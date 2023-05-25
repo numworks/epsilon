@@ -33,7 +33,7 @@ class TableViewDataSource {
     return !cell || cell->isSelectable();
   }
 
-  KDCoordinate columnWidth(int i, bool withSeparator = true);
+  KDCoordinate columnWidth(int column, bool withSeparator = true);
   KDCoordinate rowHeight(int j, bool withSeparator = true);
 
   KDCoordinate cumulatedWidthBeforeColumn(int column);

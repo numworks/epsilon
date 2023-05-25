@@ -272,8 +272,8 @@ KDCoordinate GridLayoutNode::rowHeight(int i, KDFont::Size font) const {
 
 KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
   KDCoordinate totalHeight = 0;
-  for (int i = 0; i < m_numberOfRows; i++) {
-    totalHeight += rowHeight(i, font);
+  for (int row = 0; row < m_numberOfRows; row++) {
+    totalHeight += rowHeight(row, font);
   }
   totalHeight += m_numberOfRows > 0
                      ? (m_numberOfRows - 1) * verticalGridEntryMargin(font)
@@ -281,13 +281,13 @@ KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
   return totalHeight;
 }
 
-KDCoordinate GridLayoutNode::columnWidth(int j, KDFont::Size font) const {
+KDCoordinate GridLayoutNode::columnWidth(int column, KDFont::Size font) const {
   KDCoordinate columnWidth = 0;
-  int childIndex = j;
-  int lastIndex = (m_numberOfRows - 1) * m_numberOfColumns + j;
+  int childIndex = column;
+  int lastIndex = (m_numberOfRows - 1) * m_numberOfColumns + column;
   for (LayoutNode *l :
-       const_cast<GridLayoutNode *>(this)->childrenFromIndex(j)) {
-    if (childIndex % m_numberOfColumns == j) {
+       const_cast<GridLayoutNode *>(this)->childrenFromIndex(column)) {
+    if (childIndex % m_numberOfColumns == column) {
       columnWidth = std::max(columnWidth, l->layoutSize(font).width());
       if (childIndex >= lastIndex) {
         break;

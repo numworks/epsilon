@@ -118,7 +118,7 @@ class GridLayoutNode : public Array, public LayoutNode {
   KDCoordinate rowBaseline(int i, KDFont::Size font);
   KDCoordinate rowHeight(int i, KDFont::Size font) const;
   KDCoordinate height(KDFont::Size font) const;
-  KDCoordinate columnWidth(int j, KDFont::Size font) const;
+  KDCoordinate columnWidth(int column, KDFont::Size font) const;
   KDCoordinate width(KDFont::Size font) const;
 
   // LayoutNode

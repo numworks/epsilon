@@ -75,8 +75,8 @@ KDCoordinate FormulaTemplateMenuController::nonMemoizedRowHeight(int row) {
   assert(row < k_numberOfTemplates);
   CellType type = static_cast<CellType>(typeAtRow(row));
   int reusableCellIndex = relativeCellIndex(row, type);
-  return heightForCellAtIndex(reusableCell(reusableCellIndex, typeAtRow(row)),
-                              row);
+  return heightForCellAtRow(reusableCell(reusableCellIndex, typeAtRow(row)),
+                            row);
 }
 
 HighlightCell *FormulaTemplateMenuController::reusableCell(int index,

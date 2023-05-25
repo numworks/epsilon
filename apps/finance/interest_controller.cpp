@@ -98,7 +98,7 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int row) {
     MenuCellWithEditableText<MessageTextView, MessageTextView> tempCell;
     return heightForCellAtRowWithWidthInit(&tempCell, row);
   } else if (type == k_dropdownCellType) {
-    return heightForCellAtIndex(&m_dropdownCell, row);
+    return heightForCellAtRow(&m_dropdownCell, row);
   }
   assert(type == k_buttonCellType);
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);

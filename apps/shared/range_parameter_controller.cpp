@@ -70,7 +70,7 @@ KDCoordinate RangeParameterController::nonMemoizedRowHeight(int row) {
   HighlightCell *cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1,
                             &m_okButton};
   assert(row < numberOfRows());
-  return heightForCellAtIndex(cells[row + !displayNormalizeCell()], row);
+  return heightForCellAtRow(cells[row + !displayNormalizeCell()], row);
 }
 
 void RangeParameterController::willDisplayCellAtRow(HighlightCell *cell,

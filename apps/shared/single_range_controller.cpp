@@ -44,7 +44,7 @@ KDCoordinate SingleRangeController::nonMemoizedRowHeight(int row) {
       : type == k_parameterCellType
           ? static_cast<HighlightCell *>(&m_boundsCells[row - 1])
           : nullptr;
-  return cell ? heightForCellAtIndex(cell, row)
+  return cell ? heightForCellAtRow(cell, row)
               : FloatParameterController<float>::nonMemoizedRowHeight(row);
 }
 

@@ -18,6 +18,7 @@ class DetailsListController
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 
   // Escher::ViewController
   const char *title() override;

@@ -193,13 +193,12 @@ KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedRowHeight(
   return result;
 }
 
-KDCoordinate
-PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedWidthBeforeIndex(
-    int i) {
+KDCoordinate PrefacedTableView::IntermediaryDataSource::
+    nonMemoizedCumulatedWidthBeforeColumn(int column) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeIndex(
-      columnIndexInMainDataSource(i));
+      columnIndexInMainDataSource(column));
   m_mainDataSource->lockMemoization(false);
   return result;
 }

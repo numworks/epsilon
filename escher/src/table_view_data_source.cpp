@@ -64,7 +64,7 @@ KDCoordinate TableViewDataSource::cumulatedWidthBeforeIndex(int i) {
       return result;
     }
   }
-  KDCoordinate result = nonMemoizedCumulatedWidthBeforeIndex(i);
+  KDCoordinate result = nonMemoizedCumulatedWidthBeforeColumn(i);
   assert(result >= 0);
   return result;
 }
@@ -83,9 +83,10 @@ KDCoordinate TableViewDataSource::cumulatedHeightBeforeIndex(int j) {
   return result;
 }
 
-KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthBeforeIndex(int i) {
+KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthBeforeColumn(
+    int column) {
   KDCoordinate result = 0;
-  for (int k = 0; k < i; k++) {
+  for (int k = 0; k < column; k++) {
     result += columnWidth(k);
     assert(result >= 0);
   }

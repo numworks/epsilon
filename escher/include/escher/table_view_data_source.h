@@ -78,7 +78,7 @@ class TableViewDataSource {
   /* TODO: These are virtual only for PrefacedTableView.
    * We might find a way to avoid having this in the vtable ? */
   virtual KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column);
-  virtual KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j);
+  virtual KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row);
   virtual int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX);
   virtual int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY);
 

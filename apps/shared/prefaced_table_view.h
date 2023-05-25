@@ -112,7 +112,7 @@ class PrefacedTableView : public Escher::View,
     KDCoordinate nonMemoizedRowHeight(int j) override final;
 
     KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
-    KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;
+    KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;
 
     /* WARNING: This method works only if columnIndexInMainDataSource(i) == i.
      * Else, it should be overriden.*/
@@ -140,7 +140,7 @@ class PrefacedTableView : public Escher::View,
     KDCoordinate separatorBeforeRow(int row) override { return 0; }
 
    private:
-    KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;
+    KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;
     int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) override;
 
     int rowIndexInMainDataSource(int j) override {

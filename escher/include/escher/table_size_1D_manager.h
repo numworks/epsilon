@@ -140,7 +140,7 @@ class MemoizedRowHeightManager : public TemplatedMemoizedTableSize1DManager<N> {
     return this->m_dataSource->nonMemoizedRowHeight(i, true);
   }
   KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override {
-    return this->m_dataSource->nonMemoizedCumulatedHeightBeforeIndex(i);
+    return this->m_dataSource->nonMemoizedCumulatedHeightBeforeRow(i);
   }
 };
 

@@ -90,7 +90,7 @@ class TableView : public ScrollView {
           m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
     }
     int rowsScrollingOffset() const {
-      return m_dataSource->indexAfterCumulatedHeight(invisibleHeight());
+      return m_dataSource->rowAfterCumulatedHeight(invisibleHeight());
     }
     int columnsScrollingOffset() const {
       return m_dataSource->columnAfterCumulatedWidth(invisibleWidth());

@@ -113,7 +113,7 @@ int TableViewDataSource::columnAfterCumulatedWidth(KDCoordinate offsetX) {
   return nonMemoizedColumnAfterCumulatedWidth(offsetX);
 }
 
-int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
+int TableViewDataSource::rowAfterCumulatedHeight(KDCoordinate offsetY) {
   if (rowHeightManager()) {
     int result = rowHeightManager()->computeIndexAfterCumulatedSize(
         offsetY, defaultRowHeight());

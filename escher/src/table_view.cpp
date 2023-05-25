@@ -234,8 +234,7 @@ int TableView::ContentView::numberOfDisplayableRows() const {
   int cumulatedHeightOfLastVisiblePixel =
       m_tableView->bounds().height() + invisibleHeight() - 1;
   int cumulatedRowIndexOfLastVisiblePixel =
-      m_dataSource->indexAfterCumulatedHeight(
-          cumulatedHeightOfLastVisiblePixel);
+      m_dataSource->rowAfterCumulatedHeight(cumulatedHeightOfLastVisiblePixel);
   return std::min(m_dataSource->numberOfRows(),
                   cumulatedRowIndexOfLastVisiblePixel + 1) -
          rowOffset;

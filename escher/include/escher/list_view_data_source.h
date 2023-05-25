@@ -18,8 +18,8 @@ class ListViewDataSource : public TableViewDataSource {
   virtual void willDisplayCellAtRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
   // Used to easily override nonMemoizedRowHeight
-  KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* tempCell,
-                                                 int index);
+  KDCoordinate heightForCellAtRowWithWidthInit(HighlightCell* tempCell,
+                                               int row);
 
  protected:
   KDCoordinate defaultColumnWidth() override { return KDCOORDINATE_MAX; }

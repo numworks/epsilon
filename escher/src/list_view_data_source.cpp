@@ -46,7 +46,7 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
    * index. We only assert that the list is simple enough for that trick.
    * Selecting the wrong reusable cell here can lead to cells being corrupted or
    * visually duplicated. */
-  assert(index < numberOfRows());
+  assert(0 <= index && index < numberOfRows());
   int type = typeAtIndex(index);
   int typeIndex = typeIndexFromIndex(index);
   return heightForCellAtIndex(reusableCell(typeIndex, type), index);
@@ -54,6 +54,7 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
 
 KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(
     HighlightCell* tempCell, int index) {
+  assert(0 <= index && index < numberOfRows());
   // Warning: this copy the size of a random cell of the table
   if (!tempCell->isVisible()) {
     return 0;
@@ -64,6 +65,7 @@ KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(
 
 KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell* cell,
                                                       int index) {
+  assert(0 <= index && index < numberOfRows());
   if (!cell->isVisible()) {
     return 0;
   }

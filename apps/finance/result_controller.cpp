@@ -12,8 +12,7 @@
 using namespace Finance;
 
 ResultController::ResultController(Escher::StackViewController* parentResponder)
-    : Escher::SelectableListViewWithTopAndBottomViews(parentResponder,
-                                                      &m_messageView),
+    : Escher::ListWithTopAndBottomController(parentResponder, &m_messageView),
       m_messageView(I18n::Message::CalculatedValues, k_messageFormat) {}
 
 void ResultController::didBecomeFirstResponder() {

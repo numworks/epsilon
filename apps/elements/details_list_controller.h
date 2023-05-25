@@ -2,17 +2,16 @@
 #define ELEMENTS_DETAILS_LIST_CONTROLLER
 
 #include <escher/layout_view.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
 
 #include "single_element_view.h"
 
 namespace Elements {
 
-class DetailsListController
-    : public Escher::SelectableListViewWithTopAndBottomViews {
+class DetailsListController : public Escher::ListWithTopAndBottomController {
  public:
   DetailsListController(Escher::StackViewController *parentResponder);
 

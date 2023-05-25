@@ -2,9 +2,9 @@
 #define FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
 #include <escher/chevron_view.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
@@ -17,8 +17,7 @@ using InterestMenuCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                      Escher::ChevronView>;
 
-class InterestMenuController
-    : public Escher::SelectableListViewWithTopAndBottomViews {
+class InterestMenuController : public Escher::ListWithTopAndBottomController {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
                          InterestController* interestController);

@@ -15,8 +15,8 @@ using namespace Escher;
 namespace Settings {
 
 PressToTestController::PressToTestController(Responder *parentResponder)
-    : SelectableListViewWithTopAndBottomViews(
-          parentResponder, &m_topMessageView, &m_bottomMessageView),
+    : ListWithTopAndBottomController(parentResponder, &m_topMessageView,
+                                     &m_bottomMessageView),
       m_topMessageView(I18n::Message::Default, k_messageFormat),
       m_bottomMessageView(I18n::Message::ToDeactivatePressToTest1,
                           k_messageFormat),
@@ -185,7 +185,7 @@ void PressToTestController::didBecomeFirstResponder() {
     resetController();
   }
   setMessages();
-  SelectableListViewWithTopAndBottomViews::didBecomeFirstResponder();
+  ListWithTopAndBottomController::didBecomeFirstResponder();
 }
 
 int PressToTestController::numberOfRows() const {

@@ -11,8 +11,8 @@ namespace Elements {
 
 DetailsListController::DetailsListController(
     StackViewController *parentResponder)
-    : SelectableListViewWithTopAndBottomViews(
-          parentResponder, &m_topElementView, &m_bottomMessageView),
+    : ListWithTopAndBottomController(parentResponder, &m_topElementView,
+                                     &m_bottomMessageView),
       m_topElementView(Escher::Palette::WallScreen),
       m_bottomMessageView(I18n::Message::ElementsDataConditions,
                           k_messageFormat) {}

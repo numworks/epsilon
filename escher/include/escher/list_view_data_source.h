@@ -8,7 +8,7 @@
 namespace Escher {
 
 class ListViewDataSource : public TableViewDataSource {
-  friend class ListViewWithTopAndBottomViewsDataSource;
+  friend class ListWithTopAndBottomDataSource;
 
  public:
   void initCellSize(TableView* view) override;

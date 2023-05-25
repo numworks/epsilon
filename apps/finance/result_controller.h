@@ -2,9 +2,9 @@
 #define FINANCE_RESULT_CONTROLLER_H
 
 #include <escher/buffer_text_view.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
 
 namespace Finance {
@@ -13,8 +13,7 @@ using ResultCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                      Escher::FloatBufferTextView<>>;
 
-class ResultController
-    : public Escher::SelectableListViewWithTopAndBottomViews {
+class ResultController : public Escher::ListWithTopAndBottomController {
  public:
   ResultController(Escher::StackViewController* parentResponder);
 

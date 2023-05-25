@@ -4,15 +4,14 @@
 #include <apps/i18n.h>
 #include <apps/shared/pop_up_controller.h>
 #include <escher/button_cell.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 #include <poincare/preferences.h>
 
 #include "press_to_test_switch.h"
 
 namespace Settings {
 
-class PressToTestController
-    : public Escher::SelectableListViewWithTopAndBottomViews {
+class PressToTestController : public Escher::ListWithTopAndBottomController {
  public:
   PressToTestController(Escher::Responder* parentResponder);
   const char* title() override {

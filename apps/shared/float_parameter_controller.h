@@ -2,7 +2,7 @@
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher/button_cell.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field.h>
 
@@ -14,13 +14,12 @@ namespace Shared {
  * parameterAtIndex and setParameterAtIndex). */
 
 template <typename T>
-class FloatParameterController
-    : public Escher::SelectableListViewWithTopAndBottomViews,
-      public ParameterTextFieldDelegate {
+class FloatParameterController : public Escher::ListWithTopAndBottomController,
+                                 public ParameterTextFieldDelegate {
  public:
   FloatParameterController(Escher::Responder *parentResponder);
 
-  // SelectableListViewWithTopAndBottomViews
+  // ListWithTopAndBottomController
   bool handleEvent(Ion::Events::Event event) override;
 
   // MemoizedListViewDataSource

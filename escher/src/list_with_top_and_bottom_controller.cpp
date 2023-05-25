@@ -1,13 +1,12 @@
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 
 namespace Escher {
 
-int ListViewWithTopAndBottomViewsDataSource::numberOfRows() const {
+int ListWithTopAndBottomDataSource::numberOfRows() const {
   return m_innerDataSource->numberOfRows() + hasTopView() + hasBottomView();
 }
 
-KDCoordinate ListViewWithTopAndBottomViewsDataSource::separatorBeforeRow(
-    int index) {
+KDCoordinate ListWithTopAndBottomDataSource::separatorBeforeRow(int index) {
   assert(0 <= index && index < numberOfRows());
   if (hasTopView() && index == 0) {
     return 0;
@@ -20,8 +19,8 @@ KDCoordinate ListViewWithTopAndBottomViewsDataSource::separatorBeforeRow(
   return m_innerDataSource->separatorBeforeRow(index - hasTopView());
 }
 
-HighlightCell* ListViewWithTopAndBottomViewsDataSource::reusableCell(int index,
-                                                                     int type) {
+HighlightCell* ListWithTopAndBottomDataSource::reusableCell(int index,
+                                                            int type) {
   if (type == k_topCellType) {
     assert(hasTopView() && index == 0);
     return &m_topCell;
@@ -35,15 +34,14 @@ HighlightCell* ListViewWithTopAndBottomViewsDataSource::reusableCell(int index,
   return m_innerDataSource->reusableCell(index, type - k_cellTypeOffset);
 }
 
-int ListViewWithTopAndBottomViewsDataSource::reusableCellCount(int type) {
+int ListWithTopAndBottomDataSource::reusableCellCount(int type) {
   if (type == k_topCellType || type == k_bottomCellType) {
     return 1;
   }
   return m_innerDataSource->reusableCellCount(type - k_cellTypeOffset);
 }
 
-KDCoordinate ListViewWithTopAndBottomViewsDataSource::nonMemoizedRowHeight(
-    int j) {
+KDCoordinate ListWithTopAndBottomDataSource::nonMemoizedRowHeight(int j) {
   int type = typeAtIndex(j);
   if (type == k_topCellType) {
     return m_topCell.minimalSizeForOptimalDisplay().height();
@@ -55,7 +53,7 @@ KDCoordinate ListViewWithTopAndBottomViewsDataSource::nonMemoizedRowHeight(
   return m_innerDataSource->nonMemoizedRowHeight(j - hasTopView());
 }
 
-void ListViewWithTopAndBottomViewsDataSource::willDisplayCellForIndex(
+void ListWithTopAndBottomDataSource::willDisplayCellForIndex(
     HighlightCell* cell, int index) {
   int type = typeAtIndex(index);
   if (type == k_topCellType || type == k_bottomCellType) {
@@ -64,7 +62,7 @@ void ListViewWithTopAndBottomViewsDataSource::willDisplayCellForIndex(
   m_innerDataSource->willDisplayCellForIndex(cell, index - hasTopView());
 }
 
-int ListViewWithTopAndBottomViewsDataSource::typeAtIndex(int index) const {
+int ListWithTopAndBottomDataSource::typeAtIndex(int index) const {
   assert(0 <= index && index < numberOfRows());
   if (hasTopView() && index == 0) {
     return k_topCellType;
@@ -77,9 +75,8 @@ int ListViewWithTopAndBottomViewsDataSource::typeAtIndex(int index) const {
          k_cellTypeOffset;
 }
 
-SelectableListViewWithTopAndBottomViews::
-    SelectableListViewWithTopAndBottomViews(Responder* parentResponder,
-                                            View* topView, View* bottomView)
+ListWithTopAndBottomController::ListWithTopAndBottomController(
+    Responder* parentResponder, View* topView, View* bottomView)
     : SelectableViewController(parentResponder),
       m_selectableListView(this, &m_outerDataSource, this, this),
       m_outerDataSource(this, topView, bottomView) {
@@ -87,11 +84,9 @@ SelectableListViewWithTopAndBottomViews::
   m_selectableListView.setBottomMargin(Metric::CommonLargeMargin);
 }
 
-void SelectableListViewWithTopAndBottomViews::
-    listViewDidChangeSelectionAndDidScroll(SelectableListView* l,
-                                           int previousRow,
-                                           KDPoint previousOffset,
-                                           bool withinTemporarySelection) {
+void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
+    SelectableListView* l, int previousRow, KDPoint previousOffset,
+    bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
   assert(!m_outerDataSource.hasTopView() || l->selectedRow() != 0);
   assert(!m_outerDataSource.hasBottomView() ||
@@ -109,7 +104,7 @@ void SelectableListViewWithTopAndBottomViews::
   }
 }
 
-void SelectableListViewWithTopAndBottomViews::didBecomeFirstResponder() {
+void ListWithTopAndBottomController::didBecomeFirstResponder() {
   resetMemoization();
   selectFirstCell();
   m_selectableListView.reloadData();

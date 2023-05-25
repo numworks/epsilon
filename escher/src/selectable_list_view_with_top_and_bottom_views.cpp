@@ -30,15 +30,16 @@ HighlightCell* ListViewWithTopAndBottomViewsDataSource::reusableCell(int index,
     assert(hasBottomView() && index == 0);
     return &m_bottomCell;
   }
-  assert(0 <= index && index < m_innerDataSource->reusableCellCount(type));
-  return m_innerDataSource->reusableCell(index, type);
+  assert(0 <= index &&
+         index < m_innerDataSource->reusableCellCount(type - k_cellTypeOffset));
+  return m_innerDataSource->reusableCell(index, type - k_cellTypeOffset);
 }
 
 int ListViewWithTopAndBottomViewsDataSource::reusableCellCount(int type) {
   if (type == k_topCellType || type == k_bottomCellType) {
     return 1;
   }
-  return m_innerDataSource->reusableCellCount(type);
+  return m_innerDataSource->reusableCellCount(type - k_cellTypeOffset);
 }
 
 KDCoordinate ListViewWithTopAndBottomViewsDataSource::nonMemoizedRowHeight(
@@ -72,7 +73,8 @@ int ListViewWithTopAndBottomViewsDataSource::typeAtIndex(int index) const {
     return k_bottomCellType;
   }
   assert(index >= hasTopView());
-  return m_innerDataSource->typeAtIndex(index - hasTopView());
+  return m_innerDataSource->typeAtIndex(index - hasTopView()) +
+         k_cellTypeOffset;
 }
 
 SelectableListViewWithTopAndBottomViews::

@@ -217,22 +217,23 @@ int CalculationController::reusableCellCount(int type) {
   }
 }
 
-int CalculationController::typeAtLocation(int i, int j) {
-  assert(i >= 0 && i < numberOfColumns());
-  assert(j >= 0 && j < numberOfRows());
-  if (i <= 1 && j == 0) {
+int CalculationController::typeAtLocation(int column, int row) {
+  assert(column >= 0 && column < numberOfColumns());
+  assert(row >= 0 && row < numberOfRows());
+  if (column <= 1 && row == 0) {
     return k_hideableCellType;
   }
-  if (i <= 1) {
-    assert(j > 0);
-    if (j < fixedNumberOfRows() ||
-        (showModeFrequency() && j == numberOfRows() - 1)) {
-      return i == 0 ? k_calculationTitleCellType : k_calculationSymbolCellType;
+  if (column <= 1) {
+    assert(row > 0);
+    if (row < fixedNumberOfRows() ||
+        (showModeFrequency() && row == numberOfRows() - 1)) {
+      return column == 0 ? k_calculationTitleCellType
+                         : k_calculationSymbolCellType;
     }
-    return i == 0 ? k_calculationModeTitleCellType
-                  : k_calculationModeSymbolCellType;
+    return column == 0 ? k_calculationModeTitleCellType
+                       : k_calculationModeSymbolCellType;
   }
-  if (j == 0) {
+  if (row == 0) {
     return k_seriesTitleCellType;
   }
   return k_calculationCellType;

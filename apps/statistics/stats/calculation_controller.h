@@ -32,7 +32,7 @@ class CalculationController : public Shared::DoublePairTableController {
                                  int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtLocation(int column, int row) override;
   KDCoordinate separatorBeforeColumn(int column) override;
 
   // ViewController

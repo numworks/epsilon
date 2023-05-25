@@ -218,17 +218,17 @@ int MenuController::reusableCellCount(int type) {
   return 1;
 }
 
-int MenuController::typeAtLocation(int i, int j) {
-  assert(i >= 0 && i < numberOfColumns());
-  assert(j >= 0 && j < numberOfRows());
-  if (i == 0) {
-    if (j == numberOfRows() - 1 && m_shouldDisplayAddScriptRow) {
+int MenuController::typeAtLocation(int column, int row) {
+  assert(column >= 0 && column < numberOfColumns());
+  assert(row >= 0 && row < numberOfRows());
+  if (column == 0) {
+    if (row == numberOfRows() - 1 && m_shouldDisplayAddScriptRow) {
       return k_addScriptCellType;
     }
     return k_scriptCellType;
   }
-  assert(i == 1);
-  if (j == numberOfRows() - 1 && m_shouldDisplayAddScriptRow) {
+  assert(column == 1);
+  if (row == numberOfRows() - 1 && m_shouldDisplayAddScriptRow) {
     return k_emptyCellType;
   }
   return k_scriptParameterCellType;

@@ -36,10 +36,10 @@ class StoreController : public Shared::StoreController {
                ? k_maxNumberOfNonEditableCells
                : Shared::StoreController::reusableCellCount(type);
   }
-  int typeAtLocation(int i, int j) override {
-    return isCumulatedFrequencyCell(i, j)
+  int typeAtLocation(int column, int row) override {
+    return isCumulatedFrequencyCell(column, row)
                ? k_nonEditableCellType
-               : Shared::StoreController::typeAtLocation(i, j);
+               : Shared::StoreController::typeAtLocation(column, row);
   }
   void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
                                  int row) override;

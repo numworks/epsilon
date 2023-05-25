@@ -447,23 +447,23 @@ int SolutionsController::reusableCellCount(int type) {
   }
 }
 
-int SolutionsController::typeAtLocation(int i, int j) {
+int SolutionsController::typeAtLocation(int column, int row) {
   const int rowOfUserVariableMessage = userVariablesMessageRow();
   SystemOfEquations *system = App::app()->system();
-  if (j == rowOfUserVariableMessage - 1) {
+  if (row == rowOfUserVariableMessage - 1) {
     return k_emptyCellType;
   }
-  if (j == rowOfUserVariableMessage) {
+  if (row == rowOfUserVariableMessage) {
     return k_messageCellType;
   }
-  if (i == 0) {
+  if (column == 0) {
     if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
-        j == static_cast<int>(system->numberOfSolutions()) - 1) {
+        row == static_cast<int>(system->numberOfSolutions()) - 1) {
       return k_deltaCellType;
     }
     return k_symbolCellType;
   }
-  if ((rowOfUserVariableMessage < 0 || j < rowOfUserVariableMessage - 1) &&
+  if ((rowOfUserVariableMessage < 0 || row < rowOfUserVariableMessage - 1) &&
       system->type() == SystemOfEquations::Type::GeneralMonovariable) {
     return k_approximateValueCellType;
   }

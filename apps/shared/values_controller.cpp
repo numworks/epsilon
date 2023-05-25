@@ -189,12 +189,12 @@ int ValuesController::reusableCellCount(int type) {
   }
 }
 
-int ValuesController::typeAtLocation(int i, int j) {
+int ValuesController::typeAtLocation(int column, int row) {
   static_assert(k_abscissaTitleCellType == 0 && k_functionTitleCellType == 1 &&
                     k_editableValueCellType == 2 &&
                     k_notEditableValueCellType == 3,
                 "ValuesController::typeAtLocation formula is wrong.");
-  return (i > 0) + 2 * (j > 0);
+  return (column > 0) + 2 * (row > 0);
 }
 
 Responder *ValuesController::responderWhenEmpty() {

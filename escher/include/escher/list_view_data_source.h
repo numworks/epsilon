@@ -37,8 +37,8 @@ class ListViewDataSource : public TableViewDataSource {
       willDisplayCellAtRow(cell, row);
     }
   }
-  int typeAtLocation(int col, int row) override final {
-    assert(col == 0);
+  int typeAtLocation(int column, int row) override final {
+    assert(column == 0);
     return typeAtRow(row);
   }
   // Just make this method final without changing behaviour

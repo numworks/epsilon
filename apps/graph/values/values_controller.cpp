@@ -117,9 +117,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell,
   Shared::ValuesController::willDisplayCellAtLocation(cell, column, row);
 }
 
-int ValuesController::typeAtLocation(int i, int j) {
-  symbolTypeAtColumn(&i);
-  return Shared::ValuesController::typeAtLocation(i, j);
+int ValuesController::typeAtLocation(int column, int row) {
+  symbolTypeAtColumn(&column);
+  return Shared::ValuesController::typeAtLocation(column, row);
 }
 
 KDCoordinate ValuesController::separatorBeforeColumn(int column) {

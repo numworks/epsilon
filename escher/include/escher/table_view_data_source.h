@@ -47,7 +47,7 @@ class TableViewDataSource {
 
   virtual HighlightCell* reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;
-  virtual int typeAtLocation(int i, int j) = 0;
+  virtual int typeAtLocation(int column, int row) = 0;
 
   virtual void resetMemoization(bool force = true);
   void lockMemoization(bool state);

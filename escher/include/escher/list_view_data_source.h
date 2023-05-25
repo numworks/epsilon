@@ -42,8 +42,8 @@ class ListViewDataSource : public TableViewDataSource {
     return typeAtRow(row);
   }
   // Just make this method final without changing behaviour
-  KDCoordinate nonMemoizedColumnWidth(int index) override final {
-    return TableViewDataSource::nonMemoizedColumnWidth(index);
+  KDCoordinate nonMemoizedColumnWidth(int column) override final {
+    return TableViewDataSource::nonMemoizedColumnWidth(column);
   }
   int typeIndexFromIndex(int index);
 };

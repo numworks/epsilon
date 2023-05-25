@@ -86,7 +86,7 @@ class ValuesController : public Shared::ValuesController,
    * when exact results are switched on is slow because all layouts
    * need to be computed. The speed optimization could come from either
    * a change of API or a change in the way scrollView/tableView work. */
-  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedColumnWidth(int column) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::TableSize1DManager *columnWidthManager() override {
     return &m_widthManager;

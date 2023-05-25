@@ -317,15 +317,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   bufferCell->setText(buffer);
 }
 
-KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
-  if (i == 0) {
+KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
+  if (column == 0) {
     return k_titleCalculationCellWidth;
   }
-  if (i == 1) {
+  if (column == 1) {
     return k_symbolColumnWidth;
   }
-  Model::Type currentType = m_store->seriesRegressionType(
-      m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns));
+  Model::Type currentType =
+      m_store->seriesRegressionType(m_store->seriesIndexFromActiveSeriesIndex(
+          column - k_numberOfHeaderColumns));
   if (currentType == Model::Type::Quartic) {
     return k_quarticCalculationCellWidth;
   }

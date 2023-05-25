@@ -291,6 +291,9 @@ template PoincareJ::Node
 template PoincareJ::Node
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Polynomial, int, int>(int,
                                                                          int);
+template PoincareJ::Node PoincareJ::EditionPool::push<
+    PoincareJ::BlockType::UserSymbol, const char *, size_t>(const char *,
+                                                            size_t);
 template PoincareJ::Node
 PoincareJ::EditionPool::push<PoincareJ::BlockType::RackLayout, int>(int);
 template PoincareJ::Node

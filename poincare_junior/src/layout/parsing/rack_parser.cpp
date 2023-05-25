@@ -1009,6 +1009,12 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   const Node node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
+  assert(node.type() == BlockType::CodePointLayout && length == 1);  // TODO
+  constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
+  char buffer[bufferSize];
+  CodePointLayout::GetName(node, buffer, bufferSize);
+  leftHandSide = EditionPool::sharedEditionPool()->push<BlockType::UserSymbol>(
+      static_cast<const char *>(buffer), length);
   // privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
   isThereImplicitOperator();
 }

@@ -69,16 +69,16 @@ KDCoordinate TableViewDataSource::cumulatedWidthBeforeColumn(int column) {
   return result;
 }
 
-KDCoordinate TableViewDataSource::cumulatedHeightBeforeIndex(int j) {
+KDCoordinate TableViewDataSource::cumulatedHeightBeforeRow(int row) {
   if (rowHeightManager()) {
     KDCoordinate result = rowHeightManager()->computeCumulatedSizeBeforeIndex(
-        j, defaultRowHeight());
+        row, defaultRowHeight());
     if (result != TableSize1DManager::k_undefinedSize) {
       assert(result >= 0);
       return result;
     }
   }
-  KDCoordinate result = nonMemoizedCumulatedHeightBeforeRow(j);
+  KDCoordinate result = nonMemoizedCumulatedHeightBeforeRow(row);
   assert(result >= 0);
   return result;
 }

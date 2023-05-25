@@ -133,7 +133,7 @@ KDRect TableView::ContentView::cellFrame(int col, int row) const {
   }
   return KDRect(m_dataSource->cumulatedWidthBeforeColumn(col) +
                     m_dataSource->separatorBeforeColumn(col),
-                m_dataSource->cumulatedHeightBeforeIndex(row) +
+                m_dataSource->cumulatedHeightBeforeRow(row) +
                     m_dataSource->separatorBeforeRow(row),
                 columnWidth + m_horizontalCellOverlap,
                 rowHeight + m_verticalCellOverlap);

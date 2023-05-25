@@ -20,7 +20,7 @@ CalculationSelectableTableView::CalculationSelectableTableView(
 void CalculationSelectableTableView::scrollToBottom() {
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY =
-      dataSource()->cumulatedHeightBeforeIndex(totalNumberOfRows()) -
+      dataSource()->cumulatedHeightBeforeRow(totalNumberOfRows()) -
       maxContentHeightDisplayableWithoutScrolling();
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
@@ -46,7 +46,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
   assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
 
-  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeIndex(j);
+  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeRow(j);
   if (cell->displaysSingleLine() &&
       dataSource()->rowHeight(j) >
           maxContentHeightDisplayableWithoutScrolling()) {
@@ -58,15 +58,15 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
      * display they entail :
      * (the selected cell is at index j)
      *
-     * 1 - cumulatedHeightBeforeIndex(j)
+     * 1 - cumulatedHeightBeforeRow(j)
      *   Aligns the top of the cell with the top of the zone in which the
      *   history can be drawn.
      *
-     * 2 - (cumulatedHeightBeforeIndex(j+1)
+     * 2 - (cumulatedHeightBeforeRow(j+1)
      *      - maxContentHeightDisplayableWithoutScrolling())
      *   Aligns the bottom of the cell with the top of the input field.
      *
-     * 3 - cumulatedHeightBeforeIndex(j) + baseline1 - baseline2
+     * 3 - cumulatedHeightBeforeRow(j) + baseline1 - baseline2
      *   Aligns the top of the selected layout with the top of the screen (only
      *   used when the selected layout is the smallest).
      *

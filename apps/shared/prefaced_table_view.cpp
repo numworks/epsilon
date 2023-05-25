@@ -208,8 +208,8 @@ PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedHeightBeforeRow(
     int row) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = m_mainDataSource->cumulatedHeightBeforeIndex(
-      rowIndexInMainDataSource(row));
+  KDCoordinate result =
+      m_mainDataSource->cumulatedHeightBeforeRow(rowIndexInMainDataSource(row));
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -238,7 +238,7 @@ PrefacedTableView::RowPrefaceDataSource::cumulatedHeightBeforePrefaceRow()
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   KDCoordinate result =
-      m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow) +
+      m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow) +
       m_mainDataSource->separatorBeforeRow(m_prefaceRow);
   m_mainDataSource->lockMemoization(false);
   return result;

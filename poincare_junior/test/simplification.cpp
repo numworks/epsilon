@@ -138,7 +138,9 @@ void simplifies_to(const char* input, const char* output) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
   quiz_assert(!expression.isUninitialized());
-  EditionReference reduced = Simplification::AutomaticSimplify(expression);
+  EditionReference projected = Simplification::SystemProjection(expression);
+  quiz_assert(!projected.isUninitialized());
+  EditionReference reduced = Simplification::AutomaticSimplify(projected);
   quiz_assert(!reduced.isUninitialized());
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(reduced);
@@ -148,12 +150,14 @@ void simplifies_to(const char* input, const char* output) {
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   bool b = strcmp(output, buffer) == 0;
   if (!b) {
-    std::cout << output << " vs " << buffer << std::endl;
+    std::cout << input << " reduced to " << buffer << " instead of " << output
+              << std::endl;
   }
   quiz_assert(b);
 }
 
 QUIZ_CASE(pcj_simplification) {
   simplifies_to("2+2", "4");
-  simplifies_to("2*2+(2*3* (2^2))", "28");
+  simplifies_to("3-2", "1");
+  simplifies_to("(2*3(2^2))-2*2", "20");
 }

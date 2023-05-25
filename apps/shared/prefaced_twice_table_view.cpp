@@ -170,7 +170,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   KDCoordinate result =
-      m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn) +
+      m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn) +
       m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
   m_mainDataSource->lockMemoization(false);
   return result;

@@ -131,7 +131,7 @@ KDRect TableView::ContentView::cellFrame(int col, int row) const {
   if (columnWidth == KDCOORDINATE_MAX) {  // For ListViewDataSource
     columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
-  return KDRect(m_dataSource->cumulatedWidthBeforeIndex(col) +
+  return KDRect(m_dataSource->cumulatedWidthBeforeColumn(col) +
                     m_dataSource->separatorBeforeColumn(col),
                 m_dataSource->cumulatedHeightBeforeIndex(row) +
                     m_dataSource->separatorBeforeRow(row),
@@ -140,10 +140,10 @@ KDRect TableView::ContentView::cellFrame(int col, int row) const {
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  int result =
-      m_dataSource->cumulatedWidthBeforeIndex(m_dataSource->numberOfColumns()) +
-      m_horizontalCellOverlap;
-  // handle the case of list: cumulatedWidthBeforeIndex() = KDCOORDINATE_MAX
+  int result = m_dataSource->cumulatedWidthBeforeColumn(
+                   m_dataSource->numberOfColumns()) +
+               m_horizontalCellOverlap;
+  // handle the case of list: cumulatedWidthBeforeColumn() = KDCOORDINATE_MAX
   return result == KDCOORDINATE_MAX
              ? m_tableView->maxContentWidthDisplayableWithoutScrolling()
              : result;

@@ -58,9 +58,6 @@ class ListViewWithTopAndBottomViewsDataSource
    private:
     View* m_view;
   };
-  KDCoordinate topCellHeight() const {
-    return m_topCell.minimalSizeForOptimalDisplay().height();
-  }
 
   ListViewDataSource* m_innerDataSource;
   ViewCell m_topCell;

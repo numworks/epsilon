@@ -45,7 +45,7 @@ KDCoordinate ListViewWithTopAndBottomViewsDataSource::nonMemoizedRowHeight(
     int j) {
   int type = typeAtIndex(j);
   if (type == k_topCellType) {
-    return topCellHeight();
+    return m_topCell.minimalSizeForOptimalDisplay().height();
   }
   if (type == k_bottomCellType) {
     return m_bottomCell.minimalSizeForOptimalDisplay().height();

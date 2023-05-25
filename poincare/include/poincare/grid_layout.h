@@ -115,7 +115,7 @@ class GridLayoutNode : public Array, public LayoutNode {
   KDCoordinate verticalGridEntryMargin(KDFont::Size font) const {
     return k_gridEntryMargin;
   }
-  KDCoordinate rowBaseline(int i, KDFont::Size font);
+  KDCoordinate rowBaseline(int row, KDFont::Size font);
   KDCoordinate rowHeight(int row, KDFont::Size font) const;
   KDCoordinate height(KDFont::Size font) const;
   KDCoordinate columnWidth(int column, KDFont::Size font) const;

@@ -49,9 +49,9 @@ class DoublePairTableController
     return row > 0 && col > 1;
   }
 
-  bool cellAtLocationIsSelectable(Escher::HighlightCell *cell, int col,
+  bool cellAtLocationIsSelectable(Escher::HighlightCell *cell, int column,
                                   int row) override {
-    return row > 0 || col > 1;
+    return row > 0 || column > 1;
   }
 
  protected:

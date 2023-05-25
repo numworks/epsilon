@@ -25,11 +25,13 @@ class TableViewDataSource {
   virtual int numberOfColumns() const = 0;
   virtual void willDisplayCellAtLocation(HighlightCell* cell, int column,
                                          int row);
-  virtual bool cellAtLocationIsSelectable(HighlightCell* cell, int i, int j) {
+  virtual bool cellAtLocationIsSelectable(HighlightCell* cell, int column,
+                                          int row) {
     /* TODO: If cell is nullptr because it's a reusable cell not populated
      * yet, this can't check if the cell is selectable.
      * isSelectable() should maybe belong to dataSource and not cell. */
-    assert(i >= 0 && i < numberOfColumns() && j >= 0 && j < numberOfRows());
+    assert(column >= 0 && column < numberOfColumns() && row >= 0 &&
+           row < numberOfRows());
     return !cell || cell->isSelectable();
   }
 

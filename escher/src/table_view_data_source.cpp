@@ -5,17 +5,17 @@ namespace Escher {
 void TableViewDataSource::willDisplayCellAtLocation(HighlightCell* cell,
                                                     int column, int row) {}
 
-KDCoordinate TableViewDataSource::columnWidth(int i, bool withSeparator) {
+KDCoordinate TableViewDataSource::columnWidth(int column, bool withSeparator) {
   KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
-    result = columnWidthManager()->computeSizeAtIndex(i);
+    result = columnWidthManager()->computeSizeAtIndex(column);
   }
   if (result > 0 && !withSeparator) {
     // Remove the separator from the memoized size
-    result -= separatorBeforeColumn(i);
+    result -= separatorBeforeColumn(column);
   }
   if (result == TableSize1DManager::k_undefinedSize) {
-    result = nonMemoizedColumnWidth(i, withSeparator);
+    result = nonMemoizedColumnWidth(column, withSeparator);
   }
   assert(result >= 0);
   return result;

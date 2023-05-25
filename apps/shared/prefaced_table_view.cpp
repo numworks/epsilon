@@ -227,7 +227,7 @@ int PrefacedTableView::IntermediaryDataSource::
     nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  int result = m_mainDataSource->indexAfterCumulatedHeight(offsetY);
+  int result = m_mainDataSource->rowAfterCumulatedHeight(offsetY);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

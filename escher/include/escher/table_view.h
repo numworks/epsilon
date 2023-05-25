@@ -113,7 +113,7 @@ class TableView : public ScrollView {
 #endif
    private:
     KDCoordinate height() const {
-      return m_dataSource->cumulatedHeightBeforeIndex(
+      return m_dataSource->cumulatedHeightBeforeRow(
                  m_dataSource->numberOfRows()) +
              m_verticalCellOverlap;
     }

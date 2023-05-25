@@ -102,7 +102,7 @@ KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightBeforeRow(int row) {
   return result;
 }
 
-int TableViewDataSource::indexAfterCumulatedWidth(KDCoordinate offsetX) {
+int TableViewDataSource::columnAfterCumulatedWidth(KDCoordinate offsetX) {
   if (columnWidthManager()) {
     int result = columnWidthManager()->computeIndexAfterCumulatedSize(
         offsetX, defaultColumnWidth());

@@ -57,7 +57,7 @@ class ExplicitListViewDataSource : public ListViewDataSource {
     bool m_sizesAreComputed;
   };
 
-  bool cellAtLocationIsSelectable(HighlightCell* cell, int col,
+  bool cellAtLocationIsSelectable(HighlightCell* cell, int column,
                                   int row) override;
 
   TableSize1DManager* rowHeightManager() override { return &m_heightManager; }

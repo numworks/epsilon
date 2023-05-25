@@ -440,6 +440,17 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         &exact, &approximate, context, m_complexFormat, angleUnit, unitFormat,
         symbolicComputation, UnitConversion::Default,
         approximateDuringReduction);
+    if (exact.type() == ExpressionNode::Type::Dependency) {
+      /* e has been reduced under ReductionTarget::SystemForAnalysis in
+       * Equation::Model::standardForm and has gone through Matrix::rank, which
+       * discarded dependencies. Reducing here under ReductionTarget::User may
+       * have created new dependencies.
+       * For example, "i" had been preserved up to now and has been reduced to a
+       * ComplexCartesian here, which may have triggered further reduction and
+       * the creation of a dependency.
+       * We remove that dependency in order to create layouts. */
+      exact = exact.childAtIndex(0);
+    }
   }
   if (approximate.type() == ExpressionNode::Type::Nonreal) {
     return Error::EquationNonreal;

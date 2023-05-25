@@ -135,7 +135,9 @@ void TrigonometryListController::setExactAndApproximateExpression(
   updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration
-  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
+  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(
+      approximateExpression.isUninitialized() ? e : approximateExpression,
+      context);
   // Convert angle to radians
   if (userAngleUnit != Preferences::AngleUnit::Radian) {
     angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);

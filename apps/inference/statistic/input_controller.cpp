@@ -122,10 +122,10 @@ void InputController::willDisplayCellAtRow(Escher::HighlightCell *cell,
   FloatParameterController<double>::willDisplayCellAtRow(cell, row);
 }
 
-KDCoordinate InputController::separatorBeforeRow(int index) {
-  return typeAtRow(index) == k_significanceCellType
+KDCoordinate InputController::separatorBeforeRow(int row) {
+  return typeAtRow(row) == k_significanceCellType
              ? k_defaultRowSeparator
-             : FloatParameterController<double>::separatorBeforeRow(index);
+             : FloatParameterController<double>::separatorBeforeRow(row);
 }
 
 int InputController::reusableParameterCellCount(int type) {

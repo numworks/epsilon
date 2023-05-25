@@ -33,8 +33,8 @@ class ResultsDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtRow(int row) const override;
-  KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtRow(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+  KDCoordinate separatorBeforeRow(int row) override {
+    return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
 
   constexpr static int k_numberOfReusableCells = 5;

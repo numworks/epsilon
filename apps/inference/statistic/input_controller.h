@@ -40,7 +40,7 @@ class InputController
   bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
-  KDCoordinate separatorBeforeRow(int index) override;
+  KDCoordinate separatorBeforeRow(int row) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
 
   void initCell(InputParameterCell, void* cell, int index) override;

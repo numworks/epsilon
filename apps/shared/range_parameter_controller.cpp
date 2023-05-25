@@ -122,9 +122,8 @@ void RangeParameterController::willDisplayCellAtRow(HighlightCell *cell,
   }
 }
 
-KDCoordinate RangeParameterController::separatorBeforeRow(int index) {
-  return (displayNormalizeCell() && index == 1) ||
-                 typeAtRow(index) == k_okCellType
+KDCoordinate RangeParameterController::separatorBeforeRow(int row) {
+  return (displayNormalizeCell() && row == 1) || typeAtRow(row) == k_okCellType
              ? k_defaultRowSeparator
              : 0;
 }

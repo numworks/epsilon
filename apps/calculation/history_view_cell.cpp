@@ -268,7 +268,16 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
       outputY += -baselineDifference;
     }
   } else {
-    outputY += inputSize.height();
+    KDCoordinate totalHeight =
+        2 * k_margin + outputSize.height() + inputSize.height();
+    if (totalHeight < k_maxCellHeight) {
+      outputY += inputSize.height();
+    } else {
+      /* This makes it so the output is showed in priority if the calculation is
+       * too large for the cell. */
+      outputY = k_maxCellHeight - outputSize.height() - k_margin;
+      inputY = outputY - inputSize.height();
+    }
   }
 
   *inputFrame = KDRect(0, inputY, std::min(frameWidth, inputSize.width()),

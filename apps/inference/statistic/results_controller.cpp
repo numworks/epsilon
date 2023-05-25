@@ -13,7 +13,7 @@ ResultsController::ResultsController(
     StackViewController *parent, Statistic *statistic,
     TestGraphController *testGraphController,
     IntervalGraphController *intervalGraphController)
-    : SelectableListViewWithTopAndBottomViews(parent, &m_title),
+    : ListWithTopAndBottomController(parent, &m_title),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
       m_title(I18n::Message::CalculatedValues, k_messageFormat),
       m_statistic(statistic),

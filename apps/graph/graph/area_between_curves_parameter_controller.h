@@ -2,14 +2,14 @@
 #define GRAPH_AREA_BETWEEN_CURVES_PARAMETER_CONTROLLER
 
 #include <apps/shared/curve_selection_controller.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 
 #include "area_between_curves_graph_controller.h"
 
 namespace Graph {
 
 class AreaBetweenCurvesParameterController
-    : public Escher::SelectableListViewWithTopAndBottomViews {
+    : public Escher::ListWithTopAndBottomController {
  public:
   static Ion::Storage::Record DerivableActiveFunctionAtIndex(
       int index, Ion::Storage::Record excludedRecord);

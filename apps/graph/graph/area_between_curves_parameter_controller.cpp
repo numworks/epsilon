@@ -37,7 +37,7 @@ AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
 AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
     Responder *parentResponder,
     AreaBetweenCurvesGraphController *areaGraphController)
-    : SelectableListViewWithTopAndBottomViews(parentResponder, &m_topView),
+    : ListWithTopAndBottomController(parentResponder, &m_topView),
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
       m_topView(I18n::Message::SelectSecondCurve, k_messageFormat) {}

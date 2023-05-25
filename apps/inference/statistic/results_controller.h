@@ -4,8 +4,8 @@
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
 #include <escher/layout_view.h>
+#include <escher/list_with_top_and_bottom_controller.h>
 #include <escher/menu_cell.h>
-#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
 
 #include "inference/models/statistic/statistic.h"
@@ -19,7 +19,7 @@ using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                                     Escher::FloatBufferTextView<>>;
 
 class ResultsController
-    : public Escher::SelectableListViewWithTopAndBottomViews,
+    : public Escher::ListWithTopAndBottomController,
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:

@@ -11,8 +11,7 @@ using namespace Finance;
 InterestMenuController::InterestMenuController(
     Escher::StackViewController* parentResponder,
     InterestController* interestController)
-    : Escher::SelectableListViewWithTopAndBottomViews(parentResponder,
-                                                      &m_messageView),
+    : Escher::ListWithTopAndBottomController(parentResponder, &m_messageView),
       m_messageView(I18n::Message::ParameterChoose, k_messageFormat),
       m_interestController(interestController) {
   selectRow(0);
@@ -26,7 +25,7 @@ void InterestMenuController::didBecomeFirstResponder() {
     m_cells[i].subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
-  SelectableListViewWithTopAndBottomViews::didBecomeFirstResponder();
+  ListWithTopAndBottomController::didBecomeFirstResponder();
 }
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {

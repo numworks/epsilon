@@ -1,15 +1,15 @@
-#ifndef ESCHER_LIST_VIEW_WITH_TOP_AND_BOTTOM_VIEW_H
-#define ESCHER_LIST_VIEW_WITH_TOP_AND_BOTTOM_VIEW_H
+#ifndef ESCHER_LIST_WITH_TOP_AND_BOTTOM_CONTROLLER_H
+#define ESCHER_LIST_WITH_TOP_AND_BOTTOM_CONTROLLER_H
 
 #include <escher/selectable_list_view_controller.h>
 
 namespace Escher {
 
-class ListViewWithTopAndBottomViewsDataSource
+class ListWithTopAndBottomDataSource
     : public StandardMemoizedListViewDataSource {
  public:
-  ListViewWithTopAndBottomViewsDataSource(ListViewDataSource* dataSource,
-                                          View* topView, View* bottomView)
+  ListWithTopAndBottomDataSource(ListViewDataSource* dataSource, View* topView,
+                                 View* bottomView)
       : m_innerDataSource(dataSource),
         m_topCell(topView),
         m_bottomCell(bottomView) {}
@@ -65,14 +65,13 @@ class ListViewWithTopAndBottomViewsDataSource
   ViewCell m_bottomCell;
 };
 
-class SelectableListViewWithTopAndBottomViews
-    : public SelectableViewController,
-      public ListViewDataSource,
-      public SelectableListViewDelegate {
+class ListWithTopAndBottomController : public SelectableViewController,
+                                       public ListViewDataSource,
+                                       public SelectableListViewDelegate {
  public:
-  SelectableListViewWithTopAndBottomViews(Responder* parentResponder,
-                                          View* topView = nullptr,
-                                          View* bottomView = nullptr);
+  ListWithTopAndBottomController(Responder* parentResponder,
+                                 View* topView = nullptr,
+                                 View* bottomView = nullptr);
 
   View* view() override { return &m_selectableListView; }
   void resetMemoization(bool force = true) override {
@@ -106,7 +105,7 @@ class SelectableListViewWithTopAndBottomViews
   SelectableListView m_selectableListView;
 
  private:
-  ListViewWithTopAndBottomViewsDataSource m_outerDataSource;
+  ListWithTopAndBottomDataSource m_outerDataSource;
 };
 
 }  // namespace Escher

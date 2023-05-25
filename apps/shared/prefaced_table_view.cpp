@@ -197,7 +197,7 @@ KDCoordinate PrefacedTableView::IntermediaryDataSource::
     nonMemoizedCumulatedWidthBeforeColumn(int column) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeIndex(
+  KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeColumn(
       columnIndexInMainDataSource(column));
   m_mainDataSource->lockMemoization(false);
   return result;

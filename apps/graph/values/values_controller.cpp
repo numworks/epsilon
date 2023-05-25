@@ -154,8 +154,8 @@ int ValuesController::columnToFreeze() {
     int indexOfAbscissaColumn = indexOfLastColumn + 1;
     indexOfLastColumn = indexOfAbscissaColumn + nbOfValuesColumns;
     KDCoordinate subTableWidth =
-        cumulatedWidthBeforeIndex(indexOfLastColumn + 1) -
-        cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
+        cumulatedWidthBeforeColumn(indexOfLastColumn + 1) -
+        cumulatedWidthBeforeColumn(indexOfAbscissaColumn);
     /*
      *     -----------------------------------------------------------
      *    |  x  | f(x) | g(x) | h(x) |  θ  | i(θ) |  t  | j(t) | k(t) |
@@ -169,7 +169,7 @@ int ValuesController::columnToFreeze() {
       continue;
     }
     // From here, we have an abscissa column candidate for freezing.
-    if (cumulatedWidthBeforeIndex(indexOfLastColumn) >= offset().x()) {
+    if (cumulatedWidthBeforeColumn(indexOfLastColumn) >= offset().x()) {
       /* We take the first candidate for which last column is not hidden by
        * scroll. Indeed, if last column is hidden (even partly) by scroll, it
        * means focus is not on this subtable so we don't want to freeze this

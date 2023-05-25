@@ -41,11 +41,11 @@ HighlightCell *HomogeneityTableDataSource::reusableCell(int i, int type) {
   return innerCell(i);
 }
 
-int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
-  if (i == 0 && j == 0) {
+int HomogeneityTableDataSource::typeAtLocation(int column, int row) {
+  if (column == 0 && row == 0) {
     return k_typeOfTopLeftCell;
   }
-  if (i == 0 || j == 0) {
+  if (column == 0 || row == 0) {
     return k_typeOfHeaderCells;
   }
   return k_typeOfInnerCells;

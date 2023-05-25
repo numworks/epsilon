@@ -94,9 +94,9 @@ class PrefacedTableView : public Escher::View,
     int reusableCellCount(int type) override {
       return m_mainDataSource->reusableCellCount(type);
     }
-    int typeAtLocation(int i, int j) override {
-      return m_mainDataSource->typeAtLocation(columnIndexInMainDataSource(i),
-                                              rowIndexInMainDataSource(j));
+    int typeAtLocation(int column, int row) override {
+      return m_mainDataSource->typeAtLocation(
+          columnIndexInMainDataSource(column), rowIndexInMainDataSource(row));
     }
     KDCoordinate separatorBeforeColumn(int column) override {
       return m_mainDataSource->separatorBeforeColumn(

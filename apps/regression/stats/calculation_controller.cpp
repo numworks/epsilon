@@ -378,20 +378,20 @@ int CalculationController::reusableCellCount(int type) {
   return k_numberOfDisplayableCalculationCells;
 }
 
-int CalculationController::typeAtLocation(int i, int j) {
-  if (i <= 1 && j == 0) {
+int CalculationController::typeAtLocation(int column, int row) {
+  if (column <= 1 && row == 0) {
     return k_hideableCellType;
   }
-  if (i == 0) {
+  if (column == 0) {
     return k_standardCalculationTitleCellType;
   }
-  if (i == 1) {
+  if (column == 1) {
     return k_symbolCalculationTitleCellType;
   }
-  if (j == 0) {
+  if (row == 0) {
     return k_columnTitleCellType;
   }
-  if (j > 0 && j <= k_numberOfDoubleBufferCalculations) {
+  if (row > 0 && row <= k_numberOfDoubleBufferCalculations) {
     return k_doubleBufferCalculationCellType;
   }
   return k_standardCalculationCellType;

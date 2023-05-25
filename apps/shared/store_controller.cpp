@@ -87,8 +87,8 @@ int StoreController::reusableCellCount(int type) {
                                  : k_maxNumberOfDisplayableCells;
 }
 
-int StoreController::typeAtLocation(int i, int j) {
-  return j == 0 ? k_titleCellType : k_editableCellType;
+int StoreController::typeAtLocation(int column, int row) {
+  return row == 0 ? k_titleCellType : k_editableCellType;
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,

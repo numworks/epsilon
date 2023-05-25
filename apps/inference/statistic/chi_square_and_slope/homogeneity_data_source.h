@@ -28,7 +28,7 @@ class HomogeneityTableDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }
   int numberOfColumns() const override { return innerNumberOfColumns() + 1; }
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtLocation(int column, int row) override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
   void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
                                  int row) override;

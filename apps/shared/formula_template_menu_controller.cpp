@@ -34,7 +34,7 @@ void FormulaTemplateMenuController::viewWillAppear() {
 void FormulaTemplateMenuController::willDisplayCellAtRow(HighlightCell *cell,
                                                          int row) {
   assert(row < k_numberOfTemplates);
-  CellType type = static_cast<CellType>(typeAtIndex(row));
+  CellType type = static_cast<CellType>(typeAtRow(row));
   if (type == CellType::EmptyTemplate) {
     return;
   }
@@ -73,10 +73,10 @@ bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {
 
 KDCoordinate FormulaTemplateMenuController::nonMemoizedRowHeight(int index) {
   assert(index < k_numberOfTemplates);
-  CellType type = static_cast<CellType>(typeAtIndex(index));
+  CellType type = static_cast<CellType>(typeAtRow(index));
   int reusableCellIndex = relativeCellIndex(index, type);
-  return heightForCellAtIndex(
-      reusableCell(reusableCellIndex, typeAtIndex(index)), index);
+  return heightForCellAtIndex(reusableCell(reusableCellIndex, typeAtRow(index)),
+                              index);
 }
 
 HighlightCell *FormulaTemplateMenuController::reusableCell(int index,
@@ -104,12 +104,12 @@ int FormulaTemplateMenuController::reusableCellCount(int type) {
   return k_numberOfExpressionCellsWithBuffer;
 }
 
-int FormulaTemplateMenuController::typeAtIndex(int index) const {
-  assert(index < numberOfRows());
-  if (index <= static_cast<int>(Cell::EmptyTemplate)) {
+int FormulaTemplateMenuController::typeAtRow(int row) const {
+  assert(row < numberOfRows());
+  if (row <= static_cast<int>(Cell::EmptyTemplate)) {
     return static_cast<int>(CellType::EmptyTemplate);
   }
-  if (index <= static_cast<int>(Cell::Logarithm)) {
+  if (row <= static_cast<int>(Cell::Logarithm)) {
     return static_cast<int>(CellType::TemplateWithMessage);
   }
   return static_cast<int>(CellType::TemplateWithBuffer);

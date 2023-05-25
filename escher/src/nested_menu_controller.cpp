@@ -132,11 +132,11 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE ||
        event == Ion::Events::Right) &&
-      typeAtIndex(rowIndex) == k_nodeCellType) {
+      typeAtRow(rowIndex) == k_nodeCellType) {
     return selectSubMenu(rowIndex);
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
-      typeAtIndex(rowIndex) == k_leafCellType) {
+      typeAtRow(rowIndex) == k_leafCellType) {
     return selectLeaf(rowIndex);
   }
 

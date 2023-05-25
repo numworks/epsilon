@@ -42,7 +42,7 @@ int ListWithTopAndBottomDataSource::reusableCellCount(int type) {
 }
 
 KDCoordinate ListWithTopAndBottomDataSource::nonMemoizedRowHeight(int j) {
-  int type = typeAtIndex(j);
+  int type = typeAtRow(j);
   if (type == k_topCellType) {
     return m_topCell.minimalSizeForOptimalDisplay().height();
   }
@@ -55,14 +55,14 @@ KDCoordinate ListWithTopAndBottomDataSource::nonMemoizedRowHeight(int j) {
 
 void ListWithTopAndBottomDataSource::willDisplayCellAtRow(HighlightCell* cell,
                                                           int index) {
-  int type = typeAtIndex(index);
+  int type = typeAtRow(index);
   if (type == k_topCellType || type == k_bottomCellType) {
     return;
   }
   m_innerDataSource->willDisplayCellAtRow(cell, index - hasTopView());
 }
 
-int ListWithTopAndBottomDataSource::typeAtIndex(int index) const {
+int ListWithTopAndBottomDataSource::typeAtRow(int index) const {
   assert(0 <= index && index < numberOfRows());
   if (hasTopView() && index == 0) {
     return k_topCellType;
@@ -71,8 +71,7 @@ int ListWithTopAndBottomDataSource::typeAtIndex(int index) const {
     return k_bottomCellType;
   }
   assert(index >= hasTopView());
-  return m_innerDataSource->typeAtIndex(index - hasTopView()) +
-         k_cellTypeOffset;
+  return m_innerDataSource->typeAtRow(index - hasTopView()) + k_cellTypeOffset;
 }
 
 ListWithTopAndBottomController::ListWithTopAndBottomController(

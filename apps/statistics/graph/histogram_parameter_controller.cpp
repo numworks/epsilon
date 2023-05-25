@@ -107,7 +107,7 @@ HighlightCell *HistogramParameterController::reusableParameterCell(int index,
 
 Escher::TextField *HistogramParameterController::textFieldOfCellAtIndex(
     HighlightCell *cell, int index) {
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<
              MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
       ->textField();

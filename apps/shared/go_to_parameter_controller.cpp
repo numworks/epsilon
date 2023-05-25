@@ -25,7 +25,7 @@ HighlightCell *GoToParameterController::reusableParameterCell(int index,
 
 TextField *GoToParameterController::textFieldOfCellAtIndex(
     Escher::HighlightCell *cell, int index) {
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return m_parameterCell.textField();
 }
 

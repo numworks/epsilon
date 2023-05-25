@@ -32,7 +32,7 @@ class FormulaTemplateMenuController
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int row) const override;
 
  private:
   enum class Cell {

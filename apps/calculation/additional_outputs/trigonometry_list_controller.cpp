@@ -168,7 +168,7 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
 
 void TrigonometryListController::willDisplayCellAtRow(
     Escher::HighlightCell* cell, int row) {
-  if (typeAtIndex(row) == k_expressionCellType) {
+  if (typeAtRow(row) == k_expressionCellType) {
     int expressionIndex = row - showIllustration();
     assert(0 <= expressionIndex && expressionIndex < k_numberOfExpressionRows);
     static_cast<AdditionnalResultCell*>(cell)
@@ -180,7 +180,7 @@ void TrigonometryListController::willDisplayCellAtRow(
 }
 
 KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {
-  if (typeAtIndex(j) == k_illustrationCellType) {
+  if (typeAtRow(j) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
   return IllustratedExpressionsListController::nonMemoizedRowHeight(j);

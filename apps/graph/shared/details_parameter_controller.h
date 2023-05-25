@@ -41,7 +41,7 @@ class DetailsParameterController
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   DetailCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
-  int typeAtIndex(int index) const override { return 0; }
+  int typeAtRow(int row) const override { return 0; }
 
   // SelectableListViewDelegate
   bool canStoreContentOfCell(Escher::SelectableListView* t,

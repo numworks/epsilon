@@ -37,11 +37,11 @@ bool ExpressionModelListController::isAddEmptyRow(int j) const {
          modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
-int ExpressionModelListController::typeAtIndex(int index) const {
-  if (index == m_editedCellIndex) {
+int ExpressionModelListController::typeAtRow(int row) const {
+  if (row == m_editedCellIndex) {
     return k_editableCellType;
   }
-  if (isAddEmptyRow(index)) {
+  if (isAddEmptyRow(row)) {
     return k_addNewModelCellType;
   }
   return k_expressionCellType;

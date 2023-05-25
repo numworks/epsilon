@@ -36,7 +36,7 @@ bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 }
 
 template <typename T>
-int FloatParameterController<T>::typeAtIndex(int index) const {
+int FloatParameterController<T>::typeAtRow(int index) const {
   if (index == numberOfRows() - 1) {
     return k_buttonCellType;
   }
@@ -62,7 +62,7 @@ HighlightCell *FloatParameterController<T>::reusableCell(int index, int type) {
 template <typename T>
 void FloatParameterController<T>::willDisplayCellAtRow(HighlightCell *cell,
                                                        int row) {
-  if (typeAtIndex(row) == k_buttonCellType ||
+  if (typeAtRow(row) == k_buttonCellType ||
       textFieldOfCellAtIndex(cell, row)->isEditing()) {
     return;
   }
@@ -78,7 +78,7 @@ void FloatParameterController<T>::willDisplayCellAtRow(HighlightCell *cell,
 
 template <typename T>
 KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
-  if (typeAtIndex(j) == k_buttonCellType) {
+  if (typeAtRow(j) == k_buttonCellType) {
     return m_okButton.minimalSizeForOptimalDisplay().height();
   }
   return ListViewDataSource::nonMemoizedRowHeight(j);

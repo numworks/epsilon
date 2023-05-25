@@ -13,8 +13,8 @@ class ChainableExpressionsListController : public ExpressionsListController {
   using ExpressionsListController::ExpressionsListController;
 
   // MemoizedListViewDataSource
-  int typeAtIndex(int index) const override final {
-    return ExpressionsListController::typeAtIndex(index);
+  int typeAtRow(int row) const override final {
+    return ExpressionsListController::typeAtRow(row);
   }
   int reusableCellCount(int type) override final {
     return ExpressionsListController::reusableCellCount(type);

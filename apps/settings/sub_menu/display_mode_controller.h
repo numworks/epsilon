@@ -19,12 +19,12 @@ class DisplayModeController : public PreferencesController,
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) const override {
-    return (index == numberOfRows() - 1) ? k_significantDigitsType
-                                         : k_resultFormatType;
+  int typeAtRow(int row) const override {
+    return (row == numberOfRows() - 1) ? k_significantDigitsType
+                                       : k_resultFormatType;
   }
   KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtIndex(index) == k_significantDigitsType
+    return typeAtRow(index) == k_significantDigitsType
                ? k_defaultRowSeparator
                : PreferencesController::separatorBeforeRow(index);
   }

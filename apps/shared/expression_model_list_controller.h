@@ -44,7 +44,7 @@ class ExpressionModelListController
   constexpr static int k_editableCellType = 2;
   // ListViewDataSource
   int numberOfRows() const override { return numberOfExpressionRows(); }
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int j) override {
     return expressionRowHeight(j);
   }

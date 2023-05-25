@@ -26,7 +26,7 @@ class ChainedExpressionsListController : public ExpressionsListController {
   void viewDidDisappear() override;
 
   // ListViewDataSource
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int row) const override;
   void initCellSize(Escher::TableView* view) override;
 
   // MemoizedListViewDataSource

@@ -51,7 +51,7 @@ HighlightCell *IntervalController::reusableParameterCell(int index, int type) {
 
 TextField *IntervalController::textFieldOfCellAtIndex(HighlightCell *cell,
                                                       int index) {
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
       ->textField();
 }

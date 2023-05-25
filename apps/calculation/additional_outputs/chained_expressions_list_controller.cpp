@@ -39,12 +39,12 @@ void ChainedExpressionsListController::initCellSize(Escher::TableView* view) {
   }
 }
 
-int ChainedExpressionsListController::typeAtIndex(int index) const {
+int ChainedExpressionsListController::typeAtRow(int row) const {
   int numberOfOwnedCells = ExpressionsListController::numberOfRows();
-  if (index >= numberOfOwnedCells) {
-    return m_tail->typeAtIndex(index - numberOfOwnedCells);
+  if (row >= numberOfOwnedCells) {
+    return m_tail->typeAtRow(row - numberOfOwnedCells);
   }
-  return ExpressionsListController::typeAtIndex(index);
+  return ExpressionsListController::typeAtRow(row);
 }
 
 KDCoordinate ChainedExpressionsListController::nonMemoizedRowHeight(int index) {

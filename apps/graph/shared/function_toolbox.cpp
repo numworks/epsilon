@@ -57,7 +57,7 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
 
 bool FunctionToolbox::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
-  if (typeAtIndex(rowIndex) == k_addedCellType &&
+  if (typeAtRow(rowIndex) == k_addedCellType &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     return selectAddedCell(rowIndex);
   }
@@ -86,7 +86,7 @@ HighlightCell *FunctionToolbox::reusableCell(int index, int type) {
 }
 
 void FunctionToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  if (typeAtIndex(row) == k_addedCellType) {
+  if (typeAtRow(row) == k_addedCellType) {
     assert(row < addedCellsAtRoot());
     static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
         m_addedCellLayout[row]);
@@ -97,18 +97,18 @@ void FunctionToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
 }
 
 KDCoordinate FunctionToolbox::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == k_addedCellType) {
+  if (typeAtRow(index) == k_addedCellType) {
     MenuCell<LayoutView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return MathToolbox::nonMemoizedRowHeight(index);
 }
 
-int FunctionToolbox::typeAtIndex(int index) const {
-  if (index < addedCellsAtRoot()) {
+int FunctionToolbox::typeAtRow(int row) const {
+  if (row < addedCellsAtRoot()) {
     return k_addedCellType;
   }
-  return MathToolbox::typeAtIndex(index);
+  return MathToolbox::typeAtRow(row);
 }
 
 /* TODO: This mimics SequenceToolbox::controlChecksum.

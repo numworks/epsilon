@@ -15,7 +15,7 @@ class Toolbox : public NestedMenuController {
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellAtRow(HighlightCell* cell, int row) override;
-  int typeAtIndex(int i) const override;
+  int typeAtRow(int row) const override;
 
  protected:
   constexpr static int k_maxMessageSize = 100;

@@ -38,10 +38,10 @@ RangeParameterController::RangeParameterController(
   m_rangeCells[1].label()->setMessage(I18n::Message::ValuesOfY);
 }
 
-int RangeParameterController::typeAtIndex(int index) const {
+int RangeParameterController::typeAtRow(int row) const {
   int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType,
                  k_okCellType};
-  return types[index + !displayNormalizeCell()];
+  return types[row + !displayNormalizeCell()];
 }
 
 int RangeParameterController::reusableCellCount(int type) {
@@ -75,7 +75,7 @@ KDCoordinate RangeParameterController::nonMemoizedRowHeight(int j) {
 
 void RangeParameterController::willDisplayCellAtRow(HighlightCell *cell,
                                                     int row) {
-  if (typeAtIndex(row) == k_rangeCellType) {
+  if (typeAtRow(row) == k_rangeCellType) {
     float min, max;
     bool isAuto = false;
     int i =
@@ -124,7 +124,7 @@ void RangeParameterController::willDisplayCellAtRow(HighlightCell *cell,
 
 KDCoordinate RangeParameterController::separatorBeforeRow(int index) {
   return (displayNormalizeCell() && index == 1) ||
-                 typeAtIndex(index) == k_okCellType
+                 typeAtRow(index) == k_okCellType
              ? k_defaultRowSeparator
              : 0;
 }
@@ -171,7 +171,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   int index = selectedRow() - displayNormalizeCell();
   if (index >= 0 && index < k_numberOfRangeCells &&
       m_rangeCells[index].canBeActivatedByEvent(event)) {
-    assert(typeAtIndex(selectedRow()) == k_rangeCellType);
+    assert(typeAtRow(selectedRow()) == k_rangeCellType);
     m_singleInteractiveCurveViewRangeController.setEditXRange(index == 0);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;

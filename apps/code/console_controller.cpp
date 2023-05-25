@@ -254,12 +254,12 @@ int ConsoleController::reusableCellCount(int type) {
   }
 }
 
-int ConsoleController::typeAtIndex(int index) const {
-  assert(index >= 0);
-  if (index < m_consoleStore.numberOfLines()) {
+int ConsoleController::typeAtRow(int row) const {
+  assert(row >= 0);
+  if (row < m_consoleStore.numberOfLines()) {
     return k_lineCellType;
   } else {
-    assert(index == m_consoleStore.numberOfLines());
+    assert(row == m_consoleStore.numberOfLines());
     return k_editCellType;
   }
 }

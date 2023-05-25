@@ -38,7 +38,7 @@ HighlightCell *SingleRangeController::reusableCell(int index, int type) {
 }
 
 KDCoordinate SingleRangeController::nonMemoizedRowHeight(int j) {
-  int type = typeAtIndex(j);
+  int type = typeAtRow(j);
   HighlightCell *cell =
       type == k_autoCellType ? static_cast<HighlightCell *>(&m_autoCell)
       : type == k_parameterCellType
@@ -50,7 +50,7 @@ KDCoordinate SingleRangeController::nonMemoizedRowHeight(int j) {
 
 void SingleRangeController::willDisplayCellAtRow(Escher::HighlightCell *cell,
                                                  int row) {
-  int type = typeAtIndex(row);
+  int type = typeAtRow(row);
   if (type == k_autoCellType) {
     m_autoCell.accessory()->setState(m_autoParam);
     return;
@@ -59,7 +59,7 @@ void SingleRangeController::willDisplayCellAtRow(Escher::HighlightCell *cell,
 }
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
-  if (typeAtIndex(selectedRow()) == k_autoCellType &&
+  if (typeAtRow(selectedRow()) == k_autoCellType &&
       m_autoCell.canBeActivatedByEvent(event)) {
     // Update auto status
     setAutoStatus(!m_autoParam);
@@ -91,7 +91,7 @@ bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
 
 TextField *SingleRangeController::textFieldOfCellAtIndex(HighlightCell *cell,
                                                          int index) {
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
       ->textField();
 }

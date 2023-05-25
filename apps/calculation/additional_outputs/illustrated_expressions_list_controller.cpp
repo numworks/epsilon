@@ -41,7 +41,7 @@ HighlightCell* IllustratedExpressionsListController::reusableCell(int index,
 }
 
 KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(int j) {
-  if (typeAtIndex(j) == k_illustrationCellType) {
+  if (typeAtRow(j) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
   AdditionnalResultCell tempCell;
@@ -50,7 +50,7 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(int j) {
 
 void IllustratedExpressionsListController::willDisplayCellAtRow(
     HighlightCell* cell, int row) {
-  if (typeAtIndex(row) == k_illustrationCellType) {
+  if (typeAtRow(row) == k_illustrationCellType) {
     return;
   }
   ChainedExpressionsListController::willDisplayCellAtRow(

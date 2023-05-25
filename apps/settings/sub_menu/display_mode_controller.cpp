@@ -48,7 +48,7 @@ int DisplayModeController::reusableCellCount(int type) {
 
 void DisplayModeController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   /* Number of significants figure row */
-  if (typeAtIndex(row) == k_significantDigitsType) {
+  if (typeAtRow(row) == k_significantDigitsType) {
     assert(cell == &m_editableCell);
     GenericSubController::willDisplayCellAtRow(cell, row);
     constexpr int bufferSize = 3;

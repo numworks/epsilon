@@ -66,7 +66,7 @@ int EquationModelsParameterController::numberOfRows() const {
 };
 
 KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
-  int type = typeAtIndex(j);
+  int type = typeAtRow(j);
   int reusableCellIndex = j;
   if (type == k_modelCellType) {
     reusableCellIndex -= reusableCellCount(k_emptyModelCellType);

@@ -19,7 +19,7 @@ int Toolbox::numberOfRows() const {
 int Toolbox::reusableCellCount(int type) { return maxNumberOfDisplayedRows(); }
 
 void Toolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  assert(typeAtIndex(row) == k_nodeCellType);
+  assert(typeAtRow(row) == k_nodeCellType);
   const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
   assert(messageTree->numberOfChildren() != 0);
   NestedMenuController::NodeCell *myCell =
@@ -29,20 +29,20 @@ void Toolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
 }
 
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
-  assert(typeAtIndex(index) == k_nodeCellType);
+  assert(typeAtRow(index) == k_nodeCellType);
   NestedMenuController::NodeCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-int Toolbox::typeAtIndex(int index) const {
-  if (messageTreeModelAtIndex(index)->numberOfChildren() == 0) {
+int Toolbox::typeAtRow(int row) const {
+  if (messageTreeModelAtIndex(row)->numberOfChildren() == 0) {
     return k_leafCellType;
   }
   return k_nodeCellType;
 }
 
 bool Toolbox::selectSubMenu(int selectedRow) {
-  assert(typeAtIndex(selectedRow) == k_nodeCellType);
+  assert(typeAtRow(selectedRow) == k_nodeCellType);
   m_messageTreeModel = messageTreeModelAtIndex(selectedRow);
   return NestedMenuController::selectSubMenu(selectedRow);
 }

@@ -92,8 +92,8 @@ class Dropdown : public PopupItemView, public Responder {
       return m_listViewDataSource->numberOfRows();
     }
     KDCoordinate defaultColumnWidth() override;
-    int typeAtIndex(int index) const override {
-      return m_listViewDataSource->typeAtIndex(index);
+    int typeAtRow(int row) const override {
+      return m_listViewDataSource->typeAtRow(row);
     }
     KDCoordinate nonMemoizedRowHeight(int j) override;
     int reusableCellCount(int type) override {

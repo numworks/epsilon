@@ -140,6 +140,13 @@ void Expression::ConvertExpressionToLayout(
           editionPool->push<BlockType::CodePointLayout, CodePoint>('!'));
       break;
     case BlockType::UserSymbol:
+      assert(*reinterpret_cast<const uint8_t *>(expressionReference.block() +
+                                                1) == 1);
+      NAry::AddChild(layoutParent,
+                     editionPool->push<BlockType::CodePointLayout, CodePoint>(
+                         *reinterpret_cast<const char *>(
+                             expressionReference.block() + 2)));
+      break;
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Float:

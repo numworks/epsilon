@@ -34,7 +34,7 @@ class TableViewDataSource {
   }
 
   KDCoordinate columnWidth(int column, bool withSeparator = true);
-  KDCoordinate rowHeight(int j, bool withSeparator = true);
+  KDCoordinate rowHeight(int row, bool withSeparator = true);
 
   KDCoordinate cumulatedWidthBeforeColumn(int column);
   KDCoordinate cumulatedHeightBeforeRow(int row);

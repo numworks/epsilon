@@ -29,7 +29,7 @@ class TwoMessagesPopupDataSource : public Escher::ListViewDataSource {
  private:
   constexpr static int k_numberOfRows = 2;
   // Not needed because DropdownPopupController takes care of it
-  KDCoordinate nonMemoizedRowHeight(int r) override {
+  KDCoordinate nonMemoizedRowHeight(int row) override {
     assert(false);
     return 0;
   }

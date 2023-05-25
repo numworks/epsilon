@@ -24,7 +24,7 @@ class FunctionToolbox : public MathToolbox {
 
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int index) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;

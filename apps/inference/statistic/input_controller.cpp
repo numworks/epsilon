@@ -25,12 +25,12 @@ InputController::InputController(Escher::StackViewController *parent,
   m_okButton.setMessage(I18n::Message::Next);
 }
 
-KDCoordinate InputController::nonMemoizedRowHeight(int j) {
-  if (typeAtRow(j) == k_parameterCellType) {
+KDCoordinate InputController::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_parameterCellType) {
     InputParameterCell tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, j);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
-  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(j);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
 void InputController::initCell(InputParameterCell, void *cell, int index) {

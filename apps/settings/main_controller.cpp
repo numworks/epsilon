@@ -132,17 +132,17 @@ int MainController::numberOfRows() const {
          hasPressToTestCell() + hasTestModeCell() - 3;
 };
 
-KDCoordinate MainController::nonMemoizedRowHeight(int index) {
-  switch (typeAtRow(index)) {
+KDCoordinate MainController::nonMemoizedRowHeight(int row) {
+  switch (typeAtRow(row)) {
     case k_brightnessCellType:
-      return heightForCellAtIndex(&m_brightnessCell, index);
+      return heightForCellAtIndex(&m_brightnessCell, row);
     case k_popUpCellType:
-      return heightForCellAtIndex(&m_popUpCell, index);
+      return heightForCellAtIndex(&m_popUpCell, row);
     case k_resetCellType:
-      return heightForCellAtIndex(&m_resetButton, index);
+      return heightForCellAtIndex(&m_resetButton, row);
     default:
       SubMenuCell tempCell;
-      return heightForCellAtIndexWithWidthInit(&tempCell, index);
+      return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
 }
 

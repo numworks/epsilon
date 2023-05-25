@@ -14,7 +14,7 @@ class MathToolbox : public Escher::Toolbox {
   // View Controller
   void viewDidDisappear() override;
   // MemoizedListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
  protected:

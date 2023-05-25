@@ -64,16 +64,16 @@ ExamMode::PressToTestFlags PressToTestController::getPressToTestParams() {
   return m_tempPressToTestParams;
 }
 
-KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
-  if (typeAtRow(j) == k_buttonCellType) {
+KDCoordinate PressToTestController::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_buttonCellType) {
     /* Do not call heightForCellAtIndex since bounds can be empty (when exam
      * mode is on). Moreover, willDisplayCellAtRow does nothing for
      * m_activateButton. */
     return m_activateButton.minimalSizeForOptimalDisplay().height();
   }
-  assert(typeAtRow(j) == k_switchCellType);
+  assert(typeAtRow(row) == k_switchCellType);
   PressToTestSwitch tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void PressToTestController::setParamAtIndex(int index, bool value) {

@@ -8,9 +8,9 @@ using namespace Escher;
 
 namespace Settings {
 
-KDCoordinate TestModeController::nonMemoizedRowHeight(int j) {
+KDCoordinate TestModeController::nonMemoizedRowHeight(int row) {
   MenuCell<MessageTextView, EmptyCellWidget, ChevronView> tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 HighlightCell* TestModeController::reusableCell(int index, int type) {

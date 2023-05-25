@@ -11,7 +11,7 @@ class Toolbox : public NestedMenuController {
   Toolbox(Responder* parentResponder, I18n::Message title = (I18n::Message)0);
 
   // MemoizedListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellAtRow(HighlightCell* cell, int row) override;

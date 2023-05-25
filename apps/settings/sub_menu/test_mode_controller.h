@@ -17,7 +17,7 @@ class TestModeController : public GenericSubController {
       : GenericSubController(parentResponder),
         m_mainController(mainController) {}
   TELEMETRY_ID("TestMode");
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
   int reusableCellCount(int type) override { return k_numberOfCells; };

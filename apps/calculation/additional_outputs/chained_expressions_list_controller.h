@@ -32,7 +32,7 @@ class ChainedExpressionsListController : public ExpressionsListController {
   // MemoizedListViewDataSource
   int reusableCellCount(int type) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   int numberOfRows() const override;
 

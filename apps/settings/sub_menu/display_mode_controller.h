@@ -16,7 +16,7 @@ class DisplayModeController : public PreferencesController,
       Escher::Responder* parentResponder,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
   TELEMETRY_ID("DisplayMode");
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtRow(int row) const override {

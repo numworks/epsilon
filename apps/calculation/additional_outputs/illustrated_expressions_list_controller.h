@@ -27,7 +27,7 @@ class IllustratedExpressionsListController
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   int typeAtRow(int row) const override {
     return row == 0 && showIllustration() ? k_illustrationCellType
                                           : k_expressionCellType;

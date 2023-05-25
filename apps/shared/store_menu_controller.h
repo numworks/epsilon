@@ -41,7 +41,7 @@ class StoreMenuController : public Escher::ModalViewController,
   Escher::HighlightCell* reusableCell(int index, int type) override {
     return &m_cell;
   }
-  KDCoordinate nonMemoizedRowHeight(int index) override {
+  KDCoordinate nonMemoizedRowHeight(int row) override {
     return m_cell.minimalSizeForOptimalDisplay().height();
   }
 

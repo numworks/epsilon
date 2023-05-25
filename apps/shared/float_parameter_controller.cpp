@@ -77,11 +77,11 @@ void FloatParameterController<T>::willDisplayCellAtRow(HighlightCell *cell,
 }
 
 template <typename T>
-KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
-  if (typeAtRow(j) == k_buttonCellType) {
+KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_buttonCellType) {
     return m_okButton.minimalSizeForOptimalDisplay().height();
   }
-  return ListViewDataSource::nonMemoizedRowHeight(j);
+  return ListViewDataSource::nonMemoizedRowHeight(row);
 }
 
 template <typename T>

@@ -15,7 +15,7 @@ class GenericSubController : public Escher::SelectableListViewController<
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   void setMessageTreeModel(const Escher::MessageTree* messageTreeModel);
   void viewDidDisappear() override;

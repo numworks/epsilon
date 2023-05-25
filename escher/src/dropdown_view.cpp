@@ -148,7 +148,7 @@ KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
   return m_memoizedCellWidth;
 }
 
-KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int j) {
+KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int row) {
   HighlightCell *cell = reusableCell(0, 0);
   willDisplayCellAtRow(cell, 0);
   return cell->minimalSizeForOptimalDisplay().height();

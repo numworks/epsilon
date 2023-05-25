@@ -190,17 +190,17 @@ void MathVariableBoxController::willDisplayCellAtRow(HighlightCell *cell,
   myCell->reloadCell();
 }
 
-KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
+KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int row) {
   if (m_currentPage == Page::RootMenu) {
-    if (index == defineVariableCellIndex()) {
+    if (row == defineVariableCellIndex()) {
       MenuCell<MessageTextView> tempCell;
-      return heightForCellAtIndexWithWidthInit(&tempCell, index);
+      return heightForCellAtIndexWithWidthInit(&tempCell, row);
     }
     Escher::NestedMenuController::NodeCell tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
   LeafCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, index);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 int MathVariableBoxController::typeAtRow(int row) const {

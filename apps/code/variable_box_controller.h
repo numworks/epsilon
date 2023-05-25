@@ -24,7 +24,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   void didEnterResponderChain(Responder* previousFirstResponder) override;
 
   /* MemoizedListViewDataSource */
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

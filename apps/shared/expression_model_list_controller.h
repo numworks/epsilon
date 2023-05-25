@@ -45,8 +45,8 @@ class ExpressionModelListController
   // ListViewDataSource
   int numberOfRows() const override { return numberOfExpressionRows(); }
   int typeAtRow(int row) const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override {
-    return expressionRowHeight(j);
+  KDCoordinate nonMemoizedRowHeight(int row) override {
+    return expressionRowHeight(row);
   }
   virtual int numberOfExpressionRows() const;
   bool isAddEmptyRow(int j) const;

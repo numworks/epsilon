@@ -87,7 +87,7 @@ class ValuesController : public Shared::ValuesController,
    * need to be computed. The speed optimization could come from either
    * a change of API or a change in the way scrollView/tableView work. */
   KDCoordinate nonMemoizedColumnWidth(int column) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::TableSize1DManager *columnWidthManager() override {
     return &m_widthManager;
   }

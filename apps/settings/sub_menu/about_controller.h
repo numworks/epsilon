@@ -22,7 +22,7 @@ class AboutController : public GenericSubController {
   TELEMETRY_ID("About");
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void viewWillAppear() override;
 
  private:

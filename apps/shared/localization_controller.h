@@ -46,7 +46,7 @@ class LocalizationController
     return (mode() == Mode::Country) ? I18n::NumberOfCountries
                                      : I18n::NumberOfLanguages;
   }
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override {
     return &m_cells[index];
   }

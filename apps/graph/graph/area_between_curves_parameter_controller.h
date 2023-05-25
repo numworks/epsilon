@@ -27,7 +27,7 @@ class AreaBetweenCurvesParameterController
   }
 
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   int typeAtRow(int row) const override { return 0; }
   Shared::CurveSelectionCell* reusableCell(int index, int type) override {
     assert(index >= 0 && index < reusableCellCount(type));

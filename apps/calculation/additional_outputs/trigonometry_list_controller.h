@@ -16,7 +16,7 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   void setExactAndApproximateExpression(
       Poincare::Expression exactAngle,
       Poincare::Expression approximateAngle) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
   /* See comment in parent class for why we need this. Since we need to display

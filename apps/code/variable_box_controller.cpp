@@ -106,15 +106,15 @@ void VariableBoxController::didBecomeFirstResponder() {
   AlternateEmptyNestedMenuController::didBecomeFirstResponder();
 }
 
-KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
-  assert(index >= 0 && index < numberOfRows());
-  int cellType = typeAndOriginAtLocation(index);
+KDCoordinate VariableBoxController::nonMemoizedRowHeight(int row) {
+  assert(row >= 0 && row < numberOfRows());
+  int cellType = typeAndOriginAtLocation(row);
   if (cellType == k_itemCellType) {
     MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
   SubtitleCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, index);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 int VariableBoxController::numberOfRows() const {

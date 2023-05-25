@@ -50,10 +50,11 @@ int AreaBetweenCurvesParameterController::numberOfRows() const {
   return App::app()->functionStore()->numberOfActiveDerivableFunctions() - 1;
 }
 
-KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(int j) {
+KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
+    int row) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
-          DerivableActiveFunctionAtIndex(j, m_mainRecord));
+          DerivableActiveFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell tempCell;
   tempCell.label()->setLayout(function->layout());
   return tempCell.labelView()->minimalSizeForOptimalDisplay().height() +

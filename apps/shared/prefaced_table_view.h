@@ -109,7 +109,7 @@ class PrefacedTableView : public Escher::View,
 
    protected:
     KDCoordinate nonMemoizedColumnWidth(int column) override final;
-    KDCoordinate nonMemoizedRowHeight(int j) override final;
+    KDCoordinate nonMemoizedRowHeight(int row) override final;
 
     KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
     KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;

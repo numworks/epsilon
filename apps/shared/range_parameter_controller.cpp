@@ -66,11 +66,11 @@ HighlightCell *RangeParameterController::reusableCell(int index, int type) {
   }
 }
 
-KDCoordinate RangeParameterController::nonMemoizedRowHeight(int j) {
+KDCoordinate RangeParameterController::nonMemoizedRowHeight(int row) {
   HighlightCell *cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1,
                             &m_okButton};
-  assert(j < numberOfRows());
-  return heightForCellAtIndex(cells[j + !displayNormalizeCell()], j);
+  assert(row < numberOfRows());
+  return heightForCellAtIndex(cells[row + !displayNormalizeCell()], row);
 }
 
 void RangeParameterController::willDisplayCellAtRow(HighlightCell *cell,

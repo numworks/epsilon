@@ -126,14 +126,14 @@ HighlightCell *CategoricalController::reusableCell(int index, int type) {
   }
 }
 
-KDCoordinate CategoricalController::nonMemoizedRowHeight(int index) {
-  if (index == k_indexOfTableCell) {
+KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
+  if (row == k_indexOfTableCell) {
     return std::min(
         categoricalTableCell()->minimalSizeForOptimalDisplay().height() -
             categoricalTableCell()->selectableTableView()->contentOffset().y(),
         static_cast<int>(m_selectableListView.bounds().height()));
   }
-  return ListViewDataSource::nonMemoizedRowHeight(index);
+  return ListViewDataSource::nonMemoizedRowHeight(row);
 }
 
 InputCategoricalController::InputCategoricalController(

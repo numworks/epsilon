@@ -88,12 +88,12 @@ void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   }
 }
 
-KDCoordinate ListController::nonMemoizedRowHeight(int index) {
-  if (index == m_editedCellIndex) {
+KDCoordinate ListController::nonMemoizedRowHeight(int row) {
+  if (row == m_editedCellIndex) {
     return ExpressionRowHeightFromLayoutHeight(
         m_editableCell.minimalSizeForOptimalDisplay().height());
   }
-  return expressionRowHeight(index);
+  return expressionRowHeight(row);
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {

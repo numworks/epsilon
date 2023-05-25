@@ -25,7 +25,7 @@ class ListViewDataSource : public TableViewDataSource {
   KDCoordinate defaultColumnWidth() override { return KDCOORDINATE_MAX; }
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
-  KDCoordinate nonMemoizedRowHeight(int index) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   KDCoordinate heightForCellAtIndex(HighlightCell* cell, int index);
 
  private:

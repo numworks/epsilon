@@ -1081,12 +1081,12 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
   return k_maxNumberOfDisplayedRows;
 }
 
-KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
-  if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
+KDCoordinate PythonToolbox::nonMemoizedRowHeight(int row) {
+  if (m_messageTreeModel->childAtIndex(row)->numberOfChildren() == 0) {
     ToolboxLeafCell tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
-  return Escher::Toolbox::nonMemoizedRowHeight(index);
+  return Escher::Toolbox::nonMemoizedRowHeight(row);
 }
 
 void PythonToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {

@@ -15,9 +15,8 @@ class ListController;
 
 class TypeParameterController
     : public Escher::SelectableCellListPage<
-          Escher::MenuCell<Escher::ScrollableLayoutView,
-                           Escher::MessageTextView>,
-          3, Escher::RegularListViewDataSource> {
+          Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>, 3,
+          Escher::RegularListViewDataSource> {
  public:
   TypeParameterController(Escher::Responder* parentResponder,
                           ListController* list, KDCoordinate topMargin = 0,

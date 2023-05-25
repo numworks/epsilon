@@ -37,15 +37,15 @@ HighlightCell *SingleRangeController::reusableCell(int index, int type) {
   return FloatParameterController<float>::reusableCell(index, type);
 }
 
-KDCoordinate SingleRangeController::nonMemoizedRowHeight(int j) {
-  int type = typeAtRow(j);
+KDCoordinate SingleRangeController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
   HighlightCell *cell =
       type == k_autoCellType ? static_cast<HighlightCell *>(&m_autoCell)
       : type == k_parameterCellType
-          ? static_cast<HighlightCell *>(&m_boundsCells[j - 1])
+          ? static_cast<HighlightCell *>(&m_boundsCells[row - 1])
           : nullptr;
-  return cell ? heightForCellAtIndex(cell, j)
-              : FloatParameterController<float>::nonMemoizedRowHeight(j);
+  return cell ? heightForCellAtIndex(cell, row)
+              : FloatParameterController<float>::nonMemoizedRowHeight(row);
 }
 
 void SingleRangeController::willDisplayCellAtRow(Escher::HighlightCell *cell,

@@ -47,12 +47,12 @@ int ChainedExpressionsListController::typeAtRow(int row) const {
   return ExpressionsListController::typeAtRow(row);
 }
 
-KDCoordinate ChainedExpressionsListController::nonMemoizedRowHeight(int index) {
+KDCoordinate ChainedExpressionsListController::nonMemoizedRowHeight(int row) {
   int numberOfOwnedCells = ExpressionsListController::numberOfRows();
-  if (index >= numberOfOwnedCells) {
-    return m_tail->nonMemoizedRowHeight(index - numberOfOwnedCells);
+  if (row >= numberOfOwnedCells) {
+    return m_tail->nonMemoizedRowHeight(row - numberOfOwnedCells);
   }
-  return ExpressionsListController::nonMemoizedRowHeight(index);
+  return ExpressionsListController::nonMemoizedRowHeight(row);
 }
 
 void ChainedExpressionsListController::willDisplayCellAtRow(HighlightCell* cell,

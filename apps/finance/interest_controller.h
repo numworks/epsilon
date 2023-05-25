@@ -26,7 +26,7 @@ class InterestController : public Shared::FloatParameterController<double>,
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   // Confirm cell plus all parameters but the unknown one
   int numberOfRows() const override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override {

@@ -49,9 +49,9 @@ HighlightCell *ExpressionsListController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int index) {
+KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int row) {
   AdditionnalResultCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, index);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void ExpressionsListController::willDisplayCellAtRow(HighlightCell *cell,

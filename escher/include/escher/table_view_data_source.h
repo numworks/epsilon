@@ -62,12 +62,12 @@ class TableViewDataSource {
   virtual KDCoordinate nonMemoizedColumnWidth(int column) {
     return defaultColumnWidth();
   }
-  virtual KDCoordinate nonMemoizedRowHeight(int j) {
+  virtual KDCoordinate nonMemoizedRowHeight(int row) {
     return defaultRowHeight();
   }
 
   KDCoordinate nonMemoizedColumnWidth(int column, bool withSeparator);
-  KDCoordinate nonMemoizedRowHeight(int j, bool withSeparator);
+  KDCoordinate nonMemoizedRowHeight(int row, bool withSeparator);
 
   // These should be overriden if a RegularTableSize1DManager is used.
   virtual KDCoordinate defaultColumnWidth() {

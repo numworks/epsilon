@@ -65,13 +65,13 @@ int EquationModelsParameterController::numberOfRows() const {
   return 1 + k_numberOfExpressionCells;
 };
 
-KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
-  int type = typeAtRow(j);
-  int reusableCellIndex = j;
+KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
+  int reusableCellIndex = row;
   if (type == k_modelCellType) {
     reusableCellIndex -= reusableCellCount(k_emptyModelCellType);
   }
-  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j);
+  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), row);
 }
 
 HighlightCell* EquationModelsParameterController::reusableCell(int index,

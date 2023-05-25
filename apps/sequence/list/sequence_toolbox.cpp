@@ -48,12 +48,12 @@ void SequenceToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
   MathToolbox::willDisplayCellAtRow(cell, row);
 }
 
-KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
-  if (typeAtRow(index) == k_addedCellType) {
+KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_addedCellType) {
     MenuCell<LayoutView> tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
-  return MathToolbox::nonMemoizedRowHeight(index);
+  return MathToolbox::nonMemoizedRowHeight(row);
 }
 
 int SequenceToolbox::typeAtRow(int row) const {

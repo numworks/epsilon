@@ -121,9 +121,9 @@ void PreferencesController::willDisplayCellAtRow(HighlightCell *cell, int row) {
       message == I18n::Message::SmallFont ? k_layoutFont : KDFont::Size::Large);
 }
 
-KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {
+KDCoordinate PreferencesController::nonMemoizedRowHeight(int row) {
   MenuCell<MessageTextView, LayoutView> tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, index);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,

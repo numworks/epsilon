@@ -26,7 +26,7 @@ class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
       7 /* μ1-μ2 */ + 3 /* op ≠ */ +
       Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
   constexpr static int k_numberOfOperators = 3;
-  KDCoordinate nonMemoizedRowHeight(int r) override {
+  KDCoordinate nonMemoizedRowHeight(int row) override {
     assert(false); /* Not needed because DropdownPopupController takes care of
                       it */
     return 0;

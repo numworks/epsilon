@@ -40,12 +40,13 @@ HighlightCell* IllustratedExpressionsListController::reusableCell(int index,
   return &m_cells[index];
 }
 
-KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(int j) {
-  if (typeAtRow(j) == k_illustrationCellType) {
+KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
+    int row) {
+  if (typeAtRow(row) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
   AdditionnalResultCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void IllustratedExpressionsListController::willDisplayCellAtRow(

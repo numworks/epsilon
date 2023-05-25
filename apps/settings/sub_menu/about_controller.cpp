@@ -81,8 +81,8 @@ HighlightCell *AboutController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
-  return MemoizedListViewDataSource::nonMemoizedRowHeight(index);
+KDCoordinate AboutController::nonMemoizedRowHeight(int row) {
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(row);
 }
 
 void AboutController::viewWillAppear() {

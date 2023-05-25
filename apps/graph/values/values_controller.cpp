@@ -238,11 +238,11 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int column) {
   return columnWidth;
 }
 
-KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
+KDCoordinate ValuesController::nonMemoizedRowHeight(int row) {
   KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
   KDCoordinate maxRowHeight = k_maxRowHeight;
   int nColumns = numberOfColumns();
-  if (j == 0) {
+  if (row == 0) {
     for (int i = 0; i < nColumns; i++) {
       if (typeAtLocation(i, 0) == k_functionTitleCellType) {
         rowHeight = std::max(
@@ -260,7 +260,7 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
         symbolTypeAtColumn(&tempI);
     if (!m_exactValuesAreActivated) {
       if (symbol != ContinuousFunctionProperties::SymbolType::T ||
-          j >= numberOfElementsInColumn(i) + 1) {
+          row >= numberOfElementsInColumn(i) + 1) {
         /* Height is constant when exact result is not displayed and
          * either there is no parametric function or it's the last row
          * of the column. */
@@ -269,10 +269,10 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
         return ApproximatedParametricCellSize().height();
       }
     }
-    if (typeAtLocation(i, j) == k_notEditableValueCellType &&
-        j < numberOfElementsInColumn(i) + 1) {
+    if (typeAtLocation(i, row) == k_notEditableValueCellType &&
+        row < numberOfElementsInColumn(i) + 1) {
       assert(m_exactValuesAreActivated);
-      Layout l = memoizedLayoutForCell(i, j);
+      Layout l = memoizedLayoutForCell(i, row);
       assert(!l.isUninitialized());
       rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
       if (rowHeight > maxRowHeight) {

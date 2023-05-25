@@ -24,7 +24,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   int reusableCellCount(int type) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   int typeAtRow(int row) const override;
 
   // Menu

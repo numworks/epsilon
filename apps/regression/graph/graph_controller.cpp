@@ -97,8 +97,8 @@ Poincare::Context *GraphController::globalContext() const {
 // Private
 
 KDCoordinate GraphController::CurveSelectionController::nonMemoizedRowHeight(
-    int j) {
-  if (j < 0 || j >= numberOfRows()) {
+    int row) {
+  if (row < 0 || row >= numberOfRows()) {
     return 0;
   }
   return KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin +

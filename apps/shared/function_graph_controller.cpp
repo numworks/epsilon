@@ -84,13 +84,13 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
 
 KDCoordinate
 FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
-    int j) {
-  assert(j < graphController()->numberOfCurves());
+    int row) {
+  assert(row < graphController()->numberOfCurves());
   ExpiringPointer<Function> function =
       graphController()->functionStore()->modelForRecord(
-          graphController()->recordAtCurveIndex(j));
+          graphController()->recordAtCurveIndex(row));
   return std::max(function->layout().layoutSize(k_font).height(),
-                  nameLayoutAtIndex(j).layoutSize(k_font).height()) +
+                  nameLayoutAtIndex(row).layoutSize(k_font).height()) +
          Metric::CellTopMargin + Metric::CellBottomMargin +
          Metric::CellSeparatorThickness;
 }

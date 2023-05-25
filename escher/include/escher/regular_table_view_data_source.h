@@ -10,8 +10,8 @@ class RegularHeightTableViewDataSource : public TableViewDataSource {
  private:
   KDCoordinate defaultRowHeight() override = 0;  // This must be implemented
   // Just make this method final without changing behaviour
-  KDCoordinate nonMemoizedRowHeight(int j) override final {
-    return TableViewDataSource::nonMemoizedRowHeight(j);
+  KDCoordinate nonMemoizedRowHeight(int row) override final {
+    return TableViewDataSource::nonMemoizedRowHeight(row);
   };
   TableSize1DManager* rowHeightManager() override final {
     return &m_heightManager;

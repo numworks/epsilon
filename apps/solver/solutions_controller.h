@@ -72,7 +72,7 @@ class SolutionsController : public Escher::ViewController,
     return column == 0 ? k_symbolCellWidth : k_valueCellWidth;
   }
   // TODO: Memoize the row height ?
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::TabViewController *tabController() const {
     return static_cast<Escher::TabViewController *>(
         parentResponder()->parentResponder());

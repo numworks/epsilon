@@ -24,7 +24,7 @@ class PythonToolbox : public Escher::Toolbox {
   bool handleEvent(Ion::Events::Event event) override;
 
   // MemoizedListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
  protected:

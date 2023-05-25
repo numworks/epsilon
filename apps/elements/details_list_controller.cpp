@@ -93,9 +93,9 @@ bool DetailsListController::canStoreContentOfCell(SelectableListView *l,
          !layout.isIdenticalTo(DataField::UnknownValueLayout());
 }
 
-KDCoordinate DetailsListController::nonMemoizedRowHeight(int j) {
+KDCoordinate DetailsListController::nonMemoizedRowHeight(int row) {
   PhysicalQuantityCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 const DataField *DetailsListController::DataFieldForRow(int row) {

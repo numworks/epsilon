@@ -22,8 +22,8 @@ class ChainableExpressionsListController : public ExpressionsListController {
   Escher::HighlightCell* reusableCell(int index, int type) override final {
     return ExpressionsListController::reusableCell(index, type);
   }
-  KDCoordinate nonMemoizedRowHeight(int j) override {
-    return ExpressionsListController::nonMemoizedRowHeight(j);
+  KDCoordinate nonMemoizedRowHeight(int row) override {
+    return ExpressionsListController::nonMemoizedRowHeight(row);
   }
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override {
     return ExpressionsListController::willDisplayCellAtRow(cell, row);

@@ -48,7 +48,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
   static const DataField *DataFieldForRow(int row);
 
   // Escher::MemoizedListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
   Escher::StackViewController *stackViewController() const {
     return static_cast<Escher::StackViewController *>(parentResponder());

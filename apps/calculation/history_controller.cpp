@@ -317,13 +317,13 @@ void HistoryController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   myCell->reloadSubviewHighlight();
 }
 
-KDCoordinate HistoryController::nonMemoizedRowHeight(int j) {
-  if (j >= m_calculationStore->numberOfCalculations()) {
+KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {
+  if (row >= m_calculationStore->numberOfCalculations()) {
     return 0;
   }
-  Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
+  Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(row);
   bool expanded =
-      j == selectedRow() && selectedSubviewType() == SubviewType::Output;
+      row == selectedRow() && selectedSubviewType() == SubviewType::Output;
   return calculation->height(expanded);
 }
 

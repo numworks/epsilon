@@ -22,7 +22,7 @@ class CalculationPopupDataSource : public Escher::ListViewDataSource {
   constexpr static int k_numberOfImages = 4;
 
  private:
-  KDCoordinate nonMemoizedRowHeight(int r) override {
+  KDCoordinate nonMemoizedRowHeight(int row) override {
     assert(false); /* Not needed because DropdownPopupController takes care of
                       it */
     return 1;

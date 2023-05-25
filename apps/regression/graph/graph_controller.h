@@ -77,7 +77,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
     void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
 
    private:
-    KDCoordinate nonMemoizedRowHeight(int j) override;
+    KDCoordinate nonMemoizedRowHeight(int row) override;
     GraphController *graphController() const {
       return static_cast<GraphController *>(
           const_cast<InteractiveCurveViewController *>(m_graphController));

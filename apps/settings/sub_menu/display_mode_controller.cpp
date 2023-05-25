@@ -22,12 +22,12 @@ DisplayModeController::DisplayModeController(
   m_editableCell.label()->setMessage(I18n::Message::SignificantFigures);
 }
 
-KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
-  if (j == numberOfRows() - 1) {
+KDCoordinate DisplayModeController::nonMemoizedRowHeight(int row) {
+  if (row == numberOfRows() - 1) {
     // Do not call heightForCellAtIndex as it will reset edited text.
     return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
-  return PreferencesController::nonMemoizedRowHeight(j);
+  return PreferencesController::nonMemoizedRowHeight(row);
 }
 
 HighlightCell *DisplayModeController::reusableCell(int index, int type) {

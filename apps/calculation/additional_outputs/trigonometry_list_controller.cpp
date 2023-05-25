@@ -179,11 +179,11 @@ void TrigonometryListController::willDisplayCellAtRow(
   return IllustratedExpressionsListController::willDisplayCellAtRow(cell, row);
 }
 
-KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {
-  if (typeAtRow(j) == k_illustrationCellType) {
+KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
-  return IllustratedExpressionsListController::nonMemoizedRowHeight(j);
+  return IllustratedExpressionsListController::nonMemoizedRowHeight(row);
 }
 
 I18n::Message TrigonometryListController::messageAtIndex(int index) {

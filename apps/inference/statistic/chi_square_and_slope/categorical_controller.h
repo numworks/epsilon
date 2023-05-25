@@ -58,7 +58,7 @@ class CategoricalController
   constexpr static int k_marginVertical = 5;
   constexpr static int k_indexOfTableCell = 0;
 
-  KDCoordinate nonMemoizedRowHeight(int index) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
   virtual int indexOfNextCell() const { return 1; }
   virtual CategoricalTableCell* categoricalTableCell() = 0;

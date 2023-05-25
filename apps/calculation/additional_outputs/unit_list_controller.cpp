@@ -45,12 +45,12 @@ HighlightCell *UnitListController::reusableCell(int index, int type) {
   return &m_bufferCells[index];
 }
 
-KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
-  if (typeAtRow(index) == k_expressionCellType) {
-    return ExpressionsListController::nonMemoizedRowHeight(index);
+KDCoordinate UnitListController::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_expressionCellType) {
+    return ExpressionsListController::nonMemoizedRowHeight(row);
   }
   BufferCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, index);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void UnitListController::willDisplayCellAtRow(HighlightCell *cell, int row) {

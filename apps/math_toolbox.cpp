@@ -876,12 +876,12 @@ void MathToolbox::viewDidDisappear() {
   }
 }
 
-KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
-  if (typeAtRow(index) == k_leafCellType) {
+KDCoordinate MathToolbox::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_leafCellType) {
     LeafCell tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   }
-  return Escher::Toolbox::nonMemoizedRowHeight(index);
+  return Escher::Toolbox::nonMemoizedRowHeight(row);
 }
 
 bool MathToolbox::isMessageTreeDisabled(

@@ -69,7 +69,7 @@ class ListController : public Shared::ExpressionModelListController,
   Escher::StackViewController* stackController() const;
 
   // ListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];

@@ -366,17 +366,17 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell,
   evenOddCell->setEven(row % 2 == 0);
 }
 
-KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
+KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   SystemOfEquations *system = App::app()->system();
-  if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
+  if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
     // It's a solution row
     assert(system->numberOfSolutions() > 0);
     if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
-    Layout exactLayout = system->solution(j)->exactLayout();
-    Layout approximateLayout = system->solution(j)->approximateLayout();
+    Layout exactLayout = system->solution(row)->exactLayout();
+    Layout approximateLayout = system->solution(row)->approximateLayout();
     KDCoordinate layoutHeight;
     if (exactLayout.isUninitialized()) {
       assert(!approximateLayout.isUninitialized());
@@ -397,12 +397,14 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
     }
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
-  if (j == rowOfUserVariablesMessage || j == rowOfUserVariablesMessage - 1) {
+  if (row == rowOfUserVariablesMessage ||
+      row == rowOfUserVariablesMessage - 1) {
     // It's an empty or user variable message row
     return k_defaultCellHeight;
   }
   // TODO: memoize user symbols if too slow
-  const char *symbol = system->userVariable(j - rowOfUserVariablesMessage - 1);
+  const char *symbol =
+      system->userVariable(row - rowOfUserVariablesMessage - 1);
   Layout layout = PoincareHelpers::CreateLayout(
       App::app()->localContext()->expressionForSymbolAbstract(
           Symbol::Builder(symbol, strlen(symbol)), false),

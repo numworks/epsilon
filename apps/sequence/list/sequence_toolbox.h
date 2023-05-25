@@ -14,7 +14,7 @@ class SequenceToolbox : public MathToolbox {
   SequenceToolbox();
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int index) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;

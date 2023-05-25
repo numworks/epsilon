@@ -29,7 +29,7 @@ class RegressionController : public Escher::SelectableListViewController<
   void didBecomeFirstResponder() override;
 
   // MemoizedListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfCells; }
   int numberOfRows() const override {

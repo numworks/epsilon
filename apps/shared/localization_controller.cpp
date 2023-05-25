@@ -214,9 +214,9 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
+KDCoordinate LocalizationController::nonMemoizedRowHeight(int row) {
   MenuCell<MessageTextView> tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void LocalizationController::willDisplayCellAtRow(HighlightCell *cell,

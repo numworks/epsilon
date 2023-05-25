@@ -39,9 +39,9 @@ void DetailsParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {
+KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int row) {
   DetailCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, row);
 }
 
 void DetailsParameterController::willDisplayCellAtRow(HighlightCell *cell,

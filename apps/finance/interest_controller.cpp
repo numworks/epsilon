@@ -92,16 +92,16 @@ int InterestController::typeAtRow(int row) const {
   return (row == indexOfDropdown()) ? k_dropdownCellType : k_buttonCellType;
 }
 
-KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
-  int type = typeAtRow(j);
+KDCoordinate InterestController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
   if (type == k_inputCellType) {
     MenuCellWithEditableText<MessageTextView, MessageTextView> tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, j);
+    return heightForCellAtIndexWithWidthInit(&tempCell, row);
   } else if (type == k_dropdownCellType) {
-    return heightForCellAtIndex(&m_dropdownCell, j);
+    return heightForCellAtIndex(&m_dropdownCell, row);
   }
   assert(type == k_buttonCellType);
-  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(j);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
 int InterestController::numberOfRows() const {

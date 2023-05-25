@@ -26,8 +26,8 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   virtual HighlightCell* cell(int index) = 0;
   virtual void fillCell(HighlightCell* cell) {}
   // This method fills the cell.
-  KDCoordinate nonMemoizedRowHeight(int index) override final {
-    return heightForCellAtIndex(cell(index), index);
+  KDCoordinate nonMemoizedRowHeight(int row) override final {
+    return heightForCellAtIndex(cell(row), row);
   }
 
  private:

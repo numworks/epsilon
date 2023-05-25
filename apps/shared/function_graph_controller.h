@@ -46,7 +46,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
     void didBecomeFirstResponder() override;
 
    protected:
-    KDCoordinate nonMemoizedRowHeight(int j) override;
+    KDCoordinate nonMemoizedRowHeight(int row) override;
     FunctionGraphController *graphController() const {
       return static_cast<FunctionGraphController *>(
           const_cast<InteractiveCurveViewController *>(m_graphController));

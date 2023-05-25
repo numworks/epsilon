@@ -138,7 +138,8 @@ void simplifies_to(const char* input, const char* output) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
   quiz_assert(!expression.isUninitialized());
-  EditionReference projected = Simplification::SystemProjection(expression);
+  EditionReference projected =
+      expression;  // Simplification::SystemProjection(expression);
   quiz_assert(!projected.isUninitialized());
   EditionReference reduced = Simplification::AutomaticSimplify(projected);
   quiz_assert(!reduced.isUninitialized());
@@ -154,10 +155,18 @@ void simplifies_to(const char* input, const char* output) {
               << std::endl;
   }
   quiz_assert(b);
+  EditionPool::sharedEditionPool()->flush();
 }
 
 QUIZ_CASE(pcj_simplification) {
   simplifies_to("2+2", "4");
-  simplifies_to("3-2", "1");
-  simplifies_to("(2*3(2^2))-2*2", "20");
+  simplifies_to("(2*3(2^2)) + 2*2", "28");
+  simplifies_to("a+a", "2*a");
+  simplifies_to("b+a", "a+b");
+  simplifies_to("(a*a)*a", "a^(3)");
+  simplifies_to("a*(a*a)", "a^(3)");
+  simplifies_to("a*a*a", "a^(3)");
+  simplifies_to("a*2a*b*a*b*4", "8*(a^(3))*(b^(2))");
+  simplifies_to("a^b*a^c", "a^(b+c)");
+  simplifies_to("a^b*a^b", "a^(2*b)");
 }

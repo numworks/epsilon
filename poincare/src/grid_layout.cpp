@@ -252,18 +252,18 @@ KDCoordinate GridLayoutNode::rowBaseline(int i, KDFont::Size font) {
   return rowBaseline;
 }
 
-KDCoordinate GridLayoutNode::rowHeight(int i, KDFont::Size font) const {
+KDCoordinate GridLayoutNode::rowHeight(int row, KDFont::Size font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
-  int j = 0;
+  int column = 0;
   for (LayoutNode *l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(
-           i * m_numberOfColumns)) {
+           row * m_numberOfColumns)) {
     KDCoordinate b = l->baseline(font);
     underBaseline =
         std::max<KDCoordinate>(underBaseline, l->layoutSize(font).height() - b);
     aboveBaseline = std::max(aboveBaseline, b);
-    j++;
-    if (j >= m_numberOfColumns) {
+    column++;
+    if (column >= m_numberOfColumns) {
       break;
     }
   }

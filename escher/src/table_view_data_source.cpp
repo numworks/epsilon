@@ -21,17 +21,17 @@ KDCoordinate TableViewDataSource::columnWidth(int column, bool withSeparator) {
   return result;
 }
 
-KDCoordinate TableViewDataSource::rowHeight(int j, bool withSeparator) {
+KDCoordinate TableViewDataSource::rowHeight(int row, bool withSeparator) {
   KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
-    result = rowHeightManager()->computeSizeAtIndex(j);
+    result = rowHeightManager()->computeSizeAtIndex(row);
   }
   if (result > 0 && !withSeparator) {
     // Remove the separator from the memoized size
-    result -= separatorBeforeRow(j);
+    result -= separatorBeforeRow(row);
   }
   if (result == TableSize1DManager::k_undefinedSize) {
-    result = nonMemoizedRowHeight(j, withSeparator);
+    result = nonMemoizedRowHeight(row, withSeparator);
   }
   assert(result >= 0);
   return result;

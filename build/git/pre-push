@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# Called by "git push" after it has checked the remote status,
-# but before anything has been pushed.
-#
-# If this script exits with a non-zero status nothing will be pushed.
+# The purpose of this script is to protect the master branch.
+# It is called before each git push and prevents you from doing the following
+# commands without confirmation:
+# `git push origin master``
+# `git push --force origin master`
+# `git push --delete origin master`
+# `git push origin xxxxx:master`
 #
 # Set up (all commands are run from root epsilon folder):
 # 1. Copy this file into your repo in the folder `.git/hooks`:
@@ -13,30 +16,18 @@
 # 3. Re-init your git:
 #     `git init`
 #
-# Try a force push to master, you should get a confirmation message.
-#
-# This prevents you from doing the following commands without confirmation:
-# `git push --force origin master`
-# `git push --delete origin master`
-# `git push origin xxxxx:master`
-#
-# Sources:
-#  https://gist.github.com/ColCh/9d48693276aac50cac37a9fce23f9bda
-#  https://gist.github.com/pixelhandler/5718585
 
-protected_branch='master'
+protected='master'
 
 if read local_ref local_sha remote_ref remote_sha; then
-    if [[ "$remote_ref" == *"$protected_branch"* ]]; then
-        echo -en "\033[1;33mYou're about to push to $protected_branch, is that what you intended? [y|n] \033[0m"
-        echo -en "\033[1m"
+    if [[ "$remote_ref" == *"$protected"* ]]; then
+        echo -en "\033[1;101mWARNING: You're about to push on $protected. Do you REALLY want to do this ? [y|N] \033[0m"
         read -n 1 -r < /dev/tty
-        echo -en "\033[0m"
-
         echo
         if echo $REPLY | grep -E '^[Yy]$' > /dev/null; then
-            exit 0 # push will execute
+            exit 0 # push is confirmed
+        else
+            exit 1 # push is cancelled
         fi
-        exit 1 # push will not execute
     fi
 fi

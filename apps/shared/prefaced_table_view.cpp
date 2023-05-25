@@ -174,11 +174,11 @@ HighlightCell* PrefacedTableView::IntermediaryDataSource::reusableCell(
 }
 
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedColumnWidth(
-    int i) {
+    int column) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   KDCoordinate result =
-      m_mainDataSource->columnWidth(columnIndexInMainDataSource(i), false);
+      m_mainDataSource->columnWidth(columnIndexInMainDataSource(column), false);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

@@ -23,8 +23,8 @@ class RegularTableViewDataSource : public RegularHeightTableViewDataSource {
  private:
   KDCoordinate defaultColumnWidth() override = 0;  // This must be implemented
   // Just make this method final without changing behaviour
-  KDCoordinate nonMemoizedColumnWidth(int i) override final {
-    return TableViewDataSource::nonMemoizedColumnWidth(i);
+  KDCoordinate nonMemoizedColumnWidth(int column) override final {
+    return TableViewDataSource::nonMemoizedColumnWidth(column);
   };
   TableSize1DManager* columnWidthManager() override final {
     return &m_widthManager;

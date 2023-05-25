@@ -155,7 +155,9 @@ class DoubleColumnTableCell
       k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 
  private:
-  KDCoordinate nonMemoizedColumnWidth(int i) override { return k_columnWidth; }
+  KDCoordinate nonMemoizedColumnWidth(int column) override {
+    return k_columnWidth;
+  }
   // CategoricalTableViewDataSource
   int relativeColumnIndex(int columnIndex) const override {
     return columnIndex;

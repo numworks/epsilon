@@ -103,7 +103,7 @@ class MenuController : public Escher::ViewController,
   constexpr static int k_scriptParameterCellType = 2;
   constexpr static int k_emptyCellType = 3;
   // TableViewDataSource
-  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedColumnWidth(int column) override;
   void addScript();
   void configureScript();
   void editScriptAtIndex(int scriptIndex);

@@ -118,7 +118,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_numberOfCalculations = std::size(k_calculationRows);
 
   // TableViewDataSource
-  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedColumnWidth(int column) override;
   void resetMemoization(bool force = true) override;
 
   int findCellIndex(int i) const;

@@ -127,13 +127,13 @@ int CalculationController::numberOfColumns() const {
  * tableView->cellAtLocation as this function depends on the
  * numberOfDisplaybleRows which depends on the column width! */
 
-KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
-  if (i == 0) {
+KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
+  if (column == 0) {
     return m_dropdown.minimalSizeForOptimalDisplay().width();
   }
   /* WARNING: that is possible only because we know which view cell corresponds
    * to which cell */
-  return m_calculationCells[i - 1].minimalSizeForOptimalDisplay().width();
+  return m_calculationCells[column - 1].minimalSizeForOptimalDisplay().width();
 }
 
 KDCoordinate CalculationController::defaultRowHeight() {

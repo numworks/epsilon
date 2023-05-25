@@ -159,11 +159,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   }
 }
 
-KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
-  if (i == 0) {
+KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
+  if (column == 0) {
     return k_calculationTitleCellWidth;
   }
-  if (i == 1) {
+  if (column == 1) {
     int numberOfModes = m_store->totalNumberOfModes();
     static_assert(Store::k_maxNumberOfPairs < 1000,
                   "numberOfChars must be updated");

@@ -122,7 +122,7 @@ class CalculationController : public Shared::DoublePairTableController {
           Escher::Metric::CellVerticalElementMargin);
 
   // TableViewDataSource
-  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedColumnWidth(int column) override;
 
   Shared::DoublePairStore* store() const override { return m_store; }
   static I18n::Message MessageForCalculation(Calculation c);

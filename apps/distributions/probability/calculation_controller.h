@@ -76,7 +76,7 @@ class CalculationController : public Escher::ViewController,
   constexpr static const char* k_parameterTitle = "%s = %*.*ed ";
 
   // TableViewDataSource
-  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedColumnWidth(int column) override;
   KDCoordinate defaultRowHeight() override;
 
   void updateTitle();

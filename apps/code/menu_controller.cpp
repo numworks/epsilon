@@ -181,11 +181,11 @@ void MenuController::willDisplayCellAtLocation(HighlightCell *cell, int column,
   static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
 }
 
-KDCoordinate MenuController::nonMemoizedColumnWidth(int i) {
-  if (i == 0) {
+KDCoordinate MenuController::nonMemoizedColumnWidth(int column) {
+  if (column == 0) {
     return m_selectableTableView.bounds().width() - k_parametersColumnWidth;
   }
-  assert(i == 1);
+  assert(column == 1);
   return k_parametersColumnWidth;
 }
 

@@ -203,10 +203,10 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
 
 // TableViewDataSource
 
-KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
+KDCoordinate ValuesController::nonMemoizedColumnWidth(int column) {
   KDCoordinate columnWidth;
   KDCoordinate maxColumnWidth = k_maxColumnWidth;
-  int tempI = i;
+  int tempI = column;
   ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
   if (tempI > 0 && symbol == ContinuousFunctionProperties::SymbolType::T) {
     // Default width is larger for parametric functions
@@ -214,20 +214,20 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   } else {
     columnWidth = Shared::ValuesController::defaultColumnWidth();
   }
-  if (typeAtLocation(i, 0) == k_functionTitleCellType) {
-    columnWidth =
-        std::min(maxColumnWidth,
-                 std::max(CellSizeWithLayout(functionTitleLayout(i)).width(),
-                          columnWidth));
+  if (typeAtLocation(column, 0) == k_functionTitleCellType) {
+    columnWidth = std::min(
+        maxColumnWidth,
+        std::max(CellSizeWithLayout(functionTitleLayout(column)).width(),
+                 columnWidth));
   }
   if (!m_exactValuesAreActivated) {
     // Width is constant when displaying approximations
     return columnWidth;
   }
-  int nRows = numberOfElementsInColumn(i) + 1;
-  for (int j = 0; j < nRows; j++) {
-    if (typeAtLocation(i, j) == k_notEditableValueCellType) {
-      Layout l = memoizedLayoutForCell(i, j);
+  int nRows = numberOfElementsInColumn(column) + 1;
+  for (int row = 0; row < nRows; row++) {
+    if (typeAtLocation(column, row) == k_notEditableValueCellType) {
+      Layout l = memoizedLayoutForCell(column, row);
       assert(!l.isUninitialized());
       columnWidth = std::max(CellSizeWithLayout(l).width(), columnWidth);
       if (columnWidth > maxColumnWidth) {

@@ -58,7 +58,9 @@ class HomogeneityTableDataSource
       HomogeneityTest::k_maxNumberOfColumns;
   constexpr static int k_maxNumberOfRows = HomogeneityTest::k_maxNumberOfRows;
 
-  KDCoordinate nonMemoizedColumnWidth(int i) override { return k_columnWidth; }
+  KDCoordinate nonMemoizedColumnWidth(int column) override {
+    return k_columnWidth;
+  }
   virtual int innerNumberOfRows() const = 0;
   virtual int innerNumberOfColumns() const = 0;
   virtual void willDisplayInnerCellAtLocation(Escher::HighlightCell* cell,

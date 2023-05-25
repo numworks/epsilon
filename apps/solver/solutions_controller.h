@@ -68,8 +68,8 @@ class SolutionsController : public Escher::ViewController,
 
  private:
   // TableViewDataSource
-  KDCoordinate nonMemoizedColumnWidth(int i) override {
-    return i == 0 ? k_symbolCellWidth : k_valueCellWidth;
+  KDCoordinate nonMemoizedColumnWidth(int column) override {
+    return column == 0 ? k_symbolCellWidth : k_valueCellWidth;
   }
   // TODO: Memoize the row height ?
   KDCoordinate nonMemoizedRowHeight(int j) override;

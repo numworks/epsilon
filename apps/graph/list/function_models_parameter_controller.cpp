@@ -33,7 +33,6 @@ FunctionModelsParameterController::FunctionModelsParameterController(
     /* Building the cells here is possible since the list is modified when
      * entering exam mode or changing country which requires exiting the app and
      * rebuilding the cells when re-entering. */
-    m_modelCells[i].label()->setParentResponder(&m_selectableListView);
     m_modelCells[i].subLabel()->setMessage(
         Preferences::sharedPreferences->examMode().forbidImplicitPlots()
             ? I18n::Message::Default

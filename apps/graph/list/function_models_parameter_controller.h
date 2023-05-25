@@ -126,7 +126,7 @@ class FunctionModelsParameterController
   static const char* ModelWithDefaultName(Model model, char buffer[],
                                           size_t bufferSize);
   Escher::MenuCell<Escher::MessageTextView> m_emptyModelCell;
-  Escher::MenuCell<Escher::ScrollableLayoutView, Escher::MessageTextView>
+  Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>
       m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];
   ListController* m_listController;

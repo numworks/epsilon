@@ -23,13 +23,10 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
                                                  KDCoordinate rightMargin,
                                                  KDCoordinate bottomMargin,
                                                  KDCoordinate leftMargin)
-    : SelectableCellListPage<MenuCell<ScrollableLayoutView, MessageTextView>,
+    : SelectableCellListPage<MenuCell<LayoutView, MessageTextView>,
                              k_numberOfCells, RegularListViewDataSource>(
           parentResponder),
       m_listController(list) {
-  for (int i = 0; i < k_numberOfCells; i++) {
-    cellAtIndex(i)->label()->setParentResponder(&m_selectableListView);
-  }
   cellAtIndex(k_indexOfExplicit)
       ->subLabel()
       ->setMessage(I18n::Message::Explicit);

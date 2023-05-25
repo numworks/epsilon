@@ -218,7 +218,7 @@ int PrefacedTableView::IntermediaryDataSource::
     nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  int result = m_mainDataSource->indexAfterCumulatedWidth(offsetX);
+  int result = m_mainDataSource->columnAfterCumulatedWidth(offsetX);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

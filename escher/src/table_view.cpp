@@ -246,7 +246,7 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
   int cumulatedWidthOfLastVisiblePixel =
       m_tableView->bounds().width() + invisibleWidth() - 1;
   int cumulatedColumnIndexOfLastVisiblePixel =
-      m_dataSource->indexAfterCumulatedWidth(cumulatedWidthOfLastVisiblePixel);
+      m_dataSource->columnAfterCumulatedWidth(cumulatedWidthOfLastVisiblePixel);
   return std::min(m_dataSource->numberOfColumns(),
                   cumulatedColumnIndexOfLastVisiblePixel + 1) -
          columnOffset;

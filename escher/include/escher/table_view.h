@@ -93,7 +93,7 @@ class TableView : public ScrollView {
       return m_dataSource->indexAfterCumulatedHeight(invisibleHeight());
     }
     int columnsScrollingOffset() const {
-      return m_dataSource->indexAfterCumulatedWidth(invisibleWidth());
+      return m_dataSource->columnAfterCumulatedWidth(invisibleWidth());
     }
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;

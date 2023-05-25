@@ -41,8 +41,8 @@ class CalculationController : public Shared::DoublePairTableController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  KDCoordinate separatorBeforeColumn(int index) override {
-    return typeAtLocation(index, 0) == k_columnTitleCellType
+  KDCoordinate separatorBeforeColumn(int column) override {
+    return typeAtLocation(column, 0) == k_columnTitleCellType
                ? Escher::Metric::TableSeparatorThickness
                : 0;
   }

@@ -122,8 +122,8 @@ int ValuesController::typeAtLocation(int i, int j) {
   return Shared::ValuesController::typeAtLocation(i, j);
 }
 
-KDCoordinate ValuesController::separatorBeforeColumn(int index) {
-  return index > 0 && typeAtLocation(index, 0) == k_abscissaTitleCellType
+KDCoordinate ValuesController::separatorBeforeColumn(int column) {
+  return column > 0 && typeAtLocation(column, 0) == k_abscissaTitleCellType
              ? Escher::Metric::TableSeparatorThickness
              : 0;
 }

@@ -39,7 +39,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
     KDCoordinate cumulatedWidthBeforePrefaceColumn() const;
 
     int numberOfColumns() const override { return 1; }
-    KDCoordinate separatorBeforeColumn(int index) override { return 0; }
+    KDCoordinate separatorBeforeColumn(int column) override { return 0; }
 
    private:
     Escher::HighlightCell* reusableCell(int index, int type) override;

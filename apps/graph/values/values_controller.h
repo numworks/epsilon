@@ -34,7 +34,7 @@ class ValuesController : public Shared::ValuesController,
   void willDisplayCellAtLocation(Escher::HighlightCell *cell, int column,
                                  int row) override;
   int typeAtLocation(int i, int j) override;
-  KDCoordinate separatorBeforeColumn(int index) override;
+  KDCoordinate separatorBeforeColumn(int column) override;
 
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position) const override {

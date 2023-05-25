@@ -28,8 +28,8 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
   constexpr static int k_typeOfInnerCells = 0;
 
   // TableViewDataSource
-  KDCoordinate separatorBeforeColumn(int index) override {
-    return index > 0 ? k_borderBetweenColumns : 0;
+  KDCoordinate separatorBeforeColumn(int column) override {
+    return column > 0 ? k_borderBetweenColumns : 0;
   }
 
  protected:

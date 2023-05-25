@@ -119,7 +119,7 @@ class MemoizedColumnWidthManager
     return this->m_dataSource->nonMemoizedColumnWidth(i, true);
   }
   KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override {
-    return this->m_dataSource->nonMemoizedCumulatedWidthBeforeIndex(i);
+    return this->m_dataSource->nonMemoizedCumulatedWidthBeforeColumn(i);
   }
 };
 

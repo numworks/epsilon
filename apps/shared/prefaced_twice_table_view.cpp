@@ -191,12 +191,12 @@ HighlightCell* PrefacedTwiceTableView::ColumnPrefaceDataSource::reusableCell(
 }
 
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
-    nonMemoizedCumulatedWidthBeforeIndex(int i) {
+    nonMemoizedCumulatedWidthBeforeColumn(int column) {
   // Do not alter main dataSource memoization
-  assert(i == 0 || i == 1);
+  assert(column == 0 || column == 1);
   m_mainDataSource->lockMemoization(true);
   KDCoordinate result =
-      i == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn, false) : 0;
+      column == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn, false) : 0;
   m_mainDataSource->lockMemoization(false);
   return result;
 }

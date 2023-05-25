@@ -27,8 +27,8 @@ class EquationModelsParameterController
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) const override {
-    return index == 0 ? k_emptyModelCellType : k_modelCellType;
+  int typeAtRow(int row) const override {
+    return row == 0 ? k_emptyModelCellType : k_modelCellType;
   }
 
  private:

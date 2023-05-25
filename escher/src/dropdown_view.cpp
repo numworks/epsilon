@@ -164,7 +164,7 @@ void Dropdown::DropdownPopupController::willDisplayCellAtRow(
     HighlightCell *cell, int row) {
   PopupItemView *popupView = static_cast<PopupItemView *>(cell);
   popupView->setInnerCell(
-      m_listViewDataSource->reusableCell(row, typeAtIndex(row)));
+      m_listViewDataSource->reusableCell(row, typeAtRow(row)));
   popupView->setPopping(true);
   m_listViewDataSource->willDisplayCellAtRow(popupView->innerCell(), row);
 }
@@ -176,7 +176,7 @@ void Dropdown::DropdownPopupController::resetMemoization(bool force) {
 
 HighlightCell *Dropdown::DropdownPopupController::innerCellAtIndex(int index) {
   return m_listViewDataSource->reusableCell(
-      index, m_listViewDataSource->typeAtIndex(index));
+      index, m_listViewDataSource->typeAtRow(index));
 }
 
 Dropdown::Dropdown(Responder *parentResponder,

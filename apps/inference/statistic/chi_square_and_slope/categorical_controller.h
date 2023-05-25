@@ -46,9 +46,7 @@ class CategoricalController
       bool withinTemporarySelection = false) override;
 
   // ListViewDataSource
-  int typeAtIndex(int index) const override {
-    return index;
-  }  // One cell per type
+  int typeAtRow(int row) const override { return row; }  // One cell per type
   int numberOfRows() const override { return indexOfNextCell() + 1; }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }

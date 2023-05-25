@@ -65,13 +65,13 @@ ExamMode::PressToTestFlags PressToTestController::getPressToTestParams() {
 }
 
 KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
-  if (typeAtIndex(j) == k_buttonCellType) {
+  if (typeAtRow(j) == k_buttonCellType) {
     /* Do not call heightForCellAtIndex since bounds can be empty (when exam
      * mode is on). Moreover, willDisplayCellAtRow does nothing for
      * m_activateButton. */
     return m_activateButton.minimalSizeForOptimalDisplay().height();
   }
-  assert(typeAtIndex(j) == k_switchCellType);
+  assert(typeAtRow(j) == k_switchCellType);
   PressToTestSwitch tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
@@ -150,7 +150,7 @@ void PressToTestController::setMessages() {
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = innerSelectedRow();
-  if (typeAtIndex(row) == k_switchCellType &&
+  if (typeAtRow(row) == k_switchCellType &&
       static_cast<PressToTestSwitch *>(m_selectableListView.cell(selectedRow()))
           ->canBeActivatedByEvent(event) &&
       !Preferences::sharedPreferences->examMode().isActive()) {
@@ -193,9 +193,9 @@ int PressToTestController::numberOfRows() const {
          (Preferences::sharedPreferences->examMode().isActive() ? 0 : 1);
 }
 
-int PressToTestController::typeAtIndex(int index) const {
-  assert(index >= 0 && index <= k_numberOfSwitchCells);
-  return index < k_numberOfSwitchCells ? k_switchCellType : k_buttonCellType;
+int PressToTestController::typeAtRow(int row) const {
+  assert(row >= 0 && row <= k_numberOfSwitchCells);
+  return row < k_numberOfSwitchCells ? k_switchCellType : k_buttonCellType;
 }
 
 HighlightCell *PressToTestController::reusableCell(int index, int type) {
@@ -213,7 +213,7 @@ int PressToTestController::reusableCellCount(int type) {
 }
 
 void PressToTestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  if (typeAtIndex(row) == k_buttonCellType) {
+  if (typeAtRow(row) == k_buttonCellType) {
     assert(!Preferences::sharedPreferences->examMode().isActive());
     return;
   }

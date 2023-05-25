@@ -20,9 +20,9 @@ class SingleRangeController : public FloatParameterController<float> {
   void viewWillAppear() override;
 
   int numberOfRows() const override { return k_numberOfTextCells + 2; }
-  int typeAtIndex(int index) const override {
-    return index == 0 ? k_autoCellType
-                      : FloatParameterController<float>::typeAtIndex(index);
+  int typeAtRow(int row) const override {
+    return row == 0 ? k_autoCellType
+                    : FloatParameterController<float>::typeAtRow(row);
   }
   int reusableCellCount(int type) override {
     return type == k_autoCellType

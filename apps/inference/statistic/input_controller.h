@@ -35,7 +35,7 @@ class InputController
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() override;
-  int typeAtIndex(int i) const override;
+  int typeAtRow(int row) const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;

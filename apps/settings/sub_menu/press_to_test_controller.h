@@ -21,13 +21,13 @@ class PressToTestController : public Escher::ListWithTopAndBottomController {
   TELEMETRY_ID("PressToTest");
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int row) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+    return typeAtRow(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
   Poincare::ExamMode::PressToTestFlags getPressToTestParams();
   void resetController();

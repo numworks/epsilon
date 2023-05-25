@@ -85,7 +85,7 @@ HighlightCell *ParametersController::reusableParameterCell(int index,
 
 TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
                                                         int index) {
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
              cell)
       ->textField();

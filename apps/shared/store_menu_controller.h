@@ -37,7 +37,7 @@ class StoreMenuController : public Escher::ModalViewController,
   int numberOfRows() const override { return 1; }
   int reusableCellCount(int type) override { return 1; }
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
-  int typeAtIndex(int index) const override { return 0; }
+  int typeAtRow(int row) const override { return 0; }
   Escher::HighlightCell* reusableCell(int index, int type) override {
     return &m_cell;
   }

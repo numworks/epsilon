@@ -17,7 +17,7 @@ SequenceToolbox::SequenceToolbox() : MathToolbox(), m_numberOfAddedCells(0) {}
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
-  if (typeAtIndex(rowIndex) == k_addedCellType &&
+  if (typeAtRow(rowIndex) == k_addedCellType &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     return selectAddedCell(rowIndex);
   }
@@ -39,7 +39,7 @@ HighlightCell *SequenceToolbox::reusableCell(int index, int type) {
 }
 
 void SequenceToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  if (typeAtIndex(row) == k_addedCellType) {
+  if (typeAtRow(row) == k_addedCellType) {
     static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
         m_addedCellLayout[row]);
     cell->reloadCell();
@@ -49,18 +49,18 @@ void SequenceToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
 }
 
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == k_addedCellType) {
+  if (typeAtRow(index) == k_addedCellType) {
     MenuCell<LayoutView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return MathToolbox::nonMemoizedRowHeight(index);
 }
 
-int SequenceToolbox::typeAtIndex(int index) const {
-  if (index < addedCellsAtRoot()) {
+int SequenceToolbox::typeAtRow(int row) const {
+  if (row < addedCellsAtRoot()) {
     return k_addedCellType;
   }
-  return MathToolbox::typeAtIndex(index);
+  return MathToolbox::typeAtRow(row);
 }
 
 void SequenceToolbox::buildExtraCellsLayouts(const char *sequenceName,

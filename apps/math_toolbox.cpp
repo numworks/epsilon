@@ -877,7 +877,7 @@ void MathToolbox::viewDidDisappear() {
 }
 
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == k_leafCellType) {
+  if (typeAtRow(index) == k_leafCellType) {
     LeafCell tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
@@ -972,7 +972,7 @@ bool MathToolbox::selectSubMenu(int selectedRow) {
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
-  assert(typeAtIndex(selectedRow) == k_leafCellType);
+  assert(typeAtRow(selectedRow) == k_leafCellType);
   if (GlobalPreferences::sharedGlobalPreferences->listsStatsOrderInToolbox() ==
           CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
       m_messageTreeModel->childrenList() == listsStatsChildren) {

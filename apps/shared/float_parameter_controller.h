@@ -23,13 +23,13 @@ class FloatParameterController : public Escher::ListWithTopAndBottomController,
   bool handleEvent(Ion::Events::Event event) override;
 
   // MemoizedListViewDataSource
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int index) const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+    return typeAtRow(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
 
   // ParameterTextFieldDelegate

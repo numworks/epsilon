@@ -17,7 +17,7 @@ class SequenceToolbox : public MathToolbox {
   KDCoordinate nonMemoizedRowHeight(int index) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int row) const override;
   void buildExtraCellsLayouts(const char* sequenceName, int recurrenceDepth);
 
  protected:

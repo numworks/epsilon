@@ -46,7 +46,7 @@ HighlightCell *UnitListController::reusableCell(int index, int type) {
 }
 
 KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == k_expressionCellType) {
+  if (typeAtRow(index) == k_expressionCellType) {
     return ExpressionsListController::nonMemoizedRowHeight(index);
   }
   BufferCell tempCell;
@@ -54,7 +54,7 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
 }
 
 void UnitListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  if (typeAtIndex(row) == k_expressionCellType) {
+  if (typeAtRow(row) == k_expressionCellType) {
     return ExpressionsListController::willDisplayCellAtRow(cell, row);
   }
   BufferCell *myCell = static_cast<BufferCell *>(cell);
@@ -221,7 +221,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
 }
 
 I18n::Message UnitListController::messageAtIndex(int index) {
-  if (typeAtIndex(index) == k_bufferCellType) {
+  if (typeAtRow(index) == k_bufferCellType) {
     assert(index - m_numberOfExpressionCells < m_numberOfBufferCells);
     return m_referenceValues[index - m_numberOfExpressionCells]->subtitle;
   }

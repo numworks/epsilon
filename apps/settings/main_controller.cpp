@@ -75,7 +75,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences *globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;
   int index = selectedRow();
-  int type = typeAtIndex(index);
+  int type = typeAtRow(index);
   if (type == k_resetCellType) {
     // Escape now since ButtonCell is not a MenuCell
     return false;
@@ -133,7 +133,7 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
-  switch (typeAtIndex(index)) {
+  switch (typeAtRow(index)) {
     case k_brightnessCellType:
       return heightForCellAtIndex(&m_brightnessCell, index);
     case k_popUpCellType:
@@ -170,8 +170,8 @@ int MainController::reusableCellCount(int type) {
   return 1;
 }
 
-int MainController::typeAtIndex(int index) const {
-  switch (messageAtModelIndex(getModelIndex(index))) {
+int MainController::typeAtRow(int row) const {
+  switch (messageAtModelIndex(getModelIndex(row))) {
     case I18n::Message::Brightness:
       return k_brightnessCellType;
     case I18n::Message::UpdatePopUp:
@@ -190,7 +190,7 @@ void MainController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   Preferences *preferences = Preferences::sharedPreferences;
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
-  int type = typeAtIndex(row);
+  int type = typeAtRow(row);
   if (type == k_brightnessCellType) {
     assert(&m_brightnessCell == cell);
     m_brightnessCell.label()->setMessage(title);
@@ -257,8 +257,8 @@ void MainController::willDisplayCellAtRow(HighlightCell *cell, int row) {
 }
 
 KDCoordinate MainController::separatorBeforeRow(int index) {
-  return typeAtIndex(index) == k_brightnessCellType ||
-                 typeAtIndex(index) == k_resetCellType
+  return typeAtRow(index) == k_brightnessCellType ||
+                 typeAtRow(index) == k_resetCellType
              ? k_defaultRowSeparator
              : 0;
 }

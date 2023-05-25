@@ -26,7 +26,7 @@ InputController::InputController(Escher::StackViewController *parent,
 }
 
 KDCoordinate InputController::nonMemoizedRowHeight(int j) {
-  if (typeAtIndex(j) == k_parameterCellType) {
+  if (typeAtRow(j) == k_parameterCellType) {
     InputParameterCell tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, j);
   }
@@ -86,11 +86,11 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
   return ViewController::TitlesDisplay::DisplayLastTitle;
 }
 
-int InputController::typeAtIndex(int i) const {
-  if (i == m_statistic->indexOfThreshold()) {
+int InputController::typeAtRow(int row) const {
+  if (row == m_statistic->indexOfThreshold()) {
     return k_significanceCellType;
   }
-  return FloatParameterController<double>::typeAtIndex(i);
+  return FloatParameterController<double>::typeAtRow(row);
 }
 
 void InputController::didBecomeFirstResponder() {
@@ -113,7 +113,7 @@ void InputController::willDisplayCellAtRow(Escher::HighlightCell *cell,
     InputParameterCell *mCell = static_cast<InputParameterCell *>(cell);
     mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(row));
     mCell->subLabel()->setMessage(m_statistic->parameterDefinitionAtIndex(row));
-  } else if (typeAtIndex(row) == k_significanceCellType) {
+  } else if (typeAtRow(row) == k_significanceCellType) {
     assert(cell == &m_significanceCell);
     m_significanceCell.label()->setMessage(m_statistic->thresholdName());
     m_significanceCell.subLabel()->setMessage(
@@ -123,7 +123,7 @@ void InputController::willDisplayCellAtRow(Escher::HighlightCell *cell,
 }
 
 KDCoordinate InputController::separatorBeforeRow(int index) {
-  return typeAtIndex(index) == k_significanceCellType
+  return typeAtRow(index) == k_significanceCellType
              ? k_defaultRowSeparator
              : FloatParameterController<double>::separatorBeforeRow(index);
 }
@@ -147,11 +147,11 @@ HighlightCell *InputController::reusableParameterCell(int index, int type) {
 
 TextField *InputController::textFieldOfCellAtIndex(HighlightCell *cell,
                                                    int index) {
-  if (typeAtIndex(index) == k_significanceCellType) {
+  if (typeAtRow(index) == k_significanceCellType) {
     assert(cell == &m_significanceCell);
     return m_significanceCell.textField();
   }
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<InputParameterCell *>(cell)->textField();
 }
 

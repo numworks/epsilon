@@ -16,7 +16,7 @@ class ListViewDataSource : public TableViewDataSource {
    * lists. Most implementations should override them.*/
   int reusableCellCount(int type) override { return numberOfRows(); }
   virtual void willDisplayCellAtRow(HighlightCell* cell, int row) {}
-  virtual int typeAtIndex(int index) const { return 0; }
+  virtual int typeAtRow(int row) const { return 0; }
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* tempCell,
                                                  int index);
@@ -39,7 +39,7 @@ class ListViewDataSource : public TableViewDataSource {
   }
   int typeAtLocation(int col, int row) override final {
     assert(col == 0);
-    return typeAtIndex(row);
+    return typeAtRow(row);
   }
   // Just make this method final without changing behaviour
   KDCoordinate nonMemoizedColumnWidth(int index) override final {
@@ -87,7 +87,7 @@ class SimpleListViewDataSource : public RegularListViewDataSource {
     assert(type == 0);
     return reusableCellCount();
   }
-  int typeAtIndex(int i) const override final { return 0; }
+  int typeAtRow(int row) const override final { return 0; }
 };
 
 }  // namespace Escher

@@ -28,7 +28,7 @@ class RangeParameterController
   int numberOfRows() const override {
     return displayNormalizeCell() + k_numberOfRangeCells + 1;
   }
-  int typeAtIndex(int index) const override;
+  int typeAtRow(int row) const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

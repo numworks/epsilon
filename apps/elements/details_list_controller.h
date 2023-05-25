@@ -32,7 +32,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
   KDCoordinate separatorBeforeRow(int index) override;
 
   // Escher::ListViewDataSource
-  int typeAtIndex(int index) const override { return 0; }
+  int typeAtRow(int row) const override { return 0; }
   void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
 
   bool canStoreContentOfCell(Escher::SelectableListView *l,

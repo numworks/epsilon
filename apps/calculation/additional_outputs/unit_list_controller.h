@@ -18,9 +18,9 @@ class UnitListController : public ExpressionsListController {
 
   void viewDidDisappear() override;
 
-  int typeAtIndex(int index) const override {
-    return index < m_numberOfExpressionCells ? k_expressionCellType
-                                             : k_bufferCellType;
+  int typeAtRow(int row) const override {
+    return row < m_numberOfExpressionCells ? k_expressionCellType
+                                           : k_bufferCellType;
   }
   int reusableCellCount(int type) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;

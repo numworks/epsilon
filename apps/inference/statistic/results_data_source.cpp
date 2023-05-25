@@ -64,8 +64,8 @@ int ResultsDataSource::reusableCellCount(int type) {
   return 1;
 }
 
-int ResultsDataSource::typeAtIndex(int index) const {
-  if (index == numberOfRows() - 1) {
+int ResultsDataSource::typeAtRow(int row) const {
+  if (row == numberOfRows() - 1) {
     return k_buttonCellType;
   }
   return k_resultCellType;

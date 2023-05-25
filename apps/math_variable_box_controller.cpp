@@ -203,9 +203,9 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-int MathVariableBoxController::typeAtIndex(int index) const {
+int MathVariableBoxController::typeAtRow(int row) const {
   if (m_currentPage == Page::RootMenu) {
-    if (index == defineVariableCellIndex()) {
+    if (row == defineVariableCellIndex()) {
       return k_defineVariableCellType;
     }
     return k_nodeCellType;

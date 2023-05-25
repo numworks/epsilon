@@ -28,13 +28,13 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int i) const override;
+  int typeAtRow(int row) const override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   bool cellAtLocationIsSelectable(Escher::HighlightCell* cell, int i,
                                   int j) override {
     /* Sometimes the cell is not yet populated so we can't check
      * cell->isSelectable() */
-    return typeAtIndex(j) == k_itemCellType;
+    return typeAtRow(j) == k_itemCellType;
   }
 
   /* SelectableListViewDelegate */

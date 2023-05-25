@@ -62,7 +62,7 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
 }
 
 void InterestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  int type = typeAtIndex(row);
+  int type = typeAtRow(row);
   if (type == k_buttonCellType) {
     return;
   }
@@ -85,15 +85,15 @@ void InterestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
                                                                         row);
 }
 
-int InterestController::typeAtIndex(int index) const {
-  if (index < indexOfDropdown()) {
+int InterestController::typeAtRow(int row) const {
+  if (row < indexOfDropdown()) {
     return k_inputCellType;
   }
-  return (index == indexOfDropdown()) ? k_dropdownCellType : k_buttonCellType;
+  return (row == indexOfDropdown()) ? k_dropdownCellType : k_buttonCellType;
 }
 
 KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
-  int type = typeAtIndex(j);
+  int type = typeAtRow(j);
   if (type == k_inputCellType) {
     MenuCellWithEditableText<MessageTextView, MessageTextView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, j);
@@ -142,7 +142,7 @@ HighlightCell *InterestController::reusableParameterCell(int i, int type) {
 
 Escher::TextField *InterestController::textFieldOfCellAtIndex(
     Escher::HighlightCell *cell, int index) {
-  assert(typeAtIndex(index) == k_parameterCellType);
+  assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<
              MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
       ->textField();

@@ -193,7 +193,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   if (j == m_editedCellIndex) {
     return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
-  if (typeAtIndex(j) == k_addNewModelCellType) {
+  if (typeAtRow(j) == k_addNewModelCellType) {
     return Shared::FunctionListController::expressionRowHeight(j);
   }
   FunctionCell tempCell;
@@ -268,7 +268,7 @@ void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   assert(cell != nullptr);
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(row % 2 == 0);
-  int type = typeAtIndex(row);
+  int type = typeAtRow(row);
   if (type == k_addNewModelCellType) {
     evenOddCell->reloadCell();
     return;

@@ -219,8 +219,8 @@ void VariableBoxController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-int VariableBoxController::typeAtIndex(int index) const {
-  return typeAndOriginAtLocation(index);
+int VariableBoxController::typeAtRow(int row) const {
+  return typeAndOriginAtLocation(row);
 }
 
 void VariableBoxController::loadFunctionsAndVariables(

@@ -90,6 +90,7 @@ void Node::logName(std::ostream &stream) const {
       "UserSequence",
       "List",
       "Set",
+      "Undefined",
       "RackLayout",
       "FractionLayout",
       "ParenthesisLayout",

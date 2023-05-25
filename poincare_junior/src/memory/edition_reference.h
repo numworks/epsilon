@@ -28,6 +28,10 @@ class EditionReference {
             static_cast<Node>(*this) != static_cast<Node>(t));
   }
 
+  EditionReference clone() {
+    return EditionPool::sharedEditionPool()->clone(*this);
+  }
+
   operator const Node() const;
   bool isUninitialized() const {
     return static_cast<Node>(*this).isUninitialized();

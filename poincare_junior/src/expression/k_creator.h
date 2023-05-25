@@ -111,6 +111,11 @@ consteval auto KSet(Args... args) {
   return KNAry<BlockType::Set>(args...);
 }
 
+template <class... Args>
+consteval auto KSystemList(Args... args) {
+  return KNAry<BlockType::SystemList>(args...);
+}
+
 /* if you want to add operator+ and so on, you can revert them from the commit
  * [poincare_junior] Split tree_constructor.h */
 
@@ -226,6 +231,8 @@ Tree(IntegerLitteral<V>)
             Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
 
 // TODO new node_constructor
+constexpr Tree KUndef = Tree<BlockType::Undefined>();
+
 constexpr Tree π_e =
     Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi),
          BlockType::Constant>();

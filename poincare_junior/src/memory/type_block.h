@@ -104,6 +104,7 @@ enum class BlockType : uint8_t {
   // 1 - D - Order dependant expressions
   List,
   Set,
+  Undefined,
   NumberOfExpressions,
   // 2 - Layout
   FirstLayout = NumberOfExpressions,

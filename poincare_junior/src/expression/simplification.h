@@ -45,6 +45,9 @@ class Simplification {
       EditionReference reference,
       ProjectionContext complexity = ProjectionContext::Default);
 
+  static EditionReference AutomaticSimplify(EditionReference u);
+  static void AutomaticSimplifyInPlace(EditionReference u);
+
  private:
   typedef EditionReference (*NumberOperation)(const Node, const Node);
   static void ReduceNumbersInNAry(EditionReference reference,
@@ -54,6 +57,7 @@ class Simplification {
       Node (*PushInverse)());
 };
 
+int Compare(Node u, Node v);
 }  // namespace PoincareJ
 
 #endif

@@ -2,6 +2,8 @@
 
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/p_pusher.h>
+#include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/placeholder.h>
@@ -12,6 +14,531 @@
 namespace PoincareJ {
 
 using namespace Placeholders;
+
+bool IsInteger(Node u) { return u.block()->isInteger(); }
+bool IsNumber(Node u) { return u.block()->isNumber(); }
+bool IsRational(Node u) { return u.block()->isRational(); }
+bool IsConstant(Node u) { return IsNumber(u); }
+bool IsZero(Node u) { return u.type() == BlockType::Zero; }
+bool IsUndef(Node u) { return u.type() == BlockType::Undefined; }
+
+bool AnyChildren(Node u, bool test(Node)) {
+  for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
+    if (test(child)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool AllChildren(Node u, bool test(Node)) {
+  for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
+    if (!test(child)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+EditionReference SimplifyRational(EditionReference u) { return u; }
+EditionReference SimplifyRNE(EditionReference u);
+EditionReference SimplifySum(EditionReference u);
+EditionReference SimplifyProduct(EditionReference u);
+EditionReference SimplifyPower(EditionReference u);
+
+EditionReference Simplification::AutomaticSimplify(EditionReference u) {
+  if (u.block()->isInteger()) {
+    return u;
+  }
+  if (u.block()->isRational()) {
+    // TODO return Rational::IrreducibleForm(u);
+    return u;
+  }
+  // no need, handled by recursivelyEdit ?
+  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(u)) {
+    child.replaceTreeByTree(AutomaticSimplify(child.clone()));
+  }
+
+  if (AnyChildren(u, &IsUndef)) {
+    return u.replaceTreeByNode(P_UNDEF());
+  }
+  switch (u.type()) {
+    case BlockType::Power:
+      return SimplifyPower(u);
+    case BlockType::Addition:
+      return SimplifySum(u);
+    case BlockType::Multiplication:
+      return SimplifyProduct(u);
+    default:
+      return u;
+  }
+}
+
+void Simplification::AutomaticSimplifyInPlace(EditionReference u) {
+  EditionReference r = AutomaticSimplify(u);
+  if (u.block() != r.block()) {
+    u = u.replaceTreeByTree(r);
+  }
+}
+
+EditionReference SimplifyIntegerPower(EditionReference v, EditionReference n) {
+  if (IsRational(v)) {
+    EditionReference pow = P_POW(v.clone(), n.clone());
+    return SimplifyRNE(pow);
+  }
+  if (n.type() == BlockType::Zero) {
+    return P_ONE();
+  }
+  if (n.type() == BlockType::One) {
+    return v;
+  }
+  if (v.type() == BlockType::Power) {
+    EditionReference r = v.childAtIndex(0);
+    EditionReference s = v.childAtIndex(1);
+    EditionReference m = P_MULT(s.clone(), n.clone());
+    EditionReference p = SimplifyProduct(m);
+    if (IsInteger(p)) {
+      return SimplifyIntegerPower(r, p);
+    }
+    return P_POW(r.clone(), p.clone());
+  }
+  if (v.type() == BlockType::Multiplication) {
+    for (auto [child, index] : NodeIterator::Children<Forward, Editable>(v)) {
+      child.replaceTreeByTree(SimplifyIntegerPower(child, n));
+    }
+    return SimplifyProduct(v);
+  }
+  return P_POW(v.clone(), n.clone());
+}
+
+EditionReference SimplifyPower(EditionReference u) {
+  EditionReference v = u.childAtIndex(0);
+  EditionReference w = u.childAtIndex(1);
+  if (v.type() == BlockType::Zero) {
+    if (IsNumber(w) &&
+        Rational::RationalStrictSign(w) == StrictSign::Positive) {
+      return P_ZERO();
+    }
+    return P_UNDEF();
+  }
+  if (v.type() == BlockType::One) {
+    return P_ONE();
+  }
+  if (IsInteger(w)) {
+    return SimplifyIntegerPower(v, w);
+  }
+  return u;
+}
+
+EditionReference base(EditionReference u);
+
+EditionReference exponent(EditionReference u);
+
+constexpr Tree KA = KPlaceholder<Placeholder::Tag::A>();
+constexpr Tree KB = KPlaceholder<Placeholder::Tag::B>();
+constexpr Tree KTA = KAnyTreesPlaceholder<Placeholder::Tag::A>();
+constexpr Tree KTB = KAnyTreesPlaceholder<Placeholder::Tag::B>();
+
+EditionReference WrapWithUnary(EditionReference u, Node n) {
+  u.insertNodeBeforeNode(n);
+  u = u.previousNode();
+  NAry::SetNumberOfChildren(u, 1);
+  return u;
+}
+
+EditionReference RestMult(EditionReference l) {
+  l.matchAndReplace(KMult(KA, KTB), KMult(KTB));
+  return l;
+}
+
+EditionReference AdjoinMult(EditionReference e, EditionReference l) {
+  assert(l.type() == BlockType::Multiplication);
+  NAry::AddChildAtIndex(l, e, 0);
+  return l;
+}
+
+EditionReference MergeProducts(EditionReference p, EditionReference q);
+
+EditionReference SimplifyProductRec(EditionReference l) {
+  if (l.numberOfChildren() == 2) {
+    EditionReference u1 = l.childAtIndex(0);
+    EditionReference u2 = l.childAtIndex(1);
+    if (u1.type() != BlockType::Multiplication &&
+        u2.type() != BlockType::Multiplication) {
+      // SPRDREC1
+      if (IsConstant(u1) && IsConstant(u2)) {
+        EditionReference P = SimplifyRNE(l);
+        if (P.matchAndReplace(1_e, KMult())) {
+          return P;
+        }
+        return WrapWithUnary(P, KMult());
+      }
+      if (u1.type() == BlockType::One) {
+        return WrapWithUnary(u2, KMult());
+      }
+      if (u2.type() == BlockType::One) {
+        return WrapWithUnary(u1, KMult());
+      }
+      if (Compare(base(u1), base(u2)) == 0) {
+        EditionReference e1 = exponent(u1);
+        EditionReference e2 = exponent(u2);
+        EditionReference sum = P_ADD(e1.clone(), e2.clone());
+        EditionReference S = SimplifySum(sum);
+        EditionReference b1 = base(u1);
+        EditionReference P = SimplifyPower(P_POW(b1.clone(), S.clone()));
+        if (P.matchAndReplace(1_e, KMult())) {
+          return P;
+        }
+        return WrapWithUnary(P, KMult());
+      }
+      if (Compare(u2, u1) < 0) {
+        l.matchAndReplace(KMult(KA, KB), KMult(KB, KA));
+        return l;
+      }
+      return l;
+    } else {
+      // SPRDREC2
+      if (u1.type() == BlockType::Multiplication &&
+          u2.type() == BlockType::Multiplication) {
+        return MergeProducts(u1, u2);
+      }
+      if (u1.type() == BlockType::Multiplication) {
+        EditionReference prod = P_MULT(u2.clone());
+        return MergeProducts(u1, prod);
+      }
+      assert(u2.type() == BlockType::Multiplication);
+      EditionReference prod = P_MULT(u1.clone());
+      return MergeProducts(prod, u2);
+    }
+  }
+  EditionReference u1 = EditionReference(l.childAtIndex(0)).clone();
+  EditionReference w = SimplifyProductRec(RestMult(l));
+  if (u1.type() == BlockType::Multiplication) {
+    return MergeProducts(u1, w);
+  }
+  EditionReference prod = P_MULT(u1.clone());
+  return MergeProducts(prod, w);
+}
+
+EditionReference MergeProducts(EditionReference p, EditionReference q) {
+  if (q.numberOfChildren() == 0) {
+    return p;
+  }
+  if (p.numberOfChildren() == 0) {
+    return q;
+  }
+  EditionReference p1 = p.childAtIndex(0);
+  EditionReference q1 = q.childAtIndex(0);
+  EditionReference h = SimplifyProductRec(P_MULT(p1.clone(), q1.clone()));
+  if (h.numberOfChildren() == 0) {
+    return MergeProducts(RestMult(p), RestMult(q));
+  }
+  if (h.numberOfChildren() == 1) {
+    return AdjoinMult(h.childAtIndex(0),
+                      MergeProducts(RestMult(p), RestMult(q)));
+  }
+  if (Compare(h.childAtIndex(0), p1) == 0) {
+    assert(Compare(h.childAtIndex(1), q1) == 0);
+    return AdjoinMult(p1.clone(), MergeProducts(RestMult(p), q));
+  }
+  if (Compare(h.childAtIndex(0), q1) == 0) {
+    assert(Compare(h.childAtIndex(1), p1) == 0);
+    return AdjoinMult(q1.clone(), MergeProducts(p, RestMult(q)));
+  }
+  assert(false);
+}
+
+EditionReference SimplifyProduct(EditionReference u) {
+  // SPRD1
+  // done before
+  // SPRD2
+  if (AnyChildren(u, IsZero)) {
+    return u.replaceTreeByNode(0_e);
+  }
+  // u.matchAndReplace(KMult(KTA, 0_e, KTB), 0_e);
+  // SPRD3
+  if (u.numberOfChildren() == 1) {
+    return u.childAtIndex(0);
+  }
+  // u.matchAndReplace(KMult(KA), KA);
+  EditionReference v = SimplifyProductRec(u);
+  assert(v.type() == BlockType::Multiplication);
+  if (v.numberOfChildren() == 0) {
+    return u.replaceTreeByNode(1_e);
+  }
+  if (v.numberOfChildren() == 1) {
+    return v.childAtIndex(0);
+  }
+  return v;
+}
+
+EditionReference term(EditionReference u) {
+  if (IsNumber(u)) {
+    return P_UNDEF();
+  }
+  u = u.clone();
+  if (u.type() == BlockType::Multiplication) {
+    if (IsConstant(u.childAtIndex(0))) {
+      return RestMult(u);
+    }
+    return u;
+  }
+  return WrapWithUnary(u, KMult());
+}
+
+EditionReference constant(EditionReference u) {
+  if (IsNumber(u)) {
+    return P_UNDEF();
+  }
+  if (u.type() == BlockType::Multiplication && IsConstant(u.childAtIndex(0))) {
+    return u.childAtIndex(0);
+  }
+  return P_ONE();
+}
+
+EditionReference base(EditionReference u) {
+  if (IsNumber(u)) {
+    return P_UNDEF();
+  }
+  if (u.type() == BlockType::Power) {
+    return u.childAtIndex(0);
+  }
+  return u;
+}
+
+EditionReference exponent(EditionReference u) {
+  if (IsNumber(u)) {
+    return P_UNDEF();
+  }
+  if (u.type() == BlockType::Power) {
+    return u.childAtIndex(1);
+  }
+  return P_ONE();
+}
+
+EditionReference RestAdd(EditionReference l) {
+  l.matchAndReplace(KAdd(KA, KTB), KAdd(KTB));
+  return l;
+}
+
+EditionReference AdjoinAdd(EditionReference e, EditionReference l) {
+  assert(l.type() == BlockType::Addition);
+  NAry::AddChildAtIndex(l, e, 0);
+  return l;
+}
+
+EditionReference MergeSums(EditionReference p, EditionReference q);
+
+EditionReference SimplifySumRec(EditionReference l) {
+  if (l.numberOfChildren() == 2) {
+    EditionReference u1 = l.childAtIndex(0);
+    EditionReference u2 = l.childAtIndex(1);
+    if (u1.type() != BlockType::Addition && u2.type() != BlockType::Addition) {
+      // SPRDREC1
+      if (IsConstant(u1) && IsConstant(u2)) {
+        EditionReference P = SimplifyRNE(l);
+        if (P.matchAndReplace(0_e, KAdd())) {
+          return P;
+        }
+        return WrapWithUnary(P, KAdd());
+      }
+      if (u1.type() == BlockType::Zero) {
+        return WrapWithUnary(u2, KAdd());
+      }
+      if (u2.type() == BlockType::Zero) {
+        return WrapWithUnary(u1, KAdd());
+      }
+      if (Compare(term(u1), term(u2)) == 0) {
+        EditionReference c1 = constant(u1);
+        EditionReference c2 = constant(u2);
+        EditionReference sum = P_ADD(c1.clone(), c2.clone());
+        EditionReference S = SimplifySum(sum);
+        EditionReference t1 = term(u1);
+        EditionReference P = SimplifyProduct(P_MULT(S.clone(), t1.clone()));
+        if (P.matchAndReplace(0_e, KAdd())) {
+          return P;
+        }
+        return WrapWithUnary(P, KAdd());
+      }
+      if (Compare(u2, u1) < 0) {
+        l.matchAndReplace(KAdd(KA, KB), KAdd(KB, KA));
+        return l;
+      }
+      return l;
+    } else {
+      // SPRDREC2
+      if (u1.type() == BlockType::Addition &&
+          u2.type() == BlockType::Addition) {
+        return MergeSums(u1, u2);
+      }
+      if (u1.type() == BlockType::Addition) {
+        EditionReference sum = P_ADD(u2.clone());
+        return MergeSums(u1, sum);
+      }
+      assert(u2.type() == BlockType::Addition);
+      EditionReference sum = P_ADD(u1.clone());
+      return MergeSums(sum, u2);
+    }
+  }
+  EditionReference u1 = EditionReference(l.childAtIndex(0)).clone();
+  EditionReference w = SimplifySumRec(RestAdd(l));
+  if (u1.type() == BlockType::Addition) {
+    return MergeSums(u1, w);
+  }
+  EditionReference sum = P_ADD(u1.clone());
+  return MergeSums(sum, w);
+}
+
+EditionReference MergeSums(EditionReference p, EditionReference q) {
+  if (q.numberOfChildren() == 0) {
+    return p;
+  }
+  if (p.numberOfChildren() == 0) {
+    return q;
+  }
+  EditionReference p1 = p.childAtIndex(0);
+  EditionReference q1 = q.childAtIndex(0);
+  EditionReference h = SimplifySumRec(P_ADD(p1.clone(), q1.clone()));
+  if (h.numberOfChildren() == 0) {
+    return MergeSums(RestAdd(p), RestAdd(q));
+  }
+  if (h.numberOfChildren() == 1) {
+    return AdjoinAdd(h.childAtIndex(0), MergeSums(RestAdd(p), RestAdd(q)));
+  }
+  if (Compare(h.childAtIndex(0), p1) == 0) {
+    assert(Compare(h.childAtIndex(1), q1) == 0);
+    return AdjoinAdd(p1.clone(), MergeSums(RestAdd(p), q));
+  }
+  if (Compare(h.childAtIndex(0), q1) == 0) {
+    assert(Compare(h.childAtIndex(1), p1) == 0);
+    return AdjoinAdd(q1.clone(), MergeSums(p, RestAdd(q)));
+  }
+  assert(false);
+}
+
+EditionReference SimplifySum(EditionReference u) {
+  if (u.matchAndReplace(KAdd(KA), KA)) {
+    return u;
+  }
+  EditionReference v = SimplifySumRec(u);
+  assert(v.type() == BlockType::Addition);
+  if (v.numberOfChildren() == 0) {
+    return u.replaceTreeByNode(1_e);
+  }
+  if (v.numberOfChildren() == 1) {
+    return v.childAtIndex(0);
+  }
+  return v;
+}
+
+EditionReference SimplifyRNERec(EditionReference u) {
+  if (IsInteger(u)) {
+    return u;
+  }
+  if (IsRational(u)) {
+    return Rational::Denominator(u).isZero() ? EditionReference(P_UNDEF()) : u;
+  }
+  if (u.numberOfChildren() == 1) {
+    return SimplifyRNERec(u.childAtIndex(0));
+  }
+  if (u.numberOfChildren() == 2) {
+    if (u.type() == BlockType::Addition ||
+        u.type() == BlockType::Multiplication) {
+      EditionReference v = SimplifyRNERec(u.childAtIndex(0));
+      if (IsUndef(v)) {
+        return v;
+      }
+      EditionReference w = SimplifyRNERec(u.childAtIndex(1));
+      if (IsUndef(w)) {
+        return w;
+      }
+      if (u.type() == BlockType::Addition) {
+        return IntegerHandler::Addition(Integer::Handler(v),
+                                        Integer::Handler(w));
+        // return Rational::Addition(v, w);
+      }
+      assert(u.type() == BlockType::Multiplication);
+      return Rational::Multiplication(v, w);
+    }
+    if (u.type() == BlockType::Power) {
+      EditionReference v = SimplifyRNERec(u.childAtIndex(0));
+      if (IsUndef(v)) {
+        return v;
+      }
+      return Rational::IntegerPower(v, u.childAtIndex(1));
+    }
+  }
+  assert(false);
+}
+
+EditionReference SimplifyRNE(EditionReference u) {
+  EditionReference v = SimplifyRNERec(u);
+  if (IsUndef(v)) {
+    return v;
+  }
+  return SimplifyRational(v);
+}
+
+int Compare(Node u, Node v) {
+  if (IsConstant(u) && IsConstant(v)) {
+    return IntegerHandler::Compare(Integer::Handler(u), Integer::Handler(v));
+  }
+  if (u.type() == BlockType::Undefined && v.type() == BlockType::UserSymbol) {
+    return -1;
+  }
+  if (u.type() == BlockType::UserSymbol && v.type() == BlockType::Undefined) {
+    return 1;
+  }
+  if (u.type() == BlockType::UserSymbol && v.type() == BlockType::UserSymbol) {
+    return std::memcmp(reinterpret_cast<const char*>(u.block() + 2),
+                       reinterpret_cast<const char*>(v.block() + 2),
+                       std::max(static_cast<uint8_t>(*(u.block() + 1)),
+                                static_cast<uint8_t>(*(v.block() + 1))));
+  }
+  if (u.type() == v.type()) {
+    if (u.type() == BlockType::Addition ||
+        u.type() == BlockType::Multiplication) {
+      int m = std::min(u.numberOfChildren(), v.numberOfChildren());
+      for (int j = 1; j <= m; j++) {
+        int c = Compare(u.childAtIndex(u.numberOfChildren() - j),
+                        v.childAtIndex(v.numberOfChildren() - j));
+        if (c != 0) {
+          return c;
+        }
+      }
+      if (u.numberOfChildren() < v.numberOfChildren()) {
+        return -1;
+      }
+      if (u.numberOfChildren() > v.numberOfChildren()) {
+        return 1;
+      }
+      return 0;
+    }
+    if (u.type() == BlockType::Power) {
+      int c = Compare(u.childAtIndex(0), u.childAtIndex(0));
+      return c ? c : Compare(u.childAtIndex(1), u.childAtIndex(1));
+    }
+    assert(false);
+  }
+  if (IsConstant(u) && !IsConstant(v)) {
+    return -1;
+  }
+  if (u.type() == BlockType::Multiplication &&
+      (v.type() == BlockType::Power || v.type() == BlockType::Addition ||
+       v.type() == BlockType::UserSymbol || v.type() == BlockType::Undefined)) {
+    return Compare(u, P_MULT(P_CLONE(v)));
+  }
+  if (u.type() == BlockType::Power &&
+      (v.type() == BlockType::Addition || v.type() == BlockType::UserSymbol ||
+       v.type() == BlockType::Undefined)) {
+    return Compare(u, P_POW(P_CLONE(v), P_ONE()));
+  }
+  if (u.type() == BlockType::Addition &&
+      (v.type() == BlockType::UserSymbol || v.type() == BlockType::Undefined)) {
+    return Compare(u, P_ADD(P_CLONE(v)));
+  }
+  return -Compare(v, u);
+}
 
 EditionReference Simplification::SystematicReduction(
     EditionReference reference) {
@@ -59,7 +586,7 @@ bool Simplification::Contract(EditionReference* e) {
       /* These contract methods replace with a Multiplication.
        * They must be called successively, so a | is used instead of || so that
        * there are all evaluated. */
-      return ContractAbs(e) | ContractTrigonometric(e) | ContractExpMult(e);
+      return ContractAbs(e) + ContractTrigonometric(e) + ContractExpMult(e);
     case BlockType::Power:
       // Replace with an Exponential, which cannot be contracted further.
       return ContractExpPow(e);

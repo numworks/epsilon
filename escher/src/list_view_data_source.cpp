@@ -49,15 +49,15 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int row) {
   return heightForCellAtIndex(reusableCell(typeIndex, type), row);
 }
 
-KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(
-    HighlightCell* tempCell, int index) {
-  assert(0 <= index && index < numberOfRows());
+KDCoordinate ListViewDataSource::heightForCellAtRowWithWidthInit(
+    HighlightCell* tempCell, int row) {
+  assert(0 <= row && row < numberOfRows());
   if (!tempCell->isVisible()) {
     return 0;
   }
   // Warning: this copies the size of a random cell of the table.
-  tempCell->setSize(reusableCell(0, typeAtRow(index))->bounds().size());
-  return heightForCellAtIndex(tempCell, index);
+  tempCell->setSize(reusableCell(0, typeAtRow(row))->bounds().size());
+  return heightForCellAtIndex(tempCell, row);
 }
 
 KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell* cell,

@@ -95,7 +95,7 @@ bool DetailsListController::canStoreContentOfCell(SelectableListView *l,
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int row) {
   PhysicalQuantityCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, row);
+  return heightForCellAtRowWithWidthInit(&tempCell, row);
 }
 
 const DataField *DetailsListController::DataFieldForRow(int row) {

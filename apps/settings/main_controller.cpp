@@ -142,7 +142,7 @@ KDCoordinate MainController::nonMemoizedRowHeight(int row) {
       return heightForCellAtIndex(&m_resetButton, row);
     default:
       SubMenuCell tempCell;
-      return heightForCellAtIndexWithWidthInit(&tempCell, row);
+      return heightForCellAtRowWithWidthInit(&tempCell, row);
   }
 }
 

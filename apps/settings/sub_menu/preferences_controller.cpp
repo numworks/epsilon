@@ -123,7 +123,7 @@ void PreferencesController::willDisplayCellAtRow(HighlightCell *cell, int row) {
 
 KDCoordinate PreferencesController::nonMemoizedRowHeight(int row) {
   MenuCell<MessageTextView, LayoutView> tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, row);
+  return heightForCellAtRowWithWidthInit(&tempCell, row);
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,

@@ -111,10 +111,10 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int row) {
   int cellType = typeAndOriginAtLocation(row);
   if (cellType == k_itemCellType) {
     MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, row);
+    return heightForCellAtRowWithWidthInit(&tempCell, row);
   }
   SubtitleCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, row);
+  return heightForCellAtRowWithWidthInit(&tempCell, row);
 }
 
 int VariableBoxController::numberOfRows() const {

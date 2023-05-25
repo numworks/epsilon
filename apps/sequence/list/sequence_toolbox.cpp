@@ -51,7 +51,7 @@ void SequenceToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_addedCellType) {
     MenuCell<LayoutView> tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, row);
+    return heightForCellAtRowWithWidthInit(&tempCell, row);
   }
   return MathToolbox::nonMemoizedRowHeight(row);
 }

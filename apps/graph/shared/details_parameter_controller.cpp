@@ -41,7 +41,7 @@ void DetailsParameterController::viewWillAppear() {
 
 KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int row) {
   DetailCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, row);
+  return heightForCellAtRowWithWidthInit(&tempCell, row);
 }
 
 void DetailsParameterController::willDisplayCellAtRow(HighlightCell *cell,

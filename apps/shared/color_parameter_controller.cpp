@@ -50,7 +50,7 @@ void ColorParameterController::willDisplayCellAtRow(HighlightCell *cell,
 KDCoordinate ColorParameterController::defaultRowHeight() {
   // Use the first row as template for all heights.
   ColorCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, 0);
+  return heightForCellAtRowWithWidthInit(&tempCell, 0);
 }
 
 ExpiringPointer<Function> ColorParameterController::function() {

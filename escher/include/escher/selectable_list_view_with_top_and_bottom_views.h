@@ -30,8 +30,9 @@ class ListViewWithTopAndBottomViewsDataSource
   int typeAtIndex(int index) const override;
 
  private:
-  constexpr static int k_topCellType = 1000;
-  constexpr static int k_bottomCellType = 1001;
+  constexpr static int k_topCellType = 0;
+  constexpr static int k_bottomCellType = 1;
+  constexpr static int k_cellTypeOffset = 2;
 
   class ViewCell : public HighlightCell {
    public:

@@ -46,9 +46,9 @@ const char *DetailsListController::title() {
       App::app()->elementsViewDataSource()->selectedElement()));
 }
 
-KDCoordinate DetailsListController::separatorBeforeRow(int index) {
-  assert(index < numberOfRows());
-  const DataField *dataField = DataFieldForRow(index);
+KDCoordinate DetailsListController::separatorBeforeRow(int row) {
+  assert(row < numberOfRows());
+  const DataField *dataField = DataFieldForRow(row);
   if (dataField == &ElementsDataBase::ConfigurationField ||
       dataField == &ElementsDataBase::GroupField ||
       dataField == &ElementsDataBase::RadiusField ||

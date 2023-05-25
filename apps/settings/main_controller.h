@@ -44,7 +44,7 @@ class MainController : public Escher::SelectableListViewController<
   int reusableCellCount(int type) override;
   int typeAtRow(int row) const override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
-  KDCoordinate separatorBeforeRow(int index) override;
+  KDCoordinate separatorBeforeRow(int row) override;
   void viewWillAppear() override;
   bool hasTestModeCell() const;
   TELEMETRY_ID("");

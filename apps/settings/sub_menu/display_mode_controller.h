@@ -23,10 +23,10 @@ class DisplayModeController : public PreferencesController,
     return (row == numberOfRows() - 1) ? k_significantDigitsType
                                        : k_resultFormatType;
   }
-  KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtRow(index) == k_significantDigitsType
+  KDCoordinate separatorBeforeRow(int row) override {
+    return typeAtRow(row) == k_significantDigitsType
                ? k_defaultRowSeparator
-               : PreferencesController::separatorBeforeRow(index);
+               : PreferencesController::separatorBeforeRow(row);
   }
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,

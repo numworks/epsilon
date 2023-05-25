@@ -43,7 +43,7 @@ class TableViewDataSource {
   int indexAfterCumulatedHeight(KDCoordinate offsetY);
 
   virtual KDCoordinate separatorBeforeColumn(int index) { return 0; }
-  virtual KDCoordinate separatorBeforeRow(int index) { return 0; }
+  virtual KDCoordinate separatorBeforeRow(int row) { return 0; }
 
   virtual HighlightCell* reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;

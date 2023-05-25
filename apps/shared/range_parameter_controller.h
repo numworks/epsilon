@@ -33,7 +33,7 @@ class RangeParameterController
   Escher::HighlightCell *reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
-  KDCoordinate separatorBeforeRow(int index) override;
+  KDCoordinate separatorBeforeRow(int row) override;
 
   void viewWillAppear() override;
   void viewDidDisappear() override;

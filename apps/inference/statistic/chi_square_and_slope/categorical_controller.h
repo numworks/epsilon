@@ -50,8 +50,8 @@ class CategoricalController
   int numberOfRows() const override { return indexOfNextCell() + 1; }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
-  KDCoordinate separatorBeforeRow(int index) override {
-    return index == indexOfNextCell() ? k_defaultRowSeparator : 0;
+  KDCoordinate separatorBeforeRow(int row) override {
+    return row == indexOfNextCell() ? k_defaultRowSeparator : 0;
   }
 
  protected:

@@ -34,8 +34,8 @@ class CurveParameterController
 
  private:
   constexpr static int k_numberOfRows = 5;
-  KDCoordinate separatorBeforeRow(int index) override {
-    return cell(index) == &m_calculationCell ? k_defaultRowSeparator : 0;
+  KDCoordinate separatorBeforeRow(int row) override {
+    return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
 
   float parameterAtIndex(int index) override;

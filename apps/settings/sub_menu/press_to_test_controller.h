@@ -26,8 +26,8 @@ class PressToTestController : public Escher::ListWithTopAndBottomController {
   int reusableCellCount(int type) override;
   void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtRow(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+  KDCoordinate separatorBeforeRow(int row) override {
+    return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
   Poincare::ExamMode::PressToTestFlags getPressToTestParams();
   void resetController();

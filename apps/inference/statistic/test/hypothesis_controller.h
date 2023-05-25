@@ -42,8 +42,8 @@ class HypothesisController
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell* cell(int i) override;
   int numberOfRows() const override { return 3; }
-  KDCoordinate separatorBeforeRow(int index) override {
-    return cell(index) == &m_next ? k_defaultRowSeparator : 0;
+  KDCoordinate separatorBeforeRow(int row) override {
+    return cell(row) == &m_next ? k_defaultRowSeparator : 0;
   }
 
   // TextFieldDelegate

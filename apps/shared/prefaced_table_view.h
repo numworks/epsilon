@@ -102,9 +102,9 @@ class PrefacedTableView : public Escher::View,
       return m_mainDataSource->separatorBeforeColumn(
           columnIndexInMainDataSource(index));
     }
-    KDCoordinate separatorBeforeRow(int index) override {
+    KDCoordinate separatorBeforeRow(int row) override {
       return m_mainDataSource->separatorBeforeRow(
-          rowIndexInMainDataSource(index));
+          rowIndexInMainDataSource(row));
     }
 
    protected:
@@ -137,7 +137,7 @@ class PrefacedTableView : public Escher::View,
 
     KDCoordinate cumulatedHeightBeforePrefaceRow() const;
     int numberOfRows() const override { return 1; }
-    KDCoordinate separatorBeforeRow(int index) override { return 0; }
+    KDCoordinate separatorBeforeRow(int row) override { return 0; }
 
    private:
     KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;

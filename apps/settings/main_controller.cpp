@@ -256,9 +256,9 @@ void MainController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   myTextCell->subLabel()->setMessage(subtitle);
 }
 
-KDCoordinate MainController::separatorBeforeRow(int index) {
-  return typeAtRow(index) == k_brightnessCellType ||
-                 typeAtRow(index) == k_resetCellType
+KDCoordinate MainController::separatorBeforeRow(int row) {
+  return typeAtRow(row) == k_brightnessCellType ||
+                 typeAtRow(row) == k_resetCellType
              ? k_defaultRowSeparator
              : 0;
 }

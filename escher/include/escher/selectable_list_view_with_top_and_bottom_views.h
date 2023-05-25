@@ -78,7 +78,7 @@ class SelectableListViewWithTopAndBottomViews
 
   View* view() override { return &m_selectableListView; }
   void resetMemoization(bool force = true) override {
-    return m_dataSource.resetMemoization(force);
+    return m_outerDataSource.resetMemoization(force);
   }
   void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,
@@ -93,21 +93,22 @@ class SelectableListViewWithTopAndBottomViews
 
   void didBecomeFirstResponder() override;
   int innerRowFromRow(int row) const {
-    assert(row >= m_dataSource.hasTopView());
-    return row - m_dataSource.hasTopView();
+    assert(row >= m_outerDataSource.hasTopView());
+    return row - m_outerDataSource.hasTopView();
   }
   int innerSelectedRow() const { return innerRowFromRow(selectedRow()); }
-  void selectFirstCell() { selectCell(m_dataSource.hasTopView()); }
+  void selectFirstCell() { selectCell(m_outerDataSource.hasTopView()); }
   void selectLastCell() {
-    selectCell(m_dataSource.numberOfRows() - 1 - m_dataSource.hasBottomView());
+    selectCell(m_outerDataSource.numberOfRows() - 1 -
+               m_outerDataSource.hasBottomView());
   }
-  void setTopView(View* view) { m_dataSource.setTopView(view); }
-  void setBottomView(View* view) { m_dataSource.setBottomView(view); }
+  void setTopView(View* view) { m_outerDataSource.setTopView(view); }
+  void setBottomView(View* view) { m_outerDataSource.setBottomView(view); }
 
   SelectableListView m_selectableListView;
 
  private:
-  ListViewWithTopAndBottomViewsDataSource m_dataSource;
+  ListViewWithTopAndBottomViewsDataSource m_outerDataSource;
 };
 
 }  // namespace Escher

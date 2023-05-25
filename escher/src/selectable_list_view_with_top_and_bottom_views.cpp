@@ -79,8 +79,8 @@ SelectableListViewWithTopAndBottomViews::
     SelectableListViewWithTopAndBottomViews(Responder* parentResponder,
                                             View* topView, View* bottomView)
     : SelectableViewController(parentResponder),
-      m_selectableListView(this, &m_dataSource, this, this),
-      m_dataSource(this, topView, bottomView) {
+      m_selectableListView(this, &m_outerDataSource, this, this),
+      m_outerDataSource(this, topView, bottomView) {
   m_selectableListView.setTopMargin(Metric::CommonLargeMargin);
   m_selectableListView.setBottomMargin(Metric::CommonLargeMargin);
 }
@@ -91,19 +91,19 @@ void SelectableListViewWithTopAndBottomViews::
                                            KDPoint previousOffset,
                                            bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
-  assert(!m_dataSource.hasTopView() || l->selectedRow() != 0);
-  assert(!m_dataSource.hasBottomView() ||
-         l->selectedRow() != m_dataSource.numberOfRows() - 1);
+  assert(!m_outerDataSource.hasTopView() || l->selectedRow() != 0);
+  assert(!m_outerDataSource.hasBottomView() ||
+         l->selectedRow() != m_outerDataSource.numberOfRows() - 1);
   if (withinTemporarySelection) {
     return;
   }
-  if (m_dataSource.hasTopView() && l->selectedRow() == 1) {
+  if (m_outerDataSource.hasTopView() && l->selectedRow() == 1) {
     // Show top view
     l->scrollToCell(0);
-  } else if (m_dataSource.hasBottomView() &&
-             l->selectedRow() == m_dataSource.numberOfRows() - 2) {
+  } else if (m_outerDataSource.hasBottomView() &&
+             l->selectedRow() == m_outerDataSource.numberOfRows() - 2) {
     // Show bottom view
-    l->scrollToCell(m_dataSource.numberOfRows() - 1);
+    l->scrollToCell(m_outerDataSource.numberOfRows() - 1);
   }
 }
 

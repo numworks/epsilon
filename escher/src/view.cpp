@@ -98,15 +98,24 @@ void View::setFrame(KDRect frame, bool force) {
     if (frame == m_frame) {
       return;
     }
-    if (frame.size() == m_frame.size()) {
+    /* This optimization avoids calling layoutSubviews each time the frame is
+     * just translated. The problem is that subviewAtIndex is sometimes a bit
+     * unreliable since some views have different subviews depending on their
+     * current state. (thats why we can't assert that `child` is a subview of
+     * `this` in `setChildFrame`). So this might cause some problems in the
+     * future and might need a bit of rework.
+     * Also m_frame.isEmpty() must be escaped because layoutSubviews is also
+     * escaped when m_frame.isEmpty(). If not, a subview could be translated
+     * while not having been properly re-layouted earlier. */
+    if (frame.size() == m_frame.size() && !m_frame.isEmpty()) {
       translate(frame.origin().relativeTo(m_frame.origin()));
       markWholeFrameAsDirty();
       return;
     }
   }
+
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */
-
   m_frame = frame;
 
   /* Now that we have moved, we have also dirtied our new absolute frame.

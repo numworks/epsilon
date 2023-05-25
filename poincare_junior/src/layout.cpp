@@ -1,8 +1,10 @@
 #include <ion/unicode/code_point.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/p_pusher.h>
 #include <poincare_junior/src/layout/render.h>
+#include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 #include <string.h>
 
@@ -46,16 +48,58 @@ EditionReference Layout::EditionPoolTextToLayout(const char *text) {
   return ref;
 }
 
+char *append(const char *text, char *buffer, char *end) {
+  size_t len = std::min<size_t>(strlen(text), end - buffer);
+  memcpy(buffer, text, len);
+  return buffer + len;
+}
+
+char *Layout::Serialize(EditionReference layout, char *buffer, char *end) {
+  switch (layout.type()) {
+    case BlockType::CodePointLayout: {
+      constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
+      char codepointBuffer[bufferSize];
+      CodePointLayout::GetName(layout, codepointBuffer, bufferSize);
+      buffer = append(codepointBuffer, buffer, end);
+      break;
+    }
+    case BlockType::ParenthesisLayout: {
+      buffer = append("(", buffer, end);
+      buffer = Serialize(layout.childAtIndex(0), buffer, end);
+      buffer = append(")", buffer, end);
+      break;
+    }
+    case BlockType::RackLayout: {
+      for (auto [child, index] :
+           NodeIterator::Children<Forward, NoEditable>(layout)) {
+        buffer = Serialize(child, buffer, end);
+        if (buffer == end) {
+          return end;
+        }
+      }
+      break;
+    }
+    case BlockType::FractionLayout: {
+      buffer = Serialize(layout.childAtIndex(0), buffer, end);
+      buffer = append("/", buffer, end);
+      buffer = Serialize(layout.childAtIndex(1), buffer, end);
+      break;
+    }
+    case BlockType::VerticalOffsetLayout: {
+      buffer = append("^(", buffer, end);
+      buffer = Serialize(layout.childAtIndex(0), buffer, end);
+      buffer = append(")", buffer, end);
+      break;
+    }
+    default:
+      buffer = append("?", buffer, end);
+  }
+  return buffer;
+}
+
 Layout Layout::Parse(const char *textInput) {
   return Layout([](const char *text) { EditionPoolTextToLayout(text); },
                 textInput);
-}
-
-size_t Layout::toText(char *buffer, size_t bufferSize) const {
-  size_t layoutTextLength = strlen("-1+2*3");
-  assert(bufferSize > layoutTextLength);
-  memcpy(buffer, "-1+2*3", bufferSize);
-  return layoutTextLength;
 }
 
 void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,

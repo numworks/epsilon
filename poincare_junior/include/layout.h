@@ -25,14 +25,13 @@ class Layout final : public Reference {
   }
   using Reference::Reference;
   static Layout Parse(const char* text);
-  size_t toText(char* buffer, size_t bufferSize) const;
   void draw(KDContext* ctx, KDPoint p, KDFont::Size font,
             KDColor expressionColor = KDColorBlack,
             KDColor backgroundColor = KDColorWhite) const;
   KDSize size(KDFont::Size font) const;
   bool isEmpty() const;
 
- private:
+  static char* Serialize(EditionReference layout, char* buffer, char* end);
   static EditionReference EditionPoolTextToLayout(const char* text);
 };
 

@@ -116,7 +116,7 @@ class PrefacedTableView : public Escher::View,
 
     /* WARNING: This method works only if columnIndexInMainDataSource(i) == i.
      * Else, it should be overriden.*/
-    int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
+    int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
     /* WARNING: This method works only if rowIndexInMainDataSource(j) == j.
      * Else, it should be overriden.*/
     int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) override;

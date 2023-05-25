@@ -80,7 +80,7 @@ class TableViewDataSource {
   virtual KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column);
   virtual KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row);
   virtual int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX);
-  virtual int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY);
+  virtual int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY);
 
   /* These handle the potential memoization of sizes, the computation of
    * cumulatedXBeforeIndex, and the computation of indexAfterCumulatedX.

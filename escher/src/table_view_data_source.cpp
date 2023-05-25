@@ -121,7 +121,7 @@ int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
       return result;
     }
   }
-  return nonMemoizedIndexAfterCumulatedHeight(offsetY);
+  return nonMemoizedRowAfterCumulatedHeight(offsetY);
 }
 
 int TableViewDataSource::nonMemoizedColumnAfterCumulatedWidth(
@@ -137,7 +137,7 @@ int TableViewDataSource::nonMemoizedColumnAfterCumulatedWidth(
   return nColumns;
 }
 
-int TableViewDataSource::nonMemoizedIndexAfterCumulatedHeight(
+int TableViewDataSource::nonMemoizedRowAfterCumulatedHeight(
     KDCoordinate offsetY) {
   int nRows = numberOfRows();
   KDCoordinate cumulatedHeight = 0;

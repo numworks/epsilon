@@ -110,7 +110,7 @@ int TableViewDataSource::indexAfterCumulatedWidth(KDCoordinate offsetX) {
       return result;
     }
   }
-  return nonMemoizedIndexAfterCumulatedWidth(offsetX);
+  return nonMemoizedColumnAfterCumulatedWidth(offsetX);
 }
 
 int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
@@ -124,7 +124,7 @@ int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
   return nonMemoizedIndexAfterCumulatedHeight(offsetY);
 }
 
-int TableViewDataSource::nonMemoizedIndexAfterCumulatedWidth(
+int TableViewDataSource::nonMemoizedColumnAfterCumulatedWidth(
     KDCoordinate offsetX) {
   int nColumns = numberOfColumns();
   KDCoordinate cumulatedWidth = 0;

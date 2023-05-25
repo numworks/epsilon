@@ -44,7 +44,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
    private:
     Escher::HighlightCell* reusableCell(int index, int type) override;
     KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
-    int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
+    int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
 
     int columnIndexInMainDataSource(int i) override {
       assert(i == 0 || i == 1);

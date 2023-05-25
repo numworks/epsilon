@@ -202,7 +202,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
 }
 
 int PrefacedTwiceTableView::ColumnPrefaceDataSource::
-    nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) {
+    nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   int result =

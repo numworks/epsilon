@@ -79,7 +79,7 @@ class TableViewDataSource {
    * We might find a way to avoid having this in the vtable ? */
   virtual KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column);
   virtual KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row);
-  virtual int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX);
+  virtual int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX);
   virtual int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY);
 
   /* These handle the potential memoization of sizes, the computation of

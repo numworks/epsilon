@@ -39,7 +39,7 @@ class StoreController : public EditableCellTableViewController,
   int typeAtLocation(int i, int j) override;
   void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
                                  int row) override;
-  KDCoordinate separatorBeforeColumn(int index) override;
+  KDCoordinate separatorBeforeColumn(int column) override;
 
   // ViewController
   Escher::View* view() override { return &m_prefacedTableView; }

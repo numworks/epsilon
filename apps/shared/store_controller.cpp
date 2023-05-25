@@ -117,8 +117,8 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
       cell, column, row, Preferences::sharedPreferences->displayMode());
 }
 
-KDCoordinate StoreController::separatorBeforeColumn(int index) {
-  return index > 0 && m_store->relativeColumnIndex(index) == 0
+KDCoordinate StoreController::separatorBeforeColumn(int column) {
+  return column > 0 && m_store->relativeColumnIndex(column) == 0
              ? Escher::Metric::TableSeparatorThickness
              : 0;
 }

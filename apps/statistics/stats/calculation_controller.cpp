@@ -238,8 +238,8 @@ int CalculationController::typeAtLocation(int i, int j) {
   return k_calculationCellType;
 }
 
-KDCoordinate CalculationController::separatorBeforeColumn(int index) {
-  return typeAtLocation(index, 0) == k_seriesTitleCellType
+KDCoordinate CalculationController::separatorBeforeColumn(int column) {
+  return typeAtLocation(column, 0) == k_seriesTitleCellType
              ? Escher::Metric::TableSeparatorThickness
              : 0;
 }

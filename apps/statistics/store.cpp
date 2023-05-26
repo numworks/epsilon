@@ -44,7 +44,7 @@ void Store::invalidateSortedIndexes() {
 
 /* Data */
 
-int Store::relativeColumnIndex(int i) const {
+int Store::relativeColumn(int i) const {
   computeRelativeColumnAndSeries(&i);
   return i;
 }

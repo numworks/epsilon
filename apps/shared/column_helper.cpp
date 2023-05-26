@@ -68,7 +68,7 @@ int StoreColumnHelper::formulaMemoizationIndex(int column) {
   // Index without ECC which can't be modified
   return DoublePairStore::k_numberOfColumnsPerSeries *
              store()->seriesAtColumn(column) +
-         store()->relativeColumnIndex(column);
+         store()->relativeColumn(column);
 }
 
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
@@ -87,7 +87,7 @@ bool StoreColumnHelper::switchSelectedColumnHideStatus() {
 
 void StoreColumnHelper::sortSelectedColumn() {
   store()->sortColumn(selectedSeries(),
-                      store()->relativeColumnIndex(referencedColumn()));
+                      store()->relativeColumn(referencedColumn()));
 }
 
 void StoreColumnHelper::displayFormulaInput() {
@@ -146,7 +146,7 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
 
 bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   assert(!formula.isUninitialized());
-  int columnToFill = store()->relativeColumnIndex(referencedColumn());
+  int columnToFill = store()->relativeColumn(referencedColumn());
   int seriesToFill = store()->seriesAtColumn(referencedColumn());
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
@@ -236,7 +236,7 @@ void StoreColumnHelper::reloadSeriesVisibleCells(int series,
   for (int i = 0; i < nbOfColumns; i++) {
     if (store()->seriesAtColumn(i) == series &&
         (relativeColumn == -1 ||
-         relativeColumn == store()->relativeColumnIndex(i))) {
+         relativeColumn == store()->relativeColumn(i))) {
       table()->reloadVisibleCellsAtColumn(i);
     }
   }

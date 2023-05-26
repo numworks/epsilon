@@ -23,15 +23,15 @@ void StoreParameterController::initializeColumnParameters() {
   // Number of cells and cells size may change when switching between columns
   resetMemoization();
   Shared::StoreParameterController::initializeColumnParameters();
-  int relativeColumnIndex = m_store->relativeColumnIndex(m_columnIndex);
-  m_isCumulatedFrequencyColumnSelected = relativeColumnIndex == 2;
+  int relativeColumn = m_store->relativeColumn(m_column);
+  m_isCumulatedFrequencyColumnSelected = relativeColumn == 2;
   // Initialize clear column message
-  if (relativeColumnIndex == 1) {
+  if (relativeColumn == 1) {
     m_clearColumn.label()->setMessageWithPlaceholders(
         I18n::Message::ResetFrequencies);
     return;
   }
-  if (relativeColumnIndex == 0) {
+  if (relativeColumn == 0) {
     int series = m_storeColumnHelper->selectedSeries();
     char tableName[StoreController::k_tableNameSize];
     StoreController::FillSeriesName(series, tableName);
@@ -39,7 +39,7 @@ void StoreParameterController::initializeColumnParameters() {
                                                       tableName);
     return;
   }
-  assert(relativeColumnIndex == 2);
+  assert(relativeColumn == 2);
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
@@ -55,7 +55,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     if (cell == &m_hideCumulatedFrequencyCell) {
       // We are in the options of column CF
       assert(previousStatus);
-      m_storeColumnHelper->selectColumn(m_columnIndex - 1);
+      m_storeColumnHelper->selectColumn(m_column - 1);
       m_hideCumulatedFrequencyCell.setHighlighted(false);
       stackView()->pop();
     } else {

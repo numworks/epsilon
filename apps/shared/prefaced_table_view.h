@@ -87,19 +87,19 @@ class PrefacedTableView : public Escher::View,
     void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
                                    int row) override {
       m_mainDataSource->willDisplayCellAtLocation(
-          cell, columnIndexInMainDataSource(column), rowInMainDataSource(row));
+          cell, columnInMainDataSource(column), rowInMainDataSource(row));
     }
     Escher::HighlightCell* reusableCell(int index, int type) override;
     int reusableCellCount(int type) override {
       return m_mainDataSource->reusableCellCount(type);
     }
     int typeAtLocation(int column, int row) override {
-      return m_mainDataSource->typeAtLocation(
-          columnIndexInMainDataSource(column), rowInMainDataSource(row));
+      return m_mainDataSource->typeAtLocation(columnInMainDataSource(column),
+                                              rowInMainDataSource(row));
     }
     KDCoordinate separatorBeforeColumn(int column) override {
       return m_mainDataSource->separatorBeforeColumn(
-          columnIndexInMainDataSource(column));
+          columnInMainDataSource(column));
     }
     KDCoordinate separatorBeforeRow(int row) override {
       return m_mainDataSource->separatorBeforeRow(rowInMainDataSource(row));
@@ -112,14 +112,14 @@ class PrefacedTableView : public Escher::View,
     KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
     KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;
 
-    /* WARNING: This method works only if columnIndexInMainDataSource(i) == i.
+    /* WARNING: This method works only if columnInMainDataSource(i) == i.
      * Else, it should be overriden.*/
     int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
     /* WARNING: This method works only if rowInMainDataSource(j) == j.
      * Else, it should be overriden.*/
     int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) override;
 
-    virtual int columnIndexInMainDataSource(int i) { return i; }
+    virtual int columnInMainDataSource(int i) { return i; }
     virtual int rowInMainDataSource(int j) { return j; }
 
     Escher::TableViewDataSource* m_mainDataSource;

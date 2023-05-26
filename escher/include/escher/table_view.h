@@ -20,7 +20,7 @@ class TableView : public ScrollView {
     m_contentView.setVerticalCellOverlap(o);
   }
   int firstDisplayedRow() const { return m_contentView.rowsScrollingOffset(); }
-  int firstDisplayedColumnIndex() const {
+  int firstDisplayedColumn() const {
     return m_contentView.columnsScrollingOffset();
   }
   int numberOfDisplayableRows() const {
@@ -125,7 +125,7 @@ class TableView : public ScrollView {
     }
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
-    int absoluteColumnIndexFromSubviewIndex(int index) const {
+    int absoluteColumnFromSubviewIndex(int index) const {
       return (index % numberOfDisplayableColumns()) + columnsScrollingOffset();
     }
     int absoluteRowFromSubviewIndex(int index) const {

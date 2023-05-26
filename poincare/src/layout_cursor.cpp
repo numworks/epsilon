@@ -1107,8 +1107,8 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
       int currentIndex = m_layout.parent().indexOfChild(m_layout);
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
       assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
-      newIndex = gridNode->indexAtRowColumn(
-          currentRow - 1, gridNode->rightmostNonGrayColumnIndex());
+      newIndex = gridNode->indexAtRowColumn(currentRow - 1,
+                                            gridNode->rightmostNonGrayColumn());
     }
     m_layout = m_layout.parent().childAtIndex(newIndex);
     m_position = rightmostPosition();

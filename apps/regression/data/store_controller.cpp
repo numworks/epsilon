@@ -20,7 +20,7 @@ StoreController::StoreController(
 
 void StoreController::clearSelectedColumn() {
   int series = m_store->seriesAtColumn(selectedColumn());
-  m_store->deleteColumn(series, m_store->relativeColumnIndex(selectedColumn()));
+  m_store->deleteColumn(series, m_store->relativeColumn(selectedColumn()));
   selectCellAtLocation(selectedColumn(), 1);
   resetMemoizedFormulasOfEmptyColumns(series);
 }

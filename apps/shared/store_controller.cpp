@@ -118,20 +118,20 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
 }
 
 KDCoordinate StoreController::separatorBeforeColumn(int column) {
-  return column > 0 && m_store->relativeColumnIndex(column) == 0
+  return column > 0 && m_store->relativeColumn(column) == 0
              ? Escher::Metric::TableSeparatorThickness
              : 0;
 }
 
-void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {
+void StoreController::setTitleCellText(HighlightCell *cell, int column) {
   // Default : put column name in titleCell
   BufferFunctionTitleCell *myTitleCell =
       static_cast<BufferFunctionTitleCell *>(cell);
-  fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
+  fillColumnName(column, const_cast<char *>(myTitleCell->text()));
 }
 
-void StoreController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
-  int seriesIndex = m_store->seriesAtColumn(columnIndex);
+void StoreController::setTitleCellStyle(HighlightCell *cell, int column) {
+  int seriesIndex = m_store->seriesAtColumn(column);
   Shared::BufferFunctionTitleCell *myCell =
       static_cast<Shared::BufferFunctionTitleCell *>(cell);
   // TODO Share GrayDark with graph/list_controller
@@ -198,8 +198,8 @@ int StoreController::numberOfRowsAtColumn(int i) const {
 
 bool StoreController::deleteCellValue(int series, int i, int j,
                                       bool authorizeNonEmptyRowDeletion) {
-  return m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(i),
-                                     j - 1, authorizeNonEmptyRowDeletion);
+  return m_store->deleteValueAtIndex(series, m_store->relativeColumn(i), j - 1,
+                                     authorizeNonEmptyRowDeletion);
 }
 
 StackViewController *StoreController::stackController() const {
@@ -212,31 +212,29 @@ Escher::TabViewController *StoreController::tabController() const {
       parentResponder()->parentResponder()->parentResponder());
 }
 
-bool StoreController::cellAtLocationIsEditable(int columnIndex, int row) {
-  return typeAtLocation(columnIndex, row) == k_editableCellType;
+bool StoreController::cellAtLocationIsEditable(int column, int row) {
+  return typeAtLocation(column, row) == k_editableCellType;
 }
 
-bool StoreController::checkDataAtLocation(double floatBody, int columnIndex,
+bool StoreController::checkDataAtLocation(double floatBody, int column,
                                           int row) const {
   return m_store->valueValidInColumn(floatBody,
-                                     m_store->relativeColumnIndex(columnIndex));
+                                     m_store->relativeColumn(column));
 }
 
-bool StoreController::setDataAtLocation(double floatBody, int columnIndex,
-                                        int row) {
-  assert(checkDataAtLocation(floatBody, columnIndex, row));
-  return m_store->set(floatBody, m_store->seriesAtColumn(columnIndex),
-                      m_store->relativeColumnIndex(columnIndex), row - 1, false,
-                      true);
+bool StoreController::setDataAtLocation(double floatBody, int column, int row) {
+  assert(checkDataAtLocation(floatBody, column, row));
+  return m_store->set(floatBody, m_store->seriesAtColumn(column),
+                      m_store->relativeColumn(column), row - 1, false, true);
 }
 
-double StoreController::dataAtLocation(int columnIndex, int row) {
-  return m_store->get(m_store->seriesAtColumn(columnIndex),
-                      m_store->relativeColumnIndex(columnIndex), row - 1);
+double StoreController::dataAtLocation(int column, int row) {
+  return m_store->get(m_store->seriesAtColumn(column),
+                      m_store->relativeColumn(column), row - 1);
 }
 
-int StoreController::numberOfElementsInColumn(int columnIndex) const {
-  return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(columnIndex));
+int StoreController::numberOfElementsInColumn(int column) const {
+  return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column));
 }
 
 void StoreController::resetMemoizedFormulasOfEmptyColumns(int series) {

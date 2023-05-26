@@ -77,9 +77,9 @@ class ValuesController : public EditableCellTableViewController,
   void initValueCells();
 
   // EditableCellTableViewController
-  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
+  bool setDataAtLocation(double floatBody, int column, int row) override;
   void didChangeCell(int column, int row) override;
-  int numberOfElementsInColumn(int columnIndex) const override;
+  int numberOfElementsInColumn(int column) const override;
 
   // Constructor helper
   void setupSelectableTableViewAndCells(
@@ -117,12 +117,10 @@ class ValuesController : public EditableCellTableViewController,
   Shared::ColumnParameters* columnParameters() override;
 
   virtual Poincare::Layout functionTitleLayout(
-      int columnIndex, bool forceShortVersion = false) = 0;
-  int fillColumnName(int columnIndex, char* buffer) override;
-  void setTitleCellText(Escher::HighlightCell* titleCell,
-                        int columnIndex) override;
-  void setTitleCellStyle(Escher::HighlightCell* titleCell,
-                         int columnIndex) override;
+      int column, bool forceShortVersion = false) = 0;
+  int fillColumnName(int column, char* buffer) override;
+  void setTitleCellText(Escher::HighlightCell* titleCell, int column) override;
+  void setTitleCellStyle(Escher::HighlightCell* titleCell, int column) override;
   void reloadEditedCell(int column, int row) override;
 
   virtual int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const {
@@ -146,8 +144,8 @@ class ValuesController : public EditableCellTableViewController,
       Shared::IntervalParameterController* controller, int column) = 0;
 
   // EditableCellTableViewController
-  bool cellAtLocationIsEditable(int columnIndex, int row) override;
-  double dataAtLocation(int columnIndex, int row) override;
+  bool cellAtLocationIsEditable(int column, int row) override;
+  double dataAtLocation(int column, int row) override;
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
   };
@@ -174,9 +172,8 @@ class ValuesController : public EditableCellTableViewController,
   virtual void updateSizeMemoizationForColumnAfterIndexChanged(
       int column, KDCoordinate columnPreviousWidth, int changedRow) {}
 
-  virtual Interval* intervalAtColumn(int columnIndex) = 0;
-  virtual I18n::Message valuesParameterMessageAtColumn(
-      int columnIndex) const = 0;
+  virtual Interval* intervalAtColumn(int column) = 0;
+  virtual I18n::Message valuesParameterMessageAtColumn(int column) const = 0;
   virtual ExpressionFunctionTitleCell* functionTitleCells(int j) = 0;
   virtual Escher::EvenOddExpressionCell* valueCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;
@@ -191,8 +188,8 @@ class ValuesController : public EditableCellTableViewController,
     m_confirmPopUpController.setMessageWithPlaceholders(
         I18n::Message::ClearTableConfirmation, "");
   }
-  bool isColumnClearable(int columnIndex) override {
-    return typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType;
+  bool isColumnClearable(int column) override {
+    return typeAtLocation(column, 0) == k_abscissaTitleCellType;
   }
 
   ValuesParameterController m_abscissaParameterController;

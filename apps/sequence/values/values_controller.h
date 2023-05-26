@@ -60,14 +60,14 @@ class ValuesController : public Shared::ValuesController,
                                      KDCoordinate defaultSize) override;
 
   // ColumnHelper
-  int fillColumnName(int columnIndex, char *buffer) override;
+  int fillColumnName(int column, char *buffer) override;
 
   // EditableCellTableViewController
-  bool checkDataAtLocation(double floatBody, int columnIndex,
+  bool checkDataAtLocation(double floatBody, int column,
                            int row) const override {
     return floatBody >= 0.0;
   }
-  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
+  bool setDataAtLocation(double floatBody, int column, int row) override;
 
   // Shared::ValuesController
   Shared::SequenceStore *functionStore() const override {
@@ -80,15 +80,15 @@ class ValuesController : public Shared::ValuesController,
   Ion::Storage::Record recordAtColumn(int i, bool *isSumColumn);
   void updateNumberOfColumns() const override;
   Poincare::Layout *memoizedLayoutAtIndex(int i) override;
-  Poincare::Layout functionTitleLayout(int columnIndex,
+  Poincare::Layout functionTitleLayout(int column,
                                        bool forceShortVersion = false) override;
   void setStartEndMessages(Shared::IntervalParameterController *controller,
                            int column) override {
     setDefaultStartEndMessages();
   }
   void createMemoizedLayout(int i, int j, int index) override;
-  Shared::Interval *intervalAtColumn(int columnIndex) override;
-  I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override {
+  Shared::Interval *intervalAtColumn(int column) override;
+  I18n::Message valuesParameterMessageAtColumn(int column) const override {
     return I18n::Message::N;
   }
   Shared::ExpressionFunctionTitleCell *functionTitleCells(int j) override;

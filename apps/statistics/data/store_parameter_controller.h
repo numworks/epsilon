@@ -30,8 +30,8 @@ class StoreParameterController : public Shared::StoreParameterController {
       Shared::StoreParameterController::k_numberOfCells;
 
   I18n::Message sortMessage() override {
-    return (m_columnIndex % 2 == 0) ? I18n::Message::SortValues
-                                    : I18n::Message::SortSizes;
+    return (m_column % 2 == 0) ? I18n::Message::SortValues
+                               : I18n::Message::SortSizes;
   }
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,

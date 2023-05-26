@@ -102,10 +102,10 @@ class InputCategoricalTableCell
   int numberOfElementsInColumn(int column) const override;
   void clearSelectedColumn() override;
   bool isColumnClearable(int column) override {
-    return relativeColumnIndex(column) >= 0;
+    return relativeColumn(column) >= 0;
   }
 
-  virtual int relativeColumnIndex(int columnIndex) const = 0;
+  virtual int relativeColumn(int column) const = 0;
   int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
   Table *tableModel();
@@ -159,9 +159,7 @@ class DoubleColumnTableCell
     return k_columnWidth;
   }
   // CategoricalTableViewDataSource
-  int relativeColumnIndex(int columnIndex) const override {
-    return columnIndex;
-  }
+  int relativeColumn(int column) const override { return column; }
   virtual Escher::HighlightCell *headerCell(int index) = 0;
 };
 

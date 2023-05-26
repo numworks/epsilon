@@ -17,11 +17,11 @@ class ColumnNameHelper {
   /* this is an ad hoc value. Most of the time, colum_name are very short like
    * "X1", "n" or "f(x)" */
   constexpr static int k_maxSizeOfColumnName = 16;
-  virtual int fillColumnName(int columnIndex, char* buffer) = 0;
+  virtual int fillColumnName(int column, char* buffer) = 0;
 
  protected:
   static int FillColumnNameWithMessage(char* buffer, I18n::Message message);
-  virtual int numberOfElementsInColumn(int columnIndex) const = 0;
+  virtual int numberOfElementsInColumn(int column) const = 0;
 };
 
 class ClearColumnHelper : public ColumnNameHelper {
@@ -35,7 +35,7 @@ class ClearColumnHelper : public ColumnNameHelper {
  private:
   virtual void clearSelectedColumn() = 0;
   virtual void setClearPopUpContent();
-  virtual bool isColumnClearable(int columnIndex) { return true; }
+  virtual bool isColumnClearable(int column) { return true; }
 };
 
 class StoreColumnHelper {
@@ -47,7 +47,7 @@ class StoreColumnHelper {
   int referencedColumn() { return table()->selectedColumn(); }
   int formulaMemoizationIndex(int column);
   ClearColumnHelper* clearColumnHelper() { return m_clearColumnHelper; }
-  void selectColumn(int columnIndex) { table()->selectColumn(columnIndex); }
+  void selectColumn(int column) { table()->selectColumn(column); }
 
   /* Hide series */
   // Return false if the series can't switch hide status because it's invalid
@@ -70,10 +70,9 @@ class StoreColumnHelper {
   bool createExpressionForFillingColumnWithFormula(const char* text);
 
   /* Clear series */
-  int fillColumnNameFromStore(int columnIndex, char* buffer) {
-    return store()->fillColumnName(store()->seriesAtColumn(columnIndex),
-                                   store()->relativeColumnIndex(columnIndex),
-                                   buffer);
+  int fillColumnNameFromStore(int column, char* buffer) {
+    return store()->fillColumnName(store()->seriesAtColumn(column),
+                                   store()->relativeColumn(column), buffer);
   }
 
   virtual Escher::InputViewController* inputViewController() = 0;

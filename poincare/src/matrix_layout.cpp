@@ -48,8 +48,7 @@ int MatrixLayoutNode::serialize(char *buffer, int bufferSize,
   }
 
   // Serialize the vectors
-  int maxColumnIndex =
-      isEditing() ? m_numberOfColumns - 2 : m_numberOfColumns - 1;
+  int maxColumn = isEditing() ? m_numberOfColumns - 2 : m_numberOfColumns - 1;
   for (int i = minRow; i <= maxRow; i++) {
     numberOfChar += SerializationHelper::CodePoint(
         buffer + numberOfChar, bufferSize - numberOfChar, '[');
@@ -60,7 +59,7 @@ int MatrixLayoutNode::serialize(char *buffer, int bufferSize,
     numberOfChar += SerializationHelper::Infix(
         this, buffer + numberOfChar, bufferSize - numberOfChar,
         floatDisplayMode, numberOfSignificantDigits, ",", i * m_numberOfColumns,
-        i * m_numberOfColumns + maxColumnIndex);
+        i * m_numberOfColumns + maxColumn);
     if (numberOfChar >= bufferSize - 1) {
       return bufferSize - 1;
     }

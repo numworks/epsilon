@@ -50,9 +50,7 @@ class InputHomogeneityTableCell
   int fillColumnName(int column, char* buffer) override;
 
   // CategoricalTableViewDataSource
-  int relativeColumnIndex(int columnIndex) const override {
-    return columnIndex - 1;
-  }
+  int relativeColumn(int column) const override { return column - 1; }
 
   // HomogeneityTableViewDataSource
   Escher::HighlightCell* innerCell(int i) override {

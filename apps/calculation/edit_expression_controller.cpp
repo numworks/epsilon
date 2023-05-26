@@ -100,10 +100,11 @@ void EditExpressionController::viewWillAppear() {
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(
     ::LayoutField *layoutField, Ion::Events::Event event) {
-  bool shouldDuplicateLastCalculation =
-      layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
-      layoutField->isEmpty();
-  if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
+  bool calculationIsEmpty = layoutField->isEditing() &&
+                            layoutField->shouldFinishEditing(event) &&
+                            layoutField->isEmpty();
+  if (inputViewDidReceiveEvent(event, calculationIsEmpty) ||
+      calculationIsEmpty) {
     return true;
   }
   return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
@@ -140,6 +141,22 @@ void EditExpressionController::layoutFieldDidChangeSize(
   }
 }
 
+bool EditExpressionController::isAcceptableExpression(
+    Escher::EditableField *field, const Poincare::Expression expression) {
+  /* Override SharedApp because Store is acceptable, and
+   * ans has an expression. */
+  {
+    Expression ansExpression =
+        App::app()->snapshot()->calculationStore()->ansExpression(
+            App::app()->localContext());
+    if (!ExpressionCanBeSerialized(expression, true, ansExpression,
+                                   App::app()->localContext())) {
+      return false;
+    }
+  }
+  return !expression.isUninitialized();
+}
+
 void EditExpressionController::reloadView() {
   m_contentView.reload();
   m_historyController->reload();
@@ -150,13 +167,11 @@ bool EditExpressionController::inputViewDidReceiveEvent(
   if (shouldDuplicateLastCalculation && m_workingBuffer[0] != 0) {
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
-    Shared::TextFieldDelegateApp *myApp = App::app();
-    if (!myApp->isAcceptableText(m_contentView.layoutField(),
-                                 m_workingBuffer)) {
+    if (!isAcceptableText(m_contentView.layoutField(), m_workingBuffer)) {
       return true;
     }
     if (m_calculationStore
-            ->push(m_workingBuffer, myApp->localContext(),
+            ->push(m_workingBuffer, App::app()->localContext(),
                    HistoryViewCell::Height)
             .pointer()) {
       m_historyController->reload();

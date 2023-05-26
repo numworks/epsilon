@@ -1,7 +1,6 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/shared/text_field_delegate_app.h>
 
 #include "images/confidence_interval.h"
 #include "images/significance_test.h"
@@ -23,7 +22,7 @@ App *App::Snapshot::unpack(Container *container) {
 }
 
 App::App(Snapshot *snapshot, Poincare::Context *parentContext)
-    : LayoutFieldDelegateApp(snapshot, &m_inputViewController),
+    : SharedApp(snapshot, &m_inputViewController),
       m_testGraphController(&m_stackViewController,
                             static_cast<Test *>(snapshot->statistic())),
       m_intervalGraphController(&m_stackViewController,

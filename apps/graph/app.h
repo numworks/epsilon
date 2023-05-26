@@ -55,7 +55,6 @@ class App : public Shared::FunctionApp {
   }
 
   TELEMETRY_ID("Graph");
-  CodePoint XNT() override;
   Shared::ContinuousFunctionStore *functionStore() const override {
     return snapshot()->functionStore();
   }

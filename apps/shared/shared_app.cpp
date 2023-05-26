@@ -2,7 +2,10 @@
 
 #include <apps/apps_container_helper.h>
 
-#include "global_context.h"
+#include "../apps_container.h"
+
+using namespace Escher;
+using namespace Poincare;
 
 namespace Shared {
 
@@ -21,6 +24,44 @@ void SharedApp::Snapshot::tidy() {
 
 void SharedApp::Snapshot::reset() {
   AppsContainerHelper::sharedAppsContainerGlobalContext()->reset();
+}
+
+SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
+    : ::App(snapshot, rootViewController, I18n::Message::Warning),
+      InputEventHandlerDelegate(),
+      m_intrusiveStorageChangeFlag(false) {}
+
+Context* SharedApp::localContext() {
+  return AppsContainerHelper::sharedAppsContainerGlobalContext();
+}
+
+NestedMenuController* SharedApp::toolbox() {
+  return AppsContainer::sharedAppsContainer()->mathToolbox();
+}
+
+NestedMenuController* SharedApp::variableBox() {
+  return AppsContainer::sharedAppsContainer()->variableBoxController();
+}
+
+bool SharedAppWithStoreMenu::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Sto || event == Ion::Events::Var) {
+    storeValue();
+    return true;
+  }
+  return SharedApp::handleEvent(event);
+}
+
+void SharedAppWithStoreMenu::storeValue(const char* text) {
+  if (m_modalViewController.isDisplayingModal()) {
+    return;
+  }
+  m_storeMenuController.setText(text);
+  m_storeMenuController.open();
+}
+
+bool SharedAppWithStoreMenu::isStoreMenuOpen() const {
+  return m_modalViewController.currentModalViewController() ==
+         &m_storeMenuController;
 }
 
 }  // namespace Shared

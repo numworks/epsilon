@@ -10,13 +10,12 @@
 #include "function_graph_controller.h"
 #include "function_list_controller.h"
 #include "function_store.h"
-#include "layout_field_delegate_app.h"
 #include "shared_app.h"
 #include "values_controller.h"
 
 namespace Shared {
 
-class FunctionApp : public LayoutFieldDelegateApp {
+class FunctionApp : public SharedAppWithStoreMenu {
  public:
   class Snapshot : public Shared::SharedApp::Snapshot,
                    public Escher::TabViewDataSource {

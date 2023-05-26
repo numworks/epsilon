@@ -27,7 +27,7 @@ void App::Snapshot::reset() {
 }
 
 void App::prepareForIntrusiveStorageChange() {
-  LayoutFieldDelegateApp::prepareForIntrusiveStorageChange();
+  SharedApp::prepareForIntrusiveStorageChange();
   m_stackViewController.popUntilDepth(1, true);
 }
 
@@ -42,7 +42,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Snapshot* snapshot)
-    : LayoutFieldDelegateApp(snapshot, &m_stackViewController),
+    : SharedAppWithStoreMenu(snapshot, &m_stackViewController),
       m_solutionsController(&m_alternateEmptyViewController),
       m_intervalController(nullptr, this),
       m_alternateEmptyViewController(nullptr, &m_solutionsController,
@@ -57,14 +57,5 @@ App::App(Snapshot* snapshot)
                             StackViewController::Style::GrayGradation),
       m_system(snapshot->equationStore()),
       m_context(AppsContainer::sharedAppsContainer()->globalContext()) {}
-
-bool App::isAcceptableExpression(EditableField* field,
-                                 const Poincare::Expression exp) {
-  /* Complete LayoutFieldDelegateApp acceptable conditions by only accepting
-   * the Equal OperatorType in the list of equations. */
-  return LayoutFieldDelegateApp::isAcceptableExpression(field, exp) &&
-         (field != m_listController.layoutField() ||
-          Poincare::ComparisonNode::IsBinaryEquality(exp));
-}
 
 }  // namespace Solver

@@ -12,7 +12,6 @@
 
 #include "column_parameter_controller.h"
 #include "poincare_helpers.h"
-#include "text_field_delegate_app.h"
 
 using namespace Escher;
 using namespace Poincare;

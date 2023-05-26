@@ -1,7 +1,6 @@
 #ifndef CALCULATION_APP_H
 #define CALCULATION_APP_H
 
-#include <apps/shared/layout_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 
 #include <new>
@@ -12,7 +11,7 @@
 
 namespace Calculation {
 
-class App : public Shared::LayoutFieldDelegateApp {
+class App : public Shared::SharedAppWithStoreMenu {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -58,17 +57,8 @@ class App : public Shared::LayoutFieldDelegateApp {
 
   TELEMETRY_ID("Calculation");
 
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField *textField,
-                                Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(Escher::LayoutField *layoutField,
-                                  Ion::Events::Event event) override;
-
-  // TextFieldDelegateApp
-  bool isAcceptableExpression(Escher::EditableField *field,
-                              const Poincare::Expression expression) override;
-
   Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Shared::LayoutFieldDelegateApp::snapshot());
+    return static_cast<Snapshot *>(Shared::SharedApp::snapshot());
   }
 
  private:

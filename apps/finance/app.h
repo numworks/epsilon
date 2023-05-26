@@ -2,7 +2,6 @@
 #define FINANCE_APP_H
 
 #include <apps/i18n.h>
-#include <apps/shared/layout_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <escher/stack_view_controller.h>
 
@@ -14,10 +13,10 @@
 
 namespace Finance {
 
-class App : public Shared::LayoutFieldDelegateApp {
+class App : public Shared::SharedAppWithStoreMenu {
  public:
   // Descriptor
-  class Descriptor : public Shared::TextFieldDelegateApp::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
    public:
     I18n::Message name() const override { return I18n::Message::FinanceApp; }
     I18n::Message upperName() const override {
@@ -36,8 +35,8 @@ class App : public Shared::LayoutFieldDelegateApp {
     App *unpack(Escher::Container *container) override;
     const Descriptor *descriptor() const override;
     void reset() override;
-    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks>
-        *pageQueue() {
+    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks> *
+    pageQueue() {
       return &m_pageQueue;
     }
     Data *data() { return &m_data; }

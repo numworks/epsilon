@@ -1,13 +1,12 @@
 #include "store_menu_controller.h"
 
-#include <apps/shared/layout_field_delegate_app.h>
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
 #include <poincare/store.h>
 
 #include "expression_display_permissions.h"
 #include "poincare_helpers.h"
-#include "text_field_delegate_app.h"
+#include "shared_app.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -120,8 +119,8 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char* text) {
-  LayoutFieldDelegateApp* app =
-      static_cast<LayoutFieldDelegateApp*>(Container::activeApp());
+  SharedAppWithStoreMenu* app =
+      static_cast<SharedAppWithStoreMenu*>(Container::activeApp());
   Poincare::Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {

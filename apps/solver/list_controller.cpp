@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/comparison.h>
 #include <poincare/variable_context.h>
 
 #include "app.h"
@@ -172,6 +173,14 @@ void ListController::layoutFieldDidAbortEditing(
   ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
   reloadBrace();
   reloadButtonMessage();
+}
+
+bool ListController::isAcceptableExpression(EditableField *field,
+                                            const Poincare::Expression exp) {
+  /* Complete SharedApp acceptable conditions by only accepting
+   * the Equal OperatorType in the list of equations. */
+  return MathFieldDelegate::isAcceptableExpression(field, exp) &&
+         Poincare::ComparisonNode::IsBinaryEquality(exp);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

@@ -42,53 +42,17 @@ App::Snapshot::Snapshot()
     : m_calculationStore(m_calculationBuffer, k_calculationBufferSize) {}
 
 App::App(Snapshot *snapshot)
-    : LayoutFieldDelegateApp(snapshot, &m_editExpressionController),
+    : SharedAppWithStoreMenu(snapshot, &m_editExpressionController),
       m_historyController(&m_editExpressionController,
                           snapshot->calculationStore()),
       m_editExpressionController(&m_modalViewController, this,
                                  &m_historyController,
                                  snapshot->calculationStore()) {}
 
-bool App::textFieldDidReceiveEvent(AbstractTextField *textField,
-                                   Ion::Events::Event event) {
-  if (textField->isEditing() && textField->shouldFinishEditing(event) &&
-      textField->text()[0] == 0) {
-    return true;
-  }
-  return Shared::LayoutFieldDelegateApp::textFieldDidReceiveEvent(textField,
-                                                                  event);
-}
-
-bool App::layoutFieldDidReceiveEvent(::LayoutField *layoutField,
-                                     Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
-      layoutField->isEmpty()) {
-    return true;
-  }
-  return Shared::LayoutFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField,
-                                                                    event);
-}
-
-bool App::isAcceptableExpression(Escher::EditableField *field,
-                                 const Poincare::Expression expression) {
-  /* Override LayoutFieldDelegateApp because Store is acceptable, and
-   * ans has an expression. */
-  {
-    Expression ansExpression = static_cast<Snapshot *>(snapshot())
-                                   ->calculationStore()
-                                   ->ansExpression(localContext());
-    if (!TextFieldDelegateApp::ExpressionCanBeSerialized(
-            expression, true, ansExpression, localContext())) {
-      return false;
-    }
-  }
-  return !expression.isUninitialized();
-}
-
 void App::didBecomeActive(Window *window) {
   m_editExpressionController.restoreInput();
   m_historyController.recomputeHistoryCellHeightsIfNeeded();
-  Shared::LayoutFieldDelegateApp::didBecomeActive(window);
+  Shared::SharedApp::didBecomeActive(window);
 }
 
 }  // namespace Calculation

@@ -64,8 +64,7 @@ void App::Snapshot::setOpt(const char *name, const char *value) {
 #endif
 
 App::App(Snapshot *snapshot)
-    : Shared::InputEventHandlerDelegateApp(snapshot,
-                                           &m_codeStackViewController),
+    : Shared::SharedApp(snapshot, &m_codeStackViewController),
       m_pythonUser(nullptr),
       m_consoleController(nullptr, this, snapshot->scriptStore()
 #if EPSILON_GETOPT

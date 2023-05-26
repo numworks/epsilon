@@ -74,9 +74,8 @@ float GraphController::interestingXMin() const {
 bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
                                                 const char *text,
                                                 Ion::Events::Event event) {
-  Shared::TextFieldDelegateApp *myApp = App::app();
   double floatBody = ParseInputtedFloatValue<double>(text);
-  if (myApp->hasUndefinedValue(floatBody)) {
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
@@ -85,9 +84,7 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
 }
 
 void GraphController::moveToRank(int n) {
-  double y =
-      xyValues(selectedCurveIndex(), n, App::app()->localContext())
-          .y();
+  double y = xyValues(selectedCurveIndex(), n, App::app()->localContext()).y();
   m_cursor->moveTo(n, n, y);
   panToMakeCursorVisible();
   reloadBannerView();

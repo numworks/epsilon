@@ -124,7 +124,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
               snapshot->userPreferences()),
       m_context(parentContext),
       m_inputViewController(&m_modalViewController, &m_tabViewController, this,
-                            this),
+                            MathFieldDelegate::Default()),
       m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(
@@ -149,7 +149,7 @@ void App::activeViewDidBecomeFirstResponder(
 void App::didBecomeActive(Escher::Window *windows) {
   // Sorted indexes are not kept in the snapshot, they have been invalidated.
   m_store.invalidateSortedIndexes();
-  LayoutFieldDelegateApp::didBecomeActive(windows);
+  SharedApp::didBecomeActive(windows);
 }
 
 }  // namespace Statistics

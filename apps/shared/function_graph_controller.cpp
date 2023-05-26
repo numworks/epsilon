@@ -33,8 +33,7 @@ void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(
-        static_cast<InputEventHandlerDelegateApp *>(Container::activeApp()),
-        this);
+        static_cast<SharedApp *>(Container::activeApp()), this);
     if (!isAlongY(*m_selectedCurveIndex)) {
       Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
     }

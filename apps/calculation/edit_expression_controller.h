@@ -34,7 +34,7 @@ class EditExpressionController : public Escher::ViewController,
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  /* LayoutFieldDelegate */
+  /* MathFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool layoutFieldDidHandleEvent(Escher::LayoutField* layoutField,
@@ -45,6 +45,8 @@ class EditExpressionController : public Escher::ViewController,
                                    Ion::Events::Event event) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
+  bool isAcceptableExpression(Escher::EditableField* field,
+                              const Poincare::Expression expression) override;
 
   void insertTextBody(const char* text);
   void restoreInput();

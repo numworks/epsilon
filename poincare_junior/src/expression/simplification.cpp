@@ -97,7 +97,8 @@ EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
   Node expanded = KMult(KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
                         KTrig(KPlaceholder<B>(), KPlaceholder<D>()));
-  // KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
+  /* KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
+   * TODO: This is the only place this is used. It might not be worth it.  */
   Node contracted = KMult(
       0.5_e, KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
                         KTrigDiff(KPlaceholder<C>(), KPlaceholder<D>())),

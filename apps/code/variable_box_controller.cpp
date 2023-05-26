@@ -439,16 +439,15 @@ int VariableBoxController::typeAndOriginAtLocation(
   return k_itemCellType;
 }
 
-bool VariableBoxController::selectLeaf(int rowIndex) {
-  assert(rowIndex >= 0 && rowIndex < numberOfRows());
+bool VariableBoxController::selectLeaf(int row) {
+  assert(row >= 0 && row < numberOfRows());
   int cumulatedOriginsCount = 0;
-  int cellType =
-      typeAndOriginAtLocation(rowIndex, nullptr, &cumulatedOriginsCount);
+  int cellType = typeAndOriginAtLocation(row, nullptr, &cumulatedOriginsCount);
   assert(cellType == k_itemCellType);
   (void)cellType;  // Silence warnings
 
   insertAutocompletionResultAtIndex(
-      rowIndex - (m_displaySubtitles ? cumulatedOriginsCount : 0));
+      row - (m_displaySubtitles ? cumulatedOriginsCount : 0));
 
   Container::activeApp()->modalViewController()->dismissModal();
   return true;

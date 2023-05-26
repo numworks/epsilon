@@ -67,10 +67,10 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record,
                                              int index);
   static const char* Extension(Page page);
-  Ion::Storage::Record recordAtIndex(int rowIndex);
+  Ion::Storage::Record recordAtIndex(int row);
   void resetVarBoxMemoization();
   // Return false if destruction is prevented by the app
-  bool destroyRecordAtRowIndex(int rowIndex);
+  bool destroyRecordAtRow(int row);
   Page m_currentPage;
   LeafCell m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::NestedMenuController::NodeCell m_nodeCells[k_numberOfMenuRows];

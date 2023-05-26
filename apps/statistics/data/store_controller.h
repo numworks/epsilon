@@ -72,9 +72,8 @@ class StoreController : public Shared::StoreController {
   Shared::ColumnParameters* columnParameters() override {
     return &m_storeParameterController;
   }
-  bool setDataAtLocation(double floatBody, int columnIndex,
-                         int rowIndex) override;
-  double dataAtLocation(int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
+  double dataAtLocation(int columnIndex, int row) override;
   void setTitleCellText(Escher::HighlightCell* titleCell,
                         int columnIndex) override;
   void clearSelectedColumn() override;

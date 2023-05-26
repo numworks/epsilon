@@ -19,9 +19,7 @@ class TableView : public ScrollView {
   void setVerticalCellOverlap(KDCoordinate o) {
     m_contentView.setVerticalCellOverlap(o);
   }
-  int firstDisplayedRowIndex() const {
-    return m_contentView.rowsScrollingOffset();
-  }
+  int firstDisplayedRow() const { return m_contentView.rowsScrollingOffset(); }
   int firstDisplayedColumnIndex() const {
     return m_contentView.columnsScrollingOffset();
   }
@@ -130,7 +128,7 @@ class TableView : public ScrollView {
     int absoluteColumnIndexFromSubviewIndex(int index) const {
       return (index % numberOfDisplayableColumns()) + columnsScrollingOffset();
     }
-    int absoluteRowIndexFromSubviewIndex(int index) const {
+    int absoluteRowFromSubviewIndex(int index) const {
       return (index / numberOfDisplayableColumns()) + rowsScrollingOffset();
     }
     int typeOfSubviewAtIndex(int index) const;

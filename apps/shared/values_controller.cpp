@@ -224,19 +224,19 @@ ColumnParameters *ValuesController::columnParameters() {
 }
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex,
-                                         int rowIndex) {
-  assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
+                                         int row) {
+  assert(checkDataAtLocation(floatBody, columnIndex, row));
   intervalAtColumn(columnIndex)
-      ->setElement(rowIndex - k_numberOfTitleRows, floatBody);
+      ->setElement(row - k_numberOfTitleRows, floatBody);
   return true;
 }
 
-bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  return typeAtLocation(columnIndex, rowIndex) == k_editableValueCellType;
+bool ValuesController::cellAtLocationIsEditable(int columnIndex, int row) {
+  return typeAtLocation(columnIndex, row) == k_editableValueCellType;
 }
 
-double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
-  return intervalAtColumn(columnIndex)->element(rowIndex - k_numberOfTitleRows);
+double ValuesController::dataAtLocation(int columnIndex, int row) {
+  return intervalAtColumn(columnIndex)->element(row - k_numberOfTitleRows);
 }
 
 int ValuesController::valuesColumnForAbsoluteColumn(int column) {

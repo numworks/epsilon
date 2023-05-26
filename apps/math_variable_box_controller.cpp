@@ -60,8 +60,8 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
    * - The empty controller is displayed
    */
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
-    int rowIndex = selectedRow();
-    if (destroyRecordAtRowIndex(rowIndex)) {
+    int row = selectedRow();
+    if (destroyRecordAtRow(row)) {
       if (Container::activeApp()
               ->modalViewController()
               ->currentModalViewController() !=
@@ -69,8 +69,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
         // The varbox was dismissed by prepareForIntrusiveStorageChange
         return true;
       }
-      int newSelectedRow =
-          rowIndex >= numberOfRows() ? numberOfRows() - 1 : rowIndex;
+      int newSelectedRow = row >= numberOfRows() ? numberOfRows() - 1 : row;
       selectCell(newSelectedRow);
       resetMemoization();
       m_selectableListView.reloadData();
@@ -396,23 +395,23 @@ const char *MathVariableBoxController::Extension(Page page) {
   }
 }
 
-Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
+Storage::Record MathVariableBoxController::recordAtIndex(int row) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
-    if (rowIndex < NumberOfFunctions()) {
+    if (row < NumberOfFunctions()) {
       record = Storage::FileSystem::sharedFileSystem
                    ->recordWithExtensionAtIndexStartingWithout(
                        ContinuousFunction::k_unnamedRecordFirstChar,
-                       Storage::funcExtension, rowIndex);
+                       Storage::funcExtension, row);
     } else {
       record =
           Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-              Storage::regExtension, rowIndex - NumberOfFunctions());
+              Storage::regExtension, row - NumberOfFunctions());
     }
   } else {
     record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-        Extension(m_currentPage), rowIndex);
+        Extension(m_currentPage), row);
   }
   assert(!record.isNull());
   return record;
@@ -425,9 +424,9 @@ void MathVariableBoxController::resetVarBoxMemoization() {
   m_firstMemoizedLayoutIndex = 0;
 }
 
-bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
+bool MathVariableBoxController::destroyRecordAtRow(int row) {
   {
-    Storage::Record record = recordAtIndex(rowIndex);
+    Storage::Record record = recordAtIndex(row);
     if (record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
@@ -442,11 +441,11 @@ bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
     }
   }
   // Shift the memoization if needed
-  if (rowIndex >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows) {
+  if (row >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows) {
     // The deleted row is after the memoization
     return true;
   }
-  for (int i = std::max(0, rowIndex - m_firstMemoizedLayoutIndex);
+  for (int i = std::max(0, row - m_firstMemoizedLayoutIndex);
        i < k_maxNumberOfDisplayedRows - 1; i++) {
     m_layouts[i] = m_layouts[i + 1];
   }

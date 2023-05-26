@@ -94,10 +94,10 @@ int ValuesController::fillColumnName(int columnIndex, char *buffer) {
 // EditableCellTableViewController
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex,
-                                         int rowIndex) {
-  assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
+                                         int row) {
+  assert(checkDataAtLocation(floatBody, columnIndex, row));
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody),
-                                                     columnIndex, rowIndex);
+                                                     columnIndex, row);
 }
 
 // Shared::ValuesController

@@ -328,14 +328,14 @@ int ListController::modelIndexForRow(int j) const {
   if (isAddEmptyRow(j)) {
     return modelIndexForRow(j - 1) + 1;
   }
-  int rowIndex = 0;
+  int row = 0;
   int sequenceIndex = -1;
   do {
     sequenceIndex++;
     Shared::Sequence *sequence = modelStore()->modelForRecord(
         modelStore()->recordAtIndex(sequenceIndex));
-    rowIndex += sequence->numberOfElements();
-  } while (rowIndex <= j);
+    row += sequence->numberOfElements();
+  } while (row <= j);
   return sequenceIndex;
 }
 
@@ -346,17 +346,17 @@ int ListController::sequenceDefinitionForRow(int j) const {
   if (isAddEmptyRow(j)) {
     return k_sequenceDefinition;
   }
-  int rowIndex = 0;
+  int row = 0;
   int sequenceIndex = -1;
   Shared::Sequence *sequence;
   do {
     sequenceIndex++;
     sequence = modelStore()->modelForRecord(
         modelStore()->recordAtIndex(sequenceIndex));
-    rowIndex += sequence->numberOfElements();
-  } while (rowIndex <= j);
+    row += sequence->numberOfElements();
+  } while (row <= j);
   assert(sequence);
-  int sequenceDefinition = j + sequence->numberOfElements() - rowIndex;
+  int sequenceDefinition = j + sequence->numberOfElements() - row;
   assert(sequenceDefinition >= k_sequenceDefinition &&
          sequenceDefinition <= k_secondInitialCondition);
   return sequenceDefinition;

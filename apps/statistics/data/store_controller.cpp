@@ -91,9 +91,9 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex,
-                                        int rowIndex) {
+                                        int row) {
   if (!Shared::StoreController::setDataAtLocation(floatBody, columnIndex,
-                                                  rowIndex)) {
+                                                  row)) {
     return false;
   }
   int series = m_store->seriesAtColumn(columnIndex);
@@ -104,13 +104,13 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex,
   return true;
 }
 
-double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
+double StoreController::dataAtLocation(int columnIndex, int row) {
   if (isCumulatedFrequencyColumn(columnIndex)) {
     int series = m_store->seriesAtColumn(columnIndex);
-    double value = m_store->get(series, 0, rowIndex - 1);
+    double value = m_store->get(series, 0, row - 1);
     return m_store->sumOfValuesBetween(series, -DBL_MAX, value, false);
   }
-  return Shared::StoreController::dataAtLocation(columnIndex, rowIndex);
+  return Shared::StoreController::dataAtLocation(columnIndex, row);
 }
 
 void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {

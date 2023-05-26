@@ -27,21 +27,21 @@ int MatrixLayoutNode::serialize(char *buffer, int bufferSize,
 
   /* Do not serialize the outmost lines if they are empty: compute the first and
    * last lines to serialize. */
-  int minRowIndex = 0;
+  int minRow = 0;
   bool matrixIsEmpty = true;
   for (int i = 0; i < m_numberOfRows; i++) {
     if (!isRowEmpty(i)) {
-      minRowIndex = i;
+      minRow = i;
       matrixIsEmpty = false;
       break;
     }
   }
   assert(m_numberOfRows > 0);
-  int maxRowIndex = m_numberOfRows - 1;
+  int maxRow = m_numberOfRows - 1;
   if (!matrixIsEmpty) {
     for (int i = m_numberOfRows - 1; i >= 0; i--) {
       if (!isRowEmpty(i)) {
-        maxRowIndex = i;
+        maxRow = i;
         break;
       }
     }
@@ -50,7 +50,7 @@ int MatrixLayoutNode::serialize(char *buffer, int bufferSize,
   // Serialize the vectors
   int maxColumnIndex =
       isEditing() ? m_numberOfColumns - 2 : m_numberOfColumns - 1;
-  for (int i = minRowIndex; i <= maxRowIndex; i++) {
+  for (int i = minRow; i <= maxRow; i++) {
     numberOfChar += SerializationHelper::CodePoint(
         buffer + numberOfChar, bufferSize - numberOfChar, '[');
     if (numberOfChar >= bufferSize - 1) {

@@ -106,7 +106,7 @@ class InputCategoricalTableCell
   }
 
   virtual int relativeColumnIndex(int columnIndex) const = 0;
-  int relativeRowIndex(int rowIndex) { return rowIndex - 1; }
+  int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
   Table *tableModel();
   const Table *constTableModel() const {

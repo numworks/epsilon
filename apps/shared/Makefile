@@ -66,7 +66,6 @@ app_shared_src = $(addprefix apps/shared/,\
   interactive_curve_view_controller.cpp \
   interval.cpp \
   interval_parameter_controller.cpp \
-  layout_field_delegate.cpp \
   list_parameter_controller.cpp \
   localization_controller.cpp \
   math_field_delegate.cpp \

@@ -1,7 +1,7 @@
 #ifndef CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
-#include <apps/shared/layout_field_delegate.h>
+#include <apps/shared/math_field_delegate.h>
 #include <poincare/layout.h>
 
 #include "calculation_selectable_table_view.h"
@@ -12,7 +12,7 @@ namespace Calculation {
 
 /* TODO: implement a split view */
 class EditExpressionController : public Escher::ViewController,
-                                 public Shared::LayoutFieldDelegate {
+                                 public Shared::MathFieldDelegate {
  public:
   /* k_layoutBufferMaxSize dictates the size under which the expression being
    * edited can be remembered when the user leaves Calculation. */
@@ -55,7 +55,7 @@ class EditExpressionController : public Escher::ViewController,
     ContentView(Escher::Responder* parentResponder,
                 CalculationSelectableTableView* subview,
                 Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-                LayoutFieldDelegate* layoutFieldDelegate);
+                Escher::LayoutFieldDelegate* layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView* mainView() { return m_mainView; }
     Escher::LayoutField* layoutField() {

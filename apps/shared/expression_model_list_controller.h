@@ -10,7 +10,7 @@
 #include <escher/selectable_table_view_delegate.h>
 
 #include "expression_model_store.h"
-#include "layout_field_delegate.h"
+#include "math_field_delegate.h"
 
 namespace Shared {
 
@@ -19,7 +19,7 @@ class ExpressionModelListController
       public Escher::SelectableListViewDataSource,
       public Escher::SelectableListViewDelegate,
       public Escher::StandardMemoizedListViewDataSource,
-      public LayoutFieldDelegate {
+      public MathFieldDelegate {
  public:
   ExpressionModelListController(Escher::Responder* parentResponder,
                                 I18n::Message text);

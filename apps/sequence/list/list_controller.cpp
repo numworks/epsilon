@@ -201,7 +201,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return true;
   }
-  return LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+  return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
 void ListController::computeTitlesColumnWidth(bool forceMax) {

@@ -146,8 +146,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       }
     }
   }
-  if (Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
-                                                              event)) {
+  if (MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)) {
     return true;
   }
   return false;

@@ -32,15 +32,15 @@ void FrequencyController::didBecomeFirstResponder() {
 bool FrequencyController::textFieldDidFinishEditing(
     Escher::AbstractTextField *textField, const char *text,
     Ion::Events::Event event) {
-  double newX = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(newX)) {
+  double newX = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(newX)) {
     return false;
   }
   // Check if x is out of bounds
   int n = totalValues(selectedSeries());
   if (newX < valueAtIndex(selectedSeries(), 0) ||
       newX > valueAtIndex(selectedSeries(), n - 1)) {
-    textFieldDelegateApp()->displayWarning(I18n::Message::UndefinedValue);
+    App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
   // Compute the new selected index

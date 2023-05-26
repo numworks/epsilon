@@ -394,7 +394,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
   }
 
-  Poincare::Context *context = textFieldDelegateApp()->localContext();
+  Poincare::Context *context = App::app()->localContext();
   if (function->properties().isScatterPlot()) {
     Preferences::ComplexFormat complexFormat =
         Preferences::sharedPreferences->complexFormat();
@@ -444,7 +444,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  Context *context = textFieldDelegateApp()->localContext();
+  Context *context = App::app()->localContext();
   Preferences::ComplexFormat complexFormat =
       Preferences::sharedPreferences->complexFormat();
   Preferences::AngleUnit angleUnit =

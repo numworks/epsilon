@@ -86,8 +86,7 @@ bool IntervalController::textFieldDidFinishEditing(AbstractTextField *textField,
 
 void IntervalController::buttonAction() {
   StackViewController *stack = stackController();
-  App::app()->system()->approximateSolve(
-      textFieldDelegateApp()->localContext());
+  App::app()->system()->approximateSolve(App::app()->localContext());
   stack->push(App::app()->solutionsControllerStack());
 }
 

@@ -86,7 +86,9 @@ void GraphController::didBecomeFirstResponder() {
 
 void GraphController::setAbscissaInputAsFirstResponder() {
   m_bannerView.abscissaValue()->setParentResponder(this);
-  m_bannerView.abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+  m_bannerView.abscissaValue()->setDelegates(
+      static_cast<InputEventHandlerDelegateApp *>(Container::activeApp()),
+      this);
   Container::activeApp()->setFirstResponder(m_bannerView.abscissaValue());
 }
 
@@ -243,7 +245,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (*m_selectedCurveIndex != curveIndex) {
     *m_selectedCurveIndex = curveIndex;
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(),
-                                       textFieldDelegateApp()->localContext());
+                                       Container::activeApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {

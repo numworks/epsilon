@@ -171,7 +171,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   double abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;
-  Context *context = textFieldDelegateApp()->localContext();
+  Context *context = App::app()->localContext();
   Shared::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   Expression result;

@@ -72,15 +72,14 @@ bool ExplicitFloatParameterController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows() - 1) ||
          (event == Ion::Events::Up && selectedRow() > 0) ||
-         TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ExplicitFloatParameterController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  float floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  float floatBody = ParseInputtedFloatValue<double>(text);
   int row = selectedRow();
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   if (!setParameterAtIndex(row, floatBody)) {

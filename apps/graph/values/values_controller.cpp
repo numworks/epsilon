@@ -363,7 +363,7 @@ Layout ValuesController::functionTitleLayout(int column,
   if (isDerivative) {
     return function->derivativeTitleLayout();
   }
-  return function->titleLayout(textFieldDelegateApp()->localContext(),
+  return function->titleLayout(App::app()->localContext(),
                                forceShortVersion || function->isNamed());
 }
 
@@ -405,7 +405,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &isDerivative);
-  Poincare::Context *context = textFieldDelegateApp()->localContext();
+  Poincare::Context *context = App::app()->localContext();
   Expression result;
   if (isDerivative) {
     // Compute derivative approximate result

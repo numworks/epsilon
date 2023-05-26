@@ -26,7 +26,7 @@ EditableCellTableViewController::EditableCellTableViewController(
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
+  return MathFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          (event == Ion::Events::Down && selectedRow() < numberOfRows()) ||
          (event == Ion::Events::Up && selectedRow() > 0) ||
          (event == Ion::Events::Right &&
@@ -40,9 +40,8 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+  double floatBody = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   // Save attributes for later use

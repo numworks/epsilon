@@ -64,14 +64,13 @@ void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
 bool DisplayModeController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return (event == Ion::Events::Up && selectedRow() > 0) ||
-         TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool DisplayModeController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+  double floatBody = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   if (floatBody < 1.0) {

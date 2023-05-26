@@ -38,24 +38,26 @@ void TangentGraphController::viewWillAppear() {
 void TangentGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     m_bannerView->abscissaValue()->setParentResponder(this);
-    m_bannerView->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    m_bannerView->abscissaValue()->setDelegates(
+        static_cast<InputEventHandlerDelegateApp *>(Container::activeApp()),
+        this);
     Container::activeApp()->setFirstResponder(m_bannerView->abscissaValue());
   }
 }
 
 bool TangentGraphController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  Shared::TextFieldDelegateApp *myApp = textFieldDelegateApp();
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (myApp->hasUndefinedValue(floatBody)) {
+  double floatBody = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(m_record);
   assert(function->properties().isCartesian());
-  double y =
-      function->evaluate2DAtParameter(floatBody, myApp->localContext()).y();
+  double y = function
+                 ->evaluate2DAtParameter(floatBody,
+                                         Container::activeApp()->localContext())
+                 .y();
   m_cursor->moveTo(floatBody, floatBody, y);
   panToMakeCursorVisible();
   reloadBannerView();

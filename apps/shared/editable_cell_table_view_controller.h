@@ -9,8 +9,8 @@
 #include "column_helper.h"
 #include "column_parameter_controller.h"
 #include "editable_cell_selectable_table_view.h"
+#include "math_field_delegate.h"
 #include "tab_table_controller.h"
-#include "text_field_delegate.h"
 
 namespace Shared {
 
@@ -18,7 +18,7 @@ class ColumnParameterController;
 
 class EditableCellTableViewController : public TabTableController,
                                         public Escher::TableViewDataSource,
-                                        public TextFieldDelegate,
+                                        public MathFieldDelegate,
                                         public ClearColumnHelper {
  public:
   EditableCellTableViewController(

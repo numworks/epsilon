@@ -8,7 +8,6 @@
 #include "function.h"
 #include "function_graph_view.h"
 #include "simple_interactive_curve_view_controller.h"
-#include "text_field_delegate.h"
 #include "vertical_cursor_view.h"
 
 namespace Shared {

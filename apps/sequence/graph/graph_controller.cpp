@@ -74,9 +74,8 @@ float GraphController::interestingXMin() const {
 bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
                                                 const char *text,
                                                 Ion::Events::Event event) {
-  Shared::TextFieldDelegateApp *myApp = textFieldDelegateApp();
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  Shared::TextFieldDelegateApp *myApp = App::app();
+  double floatBody = ParseInputtedFloatValue<double>(text);
   if (myApp->hasUndefinedValue(floatBody)) {
     return false;
   }
@@ -87,7 +86,7 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
 
 void GraphController::moveToRank(int n) {
   double y =
-      xyValues(selectedCurveIndex(), n, textFieldDelegateApp()->localContext())
+      xyValues(selectedCurveIndex(), n, App::app()->localContext())
           .y();
   m_cursor->moveTo(n, n, y);
   panToMakeCursorVisible();
@@ -113,7 +112,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   if (computeY) {
     Zoom zoom(result.xMin(), result.xMax(),
               InteractiveCurveViewRange::NormalYXRatio(),
-              textFieldDelegateApp()->localContext(), k_maxFloat);
+              App::app()->localContext(), k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
     for (int i = 0; i < nbOfActiveModels; i++) {
       Shared::Sequence *s =
@@ -151,7 +150,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
     return false;
   }
   double y = s->evaluateXYAtParameter(static_cast<double>(x),
-                                      textFieldDelegateApp()->localContext())
+                                      App::app()->localContext())
                  .y();
   m_cursor->moveTo(x, x, y);
   return true;

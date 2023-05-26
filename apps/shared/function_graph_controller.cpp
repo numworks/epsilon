@@ -32,7 +32,9 @@ FunctionGraphController::FunctionGraphController(
 void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
-    bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    bannerView()->abscissaValue()->setDelegates(
+        static_cast<InputEventHandlerDelegateApp *>(Container::activeApp()),
+        this);
     if (!isAlongY(*m_selectedCurveIndex)) {
       Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
     }
@@ -46,7 +48,7 @@ void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setAreaHighlight(NAN, NAN);
 
   if (functionGraphView()->context() == nullptr) {
-    functionGraphView()->setContext(textFieldDelegateApp()->localContext());
+    functionGraphView()->setContext(Container::activeApp()->localContext());
   }
 
   InteractiveCurveViewController::viewWillAppear();
@@ -57,7 +59,7 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
     selectCurveAtIndex(curveIndex, false);
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(),
-                                       textFieldDelegateApp()->localContext(),
+                                       Container::activeApp()->localContext(),
                                        m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
@@ -129,7 +131,7 @@ void FunctionGraphController::reloadBannerView() {
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
                                                bool ignoreMargins) {
-  Poincare::Context *context = textFieldDelegateApp()->localContext();
+  Poincare::Context *context = Container::activeApp()->localContext();
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   float gridUnit = 2.0 * interactiveCurveViewRange()->xGridUnit();
   float xMin = interactiveCurveViewRange()->xMin();
@@ -174,7 +176,7 @@ void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
   *xy = function->evaluateXYAtParameter(
-      *t, textFieldDelegateApp()->localContext(), 0);
+      *t, Container::activeApp()->localContext(), 0);
 }
 
 void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
@@ -204,7 +206,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 bool FunctionGraphController::moveCursorVertically(
     OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  Poincare::Context *context = textFieldDelegateApp()->localContext();
+  Poincare::Context *context = Container::activeApp()->localContext();
   int nextSubCurve = 0;
   int nextFunction =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
@@ -227,7 +229,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextFunction,
     assert(!std::isnan(f->tMax()));
     nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
   }
-  Poincare::Context *context = textFieldDelegateApp()->localContext();
+  Poincare::Context *context = Container::activeApp()->localContext();
   Poincare::Coordinate2D<double> cursorPosition =
       f->evaluateXYAtParameter(nextT, context, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
@@ -252,7 +254,7 @@ Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
   return xyValues(*m_selectedCurveIndex, t,
-                  textFieldDelegateApp()->localContext(),
+                  Container::activeApp()->localContext(),
                   m_selectedSubCurveIndex);
 }
 

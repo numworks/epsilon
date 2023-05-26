@@ -163,9 +163,7 @@ static bool IsTemporaryAutocompletedBracketPair(
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
     HorizontalLayout l, int index) {
   int dummy = 0;
-  int leftParenthesisIndex = index;
-  assert(l.childAtIndex(leftParenthesisIndex)
-             .isCollapsable(&dummy, OMG::Direction::Left()));
+  int leftParenthesisIndex = index + 1;
   while (leftParenthesisIndex > 0 &&
          l.childAtIndex(leftParenthesisIndex - 1)
              .isCollapsable(&dummy, OMG::Direction::Left())) {

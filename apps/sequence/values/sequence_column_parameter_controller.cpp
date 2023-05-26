@@ -38,9 +38,9 @@ bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void SequenceColumnParameterController::willDisplayCellAtRow(
+void SequenceColumnParameterController::fillCellForRow(
     Escher::HighlightCell* cell, int row) {
-  Shared::ColumnParameterController::willDisplayCellAtRow(cell, row);
+  Shared::ColumnParameterController::fillCellForRow(cell, row);
   assert(row == 0 && cell == &m_showSumCell);
   ExpiringPointer<Shared::Sequence> currentSequence =
       GlobalContext::sequenceStore->modelForRecord(m_record);

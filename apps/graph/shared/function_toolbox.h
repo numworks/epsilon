@@ -27,7 +27,7 @@ class FunctionToolbox : public MathToolbox {
   KDCoordinate nonMemoizedRowHeight(int row) override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;
 
  protected:

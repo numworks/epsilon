@@ -32,7 +32,7 @@ class IllustratedExpressionsListController
     return row == 0 && showIllustration() ? k_illustrationCellType
                                           : k_expressionCellType;
   }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
   // SelectableListViewDelegate
   void listViewDidChangeSelectionAndDidScroll(

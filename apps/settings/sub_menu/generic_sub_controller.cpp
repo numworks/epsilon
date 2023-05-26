@@ -57,7 +57,7 @@ KDCoordinate GenericSubController::nonMemoizedRowHeight(int row) {
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
-void GenericSubController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void GenericSubController::fillCellForRow(HighlightCell *cell, int row) {
   static_cast<MessageTextView *>(
       static_cast<AbstractMenuCell *>(cell)->widget(CellWidget::Type::Label))
       ->setMessage(m_messageTreeModel->childAtIndex(row)->label());

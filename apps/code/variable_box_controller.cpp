@@ -147,7 +147,7 @@ int VariableBoxController::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedItems;
 }
 
-void VariableBoxController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void VariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
   assert(row >= 0 && row < numberOfRows());
   uint8_t cellOrigin = k_currentScriptOrigin;
   int cumulatedOriginsCount = 0;

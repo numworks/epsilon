@@ -31,7 +31,7 @@ const char *IntervalController::title() {
 
 int IntervalController::numberOfRows() const { return k_maxNumberOfCells + 1; }
 
-void IntervalController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void IntervalController::fillCellForRow(HighlightCell *cell, int row) {
   if (row == numberOfRows() - 1) {
     return;
   }
@@ -40,7 +40,7 @@ void IntervalController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   MenuCellWithEditableText<MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
   myCell->label()->setMessage(labels[row]);
-  FloatParameterController::willDisplayCellAtRow(cell, row);
+  FloatParameterController::fillCellForRow(cell, row);
 }
 
 HighlightCell *IntervalController::reusableParameterCell(int index, int type) {

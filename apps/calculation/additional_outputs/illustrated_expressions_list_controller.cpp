@@ -49,13 +49,13 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
-void IllustratedExpressionsListController::willDisplayCellAtRow(
-    HighlightCell* cell, int row) {
+void IllustratedExpressionsListController::fillCellForRow(HighlightCell* cell,
+                                                          int row) {
   if (typeAtRow(row) == k_illustrationCellType) {
     return;
   }
-  ChainedExpressionsListController::willDisplayCellAtRow(
-      cell, row - showIllustration());
+  ChainedExpressionsListController::fillCellForRow(cell,
+                                                   row - showIllustration());
 }
 
 void IllustratedExpressionsListController::

@@ -31,8 +31,8 @@ void FormulaTemplateMenuController::viewWillAppear() {
   selectCell(0);
 }
 
-void FormulaTemplateMenuController::willDisplayCellAtRow(HighlightCell *cell,
-                                                         int row) {
+void FormulaTemplateMenuController::fillCellForRow(HighlightCell *cell,
+                                                   int row) {
   assert(row < k_numberOfTemplates);
   CellType type = static_cast<CellType>(typeAtRow(row));
   if (type == CellType::EmptyTemplate) {

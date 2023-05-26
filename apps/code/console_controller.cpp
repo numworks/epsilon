@@ -264,7 +264,7 @@ int ConsoleController::typeAtRow(int row) const {
   }
 }
 
-void ConsoleController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void ConsoleController::fillCellForRow(HighlightCell *cell, int row) {
   if (row < m_consoleStore.numberOfLines()) {
     static_cast<ConsoleLineCell *>(cell)->setLine(
         m_consoleStore.lineAtIndex(row));

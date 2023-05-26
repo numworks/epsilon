@@ -53,9 +53,9 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int row) {
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
-void UnitListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void UnitListController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_expressionCellType) {
-    return ExpressionsListController::willDisplayCellAtRow(cell, row);
+    return ExpressionsListController::fillCellForRow(cell, row);
   }
   BufferCell *myCell = static_cast<BufferCell *>(cell);
   fillBufferCellAtIndex(myCell, row - m_numberOfExpressionCells);

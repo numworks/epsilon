@@ -197,7 +197,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     return Shared::FunctionListController::expressionRowHeight(j);
   }
   FunctionCell tempCell;
-  willDisplayCellAtRow(&tempCell, j);
+  fillCellForRow(&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
@@ -264,7 +264,7 @@ HighlightCell *ListController::functionCells(int row) {
   return &m_expressionCells[row];
 }
 
-void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void ListController::fillCellForRow(HighlightCell *cell, int row) {
   assert(cell != nullptr);
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(row % 2 == 0);

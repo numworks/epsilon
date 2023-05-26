@@ -46,11 +46,11 @@ int DisplayModeController::reusableCellCount(int type) {
   return 1;
 }
 
-void DisplayModeController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
   /* Number of significants figure row */
   if (typeAtRow(row) == k_significantDigitsType) {
     assert(cell == &m_editableCell);
-    GenericSubController::willDisplayCellAtRow(cell, row);
+    GenericSubController::fillCellForRow(cell, row);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
     Integer(Preferences::sharedPreferences->numberOfSignificantDigits())
@@ -58,7 +58,7 @@ void DisplayModeController::willDisplayCellAtRow(HighlightCell *cell, int row) {
     m_editableCell.textField()->setText(buffer);
     return;
   }
-  PreferencesController::willDisplayCellAtRow(cell, row);
+  PreferencesController::fillCellForRow(cell, row);
 }
 
 bool DisplayModeController::textFieldShouldFinishEditing(

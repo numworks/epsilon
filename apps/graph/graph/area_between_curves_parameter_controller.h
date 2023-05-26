@@ -37,7 +37,7 @@ class AreaBetweenCurvesParameterController
     return k_maxNumberOfDisplayableRows;
   }
 
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   constexpr static int k_maxNumberOfDisplayableRows =

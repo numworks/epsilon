@@ -49,8 +49,7 @@ void IntervalParameterController::setStartEndMessages(
   m_endMessage = endMessage;
 }
 
-void IntervalParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                       int row) {
+void IntervalParameterController::fillCellForRow(HighlightCell *cell, int row) {
   if (row == numberOfRows() - 1) {
     return;
   }
@@ -61,7 +60,7 @@ void IntervalParameterController::willDisplayCellAtRow(HighlightCell *cell,
   I18n::Message m = row == 0 ? m_startMessage
                              : (row == 1 ? m_endMessage : I18n::Message::Step);
   myCell->label()->setMessage(m);
-  FloatParameterController::willDisplayCellAtRow(cell, row);
+  FloatParameterController::fillCellForRow(cell, row);
 }
 
 double IntervalParameterController::parameterAtIndex(int index) {

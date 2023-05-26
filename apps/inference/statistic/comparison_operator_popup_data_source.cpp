@@ -23,7 +23,7 @@ ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
   }
 }
 
-void ComparisonOperatorPopupDataSource::willDisplayCellAtRow(
+void ComparisonOperatorPopupDataSource::fillCellForRow(
     Escher::HighlightCell *cell, int row) {
   SmallBufferTextHighlightCell *bufferCell =
       static_cast<SmallBufferTextHighlightCell *>(cell);

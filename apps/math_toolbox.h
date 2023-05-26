@@ -15,7 +15,7 @@ class MathToolbox : public Escher::Toolbox {
   void viewDidDisappear() override;
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
   /* These could have a ScrollableLayoutView as label, but it's not

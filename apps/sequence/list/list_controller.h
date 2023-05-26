@@ -32,7 +32,7 @@ class ListController : public Shared::FunctionListController {
   int reusableCellCount(int type) override {
     return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows();
   }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   /* ViewController */

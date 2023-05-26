@@ -62,8 +62,7 @@ const char *CurveParameterController::title() {
   return m_title;
 }
 
-void CurveParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                    int row) {
+void CurveParameterController::fillCellForRow(HighlightCell *cell, int row) {
   I18n::Message name = I18n::Message::Default;
   MenuCellWithEditableText<OneLineBufferTextView<KDFont::Size::Large>>
       *parameterCells[] = {&m_abscissaCell, &m_imageCell,
@@ -76,7 +75,7 @@ void CurveParameterController::willDisplayCellAtRow(HighlightCell *cell,
   }
   if (name != I18n::Message::Default) {
     parameterCells[row]->label()->setMessageWithPlaceholders(name);
-    ExplicitFloatParameterController::willDisplayCellAtRow(cell, row);
+    ExplicitFloatParameterController::fillCellForRow(cell, row);
     return;
   }
   if (cell == &m_derivativeNumberCell) {
@@ -94,7 +93,7 @@ void CurveParameterController::willDisplayCellAtRow(HighlightCell *cell,
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
     parameterCells[row]->label()->setText(buffer);
-    ExplicitFloatParameterController::willDisplayCellAtRow(cell, row);
+    ExplicitFloatParameterController::fillCellForRow(cell, row);
   }
 }
 

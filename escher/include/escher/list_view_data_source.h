@@ -15,7 +15,7 @@ class ListViewDataSource : public TableViewDataSource {
   /* reusableCellCount have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   int reusableCellCount(int type) override { return numberOfRows(); }
-  virtual void willDisplayCellAtRow(HighlightCell* cell, int row) {}
+  virtual void fillCellForRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
 
  protected:
@@ -33,7 +33,7 @@ class ListViewDataSource : public TableViewDataSource {
   void fillCellForLocation(HighlightCell* cell, int column,
                            int row) override final {
     if (cell->isVisible()) {  // Frame is already set to zero if hidden
-      willDisplayCellAtRow(cell, row);
+      fillCellForRow(cell, row);
     }
   }
   int typeAtLocation(int column, int row) override final {

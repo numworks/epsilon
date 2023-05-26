@@ -28,7 +28,7 @@ class DisplayModeController : public PreferencesController,
                ? k_defaultRowSeparator
                : PreferencesController::separatorBeforeRow(row);
   }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,

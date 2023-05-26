@@ -29,7 +29,7 @@ class ResultsDataSource
                         dynamicCellsDataSourceDelegate);
   int numberOfRows() const override;
   KDCoordinate defaultColumnWidth() override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtRow(int row) const override;

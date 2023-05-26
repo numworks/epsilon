@@ -53,13 +53,13 @@ KDCoordinate ListWithTopAndBottomDataSource::nonMemoizedRowHeight(int j) {
   return m_innerDataSource->nonMemoizedRowHeight(j - hasTopView());
 }
 
-void ListWithTopAndBottomDataSource::willDisplayCellAtRow(HighlightCell* cell,
-                                                          int index) {
+void ListWithTopAndBottomDataSource::fillCellForRow(HighlightCell* cell,
+                                                    int index) {
   int type = typeAtRow(index);
   if (type == k_topCellType || type == k_bottomCellType) {
     return;
   }
-  m_innerDataSource->willDisplayCellAtRow(cell, index - hasTopView());
+  m_innerDataSource->fillCellForRow(cell, index - hasTopView());
 }
 
 int ListWithTopAndBottomDataSource::typeAtRow(int index) const {

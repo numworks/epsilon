@@ -48,14 +48,14 @@ KDCoordinate SingleRangeController::nonMemoizedRowHeight(int row) {
               : FloatParameterController<float>::nonMemoizedRowHeight(row);
 }
 
-void SingleRangeController::willDisplayCellAtRow(Escher::HighlightCell *cell,
-                                                 int row) {
+void SingleRangeController::fillCellForRow(Escher::HighlightCell *cell,
+                                           int row) {
   int type = typeAtRow(row);
   if (type == k_autoCellType) {
     m_autoCell.accessory()->setState(m_autoParam);
     return;
   }
-  FloatParameterController<float>::willDisplayCellAtRow(cell, row);
+  FloatParameterController<float>::fillCellForRow(cell, row);
 }
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {

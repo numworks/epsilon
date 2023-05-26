@@ -78,8 +78,7 @@ AbstractMenuCell *ScriptParameterController::cell(int row) {
   return cells[row];
 }
 
-void ScriptParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                     int row) {
+void ScriptParameterController::fillCellForRow(HighlightCell *cell, int row) {
   if (cell == &m_autoImportScript && !m_script.isNull()) {
     m_autoImportScript.accessory()->setState(m_script.autoImportation());
   }

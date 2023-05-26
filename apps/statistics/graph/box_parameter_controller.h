@@ -23,7 +23,7 @@ class BoxParameterController
   const char* title() override {
     return I18n::translate(I18n::Message::StatisticsGraphSettings);
   }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   bool handleEvent(Ion::Events::Event event) override;

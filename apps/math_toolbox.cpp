@@ -911,7 +911,7 @@ bool MathToolbox::displayMessageTreeDisabledPopUp(
   return false;
 }
 
-void MathToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void MathToolbox::fillCellForRow(HighlightCell *cell, int row) {
   const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
   KDColor textColor =
       isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
@@ -961,7 +961,7 @@ void MathToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
                static_cast<void *>(m_leafCells + k_maxNumberOfDisplayedRows));
     static_cast<NestedMenuController::NodeCell *>(cell)->label()->setTextColor(
         textColor);
-    Escher::Toolbox::willDisplayCellAtRow(cell, row);
+    Escher::Toolbox::fillCellForRow(cell, row);
   }
 }
 

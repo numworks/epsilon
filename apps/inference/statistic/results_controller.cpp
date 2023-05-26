@@ -77,7 +77,7 @@ KDCoordinate ResultsController::defaultColumnWidth() {
          Metric::CommonRightMargin;
 }
 
-void ResultsController::willDisplayCellAtRow(HighlightCell *cell, int i) {
+void ResultsController::fillCellForRow(HighlightCell *cell, int i) {
   if (i < numberOfRows() - 1) {
     ResultCell *messageCell = static_cast<ResultCell *>(cell);
     double value;

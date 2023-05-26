@@ -24,7 +24,7 @@ class PressToTestController : public Escher::ListWithTopAndBottomController {
   int typeAtRow(int row) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   KDCoordinate separatorBeforeRow(int row) override {
     return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;

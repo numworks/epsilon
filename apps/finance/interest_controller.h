@@ -24,7 +24,7 @@ class InterestController : public Shared::FloatParameterController<double>,
   const char* title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   // Confirm cell plus all parameters but the unknown one

@@ -44,8 +44,7 @@ KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int row) {
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
-void DetailsParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                      int row) {
+void DetailsParameterController::fillCellForRow(HighlightCell *cell, int row) {
   assert(0 <= row && row < k_numberOfDataPoints);
   DetailCell *myCell = static_cast<DetailCell *>(cell);
   if (row == k_indexOfCurveTypeRow) {

@@ -82,7 +82,7 @@ int ListController::reusableCellCount(int type) {
   return 1;
 }
 
-void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void ListController::fillCellForRow(HighlightCell *cell, int row) {
   if (!isAddEmptyRow(row) && row != m_editedCellIndex) {
     willDisplayExpressionCellAtIndex(cell, row);
   }

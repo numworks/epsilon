@@ -35,7 +35,7 @@ class TypeController : public Escher::SelectableListViewController<
     return &m_cells[i];
   }
   bool handleEvent(Ion::Events::Event event) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
   constexpr static int k_indexOfTTest = 0;
   constexpr static int k_indexOfPooledTest = 1;

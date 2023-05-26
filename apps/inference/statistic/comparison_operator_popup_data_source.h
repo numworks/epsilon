@@ -19,7 +19,7 @@ class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
   Escher::SmallBufferTextHighlightCell* reusableCell(int i, int type) override {
     return &m_cells[i];
   }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   constexpr static int k_cellBufferSize =

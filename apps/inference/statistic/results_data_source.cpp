@@ -29,8 +29,7 @@ KDCoordinate ResultsDataSource::defaultColumnWidth() {
          Escher::Metric::CommonRightMargin;
 }
 
-void ResultsDataSource::willDisplayCellAtRow(Escher::HighlightCell *cell,
-                                             int row) {
+void ResultsDataSource::fillCellForRow(Escher::HighlightCell *cell, int row) {
   if (row < numberOfRows() - 1) {
     ResultCell *messageCell = static_cast<ResultCell *>(cell);
     double value;

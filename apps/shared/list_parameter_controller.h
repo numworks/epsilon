@@ -28,7 +28,7 @@ class ListParameterController
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_numberOfSharedCells; }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
   // Type order defines cell order

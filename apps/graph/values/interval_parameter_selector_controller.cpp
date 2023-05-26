@@ -56,8 +56,8 @@ HighlightCell *IntervalParameterSelectorController::reusableCell(int index) {
   return m_intervalParameterCell + index;
 }
 
-void IntervalParameterSelectorController::willDisplayCellAtRow(
-    HighlightCell *cell, int row) {
+void IntervalParameterSelectorController::fillCellForRow(HighlightCell *cell,
+                                                         int row) {
   assert(0 <= row && row < numberOfRows());
   Shared::ContinuousFunctionProperties::SymbolType symbolType =
       symbolTypeAtRow(row);

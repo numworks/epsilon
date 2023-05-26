@@ -184,7 +184,7 @@ int MainController::typeAtRow(int row) const {
   };
 }
 
-void MainController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void MainController::fillCellForRow(HighlightCell *cell, int row) {
   GlobalPreferences *globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;
   Preferences *preferences = Preferences::sharedPreferences;

@@ -54,8 +54,7 @@ KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int row) {
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
-void ExpressionsListController::willDisplayCellAtRow(HighlightCell *cell,
-                                                     int row) {
+void ExpressionsListController::fillCellForRow(HighlightCell *cell, int row) {
   /* Note : To further optimize memoization space in the pool, layout
    * serialization could be memoized instead, and layout would be recomputed
    * here, when setting cell's layout. */

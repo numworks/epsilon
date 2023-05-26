@@ -83,9 +83,8 @@ HighlightCell *ListParameterController::cell(int index) {
   return cells[index];
 }
 
-void ListParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                   int row) {
-  Shared::ListParameterController::willDisplayCellAtRow(cell, row);
+void ListParameterController::fillCellForRow(HighlightCell *cell, int row) {
+  Shared::ListParameterController::fillCellForRow(cell, row);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
   }

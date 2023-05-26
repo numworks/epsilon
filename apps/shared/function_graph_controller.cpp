@@ -95,7 +95,7 @@ FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
          Metric::CellSeparatorThickness;
 }
 
-void FunctionGraphController::FunctionSelectionController::willDisplayCellAtRow(
+void FunctionGraphController::FunctionSelectionController::fillCellForRow(
     HighlightCell *cell, int row) {
   assert(row < graphController()->numberOfCurves());
   ExpiringPointer<Function> function =

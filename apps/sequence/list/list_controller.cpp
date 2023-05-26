@@ -116,7 +116,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   }
 }
 
-void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void ListController::fillCellForRow(HighlightCell *cell, int row) {
   if (!isAddEmptyRow(row)) {
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);

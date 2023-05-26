@@ -38,7 +38,7 @@ class RegressionController : public Escher::SelectableListViewController<
                ? k_defaultNumberOfRows
                : k_variantNumberOfRows;
   }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   /* In all variants, Model::Type::None isn't made available.

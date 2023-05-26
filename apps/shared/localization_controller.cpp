@@ -219,8 +219,7 @@ KDCoordinate LocalizationController::nonMemoizedRowHeight(int row) {
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
-void LocalizationController::willDisplayCellAtRow(HighlightCell *cell,
-                                                  int row) {
+void LocalizationController::fillCellForRow(HighlightCell *cell, int row) {
   if (mode() == Mode::Language) {
     static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
         I18n::LanguageNames[row]);

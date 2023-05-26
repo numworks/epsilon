@@ -13,10 +13,9 @@ namespace Shared {
 
 class SingleRangeController : public FloatParameterController<float> {
  public:
-  SingleRangeController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      MessagePopUpController* confirmPopUpController);
+  SingleRangeController(Escher::Responder* parentResponder,
+                        Escher::BoxesDelegate* boxesDelegate,
+                        MessagePopUpController* confirmPopUpController);
   void viewWillAppear() override;
 
   int numberOfRows() const override { return k_numberOfTextCells + 2; }

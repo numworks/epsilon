@@ -3,7 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
-#include <escher/input_event_handler_delegate.h>
+#include <escher/boxes_delegate.h>
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/code_point_layout.h>
@@ -23,8 +23,8 @@ namespace Inference {
 
 HypothesisController::HypothesisController(
     Escher::StackViewController* parent, InputController* inputController,
-    InputSlopeController* inputSlopeController,
-    InputEventHandlerDelegate* handler, Test* test)
+    InputSlopeController* inputSlopeController, BoxesDelegate* handler,
+    Test* test)
     : Escher::ExplicitSelectableListViewController(parent),
       m_inputController(inputController),
       m_inputSlopeController(inputSlopeController),

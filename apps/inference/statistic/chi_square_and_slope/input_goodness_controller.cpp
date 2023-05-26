@@ -6,12 +6,10 @@ namespace Inference {
 
 InputGoodnessController::InputGoodnessController(
     StackViewController *parent, ViewController *resultsController,
-    GoodnessTest *statistic,
-    InputEventHandlerDelegate *inputEventHandlerDelegate)
+    GoodnessTest *statistic, BoxesDelegate *boxesDelegate)
     : InputCategoricalController(parent, resultsController, statistic,
-                                 inputEventHandlerDelegate),
-      m_degreeOfFreedomCell(&m_selectableListView, inputEventHandlerDelegate,
-                            this),
+                                 boxesDelegate),
+      m_degreeOfFreedomCell(&m_selectableListView, boxesDelegate, this),
       m_goodnessTableCell(&m_selectableListView, statistic, this) {
   m_degreeOfFreedomCell.setMessages(I18n::Message::DegreesOfFreedom);
 }

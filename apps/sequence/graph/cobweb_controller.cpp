@@ -23,8 +23,7 @@ using namespace Escher;
 namespace Sequence {
 
 CobwebController::CobwebController(
-    Responder* parentResponder,
-    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
     GraphView* graphView, CurveViewRange* graphRange, CurveViewCursor* cursor,
     XYBannerView* bannerView, CursorView* cursorView,
     SequenceStore* sequenceStore)

@@ -8,12 +8,11 @@ namespace Graph {
 class AreaBetweenCurvesGraphController : public IntegralGraphController {
  public:
   AreaBetweenCurvesGraphController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      Escher::Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
       GraphView* graphView, Shared::InteractiveCurveViewRange* graphRange,
       Shared::CurveViewCursor* cursor)
-      : IntegralGraphController(parentResponder, inputEventHandlerDelegate,
-                                graphView, graphRange, cursor) {}
+      : IntegralGraphController(parentResponder, boxesDelegate, graphView,
+                                graphRange, cursor) {}
   const char* title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

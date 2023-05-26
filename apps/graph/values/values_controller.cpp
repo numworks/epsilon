@@ -24,13 +24,12 @@ namespace Graph {
 /* PUBLIC */
 
 ValuesController::ValuesController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
     ButtonRowController *header,
     FunctionParameterController *functionParameterController)
     : Shared::ValuesController(parentResponder, header),
       m_functionParameterController(functionParameterController),
-      m_intervalParameterController(this, inputEventHandlerDelegate),
+      m_intervalParameterController(this, boxesDelegate),
       m_derivativeParameterController(this),
       m_setIntervalButton(
           this, I18n::Message::IntervalSet,
@@ -74,7 +73,7 @@ ValuesController::ValuesController(
   m_prefacedTwiceTableView.setPrefaceDelegate(this);
   initValueCells();
   m_exactValuesButton.setState(m_exactValuesAreActivated);
-  setupSelectableTableViewAndCells(inputEventHandlerDelegate);
+  setupSelectableTableViewAndCells(boxesDelegate);
 }
 
 bool ValuesController::displayButtonExactValues() const {

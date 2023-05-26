@@ -1,9 +1,9 @@
 #ifndef DISTRIBUTIONS_PROBABILITY_CALCULATION_CELL_H
 #define DISTRIBUTIONS_PROBABILITY_CALCULATION_CELL_H
 
+#include <escher/boxes_delegate.h>
 #include <escher/editable_text_cell.h>
 #include <escher/highlight_cell.h>
-#include <escher/input_event_handler_delegate.h>
 #include <escher/message_text_view.h>
 #include <escher/text_field_delegate.h>
 
@@ -11,10 +11,9 @@ namespace Distributions {
 
 class CalculationCell : public Escher::HighlightCell {
  public:
-  CalculationCell(
-      Escher::Responder* parentResponder = nullptr,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      Escher::TextFieldDelegate* textFieldDelegate = nullptr);
+  CalculationCell(Escher::Responder* parentResponder = nullptr,
+                  Escher::BoxesDelegate* boxesDelegate = nullptr,
+                  Escher::TextFieldDelegate* textFieldDelegate = nullptr);
   Escher::Responder* responder() override;
   void setResponder(bool shouldbeResponder);
   void setHighlighted(bool highlight) override;

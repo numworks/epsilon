@@ -14,11 +14,10 @@ namespace Shared {
 
 class SumGraphController : public SimpleInteractiveCurveViewController {
  public:
-  SumGraphController(
-      Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      FunctionGraphView* curveView, InteractiveCurveViewRange* range,
-      CurveViewCursor* cursor);
+  SumGraphController(Responder* parentResponder,
+                     Escher::BoxesDelegate* boxesDelegate,
+                     FunctionGraphView* curveView,
+                     InteractiveCurveViewRange* range, CurveViewCursor* cursor);
 
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
@@ -72,7 +71,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   class LegendView : public Escher::View {
    public:
     LegendView(SumGraphController* controller,
-               Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
+               Escher::BoxesDelegate* boxesDelegate);
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
 

@@ -9,11 +9,10 @@ namespace Shared {
 
 SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
-        Responder* parentResponder,
-        InputEventHandlerDelegate* inputEventHandlerDelegate,
+        Responder* parentResponder, BoxesDelegate* boxesDelegate,
         InteractiveCurveViewRange* interactiveRange,
         Shared::MessagePopUpController* confirmPopUpController)
-    : SingleRangeController(parentResponder, inputEventHandlerDelegate,
+    : SingleRangeController(parentResponder, boxesDelegate,
                             confirmPopUpController),
       m_range(interactiveRange) {}
 

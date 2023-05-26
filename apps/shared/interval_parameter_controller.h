@@ -13,9 +13,8 @@ namespace Shared {
 
 class IntervalParameterController : public FloatParameterController<double> {
  public:
-  IntervalParameterController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
+  IntervalParameterController(Escher::Responder* parentResponder,
+                              Escher::BoxesDelegate* boxesDelegate);
   Interval* interval() {
     assert(m_interval);
     return m_interval;

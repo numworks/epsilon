@@ -9,12 +9,11 @@ namespace Graph {
 
 class PreimageParameterController : public Shared::GoToParameterController {
  public:
-  PreimageParameterController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Shared::InteractiveCurveViewRange* graphRange,
-      Shared::CurveViewCursor* cursor,
-      PreimageGraphController* preimageGraphController);
+  PreimageParameterController(Escher::Responder* parentResponder,
+                              Escher::BoxesDelegate* boxesDelegate,
+                              Shared::InteractiveCurveViewRange* graphRange,
+                              Shared::CurveViewCursor* cursor,
+                              PreimageGraphController* preimageGraphController);
   const char* title() override {
     return I18n::translate(I18n::Message::Preimage);
   }

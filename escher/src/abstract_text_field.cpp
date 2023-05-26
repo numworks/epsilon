@@ -325,12 +325,12 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
 
 /* AbstractTextField */
 
-AbstractTextField::AbstractTextField(
-    Responder *parentResponder, View *contentView,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
-    TextFieldDelegate *delegate)
+AbstractTextField::AbstractTextField(Responder *parentResponder,
+                                     View *contentView,
+                                     BoxesDelegate *boxesDelegate,
+                                     TextFieldDelegate *delegate)
     : TextInput(parentResponder, contentView),
-      EditableField(inputEventHandlerDelegate),
+      EditableField(boxesDelegate),
       m_delegate(delegate) {}
 
 void AbstractTextField::setBackgroundColor(KDColor backgroundColor) {
@@ -342,16 +342,14 @@ void AbstractTextField::setTextColor(KDColor textColor) {
   contentView()->setTextColor(textColor);
 }
 
-void AbstractTextField::setDelegates(
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
-    TextFieldDelegate *delegate) {
-  m_inputEventHandlerDelegate = inputEventHandlerDelegate;
+void AbstractTextField::setDelegates(BoxesDelegate *boxesDelegate,
+                                     TextFieldDelegate *delegate) {
+  m_boxesDelegate = boxesDelegate;
   m_delegate = delegate;
 }
 
-void AbstractTextField::setInputEventHandlerDelegate(
-    InputEventHandlerDelegate *inputEventHandlerDelegate) {
-  m_inputEventHandlerDelegate = inputEventHandlerDelegate;
+void AbstractTextField::setBoxesDelegate(BoxesDelegate *boxesDelegate) {
+  m_boxesDelegate = boxesDelegate;
 }
 
 bool AbstractTextField::isEditing() const {

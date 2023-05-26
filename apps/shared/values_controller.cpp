@@ -34,13 +34,12 @@ ValuesController::ValuesController(Responder *parentResponder,
 }
 
 void ValuesController::setupSelectableTableViewAndCells(
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate) {
+    Escher::BoxesDelegate *boxesDelegate) {
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {
     AbstractEvenOddEditableTextCell *c = abscissaCells(i);
     c->setParentResponder(selectableTableView());
-    c->editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
-                                                     this);
+    c->editableTextCell()->textField()->setDelegates(boxesDelegate, this);
     c->editableTextCell()->textField()->setFont(k_cellFont);
   }
   int numberOfAbscissaTitleCells = abscissaTitleCellsCount();

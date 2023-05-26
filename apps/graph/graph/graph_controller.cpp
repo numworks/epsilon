@@ -18,19 +18,18 @@ using namespace Shared;
 namespace Graph {
 
 GraphController::GraphController(
-    Escher::Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Escher::Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
     Escher::ButtonRowController *header,
     Shared::InteractiveCurveViewRange *interactiveRange,
     CurveViewCursor *cursor, int *selectedCurveIndex)
-    : FunctionGraphController(parentResponder, inputEventHandlerDelegate,
-                              header, interactiveRange, &m_view, cursor,
+    : FunctionGraphController(parentResponder, boxesDelegate, header,
+                              interactiveRange, &m_view, cursor,
                               selectedCurveIndex),
-      m_bannerView(this, inputEventHandlerDelegate, this),
+      m_bannerView(this, boxesDelegate, this),
       m_view(interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
       m_graphRange(interactiveRange),
-      m_curveParameterController(inputEventHandlerDelegate, interactiveRange,
-                                 &m_bannerView, m_cursor, &m_view),
+      m_curveParameterController(boxesDelegate, interactiveRange, &m_bannerView,
+                                 m_cursor, &m_view),
       m_functionSelectionController(this) {
   m_graphRange->setDelegate(this);
 }

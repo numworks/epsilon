@@ -15,7 +15,7 @@ class ValuesController : public Shared::ValuesController,
                          Escher::RegularTableSize1DManager {
  public:
   ValuesController(Escher::Responder *parentResponder,
-                   Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+                   Escher::BoxesDelegate *boxesDelegate,
                    Escher::ButtonRowController *header);
 
   // ButtonRowDelegate

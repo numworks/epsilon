@@ -17,7 +17,7 @@ namespace Sequence {
 class ListController : public Shared::FunctionListController {
  public:
   ListController(Escher::Responder* parentResponder,
-                 Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+                 Escher::BoxesDelegate* boxesDelegate,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
   int numberOfExpressionRows() const override;

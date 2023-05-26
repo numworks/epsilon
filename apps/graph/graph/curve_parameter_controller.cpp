@@ -14,21 +14,18 @@ using namespace Escher;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-    InteractiveCurveViewRange *graphRange, BannerView *bannerView,
-    CurveViewCursor *cursor, GraphView *graphView)
+    Escher::BoxesDelegate *boxesDelegate, InteractiveCurveViewRange *graphRange,
+    BannerView *bannerView, CurveViewCursor *cursor, GraphView *graphView)
     : ExplicitFloatParameterController(parentResponder()),
-      m_abscissaCell(&m_selectableListView, inputEventHandlerDelegate, this),
-      m_imageCell(&m_selectableListView, inputEventHandlerDelegate, this),
-      m_derivativeNumberCell(&m_selectableListView, inputEventHandlerDelegate,
-                             this),
+      m_abscissaCell(&m_selectableListView, boxesDelegate, this),
+      m_imageCell(&m_selectableListView, boxesDelegate, this),
+      m_derivativeNumberCell(&m_selectableListView, boxesDelegate, this),
       m_graphRange(graphRange),
       m_cursor(cursor),
       m_preimageGraphController(nullptr, graphView, bannerView, graphRange,
                                 cursor),
-      m_calculationParameterController(this, inputEventHandlerDelegate,
-                                       graphView, bannerView, graphRange,
-                                       cursor) {
+      m_calculationParameterController(this, boxesDelegate, graphView,
+                                       bannerView, graphRange, cursor) {
   m_calculationCell.label()->setMessage(I18n::Message::Find);
   m_optionsCell.label()->setMessage(I18n::Message::Options);
 }

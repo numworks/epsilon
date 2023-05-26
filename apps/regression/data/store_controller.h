@@ -11,8 +11,8 @@ namespace Regression {
 class StoreController : public Shared::StoreController {
  public:
   StoreController(Escher::Responder *parentResponder,
-                  Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-                  Store *store, Escher::ButtonRowController *header,
+                  Escher::BoxesDelegate *boxesDelegate, Store *store,
+                  Escher::ButtonRowController *header,
                   Poincare::Context *parentContext);
   Model *selectedModel() {
     return static_cast<Store *>(m_store)->modelForSeries(selectedSeries());

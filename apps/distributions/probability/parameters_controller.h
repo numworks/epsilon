@@ -13,11 +13,10 @@ namespace Distributions {
 
 class ParametersController : public Shared::FloatParameterController<double> {
  public:
-  ParametersController(
-      Escher::StackViewController* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Distribution* m_distribution,
-      CalculationController* calculationController);
+  ParametersController(Escher::StackViewController* parentResponder,
+                       Escher::BoxesDelegate* boxesDelegate,
+                       Distribution* m_distribution,
+                       CalculationController* calculationController);
   const char* title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;

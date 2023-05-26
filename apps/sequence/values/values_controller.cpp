@@ -16,12 +16,11 @@ using namespace Escher;
 
 namespace Sequence {
 
-ValuesController::ValuesController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
-    ButtonRowController *header)
+ValuesController::ValuesController(Responder *parentResponder,
+                                   BoxesDelegate *boxesDelegate,
+                                   ButtonRowController *header)
     : Shared::ValuesController(parentResponder, header),
-      m_intervalParameterController(this, inputEventHandlerDelegate),
+      m_intervalParameterController(this, boxesDelegate),
       m_sequenceColumnParameterController(this),
       m_sumColumnParameterController(this),
       m_setIntervalButton(
@@ -45,7 +44,7 @@ ValuesController::ValuesController(
               this),
           k_cellFont),
       m_hasAtLeastOneSumColumn(false) {
-  setupSelectableTableViewAndCells(inputEventHandlerDelegate);
+  setupSelectableTableViewAndCells(boxesDelegate);
   setDefaultStartEndMessages();
   initValueCells();
 }

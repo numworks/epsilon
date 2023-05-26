@@ -25,12 +25,11 @@ class GraphController;
 class CalculationParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
-  CalculationParameterController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      GraphView* graphView, BannerView* bannerView,
-      Shared::InteractiveCurveViewRange* range,
-      Shared::CurveViewCursor* cursor);
+  CalculationParameterController(Escher::Responder* parentResponder,
+                                 Escher::BoxesDelegate* boxesDelegate,
+                                 GraphView* graphView, BannerView* bannerView,
+                                 Shared::InteractiveCurveViewRange* range,
+                                 Shared::CurveViewCursor* cursor);
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

@@ -19,15 +19,13 @@ using namespace Poincare;
 namespace Shared {
 
 FunctionGraphController::FunctionGraphController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
     ButtonRowController *header, InteractiveCurveViewRange *interactiveRange,
     AbstractPlotView *curveView, CurveViewCursor *cursor,
     int *selectedCurveIndex)
     : InteractiveCurveViewController(
-          parentResponder, inputEventHandlerDelegate, header, interactiveRange,
-          curveView, cursor, I18n::Message::GraphCalculus, selectedCurveIndex) {
-}
+          parentResponder, boxesDelegate, header, interactiveRange, curveView,
+          cursor, I18n::Message::GraphCalculus, selectedCurveIndex) {}
 
 void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {

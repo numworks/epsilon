@@ -2,7 +2,7 @@
 #define SHARED_APP_H
 
 #include <escher/app.h>
-#include <escher/input_event_handler_delegate.h>
+#include <escher/boxes_delegate.h>
 #include <escher/nested_menu_controller.h>
 
 #include "store_menu_controller.h"
@@ -10,7 +10,7 @@
 namespace Shared {
 
 // TODO: Handle InputEventHandleDelegate differently
-class SharedApp : public Escher::App, public Escher::InputEventHandlerDelegate {
+class SharedApp : public Escher::App, public Escher::BoxesDelegate {
  public:
   class Snapshot : public App::Snapshot {
    public:

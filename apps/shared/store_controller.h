@@ -7,10 +7,10 @@
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 
+#include "boxes_delegate.h"
 #include "buffer_function_title_cell.h"
 #include "double_pair_store.h"
 #include "editable_cell_table_view_controller.h"
-#include "input_event_handler_delegate.h"
 #include "store_parameter_controller.h"
 
 namespace Shared {
@@ -20,8 +20,8 @@ class StoreController : public EditableCellTableViewController,
                         public StoreColumnHelper {
  public:
   StoreController(Escher::Responder* parentResponder,
-                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-                  DoublePairStore* store, Escher::ButtonRowController* header,
+                  Escher::BoxesDelegate* boxesDelegate, DoublePairStore* store,
+                  Escher::ButtonRowController* header,
                   Poincare::Context* parentContext);
   TELEMETRY_ID("Store");
 

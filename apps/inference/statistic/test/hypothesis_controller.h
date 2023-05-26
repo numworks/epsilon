@@ -1,10 +1,10 @@
 #ifndef INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H
 #define INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H
 
+#include <escher/boxes_delegate.h>
 #include <escher/button_cell.h>
 #include <escher/dropdown_widget.h>
 #include <escher/highlight_cell.h>
-#include <escher/input_event_handler_delegate.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
@@ -29,7 +29,7 @@ class HypothesisController
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
                        InputSlopeController* inputSlopeController,
-                       Escher::InputEventHandlerDelegate* handler, Test* test);
+                       Escher::BoxesDelegate* handler, Test* test);
   static bool ButtonAction(HypothesisController* controller, void* s);
 
   // SelectableListViewController

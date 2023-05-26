@@ -12,10 +12,9 @@ namespace Inference {
 
 class InputCategoricalCell : public HighlightCell {
  public:
-  InputCategoricalCell(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* textFieldDelegate = nullptr);
+  InputCategoricalCell(Responder* parentResponder = nullptr,
+                       BoxesDelegate* boxesDelegate = nullptr,
+                       TextFieldDelegate* textFieldDelegate = nullptr);
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;

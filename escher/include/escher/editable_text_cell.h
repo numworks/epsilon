@@ -34,13 +34,13 @@ template <int NumberOfSignificantDigits =
               Poincare::PrintFloat::k_numberOfStoredSignificantDigits>
 class EditableTextCell : public AbstractEditableTextCell {
  public:
-  EditableTextCell(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {})
+  EditableTextCell(Responder* parentResponder = nullptr,
+                   BoxesDelegate* boxesDelegate = nullptr,
+                   TextFieldDelegate* delegate = nullptr,
+                   KDGlyph::Format format = {})
       : AbstractEditableTextCell(parentResponder),
-        m_textField(this, m_textBody, k_bufferSize, inputEventHandlerDelegate,
-                    delegate, format) {
+        m_textField(this, m_textBody, k_bufferSize, boxesDelegate, delegate,
+                    format) {
     m_textBody[0] = 0;
   }
 

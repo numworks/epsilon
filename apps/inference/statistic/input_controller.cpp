@@ -15,7 +15,7 @@ using namespace Inference;
 InputController::InputController(Escher::StackViewController *parent,
                                  ResultsController *resultsController,
                                  Statistic *statistic,
-                                 Escher::InputEventHandlerDelegate *handler)
+                                 Escher::BoxesDelegate *handler)
     : FloatParameterController<double>(parent),
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
       m_statistic(statistic),

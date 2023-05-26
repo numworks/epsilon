@@ -9,10 +9,10 @@ namespace Inference {
 
 class InputGoodnessController : public InputCategoricalController {
  public:
-  InputGoodnessController(
-      Escher::StackViewController* parent,
-      Escher::ViewController* resultsController, GoodnessTest* statistic,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
+  InputGoodnessController(Escher::StackViewController* parent,
+                          Escher::ViewController* resultsController,
+                          GoodnessTest* statistic,
+                          Escher::BoxesDelegate* boxesDelegate);
 
   void updateDegreeOfFreedomCell();
 

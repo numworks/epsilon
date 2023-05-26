@@ -26,13 +26,14 @@ class InteractiveCurveViewController
  public:
   constexpr static int k_graphControllerStackDepth = 1;
 
-  InteractiveCurveViewController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Escher::ButtonRowController* header,
-      InteractiveCurveViewRange* interactiveRange, AbstractPlotView* curveView,
-      CurveViewCursor* cursor, I18n::Message calculusButtonMessage,
-      int* selectedCurveIndex);
+  InteractiveCurveViewController(Escher::Responder* parentResponder,
+                                 Escher::BoxesDelegate* boxesDelegate,
+                                 Escher::ButtonRowController* header,
+                                 InteractiveCurveViewRange* interactiveRange,
+                                 AbstractPlotView* curveView,
+                                 CurveViewCursor* cursor,
+                                 I18n::Message calculusButtonMessage,
+                                 int* selectedCurveIndex);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

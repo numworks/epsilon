@@ -20,7 +20,7 @@ class GraphController : public Shared::FunctionGraphController,
                         public GraphControllerHelper {
  public:
   GraphController(Escher::Responder *parentResponder,
-                  Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+                  Escher::BoxesDelegate *boxesDelegate,
                   Escher::ButtonRowController *header,
                   Shared::InteractiveCurveViewRange *interactiveRange,
                   Shared::CurveViewCursor *cursor, int *selectedCurveIndex);

@@ -24,10 +24,10 @@ class EditExpressionController : public Escher::ViewController,
   constexpr static int k_cacheBufferSize =
       std::max(k_layoutBufferMaxSize, Constant::MaxSerializedExpressionSize);
 
-  EditExpressionController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      HistoryController* historyController, CalculationStore* calculationStore);
+  EditExpressionController(Escher::Responder* parentResponder,
+                           Escher::BoxesDelegate* boxesDelegate,
+                           HistoryController* historyController,
+                           CalculationStore* calculationStore);
 
   /* ViewController */
   Escher::View* view() override { return &m_contentView; }
@@ -55,7 +55,7 @@ class EditExpressionController : public Escher::ViewController,
    public:
     ContentView(Escher::Responder* parentResponder,
                 CalculationSelectableTableView* subview,
-                Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+                Escher::BoxesDelegate* boxesDelegate,
                 Escher::LayoutFieldDelegate* layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView* mainView() { return m_mainView; }

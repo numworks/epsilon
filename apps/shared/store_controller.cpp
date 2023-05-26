@@ -14,10 +14,11 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreController::StoreController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-    DoublePairStore *store, ButtonRowController *header, Context *parentContext)
+StoreController::StoreController(Responder *parentResponder,
+                                 Escher::BoxesDelegate *boxesDelegate,
+                                 DoublePairStore *store,
+                                 ButtonRowController *header,
+                                 Context *parentContext)
     : EditableCellTableViewController(parentResponder, &m_prefacedTableView),
       ButtonRowDelegate(header, nullptr),
       StoreColumnHelper(this, parentContext, this),
@@ -30,7 +31,7 @@ StoreController::StoreController(
   for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
     m_editableCells[i].setParentResponder(&m_selectableTableView);
     m_editableCells[i].editableTextCell()->textField()->setDelegates(
-        inputEventHandlerDelegate, this);
+        boxesDelegate, this);
   }
 }
 

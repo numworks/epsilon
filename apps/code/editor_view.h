@@ -20,10 +20,9 @@ class EditorView : public Escher::Responder,
   }
   bool isAutocompleting() const;
   void resetSelection();
-  void setTextAreaDelegates(
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Escher::TextAreaDelegate* delegate) {
-    m_textArea.setDelegates(inputEventHandlerDelegate, delegate);
+  void setTextAreaDelegates(Escher::BoxesDelegate* boxesDelegate,
+                            Escher::TextAreaDelegate* delegate) {
+    m_textArea.setDelegates(boxesDelegate, delegate);
   }
   const char* text() const { return m_textArea.text(); }
   void setText(char* textBuffer, size_t textBufferSize) {

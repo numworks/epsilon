@@ -3,7 +3,6 @@
 
 #include <apps/shared/menu_controller.h>
 #include <apps/shared/shared_app.h>
-#include <apps/shared/text_field_delegate_app.h>
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
@@ -11,7 +10,6 @@
 
 #include "models/statistic_buffer.h"
 #include "shared/dynamic_cells_data_source.h"
-#include "shared/layout_field_delegate_app.h"
 #include "statistic/chi_square_and_slope/categorical_type_controller.h"
 #include "statistic/chi_square_and_slope/input_goodness_controller.h"
 #include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
@@ -27,8 +25,7 @@
 
 namespace Inference {
 
-class App : public Shared::LayoutFieldDelegateApp,
-            public Shared::MenuControllerDelegate {
+class App : public Shared::SharedApp, public Shared::MenuControllerDelegate {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

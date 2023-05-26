@@ -1,7 +1,6 @@
 #ifndef CODE_APP_H
 #define CODE_APP_H
 
-#include <apps/shared/input_event_handler_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <ion/events.h>
 
@@ -13,9 +12,9 @@
 
 namespace Code {
 
-class App : public Shared::InputEventHandlerDelegateApp {
+class App : public Shared::SharedApp {
  public:
-  class Descriptor : public Shared::InputEventHandlerDelegateApp::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
    public:
     I18n::Message name() const override;
     I18n::Message upperName() const override;

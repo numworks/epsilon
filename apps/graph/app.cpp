@@ -44,20 +44,6 @@ void App::Snapshot::tidy() {
   SharedApp::Snapshot::tidy();
 }
 
-CodePoint App::XNT() {
-  if (snapshot()->activeTab() != 0) {
-    return ContinuousFunction::k_cartesianSymbol;
-  }
-  int selectedFunctionIndex = listController()->selectedRow();
-  if (!isStoreMenuOpen() && selectedFunctionIndex >= 0) {
-    assert(selectedFunctionIndex < functionStore()->numberOfModels());
-    Ion::Storage::Record record =
-        functionStore()->recordAtIndex(selectedFunctionIndex);
-    return functionStore()->modelForRecord(record)->symbol();
-  }
-  return ContinuousFunction::k_cartesianSymbol;
-}
-
 App::ListTab::ListTab()
     : Shared::FunctionApp::ListTab(&m_listController),
       m_listController(&m_listFooter, &m_listHeader, &m_listFooter,

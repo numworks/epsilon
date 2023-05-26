@@ -1,7 +1,6 @@
 #ifndef DISTRIBUTIONS_APP_H
 #define DISTRIBUTIONS_APP_H
 
-#include <apps/shared/layout_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <escher/stack_view_controller.h>
 #include <ion/ring_buffer.h>
@@ -12,7 +11,7 @@
 
 namespace Distributions {
 
-class App : public Shared::LayoutFieldDelegateApp {
+class App : public Shared::SharedAppWithStoreMenu {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

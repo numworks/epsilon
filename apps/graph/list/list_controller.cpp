@@ -181,6 +181,17 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
   return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
+CodePoint ListController::XNT() {
+  int selectedFunctionIndex = selectedRow();
+  if (!App::app()->isStoreMenuOpen() && selectedFunctionIndex >= 0) {
+    assert(selectedFunctionIndex < modelStore()->numberOfModels());
+    Ion::Storage::Record record =
+        modelStore()->recordAtIndex(selectedFunctionIndex);
+    return modelStore()->modelForRecord(record)->symbol();
+  }
+  return ContinuousFunction::k_cartesianSymbol;
+}
+
 void ListController::editExpression(Ion::Events::Event event) {
   ExpressionModelListController::editExpression(event);
   m_editableCell.setHighlighted(true);

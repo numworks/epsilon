@@ -1,7 +1,6 @@
 #ifndef ELEMENTS_APP_H
 #define ELEMENTS_APP_H
 
-#include <apps/shared/layout_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
@@ -11,7 +10,7 @@
 
 namespace Elements {
 
-class App : public Shared::LayoutFieldDelegateApp {
+class App : public Shared::SharedAppWithStoreMenu {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:

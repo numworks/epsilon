@@ -74,14 +74,6 @@ void App::Snapshot::tidy() {
   Shared::SharedApp::Snapshot::tidy();
 }
 
-bool App::isAcceptableExpression(Escher::EditableField *field,
-                                 const Poincare::Expression exp) {
-  /* Complete LayoutFieldDelegateApp acceptable conditions by not accepting
-   * any OperatorType. */
-  return LayoutFieldDelegateApp::isAcceptableExpression(field, exp) &&
-         exp.type() != ExpressionNode::Type::Comparison;
-}
-
 App::ListTab::ListTab()
     : Shared::FunctionApp::ListTab(&m_listController),
       m_listController(&m_listFooter, app(), &m_listHeader, &m_listFooter) {}

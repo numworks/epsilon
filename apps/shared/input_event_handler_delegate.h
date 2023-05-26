@@ -3,7 +3,7 @@
 
 #include <escher/container.h>
 
-#include "input_event_handler_delegate_app.h"
+#include "shared_app.h"
 
 namespace Shared {
 
@@ -17,9 +17,8 @@ class InputEventHandlerDelegate : public Escher::InputEventHandlerDelegate {
   }
 
  private:
-  InputEventHandlerDelegateApp *inputEventHandlerDelegateApp() const {
-    return static_cast<InputEventHandlerDelegateApp *>(
-        Escher::Container::activeApp());
+  SharedApp *inputEventHandlerDelegateApp() const {
+    return static_cast<SharedApp *>(Escher::Container::activeApp());
   }
 };
 

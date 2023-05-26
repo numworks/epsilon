@@ -59,7 +59,6 @@ class App : public Shared::FunctionApp {
   /* TODO: override variableBox to lock sequence in the variable box once they
    * appear there NestedMenuController * variableBox(InputEventHandler *
    * textInput) override; */
-  CodePoint XNT() override { return 'n'; }
   Shared::SequenceContext *localContext() override {
     return static_cast<Shared::GlobalContext *>(
                AppsContainerHelper::sharedAppsContainerGlobalContext())
@@ -74,8 +73,6 @@ class App : public Shared::FunctionApp {
   ValuesController *valuesController() override {
     return &m_tabs.tab<ValuesTab>()->m_valuesController;
   }
-  bool isAcceptableExpression(Escher::EditableField *field,
-                              const Poincare::Expression expression) override;
 
  private:
   App(Snapshot *snapshot) : FunctionApp(snapshot, &m_tabs, ListTab::k_title) {}

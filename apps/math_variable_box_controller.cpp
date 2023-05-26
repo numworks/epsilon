@@ -15,7 +15,6 @@
 #include "global_preferences.h"
 #include "shared/continuous_function.h"
 #include "shared/global_context.h"
-#include "shared/input_event_handler_delegate_app.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -430,9 +429,8 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     if (record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
-    Shared::InputEventHandlerDelegateApp *app =
-        static_cast<Shared::InputEventHandlerDelegateApp *>(
-            Container::activeApp());
+    Shared::SharedApp *app =
+        static_cast<Shared::SharedApp *>(Container::activeApp());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();

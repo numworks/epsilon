@@ -2,7 +2,6 @@
 #define SOLVER_APP_H
 
 #include <apps/i18n.h>
-#include <apps/shared/layout_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 
 #include "equation_store.h"
@@ -14,7 +13,7 @@
 
 namespace Solver {
 
-class App : public Shared::LayoutFieldDelegateApp {
+class App : public Shared::SharedAppWithStoreMenu {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {
@@ -64,9 +63,6 @@ class App : public Shared::LayoutFieldDelegateApp {
 
  private:
   App(Snapshot *snapshot);
-  // TextFieldDelegateApp
-  bool isAcceptableExpression(Escher::EditableField *field,
-                              const Poincare::Expression expression) override;
 
   // Controllers
   SolutionsController m_solutionsController;

@@ -37,9 +37,13 @@ class ListController : public Shared::FunctionListController {
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   void showLastSequence();
-  /* LayoutFieldDelegate */
+
+  /* MathFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
+  bool isAcceptableExpression(Escher::EditableField* field,
+                              const Poincare::Expression expression) override;
+  CodePoint XNT() override { return 'n'; }
 
  private:
   /* Model definitions */

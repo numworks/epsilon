@@ -39,8 +39,7 @@ void TangentGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     m_bannerView->abscissaValue()->setParentResponder(this);
     m_bannerView->abscissaValue()->setDelegates(
-        static_cast<InputEventHandlerDelegateApp *>(Container::activeApp()),
-        this);
+        static_cast<SharedApp *>(Container::activeApp()), this);
     Container::activeApp()->setFirstResponder(m_bannerView->abscissaValue());
   }
 }

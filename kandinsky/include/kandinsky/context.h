@@ -17,8 +17,15 @@ class KDContext {
   void getPixels(KDRect r, KDColor* pixels);
 
   // Text
+#if ASSERTIONS
+  KDPoint drawString(const char* text, KDPoint p, KDGlyph::Style style = {},
+                     int maxLength = -1, bool allowAnyChar = false);
+#else
   KDPoint drawString(const char* text, KDPoint p, KDGlyph::Style style = {},
                      int maxLength = -1);
+#endif
+  KDPoint drawStringAnyChar(const char* text, KDPoint p,
+                            KDGlyph::Style style = {}, int maxLength = -1);
   KDPoint alignAndDrawString(const char* text, KDPoint p, KDSize frame,
                              KDGlyph::Format format = {}, int maxLength = -1);
 

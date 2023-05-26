@@ -199,10 +199,10 @@ void Turtle::write(const char* string) {
   KDPoint headOffset(headOffsetX, headOffsetY);
   KDPoint head(-k_iconHeadSize, -k_iconHeadSize);
   KDPoint stringOffset = KDPoint(0, -KDFont::GlyphHeight(k_font));
-  ctx->drawString(string, position()
+  ctx->drawStringAnyChar(string, position()
                               .translatedBy(headOffset)
                               .translatedBy(head)
-                              .translatedBy(stringOffset));
+                  .translatedBy(stringOffset));
   draw(true);
 }
 

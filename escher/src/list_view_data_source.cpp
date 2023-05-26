@@ -49,7 +49,7 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(reusableCell(typeIndex, type), row);
 }
 
-KDCoordinate ListViewDataSource::protectedNonMemoizedRowHeightWithWidthInit(
+KDCoordinate ListViewDataSource::nonMemoizedRowHeightWithWidthInit(
     HighlightCell* tempCell, int row) {
   assert(0 <= row && row < numberOfRows());
   if (!tempCell->isVisible()) {

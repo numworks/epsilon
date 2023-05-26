@@ -135,14 +135,14 @@ int MainController::numberOfRows() const {
 KDCoordinate MainController::nonMemoizedRowHeight(int row) {
   switch (typeAtRow(row)) {
     case k_brightnessCellType:
-      return heightForCellAtRow(&m_brightnessCell, row);
+      return protectedNonMemoizedRowHeight(&m_brightnessCell, row);
     case k_popUpCellType:
-      return heightForCellAtRow(&m_popUpCell, row);
+      return protectedNonMemoizedRowHeight(&m_popUpCell, row);
     case k_resetCellType:
-      return heightForCellAtRow(&m_resetButton, row);
+      return protectedNonMemoizedRowHeight(&m_resetButton, row);
     default:
       SubMenuCell tempCell;
-      return heightForCellAtRowWithWidthInit(&tempCell, row);
+      return protectedNonMemoizedRowHeightWithWidthInit(&tempCell, row);
   }
 }
 

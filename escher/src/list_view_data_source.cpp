@@ -46,10 +46,10 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int row) {
   assert(0 <= row && row < numberOfRows());
   int type = typeAtRow(row);
   int typeIndex = typeIndexFromIndex(row);
-  return heightForCellAtRow(reusableCell(typeIndex, type), row);
+  return protectedNonMemoizedRowHeight(reusableCell(typeIndex, type), row);
 }
 
-KDCoordinate ListViewDataSource::heightForCellAtRowWithWidthInit(
+KDCoordinate ListViewDataSource::protectedNonMemoizedRowHeightWithWidthInit(
     HighlightCell* tempCell, int row) {
   assert(0 <= row && row < numberOfRows());
   if (!tempCell->isVisible()) {
@@ -57,11 +57,11 @@ KDCoordinate ListViewDataSource::heightForCellAtRowWithWidthInit(
   }
   // Warning: this copies the size of a random cell of the table.
   tempCell->setSize(reusableCell(0, typeAtRow(row))->bounds().size());
-  return heightForCellAtRow(tempCell, row);
+  return protectedNonMemoizedRowHeight(tempCell, row);
 }
 
-KDCoordinate ListViewDataSource::heightForCellAtRow(HighlightCell* cell,
-                                                    int row) {
+KDCoordinate ListViewDataSource::protectedNonMemoizedRowHeight(
+    HighlightCell* cell, int row) {
   assert(0 <= row && row < numberOfRows());
   if (!cell->isVisible()) {
     return 0;

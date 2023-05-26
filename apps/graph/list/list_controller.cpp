@@ -178,8 +178,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       }
     }
   }
-  return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
-                                                                 event);
+  return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

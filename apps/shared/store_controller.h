@@ -11,7 +11,6 @@
 #include "double_pair_store.h"
 #include "editable_cell_table_view_controller.h"
 #include "input_event_handler_delegate.h"
-#include "layout_field_delegate.h"
 #include "store_parameter_controller.h"
 
 namespace Shared {

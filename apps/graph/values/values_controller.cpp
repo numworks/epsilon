@@ -92,8 +92,8 @@ void ValuesController::viewDidDisappear() {
 
 // TableViewDataSource
 
-void ValuesController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                 int column, int row) {
+void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
+                                           int row) {
   // Handle hidden cells
   int type = typeAtLocation(column, row);
   if (type == k_notEditableValueCellType || type == k_editableValueCellType) {
@@ -114,7 +114,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell,
       return;
     }
   }
-  Shared::ValuesController::willDisplayCellAtLocation(cell, column, row);
+  Shared::ValuesController::fillCellForLocation(cell, column, row);
 }
 
 int ValuesController::typeAtLocation(int column, int row) {

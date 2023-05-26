@@ -50,8 +50,8 @@ int CalculationController::numberOfColumns() const {
   return 2 + m_store->numberOfActiveSeries();
 }
 
-void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                      int column, int row) {
+void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
+                                                int row) {
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(row % 2 == 0);
   int type = typeAtLocation(column, row);

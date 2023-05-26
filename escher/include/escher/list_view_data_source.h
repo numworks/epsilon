@@ -30,8 +30,8 @@ class ListViewDataSource : public TableViewDataSource {
  private:
   // ListViewDataSource has only one column
   int numberOfColumns() const override final { return 1; }
-  void willDisplayCellAtLocation(HighlightCell* cell, int column,
-                                 int row) override final {
+  void fillCellForLocation(HighlightCell* cell, int column,
+                           int row) override final {
     if (cell->isVisible()) {  // Frame is already set to zero if hidden
       willDisplayCellAtRow(cell, row);
     }

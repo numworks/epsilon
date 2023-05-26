@@ -84,9 +84,9 @@ class PrefacedTableView : public Escher::View,
     int numberOfColumns() const override {
       return m_mainDataSource->numberOfColumns();
     }
-    void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
-                                   int row) override {
-      m_mainDataSource->willDisplayCellAtLocation(
+    void fillCellForLocation(Escher::HighlightCell* cell, int column,
+                             int row) override {
+      m_mainDataSource->fillCellForLocation(
           cell, columnInMainDataSource(column), rowInMainDataSource(row));
     }
     Escher::HighlightCell* reusableCell(int index, int type) override;

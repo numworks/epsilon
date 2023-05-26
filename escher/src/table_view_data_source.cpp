@@ -2,8 +2,8 @@
 
 namespace Escher {
 
-void TableViewDataSource::willDisplayCellAtLocation(HighlightCell* cell,
-                                                    int column, int row) {}
+void TableViewDataSource::fillCellForLocation(HighlightCell* cell, int column,
+                                              int row) {}
 
 KDCoordinate TableViewDataSource::columnWidth(int column, bool withSeparator) {
   KDCoordinate result = TableSize1DManager::k_undefinedSize;

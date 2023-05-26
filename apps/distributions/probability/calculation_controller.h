@@ -50,8 +50,8 @@ class CalculationController : public Escher::ViewController,
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
   int typeAtLocation(int column, int row) override { return column; }
-  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
-                                 int row) override;
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
+                           int row) override;
 
   /* TextField delegate */
   bool textFieldDidHandleEvent(Escher::AbstractTextField* textField,

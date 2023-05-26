@@ -31,8 +31,8 @@ class InputHomogeneityTableCell
   // DataSource
   int innerNumberOfRows() const override { return m_numberOfRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
-  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
-                                 int row) override;
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
+                           int row) override;
 
   // DynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {

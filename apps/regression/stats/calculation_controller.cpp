@@ -124,8 +124,8 @@ void DisableBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
   bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
 
-void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                      int column, int row) {
+void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
+                                                int row) {
   if (column <= 1 && row == 0) {
     return;
   }

@@ -124,8 +124,7 @@ HighlightCell *Controller::reusableCell(int index) {
   return &m_reusableCells[index];
 }
 
-void Controller::willDisplayCellAtLocation(HighlightCell *cell, int column,
-                                           int row) {
+void Controller::fillCellForLocation(HighlightCell *cell, int column, int row) {
   AppCell *appCell = static_cast<AppCell *>(cell);
   AppsContainer *container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(column, row);

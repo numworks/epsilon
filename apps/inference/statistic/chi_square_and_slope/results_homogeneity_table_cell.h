@@ -35,8 +35,8 @@ class ResultsHomogeneityTableCell
   }
 
   // DataSource
-  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
-                                 int row) override;
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
+                           int row) override;
 
   // DynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {

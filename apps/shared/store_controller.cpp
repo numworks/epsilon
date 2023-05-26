@@ -91,8 +91,8 @@ int StoreController::typeAtLocation(int column, int row) {
   return row == 0 ? k_titleCellType : k_editableCellType;
 }
 
-void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
-                                                int row) {
+void StoreController::fillCellForLocation(HighlightCell *cell, int column,
+                                          int row) {
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(column);
   if (row > numberOfElementsInCol + 1) {
@@ -113,7 +113,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
             : Palette::GrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
-  willDisplayCellAtLocationWithDisplayMode(
+  fillCellForLocationWithDisplayMode(
       cell, column, row, Preferences::sharedPreferences->displayMode());
 }
 

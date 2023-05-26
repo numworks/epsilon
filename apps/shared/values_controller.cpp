@@ -137,9 +137,9 @@ int ValuesController::numberOfColumns() const {
   return m_numberOfColumns;
 }
 
-void ValuesController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                 int column, int row) {
-  willDisplayCellAtLocationWithDisplayMode(
+void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
+                                           int row) {
+  fillCellForLocationWithDisplayMode(
       cell, column, row, Preferences::sharedPreferences->displayMode());
   int typeAtLoc = typeAtLocation(column, row);
   // The cell is not a title cell and not editable

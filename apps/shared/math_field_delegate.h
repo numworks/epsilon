@@ -39,9 +39,8 @@ class MathFieldDelegate : public Escher::TextFieldDelegate,
                                 bool enableMinusInfinity = false);
 
  protected:
-  virtual bool isAcceptableExpression(Escher::EditableField* field,
-                                      const Poincare::Expression expression);
-  bool isAcceptableText(Escher::EditableField* field, const char* text);
+  virtual bool isAcceptableExpression(const Poincare::Expression expression);
+  bool isAcceptableText(const char* text);
 
   static bool ExpressionCanBeSerialized(const Poincare::Expression expression,
                                         bool replaceAns,

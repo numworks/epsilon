@@ -72,9 +72,10 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
 void build_failure_infos(char *returnedInformationsBuffer, size_t bufferSize,
                          const char *expression, const char *result,
                          const char *expectedResult) {
-  Poincare::Print::SafeCustomPrintf(returnedInformationsBuffer, bufferSize,
-                                    " %s\n processed to\n %s\n instead of\n %s",
-                                    expression, result, expectedResult);
+  Poincare::Print::UnsafeCustomPrintf(
+      returnedInformationsBuffer, bufferSize,
+      " %s\n processed to\n %s\n instead of\n %s", expression, result,
+      expectedResult);
 }
 
 void assert_parsed_expression_process_to(

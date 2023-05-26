@@ -119,8 +119,8 @@ int Print::CustomPrintf(char *buffer, size_t bufferSize, const char *format,
   return length;
 }
 
-int Print::SafeCustomPrintf(char *buffer, size_t bufferSize, const char *format,
-                            ...) {
+int Print::UnsafeCustomPrintf(char *buffer, size_t bufferSize,
+                              const char *format, ...) {
   va_list args;
   va_start(args, format);
   int length = PrivateCustomPrintf(buffer, bufferSize, format, args);

@@ -19,7 +19,8 @@ void ListViewDataSource::initCellSize(TableView* view) {
 }
 
 int ListViewDataSource::typeIndexFromIndex(int index) {
-  // TODO: use typeIndexFromSubviewIndex?
+  /* Warning: this implementation only works when cells are not reusable and
+   * when we do no need to account for offset in the index. */
   int type = typeAtIndex(index);
   assert(reusableCellCount(type) > 0);
   if (reusableCellCount(type) == 1) {
@@ -36,16 +37,12 @@ int ListViewDataSource::typeIndexFromIndex(int index) {
 }
 
 KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
-  /* Overridden cellHeight implementations boils down to instantiating
-   * a temporary cell on which returning heightForCellAtIndex. As temporary cell
-   * must be instantiated in the type expected in willDisplayCellAtIndex(),
-   * which is unknown here, we cannot factorize this logic.
-   * Generally, row index (in nonMemoizedRowHeight() and typeAtIndex()) is
-   * different from cell index (named j here, in reusableCell()).
-   * However, there are simple situations where we can assume the reusable cell
-   * index. We only assert that the list is simple enough for that trick.
-   * Selecting the wrong reusable cell here can lead to cells being corrupted or
-   * visually duplicated. */
+  /* We should always use a temporary cell here because we call
+   * willDisplayCellForIndex on it and this may alter the visual layouting. In
+   * overriden implementations of this method, we know the type of the cell
+   * expected in willDisplayCellForIndex so we can instanciate a temporary cell
+   * with the right type. Here, we don't know the type, so we assume that the
+   * list is simple enough to use the method typeIndexFromIndex defined above.*/
   assert(0 <= index && index < numberOfRows());
   int type = typeAtIndex(index);
   int typeIndex = typeIndexFromIndex(index);
@@ -55,10 +52,10 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
 KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(
     HighlightCell* tempCell, int index) {
   assert(0 <= index && index < numberOfRows());
-  // Warning: this copy the size of a random cell of the table
   if (!tempCell->isVisible()) {
     return 0;
   }
+  // Warning: this copies the size of a random cell of the table.
   tempCell->setSize(reusableCell(0, typeAtIndex(index))->bounds().size());
   return heightForCellAtIndex(tempCell, index);
 }

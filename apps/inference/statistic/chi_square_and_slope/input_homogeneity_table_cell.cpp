@@ -24,9 +24,9 @@ void InputHomogeneityTableCell::didBecomeFirstResponder() {
   CategoricalTableCell::didBecomeFirstResponder();
 }
 
-void InputHomogeneityTableCell::willDisplayCellAtLocation(
-    Escher::HighlightCell *cell, int column, int row) {
-  HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
+void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell *cell,
+                                                    int column, int row) {
+  HomogeneityTableDataSource::fillCellForLocation(cell, column, row);
   if ((column == 0 && row != 0 && row == numberOfRows() - 1 &&
        row < k_maxNumberOfRows) ||
       (row == 0 && column != 0 && column == numberOfColumns() - 1 &&

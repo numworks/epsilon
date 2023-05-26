@@ -238,8 +238,8 @@ int SolutionsController::numberOfRows() const {
   return numberOfRows;
 }
 
-void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                    int column, int row) {
+void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
+                                              int row) {
   SystemOfEquations *system = App::app()->system();
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (row == rowOfUserVariablesMessage - 1) {

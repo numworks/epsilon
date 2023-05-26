@@ -246,8 +246,8 @@ HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
   return cell(i);
 }
 
-void DoubleColumnTableCell::willDisplayCellAtLocation(
-    Escher::HighlightCell *cell, int column, int row) {
+void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell *cell,
+                                                int column, int row) {
   if (row == 0) {  // Header
     return;
   }

@@ -90,7 +90,7 @@ int EditableCellTableViewController::numberOfRows() const {
          (numberOfModelElements < maxNumberOfElements());
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(
+void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
     HighlightCell *cell, int column, int row,
     Preferences::PrintFloatMode floatDisplayMode) {
   static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);

@@ -150,8 +150,8 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
   }
 }
 
-void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                      int column, int row) {
+void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
+                                                int row) {
   if (column > 0) {
     CalculationCell *myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(

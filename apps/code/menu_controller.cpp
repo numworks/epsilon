@@ -173,8 +173,8 @@ int MenuController::numberOfRows() const {
   return m_scriptStore->numberOfScripts() + m_shouldDisplayAddScriptRow;
 }
 
-void MenuController::willDisplayCellAtLocation(HighlightCell *cell, int column,
-                                               int row) {
+void MenuController::fillCellForLocation(HighlightCell *cell, int column,
+                                         int row) {
   if (column == 0 && row < m_scriptStore->numberOfScripts()) {
     willDisplayScriptTitleCellForIndex(cell, row);
   }

@@ -50,11 +50,10 @@ int StoreController::numberOfColumns() const {
   return result;
 }
 
-void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
-                                                int row) {
+void StoreController::fillCellForLocation(HighlightCell *cell, int column,
+                                          int row) {
   if (!isCumulatedFrequencyCell(column, row)) {
-    return Shared::StoreController::willDisplayCellAtLocation(cell, column,
-                                                              row);
+    return Shared::StoreController::fillCellForLocation(cell, column, row);
   }
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(column);

@@ -51,7 +51,7 @@ int HomogeneityTableDataSource::typeAtLocation(int column, int row) {
   return k_typeOfInnerCells;
 }
 
-void HomogeneityTableDataSource::willDisplayCellAtLocation(
+void HomogeneityTableDataSource::fillCellForLocation(
     Escher::HighlightCell *cell, int column, int row) {
   int type = typeAtLocation(column, row);
   if (type == k_typeOfTopLeftCell) {

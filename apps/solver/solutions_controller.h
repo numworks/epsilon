@@ -46,8 +46,8 @@ class SolutionsController : public Escher::ViewController,
   // TableViewDataSource
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
-  void willDisplayCellAtLocation(Escher::HighlightCell *cell, int column,
-                                 int row) override;
+  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+                           int row) override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;

@@ -142,8 +142,8 @@ class DoubleColumnTableCell
   int typeAtLocation(int column, int row) override {
     return row == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells;
   }
-  void willDisplayCellAtLocation(Escher::HighlightCell *cell, int column,
-                                 int row) override;
+  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+                           int row) override;
 
   // DynamicCellsDataSource
   Escher::SelectableTableView *tableView() override {

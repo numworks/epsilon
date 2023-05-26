@@ -31,8 +31,8 @@ class ValuesController : public Shared::ValuesController,
   void viewDidDisappear() override;
 
   // TableViewDataSource
-  void willDisplayCellAtLocation(Escher::HighlightCell *cell, int column,
-                                 int row) override;
+  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+                           int row) override;
   int typeAtLocation(int column, int row) override;
   KDCoordinate separatorBeforeColumn(int column) override;
 

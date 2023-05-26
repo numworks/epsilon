@@ -40,7 +40,7 @@ void ResultsHomogeneityTableCell::drawRect(KDContext *ctx, KDRect rect) const {
                 m_selectableTableView.backgroundColor());
 }
 
-void ResultsHomogeneityTableCell::willDisplayCellAtLocation(
+void ResultsHomogeneityTableCell::fillCellForLocation(
     Escher::HighlightCell *cell, int column, int row) {
   if (m_mode == Mode::ExpectedValue &&
       ((column == 0 && row == innerNumberOfRows()) ||
@@ -52,7 +52,7 @@ void ResultsHomogeneityTableCell::willDisplayCellAtLocation(
     myCell->setText(I18n::translate(I18n::Message::Total));
     myCell->setEven(row % 2 == 0);
   } else {
-    HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
+    HomogeneityTableDataSource::fillCellForLocation(cell, column, row);
   }
 }
 

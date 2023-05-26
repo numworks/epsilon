@@ -31,7 +31,7 @@ class EditableCellTableViewController : public TabTableController,
                                  Ion::Events::Event event) override;
 
   int numberOfRows() const override;
-  void willDisplayCellAtLocationWithDisplayMode(
+  void fillCellForLocationWithDisplayMode(
       Escher::HighlightCell* cell, int column, int row,
       Poincare::Preferences::PrintFloatMode mode);
   void viewWillAppear() override;

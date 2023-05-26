@@ -153,7 +153,7 @@ void TableView::ContentView::reloadCellAtLocation(int col, int row,
                                                   bool forceSetFrame) {
   HighlightCell* cell = cellAtLocation(col, row);
   if (cell) {
-    m_dataSource->willDisplayCellAtLocation(cell, col, row);
+    m_dataSource->fillCellForLocation(cell, col, row);
     if (forceSetFrame) {
       setChildFrame(cell, cellFrame(col, row), true);
     }
@@ -221,7 +221,7 @@ void TableView::ContentView::layoutSubviews(bool force,
     int row = absoluteRowFromSubviewIndex(index);
     assert(cellAtLocation(col, row) == cell);
     if (updateCellContent) {
-      m_dataSource->willDisplayCellAtLocation(cell, col, row);
+      m_dataSource->fillCellForLocation(cell, col, row);
     }
     /* Cell's content might change and fit in the same frame. LayoutSubviews
      * must be called on each cells even with an unchanged frame. */

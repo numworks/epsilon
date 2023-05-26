@@ -16,3 +16,9 @@ QUIZ_CASE(python_template) {
       Code::ScriptTemplate::Polynomial()->content());
   assert_script_execution_succeeds(Code::ScriptTemplate::Parabola()->content());
 }
+
+QUIZ_CASE(python_fixes) {
+  TestExecutionEnvironment env = init_environement();
+  assert_command_execution_fails(env, "'abcd'*2**62");
+  deinit_environment();
+}

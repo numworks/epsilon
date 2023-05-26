@@ -62,8 +62,22 @@ KDPoint KDContext::alignAndDrawString(const char* text, KDPoint p, KDSize frame,
                                       maxLength + text - startLine);
 }
 
+KDPoint KDContext::drawStringAnyChar(const char* text, KDPoint p,
+                                     KDGlyph::Style style, int maxLength) {
+#if ASSERTIONS
+  return drawString(text, p, style, maxLength, true);
+#else
+  return drawString(text, p, style, maxLength);
+#endif
+}
+
+#if ASSERTIONS
+KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
+                              int maxByteLength, bool allowAnyChar) {
+#else
 KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
                               int maxByteLength) {
+#endif
   KDPoint position = p;
   KDSize glyphSize = KDFont::GlyphSize(style.font);
   KDFont::RenderPalette palette =
@@ -94,8 +108,9 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
     } else {
       assert(!codePoint.isCombining());
       // We don't want to draw '�'
-      assert(KDFont::Font(style.font)->indexForCodePoint(codePoint) !=
-             KDFont::k_indexForReplacementCharacterCodePoint);
+      assert(allowAnyChar ||
+             KDFont::Font(style.font)->indexForCodePoint(codePoint) !=
+                 KDFont::k_indexForReplacementCharacterCodePoint);
       KDFont::Font(style.font)
           ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
       codePoint = decoder.nextCodePoint();

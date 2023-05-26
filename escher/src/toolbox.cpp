@@ -31,7 +31,7 @@ void Toolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
 KDCoordinate Toolbox::nonMemoizedRowHeight(int row) {
   assert(typeAtRow(row) == k_nodeCellType);
   NestedMenuController::NodeCell tempCell;
-  return heightForCellAtRowWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
 int Toolbox::typeAtRow(int row) const {

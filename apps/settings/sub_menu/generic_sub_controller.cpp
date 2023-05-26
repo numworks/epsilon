@@ -54,7 +54,7 @@ int GenericSubController::numberOfRows() const {
 
 KDCoordinate GenericSubController::nonMemoizedRowHeight(int row) {
   MenuCell<MessageTextView> tempCell;
-  return heightForCellAtRowWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
 
 void GenericSubController::willDisplayCellAtRow(HighlightCell *cell, int row) {

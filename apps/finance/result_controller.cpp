@@ -73,7 +73,7 @@ const char* ResultController::title() {
     bool lastKnownParameter =
         (param == doubleParameters - 1 - unknownParamIsLast);
     // Attempting the parameter insertion
-    int parameterLength = Poincare::Print::SafeCustomPrintf(
+    int parameterLength = Poincare::Print::UnsafeCustomPrintf(
         m_titleBuffer + length, k_titleBufferSize - length,
         (lastKnownParameter ? lastKnownParameterTemplate : parameterTemplate),
         I18n::translate(App::GetInterestData()->labelForParameter(param)),

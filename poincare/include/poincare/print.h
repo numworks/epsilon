@@ -37,14 +37,14 @@ class Print {
    *       --> "A double 1.235E-2!"
    * - %+i or %+*.*ef inserts the plus sign if the value is positive or null
    *
-   * In contrast to SafeCustomPrintf, CustomPrintf method asserts that the
+   * In contrast to UnsafeCustomPrintf, CustomPrintf method asserts that the
    * bufferSize is large enough. If the text does not fit, the buffer is erased
    * and a length equal or bigger than bufferSize is returned.
    */
   static int CustomPrintf(char* buffer, size_t bufferSize, const char* format,
                           ...);
-  static int SafeCustomPrintf(char* buffer, size_t bufferSize,
-                              const char* format, ...);
+  static int UnsafeCustomPrintf(char* buffer, size_t bufferSize,
+                                const char* format, ...);
 
   /* Try to print in buffer, and each time the text is too long, decrease by one
    * the number of significant digits, until it fits.

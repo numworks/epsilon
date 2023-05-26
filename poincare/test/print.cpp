@@ -44,8 +44,8 @@ QUIZ_CASE(poincare_print_custom_print) {
   Poincare::Print::CustomPrintf(shortBuffer, shortBufferSize, "%s", "1234");
   assert_string_equality(shortBuffer, "1234");
 
-  quiz_assert(Poincare::Print::SafeCustomPrintf(shortBuffer, shortBufferSize,
-                                                "%s",
-                                                "12345") >= shortBufferSize);
+  quiz_assert(Poincare::Print::UnsafeCustomPrintf(shortBuffer, shortBufferSize,
+                                                  "%s",
+                                                  "12345") >= shortBufferSize);
   assert_string_equality(shortBuffer, "");
 }

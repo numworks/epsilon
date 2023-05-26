@@ -30,7 +30,7 @@ const char *InterestController::title() {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
   const char *label =
       I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));
-  int length = Poincare::Print::SafeCustomPrintf(
+  int length = Poincare::Print::UnsafeCustomPrintf(
       m_titleBuffer, k_titleBufferSize,
       I18n::translate(I18n::Message::FinanceSolving), label,
       I18n::translate(

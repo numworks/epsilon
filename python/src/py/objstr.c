@@ -341,6 +341,10 @@ mp_obj_t mp_obj_str_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_i
             }
         }
         vstr_t vstr;
+        /* Warning: this is a NumWorks change to MicroPython 1.17 */
+        if (n > UINT_MAX / lhs_len) {
+          m_malloc_fail(UINT_MAX);
+        }
         vstr_init_len(&vstr, lhs_len * n);
         mp_seq_multiply(lhs_data, sizeof(*lhs_data), lhs_len, n, vstr.buf);
         return mp_obj_new_str_from_vstr(lhs_type, &vstr);

@@ -29,17 +29,16 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
                         1;
     dataSource->setSelectedElement(newZ);
     /* Pop and push back to update the title. */
+    KDPoint offset = m_selectableListView.contentOffset();
+    int row = m_selectableListView.selectedRow();
     StackViewController *stack = stackViewController();
     stack->pop();
     stack->push(this);
+    m_selectableListView.setContentOffset(offset);
+    m_selectableListView.selectCell(row);
     return true;
   }
   return false;
-}
-
-void DetailsListController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-  m_selectableListView.reloadData();
 }
 
 const char *DetailsListController::title() {

@@ -12,6 +12,11 @@ using namespace Escher;
 
 namespace Shared {
 
+MathFieldDelegate *MathFieldDelegate::Default() {
+  static MathFieldDelegate s_defaultMathFieldDelegate;
+  return &s_defaultMathFieldDelegate;
+}
+
 bool MathFieldDelegate::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;

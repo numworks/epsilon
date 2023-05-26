@@ -223,20 +223,19 @@ ColumnParameters *ValuesController::columnParameters() {
   return functionParameters();
 }
 
-bool ValuesController::setDataAtLocation(double floatBody, int columnIndex,
+bool ValuesController::setDataAtLocation(double floatBody, int column,
                                          int row) {
-  assert(checkDataAtLocation(floatBody, columnIndex, row));
-  intervalAtColumn(columnIndex)
-      ->setElement(row - k_numberOfTitleRows, floatBody);
+  assert(checkDataAtLocation(floatBody, column, row));
+  intervalAtColumn(column)->setElement(row - k_numberOfTitleRows, floatBody);
   return true;
 }
 
-bool ValuesController::cellAtLocationIsEditable(int columnIndex, int row) {
-  return typeAtLocation(columnIndex, row) == k_editableValueCellType;
+bool ValuesController::cellAtLocationIsEditable(int column, int row) {
+  return typeAtLocation(column, row) == k_editableValueCellType;
 }
 
-double ValuesController::dataAtLocation(int columnIndex, int row) {
-  return intervalAtColumn(columnIndex)->element(row - k_numberOfTitleRows);
+double ValuesController::dataAtLocation(int column, int row) {
+  return intervalAtColumn(column)->element(row - k_numberOfTitleRows);
 }
 
 int ValuesController::valuesColumnForAbsoluteColumn(int column) {
@@ -301,9 +300,9 @@ void ValuesController::didChangeCell(int column, int row) {
   }
 }
 
-int ValuesController::numberOfElementsInColumn(int columnIndex) const {
+int ValuesController::numberOfElementsInColumn(int column) const {
   return const_cast<ValuesController *>(this)
-      ->intervalAtColumn(columnIndex)
+      ->intervalAtColumn(column)
       ->numberOfElements();
 }
 
@@ -424,32 +423,32 @@ void ValuesController::clearSelectedColumn() {
   resetMemoization();
 }
 
-int ValuesController::fillColumnName(int columnIndex, char *buffer) {
-  assert(typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType);
+int ValuesController::fillColumnName(int column, char *buffer) {
+  assert(typeAtLocation(column, 0) == k_abscissaTitleCellType);
   return FillColumnNameWithMessage(buffer,
-                                   valuesParameterMessageAtColumn(columnIndex));
+                                   valuesParameterMessageAtColumn(column));
 }
 
-void ValuesController::setTitleCellText(HighlightCell *cell, int columnIndex) {
-  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
+void ValuesController::setTitleCellText(HighlightCell *cell, int column) {
+  if (typeAtLocation(column, 0) == k_functionTitleCellType) {
     Shared::ExpressionFunctionTitleCell *myCell =
         static_cast<Shared::ExpressionFunctionTitleCell *>(cell);
-    myCell->setLayout(functionTitleLayout(columnIndex));
+    myCell->setLayout(functionTitleLayout(column));
     return;
   }
-  if (typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType) {
+  if (typeAtLocation(column, 0) == k_abscissaTitleCellType) {
     EvenOddMessageTextCell *myTitleCell =
         static_cast<EvenOddMessageTextCell *>(cell);
-    myTitleCell->setMessage(valuesParameterMessageAtColumn(columnIndex));
+    myTitleCell->setMessage(valuesParameterMessageAtColumn(column));
     return;
   }
 }
 
-void ValuesController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
-  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
+void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
+  if (typeAtLocation(column, 0) == k_functionTitleCellType) {
     FunctionTitleCell *myCell = static_cast<FunctionTitleCell *>(cell);
     Shared::Function *function =
-        functionStore()->modelForRecord(recordAtColumn(columnIndex)).pointer();
+        functionStore()->modelForRecord(recordAtColumn(column)).pointer();
     myCell->setColor(function->color());
     return;
   }

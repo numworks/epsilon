@@ -91,13 +91,13 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
   }
   int row = m_selectableTableView.selectedRow(),
       column = m_selectableTableView.selectedColumn();
-  if (!tableModel()->authorizedParameterAtPosition(
-          p, relativeRow(row), relativeColumnIndex(column))) {
+  if (!tableModel()->authorizedParameterAtPosition(p, relativeRow(row),
+                                                   relativeColumn(column))) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   tableModel()->setParameterAtPosition(p, relativeRow(row),
-                                       relativeColumnIndex(column));
+                                       relativeColumn(column));
 
   m_selectableTableView.deselectTable(true);
   // Add row or column
@@ -105,7 +105,7 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
        relativeRow(tableViewDataSource()->numberOfRows()) <
            tableModel()->maxNumberOfRows()) ||
       (column == tableViewDataSource()->numberOfColumns() - 1 &&
-       relativeColumnIndex(tableViewDataSource()->numberOfColumns()) <
+       relativeColumn(tableViewDataSource()->numberOfColumns()) <
            tableModel()->maxNumberOfColumns())) {
     recomputeDimensions();
   }
@@ -144,10 +144,10 @@ void InputCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
 bool InputCategoricalTableCell::deleteSelectedValue() {
   int row = m_selectableTableView.selectedRow(),
       col = m_selectableTableView.selectedColumn();
-  assert(relativeRow(row) >= 0 && relativeColumnIndex(col) >= 0);
+  assert(relativeRow(row) >= 0 && relativeColumn(col) >= 0);
   // Remove value
   bool shouldDeleteRowOrCol = tableModel()->deleteParameterAtPosition(
-      relativeRow(row), relativeColumnIndex(col));
+      relativeRow(row), relativeColumn(col));
   if (!shouldDeleteRowOrCol) {
     // Only one cell needs to reload.
     assert(row < tableViewDataSource()->numberOfRows() &&
@@ -173,7 +173,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
 
 int InputCategoricalTableCell::numberOfElementsInColumn(int column) const {
   int n = constTableModel()->maxNumberOfRows();
-  column = relativeColumnIndex(column);
+  column = relativeColumn(column);
   int res = 0;
   for (int row = 0; row < n; row++) {
     res += std::isfinite(constTableModel()->parameterAtPosition(row, column));
@@ -183,7 +183,7 @@ int InputCategoricalTableCell::numberOfElementsInColumn(int column) const {
 
 void InputCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
-  tableModel()->deleteParametersInColumn(relativeColumnIndex(column));
+  tableModel()->deleteParametersInColumn(relativeColumn(column));
   tableModel()->recomputeData();
   m_selectableTableView.deselectTable();
   if (!recomputeDimensions()) {

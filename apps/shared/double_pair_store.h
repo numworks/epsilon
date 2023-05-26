@@ -105,8 +105,8 @@ class DoublePairStore {
       ActiveSeriesTest activeSeriesTest = &DefaultActiveSeriesTest) const;
 
   // Series and columns
-  virtual int relativeColumnIndex(int columnIndex) const {
-    return columnIndex % k_numberOfColumnsPerSeries;
+  virtual int relativeColumn(int column) const {
+    return column % k_numberOfColumnsPerSeries;
   }
   virtual int seriesAtColumn(int column) const {
     return column / k_numberOfColumnsPerSeries;

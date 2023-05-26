@@ -84,14 +84,12 @@ class EditableCellTableViewController : public TabTableController,
   virtual Escher::SelectableViewController* columnParameterController() = 0;
   virtual Shared::ColumnParameters* columnParameters() = 0;
   virtual Escher::StackViewController* stackController() const = 0;
-  virtual void setTitleCellText(Escher::HighlightCell* cell,
-                                int columnIndex) = 0;
-  virtual void setTitleCellStyle(Escher::HighlightCell* cell,
-                                 int columnIndex) = 0;
+  virtual void setTitleCellText(Escher::HighlightCell* cell, int column) = 0;
+  virtual void setTitleCellStyle(Escher::HighlightCell* cell, int column) = 0;
   virtual void reloadEditedCell(int column, int row) {
     selectableTableView()->reloadCellAtLocation(column, row);
   }
-  virtual bool checkDataAtLocation(double floatBody, int columnIndex,
+  virtual bool checkDataAtLocation(double floatBody, int column,
                                    int row) const {
     return true;
   }
@@ -100,10 +98,9 @@ class EditableCellTableViewController : public TabTableController,
 
  private:
   virtual void didChangeCell(int column, int row) {}
-  virtual bool cellAtLocationIsEditable(int columnIndex, int row) = 0;
-  virtual bool setDataAtLocation(double floatBody, int columnIndex,
-                                 int row) = 0;
-  virtual double dataAtLocation(int columnIndex, int row) = 0;
+  virtual bool cellAtLocationIsEditable(int column, int row) = 0;
+  virtual bool setDataAtLocation(double floatBody, int column, int row) = 0;
+  virtual double dataAtLocation(int column, int row) = 0;
   virtual int maxNumberOfElements() const = 0;
 };
 

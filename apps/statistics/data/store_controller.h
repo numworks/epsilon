@@ -22,7 +22,7 @@ class StoreController : public Shared::StoreController {
 
   /* Shared::StoreController */
   void sortSelectedColumn() override;
-  int fillColumnName(int columnIndex, char* buffer) override;
+  int fillColumnName(int column, char* buffer) override;
 
   // TableViewDataSource
   int numberOfColumns() const override;
@@ -45,7 +45,7 @@ class StoreController : public Shared::StoreController {
                                  int row) override;
 
  private:
-  constexpr static int k_cumulatedFrequencyRelativeColumnIndex = 2;
+  constexpr static int k_cumulatedFrequencyRelativeColumn = 2;
   constexpr static int k_columnTitleSize = 50;
   constexpr static int k_nonEditableCellType =
       Shared::StoreController::k_editableCellType + 1;
@@ -56,8 +56,7 @@ class StoreController : public Shared::StoreController {
       k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableNonEditableColumns;
 
   bool isCumulatedFrequencyColumn(int i) const {
-    return m_store->relativeColumnIndex(i) ==
-           k_cumulatedFrequencyRelativeColumnIndex;
+    return m_store->relativeColumn(i) == k_cumulatedFrequencyRelativeColumn;
   }
   bool isCumulatedFrequencyCell(int i, int j) const {
     return j != 0 && isCumulatedFrequencyColumn(i);
@@ -72,14 +71,13 @@ class StoreController : public Shared::StoreController {
   Shared::ColumnParameters* columnParameters() override {
     return &m_storeParameterController;
   }
-  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
-  double dataAtLocation(int columnIndex, int row) override;
-  void setTitleCellText(Escher::HighlightCell* titleCell,
-                        int columnIndex) override;
+  bool setDataAtLocation(double floatBody, int column, int row) override;
+  double dataAtLocation(int column, int row) override;
+  void setTitleCellText(Escher::HighlightCell* titleCell, int column) override;
   void clearSelectedColumn() override;
   void setClearPopUpContent() override;
-  bool isColumnClearable(int columnIndex) override {
-    return !isCumulatedFrequencyColumn(columnIndex);
+  bool isColumnClearable(int column) override {
+    return !isCumulatedFrequencyColumn(column);
   }
 
   Store* m_store;

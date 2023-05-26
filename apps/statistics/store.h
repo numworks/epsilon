@@ -34,7 +34,7 @@ class Store : public Shared::DoublePairStore {
   int seriesAtColumn(int column) const override {
     return computeRelativeColumnAndSeries(&column);
   }
-  int relativeColumnIndex(int columnIndex) const override;
+  int relativeColumn(int column) const override;
 
   // DoublePairStore
   char columnNamePrefixAtIndex(int column) const override {

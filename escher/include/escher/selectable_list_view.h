@@ -38,7 +38,7 @@ class SelectableListView : public SelectableTableView {
   using SelectableTableView::selectColumn;
   using SelectableTableView::selectedColumn;
   using TableView::cellAtLocation;
-  using TableView::firstDisplayedColumnIndex;
+  using TableView::firstDisplayedColumn;
   using TableView::numberOfDisplayableColumns;
   using TableView::reloadCellAtLocation;
   using TableView::scrollToCell;

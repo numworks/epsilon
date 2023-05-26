@@ -49,8 +49,8 @@ class StoreController : public EditableCellTableViewController,
   void didBecomeFirstResponder() override;
 
   // ClearColumnHelper
-  int fillColumnName(int columnIndex, char* buffer) override {
-    return fillColumnNameFromStore(columnIndex, buffer);
+  int fillColumnName(int column, char* buffer) override {
+    return fillColumnNameFromStore(column, buffer);
   }
 
   // EditableCellTableViewController
@@ -76,15 +76,13 @@ class StoreController : public EditableCellTableViewController,
                                bool authorizeNonEmptyRowDeletion = true);
   Escher::StackViewController* stackController() const override;
   Escher::TabViewController* tabController() const override;
-  bool checkDataAtLocation(double floatBody, int columnIndex,
+  bool checkDataAtLocation(double floatBody, int column,
                            int row) const override;
-  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
-  double dataAtLocation(int columnIndex, int row) override;
-  void setTitleCellText(Escher::HighlightCell* titleCell,
-                        int columnIndex) override;
-  void setTitleCellStyle(Escher::HighlightCell* titleCell,
-                         int columnIndex) override;
-  int numberOfElementsInColumn(int columnIndex) const override;
+  bool setDataAtLocation(double floatBody, int column, int row) override;
+  double dataAtLocation(int column, int row) override;
+  void setTitleCellText(Escher::HighlightCell* titleCell, int column) override;
+  void setTitleCellStyle(Escher::HighlightCell* titleCell, int column) override;
+  int numberOfElementsInColumn(int column) const override;
 
   Poincare::Layout memoizedFormula(int index) override {
     return m_memoizedFormulas[index];
@@ -101,7 +99,7 @@ class StoreController : public EditableCellTableViewController,
                          DoublePairStore::k_numberOfColumnsPerSeries];
 
  private:
-  bool cellAtLocationIsEditable(int columnIndex, int row) override;
+  bool cellAtLocationIsEditable(int column, int row) override;
   int maxNumberOfElements() const override {
     return DoublePairStore::k_maxNumberOfPairs;
   }

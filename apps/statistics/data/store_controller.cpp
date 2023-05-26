@@ -26,21 +26,20 @@ StoreController::StoreController(
       m_storeParameterController(this, this, store) {}
 
 void StoreController::sortSelectedColumn() {
-  int relativeIndex = m_store->relativeColumnIndex(selectedColumn());
+  int relativeIndex = m_store->relativeColumn(selectedColumn());
   // Also sort the values if the cumulated frequency is selected
-  m_store->sortColumn(selectedSeries(),
-                      relativeIndex != k_cumulatedFrequencyRelativeColumnIndex
-                          ? relativeIndex
-                          : 0);
+  m_store->sortColumn(
+      selectedSeries(),
+      relativeIndex != k_cumulatedFrequencyRelativeColumn ? relativeIndex : 0);
 }
 
-int StoreController::fillColumnName(int columnIndex, char *buffer) {
-  if (isCumulatedFrequencyColumn(columnIndex)) {
+int StoreController::fillColumnName(int column, char *buffer) {
+  if (isCumulatedFrequencyColumn(column)) {
     // FC column options doesn't specify the column name.
     buffer[0] = 0;
     return 0;
   }
-  return Shared::StoreController::fillColumnName(columnIndex, buffer);
+  return Shared::StoreController::fillColumnName(column, buffer);
 }
 
 int StoreController::numberOfColumns() const {
@@ -90,43 +89,41 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
   }
 }
 
-bool StoreController::setDataAtLocation(double floatBody, int columnIndex,
-                                        int row) {
-  if (!Shared::StoreController::setDataAtLocation(floatBody, columnIndex,
-                                                  row)) {
+bool StoreController::setDataAtLocation(double floatBody, int column, int row) {
+  if (!Shared::StoreController::setDataAtLocation(floatBody, column, row)) {
     return false;
   }
-  int series = m_store->seriesAtColumn(columnIndex);
+  int series = m_store->seriesAtColumn(column);
   if (m_store->displayCumulatedFrequenciesForSeries(series)) {
     // Cumulated frequencies must be re-computed
-    reloadSeriesVisibleCells(series, k_cumulatedFrequencyRelativeColumnIndex);
+    reloadSeriesVisibleCells(series, k_cumulatedFrequencyRelativeColumn);
   }
   return true;
 }
 
-double StoreController::dataAtLocation(int columnIndex, int row) {
-  if (isCumulatedFrequencyColumn(columnIndex)) {
-    int series = m_store->seriesAtColumn(columnIndex);
+double StoreController::dataAtLocation(int column, int row) {
+  if (isCumulatedFrequencyColumn(column)) {
+    int series = m_store->seriesAtColumn(column);
     double value = m_store->get(series, 0, row - 1);
     return m_store->sumOfValuesBetween(series, -DBL_MAX, value, false);
   }
-  return Shared::StoreController::dataAtLocation(columnIndex, row);
+  return Shared::StoreController::dataAtLocation(column, row);
 }
 
-void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {
-  assert(typeAtLocation(columnIndex, 0) == k_titleCellType);
+void StoreController::setTitleCellText(HighlightCell *cell, int column) {
+  assert(typeAtLocation(column, 0) == k_titleCellType);
   BufferFunctionTitleCell *myTitleCell =
       static_cast<BufferFunctionTitleCell *>(cell);
-  if (isCumulatedFrequencyColumn(columnIndex)) {
+  if (isCumulatedFrequencyColumn(column)) {
     myTitleCell->setText(
         I18n::translate(I18n::Message::CumulatedFrequencyColumnName));
   } else {
     char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
-    fillColumnName(columnIndex, columnName);
+    fillColumnName(column, columnName);
     /* 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the
      * glyph can take more space than 1 byte in memory. */
     char columnTitle[k_columnTitleSize];
-    I18n::Message titleType = m_store->relativeColumnIndex(columnIndex) % 2 == 1
+    I18n::Message titleType = m_store->relativeColumn(column) % 2 == 1
                                   ? I18n::Message::Frequencies
                                   : I18n::Message::Values;
     Poincare::Print::CustomPrintf(columnTitle, k_columnTitleSize,
@@ -137,7 +134,7 @@ void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {
 
 void StoreController::clearSelectedColumn() {
   int series = m_store->seriesAtColumn(selectedColumn());
-  int column = m_store->relativeColumnIndex(selectedColumn());
+  int column = m_store->relativeColumn(selectedColumn());
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
     selectCellAtLocation(selectedColumn(), 1);
@@ -148,7 +145,7 @@ void StoreController::clearSelectedColumn() {
 }
 
 void StoreController::setClearPopUpContent() {
-  int column = m_store->relativeColumnIndex(selectedColumn());
+  int column = m_store->relativeColumn(selectedColumn());
   assert(column == 0 || column == 1);
   int series = m_store->seriesAtColumn(selectedColumn());
   if (column == 0) {

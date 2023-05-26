@@ -64,11 +64,11 @@ void DoublePairStore::tidy() {
   }
 }
 
-int DoublePairStore::fillColumnName(int series, int columnIndex,
+int DoublePairStore::fillColumnName(int series, int column,
                                     char *buffer) const {
   assert(series >= 0 && series < k_numberOfSeries);
-  assert(columnIndex >= 0 && columnIndex < k_numberOfColumnsPerSeries);
-  buffer[0] = columnNamePrefixAtIndex(columnIndex);
+  assert(column >= 0 && column < k_numberOfColumnsPerSeries);
+  buffer[0] = columnNamePrefixAtIndex(column);
   buffer[1] = static_cast<char>('1' + series);
   buffer[2] = 0;
   return 2;

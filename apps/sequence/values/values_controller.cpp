@@ -74,12 +74,12 @@ int ValuesController::computeIndexAfterCumulatedSize(KDCoordinate offset,
 
 // ColumnHelper
 
-int ValuesController::fillColumnName(int columnIndex, char *buffer) {
-  if (typeAtLocation(columnIndex, 0) != k_functionTitleCellType) {
-    return Shared::ValuesController::fillColumnName(columnIndex, buffer);
+int ValuesController::fillColumnName(int column, char *buffer) {
+  if (typeAtLocation(column, 0) != k_functionTitleCellType) {
+    return Shared::ValuesController::fillColumnName(column, buffer);
   }
   bool isSumColumn = false;
-  Ion::Storage::Record record = recordAtColumn(columnIndex, &isSumColumn);
+  Ion::Storage::Record record = recordAtColumn(column, &isSumColumn);
   Shared::ExpiringPointer<Shared::Sequence> seq =
       functionStore()->modelForRecord(record);
   if (!isSumColumn) {
@@ -93,11 +93,11 @@ int ValuesController::fillColumnName(int columnIndex, char *buffer) {
 
 // EditableCellTableViewController
 
-bool ValuesController::setDataAtLocation(double floatBody, int columnIndex,
+bool ValuesController::setDataAtLocation(double floatBody, int column,
                                          int row) {
-  assert(checkDataAtLocation(floatBody, columnIndex, row));
+  assert(checkDataAtLocation(floatBody, column, row));
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody),
-                                                     columnIndex, row);
+                                                     column, row);
 }
 
 // Shared::ValuesController
@@ -107,20 +107,20 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   int numberOfActiveSequences = functionStore()->numberOfActiveFunctions();
   assert(numberOfAbscissaColumns() == 1);
-  int currentColumnIndex = numberOfAbscissaColumns();
+  int currentColumn = numberOfAbscissaColumns();
   for (int k = 0; k < numberOfActiveSequences; k++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(k);
     Shared::ExpiringPointer<Shared::Sequence> seq =
         functionStore()->modelForRecord(record);
     int numberOfColumnsForCurrentRecord = 1 + seq->displaySum();
-    if (currentColumnIndex <= i &&
-        i < currentColumnIndex + numberOfColumnsForCurrentRecord) {
+    if (currentColumn <= i &&
+        i < currentColumn + numberOfColumnsForCurrentRecord) {
       if (isSumColumn) {
-        *isSumColumn = i == currentColumnIndex + 1;
+        *isSumColumn = i == currentColumn + 1;
       }
       return record;
     }
-    currentColumnIndex += numberOfColumnsForCurrentRecord;
+    currentColumn += numberOfColumnsForCurrentRecord;
   }
   assert(false);  // Out of bounds
   return nullptr;
@@ -145,11 +145,11 @@ Layout *ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int columnIndex,
+Layout ValuesController::functionTitleLayout(int column,
                                              bool forceShortVersion) {
   bool isSumColumn = false;
-  Shared::Sequence *sequence = functionStore()->modelForRecord(
-      recordAtColumn(columnIndex, &isSumColumn));
+  Shared::Sequence *sequence =
+      functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   if (!isSumColumn) {
     return sequence->nameLayout();
   }
@@ -188,7 +188,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
-Shared::Interval *ValuesController::intervalAtColumn(int columnIndex) {
+Shared::Interval *ValuesController::intervalAtColumn(int column) {
   return App::app()->interval();
 }
 

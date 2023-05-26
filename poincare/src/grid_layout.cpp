@@ -44,8 +44,8 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(
 
   assert(isEditing());
   int row = rowAtChildIndex(childIndex);
-  int columnIndex = columnAtChildIndex(childIndex);
-  if (row == 0 && columnIndex == 0 &&
+  int column = columnAtChildIndex(childIndex);
+  if (row == 0 && column == 0 &&
       numberOfColumns() == k_minimalNumberOfRowsAndColumnsWhileEditing &&
       numberOfRows() == k_minimalNumberOfRowsAndColumnsWhileEditing) {
     /* If the top left child is filled and the cursor is left of it, delete the
@@ -58,7 +58,7 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(
                         !childIsBottomOfGrid(childIndex) && isRowEmpty(row);
   bool deleteWholeColumn =
       !numberOfColumnsIsFixed() && childIsTopOfGrid(childIndex) &&
-      !childIsRightOfGrid(childIndex) && isColumnEmpty(columnIndex);
+      !childIsRightOfGrid(childIndex) && isColumnEmpty(column);
   if (deleteWholeRow || deleteWholeColumn) {
     /* Pressing backspace at the top of an empty column or a the left of an
      * empty row deletes the whole column/row. */
@@ -98,16 +98,16 @@ int GridLayoutNode::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
   assert(childAtIndex(childIndex)->isEmpty());
   assert(isEditing());
   int row = rowAtChildIndex(childIndex);
-  int columnIndex = columnAtChildIndex(childIndex);
+  int column = columnAtChildIndex(childIndex);
   bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);
   bool isBottomOfGrid = childIsInLastNonGrayRow(childIndex);
-  int newColumnIndex = columnIndex;
+  int newColumn = column;
   int newRow = row;
   while (isRightOfGrid && !numberOfColumnsIsFixed() &&
          numberOfColumns() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
-         isColumnEmpty(columnIndex)) {
-    newColumnIndex = columnIndex;
-    deleteColumnAtIndex(columnIndex--);
+         isColumnEmpty(column)) {
+    newColumn = column;
+    deleteColumnAtIndex(column--);
   }
   while (isBottomOfGrid && !numberOfRowsIsFixed() &&
          numberOfRows() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
@@ -117,7 +117,7 @@ int GridLayoutNode::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
   }
   assert(numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing &&
          numberOfRows() >= k_minimalNumberOfRowsAndColumnsWhileEditing);
-  return indexAtRowColumn(newRow, newColumnIndex);
+  return indexAtRowColumn(newRow, newColumn);
 }
 
 // Protected
@@ -190,10 +190,10 @@ int GridLayoutNode::columnAtChildIndex(int index) const {
   return index - m_numberOfColumns * rowAtChildIndex(index);
 }
 
-int GridLayoutNode::indexAtRowColumn(int row, int columnIndex) const {
+int GridLayoutNode::indexAtRowColumn(int row, int column) const {
   assert(row >= 0 && row < m_numberOfRows);
-  assert(columnIndex >= 0 && columnIndex < m_numberOfColumns);
-  return row * m_numberOfColumns + columnIndex;
+  assert(column >= 0 && column < m_numberOfColumns);
+  return row * m_numberOfColumns + column;
 }
 
 int GridLayoutNode::closestNonGrayIndex(int index) const {
@@ -220,13 +220,13 @@ KDCoordinate GridLayoutNode::computeBaseline(KDFont::Size font) {
 KDPoint GridLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
   int childIndex = indexOfChild(l);
   int row = rowAtChildIndex(childIndex);
-  int columnIndex = columnAtChildIndex(childIndex);
+  int column = columnAtChildIndex(childIndex);
   KDCoordinate x = 0;
-  for (int j = 0; j < columnIndex; j++) {
+  for (int j = 0; j < column; j++) {
     x += columnWidth(j, font);
   }
-  x += (columnWidth(columnIndex, font) - l->layoutSize(font).width()) / 2 +
-       columnIndex * horizontalGridEntryMargin(font);
+  x += (columnWidth(column, font) - l->layoutSize(font).width()) / 2 +
+       column * horizontalGridEntryMargin(font);
   KDCoordinate y = 0;
   for (int i = 0; i < row; i++) {
     y += rowHeight(i, font);

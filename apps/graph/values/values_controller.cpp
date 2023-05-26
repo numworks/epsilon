@@ -285,9 +285,9 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int row) {
 
 // ColumnHelper
 
-int ValuesController::fillColumnName(int columnIndex, char *buffer) {
-  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
-    Layout functionTitle = functionTitleLayout(columnIndex, true);
+int ValuesController::fillColumnName(int column, char *buffer) {
+  if (typeAtLocation(column, 0) == k_functionTitleCellType) {
+    Layout functionTitle = functionTitleLayout(column, true);
     constexpr size_t bufferNameSize =
         ContinuousFunction::k_maxNameWithArgumentSize + 1;
     int size = functionTitle.serializeForParsing(buffer, bufferNameSize);
@@ -296,7 +296,7 @@ int ValuesController::fillColumnName(int columnIndex, char *buffer) {
         buffer, bufferNameSize - 1);
     return size;
   }
-  return Shared::ValuesController::fillColumnName(columnIndex, buffer);
+  return Shared::ValuesController::fillColumnName(column, buffer);
 }
 
 // EditableCellTableViewController
@@ -310,11 +310,11 @@ void ValuesController::reloadEditedCell(int column, int row) {
   Shared::ValuesController::reloadEditedCell(column, row);
 }
 
-void ValuesController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
-  if (typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType) {
+void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
+  if (typeAtLocation(column, 0) == k_abscissaTitleCellType) {
     return;
   }
-  Shared::ValuesController::setTitleCellStyle(cell, columnIndex);
+  Shared::ValuesController::setTitleCellStyle(cell, column);
 }
 
 // Shared::ValuesController
@@ -353,11 +353,11 @@ Poincare::Layout *ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int columnIndex,
+Layout ValuesController::functionTitleLayout(int column,
                                              bool forceShortVersion) {
-  assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
+  assert(typeAtLocation(column, 0) == k_functionTitleCellType);
   bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
+  Ion::Storage::Record record = recordAtColumn(column, &isDerivative);
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   if (isDerivative) {
@@ -463,14 +463,14 @@ void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(
   }
 }
 
-Shared::Interval *ValuesController::intervalAtColumn(int columnIndex) {
-  return App::app()->intervalForSymbolType(symbolTypeAtColumn(&columnIndex));
+Shared::Interval *ValuesController::intervalAtColumn(int column) {
+  return App::app()->intervalForSymbolType(symbolTypeAtColumn(&column));
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(
-    int columnIndex) const {
+    int column) const {
   return ContinuousFunctionProperties::MessageForSymbolType(
-      symbolTypeAtColumn(&columnIndex));
+      symbolTypeAtColumn(&column));
 }
 
 Shared::ExpressionFunctionTitleCell *ValuesController::functionTitleCells(

@@ -24,7 +24,7 @@ void TableView::initSize(KDRect rect) {
 
 void TableView::reloadVisibleCellsAtColumn(int column) {
   // Reload visible cells of the selected column
-  int firstVisibleCol = firstDisplayedColumnIndex();
+  int firstVisibleCol = firstDisplayedColumn();
   int lastVisibleCol = firstVisibleCol + numberOfDisplayableColumns();
   if (column < firstVisibleCol || column >= lastVisibleCol) {
     // Column is not visible
@@ -162,7 +162,7 @@ void TableView::ContentView::reloadCellAtLocation(int col, int row,
 
 int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
   assert(index >= 0);
-  int col = absoluteColumnIndexFromSubviewIndex(index);
+  int col = absoluteColumnFromSubviewIndex(index);
   int row = absoluteRowFromSubviewIndex(index);
   int type = m_dataSource->typeAtLocation(col, row);
   return type;
@@ -217,7 +217,7 @@ void TableView::ContentView::layoutSubviews(bool force,
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfDisplayableCells(); index++) {
     HighlightCell* cell = reusableCellAtIndex(index);
-    int col = absoluteColumnIndexFromSubviewIndex(index);
+    int col = absoluteColumnFromSubviewIndex(index);
     int row = absoluteRowFromSubviewIndex(index);
     assert(cellAtLocation(col, row) == cell);
     if (updateCellContent) {
@@ -244,10 +244,10 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
   int cumulatedWidthOfLastVisiblePixel =
       m_tableView->bounds().width() + invisibleWidth() - 1;
-  int cumulatedColumnIndexOfLastVisiblePixel =
+  int cumulatedColumnOfLastVisiblePixel =
       m_dataSource->columnAfterCumulatedWidth(cumulatedWidthOfLastVisiblePixel);
   return std::min(m_dataSource->numberOfColumns(),
-                  cumulatedColumnIndexOfLastVisiblePixel + 1) -
+                  cumulatedColumnOfLastVisiblePixel + 1) -
          columnOffset;
 }
 

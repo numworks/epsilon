@@ -96,7 +96,7 @@ class ValuesController : public Shared::ValuesController,
   }
 
   // ColumnHelper
-  int fillColumnName(int columnIndex, char *buffer) override;
+  int fillColumnName(int column, char *buffer) override;
 
   // EditableCellTableViewController
   void reloadEditedCell(int column, int row) override;
@@ -104,8 +104,7 @@ class ValuesController : public Shared::ValuesController,
                                    KDCoordinate rowPreviousHeight) override {
     m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight);
   }
-  void setTitleCellStyle(Escher::HighlightCell *titleCell,
-                         int columnIndex) override;
+  void setTitleCellStyle(Escher::HighlightCell *titleCell, int column) override;
 
   // Shared::ValuesController
   Shared::ContinuousFunctionStore *functionStore() const override {
@@ -115,7 +114,7 @@ class ValuesController : public Shared::ValuesController,
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() const override;
   Poincare::Layout *memoizedLayoutAtIndex(int i) override;
-  Poincare::Layout functionTitleLayout(int columnIndex,
+  Poincare::Layout functionTitleLayout(int column,
                                        bool forceShortVersion = false) override;
   int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
   int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
@@ -125,8 +124,8 @@ class ValuesController : public Shared::ValuesController,
   int numberOfColumnsForAbscissaColumn(int column) override;
   void updateSizeMemoizationForColumnAfterIndexChanged(
       int column, KDCoordinate columnPreviousWidth, int changedRow) override;
-  Shared::Interval *intervalAtColumn(int columnIndex) override;
-  I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
+  Shared::Interval *intervalAtColumn(int column) override;
+  I18n::Message valuesParameterMessageAtColumn(int column) const override;
   Shared::ExpressionFunctionTitleCell *functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell *valueCells(int j) override;
   int abscissaCellsCount() const override {

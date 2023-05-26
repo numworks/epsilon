@@ -46,7 +46,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
     KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
     int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
 
-    int columnIndexInMainDataSource(int i) override {
+    int columnInMainDataSource(int i) override {
       assert(i == 0 || i == 1);
       return m_prefaceColumn + i;
     }

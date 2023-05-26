@@ -68,7 +68,7 @@ void AreaBetweenCurvesParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void AreaBetweenCurvesParameterController::willDisplayCellAtRow(
+void AreaBetweenCurvesParameterController::fillCellForRow(
     Escher::HighlightCell *cell, int row) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(

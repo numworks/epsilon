@@ -26,7 +26,7 @@ class ListWithTopAndBottomDataSource
 
  protected:
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  void willDisplayCellAtRow(HighlightCell* cell, int index) override;
+  void fillCellForRow(HighlightCell* cell, int index) override;
   int typeAtRow(int index) const override;
 
  private:

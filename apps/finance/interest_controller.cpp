@@ -61,7 +61,7 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-void InterestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void InterestController::fillCellForRow(HighlightCell *cell, int row) {
   int type = typeAtRow(row);
   if (type == k_buttonCellType) {
     return;
@@ -81,8 +81,7 @@ void InterestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   myCell->label()->setMessage(App::GetInterestData()->labelForParameter(param));
   myCell->subLabel()->setMessage(
       App::GetInterestData()->sublabelForParameter(param));
-  return Shared::FloatParameterController<double>::willDisplayCellAtRow(cell,
-                                                                        row);
+  return Shared::FloatParameterController<double>::fillCellForRow(cell, row);
 }
 
 int InterestController::typeAtRow(int row) const {

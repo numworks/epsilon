@@ -23,7 +23,7 @@ class FormulaTemplateMenuController
 
   const char* title() override;
   void viewWillAppear() override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override {

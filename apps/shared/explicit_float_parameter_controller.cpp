@@ -53,8 +53,8 @@ bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ExplicitFloatParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                            int row) {
+void ExplicitFloatParameterController::fillCellForRow(HighlightCell *cell,
+                                                      int row) {
   if (textFieldOfCellAtIndex(cell, row)->isEditing()) {
     return;
   }

@@ -55,7 +55,7 @@ class ListController : public Shared::FunctionListController {
   void addModel() override;
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell* functionCells(int index) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   Shared::ContinuousFunctionStore* modelStore() const override;
   Escher::LayoutField* layoutField() override {
     return m_editableCell.layoutField();

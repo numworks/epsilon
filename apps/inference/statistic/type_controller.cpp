@@ -88,8 +88,7 @@ int TypeController::numberOfRows() const {
   return m_statistic->numberOfAvailableDistributions();
 }
 
-void TypeController::willDisplayCellAtRow(Escher::HighlightCell *cell,
-                                          int row) {
+void TypeController::fillCellForRow(Escher::HighlightCell *cell, int row) {
   assert(row <= indexOfZTest());
   I18n::Message message;
   if (row == k_indexOfTTest) {

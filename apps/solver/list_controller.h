@@ -29,7 +29,7 @@ class ListController : public Shared::ExpressionModelListController,
   /* ListViewDataSource */
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

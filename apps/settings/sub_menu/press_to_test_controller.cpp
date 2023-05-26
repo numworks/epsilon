@@ -67,7 +67,7 @@ ExamMode::PressToTestFlags PressToTestController::getPressToTestParams() {
 KDCoordinate PressToTestController::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_buttonCellType) {
     /* Do not call protectedNonMemoizedRowHeight since bounds can be empty (when
-     * exam mode is on). Moreover, willDisplayCellAtRow does nothing for
+     * exam mode is on). Moreover, fillCellForRow does nothing for
      * m_activateButton. */
     return m_activateButton.minimalSizeForOptimalDisplay().height();
   }
@@ -212,7 +212,7 @@ int PressToTestController::reusableCellCount(int type) {
   return type == k_buttonCellType ? 1 : k_numberOfReusableSwitchCells;
 }
 
-void PressToTestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void PressToTestController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_buttonCellType) {
     assert(!Preferences::sharedPreferences->examMode().isActive());
     return;

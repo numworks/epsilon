@@ -93,7 +93,7 @@ HighlightCell *RegressionController::reusableCell(int index, int type) {
   return &m_regressionCells[index];
 }
 
-void RegressionController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void RegressionController::fillCellForRow(HighlightCell *cell, int row) {
   assert(row >= 0 && row < numberOfRows());
   MenuCell<MessageTextView, LayoutView> *castedCell =
       static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);

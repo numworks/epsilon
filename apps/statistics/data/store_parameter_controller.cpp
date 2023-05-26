@@ -84,8 +84,8 @@ Escher::AbstractMenuCell* StoreParameterController::cell(int index) {
   return Shared::StoreParameterController::cell(index);
 }
 
-void StoreParameterController::willDisplayCellAtRow(Escher::HighlightCell* cell,
-                                                    int row) {
+void StoreParameterController::fillCellForRow(Escher::HighlightCell* cell,
+                                              int row) {
   if (cell == &m_displayCumulatedFrequencyCell) {
     m_displayCumulatedFrequencyCell.accessory()->setState(
         m_store->displayCumulatedFrequenciesForSeries(
@@ -94,7 +94,7 @@ void StoreParameterController::willDisplayCellAtRow(Escher::HighlightCell* cell,
   } else if (cell == &m_hideCumulatedFrequencyCell) {
     return;
   }
-  Shared::StoreParameterController::willDisplayCellAtRow(cell, row);
+  Shared::StoreParameterController::fillCellForRow(cell, row);
 }
 
 }  // namespace Statistics

@@ -60,8 +60,7 @@ HighlightCell *FloatParameterController<T>::reusableCell(int index, int type) {
 }
 
 template <typename T>
-void FloatParameterController<T>::willDisplayCellAtRow(HighlightCell *cell,
-                                                       int row) {
+void FloatParameterController<T>::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_buttonCellType ||
       textFieldOfCellAtIndex(cell, row)->isEditing()) {
     return;

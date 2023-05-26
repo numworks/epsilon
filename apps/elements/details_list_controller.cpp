@@ -59,7 +59,7 @@ KDCoordinate DetailsListController::separatorBeforeRow(int row) {
   return 0;
 }
 
-void DetailsListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void DetailsListController::fillCellForRow(HighlightCell *cell, int row) {
   AtomicNumber z = App::app()->elementsViewDataSource()->selectedElement();
   assert(ElementsDataBase::IsElement(z));
   PhysicalQuantityCell *typedCell = static_cast<PhysicalQuantityCell *>(cell);

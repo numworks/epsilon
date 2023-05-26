@@ -132,8 +132,7 @@ int MathVariableBoxController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void MathVariableBoxController::willDisplayCellAtRow(HighlightCell *cell,
-                                                     int row) {
+void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
   if (m_currentPage == Page::RootMenu) {
     if (row == defineVariableCellIndex()) {
       return;

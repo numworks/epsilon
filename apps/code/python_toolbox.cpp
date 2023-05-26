@@ -1089,7 +1089,7 @@ KDCoordinate PythonToolbox::nonMemoizedRowHeight(int row) {
   return Escher::Toolbox::nonMemoizedRowHeight(row);
 }
 
-void PythonToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void PythonToolbox::fillCellForRow(HighlightCell *cell, int row) {
   const ToolboxMessageTree *messageTree =
       static_cast<const ToolboxMessageTree *>(
           m_messageTreeModel->childAtIndex(row));
@@ -1108,7 +1108,7 @@ void PythonToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
     myCell->subLabel()->setMessage(messageTree->text());
     return;
   }
-  Escher::Toolbox::willDisplayCellAtRow(cell, row);
+  Escher::Toolbox::fillCellForRow(cell, row);
 }
 
 void PythonToolbox::scrollToLetter(char letter) {

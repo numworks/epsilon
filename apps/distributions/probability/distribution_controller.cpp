@@ -63,8 +63,7 @@ constexpr I18n::Message sMessages[] = {
     I18n::Message::Poisson,     I18n::Message::Fisher,
 };
 
-void DistributionController::willDisplayCellAtRow(HighlightCell *cell,
-                                                  int row) {
+void DistributionController::fillCellForRow(HighlightCell *cell, int row) {
   DistributionCell *myCell = static_cast<DistributionCell *>(cell);
   myCell->subLabel()->setGlyphFormat(
       GlyphsView::FormatForWidgetType(CellWidget::Type::Label));

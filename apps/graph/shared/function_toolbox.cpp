@@ -85,7 +85,7 @@ HighlightCell *FunctionToolbox::reusableCell(int index, int type) {
   return MathToolbox::reusableCell(index, type);
 }
 
-void FunctionToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void FunctionToolbox::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_addedCellType) {
     assert(row < addedCellsAtRoot());
     static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
@@ -93,7 +93,7 @@ void FunctionToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
     cell->reloadCell();
     return;
   }
-  MathToolbox::willDisplayCellAtRow(cell, row);
+  MathToolbox::fillCellForRow(cell, row);
 }
 
 KDCoordinate FunctionToolbox::nonMemoizedRowHeight(int row) {

@@ -59,7 +59,7 @@ void FunctionModelsParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void FunctionModelsParameterController::willDisplayCellAtRow(
+void FunctionModelsParameterController::fillCellForRow(
     Escher::HighlightCell* cell, int row) {
   if (cell == &m_emptyModelCell) {
     return;

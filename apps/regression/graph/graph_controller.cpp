@@ -105,7 +105,7 @@ KDCoordinate GraphController::CurveSelectionController::nonMemoizedRowHeight(
          Metric::CellBottomMargin;
 }
 
-void GraphController::CurveSelectionController::willDisplayCellAtRow(
+void GraphController::CurveSelectionController::fillCellForRow(
     HighlightCell *cell, int row) {
   int series = graphController()->seriesIndexFromCurveIndex(row);
   const char *name = Store::SeriesTitle(series);

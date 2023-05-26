@@ -59,7 +59,7 @@ int ParametersController::numberOfRows() const {
   return 1 + m_distribution->numberOfParameters();
 }
 
-void ParametersController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
   if (row == numberOfRows() - 1) {
     return;
   }
@@ -73,7 +73,7 @@ void ParametersController::willDisplayCellAtRow(HighlightCell *cell, int row) {
     textFieldOfCellAtIndex(cell, row)->setText("");
     return;
   }
-  FloatParameterController::willDisplayCellAtRow(cell, row);
+  FloatParameterController::fillCellForRow(cell, row);
 }
 
 HighlightCell *ParametersController::reusableParameterCell(int index,

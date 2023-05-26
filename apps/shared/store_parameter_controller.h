@@ -21,7 +21,7 @@ class StoreParameterController : public ColumnParameterController {
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfCells; }
   Escher::AbstractMenuCell* cell(int index) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void initializeColumnParameters() override;
 
  protected:

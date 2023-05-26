@@ -28,7 +28,7 @@ class DistributionController : public Escher::SelectableListViewController<
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_totalNumberOfModels; }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   Escher::HighlightCell* reusableCell(int index) override;
   int reusableCellCount() const override { return k_numberOfCells; }
   KDCoordinate defaultRowHeight() override;

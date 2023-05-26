@@ -66,8 +66,8 @@ AbstractMenuCell* StoreParameterController::cell(int index) {
   return cells[index];
 }
 
-void StoreParameterController::willDisplayCellAtRow(Escher::HighlightCell* cell,
-                                                    int row) {
+void StoreParameterController::fillCellForRow(Escher::HighlightCell* cell,
+                                              int row) {
   if (cell == &m_hideCell) {
     m_hideCell.accessory()->setState(
         m_storeColumnHelper->selectedSeriesIsActive());

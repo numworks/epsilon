@@ -38,8 +38,7 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ColorParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                    int row) {
+void ColorParameterController::fillCellForRow(HighlightCell *cell, int row) {
   ColorCell *colorCell = static_cast<ColorCell *>(cell);
   assert(row >= 0);
   assert(row < ColorNames::k_count);

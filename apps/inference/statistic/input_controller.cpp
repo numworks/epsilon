@@ -107,8 +107,7 @@ void InputController::buttonAction() {
   stackOpenPage(m_resultsController);
 }
 
-void InputController::willDisplayCellAtRow(Escher::HighlightCell *cell,
-                                           int row) {
+void InputController::fillCellForRow(Escher::HighlightCell *cell, int row) {
   if (row < m_statistic->indexOfThreshold()) {
     InputParameterCell *mCell = static_cast<InputParameterCell *>(cell);
     mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(row));
@@ -119,7 +118,7 @@ void InputController::willDisplayCellAtRow(Escher::HighlightCell *cell,
     m_significanceCell.subLabel()->setMessage(
         m_statistic->thresholdDescription());
   }
-  FloatParameterController<double>::willDisplayCellAtRow(cell, row);
+  FloatParameterController<double>::fillCellForRow(cell, row);
 }
 
 KDCoordinate InputController::separatorBeforeRow(int row) {

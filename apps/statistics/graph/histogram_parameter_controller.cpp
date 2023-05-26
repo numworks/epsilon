@@ -42,8 +42,8 @@ const char *HistogramParameterController::title() {
   return I18n::translate(I18n::Message::StatisticsGraphSettings);
 }
 
-void HistogramParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                        int row) {
+void HistogramParameterController::fillCellForRow(HighlightCell *cell,
+                                                  int row) {
   if (row == numberOfRows() - 1) {
     return;
   }
@@ -57,7 +57,7 @@ void HistogramParameterController::willDisplayCellAtRow(HighlightCell *cell,
       I18n::Message::BarStartDescrition};
   myCell->label()->setMessage(labels[row]);
   myCell->subLabel()->setMessage(sublabels[row]);
-  FloatParameterController::willDisplayCellAtRow(cell, row);
+  FloatParameterController::fillCellForRow(cell, row);
 }
 
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {

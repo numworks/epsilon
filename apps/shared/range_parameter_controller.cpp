@@ -74,8 +74,7 @@ KDCoordinate RangeParameterController::nonMemoizedRowHeight(int row) {
                                        row);
 }
 
-void RangeParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                    int row) {
+void RangeParameterController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_rangeCellType) {
     float min, max;
     bool isAuto = false;

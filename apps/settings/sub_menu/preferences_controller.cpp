@@ -111,8 +111,8 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   }
 }
 
-void PreferencesController::willDisplayCellAtRow(HighlightCell *cell, int row) {
-  GenericSubController::willDisplayCellAtRow(cell, row);
+void PreferencesController::fillCellForRow(HighlightCell *cell, int row) {
+  GenericSubController::fillCellForRow(cell, row);
   MenuCell<MessageTextView, LayoutView> *myCell =
       static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
   I18n::Message message = m_messageTreeModel->childAtIndex(row)->label();

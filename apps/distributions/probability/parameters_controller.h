@@ -27,7 +27,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
   void viewWillAppear() override;
   TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   int reusableParameterCellCount(int type) override;

@@ -20,7 +20,7 @@ class HistogramParameterController
   void viewWillAppear() override;
   const char* title() override;
   int numberOfRows() const override { return 1 + k_numberOfCells; }
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   constexpr static int k_numberOfCells = 2;

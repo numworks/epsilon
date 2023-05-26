@@ -191,8 +191,8 @@ HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
   }
 }
 
-void InputCategoricalController::willDisplayCellAtRow(
-    Escher::HighlightCell *cell, int row) {
+void InputCategoricalController::fillCellForRow(Escher::HighlightCell *cell,
+                                                int row) {
   if (row == indexOfSignificanceCell()) {
     assert(cell == &m_significanceCell);
     m_significanceCell.setMessages(m_statistic->thresholdName(),

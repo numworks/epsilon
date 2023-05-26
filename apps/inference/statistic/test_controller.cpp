@@ -102,7 +102,7 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-void TestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void TestController::fillCellForRow(HighlightCell *cell, int row) {
   MenuCell<MessageTextView, MessageTextView, ChevronView> *c =
       static_cast<MenuCell<MessageTextView, MessageTextView, ChevronView> *>(
           cell);

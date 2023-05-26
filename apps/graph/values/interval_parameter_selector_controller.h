@@ -22,7 +22,7 @@ class IntervalParameterSelectorController
   int numberOfRows() const override;
   int reusableCellCount() const override { return k_numberOfSymbolTypes; }
   Escher::HighlightCell* reusableCell(int index) override;
-  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void setStartEndMessages(
       Shared::IntervalParameterController* controller,
       Shared::ContinuousFunctionProperties::SymbolType symbolType);

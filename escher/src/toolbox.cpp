@@ -18,7 +18,7 @@ int Toolbox::numberOfRows() const {
 
 int Toolbox::reusableCellCount(int type) { return maxNumberOfDisplayedRows(); }
 
-void Toolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+void Toolbox::fillCellForRow(HighlightCell *cell, int row) {
   assert(typeAtRow(row) == k_nodeCellType);
   const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
   assert(messageTree->numberOfChildren() != 0);

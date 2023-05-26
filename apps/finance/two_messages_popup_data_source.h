@@ -17,7 +17,7 @@ class TwoMessagesPopupDataSource : public Escher::ListViewDataSource {
   Escher::SmallBufferTextHighlightCell *reusableCell(int i, int type) override {
     return &m_cells[i];
   }
-  void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override {
+  void fillCellForRow(Escher::HighlightCell *cell, int row) override {
     static_cast<Escher::SmallBufferTextHighlightCell *>(cell)->setText(
         I18n::translate(row == 0 ? m_message1 : m_message2));
   }

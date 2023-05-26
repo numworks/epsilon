@@ -123,8 +123,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void CalculationParameterController::willDisplayCellAtRow(HighlightCell *cell,
-                                                          int row) {
+void CalculationParameterController::fillCellForRow(HighlightCell *cell,
+                                                    int row) {
   assert(row >= 0 && row <= numberOfRows());
   if (cell != &m_areaCell) {
     return;

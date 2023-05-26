@@ -3,7 +3,6 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/expression_model_list_controller.h>
-#include <apps/shared/text_field_delegate.h>
 #include <escher/button_row_controller.h>
 #include <escher/editable_expression_model_cell.h>
 #include <escher/even_odd_expression_cell.h>

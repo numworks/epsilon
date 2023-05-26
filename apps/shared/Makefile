@@ -89,7 +89,6 @@ app_shared_src = $(addprefix apps/shared/,\
   store_menu_controller.cpp \
   sum_graph_controller.cpp \
   tab_table_controller.cpp \
-  text_field_delegate.cpp \
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
   values_controller.cpp \

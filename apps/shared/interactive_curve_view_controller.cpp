@@ -165,15 +165,14 @@ void InteractiveCurveViewController::willExitResponderChain(
 
 bool InteractiveCurveViewController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+  double floatBody = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      floatBody, textFieldDelegateApp()->localContext(),
+      floatBody, Container::activeApp()->localContext(),
       Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
@@ -193,7 +192,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(), t,
-                                     textFieldDelegateApp()->localContext(), 0);
+                                     Container::activeApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {

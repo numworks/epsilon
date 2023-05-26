@@ -1,6 +1,5 @@
 #include "cobweb_controller.h"
 
-#include <apps/shared/text_field_delegate.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>

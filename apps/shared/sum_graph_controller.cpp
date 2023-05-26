@@ -151,8 +151,8 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
                                                    const char *text,
                                                    Ion::Events::Event event) {
   double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+      ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   if ((!allowEndLowerThanStart() && m_step == Step::SecondParameter &&

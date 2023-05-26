@@ -2,7 +2,6 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <apps/shared/layout_field_delegate.h>
-#include <apps/shared/text_field_delegate.h>
 #include <poincare/layout.h>
 
 #include "calculation_selectable_table_view.h"

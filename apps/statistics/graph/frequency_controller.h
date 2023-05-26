@@ -1,15 +1,15 @@
 #ifndef STATISTICS_FREQUENCY_CONTROLLER_H
 #define STATISTICS_FREQUENCY_CONTROLLER_H
 
+#include <apps/shared/math_field_delegate.h>
 #include <apps/shared/round_cursor_view.h>
-#include <apps/shared/text_field_delegate.h>
 
 #include "plot_controller.h"
 
 namespace Statistics {
 
 class FrequencyController : public PlotController,
-                            public Shared::TextFieldDelegate {
+                            public Shared::MathFieldDelegate {
  public:
   FrequencyController(Escher::Responder *parentResponder,
                       Escher::ButtonRowController *header,

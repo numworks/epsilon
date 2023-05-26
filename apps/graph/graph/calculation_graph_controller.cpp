@@ -105,7 +105,7 @@ CalculationGraphController::computeNewPointOfInterestFromAbscissa(
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start,
                                                                     &max);
   return computeNewPointOfInterest(start, max,
-                                   textFieldDelegateApp()->localContext());
+                                   Container::activeApp()->localContext());
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(

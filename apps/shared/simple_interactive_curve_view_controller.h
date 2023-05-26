@@ -1,7 +1,7 @@
 #ifndef SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 #define SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
-#include "text_field_delegate.h"
+#include "math_field_delegate.h"
 #include "zoom_curve_view_controller.h"
 
 namespace Shared {
@@ -10,7 +10,7 @@ namespace Shared {
  * can handles zoom in/out and left and right events. */
 
 class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
-                                             public TextFieldDelegate {
+                                             public MathFieldDelegate {
  public:
   SimpleInteractiveCurveViewController(Escher::Responder *parentResponder,
                                        CurveViewCursor *cursor)

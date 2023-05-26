@@ -89,14 +89,13 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(
   return (event == Ion::Events::Down &&
           innerSelectedRow() < numberOfRows() - 1) ||
          (event == Ion::Events::Up && innerSelectedRow() > 0) ||
-         TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 template <typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  T floatBody =
-      textFieldDelegateApp()->template parseInputtedFloatValue<T>(text);
+  T floatBody = ParseInputtedFloatValue<T>(text);
   if (hasUndefinedValue(text, floatBody) ||
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {
     return false;
@@ -123,9 +122,9 @@ template <typename T>
 bool FloatParameterController<T>::hasUndefinedValue(const char *text,
                                                     T floatValue) const {
   InfinityTolerance infTolerance = infinityAllowanceForRow(innerSelectedRow());
-  return textFieldDelegateApp()->hasUndefinedValue(
-      floatValue, infTolerance == InfinityTolerance::PlusInfinity,
-      infTolerance == InfinityTolerance::MinusInfinity);
+  return HasUndefinedValue(floatValue,
+                           infTolerance == InfinityTolerance::PlusInfinity,
+                           infTolerance == InfinityTolerance::MinusInfinity);
 }
 
 template class FloatParameterController<float>;

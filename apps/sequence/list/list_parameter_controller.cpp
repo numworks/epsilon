@@ -34,14 +34,13 @@ const char *ListParameterController::title() {
 bool ListParameterController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return event == Ion::Events::Down || event == Ion::Events::Up ||
-         TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ListParameterController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+  double floatBody = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   int index = std::floor(floatBody);

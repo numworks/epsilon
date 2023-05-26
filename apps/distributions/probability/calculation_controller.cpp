@@ -196,7 +196,7 @@ bool CalculationController::textFieldDidHandleEvent(
 
 bool CalculationController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
+  return MathFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          (event == Ion::Events::Right &&
           textField->cursorLocation() ==
               textField->text() + textField->draftTextLength() &&
@@ -208,9 +208,8 @@ bool CalculationController::textFieldShouldFinishEditing(
 bool CalculationController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
   assert(selectedColumn() != 0);
-  double floatBody =
-      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
-  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
+  double floatBody = ParseInputtedFloatValue<double>(text);
+  if (HasUndefinedValue(floatBody)) {
     return false;
   }
   int resultColumn =

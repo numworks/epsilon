@@ -9,17 +9,15 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 
-#include "layout_field_delegate.h"
+#include "math_field_delegate.h"
 #include "pop_up_controller.h"
-#include "text_field_delegate.h"
 
 namespace Shared {
 
 class StoreMenuController : public Escher::ModalViewController,
                             public Escher::ListViewDataSource,
                             public Escher::SelectableListViewDataSource,
-                            public TextFieldDelegate,
-                            public LayoutFieldDelegate,
+                            public MathFieldDelegate,
                             public Escher::PervasiveBox {
  public:
   StoreMenuController();

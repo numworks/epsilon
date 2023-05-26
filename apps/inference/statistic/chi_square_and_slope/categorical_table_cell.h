@@ -7,8 +7,8 @@
 #include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
 #include <shared/column_helper.h>
+#include <shared/math_field_delegate.h>
 #include <shared/parameter_text_field_delegate.h>
-#include <shared/text_field_delegate.h>
 
 #include "inference/models/statistic/statistic.h"
 #include "inference/models/statistic/table.h"
@@ -67,7 +67,7 @@ class CategoricalTableCell : public Escher::HighlightCell,
 
 class InputCategoricalTableCell
     : public CategoricalTableCell,
-      public Shared::TextFieldDelegate,
+      public Shared::MathFieldDelegate,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
       public Shared::ClearColumnHelper {
  public:

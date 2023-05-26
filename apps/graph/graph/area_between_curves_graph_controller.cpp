@@ -1,6 +1,5 @@
 #include "area_between_curves_graph_controller.h"
 
-#include <apps/shared/text_field_delegate.h>
 #include <assert.h>
 #include <poincare/absolute_value.h>
 #include <poincare/absolute_value_layout.h>

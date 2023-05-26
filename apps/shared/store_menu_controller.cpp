@@ -184,8 +184,7 @@ bool StoreMenuController::layoutFieldDidReceiveEvent(
     return true;
   }
   // We short circuit the LayoutFieldDelegate to avoid calls to displayWarning
-  return textFieldDelegateApp()->fieldDidReceiveEvent(layoutField, layoutField,
-                                                      event);
+  return fieldDidReceiveEvent(layoutField, layoutField, event);
 }
 
 }  // namespace Shared

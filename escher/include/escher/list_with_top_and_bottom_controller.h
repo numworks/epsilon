@@ -28,6 +28,7 @@ class ListWithTopAndBottomDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void fillCellForRow(HighlightCell* cell, int index) override;
   int typeAtRow(int index) const override;
+  bool cellAtLocationIsSelectable(int column, int row) override;
 
  private:
   constexpr static int k_topCellType = 0;
@@ -54,7 +55,6 @@ class ListWithTopAndBottomDataSource
       assert(m_view);
       setChildFrame(m_view, bounds(), force);
     }
-    bool protectedIsSelectable() override { return false; }
 
    private:
     View* m_view;

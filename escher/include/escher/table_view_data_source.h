@@ -24,15 +24,7 @@ class TableViewDataSource {
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
   virtual void fillCellForLocation(HighlightCell* cell, int column, int row);
-  virtual bool cellAtLocationIsSelectable(HighlightCell* cell, int column,
-                                          int row) {
-    /* TODO: If cell is nullptr because it's a reusable cell not populated
-     * yet, this can't check if the cell is selectable.
-     * isSelectable() should maybe belong to dataSource and not cell. */
-    assert(column >= 0 && column < numberOfColumns() && row >= 0 &&
-           row < numberOfRows());
-    return !cell || cell->isSelectable();
-  }
+  virtual bool cellAtLocationIsSelectable(int column, int row) { return true; }
 
   KDCoordinate columnWidth(int column, bool withSeparator = true);
   KDCoordinate rowHeight(int row, bool withSeparator = true);

@@ -32,8 +32,7 @@ class HomogeneityTableDataSource
   Escher::HighlightCell* reusableCell(int i, int type) override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  bool cellAtLocationIsSelectable(Escher::HighlightCell* cell, int column,
-                                  int row) override {
+  bool cellAtLocationIsSelectable(int column, int row) override {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
 

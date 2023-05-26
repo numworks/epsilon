@@ -45,6 +45,12 @@ int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first,
   return -1;
 }
 
+bool SelectableTableView::cellAtLocationIsSelectable(int column, int row) {
+  HighlightCell* cell = cellAtLocation(column, row);
+  return (!cell || cell->isVisible()) &&
+         dataSource()->cellAtLocationIsSelectable(column, row);
+}
+
 int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
                                                           int row,
                                                           bool searchForRow) {

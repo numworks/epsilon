@@ -18,8 +18,6 @@ class HighlightCell : public View {
   void show() { setVisible(true); }
   void hide() { setVisible(false); }
 
-  bool isSelectable() { return isVisible() && protectedIsSelectable(); }
-
   virtual void setHighlighted(bool highlight);
   void setHighlightedWithoutReload(bool highlight) {
     m_state = highlight ? State::Highlighted : State::Visible;
@@ -30,7 +28,6 @@ class HighlightCell : public View {
   virtual Poincare::Layout layout() const { return Poincare::Layout(); }
 
  protected:
-  virtual bool protectedIsSelectable() { return true; }
   bool isHighlighted() const { return m_state == State::Highlighted; }
   KDColor defaultBackgroundColor() const {
     return isHighlighted() ? Palette::Select : KDColorWhite;

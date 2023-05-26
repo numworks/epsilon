@@ -29,15 +29,14 @@ void ExplicitListViewDataSource::initCellSize(TableView* view) {
   ListViewDataSource::initCellSize(view);
 }
 
-bool ExplicitListViewDataSource::cellAtLocationIsSelectable(HighlightCell* cell,
-                                                            int column,
+bool ExplicitListViewDataSource::cellAtLocationIsSelectable(int column,
                                                             int row) {
-  /* This controller owns all its cells so even if cell == nullptr, it can
+  /* This controller owns all its cells so even when cellAtLocation(column, row)
+   * is nullptr, we can access the cell via the method cell(row) and we can
    * check if the cell is selectable or not. */
   assert(column >= 0 && column < 1 && row >= 0 && row < numberOfRows());
-  // this->cell() is used because cell() is ambiguous with the cell variable
-  assert(!cell || cell == this->cell(row));
-  return this->cell(row)->isSelectable();
+  assert(cell(row));
+  return cell(row)->isVisible();
 }
 
 }  // namespace Escher

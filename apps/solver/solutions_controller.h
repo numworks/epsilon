@@ -51,8 +51,7 @@ class SolutionsController : public Escher::ViewController,
   Escher::HighlightCell *reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
-  bool cellAtLocationIsSelectable(Escher::HighlightCell *cell, int column,
-                                  int row) override {
+  bool cellAtLocationIsSelectable(int column, int row) override {
     return typeAtLocation(column, row) != k_messageCellType &&
            typeAtLocation(column, row) != k_emptyCellType;
   }
@@ -144,7 +143,6 @@ class SolutionsController : public Escher::ViewController,
     void layoutSubviews(bool force = false) override {
       setChildFrame(&m_messageView, bounds(), force);
     }
-    bool protectedIsSelectable() override { return false; }
     Escher::MessageTextView m_messageView;
   };
 

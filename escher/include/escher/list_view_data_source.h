@@ -17,15 +17,14 @@ class ListViewDataSource : public TableViewDataSource {
   int reusableCellCount(int type) override { return numberOfRows(); }
   virtual void willDisplayCellAtRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
-  // Used to easily override nonMemoizedRowHeight
-  KDCoordinate heightForCellAtRowWithWidthInit(HighlightCell* tempCell,
-                                               int row);
 
  protected:
   KDCoordinate defaultColumnWidth() override { return KDCOORDINATE_MAX; }
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
   KDCoordinate nonMemoizedRowHeight(int row) override;
+  KDCoordinate heightForCellAtRowWithWidthInit(HighlightCell* tempCell,
+                                               int row);
   KDCoordinate heightForCellAtRow(HighlightCell* cell, int row);
 
  private:

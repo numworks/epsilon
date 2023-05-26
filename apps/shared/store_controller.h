@@ -77,10 +77,9 @@ class StoreController : public EditableCellTableViewController,
   Escher::StackViewController* stackController() const override;
   Escher::TabViewController* tabController() const override;
   bool checkDataAtLocation(double floatBody, int columnIndex,
-                           int rowIndex) const override;
-  bool setDataAtLocation(double floatBody, int columnIndex,
-                         int rowIndex) override;
-  double dataAtLocation(int columnIndex, int rowIndex) override;
+                           int row) const override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
+  double dataAtLocation(int columnIndex, int row) override;
   void setTitleCellText(Escher::HighlightCell* titleCell,
                         int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell* titleCell,
@@ -102,7 +101,7 @@ class StoreController : public EditableCellTableViewController,
                          DoublePairStore::k_numberOfColumnsPerSeries];
 
  private:
-  bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
+  bool cellAtLocationIsEditable(int columnIndex, int row) override;
   int maxNumberOfElements() const override {
     return DoublePairStore::k_maxNumberOfPairs;
   }

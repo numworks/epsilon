@@ -27,7 +27,7 @@ class ModalViewEmptyController : public ViewController {
     void reload();
 
    private:
-    constexpr static int k_layoutViewRowIndex = 2;
+    constexpr static int k_layoutViewRow = 2;
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;
     int numberOfSubviews() const override;
     View *subviewAtIndex(int index) override;

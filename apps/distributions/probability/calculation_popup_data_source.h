@@ -15,9 +15,9 @@ class CalculationPopupDataSource : public Escher::ListViewDataSource {
   int numberOfRows() const override;
   int reusableCellCount(int type) override { return numberOfRows(); }
   Escher::HighlightImageCell* reusableCell(int i, int type) override {
-    return m_imageCells + absoluteRowIndex(i);
+    return m_imageCells + absoluteRow(i);
   }
-  int absoluteRowIndex(int currentRowIndex) const;
+  int absoluteRow(int currentRow) const;
 
   constexpr static int k_numberOfImages = 4;
 

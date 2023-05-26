@@ -28,12 +28,12 @@ int CalculationPopupDataSource::numberOfRows() const {
   return k_numberOfImages - m_distribution->isContinuous();
 }
 
-int CalculationPopupDataSource::absoluteRowIndex(int currentRowIndex) const {
-  if (!m_distribution->allParametersAreInitialized() && currentRowIndex == 1) {
+int CalculationPopupDataSource::absoluteRow(int currentRow) const {
+  if (!m_distribution->allParametersAreInitialized() && currentRow == 1) {
     // Only display left and right integral
     return 2;
   }
-  return currentRowIndex;
+  return currentRow;
 }
 
 }  // namespace Distributions

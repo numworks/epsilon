@@ -92,7 +92,7 @@ class EditableCellTableViewController : public TabTableController,
     selectableTableView()->reloadCellAtLocation(column, row);
   }
   virtual bool checkDataAtLocation(double floatBody, int columnIndex,
-                                   int rowIndex) const {
+                                   int row) const {
     return true;
   }
 
@@ -100,10 +100,10 @@ class EditableCellTableViewController : public TabTableController,
 
  private:
   virtual void didChangeCell(int column, int row) {}
-  virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
+  virtual bool cellAtLocationIsEditable(int columnIndex, int row) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex,
-                                 int rowIndex) = 0;
-  virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;
+                                 int row) = 0;
+  virtual double dataAtLocation(int columnIndex, int row) = 0;
   virtual int maxNumberOfElements() const = 0;
 };
 

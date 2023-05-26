@@ -92,17 +92,17 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
   int row = m_selectableTableView.selectedRow(),
       column = m_selectableTableView.selectedColumn();
   if (!tableModel()->authorizedParameterAtPosition(
-          p, relativeRowIndex(row), relativeColumnIndex(column))) {
+          p, relativeRow(row), relativeColumnIndex(column))) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  tableModel()->setParameterAtPosition(p, relativeRowIndex(row),
+  tableModel()->setParameterAtPosition(p, relativeRow(row),
                                        relativeColumnIndex(column));
 
   m_selectableTableView.deselectTable(true);
   // Add row or column
   if ((row == tableViewDataSource()->numberOfRows() - 1 &&
-       relativeRowIndex(tableViewDataSource()->numberOfRows()) <
+       relativeRow(tableViewDataSource()->numberOfRows()) <
            tableModel()->maxNumberOfRows()) ||
       (column == tableViewDataSource()->numberOfColumns() - 1 &&
        relativeColumnIndex(tableViewDataSource()->numberOfColumns()) <
@@ -144,10 +144,10 @@ void InputCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
 bool InputCategoricalTableCell::deleteSelectedValue() {
   int row = m_selectableTableView.selectedRow(),
       col = m_selectableTableView.selectedColumn();
-  assert(relativeRowIndex(row) >= 0 && relativeColumnIndex(col) >= 0);
+  assert(relativeRow(row) >= 0 && relativeColumnIndex(col) >= 0);
   // Remove value
   bool shouldDeleteRowOrCol = tableModel()->deleteParameterAtPosition(
-      relativeRowIndex(row), relativeColumnIndex(col));
+      relativeRow(row), relativeColumnIndex(col));
   if (!shouldDeleteRowOrCol) {
     // Only one cell needs to reload.
     assert(row < tableViewDataSource()->numberOfRows() &&

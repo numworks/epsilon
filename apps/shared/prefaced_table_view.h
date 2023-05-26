@@ -87,8 +87,7 @@ class PrefacedTableView : public Escher::View,
     void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
                                    int row) override {
       m_mainDataSource->willDisplayCellAtLocation(
-          cell, columnIndexInMainDataSource(column),
-          rowIndexInMainDataSource(row));
+          cell, columnIndexInMainDataSource(column), rowInMainDataSource(row));
     }
     Escher::HighlightCell* reusableCell(int index, int type) override;
     int reusableCellCount(int type) override {
@@ -96,15 +95,14 @@ class PrefacedTableView : public Escher::View,
     }
     int typeAtLocation(int column, int row) override {
       return m_mainDataSource->typeAtLocation(
-          columnIndexInMainDataSource(column), rowIndexInMainDataSource(row));
+          columnIndexInMainDataSource(column), rowInMainDataSource(row));
     }
     KDCoordinate separatorBeforeColumn(int column) override {
       return m_mainDataSource->separatorBeforeColumn(
           columnIndexInMainDataSource(column));
     }
     KDCoordinate separatorBeforeRow(int row) override {
-      return m_mainDataSource->separatorBeforeRow(
-          rowIndexInMainDataSource(row));
+      return m_mainDataSource->separatorBeforeRow(rowInMainDataSource(row));
     }
 
    protected:
@@ -117,12 +115,12 @@ class PrefacedTableView : public Escher::View,
     /* WARNING: This method works only if columnIndexInMainDataSource(i) == i.
      * Else, it should be overriden.*/
     int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
-    /* WARNING: This method works only if rowIndexInMainDataSource(j) == j.
+    /* WARNING: This method works only if rowInMainDataSource(j) == j.
      * Else, it should be overriden.*/
     int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) override;
 
     virtual int columnIndexInMainDataSource(int i) { return i; }
-    virtual int rowIndexInMainDataSource(int j) { return j; }
+    virtual int rowInMainDataSource(int j) { return j; }
 
     Escher::TableViewDataSource* m_mainDataSource;
   };
@@ -143,7 +141,7 @@ class PrefacedTableView : public Escher::View,
     KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;
     int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) override;
 
-    int rowIndexInMainDataSource(int j) override {
+    int rowInMainDataSource(int j) override {
       assert(j == 0 || j == 1);
       return m_prefaceRow + j;
     }

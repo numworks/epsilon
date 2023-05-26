@@ -16,10 +16,10 @@ namespace Sequence {
 SequenceToolbox::SequenceToolbox() : MathToolbox(), m_numberOfAddedCells(0) {}
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
-  const int rowIndex = selectedRow();
-  if (typeAtRow(rowIndex) == k_addedCellType &&
+  const int row = selectedRow();
+  if (typeAtRow(row) == k_addedCellType &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    return selectAddedCell(rowIndex);
+    return selectAddedCell(row);
   }
   return MathToolbox::handleEvent(event);
 }

@@ -30,7 +30,7 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
     // Column is not visible
     return;
   }
-  int firstVisibleRow = firstDisplayedRowIndex();
+  int firstVisibleRow = firstDisplayedRow();
   int lastVisibleRow = std::max(firstVisibleRow + numberOfDisplayableRows(),
                                 totalNumberOfRows() - 1);
 
@@ -163,7 +163,7 @@ void TableView::ContentView::reloadCellAtLocation(int col, int row,
 int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
   assert(index >= 0);
   int col = absoluteColumnIndexFromSubviewIndex(index);
-  int row = absoluteRowIndexFromSubviewIndex(index);
+  int row = absoluteRowFromSubviewIndex(index);
   int type = m_dataSource->typeAtLocation(col, row);
   return type;
 }
@@ -218,7 +218,7 @@ void TableView::ContentView::layoutSubviews(bool force,
   for (int index = 0; index < numberOfDisplayableCells(); index++) {
     HighlightCell* cell = reusableCellAtIndex(index);
     int col = absoluteColumnIndexFromSubviewIndex(index);
-    int row = absoluteRowIndexFromSubviewIndex(index);
+    int row = absoluteRowFromSubviewIndex(index);
     assert(cellAtLocation(col, row) == cell);
     if (updateCellContent) {
       m_dataSource->willDisplayCellAtLocation(cell, col, row);
@@ -233,10 +233,10 @@ int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
   int cumulatedHeightOfLastVisiblePixel =
       m_tableView->bounds().height() + invisibleHeight() - 1;
-  int cumulatedRowIndexOfLastVisiblePixel =
+  int cumulatedRowOfLastVisiblePixel =
       m_dataSource->rowAfterCumulatedHeight(cumulatedHeightOfLastVisiblePixel);
   return std::min(m_dataSource->numberOfRows(),
-                  cumulatedRowIndexOfLastVisiblePixel + 1) -
+                  cumulatedRowOfLastVisiblePixel + 1) -
          rowOffset;
 }
 

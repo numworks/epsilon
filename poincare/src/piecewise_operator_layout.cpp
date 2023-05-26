@@ -90,15 +90,15 @@ void PiecewiseOperatorLayoutNode::render(KDContext *ctx, KDPoint p,
    * condition which is yellow instead of gray, and the penultimate
    * condition which could have been previously set to gray here and should
    * be set to yellow. */
-  int lastRealRowIndex =
+  int lastRealRow =
       m_numberOfRows - 1 - static_cast<int>(cursorIsInsideOperator);
-  LayoutNode *lastRealCondition = childAtIndex(lastRealRowIndex * 2 + 1);
+  LayoutNode *lastRealCondition = childAtIndex(lastRealRow * 2 + 1);
   if (lastRealCondition->isEmpty()) {
     static_cast<HorizontalLayoutNode *>(lastRealCondition)
         ->setEmptyColor(EmptyRectangle::Color::Gray);
   }
   if (numberOfChildren() > 2 + 2 * static_cast<int>(cursorIsInsideOperator)) {
-    LayoutNode *conditionAboveLast = childAtIndex(lastRealRowIndex * 2 - 1);
+    LayoutNode *conditionAboveLast = childAtIndex(lastRealRow * 2 - 1);
     if (conditionAboveLast->isEmpty()) {
       static_cast<HorizontalLayoutNode *>(conditionAboveLast)
           ->setEmptyColor(EmptyRectangle::Color::Gray);

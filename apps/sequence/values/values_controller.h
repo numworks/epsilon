@@ -64,11 +64,10 @@ class ValuesController : public Shared::ValuesController,
 
   // EditableCellTableViewController
   bool checkDataAtLocation(double floatBody, int columnIndex,
-                           int rowIndex) const override {
+                           int row) const override {
     return floatBody >= 0.0;
   }
-  bool setDataAtLocation(double floatBody, int columnIndex,
-                         int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
 
   // Shared::ValuesController
   Shared::SequenceStore *functionStore() const override {

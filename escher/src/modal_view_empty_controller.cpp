@@ -48,11 +48,10 @@ void ModalViewEmptyController::ModalViewEmptyView::reload() {
 
 View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
   if (hasLayoutView()) {
-    if (index == k_layoutViewRowIndex) {
+    if (index == k_layoutViewRow) {
       return layoutView();
     }
-    return messageTextViewAtIndex(index +
-                                  (index < k_layoutViewRowIndex ? 0 : -1));
+    return messageTextViewAtIndex(index + (index < k_layoutViewRow ? 0 : -1));
   }
   return messageTextViewAtIndex(index);
 }
@@ -68,16 +67,16 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   KDCoordinate margin =
       (height - numberOfMessageViews * textHeight - layoutHeight) / 2;
   if (hasLayout) {
-    setChildFrame(layoutView(),
-                  KDRect(k_separatorThickness,
-                         k_separatorThickness + margin +
-                             k_layoutViewRowIndex * textHeight,
-                         width, layoutHeight),
-                  force);
+    setChildFrame(
+        layoutView(),
+        KDRect(k_separatorThickness,
+               k_separatorThickness + margin + k_layoutViewRow * textHeight,
+               width, layoutHeight),
+        force);
   }
   KDCoordinate currentHeight = k_separatorThickness;
   for (uint8_t i = 0; i < numberOfMessageViews; i++) {
-    if (hasLayout && i == k_layoutViewRowIndex) {
+    if (hasLayout && i == k_layoutViewRow) {
       currentHeight += layoutHeight;
     }
     KDCoordinate h = (i == 0 || i == numberOfMessageViews - 1)

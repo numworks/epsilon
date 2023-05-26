@@ -108,7 +108,7 @@ HighlightCell* NestedMenuController::reusableCell(int index, int type) {
 }
 
 bool NestedMenuController::handleEvent(Ion::Events::Event event) {
-  const int rowIndex = selectedRow();
+  const int row = selectedRow();
   if ((event == Ion::Events::Back || event == Ion::Events::Left) &&
       stackDepth() > 0) {
     return returnToPreviousMenu();
@@ -132,12 +132,12 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE ||
        event == Ion::Events::Right) &&
-      typeAtRow(rowIndex) == k_nodeCellType) {
-    return selectSubMenu(rowIndex);
+      typeAtRow(row) == k_nodeCellType) {
+    return selectSubMenu(row);
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
-      typeAtRow(rowIndex) == k_leafCellType) {
-    return selectLeaf(rowIndex);
+      typeAtRow(row) == k_leafCellType) {
+    return selectLeaf(row);
   }
 
   return false;

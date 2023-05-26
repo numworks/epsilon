@@ -134,7 +134,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
     assert(false);
     return (I18n::Message)0;
   }
-  bool selectLeaf(int rowIndex) override;
+  bool selectLeaf(int row) override;
   void insertTextInCaller(const char* text, int textLength = -1);
 
   // Loading

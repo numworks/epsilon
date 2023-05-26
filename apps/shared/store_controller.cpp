@@ -212,27 +212,27 @@ Escher::TabViewController *StoreController::tabController() const {
       parentResponder()->parentResponder()->parentResponder());
 }
 
-bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  return typeAtLocation(columnIndex, rowIndex) == k_editableCellType;
+bool StoreController::cellAtLocationIsEditable(int columnIndex, int row) {
+  return typeAtLocation(columnIndex, row) == k_editableCellType;
 }
 
 bool StoreController::checkDataAtLocation(double floatBody, int columnIndex,
-                                          int rowIndex) const {
+                                          int row) const {
   return m_store->valueValidInColumn(floatBody,
                                      m_store->relativeColumnIndex(columnIndex));
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex,
-                                        int rowIndex) {
-  assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
+                                        int row) {
+  assert(checkDataAtLocation(floatBody, columnIndex, row));
   return m_store->set(floatBody, m_store->seriesAtColumn(columnIndex),
-                      m_store->relativeColumnIndex(columnIndex), rowIndex - 1,
-                      false, true);
+                      m_store->relativeColumnIndex(columnIndex), row - 1, false,
+                      true);
 }
 
-double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
+double StoreController::dataAtLocation(int columnIndex, int row) {
   return m_store->get(m_store->seriesAtColumn(columnIndex),
-                      m_store->relativeColumnIndex(columnIndex), rowIndex - 1);
+                      m_store->relativeColumnIndex(columnIndex), row - 1);
 }
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {

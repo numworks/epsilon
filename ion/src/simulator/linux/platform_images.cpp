@@ -62,7 +62,7 @@ bool readPNG(unsigned char *start, size_t size, unsigned char **bitmapData,
   const png_uint_32 bytesPerRow = png_get_rowbytes(png, info);
   *bitmapData = new unsigned char[*height * bytesPerRow];
   unsigned char *rowData = *bitmapData;
-  for (unsigned int rowIndex = 0; rowIndex < *height; rowIndex++) {
+  for (unsigned int row = 0; row < *height; row++) {
     png_read_row(png, static_cast<png_bytep>(rowData), nullptr);
     rowData += bytesPerRow;
   }

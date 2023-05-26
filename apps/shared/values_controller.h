@@ -77,8 +77,7 @@ class ValuesController : public EditableCellTableViewController,
   void initValueCells();
 
   // EditableCellTableViewController
-  bool setDataAtLocation(double floatBody, int columnIndex,
-                         int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int row) override;
   void didChangeCell(int column, int row) override;
   int numberOfElementsInColumn(int columnIndex) const override;
 
@@ -147,8 +146,8 @@ class ValuesController : public EditableCellTableViewController,
       Shared::IntervalParameterController* controller, int column) = 0;
 
   // EditableCellTableViewController
-  bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  double dataAtLocation(int columnIndex, int rowIndex) override;
+  bool cellAtLocationIsEditable(int columnIndex, int row) override;
+  double dataAtLocation(int columnIndex, int row) override;
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
   };

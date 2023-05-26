@@ -13,12 +13,11 @@ using namespace Escher;
 namespace Shared {
 
 FunctionGoToParameterController::FunctionGoToParameterController(
-    Responder* parentResponder,
-    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
     InteractiveCurveViewController* graphController,
     InteractiveCurveViewRange* graphRange, CurveViewCursor* cursor)
-    : GoToParameterController(parentResponder, inputEventHandlerDelegate,
-                              graphRange, cursor),
+    : GoToParameterController(parentResponder, boxesDelegate, graphRange,
+                              cursor),
       m_graphController(graphController) {}
 
 bool FunctionGoToParameterController::confirmParameterAtIndex(

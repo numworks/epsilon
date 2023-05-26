@@ -39,9 +39,8 @@ constexpr MessageTree
 #endif
 };
 
-MainController::MainController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate)
+MainController::MainController(Responder *parentResponder,
+                               BoxesDelegate *boxesDelegate)
     : SelectableListViewController(parentResponder),
       m_resetButton(&m_selectableListView, I18n::Message::ResetCalculator,
                     Invocation::Builder<MainController>(
@@ -51,7 +50,7 @@ MainController::MainController(
                         },
                         this)),
       m_preferencesController(this),
-      m_displayModeController(this, inputEventHandlerDelegate),
+      m_displayModeController(this, boxesDelegate),
       m_localizationController(this, LocalizationController::Mode::Language),
       m_examModeController(this),
       m_pressToTestController(this),

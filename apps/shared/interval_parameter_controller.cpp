@@ -11,8 +11,7 @@ IntervalParameterController::SharedTempIntervalParameters() {
 }
 
 IntervalParameterController::IntervalParameterController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate)
+    Responder *parentResponder, BoxesDelegate *boxesDelegate)
     : FloatParameterController<double>(parentResponder),
       m_interval(nullptr),
       m_title(I18n::Message::IntervalSet),
@@ -26,7 +25,7 @@ IntervalParameterController::IntervalParameterController(
           this)) {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableListView);
-    m_intervalCells[i].setDelegates(inputEventHandlerDelegate, this);
+    m_intervalCells[i].setDelegates(boxesDelegate, this);
   }
 }
 

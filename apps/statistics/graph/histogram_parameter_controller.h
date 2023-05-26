@@ -13,10 +13,9 @@ namespace Statistics {
 class HistogramParameterController
     : public Shared::FloatParameterController<double> {
  public:
-  HistogramParameterController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegateApp,
-      Store* store);
+  HistogramParameterController(Escher::Responder* parentResponder,
+                               Escher::BoxesDelegate* boxesDelegateApp,
+                               Store* store);
   void viewWillAppear() override;
   const char* title() override;
   int numberOfRows() const override { return 1 + k_numberOfCells; }

@@ -16,8 +16,8 @@ class StoreController : public Shared::StoreController {
                              bool withFinalSpace = false);
 
   StoreController(Escher::Responder* parentResponder,
-                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-                  Store* store, Escher::ButtonRowController* header,
+                  Escher::BoxesDelegate* boxesDelegate, Store* store,
+                  Escher::ButtonRowController* header,
                   Poincare::Context* parentContext);
 
   /* Shared::StoreController */

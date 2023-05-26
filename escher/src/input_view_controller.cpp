@@ -6,12 +6,10 @@
 namespace Escher {
 
 InputViewController::ExpressionInputBarController::ExpressionInputBarController(
-    Responder* parentResponder,
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Responder* parentResponder, BoxesDelegate* boxesDelegate,
     LayoutFieldDelegate* layoutFieldDelegate)
     : ViewController(parentResponder),
-      m_expressionInputBar(this, inputEventHandlerDelegate,
-                           layoutFieldDelegate) {}
+      m_expressionInputBar(this, boxesDelegate, layoutFieldDelegate) {}
 
 void InputViewController::ExpressionInputBarController::
     didBecomeFirstResponder() {
@@ -20,13 +18,12 @@ void InputViewController::ExpressionInputBarController::
 
 InputViewController::InputViewController(
     Responder* parentResponder, ViewController* child,
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
-    LayoutFieldDelegate* layoutFieldDelegate)
+    BoxesDelegate* boxesDelegate, LayoutFieldDelegate* layoutFieldDelegate)
     : ModalViewController(parentResponder, child),
       m_expressionInputBarController(this, this, this),
       m_successAction(Invocation(nullptr, nullptr)),
       m_failureAction(Invocation(nullptr, nullptr)),
-      m_inputEventHandlerDelegate(inputEventHandlerDelegate),
+      m_boxesDelegate(boxesDelegate),
       m_layoutFieldDelegate(layoutFieldDelegate) {}
 
 void InputViewController::edit(Ion::Events::Event event, void* context,
@@ -90,11 +87,11 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
 }
 
 PervasiveBox* InputViewController::toolbox() {
-  return m_inputEventHandlerDelegate->toolbox();
+  return m_boxesDelegate->toolbox();
 }
 
 PervasiveBox* InputViewController::variableBox() {
-  return m_inputEventHandlerDelegate->variableBox();
+  return m_boxesDelegate->variableBox();
 }
 
 bool InputViewController::inputViewDidFinishEditing() {

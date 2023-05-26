@@ -12,14 +12,13 @@ namespace Statistics {
 
 class HistogramController : public MultipleDataViewController {
  public:
-  HistogramController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Escher::ButtonRowController* header,
-      Escher::TabViewController* tabController,
-      Escher::StackViewController* stackViewController,
-      Escher::ViewController* typeViewController, Store* store,
-      uint32_t* m_storeVersion);
+  HistogramController(Escher::Responder* parentResponder,
+                      Escher::BoxesDelegate* boxesDelegate,
+                      Escher::ButtonRowController* header,
+                      Escher::TabViewController* tabController,
+                      Escher::StackViewController* stackViewController,
+                      Escher::ViewController* typeViewController, Store* store,
+                      uint32_t* m_storeVersion);
 
   HistogramParameterController* histogramParameterController() {
     return &m_histogramParameterController;

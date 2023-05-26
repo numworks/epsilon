@@ -35,7 +35,7 @@ class MainController : public Escher::SelectableListViewController<
                            Escher::StandardMemoizedListViewDataSource> {
  public:
   MainController(Escher::Responder* parentResponder,
-                 Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
+                 Escher::BoxesDelegate* boxesDelegate);
   bool handleEvent(Ion::Events::Event event) override;
   void pushModel(const Escher::MessageTree* messageTreeModel);
   int numberOfRows() const override;

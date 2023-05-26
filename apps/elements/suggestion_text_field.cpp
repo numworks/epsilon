@@ -41,12 +41,11 @@ void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
 
 // SuggestionTextField
 
-SuggestionTextField::SuggestionTextField(
-    Responder* parentResponder,
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
-    TextFieldDelegate* delegate)
-    : AbstractTextField(parentResponder, &m_contentView,
-                        inputEventHandlerDelegate, delegate) {}
+SuggestionTextField::SuggestionTextField(Responder* parentResponder,
+                                         BoxesDelegate* boxesDelegate,
+                                         TextFieldDelegate* delegate)
+    : AbstractTextField(parentResponder, &m_contentView, boxesDelegate,
+                        delegate) {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() &&

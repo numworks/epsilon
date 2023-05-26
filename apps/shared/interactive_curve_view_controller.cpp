@@ -14,8 +14,7 @@ using namespace Poincare;
 namespace Shared {
 
 InteractiveCurveViewController::InteractiveCurveViewController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, BoxesDelegate *boxesDelegate,
     ButtonRowController *header, InteractiveCurveViewRange *interactiveRange,
     AbstractPlotView *curveView, CurveViewCursor *cursor,
     I18n::Message calculusButtonMessage, int *selectedCurveIndex)
@@ -23,8 +22,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(
       ButtonRowDelegate(header, nullptr),
       m_selectedCurveIndex(selectedCurveIndex),
       m_selectedSubCurveIndex(0),
-      m_rangeParameterController(this, inputEventHandlerDelegate,
-                                 interactiveRange),
+      m_rangeParameterController(this, boxesDelegate, interactiveRange),
       m_zoomParameterController(this, interactiveRange, curveView),
       m_interactiveRange(interactiveRange),
       m_autoButton(this, I18n::Message::DefaultSetting, autoButtonInvocation(),

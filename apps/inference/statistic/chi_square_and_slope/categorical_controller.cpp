@@ -138,14 +138,13 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
 
 InputCategoricalController::InputCategoricalController(
     StackViewController *parent, ViewController *nextController,
-    Statistic *statistic, InputEventHandlerDelegate *inputEventHandlerDelegate)
+    Statistic *statistic, BoxesDelegate *boxesDelegate)
     : CategoricalController(
           parent, nextController,
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
-      m_significanceCell(&m_selectableListView, inputEventHandlerDelegate,
-                         this) {}
+      m_significanceCell(&m_selectableListView, boxesDelegate, this) {}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {

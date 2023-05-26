@@ -13,8 +13,8 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate, Store *store)
+    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
+    Store *store)
     : FloatParameterController<double>(parentResponder),
       m_store(store),
       m_confirmPopUpController(
@@ -26,7 +26,7 @@ HistogramParameterController::HistogramParameterController(
               this)) {
   for (int i = 0; i < k_numberOfCells; i++) {
     m_cells[i].setParentResponder(&m_selectableListView);
-    m_cells[i].setDelegates(inputEventHandlerDelegate, this);
+    m_cells[i].setDelegates(boxesDelegate, this);
   }
 }
 

@@ -16,10 +16,9 @@ class EditableExpressionCell : public Bordered,
                                public HighlightCell,
                                public Responder {
  public:
-  EditableExpressionCell(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      LayoutFieldDelegate* layoutDelegate = nullptr);
+  EditableExpressionCell(Responder* parentResponder = nullptr,
+                         BoxesDelegate* boxesDelegate = nullptr,
+                         LayoutFieldDelegate* layoutDelegate = nullptr);
   LayoutField* layoutField() { return &m_layoutField; }
   void setHighlighted(bool highlight) override;
   Responder* responder() override { return this; }

@@ -3,21 +3,19 @@
 namespace Escher {
 
 AbstractWithEditableText::AbstractWithEditableText(
-    Responder* parentResponder,
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Responder* parentResponder, BoxesDelegate* boxesDelegate,
     TextFieldDelegate* textFieldDelegate)
     : Responder(parentResponder),
       ChainedTextFieldDelegate(textFieldDelegate),
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
-                  inputEventHandlerDelegate, this, k_defaultFormat),
+                  boxesDelegate, this, k_defaultFormat),
       m_editable(true) {
   m_textBody[0] = '\0';
 }
 
 void AbstractWithEditableText::setDelegates(
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
-    TextFieldDelegate* textFieldDelegate) {
-  m_textField.setInputEventHandlerDelegate(inputEventHandlerDelegate);
+    BoxesDelegate* boxesDelegate, TextFieldDelegate* textFieldDelegate) {
+  m_textField.setBoxesDelegate(boxesDelegate);
   ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 

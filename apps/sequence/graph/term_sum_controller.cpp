@@ -19,12 +19,13 @@ using namespace Escher;
 
 namespace Sequence {
 
-TermSumController::TermSumController(
-    Responder* parentResponder,
-    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-    GraphView* graphView, CurveViewRange* graphRange, CurveViewCursor* cursor)
-    : SumGraphController(parentResponder, inputEventHandlerDelegate, graphView,
-                         graphRange, cursor) {}
+TermSumController::TermSumController(Responder* parentResponder,
+                                     Escher::BoxesDelegate* boxesDelegate,
+                                     GraphView* graphView,
+                                     CurveViewRange* graphRange,
+                                     CurveViewCursor* cursor)
+    : SumGraphController(parentResponder, boxesDelegate, graphView, graphRange,
+                         cursor) {}
 
 const char* TermSumController::title() {
   return I18n::translate(I18n::Message::TermSum);

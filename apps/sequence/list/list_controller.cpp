@@ -15,14 +15,14 @@ namespace Sequence {
 
 constexpr KDCoordinate ListController::k_minTitleColumnWidth;
 
-ListController::ListController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-    ButtonRowController *header, ButtonRowController *footer)
+ListController::ListController(Responder *parentResponder,
+                               Escher::BoxesDelegate *boxesDelegate,
+                               ButtonRowController *header,
+                               ButtonRowController *footer)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddSequence),
       m_editableCell(this, this, this),
-      m_parameterController(inputEventHandlerDelegate, this),
+      m_parameterController(boxesDelegate, this),
       m_typeParameterController(this, this),
       m_typeStackController(nullptr, &m_typeParameterController,
                             StackViewController::Style::PurpleWhite),

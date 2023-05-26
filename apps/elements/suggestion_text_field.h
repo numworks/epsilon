@@ -7,10 +7,9 @@ namespace Elements {
 
 class SuggestionTextField : public Escher::AbstractTextField {
  public:
-  SuggestionTextField(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Escher::TextFieldDelegate* delegate);
+  SuggestionTextField(Escher::Responder* parentResponder,
+                      Escher::BoxesDelegate* boxesDelegate,
+                      Escher::TextFieldDelegate* delegate);
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;

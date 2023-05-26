@@ -15,10 +15,10 @@ namespace Escher {
 
 class EditableExpressionModelCell : public HighlightCell {
  public:
-  EditableExpressionModelCell(
-      Responder* parentResponder,
-      InputEventHandlerDelegate* inputEventHandlerDelegate,
-      LayoutFieldDelegate* layoutDelegate, KDGlyph::Format format = {});
+  EditableExpressionModelCell(Responder* parentResponder,
+                              BoxesDelegate* boxesDelegate,
+                              LayoutFieldDelegate* layoutDelegate,
+                              KDGlyph::Format format = {});
   void setLayout(Poincare::Layout layout) { m_layoutField.setLayout(layout); }
   void setTextColor(KDColor textColor) {
     m_layoutField.layoutView()->setTextColor(textColor);

@@ -23,10 +23,9 @@ class CalculationController : public Escher::ViewController,
                               public Shared::ParameterTextFieldDelegate,
                               public Escher::DropdownCallback {
  public:
-  CalculationController(
-      Escher::StackViewController* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      Distribution* distribution, Calculation* calculation);
+  CalculationController(Escher::StackViewController* parentResponder,
+                        Escher::BoxesDelegate* boxesDelegate,
+                        Distribution* distribution, Calculation* calculation);
 
   void reinitCalculation();
 

@@ -21,20 +21,19 @@ using namespace Escher;
 namespace Regression {
 
 GraphController::GraphController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
     ButtonRowController *header,
     Shared::InteractiveCurveViewRange *interactiveRange,
     CurveViewCursor *cursor, int *selectedDotIndex, int *selectedCurveIndex,
     Store *store)
     : InteractiveCurveViewController(
-          parentResponder, inputEventHandlerDelegate, header, interactiveRange,
-          &m_view, cursor, I18n::Message::Regression, selectedCurveIndex),
-      m_bannerView(this, inputEventHandlerDelegate, this),
+          parentResponder, boxesDelegate, header, interactiveRange, &m_view,
+          cursor, I18n::Message::Regression, selectedCurveIndex),
+      m_bannerView(this, boxesDelegate, this),
       m_view(interactiveRange, store, m_cursor, &m_bannerView, &m_cursorView),
       m_store(store),
-      m_graphOptionsController(this, inputEventHandlerDelegate,
-                               interactiveRange, m_store, m_cursor, this),
+      m_graphOptionsController(this, boxesDelegate, interactiveRange, m_store,
+                               m_cursor, this),
       m_curveSelectionController(this),
       m_selectedDotIndex(selectedDotIndex),
       m_selectedModelType((Model::Type)-1) {

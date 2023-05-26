@@ -6,13 +6,13 @@ using namespace Escher;
 
 namespace Inference {
 
-InputSlopeController::InputSlopeController(
-    StackViewController* parent, ViewController* resultsController,
-    Statistic* statistic,
-    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-    Poincare::Context* context)
+InputSlopeController::InputSlopeController(StackViewController* parent,
+                                           ViewController* resultsController,
+                                           Statistic* statistic,
+                                           Escher::BoxesDelegate* boxesDelegate,
+                                           Poincare::Context* context)
     : InputCategoricalController(parent, resultsController, statistic,
-                                 inputEventHandlerDelegate),
+                                 boxesDelegate),
       m_slopeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),

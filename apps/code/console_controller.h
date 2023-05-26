@@ -1,7 +1,7 @@
 #ifndef CODE_CONSOLE_CONTROLLER_H
 #define CODE_CONSOLE_CONTROLLER_H
 
-#include <apps/shared/input_event_handler_delegate.h>
+#include <apps/shared/boxes_delegate.h>
 #include <escher/list_view_data_source.h>
 #include <python/port/port.h>
 
@@ -21,7 +21,7 @@ class ConsoleController : public Escher::ViewController,
                           public Escher::SelectableListViewDataSource,
                           public Escher::SelectableListViewDelegate,
                           public Escher::TextFieldDelegate,
-                          public Shared::InputEventHandlerDelegate,
+                          public Shared::BoxesDelegate,
                           public MicroPython::ExecutionEnvironment {
  public:
   ConsoleController(Escher::Responder* parentResponder, App* pythonDelegate,
@@ -74,7 +74,7 @@ class ConsoleController : public Escher::ViewController,
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
-  // InputEventHandlerDelegate
+  // BoxesDelegate
   VariableBoxController* variableBox() override;
 
   // MicroPython::ExecutionEnvironment

@@ -9,8 +9,7 @@ namespace Shared {
 class FunctionGoToParameterController : public GoToParameterController {
  public:
   FunctionGoToParameterController(
-      Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
       InteractiveCurveViewController* graphController,
       InteractiveCurveViewRange* graphRange, CurveViewCursor* cursor);
 

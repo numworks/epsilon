@@ -73,10 +73,10 @@ class CategoricalController
 class InputCategoricalController : public CategoricalController,
                                    public Shared::ParameterTextFieldDelegate {
  public:
-  InputCategoricalController(
-      Escher::StackViewController* parent,
-      Escher::ViewController* resultsController, Statistic* statistic,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
+  InputCategoricalController(Escher::StackViewController* parent,
+                             Escher::ViewController* resultsController,
+                             Statistic* statistic,
+                             Escher::BoxesDelegate* boxesDelegate);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,

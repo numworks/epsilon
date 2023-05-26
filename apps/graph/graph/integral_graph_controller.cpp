@@ -15,12 +15,11 @@ using namespace Escher;
 namespace Graph {
 
 IntegralGraphController::IntegralGraphController(
-    Responder* parentResponder,
-    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
     GraphView* graphView, InteractiveCurveViewRange* graphRange,
     CurveViewCursor* cursor)
-    : SumGraphController(parentResponder, inputEventHandlerDelegate, graphView,
-                         graphRange, cursor) {}
+    : SumGraphController(parentResponder, boxesDelegate, graphView, graphRange,
+                         cursor) {}
 
 const char* IntegralGraphController::title() {
   return I18n::translate(I18n::Message::Integral);

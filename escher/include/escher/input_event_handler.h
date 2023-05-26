@@ -7,12 +7,12 @@ namespace Escher {
 
 // See TODO in EditableField
 
-class InputEventHandlerDelegate;
+class BoxesDelegate;
 
 class InputEventHandler {
  public:
-  InputEventHandler(InputEventHandlerDelegate* inputEventHandlerdelegate)
-      : m_inputEventHandlerDelegate(inputEventHandlerdelegate) {}
+  InputEventHandler(BoxesDelegate* boxesDelegate)
+      : m_boxesDelegate(boxesDelegate) {}
   virtual bool handleEventWithText(const char* text, bool indentation = false,
                                    bool forceCursorRightOfText = false) {
     return false;
@@ -21,7 +21,7 @@ class InputEventHandler {
   bool handleBoxEvent(Ion::Events::Event event);
 
  protected:
-  InputEventHandlerDelegate* m_inputEventHandlerDelegate;
+  BoxesDelegate* m_boxesDelegate;
 };
 
 }  // namespace Escher

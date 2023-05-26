@@ -19,8 +19,7 @@ using namespace Poincare;
 namespace Regression {
 
 GraphOptionsController::GraphOptionsController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
     InteractiveCurveViewRange *range, Store *store, CurveViewCursor *cursor,
     GraphController *graphController)
     : ExplicitSelectableListViewController(parentResponder),
@@ -32,8 +31,8 @@ GraphOptionsController::GraphOptionsController(
                 return true;
               },
               this)),
-      m_goToParameterController(this, inputEventHandlerDelegate, range, store,
-                                cursor, graphController),
+      m_goToParameterController(this, boxesDelegate, range, store, cursor,
+                                graphController),
       m_residualPlotCellController(parentResponder, store),
       m_store(store),
       m_graphController(graphController) {

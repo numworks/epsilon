@@ -10,7 +10,7 @@ namespace Graph {
 class EditableFunctionCell : public AbstractFunctionCell {
  public:
   EditableFunctionCell(Escher::Responder* parentResponder,
-                       Escher::InputEventHandlerDelegate* inputEventHandler,
+                       Escher::BoxesDelegate* boxesDelegate,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
   Escher::LayoutField* layoutField() { return &m_layoutField; }
 

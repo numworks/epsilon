@@ -9,7 +9,7 @@ using namespace Escher;
 namespace Finance {
 
 ParametersController::ParametersController(StackViewController *parent,
-                                           InputEventHandlerDelegate *handler,
+                                           BoxesDelegate *handler,
                                            ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
       m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),

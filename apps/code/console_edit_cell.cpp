@@ -13,10 +13,9 @@ using namespace Escher;
 
 namespace Code {
 
-ConsoleEditCell::ConsoleEditCell(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
-    TextFieldDelegate *delegate)
+ConsoleEditCell::ConsoleEditCell(Responder *parentResponder,
+                                 BoxesDelegate *boxesDelegate,
+                                 TextFieldDelegate *delegate)
     : HighlightCell(),
       Responder(parentResponder),
       m_promptView(
@@ -24,8 +23,7 @@ ConsoleEditCell::ConsoleEditCell(
           {.style = {.font =
                          GlobalPreferences::sharedGlobalPreferences->font()}}),
       m_textField(
-          this, nullptr, TextField::MaxBufferSize(), inputEventHandlerDelegate,
-          delegate,
+          this, nullptr, TextField::MaxBufferSize(), boxesDelegate, delegate,
           {.style = {.font =
                          GlobalPreferences::sharedGlobalPreferences->font()}}) {
 }

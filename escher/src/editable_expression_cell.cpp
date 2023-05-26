@@ -7,12 +7,11 @@
 namespace Escher {
 
 EditableExpressionCell::EditableExpressionCell(
-    Responder* parentResponder,
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Responder* parentResponder, BoxesDelegate* boxesDelegate,
     LayoutFieldDelegate* layoutDelegate)
     : HighlightCell(),
       Responder(parentResponder),
-      m_layoutField(this, inputEventHandlerDelegate, layoutDelegate) {
+      m_layoutField(this, boxesDelegate, layoutDelegate) {
   m_layoutField.setMargins(k_topMargin, k_margin, k_margin, k_margin);
   m_expressionBody[0] = 0;
 }

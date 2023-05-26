@@ -20,11 +20,10 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
                     public ScrollViewDataSource,
                     public EditableField {
  public:
-  LayoutField(Responder* parentResponder,
-              InputEventHandlerDelegate* inputEventHandlerDelegate,
+  LayoutField(Responder* parentResponder, BoxesDelegate* boxesDelegate,
               LayoutFieldDelegate* layoutFieldDelegate = nullptr,
               KDGlyph::Format format = {});
-  void setDelegates(InputEventHandlerDelegate* inputEventHandlerDelegate,
+  void setDelegates(BoxesDelegate* boxesDelegate,
                     LayoutFieldDelegate* layoutFieldDelegate);
   Poincare::Context* context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }

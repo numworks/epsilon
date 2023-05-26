@@ -17,16 +17,16 @@ using namespace Escher;
 
 namespace Shared {
 
-SumGraphController::SumGraphController(
-    Responder *parentResponder,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-    FunctionGraphView *graphView, InteractiveCurveViewRange *range,
-    CurveViewCursor *cursor)
+SumGraphController::SumGraphController(Responder *parentResponder,
+                                       Escher::BoxesDelegate *boxesDelegate,
+                                       FunctionGraphView *graphView,
+                                       InteractiveCurveViewRange *range,
+                                       CurveViewCursor *cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_step(Step::FirstParameter),
       m_graphRange(range),
       m_graphView(graphView),
-      m_legendView(this, inputEventHandlerDelegate) {}
+      m_legendView(this, boxesDelegate) {}
 
 void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
@@ -150,8 +150,7 @@ void SumGraphController::setRecord(Ion::Storage::Record record) {
 bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
                                                    const char *text,
                                                    Ion::Events::Event event) {
-  double floatBody =
-      ParseInputtedFloatValue<double>(text);
+  double floatBody = ParseInputtedFloatValue<double>(text);
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -229,13 +228,12 @@ Poincare::Expression SumGraphController::createSumExpression(
 
 /* Legend View */
 
-SumGraphController::LegendView::LegendView(
-    SumGraphController *controller,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate)
+SumGraphController::LegendView::LegendView(SumGraphController *controller,
+                                           Escher::BoxesDelegate *boxesDelegate)
     : m_sum(k_glyphsFormat),
       m_legend(I18n::Message::Default, k_glyphsFormat),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
-                     inputEventHandlerDelegate, controller, k_glyphsFormat) {
+                     boxesDelegate, controller, k_glyphsFormat) {
   m_textBuffer[0] = 0;
 }
 

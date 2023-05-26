@@ -8,14 +8,13 @@ namespace Shared {
 // SingleRangeController
 
 SingleRangeController::SingleRangeController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, BoxesDelegate *boxesDelegate,
     Shared::MessagePopUpController *confirmPopUpController)
     : FloatParameterController<float>(parentResponder),
       m_confirmPopUpController(confirmPopUpController) {
   for (int i = 0; i < k_numberOfTextCells; i++) {
     m_boundsCells[i].setParentResponder(&m_selectableListView);
-    m_boundsCells[i].setDelegates(inputEventHandlerDelegate, this);
+    m_boundsCells[i].setDelegates(boxesDelegate, this);
   }
   m_autoCell.label()->setMessage(I18n::Message::DefaultSetting);
 }

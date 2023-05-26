@@ -14,11 +14,10 @@ using namespace Escher;
 
 namespace Settings {
 
-DisplayModeController::DisplayModeController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate)
+DisplayModeController::DisplayModeController(Responder *parentResponder,
+                                             BoxesDelegate *boxesDelegate)
     : PreferencesController(parentResponder),
-      m_editableCell(&m_selectableListView, inputEventHandlerDelegate, this) {
+      m_editableCell(&m_selectableListView, boxesDelegate, this) {
   m_editableCell.label()->setMessage(I18n::Message::SignificantFigures);
 }
 

@@ -8,11 +8,9 @@ using namespace Escher;
 
 namespace Regression {
 
-BannerView::BannerView(Responder* parentResponder,
-                       InputEventHandlerDelegate* inputEventHandlerDelegate,
+BannerView::BannerView(Responder* parentResponder, BoxesDelegate* boxesDelegate,
                        TextFieldDelegate* textFieldDelegate)
-    : Shared::XYBannerView(parentResponder, inputEventHandlerDelegate,
-                           textFieldDelegate),
+    : Shared::XYBannerView(parentResponder, boxesDelegate, textFieldDelegate),
       m_otherView(k_bannerFieldFormat),
       m_dataNotSuitableView(I18n::Message::DataNotSuitableForRegression,
                             k_bannerFieldFormat),

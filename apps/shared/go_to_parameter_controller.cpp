@@ -9,8 +9,7 @@ using namespace Escher;
 namespace Shared {
 
 GoToParameterController::GoToParameterController(
-    Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Responder *parentResponder, BoxesDelegate *boxesDelegate,
     InteractiveCurveViewRange *graphRange, CurveViewCursor *cursor)
     : FloatParameterController<double>(parentResponder),
       m_cursor(cursor),
@@ -19,7 +18,7 @@ GoToParameterController::GoToParameterController(
        * displayed anything. Set it to a dummy value that will be overriden in
        * viewWillAppear() anyway. */
       m_tempParameter(0.0),
-      m_parameterCell(&m_selectableListView, inputEventHandlerDelegate, this) {}
+      m_parameterCell(&m_selectableListView, boxesDelegate, this) {}
 
 HighlightCell *GoToParameterController::reusableParameterCell(int index,
                                                               int type) {

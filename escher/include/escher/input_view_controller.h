@@ -1,8 +1,8 @@
 #ifndef ESCHER_INPUT_VIEW_CONTROLLER_H
 #define ESCHER_INPUT_VIEW_CONTROLLER_H
 
+#include <escher/boxes_delegate.h>
 #include <escher/expression_input_bar.h>
-#include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/modal_view_controller.h>
@@ -13,11 +13,11 @@
 namespace Escher {
 
 class InputViewController : public ModalViewController,
-                            public InputEventHandlerDelegate,
+                            public BoxesDelegate,
                             LayoutFieldDelegate {
  public:
   InputViewController(Responder* parentResponder, ViewController* child,
-                      InputEventHandlerDelegate* inputEventHandlerDelegate,
+                      BoxesDelegate* boxesDelegate,
                       LayoutFieldDelegate* layoutFieldDelegate);
   const char* textBody() {
     return m_expressionInputBarController.layoutField()->text();
@@ -41,17 +41,16 @@ class InputViewController : public ModalViewController,
   void layoutFieldDidAbortEditing(LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(LayoutField* layoutField) override;
 
-  /* InputEventHandlerDelegate */
+  /* BoxesDelegate */
   PervasiveBox* toolbox() override;
   PervasiveBox* variableBox() override;
 
  private:
   class ExpressionInputBarController : public ViewController {
    public:
-    ExpressionInputBarController(
-        Responder* parentResponder,
-        InputEventHandlerDelegate* inputEventHandlerDelegate,
-        LayoutFieldDelegate* layoutFieldDelegate);
+    ExpressionInputBarController(Responder* parentResponder,
+                                 BoxesDelegate* boxesDelegate,
+                                 LayoutFieldDelegate* layoutFieldDelegate);
     ExpressionInputBarController(const ExpressionInputBarController& other) =
         delete;
     ExpressionInputBarController(ExpressionInputBarController&& other) = delete;
@@ -71,7 +70,7 @@ class InputViewController : public ModalViewController,
   ExpressionInputBarController m_expressionInputBarController;
   Invocation m_successAction;
   Invocation m_failureAction;
-  InputEventHandlerDelegate* m_inputEventHandlerDelegate;
+  BoxesDelegate* m_boxesDelegate;
   LayoutFieldDelegate* m_layoutFieldDelegate;
 };
 

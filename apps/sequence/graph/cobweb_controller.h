@@ -20,9 +20,8 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
                          public Shared::FunctionBannerDelegate {
  public:
   CobwebController(Responder* parentResponder,
-                   Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-                   GraphView* graphView, CurveViewRange* graphRange,
-                   Shared::CurveViewCursor* cursor,
+                   Escher::BoxesDelegate* boxesDelegate, GraphView* graphView,
+                   CurveViewRange* graphRange, Shared::CurveViewCursor* cursor,
                    Shared::XYBannerView* bannerView,
                    Shared::CursorView* cursorView,
                    Shared::SequenceStore* sequenceStore);

@@ -11,12 +11,12 @@ using namespace Escher;
 namespace Sequence {
 
 CurveParameterController::CurveParameterController(
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
-    GraphController *graphController, CobwebController *cobwebController,
-    InteractiveCurveViewRange *graphRange, CurveViewCursor *cursor)
+    BoxesDelegate *boxesDelegate, GraphController *graphController,
+    CobwebController *cobwebController, InteractiveCurveViewRange *graphRange,
+    CurveViewCursor *cursor)
     : ExplicitSelectableListViewController(nullptr, nullptr),
-      m_goToParameterController(this, inputEventHandlerDelegate,
-                                graphController, graphRange, cursor),
+      m_goToParameterController(this, boxesDelegate, graphController,
+                                graphRange, cursor),
       m_cobwebController(cobwebController),
       m_graphController(graphController) {
   m_sumCell.label()->setMessage(I18n::Message::TermSum);

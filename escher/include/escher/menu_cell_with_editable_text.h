@@ -51,13 +51,12 @@ class EditableTextWidget : public CellWidget {
 class AbstractWithEditableText : public Responder,
                                  public ChainedTextFieldDelegate {
  public:
-  AbstractWithEditableText(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* textFieldDelegate = nullptr);
+  AbstractWithEditableText(Responder* parentResponder = nullptr,
+                           BoxesDelegate* boxesDelegate = nullptr,
+                           TextFieldDelegate* textFieldDelegate = nullptr);
 
   void setEditable(bool isEditable) { m_editable = isEditable; }
-  void setDelegates(InputEventHandlerDelegate* inputEventHandlerDelegate,
+  void setDelegates(BoxesDelegate* boxesDelegate,
                     TextFieldDelegate* textFieldDelegate);
 
   void didBecomeFirstResponder() override {
@@ -91,12 +90,11 @@ class MenuCellWithEditableText
     : public MenuCell<Label, SubLabel, EditableTextWidget>,
       public AbstractWithEditableText {
  public:
-  MenuCellWithEditableText(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* textFieldDelegate = nullptr)
+  MenuCellWithEditableText(Responder* parentResponder = nullptr,
+                           BoxesDelegate* boxesDelegate = nullptr,
+                           TextFieldDelegate* textFieldDelegate = nullptr)
       : MenuCell<Label, SubLabel, EditableTextWidget>(),
-        AbstractWithEditableText(parentResponder, inputEventHandlerDelegate,
+        AbstractWithEditableText(parentResponder, boxesDelegate,
                                  textFieldDelegate) {
     this->accessory()->setTextField(&m_textField);
   }

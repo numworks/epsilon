@@ -35,13 +35,12 @@ template <int NumberOfSignificantDigits =
               Poincare::Preferences::VeryLargeNumberOfSignificantDigits>
 class EvenOddEditableTextCell : public AbstractEvenOddEditableTextCell {
  public:
-  EvenOddEditableTextCell(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* delegate = nullptr,
-      KDGlyph::Format format = k_smallCellDefaultFormat)
+  EvenOddEditableTextCell(Responder* parentResponder = nullptr,
+                          BoxesDelegate* boxesDelegate = nullptr,
+                          TextFieldDelegate* delegate = nullptr,
+                          KDGlyph::Format format = k_smallCellDefaultFormat)
       : AbstractEvenOddEditableTextCell(parentResponder),
-        m_editableCell(this, inputEventHandlerDelegate, delegate, format) {}
+        m_editableCell(this, boxesDelegate, delegate, format) {}
 
   AbstractEditableTextCell* editableTextCell() override {
     return &m_editableCell;

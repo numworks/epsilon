@@ -9,11 +9,11 @@ namespace Graph {
 
 class IntegralGraphController : public Shared::SumGraphController {
  public:
-  IntegralGraphController(
-      Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      GraphView* graphView, Shared::InteractiveCurveViewRange* graphRange,
-      Shared::CurveViewCursor* cursor);
+  IntegralGraphController(Escher::Responder* parentResponder,
+                          Escher::BoxesDelegate* boxesDelegate,
+                          GraphView* graphView,
+                          Shared::InteractiveCurveViewRange* graphRange,
+                          Shared::CurveViewCursor* cursor);
   const char* title() override;
 
  protected:

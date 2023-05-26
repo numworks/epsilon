@@ -28,7 +28,7 @@ void SharedApp::Snapshot::reset() {
 
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
     : ::App(snapshot, rootViewController, I18n::Message::Warning),
-      InputEventHandlerDelegate(),
+      BoxesDelegate(),
       m_intrusiveStorageChangeFlag(false) {}
 
 Context* SharedApp::localContext() {

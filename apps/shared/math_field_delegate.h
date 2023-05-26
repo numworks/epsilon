@@ -13,6 +13,8 @@ namespace Shared {
 class MathFieldDelegate : public Escher::TextFieldDelegate,
                           public Escher::LayoutFieldDelegate {
  public:
+  static MathFieldDelegate* Default();
+
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;

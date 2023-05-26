@@ -45,8 +45,7 @@ class EditExpressionController : public Escher::ViewController,
                                    Ion::Events::Event event) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
-  bool isAcceptableExpression(Escher::EditableField* field,
-                              const Poincare::Expression expression) override;
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
 
   void insertTextBody(const char* text);
   void restoreInput();

@@ -204,10 +204,9 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
   return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool ListController::isAcceptableExpression(EditableField *field,
-                                            const Expression expression) {
+bool ListController::isAcceptableExpression(const Expression expression) {
   // Do not accept any OperatorType.
-  return MathFieldDelegate::isAcceptableExpression(field, expression) &&
+  return MathFieldDelegate::isAcceptableExpression(expression) &&
          expression.type() != ExpressionNode::Type::Comparison;
 }
 

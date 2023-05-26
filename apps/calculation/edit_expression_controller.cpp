@@ -142,7 +142,7 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    Escher::EditableField *field, const Poincare::Expression expression) {
+    const Poincare::Expression expression) {
   /* Override SharedApp because Store is acceptable, and
    * ans has an expression. */
   {
@@ -167,7 +167,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(
   if (shouldDuplicateLastCalculation && m_workingBuffer[0] != 0) {
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
-    if (!isAcceptableText(m_contentView.layoutField(), m_workingBuffer)) {
+    if (!isAcceptableText(m_workingBuffer)) {
       return true;
     }
     if (m_calculationStore

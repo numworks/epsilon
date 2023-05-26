@@ -29,7 +29,7 @@ bool MathFieldDelegate::textFieldDidReceiveEvent(AbstractTextField *textField,
       // Empty field, let the textfield handle the event
       return false;
     }
-    if (!isAcceptableText(textField, textField->text())) {
+    if (!isAcceptableText(textField->text())) {
       return true;
     }
   }
@@ -91,7 +91,7 @@ bool MathFieldDelegate::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       App()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    if (!isAcceptableExpression(layoutField, e)) {
+    if (!isAcceptableExpression(e)) {
       App()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
@@ -102,17 +102,15 @@ bool MathFieldDelegate::layoutFieldDidReceiveEvent(LayoutField *layoutField,
   return false;
 }
 
-bool MathFieldDelegate::isAcceptableExpression(EditableField *field,
-                                               const Expression exp) {
+bool MathFieldDelegate::isAcceptableExpression(const Expression exp) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
          ExpressionCanBeSerialized(exp, false, Poincare::Expression(),
                                    context());
 }
 
-bool MathFieldDelegate::isAcceptableText(EditableField *field,
-                                         const char *text) {
+bool MathFieldDelegate::isAcceptableText(const char *text) {
   Expression exp = Expression::Parse(text, context());
-  bool isAcceptable = isAcceptableExpression(field, exp);
+  bool isAcceptable = isAcceptableExpression(exp);
   if (!isAcceptable) {
     App()->displayWarning(I18n::Message::SyntaxError);
   }

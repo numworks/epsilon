@@ -62,8 +62,8 @@ KDPoint KDContext::alignAndDrawString(const char* text, KDPoint p, KDSize frame,
                                       maxLength + text - startLine);
 }
 
-KDPoint KDContext::drawStringAnyChar(const char* text, KDPoint p,
-                                     KDGlyph::Style style, int maxLength) {
+KDPoint KDContext::drawStringUnsafe(const char* text, KDPoint p,
+                                    KDGlyph::Style style, int maxLength) {
 #if ASSERTIONS
   return drawString(text, p, style, maxLength, true);
 #else

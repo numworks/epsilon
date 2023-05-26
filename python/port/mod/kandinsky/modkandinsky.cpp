@@ -67,7 +67,7 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t *args) {
       (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
       ->displaySandbox();
-  KDIonContext::SharedContext->drawStringAnyChar(
+  KDIonContext::SharedContext->drawStringUnsafe(
       text, point,
       KDGlyph::Style{.glyphColor = textColor,
                      .backgroundColor = backgroundColor,

@@ -861,11 +861,20 @@ constexpr ToolboxMessageTree menu[] = {
 constexpr ToolboxMessageTree toolboxModel =
     ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
-MathToolbox::MathToolbox() : Toolbox(nullptr, rootModel()->label()) {}
+MathToolbox::MathToolbox()
+    : Toolbox(nullptr, rootModel()->label()), m_extraCellsDataSource(nullptr) {}
+
+bool MathToolbox::handleEvent(Ion::Events::Event event) {
+  const int rowIndex = selectedRow();
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
+      rowIndex < numberOfExtraCellsInCurrentMenu()) {
+    return selectExtraCell(rowIndex);
+  }
+  return Toolbox::handleEvent(event);
+}
 
 void MathToolbox::viewDidDisappear() {
   Toolbox::viewDidDisappear();
-
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
    * use the MathToolbox cell heights memoization. We thus reset the MathToolbox
    * layouts only after calling the parent's viewDidDisappear. */
@@ -874,6 +883,17 @@ void MathToolbox::viewDidDisappear() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].label()->setLayout(Layout());
   }
+}
+
+int MathToolbox::numberOfRows() const {
+  return Toolbox::numberOfRows() + numberOfExtraCellsInCurrentMenu();
+}
+
+int MathToolbox::typeAtRow(int row) const {
+  if (row < numberOfExtraCellsInCurrentMenu()) {
+    return k_leafCellType;
+  }
+  return Escher::Toolbox::typeAtRow(row);
 }
 
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int row) {
@@ -912,6 +932,15 @@ bool MathToolbox::displayMessageTreeDisabledPopUp(
 }
 
 void MathToolbox::fillCellForRow(HighlightCell *cell, int row) {
+  if (row < numberOfExtraCellsInCurrentMenu()) {
+    assert(m_extraCellsDataSource);
+    static_cast<LeafCell *>(cell)->label()->setLayout(
+        m_extraCellsDataSource->extraCellLayoutAtRow(row));
+    static_cast<LeafCell *>(cell)->subLabel()->setMessage(
+        I18n::Message::Default);
+    cell->reloadCell();
+    return;
+  }
   const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
   KDColor textColor =
       isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
@@ -1000,6 +1029,17 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   return true;
 }
 
+bool MathToolbox::selectExtraCell(int selectedRow) {
+  assert(m_extraCellsDataSource);
+  Layout l = m_extraCellsDataSource->extraCellLayoutAtRow(selectedRow);
+  char buffer[k_maxSizeOfExtraCellExpression];
+  l.serializeForParsing(
+      buffer, k_maxSizeOfExtraCellExpression);  // No need of context here
+  sender()->handleEventWithText(buffer);
+  Container::activeApp()->modalViewController()->dismissModal();
+  return true;
+}
+
 const ToolboxMessageTree *MathToolbox::rootModel() const {
   return &toolboxModel;
 }
@@ -1015,6 +1055,15 @@ Escher::NestedMenuController::NodeCell *MathToolbox::nodeCellAtIndex(
   return &m_nodeCells[index];
 }
 
+const Escher::ToolboxMessageTree *MathToolbox::messageTreeModelAtIndex(
+    int index) const {
+  assert(index >= numberOfExtraCellsInCurrentMenu() &&
+         index - numberOfExtraCellsInCurrentMenu() <
+             m_messageTreeModel->numberOfChildren());
+  return Toolbox::messageTreeModelAtIndex(index -
+                                          numberOfExtraCellsInCurrentMenu());
+}
+
 int MathToolbox::maxNumberOfDisplayedRows() {
   return k_maxNumberOfDisplayedRows;
 }
@@ -1024,7 +1073,11 @@ int MathToolbox::controlChecksum() const {
              Preferences::sharedPreferences->examMode().ruleset()) *
              I18n::NumberOfCountries +
          static_cast<int>(
-             GlobalPreferences::sharedGlobalPreferences->country());
+             GlobalPreferences::sharedGlobalPreferences->country()) +
+         +(m_extraCellsDataSource ? m_extraCellsDataSource->numberOfExtraCells()
+                                  : 0) *
+             static_cast<int>(Ion::ExamMode::Ruleset::NumberOfRulesets) *
+             I18n::NumberOfCountries;
 }
 
 int MathToolbox::indexAfterFork(
@@ -1042,4 +1095,10 @@ int MathToolbox::indexAfterFork(
   }
   assert(unitFormat == Preferences::UnitFormat::Imperial);
   return 1;
+}
+
+int MathToolbox::numberOfExtraCellsInCurrentMenu() const {
+  return (m_extraCellsDataSource && m_messageTreeModel == rootModel())
+             ? m_extraCellsDataSource->numberOfExtraCells()
+             : 0;
 }

@@ -11,7 +11,7 @@
 
 namespace Distributions {
 
-class App : public Shared::MathAppWithStoreMenu {
+class App : public Shared::MathApp {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

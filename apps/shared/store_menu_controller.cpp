@@ -119,8 +119,8 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char* text) {
-  MathAppWithStoreMenu* app =
-      static_cast<MathAppWithStoreMenu*>(Container::activeApp());
+  MathApp* app =
+      static_cast<MathApp*>(Container::activeApp());
   Poincare::Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {

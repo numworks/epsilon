@@ -42,7 +42,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Snapshot* snapshot)
-    : MathAppWithStoreMenu(snapshot, &m_stackViewController),
+    : MathApp(snapshot, &m_stackViewController),
       m_solutionsController(&m_alternateEmptyViewController),
       m_intervalController(nullptr, this),
       m_alternateEmptyViewController(nullptr, &m_solutionsController,

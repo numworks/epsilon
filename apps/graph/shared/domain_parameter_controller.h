@@ -1,7 +1,7 @@
 #ifndef GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
 #define GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
 
-#include <apps/graph/shared/function_toolbox.h>
+#include <apps/math_toolbox.h>
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/expiring_pointer.h>
 #include <apps/shared/interactive_curve_view_controller.h>
@@ -9,7 +9,8 @@
 
 namespace Graph {
 
-class DomainParameterController : public Shared::SingleRangeController {
+class DomainParameterController : public Shared::SingleRangeController,
+                                  public MathToolboxExtraCellsDataSource {
  public:
   DomainParameterController(Escher::Responder* parentResponder);
 
@@ -36,6 +37,10 @@ class DomainParameterController : public Shared::SingleRangeController {
                              : function()->properties().canHaveCustomDomain();
   }
 
+  // MathToolboxExtraCellsDataSource
+  int numberOfExtraCells() override { return 1; }
+  Poincare::Layout extraCellLayoutAtRow(int row) override;
+
  private:
   I18n::Message parameterMessage(int index) const override;
   // Return false if temporary parameters and function parameters are equal.
@@ -60,6 +65,7 @@ class DomainParameterController : public Shared::SingleRangeController {
 
   Shared::MessagePopUpController m_confirmPopUpController;
   Ion::Storage::Record m_record;
+  bool m_currentTextFieldIsMinField;
 };
 
 }  // namespace Graph

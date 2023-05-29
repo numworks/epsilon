@@ -10,7 +10,6 @@
 
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
-#include "shared/function_toolbox.h"
 #include "values/values_controller.h"
 
 namespace Graph {
@@ -75,8 +74,6 @@ class App : public Shared::FunctionApp {
     return &m_functionParameterController;
   }
 
-  FunctionToolbox *defaultToolbox() override { return &m_functionToolbox; }
-
  private:
   App(Snapshot *snapshot);
 
@@ -95,7 +92,6 @@ class App : public Shared::FunctionApp {
   };
 
   FunctionParameterController m_functionParameterController;
-  FunctionToolbox m_functionToolbox;
   Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
 };
 

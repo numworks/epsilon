@@ -85,12 +85,14 @@ void ListController::selectPreviousNewSequenceCell() {
 void ListController::viewWillAppear() {
   resetMemoization();  // A sequence could have been deleted
   ExpressionModelListController::viewWillAppear();
+  App::app()->defaultToolbox()->setExtraCellsDataSource(
+      &m_sequenceToolboxDataSource);
   computeTitlesColumnWidth();
 }
 
 void ListController::viewDidDisappear() {
   ExpressionModelListController::viewDidDisappear();
-  App::app()->defaultToolbox()->resetExtraCells();
+  App::app()->defaultToolbox()->setExtraCellsDataSource(nullptr);
 }
 
 HighlightCell *ListController::reusableCell(int index, int type) {
@@ -200,8 +202,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     if (sequenceDefinitionForRow(row) == k_sequenceDefinition) {
       recurrenceDepth = sequence->numberOfElements() - 1;
     }
-    App::app()->defaultToolbox()->buildExtraCellsLayouts(sequence->fullName(),
-                                                         recurrenceDepth);
+    m_sequenceToolboxDataSource.buildExtraCellsLayouts(sequence->fullName(),
+                                                       recurrenceDepth);
   }
   return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
                                                              event);

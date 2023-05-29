@@ -18,7 +18,8 @@ DomainParameterController::DomainParameterController(Responder* parentResponder)
             controller->pop(false);
             return true;
           },
-          this)) {}
+          this)),
+      m_currentTextFieldIsMinField(false) {}
 
 bool DomainParameterController::textFieldDidReceiveEvent(
     AbstractTextField* textField, Ion::Events::Event event) {
@@ -123,19 +124,24 @@ DomainParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 
+Poincare::Layout DomainParameterController::extraCellLayoutAtRow(int row) {
+  assert(row == 0);
+  Preferences* pref = Preferences::sharedPreferences;
+  return Infinity::Builder(m_currentTextFieldIsMinField)
+      .createLayout(pref->displayMode(), pref->numberOfSignificantDigits(),
+                    Container::activeApp()->localContext());
+}
+
 void DomainParameterController::switchToolboxContent(
     Escher::AbstractTextField* textField, bool setSpecificContent) {
   assert(textField == m_boundsCells[0].textField() ||
          textField == m_boundsCells[1].textField());
-  FunctionToolbox::AddedCellsContent content;
   if (setSpecificContent && function()->properties().isCartesian()) {
-    content = textField == m_boundsCells[0].textField()
-                  ? FunctionToolbox::AddedCellsContent::NegativeInfinity
-                  : FunctionToolbox::AddedCellsContent::PositiveInfinity;
+    m_currentTextFieldIsMinField = (textField == m_boundsCells[0].textField());
+    App::app()->defaultToolbox()->setExtraCellsDataSource(this);
   } else {
-    content = FunctionToolbox::AddedCellsContent::None;
+    App::app()->defaultToolbox()->setExtraCellsDataSource(nullptr);
   }
-  App::app()->defaultToolbox()->setAddedCellsContent(content);
 }
 
 }  // namespace Graph

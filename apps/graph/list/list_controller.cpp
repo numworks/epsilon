@@ -62,14 +62,12 @@ void ListController::viewWillAppear() {
    * (if the list tab is displayed but not selected using Back-Back)
    * therefore we also need to manually reload the table here. */
   selectableListView()->reloadData(false);
-  App::app()->defaultToolbox()->setAddedCellsContent(
-      FunctionToolbox::AddedCellsContent::ComparisonOperators);
+  App::app()->defaultToolbox()->setExtraCellsDataSource(this);
 }
 
 void ListController::viewDidDisappear() {
   Shared::FunctionListController::viewDidDisappear();
-  App::app()->defaultToolbox()->setAddedCellsContent(
-      FunctionToolbox::AddedCellsContent::None);
+  App::app()->defaultToolbox()->setExtraCellsDataSource(nullptr);
 }
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
@@ -276,6 +274,13 @@ Shared::ListParameterController *ListController::parameterController() {
 
 int ListController::maxNumberOfDisplayableRows() {
   return k_maxNumberOfDisplayableRows;
+}
+
+Poincare::Layout ListController::extraCellLayoutAtRow(int row) {
+  assert(row < k_numberOfToolboxExtraCells);
+  constexpr CodePoint codepoints[k_numberOfToolboxExtraCells] = {
+      UCodePointInferiorEqual, UCodePointSuperiorEqual};
+  return CodePointLayout::Builder(codepoints[row]);
 }
 
 HighlightCell *ListController::functionCells(int row) {

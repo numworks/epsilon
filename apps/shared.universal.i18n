@@ -1,3 +1,4 @@
+EmptyString = ""
 UnitTimeSecondSymbol = "_s"
 UnitTimeSecondMilliSymbol = "_ms"
 UnitTimeSecondMicroSymbol = "_μs"

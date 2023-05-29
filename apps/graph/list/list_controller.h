@@ -1,19 +1,20 @@
 #ifndef GRAPH_LIST_CONTROLLER_H
 #define GRAPH_LIST_CONTROLLER_H
 
+#include <apps/math_toolbox.h>
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_list_controller.h>
 
 #include "../graph/graph_controller.h"
 #include "../shared/function_parameter_controller.h"
-#include "../shared/function_toolbox.h"
 #include "editable_function_cell.h"
 #include "function_cell.h"
 #include "function_models_parameter_controller.h"
 
 namespace Graph {
 
-class ListController : public Shared::FunctionListController {
+class ListController : public Shared::FunctionListController,
+                       public MathToolboxExtraCellsDataSource {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::ButtonRowController* header,
@@ -36,9 +37,14 @@ class ListController : public Shared::FunctionListController {
   Shared::ListParameterController* parameterController() override;
   bool canStoreCellAtRow(int row) override { return false; }
 
+  // MathToolboxExtraCellsDataSource
+  int numberOfExtraCells() override { return k_numberOfToolboxExtraCells; }
+  Poincare::Layout extraCellLayoutAtRow(int row) override;
+
  private:
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
+  constexpr static int k_numberOfToolboxExtraCells = 2;
 
   void fillWithDefaultFunctionEquation(
       char* buffer, size_t bufferSize,

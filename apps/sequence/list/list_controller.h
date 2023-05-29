@@ -9,6 +9,7 @@
 #include "editable_sequence_cell.h"
 #include "list_parameter_controller.h"
 #include "sequence_cell.h"
+#include "sequence_toolbox_data_source.h"
 #include "type_parameter_controller.h"
 
 namespace Sequence {
@@ -90,6 +91,7 @@ class ListController : public Shared::FunctionListController {
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;
+  SequenceToolboxDataSource m_sequenceToolboxDataSource;
   KDCoordinate m_titlesColumnWidth;
   bool m_parameterColumnSelected;
 };

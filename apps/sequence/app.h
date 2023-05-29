@@ -11,7 +11,6 @@
 #include "graph/curve_view_range.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
-#include "sequence_toolbox.h"
 #include "values/values_controller.h"
 
 namespace Sequence {
@@ -75,8 +74,6 @@ class App : public Shared::FunctionApp {
     return &m_tabs.tab<ValuesTab>()->m_valuesController;
   }
 
-  SequenceToolbox *defaultToolbox() override { return &m_sequenceToolbox; }
-
  private:
   App(Snapshot *snapshot) : FunctionApp(snapshot, &m_tabs, ListTab::k_title) {}
 
@@ -95,7 +92,6 @@ class App : public Shared::FunctionApp {
   };
 
   Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
-  SequenceToolbox m_sequenceToolbox;
 };
 
 }  // namespace Sequence

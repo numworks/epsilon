@@ -1,7 +1,6 @@
 #ifndef SHARED_FUNCTION_APP_H
 #define SHARED_FUNCTION_APP_H
 
-#include <apps/math_variable_box_controller.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/input_view_controller.h>
 #include <escher/tab_union_view_controller.h>
@@ -16,9 +15,7 @@
 
 namespace Shared {
 
-/* TODO: Ideally, FunctionToolbox, SequenceToolbox and MathToolbox would be only
- * 1 class and FunctionApp could inherit from MathApp. */
-class FunctionApp : public SharedAppWithStoreMenu {
+class FunctionApp : public MathApp {
  public:
   class Snapshot : public SharedApp::Snapshot,
                    public Escher::TabViewDataSource {
@@ -50,10 +47,6 @@ class FunctionApp : public SharedAppWithStoreMenu {
       const Ion::Storage::Record::Name recordName) const override;
   void prepareForIntrusiveStorageChange() override;
   void concludeIntrusiveStorageChange() override;
-
-  MathVariableBoxController *defaultVariableBox() override {
-    return &m_variableBoxController;
-  }
 
  protected:
   FunctionApp(Snapshot *snapshot, Escher::AbstractTabUnion *tabs,
@@ -91,7 +84,6 @@ class FunctionApp : public SharedAppWithStoreMenu {
 
   Escher::TabUnionViewController m_tabViewController;
   Escher::ViewController *m_activeControllerBeforeStore;
-  MathVariableBoxController m_variableBoxController;
 };
 
 }  // namespace Shared

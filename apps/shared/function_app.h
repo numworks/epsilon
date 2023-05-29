@@ -15,7 +15,7 @@
 
 namespace Shared {
 
-class FunctionApp : public MathAppWithStoreMenu {
+class FunctionApp : public MathApp {
  public:
   class Snapshot : public Shared::SharedApp::Snapshot,
                    public Escher::TabViewDataSource {

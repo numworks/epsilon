@@ -8,9 +8,9 @@
 
 namespace Shared {
 
-class StoreApp : public MathAppWithStoreMenu {
+class StoreApp : public MathApp {
  public:
-  class Snapshot : public Shared::MathAppWithStoreMenu::Snapshot,
+  class Snapshot : public Shared::MathApp::Snapshot,
                    public Escher::TabViewDataSource {
    public:
     Snapshot();
@@ -37,7 +37,7 @@ class StoreApp : public MathAppWithStoreMenu {
   }
 
  protected:
-  using MathAppWithStoreMenu::MathAppWithStoreMenu;
+  using MathApp::MathApp;
   virtual StoreController *storeController() = 0;
 
  private:

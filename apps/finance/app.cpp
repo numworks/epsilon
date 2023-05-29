@@ -58,7 +58,7 @@ void App::didExitPage(Escher::ViewController *controller) {
 
 // App
 App::App(Snapshot *snapshot)
-    : Shared::MathAppWithStoreMenu(snapshot, &m_stackViewController),
+    : Shared::MathApp(snapshot, &m_stackViewController),
       m_resultController(&m_stackViewController),
       m_parametersController(&m_stackViewController, this, &m_resultController),
       m_interestMenuController(&m_stackViewController, &m_parametersController),

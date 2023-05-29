@@ -5,11 +5,10 @@
 #include <apps/math_variable_box_controller.h>
 
 #include "shared_app.h"
-#include "store_menu_controller.h"
 
 namespace Shared {
 
-class MathApp : public SharedApp {
+class MathApp : public SharedAppWithStoreMenu {
  public:
   virtual ~MathApp() = default;
   MathToolbox* toolbox() override { return &m_mathToolbox; }
@@ -18,25 +17,11 @@ class MathApp : public SharedApp {
   }
 
  protected:
-  using SharedApp::SharedApp;
+  using SharedAppWithStoreMenu::SharedAppWithStoreMenu;
 
  private:
   MathToolbox m_mathToolbox;
   MathVariableBoxController m_variableBoxController;
-};
-
-class MathAppWithStoreMenu : public MathApp {
- public:
-  virtual ~MathAppWithStoreMenu() = default;
-  void storeValue(const char* text = "") override;
-  bool isStoreMenuOpen() const;
-
- protected:
-  using MathApp::MathApp;
-  bool handleEvent(Ion::Events::Event event) override;
-
- private:
-  StoreMenuController m_storeMenuController;
 };
 
 }  // namespace Shared

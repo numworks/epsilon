@@ -22,7 +22,7 @@ App *App::Snapshot::unpack(Container *container) {
 }
 
 App::App(Snapshot *snapshot, Poincare::Context *parentContext)
-    : MathAppWithStoreMenu(snapshot, &m_inputViewController),
+    : MathApp(snapshot, &m_inputViewController),
       m_testGraphController(&m_stackViewController,
                             static_cast<Test *>(snapshot->statistic())),
       m_intervalGraphController(&m_stackViewController,

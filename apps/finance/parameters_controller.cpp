@@ -1,7 +1,8 @@
+#include "parameters_controller.h"
+
 #include <poincare/print.h>
 
 #include "app.h"
-#include "parameters_controller.h"
 
 using namespace Escher;
 

@@ -219,15 +219,16 @@ Expression Trigonometry::shallowReduceDirectFunction(
     return lookup;
   }
 
-  // Step 2. Look for an expression of type "cos(acos(x))", return x
+  // Step 2. Look for an expression of type "cos(acos(x))", return x.
   if (AreInverseFunctions(e, e.childAtIndex(0))) {
     Expression result = e.childAtIndex(0).childAtIndex(0);
-    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+    // Only real functions asin and acos have a domain of definition
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real &&
+        e.type() != ExpressionNode::Type::Tangent) {
       List listOfDependencies = List::Builder();
       listOfDependencies.addChildAtIndexInPlace(e.childAtIndex(0).clone(), 0,
                                                 0);
-      result = Dependency::Builder(e.childAtIndex(0).childAtIndex(0),
-                                   listOfDependencies);
+      result = Dependency::Builder(result, listOfDependencies);
       result = result.shallowReduce(reductionContext);
     }
     e.replaceWithInPlace(result);

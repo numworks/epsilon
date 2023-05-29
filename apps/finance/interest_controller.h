@@ -3,12 +3,9 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/dropdown_widget.h>
-#include <escher/highlight_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
-#include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
-#include <escher/view_controller.h>
 
 #include "result_controller.h"
 #include "two_messages_popup_data_source.h"

@@ -1,17 +1,12 @@
 #include "interest_controller.h"
 
-#include <apps/apps_container.h>
-#include <apps/i18n.h>
-#include <apps/shared/poincare_helpers.h>
-#include <escher/input_event_handler_delegate.h>
-#include <escher/invocation.h>
-#include <escher/stack_view_controller.h>
 #include <poincare/print.h>
 
 #include "app.h"
 
-using namespace Finance;
 using namespace Escher;
+
+namespace Finance {
 
 InterestController::InterestController(StackViewController *parent,
                                        InputEventHandlerDelegate *handler,
@@ -137,8 +132,8 @@ HighlightCell *InterestController::reusableParameterCell(int i, int type) {
   }
 }
 
-Escher::TextField *InterestController::textFieldOfCellAtIndex(
-    Escher::HighlightCell *cell, int index) {
+TextField *InterestController::textFieldOfCellAtIndex(HighlightCell *cell,
+                                                      int index) {
   assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<
              MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
@@ -162,3 +157,5 @@ bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
 int InterestController::indexOfDropdown() const {
   return App::GetInterestData()->numberOfDoubleValues() - 1;
 }
+
+}  // namespace Finance

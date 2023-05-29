@@ -18,6 +18,7 @@ class SequenceToolbox : public MathToolbox {
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;
   void buildExtraCellsLayouts(const char* sequenceName, int recurrenceDepth);
+  void resetExtraCells() { buildExtraCellsLayouts(nullptr, -1); }
 
  protected:
   const Escher::ToolboxMessageTree* messageTreeModelAtIndex(

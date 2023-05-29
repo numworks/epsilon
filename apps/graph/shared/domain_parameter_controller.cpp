@@ -59,11 +59,6 @@ bool DomainParameterController::textFieldDidAbortEditing(
   return false;
 }
 
-/* TODO: Restore behaviour
-FunctionToolbox* DomainParameterController::toolbox() {
-  return App::app()->functionToolbox();
-}*/
-
 I18n::Message DomainParameterController::parameterMessage(int index) const {
   ContinuousFunctionProperties plotProperties = function()->properties();
   if (plotProperties.isParametric()) {
@@ -130,19 +125,17 @@ DomainParameterController::function() const {
 
 void DomainParameterController::switchToolboxContent(
     Escher::AbstractTextField* textField, bool setSpecificContent) {
-  /* assert(textField == m_boundsCells[0].textField() ||
-          textField == m_boundsCells[1].textField());
-   FunctionToolbox::AddedCellsContent content;
-   if (setSpecificContent) {
-     content = !function()->properties().isCartesian()
-                   ? FunctionToolbox::AddedCellsContent::None
-               : textField == m_boundsCells[0].textField()
-                   ? FunctionToolbox::AddedCellsContent::NegativeInfinity
-                   : FunctionToolbox::AddedCellsContent::PositiveInfinity;
-   } else {
-     content = FunctionToolbox::AddedCellsContent::ComparisonOperators;
-   }
-   toolbox()->setAddedCellsContent(content);*/
+  assert(textField == m_boundsCells[0].textField() ||
+         textField == m_boundsCells[1].textField());
+  FunctionToolbox::AddedCellsContent content;
+  if (setSpecificContent && function()->properties().isCartesian()) {
+    content = textField == m_boundsCells[0].textField()
+                  ? FunctionToolbox::AddedCellsContent::NegativeInfinity
+                  : FunctionToolbox::AddedCellsContent::PositiveInfinity;
+  } else {
+    content = FunctionToolbox::AddedCellsContent::None;
+  }
+  App::app()->defaultToolbox()->setAddedCellsContent(content);
 }
 
 }  // namespace Graph

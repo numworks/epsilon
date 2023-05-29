@@ -74,7 +74,8 @@ class App : public Shared::FunctionApp {
   FunctionParameterController *parameterController() {
     return &m_functionParameterController;
   }
-  FunctionToolbox *functionToolbox() { return &m_functionToolbox; }
+
+  FunctionToolbox *defaultToolbox() override { return &m_functionToolbox; }
 
  private:
   App(Snapshot *snapshot);

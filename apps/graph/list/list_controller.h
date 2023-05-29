@@ -23,6 +23,7 @@ class ListController : public Shared::FunctionListController {
   int reusableCellCount(int type) override;
   // ViewController
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   // MathFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;

@@ -62,6 +62,14 @@ void ListController::viewWillAppear() {
    * (if the list tab is displayed but not selected using Back-Back)
    * therefore we also need to manually reload the table here. */
   selectableListView()->reloadData(false);
+  App::app()->defaultToolbox()->setAddedCellsContent(
+      FunctionToolbox::AddedCellsContent::ComparisonOperators);
+}
+
+void ListController::viewDidDisappear() {
+  Shared::FunctionListController::viewDidDisappear();
+  App::app()->defaultToolbox()->setAddedCellsContent(
+      FunctionToolbox::AddedCellsContent::None);
 }
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
@@ -303,11 +311,6 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   functionCell->setColor(functionColor);
   functionCell->reloadCell();
 }
-
-/* TODO: Restore behaviour
-FunctionToolbox *ListController::toolbox() {
-  return App::app()->functionToolbox();
-}*/
 
 void ListController::addModel() {
   Container::activeApp()->displayModalViewController(

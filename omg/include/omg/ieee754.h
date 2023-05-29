@@ -1,5 +1,5 @@
-#ifndef POINCARE_IEEE754_H
-#define POINCARE_IEEE754_H
+#ifndef OMG_IEEE754_H
+#define OMG_IEEE754_H
 
 #include <assert.h>
 #include <stddef.h>
@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace OMG {
 
 /* This class describes the IEEE 754 float representation.
  * Float numbers are 32(64)-bit values, stored as follow:
@@ -93,6 +93,6 @@ class IEEE754 final {
   };
 };
 
-}  // namespace Poincare
+}  // namespace OMG
 
 #endif

@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <omg/ieee754.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/decimal.h>
-#include <poincare/ieee754.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -517,7 +517,7 @@ Decimal Decimal::Builder(const char *integralPart, int integralPartLength,
 template <typename T>
 Decimal Decimal::Builder(T f) {
   assert(!std::isnan(f) && !std::isinf(f));
-  int exp = IEEE754<T>::exponentBase10(f);
+  int exp = OMG::IEEE754<T>::exponentBase10(f);
   /* We keep 7 significant digits for if the the Decimal was built from a float
    * and 14 significant digits if it was built from a double. This roughly
    * correspond to the respective precision of float and double. */

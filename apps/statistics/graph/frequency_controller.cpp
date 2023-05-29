@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <escher/container.h>
-#include <poincare/ieee754.h>
+#include <omg/ieee754.h>
 #include <poincare/print.h>
 
 #include "../app.h"
@@ -159,9 +159,9 @@ bool FrequencyController::moveSelectionHorizontally(
   } else {
     /* Using pixelWidth(), simplify the cursor's position value while staying at
      * the same pixel. */
-    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(
-                                          m_curveView.pixelWidth()) -
-                                          1.0);
+    double magnitude = std::pow(
+        10.0,
+        OMG::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
     double xSimplified = magnitude * std::round(x / magnitude);
     assert(std::fabs(xSimplified - x) <= std::fabs(step * simplifyFactor));
     x = xSimplified;

@@ -1,7 +1,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <omg/ieee754.h>
 #include <poincare/decimal.h>
-#include <poincare/ieee754.h>
 #include <poincare/infinity.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -225,7 +225,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
     return requiredTextLengths;
   }
 
-  int exponentInBase10 = IEEE754<T>::exponentBase10(f);
+  int exponentInBase10 = OMG::IEEE754<T>::exponentBase10(f);
 
   /* Part I: Mantissa */
 
@@ -265,8 +265,9 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
    * However, unroundedMantissa can have a different exponent than expected
    * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000)
    */
-  if (f != 0 && IEEE754<double>::exponentBase10(mantissa) - exponentInBase10 !=
-                    numberOfSignificantDigits - 1 - exponentInBase10) {
+  if (f != 0 &&
+      OMG::IEEE754<double>::exponentBase10(mantissa) - exponentInBase10 !=
+          numberOfSignificantDigits - 1 - exponentInBase10) {
     exponentInBase10++;
   }
 
@@ -280,7 +281,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   }
 
   // Correct the number of digits in mantissa after rounding
-  if (IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
+  if (OMG::IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
     mantissa = mantissa / static_cast<T>(10.0);
   }
 
@@ -396,8 +397,9 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
                      ? exponentForEngineeringNotation
                      : exponentInBase10;
   int numberOfCharExponent =
-      exponent != 0 ? IEEE754<T>::exponentBase10(static_cast<T>(exponent)) + 1
-                    : 0;
+      exponent != 0
+          ? OMG::IEEE754<T>::exponentBase10(static_cast<T>(exponent)) + 1
+          : 0;
   if (exponent < 0) {
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;

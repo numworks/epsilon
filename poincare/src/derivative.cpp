@@ -1,10 +1,10 @@
 #include <assert.h>
 #include <float.h>
+#include <omg/ieee754.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/derivative_layout.h>
 #include <poincare/float.h>
-#include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
@@ -159,7 +159,7 @@ T DerivativeNode::scalarApproximateWithValueForArgumentAndOrder(
   // Round and amplify error to a power of 10
   T roundedError =
       static_cast<T>(100.0) *
-      std::pow(static_cast<T>(10.0), IEEE754<T>::exponentBase10(error));
+      std::pow(static_cast<T>(10.0), OMG::IEEE754<T>::exponentBase10(error));
   if (error == static_cast<T>(0.0) ||
       std::round(result / roundedError) == result / roundedError) {
     // Return result if error is negligible

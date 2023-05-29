@@ -11,8 +11,7 @@ namespace Solver {
 
 class IntervalController : public Shared::FloatParameterController<double> {
  public:
-  IntervalController(Escher::Responder* parentResponder,
-                     Escher::BoxesDelegate* boxesDelegate);
+  IntervalController(Escher::Responder* parentResponder);
   const char* title() override;
   TELEMETRY_ID("Interval");
   int numberOfRows() const override;

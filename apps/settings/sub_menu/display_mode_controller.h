@@ -12,8 +12,7 @@ namespace Settings {
 class DisplayModeController : public PreferencesController,
                               public Shared::ParameterTextFieldDelegate {
  public:
-  DisplayModeController(Escher::Responder* parentResponder,
-                        Escher::BoxesDelegate* boxesDelegate);
+  DisplayModeController(Escher::Responder* parentResponder);
   TELEMETRY_ID("DisplayMode");
   KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;

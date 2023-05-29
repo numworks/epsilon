@@ -3,10 +3,8 @@
 namespace Inference {
 
 InputCategoricalCell::InputCategoricalCell(Responder* parentResponder,
-                                           BoxesDelegate* boxesDelegate,
                                            TextFieldDelegate* textFieldDelegate)
-    : HighlightCell(),
-      m_innerCell(parentResponder, boxesDelegate, textFieldDelegate) {}
+    : HighlightCell(), m_innerCell(parentResponder, textFieldDelegate) {}
 
 KDSize InputCategoricalCell::minimalSizeForOptimalDisplay() const {
   KDSize innerSize = m_innerCell.minimalSizeForOptimalDisplay();

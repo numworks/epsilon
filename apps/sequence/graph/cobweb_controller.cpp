@@ -22,11 +22,13 @@ using namespace Escher;
 
 namespace Sequence {
 
-CobwebController::CobwebController(
-    Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
-    GraphView* graphView, CurveViewRange* graphRange, CurveViewCursor* cursor,
-    XYBannerView* bannerView, CursorView* cursorView,
-    SequenceStore* sequenceStore)
+CobwebController::CobwebController(Responder* parentResponder,
+                                   GraphView* graphView,
+                                   CurveViewRange* graphRange,
+                                   CurveViewCursor* cursor,
+                                   XYBannerView* bannerView,
+                                   CursorView* cursorView,
+                                   SequenceStore* sequenceStore)
     : Shared::SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_graphView(&m_graphRange, cursor, bannerView, cursorView),
       m_cursor(cursor),

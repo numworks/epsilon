@@ -14,7 +14,6 @@ namespace Shared {
 class SingleRangeController : public FloatParameterController<float> {
  public:
   SingleRangeController(Escher::Responder* parentResponder,
-                        Escher::BoxesDelegate* boxesDelegate,
                         MessagePopUpController* confirmPopUpController);
   void viewWillAppear() override;
 

@@ -18,7 +18,6 @@ using namespace Escher;
 namespace Shared {
 
 SumGraphController::SumGraphController(Responder *parentResponder,
-                                       Escher::BoxesDelegate *boxesDelegate,
                                        FunctionGraphView *graphView,
                                        InteractiveCurveViewRange *range,
                                        CurveViewCursor *cursor)
@@ -26,7 +25,7 @@ SumGraphController::SumGraphController(Responder *parentResponder,
       m_step(Step::FirstParameter),
       m_graphRange(range),
       m_graphView(graphView),
-      m_legendView(this, boxesDelegate) {}
+      m_legendView(this) {}
 
 void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
@@ -228,12 +227,11 @@ Poincare::Expression SumGraphController::createSumExpression(
 
 /* Legend View */
 
-SumGraphController::LegendView::LegendView(SumGraphController *controller,
-                                           Escher::BoxesDelegate *boxesDelegate)
+SumGraphController::LegendView::LegendView(SumGraphController *controller)
     : m_sum(k_glyphsFormat),
       m_legend(I18n::Message::Default, k_glyphsFormat),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
-                     boxesDelegate, controller, k_glyphsFormat) {
+                     controller, k_glyphsFormat) {
   m_textBuffer[0] = 0;
 }
 

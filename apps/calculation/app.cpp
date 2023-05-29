@@ -45,8 +45,7 @@ App::App(Snapshot *snapshot)
     : MathApp(snapshot, &m_editExpressionController),
       m_historyController(&m_editExpressionController,
                           snapshot->calculationStore()),
-      m_editExpressionController(&m_modalViewController, this,
-                                 &m_historyController,
+      m_editExpressionController(&m_modalViewController, &m_historyController,
                                  snapshot->calculationStore()) {}
 
 void App::didBecomeActive(Window *window) {

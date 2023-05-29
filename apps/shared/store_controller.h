@@ -7,7 +7,6 @@
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 
-#include "boxes_delegate.h"
 #include "buffer_function_title_cell.h"
 #include "double_pair_store.h"
 #include "editable_cell_table_view_controller.h"
@@ -19,8 +18,7 @@ class StoreController : public EditableCellTableViewController,
                         public Escher::ButtonRowDelegate,
                         public StoreColumnHelper {
  public:
-  StoreController(Escher::Responder* parentResponder,
-                  Escher::BoxesDelegate* boxesDelegate, DoublePairStore* store,
+  StoreController(Escher::Responder* parentResponder, DoublePairStore* store,
                   Escher::ButtonRowController* header,
                   Poincare::Context* parentContext);
   TELEMETRY_ID("Store");

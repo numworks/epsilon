@@ -9,12 +9,10 @@ using namespace Escher;
 namespace Graph {
 
 PreimageParameterController::PreimageParameterController(
-    Responder *parentResponder, BoxesDelegate *boxesDelegate,
-    Shared::InteractiveCurveViewRange *graphRange,
+    Responder *parentResponder, Shared::InteractiveCurveViewRange *graphRange,
     Shared::CurveViewCursor *cursor,
     PreimageGraphController *preimageGraphController)
-    : Shared::GoToParameterController(parentResponder, boxesDelegate,
-                                      graphRange, cursor),
+    : Shared::GoToParameterController(parentResponder, graphRange, cursor),
       m_preimageGraphController(preimageGraphController) {}
 
 void PreimageParameterController::viewWillAppear() {

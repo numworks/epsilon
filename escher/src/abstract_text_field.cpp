@@ -327,10 +327,9 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
 
 AbstractTextField::AbstractTextField(Responder *parentResponder,
                                      View *contentView,
-                                     BoxesDelegate *boxesDelegate,
                                      TextFieldDelegate *delegate)
     : TextInput(parentResponder, contentView),
-      EditableField(boxesDelegate),
+      EditableField(),
       m_delegate(delegate) {}
 
 void AbstractTextField::setBackgroundColor(KDColor backgroundColor) {
@@ -342,14 +341,8 @@ void AbstractTextField::setTextColor(KDColor textColor) {
   contentView()->setTextColor(textColor);
 }
 
-void AbstractTextField::setDelegates(BoxesDelegate *boxesDelegate,
-                                     TextFieldDelegate *delegate) {
-  m_boxesDelegate = boxesDelegate;
+void AbstractTextField::setDelegate(TextFieldDelegate *delegate) {
   m_delegate = delegate;
-}
-
-void AbstractTextField::setBoxesDelegate(BoxesDelegate *boxesDelegate) {
-  m_boxesDelegate = boxesDelegate;
 }
 
 bool AbstractTextField::isEditing() const {

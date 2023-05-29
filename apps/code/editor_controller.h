@@ -1,8 +1,6 @@
 #ifndef CODE_EDITOR_CONTROLLER_H
 #define CODE_EDITOR_CONTROLLER_H
 
-#include <apps/shared/boxes_delegate.h>
-
 #include "editor_view.h"
 #include "script.h"
 #include "variable_box_controller.h"
@@ -14,8 +12,7 @@ class ScriptParameterController;
 class App;
 
 class EditorController : public Escher::ViewController,
-                         public Escher::TextAreaDelegate,
-                         public Shared::BoxesDelegate {
+                         public Escher::TextAreaDelegate {
  public:
   EditorController(MenuController* menuController, App* pythonDelegate);
   void setScript(Script script, int scriptIndex);
@@ -37,11 +34,9 @@ class EditorController : public Escher::ViewController,
   bool textAreaDidReceiveEvent(Escher::TextArea* textArea,
                                Ion::Events::Event event) override;
 
-  /* BoxesDelegate */
-  VariableBoxController* variableBox() override;
-
  private:
   void cleanStorageEmptySpace();
+  void prepareVariableBox();
   Escher::StackViewController* stackController();
   EditorView m_editorView;
   Script m_script;

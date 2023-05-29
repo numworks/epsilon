@@ -22,7 +22,7 @@ class AbstractTextField : public TextInput, public EditableField {
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 
   AbstractTextField(Responder *parentResponder, View *contentView,
-                    BoxesDelegate *boxesDelegate, TextFieldDelegate *delegate);
+                    TextFieldDelegate *delegate);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -49,8 +49,7 @@ class AbstractTextField : public TextInput, public EditableField {
 
   bool isEditable() { return m_delegate->textFieldIsEditable(this); }
 
-  void setDelegates(BoxesDelegate *boxesDelegate, TextFieldDelegate *delegate);
-  void setBoxesDelegate(BoxesDelegate *boxesDelegate);
+  void setDelegate(TextFieldDelegate *delegate);
   void setText(const char *text);
   char *draftTextBuffer() const {
     return const_cast<char *>(nonEditableContentView()->editedText());

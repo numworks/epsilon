@@ -14,14 +14,13 @@ using namespace Escher;
 namespace Solver {
 
 ListController::ListController(Responder *parentResponder,
-                               BoxesDelegate *boxesDelegate,
                                EquationStore *equationStore,
                                ButtonRowController *footer)
     : ExpressionModelListController(parentResponder,
                                     I18n::Message::AddEquation),
       ButtonRowDelegate(nullptr, footer),
       m_equationListView(this),
-      m_editableCell(this, boxesDelegate, this),
+      m_editableCell(this, this),
       m_resolveButton(this,
                       equationStore->numberOfDefinedModels() > 1
                           ? I18n::Message::ResolveSystem

@@ -42,7 +42,7 @@ StoreMenuController::StoreMenuController()
       m_stackViewController(nullptr, &m_listController,
                             StackViewController::Style::PurpleWhite, false),
       m_listController(this),
-      m_cell(this, nullptr, this),
+      m_cell(this, this),
       m_abortController(Invocation::Builder<StoreMenuController>(
                             [](StoreMenuController* storeMenu, void* sender) {
                               /* Close the warning and then the store menu which
@@ -119,8 +119,7 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char* text) {
-  MathApp* app =
-      static_cast<MathApp*>(Container::activeApp());
+  MathApp* app = static_cast<MathApp*>(Container::activeApp());
   Poincare::Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {

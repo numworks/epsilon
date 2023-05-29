@@ -8,10 +8,9 @@ namespace Graph {
 
 EditableFunctionCell::EditableFunctionCell(
     Escher::Responder* parentResponder,
-    Escher::BoxesDelegate* boxesDelegate,
     Escher::LayoutFieldDelegate* layoutFieldDelegate)
     : AbstractFunctionCell(),
-      m_layoutField(parentResponder, boxesDelegate, layoutFieldDelegate) {
+      m_layoutField(parentResponder, layoutFieldDelegate) {
   // We set a dummy message for the height computation
   m_messageTextView.setMessage(I18n::Message::UnhandledType);
   m_layoutField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);

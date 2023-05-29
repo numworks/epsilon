@@ -22,7 +22,6 @@ class GraphOptionsController
     : public Escher::ExplicitSelectableListViewController {
  public:
   GraphOptionsController(Escher::Responder* parentResponder,
-                         Escher::BoxesDelegate* boxesDelegate,
                          Shared::InteractiveCurveViewRange* range, Store* store,
                          Shared::CurveViewCursor* cursor,
                          GraphController* graphController);

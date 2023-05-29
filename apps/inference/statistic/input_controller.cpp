@@ -14,13 +14,12 @@ using namespace Inference;
 
 InputController::InputController(Escher::StackViewController *parent,
                                  ResultsController *resultsController,
-                                 Statistic *statistic,
-                                 Escher::BoxesDelegate *handler)
+                                 Statistic *statistic)
     : FloatParameterController<double>(parent),
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
       m_statistic(statistic),
       m_resultsController(resultsController),
-      m_significanceCell(&m_selectableListView, handler, this) {
+      m_significanceCell(&m_selectableListView, this) {
   m_okButton.setMessage(I18n::Message::Next);
 }
 
@@ -35,7 +34,7 @@ KDCoordinate InputController::nonMemoizedRowHeight(int row) {
 void InputController::initCell(ParameterCell, void *cell, int index) {
   ParameterCell *c = static_cast<ParameterCell *>(cell);
   c->setParentResponder(&m_selectableListView);
-  c->setDelegates(App::app(), this);
+  c->setDelegate(this);
 }
 
 void InputController::InputTitle(Escher::ViewController *vc,

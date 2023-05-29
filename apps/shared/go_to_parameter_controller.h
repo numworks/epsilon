@@ -12,7 +12,6 @@ namespace Shared {
 class GoToParameterController : public FloatParameterController<double> {
  public:
   GoToParameterController(Responder* parentResponder,
-                          Escher::BoxesDelegate* boxesDelegate,
                           InteractiveCurveViewRange* graphRange,
                           CurveViewCursor* cursor);
   int numberOfRows() const override { return 2; }

@@ -12,12 +12,11 @@ using namespace Escher;
 
 namespace Sequence {
 
-ListParameterController::ListParameterController(
-    Escher::BoxesDelegate *boxesDelegate, ListController *listController)
+ListParameterController::ListParameterController(ListController *listController)
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
-      m_initialRankCell(&m_selectableListView, boxesDelegate, this),
+      m_initialRankCell(&m_selectableListView, this),
       m_typeParameterController(this, listController, Metric::CommonTopMargin,
                                 Metric::CommonRightMargin,
                                 Metric::CommonBottomMargin,

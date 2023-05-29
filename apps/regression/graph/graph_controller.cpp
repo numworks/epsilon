@@ -21,19 +21,17 @@ using namespace Escher;
 namespace Regression {
 
 GraphController::GraphController(
-    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
-    ButtonRowController *header,
+    Responder *parentResponder, ButtonRowController *header,
     Shared::InteractiveCurveViewRange *interactiveRange,
     CurveViewCursor *cursor, int *selectedDotIndex, int *selectedCurveIndex,
     Store *store)
-    : InteractiveCurveViewController(
-          parentResponder, boxesDelegate, header, interactiveRange, &m_view,
-          cursor, I18n::Message::Regression, selectedCurveIndex),
-      m_bannerView(this, boxesDelegate, this),
+    : InteractiveCurveViewController(parentResponder, header, interactiveRange,
+                                     &m_view, cursor, I18n::Message::Regression,
+                                     selectedCurveIndex),
+      m_bannerView(this, this),
       m_view(interactiveRange, store, m_cursor, &m_bannerView, &m_cursorView),
       m_store(store),
-      m_graphOptionsController(this, boxesDelegate, interactiveRange, m_store,
-                               m_cursor, this),
+      m_graphOptionsController(this, interactiveRange, m_store, m_cursor, this),
       m_curveSelectionController(this),
       m_selectedDotIndex(selectedDotIndex),
       m_selectedModelType((Model::Type)-1) {
@@ -85,8 +83,7 @@ void GraphController::didBecomeFirstResponder() {
 
 void GraphController::setAbscissaInputAsFirstResponder() {
   m_bannerView.abscissaValue()->setParentResponder(this);
-  m_bannerView.abscissaValue()->setDelegates(
-      static_cast<SharedApp *>(Container::activeApp()), this);
+  m_bannerView.abscissaValue()->setDelegate(this);
   Container::activeApp()->setFirstResponder(m_bannerView.abscissaValue());
 }
 

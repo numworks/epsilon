@@ -2,7 +2,6 @@
 #define GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
 
 #include <apps/graph/shared/function_toolbox.h>
-#include <apps/shared/boxes_delegate.h>
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/expiring_pointer.h>
 #include <apps/shared/interactive_curve_view_controller.h>
@@ -10,8 +9,7 @@
 
 namespace Graph {
 
-class DomainParameterController : public Shared::SingleRangeController,
-                                  public Shared::BoxesDelegate {
+class DomainParameterController : public Shared::SingleRangeController {
  public:
   DomainParameterController(Escher::Responder* parentResponder);
 
@@ -37,9 +35,6 @@ class DomainParameterController : public Shared::SingleRangeController,
     return m_record.isNull() ? false
                              : function()->properties().canHaveCustomDomain();
   }
-
-  // InputEventHandlerDelegate
-  FunctionToolbox* toolbox() override;
 
  private:
   I18n::Message parameterMessage(int index) const override;

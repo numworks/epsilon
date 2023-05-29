@@ -14,11 +14,10 @@ namespace Calculation {
 
 EditExpressionController::ContentView::ContentView(
     Responder *parentResponder, CalculationSelectableTableView *subview,
-    BoxesDelegate *boxesDelegate, LayoutFieldDelegate *layoutFieldDelegate)
+    LayoutFieldDelegate *layoutFieldDelegate)
     : View(),
       m_mainView(subview),
-      m_expressionInputBar(parentResponder, boxesDelegate,
-                           layoutFieldDelegate) {}
+      m_expressionInputBar(parentResponder, layoutFieldDelegate) {}
 
 View *EditExpressionController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
@@ -46,15 +45,15 @@ void EditExpressionController::ContentView::reload() {
 }
 
 EditExpressionController::EditExpressionController(
-    Responder *parentResponder, BoxesDelegate *boxesDelegate,
-    HistoryController *historyController, CalculationStore *calculationStore)
+    Responder *parentResponder, HistoryController *historyController,
+    CalculationStore *calculationStore)
     : ViewController(parentResponder),
       m_historyController(historyController),
       m_calculationStore(calculationStore),
       m_contentView(this,
                     static_cast<CalculationSelectableTableView *>(
                         m_historyController->view()),
-                    boxesDelegate, this) {
+                    this) {
   clearWorkingBuffer();
 }
 

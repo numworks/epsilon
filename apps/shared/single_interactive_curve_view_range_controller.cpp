@@ -9,11 +9,9 @@ namespace Shared {
 
 SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
-        Responder* parentResponder, BoxesDelegate* boxesDelegate,
-        InteractiveCurveViewRange* interactiveRange,
+        Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
         Shared::MessagePopUpController* confirmPopUpController)
-    : SingleRangeController(parentResponder, boxesDelegate,
-                            confirmPopUpController),
+    : SingleRangeController(parentResponder, confirmPopUpController),
       m_range(interactiveRange) {}
 
 void SingleInteractiveCurveViewRangeController::setEditXRange(bool editXRange) {

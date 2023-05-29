@@ -4,10 +4,10 @@
 namespace Escher {
 
 EditableExpressionModelCell::EditableExpressionModelCell(
-    Responder* parentResponder, BoxesDelegate* boxesDelegate,
-    LayoutFieldDelegate* layoutDelegate, KDGlyph::Format format)
+    Responder* parentResponder, LayoutFieldDelegate* layoutDelegate,
+    KDGlyph::Format format)
     : HighlightCell(),
-      m_layoutField(parentResponder, boxesDelegate, layoutDelegate, format),
+      m_layoutField(parentResponder, layoutDelegate, format),
       m_leftMargin(0),
       m_rightMargin(0) {
   m_layoutField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);

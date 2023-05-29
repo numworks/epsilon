@@ -26,7 +26,6 @@ class CalculationParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
   CalculationParameterController(Escher::Responder* parentResponder,
-                                 Escher::BoxesDelegate* boxesDelegate,
                                  GraphView* graphView, BannerView* bannerView,
                                  Shared::InteractiveCurveViewRange* range,
                                  Shared::CurveViewCursor* cursor);

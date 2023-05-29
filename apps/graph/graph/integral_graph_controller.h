@@ -10,7 +10,6 @@ namespace Graph {
 class IntegralGraphController : public Shared::SumGraphController {
  public:
   IntegralGraphController(Escher::Responder* parentResponder,
-                          Escher::BoxesDelegate* boxesDelegate,
                           GraphView* graphView,
                           Shared::InteractiveCurveViewRange* graphRange,
                           Shared::CurveViewCursor* cursor);

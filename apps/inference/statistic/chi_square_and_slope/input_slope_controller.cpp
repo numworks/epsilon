@@ -9,10 +9,8 @@ namespace Inference {
 InputSlopeController::InputSlopeController(StackViewController* parent,
                                            ViewController* resultsController,
                                            Statistic* statistic,
-                                           Escher::BoxesDelegate* boxesDelegate,
                                            Poincare::Context* context)
-    : InputCategoricalController(parent, resultsController, statistic,
-                                 boxesDelegate),
+    : InputCategoricalController(parent, resultsController, statistic),
       m_slopeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),

@@ -11,8 +11,7 @@ namespace Sequence {
 
 class TermSumController : public Shared::SumGraphController {
  public:
-  TermSumController(Escher::Responder* parentResponder,
-                    Escher::BoxesDelegate* boxesDelegate, GraphView* graphView,
+  TermSumController(Escher::Responder* parentResponder, GraphView* graphView,
                     CurveViewRange* graphRange,
                     Shared::CurveViewCursor* cursor);
   const char* title() override;

@@ -14,7 +14,6 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                                                I18n::Message text)
     : ExpressionModelListController(parentResponder, text),
       ButtonRowDelegate(header, footer),
-      BoxesDelegate(),
       m_selectableListView(this, this, this, this),
       m_plotButton(this, I18n::Message::Plot,
                    Invocation::Builder<FunctionListController>(

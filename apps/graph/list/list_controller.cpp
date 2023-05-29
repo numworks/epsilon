@@ -21,7 +21,7 @@ ListController::ListController(
     FunctionParameterController *functionParameterController)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),
-      m_editableCell(this, this, this),
+      m_editableCell(this, this),
       m_parameterController(functionParameterController),
       m_modelsParameterController(this, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
@@ -304,9 +304,10 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   functionCell->reloadCell();
 }
 
+/* TODO: Restore behaviour
 FunctionToolbox *ListController::toolbox() {
   return App::app()->functionToolbox();
-}
+}*/
 
 void ListController::addModel() {
   Container::activeApp()->displayModalViewController(

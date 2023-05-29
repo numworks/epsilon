@@ -11,11 +11,9 @@ namespace Sequence {
 class EditableSequenceCell : public AbstractSequenceCell {
  public:
   EditableSequenceCell(Escher::Responder* parentResponder,
-                       Escher::BoxesDelegate* boxesDelegate,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate)
       : AbstractSequenceCell(),
-        m_expressionModelCell(parentResponder, boxesDelegate,
-                              layoutFieldDelegate) {}
+        m_expressionModelCell(parentResponder, layoutFieldDelegate) {}
   Escher::EditableExpressionModelCell* expressionCell() override {
     return &m_expressionModelCell;
   }

@@ -2,7 +2,6 @@
 #define INFERENCE_STATISTIC_INPUT_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
-#include <escher/boxes_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
 
@@ -23,8 +22,7 @@ class InputController
 
  public:
   InputController(Escher::StackViewController* parent,
-                  ResultsController* resultsController, Statistic* statistic,
-                  Escher::BoxesDelegate* handler);
+                  ResultsController* resultsController, Statistic* statistic);
   int numberOfRows() const override {
     return m_statistic->numberOfParameters() + 1 /* button */;
   }

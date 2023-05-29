@@ -64,7 +64,7 @@ const App::Descriptor *App::Snapshot::descriptor() const {
 }
 
 App::StoreTab::StoreTab()
-    : m_storeController(&m_storeHeader, app(), &app()->m_store, &m_storeHeader,
+    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader,
                         app()->m_context),
       m_storeHeader(&m_storeStackViewController, &m_storeController,
                     &m_storeController),
@@ -76,7 +76,7 @@ App::StoreTab::StoreTab()
 
 App::GraphTab::GraphTab()
     : m_graphController(
-          &m_graphAlternateEmptyViewController, app(), &m_graphHeader,
+          &m_graphAlternateEmptyViewController, &m_graphHeader,
           app()->snapshot()->graphRange(), app()->snapshot()->cursor(),
           app()->snapshot()->graphSelectedDotIndex(),
           app()->snapshot()->selectedCurveIndex(), &app()->m_store),
@@ -103,7 +103,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
               snapshot->storePreferences(), snapshot->regressionTypes()),
       m_regressionController(nullptr, &m_store),
-      m_inputViewController(&m_modalViewController, &m_tabViewController, this,
+      m_inputViewController(&m_modalViewController, &m_tabViewController,
                             MathFieldDelegate::Default()),
       m_context(parentContext),
       m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {}

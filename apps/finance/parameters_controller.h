@@ -16,7 +16,6 @@ class ParametersController : public Shared::FloatParameterController<double>,
                              public Escher::DropdownCallback {
  public:
   ParametersController(Escher::StackViewController* parent,
-                       Escher::BoxesDelegate* handler,
                        ResultController* resultController);
   const char* title() override;
   void didBecomeFirstResponder() override;

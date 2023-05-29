@@ -12,7 +12,6 @@ namespace Code {
 class ConsoleEditCell : public Escher::HighlightCell, public Escher::Responder {
  public:
   ConsoleEditCell(Escher::Responder* parentResponder = nullptr,
-                  Escher::BoxesDelegate* boxesDelegate = nullptr,
                   Escher::TextFieldDelegate* delegate = nullptr);
 
   // View

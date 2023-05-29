@@ -11,8 +11,8 @@ namespace Distributions {
 /* Parameters Controller */
 
 ParametersController::ParametersController(
-    Escher::StackViewController *parentResponder, BoxesDelegate *boxesDelegate,
-    Distribution *distribution, CalculationController *calculationController)
+    Escher::StackViewController *parentResponder, Distribution *distribution,
+    CalculationController *calculationController)
     : FloatParameterController<double>(parentResponder),
       m_headerView(I18n::Message::DefineParameters, k_messageFormat),
       m_bottomView(I18n::Message::LeaveAFieldEmpty, k_messageFormat),
@@ -22,7 +22,7 @@ ParametersController::ParametersController(
   m_okButton.setMessage(I18n::Message::Next);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_menuListCell[i].setParentResponder(&m_selectableListView);
-    m_menuListCell[i].setDelegates(boxesDelegate, this);
+    m_menuListCell[i].setDelegate(this);
   }
   setTopView(&m_headerView);
 }

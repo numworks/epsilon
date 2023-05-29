@@ -76,7 +76,7 @@ class ValuesController : public EditableCellTableViewController,
   int numberOfElementsInColumn(int column) const override;
 
   // Constructor helper
-  void setupSelectableTableViewAndCells(Escher::BoxesDelegate* boxesDelegate);
+  void setupSelectableTableViewAndCells();
 
   // Parent controller getters
   Escher::StackViewController* stackController() const override;

@@ -10,7 +10,7 @@ namespace Shared {
 class SingleInteractiveCurveViewRangeController : public SingleRangeController {
  public:
   SingleInteractiveCurveViewRangeController(
-      Escher::Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
+      Escher::Responder* parentResponder,
       InteractiveCurveViewRange* interactiveCurveViewRange,
       MessagePopUpController* confirmPopUpController);
 

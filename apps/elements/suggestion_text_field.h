@@ -8,7 +8,6 @@ namespace Elements {
 class SuggestionTextField : public Escher::AbstractTextField {
  public:
   SuggestionTextField(Escher::Responder* parentResponder,
-                      Escher::BoxesDelegate* boxesDelegate,
                       Escher::TextFieldDelegate* delegate);
 
   // Escher::Responder

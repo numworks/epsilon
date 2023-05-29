@@ -51,7 +51,6 @@ class App : public Shared::SharedApp {
   bool handleEvent(Ion::Events::Event event) override;
   void willExitResponderChain(Escher::Responder *nextFirstResponder) override;
 
-  /* BoxesDelegate */
   PythonToolbox *toolbox() override { return &m_toolbox; }
   VariableBoxController *variableBox() override {
     return &m_variableBoxController;

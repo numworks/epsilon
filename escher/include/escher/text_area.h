@@ -17,10 +17,7 @@ class TextArea : public TextInput, public InputEventHandler {
 
   TextArea(Responder* parentResponder, View* contentView,
            KDFont::Size font = KDFont::Size::Large);
-  void setDelegates(BoxesDelegate* boxesDelegate, TextAreaDelegate* delegate) {
-    m_boxesDelegate = boxesDelegate;
-    m_delegate = delegate;
-  }
+  void setDelegate(TextAreaDelegate* delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;

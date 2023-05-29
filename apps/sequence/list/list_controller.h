@@ -17,12 +17,10 @@ namespace Sequence {
 class ListController : public Shared::FunctionListController {
  public:
   ListController(Escher::Responder* parentResponder,
-                 Escher::BoxesDelegate* boxesDelegate,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
   int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
-  Escher::Toolbox* toolbox() override;
   void selectPreviousNewSequenceCell();
   void editExpression(Ion::Events::Event event) override;
   /* ViewController */

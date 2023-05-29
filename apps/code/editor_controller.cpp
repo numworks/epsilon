@@ -19,7 +19,7 @@ EditorController::EditorController(MenuController *menuController,
       m_script(Ion::Storage::Record()),
       m_scriptIndex(-1),
       m_menuController(menuController) {
-  m_editorView.setTextAreaDelegates(this, this);
+  m_editorView.setTextAreaDelegate(this);
 }
 
 void EditorController::setScript(Script script, int scriptIndex) {
@@ -47,8 +47,12 @@ void EditorController::setScript(Script script, int scriptIndex) {
 
 void EditorController::willExitApp() { cleanStorageEmptySpace(); }
 
-// TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    prepareVariableBox();
+    return false;
+  }
+  // TODO: this should be done in textAreaDidFinishEditing maybe??
   if (event == Ion::Events::OK || event == Ion::Events::Back ||
       event == Ion::Events::Home || event == Ion::Events::USBEnumeration) {
     /* Exit the edition on USB enumeration, because the storage needs to be in a
@@ -133,7 +137,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea *textArea,
   return false;
 }
 
-VariableBoxController *EditorController::variableBox() {
+void EditorController::prepareVariableBox() {
   VariableBoxController *varBox = App::app()->variableBox();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(true);
@@ -157,7 +161,6 @@ VariableBoxController *EditorController::variableBox() {
     varBox->loadFunctionsAndVariables(m_scriptIndex, beginningOfAutocompletion,
                                       cursor - beginningOfAutocompletion);
   }
-  return varBox;
 }
 
 StackViewController *EditorController::stackController() {

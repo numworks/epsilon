@@ -75,8 +75,7 @@ class InputCategoricalController : public CategoricalController,
  public:
   InputCategoricalController(Escher::StackViewController* parent,
                              Escher::ViewController* resultsController,
-                             Statistic* statistic,
-                             Escher::BoxesDelegate* boxesDelegate);
+                             Statistic* statistic);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,

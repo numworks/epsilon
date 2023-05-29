@@ -1,7 +1,6 @@
 #ifndef ESCHER_INPUT_VIEW_CONTROLLER_H
 #define ESCHER_INPUT_VIEW_CONTROLLER_H
 
-#include <escher/boxes_delegate.h>
 #include <escher/expression_input_bar.h>
 #include <escher/invocation.h>
 #include <escher/layout_field_delegate.h>
@@ -12,12 +11,9 @@
 
 namespace Escher {
 
-class InputViewController : public ModalViewController,
-                            public BoxesDelegate,
-                            LayoutFieldDelegate {
+class InputViewController : public ModalViewController, LayoutFieldDelegate {
  public:
   InputViewController(Responder* parentResponder, ViewController* child,
-                      BoxesDelegate* boxesDelegate,
                       LayoutFieldDelegate* layoutFieldDelegate);
   const char* textBody() {
     return m_expressionInputBarController.layoutField()->text();
@@ -41,16 +37,10 @@ class InputViewController : public ModalViewController,
   void layoutFieldDidAbortEditing(LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(LayoutField* layoutField) override;
 
-  /* BoxesDelegate */
-  PervasiveBox* toolbox() override;
-  PervasiveBox* variableBox() override;
-
  private:
   class ExpressionInputBarController : public ViewController {
    public:
-    ExpressionInputBarController(Responder* parentResponder,
-                                 BoxesDelegate* boxesDelegate,
-                                 LayoutFieldDelegate* layoutFieldDelegate);
+    ExpressionInputBarController(InputViewController* inputViewController);
     ExpressionInputBarController(const ExpressionInputBarController& other) =
         delete;
     ExpressionInputBarController(ExpressionInputBarController&& other) = delete;
@@ -70,7 +60,6 @@ class InputViewController : public ModalViewController,
   ExpressionInputBarController m_expressionInputBarController;
   Invocation m_successAction;
   Invocation m_failureAction;
-  BoxesDelegate* m_boxesDelegate;
   LayoutFieldDelegate* m_layoutFieldDelegate;
 };
 

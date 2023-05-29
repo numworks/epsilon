@@ -10,8 +10,7 @@ using namespace Escher;
 
 namespace Solver {
 
-IntervalController::IntervalController(Responder *parentResponder,
-                                       BoxesDelegate *boxesDelegate)
+IntervalController::IntervalController(Responder *parentResponder)
     : FloatParameterController<double>(parentResponder),
       m_instructions(I18n::Message::ApproximateSolutionIntervalInstruction,
                      k_messageFormat) {
@@ -19,7 +18,7 @@ IntervalController::IntervalController(Responder *parentResponder,
   m_okButton.setMessage(I18n::Message::ResolveEquation);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i].setParentResponder(&m_selectableListView);
-    m_intervalCell[i].setDelegates(boxesDelegate, this);
+    m_intervalCell[i].setDelegate(this);
   }
 }
 

@@ -51,15 +51,14 @@ App::ListTab::ListTab()
 
 App::GraphTab::GraphTab()
     : Shared::FunctionApp::GraphTab(&m_graphController),
-      m_graphController(&m_graphAlternateEmptyViewController, app(),
-                        &m_graphHeader, app()->snapshot()->graphRange(),
+      m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader,
+                        app()->snapshot()->graphRange(),
                         app()->snapshot()->cursor(),
                         app()->snapshot()->selectedCurveIndex()) {}
 
 App::ValuesTab::ValuesTab()
     : Shared::FunctionApp::ValuesTab(&m_valuesController),
-      m_valuesController(&m_valuesAlternateEmptyViewController, app(),
-                         &m_valuesHeader,
+      m_valuesController(&m_valuesAlternateEmptyViewController, &m_valuesHeader,
                          &app()->m_functionParameterController) {}
 
 App::App(Snapshot* snapshot)

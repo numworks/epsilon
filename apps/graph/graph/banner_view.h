@@ -10,7 +10,6 @@ namespace Graph {
 class BannerView : public Shared::XYBannerView {
  public:
   BannerView(Escher::Responder* parentResponder,
-             Escher::BoxesDelegate* boxesDelegate,
              Escher::TextFieldDelegate* textFieldDelegate);
 
   BannerBufferTextView* derivativeView() { return &m_derivativeView; }

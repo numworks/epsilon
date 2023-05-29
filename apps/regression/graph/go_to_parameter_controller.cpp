@@ -16,11 +16,9 @@ using namespace Escher;
 namespace Regression {
 
 GoToParameterController::GoToParameterController(
-    Responder* parentResponder, Escher::BoxesDelegate* boxesDelegate,
-    InteractiveCurveViewRange* range, Store* store, CurveViewCursor* cursor,
-    GraphController* graphController)
-    : Shared::GoToParameterController(parentResponder, boxesDelegate, range,
-                                      cursor),
+    Responder* parentResponder, InteractiveCurveViewRange* range, Store* store,
+    CurveViewCursor* cursor, GraphController* graphController)
+    : Shared::GoToParameterController(parentResponder, range, cursor),
       m_store(store),
       m_xPrediction(true),
       m_graphController(graphController) {}

@@ -19,7 +19,7 @@ class RangeParameterController
           Escher::StandardMemoizedListViewDataSource> {
  public:
   RangeParameterController(
-      Escher::Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
+      Escher::Responder *parentResponder,
       InteractiveCurveViewRange *interactiveCurveViewRange);
 
   const char *title() override { return I18n::translate(I18n::Message::Axis); }

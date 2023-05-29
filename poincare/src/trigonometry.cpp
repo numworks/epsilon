@@ -448,9 +448,9 @@ Expression Trigonometry::shallowReduceInverseFunction(
           result = Opposite::Builder(add);
           add.shallowReduce(reductionContext);
         }
+        e.replaceWithInPlace(result);
+        return result.shallowReduce(reductionContext);
       }
-      e.replaceWithInPlace(result);
-      return result.shallowReduce(reductionContext);
     }
   }
 

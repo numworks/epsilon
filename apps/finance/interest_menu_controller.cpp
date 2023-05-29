@@ -10,10 +10,10 @@ using namespace Finance;
 
 InterestMenuController::InterestMenuController(
     Escher::StackViewController* parentResponder,
-    InterestController* interestController)
+    ParametersController* interestController)
     : Escher::ListWithTopAndBottomController(parentResponder, &m_messageView),
       m_messageView(I18n::Message::ParameterChoose, k_messageFormat),
-      m_interestController(interestController) {
+      m_parametersController(interestController) {
   selectRow(0);
 }
 
@@ -32,7 +32,7 @@ bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (m_cells[0].canBeActivatedByEvent(event)) {
     App::GetInterestData()->setUnknown(paramaterAtIndex(innerSelectedRow()));
-    stackOpenPage(m_interestController);
+    stackOpenPage(m_parametersController);
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

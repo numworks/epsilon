@@ -9,7 +9,7 @@
 #include <ion/events.h>
 
 #include "data.h"
-#include "interest_controller.h"
+#include "parameters_controller.h"
 
 namespace Finance {
 
@@ -20,7 +20,7 @@ using InterestMenuCell =
 class InterestMenuController : public Escher::ListWithTopAndBottomController {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
-                         InterestController* interestController);
+                         ParametersController* interestController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() override;
@@ -42,7 +42,7 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
 
   Escher::MessageTextView m_messageView;
   InterestMenuCell m_cells[InterestData::k_maxNumberOfUnknowns];
-  InterestController* m_interestController;
+  ParametersController* m_parametersController;
 };
 
 }  // namespace Finance

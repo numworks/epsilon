@@ -59,8 +59,8 @@ void App::didExitPage(Escher::ViewController *controller) {
 App::App(Snapshot *snapshot)
     : Shared::LayoutFieldDelegateApp(snapshot, &m_stackViewController),
       m_resultController(&m_stackViewController),
-      m_interestController(&m_stackViewController, this, &m_resultController),
-      m_interestMenuController(&m_stackViewController, &m_interestController),
+      m_parametersController(&m_stackViewController, this, &m_resultController),
+      m_interestMenuController(&m_stackViewController, &m_parametersController),
       m_menuController(&m_stackViewController, &m_interestMenuController),
       m_stackViewController(&m_modalViewController, &m_menuController,
                             Escher::StackViewController::Style::GrayGradation) {

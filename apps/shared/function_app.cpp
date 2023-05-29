@@ -14,7 +14,7 @@ void FunctionApp::Snapshot::reset() {
 }
 
 void FunctionApp::prepareForIntrusiveStorageChange() {
-  MathApp::prepareForIntrusiveStorageChange();
+  SharedAppWithStoreMenu::prepareForIntrusiveStorageChange();
   assert(m_activeControllerBeforeStore == nullptr);
   StackViewController* stack = static_cast<StackViewController*>(
       m_tabViewController.activeViewController());
@@ -37,7 +37,7 @@ void FunctionApp::prepareForIntrusiveStorageChange() {
 }
 
 void FunctionApp::concludeIntrusiveStorageChange() {
-  MathApp::concludeIntrusiveStorageChange();
+  SharedAppWithStoreMenu::concludeIntrusiveStorageChange();
   assert(m_activeControllerBeforeStore);
   /* TODO: we could avoid updating the graph/values when the record doesn't
    * affect the store but it's hard to detect indirect dependencies:
@@ -92,7 +92,7 @@ FunctionApp::ValuesTab::ValuesTab(Shared::ValuesController* valuesController)
 
 FunctionApp::FunctionApp(Snapshot* snapshot, Escher::AbstractTabUnion* tabs,
                          I18n::Message firstTabName)
-    : MathApp(snapshot, &m_tabViewController),
+    : SharedAppWithStoreMenu(snapshot, &m_tabViewController),
       m_tabViewController(&m_modalViewController, snapshot, tabs, firstTabName,
                           GraphTab::k_title, ValuesTab::k_title),
       m_activeControllerBeforeStore(nullptr) {}

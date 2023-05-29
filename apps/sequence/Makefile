@@ -7,6 +7,7 @@ app_sequence_test_src = $(addprefix apps/sequence/,\
 
 app_sequence_src = $(addprefix apps/sequence/,\
   app.cpp \
+  sequence_toolbox.cpp \
   graph/cobweb_controller.cpp \
   graph/cobweb_graph_view.cpp \
   graph/curve_parameter_controller.cpp \
@@ -19,7 +20,6 @@ app_sequence_src = $(addprefix apps/sequence/,\
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
   list/sequence_cell.cpp \
-  list/sequence_toolbox.cpp \
   list/type_parameter_controller.cpp \
   list/vertical_sequence_title_cell.cpp \
   values/interval_parameter_controller.cpp \

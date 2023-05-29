@@ -73,21 +73,6 @@ KDCoordinate ListController::expressionRowHeight(int j) {
       defaultHeight, sequenceHeight + 2 * k_expressionCellVerticalMargin);
 }
 
-/* TODO: Restore behaviour
-Toolbox *ListController::toolbox() {
-  // Set extra cells
-  int recurrenceDepth = -1;
-  int row = selectedRow();
-  Shared::Sequence *sequence = modelStore()->modelForRecord(
-      modelStore()->recordAtIndex(modelIndexForRow(row)));
-  if (sequenceDefinitionForRow(row) == k_sequenceDefinition) {
-    recurrenceDepth = sequence->numberOfElements() - 1;
-  }
-  m_sequenceToolbox.buildExtraCellsLayouts(sequence->fullName(),
-                                           recurrenceDepth);
-  return &m_sequenceToolbox;
-}*/
-
 void ListController::selectPreviousNewSequenceCell() {
   int row = selectedRow();
   if (sequenceDefinitionForRow(row) >= 0) {
@@ -101,6 +86,11 @@ void ListController::viewWillAppear() {
   resetMemoization();  // A sequence could have been deleted
   ExpressionModelListController::viewWillAppear();
   computeTitlesColumnWidth();
+}
+
+void ListController::viewDidDisappear() {
+  ExpressionModelListController::viewDidDisappear();
+  App::app()->defaultToolbox()->resetExtraCells();
 }
 
 HighlightCell *ListController::reusableCell(int index, int type) {
@@ -200,6 +190,18 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       layoutField->isEmpty()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return true;
+  }
+  if (event == Ion::Events::Toolbox) {
+    // Set extra cells
+    int recurrenceDepth = -1;
+    int row = selectedRow();
+    Shared::Sequence *sequence = modelStore()->modelForRecord(
+        modelStore()->recordAtIndex(modelIndexForRow(row)));
+    if (sequenceDefinitionForRow(row) == k_sequenceDefinition) {
+      recurrenceDepth = sequence->numberOfElements() - 1;
+    }
+    App::app()->defaultToolbox()->buildExtraCellsLayouts(sequence->fullName(),
+                                                         recurrenceDepth);
   }
   return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }

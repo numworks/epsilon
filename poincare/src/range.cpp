@@ -109,7 +109,7 @@ bool Range2D::ratioIs(float r) const {
    * the interval in which numbers are indistinguishable from ratio with this
    * level of precision. */
   float tolerance =
-      std::pow(2.f, IEEE754<float>::exponent(thisRatio) - significantBits);
+      std::pow(2.f, OMG::IEEE754<float>::exponent(thisRatio) - significantBits);
   return std::fabs(thisRatio - r) <= tolerance;
 }
 

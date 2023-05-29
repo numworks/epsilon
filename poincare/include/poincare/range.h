@@ -2,9 +2,9 @@
 #define POINCARE_RANGE_H
 
 #include <assert.h>
+#include <omg/ieee754.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/float.h>
-#include <poincare/ieee754.h>
 
 #include <algorithm>
 #include <cmath>
@@ -18,8 +18,9 @@ class Range1D {
   constexpr static float k_defaultHalfLength = 10.f;
 
   static float DefaultLengthAt(float t) {
-    return std::max(std::pow(10.f, IEEE754<float>::exponentBase10(t) - 2.f),
-                    k_minLength + Float<float>::EpsilonLax());
+    return std::max(
+        std::pow(10.f, OMG::IEEE754<float>::exponentBase10(t) - 2.f),
+        k_minLength + Float<float>::EpsilonLax());
   }
   /* Given any two numbers, RangeBetween will return a range with bounds no
    * more than limit, and length no less than k_minLength. */

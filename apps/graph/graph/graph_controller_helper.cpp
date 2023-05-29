@@ -2,7 +2,7 @@
 
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/ieee754.h>
+#include <omg/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -114,7 +114,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     } else {
       // Round t to a simpler value, displayed at the same index
       double magnitude =
-          std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
+          std::pow(10.0, OMG::IEEE754<double>::exponentBase10(pixelWidth));
       t = magnitude * std::round(t / magnitude);
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(

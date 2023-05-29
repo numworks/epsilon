@@ -4,8 +4,8 @@
 #include <ion.h>
 #include <math.h>
 #include <omg/comparison.h>
+#include <omg/ieee754.h>
 #include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/zoom.h>
 #include <stddef.h>
@@ -45,7 +45,7 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
    *    [10,100]      |     1                   | 3
    *    [1,10]        |     0.1                 | 3.1                       */
   float magnitude =
-      std::pow(10.0f, Poincare::IEEE754<float>::exponentBase10(range) - 1.0f);
+      std::pow(10.0f, OMG::IEEE754<float>::exponentBase10(range) - 1.0f);
   if (isMin) {
     return magnitude * std::floor(y / magnitude);
   }

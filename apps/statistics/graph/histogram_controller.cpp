@@ -4,7 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <float.h>
-#include <poincare/ieee754.h>
+#include <omg/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -238,7 +238,7 @@ void HistogramController::initBarParameters() {
   } else {
     // Round the bar width, as we convert from float to double
     const double precision = 7.0;  // FLT_EPS ~= 1e-7
-    const double logBarWidth = IEEE754<double>::exponentBase10(barWidth);
+    const double logBarWidth = OMG::IEEE754<double>::exponentBase10(barWidth);
     const double truncateFactor = std::pow(10.0, precision - logBarWidth);
     barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
   }

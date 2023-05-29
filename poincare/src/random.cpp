@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <ion.h>
+#include <omg/ieee754.h>
 #include <poincare/complex.h>
-#include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/random.h>
 #include <poincare/serialization_helper.h>
@@ -58,7 +58,7 @@ T Random::random() {
    * for double) of representable floats in [0,1)...
    * TODO: find a way to be able to draw any float in [0,1)? */
 
-  constexpr size_t p = IEEE754<T>::k_mantissaNbBits + 1;
+  constexpr size_t p = OMG::IEEE754<T>::k_mantissaNbBits + 1;
   if (sizeof(T) == sizeof(float)) {
     uint32_t r = Ion::random() & ((static_cast<uint32_t>(1) << p) - 1);
     return static_cast<float>(r) / static_cast<float>((1 << p));

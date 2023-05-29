@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <poincare/ieee754.h>
+#include <omg/ieee754.h>
 #include <poincare/print_int.h>
 
 #include <cmath>
@@ -8,7 +8,7 @@ namespace Poincare {
 
 int PrintIntInBuffer(uint32_t integer, char* buffer, int bufferLength,
                      bool left) {
-  int wantedLength = IEEE754<double>::exponentBase10((double)integer) + 1;
+  int wantedLength = OMG::IEEE754<double>::exponentBase10((double)integer) + 1;
   assert(wantedLength > 0);
   if (bufferLength == 0 || wantedLength > bufferLength) {
     return wantedLength;

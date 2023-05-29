@@ -15,7 +15,7 @@ class ListWithTopAndBottomDataSource
         m_bottomCell(bottomView) {}
 
   int numberOfRows() const override;
-  KDCoordinate separatorBeforeRow(int index) override;
+  KDCoordinate separatorBeforeRow(int row) override;
   HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
 
@@ -26,8 +26,8 @@ class ListWithTopAndBottomDataSource
 
  protected:
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  void fillCellForRow(HighlightCell* cell, int index) override;
-  int typeAtRow(int index) const override;
+  void fillCellForRow(HighlightCell* cell, int row) override;
+  int typeAtRow(int row) const override;
   bool canSelectCellAtRow(int row) override;
   bool canStoreCellAtRow(int row) override;
 

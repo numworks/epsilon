@@ -111,8 +111,8 @@ int ResultsController::reusableCellCount(int type) {
   return 1;
 }
 
-int ResultsController::typeAtRow(int index) const {
-  if (index == numberOfRows() - 1) {
+int ResultsController::typeAtRow(int row) const {
+  if (row == numberOfRows() - 1) {
     return k_buttonCellType;
   }
   return k_resultCellType;

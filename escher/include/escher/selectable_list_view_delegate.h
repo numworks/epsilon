@@ -12,16 +12,11 @@ class SelectableListViewDelegate : public SelectableTableViewDelegate {
   virtual void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) {}
-  virtual bool canStoreContentOfCell(SelectableListView* l, int row) const {
-    return true;
-  }
 
  private:
   void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection) override final;
-  bool canStoreContentOfCellAtLocation(SelectableTableView* t, int col,
-                                       int row) const override final;
 };
 
 }  // namespace Escher

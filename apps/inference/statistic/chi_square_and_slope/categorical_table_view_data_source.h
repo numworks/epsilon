@@ -20,6 +20,9 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
     PrintValueInTextHolder(p, textHolder);
     evenOddCell->setEven(row % 2 == 1);
   }
+  bool canStoreContentOfCellAtLocation(int column, int row) override {
+    return row > 0;
+  }
 
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
   constexpr static int k_maxNumberOfReusableRows =

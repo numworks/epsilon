@@ -18,8 +18,7 @@ namespace Shared {
 
 class StoreController : public EditableCellTableViewController,
                         public Escher::ButtonRowDelegate,
-                        public StoreColumnHelper,
-                        public Escher::SelectableListViewDelegate {
+                        public StoreColumnHelper {
  public:
   StoreController(Escher::Responder* parentResponder,
                   Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
@@ -40,6 +39,9 @@ class StoreController : public EditableCellTableViewController,
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   KDCoordinate separatorBeforeColumn(int column) override;
+  bool canStoreContentOfCellAtLocation(int column, int row) override {
+    return row > 0;
+  }
 
   // ViewController
   Escher::View* view() override { return &m_prefacedTableView; }
@@ -55,12 +57,6 @@ class StoreController : public EditableCellTableViewController,
 
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
-
-  // SelectableListViewDelegate
-  bool canStoreContentOfCell(Escher::SelectableListView* t,
-                             int row) const override {
-    return row > 0;
-  }
 
   void loadMemoizedFormulasFromSnapshot();
 

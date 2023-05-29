@@ -77,21 +77,20 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
   }
 }
 
-bool CalculationController::canStoreContentOfCellAtLocation(
-    Escher::SelectableTableView *t, int col, int row) const {
-  if (!Shared::DoublePairTableController::canStoreContentOfCellAtLocation(
-          t, col, row)) {
+bool CalculationController::canStoreContentOfCellAtLocation(int column,
+                                                            int row) {
+  if (!DoublePairTableController::canStoreContentOfCellAtLocation(column,
+                                                                  row)) {
     return false;
   }
-  assert(row > 0 && col > 1);
+  assert(row > 0 && column > 1);
   const Calculation c = calculationForRow(row);
   if (c == Calculation::Regression) {
     return false;
   }
   if (c == Calculation::CorrelationCoeff || c > Calculation::Regression) {
     AbstractEvenOddBufferTextCell *bufferCell =
-        static_cast<AbstractEvenOddBufferTextCell *>(
-            t->cellAtLocation(col, row));
+        static_cast<AbstractEvenOddBufferTextCell *>(reusableCell(column, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
            strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
   }

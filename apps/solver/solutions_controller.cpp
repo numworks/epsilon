@@ -26,7 +26,7 @@ constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 SolutionsController::ContentView::ContentView(SolutionsController *controller)
     : m_warningMessageView0(I18n::Message::Default, k_warningFormat),
       m_warningMessageView1(I18n::Message::Default, k_warningFormat),
-      m_selectableTableView(controller, controller, controller, controller),
+      m_selectableTableView(controller, controller, controller),
       m_displayWarningMoreSolutions(false) {
   m_selectableTableView.setBackgroundColor(k_backgroundColor);
   m_selectableTableView.setVerticalCellOverlap(0);

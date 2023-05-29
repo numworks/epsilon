@@ -84,6 +84,14 @@ bool ListWithTopAndBottomDataSource::cellAtLocationIsSelectable(int column,
                                                        row - hasTopView());
 }
 
+bool ListWithTopAndBottomDataSource::canStoreContentOfCellAtRow(int row) {
+  if (typeAtRow(row) == k_topCellType || typeAtRow(row) == k_bottomCellType) {
+    return false;
+  }
+  assert(row >= hasTopView());
+  return m_innerDataSource->canStoreContentOfCellAtRow(row - hasTopView());
+}
+
 ListWithTopAndBottomController::ListWithTopAndBottomController(
     Responder* parentResponder, View* topView, View* bottomView)
     : SelectableViewController(parentResponder),

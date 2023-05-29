@@ -5,8 +5,6 @@
 #include <escher/list_with_top_and_bottom_controller.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/stack_view_controller.h>
-#include <ion/events.h>
 
 #include "data.h"
 #include "parameters_controller.h"

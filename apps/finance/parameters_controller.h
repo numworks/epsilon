@@ -1,5 +1,5 @@
-#ifndef FINANCE_SIMPLE_INTEREST_CONTROLLER_H
-#define FINANCE_SIMPLE_INTEREST_CONTROLLER_H
+#ifndef FINANCE_PARAMETERS_CONTROLLER_H
+#define FINANCE_PARAMETERS_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/dropdown_widget.h>
@@ -12,12 +12,12 @@
 
 namespace Finance {
 
-class InterestController : public Shared::FloatParameterController<double>,
-                           public Escher::DropdownCallback {
+class ParametersController : public Shared::FloatParameterController<double>,
+                             public Escher::DropdownCallback {
  public:
-  InterestController(Escher::StackViewController* parent,
-                     Escher::InputEventHandlerDelegate* handler,
-                     ResultController* resultController);
+  ParametersController(Escher::StackViewController* parent,
+                       Escher::InputEventHandlerDelegate* handler,
+                       ResultController* resultController);
   const char* title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

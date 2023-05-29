@@ -7,9 +7,9 @@
 #include "../shared/layout_field_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "data.h"
-#include "interest_controller.h"
 #include "interest_menu_controller.h"
 #include "menu_controller.h"
+#include "parameters_controller.h"
 #include "result_controller.h"
 
 namespace Finance {
@@ -30,7 +30,7 @@ class App : public Shared::LayoutFieldDelegateApp {
   class Snapshot : public Shared::SharedApp::Snapshot {
    public:
     /* At most 3 nested menus from MenuController :
-     * InterestMenuController, InterestController and ResultController */
+     * InterestMenuController, ParametersController and ResultController */
     constexpr static uint8_t k_maxNumberOfStacks = 3;
 
     App *unpack(Escher::Container *container) override;
@@ -73,7 +73,7 @@ class App : public Shared::LayoutFieldDelegateApp {
 
   // Controllers
   ResultController m_resultController;
-  InterestController m_interestController;
+  ParametersController m_parametersController;
   InterestMenuController m_interestMenuController;
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;

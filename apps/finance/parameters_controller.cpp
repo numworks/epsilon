@@ -1,16 +1,15 @@
-#include "interest_controller.h"
-
 #include <poincare/print.h>
 
 #include "app.h"
+#include "parameters_controller.h"
 
 using namespace Escher;
 
 namespace Finance {
 
-InterestController::InterestController(StackViewController *parent,
-                                       InputEventHandlerDelegate *handler,
-                                       ResultController *resultController)
+ParametersController::ParametersController(StackViewController *parent,
+                                           InputEventHandlerDelegate *handler,
+                                           ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
       m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController) {
@@ -21,7 +20,7 @@ InterestController::InterestController(StackViewController *parent,
   m_dropdownCell.accessory()->setDropdown(&m_dropdown);
 }
 
-const char *InterestController::title() {
+const char *ParametersController::title() {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
   const char *label =
       I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));
@@ -39,7 +38,7 @@ const char *InterestController::title() {
   return m_titleBuffer;
 }
 
-void InterestController::didBecomeFirstResponder() {
+void ParametersController::didBecomeFirstResponder() {
   // Init from data
   m_dropdownDataSource.setMessages(
       App::GetInterestData()->dropdownMessageAtIndex(0),
@@ -50,11 +49,11 @@ void InterestController::didBecomeFirstResponder() {
   ListWithTopAndBottomController::didBecomeFirstResponder();
 }
 
-bool InterestController::handleEvent(Ion::Events::Event event) {
+bool ParametersController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-void InterestController::fillCellForRow(HighlightCell *cell, int row) {
+void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
   int type = typeAtRow(row);
   if (type == k_buttonCellType) {
     return;
@@ -77,14 +76,14 @@ void InterestController::fillCellForRow(HighlightCell *cell, int row) {
   return Shared::FloatParameterController<double>::fillCellForRow(cell, row);
 }
 
-int InterestController::typeAtRow(int row) const {
+int ParametersController::typeAtRow(int row) const {
   if (row < indexOfDropdown()) {
     return k_inputCellType;
   }
   return (row == indexOfDropdown()) ? k_dropdownCellType : k_buttonCellType;
 }
 
-KDCoordinate InterestController::nonMemoizedRowHeight(int row) {
+KDCoordinate ParametersController::nonMemoizedRowHeight(int row) {
   int type = typeAtRow(row);
   if (type == k_inputCellType) {
     MenuCellWithEditableText<MessageTextView, MessageTextView> tempCell;
@@ -96,15 +95,15 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int row) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-int InterestController::numberOfRows() const {
+int ParametersController::numberOfRows() const {
   return App::GetInterestData()->numberOfParameters();
 }
 
-void InterestController::onDropdownSelected(int selectedRow) {
+void ParametersController::onDropdownSelected(int selectedRow) {
   App::GetInterestData()->m_booleanParam = (selectedRow == 0);
 }
 
-uint8_t InterestController::interestParamaterAtIndex(int index) const {
+uint8_t ParametersController::interestParamaterAtIndex(int index) const {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
   assert(unknownParam < App::GetInterestData()->numberOfUnknowns());
   if (unknownParam <= index) {
@@ -114,14 +113,14 @@ uint8_t InterestController::interestParamaterAtIndex(int index) const {
   return index;
 }
 
-int InterestController::reusableParameterCellCount(int type) {
+int ParametersController::reusableParameterCellCount(int type) {
   if (type == k_inputCellType) {
     return k_numberOfReusableInputs;
   }
   return 1;
 }
 
-HighlightCell *InterestController::reusableParameterCell(int i, int type) {
+HighlightCell *ParametersController::reusableParameterCell(int i, int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);
@@ -132,19 +131,19 @@ HighlightCell *InterestController::reusableParameterCell(int i, int type) {
   }
 }
 
-TextField *InterestController::textFieldOfCellAtIndex(HighlightCell *cell,
-                                                      int index) {
+TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
+                                                        int index) {
   assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<
              MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
       ->textField();
 }
 
-double InterestController::parameterAtIndex(int index) {
+double ParametersController::parameterAtIndex(int index) {
   return App::GetInterestData()->getValue(interestParamaterAtIndex(index));
 }
 
-bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
+bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   uint8_t param = interestParamaterAtIndex(parameterIndex);
   if (!App::GetInterestData()->checkValue(param, f)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
@@ -154,7 +153,7 @@ bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
   return true;
 }
 
-int InterestController::indexOfDropdown() const {
+int ParametersController::indexOfDropdown() const {
   return App::GetInterestData()->numberOfDoubleValues() - 1;
 }
 

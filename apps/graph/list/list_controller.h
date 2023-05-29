@@ -33,7 +33,7 @@ class ListController : public Shared::FunctionListController {
   KDCoordinate expressionRowHeight(int j) override;
   FunctionToolbox* toolbox() override;
   Shared::ListParameterController* parameterController() override;
-  bool canStoreContentOfCellAtRow(int row) override { return false; }
+  bool canStoreCellAtRow(int row) override { return false; }
 
  private:
   // 6 rows of undefined empty functions

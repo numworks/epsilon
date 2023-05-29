@@ -44,9 +44,7 @@ class ValuesController : public EditableCellTableViewController,
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
-  bool canStoreContentOfCellAtLocation(int column, int row) override {
-    return row > 0;
-  }
+  bool canStoreCellAtLocation(int column, int row) override { return row > 0; }
 
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position) const override {

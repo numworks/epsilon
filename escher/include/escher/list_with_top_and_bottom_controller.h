@@ -29,7 +29,7 @@ class ListWithTopAndBottomDataSource
   void fillCellForRow(HighlightCell* cell, int index) override;
   int typeAtRow(int index) const override;
   bool canSelectCellAtLocation(int column, int row) override;
-  bool canStoreContentOfCellAtRow(int row) override;
+  bool canStoreCellAtRow(int row) override;
 
  private:
   constexpr static int k_topCellType = 0;

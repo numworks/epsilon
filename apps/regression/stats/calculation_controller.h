@@ -44,7 +44,7 @@ class CalculationController : public Shared::DoublePairTableController {
                ? Escher::Metric::TableSeparatorThickness
                : 0;
   }
-  bool canStoreContentOfCellAtLocation(int column, int row) override;
+  bool canStoreCellAtLocation(int column, int row) override;
 
  private:
   enum class Calculation : uint8_t {

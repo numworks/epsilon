@@ -49,12 +49,10 @@ void InterestController::didBecomeFirstResponder() {
   m_dropdownDataSource.setMessages(
       App::GetInterestData()->dropdownMessageAtIndex(0),
       App::GetInterestData()->dropdownMessageAtIndex(1));
-  selectCell(0);
   m_dropdown.selectRow(App::GetInterestData()->m_booleanParam ? 0 : 1);
   m_dropdown.init();
   m_dropdown.reloadAllCells();
-  resetMemoization();
-  m_selectableListView.reloadData(true);
+  ListWithTopAndBottomController::didBecomeFirstResponder();
 }
 
 bool InterestController::handleEvent(Ion::Events::Event event) {

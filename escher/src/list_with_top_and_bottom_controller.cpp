@@ -106,6 +106,7 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
 void ListWithTopAndBottomController::didBecomeFirstResponder() {
   resetMemoization();
   selectFirstCell();
+  m_selectableListView.setContentOffset(KDPointZero);
   m_selectableListView.reloadData();
 }
 

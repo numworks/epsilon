@@ -32,7 +32,7 @@ const char *ListParameterController::title() {
 bool ListParameterController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return event == Ion::Events::Down || event == Ion::Events::Up ||
-         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ListParameterController::textFieldDidFinishEditing(

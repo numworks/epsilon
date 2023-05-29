@@ -12,7 +12,7 @@ namespace Calculation {
 
 /* TODO: implement a split view */
 class EditExpressionController : public Escher::ViewController,
-                                 public Shared::MathFieldDelegate {
+                                 public Shared::MathLayoutFieldDelegate {
  public:
   /* k_layoutBufferMaxSize dictates the size under which the expression being
    * edited can be remembered when the user leaves Calculation. */
@@ -33,7 +33,7 @@ class EditExpressionController : public Escher::ViewController,
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  /* MathFieldDelegate */
+  /* MathLayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool layoutFieldDidHandleEvent(Escher::LayoutField* layoutField,

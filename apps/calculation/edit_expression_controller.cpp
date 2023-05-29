@@ -104,7 +104,8 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
       calculationIsEmpty) {
     return true;
   }
-  return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
+                                                             event);
 }
 
 bool EditExpressionController::layoutFieldDidHandleEvent(

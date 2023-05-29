@@ -186,7 +186,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       }
     }
   }
-  return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
+                                                             event);
 }
 
 CodePoint ListController::XNT() {

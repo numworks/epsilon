@@ -67,7 +67,7 @@ class CategoricalTableCell : public Escher::HighlightCell,
 
 class InputCategoricalTableCell
     : public CategoricalTableCell,
-      public Shared::MathFieldDelegate,
+      public Shared::MathTextFieldDelegate,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
       public Shared::ClearColumnHelper {
  public:

@@ -8,7 +8,7 @@ namespace Shared {
 /* This textField delegate implements the behaviour of textField delegate in
  * parameter menu. */
 
-class ParameterTextFieldDelegate : public MathFieldDelegate {
+class ParameterTextFieldDelegate : public MathTextFieldDelegate {
  public:
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;

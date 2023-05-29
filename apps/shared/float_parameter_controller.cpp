@@ -88,7 +88,7 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(
   return (event == Ion::Events::Down &&
           innerSelectedRow() < numberOfRows() - 1) ||
          (event == Ion::Events::Up && innerSelectedRow() > 0) ||
-         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 template <typename T>

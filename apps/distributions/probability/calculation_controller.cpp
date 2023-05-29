@@ -194,7 +194,8 @@ bool CalculationController::textFieldDidHandleEvent(
 
 bool CalculationController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  return MathFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
+  return MathTextFieldDelegate::textFieldShouldFinishEditing(textField,
+                                                             event) ||
          (event == Ion::Events::Right &&
           textField->cursorLocation() ==
               textField->text() + textField->draftTextLength() &&

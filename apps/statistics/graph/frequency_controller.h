@@ -9,7 +9,7 @@
 namespace Statistics {
 
 class FrequencyController : public PlotController,
-                            public Shared::MathFieldDelegate {
+                            public Shared::MathTextFieldDelegate {
  public:
   FrequencyController(Escher::Responder *parentResponder,
                       Escher::ButtonRowController *header,

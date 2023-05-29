@@ -1,13 +1,13 @@
 #ifndef SETTINGS_APP_H
 #define SETTINGS_APP_H
 
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 
 #include "main_controller.h"
 
 namespace Settings {
 
-class App : public Shared::SharedApp {
+class App : public Shared::MathApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:

@@ -42,7 +42,7 @@ App::Snapshot::Snapshot()
     : m_calculationStore(m_calculationBuffer, k_calculationBufferSize) {}
 
 App::App(Snapshot *snapshot)
-    : SharedAppWithStoreMenu(snapshot, &m_editExpressionController),
+    : MathAppWithStoreMenu(snapshot, &m_editExpressionController),
       m_historyController(&m_editExpressionController,
                           snapshot->calculationStore()),
       m_editExpressionController(&m_modalViewController, this,

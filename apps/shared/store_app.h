@@ -2,15 +2,15 @@
 #define STORE_APP_H
 
 #include <apps/shared/double_pair_store.h>
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 #include <apps/shared/store_controller.h>
 #include <escher/tab_view_data_source.h>
 
 namespace Shared {
 
-class StoreApp : public SharedAppWithStoreMenu {
+class StoreApp : public MathAppWithStoreMenu {
  public:
-  class Snapshot : public Shared::SharedAppWithStoreMenu::Snapshot,
+  class Snapshot : public Shared::MathAppWithStoreMenu::Snapshot,
                    public Escher::TabViewDataSource {
    public:
     Snapshot();
@@ -37,7 +37,7 @@ class StoreApp : public SharedAppWithStoreMenu {
   }
 
  protected:
-  using SharedAppWithStoreMenu::SharedAppWithStoreMenu;
+  using MathAppWithStoreMenu::MathAppWithStoreMenu;
   virtual StoreController *storeController() = 0;
 
  private:

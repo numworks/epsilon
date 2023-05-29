@@ -13,8 +13,6 @@
 #include "exam_pop_up_controller.h"
 #include "hardware_test/app.h"
 #include "home/app.h"
-#include "math_toolbox.h"
-#include "math_variable_box_controller.h"
 #include "on_boarding/app.h"
 #include "on_boarding/prompt_controller.h"
 #include "shared/global_context.h"
@@ -37,8 +35,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
   void setExamMode(Poincare::ExamMode targetExamMode);
   Shared::GlobalContext* globalContext();
-  MathToolbox* mathToolbox();
-  MathVariableBoxController* variableBoxController();
   void didSuspend(bool checkIfOnOffKeyReleased = false);
   bool dispatchEvent(Ion::Events::Event event) override;
   void switchToBuiltinApp(Escher::App::Snapshot* snapshot) override;
@@ -82,8 +78,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;
-  MathToolbox m_mathToolbox;
-  MathVariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
   OnBoarding::PromptController m_promptController;
   BatteryTimer m_batteryTimer;

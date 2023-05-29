@@ -94,12 +94,6 @@ Shared::GlobalContext* AppsContainer::globalContext() {
   return &m_globalContext;
 }
 
-MathToolbox* AppsContainer::mathToolbox() { return &m_mathToolbox; }
-
-MathVariableBoxController* AppsContainer::variableBoxController() {
-  return &m_variableBoxController;
-}
-
 void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences* globalPreferences =

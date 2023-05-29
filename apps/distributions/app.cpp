@@ -18,7 +18,7 @@ App *App::Snapshot::unpack(Container *container) {
 }
 
 App::App(Snapshot *snapshot, Poincare::Context *parentContext)
-    : SharedAppWithStoreMenu(snapshot, &m_stackViewController),
+    : MathAppWithStoreMenu(snapshot, &m_stackViewController),
       m_calculationController(&m_stackViewController, this,
                               snapshot->distribution(),
                               snapshot->calculation()),

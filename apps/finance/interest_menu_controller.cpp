@@ -1,12 +1,8 @@
 #include "interest_menu_controller.h"
 
-#include <apps/i18n.h>
-#include <assert.h>
-#include <escher/container.h>
-
 #include "app.h"
 
-using namespace Finance;
+namespace Finance {
 
 InterestMenuController::InterestMenuController(
     Escher::StackViewController* parentResponder,
@@ -51,3 +47,5 @@ uint8_t InterestMenuController::paramaterAtIndex(int index) const {
   assert(index >= 0 && index < App::GetInterestData()->numberOfUnknowns());
   return index;
 }
+
+}  // namespace Finance

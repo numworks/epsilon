@@ -74,13 +74,12 @@ int ListWithTopAndBottomDataSource::typeAtRow(int index) const {
   return m_innerDataSource->typeAtRow(index - hasTopView()) + k_cellTypeOffset;
 }
 
-bool ListWithTopAndBottomDataSource::canSelectCellAtLocation(int column,
-                                                             int row) {
+bool ListWithTopAndBottomDataSource::canSelectCellAtRow(int row) {
   if (typeAtRow(row) == k_topCellType || typeAtRow(row) == k_bottomCellType) {
     return false;
   }
   assert(row >= hasTopView());
-  return m_innerDataSource->canSelectCellAtLocation(column, row - hasTopView());
+  return m_innerDataSource->canSelectCellAtRow(row - hasTopView());
 }
 
 bool ListWithTopAndBottomDataSource::canStoreCellAtRow(int row) {

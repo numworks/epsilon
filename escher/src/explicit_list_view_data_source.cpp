@@ -29,11 +29,11 @@ void ExplicitListViewDataSource::initCellSize(TableView* view) {
   ListViewDataSource::initCellSize(view);
 }
 
-bool ExplicitListViewDataSource::canSelectCellAtLocation(int column, int row) {
+bool ExplicitListViewDataSource::canSelectCellAtRow(int row) {
   /* This controller owns all its cells so even when cellAtLocation(column, row)
    * is nullptr, we can access the cell via the method cell(row) and we can
    * check if the cell is selectable or not. */
-  assert(column >= 0 && column < 1 && row >= 0 && row < numberOfRows());
+  assert(row >= 0 && row < numberOfRows());
   assert(cell(row));
   return cell(row)->isVisible();
 }

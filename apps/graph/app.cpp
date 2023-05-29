@@ -79,6 +79,6 @@ App::ValuesTab::ValuesTab()
 App::App(Snapshot* snapshot)
     : FunctionApp(snapshot, &m_tabs, ListTab::k_title),
       m_functionParameterController(this, I18n::Message::FunctionColor,
-                                    I18n::Message::DeleteExpression, this) {}
+                                    I18n::Message::DeleteExpression) {}
 
 }  // namespace Graph

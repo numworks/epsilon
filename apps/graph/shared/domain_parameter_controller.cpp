@@ -11,10 +11,8 @@ using namespace Poincare;
 
 namespace Graph {
 
-DomainParameterController::DomainParameterController(
-    Responder* parentResponder,
-    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate)
-    : Shared::SingleRangeController(parentResponder, inputEventHandlerDelegate,
+DomainParameterController::DomainParameterController(Responder* parentResponder)
+    : Shared::SingleRangeController(parentResponder, this,
                                     &m_confirmPopUpController),
       m_confirmPopUpController(Invocation::Builder<DomainParameterController>(
           [](DomainParameterController* controller, void* sender) {
@@ -60,6 +58,10 @@ bool DomainParameterController::textFieldDidAbortEditing(
     AbstractTextField* textField) {
   switchToolboxContent(textField, false);
   return false;
+}
+
+FunctionToolbox* DomainParameterController::toolbox() {
+  return App::app()->functionToolbox();
 }
 
 I18n::Message DomainParameterController::parameterMessage(int index) const {
@@ -140,8 +142,7 @@ void DomainParameterController::switchToolboxContent(
   } else {
     content = FunctionToolbox::AddedCellsContent::ComparisonOperators;
   }
-  FunctionToolbox* toolbox = App::app()->functionToolbox();
-  toolbox->setAddedCellsContent(content);
+  toolbox()->setAddedCellsContent(content);
 }
 
 }  // namespace Graph

@@ -24,7 +24,7 @@ class TableViewDataSource {
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
   virtual void fillCellForLocation(HighlightCell* cell, int column, int row);
-  virtual bool cellAtLocationIsSelectable(int column, int row) { return true; }
+  virtual bool canSelectCellAtLocation(int column, int row) { return true; }
   virtual bool canStoreContentOfCellAtLocation(int column, int row) {
     return true;
   }

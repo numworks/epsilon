@@ -44,7 +44,7 @@ class DoublePairTableController
   KDCoordinate columnPrefaceRightMargin() override;
 
   // RegularHeightTableViewDataSource
-  bool cellAtLocationIsSelectable(int column, int row) override {
+  bool canSelectCellAtLocation(int column, int row) override {
     return row > 0 || column > 1;
   }
   bool canStoreContentOfCellAtLocation(int column, int row) override {

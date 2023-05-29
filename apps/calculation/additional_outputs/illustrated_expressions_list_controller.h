@@ -33,7 +33,7 @@ class IllustratedExpressionsListController
                                           : k_expressionCellType;
   }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
-  bool cellAtLocationIsSelectable(int column, int row) override {
+  bool canSelectCellAtLocation(int column, int row) override {
     return typeAtRow(row) != k_illustrationCellType;
   }
 

@@ -42,7 +42,7 @@ class DetailsParameterController
   DetailCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtRow(int row) const override { return 0; }
-  bool canStoreContentOfCellAtRow(int row) override {
+  bool canStoreCellAtRow(int row) override {
     return row != k_indexOfCurveTypeRow;
   }
 

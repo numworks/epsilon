@@ -79,7 +79,7 @@ void DetailsListController::fillCellForRow(HighlightCell *cell, int row) {
   typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
 }
 
-bool DetailsListController::canStoreContentOfCellAtRow(int row) {
+bool DetailsListController::canStoreCellAtRow(int row) {
   const DataField *dataField = DataFieldForRow(row);
   Layout layout = DataFieldForRow(row)->getLayout(
       App::app()->elementsViewDataSource()->selectedElement(),

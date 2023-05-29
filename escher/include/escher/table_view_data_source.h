@@ -25,9 +25,7 @@ class TableViewDataSource {
   virtual int numberOfColumns() const = 0;
   virtual void fillCellForLocation(HighlightCell* cell, int column, int row);
   virtual bool canSelectCellAtLocation(int column, int row) { return true; }
-  virtual bool canStoreContentOfCellAtLocation(int column, int row) {
-    return true;
-  }
+  virtual bool canStoreCellAtLocation(int column, int row) { return true; }
 
   KDCoordinate columnWidth(int column, bool withSeparator = true);
   KDCoordinate rowHeight(int row, bool withSeparator = true);

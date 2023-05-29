@@ -34,7 +34,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
   // Escher::ListViewDataSource
   int typeAtRow(int row) const override { return 0; }
   void fillCellForRow(Escher::HighlightCell *cell, int row) override;
-  bool canStoreContentOfCellAtRow(int row) override;
+  bool canStoreCellAtRow(int row) override;
 
  private:
   constexpr static size_t k_numberOfRows = 13;

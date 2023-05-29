@@ -83,12 +83,12 @@ bool ListWithTopAndBottomDataSource::canSelectCellAtLocation(int column,
   return m_innerDataSource->canSelectCellAtLocation(column, row - hasTopView());
 }
 
-bool ListWithTopAndBottomDataSource::canStoreContentOfCellAtRow(int row) {
+bool ListWithTopAndBottomDataSource::canStoreCellAtRow(int row) {
   if (typeAtRow(row) == k_topCellType || typeAtRow(row) == k_bottomCellType) {
     return false;
   }
   assert(row >= hasTopView());
-  return m_innerDataSource->canStoreContentOfCellAtRow(row - hasTopView());
+  return m_innerDataSource->canStoreCellAtRow(row - hasTopView());
 }
 
 ListWithTopAndBottomController::ListWithTopAndBottomController(

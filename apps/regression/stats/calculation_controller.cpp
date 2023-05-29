@@ -77,10 +77,8 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
   }
 }
 
-bool CalculationController::canStoreContentOfCellAtLocation(int column,
-                                                            int row) {
-  if (!DoublePairTableController::canStoreContentOfCellAtLocation(column,
-                                                                  row)) {
+bool CalculationController::canStoreCellAtLocation(int column, int row) {
+  if (!DoublePairTableController::canStoreCellAtLocation(column, row)) {
     return false;
   }
   assert(row > 0 && column > 1);

@@ -54,7 +54,7 @@ class SolutionsController : public Escher::ViewController,
     return typeAtLocation(column, row) != k_messageCellType &&
            typeAtLocation(column, row) != k_emptyCellType;
   }
-  bool canStoreContentOfCellAtLocation(int column, int row) override {
+  bool canStoreCellAtLocation(int column, int row) override {
     return column > 0;
   }
 

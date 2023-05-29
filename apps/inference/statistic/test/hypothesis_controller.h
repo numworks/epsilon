@@ -44,7 +44,7 @@ class HypothesisController
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_next ? k_defaultRowSeparator : 0;
   }
-  bool canStoreContentOfCellAtRow(int row) override { return false; }
+  bool canStoreCellAtRow(int row) override { return false; }
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,

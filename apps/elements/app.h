@@ -53,6 +53,22 @@ class App : public Shared::MathAppWithStoreMenu {
   }
   ElementsViewDataSource *elementsViewDataSource() { return &m_dataSource; }
 
+  /* TODO: Currently the app class hierarchy makes it so every app that uses the
+   * store menu owns a MathToolbox and a MathVariableBox. But elements should
+   * not use any toolbox, yet still use the store menu. So the Toolbox and
+   * Varbox take up some space for no reason. This is not a problem because the
+   * Elements app is very small, but the app hierarchy could should maybe be
+   * templated to accept a store menu independently from having a MathToolbox.
+   */
+  MathToolbox *toolbox() override {
+    assert(false);
+    return nullptr;
+  }
+  MathVariableBoxController *variableBox() override {
+    assert(false);
+    return nullptr;
+  }
+
  private:
   App(Snapshot *snapshot);
 

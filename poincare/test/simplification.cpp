@@ -1412,7 +1412,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
 
   assert_parsed_expression_simplify_to("acos(cos(12))", "4×π-12");
-  assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "20000000000");
+  assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))",
+                                       "arccos(cos(20000000000))");
   assert_parsed_expression_simplify_to("acos(cos(inf))", "arccos(cos(∞))");
   assert_parsed_expression_simplify_to("acos(cos(9))", "-2×π+9");
   assert_parsed_expression_simplify_to("acos(cos(10^125))",
@@ -1474,6 +1475,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("asin(sin(400))", "40", User, Degree);
   assert_parsed_expression_simplify_to("asin(sin(-180/7))", "-180/7", User,
                                        Degree);
+  assert_parsed_expression_simplify_to("arcsin(sin(10^10))",
+                                       "arcsin(sin(10000000000))");
   // -- atan
   assert_parsed_expression_simplify_to("atan(-1)", "-π/4");
   assert_parsed_expression_simplify_to("atan(-1.2)", "-arctan(6/5)");

@@ -80,7 +80,7 @@ class App : public Shared::LayoutFieldDelegateApp,
 
   constexpr static int k_bufferSize =  // 21056
       std::max({sizeof(ResultCell) * k_maxNumberOfResultCells,
-                sizeof(InputParameterCell) * k_maxNumberOfInputParameterCell,
+                sizeof(ParameterCell) * k_maxNumberOfParameterCell,
                 sizeof(InferenceEvenOddBufferCell) *
                     (k_homogeneityTableNumberOfReusableHeaderCells +
                      k_homogeneityTableNumberOfReusableInnerCells),

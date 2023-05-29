@@ -17,8 +17,7 @@ InputController::InputController(Escher::StackViewController *parent,
                                  Statistic *statistic,
                                  Escher::InputEventHandlerDelegate *handler)
     : FloatParameterController<double>(parent),
-      DynamicCellsDataSource<InputParameterCell,
-                             k_maxNumberOfInputParameterCell>(this),
+      DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
       m_statistic(statistic),
       m_resultsController(resultsController),
       m_significanceCell(&m_selectableListView, handler, this) {
@@ -27,14 +26,14 @@ InputController::InputController(Escher::StackViewController *parent,
 
 KDCoordinate InputController::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_parameterCellType) {
-    InputParameterCell tempCell;
+    ParameterCell tempCell;
     return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
   }
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-void InputController::initCell(InputParameterCell, void *cell, int index) {
-  InputParameterCell *c = static_cast<InputParameterCell *>(cell);
+void InputController::initCell(ParameterCell, void *cell, int index) {
+  ParameterCell *c = static_cast<ParameterCell *>(cell);
   c->setParentResponder(&m_selectableListView);
   c->setDelegates(App::app(), this);
 }
@@ -104,7 +103,7 @@ void InputController::buttonAction() {
 
 void InputController::fillCellForRow(Escher::HighlightCell *cell, int row) {
   if (row < m_statistic->indexOfThreshold()) {
-    InputParameterCell *mCell = static_cast<InputParameterCell *>(cell);
+    ParameterCell *mCell = static_cast<ParameterCell *>(cell);
     mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(row));
     mCell->subLabel()->setMessage(m_statistic->parameterDefinitionAtIndex(row));
   } else if (typeAtRow(row) == k_significanceCellType) {
@@ -146,7 +145,7 @@ TextField *InputController::textFieldOfCellAtIndex(HighlightCell *cell,
     return m_significanceCell.textField();
   }
   assert(typeAtRow(index) == k_parameterCellType);
-  return static_cast<InputParameterCell *>(cell)->textField();
+  return static_cast<ParameterCell *>(cell)->textField();
 }
 
 bool InputController::handleEvent(Ion::Events::Event event) {

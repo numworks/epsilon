@@ -87,7 +87,7 @@ class HypothesisController
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 
-  InputParameterCell m_h0;
+  ParameterCell m_h0;
   Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                    Escher::DropdownWidget>
       m_ha;

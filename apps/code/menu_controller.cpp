@@ -88,6 +88,12 @@ void MenuController::didBecomeFirstResponder() {
 void MenuController::viewWillAppear() {
   ViewController::viewWillAppear();
   updateAddScriptRowDisplay();
+  App::app()->allowBoxes(false);
+}
+
+void MenuController::viewDidDisappear() {
+  ViewController::viewWillAppear();
+  App::app()->allowBoxes(true);
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {

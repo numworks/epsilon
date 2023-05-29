@@ -186,10 +186,6 @@ void ConsoleController::didBecomeFirstResponder() {
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    prepareVariableBox();
-    return false;
-  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 &&
         m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
@@ -312,6 +308,9 @@ bool ConsoleController::textFieldShouldFinishEditing(
 
 bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField *textField,
                                                  Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    prepareVariableBox();
+  }
   if (m_inputRunLoopActive &&
       (event == Ion::Events::Up || event == Ion::Events::OK ||
        event == Ion::Events::EXE)) {

@@ -48,10 +48,6 @@ void EditorController::setScript(Script script, int scriptIndex) {
 void EditorController::willExitApp() { cleanStorageEmptySpace(); }
 
 bool EditorController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    prepareVariableBox();
-    return false;
-  }
   // TODO: this should be done in textAreaDidFinishEditing maybe??
   if (event == Ion::Events::OK || event == Ion::Events::Back ||
       event == Ion::Events::Home || event == Ion::Events::USBEnumeration) {
@@ -84,6 +80,10 @@ void EditorController::viewDidDisappear() {
 
 bool EditorController::textAreaDidReceiveEvent(TextArea *textArea,
                                                Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    prepareVariableBox();
+    return false;
+  }
   if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }

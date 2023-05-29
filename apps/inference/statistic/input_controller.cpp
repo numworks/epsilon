@@ -93,11 +93,6 @@ int InputController::typeAtRow(int row) const {
   return FloatParameterController<double>::typeAtRow(row);
 }
 
-void InputController::didBecomeFirstResponder() {
-  selectCell(0);
-  Shared::FloatParameterController<double>::didBecomeFirstResponder();
-}
-
 void InputController::buttonAction() {
   if (!m_statistic->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);

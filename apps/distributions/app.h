@@ -1,7 +1,7 @@
 #ifndef DISTRIBUTIONS_APP_H
 #define DISTRIBUTIONS_APP_H
 
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 #include <escher/stack_view_controller.h>
 #include <ion/ring_buffer.h>
 
@@ -11,7 +11,7 @@
 
 namespace Distributions {
 
-class App : public Shared::SharedAppWithStoreMenu {
+class App : public Shared::MathAppWithStoreMenu {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

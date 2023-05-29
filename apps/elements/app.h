@@ -1,7 +1,7 @@
 #ifndef ELEMENTS_APP_H
 #define ELEMENTS_APP_H
 
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 
@@ -10,7 +10,7 @@
 
 namespace Elements {
 
-class App : public Shared::SharedAppWithStoreMenu {
+class App : public Shared::MathAppWithStoreMenu {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:

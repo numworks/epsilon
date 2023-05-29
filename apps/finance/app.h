@@ -2,7 +2,7 @@
 #define FINANCE_APP_H
 
 #include <apps/i18n.h>
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 #include <escher/stack_view_controller.h>
 
 #include "data.h"
@@ -13,7 +13,7 @@
 
 namespace Finance {
 
-class App : public Shared::SharedAppWithStoreMenu {
+class App : public Shared::MathAppWithStoreMenu {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

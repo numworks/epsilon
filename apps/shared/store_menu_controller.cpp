@@ -5,8 +5,8 @@
 #include <poincare/store.h>
 
 #include "expression_display_permissions.h"
+#include "math_app.h"
 #include "poincare_helpers.h"
-#include "shared_app.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -119,8 +119,8 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char* text) {
-  SharedAppWithStoreMenu* app =
-      static_cast<SharedAppWithStoreMenu*>(Container::activeApp());
+  MathAppWithStoreMenu* app =
+      static_cast<MathAppWithStoreMenu*>(Container::activeApp());
   Poincare::Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {

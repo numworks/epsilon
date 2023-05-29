@@ -1,7 +1,7 @@
 #ifndef HOME_APP_H
 #define HOME_APP_H
 
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/selectable_table_view_data_source.h>

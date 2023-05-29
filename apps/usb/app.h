@@ -1,7 +1,7 @@
 #ifndef USB_APP_H
 #define USB_APP_H
 
-#include <apps/shared/shared_app.h>
+#include <apps/shared/math_app.h>
 
 #include "escher/include/escher/app.h"
 #include "usb_connected_controller.h"

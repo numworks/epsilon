@@ -1,8 +1,8 @@
 #ifndef INFERENCE_APP_H
 #define INFERENCE_APP_H
 
+#include <apps/shared/math_app.h>
 #include <apps/shared/menu_controller.h>
-#include <apps/shared/shared_app.h>
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
@@ -25,7 +25,8 @@
 
 namespace Inference {
 
-class App : public Shared::SharedApp, public Shared::MenuControllerDelegate {
+class App : public Shared::MathAppWithStoreMenu,
+            public Shared::MenuControllerDelegate {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

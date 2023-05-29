@@ -17,6 +17,7 @@ class ListViewDataSource : public TableViewDataSource {
   int reusableCellCount(int type) override { return numberOfRows(); }
   virtual void fillCellForRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
+  virtual bool canSelectCellAtRow(int row) { return true; }
   virtual bool canStoreCellAtRow(int row) { return true; }
 
  protected:
@@ -40,6 +41,9 @@ class ListViewDataSource : public TableViewDataSource {
   int typeAtLocation(int column, int row) override final {
     assert(column == 0);
     return typeAtRow(row);
+  }
+  bool canSelectCellAtLocation(int column, int row) override final {
+    return canSelectCellAtRow(row);
   }
   bool canStoreCellAtLocation(int column, int row) override final {
     return canStoreCellAtRow(row);

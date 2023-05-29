@@ -28,7 +28,7 @@ class ListWithTopAndBottomDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void fillCellForRow(HighlightCell* cell, int index) override;
   int typeAtRow(int index) const override;
-  bool canSelectCellAtLocation(int column, int row) override;
+  bool canSelectCellAtRow(int row) override;
   bool canStoreCellAtRow(int row) override;
 
  private:

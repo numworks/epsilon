@@ -10,7 +10,7 @@ namespace Shared {
  * can handles zoom in/out and left and right events. */
 
 class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
-                                             public MathFieldDelegate {
+                                             public MathTextFieldDelegate {
  public:
   SimpleInteractiveCurveViewController(Escher::Responder *parentResponder,
                                        CurveViewCursor *cursor)

@@ -146,7 +146,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       }
     }
   }
-  if (MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)) {
+  if (MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)) {
     return true;
   }
   return false;
@@ -177,7 +177,7 @@ void ListController::layoutFieldDidAbortEditing(
 bool ListController::isAcceptableExpression(const Poincare::Expression exp) {
   /* Complete SharedApp acceptable conditions by only accepting
    * the Equal OperatorType in the list of equations. */
-  return MathFieldDelegate::isAcceptableExpression(exp) &&
+  return MathLayoutFieldDelegate::isAcceptableExpression(exp) &&
          Poincare::ComparisonNode::IsBinaryEquality(exp);
 }
 

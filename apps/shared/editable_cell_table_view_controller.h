@@ -18,7 +18,7 @@ class ColumnParameterController;
 
 class EditableCellTableViewController : public TabTableController,
                                         public Escher::TableViewDataSource,
-                                        public MathFieldDelegate,
+                                        public MathTextFieldDelegate,
                                         public ClearColumnHelper {
  public:
   EditableCellTableViewController(

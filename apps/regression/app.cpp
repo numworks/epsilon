@@ -104,7 +104,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
               snapshot->storePreferences(), snapshot->regressionTypes()),
       m_regressionController(nullptr, &m_store),
       m_inputViewController(&m_modalViewController, &m_tabViewController,
-                            MathFieldDelegate::Default()),
+                            MathLayoutFieldDelegate::Default()),
       m_context(parentContext),
       m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {}
 

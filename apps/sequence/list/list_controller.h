@@ -36,7 +36,7 @@ class ListController : public Shared::FunctionListController {
   bool handleEvent(Ion::Events::Event event) override;
   void showLastSequence();
 
-  /* MathFieldDelegate */
+  /* MathLayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool isAcceptableExpression(const Poincare::Expression expression) override;

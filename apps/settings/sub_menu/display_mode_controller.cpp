@@ -62,7 +62,7 @@ void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
 bool DisplayModeController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return (event == Ion::Events::Up && selectedRow() > 0) ||
-         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool DisplayModeController::textFieldDidFinishEditing(

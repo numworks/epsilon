@@ -25,7 +25,8 @@ EditableCellTableViewController::EditableCellTableViewController(
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  return MathFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
+  return MathTextFieldDelegate::textFieldShouldFinishEditing(textField,
+                                                             event) ||
          (event == Ion::Events::Down && selectedRow() < numberOfRows()) ||
          (event == Ion::Events::Up && selectedRow() > 0) ||
          (event == Ion::Events::Right &&

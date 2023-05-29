@@ -182,7 +182,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   ;
 }
 
-/* MathFieldDelegate */
+/* MathLayoutFieldDelegate */
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   // Do not accept empty input
@@ -203,12 +203,13 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     App::app()->defaultToolbox()->buildExtraCellsLayouts(sequence->fullName(),
                                                          recurrenceDepth);
   }
-  return MathFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
+                                                             event);
 }
 
 bool ListController::isAcceptableExpression(const Expression expression) {
   // Do not accept any OperatorType.
-  return MathFieldDelegate::isAcceptableExpression(expression) &&
+  return MathLayoutFieldDelegate::isAcceptableExpression(expression) &&
          expression.type() != ExpressionNode::Type::Comparison;
 }
 

@@ -71,7 +71,7 @@ bool ExplicitFloatParameterController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows() - 1) ||
          (event == Ion::Events::Up && selectedRow() > 0) ||
-         MathFieldDelegate::textFieldShouldFinishEditing(textField, event);
+         MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ExplicitFloatParameterController::textFieldDidFinishEditing(

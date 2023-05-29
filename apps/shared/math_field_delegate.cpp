@@ -12,114 +12,9 @@ using namespace Escher;
 
 namespace Shared {
 
-MathFieldDelegate *MathFieldDelegate::Default() {
-  static MathFieldDelegate s_defaultMathFieldDelegate;
-  return &s_defaultMathFieldDelegate;
-}
-
-bool MathFieldDelegate::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool MathFieldDelegate::textFieldDidReceiveEvent(AbstractTextField *textField,
-                                                 Ion::Events::Event event) {
-  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    if (textField->text()[0] == 0) {
-      // Empty field, let the textfield handle the event
-      return false;
-    }
-    if (!isAcceptableText(textField->text())) {
-      return true;
-    }
-  }
-  if (fieldDidReceiveEvent(textField, textField, event)) {
-    return true;
-  }
-  return false;
-}
-
-bool MathFieldDelegate::layoutFieldShouldFinishEditing(
-    LayoutField *layoutField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool MathFieldDelegate::layoutFieldDidReceiveEvent(LayoutField *layoutField,
-                                                   Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (layoutField->isEmpty()) {
-      // Accept empty fields
-      return false;
-    }
-    /* An acceptable layout has to be parsable and serialized in a fixed-size
-     * buffer. We check all that here. */
-    /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
-     * not displayed, like:
-     * - 2a
-     * - log_{2}(x) */
-    constexpr int bufferSize = TextField::MaxBufferSize();
-    char buffer[bufferSize];
-    int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
-    if (length >= bufferSize - 1) {
-      /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
-       * escaped before printing utterly the expression. */
-      App()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    /* Step 2: Parsing
-     * Do not parse for assignment to detect if there is a syntax error, since
-     * some errors could be missed.
-     * Sometimes the field needs to be parsed for assignment but this is
-     * done later, namely by ContinuousFunction::buildExpressionFromText.
-     */
-    Poincare::Expression e = Poincare::Expression::Parse(
-        buffer, layoutField->context(), true, false);
-    if (e.isUninitialized()) {
-      // Unparsable expression
-      App()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    /* Step 3: Expression serialization. Resulting texts are parseable and
-     * displayable, like:
-     * - 2*a
-     * - log(x,2) */
-    length =
-        e.serialize(buffer, bufferSize,
-                    Poincare::Preferences::sharedPreferences->displayMode());
-    if (length >= bufferSize - 1) {
-      // Same comment as before
-      App()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    if (!isAcceptableExpression(e)) {
-      App()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-  }
-  if (fieldDidReceiveEvent(layoutField, layoutField, event)) {
-    return true;
-  }
-  return false;
-}
-
-bool MathFieldDelegate::isAcceptableExpression(const Expression exp) {
-  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
-         ExpressionCanBeSerialized(exp, false, Poincare::Expression(),
-                                   context());
-}
-
-bool MathFieldDelegate::isAcceptableText(const char *text) {
-  Expression exp = Expression::Parse(text, context());
-  bool isAcceptable = isAcceptableExpression(exp);
-  if (!isAcceptable) {
-    App()->displayWarning(I18n::Message::SyntaxError);
-  }
-  return isAcceptable;
-}
-
-bool MathFieldDelegate::fieldDidReceiveEvent(EditableField *field,
-                                             Responder *responder,
-                                             Ion::Events::Event event) {
+bool AbstractMathFieldDelegate::fieldDidReceiveEvent(EditableField *field,
+                                                     Responder *responder,
+                                                     Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
     CodePoint defaultXNT = XNT();
     int XNTIndex = Ion::Events::repetitionFactor();
@@ -144,32 +39,19 @@ bool MathFieldDelegate::fieldDidReceiveEvent(EditableField *field,
   return false;
 }
 
-CodePoint MathFieldDelegate::XNT() {
+CodePoint AbstractMathFieldDelegate::XNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-template <typename T>
-T MathFieldDelegate::ParseInputtedFloatValue(const char *text) {
-  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(
-      text, App()->localContext());
+bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp) {
+  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
+         ExpressionCanBeSerialized(exp, false, Poincare::Expression(),
+                                   Container::activeApp()->localContext());
 }
 
-template <typename T>
-bool MathFieldDelegate::HasUndefinedValue(T value, bool enablePlusInfinity,
-                                          bool enableMinusInfinity) {
-  bool isUndefined = std::isnan(value) ||
-                     (!enablePlusInfinity && value > 0 && std::isinf(value)) ||
-                     (!enableMinusInfinity && value < 0 && std::isinf(value));
-  if (isUndefined) {
-    App()->displayWarning(I18n::Message::UndefinedValue);
-  }
-  return isUndefined;
-}
-
-bool MathFieldDelegate::ExpressionCanBeSerialized(const Expression expression,
-                                                  bool replaceAns,
-                                                  Expression ansExpression,
-                                                  Context *context) {
+bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
+    const Expression expression, bool replaceAns, Expression ansExpression,
+    Context *context) {
   if (expression.isUninitialized()) {
     return false;
   }
@@ -197,10 +79,135 @@ bool MathFieldDelegate::ExpressionCanBeSerialized(const Expression expression,
   return true;
 }
 
-template float MathFieldDelegate::ParseInputtedFloatValue<float>(const char *);
-template double MathFieldDelegate::ParseInputtedFloatValue<double>(
+bool AbstractMathFieldDelegate::isAcceptableText(const char *text) {
+  Expression exp =
+      Expression::Parse(text, Container::activeApp()->localContext());
+  bool isAcceptable = isAcceptableExpression(exp);
+  if (!isAcceptable) {
+    Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
+  }
+  return isAcceptable;
+}
+
+MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
+  static MathLayoutFieldDelegate s_defaultMathLayoutFieldDelegate;
+  return &s_defaultMathLayoutFieldDelegate;
+}
+
+bool MathLayoutFieldDelegate::layoutFieldShouldFinishEditing(
+    LayoutField *layoutField, Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
+}
+
+bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
+    LayoutField *layoutField, Ion::Events::Event event) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
+    if (layoutField->isEmpty()) {
+      // Accept empty fields
+      return false;
+    }
+    App *app = Container::activeApp();
+    /* An acceptable layout has to be parsable and serialized in a fixed-size
+     * buffer. We check all that here. */
+    /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
+     * not displayed, like:
+     * - 2a
+     * - log_{2}(x) */
+    constexpr int bufferSize = TextField::MaxBufferSize();
+    char buffer[bufferSize];
+    int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
+    if (length >= bufferSize - 1) {
+      /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
+       * escaped before printing utterly the expression. */
+      app->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    /* Step 2: Parsing
+     * Do not parse for assignment to detect if there is a syntax error, since
+     * some errors could be missed.
+     * Sometimes the field needs to be parsed for assignment but this is
+     * done later, namely by ContinuousFunction::buildExpressionFromText.
+     */
+    Poincare::Expression e = Poincare::Expression::Parse(
+        buffer, layoutField->context(), true, false);
+    if (e.isUninitialized()) {
+      // Unparsable expression
+      app->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    /* Step 3: Expression serialization. Resulting texts are parseable and
+     * displayable, like:
+     * - 2*a
+     * - log(x,2) */
+    length =
+        e.serialize(buffer, bufferSize,
+                    Poincare::Preferences::sharedPreferences->displayMode());
+    if (length >= bufferSize - 1) {
+      // Same comment as before
+      app->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    if (!isAcceptableExpression(e)) {
+      app->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+  }
+  if (fieldDidReceiveEvent(layoutField, layoutField, event)) {
+    return true;
+  }
+  return false;
+}
+
+MathTextFieldDelegate *MathTextFieldDelegate::Default() {
+  static MathTextFieldDelegate s_defaultMathTextFieldDelegate;
+  return &s_defaultMathTextFieldDelegate;
+}
+
+bool MathTextFieldDelegate::textFieldShouldFinishEditing(
+    AbstractTextField *textField, Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
+}
+
+bool MathTextFieldDelegate::textFieldDidReceiveEvent(
+    AbstractTextField *textField, Ion::Events::Event event) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
+    if (textField->text()[0] == 0) {
+      // Empty field, let the textfield handle the event
+      return false;
+    }
+    if (!isAcceptableText(textField->text())) {
+      return true;
+    }
+  }
+  if (fieldDidReceiveEvent(textField, textField, event)) {
+    return true;
+  }
+  return false;
+}
+
+template <typename T>
+T MathTextFieldDelegate::ParseInputtedFloatValue(const char *text) {
+  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(
+      text, Container::activeApp()->localContext());
+}
+
+template <typename T>
+bool MathTextFieldDelegate::HasUndefinedValue(T value, bool enablePlusInfinity,
+                                              bool enableMinusInfinity) {
+  bool isUndefined = std::isnan(value) ||
+                     (!enablePlusInfinity && value > 0 && std::isinf(value)) ||
+                     (!enableMinusInfinity && value < 0 && std::isinf(value));
+  if (isUndefined) {
+    Container::activeApp()->displayWarning(I18n::Message::UndefinedValue);
+  }
+  return isUndefined;
+}
+
+template float MathTextFieldDelegate::ParseInputtedFloatValue<float>(
     const char *);
-template bool MathFieldDelegate::HasUndefinedValue(float, bool, bool);
-template bool MathFieldDelegate::HasUndefinedValue(double, bool, bool);
+template double MathTextFieldDelegate::ParseInputtedFloatValue<double>(
+    const char *);
+template bool MathTextFieldDelegate::HasUndefinedValue(float, bool, bool);
+template bool MathTextFieldDelegate::HasUndefinedValue(double, bool, bool);
 
 }  // namespace Shared

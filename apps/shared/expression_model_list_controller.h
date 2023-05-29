@@ -19,7 +19,7 @@ class ExpressionModelListController
       public Escher::SelectableListViewDataSource,
       public Escher::SelectableListViewDelegate,
       public Escher::StandardMemoizedListViewDataSource,
-      public MathFieldDelegate {
+      public MathLayoutFieldDelegate {
  public:
   ExpressionModelListController(Escher::Responder* parentResponder,
                                 I18n::Message text);

@@ -123,7 +123,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
               snapshot->userPreferences()),
       m_context(parentContext),
       m_inputViewController(&m_modalViewController, &m_tabViewController,
-                            MathFieldDelegate::Default()),
+                            MathLayoutFieldDelegate::Default()),
       m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(

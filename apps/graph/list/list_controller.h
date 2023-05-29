@@ -24,7 +24,7 @@ class ListController : public Shared::FunctionListController {
   // ViewController
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  // MathFieldDelegate
+  // MathLayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   CodePoint XNT() override;

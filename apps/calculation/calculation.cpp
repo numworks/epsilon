@@ -256,6 +256,10 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
 }
 
 static bool expressionIsInterestingFunction(Expression e) {
+  if (e.isOfType({ExpressionNode::Type::Opposite,
+                  ExpressionNode::Type::Parenthesis})) {
+    return expressionIsInterestingFunction(e.childAtIndex(0));
+  }
   return !e.isNumber() && !e.isOfType({ExpressionNode::Type::ConstantMaths,
                                        ExpressionNode::Type::Sequence,
                                        ExpressionNode::Type::UnitConvert});
@@ -373,13 +377,9 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
         ScientificNotationHelper::HasAdditionalOutputs(a, globalContext);
   }
   // We want a single numerical value and to avoid showing the identity function
-  bool isInterestingFunction =
-      expressionIsInterestingFunction(i) &&
-      !(i.isOfType({ExpressionNode::Type::Opposite,
-                    ExpressionNode::Type::Parenthesis}) &&
-        !expressionIsInterestingFunction(i.childAtIndex(0)));
   assert(!a.isUndefined());
-  if (isInterestingFunction && a.type() != ExpressionNode::Type::Nonreal &&
+  if (expressionIsInterestingFunction(i) &&
+      a.type() != ExpressionNode::Type::Nonreal &&
       i.numberOfNumericalValues() == 1) {
     additionalInformations.function = true;
   }

@@ -6,17 +6,17 @@ int ListWithTopAndBottomDataSource::numberOfRows() const {
   return m_innerDataSource->numberOfRows() + hasTopView() + hasBottomView();
 }
 
-KDCoordinate ListWithTopAndBottomDataSource::separatorBeforeRow(int index) {
-  assert(0 <= index && index < numberOfRows());
-  if (hasTopView() && index == 0) {
+KDCoordinate ListWithTopAndBottomDataSource::separatorBeforeRow(int row) {
+  assert(0 <= row && row < numberOfRows());
+  if (hasTopView() && row == 0) {
     return 0;
   }
-  if ((hasTopView() && index == 1) ||
-      (hasBottomView() && index == numberOfRows() - 1)) {
+  if ((hasTopView() && row == 1) ||
+      (hasBottomView() && row == numberOfRows() - 1)) {
     return Metric::CommonLargeMargin;
   }
-  assert(index >= hasTopView());
-  return m_innerDataSource->separatorBeforeRow(index - hasTopView());
+  assert(row >= hasTopView());
+  return m_innerDataSource->separatorBeforeRow(row - hasTopView());
 }
 
 HighlightCell* ListWithTopAndBottomDataSource::reusableCell(int index,
@@ -54,24 +54,24 @@ KDCoordinate ListWithTopAndBottomDataSource::nonMemoizedRowHeight(int j) {
 }
 
 void ListWithTopAndBottomDataSource::fillCellForRow(HighlightCell* cell,
-                                                    int index) {
-  int type = typeAtRow(index);
+                                                    int row) {
+  int type = typeAtRow(row);
   if (type == k_topCellType || type == k_bottomCellType) {
     return;
   }
-  m_innerDataSource->fillCellForRow(cell, index - hasTopView());
+  m_innerDataSource->fillCellForRow(cell, row - hasTopView());
 }
 
-int ListWithTopAndBottomDataSource::typeAtRow(int index) const {
-  assert(0 <= index && index < numberOfRows());
-  if (hasTopView() && index == 0) {
+int ListWithTopAndBottomDataSource::typeAtRow(int row) const {
+  assert(0 <= row && row < numberOfRows());
+  if (hasTopView() && row == 0) {
     return k_topCellType;
   }
-  if (hasBottomView() && index == numberOfRows() - 1) {
+  if (hasBottomView() && row == numberOfRows() - 1) {
     return k_bottomCellType;
   }
-  assert(index >= hasTopView());
-  return m_innerDataSource->typeAtRow(index - hasTopView()) + k_cellTypeOffset;
+  assert(row >= hasTopView());
+  return m_innerDataSource->typeAtRow(row - hasTopView()) + k_cellTypeOffset;
 }
 
 bool ListWithTopAndBottomDataSource::canSelectCellAtRow(int row) {

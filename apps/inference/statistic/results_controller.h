@@ -39,9 +39,9 @@ class ResultsController
   void fillCellForRow(Escher::HighlightCell* cell, int i) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtRow(int index) const override;
-  KDCoordinate separatorBeforeRow(int index) override {
-    return typeAtRow(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+  int typeAtRow(int row) const override;
+  KDCoordinate separatorBeforeRow(int row) override {
+    return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
 
   // DynamicCellsDataSourceDelegate

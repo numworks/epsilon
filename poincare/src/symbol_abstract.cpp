@@ -124,11 +124,6 @@ Expression SymbolAbstract::replaceSymbolWithExpression(
         return *this;
       }
     }
-    Expression p = parent();
-    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
-                                    exp, p.indexOfChild(*this))) {
-      exp = Parenthesis::Builder(exp);
-    }
     replaceWithInPlace(exp);
     return exp;
   }

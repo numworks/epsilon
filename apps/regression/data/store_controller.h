@@ -10,8 +10,7 @@ namespace Regression {
 
 class StoreController : public Shared::StoreController {
  public:
-  StoreController(Escher::Responder *parentResponder,
-                  Escher::BoxesDelegate *boxesDelegate, Store *store,
+  StoreController(Escher::Responder *parentResponder, Store *store,
                   Escher::ButtonRowController *header,
                   Poincare::Context *parentContext);
   Model *selectedModel() {

@@ -2,7 +2,6 @@
 #define SHARED_APP_H
 
 #include <escher/app.h>
-#include <escher/boxes_delegate.h>
 #include <escher/nested_menu_controller.h>
 #include <escher/pervasive_box.h>
 
@@ -10,7 +9,7 @@
 
 namespace Shared {
 
-class SharedApp : public Escher::App, public Escher::BoxesDelegate {
+class SharedApp : public Escher::App {
  public:
   class Snapshot : public App::Snapshot {
    public:
@@ -40,6 +39,14 @@ class SharedAppWithStoreMenu : public SharedApp {
   virtual ~SharedAppWithStoreMenu() = default;
   void storeValue(const char* text = "") override;
   bool isStoreMenuOpen() const;
+  Escher::PervasiveBox* toolbox() override final {
+    return isStoreMenuOpen() ? nullptr : defaultToolbox();
+  }
+  Escher::PervasiveBox* variableBox() override final {
+    return isStoreMenuOpen() ? nullptr : defaultVariableBox();
+  }
+  virtual Escher::PervasiveBox* defaultToolbox() { return nullptr; }
+  virtual Escher::PervasiveBox* defaultVariableBox() { return nullptr; }
 
  protected:
   using SharedApp::SharedApp;

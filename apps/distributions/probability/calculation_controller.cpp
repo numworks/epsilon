@@ -61,8 +61,7 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
 }
 
 CalculationController::CalculationController(
-    Escher::StackViewController *parentResponder,
-    Escher::BoxesDelegate *boxesDelegate, Distribution *distribution,
+    Escher::StackViewController *parentResponder, Distribution *distribution,
     Calculation *calculation)
     : Escher::ViewController(parentResponder),
       m_calculation(calculation),
@@ -81,8 +80,7 @@ CalculationController::CalculationController(
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(
         &m_selectableTableView);
-    m_calculationCells[i].editableTextCell()->textField()->setDelegates(
-        boxesDelegate, this);
+    m_calculationCells[i].editableTextCell()->textField()->setDelegate(this);
   }
 }
 

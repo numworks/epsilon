@@ -22,8 +22,7 @@ class ListParameterController : public Shared::ListParameterController,
                                 public Escher::SelectableListViewDelegate,
                                 public Shared::ParameterTextFieldDelegate {
  public:
-  ListParameterController(Escher::BoxesDelegate *boxesDelegate,
-                          ListController *list);
+  ListParameterController(ListController *list);
   const char *title() override;
 
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,

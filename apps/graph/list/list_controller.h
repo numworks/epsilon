@@ -32,7 +32,6 @@ class ListController : public Shared::FunctionListController {
   // ExpressionModelListController
   void editExpression(Ion::Events::Event event) override;
   KDCoordinate expressionRowHeight(int j) override;
-  FunctionToolbox* toolbox() override;
   Shared::ListParameterController* parameterController() override;
   bool canStoreCellAtRow(int row) override { return false; }
 

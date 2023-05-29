@@ -24,7 +24,6 @@ class App : public Shared::SharedApp {
   };
   TELEMETRY_ID("Settings");
 
-  // BoxesDelegate
   // Do not inherit from MathApp to prevent using StoreMenu here
   MathToolbox* toolbox() override { return &m_mathToolbox; }
   MathVariableBoxController* variableBox() override {

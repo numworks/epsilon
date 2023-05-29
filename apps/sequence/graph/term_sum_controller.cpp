@@ -20,12 +20,10 @@ using namespace Escher;
 namespace Sequence {
 
 TermSumController::TermSumController(Responder* parentResponder,
-                                     Escher::BoxesDelegate* boxesDelegate,
                                      GraphView* graphView,
                                      CurveViewRange* graphRange,
                                      CurveViewCursor* cursor)
-    : SumGraphController(parentResponder, boxesDelegate, graphView, graphRange,
-                         cursor) {}
+    : SumGraphController(parentResponder, graphView, graphRange, cursor) {}
 
 const char* TermSumController::title() {
   return I18n::translate(I18n::Message::TermSum);

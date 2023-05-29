@@ -35,10 +35,9 @@ template <class T>
 class TemplatedExpressionInputBar : public AbstractExpressionInputBar {
  public:
   TemplatedExpressionInputBar(Responder* parentResponder,
-                              BoxesDelegate* boxesDelegate,
                               LayoutFieldDelegate* layoutFieldDelegate)
       : AbstractExpressionInputBar(),
-        m_field(parentResponder, boxesDelegate, layoutFieldDelegate) {
+        m_field(parentResponder, layoutFieldDelegate) {
     layoutField()->setMargins(k_margin);
   }
 

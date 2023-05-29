@@ -3,20 +3,13 @@
 namespace Escher {
 
 AbstractWithEditableText::AbstractWithEditableText(
-    Responder* parentResponder, BoxesDelegate* boxesDelegate,
-    TextFieldDelegate* textFieldDelegate)
+    Responder* parentResponder, TextFieldDelegate* textFieldDelegate)
     : Responder(parentResponder),
       ChainedTextFieldDelegate(textFieldDelegate),
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
-                  boxesDelegate, this, k_defaultFormat),
+                  this, k_defaultFormat),
       m_editable(true) {
   m_textBody[0] = '\0';
-}
-
-void AbstractWithEditableText::setDelegates(
-    BoxesDelegate* boxesDelegate, TextFieldDelegate* textFieldDelegate) {
-  m_textField.setBoxesDelegate(boxesDelegate);
-  ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 
 // ChainedTextFieldDelegate

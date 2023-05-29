@@ -9,14 +9,13 @@ using namespace Escher;
 namespace Finance {
 
 ParametersController::ParametersController(StackViewController *parent,
-                                           BoxesDelegate *handler,
                                            ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
       m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
     m_cells[i].setParentResponder(&m_selectableListView);
-    m_cells[i].setDelegates(handler, this);
+    m_cells[i].setDelegate(this);
   }
   m_dropdownCell.accessory()->setDropdown(&m_dropdown);
 }

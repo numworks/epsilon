@@ -1,7 +1,6 @@
 #ifndef CODE_CONSOLE_CONTROLLER_H
 #define CODE_CONSOLE_CONTROLLER_H
 
-#include <apps/shared/boxes_delegate.h>
 #include <escher/list_view_data_source.h>
 #include <python/port/port.h>
 
@@ -21,7 +20,6 @@ class ConsoleController : public Escher::ViewController,
                           public Escher::SelectableListViewDataSource,
                           public Escher::SelectableListViewDelegate,
                           public Escher::TextFieldDelegate,
-                          public Shared::BoxesDelegate,
                           public MicroPython::ExecutionEnvironment {
  public:
   ConsoleController(Escher::Responder* parentResponder, App* pythonDelegate,
@@ -74,9 +72,6 @@ class ConsoleController : public Escher::ViewController,
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
-  // BoxesDelegate
-  VariableBoxController* variableBox() override;
-
   // MicroPython::ExecutionEnvironment
   Escher::ViewController* sandbox() override { return &m_sandboxController; }
   void resetSandbox() override;
@@ -117,6 +112,7 @@ class ConsoleController : public Escher::ViewController,
   void emptyOutputAccumulationBuffer();
   size_t firstNewLineCharIndex(const char* text, size_t length);
   Escher::StackViewController* stackViewController();
+  void prepareVariableBox();
   App* m_pythonDelegate;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;

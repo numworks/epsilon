@@ -19,8 +19,7 @@ class GraphController;
 class CobwebController : public Shared::SimpleInteractiveCurveViewController,
                          public Shared::FunctionBannerDelegate {
  public:
-  CobwebController(Responder* parentResponder,
-                   Escher::BoxesDelegate* boxesDelegate, GraphView* graphView,
+  CobwebController(Responder* parentResponder, GraphView* graphView,
                    CurveViewRange* graphRange, Shared::CurveViewCursor* cursor,
                    Shared::XYBannerView* bannerView,
                    Shared::CursorView* cursorView,

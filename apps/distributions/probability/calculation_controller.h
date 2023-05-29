@@ -24,7 +24,6 @@ class CalculationController : public Escher::ViewController,
                               public Escher::DropdownCallback {
  public:
   CalculationController(Escher::StackViewController* parentResponder,
-                        Escher::BoxesDelegate* boxesDelegate,
                         Distribution* distribution, Calculation* calculation);
 
   void reinitCalculation();

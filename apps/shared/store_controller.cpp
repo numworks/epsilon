@@ -15,7 +15,6 @@ using namespace Escher;
 namespace Shared {
 
 StoreController::StoreController(Responder *parentResponder,
-                                 Escher::BoxesDelegate *boxesDelegate,
                                  DoublePairStore *store,
                                  ButtonRowController *header,
                                  Context *parentContext)
@@ -30,8 +29,7 @@ StoreController::StoreController(Responder *parentResponder,
                                  k_margin);
   for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
     m_editableCells[i].setParentResponder(&m_selectableTableView);
-    m_editableCells[i].editableTextCell()->textField()->setDelegates(
-        boxesDelegate, this);
+    m_editableCells[i].editableTextCell()->textField()->setDelegate(this);
   }
 }
 

@@ -52,12 +52,9 @@ class AbstractWithEditableText : public Responder,
                                  public ChainedTextFieldDelegate {
  public:
   AbstractWithEditableText(Responder* parentResponder = nullptr,
-                           BoxesDelegate* boxesDelegate = nullptr,
                            TextFieldDelegate* textFieldDelegate = nullptr);
 
   void setEditable(bool isEditable) { m_editable = isEditable; }
-  void setDelegates(BoxesDelegate* boxesDelegate,
-                    TextFieldDelegate* textFieldDelegate);
 
   void didBecomeFirstResponder() override {
     if (m_editable) {
@@ -91,11 +88,9 @@ class MenuCellWithEditableText
       public AbstractWithEditableText {
  public:
   MenuCellWithEditableText(Responder* parentResponder = nullptr,
-                           BoxesDelegate* boxesDelegate = nullptr,
                            TextFieldDelegate* textFieldDelegate = nullptr)
       : MenuCell<Label, SubLabel, EditableTextWidget>(),
-        AbstractWithEditableText(parentResponder, boxesDelegate,
-                                 textFieldDelegate) {
+        AbstractWithEditableText(parentResponder, textFieldDelegate) {
     this->accessory()->setTextField(&m_textField);
   }
 

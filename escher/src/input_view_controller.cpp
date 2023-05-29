@@ -6,10 +6,9 @@
 namespace Escher {
 
 InputViewController::ExpressionInputBarController::ExpressionInputBarController(
-    Responder* parentResponder, BoxesDelegate* boxesDelegate,
-    LayoutFieldDelegate* layoutFieldDelegate)
-    : ViewController(parentResponder),
-      m_expressionInputBar(this, boxesDelegate, layoutFieldDelegate) {}
+    InputViewController* inputViewController)
+    : ViewController(inputViewController),
+      m_expressionInputBar(this, inputViewController) {}
 
 void InputViewController::ExpressionInputBarController::
     didBecomeFirstResponder() {
@@ -18,12 +17,11 @@ void InputViewController::ExpressionInputBarController::
 
 InputViewController::InputViewController(
     Responder* parentResponder, ViewController* child,
-    BoxesDelegate* boxesDelegate, LayoutFieldDelegate* layoutFieldDelegate)
+    LayoutFieldDelegate* layoutFieldDelegate)
     : ModalViewController(parentResponder, child),
-      m_expressionInputBarController(this, this, this),
+      m_expressionInputBarController(this),
       m_successAction(Invocation(nullptr, nullptr)),
       m_failureAction(Invocation(nullptr, nullptr)),
-      m_boxesDelegate(boxesDelegate),
       m_layoutFieldDelegate(layoutFieldDelegate) {}
 
 void InputViewController::edit(Ion::Events::Event event, void* context,
@@ -84,14 +82,6 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
      * propagate a relayout to the content of the field scroll view. */
     m_expressionInputBarController.layoutField()->layoutSubviews(true);
   }
-}
-
-PervasiveBox* InputViewController::toolbox() {
-  return m_boxesDelegate->toolbox();
-}
-
-PervasiveBox* InputViewController::variableBox() {
-  return m_boxesDelegate->variableBox();
 }
 
 bool InputViewController::inputViewDidFinishEditing() {

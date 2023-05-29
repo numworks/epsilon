@@ -11,8 +11,7 @@ class InputGoodnessController : public InputCategoricalController {
  public:
   InputGoodnessController(Escher::StackViewController* parent,
                           Escher::ViewController* resultsController,
-                          GoodnessTest* statistic,
-                          Escher::BoxesDelegate* boxesDelegate);
+                          GoodnessTest* statistic);
 
   void updateDegreeOfFreedomCell();
 

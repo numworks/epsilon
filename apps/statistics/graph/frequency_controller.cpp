@@ -16,7 +16,7 @@ FrequencyController::FrequencyController(
     Escher::ViewController *typeViewController, Store *store)
     : PlotController(parentResponder, header, tabController,
                      stackViewController, typeViewController, store),
-      m_bannerViewWithEditableField(this, App::app(), this) {
+      m_bannerViewWithEditableField(this, this) {
   m_view.setBannerView(&m_bannerViewWithEditableField);
   m_curveView.setCursorView(&m_cursorView);
 }

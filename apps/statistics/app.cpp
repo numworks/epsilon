@@ -55,7 +55,7 @@ const App::Descriptor *App::Snapshot::descriptor() const {
 }
 
 App::StoreTab::StoreTab()
-    : m_storeController(&m_storeHeader, app(), &app()->m_store, &m_storeHeader,
+    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader,
                         app()->m_context),
       m_storeHeader(&m_storeStackViewController, &m_storeController,
                     &m_storeController),
@@ -87,11 +87,10 @@ App::GraphTab::GraphTab()
                       &m_graphMenuStackViewController, &m_graphTypeController,
                       &app()->m_store),
       m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
-      m_histogramController(&m_histogramHeader, app(), &m_histogramHeader,
-                            &app()->m_tabViewController,
-                            &m_graphMenuStackViewController,
-                            &m_graphTypeController, &app()->m_store,
-                            app()->snapshot()->storeVersion()),
+      m_histogramController(
+          &m_histogramHeader, &m_histogramHeader, &app()->m_tabViewController,
+          &m_graphMenuStackViewController, &m_graphTypeController,
+          &app()->m_store, app()->snapshot()->storeVersion()),
       m_histogramHeader(&m_graphController, &m_histogramController,
                         &m_histogramController),
       m_graphTypeController(&m_graphMenuStackViewController,
@@ -123,7 +122,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
               snapshot->userPreferences()),
       m_context(parentContext),
-      m_inputViewController(&m_modalViewController, &m_tabViewController, this,
+      m_inputViewController(&m_modalViewController, &m_tabViewController,
                             MathFieldDelegate::Default()),
       m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {
   // Order used in m_graphController constructor

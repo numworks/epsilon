@@ -39,7 +39,7 @@ ConsoleController::ConsoleController(Responder *parentResponder,
       m_pythonDelegate(pythonDelegate),
       m_importScriptsWhenViewAppears(false),
       m_selectableTableView(this, this, this, this),
-      m_editCell(this, this, this),
+      m_editCell(this, this),
       m_scriptStore(scriptStore),
       m_sandboxController(this),
       m_inputRunLoopActive(false)
@@ -186,6 +186,10 @@ void ConsoleController::didBecomeFirstResponder() {
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    prepareVariableBox();
+    return false;
+  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 &&
         m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
@@ -364,13 +368,12 @@ bool ConsoleController::textFieldDidAbortEditing(AbstractTextField *textField) {
   return true;
 }
 
-VariableBoxController *ConsoleController::variableBox() {
+void ConsoleController::prepareVariableBox() {
   VariableBoxController *varBox = App::app()->variableBox();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(false);
   varBox->loadVariablesImportedFromScripts();
   varBox->setTitle(I18n::Message::FunctionsAndVariables);
-  return varBox;
 }
 
 void ConsoleController::resetSandbox() {

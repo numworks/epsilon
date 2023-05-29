@@ -11,8 +11,8 @@ namespace Shared {
 class MathApp : public SharedAppWithStoreMenu {
  public:
   virtual ~MathApp() = default;
-  MathToolbox* toolbox() override { return &m_mathToolbox; }
-  MathVariableBoxController* variableBox() override {
+  Escher::Toolbox* defaultToolbox() override { return &m_mathToolbox; }
+  MathVariableBoxController* defaultVariableBox() override {
     return &m_variableBoxController;
   }
 

@@ -138,7 +138,7 @@ void InputCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
   InferenceEvenOddEditableCell *c =
       static_cast<InferenceEvenOddEditableCell *>(cell);
   c->setParentResponder(&m_selectableTableView);
-  c->editableTextCell()->textField()->setDelegates(App::app(), this);
+  c->editableTextCell()->textField()->setDelegate(this);
 }
 
 bool InputCategoricalTableCell::deleteSelectedValue() {

@@ -38,9 +38,8 @@ class PlotBannerViewWithEditableField
       public Shared::EditableFieldBannerViewDelegate {
  public:
   PlotBannerViewWithEditableField(Escher::Responder* parentResponder,
-                                  Escher::BoxesDelegate* boxesDelegate,
                                   Escher::TextFieldDelegate* textFieldDelegate)
-      : Shared::EditableFieldBannerViewDelegate(parentResponder, boxesDelegate,
+      : Shared::EditableFieldBannerViewDelegate(parentResponder,
                                                 textFieldDelegate) {}
   BannerBufferTextView* valueLabel() { return editableFieldLabel(); }
   Escher::TextField* value() { return editableField(); }

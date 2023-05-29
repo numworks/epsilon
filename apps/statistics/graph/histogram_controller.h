@@ -13,7 +13,6 @@ namespace Statistics {
 class HistogramController : public MultipleDataViewController {
  public:
   HistogramController(Escher::Responder* parentResponder,
-                      Escher::BoxesDelegate* boxesDelegate,
                       Escher::ButtonRowController* header,
                       Escher::TabViewController* tabController,
                       Escher::StackViewController* stackViewController,

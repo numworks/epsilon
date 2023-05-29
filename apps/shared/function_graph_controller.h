@@ -13,7 +13,6 @@ class FunctionGraphController : public InteractiveCurveViewController,
                                 public FunctionBannerDelegate {
  public:
   FunctionGraphController(Escher::Responder *parentResponder,
-                          Escher::BoxesDelegate *boxesDelegate,
                           Escher::ButtonRowController *header,
                           InteractiveCurveViewRange *interactiveRange,
                           AbstractPlotView *curveView, CurveViewCursor *cursor,

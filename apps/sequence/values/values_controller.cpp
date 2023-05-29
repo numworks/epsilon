@@ -17,10 +17,9 @@ using namespace Escher;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder *parentResponder,
-                                   BoxesDelegate *boxesDelegate,
                                    ButtonRowController *header)
     : Shared::ValuesController(parentResponder, header),
-      m_intervalParameterController(this, boxesDelegate),
+      m_intervalParameterController(this),
       m_sequenceColumnParameterController(this),
       m_sumColumnParameterController(this),
       m_setIntervalButton(
@@ -44,7 +43,7 @@ ValuesController::ValuesController(Responder *parentResponder,
               this),
           k_cellFont),
       m_hasAtLeastOneSumColumn(false) {
-  setupSelectableTableViewAndCells(boxesDelegate);
+  setupSelectableTableViewAndCells();
   setDefaultStartEndMessages();
   initValueCells();
 }

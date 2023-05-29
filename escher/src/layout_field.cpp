@@ -124,12 +124,11 @@ LayoutField::ContentView::ContentView(KDGlyph::Format format)
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
 LayoutField::LayoutField(Responder *parentResponder,
-                         BoxesDelegate *boxesDelegate,
                          LayoutFieldDelegate *layoutFieldDelegate,
                          KDGlyph::Format format)
     : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
                                                          &m_contentView, this),
-      EditableField(boxesDelegate),
+      EditableField(),
       m_contentView(format),
       m_layoutFieldDelegate(layoutFieldDelegate),
       m_inputViewMemoizedHeight(0),
@@ -138,9 +137,7 @@ LayoutField::LayoutField(Responder *parentResponder,
   setBackgroundColor(KDColorWhite);
 }
 
-void LayoutField::setDelegates(BoxesDelegate *boxesDelegate,
-                               LayoutFieldDelegate *layoutFieldDelegate) {
-  m_boxesDelegate = boxesDelegate;
+void LayoutField::setDelegate(LayoutFieldDelegate *layoutFieldDelegate) {
   m_layoutFieldDelegate = layoutFieldDelegate;
 }
 

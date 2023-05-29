@@ -13,7 +13,6 @@ namespace Inference {
 class InputCategoricalCell : public HighlightCell {
  public:
   InputCategoricalCell(Responder* parentResponder = nullptr,
-                       BoxesDelegate* boxesDelegate = nullptr,
                        TextFieldDelegate* textFieldDelegate = nullptr);
 
   // View

@@ -6,9 +6,8 @@ namespace Inference {
 
 InputHomogeneityController::InputHomogeneityController(
     StackViewController* parent, Escher::ViewController* resultsController,
-    HomogeneityTest* statistic, BoxesDelegate* boxesDelegate)
-    : InputCategoricalController(parent, resultsController, statistic,
-                                 boxesDelegate),
+    HomogeneityTest* statistic)
+    : InputCategoricalController(parent, resultsController, statistic),
       m_inputHomogeneityTable(&m_selectableListView, statistic, this) {}
 
 }  // namespace Inference

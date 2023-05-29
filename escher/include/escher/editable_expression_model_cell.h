@@ -16,7 +16,6 @@ namespace Escher {
 class EditableExpressionModelCell : public HighlightCell {
  public:
   EditableExpressionModelCell(Responder* parentResponder,
-                              BoxesDelegate* boxesDelegate,
                               LayoutFieldDelegate* layoutDelegate,
                               KDGlyph::Format format = {});
   void setLayout(Poincare::Layout layout) { m_layoutField.setLayout(layout); }

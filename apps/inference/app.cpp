@@ -32,16 +32,16 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
           static_cast<HomogeneityTest *>(snapshot->statistic())),
       m_inputHomogeneityController(
           &m_stackViewController, &m_homogeneityResultsController,
-          static_cast<HomogeneityTest *>(snapshot->statistic()), this),
+          static_cast<HomogeneityTest *>(snapshot->statistic())),
       m_inputGoodnessController(
           &m_stackViewController, &m_resultsController,
-          static_cast<GoodnessTest *>(snapshot->statistic()), this),
+          static_cast<GoodnessTest *>(snapshot->statistic())),
       m_inputSlopeController(&m_stackViewController, &m_resultsController,
-                             snapshot->statistic(), this, parentContext),
+                             snapshot->statistic(), parentContext),
       m_resultsController(&m_stackViewController, snapshot->statistic(),
                           &m_testGraphController, &m_intervalGraphController),
       m_inputController(&m_stackViewController, &m_resultsController,
-                        snapshot->statistic(), this),
+                        snapshot->statistic()),
       m_typeController(&m_stackViewController, &m_hypothesisController,
                        &m_inputController, snapshot->statistic()),
       m_categoricalTypeController(
@@ -49,7 +49,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
           static_cast<Chi2Test *>(snapshot->statistic()),
           &m_inputGoodnessController, &m_inputHomogeneityController),
       m_hypothesisController(&m_stackViewController, &m_inputController,
-                             &m_inputSlopeController, this,
+                             &m_inputSlopeController,
                              static_cast<Test *>(snapshot->statistic())),
       m_testController(&m_stackViewController, &m_hypothesisController,
                        &m_typeController, &m_categoricalTypeController,
@@ -63,7 +63,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_stackViewController(&m_modalViewController, &m_menuController,
                             StackViewController::Style::GrayGradation),
       m_inputViewController(&m_modalViewController, &m_stackViewController,
-                            &m_inputSlopeController, &m_inputSlopeController),
+                            &m_inputSlopeController),
       m_bufferDestructor(nullptr) {}
 
 void App::didBecomeActive(Window *window) {

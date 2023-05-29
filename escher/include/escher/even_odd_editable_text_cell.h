@@ -36,11 +36,10 @@ template <int NumberOfSignificantDigits =
 class EvenOddEditableTextCell : public AbstractEvenOddEditableTextCell {
  public:
   EvenOddEditableTextCell(Responder* parentResponder = nullptr,
-                          BoxesDelegate* boxesDelegate = nullptr,
                           TextFieldDelegate* delegate = nullptr,
                           KDGlyph::Format format = k_smallCellDefaultFormat)
       : AbstractEvenOddEditableTextCell(parentResponder),
-        m_editableCell(this, boxesDelegate, delegate, format) {}
+        m_editableCell(this, delegate, format) {}
 
   AbstractEditableTextCell* editableTextCell() override {
     return &m_editableCell;

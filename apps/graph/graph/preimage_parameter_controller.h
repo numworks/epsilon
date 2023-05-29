@@ -10,7 +10,6 @@ namespace Graph {
 class PreimageParameterController : public Shared::GoToParameterController {
  public:
   PreimageParameterController(Escher::Responder* parentResponder,
-                              Escher::BoxesDelegate* boxesDelegate,
                               Shared::InteractiveCurveViewRange* graphRange,
                               Shared::CurveViewCursor* cursor,
                               PreimageGraphController* preimageGraphController);

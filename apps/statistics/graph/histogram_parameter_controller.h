@@ -14,7 +14,6 @@ class HistogramParameterController
     : public Shared::FloatParameterController<double> {
  public:
   HistogramParameterController(Escher::Responder* parentResponder,
-                               Escher::BoxesDelegate* boxesDelegateApp,
                                Store* store);
   void viewWillAppear() override;
   const char* title() override;

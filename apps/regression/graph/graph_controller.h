@@ -20,7 +20,6 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
  public:
   GraphController(Escher::Responder *parentResponder,
-                  Escher::BoxesDelegate *boxesDelegate,
                   Escher::ButtonRowController *header,
                   Shared::InteractiveCurveViewRange *interactiveRange,
                   Shared::CurveViewCursor *cursor, int *selectedDotIndex,

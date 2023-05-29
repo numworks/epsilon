@@ -15,7 +15,6 @@ namespace Regression {
 class BannerView : public Shared::XYBannerView {
  public:
   BannerView(Escher::Responder* parentResponder,
-             Escher::BoxesDelegate* boxesDelegate,
              Escher::TextFieldDelegate* textFieldDelegate);
   BannerBufferTextView* otherView() { return &m_otherView; }
   void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst,

@@ -12,9 +12,7 @@ class ChainedTextFieldDelegate : public TextFieldDelegate {
  public:
   ChainedTextFieldDelegate(TextFieldDelegate* parentDelegate)
       : m_parentDelegate(parentDelegate) {}
-  void setTextFieldDelegate(TextFieldDelegate* delegate) {
-    m_parentDelegate = delegate;
-  }
+  void setDelegate(TextFieldDelegate* delegate) { m_parentDelegate = delegate; }
 
   bool textFieldShouldFinishEditing(AbstractTextField* textField,
                                     Ion::Events::Event event) override;

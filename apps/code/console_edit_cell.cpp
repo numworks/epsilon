@@ -14,7 +14,6 @@ using namespace Escher;
 namespace Code {
 
 ConsoleEditCell::ConsoleEditCell(Responder *parentResponder,
-                                 BoxesDelegate *boxesDelegate,
                                  TextFieldDelegate *delegate)
     : HighlightCell(),
       Responder(parentResponder),
@@ -23,7 +22,7 @@ ConsoleEditCell::ConsoleEditCell(Responder *parentResponder,
           {.style = {.font =
                          GlobalPreferences::sharedGlobalPreferences->font()}}),
       m_textField(
-          this, nullptr, TextField::MaxBufferSize(), boxesDelegate, delegate,
+          this, nullptr, TextField::MaxBufferSize(), delegate,
           {.style = {.font =
                          GlobalPreferences::sharedGlobalPreferences->font()}}) {
 }

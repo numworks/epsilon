@@ -16,12 +16,10 @@ using namespace Escher;
 
 namespace Statistics {
 
-StoreController::StoreController(Responder *parentResponder,
-                                 Escher::BoxesDelegate *boxesDelegate,
-                                 Store *store, ButtonRowController *header,
+StoreController::StoreController(Responder *parentResponder, Store *store,
+                                 ButtonRowController *header,
                                  Context *parentContext)
-    : Shared::StoreController(parentResponder, boxesDelegate, store, header,
-                              parentContext),
+    : Shared::StoreController(parentResponder, store, header, parentContext),
       m_store(store),
       m_storeParameterController(this, this, store) {}
 

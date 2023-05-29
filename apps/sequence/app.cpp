@@ -76,19 +76,19 @@ void App::Snapshot::tidy() {
 
 App::ListTab::ListTab()
     : Shared::FunctionApp::ListTab(&m_listController),
-      m_listController(&m_listFooter, app(), &m_listHeader, &m_listFooter) {}
+      m_listController(&m_listFooter, &m_listHeader, &m_listFooter) {}
 
 App::GraphTab::GraphTab()
     : Shared::FunctionApp::GraphTab(&m_graphController),
-      m_graphController(&m_graphAlternateEmptyViewController, app(),
-                        &m_graphHeader, app()->snapshot()->graphRange(),
+      m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader,
+                        app()->snapshot()->graphRange(),
                         app()->snapshot()->cursor(),
                         app()->snapshot()->selectedCurveIndex(),
                         app()->snapshot()->functionStore()) {}
 
 App::ValuesTab::ValuesTab()
     : Shared::FunctionApp::ValuesTab(&m_valuesController),
-      m_valuesController(&m_valuesAlternateEmptyViewController, app(),
+      m_valuesController(&m_valuesAlternateEmptyViewController,
                          &m_valuesHeader) {}
 
 }  // namespace Sequence

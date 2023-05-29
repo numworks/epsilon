@@ -17,8 +17,7 @@ class CurveParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Shared::WithRecord {
  public:
-  CurveParameterController(Escher::BoxesDelegate* boxesDelegate,
-                           GraphController* graphController,
+  CurveParameterController(GraphController* graphController,
                            CobwebController* cobwebController,
                            Shared::InteractiveCurveViewRange* graphRange,
                            Shared::CurveViewCursor* cursor);

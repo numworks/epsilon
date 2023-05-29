@@ -29,7 +29,7 @@ void BannerView::DotView::setColor(KDColor color) {
 
 BannerView::BannerView(Escher::Responder* textFieldParent,
                        Escher::TextFieldDelegate* textFieldDelegate)
-    : m_textField(textFieldParent, nullptr, textFieldDelegate),
+    : m_textField(textFieldParent, textFieldDelegate),
       m_legendView({.style = {.glyphColor = k_legendColor,
                               .backgroundColor = k_backgroundColor,
                               .font = k_legendSize}}),

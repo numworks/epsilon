@@ -20,8 +20,8 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramController::HistogramController(
-    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
-    ButtonRowController *header, TabViewController *tabController,
+    Responder *parentResponder, ButtonRowController *header,
+    TabViewController *tabController,
     Escher::StackViewController *stackViewController,
     Escher::ViewController *typeViewController, Store *store,
     uint32_t *storeVersion)
@@ -31,7 +31,7 @@ HistogramController::HistogramController(
       m_view(store, &m_histogramRange),
       m_histogramRange(store),
       m_storeVersion(storeVersion),
-      m_histogramParameterController(nullptr, boxesDelegate, store),
+      m_histogramParameterController(nullptr, store),
       m_parameterButton(
           this, I18n::Message::StatisticsGraphSettings,
           Invocation::Builder<HistogramController>(

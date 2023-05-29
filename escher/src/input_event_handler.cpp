@@ -1,4 +1,3 @@
-#include <escher/boxes_delegate.h>
 #include <escher/container.h>
 #include <escher/input_event_handler.h>
 #include <escher/metric.h>
@@ -7,14 +6,12 @@
 namespace Escher {
 
 bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
-  if (m_boxesDelegate == nullptr) {
-    return false;
-  }
+  App* app = Container::activeApp();
   PervasiveBox* box = nullptr;
   if (event == Ion::Events::Toolbox) {
-    box = m_boxesDelegate->toolbox();
+    box = app->toolbox();
   } else if (event == Ion::Events::Var) {
-    box = m_boxesDelegate->variableBox();
+    box = app->variableBox();
   }
   if (!box) {
     return false;

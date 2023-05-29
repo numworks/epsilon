@@ -42,10 +42,8 @@ void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
 // SuggestionTextField
 
 SuggestionTextField::SuggestionTextField(Responder* parentResponder,
-                                         BoxesDelegate* boxesDelegate,
                                          TextFieldDelegate* delegate)
-    : AbstractTextField(parentResponder, &m_contentView, boxesDelegate,
-                        delegate) {}
+    : AbstractTextField(parentResponder, &m_contentView, delegate) {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() &&

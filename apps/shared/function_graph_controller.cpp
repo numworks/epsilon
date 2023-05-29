@@ -19,19 +19,17 @@ using namespace Poincare;
 namespace Shared {
 
 FunctionGraphController::FunctionGraphController(
-    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
-    ButtonRowController *header, InteractiveCurveViewRange *interactiveRange,
-    AbstractPlotView *curveView, CurveViewCursor *cursor,
-    int *selectedCurveIndex)
+    Responder *parentResponder, ButtonRowController *header,
+    InteractiveCurveViewRange *interactiveRange, AbstractPlotView *curveView,
+    CurveViewCursor *cursor, int *selectedCurveIndex)
     : InteractiveCurveViewController(
-          parentResponder, boxesDelegate, header, interactiveRange, curveView,
-          cursor, I18n::Message::GraphCalculus, selectedCurveIndex) {}
+          parentResponder, header, interactiveRange, curveView, cursor,
+          I18n::Message::GraphCalculus, selectedCurveIndex) {}
 
 void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
-    bannerView()->abscissaValue()->setDelegates(
-        static_cast<SharedApp *>(Container::activeApp()), this);
+    bannerView()->abscissaValue()->setDelegate(this);
     if (!isAlongY(*m_selectedCurveIndex)) {
       Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
     }

@@ -27,7 +27,6 @@ class InteractiveCurveViewController
   constexpr static int k_graphControllerStackDepth = 1;
 
   InteractiveCurveViewController(Escher::Responder* parentResponder,
-                                 Escher::BoxesDelegate* boxesDelegate,
                                  Escher::ButtonRowController* header,
                                  InteractiveCurveViewRange* interactiveRange,
                                  AbstractPlotView* curveView,

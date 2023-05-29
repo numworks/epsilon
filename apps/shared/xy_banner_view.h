@@ -9,10 +9,8 @@ namespace Shared {
 class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
  public:
   XYBannerView(Escher::Responder* parentResponder,
-               Escher::BoxesDelegate* boxesDelegate,
                Escher::TextFieldDelegate* textFieldDelegate)
-      : EditableFieldBannerViewDelegate(parentResponder, boxesDelegate,
-                                        textFieldDelegate),
+      : EditableFieldBannerViewDelegate(parentResponder, textFieldDelegate),
         m_ordinateView(k_bannerFieldFormat) {}
 
   BannerBufferTextView* abscissaSymbol() { return editableFieldLabel(); }

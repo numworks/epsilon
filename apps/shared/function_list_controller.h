@@ -6,15 +6,13 @@
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 
-#include "boxes_delegate.h"
 #include "expression_model_list_controller.h"
 #include "list_parameter_controller.h"
 
 namespace Shared {
 
 class FunctionListController : public ExpressionModelListController,
-                               public Escher::ButtonRowDelegate,
-                               public BoxesDelegate {
+                               public Escher::ButtonRowDelegate {
  public:
   FunctionListController(Escher::Responder* parentResponder,
                          Escher::ButtonRowController* header,

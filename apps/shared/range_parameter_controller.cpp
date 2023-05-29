@@ -10,8 +10,7 @@ namespace Shared {
 // RangeParameterController
 
 RangeParameterController::RangeParameterController(
-    Responder *parentResponder, BoxesDelegate *boxesDelegate,
-    InteractiveCurveViewRange *interactiveRange)
+    Responder *parentResponder, InteractiveCurveViewRange *interactiveRange)
     : SelectableListViewController(parentResponder),
       m_interactiveRange(interactiveRange),
       m_tempInteractiveRange(*interactiveRange),
@@ -30,8 +29,7 @@ RangeParameterController::RangeParameterController(
           },
           this)),
       m_singleInteractiveCurveViewRangeController(
-          parentResponder, boxesDelegate, &m_tempInteractiveRange,
-          &m_confirmPopUpController) {
+          parentResponder, &m_tempInteractiveRange, &m_confirmPopUpController) {
   m_normalizeCell.label()->setMessage(I18n::Message::MakeOrthonormal);
   m_rangeCells[0].label()->setMessage(I18n::Message::ValuesOfX);
   m_rangeCells[1].label()->setMessage(I18n::Message::ValuesOfY);

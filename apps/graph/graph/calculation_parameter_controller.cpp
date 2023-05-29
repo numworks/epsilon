@@ -14,18 +14,16 @@ using namespace Escher;
 namespace Graph {
 
 CalculationParameterController::CalculationParameterController(
-    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
-    GraphView *graphView, BannerView *bannerView,
+    Responder *parentResponder, GraphView *graphView, BannerView *bannerView,
     InteractiveCurveViewRange *range, CurveViewCursor *cursor)
     : ExplicitSelectableListViewController(parentResponder),
-      m_preimageParameterController(nullptr, boxesDelegate, range, cursor,
+      m_preimageParameterController(nullptr, range, cursor,
                                     &m_preimageGraphController),
       m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
       m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
-      m_integralGraphController(nullptr, boxesDelegate, graphView, range,
-                                cursor),
+      m_integralGraphController(nullptr, graphView, range, cursor),
       m_areaParameterController(nullptr, &m_areaGraphController),
-      m_areaGraphController(nullptr, boxesDelegate, graphView, range, cursor),
+      m_areaGraphController(nullptr, graphView, range, cursor),
       m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
       m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
       m_rootGraphController(nullptr, graphView, bannerView, range, cursor),

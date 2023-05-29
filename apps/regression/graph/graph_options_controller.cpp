@@ -18,10 +18,11 @@ using namespace Poincare;
 
 namespace Regression {
 
-GraphOptionsController::GraphOptionsController(
-    Responder *parentResponder, Escher::BoxesDelegate *boxesDelegate,
-    InteractiveCurveViewRange *range, Store *store, CurveViewCursor *cursor,
-    GraphController *graphController)
+GraphOptionsController::GraphOptionsController(Responder *parentResponder,
+                                               InteractiveCurveViewRange *range,
+                                               Store *store,
+                                               CurveViewCursor *cursor,
+                                               GraphController *graphController)
     : ExplicitSelectableListViewController(parentResponder),
       m_removeRegressionCell(
           &(this->m_selectableListView), I18n::Message::RemoveRegression,
@@ -31,8 +32,7 @@ GraphOptionsController::GraphOptionsController(
                 return true;
               },
               this)),
-      m_goToParameterController(this, boxesDelegate, range, store, cursor,
-                                graphController),
+      m_goToParameterController(this, range, store, cursor, graphController),
       m_residualPlotCellController(parentResponder, store),
       m_store(store),
       m_graphController(graphController) {

@@ -16,13 +16,12 @@ namespace Sequence {
 constexpr KDCoordinate ListController::k_minTitleColumnWidth;
 
 ListController::ListController(Responder *parentResponder,
-                               Escher::BoxesDelegate *boxesDelegate,
                                ButtonRowController *header,
                                ButtonRowController *footer)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddSequence),
-      m_editableCell(this, this, this),
-      m_parameterController(boxesDelegate, this),
+      m_editableCell(this, this),
+      m_parameterController(this),
       m_typeParameterController(this, this),
       m_typeStackController(nullptr, &m_typeParameterController,
                             StackViewController::Style::PurpleWhite),
@@ -74,6 +73,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
       defaultHeight, sequenceHeight + 2 * k_expressionCellVerticalMargin);
 }
 
+/* TODO: Restore behaviour
 Toolbox *ListController::toolbox() {
   // Set extra cells
   int recurrenceDepth = -1;
@@ -86,7 +86,7 @@ Toolbox *ListController::toolbox() {
   m_sequenceToolbox.buildExtraCellsLayouts(sequence->fullName(),
                                            recurrenceDepth);
   return &m_sequenceToolbox;
-}
+}*/
 
 void ListController::selectPreviousNewSequenceCell() {
   int row = selectedRow();

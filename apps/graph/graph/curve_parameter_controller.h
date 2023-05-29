@@ -19,8 +19,7 @@ class CurveParameterController
     : public Shared::ExplicitFloatParameterController,
       public Shared::WithRecord {
  public:
-  CurveParameterController(Escher::BoxesDelegate* boxesDelegate,
-                           Shared::InteractiveCurveViewRange* graphRange,
+  CurveParameterController(Shared::InteractiveCurveViewRange* graphRange,
                            BannerView* bannerView,
                            Shared::CurveViewCursor* cursor,
                            GraphView* graphView);

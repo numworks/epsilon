@@ -25,8 +25,7 @@
 
 namespace Inference {
 
-class App : public Shared::MathApp,
-            public Shared::MenuControllerDelegate {
+class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

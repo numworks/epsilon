@@ -9,10 +9,8 @@ namespace Calculation {
 class LayoutField : public Escher::LayoutField {
  public:
   LayoutField(Escher::Responder* parentResponder,
-              Escher::BoxesDelegate* boxesDelegate,
               Escher::LayoutFieldDelegate* layoutFieldDelegate)
-      : Escher::LayoutField(parentResponder, boxesDelegate,
-                            layoutFieldDelegate),
+      : Escher::LayoutField(parentResponder, layoutFieldDelegate),
         m_currentStep(DivisionCycleStep::Start),
         m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 

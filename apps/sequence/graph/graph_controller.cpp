@@ -16,26 +16,23 @@ using namespace Escher;
 namespace Sequence {
 
 GraphController::GraphController(Responder *parentResponder,
-                                 Escher::BoxesDelegate *boxesDelegate,
                                  Escher::ButtonRowController *header,
                                  CurveViewRange *interactiveRange,
                                  CurveViewCursor *cursor,
                                  int *selectedCurveIndex,
                                  SequenceStore *sequenceStore)
-    : FunctionGraphController(parentResponder, boxesDelegate, header,
-                              interactiveRange, &m_view, cursor,
-                              selectedCurveIndex),
-      m_bannerView(this, boxesDelegate, this),
+    : FunctionGraphController(parentResponder, header, interactiveRange,
+                              &m_view, cursor, selectedCurveIndex),
+      m_bannerView(this, this),
       m_view(sequenceStore, interactiveRange, m_cursor, &m_bannerView,
              &m_cursorView),
       m_graphRange(interactiveRange),
-      m_curveParameterController(boxesDelegate, this, &m_cobwebController,
-                                 interactiveRange, m_cursor),
+      m_curveParameterController(this, &m_cobwebController, interactiveRange,
+                                 m_cursor),
       m_sequenceSelectionController(this),
-      m_termSumController(this, boxesDelegate, &m_view, interactiveRange,
-                          m_cursor),
-      m_cobwebController(this, boxesDelegate, &m_view, interactiveRange,
-                         m_cursor, &m_bannerView, &m_cursorView, sequenceStore),
+      m_termSumController(this, &m_view, interactiveRange, m_cursor),
+      m_cobwebController(this, &m_view, interactiveRange, m_cursor,
+                         &m_bannerView, &m_cursorView, sequenceStore),
       m_sequenceStore(sequenceStore) {
   m_graphRange->setDelegate(this);
 }

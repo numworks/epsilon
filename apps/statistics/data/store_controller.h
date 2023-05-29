@@ -15,8 +15,7 @@ class StoreController : public Shared::StoreController {
   static void FillSeriesName(int series, char* buffer,
                              bool withFinalSpace = false);
 
-  StoreController(Escher::Responder* parentResponder,
-                  Escher::BoxesDelegate* boxesDelegate, Store* store,
+  StoreController(Escher::Responder* parentResponder, Store* store,
                   Escher::ButtonRowController* header,
                   Poincare::Context* parentContext);
 

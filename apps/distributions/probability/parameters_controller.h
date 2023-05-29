@@ -14,7 +14,6 @@ namespace Distributions {
 class ParametersController : public Shared::FloatParameterController<double> {
  public:
   ParametersController(Escher::StackViewController* parentResponder,
-                       Escher::BoxesDelegate* boxesDelegate,
                        Distribution* m_distribution,
                        CalculationController* calculationController);
   const char* title() override;

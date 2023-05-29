@@ -13,12 +13,11 @@ namespace Shared {
 class EditableFieldBannerViewDelegate {
  public:
   EditableFieldBannerViewDelegate(Escher::Responder* parentResponder,
-                                  Escher::BoxesDelegate* boxesDelegate,
                                   Escher::TextFieldDelegate* textFieldDelegate)
       : m_editableFieldLabel({.style = BannerView::k_bannerFieldFormat.style,
                               .horizontalAlignment = KDGlyph::k_alignRight}),
         m_editableField(parentResponder, m_textBody, k_bufferSize,
-                        boxesDelegate, textFieldDelegate,
+                        textFieldDelegate,
                         {.style = BannerView::k_bannerFieldFormat.style,
                          .horizontalAlignment = KDGlyph::k_alignLeft}),
         m_editableView(&m_editableFieldLabel, &m_editableField) {

@@ -17,7 +17,6 @@ class ListController : public Shared::ExpressionModelListController,
                        public Escher::ButtonRowDelegate {
  public:
   ListController(Escher::Responder* parentResponder,
-                 Escher::BoxesDelegate* boxesDelegate,
                  EquationStore* equationStore,
                  Escher::ButtonRowController* footer);
   /* ButtonRowDelegate */

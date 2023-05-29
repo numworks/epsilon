@@ -22,7 +22,6 @@ class ValuesController : public Shared::ValuesController,
                          public Escher::PrefacedTableViewDelegate {
  public:
   ValuesController(Escher::Responder *parentResponder,
-                   Escher::BoxesDelegate *boxesDelegate,
                    Escher::ButtonRowController *header,
                    FunctionParameterController *functionParameterController);
   bool displayButtonExactValues() const;

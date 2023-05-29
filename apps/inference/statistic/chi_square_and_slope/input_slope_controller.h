@@ -4,19 +4,15 @@
 #include "inference/statistic/chi_square_and_slope/categorical_controller.h"
 #include "inference/statistic/chi_square_and_slope/slope_table_cell.h"
 #include "inference/statistic/input_controller.h"
-#include "shared/boxes_delegate.h"
 #include "slope_column_parameter_controller.h"
 
 namespace Inference {
 
-class InputSlopeController : public InputCategoricalController,
-                             public Shared::BoxesDelegate {
+class InputSlopeController : public InputCategoricalController {
  public:
   InputSlopeController(Escher::StackViewController *parent,
                        Escher::ViewController *resultsController,
-                       Statistic *statistic,
-                       Escher::BoxesDelegate *boxesDelegate,
-                       Poincare::Context *parentContext);
+                       Statistic *statistic, Poincare::Context *parentContext);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

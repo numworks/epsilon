@@ -53,10 +53,6 @@ class App : public Shared::SharedAppWithStoreMenu {
   }
   ElementsViewDataSource *elementsViewDataSource() { return &m_dataSource; }
 
-  // BoxesDelegate
-  Escher::PervasiveBox *toolbox() override { return nullptr; }
-  Escher::PervasiveBox *variableBox() override { return nullptr; }
-
  private:
   App(Snapshot *snapshot);
 

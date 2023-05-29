@@ -103,6 +103,6 @@ template class DynamicCellsDataSource<InferenceEvenOddEditableCell,
 template class DynamicCellsDataSource<
     Escher::MenuCellWithEditableText<Escher::LayoutView,
                                      Escher::MessageTextView>,
-    k_maxNumberOfInputParameterCell>;
+    k_maxNumberOfParameterCell>;
 template class DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>;
 }  // namespace Inference

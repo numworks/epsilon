@@ -62,7 +62,7 @@ constexpr int k_homogeneityTableNumberOfReusableInnerCells = 50;
 // static assertion in implementation
 constexpr int k_doubleColumnTableNumberOfReusableCells = 24;
 constexpr int k_inputControllerNumberOfReusableCells = 8;
-constexpr int k_maxNumberOfInputParameterCell =
+constexpr int k_maxNumberOfParameterCell =
     k_inputControllerNumberOfReusableCells;
 constexpr int k_resultDataSourceNumberOfReusableCells = 5;
 constexpr int k_maxNumberOfResultCells =

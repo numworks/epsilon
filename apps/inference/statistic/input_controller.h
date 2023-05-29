@@ -12,15 +12,13 @@
 
 namespace Inference {
 
-using InputParameterCell =
-    Escher::MenuCellWithEditableText<Escher::LayoutView,
-                                     Escher::MessageTextView>;
+using ParameterCell = Escher::MenuCellWithEditableText<Escher::LayoutView,
+                                                       Escher::MessageTextView>;
 
 class InputController
     : public Shared::FloatParameterController<double>,
-      public DynamicCellsDataSource<InputParameterCell,
-                                    k_maxNumberOfInputParameterCell>,
-      public DynamicCellsDataSourceDelegate<InputParameterCell> {
+      public DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>,
+      public DynamicCellsDataSourceDelegate<ParameterCell> {
   friend class InputSlopeController;
 
  public:
@@ -42,7 +40,7 @@ class InputController
   KDCoordinate separatorBeforeRow(int row) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  void initCell(InputParameterCell, void* cell, int index) override;
+  void initCell(ParameterCell, void* cell, int index) override;
   Escher::SelectableTableView* tableView() override {
     return &m_selectableListView;
   }

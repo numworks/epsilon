@@ -13,6 +13,7 @@ class Simplification {
     return reference;
   }
 
+  // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   static bool Expand(EditionReference *reference);
   static bool Contract(EditionReference *reference);
 

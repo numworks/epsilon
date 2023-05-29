@@ -86,7 +86,6 @@ bool Simplification::Expand(EditionReference* e) {
 }
 
 bool Simplification::ContractAbs(EditionReference* reference) {
-  // TODO : Ensure NAry children are sorted before and after.
   // A*|B|*|C|*D = A*|BC|*D
   return reference->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
@@ -104,7 +103,6 @@ bool Simplification::ExpandAbs(EditionReference* reference) {
 }
 
 bool Simplification::ContractLn(EditionReference* reference) {
-  // TODO : Ensure NAry children are sorted before and after.
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
   return reference->matchAndReplace(
       KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
@@ -138,7 +136,6 @@ bool Simplification::ExpandExp(EditionReference* reference) {
 }
 
 bool Simplification::ContractExpMult(EditionReference* reference) {
-  // TODO : Ensure NAry children are sorted before and after.
   // A? * e^B * e^C * D? = A * e^(B+C) * D
   return reference->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
@@ -243,7 +240,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
-/* The order of nodes in NAry is not a concern here. They will be sorted in
+/* The order of nodes in NAry is not a concern here. They will be sorted before
  * SystemReduction. */
 EditionReference Simplification::SystemProjection(EditionReference reference,
                                                   ProjectionContext context) {

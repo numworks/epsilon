@@ -17,10 +17,6 @@ class SelectableTableViewDelegate : public ContextProvider {
   virtual void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) {}
-  virtual bool canStoreContentOfCellAtLocation(SelectableTableView* t, int col,
-                                               int row) const {
-    return true;
-  }
 };
 
 }  // namespace Escher

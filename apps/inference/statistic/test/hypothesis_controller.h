@@ -24,8 +24,7 @@ namespace Inference {
 class HypothesisController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate,
-      public Escher::DropdownCallback,
-      public Escher::SelectableListViewDelegate {
+      public Escher::DropdownCallback {
  public:
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
@@ -45,6 +44,7 @@ class HypothesisController
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_next ? k_defaultRowSeparator : 0;
   }
+  bool canStoreContentOfCellAtRow(int row) override { return false; }
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
@@ -61,12 +61,6 @@ class HypothesisController
     return true;
   }
   bool textFieldIsStorable(Escher::AbstractTextField* textField) override {
-    return false;
-  }
-
-  // SelectableListViewDelegate
-  bool canStoreContentOfCell(Escher::SelectableListView* t,
-                             int row) const override {
     return false;
   }
 

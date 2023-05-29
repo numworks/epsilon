@@ -21,8 +21,7 @@ namespace Solver {
 class SolutionsController : public Escher::ViewController,
                             public Escher::AlternateEmptyViewDelegate,
                             public Escher::SelectableTableViewDataSource,
-                            public Escher::TableViewDataSource,
-                            public Escher::SelectableTableViewDelegate {
+                            public Escher::TableViewDataSource {
  public:
   SolutionsController(Escher::Responder *parentResponder);
 
@@ -55,15 +54,12 @@ class SolutionsController : public Escher::ViewController,
     return typeAtLocation(column, row) != k_messageCellType &&
            typeAtLocation(column, row) != k_emptyCellType;
   }
+  bool canStoreContentOfCellAtLocation(int column, int row) override {
+    return column > 0;
+  }
 
   // Responder
   void didBecomeFirstResponder() override;
-
-  // SelectableTableViewDelegate
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t, int col,
-                                       int row) const override {
-    return col > 0;
-  }
 
  private:
   // TableViewDataSource

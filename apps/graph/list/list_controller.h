@@ -33,11 +33,7 @@ class ListController : public Shared::FunctionListController {
   KDCoordinate expressionRowHeight(int j) override;
   FunctionToolbox* toolbox() override;
   Shared::ListParameterController* parameterController() override;
-  // SelectableListViewDelegate
-  bool canStoreContentOfCell(Escher::SelectableListView* l,
-                             int row) const override {
-    return false;
-  }
+  bool canStoreContentOfCellAtRow(int row) override { return false; }
 
  private:
   // 6 rows of undefined empty functions

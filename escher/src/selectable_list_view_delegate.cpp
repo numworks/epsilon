@@ -14,9 +14,4 @@ void SelectableListViewDelegate::tableViewDidChangeSelectionAndDidScroll(
       withinTemporarySelection);
 }
 
-bool SelectableListViewDelegate::canStoreContentOfCellAtLocation(
-    SelectableTableView* t, int col, int row) const {
-  return canStoreContentOfCell(static_cast<SelectableListView*>(t), row);
-};
-
 }  // namespace Escher

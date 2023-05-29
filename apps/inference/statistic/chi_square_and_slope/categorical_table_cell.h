@@ -49,10 +49,6 @@ class CategoricalTableCell : public Escher::HighlightCell,
       Escher::SelectableTableView *t, int previousSelectedCol,
       int previousSelectedRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t, int col,
-                                       int row) const override {
-    return row > 0;
-  }
 
   void layoutSubviews(bool force = false) override;
 

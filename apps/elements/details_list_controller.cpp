@@ -79,12 +79,9 @@ void DetailsListController::fillCellForRow(HighlightCell *cell, int row) {
   typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
 }
 
-bool DetailsListController::canStoreContentOfCell(SelectableListView *l,
-                                                  int row) const {
-  assert(l == &m_selectableListView);
-  int innerRow = innerRowFromRow(row);
-  const DataField *dataField = DataFieldForRow(innerRow);
-  Layout layout = DataFieldForRow(innerRow)->getLayout(
+bool DetailsListController::canStoreContentOfCellAtRow(int row) {
+  const DataField *dataField = DataFieldForRow(row);
+  Layout layout = DataFieldForRow(row)->getLayout(
       App::app()->elementsViewDataSource()->selectedElement(),
       PrintFloat::k_numberOfStoredSignificantDigits);
   return dataField != &ElementsDataBase::ConfigurationField &&

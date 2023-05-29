@@ -32,14 +32,10 @@ class ListController : public Shared::FunctionListController {
   int reusableCellCount(int type) override {
     return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows();
   }
+  bool canStoreContentOfCellAtRow(int row) override { return false; }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  /* ViewController */
-  bool canStoreContentOfCell(Escher::SelectableListView* t,
-                             int row) const override {
-    return false;
-  }
   void showLastSequence();
   /* LayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,

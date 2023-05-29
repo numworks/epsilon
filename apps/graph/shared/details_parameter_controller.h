@@ -42,10 +42,7 @@ class DetailsParameterController
   DetailCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtRow(int row) const override { return 0; }
-
-  // SelectableListViewDelegate
-  bool canStoreContentOfCell(Escher::SelectableListView* t,
-                             int row) const override {
+  bool canStoreContentOfCellAtRow(int row) override {
     return row != k_indexOfCurveTypeRow;
   }
 

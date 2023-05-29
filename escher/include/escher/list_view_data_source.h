@@ -17,6 +17,7 @@ class ListViewDataSource : public TableViewDataSource {
   int reusableCellCount(int type) override { return numberOfRows(); }
   virtual void fillCellForRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
+  virtual bool canStoreContentOfCellAtRow(int row) { return true; }
 
  protected:
   KDCoordinate defaultColumnWidth() override { return KDCOORDINATE_MAX; }
@@ -39,6 +40,9 @@ class ListViewDataSource : public TableViewDataSource {
   int typeAtLocation(int column, int row) override final {
     assert(column == 0);
     return typeAtRow(row);
+  }
+  bool canStoreContentOfCellAtLocation(int column, int row) override final {
+    return canStoreContentOfCellAtRow(row);
   }
   // Just make this method final without changing behaviour
   KDCoordinate nonMemoizedColumnWidth(int column) override final {

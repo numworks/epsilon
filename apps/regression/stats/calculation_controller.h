@@ -30,8 +30,6 @@ class CalculationController : public Shared::DoublePairTableController {
       Escher::SelectableTableView* t, int previousSelectedCol,
       int previousSelectedRow, KDPoint previousOffset,
       bool withinTemporarySelection) override;
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override;
 
   // TableViewDataSource
   int numberOfRows() const override;
@@ -46,6 +44,7 @@ class CalculationController : public Shared::DoublePairTableController {
                ? Escher::Metric::TableSeparatorThickness
                : 0;
   }
+  bool canStoreContentOfCellAtLocation(int column, int row) override;
 
  private:
   enum class Calculation : uint8_t {

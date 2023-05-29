@@ -185,8 +185,8 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (!text && layout.isUninitialized()) {
       return false;
     }
-    if (!m_delegate || m_delegate->canStoreContentOfCellAtLocation(
-                           this, selectedColumn(), selectedRow())) {
+    if (dataSource()->canStoreContentOfCellAtLocation(selectedColumn(),
+                                                      selectedRow())) {
       if (text) {
         strlcpy(buffer, text, bufferSize);
       } else {

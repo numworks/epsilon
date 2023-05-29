@@ -43,14 +43,12 @@ class DoublePairTableController
   // PrefacedTableView::MarginDelegate
   KDCoordinate columnPrefaceRightMargin() override;
 
-  // SelectableTableViewDelegate
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t, int col,
-                                       int row) const override {
-    return row > 0 && col > 1;
-  }
-
+  // RegularHeightTableViewDataSource
   bool cellAtLocationIsSelectable(int column, int row) override {
     return row > 0 || column > 1;
+  }
+  bool canStoreContentOfCellAtLocation(int column, int row) override {
+    return row > 0 && column > 1;
   }
 
  protected:

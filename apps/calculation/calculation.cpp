@@ -375,7 +375,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction =
       expressionIsInterestingFunction(i) &&
-      !(i.type() == ExpressionNode::Type::Opposite &&
+      !(i.isOfType({ExpressionNode::Type::Opposite,
+                    ExpressionNode::Type::Parenthesis}) &&
         !expressionIsInterestingFunction(i.childAtIndex(0)));
   assert(!a.isUndefined());
   if (isInterestingFunction && a.type() != ExpressionNode::Type::Nonreal &&

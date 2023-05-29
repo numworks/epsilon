@@ -36,7 +36,6 @@ class InputController
   }
   ViewController::TitlesDisplay titlesDisplay() override;
   int typeAtRow(int row) const override;
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;

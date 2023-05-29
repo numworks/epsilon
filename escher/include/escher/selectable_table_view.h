@@ -57,7 +57,7 @@ class SelectableTableView : public TableView, public Responder {
   SelectableTableViewDelegate* m_delegate;
 
  private:
-  bool cellAtLocationIsSelectable(int column, int row);
+  bool canSelectCellAtLocation(int column, int row);
   /* This function searches (for delta = n) :
    * - The n-th next selectable row in the currentCol starting from currentRow
    *   if searchForRow = true

@@ -32,7 +32,7 @@ class Controller : public Escher::ViewController,
   int reusableCellCount() const override { return k_numberOfReusableCells; }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  bool cellAtLocationIsSelectable(int column, int row) override {
+  bool canSelectCellAtLocation(int column, int row) override {
     assert(column >= 0 && column < numberOfColumns() && row >= 0 &&
            row < numberOfRows());
     return row < numberOfRows() - 1 || column <= columnOfLastIcon();

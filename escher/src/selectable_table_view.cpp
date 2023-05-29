@@ -35,8 +35,8 @@ int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first,
   for (int cow = firstIndex; first ? cow < nColumnsOrRow : cow >= 0;
        first ? cow++ : cow--) {
     bool isSelectable = searchForRow
-                            ? cellAtLocationIsSelectable(selectedColumn(), cow)
-                            : cellAtLocationIsSelectable(cow, selectedRow());
+                            ? canSelectCellAtLocation(selectedColumn(), cow)
+                            : canSelectCellAtLocation(cow, selectedRow());
     if (isSelectable) {
       return cow;
     }
@@ -45,10 +45,10 @@ int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first,
   return -1;
 }
 
-bool SelectableTableView::cellAtLocationIsSelectable(int column, int row) {
+bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
   HighlightCell* cell = cellAtLocation(column, row);
   return (!cell || cell->isVisible()) &&
-         dataSource()->cellAtLocationIsSelectable(column, row);
+         dataSource()->canSelectCellAtLocation(column, row);
 }
 
 int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
@@ -71,8 +71,8 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
       }
       return firstOrLastSelectableColumnOrRow(delta < 0, searchForRow);
     }
-    bool cellIsSelectable = searchForRow ? cellAtLocationIsSelectable(col, cow)
-                                         : cellAtLocationIsSelectable(cow, row);
+    bool cellIsSelectable = searchForRow ? canSelectCellAtLocation(col, cow)
+                                         : canSelectCellAtLocation(cow, row);
     if (cellIsSelectable) {
       selectableCow = cow;
       delta -= step;
@@ -89,13 +89,13 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
     return false;
   }
 
-  if (!cellAtLocationIsSelectable(col, row)) {
+  if (!canSelectCellAtLocation(col, row)) {
     /* If the cell is not selectable, go down by default.
      * This behaviour is only implemented for Explicit. */
     row = indexOfNextSelectableRow(1, col, row);
   }
   // There should always be at least 1 selectable cell in the column
-  assert(cellAtLocationIsSelectable(col, row));
+  assert(canSelectCellAtLocation(col, row));
 
   // Unhighlight previous cell
   unhighlightSelectedCell();

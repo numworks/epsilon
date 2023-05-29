@@ -44,7 +44,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 
     // Set the interest data model
     App::SetModel(simpleInterestRowSelected);
-    m_interestMenuController->selectRow(0);
+    m_interestMenuController->selectFirstCell();
     stackOpenPage(m_interestMenuController);
     return true;
   }

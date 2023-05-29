@@ -21,7 +21,8 @@ void InterestMenuController::didBecomeFirstResponder() {
     m_cells[i].subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
-  ListWithTopAndBottomController::didBecomeFirstResponder();
+  resetMemoization();
+  m_selectableListView.reloadData();
 }
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {

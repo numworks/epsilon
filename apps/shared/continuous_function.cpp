@@ -700,10 +700,16 @@ Expression ContinuousFunction::Model::expressionEquation(
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;
       }
-      return Expression::ExpressionWithoutSymbols(result, context);
+      result = Expression::ExpressionWithoutSymbols(result, context);
+      if (!result.isUninitialized()) {
+        // Result is not circularly defined.
+        return result;
+      }
     }
-    /* Happens when the input text is too long and "f(x)=" can't be inserted
-     * or when inputting amiguous equations like "x+y>2>y" */
+    /* Happens when:
+     * - The input text is too long and "f(x)=" can't be inserted.
+     * - When inputting amiguous equations like "x+y>2>y".
+     * - When result is uninitialized because of circular definition.  */
     return Undefined::Builder();
   }
   if (equationType == ComparisonNode::OperatorType::NotEqual) {

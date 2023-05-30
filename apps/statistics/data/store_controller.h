@@ -36,7 +36,7 @@ class StoreController : public Shared::StoreController {
                : Shared::StoreController::reusableCellCount(type);
   }
   int typeAtLocation(int column, int row) override {
-    return isCumulatedFrequencyCell(column, row)
+    return row != 0 && isCumulatedFrequencyColumn(column)
                ? k_nonEditableCellType
                : Shared::StoreController::typeAtLocation(column, row);
   }
@@ -56,9 +56,6 @@ class StoreController : public Shared::StoreController {
 
   bool isCumulatedFrequencyColumn(int i) const {
     return m_store->relativeColumn(i) == k_cumulatedFrequencyRelativeColumn;
-  }
-  bool isCumulatedFrequencyCell(int i, int j) const {
-    return j != 0 && isCumulatedFrequencyColumn(i);
   }
 
   bool deleteCellValue(int series, int i, int j,

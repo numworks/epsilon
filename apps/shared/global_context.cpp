@@ -43,9 +43,10 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
         ExpressionForActualSymbol(record),
         AppsContainer::activeApp()->localContext());
   } else if (record.hasExtension(Ion::Storage::funcExtension)) {
+    ExpiringPointer<ContinuousFunction> f =
+        continuousFunctionStore->modelForRecord(record);
     return PoincareHelpers::CreateLayout(
-        ExpressionForFunction(
-            Symbol::Builder(ContinuousFunction(record).symbol()), record),
+        ExpressionForFunction(Symbol::Builder(f->symbol()), record),
         AppsContainer::activeApp()->localContext());
   } else if (record.hasExtension(Ion::Storage::regExtension)) {
     return PoincareHelpers::CreateLayout(

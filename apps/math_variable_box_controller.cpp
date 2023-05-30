@@ -157,8 +157,9 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
         symbolName, record.fullName(), SymbolAbstractNode::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
     if (record.hasExtension(Storage::funcExtension)) {
-      ContinuousFunction f(record);
-      symbolLength = f.nameWithArgument(
+      ExpiringPointer<ContinuousFunction> f =
+          GlobalContext::continuousFunctionStore->modelForRecord(record);
+      symbolLength = f->nameWithArgument(
           symbolName, Shared::Function::k_maxNameWithArgumentSize);
     } else {
       assert(record.hasExtension(Storage::regExtension));

@@ -34,7 +34,7 @@ CalculationController::CalculationController(Responder *parentResponder,
     m_calculationModeSymbolCells[i].setFont(KDFont::Size::Small);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
-    m_hideableCell[i].hide();
+    m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
   }
   resetMemoization();
 }
@@ -52,6 +52,9 @@ int CalculationController::numberOfColumns() const {
 
 void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
                                                 int row) {
+  if (column <= 1 && row == 0) {
+    return;
+  }
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(row % 2 == 0);
   int type = typeAtLocation(column, row);

@@ -100,8 +100,6 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
   }
   // The cell is editable
   if (cellAtLocationIsEditable(column, row)) {
-    AbstractEvenOddEditableTextCell *myEditableValueCell =
-        static_cast<AbstractEvenOddEditableTextCell *>(cell);
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
@@ -114,7 +112,10 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
           dataAtLocation(column, row), buffer, bufferSize,
           AbstractEvenOddBufferTextCell::k_defaultPrecision, floatDisplayMode);
     }
-    myEditableValueCell->editableTextCell()->textField()->setText(buffer);
+    static_cast<AbstractEvenOddEditableTextCell *>(cell)
+        ->editableTextCell()
+        ->textField()
+        ->setText(buffer);
   }
 }
 

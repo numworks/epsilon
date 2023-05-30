@@ -1,12 +1,10 @@
-#include "scrollable_two_layouts_cell.h"
-
 #include <assert.h>
 #include <escher/container.h>
+#include <escher/scrollable_two_layouts_cell.h>
 
-using namespace Escher;
 using namespace Poincare;
 
-namespace Shared {
+namespace Escher {
 
 ScrollableTwoLayoutsCell::ScrollableTwoLayoutsCell(Responder* parentResponder,
                                                    float horizontalAlignment,
@@ -32,4 +30,4 @@ void ScrollableTwoLayoutsCell::reinitSelection() {
   m_view.reloadScroll();
 }
 
-}  // namespace Shared
+}  // namespace Escher

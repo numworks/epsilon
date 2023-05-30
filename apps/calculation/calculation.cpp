@@ -4,7 +4,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <apps/shared/scrollable_multiple_layouts_view.h>
+#include <escher/scrollable_multiple_layouts_view.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix.h>
 #include <poincare/nonreal.h>

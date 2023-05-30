@@ -3,8 +3,8 @@
 
 #include <escher/even_odd_cell_with_ellipsis.h>
 #include <escher/scrollable_layout_view.h>
+#include <escher/scrollable_multiple_layouts_view.h>
 
-#include "../shared/scrollable_multiple_layouts_view.h"
 #include "calculation.h"
 
 namespace Calculation {
@@ -39,7 +39,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
   constexpr static KDCoordinate k_inputViewHorizontalMargin =
-      Shared::AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
+      Escher::AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   constexpr static KDCoordinate k_maxCellHeight = Ion::Display::Height * 2;
 
   static KDCoordinate Height(Calculation* calculation,
@@ -72,7 +72,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Shared::ScrollableTwoLayoutsView* outputView() {
+  Escher::ScrollableTwoLayoutsView* outputView() {
     return &m_scrollableOutputView;
   }
   Escher::ScrollableLayoutView* inputView() { return &m_inputView; }
@@ -96,7 +96,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformations m_calculationAdditionInformations;
   Escher::ScrollableLayoutView m_inputView;
-  Shared::ScrollableTwoLayoutsView m_scrollableOutputView;
+  Escher::ScrollableTwoLayoutsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource* m_dataSource;
   bool m_calculationExpanded;

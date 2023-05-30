@@ -2,19 +2,19 @@
 #define CALCULATION_SCROLLABLE_THREE_LAYOUTS_CELL_H
 
 #include <escher/menu_cell.h>
+#include <escher/scrollable_multiple_layouts_view.h>
 #include <poincare/layout.h>
 
-#include "../../shared/scrollable_multiple_layouts_view.h"
 #include "../calculation.h"
 #include "layout_with_equal_sign_view.h"
 
 namespace Calculation {
 
 class ScrollableThreeLayoutsView
-    : public Shared::AbstractScrollableMultipleLayoutsView {
+    : public Escher::AbstractScrollableMultipleLayoutsView {
  public:
   ScrollableThreeLayoutsView(Responder *parentResponder = nullptr)
-      : Shared::AbstractScrollableMultipleLayoutsView(parentResponder,
+      : Escher::AbstractScrollableMultipleLayoutsView(parentResponder,
                                                       &m_contentCell) {
     setMargins(0, 0, 0, 0);  // margins are already added by MenuCell
     setBackgroundColor(KDColorWhite);
@@ -40,11 +40,11 @@ class ScrollableThreeLayoutsView
 
  private:
   class ContentCell
-      : public Shared::AbstractScrollableMultipleLayoutsView::ContentCell {
+      : public Escher::AbstractScrollableMultipleLayoutsView::ContentCell {
     friend ScrollableThreeLayoutsView;
 
    public:
-    using Shared::AbstractScrollableMultipleLayoutsView::ContentCell::
+    using Escher::AbstractScrollableMultipleLayoutsView::ContentCell::
         ContentCell;
     KDColor backgroundColor() const override {
       return m_highlightWholeCell ? defaultBackgroundColor() : KDColorWhite;

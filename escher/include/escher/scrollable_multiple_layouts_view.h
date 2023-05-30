@@ -1,5 +1,5 @@
-#ifndef SHARED_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
-#define SHARED_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
+#ifndef ESCHER_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
+#define ESCHER_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
 
 #include <apps/i18n.h>
 #include <escher/even_odd_cell.h>
@@ -8,20 +8,19 @@
 #include <escher/metric.h>
 #include <escher/scrollable_view.h>
 
-namespace Shared {
+namespace Escher {
 
 class AbstractScrollableMultipleLayoutsView
-    : public Escher::ScrollableView<Escher::ScrollView::ArrowDecorator>,
-      public Escher::ScrollViewDataSource,
-      public Escher::CellWidget {
+    : public ScrollableView<ScrollView::ArrowDecorator>,
+      public ScrollViewDataSource,
+      public CellWidget {
  public:
-  constexpr static KDCoordinate k_horizontalMargin =
-      Escher::Metric::CommonLargeMargin;
+  constexpr static KDCoordinate k_horizontalMargin = Metric::CommonLargeMargin;
   enum class SubviewPosition : uint8_t { Left = 0, Center = 1, Right = 2 };
 
   AbstractScrollableMultipleLayoutsView(Responder* parentResponder,
                                         View* contentCell);
-  Escher::EvenOddCell* evenOddCell() { return contentCell(); }
+  EvenOddCell* evenOddCell() { return contentCell(); }
   virtual void setLayouts(Poincare::Layout formulaLayout,
                           Poincare::Layout exactLayout,
                           Poincare::Layout approximateLayout);
@@ -54,15 +53,14 @@ class AbstractScrollableMultipleLayoutsView
   const View* view() const override { return this; }
   Responder* responder() override { return this; }
   void setBackgroundColor(KDColor color) override {
-    Escher::ScrollableView<
-        Escher::ScrollView::ArrowDecorator>::setBackgroundColor(color);
+    ScrollableView<ScrollView::ArrowDecorator>::setBackgroundColor(color);
   }
   void setHighlighted(bool highlighted) override {
-    setBackgroundColor(Escher::AbstractMenuCell::BackgroundColor(highlighted));
+    setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
   }
 
  protected:
-  class ContentCell : public Escher::EvenOddCell {
+  class ContentCell : public EvenOddCell {
    public:
     ContentCell(float horizontalAlignment = KDGlyph::k_alignLeft,
                 KDFont::Size font = KDFont::Size::Large);
@@ -75,10 +73,10 @@ class AbstractScrollableMultipleLayoutsView
       assert(m_rightLayoutView.font() == m_centeredLayoutView.font());
       return m_rightLayoutView.font();
     }
-    virtual Escher::LayoutView* leftLayoutView() const { return nullptr; }
-    Escher::LayoutView* rightLayoutView() { return &m_rightLayoutView; }
-    Escher::LayoutView* centeredLayoutView() { return &m_centeredLayoutView; }
-    Escher::MessageTextView* approximateSign() { return &m_approximateSign; }
+    virtual LayoutView* leftLayoutView() const { return nullptr; }
+    LayoutView* rightLayoutView() { return &m_rightLayoutView; }
+    LayoutView* centeredLayoutView() { return &m_centeredLayoutView; }
+    MessageTextView* approximateSign() { return &m_approximateSign; }
     SubviewPosition selectedSubviewPosition() const {
       return m_selectedSubviewPosition;
     }
@@ -118,9 +116,9 @@ class AbstractScrollableMultipleLayoutsView
     void updateSubviewsBackgroundAfterChangingState() override;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View* subviewAtIndex(int index) override;
-    Escher::LayoutView m_rightLayoutView;
-    Escher::MessageTextView m_approximateSign;
-    Escher::LayoutView m_centeredLayoutView;
+    LayoutView m_rightLayoutView;
+    MessageTextView m_approximateSign;
+    LayoutView m_centeredLayoutView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;
@@ -133,14 +131,13 @@ class AbstractScrollableMultipleLayoutsView
 
 class ScrollableTwoLayoutsView : public AbstractScrollableMultipleLayoutsView {
  public:
-  ScrollableTwoLayoutsView(Escher::Responder* parentResponder,
+  ScrollableTwoLayoutsView(Responder* parentResponder,
                            float horizontalAlignment = KDGlyph::k_alignLeft,
                            KDFont::Size font = KDFont::Size::Large)
       : AbstractScrollableMultipleLayoutsView(parentResponder, &m_contentCell),
         m_contentCell(horizontalAlignment, font) {
-    setMargins(
-        Escher::Metric::CommonSmallMargin, Escher::Metric::CommonLargeMargin,
-        Escher::Metric::CommonSmallMargin, Escher::Metric::CommonLargeMargin);
+    setMargins(Metric::CommonSmallMargin, Metric::CommonLargeMargin,
+               Metric::CommonSmallMargin, Metric::CommonLargeMargin);
   }
   KDSize minimalSizeForOptimalDisplayFullSize() const;
   KDFont::Size font() const { return m_contentCell.font(); }
@@ -151,6 +148,6 @@ class ScrollableTwoLayoutsView : public AbstractScrollableMultipleLayoutsView {
   ContentCell m_contentCell;
 };
 
-}  // namespace Shared
+}  // namespace Escher
 
 #endif

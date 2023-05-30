@@ -1,14 +1,11 @@
-#include "scrollable_multiple_layouts_view.h"
-
-#include <apps/i18n.h>
 #include <assert.h>
+#include <escher/scrollable_multiple_layouts_view.h>
 
 #include <algorithm>
 
-using namespace Escher;
 using namespace Poincare;
 
-namespace Shared {
+namespace Escher {
 
 AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
@@ -422,4 +419,4 @@ KDSize ScrollableTwoLayoutsView::minimalSizeForOptimalDisplayFullSize() const {
                 res.height() + topMargin() + bottomMargin());
 }
 
-}  // namespace Shared
+}  // namespace Escher

@@ -99,13 +99,13 @@ void StoreController::fillCellForLocation(HighlightCell *cell, int column,
     Escher::AbstractEvenOddEditableTextCell *myCell =
         static_cast<Escher::AbstractEvenOddEditableTextCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
-    myCell->hide();
+    myCell->setVisible(false);
     return;
   }
   if (typeAtLocation(column, row) == k_editableCellType) {
     Escher::AbstractEvenOddEditableTextCell *myCell =
         static_cast<Escher::AbstractEvenOddEditableTextCell *>(cell);
-    myCell->show();
+    myCell->setVisible(true);
     KDColor textColor =
         (m_store->seriesIsActive(m_store->seriesAtColumn(column)) ||
          m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column)) == 0)

@@ -13,7 +13,7 @@ class SlopeColumnParameterController : public Shared::StoreParameterController {
                                  Shared::StoreColumnHelper* storeColumnHelper)
       : Shared::StoreParameterController(parentResponder, storeColumnHelper) {
     // Do not display an option to hide series
-    m_hideCell.hide();
+    m_hideCell.setVisible(false);
   }
   Escher::ViewController::TitlesDisplay titlesDisplay() override {
     return m_titlesDisplay;

@@ -15,8 +15,6 @@ class HighlightCell : public View {
 
   bool isVisible() const { return m_state != State::Hidden; }
   virtual void setVisible(bool visible);
-  void show() { setVisible(true); }
-  void hide() { setVisible(false); }
 
   virtual void setHighlighted(bool highlight);
   void setHighlightedWithoutReload(bool highlight) {

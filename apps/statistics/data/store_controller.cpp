@@ -61,10 +61,10 @@ void StoreController::fillCellForLocation(HighlightCell *cell, int column,
       static_cast<AbstractEvenOddBufferTextCell *>(cell);
   if (row > numberOfElementsInCol + 1) {
     myCell->setText("");
-    myCell->hide();
+    myCell->setVisible(false);
     return;
   }
-  myCell->show();
+  myCell->setVisible(true);
   myCell->setEven(row % 2 == 0);
 
   double value =

@@ -32,9 +32,8 @@ void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell *cell,
       (row == 0 && column != 0 && column == numberOfColumns() - 1 &&
        column < k_maxNumberOfColumns)) {
     /* The last column/row is empty and has its title grayed out. */
-    InferenceEvenOddBufferCell *typedCell =
-        static_cast<InferenceEvenOddBufferCell *>(cell);
-    typedCell->setTextColor(Palette::GrayDark);
+    static_cast<InferenceEvenOddBufferCell *>(cell)->setTextColor(
+        Palette::GrayDark);
   }
 }
 

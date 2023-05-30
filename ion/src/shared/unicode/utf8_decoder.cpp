@@ -28,13 +28,13 @@ size_t UnicodeDecoder::previousGlyphPosition() {
 
 size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
                                      size_t printLength) {
-  if (printLength == k_noSize) {
-    printLength = m_end - m_position;
-  }
-  assert(m_position + printLength <= m_end);
+  assert(m_end == k_noSize || m_position + printLength <= m_end);
   size_t result = 0;
   while (result < printLength) {
     CodePoint c = nextCodePoint();
+    if (c == UCodePointNull) {
+      break;
+    }
     if (result + UTF8Decoder::CharSizeOfCodePoint(c) >= bufferSize) {
       buffer[0] = 0;
       return 0;

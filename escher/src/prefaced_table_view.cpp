@@ -1,15 +1,13 @@
-#include "prefaced_table_view.h"
+#include <escher/prefaced_table_view.h>
 
-using namespace Escher;
-
-namespace Shared {
+namespace Escher {
 
 PrefacedTableView::PrefacedTableView(
     int prefaceRow, Responder* parentResponder,
     SelectableTableView* mainTableView, TableViewDataSource* cellsDataSource,
     SelectableTableViewDelegate* delegate,
     PrefacedTableViewDelegate* prefacedTableViewDelegate)
-    : Escher::Responder(parentResponder),
+    : Responder(parentResponder),
       m_rowPrefaceDataSource(prefaceRow, cellsDataSource),
       m_rowPrefaceView(&m_rowPrefaceDataSource, &m_rowPrefaceDataSource),
       m_mainTableView(mainTableView),
@@ -64,9 +62,8 @@ void PrefacedTableView::resetContentOffset() {
 }
 
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
-    Escher::SelectableTableView* t, int previousSelectedCol,
-    int previousSelectedRow, KDPoint previousOffset,
-    bool withinTemporarySelection) {
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+    KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(
@@ -79,7 +76,7 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   layoutSubviews();
 }
 
-Escher::View* PrefacedTableView::subviewAtIndex(int index) {
+View* PrefacedTableView::subviewAtIndex(int index) {
   switch (index) {
     case 0:
       return m_mainTableView;
@@ -266,4 +263,4 @@ int PrefacedTableView::RowPrefaceDataSource::nonMemoizedRowAfterCumulatedHeight(
   return result;
 }
 
-}  // namespace Shared
+}  // namespace Escher

@@ -3,6 +3,7 @@
 
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_editable_text_cell.h>
+#include <escher/prefaced_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 
@@ -11,7 +12,6 @@
 #include "editable_cell_table_view_controller.h"
 #include "input_event_handler_delegate.h"
 #include "layout_field_delegate.h"
-#include "prefaced_table_view.h"
 #include "store_parameter_controller.h"
 
 namespace Shared {
@@ -84,7 +84,7 @@ class StoreController : public EditableCellTableViewController,
   void resetMemoizedFormulasOfEmptyColumns(int series);
   void memoizeFormula(Poincare::Layout formula, int index) override;
 
-  PrefacedTableView m_prefacedTableView;
+  Escher::PrefacedTableView m_prefacedTableView;
   Escher::EvenOddEditableTextCell<>
       m_editableCells[k_maxNumberOfDisplayableCells];
   DoublePairStore* m_store;

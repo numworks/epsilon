@@ -1,17 +1,16 @@
-#ifndef SHARED_PREFACED_TWICE_TABLE_VIEW_H
-#define SHARED_PREFACED_TWICE_TABLE_VIEW_H
+#ifndef ESCHER_PREFACED_TWICE_TABLE_VIEW_H
+#define ESCHER_PREFACED_TWICE_TABLE_VIEW_H
 
-#include "prefaced_table_view.h"
+#include <escher/prefaced_table_view.h>
 
-namespace Shared {
+namespace Escher {
 
 class PrefacedTwiceTableView : public PrefacedTableView {
  public:
   PrefacedTwiceTableView(
-      int prefaceRow, int prefaceColumn, Escher::Responder* parentResponder,
-      Escher::SelectableTableView* mainTableView,
-      Escher::TableViewDataSource* cellsDataSource,
-      Escher::SelectableTableViewDelegate* delegate = nullptr,
+      int prefaceRow, int prefaceColumn, Responder* parentResponder,
+      SelectableTableView* mainTableView, TableViewDataSource* cellsDataSource,
+      SelectableTableViewDelegate* delegate = nullptr,
       PrefacedTableViewDelegate* prefacedTableViewDelegate = nullptr);
 
   void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom,
@@ -19,7 +18,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   void setBackgroundColor(KDColor color) override;
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
-  Escher::TableView* columnPrefaceView() { return &m_columnPrefaceView; }
+  TableView* columnPrefaceView() { return &m_columnPrefaceView; }
   void resetDataSourceSizeMemoization() override;
   KDCoordinate minVisibleContentWidth() const {
     return bounds().width() -
@@ -30,7 +29,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   class ColumnPrefaceDataSource : public IntermediaryDataSource {
    public:
     ColumnPrefaceDataSource(int prefaceColumn,
-                            Escher::TableViewDataSource* mainDataSource)
+                            TableViewDataSource* mainDataSource)
         : IntermediaryDataSource(mainDataSource),
           m_prefaceColumn(prefaceColumn) {}
 
@@ -42,7 +41,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
     KDCoordinate separatorBeforeColumn(int column) override { return 0; }
 
    private:
-    Escher::HighlightCell* reusableCell(int index, int type) override;
+    HighlightCell* reusableCell(int index, int type) override;
     KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
     int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
 
@@ -72,7 +71,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
 
   // View
   int numberOfSubviews() const override { return 6; }
-  Escher::View* subviewAtIndex(int index) override;
+  View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void resetContentOffset() override;
   KDPoint marginToAddForVirtualOffset() const override {
@@ -81,12 +80,12 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   }
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
-  Escher::TableView m_columnPrefaceView;
+  TableView m_columnPrefaceView;
   IntersectionPrefaceDataSource m_prefaceIntersectionDataSource;
-  Escher::TableView m_prefaceIntersectionView;
+  TableView m_prefaceIntersectionView;
   KDCoordinate m_mainTableViewLeftMargin;
 };
 
-}  // namespace Shared
+}  // namespace Escher
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SHARED_PREFACED_TABLE_VIEW_H
-#define SHARED_PREFACED_TABLE_VIEW_H
+#ifndef ESCHER_PREFACED_TABLE_VIEW_H
+#define ESCHER_PREFACED_TABLE_VIEW_H
 
 #include <escher/container.h>
 #include <escher/scroll_view.h>
@@ -10,7 +10,7 @@
  * It uses a secondary table view, which it syncs up to the selectable table
  * by intercepting callbacks to its delegate. */
 
-namespace Shared {
+namespace Escher {
 
 class PrefacedTableViewDelegate {
  public:
@@ -19,29 +19,27 @@ class PrefacedTableViewDelegate {
   columnToFreeze() = 0;  // Returns -1 if there is no column to freeze
 };
 
-class PrefacedTableView : public Escher::View,
-                          public Escher::Responder,
-                          public Escher::SelectableTableViewDelegate {
+class PrefacedTableView : public View,
+                          public Responder,
+                          public SelectableTableViewDelegate {
  public:
   PrefacedTableView(
-      int prefaceRow, Escher::Responder* parentResponder,
-      Escher::SelectableTableView* mainTableView,
-      Escher::TableViewDataSource* cellsDataSource,
-      Escher::SelectableTableViewDelegate* delegate = nullptr,
+      int prefaceRow, Responder* parentResponder,
+      SelectableTableView* mainTableView, TableViewDataSource* cellsDataSource,
+      SelectableTableViewDelegate* delegate = nullptr,
       PrefacedTableViewDelegate* prefacedTableViewDelegate = nullptr);
 
   // Responder
   void didBecomeFirstResponder() override {
-    Escher::Container::activeApp()->setFirstResponder(m_mainTableView);
+    Container::activeApp()->setFirstResponder(m_mainTableView);
   }
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, KDPoint previousOffset,
-      bool withinTemporarySelection = false) override;
+      SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+      KDPoint previousOffset, bool withinTemporarySelection = false) override;
 
-  Escher::SelectableTableView* selectableTableView() { return m_mainTableView; }
+  SelectableTableView* selectableTableView() { return m_mainTableView; }
   virtual void setMargins(KDCoordinate top, KDCoordinate right,
                           KDCoordinate bottom, KDCoordinate left);
   virtual void setBackgroundColor(KDColor color);
@@ -64,10 +62,10 @@ class PrefacedTableView : public Escher::View,
   }
 
  protected:
-  class IntermediaryDataSource : public Escher::TableViewDataSource,
-                                 public Escher::ScrollViewDataSource {
+  class IntermediaryDataSource : public TableViewDataSource,
+                                 public ScrollViewDataSource {
    public:
-    IntermediaryDataSource(Escher::TableViewDataSource* mainDataSource)
+    IntermediaryDataSource(TableViewDataSource* mainDataSource)
         : m_mainDataSource(mainDataSource) {}
 
     // TableViewDataSource
@@ -77,12 +75,12 @@ class PrefacedTableView : public Escher::View,
     int numberOfColumns() const override {
       return m_mainDataSource->numberOfColumns();
     }
-    void fillCellForLocation(Escher::HighlightCell* cell, int column,
+    void fillCellForLocation(HighlightCell* cell, int column,
                              int row) override {
       m_mainDataSource->fillCellForLocation(
           cell, columnInMainDataSource(column), rowInMainDataSource(row));
     }
-    Escher::HighlightCell* reusableCell(int index, int type) override;
+    HighlightCell* reusableCell(int index, int type) override;
     int reusableCellCount(int type) override {
       return m_mainDataSource->reusableCellCount(type);
     }
@@ -115,13 +113,12 @@ class PrefacedTableView : public Escher::View,
     virtual int columnInMainDataSource(int i) { return i; }
     virtual int rowInMainDataSource(int j) { return j; }
 
-    Escher::TableViewDataSource* m_mainDataSource;
+    TableViewDataSource* m_mainDataSource;
   };
 
   class RowPrefaceDataSource : public IntermediaryDataSource {
    public:
-    RowPrefaceDataSource(int prefaceRow,
-                         Escher::TableViewDataSource* mainDataSource)
+    RowPrefaceDataSource(int prefaceRow, TableViewDataSource* mainDataSource)
         : IntermediaryDataSource(mainDataSource),
           m_prefaceRow(prefaceRow),
           m_rowHeigthManager(this) {}
@@ -139,12 +136,12 @@ class PrefacedTableView : public Escher::View,
       return m_prefaceRow + j;
     }
 
-    Escher::TableSize1DManager* rowHeightManager() override {
+    TableSize1DManager* rowHeightManager() override {
       return &m_rowHeigthManager;
     }
 
     const int m_prefaceRow;
-    Escher::MemoizedRowHeightManager<1> m_rowHeigthManager;
+    MemoizedRowHeightManager<1> m_rowHeigthManager;
   };
 
   void layoutSubviewsInRect(KDRect rect, bool force);
@@ -152,9 +149,9 @@ class PrefacedTableView : public Escher::View,
   virtual void resetContentOffset();
 
   RowPrefaceDataSource m_rowPrefaceDataSource;
-  Escher::TableView m_rowPrefaceView;
-  Escher::ScrollView::BarDecorator m_barDecorator;
-  Escher::SelectableTableView* m_mainTableView;
+  TableView m_rowPrefaceView;
+  ScrollView::BarDecorator m_barDecorator;
+  SelectableTableView* m_mainTableView;
   MarginDelegate* m_marginDelegate;
   PrefacedTableViewDelegate* m_prefacedDelegate;
   KDCoordinate m_mainTableViewTopMargin;
@@ -163,14 +160,14 @@ class PrefacedTableView : public Escher::View,
   // View
   int numberOfSubviews() const override { return 4; }
   void layoutSubviews(bool force = false) override;
-  Escher::View* subviewAtIndex(int index) override;
+  View* subviewAtIndex(int index) override;
   virtual KDPoint marginToAddForVirtualOffset() const {
     return KDPoint(0, m_mainTableViewTopMargin - m_mainTableView->topMargin());
   }
 
-  Escher::SelectableTableViewDelegate* m_mainTableDelegate;
+  SelectableTableViewDelegate* m_mainTableDelegate;
 };
 
-}  // namespace Shared
+}  // namespace Escher
 
 #endif

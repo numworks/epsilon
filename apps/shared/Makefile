@@ -73,8 +73,6 @@ app_shared_src = $(addprefix apps/shared/,\
   menu_controller.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
-  prefaced_table_view.cpp \
-  prefaced_twice_table_view.cpp \
   range_parameter_controller.cpp \
   round_cursor_view.cpp \
   sequence.cpp \

@@ -19,7 +19,7 @@
 namespace Graph {
 
 class ValuesController : public Shared::ValuesController,
-                         public Shared::PrefacedTableViewDelegate {
+                         public Escher::PrefacedTableViewDelegate {
  public:
   ValuesController(Escher::Responder *parentResponder,
                    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,

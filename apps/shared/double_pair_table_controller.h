@@ -4,11 +4,11 @@
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/button_row_controller.h>
+#include <escher/prefaced_twice_table_view.h>
 #include <escher/regular_table_view_data_source.h>
 #include <escher/tab_view_controller.h>
 
 #include "double_pair_store.h"
-#include "prefaced_twice_table_view.h"
 #include "tab_table_controller.h"
 
 namespace Shared {
@@ -19,7 +19,7 @@ class DoublePairTableController
       public Escher::ButtonRowDelegate,
       public Escher::AlternateEmptyViewDelegate,
       public Escher::SelectableTableViewDelegate,
-      public PrefacedTableView::MarginDelegate {
+      public Escher::PrefacedTableView::MarginDelegate {
  public:
   constexpr static int k_titleNumberOfChars = 22;
 
@@ -71,7 +71,7 @@ class DoublePairTableController
     return &m_selectableTableView;
   }
 
-  PrefacedTwiceTableView m_prefacedTwiceTableView;
+  Escher::PrefacedTwiceTableView m_prefacedTwiceTableView;
   Escher::SelectableTableView m_selectableTableView;
 };
 

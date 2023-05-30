@@ -7,6 +7,7 @@
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
+#include <escher/prefaced_twice_table_view.h>
 #include <escher/tab_view_controller.h>
 
 #include "editable_cell_table_view_controller.h"
@@ -14,7 +15,6 @@
 #include "function_store.h"
 #include "interval.h"
 #include "interval_parameter_controller.h"
-#include "prefaced_twice_table_view.h"
 #include "values_parameter_controller.h"
 
 namespace Shared {
@@ -130,7 +130,7 @@ class ValuesController : public EditableCellTableViewController,
     return numberOfColumns() - numberOfAbscissaColumns();
   }
 
-  PrefacedTwiceTableView m_prefacedTwiceTableView;
+  Escher::PrefacedTwiceTableView m_prefacedTwiceTableView;
 
  private:
   // Specialization depending on the abscissa names (x, n, t...)

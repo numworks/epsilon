@@ -34,7 +34,7 @@ CalculationController::CalculationController(Responder *parentResponder,
     m_titleSymbolCells[i].setMessageFont(KDFont::Size::Small);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
-    m_hideableCell[i].hide();
+    m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
   }
   resetMemoization();
 }

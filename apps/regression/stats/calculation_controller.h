@@ -7,6 +7,7 @@
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
+#include <escher/solid_color_cell.h>
 #include <poincare/preferences.h>
 
 #include "../store.h"
@@ -140,7 +141,7 @@ class CalculationController : public Shared::DoublePairTableController {
       m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Escher::SmallFontEvenOddBufferTextCell
       m_calculationCells[k_numberOfDisplayableCalculationCells];
-  Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
+  Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];
   Store* m_store;
   double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2]
                                          [k_numberOfDoubleBufferCalculations];

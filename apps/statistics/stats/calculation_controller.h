@@ -4,6 +4,7 @@
 #include <apps/shared/buffer_function_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
 #include <escher/even_odd_buffer_text_cell.h>
+#include <escher/solid_color_cell.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
@@ -138,7 +139,7 @@ class CalculationController : public Shared::DoublePairTableController {
       m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
   Escher::FloatEvenOddBufferTextCell<>
       m_calculationCells[k_numberOfCalculationCells];
-  Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
+  Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];
   double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store* m_store;
 };

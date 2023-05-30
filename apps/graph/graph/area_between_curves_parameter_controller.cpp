@@ -73,9 +73,10 @@ void AreaBetweenCurvesParameterController::fillCellForRow(
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
           DerivableActiveFunctionAtIndex(row, m_mainRecord));
-  static_cast<CurveSelectionCell *>(cell)->setColor(function->color());
-  static_cast<CurveSelectionCell *>(cell)->label()->setLayout(
-      function->layout().clone());
+  CurveSelectionCell *curveSelectionCell =
+      static_cast<CurveSelectionCell *>(cell);
+  curveSelectionCell->setColor(function->color());
+  curveSelectionCell->label()->setLayout(function->layout().clone());
 }
 
 bool AreaBetweenCurvesParameterController::handleEvent(

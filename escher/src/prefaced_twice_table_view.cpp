@@ -1,14 +1,11 @@
-#include "prefaced_twice_table_view.h"
+#include <escher/prefaced_twice_table_view.h>
 
-using namespace Escher;
-
-namespace Shared {
+namespace Escher {
 
 PrefacedTwiceTableView::PrefacedTwiceTableView(
-    int prefaceRow, int prefaceColumn, Escher::Responder* parentResponder,
-    Escher::SelectableTableView* mainTableView,
-    Escher::TableViewDataSource* cellsDataSource,
-    Escher::SelectableTableViewDelegate* delegate,
+    int prefaceRow, int prefaceColumn, Responder* parentResponder,
+    SelectableTableView* mainTableView, TableViewDataSource* cellsDataSource,
+    SelectableTableViewDelegate* delegate,
     PrefacedTableViewDelegate* prefacedTableViewDelegate)
     : PrefacedTableView(prefaceRow, parentResponder, mainTableView,
                         cellsDataSource, delegate, prefacedTableViewDelegate),
@@ -211,4 +208,4 @@ int PrefacedTwiceTableView::ColumnPrefaceDataSource::
   return result;
 }
 
-}  // namespace Shared
+}  // namespace Escher

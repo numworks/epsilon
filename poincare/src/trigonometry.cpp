@@ -408,7 +408,7 @@ Expression Trigonometry::shallowReduceInverseFunction(
   }
 
   const Preferences::AngleUnit angleUnit = reductionContext.angleUnit();
-  float pi = PiInAngleUnit(angleUnit);
+  double pi = PiInAngleUnit(angleUnit);
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
   Expression result;
@@ -419,18 +419,18 @@ Expression Trigonometry::shallowReduceInverseFunction(
     Expression result = isArcTanOfSinCos
                             ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0)
                             : e.childAtIndex(0).childAtIndex(0);
-    float x =
-        result.node()
-            ->approximate(float(), ApproximationContext(reductionContext, true))
-            .toScalar();
+    double x = result.node()
+                   ->approximate(double(),
+                                 ApproximationContext(reductionContext, true))
+                   .toScalar();
     if (!(std::isinf(x) || std::isnan(x))) {
       /* We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for
        * asin(sin) and atan(tan) */
-      float k = (e.type() == ExpressionNode::Type::ArcCosine)
-                    ? std::floor(x / pi)
-                    : std::floor((x + pi / 2.0f) / pi);
+      double k = (e.type() == ExpressionNode::Type::ArcCosine)
+                     ? std::floor(x / pi)
+                     : std::floor((x + pi / 2.0f) / pi);
       if (!std::isinf(k) && !std::isnan(k) &&
-          std::fabs(k) <= static_cast<float>(INT_MAX)) {
+          std::fabs(k) <= static_cast<double>(INT_MAX)) {
         int kInt = static_cast<int>(k);
         Multiplication mult = Multiplication::Builder(
             Rational::Builder(-kInt),

@@ -36,6 +36,11 @@
 // Implements backend of sequence * integer operation. Assumes elements are
 // memory-adjacent in sequence.
 void mp_seq_multiply(const void *items, size_t item_sz, size_t len, size_t times, void *dest) {
+    /* Warning: this is a NumWorks change to MicroPython 1.17 */
+    if (len == 0) {
+      return;
+    }
+    // End of change
     for (size_t i = 0; i < times; i++) {
         size_t copy_sz = item_sz * len;
         memcpy(dest, items, copy_sz);

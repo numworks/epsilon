@@ -12,29 +12,15 @@ class Simplification {
   static EditionReference ShallowBeautify(EditionReference reference) {
     return reference;
   }
-
-  // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool ShallowExpand(EditionReference *reference);
-  static bool ShallowContract(EditionReference *reference);
-
-  static bool ContractAbs(EditionReference *reference);
-  static bool ExpandAbs(EditionReference *reference);
-  static bool ContractLn(EditionReference *reference);
-  static bool ExpandLn(EditionReference *reference);
-  static bool ContractExpMult(EditionReference *reference);
-  static bool ContractExpPow(EditionReference *reference);
-  static bool ExpandExp(EditionReference *reference);
-  static bool ContractTrigonometric(EditionReference *reference);
-  static bool ExpandTrigonometric(EditionReference *reference);
-
-  static bool ShallowAlgebraicExpand(EditionReference *reference);
-  static bool ExpandMult(EditionReference *reference);
-  static bool ExpandPower(EditionReference *reference);
-
   static EditionReference DivisionReduction(EditionReference reference);
   static EditionReference SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
+
+  // TODO : Ensure NAry children are sorted before and after Expand/Contract.
+  static bool ShallowContract(EditionReference *reference);
+  static bool ShallowExpand(EditionReference *reference);
+  static bool ShallowAlgebraicExpand(EditionReference *reference);
 
   enum class ProjectionContext {
     Default,
@@ -65,6 +51,18 @@ class Simplification {
   static EditionReference ProjectionReduction(
       EditionReference reference, Node (*PushProjectedEExpression)(),
       Node (*PushInverse)());
+
+  static bool ContractAbs(EditionReference *reference);
+  static bool ExpandAbs(EditionReference *reference);
+  static bool ContractLn(EditionReference *reference);
+  static bool ExpandLn(EditionReference *reference);
+  static bool ContractExpMult(EditionReference *reference);
+  static bool ContractExpPow(EditionReference *reference);
+  static bool ExpandExp(EditionReference *reference);
+  static bool ContractTrigonometric(EditionReference *reference);
+  static bool ExpandTrigonometric(EditionReference *reference);
+  static bool ExpandMult(EditionReference *reference);
+  static bool ExpandPower(EditionReference *reference);
 };
 
 }  // namespace PoincareJ

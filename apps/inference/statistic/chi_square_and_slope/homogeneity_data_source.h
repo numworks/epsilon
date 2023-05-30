@@ -62,8 +62,8 @@ class HomogeneityTableDataSource
   }
   virtual int innerNumberOfRows() const = 0;
   virtual int innerNumberOfColumns() const = 0;
-  virtual void willDisplayInnerCellAtLocation(Escher::HighlightCell* cell,
-                                              int column, int row) = 0;
+  virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
+                                        int row) = 0;
   virtual Escher::HighlightCell* innerCell(int i) = 0;
 
  private:

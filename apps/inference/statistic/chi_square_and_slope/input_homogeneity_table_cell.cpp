@@ -47,12 +47,12 @@ int InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
   return length;
 }
 
-void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(
+void InputHomogeneityTableCell::fillInnerCellForLocation(
     Escher::HighlightCell *cell, int column, int row) {
   InferenceEvenOddEditableCell *myCell =
       static_cast<InferenceEvenOddEditableCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(),
-                                 myCell, column, row, tableModel());
+  fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
+                           column, row, tableModel());
 }
 
 void InputHomogeneityTableCell::createCells() {

@@ -254,8 +254,8 @@ void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell *cell,
   }
   InferenceEvenOddEditableCell *myCell =
       static_cast<InferenceEvenOddEditableCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(),
-                                 myCell, column, row - 1, tableModel());
+  fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
+                           column, row - 1, tableModel());
 }
 
 }  // namespace Inference

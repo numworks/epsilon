@@ -498,6 +498,13 @@ class Expression : public TreeHandle {
   Expression cloneAndApproximateKeepingSymbols(
       ReductionContext reductionContext) const;
 
+  /* Add missing parenthesis will add parentheses that easen the reading of the
+   * expression or that are required by math rules. For example:
+   * 2+-1 --> 2+(-1)
+   * *(+(2,1),3) --> (2+1)*3
+   */
+  Expression addMissingParentheses();
+
   /* This class is meant to contain data about named functions (e.g. sin,
    * tan...) in one place: their name, their number of children and a pointer to
    * a builder. It is used in particular by the parser. */
@@ -722,12 +729,6 @@ class Expression : public TreeHandle {
  private:
   constexpr static int k_maxSymbolReplacementsCount = 10;
 
-  /* Add missing parenthesis will add parentheses that easen the reading of the
-   * expression or that are required by math rules. For example:
-   * 2+-1 --> 2+(-1)
-   * *(+(2,1),3) --> (2+1)*3
-   */
-  Expression addMissingParentheses();
   void shallowAddMissingParenthesis();
 
   /* Simplification */

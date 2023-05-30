@@ -1,9 +1,8 @@
 #ifndef USB_USB_CONNECTED_CONTROLLER_H
 #define USB_USB_CONNECTED_CONTROLLER_H
 
+#include <escher/message_view.h>
 #include <escher/view_controller.h>
-
-#include "../shared/message_view.h"
 
 namespace USB {
 
@@ -14,7 +13,7 @@ class USBConnectedController : public Escher::ViewController {
   bool handleEvent(Ion::Events::Event event) override { return false; }
 
  private:
-  Shared::MessageView m_messageView;
+  Escher::MessageView m_messageView;
 };
 
 }  // namespace USB

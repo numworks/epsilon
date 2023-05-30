@@ -57,7 +57,7 @@ class UTF8Decoder : public UnicodeDecoder {
   UTF8Decoder(const char* string, const char* initialPosition = nullptr,
               const char* stringEnd = nullptr)
       : UnicodeDecoder(initialPosition ? initialPosition - string : 0,
-                       stringEnd ? stringEnd - string : strlen(string)),
+                       stringEnd ? stringEnd - string : k_noSize),
         m_string(string) {
     assert(string != nullptr);
   }
@@ -72,7 +72,9 @@ class UTF8Decoder : public UnicodeDecoder {
   }
   const char* string() const { return m_string; }
   const char* stringPosition() { return m_string + m_position; }
-  const char* stringEnd() const { return m_string + m_end; }
+  const char* stringEnd() const {
+    return m_end == k_noSize ? nullptr : m_string + m_end;
+  }
   void setPosition(const char* position);
   constexpr static size_t CharSizeOfCodePoint(CodePoint c) {
     return c <= 0x7F ? 1 : (c <= 0x7FF ? 2 : (c <= 0xFFFF ? 3 : 4));

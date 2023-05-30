@@ -132,7 +132,8 @@ QUIZ_CASE(calculation_store) {
     quiz_assert(numberOfCalculations1 >= numberOfCalculations2);
   }
   store.deleteAll();
-  quiz_assert(store.remainingBufferSize() == store.bufferSize());
+  quiz_assert(store.remainingBufferSize() ==
+              static_cast<int>(store.bufferSize()));
 }
 
 void assertAnsIs(const char *input, const char *expectedAnsInputText,

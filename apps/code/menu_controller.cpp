@@ -181,7 +181,7 @@ int MenuController::numberOfRows() const {
 
 void MenuController::fillCellForLocation(HighlightCell *cell, int column,
                                          int row) {
-  if (column == 0 && row < m_scriptStore->numberOfScripts()) {
+  if (typeAtLocation(column, row) == k_scriptCellType) {
     (static_cast<ScriptNameCell *>(cell))
         ->textField()
         ->setText(m_scriptStore->scriptAtIndex(row).fullName());

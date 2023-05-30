@@ -5,6 +5,12 @@
 #include <poincare_junior/src/layout/k_creator.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 
+#ifdef PCJ_PERF
+#include <chrono>
+#include <iomanip>
+#include <iostream>
+#endif
+
 #include "helper.h"
 
 using namespace PoincareJ;
@@ -135,13 +141,41 @@ QUIZ_CASE(pcj_compare) {
 }
 
 void simplifies_to(const char* input, const char* output) {
+#ifdef PCJ_PERF
+  static bool printHeader = true;
+  if (printHeader) {
+    std::cout << std::left << std::setw(160) << "input" << std::right
+              << std::setw(10) << "micros" << std::setw(10) << "refs"
+              << std::endl;
+    printHeader = false;
+  }
+#endif
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
   quiz_assert(!expression.isUninitialized());
   EditionReference projected =
       expression;  // Simplification::SystemProjection(expression);
   quiz_assert(!projected.isUninitialized());
+#ifdef PCJ_PERF
+  auto start = std::chrono::high_resolution_clock::now();
+  int refId;
+  {
+    EditionReference r(0_e);
+    refId = r.identifier();
+  }
+#endif
   EditionReference reduced = Simplification::AutomaticSimplify(projected);
+#ifdef PCJ_PERF
+  auto elapsed = std::chrono::high_resolution_clock::now() - start;
+  {
+    EditionReference r(0_e);
+    refId = r.identifier() - refId;
+  }
+  std::cout
+      << std::left << std::setw(50) << input << std::right << std::setw(10)
+      << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count()
+      << std::setw(10) << refId << std::endl;
+#endif
   quiz_assert(!reduced.isUninitialized());
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(reduced);
@@ -158,7 +192,7 @@ void simplifies_to(const char* input, const char* output) {
   EditionPool::sharedEditionPool()->flush();
 }
 
-QUIZ_CASE(pcj_simplification) {
+QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2+2", "4");
   simplifies_to("(2*3(2^2)) + 2*2", "28");
   simplifies_to("a+a", "2*a");
@@ -169,4 +203,64 @@ QUIZ_CASE(pcj_simplification) {
   simplifies_to("a*2a*b*a*b*4", "8*(a^(3))*(b^(2))");
   simplifies_to("a^b*a^c", "a^(b+c)");
   simplifies_to("a^b*a^b", "a^(2*b)");
+}
+
+QUIZ_CASE(pcj_perf_simplification) {
+  simplifies_to("2+2", "4");
+  simplifies_to("2+2+2+2", "8");
+  simplifies_to("2+2+2+2+2+2+2+2", "16");
+  simplifies_to("2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2", "32");
+  simplifies_to(
+      "2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2+2", "64");
+  simplifies_to(
+      "2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2",
+      "4294967296");
+  simplifies_to("(2+(2+(2+(2))))", "8");
+  simplifies_to("(2+(2+(2+(2+(2+(2+(2+(2))))))))", "16");
+  simplifies_to(
+      "(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2))))))))))))))))", "32");
+  simplifies_to(
+      "(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+(2+"
+      "(2+(2+(2+(2+(2+(2+(2+(2))))))))))))))))))))))))))))))))",
+      "64");
+  simplifies_to("((((2)+2)+2)+2)", "8");
+  simplifies_to("((((((((2)+2)+2)+2)+2)+2)+2)+2)", "16");
+  simplifies_to(
+      "((((((((((((((((2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)", "32");
+  simplifies_to(
+      "((((((((((((((((((((((((((((((((2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+"
+      "2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)+2)",
+      "64");
+  simplifies_to("a+a", "2*a");
+  simplifies_to("a+a+a+a", "4*a");
+  simplifies_to("a+a+a+a+a+a+a+a", "8*a");
+  simplifies_to("a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a", "16*a");
+  simplifies_to(
+      "a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a",
+      "32*a");
+  simplifies_to(
+      "a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a",
+      "a^(32)");
+  simplifies_to("(a+(a+(a+(a))))", "4*a");
+  simplifies_to("(a+(a+(a+(a+(a+(a+(a+(a))))))))", "8*a");
+  simplifies_to(
+      "(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a))))))))))))))))",
+      "16*a");
+  simplifies_to(
+      "(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+(a+"
+      "(a+(a+(a+(a+(a+(a+(a+(a))))))))))))))))))))))))))))))))",
+      "32*a");
+  simplifies_to("((((a)+a)+a)+a)", "4*a");
+  simplifies_to("((((((((a)+a)+a)+a)+a)+a)+a)+a)", "8*a");
+  simplifies_to(
+      "((((((((((((((((a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)",
+      "16*a");
+  simplifies_to(
+      "((((((((((((((((((((((((((((((((a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+"
+      "a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)+a)",
+      "32*a");
+  simplifies_to("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p",
+                "a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p");
+  simplifies_to("p+o+n+m+l+k+j+i+h+g+f+e+d+c+b+a",
+                "a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p");
 }

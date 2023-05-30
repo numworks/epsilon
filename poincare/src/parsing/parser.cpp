@@ -15,7 +15,10 @@ Expression Parser::parse() {
   const char *endPosition = m_tokenizer.endPosition();
   const char *rightwardsArrowPosition = UTF8Helper::CodePointSearch(
       m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
-  if (rightwardsArrowPosition != endPosition) {
+  assert(rightwardsArrowPosition);
+  /* The second condition is necessary if endPosition is nullptr. */
+  if (rightwardsArrowPosition != endPosition &&
+      *rightwardsArrowPosition != '\0') {
     return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   }
   Expression result = initializeFirstTokenAndParseUntilEnd();

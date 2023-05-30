@@ -31,7 +31,7 @@ bool ComparisonNode::IsComparisonOperatorString(const char* s,
                                                 const char* stringEnd,
                                                 OperatorType* returnType,
                                                 size_t* returnLength) {
-  int maxOperatorLength = stringEnd - s;
+  int maxOperatorLength = stringEnd ? stringEnd - s : INT_MAX;
   int lengthOfFoundOperator = 0;
   OperatorType typeOfFoundOperator;
   for (int i = 0; i < static_cast<int>(OperatorType::NumberOfTypes); i++) {

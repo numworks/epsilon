@@ -54,6 +54,7 @@ void IllustratedExpressionsListController::fillCellForRow(HighlightCell* cell,
   if (typeAtRow(row) == k_illustrationCellType) {
     return;
   }
+  assert(typeAtRow(row) == k_expressionCellType);
   ChainedExpressionsListController::fillCellForRow(cell,
                                                    row - showIllustration());
 }

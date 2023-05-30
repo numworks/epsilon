@@ -66,6 +66,8 @@ escher_src += $(addprefix escher/src/,\
   selectable_list_view_controller.cpp \
   selectable_list_view_delegate.cpp \
   list_with_top_and_bottom_controller.cpp \
+  scrollable_multiple_layouts_view.cpp \
+  scrollable_two_layouts_cell.cpp \
   selectable_table_view.cpp \
   solid_color_view.cpp \
   stack_view.cpp \

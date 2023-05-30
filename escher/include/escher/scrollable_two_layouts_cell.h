@@ -1,14 +1,13 @@
-#ifndef SHARED_SCROLLABLE_TWO_LAYOUTS_CELL_H
-#define SHARED_SCROLLABLE_TWO_LAYOUTS_CELL_H
+#ifndef ESCHER_SCROLLABLE_TWO_LAYOUTS_CELL_H
+#define ESCHER_SCROLLABLE_TWO_LAYOUTS_CELL_H
 
-#include "scrollable_multiple_layouts_view.h"
+#include <escher/scrollable_multiple_layouts_view.h>
 
-namespace Shared {
+namespace Escher {
 
-class ScrollableTwoLayoutsCell : public Escher::EvenOddCell,
-                                 public Escher::Responder {
+class ScrollableTwoLayoutsCell : public EvenOddCell, public Responder {
  public:
-  ScrollableTwoLayoutsCell(Escher::Responder* parentResponder = nullptr,
+  ScrollableTwoLayoutsCell(Responder* parentResponder = nullptr,
                            float horizontalAlignment = KDGlyph::k_alignLeft,
                            KDFont::Size font = KDFont::Size::Large);
   void setLayouts(Poincare::Layout exactLayout,
@@ -23,7 +22,7 @@ class ScrollableTwoLayoutsCell : public Escher::EvenOddCell,
     m_view.evenOddCell()->setHighlighted(highlight);
   }
   void setEven(bool even) override;
-  Escher::Responder* responder() override { return this; }
+  Responder* responder() override { return this; }
   Poincare::Layout layout() const override { return m_view.layout(); }
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_view.minimalSizeForOptimalDisplay();
@@ -33,13 +32,13 @@ class ScrollableTwoLayoutsCell : public Escher::EvenOddCell,
 
  private:
   int numberOfSubviews() const override { return 1; }
-  Escher::View* subviewAtIndex(int index) override { return &m_view; }
+  View* subviewAtIndex(int index) override { return &m_view; }
   void layoutSubviews(bool force = false) override {
     setChildFrame(&m_view, bounds(), force);
   }
   ScrollableTwoLayoutsView m_view;
 };
 
-}  // namespace Shared
+}  // namespace Escher
 
 #endif

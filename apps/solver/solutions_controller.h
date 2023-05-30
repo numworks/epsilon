@@ -2,10 +2,10 @@
 #define SOLVER_SOLUTIONS_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <apps/shared/scrollable_two_layouts_cell.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
+#include <escher/scrollable_two_layouts_cell.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
@@ -214,7 +214,7 @@ class SolutionsController : public Escher::ViewController,
   Escher::EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;
   Poincare::Layout m_delta3Layout;
-  Shared::ScrollableTwoLayoutsCell m_exactValueCells[k_numberOfExactValueCells];
+  Escher::ScrollableTwoLayoutsCell m_exactValueCells[k_numberOfExactValueCells];
   Escher::FloatEvenOddBufferTextCell<>
       m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];

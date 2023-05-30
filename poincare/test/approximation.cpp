@@ -269,6 +269,8 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<float>("i^(2/3)", "0.5+0.8660254×i");
   assert_expression_approximates_to<double>("i^(2/3)",
                                             "0.5+0.86602540378444×i");
+  assert_expression_approximates_to<double>(
+      "1/cos(-1+50×i)", "2.0842159805955ᴇ-22-3.2459740680286ᴇ-22×i", Radian);
 
   assert_expression_approximates_to<float>("{1,2,3}^2", "{1,4,9}");
   assert_expression_approximates_to<float>("2^{1,2,3}", "{2,4,8}");

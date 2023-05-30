@@ -270,9 +270,11 @@ Complex<T> PowerNode::computeOnComplex(
      * that result is 0, which is plotted even though it is "complex". */
     return Complex<T>::Builder(result);
   }
+  std::complex<T> precision =
+      d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;
   return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c, d,
-                                                                   false));
+      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+          result, precision, d, false));
 }
 
 // Layout

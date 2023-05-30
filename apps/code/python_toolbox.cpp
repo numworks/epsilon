@@ -1093,7 +1093,7 @@ void PythonToolbox::fillCellForRow(HighlightCell *cell, int row) {
       static_cast<const ToolboxMessageTree *>(
           m_messageTreeModel->childAtIndex(row));
   // Message is leaf
-  if (messageTree->numberOfChildren() == 0) {
+  if (typeAtRow(row) == k_leafCellType) {
     ToolboxLeafCell *myCell = static_cast<ToolboxLeafCell *>(cell);
     if (messageTree->text() == I18n::Message::Default &&
         UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
@@ -1107,6 +1107,7 @@ void PythonToolbox::fillCellForRow(HighlightCell *cell, int row) {
     myCell->subLabel()->setMessage(messageTree->text());
     return;
   }
+  assert(typeAtRow(row) == k_nodeCellType);
   Escher::Toolbox::fillCellForRow(cell, row);
 }
 

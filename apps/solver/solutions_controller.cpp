@@ -243,10 +243,11 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
                                               int row) {
   SystemOfEquations *system = App::app()->system();
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  if (row == rowOfUserVariablesMessage - 1) {
-    return;  // Empty row
+  int type = typeAtLocation(column, row);
+  if (type == k_emptyCellType) {
+    return;
   }
-  if (row == rowOfUserVariablesMessage) {
+  if (type == k_messageCellType) {
     // Predefined variable used/ignored message
     assert(column >= 0);
     MessageCell *messageCell = static_cast<MessageCell *>(cell);
@@ -263,108 +264,97 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
     }
     return;
   }
-  if (column == 0) {
-    if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
-        row == static_cast<int>(system->numberOfSolutions()) - 1) {
-      // Formula of the discriminant
-      assert(system->degree() == 2 || system->degree() == 3);
-      EvenOddExpressionCell *deltaCell =
-          static_cast<EvenOddExpressionCell *>(cell);
-      deltaCell->setLayout(system->degree() == 2 ? m_delta2Layout
-                                                 : m_delta3Layout);
-    } else {
-      AbstractEvenOddBufferTextCell *symbolCell =
-          static_cast<AbstractEvenOddBufferTextCell *>(cell);
-      /* Holds at maximum the variable name + 2 digits (for 10)
-       * Quotation marks are removed to make the cell thinner.
-       * (A variable name is either always inferior to 7 chars, except
-       * if it has quotation marks, in which case it can have up to 9
-       * chars, including the quotation marks). */
-      constexpr size_t k_maxSize =
-          SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
-      char bufferSymbol[k_maxSize + 2];
-      if (rowOfUserVariablesMessage < 0 ||
-          row < rowOfUserVariablesMessage - 1) {
-        // It's a solution row, get symbol name
-        if (system->type() == SystemOfEquations::Type::LinearSystem) {
-          /* The system has more than one variable: the cell text is the
-           * variable name */
-          const char *varName = system->variable(row);
-          SymbolAbstractNode::NameWithoutQuotationMarks(
-              bufferSymbol, k_maxSize, varName, strlen(varName));
-        } else {
-          /* The system has one variable but might have many solutions: the cell
-           * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
-          const char *varName = system->variable(0);
-          int length = SymbolAbstractNode::NameWithoutQuotationMarks(
-              bufferSymbol, k_maxSize, varName, strlen(varName));
-          if (row < 9) {
-            bufferSymbol[length++] = row + '1';
-          } else {
-            assert(row == 9);
-            bufferSymbol[length++] = '1';
-            bufferSymbol[length++] = '0';
-          }
-          bufferSymbol[length] = 0;
-        }
-      } else {
-        // It's a user variable row, get variable name
-        assert(rowOfUserVariablesMessage >= 0);
-        const char *varName =
-            system->userVariable(row - rowOfUserVariablesMessage - 1);
+  if (type == k_deltaCellType) {
+    // Formula of the discriminant
+    assert(system->degree() == 2 || system->degree() == 3);
+    static_cast<EvenOddExpressionCell *>(cell)->setLayout(
+        system->degree() == 2 ? m_delta2Layout : m_delta3Layout);
+  }
+  if (type == k_symbolCellType) {
+    /* Holds at maximum the variable name + 2 digits (for 10)
+     * Quotation marks are removed to make the cell thinner.
+     * (A variable name is either always inferior to 7 chars, except
+     * if it has quotation marks, in which case it can have up to 9
+     * chars, including the quotation marks). */
+    constexpr size_t k_maxSize =
+        SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
+    char bufferSymbol[k_maxSize + 2];
+    if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
+      // It's a solution row, get symbol name
+      if (system->type() == SystemOfEquations::Type::LinearSystem) {
+        /* The system has more than one variable: the cell text is the
+         * variable name */
+        const char *varName = system->variable(row);
         SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
                                                       varName, strlen(varName));
+      } else {
+        /* The system has one variable but might have many solutions: the cell
+         * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
+        const char *varName = system->variable(0);
+        int length = SymbolAbstractNode::NameWithoutQuotationMarks(
+            bufferSymbol, k_maxSize, varName, strlen(varName));
+        if (row < 9) {
+          bufferSymbol[length++] = row + '1';
+        } else {
+          assert(row == 9);
+          bufferSymbol[length++] = '1';
+          bufferSymbol[length++] = '0';
+        }
+        bufferSymbol[length] = 0;
       }
-      symbolCell->setText(bufferSymbol);
+    } else {
+      // It's a user variable row, get variable name
+      assert(rowOfUserVariablesMessage >= 0);
+      const char *varName =
+          system->userVariable(row - rowOfUserVariablesMessage - 1);
+      SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
+                                                    varName, strlen(varName));
     }
-  } else {
+    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(bufferSymbol);
+  }
+  if (type == k_approximateValueCellType) {
+    assert(system->numberOfSolutions() > 0);
+    // Get values of the solutions
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+    char bufferValue[bufferSize];
+    PoincareHelpers::ConvertFloatToText<double>(
+        system->solution(row)->approximate(), bufferValue, bufferSize,
+        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(bufferValue);
+  }
+  if (type == k_exactValueCellType) {
     if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
       // It's a solution row
       assert(system->numberOfSolutions() > 0);
-      if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
-        // Get values of the solutions
-        AbstractEvenOddBufferTextCell *valueCell =
-            static_cast<AbstractEvenOddBufferTextCell *>(cell);
-
-        constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-            AbstractEvenOddBufferTextCell::k_defaultPrecision);
-        char bufferValue[bufferSize];
-        PoincareHelpers::ConvertFloatToText<double>(
-            system->solution(row)->approximate(), bufferValue, bufferSize,
-            AbstractEvenOddBufferTextCell::k_defaultPrecision);
-        valueCell->setText(bufferValue);
-      } else {
-        const Solution *solution = system->solution(row);
-        ScrollableTwoLayoutsCell *valueCell =
-            static_cast<ScrollableTwoLayoutsCell *>(cell);
-        /* ScrollableTwoLayoutsCell will always try to display its
-         * approximate layout. If the only layout is the exact one, they need to
-         * be swapped.
-         * FIXME This is quirky and could be changed. */
-        if (solution->approximateLayout().isUninitialized()) {
-          valueCell->setLayouts(Layout(), solution->exactLayout());
-        } else {
-          valueCell->setLayouts(solution->exactLayout(),
-                                solution->approximateLayout());
-        }
-        valueCell->setExactAndApproximateAreStriclyEqual(
-            solution->exactAndApproximateAreEqual());
-      }
-    } else {
-      // It's a user variable row, get values of the solutions or discriminant
+      const Solution *solution = system->solution(row);
       ScrollableTwoLayoutsCell *valueCell =
           static_cast<ScrollableTwoLayoutsCell *>(cell);
+      /* ScrollableTwoLayoutsCell will always try to display its
+       * approximate layout. If the only layout is the exact one, they need to
+       * be swapped.
+       * FIXME This is quirky and could be changed. */
+      if (solution->approximateLayout().isUninitialized()) {
+        valueCell->setLayouts(Layout(), solution->exactLayout());
+      } else {
+        valueCell->setLayouts(solution->exactLayout(),
+                              solution->approximateLayout());
+      }
+      valueCell->setExactAndApproximateAreStriclyEqual(
+          solution->exactAndApproximateAreEqual());
+    } else {
+      // It's a user variable row, get values of the solutions or discriminant
       const char *symbol =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
       Layout layout = PoincareHelpers::CreateLayout(
           App::app()->localContext()->expressionForSymbolAbstract(
               Symbol::Builder(symbol, strlen(symbol)), false),
           App::app()->localContext());
-      valueCell->setLayouts(Layout(), layout);
+      static_cast<ScrollableTwoLayoutsCell *>(cell)->setLayouts(Layout(),
+                                                                layout);
     }
   }
-  EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
-  evenOddCell->setEven(row % 2 == 0);
+  static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
 }
 
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {

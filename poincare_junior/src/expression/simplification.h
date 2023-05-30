@@ -14,8 +14,8 @@ class Simplification {
   }
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool Expand(EditionReference *reference);
-  static bool Contract(EditionReference *reference);
+  static bool ShallowExpand(EditionReference *reference);
+  static bool ShallowContract(EditionReference *reference);
 
   static bool ContractAbs(EditionReference *reference);
   static bool ExpandAbs(EditionReference *reference);
@@ -27,7 +27,7 @@ class Simplification {
   static bool ContractTrigonometric(EditionReference *reference);
   static bool ExpandTrigonometric(EditionReference *reference);
 
-  static bool AlgebraicExpand(EditionReference *reference);
+  static bool ShallowAlgebraicExpand(EditionReference *reference);
   static bool ExpandMult(EditionReference *reference);
   static bool ExpandPower(EditionReference *reference);
 

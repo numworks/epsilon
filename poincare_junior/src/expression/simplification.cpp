@@ -581,7 +581,7 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
 }
 
-bool Simplification::Contract(EditionReference* e) {
+bool Simplification::ShallowContract(EditionReference* e) {
   switch (e->type()) {
     case BlockType::Addition:
       // Replace with an Addition, which cannot be contracted further.
@@ -599,7 +599,7 @@ bool Simplification::Contract(EditionReference* e) {
   }
 }
 
-bool Simplification::Expand(EditionReference* e) {
+bool Simplification::ShallowExpand(EditionReference* e) {
   /* None of these Expand methods replace with a BlockType that can be expanded
    * again. Otherwise, one would have to call Expand(e) again upon success. */
   switch (e->type()) {
@@ -715,7 +715,7 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
 
 // Algebraic expand
 
-bool Simplification::AlgebraicExpand(EditionReference* e) {
+bool Simplification::ShallowAlgebraicExpand(EditionReference* e) {
   /* None of these Expand methods replace with a structure that can be expanded
    * again. Otherwise, one would have to call Expand(e) again upon success. */
   switch (e->type()) {

@@ -1,10 +1,7 @@
-#include "message_view.h"
-
 #include <assert.h>
+#include <escher/message_view.h>
 
-using namespace Escher;
-
-namespace Shared {
+namespace Escher {
 
 MessageView::MessageView(const I18n::Message* messages, const KDColor* colors,
                          uint8_t numberOfMessages) {
@@ -51,4 +48,4 @@ void MessageView::layoutSubviews(bool force) {
   }
 }
 
-}  // namespace Shared
+}  // namespace Escher

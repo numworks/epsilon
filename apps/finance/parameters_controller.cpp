@@ -67,6 +67,7 @@ void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
         App::GetInterestData()->sublabelForParameter(param));
     return;
   }
+  assert(type == k_inputCellType);
   MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView> *>(
           cell);

@@ -182,7 +182,9 @@ int MenuController::numberOfRows() const {
 void MenuController::fillCellForLocation(HighlightCell *cell, int column,
                                          int row) {
   if (column == 0 && row < m_scriptStore->numberOfScripts()) {
-    willDisplayScriptTitleCellForIndex(cell, row);
+    (static_cast<ScriptNameCell *>(cell))
+        ->textField()
+        ->setText(m_scriptStore->scriptAtIndex(row).fullName());
   }
   static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
 }
@@ -238,14 +240,6 @@ int MenuController::typeAtLocation(int column, int row) {
     return k_emptyCellType;
   }
   return k_scriptParameterCellType;
-}
-
-void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell *cell,
-                                                        int index) {
-  assert(index >= 0 && index < m_scriptStore->numberOfScripts());
-  (static_cast<ScriptNameCell *>(cell))
-      ->textField()
-      ->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
 void MenuController::tableViewDidChangeSelectionAndDidScroll(

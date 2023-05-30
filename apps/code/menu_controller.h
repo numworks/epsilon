@@ -55,8 +55,6 @@ class MenuController : public Escher::ViewController,
   Escher::HighlightCell *reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
-  void willDisplayScriptTitleCellForIndex(Escher::HighlightCell *cell,
-                                          int index);
   KDCoordinate defaultRowHeight() override {
     return Escher::Metric::StoreRowHeight;
   }

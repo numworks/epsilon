@@ -59,9 +59,10 @@ int ParametersController::numberOfRows() const {
 }
 
 void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
-  if (row == numberOfRows() - 1) {
+  if (typeAtRow(row) == k_buttonCellType) {
     return;
   }
+  assert(typeAtRow(row) == k_parameterCellType);
   MenuCellWithEditableText<LayoutView, MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
           cell);

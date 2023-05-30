@@ -28,10 +28,7 @@ class Simplification {
   static bool ExpandTrigonometric(EditionReference *reference);
 
   static bool AlgebraicExpand(EditionReference *reference);
-  static bool AlgebraicContract(EditionReference *reference);
-  static bool ContractMult(EditionReference *reference);
   static bool ExpandMult(EditionReference *reference);
-  static bool ContractPower(EditionReference *reference);
   static bool ExpandPower(EditionReference *reference);
 
   static EditionReference DivisionReduction(EditionReference reference);

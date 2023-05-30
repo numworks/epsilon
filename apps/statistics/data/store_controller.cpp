@@ -50,7 +50,7 @@ int StoreController::numberOfColumns() const {
 
 void StoreController::fillCellForLocation(HighlightCell *cell, int column,
                                           int row) {
-  if (!isCumulatedFrequencyCell(column, row)) {
+  if (typeAtLocation(column, row) != k_nonEditableCellType) {
     return Shared::StoreController::fillCellForLocation(cell, column, row);
   }
   // Handle hidden cells

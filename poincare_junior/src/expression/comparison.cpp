@@ -9,60 +9,67 @@
 
 namespace PoincareJ {
 
-int Comparison::Compare(const Node node0, const Node node1,
-                        bool comparePowBase) {
+int Comparison::Compare(const Node node0, const Node node1, Order order) {
   BlockType type0 = node0.type();
   BlockType type1 = node1.type();
+  if (type0 > type1) {
+    /* We handle this case first to implement only the upper diagonal of the
+     * comparison table. */
+    return -Compare(node1, node0);
+  }
   TypeBlock* block0 = node0.block();
   TypeBlock* block1 = node1.block();
-  if (type0 > type1) {
-    // We handle the case first to implement only the upper diagonal of the
-    // comparison table
-    return -Compare(node1, node0);
-  } else if (type0 == type1 ||
-             (block0->isNumber() &&
-              block1->isNumber())) {  // TODO: (block0->isUserNamed() &&
-                                      // block1->isUserNamed()): do we want to
-                                      // group functions and symbols together?
-    if (block0->isNumber()) {
-      assert(block1->isNumber());
-      return CompareNumbers(node0, node1);
+  if ((block0->isNumber() && block1->isNumber())) {
+    return CompareNumbers(node0, node1);
+  }
+  if (type0 < type1) {
+    if (order == Order::SystematicReduce) {
+      return -1;
     }
-    if (block0->isUserNamed()) {
-      int nameComparison = CompareNames(node0, node1);
-      if (nameComparison != 0) {
-        return nameComparison;
+    /* Note: nodes with a smaller type than Power (numbers and Multiplication)
+     * will not benefit from this exception. */
+    if (type0 == BlockType::Power) {
+      if (Compare(node0.childAtIndex(0), node1) == 0) {
+        // 1/x < x < x^2
+        return Compare(node0.childAtIndex(1), &OneBlock);
       }
-      // Scan children
+      // x < y^2
+      return 1;
     }
-    switch (type0) {
-      case BlockType::Constant:
-        return CompareConstants(node0, node1);
-      case BlockType::Polynomial:
-        return ComparePolynomial(node0, node1);
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-        return CompareChildren(node0, node1, ScanDirection::Backward);
-#endif
-      /* TODO : Either sort Addition/Multiplication children backward or restore
-       *        backward scan direction in CompareChildren. */
-      default:
-        return CompareChildren(node0, node1, ScanDirection::Forward);
-    }
-  } else {
-    assert(type0 < type1);
-    if (comparePowBase && type0 == BlockType::Power) {
-      int comparisonBase = Compare(node0.childAtIndex(0), node1);
-      if (comparisonBase != 0) {
-        return 1;
-      }
-      return Compare(node0.childAtIndex(1), &OneBlock);
-    }
+    /* Note: nodes with a smaller type than Addition (numbers, Multiplication
+     * and Power) / Multiplication (numbers) will not benefit from this
+     * exception. */
     if (type0 == BlockType::Addition || type0 == BlockType::Multiplication) {
+      // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
       return CompareLastChild(node0, node1);
     }
     return -1;
+  }
+  assert(type0 == type1);
+  if (block0->isUserNamed()) {
+    int nameComparison = CompareNames(node0, node1);
+    if (nameComparison != 0) {
+      // a(x) < b(y)
+      return nameComparison;
+    }
+    // a(1) < a(2), Scan children
+  }
+  switch (type0) {
+    case BlockType::Constant:
+      return CompareConstants(node0, node1);
+    case BlockType::Polynomial:
+      return ComparePolynomial(node0, node1);
+#if POINCARE_JUNIOR_BACKWARD_SCAN
+    case BlockType::Addition:
+    case BlockType::Multiplication:
+      return CompareChildren(node0, node1, ScanDirection::Backward);
+#endif
+    default:
+      /* TODO : Either sort Addition/Multiplication children backward or restore
+       *        backward scan direction in CompareChildren so that:
+       *        (2 + 3) < (1 + 4) */
+      // f(0, 1, 4) < f(0, 2, 3)
+      return CompareChildren(node0, node1, ScanDirection::Forward);
   }
 }
 

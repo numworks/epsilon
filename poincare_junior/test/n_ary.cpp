@@ -74,17 +74,17 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   // Sort
   EditionReference addition3 = editionPool->clone(
-      KMult(KLn(5_e), KLn(-1_e), KTrig(3_e, 0_e), 1_e, KTrig(2_e, 1_e), 0_e,
-            KTrig(1_e, 0_e), 3_e, KMult(1_e, 0_e, 2_e), 1_e,
-            KPow(KTrig(3_e, 0_e), -1_e)));
-  NAry::SortChildren(addition3, false);
+      KAdd(KLn(5_e), KLn(1_e), KTrig(3_e, 0_e), 1_e, KTrig(2_e, 1_e), 0_e,
+           KTrig(1_e, 0_e), 3_e, KMult(1_e, 0_e, KLn(2_e)), 1_e,
+           KPow(KTrig(3_e, 0_e), -1_e)));
+  NAry::SortChildren(addition3, Comparison::Order::Readable);
   assert_trees_are_equal(
-      addition3, KMult(0_e, 1_e, 1_e, 3_e, KMult(1_e, 0_e, 2_e),
-                       KPow(KTrig(3_e, 0_e), -1_e), KLn(-1_e), KLn(5_e),
-                       KTrig(1_e, 0_e), KTrig(2_e, 1_e), KTrig(3_e, 0_e)));
-  NAry::SortChildren(addition3, true);
+      addition3, KAdd(0_e, 1_e, 1_e, 3_e, KLn(1_e), KMult(1_e, 0_e, KLn(2_e)),
+                      KLn(5_e), KTrig(1_e, 0_e), KTrig(2_e, 1_e),
+                      KPow(KTrig(3_e, 0_e), -1_e), KTrig(3_e, 0_e)));
+  NAry::SortChildren(addition3, Comparison::Order::SystematicReduce);
   assert_trees_are_equal(
-      addition3, KMult(0_e, 1_e, 1_e, 3_e, KMult(1_e, 0_e, 2_e), KLn(-1_e),
-                       KLn(5_e), KTrig(1_e, 0_e), KTrig(2_e, 1_e),
-                       KPow(KTrig(3_e, 0_e), -1_e), KTrig(3_e, 0_e)));
+      addition3, KAdd(0_e, 1_e, 1_e, 3_e, KMult(1_e, 0_e, KLn(2_e)),
+                      KPow(KTrig(3_e, 0_e), -1_e), KLn(1_e), KLn(5_e),
+                      KTrig(1_e, 0_e), KTrig(2_e, 1_e), KTrig(3_e, 0_e)));
 }

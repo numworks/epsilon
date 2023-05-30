@@ -7,13 +7,19 @@ namespace PoincareJ {
 
 class Comparison {
  public:
+  /* SystematicReduce ensure that no node can slip in-between two nodes of the
+   * same type, making pattern matches reliable.
+   * TODO: Use Order appropriately during advanced reduction.
+   * TODO: Pass the parent type or a context in Compare if necessary for an
+   *       Order. */
+  enum class Order { SystematicReduce, Readable };
   /* Compare returns:
    *  1 if block0 > block1
    * -1 if block0 < block1
    *  0 if block0 == block1
    */
   static int Compare(const Node node0, const Node node1,
-                     bool comparePowBase = true);
+                     Order order = Order::Readable);
   static bool AreEqual(const Node node0, const Node node1);
   static bool ContainsSubtree(const Node tree, const Node subtree);
 

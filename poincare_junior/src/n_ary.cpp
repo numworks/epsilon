@@ -107,11 +107,11 @@ EditionReference NAry::Sanitize(EditionReference reference) {
   return SquashIfUnary(reference);
 }
 
-void NAry::SortChildren(EditionReference reference, bool comparePowBaseInMult) {
+void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
   // Non simple NArys (Polynomial) rely on children order.
   assert(reference.block()->isSimpleNAry());
   Node nary = reference;
-  void* contextArray[2] = {&nary, &comparePowBaseInMult};
+  void* contextArray[2] = {&nary, &order};
   /* TODO : This sort is far from being optimized. Calls of childAtIndex are
    *        very expensive here. A better swap could also be implemented. */
   List::Sort(
@@ -127,11 +127,10 @@ void NAry::SortChildren(EditionReference reference, bool comparePowBaseInMult) {
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);
         Node nary = *static_cast<Node*>(contextArray[0]);
-        bool comparePowBaseInMult = *static_cast<bool*>(contextArray[1]);
-        return Comparison::Compare(
-                   nary.childAtIndex(i), nary.childAtIndex(j),
-                   comparePowBaseInMult &&
-                       (nary.type() == BlockType::Multiplication)) >= 0;
+        Comparison::Order order =
+            *static_cast<Comparison::Order*>(contextArray[1]);
+        return Comparison::Compare(nary.childAtIndex(i), nary.childAtIndex(j),
+                                   order) >= 0;
       },
       contextArray, reference.numberOfChildren());
 }

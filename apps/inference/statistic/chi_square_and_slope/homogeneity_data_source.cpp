@@ -80,7 +80,7 @@ void HomogeneityTableDataSource::fillCellForLocation(
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);
-    willDisplayInnerCellAtLocation(cell, column - 1, row - 1);
+    fillInnerCellForLocation(cell, column - 1, row - 1);
   }
 }
 

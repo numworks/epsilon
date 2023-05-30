@@ -56,7 +56,7 @@ void ResultsHomogeneityTableCell::fillCellForLocation(
   }
 }
 
-void ResultsHomogeneityTableCell::willDisplayInnerCellAtLocation(
+void ResultsHomogeneityTableCell::fillInnerCellForLocation(
     Escher::HighlightCell *cell, int column, int row) {
   InferenceEvenOddBufferCell *myCell =
       static_cast<InferenceEvenOddBufferCell *>(cell);

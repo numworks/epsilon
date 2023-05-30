@@ -13,9 +13,9 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
  public:
   // TableViewDataSource
   template <typename TextHolder>
-  void willDisplayValueCellAtLocation(TextHolder* textHolder,
-                                      Escher::EvenOddCell* evenOddCell,
-                                      int column, int row, Table* tableModel) {
+  void fillValueCellForLocation(TextHolder* textHolder,
+                                Escher::EvenOddCell* evenOddCell, int column,
+                                int row, Table* tableModel) {
     double p = tableModel->parameterAtPosition(row, column);
     PrintValueInTextHolder(p, textHolder);
     evenOddCell->setEven(row % 2 == 1);

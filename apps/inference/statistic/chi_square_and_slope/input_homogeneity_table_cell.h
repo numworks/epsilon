@@ -55,8 +55,8 @@ class InputHomogeneityTableCell
         InferenceEvenOddEditableCell,
         k_homogeneityTableNumberOfReusableInnerCells>::cell(i);
   }
-  void willDisplayInnerCellAtLocation(Escher::HighlightCell* cell, int column,
-                                      int row) override;
+  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
+                                int row) override;
   CategoricalController* categoricalController() override;
 
   // DynamicCellsDataSource

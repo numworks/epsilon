@@ -139,16 +139,14 @@ void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
                                            int row) {
   fillCellForLocationWithDisplayMode(
       cell, column, row, Preferences::sharedPreferences->displayMode());
-  int typeAtLoc = typeAtLocation(column, row);
   // The cell is not a title cell and not editable
-  if (typeAtLoc == k_notEditableValueCellType) {
+  if (typeAtLocation(column, row) == k_notEditableValueCellType) {
+    EvenOddExpressionCell *myCell = static_cast<EvenOddExpressionCell *>(cell);
     // Special case: last row
     if (row == numberOfElementsInColumn(column) + k_numberOfTitleRows) {
-      static_cast<EvenOddExpressionCell *>(cell)->setLayout(
-          HorizontalLayout::Builder());
+      myCell->setLayout(HorizontalLayout::Builder());
     } else {
-      static_cast<EvenOddExpressionCell *>(cell)->setLayout(
-          memoizedLayoutForCell(column, row));
+      myCell->setLayout(memoizedLayoutForCell(column, row));
     }
     return;
   }

@@ -26,9 +26,9 @@ all_release:
 	@ cp output/release/device/n0115/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0115.onboarding.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    DEVICE N0120"
 	@ $(MAKE) MODEL=n0120 clean
-	@ $(MAKE) MODEL=n0120 epsilon.onboarding.dfu
+	@ $(MAKE) MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0120.onboarding.dfu
-	@ $(MAKE) MODEL=n0120 epsilon.onboarding.allow3rdparty.dfu
+	@ $(MAKE) MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.allow3rdparty.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0120.onboarding.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
@@ -66,9 +66,9 @@ all_beta:
 	@ cp output/release/device/n0115/epsilon/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.allow3rdparty.dfu
 	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0120"
 	@ $(MAKE) MODEL=n0120 clean
-	@ $(MAKE) MODEL=n0120 epsilon.onboarding.beta.dfu
+	@ $(MAKE) MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.dfu
-	@ $(MAKE) MODEL=n0120 epsilon.onboarding.beta.allow3rdparty.dfu
+	@ $(MAKE) MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.allow3rdparty.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.allow3rdparty.dfu
 	@ echo "BUILD_BETA_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean

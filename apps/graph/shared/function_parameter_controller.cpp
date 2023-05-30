@@ -1,12 +1,12 @@
 #include "function_parameter_controller.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/print.h>
 
 #include <array>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Shared;

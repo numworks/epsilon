@@ -1,6 +1,7 @@
 #include "matrix_list_controller.h"
 
 #include <apps/global_preferences.h>
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/determinant.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_inverse.h>
@@ -9,7 +10,6 @@
 #include <poincare/matrix_trace.h>
 #include <string.h>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Poincare;

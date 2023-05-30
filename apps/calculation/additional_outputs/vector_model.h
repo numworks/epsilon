@@ -1,7 +1,8 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_VECTOR_MODEL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_VECTOR_MODEL_H
 
-#include "../../shared/memoized_curve_view_range.h"
+#include <apps/shared/memoized_curve_view_range.h>
+
 #include "illustrated_expressions_list_controller.h"
 
 namespace Calculation {

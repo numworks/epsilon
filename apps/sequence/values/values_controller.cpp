@@ -1,6 +1,7 @@
 #include "values_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/based_integer.h>
 #include <poincare/sequence.h>
@@ -8,7 +9,6 @@
 
 #include <cmath>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Poincare;

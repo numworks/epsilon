@@ -1,10 +1,11 @@
 #ifndef CALCULATION_APP_H
 #define CALCULATION_APP_H
 
+#include <apps/shared/layout_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
+
 #include <new>
 
-#include "../shared/layout_field_delegate_app.h"
-#include "../shared/shared_app.h"
 #include "calculation_store.h"
 #include "edit_expression_controller.h"
 #include "history_controller.h"

@@ -1,7 +1,8 @@
 #ifndef ON_BOARDING_APP_H
 #define ON_BOARDING_APP_H
 
-#include "../shared/shared_app.h"
+#include <apps/shared/shared_app.h>
+
 #include "localization_controller.h"
 
 namespace OnBoarding {

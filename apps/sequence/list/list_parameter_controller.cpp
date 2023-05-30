@@ -1,8 +1,8 @@
 #include "list_parameter_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 #include "list_controller.h"
 

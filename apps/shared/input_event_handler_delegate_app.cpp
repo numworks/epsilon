@@ -1,11 +1,10 @@
 #include "input_event_handler_delegate_app.h"
 
+#include <apps/apps_container.h>
 #include <escher/clipboard.h>
 #include <string.h>
 
 #include <cmath>
-
-#include "../apps_container.h"
 
 using namespace Escher;
 using namespace Poincare;

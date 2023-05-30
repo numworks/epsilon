@@ -1,10 +1,10 @@
 #include "tangent_graph_controller.h"
 
 #include <apps/apps_container_helper.h>
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Shared;

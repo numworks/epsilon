@@ -1,6 +1,7 @@
 #include "variable_box_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/toolbox_helpers.h>
 #include <assert.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_helper.h>
@@ -9,7 +10,6 @@
 
 #include <algorithm>
 
-#include "../shared/toolbox_helpers.h"
 #include "app.h"
 #include "python_toolbox.h"
 #include "script.h"

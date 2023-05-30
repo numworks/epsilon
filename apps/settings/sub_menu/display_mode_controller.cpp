@@ -1,11 +1,11 @@
 #include "display_mode_controller.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/integer.h>
 
 #include <cmath>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Poincare;

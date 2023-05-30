@@ -1,8 +1,7 @@
 #include "colors_lcd_test_controller.h"
 
+#include <apps/apps_container.h>
 #include <ion/post_and_hardware_tests.h>
-
-#include "../apps_container.h"
 
 using namespace Poincare;
 

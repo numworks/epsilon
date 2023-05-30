@@ -1,11 +1,10 @@
 #ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
 #define SEQUENCE_SEQUENCE_TOOLBOX_H
 
+#include <apps/math_toolbox.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <poincare/layout.h>
-
-#include "../../math_toolbox.h"
 
 namespace Sequence {
 

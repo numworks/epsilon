@@ -1,11 +1,11 @@
 #include "history_controller.h"
 
+#include <apps/shared/expression_display_permissions.h>
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/trigonometry.h>
 
-#include "../shared/expression_display_permissions.h"
 #include "app.h"
 
 using namespace Shared;

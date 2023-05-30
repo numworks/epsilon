@@ -1,11 +1,10 @@
 #include "about_controller.h"
 
+#include <apps/apps_container.h>
 #include <assert.h>
 #include <ion/src/shared/events.h>
 
 #include <cmath>
-
-#include "../../apps_container.h"
 
 using namespace Escher;
 

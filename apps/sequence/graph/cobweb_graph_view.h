@@ -1,10 +1,10 @@
 #ifndef SEQUENCE_COBWEB_GRAPH_VIEW_H
 #define SEQUENCE_COBWEB_GRAPH_VIEW_H
 
+#include <apps/shared/function_graph_view.h>
+#include <apps/shared/sequence_store.h>
 #include <kandinsky/pixel_cache.h>
 
-#include "../../shared/function_graph_view.h"
-#include "../../shared/sequence_store.h"
 #include "apps/shared/dots.h"
 #include "apps/shared/sequence.h"
 

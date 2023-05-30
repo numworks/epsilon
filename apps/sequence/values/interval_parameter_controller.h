@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_INTERVAL_PARAM_CONTROLLER_H
 #define SEQUENCE_INTERVAL_PARAM_CONTROLLER_H
 
-#include "../../shared/interval_parameter_controller.h"
+#include <apps/shared/interval_parameter_controller.h>
 
 namespace Sequence {
 

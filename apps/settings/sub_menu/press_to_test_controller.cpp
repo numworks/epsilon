@@ -1,11 +1,11 @@
 #include "press_to_test_controller.h"
 
+#include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <assert.h>
 
 #include <cmath>
 
-#include "../../apps_container.h"
 #include "press_to_test_success.h"
 
 using namespace Poincare;

@@ -1,6 +1,7 @@
 #include "sequence.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
 #include <float.h>
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
@@ -17,7 +18,6 @@
 
 #include <cmath>
 
-#include "../shared/poincare_helpers.h"
 #include "sequence_context.h"
 #include "sequence_store.h"
 

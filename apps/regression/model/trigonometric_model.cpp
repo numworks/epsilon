@@ -1,6 +1,7 @@
 #include "trigonometric_model.h"
 
 #include <apps/regression/store.h>
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/multiplication.h>
 #include <poincare/number.h>
@@ -11,8 +12,6 @@
 #include <poincare/symbol.h>
 
 #include <cmath>
-
-#include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;

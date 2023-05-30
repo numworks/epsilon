@@ -1,11 +1,11 @@
 #include "sequence_context.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <omg/signaling_nan.h>
 
 #include <array>
 #include <cmath>
 
-#include "../shared/poincare_helpers.h"
 #include "sequence_store.h"
 
 using namespace Poincare;

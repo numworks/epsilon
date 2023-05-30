@@ -1,12 +1,12 @@
 #include "term_sum_controller.h"
 
+#include <apps/shared/text_field_delegate.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
 
-#include "../../shared/text_field_delegate.h"
 #include "../app.h"
 
 extern "C" {

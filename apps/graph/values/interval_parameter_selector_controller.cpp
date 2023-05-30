@@ -1,9 +1,9 @@
 #include "interval_parameter_selector_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/interval_parameter_controller.h>
 #include <assert.h>
 
-#include "../../shared/interval_parameter_controller.h"
 #include "../app.h"
 
 using namespace Escher;

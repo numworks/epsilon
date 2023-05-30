@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_CURVE_VIEW_RANGE_H
 #define SEQUENCE_CURVE_VIEW_RANGE_H
 
-#include "../../shared/interactive_curve_view_range.h"
+#include <apps/shared/interactive_curve_view_range.h>
 
 namespace Sequence {
 

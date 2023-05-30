@@ -1,6 +1,6 @@
 #include "keyboard_view.h"
 
-#include "../constant.h"
+#include <apps/constant.h>
 
 namespace HardwareTest {
 

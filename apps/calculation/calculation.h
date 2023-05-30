@@ -2,10 +2,9 @@
 #define CALCULATION_CALCULATION_H
 
 #include <apps/constant.h>
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
-
-#include "../shared/poincare_helpers.h"
 
 namespace Calculation {
 

@@ -2,12 +2,12 @@
 #define SEQUENCE_APP_H
 
 #include <apps/apps_container_helper.h>
+#include <apps/shared/function_app.h>
+#include <apps/shared/global_context.h>
+#include <apps/shared/interval.h>
+#include <apps/shared/sequence_context.h>
+#include <apps/shared/sequence_store.h>
 
-#include "../shared/function_app.h"
-#include "../shared/global_context.h"
-#include "../shared/interval.h"
-#include "../shared/sequence_context.h"
-#include "../shared/sequence_store.h"
 #include "graph/curve_view_range.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"

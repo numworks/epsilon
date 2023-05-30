@@ -1,8 +1,9 @@
 #ifndef GRAPH_TANGENT_GRAPH_CONTROLLER_H
 #define GRAPH_TANGENT_GRAPH_CONTROLLER_H
 
-#include "../../shared/function_banner_delegate.h"
-#include "../../shared/simple_interactive_curve_view_controller.h"
+#include <apps/shared/function_banner_delegate.h>
+#include <apps/shared/simple_interactive_curve_view_controller.h>
+
 #include "banner_view.h"
 #include "graph_controller_helper.h"
 #include "graph_view.h"

@@ -1,11 +1,11 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <apps/global_preferences.h>
+#include <apps/shared/global_context.h>
 
 #include <array>
 
-#include "../apps_container.h"
-#include "../shared/global_context.h"
 #include "sequence_icon.h"
 
 using namespace Poincare;

@@ -1,8 +1,8 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <apps/i18n.h>
 
-#include "../apps_container.h"
 #include "graph_icon.h"
 
 using namespace Poincare;

@@ -1,12 +1,11 @@
 #ifndef SEQUENCE_SEQUENCE_COLUMN_PARAM_CONTROLLER_H
 #define SEQUENCE_SEQUENCE_COLUMN_PARAM_CONTROLLER_H
 
+#include <apps/shared/column_parameter_controller.h>
 #include <apps/shared/continuous_function_store.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/switch_view.h>
-
-#include "../../shared/column_parameter_controller.h"
 
 namespace Sequence {
 

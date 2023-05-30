@@ -1,10 +1,10 @@
 #ifndef CODE_APP_H
 #define CODE_APP_H
 
+#include <apps/shared/input_event_handler_delegate_app.h>
+#include <apps/shared/shared_app.h>
 #include <ion/events.h>
 
-#include "../shared/input_event_handler_delegate_app.h"
-#include "../shared/shared_app.h"
 #include "console_controller.h"
 #include "menu_controller.h"
 #include "python_toolbox.h"

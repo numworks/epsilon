@@ -1,7 +1,8 @@
 #ifndef GRAPH_PREIMAGE_PARAMETER_CONTROLLER
 #define GRAPH_PREIMAGE_PARAMETER_CONTROLLER
 
-#include "../../shared/go_to_parameter_controller.h"
+#include <apps/shared/go_to_parameter_controller.h>
+
 #include "preimage_graph_controller.h"
 
 namespace Graph {

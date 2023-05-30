@@ -1,14 +1,13 @@
 #include <apps/shared/global_context.h>
+#include <apps/shared/poincare_helpers.h>
+#include <apps/shared/sequence_context.h>
+#include <apps/shared/sequence_store.h>
 #include <assert.h>
 #include <poincare/test/helper.h>
 #include <quiz.h>
 #include <string.h>
 
 #include <cmath>
-
-#include "../../shared/poincare_helpers.h"
-#include "../../shared/sequence_context.h"
-#include "../../shared/sequence_store.h"
 
 using namespace Poincare;
 

@@ -1,6 +1,7 @@
 #include "vector_list_controller.h"
 
 #include <apps/global_preferences.h>
+#include <apps/shared/poincare_helpers.h>
 #include <omg/round.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -8,7 +9,6 @@
 #include <poincare_expressions.h>
 #include <string.h>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Poincare;

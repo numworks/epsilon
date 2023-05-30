@@ -1,5 +1,6 @@
 #include "cubic_model.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
@@ -11,8 +12,6 @@
 #include <poincare/print.h>
 #include <poincare/symbol.h>
 #include <poincare/vertical_offset_layout.h>
-
-#include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;

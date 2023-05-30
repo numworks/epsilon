@@ -1,10 +1,10 @@
 #include "transformed_model.h"
 
+#include <apps/shared/linear_regression_store.h>
 #include <assert.h>
 
 #include <cmath>
 
-#include "../../shared/linear_regression_store.h"
 #include "../store.h"
 
 using namespace Poincare;

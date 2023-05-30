@@ -2,10 +2,9 @@
 #define ON_PROMPT_CONTROLLER_H
 
 #include <apps/i18n.h>
+#include <apps/shared/ok_view.h>
 #include <escher/message_view.h>
 #include <escher/view_controller.h>
-
-#include "../shared/ok_view.h"
 
 namespace OnBoarding {
 

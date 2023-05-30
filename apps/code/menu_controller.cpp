@@ -1,5 +1,6 @@
 #include "menu_controller.h"
 
+#include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/shared/expression_model_list_controller.h>
 #include <assert.h>
@@ -7,7 +8,6 @@
 #include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
 
-#include "../apps_container.h"
 #include "app.h"
 
 using namespace Escher;

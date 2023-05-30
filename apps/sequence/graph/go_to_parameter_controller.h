@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_GO_TO_PARAMETER_CONTROLLER_H
 #define SEQUENCE_GO_TO_PARAMETER_CONTROLLER_H
 
-#include "../../shared/function_go_to_parameter_controller.h"
+#include <apps/shared/function_go_to_parameter_controller.h>
 
 namespace Sequence {
 

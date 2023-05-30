@@ -1,9 +1,8 @@
 #include "preimage_graph_controller.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/float.h>
 #include <poincare/serialization_helper.h>
-
-#include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;

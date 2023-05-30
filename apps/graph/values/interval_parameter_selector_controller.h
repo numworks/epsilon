@@ -1,13 +1,12 @@
 #ifndef GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 #define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 
+#include <apps/shared/continuous_function.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
-
-#include "../../shared/continuous_function.h"
 
 namespace Graph {
 

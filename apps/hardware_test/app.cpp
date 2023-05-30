@@ -1,9 +1,8 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <ion/circuit_breaker.h>
 #include <ion/events.h>
-
-#include "../apps_container.h"
 
 using namespace Escher;
 

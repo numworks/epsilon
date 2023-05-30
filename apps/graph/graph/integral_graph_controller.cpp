@@ -1,12 +1,12 @@
 #include "integral_graph_controller.h"
 
+#include <apps/shared/text_field_delegate.h>
 #include <assert.h>
 #include <poincare/layout_helper.h>
 #include <stdlib.h>
 
 #include <cmath>
 
-#include "../../shared/text_field_delegate.h"
 #include "../app.h"
 
 using namespace Shared;

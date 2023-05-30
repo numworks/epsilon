@@ -1,8 +1,7 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <assert.h>
-
-#include "../apps_container.h"
 
 using namespace Escher;
 

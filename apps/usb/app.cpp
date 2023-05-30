@@ -1,9 +1,8 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <assert.h>
-
-#include "../apps_container.h"
 
 namespace USB {
 

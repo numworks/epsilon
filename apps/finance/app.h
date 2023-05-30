@@ -2,10 +2,10 @@
 #define FINANCE_APP_H
 
 #include <apps/i18n.h>
+#include <apps/shared/layout_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
 #include <escher/stack_view_controller.h>
 
-#include "../shared/layout_field_delegate_app.h"
-#include "../shared/shared_app.h"
 #include "data.h"
 #include "interest_menu_controller.h"
 #include "menu_controller.h"

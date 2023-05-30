@@ -1,10 +1,10 @@
 #ifndef CODE_CONSOLE_CONTROLLER_H
 #define CODE_CONSOLE_CONTROLLER_H
 
+#include <apps/shared/input_event_handler_delegate.h>
 #include <escher/list_view_data_source.h>
 #include <python/port/port.h>
 
-#include "../shared/input_event_handler_delegate.h"
 #include "console_edit_cell.h"
 #include "console_line_cell.h"
 #include "console_store.h"

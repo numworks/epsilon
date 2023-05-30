@@ -1,12 +1,12 @@
 #include "history_view_cell.h"
 
+#include <apps/constant.h>
 #include <assert.h>
 #include <poincare/exception_checkpoint.h>
 #include <string.h>
 
 #include <algorithm>
 
-#include "../constant.h"
 #include "app.h"
 #include "calculation_selectable_table_view.h"
 

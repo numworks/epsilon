@@ -1,7 +1,8 @@
 #ifndef CODE_EDITOR_CONTROLLER_H
 #define CODE_EDITOR_CONTROLLER_H
 
-#include "../shared/input_event_handler_delegate.h"
+#include <apps/shared/input_event_handler_delegate.h>
+
 #include "editor_view.h"
 #include "script.h"
 #include "variable_box_controller.h"

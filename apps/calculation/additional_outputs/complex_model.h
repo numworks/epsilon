@@ -1,9 +1,10 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_COMPLEX_MODEL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_COMPLEX_MODEL_H
 
+#include <apps/shared/curve_view_range.h>
+
 #include <complex>
 
-#include "../../shared/curve_view_range.h"
 #include "illustrated_expressions_list_controller.h"
 
 namespace Calculation {

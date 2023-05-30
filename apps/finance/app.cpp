@@ -1,9 +1,9 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <escher/palette.h>
 
-#include "../apps_container.h"
 #include "finance_icon.h"
 
 namespace Finance {

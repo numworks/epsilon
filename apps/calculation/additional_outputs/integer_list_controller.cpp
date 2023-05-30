@@ -1,10 +1,10 @@
 #include "integer_list_controller.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/based_integer.h>
 #include <poincare/factor.h>
 #include <poincare/integer.h>
 
-#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 using namespace Poincare;

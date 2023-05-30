@@ -1,10 +1,10 @@
 #ifndef SEQUENCE_COBWEB_CONTROLLER_H
 #define SEQUENCE_COBWEB_CONTROLLER_H
 
+#include <apps/shared/sum_graph_controller.h>
+#include <apps/shared/xy_banner_view.h>
 #include <poincare/layout.h>
 
-#include "../../shared/sum_graph_controller.h"
-#include "../../shared/xy_banner_view.h"
 #include "apps/shared/curve_view_cursor.h"
 #include "apps/shared/function_graph_controller.h"
 #include "apps/shared/sequence_store.h"

@@ -2,9 +2,9 @@
 #define SOLVER_APP_H
 
 #include <apps/i18n.h>
+#include <apps/shared/layout_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
 
-#include "../shared/layout_field_delegate_app.h"
-#include "../shared/shared_app.h"
 #include "equation_store.h"
 #include "interval_controller.h"
 #include "list_controller.h"

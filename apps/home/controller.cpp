@@ -1,10 +1,10 @@
 #include "controller.h"
 
+#include <apps/apps_container.h>
 #include <apps/home/apps_layout.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/preferences.h>
 
-#include "../apps_container.h"
 #include "app.h"
 
 extern "C" {

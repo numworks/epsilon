@@ -131,16 +131,18 @@ int MathVariableBoxController::reusableCellCount(int type) {
 }
 
 void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
-  if (m_currentPage == Page::RootMenu) {
-    if (row == defineVariableCellIndex()) {
-      return;
-    }
+  int type = typeAtRow(row);
+  if (type == k_defineVariableCellType) {
+    return;
+  }
+  if (type == k_nodeCellType) {
     Escher::NestedMenuController::NodeCell *myCell =
         static_cast<Escher::NestedMenuController::NodeCell *>(cell);
     myCell->label()->setMessage(nodeLabel(pageAtIndex(row)));
     myCell->reloadCell();
     return;
   }
+  assert(type == k_leafCellType);
   LeafCell *myCell = static_cast<LeafCell *>(cell);
   Storage::Record record = recordAtIndex(row);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];

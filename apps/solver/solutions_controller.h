@@ -9,6 +9,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
+#include <escher/solid_color_cell.h>
 #include <escher/tab_view_controller.h>
 #include <escher/table_view_data_source.h>
 #include <ion.h>
@@ -142,14 +143,6 @@ class SolutionsController : public Escher::ViewController,
     Escher::MessageTextView m_messageView;
   };
 
-  class EmptyCell : public Escher::HighlightCell {
-   public:
-    void drawRect(KDContext *ctx, KDRect rect) const override {
-      ctx->fillRect(bounds(),
-                    SolutionsController::ContentView::k_backgroundColor);
-    }
-  };
-
   // Cell types
   constexpr static int k_symbolCellType = 0;
   constexpr static int k_deltaCellType = 1;
@@ -225,7 +218,7 @@ class SolutionsController : public Escher::ViewController,
   Escher::FloatEvenOddBufferTextCell<>
       m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];
-  EmptyCell m_emptyCell[k_numberOfEmptyCells];
+  Escher::SolidColorCell m_emptyCell[k_numberOfEmptyCells];
   ContentView m_contentView;
 };
 

@@ -150,7 +150,8 @@ SolutionsController::SolutionsController(Responder *parentResponder)
     m_symbolCells[i].setFont(k_solutionsFont);
   }
   for (int i = 0; i < k_numberOfEmptyCells; ++i) {
-    m_emptyCell[i].hide();
+    m_emptyCell[i].setColor(
+        SolutionsController::ContentView::k_backgroundColor);
   }
 }
 

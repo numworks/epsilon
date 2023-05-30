@@ -110,4 +110,11 @@ void ListWithTopAndBottomController::didBecomeFirstResponder() {
   m_selectableListView.reloadData();
 }
 
+void ListWithTopAndBottomController::willExitResponderChain(
+    Responder* nextFirstResponder) {
+  /* Sometimes we layout subviews before calling didBecomeFirstResponder, and to
+   * layout subviews we need to have a clean memoization. */
+  resetMemoization();
+}
+
 }  // namespace Escher

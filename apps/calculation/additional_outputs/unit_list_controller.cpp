@@ -49,6 +49,7 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_expressionCellType) {
     return ExpressionsListController::nonMemoizedRowHeight(row);
   }
+  assert(typeAtRow(row) == k_bufferCellType);
   BufferCell tempCell;
   return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
 }
@@ -57,6 +58,7 @@ void UnitListController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_expressionCellType) {
     return ExpressionsListController::fillCellForRow(cell, row);
   }
+  assert(typeAtRow(row) == k_bufferCellType);
   BufferCell *myCell = static_cast<BufferCell *>(cell);
   fillBufferCellAtIndex(myCell, row - m_numberOfExpressionCells);
   myCell->subLabel()->setMessage(messageAtIndex(row));

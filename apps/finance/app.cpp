@@ -28,6 +28,7 @@ const App::Descriptor *App::Snapshot::descriptor() const {
 void App::Snapshot::reset() {
   m_data.reset();
   m_pageQueue.reset();
+  Shared::SharedApp::Snapshot::reset();
 }
 
 void App::didBecomeActive(Escher::Window *window) {

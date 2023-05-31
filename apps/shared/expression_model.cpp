@@ -171,6 +171,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(
     Ion::Storage::Record* record, const Expression& newExpression) {
   assert(record->fullName() != nullptr);
   // Prepare the new data to be stored
+  setStorageChangeFlag();
   Ion::Storage::Record::Data newData = record->value();
   size_t previousExpressionSize = expressionSize(record);
   size_t newExpressionSize =

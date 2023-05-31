@@ -965,6 +965,10 @@ size_t ContinuousFunction::Model::expressionSize(
   return record->value().size - sizeof(RecordDataBuffer);
 }
 
+void ContinuousFunction::Model::setStorageChangeFlag() const {
+  GlobalContext::continuousFunctionStore->setStorageChangeFlag(true);
+}
+
 template Coordinate2D<float>
 ContinuousFunction::templatedApproximateAtParameter<float>(float, Context *,
                                                            int) const;

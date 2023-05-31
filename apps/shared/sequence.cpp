@@ -18,6 +18,7 @@
 
 #include <cmath>
 
+#include "global_context.h"
 #include "sequence_context.h"
 #include "sequence_store.h"
 
@@ -325,6 +326,10 @@ void Sequence::SequenceModel::updateNewDataWithExpression(
   }
   // Update meta data
   updateMetaData(record, newExpressionSize);
+}
+
+void Sequence::SequenceModel::setStorageChangeFlag() const {
+  GlobalContext::sequenceStore->setStorageChangeFlag(true);
 }
 
 /* Definition Handle*/

@@ -120,7 +120,10 @@ const App::Descriptor *App::Snapshot::descriptor() const {
 
 void App::Snapshot::tidy() { statistic()->tidy(); }
 
-void App::Snapshot::reset() { m_pageQueue.reset(); }
+void App::Snapshot::reset() {
+  Shared::SharedApp::Snapshot::reset();
+  m_pageQueue.reset();
+}
 
 bool App::storageCanChangeForRecordName(
     const Ion::Storage::Record::Name recordName) const {

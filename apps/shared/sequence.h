@@ -210,6 +210,9 @@ class Sequence : public Function {
         size_t newExpressionSize, size_t previousExpressionSize) override;
     virtual void updateMetaData(const Ion::Storage::Record *record,
                                 size_t newSize) {}
+
+   private:
+    void setStorageChangeFlag() const override;
   };
 
   class DefinitionModel : public SequenceModel {

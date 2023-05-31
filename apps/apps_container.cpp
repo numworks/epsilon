@@ -257,28 +257,20 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   }
 }
 
-void AppsContainer::handleRunException(bool resetSnapshot) {
+void AppsContainer::handleRunException() {
   App::Snapshot* activeSnapshot =
       s_activeApp != nullptr ? s_activeApp->snapshot() : nullptr;
-  if (activeSnapshot == homeAppSnapshot()) {
-    // Reset home selection if already selected
-    dispatchEvent(Ion::Events::Back);
-    return;
-  }
+  assert(activeSnapshot != homeAppSnapshot());
   switchToBuiltinApp(homeAppSnapshot());
   if (activeSnapshot != nullptr) {
-    if (resetSnapshot) {
-      /* When an app encountered an exception due to a full pool, the next time
-       * the user enters the app, the same exception could happen again which
-       * would prevent from reopening the app. To avoid being stuck outside the
-       * app causing the issue, we reset its snapshot when leaving it due to
-       * exception. For instance, the calculation app can encounter an
-       * exception when displaying too many huge layouts, if we don't clean the
-       * history here, we will be stuck outside the calculation app. */
-      activeSnapshot->reset();
-    } else {
-      activeSnapshot->tidy();
-    }
+    /* When an app encountered an exception due to a full pool, the next time
+     * the user enters the app, the same exception could happen again which
+     * would prevent from reopening the app. To avoid being stuck outside the
+     * app causing the issue, we reset its snapshot when leaving it due to
+     * exception. For instance, the calculation app can encounter an
+     * exception when displaying too many huge layouts, if we don't clean the
+     * history here, we will be stuck outside the calculation app. */
+    activeSnapshot->reset();
   }
 }
 
@@ -318,7 +310,7 @@ void AppsContainer::run() {
           GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
-      handleRunException(false);
+      switchToBuiltinApp(homeAppSnapshot());
     } else {
       /* Normal execution. The exception checkpoint must be created before
        * switching to the first app, because the first app might create nodes on
@@ -331,7 +323,7 @@ void AppsContainer::run() {
      * with the same identifiers as potential dangling handles (that have
      * lost their nodes in the exception). */
     TreePool::Lock();
-    handleRunException(true);
+    handleRunException();
     TreePool::Unlock();
     s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1,
                                 I18n::Message::PoolMemoryFull2, true);

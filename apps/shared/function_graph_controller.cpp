@@ -98,10 +98,10 @@ void FunctionGraphController::FunctionSelectionController::fillCellForRow(
   ExpiringPointer<Function> function =
       graphController()->functionStore()->modelForRecord(
           graphController()->recordAtCurveIndex(row));
-  static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(
-      function->color());
-  static_cast<CurveSelectionCellWithChevron *>(cell)->label()->setLayout(
-      function->layout().clone());
+  CurveSelectionCellWithChevron *myCell =
+      static_cast<CurveSelectionCellWithChevron *>(cell);
+  myCell->setColor(function->color());
+  myCell->label()->setLayout(function->layout().clone());
 }
 
 void FunctionGraphController::FunctionSelectionController::

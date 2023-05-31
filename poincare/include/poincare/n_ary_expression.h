@@ -51,12 +51,8 @@ class NAryExpression : public Expression {
     return node()->squashUnaryHierarchyInPlace();
   }
   void mergeSameTypeChildrenInPlace();
-  /* allChildrenAreReal returns:
-   * - 1 if all children are real
-   * - 0 if all non real children are ComplexCartesian
-   * - -1 if some chidren are non-real and non ComplexCartesian */
-  int allChildrenAreReal(Context* context,
-                         bool canContainMatrices = true) const;
+  bool allChildrenAreReal(Context* context,
+                          bool canContainMatrices = true) const;
 
  protected:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order,

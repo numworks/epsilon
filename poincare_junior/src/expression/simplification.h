@@ -41,7 +41,7 @@ class Simplification {
       EditionReference reference,
       ProjectionContext complexity = ProjectionContext::Default);
   static bool ShallowSystemProjection(
-      EditionReference reference,
+      EditionReference *reference,
       ProjectionContext complexity = ProjectionContext::Default);
 
   static bool SystematicReduce(EditionReference *u);

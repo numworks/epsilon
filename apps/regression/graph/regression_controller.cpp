@@ -95,11 +95,11 @@ HighlightCell *RegressionController::reusableCell(int index, int type) {
 
 void RegressionController::fillCellForRow(HighlightCell *cell, int row) {
   assert(row >= 0 && row < numberOfRows());
-  MenuCell<MessageTextView, LayoutView> *castedCell =
+  MenuCell<MessageTextView, LayoutView> *myCell =
       static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
   Model *model = m_store->regressionModel(ModelTypeAtIndex(row));
-  castedCell->label()->setMessage(model->name());
-  castedCell->subLabel()->setLayout(model->templateLayout());
+  myCell->label()->setMessage(model->name());
+  myCell->subLabel()->setLayout(model->templateLayout());
 }
 
 }  // namespace Regression

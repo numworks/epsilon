@@ -218,6 +218,7 @@ void PressToTestController::fillCellForRow(HighlightCell *cell, int row) {
     assert(!Preferences::sharedPreferences->examMode().isActive());
     return;
   }
+  assert(typeAtRow(row) == k_switchCellType);
   PressToTestSwitch *myCell = static_cast<PressToTestSwitch *>(cell);
   // A true params means the feature is disabled,
   bool featureIsDisabled = getParamAtIndex(row);

@@ -29,7 +29,6 @@ const char *read() {
     // Do not use system clipboard when headless
     return nullptr;
   }
-  fetchFromSystemClipboard(buffer(), k_bufferSize);
   if (buffer()[0] == '\0') {
     return nullptr;
   }

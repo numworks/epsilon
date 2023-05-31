@@ -279,19 +279,22 @@ bool SimplificationHelper::extractIntegerChildAtIndex(
   assert(e.numberOfChildren() > integerChildIndex);
   Expression child = e.childAtIndex(integerChildIndex);
   *isSymbolReturnValue = false;
-  if (child.type() != ExpressionNode::Type::Rational) {
+  if (!child.isNumber()) {
     if (child.type() != ExpressionNode::Type::Symbol) {
       return false;
     }
     *isSymbolReturnValue = true;
     return true;
   }
-  Rational rationalChild = static_cast<Rational&>(child);
-  Integer integerChild = rationalChild.signedIntegerNumerator();
-  if (!rationalChild.isInteger() || !integerChild.isExtractable()) {
+  Number number = static_cast<Number&>(child);
+  if (!number.isInteger()) {
     return false;
   }
-  *integerChildReturnValue = integerChild.extractedInt();
+  Integer integer = number.integerValue();
+  if (!integer.isExtractable()) {
+    return false;
+  }
+  *integerChildReturnValue = integer.extractedInt();
   return true;
 }
 

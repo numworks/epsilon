@@ -26,7 +26,7 @@ CalculationController::ContentView::ContentView(
     : m_selectableTableView(selectableTableView),
       m_distributionCurveView(distribution, calculation),
       m_unknownParameterBanner(
-          {.style = {.backgroundColor = Escher::Palette::WallScreen},
+          {.style = {.backgroundColor = Palette::WallScreen},
            .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 View *CalculationController::ContentView::subviewAtIndex(int index) {
@@ -61,9 +61,9 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
 }
 
 CalculationController::CalculationController(
-    Escher::StackViewController *parentResponder, Distribution *distribution,
+    StackViewController *parentResponder, Distribution *distribution,
     Calculation *calculation)
-    : Escher::ViewController(parentResponder),
+    : ViewController(parentResponder),
       m_calculation(calculation),
       m_distribution(distribution),
       m_contentView(&m_selectableTableView, distribution, calculation),
@@ -162,8 +162,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
       calculationCellIsResponder = false;
     }
     myCell->setResponder(calculationCellIsResponder);
-    TextField *field =
-        static_cast<CalculationCell *>(cell)->editableTextCell()->textField();
+    TextField *field = myCell->editableTextCell()->textField();
     if (field->isEditing()) {
       return;
     }
@@ -171,7 +170,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
     char buffer[bufferSize];
     /* FIXME: It has not been decided yet if we should use the prefered mode
      * instead of always using scientific mode */
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode(
         m_calculation->parameterAtIndex(column - 1), buffer, bufferSize,
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
         Poincare::Preferences::PrintFloatMode::Decimal);

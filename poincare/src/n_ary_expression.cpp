@@ -64,20 +64,16 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   }
 }
 
-int NAryExpression::allChildrenAreReal(Context* context,
-                                       bool canContainMatrices) const {
-  int i = 0;
-  int result = 1;
-  while (i < numberOfChildren()) {
+bool NAryExpression::allChildrenAreReal(Context* context,
+                                        bool canContainMatrices) const {
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
     Expression c = childAtIndex(i);
-    if (c.type() == ExpressionNode::Type::ComplexCartesian) {
-      result *= 0;
-    } else if (!c.isReal(context, canContainMatrices)) {
-      return -1;
+    if (!c.isReal(context, canContainMatrices)) {
+      return false;
     }
-    i++;
   }
-  return result;
+  return true;
 }
 
 Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(

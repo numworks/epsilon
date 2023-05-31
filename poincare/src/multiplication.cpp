@@ -1145,53 +1145,35 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
     return result;
   }
 
-  /* Let's bubble up the complex operator if possible
-   * 3 cases:
-   * - All children are real, we do nothing (allChildrenAreReal == 1)
-   * - One of the child is non-real and not a ComplexCartesian: it means a
-   *   complex expression could not be resolved as a ComplexCartesian, we cannot
-   *   do anything about it now (allChildrenAreReal == -1)
-   * - All children are either real or ComplexCartesian (allChildrenAreReal ==
-   * 0) We can bubble up ComplexCartesian nodes. Do not simplify if there are
-   * randoms !*/
-  if (!hasRandom && allChildrenAreReal(
-                        context, reductionContext.shouldCheckMatrices()) == 0) {
-    int nbChildren = numberOfChildren();
-    int i = nbChildren - 1;
-    // Children are sorted so ComplexCartesian nodes are at the end
-    assert(childAtIndex(i).type() == ExpressionNode::Type::ComplexCartesian);
-    // First, we merge all ComplexCartesian children into one
+  /* Let's bubble up the complex cartesian if possible.
+   * Children are sorted so ComplexCartesian nodes are at the end
+   */
+  if (childAtIndex(numberOfChildren() - 1).type() ==
+      ExpressionNode::Type::ComplexCartesian) {
+    int currentNChildren = numberOfChildren();
+    int i = currentNChildren - 1;
+    // Merge all ComplexCartesian and real children into one
     ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
-    while (true) {
-      removeChildAtIndexInPlace(i);
+    while (i > 0) {
       i--;
-      if (i < 0) {
-        break;
+      Expression c = childAtIndex(i);
+      if (c.type() != ExpressionNode::Type::ComplexCartesian) {
+        if (!c.isReal(reductionContext.context(),
+                      reductionContext.shouldCheckMatrices())) {
+          continue;
+        }
+        c = ComplexCartesian::Builder(c, Rational::Builder(0));
       }
-      Expression e = childAtIndex(i);
-      if (e.type() != ExpressionNode::Type::ComplexCartesian) {
-        /* The Multiplication is sorted so ComplexCartesian nodes are the last
-         * ones. */
-        break;
-      }
+      assert(c.type() == ExpressionNode::Type::ComplexCartesian);
       child =
-          child.multiply(static_cast<ComplexCartesian &>(e), reductionContext);
+          child.multiply(static_cast<ComplexCartesian &>(c), reductionContext);
+      replaceChildAtIndexInPlace(numberOfChildren() - 1, child);
+      removeChildAtIndexInPlace(i);
     }
-    /* The real children are both factors of the real and the imaginary
-     * multiplication. */
-    Multiplication real = *this;
-    Multiplication imag = clone().convert<Multiplication>();
-    real.addChildAtIndexInPlace(child.real(), real.numberOfChildren(),
-                                real.numberOfChildren());
-    imag.addChildAtIndexInPlace(child.imag(), real.numberOfChildren(),
-                                real.numberOfChildren());
-    ComplexCartesian newComplexCartesian = ComplexCartesian::Builder();
-    replaceWithInPlace(newComplexCartesian);
-    newComplexCartesian.replaceChildAtIndexInPlace(0, real);
-    newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
-    real.shallowReduce(reductionContext);
-    imag.shallowReduce(reductionContext);
-    return newComplexCartesian.shallowReduce(reductionContext);
+    if (currentNChildren != numberOfChildren()) {
+      child.shallowReduce(reductionContext);
+      return shallowReduce(reductionContext);
+    }
   }
 
   return result;

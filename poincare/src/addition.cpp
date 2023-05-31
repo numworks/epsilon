@@ -518,40 +518,40 @@ Expression Addition::shallowReduce(ReductionContext reductionContext) {
     return result;
   }
 
-  /* Step 9: Let's bubble up the complex operator if possible
-   * 3 cases:
-   * - All children are real, we do nothing (allChildrenAreReal == 1)
-   * - One of the child is non-real and not a ComplexCartesian: it means a
-   *   complex expression could not be resolved as a ComplexCartesian, we cannot
-   *   do anything about it now (allChildrenAreReal == -1)
-   * - All children are either real or ComplexCartesian (allChildrenAreReal ==
-   * 0) We can bubble up ComplexCartesian nodes. */
-  if (allChildrenAreReal(reductionContext.context(),
-                         reductionContext.shouldCheckMatrices()) == 0) {
+  /* Step 9: Let's bubble up the complex cartesian if possible.
+   * The addition is sorted so ComplexCartesian nodes are the last ones */
+  if (childAtIndex(numberOfChildren() - 1).type() ==
+      ExpressionNode::Type::ComplexCartesian) {
     /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
-    // we store all imaginary parts in 'imag'
-    Addition imag = Addition::Builder();
-    Addition real = *this;  // we store all real parts in 'real'
-    i = numberOfChildren() - 1;
-    while (i >= 0) {
-      Expression c = childAtIndex(i);
-      if (c.type() == ExpressionNode::Type::ComplexCartesian) {
-        real.replaceChildAtIndexInPlace(i, c.childAtIndex(0));
-        imag.addChildAtIndexInPlace(c.childAtIndex(1), imag.numberOfChildren(),
-                                    imag.numberOfChildren());
-      } else {
-        // the Addition is sorted so ComplexCartesian nodes are the last ones
-        break;
-      }
+    int currentNChildren = numberOfChildren();
+    int i = currentNChildren - 1;
+    // Merge all ComplexCartesian and real children into one
+    ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
+    while (i > 0) {
       i--;
+      Expression c = childAtIndex(i);
+      if (c.type() != ExpressionNode::Type::ComplexCartesian) {
+        if (!c.isReal(reductionContext.context(),
+                      reductionContext.shouldCheckMatrices())) {
+          continue;
+        }
+        c = ComplexCartesian::Builder(c, Rational::Builder(0));
+      }
+      assert(c.type() == ExpressionNode::Type::ComplexCartesian);
+      Expression newReal = Addition::Builder(
+          child.real(), static_cast<ComplexCartesian&>(c).real());
+      Expression newImag = Addition::Builder(
+          child.imag(), static_cast<ComplexCartesian&>(c).imag());
+      child.replaceChildAtIndexInPlace(0, newReal);
+      child.replaceChildAtIndexInPlace(1, newImag);
+      newReal.shallowReduce(reductionContext);
+      newImag.shallowReduce(reductionContext);
+      removeChildAtIndexInPlace(i);
     }
-    ComplexCartesian newComplexCartesian = ComplexCartesian::Builder();
-    replaceWithInPlace(newComplexCartesian);
-    newComplexCartesian.replaceChildAtIndexInPlace(0, real);
-    newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
-    real.shallowReduce(reductionContext);
-    imag.shallowReduce(reductionContext);
-    return newComplexCartesian.shallowReduce(reductionContext);
+    if (currentNChildren != numberOfChildren()) {
+      child.shallowReduce(reductionContext);
+      return shallowReduce(reductionContext);
+    }
   }
 
   /* Step 10: Let's put everything under a common denominator.

@@ -942,8 +942,8 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
 
   // NAryExpresions are real if all children are real
   if (IsNAry(*this, context)) {
-    return convert<NAryExpression>().allChildrenAreReal(
-               context, canContainMatrices) == 1;
+    return convert<NAryExpression>().allChildrenAreReal(context,
+                                                        canContainMatrices);
   }
 
   if (type() == ExpressionNode::Type::ConstantMaths) {

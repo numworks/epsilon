@@ -25,11 +25,12 @@ class ExpressionsListController
       bool highlightWholeCells,
       Escher::SelectableListViewDelegate* delegate = nullptr);
   virtual ~ExpressionsListController() = default;
+  void tidy();
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void viewDidDisappear() override;
+  void viewDidDisappear() override { tidy(); };
 
   // MemoizedListViewDataSource
   int reusableCellCount(int type) override;

@@ -138,10 +138,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
        * TODO: Refactor to avoid writing an if for each parent * child. */
       CircuitBreakerCheckpoint checkpoint(
           Ion::CircuitBreaker::CheckpointType::Back);
+      ExpressionsListController *vc = nullptr;
       if (CircuitBreakerRun(checkpoint)) {
         Calculation::AdditionalInformations additionalInformations =
             selectedCell->additionalInformations();
-        ExpressionsListController *vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation =
             calculationAtIndex(focusRow);
         assert(focusCalculation->displayOutput(context) !=
@@ -220,6 +220,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           Container::activeApp()->displayModalViewController(
               vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
               Metric::PopUpRightMargin);
+        }
+      } else {
+        if (vc) {
+          vc->tidy();
         }
       }
     }

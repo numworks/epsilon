@@ -106,8 +106,13 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   {
     /* Do not use defaultShallowReduce since it calls shallowReduceUndfined
      * and a piecewiseOperator can be defined even with an undefined child. */
-    Expression e = SimplificationHelper::distributeReductionOverLists(
-        *this, reductionContext);
+    Expression e =
+        SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this,
+                                                           reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

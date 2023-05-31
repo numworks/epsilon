@@ -18,10 +18,9 @@ void write(const char *text) {
     // Do not use system clipboard when headless
     return;
   }
-  /* FIXME : Handle the error if need be. */
-  sendToSystemClipboard(text);
   localClipboardVersion =
       crc32Byte(reinterpret_cast<const uint8_t *>(text), strlen(text));
+  strlcpy(buffer(), text, k_bufferSize);
 }
 
 const char *read() {

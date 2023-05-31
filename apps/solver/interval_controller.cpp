@@ -29,14 +29,16 @@ const char *IntervalController::title() {
 int IntervalController::numberOfRows() const { return k_maxNumberOfCells + 1; }
 
 void IntervalController::fillCellForRow(HighlightCell *cell, int row) {
-  if (row == numberOfRows() - 1) {
+  if (typeAtRow(row) == k_buttonCellType) {
     return;
   }
+  assert(typeAtRow(row) == k_parameterCellType);
+  assert(0 <= row && row < k_maxNumberOfCells);
   I18n::Message labels[k_maxNumberOfCells] = {I18n::Message::XMin,
                                               I18n::Message::XMax};
-  MenuCellWithEditableText<MessageTextView> *myCell =
-      static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
-  myCell->label()->setMessage(labels[row]);
+  static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+      ->label()
+      ->setMessage(labels[row]);
   FloatParameterController::fillCellForRow(cell, row);
 }
 

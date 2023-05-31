@@ -63,8 +63,9 @@ void ExpressionsListController::didBecomeFirstResponder() {
   assert(numberOfRows() > 0);
 }
 
-void ExpressionsListController::viewDidDisappear() {
+void ExpressionsListController::tidy() {
   // Reset layout and cell memoization to avoid taking extra space in the pool
+  resetMemoization();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_cells[i].label()->resetLayouts();
     /* By reseting m_layouts, numberOfRow will go down to 0, and the highlighted
@@ -114,14 +115,7 @@ int ExpressionsListController::numberOfRows() const {
 
 void ExpressionsListController::setExpression(Expression e) {
   // Reinitialize memoization
-  resetMemoization();
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_layouts[i] = Layout();
-    m_exactLayouts[i] = Layout();
-    m_approximatedLayouts[i] = Layout();
-    m_cells[i].label()->setSelectedSubviewPosition(
-        ScrollableThreeLayoutsView::SubviewPosition::Left);
-  }
+  tidy();
   m_expression = e;
 }
 

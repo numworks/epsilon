@@ -67,7 +67,7 @@ bool PromptController::handleEvent(Ion::Events::Event event) {
     AppsContainer* appsContainer = AppsContainer::sharedAppsContainer();
     if (appsContainer->activeApp()->snapshot() ==
         appsContainer->onBoardingAppSnapshot()) {
-      appsContainer->switchToBuiltinApp(appsContainer->appSnapshotAtIndex(0));
+      appsContainer->switchToBuiltinApp(appsContainer->homeAppSnapshot());
     }
     return true;
   }

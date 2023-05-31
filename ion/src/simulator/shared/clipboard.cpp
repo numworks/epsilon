@@ -8,6 +8,9 @@
 namespace Ion {
 namespace Clipboard {
 
+static char s_buffer[k_bufferSize];
+char *buffer() { return s_buffer; }
+
 uint32_t localClipboardVersion;
 
 void write(const char *text) {
@@ -26,13 +29,8 @@ const char *read() {
     // Do not use system clipboard when headless
     return nullptr;
   }
-  /* The buffer size is chosen to be around the size of a typical large
-   * python script, allowing the user to insert most scripts into the
-   * simulator using the paste feature. */
-  constexpr size_t bufferSize = 8192;
-  static char buffer[bufferSize];
-  fetchFromSystemClipboard(buffer, bufferSize);
-  if (buffer[0] == '\0') {
+  fetchFromSystemClipboard(buffer(), k_bufferSize);
+  if (buffer()[0] == '\0') {
     return nullptr;
   }
 
@@ -41,11 +39,11 @@ const char *read() {
    * Escher::Clipboard, and has been translated to best suit the current app :
    * we return nullptr to use that text.  */
   uint32_t version =
-      crc32Byte(reinterpret_cast<const uint8_t *>(buffer), strlen(buffer));
+      crc32Byte(reinterpret_cast<const uint8_t *>(buffer()), strlen(buffer()));
   if (version == localClipboardVersion) {
     return nullptr;
   }
-  return buffer;
+  return buffer();
 }
 
 }  // namespace Clipboard

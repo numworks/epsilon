@@ -14,6 +14,7 @@
 #include <algorithm>
 
 #include "haptics.h"
+#include "ion/src/simulator/shared/clipboard_helper.h"
 
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>
@@ -72,6 +73,17 @@ const char *Event::text() const {
   return defaultText();
 }
 
+Event simulatorGetEvent(int *timeout) {
+  Event e = sharedGetEvent(timeout);
+
+  if (e == Events::Paste) {
+    Clipboard::fetchFromSystemClipboard(Clipboard::buffer(),
+                                        Clipboard::k_bufferSize);
+  }
+
+  return e;
+}
+
 #if ION_EVENTS_JOURNAL
 
 static Journal *sSourceJournal = nullptr;
@@ -105,7 +117,7 @@ Event getEvent(int *timeout) {
   }
 
   if (res == Events::None) {
-    res = sharedGetEvent(timeout);
+    res = simulatorGetEvent(timeout);
   }
   if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(res);
@@ -115,7 +127,7 @@ Event getEvent(int *timeout) {
 
 #else
 
-Event getEvent(int *timeout) { return sharedGetEvent(timeout); }
+Event getEvent(int *timeout) { return simulatorGetEvent(timeout); }
 
 #endif
 

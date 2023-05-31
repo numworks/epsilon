@@ -77,24 +77,24 @@ KDCoordinate ResultsController::defaultColumnWidth() {
          Metric::CommonRightMargin;
 }
 
-void ResultsController::fillCellForRow(HighlightCell *cell, int i) {
-  if (i < numberOfRows() - 1) {
-    ResultCell *messageCell = static_cast<ResultCell *>(cell);
-    double value;
-    Poincare::Layout message;
-    I18n::Message subMessage;
-    int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
-    m_statistic->resultAtIndex(i, &value, &message, &subMessage, &precision);
-    constexpr int bufferSize = Constants::k_largeBufferSize;
-    char buffer[bufferSize];
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-        value, buffer, bufferSize, precision,
-        Poincare::Preferences::PrintFloatMode::Decimal);
-
-    messageCell->label()->setLayout(message);
-    messageCell->subLabel()->setMessage(subMessage);
-    messageCell->accessory()->setText(buffer);
+void ResultsController::fillCellForRow(HighlightCell *cell, int row) {
+  if (typeAtRow(row) != k_resultCellType) {
+    return;
   }
+  ResultCell *myCell = static_cast<ResultCell *>(cell);
+  double value;
+  Poincare::Layout message;
+  I18n::Message subMessage;
+  int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
+  m_statistic->resultAtIndex(row, &value, &message, &subMessage, &precision);
+  constexpr int bufferSize = Constants::k_largeBufferSize;
+  char buffer[bufferSize];
+  Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      value, buffer, bufferSize, precision,
+      Poincare::Preferences::PrintFloatMode::Decimal);
+  myCell->label()->setLayout(message);
+  myCell->subLabel()->setMessage(subMessage);
+  myCell->accessory()->setText(buffer);
 }
 
 HighlightCell *ResultsController::reusableCell(int index, int type) {

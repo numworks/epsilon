@@ -621,54 +621,6 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
-bool Simplification::ShallowContract(EditionReference* e) {
-  switch (e->type()) {
-    case BlockType::Addition:
-      // Replace with an Addition, which cannot be contracted further.
-      return ContractLn(e);
-    case BlockType::Multiplication:
-      /* These contract methods replace with a Multiplication.
-       * They must be called successively, so a + is used instead of || so that
-       * there are all evaluated. */
-      return ContractAbs(e) + ContractTrigonometric(e) + ContractExpMult(e);
-    case BlockType::Power:
-      // Replace with an Exponential, which cannot be contracted further.
-      return ContractExpPow(e);
-    default:
-      return false;
-  }
-}
-
-bool Simplification::ShallowExpand(EditionReference* e) {
-  /* None of these Expand methods replace with a BlockType that can be expanded
-   * again. Otherwise, one would have to call Expand(e) again upon success. */
-  switch (e->type()) {
-    case BlockType::Abs:
-      return ExpandAbs(e);
-    case BlockType::Ln:
-      return ExpandLn(e);
-    case BlockType::Exponential:
-      return ExpandExp(e);
-    case BlockType::Trig:
-      return ExpandTrigonometric(e);
-    default:
-      return false;
-  }
-}
-
-bool Simplification::ShallowAlgebraicExpand(EditionReference* e) {
-  /* None of these Expand methods replace with a structure that can be expanded
-   * again. Otherwise, one would have to call Expand(e) again upon success. */
-  switch (e->type()) {
-    case BlockType::Power:
-      return ExpandPower(e);
-    case BlockType::Multiplication:
-      return ExpandMult(e);
-    default:
-      return false;
-  }
-}
-
 EditionReference Simplification::DeepSystemProjection(
     EditionReference reference, ProjectionContext context) {
   if (context == ProjectionContext::ApproximateToFloat) {

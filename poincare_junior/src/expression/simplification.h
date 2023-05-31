@@ -18,9 +18,19 @@ class Simplification {
       EditionReference reference);
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool ShallowContract(EditionReference *reference);
-  static bool ShallowExpand(EditionReference *reference);
-  static bool ShallowAlgebraicExpand(EditionReference *reference);
+  /* Some submethods replace with a type that could be altered again. +
+   * is used instead of || so that they are called successively. */
+  static bool ShallowContract(EditionReference *e) {
+    return ContractLn(e) || ContractExpPow(e) ||
+           (ContractAbs(e) + ContractTrigonometric(e) + ContractExpMult(e));
+  }
+  static bool ShallowExpand(EditionReference *e) {
+    return ExpandAbs(e) || ExpandLn(e) || ExpandExp(e) ||
+           ExpandTrigonometric(e);
+  }
+  static bool ShallowAlgebraicExpand(EditionReference *e) {
+    return ExpandPower(e) || ExpandMult(e);
+  }
 
   enum class ProjectionContext {
     Default,

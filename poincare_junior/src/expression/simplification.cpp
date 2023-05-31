@@ -733,16 +733,18 @@ bool Simplification::ShallowSystemProjection(EditionReference ref,
       ref.matchAndReplace(
           KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
           KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e))) ||
-      // e^A -> exp(A)
-      ref.matchAndReplace(KPow(e_e, KPlaceholder<A>()),
-                          KExp(KPlaceholder<A>())) ||
       // Power of non-integers
+      // TODO: Maybe add exp(A) -> e^A with A integer
       (ref.type() == BlockType::Power &&
        !ref.nextNode().nextTree().block()->isInteger() &&
-       // A^B -> exp(ln(A)*B)
-       ref.matchAndReplace(
-           KPow(KPlaceholder<A>(), KPlaceholder<B>()),
-           KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>()))));
+       (  // e^A -> exp(A)
+          // TODO: Maybe remove it and rely on next matchAndReplace
+           ref.matchAndReplace(KPow(e_e, KPlaceholder<A>()),
+                               KExp(KPlaceholder<A>())) ||
+           // A^B -> exp(ln(A)*B)
+           ref.matchAndReplace(
+               KPow(KPlaceholder<A>(), KPlaceholder<B>()),
+               KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())))));
 }
 
 void Simplification::ReduceNumbersInNAry(EditionReference reference,

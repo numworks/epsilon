@@ -9,9 +9,7 @@ namespace PoincareJ {
 class Simplification {
  public:
   static EditionReference SystematicReduction(EditionReference reference);
-  static EditionReference ShallowBeautify(EditionReference reference) {
-    return reference;
-  }
+  static bool ShallowBeautify(EditionReference *reference);
   static EditionReference DivisionReduction(EditionReference reference);
   static EditionReference SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(

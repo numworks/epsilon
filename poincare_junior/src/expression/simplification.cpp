@@ -563,6 +563,36 @@ EditionReference Simplification::SystematicReduction(
   }
 }
 
+// Reverse most system projections to display better expressions
+bool Simplification::ShallowBeautify(EditionReference* reference) {
+  return
+      // A + B? + (-1)*C + D?-> ((A + B) - C) + D
+      reference->matchAndReplace(
+          KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
+               KMult(-1_e, KAnyTreesPlaceholder<C>()),
+               KAnyTreesPlaceholder<D>()),
+          KAdd(KSub(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
+                    KPlaceholder<C>()),
+               KPlaceholder<D>())) ||
+      // trig(A, 0) -> cos(A)
+      reference->matchAndReplace(KTrig(KPlaceholder<A>(), 0_e),
+                                 KCos(KPlaceholder<A>())) ||
+      // trig(A, 1) -> sin(A)
+      reference->matchAndReplace(KTrig(KPlaceholder<A>(), 1_e),
+                                 KSin(KPlaceholder<A>())) ||
+      // exp(ln(A) * B?) -> A^B
+      reference->matchAndReplace(
+          KExp(KMult(KLn(KPlaceholder<A>()), KAnyTreesPlaceholder<B>())),
+          KPow(KPlaceholder<A>(), KMult(KPlaceholder<B>()))) ||
+      // exp(A) -> e^A
+      reference->matchAndReplace(KExp(KPlaceholder<A>()),
+                                 KPow(e_e, KPlaceholder<A>())) ||
+      // ln(A) * ln(B)^(-1) -> log(A, B)
+      reference->matchAndReplace(
+          KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e)),
+          KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()));
+}
+
 EditionReference Simplification::DivisionReduction(EditionReference reference) {
   assert(reference.type() == BlockType::Division);
   return ProjectionReduction(

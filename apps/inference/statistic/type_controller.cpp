@@ -99,9 +99,7 @@ void TypeController::fillCellForRow(Escher::HighlightCell *cell, int row) {
     assert(row == k_indexOfPooledTest);
     message = m_statistic->tPooledDistributionName();
   }
-
-  static_cast<Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                               Escher::ChevronView> *>(cell)
+  static_cast<MenuCell<MessageTextView, EmptyCellWidget, ChevronView> *>(cell)
       ->label()
       ->setMessage(message);
 }

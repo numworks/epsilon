@@ -17,7 +17,6 @@ class RationalNode final : public NumberNode {
   Integer denominator() const;
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) override { m_negative = negative; }
-  bool isInteger() const { return denominator().isOne(); }
 
   // TreeNode
   size_t size() const override;
@@ -81,6 +80,8 @@ class RationalNode final : public NumberNode {
   bool isGreaterThanOne() const {
     return denominator().isLowerThan(signedNumerator());
   }
+  bool isInteger() const override { return denominator().isOne(); }
+  Integer integerValue() const override { return signedNumerator(); }
 
   static int NaturalOrder(const RationalNode* i, const RationalNode* j);
 
@@ -136,7 +137,6 @@ class Rational final : public Number {
   bool isTen() const { return node()->isTen(); }
   bool isGreaterThanOne() const { return node()->isGreaterThanOne(); }
   bool numeratorOrDenominatorIsInfinity() const;
-  bool isInteger() const { return node()->isInteger(); }
 
   // Arithmetic
   /* Warning: when using this function, always assert that the result does not

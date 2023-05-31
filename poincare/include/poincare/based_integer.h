@@ -39,6 +39,8 @@ class BasedIntegerNode final : public NumberNode {
   bool isZero() const override { return integer().isZero(); }
   bool isOne() const override { return integer().isOne(); }
   bool isMinusOne() const override { return integer().isMinusOne(); }
+  bool isInteger() const override { return true; }
+  Integer integerValue() const override { return integer(); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,

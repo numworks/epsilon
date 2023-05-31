@@ -2,6 +2,7 @@
 #define POINCARE_NUMBER_H
 
 #include <poincare/expression.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
@@ -33,6 +34,8 @@ class NumberNode : public ExpressionNode {
   virtual bool isZero() const = 0;
   virtual bool isOne() const = 0;
   virtual bool isMinusOne() const = 0;
+  virtual bool isInteger() const = 0;
+  virtual Integer integerValue() const = 0;
 
   TrinaryBoolean isNull(Context* context) const override {
     return BinaryToTrinaryBool(isZero());
@@ -81,6 +84,11 @@ class Number : public Expression {
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
   bool isMinusOne() const { return node()->isMinusOne(); }
+  bool isInteger() const { return node()->isInteger(); }
+  Integer integerValue() const {
+    assert(isInteger());
+    return node()->integerValue();
+  }
 
  protected:
   Number() : Expression() {}

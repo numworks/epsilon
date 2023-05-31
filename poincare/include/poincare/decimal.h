@@ -53,6 +53,8 @@ class DecimalNode final : public NumberNode {
   bool isMinusOne() const override {
     return templatedApproximate<double>() == -1.0;
   }
+  bool isInteger() const override;
+  Integer integerValue() const override;
 
   // Approximation
   Evaluation<float> approximate(

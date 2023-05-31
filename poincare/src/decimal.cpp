@@ -91,6 +91,17 @@ size_t DecimalNode::size() const {
   return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
+bool DecimalNode::isInteger() const {
+  double value = templatedApproximate<double>();
+  return std::floor(value) == value;
+}
+
+Integer DecimalNode::integerValue() const {
+  assert(isInteger());
+  return Integer(static_cast<double_native_int_t>(
+      std::floor(templatedApproximate<double>())));
+}
+
 int DecimalNode::simplificationOrderSameType(const ExpressionNode *e,
                                              bool ascending,
                                              bool ignoreParentheses) const {

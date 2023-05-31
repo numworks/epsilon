@@ -669,85 +669,80 @@ bool Simplification::ShallowAlgebraicExpand(EditionReference* e) {
   }
 }
 
-/* The order of nodes in NAry is not a concern here. They will be sorted before
- * SystemReduction. */
-EditionReference Simplification::SystemProjection(EditionReference reference,
-                                                  ProjectionContext context) {
+EditionReference Simplification::DeepSystemProjection(
+    EditionReference reference, ProjectionContext context) {
   if (context == ProjectionContext::ApproximateToFloat) {
     return Approximation::ReplaceWithApproximation(reference);
   }
   const Node root = reference.block();
   Node node = root;
-  /* TODO: Most of the projections could be optimized by simply replacing and
-   * inserting nodes. This optimization could be applied in matchAndReplace. See
-   * comment in matchAndReplace. */
   int treesToProject = 1;
   while (treesToProject > 0) {
     treesToProject--;
-    BlockType type = node.type();
-    EditionReference ref(node);
-    if (context == ProjectionContext::NumbersToFloat &&
-        ref.block()->isInteger()) {
-      ref = Approximation::ReplaceWithApproximation(ref);
-      node = node.nextTree();
-      continue;
-    }
-    switch (type) {
-      case BlockType::Subtraction:
-        ref.matchAndReplace(
-            KSub(KPlaceholder<A>(), KPlaceholder<B>()),
-            KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())));
-        break;
-      case BlockType::Division:
-        ref.matchAndReplace(
-            KDiv(KPlaceholder<A>(), KPlaceholder<B>()),
-            KMult(KPlaceholder<A>(), KPow(KPlaceholder<B>(), -1_e)));
-        break;
-      case BlockType::Cosine:
-        ref.matchAndReplace(KCos(KPlaceholder<A>()),
-                            KTrig(KPlaceholder<A>(), 0_e));
-        break;
-      case BlockType::Sine:
-        ref.matchAndReplace(KSin(KPlaceholder<A>()),
-                            KTrig(KPlaceholder<A>(), 1_e));
-        break;
-      case BlockType::Tangent:
-        /* TODO: Tangent will duplicate its children, replacing it after
-         * everything else may be an optimization. */
-        ref.matchAndReplace(KTan(KPlaceholder<A>()),
-                            KMult(KTrig(KPlaceholder<A>(), 1_e),
-                                  KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e)));
-        break;
-      case BlockType::Power:
-        if (node.nextNode().treeIsIdenticalTo(e_e)) {
-          ref.matchAndReplace(KPow(e_e, KPlaceholder<A>()),
-                              KExp(KPlaceholder<A>()));
-        } else if (!node.nextNode().nextTree().block()->isInteger()) {
-          ref.matchAndReplace(
-              KPow(KPlaceholder<A>(), KPlaceholder<B>()),
-              KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
-        }
-        break;
-      case BlockType::Logarithm:
-        if (!ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
-                                 KLn(KPlaceholder<A>()))) {
-          ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
-                              KMult(KLn(KPlaceholder<A>()),
-                                    KPow(KLn(KPlaceholder<B>()), -1_e)));
-        }
-        break;
-      case BlockType::Log:
-        ref.matchAndReplace(
-            KLog(KPlaceholder<A>()),
-            KMult(KLn(KPlaceholder<A>()), KPow(KLn(10_e), -1_e)));
-        break;
-      default:
-        break;
-    }
+    ShallowSystemProjection(node, context);
     treesToProject += node.numberOfChildren();
     node = node.nextNode();
   }
   return EditionReference(root);
+}
+
+/* The order of nodes in NAry is not a concern here. They will be sorted before
+ * SystemReduction. */
+bool Simplification::ShallowSystemProjection(EditionReference ref,
+                                             ProjectionContext context) {
+  /* TODO: Most of the projections could be optimized by simply replacing and
+   * inserting nodes. This optimization could be applied in matchAndReplace. See
+   * comment in matchAndReplace. */
+  if (context == ProjectionContext::NumbersToFloat &&
+      ref.block()->isInteger()) {
+    Approximation::ReplaceWithApproximation(ref);
+    return true;
+  }
+  /* All replaced structure do not not need further shallow projection.
+   * Operator || only is used. */
+  return
+      // A - B -> A + (-1)*B
+      ref.matchAndReplace(
+          KSub(KPlaceholder<A>(), KPlaceholder<B>()),
+          KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))) ||
+      // A / B -> A * B^-1
+      ref.matchAndReplace(
+          KDiv(KPlaceholder<A>(), KPlaceholder<B>()),
+          KMult(KPlaceholder<A>(), KPow(KPlaceholder<B>(), -1_e))) ||
+      // cos(A) -> trig(A, 0)
+      ref.matchAndReplace(KCos(KPlaceholder<A>()),
+                          KTrig(KPlaceholder<A>(), 0_e)) ||
+      // sin(A) -> trig(A, 1)
+      ref.matchAndReplace(KSin(KPlaceholder<A>()),
+                          KTrig(KPlaceholder<A>(), 1_e)) ||
+      // tan(A) -> sin(A) * cos(A)^(-1)
+      /* TODO: Tangent will duplicate its yet to be projected children,
+       * replacing it after everything else may be an optimization. */
+      ref.matchAndReplace(KTan(KPlaceholder<A>()),
+                          KMult(KTrig(KPlaceholder<A>(), 1_e),
+                                KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e))) ||
+      // log(A, e) -> ln(e)
+      ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
+                          KLn(KPlaceholder<A>())) ||
+      // log(A) -> ln(A) * ln(10)^(-1)
+      // TODO: Maybe log(A) -> log(A, 10) and rely on next matchAndReplace
+      ref.matchAndReplace(
+          KLog(KPlaceholder<A>()),
+          KMult(KLn(KPlaceholder<A>()), KPow(KLn(10_e), -1_e))) ||
+      // log(A, B) -> ln(A) * ln(B)^(-1)
+      ref.matchAndReplace(
+          KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
+          KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e))) ||
+      // e^A -> exp(A)
+      ref.matchAndReplace(KPow(e_e, KPlaceholder<A>()),
+                          KExp(KPlaceholder<A>())) ||
+      // Power of non-integers
+      (ref.type() == BlockType::Power &&
+       !ref.nextNode().nextTree().block()->isInteger() &&
+       // A^B -> exp(ln(A)*B)
+       ref.matchAndReplace(
+           KPow(KPlaceholder<A>(), KPlaceholder<B>()),
+           KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>()))));
 }
 
 void Simplification::ReduceNumbersInNAry(EditionReference reference,

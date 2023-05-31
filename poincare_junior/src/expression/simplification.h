@@ -27,7 +27,10 @@ class Simplification {
     NumbersToFloat,
     ApproximateToFloat,
   };
-  static EditionReference SystemProjection(
+  static EditionReference DeepSystemProjection(
+      EditionReference reference,
+      ProjectionContext complexity = ProjectionContext::Default);
+  static bool ShallowSystemProjection(
       EditionReference reference,
       ProjectionContext complexity = ProjectionContext::Default);
 

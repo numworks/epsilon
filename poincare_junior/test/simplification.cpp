@@ -77,7 +77,7 @@ QUIZ_CASE(pcj_simplification_projection) {
   EditionReference ref1(KCos(KSin(KTan(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
            3_e)))));
-  ref1 = Simplification::SystemProjection(ref1);
+  ref1 = Simplification::DeepSystemProjection(ref1);
   assert_trees_are_equal(
       ref1,
       KTrig(
@@ -102,12 +102,12 @@ QUIZ_CASE(pcj_simplification_projection) {
           0_e));
 
   EditionReference ref2(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
-  ref2 = Simplification::SystemProjection(
+  ref2 = Simplification::DeepSystemProjection(
       ref2, Simplification::ProjectionContext::NumbersToFloat);
   assert_trees_are_equal(
       ref2,
       KAdd(KTrig(KAdd(2065.0_e, KMult(-1.0_e, 2065.0_e)), 0.0_e), KExp("x"_e)));
-  ref2 = Simplification::SystemProjection(
+  ref2 = Simplification::DeepSystemProjection(
       ref2, Simplification::ProjectionContext::ApproximateToFloat);
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 }
@@ -117,7 +117,7 @@ void simplifies_to(const char* input, const char* output) {
   EditionReference expression = RackParser(inputLayout).parse();
   inputLayout.removeTree();
   quiz_assert(!expression.isUninitialized());
-  EditionReference projected = Simplification::SystemProjection(expression);
+  EditionReference projected = Simplification::DeepSystemProjection(expression);
   quiz_assert(!projected.isUninitialized());
   Simplification::SystematicReduce(&projected);
   quiz_assert(!projected.isUninitialized());

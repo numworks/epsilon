@@ -58,6 +58,10 @@ class FloatNode final : public NumberNode {
   bool isZero() const override { return m_value == static_cast<T>(0.0); }
   bool isOne() const override { return m_value == static_cast<T>(1.0); }
   bool isMinusOne() const override { return m_value == static_cast<T>(-1.0); }
+  bool isInteger() const override { return m_value == std::floor(m_value); }
+  Integer integerValue() const override {
+    return Integer(static_cast<double_native_int_t>(std::floor(m_value)));
+  }
 
   // Layout
   int serialize(char* buffer, int bufferSize,

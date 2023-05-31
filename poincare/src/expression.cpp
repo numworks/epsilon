@@ -106,11 +106,9 @@ bool Expression::isMinusOne() const {
 }
 
 bool Expression::isInteger() const {
-  return (type() == ExpressionNode::Type::BasedInteger) ||
+  return (isNumber() && convert<const Number>().isInteger()) ||
          (type() == ExpressionNode::Type::Opposite &&
-          childAtIndex(0).isInteger()) ||
-         (type() == ExpressionNode::Type::Rational &&
-          convert<const Rational>().isInteger());
+          childAtIndex(0).isInteger());
 }
 
 bool Expression::recursivelyMatches(ExpressionTrinaryTest test,

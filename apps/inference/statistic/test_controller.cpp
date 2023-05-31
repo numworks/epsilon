@@ -103,35 +103,35 @@ int TestController::numberOfRows() const {
 }
 
 void TestController::fillCellForRow(HighlightCell *cell, int row) {
-  MenuCell<MessageTextView, MessageTextView, ChevronView> *c =
+  MenuCell<MessageTextView, MessageTextView, ChevronView> *myCell =
       static_cast<MenuCell<MessageTextView, MessageTextView, ChevronView> *>(
           cell);
   if (row == virtualIndexOfSlope()) {
-    c->label()->setMessage(I18n::Message::Slope);
-    c->subLabel()->setMessage(m_statistic->tStatisticMessage());
+    myCell->label()->setMessage(I18n::Message::Slope);
+    myCell->subLabel()->setMessage(m_statistic->tStatisticMessage());
     return;
   }
   switch (row) {
     case k_indexOfOneProp:
-      c->label()->setMessage(I18n::Message::TestOneProp);
-      c->subLabel()->setMessage(m_statistic->zStatisticMessage());
+      myCell->label()->setMessage(I18n::Message::TestOneProp);
+      myCell->subLabel()->setMessage(m_statistic->zStatisticMessage());
       return;
     case k_indexOfOneMean:
-      c->label()->setMessage(I18n::Message::TestOneMean);
-      c->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
+      myCell->label()->setMessage(I18n::Message::TestOneMean);
+      myCell->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
       return;
     case k_indexOfTwoProps:
-      c->label()->setMessage(I18n::Message::TestTwoProps);
-      c->subLabel()->setMessage(m_statistic->zStatisticMessage());
+      myCell->label()->setMessage(I18n::Message::TestTwoProps);
+      myCell->subLabel()->setMessage(m_statistic->zStatisticMessage());
       return;
     case k_indexOfTwoMeans:
-      c->label()->setMessage(I18n::Message::TestTwoMeans);
-      c->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
+      myCell->label()->setMessage(I18n::Message::TestTwoMeans);
+      myCell->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
       return;
     default:
       assert(row == k_indexOfCategorical);
-      c->label()->setMessage(I18n::Message::TestCategorical);
-      c->subLabel()->setMessage(I18n::Message::X2Test);
+      myCell->label()->setMessage(I18n::Message::TestCategorical);
+      myCell->subLabel()->setMessage(I18n::Message::X2Test);
       return;
   }
 }

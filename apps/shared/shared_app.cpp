@@ -12,7 +12,11 @@ void SharedApp::Snapshot::pack(App* app) {
    * it.*/
   AppsContainerHelper::sharedAppsContainerGlobalContext()
       ->tidyDownstreamPoolFrom();
-  App::Snapshot::pack(app);
+  Escher::App::Snapshot::pack(app);
+}
+
+void SharedApp::Snapshot::reset() {
+  AppsContainerHelper::sharedAppsContainerGlobalContext()->reset();
 }
 
 }  // namespace Shared

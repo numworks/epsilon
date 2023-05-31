@@ -10,6 +10,7 @@ FunctionApp::Snapshot::Snapshot() : m_selectedCurveIndex(0) {}
 void FunctionApp::Snapshot::reset() {
   m_selectedCurveIndex = 0;
   setActiveTab(0);
+  Shared::SharedApp::Snapshot::reset();
 }
 
 void FunctionApp::prepareForIntrusiveStorageChange() {

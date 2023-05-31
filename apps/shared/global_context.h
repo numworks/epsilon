@@ -49,6 +49,8 @@ class GlobalContext final : public Poincare::Context {
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext *sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(char *treePoolCursor = nullptr) override;
+  void prepareForNewApp();
+  void reset();
 
  private:
   // Expression getters

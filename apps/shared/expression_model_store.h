@@ -39,6 +39,12 @@ class ExpressionModelStore {
   virtual Ion::Storage::Record::ErrorStatus addEmptyModel() = 0;
   void removeAll();
   void removeModel(Ion::Storage::Record record);
+  void setStorageChangeFlag(bool flag) { m_storageChangeFlag = flag; }
+  void reset() {
+    if (m_storageChangeFlag) {
+      removeAll();
+    }
+  }
 
   // Other
   virtual void tidyDownstreamPoolFrom(char* treePoolCursor = nullptr);
@@ -69,6 +75,13 @@ class ExpressionModelStore {
    * model because models are all reset at the same time. Otherwise, we should
    * use a queue to decide which was the last memoized model. */
   mutable int m_oldestMemoizedIndex;
+  /* This flag is used to know if the storage was changed for the model of this
+   * store while the current app was open. If it's the case, and the app is
+   * exited due to an Exception, the store need to remove all models with its
+   * extension in case it's these models that caused the exception. This avoids
+   * to always crash each time the app is opened. (Example: Input
+   * y=tan(tan(tan(tan(tan(tan(tan(tan(x)))))))) in Grapher). */
+  bool m_storageChangeFlag;
 };
 
 }  // namespace Shared

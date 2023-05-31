@@ -23,6 +23,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 void App::Snapshot::reset() {
   // Delete all equations
   m_equationStore.removeAll();
+  Shared::SharedApp::Snapshot::reset();
 }
 
 void App::prepareForIntrusiveStorageChange() {

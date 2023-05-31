@@ -31,6 +31,7 @@ class Equation : public Shared::ExpressionModelHandle {
    private:
     void* expressionAddress(const Ion::Storage::Record* record) const override;
     size_t expressionSize(const Ion::Storage::Record* record) const override;
+    void setStorageChangeFlag() const override {}
   };
   size_t metaDataSize() const override { return 0; }
   const Shared::ExpressionModel* model() const override { return &m_model; }

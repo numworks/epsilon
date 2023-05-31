@@ -29,6 +29,7 @@ void App::Snapshot::reset() {
   m_calculationStore.deleteAll();
   m_cacheBuffer[0] = 0;
   m_cacheBufferInformation = 0;
+  SharedApp::Snapshot::reset();
 }
 
 constexpr static App::Descriptor sDescriptor;

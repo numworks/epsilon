@@ -39,10 +39,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::tidy() {
-  functionStore()->tidyDownstreamPoolFrom();
-  m_graphRange.setDelegate(nullptr);
-}
+void App::Snapshot::tidy() { m_graphRange.setDelegate(nullptr); }
 
 CodePoint App::XNT() {
   if (snapshot()->activeTab() != 0) {

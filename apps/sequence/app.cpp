@@ -69,10 +69,7 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::tidy() {
-  m_graphRange.setDelegate(nullptr);
-  functionStore()->tidyDownstreamPoolFrom();
-}
+void App::Snapshot::tidy() { m_graphRange.setDelegate(nullptr); }
 
 bool App::isAcceptableExpression(Escher::EditableField *field,
                                  const Poincare::Expression exp) {

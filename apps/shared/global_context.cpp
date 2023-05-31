@@ -285,6 +285,7 @@ Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
 
 void GlobalContext::tidyDownstreamPoolFrom(char *treePoolCursor) {
   sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
+  continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 }  // namespace Shared

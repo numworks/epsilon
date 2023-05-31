@@ -25,8 +25,6 @@ ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
 
 void ComparisonOperatorPopupDataSource::fillCellForRow(
     Escher::HighlightCell *cell, int row) {
-  SmallBufferTextHighlightCell *bufferCell =
-      static_cast<SmallBufferTextHighlightCell *>(cell);
   const char *symbol = m_test->hypothesisSymbol();
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
@@ -37,7 +35,7 @@ void ComparisonOperatorPopupDataSource::fillCellForRow(
       m_test->hypothesisParams()->firstParam(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
-  bufferCell->setText(buffer);
+  static_cast<SmallBufferTextHighlightCell *>(cell)->setText(buffer);
 }
 
 }  // namespace Inference

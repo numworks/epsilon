@@ -118,7 +118,10 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::tidy() { statistic()->tidy(); }
+void App::Snapshot::tidy() {
+  statistic()->tidy();
+  Shared::SharedApp::Snapshot::tidy();
+}
 
 void App::Snapshot::reset() {
   Shared::SharedApp::Snapshot::reset();

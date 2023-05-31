@@ -9,7 +9,7 @@ class SharedApp : public Escher::App {
  public:
   class Snapshot : public App::Snapshot {
    public:
-    void pack(Escher::App* app) override;
+    void tidy() override;
     void reset() override;
   };
 };

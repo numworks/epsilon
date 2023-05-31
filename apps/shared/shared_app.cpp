@@ -6,13 +6,13 @@
 
 namespace Shared {
 
-void SharedApp::Snapshot::pack(App* app) {
+void SharedApp::Snapshot::tidy() {
   /* Since the sequence store and the continuous function store is now
    * accessible from every app, when exiting any application, we need to tidy
    * it.*/
   AppsContainerHelper::sharedAppsContainerGlobalContext()
       ->tidyDownstreamPoolFrom();
-  Escher::App::Snapshot::pack(app);
+  Escher::App::Snapshot::tidy();
 }
 
 void SharedApp::Snapshot::reset() {

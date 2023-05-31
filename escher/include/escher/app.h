@@ -41,7 +41,7 @@ class App : public Responder {
   class Snapshot {
    public:
     virtual App* unpack(Container* container) = 0;
-    virtual void pack(App* app);
+    void pack(App* app);
     /* reset all instances to their initial values */
     virtual void reset() {}
     virtual const Descriptor* descriptor() const = 0;

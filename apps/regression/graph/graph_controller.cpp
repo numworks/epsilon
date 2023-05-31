@@ -106,10 +106,10 @@ void GraphController::CurveSelectionController::fillCellForRow(
     HighlightCell *cell, int row) {
   int series = graphController()->seriesIndexFromCurveIndex(row);
   const char *name = Store::SeriesTitle(series);
-  static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(
-      DoublePairStore::colorOfSeriesAtIndex(series));
-  static_cast<CurveSelectionCellWithChevron *>(cell)->label()->setLayout(
-      LayoutHelper::String(name));
+  CurveSelectionCellWithChevron *myCell =
+      static_cast<CurveSelectionCellWithChevron *>(cell);
+  myCell->setColor(DoublePairStore::colorOfSeriesAtIndex(series));
+  myCell->label()->setLayout(LayoutHelper::String(name));
 }
 
 bool GraphController::buildRegressionExpression(

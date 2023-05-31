@@ -13,6 +13,11 @@
 
 namespace PoincareJ {
 
+/* TODO: Profile the code to decide whether to:
+ * - reduce node size by unsymmetrizing them but forbid the use of parent
+ * - replace parentOfDescendant by an easier call to parent()
+ * */
+
 class PatternMatching {
  public:
   class Context {

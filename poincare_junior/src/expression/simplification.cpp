@@ -564,7 +564,8 @@ EditionReference Simplification::SystematicReduction(
 }
 
 // Reverse most system projections to display better expressions
-bool Simplification::ShallowBeautify(EditionReference* reference) {
+bool Simplification::ShallowBeautify(EditionReference* reference,
+                                     void* context) {
   return
       // A + B? + (-1)*C + D?-> ((A + B) - C) + D
       reference->matchAndReplace(
@@ -652,31 +653,23 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
 }
 
 EditionReference Simplification::DeepSystemProjection(
-    EditionReference reference, ProjectionContext context) {
-  if (context == ProjectionContext::ApproximateToFloat) {
+    EditionReference reference, ProjectionContext projectionContext) {
+  if (projectionContext == ProjectionContext::ApproximateToFloat) {
     return Approximation::ReplaceWithApproximation(reference);
   }
-  const Node root = reference.block();
-  Node node = root;
-  int treesToProject = 1;
-  while (treesToProject > 0) {
-    treesToProject--;
-    EditionReference subRef(node);
-    ShallowSystemProjection(&subRef, context);
-    treesToProject += node.numberOfChildren();
-    node = node.nextNode();
-  }
-  return EditionReference(root);
+  return ApplyShallowInDepth(reference, ShallowSystemProjection,
+                             static_cast<void*>(&projectionContext));
 }
 
 /* The order of nodes in NAry is not a concern here. They will be sorted before
  * SystemReduction. */
 bool Simplification::ShallowSystemProjection(EditionReference* ref,
-                                             ProjectionContext context) {
+                                             void* context) {
   /* TODO: Most of the projections could be optimized by simply replacing and
    * inserting nodes. This optimization could be applied in matchAndReplace. See
    * comment in matchAndReplace. */
-  if (context == ProjectionContext::NumbersToFloat &&
+  if (*static_cast<ProjectionContext*>(context) ==
+          ProjectionContext::NumbersToFloat &&
       ref->block()->isInteger()) {
     *ref = Approximation::ReplaceWithApproximation(*ref);
     return true;
@@ -774,6 +767,22 @@ EditionReference Simplification::ProjectionReduction(
   // (or addition)
   division.replaceNodeByTree(multiplication);
   return multiplication;
+}
+
+EditionReference Simplification::ApplyShallowInDepth(
+    EditionReference reference, ShallowOperation shallowOperation,
+    void* context) {
+  const Node root = reference.block();
+  Node node = root;
+  int treesToProject = 1;
+  while (treesToProject > 0) {
+    treesToProject--;
+    EditionReference subRef(node);
+    shallowOperation(&subRef, context);
+    treesToProject += node.numberOfChildren();
+    node = node.nextNode();
+  }
+  return EditionReference(root);
 }
 
 bool Simplification::ContractAbs(EditionReference* reference) {

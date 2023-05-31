@@ -112,6 +112,16 @@ QUIZ_CASE(pcj_simplification_projection) {
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 }
 
+QUIZ_CASE(pcj_simplification_beautify) {
+  EditionReference ref1(KAdd(KTrig(3_e, 0_e), KTrig("x"_e, 1_e),
+                             KMult(-1_e, KExp(KMult(KLn(5_e), "y"_e))),
+                             KMult(KLn(2_e), KPow(KLn(4_e), -1_e))));
+  ref1 = Simplification::DeepBeautify(ref1);
+  assert_trees_are_equal(
+      ref1, KAdd(KSub(KAdd(KCos(3_e), KSin("x"_e)), KPow(5_e, "y"_e)),
+                 KLogarithm(2_e, 4_e)));
+}
+
 void simplifies_to(const char* input, const char* output) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();

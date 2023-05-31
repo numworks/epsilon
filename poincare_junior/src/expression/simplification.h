@@ -9,7 +9,11 @@ namespace PoincareJ {
 class Simplification {
  public:
   static EditionReference SystematicReduction(EditionReference reference);
-  static bool ShallowBeautify(EditionReference *reference);
+  static bool ShallowBeautify(EditionReference *reference,
+                              void *context = nullptr);
+  static EditionReference DeepBeautify(EditionReference reference) {
+    return ApplyShallowInDepth(reference, ShallowBeautify);
+  }
   static EditionReference DivisionReduction(EditionReference reference);
   static EditionReference SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(
@@ -18,15 +22,16 @@ class Simplification {
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   /* Some submethods replace with a type that could be altered again. +
    * is used instead of || so that they are called successively. */
-  static bool ShallowContract(EditionReference *e) {
+  static bool ShallowContract(EditionReference *e, void *context = nullptr) {
     return ContractLn(e) || ContractExpPow(e) ||
            (ContractAbs(e) + ContractTrigonometric(e) + ContractExpMult(e));
   }
-  static bool ShallowExpand(EditionReference *e) {
+  static bool ShallowExpand(EditionReference *e, void *context = nullptr) {
     return ExpandAbs(e) || ExpandLn(e) || ExpandExp(e) ||
            ExpandTrigonometric(e);
   }
-  static bool ShallowAlgebraicExpand(EditionReference *e) {
+  static bool ShallowAlgebraicExpand(EditionReference *e,
+                                     void *context = nullptr) {
     return ExpandPower(e) || ExpandMult(e);
   }
 
@@ -37,10 +42,9 @@ class Simplification {
   };
   static EditionReference DeepSystemProjection(
       EditionReference reference,
-      ProjectionContext complexity = ProjectionContext::Default);
-  static bool ShallowSystemProjection(
-      EditionReference *reference,
-      ProjectionContext complexity = ProjectionContext::Default);
+      ProjectionContext projectionContext = ProjectionContext::Default);
+  static bool ShallowSystemProjection(EditionReference *reference,
+                                      void *projectionContext);
 
   static bool SystematicReduce(EditionReference *u);
 
@@ -62,6 +66,11 @@ class Simplification {
   static EditionReference ProjectionReduction(
       EditionReference reference, Node (*PushProjectedEExpression)(),
       Node (*PushInverse)());
+
+  typedef bool (*ShallowOperation)(EditionReference *reference, void *context);
+  static EditionReference ApplyShallowInDepth(EditionReference reference,
+                                              ShallowOperation shallowOperation,
+                                              void *context = nullptr);
 
   static bool ContractAbs(EditionReference *reference);
   static bool ExpandAbs(EditionReference *reference);

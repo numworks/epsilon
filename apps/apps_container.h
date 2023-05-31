@@ -72,7 +72,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
-  void handleRunException(bool resetSnapshot);
+  void handleRunException();
   static void ShowCursor();
 
   static const I18n::Message k_promptMessages[];

@@ -1,9 +1,11 @@
 #include <poincare/boolean.h>
+#include <poincare/derivative.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/piecewise_operator.h>
 #include <poincare/piecewise_operator_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 
 namespace Poincare {
@@ -139,6 +141,30 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   }
   // Every condition is false
   return replaceWithUndefinedInPlace();
+}
+
+bool PiecewiseOperatorNode::derivate(const ReductionContext& reductionContext,
+                                     Symbol symbol, Expression symbolValue) {
+  return PiecewiseOperator(this).derivate(reductionContext, symbol,
+                                          symbolValue);
+}
+
+bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
+                                 Symbol symbol, Expression symbolValue) {
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
+  // diff(piecewise(exp1,cond1,exp2)) == piecewise(diff(exp1),cond1,diff(exp2)))
+
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i += 2) {
+    derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
+  }
+  return true;
 }
 
 template <typename T>

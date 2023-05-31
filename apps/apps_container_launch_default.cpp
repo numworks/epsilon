@@ -6,5 +6,6 @@ Escher::App::Snapshot* AppsContainer::initialAppSnapshot() {
     return m_initialAppSnapshot;
   }
 #endif
-  return appSnapshotAtIndex(0);
+  assert(homeAppSnapshot() == appSnapshotAtIndex(0));
+  return homeAppSnapshot();
 }

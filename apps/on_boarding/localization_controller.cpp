@@ -31,7 +31,7 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
             appsContainer->promptController(), KDGlyph::k_alignCenter,
             KDGlyph::k_alignCenter);
       } else {
-        appsContainer->switchToBuiltinApp(appsContainer->appSnapshotAtIndex(0));
+        appsContainer->switchToBuiltinApp(appsContainer->homeAppSnapshot());
       }
     }
     return true;

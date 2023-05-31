@@ -175,7 +175,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     if (!Preferences::sharedPreferences->examMode().isActive()) {
       App::Snapshot* activeSnapshot =
-          (s_activeApp == nullptr ? appSnapshotAtIndex(0)
+          (s_activeApp == nullptr ? homeAppSnapshot()
                                   : s_activeApp->snapshot());
       /* Just after a software update, the battery timer does not have time to
        * fire before the calculator enters DFU mode. As the DFU mode blocks the
@@ -210,7 +210,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Home ||
       (event == Ion::Events::Back && !Ion::Events::isRepeating())) {
-    switchToBuiltinApp(appSnapshotAtIndex(0));
+    switchToBuiltinApp(homeAppSnapshot());
     return true;
   }
   if (event == Ion::Events::OnOff) {
@@ -249,7 +249,7 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   if (appStart) {
     appStart();
   }
-  switchToBuiltinApp(appSnapshotAtIndex(0));
+  switchToBuiltinApp(homeAppSnapshot());
   assert(s_activeApp);
   if (!appStart) {
     s_activeApp->displayWarning(I18n::Message::ExternalAppIncompatible1,

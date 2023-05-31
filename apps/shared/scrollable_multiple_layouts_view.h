@@ -26,6 +26,7 @@ class AbstractScrollableMultipleLayoutsView
                           Poincare::Layout exactLayout,
                           Poincare::Layout approximateLayout);
   void resetLayouts() {
+    setSelectedSubviewPosition(SubviewPosition::Left);
     setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
   }
   void setExactAndApproximateAreStriclyEqual(bool isEqual) {

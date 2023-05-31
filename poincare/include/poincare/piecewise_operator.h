@@ -32,6 +32,10 @@ class PiecewiseOperatorNode final : public ExpressionNode {
   int indexOfFirstTrueCondition(
       const ApproximationContext& approximationContext) const;
 
+  // Derivation
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
+                Expression symbolValue) override;
+
  private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
@@ -73,6 +77,8 @@ class PiecewiseOperator final : public Expression {
 
   // Expression
   Expression shallowReduce(ReductionContext reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
+                Expression symbolValue);
 
   // Returns -1 if every condition is false
   template <typename T>

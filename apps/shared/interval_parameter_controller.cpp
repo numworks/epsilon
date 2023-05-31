@@ -49,16 +49,16 @@ void IntervalParameterController::setStartEndMessages(
 }
 
 void IntervalParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  if (row == numberOfRows() - 1) {
+  if (typeAtRow(row) == k_buttonCellType) {
     return;
   }
-
-  MenuCellWithEditableText<MessageTextView> *myCell =
-      static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
-  assert(row >= 0 && row < 3);
-  I18n::Message m = row == 0 ? m_startMessage
-                             : (row == 1 ? m_endMessage : I18n::Message::Step);
-  myCell->label()->setMessage(m);
+  assert(typeAtRow(row) == k_parameterCellType);
+  assert(row >= 0 && row < k_totalNumberOfCell);
+  I18n::Message messages[k_totalNumberOfCell] = {m_startMessage, m_endMessage,
+                                                 I18n::Message::Step};
+  static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+      ->label()
+      ->setMessage(messages[row]);
   FloatParameterController::fillCellForRow(cell, row);
 }
 

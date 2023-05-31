@@ -61,6 +61,9 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::reset() { m_pageQueue.reset(); }
+void App::Snapshot::reset() {
+  Shared::SharedApp::Snapshot::reset();
+  m_pageQueue.reset();
+}
 
 }  // namespace Distributions

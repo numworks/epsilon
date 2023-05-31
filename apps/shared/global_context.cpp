@@ -288,4 +288,14 @@ void GlobalContext::tidyDownstreamPoolFrom(char *treePoolCursor) {
   continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
+void GlobalContext::prepareForNewApp() {
+  sequenceStore->setStorageChangeFlag(false);
+  continuousFunctionStore->setStorageChangeFlag(false);
+}
+
+void GlobalContext::reset() {
+  sequenceStore->reset();
+  continuousFunctionStore->reset();
+}
+
 }  // namespace Shared

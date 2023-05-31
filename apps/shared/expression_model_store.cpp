@@ -2,7 +2,8 @@
 
 namespace Shared {
 
-ExpressionModelStore::ExpressionModelStore() : m_oldestMemoizedIndex(0) {}
+ExpressionModelStore::ExpressionModelStore()
+    : m_oldestMemoizedIndex(0), m_storageChangeFlag(false) {}
 
 int ExpressionModelStore::numberOfModels() const {
   return Ion::Storage::FileSystem::sharedFileSystem

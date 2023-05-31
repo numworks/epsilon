@@ -345,6 +345,9 @@ class ContinuousFunction : public Function {
     void *expressionAddress(const Ion::Storage::Record *record) const override;
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record *record) const override;
+
+    void setStorageChangeFlag() const override;
+
     mutable ContinuousFunctionProperties m_properties;
     /* m_expression is used for values in table.
      * m_expressionApproximated is used for plot, autozoom and points of

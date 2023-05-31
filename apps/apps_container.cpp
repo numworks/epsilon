@@ -232,6 +232,7 @@ void AppsContainer::switchToBuiltinApp(App::Snapshot* snapshot) {
   }
   if (snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
+    globalContext()->prepareForNewApp();
   }
   return Container::switchToBuiltinApp(snapshot);
 }
@@ -261,7 +262,10 @@ void AppsContainer::handleRunException() {
   App::Snapshot* activeSnapshot =
       s_activeApp != nullptr ? s_activeApp->snapshot() : nullptr;
   assert(activeSnapshot != homeAppSnapshot());
-  switchToBuiltinApp(homeAppSnapshot());
+  /* First leave the app without reopening one so that the
+   * ContinuousFunctionStore and the SequenceStore keep their modification flag,
+   * to know if they need to be reset. */
+  switchToBuiltinApp(nullptr);
   if (activeSnapshot != nullptr) {
     /* When an app encountered an exception due to a full pool, the next time
      * the user enters the app, the same exception could happen again which
@@ -272,6 +276,9 @@ void AppsContainer::handleRunException() {
      * history here, we will be stuck outside the calculation app. */
     activeSnapshot->reset();
   }
+  /* Now that the snapshot was reset, as well as the ContinuousFunctionStore and
+   * the SequenceStore if needed, the home app can be opened. */
+  switchToBuiltinApp(homeAppSnapshot());
 }
 
 void AppsContainer::run() {

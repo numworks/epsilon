@@ -56,6 +56,8 @@ class ExpressionModel {
   virtual void* expressionAddress(const Ion::Storage::Record* record) const = 0;
   virtual size_t expressionSize(const Ion::Storage::Record* record) const = 0;
 
+  virtual void setStorageChangeFlag() const = 0;
+
   mutable int8_t m_circular;
 
   enum class MemoizedComplexFormat : int8_t {

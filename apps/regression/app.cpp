@@ -54,6 +54,7 @@ App *App::Snapshot::unpack(Container *container) {
 void App::Snapshot::reset() {
   setActiveTab(0);
   memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
+  Shared::SharedApp::Snapshot::reset();
 }
 
 constexpr static App::Descriptor sDescriptor;

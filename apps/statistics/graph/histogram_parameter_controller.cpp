@@ -43,9 +43,10 @@ const char *HistogramParameterController::title() {
 
 void HistogramParameterController::fillCellForRow(HighlightCell *cell,
                                                   int row) {
-  if (row == numberOfRows() - 1) {
+  if (typeAtRow(row) == k_buttonCellType) {
     return;
   }
+  assert(typeAtRow(row) == k_parameterCellType);
   MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView> *>(
           cell);

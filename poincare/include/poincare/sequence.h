@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class SequenceNode : public SymbolAbstractNode {
+class SequenceNode final : public SymbolAbstractNode {
  public:
   SequenceNode(const char* newName, int length);
   const char* name() const override { return m_name; }
@@ -58,7 +58,7 @@ class SequenceNode : public SymbolAbstractNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class Sequence : public SymbolAbstract {
+class Sequence final : public SymbolAbstract {
   friend SequenceNode;
 
  public:

@@ -117,7 +117,6 @@ __ZN3Ion9Clipboard27sendBufferToSystemClipboardEv \
 __ZN3Ion9Clipboard28fetchSystemClipboardToBufferEv \
 __ZN3Ion9Clipboard21sendToSystemClipboardEPKc \
 __ZN3Ion9Clipboard24fetchFromSystemClipboardEPcm \
-__ZN3Ion6EventsL26getEventAndHandleClipboardEPi \
 __ZN3Ion14CircuitBreaker14loadCheckpointENS0_14CheckpointTypeE \
 _msleep \
 _SDL_Delay \

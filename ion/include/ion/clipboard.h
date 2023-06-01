@@ -4,12 +4,15 @@
 namespace Ion {
 namespace Clipboard {
 
-/* Write the text to the system clipboard. */
+/* Buffer text to send to system clipboard */
 void write(const char* text);
 
 /* Returns the system's clipboard text if it differs from the text previously
  * copied, and nullptr otherwise. */
 const char* read();
+
+void sendBufferToSystemClipboard();
+void fetchSystemClipboardToBuffer();
 
 }  // namespace Clipboard
 }  // namespace Ion

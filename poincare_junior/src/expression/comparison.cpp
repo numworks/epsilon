@@ -23,9 +23,6 @@ int Comparison::Compare(const Node node0, const Node node1, Order order) {
     return CompareNumbers(node0, node1);
   }
   if (type0 < type1) {
-    if (order == Order::SystematicReduce) {
-      return -1;
-    }
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type0 == BlockType::Power) {
@@ -39,7 +36,8 @@ int Comparison::Compare(const Node node0, const Node node1, Order order) {
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
      * and Power) / Multiplication (numbers) will not benefit from this
      * exception. */
-    if (type0 == BlockType::Addition || type0 == BlockType::Multiplication) {
+    if (order == Order::Readable &&
+        (type0 == BlockType::Addition || type0 == BlockType::Multiplication)) {
       // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
       return CompareLastChild(node0, node1);
     }

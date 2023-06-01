@@ -32,10 +32,6 @@ class SequenceNode final : public SymbolAbstractNode {
 
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
-  LayoutShape leftLayoutShape() const override {
-    return strlen(m_name) > 1 ? LayoutShape::MoreLetters
-                              : LayoutShape::OneLetter;
-  };
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }

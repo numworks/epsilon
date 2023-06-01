@@ -53,6 +53,7 @@ class SymbolAbstractNode : public ExpressionNode {
   TrinaryBoolean isPositive(Context *context) const override;
   Expression replaceSymbolWithExpression(const SymbolAbstract &symbol,
                                          const Expression &expression) override;
+  ExpressionNode::LayoutShape leftLayoutShape() const override;
 
   // TreeNode
 #if POINCARE_TREE_LOG

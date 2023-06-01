@@ -90,8 +90,8 @@ bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
   }
 
   // Check variable
-  if (ExpressionNode::involvesCircularity(context, maxDepth, visitedFunctions,
-                                          numberOfVisitedFunctions)) {
+  if (childAtIndex(0)->involvesCircularity(context, maxDepth, visitedFunctions,
+                                           numberOfVisitedFunctions)) {
     return true;
   }
 
@@ -105,8 +105,10 @@ bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
   visitedFunctions[numberOfVisitedFunctions] = name();
   numberOfVisitedFunctions++;
 
-  Expression e =
-      context->expressionForSymbolAbstract(SymbolAbstract(this), false);
+  Expression e = Expression(this).clone();
+  e.replaceChildAtIndexInPlace(0, Symbol::Builder(UCodePointUnknown));
+  e = context->expressionForSymbolAbstract(static_cast<SymbolAbstract&>(e),
+                                           false);
   if (e.isUninitialized()) {
     return false;
   }

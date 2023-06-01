@@ -45,10 +45,6 @@ class FunctionNode final : public SymbolAbstractNode {
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
-  LayoutShape leftLayoutShape() const override {
-    return strlen(m_name) > 1 ? LayoutShape::MoreLetters
-                              : LayoutShape::OneLetter;
-  };
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }

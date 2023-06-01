@@ -90,16 +90,6 @@ Expression SymbolNode::deepReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
 }
 
-ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
-  UTF8Decoder decoder(m_name);
-  decoder.nextCodePoint();
-  // nextCodePoint asserts that the first character is  non-null
-  if (decoder.nextCodePoint() == UCodePointNull) {
-    return LayoutShape::OneLetter;
-  }
-  return LayoutShape::MoreLetters;
-}
-
 bool SymbolNode::derivate(const ReductionContext& reductionContext,
                           Symbol symbol, Expression symbolValue) {
   return Symbol(this).derivate(reductionContext, symbol, symbolValue);

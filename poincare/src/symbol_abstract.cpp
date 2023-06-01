@@ -36,6 +36,16 @@ Expression SymbolAbstractNode::replaceSymbolWithExpression(
   return SymbolAbstract(this).replaceSymbolWithExpression(symbol, expression);
 }
 
+ExpressionNode::LayoutShape SymbolAbstractNode::leftLayoutShape() const {
+  UTF8Decoder decoder(m_name);
+  decoder.nextCodePoint();
+  // nextCodePoint asserts that the first character is non-null
+  if (decoder.nextCodePoint() == UCodePointNull) {
+    return ExpressionNode::LayoutShape::OneLetter;
+  }
+  return ExpressionNode::LayoutShape::MoreLetters;
+}
+
 size_t SymbolAbstractNode::size() const {
   return nodeSize() + strlen(name()) + 1;
 }

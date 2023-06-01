@@ -78,14 +78,13 @@ static bool s_shouldSendToClipboard = false;
 Event simulatorGetEvent(int *timeout) {
   if (s_shouldSendToClipboard) {
     s_shouldSendToClipboard = false;
-    Clipboard::sendToSystemClipboard(Clipboard::buffer());
+    Clipboard::sendBufferToSystemClipboard();
   }
 
   Event e = sharedGetEvent(timeout);
 
   if (e == Events::Paste) {
-    Clipboard::fetchFromSystemClipboard(Clipboard::buffer(),
-                                        Clipboard::k_bufferSize);
+    Clipboard::fetchSystemClipboardToBuffer();
   } else if (e == Events::Copy || e == Events::Cut) {
     s_shouldSendToClipboard = true;
   }

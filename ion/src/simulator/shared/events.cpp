@@ -75,7 +75,7 @@ const char *Event::text() const {
 
 static bool s_shouldSendToClipboard = false;
 
-Event simulatorGetEvent(int *timeout) {
+static Event getEventAndHandleClipboard(int *timeout) {
   if (s_shouldSendToClipboard) {
     s_shouldSendToClipboard = false;
     Clipboard::sendBufferToSystemClipboard();
@@ -125,7 +125,7 @@ Event getEvent(int *timeout) {
   }
 
   if (res == Events::None) {
-    res = simulatorGetEvent(timeout);
+    res = getEventAndHandleClipboard(timeout);
   }
   if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(res);
@@ -135,7 +135,7 @@ Event getEvent(int *timeout) {
 
 #else
 
-Event getEvent(int *timeout) { return simulatorGetEvent(timeout); }
+Event getEvent(int *timeout) { return getEventAndHandleClipboard(timeout); }
 
 #endif
 

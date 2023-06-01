@@ -1,7 +1,7 @@
-#include "clipboard_helper.h"
-
 #include <SDL.h>
 #include <string.h>
+
+#include "clipboard_helper.h"
 
 /* This implementation is used for all targets but the web simulator. */
 

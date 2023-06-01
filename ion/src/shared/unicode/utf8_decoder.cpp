@@ -28,7 +28,8 @@ size_t UnicodeDecoder::previousGlyphPosition() {
 
 size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
                                      size_t printLength) {
-  assert(m_end == k_noSize || m_position + printLength <= m_end);
+  assert(m_end == k_noSize || printLength == k_noSize ||
+         m_position + printLength <= m_end);
   size_t result = 0;
   while (result < printLength) {
     CodePoint c = nextCodePoint();

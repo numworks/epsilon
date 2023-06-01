@@ -75,6 +75,10 @@ const char *Event::text() const {
 
 static bool s_shouldSendToClipboard = false;
 
+/* On the web simulator, the fetch and send functions in Clipboard will call
+ * an emscripten_sleep, which requires all symbols currently on the stack to be
+ * whitelisted. Fetch and send are thus called before returning the event to
+ * avoid having to maintain a whitelist of symbols from the appliation code. */
 static Event getEventAndHandleClipboard(int *timeout) {
   if (s_shouldSendToClipboard) {
     s_shouldSendToClipboard = false;

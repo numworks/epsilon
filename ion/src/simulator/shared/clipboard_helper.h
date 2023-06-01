@@ -12,6 +12,9 @@ namespace Clipboard {
 constexpr size_t k_bufferSize = 8192;
 char* buffer();
 
+void sendBufferToSystemClipboard();
+void fetchSystemClipboardToBuffer();
+
 void sendToSystemClipboard(const char* text);
 void fetchFromSystemClipboard(char* buffer, size_t bufferSize);
 

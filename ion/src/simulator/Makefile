@@ -16,6 +16,7 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   clipboard.cpp \
+  clipboard_helper.cpp \
   console.cpp \
   compilation_flags.cpp \
   crc32.cpp \

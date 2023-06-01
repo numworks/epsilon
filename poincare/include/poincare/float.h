@@ -60,6 +60,7 @@ class FloatNode final : public NumberNode {
   bool isMinusOne() const override { return m_value == static_cast<T>(-1.0); }
   bool isInteger() const override { return m_value == std::floor(m_value); }
   Integer integerValue() const override {
+    assert(isInteger());
     return Integer(static_cast<double_native_int_t>(std::floor(m_value)));
   }
 

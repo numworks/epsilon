@@ -81,7 +81,10 @@ class RationalNode final : public NumberNode {
     return denominator().isLowerThan(signedNumerator());
   }
   bool isInteger() const override { return denominator().isOne(); }
-  Integer integerValue() const override { return signedNumerator(); }
+  Integer integerValue() const override {
+    assert(isInteger());
+    return signedNumerator();
+  }
 
   static int NaturalOrder(const RationalNode* i, const RationalNode* j);
 

@@ -12,11 +12,6 @@
 
 namespace Poincare {
 
-SequenceNode::SequenceNode(const char* newName, int length)
-    : SymbolAbstractNode() {
-  setName(newName, length);
-}
-
 int SequenceNode::simplificationOrderSameType(const ExpressionNode* e,
                                               bool ascending,
                                               bool ignoreParentheses) const {

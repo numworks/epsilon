@@ -7,7 +7,7 @@ namespace Poincare {
 
 class SequenceNode final : public SymbolAbstractNode {
  public:
-  SequenceNode(const char* newName, int length);
+  using SymbolAbstractNode::SymbolAbstractNode;
 
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG

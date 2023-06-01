@@ -268,7 +268,7 @@ Expression Symbol::deepReplaceReplaceableSymbols(
     return replaceWithUndefinedInPlace();
   }
 
-  /* A symbol outside parametered expressions are not supposed to depend on
+  /* A symbol outside parametered expressions is not supposed to depend on
    * another symbol, the latter is directly replaced by its expression (cf
    * Store::deepReduceChildren). If we decide to allow symbols to depend on
    * other symbols, then circularity should be checked like in

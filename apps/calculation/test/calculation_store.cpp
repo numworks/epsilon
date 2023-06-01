@@ -485,6 +485,12 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("f(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("diff(f(x),x,1)", "undef", &globalContext,
                                 &store);
+  //   C - g(x) = f(f(..))
+  assertMainCalculationOutputIs("x+5→f(x)", "x+5", &globalContext, &store);
+  assertMainCalculationOutputIs("f(f(1-f(x)))→g(x)", "f(f(1-f(x)))",
+                                &globalContext, &store);
+  assertMainCalculationOutputIs("g(4)", "2", &globalContext, &store);
+
   // Destroy records
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

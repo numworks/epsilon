@@ -1,4 +1,5 @@
 #include <poincare/boolean.h>
+#include <poincare/comparison.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/horizontal_layout.h>
@@ -164,11 +165,66 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
     }
   }
 
-  // diff(piecewise(exp1,cond1,exp2)) == piecewise(diff(exp1),cond1,diff(exp2)))
+  /* To derivate piecewise, we just need to derivate the expressions and keep
+   * the same conditions except that the inferior equal and superior equal
+   * should turn into strict inferior and superior.
+   * Indeed the derivative of piecewise(x,x>=0,-x) is x=0 is undef.
+   *
+   * To do so, each condition is duplicated.
+   * The first one is transformed to change inferior equal into inferior (same
+   * for superior), and the expression is the derivative.
+   * The second one is kept intact and is matched with undef.
+   * Since only the first true condition will be applied, if x is in the open
+   * interval, the derivative is properly computed, if it's at bounds, it's
+   * undef.
+   *
+   * Example:
+   * piecewise(
+   *   x , cos(x) >= 0.5,
+   *   0
+   * )
+   * derivates into
+   * piecewise(
+   *   1     , cos(x) > 0.5,
+   *   undef , cos(x) >= 0.5,
+   *   0
+   * )*/
 
-  int n = numberOfChildren();
-  for (int i = 0; i < n; i += 2) {
+  int i = 0;
+  while (i < numberOfChildren()) {
+    // Derivate the expression
     derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
+    if (i == numberOfChildren() - 1) {
+      // No condition for last expression.
+      break;
+    }
+    Expression derivateCondition = childAtIndex(i + 1);
+    if (derivateCondition.type() != ExpressionNode::Type::Comparison) {
+      i += 2;
+      continue;
+    }
+    // Turn >= into > and <= into <
+    Expression noBoundsCondition =
+        static_cast<Comparison&>(derivateCondition).cloneWithStrictOperators();
+    if (noBoundsCondition.isUninitialized()) {
+      // It's uninitialized if it contained no >=, <= or ==. Just keep it as is.
+      i += 2;
+      continue;
+    }
+    // Add the undef expression with the condition containing <=, >=, ==
+    addChildAtIndexInPlace(Undefined::Builder(), i + 2, numberOfChildren());
+    addChildAtIndexInPlace(derivateCondition.clone(), i + 3,
+                           numberOfChildren());
+    // Replace the condition containing >=, <= with the one with > and <
+    replaceChildAtIndexInPlace(i + 1, noBoundsCondition);
+    if (noBoundsCondition.isUndefined()) {
+      /* It's undef if it contained a ==. In this case, the derivative is just
+       * undef when the condition is true. */
+      removeChildAtIndexInPlace(i);
+      removeChildAtIndexInPlace(i + 1);
+      i -= 2;
+    }
+    i += 4;
   }
   return true;
 }

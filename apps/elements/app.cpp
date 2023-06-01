@@ -20,7 +20,6 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Escher::Image* App::Descriptor::icon() const {
-  // TODO
   return ImageStore::ElementsIcon;
 }
 

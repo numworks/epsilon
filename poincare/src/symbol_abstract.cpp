@@ -17,6 +17,13 @@
 
 namespace Poincare {
 
+SymbolAbstractNode::SymbolAbstractNode(const char *newName, int length)
+    : ExpressionNode() {
+  assert(length <= k_maxNameLengthWithoutQuotationMarks ||
+         (NameHasQuotationMarks(newName, length) && length <= k_maxNameLength));
+  strlcpy(m_name, newName, length + 1);
+}
+
 size_t SymbolAbstractNode::NameWithoutQuotationMarks(char *buffer,
                                                      size_t bufferSize,
                                                      const char *name,
@@ -72,12 +79,6 @@ int SymbolAbstractNode::serialize(char *buffer, int bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {
   return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
-}
-
-void SymbolAbstractNode::setName(const char *name, size_t length) {
-  assert(length <= k_maxNameLengthWithoutQuotationMarks ||
-         (NameHasQuotationMarks(name, length) && length <= k_maxNameLength));
-  strlcpy(m_name, name, length + 1);
 }
 
 template <typename T, typename U>

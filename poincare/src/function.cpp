@@ -11,11 +11,6 @@
 
 namespace Poincare {
 
-FunctionNode::FunctionNode(const char* newName, int length)
-    : SymbolAbstractNode() {
-  setName(newName, length);
-}
-
 /* Usual behavior for functions is to expand itself (as well as any function it
  * contains), before calling the same method on its definition (or handle it if
  * uninitialized). We do this in polynomialDegree, getPolynomialCoefficients,

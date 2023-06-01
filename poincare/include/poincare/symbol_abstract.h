@@ -22,6 +22,8 @@ namespace Poincare {
 
 class SymbolAbstractNode : public ExpressionNode {
  public:
+  SymbolAbstractNode(const char *newName, int length);
+
   /* A symbol abstract can have a max length of 7 chars, or 9 if it's
    * surrounded by quotation marks.
    * This makes it so a 9 chars name (with quotation marks), can be
@@ -70,7 +72,6 @@ class SymbolAbstractNode : public ExpressionNode {
   int serialize(char *buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
-  void setName(const char *name, size_t length);
 
   char m_name[0];  // MUST be the last member variable
 

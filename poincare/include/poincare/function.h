@@ -8,7 +8,7 @@ namespace Poincare {
 
 class FunctionNode final : public SymbolAbstractNode {
  public:
-  FunctionNode(const char* newName, int length);
+  using SymbolAbstractNode::SymbolAbstractNode;
 
   // TreeNode
   int numberOfChildren() const override { return 1; }

@@ -16,10 +16,6 @@
 
 namespace Poincare {
 
-SymbolNode::SymbolNode(const char* newName, int length) : SymbolAbstractNode() {
-  setName(newName, length);
-}
-
 int SymbolNode::polynomialDegree(Context* context,
                                  const char* symbolName) const {
   if (strcmp(m_name, symbolName) == 0) {

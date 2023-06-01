@@ -1,12 +1,20 @@
 #include "clipboard_helper.h"
 
+#include "window.h"
+
 namespace Ion {
 namespace Clipboard {
 
-void sendBufferToSystemClipboard() { sendToSystemClipboard(buffer()); }
+void sendBufferToSystemClipboard() {
+  if (!Simulator::Window::isHeadless()) {
+    sendToSystemClipboard(buffer());
+  }
+}
 
 void fetchSystemClipboardToBuffer() {
-  fetchFromSystemClipboard(buffer(), k_bufferSize);
+  if (!Simulator::Window::isHeadless()) {
+    fetchFromSystemClipboard(buffer(), k_bufferSize);
+  }
 }
 
 }  // namespace Clipboard

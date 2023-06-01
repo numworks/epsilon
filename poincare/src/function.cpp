@@ -58,14 +58,14 @@ Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits,
                                   Context* context) const {
   return LayoutHelper::Prefix(Function(this), floatDisplayMode,
-                              numberOfSignificantDigits, name(), context);
+                              numberOfSignificantDigits, m_name, context);
 }
 
 int FunctionNode::serialize(char* buffer, int bufferSize,
                             Preferences::PrintFloatMode floatDisplayMode,
                             int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode,
-                                     numberOfSignificantDigits, name());
+                                     numberOfSignificantDigits, m_name);
 }
 
 Expression FunctionNode::shallowReduce(
@@ -79,7 +79,7 @@ bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
                                        int numberOfVisitedFunctions) {
   // Check if this symbol has already been visited.
   for (int i = 0; i < numberOfVisitedFunctions; i++) {
-    if (strcmp(name(), visitedFunctions[i]) == 0) {
+    if (strcmp(m_name, visitedFunctions[i]) == 0) {
       return true;
     }
   }
@@ -97,7 +97,7 @@ bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
      * circular. */
     return true;
   }
-  visitedFunctions[numberOfVisitedFunctions] = name();
+  visitedFunctions[numberOfVisitedFunctions] = m_name;
   numberOfVisitedFunctions++;
 
   // This is like cloning, but without the symbol.

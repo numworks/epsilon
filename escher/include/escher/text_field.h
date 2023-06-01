@@ -7,7 +7,6 @@ namespace Escher {
 
 class TextField : public AbstractTextField {
  public:
-  // TODO: Initalize with KDGlyph::Format
   TextField(Responder* parentResponder, char* textBuffer, size_t textBufferSize,
             InputEventHandlerDelegate* inputEventHandlerDelegate,
             TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {})

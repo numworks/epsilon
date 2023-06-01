@@ -43,7 +43,6 @@ class SymbolNode final : public SymbolAbstractNode {
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
-  LayoutShape leftLayoutShape() const override;
 
   /* Derivation */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,

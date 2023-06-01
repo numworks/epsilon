@@ -14,9 +14,7 @@ class FunctionNode final : public SymbolAbstractNode {
   const char* name() const override { return m_name; }
 
   // TreeNode
-  int numberOfChildren() const override {
-    return 1;
-  }  // TODO allow any number of children? Needs templating
+  int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "Function";

@@ -77,7 +77,7 @@ class SymbolAbstractNode : public ExpressionNode {
   virtual size_t nodeSize() const = 0;
 };
 
-/* WARNING: symbol abstract cannot have any virtual methods. Otherwise,
+/* WARNING: SymbolAbstract cannot have any virtual methods. Otherwise,
  * inheriting Expression won't fulfil the requirement:
  * 'sizeof(Expression) == sizeof(ExpressionInheritingFromSymbolAbstract)
  * due to the virtual table. */

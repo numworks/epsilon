@@ -10,9 +10,6 @@ class FunctionNode final : public SymbolAbstractNode {
  public:
   FunctionNode(const char* newName, int length);
 
-  // SymbolAbstractNode
-  const char* name() const override { return m_name; }
-
   // TreeNode
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
@@ -30,8 +27,6 @@ class FunctionNode final : public SymbolAbstractNode {
                    int maxSizeVariable, int nextVariableIndex) const override;
 
  private:
-  char m_name[0];  // MUST be the last member variable
-
   size_t nodeSize() const override { return sizeof(FunctionNode); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
@@ -40,9 +35,6 @@ class FunctionNode final : public SymbolAbstractNode {
   int serialize(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
-
-  // Name
-  char* editableName() override { return m_name; }
 
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;

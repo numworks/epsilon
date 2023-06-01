@@ -9,8 +9,6 @@ class SymbolNode final : public SymbolAbstractNode {
  public:
   SymbolNode(const char* newName, int length);
 
-  const char* name() const override { return m_name; }
-
   // TreeNode
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
@@ -66,15 +64,10 @@ class SymbolNode final : public SymbolAbstractNode {
   bool isUnknown() const;
 
  private:
-  char m_name[0];  // MUST be the last member variable
-
   size_t nodeSize() const override { return sizeof(SymbolNode); }
   template <typename T>
   Evaluation<T> templatedApproximate(
       const ApproximationContext& approximationContext) const;
-
-  // Name
-  char* editableName() override { return m_name; }
 };
 
 class Symbol final : public SymbolAbstract {

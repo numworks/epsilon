@@ -67,7 +67,7 @@ int SymbolAbstractNode::serialize(char *buffer, int bufferSize,
 void SymbolAbstractNode::setName(const char *name, size_t length) {
   assert(length <= k_maxNameLengthWithoutQuotationMarks ||
          (NameHasQuotationMarks(name, length) && length <= k_maxNameLength));
-  strlcpy(editableName(), name, length + 1);
+  strlcpy(m_name, name, length + 1);
 }
 
 template <typename T, typename U>

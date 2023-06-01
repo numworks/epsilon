@@ -310,14 +310,18 @@ void AppsContainer::run() {
   if (ExceptionRun(exceptionCheckpoint)) {
     if (homeInterruptOcurred) {
       /* Reset backlight and suspend timers here, because a keyboard event has
-       * loaded the checkpoint and did not call AppsContainer::dispatchEvent */
+       * loaded the checkpoint and did not call AppsContainer::dispatchEvent. */
       m_backlightDimmingTimer.reset();
       m_suspendTimer.reset();
       Ion::Backlight::setBrightness(
           GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
-      switchToBuiltinApp(homeAppSnapshot());
+      if (s_activeApp && s_activeApp->snapshot() == homeAppSnapshot()) {
+        dispatchEvent(Ion::Events::Back);
+      } else {
+        switchToBuiltinApp(homeAppSnapshot());
+      }
     } else {
       /* Normal execution. The exception checkpoint must be created before
        * switching to the first app, because the first app might create nodes on

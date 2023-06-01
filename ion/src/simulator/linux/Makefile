@@ -24,7 +24,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/window_callback.cpp \
   unix/platform_files.cpp \
   circuit_breaker.cpp \
-  clipboard_helper.cpp \
+  clipboard_helper_sdl.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
   haptics.cpp \

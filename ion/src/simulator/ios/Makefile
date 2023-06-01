@@ -6,7 +6,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/keyboard_callback.cpp \
   dummy/window_callback.cpp \
   circuit_breaker.cpp \
-  clipboard_helper.cpp \
+  clipboard_helper_sdl.cpp \
   haptics.cpp \
 )
 

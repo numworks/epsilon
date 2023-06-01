@@ -24,7 +24,7 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode* e,
   assert(numberOfChildren() == 1);
   assert(e->numberOfChildren() == 1);
   ExpressionNode* seq = const_cast<ExpressionNode*>(e);
-  int delta = strcmp(name(), reinterpret_cast<SequenceNode*>(seq)->name());
+  int delta = strcmp(m_name, reinterpret_cast<SequenceNode*>(seq)->name());
   if (delta == 0) {
     return SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending,
                                ignoreParentheses);
@@ -38,7 +38,7 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   Layout rank = childAtIndex(0)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context);
   return HorizontalLayout::Builder(
-      CodePointLayout::Builder(name()[0]),
+      CodePointLayout::Builder(m_name[0]),
       VerticalOffsetLayout::Builder(
           rank, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
@@ -48,7 +48,7 @@ int SequenceNode::serialize(char* buffer, int bufferSize,
                             int numberOfSignificantDigits) const {
   int result = SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
-      name(), SerializationHelper::ParenthesisType::Braces);
+      m_name, SerializationHelper::ParenthesisType::Braces);
   return result;
 }
 

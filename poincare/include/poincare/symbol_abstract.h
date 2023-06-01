@@ -44,7 +44,7 @@ class SymbolAbstractNode : public ExpressionNode {
   static size_t NameWithoutQuotationMarks(char *buffer, size_t bufferSize,
                                           const char *name, size_t nameLength);
 
-  virtual const char *name() const = 0;
+  const char *name() const { return m_name; }
 
   size_t size() const override;
 
@@ -72,10 +72,9 @@ class SymbolAbstractNode : public ExpressionNode {
   int serialize(char *buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
-
-  // editableName is used in setName
-  virtual char *editableName() = 0;
   void setName(const char *name, size_t length);
+
+  char m_name[0];  // MUST be the last member variable
 
  private:
   virtual size_t nodeSize() const = 0;

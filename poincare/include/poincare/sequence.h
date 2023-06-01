@@ -8,7 +8,6 @@ namespace Poincare {
 class SequenceNode final : public SymbolAbstractNode {
  public:
   SequenceNode(const char* newName, int length);
-  const char* name() const override { return m_name; }
 
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
@@ -22,8 +21,6 @@ class SequenceNode final : public SymbolAbstractNode {
                                   bool ignoreParentheses) const override;
 
  private:
-  char m_name[0];
-
   size_t nodeSize() const override { return sizeof(SequenceNode); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
@@ -32,9 +29,6 @@ class SequenceNode final : public SymbolAbstractNode {
   int serialize(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
-
-  // Name
-  char* editableName() override { return m_name; }
 
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;

@@ -130,11 +130,26 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     Ion::LED::updateColorWithPlugAndCharge();
   }
 
+  if (event == Ion::Events::Paste) {
+    /* On the web simulator, the fetch and send functions in Clipboard will call
+     * an emscripten_sleep, which requires all symbols currently on the stack to
+     * be whitelisted. Fetch and send are thus called before returning the event
+     * to avoid having to maintain a whitelist of symbols from the appliation
+     * code. */
+    Ion::Clipboard::fetchSystemClipboardToBuffer();
+  }
+
   bool didProcessEvent = Container::dispatchEvent(event);
 
   if (!didProcessEvent) {
     didProcessEvent = processEvent(event);
   }
+
+  if (didProcessEvent &&
+      (event == Ion::Events::Copy || event == Ion::Events::Cut)) {
+    Ion::Clipboard::sendBufferToSystemClipboard();
+  }
+
   if (event.isKeyPress()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();

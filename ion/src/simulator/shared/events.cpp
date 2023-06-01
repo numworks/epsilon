@@ -73,29 +73,6 @@ const char *Event::text() const {
   return defaultText();
 }
 
-static bool s_shouldSendToClipboard = false;
-
-/* On the web simulator, the fetch and send functions in Clipboard will call
- * an emscripten_sleep, which requires all symbols currently on the stack to be
- * whitelisted. Fetch and send are thus called before returning the event to
- * avoid having to maintain a whitelist of symbols from the appliation code. */
-static Event getEventAndHandleClipboard(int *timeout) {
-  if (s_shouldSendToClipboard) {
-    s_shouldSendToClipboard = false;
-    Clipboard::sendBufferToSystemClipboard();
-  }
-
-  Event e = sharedGetEvent(timeout);
-
-  if (e == Events::Paste) {
-    Clipboard::fetchSystemClipboardToBuffer();
-  } else if (e == Events::Copy || e == Events::Cut) {
-    s_shouldSendToClipboard = true;
-  }
-
-  return e;
-}
-
 #if ION_EVENTS_JOURNAL
 
 static Journal *sSourceJournal = nullptr;
@@ -129,7 +106,7 @@ Event getEvent(int *timeout) {
   }
 
   if (res == Events::None) {
-    res = getEventAndHandleClipboard(timeout);
+    res = sharedGetEvent(timeout);
   }
   if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(res);
@@ -139,7 +116,7 @@ Event getEvent(int *timeout) {
 
 #else
 
-Event getEvent(int *timeout) { return getEventAndHandleClipboard(timeout); }
+Event getEvent(int *timeout) { return sharedGetEvent(timeout); }
 
 #endif
 

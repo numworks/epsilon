@@ -8,7 +8,7 @@
 namespace Ion {
 namespace Clipboard {
 
-static char s_buffer[k_bufferSize];
+static char s_buffer[k_bufferSize] = {'\0'};
 char *buffer() { return s_buffer; }
 
 uint32_t localClipboardVersion;
@@ -24,10 +24,6 @@ void write(const char *text) {
 }
 
 const char *read() {
-  if (Simulator::Window::isHeadless()) {
-    // Do not use system clipboard when headless
-    return nullptr;
-  }
   if (buffer()[0] == '\0') {
     return nullptr;
   }

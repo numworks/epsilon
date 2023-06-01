@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FunctionNode : public SymbolAbstractNode {
+class FunctionNode final : public SymbolAbstractNode {
  public:
   FunctionNode(const char* newName, int length);
 
@@ -75,7 +75,7 @@ class FunctionNode : public SymbolAbstractNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class Function : public SymbolAbstract {
+class Function final : public SymbolAbstract {
   friend class FunctionNode;
 
  public:

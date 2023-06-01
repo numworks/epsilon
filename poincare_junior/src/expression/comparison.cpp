@@ -36,7 +36,7 @@ int Comparison::Compare(const Node node0, const Node node1, Order order) {
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
      * and Power) / Multiplication (numbers) will not benefit from this
      * exception. */
-    if (order == Order::Readable &&
+    if (order == Order::User &&
         (type0 == BlockType::Addition || type0 == BlockType::Multiplication)) {
       // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
       return CompareLastChild(node0, node1);

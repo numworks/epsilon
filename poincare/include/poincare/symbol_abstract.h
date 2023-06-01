@@ -5,9 +5,6 @@
 
 namespace Poincare {
 
-/* TODO: should Function directly inherit from Symbol and we remove
- * SymbolAbstract? */
-
 /* TODO: should we keep the size of SymbolAbstractNode as a member to speed up
  * TreePool scan? */
 

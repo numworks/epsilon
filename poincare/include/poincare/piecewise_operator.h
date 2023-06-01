@@ -92,6 +92,9 @@ class PiecewiseOperator final : public Expression {
     return TreeHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(
         convert(children));
   }
+  // This will shallowReduce the resulting expression.
+  Expression bubbleUpPiecewiseDependencies(
+      const ReductionContext& reductionContext);
 };
 
 }  // namespace Poincare

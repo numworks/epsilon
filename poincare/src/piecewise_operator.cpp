@@ -1,4 +1,5 @@
 #include <poincare/boolean.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/piecewise_operator.h>
@@ -6,6 +7,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 
 namespace Poincare {
@@ -103,13 +105,13 @@ Expression PiecewiseOperator::UntypedBuilder(Expression children) {
 
 Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   {
-    /* Do not use defaultShallowReduce since it calls shallowReduceUndfined
-     * and a piecewiseOperator can be defined even with an undefined child. */
-    Expression e =
-        SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+    // Use custom dependencies bubbling-up for piecwise.
+    Expression e = bubbleUpPiecewiseDependencies(reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
+    /* Do not use defaultShallowReduce since it calls shallowReduceUndfined
+     * and a piecewiseOperator can be defined even with an undefined child. */
     e = SimplificationHelper::distributeReductionOverLists(*this,
                                                            reductionContext);
     if (!e.isUninitialized()) {
@@ -183,6 +185,86 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(
       ApproximationContext(&variableContext, complexFormat, angleUnit);
   return static_cast<PiecewiseOperatorNode*>(node())
       ->indexOfFirstTrueCondition<T>(approximationContext);
+}
+
+Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
+    const ReductionContext& reductionContext) {
+  /* - Do not bubble up dependencies of conditions.
+   * - When bubbling up dependencies, keep conditions in dependencies list :
+   *
+   * Example:
+   *
+   * piecewise(
+   *   dep(3,{1/x,tan(x)} , x>a,
+   *   dep(4,{sqrt(x)})   , x>b,
+   *   dep(5,{ln(x)})       otherwise)
+   *
+   * becomes
+   *
+   * dep(
+   * piecewise(
+   *   3 , x>a,
+   *   4 , x>b,
+   *   5 , otherwise),
+   * {
+   *   piecewise(
+   *     1/x , x>a,
+   *     0   , x>b,
+   *     0     otherwise),
+   *   piecewise(
+   *     tan(x) , x>a,
+   *     0      , x>b,
+   *     0        otherwise),
+   *   piecewise(
+   *     0       , x>a,
+   *     sqrt(x) , x>b,
+   *     0         otherwise),
+   *   piecewise(
+   *     0    , x>a,
+   *     0    , x>b,
+   *     ln(x)  otherwise)
+   * })
+   *
+   * piecwise(tan(x),x>1,0)})*/
+  int nChildren = numberOfChildren();
+  // Create a piecewise with same conditions but filled with 0.
+  Expression genericPiecewiseDependency = clone();
+  for (int i = 0; i < nChildren; i += 2) {
+    genericPiecewiseDependency.replaceChildAtIndexInPlace(i,
+                                                          Rational::Builder(0));
+  }
+
+  List dependencies = List::Builder();
+  for (int i = 0; i < nChildren; i += 2) {
+    Expression child = childAtIndex(i);
+    int currentNDependencies = dependencies.numberOfChildren();
+    if (child.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency&>(child).extractDependencies(dependencies);
+    }
+    int newNDependencies = dependencies.numberOfChildren();
+    if (newNDependencies == currentNDependencies) {
+      continue;
+    }
+    for (int k = currentNDependencies; k < newNDependencies; k++) {
+      /* Clone the piecewise containing 0 and replace the expression at index i
+       * with the dependency expression. */
+      Expression piecewiseDependency = genericPiecewiseDependency.clone();
+      piecewiseDependency.replaceChildAtIndexInPlace(
+          i, dependencies.childAtIndex(k));
+      dependencies.replaceChildAtIndexInPlace(k, piecewiseDependency);
+    }
+  }
+  if (dependencies.numberOfChildren() > 0) {
+    Expression e = shallowReduce(reductionContext);
+    Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
+    e.replaceWithInPlace(d);
+    d.replaceChildAtIndexInPlace(0, e);
+    if (e.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency&>(e).extractDependencies(dependencies);
+    }
+    return d.shallowReduce(reductionContext);
+  }
+  return Expression();
 }
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(

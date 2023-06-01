@@ -71,6 +71,7 @@ class PiecewiseOperator final : public Expression {
  public:
   PiecewiseOperator(const PiecewiseOperatorNode* n) : Expression(n) {}
   using TreeHandle::addChildAtIndexInPlace;
+  using TreeHandle::removeChildAtIndexInPlace;
   static Expression UntypedBuilder(Expression children);
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilder);

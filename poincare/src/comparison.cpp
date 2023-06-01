@@ -10,6 +10,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/subtraction.h>
+#include <poincare/undefined.h>
 
 namespace Poincare {
 
@@ -340,6 +341,28 @@ Expression Comparison::shallowReduce(ReductionContext reductionContext) {
   Expression result = Boolean::Builder(true);
   replaceWithInPlace(result);
   return result;
+}
+
+Expression Comparison::cloneWithStrictOperators() const {
+  bool atLeastOneOperatorChanged = false;
+  int n = numberOfOperators();
+  Expression result = clone();
+  ComparisonNode::OperatorType* operatorsList =
+      static_cast<Comparison&>(result).node()->listOfOperators();
+  for (int i = 0; i < n; i++) {
+    if (operatorsList[i] == ComparisonNode::OperatorType::Equal) {
+      return Undefined::Builder();
+    }
+    if (operatorsList[i] == ComparisonNode::OperatorType::InferiorEqual) {
+      operatorsList[i] = ComparisonNode::OperatorType::Inferior;
+      atLeastOneOperatorChanged = true;
+    } else if (operatorsList[i] ==
+               ComparisonNode::OperatorType::SuperiorEqual) {
+      operatorsList[i] = ComparisonNode::OperatorType::Superior;
+      atLeastOneOperatorChanged = true;
+    }
+  }
+  return atLeastOneOperatorChanged ? result : Expression();
 }
 
 }  // namespace Poincare

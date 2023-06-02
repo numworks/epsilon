@@ -1,0 +1,6 @@
+#ifndef IOSTREAM
+#define IOSTREAM
+
+#include "ostream"
+
+#endif

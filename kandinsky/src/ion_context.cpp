@@ -20,16 +20,16 @@ void KDIonContext::pullRect(KDRect rect, KDColor* pixels) {
 static KDPoint s_cursor = KDPointZero;
 
 void KDIonContext::Putchar(char c) {
+  constexpr KDFont::Size font = KDFont::Size::Large;
+  constexpr KDGlyph::Style style = {.font = font};
   char text[2] = {c, 0};
-  if (s_cursor.x() >
-      Ion::Display::Width - KDFont::GlyphWidth(KDFont::Size::Large)) {
-    s_cursor = SharedContext->drawString("\n", s_cursor);
+  if (s_cursor.x() > Ion::Display::Width - KDFont::GlyphWidth(font)) {
+    s_cursor = SharedContext->drawString("\n", s_cursor, style);
   }
-  if (s_cursor.y() >
-      Ion::Display::Height - KDFont::GlyphHeight(KDFont::Size::Large)) {
+  if (s_cursor.y() > Ion::Display::Height - 2 * KDFont::GlyphHeight(font)) {
     Clear(KDPoint(s_cursor.x(), 0));
   }
-  s_cursor = SharedContext->drawStringUnsafe(text, s_cursor);
+  s_cursor = SharedContext->drawStringUnsafe(text, s_cursor, style);
 }
 
 void KDIonContext::Clear(KDPoint newCursorPosition) {

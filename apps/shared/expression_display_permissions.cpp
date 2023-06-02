@@ -35,8 +35,11 @@ static bool exactExpressionIsForbidden(Expression exactOutput) {
            isPrimeFactorization(exactOutput));
 }
 
-bool ShouldNeverDisplayReduction(Expression input, Context* context) {
-  assert(!input.isUninitialized());
+static bool shouldNeverDisplayReductionOfInput(Expression input,
+                                               Context* context) {
+  if (input.isUninitialized()) {
+    return false;
+  }
   return input.recursivelyMatches(
       [](const Expression e, Context* c) {
         return e.isOfType({
@@ -58,7 +61,9 @@ bool ShouldNeverDisplayReduction(Expression input, Context* context) {
 }
 
 bool shouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
-  assert(!exactOutput.isUninitialized());
+  if (exactOutput.isUninitialized()) {
+    return false;
+  }
   return
       /* Force all outputs to be ApproximateOnly if required by the exam mode
        * configuration */
@@ -97,7 +102,7 @@ bool ShouldOnlyDisplayApproximation(Expression input, Expression exactOutput,
   return (!approximateOutput.isUninitialized() && approximateOutput.hasUnit() &&
           !approximateOutput.isInRadians(context)) ||
          shouldNeverDisplayExactOutput(exactOutput, context) ||
-         ShouldNeverDisplayReduction(input, context);
+         shouldNeverDisplayReductionOfInput(input, context);
 }
 
 }  // namespace ExpressionDisplayPermissions

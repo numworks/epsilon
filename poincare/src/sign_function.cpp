@@ -4,6 +4,7 @@
 #include <poincare/derivative.h>
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/sign_function.h>

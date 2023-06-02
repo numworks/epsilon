@@ -34,8 +34,7 @@ bool ExactExpressionIsForbidden(Expression e) {
   return !(e.isNumber() || isFraction || isPrimeFactorization(e));
 }
 
-bool ShouldNeverDisplayReduction(Poincare::Expression input,
-                                 Poincare::Context* context) {
+bool ShouldNeverDisplayReduction(Expression input, Context* context) {
   return input.recursivelyMatches(
       [](const Expression e, Context* c) {
         return e.isOfType({
@@ -56,8 +55,7 @@ bool ShouldNeverDisplayReduction(Poincare::Expression input,
       context);
 }
 
-bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
-                                   Poincare::Context* context) {
+bool ShouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
   return
       /* Force all outputs to be ApproximateOnly if required by the exam mode
        * configuration */
@@ -83,18 +81,16 @@ bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
       exactOutput.hasUnit(true);
 }
 
-bool ShouldOnlyDisplayApproximation(Poincare::Expression input,
-                                    Poincare::Expression exactOutput,
-                                    Poincare::Expression approximateOutput,
-                                    Poincare::Context* context) {
+bool ShouldOnlyDisplayApproximation(Expression input, Expression exactOutput,
+                                    Expression approximateOutput,
+                                    Context* context) {
   /* The angle units could display exact output but we want to avoid exact
    * results that are not in radians like "(3/sqrt(2))°" because they are not
    * relevant for the user.
    * On the other hand, we'd like "cos(4°)" to be displayed as exact result.
    * To do so, the approximateOutput is checked rather than the exactOutput,
    * because the approximateOutput has a unit only if the degree unit is not
-   * in a trig function.
-   * */
+   * in a trig function. */
   return (approximateOutput.hasUnit() &&
           !approximateOutput.isInRadians(context)) ||
          ShouldNeverDisplayExactOutput(exactOutput, context) ||

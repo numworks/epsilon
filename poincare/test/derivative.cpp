@@ -92,11 +92,13 @@ QUIZ_CASE(poincare_derivative_formal) {
                                       "\u0014dep(0,{sinh(sin(y))})");
 
   assert_reduces_to_formal_expression(
-      "diff(piecewise(x,x≥1,3),x,x)",
-      "\u0014dep(piecewise(1,x>1,undef,x≥1,0),{piecewise(x,x≥1,3)})");
+      "diff(piecewise(x,x≥1,-x,x≠0),x,x)",
+      "\u0014dep(piecewise(1,x>1,undef,x≥1,-1,"
+      "x≠0,undef,x=0),{piecewise(x,x≥1,-x,x≠0)})");
   assert_reduces_to_formal_expression(
       "diff(piecewise(x,x=1,2×x,x<5,3),x,x)",
-      "\u0014dep(piecewise(undef,x=1,2,x<5,0),{piecewise(x,x=1,2×x,x<5,3)})");
+      "\u0014dep(piecewise(undef,x=1,2,x<5,undef,x≤5,0),{"
+      "piecewise(x,x=1,2×x,x<5,3)})");
 
   assert_reduce_and_store("2→a");
   assert_reduce_and_store("-1→b");

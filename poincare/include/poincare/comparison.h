@@ -142,12 +142,18 @@ class Comparison : public Expression {
   ComparisonNode::OperatorType operatorAtIndex(int i) const {
     return node()->operatorAtIndex(i);
   }
-  /* Return Undefined if contains an equal.
-   * Return Expression() if everything is already strict. */
-  Expression cloneWithStrictOperators() const;
+  /* Returns Undefined if contains an equal. */
+  Expression cloneWithStrictOperators() const {
+    return cloneWithStrictOrLenientOperators(true);
+  }
+  /* Changes not equal into equal. */
+  Expression cloneWithLenientOperators() const {
+    return cloneWithStrictOrLenientOperators(false);
+  }
   int numberOfOperators() const { return node()->numberOfOperators(); }
 
  private:
+  Expression cloneWithStrictOrLenientOperators(bool strict) const;
   ComparisonNode* node() const {
     return static_cast<ComparisonNode*>(Expression::node());
   }

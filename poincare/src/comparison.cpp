@@ -343,26 +343,33 @@ Expression Comparison::shallowReduce(ReductionContext reductionContext) {
   return result;
 }
 
-Expression Comparison::cloneWithStrictOperators() const {
-  bool atLeastOneOperatorChanged = false;
+Expression Comparison::cloneWithStrictOrLenientOperators(bool strict) const {
+  // operators[strict] is strict if strict == 1 and lenient if strict == 0
+  constexpr ComparisonNode::OperatorType inferiorOperators[] = {
+      ComparisonNode::OperatorType::InferiorEqual,
+      ComparisonNode::OperatorType::Inferior};
+  constexpr ComparisonNode::OperatorType superiorOperators[] = {
+      ComparisonNode::OperatorType::SuperiorEqual,
+      ComparisonNode::OperatorType::Superior};
   int n = numberOfOperators();
   Expression result = clone();
   ComparisonNode::OperatorType* operatorsList =
       static_cast<Comparison&>(result).node()->listOfOperators();
   for (int i = 0; i < n; i++) {
-    if (operatorsList[i] == ComparisonNode::OperatorType::Equal) {
+    if (strict && operatorsList[i] == ComparisonNode::OperatorType::Equal) {
       return Undefined::Builder();
-    }
-    if (operatorsList[i] == ComparisonNode::OperatorType::InferiorEqual) {
-      operatorsList[i] = ComparisonNode::OperatorType::Inferior;
-      atLeastOneOperatorChanged = true;
+    } else if (!strict &&
+               operatorsList[i] == ComparisonNode::OperatorType::NotEqual) {
+      operatorsList[i] = ComparisonNode::OperatorType::Equal;
     } else if (operatorsList[i] ==
-               ComparisonNode::OperatorType::SuperiorEqual) {
-      operatorsList[i] = ComparisonNode::OperatorType::Superior;
-      atLeastOneOperatorChanged = true;
+               inferiorOperators[static_cast<int>(!strict)]) {
+      operatorsList[i] = inferiorOperators[static_cast<int>(strict)];
+    } else if (operatorsList[i] ==
+               superiorOperators[static_cast<int>(!strict)]) {
+      operatorsList[i] = superiorOperators[static_cast<int>(strict)];
     }
   }
-  return atLeastOneOperatorChanged ? result : Expression();
+  return result;
 }
 
 }  // namespace Poincare

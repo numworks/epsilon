@@ -172,21 +172,22 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
    *
    * To do so, each condition is duplicated.
    * The first one is transformed to change inferior equal into inferior (same
-   * for superior), and the expression is the derivative.
-   * The second one is kept intact and is matched with undef.
+   * for superior), and is matched with the derivative.
+   * The second one is transformed to change equal into inferior equal (same
+   * for superior), and is matched with undef.
    * Since only the first true condition will be applied, if x is in the open
    * interval, the derivative is properly computed, if it's at bounds, it's
    * undef.
    *
    * Example:
    * piecewise(
-   *   x , cos(x) >= 0.5,
+   *   x , 0 < cos(x) <= 0.5,
    *   0
    * )
    * derivates into
    * piecewise(
-   *   1     , cos(x) > 0.5,
-   *   undef , cos(x) >= 0.5,
+   *   1     , 0 < cos(x) < 0.5,
+   *   undef , 0 <= cos(x) <= 0.5,
    *   0
    * )*/
 
@@ -198,31 +199,29 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
       // No condition for last expression.
       break;
     }
-    Expression derivateCondition = childAtIndex(i + 1);
-    if (derivateCondition.type() != ExpressionNode::Type::Comparison) {
+    Expression originalCondition = childAtIndex(i + 1);
+    if (originalCondition.type() != ExpressionNode::Type::Comparison) {
       i += 2;
       continue;
     }
     // Turn >= into > and <= into <
-    Expression noBoundsCondition =
-        static_cast<Comparison&>(derivateCondition).cloneWithStrictOperators();
-    if (noBoundsCondition.isUninitialized()) {
-      // It's uninitialized if it contained no >=, <= or ==. Just keep it as is.
-      i += 2;
-      continue;
-    }
+    Expression strictCondition =
+        static_cast<Comparison&>(originalCondition).cloneWithStrictOperators();
+    Expression lenientCondition =
+        static_cast<Comparison&>(originalCondition).cloneWithLenientOperators();
     // Add the undef expression with the condition containing <=, >=, ==
+    assert(!lenientCondition.isUndefined());
     addChildAtIndexInPlace(Undefined::Builder(), i + 2, numberOfChildren());
-    addChildAtIndexInPlace(derivateCondition.clone(), i + 3,
-                           numberOfChildren());
-    // Replace the condition containing >=, <= with the one with > and <
-    replaceChildAtIndexInPlace(i + 1, noBoundsCondition);
-    if (noBoundsCondition.isUndefined()) {
+    addChildAtIndexInPlace(lenientCondition, i + 3, numberOfChildren());
+    if (strictCondition.isUndefined()) {
       /* It's undef if it contained a ==. In this case, the derivative is just
        * undef when the condition is true. */
       removeChildAtIndexInPlace(i);
-      removeChildAtIndexInPlace(i + 1);
+      removeChildAtIndexInPlace(i);
       i -= 2;
+    } else {
+      // Replace the condition containing >=, <= with the one with > and <
+      replaceChildAtIndexInPlace(i + 1, strictCondition);
     }
     i += 4;
   }

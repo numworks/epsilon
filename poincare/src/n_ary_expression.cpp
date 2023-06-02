@@ -114,4 +114,42 @@ Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
   return Expression();
 }
 
+Expression NAryExpression::combineComplexCartesians(
+    ComplexOperator complexOperator, ReductionContext reductionContext) {
+  /* Let's bubble up the complex cartesian if possible.
+   * Children are sorted so ComplexCartesian nodes are at the end
+   */
+  int currentNChildren = numberOfChildren();
+  if (childAtIndex(currentNChildren - 1).type() !=
+      ExpressionNode::Type::ComplexCartesian) {
+    return Expression();
+  }
+
+  int i = currentNChildren - 1;
+  // Merge all ComplexCartesian and real children into one
+  ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
+  while (i > 0) {
+    i--;
+    Expression c = childAtIndex(i);
+    if (c.type() != ExpressionNode::Type::ComplexCartesian) {
+      if (!c.isReal(reductionContext.context(),
+                    reductionContext.shouldCheckMatrices())) {
+        continue;
+      }
+      c = ComplexCartesian::Builder(c, Rational::Builder(0));
+    }
+    assert(c.type() == ExpressionNode::Type::ComplexCartesian);
+    child = (child.*complexOperator)(static_cast<ComplexCartesian&>(c),
+                                     reductionContext);
+    replaceChildAtIndexInPlace(numberOfChildren() - 1, child);
+    removeChildAtIndexInPlace(i);
+  }
+  if (currentNChildren != numberOfChildren()) {
+    child.shallowReduce(reductionContext);
+    return shallowReduce(reductionContext);
+  }
+
+  return Expression();
+}
+
 }  // namespace Poincare

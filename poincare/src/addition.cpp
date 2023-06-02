@@ -518,40 +518,11 @@ Expression Addition::shallowReduce(ReductionContext reductionContext) {
     return result;
   }
 
-  /* Step 9: Let's bubble up the complex cartesian if possible.
-   * The addition is sorted so ComplexCartesian nodes are the last ones */
-  if (childAtIndex(numberOfChildren() - 1).type() ==
-      ExpressionNode::Type::ComplexCartesian) {
-    /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
-    int currentNChildren = numberOfChildren();
-    int i = currentNChildren - 1;
-    // Merge all ComplexCartesian and real children into one
-    ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
-    while (i > 0) {
-      i--;
-      Expression c = childAtIndex(i);
-      if (c.type() != ExpressionNode::Type::ComplexCartesian) {
-        if (!c.isReal(reductionContext.context(),
-                      reductionContext.shouldCheckMatrices())) {
-          continue;
-        }
-        c = ComplexCartesian::Builder(c, Rational::Builder(0));
-      }
-      assert(c.type() == ExpressionNode::Type::ComplexCartesian);
-      Expression newReal = Addition::Builder(
-          child.real(), static_cast<ComplexCartesian&>(c).real());
-      Expression newImag = Addition::Builder(
-          child.imag(), static_cast<ComplexCartesian&>(c).imag());
-      child.replaceChildAtIndexInPlace(0, newReal);
-      child.replaceChildAtIndexInPlace(1, newImag);
-      newReal.shallowReduce(reductionContext);
-      newImag.shallowReduce(reductionContext);
-      removeChildAtIndexInPlace(i);
-    }
-    if (currentNChildren != numberOfChildren()) {
-      child.shallowReduce(reductionContext);
-      return shallowReduce(reductionContext);
-    }
+  /* Step 9: Let's bubble up the complex cartesian if possible. */
+  Expression complexCombined =
+      combineComplexCartesians(&ComplexCartesian::add, reductionContext);
+  if (!complexCombined.isUninitialized()) {
+    return complexCombined;
   }
 
   /* Step 10: Let's put everything under a common denominator.

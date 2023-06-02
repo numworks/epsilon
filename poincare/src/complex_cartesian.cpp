@@ -7,6 +7,7 @@
 #include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>

@@ -7,6 +7,7 @@
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/nonreal.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

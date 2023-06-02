@@ -1,6 +1,7 @@
 #ifndef POINCARE_N_ARY_EXPRESSION_H
 #define POINCARE_N_ARY_EXPRESSION_H
 
+#include <poincare/complex_cartesian.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -66,6 +67,12 @@ class NAryExpression : public Expression {
   }
   Expression checkChildrenAreRationalIntegersAndUpdate(
       const ReductionContext& reductionContext);
+
+  using ComplexOperator = ComplexCartesian (ComplexCartesian::*)(
+      ComplexCartesian& other, const ReductionContext& reductionContext);
+  // /!\ Only call this during reduction.
+  Expression combineComplexCartesians(ComplexOperator complexOperator,
+                                      ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

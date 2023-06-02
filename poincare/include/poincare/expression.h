@@ -97,6 +97,7 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class MultiplicationNode;
   friend class NAryExpressionNode;
+  friend class NAryExpression;
   friend class NAryInfixExpressionNode;
   friend class NaperianLogarithm;
   friend class NaperianLogarithmNode;

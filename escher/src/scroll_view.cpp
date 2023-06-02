@@ -190,29 +190,20 @@ void ScrollView::setContentOffset(KDPoint offset) {
 void ScrollView::InnerView::drawRect(KDContext *ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDPoint offset = m_scrollView->contentOffset().translatedBy(
-      relativeChildOrigin(m_scrollView));
-  KDCoordinate offsetX = offset.x();
-  KDCoordinate offsetY = offset.y();
-  KDCoordinate contentHeight = m_scrollView->m_contentView->bounds().height();
-  KDCoordinate contentWidth = m_scrollView->m_contentView->bounds().width();
+  KDRect contentFrame = relativeChildFrame(m_scrollView->m_contentView);
+  KDColor color = m_scrollView->m_backgroundColor;
   // Draw top margin
-  ctx->fillRect(KDRect(0, 0, width, m_scrollView->m_topMargin - offsetY),
-                m_scrollView->m_backgroundColor);
+  KDCoordinate contentTop = contentFrame.origin().y();
+  ctx->fillRect(KDRect(0, 0, width, contentTop), color);
   // Draw bottom margin
-  ctx->fillRect(
-      KDRect(0, contentHeight + m_scrollView->m_topMargin - offsetY, width,
-             height - contentHeight - m_scrollView->m_topMargin + offsetY),
-      m_scrollView->m_backgroundColor);
+  KDCoordinate contentBottom = contentTop + contentFrame.size().height();
+  ctx->fillRect(KDRect(0, contentBottom, width, height - contentBottom), color);
   // Draw left margin
-  ctx->fillRect(KDRect(0, 0, m_scrollView->m_leftMargin - offsetX, height),
-                m_scrollView->m_backgroundColor);
+  KDCoordinate contentLeft = contentFrame.origin().x();
+  ctx->fillRect(KDRect(0, 0, contentLeft, height), color);
   // Draw right margin
-  ctx->fillRect(
-      KDRect(contentWidth + m_scrollView->m_leftMargin - offsetX, 0,
-             width - contentWidth - m_scrollView->m_leftMargin + offsetX,
-             height),
-      m_scrollView->m_backgroundColor);
+  KDCoordinate contentRight = contentLeft + contentFrame.size().width();
+  ctx->fillRect(KDRect(contentRight, 0, width - contentRight, height), color);
 }
 
 View *ScrollView::BarDecorator::indicatorAtIndex(int index) {

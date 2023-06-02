@@ -21,17 +21,18 @@ static bool isPrimeFactorization(Expression expression) {
   });
 }
 
-bool ExactExpressionIsForbidden(Expression e) {
+static bool exactExpressionIsForbidden(Expression exactOutput) {
   if (!Preferences::sharedPreferences->examMode().forbidExactResults()) {
     return false;
   }
-  if (e.type() == ExpressionNode::Type::Opposite) {
-    return ExactExpressionIsForbidden(e.childAtIndex(0));
+  if (exactOutput.type() == ExpressionNode::Type::Opposite) {
+    return exactExpressionIsForbidden(exactOutput.childAtIndex(0));
   }
-  bool isFraction = e.type() == ExpressionNode::Type::Division &&
-                    e.childAtIndex(0).isNumber() &&
-                    e.childAtIndex(1).isNumber();
-  return !(e.isNumber() || isFraction || isPrimeFactorization(e));
+  bool isFraction = exactOutput.type() == ExpressionNode::Type::Division &&
+                    exactOutput.childAtIndex(0).isNumber() &&
+                    exactOutput.childAtIndex(1).isNumber();
+  return !(exactOutput.isNumber() || isFraction ||
+           isPrimeFactorization(exactOutput));
 }
 
 bool ShouldNeverDisplayReduction(Expression input, Context* context) {
@@ -59,7 +60,7 @@ bool ShouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
   return
       /* Force all outputs to be ApproximateOnly if required by the exam mode
        * configuration */
-      ExactExpressionIsForbidden(exactOutput) ||
+      exactExpressionIsForbidden(exactOutput) ||
       // Lists or Matrices with only nonreal/undefined children
       (exactOutput.isOfType(
            {ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) &&

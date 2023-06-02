@@ -7,7 +7,6 @@ namespace Shared {
 
 namespace ExpressionDisplayPermissions {
 
-bool ExactExpressionIsForbidden(Poincare::Expression);
 bool ShouldNeverDisplayReduction(Poincare::Expression input,
                                  Poincare::Context* context);
 bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,

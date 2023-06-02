@@ -56,7 +56,7 @@ bool ShouldNeverDisplayReduction(Expression input, Context* context) {
       context);
 }
 
-bool ShouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
+bool shouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
   return
       /* Force all outputs to be ApproximateOnly if required by the exam mode
        * configuration */
@@ -92,9 +92,9 @@ bool ShouldOnlyDisplayApproximation(Expression input, Expression exactOutput,
    * To do so, the approximateOutput is checked rather than the exactOutput,
    * because the approximateOutput has a unit only if the degree unit is not
    * in a trig function. */
-  return (approximateOutput.hasUnit() &&
+  return (!approximateOutput.isUninitialized() && approximateOutput.hasUnit() &&
           !approximateOutput.isInRadians(context)) ||
-         ShouldNeverDisplayExactOutput(exactOutput, context) ||
+         shouldNeverDisplayExactOutput(exactOutput, context) ||
          ShouldNeverDisplayReduction(input, context);
 }
 

@@ -71,8 +71,8 @@ void TrigonometryListController::setExactAndApproximateExpression(
           [](const Expression e, Context* context) {
             return e.type() == ExpressionNode::Type::FracPart;
           }) ||
-      Shared::ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(
-          simplifiedAngle, context)) {
+      Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+          exactAngle, simplifiedAngle, approximateAngle, context)) {
     if (approximateAngle.isUninitialized()) {
       assert(!exactAngle.isUndefined());
       /* In case of direct trigonometry, the approximate expression of the angle

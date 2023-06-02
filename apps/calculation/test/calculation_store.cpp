@@ -185,8 +185,9 @@ QUIZ_CASE(calculation_ans) {
 
   Preferences::sharedPreferences->setExamMode(
       ExamMode(ExamMode::Ruleset::Dutch));
-  assert(Shared::ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(
-      SquareRoot::Builder(Rational::Builder(2)), nullptr));
+  assert(Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+      SquareRoot::Builder(Rational::Builder(2)),
+      SquareRoot::Builder(Rational::Builder(2)), Expression(), nullptr));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 

@@ -76,16 +76,14 @@ void View::setSize(KDSize size) {
 
 void View::setChildFrame(View *child, KDRect frame, bool force) {
   /* We will move the child. This will leave a blank spot in this view where it
-   * previously was.  At this point, we know that the only area that needs to be
+   * previously was. At this point, we know that the only area that needs to be
    * redrawn in the superview is the old frame minus the part covered by the new
    * frame.
-   *
    * Check first if m_dirtyRect == m_frame. If it is, it's useless to
    * compute previousFrame since everything is already dirty.
    * WARNING: When this->setFrame is called, m_frame changes which makes
    * relativeChildFrame return a wrong value. Fortunately, in this case,
-   * m_dirtyRect == m_frame so we can avoid calling relativeChildFrame.
-   * */
+   * m_dirtyRect == m_frame so we can avoid calling relativeChildFrame. */
   if (m_dirtyRect != m_frame) {
     KDRect previousFrame = relativeChildFrame(child);
     markRectAsDirty(previousFrame.differencedWith(frame));

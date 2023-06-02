@@ -300,11 +300,8 @@ KDRect ScrollView::ArrowDecorator::layoutIndicators(
 }
 
 void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
-  const int indicatorsCount = numberOfIndicators();
-  for (int index = 1; index <= indicatorsCount; index++) {
-    static_cast<ScrollViewArrow *>(indicatorAtIndex(index))
-        ->setBackgroundColor(c);
-  }
+  m_rightArrow.setBackgroundColor(c);
+  m_leftArrow.setBackgroundColor(c);
 }
 
 void ScrollView::ArrowDecorator::setFont(KDFont::Size font) {

@@ -787,65 +787,108 @@ EditionReference Simplification::ApplyShallowInDepth(
 
 bool Simplification::ContractAbs(EditionReference* reference) {
   // A*|B|*|C|*D = A*|BC|*D
-  return reference->matchAndReplace(
-      KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
-            KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KMult(KPlaceholder<A>(),
-            KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-            KPlaceholder<D>()));
+  if (reference->matchAndReplace(
+          KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
+                KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+          KMult(KPlaceholder<A>(),
+                KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
+                KPlaceholder<D>()))) {
+    // Try again as long as there can be more to contract
+    ContractAbs(reference);
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ExpandAbs(EditionReference* reference) {
-  // |AB| = |A|*|B|
-  return reference->matchAndReplace(
-      KAbs(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
-      KMult(KAbs(KPlaceholder<A>()), KAbs(KMult(KPlaceholder<B>()))));
+  // |A?B| = |A|*|B|
+  if (reference->matchAndReplace(
+          KAbs(KMult(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+          KMult(KAbs(KMult(KPlaceholder<A>())), KAbs(KPlaceholder<B>())))) {
+    // |A| could be expanded again
+    EditionReference newAbs(reference->nextNode());
+    // Multiplication is expected to have been squashed if unary.
+    assert(newAbs.nextNode().type() != BlockType::Multiplication ||
+           newAbs.nextNode().numberOfChildren() > 1);
+    if (ExpandAbs(&newAbs)) {
+      *reference = NAry::Flatten(*reference);
+    }
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ContractLn(EditionReference* reference) {
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
-  return reference->matchAndReplace(
-      KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
-           KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KPlaceholder<A>(),
-           KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-           KPlaceholder<D>()));
+  if (reference->matchAndReplace(
+          KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
+               KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+          KAdd(KPlaceholder<A>(),
+               KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
+               KPlaceholder<D>()))) {
+    // Try again as long as there can be more to contract
+    ContractLn(reference);
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ExpandLn(EditionReference* reference) {
-  // ln(AB) = Ln(A) + Ln(B)
-  return reference->matchAndReplace(
-      KLn(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
-      KAdd(KLn(KPlaceholder<A>()), KLn(KMult(KPlaceholder<B>()))));
+  // ln(A?B) = ln(A) + ln(B)
+  if (reference->matchAndReplace(
+          KLn(KMult(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+          KAdd(KLn(KMult(KPlaceholder<A>())), KLn(KPlaceholder<B>())))) {
+    // ln(A) could be expanded again
+    EditionReference newLn(reference->nextNode());
+    // Multiplication is expected to have been squashed if unary.
+    assert(newLn.nextNode().type() != BlockType::Multiplication ||
+           newLn.nextNode().numberOfChildren() > 1);
+    if (ExpandLn(&newLn)) {
+      *reference = NAry::Flatten(*reference);
+    }
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ExpandExp(EditionReference* reference) {
-  return
-      // e^(A+B+C?) = e^A * e^(B+C)
-      reference->matchAndReplace(
-          KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>(),
-                    KAnyTreesPlaceholder<C>())),
-          KMult(KExp(KPlaceholder<A>()),
-                KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())))) ||
-      // e^ABC? = (e^A)^(BC)
-      reference->matchAndReplace(
-          KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>(),
-                     KAnyTreesPlaceholder<C>())),
-          KPow(KExp(KPlaceholder<A>()),
-               KMult(KPlaceholder<B>(), KPlaceholder<C>())));
+  // exp(A?+B) = exp(A) * exp(B)
+  if (reference->matchAndReplace(
+          KExp(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+          KMult(KExp(KAdd(KPlaceholder<A>())), KExp(KPlaceholder<B>())))) {
+    // exp(A) could be expanded again
+    EditionReference newExp(reference->nextNode());
+    // Addition is expected to have been squashed if unary.
+    assert(newExp.nextNode().type() != BlockType::Addition ||
+           newExp.nextNode().numberOfChildren() > 1);
+    if (ExpandExp(&newExp)) {
+      *reference = NAry::Flatten(*reference);
+    }
+    return true;
+  }
+  // exp(AB?) = exp(A)^(BC)
+  return reference->matchAndReplace(
+      KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
+      KPow(KExp(KPlaceholder<A>()), KMult(KPlaceholder<B>())));
 }
 
 bool Simplification::ContractExpMult(EditionReference* reference) {
-  // A? * e^B * e^C * D? = A * e^(B+C) * D
-  return reference->matchAndReplace(
-      KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
-            KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KMult(KPlaceholder<A>(), KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-            KPlaceholder<D>()));
+  // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
+  if (reference->matchAndReplace(
+          KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
+                KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+          KMult(KPlaceholder<A>(),
+                KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+                KPlaceholder<D>()))) {
+    // Try again as long as there can be more to contract
+    ContractExpMult(reference);
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ContractExpPow(EditionReference* reference) {
-  // (e^A)^B = e^AB
+  // exp(A)^B = exp(A*B)
   return reference->matchAndReplace(
       KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
       KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
@@ -854,55 +897,112 @@ bool Simplification::ContractExpPow(EditionReference* reference) {
 bool Simplification::ExpandTrigonometric(EditionReference* reference) {
   // If second element is -1/0/1/2, KTrig is -sin/cos/sin/-cos
   // TODO : Ensure trig second element is reduced before and after.
-  // Trig(A+B+C?, D) = Trig(A, D)*Trig(B+C, 0) + Trig(A, D-1)*Trig(B+C, 1)
-  return reference->matchAndReplace(
-      KTrig(
-          KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()),
-          KPlaceholder<D>()),
-      KAdd(KMult(KTrig(KPlaceholder<A>(), KPlaceholder<D>()),
-                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 0_e)),
-           KMult(KTrig(KPlaceholder<A>(), KAdd(KPlaceholder<D>(), -1_e)),
-                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 1_e))));
+  // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
+  if (reference->matchAndReplace(
+          KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
+                KPlaceholder<C>()),
+          KAdd(KMult(KTrig(KAdd(KPlaceholder<A>()), 0_e),
+                     KTrig(KPlaceholder<B>(), KPlaceholder<C>())),
+               KMult(
+                   KTrig(KAdd(KPlaceholder<A>()), 1_e),
+                   KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
+    // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
+    EditionReference newTrig0(reference->nextNode().nextNode());
+    // Addition is expected to have been squashed if unary.
+    assert(newTrig0.nextNode().type() != BlockType::Addition ||
+           newTrig0.nextNode().numberOfChildren() > 1);
+    if (ExpandTrigonometric(&newTrig0)) {
+      EditionReference newTrig1(reference->nextNode().nextTree().nextNode());
+      ExpandTrigonometric(&newTrig1);
+    }
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ContractTrigonometric(EditionReference* reference) {
   /* KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
-   * TODO: This is the only place this is used. It might not be worth it. */
-  // A?*Trig(B, C)*Trig(D, E)*F? = A*0.5*(Trig(B-D, C+E-2CE) + Trig(B+D, E+C))*F
-  return reference->matchAndReplace(
-      KMult(KAnyTreesPlaceholder<A>(),
-            KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
-            KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
-            KAnyTreesPlaceholder<F>()),
-      KMult(KPlaceholder<A>(), 0.5_e,
-            KAdd(KTrig(KAdd(KPlaceholder<B>(), KMult(-1_e, KPlaceholder<D>())),
-                       KTrigDiff(KPlaceholder<C>(), KPlaceholder<E>())),
-                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
-                       KAdd(KPlaceholder<E>(), KPlaceholder<C>()))),
-            KPlaceholder<F>()));
+   * TODO: This is the only place this is used. It might not be worth it.
+   * TODO : Ensure trig second elements are reduced before and after. */
+  /* A?*Trig(B, C)*Trig(D, E)*F?
+   * = (Trig(B-D, TrigDiff(C,E))*F + Trig(B+D, E+C))*F)*A*0.5
+   * F is duplicated in case it contains other Trig trees that could be
+   * contracted as well. */
+  if (reference->matchAndReplace(
+          KMult(KAnyTreesPlaceholder<A>(),
+                KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
+                KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
+                KAnyTreesPlaceholder<F>()),
+          KMult(
+              KAdd(KMult(KTrig(KAdd(KPlaceholder<B>(),
+                                    KMult(-1_e, KPlaceholder<D>())),
+                               KTrigDiff(KPlaceholder<C>(), KPlaceholder<E>())),
+                         KPlaceholder<F>()),
+                   KMult(KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
+                               KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
+                         KPlaceholder<F>())),
+              KPlaceholder<A>(), 0.5_e))) {
+    // Contract newly created multiplications
+    EditionReference newMult1(reference->nextNode().nextNode());
+    // TODO: SystematicReduce KTrig second elements.
+    // Contract Trig(B-D, TrigDiff(C,E))*F
+    if (ContractTrigonometric(&newMult1)) {
+      // Contract Trig(B-D, TrigDiff(C,E))*F
+      EditionReference newMult2(newMult1.nextTree());
+      ContractTrigonometric(&newMult2);
+    }
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ExpandMult(EditionReference* reference) {
-  // A?*(B+C)*D? = A*B*D + A*C*D
-  return reference->matchAndReplace(
-      KMult(KAnyTreesPlaceholder<A>(),
-            KAdd(KPlaceholder<B>(), KAnyTreesPlaceholder<C>()),
-            KAnyTreesPlaceholder<D>()),
-      KAdd(KMult(KPlaceholder<A>(), KPlaceholder<B>(), KPlaceholder<D>()),
-           KMult(KPlaceholder<A>(), KAdd(KPlaceholder<C>()),
-                 KPlaceholder<D>())));
+  // A?*(B?+C)*D? = A*B*D + A*C*D
+  if (reference->matchAndReplace(
+          KMult(KAnyTreesPlaceholder<A>(),
+                KAdd(KAnyTreesPlaceholder<B>(), KPlaceholder<C>()),
+                KAnyTreesPlaceholder<D>()),
+          KAdd(KMult(KPlaceholder<A>(), KAdd(KPlaceholder<B>()),
+                     KPlaceholder<D>()),
+               KMult(KPlaceholder<A>(), KPlaceholder<C>(),
+                     KPlaceholder<D>())))) {
+    // A*B*D may be expanded again, do it recursively
+    EditionReference newMult(reference->nextNode());
+    // Addition is expected to have been squashed if unary.
+    assert(!newMult.matchAndReplace(
+        KMult(KAnyTreesPlaceholder<A>(), KAdd(KPlaceholder<B>()),
+              KAnyTreesPlaceholder<C>()),
+        KMult(KPlaceholder<A>(), KAdd(KPlaceholder<B>()), KPlaceholder<C>())));
+    if (ExpandMult(&newMult)) {
+      *reference = NAry::Flatten(*reference);
+    }
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::ExpandPower(EditionReference* reference) {
-  return
-      // (A*B)^C = A^C * B^C is currently in SystematicSimplification
-      // (A + B)^2 = (A^2 + 2*A*B + B^2)
-      // TODO: Implement a more general (A + B)^C expand.
-      reference->matchAndReplace(
-          KPow(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()), 2_e),
-          KAdd(KPow(KPlaceholder<A>(), 2_e),
-               KMult(2_e, KPlaceholder<A>(), KAdd(KPlaceholder<B>())),
-               KPow(KAdd(KPlaceholder<B>()), 2_e)));
+  // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
+  // (A? + B)^2 = (A^2 + 2*A*B + B^2)
+  // TODO: Implement a more general (A + B)^C expand.
+  if (reference->matchAndReplace(
+          KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
+          KAdd(KPow(KAdd(KPlaceholder<A>()), 2_e),
+               KMult(2_e, KAdd(KPlaceholder<A>()), KPlaceholder<B>()),
+               KPow(KPlaceholder<B>(), 2_e)))) {
+    // A^2 and 2*A*B may be expanded again, do it recursively
+    EditionReference newPow(reference->nextNode());
+    // Addition is expected to have been squashed if unary.
+    assert(newPow.nextNode().type() != BlockType::Addition ||
+           newPow.nextNode().numberOfChildren() > 1);
+    if (ExpandPower(&newPow)) {
+      EditionReference newMult(newPow.nextTree());
+      ExpandMult(&newMult);
+      *reference = NAry::Flatten(*reference);
+    }
+    return true;
+  }
+  return false;
 }
 
 }  // namespace PoincareJ

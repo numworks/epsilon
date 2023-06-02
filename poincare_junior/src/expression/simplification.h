@@ -21,10 +21,12 @@ class Simplification {
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   /* Some submethods replace with a type that could be altered again. +
-   * is used instead of || so that they are called successively. */
+   * is used instead of || so that they are called successively.
+   * ContractTrigonometric is called last since it can split and expand the
+   * multiplication.  */
   static bool ShallowContract(EditionReference *e, void *context = nullptr) {
     return ContractLn(e) || ContractExpPow(e) ||
-           (ContractAbs(e) + ContractTrigonometric(e) + ContractExpMult(e));
+           (ContractAbs(e) + ContractExpMult(e) + ContractTrigonometric(e));
   }
   static bool ShallowExpand(EditionReference *e, void *context = nullptr) {
     return ExpandAbs(e) || ExpandLn(e) || ExpandExp(e) ||

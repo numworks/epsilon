@@ -2,9 +2,10 @@
 #define POINCARE_COMPLEX_CARTESIAN_H
 
 #include <poincare/expression.h>
-#include <poincare/multiplication.h>
 
 namespace Poincare {
+
+class Multiplication;
 
 class ComplexCartesianNode : public ExpressionNode {
  public:

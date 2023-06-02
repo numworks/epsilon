@@ -280,7 +280,22 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
    *     ln(x)  otherwise)
    * })
    *
-   * piecwise(tan(x),x>1,0)})*/
+   * TODO:
+   * The best would be to turn it into:
+   * dep(
+   * piecewise(
+   *   3 , x>a,
+   *   4 , x>b,
+   *   5 , otherwise),
+   * {
+   *   piecewise(
+   *     [1/x, tan(x)] , x>a,
+   *     [sqrt(x)]     , x>b,
+   *     [ln(x)]         otherwise)
+   * })
+   * but for now a matrix is NOT undef if one of its children is undef. This
+   * should be changed soon though.
+   * */
   int nChildren = numberOfChildren();
   // Create a piecewise with same conditions but filled with 0.
   Expression genericPiecewiseDependency = clone();

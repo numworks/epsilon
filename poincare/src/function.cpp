@@ -105,8 +105,9 @@ bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
   visitedFunctions[numberOfVisitedFunctions] = name();
   numberOfVisitedFunctions++;
 
-  Expression e = Expression(this).clone();
-  e.replaceChildAtIndexInPlace(0, Symbol::Builder(UCodePointUnknown));
+  // This is like cloning, but without the symbol.
+  Expression e = Function::Builder(name(), strlen(name()),
+                                   Symbol::Builder(UCodePointUnknown));
   e = context->expressionForSymbolAbstract(static_cast<SymbolAbstract&>(e),
                                            false);
   if (e.isUninitialized()) {

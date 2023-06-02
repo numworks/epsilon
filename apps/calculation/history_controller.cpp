@@ -95,6 +95,26 @@ static bool isFractionInput(Expression e) {
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
+static void breakableSetExpressionInListController(
+    ExpressionsListController **vc, Poincare::Expression exact,
+    Poincare::Expression approximate) {
+  if (*vc == nullptr) {
+    return;
+  }
+  CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
+    Expression exactClone =
+        !exact.isUninitialized() ? exact.clone() : Expression();
+    Expression approximateClone =
+        !approximate.isUninitialized() ? approximate.clone() : Expression();
+    (*vc)->setExactAndApproximateExpression(exactClone, approximateClone);
+  } else {
+    (*vc)->tidy();
+    *vc = nullptr;
+  }
+}
+
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     m_selectableTableView.deselectTable();
@@ -169,95 +189,88 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     assert(subviewType == SubviewType::Ellipsis);
     /* Only function results can be chained (with integer or rational).
      * TODO: Refactor to avoid writing an if for each parent * child. */
-    CircuitBreakerCheckpoint checkpoint(
-        Ion::CircuitBreaker::CheckpointType::Back);
     ExpressionsListController *vc = nullptr;
-    if (CircuitBreakerRun(checkpoint)) {
-      Calculation::AdditionalInformations additionalInformations =
-          selectedCell->additionalInformations();
-      ExpiringPointer<Calculation> focusCalculation =
-          calculationAtIndex(focusRow);
-      assert(focusCalculation->displayOutput(context) !=
-             Calculation::DisplayOutput::ExactOnly);
-      Expression i = focusCalculation->input();
-      Expression a = focusCalculation->approximateOutput(
-          Calculation::NumberOfSignificantDigits::Maximal);
-      Expression e = focusCalculation->displayOutput(context) !=
-                             Calculation::DisplayOutput::ApproximateOnly
-                         ? focusCalculation->exactOutput()
-                         : a;
-      if (additionalInformations.complex || additionalInformations.unit ||
-          additionalInformations.vector || additionalInformations.matrix ||
-          additionalInformations.directTrigonometry ||
-          additionalInformations.inverseTrigonometry) {
-        // The main controllers have to be initialized before use
-        m_unionController.~UnionController();
-        vc = m_unionController.listController();
-        if (additionalInformations.complex) {
-          new (&m_unionController) ComplexListController(editController);
-        } else if (additionalInformations.unit) {
-          new (&m_unionController) UnitListController(editController);
-        } else if (additionalInformations.vector) {
-          new (&m_unionController) VectorListController(editController);
-        } else if (additionalInformations.matrix) {
-          new (&m_unionController) MatrixListController(editController);
-        } else if (additionalInformations.directTrigonometry ||
-                   additionalInformations.inverseTrigonometry) {
-          new (&m_unionController) TrigonometryListController(editController);
-          if (additionalInformations.directTrigonometry) {
-            // Find the angle
-            if (Trigonometry::isDirectTrigonometryFunction(e)) {
-              e = e.childAtIndex(0);
-            } else {
-              assert(Trigonometry::isDirectTrigonometryFunction(i));
-              e = i.childAtIndex(0);
-            }
-            /* The approximation of the new e is not yet computed and will be
-             * by the controller. */
-            a = Expression();
+    Calculation::AdditionalInformations additionalInformations =
+        selectedCell->additionalInformations();
+    ExpiringPointer<Calculation> focusCalculation =
+        calculationAtIndex(focusRow);
+    assert(focusCalculation->displayOutput(context) !=
+           Calculation::DisplayOutput::ExactOnly);
+    Expression i = focusCalculation->input();
+    Expression a = focusCalculation->approximateOutput(
+        Calculation::NumberOfSignificantDigits::Maximal);
+    Expression e = focusCalculation->displayOutput(context) !=
+                           Calculation::DisplayOutput::ApproximateOnly
+                       ? focusCalculation->exactOutput()
+                       : a;
+    if (additionalInformations.complex || additionalInformations.unit ||
+        additionalInformations.vector || additionalInformations.matrix ||
+        additionalInformations.directTrigonometry ||
+        additionalInformations.inverseTrigonometry) {
+      // The main controllers have to be initialized before use
+      m_unionController.~UnionController();
+      vc = m_unionController.listController();
+      if (additionalInformations.complex) {
+        new (&m_unionController) ComplexListController(editController);
+      } else if (additionalInformations.unit) {
+        new (&m_unionController) UnitListController(editController);
+      } else if (additionalInformations.vector) {
+        new (&m_unionController) VectorListController(editController);
+      } else if (additionalInformations.matrix) {
+        new (&m_unionController) MatrixListController(editController);
+      } else if (additionalInformations.directTrigonometry ||
+                 additionalInformations.inverseTrigonometry) {
+        new (&m_unionController) TrigonometryListController(editController);
+        if (additionalInformations.directTrigonometry) {
+          // Find the angle
+          if (Trigonometry::isDirectTrigonometryFunction(e)) {
+            e = e.childAtIndex(0);
+          } else {
+            assert(Trigonometry::isDirectTrigonometryFunction(i));
+            e = i.childAtIndex(0);
           }
+          /* The approximation of the new e is not yet computed and will be
+           * by the controller. */
+          a = Expression();
         }
-      } else if (additionalInformations.integer) {
-        vc = &m_integerController;
-      } else if (additionalInformations.rational) {
-        if (isFractionInput(i)) {
-          e = i;
-        }
-        vc = &m_rationalController;
       }
-      if (vc) {
-        vc->setExactAndApproximateExpression(e, a);
+    } else if (additionalInformations.integer) {
+      vc = &m_integerController;
+    } else if (additionalInformations.rational) {
+      if (isFractionInput(i)) {
+        e = i;
       }
-      if (additionalInformations.function) {
-        assert(vc == nullptr || vc == &m_integerController ||
-               vc == &m_rationalController);
-        ChainableExpressionsListController *tail =
-            static_cast<ChainableExpressionsListController *>(vc);
-        m_unionController.~UnionController();
-        new (&m_unionController) FunctionListController(editController);
-        m_unionController.m_functionController.setTail(tail);
-        vc = m_unionController.listController();
-        vc->setExactAndApproximateExpression(i, a);
-      } else if (additionalInformations.scientificNotation) {
-        // TODO function and scientific ?
-        assert(vc == nullptr || vc == &m_integerController ||
-               vc == &m_rationalController);
-        ChainableExpressionsListController *tail =
-            static_cast<ChainableExpressionsListController *>(vc);
-        m_scientificNotationListController.setTail(tail);
-        vc = &m_scientificNotationListController;
-        vc->setExactAndApproximateExpression(e, a);
-      }
-      if (vc) {
-        assert(vc->numberOfRows() > 0);
-        Container::activeApp()->displayModalViewController(
-            vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
-            Metric::PopUpRightMargin);
-      }
-    } else {
-      if (vc) {
-        vc->tidy();
-      }
+      vc = &m_rationalController;
+    }
+
+    breakableSetExpressionInListController(&vc, e, a);
+
+    if (additionalInformations.function) {
+      assert(vc == nullptr || vc == &m_integerController ||
+             vc == &m_rationalController);
+      ChainableExpressionsListController *tail =
+          static_cast<ChainableExpressionsListController *>(vc);
+      m_unionController.~UnionController();
+      new (&m_unionController) FunctionListController(editController);
+      m_unionController.m_functionController.setTail(tail);
+      vc = m_unionController.listController();
+      breakableSetExpressionInListController(&vc, i, a);
+    } else if (additionalInformations.scientificNotation) {
+      // TODO function and scientific ?
+      assert(vc == nullptr || vc == &m_integerController ||
+             vc == &m_rationalController);
+      ChainableExpressionsListController *tail =
+          static_cast<ChainableExpressionsListController *>(vc);
+      m_scientificNotationListController.setTail(tail);
+      vc = &m_scientificNotationListController;
+      breakableSetExpressionInListController(&vc, e, a);
+    }
+
+    if (vc) {
+      assert(vc->numberOfRows() > 0);
+      Container::activeApp()->displayModalViewController(
+          vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
+          Metric::PopUpRightMargin);
     }
   }
   return true;

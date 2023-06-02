@@ -36,6 +36,7 @@ static bool exactExpressionIsForbidden(Expression exactOutput) {
 }
 
 bool ShouldNeverDisplayReduction(Expression input, Context* context) {
+  assert(!input.isUninitialized());
   return input.recursivelyMatches(
       [](const Expression e, Context* c) {
         return e.isOfType({
@@ -57,6 +58,7 @@ bool ShouldNeverDisplayReduction(Expression input, Context* context) {
 }
 
 bool shouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
+  assert(!exactOutput.isUninitialized());
   return
       /* Force all outputs to be ApproximateOnly if required by the exam mode
        * configuration */

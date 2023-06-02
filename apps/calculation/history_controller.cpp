@@ -105,130 +105,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   Context *context = App::app()->localContext();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    int focusRow = selectedRow();
-    HistoryViewCell *selectedCell =
-        (HistoryViewCell *)m_selectableTableView.selectedCell();
-    SubviewType subviewType = selectedSubviewType();
-    EditExpressionController *editController =
-        (EditExpressionController *)parentResponder();
-    if (subviewType == SubviewType::Input) {
-      m_selectableTableView.deselectTable();
-      editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
-    } else if (subviewType == SubviewType::Output) {
-      m_selectableTableView.deselectTable();
-      Shared::ExpiringPointer<Calculation> calculation =
-          calculationAtIndex(focusRow);
-      ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
-          selectedCell->outputView()->selectedSubviewPosition();
-      if (outputSubviewPosition ==
-              ScrollableTwoLayoutsView::SubviewPosition::Right &&
-          calculation->displayOutput(context) !=
-              Calculation::DisplayOutput::ExactOnly) {
-        editController->insertTextBody(calculation->approximateOutputText(
-            Calculation::NumberOfSignificantDigits::Maximal));
-      } else {
-        assert(calculation->displayOutput(context) !=
-               Calculation::DisplayOutput::ApproximateOnly);
-        editController->insertTextBody(calculation->exactOutputText());
-      }
-    } else {
-      assert(subviewType == SubviewType::Ellipsis);
-      /* Only function results can be chained (with integer or rational).
-       * TODO: Refactor to avoid writing an if for each parent * child. */
-      CircuitBreakerCheckpoint checkpoint(
-          Ion::CircuitBreaker::CheckpointType::Back);
-      ExpressionsListController *vc = nullptr;
-      if (CircuitBreakerRun(checkpoint)) {
-        Calculation::AdditionalInformations additionalInformations =
-            selectedCell->additionalInformations();
-        ExpiringPointer<Calculation> focusCalculation =
-            calculationAtIndex(focusRow);
-        assert(focusCalculation->displayOutput(context) !=
-               Calculation::DisplayOutput::ExactOnly);
-        Expression i = focusCalculation->input();
-        Expression a = focusCalculation->approximateOutput(
-            Calculation::NumberOfSignificantDigits::Maximal);
-        Expression e = focusCalculation->displayOutput(context) !=
-                               Calculation::DisplayOutput::ApproximateOnly
-                           ? focusCalculation->exactOutput()
-                           : a;
-        if (additionalInformations.complex || additionalInformations.unit ||
-            additionalInformations.vector || additionalInformations.matrix ||
-            additionalInformations.directTrigonometry ||
-            additionalInformations.inverseTrigonometry) {
-          // The main controllers have to be initialized before use
-          m_unionController.~UnionController();
-          vc = m_unionController.listController();
-          if (additionalInformations.complex) {
-            new (&m_unionController) ComplexListController(editController);
-          } else if (additionalInformations.unit) {
-            new (&m_unionController) UnitListController(editController);
-          } else if (additionalInformations.vector) {
-            new (&m_unionController) VectorListController(editController);
-          } else if (additionalInformations.matrix) {
-            new (&m_unionController) MatrixListController(editController);
-          } else if (additionalInformations.directTrigonometry ||
-                     additionalInformations.inverseTrigonometry) {
-            new (&m_unionController) TrigonometryListController(editController);
-            if (additionalInformations.directTrigonometry) {
-              // Find the angle
-              if (Trigonometry::isDirectTrigonometryFunction(e)) {
-                e = e.childAtIndex(0);
-              } else {
-                assert(Trigonometry::isDirectTrigonometryFunction(i));
-                e = i.childAtIndex(0);
-              }
-              /* The approximation of the new e is not yet computed and will be
-               * by the controller. */
-              a = Expression();
-            }
-          }
-        } else if (additionalInformations.integer) {
-          vc = &m_integerController;
-        } else if (additionalInformations.rational) {
-          if (isFractionInput(i)) {
-            e = i;
-          }
-          vc = &m_rationalController;
-        }
-        if (vc) {
-          vc->setExactAndApproximateExpression(e, a);
-        }
-        if (additionalInformations.function) {
-          assert(vc == nullptr || vc == &m_integerController ||
-                 vc == &m_rationalController);
-          ChainableExpressionsListController *tail =
-              static_cast<ChainableExpressionsListController *>(vc);
-          m_unionController.~UnionController();
-          new (&m_unionController) FunctionListController(editController);
-          m_unionController.m_functionController.setTail(tail);
-          vc = m_unionController.listController();
-          vc->setExactAndApproximateExpression(i, a);
-        } else if (additionalInformations.scientificNotation) {
-          // TODO function and scientific ?
-          assert(vc == nullptr || vc == &m_integerController ||
-                 vc == &m_rationalController);
-          ChainableExpressionsListController *tail =
-              static_cast<ChainableExpressionsListController *>(vc);
-          m_scientificNotationListController.setTail(tail);
-          vc = &m_scientificNotationListController;
-          vc->setExactAndApproximateExpression(e, a);
-        }
-        if (vc) {
-          assert(vc->numberOfRows() > 0);
-          Container::activeApp()->displayModalViewController(
-              vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
-              Metric::PopUpRightMargin);
-        }
-      } else {
-        if (vc) {
-          vc->tidy();
-        }
-      }
-    }
-    return true;
-  }
   if (event == Ion::Events::Backspace) {
     int focusRow = selectedRow();
     SubviewType subviewType = selectedSubviewType();
@@ -260,7 +136,131 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->setFirstResponder(parentResponder());
     return true;
   }
-  return false;
+  if (event != Ion::Events::OK && event != Ion::Events::EXE) {
+    return false;
+  }
+  int focusRow = selectedRow();
+  HistoryViewCell *selectedCell =
+      (HistoryViewCell *)m_selectableTableView.selectedCell();
+  SubviewType subviewType = selectedSubviewType();
+  EditExpressionController *editController =
+      (EditExpressionController *)parentResponder();
+  if (subviewType == SubviewType::Input) {
+    m_selectableTableView.deselectTable();
+    editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
+  } else if (subviewType == SubviewType::Output) {
+    m_selectableTableView.deselectTable();
+    Shared::ExpiringPointer<Calculation> calculation =
+        calculationAtIndex(focusRow);
+    ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
+        selectedCell->outputView()->selectedSubviewPosition();
+    if (outputSubviewPosition ==
+            ScrollableTwoLayoutsView::SubviewPosition::Right &&
+        calculation->displayOutput(context) !=
+            Calculation::DisplayOutput::ExactOnly) {
+      editController->insertTextBody(calculation->approximateOutputText(
+          Calculation::NumberOfSignificantDigits::Maximal));
+    } else {
+      assert(calculation->displayOutput(context) !=
+             Calculation::DisplayOutput::ApproximateOnly);
+      editController->insertTextBody(calculation->exactOutputText());
+    }
+  } else {
+    assert(subviewType == SubviewType::Ellipsis);
+    /* Only function results can be chained (with integer or rational).
+     * TODO: Refactor to avoid writing an if for each parent * child. */
+    CircuitBreakerCheckpoint checkpoint(
+        Ion::CircuitBreaker::CheckpointType::Back);
+    ExpressionsListController *vc = nullptr;
+    if (CircuitBreakerRun(checkpoint)) {
+      Calculation::AdditionalInformations additionalInformations =
+          selectedCell->additionalInformations();
+      ExpiringPointer<Calculation> focusCalculation =
+          calculationAtIndex(focusRow);
+      assert(focusCalculation->displayOutput(context) !=
+             Calculation::DisplayOutput::ExactOnly);
+      Expression i = focusCalculation->input();
+      Expression a = focusCalculation->approximateOutput(
+          Calculation::NumberOfSignificantDigits::Maximal);
+      Expression e = focusCalculation->displayOutput(context) !=
+                             Calculation::DisplayOutput::ApproximateOnly
+                         ? focusCalculation->exactOutput()
+                         : a;
+      if (additionalInformations.complex || additionalInformations.unit ||
+          additionalInformations.vector || additionalInformations.matrix ||
+          additionalInformations.directTrigonometry ||
+          additionalInformations.inverseTrigonometry) {
+        // The main controllers have to be initialized before use
+        m_unionController.~UnionController();
+        vc = m_unionController.listController();
+        if (additionalInformations.complex) {
+          new (&m_unionController) ComplexListController(editController);
+        } else if (additionalInformations.unit) {
+          new (&m_unionController) UnitListController(editController);
+        } else if (additionalInformations.vector) {
+          new (&m_unionController) VectorListController(editController);
+        } else if (additionalInformations.matrix) {
+          new (&m_unionController) MatrixListController(editController);
+        } else if (additionalInformations.directTrigonometry ||
+                   additionalInformations.inverseTrigonometry) {
+          new (&m_unionController) TrigonometryListController(editController);
+          if (additionalInformations.directTrigonometry) {
+            // Find the angle
+            if (Trigonometry::isDirectTrigonometryFunction(e)) {
+              e = e.childAtIndex(0);
+            } else {
+              assert(Trigonometry::isDirectTrigonometryFunction(i));
+              e = i.childAtIndex(0);
+            }
+            /* The approximation of the new e is not yet computed and will be
+             * by the controller. */
+            a = Expression();
+          }
+        }
+      } else if (additionalInformations.integer) {
+        vc = &m_integerController;
+      } else if (additionalInformations.rational) {
+        if (isFractionInput(i)) {
+          e = i;
+        }
+        vc = &m_rationalController;
+      }
+      if (vc) {
+        vc->setExactAndApproximateExpression(e, a);
+      }
+      if (additionalInformations.function) {
+        assert(vc == nullptr || vc == &m_integerController ||
+               vc == &m_rationalController);
+        ChainableExpressionsListController *tail =
+            static_cast<ChainableExpressionsListController *>(vc);
+        m_unionController.~UnionController();
+        new (&m_unionController) FunctionListController(editController);
+        m_unionController.m_functionController.setTail(tail);
+        vc = m_unionController.listController();
+        vc->setExactAndApproximateExpression(i, a);
+      } else if (additionalInformations.scientificNotation) {
+        // TODO function and scientific ?
+        assert(vc == nullptr || vc == &m_integerController ||
+               vc == &m_rationalController);
+        ChainableExpressionsListController *tail =
+            static_cast<ChainableExpressionsListController *>(vc);
+        m_scientificNotationListController.setTail(tail);
+        vc = &m_scientificNotationListController;
+        vc->setExactAndApproximateExpression(e, a);
+      }
+      if (vc) {
+        assert(vc->numberOfRows() > 0);
+        Container::activeApp()->displayModalViewController(
+            vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
+            Metric::PopUpRightMargin);
+      }
+    } else {
+      if (vc) {
+        vc->tidy();
+      }
+    }
+  }
+  return true;
 }
 
 Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(

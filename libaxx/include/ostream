@@ -1,0 +1,45 @@
+#ifndef OSTREAM
+#define OSTREAM
+
+#include <ion/console.h>
+#include <poincare/print_int.h>
+
+namespace std {
+
+class ostream {
+ public:
+  template <typename T>
+  ostream& operator<<(const T& any) {
+    return *this;
+  }
+
+  ostream& operator<<(const char* str) {
+    Ion::Console::writeLine(str, false);
+    return *this;
+  }
+
+  ostream& operator<<(int i) {
+    constexpr char bufferSize = 32;
+    char buffer[bufferSize];
+    if (i < 0) {
+      Ion::Console::writeChar('-');
+    }
+    int p = Poincare::PrintInt::Left(i, buffer, bufferSize);
+    buffer[p] = 0;
+    Ion::Console::writeLine(buffer, false);
+    return *this;
+  }
+
+  ostream& operator<<(unsigned int i) { return *this << static_cast<int>(i); }
+  ostream& operator<<(unsigned short i) { return *this << static_cast<int>(i); }
+  ostream& operator<<(short i) { return *this << static_cast<int>(i); }
+  ostream& operator<<(unsigned char i) { return *this << static_cast<int>(i); }
+  ostream& operator<<(char i) { return *this << static_cast<int>(i); }
+};
+
+static ostream cout;
+static char endl = '\n';
+
+}  // namespace std
+
+#endif

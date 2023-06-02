@@ -338,6 +338,21 @@ ComplexCartesian ComplexCartesian::powerInteger(
   return result;
 }
 
+ComplexCartesian ComplexCartesian::add(
+    ComplexCartesian& other, const ReductionContext& reductionContext) {
+  Expression a = real();
+  Expression b = imag();
+  Expression c = other.real();
+  Expression d = other.imag();
+  /* (a+ib) + (c+id) = (a+c)+i*(b+d) */
+  Expression ac = Addition::Builder(a.clone(), c.clone());
+  Expression bd = Addition::Builder(b.clone(), d.clone());
+  ComplexCartesian result = ComplexCartesian::Builder(ac, bd);
+  ac.shallowReduce(reductionContext);
+  bd.shallowReduce(reductionContext);
+  return result.interruptComputationIfManyNodes();
+}
+
 ComplexCartesian ComplexCartesian::multiply(
     ComplexCartesian& other, const ReductionContext& reductionContext) {
   Expression a = real();

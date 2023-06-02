@@ -8,6 +8,43 @@ namespace Shared {
 
 namespace ExpressionDisplayPermissions {
 
+static bool neverDisplayExactExpressionOfApproximation(
+    Expression approximateOutput, Context* context) {
+  /* The angle units could display exact output but we want to avoid exact
+   * results that are not in radians like "(3/sqrt(2))°" because they are not
+   * relevant for the user.
+   * On the other hand, we'd like "cos(4°)" to be displayed as exact result.
+   * To do so, the approximateOutput is checked rather than the exactOutput,
+   * because the approximateOutput has a unit only if the degree unit is not
+   * in a trig function. */
+  return !approximateOutput.isUninitialized() && approximateOutput.hasUnit() &&
+         !approximateOutput.isInRadians(context);
+}
+
+static bool neverDisplayReductionOfInput(Expression input, Context* context) {
+  if (input.isUninitialized()) {
+    return false;
+  }
+  return input.recursivelyMatches(
+      [](const Expression e, Context* c) {
+        return e.isOfType({
+            ExpressionNode::Type::ConstantPhysics,
+            ExpressionNode::Type::Randint,
+            ExpressionNode::Type::RandintNoRepeat,
+            ExpressionNode::Type::Random,
+            ExpressionNode::Type::Round,
+            ExpressionNode::Type::FracPart,
+            ExpressionNode::Type::Integral,
+            ExpressionNode::Type::Product,
+            ExpressionNode::Type::Sum,
+            ExpressionNode::Type::Derivative,
+            ExpressionNode::Type::Sequence,
+            ExpressionNode::Type::DistributionDispatcher,
+        });
+      },
+      context);
+}
+
 static bool isPrimeFactorization(Expression expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
@@ -35,32 +72,7 @@ static bool exactExpressionIsForbidden(Expression exactOutput) {
            isPrimeFactorization(exactOutput));
 }
 
-static bool shouldNeverDisplayReductionOfInput(Expression input,
-                                               Context* context) {
-  if (input.isUninitialized()) {
-    return false;
-  }
-  return input.recursivelyMatches(
-      [](const Expression e, Context* c) {
-        return e.isOfType({
-            ExpressionNode::Type::ConstantPhysics,
-            ExpressionNode::Type::Randint,
-            ExpressionNode::Type::RandintNoRepeat,
-            ExpressionNode::Type::Random,
-            ExpressionNode::Type::Round,
-            ExpressionNode::Type::FracPart,
-            ExpressionNode::Type::Integral,
-            ExpressionNode::Type::Product,
-            ExpressionNode::Type::Sum,
-            ExpressionNode::Type::Derivative,
-            ExpressionNode::Type::Sequence,
-            ExpressionNode::Type::DistributionDispatcher,
-        });
-      },
-      context);
-}
-
-bool shouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
+bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
   if (exactOutput.isUninitialized()) {
     return false;
   }
@@ -92,17 +104,9 @@ bool shouldNeverDisplayExactOutput(Expression exactOutput, Context* context) {
 bool ShouldOnlyDisplayApproximation(Expression input, Expression exactOutput,
                                     Expression approximateOutput,
                                     Context* context) {
-  /* The angle units could display exact output but we want to avoid exact
-   * results that are not in radians like "(3/sqrt(2))°" because they are not
-   * relevant for the user.
-   * On the other hand, we'd like "cos(4°)" to be displayed as exact result.
-   * To do so, the approximateOutput is checked rather than the exactOutput,
-   * because the approximateOutput has a unit only if the degree unit is not
-   * in a trig function. */
-  return (!approximateOutput.isUninitialized() && approximateOutput.hasUnit() &&
-          !approximateOutput.isInRadians(context)) ||
-         shouldNeverDisplayExactOutput(exactOutput, context) ||
-         shouldNeverDisplayReductionOfInput(input, context);
+  return neverDisplayReductionOfInput(input, context) ||
+         neverDisplayExactOutput(exactOutput, context) ||
+         neverDisplayExactExpressionOfApproximation(approximateOutput, context);
 }
 
 }  // namespace ExpressionDisplayPermissions

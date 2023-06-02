@@ -111,7 +111,7 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
     if (!e.isUninitialized()) {
       return e;
     }
-    /* Do not use defaultShallowReduce since it calls shallowReduceUndfined
+    /* Do not use defaultShallowReduce since it calls shallowReduceUndefined
      * and a piecewiseOperator can be defined even with an undefined child. */
     e = SimplificationHelper::distributeReductionOverLists(*this,
                                                            reductionContext);
@@ -168,7 +168,7 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
   /* To derivate piecewise, we just need to derivate the expressions and keep
    * the same conditions except that the inferior equal and superior equal
    * should turn into strict inferior and superior.
-   * Indeed the derivative of piecewise(x,x>=0,-x) is x=0 is undef.
+   * Indeed the derivative of piecewise(x,x>=0,-x) in x=0 is undef.
    *
    * To do so, each condition is duplicated.
    * The first one is transformed to change inferior equal into inferior (same

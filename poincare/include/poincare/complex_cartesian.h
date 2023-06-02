@@ -90,6 +90,8 @@ class ComplexCartesian final : public Expression {
   ComplexCartesian squareRoot(const ReductionContext& reductionContext);
   ComplexCartesian powerInteger(int n,
                                 const ReductionContext& reductionContext);
+  ComplexCartesian add(ComplexCartesian& other,
+                       const ReductionContext& reductionContext);
   ComplexCartesian multiply(ComplexCartesian& other,
                             const ReductionContext& reductionContext);
   ComplexCartesian power(ComplexCartesian& other,

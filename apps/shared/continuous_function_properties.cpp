@@ -152,10 +152,13 @@ void ContinuousFunctionProperties::update(
     return;
   }
 
+  /* We do not care about reduced expression since it is never shown to the
+   * user. We do not care (neither have) an approximate expression. Indeed we
+   * only check display permissions for input expression.*/
   bool genericCaptionOnly =
-      !inputEquation.isUninitialized() &&
-      Shared::ExpressionDisplayPermissions::ShouldNeverDisplayReduction(
-          inputEquation, context);
+      Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+          inputEquation, Expression(), Expression(), context);
+
   setHideDetails(genericCaptionOnly);
 
   assert(!reducedEquation.isUninitialized());

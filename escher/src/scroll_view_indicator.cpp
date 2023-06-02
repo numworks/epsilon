@@ -67,8 +67,8 @@ ScrollViewArrow::ScrollViewArrow()
 bool ScrollViewArrow::update(bool visible) {
   if (m_visible != visible) {
     markWholeFrameAsDirty();
+    m_visible = visible;
   }
-  m_visible = visible;
   return visible;
 }
 

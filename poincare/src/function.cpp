@@ -110,11 +110,10 @@ bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
                                    Symbol::Builder(UCodePointUnknown));
   e = context->expressionForSymbolAbstract(static_cast<SymbolAbstract&>(e),
                                            false);
-  if (e.isUninitialized()) {
-    return false;
-  }
-  return e.involvesCircularity(context, maxDepth, visitedFunctions,
-                               numberOfVisitedFunctions);
+  return e.isUninitialized()
+             ? false
+             : e.involvesCircularity(context, maxDepth, visitedFunctions,
+                                     numberOfVisitedFunctions);
 }
 
 Expression FunctionNode::deepReplaceReplaceableSymbols(

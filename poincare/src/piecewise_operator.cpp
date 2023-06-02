@@ -309,6 +309,7 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
       dependencies.replaceChildAtIndexInPlace(k, piecewiseDependency);
     }
   }
+  // This code is copy/pasted from SimplificationHelper::bubbleUpDependencies.
   if (dependencies.numberOfChildren() > 0) {
     Expression e = shallowReduce(reductionContext);
     Expression d = Dependency::Builder(Undefined::Builder(), dependencies);

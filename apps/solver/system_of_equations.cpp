@@ -465,8 +465,8 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
 
   if (type != SolutionType::Approximate &&
       (approximateDuringReduction ||
-       !ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
-                                                                    context))) {
+       !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+           e, exact, approximate, context))) {
     assert(!exact.isUninitialized());
     exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }

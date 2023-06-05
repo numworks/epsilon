@@ -70,14 +70,16 @@ void KeyboardView::drawKey(int keyIndex, KDContext* ctx, KDRect rect) const {
 }
 
 KDColor KeyboardView::keyColor(Ion::Keyboard::Key key) const {
-  if (!m_keyboardModel.belongsToTestedKeysSubset(key)) {
-    return Escher::Palette::GrayBright;
-  }
-  if (m_keyboardModel.testedKey() == key) {
+  Ion::Keyboard::Key testedKey = m_keyboardModel.testedKey();
+  if (testedKey == key) {
     return KDColorBlue;
   }
-  return (uint8_t)key < (uint8_t)m_keyboardModel.testedKey() ? KDColorGreen
-                                                             : KDColorBlack;
+  int keyIndex = m_keyboardModel.indexInTestedKeys(key);
+  if (keyIndex < 0) {
+    return Escher::Palette::GrayBright;
+  }
+  return keyIndex < m_keyboardModel.indexInTestedKeys(testedKey) ? KDColorGreen
+                                                                 : KDColorBlack;
 }
 
 }  // namespace HardwareTest

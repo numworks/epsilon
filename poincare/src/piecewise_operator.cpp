@@ -173,7 +173,7 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
    * To do so, each condition is duplicated.
    * The first one is transformed to change inferior equal into inferior (same
    * for superior), and is matched with the derivative.
-   * The second one is transformed to change equal into inferior equal (same
+   * The second one is transformed to change inferior into inferior equal (same
    * for superior), and is matched with undef.
    * Since only the first true condition will be applied, if x is in the open
    * interval, the derivative is properly computed, if it's at bounds, it's

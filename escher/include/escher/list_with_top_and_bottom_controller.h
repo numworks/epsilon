@@ -90,7 +90,6 @@ class ListWithTopAndBottomController : public SelectableViewController,
       .horizontalAlignment = KDGlyph::k_alignCenter};
 
   void didBecomeFirstResponder() override;
-  void willExitResponderChain(Responder* nextFirstResponder) override;
   int innerRowFromRow(int row) const {
     assert(row >= m_outerDataSource.hasTopView());
     return row - m_outerDataSource.hasTopView();

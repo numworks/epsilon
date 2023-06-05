@@ -284,12 +284,12 @@ int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 
-void FunctionGraphController::tidyModels() {
+void FunctionGraphController::tidyModels(char *treePoolCursor) {
   int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {
     ExpiringPointer<Function> f =
         functionStore()->modelForRecord(recordAtCurveIndex(i));
-    f->tidyDownstreamPoolFrom();
+    f->tidyDownstreamPoolFrom(treePoolCursor);
   }
 }
 

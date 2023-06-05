@@ -49,7 +49,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
   Poincare::Range2D optimalRange(
       bool computeX, bool computeY,
       Poincare::Range2D originalRange) const override;
-  void tidyModels() override {}
+  void tidyModels(char *treePoolCursor) override {}
 
   void selectRegressionCurve() { *m_selectedDotIndex = -1; }
   int selectedSeriesIndex() const {

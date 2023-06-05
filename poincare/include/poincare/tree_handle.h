@@ -70,10 +70,9 @@ class TreeHandle {
   bool isUninitialized() const {
     return m_identifier == TreeNode::NoNodeIdentifier;
   }
-  bool isDownstreamOf(char* treePoolCursor) {
+  bool isDownstreamOf(TreeNode* treePoolCursor) {
     return !isUninitialized() &&
-           (node() == nullptr ||
-            reinterpret_cast<char*>(node()) >= treePoolCursor);
+           (node() == nullptr || node() >= treePoolCursor);
   }
 
   /* Hierarchy */
@@ -190,9 +189,7 @@ class TreeHandle {
 
    private:
     static Node* NodePointerInPool(Node* node) {
-      return reinterpret_cast<char*>(node) < TreePool::sharedPool->cursor()
-                 ? node
-                 : nullptr;
+      return node < TreePool::sharedPool->cursor() ? node : nullptr;
     }
 
     Handle m_handle;

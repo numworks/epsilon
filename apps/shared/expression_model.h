@@ -29,7 +29,8 @@ class ExpressionModel {
   Ion::Storage::Record::ErrorStatus setExpressionContent(
       Ion::Storage::Record* record, const Poincare::Expression& newExpression);
 
-  virtual void tidyDownstreamPoolFrom(char* treePoolCursor = nullptr) const;
+  virtual void tidyDownstreamPoolFrom(
+      Poincare::TreeNode* treePoolCursor = nullptr) const;
 
   Poincare::Preferences::ComplexFormat complexFormat(
       const Ion::Storage::Record* record, Poincare::Context* context) const;

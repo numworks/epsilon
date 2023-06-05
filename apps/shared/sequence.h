@@ -86,7 +86,8 @@ class Sequence : public Function {
       const char *c, Poincare::Context *context) {
     return m_secondInitialCondition.setContent(this, c, context);
   }
-  void tidyDownstreamPoolFrom(char *treePoolCursor = nullptr) const override;
+  void tidyDownstreamPoolFrom(
+      Poincare::TreeNode *treePoolCursor = nullptr) const override;
 
   // Sequence properties
   int numberOfElements() { return order() + 1; }
@@ -196,8 +197,9 @@ class Sequence : public Function {
    public:
     using ExpressionModel::ExpressionModel;
     Poincare::Layout name(Sequence *sequence);
-    void tidyDownstreamPoolFrom(char *treePoolCursor) const override;
-    void tidyName(char *treePoolCursor = nullptr) const;
+    void tidyDownstreamPoolFrom(
+        Poincare::TreeNode *treePoolCursor) const override;
+    void tidyName(Poincare::TreeNode *treePoolCursor = nullptr) const;
 
    protected:
     virtual void buildName(Sequence *sequence) = 0;

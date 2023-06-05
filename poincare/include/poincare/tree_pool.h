@@ -40,7 +40,7 @@ class TreePool final {
 
   TreePool() : m_cursor(buffer()) {}
 
-  char *cursor() const { return m_cursor; }
+  TreeNode *cursor() const { return reinterpret_cast<TreeNode *>(m_cursor); }
 
   // Node
   TreeNode *node(uint16_t identifier) const {

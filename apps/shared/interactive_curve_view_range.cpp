@@ -361,8 +361,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
           }
         }
       } else {
-        m_delegate->tidyModels(
-            reinterpret_cast<char*>(checkpoint.endOfPoolBeforeCheckpoint()));
+        m_delegate->tidyModels(checkpoint.endOfPoolBeforeCheckpoint());
         newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
       }
     }

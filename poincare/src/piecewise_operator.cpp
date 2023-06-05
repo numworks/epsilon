@@ -1,3 +1,4 @@
+#include <poincare/addition.h>
 #include <poincare/boolean.h>
 #include <poincare/comparison.h>
 #include <poincare/dependency.h>
@@ -250,47 +251,41 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
    * Example:
    *
    * piecewise(
-   *   dep(3,{1/x,tan(x)} , x>a,
-   *   dep(4,{sqrt(x)})   , x>b,
+   *   2                  , x>a,
+   *   dep(3,{1/x,tan(x)} , x>b,
+   *   dep(4,{sqrt(x)})   , x>c,
    *   dep(5,{ln(x)})       otherwise)
    *
    * becomes
    *
    * dep(
    * piecewise(
-   *   3 , x>a,
-   *   4 , x>b,
+   *   2 , x>a,
+   *   3 , x>b,
+   *   4 , x>c,
    *   5 , otherwise),
    * {
    *   piecewise(
-   *     1/x , x>a,
-   *     0   , x>b,
-   *     0     otherwise),
-   *   piecewise(
-   *     tan(x) , x>a,
-   *     0      , x>b,
-   *     0        otherwise),
-   *   piecewise(
-   *     0       , x>a,
-   *     sqrt(x) , x>b,
-   *     0         otherwise),
-   *   piecewise(
-   *     0    , x>a,
-   *     0    , x>b,
-   *     ln(x)  otherwise)
+   *     0            , x>a,
+   *     1/x + tan(x) , x>b,
+   *     sqrt(x)      , x>c,
+   *     ln(x)          otherwise)
    * })
    *
    * TODO:
-   * The best would be to turn it into:
+   * Adding 1/x and tan(x) here is a hack to make sure the expression is undef
+   * if one of these is undef. The best would be to turn it into:
    * dep(
    * piecewise(
-   *   3 , x>a,
-   *   4 , x>b,
+   *   2 , x>a,
+   *   3 , x>b,
+   *   4 , x>c,
    *   5 , otherwise),
    * {
    *   piecewise(
-   *     [1/x, tan(x)] , x>a,
-   *     [sqrt(x)]     , x>b,
+   *     [ ]           , x>a,
+   *     [1/x, tan(x)] , x>b,
+   *     [sqrt(x)]     , x>c,
    *     [ln(x)]         otherwise)
    * })
    * but for now a matrix is NOT undef if one of its children is undef. This
@@ -298,10 +293,9 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
    * */
   int nChildren = numberOfChildren();
   // Create a piecewise with same conditions but filled with 0.
-  Expression genericPiecewiseDependency = clone();
+  Expression piecewiseDependency = clone();
   for (int i = 0; i < nChildren; i += 2) {
-    genericPiecewiseDependency.replaceChildAtIndexInPlace(i,
-                                                          Rational::Builder(0));
+    piecewiseDependency.replaceChildAtIndexInPlace(i, Rational::Builder(0));
   }
 
   List dependencies = List::Builder();
@@ -315,17 +309,24 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     if (newNDependencies == currentNDependencies) {
       continue;
     }
-    for (int k = currentNDependencies; k < newNDependencies; k++) {
-      /* Clone the piecewise containing 0 and replace the expression at index i
-       * with the dependency expression. */
-      Expression piecewiseDependency = genericPiecewiseDependency.clone();
-      piecewiseDependency.replaceChildAtIndexInPlace(
-          i, dependencies.childAtIndex(k));
-      dependencies.replaceChildAtIndexInPlace(k, piecewiseDependency);
+    Expression dependencyExpression;
+    if (newNDependencies == currentNDependencies + 1) {
+      dependencyExpression = dependencies.childAtIndex(newNDependencies - 1);
+    } else {
+      Addition a = Addition::Builder();
+      for (int k = currentNDependencies; k < newNDependencies; k++) {
+        a.addChildAtIndexInPlace(dependencies.childAtIndex(k),
+                                 a.numberOfChildren(), a.numberOfChildren());
+      }
+      dependencyExpression = a;
     }
+    piecewiseDependency.replaceChildAtIndexInPlace(i, dependencyExpression);
   }
-  // This code is copy/pasted from SimplificationHelper::bubbleUpDependencies.
+  /* This code is partly copy/pasted from
+   * SimplificationHelper::bubbleUpDependencies. */
   if (dependencies.numberOfChildren() > 0) {
+    dependencies = List::Builder();
+    dependencies.addChildAtIndexInPlace(piecewiseDependency, 0, 0);
     Expression e = shallowReduce(reductionContext);
     Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
     e.replaceWithInPlace(d);

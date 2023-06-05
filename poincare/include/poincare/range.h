@@ -18,7 +18,7 @@ class Range1D {
   constexpr static float k_defaultHalfLength = 10.f;
 
   static float DefaultLengthAt(float t) {
-    return std::max(std::pow(10.f, IEEE754<float>::exponentBase10(t) - 1.f),
+    return std::max(std::pow(10.f, IEEE754<float>::exponentBase10(t) - 2.f),
                     k_minLength + Float<float>::EpsilonLax());
   }
   /* Given any two numbers, RangeBetween will return a range with bounds no

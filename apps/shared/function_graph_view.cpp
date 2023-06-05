@@ -43,8 +43,10 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       drawRecord(record, index, ctx, rect, firstDrawnRecord);
     } else {
       setFunctionInterrupted(index);
-      tidyModel(index);
-      m_context->tidyDownstreamPoolFrom();
+      tidyModel(index, reinterpret_cast<char*>(
+                           checkpoint.endOfPoolBeforeCheckpoint()));
+      m_context->tidyDownstreamPoolFrom(
+          reinterpret_cast<char*>(checkpoint.endOfPoolBeforeCheckpoint()));
     }
     firstDrawnRecord = false;
   }

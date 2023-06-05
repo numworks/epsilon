@@ -22,9 +22,9 @@ class GraphView : public Shared::FunctionGraphView {
   int nextDotIndex(Shared::Sequence* sequence, int currentIndex,
                    OMG::HorizontalDirection direction = OMG::Direction::Right(),
                    int scrollSpeed = 1) const;
-  void tidyModel(int i) const override {
+  void tidyModel(int i, char* treePoolCursor) const override {
     m_sequenceStore->modelForRecord(m_sequenceStore->activeRecordAtIndex(i))
-        ->tidyDownstreamPoolFrom();
+        ->tidyDownstreamPoolFrom(treePoolCursor);
   }
   int selectedRecordIndex() const override {
     return m_sequenceStore->indexOfRecordAmongActiveRecords(m_selectedRecord);

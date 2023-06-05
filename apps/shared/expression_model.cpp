@@ -220,12 +220,12 @@ void ExpressionModel::updateNewDataWithExpression(
 void ExpressionModel::tidyDownstreamPoolFrom(char* treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expression.isDownstreamOf(treePoolCursor)) {
-    assert(treePoolCursor == nullptr || m_layout.isUninitialized() ||
-           m_layout.isDownstreamOf(treePoolCursor));
-    m_layout = Layout();
     m_expression = Expression();
     m_circular = -1;
     m_expressionComplexFormat = MemoizedComplexFormat::NotMemoized;
+  }
+  if (treePoolCursor == nullptr || m_layout.isDownstreamOf(treePoolCursor)) {
+    m_layout = Layout();
   }
 }
 

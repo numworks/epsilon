@@ -14,7 +14,7 @@ class KeyboardModel {
     assert(i >= 0 && i <= NumberOfTestedKeys);
     m_testedKeyIndex = i;
   }
-  bool belongsToTestedKeysSubset(Ion::Keyboard::Key key) const;
+  int indexInTestedKeys(Ion::Keyboard::Key key) const;
 
   constexpr static int NumberOfTestedKeys = 19;
   constexpr static Ion::Keyboard::Key

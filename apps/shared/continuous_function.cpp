@@ -931,10 +931,11 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     TreeNode *treePoolCursor) const {
   if (treePoolCursor == nullptr ||
-      m_expressionDerivate.isDownstreamOf(treePoolCursor) ||
-      m_expressionApproximated.isDownstreamOf(treePoolCursor)) {
-    resetProperties();
+      m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
     m_expressionDerivate = Expression();
+  }
+  if (treePoolCursor == nullptr ||
+      m_expressionApproximated.isDownstreamOf(treePoolCursor)) {
     m_expressionApproximated = Expression();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);

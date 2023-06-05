@@ -226,7 +226,8 @@ void ListController::resolveEquations() {
       }
     }
   } else {
-    modelStore()->tidyDownstreamPoolFrom();
+    modelStore()->tidyDownstreamPoolFrom(
+        checkpoint.endOfPoolBeforeCheckpoint());
     App::app()->system()->tidy();
   }
 }

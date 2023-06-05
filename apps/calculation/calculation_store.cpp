@@ -165,7 +165,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
       }
     } else {
-      context->tidyDownstreamPoolFrom();
+      context->tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
       return nullptr;
     }
   }

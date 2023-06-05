@@ -44,9 +44,7 @@ void Range1D::stretchIfTooSmall(float shift, float limit) {
   /* Handle cases where limits are too close or equal.
    * They are both shifted by shift. */
   if (length() < k_minLength) {
-    if (shift < 0) {
-      shift = DefaultLengthAt(m_min) / 2.0f;
-    }
+    shift = std::max(shift, DefaultLengthAt(m_min) / 2.0f);
     stretchEachBoundBy(shift, limit);
   }
   assert(std::isnan(length()) || length() >= k_minLength);

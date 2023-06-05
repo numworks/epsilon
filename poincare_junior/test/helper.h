@@ -65,8 +65,8 @@ inline void assert_node_equals_blocks(const Node node,
 }
 
 inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
-  quiz_assert(tree0.isUninitialized() == tree1.isUninitialized() &&
-              Comparison::AreEqual(tree0, tree1));
+  quiz_assert(tree0.isUninitialized() == tree1.isUninitialized());
+  quiz_assert(Comparison::AreEqual(tree0, tree1));
 }
 
 using FunctionSize = size_t (Pool::*)() const;

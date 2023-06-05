@@ -176,15 +176,13 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
               m_computedStart);
         }
       } else {
-        tidyDownstreamPoolFrom(
-            reinterpret_cast<char *>(checkpoint.endOfPoolBeforeCheckpoint()));
+        tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
         return false;
       }
     } else {
       // TODO : Notify the user that the pool is full
       m_interestingPointsOverflowPool = true;
-      tidyDownstreamPoolFrom(
-          reinterpret_cast<char *>(ecp.endOfPoolBeforeCheckpoint()));
+      tidyDownstreamPoolFrom(ecp.endOfPoolBeforeCheckpoint());
       return false;
     }
   }
@@ -311,7 +309,8 @@ void PointsOfInterestCache::append(double x, double y,
   m_list.append(x, y, data, interest, f->isAlongY(), subCurveIndex);
 }
 
-void PointsOfInterestCache::tidyDownstreamPoolFrom(char *treePoolCursor) const {
+void PointsOfInterestCache::tidyDownstreamPoolFrom(
+    TreeNode *treePoolCursor) const {
   ContinuousFunctionStore *store = App::app()->functionStore();
   int n = store->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {

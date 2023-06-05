@@ -1443,7 +1443,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
 #else
   Expression e;
   {
-    char *treePoolCursor = TreePool::sharedPool->cursor();
+    TreeNode *treePoolCursor = TreePool::sharedPool->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       Expression reduced = clone().deepReduce(*reductionContext);

@@ -87,7 +87,7 @@ class SequenceContext : public Poincare::ContextWithParent {
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
 
-  void tidyDownstreamPoolFrom(char* treePoolCursor) override;
+  void tidyDownstreamPoolFrom(Poincare::TreeNode* treePoolCursor) override;
 
   template <typename T>
   int rank(int sequenceIndex, bool intermediateComputation) {

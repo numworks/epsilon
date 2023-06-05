@@ -83,7 +83,7 @@ class SystemOfEquations {
   }
   bool hasMoreSolutions() const { return m_hasMoreSolutions; }
 
-  void tidy(char* treePoolCursor = nullptr);
+  void tidy(Poincare::TreeNode* treePoolCursor = nullptr);
 
  private:
   constexpr static char k_parameterPrefix = 't';

@@ -284,7 +284,7 @@ int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 
-void FunctionGraphController::tidyModels(char *treePoolCursor) {
+void FunctionGraphController::tidyModels(Poincare::TreeNode *treePoolCursor) {
   int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {
     ExpiringPointer<Function> f =

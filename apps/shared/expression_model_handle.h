@@ -33,7 +33,8 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
   /* tidyDownstreamPoolFrom tidy the model if its members are located downstream
    * in Poincare pool of the node given as arguments. */
-  virtual void tidyDownstreamPoolFrom(char *treePoolCursor = nullptr) const {
+  virtual void tidyDownstreamPoolFrom(
+      Poincare::TreeNode *treePoolCursor = nullptr) const {
     model()->tidyDownstreamPoolFrom(treePoolCursor);
   }
   virtual Ion::Storage::Record::ErrorStatus setContent(

@@ -48,6 +48,8 @@ class TableView : public ScrollView {
   void hideScrollBars() { m_decorator.setVisibility(false); }
   BarDecorator *decorator() override { return &m_decorator; }
 
+  void resetDataSourceMemoization() { dataSource()->resetMemoization(); }
+
  protected:
 #if ESCHER_VIEW_LOGGING
   const char *className() const override { return "TableView"; }

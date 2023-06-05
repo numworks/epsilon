@@ -447,10 +447,7 @@ static Range1D sanitationHelper(Range1D range, float defaultHalfLength,
   if (!range.isValid()) {
     range = Range1D(0.f, 0.f, limit);
   }
-  if (range.length() < Range1D::k_minLength) {
-    float c = range.min();
-    range = Range1D(c - defaultHalfLength, c + defaultHalfLength, limit);
-  }
+  range.stretchIfTooSmall(defaultHalfLength, limit);
   return range;
 }
 

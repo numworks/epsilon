@@ -167,11 +167,15 @@ QUIZ_CASE(graph_function_properties) {
 
     // === Cartesian equations ===
 
-    assert_check_function_properties(
-        "y=log(x)", FunctionProperties{
-                        .m_caption = I18n::Message::EquationType,
-                        .m_curveParameterType = ContinuousFunctionProperties::
-                            CurveParameterType::CartesianFunction});
+    constexpr static FunctionProperties k_cartesianEquationProperties =
+        FunctionProperties{.m_caption = I18n::Message::EquationType,
+                           .m_curveParameterType =
+                               ContinuousFunctionProperties::
+                                   CurveParameterType::CartesianFunction};
+
+    assert_check_function_properties("y=log(x)", k_cartesianEquationProperties);
+    assert_check_function_properties("y=piecewise(x,x>0,undef,x<-2,3)",
+                                     k_cartesianEquationProperties);
 
     constexpr static FunctionProperties k_bannedProperties = FunctionProperties{
         .m_status = ContinuousFunctionProperties::Status::Banned,
@@ -332,10 +336,7 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties(
         "y=x^2",
         noImplicitPlot
-            ? FunctionProperties{.m_caption = I18n::Message::EquationType,
-                                 .m_curveParameterType =
-                                     ContinuousFunctionProperties::
-                                         CurveParameterType::CartesianFunction}
+            ? k_cartesianEquationProperties
             : FunctionProperties{
                   .m_caption = I18n::Message::ParabolaType,
                   .m_curveParameterType = ContinuousFunctionProperties::
@@ -667,6 +668,8 @@ QUIZ_CASE(graph_function_properties) {
                       Poincare::ComparisonNode::OperatorType::Superior});
 
     assert_check_function_properties("x*y^2=x", k_unhandledCartesian);
+    assert_check_function_properties("y=piecewise(3y,x<2,x)",
+                                     k_unhandledCartesian);
 
     // === Updated complex format ===
 
@@ -680,12 +683,8 @@ QUIZ_CASE(graph_function_properties) {
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
-    assert_check_function_properties(
-        "y=im(i*x+1)",
-        FunctionProperties{.m_caption = I18n::Message::EquationType,
-                           .m_curveParameterType =
-                               ContinuousFunctionProperties::
-                                   CurveParameterType::CartesianFunction});
+    assert_check_function_properties("y=im(i*x+1)",
+                                     k_cartesianEquationProperties);
 
     Poincare::Preferences::sharedPreferences->setComplexFormat(
         Preferences::ComplexFormat::Real);
@@ -697,12 +696,8 @@ QUIZ_CASE(graph_function_properties) {
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
-    assert_check_function_properties(
-        "y=im(i*x+1)",
-        FunctionProperties{.m_caption = I18n::Message::EquationType,
-                           .m_curveParameterType =
-                               ContinuousFunctionProperties::
-                                   CurveParameterType::CartesianFunction});
+    assert_check_function_properties("y=im(i*x+1)",
+                                     k_cartesianEquationProperties);
     // Restore preferences
     Poincare::Preferences::sharedPreferences->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);

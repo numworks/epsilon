@@ -23,6 +23,7 @@
 #include <poincare/integral.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/multiplication.h>
+#include <poincare/nonreal.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/percent.h>
@@ -565,7 +566,7 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("(x^2+2)^(3)", 6);
   assert_reduced_expression_polynomial_degree("2-x-x^3", 3);
   assert_reduced_expression_polynomial_degree("π×x", 1);
-  assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
+  assert_reduced_expression_polynomial_degree("√(-1)×x", 0, "x", Real);
 
   // f: y→y^2+πy+1
   assert_reduce_and_store("1+π×y+y^2→f(y)");
@@ -578,7 +579,7 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   // a : undef and f : y→ay+πy+1
   assert_reduce_and_store("undef→a");
   assert_reduce_and_store("1+π×y+y×a→f(y)");
-  assert_reduced_expression_polynomial_degree("f(x)", -1);  // a is undefined
+  assert_reduced_expression_polynomial_degree("f(x)", 0);  // a is undefined
   // With a = 1
   assert_reduce_and_store("1→a");
   assert_reduced_expression_polynomial_degree("f(x)", 1);
@@ -762,7 +763,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   const char* coefficient5[] = {"0", "i", 0};  // √(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        coefficient5);
-  const char* coefficient6[] = {0};  // √(-1)x
+  const char* coefficient6[] = {Nonreal::Name(), 0};  // √(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        coefficient6, Real);
 

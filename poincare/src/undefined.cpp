@@ -14,7 +14,7 @@ namespace Poincare {
 
 int UndefinedNode::polynomialDegree(Context* context,
                                     const char* symbolName) const {
-  return -1;
+  return 0;
 }
 
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,

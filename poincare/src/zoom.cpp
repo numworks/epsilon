@@ -442,8 +442,11 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   return p->f1(pb.x(), p->model1, p->context);
 }
 
-static Range1D sanitationHelper(Range1D range, float defaultHalfLength,
-                                float limit) {
+static Range1D sanitation1DHelper(Range1D range, Range1D forcedRange,
+                                  float defaultHalfLength, float limit) {
+  if (forcedRange.isValid()) {
+    return forcedRange;
+  }
   if (!range.isValid()) {
     range = Range1D(0.f, 0.f, limit);
   }
@@ -452,15 +455,11 @@ static Range1D sanitationHelper(Range1D range, float defaultHalfLength,
 }
 
 Range2D Zoom::sanitize2DHelper(Range2D range) const {
-  Range1D xRange =
-      m_forcedRange.x()->isValid()
-          ? *m_forcedRange.x()
-          : sanitationHelper(*range.x(), m_defaultHalfLength, m_maxFloat);
+  Range1D xRange = sanitation1DHelper(*range.x(), *m_forcedRange.x(),
+                                      m_defaultHalfLength, m_maxFloat);
   Range1D yRange =
-      m_forcedRange.y()->isValid()
-          ? *m_forcedRange.y()
-          : sanitationHelper(*range.y(), xRange.length() * 0.5f * m_normalRatio,
-                             m_maxFloat);
+      sanitation1DHelper(*range.y(), *m_forcedRange.y(),
+                         xRange.length() * 0.5f * m_normalRatio, m_maxFloat);
   return Range2D(xRange, yRange);
 }
 

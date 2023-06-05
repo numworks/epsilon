@@ -51,6 +51,7 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   Range2D result;
   Range2D pretty =
       beautify ? prettyRange(forceNormalization) : sanitizedRange();
+  assert(pretty.x()->isValid() && pretty.y()->isValid());
   result.x()->setMin(pretty.xMin(), m_maxFloat);
   result.x()->setMax(pretty.xMax(), m_maxFloat);
   result.y()->setMin(pretty.yMin(), m_maxFloat);

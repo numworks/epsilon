@@ -310,16 +310,19 @@ void PythonTextArea::ContentView::drawLine(KDContext *ctx, int line,
       }
       tokenLength = TokenLength(lex, tokenFrom);
       tokenEnd = tokenFrom + tokenLength;
-      UTF8Decoder decoder(text, tokenEnd);
+
       bool skipCombining = false;
-      while (decoder.nextCodePoint().isCombining()) {
-        /* If combined different =/ ends up in a python buffer, the lexer will
-         * take the = equal sign and leave the combining / alone. In this case
-         * we manually extend the token to include the / part and skip the next
-         * token. */
-        tokenEnd = decoder.stringPosition();
-        tokenLength = tokenEnd - tokenFrom;
-        skipCombining = true;
+      if (*(tokenEnd - 1) != 0) {
+        UTF8Decoder decoder(text, tokenEnd);
+        while (decoder.nextCodePoint().isCombining()) {
+          /* If combined different =/ ends up in a python buffer, the lexer will
+           * take the = equal sign and leave the combining / alone. In this case
+           * we manually extend the token to include the / part and skip the
+           * next token. */
+          tokenEnd = decoder.stringPosition();
+          tokenLength = tokenEnd - tokenFrom;
+          skipCombining = true;
+        }
       }
 
       // If the token is being autocompleted, use DefaultColor

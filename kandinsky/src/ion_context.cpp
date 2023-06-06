@@ -29,7 +29,7 @@ void KDIonContext::Putchar(char c) {
   if (s_cursor.y() > Ion::Display::Height - 2 * KDFont::GlyphHeight(font)) {
     Clear(KDPoint(s_cursor.x(), 0));
   }
-  s_cursor = SharedContext->drawStringUnsafe(text, s_cursor, style);
+  s_cursor = SharedContext->drawString(text, s_cursor, style);
 }
 
 void KDIonContext::Clear(KDPoint newCursorPosition) {

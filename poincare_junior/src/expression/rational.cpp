@@ -71,7 +71,7 @@ IntegerHandler Rational::Denominator(const Node node) {
     case BlockType::Half:
       return IntegerHandler(2);
     case BlockType::RationalShort: {
-      uint8_t value = static_cast<uint8_t>(*(node.block()->next()));
+      uint8_t value = static_cast<uint8_t>(*(node.block()->nextNth(2)));
       return IntegerHandler(value);
     }
     case BlockType::RationalPosBig:

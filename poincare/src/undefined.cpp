@@ -14,6 +14,9 @@ namespace Poincare {
 
 int UndefinedNode::polynomialDegree(Context* context,
                                     const char* symbolName) const {
+  /* Previously the return value was -1, but it was causing problems in the
+  ¨* equations of type `y = piecewise(x,x>0,undefined,x<=0)` since the computed
+   * yDeg here was -1 instead of 0. */
   return 0;
 }
 

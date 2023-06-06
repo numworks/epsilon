@@ -71,12 +71,10 @@ int ExamModeController::numberOfRows() const {
   // Activation button(s)
   switch (availableExamModes) {
     case CountryPreferences::AvailableExamModes::StandardOnly:
+    case CountryPreferences::AvailableExamModes::DutchOnly:
     case CountryPreferences::AvailableExamModes::PortugueseOnly:
     case CountryPreferences::AvailableExamModes::EnglishOnly:
       return 1;
-    case CountryPreferences::AvailableExamModes::StandardAndDutch:
-      // Standard and Dutch
-      return 2;
     case CountryPreferences::AvailableExamModes::AmericanAll:
       // STAAR, Keystone and IB
       return 3;
@@ -126,6 +124,9 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
   CountryPreferences::AvailableExamModes availableExamModes =
       GlobalPreferences::sharedGlobalPreferences->availableExamModes();
   switch (availableExamModes) {
+    case CountryPreferences::AvailableExamModes::DutchOnly:
+      assert(index == 0);
+      return ExamMode::Ruleset::Dutch;
     case CountryPreferences::AvailableExamModes::PortugueseOnly:
       assert(index == 0);
       return ExamMode::Ruleset::Portuguese;
@@ -138,8 +139,6 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
     default:
       assert(availableExamModes ==
                  CountryPreferences::AvailableExamModes::StandardOnly ||
-             availableExamModes ==
-                 CountryPreferences::AvailableExamModes::StandardAndDutch ||
              availableExamModes ==
                  CountryPreferences::AvailableExamModes::AmericanAll ||
              availableExamModes == CountryPreferences::AvailableExamModes::All);

@@ -5,6 +5,12 @@
 #include <ion/unicode/utf8_helper.h>
 #include <apps/apps_container.h>
 
+#if defined _FXCG || defined NSPIRE_NEWLIB
+extern "C" int calculator;
+extern "C" const int prizm_heap_size;
+extern "C" char prizm_heap[];
+#endif
+
 namespace Code {
 
 I18n::Message App::Descriptor::name() {
@@ -150,7 +156,17 @@ bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::E
 
 void App::initPythonWithUser(const void * pythonUser) {
   if (!m_pythonUser) {
-    MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+#if defined _FXCG || defined NSPIRE_NEWLIB
+    if (calculator == 1) { // fxcg50
+      MicroPython::init( (void *) 0x8c200000, (void *)(0x8c200000+ 0x2e0000));
+    } else if (calculator >= 1 && calculator <=4 ) {
+      MicroPython::init( prizm_heap, prizm_heap+prizm_heap_size);
+    } else {
+#endif
+      MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+#if defined _FXCG || defined NSPIRE_NEWLIB
+    }
+#endif
   }
   m_pythonUser = pythonUser;
 }

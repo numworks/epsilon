@@ -38,10 +38,42 @@ Expression Expression::Parse(char const * string, Context * context, bool addPar
   return expression;
 }
 
-Expression Expression::ExpressionFromAddress(const void * address, size_t size) {
+  Expression Expression::ExpressionFromAddress(const void * address, size_t size, const void * record) {
   if (address == nullptr || size == 0) {
     return Expression();
   }
+#ifdef STRING_STORAGE
+  // Check that expression was stored as a string in record
+  size_t i;
+  const char * ptr=(const char *) address;
+  for (i=1;i<size && ptr[i];++i){
+    if (ptr[i]=='"')
+      break;
+  }
+  if (i < 1024 && ptr[0]=='"' && i > 0 && i < size && ptr[i] == '"') {
+    ((char *)ptr)[i] = 0;
+    Expression e = Expression::Parse(ptr + 1, nullptr);
+    ((char *)ptr)[i] = '"';
+    address = e.addressInPool();
+    size = e.size();
+    if (record) {
+      const char * name = ((const Ion::Storage::Record *)record)->fullName();
+      char repl = 0;
+      int l = strlen(name);
+      if (strncmp(name+l-4,".seq",4) == 0) {
+        repl='n';
+      } else if (strncmp(name+l-5,".func",5) == 0) {
+        repl='x';
+      }
+      if (repl){
+        e=e.replaceSymbolWithExpression(Symbol::Builder(repl),Symbol::Builder(UCodePointUnknown));
+        address= e.addressInPool();
+        size=e.size();
+      }
+    }
+    return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));    // must be done before e is destroyed
+  }
+#endif
   // Build the Expression in the Tree Pool
   return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
 }

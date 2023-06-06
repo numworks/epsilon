@@ -22,8 +22,11 @@ public:
   static constexpr char expExtension[] = "exp";
   static constexpr char funcExtension[] = "func";
   static constexpr char seqExtension[] = "seq";
-
+#ifdef _FXCG
+  constexpr static size_t k_storageSize = 65500;
+#else
   constexpr static size_t k_storageSize = 60000;
+#endif
   static_assert(UINT16_MAX >= k_storageSize, "record_size_t not big enough");
 
   constexpr static char k_dotChar = '.';
@@ -195,7 +198,7 @@ public:
 class StorageHelper {
 public:
   static uint16_t unalignedShort(char * address) {
-#if (defined __EMSCRIPTEN__) || (defined _FXCG)
+#if (defined __EMSCRIPTEN__) || (defined _FXCG) || defined NSPIRE_NEWLIB
     uint8_t f1 = *(address);
     uint8_t f2 = *(address+1);
     uint16_t f = (uint16_t)f1 + (((uint16_t)f2)<<8);
@@ -205,7 +208,7 @@ public:
 #endif
   }
   static void writeUnalignedShort(uint16_t value, char * address) {
-#if (defined __EMSCRIPTEN__) || (defined _FXCG)
+#if (defined __EMSCRIPTEN__) || (defined _FXCG) || defined NSPIRE_NEWLIB
     *((uint8_t *)address) = (uint8_t)(value & ((1 << 8) - 1));
     *((uint8_t *)address+1) = (uint8_t)(value >> 8);
 #else

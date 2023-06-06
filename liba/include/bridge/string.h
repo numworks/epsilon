@@ -7,9 +7,10 @@
 
 LIBA_BEGIN_DECLS
 
-#if (__GLIBC__ || __MINGW32__ || _FXCG)
+#if (__GLIBC__ || __MINGW32__ || _FXCG || NSPIRE_NEWLIB)
 size_t strlcat(char * dst, const char * src, size_t dstSize);
 size_t strlcpy(char * dst, const char * src, size_t len);
+char *strdup(const char *s);
 #endif
 
 LIBA_END_DECLS

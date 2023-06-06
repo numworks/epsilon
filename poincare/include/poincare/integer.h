@@ -21,7 +21,7 @@ class LayoutNode;
 class Integer;
 struct IntegerDivision;
 
-#if (defined _3DS) || (defined _FXCG)
+#if (defined _3DS) || (defined _FXCG) || defined NSPIRE_NEWLIB
 typedef unsigned short half_native_uint_t;
 static_assert(sizeof(half_native_uint_t) == sizeof(uint16_t));
 typedef int native_int_t;

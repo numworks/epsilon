@@ -135,7 +135,7 @@ public:
   Expression() : TreeHandle() {}
   Expression clone() const;
   static Expression Parse(char const * string, Context * context, bool addMissingParenthesis = true);
-  static Expression ExpressionFromAddress(const void * address, size_t size);
+  static Expression ExpressionFromAddress(const void * address, size_t size, const void * record=nullptr);
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();

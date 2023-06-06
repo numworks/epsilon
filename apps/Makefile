@@ -50,6 +50,7 @@ apps_src += $(addprefix apps/,\
   exam_mode_configuration_official.cpp:+official \
   exam_mode_configuration_non_official.cpp:-official \
   global_preferences.cpp \
+  host_filemanager.cpp \
   i18n.py \
   lock_view.cpp \
   main.cpp \

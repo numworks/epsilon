@@ -7,6 +7,39 @@
 #include "../exam_mode_configuration.h"
 #include <assert.h>
 
+#if defined _FXCG || defined NSPIRE_NEWLIB
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <apps/shared/global_context.h>
+
+static KDCoordinate dummyHeight(::Calculation::Calculation * c, bool expanded) {
+  bool b;
+  Poincare::Layout l = c->createExactOutputLayout(&b);
+  if (!b) {
+    l=c->createInputLayout();
+  }
+  KDSize s = l.layoutSize();
+  const int bordersize = 10;
+  int h = s.height() + bordersize;
+  const int maxheight = 64;
+  if (h > maxheight) {
+    return maxheight;
+  }
+  return h;
+}
+
+extern void * last_calculation_history;
+void * last_calculation_history = 0;
+const char * retrieve_calc_history();
+
+#endif
+
 using namespace Poincare;
 using namespace Shared;
 
@@ -21,10 +54,39 @@ CalculationStore::CalculationStore(char * buffer, int size) :
 {
   assert(m_buffer != nullptr);
   assert(m_bufferSize > 0);
+#if defined _FXCG || defined NSPIRE_NEWLIB
+  if (last_calculation_history == 0){
+    // Restore from scriptstore
+    const char * buf=retrieve_calc_history();
+    if (buf) {
+      Shared::GlobalContext globalContext;
+      char * ptr=(char *)buf;
+      for (;*ptr;) {
+	      for (;*ptr;++ptr) {
+          if (*ptr=='\n') {
+            break;
+          }
+	      }
+	      char c = *ptr;
+	      *ptr=0;
+	      if (ptr > buf) {
+          push(buf,&globalContext, dummyHeight);
+        }
+        *ptr = c;
+        ++ptr;
+        buf = ptr;
+      }
+    }
+    last_calculation_history = (void *) this;
+  }
+#endif
 }
 
 // Returns an expiring pointer to the calculation of index i, and ignore the trash
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
+#if defined _FXCG || defined NSPIRE_NEWLIB
+  last_calculation_history = (void *) this;
+#endif
   if (m_trashIndex == -1 || i < m_trashIndex) {
     return realCalculationAtIndex(i);
   } else {

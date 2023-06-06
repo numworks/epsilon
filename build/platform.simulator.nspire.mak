@@ -1,0 +1,11 @@
+TOOLCHAIN = nspire-gcc
+EXE = elf
+
+EPSILON_TELEMETRY ?= 0
+
+HANDY_TARGETS_EXTENSIONS = tns
+
+USE_LIBA = 0
+POINCARE_TREE_LOG = 0
+
+SFLAGS := $(filter-out -fPIE, $(SFLAGS))

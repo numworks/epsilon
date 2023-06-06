@@ -72,7 +72,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
     if (isCircularlyDefined(record, context)) {
       m_expression = Undefined::Builder();
     } else {
-      m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+      m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record), record);
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
@@ -90,7 +90,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
 Expression ExpressionModel::expressionClone(const Storage::Record * record) const {
   assert(record->fullName() != nullptr);
   /* A new Expression has to be created at each call (because it might be tempered with after calling) */
-  return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record), record);
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods text, setContent (through BuildExpressionFromText), layout and
@@ -125,6 +125,39 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   Ion::Storage::Record::Data newData = record->value();
   size_t previousExpressionSize = expressionSize(record);
   size_t newExpressionSize = newExpression.isUninitialized() ? 0 : newExpression.size();
+#ifdef STRING_STORAGE
+  size_t stringsize = 0;
+  char buf[1024] = {0};
+  char repl = 0;
+  buf[0] = '"';
+  if (!newExpression.isUninitialized()) {
+    size_t l = newExpression.serialize(buf+1,sizeof(buf)-2);
+    if (l >= sizeof(buf) - 3) {
+      newExpressionSize = 0;
+    } else {
+      buf[l + 1] = '"';
+      // replace 0x1 by x for func or n for seq
+      const char * name = record->fullName();
+      int namel = strlen(name);
+      if (namel > 4 && strncmp(name + namel - 4, ".seq", 4) == 0) {
+        repl = 'n';
+      } else if (namel > 5 && strncmp(name + namel - 5, ".func", 5) == 0) {
+        repl = 'x';
+      }
+      if (repl) {
+        for (char * ptr = buf; *ptr; ++ptr) {
+          if (*ptr == 1) {
+            *ptr = repl;
+          }
+        }
+      }
+      stringsize= l + 3; // 2 quotes and 0 at end
+      if (newExpressionSize < stringsize) {
+	      newExpressionSize = stringsize;
+      }
+    }
+  }
+#endif
   size_t previousDataSize = newData.size;
   size_t newDataSize = previousDataSize - previousExpressionSize + newExpressionSize;
   void * expAddress = expressionAddress(record);
@@ -140,6 +173,12 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
    * (as it is sometimes computed from metadata). Thus, the expression address
    * is given as a parameter to updateNewDataWithExpression. */
   updateNewDataWithExpression(record, newExpression, expAddress, newExpressionSize, previousExpressionSize);
+#ifdef STRING_STORAGE
+  if (stringsize && stringsize<newExpressionSize) {
+    // print size is smaller than expression size
+    strncpy((char *)expAddress, buf, stringsize);
+  }
+#endif
   // Set the data with the right size
   newData.size = newDataSize;
   error = record->setValue(newData);

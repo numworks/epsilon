@@ -1,7 +1,7 @@
 #ifndef LIBA_STRINGS_H
 #define LIBA_STRINGS_H
 
-#if (_FXCG)
+#if (_FXCG) || defined NSPIRE_NEWLIB
 
 #include <stdlib.h>
 

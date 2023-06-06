@@ -7,4 +7,4 @@ SIZE = sh-elf-size
 AS = sh-elf-as
 FXGXA = fxgxa
 
-SFLAGS += -D_FXCG -D_BIG_ENDIAN
+SFLAGS += -D_FXCG -D_BIG_ENDIAN  -DSTRING_STORAGE

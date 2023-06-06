@@ -289,6 +289,20 @@ QUIZ_CASE(pcj_integer_factorial) {
       "29519906261646730733907419814952960000000000000000000000000000");
 }
 
+static inline void assert_gcd_to(const char* a, const char* b, const char* c) {
+  quiz_assert(
+      IntegerHandler::GCD(CreateIntegerHandler(a), CreateIntegerHandler(b))
+          .treeIsIdenticalTo(CreateInteger(c)));
+  reset_pools();
+}
+
+QUIZ_CASE(pcj_integer_gcd) {
+  assert_gcd_to("42", "18", "6");
+  assert_gcd_to("18", "42", "6");
+  assert_gcd_to("7", "13", "1");
+  assert_gcd_to("7", "7", "7");
+}
+
 static inline void assert_might_overflow(ActionWithContext action,
                                          bool overflow) {
   CachePool* cachePool = CachePool::sharedCachePool();

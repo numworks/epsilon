@@ -134,6 +134,7 @@ class IntegerHandler final {
                                         const IntegerHandler &denominator);
   static Node Power(const IntegerHandler &i, const IntegerHandler &j);
   static Node Factorial(const IntegerHandler &i);
+  static Node GCD(const IntegerHandler &a, const IntegerHandler &b);
 
   constexpr static uint8_t k_maxNumberOfDigits = 128;
   constexpr static uint8_t k_maxNumberOfNativeDigits =

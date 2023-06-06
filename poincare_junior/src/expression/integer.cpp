@@ -531,6 +531,29 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
   return std::pair<IntegerHandler, IntegerHandler>(Q, remainder);
 }
 
+Node IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
+  // TODO Knuth modified like in upy to avoid divisions
+  WorkingBuffer workingBuffer;
+  IntegerHandler i = a;
+  IntegerHandler j = b;
+  if (Compare(i, j) == 0) {
+    return i.pushOnEditionPool();
+  }
+  do {
+    if (i.isZero()) {
+      return j.pushOnEditionPool();
+    }
+    if (j.isZero()) {
+      return i.pushOnEditionPool();
+    }
+    if (Compare(i, j) > 0) {
+      i = Udiv(i, j, &workingBuffer).second;
+    } else {
+      j = Udiv(j, i, &workingBuffer).second;
+    }
+  } while (true);
+}
+
 IntegerHandler IntegerHandler::multiplyByPowerOf2(
     uint8_t pow, WorkingBuffer *workingBuffer) const {
   assert(pow < 32);

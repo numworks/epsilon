@@ -311,11 +311,12 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     }
     Expression dependencyExpression;
     if (newNDependencies == currentNDependencies + 1) {
-      dependencyExpression = dependencies.childAtIndex(newNDependencies - 1);
+      dependencyExpression =
+          dependencies.childAtIndex(newNDependencies - 1).clone();
     } else {
       Addition a = Addition::Builder();
       for (int k = currentNDependencies; k < newNDependencies; k++) {
-        a.addChildAtIndexInPlace(dependencies.childAtIndex(k),
+        a.addChildAtIndexInPlace(dependencies.childAtIndex(k).clone(),
                                  a.numberOfChildren(), a.numberOfChildren());
       }
       dependencyExpression = a;

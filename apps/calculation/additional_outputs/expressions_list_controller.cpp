@@ -63,6 +63,11 @@ void ExpressionsListController::didBecomeFirstResponder() {
   assert(numberOfRows() > 0);
 }
 
+void ExpressionsListController::viewDidDisappear() {
+  tidy();
+  StackViewController::viewDidDisappear();
+}
+
 void ExpressionsListController::tidy() {
   // Reset layout and cell memoization to avoid taking extra space in the pool
   resetMemoization();

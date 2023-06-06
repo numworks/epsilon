@@ -733,8 +733,10 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
          child1.block()->isNumber()) {
     EditionReference reducedChild = operation(child0, child1);
     child0 = child0.replaceTreeByTree(reducedChild);
+    const Node child1Node = child1;
     child1.removeTree();
-    child1 = child0.nextTree();
+    // Optimized equivalent of child1 = child0.nextTree();
+    child1 = child1Node;
     index++;
   }
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);

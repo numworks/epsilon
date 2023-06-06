@@ -181,14 +181,27 @@ Node Rational::IntegerPower(const Node i, const Node j) {
 Node Rational::IrreducibleForm(const Node i) {
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
   if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
-    return IntegerHandler::Division(Numerator(i), Integer::Handler(gcd)).first;
+    std::pair<EditionReference, EditionReference> a =
+        IntegerHandler::Division(Numerator(i), Integer::Handler(gcd));
+    gcd.removeTree();
+    a.second.removeTree();
+    return a.first;
   }
   if (gcd.type() != BlockType::One) {
-    return Rational::Push(
-        IntegerHandler::Division(Numerator(i), Integer::Handler(gcd)).first,
-        IntegerHandler::Division(Denominator(i), Integer::Handler(gcd)).first);
+    std::pair<EditionReference, EditionReference> a =
+        IntegerHandler::Division(Numerator(i), Integer::Handler(gcd));
+    std::pair<EditionReference, EditionReference> b =
+        IntegerHandler::Division(Denominator(i), Integer::Handler(gcd));
+    EditionReference result = Rational::Push(a.first, b.first);
+    gcd.removeTree();
+    a.first.removeTree();
+    a.second.removeTree();
+    b.first.removeTree();
+    b.second.removeTree();
+    return result;
   }
-  return i;
+  gcd.removeTree();
+  return EditionPool::sharedEditionPool()->clone(i);
 }
 
 }  // namespace PoincareJ

@@ -111,8 +111,9 @@ class CalculationController : public Escher::ViewController,
   CalculationPopupDataSource m_imagesDataSource;
   Escher::Dropdown m_dropdown;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
+  // Max is reached for hypergeometric distribution
   constexpr static int k_titleBufferSize =
-      sizeof("d1 =  d2 =  ") + 2 * Constants::k_shortFloatNumberOfChars;
+      sizeof("N =  K =  n = ") + 3 * Constants::k_shortFloatNumberOfChars;
   char m_titleBuffer[k_titleBufferSize];
 };
 

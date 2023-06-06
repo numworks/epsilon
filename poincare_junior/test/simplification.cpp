@@ -153,8 +153,7 @@ void simplifies_to(const char* input, const char* output) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
   quiz_assert(!expression.isUninitialized());
-  EditionReference projected =
-      expression;  // Simplification::SystemProjection(expression);
+  EditionReference projected = Simplification::SystemProjection(expression);
   quiz_assert(!projected.isUninitialized());
 #ifdef PCJ_PERF
   auto start = std::chrono::high_resolution_clock::now();
@@ -195,6 +194,8 @@ void simplifies_to(const char* input, const char* output) {
 QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2+2", "4");
   simplifies_to("(2*3(2^2)) + 2*2", "28");
+  simplifies_to("36/8", "9/2");
+  simplifies_to("2+36/8+2", "17/2");
   simplifies_to("a+a", "2*a");
   simplifies_to("b+a", "a+b");
   simplifies_to("(a*a)*a", "a^(3)");

@@ -51,8 +51,7 @@ EditionReference Simplification::AutomaticSimplify(EditionReference u) {
     return u;
   }
   if (u.block()->isRational()) {
-    // TODO return Rational::IrreducibleForm(u);
-    return u;
+    return Rational::IrreducibleForm(u);
   }
   // no need, handled by recursivelyEdit ?
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(u)) {
@@ -453,19 +452,18 @@ EditionReference SimplifyRNERec(EditionReference u) {
         return w;
       }
       if (u.type() == BlockType::Addition) {
-        return IntegerHandler::Addition(Integer::Handler(v),
-                                        Integer::Handler(w));
-        // return Rational::Addition(v, w);
+        return Rational::IrreducibleForm(Rational::Addition(v, w));
       }
       assert(u.type() == BlockType::Multiplication);
-      return Rational::Multiplication(v, w);
+      return Rational::IrreducibleForm(Rational::Multiplication(v, w));
     }
     if (u.type() == BlockType::Power) {
       EditionReference v = SimplifyRNERec(u.childAtIndex(0));
       if (IsUndef(v)) {
         return v;
       }
-      return Rational::IntegerPower(v, u.childAtIndex(1));
+      return Rational::IrreducibleForm(
+          Rational::IntegerPower(v, u.childAtIndex(1)));
     }
   }
   assert(false);
@@ -839,6 +837,11 @@ EditionReference Simplification::SystemProjection(EditionReference reference,
         ref.matchAndReplace(
             KSub(KPlaceholder<A>(), KPlaceholder<B>()),
             KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())));
+        break;
+      case BlockType::Division:
+        ref.matchAndReplace(
+            KDiv(KPlaceholder<A>(), KPlaceholder<B>()),
+            KMult(KPlaceholder<A>(), KPow(KPlaceholder<B>(), -1_e)));
         break;
       case BlockType::Cosine:
         ref.matchAndReplace(KCos(KPlaceholder<A>()),

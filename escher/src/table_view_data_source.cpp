@@ -43,6 +43,7 @@ KDCoordinate TableViewDataSource::nonMemoizedColumnWidth(int column,
   if (result > 0 && withSeparator) {
     result += separatorBeforeColumn(column);
   }
+  assert(result >= 0);
   return result;
 }
 
@@ -52,6 +53,7 @@ KDCoordinate TableViewDataSource::nonMemoizedRowHeight(int row,
   if (result > 0 && withSeparator) {
     result += separatorBeforeRow(row);
   }
+  assert(result >= 0);
   return result;
 }
 

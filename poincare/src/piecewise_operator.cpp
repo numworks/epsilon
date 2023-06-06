@@ -323,21 +323,13 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     }
     piecewiseDependency.replaceChildAtIndexInPlace(i, dependencyExpression);
   }
-  /* This code is partly copy/pasted from
-   * SimplificationHelper::bubbleUpDependencies. */
-  if (dependencies.numberOfChildren() > 0) {
-    dependencies = List::Builder();
-    dependencies.addChildAtIndexInPlace(piecewiseDependency, 0, 0);
-    Expression e = shallowReduce(reductionContext);
-    Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
-    e.replaceWithInPlace(d);
-    d.replaceChildAtIndexInPlace(0, e);
-    if (e.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency&>(e).extractDependencies(dependencies);
-    }
-    return d.shallowReduce(reductionContext);
+  if (dependencies.numberOfChildren() == 0) {
+    return Expression();
   }
-  return Expression();
+  dependencies = List::Builder();
+  dependencies.addChildAtIndexInPlace(piecewiseDependency, 0, 0);
+  return SimplificationHelper::reduceAfterBubblingUpDependencies(
+      *this, dependencies, reductionContext);
 }
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(

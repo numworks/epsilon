@@ -6,9 +6,13 @@
 
 namespace Poincare {
 
+class List;
+
 /* Class holding helper functions (mostly defaults)
  * for expression simplication (reduce / beautify). */
 class SimplificationHelper {
+  friend class PiecewiseOperator;
+
  public:
   enum class UnitReduction : uint8_t {
     KeepUnits = 0,
@@ -79,6 +83,10 @@ class SimplificationHelper {
    * Otherwise returns uninitialized handle. */
   static Expression shallowReduceKeepingUnitsFromFirstChild(
       Expression e, const ReductionContext& reductionContext);
+
+  static Expression reduceAfterBubblingUpDependencies(
+      Expression e, List dependencies,
+      const ReductionContext& reductionContext);
 
   static Expression undefinedOnBooleans(Expression e);
   static Expression undefinedOnPoint(Expression e);

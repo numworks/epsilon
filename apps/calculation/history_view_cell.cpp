@@ -100,16 +100,19 @@ void HistoryViewCell::reloadSubviewHighlight() {
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   m_ellipsis.setHighlighted(false);
   if (isHighlighted()) {
-    if (m_dataSource->selectedSubviewType() ==
-        HistoryViewCellDataSource::SubviewType::Input) {
-      m_inputView.setExpressionBackgroundColor(Palette::Select);
-    } else if (m_dataSource->selectedSubviewType() ==
-               HistoryViewCellDataSource::SubviewType::Output) {
-      m_scrollableOutputView.evenOddCell()->setHighlighted(true);
-    } else {
-      assert(m_dataSource->selectedSubviewType() ==
-             HistoryViewCellDataSource::SubviewType::Ellipsis);
-      m_ellipsis.setHighlighted(true);
+    HistoryViewCellDataSource::SubviewType type =
+        m_dataSource->selectedSubviewType();
+    switch (type) {
+      case HistoryViewCellDataSource::SubviewType::Input:
+        m_inputView.setExpressionBackgroundColor(Palette::Select);
+        return;
+      case HistoryViewCellDataSource::SubviewType::Output:
+        m_scrollableOutputView.evenOddCell()->setHighlighted(true);
+        return;
+      default:
+        assert(type == HistoryViewCellDataSource::SubviewType::Ellipsis);
+        m_ellipsis.setHighlighted(true);
+        return;
     }
   }
 }

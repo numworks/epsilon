@@ -25,6 +25,7 @@ class Rational final {
   static Node Multiplication(const Node i, const Node j);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
   static Node IntegerPower(const Node i, const Node j);
+  static Node IrreducibleForm(const Node i);
 };
 
 }  // namespace PoincareJ

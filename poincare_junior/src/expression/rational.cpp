@@ -178,4 +178,17 @@ Node Rational::IntegerPower(const Node i, const Node j) {
   return result;
 }
 
+Node Rational::IrreducibleForm(const Node i) {
+  EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
+  if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
+    return IntegerHandler::Division(Numerator(i), Integer::Handler(gcd)).first;
+  }
+  if (gcd.type() != BlockType::One) {
+    return Rational::Push(
+        IntegerHandler::Division(Numerator(i), Integer::Handler(gcd)).first,
+        IntegerHandler::Division(Denominator(i), Integer::Handler(gcd)).first);
+  }
+  return i;
+}
+
 }  // namespace PoincareJ

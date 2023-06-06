@@ -287,21 +287,21 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
       if (currentChar >= bufferSize - 1) {
         return bufferSize - 1;
       }
-      int decimalMarkerPosition =
-          currentChar + (mode == Preferences::PrintFloatMode::Engineering
-                             ? minimalNumberOfMantissaDigits - 1
-                             : 0);
-      currentChar +=
-          strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
-      assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) ==
-             1);
       int numberOfCharsToShift =
           (mode == Preferences::PrintFloatMode::Engineering
                ? minimalNumberOfMantissaDigits
                : 1);
+      int decimalMarkerPosition = currentChar + numberOfCharsToShift - 1;
+      currentChar +=
+          strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
+      assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) ==
+             1);
       for (int i = 0; i < numberOfCharsToShift; i++) {
-        int charIndex = decimalMarkerPosition - numberOfCharsToShift + i;
-        buffer[charIndex] = buffer[charIndex + 1];
+        buffer[i + decimalMarkerPosition - numberOfCharsToShift] =
+            tempBuffer[i];
+      }
+      if (decimalMarkerPosition >= bufferSize - 1) {
+        return bufferSize - 1;
       }
       buffer[decimalMarkerPosition] = '.';
     } else {

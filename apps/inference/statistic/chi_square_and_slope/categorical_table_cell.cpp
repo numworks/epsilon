@@ -186,6 +186,7 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   tableModel()->deleteParametersInColumn(relativeColumn(column));
   tableModel()->recomputeData();
   m_selectableTableView.deselectTable();
+  m_selectableTableView.setContentOffset(KDPointZero);
   if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }

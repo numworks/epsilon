@@ -14,8 +14,6 @@ class Simplification {
   static EditionReference DeepBeautify(EditionReference reference) {
     return ApplyShallowInDepth(reference, ShallowBeautify);
   }
-  static EditionReference DivisionReduction(EditionReference reference);
-  static EditionReference SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
 
@@ -62,9 +60,6 @@ class Simplification {
   typedef EditionReference (*NumberOperation)(const Node, const Node);
   static void ReduceNumbersInNAry(EditionReference reference,
                                   NumberOperation operation);
-  static EditionReference ProjectionReduction(
-      EditionReference reference, Node (*PushProjectedEExpression)(),
-      Node (*PushInverse)());
 
   typedef bool (*ShallowOperation)(EditionReference *reference, void *context);
   static EditionReference ApplyShallowInDepth(EditionReference reference,

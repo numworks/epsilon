@@ -548,10 +548,6 @@ EditionReference Simplification::SystematicReduction(
     EditionReference reference) {
   // TODO: Macro to automatically generate switch
   switch (reference.type()) {
-    case BlockType::Division:
-      return DivisionReduction(reference);
-    case BlockType::Subtraction:
-      return SubtractionReduction(reference);
     case BlockType::Addition:
       ReduceNumbersInNAry(reference, Number::Addition);
       return NAry::SquashIfUnary(reference);
@@ -592,33 +588,6 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
       reference->matchAndReplace(
           KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e)),
           KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()));
-}
-
-EditionReference Simplification::DivisionReduction(EditionReference reference) {
-  assert(reference.type() == BlockType::Division);
-  return ProjectionReduction(
-      reference,
-      []() {
-        return EditionPool::sharedEditionPool()
-            ->push<BlockType::Multiplication>(2);
-      },
-      []() {
-        return EditionPool::sharedEditionPool()->push<BlockType::Power>();
-      });
-}
-
-EditionReference Simplification::SubtractionReduction(
-    EditionReference reference) {
-  assert(reference.type() == BlockType::Subtraction);
-  return ProjectionReduction(
-      reference,
-      []() {
-        return EditionPool::sharedEditionPool()->push<BlockType::Addition>(2);
-      },
-      []() {
-        return EditionPool::sharedEditionPool()
-            ->push<BlockType::Multiplication>(2);
-      });
 }
 
 EditionReference Simplification::DistributeMultiplicationOverAddition(
@@ -740,34 +709,6 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
     index++;
   }
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
-}
-
-EditionReference Simplification::ProjectionReduction(
-    EditionReference division, Node (*PushProjectedEExpression)(),
-    Node (*PushInverse)()) {
-  /* Rule a / b --> a * b^-1 (or a - b --> a + b * -1) */
-  // Create empty * (or +)
-  EditionReference multiplication(PushProjectedEExpression());
-  // Get references to children
-  assert(division.numberOfChildren() == 2);
-  EditionReference childrenReferences[2];
-  for (auto [child, index] :
-       NodeIterator::Children<Forward, Editable>(division)) {
-    childrenReferences[index] = child;
-  }
-  // Move first child
-  multiplication.insertTreeAfterNode(childrenReferences[0]);
-  // Create empty ^ (or *)
-  EditionReference power(PushInverse());
-  // Move second child
-  power.insertTreeAfterNode(childrenReferences[1]);
-  // Complete: a * b^-1 (or a + b * -1)
-  EditionPool::sharedEditionPool()->push<BlockType::IntegerShort>(
-      static_cast<int8_t>(-1));
-  // Replace single-noded division (or subtraction) by the new multiplication
-  // (or addition)
-  division.replaceNodeByTree(multiplication);
-  return multiplication;
 }
 
 EditionReference Simplification::ApplyShallowInDepth(

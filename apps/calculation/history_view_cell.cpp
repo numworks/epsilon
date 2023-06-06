@@ -116,11 +116,16 @@ void HistoryViewCell::reloadSubviewHighlight() {
 
 Layout HistoryViewCell::layout() const {
   assert(m_dataSource);
-  if (m_dataSource->selectedSubviewType() ==
-      HistoryViewCellDataSource::SubviewType::Input) {
-    return m_inputView.layout();
-  } else {
-    return m_scrollableOutputView.layout();
+  HistoryViewCellDataSource::SubviewType type =
+      m_dataSource->selectedSubviewType();
+  switch (type) {
+    case HistoryViewCellDataSource::SubviewType::Input:
+      return m_inputView.layout();
+    case HistoryViewCellDataSource::SubviewType::Output:
+      return m_scrollableOutputView.layout();
+    default:
+      assert(type == HistoryViewCellDataSource::SubviewType::Ellipsis);
+      return Layout();
   }
 }
 

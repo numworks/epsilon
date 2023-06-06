@@ -7,10 +7,10 @@ class CountryPreferences {
  public:
   enum class AvailableExamModes : uint8_t {
     StandardOnly,
-    StandardAndDutch,
-    AmericanAll,
-    PortugueseOnly,
+    DutchOnly,
     EnglishOnly,
+    PortugueseOnly,
+    AmericanAll,
     All
   };
 

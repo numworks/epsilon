@@ -4,6 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/expression_node.h>
 #include <poincare/integer.h>
+#include <poincare/list.h>
 #include <poincare/multiplication.h>
 #include <poincare/nonreal.h>
 #include <poincare/parametered_expression.h>
@@ -260,17 +261,23 @@ Expression SimplificationHelper::bubbleUpDependencies(
       static_cast<Dependency&>(child).extractDependencies(dependencies);
     }
   }
-  if (dependencies.numberOfChildren() > 0) {
-    e = e.shallowReduce(reductionContext);
-    Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
-    e.replaceWithInPlace(d);
-    d.replaceChildAtIndexInPlace(0, e);
-    if (e.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency&>(e).extractDependencies(dependencies);
-    }
-    return d.shallowReduce(reductionContext);
+  if (dependencies.numberOfChildren() == 0) {
+    return Expression();
   }
-  return Expression();
+  return reduceAfterBubblingUpDependencies(e, dependencies, reductionContext);
+}
+
+Expression SimplificationHelper::reduceAfterBubblingUpDependencies(
+    Expression e, List dependencies, const ReductionContext& reductionContext) {
+  assert(dependencies.numberOfChildren() > 0);
+  e = e.shallowReduce(reductionContext);
+  Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
+  e.replaceWithInPlace(d);
+  d.replaceChildAtIndexInPlace(0, e);
+  if (e.type() == ExpressionNode::Type::Dependency) {
+    static_cast<Dependency&>(e).extractDependencies(dependencies);
+  }
+  return d.shallowReduce(reductionContext);
 }
 
 bool SimplificationHelper::extractIntegerChildAtIndex(

@@ -1395,7 +1395,8 @@ Power::DependencyType Power::typeOfDependency(
   DependencyType result = DependencyType::None;
 
   // Case 1.
-  if (index.isPositive(reductionContext.context()) != TrinaryBoolean::True &&
+  if ((index.isPositive(reductionContext.context()) != TrinaryBoolean::True ||
+       index.isNull(reductionContext.context()) != TrinaryBoolean::False) &&
       base.isNull(reductionContext.context()) != TrinaryBoolean::False) {
     result = DependencyType::NegativeIndex;
   }

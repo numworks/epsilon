@@ -2928,10 +2928,9 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)",
                                        Undefined::Name());
   assert_parsed_expression_simplify_to("piecewise(3,1>0,undef)", "3");
-  // TODO: The dependency should be in 1/x, not 1/x+1/x
   assert_parsed_expression_simplify_to(
       "piecewise(-x/x,x>0,0)",
-      "\u0014dep(piecewise(-1,x>0,0),{piecewise(1/x+1/x,x>0,0)})");
+      "\u0014dep(piecewise(-1,x>0,0),{piecewise(1/x,x>0,0)})");
 }
 
 QUIZ_CASE(poincare_simplification_integral) {

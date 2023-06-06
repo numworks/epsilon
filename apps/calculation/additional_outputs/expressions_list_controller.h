@@ -30,7 +30,7 @@ class ExpressionsListController
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void viewDidDisappear() override { tidy(); };
+  void viewDidDisappear() override;
 
   // MemoizedListViewDataSource
   int reusableCellCount(int type) override;

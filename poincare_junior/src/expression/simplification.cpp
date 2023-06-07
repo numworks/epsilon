@@ -544,18 +544,15 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
   assert(false);
 }
 
-EditionReference Simplification::SystematicReduction(
-    EditionReference reference) {
+bool Simplification::ShallowSystemReduce(EditionReference* e, void* context) {
   // TODO: Macro to automatically generate switch
-  switch (reference.type()) {
+  switch (e->type()) {
     case BlockType::Addition:
-      ReduceNumbersInNAry(reference, Number::Addition);
-      return NAry::SquashIfUnary(reference);
+      return ReduceNumbersInNAry(e, Number::Addition);
     case BlockType::Multiplication:
-      ReduceNumbersInNAry(reference, Number::Multiplication);
-      return NAry::SquashIfUnary(reference);
+      return ReduceNumbersInNAry(e, Number::Multiplication);
     default:
-      return reference;
+      return false;
   }
 }
 
@@ -691,12 +688,12 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
                KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())))));
 }
 
-void Simplification::ReduceNumbersInNAry(EditionReference reference,
+bool Simplification::ReduceNumbersInNAry(EditionReference* reference,
                                          NumberOperation operation) {
   size_t index = 0;
-  size_t nbOfChildren = reference.numberOfChildren();
+  size_t nbOfChildren = reference->numberOfChildren();
   assert(nbOfChildren > 0);
-  EditionReference child0 = reference.nextNode();
+  EditionReference child0 = reference->nextNode();
   EditionReference child1 = child0.nextTree();
   while (index + 1 < nbOfChildren && child0.block()->isNumber() &&
          child1.block()->isNumber()) {
@@ -708,7 +705,9 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
     child1 = child1Node;
     index++;
   }
-  NAry::SetNumberOfChildren(reference, nbOfChildren - index);
+  NAry::SetNumberOfChildren(*reference, nbOfChildren - index);
+  *reference = NAry::SquashIfUnary(*reference);
+  return index > 0;
 }
 
 EditionReference Simplification::ApplyShallowInDepth(

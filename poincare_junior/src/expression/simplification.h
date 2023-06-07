@@ -8,7 +8,7 @@ namespace PoincareJ {
 
 class Simplification {
  public:
-  static EditionReference SystematicReduction(EditionReference reference);
+  static bool ShallowSystemReduce(EditionReference *e, void *context = nullptr);
   static bool ShallowBeautify(EditionReference *reference,
                               void *context = nullptr);
   static EditionReference DeepBeautify(EditionReference reference) {
@@ -58,7 +58,7 @@ class Simplification {
   static bool SimplifyPower(EditionReference *u);
 
   typedef EditionReference (*NumberOperation)(const Node, const Node);
-  static void ReduceNumbersInNAry(EditionReference reference,
+  static bool ReduceNumbersInNAry(EditionReference *reference,
                                   NumberOperation operation);
 
   typedef bool (*ShallowOperation)(EditionReference *reference, void *context);

@@ -202,7 +202,7 @@ Expression Expression::CreateSystematicReduction(void *expressionAddress) {
   return Expression(
       [](Node tree) {
         EditionReference(tree).recursivelyEdit([](EditionReference reference) {
-          Simplification::SystematicReduction(reference);
+          Simplification::ShallowSystemReduce(&reference);
         });
       },
       Node(static_cast<const TypeBlock *>(expressionAddress)));

@@ -344,17 +344,26 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};
     Expression unit;
+    Expression oClone = o.clone();
     PoincareHelpers::CloneAndReduceAndRemoveUnit(
-        &o, globalContext, ReductionTarget::User, &unit,
+        &oClone, globalContext, ReductionTarget::User, &unit,
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
         UnitConversion::None);
     double value =
-        PoincareHelpers::ApproximateToScalar<double>(o, globalContext);
+        PoincareHelpers::ApproximateToScalar<double>(oClone, globalContext);
     if (Unit::ShouldDisplayAdditionalOutputs(
             value, unit,
             GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
         UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
-      additionalInformations.unit = true;
+      /* Sometimes with angle units, the reduction with UnitConversion::None
+       * will be defined but not the reduction with UnitConversion::Default,
+       * which will make the unit list controller crash.  */
+      unit = Expression();
+      PoincareHelpers::CloneAndReduceAndRemoveUnit(
+          &o, globalContext, ReductionTarget::User, &unit);
+      if (!unit.isUninitialized()) {
+        additionalInformations.unit = true;
+      }
     }
     return additionalInformations;
   }

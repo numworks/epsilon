@@ -85,6 +85,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   // Reduce to be able to recognize units
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &copy, App::app()->localContext(), ReductionTarget::User, &units);
+  assert(!units.isUninitialized());
   double value = Shared::PoincareHelpers::ApproximateToScalar<double>(
       copy, App::app()->localContext());
   ReductionContext reductionContext(

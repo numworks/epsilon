@@ -313,6 +313,9 @@ void PythonTextArea::ContentView::drawLine(KDContext *ctx, int line,
 
       bool skipCombining = false;
       if (*(tokenEnd - 1) != 0) {
+        /* The previous if is to prevent entering the following loop if already
+         * at end of buffer and avoid reading nextCodePoint out of the buffer.
+         */
         UTF8Decoder decoder(text, tokenEnd);
         while (decoder.nextCodePoint().isCombining()) {
           /* If combined different =/ ends up in a python buffer, the lexer will

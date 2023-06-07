@@ -100,16 +100,16 @@ Sequence Sequence::Builder(const char* name, size_t length, Expression child) {
 }
 
 Expression Sequence::shallowReduce(ReductionContext reductionContext) {
+  if (reductionContext.symbolicComputation() ==
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+    return replaceWithUndefinedInPlace();
+  }
   Expression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,
       SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
       SimplificationHelper::UnitReduction::BanUnits);
   if (!e.isUninitialized()) {
     return e;
-  }
-  if (reductionContext.symbolicComputation() ==
-      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

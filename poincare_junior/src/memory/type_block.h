@@ -198,6 +198,11 @@ class TypeBlock : public Block {
   constexpr bool isExpression() const {
     return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions);
   }
+  constexpr bool isAlgebraic() const {
+    return isNumber() ||
+           isOfType({BlockType::Addition, BlockType::Multiplication,
+                     BlockType::Power});
+  }
   constexpr bool isLayout() const {
     return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) &&
            m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts);

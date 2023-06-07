@@ -544,6 +544,23 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
   assert(false);
 }
 
+bool Simplification::AdvancedReduction(EditionReference* reference) {
+  bool changed = false;
+  for (std::pair<EditionReference, int> indexedNode :
+       NodeIterator::Children<Forward, Editable>(*reference)) {
+    changed =
+        AdvancedReduction(&std::get<EditionReference>(indexedNode)) || changed;
+  }
+  return ShallowAdvancedReduction(reference, changed) || changed;
+}
+
+bool Simplification::ShallowAdvancedReduction(EditionReference* reference,
+                                              bool change) {
+  return (reference->block()->isAlgebraic()
+              ? AdvanceReduceOnAlgebraic
+              : AdvanceReduceOnTranscendental)(reference, change);
+}
+
 bool Simplification::ShallowSystemReduce(EditionReference* e, void* context) {
   // TODO: Macro to automatically generate switch
   switch (e->type()) {
@@ -724,6 +741,50 @@ EditionReference Simplification::ApplyShallowInDepth(
     node = node.nextNode();
   }
   return EditionReference(root);
+}
+
+bool Simplification::AdvanceReduceOnTranscendental(EditionReference* reference,
+                                                   bool change) {
+  if (change && ReduceInverseFunction(reference)) {
+    return true;
+  }
+  if (ShallowExpand(reference)) {
+    // TODO: Define a metric to validate (or not) the contraction
+    ShallowSystemReduce(reference);
+    ShallowAdvancedReduction(reference, true);
+    return true;
+  }
+  return false;
+}
+
+bool Simplification::AdvanceReduceOnAlgebraic(EditionReference* reference,
+                                              bool change) {
+  if (ShallowContract(reference)) {
+    /* TODO: Define a metric to validate (or not) the contraction. It could be :
+     * - Number of node decreased
+     * - Success of ShallowSystemReduce */
+    ShallowSystemReduce(reference);
+    return true;
+  }
+  return ExpandTranscendentalOnRational(reference) +
+         ShallowAlgebraicExpand(reference) +
+         PolynomialInterpretation(reference);
+}
+
+bool Simplification::ReduceInverseFunction(EditionReference* e) {
+  // TODO : Add more
+  return e->matchAndReplace(KExp(KLn(KPlaceholder<A>())), KPlaceholder<A>()) ||
+         e->matchAndReplace(KLn(KExp(KPlaceholder<A>())), KPlaceholder<A>());
+}
+
+bool Simplification::ExpandTranscendentalOnRational(EditionReference* e) {
+  // TODO : Implement
+  return false;
+}
+
+bool Simplification::PolynomialInterpretation(EditionReference* e) {
+  // TODO : Implement
+  return false;
 }
 
 bool Simplification::DistributeOverNAry(EditionReference* reference,

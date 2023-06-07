@@ -8,6 +8,10 @@ namespace PoincareJ {
 
 class Simplification {
  public:
+  static bool AdvancedReduction(EditionReference *reference);
+  static bool ShallowAdvancedReduction(EditionReference *reference,
+                                       bool change);
+
   static bool ShallowSystemReduce(EditionReference *e, void *context = nullptr);
   static bool ShallowBeautify(EditionReference *reference,
                               void *context = nullptr);
@@ -70,6 +74,14 @@ class Simplification {
   static bool DistributeOverNAry(EditionReference *reference, BlockType target,
                                  BlockType naryTarget, BlockType naryOutput,
                                  int childIndex = 0);
+
+  static bool AdvanceReduceOnTranscendental(EditionReference *reference,
+                                            bool change);
+  static bool AdvanceReduceOnAlgebraic(EditionReference *reference,
+                                       bool change);
+  static bool ReduceInverseFunction(EditionReference *reference);
+  static bool ExpandTranscendentalOnRational(EditionReference *reference);
+  static bool PolynomialInterpretation(EditionReference *reference);
 
   typedef bool (*Operation)(EditionReference *reference);
   // Try all Operations until they all fail consecutively.

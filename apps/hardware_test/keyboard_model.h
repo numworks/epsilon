@@ -19,6 +19,7 @@ class KeyboardModel {
   int indexInTestedKeys(Ion::Keyboard::Key key) const;
 
   constexpr static Ion::Keyboard::Key TestedKeys[] = {
+#if HWTEST_ALL_KEYS
       Ion::Keyboard::Key::Left,
       Ion::Keyboard::Key::Up,
       Ion::Keyboard::Key::Down,
@@ -64,6 +65,18 @@ class KeyboardModel {
       Ion::Keyboard::Key::EE,
       Ion::Keyboard::Key::Ans,
       Ion::Keyboard::Key::EXE,
+#else
+      Ion::Keyboard::Key::Left,      Ion::Keyboard::Key::Up,
+      Ion::Keyboard::Key::Down,      Ion::Keyboard::Key::Right,
+      Ion::Keyboard::Key::OK,        Ion::Keyboard::Key::Back,
+      Ion::Keyboard::Key::Home,      Ion::Keyboard::Key::Shift,
+      Ion::Keyboard::Key::Alpha,     Ion::Keyboard::Key::XNT,
+      Ion::Keyboard::Key::Var,       Ion::Keyboard::Key::Toolbox,
+      Ion::Keyboard::Key::Backspace, Ion::Keyboard::Key::Power,
+      Ion::Keyboard::Key::Square,    Ion::Keyboard::Key::RightParenthesis,
+      Ion::Keyboard::Key::Division,  Ion::Keyboard::Key::Minus,
+      Ion::Keyboard::Key::EXE,
+#endif
   };
   constexpr static int NumberOfTestedKeys = std::size(TestedKeys);
 

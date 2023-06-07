@@ -149,7 +149,9 @@ Function Function::Builder(const char* name, size_t length, Expression child) {
 }
 
 Expression Function::shallowReduce(ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() ==
+  SymbolicComputation symbolicComputation =
+      reductionContext.symbolicComputation();
+  if (symbolicComputation ==
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
@@ -161,10 +163,17 @@ Expression Function::shallowReduce(ReductionContext reductionContext) {
     return e;
   }
 
-  if (reductionContext.symbolicComputation() ==
-      SymbolicComputation::DoNotReplaceAnySymbol) {
+  if (symbolicComputation == SymbolicComputation::DoNotReplaceAnySymbol) {
     return *this;
   }
+
+  assert(symbolicComputation ==
+             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
+         symbolicComputation ==
+             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+         symbolicComputation ==
+             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+
   /* Symbols that have a definition while also being the parameter of a
    * parametered expression should not be replaced in SymbolAbstract::Expand,
    * which won't handle this expression's parents.
@@ -177,10 +186,14 @@ Expression Function::shallowReduce(ReductionContext reductionContext) {
       *this, reductionContext.context(), true,
       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (result.isUninitialized()) {
-    if (reductionContext.symbolicComputation() !=
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation ==
+            SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+        symbolicComputation ==
+            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
       return *this;
     }
+    assert(symbolicComputation ==
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
@@ -201,6 +214,13 @@ Expression Function::deepReplaceReplaceableSymbols(
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
+
+  assert(symbolicComputation ==
+             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
+         symbolicComputation ==
+             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+         symbolicComputation ==
+             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
 
   /* Check for circularity only when a function is encountered so that
    * it is not uselessly checked each time deepReplaceReplaceableSymbols is
@@ -230,10 +250,14 @@ Expression Function::deepReplaceReplaceableSymbols(
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
    * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
   if (e.isUninitialized()) {
-    if (symbolicComputation !=
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation ==
+            SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+        symbolicComputation ==
+            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
       return *this;
     }
+    assert(symbolicComputation ==
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     return replaceWithUndefinedInPlace();
   }
 

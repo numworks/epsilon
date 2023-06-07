@@ -173,10 +173,12 @@ Expression Symbol::shallowReduce(ReductionContext reductionContext) {
       *this, reductionContext.context(), true,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (result.isUninitialized()) {
-    if (symbolicComputation !=
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation ==
+        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
       return *this;
     }
+    assert(symbolicComputation ==
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
@@ -230,6 +232,11 @@ Expression Symbol::deepReplaceReplaceableSymbols(
     return *this;
   }
 
+  assert(symbolicComputation ==
+             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
+         symbolicComputation ==
+             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+
   // Check that this is not a parameter in a parametered expression
   Expression ancestor = *this;
   while (parameteredAncestorsCount > 0) {
@@ -247,10 +254,12 @@ Expression Symbol::deepReplaceReplaceableSymbols(
 
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
-    if (symbolicComputation !=
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation ==
+        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
       return *this;
     }
+    assert(symbolicComputation ==
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     return replaceWithUndefinedInPlace();
   }
 

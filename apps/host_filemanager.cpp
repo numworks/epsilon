@@ -5,9 +5,9 @@
 // #include "math.h"
 // #include "app.h"
 #include <apps/home/apps_layout.h>
-#include "../apps_container.h"
-#include "../global_preferences.h"
-#include "../exam_mode_configuration.h"
+#include "apps_container.h"
+#include "global_preferences.h"
+// #include "../exam_mode_configuration.h"
 
 extern "C" {
 #include <assert.h>

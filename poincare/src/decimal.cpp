@@ -268,12 +268,10 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
   if (mode == Preferences::PrintFloatMode::Engineering ||
       numberOfRequiredDigits > PrintFloat::k_numberOfStoredSignificantDigits ||
       forceScientificMode) {
-    if (mantissaLength == 1) {
-      currentChar +=
-          strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
-    } else if (mode != Preferences::PrintFloatMode::Engineering ||
-               Integer::NumberOfBase10DigitsWithoutSign(m) >
-                   minimalNumberOfMantissaDigits) {
+    if (mantissaLength > 1 &&
+        (mode != Preferences::PrintFloatMode::Engineering ||
+         Integer::NumberOfBase10DigitsWithoutSign(m) >
+             minimalNumberOfMantissaDigits)) {
       /* Forward one or more chars: _
        * Write the mantissa _23456
        * Copy the most significant digits on the forwarded chars: 223456

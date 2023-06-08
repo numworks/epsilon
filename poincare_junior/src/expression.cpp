@@ -1,5 +1,6 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
@@ -9,6 +10,32 @@
 #include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
+
+void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
+                                        EditionReference expressionReference) {
+  assert(Builtin::IsBuiltin(expressionReference.type()));
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
+  int i = 0;
+  const char *name = Builtin::Name(expressionReference.type()).mainAlias();
+  while (name[i] != 0) {
+    NAry::AddChild(
+        layoutParent,
+        editionPool->push<BlockType::CodePointLayout, CodePoint>(name[i++]));
+  }
+  EditionReference parenthesis =
+      editionPool->push<BlockType::ParenthesisLayout>();
+  EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
+  NAry::AddChild(layoutParent, parenthesis);
+  EditionReference child = expressionReference.nextNode();
+  for (int j = 0; j < expressionReference.numberOfChildren(); j++) {
+    if (j != 0) {
+      NAry::AddChild(
+          newParent,
+          editionPool->push<BlockType::CodePointLayout, CodePoint>(','));
+    }
+    ConvertExpressionToLayout(newParent, child);
+  }
+}
 
 void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                                IntegerHandler handler) {
@@ -89,6 +116,12 @@ void Expression::ConvertExpressionToLayout(
   BlockType type = expressionReference.type();
   EditionPool *editionPool = EditionPool::sharedEditionPool();
 
+  if (Builtin::IsBuiltin(type)) {
+    ConvertBuiltinToLayout(layoutParent, expressionReference);
+    expressionReference.removeNode();
+    return;
+  }
+
   // Add Parentheses if needed
   if (layoutParent.numberOfChildren() > 0 &&
       expressionReference.numberOfChildren() > 1 &&
@@ -154,14 +187,8 @@ void Expression::ConvertExpressionToLayout(
     case BlockType::Set:
     case BlockType::List:
     case BlockType::Polynomial:
-    case BlockType::Cosine:
-    case BlockType::Sine:
-    case BlockType::Tangent:
-    case BlockType::ArcCosine:
-    case BlockType::ArcSine:
-    case BlockType::ArcTangent:
-    case BlockType::Logarithm:
     default:
+      assert(false);
       NAry::AddChild(
           layoutParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>('?'));

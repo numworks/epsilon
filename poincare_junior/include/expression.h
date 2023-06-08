@@ -24,6 +24,8 @@ class Expression final : public Reference {
   static EditionReference EditionPoolExpressionToLayout(Node node);
 
  private:
+  static void ConvertBuiltinToLayout(EditionReference layoutParent,
+                                     EditionReference expressionReference);
   static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                             IntegerHandler handler);
   static void ConvertInfixOperatorToLayout(

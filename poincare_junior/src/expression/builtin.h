@@ -12,6 +12,7 @@ class Builtin : public std::pair<BlockType, Aliases> {
   using pair::pair;
   const BlockType blockType() const { return first; }
   const Aliases* aliases() const { return &second; }
+  static bool IsBuiltin(BlockType type);
   static Aliases Name(BlockType type);
   static Aliases Name(const Node node) { return Name(node.type()); }
   static bool HasReservedFunction(UnicodeDecoder* name);

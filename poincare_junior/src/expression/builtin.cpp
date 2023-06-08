@@ -20,6 +20,15 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Ln, "ln"},
 };
 
+bool Builtin::IsBuiltin(BlockType type) {
+  for (auto &[block, aliases] : s_builtins) {
+    if (block == type) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Aliases Builtin::Name(BlockType type) {
   for (auto &[block, aliases] : s_builtins) {
     if (block == type) {
@@ -75,6 +84,9 @@ EditionReference Builtin::Promote(EditionReference parameterList,
       break;
     case BlockType::ArcTangent:
       header = Tree<BlockType::ArcTangent>();
+      break;
+    case BlockType::Logarithm:
+      header = Tree<BlockType::Logarithm>();
       break;
     case BlockType::Log:
       header = Tree<BlockType::Log>();

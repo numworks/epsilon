@@ -635,10 +635,10 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
-EditionReference Simplification::DeepSystemProjection(
-    EditionReference reference, ProjectionContext projectionContext) {
+bool Simplification::DeepSystemProjection(EditionReference* reference,
+                                          ProjectionContext projectionContext) {
   if (projectionContext == ProjectionContext::ApproximateToFloat) {
-    return Approximation::ReplaceWithApproximation(reference);
+    *reference = Approximation::ReplaceWithApproximation(*reference);
   }
   return ApplyShallowInDepth(reference, ShallowSystemProjection,
                              static_cast<void*>(&projectionContext));
@@ -727,20 +727,20 @@ bool Simplification::ReduceNumbersInNAry(EditionReference* reference,
   return index > 0;
 }
 
-EditionReference Simplification::ApplyShallowInDepth(
-    EditionReference reference, ShallowOperation shallowOperation,
-    void* context) {
-  const Node root = reference.block();
-  Node node = root;
-  int treesToProject = 1;
+bool Simplification::ApplyShallowInDepth(EditionReference* reference,
+                                         ShallowOperation shallowOperation,
+                                         void* context) {
+  bool changed = shallowOperation(reference, context);
+  int treesToProject = reference->numberOfChildren();
+  Node node = reference->nextNode();
   while (treesToProject > 0) {
     treesToProject--;
     EditionReference subRef(node);
-    shallowOperation(&subRef, context);
+    changed = shallowOperation(&subRef, context) || changed;
     treesToProject += node.numberOfChildren();
     node = node.nextNode();
   }
-  return EditionReference(root);
+  return changed;
 }
 
 bool Simplification::AdvanceReduceOnTranscendental(EditionReference* reference,

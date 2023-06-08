@@ -15,7 +15,7 @@ class Simplification {
   static bool ShallowSystemReduce(EditionReference *e, void *context = nullptr);
   static bool ShallowBeautify(EditionReference *reference,
                               void *context = nullptr);
-  static EditionReference DeepBeautify(EditionReference reference) {
+  static bool DeepBeautify(EditionReference *reference) {
     return ApplyShallowInDepth(reference, ShallowBeautify);
   }
   static EditionReference DistributeMultiplicationOverAddition(
@@ -41,8 +41,8 @@ class Simplification {
     NumbersToFloat,
     ApproximateToFloat,
   };
-  static EditionReference DeepSystemProjection(
-      EditionReference reference,
+  static bool DeepSystemProjection(
+      EditionReference *reference,
       ProjectionContext projectionContext = ProjectionContext::Default);
   static bool ShallowSystemProjection(EditionReference *reference,
                                       void *projectionContext);
@@ -66,9 +66,9 @@ class Simplification {
                                   NumberOperation operation);
 
   typedef bool (*ShallowOperation)(EditionReference *reference, void *context);
-  static EditionReference ApplyShallowInDepth(EditionReference reference,
-                                              ShallowOperation shallowOperation,
-                                              void *context = nullptr);
+  static bool ApplyShallowInDepth(EditionReference *reference,
+                                  ShallowOperation shallowOperation,
+                                  void *context = nullptr);
   /* Replace target(..., naryTarget(A, B, ...), ...)
    * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
   static bool DistributeOverNAry(EditionReference *reference, BlockType target,

@@ -27,10 +27,18 @@ EditionReference RackParser::parse() {
   // if (rightwardsArrowPosition != endPosition) {
   // return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   // }
+  // Using end of pool instead of number of trees since the editionPool may be
+  // incomplete. This can happen while parsing a division's denominator.
+  const TypeBlock *endOfPool = EditionPool::sharedEditionPool()->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
+  assert(EditionPool::sharedEditionPool()->lastBlock() ==
+         (result.isUninitialized() ? endOfPool : result.nextTree().block()));
+  assert(result.isUninitialized() || endOfPool == result.block());
+  (void)endOfPool;
   if (m_status == Status::Success) {
     return result;
   }
+  result.removeTree();
   return EditionReference();
 }
 
@@ -89,7 +97,7 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
   // m_status = Status::Progress;
   // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
   // EmptyContext tempContext = EmptyContext();
-  // This is instatiated outside the condition so that the pointer is not
+  // This is instantiated outside the condition so that the pointer is not
   // lost.
   // VariableContext assignmentContext("", &tempContext);
   // if (rightHandSide.type() == ExpressionNode::Type::Function &&
@@ -113,7 +121,7 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
   // }
   // }
   m_status = Status::Error;
-  return EditionReference();
+  return result;
 }
 
 EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
@@ -121,9 +129,8 @@ EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
   EditionReference result = parseUntil(Token::Type::EndOfStream);
   if (m_status == Status::Progress) {
     m_status = Status::Success;
-    return result;
   }
-  return EditionReference();
+  return result;
 }
 // Private
 
@@ -907,7 +914,6 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     }
   }*/
 
-  EditionReference parameters;
   // if (m_parsingContext.context() &&
   // ParsingHelper::IsParameteredExpression(*functionHelper)) {
   // We must make sure that the parameter is parsed as a single variable.
@@ -920,13 +926,13 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   // VariableContext parameterContext(
   // Symbol::Builder(parameterText, parameterLength), oldContext);
   // m_parsingContext.setContext(&parameterContext);
-  // parameters = parseFunctionParameters();
+  // leftHandSide = parseFunctionParameters();
   // m_parsingContext.setContext(oldContext);
   // } else {
-  // parameters = parseFunctionParameters();
+  // leftHandSide = parseFunctionParameters();
   // }
   // } else {
-  parameters = parseFunctionParameters();
+  leftHandSide = parseFunctionParameters();
   // }
 
   if (m_status != Status::Progress) {
@@ -936,7 +942,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
    * but not same number of parameters.
    * This is currently only useful for "sum" which can be sum({1,2,3}) or
    * sum(1/k, k, 1, n) */
-  int numberOfParameters = parameters.numberOfChildren();
+  int numberOfParameters = leftHandSide.numberOfChildren();
   // if ((**functionHelper).minNumberOfChildren() >= 0) {
   // while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
   // functionHelper++;
@@ -960,7 +966,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     return;
   }
 
-  leftHandSide = Builtin::Promote(parameters, builtin->blockType());
+  leftHandSide = Builtin::Promote(leftHandSide, builtin->blockType());
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args
     return;
@@ -1151,13 +1157,10 @@ EditionReference RackParser::parseFunctionParameters() {
                                 // parameter.
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
-  if (m_status != Status::Progress) {
-    return EditionReference();
-  }
-  if (!popTokenIfType(Token::Type::RightParenthesis)) {
+  if (m_status == Status::Progress &&
+      !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
     m_status = Status::Error;
-    return EditionReference();
   }
   return commaSeparatedList;
 }
@@ -1199,13 +1202,9 @@ EditionReference RackParser::parseVector() {
     return EditionReference();
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
-  if (m_status != Status::Progress) {
-    // There has been an error during the parsing of the comma separated list
-    return EditionReference();
-  }
-  if (!popTokenIfType(Token::Type::RightBracket)) {
+  if (m_status == Status::Progress &&
+      !popTokenIfType(Token::Type::RightBracket)) {
     m_status = Status::Error;  // Right bracket missing.
-    return EditionReference();
   }
   return commaSeparatedList;
 }
@@ -1216,12 +1215,9 @@ EditionReference RackParser::parseCommaSeparatedList() {
   int length = 0;
   do {
     parseUntil(Token::Type::Comma);
-    if (m_status != Status::Progress) {
-      return EditionReference();
-    }
     length++;
     NAry::SetNumberOfChildren(list, length);
-  } while (popTokenIfType(Token::Type::Comma));
+  } while (m_status == Status::Progress && popTokenIfType(Token::Type::Comma));
   return list;
 }
 
@@ -1231,9 +1227,8 @@ void RackParser::parseList(EditionReference &leftHandSide,
     m_status = Status::Error;  // FIXME
     return;
   }
-  EditionReference result;
   if (!popTokenIfType(Token::Type::RightBrace)) {
-    result = parseCommaSeparatedList();
+    leftHandSide = parseCommaSeparatedList();
     if (m_status != Status::Progress) {
       // There has been an error during the parsing of the comma separated list
       return;
@@ -1243,9 +1238,8 @@ void RackParser::parseList(EditionReference &leftHandSide,
       return;
     }
   } else {
-    // result = List::Builder();
+    // leftHandSide = List::Builder();
   }
-  leftHandSide = result;
   if (popTokenIfType(Token::Type::LeftParenthesis)) {
     EditionReference parameter = parseCommaSeparatedList();
     if (m_status != Status::Progress) {
@@ -1257,16 +1251,15 @@ void RackParser::parseList(EditionReference &leftHandSide,
     }
     int numberOfParameters = parameter.numberOfChildren();
     if (numberOfParameters == 2) {
-      // result = ListSlice::Builder(parameter.childAtIndex(0),
-      // parameter.childAtIndex(1), result);
+      // leftHandSide = ListSlice::Builder(parameter.childAtIndex(0),
+      // parameter.childAtIndex(1), leftHandSide);
     } else if (numberOfParameters == 1) {
       parameter = parameter.childAtIndex(0);
-      // result = ListElement::Builder(parameter, result);
+      // leftHandSide = ListElement::Builder(parameter, leftHandSide);
     } else {
       m_status = Status::Error;
       return;
     }
-    leftHandSide = result;
   }
   isThereImplicitOperator();
 }

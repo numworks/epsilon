@@ -39,10 +39,9 @@ QUIZ_CASE(pcj_layout_tokenize) {
               token.length() == 4);
 }
 
-void assert_is_parsable(Node layout) {
+bool is_parsable(Node layout) {
   EditionReference expression = RackParser(layout).parse();
-  quiz_assert(!expression.isUninitialized());
-  // expression.log();
+  return !expression.isUninitialized();
 }
 
 // TODO import all the parsing tests from poincare
@@ -50,11 +49,13 @@ void assert_is_parsable(Node layout) {
 QUIZ_CASE(pcj_layout_parse) {
   assert_trees_are_equal(RackParser("2^(3+1)^4"_l).parse(),
                          KPow(2_e, KPow(KAdd(3_e, 1_e), 4_e)));
-  assert_is_parsable("12(123.4567E2 +  0x2a+2*0b0101)"_l);
-  assert_is_parsable("-1"_l);
-  assert_is_parsable("1+2+3+4+5+6"_l);
-  assert_is_parsable("(1+(2+(3+4)))"_l);
-  assert_is_parsable(KRackL(KFracL("2"_l, "3"_l), KParenthesisL("4"_l)));
-  assert_is_parsable(
-      KRackL(KFracL("2"_l, "3"_l), KVertOffL(KFracL("4"_l, "5"_l))));
+  quiz_assert(is_parsable("12(123.4567E2 +  0x2a+2*0b0101)"_l));
+  quiz_assert(is_parsable("-1"_l));
+  quiz_assert(is_parsable("1+2+3+4+5+6"_l));
+  quiz_assert(is_parsable("(1+(2+(3+4)))"_l));
+  quiz_assert(is_parsable(KRackL(KFracL("2"_l, "3"_l), KParenthesisL("4"_l))));
+  quiz_assert(is_parsable(
+      KRackL(KFracL("2"_l, "3"_l), KVertOffL(KFracL("4"_l, "5"_l)))));
+
+  quiz_assert(!is_parsable("ln(ln(2"_l));
 }

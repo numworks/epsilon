@@ -544,6 +544,19 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
   assert(false);
 }
 
+bool Simplification::Simplify(EditionReference* reference) {
+  bool changed = false;
+  /* TODO: If simplification fails, come back to this step with a simpler
+   * projection context. */
+  changed = DeepSystemProjection(reference) || changed;
+  // TODO: Deep SystemReduce instead of ShallowSystemReduce.
+  changed = ShallowSystemReduce(reference) || changed;
+  // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
+  changed = AdvancedReduction(reference) || changed;
+  changed = DeepBeautify(reference) || changed;
+  return changed;
+}
+
 bool Simplification::AdvancedReduction(EditionReference* reference) {
   bool changed = false;
   for (std::pair<EditionReference, int> indexedNode :

@@ -8,6 +8,7 @@ namespace PoincareJ {
 
 class Simplification {
  public:
+  static bool Simplify(EditionReference *reference);
   static bool AdvancedReduction(EditionReference *reference);
   static bool ShallowAdvancedReduction(EditionReference *reference,
                                        bool change);

@@ -59,8 +59,8 @@ class Reference {
   size_t treeSize() const;
   bool treeIsIdenticalTo(const Reference &other) const {
     // TODO: second getTree() can delete first tree.
-    return (isInitialized() == other.isInitialized()) &&
-           (!isInitialized() || getTree().treeIsIdenticalTo(other.getTree()));
+    return (isUninitialized() == other.isUninitialized()) &&
+           (isUninitialized() || getTree().treeIsIdenticalTo(other.getTree()));
   }
 #if POINCARE_MEMORY_TREE_LOG
   void log();
@@ -69,6 +69,12 @@ class Reference {
   bool isCacheReference() const { return m_initializer != nullptr; }
   bool isInitialized() const {
     return isCacheReference() || m_data.data() != nullptr;
+  }
+  /* isUninitialized() relates to the reference's tree and is not exactly the
+   * opposite of isInitialized(), which relates to the reference itself without
+   * needing to fetch the tree. */
+  bool isUninitialized() const {
+    return !isInitialized() || getTree().isUninitialized();
   }
   uint16_t id() const;  // TODO: make private (public for tests)
 

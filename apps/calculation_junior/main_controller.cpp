@@ -28,7 +28,12 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     /* Create temporary Layout and expression to dump into m_buffer.blocks().
      * TODO : CreateSystematicReduction from expressions. */
     PoincareJ::Layout tempLayout = m_view.layoutField()->layout();
-    PoincareJ::Expression::Parse(&tempLayout).dumpAt(m_buffer.blocks());
+    PoincareJ::Expression tempExpression =
+        PoincareJ::Expression::Parse(&tempLayout);
+    if (tempExpression.isUninitialized()) {
+      return false;
+    }
+    tempExpression.dumpAt(m_buffer.blocks());
     // The reduced expression has to live somewhere so layout can be initialized
     m_reducedExpression =
         PoincareJ::Expression::CreateSystematicReduction(m_buffer.blocks());

@@ -57,13 +57,19 @@ static inline bool loadFileHeader(const char* header) {
 
 static inline void pushEvent(uint8_t c) {
   Ion::Events::Event e = Ion::Events::Event(c);
-  if (Events::isDefined(static_cast<uint8_t>(e)) && e != Ion::Events::None &&
-      e != Ion::Events::Termination && e != Ion::Events::TimerFire &&
-      e != Ion::Events::ExternalText) {
-    /* Avoid pushing invalid events - useful when fuzzing.
-     * ExternalText is not handled by state files. */
-    Journal::replayJournal()->pushEvent(e);
+  if (!Events::isDefined(static_cast<uint8_t>(
+          e))) {  // If not defined, fall back on a normal key event.
+    e = Ion::Events::Event(static_cast<uint8_t>(
+        Keyboard::ValidKeys[c % Ion::Keyboard::NumberOfValidKeys]));
   }
+  assert(Events::isDefined(static_cast<uint8_t>(e)));
+
+  if (e == Ion::Events::None || e == Ion::Events::Termination ||
+      e == Ion::Events::TimerFire || e == Ion::Events::ExternalText) {
+    return;
+  }
+  /* ExternalText is not yet handled by state files. */
+  Journal::replayJournal()->pushEvent(e);
 }
 
 static inline bool loadFile(FILE* f) {

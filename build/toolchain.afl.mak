@@ -17,3 +17,5 @@ endif
 ifeq ($(DEBUG),1)
 $(error DEBUG=1 is unnecessary with afl toolchain: assertions are handled anyway but the build won't be optimized.)
 endif
+
+SFLAGS += -DEFFICIENT_STATE_FILES=1

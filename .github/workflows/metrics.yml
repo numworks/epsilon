@@ -52,6 +52,7 @@ jobs:
       - name: Build head userland for N0110
         # build the largest target
         run: cd head && make userland.onboarding.beta.allow3rdparty.A.elf
+      # tables with bootloader and kernel
       - name: Binary size summary
         id: binary_size_summary
         if: ${{ steps.epsilon-core.outcome == 'success' }}
@@ -60,6 +61,7 @@ jobs:
         id: binary_size_n0110
         if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" >> $GITHUB_OUTPUT
+      # tables with userland only
       - name: Binary size summary (userland only)
         id: userland_binary_size_summary
         if: ${{ steps.epsilon-core.outcome != 'success' }}
@@ -68,6 +70,7 @@ jobs:
         id: userland_binary_size_n0110
         if: ${{ steps.epsilon-core.outcome != 'success' }}
         run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" >> $GITHUB_OUTPUT
+      # final comment
       - name: Add comment
         uses: actions/github-script@v6
         with:

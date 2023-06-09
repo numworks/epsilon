@@ -7,6 +7,8 @@ namespace std {
 template <typename U, typename V>
 struct pair {
   constexpr pair(U u, V v) : first(u), second(v) {}
+  template <typename W, typename X>
+  constexpr pair(pair<W, X> p) : pair(p.first, p.second) {}
 
   U first;
   V second;

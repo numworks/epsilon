@@ -301,6 +301,10 @@ QUIZ_CASE(pcj_integer_gcd) {
   assert_gcd_to("18", "42", "6");
   assert_gcd_to("7", "13", "1");
   assert_gcd_to("7", "7", "7");
+  assert_gcd_to("-8", "16", "8");
+  assert_gcd_to("1", "-1", "1");
+  assert_gcd_to("0", "-3", "3");
+  assert_gcd_to("0", "0", "0");
 }
 
 static inline void assert_might_overflow(ActionWithContext action,

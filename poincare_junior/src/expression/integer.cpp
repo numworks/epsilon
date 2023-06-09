@@ -535,7 +535,9 @@ Node IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
   // TODO Knuth modified like in upy to avoid divisions
   WorkingBuffer workingBuffer;
   IntegerHandler i = a;
+  i.setSign(NonStrictSign::Positive);
   IntegerHandler j = b;
+  j.setSign(NonStrictSign::Positive);
   if (Compare(i, j) == 0) {
     return i.pushOnEditionPool();
   }

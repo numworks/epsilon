@@ -168,7 +168,8 @@ int main(int argc, char *argv[]) {
       args.pop(k_loadStateFileKeys, std::size(k_loadStateFileKeys));
   if (stateFile) {
     assert(Journal::replayJournal());
-    StateFile::load(stateFile);
+    bool headlessStateFile = args.popFlag("--headless-state-file");
+    StateFile::load(stateFile, headlessStateFile);
     const char *replayJournalLanguage =
         Journal::replayJournal()->startingLanguage();
     if (replayJournalLanguage[0] != 0) {

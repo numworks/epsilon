@@ -225,12 +225,11 @@ Expression Expression::Parse(const Layout *layout) {
       layout);
 }
 
-Expression Expression::CreateSystematicReduction(void *expressionAddress) {
+Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
   return Expression(
       [](Node tree) {
-        EditionReference(tree).recursivelyEdit([](EditionReference reference) {
-          Simplification::ShallowSystemReduce(&reference);
-        });
+        EditionReference reference(tree);
+        Simplification::Simplify(&reference);
       },
       Node(static_cast<const TypeBlock *>(expressionAddress)));
 }

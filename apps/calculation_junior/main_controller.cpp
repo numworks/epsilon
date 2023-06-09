@@ -26,7 +26,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     // Reset reduction layout before altering m_buffer
     m_view.reductionLayoutView()->setLayout(PoincareJ::Layout());
     /* Create temporary Layout and expression to dump into m_buffer.blocks().
-     * TODO : CreateSystematicReduction from expressions. */
+     * TODO : CreateSimplifyReduction from expressions. */
     PoincareJ::Layout tempLayout = m_view.layoutField()->layout();
     PoincareJ::Expression tempExpression =
         PoincareJ::Expression::Parse(&tempLayout);
@@ -36,7 +36,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     tempExpression.dumpAt(m_buffer.blocks());
     // The reduced expression has to live somewhere so layout can be initialized
     m_reducedExpression =
-        PoincareJ::Expression::CreateSystematicReduction(m_buffer.blocks());
+        PoincareJ::Expression::CreateSimplifyReduction(m_buffer.blocks());
     m_view.reductionLayoutView()->setLayout(m_reducedExpression.toLayout());
     // Approximate reduced expression
     float approximation = m_reducedExpression.approximate();

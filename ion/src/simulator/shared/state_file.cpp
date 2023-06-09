@@ -30,8 +30,6 @@ constexpr static size_t sHeaderLength =
  * + EVENTS...
  */
 
-#if EFFICIENT_STATE_FILES
-#else
 static inline bool loadFileHeader(const char* header) {
   const char* magic = header;
   const char* version = magic + sMagicLength;
@@ -53,7 +51,6 @@ static inline bool loadFileHeader(const char* header) {
   }
   return true;
 }
-#endif
 
 static inline void pushEvent(uint8_t c) {
   Ion::Events::Event e = Ion::Events::Event(c);
@@ -72,17 +69,16 @@ static inline void pushEvent(uint8_t c) {
   Journal::replayJournal()->pushEvent(e);
 }
 
-static inline bool loadFile(FILE* f) {
-#if EFFICIENT_STATE_FILES
-#else
-  char header[sHeaderLength];
-  if (fread(header, sHeaderLength, 1, f) != 1) {
-    return false;
+static inline bool loadFile(FILE* f, bool headlessStateFile) {
+  if (!headlessStateFile) {
+    char header[sHeaderLength];
+    if (fread(header, sHeaderLength, 1, f) != 1) {
+      return false;
+    }
+    if (!loadFileHeader(header)) {
+      return false;
+    }
   }
-  if (!loadFileHeader(header)) {
-    return false;
-  }
-#endif
   // Events
   int c = 0;
   while ((c = getc(f)) != EOF) {
@@ -94,7 +90,7 @@ static inline bool loadFile(FILE* f) {
   return true;
 }
 
-void load(const char* filename) {
+void load(const char* filename, bool headlessStateFile) {
   FILE* f = nullptr;
   if (strcmp(filename, "-") == 0) {
     f = stdin;
@@ -104,24 +100,25 @@ void load(const char* filename) {
   if (f == nullptr) {
     return;
   }
-  loadFile(f);
+  loadFile(f, headlessStateFile);
   if (f != stdin) {
     fclose(f);
   }
 }
 
-void loadMemory(const char* buffer, size_t length) {
-#if EFFICIENT_STATE_FILES
-  const uint8_t* e = reinterpret_cast<const uint8_t*>(buffer);
-#else
-  if (length < sHeaderLength) {
-    return;
+void loadMemory(const char* buffer, size_t length, bool headlessStateFile) {
+  const uint8_t* e;
+  if (headlessStateFile) {
+    e = reinterpret_cast<const uint8_t*>(buffer);
+  } else {
+    if (length < sHeaderLength) {
+      return;
+    }
+    if (!loadFileHeader(buffer)) {
+      return;
+    }
+    e = reinterpret_cast<const uint8_t*>(buffer + sHeaderLength);
   }
-  if (!loadFileHeader(buffer)) {
-    return;
-  }
-  const uint8_t* e = reinterpret_cast<const uint8_t*>(buffer + sHeaderLength);
-#endif
   const uint8_t* bufferEnd = reinterpret_cast<const uint8_t*>(buffer + length);
   while (e != bufferEnd) {
     pushEvent(*e++);

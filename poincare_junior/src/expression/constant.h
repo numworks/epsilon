@@ -36,6 +36,16 @@ class Constant final {
         assert(false);
     }
   }
+  constexpr static CodePoint ToCodePoint(enum Type type) {
+    switch (type) {
+      case Constant::Type::Pi:
+        return CodePoint(u'π');
+      case Constant::Type::E:
+        return CodePoint('e');
+      default:
+        assert(false);
+    }
+  }
 };
 
 }  // namespace PoincareJ

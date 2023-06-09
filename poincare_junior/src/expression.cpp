@@ -1,6 +1,7 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/builtin.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
@@ -172,6 +173,12 @@ void Expression::ConvertExpressionToLayout(
           layoutParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>('!'));
       break;
+    case BlockType::Constant:
+      NAry::AddChild(
+          layoutParent,
+          editionPool->push<BlockType::CodePointLayout, CodePoint>(
+              Constant::ToCodePoint(Constant::Type(expressionReference))));
+      break;
     case BlockType::UserSymbol:
       assert(*reinterpret_cast<const uint8_t *>(expressionReference.block() +
                                                 1) == 1);
@@ -183,7 +190,6 @@ void Expression::ConvertExpressionToLayout(
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Float:
-    case BlockType::Constant:
     case BlockType::Set:
     case BlockType::List:
     case BlockType::Polynomial:

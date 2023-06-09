@@ -360,11 +360,13 @@ static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string,
 static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     Node layout, size_t string, size_t* length, Token::Type* returnType) {
   RackLayoutDecoder tempDecoder(layout, string);
-  CodePoint c = tempDecoder.nextCodePoint();
   size_t identifierLength = 0;
-  while (identifierLength < *length && !c.isDecimalDigit()) {
+  while (identifierLength < *length) {
+    CodePoint c = tempDecoder.nextCodePoint();
+    if (c.isDecimalDigit()) {
+      break;
+    }
     identifierLength += UTF8Decoder::CharSizeOfCodePoint(c);
-    c = tempDecoder.nextCodePoint();
   }
   if (identifierLength == *length) {
     return false;
@@ -396,6 +398,9 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
   // if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
   // return Token::Type::SpecialIdentifier;
   // }
+  if (*length == 1 && m_decoder.codePointAt(string) == 'e') {
+    return Token::Type::Constant;
+  }
   // if (Constant::IsConstant(string, *length)) {
   // return Token::Type::Constant;
   // }

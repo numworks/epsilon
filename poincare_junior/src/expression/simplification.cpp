@@ -146,7 +146,16 @@ EditionReference WrapWithUnary(EditionReference u, Node n) {
 }
 
 EditionReference RestMult(EditionReference l) {
-  l.matchAndReplace(KMult(KA, KTB), KMult(KTB));
+  if (l.matchAndReplace(KMult(KA, KTB), KMult(KTB)) &&
+      l.type() != BlockType::Multiplication) {
+    l.insertNodeBeforeNode(KMult());
+    if (l.type() == BlockType::One) {
+      l = l.previousNode();
+    } else {
+      l = l.previousNode();
+      NAry::SetNumberOfChildren(l, 1);
+    }
+  }
   return l;
 }
 
@@ -167,8 +176,8 @@ EditionReference SimplifyProductRec(EditionReference l) {
       // SPRDREC1
       if (IsConstant(u1) && IsConstant(u2)) {
         EditionReference P = SimplifyRNE(l);
-        if (P.matchAndReplace(1_e, KMult())) {
-          return P;
+        if (P.type() == BlockType::One) {
+          return P.replaceNodeByNode(KMult());
         }
         return WrapWithUnary(P, KMult());
       }
@@ -185,8 +194,8 @@ EditionReference SimplifyProductRec(EditionReference l) {
         EditionReference S = SimplifySum(sum);
         EditionReference b1 = base(u1);
         EditionReference P = SimplifyPower(P_POW(b1.clone(), S.clone()));
-        if (P.matchAndReplace(1_e, KMult())) {
-          return P;
+        if (P.type() == BlockType::One) {
+          return P.replaceNodeByNode(KMult());
         }
         return WrapWithUnary(P, KMult());
       }
@@ -316,7 +325,16 @@ EditionReference exponent(EditionReference u) {
 }
 
 EditionReference RestAdd(EditionReference l) {
-  l.matchAndReplace(KAdd(KA, KTB), KAdd(KTB));
+  if (l.matchAndReplace(KAdd(KA, KTB), KAdd(KTB)) &&
+      l.type() != BlockType::Addition) {
+    l.insertNodeBeforeNode(KAdd());
+    if (l.type() == BlockType::Zero) {
+      l = l.previousNode();
+    } else {
+      l = l.previousNode();
+      NAry::SetNumberOfChildren(l, 1);
+    }
+  }
   return l;
 }
 
@@ -336,8 +354,8 @@ EditionReference SimplifySumRec(EditionReference l) {
       // SPRDREC1
       if (IsConstant(u1) && IsConstant(u2)) {
         EditionReference P = SimplifyRNE(l);
-        if (P.matchAndReplace(0_e, KAdd())) {
-          return P;
+        if (P.type() == BlockType::Zero) {
+          return P.replaceNodeByNode(KAdd());
         }
         return WrapWithUnary(P, KAdd());
       }
@@ -354,8 +372,8 @@ EditionReference SimplifySumRec(EditionReference l) {
         EditionReference S = SimplifySum(sum);
         EditionReference t1 = term(u1);
         EditionReference P = SimplifyProduct(P_MULT(S.clone(), t1.clone()));
-        if (P.matchAndReplace(0_e, KAdd())) {
-          return P;
+        if (P.type() == BlockType::Zero) {
+          return P.replaceNodeByNode(KAdd());
         }
         return WrapWithUnary(P, KAdd());
       }

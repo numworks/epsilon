@@ -207,11 +207,10 @@ QUIZ_CASE(pcj_integer_multiplication) {
 
 static inline void assert_div_to(const char* a, const char* b, const char* q,
                                  const char* r) {
-  // TODO: remove static_cast<Node> when Hugo's PR is merged
   auto [quotient, remainder] = IntegerHandler::Division(
       CreateIntegerHandler(a), CreateIntegerHandler(b));
-  quiz_assert(static_cast<Node>(quotient).treeIsIdenticalTo(CreateInteger(q)) &&
-              static_cast<Node>(remainder).treeIsIdenticalTo(CreateInteger(r)));
+  quiz_assert(quotient.treeIsIdenticalTo(CreateInteger(q)) &&
+              remainder.treeIsIdenticalTo(CreateInteger(r)));
   reset_pools();
 }
 

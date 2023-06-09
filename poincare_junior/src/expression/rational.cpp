@@ -181,23 +181,20 @@ Node Rational::IntegerPower(const Node i, const Node j) {
 Node Rational::IrreducibleForm(const Node i) {
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
   if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
-    std::pair<EditionReference, EditionReference> a =
-        IntegerHandler::Division(Numerator(i), Integer::Handler(gcd));
+    EditionReference numerator =
+        IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
     gcd.removeTree();
-    a.second.removeTree();
-    return a.first;
+    return numerator;
   }
   if (gcd.type() != BlockType::One) {
-    std::pair<EditionReference, EditionReference> a =
-        IntegerHandler::Division(Numerator(i), Integer::Handler(gcd));
-    std::pair<EditionReference, EditionReference> b =
-        IntegerHandler::Division(Denominator(i), Integer::Handler(gcd));
-    EditionReference result = Rational::Push(a.first, b.first);
+    EditionReference numerator =
+        IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
+    EditionReference denominator =
+        IntegerHandler::Quotient(Denominator(i), Integer::Handler(gcd));
+    EditionReference result = Rational::Push(numerator, denominator);
     gcd.removeTree();
-    a.first.removeTree();
-    a.second.removeTree();
-    b.first.removeTree();
-    b.second.removeTree();
+    numerator.removeTree();
+    denominator.removeTree();
     return result;
   }
   gcd.removeTree();

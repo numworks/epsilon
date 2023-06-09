@@ -445,6 +445,31 @@ std::pair<Node, Node> IntegerHandler::Division(
   return std::make_pair(q, r);
 }
 
+Node IntegerHandler::Quotient(const IntegerHandler &numerator,
+                              const IntegerHandler &denominator) {
+  WorkingBuffer workingBuffer;
+  auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
+  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
+    quotient = Usum(quotient, IntegerHandler(1), false, &workingBuffer);
+  }
+  quotient.setSign(numerator.sign() == denominator.sign()
+                       ? NonStrictSign::Positive
+                       : NonStrictSign::Negative);
+  return quotient.pushOnEditionPool();
+}
+
+Node IntegerHandler::Remainder(const IntegerHandler &numerator,
+                               const IntegerHandler &denominator) {
+  WorkingBuffer workingBuffer;
+  IntegerHandler remainder =
+      Udiv(numerator, denominator, &workingBuffer).second;
+  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
+    remainder = Usum(denominator, remainder, true,
+                     &workingBuffer);  // |denominator|-remainder
+  }
+  return remainder.pushOnEditionPool();
+}
+
 std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
     const IntegerHandler &numerator, const IntegerHandler &denominator,
     WorkingBuffer *workingBuffer) {

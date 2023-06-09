@@ -132,6 +132,10 @@ class IntegerHandler final {
   static Node Multiplication(const IntegerHandler &a, const IntegerHandler &b);
   static std::pair<Node, Node> Division(const IntegerHandler &numerator,
                                         const IntegerHandler &denominator);
+  static Node Quotient(const IntegerHandler &numerator,
+                       const IntegerHandler &denominator);
+  static Node Remainder(const IntegerHandler &numerator,
+                        const IntegerHandler &denominator);
   static Node Power(const IntegerHandler &i, const IntegerHandler &j);
   static Node Factorial(const IntegerHandler &i);
   static Node GCD(const IntegerHandler &a, const IntegerHandler &b);

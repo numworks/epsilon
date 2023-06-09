@@ -10,7 +10,7 @@ on:
 
 jobs:
   compare_screenshots:
-    runs-on: self-hosted
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v3

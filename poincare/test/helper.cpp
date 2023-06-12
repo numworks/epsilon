@@ -146,7 +146,7 @@ void assert_parsed_expression_simplify_to(
       unitFormat, symbolicComputation, unitConversion,
       [](Expression e, ReductionContext reductionContext) {
         Expression simplifiedExpression;
-        if (reductionContext.target() == ReductionTarget::User) {
+        if (reductionContext.target() == User) {
           e.cloneAndSimplifyAndApproximate(
               &simplifiedExpression, nullptr, reductionContext.context(),
               reductionContext.complexFormat(), reductionContext.angleUnit(),

@@ -281,9 +281,9 @@ void assert_reduced_expression_sign(
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  e = e.cloneAndReduce(
-      ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::SystemForApproximation));
+  e = e.cloneAndReduce(ReductionContext(&globalContext, complexFormat,
+                                        angleUnit, unitFormat,
+                                        SystemForApproximation));
   quiz_assert_print_if_failure(e.isPositive(&globalContext) == isPositive,
                                expression);
 }
@@ -488,9 +488,9 @@ void assert_expression_is_real(const char* expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
   Expression e = parse_expression(expression, &context, false)
-                     .cloneAndReduce(ReductionContext(
-                         &context, Cartesian, Radian, MetricUnitFormat,
-                         ReductionTarget::SystemForApproximation));
+                     .cloneAndReduce(ReductionContext(&context, Cartesian,
+                                                      Radian, MetricUnitFormat,
+                                                      SystemForApproximation));
   quiz_assert_print_if_failure(e.isReal(&context), expression);
 }
 
@@ -498,9 +498,9 @@ void assert_expression_is_not_real(const char* expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
   Expression e = parse_expression(expression, &context, false)
-                     .cloneAndReduce(ReductionContext(
-                         &context, Cartesian, Radian, MetricUnitFormat,
-                         ReductionTarget::SystemForApproximation));
+                     .cloneAndReduce(ReductionContext(&context, Cartesian,
+                                                      Radian, MetricUnitFormat,
+                                                      SystemForApproximation));
   quiz_assert_print_if_failure(!e.isReal(&context), expression);
 }
 
@@ -839,8 +839,7 @@ void assert_additional_results_compute_to(
 
   quiz_assert(numberOfResults == length);
   for (int i = 0; i < length; i++) {
-    assert_expression_serialize_to(additional[i], results[i],
-                                   Preferences::PrintFloatMode::Decimal);
+    assert_expression_serialize_to(additional[i], results[i], DecimalMode);
   }
 }
 
@@ -996,9 +995,7 @@ void assert_is_continuous_between_values(const char* expression, float x1,
   Expression e = parse_expression(expression, &context, false);
   quiz_assert_print_if_failure(
       !isContinuous == e.isDiscontinuousBetweenValuesForSymbol(
-                           "x", x1, x2, &context,
-                           Preferences::ComplexFormat::Cartesian,
-                           Preferences::AngleUnit::Degree),
+                           "x", x1, x2, &context, Cartesian, Degree),
       expression);
 }
 
@@ -1080,8 +1077,7 @@ void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      e.deepIsSymbolic(&context, SymbolicComputation::DoNotReplaceAnySymbol) ==
-          isSymbolic,
+      e.deepIsSymbolic(&context, DoNotReplaceAnySymbol) == isSymbolic,
       expression);
 }
 

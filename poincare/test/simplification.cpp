@@ -396,7 +396,7 @@ void assert_parsed_unit_simplify_to_with_prefixes(
         representative->canPrefix(prefixes + i, false)) {
       Unit::Builder(representative, prefixes + i)
           .serialize(buffer + strlen("1×"), bufferSize - strlen("1×"),
-                     Preferences::PrintFloatMode::Decimal,
+                     DecimalMode,
                      Preferences::VeryShortNumberOfSignificantDigits);
       assert_parsed_expression_simplify_to(buffer, buffer);
     }
@@ -846,12 +846,9 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");
 
   // angle units
-  assert_parsed_expression_simplify_to("ln(2/2)_°", "0×_rad",
-                                       ReductionTarget::User,
-                                       Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("ln(2/2)_°", "0×_rad", User, Degree);
   assert_parsed_expression_simplify_to("ln(2/2)_rad", "0×_rad");
-  assert_parsed_expression_simplify_to("1×π×_°", "π×_°", ReductionTarget::User,
-                                       Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("1×π×_°", "π×_°", User, Degree);
   assert_parsed_expression_simplify_to("1×π×_rad", "π×_rad");
 }
 

@@ -29,13 +29,11 @@ QUIZ_CASE(poincare_print_custom_print) {
   assert_string_equality(buffer, "Hello 123");
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "A float: %*.*ef!",
-                                0.0123456789f,
-                                Preferences::PrintFloatMode::Decimal, 7);
+                                0.0123456789f, DecimalMode, 7);
   assert_string_equality(buffer, "A float: 0.01234568!");
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "A double: %*.*ed!",
-                                0.0123456789,
-                                Preferences::PrintFloatMode::Scientific, 4);
+                                0.0123456789, ScientificMode, 4);
   assert_string_equality(buffer, "A double: 1.235ᴇ-2!");
 
   constexpr int shortBufferSize = 5;

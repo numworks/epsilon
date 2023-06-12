@@ -5,7 +5,6 @@ namespace Poincare {
 
 bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(
     const Expression &child, int childIndex) const {
-  assert(child.type() != Type::Dependency);
   /* Expressions like "-2" require parentheses in Addition/Multiplication except
    * when they are the first operand. (same for -2%) */
   if (childIndex != 0 &&
@@ -14,7 +13,8 @@ bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(
        child.type() == Type::Opposite)) {
     return true;
   }
-  if (child.type() == Type::Conjugate || child.type() == Type::PercentSimple) {
+  if (child.isOfType(
+          {Type::Conjugate, Type::Dependency, Type::PercentSimple})) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   if (numberOfChildren() > 1 &&

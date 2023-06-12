@@ -182,30 +182,6 @@ void assert_expression_approximates_to(const char *expression,
       numberOfDigits);
 }
 
-void assert_expression_simplifies_and_approximates_to(
-    const char *expression, const char *approximation,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
-  int numberOfDigits = numberOfSignificantDigits > 0
-                           ? numberOfSignificantDigits
-                           : PrintFloat::k_numberOfStoredSignificantDigits;
-  assert_parsed_expression_process_to(
-      expression, approximation, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      DefaultUnitConversion,
-      [](Expression e, ReductionContext reductionContext) {
-        Expression reduced;
-        Expression approximated;
-        e.cloneAndSimplifyAndApproximate(
-            &reduced, &approximated, reductionContext.context(),
-            reductionContext.complexFormat(), reductionContext.angleUnit(),
-            reductionContext.unitFormat(),
-            reductionContext.symbolicComputation());
-        return approximated;
-      },
-      numberOfDigits);
-}
-
 void assert_expression_approximates_keeping_symbols_to(
     const char *expression, const char *simplifiedExpression,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
@@ -235,9 +211,9 @@ void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
-  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
-  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits
-                                                 : numberOfDigits;
+  int numberOfDigits = numberOfSignificantDigits > 0
+                           ? numberOfSignificantDigits
+                           : PrintFloat::SignificantDecimalDigits<T>();
   assert_parsed_expression_process_to(
       expression, approximation, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,

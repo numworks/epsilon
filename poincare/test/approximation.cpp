@@ -801,7 +801,7 @@ QUIZ_CASE(poincare_approximation_unique_random) {
 
   /* The simplification process should understand that the expression is not a
    * scalar if it encounters a randintnorep. */
-  assert_expression_simplifies_and_approximates_to(
+  assert_expression_simplifies_approximates_to<double>(
       "rem(randintnorep(1,10,5),1)", "{0,0,0,0,0}");
 }
 
@@ -1931,12 +1931,12 @@ QUIZ_CASE(poincare_approximation_mix) {
   assert_expression_approximates_to<float>("4/2×(2+3)", "10");
   assert_expression_approximates_to<double>("4/2×(2+3)", "10");
 
-  assert_expression_simplifies_and_approximates_to("1.0092^(20)",
-                                                   "1.2010050593402");
-  assert_expression_simplifies_and_approximates_to(
+  assert_expression_simplifies_approximates_to<double>("1.0092^(20)",
+                                                       "1.2010050593402");
+  assert_expression_simplifies_approximates_to<double>(
       "1.0092^(50)×ln(3/2)", "0.6409373488899", Degree, MetricUnitFormat,
       Cartesian, 13);
-  assert_expression_simplifies_and_approximates_to(
+  assert_expression_simplifies_approximates_to<double>(
       "1.0092^(50)×ln(1.0092)", "0.01447637354655", Degree, MetricUnitFormat,
       Cartesian, 13);
   assert_expression_approximates_to<double>("1.0092^(20)", "1.2010050593402");

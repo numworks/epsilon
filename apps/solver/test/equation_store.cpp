@@ -293,4 +293,9 @@ QUIZ_CASE(solver_symbolic_computation) {
   assert_solves_to_infinite_solutions({"ax=y"}, {"x=t/2", "y=t"});
   unset("a");
   unset("t");
+
+  set("a", "0");
+  assert_solves_to_error("cos(πx)+cos(a)=0", RequireApproximateSolution);
+  // Value of a was not ignored, which would have resulted in a NonLinearSystem
+  unset("a");
 }

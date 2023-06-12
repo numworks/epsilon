@@ -20,7 +20,8 @@ namespace Solver {
 SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
-  if (firstError == Error::NoError && m_numberOfSolutions > 0) {
+  if (firstError == Error::RequireApproximateSolution ||
+      (firstError == Error::NoError && m_numberOfSolutions > 0)) {
     return firstError;
   }
 

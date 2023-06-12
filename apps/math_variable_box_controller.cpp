@@ -1,6 +1,7 @@
 #include "math_variable_box_controller.h"
 
 #include <apps/apps_container.h>
+#include <apps/shared/app_with_store_menu.h>
 #include <apps/shared/sequence.h>
 #include <assert.h>
 #include <escher/metric.h>
@@ -429,8 +430,8 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     if (record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
-    Shared::SharedAppWithStoreMenu *app =
-        static_cast<Shared::SharedAppWithStoreMenu *>(Container::activeApp());
+    Shared::AppWithStoreMenu *app =
+        static_cast<Shared::AppWithStoreMenu *>(Container::activeApp());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();

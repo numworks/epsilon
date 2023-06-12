@@ -35,6 +35,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
 )
 
 app_shared_src = $(addprefix apps/shared/,\
+  app_with_store_menu.cpp \
   banner_view.cpp \
   buffer_function_title_cell.cpp \
   calculus_column_parameter_controller.cpp \

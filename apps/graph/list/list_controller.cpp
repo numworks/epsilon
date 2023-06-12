@@ -190,7 +190,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
 
 CodePoint ListController::XNT() {
   int selectedFunctionIndex = selectedRow();
-  if (!App::app()->isStoreMenuOpen() && selectedFunctionIndex >= 0) {
+  if (selectedFunctionIndex >= 0) {
     assert(selectedFunctionIndex < modelStore()->numberOfModels());
     Ion::Storage::Record record =
         modelStore()->recordAtIndex(selectedFunctionIndex);

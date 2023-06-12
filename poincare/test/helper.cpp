@@ -235,9 +235,6 @@ void assert_expression_approximates_to(const char *expression,
                                        Preferences::UnitFormat unitFormat,
                                        Preferences::ComplexFormat complexFormat,
                                        int numberOfSignificantDigits) {
-  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
-  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits
-                                                 : numberOfDigits;
   assert_parsed_expression_process_to(
       expression, approximation, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
@@ -247,16 +244,13 @@ void assert_expression_approximates_to(const char *expression,
                                 reductionContext.complexFormat(),
                                 reductionContext.angleUnit());
       },
-      numberOfDigits);
+      numberOfSignificantDigits);
 }
 
 void assert_expression_approximates_keeping_symbols_to(
     const char *expression, const char *simplifiedExpression,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
-  int numberOfDigits = 10;
-  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits
-                                                 : numberOfDigits;
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllDefinedSymbolsWithDefinition,
@@ -271,7 +265,7 @@ void assert_expression_approximates_keeping_symbols_to(
             reductionContext.unitConversion(), true);
         return simplifiedExpression;
       },
-      numberOfDigits);
+      numberOfSignificantDigits);
 }
 
 template <typename T>
@@ -279,9 +273,6 @@ void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
-  int numberOfDigits = numberOfSignificantDigits > 0
-                           ? numberOfSignificantDigits
-                           : PrintFloat::SignificantDecimalDigits<T>();
   assert_parsed_expression_process_to(
       expression, approximation, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
@@ -292,7 +283,7 @@ void assert_expression_simplifies_approximates_to(
                                 reductionContext.complexFormat(),
                                 reductionContext.angleUnit());
       },
-      numberOfDigits);
+      numberOfSignificantDigits);
 }
 
 void assert_expression_serialize_to(Poincare::Expression expression,

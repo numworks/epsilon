@@ -20,7 +20,7 @@ class SequenceToolboxDataSource : public MathToolboxExtraCellsDataSource {
     assert(row < numberOfExtraCells());
     return m_addedCellLayout[row];
   }
-  void buildExtraCellsLayouts(const char* sequenceName, int recurrenceDepth);
+  void buildExtraCellsLayouts(const char* sequenceName, int order);
 
  private:
   constexpr static int k_maxNumberOfLayouts =

@@ -13,10 +13,10 @@ using namespace Escher;
 namespace Sequence {
 
 void SequenceToolboxDataSource::buildExtraCellsLayouts(const char *sequenceName,
-                                                       int recurrenceDepth) {
+                                                       int order) {
   /* If recurrenceDepth < 0, the user is setting the initial conditions so we
    * do not want to add any cell in the toolbox. */
-  if (recurrenceDepth < 0) {
+  if (order < 0) {
     m_numberOfAddedCells = 0;
     return;
   }
@@ -29,9 +29,9 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char *sequenceName,
   int sequenceIndex =
       Shared::SequenceStore::SequenceIndexForName(sequenceName[0]);
   for (int i = 0; i < Shared::SequenceStore::k_maxNumberOfSequences; i++) {
-    for (int j = 0; j < recurrenceDepth + 1; j++) {
+    for (int j = 0; j < order + 1; j++) {
       // When defining u(n+1) for ex, don't add [u|v|w](n+2) or u(n+1)
-      if (j == 2 || (j == recurrenceDepth && sequenceIndex == i)) {
+      if (j == 2 || (j == order && sequenceIndex == i)) {
         continue;
       }
       const char *indice = j == 0 ? "n" : "n+1";

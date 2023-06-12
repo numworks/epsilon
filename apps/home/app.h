@@ -1,7 +1,6 @@
 #ifndef HOME_APP_H
 #define HOME_APP_H
 
-#include <apps/shared/math_app.h>
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/selectable_table_view_data_source.h>
@@ -17,7 +16,7 @@ class App : public Escher::App {
     I18n::Message name() const override;
     I18n::Message upperName() const override;
   };
-  class Snapshot : public Shared::SharedApp::Snapshot,
+  class Snapshot : public Escher::App::Snapshot,
                    public Escher::SelectableTableViewDataSource {
    public:
     App *unpack(Escher::Container *container) override;

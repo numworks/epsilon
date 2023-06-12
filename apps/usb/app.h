@@ -1,9 +1,8 @@
 #ifndef USB_APP_H
 #define USB_APP_H
 
-#include <apps/shared/math_app.h>
+#include <escher/app.h>
 
-#include "escher/include/escher/app.h"
 #include "usb_connected_controller.h"
 
 namespace USB {
@@ -15,7 +14,7 @@ class App : public Escher::App {
     I18n::Message name() const override;
     I18n::Message upperName() const override;
   };
-  class Snapshot : public Shared::SharedApp::Snapshot {
+  class Snapshot : public Escher::App::Snapshot {
    public:
     App* unpack(Escher::Container* container) override;
     const Descriptor* descriptor() const override;

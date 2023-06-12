@@ -52,10 +52,9 @@ bool TangentGraphController::textFieldDidFinishEditing(
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(m_record);
   assert(function->properties().isCartesian());
-  double y = function
-                 ->evaluate2DAtParameter(floatBody,
-                                         Container::activeApp()->localContext())
-                 .y();
+  double y =
+      function->evaluate2DAtParameter(floatBody, App::app()->localContext())
+          .y();
   m_cursor->moveTo(floatBody, floatBody, y);
   panToMakeCursorVisible();
   reloadBannerView();

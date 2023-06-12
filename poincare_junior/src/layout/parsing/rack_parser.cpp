@@ -38,7 +38,9 @@ EditionReference RackParser::parse() {
   if (m_status == Status::Success) {
     return result;
   }
-  result.removeTree();
+  if (!result.isUninitialized()) {
+    result.removeTree();
+  }
   return EditionReference();
 }
 
@@ -1151,6 +1153,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // }
 
 EditionReference RackParser::parseFunctionParameters() {
+  // TODO: Handle ParenthesisLayout here.
   if (!popTokenIfType(Token::Type::LeftParenthesis)) {
     m_status = Status::Error;  // Left parenthesis missing.
     return EditionReference();

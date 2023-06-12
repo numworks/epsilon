@@ -35,12 +35,11 @@ Evaluation<T> OppositeNode::templatedApproximate(
 bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression& child,
                                                     int childIndex) const {
   assert(childIndex == 0);
-  assert(child.type() != Type::Dependency);
   if (child.isNumber() &&
       static_cast<const Number&>(child).isPositive() == TrinaryBoolean::False) {
     return true;
   }
-  if (child.type() == Type::Conjugate) {
+  if (child.isOfType({Type::Conjugate, Type::Dependency})) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   return child.isOfType({Type::Addition, Type::Subtraction, Type::Opposite});

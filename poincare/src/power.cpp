@@ -142,7 +142,6 @@ bool PowerNode::isReal(Context *context, bool canContainMatrices) const {
 
 bool PowerNode::childAtIndexNeedsUserParentheses(const Expression &child,
                                                  int childIndex) const {
-  assert(child.type() != Type::Dependency);
   if (childIndex > 0) {
     return false;
   }
@@ -154,7 +153,7 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression &child,
      * ^(2/3, 4) --> (2/3)^{4}   */
     return true;
   }
-  if (child.type() == Type::Conjugate) {
+  if (child.isOfType({Type::Conjugate, Type::Dependency})) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   // ^(2+3,4) --> (2+3)^{4}

@@ -21,7 +21,6 @@ static Expression enhancePushedExpression(Expression expression,
     Symbol ans = Symbol::Ans();
     expression = expression.replaceSymbolWithExpression(
         ans, ansContext->expressionForSymbolAbstract(ans, false));
-    expression = expression.addMissingParentheses();
   }
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.

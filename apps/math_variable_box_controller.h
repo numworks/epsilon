@@ -9,6 +9,9 @@
 #include <escher/scrollable_layout_view.h>
 #include <ion.h>
 
+/*  WARNING: MathVariableBox can only be used within AppWithStoreMenu, since it
+ * does intrusive storage changes. */
+
 class MathVariableBoxController : public Escher::NestedMenuController {
  public:
   MathVariableBoxController();

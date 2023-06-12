@@ -19,7 +19,7 @@ jobs:
       - name: Checkout to most recent ancestor
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PAT || github.token }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
@@ -39,7 +39,7 @@ jobs:
       - name: Find head of PR
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PAT || github.token }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
           ref: ${{ github.event.pull_request.head.sha }}
           path: head

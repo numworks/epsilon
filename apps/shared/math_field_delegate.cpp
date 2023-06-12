@@ -82,11 +82,7 @@ bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
 bool AbstractMathFieldDelegate::isAcceptableText(const char *text) {
   Expression exp =
       Expression::Parse(text, Container::activeApp()->localContext());
-  bool isAcceptable = isAcceptableExpression(exp);
-  if (!isAcceptable) {
-    Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
-  }
-  return isAcceptable;
+  return isAcceptableExpression(exp);
 }
 
 MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
@@ -176,6 +172,7 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
       return false;
     }
     if (!isAcceptableText(textField->text())) {
+      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }

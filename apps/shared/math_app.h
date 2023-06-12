@@ -4,11 +4,11 @@
 #include <apps/math_toolbox.h>
 #include <apps/math_variable_box_controller.h>
 
-#include "shared_app.h"
+#include "app_with_store_menu.h"
 
 namespace Shared {
 
-class MathApp : public SharedAppWithStoreMenu {
+class MathApp : public AppWithStoreMenu {
  public:
   MathToolbox* defaultToolbox() override final { return &m_mathToolbox; }
   MathVariableBoxController* defaultVariableBox() override final {
@@ -16,7 +16,7 @@ class MathApp : public SharedAppWithStoreMenu {
   }
 
  protected:
-  using SharedAppWithStoreMenu::SharedAppWithStoreMenu;
+  using AppWithStoreMenu::AppWithStoreMenu;
 
  private:
   MathToolbox m_mathToolbox;

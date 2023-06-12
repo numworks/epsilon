@@ -37,7 +37,7 @@ void FunctionApp::prepareForIntrusiveStorageChange() {
 }
 
 void FunctionApp::concludeIntrusiveStorageChange() {
-  SharedAppWithStoreMenu::concludeIntrusiveStorageChange();
+  AppWithStoreMenu::concludeIntrusiveStorageChange();
   assert(m_activeControllerBeforeStore);
   /* TODO: we could avoid updating the graph/values when the record doesn't
    * affect the store but it's hard to detect indirect dependencies:

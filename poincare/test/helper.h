@@ -76,7 +76,7 @@ void assert_parsed_expression_process_to(
     Poincare::Preferences::UnitFormat unitFormat,
     Poincare::SymbolicComputation symbolicComputation,
     Poincare::UnitConversion unitConversion, ProcessExpression process,
-    int numberOfSignifiantDigits =
+    int numberOfSignificantDigits =
         Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
 
 // Parsing

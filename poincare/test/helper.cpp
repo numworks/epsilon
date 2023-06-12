@@ -83,7 +83,7 @@ void assert_parsed_expression_process_to(
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     UnitConversion unitConversion, ProcessExpression process,
-    int numberOfSignifiantDigits) {
+    int numberOfSignificantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   Expression m = process(
@@ -91,7 +91,7 @@ void assert_parsed_expression_process_to(
                           target, symbolicComputation, unitConversion));
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
+  m.serialize(buffer, bufferSize, DecimalMode, numberOfSignificantDigits);
   const bool test = strcmp(buffer, result) == 0;
   char information[bufferSize] = "";
   if (!test) {

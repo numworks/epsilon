@@ -192,7 +192,6 @@ void ListController::resolveEquations() {
   Poincare::CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    bool resultWithoutUserDefinedSymbols = false;
     SystemOfEquations::Error e =
         App::app()->system()->exactSolve(App::app()->localContext());
     switch (e) {
@@ -209,20 +208,13 @@ void ListController::resolveEquations() {
       case SystemOfEquations::Error::NonLinearSystem:
         Container::activeApp()->displayWarning(I18n::Message::NonLinearSystem);
         return;
-      case SystemOfEquations::Error::RequireApproximateSolution: {
-        reinterpret_cast<IntervalController *>(App::app()->intervalController())
-            ->setShouldReplaceFuncionsButNotSymbols(
-                resultWithoutUserDefinedSymbols);
-        stackController()->push(App::app()->intervalController());
-        return;
-      }
       default: {
-        assert(e == SystemOfEquations::Error::NoError);
-        StackViewController *stack = stackController();
-        reinterpret_cast<IntervalController *>(App::app()->intervalController())
-            ->setShouldReplaceFuncionsButNotSymbols(
-                resultWithoutUserDefinedSymbols);
-        stack->push(App::app()->solutionsControllerStack());
+        assert(e == SystemOfEquations::Error::NoError ||
+               e == SystemOfEquations::Error::RequireApproximateSolution);
+        stackController()->push(
+            e == SystemOfEquations::Error::RequireApproximateSolution
+                ? App::app()->intervalController()
+                : App::app()->solutionsControllerStack());
       }
     }
   } else {

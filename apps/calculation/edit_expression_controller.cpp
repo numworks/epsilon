@@ -166,6 +166,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
     if (!isAcceptableText(m_workingBuffer)) {
+      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
     if (m_calculationStore

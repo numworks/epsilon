@@ -27,7 +27,6 @@ int SubtractionNode::polynomialDegree(Context* context,
 
 bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression& child,
                                                        int childIndex) const {
-  assert(child.type() != Type::Dependency);
   if (childIndex == 0) {
     // First operand of a subtraction never requires parentheses
     return false;
@@ -36,7 +35,7 @@ bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression& child,
       static_cast<const Number&>(child).isPositive() == TrinaryBoolean::False) {
     return true;
   }
-  if (child.type() == Type::Conjugate) {
+  if (child.isOfType({Type::Conjugate, Type::Dependency})) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   return child.isOfType({Type::Subtraction, Type::Opposite, Type::Addition});

@@ -85,7 +85,6 @@ int MultiplicationNode::getPolynomialCoefficients(
 
 bool MultiplicationNode::childAtIndexNeedsUserParentheses(
     const Expression &child, int childIndex) const {
-  assert(child.type() != Type::Dependency);
   if (NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(child,
                                                                 childIndex)) {
     return true;

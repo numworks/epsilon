@@ -11,32 +11,19 @@ namespace Shared {
 
 class SharedApp : public Escher::App {
  public:
-  class Snapshot : public App::Snapshot {
+  class Snapshot : public Escher::App::Snapshot {
    public:
     void tidy() override;
     void reset() override;
   };
-  virtual ~SharedApp() = default;
   Poincare::Context* localContext() override;
-
-  virtual void prepareForIntrusiveStorageChange() {
-    assert(!m_intrusiveStorageChangeFlag);
-    m_intrusiveStorageChangeFlag = true;
-  }
-  virtual void concludeIntrusiveStorageChange() {
-    assert(m_intrusiveStorageChangeFlag);
-    m_intrusiveStorageChangeFlag = false;
-  }
 
  protected:
   SharedApp(Snapshot* snapshot, Escher::ViewController* rootViewController);
-
-  bool m_intrusiveStorageChangeFlag;
 };
 
 class SharedAppWithStoreMenu : public SharedApp {
  public:
-  virtual ~SharedAppWithStoreMenu() = default;
   void storeValue(const char* text = "") override;
   bool isStoreMenuOpen() const;
   Escher::PervasiveBox* toolbox() override final {
@@ -48,12 +35,25 @@ class SharedAppWithStoreMenu : public SharedApp {
   virtual Escher::PervasiveBox* defaultToolbox() { return nullptr; }
   virtual Escher::PervasiveBox* defaultVariableBox() { return nullptr; }
 
+  virtual void prepareForIntrusiveStorageChange() {
+    assert(!m_intrusiveStorageChangeFlag);
+    m_intrusiveStorageChangeFlag = true;
+  }
+  virtual void concludeIntrusiveStorageChange() {
+    assert(m_intrusiveStorageChangeFlag);
+    m_intrusiveStorageChangeFlag = false;
+  }
+
  protected:
-  using SharedApp::SharedApp;
+  SharedAppWithStoreMenu(SharedApp::Snapshot* snapshot,
+                         Escher::ViewController* rootViewController);
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
   StoreMenuController m_storeMenuController;
+
+ protected:
+  bool m_intrusiveStorageChangeFlag;
 };
 
 }  // namespace Shared

@@ -429,8 +429,8 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     if (record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
-    Shared::SharedApp *app =
-        static_cast<Shared::SharedApp *>(Container::activeApp());
+    Shared::SharedAppWithStoreMenu *app =
+        static_cast<Shared::SharedAppWithStoreMenu *>(Container::activeApp());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();

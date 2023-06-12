@@ -141,7 +141,7 @@ void EditExpressionController::layoutFieldDidChangeSize(
 
 bool EditExpressionController::isAcceptableExpression(
     const Poincare::Expression expression) {
-  /* Override SharedApp because Store is acceptable, and
+  /* Override MathLayoutFieldDelegate because Store is acceptable, and
    * ans has an expression. */
   {
     Expression ansExpression =

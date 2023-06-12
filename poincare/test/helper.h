@@ -148,6 +148,7 @@ void inline assert_roughly_equal(T observed, T expected,
 
 template <typename T>
 void assert_no_duplicates_in_list(const char* expression);
+
 template <typename T>
 void assert_expression_approximates_to_scalar(
     const char* expression, T approximation,
@@ -155,17 +156,21 @@ void assert_expression_approximates_to_scalar(
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::Preferences::MixedFractions mixedFractionsParameter =
         Poincare::Preferences::MixedFractions::Enabled);
+
 template <typename T>
 void assert_float_approximates_to(Poincare::Float<T> f, const char* result);
+
 template <typename T>
 void assert_expression_approximates_with_value_for_symbol(
     const char* expression, T approximation, const char* symbol, T symbolValue,
     Poincare::Preferences::AngleUnit angleUnit = Degree,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian);
+
 template <typename T>
 void assert_expression_approximation_is_bounded(const char* expression,
                                                 T lowBound, T upBound,
                                                 bool upBoundIncluded = false);
+
 template <typename T>
 void assert_expression_approximates_to(
     const char* expression, const char* approximation,
@@ -173,18 +178,21 @@ void assert_expression_approximates_to(
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits = -1);
+
 void assert_expression_simplifies_and_approximates_to(
     const char* expression, const char* approximation,
     Poincare::Preferences::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits = -1);
+
 void assert_expression_approximates_keeping_symbols_to(
     const char* expression, const char* simplifiedExpression,
     Poincare::Preferences::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits = -1);
+
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,

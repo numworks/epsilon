@@ -156,7 +156,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(
     AbstractTextField *textField, const char *text, Ion::Events::Event event) {
   // Parse and check significance level
   double p = ParseInputtedFloatValue<double>(text);
-  if (HasUndefinedValue(p, false, false)) {
+  if (HasUndefinedValue(p)) {
     return false;
   }
   return handleEditedValue(

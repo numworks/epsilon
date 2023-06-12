@@ -86,7 +86,7 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField *textField, const char *text,
     Ion::Events::Event event) {
   double p = ParseInputtedFloatValue<double>(text);
-  if (HasUndefinedValue(p, false, false)) {
+  if (HasUndefinedValue(p)) {
     return false;
   }
   int row = m_selectableTableView.selectedRow(),

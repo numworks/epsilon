@@ -568,7 +568,7 @@ QUIZ_CASE(poincare_parsing_units) {
       constexpr static size_t bufferSize = 10;
       char buffer[bufferSize];
       Unit::Builder(rep, Unit::Prefix::EmptyPrefix())
-          .serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal,
+          .serialize(buffer, bufferSize, DecimalMode,
                      Preferences::VeryShortNumberOfSignificantDigits);
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit,
@@ -582,7 +582,7 @@ QUIZ_CASE(poincare_parsing_units) {
         for (size_t i = 0; i < Unit::Prefix::k_numberOfPrefixes; i++) {
           const Unit::Prefix* pre = Unit::Prefix::Prefixes();
           Unit::Builder(rep, pre).serialize(
-              buffer, bufferSize, Preferences::PrintFloatMode::Decimal,
+              buffer, bufferSize, DecimalMode,
               Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(

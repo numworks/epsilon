@@ -7,8 +7,8 @@
 using namespace Poincare;
 
 CartesianConic getConicFromExpression(
-    const char* expression, Preferences::ComplexFormat complexFormat =
-                                Preferences::ComplexFormat::Cartesian) {
+    const char* expression,
+    Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   return CartesianConic(e, &globalContext, complexFormat);

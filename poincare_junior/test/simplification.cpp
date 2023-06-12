@@ -80,6 +80,10 @@ QUIZ_CASE(pcj_simplification_contraction) {
       KAdd(KLn(1_e), KLn(2_e), KLn(KMult(3_e, 4_e)), 5_e, 6_e));
   quiz_assert(Simplification::ShallowContract(&ref5));
   assert_trees_are_equal(ref5, KAdd(KLn(KMult(1_e, 2_e, 3_e, 4_e)), 5_e, 6_e));
+
+  EditionReference ref6(KPow(KExp("x"_e), 2_e));
+  quiz_assert(Simplification::ShallowContract(&ref6));
+  assert_trees_are_equal(ref6, KExp(KMult("x"_e, 2_e)));
 }
 
 QUIZ_CASE(pcj_simplification_algebraic_expansion) {

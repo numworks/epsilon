@@ -899,14 +899,11 @@ bool Simplification::ExpandLn(EditionReference* reference) {
 }
 
 bool Simplification::ExpandExp(EditionReference* reference) {
+  // TODO: exp(A?*B) = exp(A)^(B) if B is an integer only
   return
       // exp(A+B+...) = exp(A) * exp(B) * ...
       DistributeOverNAry(reference, BlockType::Exponential, BlockType::Addition,
-                         BlockType::Multiplication) ||
-      // exp(A*B?) = exp(A) ^ B
-      reference->matchAndReplace(
-          KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
-          KPow(KExp(KPlaceholder<A>()), KMult(KPlaceholder<B>())));
+                         BlockType::Multiplication);
 }
 
 bool Simplification::ContractExpMult(EditionReference* reference) {

@@ -15,8 +15,7 @@ IntervalController::IntervalController(
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : FloatParameterController<double>(parentResponder),
       m_instructions(I18n::Message::ApproximateSolutionIntervalInstruction,
-                     k_messageFormat),
-      m_shouldReplaceFunctionsButNotSymbols(false) {
+                     k_messageFormat) {
   setTopView(&m_instructions);
   m_okButton.setMessage(I18n::Message::ResolveEquation);
   for (int i = 0; i < k_maxNumberOfCells; i++) {

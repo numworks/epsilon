@@ -18,10 +18,6 @@ class IntervalController : public Shared::FloatParameterController<double> {
   TELEMETRY_ID("Interval");
   int numberOfRows() const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
-  void setShouldReplaceFuncionsButNotSymbols(
-      bool shouldReplaceFunctionsButNotSymbols) {
-    m_shouldReplaceFunctionsButNotSymbols = shouldReplaceFunctionsButNotSymbols;
-  }
 
  private:
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
@@ -39,7 +35,6 @@ class IntervalController : public Shared::FloatParameterController<double> {
   Escher::MessageTextView m_instructions;
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_intervalCell[k_maxNumberOfCells];
-  bool m_shouldReplaceFunctionsButNotSymbols;
 };
 
 }  // namespace Solver

@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <assert.h>
+#include <escher/stack_view_controller.h>
 
 #include <cmath>
 

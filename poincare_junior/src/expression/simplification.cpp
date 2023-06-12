@@ -40,459 +40,564 @@ bool AllChildren(Node u, bool test(Node)) {
   return true;
 }
 
-EditionReference SimplifyRational(EditionReference u) { return u; }
-EditionReference SimplifyRNE(EditionReference u);
-EditionReference SimplifySum(EditionReference u);
-EditionReference SimplifyProduct(EditionReference u);
-EditionReference SimplifyPower(EditionReference u);
+bool SimplifyRational(EditionReference* u) { return false; }
+bool SimplifyRNE(EditionReference* u);
+bool SimplifySum(EditionReference* u);
+bool SimplifyProduct(EditionReference* u);
+bool SimplifyPower(EditionReference* u);
 
-EditionReference Simplification::AutomaticSimplify(EditionReference u) {
-  if (u.block()->isInteger()) {
-    return u;
+bool Simplification::AutomaticSimplify(EditionReference* u) {
+  if (u->block()->isInteger()) {
+    return false;
   }
-  if (u.block()->isRational()) {
-    return Rational::IrreducibleForm(u);
+  if (u->block()->isRational()) {
+    Rational::IrreducibleForm(*u);
+    return true;  // TODO
   }
-  // no need, handled by recursivelyEdit ?
-  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(u)) {
-    child.replaceTreeByTree(AutomaticSimplify(child.clone()));
+  bool childChanged = false;
+  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*u)) {
+    childChanged = AutomaticSimplify(&child) || childChanged;
   }
 
-  if (AnyChildren(u, &IsUndef)) {
-    return u.replaceTreeByNode(P_UNDEF());
+  if (AnyChildren(*u, &IsUndef)) {
+    *u = u->replaceTreeByNode(KUndef);
+    return true;
   }
-  switch (u.type()) {
+  switch (u->type()) {
     case BlockType::Power:
-      return SimplifyPower(u);
+      return SimplifyPower(u) || childChanged;
     case BlockType::Addition:
-      return SimplifySum(u);
+      return SimplifySum(u) || childChanged;
     case BlockType::Multiplication:
-      return SimplifyProduct(u);
+      return SimplifyProduct(u) || childChanged;
     default:
-      return u;
+      return childChanged;
   }
 }
 
-void Simplification::AutomaticSimplifyInPlace(EditionReference u) {
-  EditionReference r = AutomaticSimplify(u);
-  if (u.block() != r.block()) {
-    u = u.replaceTreeByTree(r);
+bool SimplifyIntegerPower(EditionReference* v, EditionReference* n) {
+  if (IsRational(*v)) {
+    EditionReference pow = P_POW(v->clone(), n->clone());
+    n->removeTree();
+    *v = v->replaceTreeByTree(pow);
+    SimplifyRNE(v);
+    return true;
   }
-}
-
-EditionReference SimplifyIntegerPower(EditionReference v, EditionReference n) {
-  if (IsRational(v)) {
-    EditionReference pow = P_POW(v.clone(), n.clone());
-    return SimplifyRNE(pow);
+  if (n->type() == BlockType::Zero) {
+    n->removeNode();
+    *v = v->replaceTreeByNode(1_e);
+    return true;
   }
-  if (n.type() == BlockType::Zero) {
-    return P_ONE();
+  if (n->type() == BlockType::One) {
+    n->removeNode();
+    return true;
   }
-  if (n.type() == BlockType::One) {
-    return v;
-  }
-  if (v.type() == BlockType::Power) {
-    EditionReference r = v.childAtIndex(0);
-    EditionReference s = v.childAtIndex(1);
-    EditionReference m = P_MULT(s.clone(), n.clone());
-    EditionReference p = SimplifyProduct(m);
-    if (IsInteger(p)) {
-      return SimplifyIntegerPower(r, p);
+  if (v->type() == BlockType::Power) {
+    EditionReference r = v->childAtIndex(0);
+    EditionReference s = v->childAtIndex(1);
+    EditionReference m = P_MULT(s.clone(), n->clone());
+    ;
+    SimplifyProduct(&m);
+    if (IsInteger(m)) {
+      *v = v->replaceTreeByTree(r.clone());
+      SimplifyIntegerPower(v, &m);
+      return true;
     }
-    return P_POW(r.clone(), p.clone());
+    EditionReference pow = P_POW(r.clone(), m.clone());
+    m.removeTree();
+    *v = v->replaceTreeByTree(pow);
+    return true;
   }
-  if (v.type() == BlockType::Multiplication) {
-    for (auto [child, index] : NodeIterator::Children<Forward, Editable>(v)) {
-      child.replaceTreeByTree(SimplifyIntegerPower(child, n));
+  if (v->type() == BlockType::Multiplication) {
+    for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*v)) {
+      EditionReference nClone = n->clone();
+      SimplifyIntegerPower(&child, &nClone);
     }
     return SimplifyProduct(v);
   }
-  return P_POW(v.clone(), n.clone());
+  EditionReference pow = P_POW(v->clone(), n->clone());
+  n->removeTree();
+  *v = v->replaceTreeByTree(pow);
+  return false;
 }
 
-EditionReference SimplifyPower(EditionReference u) {
-  EditionReference v = u.childAtIndex(0);
-  EditionReference w = u.childAtIndex(1);
+bool SimplifyPower(EditionReference* u) {
+  EditionReference v = u->childAtIndex(0);
+  EditionReference w = u->childAtIndex(1);
   if (v.type() == BlockType::Zero) {
     if (IsNumber(w) &&
         Rational::RationalStrictSign(w) == StrictSign::Positive) {
-      return P_ZERO();
+      *u = u->replaceTreeByNode(0_e);
+      return true;
     }
-    return P_UNDEF();
+    *u = u->replaceTreeByNode(KUndef);
+    return true;
   }
   if (v.type() == BlockType::One) {
-    return P_ONE();
+    *u = u->replaceTreeByNode(1_e);
+    return true;
   }
   if (IsInteger(w)) {
-    return SimplifyIntegerPower(v, w);
+    u->removeNode();
+    *u = v;
+    return SimplifyIntegerPower(u, &w);
   }
-  return u;
+  return false;
 }
 
-EditionReference base(EditionReference u);
+EditionReference base(Node u);
 
-EditionReference exponent(EditionReference u);
+EditionReference exponent(Node u);
 
 constexpr Tree KA = KPlaceholder<Placeholder::Tag::A>();
 constexpr Tree KB = KPlaceholder<Placeholder::Tag::B>();
 constexpr Tree KTA = KAnyTreesPlaceholder<Placeholder::Tag::A>();
 constexpr Tree KTB = KAnyTreesPlaceholder<Placeholder::Tag::B>();
 
-EditionReference WrapWithUnary(EditionReference u, Node n) {
-  u.insertNodeBeforeNode(n);
-  u = u.previousNode();
-  NAry::SetNumberOfChildren(u, 1);
-  return u;
+bool WrapWithUnary(EditionReference* u, Node n) {
+  u->insertNodeBeforeNode(n);
+  *u = u->previousNode();
+  NAry::SetNumberOfChildren(*u, 1);
+  return true;
 }
 
-EditionReference RestMult(EditionReference l) {
-  if (l.matchAndReplace(KMult(KA, KTB), KMult(KTB)) &&
-      l.type() != BlockType::Multiplication) {
-    l.insertNodeBeforeNode(KMult());
-    if (l.type() == BlockType::One) {
-      l = l.previousNode();
+void MultPop(EditionReference* l) {
+  if (l->matchAndReplace(KMult(KA, KTB), KMult(KTB)) &&
+      l->type() != BlockType::Multiplication) {
+    l->insertNodeBeforeNode(KMult());
+    if (l->type() == BlockType::One) {
+      *l = l->previousNode();
     } else {
-      l = l.previousNode();
-      NAry::SetNumberOfChildren(l, 1);
+      *l = l->previousNode();
+      NAry::SetNumberOfChildren(*l, 1);
     }
   }
-  return l;
 }
 
-EditionReference AdjoinMult(EditionReference e, EditionReference l) {
-  assert(l.type() == BlockType::Multiplication);
-  NAry::AddChildAtIndex(l, e, 0);
-  return l;
+void MultPush(EditionReference* l, EditionReference* e) {
+  assert(l->type() == BlockType::Multiplication);
+  NAry::AddChildAtIndex(*l, *e, 0);
 }
 
-EditionReference MergeProducts(EditionReference p, EditionReference q);
+bool MergeProducts(EditionReference* p, EditionReference* q);
 
-EditionReference SimplifyProductRec(EditionReference l) {
-  if (l.numberOfChildren() == 2) {
-    EditionReference u1 = l.childAtIndex(0);
-    EditionReference u2 = l.childAtIndex(1);
+bool SimplifyProductRec(EditionReference* l) {
+  if (l->numberOfChildren() == 2) {
+    EditionReference u1 = l->childAtIndex(0);
+    EditionReference u2 = l->childAtIndex(1);
     if (u1.type() != BlockType::Multiplication &&
         u2.type() != BlockType::Multiplication) {
       // SPRDREC1
       if (IsConstant(u1) && IsConstant(u2)) {
-        EditionReference P = SimplifyRNE(l);
-        if (P.type() == BlockType::One) {
-          return P.replaceNodeByNode(KMult());
+        SimplifyRNE(l);
+        if (l->type() == BlockType::One) {
+          *l = l->replaceNodeByNode(KMult());
+          return true;
         }
-        return WrapWithUnary(P, KMult());
+        WrapWithUnary(l, KMult());
+        return true;
       }
       if (u1.type() == BlockType::One) {
-        return WrapWithUnary(u2, KMult());
+        *l = l->replaceTreeByTree(u2);
+        WrapWithUnary(l, KMult());
+        return true;
       }
       if (u2.type() == BlockType::One) {
-        return WrapWithUnary(u1, KMult());
+        *l = l->replaceTreeByTree(u1);
+        WrapWithUnary(l, KMult());
+        return true;
       }
       if (Compare(base(u1), base(u2)) == 0) {
-        EditionReference e1 = exponent(u1);
-        EditionReference e2 = exponent(u2);
-        EditionReference sum = P_ADD(e1.clone(), e2.clone());
-        EditionReference S = SimplifySum(sum);
-        EditionReference b1 = base(u1);
-        EditionReference P = SimplifyPower(P_POW(b1.clone(), S.clone()));
+        EditionReference S = P_ADD(exponent(u1), exponent(u2));
+        SimplifySum(&S);
+        EditionReference P = P_POW(base(u1), S.clone());
+        SimplifyPower(&P);
         if (P.type() == BlockType::One) {
-          return P.replaceNodeByNode(KMult());
+          *l = l->replaceTreeByNode(KMult());
+          return true;
         }
-        return WrapWithUnary(P, KMult());
+        *l = l->replaceTreeByTree(P);
+        WrapWithUnary(l, KMult());
+        return true;
       }
       if (Compare(u2, u1) < 0) {
-        l.matchAndReplace(KMult(KA, KB), KMult(KB, KA));
-        return l;
+        l->matchAndReplace(KMult(KA, KB), KMult(KB, KA));
+        return true;
       }
-      return l;
+      return false;
     } else {
       // SPRDREC2
       if (u1.type() == BlockType::Multiplication &&
           u2.type() == BlockType::Multiplication) {
-        return MergeProducts(u1, u2);
+        MergeProducts(&u1, &u2);
+        *l = l->replaceTreeByTree(u1);
+        return true;
       }
       if (u1.type() == BlockType::Multiplication) {
         EditionReference prod = P_MULT(u2.clone());
-        return MergeProducts(u1, prod);
+        MergeProducts(&u1, &prod);
+        *l = l->replaceTreeByTree(u1);
+        return true;
       }
       assert(u2.type() == BlockType::Multiplication);
       EditionReference prod = P_MULT(u1.clone());
-      return MergeProducts(prod, u2);
+      MergeProducts(&prod, &u2);
+      *l = l->replaceTreeByTree(prod);
+      return true;
     }
   }
-  EditionReference u1 = EditionReference(l.childAtIndex(0)).clone();
-  EditionReference w = SimplifyProductRec(RestMult(l));
+  EditionReference u1 = l->childAtIndex(0).clone();
+  MultPop(l);
+  SimplifyProductRec(l);
   if (u1.type() == BlockType::Multiplication) {
-    return MergeProducts(u1, w);
+    /* TODO merge products consume its second children so we can't pass it l
+     * which needs to be kept at the same place. But since the order counts we
+     * can't pass l as the first argument either. Need merge on right ? */
+    EditionReference l2 = l->clone();
+    MergeProducts(&u1, &l2);
+    *l = l->replaceTreeByTree(u1);
+    return true;
   }
   EditionReference prod = P_MULT(u1.clone());
-  return MergeProducts(prod, w);
+  EditionReference l2 = l->clone();
+  MergeProducts(&prod, &l2);
+  *l = l->replaceTreeByTree(prod);
+  return true;
 }
 
-EditionReference MergeProducts(EditionReference p, EditionReference q) {
-  if (q.numberOfChildren() == 0) {
-    return p;
+bool MergeProducts(EditionReference* p, EditionReference* q) {
+  if (q->numberOfChildren() == 0) {
+    q->removeNode();
+    return true;
   }
-  if (p.numberOfChildren() == 0) {
-    return q;
+  if (p->numberOfChildren() == 0) {
+    *p = p->replaceNodeByTree(*q);
+    return true;
   }
-  EditionReference p1 = p.childAtIndex(0);
-  EditionReference q1 = q.childAtIndex(0);
-  EditionReference h = SimplifyProductRec(P_MULT(p1.clone(), q1.clone()));
+  Node p1 = p->childAtIndex(0);
+  Node q1 = q->childAtIndex(0);
+  EditionReference h = P_MULT(p1.clone(), q1.clone());
+  SimplifyProductRec(&h);
   if (h.numberOfChildren() == 0) {
-    return MergeProducts(RestMult(p), RestMult(q));
+    h.removeNode();
+    MultPop(p);
+    MultPop(q);
+    return MergeProducts(p, q);
   }
   if (h.numberOfChildren() == 1) {
-    return AdjoinMult(h.childAtIndex(0),
-                      MergeProducts(RestMult(p), RestMult(q)));
+    MultPop(p);
+    MultPop(q);
+    MergeProducts(p, q);
+    h = h.replaceTreeByTree(h.childAtIndex(0));
+    MultPush(p, &h);
+    return true;
   }
   if (Compare(h.childAtIndex(0), p1) == 0) {
     assert(Compare(h.childAtIndex(1), q1) == 0);
-    return AdjoinMult(p1.clone(), MergeProducts(RestMult(p), q));
+    EditionReference pc = p1.clone();
+    MultPop(p);
+    MergeProducts(p, q);
+    MultPush(p, &pc);
+    return true;
   }
   if (Compare(h.childAtIndex(0), q1) == 0) {
     assert(Compare(h.childAtIndex(1), p1) == 0);
-    return AdjoinMult(q1.clone(), MergeProducts(p, RestMult(q)));
+    EditionReference qc = q1.clone();
+    MultPop(q);
+    MergeProducts(p, q);
+    MultPush(p, &qc);
+    return true;
   }
   assert(false);
 }
 
-EditionReference SimplifyProduct(EditionReference u) {
+bool SimplifyProduct(EditionReference* u) {
   // SPRD1
   // done before
   // SPRD2
-  if (AnyChildren(u, IsZero)) {
-    return u.replaceTreeByNode(0_e);
+  if (AnyChildren(*u, IsZero)) {
+    *u = u->replaceTreeByNode(0_e);
+    return true;
   }
   // u.matchAndReplace(KMult(KTA, 0_e, KTB), 0_e);
   // SPRD3
-  if (u.numberOfChildren() == 1) {
-    return u.childAtIndex(0);
+  if (u->numberOfChildren() == 1) {
+    *u = u->replaceNodeByTree(u->childAtIndex(0));
+    return true;
   }
   // u.matchAndReplace(KMult(KA), KA);
-  EditionReference v = SimplifyProductRec(u);
-  assert(v.type() == BlockType::Multiplication);
-  if (v.numberOfChildren() == 0) {
-    return u.replaceTreeByNode(1_e);
+  if (!SimplifyProductRec(u)) {
+    return false;
   }
-  if (v.numberOfChildren() == 1) {
-    return v.childAtIndex(0);
-  }
-  return v;
+  *u = NAry::Sanitize(*u);
+  return true;
 }
 
-EditionReference term(EditionReference u) {
+EditionReference term(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  u = u.clone();
+  EditionReference c = u.clone();
   if (u.type() == BlockType::Multiplication) {
     if (IsConstant(u.childAtIndex(0))) {
-      return RestMult(u);
+      MultPop(&c);
+      return c;
     }
-    return u;
+    return c;
   }
-  return WrapWithUnary(u, KMult());
+  WrapWithUnary(&c, KMult());
+  return c;
 }
 
-EditionReference constant(EditionReference u) {
+EditionReference constant(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
   if (u.type() == BlockType::Multiplication && IsConstant(u.childAtIndex(0))) {
-    return u.childAtIndex(0);
+    return u.childAtIndex(0).clone();
   }
   return P_ONE();
 }
 
-EditionReference base(EditionReference u) {
+EditionReference base(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
   if (u.type() == BlockType::Power) {
-    return u.childAtIndex(0);
+    return u.childAtIndex(0).clone();
   }
-  return u;
+  return u.clone();
 }
 
-EditionReference exponent(EditionReference u) {
+EditionReference exponent(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
   if (u.type() == BlockType::Power) {
-    return u.childAtIndex(1);
+    return u.childAtIndex(1).clone();
   }
   return P_ONE();
 }
 
-EditionReference RestAdd(EditionReference l) {
-  if (l.matchAndReplace(KAdd(KA, KTB), KAdd(KTB)) &&
-      l.type() != BlockType::Addition) {
-    l.insertNodeBeforeNode(KAdd());
-    if (l.type() == BlockType::Zero) {
-      l = l.previousNode();
+void AddPop(EditionReference* l) {
+  if (l->matchAndReplace(KAdd(KA, KTB), KAdd(KTB)) &&
+      l->type() != BlockType::Addition) {
+    l->insertNodeBeforeNode(KAdd());
+    if (l->type() == BlockType::Zero) {
+      *l = l->previousNode();
     } else {
-      l = l.previousNode();
-      NAry::SetNumberOfChildren(l, 1);
+      *l = l->previousNode();
+      NAry::SetNumberOfChildren(*l, 1);
     }
   }
-  return l;
 }
 
-EditionReference AdjoinAdd(EditionReference e, EditionReference l) {
-  assert(l.type() == BlockType::Addition);
-  NAry::AddChildAtIndex(l, e, 0);
-  return l;
+void AddPush(EditionReference* l, EditionReference* e) {
+  assert(l->type() == BlockType::Addition);
+  NAry::AddChildAtIndex(*l, *e, 0);
 }
 
-EditionReference MergeSums(EditionReference p, EditionReference q);
+bool MergeSums(EditionReference* p, EditionReference* q);
 
-EditionReference SimplifySumRec(EditionReference l) {
-  if (l.numberOfChildren() == 2) {
-    EditionReference u1 = l.childAtIndex(0);
-    EditionReference u2 = l.childAtIndex(1);
+bool SimplifySumRec(EditionReference* l) {
+  if (l->numberOfChildren() == 2) {
+    EditionReference u1 = l->childAtIndex(0);
+    EditionReference u2 = l->childAtIndex(1);
     if (u1.type() != BlockType::Addition && u2.type() != BlockType::Addition) {
       // SPRDREC1
       if (IsConstant(u1) && IsConstant(u2)) {
-        EditionReference P = SimplifyRNE(l);
-        if (P.type() == BlockType::Zero) {
-          return P.replaceNodeByNode(KAdd());
+        SimplifyRNE(l);
+        if (l->type() == BlockType::Zero) {
+          *l = l->replaceNodeByNode(KAdd());
+          return true;
         }
-        return WrapWithUnary(P, KAdd());
+        WrapWithUnary(l, KAdd());
+        return true;
       }
       if (u1.type() == BlockType::Zero) {
-        return WrapWithUnary(u2, KAdd());
+        *l = l->replaceTreeByTree(u2);
+        WrapWithUnary(l, KAdd());
+        return true;
       }
       if (u2.type() == BlockType::Zero) {
-        return WrapWithUnary(u1, KAdd());
+        *l = l->replaceTreeByTree(u1);
+        WrapWithUnary(l, KAdd());
+        return true;
       }
       if (Compare(term(u1), term(u2)) == 0) {
-        EditionReference c1 = constant(u1);
-        EditionReference c2 = constant(u2);
-        EditionReference sum = P_ADD(c1.clone(), c2.clone());
-        EditionReference S = SimplifySum(sum);
-        EditionReference t1 = term(u1);
-        EditionReference P = SimplifyProduct(P_MULT(S.clone(), t1.clone()));
+        EditionReference S = P_ADD(constant(u1), constant(u2));
+        SimplifySum(&S);
+        EditionReference P = P_MULT(S.clone(), term(u1));
+        SimplifyProduct(&P);
         if (P.type() == BlockType::Zero) {
-          return P.replaceNodeByNode(KAdd());
+          *l = l->replaceTreeByNode(KAdd());
+          return true;
         }
-        return WrapWithUnary(P, KAdd());
+        *l = l->replaceTreeByTree(P);
+        WrapWithUnary(l, KAdd());
+        return true;
       }
       if (Compare(u2, u1) < 0) {
-        l.matchAndReplace(KAdd(KA, KB), KAdd(KB, KA));
-        return l;
+        l->matchAndReplace(KAdd(KA, KB), KAdd(KB, KA));
+        return true;
       }
-      return l;
+      return false;
     } else {
       // SPRDREC2
       if (u1.type() == BlockType::Addition &&
           u2.type() == BlockType::Addition) {
-        return MergeSums(u1, u2);
+        MergeSums(&u1, &u2);
+        *l = l->replaceTreeByTree(u1);
+        return true;
       }
       if (u1.type() == BlockType::Addition) {
         EditionReference sum = P_ADD(u2.clone());
-        return MergeSums(u1, sum);
+        MergeSums(&u1, &sum);
+        *l = l->replaceTreeByTree(u1);
+        return true;
       }
       assert(u2.type() == BlockType::Addition);
       EditionReference sum = P_ADD(u1.clone());
-      return MergeSums(sum, u2);
+      MergeSums(&sum, &u2);
+      *l = l->replaceTreeByTree(sum);
+      return true;
     }
   }
-  EditionReference u1 = EditionReference(l.childAtIndex(0)).clone();
-  EditionReference w = SimplifySumRec(RestAdd(l));
+  EditionReference u1 = l->childAtIndex(0).clone();
+  AddPop(l);
+  SimplifySumRec(l);
   if (u1.type() == BlockType::Addition) {
-    return MergeSums(u1, w);
+    EditionReference l2 = l->clone();
+    MergeSums(&u1, &l2);
+    *l = l->replaceTreeByTree(u1);
+    return true;
   }
   EditionReference sum = P_ADD(u1.clone());
-  return MergeSums(sum, w);
+  EditionReference l2 = l->clone();
+  MergeSums(&sum, &l2);
+  *l = l->replaceTreeByTree(sum);
+  return true;
 }
 
-EditionReference MergeSums(EditionReference p, EditionReference q) {
-  if (q.numberOfChildren() == 0) {
-    return p;
+bool MergeSums(EditionReference* p, EditionReference* q) {
+  if (q->numberOfChildren() == 0) {
+    q->removeNode();
+    return true;
   }
-  if (p.numberOfChildren() == 0) {
-    return q;
+  if (p->numberOfChildren() == 0) {
+    *p = p->replaceNodeByTree(*q);
+    return true;
   }
-  EditionReference p1 = p.childAtIndex(0);
-  EditionReference q1 = q.childAtIndex(0);
-  EditionReference h = SimplifySumRec(P_ADD(p1.clone(), q1.clone()));
+  Node p1 = p->childAtIndex(0);
+  Node q1 = q->childAtIndex(0);
+  EditionReference h = P_ADD(p1.clone(), q1.clone());
+  SimplifySumRec(&h);
   if (h.numberOfChildren() == 0) {
-    return MergeSums(RestAdd(p), RestAdd(q));
+    h.removeNode();
+    AddPop(p);
+    AddPop(q);
+    return MergeSums(p, q);
   }
   if (h.numberOfChildren() == 1) {
-    return AdjoinAdd(h.childAtIndex(0), MergeSums(RestAdd(p), RestAdd(q)));
+    AddPop(p);
+    AddPop(q);
+    MergeSums(p, q);
+    h = h.replaceTreeByTree(h.childAtIndex(0));
+    AddPush(p, &h);
+    return true;
   }
   if (Compare(h.childAtIndex(0), p1) == 0) {
     assert(Compare(h.childAtIndex(1), q1) == 0);
-    return AdjoinAdd(p1.clone(), MergeSums(RestAdd(p), q));
+    EditionReference pc = p1.clone();
+    AddPop(p);
+    MergeSums(p, q);
+    AddPush(p, &pc);
+    return true;
   }
   if (Compare(h.childAtIndex(0), q1) == 0) {
     assert(Compare(h.childAtIndex(1), p1) == 0);
-    return AdjoinAdd(q1.clone(), MergeSums(p, RestAdd(q)));
+    EditionReference qc = q1.clone();
+    AddPop(q);
+    MergeSums(p, q);
+    AddPush(p, &qc);
+    return true;
   }
   assert(false);
 }
 
-EditionReference SimplifySum(EditionReference u) {
-  if (u.matchAndReplace(KAdd(KA), KA)) {
-    return u;
+bool SimplifySum(EditionReference* u) {
+  if (u->matchAndReplace(KAdd(KA), KA)) {
+    return true;
   }
-  EditionReference v = SimplifySumRec(u);
-  assert(v.type() == BlockType::Addition);
-  if (v.numberOfChildren() == 0) {
-    return u.replaceTreeByNode(1_e);
+  if (!SimplifySumRec(u)) {
+    return false;
   }
-  if (v.numberOfChildren() == 1) {
-    return v.childAtIndex(0);
-  }
-  return v;
+  assert(u->type() == BlockType::Addition);
+  *u = NAry::Sanitize(*u);
+  return true;
 }
 
-EditionReference SimplifyRNERec(EditionReference u) {
-  if (IsInteger(u)) {
-    return u;
+bool SimplifyRNERec(EditionReference* u) {
+  if (IsInteger(*u)) {
+    return false;
   }
-  if (IsRational(u)) {
-    return Rational::Denominator(u).isZero() ? EditionReference(P_UNDEF()) : u;
+  if (IsRational(*u)) {
+    if (Rational::Denominator(*u).isZero()) {
+      *u = u->replaceTreeByNode(P_UNDEF());
+      return true;
+    }
+    return false;
   }
-  if (u.numberOfChildren() == 1) {
-    return SimplifyRNERec(u.childAtIndex(0));
+  if (u->numberOfChildren() == 1) {
+    *u = u->replaceNodeByTree(u->childAtIndex(0));
+    return SimplifyRNERec(u);
   }
-  if (u.numberOfChildren() == 2) {
-    if (u.type() == BlockType::Addition ||
-        u.type() == BlockType::Multiplication) {
-      EditionReference v = SimplifyRNERec(u.childAtIndex(0));
+  if (u->numberOfChildren() == 2) {
+    if (u->type() == BlockType::Addition ||
+        u->type() == BlockType::Multiplication) {
+      EditionReference v = u->childAtIndex(0);
+      SimplifyRNERec(&v);
       if (IsUndef(v)) {
-        return v;
+        *u = u->replaceTreeByNode(KUndef);
+        return true;
       }
-      EditionReference w = SimplifyRNERec(u.childAtIndex(1));
+      EditionReference w = u->childAtIndex(1);
+      SimplifyRNERec(&w);
       if (IsUndef(w)) {
-        return w;
+        *u = u->replaceTreeByNode(KUndef);
+        return true;
       }
-      if (u.type() == BlockType::Addition) {
-        return Rational::IrreducibleForm(Rational::Addition(v, w));
+      if (u->type() == BlockType::Addition) {
+        *u = u->replaceTreeByTree(Rational::IrreducibleForm(
+            Rational::Addition(v.clone(), w.clone())));
+        return true;
       }
-      assert(u.type() == BlockType::Multiplication);
-      return Rational::IrreducibleForm(Rational::Multiplication(v, w));
+      assert(u->type() == BlockType::Multiplication);
+      *u = u->replaceTreeByTree(
+          Rational::IrreducibleForm(Rational::Multiplication(v, w)));
+      return true;
     }
-    if (u.type() == BlockType::Power) {
-      EditionReference v = SimplifyRNERec(u.childAtIndex(0));
+    if (u->type() == BlockType::Power) {
+      EditionReference v = u->childAtIndex(0);
+      SimplifyRNERec(&v);
       if (IsUndef(v)) {
-        return v;
+        *u = u->replaceTreeByNode(KUndef);
+        return true;
       }
-      return Rational::IrreducibleForm(
-          Rational::IntegerPower(v, u.childAtIndex(1)));
+      *u = u->replaceTreeByTree(Rational::IrreducibleForm(
+          Rational::IntegerPower(v, u->childAtIndex(1))));
+      return true;
     }
   }
   assert(false);
 }
 
-EditionReference SimplifyRNE(EditionReference u) {
-  EditionReference v = SimplifyRNERec(u);
-  if (IsUndef(v)) {
-    return v;
+bool SimplifyRNE(EditionReference* u) {
+  bool modified = SimplifyRNERec(u);
+  if (IsUndef(*u)) {
+    return true;
   }
-  return SimplifyRational(v);
+  return SimplifyRational(u) || modified;
 }
 
 int Compare(Node u, Node v) {

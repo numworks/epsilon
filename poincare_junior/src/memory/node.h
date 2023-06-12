@@ -21,6 +21,8 @@ namespace PoincareJ {
  * [COSINE]
  */
 
+class EditionReference;
+
 class Node {
  public:
   constexpr Node(TypeBlock *block = nullptr) : m_block(block) {}
@@ -122,6 +124,8 @@ class Node {
   // Recursive helper
   typedef void (*InPlaceConstTreeFunction)(const Node node);
   void recursivelyGet(InPlaceConstTreeFunction treeFunction) const;
+
+  EditionReference clone() const;
 
  private:
   bool canNavigateNext() const;

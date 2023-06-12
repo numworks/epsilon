@@ -163,7 +163,7 @@ void simplifies_to(const char* input, const char* output) {
     refId = r.identifier();
   }
 #endif
-  EditionReference reduced = Simplification::AutomaticSimplify(projected);
+  Simplification::AutomaticSimplify(&projected);
 #ifdef PCJ_PERF
   auto elapsed = std::chrono::high_resolution_clock::now() - start;
   {
@@ -175,9 +175,9 @@ void simplifies_to(const char* input, const char* output) {
       << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count()
       << std::setw(10) << refId << std::endl;
 #endif
-  quiz_assert(!reduced.isUninitialized());
+  quiz_assert(!projected.isUninitialized());
   EditionReference outputLayout =
-      Expression::EditionPoolExpressionToLayout(reduced);
+      Expression::EditionPoolExpressionToLayout(projected);
   quiz_assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
@@ -200,6 +200,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("b+a", "a+b");
   simplifies_to("(a*a)*a", "a^(3)");
   simplifies_to("a*(a*a)", "a^(3)");
+  simplifies_to("(a*b)^2", "a^(2)*(b^(2))");
+  simplifies_to("(a*b*c)^2", "a^(2)*(b^(2))*(c^(2))");
   simplifies_to("a*a*a", "a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*(a^(3))*(b^(2))");
   simplifies_to("a^b*a^c", "a^(b+c)");

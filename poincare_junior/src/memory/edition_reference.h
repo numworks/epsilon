@@ -133,6 +133,10 @@ class EditionReference {
   uint16_t m_identifier;
 };
 
+inline EditionReference Node::clone() const {
+  return EditionPool::sharedEditionPool()->clone(*this);
+}
+
 }  // namespace PoincareJ
 
 #endif

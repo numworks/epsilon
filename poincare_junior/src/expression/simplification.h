@@ -45,8 +45,7 @@ class Simplification {
       EditionReference reference,
       ProjectionContext complexity = ProjectionContext::Default);
 
-  static EditionReference AutomaticSimplify(EditionReference u);
-  static void AutomaticSimplifyInPlace(EditionReference u);
+  static bool AutomaticSimplify(EditionReference *u);
 
  private:
   typedef EditionReference (*NumberOperation)(const Node, const Node);

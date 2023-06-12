@@ -27,7 +27,7 @@ void App::Snapshot::reset() {
 }
 
 void App::prepareForIntrusiveStorageChange() {
-  SharedApp::prepareForIntrusiveStorageChange();
+  MathApp::prepareForIntrusiveStorageChange();
   m_stackViewController.popUntilDepth(1, true);
 }
 

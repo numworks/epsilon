@@ -14,7 +14,7 @@ void FunctionApp::Snapshot::reset() {
 }
 
 void FunctionApp::prepareForIntrusiveStorageChange() {
-  SharedAppWithStoreMenu::prepareForIntrusiveStorageChange();
+  MathApp::prepareForIntrusiveStorageChange();
   assert(m_activeControllerBeforeStore == nullptr);
   StackViewController* stack = static_cast<StackViewController*>(
       m_tabViewController.activeViewController());

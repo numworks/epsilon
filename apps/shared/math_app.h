@@ -10,7 +10,6 @@ namespace Shared {
 
 class MathApp : public SharedAppWithStoreMenu {
  public:
-  virtual ~MathApp() = default;
   MathToolbox* defaultToolbox() override final { return &m_mathToolbox; }
   MathVariableBoxController* defaultVariableBox() override final {
     return &m_variableBoxController;

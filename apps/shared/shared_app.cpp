@@ -27,8 +27,7 @@ void SharedApp::Snapshot::reset() {
 }
 
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
-    : ::App(snapshot, rootViewController, I18n::Message::Warning),
-      m_intrusiveStorageChangeFlag(false) {}
+    : ::App(snapshot, rootViewController, I18n::Message::Warning) {}
 
 Context* SharedApp::localContext() {
   return AppsContainerHelper::sharedAppsContainerGlobalContext();
@@ -54,5 +53,10 @@ bool SharedAppWithStoreMenu::isStoreMenuOpen() const {
   return m_modalViewController.currentModalViewController() ==
          &m_storeMenuController;
 }
+
+SharedAppWithStoreMenu::SharedAppWithStoreMenu(
+    SharedApp::Snapshot* snapshot, Escher::ViewController* rootViewController)
+    : SharedApp(snapshot, rootViewController),
+      m_intrusiveStorageChangeFlag(false) {}
 
 }  // namespace Shared

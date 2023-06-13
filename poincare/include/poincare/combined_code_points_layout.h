@@ -39,10 +39,12 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
   }
 #endif
 
+  /*
   bool isNotEqualOperator() const {
     return m_codePoint == '=' &&
            m_combinedCodePoint == UCodePointCombiningLongSolidusOverlay;
   }
+  */
 
  private:
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;

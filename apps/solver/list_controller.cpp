@@ -137,8 +137,13 @@ void ListController::didEnterResponderChain(Responder *previousFirstResponder) {
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    // TODO: do like for textField: parse and and check is type is comparison
-    if (!layoutField->layout().hasTopLevelComparisonSymbol()) {
+    char buffer[TextField::MaxBufferSize()];
+    layoutField->layout().serializeForParsing(buffer,
+                                              TextField::MaxBufferSize());
+    Poincare::Expression parsedExpression =
+        Poincare::Expression::Parse(buffer, nullptr);
+    if (parsedExpression.isUninitialized() ||
+        parsedExpression.type() != Poincare::ExpressionNode::Type::Comparison) {
       layoutField->putCursorOnOneSide(OMG::Direction::Right());
       if (!layoutField->handleEventWithText("=0")) {
         App::app()->displayWarning(I18n::Message::RequireEquation);

@@ -32,9 +32,6 @@ KDCoordinate BannerView::minimalHeightForOptimalDisplayGivenWidth(
 
 void BannerView::layoutSubviews(bool force) {
   if (bounds().isEmpty()) {
-    /* If the frame has not been set yet, there is no point in layouting the
-     * subviews.
-     * TODO: Do not call layout Subviews if the frame has not been set? */
     return;
   }
   const KDCoordinate width = bounds().width();

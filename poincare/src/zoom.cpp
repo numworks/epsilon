@@ -36,12 +36,14 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
 #if ASSERTIONS
 static bool rangeIsValidZoom(Range1D range, Range1D interestingRange,
                              float maxFloat) {
+  float tolerance =
+      Float<float>::Epsilon() * std::max(std::fabs(interestingRange.min()),
+                                         std::fabs(interestingRange.max()));
   return (range.min() <=
               std::clamp(interestingRange.min(), -maxFloat, maxFloat) +
-                  Float<float>::Epsilon() * std::fabs(interestingRange.min()) ||
+                  tolerance ||
           !std::isfinite(interestingRange.min())) &&
-         (std::clamp(interestingRange.max(), -maxFloat, maxFloat) -
-                  Float<float>::Epsilon() * std::fabs(interestingRange.max()) <=
+         (std::clamp(interestingRange.max(), -maxFloat, maxFloat) - tolerance <=
               range.max() ||
           !std::isfinite(interestingRange.max()));
 }

@@ -132,23 +132,17 @@ Layout Layout::childAtIndex(int i) const {
   return static_cast<Layout &>(c);
 }
 
-bool Layout::privateHasTopLevelComparisonSymbol(
-    bool includingNotEqualSymbol) const {
+bool Layout::hasTopLevelEquationSymbol() const {
   if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
     return false;
   }
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     Poincare::Layout child = childAtIndex(i);
-    if ((child.type() == Poincare::LayoutNode::Type::CodePointLayout &&
-         static_cast<Poincare::CodePointLayout &>(child)
-             .codePoint()
-             .isEquationOperator()) ||
-        (includingNotEqualSymbol &&
-         child.type() == Poincare::LayoutNode::Type::CombinedCodePointsLayout &&
-         static_cast<Poincare::CombinedCodePointsLayout &>(child)
-             .node()
-             ->isNotEqualOperator())) {
+    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout &&
+        static_cast<Poincare::CodePointLayout &>(child)
+            .codePoint()
+            .isEquationOperator()) {
       return true;
     }
   }

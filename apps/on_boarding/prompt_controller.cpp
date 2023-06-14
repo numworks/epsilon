@@ -64,8 +64,7 @@ bool PromptController::handleEvent(Ion::Events::Event event) {
       event != Ion::Events::OnOff) {
     App::app()->modalViewController()->dismissModal();
     AppsContainer* appsContainer = AppsContainer::sharedAppsContainer();
-    if (appsContainer->activeApp()->snapshot() ==
-        appsContainer->onBoardingAppSnapshot()) {
+    if (App::app()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
       appsContainer->switchToBuiltinApp(appsContainer->homeAppSnapshot());
     }
     return true;

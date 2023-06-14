@@ -116,7 +116,7 @@ void Controller::didBecomeFirstResponder() {
   if (selectionDataSource()->selectedRow() == -1) {
     selectionDataSource()->selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(m_view.selectableTableView());
+  App::app()->setFirstResponder(m_view.selectableTableView());
 }
 
 HighlightCell *Controller::reusableCell(int index) {

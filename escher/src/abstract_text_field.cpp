@@ -694,7 +694,7 @@ bool AbstractTextField::storeInClipboard() const {
 
 bool AbstractTextField::handleStoreEvent() {
   if (!isEditing() && m_delegate->textFieldIsStorable(this)) {
-    Container::activeApp()->storeValue(text());
+    App::app()->storeValue(text());
   } else if (isEditing() && !nonEditableContentView()->selectionIsEmpty()) {
     const char *start = nonEditableContentView()->selectionLeft();
     static_assert(TextField::MaxBufferSize() ==
@@ -702,9 +702,9 @@ bool AbstractTextField::handleStoreEvent() {
     char buffer[Escher::Clipboard::k_bufferSize];
     strlcpy(buffer, start,
             nonEditableContentView()->selectionRight() - start + 1);
-    Container::activeApp()->storeValue(buffer);
+    App::app()->storeValue(buffer);
   } else {
-    Container::activeApp()->storeValue();
+    App::app()->storeValue();
   }
   return true;
 }

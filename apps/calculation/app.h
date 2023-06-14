@@ -51,9 +51,7 @@ class App : public Shared::MathApp {
     int m_cacheCursorPosition;
   };
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
 
   TELEMETRY_ID("Calculation");
 

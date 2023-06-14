@@ -27,7 +27,7 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
       assert(mode() == Mode::Country);
       AppsContainer* appsContainer = AppsContainer::sharedAppsContainer();
       if (appsContainer->promptController()) {
-        Container::activeApp()->displayModalViewController(
+        App::app()->displayModalViewController(
             appsContainer->promptController(), KDGlyph::k_alignCenter,
             KDGlyph::k_alignCenter);
       } else {

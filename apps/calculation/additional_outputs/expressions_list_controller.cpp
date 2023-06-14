@@ -48,7 +48,7 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
      * clears the Poincare pool from the layouts used to display the pop-up.
      * Thereby it frees memory to do Poincare computations required by
      * insertTextBody. */
-    Container::activeApp()->modalViewController()->dismissModal();
+    App::app()->modalViewController()->dismissModal();
     m_editExpressionController->insertTextBody(buffer);
     return true;
   }
@@ -58,7 +58,7 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
 void ExpressionsListController::didBecomeFirstResponder() {
   selectCell(0);
   resetMemoization();
-  Container::activeApp()->setFirstResponder(&m_listController);
+  App::app()->setFirstResponder(&m_listController);
   // Additional outputs should have at least one row to display
   assert(numberOfRows() > 0);
 }

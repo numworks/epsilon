@@ -129,7 +129,7 @@ Poincare::Layout DomainParameterController::extraCellLayoutAtRow(int row) {
   Preferences* pref = Preferences::sharedPreferences;
   return Infinity::Builder(m_currentTextFieldIsMinField)
       .createLayout(pref->displayMode(), pref->numberOfSignificantDigits(),
-                    Container::activeApp()->localContext());
+                    App::app()->localContext());
 }
 
 void DomainParameterController::switchToolboxContent(

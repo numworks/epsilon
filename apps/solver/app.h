@@ -40,9 +40,7 @@ class App : public Shared::MathApp {
     EquationStore m_equationStore;
   };
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   Poincare::Context *localContext() override { return &m_context; }
   Snapshot *snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());

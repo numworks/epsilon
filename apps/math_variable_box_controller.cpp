@@ -62,9 +62,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     int row = selectedRow();
     if (destroyRecordAtRow(row)) {
-      if (Container::activeApp()
-              ->modalViewController()
-              ->currentModalViewController() !=
+      if (App::app()->modalViewController()->currentModalViewController() !=
           static_cast<const ViewController *>(this)) {
         // The varbox was dismissed by prepareForIntrusiveStorageChange
         return true;
@@ -84,7 +82,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   if (m_currentPage == Page::RootMenu &&
       m_defineVariableCell.canBeActivatedByEvent(event) &&
       selectedRow() == defineVariableCellIndex()) {
-    Container::activeApp()->modalViewController()->dismissModal();
+    App::app()->modalViewController()->dismissModal();
     sender()->handleStoreEvent();
     return true;
   }
@@ -317,7 +315,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
   // Handle the text
   sender()->handleEventWithText(nameToHandle);
-  Container::activeApp()->modalViewController()->dismissModal();
+  App::app()->modalViewController()->dismissModal();
   return true;
 }
 
@@ -431,7 +429,7 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
       return false;
     }
     Shared::AppWithStoreMenu *app =
-        static_cast<Shared::AppWithStoreMenu *>(Container::activeApp());
+        static_cast<Shared::AppWithStoreMenu *>(App::app());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();

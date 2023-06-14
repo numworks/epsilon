@@ -58,7 +58,7 @@ class AbstractWithEditableText : public Responder,
 
   void didBecomeFirstResponder() override {
     if (m_editable) {
-      Container::activeApp()->setFirstResponder(&m_textField);
+      App::app()->setFirstResponder(&m_textField);
     }
   }
   TextField* textField() { return &m_textField; }

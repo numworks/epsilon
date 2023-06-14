@@ -58,7 +58,7 @@ EditExpressionController::EditExpressionController(
 }
 
 void EditExpressionController::insertTextBody(const char *text) {
-  Container::activeApp()->setFirstResponder(this);
+  App::app()->setFirstResponder(this);
   m_contentView.layoutField()->handleEventWithText(text, false, true);
   memoizeInput();
 }
@@ -66,7 +66,7 @@ void EditExpressionController::insertTextBody(const char *text) {
 void EditExpressionController::didBecomeFirstResponder() {
   m_contentView.mainView()->scrollToBottom();
   m_contentView.layoutField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(m_contentView.layoutField());
+  App::app()->setFirstResponder(m_contentView.layoutField());
 }
 
 void EditExpressionController::restoreInput() {
@@ -166,7 +166,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
     if (!isAcceptableText(m_workingBuffer)) {
-      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
+      App::app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
     if (m_calculationStore
@@ -181,7 +181,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(
     if (m_calculationStore->numberOfCalculations() > 0) {
       clearWorkingBuffer();
       m_contentView.layoutField()->setEditing(false);
-      Container::activeApp()->setFirstResponder(m_historyController);
+      App::app()->setFirstResponder(m_historyController);
     }
     return true;
   }

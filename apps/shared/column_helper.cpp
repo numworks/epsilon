@@ -27,7 +27,7 @@ ClearColumnHelper::ClearColumnHelper()
     : m_confirmPopUpController(Invocation::Builder<ClearColumnHelper>(
           [](ClearColumnHelper *param, void *parent) {
             param->clearSelectedColumn();
-            Container::activeApp()->modalViewController()->dismissModal();
+            App::app()->modalViewController()->dismissModal();
             param->table()->reloadData();
             return true;
           },
@@ -51,7 +51,7 @@ void ClearColumnHelper::setClearPopUpContent() {
 /* StoreColumnHelper */
 
 bool displayNotSuitableWarning() {
-  Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
+  App::app()->displayWarning(I18n::Message::DataNotSuitable);
   return false;
 }
 
@@ -96,7 +96,7 @@ void StoreColumnHelper::displayFormulaInput() {
     fillFormulaInputWithTemplate(memoizedFormula(index));
     return;
   }
-  Container::activeApp()->displayModalViewController(
+  App::app()->displayModalViewController(
       &m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin,
       Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
@@ -134,11 +134,11 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
   StoreContext storeContext(store(), m_parentContext);
   Expression expression = Expression::Parse(text, &storeContext);
   if (expression.isUninitialized()) {
-    Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
+    App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
   if (fillColumnWithFormula(expression)) {
-    Container::activeApp()->setFirstResponder(table());
+    App::app()->setFirstResponder(table());
     return true;
   }
   return false;

@@ -179,7 +179,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                      : ContinuousFunction::k_cartesianSymbol);
       if (!completeEquation(layoutField, symbol)) {
         layoutField->putCursorOnOneSide(OMG::Direction::Right());
-        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
+        App::app()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
     }
@@ -249,7 +249,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
       selectableListView()->selectCell(numberOfRows() - 1);
-      Container::activeApp()->setFirstResponder(selectableListView());
+      App::app()->setFirstResponder(selectableListView());
       return true;
     }
     selectableListView()->deselectTable();
@@ -319,7 +319,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
 }
 
 void ListController::addModel() {
-  Container::activeApp()->displayModalViewController(
+  App::app()->displayModalViewController(
       &m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin,
       Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }

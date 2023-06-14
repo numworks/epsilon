@@ -27,7 +27,7 @@ void CategoricalTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(1);
   }
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Escher::App::app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {

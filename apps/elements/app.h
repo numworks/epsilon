@@ -44,9 +44,7 @@ class App : public Shared::AppWithStoreMenu {
   };
   TELEMETRY_ID("ElementsTable");
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
 
   Snapshot *snapshot() {
     return static_cast<Snapshot *>(Escher::App::snapshot());

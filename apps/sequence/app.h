@@ -49,9 +49,7 @@ class App : public Shared::FunctionApp {
     Shared::Interval m_interval;
     bool m_intervalModifiedByUser;
   };
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   Snapshot *snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }

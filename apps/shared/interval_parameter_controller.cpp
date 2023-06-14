@@ -72,7 +72,7 @@ double IntervalParameterController::parameterAtIndex(int index) {
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex,
                                                       double f) {
   if (f <= 0.0f && parameterIndex == 2) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   double start =
@@ -80,7 +80,7 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex,
   double end = parameterIndex == 1 ? f : SharedTempIntervalParameters()->end();
   if (start > end) {
     if (parameterIndex == 1) {
-      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+      App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
     double g = f + 1.0;

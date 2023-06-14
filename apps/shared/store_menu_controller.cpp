@@ -22,14 +22,14 @@ StoreMenuController::InnerListController::InnerListController(
 }
 
 void StoreMenuController::open() {
-  Container::activeApp()->displayModalViewController(
+  App::app()->displayModalViewController(
       this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, 0,
       Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin, true);
 }
 
 void StoreMenuController::close() {
   m_cell.layoutField()->setEditing(false);
-  Container::activeApp()->modalViewController()->dismissModal();
+  App::app()->modalViewController()->dismissModal();
 }
 
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
@@ -75,7 +75,7 @@ StoreMenuController::StoreMenuController()
 }
 
 void StoreMenuController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_listController);
+  App::app()->setFirstResponder(&m_listController);
   m_cell.layoutField()->reload();
 }
 
@@ -103,7 +103,7 @@ void StoreMenuController::layoutFieldDidChangeSize(LayoutField* layoutField) {
    * layout but it will also call layoutFieldDidChangeSize. We set this
    * boolean to break the cycle. */
   m_preventReload = true;
-  Container::activeApp()->modalViewController()->reloadModal();
+  App::app()->modalViewController()->reloadModal();
   m_preventReload = false;
 }
 
@@ -115,12 +115,11 @@ void StoreMenuController::openAbortWarning() {
    * embedded pop-up. */
   displayModalViewController(&m_abortController, KDGlyph::k_alignCenter,
                              KDGlyph::k_alignCenter);
-  Container::activeApp()->modalViewController()->reloadModal();
+  App::app()->modalViewController()->reloadModal();
 }
 
 bool StoreMenuController::parseAndStore(const char* text) {
-  AppWithStoreMenu* app =
-      static_cast<AppWithStoreMenu*>(Container::activeApp());
+  AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Poincare::Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {

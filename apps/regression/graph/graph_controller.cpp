@@ -84,7 +84,7 @@ void GraphController::didBecomeFirstResponder() {
 void GraphController::setAbscissaInputAsFirstResponder() {
   m_bannerView.abscissaValue()->setParentResponder(this);
   m_bannerView.abscissaValue()->setDelegate(this);
-  Container::activeApp()->setFirstResponder(m_bannerView.abscissaValue());
+  App::app()->setFirstResponder(m_bannerView.abscissaValue());
 }
 
 Poincare::Context *GraphController::globalContext() const {
@@ -239,8 +239,8 @@ InteractiveCurveViewRange *GraphController::interactiveCurveViewRange() const {
 void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (*m_selectedCurveIndex != curveIndex) {
     *m_selectedCurveIndex = curveIndex;
-    Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(),
-                                       Container::activeApp()->localContext());
+    Coordinate2D<double> xy =
+        xyValues(curveIndex, m_cursor->t(), App::app()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {
@@ -364,7 +364,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double newY = dotOrdinate(*m_selectedCurveIndex, dotSelected);
     m_cursor->moveTo(newX, newX, newY);
     // abscissa input must resolve first responder
-    Container::activeApp()->setFirstResponder(this);
+    App::app()->setFirstResponder(this);
     return true;
   }
 

@@ -43,7 +43,7 @@ void SumGraphController::didBecomeFirstResponder() {
   /* Do not set the textField as first responder when displaying the result
    * so that Copy and Sto apply on the result. */
   if (m_step != Step::Result) {
-    Container::activeApp()->setFirstResponder(m_legendView.textField());
+    App::app()->setFirstResponder(m_legendView.textField());
   }
 }
 
@@ -51,7 +51,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step - 1);
     if (m_step == Step::SecondParameter) {
-      Container::activeApp()->setFirstResponder(m_legendView.textField());
+      App::app()->setFirstResponder(m_legendView.textField());
       m_graphView->setAreaHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
     }
@@ -75,7 +75,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     PoincareHelpers::ConvertFloatToText<double>(m_result, buffer, bufferSize,
                                                 precision);
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-      Container::activeApp()->storeValue(buffer);
+      App::app()->storeValue(buffer);
     } else {
       Escher::Clipboard::SharedClipboard()->store(buffer);
     }
@@ -156,7 +156,7 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
   if ((!allowEndLowerThanStart() && m_step == Step::SecondParameter &&
        floatBody < m_startSum) ||
       !moveCursorHorizontallyToPosition(floatBody)) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   return handleEnter();
@@ -190,7 +190,7 @@ bool SumGraphController::handleEnter() {
     } else {
       m_graphView->setAreaHighlightColor(true);
       m_graphView->setCursorView(nullptr);
-      Container::activeApp()->setFirstResponder(this);
+      App::app()->setFirstResponder(this);
     }
     reloadBannerView();
   }

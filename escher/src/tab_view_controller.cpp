@@ -75,11 +75,11 @@ int TabViewController::activeTab() const { return m_dataSource->activeTab(); }
 
 void TabViewController::selectTab() {
   m_isSelected = true;
-  Container::activeApp()->setFirstResponder(this);
+  App::app()->setFirstResponder(this);
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
-  App* app = Container::activeApp();
+  App* app = App::app();
   if (app->firstResponder() != this) {
     if (event == Ion::Events::Back) {
       selectTab();
@@ -131,7 +131,7 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
    * button. It is useful when pressing Back on a non-leftmost tab. */
   if (enter) {
     m_isSelected = false;
-    Container::activeApp()->setFirstResponder(activeVC);
+    App::app()->setFirstResponder(activeVC);
   }
 }
 

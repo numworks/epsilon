@@ -60,10 +60,9 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    Container::activeApp()->setFirstResponder(
-        m_contentView.mainViewController());
+    App::app()->setFirstResponder(m_contentView.mainViewController());
   } else {
-    Container::activeApp()->setFirstResponder(
+    App::app()->setFirstResponder(
         m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty());
   }
 }

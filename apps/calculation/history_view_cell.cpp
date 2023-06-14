@@ -35,7 +35,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(
   if (selectedCell) {
     selectedCell->reloadSubviewHighlight();
     selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);
-    Container::activeApp()->setFirstResponder(selectedCell, true);
+    App::app()->setFirstResponder(selectedCell, true);
   }
   if (previouslySelectedCell) {
     previouslySelectedCell->cellDidSelectSubview(SubviewType::Input);
@@ -430,10 +430,10 @@ void HistoryViewCell::didBecomeFirstResponder() {
   assert(m_dataSource);
   if (m_dataSource->selectedSubviewType() ==
       HistoryViewCellDataSource::SubviewType::Input) {
-    Container::activeApp()->setFirstResponder(&m_inputView);
+    App::app()->setFirstResponder(&m_inputView);
   } else if (m_dataSource->selectedSubviewType() ==
              HistoryViewCellDataSource::SubviewType::Output) {
-    Container::activeApp()->setFirstResponder(&m_scrollableOutputView);
+    App::app()->setFirstResponder(&m_scrollableOutputView);
   }
 }
 

@@ -6,7 +6,7 @@
 namespace Escher {
 
 bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
-  App* app = Container::activeApp();
+  App* app = App::app();
   PervasiveBox* box = nullptr;
   if (event == Ion::Events::Toolbox) {
     box = app->toolbox();

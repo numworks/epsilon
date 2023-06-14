@@ -108,18 +108,17 @@ void StackViewController::setupActiveViewController() {
     vc->setParentResponder(this);
   }
   setupActiveView();
-  Container::activeApp()->setFirstResponder(vc);
+  App::app()->setFirstResponder(vc);
 }
 
 void StackViewController::didEnterResponderChain(
     Responder* previousFirstResponder) {
-  m_displayedAsModal =
-      Container::activeApp()->modalViewController()->isDisplayingModal();
+  m_displayedAsModal = App::app()->modalViewController()->isDisplayingModal();
 }
 
 void StackViewController::didBecomeFirstResponder() {
   ViewController* vc = topViewController();
-  Container::activeApp()->setFirstResponder(vc);
+  App::app()->setFirstResponder(vc);
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {
@@ -175,16 +174,16 @@ void StackViewController::updateStack(
 }
 
 void StackViewController::didExitPage(ViewController* controller) const {
-  Container::activeApp()->didExitPage(controller);
+  App::app()->didExitPage(controller);
 }
 
 void StackViewController::willOpenPage(ViewController* controller) const {
-  Container::activeApp()->willOpenPage(controller);
+  App::app()->willOpenPage(controller);
 }
 
 void StackViewController::dismissPotentialModal() {
   if (!m_displayedAsModal) {
-    Container::activeApp()->modalViewController()->dismissPotentialModal();
+    App::app()->modalViewController()->dismissPotentialModal();
   }
 }
 

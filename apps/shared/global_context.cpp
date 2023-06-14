@@ -39,19 +39,18 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   if (record.hasExtension(Ion::Storage::expExtension) ||
       record.hasExtension(Ion::Storage::lisExtension) ||
       record.hasExtension(Ion::Storage::matExtension)) {
-    return PoincareHelpers::CreateLayout(
-        ExpressionForActualSymbol(record),
-        AppsContainer::activeApp()->localContext());
+    return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record),
+                                         Escher::App::app()->localContext());
   } else if (record.hasExtension(Ion::Storage::funcExtension)) {
     ExpiringPointer<ContinuousFunction> f =
         continuousFunctionStore->modelForRecord(record);
     return PoincareHelpers::CreateLayout(
         ExpressionForFunction(Symbol::Builder(f->symbol()), record),
-        AppsContainer::activeApp()->localContext());
+        Escher::App::app()->localContext());
   } else if (record.hasExtension(Ion::Storage::regExtension)) {
     return PoincareHelpers::CreateLayout(
         ExpressionForFunction(Symbol::Builder('x'), record),
-        AppsContainer::activeApp()->localContext());
+        Escher::App::app()->localContext());
   } else {
     assert(record.hasExtension(Ion::Storage::seqExtension));
     return Sequence(record).layout();

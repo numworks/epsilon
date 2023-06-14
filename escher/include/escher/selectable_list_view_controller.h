@@ -39,7 +39,7 @@ class SelectableListViewController : public SelectableViewController,
 
  protected:
   void didBecomeFirstResponder() override {
-    Container::activeApp()->setFirstResponder(&m_selectableListView);
+    App::app()->setFirstResponder(&m_selectableListView);
   }
 
   SelectableListView m_selectableListView;

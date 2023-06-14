@@ -43,7 +43,7 @@ bool ListParameterController::textFieldDidFinishEditing(
   }
   int index = std::floor(floatBody);
   if (index < 0 || index > Shared::Sequence::k_maxInitialRank) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   sequence()->setInitialRank(index);
@@ -65,11 +65,11 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
   if (previousSelectedRow == 1) {
     assert(l->cell(previousSelectedRow) == &m_initialRankCell);
     m_initialRankCell.textField()->setEditing(false);
-    Container::activeApp()->setFirstResponder(&m_selectableListView);
+    App::app()->setFirstResponder(&m_selectableListView);
   }
   if (l->selectedRow() == 1) {
     assert(l->selectedCell() == &m_initialRankCell);
-    Container::activeApp()->setFirstResponder(&m_initialRankCell);
+    App::app()->setFirstResponder(&m_initialRankCell);
   }
 }
 

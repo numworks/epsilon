@@ -113,7 +113,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     newSequence->setType(static_cast<Shared::Sequence::Type>(selectedRow()));
     // Make all the lines of the added sequence visible
     m_listController->showLastSequence();
-    Container::activeApp()->modalViewController()->dismissModal();
+    App::app()->modalViewController()->dismissModal();
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }

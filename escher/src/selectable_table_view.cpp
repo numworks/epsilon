@@ -128,8 +128,8 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
            changed. Other times, the row did not change but the responder did
            (when going back in previous menu for example). */
         ((selectedColumn() != previousColumn || selectedRow() != previousRow) ||
-         Container::activeApp()->firstResponder() != r)) {
-      Container::activeApp()->setFirstResponder(r, true);
+         App::app()->firstResponder() != r)) {
+      App::app()->setFirstResponder(r, true);
     }
     // Highlight new cell
     cell->setHighlighted(true);
@@ -208,7 +208,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         Escher::Clipboard::SharedClipboard()->store(buffer);
       }
     } else {
-      Container::activeApp()->storeValue(buffer);
+      App::app()->storeValue(buffer);
     }
     return true;
   }
@@ -249,7 +249,7 @@ void SelectableTableView::didBecomeFirstResponder() {
   HighlightCell* cell = selectedCell();
   if (cell && cell->responder()) {
     // Update first responder
-    Container::activeApp()->setFirstResponder(cell->responder());
+    App::app()->setFirstResponder(cell->responder());
   }
 }
 

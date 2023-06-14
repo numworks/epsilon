@@ -95,7 +95,7 @@ void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
     m_selectionDataSource.selectRow(0);
     m_selectableListView.reloadData(false);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
+  App::app()->setFirstResponder(&m_selectableListView);
 }
 
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
@@ -126,14 +126,14 @@ void Dropdown::DropdownPopupController::selectRow(int row) {
 
 void Dropdown::DropdownPopupController::close() {
   m_dropdown->layoutSubviews(true);
-  Container::activeApp()->modalViewController()->dismissModal();
+  App::app()->modalViewController()->dismissModal();
 }
 
 KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(
     View *originView) {
   KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
                                  -BorderingView::k_separatorThickness);
-  return Container::activeApp()
+  return App::app()
       ->modalView()
       ->pointFromPointInView(originView, KDPointZero)
       .translatedBy(borderOffset);
@@ -228,8 +228,8 @@ void Dropdown::open() {
   m_popup.m_selectableListView.reloadData(false);
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
-  Container::activeApp()->displayModalViewController(
-      &m_popup, 0.f, 0.f, topLeftAngle.y(), topLeftAngle.x());
+  App::app()->displayModalViewController(&m_popup, 0.f, 0.f, topLeftAngle.y(),
+                                         topLeftAngle.x());
 }
 
 void Dropdown::close() { m_popup.close(); }

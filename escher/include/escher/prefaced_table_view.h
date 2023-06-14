@@ -31,7 +31,7 @@ class PrefacedTableView : public View,
 
   // Responder
   void didBecomeFirstResponder() override {
-    Container::activeApp()->setFirstResponder(m_mainTableView);
+    App::app()->setFirstResponder(m_mainTableView);
   }
 
   // SelectableTableViewDelegate

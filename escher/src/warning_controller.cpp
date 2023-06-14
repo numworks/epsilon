@@ -96,7 +96,7 @@ bool WarningController::handleEvent(Ion::Events::Event event) {
         event == Ion::Events::Back)) {
     return true;
   }
-  Container::activeApp()->modalViewController()->dismissModal();
+  App::app()->modalViewController()->dismissModal();
   return true;
 }
 

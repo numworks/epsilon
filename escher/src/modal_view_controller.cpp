@@ -136,15 +136,15 @@ void ModalViewController::displayModalViewController(
   vc->setParentResponder(this);
   /* modalViewAltersFirstResponder might change first responder so retrieve
    * previous responder after calling this function. */
-  Container::activeApp()->firstResponder()->modalViewAltersFirstResponder(
+  App::app()->firstResponder()->modalViewAltersFirstResponder(
       FirstResponderAlteration::WillSpoil);
-  m_previousResponder = Container::activeApp()->firstResponder();
+  m_previousResponder = App::app()->firstResponder();
   m_currentModalViewController->initView();
   m_contentView.presentModalView(vc->view(), verticalAlignment,
                                  horizontalAlignment, topMargin, leftMargin,
                                  bottomMargin, rightMargin, growingOnly);
   m_currentModalViewController->viewWillAppear();
-  Container::activeApp()->setFirstResponder(vc);
+  App::app()->setFirstResponder(vc);
 }
 
 void ModalViewController::reloadModal() { m_contentView.layoutSubviews(); }
@@ -158,16 +158,16 @@ void ModalViewController::dismissModal() {
    * the new first responder to rely on the modal state to decide its course of
    * action. */
   m_contentView.dismissModalView();
-  Container::activeApp()->setFirstResponder(m_previousResponder);
+  App::app()->setFirstResponder(m_previousResponder);
   m_previousResponder->modalViewAltersFirstResponder(
       FirstResponderAlteration::DidRestore);
   m_currentModalViewController = nullptr;
 }
 
 void ModalViewController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(isDisplayingModal()
-                                                ? m_currentModalViewController
-                                                : m_regularViewController);
+  App::app()->setFirstResponder(isDisplayingModal()
+                                    ? m_currentModalViewController
+                                    : m_regularViewController);
 }
 
 bool ModalViewController::handleEvent(Ion::Events::Event event) {

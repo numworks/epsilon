@@ -48,9 +48,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     int16_t m_selectedIndex;
   };
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
 
   TELEMETRY_ID("Statistics");
 

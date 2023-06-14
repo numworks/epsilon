@@ -130,7 +130,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
       selectableListView()->selectCell(numberOfRows() - 1);
-      Container::activeApp()->setFirstResponder(selectableListView());
+      App::app()->setFirstResponder(selectableListView());
       return true;
     }
     selectableListView()->deselectTable();
@@ -412,7 +412,7 @@ KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
 }
 
 void ListController::addModel() {
-  Container::activeApp()->displayModalViewController(
+  App::app()->displayModalViewController(
       &m_typeStackController, 0.f, 0.f, Metric::PopUpTopMargin,
       Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }

@@ -152,7 +152,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
                                                 Symbol::Builder(symbol));
     }
     m_layout = PoincareHelpers::CreateLayout(
-        clone, AppsContainer::activeApp()->localContext());
+        clone, Escher::App::app()->localContext());
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout::Builder();
     }

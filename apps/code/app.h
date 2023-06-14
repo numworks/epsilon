@@ -36,9 +36,7 @@ class App : public Shared::SharedApp {
 #endif
     ScriptStore m_scriptStore;
   };
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   ~App();
   TELEMETRY_ID("Code");
   Escher::StackViewController *stackViewController() {

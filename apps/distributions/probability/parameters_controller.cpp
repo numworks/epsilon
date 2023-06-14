@@ -100,7 +100,7 @@ double ParametersController::parameterAtIndex(int index) {
 
 bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   if (!m_distribution->authorizedParameterAtIndex(f, parameterIndex)) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   m_distribution->setParameterAtIndex(f, parameterIndex);

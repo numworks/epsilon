@@ -1,9 +1,10 @@
 #include "editor_view.h"
 
 #include <apps/global_preferences.h>
-#include <escher/app.h>
 #include <escher/palette.h>
 #include <poincare/integer.h>
+
+#include "app.h"
 
 using namespace Escher;
 
@@ -40,7 +41,7 @@ View* EditorView::subviewAtIndex(int index) {
 }
 
 void EditorView::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_textArea);
+  App::app()->setFirstResponder(&m_textArea);
 }
 
 void EditorView::layoutSubviews(bool force) {

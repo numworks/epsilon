@@ -67,7 +67,7 @@ void MenuController::didBecomeFirstResponder() {
   }
   if (footer()->selectedButton() == 0) {
     assert(m_selectableTableView.selectedRow() < 0);
-    Container::activeApp()->setFirstResponder(&m_consoleButton);
+    App::app()->setFirstResponder(&m_consoleButton);
     return;
   }
   if (m_selectableTableView.selectedRow() < 0) {
@@ -75,7 +75,7 @@ void MenuController::didBecomeFirstResponder() {
   }
   assert(m_selectableTableView.selectedRow() <
          m_scriptStore->numberOfScripts() + 1);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  App::app()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
   if (consoleController()->locked()) {
     consoleController()->setAutoImport(true);
@@ -106,7 +106,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     if (footer()->selectedButton() == 0) {
       footer()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0, numberOfRows() - 1);
-      Container::activeApp()->setFirstResponder(&m_selectableTableView);
+      App::app()->setFirstResponder(&m_selectableTableView);
       return true;
     }
   }
@@ -140,7 +140,7 @@ void MenuController::renameSelectedScript() {
       0, (m_selectableTableView.selectedRow()));
   ScriptNameCell *myCell =
       static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
-  Container::activeApp()->setFirstResponder(myCell);
+  App::app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
   TextField *tf = myCell->textField();
   const char *previousText = tf->text();
@@ -316,19 +316,18 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
           m_selectableTableView.selectedColumn(), currentRow - 1);
     }
     reloadConsole();
-    Container::activeApp()->setFirstResponder(&m_selectableTableView);
+    App::app()->setFirstResponder(&m_selectableTableView);
     AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(
         Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Script::ErrorStatus::NameTaken) {
-    Container::activeApp()->displayWarning(I18n::Message::NameTaken);
+    App::app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Script::ErrorStatus::NonCompliantName) {
-    Container::activeApp()->displayWarning(
-        I18n::Message::AllowedCharactersaz09,
-        I18n::Message::NameCannotStartWithNumber);
+    App::app()->displayWarning(I18n::Message::AllowedCharactersaz09,
+                               I18n::Message::NameCannotStartWithNumber);
   } else {
     assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
-    Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
+    App::app()->displayWarning(I18n::Message::NameTooLong);
   }
   return false;
 }
@@ -415,7 +414,7 @@ bool MenuController::privateTextFieldDidAbortEditing(
     m_selectableTableView.selectCellAtLocation(
         m_selectableTableView.selectedColumn(),
         m_selectableTableView.selectedRow());
-    Container::activeApp()->setFirstResponder(&m_selectableTableView);
+    App::app()->setFirstResponder(&m_selectableTableView);
   }
   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(
       Ion::Events::ShiftAlphaStatus::Default);

@@ -50,7 +50,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(
   KDCoordinate rwHeight = rowHeight(row);
   int previousNumberOfElementsInColumn = numberOfElementsInColumn(column);
   if (!checkDataAtLocation(floatBody, column, row)) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   if (!setDataAtLocation(floatBody, column, row)) {

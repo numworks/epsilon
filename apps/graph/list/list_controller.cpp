@@ -125,8 +125,7 @@ bool ListController::layoutRepresentsParametricFunction(Layout l) const {
   return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
 }
 
-bool ListController::completeEquation(InputEventHandler *equationField,
-                                      CodePoint symbol) {
+bool ListController::completeEquation(LayoutField *equationField) {
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
@@ -137,6 +136,12 @@ bool ListController::completeEquation(InputEventHandler *equationField,
         Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(x)=") - 1;
     char buffer[k_bufferSize];
     // Insert "f(x)=", with f the default function name and x the symbol
+    CodePoint symbol =
+        layoutRepresentsPolarFunction(equationField->layout())
+            ? ContinuousFunction::k_polarSymbol
+            : (layoutRepresentsParametricFunction(equationField->layout())
+                   ? ContinuousFunction::k_parametricSymbol
+                   : ContinuousFunction::k_cartesianSymbol);
     fillWithDefaultFunctionEquation(buffer, k_bufferSize,
                                     &m_modelsParameterController, symbol);
     return equationField->handleEventWithText(buffer, false, true);
@@ -169,13 +174,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
          parsedExpression.type() != Poincare::ExpressionNode::Type::Point &&
          !parsedExpression.deepIsList(nullptr))) {
       layoutField->putCursorOnOneSide(OMG::Direction::Left());
-      CodePoint symbol =
-          layoutRepresentsPolarFunction(layoutField->layout())
-              ? ContinuousFunction::k_polarSymbol
-              : (layoutRepresentsParametricFunction(layoutField->layout())
-                     ? ContinuousFunction::k_parametricSymbol
-                     : ContinuousFunction::k_cartesianSymbol);
-      if (!completeEquation(layoutField, symbol)) {
+      if (!completeEquation(layoutField)) {
         layoutField->putCursorOnOneSide(OMG::Direction::Right());
         App::app()->displayWarning(I18n::Message::RequireEquation);
         return true;

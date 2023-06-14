@@ -32,7 +32,7 @@ void AbstractEditableTextCell::layoutSubviews(bool force) {
 }
 
 void AbstractEditableTextCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(textField());
+  App::app()->setFirstResponder(textField());
 }
 
 KDSize AbstractEditableTextCell::minimalSizeForOptimalDisplay() const {

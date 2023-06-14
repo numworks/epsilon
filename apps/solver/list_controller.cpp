@@ -100,7 +100,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up && selectedRow() == -1) {
     footer()->setSelectedButton(-1);
     selectableListView()->selectCell(numberOfRows() - 1);
-    Container::activeApp()->setFirstResponder(selectableListView());
+    App::app()->setFirstResponder(selectableListView());
     return true;
   }
   if (event == Ion::Events::Down) {
@@ -124,7 +124,7 @@ void ListController::didBecomeFirstResponder() {
     selectCell(numberOfRows() - 1);
   }
   footer()->setSelectedButton(-1);
-  Container::activeApp()->setFirstResponder(selectableListView());
+  App::app()->setFirstResponder(selectableListView());
 }
 
 void ListController::didEnterResponderChain(Responder *previousFirstResponder) {
@@ -141,7 +141,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     if (!layoutField->layout().hasTopLevelComparisonSymbol()) {
       layoutField->putCursorOnOneSide(OMG::Direction::Right());
       if (!layoutField->handleEventWithText("=0")) {
-        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
+        App::app()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
     }
@@ -189,7 +189,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 
 void ListController::resolveEquations() {
   if (modelStore()->numberOfDefinedModels() == 0) {
-    Container::activeApp()->displayWarning(I18n::Message::EnterEquation);
+    App::app()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
   // Tidy model before checkpoint, during which older TreeNodes can't be altered
@@ -202,17 +202,16 @@ void ListController::resolveEquations() {
         App::app()->system()->exactSolve(App::app()->localContext());
     switch (e) {
       case SystemOfEquations::Error::EquationUndefined:
-        Container::activeApp()->displayWarning(
-            I18n::Message::UndefinedEquation);
+        App::app()->displayWarning(I18n::Message::UndefinedEquation);
         return;
       case SystemOfEquations::Error::EquationNonreal:
-        Container::activeApp()->displayWarning(I18n::Message::NonrealEquation);
+        App::app()->displayWarning(I18n::Message::NonrealEquation);
         return;
       case SystemOfEquations::Error::TooManyVariables:
-        Container::activeApp()->displayWarning(I18n::Message::TooManyVariables);
+        App::app()->displayWarning(I18n::Message::TooManyVariables);
         return;
       case SystemOfEquations::Error::NonLinearSystem:
-        Container::activeApp()->displayWarning(I18n::Message::NonLinearSystem);
+        App::app()->displayWarning(I18n::Message::NonLinearSystem);
         return;
       default: {
         assert(e == SystemOfEquations::Error::NoError ||
@@ -238,7 +237,7 @@ void ListController::reloadButtonMessage() {
 }
 
 void ListController::addModel() {
-  Container::activeApp()->displayModalViewController(
+  App::app()->displayModalViewController(
       &m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin,
       Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }

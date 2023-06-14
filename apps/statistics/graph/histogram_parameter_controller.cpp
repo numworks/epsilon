@@ -87,7 +87,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex,
   const double nextFirstDrawnBarAbscissa =
       parameterIndex == 0 ? m_tempFirstDrawnBarAbscissa : value;
   if (!authorizedParameters(nextBarWidth, nextFirstDrawnBarAbscissa)) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   if (parameterIndex == 0) {

@@ -46,9 +46,7 @@ class App : public Shared::StoreApp {
     Shared::DoublePairStorePreferences m_storePreferences;
   };
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
 
   TELEMETRY_ID("Regression");
 

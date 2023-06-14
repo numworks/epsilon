@@ -23,8 +23,7 @@ class MainController : public Escher::ViewController,
 
   // Escher::Responder
   void didBecomeFirstResponder() override {
-    Escher::Container::activeApp()->setFirstResponder(
-        m_view.bannerView()->textField());
+    Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
   }
   bool handleEvent(Ion::Events::Event e) override;
 

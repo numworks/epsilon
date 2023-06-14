@@ -46,7 +46,7 @@ CodePoint AbstractMathFieldDelegate::XNT() {
 bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
          ExpressionCanBeSerialized(exp, false, Poincare::Expression(),
-                                   Container::activeApp()->localContext());
+                                   App::app()->localContext());
 }
 
 bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
@@ -80,8 +80,7 @@ bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
 }
 
 bool AbstractMathFieldDelegate::isAcceptableText(const char *text) {
-  Expression exp =
-      Expression::Parse(text, Container::activeApp()->localContext());
+  Expression exp = Expression::Parse(text, App::app()->localContext());
   return isAcceptableExpression(exp);
 }
 
@@ -102,7 +101,7 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
       // Accept empty fields
       return false;
     }
-    App *app = Container::activeApp();
+    App *app = App::app();
     /* An acceptable layout has to be parsable and serialized in a fixed-size
      * buffer. We check all that here. */
     /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
@@ -172,7 +171,7 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
       return false;
     }
     if (!isAcceptableText(textField->text())) {
-      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
+      App::app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }
@@ -185,7 +184,7 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 template <typename T>
 T MathTextFieldDelegate::ParseInputtedFloatValue(const char *text) {
   return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(
-      text, Container::activeApp()->localContext());
+      text, App::app()->localContext());
 }
 
 template <typename T>
@@ -195,7 +194,7 @@ bool MathTextFieldDelegate::HasUndefinedValue(T value, bool enablePlusInfinity,
                      (!enablePlusInfinity && value > 0 && std::isinf(value)) ||
                      (!enableMinusInfinity && value < 0 && std::isinf(value));
   if (isUndefined) {
-    Container::activeApp()->displayWarning(I18n::Message::UndefinedValue);
+    App::app()->displayWarning(I18n::Message::UndefinedValue);
   }
   return isUndefined;
 }

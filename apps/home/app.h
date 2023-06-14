@@ -22,9 +22,7 @@ class App : public Escher::App {
     App *unpack(Escher::Container *container) override;
     const Descriptor *descriptor() const override;
   };
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   Snapshot *snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }

@@ -19,7 +19,7 @@ void ScrollableTwoLayoutsCell::setEven(bool even) {
 
 void ScrollableTwoLayoutsCell::didBecomeFirstResponder() {
   reinitSelection();
-  Container::activeApp()->setFirstResponder(&m_view);
+  App::app()->setFirstResponder(&m_view);
 }
 
 void ScrollableTwoLayoutsCell::reinitSelection() {

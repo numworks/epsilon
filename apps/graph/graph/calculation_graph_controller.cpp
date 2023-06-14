@@ -104,8 +104,7 @@ CalculationGraphController::computeNewPointOfInterestFromAbscissa(
       direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start,
                                                                     &max);
-  return computeNewPointOfInterest(start, max,
-                                   Container::activeApp()->localContext());
+  return computeNewPointOfInterest(start, max, App::app()->localContext());
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(

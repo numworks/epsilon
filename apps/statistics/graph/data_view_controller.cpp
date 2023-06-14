@@ -68,7 +68,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       dataView()->selectViewForSeries(selectedSeries());
       highlightSelection();
       reloadBannerView();
-      Escher::Container::activeApp()->setFirstResponder(this);
+      Escher::App::app()->setFirstResponder(this);
       return true;
     }
     return buttonAtIndex(selectedButton,

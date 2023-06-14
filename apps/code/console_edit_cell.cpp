@@ -3,10 +3,10 @@
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
-#include <escher/app.h>
 
 #include <algorithm>
 
+#include "app.h"
 #include "console_controller.h"
 
 using namespace Escher;
@@ -51,7 +51,7 @@ void ConsoleEditCell::layoutSubviews(bool force) {
 }
 
 void ConsoleEditCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_textField);
+  App::app()->setFirstResponder(&m_textField);
   m_textField.setEditing(true);
 }
 

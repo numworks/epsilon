@@ -13,14 +13,14 @@ void BankViewController::setActiveIndex(int i) {
   }
   ViewController* upcomingVC = childAtIndex(i);
   upcomingVC->viewWillAppear();
-  Container::activeApp()->setFirstResponder(upcomingVC);
+  App::app()->setFirstResponder(upcomingVC);
   childAtIndex(m_activeIndex)->viewDidDisappear();
   m_activeIndex = i;
   m_view.setSubview(upcomingVC->view());
 }
 
 void BankViewController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(activeViewController());
+  App::app()->setFirstResponder(activeViewController());
 }
 
 void BankViewController::initView() {

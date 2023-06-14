@@ -476,8 +476,7 @@ int SolutionsController::typeAtLocation(int column, int row) {
 void SolutionsController::didBecomeFirstResponder() {
   SystemOfEquations *system = App::app()->system();
   if (system->numberOfSolutions() > 0) {
-    Container::activeApp()->setFirstResponder(
-        m_contentView.selectableTableView());
+    App::app()->setFirstResponder(m_contentView.selectableTableView());
   }
 }
 

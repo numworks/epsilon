@@ -30,7 +30,7 @@ void EditableExpressionCell::layoutSubviews(bool force) {
 }
 
 void EditableExpressionCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_layoutField);
+  App::app()->setFirstResponder(&m_layoutField);
 }
 
 KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {

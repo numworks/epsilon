@@ -41,7 +41,7 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 }
 
 void PopUpController::presentModally() {
-  Escher::Container::activeApp()->displayModalViewController(
+  Escher::App::app()->displayModalViewController(
       this, 0.f, 0.f, Escher::Metric::PopUpTopMargin,
       Escher::Metric::PopUpRightMargin, Escher::Metric::PopUpBottomMargin,
       Escher::Metric::PopUpLeftMargin);
@@ -70,12 +70,12 @@ PopUpController::ContentView::ContentView(Responder* parentResponder,
 void PopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
-  Container::activeApp()->setFirstResponder(
-      selectedButton == 0 ? &m_cancelButton : &m_okButton);
+  App::app()->setFirstResponder(selectedButton == 0 ? &m_cancelButton
+                                                    : &m_okButton);
 }
 
 int PopUpController::ContentView::selectedButton() {
-  return Container::activeApp()->firstResponder() == &m_cancelButton ? 0 : 1;
+  return App::app()->firstResponder() == &m_cancelButton ? 0 : 1;
 }
 
 int PopUpController::ContentView::numberOfSubviews() const {
@@ -139,15 +139,15 @@ MessagePopUpController::MessagePopUpController(Invocation OkInvocation,
                                                I18n::Message warningMessage,
                                                I18n::Message okMessage,
                                                I18n::Message cancelMessage)
-    : PopUpController(
-          OkInvocation,
-          Invocation(
-              [](void* context, void* sender) {
-                Container::activeApp()->modalViewController()->dismissModal();
-                return true;
-              },
-              &m_contentView),
-          warningMessage, okMessage, cancelMessage, &m_messageTextView) {}
+    : PopUpController(OkInvocation,
+                      Invocation(
+                          [](void* context, void* sender) {
+                            App::app()->modalViewController()->dismissModal();
+                            return true;
+                          },
+                          &m_contentView),
+                      warningMessage, okMessage, cancelMessage,
+                      &m_messageTextView) {}
 
 void MessagePopUpController::setContentMessage(I18n::Message message) {
   m_messageTextView.setMessage(message);
@@ -173,15 +173,15 @@ BufferPopUpController::BufferPopUpController(Invocation OkInvocation,
                                              I18n::Message warningMessage,
                                              I18n::Message okMessage,
                                              I18n::Message cancelMessage)
-    : PopUpController(
-          OkInvocation,
-          Invocation(
-              [](void* context, void* sender) {
-                Container::activeApp()->modalViewController()->dismissModal();
-                return true;
-              },
-              &m_contentView),
-          warningMessage, okMessage, cancelMessage, &m_bufferTextView) {}
+    : PopUpController(OkInvocation,
+                      Invocation(
+                          [](void* context, void* sender) {
+                            App::app()->modalViewController()->dismissModal();
+                            return true;
+                          },
+                          &m_contentView),
+                      warningMessage, okMessage, cancelMessage,
+                      &m_bufferTextView) {}
 
 void BufferPopUpController::setContentText(const char* text) {
   m_bufferTextView.setText(text);

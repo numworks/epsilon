@@ -31,7 +31,7 @@ void FunctionGraphController::didBecomeFirstResponder() {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegate(this);
     if (!isAlongY(*m_selectedCurveIndex)) {
-      Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
+      App::app()->setFirstResponder(bannerView()->abscissaValue());
     }
   } else {
     InteractiveCurveViewController::didBecomeFirstResponder();
@@ -43,7 +43,7 @@ void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setAreaHighlight(NAN, NAN);
 
   if (functionGraphView()->context() == nullptr) {
-    functionGraphView()->setContext(Container::activeApp()->localContext());
+    functionGraphView()->setContext(App::app()->localContext());
   }
 
   InteractiveCurveViewController::viewWillAppear();
@@ -53,9 +53,9 @@ void FunctionGraphController::viewWillAppear() {
 void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
     selectCurveAtIndex(curveIndex, false);
-    Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(),
-                                       Container::activeApp()->localContext(),
-                                       m_selectedSubCurveIndex);
+    Coordinate2D<double> xy =
+        xyValues(curveIndex, m_cursor->t(), App::app()->localContext(),
+                 m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   curveParameterControllerWithRecord()->setRecord(recordAtSelectedCurveIndex());
@@ -126,7 +126,7 @@ void FunctionGraphController::reloadBannerView() {
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
                                                bool ignoreMargins) {
-  Poincare::Context *context = Container::activeApp()->localContext();
+  Poincare::Context *context = App::app()->localContext();
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   float gridUnit = 2.0 * interactiveCurveViewRange()->xGridUnit();
   float xMin = interactiveCurveViewRange()->xMin();
@@ -170,8 +170,7 @@ void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
   Ion::Storage::Record record = recordAtCurveIndex(index);
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
-  *xy = function->evaluateXYAtParameter(
-      *t, Container::activeApp()->localContext(), 0);
+  *xy = function->evaluateXYAtParameter(*t, App::app()->localContext(), 0);
 }
 
 void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
@@ -201,7 +200,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 bool FunctionGraphController::moveCursorVertically(
     OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  Poincare::Context *context = Container::activeApp()->localContext();
+  Poincare::Context *context = App::app()->localContext();
   int nextSubCurve = 0;
   int nextFunction =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
@@ -224,7 +223,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextFunction,
     assert(!std::isnan(f->tMax()));
     nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
   }
-  Poincare::Context *context = Container::activeApp()->localContext();
+  Poincare::Context *context = App::app()->localContext();
   Poincare::Coordinate2D<double> cursorPosition =
       f->evaluateXYAtParameter(nextT, context, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
@@ -233,8 +232,8 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextFunction,
   Escher::Responder *responder = isAlongY(*m_selectedCurveIndex)
                                      ? static_cast<Responder *>(this)
                                      : bannerView()->abscissaValue();
-  if (Container::activeApp()->firstResponder() != responder) {
-    Container::activeApp()->setFirstResponder(responder);
+  if (App::app()->firstResponder() != responder) {
+    App::app()->setFirstResponder(responder);
   }
   m_selectedSubCurveIndex = nextSubCurve;
 }
@@ -248,8 +247,7 @@ bool FunctionGraphController::selectedModelIsValid() const {
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
-  return xyValues(*m_selectedCurveIndex, t,
-                  Container::activeApp()->localContext(),
+  return xyValues(*m_selectedCurveIndex, t, App::app()->localContext(),
                   m_selectedSubCurveIndex);
 }
 

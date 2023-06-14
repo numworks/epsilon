@@ -1,5 +1,6 @@
 #include "script_parameter_controller.h"
 
+#include "app.h"
 #include "menu_controller.h"
 
 using namespace Escher;
@@ -48,7 +49,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
     m_script.toggleAutoImportation();
     m_selectableListView.reloadSelectedCell();
     m_menuController->reloadConsole();
-    Container::activeApp()->setFirstResponder(&m_selectableListView);
+    App::app()->setFirstResponder(&m_selectableListView);
   } else {
     assert(cell == &m_deleteScript);
     dismissScriptParameterController();

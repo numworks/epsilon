@@ -923,9 +923,8 @@ bool MathToolbox::displayMessageTreeDisabledPopUp(
     const Escher::ToolboxMessageTree *messageTree) {
   if (isMessageTreeDisabled(messageTree)) {
     // TODO : It would be better if warning did not dismiss the toolbox
-    Container::activeApp()->displayWarning(
-        I18n::Message::DisabledFeatureInTestMode1,
-        I18n::Message::DisabledFeatureInTestMode2);
+    App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1,
+                               I18n::Message::DisabledFeatureInTestMode2);
     return true;
   }
   return false;
@@ -972,7 +971,7 @@ void MathToolbox::fillCellForRow(HighlightCell *cell, int row) {
           resultLayout = resultExpression.createLayout(
               Poincare::Preferences::sharedPreferences->displayMode(),
               Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
-              Container::activeApp()->localContext());
+              App::app()->localContext());
         }
       }
     }
@@ -1025,7 +1024,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
     text = textToInsert;
   }
   sender()->handleEventWithText(text);
-  Container::activeApp()->modalViewController()->dismissModal();
+  App::app()->modalViewController()->dismissModal();
   return true;
 }
 
@@ -1036,7 +1035,7 @@ bool MathToolbox::selectExtraCell(int selectedRow) {
   l.serializeForParsing(
       buffer, k_maxSizeOfExtraCellExpression);  // No need of context here
   sender()->handleEventWithText(buffer);
-  Container::activeApp()->modalViewController()->dismissModal();
+  App::app()->modalViewController()->dismissModal();
   return true;
 }
 

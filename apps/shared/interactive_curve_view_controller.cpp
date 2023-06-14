@@ -169,7 +169,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      floatBody, Container::activeApp()->localContext(),
+      floatBody, App::app()->localContext(),
       Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
@@ -188,8 +188,8 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
 }
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
-  Coordinate2D<double> xy = xyValues(selectedCurveIndex(), t,
-                                     Container::activeApp()->localContext(), 0);
+  Coordinate2D<double> xy =
+      xyValues(selectedCurveIndex(), t, App::app()->localContext(), 0);
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
@@ -346,7 +346,7 @@ void InteractiveCurveViewController::setCurveViewAsMainView(
     bool resetInterrupted, bool forceReload) {
   header()->setSelectedButton(-1);
   curveView()->setFocus(true);
-  Container::activeApp()->setFirstResponder(this);
+  App::app()->setFirstResponder(this);
   reloadBannerView();
   panToMakeCursorVisible();
   curveView()->reload(resetInterrupted, forceReload);

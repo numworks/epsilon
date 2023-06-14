@@ -71,7 +71,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(0, 0);
-      Container::activeApp()->setFirstResponder(selectableTableView());
+      App::app()->setFirstResponder(selectableTableView());
       return true;
     }
     return false;

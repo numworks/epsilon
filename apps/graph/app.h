@@ -46,9 +46,7 @@ class App : public Shared::FunctionApp {
     Shared::Interval m_interval
         [Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes];
   };
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   Snapshot *snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }

@@ -113,7 +113,7 @@ bool ExpressionModelListController::handleEventOnExpression(
       (!inTemplateMenu &&
        (event == Ion::Events::Toolbox || event == Ion::Events::Var))) {
     if (inTemplateMenu) {
-      Container::activeApp()->modalViewController()->dismissModal();
+      App::app()->modalViewController()->dismissModal();
     }
     // If empty row is selected, try adding an empty model
     if (isAddEmptyRow(selectedRow()) && !addEmptyModel()) {
@@ -155,7 +155,7 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     layoutField()->setText(initialTextContent);
   }
   layoutField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(layoutField());
+  App::app()->setFirstResponder(layoutField());
   if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
     layoutField()->handleEvent(event);
   }
@@ -169,9 +169,8 @@ bool ExpressionModelListController::editSelectedRecordWithText(
       modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
-  bool result =
-      (model->setContent(text, Container::activeApp()->localContext()) ==
-       Ion::Storage::Record::ErrorStatus::None);
+  bool result = (model->setContent(text, App::app()->localContext()) ==
+                 Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
   return result;
 }

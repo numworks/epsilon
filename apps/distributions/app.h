@@ -47,9 +47,7 @@ class App : public Shared::MathApp {
     DistributionBuffer m_distributionBuffer;
   };
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   void didBecomeActive(Escher::Window *window) override;
 
   // Navigation

@@ -137,7 +137,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
         ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel));
     assert(success);
     (void)success;  // Silence warnings
-    Container::activeApp()->modalViewController()->dismissModal();
+    App::app()->modalViewController()->dismissModal();
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }

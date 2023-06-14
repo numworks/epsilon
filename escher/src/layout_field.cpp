@@ -54,7 +54,7 @@ void LayoutField::ContentView::copySelection(Context *context,
   LayoutSelection selection = m_cursor.selection().clone();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {
-      Container::activeApp()->storeValue();
+      App::app()->storeValue();
     }
     return;
   }
@@ -81,7 +81,7 @@ void LayoutField::ContentView::copySelection(Context *context,
     return;
   }
   if (intoStoreMenu) {
-    Container::activeApp()->storeValue(buffer);
+    App::app()->storeValue(buffer);
   } else {
     Clipboard::SharedClipboard()->store(buffer);
   }
@@ -345,8 +345,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   Layout resultLayout = resultExpression.createLayout(
       Poincare::Preferences::sharedPreferences->displayMode(),
       Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
-      Container::activeApp() ? Container::activeApp()->localContext() : nullptr,
-      true);
+      App::app() ? App::app()->localContext() : nullptr, true);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return false;

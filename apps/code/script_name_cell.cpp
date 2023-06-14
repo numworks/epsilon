@@ -20,7 +20,7 @@ KDSize ScriptNameCell::minimalSizeForOptimalDisplay() const {
 }
 
 void ScriptNameCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_textField);
+  App::app()->setFirstResponder(&m_textField);
 }
 
 void ScriptNameCell::updateSubviewsBackgroundAfterChangingState() {

@@ -65,7 +65,7 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
 
 void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableListView->reloadData();
-  Container::activeApp()->setFirstResponder(m_selectableListView);
+  App::app()->setFirstResponder(m_selectableListView);
 }
 
 /* NestedMenuController */
@@ -116,14 +116,14 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Toolbox && isToolbox()) ||
       (event == Ion::Events::Var && !isToolbox())) {
     if (stackDepth() == 0) {
-      Container::activeApp()->modalViewController()->dismissModal();
+      App::app()->modalViewController()->dismissModal();
       return true;
     }
     return returnToRootMenu();
   }
   if ((event == Ion::Events::Var && isToolbox()) ||
       (event == Ion::Events::Toolbox && !isToolbox())) {
-    Container::activeApp()->modalViewController()->dismissModal();
+    App::app()->modalViewController()->dismissModal();
     assert(sender());
     return sender()->handleBoxEvent(event);
   }
@@ -157,7 +157,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   m_breadcrumbController.pushTitle(subTitle());
   StackViewController::push(&m_breadcrumbController);
   m_selectableListView.selectFirstRow();
-  Container::activeApp()->setFirstResponder(&m_listController);
+  App::app()->setFirstResponder(&m_listController);
   return true;
 }
 
@@ -199,9 +199,9 @@ void NestedMenuController::loadState(NestedMenuController::StackState state) {
 }
 
 void NestedMenuController::open() {
-  Container::activeApp()->displayModalViewController(
-      this, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
-      Metric::PopUpRightMargin);
+  App::app()->displayModalViewController(this, 0.f, 0.f, Metric::PopUpTopMargin,
+                                         Metric::PopUpLeftMargin, 0,
+                                         Metric::PopUpRightMargin);
 }
 
 }  // namespace Escher

@@ -60,9 +60,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     StatisticBuffer m_statisticBuffer;
   };
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   void didBecomeActive(Escher::Window *window) override;
   bool storageCanChangeForRecordName(
       const Ion::Storage::Record::Name recordName) const override;

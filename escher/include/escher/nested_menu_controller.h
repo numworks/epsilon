@@ -30,7 +30,7 @@ class NestedMenuController : public StackViewController,
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override {
-    Container::activeApp()->setFirstResponder(&m_listController);
+    App::app()->setFirstResponder(&m_listController);
   }
   void viewWillAppear() override;
 

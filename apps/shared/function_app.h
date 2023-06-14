@@ -31,7 +31,7 @@ class FunctionApp : public MathApp {
     int m_selectedCurveIndex;
   };
   static FunctionApp *app() {
-    return static_cast<FunctionApp *>(Escher::Container::activeApp());
+    return static_cast<FunctionApp *>(Escher::App::app());
   }
   virtual ~FunctionApp() = default;
   Snapshot *snapshot() const {

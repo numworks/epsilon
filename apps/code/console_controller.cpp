@@ -173,15 +173,14 @@ void ConsoleController::viewWillAppear() {
 
 void ConsoleController::didBecomeFirstResponder() {
   if (!isDisplayingViewController()) {
-    Container::activeApp()->setFirstResponder(&m_editCell);
+    App::app()->setFirstResponder(&m_editCell);
   } else {
     /* A view controller might be displayed: for example, when pushing the
      * console on the stack controller, we auto-import scripts during the
      * 'viewWillAppear' and then we set the console as first responder. The
      * sandbox or the matplotlib controller might have been pushed in the
      * auto-import. */
-    Container::activeApp()->setFirstResponder(
-        stackViewController()->topViewController());
+    App::app()->setFirstResponder(stackViewController()->topViewController());
   }
 }
 
@@ -194,7 +193,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
               .text();
       m_editCell.setEditing(true);
       m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
-      Container::activeApp()->setFirstResponder(&m_editCell);
+      App::app()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
   } else if (event == Ion::Events::Clear) {

@@ -13,7 +13,7 @@ void ViewController::viewWillAppear() {
     return;
   }
 
-  const char *appId = Container::activeApp()->telemetryId();
+  const char *appId = App::app()->telemetryId();
   if (appId == nullptr) {
     return;
   }
@@ -54,7 +54,7 @@ bool ViewController::popFromStackViewControllerOnLeftEvent(
 #if EPSILON_TELEMETRY
 void ViewController::telemetryReportEvent(const char *action,
                                           const char *label) const {
-  const char *category = Container::activeApp()->telemetryId();
+  const char *category = App::app()->telemetryId();
   assert(category != nullptr);
   assert(action != nullptr);
   assert(label != nullptr);

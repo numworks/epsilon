@@ -65,7 +65,7 @@ void HistoryController::viewWillAppear() {
 
 void HistoryController::didBecomeFirstResponder() {
   selectCellAtLocation(0, numberOfRows() - 1);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  App::app()->setFirstResponder(&m_selectableTableView);
 }
 
 void HistoryController::willExitResponderChain(Responder *nextFirstResponder) {
@@ -118,7 +118,7 @@ static void breakableSetExpressionInListController(
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     m_selectableTableView.deselectTable();
-    Container::activeApp()->setFirstResponder(parentResponder());
+    App::app()->setFirstResponder(parentResponder());
     return true;
   }
   if (event == Ion::Events::Up) {
@@ -132,7 +132,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
     reload();
     if (numberOfRows() == 0) {
-      Container::activeApp()->setFirstResponder(parentResponder());
+      App::app()->setFirstResponder(parentResponder());
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0,
@@ -148,12 +148,12 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.deselectTable();
     m_calculationStore->deleteAll();
     reload();
-    Container::activeApp()->setFirstResponder(parentResponder());
+    App::app()->setFirstResponder(parentResponder());
     return true;
   }
   if (event == Ion::Events::Back) {
     m_selectableTableView.deselectTable();
-    Container::activeApp()->setFirstResponder(parentResponder());
+    App::app()->setFirstResponder(parentResponder());
     return true;
   }
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {
@@ -268,7 +268,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 
     if (vc) {
       assert(vc->numberOfRows() > 0);
-      Container::activeApp()->displayModalViewController(
+      App::app()->displayModalViewController(
           vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
           Metric::PopUpRightMargin);
     }

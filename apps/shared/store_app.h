@@ -29,7 +29,7 @@ class StoreApp : public MathApp {
   };
 
   static StoreApp *storeApp() {
-    return static_cast<StoreApp *>(Escher::Container::activeApp());
+    return static_cast<StoreApp *>(Escher::App::app());
   }
 
   Snapshot *storeAppSnapshot() const {

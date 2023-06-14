@@ -63,7 +63,7 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditorController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_editorView);
+  App::app()->setFirstResponder(&m_editorView);
 }
 
 void EditorController::viewWillAppear() {

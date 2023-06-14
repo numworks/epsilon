@@ -47,9 +47,7 @@ class App : public Shared::MathApp {
   };
   TELEMETRY_ID("Finance");
 
-  static App *app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App *app() { return static_cast<App *>(Escher::App::app()); }
   static InterestData *GetInterestData() {
     return app()->snapshot()->data()->interestData();
   }

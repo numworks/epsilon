@@ -31,7 +31,7 @@ void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);
   if (i != m_dataSource->activeTab()) {
     if (!m_isSelected) {
-      Container::activeApp()->setFirstResponder(nullptr);
+      App::app()->setFirstResponder(nullptr);
     }
     children(m_dataSource->activeTab())->viewDidDisappear();
     m_tabs->setActiveTab(i);
@@ -47,7 +47,7 @@ void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
    * button. It is useful when pressing Back on a non-leftmost tab. */
   if (enter) {
     m_isSelected = false;
-    Container::activeApp()->setFirstResponder(activeVC);
+    App::app()->setFirstResponder(activeVC);
   }
 }
 

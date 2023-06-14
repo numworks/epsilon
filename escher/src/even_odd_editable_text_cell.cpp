@@ -24,7 +24,7 @@ void AbstractEvenOddEditableTextCell::layoutSubviews(bool force) {
 }
 
 void AbstractEvenOddEditableTextCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(editableTextCell());
+  App::app()->setFirstResponder(editableTextCell());
 }
 
 }  // namespace Escher

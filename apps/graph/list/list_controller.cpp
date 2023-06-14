@@ -128,7 +128,7 @@ bool ListController::layoutRepresentsParametricFunction(Layout l) const {
 bool ListController::shouldCompleteEquation(Poincare::Expression expression) {
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list (of points). */
-  return !ComparisonNode::IsComparisonWithoutNotEqualOperator(expression) &&
+  return expression.type() != ExpressionNode::Type::Comparison &&
          expression.type() != ExpressionNode::Type::Point &&
          !expression.deepIsList(nullptr);
 }

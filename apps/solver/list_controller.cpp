@@ -151,10 +151,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       }
     }
   }
-  if (MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)) {
-    return true;
-  }
-  return false;
+  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
+                                                             event);
 }
 
 void ListController::layoutFieldDidChangeSize(LayoutField *layoutField) {

@@ -93,7 +93,7 @@ void Pool::log(std::ostream &stream, LogFormat format, bool verbose,
   const char *formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
   stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\""
-         << size() << "\">" << std::endl;
+         << size() << "\">" << '\n';
   if (format == LogFormat::Tree) {
     for (const Node tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);
@@ -104,7 +104,7 @@ void Pool::log(std::ostream &stream, LogFormat format, bool verbose,
     }
   }
   Indent(stream, indentation);
-  stream << "</" << name() << "Pool>";
+  stream << "</" << name() << "Pool>" << std::endl;
 }
 
 #endif

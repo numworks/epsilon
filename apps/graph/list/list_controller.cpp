@@ -158,17 +158,15 @@ bool ListController::completeEquation(InputEventHandler *equationField,
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
-      !layoutField->layout().hasTopLevelEquationSymbol()) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     char buffer[TextField::MaxBufferSize()];
     layoutField->layout().serializeForParsing(buffer,
                                               TextField::MaxBufferSize());
     Expression parsedExpression = Expression::Parse(buffer, nullptr);
     if (parsedExpression.isUninitialized() ||
-        (!parsedExpression.isOfType({
-             ExpressionNode::Type::Comparison,
-             ExpressionNode::Type::Point,
-         }) &&
+        (!Poincare::ComparisonNode::IsComparisonWithoutNotEqualOperator(
+             parsedExpression) &&
+         parsedExpression.type() != Poincare::ExpressionNode::Type::Point &&
          !parsedExpression.deepIsList(nullptr))) {
       layoutField->putCursorOnOneSide(OMG::Direction::Left());
       CodePoint symbol =

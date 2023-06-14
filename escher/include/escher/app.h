@@ -96,6 +96,8 @@ class App : public Responder {
   virtual const char* telemetryId() const { return nullptr; }
 #endif
 
+  static App* app();
+
  protected:
   App(Snapshot* snapshot, ViewController* rootViewController,
       I18n::Message warningMessage = (I18n::Message)0)

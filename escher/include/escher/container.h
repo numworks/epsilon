@@ -18,8 +18,9 @@
 namespace Escher {
 
 class Container : public RunLoop {
+  friend class App;
+
  public:
-  static App* activeApp() { return s_activeApp; }
   Container();
   virtual ~Container();
   Container(const Container& other) = delete;
@@ -32,14 +33,15 @@ class Container : public RunLoop {
   virtual void switchToBuiltinApp(App::Snapshot* snapshot);
 
  protected:
+  static App* activeApp() { return s_activeApp; }
   virtual Window* window() = 0;
-  static App* s_activeApp;
 
  private:
   int numberOfTimers() override;
   Timer* timerAtIndex(int i) override;
   virtual int numberOfContainerTimers();
   virtual Timer* containerTimerAtIndex(int i);
+  static App* s_activeApp;
 };
 
 inline App* App::app() { return Container::activeApp(); }

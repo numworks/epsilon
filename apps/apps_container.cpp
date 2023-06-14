@@ -100,10 +100,10 @@ void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
       GlobalPreferences::sharedGlobalPreferences;
   // Display the prompt if it has a message to display
   if (promptController() != nullptr &&
-      s_activeApp->snapshot() != onBoardingAppSnapshot() &&
-      s_activeApp->snapshot() != hardwareTestAppSnapshot() &&
+      activeApp()->snapshot() != onBoardingAppSnapshot() &&
+      activeApp()->snapshot() != hardwareTestAppSnapshot() &&
       globalPreferences->showPopUp()) {
-    s_activeApp->displayModalViewController(promptController(), 0.f, 0.f);
+    activeApp()->displayModalViewController(promptController(), 0.f, 0.f);
   }
   /* Reset first enumeration flag in case the device was unplugged during its
    * off time. */
@@ -169,8 +169,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     if (!Preferences::sharedPreferences->examMode().isActive()) {
       App::Snapshot* activeSnapshot =
-          (s_activeApp == nullptr ? homeAppSnapshot()
-                                  : s_activeApp->snapshot());
+          (activeApp() == nullptr ? homeAppSnapshot()
+                                  : activeApp()->snapshot());
       /* Just after a software update, the battery timer does not have time to
        * fire before the calculator enters DFU mode. As the DFU mode blocks the
        * event loop, we update the battery state "manually" here.
@@ -215,7 +215,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchToBuiltinApp(App::Snapshot* snapshot) {
-  if (s_activeApp && snapshot != s_activeApp->snapshot()) {
+  if (activeApp() && snapshot != activeApp()->snapshot()) {
     resetShiftAlphaStatus();
   }
   if (snapshot == hardwareTestAppSnapshot() ||
@@ -245,16 +245,16 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
     appStart();
   }
   switchToBuiltinApp(homeAppSnapshot());
-  assert(s_activeApp);
+  assert(activeApp());
   if (!appStart) {
-    s_activeApp->displayWarning(I18n::Message::ExternalAppIncompatible1,
+    activeApp()->displayWarning(I18n::Message::ExternalAppIncompatible1,
                                 I18n::Message::ExternalAppIncompatible2, true);
   }
 }
 
 void AppsContainer::handleRunException() {
   App::Snapshot* activeSnapshot =
-      s_activeApp != nullptr ? s_activeApp->snapshot() : nullptr;
+      activeApp() != nullptr ? activeApp()->snapshot() : nullptr;
   assert(activeSnapshot != homeAppSnapshot());
   /* First leave the app without reopening one so that the
    * ContinuousFunctionStore and the SequenceStore keep their modification flag,
@@ -311,7 +311,7 @@ void AppsContainer::run() {
           GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
-      if (s_activeApp && s_activeApp->snapshot() == homeAppSnapshot()) {
+      if (activeApp() && activeApp()->snapshot() == homeAppSnapshot()) {
         dispatchEvent(Ion::Events::Back);
       } else {
         switchToBuiltinApp(homeAppSnapshot());
@@ -330,7 +330,7 @@ void AppsContainer::run() {
     TreePool::Lock();
     handleRunException();
     TreePool::Unlock();
-    s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1,
+    activeApp()->displayWarning(I18n::Message::PoolMemoryFull1,
                                 I18n::Message::PoolMemoryFull2, true);
   }
 
@@ -394,8 +394,8 @@ void AppsContainer::redrawWindow() { m_window.redraw(); }
 
 bool AppsContainer::storageCanChangeForRecordName(
     const Ion::Storage::Record::Name recordName) const {
-  if (s_activeApp) {
-    return s_activeApp->storageCanChangeForRecordName(recordName);
+  if (activeApp()) {
+    return activeApp()->storageCanChangeForRecordName(recordName);
   }
   return true;
 }
@@ -403,14 +403,14 @@ bool AppsContainer::storageCanChangeForRecordName(
 void AppsContainer::storageDidChangeForRecord(
     const Ion::Storage::Record record) {
   m_globalContext.storageDidChangeForRecord(record);
-  if (s_activeApp) {
-    s_activeApp->storageDidChangeForRecord(record);
+  if (activeApp()) {
+    activeApp()->storageDidChangeForRecord(record);
   }
 }
 
 void AppsContainer::storageIsFull() {
-  if (s_activeApp) {
-    s_activeApp->displayWarning(I18n::Message::StorageMemoryFull1,
+  if (activeApp()) {
+    activeApp()->displayWarning(I18n::Message::StorageMemoryFull1,
                                 I18n::Message::StorageMemoryFull2, true);
   }
 }

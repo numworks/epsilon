@@ -152,6 +152,7 @@ void simplifies_to(const char* input, const char* output) {
 #endif
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
+  inputLayout.removeTree();
   quiz_assert(!expression.isUninitialized());
   EditionReference projected = Simplification::SystemProjection(expression);
   quiz_assert(!projected.isUninitialized());
@@ -182,6 +183,8 @@ void simplifies_to(const char* input, const char* output) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+  outputLayout.removeTree();
+  assert(EditionPool::sharedEditionPool()->numberOfTrees() == 0);
   bool b = strcmp(output, buffer) == 0;
   if (!b) {
     std::cout << input << " reduced to " << buffer << " instead of " << output

@@ -142,8 +142,11 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                               TextField::MaxBufferSize());
     Poincare::Expression parsedExpression =
         Poincare::Expression::Parse(buffer, nullptr);
-    if (parsedExpression.isUninitialized() ||
-        parsedExpression.type() != Poincare::ExpressionNode::Type::Comparison) {
+    if (parsedExpression.isUninitialized()) {
+      App::app()->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    if (parsedExpression.type() != Poincare::ExpressionNode::Type::Comparison) {
       layoutField->putCursorOnOneSide(OMG::Direction::Right());
       if (!layoutField->handleEventWithText("=0")) {
         App::app()->displayWarning(I18n::Message::RequireEquation);

@@ -168,11 +168,14 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     layoutField->layout().serializeForParsing(buffer,
                                               TextField::MaxBufferSize());
     Expression parsedExpression = Expression::Parse(buffer, nullptr);
-    if (parsedExpression.isUninitialized() ||
-        (!Poincare::ComparisonNode::IsComparisonWithoutNotEqualOperator(
-             parsedExpression) &&
-         parsedExpression.type() != Poincare::ExpressionNode::Type::Point &&
-         !parsedExpression.deepIsList(nullptr))) {
+    if (parsedExpression.isUninitialized()) {
+      App::app()->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    if (!Poincare::ComparisonNode::IsComparisonWithoutNotEqualOperator(
+            parsedExpression) &&
+        parsedExpression.type() != Poincare::ExpressionNode::Type::Point &&
+        !parsedExpression.deepIsList(nullptr)) {
       layoutField->putCursorOnOneSide(OMG::Direction::Left());
       if (!completeEquation(layoutField)) {
         layoutField->putCursorOnOneSide(OMG::Direction::Right());

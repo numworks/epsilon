@@ -42,6 +42,8 @@ class Container : public RunLoop {
   virtual Timer* containerTimerAtIndex(int i);
 };
 
+inline App* App::app() { return Container::activeApp(); }
+
 }  // namespace Escher
 
 #endif

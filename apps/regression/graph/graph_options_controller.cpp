@@ -144,7 +144,7 @@ HighlightCell *GraphOptionsController::cell(int index) {
   return cells[index];
 }
 
-void GraphOptionsController::fillCell(HighlightCell *cell) {
+void GraphOptionsController::fillCellForRow(HighlightCell *cell, int row) {
   int series = m_graphController->selectedSeriesIndex();
   Regression::Model *model = m_store->modelForSeries(series);
   if (cell == &m_changeRegressionCell) {

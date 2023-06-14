@@ -36,9 +36,6 @@ class ListController : public Shared::ExpressionModelListController,
   /* ViewController */
   Escher::View* view() override { return &m_equationListView; }
   TELEMETRY_ID("List");
-  /* MathLayoutFieldDelegate */
-  bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
-                                  Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Poincare::Layout layout,
                                    Ion::Events::Event event) override;
@@ -66,6 +63,10 @@ class ListController : public Shared::ExpressionModelListController,
   void reloadBrace();
   EquationStore* modelStore() const override;
   Escher::StackViewController* stackController() const;
+  bool shouldCompleteEquation(Poincare::Expression expression) override {
+    return expression.type() != Poincare::ExpressionNode::Type::Comparison;
+  }
+  bool completeEquation(Escher::LayoutField* equationField) override;
 
   // ListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override;

@@ -185,14 +185,9 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 }
 
 /* MathLayoutFieldDelegate */
+
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
-  // Do not accept empty input
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
-      layoutField->isEmpty()) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
-    return true;
-  }
   if (event == Ion::Events::Toolbox) {
     // Set extra cells
     int recurrenceDepth = -1;
@@ -205,8 +200,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     m_sequenceToolboxDataSource.buildExtraCellsLayouts(sequence->fullName(),
                                                        recurrenceDepth);
   }
-  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
-                                                             event);
+  return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
+                                                                   event);
 }
 
 bool ListController::isAcceptableExpression(const Expression expression) {

@@ -129,12 +129,16 @@ bool ListController::completeEquation(LayoutField *equationField) {
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  constexpr size_t k_bufferSize =
+      SymbolAbstractNode::k_maxNameSize + sizeof("(x)≥") - 1;
+  static_assert(k_bufferSize >= sizeof("r=") &&
+                    k_bufferSize >= ContinuousFunction::k_maxDefaultNameSize +
+                                        sizeof("(x)=") - 1,
+                "k_bufferSize should fit all situations.");
+  char buffer[k_bufferSize];
   if (f->isNull() || f->properties().status() ==
                          ContinuousFunctionProperties::Status::Undefined) {
     // Function is new or undefined, complete the equation with a default name
-    constexpr size_t k_bufferSize =
-        Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(x)=") - 1;
-    char buffer[k_bufferSize];
     // Insert "f(x)=", with f the default function name and x the symbol
     CodePoint symbol =
         layoutRepresentsPolarFunction(equationField->layout())
@@ -144,18 +148,13 @@ bool ListController::completeEquation(LayoutField *equationField) {
                    : ContinuousFunction::k_cartesianSymbol);
     fillWithDefaultFunctionEquation(buffer, k_bufferSize,
                                     &m_modelsParameterController, symbol);
-    return equationField->handleEventWithText(buffer, false, true);
+  } else {
+    // Insert the name, symbol and equation symbol of the existing function
+    size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);
+    nameLength += strlcpy(buffer + nameLength, f->properties().equationSymbol(),
+                          k_bufferSize - nameLength);
+    assert(nameLength < k_bufferSize);
   }
-  // Insert the name, symbol and equation symbol of the existing function
-  constexpr size_t k_bufferSize =
-      SymbolAbstractNode::k_maxNameSize + sizeof("(x)≥") - 1;
-  static_assert(k_bufferSize >= sizeof("r="),
-                "k_bufferSize should fit both situations.");
-  char buffer[k_bufferSize];
-  size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);
-  nameLength += strlcpy(buffer + nameLength, f->properties().equationSymbol(),
-                        k_bufferSize - nameLength);
-  assert(nameLength < k_bufferSize);
   return equationField->handleEventWithText(buffer, false, true);
 }
 

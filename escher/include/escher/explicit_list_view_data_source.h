@@ -20,11 +20,9 @@ class ExplicitListViewDataSource : public ListViewDataSource {
     return cell(type);
   }
   // HighlightCell * selectedCell() { return cell(selectedRow()); }
-  void initCellSize(TableView* view) override;
 
  protected:
   virtual HighlightCell* cell(int index) = 0;
-  virtual void fillCell(HighlightCell* cell) {}
   // This method fills the cell.
   KDCoordinate nonMemoizedRowHeight(int row) override final {
     return protectedNonMemoizedRowHeight(cell(row), row);

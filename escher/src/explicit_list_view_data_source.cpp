@@ -19,16 +19,6 @@ ExplicitListViewDataSource::ExplicitListRowHeightManager::computeSizeAtIndex(
                             : 0);
 }
 
-void ExplicitListViewDataSource::initCellSize(TableView* view) {
-  for (int i = 0; i < numberOfRows(); i++) {
-    HighlightCell* cellI = cell(i);
-    if (cellI->isVisible()) {
-      fillCell(cellI);
-    }
-  }
-  ListViewDataSource::initCellSize(view);
-}
-
 bool ExplicitListViewDataSource::canSelectCellAtRow(int row) {
   /* This controller owns all its cells so even when cellAtLocation(column, row)
    * is nullptr, we can access the cell via the method cell(row) and we can

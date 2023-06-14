@@ -52,8 +52,8 @@ class ListController : public Shared::FunctionListController,
       CodePoint Symbol) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
   bool layoutRepresentsParametricFunction(Poincare::Layout l) const;
-  // Complete the equationField with a valid left equation side
-  bool completeEquation(Escher::LayoutField* equationField);
+  bool shouldCompleteEquation(Poincare::Expression expression) override;
+  bool completeEquation(Escher::LayoutField* equationField) override;
   void addModel() override;
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell* functionCells(int index) override;

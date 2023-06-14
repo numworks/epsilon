@@ -64,6 +64,8 @@ class ExpressionModelListController
   virtual ExpressionModelStore* modelStore() const = 0;
   Escher::EvenOddMessageTextCell m_addNewModelCell;
   // LayoutDelegate
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
+                                  Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Poincare::Layout layout,
                                    Ion::Events::Event event) override;
@@ -76,6 +78,13 @@ class ExpressionModelListController
  private:
   void finishEdition();
   bool addEmptyModel();
+  virtual bool shouldCompleteEquation(Poincare::Expression expression) {
+    return false;
+  }
+  virtual bool completeEquation(Escher::LayoutField* equationField) {
+    assert(false);
+    return true;
+  }
 };
 
 }  // namespace Shared

@@ -125,7 +125,16 @@ bool ListController::layoutRepresentsParametricFunction(Layout l) const {
   return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
 }
 
+bool ListController::shouldCompleteEquation(Poincare::Expression expression) {
+  /* We do not want to complete equation if expression is already an
+   * (in)equation, a point or a list (of points). */
+  return !ComparisonNode::IsComparisonWithoutNotEqualOperator(expression) &&
+         expression.type() != ExpressionNode::Type::Point &&
+         !expression.deepIsList(nullptr);
+}
+
 bool ListController::completeEquation(LayoutField *equationField) {
+  equationField->putCursorOnOneSide(OMG::Direction::Left());
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
@@ -155,36 +164,16 @@ bool ListController::completeEquation(LayoutField *equationField) {
                           k_bufferSize - nameLength);
     assert(nameLength < k_bufferSize);
   }
-  return equationField->handleEventWithText(buffer, false, true);
+  bool handled = equationField->handleEventWithText(buffer, false, true);
+  equationField->putCursorOnOneSide(OMG::Direction::Right());
+  return handled;
 }
 
-// TODO: factorize with solver
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    char buffer[TextField::MaxBufferSize()];
-    layoutField->layout().serializeForParsing(buffer,
-                                              TextField::MaxBufferSize());
-    Expression parsedExpression = Expression::Parse(buffer, nullptr);
-    if (parsedExpression.isUninitialized()) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    if (!Poincare::ComparisonNode::IsComparisonWithoutNotEqualOperator(
-            parsedExpression) &&
-        parsedExpression.type() != Poincare::ExpressionNode::Type::Point &&
-        !parsedExpression.deepIsList(nullptr)) {
-      layoutField->putCursorOnOneSide(OMG::Direction::Left());
-      if (!completeEquation(layoutField)) {
-        layoutField->putCursorOnOneSide(OMG::Direction::Right());
-        App::app()->displayWarning(I18n::Message::RequireEquation);
-        return true;
-      }
-    }
-  }
-  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
-                                                             event);
+  return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
+                                                                   event);
 }
 
 CodePoint ListController::XNT() {

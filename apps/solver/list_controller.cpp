@@ -133,29 +133,9 @@ void ListController::didEnterResponderChain(Responder *previousFirstResponder) {
   reloadBrace();
 }
 
-// TODO factorize with Graph?
-bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
-                                                Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    char buffer[TextField::MaxBufferSize()];
-    layoutField->layout().serializeForParsing(buffer,
-                                              TextField::MaxBufferSize());
-    Poincare::Expression parsedExpression =
-        Poincare::Expression::Parse(buffer, nullptr);
-    if (parsedExpression.isUninitialized()) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    if (parsedExpression.type() != Poincare::ExpressionNode::Type::Comparison) {
-      layoutField->putCursorOnOneSide(OMG::Direction::Right());
-      if (!layoutField->handleEventWithText("=0")) {
-        App::app()->displayWarning(I18n::Message::RequireEquation);
-        return true;
-      }
-    }
-  }
-  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
-                                                             event);
+bool ListController::completeEquation(LayoutField *equationField) {
+  equationField->putCursorOnOneSide(OMG::Direction::Right());
+  return equationField->handleEventWithText("=0");
 }
 
 void ListController::layoutFieldDidChangeSize(LayoutField *layoutField) {

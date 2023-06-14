@@ -19,16 +19,6 @@ ExplicitListViewDataSource::ExplicitListRowHeightManager::computeSizeAtIndex(
                             : 0);
 }
 
-void ExplicitListViewDataSource::initCellSize(TableView* view) {
-  for (int i = 0; i < numberOfRows(); i++) {
-    HighlightCell* cellI = cell(i);
-    if (cellI->isVisible()) {
-      fillCell(cellI);
-    }
-  }
-  ListViewDataSource::initCellSize(view);
-}
-
 bool ExplicitListViewDataSource::cellAtLocationIsSelectable(HighlightCell* cell,
                                                             int column,
                                                             int row) {

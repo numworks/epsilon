@@ -25,6 +25,7 @@ class ListWithTopAndBottomDataSource
   void setBottomView(View* view) { m_bottomCell.setView(view); }
 
  protected:
+  void initCellSize(TableView* view) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void fillCellForRow(HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;

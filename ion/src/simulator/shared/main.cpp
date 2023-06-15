@@ -170,13 +170,22 @@ int main(int argc, char *argv[]) {
     assert(Journal::replayJournal());
     bool headlessStateFile = args.popFlag("--headless-state-file");
     StateFile::load(stateFile, headlessStateFile);
+    if (args.has("--language")) {
+      // Override any language setting if there is
+      fprintf(stderr,
+              "Warning: the language passed as an option will be ignored and "
+              "the language of the statefile will be used instead.\n");
+      args.pop("--language");
+    }
     const char *replayJournalLanguage =
         Journal::replayJournal()->startingLanguage();
-    if (replayJournalLanguage[0] != 0) {
-      // Override any language setting if there is
-      args.pop("--language");
-      args.push("--language", replayJournalLanguage);
+    if (replayJournalLanguage[0] == 0) {
+      /* If the state file contains the wildcard language, still set the
+       * language to none so that the initial country is WorldWide and the
+       * statefile stays consistent whatever the platform language. */
+      replayJournalLanguage = "none";
     }
+    args.push("--language", replayJournalLanguage);
   }
 
   const char *screenshotPath = args.pop("--take-screenshot");

@@ -12,7 +12,10 @@ namespace Poincare {
 
 template <typename T>
 T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
-  if (!std::isfinite(k) || n > N || K > N) {
+  if (!std::isfinite(k) || n > N || K > N ||
+      (N - K == N && K != static_cast<T>(0.))) {
+    /* `N - K == N` checks if K is negligeable compared to N, to avoid precision
+     * errors. */
     return NAN;
   }
   k = std::floor(k);

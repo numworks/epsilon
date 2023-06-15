@@ -21,7 +21,7 @@ static bool neverDisplayExactExpressionOfApproximation(
          !approximateOutput.isInRadians(context);
 }
 
-static bool neverDisplayReductionOfInput(Expression input, Context* context) {
+bool NeverDisplayReductionOfInput(Expression input, Context* context) {
   if (input.isUninitialized()) {
     return false;
   }
@@ -72,7 +72,7 @@ static bool exactExpressionIsForbidden(Expression exactOutput) {
            isPrimeFactorization(exactOutput));
 }
 
-bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
+static bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
   if (exactOutput.isUninitialized()) {
     return false;
   }
@@ -104,7 +104,7 @@ bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
 bool ShouldOnlyDisplayApproximation(Expression input, Expression exactOutput,
                                     Expression approximateOutput,
                                     Context* context) {
-  return neverDisplayReductionOfInput(input, context) ||
+  return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||
          neverDisplayExactExpressionOfApproximation(approximateOutput, context);
 }

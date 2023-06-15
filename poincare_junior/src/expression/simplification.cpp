@@ -568,10 +568,7 @@ bool Simplification::SimplifyRNERec(EditionReference* u) {
 
 bool Simplification::SimplifyRNE(EditionReference* u) {
   bool modified = SimplifyRNERec(u);
-  if (IsUndef(*u)) {
-    return true;
-  }
-  return SimplifyRational(u) || modified;
+  return IsUndef(*u) || SimplifyRational(u) || modified;
 }
 
 int Compare(Node u, Node v) {
@@ -688,7 +685,7 @@ bool Simplification::Contract(EditionReference* e) {
       return ContractLn(e);
     case BlockType::Multiplication:
       /* These contract methods replace with a Multiplication.
-       * They must be called successively, so a | is used instead of || so that
+       * They must be called successively, so a + is used instead of || so that
        * there are all evaluated. */
       return ContractAbs(e) + ContractTrigonometric(e) + ContractExpMult(e);
     case BlockType::Power:

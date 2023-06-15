@@ -91,6 +91,7 @@ enum class BlockType : uint8_t {
   ArcCosine,
   ArcSine,
   ArcTangent,
+  Derivative,
   Exponential,
   Ln,
   Log,
@@ -171,6 +172,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Division);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Set);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Derivative);
 
 BLOCK_TYPE_IS_LAYOUT(BlockType::RackLayout);
 BLOCK_TYPE_IS_LAYOUT(BlockType::FractionLayout);
@@ -316,6 +318,8 @@ class TypeBlock : public Block {
       return static_cast<uint8_t>(*(head ? next() : previous()));
     }
     switch (type()) {
+      case BlockType::Derivative:
+        return 3;
       case BlockType::Power:
       case BlockType::Subtraction:
       case BlockType::Division:

@@ -295,6 +295,8 @@ template PoincareJ::Node PoincareJ::EditionPool::push<
     PoincareJ::BlockType::UserSymbol, const char *, size_t>(const char *,
                                                             size_t);
 template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Derivative>();
+template PoincareJ::Node
 PoincareJ::EditionPool::push<PoincareJ::BlockType::RackLayout, int>(int);
 template PoincareJ::Node
 PoincareJ::EditionPool::push<PoincareJ::BlockType::SystemList, int>(int);

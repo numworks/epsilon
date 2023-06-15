@@ -15,6 +15,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::ArcCosine, BuiltinsAliases::k_acosAliases},
     {BlockType::ArcSine, BuiltinsAliases::k_asinAliases},
     {BlockType::ArcTangent, BuiltinsAliases::k_atanAliases},
+    {BlockType::Derivative, "diff"},
     {BlockType::Logarithm, "log"},
     {BlockType::Log, "log"},
     {BlockType::Ln, "ln"},
@@ -97,6 +98,9 @@ EditionReference Builtin::Promote(EditionReference parameterList,
       break;
     case BlockType::ArcTangent:
       header = Tree<BlockType::ArcTangent>();
+      break;
+    case BlockType::Derivative:
+      header = Tree<BlockType::Derivative>();
       break;
     case BlockType::Logarithm:
       header = Tree<BlockType::Logarithm>();

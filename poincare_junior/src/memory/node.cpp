@@ -88,6 +88,7 @@ void Node::logName(std::ostream &stream) const {
       "ArcCosine",
       "ArcSine",
       "ArcTangent",
+      "Derivative",
       "Exponential",
       "Ln",
       "Log",

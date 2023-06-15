@@ -33,6 +33,7 @@ extern size_t eadk_external_data_size;
 constexpr static const char *k_loadStateFileKeys[] = {"--load-state-file",
                                                       "-l"};
 constexpr static const char *k_headlessFlags[] = {"--headless", "-h"};
+constexpr static const char *k_languageFlag = "--language";
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
@@ -170,12 +171,12 @@ int main(int argc, char *argv[]) {
     assert(Journal::replayJournal());
     bool headlessStateFile = args.popFlag("--headless-state-file");
     StateFile::load(stateFile, headlessStateFile);
-    if (args.has("--language")) {
+    if (args.has(k_languageFlag)) {
       // Override any language setting if there is
       fprintf(stderr,
               "Warning: the language passed as an option will be ignored and "
               "the language of the statefile will be used instead.\n");
-      args.pop("--language");
+      args.pop(k_languageFlag);
     }
     const char *replayJournalLanguage =
         Journal::replayJournal()->startingLanguage();
@@ -185,7 +186,7 @@ int main(int argc, char *argv[]) {
        * statefile stays consistent whatever the platform language. */
       replayJournalLanguage = "none";
     }
-    args.push("--language", replayJournalLanguage);
+    args.push(k_languageFlag, replayJournalLanguage);
   }
 
   const char *screenshotPath = args.pop("--take-screenshot");
@@ -204,8 +205,8 @@ int main(int argc, char *argv[]) {
 #endif
 
   // Default language
-  if (!args.has("--language")) {
-    args.push("--language", Platform::languageCode());
+  if (!args.has(k_languageFlag)) {
+    args.push(k_languageFlag, Platform::languageCode());
   }
 
   bool headless = args.popFlags(k_headlessFlags, std::size(k_headlessFlags));
@@ -213,9 +214,9 @@ int main(int argc, char *argv[]) {
   Random::init();
   if (!headless) {
     Journal::init();
-    if (args.has("--language") && Journal::logJournal()) {
+    if (args.has(k_languageFlag) && Journal::logJournal()) {
       // Set log journal starting language
-      Journal::logJournal()->setStartingLanguage(args.get("--language"));
+      Journal::logJournal()->setStartingLanguage(args.get(k_languageFlag));
     }
 #if EPSILON_TELEMETRY
     Telemetry::init();

@@ -292,9 +292,13 @@ void ValuesController::didChangeCell(int column, int row) {
       // The changed column is out of the memoized table
       continue;
     }
-    KDCoordinate currentWidth = columnWidth(i);
+    bool shouldUpdateMemoization =
+        columnWidthManager()->sizeAtIndexIsMemoized(i);
+    KDCoordinate currentWidth = shouldUpdateMemoization ? columnWidth(i) : -1;
     createMemoizedLayout(i, row, nbOfMemoizedColumns * memoizedRow + memoizedI);
-    updateSizeMemoizationForColumnAfterIndexChanged(i, currentWidth, row);
+    if (shouldUpdateMemoization) {
+      updateSizeMemoizationForColumnAfterIndexChanged(i, currentWidth, row);
+    }
   }
 }
 

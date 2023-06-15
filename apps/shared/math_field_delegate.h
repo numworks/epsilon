@@ -12,10 +12,7 @@ namespace Shared {
 class AbstractMathFieldDelegate {
  public:
   virtual CodePoint XNT();
-
-  bool fieldDidReceiveEvent(Escher::EditableField* field,
-                            Escher::Responder* responder,
-                            Ion::Events::Event event);
+  bool handleXNT(Escher::EditableField* field);
 
  protected:
   virtual bool isAcceptableExpression(const Poincare::Expression expression);

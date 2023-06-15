@@ -12,31 +12,26 @@ using namespace Escher;
 
 namespace Shared {
 
-bool AbstractMathFieldDelegate::fieldDidReceiveEvent(EditableField *field,
-                                                     Responder *responder,
-                                                     Ion::Events::Event event) {
-  if (event == Ion::Events::XNT) {
-    CodePoint defaultXNT = XNT();
-    int XNTIndex = Ion::Events::repetitionFactor();
-    if (XNTIndex > 0) {
-      // Cycle through XNT CodePoints, starting from default code point position
-      constexpr CodePoint XNTCodePoints[] = {
-          ContinuousFunction::k_cartesianSymbol, 'n',
-          ContinuousFunction::k_parametricSymbol,
-          ContinuousFunction::k_polarSymbol};
-      constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);
-      for (size_t i = 0; i < k_numberOfCodePoints; i++) {
-        if (XNTCodePoints[i] == defaultXNT) {
-          break;
-        }
-        XNTIndex++;
+bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
+  CodePoint defaultXNT = XNT();
+  int XNTIndex = Ion::Events::repetitionFactor();
+  if (XNTIndex > 0) {
+    // Cycle through XNT CodePoints, starting from default code point position
+    constexpr CodePoint XNTCodePoints[] = {
+        ContinuousFunction::k_cartesianSymbol, 'n',
+        ContinuousFunction::k_parametricSymbol,
+        ContinuousFunction::k_polarSymbol};
+    constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);
+    for (size_t i = 0; i < k_numberOfCodePoints; i++) {
+      if (XNTCodePoints[i] == defaultXNT) {
+        break;
       }
-      // Unknown default code point
-      defaultXNT = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
+      XNTIndex++;
     }
-    return field->addXNTCodePoint(defaultXNT);
+    // Unknown default code point
+    defaultXNT = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
   }
-  return false;
+  return field->addXNTCodePoint(defaultXNT);
 }
 
 CodePoint AbstractMathFieldDelegate::XNT() {
@@ -146,7 +141,10 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
       return true;
     }
   }
-  return fieldDidReceiveEvent(layoutField, layoutField, event);
+  if (event == Ion::Events::XNT) {
+    return handleXNT(layoutField);
+  }
+  return false;
 }
 
 MathTextFieldDelegate *MathTextFieldDelegate::Default() {
@@ -171,7 +169,10 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
       return true;
     }
   }
-  return fieldDidReceiveEvent(textField, textField, event);
+  if (event == Ion::Events::XNT) {
+    return handleXNT(textField);
+  }
+  return false;
 }
 
 template <typename T>

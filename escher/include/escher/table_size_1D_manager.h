@@ -18,6 +18,7 @@ class TableSize1DManager {
       int i, KDCoordinate defaultSize) = 0;
   virtual int computeIndexAfterCumulatedSize(KDCoordinate offset,
                                              KDCoordinate defaultSize) = 0;
+  virtual bool sizeAtIndexIsMemoized(int i) const { return false; }
 
   virtual void resetMemoization(bool force = true) {}
   virtual void lockMemoization(bool state) const {}
@@ -61,6 +62,11 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
 
   void resetMemoization(bool force = true) override;
   void lockMemoization(bool state) const override;
+
+  bool sizeAtIndexIsMemoized(int i) const override {
+    return i >= m_memoizedIndexOffset &&
+           i < m_memoizedIndexOffset + memoizedLinesCount();
+  }
 
   void updateMemoizationForIndex(int index, KDCoordinate previousSize,
                                  KDCoordinate newSize = k_undefinedSize);

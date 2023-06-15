@@ -4,13 +4,11 @@
 namespace Escher {
 
 KDCoordinate MemoizedTableSize1DManager::computeSizeAtIndex(int i) {
-  if (i < m_memoizedIndexOffset ||
-      i >= m_memoizedIndexOffset + memoizedLinesCount()) {
+  if (!sizeAtIndexIsMemoized(i)) {
     // Update memoization index.
     setMemoizationIndex(i);
   }
-  if (i >= m_memoizedIndexOffset &&
-      i < m_memoizedIndexOffset + memoizedLinesCount()) {
+  if (sizeAtIndexIsMemoized(i)) {
     // Value might be memoized
     KDCoordinate memoizedSize = memoizedSizes()[getMemoizedIndex(i)];
     if (memoizedSize == k_undefinedSize) {
@@ -151,12 +149,11 @@ void MemoizedTableSize1DManager::updateMemoizationForIndex(
     newSize = nonMemoizedSizeAtIndex(index);
   }
   m_memoizedTotalSize = m_memoizedTotalSize - previousSize + newSize;
-  if (index >= m_memoizedIndexOffset + memoizedLinesCount()) {
-    return;
-  }
   if (index < m_memoizedIndexOffset) {
     m_memoizedCumulatedSizeOffset =
         m_memoizedCumulatedSizeOffset - previousSize + newSize;
+  }
+  if (!sizeAtIndexIsMemoized(index)) {
     return;
   }
   memoizedSizes()[getMemoizedIndex(index)] = newSize;
@@ -186,8 +183,7 @@ int MemoizedTableSize1DManager::getMemoizedIndex(int index) const {
    * stores values for index such that index%k_memoizedCellsCount == i
    * Eg : 0 1 2 3 4 5 6 shifts to 7 1 2 3 4 5 6 which shifts to 7 8 2 3 4 5 6
    * Shifting the memoization is then more optimized. */
-  assert(index >= m_memoizedIndexOffset &&
-         index < m_memoizedIndexOffset + memoizedLinesCount());
+  assert(sizeAtIndexIsMemoized(index));
   int circularOffset = m_memoizedIndexOffset % memoizedLinesCount();
   return (circularOffset + index - m_memoizedIndexOffset) %
          memoizedLinesCount();

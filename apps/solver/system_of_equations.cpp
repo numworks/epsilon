@@ -17,6 +17,18 @@ using namespace Shared;
 
 namespace Solver {
 
+const Expression
+SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
+    const SymbolAbstract &symbol, bool clone,
+    ContextWithParent *lastDescendantContext) {
+  if (symbol.type() == ExpressionNode::Type::Symbol &&
+      static_cast<const Symbol &>(symbol).name()[0] == 't') {
+    return Expression();
+  }
+  return ContextWithParent::protectedExpressionForSymbolAbstract(
+      symbol, clone, lastDescendantContext);
+}
+
 SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
@@ -278,12 +290,11 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
    * variables to parameters. */
   m_hasMoreSolutions = true;
 
-  /* Use an empty context to avoid replacing the t? parameters with a value if
-   * the user stored something in them but they are not used by the system.
-   * Symbols that matter have already been replaced when reducing the equations.
+  /* Use a context without t to avoid replacing the t? parameters with a value
+   * if the user stored something in them but they are not used by the system..
    */
-  Poincare::EmptyContext emptyContext;
-  context = &emptyContext;
+  ContextWithoutT noTContext(context);
+  context = &noTContext;
 
   // 't' + 2 digits + '\0'
   constexpr size_t parameterNameSize = 1 + 2 + 1;

@@ -1,6 +1,7 @@
 #ifndef SOLVER_SYSTEM_OF_EQUATIONS_H
 #define SOLVER_SYSTEM_OF_EQUATIONS_H
 
+#include <poincare/context_with_parent.h>
 #include <poincare/symbol_abstract.h>
 
 #include "equation.h"
@@ -88,6 +89,16 @@ class SystemOfEquations {
  private:
   constexpr static char k_parameterPrefix = 't';
   constexpr static double k_defaultApproximateSearchRange = 10.;
+
+  class ContextWithoutT : public Poincare::ContextWithParent {
+   public:
+    using Poincare::ContextWithParent::ContextWithParent;
+
+   private:
+    const Poincare::Expression protectedExpressionForSymbolAbstract(
+        const Poincare::SymbolAbstract& symbol, bool clone,
+        Poincare::ContextWithParent* lastDescendantContext) override;
+  };
 
   Error privateExactSolve(Poincare::Context* context);
   Error simplifyAndFindVariables(Poincare::Context* context,

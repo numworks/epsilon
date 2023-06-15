@@ -173,12 +173,9 @@ bool WrapWithUnary(EditionReference* u, Node n) {
   return true;
 }
 
-void MultPop(EditionReference* l) {
-  if (l->type() != BlockType::Multiplication) {
-    return;
-  }
-  EditionReference(l->childAtIndex(0)).removeTree();
-  NAry::SetNumberOfChildren(*l, l->numberOfChildren() - 1);
+void MultPopFirst(EditionReference* l) {
+  assert(l->type() == BlockType::Multiplication);
+  NAry::RemoveChildAtIndex(*l, 0);
 }
 
 void MultPush(EditionReference* l, EditionReference* e) {
@@ -251,7 +248,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
     }
   }
   EditionReference u1 = l->childAtIndex(0).clone();
-  MultPop(l);
+  MultPopFirst(l);
   SimplifyProductRec(l);
   if (u1.type() == BlockType::Multiplication) {
     /* TODO merge products consume its second children so we can't pass it l
@@ -284,13 +281,13 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   SimplifyProductRec(&h);
   if (h.numberOfChildren() == 0) {
     h.removeNode();
-    MultPop(p);
-    MultPop(q);
+    MultPopFirst(p);
+    MultPopFirst(q);
     return MergeProducts(p, q);
   }
   if (h.numberOfChildren() == 1) {
-    MultPop(p);
-    MultPop(q);
+    MultPopFirst(p);
+    MultPopFirst(q);
     MergeProducts(p, q);
     h = h.replaceTreeByTree(h.childAtIndex(0));
     MultPush(p, &h);
@@ -300,7 +297,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     assert(Compare(h.childAtIndex(1), q1) == 0);
     EditionReference pc = p1.clone();
     h.removeTree();
-    MultPop(p);
+    MultPopFirst(p);
     MergeProducts(p, q);
     MultPush(p, &pc);
     return true;
@@ -309,7 +306,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     assert(Compare(h.childAtIndex(1), p1) == 0);
     EditionReference qc = q1.clone();
     h.removeTree();
-    MultPop(q);
+    MultPopFirst(q);
     MergeProducts(p, q);
     MultPush(p, &qc);
     return true;
@@ -346,7 +343,7 @@ EditionReference PushTerm(Node u) {
   EditionReference c = u.clone();
   if (u.type() == BlockType::Multiplication) {
     if (IsConstant(u.childAtIndex(0))) {
-      MultPop(&c);
+      MultPopFirst(&c);
       return c;
     }
     return c;
@@ -365,12 +362,9 @@ EditionReference PushConstant(Node u) {
   return P_ONE();
 }
 
-void AddPop(EditionReference* l) {
-  if (l->type() != BlockType::Addition) {
-    return;
-  }
-  EditionReference(l->childAtIndex(0)).removeTree();
-  NAry::SetNumberOfChildren(*l, l->numberOfChildren() - 1);
+void AddPopFirst(EditionReference* l) {
+  assert(l->type() == BlockType::Addition);
+  NAry::RemoveChildAtIndex(*l, 0);
 }
 
 void AddPush(EditionReference* l, EditionReference* e) {
@@ -442,7 +436,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     }
   }
   EditionReference u1 = l->childAtIndex(0).clone();
-  AddPop(l);
+  AddPopFirst(l);
   SimplifySumRec(l);
   if (u1.type() == BlockType::Addition) {
     EditionReference l2 = l->clone();
@@ -472,13 +466,13 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
   SimplifySumRec(&h);
   if (h.numberOfChildren() == 0) {
     h.removeNode();
-    AddPop(p);
-    AddPop(q);
+    AddPopFirst(p);
+    AddPopFirst(q);
     return MergeSums(p, q);
   }
   if (h.numberOfChildren() == 1) {
-    AddPop(p);
-    AddPop(q);
+    AddPopFirst(p);
+    AddPopFirst(q);
     MergeSums(p, q);
     h = h.replaceTreeByTree(h.childAtIndex(0));
     AddPush(p, &h);
@@ -488,7 +482,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     assert(Compare(h.childAtIndex(1), q1) == 0);
     EditionReference pc = p1.clone();
     h.removeTree();
-    AddPop(p);
+    AddPopFirst(p);
     MergeSums(p, q);
     AddPush(p, &pc);
     return true;
@@ -497,7 +491,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     assert(Compare(h.childAtIndex(1), p1) == 0);
     EditionReference qc = q1.clone();
     h.removeTree();
-    AddPop(q);
+    AddPopFirst(q);
     MergeSums(p, q);
     AddPush(p, &qc);
     return true;

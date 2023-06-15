@@ -1675,12 +1675,12 @@ Expression Expression::deepApproximateKeepingSymbols(
       reductionContext, &thisShouldApproximate, &thisShouldReduce);
   /* No need to approximate lists and matrices. Approximating their children is
    * enough. */
-  if (thisShouldApproximate && !IsSymbolic(*this, nullptr) &&
+  if (thisShouldApproximate && type() != ExpressionNode::Type::Symbol &&
       type() != ExpressionNode::Type::List &&
       type() != ExpressionNode::Type::Matrix) {
     Expression a = approximate<double>(reductionContext.context(),
                                        reductionContext.complexFormat(),
-                                       reductionContext.angleUnit(), true);
+                                       reductionContext.angleUnit());
     replaceWithInPlace(a);
     *parentShouldApproximate = true;
     *parentShouldReduce = true;

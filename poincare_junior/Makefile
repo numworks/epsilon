@@ -13,6 +13,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/aliases.cpp \
   expression/approximation.cpp \
   expression/builtin.cpp \
+  expression/derivation.cpp \
   expression/comparison.cpp \
   expression/integer.cpp \
   expression/number.cpp \
@@ -52,6 +53,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   calculation.cpp \
   comparison.cpp \
   context.cpp \
+  derivation.cpp \
   elementary_tree_manipulations.cpp \
   expression_comparison.cpp \
   layout.cpp \

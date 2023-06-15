@@ -161,74 +161,6 @@ void assert_parsed_expression_simplify_to(
 }
 
 template <typename T>
-void assert_no_duplicates_in_list(const char *expression) {
-  Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, true);
-  e = ListSort::Builder(e);
-  Expression result = e.approximate<T>(&globalContext, Cartesian, Radian);
-  assert(result.type() == ExpressionNode::Type::List);
-  List list = static_cast<List &>(result);
-  int n = list.numberOfChildren();
-  for (int i = 1; i < n; i++) {
-    quiz_assert_print_if_failure(
-        !list.childAtIndex(i).isIdenticalTo(list.childAtIndex(i - 1)),
-        expression);
-  }
-}
-
-template <typename T>
-void assert_expression_approximates_to_scalar(
-    const char *expression, T approximation, Preferences::AngleUnit angleUnit,
-    Preferences::ComplexFormat complexFormat,
-    Preferences::MixedFractions mixedFractionsParameter) {
-  Shared::GlobalContext globalContext;
-  Preferences::sharedPreferences->enableMixedFractions(mixedFractionsParameter);
-  Expression e = parse_expression(expression, &globalContext, false);
-  T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
-  quiz_assert_print_if_failure(
-      roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
-                    true),
-      expression);
-}
-
-template <typename T>
-void assert_float_approximates_to(Float<T> f, const char *result) {
-  Shared::GlobalContext globalContext;
-  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
-  char buffer[500];
-  f.template approximate<T>(&globalContext, Cartesian, Radian)
-      .serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);
-  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
-}
-
-template <typename T>
-void assert_expression_approximates_with_value_for_symbol(
-    const char *expression, T approximation, const char *symbol, T symbolValue,
-    Preferences::AngleUnit angleUnit,
-    Preferences::ComplexFormat complexFormat) {
-  Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
-  T result = e.approximateWithValueForSymbol<T>(
-      symbol, symbolValue, &globalContext, complexFormat, angleUnit);
-  quiz_assert_print_if_failure(
-      roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
-                    true),
-      expression);
-}
-
-template <typename T>
-void assert_expression_approximation_is_bounded(const char *expression,
-                                                T lowBound, T upBound,
-                                                bool upBoundIncluded) {
-  Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, true);
-  T result = e.approximateToScalar<T>(&globalContext, Cartesian, Radian);
-  quiz_assert_print_if_failure(result >= lowBound, expression);
-  quiz_assert_print_if_failure(
-      result < upBound || (result == upBound && upBoundIncluded), expression);
-}
-
-template <typename T>
 void assert_expression_approximates_to(const char *expression,
                                        const char *approximation,
                                        Preferences::AngleUnit angleUnit,
@@ -318,28 +250,6 @@ void assert_expression_layouts_as(Poincare::Expression expression,
   quiz_assert(l.isIdenticalTo(layout));
 }
 
-template void assert_expression_approximation_is_bounded<float>(const char *,
-                                                                float, float,
-                                                                bool);
-template void assert_expression_approximation_is_bounded<double>(const char *,
-                                                                 double, double,
-                                                                 bool);
-template void assert_expression_approximates_with_value_for_symbol<float>(
-    const char *, float, const char *, float, Preferences::AngleUnit,
-    Preferences::ComplexFormat);
-template void assert_expression_approximates_with_value_for_symbol<double>(
-    const char *, double, const char *, double, Preferences::AngleUnit,
-    Preferences::ComplexFormat);
-template void assert_no_duplicates_in_list<float>(const char *);
-template void assert_no_duplicates_in_list<double>(const char *);
-template void assert_float_approximates_to<float>(Float<float>, const char *);
-template void assert_float_approximates_to<double>(Float<double>, const char *);
-template void assert_expression_approximates_to_scalar<float>(
-    const char *, float, Preferences::AngleUnit, Preferences::ComplexFormat,
-    Preferences::MixedFractions);
-template void assert_expression_approximates_to_scalar<double>(
-    const char *, double, Preferences::AngleUnit, Preferences::ComplexFormat,
-    Preferences::MixedFractions);
 template void assert_expression_approximates_to<float>(
     char const *, char const *, Poincare::Preferences::AngleUnit,
     Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat,

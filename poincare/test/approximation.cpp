@@ -1,3 +1,4 @@
+#include <apps/shared/global_context.h>
 #include <poincare/constant.h>
 #include <poincare/infinity.h>
 #include <poincare/undefined.h>
@@ -5,6 +6,23 @@
 #include "helper.h"
 
 using namespace Poincare;
+
+template <typename T>
+void assert_expression_approximates_to_scalar(
+    const char *expression, T approximation,
+    Preferences::AngleUnit angleUnit = Degree,
+    Preferences::ComplexFormat complexFormat = Cartesian,
+    Preferences::MixedFractions mixedFractionsParameter =
+        Poincare::Preferences::MixedFractions::Enabled) {
+  Shared::GlobalContext globalContext;
+  Preferences::sharedPreferences->enableMixedFractions(mixedFractionsParameter);
+  Expression e = parse_expression(expression, &globalContext, false);
+  T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
+  quiz_assert_print_if_failure(
+      roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
+                    true),
+      expression);
+}
 
 QUIZ_CASE(poincare_approximation_decimal) {
   assert_expression_approximates_to<float>("-0", "0");
@@ -44,6 +62,16 @@ QUIZ_CASE(poincare_approximation_rational) {
   assert_expression_approximates_to_scalar<float>("1/3", 0.3333333f);
   assert_expression_approximates_to_scalar<double>("123456/1234567",
                                                    9.9999432999586E-2);
+}
+
+template <typename T>
+void assert_float_approximates_to(Float<T> f, const char *result) {
+  Shared::GlobalContext globalContext;
+  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
+  char buffer[500];
+  f.template approximate<T>(&globalContext, Cartesian, Radian)
+      .serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);
+  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
 
 QUIZ_CASE(poincare_approximation_float) {
@@ -407,6 +435,18 @@ QUIZ_CASE(poincare_approximation_logarithm) {
   // WARNING: evaluate on branch cut can be multivalued
   assert_expression_approximates_to<double>(
       "ln(-4)", "1.3862943611199+3.1415926535898×i");
+}
+
+template <typename T>
+void assert_expression_approximation_is_bounded(const char *expression,
+                                                T lowBound, T upBound,
+                                                bool upBoundIncluded = false) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, true);
+  T result = e.approximateToScalar<T>(&globalContext, Cartesian, Radian);
+  quiz_assert_print_if_failure(result >= lowBound, expression);
+  quiz_assert_print_if_failure(
+      result < upBound || (result == upBound && upBoundIncluded), expression);
 }
 
 QUIZ_CASE(poincare_approximation_function) {
@@ -781,6 +821,22 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("randint(4, 3)", Undefined::Name());
   assert_expression_approximates_to<double>("randint(2, 23345678909876545678)",
                                             Undefined::Name());
+}
+
+template <typename T>
+void assert_no_duplicates_in_list(const char *expression) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, true);
+  e = ListSort::Builder(e);
+  Expression result = e.approximate<T>(&globalContext, Cartesian, Radian);
+  assert(result.type() == ExpressionNode::Type::List);
+  List list = static_cast<List &>(result);
+  int n = list.numberOfChildren();
+  for (int i = 1; i < n; i++) {
+    quiz_assert_print_if_failure(
+        !list.childAtIndex(i).isIdenticalTo(list.childAtIndex(i - 1)),
+        expression);
+  }
 }
 
 QUIZ_CASE(poincare_approximation_unique_random) {
@@ -2038,6 +2094,21 @@ QUIZ_CASE(poincare_approximation_mixed_fraction) {
   assert_expression_approximates_to_scalar<double>(
       "1\u00121/2\u0013", 0.5, Degree, Cartesian,
       Preferences::MixedFractions::Disabled);
+}
+
+template <typename T>
+void assert_expression_approximates_with_value_for_symbol(
+    const char *expression, T approximation, const char *symbol, T symbolValue,
+    Preferences::AngleUnit angleUnit = Degree,
+    Preferences::ComplexFormat complexFormat = Cartesian) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  T result = e.approximateWithValueForSymbol<T>(
+      symbol, symbolValue, &globalContext, complexFormat, angleUnit);
+  quiz_assert_print_if_failure(
+      roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
+                    true),
+      expression);
 }
 
 QUIZ_CASE(poincare_approximation_floor_ceil_integer) {

@@ -435,9 +435,23 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       Preferences::sharedPreferences->angleUnit();
   Expression exact, approximate;
 
-  bool approximateDuringReduction =
-      type == SolutionType::Formal &&
+  bool forbidExactSolution =
       Preferences::sharedPreferences->examMode().forbidExactResults();
+  EquationStore *store = m_store;
+  int nEquations = store->numberOfDefinedModels();
+  int i = 0;
+  while (i < nEquations && !forbidExactSolution) {
+    ExpiringPointer<Equation> equation =
+        store->modelForRecord(store->definedRecordAtIndex(i));
+    if (ExpressionDisplayPermissions::NeverDisplayReductionOfInput(
+            equation->expressionClone(), context)) {
+      forbidExactSolution = true;
+    }
+    i++;
+  }
+
+  bool approximateDuringReduction =
+      type == SolutionType::Formal && forbidExactSolution;
 
   bool displayExactSolution = false;
   bool displayApproximateSolution = false;
@@ -478,8 +492,9 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       }
       displayExactSolution =
           approximateDuringReduction ||
-          !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-              e, exact, approximate, context);
+          (!forbidExactSolution &&
+           !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+               e, exact, approximate, context));
       displayApproximateSolution = type != SolutionType::Formal;
       if (!displayApproximateSolution && !displayExactSolution) {
         /* Happens if the formal solution has no permission to be displayed.

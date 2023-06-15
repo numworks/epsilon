@@ -7,6 +7,10 @@ namespace Shared {
 
 namespace ExpressionDisplayPermissions {
 
+// This needs to be exposed for the solver
+bool NeverDisplayReductionOfInput(Poincare::Expression input,
+                                  Poincare::Context* context);
+
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input,
                                     Poincare::Expression exactOutput,
                                     Poincare::Expression approximateOutput,

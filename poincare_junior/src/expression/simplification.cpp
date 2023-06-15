@@ -69,52 +69,58 @@ bool Simplification::AutomaticSimplify(EditionReference* u) {
   }
 }
 
-bool Simplification::SimplifyIntegerPower(EditionReference* v,
-                                          EditionReference* n) {
-  assert(IsInteger(*n));
-  if (IsRational(*v)) {
-    EditionReference pow = P_POW(v->clone(), n->clone());
-    n->removeTree();
-    *v = v->replaceTreeByTree(pow);
-    SimplifyRNE(v);
+bool Simplification::SimplifyIntegerPower(EditionReference* u) {
+  EditionReference v = u->childAtIndex(0);
+  EditionReference n = u->childAtIndex(1);
+  assert(IsInteger(u->childAtIndex(1)));
+  if (IsRational(v)) {
+    SimplifyRNE(u);
     return true;
   }
-  if (n->type() == BlockType::Zero) {
-    n->removeNode();
-    *v = v->replaceTreeByNode(1_e);
+  // a^0 -> 1
+  if (n.type() == BlockType::Zero) {
+    *u = u->replaceTreeByNode(1_e);
     return true;
   }
-  if (n->type() == BlockType::One) {
-    n->removeNode();
+  // a^1 -> a
+  if (n.type() == BlockType::One) {
+    *u = u->replaceTreeByTree(v);
     return true;
   }
-  if (v->type() == BlockType::Power) {
-    EditionReference r = v->childAtIndex(0);
-    EditionReference s = v->childAtIndex(1);
-    EditionReference m = P_MULT(s.clone(), n->clone());
-    n->removeTree();
-    SimplifyProduct(&m);
-    if (IsInteger(m)) {
-      *v = v->replaceTreeByTree(r.clone());
-      SimplifyIntegerPower(v, &m);
-      return true;
+  // (a^b)^n -> a^(b*n)
+  if (v.type() == BlockType::Power) {
+    EditionReference s = v.childAtIndex(1);
+    assert(s.nextTree() == static_cast<Node>(n));
+    EditionReference m =
+        EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
+    Node previousS = s;
+    s.insertNodeBeforeNode(m);
+    s = previousS;
+    Node previousU = *u;
+    u->removeNode();
+    *u = previousU;
+    SimplifyProduct(&s);
+    if (IsInteger(s)) {
+      SimplifyIntegerPower(u);
     }
-    EditionReference pow = P_POW(r.clone(), m.clone());
-    m.removeTree();
-    *v = v->replaceTreeByTree(pow);
     return true;
   }
-  if (v->type() == BlockType::Multiplication) {
-    for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*v)) {
-      EditionReference nClone = n->clone();
-      SimplifyIntegerPower(&child, &nClone);
+  // (a*b)^n -> a^n * b^n
+  if (v.type() == BlockType::Multiplication) {
+    for (auto [child, index] : NodeIterator::Children<Forward, Editable>(v)) {
+      EditionReference m =
+          EditionPool::sharedEditionPool()->push<BlockType::Power>();
+      child.clone();
+      n.clone();
+      child = child.replaceTreeByTree(m);
+      SimplifyIntegerPower(&child);
     }
-    n->removeTree();
-    return SimplifyProduct(v);
+    n.removeTree();
+    Node previousU = *u;
+    u->removeNode();
+    *u = previousU;
+    return SimplifyProduct(u);
   }
-  EditionReference pow = P_POW(v->clone(), n->clone());
-  n->removeTree();
-  *v = v->replaceTreeByTree(pow);
   return false;
 }
 
@@ -135,9 +141,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     return true;
   }
   if (IsInteger(w)) {
-    u->removeNode();
-    *u = v;
-    return SimplifyIntegerPower(u, &w);
+    return SimplifyIntegerPower(u);
   }
   return false;
 }

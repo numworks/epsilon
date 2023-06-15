@@ -428,29 +428,55 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       type == SolutionType::Formal &&
       Preferences::sharedPreferences->examMode().forbidExactResults();
 
+  bool displayExactSolution = false;
+  bool displayApproximateSolution = false;
   if (type == SolutionType::Approximate) {
     approximate = e;
+    displayApproximateSolution = true;
   } else {
+    assert(type == SolutionType::Formal || type == SolutionType::Exact);
     Preferences::UnitFormat unitFormat =
         GlobalPreferences::sharedGlobalPreferences->unitFormat();
     SymbolicComputation symbolicComputation =
         m_overrideUserVariables
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-    e.cloneAndSimplifyAndApproximate(
-        &exact, &approximate, context, m_complexFormat, angleUnit, unitFormat,
-        symbolicComputation, UnitConversion::Default,
-        approximateDuringReduction);
-    if (exact.type() == ExpressionNode::Type::Dependency) {
-      /* e has been reduced under ReductionTarget::SystemForAnalysis in
-       * Equation::Model::standardForm and has gone through Matrix::rank, which
-       * discarded dependencies. Reducing here under ReductionTarget::User may
-       * have created new dependencies.
-       * For example, "i" had been preserved up to now and has been reduced to a
-       * ComplexCartesian here, which may have triggered further reduction and
-       * the creation of a dependency.
-       * We remove that dependency in order to create layouts. */
-      exact = exact.childAtIndex(0);
+// The following loop should run twice max
+#if ASSERTIONS
+    int nLoops = 0;
+#endif
+    while (!displayExactSolution && !displayApproximateSolution) {
+#if ASSERTIONS
+      assert(nLoops < 2);
+      nLoops++;
+#endif
+      e.cloneAndSimplifyAndApproximate(
+          &exact, &approximate, context, m_complexFormat, angleUnit, unitFormat,
+          symbolicComputation, UnitConversion::Default,
+          approximateDuringReduction);
+      if (exact.type() == ExpressionNode::Type::Dependency) {
+        /* e has been reduced under ReductionTarget::SystemForAnalysis in
+         * Equation::Model::standardForm and has gone through Matrix::rank,
+         * which discarded dependencies. Reducing here under
+         * ReductionTarget::User may have created new dependencies. For example,
+         * "i" had been preserved up to now and has been reduced to a
+         * ComplexCartesian here, which may have triggered further reduction and
+         * the creation of a dependency.
+         * We remove that dependency in order to create layouts. */
+        exact = exact.childAtIndex(0);
+      }
+      displayExactSolution =
+          approximateDuringReduction ||
+          !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+              e, exact, approximate, context);
+      displayApproximateSolution = type != SolutionType::Formal;
+      if (!displayApproximateSolution && !displayExactSolution) {
+        /* Happens if the formal solution has no permission to be displayed.
+         * Re-reduce but force approximating during redution. */
+        approximateDuringReduction = true;
+        exact = Expression();
+        approximate = Expression();
+      }
     }
   }
   if (approximate.type() == ExpressionNode::Type::Nonreal) {
@@ -462,22 +488,18 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   }
 
   Layout exactLayout, approximateLayout;
-  bool exactAndApproximateAreEqual = false;
-
-  if (type != SolutionType::Approximate &&
-      (approximateDuringReduction ||
-       !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-           e, exact, approximate, context))) {
+  if (displayExactSolution) {
     assert(!exact.isUninitialized());
     exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }
-  if (type != SolutionType::Formal) {
+  if (displayApproximateSolution) {
     assert(!approximate.isUninitialized());
     approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
   }
   assert(!approximateLayout.isUninitialized() ||
          !exactLayout.isUninitialized());
 
+  bool exactAndApproximateAreEqual = false;
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];

@@ -71,6 +71,7 @@ bool Simplification::AutomaticSimplify(EditionReference* u) {
 
 bool Simplification::SimplifyIntegerPower(EditionReference* v,
                                           EditionReference* n) {
+  assert(IsInteger(*n));
   if (IsRational(*v)) {
     EditionReference pow = P_POW(v->clone(), n->clone());
     n->removeTree();

@@ -141,9 +141,25 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   return false;
 }
 
-EditionReference base(Node u);
+EditionReference PushBase(Node u) {
+  if (IsNumber(u)) {
+    return P_UNDEF();
+  }
+  if (u.type() == BlockType::Power) {
+    return u.childAtIndex(0).clone();
+  }
+  return u.clone();
+}
 
-EditionReference exponent(Node u);
+EditionReference PushExponent(Node u) {
+  if (IsNumber(u)) {
+    return P_UNDEF();
+  }
+  if (u.type() == BlockType::Power) {
+    return u.childAtIndex(1).clone();
+  }
+  return P_ONE();
+}
 
 constexpr Tree KA = KPlaceholder<Placeholder::Tag::A>();
 constexpr Tree KB = KPlaceholder<Placeholder::Tag::B>();
@@ -195,15 +211,15 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
         WrapWithUnary(l, KMult());
         return true;
       }
-      EditionReference t1 = base(u1);
-      EditionReference t2 = base(u2);
+      EditionReference t1 = PushBase(u1);
+      EditionReference t2 = PushBase(u2);
       int comparison = Compare(t1, t2);
       t1.removeTree();
       t2.removeTree();
       if (comparison == 0) {
-        EditionReference S = P_ADD(exponent(u1), exponent(u2));
+        EditionReference S = P_ADD(PushExponent(u1), PushExponent(u2));
         SimplifySum(&S);
-        EditionReference P = P_POW(base(u1), S.clone());
+        EditionReference P = P_POW(PushBase(u1), S.clone());
         S.removeTree();
         SimplifyPower(&P);
         if (P.type() == BlockType::One) {
@@ -322,7 +338,7 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
   return true;
 }
 
-EditionReference term(Node u) {
+EditionReference PushTerm(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -338,32 +354,12 @@ EditionReference term(Node u) {
   return c;
 }
 
-EditionReference constant(Node u) {
+EditionReference PushConstant(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
   if (u.type() == BlockType::Multiplication && IsConstant(u.childAtIndex(0))) {
     return u.childAtIndex(0).clone();
-  }
-  return P_ONE();
-}
-
-EditionReference base(Node u) {
-  if (IsNumber(u)) {
-    return P_UNDEF();
-  }
-  if (u.type() == BlockType::Power) {
-    return u.childAtIndex(0).clone();
-  }
-  return u.clone();
-}
-
-EditionReference exponent(Node u) {
-  if (IsNumber(u)) {
-    return P_UNDEF();
-  }
-  if (u.type() == BlockType::Power) {
-    return u.childAtIndex(1).clone();
   }
   return P_ONE();
 }
@@ -406,15 +402,15 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
         WrapWithUnary(l, KAdd());
         return true;
       }
-      EditionReference t1 = term(u1);
-      EditionReference t2 = term(u2);
+      EditionReference t1 = PushTerm(u1);
+      EditionReference t2 = PushTerm(u2);
       int comparison = Compare(t1, t2);
       t1.removeTree();
       t2.removeTree();
       if (comparison == 0) {
-        EditionReference S = P_ADD(constant(u1), constant(u2));
+        EditionReference S = P_ADD(PushConstant(u1), PushConstant(u2));
         SimplifySum(&S);
-        EditionReference P = P_MULT(S.clone(), term(u1));
+        EditionReference P = P_MULT(S.clone(), PushTerm(u1));
         S.removeTree();
         SimplifyProduct(&P);
         if (P.type() == BlockType::Zero) {

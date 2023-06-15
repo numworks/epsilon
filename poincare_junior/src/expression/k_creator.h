@@ -97,6 +97,11 @@ consteval auto KPow(Args... args) {
 }
 
 template <class... Args>
+consteval auto KDiff(Args... args) {
+  return KTrinary<BlockType::Derivative>(args...);
+}
+
+template <class... Args>
 consteval auto KAdd(Args... args) {
   return KNAry<BlockType::Addition>(args...);
 }

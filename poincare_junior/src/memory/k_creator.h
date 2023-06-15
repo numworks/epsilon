@@ -96,9 +96,20 @@ consteval auto KBinary(Tree<B1...>, Tree<B2...>) {
   return Tree<Tag, B1..., B2...>();
 }
 
+template <Block Tag, Block... B1, Block... B2, Block... B3>
+consteval auto KTrinary(Tree<B1...>, Tree<B2...>, Tree<B3...>) {
+  return Tree<Tag, B1..., B2..., B2...>();
+}
+
 template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B>
 consteval auto KBinary(A a, B b) {
   return KBinary<Tag>(Tree(a), Tree(b));
+}
+
+template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B,
+          TreeCompatibleConcept C>
+consteval auto KTrinary(A a, B b, C c) {
+  return KTrinary<Tag>(Tree(a), Tree(b), Tree(c));
 }
 
 template <Block Tag, TreeConcept... CTS>
@@ -126,6 +137,11 @@ consteval Node KUnary(Node a) {
 
 template <Block Tag>
 consteval Node KBinary(Node a, Node b) {
+  return Tree<>();
+}
+
+template <Block Tag>
+consteval Node KTrinary(Node a, Node b, Node c) {
   return Tree<>();
 }
 

@@ -76,7 +76,8 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   if (m_mainTableView->selectedRow() == -1) {
     resetContentOffset();
   }
-  layoutSubviews();
+  // TODO investigate on why prefaces relied on the double layout
+  layoutSubviews(true);
 }
 
 Escher::View* PrefacedTableView::subviewAtIndex(int index) {

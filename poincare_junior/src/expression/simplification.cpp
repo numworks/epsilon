@@ -152,8 +152,6 @@ EditionReference exponent(Node u);
 
 constexpr Tree KA = KPlaceholder<Placeholder::Tag::A>();
 constexpr Tree KB = KPlaceholder<Placeholder::Tag::B>();
-constexpr Tree KTA = KAnyTreesPlaceholder<Placeholder::Tag::A>();
-constexpr Tree KTB = KAnyTreesPlaceholder<Placeholder::Tag::B>();
 
 bool WrapWithUnary(EditionReference* u, Node n) {
   u->insertNodeBeforeNode(n);
@@ -229,22 +227,15 @@ bool SimplifyProductRec(EditionReference* l) {
       return false;
     } else {
       // SPRDREC2
-      if (u1.type() == BlockType::Multiplication &&
-          u2.type() == BlockType::Multiplication) {
-        MergeProducts(&u1, &u2);
-        *l = l->replaceTreeByTree(u1);
-        return true;
+      l->removeNode();
+      if (u1.type() != BlockType::Multiplication) {
+        WrapWithUnary(&u1, KMult());
       }
-      if (u1.type() == BlockType::Multiplication) {
-        EditionReference prod = P_MULT(u2.clone());
-        MergeProducts(&u1, &prod);
-        *l = l->replaceTreeByTree(u1);
-        return true;
+      if (u2.type() != BlockType::Multiplication) {
+        WrapWithUnary(&u2, KMult());
       }
-      assert(u2.type() == BlockType::Multiplication);
-      EditionReference prod = P_MULT(u1.clone());
-      MergeProducts(&prod, &u2);
-      *l = l->replaceTreeByTree(prod);
+      MergeProducts(&u1, &u2);
+      *l = u1;
       return true;
     }
   }
@@ -449,22 +440,15 @@ bool SimplifySumRec(EditionReference* l) {
       return false;
     } else {
       // SPRDREC2
-      if (u1.type() == BlockType::Addition &&
-          u2.type() == BlockType::Addition) {
-        MergeSums(&u1, &u2);
-        *l = l->replaceTreeByTree(u1);
-        return true;
+      l->removeNode();
+      if (u1.type() != BlockType::Addition) {
+        WrapWithUnary(&u1, KAdd());
       }
-      if (u1.type() == BlockType::Addition) {
-        EditionReference sum = P_ADD(u2.clone());
-        MergeSums(&u1, &sum);
-        *l = l->replaceTreeByTree(u1);
-        return true;
+      if (u2.type() != BlockType::Addition) {
+        WrapWithUnary(&u2, KAdd());
       }
-      assert(u2.type() == BlockType::Addition);
-      EditionReference sum = P_ADD(u1.clone());
-      MergeSums(&sum, &u2);
-      *l = l->replaceTreeByTree(sum);
+      MergeSums(&u1, &u2);
+      *l = u1;
       return true;
     }
   }

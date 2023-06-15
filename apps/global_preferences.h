@@ -108,7 +108,10 @@ class GlobalPreferences {
         m_country((I18n::Country)0),
         m_showPopUp(true),
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
-        m_font(KDFont::Size::Large) {}
+        m_font(KDFont::Size::Large) {
+    setLanguage(I18n::Language::EN);
+    setCountry(I18n::Country::WW);
+  }
 
   I18n::Language m_language;
   I18n::Country m_country;

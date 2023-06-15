@@ -149,8 +149,9 @@ constexpr Tree KA = KPlaceholder<Placeholder::Tag::A>();
 constexpr Tree KB = KPlaceholder<Placeholder::Tag::B>();
 
 bool WrapWithUnary(EditionReference* u, Node n) {
+  Node previousU = *u;
   u->insertNodeBeforeNode(n);
-  *u = u->previousNode();
+  *u = previousU;
   NAry::SetNumberOfChildren(*u, 1);
   return true;
 }

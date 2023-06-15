@@ -48,6 +48,18 @@ class Simplification {
   static bool AutomaticSimplify(EditionReference *u);
 
  private:
+  static bool SimplifyRational(EditionReference *u) { return false; }
+  static bool SimplifyRNE(EditionReference *u);
+  static bool SimplifyRNERec(EditionReference *u);
+  static bool SimplifySum(EditionReference *u);
+  static bool SimplifySumRec(EditionReference *u);
+  static bool MergeSums(EditionReference *p, EditionReference *q);
+  static bool SimplifyProduct(EditionReference *u);
+  static bool SimplifyProductRec(EditionReference *u);
+  static bool MergeProducts(EditionReference *p, EditionReference *q);
+  static bool SimplifyPower(EditionReference *u);
+  static bool SimplifyIntegerPower(EditionReference *v, EditionReference *n);
+
   typedef EditionReference (*NumberOperation)(const Node, const Node);
   static void ReduceNumbersInNAry(EditionReference reference,
                                   NumberOperation operation);

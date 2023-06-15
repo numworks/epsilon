@@ -40,12 +40,6 @@ bool AllChildren(Node u, bool test(Node)) {
   return true;
 }
 
-bool SimplifyRational(EditionReference* u) { return false; }
-bool SimplifyRNE(EditionReference* u);
-bool SimplifySum(EditionReference* u);
-bool SimplifyProduct(EditionReference* u);
-bool SimplifyPower(EditionReference* u);
-
 bool Simplification::AutomaticSimplify(EditionReference* u) {
   if (u->block()->isInteger()) {
     return false;
@@ -75,7 +69,8 @@ bool Simplification::AutomaticSimplify(EditionReference* u) {
   }
 }
 
-bool SimplifyIntegerPower(EditionReference* v, EditionReference* n) {
+bool Simplification::SimplifyIntegerPower(EditionReference* v,
+                                          EditionReference* n) {
   if (IsRational(*v)) {
     EditionReference pow = P_POW(v->clone(), n->clone());
     n->removeTree();
@@ -122,7 +117,7 @@ bool SimplifyIntegerPower(EditionReference* v, EditionReference* n) {
   return false;
 }
 
-bool SimplifyPower(EditionReference* u) {
+bool Simplification::SimplifyPower(EditionReference* u) {
   EditionReference v = u->childAtIndex(0);
   EditionReference w = u->childAtIndex(1);
   if (v.type() == BlockType::Zero) {
@@ -173,9 +168,7 @@ void MultPush(EditionReference* l, EditionReference* e) {
   NAry::AddChildAtIndex(*l, *e, 0);
 }
 
-bool MergeProducts(EditionReference* p, EditionReference* q);
-
-bool SimplifyProductRec(EditionReference* l) {
+bool Simplification::SimplifyProductRec(EditionReference* l) {
   if (l->numberOfChildren() == 2) {
     EditionReference u1 = l->childAtIndex(0);
     EditionReference u2 = l->childAtIndex(1);
@@ -258,7 +251,7 @@ bool SimplifyProductRec(EditionReference* l) {
   return true;
 }
 
-bool MergeProducts(EditionReference* p, EditionReference* q) {
+bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   if (q->numberOfChildren() == 0) {
     q->removeNode();
     return true;
@@ -306,7 +299,7 @@ bool MergeProducts(EditionReference* p, EditionReference* q) {
   assert(false);
 }
 
-bool SimplifyProduct(EditionReference* u) {
+bool Simplification::SimplifyProduct(EditionReference* u) {
   // SPRD1
   // done before
   // SPRD2
@@ -387,9 +380,7 @@ void AddPush(EditionReference* l, EditionReference* e) {
   NAry::AddChildAtIndex(*l, *e, 0);
 }
 
-bool MergeSums(EditionReference* p, EditionReference* q);
-
-bool SimplifySumRec(EditionReference* l) {
+bool Simplification::SimplifySumRec(EditionReference* l) {
   if (l->numberOfChildren() == 2) {
     EditionReference u1 = l->childAtIndex(0);
     EditionReference u2 = l->childAtIndex(1);
@@ -468,7 +459,7 @@ bool SimplifySumRec(EditionReference* l) {
   return true;
 }
 
-bool MergeSums(EditionReference* p, EditionReference* q) {
+bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
   if (q->numberOfChildren() == 0) {
     q->removeNode();
     return true;
@@ -516,7 +507,7 @@ bool MergeSums(EditionReference* p, EditionReference* q) {
   assert(false);
 }
 
-bool SimplifySum(EditionReference* u) {
+bool Simplification::SimplifySum(EditionReference* u) {
   if (u->matchAndReplace(KAdd(KA), KA)) {
     return true;
   }
@@ -528,7 +519,7 @@ bool SimplifySum(EditionReference* u) {
   return true;
 }
 
-bool SimplifyRNERec(EditionReference* u) {
+bool Simplification::SimplifyRNERec(EditionReference* u) {
   if (IsInteger(*u)) {
     return false;
   }
@@ -583,7 +574,7 @@ bool SimplifyRNERec(EditionReference* u) {
   assert(false);
 }
 
-bool SimplifyRNE(EditionReference* u) {
+bool Simplification::SimplifyRNE(EditionReference* u) {
   bool modified = SimplifyRNERec(u);
   if (IsUndef(*u)) {
     return true;

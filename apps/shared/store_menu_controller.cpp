@@ -120,7 +120,7 @@ void StoreMenuController::openAbortWarning() {
 
 bool StoreMenuController::parseAndStore(const char* text) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
-  Poincare::Context* context = app->localContext();
+  Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {
     openAbortWarning();
@@ -128,7 +128,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
   }
   Expression reducedExp = input;
   PoincareHelpers::CloneAndSimplify(&reducedExp, context,
-                                    Poincare::ReductionTarget::User);
+                                    ReductionTarget::User);
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
@@ -158,7 +158,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
 }
 
 bool StoreMenuController::layoutFieldDidFinishEditing(
-    Escher::LayoutField* layoutField, Poincare::Layout layoutR,
+    Escher::LayoutField* layoutField, Layout layoutR,
     Ion::Events::Event event) {
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];

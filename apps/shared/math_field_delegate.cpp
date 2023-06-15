@@ -45,7 +45,7 @@ CodePoint AbstractMathFieldDelegate::XNT() {
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
-         ExpressionCanBeSerialized(exp, false, Poincare::Expression(),
+         ExpressionCanBeSerialized(exp, false, Expression(),
                                    App::app()->localContext());
 }
 
@@ -123,8 +123,8 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
      * Sometimes the field needs to be parsed for assignment but this is
      * done later, namely by ContinuousFunction::buildExpressionFromText.
      */
-    Poincare::Expression e = Poincare::Expression::Parse(
-        buffer, layoutField->context(), true, false);
+    Expression e =
+        Expression::Parse(buffer, layoutField->context(), true, false);
     if (e.isUninitialized()) {
       // Unparsable expression
       app->displayWarning(I18n::Message::SyntaxError);
@@ -134,9 +134,8 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
      * displayable, like:
      * - 2*a
      * - log(x,2) */
-    length =
-        e.serialize(buffer, bufferSize,
-                    Poincare::Preferences::sharedPreferences->displayMode());
+    length = e.serialize(buffer, bufferSize,
+                         Preferences::sharedPreferences->displayMode());
     if (length >= bufferSize - 1) {
       // Same comment as before
       app->displayWarning(I18n::Message::SyntaxError);

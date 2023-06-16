@@ -32,7 +32,7 @@ class SelectableListView : public SelectableTableView {
   }
 
   void layoutSubviews(bool force = false) override {
-    dataSource()->initCellSize(this);
+    dataSource()->initCellsAvailableWidth(this);
     SelectableTableView::layoutSubviews(force);
   }
 

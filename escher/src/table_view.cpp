@@ -18,7 +18,7 @@ TableView::TableView(TableViewDataSource* dataSource,
 void TableView::initSize(KDRect rect) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
     setSize(KDSize(rect.width(), rect.height()));
-    dataSource()->initCellSize(this);
+    dataSource()->initCellsAvailableWidth(this);
   }
 }
 

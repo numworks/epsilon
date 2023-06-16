@@ -6,9 +6,9 @@ int ListWithTopAndBottomDataSource::numberOfRows() const {
   return m_innerDataSource->numberOfRows() + hasTopView() + hasBottomView();
 }
 
-void ListWithTopAndBottomDataSource::initCellSize(TableView* view) {
-  m_innerDataSource->initCellSize(view);
-  StandardMemoizedListViewDataSource::initCellSize(view);
+void ListWithTopAndBottomDataSource::initCellsAvailableWidth(TableView* view) {
+  m_innerDataSource->initCellsAvailableWidth(view);
+  StandardMemoizedListViewDataSource::initCellsAvailableWidth(view);
 }
 
 KDCoordinate ListWithTopAndBottomDataSource::separatorBeforeRow(int row) {

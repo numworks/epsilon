@@ -50,7 +50,8 @@ bool InputViewController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
 bool InputViewController::layoutFieldDidFinishEditing(
     LayoutField* layoutField, Poincare::Layout layoutR,
     Ion::Events::Event event) {
-  if (inputViewDidFinishEditing()) {
+  if (m_successAction.perform(this)) {
+    dismissModal();
     m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, layoutR,
                                                        event);
     return true;
@@ -59,7 +60,8 @@ bool InputViewController::layoutFieldDidFinishEditing(
 }
 
 void InputViewController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
-  inputViewDidAbortEditing();
+  m_failureAction.perform(this);
+  dismissModal();
   m_layoutFieldDelegate->layoutFieldDidAbortEditing(layoutField);
 }
 
@@ -77,19 +79,6 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
      * propagate a relayout to the content of the field scroll view. */
     m_expressionInputBarController.layoutField()->layoutSubviews(true);
   }
-}
-
-bool InputViewController::inputViewDidFinishEditing() {
-  if (m_successAction.perform(this)) {
-    dismissModal();
-    return true;
-  }
-  return false;
-}
-
-void InputViewController::inputViewDidAbortEditing() {
-  m_failureAction.perform(this);
-  dismissModal();
 }
 
 }  // namespace Escher

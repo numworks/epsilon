@@ -48,9 +48,7 @@ class Simplification {
   static bool AutomaticSimplify(EditionReference *u);
 
  private:
-  static bool SimplifyRational(EditionReference *u) { return false; }
   static bool SimplifyRationalTree(EditionReference *u);
-  static bool SimplifyRationalTreeRec(EditionReference *u);
   static bool SimplifySum(EditionReference *u);
   static bool SimplifySumRec(EditionReference *u);
   static bool MergeSums(EditionReference *p, EditionReference *q);

@@ -507,7 +507,7 @@ bool Simplification::SimplifySum(EditionReference* u) {
   return true;
 }
 
-bool Simplification::SimplifyRationalTreeRec(EditionReference* u) {
+bool Simplification::SimplifyRationalTree(EditionReference* u) {
   if (IsInteger(*u)) {
     return false;
   }
@@ -520,19 +520,19 @@ bool Simplification::SimplifyRationalTreeRec(EditionReference* u) {
   }
   if (u->numberOfChildren() == 1) {
     *u = u->replaceNodeByTree(u->childAtIndex(0));
-    return SimplifyRationalTreeRec(u);
+    return SimplifyRationalTree(u);
   }
   if (u->numberOfChildren() == 2) {
     if (u->type() == BlockType::Addition ||
         u->type() == BlockType::Multiplication) {
       EditionReference v = u->childAtIndex(0);
-      SimplifyRationalTreeRec(&v);
+      SimplifyRationalTree(&v);
       if (IsUndef(v)) {
         *u = u->replaceTreeByNode(KUndef);
         return true;
       }
       EditionReference w = u->childAtIndex(1);
-      SimplifyRationalTreeRec(&w);
+      SimplifyRationalTree(&w);
       if (IsUndef(w)) {
         *u = u->replaceTreeByNode(KUndef);
         return true;
@@ -549,7 +549,7 @@ bool Simplification::SimplifyRationalTreeRec(EditionReference* u) {
     }
     if (u->type() == BlockType::Power) {
       EditionReference v = u->childAtIndex(0);
-      SimplifyRationalTreeRec(&v);
+      SimplifyRationalTree(&v);
       if (IsUndef(v)) {
         *u = u->replaceTreeByNode(KUndef);
         return true;
@@ -560,11 +560,6 @@ bool Simplification::SimplifyRationalTreeRec(EditionReference* u) {
     }
   }
   assert(false);
-}
-
-bool Simplification::SimplifyRationalTree(EditionReference* u) {
-  bool modified = SimplifyRationalTreeRec(u);
-  return IsUndef(*u) || SimplifyRational(u) || modified;
 }
 
 int Compare(Node u, Node v) {

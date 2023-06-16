@@ -607,15 +607,7 @@ void RackParser::parseCaret(EditionReference &leftHandSide,
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::ImplicitTimes)) {
-    if (leftHandSide.type() == BlockType::Power) {
-      // l         r -> l
-      // (POW A B) C -> POW A (POW B C)
-      assert(leftHandSide.nextTree() == static_cast<Node>(rightHandSide));
-      EditionReference(leftHandSide.childAtIndex(1))
-          .insertNodeBeforeNode(Tree<BlockType::Power>());
-    } else {
-      turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
-    }
+    turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
   }
 }
 

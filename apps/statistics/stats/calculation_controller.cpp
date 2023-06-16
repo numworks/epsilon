@@ -27,7 +27,7 @@ CalculationController::CalculationController(Responder *parentResponder,
                                                  KDGlyph::k_alignCenter);
     m_calculationModeSymbolCells[i].setFont(KDFont::Size::Small);
   }
-  resetMemoization();
+  resetSizeMemoization();
 }
 
 // TableViewDataSource
@@ -218,8 +218,8 @@ int CalculationController::fixedNumberOfRows() const {
              : k_fixedMaxNumberOfRows - 1;
 }
 
-void CalculationController::resetMemoization(bool force) {
-  DoublePairTableController::resetMemoization(force);
+void CalculationController::resetSizeMemoization(bool force) {
+  DoublePairTableController::resetSizeMemoization(force);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     for (int j = 0; j < k_numberOfCalculations; j++) {
       m_memoizedCellContent[i][j] = NAN;

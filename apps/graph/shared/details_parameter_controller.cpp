@@ -35,7 +35,7 @@ void DetailsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   assert(!m_record.isNull());
   selectCell(0);
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.reloadData();
 }
 

@@ -57,9 +57,9 @@ void PrefacedTwiceTableView::setCellOverlap(KDCoordinate horizontal,
 
 void PrefacedTwiceTableView::resetDataSourceSizeMemoization() {
   // Intersection preface
-  m_prefaceIntersectionDataSource.resetMemoization();
+  m_prefaceIntersectionDataSource.resetSizeMemoization();
   // Column preface
-  m_columnPrefaceDataSource.resetMemoization();
+  m_columnPrefaceDataSource.resetSizeMemoization();
   // Main table and row preface
   PrefacedTableView::resetDataSourceSizeMemoization();
 }
@@ -165,11 +165,11 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
     cumulatedWidthBeforePrefaceColumn() const {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn) +
       m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
@@ -191,20 +191,20 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
     nonMemoizedCumulatedWidthBeforeColumn(int column) {
   // Do not alter main dataSource memoization
   assert(column == 0 || column == 1);
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       column == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn, false) : 0;
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
 int PrefacedTwiceTableView::ColumnPrefaceDataSource::
     nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   int result =
       offsetX < m_mainDataSource->columnWidth(m_prefaceColumn, false) ? 0 : 1;
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 

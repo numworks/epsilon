@@ -69,7 +69,7 @@ int UnitListController::numberOfRows() const {
 }
 
 void UnitListController::setExpression(Poincare::Expression e) {
-  resetMemoization();
+  resetSizeMemoization();
   m_expression = e;
 
   /* I. Handle expression cells

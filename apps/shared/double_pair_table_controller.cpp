@@ -27,7 +27,7 @@ DoublePairTableController::DoublePairTableController(
 }
 
 void DoublePairTableController::viewWillAppear() {
-  resetMemoization();
+  resetSizeMemoization();
   TabTableController::viewWillAppear();
 }
 

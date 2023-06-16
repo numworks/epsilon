@@ -137,7 +137,7 @@ void RangeParameterController::viewWillAppear() {
         displayNormalizeCell();
     selectCell(row);
   }
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.reloadData();
 }
 

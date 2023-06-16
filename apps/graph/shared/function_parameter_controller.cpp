@@ -55,7 +55,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
   m_derivativeCell.setVisible(displayDerivative);
   m_detailsCell.setVisible(displayDetails());
   m_functionDomainCell.setVisible(displayDomain());
-  resetMemoization();
+  resetSizeMemoization();
 }
 
 const char *intervalBracket(double value, bool opening) {

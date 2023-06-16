@@ -118,7 +118,7 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor *destructor) {
   if (m_bufferDestructor) {
     m_bufferDestructor->dynamicCellsTableView()->selectColumn(0);
     m_bufferDestructor->dynamicCellsTableView()->selectRow(-1);
-    m_bufferDestructor->dynamicCellsTableView()->resetDataSourceMemoization();
+    m_bufferDestructor->dynamicCellsTableView()->resetSizeMemoization();
     m_bufferDestructor->destroyCells();
   }
   m_bufferDestructor = destructor;

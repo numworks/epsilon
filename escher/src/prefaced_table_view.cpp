@@ -181,30 +181,30 @@ HighlightCell* PrefacedTableView::IntermediaryDataSource::reusableCell(
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedColumnWidth(
     int column) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->columnWidth(columnInMainDataSource(column), false);
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedRowHeight(
     int row) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->rowHeight(rowInMainDataSource(row), false);
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
 KDCoordinate PrefacedTableView::IntermediaryDataSource::
     nonMemoizedCumulatedWidthBeforeColumn(int column) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeColumn(
       columnInMainDataSource(column));
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
@@ -212,28 +212,28 @@ KDCoordinate
 PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedHeightBeforeRow(
     int row) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedHeightBeforeRow(rowInMainDataSource(row));
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
 int PrefacedTableView::IntermediaryDataSource::
     nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   int result = m_mainDataSource->columnAfterCumulatedWidth(offsetX);
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
 int PrefacedTableView::IntermediaryDataSource::
     nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   int result = m_mainDataSource->rowAfterCumulatedHeight(offsetY);
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
@@ -241,11 +241,11 @@ KDCoordinate
 PrefacedTableView::RowPrefaceDataSource::cumulatedHeightBeforePrefaceRow()
     const {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow) +
       m_mainDataSource->separatorBeforeRow(m_prefaceRow);
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
@@ -254,20 +254,20 @@ PrefacedTableView::RowPrefaceDataSource::nonMemoizedCumulatedHeightBeforeRow(
     int row) {
   // Do not alter main dataSource memoization
   assert(row == 0 || row == 1);
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       row == 1 ? m_mainDataSource->rowHeight(m_prefaceRow, false) : 0;
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 
 int PrefacedTableView::RowPrefaceDataSource::nonMemoizedRowAfterCumulatedHeight(
     KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
-  m_mainDataSource->lockMemoization(true);
+  m_mainDataSource->lockSizeMemoization(true);
   int result =
       offsetY < m_mainDataSource->rowHeight(m_prefaceRow, false) ? 0 : 1;
-  m_mainDataSource->lockMemoization(false);
+  m_mainDataSource->lockSizeMemoization(false);
   return result;
 }
 

@@ -306,7 +306,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
 
 void VariableBoxController::empty() {
   m_shortenResultCharCount = 0;
-  resetMemoization();
+  resetSizeMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
   for (uint8_t i = 0; i < k_maxOrigins; ++i) {
     m_rowsPerOrigins[i] = 0;

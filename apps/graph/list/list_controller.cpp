@@ -56,7 +56,7 @@ int ListController::reusableCellCount(int type) {
 
 void ListController::viewWillAppear() {
   // A function could have been deleted from the option menu of the Graph tab.
-  resetMemoization();
+  resetSizeMemoization();
   Shared::FunctionListController::viewWillAppear();
   /* FunctionListcontroller::didEnterResponderChain might not be called,
    * (if the list tab is displayed but not selected using Back-Back)

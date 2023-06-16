@@ -49,7 +49,7 @@ class ExplicitListViewDataSource : public ListViewDataSource {
       return k_undefinedSize;
     }
 
-    void resetMemoization(bool force = true) override {
+    void resetSizeMemoization(bool force = true) override {
       m_sizesAreComputed = false;
     }
 

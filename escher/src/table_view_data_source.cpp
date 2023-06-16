@@ -164,21 +164,21 @@ int TableViewDataSource::nonMemoizedRowAfterCumulatedHeight(
   return nRows;
 }
 
-void TableViewDataSource::resetMemoization(bool force) {
+void TableViewDataSource::resetSizeMemoization(bool force) {
   if (columnWidthManager()) {
-    columnWidthManager()->resetMemoization(force);
+    columnWidthManager()->resetSizeMemoization(force);
   }
   if (rowHeightManager()) {
-    rowHeightManager()->resetMemoization(force);
+    rowHeightManager()->resetSizeMemoization(force);
   }
 }
 
-void TableViewDataSource::lockMemoization(bool state) {
+void TableViewDataSource::lockSizeMemoization(bool state) {
   if (columnWidthManager()) {
-    columnWidthManager()->lockMemoization(state);
+    columnWidthManager()->lockSizeMemoization(state);
   }
   if (rowHeightManager()) {
-    rowHeightManager()->lockMemoization(state);
+    rowHeightManager()->lockSizeMemoization(state);
   }
 }
 

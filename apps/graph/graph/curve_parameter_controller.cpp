@@ -198,7 +198,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
       function()->properties().numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
   selectCell(0);
-  resetMemoization();
+  resetSizeMemoization();
   m_preimageGraphController.setRecord(record);
 }
 

@@ -20,8 +20,8 @@ class TableSize1DManager {
                                              KDCoordinate defaultSize) = 0;
   virtual bool sizeAtIndexIsMemoized(int i) const { return false; }
 
-  virtual void resetMemoization(bool force = true) {}
-  virtual void lockMemoization(bool state) const {}
+  virtual void resetSizeMemoization(bool force = true) {}
+  virtual void lockSizeMemoization(bool state) const {}
 };
 
 /* Use RegularTableSize1DManager if the height or width is constant.
@@ -60,8 +60,8 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
   int computeIndexAfterCumulatedSize(KDCoordinate offset,
                                      KDCoordinate defaultSize) override;
 
-  void resetMemoization(bool force = true) override;
-  void lockMemoization(bool state) const override;
+  void resetSizeMemoization(bool force = true) override;
+  void lockSizeMemoization(bool state) const override;
 
   bool sizeAtIndexIsMemoized(int i) const override {
     return i >= m_memoizedIndexOffset &&
@@ -99,7 +99,7 @@ class TemplatedMemoizedTableSize1DManager : public MemoizedTableSize1DManager {
   TemplatedMemoizedTableSize1DManager(TableViewDataSource* tableViewDataSource)
       : MemoizedTableSize1DManager(tableViewDataSource) {
     // Must be done here since virtual functions are not virtual in constructors
-    resetMemoization(true);
+    resetSizeMemoization(true);
   }
 
  private:

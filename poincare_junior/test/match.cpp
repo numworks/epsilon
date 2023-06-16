@@ -84,6 +84,9 @@ QUIZ_CASE(pcj_match_n_ary) {
   assert_no_match(KAdd(1_e, 2_e, 3_e, 4_e),
                   KAdd(KAnyTreesPlaceholder<A>(), 3_e, KPlaceholder<B>(), 4_e));
 
+  assert_match_and_create(KAdd(1_e, 2_e), KPlaceholder<A>(),
+                          KLn(KPlaceholder<A>()), KLn(KAdd(1_e, 2_e)));
+
   assert_match_and_create(
       KMult(KAdd(1_e, 2_e, 3_e), KAdd(1_e, 2_e)),
       KMult(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),

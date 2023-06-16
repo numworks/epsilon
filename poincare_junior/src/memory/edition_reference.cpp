@@ -179,8 +179,13 @@ bool EditionReference::matchAndReplace(const Node pattern,
     }
     // Get a Node to the first placeholder tree, and detach as many as necessary
     Node trees = placeholders[i].block();
+    // If the placeHolder matches the entire Tree, restore it after detaching.
+    bool restoreReference = trees.block() == block();
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       EditionReference(trees).detachTree();
+    }
+    if (restoreReference) {
+      *this = EditionReference(trees);
     }
   }
 

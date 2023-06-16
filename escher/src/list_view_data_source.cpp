@@ -44,7 +44,6 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeightWithWidthInit(
   if (!tempCell->isVisible()) {
     return 0;
   }
-  // Warning: this copies the size of a random cell of the table.
   tempCell->setSize((KDSize(m_availableWidth, Ion::Display::Height)));
   return protectedNonMemoizedRowHeight(tempCell, row);
 }

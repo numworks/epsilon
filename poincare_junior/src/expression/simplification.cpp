@@ -714,7 +714,6 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
       (ref->type() == BlockType::Power &&
        !ref->nextNode().nextTree().block()->isInteger() &&
        (  // e^A -> exp(A)
-          // TODO: Maybe remove it and rely on next matchAndReplace
            ref->matchAndReplace(KPow(e_e, KPlaceholder<A>()),
                                 KExp(KPlaceholder<A>())) ||
            // A^B -> exp(ln(A)*B)
@@ -921,7 +920,7 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
 }
 
 bool Simplification::ContractTrigonometric(EditionReference* reference) {
-  /* KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
+  /* KTrigDiff : If both elements are 1 or both are 0, return 0. 1 Otherwise.
    * TODO: This is the only place this is used. It might not be worth it.
    * TODO : Ensure trig second elements are reduced before and after. */
   /* A?*Trig(B, C)*Trig(D, E)*F?

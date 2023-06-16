@@ -573,10 +573,10 @@ int Compare(Node u, Node v) {
     return 1;
   }
   if (u.type() == BlockType::UserSymbol && v.type() == BlockType::UserSymbol) {
-    return std::memcmp(reinterpret_cast<const char*>(u.block() + 2),
-                       reinterpret_cast<const char*>(v.block() + 2),
-                       std::max(static_cast<uint8_t>(*(u.block() + 1)),
-                                static_cast<uint8_t>(*(v.block() + 1))));
+    return memcmp(reinterpret_cast<const char*>(u.block() + 2),
+                  reinterpret_cast<const char*>(v.block() + 2),
+                  std::max(static_cast<uint8_t>(*(u.block() + 1)),
+                           static_cast<uint8_t>(*(v.block() + 1))));
   }
   if (u.type() == v.type()) {
     if (u.type() == BlockType::Addition ||

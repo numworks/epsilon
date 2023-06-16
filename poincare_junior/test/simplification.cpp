@@ -123,11 +123,15 @@ QUIZ_CASE(pcj_simplification_projection) {
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 }
 
+#if PLATFORM_DEVICE
+#define QUIZ_ASSERT(test) quiz_assert(test)
+#else
 #include <iostream>
 #define QUIZ_ASSERT(test)                                   \
   if (!(test)) {                                            \
     std::cerr << "Assert failed " << __LINE__ << std::endl; \
   }
+#endif
 
 QUIZ_CASE(pcj_compare) {
   QUIZ_ASSERT(Compare("a"_e, "a"_e) == 0);
@@ -187,8 +191,10 @@ void simplifies_to(const char* input, const char* output) {
   assert(EditionPool::sharedEditionPool()->numberOfTrees() == 0);
   bool b = strcmp(output, buffer) == 0;
   if (!b) {
+#ifndef PLATFORM_DEVICE
     std::cout << input << " reduced to " << buffer << " instead of " << output
               << std::endl;
+#endif
   }
   quiz_assert(b);
   EditionPool::sharedEditionPool()->flush();

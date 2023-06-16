@@ -1,8 +1,6 @@
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/polynomial.h>
 
-#include <iostream>
-
 #include "helper.h"
 
 using namespace PoincareJ;

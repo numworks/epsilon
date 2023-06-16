@@ -97,11 +97,34 @@ void EditExpressionController::viewWillAppear() {
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(
     ::LayoutField *layoutField, Ion::Events::Event event) {
-  bool calculationIsEmpty = layoutField->isEditing() &&
-                            layoutField->shouldFinishEditing(event) &&
-                            layoutField->isEmpty();
-  if (inputViewDidReceiveEvent(event, calculationIsEmpty) ||
-      calculationIsEmpty) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
+      layoutField->isEmpty()) {
+    if (m_workingBuffer[0] != 0) {
+      /* The input text store in m_workingBuffer might have been correct the
+       * first time but then be too long when replacing ans in another context
+       */
+      if (!isAcceptableText(m_workingBuffer)) {
+        App::app()->displayWarning(I18n::Message::SyntaxError);
+      } else if (m_calculationStore
+                     ->push(m_workingBuffer, App::app()->localContext(),
+                            HistoryViewCell::Height)
+                     .pointer()) {
+        m_historyController->reload();
+      }
+    }
+    return true;
+  }
+  if (event == Ion::Events::Up) {
+    if (m_calculationStore->numberOfCalculations() > 0) {
+      clearWorkingBuffer();
+      m_contentView.layoutField()->setEditing(false);
+      App::app()->setFirstResponder(m_historyController);
+    }
+    return true;
+  }
+  if (event == Ion::Events::Clear && m_contentView.layoutField()->isEmpty()) {
+    m_calculationStore->deleteAll();
+    m_historyController->reload();
     return true;
   }
   return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
@@ -167,39 +190,6 @@ bool EditExpressionController::isAcceptableExpression(
 void EditExpressionController::reloadView() {
   m_contentView.reload();
   m_historyController->reload();
-}
-
-bool EditExpressionController::inputViewDidReceiveEvent(
-    Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
-  if (shouldDuplicateLastCalculation && m_workingBuffer[0] != 0) {
-    /* The input text store in m_workingBuffer might have been correct the first
-     * time but then be too long when replacing ans in another context */
-    if (!isAcceptableText(m_workingBuffer)) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    if (m_calculationStore
-            ->push(m_workingBuffer, App::app()->localContext(),
-                   HistoryViewCell::Height)
-            .pointer()) {
-      m_historyController->reload();
-      return true;
-    }
-  }
-  if (event == Ion::Events::Up) {
-    if (m_calculationStore->numberOfCalculations() > 0) {
-      clearWorkingBuffer();
-      m_contentView.layoutField()->setEditing(false);
-      App::app()->setFirstResponder(m_historyController);
-    }
-    return true;
-  }
-  if (event == Ion::Events::Clear && m_contentView.layoutField()->isEmpty()) {
-    m_calculationStore->deleteAll();
-    m_historyController->reload();
-    return true;
-  }
-  return false;
 }
 
 }  // namespace Calculation

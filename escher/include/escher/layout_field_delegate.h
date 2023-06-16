@@ -23,11 +23,7 @@ class LayoutFieldDelegate : public ContextProvider {
     return false;
   }
   virtual void layoutFieldDidAbortEditing(LayoutField* layoutField) {}
-  virtual bool layoutFieldDidHandleEvent(LayoutField* layoutField,
-                                         bool returnValue,
-                                         bool layoutDidChange) {
-    return returnValue;
-  }
+  virtual void layoutFieldDidHandleEvent(LayoutField* layoutField) {}
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
 };
 

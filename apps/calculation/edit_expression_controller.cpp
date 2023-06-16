@@ -108,14 +108,11 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
                                                              event);
 }
 
-bool EditExpressionController::layoutFieldDidHandleEvent(
-    Escher::LayoutField *layoutField, bool returnValue, bool layoutDidChange) {
+void EditExpressionController::layoutFieldDidHandleEvent(
+    Escher::LayoutField *layoutField) {
   /* Memoize on all handled event, even if the text did not change, to properly
    * update the cursor position. */
-  if (returnValue) {
-    memoizeInput();
-  }
-  return returnValue;
+  memoizeInput();
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(

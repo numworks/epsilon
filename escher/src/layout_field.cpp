@@ -486,10 +486,10 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   } else {
     reload(previousSize);
   }
-  return m_layoutFieldDelegate
-             ? m_layoutFieldDelegate->layoutFieldDidHandleEvent(
-                   this, didHandleEvent, shouldRedrawLayout)
-             : didHandleEvent;
+  if (didHandleEvent && m_layoutFieldDelegate) {
+    m_layoutFieldDelegate->layoutFieldDidHandleEvent(this);
+  }
+  return didHandleEvent;
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,

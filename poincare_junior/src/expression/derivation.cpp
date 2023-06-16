@@ -127,6 +127,20 @@ void Derivation::CloneReplacingSymbolRec(Node expression, Node symbol,
     return;
   }
   editionPool->clone(expression, false);
+  // TODO: Extend this escape case to handle all nodes using local context.
+  if (expression.type() == BlockType::Derivative) {
+    // With x symbol and f(y) symbolValue :
+    Node subSymbol = expression.childAtIndex(1);
+    if (subSymbol.treeIsIdenticalTo(symbol)) {
+      // Diff(g(x),x,h(x)) -> Diff(g(x),x,h(f(y)))
+      editionPool->clone(expression.nextNode());
+      editionPool->clone(subSymbol);
+      CloneReplacingSymbolRec(subSymbol.nextTree(), symbol, symbolValue);
+      return;
+    }
+    // TODO : Diff(g(x,y),y,h(x,y)) -> Diff(g(f(y),z),z,h(f(y),y))
+    // Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
+  }
   for (std::pair<Node, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(expression)) {
     CloneReplacingSymbolRec(indexedNode.first, symbol, symbolValue);

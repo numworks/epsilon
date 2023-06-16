@@ -43,5 +43,7 @@ QUIZ_CASE(pcj_derivation) {
            KMult(3_e, KExp(KMult(3_e, "y"_e)), KPow("y"_e, 4_e), KLn("y"_e))));
   assertDerivationIs(KTrig(KLn("x"_e), 1_e),
                      KMult(KPow("y"_e, -1_e), KTrig(KLn("y"_e), 0_e)));
+  assertDerivationIs(KPow(KDiff(KPow("x"_e, 2_e), "x"_e, "x"_e), 2_e),
+                     KMult(8_e, "y"_e));
 #endif
 }

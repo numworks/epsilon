@@ -163,7 +163,7 @@ void LayoutField::clearAndSetEditing(bool isEditing) {
 void LayoutField::scrollToCursor() {
   KDRect cursorRect = m_contentView.cursorRect();
   KDCoordinate cursorBaseline =
-      m_contentView.cursor()->layout().baseline(m_contentView.font());
+      cursor()->layout().baseline(m_contentView.font());
   scrollToBaselinedRect(cursorRect, cursorBaseline);
 }
 
@@ -209,10 +209,10 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   }
   Layout xnt;
   if (linearMode()) {
-    Layout layout = m_contentView.cursor()->layout();
+    Layout layout = cursor()->layout();
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
-    int position = m_contentView.cursor()->position();
+    int position = cursor()->position();
     LinearLayoutDecoder decoder(horizontalLayout, position);
     bool defaultXNTHasChanged = false;
     if (FindXNTSymbol(decoder, &defaultXNTHasChanged, &defaultXNTCodePoint)) {
@@ -233,16 +233,16 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     }
   } else {
     // Query bottom-most layout
-    xnt = m_contentView.cursor()->layout().XNTLayout();
+    xnt = cursor()->layout().XNTLayout();
   }
   /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
    * such as derivative, sum, integral or layouts. */
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0 && isEditing()) {
-      assert(m_contentView.cursor()->selection().isEmpty());
+      assert(cursor()->selection().isEmpty());
       // XNT is Cycling, remove the last inserted character
-      m_contentView.cursor()->performBackspace();
+      cursor()->performBackspace();
     }
   }
 
@@ -257,10 +257,10 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
-  LayoutCursor previousCursor = *m_contentView.cursor();
+  LayoutCursor previousCursor = *cursor();
   m_contentView.setCursor(
       LayoutCursor(m_contentView.layoutView()->layout(), side));
-  m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
+  cursor()->didEnterCurrentPosition(previousCursor);
 }
 
 void LayoutField::reload(KDSize previousSize) {
@@ -296,7 +296,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
     return false;
   }
 
-  Poincare::LayoutCursor *cursor = m_contentView.cursor();
+  Poincare::LayoutCursor *cursor = this->cursor();
   // Handle special cases
   constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
@@ -397,7 +397,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 
 bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
   if (m_layoutFieldDelegate->layoutFieldShouldFinishEditing(this, event)) {
-    m_contentView.cursor()->stopSelecting();
+    cursor()->stopSelecting();
     return true;
   }
   return false;
@@ -558,7 +558,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                           true);
     } else {
       assert(event == Ion::Events::Backspace);
-      m_contentView.cursor()->performBackspace();
+      cursor()->performBackspace();
     }
     *shouldRedrawLayout = true;
     return true;
@@ -567,9 +567,8 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
        event == Ion::Events::Sto) &&
       isEditing()) {
     m_contentView.copySelection(context(), event == Ion::Events::Sto);
-    if (event == Ion::Events::Cut &&
-        !m_contentView.cursor()->selection().isEmpty()) {
-      m_contentView.cursor()->performBackspace();
+    if (event == Ion::Events::Cut && !cursor()->selection().isEmpty()) {
+      cursor()->performBackspace();
       *shouldRedrawLayout = true;
     }
     *shouldUpdateCursor = event != Ion::Events::Sto;
@@ -596,7 +595,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event,
   if (!isMoveEvent && !isSelectionEvent) {
     return false;
   }
-  return m_contentView.cursor()->moveMultipleSteps(
+  return cursor()->moveMultipleSteps(
       OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent,
       shouldRedrawLayout, context());
 }
@@ -621,8 +620,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayout(
-      layout, context(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
+  cursor()->insertLayout(layout, context(), forceCursorRightOfLayout,
+                         forceCursorLeftOfLayout);
 
   // Reload
   reload(previousSize);

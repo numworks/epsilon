@@ -104,9 +104,7 @@ class GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
   GlobalPreferences()
-      : m_language((I18n::Language)0),
-        m_country((I18n::Country)0),
-        m_showPopUp(true),
+      : m_showPopUp(true),
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
         m_font(KDFont::Size::Large) {
     setLanguage(I18n::Language::EN);

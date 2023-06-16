@@ -9,7 +9,9 @@ class AbstractTextField;
 class TextFieldDelegate {
  public:
   virtual bool textFieldShouldFinishEditing(AbstractTextField* textField,
-                                            Ion::Events::Event event) = 0;
+                                            Ion::Events::Event event) {
+    return event == Ion::Events::OK || event == Ion::Events::EXE;
+  }
   virtual void textFieldDidStartEditing(AbstractTextField* textField) {}
   virtual bool textFieldDidReceiveEvent(AbstractTextField* textField,
                                         Ion::Events::Event event) = 0;

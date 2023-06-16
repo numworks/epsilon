@@ -70,7 +70,7 @@ InputCategoricalTableCell::InputCategoricalTableCell(
 
 bool InputCategoricalTableCell::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE ||
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          (event == Ion::Events::Right &&
           m_selectableTableView.selectedColumn() <
               tableViewDataSource()->numberOfColumns() - 1) ||

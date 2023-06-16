@@ -27,8 +27,6 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
   void abortEditionAndDismiss();
 
   /* LayoutFieldDelegate */
-  bool layoutFieldShouldFinishEditing(LayoutField* layoutField,
-                                      Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(LayoutField* layoutField,

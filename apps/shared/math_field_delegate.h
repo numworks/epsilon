@@ -29,8 +29,6 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
   static MathLayoutFieldDelegate* Default();
 
   // LayoutFieldDelegate
-  bool layoutFieldShouldFinishEditing(Escher::LayoutField* layoutField,
-                                      Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
 };
@@ -41,8 +39,6 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
   static MathTextFieldDelegate* Default();
 
   // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
-                                    Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
 

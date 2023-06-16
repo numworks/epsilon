@@ -84,11 +84,6 @@ MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
   return &s_defaultMathLayoutFieldDelegate;
 }
 
-bool MathLayoutFieldDelegate::layoutFieldShouldFinishEditing(
-    LayoutField *layoutField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
 bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
     LayoutField *layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
@@ -150,11 +145,6 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
 MathTextFieldDelegate *MathTextFieldDelegate::Default() {
   static MathTextFieldDelegate s_defaultMathTextFieldDelegate;
   return &s_defaultMathTextFieldDelegate;
-}
-
-bool MathTextFieldDelegate::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
 bool MathTextFieldDelegate::textFieldDidReceiveEvent(

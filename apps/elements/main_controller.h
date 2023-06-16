@@ -32,8 +32,6 @@ class MainController : public Escher::ViewController,
   void activeDataFieldHasChanged() override;
 
   // Escher::TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
-                                    Ion::Events::Event event) override;
   void textFieldDidStartEditing(Escher::AbstractTextField* textField) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;

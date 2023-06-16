@@ -42,11 +42,6 @@ void InputViewController::abortEditionAndDismiss() {
   dismissModal();
 }
 
-bool InputViewController::layoutFieldShouldFinishEditing(
-    LayoutField* layoutField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
 bool InputViewController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                                      Ion::Events::Event event) {
   return m_layoutFieldDelegate->layoutFieldDidReceiveEvent(layoutField, event);

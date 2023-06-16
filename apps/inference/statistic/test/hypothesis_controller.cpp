@@ -74,11 +74,6 @@ bool HypothesisController::textFieldDidReceiveEvent(
                        1 /* = symbol */);
   }
   return false;
-};
-
-bool HypothesisController::textFieldShouldFinishEditing(
-    Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
 bool HypothesisController::textFieldDidFinishEditing(

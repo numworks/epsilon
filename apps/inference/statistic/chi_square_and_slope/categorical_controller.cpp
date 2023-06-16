@@ -148,7 +148,7 @@ InputCategoricalController::InputCategoricalController(
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE ||
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          event == Ion::Events::Up || event == Ion::Events::Down;
 }
 

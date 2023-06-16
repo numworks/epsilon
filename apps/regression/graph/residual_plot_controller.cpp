@@ -103,6 +103,11 @@ void ResidualPlotController::viewWillAppear() {
     yMin = std::min(yMin, y);
     yMax = std::max(yMax, y);
   }
+  if (yMax == DBL_MIN) {
+    // This happens if every y is NAN
+    yMin = -Poincare::Range1D::k_defaultHalfLength;
+    yMax = Poincare::Range1D::k_defaultHalfLength;
+  }
   assert(xMin <= xMax && yMin <= yMax);
   updateCursor();
   m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(),

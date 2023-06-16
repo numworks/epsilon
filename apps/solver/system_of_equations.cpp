@@ -429,6 +429,28 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   return registerSolution(delta, context, type);
 }
 
+static void simplifyAndApproximateSolution(
+    Expression e, Expression *exact, Expression *approximate,
+    bool approximateDuringReduction, Context *context,
+    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
+    Preferences::UnitFormat unitFormat,
+    SymbolicComputation symbolicComputation) {
+  e.cloneAndSimplifyAndApproximate(
+      exact, approximate, context, complexFormat, angleUnit, unitFormat,
+      symbolicComputation, UnitConversion::Default, approximateDuringReduction);
+  if (exact->type() == ExpressionNode::Type::Dependency) {
+    /* e has been reduced under ReductionTarget::SystemForAnalysis in
+     * Equation::Model::standardForm and has gone through Matrix::rank,
+     * which discarded dependencies. Reducing here under
+     * ReductionTarget::User may have created new dependencies. For example,
+     * "i" had been preserved up to now and has been reduced to a
+     * ComplexCartesian here, which may have triggered further reduction and
+     * the creation of a dependency.
+     * We remove that dependency in order to create layouts. */
+    *exact = exact->childAtIndex(0);
+  }
+}
+
 SystemOfEquations::Error SystemOfEquations::registerSolution(
     Expression e, Context *context, SolutionType type) {
   Preferences::AngleUnit angleUnit =
@@ -466,43 +488,23 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         m_overrideUserVariables
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-// The following loop should run twice max
-#if ASSERTIONS
-    int nLoops = 0;
-#endif
-    while (!displayExactSolution && !displayApproximateSolution) {
-#if ASSERTIONS
-      assert(nLoops < 2);
-      nLoops++;
-#endif
-      e.cloneAndSimplifyAndApproximate(
-          &exact, &approximate, context, m_complexFormat, angleUnit, unitFormat,
-          symbolicComputation, UnitConversion::Default,
-          approximateDuringReduction);
-      if (exact.type() == ExpressionNode::Type::Dependency) {
-        /* e has been reduced under ReductionTarget::SystemForAnalysis in
-         * Equation::Model::standardForm and has gone through Matrix::rank,
-         * which discarded dependencies. Reducing here under
-         * ReductionTarget::User may have created new dependencies. For example,
-         * "i" had been preserved up to now and has been reduced to a
-         * ComplexCartesian here, which may have triggered further reduction and
-         * the creation of a dependency.
-         * We remove that dependency in order to create layouts. */
-        exact = exact.childAtIndex(0);
-      }
-      displayExactSolution =
-          approximateDuringReduction ||
-          (!forbidExactSolution &&
-           !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-               e, exact, approximate, context));
-      displayApproximateSolution = type != SolutionType::Formal;
-      if (!displayApproximateSolution && !displayExactSolution) {
-        /* Happens if the formal solution has no permission to be displayed.
-         * Re-reduce but force approximating during redution. */
-        approximateDuringReduction = true;
-        exact = Expression();
-        approximate = Expression();
-      }
+    simplifyAndApproximateSolution(
+        e, &exact, &approximate, approximateDuringReduction, context,
+        m_complexFormat, angleUnit, unitFormat, symbolicComputation);
+    displayExactSolution =
+        approximateDuringReduction ||
+        (!forbidExactSolution &&
+         !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+             e, exact, approximate, context));
+    displayApproximateSolution = type != SolutionType::Formal;
+    if (!displayApproximateSolution && !displayExactSolution) {
+      /* Happens if the formal solution has no permission to be displayed.
+       * Re-reduce but force approximating during redution. */
+      exact = Expression();
+      approximate = Expression();
+      simplifyAndApproximateSolution(e, &exact, &approximate, true, context,
+                                     m_complexFormat, angleUnit, unitFormat,
+                                     symbolicComputation);
     }
   }
   if (approximate.type() == ExpressionNode::Type::Nonreal) {

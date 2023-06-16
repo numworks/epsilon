@@ -65,7 +65,6 @@ class Simplification {
       Node (*PushInverse)());
 };
 
-int Compare(Node u, Node v);
 }  // namespace PoincareJ
 
 #endif

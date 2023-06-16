@@ -41,12 +41,12 @@ bool AllChildren(Node u, bool test(Node)) {
 }
 
 bool Simplification::AutomaticSimplify(EditionReference* u) {
-  if (u->block()->isInteger()) {
-    return false;
-  }
   if (u->block()->isRational()) {
     *u = u->replaceTreeByTree(Rational::IrreducibleForm(*u));
     return true;  // TODO
+  }
+  if (u->numberOfChildren() == 0) {
+    return false;
   }
   bool childChanged = false;
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*u)) {
@@ -208,10 +208,10 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
       }
       EditionReference t1 = PushBase(u1);
       EditionReference t2 = PushBase(u2);
-      int comparison = Compare(t1, t2);
+      int basesAreEqual = Comparison::AreEqual(t1, t2);
       t1.removeTree();
       t2.removeTree();
-      if (comparison == 0) {
+      if (basesAreEqual) {
         EditionReference S = P_ADD(PushExponent(u1), PushExponent(u2));
         SimplifySum(&S);
         EditionReference P = P_POW(PushBase(u1), S.clone());
@@ -225,7 +225,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
         WrapWithUnary(l, KMult());
         return true;
       }
-      if (Compare(u2, u1) < 0) {
+      if (Comparison::Compare(u2, u1) < 0) {
         l->matchAndReplace(KMult(KA, KB), KMult(KB, KA));
         return true;
       }
@@ -290,8 +290,8 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     MultPushFirst(p, &h);
     return true;
   }
-  if (Compare(h.childAtIndex(0), p1) == 0) {
-    assert(Compare(h.childAtIndex(1), q1) == 0);
+  if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
+    assert(Comparison::AreEqual(h.childAtIndex(1), q1));
     EditionReference pc = p1.clone();
     h.removeTree();
     MultPopFirst(p);
@@ -299,8 +299,8 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     MultPushFirst(p, &pc);
     return true;
   }
-  if (Compare(h.childAtIndex(0), q1) == 0) {
-    assert(Compare(h.childAtIndex(1), p1) == 0);
+  if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
+    assert(Comparison::AreEqual(h.childAtIndex(1), p1));
     EditionReference qc = q1.clone();
     h.removeTree();
     MultPopFirst(q);
@@ -395,10 +395,10 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
       }
       EditionReference t1 = PushTerm(u1);
       EditionReference t2 = PushTerm(u2);
-      int comparison = Compare(t1, t2);
+      int termsAreEqual = Comparison::AreEqual(t1, t2);
       t1.removeTree();
       t2.removeTree();
-      if (comparison == 0) {
+      if (termsAreEqual) {
         EditionReference S = P_ADD(PushConstant(u1), PushConstant(u2));
         SimplifySum(&S);
         EditionReference P = P_MULT(S.clone(), PushTerm(u1));
@@ -412,7 +412,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
         WrapWithUnary(l, KAdd());
         return true;
       }
-      if (Compare(u2, u1) < 0) {
+      if (Comparison::Compare(u2, u1) < 0) {
         l->matchAndReplace(KAdd(KA, KB), KAdd(KB, KA));
         return true;
       }
@@ -474,8 +474,8 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     AddPushFirst(p, &h);
     return true;
   }
-  if (Compare(h.childAtIndex(0), p1) == 0) {
-    assert(Compare(h.childAtIndex(1), q1) == 0);
+  if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
+    assert(Comparison::AreEqual(h.childAtIndex(1), q1));
     EditionReference pc = p1.clone();
     h.removeTree();
     AddPopFirst(p);
@@ -483,8 +483,8 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     AddPushFirst(p, &pc);
     return true;
   }
-  if (Compare(h.childAtIndex(0), q1) == 0) {
-    assert(Compare(h.childAtIndex(1), p1) == 0);
+  if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
+    assert(Comparison::AreEqual(h.childAtIndex(1), p1));
     EditionReference qc = q1.clone();
     h.removeTree();
     AddPopFirst(q);
@@ -560,76 +560,6 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
     }
   }
   assert(false);
-}
-
-int Compare(Node u, Node v) {
-  if (IsConstant(u) && IsConstant(v)) {
-    return IntegerHandler::Compare(Integer::Handler(u), Integer::Handler(v));
-  }
-  if (u.type() == BlockType::Undefined && v.type() == BlockType::UserSymbol) {
-    return -1;
-  }
-  if (u.type() == BlockType::UserSymbol && v.type() == BlockType::Undefined) {
-    return 1;
-  }
-  if (u.type() == BlockType::UserSymbol && v.type() == BlockType::UserSymbol) {
-    return memcmp(reinterpret_cast<const char*>(u.block() + 2),
-                  reinterpret_cast<const char*>(v.block() + 2),
-                  std::max(static_cast<uint8_t>(*(u.block() + 1)),
-                           static_cast<uint8_t>(*(v.block() + 1))));
-  }
-  if (u.type() == v.type()) {
-    if (u.type() == BlockType::Addition ||
-        u.type() == BlockType::Multiplication) {
-      int m = std::min(u.numberOfChildren(), v.numberOfChildren());
-      for (int j = 1; j <= m; j++) {
-        int c = Compare(u.childAtIndex(u.numberOfChildren() - j),
-                        v.childAtIndex(v.numberOfChildren() - j));
-        if (c != 0) {
-          return c;
-        }
-      }
-      if (u.numberOfChildren() < v.numberOfChildren()) {
-        return -1;
-      }
-      if (u.numberOfChildren() > v.numberOfChildren()) {
-        return 1;
-      }
-      return 0;
-    }
-    if (u.type() == BlockType::Power) {
-      int c = Compare(u.childAtIndex(0), u.childAtIndex(0));
-      return c ? c : Compare(u.childAtIndex(1), u.childAtIndex(1));
-    }
-    assert(false);
-  }
-  if (IsConstant(u) && !IsConstant(v)) {
-    return -1;
-  }
-  if (u.type() == BlockType::Multiplication &&
-      (v.type() == BlockType::Power || v.type() == BlockType::Addition ||
-       v.type() == BlockType::UserSymbol || v.type() == BlockType::Undefined)) {
-    EditionReference v2 = P_MULT(P_CLONE(v));
-    int res = Compare(u, v2);
-    v2.removeTree();
-    return res;
-  }
-  if (u.type() == BlockType::Power &&
-      (v.type() == BlockType::Addition || v.type() == BlockType::UserSymbol ||
-       v.type() == BlockType::Undefined)) {
-    EditionReference v2 = P_POW(P_CLONE(v), P_ONE());
-    int res = Compare(u, v2);
-    v2.removeTree();
-    return res;
-  }
-  if (u.type() == BlockType::Addition &&
-      (v.type() == BlockType::UserSymbol || v.type() == BlockType::Undefined)) {
-    EditionReference v2 = P_ADD(P_CLONE(v));
-    int res = Compare(u, v2);
-    v2.removeTree();
-    return res;
-  }
-  return -Compare(v, u);
 }
 
 EditionReference Simplification::SystematicReduction(

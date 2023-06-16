@@ -69,13 +69,30 @@ bool Simplification::AutomaticSimplify(EditionReference* u) {
   }
 }
 
-bool Simplification::SimplifyIntegerPower(EditionReference* u) {
+bool Simplification::SimplifyPower(EditionReference* u) {
   EditionReference v = u->childAtIndex(0);
   EditionReference n = u->childAtIndex(1);
-  assert(IsInteger(u->childAtIndex(1)));
-  if (IsRational(v)) {
-    SimplifyRNE(u);
+  // 0^n -> 0
+  if (v.type() == BlockType::Zero) {
+    if (n.type() != BlockType::Zero &&
+        Rational::RationalStrictSign(n) == StrictSign::Positive) {
+      *u = u->replaceTreeByNode(0_e);
+      return true;
+    }
+    *u = u->replaceTreeByNode(KUndef);
     return true;
+  }
+  // 1^n -> 1
+  if (v.type() == BlockType::One) {
+    *u = u->replaceTreeByNode(1_e);
+    return true;
+  }
+  if (IsRational(v)) {
+    return SimplifyRNE(u);
+    ;
+  }
+  if (!IsInteger(n)) {  // TODO replace by assert
+    return false;
   }
   // a^0 -> 1
   if (n.type() == BlockType::Zero) {
@@ -100,10 +117,8 @@ bool Simplification::SimplifyIntegerPower(EditionReference* u) {
     u->removeNode();
     *u = previousU;
     SimplifyProduct(&s);
-    if (IsInteger(s)) {
-      SimplifyIntegerPower(u);
-    }
-    return true;
+    // assert(IsInteger(s));
+    return SimplifyPower(u);
   }
   // (a*b)^n -> a^n * b^n
   if (v.type() == BlockType::Multiplication) {
@@ -113,35 +128,13 @@ bool Simplification::SimplifyIntegerPower(EditionReference* u) {
       child.clone();
       n.clone();
       child = child.replaceTreeByTree(m);
-      SimplifyIntegerPower(&child);
+      SimplifyPower(&child);
     }
     n.removeTree();
     Node previousU = *u;
     u->removeNode();
     *u = previousU;
     return SimplifyProduct(u);
-  }
-  return false;
-}
-
-bool Simplification::SimplifyPower(EditionReference* u) {
-  EditionReference v = u->childAtIndex(0);
-  EditionReference w = u->childAtIndex(1);
-  if (v.type() == BlockType::Zero) {
-    if (IsNumber(w) &&
-        Rational::RationalStrictSign(w) == StrictSign::Positive) {
-      *u = u->replaceTreeByNode(0_e);
-      return true;
-    }
-    *u = u->replaceTreeByNode(KUndef);
-    return true;
-  }
-  if (v.type() == BlockType::One) {
-    *u = u->replaceTreeByNode(1_e);
-    return true;
-  }
-  if (IsInteger(w)) {
-    return SimplifyIntegerPower(u);
   }
   return false;
 }

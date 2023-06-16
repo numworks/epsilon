@@ -58,7 +58,6 @@ class Simplification {
   static bool SimplifyProductRec(EditionReference *u);
   static bool MergeProducts(EditionReference *p, EditionReference *q);
   static bool SimplifyPower(EditionReference *u);
-  static bool SimplifyIntegerPower(EditionReference *v);
 
   typedef EditionReference (*NumberOperation)(const Node, const Node);
   static void ReduceNumbersInNAry(EditionReference reference,

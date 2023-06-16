@@ -1,4 +1,3 @@
-
 #include <poincare_junior/src/expression/derivation.h>
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/simplification.h>
@@ -6,6 +5,13 @@
 #include "helper.h"
 
 using namespace PoincareJ;
+
+void assertDerivationInplaceIs(Node expression, Node expected) {
+  EditionReference ref(expression);
+  Derivation::Reduce(&ref);
+  assert_trees_are_equal(ref, expected);
+  ref.removeTree();
+}
 
 void assertDerivationIs(Node expression, Node expected, Node symbol = Node(),
                         Node symbolValue = Node()) {
@@ -20,9 +26,13 @@ void assertDerivationIs(Node expression, Node expected, Node symbol = Node(),
   EditionReference simplifiedResult(result);
   Simplification::Simplify(&simplifiedResult);
   quiz_assert(expected.treeIsIdenticalTo(simplifiedResult));
+  simplifiedResult.removeTree();
 }
 
 QUIZ_CASE(pcj_derivation) {
+  assertDerivationInplaceIs(KDiff("x"_e, "x"_e, 2_e), 1_e);
+  assertDerivationInplaceIs(KDiff(23_e, "x"_e, 1_e), 0_e);
+
   // TODO: Activate these tests once systemReduce is fully operational
 #if 0
   assertDerivationIs(KAdd(1_e, "x"_e), 1_e);

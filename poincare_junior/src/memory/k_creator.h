@@ -98,7 +98,7 @@ consteval auto KBinary(Tree<B1...>, Tree<B2...>) {
 
 template <Block Tag, Block... B1, Block... B2, Block... B3>
 consteval auto KTrinary(Tree<B1...>, Tree<B2...>, Tree<B3...>) {
-  return Tree<Tag, B1..., B2..., B2...>();
+  return Tree<Tag, B1..., B2..., B3...>();
 }
 
 template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B>

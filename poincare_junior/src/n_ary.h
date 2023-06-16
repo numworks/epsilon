@@ -23,6 +23,8 @@ class NAry {
   static EditionReference SquashIfUnary(EditionReference reference);
   static EditionReference SquashIfEmpty(EditionReference reference);
   static EditionReference Sanitize(EditionReference reference);
+  static bool SquashIfUnary(EditionReference* reference);
+  static bool SquashIfEmpty(EditionReference* reference);
   static void SortChildren(EditionReference reference,
                            Comparison::Order order = Comparison::Order::User);
 };

@@ -319,13 +319,10 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
     *u = u->replaceTreeByNode(0_e);
     return true;
   }
-  // u.matchAndReplace(KMult(KTA, 0_e, KTB), 0_e);
   // SPRD3
-  if (u->numberOfChildren() == 1) {
-    *u = u->replaceNodeByTree(u->childAtIndex(0));
+  if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  // u.matchAndReplace(KMult(KA), KA);
   if (!SimplifyProductRec(u)) {
     return false;
   }
@@ -499,7 +496,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
 }
 
 bool Simplification::SimplifySum(EditionReference* u) {
-  if (u->matchAndReplace(KAdd(KA), KA)) {
+  if (NAry::SquashIfUnary(u)) {
     return true;
   }
   if (!SimplifySumRec(u)) {

@@ -88,6 +88,14 @@ EditionReference NAry::SquashIfUnary(EditionReference reference) {
   return reference;
 }
 
+bool NAry::SquashIfUnary(EditionReference* reference) {
+  if (reference->numberOfChildren() == 1) {
+    *reference = reference->replaceTreeByTree(reference->nextNode());
+    return true;
+  }
+  return false;
+}
+
 EditionReference NAry::SquashIfEmpty(EditionReference reference) {
   if (reference.numberOfChildren() >= 1) {
     return reference;
@@ -97,6 +105,18 @@ EditionReference NAry::SquashIfEmpty(EditionReference reference) {
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
   return EditionReference(reference.replaceTreeByTree(
       type == BlockType::Addition ? &ZeroBlock : &OneBlock));
+}
+
+bool NAry::SquashIfEmpty(EditionReference* reference) {
+  if (reference->numberOfChildren() >= 1) {
+    return false;
+  }
+  // Return the neutral element
+  BlockType type = reference->type();
+  assert(type == BlockType::Addition || type == BlockType::Multiplication);
+  *reference = reference->replaceTreeByTree(
+      type == BlockType::Addition ? &ZeroBlock : &OneBlock);
+  return true;
 }
 
 EditionReference NAry::Sanitize(EditionReference reference) {

@@ -70,7 +70,6 @@ class EditExpressionController : public Escher::ViewController,
   void clearWorkingBuffer() { m_workingBuffer[0] = 0; }
   bool inputViewDidReceiveEvent(Ion::Events::Event event,
                                 bool shouldDuplicateLastCalculation);
-  bool inputViewDidFinishEditing(const char* text, Poincare::Layout layoutR);
   void memoizeInput();
 
   char m_workingBuffer[k_layoutBufferMaxSize];

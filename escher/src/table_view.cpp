@@ -195,8 +195,7 @@ HighlightCell* TableView::ContentView::reusableCellAtIndex(int index) {
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
-void TableView::ContentView::layoutSubviews(bool force,
-                                            bool updateCellContent) {
+void TableView::ContentView::layoutSubviews(bool force) {
   /* The number of cells might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfDisplayableCells(); index++) {

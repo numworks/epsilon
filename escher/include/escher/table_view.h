@@ -97,10 +97,7 @@ class TableView : public ScrollView {
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
     KDRect cellFrame(int col, int row) const;
-    void layoutSubviews(bool force = false) override {
-      layoutSubviews(force, false);
-    }
-    void layoutSubviews(bool force, bool updateCellContent);
+    void layoutSubviews(bool force) override;
     int numberOfDisplayableCells() const {
       return numberOfDisplayableRows() * numberOfDisplayableColumns();
     }

@@ -101,7 +101,7 @@ class CalculationController : public Shared::DoublePairTableController {
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int column) override;
-  void resetSizeMemoization(bool force = true) override;
+  void resetSizeMemoization() override;
 
   // DoublePairTableController
   Shared::DoublePairStore* store() const override { return m_store; }

@@ -42,7 +42,7 @@ class TableViewDataSource {
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int column, int row) = 0;
 
-  virtual void resetSizeMemoization(bool force = true);
+  virtual void resetSizeMemoization();
   void lockSizeMemoization(bool state);
 
  protected:

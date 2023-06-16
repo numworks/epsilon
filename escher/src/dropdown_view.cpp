@@ -169,9 +169,9 @@ void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
   m_listViewDataSource->fillCellForRow(popupView->innerCell(), row);
 }
 
-void Dropdown::DropdownPopupController::resetSizeMemoization(bool force) {
+void Dropdown::DropdownPopupController::resetSizeMemoization() {
   m_memoizedCellWidth = -1;
-  MemoizedListViewDataSource::resetSizeMemoization(force);
+  MemoizedListViewDataSource::resetSizeMemoization();
 }
 
 HighlightCell *Dropdown::DropdownPopupController::innerCellAtIndex(int index) {

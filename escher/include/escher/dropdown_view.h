@@ -101,7 +101,7 @@ class Dropdown : public PopupItemView, public Responder {
     }
     PopupItemView* reusableCell(int index, int type) override;
     void fillCellForRow(HighlightCell* cell, int row) override;
-    void resetSizeMemoization(bool force = true) override;
+    void resetSizeMemoization() override;
     HighlightCell* innerCellAtIndex(int index);
 
     constexpr static int k_maxNumberOfPopupItems = 4;

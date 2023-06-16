@@ -605,8 +605,7 @@ bool AbstractTextField::privateHandleSelectEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
-  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight ||
-      event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
+  if (event.isSelectionEvent()) {
     selectLeftRight(
         (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp)
             ? OMG::Direction::Left()

@@ -129,7 +129,7 @@ void Derivation::CloneReplacingSymbolRec(Node expression, Node symbol,
   editionPool->clone(expression, false);
   for (std::pair<Node, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(expression)) {
-    CloneReplacingSymbol(indexedNode.first, symbol, symbolValue);
+    CloneReplacingSymbolRec(indexedNode.first, symbol, symbolValue);
   }
 }
 

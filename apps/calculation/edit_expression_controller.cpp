@@ -120,11 +120,6 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   return inputViewDidFinishEditing(nullptr, layoutR);
 }
 
-void EditExpressionController::layoutFieldDidAbortEditing(
-    ::LayoutField *layoutField) {
-  inputViewDidAbortEditing(nullptr);
-}
-
 void EditExpressionController::layoutFieldDidChangeSize(
     ::LayoutField *layoutField) {
   if (m_contentView.layoutField()->inputViewHeightDidChange()) {
@@ -212,14 +207,6 @@ bool EditExpressionController::inputViewDidFinishEditing(const char *text,
     m_contentView.layoutField()->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
-  }
-  return false;
-}
-
-bool EditExpressionController::inputViewDidAbortEditing(const char *text) {
-  if (text != nullptr) {
-    m_contentView.layoutField()->clearAndSetEditing(true);
-    m_contentView.layoutField()->setText(text);
   }
   return false;
 }

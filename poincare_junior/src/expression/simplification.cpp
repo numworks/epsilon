@@ -159,15 +159,25 @@ EditionReference PushExponent(Node u) {
   return P_ONE();
 }
 
-constexpr Tree KA = KPlaceholder<Placeholder::Tag::A>();
-constexpr Tree KB = KPlaceholder<Placeholder::Tag::B>();
-
 bool WrapWithUnary(EditionReference* u, Node n) {
   Node previousU = *u;
   u->insertNodeBeforeNode(n);
   *u = previousU;
   NAry::SetNumberOfChildren(*u, 1);
   return true;
+}
+
+bool Reorder(EditionReference* u, EditionReference* v) {
+  if (Comparison::Compare(*u, *v) > 0) {
+    Node previousU = *u;
+    v->insertTreeBeforeNode(*u);
+    EditionReference u2 = previousU;
+    u2.insertTreeBeforeNode(*v);
+    *v = *u;
+    *u = u2;
+    return true;
+  }
+  return false;
 }
 
 void MultPopFirst(EditionReference* l) {
@@ -225,11 +235,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
         WrapWithUnary(l, KMult());
         return true;
       }
-      if (Comparison::Compare(u2, u1) < 0) {
-        l->matchAndReplace(KMult(KA, KB), KMult(KB, KA));
-        return true;
-      }
-      return false;
+      return Reorder(&u1, &u2);
     } else {
       // SPRDREC2
       l->removeNode();
@@ -412,11 +418,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
         WrapWithUnary(l, KAdd());
         return true;
       }
-      if (Comparison::Compare(u2, u1) < 0) {
-        l->matchAndReplace(KAdd(KA, KB), KAdd(KB, KA));
-        return true;
-      }
-      return false;
+      return Reorder(&u1, &u2);
     } else {
       // SPRDREC2
       l->removeNode();

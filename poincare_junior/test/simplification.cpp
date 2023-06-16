@@ -216,6 +216,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a^b*a^c", "a^(b+c)");
   simplifies_to("a^b*a^b", "a^(2*b)");
   simplifies_to("(a^b)^2", "a^(2*b)");
+  simplifies_to("d+c+b+a", "a+b+c+d");
 }
 
 QUIZ_CASE(pcj_perf_simplification) {

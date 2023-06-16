@@ -53,8 +53,6 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
    private:
     ExpressionInputBar m_expressionInputBar;
   };
-  bool inputViewDidFinishEditing();
-  void inputViewDidAbortEditing();
   ExpressionInputBarController m_expressionInputBarController;
   Invocation m_successAction;
   Invocation m_failureAction;

@@ -16,8 +16,8 @@ float ExponentialDistribution::evaluateAtAbscissa(float x) const {
 
 bool ExponentialDistribution::authorizedParameterAtIndex(double x,
                                                          int index) const {
-  OneParameterDistribution::authorizedParameterAtIndex(x, index) && x > 0.0 &&
-      x <= 7500.0;
+  return OneParameterDistribution::authorizedParameterAtIndex(x, index) &&
+         x > 0.0 && x <= 7500.0;
 }
 
 double ExponentialDistribution::cumulativeDistributiveFunctionAtAbscissa(

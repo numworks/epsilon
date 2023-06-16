@@ -171,7 +171,7 @@ void LocalizationController::resetSelection() {
 
 void LocalizationController::setMode(LocalizationController::Mode mode) {
   selectableListView()->deselectTable();
-  resetMemoization();
+  resetSizeMemoization();
   m_mode = mode;
   setVerticalMargins();
   m_contentView.modeHasChanged();
@@ -194,7 +194,7 @@ const char *LocalizationController::title() {
 void LocalizationController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetSelection();
-  resetMemoization();
+  resetSizeMemoization();
   selectableListView()->reloadData();
 }
 

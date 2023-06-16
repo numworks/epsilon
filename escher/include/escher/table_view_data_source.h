@@ -42,8 +42,8 @@ class TableViewDataSource {
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int column, int row) = 0;
 
-  virtual void resetMemoization(bool force = true);
-  void lockMemoization(bool state);
+  virtual void resetSizeMemoization(bool force = true);
+  void lockSizeMemoization(bool state);
 
  protected:
   /* These should always be overriden unless sizes are regular, in which case

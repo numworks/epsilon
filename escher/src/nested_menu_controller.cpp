@@ -87,7 +87,7 @@ NestedMenuController::NestedMenuController(Responder* parentResponder,
 
 void NestedMenuController::viewWillAppear() {
   // Reset memoization first, so that the right cells are manipulated
-  resetMemoization();
+  resetSizeMemoization();
   StackViewController::viewWillAppear();
   m_selectableListView.reloadData();
 
@@ -144,7 +144,7 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
 }
 
 bool NestedMenuController::selectSubMenu(int selectedRow) {
-  resetMemoization();
+  resetSizeMemoization();
   int previousDepth = stackDepth();
   m_stack.push(
       StackState(selectedRow, m_selectableListView.contentOffset().y()));
@@ -163,7 +163,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 }
 
 bool NestedMenuController::returnToPreviousMenu() {
-  resetMemoization();
+  resetSizeMemoization();
   int previousDepth = stackDepth();
   NestedMenuController::StackState state = m_stack.stackPop();
 
@@ -180,7 +180,7 @@ bool NestedMenuController::returnToPreviousMenu() {
 }
 
 bool NestedMenuController::returnToRootMenu() {
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.selectFirstRow();
   if (stackDepth() > 0) {
     // Reset breadcrumb and stack

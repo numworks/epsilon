@@ -31,7 +31,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
   m_goToParameterController.setRecord(record);
   m_cobwebController->setRecord(record);
   m_cobwebCell.setVisible(m_cobwebController->isRecordSuitable());
-  resetMemoization();
+  resetSizeMemoization();
 }
 
 void CurveParameterController::viewWillAppear() {

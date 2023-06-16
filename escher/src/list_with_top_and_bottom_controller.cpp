@@ -125,7 +125,7 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
 }
 
 void ListWithTopAndBottomController::initView() {
-  resetMemoization();
+  resetSizeMemoization();
   selectFirstCell();
   setOffset(KDPointZero);
 }

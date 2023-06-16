@@ -100,7 +100,7 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {
     return false;
   }
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {

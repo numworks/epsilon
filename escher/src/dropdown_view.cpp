@@ -90,7 +90,7 @@ Dropdown::DropdownPopupController::DropdownPopupController(
 }
 
 void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
-  resetMemoization();
+  resetSizeMemoization();
   if (m_selectionDataSource.selectedRow() < 0) {
     m_selectionDataSource.selectRow(0);
     m_selectableListView.reloadData(false);
@@ -169,9 +169,9 @@ void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
   m_listViewDataSource->fillCellForRow(popupView->innerCell(), row);
 }
 
-void Dropdown::DropdownPopupController::resetMemoization(bool force) {
+void Dropdown::DropdownPopupController::resetSizeMemoization(bool force) {
   m_memoizedCellWidth = -1;
-  MemoizedListViewDataSource::resetMemoization(force);
+  MemoizedListViewDataSource::resetSizeMemoization(force);
 }
 
 HighlightCell *Dropdown::DropdownPopupController::innerCellAtIndex(int index) {
@@ -197,7 +197,7 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::reloadAllCells() {
   // Reload popup list
-  m_popup.resetMemoization();  // Reset computed width
+  m_popup.resetSizeMemoization();  // Reset computed width
   m_popup.m_selectableListView.reloadData(false);
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width.
@@ -224,7 +224,7 @@ void Dropdown::init() {
 
 void Dropdown::open() {
   // Reload popup list
-  m_popup.resetMemoization();
+  m_popup.resetSizeMemoization();
   m_popup.m_selectableListView.reloadData(false);
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);

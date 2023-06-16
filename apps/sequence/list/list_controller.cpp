@@ -74,7 +74,7 @@ void ListController::selectPreviousNewSequenceCell() {
 /* ViewController */
 
 void ListController::viewWillAppear() {
-  resetMemoization();  // A sequence could have been deleted
+  resetSizeMemoization();  // A sequence could have been deleted
   ExpressionModelListController::viewWillAppear();
   App::app()->defaultToolbox()->setExtraCellsDataSource(
       &m_sequenceToolboxDataSource);
@@ -420,7 +420,7 @@ KDCoordinate ListController::nameWidth(int nameLength) const {
 }
 
 void ListController::showLastSequence() {
-  resetMemoization();
+  resetSizeMemoization();
   SequenceStore *store = const_cast<ListController *>(this)->modelStore();
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();

@@ -90,7 +90,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     for (int i = row; i < nRows; i++) {
       didChangeCell(column, i);
     }
-    resetMemoization();  // This is slow but it works
+    resetSizeMemoization();  // This is slow but it works
     selectableTableView()->reloadData();
     return true;
   }
@@ -349,7 +349,7 @@ void ValuesController::resetLayoutMemoization() {
     assert(titleCell);
     titleCell->setLayout(Layout());
   }
-  resetMemoization();  // reset sizes memoization
+  resetSizeMemoization();  // reset sizes memoization
   m_prefacedTwiceTableView.resetDataSourceSizeMemoization();
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
@@ -438,7 +438,7 @@ Layout ValuesController::memoizedLayoutForCell(int column, int row) {
 void ValuesController::clearSelectedColumn() {
   intervalAtColumn(selectedColumn())->clear();
   selectCellAtLocation(selectedColumn(), 1);
-  resetMemoization();
+  resetSizeMemoization();
 }
 
 int ValuesController::fillColumnName(int column, char *buffer) {

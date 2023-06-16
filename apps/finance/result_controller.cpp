@@ -31,7 +31,7 @@ void ResultController::viewWillAppear() {
       value, buffer, bufferSize, precision,
       Poincare::Preferences::PrintFloatMode::Decimal);
   m_cell.accessory()->setText(buffer);
-  resetMemoization(true);
+  resetSizeMemoization(true);
   selectRow(-1);
   m_selectableListView.reloadData(false);
   ViewController::viewWillAppear();

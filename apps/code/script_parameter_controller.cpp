@@ -67,7 +67,7 @@ void ScriptParameterController::viewWillAppear() {
   if (!m_script.isNull()) {
     m_autoImportScript.accessory()->setState(m_script.autoImportation());
   }
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.reloadData();
   m_selectableListView.selectCell(0);
 }

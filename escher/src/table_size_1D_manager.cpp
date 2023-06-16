@@ -14,9 +14,9 @@ KDCoordinate MemoizedTableSize1DManager::computeSizeAtIndex(int i) {
     KDCoordinate memoizedSize = memoizedSizes()[getMemoizedIndex(i)];
     if (memoizedSize == k_undefinedSize) {
       // Compute and memoize value
-      lockMemoization(true);
+      lockSizeMemoization(true);
       memoizedSize = nonMemoizedSizeAtIndex(i);
-      lockMemoization(false);
+      lockSizeMemoization(false);
       memoizedSizes()[getMemoizedIndex(i)] = memoizedSize;
     }
     return memoizedSize;
@@ -42,11 +42,11 @@ KDCoordinate MemoizedTableSize1DManager::computeCumulatedSizeBeforeIndex(
    * m_memoizedIndexOffset than 0. */
   if (m_memoizedCumulatedSizeOffset == k_undefinedSize) {
     // Memoized cumultaedSize is required and must be recomputed
-    lockMemoization(true);
+    lockSizeMemoization(true);
     m_memoizedCumulatedSizeOffset =
         nonMemoizedCumulatedSizeBeforeIndex(m_memoizedIndexOffset);
     assert(m_memoizedCumulatedSizeOffset >= 0);
-    lockMemoization(false);
+    lockSizeMemoization(false);
   }
   // Search cumulatedSize around m_memoizedCumulatedSizeOffset
   KDCoordinate cumulatedSize = m_memoizedCumulatedSizeOffset;
@@ -84,11 +84,11 @@ int MemoizedTableSize1DManager::computeIndexAfterCumulatedSize(
    * m_memoizedCumulatedSizeOffset than 0. */
   if (m_memoizedCumulatedSizeOffset == k_undefinedSize) {
     // Memoized cumulatedSize is required and must be recomputed
-    lockMemoization(true);
+    lockSizeMemoization(true);
     m_memoizedCumulatedSizeOffset =
         nonMemoizedCumulatedSizeBeforeIndex(m_memoizedIndexOffset);
     assert(m_memoizedCumulatedSizeOffset >= 0);
-    lockMemoization(false);
+    lockSizeMemoization(false);
   }
   // Search index around m_memoizedIndexOffset
   KDCoordinate cumulatedSize = m_memoizedCumulatedSizeOffset;
@@ -117,7 +117,7 @@ int MemoizedTableSize1DManager::computeIndexAfterCumulatedSize(
   return 0;
 }
 
-void MemoizedTableSize1DManager::lockMemoization(bool lockUp) const {
+void MemoizedTableSize1DManager::lockSizeMemoization(bool lockUp) const {
   /* This lock system is used to ensure the memoization state
    * (m_memoizedIndexOffset) is preserved when performing an action that could
    * potentially alter it. */
@@ -125,7 +125,7 @@ void MemoizedTableSize1DManager::lockMemoization(bool lockUp) const {
   assert(m_memoizationLockedLevel >= 0);
 }
 
-void MemoizedTableSize1DManager::resetMemoization(bool force) {
+void MemoizedTableSize1DManager::resetSizeMemoization(bool force) {
   if (!force && m_memoizationLockedLevel > 0) {
     return;
   }
@@ -206,7 +206,7 @@ void MemoizedTableSize1DManager::setMemoizationIndex(int index) {
   if (index < m_memoizedIndexOffset / 2 &&
       m_memoizedIndexOffset - index > memoizedLinesCount()) {
     // New memoization index is too far to be updated by shifting.
-    resetMemoization(false);
+    resetSizeMemoization(false);
     m_memoizedIndexOffset = index;
     m_memoizedCumulatedSizeOffset = index == 0 ? 0 : k_undefinedSize;
     return;
@@ -233,9 +233,9 @@ void MemoizedTableSize1DManager::shiftMemoization(bool lowerIndex) {
     assert(m_memoizedIndexOffset > 0);
     m_memoizedIndexOffset--;
     // Unknown value is the new one
-    lockMemoization(true);
+    lockSizeMemoization(true);
     KDCoordinate size = nonMemoizedSizeAtIndex(m_memoizedIndexOffset);
-    lockMemoization(false);
+    lockSizeMemoization(false);
     // Compute and set memoized index size
     memoizedSizes()[getMemoizedIndex(m_memoizedIndexOffset)] = size;
     // Update cumulated size
@@ -249,11 +249,11 @@ void MemoizedTableSize1DManager::shiftMemoization(bool lowerIndex) {
       return;
     }
     if (m_memoizedCumulatedSizeOffset != k_undefinedSize) {
-      lockMemoization(true);
+      lockSizeMemoization(true);
       m_memoizedCumulatedSizeOffset +=
           nonMemoizedSizeAtIndex(m_memoizedIndexOffset);
       assert(m_memoizedCumulatedSizeOffset >= 0);
-      lockMemoization(false);
+      lockSizeMemoization(false);
     }
     // Unknown value is the previous one
     memoizedSizes()[getMemoizedIndex(m_memoizedIndexOffset)] = k_undefinedSize;

@@ -26,7 +26,7 @@ CalculationController::CalculationController(Responder *parentResponder,
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
   }
-  resetMemoization();
+  resetSizeMemoization();
 }
 
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
@@ -474,8 +474,8 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
   return maxNumberCoefficients;
 }
 
-void CalculationController::resetMemoization(bool force) {
-  DoublePairTableController::resetMemoization(force);
+void CalculationController::resetSizeMemoization(bool force) {
+  DoublePairTableController::resetSizeMemoization(force);
   for (int s = 0; s < k_numberOfSeriesTitleCells; s++) {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < k_numberOfDoubleBufferCalculations; j++) {

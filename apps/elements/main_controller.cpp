@@ -38,7 +38,7 @@ MainController::MainController(Escher::StackViewController* parentResponder)
 void MainController::selectedElementHasChanged() {
   m_view.bannerView()->reload();
   m_view.elementsView()->cursorMoved();
-  m_detailsController.resetMemoization();
+  m_detailsController.resetSizeMemoization();
 }
 
 void MainController::activeDataFieldHasChanged() {

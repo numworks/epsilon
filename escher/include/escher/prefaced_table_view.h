@@ -58,7 +58,7 @@ class PrefacedTableView : public View,
     m_marginDelegate = delegate;
   }
   virtual void resetDataSourceSizeMemoization() {
-    m_rowPrefaceDataSource.resetMemoization();
+    m_rowPrefaceDataSource.resetSizeMemoization();
   }
 
  protected:

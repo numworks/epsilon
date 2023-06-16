@@ -32,7 +32,7 @@ void ExplicitFloatParameterController::viewWillAppear() {
       fillParameterCellAtRow(row);
     }
   }
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.reloadData();
 }
 
@@ -83,7 +83,7 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
   if (!setParameterAtIndex(row, floatBody)) {
     return false;
   }
-  resetMemoization();
+  resetSizeMemoization();
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {

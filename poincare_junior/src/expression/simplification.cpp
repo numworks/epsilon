@@ -51,12 +51,12 @@ bool Simplification::AutomaticSimplify(EditionReference* u) {
   bool childChanged = false;
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*u)) {
     childChanged = AutomaticSimplify(&child) || childChanged;
+    if (IsUndef(child)) {
+      *u = u->replaceTreeByNode(KUndef);
+      return true;
+    }
   }
 
-  if (AnyChildren(*u, &IsUndef)) {
-    *u = u->replaceTreeByNode(KUndef);
-    return true;
-  }
   switch (u->type()) {
     case BlockType::Power:
       return SimplifyPower(u) || childChanged;

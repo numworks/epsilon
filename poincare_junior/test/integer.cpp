@@ -212,6 +212,14 @@ static inline void assert_div_to(const char* a, const char* b, const char* q,
   quiz_assert(quotient.treeIsIdenticalTo(CreateInteger(q)) &&
               remainder.treeIsIdenticalTo(CreateInteger(r)));
   reset_pools();
+  quiz_assert(
+      IntegerHandler::Quotient(CreateIntegerHandler(a), CreateIntegerHandler(b))
+          .treeIsIdenticalTo(CreateInteger(q)));
+  reset_pools();
+  quiz_assert(IntegerHandler::Remainder(CreateIntegerHandler(a),
+                                        CreateIntegerHandler(b))
+                  .treeIsIdenticalTo(CreateInteger(r)));
+  reset_pools();
 }
 
 QUIZ_CASE(pcj_integer_divide) {

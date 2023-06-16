@@ -164,12 +164,12 @@ int TableViewDataSource::nonMemoizedRowAfterCumulatedHeight(
   return nRows;
 }
 
-void TableViewDataSource::resetSizeMemoization(bool force) {
+void TableViewDataSource::resetSizeMemoization() {
   if (columnWidthManager()) {
-    columnWidthManager()->resetSizeMemoization(force);
+    columnWidthManager()->resetSizeMemoization(true);
   }
   if (rowHeightManager()) {
-    rowHeightManager()->resetSizeMemoization(force);
+    rowHeightManager()->resetSizeMemoization(true);
   }
 }
 

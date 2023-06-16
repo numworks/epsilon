@@ -77,8 +77,8 @@ class ListWithTopAndBottomController : public SelectableViewController,
 
   View* view() override { return &m_selectableListView; }
   void initView() override;
-  void resetSizeMemoization(bool force = true) override {
-    return m_outerDataSource.resetSizeMemoization(force);
+  void resetSizeMemoization() override {
+    return m_outerDataSource.resetSizeMemoization();
   }
   void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,

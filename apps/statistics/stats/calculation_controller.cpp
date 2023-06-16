@@ -218,8 +218,8 @@ int CalculationController::fixedNumberOfRows() const {
              : k_fixedMaxNumberOfRows - 1;
 }
 
-void CalculationController::resetSizeMemoization(bool force) {
-  DoublePairTableController::resetSizeMemoization(force);
+void CalculationController::resetSizeMemoization() {
+  DoublePairTableController::resetSizeMemoization();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     for (int j = 0; j < k_numberOfCalculations; j++) {
       m_memoizedCellContent[i][j] = NAN;

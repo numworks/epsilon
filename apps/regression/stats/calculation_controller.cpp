@@ -474,8 +474,8 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
   return maxNumberCoefficients;
 }
 
-void CalculationController::resetSizeMemoization(bool force) {
-  DoublePairTableController::resetSizeMemoization(force);
+void CalculationController::resetSizeMemoization() {
+  DoublePairTableController::resetSizeMemoization();
   for (int s = 0; s < k_numberOfSeriesTitleCells; s++) {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < k_numberOfDoubleBufferCalculations; j++) {

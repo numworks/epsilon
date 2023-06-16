@@ -111,10 +111,8 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
      * Do not parse for assignment to detect if there is a syntax error, since
      * some errors could be missed.
      * Sometimes the field needs to be parsed for assignment but this is
-     * done later, namely by ContinuousFunction::buildExpressionFromText.
-     */
-    Expression e =
-        Expression::Parse(buffer, layoutField->context(), true, false);
+     * done later, namely by ContinuousFunction::buildExpressionFromText. */
+    Expression e = Expression::Parse(buffer, layoutField->context());
     if (e.isUninitialized()) {
       // Unparsable expression
       app->displayWarning(I18n::Message::SyntaxError);

@@ -40,7 +40,6 @@ class EditExpressionController : public Escher::ViewController,
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Poincare::Layout layoutR,
                                    Ion::Events::Event event) override;
-  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 
@@ -72,7 +71,6 @@ class EditExpressionController : public Escher::ViewController,
   bool inputViewDidReceiveEvent(Ion::Events::Event event,
                                 bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char* text, Poincare::Layout layoutR);
-  bool inputViewDidAbortEditing(const char* text);
   void memoizeInput();
 
   char m_workingBuffer[k_layoutBufferMaxSize];

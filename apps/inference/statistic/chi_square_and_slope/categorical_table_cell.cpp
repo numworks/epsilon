@@ -205,12 +205,6 @@ bool InputCategoricalTableCell::recomputeDimensions() {
    * the InputCategoricalController */
   m_selectableTableView.reloadData(false);
   categoricalController()->selectableListView()->reloadData(false);
-  /* TODO the categoricalController provides a custom updateBarIndicator to
-   * adapt the outer scrollbar length to the size of the inner table. But in
-   * ScrollView::layoutSubviews, the indicators are layouted before the content
-   * and therefore at the time of the updateBarIndicator, the size of the inner
-   * table has not changed yet. We need to rework this. */
-  categoricalController()->selectableListView()->reloadData(false);
   return true;
 }
 

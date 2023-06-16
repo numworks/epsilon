@@ -180,8 +180,6 @@ void InputCategoricalController::viewWillAppear() {
   PrintValueInTextHolder(m_statistic->threshold(),
                          m_significanceCell.textField(), true, true);
   m_selectableListView.reloadData(false);
-  // See comment in recomputeDimensions
-  m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();
 }
 

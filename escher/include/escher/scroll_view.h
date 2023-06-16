@@ -18,7 +18,6 @@ class ScrollView : public View {
  public:
   ScrollView(View *contentView, ScrollViewDataSource *dataSource);
   KDSize minimalSizeForOptimalDisplay() const override;
-
   void setTopMargin(KDCoordinate m) { m_topMargin = m; }
   void setRightMargin(KDCoordinate m) { m_rightMargin = m; }
   void setBottomMargin(KDCoordinate m) { m_bottomMargin = m; }
@@ -47,6 +46,7 @@ class ScrollView : public View {
       return frame;
     }
     virtual void setBackgroundColor(KDColor c) {}
+    virtual bool layoutBeforeInnerView() const { return true; }
   };
 
   // Decorator is the base class and an empty decorator
@@ -68,6 +68,8 @@ class ScrollView : public View {
     ScrollViewVerticalBar *verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar *horizontalBar() { return &m_horizontalBar; }
     void setVisibility(bool visible) { m_visible = visible; }
+    // Draw the bar after the table to know its size
+    bool layoutBeforeInnerView() const override { return false; }
 
    private:
     ScrollViewVerticalBar m_verticalBar;
@@ -144,6 +146,8 @@ class ScrollView : public View {
     }
     const ScrollView *m_scrollView;
   };
+
+  KDRect layoutDecorator(bool force);
 
   ScrollViewDataSource *m_dataSource;
   View *m_contentView;

@@ -32,10 +32,11 @@ HighlightCell* ChainedExpressionsListController::reusableCell(int index,
   return &m_cells[index];
 }
 
-void ChainedExpressionsListController::initCellSize(Escher::TableView* view) {
-  ExpressionsListController::initCellSize(view);
+void ChainedExpressionsListController::initCellsAvailableWidth(
+    Escher::TableView* view) {
+  ExpressionsListController::initCellsAvailableWidth(view);
   if (m_tail) {
-    m_tail->initCellSize(view);
+    m_tail->initCellsAvailableWidth(view);
   }
 }
 

@@ -2,7 +2,7 @@
 
 namespace Escher {
 
-void ListViewDataSource::initCellSize(TableView* view) {
+void ListViewDataSource::initCellsAvailableWidth(TableView* view) {
   m_availableWidth =
       view->bounds().width() - view->rightMargin() - view->leftMargin();
 }

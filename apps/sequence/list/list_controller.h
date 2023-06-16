@@ -60,8 +60,6 @@ class ListController : public Shared::FunctionListController {
   constexpr static int k_maxNumberOfRows =
       3 * Shared::SequenceStore::k_maxNumberOfSequences;
 
-  void initCellSize(Escher::TableView* view) override {}
-
   void computeTitlesColumnWidth(bool forceMax = false);
   ListParameterController* parameterController() override {
     return &m_parameterController;

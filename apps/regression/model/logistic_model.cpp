@@ -60,6 +60,11 @@ double LogisticModel::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
+  if (a == 0.0) {
+    /* Avoids returning NAN if std::exp(-b * x) == Inf because value is too
+     * large. */
+    return c;
+  }
   return c / (1.0 + a * std::exp(-b * x));
 }
 

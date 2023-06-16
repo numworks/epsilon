@@ -505,6 +505,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       simplifyAndApproximateSolution(e, &exact, &approximate, true, context,
                                      m_complexFormat, angleUnit, unitFormat,
                                      symbolicComputation);
+      displayExactSolution = true;
     }
   }
   if (approximate.type() == ExpressionNode::Type::Nonreal) {

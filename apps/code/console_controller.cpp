@@ -296,8 +296,8 @@ void ConsoleController::listViewDidChangeSelectionAndDidScroll(
 bool ConsoleController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   assert(textField->isEditing());
-  return (textField->draftTextLength() > 0 &&
-          (event == Ion::Events::OK || event == Ion::Events::EXE));
+  return textField->draftTextLength() > 0 &&
+         TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField *textField,

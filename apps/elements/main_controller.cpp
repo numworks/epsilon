@@ -100,11 +100,6 @@ void MainController::textFieldDidStartEditing(
   }
 }
 
-bool MainController::textFieldShouldFinishEditing(
-    Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
 bool MainController::textFieldDidReceiveEvent(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   // Sto event needs to be handled here before AbstractTextField handles it.

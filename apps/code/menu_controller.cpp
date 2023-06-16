@@ -257,7 +257,7 @@ void MenuController::tableViewDidChangeSelectionAndDidScroll(
 
 bool MenuController::textFieldShouldFinishEditing(AbstractTextField *textField,
                                                   Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE ||
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          event == Ion::Events::Down || event == Ion::Events::Up;
 }
 

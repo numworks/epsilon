@@ -136,10 +136,9 @@ void ListController::layoutFieldDidChangeSize(LayoutField *layoutField) {
 }
 
 bool ListController::layoutFieldDidFinishEditing(LayoutField *layoutField,
-                                                 Poincare::Layout layout,
                                                  Ion::Events::Event event) {
   ExpressionModelListController::layoutFieldDidFinishEditing(layoutField,
-                                                             layout, event);
+                                                             event);
   reloadBrace();
   reloadButtonMessage();
   return true;

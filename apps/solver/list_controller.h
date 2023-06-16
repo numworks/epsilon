@@ -37,7 +37,6 @@ class ListController : public Shared::ExpressionModelListController,
   Escher::View* view() override { return &m_equationListView; }
   TELEMETRY_ID("List");
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
-                                   Poincare::Layout layout,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;

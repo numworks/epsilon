@@ -116,11 +116,11 @@ void EditExpressionController::layoutFieldDidHandleEvent(
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(
-    ::LayoutField *layoutField, Layout layoutR, Ion::Events::Event event) {
+    ::LayoutField *layoutField, Ion::Events::Event event) {
   Context *context = App::app()->localContext();
-  assert(!layoutR.isUninitialized());
-  layoutR.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
-                                    context);
+  Layout layout = layoutField->layout();
+  assert(!layout.isUninitialized());
+  layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);
   if (m_calculationStore
           ->push(m_workingBuffer, context, HistoryViewCell::Height)
           .pointer()) {

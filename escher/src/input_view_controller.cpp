@@ -48,12 +48,10 @@ bool InputViewController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
 }
 
 bool InputViewController::layoutFieldDidFinishEditing(
-    LayoutField* layoutField, Poincare::Layout layoutR,
-    Ion::Events::Event event) {
+    LayoutField* layoutField, Ion::Events::Event event) {
   if (m_successAction.perform(this)) {
     dismissModal();
-    m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, layoutR,
-                                                       event);
+    m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, event);
     return true;
   }
   return false;

@@ -30,7 +30,6 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
   bool layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(LayoutField* layoutField,
-                                   Poincare::Layout layoutR,
                                    Ion::Events::Event event) override;
   void layoutFieldDidAbortEditing(LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(LayoutField* layoutField) override;

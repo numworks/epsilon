@@ -510,8 +510,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
       m_layoutFieldDelegate->layoutFieldShouldFinishEditing(
           this, event)) {  // TODO use class method?
     setEditing(false);
-    if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, layout(),
-                                                           event)) {
+    if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
       // Reinit layout for next use
       clearLayout();
     } else {

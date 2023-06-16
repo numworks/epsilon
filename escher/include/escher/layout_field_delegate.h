@@ -18,7 +18,6 @@ class LayoutFieldDelegate : public ContextProvider {
   virtual bool layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                           Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidFinishEditing(LayoutField* layoutField,
-                                           Poincare::Layout layoutR,
                                            Ion::Events::Event event) {
     return false;
   }

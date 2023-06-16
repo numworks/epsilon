@@ -104,10 +104,10 @@ void ResidualPlotController::viewWillAppear() {
     yMax = std::max(yMax, y);
   }
   assert(xMin <= xMax && yMin <= yMax);
+  updateCursor();
   m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(),
                     m_bannerView.bounds().height());
-
-  updateCursor();
+  m_curveView.reload();
 }
 
 }  // namespace Regression

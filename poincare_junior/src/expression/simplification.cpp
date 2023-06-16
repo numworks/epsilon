@@ -88,7 +88,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     return true;
   }
   if (IsRational(v)) {
-    return SimplifyRNE(u);
+    return SimplifyRationalTree(u);
     ;
   }
   if (!IsInteger(n)) {  // TODO replace by assert
@@ -188,7 +188,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
         u2.type() != BlockType::Multiplication) {
       // SPRDREC1
       if (IsConstant(u1) && IsConstant(u2)) {
-        SimplifyRNE(l);
+        SimplifyRationalTree(l);
         if (l->type() == BlockType::One) {
           *l = l->replaceNodeByNode(KMult());
           return true;
@@ -333,6 +333,7 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
   return true;
 }
 
+// The term of 2ab is ab
 EditionReference PushTerm(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
@@ -349,6 +350,7 @@ EditionReference PushTerm(Node u) {
   return c;
 }
 
+// The constant of 2ab is 2
 EditionReference PushConstant(Node u) {
   if (IsNumber(u)) {
     return P_UNDEF();
@@ -376,7 +378,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     if (u1.type() != BlockType::Addition && u2.type() != BlockType::Addition) {
       // SPRDREC1
       if (IsConstant(u1) && IsConstant(u2)) {
-        SimplifyRNE(l);
+        SimplifyRationalTree(l);
         if (l->type() == BlockType::Zero) {
           *l = l->replaceNodeByNode(KAdd());
           return true;
@@ -508,7 +510,7 @@ bool Simplification::SimplifySum(EditionReference* u) {
   return true;
 }
 
-bool Simplification::SimplifyRNERec(EditionReference* u) {
+bool Simplification::SimplifyRationalTreeRec(EditionReference* u) {
   if (IsInteger(*u)) {
     return false;
   }
@@ -521,19 +523,19 @@ bool Simplification::SimplifyRNERec(EditionReference* u) {
   }
   if (u->numberOfChildren() == 1) {
     *u = u->replaceNodeByTree(u->childAtIndex(0));
-    return SimplifyRNERec(u);
+    return SimplifyRationalTreeRec(u);
   }
   if (u->numberOfChildren() == 2) {
     if (u->type() == BlockType::Addition ||
         u->type() == BlockType::Multiplication) {
       EditionReference v = u->childAtIndex(0);
-      SimplifyRNERec(&v);
+      SimplifyRationalTreeRec(&v);
       if (IsUndef(v)) {
         *u = u->replaceTreeByNode(KUndef);
         return true;
       }
       EditionReference w = u->childAtIndex(1);
-      SimplifyRNERec(&w);
+      SimplifyRationalTreeRec(&w);
       if (IsUndef(w)) {
         *u = u->replaceTreeByNode(KUndef);
         return true;
@@ -550,7 +552,7 @@ bool Simplification::SimplifyRNERec(EditionReference* u) {
     }
     if (u->type() == BlockType::Power) {
       EditionReference v = u->childAtIndex(0);
-      SimplifyRNERec(&v);
+      SimplifyRationalTreeRec(&v);
       if (IsUndef(v)) {
         *u = u->replaceTreeByNode(KUndef);
         return true;
@@ -563,8 +565,8 @@ bool Simplification::SimplifyRNERec(EditionReference* u) {
   assert(false);
 }
 
-bool Simplification::SimplifyRNE(EditionReference* u) {
-  bool modified = SimplifyRNERec(u);
+bool Simplification::SimplifyRationalTree(EditionReference* u) {
+  bool modified = SimplifyRationalTreeRec(u);
   return IsUndef(*u) || SimplifyRational(u) || modified;
 }
 

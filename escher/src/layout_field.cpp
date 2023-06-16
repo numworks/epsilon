@@ -506,9 +506,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     *shouldUpdateCursor = false;
     return true;
   }
-  if (isEditing() && m_layoutFieldDelegate &&
-      m_layoutFieldDelegate->layoutFieldShouldFinishEditing(
-          this, event)) {  // TODO use class method?
+  if (isEditing() && m_layoutFieldDelegate && shouldFinishEditing(event)) {
     setEditing(false);
     if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
       // Reinit layout for next use

@@ -110,7 +110,12 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
 
 bool EditExpressionController::layoutFieldDidHandleEvent(
     Escher::LayoutField *layoutField, bool returnValue, bool layoutDidChange) {
-  return inputViewDidHandleEvent(returnValue);
+  /* Memoize on all handled event, even if the text did not change, to properly
+   * update the cursor position. */
+  if (returnValue) {
+    memoizeInput();
+  }
+  return returnValue;
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(
@@ -191,15 +196,6 @@ bool EditExpressionController::inputViewDidReceiveEvent(
     return true;
   }
   return false;
-}
-
-bool EditExpressionController::inputViewDidHandleEvent(bool returnValue) {
-  /* Memoize on all handled event, even if the text did not change, to properly
-   * update the cursor position. */
-  if (returnValue) {
-    memoizeInput();
-  }
-  return returnValue;
 }
 
 bool EditExpressionController::inputViewDidFinishEditing(const char *text,

@@ -175,7 +175,7 @@ void MultPopFirst(EditionReference* l) {
   NAry::RemoveChildAtIndex(*l, 0);
 }
 
-void MultPush(EditionReference* l, EditionReference* e) {
+void MultPushFirst(EditionReference* l, EditionReference* e) {
   assert(l->type() == BlockType::Multiplication);
   NAry::AddChildAtIndex(*l, *e, 0);
 }
@@ -287,7 +287,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     MultPopFirst(q);
     MergeProducts(p, q);
     h = h.replaceTreeByTree(h.childAtIndex(0));
-    MultPush(p, &h);
+    MultPushFirst(p, &h);
     return true;
   }
   if (Compare(h.childAtIndex(0), p1) == 0) {
@@ -296,7 +296,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     h.removeTree();
     MultPopFirst(p);
     MergeProducts(p, q);
-    MultPush(p, &pc);
+    MultPushFirst(p, &pc);
     return true;
   }
   if (Compare(h.childAtIndex(0), q1) == 0) {
@@ -305,7 +305,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     h.removeTree();
     MultPopFirst(q);
     MergeProducts(p, q);
-    MultPush(p, &qc);
+    MultPushFirst(p, &qc);
     return true;
   }
   assert(false);
@@ -363,7 +363,7 @@ void AddPopFirst(EditionReference* l) {
   NAry::RemoveChildAtIndex(*l, 0);
 }
 
-void AddPush(EditionReference* l, EditionReference* e) {
+void AddPushFirst(EditionReference* l, EditionReference* e) {
   assert(l->type() == BlockType::Addition);
   NAry::AddChildAtIndex(*l, *e, 0);
 }
@@ -471,7 +471,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     AddPopFirst(q);
     MergeSums(p, q);
     h = h.replaceTreeByTree(h.childAtIndex(0));
-    AddPush(p, &h);
+    AddPushFirst(p, &h);
     return true;
   }
   if (Compare(h.childAtIndex(0), p1) == 0) {
@@ -480,7 +480,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     h.removeTree();
     AddPopFirst(p);
     MergeSums(p, q);
-    AddPush(p, &pc);
+    AddPushFirst(p, &pc);
     return true;
   }
   if (Compare(h.childAtIndex(0), q1) == 0) {
@@ -489,7 +489,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     h.removeTree();
     AddPopFirst(q);
     MergeSums(p, q);
-    AddPush(p, &qc);
+    AddPushFirst(p, &qc);
     return true;
   }
   assert(false);

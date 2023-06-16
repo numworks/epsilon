@@ -117,7 +117,19 @@ void EditExpressionController::layoutFieldDidHandleEvent(
 
 bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField *layoutField, Layout layoutR, Ion::Events::Event event) {
-  return inputViewDidFinishEditing(nullptr, layoutR);
+  Context *context = App::app()->localContext();
+  assert(!layoutR.isUninitialized());
+  layoutR.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
+                                    context);
+  if (m_calculationStore
+          ->push(m_workingBuffer, context, HistoryViewCell::Height)
+          .pointer()) {
+    m_historyController->reload();
+    m_contentView.layoutField()->clearAndSetEditing(true);
+    telemetryReportEvent("Input", m_workingBuffer);
+    return true;
+  }
+  return false;
 }
 
 void EditExpressionController::layoutFieldDidChangeSize(
@@ -185,27 +197,6 @@ bool EditExpressionController::inputViewDidReceiveEvent(
   if (event == Ion::Events::Clear && m_contentView.layoutField()->isEmpty()) {
     m_calculationStore->deleteAll();
     m_historyController->reload();
-    return true;
-  }
-  return false;
-}
-
-bool EditExpressionController::inputViewDidFinishEditing(const char *text,
-                                                         Layout layoutR) {
-  Context *context = App::app()->localContext();
-  if (layoutR.isUninitialized()) {
-    assert(text);
-    strlcpy(m_workingBuffer, text, k_cacheBufferSize);
-  } else {
-    layoutR.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
-                                      context);
-  }
-  if (m_calculationStore
-          ->push(m_workingBuffer, context, HistoryViewCell::Height)
-          .pointer()) {
-    m_historyController->reload();
-    m_contentView.layoutField()->clearAndSetEditing(true);
-    telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }
   return false;

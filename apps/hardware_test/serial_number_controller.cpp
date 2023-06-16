@@ -12,10 +12,7 @@ void SerialNumberController::viewWillAppear() {
 
 bool SerialNumberController::handleEvent(Ion::Events::Event event) {
   // Do not handle OnOff event to let the apps container redraw the screen
-  if (event == Ion::Events::OnOff) {
-    return false;
-  }
-  return true;
+  return event != Ion::Events::OnOff;
 }
 
 }  // namespace HardwareTest

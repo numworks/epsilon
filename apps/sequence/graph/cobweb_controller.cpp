@@ -42,13 +42,8 @@ const char* CobwebController::title() {
 }
 
 bool CobwebController::handleLeftRightEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Right && updateStep(1)) {
-    return true;
-  }
-  if (event == Ion::Events::Left && updateStep(-1)) {
-    return true;
-  }
-  return false;
+  return (event == Ion::Events::Right && updateStep(1)) ||
+         (event == Ion::Events::Left && updateStep(-1));
 }
 
 void CobwebController::viewWillAppear() {

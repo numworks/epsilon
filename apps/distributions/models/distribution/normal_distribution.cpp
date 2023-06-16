@@ -10,16 +10,9 @@ using namespace Shared;
 namespace Distributions {
 
 bool NormalDistribution::authorizedParameterAtIndex(double x, int index) const {
-  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  if (index == 0) {
-    return true;
-  }
-  if (x <= DBL_MIN || std::fabs(m_parameters[0] / x) > k_maxRatioMuSigma) {
-    return false;
-  }
-  return true;
+  return TwoParametersDistribution::authorizedParameterAtIndex(x, index) &&
+         (index == 0 ||
+          (x > DBL_MIN && std::fabs(m_parameters[0] / x) <= k_maxRatioMuSigma));
 }
 
 void NormalDistribution::setParameterAtIndex(double f, int index) {

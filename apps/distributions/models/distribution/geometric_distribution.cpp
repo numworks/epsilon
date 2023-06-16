@@ -10,13 +10,8 @@ namespace Distributions {
 bool GeometricDistribution::authorizedParameterAtIndex(double x,
                                                        int index) const {
   assert(index == 0);
-  if (!OneParameterDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  if (x <= 0.0 || x > 1.0) {
-    return false;
-  }
-  return true;
+  return OneParameterDistribution::authorizedParameterAtIndex(x, index) &&
+         x > 0.0 && x <= 1.0;
 }
 
 float GeometricDistribution::privateComputeXMax() const {

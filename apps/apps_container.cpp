@@ -342,10 +342,7 @@ bool AppsContainer::updateBatteryState() {
   bool batteryLevelUpdated = m_window.updateBatteryLevel();
   bool pluggedStateUpdated = m_window.updatePluggedState();
   bool chargingStateUpdated = m_window.updateIsChargingState();
-  if (batteryLevelUpdated || pluggedStateUpdated || chargingStateUpdated) {
-    return true;
-  }
-  return false;
+  return batteryLevelUpdated || pluggedStateUpdated || chargingStateUpdated;
 }
 
 void AppsContainer::refreshPreferences() { m_window.refreshPreferences(); }

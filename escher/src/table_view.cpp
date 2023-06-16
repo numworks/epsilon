@@ -15,13 +15,6 @@ TableView::TableView(TableViewDataSource* dataSource,
   m_decorator.setVisibility(true);
 }
 
-void TableView::initSize(KDRect rect) {
-  if (bounds().width() <= 0 || bounds().height() <= 0) {
-    setSize(KDSize(rect.width(), rect.height()));
-    dataSource()->initCellsAvailableWidth(this);
-  }
-}
-
 void TableView::reloadVisibleCellsAtColumn(int column) {
   // Reload visible cells of the selected column
   int firstVisibleCol = firstDisplayedColumn();

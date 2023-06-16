@@ -19,6 +19,7 @@ class TableView : public ScrollView {
   void setVerticalCellOverlap(KDCoordinate o) {
     m_contentView.setVerticalCellOverlap(o);
   }
+
   int firstDisplayedRow() const { return m_contentView.rowsScrollingOffset(); }
   int firstDisplayedColumn() const {
     return m_contentView.columnsScrollingOffset();

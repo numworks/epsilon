@@ -161,6 +161,32 @@ void ScrollView::layoutSubviews(bool force) {
   if (bounds().isEmpty()) {
     return;
   }
+
+  KDRect innerFrame = bounds();
+  if (decorator()->layoutBeforeInnerView()) {
+    innerFrame = layoutDecorator(force);
+  }
+
+  setChildFrame(&m_innerView, innerFrame, force);
+  KDPoint offset = contentOffset()
+                       .opposite()
+                       .translatedBy({m_leftMargin, m_topMargin})
+                       .relativeTo(innerFrame.origin());
+  KDRect contentFrame = KDRect(offset, contentSize());
+  m_innerView.setChildFrame(m_contentView, contentFrame, force);
+
+  if (!decorator()->layoutBeforeInnerView()) {
+    layoutDecorator(force);
+  }
+}
+
+void ScrollView::setContentOffset(KDPoint offset) {
+  if (m_dataSource->setOffset(offset)) {
+    layoutSubviews(true);
+  }
+}
+
+KDRect ScrollView::layoutDecorator(bool force) {
   KDRect r1 = KDRectZero;
   KDRect r2 = KDRectZero;
   KDRect innerFrame = decorator()->layoutIndicators(
@@ -172,19 +198,7 @@ void ScrollView::layoutSubviews(bool force) {
   if (!r2.isEmpty()) {
     markRectAsDirty(r2);
   }
-  setChildFrame(&m_innerView, innerFrame, force);
-  KDPoint offset = contentOffset()
-                       .opposite()
-                       .translatedBy({m_leftMargin, m_topMargin})
-                       .relativeTo(innerFrame.origin());
-  KDRect contentFrame = KDRect(offset, contentSize());
-  m_innerView.setChildFrame(m_contentView, contentFrame, force);
-}
-
-void ScrollView::setContentOffset(KDPoint offset) {
-  if (m_dataSource->setOffset(offset)) {
-    layoutSubviews(true);
-  }
+  return innerFrame;
 }
 
 void ScrollView::InnerView::drawRect(KDContext *ctx, KDRect rect) const {

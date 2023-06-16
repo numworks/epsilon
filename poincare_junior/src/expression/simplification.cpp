@@ -576,6 +576,18 @@ bool Simplification::ShallowAdvancedReduction(EditionReference* reference,
 // Reverse most system projections to display better expressions
 bool Simplification::ShallowBeautify(EditionReference* reference,
                                      void* context) {
+  ProjectionContext* projectionContext =
+      static_cast<ProjectionContext*>(context);
+  if (reference->type() == BlockType::Trig) {
+    const Node k_angles[3] = {KPlaceholder<A>(),
+                              KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
+                              KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
+    EditionReference child(reference->childAtIndex(0));
+    child.matchAndReplace(
+        KPlaceholder<A>(),
+        k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
+    SystematicReduce(&child);
+  }
   return
       // A + B? + (-1)*C + D?-> ((A + B) - C) + D
       reference->matchAndReplace(
@@ -637,7 +649,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
 
 bool Simplification::DeepSystemProjection(EditionReference* reference,
                                           ProjectionContext projectionContext) {
-  if (projectionContext == ProjectionContext::ApproximateToFloat) {
+  if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
     *reference = Approximation::ReplaceWithApproximation(*reference);
   }
   return ApplyShallowInDepth(reference, ShallowSystemProjection,
@@ -651,12 +663,25 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
   /* TODO: Most of the projections could be optimized by simply replacing and
    * inserting nodes. This optimization could be applied in matchAndReplace. See
    * comment in matchAndReplace. */
-  if (*static_cast<ProjectionContext*>(context) ==
-          ProjectionContext::NumbersToFloat &&
+  ProjectionContext* projectionContext =
+      static_cast<ProjectionContext*>(context);
+  if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
       ref->block()->isInteger()) {
     *ref = Approximation::ReplaceWithApproximation(*ref);
     return true;
   }
+
+  if (ref->block()->isOfType(
+          {BlockType::Sine, BlockType::Cosine, BlockType::Tangent})) {
+    const Node k_angles[3] = {KPlaceholder<A>(),
+                              KMult(KPlaceholder<A>(), π_e, KPow(180_e, -1_e)),
+                              KMult(KPlaceholder<A>(), π_e, KPow(200_e, -1_e))};
+    EditionReference(ref->childAtIndex(0))
+        .matchAndReplace(
+            KPlaceholder<A>(),
+            k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
+  }
+
   /* All replaced structure do not not need further shallow projection.
    * Operator || only is used. */
   return

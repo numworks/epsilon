@@ -139,13 +139,28 @@ QUIZ_CASE(pcj_simplification_projection) {
 
   EditionReference ref2(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
   Simplification::DeepSystemProjection(
-      &ref2, Simplification::ProjectionContext::NumbersToFloat);
+      &ref2, Simplification::ProjectionContext(
+                 Simplification::ComplexFormat::Cartesian,
+                 Simplification::AngleUnit::Radian,
+                 Simplification::Strategy::NumbersToFloat));
   assert_trees_are_equal(
       ref2,
       KAdd(KTrig(KAdd(2065.0_e, KMult(-1.0_e, 2065.0_e)), 0.0_e), KExp("x"_e)));
   Simplification::DeepSystemProjection(
-      &ref2, Simplification::ProjectionContext::ApproximateToFloat);
+      &ref2, Simplification::ProjectionContext(
+                 Simplification::ComplexFormat::Cartesian,
+                 Simplification::AngleUnit::Radian,
+                 Simplification::Strategy::ApproximateToFloat));
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
+
+  EditionReference ref3(KCos(100_e));
+  Simplification::DeepSystemProjection(
+      &ref3, Simplification::ProjectionContext(
+                 Simplification::ComplexFormat::Cartesian,
+                 Simplification::AngleUnit::Degree,
+                 Simplification::Strategy::Default));
+  assert_trees_are_equal(ref3,
+                         KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
 }
 
 QUIZ_CASE(pcj_simplification_beautify) {
@@ -156,6 +171,14 @@ QUIZ_CASE(pcj_simplification_beautify) {
   assert_trees_are_equal(
       ref1, KAdd(KSub(KAdd(KCos(3_e), KSin("x"_e)), KPow(5_e, "y"_e)),
                  KLogarithm(2_e, 4_e)));
+
+  EditionReference ref2(KTrig(π_e, 1_e));
+  Simplification::DeepBeautify(&ref2,
+                               Simplification::ProjectionContext(
+                                   Simplification::ComplexFormat::Cartesian,
+                                   Simplification::AngleUnit::Gradian,
+                                   Simplification::Strategy::Default));
+  assert_trees_are_equal(ref2, KSin(200_e));
 }
 
 void simplifies_to(const char* input, const char* output) {

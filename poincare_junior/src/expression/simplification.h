@@ -8,6 +8,21 @@ namespace PoincareJ {
 
 class Simplification {
  public:
+  enum class ComplexFormat { Real, Cartesian, Polar };
+  enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
+  enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
+  class ProjectionContext {
+   public:
+    ProjectionContext(ComplexFormat complexFormat, AngleUnit angleUnit,
+                      Strategy strategy)
+        : m_complexFormat(complexFormat),
+          m_angleUnit(angleUnit),
+          m_strategy(strategy) {}
+    ComplexFormat m_complexFormat;
+    AngleUnit m_angleUnit;
+    Strategy m_strategy;
+  };
+
   static bool Simplify(EditionReference *reference);
   static bool AdvancedReduction(EditionReference *reference);
   static bool ShallowAdvancedReduction(EditionReference *reference,
@@ -15,8 +30,12 @@ class Simplification {
 
   static bool ShallowBeautify(EditionReference *reference,
                               void *context = nullptr);
-  static bool DeepBeautify(EditionReference *reference) {
-    return ApplyShallowInDepth(reference, ShallowBeautify);
+  static bool DeepBeautify(EditionReference *reference,
+                           ProjectionContext projectionContext =
+                               ProjectionContext(ComplexFormat::Cartesian,
+                                                 AngleUnit::Radian,
+                                                 Strategy::Default)) {
+    return ApplyShallowInDepth(reference, ShallowBeautify, &projectionContext);
   }
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
@@ -36,14 +55,10 @@ class Simplification {
                             std::size(k_algebraicExpandOperations));
   }
 
-  enum class ProjectionContext {
-    Default,
-    NumbersToFloat,
-    ApproximateToFloat,
-  };
   static bool DeepSystemProjection(
       EditionReference *reference,
-      ProjectionContext projectionContext = ProjectionContext::Default);
+      ProjectionContext projectionContext = ProjectionContext(
+          ComplexFormat::Cartesian, AngleUnit::Radian, Strategy::Default));
   static bool ShallowSystemProjection(EditionReference *reference,
                                       void *projectionContext);
 

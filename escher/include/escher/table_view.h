@@ -43,7 +43,6 @@ class TableView : public ScrollView {
   void reloadCellAtLocation(int col, int row, bool forceSetFrame = false) {
     m_contentView.reloadCellAtLocation(col, row, forceSetFrame);
   }
-  void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
   void hideScrollBars() { m_decorator.setVisibility(false); }
   BarDecorator *decorator() override { return &m_decorator; }

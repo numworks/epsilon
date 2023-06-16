@@ -20,7 +20,6 @@ class TableViewDataSource {
   constexpr static KDCoordinate k_defaultRowSeparator =
       Escher::Metric::CommonMenuMargin + Escher::Metric::CellSeparatorThickness;
 
-  virtual void initCellsAvailableWidth(TableView* view) {}
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
   virtual void fillCellForLocation(HighlightCell* cell, int column, int row);

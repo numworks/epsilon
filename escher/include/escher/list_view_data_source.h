@@ -11,7 +11,7 @@ class ListViewDataSource : public TableViewDataSource {
   friend class ListWithTopAndBottomDataSource;
 
  public:
-  void initCellsAvailableWidth(TableView* view) override;
+  virtual void initCellsAvailableWidth(TableView* view);
   /* reusableCellCount have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   int reusableCellCount(int type) override { return numberOfRows(); }

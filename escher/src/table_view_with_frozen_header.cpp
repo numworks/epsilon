@@ -37,7 +37,7 @@ void TableViewWithFrozenHeader::layoutSubviews(bool force) {
   setChildFrame(&m_headerView, KDRect(0, 0, bounds().width(), titleHeight),
                 force);
   /* SelectableTableView must be given a width before computing height. */
-  m_selectableTableView->initSize(bounds());
+  m_selectableTableView->setSize(bounds().size());
   KDCoordinate tableHeight =
       m_selectableTableView->minimalSizeForOptimalDisplay().height();
   setChildFrame(m_selectableTableView,

@@ -59,7 +59,6 @@ class ListController : public Shared::FunctionListController {
   Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
     return m_editableCell.expressionCell();
   }
-  void initCellSize(Escher::TableView* view) override {}
 
   void computeTitlesColumnWidth(bool forceMax = false);
   ListParameterController* parameterController() override {

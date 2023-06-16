@@ -495,25 +495,26 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *shouldRedrawLayout,
                                      bool *shouldUpdateCursor) {
-  if (m_layoutFieldDelegate &&
-      m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
-    return true;
+  if (m_layoutFieldDelegate) {
+    if (m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
+      return true;
+    }
+    if (isEditing() && shouldFinishEditing(event)) {
+      setEditing(false);
+      if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
+        // Reinit layout for next use
+        clearLayout();
+      } else {
+        setEditing(true);
+      }
+      return true;
+    }
   }
   if (handleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
     }
     *shouldUpdateCursor = false;
-    return true;
-  }
-  if (isEditing() && m_layoutFieldDelegate && shouldFinishEditing(event)) {
-    setEditing(false);
-    if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
-      // Reinit layout for next use
-      clearLayout();
-    } else {
-      setEditing(true);
-    }
     return true;
   }
   /* if move event was not caught neither by privateHandleMoveEvent nor by

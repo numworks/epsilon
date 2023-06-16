@@ -35,6 +35,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/vertical_offset_layout.cpp \
   layout.cpp \
   memory/cache_pool.cpp \
+  memory/context.cpp \
   memory/edition_pool.cpp \
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
@@ -49,6 +50,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 tests_src += $(addprefix poincare_junior/test/,\
   approximation.cpp \
   calculation.cpp \
+  context.cpp \
   elementary_tree_manipulations.cpp \
   expression_comparison.cpp \
   layout.cpp \

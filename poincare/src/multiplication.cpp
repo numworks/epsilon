@@ -1568,10 +1568,7 @@ bool Multiplication::TermHasNumeralExponent(const Expression &e) {
   if (e.type() != ExpressionNode::Type::Power) {
     return true;
   }
-  if (e.childAtIndex(1).isNumber()) {
-    return true;
-  }
-  return false;
+  return e.childAtIndex(1).isNumber();
 }
 
 bool Multiplication::TermIsPowerOfRationals(const Expression &e) {

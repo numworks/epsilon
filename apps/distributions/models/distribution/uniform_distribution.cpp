@@ -26,16 +26,8 @@ float UniformDistribution::evaluateAtAbscissa(float t) const {
 
 bool UniformDistribution::authorizedParameterAtIndex(double x,
                                                      int index) const {
-  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  if (index == 0) {
-    return true;
-  }
-  if (m_parameters[0] > x) {
-    return false;
-  }
-  return true;
+  return TwoParametersDistribution::authorizedParameterAtIndex(x, index) &&
+         (index == 0 || m_parameters[0] <= x);
 }
 
 void UniformDistribution::setParameterAtIndex(double f, int index) {

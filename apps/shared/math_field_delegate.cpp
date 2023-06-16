@@ -147,10 +147,7 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
       return true;
     }
   }
-  if (fieldDidReceiveEvent(layoutField, layoutField, event)) {
-    return true;
-  }
-  return false;
+  return fieldDidReceiveEvent(layoutField, layoutField, event);
 }
 
 MathTextFieldDelegate *MathTextFieldDelegate::Default() {
@@ -175,10 +172,7 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
       return true;
     }
   }
-  if (fieldDidReceiveEvent(textField, textField, event)) {
-    return true;
-  }
-  return false;
+  return fieldDidReceiveEvent(textField, textField, event);
 }
 
 template <typename T>

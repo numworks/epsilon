@@ -49,10 +49,7 @@ bool SignificanceTest::ValidThreshold(double p) {
 
 bool SignificanceTest::InitializeDistribution(Statistic* statistic,
                                               DistributionType type) {
-  if (type == statistic->distributionType()) {
-    return false;
-  }
-  return true;
+  return type != statistic->distributionType();
 }
 
 /* OneMean */

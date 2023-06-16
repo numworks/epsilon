@@ -29,10 +29,7 @@ bool NthRootLayoutNode::isSquareRoot() const {
     return true;
   }
   assert((const_cast<NthRootLayoutNode *>(this))->indexLayout() != nullptr);
-  if ((const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty()) {
-    return true;
-  }
-  return false;
+  return (const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty();
 }
 
 int NthRootLayoutNode::indexAfterHorizontalCursorMove(

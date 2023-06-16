@@ -17,6 +17,8 @@ void assert_no_match(Node source, Node pattern) {
 // TODO : Factorize more tests with assert_match_and_create
 void assert_match_and_create(Node source, Node pattern, Node structure,
                              Node output) {
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
+  int numberOfTrees = editionPool->numberOfTrees();
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(pattern, source, &ctx));
   // Also test with an already matching context
@@ -31,6 +33,8 @@ void assert_match_and_create(Node source, Node pattern, Node structure,
   replacedSourceClone.matchAndReplace(pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone.removeTree();
+  // Nothing has leaked
+  quiz_assert(numberOfTrees == editionPool->numberOfTrees());
 }
 
 QUIZ_CASE(pcj_context) {
@@ -80,6 +84,10 @@ QUIZ_CASE(pcj_match_n_ary) {
   assert_no_match(
       KMult(KAdd(1_e, 2_e, 3_e), KAdd(1_e, 2_e)),
       KMult(KAdd(KAnyTreesPlaceholder<A>()), KAdd(KPlaceholder<A>())));
+
+  assert_match_and_create(KAdd(1_e),
+                          KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
+                          KAdd(KPlaceholder<B>()), 0_e);
 
   assert_no_match(KAdd(1_e, 2_e, 3_e, 4_e),
                   KAdd(KAnyTreesPlaceholder<A>(), 3_e, KPlaceholder<B>(), 4_e));

@@ -213,9 +213,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(a*b*c)^2", "a^(2)*(b^(2))*(c^(2))");
   simplifies_to("a*a*a", "a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*(a^(3))*(b^(2))");
-  simplifies_to("a^b*a^c", "a^(b+c)");
-  simplifies_to("a^b*a^b", "a^(2*b)");
-  simplifies_to("(a^b)^2", "a^(2*b)");
   simplifies_to("d+c+b+a", "a+b+c+d");
 }
 

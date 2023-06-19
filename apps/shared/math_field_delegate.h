@@ -10,10 +10,6 @@
 namespace Shared {
 
 class AbstractMathFieldDelegate {
- public:
-  virtual CodePoint XNT();
-  bool handleXNT(Escher::EditableField* field);
-
  protected:
   virtual bool isAcceptableExpression(const Poincare::Expression expression);
   bool isAcceptableText(const char* text);
@@ -21,6 +17,8 @@ class AbstractMathFieldDelegate {
                                         bool replaceAns,
                                         Poincare::Expression ansExpression,
                                         Poincare::Context* context);
+  virtual CodePoint XNT();
+  bool handleXNT(Escher::EditableField* field);
 };
 
 class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,

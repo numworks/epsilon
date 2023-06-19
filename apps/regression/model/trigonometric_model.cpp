@@ -79,8 +79,8 @@ double TrigonometricModel::partialDerivate(double* modelCoefficients,
 }
 
 // If (x2, y2) was an extremum, update xExtremum and yExtremum
-bool checkExtremum(double x2, double y2, int lastExtremum, double* xExtremum,
-                   double* yExtremum) {
+static bool checkExtremum(double x2, double y2, int lastExtremum,
+                          double* xExtremum, double* yExtremum) {
   assert(lastExtremum >= 2);
   if (lastExtremum != 2) {
     return false;
@@ -91,8 +91,8 @@ bool checkExtremum(double x2, double y2, int lastExtremum, double* xExtremum,
 }
 
 // If lower < higher, update xMinMax and yMinMax with x and y
-void updateMinMax(double lower, double higher, double x, double y,
-                  double* xMinMax, double* yMinMax) {
+static void updateMinMax(double lower, double higher, double x, double y,
+                         double* xMinMax, double* yMinMax) {
   if (lower < higher) {
     *xMinMax = x;
     *yMinMax = y;
@@ -103,9 +103,9 @@ void updateMinMax(double lower, double higher, double x, double y,
  * - minimum extrema: x(i) having y(i-2) > y(i-1) > y(i) < y(i+1) < y(i+2)
  * - maximum extrema: x(i) having y(i-2) < y(i-1) < y(i) > y(i+1) > y(i+2)
  * If one isn't found, return series min and max */
-void findExtrema(double* xMinExtremum, double* xMaxExtremum,
-                 double* yMinExtremum, double* yMaxExtremum, Store* store,
-                 int series) {
+static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
+                        double* yMinExtremum, double* yMaxExtremum,
+                        Store* store, int series) {
   int numberOfPairs = store->numberOfPairsOfSeries(series);
   assert(numberOfPairs >= 3);
   // Compute values at index 0 and 1

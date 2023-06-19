@@ -391,16 +391,15 @@ bool AbstractTextField::privateHandleEventWhileEditing(
       reinitDraftTextBuffer();
       resetSelection();
       resetScroll();
-      return true;
+    } else {
+      setEditing(true);
     }
-    setEditing(true);
     return true;
   }
 
   /* If a move event was not caught before, we handle it here to avoid bubbling
    * the event up. */
-  if (event == Ion::Events::Up || event == Ion::Events::Down ||
-      event == Ion::Events::Left || event == Ion::Events::Right) {
+  if (event.isMoveEvent()) {
     return true;
   }
 

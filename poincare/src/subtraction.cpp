@@ -67,10 +67,31 @@ Expression Subtraction::shallowReduce(ReductionContext reductionContext) {
   if (!e.isUninitialized()) {
     return e;
   }
-  Expression m =
-      Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
-  Addition a = Addition::Builder(childAtIndex(0), m);
-  m = m.shallowReduce(reductionContext);
+  Expression secondChild = childAtIndex(1);
+  if (secondChild.type() == ExpressionNode::Type::Addition) {
+    /* In Addition::shallowReduce, the addition is not reduced if its parent is
+     * a Subtraction, to avoid miscomputing a common denominator. This results
+     * in the second child not being yet reduced. This could cause problem
+     * when reducing the multiplication `(-1) * secondChild` since all
+     * children of multiplication should be reduced before reducing it. So
+     * instead, each child of the addition is multiplied by -1 and reduced.
+     * Example: `(A+B)-(C+D)` is reduced into `(A+B)+((-1*C)+(-1*D))`instead of
+     * `(A+B)+(-1*(C+D))`
+     *  */
+    int n = secondChild.numberOfChildren();
+    for (int i = 0; i < n; i++) {
+      Expression additionTerm = secondChild.childAtIndex(i);
+      Multiplication m = Multiplication::Builder(Rational::Builder(-1));
+      secondChild.replaceChildAtIndexInPlace(i, m);
+      m.addChildAtIndexInPlace(additionTerm, 1, 1);
+      m.shallowReduce(reductionContext);
+    }
+  } else {
+    Expression m = Multiplication::Builder(Rational::Builder(-1), secondChild);
+    replaceChildAtIndexInPlace(1, m);
+    m.shallowReduce(reductionContext);
+  }
+  Addition a = Addition::Builder(childAtIndex(0), childAtIndex(1));
   replaceWithInPlace(a);
   return a.shallowReduce(reductionContext);
 }

@@ -150,28 +150,22 @@ bool MainController::textFieldDidAbortEditing(
   return false;
 }
 
-bool MainController::textFieldDidHandleEvent(
-    Escher::AbstractTextField* textField, bool returnValue,
-    bool textDidChange) {
-  if (textDidChange) {
-    if (textField->isEditing()) {
-      if (textField->draftTextLength() == 0) {
-        textField->setEditing(false);
-        endElementSearch(
-            App::app()->elementsViewDataSource()->previousElement());
-      } else if (textField->cursorAtEndOfText()) {
-        /* Update suggestion text */
-        ElementsViewDataSource* dataSource =
-            App::app()->elementsViewDataSource();
-        m_view.bannerView()->textField()->setSuggestion(
-            dataSource->suggestedElementName());
-      } else {
-        m_view.bannerView()->textField()->setSuggestion(nullptr);
-      }
+void MainController::textFieldDidHandleEvent(
+    Escher::AbstractTextField* textField) {
+  if (textField->isEditing()) {
+    if (textField->draftTextLength() == 0) {
+      textField->setEditing(false);
+      endElementSearch(App::app()->elementsViewDataSource()->previousElement());
+    } else if (textField->cursorAtEndOfText()) {
+      /* Update suggestion text */
+      ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
+      m_view.bannerView()->textField()->setSuggestion(
+          dataSource->suggestedElementName());
+    } else {
+      m_view.bannerView()->textField()->setSuggestion(nullptr);
     }
-    m_view.elementsView()->reload();
   }
-  return returnValue;
+  m_view.elementsView()->reload();
 }
 
 void MainController::endElementSearch(AtomicNumber z) {

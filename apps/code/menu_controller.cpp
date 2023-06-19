@@ -326,9 +326,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
   return false;
 }
 
-bool MenuController::textFieldDidHandleEvent(AbstractTextField *textField,
-                                             bool returnValue,
-                                             bool textDidChange) {
+void MenuController::textFieldDidHandleEvent(AbstractTextField *textField) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing()) {
     const char *maxPointerLocation = textField->text() +
@@ -338,7 +336,6 @@ bool MenuController::textFieldDidHandleEvent(AbstractTextField *textField,
       textField->setCursorLocation(maxPointerLocation);
     }
   }
-  return returnValue;
 }
 
 void MenuController::addScript() {

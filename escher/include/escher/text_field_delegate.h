@@ -25,10 +25,7 @@ class TextFieldDelegate {
   virtual bool textFieldDidAbortEditing(AbstractTextField* textField) {
     return false;
   }
-  virtual bool textFieldDidHandleEvent(AbstractTextField* textField,
-                                       bool returnValue, bool textDidChange) {
-    return returnValue;
-  }
+  virtual void textFieldDidHandleEvent(AbstractTextField* textField) {}
   virtual bool textFieldIsEditable(AbstractTextField* textField) {
     return true;
   }

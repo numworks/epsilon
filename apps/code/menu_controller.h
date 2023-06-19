@@ -74,8 +74,7 @@ class MenuController : public Escher::ViewController,
   bool textFieldDidAbortEditing(Escher::AbstractTextField *textField) override {
     return privateTextFieldDidAbortEditing(textField, true);
   }
-  bool textFieldDidHandleEvent(Escher::AbstractTextField *textField,
-                               bool returnValue, bool textDidChange) override;
+  void textFieldDidHandleEvent(Escher::AbstractTextField *textField) override;
 
   /* ButtonRowDelegate */
   int numberOfButtons(

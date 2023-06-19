@@ -39,8 +39,7 @@ class MainController : public Escher::ViewController,
                                  const char* text,
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
-  bool textFieldDidHandleEvent(Escher::AbstractTextField* textField,
-                               bool returnValue, bool textDidChange) override;
+  void textFieldDidHandleEvent(Escher::AbstractTextField* textField) override;
 
  private:
   class ContentView : public Escher::View {

@@ -561,8 +561,10 @@ notify_delegate_after_handle_event:
   /* Only the strlen are compared because this method does not reaches this
    * point if the text was modified, only if it was not altered or if
    * text was deleted. */
-  return m_delegate->textFieldDidHandleEvent(
-      this, didHandleEvent, strlen(text()) != previousTextLength);
+  if (didHandleEvent && strlen(text()) != previousTextLength) {
+    m_delegate->textFieldDidHandleEvent(this);
+  }
+  return didHandleEvent;
 }
 
 void AbstractTextField::scrollToCursor() {
@@ -667,7 +669,8 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
       setCursorLocation(nextCursorLocation);
     }
   }
-  return m_delegate->textFieldDidHandleEvent(this, true, true);
+  m_delegate->textFieldDidHandleEvent(this);
+  return true;
 }
 
 void AbstractTextField::removeWholeText() {

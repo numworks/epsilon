@@ -30,11 +30,11 @@ bool ChainedTextFieldDelegate::textFieldDidAbortEditing(
              : false;
 }
 
-bool ChainedTextFieldDelegate::textFieldDidHandleEvent(
-    AbstractTextField* textField, bool returnValue, bool textDidChange) {
-  return m_parentDelegate ? m_parentDelegate->textFieldDidHandleEvent(
-                                textField, returnValue, textDidChange)
-                          : false;
+void ChainedTextFieldDelegate::textFieldDidHandleEvent(
+    AbstractTextField* textField) {
+  if (m_parentDelegate) {
+    m_parentDelegate->textFieldDidHandleEvent(textField);
+  }
 }
 
 void ChainedTextFieldDelegate::textFieldDidStartEditing(

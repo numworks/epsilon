@@ -178,17 +178,14 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   }
 }
 
-bool CalculationController::textFieldDidHandleEvent(
-    ::AbstractTextField *textField, bool returnValue, bool textDidChange) {
-  if (returnValue && textDidChange) {
-    /* We do not reload the responder because it would setEditing(false)
-     * the textField and the input would not be handled properly. */
-    m_selectableTableView.reloadData(false);
-    /* The textField frame might have increased which forces to reload the
-     * textField scroll */
-    textField->scrollToCursor();
-  }
-  return returnValue;
+void CalculationController::textFieldDidHandleEvent(
+    ::AbstractTextField *textField) {
+  /* We do not reload the responder because it would setEditing(false)
+   * the textField and the input would not be handled properly. */
+  m_selectableTableView.reloadData(false);
+  /* The textField frame might have increased which forces to reload the
+   * textField scroll */
+  textField->scrollToCursor();
 }
 
 bool CalculationController::textFieldShouldFinishEditing(

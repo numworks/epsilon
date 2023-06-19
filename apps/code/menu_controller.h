@@ -68,10 +68,6 @@ class MenuController : public Escher::ViewController,
   /* TextFieldDelegate */
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
                                     Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField *textField,
-                                Ion::Events::Event event) override {
-    return false;
-  }
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  const char *text,
                                  Ion::Events::Event event) override;

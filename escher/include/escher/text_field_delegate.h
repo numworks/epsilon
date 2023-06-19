@@ -14,7 +14,9 @@ class TextFieldDelegate {
   }
   virtual void textFieldDidStartEditing(AbstractTextField* textField) {}
   virtual bool textFieldDidReceiveEvent(AbstractTextField* textField,
-                                        Ion::Events::Event event) = 0;
+                                        Ion::Events::Event event) {
+    return false;
+  }
   virtual bool textFieldDidFinishEditing(AbstractTextField* textField,
                                          const char* text,
                                          Ion::Events::Event event) {

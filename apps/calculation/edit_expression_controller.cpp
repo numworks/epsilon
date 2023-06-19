@@ -97,6 +97,7 @@ void EditExpressionController::viewWillAppear() {
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(
     ::LayoutField *layoutField, Ion::Events::Event event) {
+  assert(m_contentView.layoutField() == layoutField);
   if (layoutField->isEditingAndShouldFinishEditing(event) &&
       layoutField->isEmpty()) {
     if (m_workingBuffer[0] != 0) {
@@ -117,12 +118,12 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       clearWorkingBuffer();
-      m_contentView.layoutField()->setEditing(false);
+      layoutField->setEditing(false);
       App::app()->setFirstResponder(m_historyController);
     }
     return true;
   }
-  if (event == Ion::Events::Clear && m_contentView.layoutField()->isEmpty()) {
+  if (event == Ion::Events::Clear && layoutField->isEmpty()) {
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;
@@ -133,6 +134,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
 
 void EditExpressionController::layoutFieldDidHandleEvent(
     Escher::LayoutField *layoutField) {
+  assert(m_contentView.layoutField() == layoutField);
   /* Memoize on all handled event, even if the text did not change, to properly
    * update the cursor position. */
   memoizeInput();
@@ -140,6 +142,7 @@ void EditExpressionController::layoutFieldDidHandleEvent(
 
 bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField *layoutField, Ion::Events::Event event) {
+  assert(m_contentView.layoutField() == layoutField);
   Context *context = App::app()->localContext();
   Layout layout = layoutField->layout();
   assert(!layout.isUninitialized());
@@ -148,7 +151,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
           ->push(m_workingBuffer, context, HistoryViewCell::Height)
           .pointer()) {
     m_historyController->reload();
-    m_contentView.layoutField()->clearAndSetEditing(true);
+    layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }
@@ -157,7 +160,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
 
 void EditExpressionController::layoutFieldDidChangeSize(
     ::LayoutField *layoutField) {
-  if (m_contentView.layoutField()->inputViewHeightDidChange()) {
+  assert(m_contentView.layoutField() == layoutField);
+  if (layoutField->inputViewHeightDidChange()) {
     /* Reload the whole view only if the LayoutField's height did actually
      * change. */
     reloadView();
@@ -167,7 +171,7 @@ void EditExpressionController::layoutFieldDidChangeSize(
      * to be relayouted.
      * We force the relayout because the frame stays the same but we need to
      * propagate a relayout to the content of the field scroll view. */
-    m_contentView.layoutField()->layoutSubviews(true);
+    layoutField->layoutSubviews(true);
   }
 }
 

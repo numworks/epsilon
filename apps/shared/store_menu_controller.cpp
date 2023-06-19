@@ -186,11 +186,8 @@ bool StoreMenuController::layoutFieldDidReceiveEvent(
     layoutField->handleEventWithText("→");
     return true;
   }
-  if (event == Ion::Events::XNT) {
-    return handleXNT(layoutField);
-  }
-  // We short circuit the LayoutFieldDelegate to avoid calls to displayWarning
-  return false;
+  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
+                                                             event);
 }
 
 }  // namespace Shared

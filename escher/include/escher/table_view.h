@@ -34,7 +34,7 @@ class TableView : public ScrollView {
 
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
-  virtual void scrollToCell(int col, int row) {
+  void scrollToCell(int col, int row) {
     scrollToContentRect(m_contentView.cellFrame(col, row));
   }
   HighlightCell *cellAtLocation(int col, int row) {

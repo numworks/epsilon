@@ -21,7 +21,6 @@ class GoodnessTableCell : public DoubleColumnTableCell {
 
   // Responder
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
-                                 const char *text,
                                  Ion::Events::Event event) override;
 
   bool recomputeDimensions() override;

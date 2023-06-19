@@ -461,7 +461,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
      * does not fail, it will save the editedText in a model and reload the
      * content of the textfield buffer using the very same model - that has
      * been updated. */
-    if (m_delegate->textFieldDidFinishEditing(this, draftTextBuffer(), event)) {
+    if (m_delegate->textFieldDidFinishEditing(this, event)) {
       // Clean draft text for next use
       reinitDraftTextBuffer();
       resetSelection();

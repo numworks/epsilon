@@ -20,9 +20,8 @@ void AbstractWithEditableText::textFieldDidStartEditing(
   ChainedTextFieldDelegate::textFieldDidStartEditing(textField);
 }
 bool AbstractWithEditableText::textFieldDidFinishEditing(
-    AbstractTextField* textField, const char* text, Ion::Events::Event event) {
-  if (ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text,
-                                                          event)) {
+    AbstractTextField* textField, Ion::Events::Event event) {
+  if (ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, event)) {
     // Relayout to show sublabel
     relayout();
     return true;

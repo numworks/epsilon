@@ -18,7 +18,7 @@ class ChainedTextFieldDelegate : public TextFieldDelegate {
                                     Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(AbstractTextField* textField,
                                 Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(AbstractTextField* textField, const char* text,
+  bool textFieldDidFinishEditing(AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(AbstractTextField* textField) override;
   void textFieldDidHandleEvent(AbstractTextField* textField) override;

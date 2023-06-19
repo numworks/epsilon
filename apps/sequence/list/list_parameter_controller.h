@@ -28,7 +28,6 @@ class ListParameterController : public Shared::ListParameterController,
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
-                                 const char *text,
                                  Ion::Events::Event event) override;
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView *l, int previousSelectedRow,

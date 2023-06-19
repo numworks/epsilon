@@ -29,7 +29,6 @@ class ExplicitFloatParameterController
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
-                                 const char *text,
                                  Ion::Events::Event event) override;
 
  protected:

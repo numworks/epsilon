@@ -77,11 +77,11 @@ bool HypothesisController::textFieldDidReceiveEvent(
 }
 
 bool HypothesisController::textFieldDidFinishEditing(
-    Escher::AbstractTextField* textField, const char* text,
-    Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
       Shared::PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<double>(
-          text, AppsContainerHelper::sharedAppsContainerGlobalContext());
+          textField->draftTextBuffer(),
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

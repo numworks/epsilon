@@ -50,7 +50,6 @@ class CurveParameterController
   }
   Escher::HighlightCell* cell(int index) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 const char* text,
                                  Ion::Events::Event event) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;

@@ -143,10 +143,10 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
 }
 
 bool CurveParameterController::textFieldDidFinishEditing(
-    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
+    AbstractTextField *textField, Ion::Events::Event event) {
   int index = selectedRow();
-  if (!ExplicitFloatParameterController::textFieldDidFinishEditing(
-          textField, text, event)) {
+  if (!ExplicitFloatParameterController::textFieldDidFinishEditing(textField,
+                                                                   event)) {
     return false;
   }
   StackViewController *stack =

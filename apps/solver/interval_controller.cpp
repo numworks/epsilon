@@ -73,10 +73,8 @@ bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
 }
 
 bool IntervalController::textFieldDidFinishEditing(AbstractTextField *textField,
-                                                   const char *text,
                                                    Ion::Events::Event event) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text,
-                                                          event)) {
+  if (FloatParameterController::textFieldDidFinishEditing(textField, event)) {
     resetMemoization();
     m_selectableListView.reloadData();
     return true;

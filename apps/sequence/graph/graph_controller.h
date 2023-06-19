@@ -31,7 +31,6 @@ class GraphController final : public Shared::FunctionGraphController {
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
-                                 const char *text,
                                  Ion::Events::Event event) override;
 
   // InteractiveCurveViewRangeDelegate

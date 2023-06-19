@@ -86,7 +86,7 @@ MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
 
 bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
     LayoutField *layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
+  if (layoutField->isEditingAndShouldFinishEditing(event)) {
     if (layoutField->isEmpty()) {
       // Accept empty fields
       return false;
@@ -147,7 +147,7 @@ MathTextFieldDelegate *MathTextFieldDelegate::Default() {
 
 bool MathTextFieldDelegate::textFieldDidReceiveEvent(
     AbstractTextField *textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
+  if (textField->isEditingAndShouldFinishEditing(event)) {
     if (textField->text()[0] == 0) {
       // Empty field, let the textfield handle the event
       return false;

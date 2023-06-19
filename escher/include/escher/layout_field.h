@@ -57,7 +57,7 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
   // TODO: factorize with TextField (see TODO of EditableField)
-  bool shouldFinishEditing(Ion::Events::Event event) override;
+  bool isEditingAndShouldFinishEditing(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
   /* View */

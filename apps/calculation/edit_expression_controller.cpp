@@ -97,7 +97,7 @@ void EditExpressionController::viewWillAppear() {
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(
     ::LayoutField *layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
+  if (layoutField->isEditingAndShouldFinishEditing(event) &&
       layoutField->isEmpty()) {
     if (m_workingBuffer[0] != 0) {
       /* The input text store in m_workingBuffer might have been correct the

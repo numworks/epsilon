@@ -198,7 +198,7 @@ bool ExpressionModelListController::removeModelRow(
 
 bool ExpressionModelListController::layoutFieldDidReceiveEvent(
     LayoutField *layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
+  if (layoutField->isEditingAndShouldFinishEditing(event)) {
     char buffer[TextField::MaxBufferSize()];
     layoutField->layout().serializeForParsing(buffer,
                                               TextField::MaxBufferSize());

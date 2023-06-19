@@ -371,7 +371,7 @@ bool AbstractTextField::privateHandleEventWhileEditing(
     Ion::Events::Event event) {
   assert(isEditing());
   assert(isEditable());
-  if (shouldFinishEditing(event)) {
+  if (isEditingAndShouldFinishEditing(event)) {
     /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
      * text for instance), the text field will call willResignFirstResponder.
      * This will call textFieldDidAbortEditing if the textfield is still
@@ -572,8 +572,9 @@ void AbstractTextField::scrollToCursor() {
   return TextInput::scrollToCursor();
 }
 
-bool AbstractTextField::shouldFinishEditing(Ion::Events::Event event) {
-  if (m_delegate->textFieldShouldFinishEditing(this, event)) {
+bool AbstractTextField::isEditingAndShouldFinishEditing(
+    Ion::Events::Event event) {
+  if (isEditing() && m_delegate->textFieldShouldFinishEditing(this, event)) {
     resetSelection();
     return true;
   }

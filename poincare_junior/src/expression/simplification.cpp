@@ -784,106 +784,92 @@ EditionReference Simplification::ApplyShallowInDepth(
   return EditionReference(root);
 }
 
+bool Simplification::SmartExpand(EditionReference* reference, Node pattern,
+                                 Node structure) {
+  /* If first expand succeeded, try expanding the first child. For example :
+   * ln(A*B*C) = ln(A*B)+ln(C) = (ln(A)+ln(B))+ln(C) = ln(A)+ln(B)+ln(C) */
+  int successCounter = 0;
+  EditionReference target;
+  EditionReference* targetPointer = reference;
+  while (targetPointer->matchAndReplace(pattern, structure)) {
+    successCounter++;
+    target = targetPointer->nextNode();
+    targetPointer = &target;
+    assert(!target.nextNode().block()->isSimpleNAry() ||
+           target.nextNode().numberOfChildren() > 1);
+  }
+  if (successCounter > 1) {
+    *reference = NAry::Flatten(*reference);
+  }
+  return successCounter > 0;
+}
+
+bool Simplification::SmartContract(EditionReference* reference, Node pattern,
+                                   Node structure) {
+  /* Contract the expression as long as possible. For example :
+   * A*|B|*|C|*|D|*E = A*|B*C|*|D|*E = A*|B*C*D|*E */
+  bool contracted = false;
+  while (reference->matchAndReplace(pattern, structure)) {
+    contracted = true;
+  }
+  return contracted;
+}
+
 bool Simplification::ContractAbs(EditionReference* reference) {
   // A*|B|*|C|*D = A*|BC|*D
-  if (reference->matchAndReplace(
-          KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
-                KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-          KMult(KPlaceholder<A>(),
-                KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-                KPlaceholder<D>()))) {
-    // Try again as long as there can be more to contract
-    ContractAbs(reference);
-    return true;
-  }
-  return false;
+  return SmartContract(
+      reference,
+      KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
+            KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KMult(KPlaceholder<A>(),
+            KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
+            KPlaceholder<D>()));
 }
 
 bool Simplification::ExpandAbs(EditionReference* reference) {
   // |A?B| = |A|*|B|
-  if (reference->matchAndReplace(
-          KAbs(KMult(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
-          KMult(KAbs(KMult(KPlaceholder<A>())), KAbs(KPlaceholder<B>())))) {
-    // |A| could be expanded again
-    EditionReference newAbs(reference->nextNode());
-    // Multiplication is expected to have been squashed if unary.
-    assert(newAbs.nextNode().type() != BlockType::Multiplication ||
-           newAbs.nextNode().numberOfChildren() > 1);
-    if (ExpandAbs(&newAbs)) {
-      *reference = NAry::Flatten(*reference);
-    }
-    return true;
-  }
-  return false;
+  return SmartExpand(
+      reference, KAbs(KMult(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+      KMult(KAbs(KMult(KPlaceholder<A>())), KAbs(KPlaceholder<B>())));
 }
 
 bool Simplification::ContractLn(EditionReference* reference) {
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
-  if (reference->matchAndReplace(
-          KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
-               KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-          KAdd(KPlaceholder<A>(),
-               KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-               KPlaceholder<D>()))) {
-    // Try again as long as there can be more to contract
-    ContractLn(reference);
-    return true;
-  }
-  return false;
+  return SmartContract(
+      reference,
+      KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
+           KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KAdd(KPlaceholder<A>(),
+           KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
+           KPlaceholder<D>()));
 }
 
 bool Simplification::ExpandLn(EditionReference* reference) {
   // ln(A?B) = ln(A) + ln(B)
-  if (reference->matchAndReplace(
-          KLn(KMult(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
-          KAdd(KLn(KMult(KPlaceholder<A>())), KLn(KPlaceholder<B>())))) {
-    // ln(A) could be expanded again
-    EditionReference newLn(reference->nextNode());
-    // Multiplication is expected to have been squashed if unary.
-    assert(newLn.nextNode().type() != BlockType::Multiplication ||
-           newLn.nextNode().numberOfChildren() > 1);
-    if (ExpandLn(&newLn)) {
-      *reference = NAry::Flatten(*reference);
-    }
-    return true;
-  }
-  return false;
+  return SmartExpand(
+      reference, KLn(KMult(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+      KAdd(KLn(KMult(KPlaceholder<A>())), KLn(KPlaceholder<B>())));
 }
 
 bool Simplification::ExpandExp(EditionReference* reference) {
   // exp(A?+B) = exp(A) * exp(B)
-  if (reference->matchAndReplace(
-          KExp(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
-          KMult(KExp(KAdd(KPlaceholder<A>())), KExp(KPlaceholder<B>())))) {
-    // exp(A) could be expanded again
-    EditionReference newExp(reference->nextNode());
-    // Addition is expected to have been squashed if unary.
-    assert(newExp.nextNode().type() != BlockType::Addition ||
-           newExp.nextNode().numberOfChildren() > 1);
-    if (ExpandExp(&newExp)) {
-      *reference = NAry::Flatten(*reference);
-    }
-    return true;
-  }
-  // exp(AB?) = exp(A)^(BC)
-  return reference->matchAndReplace(
-      KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
-      KPow(KExp(KPlaceholder<A>()), KMult(KPlaceholder<B>())));
+  return SmartExpand(
+             reference,
+             KExp(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+             KMult(KExp(KAdd(KPlaceholder<A>())), KExp(KPlaceholder<B>()))) ||
+         reference->matchAndReplace(
+             KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
+             KPow(KExp(KPlaceholder<A>()), KMult(KPlaceholder<B>())));
 }
 
 bool Simplification::ContractExpMult(EditionReference* reference) {
   // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
-  if (reference->matchAndReplace(
-          KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
-                KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-          KMult(KPlaceholder<A>(),
-                KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-                KPlaceholder<D>()))) {
-    // Try again as long as there can be more to contract
-    ContractExpMult(reference);
-    return true;
-  }
-  return false;
+  return SmartContract(
+      reference,
+      KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
+            KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KMult(KPlaceholder<A>(), KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+            KPlaceholder<D>()));
 }
 
 bool Simplification::ContractExpPow(EditionReference* reference) {
@@ -957,27 +943,13 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
 
 bool Simplification::ExpandMult(EditionReference* reference) {
   // A?*(B?+C)*D? = A*B*D + A*C*D
-  if (reference->matchAndReplace(
-          KMult(KAnyTreesPlaceholder<A>(),
-                KAdd(KAnyTreesPlaceholder<B>(), KPlaceholder<C>()),
-                KAnyTreesPlaceholder<D>()),
-          KAdd(KMult(KPlaceholder<A>(), KAdd(KPlaceholder<B>()),
-                     KPlaceholder<D>()),
-               KMult(KPlaceholder<A>(), KPlaceholder<C>(),
-                     KPlaceholder<D>())))) {
-    // A*B*D may be expanded again, do it recursively
-    EditionReference newMult(reference->nextNode());
-    // Addition is expected to have been squashed if unary.
-    assert(!newMult.matchAndReplace(
-        KMult(KAnyTreesPlaceholder<A>(), KAdd(KPlaceholder<B>()),
-              KAnyTreesPlaceholder<C>()),
-        KMult(KPlaceholder<A>(), KAdd(KPlaceholder<B>()), KPlaceholder<C>())));
-    if (ExpandMult(&newMult)) {
-      *reference = NAry::Flatten(*reference);
-    }
-    return true;
-  }
-  return false;
+  return SmartExpand(
+      reference,
+      KMult(KAnyTreesPlaceholder<A>(),
+            KAdd(KAnyTreesPlaceholder<B>(), KPlaceholder<C>()),
+            KAnyTreesPlaceholder<D>()),
+      KAdd(KMult(KPlaceholder<A>(), KAdd(KPlaceholder<B>()), KPlaceholder<D>()),
+           KMult(KPlaceholder<A>(), KPlaceholder<C>(), KPlaceholder<D>())));
 }
 
 bool Simplification::ExpandPower(EditionReference* reference) {

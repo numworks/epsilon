@@ -73,6 +73,10 @@ class Simplification {
   static EditionReference ApplyShallowInDepth(EditionReference reference,
                                               ShallowOperation shallowOperation,
                                               void *context = nullptr);
+  static bool SmartContract(EditionReference *reference, Node pattern,
+                            Node structure);
+  static bool SmartExpand(EditionReference *reference, Node pattern,
+                          Node structure);
 
   static bool ContractAbs(EditionReference *reference);
   static bool ExpandAbs(EditionReference *reference);

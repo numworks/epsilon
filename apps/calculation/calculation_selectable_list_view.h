@@ -15,8 +15,8 @@ class CalculationSelectableListView : public Escher::SelectableListView {
       Escher::ListViewDataSource* dataSource,
       Escher::SelectableListViewDataSource* selectionDataSource,
       Escher::SelectableListViewDelegate* delegate = nullptr);
+  void clipToBottomIfSpaceRemains();
   void scrollToBottom();
-  void scrollToCell(int col, int row) override;
   void scrollToSubviewOfTypeOfCellAtRow(
       HistoryViewCellDataSource::SubviewType subviewType, int row);
 };

@@ -25,8 +25,7 @@ void CalculationSelectableListView::scrollToBottom() {
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
-void CalculationSelectableListView::scrollToCell(int col, int row) {
-  SelectableTableView::scrollToCell(col, row);
+void CalculationSelectableListView::clipToBottomIfSpaceRemains() {
   if (m_contentView.bounds().height() - contentOffset().y() <
       bounds().height()) {
     // Avoid empty space at the end of the table

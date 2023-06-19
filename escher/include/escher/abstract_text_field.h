@@ -146,8 +146,8 @@ class AbstractTextField : public TextInput, public EditableField {
   virtual void removeWholeText();
   void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
   bool privateHandleEventWhileEditing(Ion::Events::Event event);
-  bool privateHandleMoveEvent(Ion::Events::Event event);
-  bool privateHandleSelectEvent(Ion::Events::Event event);
+  bool handleMoveEvent(Ion::Events::Event event);
+  bool handleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;
   bool storeInClipboard() const;
 

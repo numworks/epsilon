@@ -98,8 +98,7 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
   void reload(KDSize previousSize);
   bool privateHandleEvent(Ion::Events::Event event, bool* shouldRedrawLayout,
                           bool* shouldUpdateCursor);
-  bool privateHandleMoveEvent(Ion::Events::Event event,
-                              bool* shouldRedrawLayout);
+  bool handleMoveEvent(Ion::Events::Event event, bool* shouldRedrawLayout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR,
                             bool forceCursorRightOfLayout = false,

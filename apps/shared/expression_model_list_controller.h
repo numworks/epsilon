@@ -77,8 +77,6 @@ class ExpressionModelListController
   Escher::EvenOddMessageTextCell m_addNewModelCell;
 
   // LayoutDelegate
-  bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
-                                  Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;

@@ -98,23 +98,6 @@ void EditExpressionController::viewWillAppear() {
 bool EditExpressionController::layoutFieldDidReceiveEvent(
     ::LayoutField *layoutField, Ion::Events::Event event) {
   assert(m_contentView.layoutField() == layoutField);
-  if (layoutField->isEditingAndShouldFinishEditing(event) &&
-      layoutField->isEmpty()) {
-    if (m_workingBuffer[0] != 0) {
-      /* The input text store in m_workingBuffer might have been correct the
-       * first time but then be too long when replacing ans in another context
-       */
-      if (!isAcceptableText(m_workingBuffer)) {
-        App::app()->displayWarning(I18n::Message::SyntaxError);
-      } else if (m_calculationStore
-                     ->push(m_workingBuffer, App::app()->localContext(),
-                            HistoryViewCell::Height)
-                     .pointer()) {
-        m_historyController->reload();
-      }
-    }
-    return true;
-  }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       clearWorkingBuffer();
@@ -145,6 +128,25 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   Context *context = App::app()->localContext();
+  if (layoutField->isEmpty()) {
+    if (m_workingBuffer[0] != 0) {
+      /* The input text store in m_workingBuffer might have been correct the
+       * first time but then be too long when replacing ans in another context
+       */
+      if (!isAcceptableText(m_workingBuffer)) {
+        App::app()->displayWarning(I18n::Message::SyntaxError);
+      } else if (m_calculationStore
+                     ->push(m_workingBuffer, context, HistoryViewCell::Height)
+                     .pointer()) {
+        m_historyController->reload();
+      }
+    }
+    return true;
+  }
+  if (MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
+                                                           event)) {
+    return true;
+  }
   Layout layout = layoutField->layout();
   assert(!layout.isUninitialized());
   layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);

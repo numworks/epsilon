@@ -196,29 +196,6 @@ bool ExpressionModelListController::removeModelRow(
   return true;
 }
 
-bool ExpressionModelListController::layoutFieldDidReceiveEvent(
-    LayoutField *layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditingAndShouldFinishEditing(event)) {
-    char buffer[TextField::MaxBufferSize()];
-    layoutField->layout().serializeForParsing(buffer,
-                                              TextField::MaxBufferSize());
-    Poincare::Expression parsedExpression =
-        Poincare::Expression::Parse(buffer, nullptr);
-    if (parsedExpression.isUninitialized()) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    if (shouldCompleteEquation(parsedExpression)) {
-      if (!completeEquation(layoutField)) {
-        App::app()->displayWarning(I18n::Message::RequireEquation);
-        return true;
-      }
-    }
-  }
-  return Shared::MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
-      layoutField, event);
-}
-
 void ExpressionModelListController::layoutFieldDidChangeSize(
     LayoutField *layoutField) {
   resetMemoization();
@@ -233,6 +210,24 @@ void ExpressionModelListController::finishEdition() {
 
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
+  char buffer[TextField::MaxBufferSize()];
+  layoutField->layout().serializeForParsing(buffer, TextField::MaxBufferSize());
+  Poincare::Expression parsedExpression =
+      Poincare::Expression::Parse(buffer, nullptr);
+  if (parsedExpression.isUninitialized()) {
+    App::app()->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  if (shouldCompleteEquation(parsedExpression)) {
+    if (!completeEquation(layoutField)) {
+      App::app()->displayWarning(I18n::Message::RequireEquation);
+      return true;
+    }
+  }
+  if (MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
+                                                           event)) {
+    return true;
+  }
   assert(layoutField->isEditing());
   editSelectedRecordWithText(layoutField->text());
   finishEdition();

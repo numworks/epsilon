@@ -86,56 +86,59 @@ MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
 
 bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
     LayoutField *layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditingAndShouldFinishEditing(event)) {
-    if (layoutField->isEmpty()) {
-      // Accept empty fields
-      return false;
-    }
-    App *app = App::app();
-    /* An acceptable layout has to be parsable and serialized in a fixed-size
-     * buffer. We check all that here. */
-    /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
-     * not displayed, like:
-     * - 2a
-     * - log_{2}(x) */
-    constexpr int bufferSize = TextField::MaxBufferSize();
-    char buffer[bufferSize];
-    int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
-    if (length >= bufferSize - 1) {
-      /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
-       * escaped before printing utterly the expression. */
-      app->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    /* Step 2: Parsing
-     * Do not parse for assignment to detect if there is a syntax error, since
-     * some errors could be missed.
-     * Sometimes the field needs to be parsed for assignment but this is
-     * done later, namely by ContinuousFunction::buildExpressionFromText. */
-    Expression e = Expression::Parse(buffer, layoutField->context());
-    if (e.isUninitialized()) {
-      // Unparsable expression
-      app->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    /* Step 3: Expression serialization. Resulting texts are parseable and
-     * displayable, like:
-     * - 2*a
-     * - log(x,2) */
-    length = e.serialize(buffer, bufferSize,
-                         Preferences::sharedPreferences->displayMode());
-    if (length >= bufferSize - 1) {
-      // Same comment as before
-      app->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-    if (!isAcceptableExpression(e)) {
-      app->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-  }
   if (event == Ion::Events::XNT) {
     return handleXNT(layoutField);
+  }
+  return false;
+}
+
+bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
+    LayoutField *layoutField, Ion::Events::Event event) {
+  if (layoutField->isEmpty()) {
+    // Accept empty fields
+    return false;
+  }
+  App *app = App::app();
+  /* An acceptable layout has to be parsable and serialized in a fixed-size
+   * buffer. We check all that here. */
+  /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
+   * not displayed, like:
+   * - 2a
+   * - log_{2}(x) */
+  constexpr int bufferSize = TextField::MaxBufferSize();
+  char buffer[bufferSize];
+  int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
+  if (length >= bufferSize - 1) {
+    /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
+     * escaped before printing utterly the expression. */
+    app->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  /* Step 2: Parsing
+   * Do not parse for assignment to detect if there is a syntax error, since
+   * some errors could be missed.
+   * Sometimes the field needs to be parsed for assignment but this is
+   * done later, namely by ContinuousFunction::buildExpressionFromText. */
+  Expression e = Expression::Parse(buffer, layoutField->context());
+  if (e.isUninitialized()) {
+    // Unparsable expression
+    app->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  /* Step 3: Expression serialization. Resulting texts are parseable and
+   * displayable, like:
+   * - 2*a
+   * - log(x,2) */
+  length = e.serialize(buffer, bufferSize,
+                       Preferences::sharedPreferences->displayMode());
+  if (length >= bufferSize - 1) {
+    // Same comment as before
+    app->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  if (!isAcceptableExpression(e)) {
+    app->displayWarning(I18n::Message::SyntaxError);
+    return true;
   }
   return false;
 }

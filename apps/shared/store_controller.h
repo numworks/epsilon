@@ -25,7 +25,6 @@ class StoreController : public EditableCellTableViewController,
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 const char* text,
                                  Ion::Events::Event event) override;
 
   // TableViewDataSource

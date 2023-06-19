@@ -17,10 +17,10 @@ bool ChainedTextFieldDelegate::textFieldDidReceiveEvent(
 }
 
 bool ChainedTextFieldDelegate::textFieldDidFinishEditing(
-    AbstractTextField* textField, const char* text, Ion::Events::Event event) {
-  return m_parentDelegate ? m_parentDelegate->textFieldDidFinishEditing(
-                                textField, text, event)
-                          : false;
+    AbstractTextField* textField, Ion::Events::Event event) {
+  return m_parentDelegate
+             ? m_parentDelegate->textFieldDidFinishEditing(textField, event)
+             : false;
 }
 
 bool ChainedTextFieldDelegate::textFieldDidAbortEditing(

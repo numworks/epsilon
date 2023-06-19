@@ -34,13 +34,12 @@ StoreController::StoreController(Responder *parentResponder,
 }
 
 bool StoreController::textFieldDidFinishEditing(AbstractTextField *textField,
-                                                const char *text,
                                                 Ion::Events::Event event) {
   // First row is not editable.
   assert(selectedRow() != 0);
   int series = m_store->seriesAtColumn(selectedColumn());
   bool wasSeriesValid = m_store->seriesIsActive(series);
-  if (text[0] == 0) {  // If text = "", delete the cell
+  if (textField->draftTextBuffer()[0] == 0) {  // If text = "", delete the cell
     bool didDeleteRow = false;
     handleDeleteEvent(true, &didDeleteRow);
     if (event == Ion::Events::Up || event == Ion::Events::Left ||
@@ -53,7 +52,7 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField *textField,
     return true;
   }
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(
-      textField, text, event);
+      textField, event);
   if (wasSeriesValid != m_store->seriesIsActive(series)) {
     // Series changed validity, series' cells have changed color.
     reloadSeriesVisibleCells(series);

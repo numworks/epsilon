@@ -110,9 +110,8 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
 }
 
 bool ParametersController::textFieldDidFinishEditing(
-    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text,
-                                                          event)) {
+    AbstractTextField *textField, Ion::Events::Event event) {
+  if (FloatParameterController::textFieldDidFinishEditing(textField, event)) {
     resetMemoization();
     m_selectableListView.reloadData();
     return true;

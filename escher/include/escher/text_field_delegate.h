@@ -18,7 +18,6 @@ class TextFieldDelegate {
     return false;
   }
   virtual bool textFieldDidFinishEditing(AbstractTextField* textField,
-                                         const char* text,
                                          Ion::Events::Event event) {
     return false;
   }

@@ -26,7 +26,6 @@ class IntervalController : public Shared::FloatParameterController<double> {
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 const char* text,
                                  Ion::Events::Event event) override;
 
   constexpr static int k_maxNumberOfCells = 2;

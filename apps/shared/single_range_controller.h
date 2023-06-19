@@ -33,7 +33,6 @@ class SingleRangeController : public FloatParameterController<float> {
 
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 const char* text,
                                  Ion::Events::Event event) override;
 
  protected:

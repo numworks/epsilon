@@ -37,7 +37,6 @@ class ParametersController : public Shared::FloatParameterController<double> {
   bool setParameterAtIndex(int parameterIndex, double f) override;
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 const char* text,
                                  Ion::Events::Event event) override;
   bool hasUndefinedValue(const char* text, double floatValue) const override;
 

@@ -22,7 +22,6 @@ class FrequencyController : public PlotController,
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
-                                 const char *text,
                                  Ion::Events::Event event) override;
 
   // PlotController

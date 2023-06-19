@@ -325,12 +325,12 @@ bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField *textField,
 }
 
 bool ConsoleController::textFieldDidFinishEditing(AbstractTextField *textField,
-                                                  const char *text,
                                                   Ion::Events::Event event) {
   if (m_inputRunLoopActive) {
     m_inputRunLoopActive = false;
     return false;
   }
+  char *text = textField->draftTextBuffer();
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!isDisplayingViewController()) {

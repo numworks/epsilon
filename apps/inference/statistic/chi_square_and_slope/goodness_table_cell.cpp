@@ -22,11 +22,9 @@ GoodnessTableCell::GoodnessTableCell(
 }
 
 bool GoodnessTableCell::textFieldDidFinishEditing(
-    Escher::AbstractTextField* textField, const char* text,
-    Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   int previousDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
-  if (InputCategoricalTableCell::textFieldDidFinishEditing(textField, text,
-                                                           event)) {
+  if (InputCategoricalTableCell::textFieldDidFinishEditing(textField, event)) {
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
     if (previousDegreeOfFreedom != newDegreeOfFreedom) {
       statistic()->setDegreeOfFreedom(newDegreeOfFreedom);

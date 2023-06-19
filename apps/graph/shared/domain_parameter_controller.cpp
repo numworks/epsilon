@@ -40,18 +40,20 @@ bool DomainParameterController::textFieldDidReceiveEvent(
 }
 
 bool DomainParameterController::textFieldDidFinishEditing(
-    AbstractTextField* textField, const char* text, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   switchToolboxContent(textField, false);
-  if (text[0] == '\0') {
+  assert(!textField->isEditing());
+  textField->setEditing(true);  // To edit draft text buffer in setText
+  if (textField->draftTextBuffer()[0] == '\0') {
     if (textField == m_boundsCells[0].textField()) {
-      text = Infinity::Name(true);
+      textField->setText(Infinity::Name(true));
     } else {
       assert(textField == m_boundsCells[1].textField());
-      text = Infinity::Name(false);
+      textField->setText(Infinity::Name(false));
     }
   }
-  return SingleRangeController::textFieldDidFinishEditing(textField, text,
-                                                          event);
+  textField->setEditing(false);  // set editing back to previous value
+  return SingleRangeController::textFieldDidFinishEditing(textField, event);
 }
 
 bool DomainParameterController::textFieldDidAbortEditing(

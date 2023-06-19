@@ -201,9 +201,10 @@ bool CalculationController::textFieldShouldFinishEditing(
 }
 
 bool CalculationController::textFieldDidFinishEditing(
-    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
+    AbstractTextField *textField, Ion::Events::Event event) {
   assert(selectedColumn() != 0);
-  double floatBody = ParseInputtedFloatValue<double>(text);
+  double floatBody =
+      ParseInputtedFloatValue<double>(textField->draftTextBuffer());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

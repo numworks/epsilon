@@ -132,8 +132,7 @@ bool MainController::textFieldDidReceiveEvent(
 }
 
 bool MainController::textFieldDidFinishEditing(
-    Escher::AbstractTextField* textField, const char* text,
-    Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   m_view.bannerView()->textField()->commitSuggestion();
   AtomicNumber match =
       App::app()->elementsViewDataSource()->elementSearchResult();

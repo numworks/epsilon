@@ -102,10 +102,9 @@ void SingleRangeController::buttonAction() {
 }
 
 bool SingleRangeController::textFieldDidFinishEditing(
-    Escher::AbstractTextField *textField, const char *text,
-    Ion::Events::Event event) {
+    Escher::AbstractTextField *textField, Ion::Events::Event event) {
   bool result = FloatParameterController<float>::textFieldDidFinishEditing(
-      textField, text, event);
+      textField, event);
   if (result) {
     setAutoStatus(false);
   }

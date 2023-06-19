@@ -48,7 +48,6 @@ class HypothesisController
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 const char* text,
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
   bool textFieldIsEditable(Escher::AbstractTextField* textField) override {

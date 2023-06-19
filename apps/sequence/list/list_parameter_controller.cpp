@@ -36,8 +36,9 @@ bool ListParameterController::textFieldShouldFinishEditing(
 }
 
 bool ListParameterController::textFieldDidFinishEditing(
-    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  double floatBody = ParseInputtedFloatValue<double>(text);
+    AbstractTextField *textField, Ion::Events::Event event) {
+  double floatBody =
+      ParseInputtedFloatValue<double>(textField->draftTextBuffer());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

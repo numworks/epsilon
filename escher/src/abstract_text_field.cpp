@@ -500,7 +500,7 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   bool didHandleEvent = false;
 
   // Handle move and selection
-  if (privateHandleMoveEvent(event) || privateHandleSelectEvent(event)) {
+  if (handleMoveEvent(event) || handleSelectEvent(event)) {
     didHandleEvent = true;
     goto notify_delegate_after_handle_event;
   }
@@ -581,7 +581,7 @@ bool AbstractTextField::isEditingAndShouldFinishEditing(
   return false;
 }
 
-bool AbstractTextField::privateHandleMoveEvent(Ion::Events::Event event) {
+bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
@@ -602,7 +602,7 @@ bool AbstractTextField::privateHandleMoveEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool AbstractTextField::privateHandleSelectEvent(Ion::Events::Event event) {
+bool AbstractTextField::handleSelectEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }

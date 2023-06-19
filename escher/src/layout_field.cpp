@@ -489,7 +489,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *shouldRedrawLayout,
                                      bool *shouldUpdateCursor) {
-  if (privateHandleMoveEvent(event, shouldRedrawLayout)) {
+  if (handleMoveEvent(event, shouldRedrawLayout)) {
     if (!isEditing()) {
       setEditing(true);
     }
@@ -511,7 +511,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     *shouldUpdateCursor = false;
     return true;
   }
-  /* if move event was not caught neither by privateHandleMoveEvent nor by
+  /* if move event was not caught neither by handleMoveEvent nor by
    * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
    * event up. */
   if (event.isMoveEvent() && isEditing()) {
@@ -581,8 +581,8 @@ bool LayoutField::handleStoreEvent() {
   return true;
 }
 
-bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event,
-                                         bool *shouldRedrawLayout) {
+bool LayoutField::handleMoveEvent(Ion::Events::Event event,
+                                  bool *shouldRedrawLayout) {
   bool isMoveEvent = event.isMoveEvent();
   bool isSelectionEvent = event.isSelectionEvent();
   if (!isMoveEvent && !isSelectionEvent) {

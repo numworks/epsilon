@@ -469,17 +469,9 @@ KDCoordinate LayoutField::inputViewHeight() const {
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRedrawLayout = false;
-  bool didHandleEvent = false;
   bool shouldUpdateCursor = true;
-  if (privateHandleMoveEvent(event, &shouldRedrawLayout)) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    didHandleEvent = true;
-  } else if (privateHandleEvent(event, &shouldRedrawLayout,
-                                &shouldUpdateCursor)) {
-    didHandleEvent = true;
-  }
+  bool didHandleEvent =
+      privateHandleEvent(event, &shouldRedrawLayout, &shouldUpdateCursor);
   if (!shouldRedrawLayout) {
     if (shouldUpdateCursor) {
       m_contentView.cursorPositionChanged();
@@ -497,6 +489,12 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *shouldRedrawLayout,
                                      bool *shouldUpdateCursor) {
+  if (privateHandleMoveEvent(event, shouldRedrawLayout)) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
+    return true;
+  }
   if (m_layoutFieldDelegate) {
     if (m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
       return true;

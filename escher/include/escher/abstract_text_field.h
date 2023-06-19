@@ -45,7 +45,7 @@ class AbstractTextField : public TextInput, public EditableField {
     contentView()->setEditing(isEditing);
   }
   bool isEditing() const override;
-  bool shouldFinishEditing(Ion::Events::Event event) override;
+  bool isEditingAndShouldFinishEditing(Ion::Events::Event event) override;
 
   bool isEditable() { return m_delegate->textFieldIsEditable(this); }
 

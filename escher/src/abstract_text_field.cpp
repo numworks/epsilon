@@ -372,12 +372,6 @@ bool AbstractTextField::privateHandleEventWhileEditing(
   assert(isEditing());
   assert(isEditable());
   if (isEditingAndShouldFinishEditing(event)) {
-    /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
-     * text for instance), the text field will call willResignFirstResponder.
-     * This will call textFieldDidAbortEditing if the textfield is still
-     * editing, which we do not want, as we are not really aborting edition,
-     * just displaying a pop-up before returning to edition. We thus set editing
-     * to false. */
     setEditing(false);
     /* We avoid copying the edited text into the other text buffer in case
      * textFieldDidFinishEditing fails - we then want to be able to abort

@@ -153,6 +153,7 @@ void LayoutField::clearLayout() {
   m_contentView.clearLayout();
   // Put the scroll to offset 0
   resetScroll();
+  m_layoutFieldDelegate->layoutFieldDidChangeSize(this);
 }
 
 void LayoutField::clearAndSetEditing(bool isEditing) {
@@ -501,13 +502,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
       return true;
     }
     if (isEditingAndShouldFinishEditing(event)) {
-      setEditing(false);
-      if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
-        // Reinit layout for next use
-        clearLayout();
-      } else {
-        setEditing(true);
-      }
+      m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event);
       return true;
     }
   }

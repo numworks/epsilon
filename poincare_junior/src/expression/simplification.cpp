@@ -22,6 +22,12 @@ bool IsConstant(Node u) { return IsNumber(u); }
 bool IsZero(Node u) { return u.type() == BlockType::Zero; }
 bool IsUndef(Node u) { return u.type() == BlockType::Undefined; }
 
+void DropNode(EditionReference* u) {
+  Node previousU = *u;
+  u->removeNode();
+  *u = previousU;
+}
+
 bool AnyChildren(Node u, bool test(Node)) {
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
     if (test(child)) {
@@ -109,12 +115,10 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     assert(p.nextTree() == static_cast<Node>(n));
     EditionReference m =
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
-    Node previousU = *u;
-    u->removeNode();
-    *u = previousU;
     Node previousP = p;
     p.insertNodeBeforeNode(m);
     p = previousP;
+    DropNode(u);
     SimplifyProduct(&p);
     // assert(IsInteger(s));
     return SimplifyPower(u);
@@ -130,9 +134,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
       SimplifyPower(&w);
     }
     n.removeTree();
-    Node previousU = *u;
-    u->removeNode();
-    *u = previousU;
+    DropNode(u);
     return SimplifyProduct(u);
   }
   return false;

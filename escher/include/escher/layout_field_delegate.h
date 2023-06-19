@@ -16,7 +16,9 @@ class LayoutFieldDelegate : public ContextProvider {
     return event == Ion::Events::OK || event == Ion::Events::EXE;
   }
   virtual bool layoutFieldDidReceiveEvent(LayoutField* layoutField,
-                                          Ion::Events::Event event) = 0;
+                                          Ion::Events::Event event) {
+    return false;
+  }
   virtual bool layoutFieldDidFinishEditing(LayoutField* layoutField,
                                            Ion::Events::Event event) {
     return false;

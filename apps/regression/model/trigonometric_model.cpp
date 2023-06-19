@@ -9,6 +9,7 @@
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <poincare/sine.h>
+#include <poincare/statistics_dataset.h>
 #include <poincare/symbol.h>
 
 #include <cmath>
@@ -107,11 +108,16 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
                         Store* store, int series) {
   int numberOfPairs = store->numberOfPairsOfSeries(series);
   assert(numberOfPairs >= 3);
+  // Use a StatisticsDataset to memoize the sorted index
+  Poincare::StatisticsDataset<double> dataset =
+      store->createDatasetFromSeries(series);
   // Compute values at index 0 and 1
-  double x2 = store->get(series, 0, 0);
-  double y2 = store->get(series, 1, 0);
-  double x1 = store->get(series, 0, 1);
-  double y1 = store->get(series, 1, 1);
+  int firstIndex = dataset.indexAtSortedIndex(0);
+  int secondIndex = dataset.indexAtSortedIndex(1);
+  double x2 = store->get(series, 0, firstIndex);
+  double y2 = store->get(series, 1, firstIndex);
+  double x1 = store->get(series, 0, secondIndex);
+  double y1 = store->get(series, 1, secondIndex);
   // Compute max and min in case an extremum isn't identified
   double xMin, yMin, xMax, yMax, x0, y0;
   yMin = yMax = y2;
@@ -124,8 +130,9 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   bool foundMin, foundMax;
   foundMin = foundMax = false;
   for (int i = 2; i < numberOfPairs; i++) {
-    x0 = store->get(series, 0, i);
-    y0 = store->get(series, 1, i);
+    int sortedIndex = dataset.indexAtSortedIndex(i);
+    x0 = store->get(series, 0, sortedIndex);
+    y0 = store->get(series, 1, sortedIndex);
     if (y2 < y1 && y1 < y0) {
       // Check if (x2, y2) was a minimum extrema (y4 > y3 > y2 < y1 < y0)
       foundMin = foundMin || checkExtremum(x2, y2, lastMinExtremum,

@@ -110,6 +110,14 @@ double LinearRegressionStore::yIntercept(int series,
 }
 
 Poincare::StatisticsDataset<double>
+LinearRegressionStore::createDatasetFromSeries(int series) const {
+  Poincare::StatisticsDataset<double> dataset =
+      Poincare::StatisticsDataset<double>(&m_dataLists[series][0],
+                                          &m_dataLists[series][1]);
+  return dataset;
+}
+
+Poincare::StatisticsDataset<double>
 LinearRegressionStore::createDatasetFromColumn(
     int series, int i, CalculationOptions options) const {
   Poincare::StatisticsDataset<double> dataset =

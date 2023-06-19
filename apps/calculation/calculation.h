@@ -12,10 +12,10 @@ class CalculationStore;
 
 // clang-format off
 /* A calculation is:
- *  |     uint8_t   |KDCoordinate|  KDCoordinate  |  uint8_t  |   ...     |      ...       |         ...           |          ...          |
- *  |m_displayOutput|  m_height  |m_expandedHeight|m_equalSign|m_inputText|m_exactOuputText|m_approximateOuputText1|m_approximateOuputText2|
- *                                                                                               with maximal           with displayed
- *                                                                                            significant digits      significant digits
+ *  |     uint8_t   |  uint8_t  |KDCoordinate|  KDCoordinate  |   ...     |      ...        |          ...           |           ...          |
+ *  |m_displayOutput|m_equalSign|  m_height  |m_expandedHeight|m_inputText|m_exactOutputText|m_approximateOutputText1|m_approximateOutputText2|
+ *                                                                                                 with maximal            with displayed
+ *                                                                                              significant digits       significant digits
  *
  * */
 // clang-format on
@@ -67,9 +67,9 @@ class Calculation {
 
   Calculation()
       : m_displayOutput(DisplayOutput::Unknown),
+        m_equalSign(EqualSign::Unknown),
         m_height(-1),
-        m_expandedHeight(-1),
-        m_equalSign(EqualSign::Unknown) {
+        m_expandedHeight(-1) {
     assert(sizeof(m_inputText) == 0);
   }
   bool operator==(const Calculation& c);
@@ -122,9 +122,9 @@ class Calculation {
    * print an expression we add omitted signs (multiplications, parenthesis...)
    */
   DisplayOutput m_displayOutput;
-  KDCoordinate m_height __attribute__((packed));
-  KDCoordinate m_expandedHeight __attribute__((packed));
   EqualSign m_equalSign;
+  KDCoordinate m_height;
+  KDCoordinate m_expandedHeight;
   char m_inputText[0];  // MUST be the last member variable
 };
 

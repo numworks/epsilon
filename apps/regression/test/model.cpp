@@ -471,6 +471,43 @@ QUIZ_CASE(regression_trigonometric_4) {
                                      sr);
 }
 
+QUIZ_CASE(regression_trigonometric_4_bis) {
+  // Check that values order does not matter
+  constexpr int numberOfPoints = 89;
+  double x[numberOfPoints];
+  double y[numberOfPoints];
+  for (int i = 0; i < numberOfPoints; i++) {
+    x[i] = static_cast<double>(i);
+    y[i] = std::sin(static_cast<double>(i));
+  }
+  /* Sort from lower to hight y. This is to check if the coefficients
+   * initialization does not rely on the order of the values */
+  double* context[2] = {x, y};
+  Poincare::Helpers::Sort(
+      [](int i, int j, void* context, int numberOfElements) {
+        double** ctx = reinterpret_cast<double**>(context);
+        double* x = ctx[0];
+        double* y = ctx[1];
+        double tempX = x[i];
+        double tempY = y[i];
+        x[i] = x[j];
+        y[i] = y[j];
+        x[j] = tempX;
+        y[j] = tempY;
+      },
+      [](int i, int j, void* context, int numberOfElements) {
+        double** ctx = reinterpret_cast<double**>(context);
+        double* y = ctx[1];
+        return y[i] >= y[j];
+      },
+      static_cast<void*>(context), numberOfPoints);
+  constexpr double coefficients[] = {1.0, 1.0, 0.0, 0.0};
+  constexpr double sr = 0.0;
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
+                                     Poincare::Preferences::AngleUnit::Radian,
+                                     sr);
+}
+
 QUIZ_CASE(regression_logistic) {
   /* This data was generated without the random error, otherwise it did not pass
    * the test. */

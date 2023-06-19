@@ -489,12 +489,15 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *shouldRedrawLayout,
                                      bool *shouldUpdateCursor) {
+  // Handle move and selection
   if (handleMoveEvent(event, shouldRedrawLayout)) {
     if (!isEditing()) {
       setEditing(true);
     }
     return true;
   }
+
+  // Notify delegate
   if (m_layoutFieldDelegate) {
     if (m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
       return true;
@@ -504,6 +507,22 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
       return true;
     }
   }
+
+  /* If move event was not caught neither by handleMoveEvent nor by
+   * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
+   * event up. */
+  if (event.isMoveEvent() && isEditing()) {
+    return true;
+  }
+
+  // Handle sto
+  if (event == Ion::Events::Sto && isEditing()) {
+    handleStoreEvent();
+    *shouldUpdateCursor = false;
+    return true;
+  }
+
+  // Handle boxes
   if (handleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
@@ -511,21 +530,60 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     *shouldUpdateCursor = false;
     return true;
   }
-  /* if move event was not caught neither by handleMoveEvent nor by
-   * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
-   * event up. */
-  if (event.isMoveEvent() && isEditing()) {
+
+  // Handle copy, cut
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) &&
+      isEditing()) {
+    m_contentView.copySelection(context(), false);
+    if (event == Ion::Events::Cut && !cursor()->selection().isEmpty()) {
+      cursor()->performBackspace();
+      *shouldRedrawLayout = true;
+    }
     return true;
   }
+
+  // Handle paste
+  if (event == Ion::Events::Paste) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
+    bool didHandleEvent = handleEventWithText(
+        Clipboard::SharedClipboard()->storedText(), false, true);
+    *shouldRedrawLayout = didHandleEvent;
+    return didHandleEvent;
+  }
+
+  // Enter edition
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     setEditing(true);
     return true;
   }
+
+  // Handle back
   if (event == Ion::Events::Back && isEditing()) {
     clearAndSetEditing(false);
     m_layoutFieldDelegate->layoutFieldDidAbortEditing(this);
     return true;
   }
+
+  // Handle backspace
+  if (event == Ion::Events::Backspace) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
+    cursor()->performBackspace();
+    *shouldRedrawLayout = true;
+    return true;
+  }
+
+  // Handle clear
+  if (event == Ion::Events::Clear && isEditing()) {
+    clearLayout();
+    *shouldRedrawLayout = true;
+    return true;
+  }
+
+  // Handle special events with text
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
   size_t eventTextLength = 0;
   if (event == Ion::Events::Log &&
@@ -539,39 +597,15 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
         Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
                               Ion::Events::EventData::k_maxDataSize);
   }
-  if (eventTextLength > 0 || event == Ion::Events::Paste ||
-      event == Ion::Events::Backspace) {
+  if (eventTextLength > 0) {
     if (!isEditing()) {
       setEditing(true);
     }
-    if (eventTextLength > 0) {
-      handleEventWithText(buffer);
-    } else if (event == Ion::Events::Paste) {
-      handleEventWithText(Clipboard::SharedClipboard()->storedText(), false,
-                          true);
-    } else {
-      assert(event == Ion::Events::Backspace);
-      cursor()->performBackspace();
-    }
-    *shouldRedrawLayout = true;
-    return true;
+    bool didHandleEvent = handleEventWithText(buffer);
+    *shouldRedrawLayout = didHandleEvent;
+    return didHandleEvent;
   }
-  if ((event == Ion::Events::Copy || event == Ion::Events::Cut ||
-       event == Ion::Events::Sto) &&
-      isEditing()) {
-    m_contentView.copySelection(context(), event == Ion::Events::Sto);
-    if (event == Ion::Events::Cut && !cursor()->selection().isEmpty()) {
-      cursor()->performBackspace();
-      *shouldRedrawLayout = true;
-    }
-    *shouldUpdateCursor = event != Ion::Events::Sto;
-    return true;
-  }
-  if (event == Ion::Events::Clear && isEditing()) {
-    clearLayout();
-    *shouldRedrawLayout = true;
-    return true;
-  }
+
   *shouldUpdateCursor = false;
   return false;
 }

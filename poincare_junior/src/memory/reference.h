@@ -58,6 +58,7 @@ class Reference {
   void dumpAt(void *address) const;
   size_t treeSize() const;
   bool treeIsIdenticalTo(const Reference &other) const {
+    // TODO: second getTree() can delete first tree.
     return (isInitialized() == other.isInitialized()) &&
            (!isInitialized() || getTree().treeIsIdenticalTo(other.getTree()));
   }

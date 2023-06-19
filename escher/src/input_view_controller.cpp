@@ -49,9 +49,11 @@ bool InputViewController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
 
 bool InputViewController::layoutFieldDidFinishEditing(
     LayoutField* layoutField, Ion::Events::Event event) {
+  assert(layoutField->isEditing());
   if (m_successAction.perform(this)) {
     dismissModal();
     m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, event);
+    layoutField->clearAndSetEditing(false);
     return true;
   }
   return false;

@@ -233,8 +233,10 @@ void ExpressionModelListController::finishEdition() {
 
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
+  assert(layoutField->isEditing());
   editSelectedRecordWithText(layoutField->text());
   finishEdition();
+  layoutField->clearAndSetEditing(false);
   return true;
 }
 

@@ -159,11 +159,16 @@ bool StoreMenuController::parseAndStore(const char* text) {
 
 bool StoreMenuController::layoutFieldDidFinishEditing(
     Escher::LayoutField* layoutField, Ion::Events::Event event) {
+  assert(layoutField->isEditing());
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
   Layout layout = layoutField->layout();
   layout.serializeForParsing(buffer, bufferSize);
-  return parseAndStore(buffer);
+  if (parseAndStore(buffer)) {
+    layoutField->clearAndSetEditing(false);
+    return true;
+  }
+  return false;
 }
 
 void StoreMenuController::layoutFieldDidAbortEditing(

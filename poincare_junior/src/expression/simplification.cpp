@@ -852,14 +852,15 @@ bool Simplification::ExpandLn(EditionReference* reference) {
 }
 
 bool Simplification::ExpandExp(EditionReference* reference) {
-  // exp(A?+B) = exp(A) * exp(B)
-  return SmartExpand(
-             reference,
-             KExp(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
-             KMult(KExp(KAdd(KPlaceholder<A>())), KExp(KPlaceholder<B>()))) ||
-         reference->matchAndReplace(
-             KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
-             KPow(KExp(KPlaceholder<A>()), KMult(KPlaceholder<B>())));
+  return
+      // exp(A?+B) = exp(A) * exp(B)
+      SmartExpand(
+          reference, KExp(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>())),
+          KMult(KExp(KAdd(KPlaceholder<A>())), KExp(KPlaceholder<B>()))) ||
+      // exp(A*B?) = exp(A) ^ B
+      reference->matchAndReplace(
+          KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
+          KPow(KExp(KPlaceholder<A>()), KMult(KPlaceholder<B>())));
 }
 
 bool Simplification::ContractExpMult(EditionReference* reference) {

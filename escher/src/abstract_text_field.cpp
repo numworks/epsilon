@@ -494,14 +494,25 @@ void AbstractTextField::willResignFirstResponder() {
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   assert(!contentView()->isStalled());
+  bool textDidChange;
+  bool didHandleEvent = privateHandleEvent(event, &textDidChange);
+  if (didHandleEvent && textDidChange) {
+    m_delegate->textFieldDidHandleEvent(this);
+  }
+  return didHandleEvent;
+}
+
+bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
+                                           bool *textDidChange) {
+  assert(m_delegate);
+  assert(!contentView()->isStalled());
   size_t previousTextLength = strlen(text());
   bool fieldIsEditable = isEditable();
-  bool didHandleEvent = false;
+  *textDidChange = false;
 
   // Handle move and selection
   if (handleMoveEvent(event) || handleSelectEvent(event)) {
-    didHandleEvent = true;
-    goto notify_delegate_after_handle_event;
+    return true;
   }
 
   // Notify delegate
@@ -518,14 +529,16 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
       } else {
         removeWholeText();
       }
+      *textDidChange = true;
     }
-    didHandleEvent = true;
-    goto notify_delegate_after_handle_event;
+    return true;
   }
 
   if (fieldIsEditable && event == Ion::Events::Paste) {
-    return handleEventWithText(Clipboard::SharedClipboard()->storedText(),
-                               false, true);
+    bool didHandleEvent = privateHandleEventWithText(
+        Clipboard::SharedClipboard()->storedText(), false, true);
+    *textDidChange = didHandleEvent;
+    return didHandleEvent;
   }
 
   if (fieldIsEditable &&
@@ -534,16 +547,16 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
-    didHandleEvent = true;
-    goto notify_delegate_after_handle_event;
+    *textDidChange = true;
+    return true;
   }
 
   if ((event == Ion::Events::Sto && handleStoreEvent()) ||
       (fieldIsEditable &&
        ((isEditing() && privateHandleEventWhileEditing(event)) ||
         handleBoxEvent(event)))) {
-    didHandleEvent = true;
-    goto notify_delegate_after_handle_event;
+    *textDidChange = previousTextLength != strlen(text());
+    return true;
   }
 
   if (fieldIsEditable) {
@@ -552,18 +565,13 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
         Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
                               Ion::Events::EventData::k_maxDataSize);
     if (eventTextLength > 0) {
-      return handleEventWithText(buffer);
+      bool didHandleEvent = privateHandleEventWithText(buffer);
+      *textDidChange = didHandleEvent;
+      return didHandleEvent;
     }
   }
 
-notify_delegate_after_handle_event:
-  /* Only the strlen are compared because this method does not reaches this
-   * point if the text was modified, only if it was not altered or if
-   * text was deleted. */
-  if (didHandleEvent && strlen(text()) != previousTextLength) {
-    m_delegate->textFieldDidHandleEvent(this);
-  }
-  return didHandleEvent;
+  return false;
 }
 
 void AbstractTextField::scrollToCursor() {
@@ -618,9 +626,8 @@ bool AbstractTextField::handleSelectEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool AbstractTextField::handleEventWithText(const char *eventText,
-                                            bool indentation,
-                                            bool forceCursorRightOfText) {
+bool AbstractTextField::privateHandleEventWithText(
+    const char *eventText, bool indentation, bool forceCursorRightOfText) {
   assert(isEditable());
   if (!isEditing()) {
     reinitDraftTextBuffer();
@@ -668,8 +675,20 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
       setCursorLocation(nextCursorLocation);
     }
   }
-  m_delegate->textFieldDidHandleEvent(this);
   return true;
+}
+
+bool AbstractTextField::handleEventWithText(const char *eventText,
+                                            bool indentation,
+                                            bool forceCursorRightOfText) {
+  /* TODO: this method should not exist, we should only have
+   * privateHandleEventWithText and always call handleEvent. See issue #8 */
+  if (privateHandleEventWithText(eventText, indentation,
+                                 forceCursorRightOfText)) {
+    m_delegate->textFieldDidHandleEvent(this);
+    return true;
+  }
+  return false;
 }
 
 void AbstractTextField::removeWholeText() {

@@ -150,6 +150,9 @@ class AbstractTextField : public TextInput, public EditableField {
   bool handleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;
   bool storeInClipboard() const;
+  bool privateHandleEvent(Ion::Events::Event event, bool *textDidChange);
+  bool privateHandleEventWithText(const char *text, bool indentation = false,
+                                  bool forceCursorRightOfText = false);
 
   TextFieldDelegate *m_delegate;
 };

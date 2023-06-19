@@ -10,7 +10,7 @@
 #include "additional_outputs/trigonometry_list_controller.h"
 #include "additional_outputs/unit_list_controller.h"
 #include "additional_outputs/vector_list_controller.h"
-#include "calculation_selectable_table_view.h"
+#include "calculation_selectable_list_view.h"
 #include "calculation_store.h"
 #include "history_view_cell.h"
 
@@ -20,13 +20,13 @@ class App;
 
 class HistoryController : public Escher::ViewController,
                           public Escher::ListViewDataSource,
-                          public Escher::SelectableTableViewDataSource,
-                          public Escher::SelectableTableViewDelegate,
+                          public Escher::SelectableListViewDataSource,
+                          public Escher::SelectableListViewDelegate,
                           public HistoryViewCellDataSource {
  public:
   HistoryController(EditExpressionController* editExpressionController,
                     CalculationStore* calculationStore);
-  Escher::View* view() override { return &m_selectableTableView; }
+  Escher::View* view() override { return &m_selectableListView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   TELEMETRY_ID("");
@@ -40,10 +40,9 @@ class HistoryController : public Escher::ViewController,
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell,
                               int previousSelectedX = -1,
                               int previousSelectedY = -1) override;
-  void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, KDPoint previousOffset,
-      bool withinTemporarySelection = false) override;
+  void listViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableListView* list, int previousSelectedRow,
+      KDPoint previousOffset, bool withinTemporarySelection = false) override;
   void recomputeHistoryCellHeightsIfNeeded() {
     m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(
         Poincare::Preferences::sharedPreferences, HistoryViewCell::Height);
@@ -64,7 +63,7 @@ class HistoryController : public Escher::ViewController,
 
   constexpr static int k_maxNumberOfDisplayedRows = 8;
 
-  CalculationSelectableTableView m_selectableTableView;
+  CalculationSelectableListView m_selectableListView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore* m_calculationStore;
   union UnionController {

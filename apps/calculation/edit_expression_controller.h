@@ -4,7 +4,7 @@
 #include <apps/shared/math_field_delegate.h>
 #include <poincare/layout.h>
 
-#include "calculation_selectable_table_view.h"
+#include "calculation_selectable_list_view.h"
 #include "history_controller.h"
 #include "layout_field.h"
 
@@ -53,10 +53,10 @@ class EditExpressionController : public Escher::ViewController,
   class ContentView : public Escher::View {
    public:
     ContentView(Escher::Responder* parentResponder,
-                CalculationSelectableTableView* subview,
+                CalculationSelectableListView* subview,
                 Escher::LayoutFieldDelegate* layoutFieldDelegate);
     void reload();
-    CalculationSelectableTableView* mainView() { return m_mainView; }
+    CalculationSelectableListView* mainView() { return m_mainView; }
     Escher::LayoutField* layoutField() {
       return m_expressionInputBar.layoutField();
     }
@@ -65,7 +65,7 @@ class EditExpressionController : public Escher::ViewController,
     int numberOfSubviews() const override { return 2; }
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    CalculationSelectableTableView* m_mainView;
+    CalculationSelectableListView* m_mainView;
     ExpressionInputBar m_expressionInputBar;
   };
 

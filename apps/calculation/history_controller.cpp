@@ -18,21 +18,21 @@ HistoryController::HistoryController(
     EditExpressionController *editExpressionController,
     CalculationStore *calculationStore)
     : ViewController(editExpressionController),
-      m_selectableTableView(this, this, this, this),
+      m_selectableListView(this, this, this, this),
       m_calculationStore(calculationStore),
       m_unionController(editExpressionController),
       m_integerController(editExpressionController),
       m_rationalController(editExpressionController),
       m_scientificNotationListController(editExpressionController) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_calculationHistory[i].setParentResponder(&m_selectableTableView);
+    m_calculationHistory[i].setParentResponder(&m_selectableListView);
     m_calculationHistory[i].setDataSource(this);
   }
 }
 
 void HistoryController::reload() {
   // Ensure that the total height never overflows KDCoordinate
-  while (m_selectableTableView.minimalSizeForOptimalDisplay().height() >=
+  while (m_selectableListView.minimalSizeForOptimalDisplay().height() >=
          KDCOORDINATE_MAX - 2 * HistoryViewCell::k_maxCellHeight) {
     m_calculationStore->deleteCalculationAtIndex(
         m_calculationStore->numberOfCalculations() - 1);
@@ -44,17 +44,17 @@ void HistoryController::reload() {
     m_calculationHistory[i].resetMemoization();
   }
 
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
   /* TODO
    * Replace the following by selectCellAtLocation in order to avoid laying out
    * the table view twice.
    */
   if (numberOfRows() > 0) {
-    m_selectableTableView.scrollToBottom();
+    m_selectableListView.scrollToBottom();
     /* Force to reload last added cell (hide the burger and exact output if
      * necessary) */
-    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, -1,
-                                            KDPointZero);
+    listViewDidChangeSelectionAndDidScroll(&m_selectableListView, -1,
+                                           KDPointZero);
   }
 }
 
@@ -64,8 +64,8 @@ void HistoryController::viewWillAppear() {
 }
 
 void HistoryController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, numberOfRows() - 1);
-  App::app()->setFirstResponder(&m_selectableTableView);
+  selectCell(numberOfRows() - 1);
+  App::app()->setFirstResponder(&m_selectableListView);
 }
 
 void HistoryController::willExitResponderChain(Responder *nextFirstResponder) {
@@ -73,7 +73,7 @@ void HistoryController::willExitResponderChain(Responder *nextFirstResponder) {
     return;
   }
   if (nextFirstResponder == parentResponder()) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
   }
 }
 
@@ -117,7 +117,7 @@ static void breakableSetExpressionInListController(
 
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     App::app()->setFirstResponder(parentResponder());
     return true;
   }
@@ -128,15 +128,14 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     int focusRow = selectedRow();
     SubviewType subviewType = selectedSubviewType();
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
     reload();
     if (numberOfRows() == 0) {
       App::app()->setFirstResponder(parentResponder());
       return true;
     }
-    m_selectableTableView.selectCellAtLocation(0,
-                                               focusRow > 0 ? focusRow - 1 : 0);
+    m_selectableListView.selectCell(focusRow > 0 ? focusRow - 1 : 0);
     /* The parameters 'sameCell' and 'previousSelectedY' are chosen to enforce
      * toggling of the output when necessary. */
     setSelectedSubviewType(
@@ -145,14 +144,14 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Clear) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     m_calculationStore->deleteAll();
     reload();
     App::app()->setFirstResponder(parentResponder());
     return true;
   }
   if (event == Ion::Events::Back) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     App::app()->setFirstResponder(parentResponder());
     return true;
   }
@@ -161,15 +160,15 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
   int focusRow = selectedRow();
   HistoryViewCell *selectedCell =
-      (HistoryViewCell *)m_selectableTableView.selectedCell();
+      (HistoryViewCell *)m_selectableListView.selectedCell();
   SubviewType subviewType = selectedSubviewType();
   EditExpressionController *editController =
       (EditExpressionController *)parentResponder();
   if (subviewType == SubviewType::Input) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
   } else if (subviewType == SubviewType::Output) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     Shared::ExpiringPointer<Calculation> calculation =
         calculationAtIndex(focusRow);
     ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
@@ -281,29 +280,26 @@ Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
   return m_calculationStore->calculationAtIndex(storeIndex(i));
 }
 
-void HistoryController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    KDPoint previousOffset, bool withinTemporarySelection) {
-  assert(t == &m_selectableTableView);
+void HistoryController::listViewDidChangeSelectionAndDidScroll(
+    SelectableListView *list, int previousSelectedRow, KDPoint previousOffset,
+    bool withinTemporarySelection) {
+  assert(list == &m_selectableListView);
   if (withinTemporarySelection || previousSelectedRow == selectedRow()) {
     return;
   }
   if (previousSelectedRow == -1) {
-    setSelectedSubviewType(SubviewType::Output, false, previousSelectedCol,
-                           previousSelectedRow);
+    setSelectedSubviewType(SubviewType::Output, false, previousSelectedRow);
   } else if (selectedRow() == -1) {
-    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCol,
-                           previousSelectedRow);
+    setSelectedSubviewType(SubviewType::Input, false, previousSelectedRow);
   } else {
-    HistoryViewCell *selectedCell = (HistoryViewCell *)(t->selectedCell());
+    HistoryViewCell *selectedCell = (HistoryViewCell *)(list->selectedCell());
     SubviewType nextSelectedSubviewType = selectedSubviewType();
     if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedRow < selectedRow()
                                     ? SubviewType::Input
                                     : SubviewType::Output;
     }
-    setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedCol,
-                           previousSelectedRow);
+    setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedRow);
   }
 }
 
@@ -357,7 +353,7 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
                                                int previousSelectedY) {
   // Avoid selecting non-displayed ellipsis
   HistoryViewCell *selectedCell =
-      static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
   if (subviewType == SubviewType::Ellipsis && selectedCell &&
       selectedCell->additionalInformations().isEmpty()) {
     subviewType = SubviewType::Output;
@@ -376,22 +372,20 @@ void HistoryController::historyViewCellDidChangeSelection(
   if ((type == SubviewType::Output || previousType == SubviewType::Output) &&
       (calculationAtIndexToggles(selectedRow()) ||
        calculationAtIndexToggles(previousSelectedRow))) {
-    m_selectableTableView.reloadData(false);
+    m_selectableListView.reloadData(false);
   }
 
   /* It might be necessary to scroll to the sub type if the cell overflows the
    * screen */
   if (selectedRow() >= 0) {
-    m_selectableTableView.scrollToSubviewOfTypeOfCellAtLocation(
-        type, m_selectableTableView.selectedColumn(),
-        m_selectableTableView.selectedRow());
+    m_selectableListView.scrollToSubviewOfTypeOfCellAtRow(
+        type, m_selectableListView.selectedRow());
   }
   /* Fill the selected cell and the previous selected cell because cells
    * repartition might have changed */
-  *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
-  *previousCell =
-      static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(
-          previousSelectedCol, previousSelectedRow));
+  *cell = static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
+  *previousCell = static_cast<HistoryViewCell *>(
+      m_selectableListView.cell(previousSelectedRow));
   /* 'reloadData' calls 'fillCellForRow' for each cell while the table
    * has been deselected. To reload the expanded cell, we call one more time
    * 'fillCellForRow' but once the right cell has been selected. */

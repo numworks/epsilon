@@ -13,7 +13,7 @@ using namespace Escher;
 namespace Calculation {
 
 EditExpressionController::ContentView::ContentView(
-    Responder *parentResponder, CalculationSelectableTableView *subview,
+    Responder *parentResponder, CalculationSelectableListView *subview,
     LayoutFieldDelegate *layoutFieldDelegate)
     : View(),
       m_mainView(subview),
@@ -51,7 +51,7 @@ EditExpressionController::EditExpressionController(
       m_historyController(historyController),
       m_calculationStore(calculationStore),
       m_contentView(this,
-                    static_cast<CalculationSelectableTableView *>(
+                    static_cast<CalculationSelectableListView *>(
                         m_historyController->view()),
                     this) {
   clearWorkingBuffer();

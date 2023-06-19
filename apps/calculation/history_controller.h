@@ -61,7 +61,7 @@ class HistoryController : public Escher::ViewController,
                                          SubviewType type,
                                          SubviewType previousType) override;
 
-  constexpr static int k_maxNumberOfDisplayedRows = 8;
+  constexpr static int k_maxNumberOfDisplayedRows = 5;
 
   CalculationSelectableListView m_selectableListView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];

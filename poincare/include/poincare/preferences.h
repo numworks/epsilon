@@ -110,6 +110,11 @@ class Preferences final {
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);
 
+  uint32_t mathPreferencesCheckSum() const {
+    return (static_cast<uint32_t>(m_complexFormat) << 8) +
+           static_cast<uint32_t>(m_angleUnit);
+  }
+
  private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;

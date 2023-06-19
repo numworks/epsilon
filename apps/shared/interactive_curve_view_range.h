@@ -107,7 +107,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void privateComputeRanges(bool computeX, bool computeY);
 
   Poincare::Range2D m_memoizedAutoRange;
-  uint32_t m_checksumOfMemoizedAutoRange;
+  uint64_t m_checksumOfMemoizedAutoRange;
   float m_offscreenYAxis;
   bool m_xAuto;
   bool m_yAuto;

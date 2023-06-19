@@ -41,7 +41,7 @@ bool AllChildren(Node u, bool test(Node)) {
 }
 
 bool Simplification::AutomaticSimplify(EditionReference* u) {
-  if (u->block()->isRational()) {
+  if (IsRational(*u)) {
     ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
     return true;  // TODO
   }
@@ -93,41 +93,41 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   if (!IsInteger(n)) {  // TODO replace by assert
     return false;
   }
-  // a^0 -> 1
+  // v^0 -> 1
   if (n.type() == BlockType::Zero) {
     ReplaceTreeByNode(u, 1_e);
     return true;
   }
-  // a^1 -> a
+  // v^1 -> v
   if (n.type() == BlockType::One) {
     ReplaceTreeByTree(u, v);
     return true;
   }
-  // (a^b)^n -> a^(b*n)
+  // (w^p)^n -> w^(p*n)
   if (v.type() == BlockType::Power) {
-    EditionReference s = v.childAtIndex(1);
-    assert(s.nextTree() == static_cast<Node>(n));
+    EditionReference p = v.childAtIndex(1);
+    assert(p.nextTree() == static_cast<Node>(n));
     EditionReference m =
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
-    Node previousS = s;
-    s.insertNodeBeforeNode(m);
-    s = previousS;
     Node previousU = *u;
     u->removeNode();
     *u = previousU;
-    SimplifyProduct(&s);
+    Node previousP = p;
+    p.insertNodeBeforeNode(m);
+    p = previousP;
+    SimplifyProduct(&p);
     // assert(IsInteger(s));
     return SimplifyPower(u);
   }
-  // (a*b)^n -> a^n * b^n
+  // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v.type() == BlockType::Multiplication) {
-    for (auto [child, index] : NodeIterator::Children<Forward, Editable>(v)) {
+    for (auto [w, index] : NodeIterator::Children<Forward, Editable>(v)) {
       EditionReference m =
           EditionPool::sharedEditionPool()->push<BlockType::Power>();
-      child.clone();
+      w.clone();
       n.clone();
-      ReplaceTreeByTree(&child, m);
-      SimplifyPower(&child);
+      ReplaceTreeByTree(&w, m);
+      SimplifyPower(&w);
     }
     n.removeTree();
     Node previousU = *u;
@@ -195,7 +195,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
     EditionReference u2 = l->childAtIndex(1);
     if (u1.type() != BlockType::Multiplication &&
         u2.type() != BlockType::Multiplication) {
-      // SPRDREC1
+      // Merge constants
       if (IsConstant(u1) && IsConstant(u2)) {
         SimplifyRationalTree(l);
         if (l->type() == BlockType::One) {
@@ -205,11 +205,13 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
         WrapWithUnary(l, KMult());
         return true;
       }
+      // 1 * u2 -> u2
       if (u1.type() == BlockType::One) {
         ReplaceTreeByTree(l, u2);
         WrapWithUnary(l, KMult());
         return true;
       }
+      // u1 * 1 -> u1
       if (u2.type() == BlockType::One) {
         ReplaceTreeByTree(l, u1);
         WrapWithUnary(l, KMult());
@@ -220,6 +222,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
       int basesAreEqual = Comparison::AreEqual(t1, t2);
       t1.removeTree();
       t2.removeTree();
+      // t^m * t^n -> t^(m+n)
       if (basesAreEqual) {
         EditionReference S = P_ADD(PushExponent(u1), PushExponent(u2));
         SimplifySum(&S);
@@ -236,7 +239,6 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
       }
       return Reorder(&u1, &u2);
     } else {
-      // SPRDREC2
       l->removeNode();
       if (u1.type() != BlockType::Multiplication) {
         WrapWithUnary(&u1, KMult());
@@ -317,14 +319,11 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
 }
 
 bool Simplification::SimplifyProduct(EditionReference* u) {
-  // SPRD1
-  // done before
-  // SPRD2
+  // ... * 0 * ... -> 0
   if (AnyChildren(*u, IsZero)) {
     ReplaceTreeByNode(u, 0_e);
     return true;
   }
-  // SPRD3
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
@@ -378,7 +377,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     EditionReference u1 = l->childAtIndex(0);
     EditionReference u2 = l->childAtIndex(1);
     if (u1.type() != BlockType::Addition && u2.type() != BlockType::Addition) {
-      // SPRDREC1
+      // Merge constants
       if (IsConstant(u1) && IsConstant(u2)) {
         SimplifyRationalTree(l);
         if (l->type() == BlockType::Zero) {
@@ -403,6 +402,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
       int termsAreEqual = Comparison::AreEqual(t1, t2);
       t1.removeTree();
       t2.removeTree();
+      // k1 * a + k2 * a -> (k1+k2) * a
       if (termsAreEqual) {
         EditionReference S = P_ADD(PushConstant(u1), PushConstant(u2));
         SimplifySum(&S);
@@ -419,7 +419,6 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
       }
       return Reorder(&u1, &u2);
     } else {
-      // SPRDREC2
       l->removeNode();
       if (u1.type() != BlockType::Addition) {
         WrapWithUnary(&u1, KAdd());

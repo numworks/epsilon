@@ -50,9 +50,11 @@ class Simplification {
  private:
   static bool SimplifyRationalTree(EditionReference *u);
   static bool SimplifySum(EditionReference *u);
+  // SimplifySumRec expects an Add and returns an Add
   static bool SimplifySumRec(EditionReference *u);
   static bool MergeSums(EditionReference *p, EditionReference *q);
   static bool SimplifyProduct(EditionReference *u);
+  // SimplifyProductRec expects a Mult and returns a Mult
   static bool SimplifyProductRec(EditionReference *u);
   static bool MergeProducts(EditionReference *p, EditionReference *q);
   static bool SimplifyPower(EditionReference *u);

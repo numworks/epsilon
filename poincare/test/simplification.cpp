@@ -210,6 +210,8 @@ QUIZ_CASE(poincare_simplification_addition) {
       "\u00122×2^\u00122×√(3)×e^\u0012π\u0013\u0013\u0013");
   assert_parsed_expression_simplify_to("((4π+5)/10)-2.3",
                                        "\u00122×π-9\u0013/5");
+  assert_parsed_expression_simplify_to("4×_°+3×_'+2×_\"-(3×_°+2×_'+1×_\")",
+                                       "\u00123661×π\u0013/648000×_rad");
   assert_parsed_expression_simplify_to(
       "[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]", "[[2,4+2×i][6,8][10,12]]");
   assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", Undefined::Name());

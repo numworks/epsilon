@@ -130,7 +130,7 @@ bool LayoutField::handleDivision() {
         if (editionIn1D) {
           // 1D: NumeratorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
-          handled = handleEventWithText(" ");
+          handled = Escher::LayoutField::handleEvent(Ion::Events::Space);
           assert(handled);
           event = Ion::Events::Left;
         } else {

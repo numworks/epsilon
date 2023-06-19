@@ -64,6 +64,8 @@ class LinearRegressionStore : public Shared::DoublePairStore {
   double yIntercept(int series,
                     CalculationOptions options = CalculationOptions()) const;
 
+  Poincare::StatisticsDataset<double> createDatasetFromSeries(int series) const;
+
  private:
   Poincare::StatisticsDataset<double> createDatasetFromColumn(
       int series, int i,

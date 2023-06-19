@@ -1,4 +1,4 @@
-#include "calculation_selectable_table_view.h"
+#include "calculation_selectable_list_view.h"
 
 #include <algorithm>
 
@@ -6,18 +6,18 @@ using namespace Escher;
 
 namespace Calculation {
 
-CalculationSelectableTableView::CalculationSelectableTableView(
-    Responder *parentResponder, TableViewDataSource *dataSource,
-    SelectableTableViewDataSource *selectionDataSource,
-    SelectableTableViewDelegate *delegate)
-    : ::SelectableTableView(parentResponder, dataSource, selectionDataSource,
-                            delegate) {
+CalculationSelectableListView::CalculationSelectableListView(
+    Responder *parentResponder, ListViewDataSource *dataSource,
+    SelectableListViewDataSource *selectionDataSource,
+    SelectableListViewDelegate *delegate)
+    : ::SelectableListView(parentResponder, dataSource, selectionDataSource,
+                           delegate) {
   setVerticalCellOverlap(0);
   setMargins(0);
   hideScrollBars();
 }
 
-void CalculationSelectableTableView::scrollToBottom() {
+void CalculationSelectableListView::scrollToBottom() {
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY =
       dataSource()->cumulatedHeightBeforeRow(totalNumberOfRows()) -
@@ -25,9 +25,8 @@ void CalculationSelectableTableView::scrollToBottom() {
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
-void CalculationSelectableTableView::scrollToCell(int i, int j) {
-  ::SelectableTableView::scrollToCell(i, j);
-  ScrollView::layoutSubviews();
+void CalculationSelectableListView::scrollToCell(int col, int row) {
+  SelectableTableView::scrollToCell(col, row);
   if (m_contentView.bounds().height() - contentOffset().y() <
       bounds().height()) {
     // Avoid empty space at the end of the table
@@ -35,9 +34,9 @@ void CalculationSelectableTableView::scrollToCell(int i, int j) {
   }
 }
 
-void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
-    HistoryViewCellDataSource::SubviewType subviewType, int i, int j) {
-  if (dataSource()->rowHeight(j) <= bounds().height()) {
+void CalculationSelectableListView::scrollToSubviewOfTypeOfCellAtRow(
+    HistoryViewCellDataSource::SubviewType subviewType, int row) {
+  if (dataSource()->rowHeight(row) <= bounds().height()) {
     return;
   }
 
@@ -46,9 +45,9 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
   assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
 
-  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeRow(j);
+  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeRow(row);
   if (cell->displaysSingleLine() &&
-      dataSource()->rowHeight(j) >
+      dataSource()->rowHeight(row) >
           maxContentHeightDisplayableWithoutScrolling()) {
     /* If we cannot display the full calculation, we display the selected
      * layout as close as possible to the top of the screen without drawing
@@ -93,7 +92,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
             ? 0
             : inputLayout.baseline(cell->inputView()->font());
     contentOffsetY += std::min(
-        dataSource()->rowHeight(j) -
+        dataSource()->rowHeight(row) -
             maxContentHeightDisplayableWithoutScrolling(),
         std::max(
             0, (inputBaseline - cell->outputView()->baseline()) *
@@ -101,7 +100,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
                         ? -1
                         : 1)));
   } else if (subviewType != HistoryViewCellDataSource::SubviewType::Input) {
-    contentOffsetY += dataSource()->rowHeight(j) -
+    contentOffsetY += dataSource()->rowHeight(row) -
                       maxContentHeightDisplayableWithoutScrolling();
   }
 

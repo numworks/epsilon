@@ -33,7 +33,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/vector_list_controller.cpp \
   additional_outputs/vector_model.cpp \
   app.cpp \
-  calculation_selectable_table_view.cpp \
+  calculation_selectable_list_view.cpp \
   edit_expression_controller.cpp \
   layout_field.cpp \
   history_view_cell.cpp \

@@ -8,7 +8,7 @@
 #include <algorithm>
 
 #include "app.h"
-#include "calculation_selectable_table_view.h"
+#include "calculation_selectable_list_view.h"
 
 using namespace Escher;
 using namespace Poincare;

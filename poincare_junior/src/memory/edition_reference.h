@@ -137,6 +137,22 @@ inline EditionReference Node::clone() const {
   return EditionPool::sharedEditionPool()->clone(*this);
 }
 
+inline void ReplaceTreeByNode(EditionReference* u, Node n) {
+  *u = u->replaceTreeByNode(n);
+}
+
+inline void ReplaceTreeByTree(EditionReference* u, Node n) {
+  *u = u->replaceTreeByTree(n);
+}
+
+inline void ReplaceNodeByNode(EditionReference* u, Node n) {
+  *u = u->replaceNodeByNode(n);
+}
+
+inline void ReplaceNodeByTree(EditionReference* u, Node n) {
+  *u = u->replaceNodeByTree(n);
+}
+
 }  // namespace PoincareJ
 
 #endif

@@ -20,21 +20,18 @@ class Simplification {
       EditionReference reference);
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  /* Some submethods replace with a type that could be altered again. +
-   * is used instead of || so that they are called successively.
-   * ContractTrigonometric is called last since it can split and expand the
-   * multiplication.  */
   static bool ShallowContract(EditionReference *e, void *context = nullptr) {
-    return ContractLn(e) || ContractExpPow(e) ||
-           (ContractAbs(e) + ContractExpMult(e) + ContractTrigonometric(e));
+    return TryAllOperations(e, k_contractOperations,
+                            std::size(k_contractOperations));
   }
   static bool ShallowExpand(EditionReference *e, void *context = nullptr) {
-    return ExpandAbs(e) || ExpandLn(e) || ExpandExp(e) ||
-           ExpandTrigonometric(e);
+    return TryAllOperations(e, k_expandOperations,
+                            std::size(k_expandOperations));
   }
   static bool ShallowAlgebraicExpand(EditionReference *e,
                                      void *context = nullptr) {
-    return ExpandPower(e) || ExpandMult(e);
+    return TryAllOperations(e, k_algebraicExpandOperations,
+                            std::size(k_algebraicExpandOperations));
   }
 
   enum class ProjectionContext {
@@ -73,10 +70,13 @@ class Simplification {
   static EditionReference ApplyShallowInDepth(EditionReference reference,
                                               ShallowOperation shallowOperation,
                                               void *context = nullptr);
-  static bool SmartContract(EditionReference *reference, Node pattern,
-                            Node structure);
   static bool SmartExpand(EditionReference *reference, Node pattern,
                           Node structure);
+
+  typedef bool (*Operation)(EditionReference *reference);
+  // Try all Operations until they all fail consecutively.
+  static bool TryAllOperations(EditionReference *e, const Operation *operations,
+                               int numberOfOperations);
 
   static bool ContractAbs(EditionReference *reference);
   static bool ExpandAbs(EditionReference *reference);
@@ -89,6 +89,14 @@ class Simplification {
   static bool ExpandTrigonometric(EditionReference *reference);
   static bool ExpandMult(EditionReference *reference);
   static bool ExpandPower(EditionReference *reference);
+
+  constexpr static Operation k_contractOperations[] = {
+      ContractLn, ContractExpPow, ContractAbs, ContractExpMult,
+      ContractTrigonometric};
+  constexpr static Operation k_expandOperations[] = {
+      ExpandAbs, ExpandLn, ExpandExp, ExpandTrigonometric};
+  constexpr static Operation k_algebraicExpandOperations[] = {ExpandPower,
+                                                              ExpandMult};
 };
 
 }  // namespace PoincareJ

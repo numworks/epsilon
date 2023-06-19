@@ -804,21 +804,28 @@ bool Simplification::SmartExpand(EditionReference* reference, Node pattern,
   return successCounter > 0;
 }
 
-bool Simplification::SmartContract(EditionReference* reference, Node pattern,
-                                   Node structure) {
-  /* Contract the expression as long as possible. For example :
-   * A*|B|*|C|*|D|*E = A*|B*C|*|D|*E = A*|B*C*D|*E */
-  bool contracted = false;
-  while (reference->matchAndReplace(pattern, structure)) {
-    contracted = true;
+bool Simplification::TryAllOperations(EditionReference* e,
+                                      const Operation* operations,
+                                      int numberOfOperations) {
+  /* For example :
+   * Most contraction operations are very shallow.
+   * exp(A)*exp(B)*exp(C)*|D|*|E| = exp(A+B)*exp(C)*|D|*|E|
+   *                              = exp(A+B)*exp(C)*|D*E|
+   *                              = exp(A+B+C)*|D*E|
+   * Most expansion operations have to handle themselves smartly.
+   * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
+  int failures = 0;
+  int i = 0;
+  while (failures < numberOfOperations) {
+    failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
+    i++;
   }
-  return contracted;
+  return i > numberOfOperations;
 }
 
 bool Simplification::ContractAbs(EditionReference* reference) {
   // A*|B|*|C|*D = A*|BC|*D
-  return SmartContract(
-      reference,
+  return reference->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
             KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KPlaceholder<A>(),
@@ -835,8 +842,7 @@ bool Simplification::ExpandAbs(EditionReference* reference) {
 
 bool Simplification::ContractLn(EditionReference* reference) {
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
-  return SmartContract(
-      reference,
+  return reference->matchAndReplace(
       KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
            KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KAdd(KPlaceholder<A>(),
@@ -865,8 +871,7 @@ bool Simplification::ExpandExp(EditionReference* reference) {
 
 bool Simplification::ContractExpMult(EditionReference* reference) {
   // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
-  return SmartContract(
-      reference,
+  return reference->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
             KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KPlaceholder<A>(), KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
@@ -883,7 +888,9 @@ bool Simplification::ContractExpPow(EditionReference* reference) {
 bool Simplification::ExpandTrigonometric(EditionReference* reference) {
   // If second element is -1/0/1/2, KTrig is -sin/cos/sin/-cos
   // TODO : Ensure trig second element is reduced before and after.
-  // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
+  /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
+   * ExpandTrigonometric is more complex than other expansions and cannot be
+   * factorized with SmartExpand. */
   if (reference->matchAndReplace(
           KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
                 KPlaceholder<C>()),
@@ -913,7 +920,8 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
   /* A?*Trig(B, C)*Trig(D, E)*F?
    * = (Trig(B-D, TrigDiff(C,E))*F + Trig(B+D, E+C))*F)*A*0.5
    * F is duplicated in case it contains other Trig trees that could be
-   * contracted as well. */
+   * contracted as well. ContractTrigonometric is therefore more complex than
+   * other contractions. It handles nested trees itself. */
   if (reference->matchAndReplace(
           KMult(KAnyTreesPlaceholder<A>(),
                 KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
@@ -957,6 +965,8 @@ bool Simplification::ExpandPower(EditionReference* reference) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   // (A? + B)^2 = (A^2 + 2*A*B + B^2)
   // TODO: Implement a more general (A + B)^C expand.
+  /* This isn't factorized with SmartExpand because of the necessary second
+   * term expansion. */
   if (reference->matchAndReplace(
           KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
           KAdd(KPow(KAdd(KPlaceholder<A>()), 2_e),

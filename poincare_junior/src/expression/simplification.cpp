@@ -226,10 +226,10 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
       t2.removeTree();
       // t^m * t^n -> t^(m+n)
       if (basesAreEqual) {
-        EditionReference S = P_ADD(PushExponent(u1), PushExponent(u2));
+        EditionReference P =
+            P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
+        EditionReference S = P.childAtIndex(1);
         SimplifySum(&S);
-        EditionReference P = P_POW(PushBase(u1), S.clone());
-        S.removeTree();
         SimplifyPower(&P);
         if (P.type() == BlockType::One) {
           ReplaceTreeByNode(l, KMult());
@@ -301,8 +301,8 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   }
   if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
     assert(Comparison::AreEqual(h.childAtIndex(1), q1));
-    EditionReference pc = p1.clone();
     h.removeTree();
+    EditionReference pc = p1.clone();
     MultPopFirst(p);
     MergeProducts(p, q);
     MultPushFirst(p, &pc);
@@ -310,8 +310,8 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   }
   if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
     assert(Comparison::AreEqual(h.childAtIndex(1), p1));
-    EditionReference qc = q1.clone();
     h.removeTree();
+    EditionReference qc = q1.clone();
     MultPopFirst(q);
     MergeProducts(p, q);
     MultPushFirst(p, &qc);
@@ -405,10 +405,10 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
       t2.removeTree();
       // k1 * a + k2 * a -> (k1+k2) * a
       if (termsAreEqual) {
-        EditionReference S = P_ADD(PushConstant(u1), PushConstant(u2));
+        EditionReference P =
+            P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
+        EditionReference S = P.childAtIndex(0);
         SimplifySum(&S);
-        EditionReference P = P_MULT(S.clone(), PushTerm(u1));
-        S.removeTree();
         SimplifyProduct(&P);
         if (P.type() == BlockType::Zero) {
           ReplaceTreeByNode(l, KAdd());

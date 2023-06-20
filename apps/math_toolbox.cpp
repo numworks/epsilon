@@ -961,22 +961,18 @@ void MathToolbox::fillCellForRow(HighlightCell *cell, int row) {
 
     if (Poincare::Preferences::sharedPreferences->editionMode() ==
         Poincare::Preferences::EditionMode::Edition2D) {
-      Poincare::ExceptionCheckpoint ecp;
-      // Try a 2D layout. If it fails, fall back on a lighter 1D edition layout
-      if (ExceptionRun(ecp)) {
-        // No context is given so that f(x) is never parsed as f×(x)
-        Expression resultExpression = Expression::Parse(text, nullptr);
-        if (!resultExpression.isUninitialized()) {
-          // The text is parsable, we create its layout an insert it.
-          resultLayout = resultExpression.createLayout(
-              Poincare::Preferences::sharedPreferences->displayMode(),
-              Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
-              App::app()->localContext());
-        }
+      // No context is given so that f(x) is never parsed as f×(x)
+      Expression resultExpression = Expression::Parse(text, nullptr);
+      if (!resultExpression.isUninitialized()) {
+        // The text is parsable, we create its layout an insert it.
+        resultLayout = resultExpression.createLayout(
+            Poincare::Preferences::sharedPreferences->displayMode(),
+            Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
+            App::app()->localContext());
       }
     }
     if (resultLayout.isUninitialized()) {
-      // With Edition1D, pool exception or invalid syntax, use a simpler layout.
+      // If 2D parsing failed or edition is in 1D, try a simpler layout
       resultLayout = LayoutHelper::String(text, strlen(text));
     }
 

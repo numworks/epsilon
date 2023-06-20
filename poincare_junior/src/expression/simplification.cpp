@@ -332,8 +332,7 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
   if (!SimplifyProductRec(u)) {
     return false;
   }
-  *u = NAry::Sanitize(*u);
-  return true;
+  return NAry::Sanitize(u);
 }
 
 // The term of 2ab is ab
@@ -505,8 +504,7 @@ bool Simplification::SimplifySum(EditionReference* u) {
     return false;
   }
   assert(u->type() == BlockType::Addition);
-  *u = NAry::Sanitize(*u);
-  return true;
+  return NAry::Sanitize(u);
 }
 
 bool Simplification::SimplifyRationalTree(EditionReference* u) {

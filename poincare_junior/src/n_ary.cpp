@@ -81,6 +81,29 @@ EditionReference NAry::Flatten(EditionReference reference) {
   return reference;
 }
 
+bool NAry::Flatten(EditionReference* reference) {
+  bool modified = false;
+  assert(Node(*reference).isNAry());
+  size_t numberOfChildren = reference->numberOfChildren();
+  size_t childIndex = 0;
+  Node child = reference->nextNode();
+  while (childIndex < numberOfChildren) {
+    if (reference->type() == child.type()) {
+      modified = true;
+      numberOfChildren += child.numberOfChildren() - 1;
+      EditionReference(child).removeNode();
+    } else {
+      child = child.nextTree();
+      childIndex++;
+    }
+  }
+  if (modified) {
+    SetNumberOfChildren(*reference, numberOfChildren);
+    return true;
+  }
+  return false;
+}
+
 EditionReference NAry::SquashIfUnary(EditionReference reference) {
   if (reference.numberOfChildren() == 1) {
     return EditionReference(reference.replaceTreeByTree(reference.nextNode()));
@@ -125,6 +148,14 @@ EditionReference NAry::Sanitize(EditionReference reference) {
     return SquashIfEmpty(reference);
   }
   return SquashIfUnary(reference);
+}
+
+bool NAry::Sanitize(EditionReference* reference) {
+  bool flattened = Flatten(reference);
+  if (reference->numberOfChildren() == 0) {
+    return SquashIfEmpty(reference) || flattened;
+  }
+  return SquashIfUnary(reference) || flattened;
 }
 
 void NAry::SortChildren(EditionReference reference, Comparison::Order order) {

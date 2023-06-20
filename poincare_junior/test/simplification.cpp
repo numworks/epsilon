@@ -117,27 +117,6 @@ QUIZ_CASE(pcj_simplification_projection) {
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 }
 
-#if PLATFORM_DEVICE
-#define QUIZ_ASSERT(test) quiz_assert(test)
-#else
-#include <iostream>
-#define QUIZ_ASSERT(test)                                   \
-  if (!(test)) {                                            \
-    std::cerr << "Assert failed " << __LINE__ << std::endl; \
-  }
-#endif
-
-QUIZ_CASE(pcj_compare) {
-  QUIZ_ASSERT(Comparison::Compare("a"_e, "a"_e) == 0);
-  QUIZ_ASSERT(Comparison::Compare("a"_e, "b"_e) == -1);
-  QUIZ_ASSERT(Comparison::Compare("b"_e, "a"_e) == 1);
-  EditionReference c(KAdd(2_e, "a"_e));
-  EditionReference d(KAdd(3_e, "a"_e));
-  EditionReference e(KAdd(2_e, "b"_e));
-  QUIZ_ASSERT(Comparison::Compare(2_e, 3_e) == -1);
-  QUIZ_ASSERT(Comparison::Compare(c, d) == -1);
-}
-
 void simplifies_to(const char* input, const char* output) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();

@@ -121,6 +121,17 @@ inline void assert_pool_contains(Pool* pool,
   quiz_assert(tree.block() == pool->lastBlock());
 }
 
+#if PLATFORM_DEVICE
+#define QUIZ_ASSERT(test) quiz_assert(test)
+#else
+#include <iostream>
+#define QUIZ_ASSERT(test)                                                     \
+  if (!(test)) {                                                              \
+    std::cerr << __FILE__ << ':' << __LINE__ << ": test failed" << std::endl; \
+    std::exit(1);                                                             \
+  }
+#endif
+
 // Integer
 
 const char* MaxIntegerString();            // (2^8)^k_maxNumberOfDigits-1

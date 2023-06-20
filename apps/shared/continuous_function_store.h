@@ -33,6 +33,7 @@ class ContinuousFunctionStore : public FunctionStore {
                                         &symbolType);
   }
   typedef bool (ContinuousFunctionProperties::*HasProperty)() const;
+  int numberOfActiveFunctions() const override;
   int numberOfActiveFunctionsWithProperty(HasProperty propertyFunction) const {
     return numberOfModelsSatisfyingTest(&IsFunctionActiveAndHasProperty,
                                         &propertyFunction);
@@ -105,6 +106,8 @@ class ContinuousFunctionStore : public FunctionStore {
       int cacheIndex, Ion::Storage::Record record) const override;
   ExpressionModelHandle *memoizedModelAtIndex(int cacheIndex) const override;
 
+  mutable uint32_t m_storageCheckSum;
+  mutable int m_memoizedNumberOfActiveFunctions;
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
   mutable ContinuousFunctionCache
       m_functionCaches[ContinuousFunctionCache::k_numberOfAvailableCaches];

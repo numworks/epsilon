@@ -23,6 +23,18 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(
              &ContinuousFunctionProperties::enforcePlotNormalization) != 0;
 }
 
+int ContinuousFunctionStore::numberOfActiveFunctions() const {
+  uint32_t checksum;
+  if (m_memoizedNumberOfActiveFunctions < 0 ||
+      (checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum()) !=
+          m_storageCheckSum) {
+    m_storageCheckSum = checksum;
+    m_memoizedNumberOfActiveFunctions =
+        FunctionStore::numberOfActiveFunctions();
+  }
+  return m_memoizedNumberOfActiveFunctions;
+}
+
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   char name[ContinuousFunction::k_maxDefaultNameSize];
   const char* const extensions[1] = {modelExtension()};

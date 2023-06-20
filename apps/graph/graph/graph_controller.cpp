@@ -93,6 +93,16 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
   ContinuousFunctionStore *store = functionStore();
+  if (store->memoizationIsFull()) {
+    /* Do not compute autozoom if store is full because the computation is too
+     * slow. */
+    Range1D xRange(-Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength);
+    Range2D defaultRange(xRange, xRange);
+    defaultRange.setRatio(InteractiveCurveViewRange::NormalYXRatio(), true,
+                          k_maxFloat);
+    return Range2D(*(computeX ? defaultRange : originalRange).x(),
+                   *(computeY ? defaultRange : originalRange).y());
+  }
   int nbFunctions = store->numberOfActiveFunctions();
   Range1D xBounds =
       computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
@@ -220,11 +230,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
                            Preferences::sharedPreferences->angleUnit(), alongY);
       }
 
-      /* Do not compute intersections if store is full because re-creating a
-       * ContinuousFunction object each time a new function is intersected
-       * is very slow. */
-      if (!store->memoizationIsFull() &&
-          f->properties()
+      if (f->properties()
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         ContinuousFunction *mainF = f.operator->();
         for (int j = i + 1; j < nbFunctions; j++) {

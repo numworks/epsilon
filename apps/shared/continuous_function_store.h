@@ -11,8 +11,8 @@ class ContinuousFunctionStore : public FunctionStore {
   // Very large limit, so that records id in name can't exceed two chars.
   constexpr static int k_maxNumberOfModels = 100;
   constexpr static int k_maxNumberOfMemoizedModels = 10;
-  bool memoizationIsFull() const {
-    return numberOfModels() >= maxNumberOfMemoizedModels();
+  bool memoizationOverflows() const {
+    return numberOfModels() > maxNumberOfMemoizedModels();
   }
 
   static bool IsFunctionActiveAndDerivable(ExpressionModelHandle *model,

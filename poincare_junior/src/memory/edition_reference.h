@@ -152,7 +152,7 @@ inline void ReplaceNodeByTree(EditionReference* u, Node n) {
   *u = u->replaceNodeByTree(n);
 }
 
-void Swap(EditionReference* u, EditionReference* v);
+void SwapTrees(EditionReference* u, EditionReference* v);
 
 }  // namespace PoincareJ
 

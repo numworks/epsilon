@@ -274,9 +274,9 @@ void InsertTreeBeforeNode(EditionReference* target, Node treeToInsert) {
   *target = previousTarget;
 }
 
-void Swap(EditionReference* u, EditionReference* v) {
+void SwapTrees(EditionReference* u, EditionReference* v) {
   if (u->block() > v->block()) {
-    return Swap(v, u);
+    return SwapTrees(v, u);
   }
   Node previousU = *u;
   Node previousV = *v;

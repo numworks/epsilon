@@ -164,7 +164,7 @@ bool WrapWithUnary(EditionReference* u, Node n) {
 
 bool Reorder(EditionReference* u, EditionReference* v) {
   if (Comparison::Compare(*u, *v) > 0) {
-    Swap(u, v);
+    SwapTrees(u, v);
     return true;
   }
   return false;

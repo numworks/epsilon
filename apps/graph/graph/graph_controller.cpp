@@ -90,7 +90,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
   ContinuousFunctionStore *store = functionStore();
-  if (store->memoizationIsFull()) {
+  if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
      * slow. */
     Range1D xRange(-Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength);

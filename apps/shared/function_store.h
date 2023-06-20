@@ -13,7 +13,7 @@ namespace Shared {
 class FunctionStore : public ExpressionModelStore {
  public:
   FunctionStore() : ExpressionModelStore() {}
-  int numberOfActiveFunctions() const {
+  virtual int numberOfActiveFunctions() const {
     return numberOfModelsSatisfyingTest(&IsFunctionActive, nullptr);
   }
   Ion::Storage::Record activeRecordAtIndex(int i) const {

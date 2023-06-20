@@ -63,9 +63,6 @@ class KDContext {
                                        KDSize frame, float horizontalAlignment,
                                        KDGlyph::Style style, int maxLength);
   KDRect absoluteFillRect(KDRect rect);
-  KDPoint pushOrPullString(const char* text, KDPoint p, KDFont::Size font,
-                           KDColor textColor, KDColor backgroundColor,
-                           int maxByteLength, bool push, int* result = nullptr);
   KDPoint m_origin;
   KDRect m_clippingRect;
 };

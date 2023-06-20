@@ -17,6 +17,12 @@ const char* BigOverflowedIntegerString();
 const char* MaxParsedIntegerString();
 const char* ApproximatedParsedIntegerString();
 
+/* TODO: With C++20, these can be simplified with:
+ * using enum Poincare::ReductionTarget;
+ * using enum Poincare::SymbolicComputation;
+ * ...
+ */
+
 constexpr Poincare::ReductionTarget SystemForApproximation =
     Poincare::ReductionTarget::SystemForApproximation;
 constexpr Poincare::ReductionTarget SystemForAnalysis =

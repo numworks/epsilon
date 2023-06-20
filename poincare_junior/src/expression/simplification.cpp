@@ -96,9 +96,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   if (IsRational(v)) {
     return SimplifyRationalTree(u);
   }
-  if (!IsInteger(n)) {  // TODO replace by assert
-    return false;
-  }
+  assert(IsInteger(n));
   // v^0 -> 1
   if (n.type() == BlockType::Zero) {
     ReplaceTreeByNode(u, 1_e);
@@ -120,7 +118,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     p = previousP;
     DropNode(u);
     SimplifyProduct(&p);
-    // assert(IsInteger(s));
+    assert(IsInteger(p));
     return SimplifyPower(u);
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
@@ -519,6 +517,8 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
     return false;
   }
   if (u->numberOfChildren() == 1) {
+    assert(u->type() == BlockType::Addition ||
+           u->type() == BlockType::Multiplication);
     ReplaceNodeByTree(u, u->childAtIndex(0));
     return SimplifyRationalTree(u);
   }
@@ -550,6 +550,7 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
         ReplaceTreeByNode(u, KUndef);
         return true;
       }
+      assert(IsInteger(u->childAtIndex(1)));
       ReplaceTreeByTree(u, Rational::IntegerPower(v, u->childAtIndex(1)));
       ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
       return true;

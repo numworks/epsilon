@@ -6,6 +6,7 @@ void TableViewDataSource::fillCellForLocation(HighlightCell* cell, int column,
                                               int row) {}
 
 KDCoordinate TableViewDataSource::columnWidth(int column, bool withSeparator) {
+  assert(column >= 0);
   KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
     result = columnWidthManager()->computeSizeAtIndex(column);
@@ -22,6 +23,7 @@ KDCoordinate TableViewDataSource::columnWidth(int column, bool withSeparator) {
 }
 
 KDCoordinate TableViewDataSource::rowHeight(int row, bool withSeparator) {
+  assert(row >= 0);
   KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
     result = rowHeightManager()->computeSizeAtIndex(row);

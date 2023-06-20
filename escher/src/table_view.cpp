@@ -230,6 +230,9 @@ void TableView::ContentView::layoutSubviews(bool force,
 }
 
 int TableView::ContentView::numberOfDisplayableRows() const {
+  if (m_tableView->bounds().isEmpty()) {
+    return 0;
+  }
   int rowOffset = rowsScrollingOffset();
   int cumulatedHeightOfLastVisiblePixel =
       m_tableView->bounds().height() + invisibleHeight() - 1;
@@ -241,6 +244,9 @@ int TableView::ContentView::numberOfDisplayableRows() const {
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
+  if (m_tableView->bounds().isEmpty()) {
+    return 0;
+  }
   int columnOffset = columnsScrollingOffset();
   int cumulatedWidthOfLastVisiblePixel =
       m_tableView->bounds().width() + invisibleWidth() - 1;

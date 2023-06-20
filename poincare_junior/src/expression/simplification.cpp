@@ -537,13 +537,9 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
         ReplaceTreeByNode(u, KUndef);
         return true;
       }
-      if (u->type() == BlockType::Addition) {
-        ReplaceTreeByTree(u, Rational::Addition(v, w));
-        ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
-        return true;
-      }
-      assert(u->type() == BlockType::Multiplication);
-      ReplaceTreeByTree(u, Rational::Multiplication(v, w));
+      ReplaceTreeByTree(u, (u->type() == BlockType::Addition
+                                ? Rational::Addition
+                                : Rational::Multiplication)(v, w));
       ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
       return true;
     }

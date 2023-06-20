@@ -133,9 +133,8 @@ class EditionReference {
   uint16_t m_identifier;
 };
 
-inline EditionReference Node::clone() const {
-  return EditionPool::sharedEditionPool()->clone(*this);
-}
+void InsertNodeBeforeNode(EditionReference* target, Node nodeToInsert);
+void InsertTreeBeforeNode(EditionReference* target, Node treeToInsert);
 
 inline void ReplaceTreeByNode(EditionReference* u, Node n) {
   *u = u->replaceTreeByNode(n);
@@ -152,6 +151,8 @@ inline void ReplaceNodeByNode(EditionReference* u, Node n) {
 inline void ReplaceNodeByTree(EditionReference* u, Node n) {
   *u = u->replaceNodeByTree(n);
 }
+
+void Swap(EditionReference* u, EditionReference* v);
 
 }  // namespace PoincareJ
 

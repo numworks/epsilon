@@ -355,6 +355,10 @@ void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
   (*treeFunction)(*this);
 }
 
+EditionReference Node::clone() const {
+  return EditionPool::sharedEditionPool()->clone(*this);
+}
+
 /* When navigating between nodes, ensure that no undefined node is reached.
  * Also ensure that there is no navigation:
  * - crossing the borders of the CachePool

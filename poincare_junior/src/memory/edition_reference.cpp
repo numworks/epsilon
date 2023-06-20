@@ -254,4 +254,25 @@ void EditionReference::detach(bool isTree) {
 #endif
 }
 
+void InsertNodeBeforeNode(EditionReference* target, Node nodeToInsert) {
+  Node previousTarget = *target;
+  target->insertNodeBeforeNode(nodeToInsert);
+  *target = previousTarget;
+}
+
+void InsertTreeBeforeNode(EditionReference* target, Node treeToInsert) {
+  Node previousTarget = *target;
+  target->insertTreeBeforeNode(treeToInsert);
+  *target = previousTarget;
+}
+
+void Swap(EditionReference* u, EditionReference* v) {
+  v->insertTreeBeforeNode(*u);
+  Node previousU = *u;
+  EditionReference u2 = previousU;
+  u2.insertTreeBeforeNode(*v);
+  *v = *u;
+  *u = previousU;
+}
+
 }  // namespace PoincareJ

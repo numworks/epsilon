@@ -113,9 +113,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     assert(p.nextTree() == static_cast<Node>(n));
     EditionReference m =
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
-    Node previousP = p;
-    p.insertNodeBeforeNode(m);
-    p = previousP;
+    InsertNodeBeforeNode(&p, m);
     DropNode(u);
     SimplifyProduct(&p);
     assert(IsInteger(p));
@@ -159,21 +157,14 @@ EditionReference PushExponent(Node u) {
 }
 
 bool WrapWithUnary(EditionReference* u, Node n) {
-  Node previousU = *u;
-  u->insertNodeBeforeNode(n);
-  *u = previousU;
+  InsertNodeBeforeNode(u, n);
   NAry::SetNumberOfChildren(*u, 1);
   return true;
 }
 
 bool Reorder(EditionReference* u, EditionReference* v) {
   if (Comparison::Compare(*u, *v) > 0) {
-    Node previousU = *u;
-    v->insertTreeBeforeNode(*u);
-    EditionReference u2 = previousU;
-    u2.insertTreeBeforeNode(*v);
-    *v = *u;
-    *u = u2;
+    Swap(u, v);
     return true;
   }
   return false;

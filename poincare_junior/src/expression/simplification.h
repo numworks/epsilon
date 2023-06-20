@@ -70,8 +70,9 @@ class Simplification {
   static EditionReference ApplyShallowInDepth(EditionReference reference,
                                               ShallowOperation shallowOperation,
                                               void *context = nullptr);
-  static bool SmartExpand(EditionReference *reference, Node pattern,
-                          Node structure);
+  static bool ExpandWithNArys(EditionReference *reference, BlockType target,
+                              BlockType naryChild, BlockType naryResult,
+                              int childIndex = 0);
 
   typedef bool (*Operation)(EditionReference *reference);
   // Try all Operations until they all fail consecutively.

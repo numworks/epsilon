@@ -256,23 +256,33 @@ void EditionReference::detach(bool isTree) {
 
 void InsertNodeBeforeNode(EditionReference* target, Node nodeToInsert) {
   Node previousTarget = *target;
+  if (EditionPool::sharedEditionPool()->contains(nodeToInsert.block()) &&
+      nodeToInsert.block() < previousTarget.block()) {
+    previousTarget = Node(previousTarget.block() - nodeToInsert.nodeSize());
+  }
   target->insertNodeBeforeNode(nodeToInsert);
   *target = previousTarget;
 }
 
 void InsertTreeBeforeNode(EditionReference* target, Node treeToInsert) {
   Node previousTarget = *target;
+  if (EditionPool::sharedEditionPool()->contains(treeToInsert.block()) &&
+      treeToInsert.block() < previousTarget.block()) {
+    previousTarget = Node(previousTarget.block() - treeToInsert.treeSize());
+  }
   target->insertTreeBeforeNode(treeToInsert);
   *target = previousTarget;
 }
 
 void Swap(EditionReference* u, EditionReference* v) {
-  v->insertTreeBeforeNode(*u);
+  if (u->block() > v->block()) {
+    return Swap(v, u);
+  }
   Node previousU = *u;
-  EditionReference u2 = previousU;
-  u2.insertTreeBeforeNode(*v);
-  *v = *u;
-  *u = previousU;
+  Node previousV = *v;
+  InsertTreeBeforeNode(v, previousU);
+  *u = EditionReference(previousU);
+  InsertTreeBeforeNode(u, previousV);
 }
 
 }  // namespace PoincareJ

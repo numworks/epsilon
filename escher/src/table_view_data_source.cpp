@@ -128,6 +128,11 @@ int TableViewDataSource::rowAfterCumulatedHeight(KDCoordinate offsetY) {
 
 int TableViewDataSource::nonMemoizedColumnAfterCumulatedWidth(
     KDCoordinate offsetX) {
+  assert(offsetX >= 0);
+  if (offsetX == 0) {
+    // Avoid computing width of first column
+    return 0;
+  }
   int nColumns = numberOfColumns();
   KDCoordinate cumulatedWidth = 0;
   for (int i = 0; i < nColumns; i++) {
@@ -141,6 +146,11 @@ int TableViewDataSource::nonMemoizedColumnAfterCumulatedWidth(
 
 int TableViewDataSource::nonMemoizedRowAfterCumulatedHeight(
     KDCoordinate offsetY) {
+  assert(offsetY >= 0);
+  if (offsetY == 0) {
+    // Avoid computing height of first row
+    return 0;
+  }
   int nRows = numberOfRows();
   KDCoordinate cumulatedHeight = 0;
   for (int i = 0; i < nRows; i++) {

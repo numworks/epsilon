@@ -148,6 +148,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   int previousDepth = stackDepth();
   m_stack.push(
       StackState(selectedRow, m_selectableListView.contentOffset().y()));
+  setOffset(KDPointZero);
 
   /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
    * it again, in order to force title refresh. */

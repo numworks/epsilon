@@ -76,9 +76,8 @@ ValuesController::ValuesController(
 }
 
 bool ValuesController::displayButtonExactValues() const {
-  // Above this value, the performances significantly drop.
-  return numberOfValuesColumns() <=
-         ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
+  // When the store is full, the performances significantly drop.
+  return !functionStore()->memoizationOverflows();
 }
 
 // ViewController

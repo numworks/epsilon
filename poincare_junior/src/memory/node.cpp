@@ -26,10 +26,6 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
     return;
   }
   stream << "<";
-  if (isUninitialized()) {
-    stream << "Uninitialized/>";
-    return;
-  }
   logName(stream);
   if (verbose) {
     stream << " size=\"" << nodeSize() << "\"";
@@ -39,7 +35,7 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
   bool tagIsClosed = false;
   if (recursive) {
     for (const auto [child, index] :
-         NodeIterator::Children<Forward, NoEditable>(*this)) {
+         NodeIterator::Children<Forward, NoEditable>(this)) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
@@ -120,7 +116,7 @@ void Node::logAttributes(std::ostream& stream) const {
   if (block()->isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
-      for (int i = 0; i < Polynomial::NumberOfTerms(*this); i++) {
+      for (int i = 0; i < Polynomial::NumberOfTerms(this); i++) {
         stream << " exponent" << i << "=\""
                << static_cast<int>(
                       static_cast<uint8_t>(*(block()->nextNth(2 + i))))
@@ -130,19 +126,19 @@ void Node::logAttributes(std::ostream& stream) const {
     return;
   }
   if (block()->isNumber() || type() == BlockType::Constant) {
-    stream << " value=\"" << Approximation::To<float>(*this) << "\"";
+    stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;
   }
   if (block()->isUserNamed() || type() == BlockType::CodePointLayout) {
     char buffer[64];
     (block()->isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
-        *this, buffer, sizeof(buffer));
+        this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
     return;
   }
   if (type() == BlockType::Placeholder) {
-    stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(*this));
-    stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(*this));
+    stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(this));
+    stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
     return;
   }
 }
@@ -169,7 +165,7 @@ void Node::logBlocks(std::ostream& stream, bool recursive,
   if (recursive) {
     indentation += 1;
     for (const auto [child, index] :
-         NodeIterator::Children<Forward, NoEditable>(*this)) {
+         NodeIterator::Children<Forward, NoEditable>(this)) {
       child.logBlocks(stream, recursive, indentation);
     }
   }
@@ -200,7 +196,7 @@ const Node* Node::previousTree() const { return previousRelative(false); }
 const Node* Node::parent() const { return previousRelative(true); }
 
 const Node* Node::root() const {
-  Node* ancestor = *this;
+  Node* ancestor = this;
   while (ancestor.parent() != Node * ()) {
     ancestor = ancestor.parent();
   }
@@ -221,7 +217,7 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
     return Node * ();
   }
   Node* parent = Node * ();
-  Node* node = *this;
+  Node* node = this;
   while (true) {
     assert(block1 >= node.block());
     const Node* nodeNextTree = node.nextTree();
@@ -264,7 +260,7 @@ const Node* Node::parentOfDescendant(const Node* descendant,
     return Node * ();
   }
   Node* parent = Node * ();
-  Node* node = *this;
+  Node* node = this;
   while (true) {
     assert(descendantBlock >= node.block());
     const Node* nodeNextTree = node.nextTree();
@@ -304,18 +300,18 @@ int Node::numberOfDescendants(bool includeSelf) const {
 
 const Node* Node::childAtIndex(int i) const {
   for (const auto [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(*this)) {
+       NodeIterator::Children<Forward, NoEditable>(this)) {
     if (index == i) {
       return child;
     }
   }
-  return Node * ();
+  return nullptr;
 }
 
 int Node::indexOfChild(const Node* child) const {
   assert(child.m_block != nullptr);
   for (const auto [c, index] :
-       NodeIterator::Children<Forward, NoEditable>(*this)) {
+       NodeIterator::Children<Forward, NoEditable>(this)) {
     if (child == c) {
       return index;
     }
@@ -325,10 +321,10 @@ int Node::indexOfChild(const Node* child) const {
 
 int Node::indexInParent() const {
   const Node* p = parent();
-  if (p == Node * ()) {
+  if (!p) {
     return -1;
   }
-  return p.indexOfChild(*this);
+  return p.indexOfChild(this);
 }
 
 bool Node::hasChild(const Node* child) const {
@@ -336,19 +332,19 @@ bool Node::hasChild(const Node* child) const {
 }
 
 bool Node::hasAncestor(const Node* node, bool includeSelf) const {
-  Node* ancestor = *this;
+  Node* ancestor = this;
   do {
     if (ancestor == node) {
-      return includeSelf || (ancestor != *this);
+      return includeSelf || (ancestor != this);
     }
     ancestor = ancestor.parent();
-  } while (ancestor != Node * ());
+  } while (ancestor);
   return false;
 }
 
 bool Node::hasSibling(const Node* sibling) const {
   const Node* p = parent();
-  if (p == Node * ()) {
+  if (!p) {
     return false;
   }
   for (const auto& [child, index] :
@@ -362,14 +358,14 @@ bool Node::hasSibling(const Node* sibling) const {
 
 void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
   for (const auto& [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(*this)) {
+       NodeIterator::Children<Forward, NoEditable>(this)) {
     child.recursivelyGet(treeFunction);
   }
-  (*treeFunction)(*this);
+  (*treeFunction)(this);
 }
 
 EditionReference Node::clone() const {
-  return EditionPool::sharedEditionPool()->clone(*this);
+  return EditionPool::sharedEditionPool()->clone(this);
 }
 
 /* When navigating between nodes, ensure that no undefined node is reached.
@@ -418,8 +414,8 @@ bool Node::canNavigatePrevious() const {
 }
 
 const Node* Node::previousRelative(bool parent) const {
-  Node* currentNode = *this;
-  Node* closestSibling;
+  Node* currentNode = this;
+  Node* closestSibling = nullptr;
   int nbOfChildrenToScan = 0;
   do {
     currentNode = currentNode.previousNode();

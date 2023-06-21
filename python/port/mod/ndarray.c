@@ -621,6 +621,10 @@ ndarray_obj_t *ndarray_new_ndarray(uint8_t ndim, size_t *shape, int32_t *strides
         ndarray->len *= shape[i-1];
     }
 
+    if (SIZE_MAX / ndarray->itemsize <= ndarray->len) {
+      mp_raise_ValueError(translate("ndarray length overflows"));
+    }
+
     // if the length is 0, still allocate a single item, so that contractions can be handled
     size_t len = ndarray->itemsize * MAX(1, ndarray->len);
     uint8_t *array = m_new0(byte, len);

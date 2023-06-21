@@ -181,84 +181,83 @@ void MultPushFirst(EditionReference* l, EditionReference* e) {
 }
 
 bool Simplification::SimplifyProductRec(EditionReference* l) {
-  if (l->numberOfChildren() == 2) {
-    EditionReference u1 = l->childAtIndex(0);
-    EditionReference u2 = l->childAtIndex(1);
-    if (u1.type() != BlockType::Multiplication &&
-        u2.type() != BlockType::Multiplication) {
-      // Merge constants
-      if (IsConstant(u1) && IsConstant(u2)) {
-        SimplifyRationalTree(l);
-        if (l->type() == BlockType::One) {
-          ReplaceNodeByNode(l, KMult());
-          return true;
-        }
-        WrapWithUnary(l, KMult());
-        return true;
-      }
-      // 1 * u2 -> u2
-      if (u1.type() == BlockType::One) {
-        ReplaceTreeByTree(l, u2);
-        WrapWithUnary(l, KMult());
-        return true;
-      }
-      // u1 * 1 -> u1
-      if (u2.type() == BlockType::One) {
-        ReplaceTreeByTree(l, u1);
-        WrapWithUnary(l, KMult());
-        return true;
-      }
-      EditionReference t1 = PushBase(u1);
-      EditionReference t2 = PushBase(u2);
-      int basesAreEqual = Comparison::AreEqual(t1, t2);
-      t1.removeTree();
-      t2.removeTree();
-      // t^m * t^n -> t^(m+n)
-      if (basesAreEqual) {
-        EditionReference P =
-            P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
-        EditionReference S = P.childAtIndex(1);
-        SimplifySum(&S);
-        SimplifyPower(&P);
-        if (P.type() == BlockType::One) {
-          ReplaceTreeByNode(l, KMult());
-          return true;
-        }
-        ReplaceTreeByTree(l, P);
-        WrapWithUnary(l, KMult());
-        return true;
-      }
-      return Reorder(&u1, &u2);
-    } else {
-      l->removeNode();
-      if (u1.type() != BlockType::Multiplication) {
-        WrapWithUnary(&u1, KMult());
-      }
-      if (u2.type() != BlockType::Multiplication) {
-        WrapWithUnary(&u2, KMult());
-      }
-      MergeProducts(&u1, &u2);
-      *l = u1;
+  if (l->numberOfChildren() != 2) {
+    EditionReference u1 = l->childAtIndex(0).clone();
+    MultPopFirst(l);
+    SimplifyProductRec(l);
+    if (u1.type() == BlockType::Multiplication) {
+      /* TODO merge products consume its second children so we can't pass it l
+       * which needs to be kept at the same place. But since the order counts we
+       * can't pass l as the first argument either. Need merge on right ? */
+      EditionReference l2 = l->clone();
+      MergeProducts(&u1, &l2);
+      ReplaceTreeByTree(l, u1);
       return true;
     }
-  }
-  EditionReference u1 = l->childAtIndex(0).clone();
-  MultPopFirst(l);
-  SimplifyProductRec(l);
-  if (u1.type() == BlockType::Multiplication) {
-    /* TODO merge products consume its second children so we can't pass it l
-     * which needs to be kept at the same place. But since the order counts we
-     * can't pass l as the first argument either. Need merge on right ? */
+    WrapWithUnary(&u1, KMult());
     EditionReference l2 = l->clone();
     MergeProducts(&u1, &l2);
     ReplaceTreeByTree(l, u1);
     return true;
   }
-  WrapWithUnary(&u1, KMult());
-  EditionReference l2 = l->clone();
-  MergeProducts(&u1, &l2);
-  ReplaceTreeByTree(l, u1);
-  return true;
+  EditionReference u1 = l->childAtIndex(0);
+  EditionReference u2 = l->childAtIndex(1);
+  if (u1.type() == BlockType::Multiplication ||
+      u2.type() == BlockType::Multiplication) {
+    l->removeNode();
+    if (u1.type() != BlockType::Multiplication) {
+      WrapWithUnary(&u1, KMult());
+    }
+    if (u2.type() != BlockType::Multiplication) {
+      WrapWithUnary(&u2, KMult());
+    }
+    MergeProducts(&u1, &u2);
+    *l = u1;
+    return true;
+  }
+  // Merge constants
+  if (IsConstant(u1) && IsConstant(u2)) {
+    SimplifyRationalTree(l);
+    if (l->type() == BlockType::One) {
+      ReplaceNodeByNode(l, KMult());
+      return true;
+    }
+    WrapWithUnary(l, KMult());
+    return true;
+  }
+  // 1 * u2 -> u2
+  if (u1.type() == BlockType::One) {
+    ReplaceTreeByTree(l, u2);
+    WrapWithUnary(l, KMult());
+    return true;
+  }
+  // u1 * 1 -> u1
+  if (u2.type() == BlockType::One) {
+    ReplaceTreeByTree(l, u1);
+    WrapWithUnary(l, KMult());
+    return true;
+  }
+  EditionReference t1 = PushBase(u1);
+  EditionReference t2 = PushBase(u2);
+  int basesAreEqual = Comparison::AreEqual(t1, t2);
+  t1.removeTree();
+  t2.removeTree();
+  // t^m * t^n -> t^(m+n)
+  if (basesAreEqual) {
+    EditionReference P =
+        P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
+    EditionReference S = P.childAtIndex(1);
+    SimplifySum(&S);
+    SimplifyPower(&P);
+    if (P.type() == BlockType::One) {
+      ReplaceTreeByNode(l, KMult());
+      return true;
+    }
+    ReplaceTreeByTree(l, P);
+    WrapWithUnary(l, KMult());
+    return true;
+  }
+  return Reorder(&u1, &u2);
 }
 
 bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
@@ -363,78 +362,77 @@ void AddPushFirst(EditionReference* l, EditionReference* e) {
 }
 
 bool Simplification::SimplifySumRec(EditionReference* l) {
-  if (l->numberOfChildren() == 2) {
-    EditionReference u1 = l->childAtIndex(0);
-    EditionReference u2 = l->childAtIndex(1);
-    if (u1.type() != BlockType::Addition && u2.type() != BlockType::Addition) {
-      // Merge constants
-      if (IsConstant(u1) && IsConstant(u2)) {
-        SimplifyRationalTree(l);
-        if (l->type() == BlockType::Zero) {
-          ReplaceNodeByNode(l, KAdd());
-          return true;
-        }
-        WrapWithUnary(l, KAdd());
-        return true;
-      }
-      if (u1.type() == BlockType::Zero) {
-        ReplaceTreeByTree(l, u2);
-        WrapWithUnary(l, KAdd());
-        return true;
-      }
-      if (u2.type() == BlockType::Zero) {
-        ReplaceTreeByTree(l, u1);
-        WrapWithUnary(l, KAdd());
-        return true;
-      }
-      EditionReference t1 = PushTerm(u1);
-      EditionReference t2 = PushTerm(u2);
-      int termsAreEqual = Comparison::AreEqual(t1, t2);
-      t1.removeTree();
-      t2.removeTree();
-      // k1 * a + k2 * a -> (k1+k2) * a
-      if (termsAreEqual) {
-        EditionReference P =
-            P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
-        EditionReference S = P.childAtIndex(0);
-        SimplifySum(&S);
-        SimplifyProduct(&P);
-        if (P.type() == BlockType::Zero) {
-          ReplaceTreeByNode(l, KAdd());
-          return true;
-        }
-        ReplaceTreeByTree(l, P);
-        WrapWithUnary(l, KAdd());
-        return true;
-      }
-      return Reorder(&u1, &u2);
-    } else {
-      l->removeNode();
-      if (u1.type() != BlockType::Addition) {
-        WrapWithUnary(&u1, KAdd());
-      }
-      if (u2.type() != BlockType::Addition) {
-        WrapWithUnary(&u2, KAdd());
-      }
-      MergeSums(&u1, &u2);
-      *l = u1;
+  if (l->numberOfChildren() != 2) {
+    EditionReference u1 = l->childAtIndex(0).clone();
+    AddPopFirst(l);
+    SimplifySumRec(l);
+    if (u1.type() == BlockType::Addition) {
+      EditionReference l2 = l->clone();
+      MergeSums(&u1, &l2);
+      ReplaceTreeByTree(l, u1);
       return true;
     }
-  }
-  EditionReference u1 = l->childAtIndex(0).clone();
-  AddPopFirst(l);
-  SimplifySumRec(l);
-  if (u1.type() == BlockType::Addition) {
+    WrapWithUnary(&u1, KAdd());
     EditionReference l2 = l->clone();
     MergeSums(&u1, &l2);
     ReplaceTreeByTree(l, u1);
     return true;
   }
-  WrapWithUnary(&u1, KAdd());
-  EditionReference l2 = l->clone();
-  MergeSums(&u1, &l2);
-  ReplaceTreeByTree(l, u1);
-  return true;
+  EditionReference u1 = l->childAtIndex(0);
+  EditionReference u2 = l->childAtIndex(1);
+  if (u1.type() == BlockType::Addition || u2.type() == BlockType::Addition) {
+    l->removeNode();
+    if (u1.type() != BlockType::Addition) {
+      WrapWithUnary(&u1, KAdd());
+    }
+    if (u2.type() != BlockType::Addition) {
+      WrapWithUnary(&u2, KAdd());
+    }
+    MergeSums(&u1, &u2);
+    *l = u1;
+    return true;
+  }
+  // Merge constants
+  if (IsConstant(u1) && IsConstant(u2)) {
+    SimplifyRationalTree(l);
+    if (l->type() == BlockType::Zero) {
+      ReplaceNodeByNode(l, KAdd());
+      return true;
+    }
+    WrapWithUnary(l, KAdd());
+    return true;
+  }
+  if (u1.type() == BlockType::Zero) {
+    ReplaceTreeByTree(l, u2);
+    WrapWithUnary(l, KAdd());
+    return true;
+  }
+  if (u2.type() == BlockType::Zero) {
+    ReplaceTreeByTree(l, u1);
+    WrapWithUnary(l, KAdd());
+    return true;
+  }
+  EditionReference t1 = PushTerm(u1);
+  EditionReference t2 = PushTerm(u2);
+  int termsAreEqual = Comparison::AreEqual(t1, t2);
+  t1.removeTree();
+  t2.removeTree();
+  // k1 * a + k2 * a -> (k1+k2) * a
+  if (termsAreEqual) {
+    EditionReference P =
+        P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
+    EditionReference S = P.childAtIndex(0);
+    SimplifySum(&S);
+    SimplifyProduct(&P);
+    if (P.type() == BlockType::Zero) {
+      ReplaceTreeByNode(l, KAdd());
+      return true;
+    }
+    ReplaceTreeByTree(l, P);
+    WrapWithUnary(l, KAdd());
+    return true;
+  }
+  return Reorder(&u1, &u2);
 }
 
 bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {

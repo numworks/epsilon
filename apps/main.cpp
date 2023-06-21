@@ -46,13 +46,9 @@ void ion_main(int argc, const char *const argv[]) {
       continue;
     }
     /* Option should be given at run-time:
-     * $ ./epsilon.elf --language fr
-     */
+     * $ ./epsilon.elf --language fr */
     if (strcmp(argv[i], "--language") == 0 && argc > i + 1) {
       const char *requestedLanguageId = argv[i + 1];
-      if (strcmp(requestedLanguageId, "none") == 0) {
-        continue;
-      }
       for (int j = 0; j < I18n::NumberOfLanguages; j++) {
         if (strcmp(requestedLanguageId, I18n::LanguageISO6391Codes[j]) == 0) {
           GlobalPreferences::sharedGlobalPreferences->setLanguage(
@@ -68,13 +64,9 @@ void ion_main(int argc, const char *const argv[]) {
     const char *appNames[] = {"home", EPSILON_APPS_NAMES};
 
     /* Option to open a given app at run-time:
-     * $ ./epsilon.elf --open-app code
-     */
+     * $ ./epsilon.elf --open-app code */
     if (strcmp(argv[i], "--open-app") == 0 && argc > i + 1) {
       const char *requestedAppName = argv[i + 1];
-      if (strcmp(requestedAppName, "none") == 0) {
-        continue;
-      }
       for (int j = 0;
            j < AppsContainer::sharedAppsContainer()->numberOfBuiltinApps();
            j++) {

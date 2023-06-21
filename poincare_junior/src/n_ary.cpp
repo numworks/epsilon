@@ -64,20 +64,7 @@ void NAry::SetNumberOfChildren(EditionReference reference,
 }
 
 EditionReference NAry::Flatten(EditionReference reference) {
-  assert(static_cast<Node>(reference).isNAry());
-  size_t numberOfChildren = reference.numberOfChildren();
-  size_t childIndex = 0;
-  Node child = reference.nextNode();
-  while (childIndex < numberOfChildren) {
-    if (reference.type() == child.type()) {
-      numberOfChildren += child.numberOfChildren() - 1;
-      EditionReference(child).removeNode();
-    } else {
-      child = child.nextTree();
-      childIndex++;
-    }
-  }
-  SetNumberOfChildren(reference, numberOfChildren);
+  Flatten(&reference);
   return reference;
 }
 
@@ -105,9 +92,7 @@ bool NAry::Flatten(EditionReference* reference) {
 }
 
 EditionReference NAry::SquashIfUnary(EditionReference reference) {
-  if (reference.numberOfChildren() == 1) {
-    return EditionReference(reference.replaceTreeByTree(reference.nextNode()));
-  }
+  SquashIfUnary(&reference);
   return reference;
 }
 
@@ -120,14 +105,8 @@ bool NAry::SquashIfUnary(EditionReference* reference) {
 }
 
 EditionReference NAry::SquashIfEmpty(EditionReference reference) {
-  if (reference.numberOfChildren() >= 1) {
-    return reference;
-  }
-  // Return the neutral element
-  BlockType type = reference.type();
-  assert(type == BlockType::Addition || type == BlockType::Multiplication);
-  return EditionReference(reference.replaceTreeByTree(
-      type == BlockType::Addition ? &ZeroBlock : &OneBlock));
+  SquashIfEmpty(&reference);
+  return reference;
 }
 
 bool NAry::SquashIfEmpty(EditionReference* reference) {
@@ -143,11 +122,8 @@ bool NAry::SquashIfEmpty(EditionReference* reference) {
 }
 
 EditionReference NAry::Sanitize(EditionReference reference) {
-  reference = Flatten(reference);
-  if (reference.numberOfChildren() == 0) {
-    return SquashIfEmpty(reference);
-  }
-  return SquashIfUnary(reference);
+  Sanitize(&reference);
+  return reference;
 }
 
 bool NAry::Sanitize(EditionReference* reference) {

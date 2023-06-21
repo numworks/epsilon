@@ -741,13 +741,7 @@ bool Simplification::ExpandMult(EditionReference* reference) {
 
 bool Simplification::ExpandPower(EditionReference* reference) {
   return
-      // (A*B)^C = A^C * B^C
-      // TODO: Assert C is an integer
-      reference->matchAndReplace(
-          KPow(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
-               KPlaceholder<C>()),
-          KMult(KPow(KPlaceholder<A>(), KPlaceholder<C>()),
-                KPow(KMult(KPlaceholder<B>()), KPlaceholder<C>()))) ||
+      // (A*B)^C = A^C * B^C is currently in SystematicSimplification
       // (A + B)^2 = (A^2 + 2*A*B + B^2)
       // TODO: Implement a more general (A + B)^C expand.
       reference->matchAndReplace(

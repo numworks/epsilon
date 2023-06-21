@@ -20,6 +20,12 @@
 
 namespace PoincareJ {
 
+void removeTreeIfInitialized(EditionReference tree) {
+  if (!tree.isUninitialized()) {
+    tree.removeTree();
+  }
+}
+
 EditionReference RackParser::parse() {
   size_t endPosition = m_tokenizer.endPosition();
   // size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
@@ -39,9 +45,7 @@ EditionReference RackParser::parse() {
   if (m_status == Status::Success) {
     return result;
   }
-  if (!result.isUninitialized()) {
-    result.removeTree();
-  }
+  removeTreeIfInitialized(result);
   return EditionReference();
 }
 
@@ -491,6 +495,8 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
         rightHandSide.insertNodeBeforeNode(-1_e);
         leftHandSide = rightHandSide.previousNode().previousNode();
       }
+    } else {
+      removeTreeIfInitialized(rightHandSide);
     }
     return;
   }
@@ -521,6 +527,8 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
           Tree<BlockType::Addition, 2, BlockType::Addition>());
       leftHandSide = leftHandSide.previousNode();
     }
+  } else {
+    removeTreeIfInitialized(rightHandSide);
   }
 }
 
@@ -547,9 +555,11 @@ void RackParser::privateParseEastArrow(EditionReference &leftHandSide,
     // : Opposite::Builder(rightHandSide.childAtIndex(0)));
     // return;
     // }
+    removeTreeIfInitialized(rightHandSide);
     m_status = Status::Error;
     return;
   }
+  removeTreeIfInitialized(rightHandSide);
 }
 
 void RackParser::parseTimes(EditionReference &leftHandSide,
@@ -587,6 +597,8 @@ void RackParser::parseSlash(EditionReference &leftHandSide,
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
     leftHandSide.insertNodeBeforeNode(Tree<BlockType::Division>());
     leftHandSide = leftHandSide.previousNode();
+  } else {
+    removeTreeIfInitialized(rightHandSide);
   }
 }
 
@@ -602,6 +614,8 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
           Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
       leftHandSide = leftHandSide.previousNode();
     }
+  } else {
+    removeTreeIfInitialized(rightHandSide);
   }
 }
 
@@ -618,6 +632,8 @@ void RackParser::parseCaret(EditionReference &leftHandSide,
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::ImplicitTimes)) {
     turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
+  } else {
+    removeTreeIfInitialized(rightHandSide);
   }
 }
 
@@ -627,7 +643,7 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
     m_status = Status::Error;  // Comparison operator must have a left operand
     return;
   }
-  EditionReference rightHandSide;
+  // EditionReference rightHandSide;
   // ComparisonNode::OperatorType operatorType;
   // size_t operatorLength;
   // bool check = ComparisonNode::IsComparisonOperatorString(
@@ -660,6 +676,7 @@ void RackParser::parseAssigmentEqual(EditionReference &leftHandSide,
     // leftHandSide = Comparison::Builder(
     // leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
   }
+  removeTreeIfInitialized(rightHandSide);
 }
 
 void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
@@ -689,6 +706,7 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
   }
 
   EditionReference rightHandSide = parseUntil(stoppingType);
+  removeTreeIfInitialized(rightHandSide);
   if (m_status != Status::Progress) {
     return;
   }
@@ -715,6 +733,7 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
   // Parse until Not so that not A and B = (not A) and B
   EditionReference rightHandSide =
       parseUntil(std::max(stoppingType, Token::Type::Not));
+  removeTreeIfInitialized(rightHandSide);
   if (m_status != Status::Progress) {
     return;
   }
@@ -1338,7 +1357,10 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
       // The following expression looks like "int/int" -> it's a mixedFraction
       // leftHandSide = MixedFraction::Builder(
       // leftHandSide, static_cast<Division &>(rightHandSide));
+      removeTreeIfInitialized(rightHandSide);
       return true;
+    } else {
+      removeTreeIfInitialized(rightHandSide);
     }
   }
   restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,

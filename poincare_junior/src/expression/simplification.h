@@ -6,17 +6,18 @@
 
 namespace PoincareJ {
 
+enum class ComplexFormat { Real, Cartesian, Polar };
+enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
+enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
+
+struct ProjectionContext {
+  ComplexFormat m_complexFormat = ComplexFormat::Real;
+  AngleUnit m_angleUnit = AngleUnit::Radian;
+  Strategy m_strategy = Strategy::Default;
+};
+
 class Simplification {
  public:
-  enum class ComplexFormat { Real, Cartesian, Polar };
-  enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
-  enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
-  struct ProjectionContext {
-    ComplexFormat m_complexFormat;
-    AngleUnit m_angleUnit;
-    Strategy m_strategy;
-  };
-
   static bool Simplify(EditionReference *reference);
   static bool AdvancedReduction(EditionReference *reference);
   static bool ShallowAdvancedReduction(EditionReference *reference,

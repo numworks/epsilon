@@ -182,8 +182,7 @@ void MultPushFirst(EditionReference* l, EditionReference* e) {
 
 bool Simplification::SimplifyProductRec(EditionReference* l) {
   if (l->numberOfChildren() != 2) {
-    EditionReference u1 = l->childAtIndex(0).clone();
-    MultPopFirst(l);
+    EditionReference u1 = NAry::DetachChildAtIndex(*l, 0);
     SimplifyProductRec(l);
     if (u1.type() == BlockType::Multiplication) {
       /* TODO merge products consume its second children so we can't pass it l
@@ -227,14 +226,12 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
   }
   // 1 * u2 -> u2
   if (u1.type() == BlockType::One) {
-    ReplaceTreeByTree(l, u2);
-    WrapWithUnary(l, KMult());
+    NAry::RemoveChildAtIndex(*l, 0);
     return true;
   }
   // u1 * 1 -> u1
   if (u2.type() == BlockType::One) {
-    ReplaceTreeByTree(l, u1);
-    WrapWithUnary(l, KMult());
+    NAry::RemoveChildAtIndex(*l, 1);
     return true;
   }
   EditionReference t1 = PushBase(u1);
@@ -363,8 +360,7 @@ void AddPushFirst(EditionReference* l, EditionReference* e) {
 
 bool Simplification::SimplifySumRec(EditionReference* l) {
   if (l->numberOfChildren() != 2) {
-    EditionReference u1 = l->childAtIndex(0).clone();
-    AddPopFirst(l);
+    EditionReference u1 = NAry::DetachChildAtIndex(*l, 0);
     SimplifySumRec(l);
     if (u1.type() == BlockType::Addition) {
       EditionReference l2 = l->clone();

@@ -160,7 +160,7 @@ mp_obj_t create_arange(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
         mp_raise_msg(&mp_type_ZeroDivisionError, MP_ERROR_TEXT("divide by zero"));
     }
 
-    if(isnan(start) || isnan(stop) || isnan(step)) {
+    if(!isfinite(start) || !isfinite(stop) || !isfinite(step)) {
         mp_raise_ValueError(translate("arange: cannot compute length"));
     }
 

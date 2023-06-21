@@ -16,8 +16,9 @@ class ParsingContext {
                      // understood as abc and not a*b*c
     UnitConversion,  // 3m is understood as 3meters even if there is a value
                      // stored in the variable m
-    ImplicitAdditionBetweenUnits  // 4h40min30s is understood as 4h+40min+30s
-                                  // and not 4*h40*mi*n30*s
+    ImplicitAdditionBetweenUnits,  // 4h40min30s is understood as 4h+40min+30s
+                                   // and not 4*h40*mi*n30*s
+    CommaSeparatedList  // 1,2,3 is parsed as system list of 1, 2 and 3
   };
 
   ParsingContext(

@@ -133,7 +133,13 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
 
 EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
   m_nextToken = m_tokenizer.popToken();
-  EditionReference result = parseUntil(Token::Type::EndOfStream);
+  EditionReference result;
+  if (m_parsingContext.parsingMethod() ==
+      ParsingContext::ParsingMethod::CommaSeparatedList) {
+    result = parseCommaSeparatedList();
+  } else {
+    result = parseUntil(Token::Type::EndOfStream);
+  }
   if (m_status == Status::Progress) {
     m_status = Status::Success;
   }
@@ -1174,17 +1180,20 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // }
 
 EditionReference RackParser::parseFunctionParameters() {
-  // TODO: Handle ParenthesisLayout here.
-  if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-    m_status = Status::Error;  // Left parenthesis missing.
+  bool parenthesisIsLayout =
+      m_nextToken.is(Token::Type::Layout) &&
+      m_nextToken.firstLayout().type() == BlockType::ParenthesisLayout;
+  if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
+    // Left parenthesis missing.
+    m_status = Status::Error;
     return EditionReference();
   }
-  if (popTokenIfType(Token::Type::RightParenthesis)) {
-    return EditionReference();  // List::Builder();  // The function has no
-                                // parameter.
+  if (!parenthesisIsLayout && popTokenIfType(Token::Type::RightParenthesis)) {
+    // The function has no parameter.
+    return EditionReference();  // List::Builder();
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
-  if (m_status == Status::Progress &&
+  if (m_status == Status::Progress && !parenthesisIsLayout &&
       !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
     m_status = Status::Error;
@@ -1237,13 +1246,24 @@ EditionReference RackParser::parseVector() {
 }
 
 EditionReference RackParser::parseCommaSeparatedList() {
+  if (m_nextToken.is(Token::Type::Layout) &&
+      m_nextToken.firstLayout().type() == BlockType::ParenthesisLayout) {
+    assert(m_nextToken.firstLayout().nextNode().type() ==
+           BlockType::RackLayout);
+    // Parse the RackLayout as a comma separated list.
+    RackParser subParser(m_nextToken.firstLayout().nextNode(), 0,
+                         ParsingContext::ParsingMethod::CommaSeparatedList);
+    popToken();
+    return subParser.parse();
+  }
   EditionReference list =
       EditionPool::sharedEditionPool()->push<BlockType::SystemList>(0);
   int length = 0;
   do {
-    parseUntil(Token::Type::Comma);
-    length++;
-    NAry::SetNumberOfChildren(list, length);
+    if (!parseUntil(Token::Type::Comma).isUninitialized()) {
+      length++;
+      NAry::SetNumberOfChildren(list, length);
+    }
   } while (m_status == Status::Progress && popTokenIfType(Token::Type::Comma));
   return list;
 }

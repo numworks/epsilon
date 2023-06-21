@@ -1601,8 +1601,9 @@ STATIC mp_obj_t str_modulo_format(mp_obj_t pattern, size_t n_args, const mp_obj_
                 #if MICROPY_ERROR_REPORTING <= MICROPY_ERROR_REPORTING_TERSE
                 terse_str_format_value_error();
                 #else
+                /* Warning: this is a NumWorks change to MicroPython 1.17. */
                 mp_raise_msg_varg(&mp_type_ValueError,
-                    MP_ERROR_TEXT("unsupported format character '%c' (0x%x) at index %d"),
+                    MP_ERROR_TEXT("unsupported format character (0x%x) at index %d"),
                     *str, *str, str - start_str);
                 #endif
         }

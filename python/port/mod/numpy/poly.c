@@ -172,7 +172,7 @@ mp_obj_t poly_polyval(mp_obj_t o_p, mp_obj_t o_x) {
     }
     #endif
     // p had better be a one-dimensional standard iterable
-    uint8_t plen = mp_obj_get_int(mp_obj_len_maybe(o_p));
+    size_t plen = (size_t)mp_obj_get_int(mp_obj_len_maybe(o_p));
     mp_float_t *p = m_new(mp_float_t, plen);
     mp_obj_iter_buf_t p_buf;
     mp_obj_t p_item, p_iterable = mp_getiter(o_p, &p_buf);

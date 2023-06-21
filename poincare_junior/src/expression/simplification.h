@@ -45,7 +45,7 @@ class Simplification {
       EditionReference reference,
       ProjectionContext complexity = ProjectionContext::Default);
 
-  static bool AutomaticSimplify(EditionReference *u);
+  static bool SystematicReduce(EditionReference *u);
 
  private:
   static bool SimplifyRationalTree(EditionReference *u);

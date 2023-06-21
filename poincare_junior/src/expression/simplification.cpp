@@ -46,7 +46,7 @@ bool AllChildren(Node u, bool test(Node)) {
   return true;
 }
 
-bool Simplification::AutomaticSimplify(EditionReference* u) {
+bool Simplification::SystematicReduce(EditionReference* u) {
   if (IsRational(*u)) {
     ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
     return true;  // TODO
@@ -56,7 +56,7 @@ bool Simplification::AutomaticSimplify(EditionReference* u) {
   }
   bool childChanged = false;
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*u)) {
-    childChanged = AutomaticSimplify(&child) || childChanged;
+    childChanged = SystematicReduce(&child) || childChanged;
     if (IsUndef(child)) {
       ReplaceTreeByNode(u, KUndef);
       return true;

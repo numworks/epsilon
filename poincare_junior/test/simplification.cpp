@@ -119,7 +119,7 @@ void simplifies_to(const char* input, const char* output) {
   quiz_assert(!expression.isUninitialized());
   EditionReference projected = Simplification::SystemProjection(expression);
   quiz_assert(!projected.isUninitialized());
-  Simplification::AutomaticSimplify(&projected);
+  Simplification::SystematicReduce(&projected);
   quiz_assert(!projected.isUninitialized());
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(projected);

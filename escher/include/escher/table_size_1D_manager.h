@@ -70,7 +70,9 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
 
   void updateMemoizationForIndex(int index, KDCoordinate previousSize,
                                  KDCoordinate newSize = k_undefinedSize);
+#if 0
   void deleteIndexFromMemoization(int index, KDCoordinate previousSize);
+#endif
 
  protected:
   virtual int numberOfLines() const = 0;  // Return number of rows or columns

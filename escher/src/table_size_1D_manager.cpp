@@ -159,6 +159,7 @@ void MemoizedTableSize1DManager::updateMemoizationForIndex(
   memoizedSizes()[getMemoizedIndex(index)] = newSize;
 }
 
+#if 0
 void MemoizedTableSize1DManager::deleteIndexFromMemoization(
     int index, KDCoordinate previousSize) {
   m_memoizedTotalSize -= previousSize;
@@ -177,6 +178,7 @@ void MemoizedTableSize1DManager::deleteIndexFromMemoization(
   memoizedSizes()[getMemoizedIndex(m_memoizedIndexOffset +
                                    memoizedLinesCount() - 1)] = k_undefinedSize;
 }
+#endif
 
 int MemoizedTableSize1DManager::getMemoizedIndex(int index) const {
   /* Values are memoized in a circular way : m_memoizedSize[i] only

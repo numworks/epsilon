@@ -17,6 +17,7 @@ class Builtin : public std::pair<BlockType, Aliases> {
   static Aliases Name(const Node node) { return Name(node.type()); }
   static bool HasReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
+  static const Builtin* GetReservedFunction(BlockType type);
   static uint8_t MinNumberOfParameters(BlockType type);
   static uint8_t MaxNumberOfParameters(BlockType type);
   static EditionReference Promote(EditionReference parameterList,

@@ -986,6 +986,13 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   // }
   // }
 
+  if (numberOfParameters == 1 && builtin->blockType() == BlockType::Logarithm) {
+    builtin = Builtin::GetReservedFunction(BlockType::Log);
+  } else if (numberOfParameters == 2 &&
+             builtin->blockType() == BlockType::Log) {
+    builtin = Builtin::GetReservedFunction(BlockType::Logarithm);
+  }
+
   if (numberOfParameters <
       Builtin::MinNumberOfParameters(builtin->blockType())) {
     m_status = Status::Error;  // Too few parameters provided.

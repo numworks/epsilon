@@ -56,9 +56,22 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
   assert(false);
 }
 
-uint8_t Builtin::MinNumberOfParameters(BlockType type) { return 1; }
+const Builtin *Builtin::GetReservedFunction(BlockType type) {
+  for (const Builtin &builtin : s_builtins) {
+    if (builtin.first == type) {
+      return &builtin;
+    }
+  }
+  assert(false);
+}
 
-uint8_t Builtin::MaxNumberOfParameters(BlockType type) { return 1; }
+uint8_t Builtin::MinNumberOfParameters(BlockType type) {
+  return type == BlockType::Logarithm ? 2 : 1;
+}
+
+uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
+  return type == BlockType::Logarithm ? 2 : 1;
+}
 
 EditionReference Builtin::Promote(EditionReference parameterList,
                                   BlockType type) {

@@ -29,14 +29,13 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
       editionPool->push<BlockType::ParenthesisLayout>();
   EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
-  EditionReference child = expressionReference.nextNode();
   for (int j = 0; j < expressionReference.numberOfChildren(); j++) {
     if (j != 0) {
       NAry::AddChild(
           newParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>(','));
     }
-    ConvertExpressionToLayout(newParent, child);
+    ConvertExpressionToLayout(newParent, expressionReference.nextNode());
   }
 }
 

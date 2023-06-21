@@ -24,10 +24,8 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(
 }
 
 int ContinuousFunctionStore::numberOfActiveFunctions() const {
-  uint32_t checksum;
-  if (m_memoizedNumberOfActiveFunctions < 0 ||
-      (checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum()) !=
-          m_storageCheckSum) {
+  uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
+  if (m_memoizedNumberOfActiveFunctions < 0 || checksum != m_storageCheckSum) {
     m_storageCheckSum = checksum;
     m_memoizedNumberOfActiveFunctions =
         FunctionStore::numberOfActiveFunctions();

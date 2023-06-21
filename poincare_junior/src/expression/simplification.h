@@ -11,13 +11,7 @@ class Simplification {
   enum class ComplexFormat { Real, Cartesian, Polar };
   enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
   enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
-  class ProjectionContext {
-   public:
-    ProjectionContext(ComplexFormat complexFormat, AngleUnit angleUnit,
-                      Strategy strategy)
-        : m_complexFormat(complexFormat),
-          m_angleUnit(angleUnit),
-          m_strategy(strategy) {}
+  struct ProjectionContext {
     ComplexFormat m_complexFormat;
     AngleUnit m_angleUnit;
     Strategy m_strategy;

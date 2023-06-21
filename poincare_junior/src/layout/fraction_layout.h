@@ -10,15 +10,15 @@ namespace PoincareJ {
 
 class FractionLayout {
  public:
-  static KDSize Size(const Node node, KDFont::Size font);
-  static KDCoordinate Baseline(const Node node, KDFont::Size font);
-  static KDPoint PositionOfChild(const Node node, int childIndex,
+  static KDSize Size(const Node* node, KDFont::Size font);
+  static KDCoordinate Baseline(const Node* node, KDFont::Size font);
+  static KDPoint PositionOfChild(const Node* node, int childIndex,
                                  KDFont::Size font);
-  static void RenderNode(const Node node, KDContext* ctx, KDPoint p,
+  static void RenderNode(const Node* node, KDContext* ctx, KDPoint p,
                          KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
-  static EditionReference Parse(const Node node);
+  static EditionReference Parse(const Node* node);
 
  private:
   constexpr static int k_numeratorIndex = 0;

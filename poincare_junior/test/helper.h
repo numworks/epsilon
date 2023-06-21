@@ -54,7 +54,7 @@ inline void log_cache_pool() {}
 inline void log_cache_references() {}
 #endif
 
-inline void assert_node_equals_blocks(const Node node,
+inline void assert_node_equals_blocks(const Node* node,
                                       std::initializer_list<Block> blocks) {
   Block* block = node.block();
   for (Block b : blocks) {
@@ -64,7 +64,7 @@ inline void assert_node_equals_blocks(const Node node,
   quiz_assert(node.treeSize() == blocks.size());
 }
 
-inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
+inline void assert_trees_are_equal(const Node* tree0, const Node* tree1) {
   quiz_assert(tree0.isUninitialized() == tree1.isUninitialized());
   quiz_assert(Comparison::AreEqual(tree0, tree1));
 }
@@ -111,10 +111,10 @@ inline void reset_pools() {
 }
 
 inline void assert_pool_contains(Pool* pool,
-                                 std::initializer_list<const Node> nodes) {
+                                 std::initializer_list<const Node*> nodes) {
   quiz_assert(pool->size() > 0);
-  Node tree(pool->firstBlock());
-  for (const Node n : nodes) {
+  Node* tree(pool->firstBlock());
+  for (const Node* n : nodes) {
     assert_trees_are_equal(n, tree);
     tree = tree.nextTree();
   }

@@ -4,10 +4,10 @@
 
 namespace PoincareJ {
 
-KDSize VerticalOffsetLayout::Size(const Node node, KDFont::Size font) {
+KDSize VerticalOffsetLayout::Size(const Node* node, KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   KDSize indexSize = Render::Size(node.childAtIndex(0), font);
-  const Node base = BaseLayout(node);
+  const Node* base = BaseLayout(node);
   KDCoordinate baseHeight = base.isUninitialized()
                                 ? KDFont::GlyphHeight(font)
                                 : Render::Size(base, font).height();
@@ -15,10 +15,10 @@ KDSize VerticalOffsetLayout::Size(const Node node, KDFont::Size font) {
                 baseHeight - k_indiceHeight + indexSize.height());
 }
 
-KDCoordinate VerticalOffsetLayout::Baseline(const Node node,
+KDCoordinate VerticalOffsetLayout::Baseline(const Node* node,
                                             KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
-  const Node base = BaseLayout(node);
+  const Node* base = BaseLayout(node);
   KDCoordinate baseBaseline = base.isUninitialized()
                                   ? KDFont::GlyphHeight(font) / 2
                                   : Render::Baseline(base, font);
@@ -26,21 +26,21 @@ KDCoordinate VerticalOffsetLayout::Baseline(const Node node,
   return indexHeight - k_indiceHeight + baseBaseline;
 }
 
-KDPoint VerticalOffsetLayout::PositionOfChild(const Node node, int childIndex,
+KDPoint VerticalOffsetLayout::PositionOfChild(const Node* node, int childIndex,
                                               KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   return KDPointZero;
 }
 
-const Node VerticalOffsetLayout::BaseLayout(const Node node) {
-  const Node parent = node.parent();
+const Node* VerticalOffsetLayout::BaseLayout(const Node* node) {
+  const Node* parent = node.parent();
   if (parent.type() != BlockType::RackLayout) {
-    return Node();
+    return Node * ();
   }
   assert(IsSuffixSuperscript(node));
-  const Node previousNode = node.previousTree();
+  const Node* previousNode = node.previousTree();
   if (previousNode == parent) {
-    return Node();
+    return Node * ();
   }
   return previousNode;
 }

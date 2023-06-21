@@ -16,20 +16,20 @@ namespace PoincareJ {
 
 using namespace Placeholders;
 
-bool IsInteger(Node u) { return u.block()->isInteger(); }
-bool IsNumber(Node u) { return u.block()->isNumber(); }
-bool IsRational(Node u) { return u.block()->isRational(); }
-bool IsConstant(Node u) { return IsNumber(u); }
-bool IsZero(Node u) { return u.type() == BlockType::Zero; }
-bool IsUndef(Node u) { return u.type() == BlockType::Undefined; }
+bool IsInteger(Node* u) { return u.block()->isInteger(); }
+bool IsNumber(Node* u) { return u.block()->isNumber(); }
+bool IsRational(Node* u) { return u.block()->isRational(); }
+bool IsConstant(Node* u) { return IsNumber(u); }
+bool IsZero(Node* u) { return u.type() == BlockType::Zero; }
+bool IsUndef(Node* u) { return u.type() == BlockType::Undefined; }
 
 void DropNode(EditionReference* u) {
-  Node previousU = *u;
+  Node* previousU = *u;
   u->removeNode();
   *u = previousU;
 }
 
-bool AnyChildren(Node u, bool test(Node)) {
+bool AnyChildren(Node* u, bool test(Node*)) {
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
     if (test(child)) {
       return true;
@@ -38,7 +38,7 @@ bool AnyChildren(Node u, bool test(Node)) {
   return false;
 }
 
-bool AllChildren(Node u, bool test(Node)) {
+bool AllChildren(Node* u, bool test(Node*)) {
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
     if (!test(child)) {
       return false;
@@ -149,7 +149,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   // (w^p)^n -> w^(p*n)
   if (v.type() == BlockType::Power) {
     EditionReference p = v.childAtIndex(1);
-    assert(p.nextTree() == static_cast<Node>(n));
+    assert(p.nextTree() == static_cast<Node*>(n));
     EditionReference m =
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
     InsertNodeBeforeNode(&p, m);
@@ -175,7 +175,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   return false;
 }
 
-EditionReference PushBase(Node u) {
+EditionReference PushBase(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -185,7 +185,7 @@ EditionReference PushBase(Node u) {
   return u.clone();
 }
 
-EditionReference PushExponent(Node u) {
+EditionReference PushExponent(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -195,7 +195,7 @@ EditionReference PushExponent(Node u) {
   return P_ONE();
 }
 
-bool WrapWithUnary(EditionReference* u, Node n) {
+bool WrapWithUnary(EditionReference* u, Node* n) {
   InsertNodeBeforeNode(u, n);
   NAry::SetNumberOfChildren(*u, 1);
   return true;
@@ -306,8 +306,8 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     ReplaceNodeByTree(p, *q);
     return true;
   }
-  Node p1 = p->childAtIndex(0);
-  Node q1 = q->childAtIndex(0);
+  Node* p1 = p->childAtIndex(0);
+  Node* q1 = q->childAtIndex(0);
   EditionReference h = P_MULT(p1.clone(), q1.clone());
   SimplifyProductRec(&h);
   if (h.numberOfChildren() == 0) {
@@ -362,7 +362,7 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
 }
 
 // The term of 2ab is ab
-EditionReference PushTerm(Node u) {
+EditionReference PushTerm(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -379,7 +379,7 @@ EditionReference PushTerm(Node u) {
 }
 
 // The constant of 2ab is 2
-EditionReference PushConstant(Node u) {
+EditionReference PushConstant(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -482,8 +482,8 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     ReplaceNodeByTree(p, *q);
     return true;
   }
-  Node p1 = p->childAtIndex(0);
-  Node q1 = q->childAtIndex(0);
+  Node* p1 = p->childAtIndex(0);
+  Node* q1 = q->childAtIndex(0);
   EditionReference h = P_ADD(p1.clone(), q1.clone());
   SimplifySumRec(&h);
   if (h.numberOfChildren() == 0) {

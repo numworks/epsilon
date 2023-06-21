@@ -33,8 +33,8 @@ concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
 /* The Tree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters
  * in order to be able to use the address of the static singleton (in flash) as
- * a Node. It also eliminated identical trees since their are all using the same
- * specialized function.
+ * a Node*. It also eliminated identical trees since their are all using the
+ * same specialized function.
  */
 
 template <Block... Blocks>
@@ -42,8 +42,8 @@ class Tree : public AbstractTree {
  public:
   static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
-  // Enclose with TreeBorder Blocks when cast into Node for navigation
-  constexpr operator Node() const {
+  // Enclose with TreeBorder Blocks when cast into Node* for navigation
+  constexpr operator Node*() const {
     return Tree<BlockType::TreeBorder, Blocks...,
                 BlockType::TreeBorder>::k_blocks +
            1;
@@ -123,7 +123,7 @@ consteval auto KNAry(CTS... args) {
 }
 
 /* The following dummy constructors are here to make the error message clearer
- * when someone tries to use a Node inside a Tree constructor.
+ * when someone tries to use a Node* inside a Tree constructor.
  * Without these you get "no matching function for call to 'Unary'" and details
  * on why each candidate concept is unmatched.
  * With these constructors, they match and then you get a "call to consteval
@@ -131,12 +131,12 @@ consteval auto KNAry(CTS... args) {
  */
 
 template <Block Tag>
-consteval Node KUnary(Node a) {
+consteval Node* KUnary(Node* a) {
   return Tree<>();
 }
 
 template <Block Tag>
-consteval Node KBinary(Node a, Node b) {
+consteval Node* KBinary(Node* a, Node* b) {
   return Tree<>();
 }
 
@@ -146,10 +146,10 @@ consteval Node KTrinary(Node a, Node b, Node c) {
 }
 
 template <class... Args>
-concept HasANodeConcept = (false || ... || std::is_same<Node, Args>::value);
+concept HasANodeConcept = (false || ... || std::is_same<Node*, Args>::value);
 template <Block Tag, class... Args>
   requires HasANodeConcept<Args...>
-consteval Node KNAry(Args... args) {
+consteval Node* KNAry(Args... args) {
   return Tree<>();
 }
 

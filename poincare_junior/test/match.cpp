@@ -8,15 +8,15 @@
 using namespace PoincareJ;
 using namespace Placeholders;
 
-void assert_no_match(Node source, Node pattern) {
+void assert_no_match(Node* source, Node* pattern) {
   PatternMatching::Context ctx;
   quiz_assert(!PatternMatching::Match(pattern, source, &ctx));
   quiz_assert(ctx.isUninitialized());
 }
 
 // TODO : Factorize more tests with assert_match_and_create
-void assert_match_and_create(Node source, Node pattern, Node structure,
-                             Node output) {
+void assert_match_and_create(Node* source, Node* pattern, Node* structure,
+                             Node* output) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   int numberOfTrees = editionPool->numberOfTrees();
   PatternMatching::Context ctx;
@@ -40,13 +40,13 @@ void assert_match_and_create(Node source, Node pattern, Node structure,
 QUIZ_CASE(pcj_context) {
   PatternMatching::Context ctx;
   ctx.setNode(Placeholder::A, KAdd(2_e, 1_e), 1);
-  Node structure = KMult(5_e, KAdd(KPlaceholder<A>(), KPlaceholder<A>()));
+  Node* structure = KMult(5_e, KAdd(KPlaceholder<A>(), KPlaceholder<A>()));
   EditionReference exp = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(exp, KMult(5_e, KAdd(2_e, 1_e, 2_e, 1_e)));
 }
 
 QUIZ_CASE(pcj_match) {
-  Node t = KAdd(2_e, 1_e);
+  Node* t = KAdd(2_e, 1_e);
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(KPlaceholder<A>(), t, &ctx));
   assert_trees_are_equal(ctx.getNode(Placeholder::A), t);
@@ -57,8 +57,8 @@ QUIZ_CASE(pcj_match) {
   quiz_assert(!PatternMatching::Match(KAdd(KPlaceholder<A>(), 2_e), t, &ctx3));
   quiz_assert(ctx3.isUninitialized());
 
-  Node t2 = KAdd(1_e, 1_e, 2_e);
-  Node p = KAdd(KPlaceholder<A>(), KPlaceholder<A>(), KPlaceholder<B>());
+  Node* t2 = KAdd(1_e, 1_e, 2_e);
+  Node* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>(), KPlaceholder<B>());
   PatternMatching::Context ctx4;
   quiz_assert(PatternMatching::Match(p, t2, &ctx4));
   assert_trees_are_equal(ctx4.getNode(Placeholder::A), 1_e);
@@ -67,8 +67,8 @@ QUIZ_CASE(pcj_match) {
 
 QUIZ_CASE(pcj_rewrite_replace) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
-  Node p = KAdd(KPlaceholder<A>(), KPlaceholder<A>());
-  Node s = KMult(2_e, KPlaceholder<A>());
+  Node* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>());
+  Node* s = KMult(2_e, KPlaceholder<A>());
   EditionReference ref(editionPool->push<BlockType::Addition>(2));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));

@@ -12,8 +12,8 @@ namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Node::log(std::ostream &stream, bool recursive, bool verbose,
-               int indentation, Node comparison) const {
+void Node::log(std::ostream& stream, bool recursive, bool verbose,
+               int indentation, Node* comparison) const {
   Indent(stream, indentation);
   if (!comparison.isUninitialized() && !isIdenticalTo(comparison)) {
     stream << "<<<<<<<";
@@ -59,8 +59,8 @@ void Node::log(std::ostream &stream, bool recursive, bool verbose,
   }
 }
 
-void Node::logName(std::ostream &stream) const {
-  constexpr const char *names[] = {
+void Node* ::logName(std::ostream& stream) const {
+  constexpr const char* names[] = {
       // Respect the order of BlockType
       "Zero",
       "One",
@@ -111,12 +111,12 @@ void Node::logName(std::ostream &stream) const {
       "Placeholder",
       "SystemList",
   };
-  static_assert(sizeof(names) / sizeof(const char *) ==
+  static_assert(sizeof(names) / sizeof(const char*) ==
                 static_cast<uint8_t>(BlockType::NumberOfTypes));
   stream << names[static_cast<uint8_t>(*m_block)];
 }
 
-void Node::logAttributes(std::ostream &stream) const {
+void Node* ::logAttributes(std::ostream& stream) const {
   if (block()->isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
@@ -147,8 +147,8 @@ void Node::logAttributes(std::ostream &stream) const {
   }
 }
 
-void Node::logBlocks(std::ostream &stream, bool recursive,
-                     int indentation) const {
+void Node* ::logBlocks(std::ostream& stream, bool recursive,
+                       int indentation) const {
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
   }
@@ -177,61 +177,62 @@ void Node::logBlocks(std::ostream &stream, bool recursive,
 
 #endif
 
-void Node::copyTreeTo(void *address) const {
+void Node* ::copyTreeTo(void* address) const {
   memcpy(address, m_block, treeSize());
 }
 
-const Node Node::nextNode() const {
+const Node* Node* ::nextNode() const {
   assert(canNavigateNext());
-  return Node(m_block + nodeSize());
+  return Node * (m_block + nodeSize());
 }
 
-const Node Node::previousNode() const {
+const Node* Node* ::previousNode() const {
   if (!canNavigatePrevious()) {
-    return Node();
+    return Node * ();
   }
   int previousSize =
-      static_cast<TypeBlock *>(m_block->previous())->nodeSize(false);
-  return Node(m_block - previousSize);
+      static_cast<TypeBlock*>(m_block->previous())->nodeSize(false);
+  return Node * (m_block - previousSize);
 }
 
-const Node Node::previousTree() const { return previousRelative(false); }
+const Node* Node* ::previousTree() const { return previousRelative(false); }
 
-const Node Node::parent() const { return previousRelative(true); }
+const Node* Node* ::parent() const { return previousRelative(true); }
 
-const Node Node::root() const {
-  Node ancestor = *this;
-  while (ancestor.parent() != Node()) {
+const Node* Node* ::root() const {
+  Node* ancestor = *this;
+  while (ancestor.parent() != Node * ()) {
     ancestor = ancestor.parent();
   }
   return ancestor;
 }
 
-const Node Node::commonAncestor(const Node child1, const Node child2) const {
+const Node* Node* ::commonAncestor(const Node* child1,
+                                   const Node* child2) const {
   /* This method find the common ancestor of child1 and child2 within this tree
    * it does without going backward at any point. This tree is parsed until the
    * last node owning both childs is found. */
-  const TypeBlock *block1 = child1.block();
-  const TypeBlock *block2 = child2.block();
+  const TypeBlock* block1 = child1.block();
+  const TypeBlock* block2 = child2.block();
   if (block1 > block2) {
     return commonAncestor(child2, child1);
   }
   assert(block1 <= block2);
   if (block1 < block()) {
-    return Node();
+    return Node * ();
   }
-  Node parent = Node();
-  Node node = *this;
+  Node* parent = Node * ();
+  Node* node = *this;
   while (true) {
     assert(block1 >= node.block());
-    const Node nodeNextTree = node.nextTree();
+    const Node* nodeNextTree = node.nextTree();
     const bool descendant1 = block1 < nodeNextTree.block();
     const bool descendant2 = block2 < nodeNextTree.block();
     if (!descendant1) {
       // Neither children are descendants
       if (parent.isUninitialized()) {
         // node is the root, no ancestors can be found
-        return Node();
+        return Node * ();
       }
       // Try node's next sibling
       node = nodeNextTree;
@@ -250,29 +251,29 @@ const Node Node::commonAncestor(const Node child1, const Node child2) const {
     node = node.nextNode();
   }
   assert(false);
-  return Node();
+  return Node * ();
 }
 
-const Node Node::parentOfDescendant(const Node descendant,
-                                    int *position) const {
+const Node* Node* ::parentOfDescendant(const Node* descendant,
+                                       int* position) const {
   /* This method find the parent of child within this tree without going
    * backward at any point. This tree is parsed until the last node owning the
    * child is found. This also find position in the parent. */
   *position = 0;
-  const TypeBlock *descendantBlock = descendant.block();
+  const TypeBlock* descendantBlock = descendant.block();
   if (descendantBlock < block()) {
-    return Node();
+    return Node * ();
   }
-  Node parent = Node();
-  Node node = *this;
+  Node* parent = Node * ();
+  Node* node = *this;
   while (true) {
     assert(descendantBlock >= node.block());
-    const Node nodeNextTree = node.nextTree();
+    const Node* nodeNextTree = node.nextTree();
     if (descendantBlock >= nodeNextTree.block()) {
       // node is not descendant's ancestor
       if (parent.isUninitialized()) {
         // node is the root, no parent can be found
-        return Node();
+        return Node * ();
       }
       // Try node's next sibling
       *position = *position + 1;
@@ -288,13 +289,13 @@ const Node Node::parentOfDescendant(const Node descendant,
     node = node.nextNode();
   }
   assert(false);
-  return Node();
+  return Node * ();
 }
 
-int Node::numberOfDescendants(bool includeSelf) const {
+int Node* ::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  Node nextTreeNode = nextTree();
-  Node currentNode = nextNode();
+  Node* nextTreeNode = nextTree();
+  Node* currentNode = nextNode();
   while (currentNode != nextTreeNode) {
     result++;
     currentNode = currentNode.nextNode();
@@ -302,17 +303,17 @@ int Node::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
-const Node Node::childAtIndex(int i) const {
+const Node* Node* ::childAtIndex(int i) const {
   for (const auto [child, index] :
        NodeIterator::Children<Forward, NoEditable>(*this)) {
     if (index == i) {
       return child;
     }
   }
-  return Node();
+  return Node * ();
 }
 
-int Node::indexOfChild(const Node child) const {
+int Node* ::indexOfChild(const Node* child) const {
   assert(child.m_block != nullptr);
   for (const auto [c, index] :
        NodeIterator::Children<Forward, NoEditable>(*this)) {
@@ -323,33 +324,35 @@ int Node::indexOfChild(const Node child) const {
   return -1;
 }
 
-int Node::indexInParent() const {
-  const Node p = parent();
-  if (p == Node()) {
+int Node* ::indexInParent() const {
+  const Node* p = parent();
+  if (p == Node * ()) {
     return -1;
   }
   return p.indexOfChild(*this);
 }
 
-bool Node::hasChild(const Node child) const { return indexOfChild(child) >= 0; }
+bool Node* ::hasChild(const Node* child) const {
+  return indexOfChild(child) >= 0;
+}
 
-bool Node::hasAncestor(const Node node, bool includeSelf) const {
-  Node ancestor = *this;
+bool Node* ::hasAncestor(const Node* node, bool includeSelf) const {
+  Node* ancestor = *this;
   do {
     if (ancestor == node) {
       return includeSelf || (ancestor != *this);
     }
     ancestor = ancestor.parent();
-  } while (ancestor != Node());
+  } while (ancestor != Node * ());
   return false;
 }
 
-bool Node::hasSibling(const Node sibling) const {
-  const Node p = parent();
-  if (p == Node()) {
+bool Node* ::hasSibling(const Node* sibling) const {
+  const Node* p = parent();
+  if (p == Node * ()) {
     return false;
   }
-  for (const auto &[child, index] :
+  for (const auto& [child, index] :
        NodeIterator::Children<Forward, NoEditable>(p)) {
     if (child == sibling) {
       return true;
@@ -358,15 +361,15 @@ bool Node::hasSibling(const Node sibling) const {
   return false;
 }
 
-void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
-  for (const auto &[child, index] :
+void Node* ::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
+  for (const auto& [child, index] :
        NodeIterator::Children<Forward, NoEditable>(*this)) {
     child.recursivelyGet(treeFunction);
   }
   (*treeFunction)(*this);
 }
 
-EditionReference Node::clone() const {
+EditionReference Node* ::clone() const {
   return EditionPool::sharedEditionPool()->clone(*this);
 }
 
@@ -374,8 +377,8 @@ EditionReference Node::clone() const {
  * Also ensure that there is no navigation:
  * - crossing the borders of the CachePool
  * - going across a TreeBorder
- * Node::nextNode asserts that such events don't occur whereas
- * Node::previousNode tolerates (and handles) them to identify root nodes.
+ * Node*::nextNode asserts that such events don't occur whereas
+ * Node*::previousNode tolerates (and handles) them to identify root nodes.
  * Here are the situations that indicate navigation must stop:
  * nextNode:
  * (1) From a TreeBorder
@@ -400,24 +403,24 @@ EditionReference Node::clone() const {
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination, but not previousNode's. */
 
-bool Node::canNavigateNext() const {
-  CachePool *cache(CachePool::sharedCachePool());
+bool Node* ::canNavigateNext() const {
+  CachePool* cache(CachePool::sharedCachePool());
   return m_block->type() != BlockType::TreeBorder &&
          m_block + nodeSize() != cache->firstBlock() &&
          m_block != cache->editionPool()->lastBlock();
 }
 
-bool Node::canNavigatePrevious() const {
-  CachePool *cache(CachePool::sharedCachePool());
+bool Node* ::canNavigatePrevious() const {
+  CachePool* cache(CachePool::sharedCachePool());
   BlockType destinationType =
-      static_cast<TypeBlock *>(m_block->previous())->type();
+      static_cast<TypeBlock*>(m_block->previous())->type();
   return destinationType != BlockType::TreeBorder &&
          m_block != cache->firstBlock();
 }
 
-const Node Node::previousRelative(bool parent) const {
-  Node currentNode = *this;
-  Node closestSibling;
+const Node* Node* ::previousRelative(bool parent) const {
+  Node* currentNode = *this;
+  Node* closestSibling;
   int nbOfChildrenToScan = 0;
   do {
     currentNode = currentNode.previousNode();

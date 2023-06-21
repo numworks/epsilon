@@ -83,7 +83,7 @@ uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
 
 EditionReference Builtin::Promote(EditionReference parameterList,
                                   BlockType type) {
-  Node header;
+  Node *header;
   switch (type) {
     case BlockType::Abs:
       header = Tree<BlockType::Abs>();

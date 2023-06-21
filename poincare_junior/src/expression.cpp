@@ -205,7 +205,7 @@ void Expression::ConvertExpressionToLayout(
   expressionReference.removeNode();
 }
 
-EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
+EditionReference Expression::EditionPoolExpressionToLayout(Node *node) {
   assert(node.block()->isExpression());
   EditionReference ref =
       EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
@@ -225,7 +225,7 @@ Expression Expression::Parse(const char *textInput) {
 
 Expression Expression::Parse(const Layout *layout) {
   return Expression(
-      [](Node node) {
+      [](Node *node) {
         Parser::Parse(node);
         EditionReference(node).removeTree();
       },
@@ -234,21 +234,21 @@ Expression Expression::Parse(const Layout *layout) {
 
 Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
   return Expression(
-      [](Node tree) {
+      [](Node *tree) {
         EditionReference reference(tree);
         Simplification::Simplify(&reference);
       },
-      Node(static_cast<const TypeBlock *>(expressionAddress)));
+      Node * (static_cast<const TypeBlock *>(expressionAddress)));
 }
 
 Layout Expression::toLayout() const {
-  return Layout([](Node node) { EditionPoolExpressionToLayout(node); }, this);
+  return Layout([](Node *node) { EditionPoolExpressionToLayout(node); }, this);
 }
 
 float Expression::approximate() const {
   float res;
   send(
-      [](const Node tree, void *res) {
+      [](const Node *tree, void *res) {
         float *result = static_cast<float *>(res);
         *result = Approximation::To<float>(tree);
       },

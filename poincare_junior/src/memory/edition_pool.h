@@ -19,7 +19,7 @@ class EditionPool final : public Pool {
   static EditionPool *sharedEditionPool();
   void reinit(TypeBlock *firstBlock, size_t size);
 
-  uint16_t referenceNode(Node node);
+  uint16_t referenceNode(Node *node);
   void flush();
 
   typedef bool (*Relax)(void *context);
@@ -45,12 +45,12 @@ class EditionPool final : public Pool {
   void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks);
 
   // Initialize trees
-  Node initFromAddress(const void *address, bool isTree = true);
-  Node clone(const Node node, bool isTree = true) {
+  Node *initFromAddress(const void *address, bool isTree = true);
+  Node *clone(const Node *node, bool isTree = true) {
     return initFromAddress(static_cast<const void *>(node.block()), isTree);
   }
   template <BlockType blockType, typename... Types>
-  Node push(Types... args);
+  Node *push(Types... args);
 
   using Pool::firstBlock;
   const TypeBlock *firstBlock() const override { return m_firstBlock; }
@@ -86,8 +86,8 @@ class EditionPool final : public Pool {
      */
    public:
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
-    Node nodeForIdentifier(uint16_t id) const override;
-    uint16_t storeNode(Node node) override;
+    Node *nodeForIdentifier(uint16_t id) const override;
+    uint16_t storeNode(Node *node) override;
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,
                                        const Block *, int);
     void updateNodes(AlterSelectedBlock function,

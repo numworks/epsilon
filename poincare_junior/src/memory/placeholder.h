@@ -25,11 +25,11 @@ class Placeholder {
   consteval static uint8_t ParamsToValue(Tag tag, Filter filter) {
     return ParamsToValue(tag, static_cast<uint8_t>(filter));
   }
-  constexpr static Tag NodeToTag(const Node placeholder) {
+  constexpr static Tag NodeToTag(const Node* placeholder) {
     return ValueToTag(NodeToValue(placeholder));
   }
 
-  constexpr static Filter NodeToFilter(const Node placeholder) {
+  constexpr static Filter NodeToFilter(const Node* placeholder) {
     return ValueToFilter(NodeToValue(placeholder));
   }
 
@@ -46,7 +46,7 @@ class Placeholder {
   consteval static uint8_t ParamsToValue(Tag tag, uint8_t filter) {
     return tag | (filter << k_bitsForTag);
   }
-  constexpr static uint8_t NodeToValue(const Node placeholder) {
+  constexpr static uint8_t NodeToValue(const Node* placeholder) {
     assert(placeholder.type() == BlockType::Placeholder);
     return static_cast<uint8_t>(*(placeholder.block()->next()));
   }

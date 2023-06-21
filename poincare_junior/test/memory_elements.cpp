@@ -393,13 +393,14 @@ QUIZ_CASE(pcj_type_block) {
   }
 }
 
-void assert_tree_equals_blocks(Node node, std::initializer_list<Block> blocks) {
+void assert_tree_equals_blocks(Node* node,
+                               std::initializer_list<Block> blocks) {
   assert_node_equals_blocks(node, blocks);
   quiz_assert(blocks.size() == node.treeSize());
 }
 
 QUIZ_CASE(pcj_constexpr_tree_constructor) {
-  Node n = 12_e;
+  Node* n = 12_e;
   assert_tree_equals_blocks(0_e, {TypeBlock(BlockType::Zero)});
   assert_tree_equals_blocks(1_e, {TypeBlock(BlockType::One)});
   assert_tree_equals_blocks(2_e, {TypeBlock(BlockType::Two)});
@@ -492,21 +493,21 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree a = KAdd(1_e, 2_e);
   Tree b = 3_e;
   Tree c = 4_e;
-  Node children[] = {a, b, c};
+  Node* children[] = {a, b, c};
 
   // Scan children forward
-  for (const std::pair<Node, int> indexedNode :
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<Node>(indexedNode),
+    assert_trees_are_equal(std::get<Node*>(indexedNode),
                            children[std::get<int>(indexedNode)]);
   }
 
 #if POINCARE_JUNIOR_BACKWARD_SCAN
   // Scan children backward
-  for (const std::pair<Node, int> indexedNode :
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Backward, NoEditable>(mult)) {
     assert_trees_are_equal(
-        std::get<Node>(indexedNode),
+        std::get<Node*>(indexedNode),
         children[numberOfChildren - 1 - std::get<int>(indexedNode)]);
   }
 #endif
@@ -515,16 +516,16 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree e = 6_e;
   Tree f = 7_e;
   Tree g = 8_e;
-  Node newChildren[] = {e, f, g};
+  Node* newChildren[] = {e, f, g};
   for (std::pair<EditionReference, int> indexedRef :
        NodeIterator::Children<Forward, Editable>(mult)) {
     std::get<EditionReference>(indexedRef)
         .replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
-  for (const std::pair<Node, int> indexedNode :
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<Node>(indexedNode),
+    assert_trees_are_equal(std::get<Node*>(indexedNode),
                            newChildren[std::get<int>(indexedNode)]);
   }
 
@@ -536,10 +537,10 @@ QUIZ_CASE(pcj_node_iterator) {
         .replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
-  for (const std::pair<Node, int> indexedNode :
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(
-        std::get<Node>(indexedNode),
+        std::get<Node*>(indexedNode),
         newChildren[numberOfChildren - 1 - std::get<int>(indexedNode)]);
   }
 #endif
@@ -549,13 +550,13 @@ QUIZ_CASE(pcj_node_iterator) {
 #if POINCARE_JUNIOR_BACKWARD_SCAN
   size_t numberOfChildren2 = mult2.numberOfChildren();
 #endif
-  Node children2[] = {a, b};
+  Node* children2[] = {a, b};
   // Scan two nodes children forward
-  for (std::pair<std::array<Node, 2>, int> indexedArray :
+  for (std::pair<std::array<Node*, 2>, int> indexedArray :
        MultipleNodesIterator::Children<Forward, NoEditable, 2>(
-           std::array<Node, 2>({mult, mult2}))) {
-    std::array<Node, 2> childrenPair =
-        std::get<std::array<Node, 2>>(indexedArray);
+           std::array<Node*, 2>({mult, mult2}))) {
+    std::array<Node*, 2> childrenPair =
+        std::get<std::array<Node*, 2>>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
 
     assert_trees_are_equal(childrenPair[0],
@@ -569,11 +570,11 @@ QUIZ_CASE(pcj_node_iterator) {
 
 #if POINCARE_JUNIOR_BACKWARD_SCAN
   // Scan two nodes children backward
-  for (std::pair<std::array<Node, 2>, int> indexedArray :
+  for (std::pair<std::array<Node*, 2>, int> indexedArray :
        MultipleNodesIterator::Children<Backward, NoEditable, 2>(
-           std::array<Node, 2>({mult, mult2}))) {
-    std::array<Node, 2> childrenPair =
-        std::get<std::array<Node, 2>>(indexedArray);
+           std::array<Node*, 2>({mult, mult2}))) {
+    std::array<Node*, 2> childrenPair =
+        std::get<std::array<Node*, 2>>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
     assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
     assert_trees_are_equal(childrenPair[1],
@@ -588,8 +589,8 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree n11 = 11_e;
   Tree n13 = 13_e;
   Tree n14 = 14_e;
-  Node newChildren1[] = {n10, n11};
-  Node newChildren2[] = {n13, n14};
+  Node* newChildren1[] = {n10, n11};
+  Node* newChildren2[] = {n13, n14};
   // Edit two nodes children forward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs :
        MultipleNodesIterator::Children<Forward, Editable, 2>(
@@ -601,15 +602,15 @@ QUIZ_CASE(pcj_node_iterator) {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node children1[] = {n10, n11, n6};
-  for (const std::pair<Node, int> indexedNode :
+  Node* children1[] = {n10, n11, n6};
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<Node>(indexedNode),
+    assert_trees_are_equal(std::get<Node*>(indexedNode),
                            children1[std::get<int>(indexedNode)]);
   }
-  for (const std::pair<Node, int> indexedNode :
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult2)) {
-    assert_trees_are_equal(std::get<Node>(indexedNode),
+    assert_trees_are_equal(std::get<Node*>(indexedNode),
                            newChildren2[std::get<int>(indexedNode)]);
   }
 
@@ -625,16 +626,16 @@ QUIZ_CASE(pcj_node_iterator) {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node editedChildren1[] = {n10, n11, n10};
-  for (const std::pair<Node, int> indexedNode :
+  Node* editedChildren1[] = {n10, n11, n10};
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<Node>(indexedNode),
+    assert_trees_are_equal(std::get<Node*>(indexedNode),
                            editedChildren1[std::get<int>(indexedNode)]);
   }
-  for (const std::pair<Node, int> indexedNode :
+  for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult2)) {
     assert_trees_are_equal(
-        std::get<Node>(indexedNode),
+        std::get<Node*>(indexedNode),
         newChildren2[numberOfChildren2 - 1 - std::get<int>(indexedNode)]);
   }
 #endif
@@ -646,18 +647,18 @@ QUIZ_CASE(pcj_node) {
   EditionPool* editionPool = cachePool->editionPool();
 
   // operator==
-  Node node0 = 42_e;
-  Node node1 =
+  Node* node0 = 42_e;
+  Node* node1 =
       editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(42));
   quiz_assert(node0 != node1 && *node0.block() == *node1.block());
-  Node node2(editionPool->firstBlock());
+  Node* node2(editionPool->firstBlock());
   quiz_assert(node2 == node1);
 
-  // Node navigation
+  // Node* navigation
   constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
   constexpr Tree e2 = KPow(5_e, 6_e);
-  Node n1 = EditionReference(e1);
-  Node n2 = EditionReference(e2);
+  Node* n1 = EditionReference(e1);
+  Node* n2 = EditionReference(e2);
   quiz_assert(n1.treeSize() == 23);  // TODO: Magic Number
   assert_trees_are_equal(n1.nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1.nextTree(), e2);
@@ -713,10 +714,10 @@ QUIZ_CASE(pcj_node) {
 
 QUIZ_CASE(pcj_node_size) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
-  Node node = editionPool->push<BlockType::IntegerPosBig>(
+  Node* node = editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
   quiz_assert(node.nodeSize() == 7);
-  node = static_cast<Node>(editionPool->push<BlockType::IntegerNegBig>(
+  node = static_cast<Node*>(editionPool->push<BlockType::IntegerNegBig>(
       static_cast<uint64_t>(0x0000FF00)));
   quiz_assert(node.nodeSize() == 6);
 }

@@ -106,7 +106,7 @@ void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
                   KDColor expressionColor, KDColor backgroundColor) const {
   void *context[5] = {ctx, &p, &font, &expressionColor, &backgroundColor};
   send(
-      [](const Node tree, void *context) {
+      [](const Node *tree, void *context) {
         void **contextArray = static_cast<void **>(context);
         KDContext *ctx = static_cast<KDContext *>(contextArray[0]);
         KDPoint p = *static_cast<KDPoint *>(contextArray[1]);
@@ -122,7 +122,7 @@ KDSize Layout::size(KDFont::Size font) const {
   KDSize result = KDSizeZero;
   void *context[2] = {&font, &result};
   send(
-      [](const Node tree, void *context) {
+      [](const Node *tree, void *context) {
         void **contextArray = static_cast<void **>(context);
         KDFont::Size font = *static_cast<KDFont::Size *>(contextArray[0]);
         KDSize *result = static_cast<KDSize *>(contextArray[1]);
@@ -135,7 +135,7 @@ KDSize Layout::size(KDFont::Size font) const {
 bool Layout::isEmpty() const {
   bool result = false;
   send(
-      [](const Node tree, void *context) {
+      [](const Node *tree, void *context) {
         bool *result = static_cast<bool *>(context);
         *result = IsEmpty(tree);
       },

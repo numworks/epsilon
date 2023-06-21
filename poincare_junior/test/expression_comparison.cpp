@@ -5,7 +5,8 @@
 
 using namespace PoincareJ;
 
-void assert_comparison_equals(const Node node0, const Node node1, int result) {
+void assert_comparison_equals(const Node* node0, const Node* node1,
+                              int result) {
   int comparison = Comparison::Compare(node0, node1);
   assert(comparison == result);
 }
@@ -18,11 +19,11 @@ QUIZ_CASE(pcj_expression_comparison) {
   CachePool::sharedCachePool()->editionPool()->flush();
 }
 
-void assert_contain_subtree(const Node tree, const Node subtree) {
+void assert_contain_subtree(const Node* tree, const Node* subtree) {
   assert(Comparison::ContainsSubtree(tree, subtree));
 }
 
-void assert_not_contain_subtree(const Node tree, const Node subtree) {
+void assert_not_contain_subtree(const Node* tree, const Node* subtree) {
   assert(!Comparison::ContainsSubtree(tree, subtree));
 }
 

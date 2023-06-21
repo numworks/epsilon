@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 class Polynomial final {
   /* We opt for the recursive representation.
-   * - Node:
+   * - Node*:
    *   | P TAG | number of terms | highest exponant | second highest exponant |
    * ... | number of terms | P TAG |
    * - Children: the first child is the variable, the others are the
@@ -37,19 +37,19 @@ class Polynomial final {
       EditionReference coefficient = EditionReference(&OneBlock));
 
   // Getters
-  static uint8_t ExponentAtIndex(const Node polynomial, int index);
-  static uint8_t Degree(const Node polynomial) {
+  static uint8_t ExponentAtIndex(const Node* polynomial, int index);
+  static uint8_t Degree(const Node* polynomial) {
     return ExponentAtIndex(polynomial, 0);
   }
-  static Node LeadingCoefficient(Node polynomial) {
+  static Node* LeadingCoefficient(Node* polynomial) {
     assert(NumberOfTerms(polynomial) > 0);
     return polynomial.childAtIndex(1);
   }
-  static uint8_t NumberOfTerms(const Node polynomial) {
+  static uint8_t NumberOfTerms(const Node* polynomial) {
     assert(polynomial.type() == BlockType::Polynomial);
     return polynomial.numberOfChildren() - 1;
   }
-  static Node Variable(const Node polynomial) {
+  static Node* Variable(const Node* polynomial) {
     assert(polynomial.type() == BlockType::Polynomial);
     return polynomial.childAtIndex(0);
   }
@@ -101,7 +101,7 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static Node GetVariables(const Node expression);
+  static Node* GetVariables(const Node* expression);
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
                                            size_t variableIndex = 0);
@@ -112,8 +112,8 @@ class PolynomialParser final {
   static std::pair<EditionReference, uint8_t> ParseMonomial(
       EditionReference expression, EditionReference variable);
 #if 0
-  Node PolynomialInterpretation
-  Node RationalInterpretation --> list of 2 polynomial
+  Node* PolynomialInterpretation
+  Node* RationalInterpretation --> list of 2 polynomial
   // Set!
   //
   sign
@@ -133,9 +133,9 @@ class PolynomialParser final {
 private:
   exponentForNthVariable(int monomialIndex, int variableIndex)
   Integer coeffient(int monomialIndex);
-  Node m_listOfVariables; // Set of expressions
-  Node ListOfCoefficient; // Integers -> based of set of expressions order
-  Node ListOfListsExponents; // List of list of exponents
+  Node* m_listOfVariables; // Set of expressions
+  Node* ListOfCoefficient; // Integers -> based of set of expressions order
+  Node* ListOfListsExponents; // List of list of exponents
 #endif
 };
 

@@ -11,7 +11,7 @@
 
 namespace PoincareJ {
 
-EditionReference::EditionReference(Node node) {
+EditionReference::EditionReference(Node* node) {
   if (node.isUninitialized()) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
@@ -29,13 +29,13 @@ EditionReference::EditionReference(Node node) {
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
   std::cout << "id: " << m_identifier;
-  static_cast<Node>(*this).log(std::cout, true, 1, true);
+  static_cast<Node*>(*this).log(std::cout, true, 1, true);
   std::cout << std::endl;
 }
 #endif
 
-EditionReference::operator const Node() const {
-  Node n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
+EditionReference::operator const Node*() const {
+  Node* n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
   return n;
 }
 
@@ -46,9 +46,10 @@ void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   (*treeFunction)(*this);
 }
 
-Node EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
+Node* EditionReference::replaceBy(Node* newNode, bool oldIsTree,
+                                  bool newIsTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
-  Node oldNode = *this;
+  Node* oldNode = *this;
   int oldSize = oldIsTree ? oldNode.treeSize() : oldNode.nodeSize();
   int newSize = newIsTree ? newNode.treeSize() : newNode.nodeSize();
   Block* oldBlock = oldNode.block();
@@ -87,11 +88,11 @@ Node EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
     Log(LoggerType::Edition, "Replace", finalBlock, newSize);
 #endif
   }
-  return Node(finalBlock);
+  return Node * (finalBlock);
 }
 
-EditionReference EditionReference::matchAndCreate(const Node pattern,
-                                                  const Node structure) const {
+EditionReference EditionReference::matchAndCreate(const Node* pattern,
+                                                  const Node* structure) const {
   PatternMatching::Context ctx;
   if (!PatternMatching::Match(pattern, *this, &ctx)) {
     return EditionReference();
@@ -99,8 +100,8 @@ EditionReference EditionReference::matchAndCreate(const Node pattern,
   return PatternMatching::Create(structure, ctx);
 }
 
-bool EditionReference::matchAndReplace(const Node pattern,
-                                       const Node structure) {
+bool EditionReference::matchAndReplace(const Node* pattern,
+                                       const Node* structure) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
@@ -162,7 +163,7 @@ bool EditionReference::matchAndReplace(const Node pattern,
       placeholders[i] = EditionReference(ctx.getNode(i));
     }
     // Invalidate context before anything is detached.
-    ctx.setNode(i, Node(), numberOfTrees);
+    ctx.setNode(i, Node * (), numberOfTrees);
   }
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
@@ -178,7 +179,7 @@ bool EditionReference::matchAndReplace(const Node pattern,
       continue;
     }
     // Get a Node to the first placeholder tree, and detach as many as necessary
-    Node trees = placeholders[i].block();
+    Node* trees = placeholders[i].block();
     // If the placeHolder matches the entire Tree, restore it after detaching.
     bool restoreReference = trees.block() == block();
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
@@ -199,7 +200,8 @@ bool EditionReference::matchAndReplace(const Node pattern,
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    ctx.setNode(i, static_cast<Node>(placeholders[i]), ctx.getNumberOfTrees(i));
+    ctx.setNode(i, static_cast<Node*>(placeholders[i]),
+                ctx.getNumberOfTrees(i));
   }
 
   // Step 5 - Build the PatternMatching replacement
@@ -217,16 +219,16 @@ bool EditionReference::matchAndReplace(const Node pattern,
 
 void EditionReference::remove(bool isTree) {
   Block* b = block();
-  size_t size = isTree ? static_cast<Node>(*this).treeSize()
-                       : static_cast<Node>(*this).nodeSize();
+  size_t size = isTree ? static_cast<Node*>(*this).treeSize()
+                       : static_cast<Node*>(*this).nodeSize();
   EditionPool::sharedEditionPool()->removeBlocks(b, size);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
 #endif
 }
 
-void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
-  Node destination = before ? static_cast<Node>(*this) : nextNode();
+void EditionReference::insert(Node* nodeToInsert, bool before, bool isTree) {
+  Node* destination = before ? static_cast<Node*>(*this) : nextNode();
   EditionPool* pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert =
       isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
@@ -249,9 +251,9 @@ void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
 void EditionReference::detach(bool isTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Block* destination = pool->lastBlock();
-  size_t sizeToMove = isTree ? static_cast<Node>(*this).treeSize()
-                             : static_cast<Node>(*this).nodeSize();
-  Block* source = static_cast<Node>(*this).block();
+  size_t sizeToMove = isTree ? static_cast<Node*>(*this).treeSize()
+                             : static_cast<Node*>(*this).nodeSize();
+  Block* source = static_cast<Node*>(*this).block();
   pool->moveBlocks(destination, source, sizeToMove);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
@@ -259,21 +261,21 @@ void EditionReference::detach(bool isTree) {
 #endif
 }
 
-void InsertNodeBeforeNode(EditionReference* target, Node nodeToInsert) {
-  Node previousTarget = *target;
+void InsertNodeBeforeNode(EditionReference* target, Node* nodeToInsert) {
+  Node* previousTarget = *target;
   if (EditionPool::sharedEditionPool()->contains(nodeToInsert.block()) &&
       nodeToInsert.block() < previousTarget.block()) {
-    previousTarget = Node(previousTarget.block() - nodeToInsert.nodeSize());
+    previousTarget = Node * (previousTarget.block() - nodeToInsert.nodeSize());
   }
   target->insertNodeBeforeNode(nodeToInsert);
   *target = previousTarget;
 }
 
-void InsertTreeBeforeNode(EditionReference* target, Node treeToInsert) {
-  Node previousTarget = *target;
+void InsertTreeBeforeNode(EditionReference* target, Node* treeToInsert) {
+  Node* previousTarget = *target;
   if (EditionPool::sharedEditionPool()->contains(treeToInsert.block()) &&
       treeToInsert.block() < previousTarget.block()) {
-    previousTarget = Node(previousTarget.block() - treeToInsert.treeSize());
+    previousTarget = Node * (previousTarget.block() - treeToInsert.treeSize());
   }
   target->insertTreeBeforeNode(treeToInsert);
   *target = previousTarget;
@@ -283,8 +285,8 @@ void SwapTrees(EditionReference* u, EditionReference* v) {
   if (u->block() > v->block()) {
     return SwapTrees(v, u);
   }
-  Node previousU = *u;
-  Node previousV = *v;
+  Node* previousU = *u;
+  Node* previousV = *v;
   InsertTreeBeforeNode(v, previousU);
   *u = EditionReference(previousU);
   InsertTreeBeforeNode(u, previousV);

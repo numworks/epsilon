@@ -13,14 +13,14 @@ class Layout final : public Reference {
   friend class Expression;
 
  public:
-  constexpr static bool IsHorizontal(const Node node) {
+  constexpr static bool IsHorizontal(const Node* node) {
     return node.type() == BlockType::RackLayout;
   }
-  constexpr static bool IsEmpty(const Node node) {
+  constexpr static bool IsEmpty(const Node* node) {
     return IsHorizontal(node) && node.numberOfChildren() == 0;
   }
 
-  Layout(const Node tree) : Reference(tree) {
+  Layout(const Node* tree) : Reference(tree) {
     assert(tree.block()->isLayout());
   }
   using Reference::Reference;

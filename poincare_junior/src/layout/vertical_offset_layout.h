@@ -8,17 +8,17 @@ namespace PoincareJ {
 
 class VerticalOffsetLayout {
  public:
-  static KDSize Size(const Node node, KDFont::Size font);
-  static KDCoordinate Baseline(const Node node, KDFont::Size font);
-  static KDPoint PositionOfChild(const Node node, int childIndex,
+  static KDSize Size(const Node* node, KDFont::Size font);
+  static KDCoordinate Baseline(const Node* node, KDFont::Size font);
+  static KDPoint PositionOfChild(const Node* node, int childIndex,
                                  KDFont::Size font);
   // TODO : Implement prefix and subscript logic
-  static bool IsSuffixSuperscript(const Node node) { return true; }
+  static bool IsSuffixSuperscript(const Node* node) { return true; }
 
  private:
   constexpr static KDCoordinate k_indiceHeight = 10;
 
-  static const Node BaseLayout(const Node node);
+  static const Node* BaseLayout(const Node* node);
 };
 
 }  // namespace PoincareJ

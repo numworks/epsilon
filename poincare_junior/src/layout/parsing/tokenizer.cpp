@@ -249,7 +249,7 @@ Token Tokenizer::popToken() {
   }
 
   // All the remaining cases are single codepoint tokens
-  Node layout = m_decoder.layoutAt(start);
+  Node* layout = m_decoder.layoutAt(start);
   switch (c) {
     case UCodePointMultiplicationSign:
     case UCodePointMiddleDot:
@@ -341,7 +341,7 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart,
   return Token(tokenType, m_decoder.layoutAt(stringStart), tokenLength);
 }
 
-static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string,
+static bool stringIsACodePointFollowedByNumbers(Node* layout, size_t string,
                                                 size_t length) {
   RackLayoutDecoder tempDecoder(layout, string);
   CodePoint c = tempDecoder.nextCodePoint();
@@ -358,7 +358,7 @@ static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string,
 }
 
 static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
-    Node layout, size_t string, size_t* length, Token::Type* returnType) {
+    Node* layout, size_t string, size_t* length, Token::Type* returnType) {
   RackLayoutDecoder tempDecoder(layout, string);
   size_t identifierLength = 0;
   while (identifierLength < *length) {

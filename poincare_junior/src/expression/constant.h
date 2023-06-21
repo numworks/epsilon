@@ -10,7 +10,7 @@ namespace PoincareJ {
 class Constant final {
  public:
   enum class Type : uint8_t { Pi, E, Undefined };
-  static enum Type Type(const Node node) {
+  static enum Type Type(const Node* node) {
     assert(node.type() == BlockType::Constant);
     return static_cast<enum Type>(
         static_cast<uint8_t>(*(node.block()->next())));

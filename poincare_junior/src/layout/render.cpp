@@ -11,7 +11,7 @@
 
 namespace PoincareJ {
 
-KDSize Render::Size(const Node node, KDFont::Size font) {
+KDSize Render::Size(const Node* node, KDFont::Size font) {
   assert(node.block()->isLayout());
   switch (node.type()) {
     case BlockType::RackLayout:
@@ -30,9 +30,9 @@ KDSize Render::Size(const Node node, KDFont::Size font) {
   return KDSizeZero;
 }
 
-KDPoint Render::AbsoluteOrigin(const Node node, KDFont::Size font) {
+KDPoint Render::AbsoluteOrigin(const Node* node, KDFont::Size font) {
   assert(node.block()->isLayout());
-  const Node parent = node.parent();
+  const Node* parent = node.parent();
   if (parent.isUninitialized()) {
     return KDPointZero;
   }
@@ -40,7 +40,7 @@ KDPoint Render::AbsoluteOrigin(const Node node, KDFont::Size font) {
       .translatedBy(PositionOfChild(parent, parent.indexOfChild(node), font));
 }
 
-KDPoint Render::PositionOfChild(const Node node, int childIndex,
+KDPoint Render::PositionOfChild(const Node* node, int childIndex,
                                 KDFont::Size font) {
   assert(node.block()->isLayout());
   switch (node.type()) {
@@ -58,7 +58,7 @@ KDPoint Render::PositionOfChild(const Node node, int childIndex,
   };
 }
 
-KDCoordinate Render::Baseline(const Node node, KDFont::Size font) {
+KDCoordinate Render::Baseline(const Node* node, KDFont::Size font) {
   assert(node.block()->isLayout());
   switch (node.type()) {
     case BlockType::RackLayout:
@@ -77,15 +77,16 @@ KDCoordinate Render::Baseline(const Node node, KDFont::Size font) {
   };
 }
 
-void Render::Draw(const Node node, KDContext* ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor) {
+void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
+                  KDFont::Size font, KDColor expressionColor,
+                  KDColor backgroundColor) {
   /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
    * Drawing is therefore restricted to the highest parent only. */
   assert(node.parent().isUninitialized());
   PrivateDraw(node, ctx, p, font, expressionColor, backgroundColor);
 }
 
-void Render::PrivateDraw(const Node node, KDContext* ctx, KDPoint p,
+void Render::PrivateDraw(const Node* node, KDContext* ctx, KDPoint p,
                          KDFont::Size font, KDColor expressionColor,
                          KDColor backgroundColor) {
   assert(node.block()->isLayout());
@@ -96,7 +97,7 @@ void Render::PrivateDraw(const Node node, KDContext* ctx, KDPoint p,
     // Layout size overflows KDCoordinate
     return;
   }
-  /* Redraw the background for each Node (used with selection which isn't
+  /* Redraw the background for each Node* (used with selection which isn't
    * implemented yet) */
   ctx->fillRect(KDRect(p, size), backgroundColor);
   RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
@@ -107,7 +108,7 @@ void Render::PrivateDraw(const Node node, KDContext* ctx, KDPoint p,
   }
 }
 
-void Render::RenderNode(const Node node, KDContext* ctx, KDPoint p,
+void Render::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
                         KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
   assert(node.block()->isLayout());
@@ -128,7 +129,7 @@ void Render::RenderNode(const Node node, KDContext* ctx, KDPoint p,
   };
 }
 
-int Render::IndexAfterHorizontalCursorMove(const Node node,
+int Render::IndexAfterHorizontalCursorMove(const Node* node,
                                            OMG::HorizontalDirection direction,
                                            int currentIndex,
                                            bool* shouldRedraw) {

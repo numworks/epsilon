@@ -4,21 +4,21 @@
 
 namespace PoincareJ {
 
-KDSize ParenthesisLayout::Size(const Node node, KDFont::Size font) {
+KDSize ParenthesisLayout::Size(const Node* node, KDFont::Size font) {
   KDSize childSize = Render::Size(node.childAtIndex(0), font);
   return childSize + KDSize(2 * HorizontalPadding(font), 2 * k_verticalPadding);
 }
 
-KDCoordinate ParenthesisLayout::Baseline(const Node node, KDFont::Size font) {
+KDCoordinate ParenthesisLayout::Baseline(const Node* node, KDFont::Size font) {
   return Render::Baseline(node.childAtIndex(0), font) + k_verticalPadding;
 }
 
-KDPoint ParenthesisLayout::PositionOfChild(const Node node, int childIndex,
+KDPoint ParenthesisLayout::PositionOfChild(const Node* node, int childIndex,
                                            KDFont::Size font) {
   return KDPoint(HorizontalPadding(font), k_verticalPadding);
 }
 
-void ParenthesisLayout::RenderNode(const Node node, KDContext* ctx, KDPoint p,
+void ParenthesisLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
                                    KDFont::Size font, KDColor expressionColor,
                                    KDColor backgroundColor) {
   KDSize size = Size(node, font);
@@ -36,7 +36,7 @@ void ParenthesisLayout::RenderNode(const Node node, KDContext* ctx, KDPoint p,
                                  .font = font});
 }
 
-EditionReference ParenthesisLayout::Parse(const Node node) {
+EditionReference ParenthesisLayout::Parse(const Node* node) {
   return Parser::Parse(node.childAtIndex(0));
 }
 

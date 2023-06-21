@@ -21,9 +21,9 @@ namespace PoincareJ {
  *
  * Iterate backwards through on node's children:
 
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Backward,
- NoEditable>(node)) { Node child = std::get<Node>(indexedNode); int index =
- std::get<int>(indexedNode);
+  for (const std::pair<Node*, int> indexedNode :
+ NodeIterator::Children<Backward, NoEditable>(node)) { Node* child =
+ std::get<Node*>(indexedNode); int index = std::get<int>(indexedNode);
     ...
   }
 
@@ -132,11 +132,11 @@ class MultipleNodesIterator {
 
   class NoEditablePolicy {
    public:
-    typedef Node NodeType;
+    typedef Node *NodeType;
     template <size_t N>
     using ArrayType = std::array<NodeType, N>;
     template <size_t N>
-    int endIndex(std::array<Node, N> array) const {
+    int endIndex(std::array<Node *, N> array) const {
       uint8_t nbOfChildren = UINT8_MAX;
       for (size_t i = 0; i < N; i++) {
         nbOfChildren =
@@ -152,12 +152,12 @@ class MultipleNodesIterator {
       return (index0 != index1);
     }
     template <size_t N>
-    std::array<Node, N> convertFromArrayType(ArrayType<N> array,
-                                             int offset = 0) const {
+    std::array<Node *, N> convertFromArrayType(ArrayType<N> array,
+                                               int offset = 0) const {
       return array;
     }
     template <size_t N>
-    ArrayType<N> convertToArrayType(std::array<Node, N> array,
+    ArrayType<N> convertToArrayType(std::array<Node *, N> array,
                                     int offset = 0) const {
       return array;
     }
@@ -176,7 +176,7 @@ class MultipleNodesIterator {
      * updated at each step since children might have been inserted or deleted.
      */
     template <size_t N>
-    int endIndex(std::array<Node, N> array) const {
+    int endIndex(std::array<Node *, N> array) const {
       return -1;
     }
     template <size_t N>
@@ -197,22 +197,22 @@ class MultipleNodesIterator {
      * ensure the validity of this hack. */
 
     template <size_t N>
-    std::array<Node, N> convertFromArrayType(ArrayType<N> array,
-                                             int offset = 0) const {
-      return Array::MapAction<NodeType, Node, N>(
+    std::array<Node *, N> convertFromArrayType(ArrayType<N> array,
+                                               int offset = 0) const {
+      return Array::MapAction<NodeType, Node *, N>(
           array, &offset, [](NodeType reference, void *offset) {
-            return Node(reference.block() + *static_cast<int *>(offset));
+            return Node * (reference.block() + *static_cast<int *>(offset));
           });
     }
     template <size_t N>
-    ArrayType<N> convertToArrayType(std::array<Node, N> array,
+    ArrayType<N> convertToArrayType(std::array<Node *, N> array,
                                     int offset = 0) const {
-      return Array::MapAction<Node, NodeType, N>(
-          array, &offset, [](Node node, void *offset) {
+      return Array::MapAction<Node *, NodeType, N>(
+          array, &offset, [](Node *node, void *offset) {
             return node.isUninitialized()
                        ? EditionReference()
-                       : EditionReference(
-                             Node(node.block() - *static_cast<int *>(offset)));
+                       : EditionReference(Node * (node.block() -
+                                                  *static_cast<int *>(offset)));
           });
     }
   };
@@ -220,17 +220,17 @@ class MultipleNodesIterator {
   class ForwardPolicy {
    protected:
     template <size_t N>
-    std::array<Node, N> firstElement(std::array<Node, N> array) const {
-      return Array::MapAction<Node, Node, N>(
+    std::array<Node *, N> firstElement(std::array<Node *, N> array) const {
+      return Array::MapAction<Node *, Node *, N>(
           array, nullptr,
-          [](Node node, void *context) { return node.nextNode(); });
+          [](Node *node, void *context) { return node.nextNode(); });
     }
 
     template <size_t N>
-    std::array<Node, N> incrementeArray(std::array<Node, N> array) const {
-      return Array::MapAction<Node, Node, N>(
+    std::array<Node *, N> incrementeArray(std::array<Node *, N> array) const {
+      return Array::MapAction<Node *, Node *, N>(
           array, nullptr,
-          [](Node node, void *context) { return node.nextTree(); });
+          [](Node *node, void *context) { return node.nextTree(); });
     }
 
     int offset() const { return 1; }
@@ -240,18 +240,18 @@ class MultipleNodesIterator {
   class BackwardPolicy {
    protected:
     template <size_t N>
-    std::array<Node, N> firstElement(std::array<Node, N> array) const {
-      return Array::MapAction<Node, Node, N>(
-          array, nullptr, [](Node node, void *context) {
+    std::array<Node *, N> firstElement(std::array<Node *, N> array) const {
+      return Array::MapAction<Node *, Node *, N>(
+          array, nullptr, [](Node *node, void *context) {
             return node.childAtIndex(node.numberOfChildren() - 1);
           });
     }
 
     template <size_t N>
-    std::array<Node, N> incrementeArray(std::array<Node, N> array) const {
-      return Array::MapAction<Node, Node, N>(
+    std::array<Node *, N> incrementeArray(std::array<Node *, N> array) const {
+      return Array::MapAction<Node *, Node *, N>(
           array, nullptr,
-          [](Node node, void *context) { return node.previousTree(); });
+          [](Node *node, void *context) { return node.previousTree(); });
     }
 
     int offset() const { return -1; }

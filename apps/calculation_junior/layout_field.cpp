@@ -17,7 +17,7 @@ using namespace Escher;
 namespace CalculationJunior {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_cursor(m_layoutBuffer.blocks(), Node()),
+    : m_cursor(m_layoutBuffer.blocks(), Node * ()),
       m_expressionView(&m_cursor, format),
       m_cursorView(this),
       m_isEditing(false) {
@@ -395,7 +395,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 #else
   void *context[3] = {this, &forceCursorRightOfText, &forceCursorLeftOfText};
   resultLayout.send(
-      [](const Node tree, void *context) {
+      [](const Node *tree, void *context) {
         void **pointerContext = static_cast<void **>(context);
         LayoutField *layoutField =
             static_cast<LayoutField *>(pointerContext[0]);
@@ -572,7 +572,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(PoincareJ::Node layout,
+void LayoutField::insertLayoutAtCursor(PoincareJ::Node *layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {

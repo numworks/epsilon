@@ -4,7 +4,7 @@
 
 namespace PoincareJ {
 
-KDSize FractionLayout::Size(const Node node, KDFont::Size font) {
+KDSize FractionLayout::Size(const Node* node, KDFont::Size font) {
   KDSize numeratorSize = Render::Size(node.childAtIndex(0), font);
   KDSize denominatorSize = Render::Size(node.childAtIndex(1), font);
   KDCoordinate width =
@@ -16,12 +16,12 @@ KDSize FractionLayout::Size(const Node node, KDFont::Size font) {
   return KDSize(width, height);
 }
 
-KDCoordinate FractionLayout::Baseline(const Node node, KDFont::Size font) {
+KDCoordinate FractionLayout::Baseline(const Node* node, KDFont::Size font) {
   return Render::Size(node.childAtIndex(k_numeratorIndex), font).height() +
          k_fractionLineMargin + k_fractionLineHeight;
 }
 
-KDPoint FractionLayout::PositionOfChild(const Node node, int childIndex,
+KDPoint FractionLayout::PositionOfChild(const Node* node, int childIndex,
                                         KDFont::Size font) {
   KDCoordinate x = (Render::Size(node, font).width() -
                     Render::Size(node.childAtIndex(childIndex), font).width()) /
@@ -34,7 +34,7 @@ KDPoint FractionLayout::PositionOfChild(const Node node, int childIndex,
   return KDPoint(x, y);
 }
 
-void FractionLayout::RenderNode(const Node node, KDContext* ctx, KDPoint p,
+void FractionLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
                                 KDFont::Size font, KDColor expressionColor,
                                 KDColor backgroundColor) {
   KDCoordinate fractionLineY =
@@ -47,7 +47,7 @@ void FractionLayout::RenderNode(const Node node, KDContext* ctx, KDPoint p,
       expressionColor);
 }
 
-EditionReference FractionLayout::Parse(const Node node) {
+EditionReference FractionLayout::Parse(const Node* node) {
   EditionReference ref =
       EditionPool::sharedEditionPool()->push<BlockType::Division>();
   Parser::Parse(node.childAtIndex(k_numeratorIndex));

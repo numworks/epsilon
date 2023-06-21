@@ -11,8 +11,8 @@ QUIZ_CASE(pcj_edition_pool) {
   EditionPool* pool = cachePool->editionPool();
 
   constexpr Tree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
-  const Node handingNode = static_cast<Node>(k_expression);
-  const Node editedNode = pool->clone(handingNode);
+  const Node* handingNode = static_cast<Node*>(k_expression);
+  const Node* editedNode = pool->clone(handingNode);
   assert(pool->size() == handingNode.treeSize());
   assert(pool->numberOfTrees() == 1);
 
@@ -105,7 +105,7 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
-  // Replacements from Node outside of the EditionPool
+  // Replacements from Node* outside of the EditionPool
   ref0 = ref0.replaceNodeByNode(9_e);  // Same size
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});

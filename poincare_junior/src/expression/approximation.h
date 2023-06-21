@@ -18,7 +18,7 @@ namespace PoincareJ {
 class Approximation final {
  public:
   template <typename T>
-  static T To(const Node node);
+  static T To(const Node* node);
 
   template <typename T>
   static T FloatAddition(T a, T b) {
@@ -64,7 +64,7 @@ class Approximation final {
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T>
-  static T MapAndReduce(const Node node, Reductor<T> reductor);
+  static T MapAndReduce(const Node* node, Reductor<T> reductor);
 };
 
 }  // namespace PoincareJ

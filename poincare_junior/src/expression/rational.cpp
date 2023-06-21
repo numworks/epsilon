@@ -10,7 +10,7 @@ namespace PoincareJ {
 
 // TODO: tests
 
-IntegerHandler Rational::Numerator(const Node node) {
+IntegerHandler Rational::Numerator(const Node* node) {
   BlockType type = node.type();
   switch (type) {
     case BlockType::Zero:
@@ -29,10 +29,10 @@ IntegerHandler Rational::Numerator(const Node node) {
     }
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig: {
-      Block *block = node.block();
+      Block* block = node.block();
       uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
-      const uint8_t *digits =
-          reinterpret_cast<const uint8_t *>(block->nextNth(2));
+      const uint8_t* digits =
+          reinterpret_cast<const uint8_t*>(block->nextNth(2));
       return IntegerHandler(digits, numberOfDigits,
                             type == BlockType::IntegerNegBig
                                 ? NonStrictSign::Negative
@@ -44,10 +44,10 @@ IntegerHandler Rational::Numerator(const Node node) {
     }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-      Block *block = node.block();
+      Block* block = node.block();
       uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
-      const uint8_t *digits =
-          reinterpret_cast<const uint8_t *>(block->nextNth(3));
+      const uint8_t* digits =
+          reinterpret_cast<const uint8_t*>(block->nextNth(3));
       return IntegerHandler(digits, numberOfDigits,
                             type == BlockType::RationalNegBig
                                 ? NonStrictSign::Negative
@@ -58,7 +58,7 @@ IntegerHandler Rational::Numerator(const Node node) {
   }
 }
 
-IntegerHandler Rational::Denominator(const Node node) {
+IntegerHandler Rational::Denominator(const Node* node) {
   switch (node.type()) {
     case BlockType::Zero:
     case BlockType::One:
@@ -76,11 +76,11 @@ IntegerHandler Rational::Denominator(const Node node) {
     }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-      Block *block = node.block();
+      Block* block = node.block();
       uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(block->next()));
       uint8_t denominatorNumberOfDigits =
           static_cast<uint8_t>(*(block->nextNth(2)));
-      const uint8_t *digits = reinterpret_cast<const uint8_t *>(
+      const uint8_t* digits = reinterpret_cast<const uint8_t*>(
           block->nextNth(3 + numeratorNumberOfDigits));
       return IntegerHandler(digits, denominatorNumberOfDigits,
                             NonStrictSign::Positive);
@@ -90,12 +90,12 @@ IntegerHandler Rational::Denominator(const Node node) {
   }
 }
 
-Node Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
+Node* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   assert(!denominator.isZero());
   if (denominator.isOne()) {
     return numerator.pushOnEditionPool();
   }
-  EditionPool *pool = EditionPool::sharedEditionPool();
+  EditionPool* pool = EditionPool::sharedEditionPool();
   if (numerator.isOne() && denominator.isTwo()) {
     return pool->push<BlockType::Half>();
   }
@@ -107,13 +107,13 @@ Node Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   TypeBlock typeBlock(numerator.sign() == NonStrictSign::Negative
                           ? BlockType::RationalNegBig
                           : BlockType::RationalPosBig);
-  Node node(pool->pushBlock(typeBlock));
+  Node* node(pool->pushBlock(typeBlock));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
   if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
     // TODO: set error type to be "Unrepresentable rational"
     ExceptionCheckpoint::Raise();
-    return Node();
+    return Node * ();
   }
   pool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
   pool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
@@ -135,7 +135,7 @@ void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
   reference.replaceNodeByNode(Push(numerator, denominator));
 }
 
-Node Rational::Addition(const Node i, const Node j) {
+Node* Rational::Addition(const Node* i, const Node* j) {
   // a/b + c/d
   EditionReference ad =
       IntegerHandler::Multiplication(Numerator(i), Denominator(j));
@@ -153,7 +153,7 @@ Node Rational::Addition(const Node i, const Node j) {
   return result;
 }
 
-Node Rational::Multiplication(const Node i, const Node j) {
+Node* Rational::Multiplication(const Node* i, const Node* j) {
   EditionReference newNumerator =
       IntegerHandler::Multiplication(Numerator(i), Numerator(j));
   EditionReference newDenominator =
@@ -164,7 +164,7 @@ Node Rational::Multiplication(const Node i, const Node j) {
   return result;
 }
 
-Node Rational::IntegerPower(const Node i, const Node j) {
+Node* Rational::IntegerPower(const Node* i, const Node* j) {
   assert(!(Number::IsZero(i) && Sign(j) == NonStrictSign::Negative));
   IntegerHandler absJ = Integer::Handler(j);
   absJ.setSign(NonStrictSign::Positive);
@@ -178,7 +178,7 @@ Node Rational::IntegerPower(const Node i, const Node j) {
   return result;
 }
 
-Node Rational::IrreducibleForm(const Node i) {
+Node* Rational::IrreducibleForm(const Node* i) {
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
   if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
     EditionReference numerator =

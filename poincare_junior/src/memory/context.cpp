@@ -4,14 +4,14 @@
 
 namespace PoincareJ {
 
-const Node Context::TreeForIdentifier(const char* identifier) {
+const Node* Context::TreeForIdentifier(const char* identifier) {
   Ion::Storage::Record r =
       Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtensions(
           identifier, k_extensions, k_numberOfExtensions);
-  return Node(static_cast<const TypeBlock*>(r.value().buffer));
+  return Node * (static_cast<const TypeBlock*>(r.value().buffer));
 }
 
-bool Context::SetTreeForIdentifier(const Node node, const char* identifier) {
+bool Context::SetTreeForIdentifier(const Node* node, const char* identifier) {
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
           identifier, pcjExtension, node.block(), node.treeSize());

@@ -103,7 +103,7 @@ class LayoutField
   bool privateHandleMoveEvent(Ion::Events::Event event,
                               bool* shouldRedrawLayout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(PoincareJ::Node layoutR,
+  void insertLayoutAtCursor(PoincareJ::Node* layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
   Escher::TextCursorView* textCursorView() override {
@@ -134,7 +134,9 @@ class LayoutField
     void copySelection(bool intoStoreMenu);
     KDFont::Size font() const { return m_expressionView.font(); }
     Escher::TextCursorView* textCursorView() { return &m_cursorView; }
-    PoincareJ::Node node() { return PoincareJ::Node(m_layoutBuffer.blocks()); }
+    PoincareJ::Node* node() {
+      return PoincareJ::Node * (m_layoutBuffer.blocks());
+    }
 
    private:
     int numberOfSubviews() const override { return 2; }

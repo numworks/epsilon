@@ -161,7 +161,7 @@ class IntegerLitteral : public AbstractTreeCompatible {
     return Tree<B...>();
   }
 
-  constexpr operator const Node() { return Tree(IntegerLitteral<V>()); }
+  constexpr operator const Node*() { return Tree(IntegerLitteral<V>()); }
 
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
@@ -300,7 +300,7 @@ class FloatLitteral : public AbstractTreeCompatible {
     return Tree<B...>();
   }
 
-  constexpr operator const Node() { return Tree(FloatLitteral<V>()); }
+  constexpr operator const Node*() { return Tree(FloatLitteral<V>()); }
 
   // Since we are using the representation we have to manually flip the sign bit
   consteval auto operator-() { return FloatLitteral<V ^ (1 << 31)>(); }

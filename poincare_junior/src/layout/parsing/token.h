@@ -62,7 +62,7 @@ class Token {
 
   Token(Type type = Type::Undefined)
       : m_type(type), m_firstLayout(), m_length(0){};
-  Token(Type type, Node layout, size_t length = 1)
+  Token(Type type, Node* layout, size_t length = 1)
       : m_type(type), m_firstLayout(layout), m_length(length){};
 
   Type type() const { return m_type; }
@@ -74,23 +74,23 @@ class Token {
   }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
-  Node firstLayout() const { return m_firstLayout; }
+  Node* firstLayout() const { return m_firstLayout; }
   size_t length() const { return m_length; }
 
-  void setRange(Node firstLayout, size_t length) {
+  void setRange(Node* firstLayout, size_t length) {
     m_firstLayout = firstLayout;
     m_length = length;
   }
 
   RackLayoutDecoder toDecoder() {
-    Node rack = m_firstLayout.parent();
+    Node* rack = m_firstLayout.parent();
     size_t start = rack.indexOfChild(m_firstLayout);
     return RackLayoutDecoder(rack, start, start + m_length);
   }
 
  private:
   Type m_type;
-  Node m_firstLayout;
+  Node* m_firstLayout;
   size_t m_length;
 };
 

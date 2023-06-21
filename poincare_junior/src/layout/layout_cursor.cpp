@@ -195,7 +195,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
   return leftParenthesisIndex;
 }
 
-/* const Node insertion */
+/* const Node* insertion */
 void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
                                                          const void *data) {
   const InsertLayoutContext *insertLayoutContext =
@@ -257,8 +257,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * Later at Step 9, balanceAutocompletedBrackets will make it so:
    * "(1+(3+4)][)|" -> "(1+3(3+4))|"
    * */
-  const Node leftL = leftLayout();
-  const Node rightL = rightLayout();
+  const Node *leftL = leftLayout();
+  const Node *rightL = rightLayout();
 #if 0
   if (!leftL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
@@ -315,7 +315,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 #if 0
   // - Step 6 - Find position to point to if layout will me merged
   EditionPoolCursor previousCursor = *this;
-  Node childToPoint;
+  Node* childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
   if (layoutToInsertIsHorizontal) {
     childToPoint = (forceRight || forceLeft)
@@ -338,7 +338,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   assert(Layout::IsHorizontal(cursorNode()) ||
          cursorNode().parent().isUninitialized() ||
          !Layout::IsHorizontal(cursorNode().parent()));
-  setCursorNode(static_cast<Node>(
+  setCursorNode(static_cast<Node *>(
       RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), ref, &m_position)));
   assert(Layout::IsHorizontal(cursorNode()));
 
@@ -589,14 +589,14 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
 #if 0
   LayoutCursor previousCursor = *this;
 #endif
-  const Node leftL = leftLayout();
+  const Node *leftL = leftLayout();
   if (!leftL.isUninitialized()) {
     Render::DeletionMethod deletionMethod =
         Render::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
     privateDelete(deletionMethod, false);
   } else {
     assert(m_position == leftMostPosition());
-    const Node p = cursorNode().parent();
+    const Node *p = cursorNode().parent();
     if (p.isUninitialized()) {
       return;
     }
@@ -714,7 +714,7 @@ void LayoutCursor::beautifyLeft(Context *context) {
 
 /* Private */
 
-void LayoutCursor::setLayout(const Node l,
+void LayoutCursor::setLayout(const Node *l,
                              OMG::HorizontalDirection sideOfLayout) {
   if (!Layout::IsHorizontal(l) && !l.parent().isUninitialized() &&
       Layout::IsHorizontal(l.parent())) {
@@ -726,33 +726,33 @@ void LayoutCursor::setLayout(const Node l,
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
-const Node LayoutCursor::leftLayout() const {
+const Node *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
-    return m_position == 1 ? cursorNode() : Node();
+    return m_position == 1 ? cursorNode() : Node * ();
   }
   if (cursorNode().numberOfChildren() == 0 || m_position == 0) {
-    return Node();
+    return Node * ();
   }
   return cursorNode().childAtIndex(m_position - 1);
 }
 
-const Node LayoutCursor::rightLayout() const {
+const Node *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
-    return m_position == 0 ? cursorNode() : Node();
+    return m_position == 0 ? cursorNode() : Node * ();
   }
   if (cursorNode().numberOfChildren() == 0 ||
       m_position == cursorNode().numberOfChildren()) {
-    return Node();
+    return Node * ();
   }
   return cursorNode().childAtIndex(m_position);
 }
 
-const Node LayoutCursor::layoutToFit(KDFont::Size font) const {
+const Node *LayoutCursor::layoutToFit(KDFont::Size font) const {
   assert(!isUninitialized());
-  const Node leftL = leftLayout();
-  const Node rightL = rightLayout();
+  const Node *leftL = leftLayout();
+  const Node *rightL = rightLayout();
   if (leftL.isUninitialized() && rightL.isUninitialized()) {
     return cursorNode();
   }
@@ -765,7 +765,7 @@ const Node LayoutCursor::layoutToFit(KDFont::Size font) const {
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
                                   bool *shouldRedrawLayout) {
-  Node nextLayout = Node();
+  Node *nextLayout = Node * ();
   /* Search the nextLayout on the left/right to ask it where
    * the cursor should go when entering from outside.
    *
@@ -884,8 +884,8 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    * / -10                                     / -10           §
    *
    * */
-  const Node parent = nextLayout.parent();
-  const Node previousLayout = cursorNode();
+  const Node *parent = nextLayout.parent();
+  const Node *previousLayout = cursorNode();
   if (!parent.isUninitialized() && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
     m_position = cursorNode().indexOfChild(nextLayout) + (direction.isRight());
@@ -905,12 +905,12 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
 
 bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
                                 bool *shouldRedrawLayout) {
-  const Node previousLayout = cursorNode();
+  const Node *previousLayout = cursorNode();
   bool moved = verticalMoveWithoutSelection(direction, shouldRedrawLayout);
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorNode()) {
-    const Node layoutAncestor =
+    const Node *layoutAncestor =
         rootNode().commonAncestor(cursorNode(), previousLayout);
     assert(!layoutAncestor.isUninitialized());
     // Down goes left to right and up goes right to left
@@ -963,7 +963,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * Try to enter right or left layout if it can be entered through up/down
    * */
   if (!isSelecting()) {
-    Node nextLayout = rightLayout();
+    Node *nextLayout = rightLayout();
     Render::PositionInLayout positionRelativeToNextLayout =
         Render::PositionInLayout::Left;
     // Repeat for right and left

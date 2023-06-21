@@ -14,7 +14,7 @@ namespace PoincareJ {
  * - aligning all nodes on 4 bytes might speed up every computation
  */
 
-/* Node description by type:
+/* Node* description by type:
  * - Zero Z (same for One, Two, Half, MinusOne, TreeBorder)
  * | Z TAG |
  *

@@ -14,11 +14,11 @@ class CodePointLayout {
                                                      int index) {
     return Bit::getByteAtIndex(value, index);
   }
-  static CodePoint GetCodePoint(const Node node);
-  static void GetName(const Node node, char* buffer, size_t bufferSize);
-  static KDSize Size(const Node node, KDFont::Size font);
-  static KDCoordinate Baseline(const Node node, KDFont::Size font);
-  static void RenderNode(const Node node, KDContext* ctx, KDPoint p,
+  static CodePoint GetCodePoint(const Node* node);
+  static void GetName(const Node* node, char* buffer, size_t bufferSize);
+  static KDSize Size(const Node* node, KDFont::Size font);
+  static KDCoordinate Baseline(const Node* node, KDFont::Size font);
+  static void RenderNode(const Node* node, KDContext* ctx, KDPoint p,
                          KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);

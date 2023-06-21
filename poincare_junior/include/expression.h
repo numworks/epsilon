@@ -10,7 +10,7 @@ namespace PoincareJ {
 
 class Expression final : public Reference {
  public:
-  Expression(const Node tree) : Reference(tree) {
+  Expression(const Node* tree) : Reference(tree) {
     assert(tree.block()->isExpression());
   }
   using Reference::Reference;
@@ -21,7 +21,7 @@ class Expression final : public Reference {
   Layout toLayout() const;
   float approximate() const;
 
-  static EditionReference EditionPoolExpressionToLayout(Node node);
+  static EditionReference EditionPoolExpressionToLayout(Node* node);
 
  private:
   static void ConvertBuiltinToLayout(EditionReference layoutParent,

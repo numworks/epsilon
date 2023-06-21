@@ -33,9 +33,9 @@ class CachePool final : public Pool {
     return m_referenceTable.isEmpty()
                ? static_cast<const TypeBlock *>(
                      static_cast<const Block *>(m_blocks))
-               : Node(m_blocks + m_referenceTable.lastOffset())
-                     .nextTree()
-                     .block();
+               : Node * (m_blocks + m_referenceTable.lastOffset())
+                            .nextTree()
+                            .block();
   }
 
   // Broader implementation of Pool::contains, checking unused pool as well
@@ -74,8 +74,8 @@ class CachePool final : public Pool {
      */
    public:
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
-    Node nodeForIdentifier(uint16_t id) const override;
-    uint16_t storeNode(Node node) override;
+    Node *nodeForIdentifier(uint16_t id) const override;
+    uint16_t storeNode(Node *node) override;
     // Returns a boolean indicating if we can free numberOfRequiredFreeBlocks
     bool freeOldestBlocks(int numberOfRequiredFreeBlocks);
     uint16_t lastOffset() const;
@@ -111,7 +111,7 @@ class CachePool final : public Pool {
       return id - m_startIdentifier;
     }
     void removeFirstReferences(uint16_t newFirstIndex,
-                               Node *nodeToUpdate = nullptr);
+                               Node **nodeToUpdate = nullptr);
     uint16_t m_nodeOffsetForIdentifier[CachePool::k_maxNumberOfReferences];
     uint16_t m_startIdentifier;
   };

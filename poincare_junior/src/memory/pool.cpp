@@ -5,10 +5,10 @@
 namespace PoincareJ {
 
 size_t Pool::numberOfTrees() const {
-  const TypeBlock *currentBlock = firstBlock();
+  const TypeBlock* currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
-    currentBlock = Node(currentBlock).nextTree().block();
+    currentBlock = Node * (currentBlock).nextTree().block();
     result++;
   }
   assert(currentBlock == lastBlock());
@@ -17,7 +17,7 @@ size_t Pool::numberOfTrees() const {
 
 // Reference Table
 
-uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node node, size_t index) {
+uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node* node, size_t index) {
   if (index >= m_length) {
     assert(!isFull());
     // Increment first to make firstBlock != nullptr
@@ -30,18 +30,18 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node node, size_t index) {
   return index;
 }
 
-Node Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+Node* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
-    return Node();
+    return Node * ();
   }
   assert(id < m_length);
   uint16_t offset =
-      const_cast<Pool::ReferenceTable *>(this)->nodeOffsetArray()[id];
+      const_cast<Pool::ReferenceTable*>(this)->nodeOffsetArray()[id];
   if (offset == NoNodeIdentifier) {
-    return Node();
+    return Node * ();
   }
   assert(offset <= m_pool->size());
-  return Node(m_pool->firstBlock() + offset);
+  return Node * (m_pool->firstBlock() + offset);
 }
 
 bool Pool::ReferenceTable::reset() {
@@ -55,11 +55,11 @@ bool Pool::ReferenceTable::reset() {
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Pool::ReferenceTable::logIdsForNode(std::ostream &stream,
-                                         Node node) const {
+void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
+                                         Node* node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
-    Node n = Pool::ReferenceTable::nodeForIdentifier(i);
+    Node* n = Pool::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
       stream << identifierForIndex(i) << ", ";
       found = true;
@@ -76,7 +76,7 @@ void Pool::ReferenceTable::logIdsForNode(std::ostream &stream,
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Pool::logNode(std::ostream &stream, Node node, bool recursive,
+void Pool::logNode(std::ostream& stream, Node* node, bool recursive,
                    bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
@@ -87,18 +87,18 @@ void Pool::logNode(std::ostream &stream, Node node, bool recursive,
   stream << "</Reference>";
 }
 
-void Pool::log(std::ostream &stream, LogFormat format, bool verbose,
+void Pool::log(std::ostream& stream, LogFormat format, bool verbose,
                int indentation) {
-  const char *formatName = format == LogFormat::Tree ? "tree" : "flat";
+  const char* formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
   stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\""
          << size() << "\">";
   if (format == LogFormat::Tree) {
-    for (const Node tree : trees()) {
+    for (const Node* tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);
     }
   } else {
-    for (const Node tree : allNodes()) {
+    for (const Node* tree : allNodes()) {
       logNode(stream, tree, false, verbose, indentation + 1);
     }
   }

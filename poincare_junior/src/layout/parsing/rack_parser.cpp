@@ -405,7 +405,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     m_status = Status::Error;  // FIXME
     return;
   }
-  Node rack = m_currentToken.firstLayout().parent();
+  Node *rack = m_currentToken.firstLayout().parent();
   size_t start = rack.indexOfChild(m_currentToken.firstLayout());
   size_t end = start + m_currentToken.length();
   OMG::Base base(OMG::Base::Decimal);
@@ -519,7 +519,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // : Opposite::Builder(rightHandSide.childAtIndex(0)));
     // return;
     // }
-    assert(leftHandSide.nextTree() == static_cast<Node>(rightHandSide));
+    assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
     if (!plus) {
       leftHandSide.insertNodeBeforeNode(Tree<BlockType::Subtraction>());
       leftHandSide = leftHandSide.previousNode();
@@ -625,9 +625,9 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
   }
 }
 
-static void turnIntoBinaryNode(Node node, EditionReference &leftHandSide,
+static void turnIntoBinaryNode(Node *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
-  assert(leftHandSide.nextTree() == static_cast<Node>(rightHandSide));
+  assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
   leftHandSide.insertNodeBeforeNode(node);
   leftHandSide = leftHandSide.previousNode();
 }
@@ -1044,7 +1044,7 @@ void RackParser::parseSpecialIdentifier(EditionReference &leftHandSide,
 void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Node node = m_currentToken.firstLayout();
+  const Node *node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
   assert(node.type() == BlockType::CodePointLayout && length == 1);  // TODO
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
@@ -1325,7 +1325,7 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // return;
   // }
   assert(m_currentToken.length() == 1);
-  Node layout = m_currentToken.firstLayout();
+  Node *layout = m_currentToken.firstLayout();
   assert(layout.block()->isLayout());
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */

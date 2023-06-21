@@ -5,7 +5,7 @@
 using namespace PoincareJ;
 
 bool PatternMatching::Context::isUninitialized() const {
-  for (const Node &node : m_array) {
+  for (const Node*& node : m_array) {
     if (!node.isUninitialized()) {
       return false;
     }
@@ -20,14 +20,14 @@ void PatternMatching::Context::log() const {
     int numberOfTress = m_numberOfTrees[i];
     std::cout << "\n  <PlaceHolder tag=" << i << " trees=" << numberOfTress
               << ">";
-    Node tree = m_array[i];
+    Node* tree = m_array[i];
     if (!tree.isUninitialized()) {
       for (int j = 0; j < numberOfTress; j++) {
         tree.log(std::cout, true, true, 2);
         tree = tree.nextTree();
       }
     } else {
-      Node().log(std::cout, true, true, 2);
+      Node*().log(std::cout, true, true, 2);
     }
     std::cout << "\n  </PlaceHolder>";
   }
@@ -35,7 +35,7 @@ void PatternMatching::Context::log() const {
 }
 #endif
 
-PatternMatching::MatchContext::MatchContext(Node source, Node pattern)
+PatternMatching::MatchContext::MatchContext(Node* source, Node* pattern)
     : m_localSourceRoot(source),
       m_localSourceEnd(source.nextTree().block()),
       m_localPatternEnd(pattern.nextTree().block()),
@@ -44,32 +44,33 @@ PatternMatching::MatchContext::MatchContext(Node source, Node pattern)
       m_globalSourceEnd(m_localSourceEnd),
       m_globalPatternEnd(m_localPatternEnd) {}
 
-int PatternMatching::MatchContext::remainingLocalTrees(Node node) const {
+int PatternMatching::MatchContext::remainingLocalTrees(Node* node) const {
   assert(m_localSourceRoot.block()->isSimpleNAry());
   if (ReachedLimit(node, m_localSourceEnd)) {
     return 0;
   }
   // Parent is expected to be m_localSourceRoot, but we need nodePosition.
   int nodePosition;
-  Node parent = m_localSourceRoot.parentOfDescendant(node, &nodePosition);
+  Node* parent = m_localSourceRoot.parentOfDescendant(node, &nodePosition);
   assert(!parent.isUninitialized() && parent == m_localSourceRoot);
   return m_localSourceRoot.numberOfChildren() - nodePosition;
 }
 
-void PatternMatching::MatchContext::setLocal(Node source, Node pattern) {
+void PatternMatching::MatchContext::setLocal(Node* source, Node* pattern) {
   m_localSourceRoot = source;
   m_localSourceEnd = source.nextTree().block();
   m_localPatternEnd = pattern.nextTree().block();
 }
 
-void PatternMatching::MatchContext::setLocalFromChild(Node source,
-                                                      Node pattern) {
+void PatternMatching::MatchContext::setLocalFromChild(Node* source,
+                                                      Node* pattern) {
   int tmp;
   // If global context limits are reached, set local context back to global.
-  Node sourceParent = ReachedLimit(source, m_globalSourceEnd)
-                          ? m_globalSourceRoot
-                          : m_globalSourceRoot.parentOfDescendant(source, &tmp);
-  Node patternParent =
+  Node* sourceParent =
+      ReachedLimit(source, m_globalSourceEnd)
+          ? m_globalSourceRoot
+          : m_globalSourceRoot.parentOfDescendant(source, &tmp);
+  Node* patternParent =
       ReachedLimit(pattern, m_globalPatternEnd)
           ? m_globalPatternRoot
           : m_globalPatternRoot.parentOfDescendant(pattern, &tmp);
@@ -77,8 +78,8 @@ void PatternMatching::MatchContext::setLocalFromChild(Node source,
   setLocal(sourceParent, patternParent);
 }
 
-bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, Node source,
-                                    Node pattern, Context *context,
+bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, Node* source,
+                                    Node* pattern, Context* context,
                                     MatchContext matchContext) {
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
   int numberOfTrees = 0;
@@ -100,7 +101,7 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, Node source,
   return true;
 }
 
-bool PatternMatching::MatchNodes(Node source, Node pattern, Context *context,
+bool PatternMatching::MatchNodes(Node* source, Node* pattern, Context* context,
                                  MatchContext matchContext) {
   while (!matchContext.reachedLimit(pattern, true, false)) {
     bool onlyEmptyPlaceholders = false;
@@ -120,7 +121,7 @@ bool PatternMatching::MatchNodes(Node source, Node pattern, Context *context,
 
     if (pattern.type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
-      Node tagNode = context->getNode(tag);
+      Node* tagNode = context->getNode(tag);
       if (!tagNode.isUninitialized()) {
         // Tag has already been set. Check the trees are the same.
         for (int i = 0; i < context->getNumberOfTrees(tag); i++) {
@@ -156,7 +157,7 @@ bool PatternMatching::MatchNodes(Node source, Node pattern, Context *context,
     bool simpleNAryMatch =
         source.block()->isSimpleNAry() && pattern.type() == source.type();
     if (!simpleNAryMatch && !source.isIdenticalTo(pattern)) {
-      // Node should match exactly, but it doesn't.
+      // Node* should match exactly, but it doesn't.
       return false;
     }
     if (source.numberOfChildren() > 0) {
@@ -172,8 +173,8 @@ bool PatternMatching::MatchNodes(Node source, Node pattern, Context *context,
   return matchContext.reachedLimit(source, true, true);
 }
 
-bool PatternMatching::Match(const Node pattern, const Node source,
-                            Context *context) {
+bool PatternMatching::Match(const Node* pattern, const Node* source,
+                            Context* context) {
   // Use a temporary context to preserve context in case no match is found.
   Context tempContext = *context;
   // Match nodes between the tree's bounds.
@@ -185,21 +186,21 @@ bool PatternMatching::Match(const Node pattern, const Node source,
   return success;
 }
 
-EditionReference PatternMatching::CreateTree(const Node structure,
+EditionReference PatternMatching::CreateTree(const Node* structure,
                                              const Context context,
-                                             Node insertedNAry) {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
-  const Node top = editionPool->lastBlock();
-  TypeBlock *lastStructureBlock = structure.nextTree().block();
+                                             Node* insertedNAry) {
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
+  const Node* top = editionPool->lastBlock();
+  TypeBlock* lastStructureBlock = structure.nextTree().block();
   const bool withinNAry = !insertedNAry.isUninitialized();
   // Skip NAry structure node because it has already been inserted.
-  Node node = withinNAry ? structure.nextNode() : structure;
+  Node* node = withinNAry ? structure.nextNode() : structure;
   while (node.block() < lastStructureBlock) {
     if (node.type() != BlockType::Placeholder) {
       if (node.block()->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
-        Node insertedNode = editionPool->clone(node, false);
+        Node* insertedNode = editionPool->clone(node, false);
         /* Use node and not node.nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode);
@@ -207,7 +208,7 @@ EditionReference PatternMatching::CreateTree(const Node structure,
         node = node.nextTree();
       } else if (withinNAry && node.numberOfChildren() > 0) {
         // Insert the tree recursively to locally remove insertedNAry
-        CreateTree(node, context, Node());
+        CreateTree(node, context, Node * ());
         node = node.nextTree();
       } else {
         editionPool->clone(node, false);
@@ -216,7 +217,7 @@ EditionReference PatternMatching::CreateTree(const Node structure,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
-    Node nodeToInsert = context.getNode(tag);
+    Node* nodeToInsert = context.getNode(tag);
     int treesToInsert = context.getNumberOfTrees(tag);
     // Multiple trees can only be inserted into simple nArys
     assert(!nodeToInsert.isUninitialized() && treesToInsert >= 0);

@@ -8,7 +8,7 @@
 #define P_VERTOFFL(...) \
   _UNARY_PUSHER(BlockType::VerticalOffsetLayout, __VA_ARGS__)
 
-// Wrap arguments with EditionReference::Clone if they have Node type to avoid
+// Wrap arguments with EditionReference::Clone if they have Node* type to avoid
 // mistakes ?
 
 #endif

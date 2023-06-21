@@ -12,14 +12,14 @@ static constexpr Tree smallTree = 4_e;
 
 void execute_push_tree_and_modify() {
   PoincareJ::Reference::InitializerFromTreeInplace treeModifier =
-      [](Node tree) {
+      [](Node *tree) {
         EditionReference(tree).replaceNodeByNode(
             EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(
                 2));
       };
   EditionPool::sharedEditionPool()->executeAndCache(
       [](void *context, const void *data) {
-        Node editedTree =
+        Node *editedTree =
             EditionPool::sharedEditionPool()->initFromAddress(data);
         return (
             reinterpret_cast<PoincareJ::Reference::InitializerFromTreeInplace>(
@@ -31,7 +31,7 @@ void execute_push_tree_and_modify() {
 QUIZ_CASE(pcj_cache_pool) {
   CachePool *cachePool = CachePool::sharedCachePool();
   EditionPool *editionPool = cachePool->editionPool();
-  size_t treeSize = static_cast<Node>(bigTree).treeSize();
+  size_t treeSize = static_cast<Node *>(bigTree).treeSize();
   cachePool->reset();
 
   // storeEditedTree
@@ -80,7 +80,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   CachePool *cachePool = CachePool::sharedCachePool();
   EditionPool *editionPool = cachePool->editionPool();
   cachePool->reset();
-  size_t treeSize = static_cast<Node>(bigTree).treeSize();
+  size_t treeSize = static_cast<Node *>(bigTree).treeSize();
 
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
@@ -95,7 +95,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // 2. Edit another tree triggering a cache invalidation
   execute_push_tree_and_modify();
   assert(cachePool->numberOfTrees() <= maxNumberOfTreesInCache);
-  Node lastTree = Node(cachePool->lastBlock()).previousTree();
+  Node *lastTree = Node * (cachePool->lastBlock()).previousTree();
   assert_trees_are_equal(lastTree, KMult(3_e, 4_e));
 
   /* test overflowing the cache identifier */
@@ -112,11 +112,11 @@ QUIZ_CASE(pcj_cache_pool_limits) {
 }
 
 void assert_check_cache_reference(
-    Reference reference, std::initializer_list<const Node> cacheTrees) {
+    Reference reference, std::initializer_list<const Node *> cacheTrees) {
   CachePool *cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   assert_pools_tree_sizes_are(0, 0);
-  reference.send([](const Node tree, void *result) {}, nullptr);
+  reference.send([](const Node *tree, void *result) {}, nullptr);
   assert_pool_contains(cachePool, cacheTrees);
   assert_pools_tree_sizes_are(cacheTrees.size(), 0);
   cachePool->reset();
@@ -131,12 +131,12 @@ QUIZ_CASE(pcj_cache_references) {
   assert_check_cache_reference(reference0, {4_e});
 
   Reference reference1(
-      [](Node node) { EditionReference(node).replaceNodeByNode(5_e); },
-      static_cast<Node>(smallTree).block());
+      [](Node *node) { EditionReference(node).replaceNodeByNode(5_e); },
+      static_cast<Node *>(smallTree).block());
   assert_check_cache_reference(reference1, {5_e});
 
   Reference reference2(
-      [](Node node) {
+      [](Node *node) {
         EditionReference ref(node);
         ref.insertNodeBeforeNode(
             EditionPool::sharedEditionPool()->push<BlockType::Addition>(2));
@@ -156,17 +156,17 @@ QUIZ_CASE(pcj_cache_references) {
 
 void check_reference_invalidation_and_reconstruction(Reference reference,
                                                      uint16_t identifier,
-                                                     Node node) {
+                                                     Node *node) {
   CachePool *cachePool = CachePool::sharedCachePool();
   // reference has been invalidated
   quiz_assert(cachePool->nodeForIdentifier(identifier).isUninitialized());
   // reference is regenerated on demand
-  reference.send([](const Node tree, void *result) {}, nullptr);
-  assert_trees_are_equal(Node(cachePool->lastBlock()).previousTree(), node);
+  reference.send([](const Node *tree, void *result) {}, nullptr);
+  assert_trees_are_equal(Node * (cachePool->lastBlock()).previousTree(), node);
 }
 
 void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
-                                        const Node tree) {
+                                        const Node *tree) {
   CachePool *cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   Reference firstReference([]() {
@@ -174,18 +174,18 @@ void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
         static_cast<int8_t>(28));
   });
   assert_pools_tree_sizes_are(0, 0);
-  firstReference.send([](const Node tree, void *result) {}, nullptr);
+  firstReference.send([](const Node *tree, void *result) {}, nullptr);
   uint16_t identifier = firstReference.id();
   // Fill the cache
   for (int i = 1; i < maxNumberOfTreesInCache; i++) {
     assert_pools_tree_sizes_are(i, 0);
-    Reference([](Node node) {}, tree.block())
-        .send([](const Node tree, void *result) {}, nullptr);
+    Reference([](Node *node) {}, tree.block())
+        .send([](const Node *tree, void *result) {}, nullptr);
   }
   assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
   // Sending this reference will require freeing cache nodes
-  Reference([](Node node) {}, tree.block())
-      .send([](const Node tree, void *result) {}, nullptr);
+  Reference([](Node *node) {}, tree.block())
+      .send([](const Node *tree, void *result) {}, nullptr);
   quiz_assert(cachePool->numberOfTrees() <= maxNumberOfTreesInCache);
   check_reference_invalidation_and_reconstruction(firstReference, identifier,
                                                   28_e);
@@ -194,13 +194,13 @@ void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
 
 QUIZ_CASE(pcj_cache_reference_invalidation) {
   /* Invalidation when cache memory overflows */
-  size_t treeSize = static_cast<Node>(bigTree).treeSize();
+  size_t treeSize = static_cast<Node *>(bigTree).treeSize();
   fill_cache_and_assert_invalidation(
       1 + CachePool::k_maxNumberOfBlocks / treeSize,
-      static_cast<Node>(bigTree));
+      static_cast<Node *>(bigTree));
   /* Invalidation when cache identifiers overflow */
   fill_cache_and_assert_invalidation(CachePool::k_maxNumberOfReferences,
-                                     static_cast<Node>(smallTree));
+                                     static_cast<Node *>(smallTree));
 }
 
 QUIZ_CASE(pcj_cache_reference_shared_data) {

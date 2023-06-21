@@ -25,10 +25,7 @@ class Simplification {
   static bool ShallowBeautify(EditionReference *reference,
                               void *context = nullptr);
   static bool DeepBeautify(EditionReference *reference,
-                           ProjectionContext projectionContext =
-                               ProjectionContext(ComplexFormat::Cartesian,
-                                                 AngleUnit::Radian,
-                                                 Strategy::Default)) {
+                           ProjectionContext projectionContext = {}) {
     return ApplyShallowInDepth(reference, ShallowBeautify, &projectionContext);
   }
   static EditionReference DistributeMultiplicationOverAddition(
@@ -49,10 +46,8 @@ class Simplification {
                             std::size(k_algebraicExpandOperations));
   }
 
-  static bool DeepSystemProjection(
-      EditionReference *reference,
-      ProjectionContext projectionContext = ProjectionContext(
-          ComplexFormat::Cartesian, AngleUnit::Radian, Strategy::Default));
+  static bool DeepSystemProjection(EditionReference *reference,
+                                   ProjectionContext projectionContext = {});
   static bool ShallowSystemProjection(EditionReference *reference,
                                       void *projectionContext);
 

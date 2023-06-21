@@ -139,26 +139,17 @@ QUIZ_CASE(pcj_simplification_projection) {
 
   EditionReference ref2(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
   Simplification::DeepSystemProjection(
-      &ref2, Simplification::ProjectionContext(
-                 Simplification::ComplexFormat::Cartesian,
-                 Simplification::AngleUnit::Radian,
-                 Simplification::Strategy::NumbersToFloat));
+      &ref2, {.m_strategy = Simplification::Strategy::NumbersToFloat});
   assert_trees_are_equal(
       ref2,
       KAdd(KTrig(KAdd(2065.0_e, KMult(-1.0_e, 2065.0_e)), 0.0_e), KExp("x"_e)));
   Simplification::DeepSystemProjection(
-      &ref2, Simplification::ProjectionContext(
-                 Simplification::ComplexFormat::Cartesian,
-                 Simplification::AngleUnit::Radian,
-                 Simplification::Strategy::ApproximateToFloat));
+      &ref2, {.m_strategy = Simplification::Strategy::ApproximateToFloat});
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 
   EditionReference ref3(KCos(100_e));
   Simplification::DeepSystemProjection(
-      &ref3, Simplification::ProjectionContext(
-                 Simplification::ComplexFormat::Cartesian,
-                 Simplification::AngleUnit::Degree,
-                 Simplification::Strategy::Default));
+      &ref3, {.m_angleUnit = Simplification::AngleUnit::Degree});
   assert_trees_are_equal(ref3,
                          KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
 }
@@ -173,11 +164,8 @@ QUIZ_CASE(pcj_simplification_beautify) {
                  KLogarithm(2_e, 4_e)));
 
   EditionReference ref2(KTrig(π_e, 1_e));
-  Simplification::DeepBeautify(&ref2,
-                               Simplification::ProjectionContext(
-                                   Simplification::ComplexFormat::Cartesian,
-                                   Simplification::AngleUnit::Gradian,
-                                   Simplification::Strategy::Default));
+  Simplification::DeepBeautify(
+      &ref2, {.m_angleUnit = Simplification::AngleUnit::Gradian});
   assert_trees_are_equal(ref2, KSin(200_e));
 }
 

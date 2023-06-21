@@ -34,12 +34,12 @@ class LayoutSelection {
 
 #if 0
   LayoutSelection clone() {
-    return LayoutSelection(m_node.clone(), m_startPosition, m_endPosition);
+    return LayoutSelection(m_node->clone(), m_startPosition, m_endPosition);
   }
 #endif
 
   bool isEmpty() const {
-    return m_node.isUninitialized() || m_startPosition == m_endPosition;
+    return m_node->isUninitialized() || m_startPosition == m_endPosition;
   }
 
   Node* layout() const { return m_node; }
@@ -54,9 +54,9 @@ class LayoutSelection {
     const TypeBlock* b = n.block();
     return !isEmpty() &&
            (Layout::IsHorizontal(m_node)
-                ? (b >= m_node.childAtIndex(leftPosition()).block() &&
-                   b <= m_node.childAtIndex(rightPosition() - 1).block())
-                : (b >= m_node.block() && b < m_node.nextTree().block()));
+                ? (b >= m_node->childAtIndex(leftPosition()).block() &&
+                   b <= m_node->childAtIndex(rightPosition() - 1).block())
+                : (b >= m_node->block() && b < m_node->nextTree().block()));
   }
 
  private:

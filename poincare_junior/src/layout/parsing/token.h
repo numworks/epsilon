@@ -7,6 +7,7 @@
  * Each Token has a Type and a range (firstLayout, length). */
 
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
+
 #include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {

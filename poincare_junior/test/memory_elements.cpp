@@ -396,7 +396,7 @@ QUIZ_CASE(pcj_type_block) {
 void assert_tree_equals_blocks(Node* node,
                                std::initializer_list<Block> blocks) {
   assert_node_equals_blocks(node, blocks);
-  quiz_assert(blocks.size() == node.treeSize());
+  quiz_assert(blocks.size() == node->treeSize());
 }
 
 QUIZ_CASE(pcj_constexpr_tree_constructor) {
@@ -716,10 +716,10 @@ QUIZ_CASE(pcj_node_size) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node* node = editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
-  quiz_assert(node.nodeSize() == 7);
+  quiz_assert(node->nodeSize() == 7);
   node = static_cast<Node*>(editionPool->push<BlockType::IntegerNegBig>(
       static_cast<uint64_t>(0x0000FF00)));
-  quiz_assert(node.nodeSize() == 6);
+  quiz_assert(node->nodeSize() == 6);
 }
 
 QUIZ_CASE(pcj_constructor) {

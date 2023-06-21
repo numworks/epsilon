@@ -25,7 +25,7 @@ uint16_t CachePool::ReferenceTable::storeNode(Node *node) {
   }
   uint16_t indexOfNode = Pool::ReferenceTable::storeNodeAtIndex(node, m_length);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Cache, "Add", node.block(), node.treeSize());
+  Log(LoggerType::Cache, "Add", node->block(), node->treeSize());
 #endif
   return idForIndex(indexOfNode);
 }
@@ -36,7 +36,7 @@ bool CachePool::ReferenceTable::freeOldestBlocks(
   uint16_t newFirstIndex;
   for (uint16_t i = 0; i < m_length; i++) {
     Node *node = Pool::ReferenceTable::nodeForIdentifier(i);
-    numberOfFreedBlocks += node.treeSize();
+    numberOfFreedBlocks += node->treeSize();
     if (numberOfFreedBlocks >= numberOfRequiredFreeBlocks) {
       newFirstIndex = i + 1;
       break;

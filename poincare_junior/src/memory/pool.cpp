@@ -24,9 +24,10 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node* node, size_t index) {
     m_length++;
   }
   nodeOffsetArray()[index] =
-      static_cast<uint16_t>(node.block() - m_pool->firstBlock());
+      static_cast<uint16_t>(node->block() - m_pool->firstBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
-  assert(m_pool->contains(node.block()) || node.block() == m_pool->lastBlock());
+  assert(m_pool->contains(node->block()) ||
+         node->block() == m_pool->lastBlock());
   return index;
 }
 
@@ -82,7 +83,7 @@ void Pool::logNode(std::ostream& stream, Node* node, bool recursive,
   stream << "<Reference id=\"";
   referenceTable()->logIdsForNode(stream, node);
   stream << "\">";
-  node.log(stream, recursive, verbose, indentation + 1);
+  node->log(stream, recursive, verbose, indentation + 1);
   Indent(stream, indentation);
   stream << "</Reference>";
 }

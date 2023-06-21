@@ -5,12 +5,12 @@
 namespace PoincareJ {
 
 KDSize ParenthesisLayout::Size(const Node* node, KDFont::Size font) {
-  KDSize childSize = Render::Size(node.childAtIndex(0), font);
+  KDSize childSize = Render::Size(node->childAtIndex(0), font);
   return childSize + KDSize(2 * HorizontalPadding(font), 2 * k_verticalPadding);
 }
 
 KDCoordinate ParenthesisLayout::Baseline(const Node* node, KDFont::Size font) {
-  return Render::Baseline(node.childAtIndex(0), font) + k_verticalPadding;
+  return Render::Baseline(node->childAtIndex(0), font) + k_verticalPadding;
 }
 
 KDPoint ParenthesisLayout::PositionOfChild(const Node* node, int childIndex,
@@ -37,7 +37,7 @@ void ParenthesisLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
 }
 
 EditionReference ParenthesisLayout::Parse(const Node* node) {
-  return Parser::Parse(node.childAtIndex(0));
+  return Parser::Parse(node->childAtIndex(0));
 }
 
 }  // namespace PoincareJ

@@ -219,8 +219,8 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   Node* parent = Node * ();
   Node* node = this;
   while (true) {
-    assert(block1 >= node.block());
-    const Node* nodeNextTree = node.nextTree();
+    assert(block1 >= node->block());
+    const Node* nodeNextTree = node->nextTree();
     const bool descendant1 = block1 < nodeNextTree.block();
     const bool descendant2 = block2 < nodeNextTree.block();
     if (!descendant1) {
@@ -237,13 +237,13 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
       // Only child1 is descendant, parent is the common ancestor
       return parent;
     }
-    if (block1 == node.block()) {
+    if (block1 == node->block()) {
       // Either node or parent is the ancestor
       return node;
     }
     // Both children are in this tree, try node's first child
     parent = node;
-    node = node.nextNode();
+    node = node->nextNode();
   }
   assert(false);
   return Node * ();
@@ -262,8 +262,8 @@ const Node* Node::parentOfDescendant(const Node* descendant,
   Node* parent = Node * ();
   Node* node = this;
   while (true) {
-    assert(descendantBlock >= node.block());
-    const Node* nodeNextTree = node.nextTree();
+    assert(descendantBlock >= node->block());
+    const Node* nodeNextTree = node->nextTree();
     if (descendantBlock >= nodeNextTree.block()) {
       // node is not descendant's ancestor
       if (parent.isUninitialized()) {
@@ -275,13 +275,13 @@ const Node* Node::parentOfDescendant(const Node* descendant,
       node = nodeNextTree;
       continue;
     }
-    if (descendantBlock == node.block()) {
+    if (descendantBlock == node->block()) {
       return parent;
     }
     // descendant is in this tree, try node's first child
     parent = node;
     *position = 0;
-    node = node.nextNode();
+    node = node->nextNode();
   }
   assert(false);
   return Node * ();

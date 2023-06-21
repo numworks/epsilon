@@ -12,14 +12,14 @@
 namespace PoincareJ {
 
 EditionReference::EditionReference(Node* node) {
-  if (node.isUninitialized()) {
+  if (node->isUninitialized()) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
   }
   EditionPool* pool = EditionPool::sharedEditionPool();
-  // TODO: maybe make an assertion(pool->contains(node.block()))
+  // TODO: maybe make an assertion(pool->contains(node->block()))
   // and force developers to write EditionReference(EditionPool::clone(2_e))
-  if (!pool->contains(node.block()) && node.block() != pool->lastBlock()) {
+  if (!pool->contains(node->block()) && node->block() != pool->lastBlock()) {
     *this = EditionReference(pool->clone(node));
     return;
   }

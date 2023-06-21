@@ -778,13 +778,13 @@ bool Simplification::ApplyShallowInDepth(EditionReference* reference,
                                          void* context) {
   bool changed = shallowOperation(reference, context);
   int treesToProject = reference->numberOfChildren();
-  Node node = reference->nextNode();
+  Node* node = reference->nextNode();
   while (treesToProject > 0) {
     treesToProject--;
     EditionReference subRef(node);
     changed = shallowOperation(&subRef, context) || changed;
-    treesToProject += node.numberOfChildren();
-    node = node.nextNode();
+    treesToProject += node->numberOfChildren();
+    node = node->nextNode();
   }
   return changed;
 }

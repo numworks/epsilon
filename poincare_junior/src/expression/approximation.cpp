@@ -13,17 +13,17 @@ namespace PoincareJ {
 
 template <typename T>
 T Approximation::To(const Node* node) {
-  assert(node.block()->isExpression());
-  if (node.block()->isRational()) {
+  assert(node->block()->isExpression());
+  if (node->block()->isRational()) {
     return Rational::Numerator(node).to<T>() /
            Rational::Denominator(node).to<T>();
   }
-  switch (node.type()) {
+  switch (node->type()) {
     case BlockType::Constant:
       return Constant::To<T>(Constant::Type(node));
     case BlockType::Float: {
       volatile const uint32_t value =
-          *reinterpret_cast<const uint32_t*>(node.block()->next());
+          *reinterpret_cast<const uint32_t*>(node->block()->next());
       return std::bit_cast<float>(value);
     }
     case BlockType::Addition:
@@ -43,19 +43,19 @@ T Approximation::To(const Node* node) {
     case BlockType::TrigDiff:
       return Approximation::MapAndReduce(node, FloatTrigDiff<T>);
     case BlockType::Exponential:
-      return std::exp(Approximation::To<T>(node.nextNode()));
+      return std::exp(Approximation::To<T>(node->nextNode()));
     case BlockType::Log:
-      return std::log10(Approximation::To<T>(node.nextNode()));
+      return std::log10(Approximation::To<T>(node->nextNode()));
     case BlockType::Ln:
-      return std::log(Approximation::To<T>(node.nextNode()));
+      return std::log(Approximation::To<T>(node->nextNode()));
     case BlockType::Abs:
-      return std::fabs(Approximation::To<T>(node.nextNode()));
+      return std::fabs(Approximation::To<T>(node->nextNode()));
     case BlockType::Cosine:
-      return std::cos(Approximation::To<T>(node.nextNode()));
+      return std::cos(Approximation::To<T>(node->nextNode()));
     case BlockType::Sine:
-      return std::sin(Approximation::To<T>(node.nextNode()));
+      return std::sin(Approximation::To<T>(node->nextNode()));
     case BlockType::Tangent:
-      return std::tan(Approximation::To<T>(node.nextNode()));
+      return std::tan(Approximation::To<T>(node->nextNode()));
     default:
       // TODO: Implement more BlockTypes
       return NAN;
@@ -91,7 +91,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
     // Approximate anyway
     hasApproximatedEveryChild =
         ApproximateAndReplaceEveryScalar(node) && hasApproximatedEveryChild;
-    node = node.nextTree();
+    node = node->nextTree();
   }
   if (!hasApproximatedEveryChild) {
     // TODO: Partially approximate additions and multiplication anyway

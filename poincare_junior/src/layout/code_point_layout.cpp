@@ -5,7 +5,7 @@
 namespace PoincareJ {
 
 CodePoint CodePointLayout::GetCodePoint(const Node* node) {
-  return CodePoint(*reinterpret_cast<uint32_t*>(node.block()->nextNth(1)));
+  return CodePoint(*reinterpret_cast<uint32_t*>(node->block()->nextNth(1)));
 }
 
 void CodePointLayout::GetName(const Node* node, char* buffer,

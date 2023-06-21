@@ -7,6 +7,7 @@
 #include <poincare_junior/src/layout/empty_rectangle.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+
 #include <poincare_junior/src/memory/node.h>
 
 #include "layout_selection.h"

@@ -14,10 +14,10 @@ class Layout final : public Reference {
 
  public:
   constexpr static bool IsHorizontal(const Node* node) {
-    return node.type() == BlockType::RackLayout;
+    return node->type() == BlockType::RackLayout;
   }
   constexpr static bool IsEmpty(const Node* node) {
-    return IsHorizontal(node) && node.numberOfChildren() == 0;
+    return IsHorizontal(node) && node->numberOfChildren() == 0;
   }
 
   Layout(const Node* tree) : Reference(tree) {

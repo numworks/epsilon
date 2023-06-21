@@ -209,9 +209,9 @@ class MultipleNodesIterator {
                                     int offset = 0) const {
       return Array::MapAction<Node *, NodeType, N>(
           array, &offset, [](Node *node, void *offset) {
-            return node.isUninitialized()
+            return node->isUninitialized()
                        ? EditionReference()
-                       : EditionReference(Node * (node.block() -
+                       : EditionReference(Node * (node->block() -
                                                   *static_cast<int *>(offset)));
           });
     }
@@ -223,14 +223,14 @@ class MultipleNodesIterator {
     std::array<Node *, N> firstElement(std::array<Node *, N> array) const {
       return Array::MapAction<Node *, Node *, N>(
           array, nullptr,
-          [](Node *node, void *context) { return node.nextNode(); });
+          [](Node *node, void *context) { return node->nextNode(); });
     }
 
     template <size_t N>
     std::array<Node *, N> incrementeArray(std::array<Node *, N> array) const {
       return Array::MapAction<Node *, Node *, N>(
           array, nullptr,
-          [](Node *node, void *context) { return node.nextTree(); });
+          [](Node *node, void *context) { return node->nextTree(); });
     }
 
     int offset() const { return 1; }
@@ -243,7 +243,7 @@ class MultipleNodesIterator {
     std::array<Node *, N> firstElement(std::array<Node *, N> array) const {
       return Array::MapAction<Node *, Node *, N>(
           array, nullptr, [](Node *node, void *context) {
-            return node.childAtIndex(node.numberOfChildren() - 1);
+            return node->childAtIndex(node->numberOfChildren() - 1);
           });
     }
 
@@ -251,7 +251,7 @@ class MultipleNodesIterator {
     std::array<Node *, N> incrementeArray(std::array<Node *, N> array) const {
       return Array::MapAction<Node *, Node *, N>(
           array, nullptr,
-          [](Node *node, void *context) { return node.previousTree(); });
+          [](Node *node, void *context) { return node->previousTree(); });
     }
 
     int offset() const { return -1; }

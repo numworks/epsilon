@@ -10,11 +10,11 @@
 namespace PoincareJ {
 
 KDSize RackLayout::Size(const Node* node, KDFont::Size font) {
-  return SizeBetweenIndexes(node, 0, node.numberOfChildren(), font);
+  return SizeBetweenIndexes(node, 0, node->numberOfChildren(), font);
 }
 
 KDCoordinate RackLayout::Baseline(const Node* node, KDFont::Size font) {
-  return BaselineBetweenIndexes(node, 0, node.numberOfChildren(), font);
+  return BaselineBetweenIndexes(node, 0, node->numberOfChildren(), font);
 }
 
 KDPoint RackLayout::PositionOfChild(const Node* node, int childIndex,
@@ -41,8 +41,8 @@ EditionReference RackLayout::Parse(const Node* node) {
 KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
                                       int rightIndex, KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
-         rightIndex <= node.numberOfChildren());
-  if (node.numberOfChildren() == 0) {
+         rightIndex <= node->numberOfChildren());
+  if (node->numberOfChildren() == 0) {
     KDSize emptyRectangleSize = EmptyRectangle::RectangleSize(font);
     KDCoordinate width =
         ShouldDrawEmptyRectangle(node) ? emptyRectangleSize.width() : 0;
@@ -52,7 +52,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    const Node* childi = node.childAtIndex(i);
+    const Node* childi = node->childAtIndex(i);
     KDSize childSize = Render::Size(childi, font);
     totalWidth += childSize.width();
     KDCoordinate childBaseline = Render::Baseline(childi, font);
@@ -67,20 +67,20 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Node* node, int leftIndex,
                                                 int rightIndex,
                                                 KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
-         rightIndex <= node.numberOfChildren());
-  if (node.numberOfChildren() == 0) {
+         rightIndex <= node->numberOfChildren());
+  if (node->numberOfChildren() == 0) {
     return EmptyRectangle::RectangleBaseLine(font);
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    result = std::max(result, Render::Baseline(node.childAtIndex(i), font));
+    result = std::max(result, Render::Baseline(node->childAtIndex(i), font));
   }
   return result;
 }
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Node* node) {
   // TODO : complete this method
-  return node.numberOfChildren() == 0;
+  return node->numberOfChildren() == 0;
 }
 
 void RackLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
@@ -93,7 +93,7 @@ void RackLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
 }
 
 int RackLayout::NumberOfLayouts(const Node* node) {
-  return Layout::IsHorizontal(node) ? node.numberOfChildren() : 1;
+  return Layout::IsHorizontal(node) ? node->numberOfChildren() : 1;
 }
 
 EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference,

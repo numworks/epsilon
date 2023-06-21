@@ -85,8 +85,8 @@ class PatternMatching {
 
    private:
     static bool ReachedLimit(Node* node, const TypeBlock* end) {
-      assert(node.block() <= end);
-      return node.block() == end;
+      assert(node->block() <= end);
+      return node->block() == end;
     }
 
     // Local context

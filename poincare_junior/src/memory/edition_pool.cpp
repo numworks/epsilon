@@ -184,7 +184,7 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
 
 Node *EditionPool::initFromAddress(const void *address, bool isTree) {
   Node *node = Node * (reinterpret_cast<const TypeBlock *>(address));
-  size_t size = isTree ? node.treeSize() : node.nodeSize();
+  size_t size = isTree ? node->treeSize() : node->nodeSize();
   TypeBlock *copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
                     size * sizeof(Block))) {

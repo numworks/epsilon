@@ -56,12 +56,12 @@ inline void log_cache_references() {}
 
 inline void assert_node_equals_blocks(const Node* node,
                                       std::initializer_list<Block> blocks) {
-  Block* block = node.block();
+  Block* block = node->block();
   for (Block b : blocks) {
     quiz_assert(*block == b);
     block = block->next();
   }
-  quiz_assert(node.treeSize() == blocks.size());
+  quiz_assert(node->treeSize() == blocks.size());
 }
 
 inline void assert_trees_are_equal(const Node* tree0, const Node* tree1) {

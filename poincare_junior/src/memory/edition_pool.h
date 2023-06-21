@@ -47,7 +47,7 @@ class EditionPool final : public Pool {
   // Initialize trees
   Node *initFromAddress(const void *address, bool isTree = true);
   Node *clone(const Node *node, bool isTree = true) {
-    return initFromAddress(static_cast<const void *>(node.block()), isTree);
+    return initFromAddress(static_cast<const void *>(node->block()), isTree);
   }
   template <BlockType blockType, typename... Types>
   Node *push(Types... args);

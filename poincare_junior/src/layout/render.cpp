@@ -12,8 +12,8 @@
 namespace PoincareJ {
 
 KDSize Render::Size(const Node* node, KDFont::Size font) {
-  assert(node.block()->isLayout());
-  switch (node.type()) {
+  assert(node->block()->isLayout());
+  switch (node->type()) {
     case BlockType::RackLayout:
       return RackLayout::Size(node, font);
     case BlockType::FractionLayout:
@@ -31,8 +31,8 @@ KDSize Render::Size(const Node* node, KDFont::Size font) {
 }
 
 KDPoint Render::AbsoluteOrigin(const Node* node, KDFont::Size font) {
-  assert(node.block()->isLayout());
-  const Node* parent = node.parent();
+  assert(node->block()->isLayout());
+  const Node* parent = node->parent();
   if (parent.isUninitialized()) {
     return KDPointZero;
   }
@@ -42,8 +42,8 @@ KDPoint Render::AbsoluteOrigin(const Node* node, KDFont::Size font) {
 
 KDPoint Render::PositionOfChild(const Node* node, int childIndex,
                                 KDFont::Size font) {
-  assert(node.block()->isLayout());
-  switch (node.type()) {
+  assert(node->block()->isLayout());
+  switch (node->type()) {
     case BlockType::RackLayout:
       return RackLayout::PositionOfChild(node, childIndex, font);
     case BlockType::FractionLayout:
@@ -59,8 +59,8 @@ KDPoint Render::PositionOfChild(const Node* node, int childIndex,
 }
 
 KDCoordinate Render::Baseline(const Node* node, KDFont::Size font) {
-  assert(node.block()->isLayout());
-  switch (node.type()) {
+  assert(node->block()->isLayout());
+  switch (node->type()) {
     case BlockType::RackLayout:
       return RackLayout::Baseline(node, font);
     case BlockType::FractionLayout:
@@ -82,14 +82,14 @@ void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
                   KDColor backgroundColor) {
   /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
    * Drawing is therefore restricted to the highest parent only. */
-  assert(node.parent().isUninitialized());
+  assert(node->parent().isUninitialized());
   PrivateDraw(node, ctx, p, font, expressionColor, backgroundColor);
 }
 
 void Render::PrivateDraw(const Node* node, KDContext* ctx, KDPoint p,
                          KDFont::Size font, KDColor expressionColor,
                          KDColor backgroundColor) {
-  assert(node.block()->isLayout());
+  assert(node->block()->isLayout());
   KDSize size = Size(node, font);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
@@ -111,8 +111,8 @@ void Render::PrivateDraw(const Node* node, KDContext* ctx, KDPoint p,
 void Render::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
                         KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
-  assert(node.block()->isLayout());
-  switch (node.type()) {
+  assert(node->block()->isLayout());
+  switch (node->type()) {
     case BlockType::FractionLayout:
       return FractionLayout::RenderNode(node, ctx, p, font, expressionColor,
                                         backgroundColor);
@@ -133,7 +133,7 @@ int Render::IndexAfterHorizontalCursorMove(const Node* node,
                                            OMG::HorizontalDirection direction,
                                            int currentIndex,
                                            bool* shouldRedraw) {
-  int nChildren = node.numberOfChildren();
+  int nChildren = node->numberOfChildren();
   if (nChildren == 0) {
     assert(currentIndex == k_outsideIndex);
     return k_outsideIndex;

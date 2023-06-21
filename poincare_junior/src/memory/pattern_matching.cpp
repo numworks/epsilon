@@ -6,7 +6,7 @@ using namespace PoincareJ;
 
 bool PatternMatching::Context::isUninitialized() const {
   for (const Node*& node : m_array) {
-    if (!node.isUninitialized()) {
+    if (!node->isUninitialized()) {
       return false;
     }
   }
@@ -162,7 +162,7 @@ bool PatternMatching::MatchNodes(Node* source, Node* pattern, Context* context,
     }
     if (source.numberOfChildren() > 0) {
       // Set the new local context so that AnyTrees placeholder cannot match
-      // consecutive Trees inside and outside this node.
+      // consecutive Trees inside and outside this node->
       matchContext.setLocal(source, pattern);
     }
     source = source.nextNode();
@@ -195,24 +195,24 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
   const bool withinNAry = !insertedNAry.isUninitialized();
   // Skip NAry structure node because it has already been inserted.
   Node* node = withinNAry ? structure.nextNode() : structure;
-  while (node.block() < lastStructureBlock) {
-    if (node.type() != BlockType::Placeholder) {
-      if (node.block()->isSimpleNAry()) {
+  while (node->block() < lastStructureBlock) {
+    if (node->type() != BlockType::Placeholder) {
+      if (node->block()->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
         Node* insertedNode = editionPool->clone(node, false);
-        /* Use node and not node.nextNode() so that lastStructureBlock can be
+        /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode);
         NAry::Sanitize(insertedNode);
-        node = node.nextTree();
-      } else if (withinNAry && node.numberOfChildren() > 0) {
+        node = node->nextTree();
+      } else if (withinNAry && node->numberOfChildren() > 0) {
         // Insert the tree recursively to locally remove insertedNAry
         CreateTree(node, context, Node * ());
-        node = node.nextTree();
+        node = node->nextTree();
       } else {
         editionPool->clone(node, false);
-        node = node.nextNode();
+        node = node->nextNode();
       }
       continue;
     }
@@ -228,7 +228,7 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
       NAry::SetNumberOfChildren(insertedNAry,
                                 insertedNAry.numberOfChildren() - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
-      node = node.nextNode();
+      node = node->nextNode();
       continue;
     }
     if (treesToInsert > 1) {
@@ -242,7 +242,7 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
       }
     }
     editionPool->clone(nodeToInsert, true);
-    node = node.nextNode();
+    node = node->nextNode();
   }
   return EditionReference(top);
 }

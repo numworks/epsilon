@@ -132,7 +132,7 @@ Node *IntegerHandler::pushOnEditionPool() {
   editionPool->pushBlock(m_numberOfDigits);
   editionPool->pushBlock(typeBlock);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "PushInteger", node.block(), node.treeSize());
+  Log(LoggerType::Edition, "PushInteger", node->block(), node->treeSize());
 #endif
   return node;
 }

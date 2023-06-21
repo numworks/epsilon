@@ -9,8 +9,8 @@ QUIZ_CASE(pcj_k_creator) {
   constexpr Tree tree = 3_e;
 
   Node* node = KMult(KAdd(5_e, 8_e, 4_e), 3_e, tree);
-  quiz_assert(node.numberOfChildren() == 3);
-  quiz_assert(node.numberOfDescendants(true) == 7);
+  quiz_assert(node->numberOfChildren() == 3);
+  quiz_assert(node->numberOfDescendants(true) == 7);
 
   quiz_assert(Node * ("x"_e).nodeSize() == 5);
   quiz_assert(Node * ("var"_e).nodeSize() == 7);

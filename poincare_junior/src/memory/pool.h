@@ -89,7 +89,7 @@ class Pool {
         : m_node(const_cast<TypeBlock *>(block)) {}
     const Node *operator*() { return m_node; }
     bool operator!=(const AbstractIterator &it) const {
-      return (m_node.block() != it.m_node.block());
+      return (m_node->block() != it.m_node->block());
     }
 
    protected:
@@ -106,12 +106,14 @@ class Pool {
      public:
       using AbstractIterator::AbstractIterator;
       Iterator &operator++() {
-        m_node = m_node.nextNode();
+        m_node = m_node->nextNode();
         return *this;
       }
     };
-    Iterator begin() const { return Iterator(m_node.block()); }
-    Iterator end() const { return Iterator(m_node.block() + m_numberOfBlocks); }
+    Iterator begin() const { return Iterator(m_node->block()); }
+    Iterator end() const {
+      return Iterator(m_node->block() + m_numberOfBlocks);
+    }
 
    private:
     Node *m_node;
@@ -128,12 +130,14 @@ class Pool {
      public:
       using AbstractIterator::AbstractIterator;
       Iterator &operator++() {
-        m_node = m_node.nextTree();
+        m_node = m_node->nextTree();
         return *this;
       }
     };
-    Iterator begin() const { return Iterator(m_node.block()); }
-    Iterator end() const { return Iterator(m_node.block() + m_numberOfBlocks); }
+    Iterator begin() const { return Iterator(m_node->block()); }
+    Iterator end() const {
+      return Iterator(m_node->block() + m_numberOfBlocks);
+    }
 
    private:
     Node *m_node;

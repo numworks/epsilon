@@ -6,7 +6,7 @@ namespace PoincareJ {
 
 KDSize VerticalOffsetLayout::Size(const Node* node, KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
-  KDSize indexSize = Render::Size(node.childAtIndex(0), font);
+  KDSize indexSize = Render::Size(node->childAtIndex(0), font);
   const Node* base = BaseLayout(node);
   KDCoordinate baseHeight = base.isUninitialized()
                                 ? KDFont::GlyphHeight(font)
@@ -22,7 +22,7 @@ KDCoordinate VerticalOffsetLayout::Baseline(const Node* node,
   KDCoordinate baseBaseline = base.isUninitialized()
                                   ? KDFont::GlyphHeight(font) / 2
                                   : Render::Baseline(base, font);
-  KDCoordinate indexHeight = Render::Size(node.childAtIndex(0), font).height();
+  KDCoordinate indexHeight = Render::Size(node->childAtIndex(0), font).height();
   return indexHeight - k_indiceHeight + baseBaseline;
 }
 
@@ -33,12 +33,12 @@ KDPoint VerticalOffsetLayout::PositionOfChild(const Node* node, int childIndex,
 }
 
 const Node* VerticalOffsetLayout::BaseLayout(const Node* node) {
-  const Node* parent = node.parent();
+  const Node* parent = node->parent();
   if (parent.type() != BlockType::RackLayout) {
     return Node * ();
   }
   assert(IsSuffixSuperscript(node));
-  const Node* previousNode = node.previousTree();
+  const Node* previousNode = node->previousTree();
   if (previousNode == parent) {
     return Node * ();
   }

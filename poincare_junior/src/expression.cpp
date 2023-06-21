@@ -206,7 +206,7 @@ void Expression::ConvertExpressionToLayout(
 }
 
 EditionReference Expression::EditionPoolExpressionToLayout(Node *node) {
-  assert(node.block()->isExpression());
+  assert(node->block()->isExpression());
   EditionReference ref =
       EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
   ConvertExpressionToLayout(ref, EditionReference(node));

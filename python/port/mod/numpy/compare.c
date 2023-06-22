@@ -223,18 +223,18 @@ static mp_obj_t compare_isinf_isfinite(mp_obj_t _x, uint8_t mask) {
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < x->shape[ULAB_MAX_DIMS - 4] || (i == 0 && x->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < x->shape[ULAB_MAX_DIMS - 3] || (j == 0 && x->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k < x->shape[ULAB_MAX_DIMS - 2] || (k == 0 && x->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l < x->shape[ULAB_MAX_DIMS - 1] || (l == 0 && x->ndim < 1)) {
                         mp_float_t value = *(mp_float_t *)xarray;
                         if(isnan(value)) {
                             *rarray++ = 0;
@@ -243,24 +243,24 @@ static mp_obj_t compare_isinf_isfinite(mp_obj_t _x, uint8_t mask) {
                         }
                         xarray += x->strides[ULAB_MAX_DIMS - 1];
                         l++;
-                    } while(l < x->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     xarray -= x->strides[ULAB_MAX_DIMS - 1] * x->shape[ULAB_MAX_DIMS-1];
                     xarray += x->strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k < x->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 xarray -= x->strides[ULAB_MAX_DIMS - 2] * x->shape[ULAB_MAX_DIMS-2];
                 xarray += x->strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j < x->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             xarray -= x->strides[ULAB_MAX_DIMS - 3] * x->shape[ULAB_MAX_DIMS-3];
             xarray += x->strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i < x->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
 
         return MP_OBJ_FROM_PTR(results);
@@ -349,41 +349,41 @@ mp_obj_t compare_nonzero(mp_obj_t x) {
 
     #if ULAB_MAX_DIMS > 3
     indices[3] = 0;
-    do {
+    while(indices[3] < ndarray->shape[ULAB_MAX_DIMS - 4] || (] == 0 && ndarray->ndim < 4)) {
     #endif
         #if ULAB_MAX_DIMS > 2
         indices[2] = 0;
-        do {
+        while(indices[2] < ndarray->shape[ULAB_MAX_DIMS - 3] || (] == 0 && ndarray->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 1
             indices[1] = 0;
-            do {
+            while(indices[1] < ndarray->shape[ULAB_MAX_DIMS - 2] || (] == 0 && ndarray->ndim < 2)) {
             #endif
                 indices[0] = 0;
-                do {
+                while(indices[0] < ndarray->shape[ULAB_MAX_DIMS - 1] || (] == 0 && ndarray->ndim < 1)) {
                     if(*array != 0) {
                         count++;
                     }
                     array += ndarray->strides[ULAB_MAX_DIMS - 1];
                     indices[0]++;
-                } while(indices[0] < ndarray->shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 1
                 array -= ndarray->strides[ULAB_MAX_DIMS - 1] * ndarray->shape[ULAB_MAX_DIMS-1];
                 array += ndarray->strides[ULAB_MAX_DIMS - 2];
                 indices[1]++;
-            } while(indices[1] < ndarray->shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             array -= ndarray->strides[ULAB_MAX_DIMS - 2] * ndarray->shape[ULAB_MAX_DIMS-2];
             array += ndarray->strides[ULAB_MAX_DIMS - 3];
             indices[2]++;
-        } while(indices[2] < ndarray->shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         array -= ndarray->strides[ULAB_MAX_DIMS - 3] * ndarray->shape[ULAB_MAX_DIMS-3];
         array += ndarray->strides[ULAB_MAX_DIMS - 4];
         indices[3]++;
-    } while(indices[3] < ndarray->shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
 
     mp_obj_t *items = m_new(mp_obj_t, ndarray->ndim);
@@ -400,18 +400,18 @@ mp_obj_t compare_nonzero(mp_obj_t x) {
 
     #if ULAB_MAX_DIMS > 3
     indices[3] = 0;
-    do {
+    while(indices[3] < ndarray->shape[ULAB_MAX_DIMS - 4] || (] == 0 && ndarray->ndim < 4)) {
     #endif
         #if ULAB_MAX_DIMS > 2
         indices[2] = 0;
-        do {
+        while(indices[2] < ndarray->shape[ULAB_MAX_DIMS - 3] || (] == 0 && ndarray->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 1
             indices[1] = 0;
-            do {
+            while(indices[1] < ndarray->shape[ULAB_MAX_DIMS - 2] || (] == 0 && ndarray->ndim < 2)) {
             #endif
                 indices[0] = 0;
-                do {
+                while(indices[0] < ndarray->shape[ULAB_MAX_DIMS - 1] || (] == 0 && ndarray->ndim < 1)) {
                     if(*array != 0) {
                         for(uint8_t d = 0; d < ndarray->ndim; d++) {
                             arrays[ULAB_MAX_DIMS - 1 - d][count] = indices[d];
@@ -420,24 +420,24 @@ mp_obj_t compare_nonzero(mp_obj_t x) {
                     }
                     array += ndarray->strides[ULAB_MAX_DIMS - 1];
                     indices[0]++;
-                } while(indices[0] < ndarray->shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 1
                 array -= ndarray->strides[ULAB_MAX_DIMS - 1] * ndarray->shape[ULAB_MAX_DIMS-1];
                 array += ndarray->strides[ULAB_MAX_DIMS - 2];
                 indices[1]++;
-            } while(indices[1] < ndarray->shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             array -= ndarray->strides[ULAB_MAX_DIMS - 2] * ndarray->shape[ULAB_MAX_DIMS-2];
             array += ndarray->strides[ULAB_MAX_DIMS - 3];
             indices[2]++;
-        } while(indices[2] < ndarray->shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         array -= ndarray->strides[ULAB_MAX_DIMS - 3] * ndarray->shape[ULAB_MAX_DIMS-3];
         array += ndarray->strides[ULAB_MAX_DIMS - 4];
         indices[3]++;
-    } while(indices[3] < ndarray->shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
 
     return mp_obj_new_tuple(ndarray->ndim, items);
@@ -499,18 +499,18 @@ mp_obj_t compare_where(mp_obj_t _condition, mp_obj_t _x, mp_obj_t _y) {
 
     #if ULAB_MAX_DIMS > 3
     size_t i = 0;
-    do {
+    while(i < out->shape[ULAB_MAX_DIMS - 4] || (i == 0 && out->ndim < 4)) {
     #endif
         #if ULAB_MAX_DIMS > 2
         size_t j = 0;
-        do {
+        while(j < out->shape[ULAB_MAX_DIMS - 3] || (j == 0 && out->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 1
             size_t k = 0;
-            do {
+            while(k < out->shape[ULAB_MAX_DIMS - 2] || (k == 0 && out->ndim < 2)) {
             #endif
                 size_t l = 0;
-                do {
+                while(l < out->shape[ULAB_MAX_DIMS - 1] || (l == 0 && out->ndim < 1)) {
                     mp_float_t value;
                     mp_float_t cvalue = cfunc(carray);
                     if(cvalue != MICROPY_FLOAT_CONST(0.0)) {
@@ -524,7 +524,7 @@ mp_obj_t compare_where(mp_obj_t _condition, mp_obj_t _x, mp_obj_t _y) {
                     xarray += xstrides[ULAB_MAX_DIMS - 1];
                     yarray += ystrides[ULAB_MAX_DIMS - 1];
                     l++;
-                } while(l < out->shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 1
                 carray -= cstrides[ULAB_MAX_DIMS - 1] * c->shape[ULAB_MAX_DIMS-1];
                 carray += cstrides[ULAB_MAX_DIMS - 2];
@@ -533,7 +533,7 @@ mp_obj_t compare_where(mp_obj_t _condition, mp_obj_t _x, mp_obj_t _y) {
                 yarray -= ystrides[ULAB_MAX_DIMS - 1] * y->shape[ULAB_MAX_DIMS-1];
                 yarray += ystrides[ULAB_MAX_DIMS - 2];
                 k++;
-            } while(k < out->shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             carray -= cstrides[ULAB_MAX_DIMS - 2] * c->shape[ULAB_MAX_DIMS-2];
@@ -543,7 +543,7 @@ mp_obj_t compare_where(mp_obj_t _condition, mp_obj_t _x, mp_obj_t _y) {
             yarray -= ystrides[ULAB_MAX_DIMS - 2] * y->shape[ULAB_MAX_DIMS-2];
             yarray += ystrides[ULAB_MAX_DIMS - 3];
             j++;
-        } while(j < out->shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         carray -= cstrides[ULAB_MAX_DIMS - 3] * c->shape[ULAB_MAX_DIMS-3];
@@ -553,7 +553,7 @@ mp_obj_t compare_where(mp_obj_t _condition, mp_obj_t _x, mp_obj_t _y) {
         yarray -= ystrides[ULAB_MAX_DIMS - 3] * y->shape[ULAB_MAX_DIMS-3];
         yarray += ystrides[ULAB_MAX_DIMS - 4];
         i++;
-    } while(i < out->shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
     return MP_OBJ_FROM_PTR(out);
 }

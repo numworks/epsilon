@@ -82,17 +82,17 @@ mp_obj_t ndarray_inplace_divide(ndarray_obj_t *, ndarray_obj_t *, int32_t *);
 #if ULAB_MAX_DIMS == 1
 #define INPLACE_POWER(results, type_left, type_right, larray, rarray, rstrides)\
 ({  size_t l = 0;\
-    do {\
+    while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
         *((type_left *)(larray)) = MICROPY_FLOAT_C_FUN(pow)(*((type_left *)(larray)), *((type_right *)(rarray)));\
         (larray) += (results)->strides[ULAB_MAX_DIMS - 1];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
         l++;\
-    } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+    }\
 })
 
 #define FUNC_POINTER_LOOP(results, array, get_lhs, get_rhs, larray, lstrides, rarray, rstrides, OPERATION)\
 ({  size_t l = 0;\
-    do {\
+    while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
         mp_float_t lvalue = (get_lhs)((larray));\
         mp_float_t rvalue = (get_rhs)((rarray));\
         (set_result)((array), OPERATION);\
@@ -100,34 +100,34 @@ mp_obj_t ndarray_inplace_divide(ndarray_obj_t *, ndarray_obj_t *, int32_t *);
         (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
         l++;\
-    } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+    }\
 })
 #endif /* ULAB_MAX_DIMS == 1 */
 
 #if ULAB_MAX_DIMS == 2
 #define INPLACE_POWER(results, type_left, type_right, larray, rarray, rstrides)\
 ({  size_t k = 0;\
-    do {\
+    while(k < (results)->shape[ULAB_MAX_DIMS - 2] || (k == 0 && (results)->ndim < 2)) {\
         size_t l = 0;\
-        do {\
+        while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
             *((type_left *)(larray)) = MICROPY_FLOAT_C_FUN(pow)(*((type_left *)(larray)), *((type_right *)(rarray)));\
             (larray) += (results)->strides[ULAB_MAX_DIMS - 1];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
             l++;\
-        } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+        }\
         (larray) -= (results)->strides[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
         (larray) += (results)->strides[ULAB_MAX_DIMS - 2];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
         k++;\
-    } while(k < (results)->shape[ULAB_MAX_DIMS - 2]);\
+    }\
 })
 
 #define FUNC_POINTER_LOOP(results, array, get_lhs, get_rhs, larray, lstrides, rarray, rstrides, OPERATION)\
 ({  size_t k = 0;\
-    do {\
+    while(k < results->shape[ULAB_MAX_DIMS - 2] || (k == 0 && results->ndim < 2)) {\
         size_t l = 0;\
-        do {\
+        while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
             mp_float_t lvalue = (get_lhs)((larray));\
             mp_float_t rvalue = (get_rhs)((rarray));\
             (set_result)((array), OPERATION);\
@@ -135,51 +135,51 @@ mp_obj_t ndarray_inplace_divide(ndarray_obj_t *, ndarray_obj_t *, int32_t *);
             (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
             l++;\
-        } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+        }\
         (larray) -= (lstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
         (larray) += (lstrides)[ULAB_MAX_DIMS - 2];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
         k++;\
-    } while(k < results->shape[ULAB_MAX_DIMS - 2]);\
+    }\
 })
 #endif /* ULAB_MAX_DIMS == 2 */
 
 #if ULAB_MAX_DIMS == 3
 #define INPLACE_POWER(results, type_left, type_right, larray, rarray, rstrides)\
 ({  size_t j = 0;\
-    do {\
+    while(j < (results)->shape[ULAB_MAX_DIMS - 3] || (j == 0 && (results)->ndim < 3)) {\
         size_t k = 0;\
-        do {\
+        while(k < (results)->shape[ULAB_MAX_DIMS - 2] || (k == 0 && (results)->ndim < 2)) {\
             size_t l = 0;\
-            do {\
+            while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
                 *((type_left *)(larray)) = MICROPY_FLOAT_C_FUN(pow)(*((type_left *)(larray)), *((type_right *)(rarray)));\
                 (larray) += (results)->strides[ULAB_MAX_DIMS - 1];\
                 (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
                 l++;\
-            } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+            }\
             (larray) -= (results)->strides[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
             (larray) += (results)->strides[ULAB_MAX_DIMS - 2];\
             (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
             k++;\
-        } while(k < (results)->shape[ULAB_MAX_DIMS - 2]);\
+        }\
         (larray) -= (results)->strides[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
         (larray) += (results)->strides[ULAB_MAX_DIMS - 3];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 3];\
         j++;\
-    } while(j < (results)->shape[ULAB_MAX_DIMS - 3]);\
+    }\
 })
 
 
 #define FUNC_POINTER_LOOP(results, array, get_lhs, get_rhs, larray, lstrides, rarray, rstrides, OPERATION)\
 ({  size_t j = 0;\
-    do {\
+    while(j < (results)->shape[ULAB_MAX_DIMS - 3] || (j == 0 && (results)->ndim < 3)) {\
         size_t k = 0;\
-        do {\
+        while(k < results->shape[ULAB_MAX_DIMS - 2] || (k == 0 && results->ndim < 2)) {\
             size_t l = 0;\
-            do {\
+            while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
                 mp_float_t lvalue = (get_lhs)((larray));\
                 mp_float_t rvalue = (get_rhs)((rarray));\
                 (set_result)((array), OPERATION);\
@@ -187,66 +187,66 @@ mp_obj_t ndarray_inplace_divide(ndarray_obj_t *, ndarray_obj_t *, int32_t *);
                 (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
                 (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
                 l++;\
-            } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+            }\
             (larray) -= (lstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
             (larray) += (lstrides)[ULAB_MAX_DIMS - 2];\
             (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
             k++;\
-        } while(k < results->shape[ULAB_MAX_DIMS - 2]);\
+        }\
         (larray) -= (results)->strides[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
         (larray) += (results)->strides[ULAB_MAX_DIMS - 3];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 3];\
         j++;\
-    } while(j < (results)->shape[ULAB_MAX_DIMS - 3]);\
+    }\
 })
 #endif /* ULAB_MAX_DIMS == 3 */
 
 #if ULAB_MAX_DIMS == 4
 #define INPLACE_POWER(results, type_left, type_right, larray, rarray, rstrides)\
 ({  size_t i = 0;\
-    do {\
+    while(i < (results)->shape[ULAB_MAX_DIMS - 4] || (i == 0 && (results)->ndim < 4)) {\
         size_t j = 0;\
-        do {\
+        while(j < (results)->shape[ULAB_MAX_DIMS - 3] || (j == 0 && (results)->ndim < 3)) {\
             size_t k = 0;\
-            do {\
+            while(k < (results)->shape[ULAB_MAX_DIMS - 2] || (k == 0 && (results)->ndim < 2)) {\
                 size_t l = 0;\
-                do {\
+                while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
                     *((type_left *)(larray)) = MICROPY_FLOAT_C_FUN(pow)(*((type_left *)(larray)), *((type_right *)(rarray)));\
                     (larray) += (results)->strides[ULAB_MAX_DIMS - 1];\
                     (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
                     l++;\
-                } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+                }\
                 (larray) -= (results)->strides[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
                 (larray) += (results)->strides[ULAB_MAX_DIMS - 2];\
                 (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
                 (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
                 k++;\
-            } while(k < (results)->shape[ULAB_MAX_DIMS - 2]);\
+            }\
             (larray) -= (results)->strides[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
             (larray) += (results)->strides[ULAB_MAX_DIMS - 3];\
             (rarray) -= (rstrides)[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 3];\
             j++;\
-        } while(j < (results)->shape[ULAB_MAX_DIMS - 3]);\
+        }\
         (larray) -= (results)->strides[ULAB_MAX_DIMS - 3] * (results)->shape[ULAB_MAX_DIMS-3];\
         (larray) += (results)->strides[ULAB_MAX_DIMS - 4];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 3] * (results)->shape[ULAB_MAX_DIMS-3];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 4];\
         i++;\
-    } while(i < (results)->shape[ULAB_MAX_DIMS - 4]);\
+    }\
 })
 
 #define FUNC_POINTER_LOOP(results, array, get_lhs, get_rhs, larray, lstrides, rarray, rstrides, OPERATION)\
 ({  size_t i = 0;\
-    do {\
+    while(i < (results)->shape[ULAB_MAX_DIMS - 4] || (i == 0 && (results)->ndim < 4)) {\
         size_t j = 0;\
-        do {\
+        while(j < (results)->shape[ULAB_MAX_DIMS - 3] || (j == 0 && (results)->ndim < 3)) {\
             size_t k = 0;\
-            do {\
+            while(k < results->shape[ULAB_MAX_DIMS - 2] || (k == 0 && results->ndim < 2)) {\
                 size_t l = 0;\
-                do {\
+                while(l < (results)->shape[ULAB_MAX_DIMS - 1] || (l == 0 && (results)->ndim < 1)) {\
                     mp_float_t lvalue = (get_lhs)((larray));\
                     mp_float_t rvalue = (get_rhs)((rarray));\
                     (set_result)((array), OPERATION);\
@@ -254,24 +254,24 @@ mp_obj_t ndarray_inplace_divide(ndarray_obj_t *, ndarray_obj_t *, int32_t *);
                     (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
                     (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
                     l++;\
-                } while(l < (results)->shape[ULAB_MAX_DIMS - 1]);\
+                }\
                 (larray) -= (lstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
                 (larray) += (lstrides)[ULAB_MAX_DIMS - 2];\
                 (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS-1];\
                 (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
                 k++;\
-            } while(k < results->shape[ULAB_MAX_DIMS - 2]);\
+            }\
             (larray) -= (results)->strides[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
             (larray) += (results)->strides[ULAB_MAX_DIMS - 3];\
             (rarray) -= (rstrides)[ULAB_MAX_DIMS - 2] * (results)->shape[ULAB_MAX_DIMS-2];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 3];\
             j++;\
-        } while(j < (results)->shape[ULAB_MAX_DIMS - 3]);\
+        }\
         (larray) -= (results)->strides[ULAB_MAX_DIMS - 3] * (results)->shape[ULAB_MAX_DIMS-3];\
         (larray) += (results)->strides[ULAB_MAX_DIMS - 4];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 3] * (results)->shape[ULAB_MAX_DIMS-3];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 4];\
         i++;\
-    } while(i < (results)->shape[ULAB_MAX_DIMS - 4]);\
+    }\
 })
 #endif /* ULAB_MAX_DIMS == 4 */

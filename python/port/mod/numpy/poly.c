@@ -201,39 +201,39 @@ mp_obj_t poly_polyval(mp_obj_t o_p, mp_obj_t o_x) {
         // ITERATE_VECTOR from vectorise.c. We could pass a function pointer here
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < source->shape[ULAB_MAX_DIMS - 4] || (i == 0 && source->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < source->shape[ULAB_MAX_DIMS - 3] || (j == 0 && source->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k < source->shape[ULAB_MAX_DIMS - 2] || (k == 0 && source->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l < source->shape[ULAB_MAX_DIMS - 1] || (l == 0 && source->ndim < 1)) {
                         *array++ = poly_eval(func(sarray), p, plen);
                         sarray += source->strides[ULAB_MAX_DIMS - 1];
                         l++;
-                    } while(l < source->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     sarray -= source->strides[ULAB_MAX_DIMS - 1] * source->shape[ULAB_MAX_DIMS-1];
                     sarray += source->strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k < source->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 sarray -= source->strides[ULAB_MAX_DIMS - 2] * source->shape[ULAB_MAX_DIMS-2];
                 sarray += source->strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j < source->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             sarray -= source->strides[ULAB_MAX_DIMS - 3] * source->shape[ULAB_MAX_DIMS-3];
             sarray += source->strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i < source->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
     } else {
         // o_x had better be a one-dimensional standard iterable

@@ -120,11 +120,11 @@ static mp_obj_t numerical_all_any(mp_obj_t oin, mp_obj_t axis, uint8_t optype) {
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < _shape_strides.shape[ULAB_MAX_DIMS - 3] || (i == 0 && ndarray->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < _shape_strides.shape[ULAB_MAX_DIMS - 2] || (j == 0 && ndarray->ndim < 2)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
@@ -161,7 +161,7 @@ static mp_obj_t numerical_all_any(mp_obj_t oin, mp_obj_t axis, uint8_t optype) {
                             l++;
                         } while(l < _shape_strides.shape[0]);
                     } else { // a scalar axis keyword was supplied
-                        do {
+                        while(k < _shape_strides.shape[ULAB_MAX_DIMS - 1] || (k == 0 && ndarray->ndim < 1)) {
                             #if ULAB_SUPPORTS_COMPLEX
                             if(ndarray->dtype == NDARRAY_COMPLEX) {
                                 mp_float_t real = *((mp_float_t *)array);
@@ -207,19 +207,19 @@ static mp_obj_t numerical_all_any(mp_obj_t oin, mp_obj_t axis, uint8_t optype) {
                     array -= _shape_strides.strides[0] * _shape_strides.shape[0];
                     array += _shape_strides.strides[ULAB_MAX_DIMS - 1];
                     k++;
-                } while(k < _shape_strides.shape[ULAB_MAX_DIMS - 1]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 array -= _shape_strides.strides[ULAB_MAX_DIMS - 1] * _shape_strides.shape[ULAB_MAX_DIMS - 1];
                 array += _shape_strides.strides[ULAB_MAX_DIMS - 2];
                 j++;
-            } while(j < _shape_strides.shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             array -= _shape_strides.strides[ULAB_MAX_DIMS - 2] * _shape_strides.shape[ULAB_MAX_DIMS - 2];
             array += _shape_strides.strides[ULAB_MAX_DIMS - 3];
             i++;
-        } while(i < _shape_strides.shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
         if(axis == mp_const_none) {
             // the innermost loop fell through, so return the result here
@@ -294,18 +294,18 @@ static mp_obj_t numerical_sum_mean_std_ndarray(ndarray_obj_t *ndarray, mp_obj_t 
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < _shape_strides.shape[ULAB_MAX_DIMS - 4] || (i == 0 && ndarray->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < _shape_strides.shape[ULAB_MAX_DIMS - 3] || (j == 0 && ndarray->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k < _shape_strides.shape[ULAB_MAX_DIMS - 2] || (k == 0 && ndarray->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l < _shape_strides.shape[ULAB_MAX_DIMS - 1] || (l == 0 && ndarray->ndim < 1)) {
                         count++;
                         mp_float_t value = func(array);
                         m = M + (value - M) / (mp_float_t)count;
@@ -316,24 +316,24 @@ static mp_obj_t numerical_sum_mean_std_ndarray(ndarray_obj_t *ndarray, mp_obj_t 
                         M = m;
                         array += _shape_strides.strides[ULAB_MAX_DIMS - 1];
                         l++;
-                    } while(l < _shape_strides.shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     array -= _shape_strides.strides[ULAB_MAX_DIMS - 1] * _shape_strides.shape[ULAB_MAX_DIMS - 1];
                     array += _shape_strides.strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k < _shape_strides.shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 array -= _shape_strides.strides[ULAB_MAX_DIMS - 2] * _shape_strides.shape[ULAB_MAX_DIMS - 2];
                 array += _shape_strides.strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j < _shape_strides.shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             array -= _shape_strides.strides[ULAB_MAX_DIMS - 3] * _shape_strides.shape[ULAB_MAX_DIMS - 3];
             array += _shape_strides.strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i < _shape_strides.shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
         if(optype == NUMERICAL_SUM) {
             // numpy returns an integer for integer input types
@@ -457,18 +457,18 @@ static mp_obj_t numerical_argmin_argmax_ndarray(ndarray_obj_t *ndarray, mp_obj_t
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < ndarray->shape[ULAB_MAX_DIMS - 4] || (i == 0 && ndarray->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < ndarray->shape[ULAB_MAX_DIMS - 3] || (j == 0 && ndarray->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k < ndarray->shape[ULAB_MAX_DIMS - 2] || (k == 0 && ndarray->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l < ndarray->shape[ULAB_MAX_DIMS - 1] || (l == 0 && ndarray->ndim < 1)) {
                         value = func(array);
                         if((optype == NUMERICAL_ARGMAX) || (optype == NUMERICAL_MAX)) {
                             if(best_value < value) {
@@ -484,24 +484,24 @@ static mp_obj_t numerical_argmin_argmax_ndarray(ndarray_obj_t *ndarray, mp_obj_t
                         array += ndarray->strides[ULAB_MAX_DIMS - 1];
                         l++;
                         index++;
-                    } while(l < ndarray->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     array -= ndarray->strides[ULAB_MAX_DIMS - 1] * ndarray->shape[ULAB_MAX_DIMS-1];
                     array += ndarray->strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k < ndarray->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 array -= ndarray->strides[ULAB_MAX_DIMS - 2] * ndarray->shape[ULAB_MAX_DIMS-2];
                 array += ndarray->strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j < ndarray->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             array -= ndarray->strides[ULAB_MAX_DIMS - 3] * ndarray->shape[ULAB_MAX_DIMS-3];
             array += ndarray->strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i < ndarray->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
 
         if((optype == NUMERICAL_ARGMIN) || (optype == NUMERICAL_ARGMAX)) {
@@ -765,15 +765,15 @@ mp_obj_t numerical_argsort(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw
     // fill in the index values
     #if ULAB_MAX_DIMS > 3
     size_t j = 0;
-    do {
+    while(j < shape[ULAB_MAX_DIMS - 3] || (j == 0 && ndarray->ndim < 3)) {
     #endif
         #if ULAB_MAX_DIMS > 2
         size_t k = 0;
-        do {
+        while(k < shape[ULAB_MAX_DIMS - 2] || (k == 0 && ndarray->ndim < 2)) {
         #endif
             #if ULAB_MAX_DIMS > 1
             size_t l = 0;
-            do {
+            while(l < shape[ULAB_MAX_DIMS - 1] || (l == 0 && ndarray->ndim < 1)) {
             #endif
             uint16_t m = 0;
                 do {
@@ -784,19 +784,19 @@ mp_obj_t numerical_argsort(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw
                 iarray -= iincrement * indices->shape[ax];
                 iarray += istrides[ULAB_MAX_DIMS - 1];
                 l++;
-            } while(l < shape[ULAB_MAX_DIMS - 1]);
+            }
             iarray -= istrides[ULAB_MAX_DIMS - 1] * shape[ULAB_MAX_DIMS - 1];
             iarray += istrides[ULAB_MAX_DIMS - 2];
             #endif
         #if ULAB_MAX_DIMS > 2
             k++;
-        } while(k < shape[ULAB_MAX_DIMS - 2]);
+        }
         iarray -= istrides[ULAB_MAX_DIMS - 2] * shape[ULAB_MAX_DIMS - 2];
         iarray += istrides[ULAB_MAX_DIMS - 3];
         #endif
     #if ULAB_MAX_DIMS > 3
         j++;
-    } while(j < shape[ULAB_MAX_DIMS - 3]);
+    }
     #endif
     // reset the array
     iarray = indices->array;
@@ -1108,14 +1108,14 @@ mp_obj_t numerical_median(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < shape[ULAB_MAX_DIMS - 3] || (i == 0 && ndarray->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < shape[ULAB_MAX_DIMS - 2] || (j == 0 && ndarray->ndim < 2)) {
             #endif
                 size_t k = 0;
-                do {
+                while(k < shape[ULAB_MAX_DIMS - 1] || (k == 0 && ndarray->ndim < 1)) {
                     array += ndarray->strides[ax] * (len >> 1);
                     mp_float_t median = ndarray_get_float_value(array, ndarray->dtype);
                     if(!(len & 0x01)) { // len is an even number
@@ -1129,18 +1129,18 @@ mp_obj_t numerical_median(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_
                     *rarray = median;
                     rarray++;
                     k++;
-                } while(k < shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 2
                 array -= strides[ULAB_MAX_DIMS - 1] * shape[ULAB_MAX_DIMS - 1];
                 array += strides[ULAB_MAX_DIMS - 2];
                 j++;
-            } while(j < shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             array -= strides[ULAB_MAX_DIMS - 2] * shape[ULAB_MAX_DIMS-2];
             array += strides[ULAB_MAX_DIMS - 3];
             i++;
-        } while(i < shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
 
         return MP_OBJ_FROM_PTR(results);
@@ -1206,18 +1206,18 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
         }
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i <  ndarray->shape[ULAB_MAX_DIMS - 4] || (i == 0 &&  ndarray->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j <  ndarray->shape[ULAB_MAX_DIMS - 3] || (j == 0 &&  ndarray->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k <  ndarray->shape[ULAB_MAX_DIMS - 2] || (k == 0 &&  ndarray->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l <  ndarray->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  ndarray->ndim < 1)) {
                         memcpy(rarray, array, ndarray->itemsize);
                         rarray += results->itemsize;
                         array += ndarray->strides[ULAB_MAX_DIMS - 1];
@@ -1225,24 +1225,24 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
                         if(--counter == 0) {
                             rarray = results->array;
                         }
-                    } while(l <  ndarray->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     array -= ndarray->strides[ULAB_MAX_DIMS - 1] * ndarray->shape[ULAB_MAX_DIMS-1];
                     array += ndarray->strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k <  ndarray->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 array -= ndarray->strides[ULAB_MAX_DIMS - 2] * ndarray->shape[ULAB_MAX_DIMS-2];
                 array += ndarray->strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j <  ndarray->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             array -= ndarray->strides[ULAB_MAX_DIMS - 3] * ndarray->shape[ULAB_MAX_DIMS-3];
             array += ndarray->strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i <  ndarray->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
     } else if(mp_obj_is_int(args[2].u_obj)){
         int8_t ax = tools_get_axis(args[2].u_obj, ndarray->ndim);
@@ -1261,15 +1261,15 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < shape[ULAB_MAX_DIMS - 3] || (i == 0 && ndarray->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < shape[ULAB_MAX_DIMS - 2] || (j == 0 && ndarray->ndim < 2)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k < shape[ULAB_MAX_DIMS - 1] || (k == 0 && ndarray->ndim < 1)) {
                 #endif
                     size_t l = 0;
                     _rarray = rarray;
@@ -1280,7 +1280,7 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
                         rarray += _shift * results->strides[ax];
                         counter = results->shape[ax] - _shift;
                     }
-                    do {
+                    while(l < ndarray->shape[ax] || (l == 0 && ndarray->ndim < ULAB_MAX_DIMS - ax)) {
                         memcpy(rarray, array, ndarray->itemsize);
                         array += ndarray->strides[ax];
                         rarray += results->strides[ax];
@@ -1288,14 +1288,14 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
                             rarray = _rarray;
                         }
                         l++;
-                    } while(l < ndarray->shape[ax]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     rarray = _rarray;
                     rarray += rstrides[ULAB_MAX_DIMS - 1];
                     array -= ndarray->strides[ax] * ndarray->shape[ax];
                     array += strides[ULAB_MAX_DIMS - 1];
                     k++;
-                } while(k < shape[ULAB_MAX_DIMS - 1]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 rarray -= rstrides[ULAB_MAX_DIMS - 1] * rshape[ULAB_MAX_DIMS-1];
@@ -1303,7 +1303,7 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
                 array -= strides[ULAB_MAX_DIMS - 1] * shape[ULAB_MAX_DIMS-1];
                 array += strides[ULAB_MAX_DIMS - 2];
                 j++;
-            } while(j < shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             rarray -= rstrides[ULAB_MAX_DIMS - 2] * rshape[ULAB_MAX_DIMS-2];
@@ -1311,7 +1311,7 @@ mp_obj_t numerical_roll(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
             array -= strides[ULAB_MAX_DIMS - 2] * shape[ULAB_MAX_DIMS-2];
             array += strides[ULAB_MAX_DIMS - 3];
             i++;
-        } while(i < shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
 
         m_del(size_t, shape, ULAB_MAX_DIMS);

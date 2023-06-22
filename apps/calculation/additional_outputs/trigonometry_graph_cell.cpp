@@ -19,8 +19,8 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
     return;
   }
 #endif
-  assert(std::isfinite(angle) && 0 <= angle &&
-         angle < 2 * M_PI + Float<float>::EpsilonLax());
+  assert(std::isfinite(angle));
+  assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
   float s = std::sin(angle);
   float c = std::cos(angle);
 

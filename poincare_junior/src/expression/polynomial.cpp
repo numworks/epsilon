@@ -212,7 +212,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   if (polA.type() != BlockType::Polynomial &&
       polB.type() != BlockType::Polynomial) {
     assert(polA.block()->isInteger() && polB.block()->isInteger());
-    std::pair<const Node*, Node*> nodePair = IntegerHandler::Division(
+    std::pair<Node*, Node*> nodePair = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
     EditionReference quotient = EditionReference(nodePair.first);
     EditionReference remainder = EditionReference(nodePair.second);
@@ -346,7 +346,7 @@ const Node* PolynomialParser::GetVariables(const Node* expression) {
 EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
                                                     EditionReference variables,
                                                     size_t variableIndex) {
-  const Node* variable;
+  const Node* variable = nullptr;
   for (std::pair<const Node*, int> indexedVariable :
        NodeIterator::Children<Forward, NoEditable>(variables)) {
     if (std::get<int>(indexedVariable) < variableIndex) {

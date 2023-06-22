@@ -36,6 +36,7 @@ class PatternMatching {
  public:
   class Context {
    public:
+    Context() : m_array() {}
     const Node* getNode(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
     void setNode(uint8_t tag, const Node* node, uint8_t numberOfTrees) {

@@ -19,6 +19,10 @@ void assert_polynomial_is_parsed(const Node* node,
 
 QUIZ_CASE(pcj_polynomial_parsing) {
   assert_polynomial_is_parsed(
+      /* 42 */ 42_e,
+      /* variables = {} */ KSet(),
+      /* polynomial */ 42_e);
+  assert_polynomial_is_parsed(
       /* π^3 + 3*π^2*e + 3*π*e^2 + e^3 */ KAdd(
           KPow(π_e, 3_e), KMult(3_e, KPow(π_e, 2_e), "e"_e),
           KMult(3_e, KPow("e"_e, 2_e), π_e), KPow("e"_e, 3_e)),
@@ -26,11 +30,6 @@ QUIZ_CASE(pcj_polynomial_parsing) {
       /* polynomial */
       KPol(Exponents<3, 2, 1, 0>(), π_e, 1_e, KPol(Exponents<1>(), "e"_e, 3_e),
            KPol(Exponents<2>(), "e"_e, 3_e), KPol(Exponents<3>(), "e"_e, 1_e)));
-
-  assert_polynomial_is_parsed(
-      /* 42 */ 42_e,
-      /* variables = {} */ KSet(),
-      /* polynomial */ 42_e);
 
   assert_polynomial_is_parsed(
       /* π^1.2 */ KPow(π_e, 1.2_e),

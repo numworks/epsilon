@@ -28,7 +28,8 @@ EditionReference::EditionReference(const Node* node) {
 }
 
 EditionReference::EditionReference(Node* node) {
-  assert(EditionPool::sharedEditionPool()->contains(node->block()));
+  assert(EditionPool::sharedEditionPool()->contains(node->block()) ||
+         node->block() == EditionPool::sharedEditionPool()->lastBlock());
   m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
 }
 

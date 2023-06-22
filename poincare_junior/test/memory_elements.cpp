@@ -649,15 +649,15 @@ QUIZ_CASE(pcj_node) {
   const Node* node0 = 42_e;
   Node* node1 =
       editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(42));
-  quiz_assert(node0 != node1 && node0->block() == node1->block());
+  quiz_assert(node0 != node1 && *node0->block() == *node1->block());
   Node* node2 = Node::FromBlocks(editionPool->firstBlock());
   quiz_assert(node2 == node1);
 
   // Node navigation
   constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
   constexpr Tree e2 = KPow(5_e, 6_e);
-  const Node* n1 = e1;
-  const Node* n2 = e2;
+  Node* n1 = EditionReference(e1);
+  Node* n2 = EditionReference(e2);
   quiz_assert(n1->treeSize() == 23);  // TODO: Magic Number
   assert_trees_are_equal(n1->nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1->nextTree(), e2);

@@ -19,7 +19,7 @@ bool Set::Includes(const Node* set, const Node* expression) {
   return false;
 }
 
-EditionReference Set::Add(EditionReference set, Node* expression) {
+EditionReference Set::Add(EditionReference set, const Node* expression) {
   EditionReference child = set;
   for (auto [ref, index] : NodeIterator::Children<Forward, Editable>(set)) {
     child = ref;

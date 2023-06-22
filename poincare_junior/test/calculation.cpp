@@ -44,9 +44,9 @@ QUIZ_CASE(pcj_calculation) {
 
 QUIZ_CASE(pcj_calculation_type_block_buffer) {
   Calculation calculation("(1-2)/3/4");
-  const Node* input = Node * (calculation.input());
-  quiz_assert(input.parent().isUninitialized());
-  quiz_assert(input.type() == BlockType::Division);
+  const Node* input = Node::FromBlocks(calculation.input());
+  quiz_assert(!input->parent());
+  quiz_assert(input->type() == BlockType::Division);
 }
 
 // Check SharedPointer

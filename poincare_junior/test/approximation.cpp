@@ -9,13 +9,13 @@
 
 using namespace PoincareJ;
 
-void assert_approximation_is(Node* n, float f) {
+void assert_approximation_is(const Node* n, float f) {
   float approx = Approximation::To<float>(n);
   bool result = Float::RoughlyEqual<float>(approx, f, FLT_EPSILON);
 #if POINCARE_MEMORY_TREE_LOG
   if (!result) {
     std::cout << "Approximation test failure with: \n";
-    n.log();
+    n->log();
     std::cout << "Approximated to " << approx << " instead of " << f << "\n";
     std::cout << "Absolute difference is : " << std::fabs(approx - f) << "\n";
     std::cout << "Relative difference is : " << std::fabs((approx - f) / f)

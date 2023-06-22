@@ -4,21 +4,22 @@
 
 #include "approximation.h"
 #include "constant.h"
+#include "k_creator.h"
 #include "polynomial.h"
 #include "symbol.h"
 
 namespace PoincareJ {
 
 int Comparison::Compare(const Node* node0, const Node* node1, Order order) {
-  BlockType type0 = node0.type();
-  BlockType type1 = node1.type();
+  BlockType type0 = node0->type();
+  BlockType type1 = node1->type();
   if (type0 > type1) {
     /* We handle this case first to implement only the upper diagonal of the
      * comparison table. */
     return -Compare(node1, node0);
   }
-  TypeBlock* block0 = node0.block();
-  TypeBlock* block1 = node1.block();
+  const TypeBlock* block0 = node0->block();
+  const TypeBlock* block1 = node1->block();
   if ((block0->isNumber() && block1->isNumber())) {
     return CompareNumbers(node0, node1);
   }
@@ -26,9 +27,9 @@ int Comparison::Compare(const Node* node0, const Node* node1, Order order) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type0 == BlockType::Power) {
-      if (Compare(node0.childAtIndex(0), node1) == 0) {
+      if (Compare(node0->childAtIndex(0), node1) == 0) {
         // 1/x < x < x^2
-        return Compare(node0.childAtIndex(1), &OneBlock);
+        return Compare(node0->childAtIndex(1), 1_e);
       }
       // x < y^2
       return 1;
@@ -160,8 +161,8 @@ int Comparison::CompareChildren(const Node* node0, const Node* node1,
   if (comparison) {
     return comparison;
   }
-  int numberOfChildren0 = node0.numberOfChildren();
-  int numberOfChildren1 = node1.numberOfChildren();
+  int numberOfChildren0 = node0->numberOfChildren();
+  int numberOfChildren1 = node1->numberOfChildren();
   // The NULL node is the least node type.
   if (numberOfChildren0 < numberOfChildren1) {
     return 1;
@@ -172,11 +173,11 @@ int Comparison::CompareChildren(const Node* node0, const Node* node1,
   return 0;
 }
 
-int Comparison::CompareLastChild(const Node* node0, Node* node1) {
-  int m = node0.numberOfChildren();
+int Comparison::CompareLastChild(const Node* node0, const Node* node1) {
+  int m = node0->numberOfChildren();
   // Otherwise, node0 should be sanitized beforehand.
   assert(m > 0);
-  int comparisonWithChild = Compare(node0.childAtIndex(m - 1), node1);
+  int comparisonWithChild = Compare(node0->childAtIndex(m - 1), node1);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;
   }
@@ -185,7 +186,7 @@ int Comparison::CompareLastChild(const Node* node0, Node* node1) {
 
 bool Comparison::AreEqual(const Node* node0, const Node* node1) {
   // treeIsidenticalTo is faster since it uses memcmp
-  bool areEqual = node0.treeIsIdenticalTo(node1);
+  bool areEqual = node0->treeIsIdenticalTo(node1);
   assert((Compare(node0, node1) == 0) == areEqual);
   return areEqual;
 }

@@ -140,7 +140,7 @@ class MultipleNodesIterator {
       uint8_t nbOfChildren = UINT8_MAX;
       for (size_t i = 0; i < N; i++) {
         nbOfChildren =
-            std::min<uint8_t>(nbOfChildren, array[i].numberOfChildren());
+            std::min<uint8_t>(nbOfChildren, array[i]->numberOfChildren());
       }
       return nbOfChildren;
     }
@@ -201,7 +201,8 @@ class MultipleNodesIterator {
                                                int offset = 0) const {
       return Array::MapAction<NodeType, Node *, N>(
           array, &offset, [](NodeType reference, void *offset) {
-            return Node * (reference.block() + *static_cast<int *>(offset));
+            return Node::FromBlocks(reference.block() +
+                                    *static_cast<int *>(offset));
           });
     }
     template <size_t N>
@@ -209,10 +210,9 @@ class MultipleNodesIterator {
                                     int offset = 0) const {
       return Array::MapAction<Node *, NodeType, N>(
           array, &offset, [](Node *node, void *offset) {
-            return node->isUninitialized()
-                       ? EditionReference()
-                       : EditionReference(Node * (node->block() -
-                                                  *static_cast<int *>(offset)));
+            return node ? EditionReference(Node::FromBlocks(
+                              node->block() - *static_cast<int *>(offset)))
+                        : EditionReference();
           });
     }
   };

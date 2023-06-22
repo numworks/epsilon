@@ -33,11 +33,11 @@ KDSize Render::Size(const Node* node, KDFont::Size font) {
 KDPoint Render::AbsoluteOrigin(const Node* node, KDFont::Size font) {
   assert(node->block()->isLayout());
   const Node* parent = node->parent();
-  if (parent.isUninitialized()) {
+  if (!parent) {
     return KDPointZero;
   }
   return AbsoluteOrigin(parent, font)
-      .translatedBy(PositionOfChild(parent, parent.indexOfChild(node), font));
+      .translatedBy(PositionOfChild(parent, parent->indexOfChild(node), font));
 }
 
 KDPoint Render::PositionOfChild(const Node* node, int childIndex,
@@ -82,7 +82,7 @@ void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
                   KDColor backgroundColor) {
   /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
    * Drawing is therefore restricted to the highest parent only. */
-  assert(node->parent().isUninitialized());
+  assert(!node->parent());
   PrivateDraw(node, ctx, p, font, expressionColor, backgroundColor);
 }
 

@@ -11,7 +11,7 @@ class Set {
    */
  public:
   static bool Includes(const Node* set, const Node* expression);
-  static EditionReference Add(EditionReference set, Node* expression);
+  static EditionReference Add(EditionReference set, const Node* expression);
   static EditionReference Pop(EditionReference set);
   static EditionReference Union(EditionReference set0, EditionReference set1);
   static EditionReference Intersection(EditionReference set0,

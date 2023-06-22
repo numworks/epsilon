@@ -113,7 +113,7 @@ static inline void assert_add_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       static_cast<Node*>(IntegerHandler::Addition(CreateIntegerHandler(a),
                                                   CreateIntegerHandler(b)))
-          .treeIsIdenticalTo(CreateInteger(c)));
+          ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -148,7 +148,7 @@ static inline void assert_sub_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       static_cast<Node*>(IntegerHandler::Subtraction(CreateIntegerHandler(a),
                                                      CreateIntegerHandler(b)))
-          .treeIsIdenticalTo(CreateInteger(c)));
+          ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -187,7 +187,7 @@ static inline void assert_mult_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       static_cast<Node*>(IntegerHandler::Multiplication(
                              CreateIntegerHandler(a), CreateIntegerHandler(b)))
-          .treeIsIdenticalTo(CreateInteger(c)));
+          ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -209,16 +209,16 @@ static inline void assert_div_to(const char* a, const char* b, const char* q,
                                  const char* r) {
   auto [quotient, remainder] = IntegerHandler::Division(
       CreateIntegerHandler(a), CreateIntegerHandler(b));
-  quiz_assert(quotient.treeIsIdenticalTo(CreateInteger(q)) &&
-              remainder.treeIsIdenticalTo(CreateInteger(r)));
+  quiz_assert(quotient->treeIsIdenticalTo(CreateInteger(q)) &&
+              remainder->treeIsIdenticalTo(CreateInteger(r)));
   reset_pools();
   quiz_assert(
       IntegerHandler::Quotient(CreateIntegerHandler(a), CreateIntegerHandler(b))
-          .treeIsIdenticalTo(CreateInteger(q)));
+          ->treeIsIdenticalTo(CreateInteger(q)));
   reset_pools();
   quiz_assert(IntegerHandler::Remainder(CreateIntegerHandler(a),
                                         CreateIntegerHandler(b))
-                  .treeIsIdenticalTo(CreateInteger(r)));
+                  ->treeIsIdenticalTo(CreateInteger(r)));
   reset_pools();
 }
 
@@ -265,7 +265,7 @@ static inline void assert_pow_to(const char* a, const char* b, const char* c) {
   // TODO: remove static_cast<Node*> when Hugo's PR is merged
   quiz_assert(static_cast<Node*>(IntegerHandler::Power(CreateIntegerHandler(a),
                                                        CreateIntegerHandler(b)))
-                  .treeIsIdenticalTo(CreateInteger(c)));
+                  ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -283,7 +283,7 @@ static inline void assert_factorial_to(const char* a, const char* b) {
   // TODO: remove static_cast<Node*> when Hugo's PR is merged
   quiz_assert(
       static_cast<Node*>(IntegerHandler::Factorial(CreateIntegerHandler(a)))
-          .treeIsIdenticalTo(CreateInteger(b)));
+          ->treeIsIdenticalTo(CreateInteger(b)));
   reset_pools();
 }
 
@@ -299,7 +299,7 @@ QUIZ_CASE(pcj_integer_factorial) {
 static inline void assert_gcd_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::GCD(CreateIntegerHandler(a), CreateIntegerHandler(b))
-          .treeIsIdenticalTo(CreateInteger(c)));
+          ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -320,7 +320,7 @@ static inline void assert_might_overflow(ActionWithContext action,
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   const Node* tree = cachePool->nodeForIdentifier(
       editionPool->executeAndCache(action, nullptr, nullptr));
-  quiz_assert(tree.isUninitialized() == overflow);
+  quiz_assert((tree == nullptr) == overflow);
 }
 
 static inline void assert_did_overflow(ActionWithContext action) {

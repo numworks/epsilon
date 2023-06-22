@@ -2,7 +2,6 @@
 #define POINCARE_LAYOUT_PARSER_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
-
 #include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {

@@ -35,12 +35,12 @@ KDPoint VerticalOffsetLayout::PositionOfChild(const Node* node, int childIndex,
 const Node* VerticalOffsetLayout::BaseLayout(const Node* node) {
   const Node* parent = node->parent();
   if (parent.type() != BlockType::RackLayout) {
-    return Node * ();
+    return nullptr;
   }
   assert(IsSuffixSuperscript(node));
   const Node* previousNode = node->previousTree();
   if (previousNode == parent) {
-    return Node * ();
+    return nullptr;
   }
   return previousNode;
 }

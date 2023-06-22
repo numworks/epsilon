@@ -43,12 +43,12 @@ QUIZ_CASE(pcj_polynomial_parsing) {
 QUIZ_CASE(pcj_polynomial_operations) {
   EditionPool* editionPool(EditionPool::sharedEditionPool());
   /* A = x^2 + 3*x*y + y + 1 */
-  Node* polA =
+  const Node* polA =
       KPol(Exponents<2, 1, 0>(), "x"_e, 1_e, KPol(Exponents<1>(), "y"_e, 3_e),
            KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e));
   /* B = x^3 + 2*x*y^2 + 7*x*y + 23 */
-  Node* polB = KPol(Exponents<3, 1, 0>(), "x"_e, 1_e,
-                    KPol(Exponents<2, 1>(), "y"_e, 2_e, 7_e), 23_e);
+  const Node* polB = KPol(Exponents<3, 1, 0>(), "x"_e, 1_e,
+                          KPol(Exponents<2, 1>(), "y"_e, 2_e, 7_e), 23_e);
 
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(

@@ -60,7 +60,7 @@ class Reference {
   bool treeIsIdenticalTo(const Reference &other) const {
     // TODO: second getTree() can delete first tree.
     return (isUninitialized() == other.isUninitialized()) &&
-           (isUninitialized() || getTree().treeIsIdenticalTo(other.getTree()));
+           (isUninitialized() || getTree()->treeIsIdenticalTo(other.getTree()));
   }
 #if POINCARE_MEMORY_TREE_LOG
   void log();

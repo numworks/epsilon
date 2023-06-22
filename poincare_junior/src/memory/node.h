@@ -25,6 +25,14 @@ class EditionReference;
 
 class Node {
  public:
+  static const Node* FromBlocks(const Block* blocks) {
+    return reinterpret_cast<const Node*>(blocks);
+  }
+
+  static Node* FromBlocks(Block* blocks) {
+    return reinterpret_cast<Node*>(blocks);
+  }
+
   bool treeIsIdenticalTo(const Node* other) const {
     return memcmp(this, other, treeSize()) == 0;
   }

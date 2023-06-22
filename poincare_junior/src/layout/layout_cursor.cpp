@@ -729,10 +729,10 @@ void LayoutCursor::setLayout(const Node *l,
 const Node *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
-    return m_position == 1 ? cursorNode() : Node * ();
+    return m_position == 1 ? cursorNode() : nullptr;
   }
   if (cursorNode().numberOfChildren() == 0 || m_position == 0) {
-    return Node * ();
+    return nullptr;
   }
   return cursorNode().childAtIndex(m_position - 1);
 }
@@ -740,11 +740,11 @@ const Node *LayoutCursor::leftLayout() const {
 const Node *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
-    return m_position == 0 ? cursorNode() : Node * ();
+    return m_position == 0 ? cursorNode() : nullptr;
   }
   if (cursorNode().numberOfChildren() == 0 ||
       m_position == cursorNode().numberOfChildren()) {
-    return Node * ();
+    return nullptr;
   }
   return cursorNode().childAtIndex(m_position);
 }
@@ -765,7 +765,7 @@ const Node *LayoutCursor::layoutToFit(KDFont::Size font) const {
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
                                   bool *shouldRedrawLayout) {
-  Node *nextLayout = Node * ();
+  Node *nextLayout = nullptr;
   /* Search the nextLayout on the left/right to ask it where
    * the cursor should go when entering from outside.
    *

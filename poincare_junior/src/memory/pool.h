@@ -20,10 +20,10 @@ class Pool {
 
   Block *blockAtIndex(int i) { return firstBlock() + i; }
 
-  const Node *nodeForIdentifier(uint16_t id) {
+  Node *nodeForIdentifier(uint16_t id) {
     return referenceTable()->nodeForIdentifier(id);
   }
-  bool contains(Block *block) const {
+  bool contains(const Block *block) const {
     return block >= firstBlock() && block < lastBlock();
   }
   virtual const TypeBlock *firstBlock() const = 0;
@@ -55,7 +55,7 @@ class Pool {
     virtual Node *nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
 #if POINCARE_MEMORY_TREE_LOG
-    void logIdsForNode(std::ostream &stream, Node *node) const;
+    void logIdsForNode(std::ostream &stream, const Node *node) const;
     virtual uint16_t identifierForIndex(uint16_t index) const { return index; }
 #endif
    protected:
@@ -72,8 +72,8 @@ class Pool {
 #if POINCARE_MEMORY_TREE_LOG
  public:
   virtual const char *name() = 0;
-  void logNode(std::ostream &stream, Node *node, bool recursive, bool verbose,
-               int indentation);
+  void logNode(std::ostream &stream, const Node *node, bool recursive,
+               bool verbose, int indentation);
   void log(std::ostream &stream, LogFormat format, bool verbose,
            int indentation = 0);
   __attribute__((__used__)) void log() {
@@ -86,21 +86,22 @@ class Pool {
   class AbstractIterator {
    public:
     AbstractIterator(const TypeBlock *block)
-        : m_node(const_cast<TypeBlock *>(block)) {}
+        : m_node(reinterpret_cast<const Node *>(block)) {}
     const Node *operator*() { return m_node; }
     bool operator!=(const AbstractIterator &it) const {
       return (m_node->block() != it.m_node->block());
     }
 
    protected:
-    Node *m_node;
+    const Node *m_node;
   };
 
  public:
   class Nodes final {
    public:
     Nodes(TypeBlock *block, int numberOfBlocks)
-        : m_node(numberOfBlocks > 0 ? block : nullptr),
+        : m_node(numberOfBlocks > 0 ? reinterpret_cast<const Node *>(block)
+                                    : nullptr),
           m_numberOfBlocks(numberOfBlocks) {}
     class Iterator : public AbstractIterator {
      public:
@@ -116,7 +117,7 @@ class Pool {
     }
 
    private:
-    Node *m_node;
+    const Node *m_node;
     int m_numberOfBlocks;
   };
   Nodes allNodes() { return Nodes(firstBlock(), size()); }
@@ -124,7 +125,8 @@ class Pool {
   class Trees final {
    public:
     Trees(TypeBlock *block, int numberOfBlocks)
-        : m_node(numberOfBlocks > 0 ? block : nullptr),
+        : m_node(numberOfBlocks > 0 ? reinterpret_cast<const Node *>(block)
+                                    : nullptr),
           m_numberOfBlocks(numberOfBlocks) {}
     class Iterator : public AbstractIterator {
      public:
@@ -140,7 +142,7 @@ class Pool {
     }
 
    private:
-    Node *m_node;
+    const Node *m_node;
     int m_numberOfBlocks;
   };
   Trees trees() { return Trees(firstBlock(), size()); }

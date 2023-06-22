@@ -34,7 +34,8 @@ class Polynomial final {
   static EditionReference PushEmpty(EditionReference variable);
   static EditionReference PushMonomial(
       EditionReference variable, uint8_t exponent,
-      EditionReference coefficient = EditionReference(&OneBlock));
+      EditionReference coefficient =
+          EditionReference(Node::FromBlocks(&OneBlock)));
 
   // Getters
   static uint8_t ExponentAtIndex(const Node* polynomial, int index);
@@ -43,15 +44,15 @@ class Polynomial final {
   }
   static Node* LeadingCoefficient(Node* polynomial) {
     assert(NumberOfTerms(polynomial) > 0);
-    return polynomial.childAtIndex(1);
+    return polynomial->childAtIndex(1);
   }
   static uint8_t NumberOfTerms(const Node* polynomial) {
-    assert(polynomial.type() == BlockType::Polynomial);
-    return polynomial.numberOfChildren() - 1;
+    assert(polynomial->type() == BlockType::Polynomial);
+    return polynomial->numberOfChildren() - 1;
   }
-  static Node* Variable(const Node* polynomial) {
-    assert(polynomial.type() == BlockType::Polynomial);
-    return polynomial.childAtIndex(0);
+  static const Node* Variable(const Node* polynomial) {
+    assert(polynomial->type() == BlockType::Polynomial);
+    return polynomial->childAtIndex(0);
   }
 
   // Setters

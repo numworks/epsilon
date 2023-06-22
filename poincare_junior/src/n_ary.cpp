@@ -8,7 +8,7 @@ namespace PoincareJ {
 
 void NAry::AddChildAtIndex(EditionReference nary, EditionReference child,
                            int index) {
-  assert(static_cast<Node*>(nary).isNAry());
+  assert(static_cast<Node*>(nary)->isNAry());
   /* Child will be moved, it should be detached from his parent beforehand.
    * Otherwise, the parent structure will get corrupted.
    * TODO: Polynomial temporarily deal with corrupted structures to optimize
@@ -35,7 +35,7 @@ void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
 }
 
 EditionReference NAry::DetachChildAtIndex(EditionReference nary, int index) {
-  assert(static_cast<Node*>(nary).isNAry());
+  assert(static_cast<Node*>(nary)->isNAry());
   EditionReference child = nary.childAtIndex(index);
   child.detachTree();
   SetNumberOfChildren(nary, nary.numberOfChildren() - 1);
@@ -43,7 +43,7 @@ EditionReference NAry::DetachChildAtIndex(EditionReference nary, int index) {
 }
 
 void NAry::RemoveChildAtIndex(EditionReference nary, int index) {
-  assert(static_cast<Node*>(nary).isNAry());
+  assert(static_cast<Node*>(nary)->isNAry());
   EditionReference child = nary.childAtIndex(index);
   child.removeTree();
   SetNumberOfChildren(nary, nary.numberOfChildren() - 1);
@@ -51,12 +51,13 @@ void NAry::RemoveChildAtIndex(EditionReference nary, int index) {
 
 void NAry::SetNumberOfChildren(EditionReference reference,
                                size_t numberOfChildren) {
-  assert(static_cast<Node*>(reference).isNAry());
+  assert(static_cast<Node*>(reference)->isNAry());
   assert(numberOfChildren < UINT8_MAX);
-  if (static_cast<Node*>(reference).nodeSize() > 1) {
+  if (static_cast<Node*>(reference)->nodeSize() > 1) {
     /* Increment the tail numberOfChildren block first because the nodeSize
      * computation might be altered by the head numberOfChildren Block. */
-    Block* numberOfChildrenBlock = reference.nextNode().block()->previousNth(2);
+    Block* numberOfChildrenBlock =
+        reference.nextNode()->block()->previousNth(2);
     *numberOfChildrenBlock = numberOfChildren;
   }
   Block* numberOfChildrenBlock = reference.block()->next();
@@ -70,17 +71,17 @@ EditionReference NAry::Flatten(EditionReference reference) {
 
 bool NAry::Flatten(EditionReference* reference) {
   bool modified = false;
-  assert(Node * (*reference).isNAry());
+  assert(static_cast<Node*>(*reference)->isNAry());
   size_t numberOfChildren = reference->numberOfChildren();
   size_t childIndex = 0;
   Node* child = reference->nextNode();
   while (childIndex < numberOfChildren) {
-    if (reference->type() == child.type()) {
+    if (reference->type() == child->type()) {
       modified = true;
-      numberOfChildren += child.numberOfChildren() - 1;
+      numberOfChildren += child->numberOfChildren() - 1;
       EditionReference(child).removeNode();
     } else {
-      child = child.nextTree();
+      child = child->nextTree();
       childIndex++;
     }
   }
@@ -117,7 +118,7 @@ bool NAry::SquashIfEmpty(EditionReference* reference) {
   BlockType type = reference->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
   *reference = reference->replaceTreeByTree(
-      type == BlockType::Addition ? &ZeroBlock : &OneBlock);
+      Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
 }
 
@@ -145,8 +146,8 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);
         Node* nary = *static_cast<Node**>(contextArray[0]);
-        EditionReference refI = nary.childAtIndex(i);
-        EditionReference refJ = nary.childAtIndex(j);
+        EditionReference refI = nary->childAtIndex(i);
+        EditionReference refJ = nary->childAtIndex(j);
         EditionReference refJNext = refJ.nextTree();
         refI.insertTreeBeforeNode(refJ);
         refJNext.insertTreeBeforeNode(refI);
@@ -156,7 +157,7 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
         Node* nary = *static_cast<Node**>(contextArray[0]);
         Comparison::Order order =
             *static_cast<Comparison::Order*>(contextArray[1]);
-        return Comparison::Compare(nary.childAtIndex(i), nary.childAtIndex(j),
+        return Comparison::Compare(nary->childAtIndex(i), nary->childAtIndex(j),
                                    order) >= 0;
       },
       contextArray, reference.numberOfChildren());

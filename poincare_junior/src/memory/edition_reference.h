@@ -11,6 +11,9 @@ class EditionReference {
   EditionReference()
       : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
   EditionReference(Node* node);
+  EditionReference(const Node* node);
+  EditionReference(TypeBlock* blocks)
+      : EditionReference(Node::FromBlocks(blocks)) {}
 
 #if POINCARE_MEMORY_TREE_LOG
   __attribute__((__used__)) void log() const;
@@ -32,41 +35,39 @@ class EditionReference {
     return EditionPool::sharedEditionPool()->clone(*this);
   }
 
-  operator const Node*() const;
-  bool isUninitialized() const {
-    return static_cast<Node*>(*this).isUninitialized();
-  }
-  TypeBlock* block() { return static_cast<Node*>(*this).block(); }
-  BlockType type() const { return static_cast<Node*>(*this).type(); }
+  operator Node*() const;
+  bool isUninitialized() const { return static_cast<Node*>(*this) == nullptr; }
+  TypeBlock* block() { return static_cast<Node*>(*this)->block(); }
+  BlockType type() const { return static_cast<Node*>(*this)->type(); }
 
   uint16_t identifier() const { return m_identifier; }
 
   /* Hierarchy */
-  Node* nextNode() { return static_cast<Node*>(*this).nextNode(); }
-  Node* nextTree() { return static_cast<Node*>(*this).nextTree(); }
-  Node* previousNode() { return static_cast<Node*>(*this).previousNode(); }
-  Node* previousTree() { return static_cast<Node*>(*this).previousTree(); }
+  Node* nextNode() { return static_cast<Node*>(*this)->nextNode(); }
+  Node* nextTree() { return static_cast<Node*>(*this)->nextTree(); }
+  Node* previousNode() { return static_cast<Node*>(*this)->previousNode(); }
+  Node* previousTree() { return static_cast<Node*>(*this)->previousTree(); }
   bool hasChild(EditionReference t) const {
-    return static_cast<Node*>(*this).hasChild(t);
+    return static_cast<Node*>(*this)->hasChild(t);
   }
   bool hasSibling(EditionReference t) const {
-    return static_cast<Node*>(*this).hasSibling(t);
+    return static_cast<Node*>(*this)->hasSibling(t);
   }
   bool hasAncestor(EditionReference t, bool includeSelf) const {
-    return static_cast<Node*>(*this).hasAncestor(t, includeSelf);
+    return static_cast<Node*>(*this)->hasAncestor(t, includeSelf);
   }
   int numberOfChildren() const {
-    return static_cast<Node*>(*this).numberOfChildren();
+    return static_cast<Node*>(*this)->numberOfChildren();
   }
   int indexOfChild(EditionReference t) const {
-    return static_cast<Node*>(*this).indexOfChild(t);
+    return static_cast<Node*>(*this)->indexOfChild(t);
   }
-  Node* parent() const { return static_cast<Node*>(*this).parent(); }
+  Node* parent() const { return static_cast<Node*>(*this)->parent(); }
   Node* childAtIndex(int i) const {
-    return static_cast<Node*>(*this).childAtIndex(i);
+    return static_cast<Node*>(*this)->childAtIndex(i);
   }
   int numberOfDescendants(bool includeSelf) const {
-    return static_cast<Node*>(*this).numberOfDescendants(includeSelf);
+    return static_cast<Node*>(*this)->numberOfDescendants(includeSelf);
   }
 
   /* Edition operations on Node* */

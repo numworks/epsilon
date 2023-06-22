@@ -2,9 +2,9 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node.h>
 
 #include <cmath>
-#include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {
 

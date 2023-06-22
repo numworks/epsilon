@@ -15,12 +15,12 @@ namespace PoincareJ {
 void Node::log(std::ostream& stream, bool recursive, bool verbose,
                int indentation, Node* comparison) const {
   Indent(stream, indentation);
-  if (!comparison.isUninitialized() && !isIdenticalTo(comparison)) {
+  if (comparison && !isIdenticalTo(comparison)) {
     stream << "<<<<<<<";
     log(stream, recursive, verbose, indentation);
     Indent(stream, indentation);
     stream << "=======";
-    comparison.log(stream, recursive, verbose, indentation);
+    comparison->log(stream, recursive, verbose, indentation);
     Indent(stream, indentation);
     stream << ">>>>>>>";
     return;
@@ -41,8 +41,7 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
         tagIsClosed = true;
       }
       child.log(stream, recursive, verbose, indentation + 1,
-                comparison.isUninitialized() ? comparison
-                                             : comparison.childAtIndex(index));
+                comparison ? comparison->childAtIndex(index) : comparison);
     }
   }
   if (tagIsClosed) {
@@ -179,16 +178,16 @@ void Node::copyTreeTo(void* address) const {
 
 const Node* Node::nextNode() const {
   assert(canNavigateNext());
-  return Node * (m_block + nodeSize());
+  return Node::FromBlocks(m_block + nodeSize());
 }
 
 const Node* Node::previousNode() const {
   if (!canNavigatePrevious()) {
-    return Node * ();
+    return nullptr;
   }
   int previousSize =
       static_cast<TypeBlock*>(m_block->previous())->nodeSize(false);
-  return Node * (m_block - previousSize);
+  return Node::FromBlocks(m_block - previousSize);
 }
 
 const Node* Node::previousTree() const { return previousRelative(false); }
@@ -196,9 +195,9 @@ const Node* Node::previousTree() const { return previousRelative(false); }
 const Node* Node::parent() const { return previousRelative(true); }
 
 const Node* Node::root() const {
-  Node* ancestor = this;
-  while (ancestor.parent() != Node * ()) {
-    ancestor = ancestor.parent();
+  const Node* ancestor = this;
+  while (ancestor->parent() != nullptr) {
+    ancestor = ancestor->parent();
   }
   return ancestor;
 }
@@ -214,9 +213,9 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   }
   assert(block1 <= block2);
   if (block1 < block()) {
-    return Node * ();
+    return nullptr;
   }
-  Node* parent = Node * ();
+  Node* parent = nullptr;
   Node* node = this;
   while (true) {
     assert(block1 >= node->block());
@@ -227,7 +226,7 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
       // Neither children are descendants
       if (parent.isUninitialized()) {
         // node is the root, no ancestors can be found
-        return Node * ();
+        return nullptr;
       }
       // Try node's next sibling
       node = nodeNextTree;
@@ -246,7 +245,7 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
     node = node->nextNode();
   }
   assert(false);
-  return Node * ();
+  return nullptr;
 }
 
 const Node* Node::parentOfDescendant(const Node* descendant,
@@ -257,9 +256,9 @@ const Node* Node::parentOfDescendant(const Node* descendant,
   *position = 0;
   const TypeBlock* descendantBlock = descendant.block();
   if (descendantBlock < block()) {
-    return Node * ();
+    return nullptr;
   }
-  Node* parent = Node * ();
+  Node* parent = nullptr;
   Node* node = this;
   while (true) {
     assert(descendantBlock >= node->block());
@@ -268,7 +267,7 @@ const Node* Node::parentOfDescendant(const Node* descendant,
       // node is not descendant's ancestor
       if (parent.isUninitialized()) {
         // node is the root, no parent can be found
-        return Node * ();
+        return nullptr;
       }
       // Try node's next sibling
       *position = *position + 1;
@@ -284,7 +283,7 @@ const Node* Node::parentOfDescendant(const Node* descendant,
     node = node->nextNode();
   }
   assert(false);
-  return Node * ();
+  return nullptr;
 }
 
 int Node::numberOfDescendants(bool includeSelf) const {

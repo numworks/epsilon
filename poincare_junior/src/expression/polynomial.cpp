@@ -307,14 +307,14 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 /* PolynomialParser */
 
 Node* PolynomialParser::GetVariables(const Node* expression) {
-  if (expression.block()->isInteger()) {  // TODO: generic belongToField?
+  if (expression->block()->isInteger()) {  // TODO: generic belongToField?
     return KSet();
   }
-  BlockType type = expression.type();
+  BlockType type = expression->type();
   // TODO: match
   if (type == BlockType::Power) {
-    Node* base = expression.nextNode();
-    Node* exponent = base.nextTree();
+    const Node* base = expression->nextNode();
+    const Node* exponent = base->nextTree();
     if (Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
       EditionPool* editionPool = EditionPool::sharedEditionPool();
@@ -328,7 +328,7 @@ Node* PolynomialParser::GetVariables(const Node* expression) {
     for (std::pair<Node*, int> indexedNode :
          NodeIterator::Children<Forward, NoEditable>(expression)) {
       Node* child = std::get<Node*>(indexedNode);
-      if (child.type() == BlockType::Addition) {
+      if (child->type() == BlockType::Addition) {
         assert(type != BlockType::Addition);
         variables = Set::Add(variables, child);
       } else {
@@ -359,7 +359,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
       break;
     }
   }
-  if (variable.isUninitialized()) {
+  if (!variable) {
     // expression is not a polynomial of variables
     return expression;
   }
@@ -412,7 +412,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
   if (PatternMatching::Match(KPow(KPlaceholder<Placeholders::A>(),
                                   KPlaceholder<Placeholders::B>()),
                              expression, &ctx)) {
-    Node* exponent = ctx.getNode(Placeholders::B);
+    const Node* exponent = ctx.getNode(Placeholders::B);
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);

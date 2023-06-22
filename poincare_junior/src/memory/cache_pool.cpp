@@ -10,11 +10,11 @@ namespace PoincareJ {
 
 Node *CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
-    return Node * ();
+    return nullptr;
   }
   uint16_t index = indexForId(id);
   if (index == NoNodeIdentifier) {
-    return Node * ();
+    return nullptr;
   }
   return Pool::ReferenceTable::nodeForIdentifier(index);
 }
@@ -75,7 +75,8 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
     m_nodeOffsetForIdentifier[i] -= numberOfFreedBlocks;
   }
   if (nodeToUpdate) {
-    *nodeToUpdate = Node * (nodeToUpdate->block() - numberOfFreedBlocks);
+    *nodeToUpdate =
+        Node::FromBlocks(nodeToUpdate->block() - numberOfFreedBlocks);
   }
   static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
                                               cachePoolSize);
@@ -95,7 +96,7 @@ uint16_t CachePool::storeEditedTree() {
   if (m_editionPool.size() == 0) {
     return ReferenceTable::NoNodeIdentifier;
   }
-  uint16_t id = m_referenceTable.storeNode(Node * (lastBlock()));
+  uint16_t id = m_referenceTable.storeNode(Node::FromBlocks(lastBlock()));
   assert(id != ReferenceTable::NoNodeIdentifier);
   resetEditionPool();
   m_editionPool.flush();

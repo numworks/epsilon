@@ -43,10 +43,9 @@ class Tree : public AbstractTree {
   static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
   // Enclose with TreeBorder Blocks when cast into Node* for navigation
-  constexpr operator Node*() const {
-    return Tree<BlockType::TreeBorder, Blocks...,
-                BlockType::TreeBorder>::k_blocks +
-           1;
+  constexpr operator const Node*() const {
+    return Node::FromBlocks(&Tree<BlockType::TreeBorder, Blocks...,
+                                  BlockType::TreeBorder>::k_blocks[1]);
   }
 };
 
@@ -131,12 +130,12 @@ consteval auto KNAry(CTS... args) {
  */
 
 template <Block Tag>
-consteval Node* KUnary(Node* a) {
+consteval const Node* KUnary(Node* a) {
   return Tree<>();
 }
 
 template <Block Tag>
-consteval Node* KBinary(Node* a, Node* b) {
+consteval const Node* KBinary(Node* a, Node* b) {
   return Tree<>();
 }
 
@@ -149,7 +148,7 @@ template <class... Args>
 concept HasANodeConcept = (false || ... || std::is_same<Node*, Args>::value);
 template <Block Tag, class... Args>
   requires HasANodeConcept<Args...>
-consteval Node* KNAry(Args... args) {
+consteval const Node* KNAry(Args... args) {
   return Tree<>();
 }
 

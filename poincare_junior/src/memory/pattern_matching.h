@@ -36,9 +36,9 @@ class PatternMatching {
  public:
   class Context {
    public:
-    Node* getNode(uint8_t tag) const { return m_array[tag]; }
+    const Node* getNode(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
-    void setNode(uint8_t tag, Node* node, uint8_t numberOfTrees) {
+    void setNode(uint8_t tag, const Node* node, uint8_t numberOfTrees) {
       m_array[tag] = node;
       m_numberOfTrees[tag] = numberOfTrees;
     }
@@ -52,14 +52,14 @@ class PatternMatching {
 #endif
 
    private:
-    Node* m_array[Placeholder::Tag::NumberOfTags];
+    const Node* m_array[Placeholder::Tag::NumberOfTags];
     uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
   };
 
   static bool Match(const Node* pattern, const Node* source, Context* context);
   static EditionReference Create(const Node* structure,
                                  const Context context = Context()) {
-    return CreateTree(structure, context, Node * ());
+    return CreateTree(structure, context, nullptr);
   }
 
  private:

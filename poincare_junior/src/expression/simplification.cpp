@@ -16,12 +16,12 @@ namespace PoincareJ {
 
 using namespace Placeholders;
 
-bool IsInteger(Node* u) { return u.block()->isInteger(); }
-bool IsNumber(Node* u) { return u.block()->isNumber(); }
-bool IsRational(Node* u) { return u.block()->isRational(); }
+bool IsInteger(Node* u) { return u->block()->isInteger(); }
+bool IsNumber(Node* u) { return u->block()->isNumber(); }
+bool IsRational(Node* u) { return u->block()->isRational(); }
 bool IsConstant(Node* u) { return IsNumber(u); }
-bool IsZero(Node* u) { return u.type() == BlockType::Zero; }
-bool IsUndef(Node* u) { return u.type() == BlockType::Undefined; }
+bool IsZero(Node* u) { return u->type() == BlockType::Zero; }
+bool IsUndef(Node* u) { return u->type() == BlockType::Undefined; }
 
 void DropNode(EditionReference* u) {
   Node* previousU = *u;

@@ -11,8 +11,8 @@
 
 namespace PoincareJ {
 
-EditionReference::EditionReference(Node* node) {
-  if (node->isUninitialized()) {
+EditionReference::EditionReference(const Node* node) {
+  if (!node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
   }
@@ -23,20 +23,25 @@ EditionReference::EditionReference(Node* node) {
     *this = EditionReference(pool->clone(node));
     return;
   }
+  m_identifier =
+      EditionPool::sharedEditionPool()->referenceNode(const_cast<Node*>(node));
+}
+
+EditionReference::EditionReference(Node* node) {
+  assert(EditionPool::sharedEditionPool()->contains(node->block()));
   m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
 }
 
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
   std::cout << "id: " << m_identifier;
-  static_cast<Node*>(*this).log(std::cout, true, 1, true);
+  static_cast<Node*>(*this)->log(std::cout, true, 1, true);
   std::cout << std::endl;
 }
 #endif
 
-EditionReference::operator const Node*() const {
-  Node* n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
-  return n;
+EditionReference::operator Node*() const {
+  return EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
@@ -50,18 +55,18 @@ Node* EditionReference::replaceBy(Node* newNode, bool oldIsTree,
                                   bool newIsTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Node* oldNode = *this;
-  int oldSize = oldIsTree ? oldNode.treeSize() : oldNode.nodeSize();
-  int newSize = newIsTree ? newNode.treeSize() : newNode.nodeSize();
-  Block* oldBlock = oldNode.block();
-  Block* newBlock = newNode.block();
+  int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
+  int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
+  Block* oldBlock = oldNode->block();
+  Block* newBlock = newNode->block();
   if (oldBlock == newBlock && oldSize == newSize) {
     return newNode;
   }
   Block* finalBlock = oldBlock;
-  if (pool->contains(newNode.block())) {
+  if (pool->contains(newNode->block())) {
     // Fractal scheme
-    assert(!(newIsTree && oldNode.hasAncestor(newNode, true)));
-    if (oldIsTree && newNode.hasAncestor(oldNode, true)) {
+    assert(!(newIsTree && oldNode->hasAncestor(newNode, true)));
+    if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
       oldSize -= newSize;
     }
     pool->moveBlocks(oldBlock, newBlock, newSize);
@@ -88,7 +93,7 @@ Node* EditionReference::replaceBy(Node* newNode, bool oldIsTree,
     Log(LoggerType::Edition, "Replace", finalBlock, newSize);
 #endif
   }
-  return Node * (finalBlock);
+  return Node::FromBlocks(finalBlock);
 }
 
 EditionReference EditionReference::matchAndCreate(const Node* pattern,
@@ -145,7 +150,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   int initializedPlaceHolders = 0;
   EditionReference placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    if (ctx.getNode(i).isUninitialized()) {
+    if (!ctx.getNode(i)) {
       continue;
     }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
@@ -154,7 +159,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
     }
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);
-    if (ctx.getNode(i).isUninitialized()) {
+    if (!ctx.getNode(i)) {
       placeholders[i] = EditionReference();
     } else if (numberOfTrees == 0) {
       // Use the last block so that placeholders[i] stays initialized
@@ -163,7 +168,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
       placeholders[i] = EditionReference(ctx.getNode(i));
     }
     // Invalidate context before anything is detached.
-    ctx.setNode(i, Node * (), numberOfTrees);
+    ctx.setNode(i, nullptr, numberOfTrees);
   }
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
@@ -179,9 +184,9 @@ bool EditionReference::matchAndReplace(const Node* pattern,
       continue;
     }
     // Get a Node to the first placeholder tree, and detach as many as necessary
-    Node* trees = placeholders[i].block();
+    Node* trees = Node::FromBlocks(placeholders[i].block());
     // If the placeHolder matches the entire Tree, restore it after detaching.
-    bool restoreReference = trees.block() == block();
+    bool restoreReference = trees->block() == block();
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       EditionReference(trees).detachTree();
     }
@@ -219,8 +224,8 @@ bool EditionReference::matchAndReplace(const Node* pattern,
 
 void EditionReference::remove(bool isTree) {
   Block* b = block();
-  size_t size = isTree ? static_cast<Node*>(*this).treeSize()
-                       : static_cast<Node*>(*this).nodeSize();
+  size_t size = isTree ? static_cast<Node*>(*this)->treeSize()
+                       : static_cast<Node*>(*this)->nodeSize();
   EditionPool::sharedEditionPool()->removeBlocks(b, size);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
@@ -231,9 +236,9 @@ void EditionReference::insert(Node* nodeToInsert, bool before, bool isTree) {
   Node* destination = before ? static_cast<Node*>(*this) : nextNode();
   EditionPool* pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert =
-      isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
-  if (pool->contains(nodeToInsert.block())) {
-    pool->moveBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
+      isTree ? nodeToInsert->treeSize() : nodeToInsert->nodeSize();
+  if (pool->contains(nodeToInsert->block())) {
+    pool->moveBlocks(destination->block(), nodeToInsert->block(), sizeToInsert);
 #if POINCARE_POOL_VISUALIZATION
     Block* dst = destination.block();
     Block* addedBlock = dst >= nodeToInsert.block() ? dst - sizeToInsert : dst;
@@ -241,7 +246,8 @@ void EditionReference::insert(Node* nodeToInsert, bool before, bool isTree) {
         nodeToInsert.block());
 #endif
   } else {
-    pool->insertBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
+    pool->insertBlocks(destination->block(), nodeToInsert->block(),
+                       sizeToInsert);
 #if POINCARE_POOL_VISUALIZATION
     Log(LoggerType::Edition, "Insert", destination.block(), sizeToInsert);
 #endif
@@ -251,9 +257,9 @@ void EditionReference::insert(Node* nodeToInsert, bool before, bool isTree) {
 void EditionReference::detach(bool isTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Block* destination = pool->lastBlock();
-  size_t sizeToMove = isTree ? static_cast<Node*>(*this).treeSize()
-                             : static_cast<Node*>(*this).nodeSize();
-  Block* source = static_cast<Node*>(*this).block();
+  size_t sizeToMove = isTree ? static_cast<Node*>(*this)->treeSize()
+                             : static_cast<Node*>(*this)->nodeSize();
+  Block* source = static_cast<Node*>(*this)->block();
   pool->moveBlocks(destination, source, sizeToMove);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
@@ -263,9 +269,10 @@ void EditionReference::detach(bool isTree) {
 
 void InsertNodeBeforeNode(EditionReference* target, Node* nodeToInsert) {
   Node* previousTarget = *target;
-  if (EditionPool::sharedEditionPool()->contains(nodeToInsert.block()) &&
-      nodeToInsert.block() < previousTarget.block()) {
-    previousTarget = Node * (previousTarget.block() - nodeToInsert.nodeSize());
+  if (EditionPool::sharedEditionPool()->contains(nodeToInsert->block()) &&
+      nodeToInsert->block() < previousTarget->block()) {
+    previousTarget =
+        Node::FromBlocks(previousTarget->block() - nodeToInsert->nodeSize());
   }
   target->insertNodeBeforeNode(nodeToInsert);
   *target = previousTarget;
@@ -273,9 +280,10 @@ void InsertNodeBeforeNode(EditionReference* target, Node* nodeToInsert) {
 
 void InsertTreeBeforeNode(EditionReference* target, Node* treeToInsert) {
   Node* previousTarget = *target;
-  if (EditionPool::sharedEditionPool()->contains(treeToInsert.block()) &&
-      treeToInsert.block() < previousTarget.block()) {
-    previousTarget = Node * (previousTarget.block() - treeToInsert.treeSize());
+  if (EditionPool::sharedEditionPool()->contains(treeToInsert->block()) &&
+      treeToInsert->block() < previousTarget->block()) {
+    previousTarget =
+        Node::FromBlocks(previousTarget->block() - treeToInsert->treeSize());
   }
   target->insertTreeBeforeNode(treeToInsert);
   *target = previousTarget;

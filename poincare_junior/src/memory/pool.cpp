@@ -8,7 +8,7 @@ size_t Pool::numberOfTrees() const {
   const TypeBlock* currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
-    currentBlock = Node * (currentBlock).nextTree().block();
+    currentBlock = Node::FromBlocks(currentBlock)->nextTree()->block();
     result++;
   }
   assert(currentBlock == lastBlock());
@@ -33,16 +33,16 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node* node, size_t index) {
 
 Node* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
-    return Node * ();
+    return nullptr;
   }
   assert(id < m_length);
   uint16_t offset =
       const_cast<Pool::ReferenceTable*>(this)->nodeOffsetArray()[id];
   if (offset == NoNodeIdentifier) {
-    return Node * ();
+    return nullptr;
   }
   assert(offset <= m_pool->size());
-  return Node * (m_pool->firstBlock() + offset);
+  return Node::FromBlocks(m_pool->firstBlock() + offset);
 }
 
 bool Pool::ReferenceTable::reset() {
@@ -57,7 +57,7 @@ bool Pool::ReferenceTable::reset() {
 #if POINCARE_MEMORY_TREE_LOG
 
 void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
-                                         Node* node) const {
+                                         const Node* node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
     Node* n = Pool::ReferenceTable::nodeForIdentifier(i);
@@ -77,7 +77,7 @@ void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Pool::logNode(std::ostream& stream, Node* node, bool recursive,
+void Pool::logNode(std::ostream& stream, const Node* node, bool recursive,
                    bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";

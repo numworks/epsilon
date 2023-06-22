@@ -8,7 +8,7 @@ const Node* Context::TreeForIdentifier(const char* identifier) {
   Ion::Storage::Record r =
       Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtensions(
           identifier, k_extensions, k_numberOfExtensions);
-  return Node * (static_cast<const TypeBlock*>(r.value().buffer));
+  return Node::FromBlocks(static_cast<const TypeBlock*>(r.value().buffer));
 }
 
 bool Context::SetTreeForIdentifier(const Node* node, const char* identifier) {

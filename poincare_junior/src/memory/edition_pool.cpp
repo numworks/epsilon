@@ -19,7 +19,7 @@ Node *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (!m_pool->contains(n.block()) && n.block() != m_pool->lastBlock()) {
     /* The node has been corrupted, this is not referenced anymore. Referencing
      * the last block is tolerated though. */
-    return Node * ();
+    return nullptr;
   }
   return n;
 }
@@ -84,8 +84,8 @@ bool EditionPool::executeAndDump(ActionWithContext action, void *context,
   if (!execute(action, context, data, maxSize, relax)) {
     return false;
   }
-  assert(Node * (firstBlock()).treeSize() <= maxSize);
-  Node *(firstBlock()).copyTreeTo(address);
+  assert(Node::FromBlocks(firstBlock())->treeSize() <= maxSize);
+  Node::FromBlocks(firstBlock())->copyTreeTo(address);
   flush();
   return true;
 }
@@ -183,18 +183,18 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
 }
 
 Node *EditionPool::initFromAddress(const void *address, bool isTree) {
-  Node *node = Node * (reinterpret_cast<const TypeBlock *>(address));
+  Node *node = Node::FromBlocks(reinterpret_cast<const TypeBlock *>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   TypeBlock *copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
                     size * sizeof(Block))) {
-    return Node * ();
+    return nullptr;
   }
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Copy", copiedTree,
-      isTree ? Node * (copiedTree).treeSize() : Node * (copiedTree).nodeSize());
+      isTree ? Node::FromBlockscopiedTree).treeSize() : Node::FromBlockscopiedTree).nodeSize());
 #endif
-  return Node * (copiedTree);
+  return Node::FromBlocks(copiedTree);
 }
 
 bool EditionPool::execute(ActionWithContext action, void *context,
@@ -238,7 +238,7 @@ Node *EditionPool::push(Types... args) {
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Push", newNode, i);
 #endif
-  return Node * (newNode);
+  return Node::FromBlocks(newNode);
 }
 
 bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {

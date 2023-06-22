@@ -7,7 +7,6 @@
 #include <poincare_junior/src/layout/empty_rectangle.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/edition_reference.h>
-
 #include <poincare_junior/src/memory/node.h>
 
 #include "layout_selection.h"
@@ -170,7 +169,9 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
 
   TypeBlock* layoutBuffer() { return m_layoutBuffer; }
-  const Node* rootNode() const override { return Node * (m_layoutBuffer); }
+  const Node* rootNode() const override {
+    return Node::FromBlocks(m_layoutBuffer);
+  }
   const Node* cursorNode() const override { return m_cursorNode; }
 
   /* Layout insertion */
@@ -207,11 +208,11 @@ class LayoutBufferCursor final : public LayoutCursor {
     friend class LayoutBufferCursor;
     EditionPoolCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
-      setCursorNode(Node * (rootNode().block() + cursorOffset));
+      setCursorNode(Node::FromBlocks(rootNode().block() + cursorOffset));
     }
 
     const Node* rootNode() const override {
-      return Node * (EditionPool::sharedEditionPool()->firstBlock());
+      return Node::FromBlocks(EditionPool::sharedEditionPool()->firstBlock());
     }
     const Node* cursorNode() const override { return m_cursorReference; }
 

@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 class Number {
  public:
-  static bool IsZero(const Node* n) { return n.type() == BlockType::Zero; }
+  static bool IsZero(const Node* n) { return n->type() == BlockType::Zero; }
   static EditionReference Addition(const Node* i, const Node* j);
   static EditionReference Multiplication(const Node* i, const Node* j);
 };

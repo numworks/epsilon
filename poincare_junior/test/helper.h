@@ -56,7 +56,7 @@ inline void log_cache_references() {}
 
 inline void assert_node_equals_blocks(const Node* node,
                                       std::initializer_list<Block> blocks) {
-  Block* block = node->block();
+  const Block* block = node->block();
   for (Block b : blocks) {
     quiz_assert(*block == b);
     block = block->next();
@@ -65,7 +65,7 @@ inline void assert_node_equals_blocks(const Node* node,
 }
 
 inline void assert_trees_are_equal(const Node* tree0, const Node* tree1) {
-  quiz_assert(tree0.isUninitialized() == tree1.isUninitialized());
+  quiz_assert((tree0 == nullptr) == (tree1 == nullptr));
   quiz_assert(Comparison::AreEqual(tree0, tree1));
 }
 
@@ -113,12 +113,12 @@ inline void reset_pools() {
 inline void assert_pool_contains(Pool* pool,
                                  std::initializer_list<const Node*> nodes) {
   quiz_assert(pool->size() > 0);
-  Node* tree(pool->firstBlock());
+  Node* tree = Node::FromBlocks(pool->firstBlock());
   for (const Node* n : nodes) {
     assert_trees_are_equal(n, tree);
-    tree = tree.nextTree();
+    tree = tree->nextTree();
   }
-  quiz_assert(tree.block() == pool->lastBlock());
+  quiz_assert(tree->block() == pool->lastBlock());
 }
 
 #if PLATFORM_DEVICE

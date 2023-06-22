@@ -7,7 +7,6 @@
  * Each Token has a Type and a range (firstLayout, length). */
 
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
-
 #include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {
@@ -84,8 +83,8 @@ class Token {
   }
 
   RackLayoutDecoder toDecoder() {
-    Node* rack = m_firstLayout.parent();
-    size_t start = rack.indexOfChild(m_firstLayout);
+    Node* rack = m_firstLayout->parent();
+    size_t start = rack->indexOfChild(m_firstLayout);
     return RackLayoutDecoder(rack, start, start + m_length);
   }
 

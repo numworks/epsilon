@@ -30,10 +30,9 @@ EditionReference Layout::EditionPoolTextToLayout(const char *text) {
         child = P_RACKL();
         break;
       case ')':
-        if (!currentLayout.parent().isUninitialized() &&
-            !currentLayout.parent().parent().isUninitialized() &&
-            currentLayout.parent().parent().type() == BlockType::RackLayout) {
-          currentLayout = currentLayout.parent().parent();
+        if (currentLayout.parent() && currentLayout.parent()->parent() &&
+            currentLayout.parent()->parent()->type() == BlockType::RackLayout) {
+          currentLayout = currentLayout.parent()->parent();
           continue;
         }
         // Jump to default case

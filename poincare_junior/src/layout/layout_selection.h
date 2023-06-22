@@ -22,15 +22,15 @@ class LayoutSelection {
    * */
   LayoutSelection(const Node* n, int startPosition, int endPosition)
       : m_node(n), m_startPosition(startPosition), m_endPosition(endPosition) {
-    assert(n.isUninitialized() ||
+    assert(!n ||
            (Layout::IsHorizontal(n) && 0 <= startPosition &&
-            startPosition <= n.numberOfChildren() && 0 <= endPosition &&
-            endPosition <= n.numberOfChildren()) ||
+            startPosition <= n->numberOfChildren() && 0 <= endPosition &&
+            endPosition <= n->numberOfChildren()) ||
            (startPosition >= 0 && startPosition <= 1 && endPosition >= 0 &&
             endPosition <= 1));
   }
 
-  LayoutSelection() : LayoutSelection(Node * (), 0, 0) {}
+  LayoutSelection() : LayoutSelection(nullptr, 0, 0) {}
 
 #if 0
   LayoutSelection clone() {
@@ -38,9 +38,7 @@ class LayoutSelection {
   }
 #endif
 
-  bool isEmpty() const {
-    return m_node->isUninitialized() || m_startPosition == m_endPosition;
-  }
+  bool isEmpty() const { return !m_node || m_startPosition == m_endPosition; }
 
   Node* layout() const { return m_node; }
   /* startPosition can be higher than endPosition if the selection is from
@@ -51,7 +49,7 @@ class LayoutSelection {
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
   bool containsNode(const Node* n) const {
-    const TypeBlock* b = n.block();
+    const TypeBlock* b = n->block();
     return !isEmpty() &&
            (Layout::IsHorizontal(m_node)
                 ? (b >= m_node->childAtIndex(leftPosition()).block() &&
@@ -60,7 +58,7 @@ class LayoutSelection {
   }
 
  private:
-  const Node* m_node;
+  Node* m_node;
   int m_startPosition;
   int m_endPosition;
 };

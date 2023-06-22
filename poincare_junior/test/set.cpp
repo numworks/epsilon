@@ -20,7 +20,7 @@ QUIZ_CASE(pcj_set) {
   // Pop
   assert_trees_are_equal(Set::Pop(set0), 1_e);
 
-  Node* set1 = KSet(-1_e, 2_e, 5_e, 6_e, 7_e);
+  const Node* set1 = KSet(-1_e, 2_e, 5_e, 6_e, 7_e);
   // Union {2, 3} U {-1, 2, 5, 6, 7}
   EditionReference unionSet = Set::Union(set0, set1);
   assert_trees_are_equal(unionSet, KSet(-1_e, 2_e, 3_e, 5_e, 6_e, 7_e));

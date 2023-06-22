@@ -126,7 +126,7 @@ Node *IntegerHandler::pushOnEditionPool() {
   TypeBlock typeBlock(sign() == NonStrictSign::Negative
                           ? BlockType::IntegerNegBig
                           : BlockType::IntegerPosBig);
-  Node *node = Node * (editionPool->pushBlock(typeBlock));
+  Node *node = Node::FromBlocks(editionPool->pushBlock(typeBlock));
   editionPool->pushBlock(m_numberOfDigits);
   pushDigitsOnEditionPool();
   editionPool->pushBlock(m_numberOfDigits);
@@ -701,7 +701,7 @@ IntegerHandler Integer::Handler(const Node *expression) {
 }
 
 bool Integer::IsUint8(const Node *expression) {
-  return expression.block()->isInteger() &&
+  return expression->block()->isInteger() &&
          Integer::Handler(expression).isUnsignedType<uint8_t>();
 }
 

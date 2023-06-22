@@ -29,7 +29,7 @@ IntegerHandler Rational::Numerator(const Node* node) {
     }
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig: {
-      Block* block = node->block();
+      const Block* block = node->block();
       uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(2));
@@ -44,7 +44,7 @@ IntegerHandler Rational::Numerator(const Node* node) {
     }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-      Block* block = node->block();
+      const Block* block = node->block();
       uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(3));
@@ -113,7 +113,7 @@ Node* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
     // TODO: set error type to be "Unrepresentable rational"
     ExceptionCheckpoint::Raise();
-    return Node * ();
+    return nullptr;
   }
   pool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
   pool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));

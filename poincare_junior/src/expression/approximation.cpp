@@ -78,7 +78,7 @@ T Approximation::MapAndReduce(const Node* node, Reductor<T> reductor) {
 }
 
 EditionReference Approximation::ReplaceWithApproximation(EditionReference ref) {
-  const Node* root = ref;
+  Node* root = ref;
   ApproximateAndReplaceEveryScalar(ref);
   return EditionReference(root);
 }

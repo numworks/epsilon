@@ -11,7 +11,7 @@ namespace PoincareJ {
 class Expression final : public Reference {
  public:
   Expression(const Node* tree) : Reference(tree) {
-    assert(tree.block()->isExpression());
+    assert(tree->block()->isExpression());
   }
   using Reference::Reference;
   // TODO : Delete this method and adapt tests ?

@@ -33,9 +33,9 @@ class CachePool final : public Pool {
     return m_referenceTable.isEmpty()
                ? static_cast<const TypeBlock *>(
                      static_cast<const Block *>(m_blocks))
-               : Node * (m_blocks + m_referenceTable.lastOffset())
-                            .nextTree()
-                            .block();
+               : Node::FromBlocks(m_blocks + m_referenceTable.lastOffset())
+                     ->nextTree()
+                     ->block();
   }
 
   // Broader implementation of Pool::contains, checking unused pool as well

@@ -238,7 +238,7 @@ Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
         EditionReference reference(tree);
         Simplification::Simplify(&reference);
       },
-      Node * (static_cast<const TypeBlock *>(expressionAddress)));
+      Node::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
 Layout Expression::toLayout() const {

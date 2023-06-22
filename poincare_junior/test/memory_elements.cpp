@@ -393,14 +393,13 @@ QUIZ_CASE(pcj_type_block) {
   }
 }
 
-void assert_tree_equals_blocks(Node* node,
+void assert_tree_equals_blocks(const Node* node,
                                std::initializer_list<Block> blocks) {
   assert_node_equals_blocks(node, blocks);
   quiz_assert(blocks.size() == node->treeSize());
 }
 
 QUIZ_CASE(pcj_constexpr_tree_constructor) {
-  Node* n = 12_e;
   assert_tree_equals_blocks(0_e, {TypeBlock(BlockType::Zero)});
   assert_tree_equals_blocks(1_e, {TypeBlock(BlockType::One)});
   assert_tree_equals_blocks(2_e, {TypeBlock(BlockType::Two)});
@@ -516,7 +515,7 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree e = 6_e;
   Tree f = 7_e;
   Tree g = 8_e;
-  Node* newChildren[] = {e, f, g};
+  const Node* newChildren[] = {e, f, g};
   for (std::pair<EditionReference, int> indexedRef :
        NodeIterator::Children<Forward, Editable>(mult)) {
     std::get<EditionReference>(indexedRef)
@@ -589,8 +588,8 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree n11 = 11_e;
   Tree n13 = 13_e;
   Tree n14 = 14_e;
-  Node* newChildren1[] = {n10, n11};
-  Node* newChildren2[] = {n13, n14};
+  const Node* newChildren1[] = {n10, n11};
+  const Node* newChildren2[] = {n13, n14};
   // Edit two nodes children forward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs :
        MultipleNodesIterator::Children<Forward, Editable, 2>(
@@ -602,7 +601,7 @@ QUIZ_CASE(pcj_node_iterator) {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node* children1[] = {n10, n11, n6};
+  const Node* children1[] = {n10, n11, n6};
   for (const std::pair<Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node*>(indexedNode),
@@ -647,68 +646,68 @@ QUIZ_CASE(pcj_node) {
   EditionPool* editionPool = cachePool->editionPool();
 
   // operator==
-  Node* node0 = 42_e;
+  const Node* node0 = 42_e;
   Node* node1 =
       editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(42));
-  quiz_assert(node0 != node1 && *node0.block() == *node1.block());
-  Node* node2(editionPool->firstBlock());
+  quiz_assert(node0 != node1 && node0->block() == node1->block());
+  Node* node2 = Node::FromBlocks(editionPool->firstBlock());
   quiz_assert(node2 == node1);
 
   // Node* navigation
   constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
   constexpr Tree e2 = KPow(5_e, 6_e);
-  Node* n1 = EditionReference(e1);
-  Node* n2 = EditionReference(e2);
-  quiz_assert(n1.treeSize() == 23);  // TODO: Magic Number
-  assert_trees_are_equal(n1.nextNode(), KAdd(1_e, 2_e));
-  assert_trees_are_equal(n1.nextTree(), e2);
-  assert_trees_are_equal(n2.previousNode(), 6_e);
-  assert_trees_are_equal(n2.previousTree(), e1);
-  assert_trees_are_equal(n1.nextNode().nextNode().parent(), n1.nextNode());
-  assert_trees_are_equal(n1.nextNode().nextNode().root(), n1);
-  quiz_assert(n1.numberOfDescendants(false) == 8);
-  quiz_assert(n1.numberOfDescendants(true) == 9);
-  assert_trees_are_equal(n1.childAtIndex(0), n1.nextNode());
-  assert_trees_are_equal(n1.childAtIndex(1),
-                         n1.nextNode().nextNode().nextNode().nextNode());
-  quiz_assert(n1.indexOfChild(n1.childAtIndex(1)) == 1);
-  quiz_assert(n1.childAtIndex(0).indexInParent() == 0);
-  quiz_assert(!n1.hasChild(e2));
-  quiz_assert(n1.hasChild(n1.childAtIndex(2)));
-  quiz_assert(!n1.hasSibling(n1.childAtIndex(2)));
-  quiz_assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
+  const Node* n1 = e1;
+  const Node* n2 = e2;
+  quiz_assert(n1->treeSize() == 23);  // TODO: Magic Number
+  assert_trees_are_equal(n1->nextNode(), KAdd(1_e, 2_e));
+  assert_trees_are_equal(n1->nextTree(), e2);
+  assert_trees_are_equal(n2->previousNode(), 6_e);
+  assert_trees_are_equal(n2->previousTree(), e1);
+  assert_trees_are_equal(n1->nextNode()->nextNode()->parent(), n1->nextNode());
+  assert_trees_are_equal(n1->nextNode()->nextNode()->root(), n1);
+  quiz_assert(n1->numberOfDescendants(false) == 8);
+  quiz_assert(n1->numberOfDescendants(true) == 9);
+  assert_trees_are_equal(n1->childAtIndex(0), n1->nextNode());
+  assert_trees_are_equal(n1->childAtIndex(1),
+                         n1->nextNode()->nextNode()->nextNode()->nextNode());
+  quiz_assert(n1->indexOfChild(n1->childAtIndex(1)) == 1);
+  quiz_assert(n1->childAtIndex(0)->indexInParent() == 0);
+  quiz_assert(!n1->hasChild(e2));
+  quiz_assert(n1->hasChild(n1->childAtIndex(2)));
+  quiz_assert(!n1->hasSibling(n1->childAtIndex(2)));
+  quiz_assert(n1->nextNode()->hasSibling(n1->childAtIndex(2)));
 
-  quiz_assert(n1.commonAncestor(n1, n1) == n1);
-  quiz_assert(n1.commonAncestor(n1, n1.childAtIndex(0).childAtIndex(1)) == n1);
-  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(1), n1) == n1);
-  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(1),
-                                n1.childAtIndex(2)) == n1);
-  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(0),
-                                n1.childAtIndex(0).childAtIndex(1)) ==
-              n1.childAtIndex(0));
-  quiz_assert(n1.commonAncestor(n1.childAtIndex(3).childAtIndex(0),
-                                n1.childAtIndex(3).childAtIndex(1)) ==
-              n1.childAtIndex(3));
-  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n2)
-                  .isUninitialized());
-  quiz_assert(n1.commonAncestor(n2, n2.childAtIndex(0)).isUninitialized());
-  quiz_assert(
-      n2.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n2.childAtIndex(0))
-          .isUninitialized());
+  quiz_assert(n1->commonAncestor(n1, n1) == n1);
+  quiz_assert(n1->commonAncestor(n1, n1->childAtIndex(0)->childAtIndex(1)) ==
+              n1);
+  quiz_assert(n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(1), n1) ==
+              n1);
+  quiz_assert(n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(1),
+                                 n1->childAtIndex(2)) == n1);
+  quiz_assert(n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(0),
+                                 n1->childAtIndex(0)->childAtIndex(1)) ==
+              n1->childAtIndex(0));
+  quiz_assert(n1->commonAncestor(n1->childAtIndex(3)->childAtIndex(0),
+                                 n1->childAtIndex(3)->childAtIndex(1)) ==
+              n1->childAtIndex(3));
+  quiz_assert(!n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(0), n2));
+  quiz_assert(!n1->commonAncestor(n2, n2->childAtIndex(0)));
+  quiz_assert(!n2->commonAncestor(n1->childAtIndex(0)->childAtIndex(0),
+                                  n2->childAtIndex(0)));
 
   int position;
-  quiz_assert(n1.parentOfDescendant(n1, &position).isUninitialized());
-  quiz_assert(n1.parentOfDescendant(n2, &position).isUninitialized());
-  quiz_assert(n2.parentOfDescendant(n1, &position).isUninitialized());
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0), &position) == n1);
+  quiz_assert(!n1->parentOfDescendant(n1, &position));
+  quiz_assert(!n1->parentOfDescendant(n2, &position));
+  quiz_assert(!n2->parentOfDescendant(n1, &position));
+  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(0), &position) == n1);
   quiz_assert(position == 0);
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(1), &position) == n1);
+  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(1), &position) == n1);
   quiz_assert(position == 1);
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(3).childAtIndex(0),
-                                    &position) == n1.childAtIndex(3));
+  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(3)->childAtIndex(0),
+                                     &position) == n1->childAtIndex(3));
   quiz_assert(position == 0);
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0).childAtIndex(1),
-                                    &position) == n1.childAtIndex(0));
+  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(0)->childAtIndex(1),
+                                     &position) == n1->childAtIndex(0));
   quiz_assert(position == 1);
 }
 

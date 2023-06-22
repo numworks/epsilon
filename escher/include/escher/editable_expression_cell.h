@@ -31,7 +31,7 @@ class EditableExpressionCell : public Bordered,
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  private:
-  constexpr static KDCoordinate k_minimalHeigh =
+  constexpr static KDCoordinate k_minimalHeight =
       Metric::ExpressionInputBarMinimalHeight;
   constexpr static KDCoordinate k_margin = Metric::LayoutViewMargin;
   // topMargin has + 1 to look the same as when the separator was included in it

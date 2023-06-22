@@ -37,7 +37,7 @@ void EditableExpressionCell::didBecomeFirstResponder() {
 
 KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {
   KDSize size = m_layoutField.minimalSizeForOptimalDisplay();
-  return KDSize(size.width(), std::max(size.height(), k_minimalHeigh));
+  return KDSize(size.width(), std::max(size.height(), k_minimalHeight));
 }
 
 }  // namespace Escher

@@ -75,10 +75,10 @@ class EditionReference {
   Node* cloneTreeOverNode(const Node* n) { return cloneOver(n, false, true); }
   Node* cloneNodeOverTree(const Node* n) { return cloneOver(n, true, false); }
   Node* cloneTreeOverTree(const Node* n) { return cloneOver(n, true, true); }
-  void removeNode() { remove(false); }
-  void removeTree() { remove(true); }
-  void detachNode() { detach(false); }
-  void detachTree() { detach(true); }
+  void removeNode() { node()->removeNode(); }
+  void removeTree() { node()->removeTree(); }
+  void detachNode() { node()->detachNode(); }
+  void detachTree() { node()->detachTree(); }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
@@ -94,8 +94,6 @@ class EditionReference {
   void moveAt(Node* nodeToMove, bool before, bool newIsTree);
   Node* cloneOver(const Node* n, bool oldIsTree, bool newIsTree);
   Node* moveOver(Node* n, bool oldIsTree, bool newIsTree);
-  void detach(bool isTree);
-  void remove(bool isTree);
   uint16_t m_identifier;
 };
 

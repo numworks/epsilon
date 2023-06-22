@@ -79,7 +79,7 @@ bool NAry::Flatten(EditionReference* reference) {
     if (reference->type() == child->type()) {
       modified = true;
       numberOfChildren += child->numberOfChildren() - 1;
-      EditionReference(child).removeNode();
+      child->removeNode();
     } else {
       child = child->nextTree();
       childIndex++;

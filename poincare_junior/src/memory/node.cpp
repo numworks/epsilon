@@ -428,4 +428,26 @@ const Node* Node::previousRelative(bool parent) const {
   return parent ? currentNode : closestSibling;
 }
 
+void Node::remove(bool isTree) {
+  Block* b = block();
+  size_t size = isTree ? treeSize() : nodeSize();
+  EditionPool::sharedEditionPool()->removeBlocks(b, size);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
+#endif
+}
+
+Node* Node::detach(bool isTree) {
+  EditionPool* pool = EditionPool::sharedEditionPool();
+  Block* destination = pool->lastBlock();
+  size_t sizeToMove = isTree ? treeSize() : nodeSize();
+  Block* source = block();
+  pool->moveBlocks(destination, source, sizeToMove);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
+      source);
+#endif
+  return Node::FromBlocks(destination);
+}
+
 }  // namespace PoincareJ

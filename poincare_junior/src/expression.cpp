@@ -227,7 +227,7 @@ Expression Expression::Parse(const Layout *layout) {
   return Expression(
       [](Node *node) {
         Parser::Parse(node);
-        EditionReference(node).removeTree();
+        node->removeTree();
       },
       layout);
 }

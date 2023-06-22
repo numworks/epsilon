@@ -235,15 +235,6 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   return true;
 }
 
-void EditionReference::remove(bool isTree) {
-  Block* b = block();
-  size_t size = isTree ? node()->treeSize() : node()->nodeSize();
-  EditionPool::sharedEditionPool()->removeBlocks(b, size);
-#if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
-#endif
-}
-
 void EditionReference::moveAt(Node* nodeToMove, bool before, bool newIsTree) {
   Node* destination = before ? node() : nextNode();
   EditionPool* pool = EditionPool::sharedEditionPool();
@@ -266,18 +257,6 @@ void EditionReference::cloneAt(const Node* nodeToClone, bool before,
       newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize());
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Insert", destination.block(), sizeToInsert);
-#endif
-}
-
-void EditionReference::detach(bool isTree) {
-  EditionPool* pool = EditionPool::sharedEditionPool();
-  Block* destination = pool->lastBlock();
-  size_t sizeToMove = isTree ? node()->treeSize() : node()->nodeSize();
-  Block* source = node()->block();
-  pool->moveBlocks(destination, source, sizeToMove);
-#if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
-      source);
 #endif
 }
 

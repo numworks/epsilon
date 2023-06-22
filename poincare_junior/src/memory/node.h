@@ -128,10 +128,21 @@ class Node {
 
   EditionReference clone() const;
 
+  // Modification
+
+  // Move the node/tree to the end of the pool
+  Node* detachNode() { return detach(false); };
+  Node* detachTree() { return detach(true); };
+  void removeNode() { remove(false); }
+  void removeTree() { remove(true); }
+
  private:
   bool canNavigateNext() const;
   bool canNavigatePrevious() const;
   const Node* previousRelative(bool parent) const;
+
+  Node* detach(bool isTree);
+  void remove(bool isTree);
 
   // Should be last - and most likely only - member
   TypeBlock m_block[0];

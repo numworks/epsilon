@@ -147,6 +147,7 @@ void TrigonometryListController::setExactAndApproximateExpression(
     angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);
   }
   assert(std::isfinite(angle));
+  assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
   m_model.setAngle(angle);
   setShowIllustration(true);
 }

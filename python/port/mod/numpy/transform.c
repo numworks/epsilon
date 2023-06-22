@@ -104,21 +104,21 @@ static mp_obj_t transform_compress(size_t n_args, const mp_obj_t *pos_args, mp_m
 
     #if ULAB_MAX_DIMS > 3
     size_t i = 0;
-    do {
+    while(i < shape[ULAB_MAX_DIMS - 4]) {
     #endif
         #if ULAB_MAX_DIMS > 2
         size_t j = 0;
-        do {
+        while(j < shape[ULAB_MAX_DIMS - 3]) {
         #endif
             #if ULAB_MAX_DIMS > 1
             size_t k = 0;
-            do {
+            while(k < shape[ULAB_MAX_DIMS - 2]) {
             #endif
                 size_t l = 0;
                 if(axis != mp_const_none) {
                     iterable = mp_getiter(condition, &iter_buf);
                 }
-                do {
+                while(l < shape[ULAB_MAX_DIMS - 1]) {
                     item = mp_iternext(iterable);
                     if(mp_obj_is_true(item)) {
                         memcpy(rarray, array, ndarray->itemsize);
@@ -126,14 +126,14 @@ static mp_obj_t transform_compress(size_t n_args, const mp_obj_t *pos_args, mp_m
                     }
                     array += strides[ULAB_MAX_DIMS - 1];
                     l++;
-                } while(l < shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 1
                 array -= strides[ULAB_MAX_DIMS - 1] * shape[ULAB_MAX_DIMS - 1];
                 array += strides[ULAB_MAX_DIMS - 2];
                 rarray -= rstrides[ULAB_MAX_DIMS - 1] * rshape[ULAB_MAX_DIMS - 1];
                 rarray += rstrides[ULAB_MAX_DIMS - 2];
                 k++;
-            } while(k < shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             array -= strides[ULAB_MAX_DIMS - 2] * shape[ULAB_MAX_DIMS - 2];
@@ -141,7 +141,7 @@ static mp_obj_t transform_compress(size_t n_args, const mp_obj_t *pos_args, mp_m
             rarray -= rstrides[ULAB_MAX_DIMS - 2] * rshape[ULAB_MAX_DIMS - 2];
             rarray += rstrides[ULAB_MAX_DIMS - 3];
             j++;
-        } while(j < shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         array -= strides[ULAB_MAX_DIMS - 3] * shape[ULAB_MAX_DIMS - 3];
@@ -149,7 +149,7 @@ static mp_obj_t transform_compress(size_t n_args, const mp_obj_t *pos_args, mp_m
         rarray -= rstrides[ULAB_MAX_DIMS - 2] * rshape[ULAB_MAX_DIMS - 2];
         rarray += rstrides[ULAB_MAX_DIMS - 3];
         i++;
-    } while(i < shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
 
     m_del(size_t, shape, ULAB_MAX_DIMS);
@@ -277,18 +277,18 @@ static mp_obj_t transform_delete(size_t n_args, const mp_obj_t *pos_args, mp_map
 
     #if ULAB_MAX_DIMS > 3
     size_t i = 0;
-    do {
+    while(i < shape[ULAB_MAX_DIMS - 4]) {
     #endif
         #if ULAB_MAX_DIMS > 2
         size_t j = 0;
-        do {
+        while(j < shape[ULAB_MAX_DIMS - 3]) {
         #endif
             #if ULAB_MAX_DIMS > 1
             size_t k = 0;
-            do {
+            while(k < shape[ULAB_MAX_DIMS - 2]) {
             #endif
                 size_t l = 0;
-                do {
+                while(l < shape[ULAB_MAX_DIMS - 1]) {
                     if(count == *index_array) {
                         index_array++;
                     } else {
@@ -298,7 +298,7 @@ static mp_obj_t transform_delete(size_t n_args, const mp_obj_t *pos_args, mp_map
                     array += strides[ULAB_MAX_DIMS - 1];
                     l++;
                     count++;
-                } while(l < shape[ULAB_MAX_DIMS - 1]);
+                }
                 if(axis != mp_const_none) {
                     index_array -= index_len;
                     count = 0;
@@ -309,7 +309,7 @@ static mp_obj_t transform_delete(size_t n_args, const mp_obj_t *pos_args, mp_map
                 rarray -= rstrides[ULAB_MAX_DIMS - 1] * rshape[ULAB_MAX_DIMS - 1];
                 rarray += rstrides[ULAB_MAX_DIMS - 2];
                 k++;
-            } while(k < shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             array -= strides[ULAB_MAX_DIMS - 2] * shape[ULAB_MAX_DIMS - 2];
@@ -317,7 +317,7 @@ static mp_obj_t transform_delete(size_t n_args, const mp_obj_t *pos_args, mp_map
             rarray -= rstrides[ULAB_MAX_DIMS - 2] * rshape[ULAB_MAX_DIMS - 2];
             rarray += rstrides[ULAB_MAX_DIMS - 3];
             j++;
-        } while(j < shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         array -= strides[ULAB_MAX_DIMS - 3] * shape[ULAB_MAX_DIMS - 3];
@@ -325,7 +325,7 @@ static mp_obj_t transform_delete(size_t n_args, const mp_obj_t *pos_args, mp_map
         rarray -= rstrides[ULAB_MAX_DIMS - 3] * rshape[ULAB_MAX_DIMS - 3];
         rarray += rstrides[ULAB_MAX_DIMS - 4];
         i++;
-    } while(i < shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
 
     // TODO: deleting shape generates a seg fault

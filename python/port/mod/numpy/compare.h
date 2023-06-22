@@ -36,13 +36,13 @@ MP_DECLARE_CONST_FUN_OBJ_3(compare_where_obj);
 #if ULAB_MAX_DIMS == 1
 #define COMPARE_LOOP(results, array, type_out, type_left, type_right, larray, lstrides, rarray, rstrides, OPERATOR)\
     size_t l = 0;\
-    do {\
+    while(l <  results->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  results->ndim < 1)) {\
         *((type_out *)(array)) = *((type_left *)(larray)) OPERATOR *((type_right *)(rarray)) ? (type_out)(*((type_left *)(larray))) : (type_out)(*((type_right *)(rarray)));\
         (array) += (results)->strides[ULAB_MAX_DIMS - 1];\
         (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
         l++;\
-    } while(l <  results->shape[ULAB_MAX_DIMS - 1]);\
+    }\
     return MP_OBJ_FROM_PTR(results);\
 
 #endif // ULAB_MAX_DIMS == 1
@@ -50,21 +50,21 @@ MP_DECLARE_CONST_FUN_OBJ_3(compare_where_obj);
 #if ULAB_MAX_DIMS == 2
 #define COMPARE_LOOP(results, array, type_out, type_left, type_right, larray, lstrides, rarray, rstrides, OPERATOR)\
     size_t k = 0;\
-    do {\
+    while(k <  results->shape[ULAB_MAX_DIMS - 2] || (k == 0 &&  results->ndim < 2)) {\
         size_t l = 0;\
-        do {\
+        while(l <  results->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  results->ndim < 1)) {\
             *((type_out *)(array)) = *((type_left *)(larray)) OPERATOR *((type_right *)(rarray)) ? (type_out)(*((type_left *)(larray))) : (type_out)(*((type_right *)(rarray)));\
             (array) += (results)->strides[ULAB_MAX_DIMS - 1];\
             (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
             l++;\
-        } while(l <  results->shape[ULAB_MAX_DIMS - 1]);\
+        }\
         (larray) -= (lstrides)[ULAB_MAX_DIMS - 1] * results->shape[ULAB_MAX_DIMS-1];\
         (larray) += (lstrides)[ULAB_MAX_DIMS - 2];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * results->shape[ULAB_MAX_DIMS-1];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
         k++;\
-    } while(k <  results->shape[ULAB_MAX_DIMS - 2]);\
+    }\
     return MP_OBJ_FROM_PTR(results);\
 
 #endif // ULAB_MAX_DIMS == 2
@@ -72,29 +72,29 @@ MP_DECLARE_CONST_FUN_OBJ_3(compare_where_obj);
 #if ULAB_MAX_DIMS == 3
 #define COMPARE_LOOP(results, array, type_out, type_left, type_right, larray, lstrides, rarray, rstrides, OPERATOR)\
     size_t j = 0;\
-    do {\
+    while(j <  results->shape[ULAB_MAX_DIMS - 3] || (j == 0 &&  results->ndim < 3)) {\
         size_t k = 0;\
-        do {\
+        while(k <  results->shape[ULAB_MAX_DIMS - 2] || (k == 0 &&  results->ndim < 2)) {\
             size_t l = 0;\
-            do {\
+            while(l <  results->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  results->ndim < 1)) {\
                 *((type_out *)(array)) = *((type_left *)(larray)) OPERATOR *((type_right *)(rarray)) ? (type_out)(*((type_left *)(larray))) : (type_out)(*((type_right *)(rarray)));\
                 (array) += (results)->strides[ULAB_MAX_DIMS - 1];\
                 (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
                 (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
                 l++;\
-            } while(l <  results->shape[ULAB_MAX_DIMS - 1]);\
+            }\
             (larray) -= (lstrides)[ULAB_MAX_DIMS - 1] * results->shape[ULAB_MAX_DIMS-1];\
             (larray) += (lstrides)[ULAB_MAX_DIMS - 2];\
             (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * results->shape[ULAB_MAX_DIMS-1];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
             k++;\
-        } while(k <  results->shape[ULAB_MAX_DIMS - 2]);\
+        }\
         (larray) -= (lstrides)[ULAB_MAX_DIMS - 2] * results->shape[ULAB_MAX_DIMS-2];\
         (larray) += (lstrides)[ULAB_MAX_DIMS - 3];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 2] * results->shape[ULAB_MAX_DIMS-2];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 3];\
         j++;\
-    } while(j <  results->shape[ULAB_MAX_DIMS - 3]);\
+    }\
     return MP_OBJ_FROM_PTR(results);\
 
 #endif // ULAB_MAX_DIMS == 3
@@ -102,37 +102,37 @@ MP_DECLARE_CONST_FUN_OBJ_3(compare_where_obj);
 #if ULAB_MAX_DIMS == 4
 #define COMPARE_LOOP(results, array, type_out, type_left, type_right, larray, lstrides, rarray, rstrides, OPERATOR)\
     size_t i = 0;\
-    do {\
+    while(i <  results->shape[ULAB_MAX_DIMS - 4] || (i == 0 &&  results->ndim < 4)) {\
         size_t j = 0;\
-        do {\
+        while(j <  results->shape[ULAB_MAX_DIMS - 3] || (j == 0 &&  results->ndim < 3)) {\
             size_t k = 0;\
-            do {\
+            while(k <  results->shape[ULAB_MAX_DIMS - 2] || (k == 0 &&  results->ndim < 2)) {\
                 size_t l = 0;\
-                do {\
+                while(l <  results->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  results->ndim < 1)) {\
                     *((type_out *)(array)) = *((type_left *)(larray)) OPERATOR *((type_right *)(rarray)) ? (type_out)(*((type_left *)(larray))) : (type_out)(*((type_right *)(rarray)));\
                     (array) += (results)->strides[ULAB_MAX_DIMS - 1];\
                     (larray) += (lstrides)[ULAB_MAX_DIMS - 1];\
                     (rarray) += (rstrides)[ULAB_MAX_DIMS - 1];\
                     l++;\
-                } while(l <  results->shape[ULAB_MAX_DIMS - 1]);\
+                }\
                 (larray) -= (lstrides)[ULAB_MAX_DIMS - 1] * results->shape[ULAB_MAX_DIMS-1];\
                 (larray) += (lstrides)[ULAB_MAX_DIMS - 2];\
                 (rarray) -= (rstrides)[ULAB_MAX_DIMS - 1] * results->shape[ULAB_MAX_DIMS-1];\
                 (rarray) += (rstrides)[ULAB_MAX_DIMS - 2];\
                 k++;\
-            } while(k <  results->shape[ULAB_MAX_DIMS - 2]);\
+            }\
             (larray) -= (lstrides)[ULAB_MAX_DIMS - 2] * results->shape[ULAB_MAX_DIMS-2];\
             (larray) += (lstrides)[ULAB_MAX_DIMS - 3];\
             (rarray) -= (rstrides)[ULAB_MAX_DIMS - 2] * results->shape[ULAB_MAX_DIMS-2];\
             (rarray) += (rstrides)[ULAB_MAX_DIMS - 3];\
             j++;\
-        } while(j <  results->shape[ULAB_MAX_DIMS - 3]);\
+        }\
         (larray) -= (lstrides)[ULAB_MAX_DIMS - 3] * results->shape[ULAB_MAX_DIMS-3];\
         (larray) += (lstrides)[ULAB_MAX_DIMS - 4];\
         (rarray) -= (rstrides)[ULAB_MAX_DIMS - 3] * results->shape[ULAB_MAX_DIMS-3];\
         (rarray) += (rstrides)[ULAB_MAX_DIMS - 4];\
         i++;\
-    } while(i <  results->shape[ULAB_MAX_DIMS - 4]);\
+    }\
     return MP_OBJ_FROM_PTR(results);\
 
 #endif // ULAB_MAX_DIMS == 4

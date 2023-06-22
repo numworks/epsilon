@@ -490,24 +490,24 @@ void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t ki
         #if ULAB_MAX_DIMS > 3
         size_t i=0;
         ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-4], "[");
-        do {
+        while(i < self->shape[ULAB_MAX_DIMS-4] || (i == 0 && self->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
             ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-3], "[");
-            do {
+            while(j < self->shape[ULAB_MAX_DIMS-3] || (j == 0 && self->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
                 ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-2], "[");
-                do {
+                while(k < self->shape[ULAB_MAX_DIMS-2] || (k == 0 && self->ndim < 2)) {
                 #endif
                     ndarray_print_row(print, self, array, self->strides[ULAB_MAX_DIMS-1], self->shape[ULAB_MAX_DIMS-1]);
                 #if ULAB_MAX_DIMS > 1
                     array += self->strides[ULAB_MAX_DIMS-2];
                     k++;
                     ndarray_print_bracket(print, k, self->shape[ULAB_MAX_DIMS-2], ",\n       ");
-                } while(k < self->shape[ULAB_MAX_DIMS-2]);
+                }
                 ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-2], "]");
                 #endif
             #if ULAB_MAX_DIMS > 2
@@ -515,7 +515,7 @@ void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t ki
                 ndarray_print_bracket(print, j, self->shape[ULAB_MAX_DIMS-3], ",\n\n       ");
                 array -= self->strides[ULAB_MAX_DIMS-2] * self->shape[ULAB_MAX_DIMS-2];
                 array += self->strides[ULAB_MAX_DIMS-3];
-            } while(j < self->shape[ULAB_MAX_DIMS-3]);
+            }
             ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-3], "]");
             #endif
         #if ULAB_MAX_DIMS > 3
@@ -523,7 +523,7 @@ void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t ki
             array += self->strides[ULAB_MAX_DIMS-4];
             i++;
             ndarray_print_bracket(print, i, self->shape[ULAB_MAX_DIMS-4], ",\n\n       ");
-        } while(i < self->shape[ULAB_MAX_DIMS-4]);
+        }
         ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-4], "]");
         #endif
     }
@@ -675,40 +675,40 @@ void ndarray_copy_array(ndarray_obj_t *source, ndarray_obj_t *target, uint8_t sh
 
     #if ULAB_MAX_DIMS > 3
     size_t i = 0;
-    do {
+    while(i < source->shape[ULAB_MAX_DIMS - 4] || (i == 0 && source->ndim < 4)) {
     #endif
         #if ULAB_MAX_DIMS > 2
         size_t j = 0;
-        do {
+        while(j < source->shape[ULAB_MAX_DIMS - 3] || (j == 0 && source->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 1
             size_t k = 0;
-            do {
+            while(k < source->shape[ULAB_MAX_DIMS - 2] || (k == 0 && source->ndim < 2)) {
             #endif
                 size_t l = 0;
-                do {
+                while(l < source->shape[ULAB_MAX_DIMS - 1] || (l == 0 && source->ndim < 1)) {
                     memcpy(tarray, sarray, target->itemsize);
                     tarray += target->itemsize;
                     sarray += source->strides[ULAB_MAX_DIMS - 1];
                     l++;
-                } while(l < source->shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 1
                 sarray -= source->strides[ULAB_MAX_DIMS - 1] * source->shape[ULAB_MAX_DIMS-1];
                 sarray += source->strides[ULAB_MAX_DIMS - 2];
                 k++;
-            } while(k < source->shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             sarray -= source->strides[ULAB_MAX_DIMS - 2] * source->shape[ULAB_MAX_DIMS-2];
             sarray += source->strides[ULAB_MAX_DIMS - 3];
             j++;
-        } while(j < source->shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         sarray -= source->strides[ULAB_MAX_DIMS - 3] * source->shape[ULAB_MAX_DIMS-3];
         sarray += source->strides[ULAB_MAX_DIMS - 4];
         i++;
-    } while(i < source->shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
 }
 
@@ -765,18 +765,18 @@ ndarray_obj_t *ndarray_copy_view_convert_type(ndarray_obj_t *source, uint8_t dty
 
     #if ULAB_MAX_DIMS > 3
     size_t i = 0;
-    do {
+    while(i < source->shape[ULAB_MAX_DIMS - 4] || (i == 0 && source->ndim < 4)) {
     #endif
         #if ULAB_MAX_DIMS > 2
         size_t j = 0;
-        do {
+        while(j < source->shape[ULAB_MAX_DIMS - 3] || (j == 0 && source->ndim < 3)) {
         #endif
             #if ULAB_MAX_DIMS > 1
             size_t k = 0;
-            do {
+            while(k < source->shape[ULAB_MAX_DIMS - 2] || (k == 0 && source->ndim < 2)) {
             #endif
                 size_t l = 0;
-                do {
+                while(l < source->shape[ULAB_MAX_DIMS - 1] || (l == 0 && source->ndim < 1)) {
                     mp_obj_t item;
                     #if ULAB_SUPPORTS_COMPLEX
                     if(source->dtype == NDARRAY_COMPLEX) {
@@ -807,24 +807,24 @@ ndarray_obj_t *ndarray_copy_view_convert_type(ndarray_obj_t *source, uint8_t dty
                     array += ndarray->itemsize;
                     sarray += source->strides[ULAB_MAX_DIMS - 1];
                     l++;
-                } while(l < source->shape[ULAB_MAX_DIMS - 1]);
+                }
             #if ULAB_MAX_DIMS > 1
                 sarray -= source->strides[ULAB_MAX_DIMS - 1] * source->shape[ULAB_MAX_DIMS-1];
                 sarray += source->strides[ULAB_MAX_DIMS - 2];
                 k++;
-            } while(k < source->shape[ULAB_MAX_DIMS - 2]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 2
             sarray -= source->strides[ULAB_MAX_DIMS - 2] * source->shape[ULAB_MAX_DIMS-2];
             sarray += source->strides[ULAB_MAX_DIMS - 3];
             j++;
-        } while(j < source->shape[ULAB_MAX_DIMS - 3]);
+        }
         #endif
     #if ULAB_MAX_DIMS > 3
         sarray -= source->strides[ULAB_MAX_DIMS - 3] * source->shape[ULAB_MAX_DIMS-3];
         sarray += source->strides[ULAB_MAX_DIMS - 4];
         i++;
-    } while(i < source->shape[ULAB_MAX_DIMS - 4]);
+    }
     #endif
     return ndarray;
 }
@@ -854,18 +854,18 @@ mp_obj_t ndarray_byteswap(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_
         uint8_t *array = (uint8_t *)ndarray->array;
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i < ndarray->shape[ULAB_MAX_DIMS - 4] || (i == 0 && ndarray->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j < ndarray->shape[ULAB_MAX_DIMS - 3] || (j == 0 && ndarray->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k < ndarray->shape[ULAB_MAX_DIMS - 2] || (k == 0 && ndarray->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l < ndarray->shape[ULAB_MAX_DIMS - 1] || (l == 0 && ndarray->ndim < 1)) {
                         if(self->dtype == NDARRAY_FLOAT) {
                             #if MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_FLOAT
                             SWAP(uint8_t, array[0], array[3]);
@@ -881,24 +881,24 @@ mp_obj_t ndarray_byteswap(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_
                         }
                         array += ndarray->strides[ULAB_MAX_DIMS - 1];
                         l++;
-                    } while(l < ndarray->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     array -= ndarray->strides[ULAB_MAX_DIMS - 1] * ndarray->shape[ULAB_MAX_DIMS-1];
                     array += ndarray->strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k < ndarray->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 array -= ndarray->strides[ULAB_MAX_DIMS - 2] * ndarray->shape[ULAB_MAX_DIMS-2];
                 array += ndarray->strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j < ndarray->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             array -= ndarray->strides[ULAB_MAX_DIMS - 3] * ndarray->shape[ULAB_MAX_DIMS-3];
             array += ndarray->strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i < ndarray->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
     }
     return MP_OBJ_FROM_PTR(ndarray);
@@ -1209,30 +1209,30 @@ void ndarray_assign_view(ndarray_obj_t *view, ndarray_obj_t *values) {
 
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i <  view->shape[ULAB_MAX_DIMS - 4] || (i == 0 &&  view->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j <  view->shape[ULAB_MAX_DIMS - 3] || (j == 0 &&  view->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k <  view->shape[ULAB_MAX_DIMS - 2] || (k == 0 &&  view->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l <  view->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  view->ndim < 1)) {
                         memcpy(larray, rarray, view->itemsize);
                         larray += lstrides[ULAB_MAX_DIMS - 1];
                         rarray += rstrides[ULAB_MAX_DIMS - 1];
                         l++;
-                    } while(l <  view->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     larray -= lstrides[ULAB_MAX_DIMS - 1] * view->shape[ULAB_MAX_DIMS-1];
                     larray += lstrides[ULAB_MAX_DIMS - 2];
                     rarray -= rstrides[ULAB_MAX_DIMS - 1] * view->shape[ULAB_MAX_DIMS-1];
                     rarray += rstrides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k <  view->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 larray -= lstrides[ULAB_MAX_DIMS - 2] * view->shape[ULAB_MAX_DIMS-2];
@@ -1240,7 +1240,7 @@ void ndarray_assign_view(ndarray_obj_t *view, ndarray_obj_t *values) {
                 rarray -= rstrides[ULAB_MAX_DIMS - 2] * view->shape[ULAB_MAX_DIMS-2];
                 rarray += rstrides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j <  view->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             larray -= lstrides[ULAB_MAX_DIMS - 3] * view->shape[ULAB_MAX_DIMS-3];
@@ -1248,7 +1248,7 @@ void ndarray_assign_view(ndarray_obj_t *view, ndarray_obj_t *values) {
             rarray -= rstrides[ULAB_MAX_DIMS - 3] * view->shape[ULAB_MAX_DIMS-3];
             rarray += rstrides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i <  view->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
     }
 
@@ -1527,40 +1527,40 @@ mp_obj_t ndarray_flatten(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_a
     if(memcmp(order, "C", 1) == 0) { // C-type ordering
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;
-        do {
+        while(i <  self->shape[ULAB_MAX_DIMS - 4] || (i == 0 &&  self->ndim < 4)) {
         #endif
             #if ULAB_MAX_DIMS > 2
             size_t j = 0;
-            do {
+            while(j <  self->shape[ULAB_MAX_DIMS - 3] || (j == 0 &&  self->ndim < 3)) {
             #endif
                 #if ULAB_MAX_DIMS > 1
                 size_t k = 0;
-                do {
+                while(k <  self->shape[ULAB_MAX_DIMS - 2] || (k == 0 &&  self->ndim < 2)) {
                 #endif
                     size_t l = 0;
-                    do {
+                    while(l <  self->shape[ULAB_MAX_DIMS - 1] || (l == 0 &&  self->ndim < 1)) {
                         memcpy(array, sarray, self->itemsize);
                         array += ndarray->strides[ULAB_MAX_DIMS - 1];
                         sarray += self->strides[ULAB_MAX_DIMS - 1];
                         l++;
-                    } while(l <  self->shape[ULAB_MAX_DIMS - 1]);
+                    }
                 #if ULAB_MAX_DIMS > 1
                     sarray -= self->strides[ULAB_MAX_DIMS - 1] * self->shape[ULAB_MAX_DIMS-1];
                     sarray += self->strides[ULAB_MAX_DIMS - 2];
                     k++;
-                } while(k <  self->shape[ULAB_MAX_DIMS - 2]);
+                }
                 #endif
             #if ULAB_MAX_DIMS > 2
                 sarray -= self->strides[ULAB_MAX_DIMS - 2] * self->shape[ULAB_MAX_DIMS-2];
                 sarray += self->strides[ULAB_MAX_DIMS - 3];
                 j++;
-            } while(j <  self->shape[ULAB_MAX_DIMS - 3]);
+            }
             #endif
         #if ULAB_MAX_DIMS > 3
             sarray -= self->strides[ULAB_MAX_DIMS - 3] * self->shape[ULAB_MAX_DIMS-3];
             sarray += self->strides[ULAB_MAX_DIMS - 4];
             i++;
-        } while(i <  self->shape[ULAB_MAX_DIMS - 4]);
+        }
         #endif
     } else { // 'F', Fortran-type ordering
         #if ULAB_MAX_DIMS > 3

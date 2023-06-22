@@ -277,14 +277,14 @@
 
 #define RUN_DIFF(ndarray, type, array, results, rarray, shape, strides, index, stencil, N) do {\
     size_t l = 0;\
-    do {\
+     while(l < (results)->shape[ULAB_MAX_DIMS - 2] || (l == 0 && (results)->ndim < 2)) {\
         RUN_DIFF1((ndarray), type, (array), (results), (rarray), (index), (stencil), (N));\
         (array) -= (ndarray)->strides[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS - 1];\
         (array) += (ndarray)->strides[ULAB_MAX_DIMS - 2];\
         (rarray) -= (results)->strides[ULAB_MAX_DIMS - 1] * (results)->shape[ULAB_MAX_DIMS - 1];\
         (rarray) += (results)->strides[ULAB_MAX_DIMS - 2];\
         l++;\
-    } while(l < (results)->shape[ULAB_MAX_DIMS - 2]);\
+    }\
 } while(0)
 
 #define HEAPSORT(ndarray, type, array, shape, strides, index, increment, N) do {\

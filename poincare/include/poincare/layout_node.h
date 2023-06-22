@@ -73,7 +73,8 @@ class LayoutNode : public TreeNode {
 
   // Rendering
   void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-            LayoutSelection selection, KDColor selectionColor = KDColorRed);
+            const LayoutSelection &selection,
+            KDColor selectionColor = KDColorRed);
   KDPoint absoluteOrigin(KDFont::Size font) {
     return absoluteOriginWithMargin(font).translatedBy(
         KDPoint(leftMargin(), 0));

@@ -7,6 +7,7 @@
 
 namespace Graph {
 
+// TODO: Factorize with EditableExpressionModelCell and AbstractSequenceCell
 class EditableFunctionCell : public AbstractFunctionCell {
  public:
   EditableFunctionCell(Escher::Responder* parentResponder,

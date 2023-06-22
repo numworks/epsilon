@@ -90,8 +90,10 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
 
 KDCoordinate ListController::nonMemoizedRowHeight(int row) {
   if (row == m_editedCellIndex) {
-    return ExpressionRowHeightFromLayoutHeight(
-        m_editableCell.minimalSizeForOptimalDisplay().height());
+    return std::min<KDCoordinate>(
+        ExpressionRowHeightFromLayoutHeight(
+            m_editableCell.minimalSizeForOptimalDisplay().height()),
+        selectableListView()->bounds().height());
   }
   return expressionRowHeight(row);
 }

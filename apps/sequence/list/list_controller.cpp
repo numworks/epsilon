@@ -45,12 +45,16 @@ int ListController::numberOfExpressionRows() const {
 };
 
 KDCoordinate ListController::expressionRowHeight(int j) {
+  // TODO: factorize with ExpressionRowHeightFromLayoutHeight
   KDCoordinate defaultHeight = Metric::StoreRowHeight;
   KDCoordinate sequenceHeight;
   if (j == m_editedCellIndex) {
-    sequenceHeight = m_editableCell.expressionCell()
-                         ->minimalSizeForOptimalDisplay()
-                         .height();
+    sequenceHeight =
+        std::min<KDCoordinate>(m_editableCell.expressionCell()
+                                       ->minimalSizeForOptimalDisplay()
+                                       .height() +
+                                   2 * k_expressionCellVerticalMargin,
+                               selectableListView()->bounds().height());
   } else {
     if (isAddEmptyRow(j)) {
       return defaultHeight;
@@ -67,10 +71,10 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     if (layout.isUninitialized()) {
       return defaultHeight;
     }
-    sequenceHeight = layout.layoutSize(k_font).height();
+    sequenceHeight =
+        layout.layoutSize(k_font).height() + 2 * k_expressionCellVerticalMargin;
   }
-  return std::max<KDCoordinate>(
-      defaultHeight, sequenceHeight + 2 * k_expressionCellVerticalMargin);
+  return std::max<KDCoordinate>(defaultHeight, sequenceHeight);
 }
 
 void ListController::selectPreviousNewSequenceCell() {

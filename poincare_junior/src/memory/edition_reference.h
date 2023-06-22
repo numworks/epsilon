@@ -22,52 +22,40 @@ class EditionReference {
   /* Comparison */
   inline bool operator==(const EditionReference& t) const {
     return m_identifier == t.identifier() ||
-           (!isUninitialized() && !t.isUninitialized() &&
-            static_cast<Node*>(*this) == static_cast<Node*>(t));
+           (!isUninitialized() && !t.isUninitialized() && node() == t.node());
   }
   inline bool operator!=(const EditionReference& t) const {
     return m_identifier != t.identifier() &&
-           (isUninitialized() || t.isUninitialized() ||
-            static_cast<Node*>(*this) != static_cast<Node*>(t));
+           (isUninitialized() || t.isUninitialized() || node() != t.node());
   }
 
   EditionReference clone() {
     return EditionPool::sharedEditionPool()->clone(*this);
   }
 
-  operator Node*() const;
-  bool isUninitialized() const { return static_cast<Node*>(*this) == nullptr; }
-  TypeBlock* block() { return static_cast<Node*>(*this)->block(); }
-  BlockType type() const { return static_cast<Node*>(*this)->type(); }
+  operator Node*() const { return node(); }
+  bool isUninitialized() const { return node() == nullptr; }
+  TypeBlock* block() { return node()->block(); }
+  BlockType type() const { return node()->type(); }
 
   uint16_t identifier() const { return m_identifier; }
 
   /* Hierarchy */
-  Node* nextNode() { return static_cast<Node*>(*this)->nextNode(); }
-  Node* nextTree() { return static_cast<Node*>(*this)->nextTree(); }
-  Node* previousNode() { return static_cast<Node*>(*this)->previousNode(); }
-  Node* previousTree() { return static_cast<Node*>(*this)->previousTree(); }
-  bool hasChild(EditionReference t) const {
-    return static_cast<Node*>(*this)->hasChild(t);
-  }
-  bool hasSibling(EditionReference t) const {
-    return static_cast<Node*>(*this)->hasSibling(t);
-  }
+  Node* nextNode() { return node()->nextNode(); }
+  Node* nextTree() { return node()->nextTree(); }
+  Node* previousNode() { return node()->previousNode(); }
+  Node* previousTree() { return node()->previousTree(); }
+  bool hasChild(EditionReference t) const { return node()->hasChild(t); }
+  bool hasSibling(EditionReference t) const { return node()->hasSibling(t); }
   bool hasAncestor(EditionReference t, bool includeSelf) const {
-    return static_cast<Node*>(*this)->hasAncestor(t, includeSelf);
+    return node()->hasAncestor(t, includeSelf);
   }
-  int numberOfChildren() const {
-    return static_cast<Node*>(*this)->numberOfChildren();
-  }
-  int indexOfChild(EditionReference t) const {
-    return static_cast<Node*>(*this)->indexOfChild(t);
-  }
-  Node* parent() const { return static_cast<Node*>(*this)->parent(); }
-  Node* childAtIndex(int i) const {
-    return static_cast<Node*>(*this)->childAtIndex(i);
-  }
+  int numberOfChildren() const { return node()->numberOfChildren(); }
+  int indexOfChild(EditionReference t) const { return node()->indexOfChild(t); }
+  Node* parent() const { return node()->parent(); }
+  Node* childAtIndex(int i) const { return node()->childAtIndex(i); }
   int numberOfDescendants(bool includeSelf) const {
-    return static_cast<Node*>(*this)->numberOfDescendants(includeSelf);
+    return node()->numberOfDescendants(includeSelf);
   }
 
   /* Edition operations on Node* */
@@ -94,28 +82,28 @@ class EditionReference {
 
   // Edition operations on EditionReference
   void insertNodeAfterNode(EditionReference nodeToInsert) {
-    insertNodeAfterNode(static_cast<Node*>(nodeToInsert));
+    insertNodeAfterNode(nodeToInsert.node());
   }
   void insertTreeAfterNode(EditionReference treeToInsert) {
-    insertTreeAfterNode(static_cast<Node*>(treeToInsert));
+    insertTreeAfterNode(treeToInsert.node());
   }
   void insertNodeBeforeNode(EditionReference nodeToInsert) {
-    insertNodeBeforeNode(static_cast<Node*>(nodeToInsert));
+    insertNodeBeforeNode(nodeToInsert.node());
   }
   void insertTreeBeforeNode(EditionReference treeToInsert) {
-    insertTreeBeforeNode(static_cast<Node*>(treeToInsert));
+    insertTreeBeforeNode(treeToInsert.node());
   }
   Node* replaceNodeByNode(EditionReference t) {
-    return replaceNodeByNode(static_cast<Node*>(t));
+    return replaceNodeByNode(t.node());
   }
   Node* replaceNodeByTree(EditionReference t) {
-    return replaceNodeByTree(static_cast<Node*>(t));
+    return replaceNodeByTree(t.node());
   }
   Node* replaceTreeByNode(EditionReference t) {
-    return replaceTreeByNode(static_cast<Node*>(t));
+    return replaceTreeByNode(t.node());
   }
   Node* replaceTreeByTree(EditionReference t) {
-    return replaceTreeByTree(static_cast<Node*>(t));
+    return replaceTreeByTree(t.node());
   }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
@@ -127,6 +115,7 @@ class EditionReference {
   bool matchAndReplace(const Node* pattern, const Node* structure);
 
  private:
+  Node* node() const;
   void insert(const Node* nodeToInsert, bool before, bool isTree);
   Node* replaceBy(const Node* n, bool oldIsTree, bool newIsTree);
   void detach(bool isTree);

@@ -36,12 +36,12 @@ EditionReference::EditionReference(Node* node) {
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
   std::cout << "id: " << m_identifier;
-  static_cast<Node*>(*this)->log(std::cout, true, 1, true);
+  node()->log(std::cout, true, 1, true);
   std::cout << std::endl;
 }
 #endif
 
-EditionReference::operator Node*() const {
+Node* EditionReference::node() const {
   return EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
 }
 
@@ -206,8 +206,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    ctx.setNode(i, static_cast<Node*>(placeholders[i]),
-                ctx.getNumberOfTrees(i));
+    ctx.setNode(i, placeholders[i].node(), ctx.getNumberOfTrees(i));
   }
 
   // Step 5 - Build the PatternMatching replacement
@@ -225,8 +224,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
 
 void EditionReference::remove(bool isTree) {
   Block* b = block();
-  size_t size = isTree ? static_cast<Node*>(*this)->treeSize()
-                       : static_cast<Node*>(*this)->nodeSize();
+  size_t size = isTree ? node()->treeSize() : node()->nodeSize();
   EditionPool::sharedEditionPool()->removeBlocks(b, size);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
@@ -235,7 +233,7 @@ void EditionReference::remove(bool isTree) {
 
 void EditionReference::insert(const Node* nodeToInsert, bool before,
                               bool isTree) {
-  Node* destination = before ? static_cast<Node*>(*this) : nextNode();
+  Node* destination = before ? node() : nextNode();
   EditionPool* pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert =
       isTree ? nodeToInsert->treeSize() : nodeToInsert->nodeSize();
@@ -260,9 +258,8 @@ void EditionReference::insert(const Node* nodeToInsert, bool before,
 void EditionReference::detach(bool isTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Block* destination = pool->lastBlock();
-  size_t sizeToMove = isTree ? static_cast<Node*>(*this)->treeSize()
-                             : static_cast<Node*>(*this)->nodeSize();
-  Block* source = static_cast<Node*>(*this)->block();
+  size_t sizeToMove = isTree ? node()->treeSize() : node()->nodeSize();
+  Block* source = node()->block();
   pool->moveBlocks(destination, source, sizeToMove);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,

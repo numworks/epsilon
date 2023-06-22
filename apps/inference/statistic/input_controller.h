@@ -65,11 +65,9 @@ class InputController
   constexpr static int k_numberOfTitleSignificantDigits =
       Poincare::Preferences::VeryShortNumberOfSignificantDigits;
   constexpr static int k_titleBufferSize =
-      sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +
+      sizeof("H0:μ1-μ2= Ha:μ1-μ2≠ α=") +  // longest possible
       3 * (Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-               k_numberOfTitleSignificantDigits) -
-           1) +
-      2 /* op */ + 10;
+              k_numberOfTitleSignificantDigits));
   char m_titleBuffer[k_titleBufferSize];
   Statistic* m_statistic;
   ResultsController* m_resultsController;

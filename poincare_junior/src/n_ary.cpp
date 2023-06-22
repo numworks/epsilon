@@ -26,7 +26,7 @@ void NAry::AddChildAtIndex(EditionReference nary, EditionReference child,
 void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
                                   int index) {
   AddChildAtIndex(nary, child, index);
-  if (static_cast<Node*>(nary).type() == static_cast<Node*>(child).type()) {
+  if (static_cast<Node*>(nary)->type() == static_cast<Node*>(child)->type()) {
     size_t numberOfChildren =
         nary.numberOfChildren() + child.numberOfChildren() - 1;
     child.removeNode();

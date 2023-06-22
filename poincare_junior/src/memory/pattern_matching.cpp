@@ -20,7 +20,7 @@ void PatternMatching::Context::log() const {
     int numberOfTress = m_numberOfTrees[i];
     std::cout << "\n  <PlaceHolder tag=" << i << " trees=" << numberOfTress
               << ">";
-    Node* tree = m_array[i];
+    const Node* tree = m_array[i];
     if (tree) {
       for (int j = 0; j < numberOfTress; j++) {
         tree->log(std::cout, true, true, 2);
@@ -36,7 +36,8 @@ void PatternMatching::Context::log() const {
 }
 #endif
 
-PatternMatching::MatchContext::MatchContext(Node* source, Node* pattern)
+PatternMatching::MatchContext::MatchContext(const Node* source,
+                                            const Node* pattern)
     : m_localSourceRoot(source),
       m_localSourceEnd(source->nextTree()->block()),
       m_localPatternEnd(pattern->nextTree()->block()),
@@ -45,7 +46,7 @@ PatternMatching::MatchContext::MatchContext(Node* source, Node* pattern)
       m_globalSourceEnd(m_localSourceEnd),
       m_globalPatternEnd(m_localPatternEnd) {}
 
-int PatternMatching::MatchContext::remainingLocalTrees(Node* node) const {
+int PatternMatching::MatchContext::remainingLocalTrees(const Node* node) const {
   assert(m_localSourceRoot->block()->isSimpleNAry());
   if (ReachedLimit(node, m_localSourceEnd)) {
     return 0;
@@ -58,14 +59,15 @@ int PatternMatching::MatchContext::remainingLocalTrees(Node* node) const {
   return m_localSourceRoot->numberOfChildren() - nodePosition;
 }
 
-void PatternMatching::MatchContext::setLocal(Node* source, Node* pattern) {
+void PatternMatching::MatchContext::setLocal(const Node* source,
+                                             const Node* pattern) {
   m_localSourceRoot = source;
   m_localSourceEnd = source->nextTree()->block();
   m_localPatternEnd = pattern->nextTree()->block();
 }
 
-void PatternMatching::MatchContext::setLocalFromChild(Node* source,
-                                                      Node* pattern) {
+void PatternMatching::MatchContext::setLocalFromChild(const Node* source,
+                                                      const Node* pattern) {
   int tmp;
   // If global context limits are reached, set local context back to global.
   const Node* sourceParent =
@@ -80,8 +82,8 @@ void PatternMatching::MatchContext::setLocalFromChild(Node* source,
   setLocal(sourceParent, patternParent);
 }
 
-bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, Node* source,
-                                    Node* pattern, Context* context,
+bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Node* source,
+                                    const Node* pattern, Context* context,
                                     MatchContext matchContext) {
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
   int numberOfTrees = 0;
@@ -103,8 +105,8 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, Node* source,
   return true;
 }
 
-bool PatternMatching::MatchNodes(Node* source, Node* pattern, Context* context,
-                                 MatchContext matchContext) {
+bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
+                                 Context* context, MatchContext matchContext) {
   while (!matchContext.reachedLimit(pattern, true, false)) {
     bool onlyEmptyPlaceholders = false;
     if (matchContext.reachedLimit(pattern, false, false)) {
@@ -123,7 +125,7 @@ bool PatternMatching::MatchNodes(Node* source, Node* pattern, Context* context,
 
     if (pattern->type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
-      Node* tagNode = context->getNode(tag);
+      const Node* tagNode = context->getNode(tag);
       if (tagNode) {
         // Tag has already been set. Check the trees are the same.
         for (int i = 0; i < context->getNumberOfTrees(tag); i++) {
@@ -219,7 +221,7 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
-    Node* nodeToInsert = context.getNode(tag);
+    const Node* nodeToInsert = context.getNode(tag);
     int treesToInsert = context.getNumberOfTrees(tag);
     // Multiple trees can only be inserted into simple nArys
     assert(nodeToInsert && treesToInsert >= 0);

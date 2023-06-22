@@ -373,7 +373,7 @@ void RackParser::isThereImplicitOperator() {
    * handle implicit multiplication. */
   m_pendingImplicitOperator =
       ((m_nextToken.is(Token::Type::Layout) &&
-        m_nextToken.firstLayout().type() != BlockType::VerticalOffsetLayout) ||
+        m_nextToken.firstLayout()->type() != BlockType::VerticalOffsetLayout) ||
        m_nextToken.is(Token::Type::Number) ||
        m_nextToken.is(Token::Type::Constant) ||
        m_nextToken.is(Token::Type::Unit) ||
@@ -405,8 +405,8 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     m_status = Status::Error;  // FIXME
     return;
   }
-  Node *rack = m_currentToken.firstLayout().parent();
-  size_t start = rack.indexOfChild(m_currentToken.firstLayout());
+  const Node *rack = m_currentToken.firstLayout()->parent();
+  size_t start = rack->indexOfChild(m_currentToken.firstLayout());
   size_t end = start + m_currentToken.length();
   OMG::Base base(OMG::Base::Decimal);
   if (m_currentToken.type() == Token::Type::HexadecimalNumber ||
@@ -499,7 +499,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
         rightHandSide.insertNodeBeforeNode(
             Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
         rightHandSide.insertNodeBeforeNode(-1_e);
-        leftHandSide = rightHandSide.previousNode().previousNode();
+        leftHandSide = rightHandSide.previousNode()->previousNode();
       }
     } else {
       removeTreeIfInitialized(rightHandSide);
@@ -625,7 +625,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
   }
 }
 
-static void turnIntoBinaryNode(Node *node, EditionReference &leftHandSide,
+static void turnIntoBinaryNode(const Node *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
   assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
   leftHandSide.insertNodeBeforeNode(node);
@@ -1325,17 +1325,17 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // return;
   // }
   assert(m_currentToken.length() == 1);
-  Node *layout = m_currentToken.firstLayout();
-  assert(layout.block()->isLayout());
+  const Node *layout = m_currentToken.firstLayout();
+  assert(layout->block()->isLayout());
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */
-  switch (layout.type()) {
+  switch (layout->type()) {
     case BlockType::VerticalOffsetLayout: {
       if (leftHandSide.isUninitialized()) {
         m_status = Status::Error;
         return;
       }
-      EditionReference rightHandSide = Parser::Parse(layout.childAtIndex(0));
+      EditionReference rightHandSide = Parser::Parse(layout->childAtIndex(0));
       if (rightHandSide.isUninitialized()) {
         m_status = Status::Error;
         return;

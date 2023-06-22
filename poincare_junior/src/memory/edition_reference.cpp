@@ -51,16 +51,16 @@ void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   (*treeFunction)(*this);
 }
 
-Node* EditionReference::replaceBy(Node* newNode, bool oldIsTree,
+Node* EditionReference::replaceBy(const Node* newNode, bool oldIsTree,
                                   bool newIsTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Node* oldNode = *this;
   int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
   int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
   Block* oldBlock = oldNode->block();
-  Block* newBlock = newNode->block();
+  const Block* newBlock = newNode->block();
   if (oldBlock == newBlock && oldSize == newSize) {
-    return newNode;
+    return Node::FromBlocks(oldBlock);
   }
   Block* finalBlock = oldBlock;
   if (pool->contains(newNode->block())) {
@@ -69,7 +69,7 @@ Node* EditionReference::replaceBy(Node* newNode, bool oldIsTree,
     if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
       oldSize -= newSize;
     }
-    pool->moveBlocks(oldBlock, newBlock, newSize);
+    pool->moveBlocks(oldBlock, const_cast<Block*>(newBlock), newSize);
     if (oldBlock > newBlock) {
       finalBlock -= newSize;
     }
@@ -232,13 +232,15 @@ void EditionReference::remove(bool isTree) {
 #endif
 }
 
-void EditionReference::insert(Node* nodeToInsert, bool before, bool isTree) {
+void EditionReference::insert(const Node* nodeToInsert, bool before,
+                              bool isTree) {
   Node* destination = before ? static_cast<Node*>(*this) : nextNode();
   EditionPool* pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert =
       isTree ? nodeToInsert->treeSize() : nodeToInsert->nodeSize();
   if (pool->contains(nodeToInsert->block())) {
-    pool->moveBlocks(destination->block(), nodeToInsert->block(), sizeToInsert);
+    Block* block = const_cast<TypeBlock*>(nodeToInsert->block());
+    pool->moveBlocks(destination->block(), block, sizeToInsert);
 #if POINCARE_POOL_VISUALIZATION
     Block* dst = destination.block();
     Block* addedBlock = dst >= nodeToInsert.block() ? dst - sizeToInsert : dst;

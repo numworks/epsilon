@@ -16,7 +16,7 @@ namespace PoincareJ {
 
 Node *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   Node *n = Pool::ReferenceTable::nodeForIdentifier(id);
-  if (!m_pool->contains(n.block()) && n.block() != m_pool->lastBlock()) {
+  if (!m_pool->contains(n->block()) && n->block() != m_pool->lastBlock()) {
     /* The node has been corrupted, this is not referenced anymore. Referencing
      * the last block is tolerated though. */
     return nullptr;
@@ -30,10 +30,9 @@ uint16_t EditionPool::ReferenceTable::storeNode(Node *node) {
     size_t index = 0;
     do {
       n = nodeForIdentifier(index++);
-    } while (!n.isUninitialized() && index < k_maxNumberOfReferences);
-    assert(
-        n.isUninitialized());  // Otherwise, the pool is full with non-corrupted
-                               // references; increment k_maxNumberOfReferences?
+    } while (n && index < k_maxNumberOfReferences);
+    assert(!n);  // Otherwise, the pool is full with non-corrupted
+                 // references; increment k_maxNumberOfReferences?
     return storeNodeAtIndex(node, index - 1);
   } else {
     return storeNodeAtIndex(node, m_length);
@@ -183,7 +182,8 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
 }
 
 Node *EditionPool::initFromAddress(const void *address, bool isTree) {
-  Node *node = Node::FromBlocks(reinterpret_cast<const TypeBlock *>(address));
+  const Node *node =
+      Node::FromBlocks(reinterpret_cast<const TypeBlock *>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   TypeBlock *copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block *>(address),

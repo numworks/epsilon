@@ -117,7 +117,7 @@ QUIZ_CASE(pcj_edition_reference) {
                        {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
   // Replacements from nodes living in the EditionPool
-  EditionReference subRef0(ref2.childAtIndex(0).childAtIndex(1));
+  EditionReference subRef0(ref2.childAtIndex(0)->childAtIndex(1));
   EditionReference subRef1(ref2.childAtIndex(0));
   ref2 = ref2.replaceTreeByTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());

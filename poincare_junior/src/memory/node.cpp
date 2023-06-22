@@ -40,8 +40,8 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
         stream << ">";
         tagIsClosed = true;
       }
-      child.log(stream, recursive, verbose, indentation + 1,
-                comparison ? comparison->childAtIndex(index) : comparison);
+      child->log(stream, recursive, verbose, indentation + 1,
+                 comparison ? comparison->childAtIndex(index) : comparison);
     }
   }
   if (tagIsClosed) {
@@ -165,7 +165,7 @@ void Node::logBlocks(std::ostream& stream, bool recursive,
     indentation += 1;
     for (const auto [child, index] :
          NodeIterator::Children<Forward, NoEditable>(this)) {
-      child.logBlocks(stream, recursive, indentation);
+      child->logBlocks(stream, recursive, indentation);
     }
   }
 }
@@ -186,7 +186,7 @@ const Node* Node::previousNode() const {
     return nullptr;
   }
   int previousSize =
-      static_cast<TypeBlock*>(m_block->previous())->nodeSize(false);
+      static_cast<const TypeBlock*>(m_block->previous())->nodeSize(false);
   return Node::FromBlocks(m_block - previousSize);
 }
 
@@ -206,8 +206,8 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   /* This method find the common ancestor of child1 and child2 within this tree
    * it does without going backward at any point. This tree is parsed until the
    * last node owning both childs is found. */
-  const TypeBlock* block1 = child1.block();
-  const TypeBlock* block2 = child2.block();
+  const TypeBlock* block1 = child1->block();
+  const TypeBlock* block2 = child2->block();
   if (block1 > block2) {
     return commonAncestor(child2, child1);
   }
@@ -215,16 +215,16 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   if (block1 < block()) {
     return nullptr;
   }
-  Node* parent = nullptr;
-  Node* node = this;
+  const Node* parent = nullptr;
+  const Node* node = this;
   while (true) {
     assert(block1 >= node->block());
     const Node* nodeNextTree = node->nextTree();
-    const bool descendant1 = block1 < nodeNextTree.block();
-    const bool descendant2 = block2 < nodeNextTree.block();
+    const bool descendant1 = block1 < nodeNextTree->block();
+    const bool descendant2 = block2 < nodeNextTree->block();
     if (!descendant1) {
       // Neither children are descendants
-      if (parent.isUninitialized()) {
+      if (!parent) {
         // node is the root, no ancestors can be found
         return nullptr;
       }
@@ -254,18 +254,18 @@ const Node* Node::parentOfDescendant(const Node* descendant,
    * backward at any point. This tree is parsed until the last node owning the
    * child is found. This also find position in the parent. */
   *position = 0;
-  const TypeBlock* descendantBlock = descendant.block();
+  const TypeBlock* descendantBlock = descendant->block();
   if (descendantBlock < block()) {
     return nullptr;
   }
-  Node* parent = nullptr;
-  Node* node = this;
+  const Node* parent = nullptr;
+  const Node* node = this;
   while (true) {
     assert(descendantBlock >= node->block());
     const Node* nodeNextTree = node->nextTree();
-    if (descendantBlock >= nodeNextTree.block()) {
+    if (descendantBlock >= nodeNextTree->block()) {
       // node is not descendant's ancestor
-      if (parent.isUninitialized()) {
+      if (!parent) {
         // node is the root, no parent can be found
         return nullptr;
       }
@@ -288,11 +288,11 @@ const Node* Node::parentOfDescendant(const Node* descendant,
 
 int Node::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  Node* nextTreeNode = nextTree();
-  Node* currentNode = nextNode();
+  const Node* nextTreeNode = nextTree();
+  const Node* currentNode = nextNode();
   while (currentNode != nextTreeNode) {
     result++;
-    currentNode = currentNode.nextNode();
+    currentNode = currentNode->nextNode();
   }
   return result;
 }
@@ -308,7 +308,6 @@ const Node* Node::childAtIndex(int i) const {
 }
 
 int Node::indexOfChild(const Node* child) const {
-  assert(child.m_block != nullptr);
   for (const auto [c, index] :
        NodeIterator::Children<Forward, NoEditable>(this)) {
     if (child == c) {
@@ -323,7 +322,7 @@ int Node::indexInParent() const {
   if (!p) {
     return -1;
   }
-  return p.indexOfChild(this);
+  return p->indexOfChild(this);
 }
 
 bool Node::hasChild(const Node* child) const {
@@ -331,12 +330,12 @@ bool Node::hasChild(const Node* child) const {
 }
 
 bool Node::hasAncestor(const Node* node, bool includeSelf) const {
-  Node* ancestor = this;
+  const Node* ancestor = this;
   do {
     if (ancestor == node) {
       return includeSelf || (ancestor != this);
     }
-    ancestor = ancestor.parent();
+    ancestor = ancestor->parent();
   } while (ancestor);
   return false;
 }
@@ -358,7 +357,7 @@ bool Node::hasSibling(const Node* sibling) const {
 void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
   for (const auto& [child, index] :
        NodeIterator::Children<Forward, NoEditable>(this)) {
-    child.recursivelyGet(treeFunction);
+    child->recursivelyGet(treeFunction);
   }
   (*treeFunction)(this);
 }
@@ -407,21 +406,21 @@ bool Node::canNavigateNext() const {
 bool Node::canNavigatePrevious() const {
   CachePool* cache(CachePool::sharedCachePool());
   BlockType destinationType =
-      static_cast<TypeBlock*>(m_block->previous())->type();
+      static_cast<const TypeBlock*>(m_block->previous())->type();
   return destinationType != BlockType::TreeBorder &&
          m_block != cache->firstBlock();
 }
 
 const Node* Node::previousRelative(bool parent) const {
-  Node* currentNode = this;
-  Node* closestSibling = nullptr;
+  const Node* currentNode = this;
+  const Node* closestSibling = nullptr;
   int nbOfChildrenToScan = 0;
   do {
-    currentNode = currentNode.previousNode();
-    if (currentNode.isUninitialized()) {
+    currentNode = currentNode->previousNode();
+    if (!currentNode) {
       break;
     }
-    nbOfChildrenToScan += currentNode.numberOfChildren() - 1;
+    nbOfChildrenToScan += currentNode->numberOfChildren() - 1;
     if (nbOfChildrenToScan == -1) {
       closestSibling = currentNode;
     }

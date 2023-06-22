@@ -134,8 +134,7 @@ Reference::Reference(InitializerFromTreeInplace initializer,
 
 void Reference::send(FunctionOnConstTree function, void *context) const {
   assert(hasInitializers());
-  const Node *tree = getTree();
-  return function(tree, context);
+  return function(getTree(), context);
 }
 
 void Reference::dumpAt(void *address) const {

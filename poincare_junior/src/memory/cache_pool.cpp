@@ -76,7 +76,7 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
   }
   if (nodeToUpdate) {
     *nodeToUpdate =
-        Node::FromBlocks(nodeToUpdate->block() - numberOfFreedBlocks);
+        Node::FromBlocks((*nodeToUpdate)->block() - numberOfFreedBlocks);
   }
   static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
                                               cachePoolSize);

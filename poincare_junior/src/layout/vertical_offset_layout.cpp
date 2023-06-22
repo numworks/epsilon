@@ -8,9 +8,9 @@ KDSize VerticalOffsetLayout::Size(const Node* node, KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   KDSize indexSize = Render::Size(node->childAtIndex(0), font);
   const Node* base = BaseLayout(node);
-  KDCoordinate baseHeight = base.isUninitialized()
-                                ? KDFont::GlyphHeight(font)
-                                : Render::Size(base, font).height();
+  KDCoordinate baseHeight =
+      base ? Render::Size(base, font).height() : KDFont::GlyphHeight(font);
+
   return KDSize(indexSize.width(),
                 baseHeight - k_indiceHeight + indexSize.height());
 }
@@ -19,9 +19,8 @@ KDCoordinate VerticalOffsetLayout::Baseline(const Node* node,
                                             KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   const Node* base = BaseLayout(node);
-  KDCoordinate baseBaseline = base.isUninitialized()
-                                  ? KDFont::GlyphHeight(font) / 2
-                                  : Render::Baseline(base, font);
+  KDCoordinate baseBaseline =
+      base ? Render::Baseline(base, font) : KDFont::GlyphHeight(font) / 2;
   KDCoordinate indexHeight = Render::Size(node->childAtIndex(0), font).height();
   return indexHeight - k_indiceHeight + baseBaseline;
 }
@@ -34,7 +33,7 @@ KDPoint VerticalOffsetLayout::PositionOfChild(const Node* node, int childIndex,
 
 const Node* VerticalOffsetLayout::BaseLayout(const Node* node) {
   const Node* parent = node->parent();
-  if (parent.type() != BlockType::RackLayout) {
+  if (parent->type() != BlockType::RackLayout) {
     return nullptr;
   }
   assert(IsSuffixSuperscript(node));

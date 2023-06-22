@@ -132,7 +132,7 @@ QUIZ_CASE(pcj_cache_references) {
 
   Reference reference1(
       [](Node *node) { EditionReference(node).replaceNodeByNode(5_e); },
-      static_cast<const Node *>(smallTree)->block());
+      smallTree);
   assert_check_cache_reference(reference1, {5_e});
 
   Reference reference2(
@@ -156,7 +156,7 @@ QUIZ_CASE(pcj_cache_references) {
 
 void check_reference_invalidation_and_reconstruction(Reference reference,
                                                      uint16_t identifier,
-                                                     Node *node) {
+                                                     const Node *node) {
   CachePool *cachePool = CachePool::sharedCachePool();
   // reference has been invalidated
   quiz_assert(!cachePool->nodeForIdentifier(identifier));
@@ -180,12 +180,12 @@ void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
   // Fill the cache
   for (int i = 1; i < maxNumberOfTreesInCache; i++) {
     assert_pools_tree_sizes_are(i, 0);
-    Reference([](Node *node) {}, tree->block())
+    Reference([](Node *node) {}, tree)
         .send([](const Node *tree, void *result) {}, nullptr);
   }
   assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
   // Sending this reference will require freeing cache nodes
-  Reference([](Node *node) {}, tree->block())
+  Reference([](Node *node) {}, tree)
       .send([](const Node *tree, void *result) {}, nullptr);
   quiz_assert(cachePool->numberOfTrees() <= maxNumberOfTreesInCache);
   check_reference_invalidation_and_reconstruction(firstReference, identifier,

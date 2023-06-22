@@ -70,29 +70,29 @@ class PatternMatching {
    * and local pattern will be Mult(1). */
   class MatchContext {
    public:
-    MatchContext(Node* source, Node* pattern);
-    bool reachedLimit(Node* node, bool global, bool source) const {
+    MatchContext(const Node* source, const Node* pattern);
+    bool reachedLimit(const Node* node, bool global, bool source) const {
       return ReachedLimit(
           node, global ? (source ? m_globalSourceEnd : m_globalPatternEnd)
                        : (source ? m_localSourceEnd : m_localPatternEnd));
     }
     // Return the number of siblings right of node in local context.
-    int remainingLocalTrees(Node* node) const;
-    void setLocal(Node* source, Node* pattern);
+    int remainingLocalTrees(const Node* node) const;
+    void setLocal(const Node* source, const Node* pattern);
     /* From a local pattern and source node, sets the local context (node's
      * parents) */
-    void setLocalFromChild(Node* source, Node* pattern);
+    void setLocalFromChild(const Node* source, const Node* pattern);
 
    private:
-    static bool ReachedLimit(Node* node, const TypeBlock* end) {
+    static bool ReachedLimit(const Node* node, const TypeBlock* end) {
       assert(node->block() <= end);
       return node->block() == end;
     }
 
     // Local context
-    Node* m_localSourceRoot;
-    TypeBlock* m_localSourceEnd;
-    TypeBlock* m_localPatternEnd;
+    const Node* m_localSourceRoot;
+    const TypeBlock* m_localSourceEnd;
+    const TypeBlock* m_localPatternEnd;
     // Global context
     const Node* m_globalSourceRoot;
     const Node* m_globalPatternRoot;
@@ -101,11 +101,12 @@ class PatternMatching {
   };
 
   // Match an AnyTree Placeholder
-  static bool MatchAnyTrees(Placeholder::Tag tag, Node* source, Node* pattern,
-                            Context* context, MatchContext matchContext);
+  static bool MatchAnyTrees(Placeholder::Tag tag, const Node* source,
+                            const Node* pattern, Context* context,
+                            MatchContext matchContext);
   // Match source with pattern with given MatchContext constraints.
-  static bool MatchNodes(Node* source, Node* pattern, Context* context,
-                         MatchContext matchContext);
+  static bool MatchNodes(const Node* source, const Node* pattern,
+                         Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in EditionPool
   static EditionReference CreateTree(const Node* structure,
                                      const Context context, Node* insertedNAry);

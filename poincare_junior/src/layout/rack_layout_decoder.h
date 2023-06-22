@@ -37,7 +37,7 @@ class RackLayoutDecoder : public UnicodeDecoder {
     assert(0 <= index && index <= m_end);
     m_position = index;
   }
-  void setPosition(Node* child) {
+  void setPosition(const Node* child) {
     m_position =
         m_layout->hasChild(child) ? m_layout->indexOfChild(child) : m_end;
   }

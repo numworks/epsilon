@@ -40,7 +40,7 @@ class LayoutSelection {
 
   bool isEmpty() const { return !m_node || m_startPosition == m_endPosition; }
 
-  Node* layout() const { return m_node; }
+  const Node* layout() const { return m_node; }
   /* startPosition can be higher than endPosition if the selection is from
    * right to left. */
   int startPosition() const { return m_startPosition; }
@@ -52,13 +52,13 @@ class LayoutSelection {
     const TypeBlock* b = n->block();
     return !isEmpty() &&
            (Layout::IsHorizontal(m_node)
-                ? (b >= m_node->childAtIndex(leftPosition()).block() &&
-                   b <= m_node->childAtIndex(rightPosition() - 1).block())
-                : (b >= m_node->block() && b < m_node->nextTree().block()));
+                ? (b >= m_node->childAtIndex(leftPosition())->block() &&
+                   b <= m_node->childAtIndex(rightPosition() - 1)->block())
+                : (b >= m_node->block() && b < m_node->nextTree()->block()));
   }
 
  private:
-  Node* m_node;
+  const Node* m_node;
   int m_startPosition;
   int m_endPosition;
 };

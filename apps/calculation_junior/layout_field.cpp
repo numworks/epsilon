@@ -17,7 +17,7 @@ using namespace Escher;
 namespace CalculationJunior {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_cursor(m_layoutBuffer.blocks(), Node * ()),
+    : m_cursor(m_layoutBuffer.blocks(), nullptr),
       m_expressionView(&m_cursor, format),
       m_cursorView(this),
       m_isEditing(false) {
@@ -91,7 +91,7 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
   if (Layout::IsHorizontal(selection.layout())) {
     size_t offset = 0;
     for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
-      offset = Layout::Serialize(selection.layout().childAtIndex(i),
+      offset = Layout::Serialize(selection.layout()->childAtIndex(i),
                                  buffer + offset, buffer + bufferSize) -
                buffer;
     }
@@ -251,7 +251,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
   LayoutBufferCursor previousCursor = *m_contentView.cursor();
-  m_contentView.setCursor(LayoutBufferCursor(m_contentView.node().block(),
+  m_contentView.setCursor(LayoutBufferCursor(m_contentView.node()->block(),
                                              m_contentView.node(), side));
 #if 0
   m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
@@ -572,10 +572,10 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(PoincareJ::Node *layout,
+void LayoutField::insertLayoutAtCursor(const PoincareJ::Node *layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
-  if (layout.isUninitialized()) {
+  if (!layout) {
     return;
   }
 #if 0

@@ -492,7 +492,7 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree a = KAdd(1_e, 2_e);
   Tree b = 3_e;
   Tree c = 4_e;
-  Node* children[] = {a, b, c};
+  const Node* children[] = {a, b, c};
 
   // Scan children forward
   for (const std::pair<const Node*, int> indexedNode :
@@ -549,13 +549,13 @@ QUIZ_CASE(pcj_node_iterator) {
 #if POINCARE_JUNIOR_BACKWARD_SCAN
   size_t numberOfChildren2 = mult2.numberOfChildren();
 #endif
-  Node* children2[] = {a, b};
+  const Node* children2[] = {a, b};
   // Scan two nodes children forward
-  for (std::pair<std::array<Node*, 2>, int> indexedArray :
+  for (std::pair<std::array<const Node*, 2>, int> indexedArray :
        MultipleNodesIterator::Children<Forward, NoEditable, 2>(
-           std::array<Node*, 2>({mult, mult2}))) {
-    std::array<Node*, 2> childrenPair =
-        std::get<std::array<Node*, 2>>(indexedArray);
+           std::array<const Node*, 2>({mult, mult2}))) {
+    std::array<const Node*, 2> childrenPair =
+        std::get<std::array<const Node*, 2>>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
 
     assert_trees_are_equal(childrenPair[0],

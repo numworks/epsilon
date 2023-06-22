@@ -58,7 +58,7 @@ class LayoutCursor {
       : m_position(position), m_startOfSelection(startOfSelection) {}
 
   // Definition
-  bool isUninitialized() const { return cursorNode().isUninitialized(); }
+  bool isUninitialized() const { return cursorNode() == nullptr; }
   bool isValid() const {
     return (isUninitialized() || (m_position >= leftMostPosition() &&
                                   m_position <= rightmostPosition()));
@@ -115,7 +115,7 @@ class LayoutCursor {
  protected:
   virtual void setCursorNode(const Node* node) = 0;
   int cursorNodeOffset() const {
-    return cursorNode().block() - rootNode().block();
+    return cursorNode()->block() - rootNode()->block();
   }
 
   const Node* leftLayout() const;
@@ -124,7 +124,7 @@ class LayoutCursor {
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {
-    return Layout::IsHorizontal(cursorNode()) ? cursorNode().numberOfChildren()
+    return Layout::IsHorizontal(cursorNode()) ? cursorNode()->numberOfChildren()
                                               : 1;
   }
   bool horizontalMove(OMG::HorizontalDirection direction,
@@ -163,7 +163,7 @@ class LayoutBufferCursor final : public LayoutCursor {
       TypeBlock* layoutBuffer, Node* layout,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
       : LayoutCursor(0, -1), m_layoutBuffer(layoutBuffer) {
-    if (!layout.isUninitialized()) {
+    if (layout) {
       setLayout(layout, sideOfLayout);
     }
   }
@@ -208,7 +208,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     friend class LayoutBufferCursor;
     EditionPoolCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
-      setCursorNode(Node::FromBlocks(rootNode().block() + cursorOffset));
+      setCursorNode(Node::FromBlocks(rootNode()->block() + cursorOffset));
     }
 
     const Node* rootNode() const override {
@@ -264,7 +264,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   // Buffer of cursor's layout
   TypeBlock* m_layoutBuffer;
   // Cursor's node
-  Node* m_cursorNode;
+  const Node* m_cursorNode;
 };
 
 }  // namespace PoincareJ

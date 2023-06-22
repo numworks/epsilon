@@ -29,9 +29,10 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 // Rendering
 
 void LayoutNode::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-                      LayoutSelection selection, KDColor selectionColor) {
-  if (!selection.isEmpty() && selection.containsNode(this)) {
-    selection = LayoutSelection();
+                      const LayoutSelection &selection,
+                      KDColor selectionColor) {
+  if (style.backgroundColor != selectionColor && !selection.isEmpty() &&
+      selection.containsNode(this)) {
     style.backgroundColor = selectionColor;
   }
 

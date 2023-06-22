@@ -48,7 +48,7 @@ class Layout : public TreeHandle {
 
   // Rendering
   void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-            LayoutSelection selection,
+            const LayoutSelection &selection,
             KDColor selectionColor = Escher::Palette::Select);
   void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style);
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {

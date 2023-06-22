@@ -48,7 +48,7 @@ bool Layout::isCodePointsString() const {
 }
 
 void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-                  LayoutSelection selection, KDColor selectionColor) {
+                  const LayoutSelection &selection, KDColor selectionColor) {
   node()->draw(ctx, p, style, selection, selectionColor);
 }
 

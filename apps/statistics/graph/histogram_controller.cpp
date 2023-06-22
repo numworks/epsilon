@@ -111,7 +111,7 @@ bool HistogramController::reloadBannerView() {
    * k_bufferSize 46 (remembering ᴇ is 3 chars).
    * We add 1 to account for the fact that both calls to sizeof count the null
    * character. */
-  Poincare::Print::CustomPrintfWithMaxNumberOfSignificantDigits(
+  Poincare::Print::CustomPrintfWithMaxBufferSize(
       buffer, k_bufferSize, precision, "%s%s[%*.*ed,%*.*ed%s",
       I18n::translate(I18n::Message::Interval),
       I18n::translate(I18n::Message::ColonConvention), lowerBound, displayMode,

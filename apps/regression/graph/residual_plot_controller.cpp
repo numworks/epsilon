@@ -46,7 +46,7 @@ void ResidualPlotController::updateCursor() {
                                 y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
-  Poincare::Print::CustomPrintfWithMaxNumberOfSignificantDigits(
+  Poincare::Print::CustomPrintfWithMaxBufferSize(
       buffer, bufferSize, significantDigits, "%s%s%*.*ed",
       I18n::translate(I18n::Message::ResidualStandardDeviation),
       I18n::translate(I18n::Message::ColonConvention),

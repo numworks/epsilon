@@ -8,6 +8,8 @@ extern "C" {
 namespace Escher {
 
 void View::markRectAsDirty(KDRect rect) {
+  assert(!SumOverflowsKDCoordinate(rect.origin().x(), m_frame.origin().x()));
+  assert(!SumOverflowsKDCoordinate(rect.origin().y(), m_frame.origin().y()));
   markAbsoluteRectAsDirty(rect.translatedBy(m_frame.origin()));
 }
 
@@ -88,6 +90,8 @@ void View::setChildFrame(View *child, KDRect frame, bool force) {
     KDRect previousFrame = relativeChildFrame(child);
     markRectAsDirty(previousFrame.differencedWith(frame));
   }
+  assert(!SumOverflowsKDCoordinate(frame.origin().x(), m_frame.origin().x()));
+  assert(!SumOverflowsKDCoordinate(frame.origin().y(), m_frame.origin().y()));
   child->setFrame(frame.translatedBy(m_frame.origin()), force);
 }
 
@@ -128,6 +132,8 @@ void View::setFrame(KDRect frame, bool force) {
 }
 
 void View::translate(KDPoint delta) {
+  assert(!SumOverflowsKDCoordinate(m_frame.origin().x(), delta.x()));
+  assert(!SumOverflowsKDCoordinate(m_frame.origin().y(), delta.y()));
   m_frame = m_frame.translatedBy(delta);
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {

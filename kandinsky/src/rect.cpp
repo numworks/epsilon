@@ -29,9 +29,6 @@ KDRect KDRect::intersectedWith(const KDRect& other) const {
   KDCoordinate intersectionTop = std::max(top(), other.top());
   KDCoordinate intersectionBottom = std::min(bottom(), other.bottom());
 
-  assert(!SumOverflowsKDCoordinate(intersectionRight + 1, -intersectionLeft));
-  assert(!SumOverflowsKDCoordinate(intersectionBottom + 1, -intersectionTop));
-
   return KDRect(intersectionLeft, intersectionTop,
                 intersectionRight - intersectionLeft + 1,
                 intersectionBottom - intersectionTop + 1);
@@ -78,9 +75,6 @@ KDRect KDRect::unionedWith(const KDRect& other) const {
   computeUnionBound(height(), other.height(), &resultTop, &resultBottom, top(),
                     other.top(), bottom(), other.bottom());
 
-  assert(!SumOverflowsKDCoordinate(resultRight + 1, -resultLeft));
-  assert(!SumOverflowsKDCoordinate(resultBottom + 1, -resultTop));
-
   return KDRect(resultLeft, resultTop, resultRight - resultLeft + 1,
                 resultBottom - resultTop + 1);
 }
@@ -118,9 +112,6 @@ KDRect KDRect::differencedWith(const KDRect& other) const {
     }
   }
 
-  assert(!SumOverflowsKDCoordinate(resultRight + 1, -resultLeft));
-  assert(!SumOverflowsKDCoordinate(resultBottom + 1, -resultTop));
-
   return KDRect(resultLeft, resultTop, resultRight - resultLeft + 1,
                 resultBottom - resultTop + 1);
 }
@@ -147,12 +138,6 @@ bool KDRect::isUnder(KDPoint p) const { return (p.y() <= bottom()); }
 bool KDRect::isEmpty() const { return (width() <= 0 || height() <= 0); }
 
 KDRect KDRect::paddedWith(KDCoordinate value) const {
-  assert(!SumOverflowsKDCoordinate(value, value));
-  assert(!SumOverflowsKDCoordinate(x(), -value));
-  assert(!SumOverflowsKDCoordinate(x(), -value));
-  assert(!SumOverflowsKDCoordinate(width(), 2 * value));
-  assert(!SumOverflowsKDCoordinate(height(), 2 * value));
-
   return KDRect(x() - value, y() - value, width() + 2 * value,
                 height() + 2 * value);
 }

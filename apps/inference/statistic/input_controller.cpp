@@ -50,26 +50,26 @@ void InputController::InputTitle(Escher::ViewController *vc,
         statistic->hypothesisParams()->comparisonOperator());
     StackViewController *stackViewControllerResponder =
         static_cast<StackViewController *>(vc->parentResponder());
+    constexpr int k_maxNumberOfGlyphs =
+        Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
     if (stackViewControllerResponder->topViewController() != vc) {
-      Poincare::Print::CustomPrintf(
-          titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
-          symbol, statistic->hypothesisParams()->firstParam(),
-          Poincare::Preferences::PrintFloatMode::Decimal,
-          k_numberOfTitleSignificantDigits, symbol, op,
+      Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+          titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
+          k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed", symbol,
+          statistic->hypothesisParams()->firstParam(),
+          Poincare::Preferences::PrintFloatMode::Decimal, symbol, op,
           statistic->hypothesisParams()->firstParam(),
           Poincare::Preferences::PrintFloatMode::Decimal,
-          k_numberOfTitleSignificantDigits, statistic->threshold(),
-          Poincare::Preferences::PrintFloatMode::Decimal,
-          k_numberOfTitleSignificantDigits);
+          statistic->threshold(),
+          Poincare::Preferences::PrintFloatMode::Decimal);
     } else {
-      Poincare::Print::CustomPrintf(
-          titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed", symbol,
+      Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+          titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
+          k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed", symbol,
           statistic->hypothesisParams()->firstParam(),
-          Poincare::Preferences::PrintFloatMode::Decimal,
-          k_numberOfTitleSignificantDigits, symbol, op,
+          Poincare::Preferences::PrintFloatMode::Decimal, symbol, op,
           statistic->hypothesisParams()->firstParam(),
-          Poincare::Preferences::PrintFloatMode::Decimal,
-          k_numberOfTitleSignificantDigits);
+          Poincare::Preferences::PrintFloatMode::Decimal);
     }
   } else {
     Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize,

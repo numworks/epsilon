@@ -1,6 +1,9 @@
 #ifndef POINCARE_PRINT_H
 #define POINCARE_PRINT_H
 
+#include <escher/metric.h>
+#include <ion/display_constants.h>
+#include <kandinsky/font.h>
 #include <stdarg.h>
 #include <stddef.h>
 
@@ -62,6 +65,13 @@ class Print {
   static int CustomPrintfWithMaxBufferSize(char* buffer, size_t bufferSize,
                                            int maxNumberOfSignificantDigits,
                                            const char* format, ...);
+  constexpr static int k_maxNumberOfSmallGlyphsInScreenWidth =
+      (Ion::Display::Width - 2 * Escher::Metric::CommonLargeMargin) /
+      KDFont::GlyphWidth(KDFont::Size::Small);
+  static int CustomPrintfWithMaxNumberOfGlyphs(char* buffer, size_t bufferSize,
+                                               int maxNumberOfSignificantDigits,
+                                               int maxNumberOfGlyphs,
+                                               const char* format, ...);
 
   static void Capitalize(char* text);
   static void Decapitalize(char* text);

@@ -175,7 +175,7 @@ int Comparison::CompareChildren(const Node node0, const Node node1,
 int Comparison::CompareLastChild(const Node node0, Node node1) {
   int m = node0.numberOfChildren();
   // Otherwise, node0 should be sanitized beforehand.
-  assert(m > 1);
+  assert(m > 0);
   int comparisonWithChild = Compare(node0.childAtIndex(m - 1), node1);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;

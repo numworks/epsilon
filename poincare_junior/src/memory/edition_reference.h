@@ -71,22 +71,22 @@ class EditionReference {
   }
 
   /* Edition operations on Node* */
-  void insertNodeAfterNode(Node* nodeToInsert) {
+  void insertNodeAfterNode(const Node* nodeToInsert) {
     insert(nodeToInsert, false, false);
   }
-  void insertTreeAfterNode(Node* nodeToInsert) {
+  void insertTreeAfterNode(const Node* nodeToInsert) {
     insert(nodeToInsert, false, true);
   }
-  void insertNodeBeforeNode(Node* nodeToInsert) {
+  void insertNodeBeforeNode(const Node* nodeToInsert) {
     insert(nodeToInsert, true, false);
   }
-  void insertTreeBeforeNode(Node* nodeToInsert) {
+  void insertTreeBeforeNode(const Node* nodeToInsert) {
     insert(nodeToInsert, true, true);
   }
-  Node* replaceNodeByNode(Node* n) { return replaceBy(n, false, false); }
-  Node* replaceNodeByTree(Node* n) { return replaceBy(n, false, true); }
-  Node* replaceTreeByNode(Node* n) { return replaceBy(n, true, false); }
-  Node* replaceTreeByTree(Node* n) { return replaceBy(n, true, true); }
+  Node* replaceNodeByNode(const Node* n) { return replaceBy(n, false, false); }
+  Node* replaceNodeByTree(const Node* n) { return replaceBy(n, false, true); }
+  Node* replaceTreeByNode(const Node* n) { return replaceBy(n, true, false); }
+  Node* replaceTreeByTree(const Node* n) { return replaceBy(n, true, true); }
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
   void detachNode() { detach(false); }
@@ -127,29 +127,29 @@ class EditionReference {
   bool matchAndReplace(const Node* pattern, const Node* structure);
 
  private:
-  void insert(Node* nodeToInsert, bool before, bool isTree);
-  Node* replaceBy(Node* n, bool oldIsTree, bool newIsTree);
+  void insert(const Node* nodeToInsert, bool before, bool isTree);
+  Node* replaceBy(const Node* n, bool oldIsTree, bool newIsTree);
   void detach(bool isTree);
   void remove(bool isTree);
   uint16_t m_identifier;
 };
 
-void InsertNodeBeforeNode(EditionReference* target, Node* nodeToInsert);
-void InsertTreeBeforeNode(EditionReference* target, Node* treeToInsert);
+void InsertNodeBeforeNode(EditionReference* target, const Node* nodeToInsert);
+void InsertTreeBeforeNode(EditionReference* target, const Node* treeToInsert);
 
-inline void ReplaceTreeByNode(EditionReference* u, Node* n) {
+inline void ReplaceTreeByNode(EditionReference* u, const Node* n) {
   *u = u->replaceTreeByNode(n);
 }
 
-inline void ReplaceTreeByTree(EditionReference* u, Node* n) {
+inline void ReplaceTreeByTree(EditionReference* u, const Node* n) {
   *u = u->replaceTreeByTree(n);
 }
 
-inline void ReplaceNodeByNode(EditionReference* u, Node* n) {
+inline void ReplaceNodeByNode(EditionReference* u, const Node* n) {
   *u = u->replaceNodeByNode(n);
 }
 
-inline void ReplaceNodeByTree(EditionReference* u, Node* n) {
+inline void ReplaceNodeByTree(EditionReference* u, const Node* n) {
   *u = u->replaceNodeByTree(n);
 }
 

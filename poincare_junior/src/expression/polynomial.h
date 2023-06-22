@@ -102,7 +102,7 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static Node* GetVariables(const Node* expression);
+  static const Node* GetVariables(const Node* expression);
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
                                            size_t variableIndex = 0);

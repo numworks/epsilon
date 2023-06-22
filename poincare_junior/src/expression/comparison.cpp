@@ -76,9 +76,9 @@ bool Comparison::ContainsSubtree(const Node* tree, const Node* subtree) {
   if (AreEqual(tree, subtree)) {
     return true;
   }
-  for (std::pair<Node*, int> indexedNode :
+  for (std::pair<const Node*, int> indexedNode :
        NodeIterator::Children<Forward, NoEditable>(tree)) {
-    Node* child = std::get<Node*>(indexedNode);
+    const Node* child = std::get<const Node*>(indexedNode);
     if (ContainsSubtree(child, subtree)) {
       return true;
     }
@@ -87,7 +87,7 @@ bool Comparison::ContainsSubtree(const Node* tree, const Node* subtree) {
 }
 
 int Comparison::CompareNumbers(const Node* node0, const Node* node1) {
-  if (node0.block()->isRational() && node1.block()->isRational()) {
+  if (node0->block()->isRational() && node1->block()->isRational()) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);
   }
@@ -133,11 +133,11 @@ int Comparison::ComparePolynomial(const Node* node0, const Node* node1) {
 
 template <typename ScanDirection>
 int PrivateCompareChildren(const Node* node0, const Node* node1) {
-  for (std::pair<std::array<Node*, 2>, int> indexedNodes :
+  for (std::pair<std::array<const Node*, 2>, int> indexedNodes :
        MultipleNodesIterator::Children<ScanDirection, NoEditable, 2>(
            {node0, node1})) {
-    Node* child0 = std::get<std::array<Node*, 2>>(indexedNodes)[0];
-    Node* child1 = std::get<std::array<Node*, 2>>(indexedNodes)[1];
+    const Node* child0 = std::get<std::array<const Node*, 2>>(indexedNodes)[0];
+    const Node* child1 = std::get<std::array<const Node*, 2>>(indexedNodes)[1];
     int order = Comparison::Compare(child0, child1);
     if (order != 0) {
       return order;

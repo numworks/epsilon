@@ -76,7 +76,7 @@ IntegerHandler Rational::Denominator(const Node* node) {
     }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-      Block* block = node->block();
+      const Block* block = node->block();
       uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(block->next()));
       uint8_t denominatorNumberOfDigits =
           static_cast<uint8_t>(*(block->nextNth(2)));
@@ -107,7 +107,7 @@ Node* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   TypeBlock typeBlock(numerator.sign() == NonStrictSign::Negative
                           ? BlockType::RationalNegBig
                           : BlockType::RationalPosBig);
-  Node* node(pool->pushBlock(typeBlock));
+  Node* node = Node::FromBlocks(pool->pushBlock(typeBlock));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
   if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {

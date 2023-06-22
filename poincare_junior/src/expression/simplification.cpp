@@ -16,12 +16,12 @@ namespace PoincareJ {
 
 using namespace Placeholders;
 
-bool IsInteger(Node* u) { return u->block()->isInteger(); }
-bool IsNumber(Node* u) { return u->block()->isNumber(); }
-bool IsRational(Node* u) { return u->block()->isRational(); }
-bool IsConstant(Node* u) { return IsNumber(u); }
-bool IsZero(Node* u) { return u->type() == BlockType::Zero; }
-bool IsUndef(Node* u) { return u->type() == BlockType::Undefined; }
+bool IsInteger(const Node* u) { return u->block()->isInteger(); }
+bool IsNumber(const Node* u) { return u->block()->isNumber(); }
+bool IsRational(const Node* u) { return u->block()->isRational(); }
+bool IsConstant(const Node* u) { return IsNumber(u); }
+bool IsZero(const Node* u) { return u->type() == BlockType::Zero; }
+bool IsUndef(const Node* u) { return u->type() == BlockType::Undefined; }
 
 void DropNode(EditionReference* u) {
   Node* previousU = *u;
@@ -29,7 +29,7 @@ void DropNode(EditionReference* u) {
   *u = previousU;
 }
 
-bool AnyChildren(Node* u, bool test(Node*)) {
+bool AnyChildren(Node* u, bool test(const Node*)) {
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
     if (test(child)) {
       return true;
@@ -38,7 +38,7 @@ bool AnyChildren(Node* u, bool test(Node*)) {
   return false;
 }
 
-bool AllChildren(Node* u, bool test(Node*)) {
+bool AllChildren(Node* u, bool test(const Node*)) {
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
     if (!test(child)) {
       return false;
@@ -179,23 +179,23 @@ EditionReference PushBase(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  if (u.type() == BlockType::Power) {
-    return u.childAtIndex(0).clone();
+  if (u->type() == BlockType::Power) {
+    return u->childAtIndex(0)->clone();
   }
-  return u.clone();
+  return u->clone();
 }
 
 EditionReference PushExponent(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  if (u.type() == BlockType::Power) {
-    return u.childAtIndex(1).clone();
+  if (u->type() == BlockType::Power) {
+    return u->childAtIndex(1)->clone();
   }
   return P_ONE();
 }
 
-bool WrapWithUnary(EditionReference* u, Node* n) {
+bool WrapWithUnary(EditionReference* u, const Node* n) {
   InsertNodeBeforeNode(u, n);
   NAry::SetNumberOfChildren(*u, 1);
   return true;
@@ -308,7 +308,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   }
   Node* p1 = p->childAtIndex(0);
   Node* q1 = q->childAtIndex(0);
-  EditionReference h = P_MULT(p1.clone(), q1.clone());
+  EditionReference h = P_MULT(p1->clone(), q1->clone());
   SimplifyProductRec(&h);
   if (h.numberOfChildren() == 0) {
     h.removeNode();
@@ -327,7 +327,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
     assert(Comparison::AreEqual(h.childAtIndex(1), q1));
     h.removeTree();
-    EditionReference pc = p1.clone();
+    EditionReference pc = p1->clone();
     MultPopFirst(p);
     MergeProducts(p, q);
     MultPushFirst(p, &pc);
@@ -336,7 +336,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
   if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
     assert(Comparison::AreEqual(h.childAtIndex(1), p1));
     h.removeTree();
-    EditionReference qc = q1.clone();
+    EditionReference qc = q1->clone();
     MultPopFirst(q);
     MergeProducts(p, q);
     MultPushFirst(p, &qc);
@@ -366,9 +366,9 @@ EditionReference PushTerm(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  EditionReference c = u.clone();
-  if (u.type() == BlockType::Multiplication) {
-    if (IsConstant(u.childAtIndex(0))) {
+  EditionReference c = u->clone();
+  if (u->type() == BlockType::Multiplication) {
+    if (IsConstant(u->childAtIndex(0))) {
       MultPopFirst(&c);
       return c;
     }
@@ -383,8 +383,9 @@ EditionReference PushConstant(Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  if (u.type() == BlockType::Multiplication && IsConstant(u.childAtIndex(0))) {
-    return u.childAtIndex(0).clone();
+  if (u->type() == BlockType::Multiplication &&
+      IsConstant(u->childAtIndex(0))) {
+    return u->childAtIndex(0)->clone();
   }
   return P_ONE();
 }
@@ -484,7 +485,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
   }
   Node* p1 = p->childAtIndex(0);
   Node* q1 = q->childAtIndex(0);
-  EditionReference h = P_ADD(p1.clone(), q1.clone());
+  EditionReference h = P_ADD(p1->clone(), q1->clone());
   SimplifySumRec(&h);
   if (h.numberOfChildren() == 0) {
     h.removeNode();
@@ -502,7 +503,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
   }
   if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
     assert(Comparison::AreEqual(h.childAtIndex(1), q1));
-    EditionReference pc = p1.clone();
+    EditionReference pc = p1->clone();
     h.removeTree();
     AddPopFirst(p);
     MergeSums(p, q);
@@ -511,7 +512,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
   }
   if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
     assert(Comparison::AreEqual(h.childAtIndex(1), p1));
-    EditionReference qc = q1.clone();
+    EditionReference qc = q1->clone();
     h.removeTree();
     AddPopFirst(q);
     MergeSums(p, q);

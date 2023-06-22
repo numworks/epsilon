@@ -32,7 +32,7 @@ EditionReference Polynomial::PushMonomial(EditionReference variable,
 
 uint8_t Polynomial::ExponentAtIndex(const Node* polynomial, int index) {
   assert(index >= 0 && index < NumberOfTerms(polynomial));
-  return static_cast<uint8_t>(*(polynomial.block()->nextNth(2 + index)));
+  return static_cast<uint8_t>(*(polynomial->block()->nextNth(2 + index)));
 }
 
 void Polynomial::SetExponentAtIndex(EditionReference polynomial, int index,
@@ -109,7 +109,7 @@ EditionReference Polynomial::Multiplication(EditionReference polA,
 
 EditionReference Polynomial::Subtraction(EditionReference polA,
                                          EditionReference polB) {
-  return Addition(polA, Multiplication(polB, EditionReference(&MinusOneBlock)));
+  return Addition(polA, Multiplication(polB, EditionReference(-1_e)));
 }
 
 EditionReference Polynomial::Operation(
@@ -147,7 +147,7 @@ EditionReference Polynomial::Operation(
     size_t i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(polB);
     variableB.removeTree();
-    EditionReference result(&ZeroBlock);
+    EditionReference result(0_e);
     assert(i < nbOfTermsB);
     while (i < nbOfTermsB) {
       EditionReference nextCoefficientB = coefficientB.nextTree();
@@ -212,7 +212,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   if (polA.type() != BlockType::Polynomial &&
       polB.type() != BlockType::Polynomial) {
     assert(polA.block()->isInteger() && polB.block()->isInteger());
-    std::pair<Node*, Node*> nodePair = IntegerHandler::Division(
+    std::pair<const Node*, Node*> nodePair = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
     EditionReference quotient = EditionReference(nodePair.first);
     EditionReference remainder = EditionReference(nodePair.second);
@@ -223,11 +223,11 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     }
     quotient.removeTree();
     remainder.removeTree();
-    return std::make_pair(EditionReference(&ZeroBlock), polA);
+    return std::make_pair(EditionReference(0_e), polA);
   }
   if (polA.type() != BlockType::Polynomial) {
     polB.removeTree();
-    return std::make_pair(EditionReference(&ZeroBlock), polA);
+    return std::make_pair(EditionReference(0_e), polA);
   }
   bool isXCloned = false;
   EditionReference x = Variable(polA);
@@ -243,7 +243,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   EditionReference leadingCoeffA, leadingCoeffB;
   extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
   extractDegreeAndLeadingCoefficient(polB, x, &degreeB, &leadingCoeffB);
-  EditionReference currentQuotient(&ZeroBlock);
+  EditionReference currentQuotient(0_e);
   while (degreeA >= degreeB) {
     std::pair<EditionReference, EditionReference> refPair = PseudoDivision(
         editionPool->clone(leadingCoeffA), editionPool->clone(leadingCoeffB));
@@ -290,7 +290,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   }
   int numberOfTerms = NumberOfTerms(polynomial);
   if (numberOfTerms == 0) {
-    return EditionReference(polynomial.replaceTreeByTree(&ZeroBlock));
+    return EditionReference(polynomial.replaceTreeByTree(0_e));
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
     EditionReference result = polynomial.childAtIndex(1);
@@ -306,7 +306,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 
 /* PolynomialParser */
 
-Node* PolynomialParser::GetVariables(const Node* expression) {
+const Node* PolynomialParser::GetVariables(const Node* expression) {
   if (expression->block()->isInteger()) {  // TODO: generic belongToField?
     return KSet();
   }
@@ -325,9 +325,9 @@ Node* PolynomialParser::GetVariables(const Node* expression) {
   }
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
     EditionReference variables = EditionReference(KSet());
-    for (std::pair<Node*, int> indexedNode :
+    for (std::pair<const Node*, int> indexedNode :
          NodeIterator::Children<Forward, NoEditable>(expression)) {
-      Node* child = std::get<Node*>(indexedNode);
+      const Node* child = std::get<const Node*>(indexedNode);
       if (child->type() == BlockType::Addition) {
         assert(type != BlockType::Addition);
         variables = Set::Add(variables, child);
@@ -346,16 +346,16 @@ Node* PolynomialParser::GetVariables(const Node* expression) {
 EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
                                                     EditionReference variables,
                                                     size_t variableIndex) {
-  Node* variable;
-  for (std::pair<Node*, int> indexedVariable :
+  const Node* variable;
+  for (std::pair<const Node*, int> indexedVariable :
        NodeIterator::Children<Forward, NoEditable>(variables)) {
     if (std::get<int>(indexedVariable) < variableIndex) {
       // Skip previously handled variable
       continue;
     }
     if (Comparison::ContainsSubtree(expression,
-                                    std::get<Node*>(indexedVariable))) {
-      variable = std::get<Node*>(indexedVariable);
+                                    std::get<const Node*>(indexedVariable))) {
+      variable = std::get<const Node*>(indexedVariable);
       break;
     }
   }
@@ -403,9 +403,8 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
 std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     EditionReference expression, EditionReference variable) {
   if (Comparison::AreEqual(expression, variable)) {
-    return std::make_pair(
-        EditionReference(expression.replaceTreeByTree(&OneBlock)),
-        static_cast<uint8_t>(1));
+    return std::make_pair(EditionReference(expression.replaceTreeByTree(1_e)),
+                          static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx;
   ctx.setNode(Placeholders::A, static_cast<Node*>(variable), 1);
@@ -416,8 +415,8 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);
-      return std::make_pair(
-          EditionReference(expression.replaceTreeByTree(&OneBlock)), exp);
+      return std::make_pair(EditionReference(expression.replaceTreeByTree(1_e)),
+                            exp);
     }
   }
   if (expression.type() == BlockType::Multiplication) {
@@ -464,8 +463,8 @@ uint8_t Polynomial::Degree(const Node* expression, const Node* variable) {
   }
   uint8_t degree = 0;
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
-    for (std::pair<Node*, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
-      Node* child = std::get<Node*>(indexedNode);
+    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
+      Node* child = std::get<const Node *>(indexedNode);
       uint8_t childDegree = Degree(child, variables);
       if (type == BlockType::Addition) {
         degree = std::max(degree, childDegree);
@@ -486,8 +485,8 @@ EditionReference Polynomial::Coefficient(const Node* expression, const Node* var
       return exponent == 1 ? editionPool->push<BlockType::One>() : editionPool->push<BlockType::Zero>();
     }
     EditionReference addition = editionPool->push<BlockType::Addition>(0);
-    for (std::pair<Node*, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
-      Node* child = std::get<Node*>(indexedNode);
+    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
+      Node* child = std::get<const Node *>(indexedNode);
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {
         NAry::AddChild(addition, childCoefficient);
@@ -520,8 +519,8 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Node*
     }
   }
   if (type == BlockType::Multiplication) {
-    for (std::pair<Node*, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
-      Node* child = std::get<Node*>(indexedNode);
+    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
+      Node* child = std::get<const Node *>(indexedNode);
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at basicReduction

@@ -267,7 +267,7 @@ void EditionReference::detach(bool isTree) {
 #endif
 }
 
-void InsertNodeBeforeNode(EditionReference* target, Node* nodeToInsert) {
+void InsertNodeBeforeNode(EditionReference* target, const Node* nodeToInsert) {
   Node* previousTarget = *target;
   if (EditionPool::sharedEditionPool()->contains(nodeToInsert->block()) &&
       nodeToInsert->block() < previousTarget->block()) {
@@ -278,7 +278,7 @@ void InsertNodeBeforeNode(EditionReference* target, Node* nodeToInsert) {
   *target = previousTarget;
 }
 
-void InsertTreeBeforeNode(EditionReference* target, Node* treeToInsert) {
+void InsertTreeBeforeNode(EditionReference* target, const Node* treeToInsert) {
   Node* previousTarget = *target;
   if (EditionPool::sharedEditionPool()->contains(treeToInsert->block()) &&
       treeToInsert->block() < previousTarget->block()) {

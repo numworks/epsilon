@@ -86,7 +86,7 @@ class Pool {
   class AbstractIterator {
    public:
     AbstractIterator(const TypeBlock *block)
-        : m_node(reinterpret_cast<const Node *>(block)) {}
+        : m_node(Node::FromBlocks(block)) {}
     const Node *operator*() { return m_node; }
     bool operator!=(const AbstractIterator &it) const {
       return (m_node->block() != it.m_node->block());
@@ -100,8 +100,7 @@ class Pool {
   class Nodes final {
    public:
     Nodes(TypeBlock *block, int numberOfBlocks)
-        : m_node(numberOfBlocks > 0 ? reinterpret_cast<const Node *>(block)
-                                    : nullptr),
+        : m_node(numberOfBlocks > 0 ? Node::FromBlocks(block) : nullptr),
           m_numberOfBlocks(numberOfBlocks) {}
     class Iterator : public AbstractIterator {
      public:
@@ -125,8 +124,7 @@ class Pool {
   class Trees final {
    public:
     Trees(TypeBlock *block, int numberOfBlocks)
-        : m_node(numberOfBlocks > 0 ? reinterpret_cast<const Node *>(block)
-                                    : nullptr),
+        : m_node(numberOfBlocks > 0 ? Node::FromBlocks(block) : nullptr),
           m_numberOfBlocks(numberOfBlocks) {}
     class Iterator : public AbstractIterator {
      public:

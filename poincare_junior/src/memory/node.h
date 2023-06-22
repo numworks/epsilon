@@ -59,23 +59,21 @@ class Node {
                  int indentation = 0) const;
 #endif
 
-  const TypeBlock* block() const { return m_block; }
-  TypeBlock* block() { return m_block; }
+  constexpr const TypeBlock* block() const { return m_block; }
+  constexpr TypeBlock* block() { return m_block; }
   void copyTreeTo(void* address) const;
 
   // Node Navigation
   const Node* nextNode() const;
-  constexpr Node* nextNode() {
-    return Utils::DeconstifyPtr(&Node ::nextNode, this);
-  };
+  Node* nextNode() { return Utils::DeconstifyPtr(&Node::nextNode, this); };
   /* TODO : If costly, previousNode could be optimized by sprinkling TreeBorders
    *        blocks between every tree of the cache. PreviousNode and nextNode
    *        would only have to check for TreeBorders. */
   const Node* previousNode() const;
-  constexpr Node* previousNode() {
-    return Utils::DeconstifyPtr(&Node ::previousNode, this);
+  Node* previousNode() {
+    return Utils::DeconstifyPtr(&Node::previousNode, this);
   }
-  constexpr const Node* nextTree() const {
+  const Node* nextTree() const {
     const Node* result = this;
     int nbOfChildrenToScan = result->numberOfChildren();
     while (nbOfChildrenToScan > 0) {
@@ -84,16 +82,14 @@ class Node {
     }
     return result->nextNode();
   }
-  constexpr Node* nextTree() {
-    return Utils::DeconstifyPtr(&Node ::nextTree, this);
-  };
+  Node* nextTree() { return Utils::DeconstifyPtr(&Node::nextTree, this); };
   const Node* previousTree() const;
   Node* previousTree() {
-    return Utils::DeconstifyPtr(&Node ::previousTree, this);
+    return Utils::DeconstifyPtr(&Node::previousTree, this);
   }
 
   // Sizes
-  constexpr size_t treeSize() const { return nextTree()->block() - block(); }
+  size_t treeSize() const { return nextTree()->block() - block(); }
 
   // Node Hierarchy
   /* TODO : parent, previousBlock and similar methods navigating backward could
@@ -107,7 +103,7 @@ class Node {
   int numberOfDescendants(bool includeSelf) const;
   const Node* childAtIndex(int index) const;
   Node* childAtIndex(int index) {
-    return Utils::DeconstifyPtr(&Node ::childAtIndex, this, index);
+    return Utils::DeconstifyPtr(&Node::childAtIndex, this, index);
   }
   int indexOfChild(const Node* child) const;
   int indexInParent() const;
@@ -134,7 +130,7 @@ class Node {
   const Node* previousRelative(bool parent) const;
 
   // Should be last - and most likely only - member
-  TypeBlock m_block[];
+  TypeBlock m_block[0];
 };
 
 }  // namespace PoincareJ

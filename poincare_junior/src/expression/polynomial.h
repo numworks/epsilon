@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 class Polynomial final {
   /* We opt for the recursive representation.
-   * - Node*:
+   * - Node:
    *   | P TAG | number of terms | highest exponant | second highest exponant |
    * ... | number of terms | P TAG |
    * - Children: the first child is the variable, the others are the

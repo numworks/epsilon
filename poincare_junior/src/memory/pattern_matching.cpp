@@ -166,7 +166,7 @@ bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
     }
     if (source->numberOfChildren() > 0) {
       // Set the new local context so that AnyTrees placeholder cannot match
-      // consecutive Trees inside and outside this node->
+      // consecutive Trees inside and outside this node.
       matchContext.setLocal(source, pattern);
     }
     source = source->nextNode();

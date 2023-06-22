@@ -105,7 +105,7 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
-  // Replacements from Node* outside of the EditionPool
+  // Replacements from nodes outside of the EditionPool
   ref0 = ref0.replaceNodeByNode(9_e);  // Same size
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});

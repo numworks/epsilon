@@ -653,7 +653,7 @@ QUIZ_CASE(pcj_node) {
   Node* node2 = Node::FromBlocks(editionPool->firstBlock());
   quiz_assert(node2 == node1);
 
-  // Node* navigation
+  // Node navigation
   constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
   constexpr Tree e2 = KPow(5_e, 6_e);
   const Node* n1 = e1;

@@ -63,7 +63,7 @@ class Node {
   TypeBlock* block() { return m_block; }
   void copyTreeTo(void* address) const;
 
-  // Node* Navigation
+  // Node Navigation
   const Node* nextNode() const;
   constexpr Node* nextNode() {
     return Utils::DeconstifyPtr(&Node ::nextNode, this);
@@ -95,7 +95,7 @@ class Node {
   // Sizes
   constexpr size_t treeSize() const { return nextTree()->block() - block(); }
 
-  // Node* Hierarchy
+  // Node Hierarchy
   /* TODO : parent, previousBlock and similar methods navigating backward could
    *         be forbidden and deleted, optimizing node size and navigation. */
   const Node* parent() const;

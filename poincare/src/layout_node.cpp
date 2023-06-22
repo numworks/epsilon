@@ -35,6 +35,10 @@ void LayoutNode::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
     style.backgroundColor = selectionColor;
   }
 
+  assert(!SumOverflowsKDCoordinate(absoluteOriginWithMargin(style.font).x(),
+                                   p.x()));
+  assert(!SumOverflowsKDCoordinate(absoluteOriginWithMargin(style.font).y(),
+                                   p.y()));
   KDPoint renderingAbsoluteOrigin = absoluteOrigin(style.font).translatedBy(p);
   KDPoint renderingOriginWithMargin =
       absoluteOriginWithMargin(style.font).translatedBy(p);
@@ -58,6 +62,10 @@ KDPoint LayoutNode::absoluteOriginWithMargin(KDFont::Size font) {
   LayoutNode *p = parent();
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
     if (p != nullptr) {
+      assert(!SumOverflowsKDCoordinate(p->absoluteOrigin(font).x(),
+                                       p->positionOfChild(this, font).x()));
+      assert(!SumOverflowsKDCoordinate(p->absoluteOrigin(font).y(),
+                                       p->positionOfChild(this, font).y()));
       m_frame.setOrigin(
           p->absoluteOrigin(font).translatedBy(p->positionOfChild(this, font)));
     } else {

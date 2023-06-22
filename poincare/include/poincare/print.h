@@ -51,7 +51,7 @@ class Print {
    * For this method, do not pass a number of significant digits as argument to
    * each printed float/double.
    * ex:
-   *   CustomPrintfWithMaxNumberOfSignificantDigits(
+   *   CustomPrintfWithMaxBufferSize(
    *                 buffer, bufferSize, 7,
    *                 "Two doubles are %*.*ed and %*.*ed",
    *                 0.0123456789,
@@ -59,9 +59,9 @@ class Print {
    *                 9.8765432109,
    *                 Preferences::PrintFloatMode::Scientific);
    * */
-  static int CustomPrintfWithMaxNumberOfSignificantDigits(
-      char* buffer, size_t bufferSize, int maxNumberOfSignificantDigits,
-      const char* format, ...);
+  static int CustomPrintfWithMaxBufferSize(char* buffer, size_t bufferSize,
+                                           int maxNumberOfSignificantDigits,
+                                           const char* format, ...);
 
   static void Capitalize(char* text);
   static void Decapitalize(char* text);

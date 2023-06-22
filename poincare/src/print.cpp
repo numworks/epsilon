@@ -128,9 +128,9 @@ int Print::UnsafeCustomPrintf(char *buffer, size_t bufferSize,
   return length;
 }
 
-int Print::CustomPrintfWithMaxNumberOfSignificantDigits(
-    char *buffer, size_t bufferSize, int maxNumberOfSignificantDigits,
-    const char *format, ...) {
+int Print::CustomPrintfWithMaxBufferSize(char *buffer, size_t bufferSize,
+                                         int maxNumberOfSignificantDigits,
+                                         const char *format, ...) {
   assert(maxNumberOfSignificantDigits > 0);
   int length = bufferSize;
   while (length >= static_cast<int>(bufferSize) &&

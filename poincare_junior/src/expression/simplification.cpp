@@ -549,8 +549,7 @@ bool Simplification::Simplify(EditionReference* reference) {
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
   changed = DeepSystemProjection(reference) || changed;
-  // TODO: Deep SystemReduce instead of ShallowSystemReduce.
-  changed = ShallowSystemReduce(reference) || changed;
+  changed = SystematicReduce(reference) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(reference) || changed;
   changed = DeepBeautify(reference) || changed;
@@ -572,18 +571,6 @@ bool Simplification::ShallowAdvancedReduction(EditionReference* reference,
   return (reference->block()->isAlgebraic()
               ? AdvanceReduceOnAlgebraic
               : AdvanceReduceOnTranscendental)(reference, change);
-}
-
-bool Simplification::ShallowSystemReduce(EditionReference* e, void* context) {
-  // TODO: Macro to automatically generate switch
-  switch (e->type()) {
-    case BlockType::Addition:
-      return ReduceNumbersInNAry(e, Number::Addition);
-    case BlockType::Multiplication:
-      return ReduceNumbersInNAry(e, Number::Multiplication);
-    default:
-      return false;
-  }
 }
 
 // Reverse most system projections to display better expressions
@@ -718,28 +705,6 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
                KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())))));
 }
 
-bool Simplification::ReduceNumbersInNAry(EditionReference* reference,
-                                         NumberOperation operation) {
-  size_t index = 0;
-  size_t nbOfChildren = reference->numberOfChildren();
-  assert(nbOfChildren > 0);
-  EditionReference child0 = reference->nextNode();
-  EditionReference child1 = child0.nextTree();
-  while (index + 1 < nbOfChildren && child0.block()->isNumber() &&
-         child1.block()->isNumber()) {
-    EditionReference reducedChild = operation(child0, child1);
-    child0 = child0.replaceTreeByTree(reducedChild);
-    const Node child1Node = child1;
-    child1.removeTree();
-    // Optimized equivalent of child1 = child0.nextTree();
-    child1 = child1Node;
-    index++;
-  }
-  NAry::SetNumberOfChildren(*reference, nbOfChildren - index);
-  *reference = NAry::SquashIfUnary(*reference);
-  return index > 0;
-}
-
 bool Simplification::ApplyShallowInDepth(EditionReference* reference,
                                          ShallowOperation shallowOperation,
                                          void* context) {
@@ -763,7 +728,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference* reference,
   }
   if (ShallowExpand(reference)) {
     // TODO: Define a metric to validate (or not) the contraction
-    ShallowSystemReduce(reference);
+    SystematicReduce(reference);
     ShallowAdvancedReduction(reference, true);
     return true;
   }
@@ -775,8 +740,8 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference* reference,
   if (ShallowContract(reference)) {
     /* TODO: Define a metric to validate (or not) the contraction. It could be :
      * - Number of node decreased
-     * - Success of ShallowSystemReduce */
-    ShallowSystemReduce(reference);
+     * - Success of SystematicReduce */
+    SystematicReduce(reference);
     return true;
   }
   return ExpandTranscendentalOnRational(reference) +

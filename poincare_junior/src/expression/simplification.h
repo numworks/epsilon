@@ -13,7 +13,6 @@ class Simplification {
   static bool ShallowAdvancedReduction(EditionReference *reference,
                                        bool change);
 
-  static bool ShallowSystemReduce(EditionReference *e, void *context = nullptr);
   static bool ShallowBeautify(EditionReference *reference,
                               void *context = nullptr);
   static bool DeepBeautify(EditionReference *reference) {
@@ -61,10 +60,6 @@ class Simplification {
   static bool SimplifyProductRec(EditionReference *u);
   static bool MergeProducts(EditionReference *p, EditionReference *q);
   static bool SimplifyPower(EditionReference *u);
-
-  typedef EditionReference (*NumberOperation)(const Node, const Node);
-  static bool ReduceNumbersInNAry(EditionReference *reference,
-                                  NumberOperation operation);
 
   typedef bool (*ShallowOperation)(EditionReference *reference, void *context);
   static bool ApplyShallowInDepth(EditionReference *reference,

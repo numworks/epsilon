@@ -38,6 +38,9 @@ void TrigonometryListController::setExactAndApproximateExpression(
   Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &exactAngle, context, ReductionTarget::User, &unit);
 
+  assert(std::isfinite(Shared::PoincareHelpers::ApproximateToScalar<double>(
+      exactAngle, context)));
+
   // Set exact angle in [0, 2π]
   if (!exactAngle.isUndefined()) {
     if (!unit.isUninitialized()) {
@@ -131,9 +134,14 @@ void TrigonometryListController::setExactAndApproximateExpression(
   updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration
-  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(
-      approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
-      context);
+  /* m_model ask for a float angle but we compute the angle in double and then
+   * cast it to float because approximation in float can overflow during the
+   * computation. The angle should be between 0 and 2*pi so the approximation in
+   * double is castable in float. */
+  float angle =
+      static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(
+          approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
+          context));
   // Convert angle to radians
   if (userAngleUnit != Preferences::AngleUnit::Radian) {
     angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);

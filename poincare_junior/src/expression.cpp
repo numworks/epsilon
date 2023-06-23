@@ -17,11 +17,13 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
   assert(Builtin::IsBuiltin(expressionReference.type()));
   EditionPool *editionPool = EditionPool::sharedEditionPool();
   int i = 0;
-  const char *name = Builtin::Name(expressionReference.type()).mainAlias();
-  while (name[i] != 0) {
+  UTF8Decoder decoder(Builtin::Name(expressionReference.type()).mainAlias());
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull) {
     NAry::AddChild(
         layoutParent,
-        editionPool->push<BlockType::CodePointLayout, CodePoint>(name[i++]));
+        editionPool->push<BlockType::CodePointLayout, CodePoint>(codePoint));
+    codePoint = decoder.nextCodePoint();
   }
   EditionReference parenthesis =
       editionPool->push<BlockType::ParenthesisLayout>();

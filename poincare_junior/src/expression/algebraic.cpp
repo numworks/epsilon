@@ -101,12 +101,11 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }
-    EditionReference result =
-        numerator == negativeRationalExponent
-            ? EditionReference(1_e)
-            : expression;  // TODO: SystematicReduce(&expression)
-    expression.replaceTreeByTree(result);
-    return result;
+    if (numerator == negativeRationalExponent) {
+      return expression.replaceTreeByTree(1_e);
+    }
+    Simplification::SystematicReduce(&expression);
+    return expression;
   }
   if (type == BlockType::Multiplication) {
     for (std::pair<EditionReference, int> indexedNode :

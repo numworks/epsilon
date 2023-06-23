@@ -138,11 +138,13 @@ void ListController::layoutFieldDidChangeSize(LayoutField *layoutField) {
 bool ListController::layoutFieldDidFinishEditing(LayoutField *layoutField,
                                                  Ion::Events::Event event) {
   assert(layoutField->isEditing());
-  ExpressionModelListController::layoutFieldDidFinishEditing(layoutField,
-                                                             event);
-  reloadBrace();
-  reloadButtonMessage();
-  return true;
+  if (ExpressionModelListController::layoutFieldDidFinishEditing(layoutField,
+                                                                 event)) {
+    reloadBrace();
+    reloadButtonMessage();
+    return true;
+  }
+  return false;
 }
 
 void ListController::layoutFieldDidAbortEditing(

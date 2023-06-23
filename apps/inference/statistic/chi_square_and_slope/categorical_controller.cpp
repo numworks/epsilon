@@ -159,9 +159,21 @@ bool InputCategoricalController::textFieldDidFinishEditing(
   if (HasUndefinedValue(p)) {
     return false;
   }
-  return handleEditedValue(
-      indexOfEditedParameterAtIndex(m_selectableListView.selectedRow()), p,
-      textField, event);
+  int i = indexOfEditedParameterAtIndex(m_selectableListView.selectedRow());
+  if (!m_statistic->authorizedParameterAtIndex(p, i)) {
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+  m_statistic->setParameterAtIndex(p, i);
+  /* Alpha and DegreeOfFreedom cannot be negative. However, DegreeOfFreedom
+   * can be computed to a negative when there are no rows.
+   * In that case, the degreeOfFreedom cell should display nothing. */
+  PrintValueInTextHolder(p, textField, true, true);
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    event = Ion::Events::Down;
+  }
+  m_selectableListView.handleEvent(event);
+  return true;
 }
 
 bool InputCategoricalController::ButtonAction(
@@ -198,25 +210,6 @@ void InputCategoricalController::fillCellForRow(Escher::HighlightCell *cell,
     m_significanceCell.setMessages(m_statistic->thresholdName(),
                                    m_statistic->thresholdDescription());
   }
-}
-
-bool InputCategoricalController::handleEditedValue(int i, double p,
-                                                   AbstractTextField *textField,
-                                                   Ion::Events::Event event) {
-  if (!m_statistic->authorizedParameterAtIndex(p, i)) {
-    App::app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-  m_statistic->setParameterAtIndex(p, i);
-  /* Alpha and DegreeOfFreedom cannot be negative. However, DegreeOfFreedom
-   * can be computed to a negative when there are no rows.
-   * In that case, the degreeOfFreedom cell should display nothing. */
-  PrintValueInTextHolder(p, textField, true, true);
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    event = Ion::Events::Down;
-  }
-  m_selectableListView.handleEvent(event);
-  return true;
 }
 
 }  // namespace Inference

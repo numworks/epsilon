@@ -54,13 +54,6 @@ bool TextInput::ContentView::selectionIsEmpty() const {
   return m_selectionStart == nullptr;
 }
 
-void TextInput::ContentView::setAlignment(float horizontalAlignment,
-                                          float verticalAlignment) {
-  m_horizontalAlignment = horizontalAlignment;
-  m_verticalAlignment = verticalAlignment;
-  markWholeFrameAsDirty();
-}
-
 void TextInput::ContentView::reloadRectFromPosition(
     const char* position, bool includeFollowingLines) {
   markRectAsDirty(dirtyRectFromPosition(position, includeFollowingLines));
@@ -144,11 +137,6 @@ void TextInput::deleteSelection() {
   layoutSubviews(
       true);  // Set the cursor frame by calling the subviews relayouting
   scrollToCursor();
-}
-
-void TextInput::setAlignment(float horizontalAlignment,
-                             float verticalAlignment) {
-  contentView()->setAlignment(horizontalAlignment, verticalAlignment);
 }
 
 bool TextInput::insertTextAtLocation(const char* text, char* location) {

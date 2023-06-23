@@ -140,11 +140,12 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
+  assert(!layoutField->isEditing());
   if (layoutFieldHasSyntaxError(layoutField)) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
-    return true;
+    return false;
   }
-  return false;
+  return true;
 }
 
 MathTextFieldDelegate *MathTextFieldDelegate::Default() {

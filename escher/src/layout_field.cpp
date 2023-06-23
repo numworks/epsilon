@@ -503,7 +503,10 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
       return true;
     }
     if (isEditingAndShouldFinishEditing(event)) {
-      m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event);
+      setEditing(false);
+      if (!m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
+        setEditing(true);
+      }
       return true;
     }
   }

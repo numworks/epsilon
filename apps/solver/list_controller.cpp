@@ -137,7 +137,7 @@ void ListController::layoutFieldDidChangeSize(LayoutField *layoutField) {
 
 bool ListController::layoutFieldDidFinishEditing(LayoutField *layoutField,
                                                  Ion::Events::Event event) {
-  assert(layoutField->isEditing());
+  assert(!layoutField->isEditing());
   if (ExpressionModelListController::layoutFieldDidFinishEditing(layoutField,
                                                                  event)) {
     reloadBrace();

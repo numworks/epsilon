@@ -83,28 +83,18 @@ class EditionReference {
   void cloneTreeBeforeNode(const Node* nodeToClone) {
     insert(nodeToClone, true, true);
   }
-  Node* replaceNodeByNode(const Node* n) { return replaceBy(n, false, false); }
-  Node* replaceNodeByTree(const Node* n) { return replaceBy(n, false, true); }
-  Node* replaceTreeByNode(const Node* n) { return replaceBy(n, true, false); }
-  Node* replaceTreeByTree(const Node* n) { return replaceBy(n, true, true); }
+  Node* replaceNodeByNode(Node* n) { return replaceBy(n, false, false); }
+  Node* replaceNodeByTree(Node* n) { return replaceBy(n, false, true); }
+  Node* replaceTreeByNode(Node* n) { return replaceBy(n, true, false); }
+  Node* replaceTreeByTree(Node* n) { return replaceBy(n, true, true); }
+  Node* cloneNodeOverNode(const Node* n) { return replaceBy(n, false, false); }
+  Node* cloneTreeOverNode(const Node* n) { return replaceBy(n, false, true); }
+  Node* cloneNodeOverTree(const Node* n) { return replaceBy(n, true, false); }
+  Node* cloneTreeOverTree(const Node* n) { return replaceBy(n, true, true); }
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
   void detachNode() { detach(false); }
   void detachTree() { detach(true); }
-
-  // Edition operations on EditionReference
-  Node* replaceNodeByNode(EditionReference t) {
-    return replaceNodeByNode(t.node());
-  }
-  Node* replaceNodeByTree(EditionReference t) {
-    return replaceNodeByTree(t.node());
-  }
-  Node* replaceTreeByNode(EditionReference t) {
-    return replaceTreeByNode(t.node());
-  }
-  Node* replaceTreeByTree(EditionReference t) {
-    return replaceTreeByTree(t.node());
-  }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
@@ -129,20 +119,36 @@ void CloneTreeBeforeNode(EditionReference* target, const Node* treeToInsert);
 void MoveNodeBeforeNode(EditionReference* target, Node* nodeToInsert);
 void MoveTreeBeforeNode(EditionReference* target, Node* treeToInsert);
 
-inline void ReplaceTreeByNode(EditionReference* u, const Node* n) {
+inline void ReplaceTreeByNode(EditionReference* u, Node* n) {
   *u = u->replaceTreeByNode(n);
 }
 
-inline void ReplaceTreeByTree(EditionReference* u, const Node* n) {
+inline void ReplaceTreeByTree(EditionReference* u, Node* n) {
   *u = u->replaceTreeByTree(n);
 }
 
-inline void ReplaceNodeByNode(EditionReference* u, const Node* n) {
+inline void ReplaceNodeByNode(EditionReference* u, Node* n) {
   *u = u->replaceNodeByNode(n);
 }
 
-inline void ReplaceNodeByTree(EditionReference* u, const Node* n) {
+inline void ReplaceNodeByTree(EditionReference* u, Node* n) {
   *u = u->replaceNodeByTree(n);
+}
+
+inline void CloneTreeOverNode(EditionReference* u, const Node* n) {
+  *u = u->cloneTreeOverNode(n);
+}
+
+inline void CloneTreeOverTree(EditionReference* u, const Node* n) {
+  *u = u->cloneTreeOverTree(n);
+}
+
+inline void CloneNodeOverNode(EditionReference* u, const Node* n) {
+  *u = u->cloneNodeOverNode(n);
+}
+
+inline void CloneNodeOverTree(EditionReference* u, const Node* n) {
+  *u = u->cloneNodeOverTree(n);
 }
 
 void SwapTrees(EditionReference* u, EditionReference* v);

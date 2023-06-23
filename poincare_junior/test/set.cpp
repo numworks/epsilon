@@ -26,13 +26,13 @@ QUIZ_CASE(pcj_set) {
   assert_trees_are_equal(unionSet, KSet(-1_e, 2_e, 3_e, 5_e, 6_e, 7_e));
 
   // Intersection {2, 3, 5, 6, 7} ∩ {3, 7, 8_e}
-  EditionReference(set0).replaceTreeByTree(KSet(2_e, 3_e, 5_e, 6_e, 7_e));
+  EditionReference(set0).cloneTreeOverTree(KSet(2_e, 3_e, 5_e, 6_e, 7_e));
   set1 = KSet(3_e, 7_e, 8_e);
   EditionReference intersectionSet = Set::Intersection(set0, set1);
   assert_trees_are_equal(intersectionSet, KSet(3_e, 7_e));
 
   // Difference {3, 5, 6} \ {2, 5, 6}
-  EditionReference(set0).replaceTreeByTree(KSet(3_e, 5_e, 6_e));
+  EditionReference(set0).cloneTreeOverTree(KSet(3_e, 5_e, 6_e));
   set1 = KSet(2_e, 5_e, 6_e);
   EditionReference differenceSet = Set::Difference(set0, set1);
   assert_trees_are_equal(differenceSet, KSet(3_e));

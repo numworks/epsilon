@@ -106,13 +106,13 @@ QUIZ_CASE(pcj_edition_reference) {
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements from nodes outside of the EditionPool
-  ref0 = ref0.replaceNodeByNode(9_e);  // Same size
+  ref0 = ref0.cloneNodeOverNode(9_e);  // Same size
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
-  ref1 = ref1.replaceTreeByNode(10_e);  // Smaller size
+  ref1 = ref1.cloneNodeOverTree(10_e);  // Smaller size
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
-  ref2 = ref2.replaceNodeByTree(k_expr1);  // Bigger size
+  ref2 = ref2.cloneTreeOverNode(k_expr1);  // Bigger size
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 

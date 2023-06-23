@@ -519,7 +519,7 @@ QUIZ_CASE(pcj_node_iterator) {
   for (std::pair<EditionReference, int> indexedRef :
        NodeIterator::Children<Forward, Editable>(mult)) {
     std::get<EditionReference>(indexedRef)
-        .replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
+        .cloneTreeOverTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
   for (const std::pair<const Node*, int> indexedNode :
@@ -597,8 +597,8 @@ QUIZ_CASE(pcj_node_iterator) {
     std::array<EditionReference, 2> childrenPair =
         std::get<std::array<EditionReference, 2>>(indexedRefs);
     int pairIndex = std::get<int>(indexedRefs);
-    childrenPair[0].replaceTreeByTree(newChildren1[pairIndex]);
-    childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
+    childrenPair[0].cloneTreeOverTree(newChildren1[pairIndex]);
+    childrenPair[1].cloneTreeOverTree(newChildren2[pairIndex]);
   }
   // Check edition
   const Node* children1[] = {n10, n11, n6};

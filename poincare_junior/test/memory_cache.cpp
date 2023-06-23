@@ -131,7 +131,7 @@ QUIZ_CASE(pcj_cache_references) {
   assert_check_cache_reference(reference0, {4_e});
 
   Reference reference1(
-      [](Node *node) { EditionReference(node).replaceNodeByNode(5_e); },
+      [](Node *node) { EditionReference(node).cloneNodeOverNode(5_e); },
       smallTree);
   assert_check_cache_reference(reference1, {5_e});
 

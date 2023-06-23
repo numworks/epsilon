@@ -117,7 +117,7 @@ bool NAry::SquashIfEmpty(EditionReference* reference) {
   // Return the neutral element
   BlockType type = reference->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
-  *reference = reference->replaceTreeByTree(
+  *reference = reference->cloneTreeOverTree(
       Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
 }

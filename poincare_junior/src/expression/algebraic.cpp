@@ -102,7 +102,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }
     if (numerator == negativeRationalExponent) {
-      return expression.replaceTreeByTree(1_e);
+      return expression.cloneTreeOverTree(1_e);
     }
     Simplification::SystematicReduce(&expression);
     return expression;

@@ -59,7 +59,7 @@ bool Simplification::SystematicReduce(EditionReference* u) {
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*u)) {
     childChanged = SystematicReduce(&child) || childChanged;
     if (IsUndef(child)) {
-      ReplaceTreeByNode(u, KUndef);
+      CloneNodeOverTree(u, KUndef);
       return true;
     }
   }
@@ -90,7 +90,7 @@ bool Simplification::SimplifyTrigDiff(EditionReference* u) {
   Node* y = u->childAtIndex(1);
   assert(x->block()->isOfType({BlockType::Zero, BlockType::One}));
   assert(y->block()->isOfType({BlockType::Zero, BlockType::One}));
-  ReplaceTreeByTree(u, x->treeIsIdenticalTo(y) ? 0_e : 1_e);
+  CloneTreeOverTree(u, x->treeIsIdenticalTo(y) ? 0_e : 1_e);
   return true;
 }
 
@@ -102,7 +102,7 @@ bool Simplification::SimplifyTrig(EditionReference* u) {
   bool changed = SystematicReduce(&secondArgument);
   if (secondArgument.block()->isOfType({BlockType::MinusOne, BlockType::Two})) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
-    ReplaceTreeByTree(&secondArgument,
+    CloneTreeOverTree(&secondArgument,
                       secondArgument.type() == BlockType::Two ? 0_e : 1_e);
     EditionPool* editionPool(EditionPool::sharedEditionPool());
     MoveNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
@@ -120,15 +120,15 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   if (v.type() == BlockType::Zero) {
     if (n.type() != BlockType::Zero &&
         Rational::RationalStrictSign(n) == StrictSign::Positive) {
-      ReplaceTreeByNode(u, 0_e);
+      CloneNodeOverTree(u, 0_e);
       return true;
     }
-    ReplaceTreeByNode(u, KUndef);
+    CloneNodeOverTree(u, KUndef);
     return true;
   }
   // 1^n -> 1
   if (v.type() == BlockType::One) {
-    ReplaceTreeByNode(u, 1_e);
+    CloneNodeOverTree(u, 1_e);
     return true;
   }
   if (IsRational(v)) {
@@ -137,7 +137,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   assert(IsInteger(n));
   // v^0 -> 1
   if (n.type() == BlockType::Zero) {
-    ReplaceTreeByNode(u, 1_e);
+    CloneNodeOverTree(u, 1_e);
     return true;
   }
   // v^1 -> v
@@ -256,7 +256,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
   if (IsConstant(u1) && IsConstant(u2)) {
     SimplifyRationalTree(l);
     if (l->type() == BlockType::One) {
-      ReplaceNodeByNode(l, KMult());
+      CloneNodeOverNode(l, KMult());
       return true;
     }
     WrapWithUnary(l, KMult());
@@ -286,7 +286,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
     SimplifyPower(&P);
     if (P.type() == BlockType::One) {
       P.removeTree();
-      ReplaceTreeByNode(l, KMult());
+      CloneNodeOverTree(l, KMult());
       return true;
     }
     ReplaceTreeByTree(l, P);
@@ -347,7 +347,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
 bool Simplification::SimplifyProduct(EditionReference* u) {
   // ... * 0 * ... -> 0
   if (AnyChildren(*u, IsZero)) {
-    ReplaceTreeByNode(u, 0_e);
+    CloneNodeOverTree(u, 0_e);
     return true;
   }
   if (NAry::SquashIfUnary(u)) {
@@ -433,7 +433,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
   if (IsConstant(u1) && IsConstant(u2)) {
     SimplifyRationalTree(l);
     if (l->type() == BlockType::Zero) {
-      ReplaceNodeByNode(l, KAdd());
+      CloneNodeOverNode(l, KAdd());
       return true;
     }
     WrapWithUnary(l, KAdd());
@@ -463,7 +463,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     SimplifyProduct(&P);
     if (P.type() == BlockType::Zero) {
       P.removeTree();
-      ReplaceTreeByNode(l, KAdd());
+      CloneNodeOverTree(l, KAdd());
       return true;
     }
     ReplaceTreeByTree(l, P);
@@ -555,13 +555,13 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
       EditionReference v = u->childAtIndex(0);
       SimplifyRationalTree(&v);
       if (IsUndef(v)) {
-        ReplaceTreeByNode(u, KUndef);
+        CloneNodeOverTree(u, KUndef);
         return true;
       }
       EditionReference w = u->childAtIndex(1);
       SimplifyRationalTree(&w);
       if (IsUndef(w)) {
-        ReplaceTreeByNode(u, KUndef);
+        CloneNodeOverTree(u, KUndef);
         return true;
       }
       ReplaceTreeByTree(u, (u->type() == BlockType::Addition
@@ -574,7 +574,7 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
       EditionReference v = u->childAtIndex(0);
       SimplifyRationalTree(&v);
       if (IsUndef(v)) {
-        ReplaceTreeByNode(u, KUndef);
+        CloneNodeOverTree(u, KUndef);
         return true;
       }
       assert(IsInteger(u->childAtIndex(1)));

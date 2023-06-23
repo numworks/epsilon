@@ -40,9 +40,7 @@ class TemplatedSequenceCell : public AbstractSequenceCell, public T {
   TemplatedSequenceCell() : AbstractSequenceCell(), T() {}
 
  private:
-  Escher::HighlightCell* mainCell() override {
-    return static_cast<T*>(this)->expressionCell();
-  }
+  Escher::HighlightCell* mainCell() override { return T::expressionCell(); }
 };
 
 class SequenceCell

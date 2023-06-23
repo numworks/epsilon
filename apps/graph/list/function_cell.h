@@ -62,9 +62,7 @@ class TemplatedFunctionCell : public AbstractFunctionCell, public T {
   TemplatedFunctionCell() : AbstractFunctionCell(), T() {}
 
  private:
-  Escher::HighlightCell* mainCell() override {
-    return static_cast<T*>(this)->expressionCell();
-  }
+  Escher::HighlightCell* mainCell() override { return T::expressionCell(); }
 };
 
 class FunctionCell

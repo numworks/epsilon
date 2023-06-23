@@ -14,7 +14,6 @@ namespace PoincareJ {
 
 void Node::log(std::ostream &stream, bool recursive, bool verbose,
                int indentation) const {
-  stream << "\n";
   Indent(stream, indentation);
   stream << "<";
   if (isUninitialized()) {
@@ -39,7 +38,6 @@ void Node::log(std::ostream &stream, bool recursive, bool verbose,
     }
   }
   if (tagIsClosed) {
-    stream << "\n";
     Indent(stream, indentation);
     stream << "</";
     logName(stream);

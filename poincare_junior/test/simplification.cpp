@@ -153,12 +153,12 @@ QUIZ_CASE(pcj_simplification_projection) {
 
 QUIZ_CASE(pcj_simplification_beautify) {
   EditionReference ref1(KAdd(KTrig(3_e, 0_e), KTrig("x"_e, 1_e),
-                             KMult(-1_e, KExp(KMult(KLn(5_e), "y"_e))),
+                             KMult(-1_e, 2_e, KExp(KMult(KLn(5_e), "y"_e))),
                              KMult(KLn(2_e), KPow(KLn(4_e), -1_e))));
   Simplification::DeepBeautify(&ref1);
-  assert_trees_are_equal(
-      ref1, KAdd(KSub(KAdd(KCos(3_e), KSin("x"_e)), KPow(5_e, "y"_e)),
-                 KLogarithm(2_e, 4_e)));
+  assert_trees_are_equal(ref1, KAdd(KSub(KAdd(KCos(3_e), KSin("x"_e)),
+                                         KMult(2_e, KPow(5_e, "y"_e))),
+                                    KLogarithm(2_e, 4_e)));
 
   EditionReference ref2(KTrig(π_e, 1_e));
   Simplification::DeepBeautify(&ref2, {.m_angleUnit = AngleUnit::Gradian});

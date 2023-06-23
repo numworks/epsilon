@@ -631,7 +631,7 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
                KMult(-1_e, KAnyTreesPlaceholder<C>()),
                KAnyTreesPlaceholder<D>()),
           KAdd(KSub(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
-                    KPlaceholder<C>()),
+                    KMult(KPlaceholder<C>())),
                KPlaceholder<D>())) ||
       // trig(A, 0) -> cos(A)
       reference->matchAndReplace(KTrig(KPlaceholder<A>(), 0_e),

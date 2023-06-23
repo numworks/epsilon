@@ -952,7 +952,7 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
   /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
    * ExpandTrigonometric is more complex than other expansions and cannot be
    * factorized with DistributeOverNAry. */
-  if (reference->matchAndReplace(
+  if (!reference->matchAndReplace(
           KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
                 KPlaceholder<C>()),
           KAdd(KMult(KTrig(KAdd(KPlaceholder<A>()), 0_e),
@@ -960,27 +960,27 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
                KMult(
                    KTrig(KAdd(KPlaceholder<A>()), 1_e),
                    KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
-    EditionReference newTrig1(reference->nextNode().nextNode());
-    EditionReference newMult2(reference->nextNode().nextTree());
-    EditionReference newTrig3(newMult2.nextNode());
-    EditionReference newTrig4(newMult2.nextNode().nextTree());
-    // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
-    // Addition is expected to have been squashed if unary.
-    assert(newTrig1.nextNode().type() != BlockType::Addition ||
-           newTrig1.nextNode().numberOfChildren() > 1);
-    if (ExpandTrigonometric(&newTrig1)) {
-      if (!ExpandTrigonometric(&newTrig3)) {
-        assert(false);
-      }
-    }
-    /* Shallow reduce last Trig and the multiplication (in case it is opposed).
-     * This step must be performed after sub-expansions since SimplifyProduct
-     * may invalidate newTrig0 and newTrig3. */
-    SimplifyTrig(&newTrig4);
-    SimplifyProduct(&newMult2);
-    return true;
+    return false;
   }
-  return false;
+  EditionReference newTrig1(reference->nextNode().nextNode());
+  EditionReference newMult2(reference->nextNode().nextTree());
+  EditionReference newTrig3(newMult2.nextNode());
+  EditionReference newTrig4(newMult2.nextNode().nextTree());
+  // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
+  // Addition is expected to have been squashed if unary.
+  assert(newTrig1.nextNode().type() != BlockType::Addition ||
+         newTrig1.nextNode().numberOfChildren() > 1);
+  if (ExpandTrigonometric(&newTrig1)) {
+    if (!ExpandTrigonometric(&newTrig3)) {
+      assert(false);
+    }
+  }
+  /* Shallow reduce last Trig and the multiplication (in case it is opposed).
+   * This step must be performed after sub-expansions since SimplifyProduct
+   * may invalidate newTrig0 and newTrig3. */
+  SimplifyTrig(&newTrig4);
+  SimplifyProduct(&newMult2);
+  return true;
 }
 
 bool Simplification::ContractTrigonometric(EditionReference* reference) {
@@ -989,7 +989,7 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
    * F is duplicated in case it contains other Trig trees that could be
    * contracted as well. ContractTrigonometric is therefore more complex than
    * other contractions. It handles nested trees itself. */
-  if (reference->matchAndReplace(
+  if (!reference->matchAndReplace(
           KMult(KAnyTreesPlaceholder<A>(),
                 KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
                 KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
@@ -1003,37 +1003,37 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
                                KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
                          KPlaceholder<F>())),
               KPlaceholder<A>(), 0.5_e))) {
-    EditionReference newMult1(reference->nextNode().nextNode());
-    if (newMult1.type() != BlockType::Multiplication) {
-      // F is empty, Multiplications have been squashed.
-      EditionReference newTrig1 = newMult1;
-      EditionReference newTrig2 = newTrig1.nextTree();
-      assert(newTrig1.type() == BlockType::Trig &&
-             newTrig2.type() == BlockType::Trig);
-      SimplifyTrig(&newTrig1);
-      SimplifyTrig(&newTrig2);
-      return true;
-    }
-    EditionReference newTrig1(newMult1.nextNode());
-    EditionReference newMult2(newMult1.nextTree());
-    EditionReference newTrig2(newMult2.nextNode());
-    // Shallow reduce new trigs and multiplications (in case one is opposed)
+    return false;
+  }
+  EditionReference newMult1(reference->nextNode().nextNode());
+  if (newMult1.type() != BlockType::Multiplication) {
+    // F is empty, Multiplications have been squashed.
+    EditionReference newTrig1 = newMult1;
+    EditionReference newTrig2 = newTrig1.nextTree();
+    assert(newTrig1.type() == BlockType::Trig &&
+           newTrig2.type() == BlockType::Trig);
     SimplifyTrig(&newTrig1);
-    SimplifyProduct(&newMult1);
     SimplifyTrig(&newTrig2);
-    SimplifyProduct(&newMult2);
-
-    // Contract newly created multiplications :
-    // - Trig(B-D, TrigDiff(C,E))*F
-    if (ContractTrigonometric(&newMult1)) {
-      // - Trig(B+D, E+C))*F
-      if (!ContractTrigonometric(&newMult2)) {
-        assert(false);
-      }
-    }
     return true;
   }
-  return false;
+  EditionReference newTrig1(newMult1.nextNode());
+  EditionReference newMult2(newMult1.nextTree());
+  EditionReference newTrig2(newMult2.nextNode());
+  // Shallow reduce new trigs and multiplications (in case one is opposed)
+  SimplifyTrig(&newTrig1);
+  SimplifyProduct(&newMult1);
+  SimplifyTrig(&newTrig2);
+  SimplifyProduct(&newMult2);
+
+  // Contract newly created multiplications :
+  // - Trig(B-D, TrigDiff(C,E))*F
+  if (ContractTrigonometric(&newMult1)) {
+    // - Trig(B+D, E+C))*F
+    if (!ContractTrigonometric(&newMult2)) {
+      assert(false);
+    }
+  }
+  return true;
 }
 
 bool Simplification::ExpandMult(EditionReference* reference) {
@@ -1063,24 +1063,24 @@ bool Simplification::ExpandPower(EditionReference* reference) {
   // TODO: Implement a more general (A + B)^C expand.
   /* This isn't factorized with DistributeOverNAry because of the necessary
    * second term expansion. */
-  if (reference->matchAndReplace(
+  if (!reference->matchAndReplace(
           KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
           KAdd(KPow(KAdd(KPlaceholder<A>()), 2_e),
                KMult(2_e, KAdd(KPlaceholder<A>()), KPlaceholder<B>()),
                KPow(KPlaceholder<B>(), 2_e)))) {
-    // A^2 and 2*A*B may be expanded again, do it recursively
-    EditionReference newPow(reference->nextNode());
-    // Addition is expected to have been squashed if unary.
-    assert(newPow.nextNode().type() != BlockType::Addition ||
-           newPow.nextNode().numberOfChildren() > 1);
-    if (ExpandPower(&newPow)) {
-      EditionReference newMult(newPow.nextTree());
-      ExpandMult(&newMult);
-      *reference = NAry::Flatten(*reference);
-    }
-    return true;
+    return false;
   }
-  return false;
+  // A^2 and 2*A*B may be expanded again, do it recursively
+  EditionReference newPow(reference->nextNode());
+  // Addition is expected to have been squashed if unary.
+  assert(newPow.nextNode().type() != BlockType::Addition ||
+         newPow.nextNode().numberOfChildren() > 1);
+  if (ExpandPower(&newPow)) {
+    EditionReference newMult(newPow.nextTree());
+    ExpandMult(&newMult);
+    *reference = NAry::Flatten(*reference);
+  }
+  return true;
 }
 
 }  // namespace PoincareJ

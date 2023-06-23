@@ -27,8 +27,9 @@ EditionReference RackParser::parse() {
   // if (rightwardsArrowPosition != endPosition) {
   // return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   // }
-  // Using end of pool instead of number of trees since the editionPool may be
-  // incomplete. This can happen while parsing a division's denominator.
+  /* To check if no other trees are leaked into EditionPool, use the end of pool
+   * instead of number of trees since the editionPool may be incomplete, which
+   * can happen while parsing a division's denominator. */
   const TypeBlock *endOfPool = EditionPool::sharedEditionPool()->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
   assert(EditionPool::sharedEditionPool()->lastBlock() ==
@@ -138,7 +139,7 @@ EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
 
 EditionReference RackParser::parseUntil(Token::Type stoppingType,
                                         EditionReference leftHandSide) {
-  typedef void (RackParser::*TokenParser)(EditionReference & leftHandSide,
+  typedef void (RackParser::*TokenParser)(EditionReference &leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,       // Token::Type::EndOfStream

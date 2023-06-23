@@ -60,14 +60,14 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
     value = value * (UINT8_MAX + 1) + handler.digits()[i];
   }
   int firstInsertedIndex = layoutParent.numberOfChildren();
-  while (value > 0) {
+  do {
     uint8_t digit = value % 10;
     value /= 10;
     NAry::AddChildAtIndex(
         layoutParent,
         editionPool->push<BlockType::CodePointLayout, CodePoint>('0' + digit),
         firstInsertedIndex);
-  }
+  } while (value > 0);
 }
 
 void Expression::ConvertInfixOperatorToLayout(

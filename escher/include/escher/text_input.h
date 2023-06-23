@@ -34,8 +34,6 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
   }
   void resetSelection() { contentView()->resetSelection(); }
   void deleteSelection();
-  // Alignment
-  void setAlignment(float horizontalAlignment, float verticalAlignment);
 
  protected:
   class ContentView : public TextCursorView::CursorFieldView {
@@ -80,7 +78,6 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
     virtual size_t deleteSelection() = 0;
 
     // Alignment
-    void setAlignment(float horizontalAlignment, float verticalAlignment);
     float horizontalAlignment() const { return m_horizontalAlignment; }
 
     // Reload

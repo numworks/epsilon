@@ -122,10 +122,6 @@ class Node {
   }
   constexpr bool isNAry() const { return m_block->isNAry(); }
 
-  // Recursive helper
-  typedef void (*InPlaceConstTreeFunction)(const Node* node);
-  void recursivelyGet(InPlaceConstTreeFunction treeFunction) const;
-
   EditionReference clone() const;
 
   // Edition

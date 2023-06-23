@@ -351,14 +351,6 @@ bool Node::hasSibling(const Node* sibling) const {
   return false;
 }
 
-void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
-  for (const auto& [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(this)) {
-    child->recursivelyGet(treeFunction);
-  }
-  (*treeFunction)(this);
-}
-
 EditionReference Node::clone() const {
   return EditionPool::sharedEditionPool()->clone(this);
 }

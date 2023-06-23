@@ -25,6 +25,10 @@ class EditionReference;
 
 class Node {
  public:
+  // Prevent using Nodes objects directly
+  Node() = delete;
+  void operator=(Node&& other) = delete;
+
   static const Node* FromBlocks(const Block* blocks) {
     return reinterpret_cast<const Node*>(blocks);
   }

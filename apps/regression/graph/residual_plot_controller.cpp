@@ -34,6 +34,8 @@ void ResidualPlotController::updateCursor() {
       Poincare::Preferences::sharedPreferences->displayMode();
   constexpr size_t bufferSize =
       Shared::BannerView::BannerBufferTextView::MaxTextSize();
+  constexpr static int k_maxNumberOfGlyphs =
+      Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
   char buffer[bufferSize];
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "x=%*.*ed", x, displayMode,
@@ -46,8 +48,8 @@ void ResidualPlotController::updateCursor() {
                                 y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
-  Poincare::Print::CustomPrintfWithMaxBufferSize(
-      buffer, bufferSize, significantDigits, "%s%s%*.*ed",
+  Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+      buffer, bufferSize, significantDigits, k_maxNumberOfGlyphs, "%s%s%*.*ed",
       I18n::translate(I18n::Message::ResidualStandardDeviation),
       I18n::translate(I18n::Message::ColonConvention),
       m_store->residualStandardDeviation(

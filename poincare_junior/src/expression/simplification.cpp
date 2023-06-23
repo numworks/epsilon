@@ -458,6 +458,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     SimplifySum(&S);
     SimplifyProduct(&P);
     if (P.type() == BlockType::Zero) {
+      P.removeTree();
       ReplaceTreeByNode(l, KAdd());
       return true;
     }

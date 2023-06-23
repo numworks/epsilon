@@ -194,6 +194,7 @@ void simplifies_to(const char* input, const char* output) {
 }
 
 QUIZ_CASE(pcj_basic_simplification) {
+  simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
   simplifies_to("(2*3(2^2)) + 2*2", "28");
   simplifies_to("36/8", "9/2");

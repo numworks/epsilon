@@ -24,8 +24,7 @@ static size_t s_currentDraftTextLength;
 AbstractTextField::ContentView::ContentView(char *textBuffer,
                                             size_t textBufferSize,
                                             KDGlyph::Format format)
-    : TextInput::ContentView(format.style.font, format.horizontalAlignment,
-                             format.verticalAlignment),
+    : TextInput::ContentView(format),
       m_textBuffer(textBuffer),
       m_textBufferSize(textBufferSize),
       m_textColor(format.style.glyphColor),

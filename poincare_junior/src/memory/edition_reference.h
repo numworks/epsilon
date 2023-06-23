@@ -57,6 +57,7 @@ class EditionReference {
   int numberOfDescendants(bool includeSelf) const {
     return node()->numberOfDescendants(includeSelf);
   }
+  Node::ConstTreeRange children() { return node()->children(); }
 
   /* Edition operations on Node* */
   void moveNodeAfterNode(Node* n) { node()->moveNodeAfterNode(n); }

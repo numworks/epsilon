@@ -7,9 +7,8 @@
 namespace PoincareJ {
 
 bool Set::Includes(const Node* set, const Node* expression) {
-  for (auto [setChild, index] :
-       NodeIterator::Children<Forward, NoEditable>(set)) {
-    int comparison = Comparison::Compare(setChild, expression);
+  for (const Node* child : set->children()) {
+    int comparison = Comparison::Compare(child, expression);
     if (comparison == 0) {
       return true;
     } else if (comparison > 0) {

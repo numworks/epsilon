@@ -69,8 +69,7 @@ char *Layout::Serialize(EditionReference layout, char *buffer, char *end) {
       break;
     }
     case BlockType::RackLayout: {
-      for (auto [child, index] :
-           NodeIterator::Children<Forward, NoEditable>(layout)) {
+      for (const Node *child : layout.children()) {
         buffer = Serialize(child, buffer, end);
         if (buffer == end) {
           return end;

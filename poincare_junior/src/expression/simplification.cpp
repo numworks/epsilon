@@ -30,7 +30,7 @@ void DropNode(EditionReference* u) {
 }
 
 bool AnyChildren(Node* u, bool test(const Node*)) {
-  for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
+  for (const Node* child : u->children()) {
     if (test(child)) {
       return true;
     }
@@ -39,7 +39,7 @@ bool AnyChildren(Node* u, bool test(const Node*)) {
 }
 
 bool AllChildren(Node* u, bool test(const Node*)) {
-  for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(u)) {
+  for (const Node* child : u->children()) {
     if (!test(child)) {
       return false;
     }

@@ -34,8 +34,7 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (const auto [child, index] :
-         NodeIterator::Children<Forward, NoEditable>(this)) {
+    for (auto [child, index] : NodeIterator::Children<NoEditable>(this)) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
@@ -163,8 +162,7 @@ void Node::logBlocks(std::ostream& stream, bool recursive,
   stream << "\n";
   if (recursive) {
     indentation += 1;
-    for (const auto [child, index] :
-         NodeIterator::Children<Forward, NoEditable>(this)) {
+    for (const Node* child : children()) {
       child->logBlocks(stream, recursive, indentation);
     }
   }
@@ -203,9 +201,9 @@ const Node* Node::root() const {
 }
 
 const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
-  /* This method find the common ancestor of child1 and child2 within this tree
-   * it does without going backward at any point. This tree is parsed until the
-   * last node owning both childs is found. */
+  /* This method find the common ancestor of child1 and child2 within this
+   * tree it does without going backward at any point. This tree is parsed
+   * until the last node owning both childs is found. */
   const TypeBlock* block1 = child1->block();
   const TypeBlock* block2 = child2->block();
   if (block1 > block2) {
@@ -345,8 +343,7 @@ bool Node::hasSibling(const Node* sibling) const {
   if (!p) {
     return false;
   }
-  for (const auto& [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(p)) {
+  for (const Node* child : p->children()) {
     if (child == sibling) {
       return true;
     }

@@ -76,9 +76,7 @@ bool Comparison::ContainsSubtree(const Node* tree, const Node* subtree) {
   if (AreEqual(tree, subtree)) {
     return true;
   }
-  for (std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(tree)) {
-    const Node* child = std::get<const Node*>(indexedNode);
+  for (const Node* child : tree->children()) {
     if (ContainsSubtree(child, subtree)) {
       return true;
     }

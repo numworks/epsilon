@@ -324,9 +324,7 @@ const Node* PolynomialParser::GetVariables(const Node* expression) {
   }
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
     EditionReference variables = EditionReference(KSet());
-    for (std::pair<const Node*, int> indexedNode :
-         NodeIterator::Children<Forward, NoEditable>(expression)) {
-      const Node* child = std::get<const Node*>(indexedNode);
+    for (const Node* child : expression->children()) {
       if (child->type() == BlockType::Addition) {
         assert(type != BlockType::Addition);
         variables = Set::Add(variables, child);
@@ -462,8 +460,7 @@ uint8_t Polynomial::Degree(const Node* expression, const Node* variable) {
   }
   uint8_t degree = 0;
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
-    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
-      Node* child = std::get<const Node *>(indexedNode);
+    for (const Node* child : expression->children()) {
       uint8_t childDegree = Degree(child, variables);
       if (type == BlockType::Addition) {
         degree = std::max(degree, childDegree);
@@ -484,8 +481,7 @@ EditionReference Polynomial::Coefficient(const Node* expression, const Node* var
       return exponent == 1 ? editionPool->push<BlockType::One>() : editionPool->push<BlockType::Zero>();
     }
     EditionReference addition = editionPool->push<BlockType::Addition>(0);
-    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
-      Node* child = std::get<const Node *>(indexedNode);
+    for (const Node* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {
         NAry::AddChild(addition, childCoefficient);

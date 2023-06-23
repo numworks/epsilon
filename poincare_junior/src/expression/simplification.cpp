@@ -521,11 +521,28 @@ bool Simplification::SimplifySum(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  if (!SimplifySumRec(u)) {
-    return false;
+  bool changed = false;
+  if (SimplifySumRec(u)) {
+    changed = true;
+    NAry::Sanitize(u);
   }
-  NAry::Sanitize(u);
-  return true;
+  // Now that children are sorted :
+  // TODO : Ensure we can get rid of Placeholder C here.
+  if (u->matchAndReplace(
+          KAdd(KAnyTreesPlaceholder<A>(),
+               KPow(KTrig(KPlaceholder<B>(), 0_e), 2_e),
+               KAnyTreesPlaceholder<C>(),
+               KPow(KTrig(KPlaceholder<D>(), 1_e), 2_e),
+               KAnyTreesPlaceholder<E>()),
+          KAdd(1_e, KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>(),
+               KAnyTreesPlaceholder<E>()))) {
+    if (u->type() == BlockType::Addition) {
+      // Addition could be reduced further.
+      SimplifySum(u);
+    }
+    changed = true;
+  }
+  return changed;
 }
 
 bool Simplification::SimplifyRationalTree(EditionReference* u) {

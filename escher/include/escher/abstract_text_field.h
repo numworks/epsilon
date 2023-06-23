@@ -40,12 +40,12 @@ class AbstractTextField : public TextInput, public EditableField {
 
   // EditableField
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
-  void setEditing(bool isEditing) override {
+  void setEditing(bool isEditing) {
     assert(!isEditing || isEditable());
     contentView()->setEditing(isEditing);
   }
-  bool isEditing() const override;
-  bool isEditingAndShouldFinishEditing(Ion::Events::Event event) override;
+  bool isEditing() const;
+  bool isEditingAndShouldFinishEditing(Ion::Events::Event event);
 
   bool isEditable() { return m_delegate->textFieldIsEditable(this); }
 

@@ -59,38 +59,22 @@ class EditionReference {
   }
 
   /* Edition operations on Node* */
-  void moveNodeAfterNode(Node* nodeToInsert) {
-    insert(nodeToInsert, false, false);
-  }
-  void moveTreeAfterNode(Node* nodeToInsert) {
-    insert(nodeToInsert, false, true);
-  }
-  void moveNodeBeforeNode(Node* nodeToInsert) {
-    insert(nodeToInsert, true, false);
-  }
-  void moveTreeBeforeNode(Node* nodeToInsert) {
-    insert(nodeToInsert, true, true);
-  }
-  void cloneNodeAfterNode(const Node* nodeToClone) {
-    insert(nodeToClone, false, false);
-  }
-  void cloneTreeAfterNode(const Node* nodeToClone) {
-    insert(nodeToClone, false, true);
-  }
-  void cloneNodeBeforeNode(const Node* nodeToClone) {
-    insert(nodeToClone, true, false);
-  }
-  void cloneTreeBeforeNode(const Node* nodeToClone) {
-    insert(nodeToClone, true, true);
-  }
-  Node* moveNodeOverNode(Node* n) { return replaceBy(n, false, false); }
-  Node* moveTreeOverNode(Node* n) { return replaceBy(n, false, true); }
-  Node* moveNodeOverTree(Node* n) { return replaceBy(n, true, false); }
-  Node* moveTreeOverTree(Node* n) { return replaceBy(n, true, true); }
-  Node* cloneNodeOverNode(const Node* n) { return replaceBy(n, false, false); }
-  Node* cloneTreeOverNode(const Node* n) { return replaceBy(n, false, true); }
-  Node* cloneNodeOverTree(const Node* n) { return replaceBy(n, true, false); }
-  Node* cloneTreeOverTree(const Node* n) { return replaceBy(n, true, true); }
+  void moveNodeAfterNode(Node* n) { moveAt(n, false, false); }
+  void moveTreeAfterNode(Node* n) { moveAt(n, false, true); }
+  void moveNodeBeforeNode(Node* n) { moveAt(n, true, false); }
+  void moveTreeBeforeNode(Node* n) { moveAt(n, true, true); }
+  void cloneNodeAfterNode(const Node* n) { cloneAt(n, false, false); }
+  void cloneTreeAfterNode(const Node* n) { cloneAt(n, false, true); }
+  void cloneNodeBeforeNode(const Node* n) { cloneAt(n, true, false); }
+  void cloneTreeBeforeNode(const Node* n) { cloneAt(n, true, true); }
+  Node* moveNodeOverNode(Node* n) { return moveOver(n, false, false); }
+  Node* moveTreeOverNode(Node* n) { return moveOver(n, false, true); }
+  Node* moveNodeOverTree(Node* n) { return moveOver(n, true, false); }
+  Node* moveTreeOverTree(Node* n) { return moveOver(n, true, true); }
+  Node* cloneNodeOverNode(const Node* n) { return cloneOver(n, false, false); }
+  Node* cloneTreeOverNode(const Node* n) { return cloneOver(n, false, true); }
+  Node* cloneNodeOverTree(const Node* n) { return cloneOver(n, true, false); }
+  Node* cloneTreeOverTree(const Node* n) { return cloneOver(n, true, true); }
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
   void detachNode() { detach(false); }
@@ -106,18 +90,20 @@ class EditionReference {
 
  private:
   Node* node() const;
-  void insert(const Node* nodeToInsert, bool before, bool isTree);
-  Node* replaceBy(const Node* n, bool oldIsTree, bool newIsTree);
+  void cloneAt(const Node* nodeToClone, bool before, bool newIsTree);
+  void moveAt(Node* nodeToMove, bool before, bool newIsTree);
+  Node* cloneOver(const Node* n, bool oldIsTree, bool newIsTree);
+  Node* moveOver(Node* n, bool oldIsTree, bool newIsTree);
   void detach(bool isTree);
   void remove(bool isTree);
   uint16_t m_identifier;
 };
 
-void CloneNodeBeforeNode(EditionReference* target, const Node* nodeToInsert);
-void CloneTreeBeforeNode(EditionReference* target, const Node* treeToInsert);
+void CloneNodeBeforeNode(EditionReference* target, const Node* nodeToClone);
+void CloneTreeBeforeNode(EditionReference* target, const Node* treeToClone);
 
-void MoveNodeBeforeNode(EditionReference* target, Node* nodeToInsert);
-void MoveTreeBeforeNode(EditionReference* target, Node* treeToInsert);
+void MoveNodeBeforeNode(EditionReference* target, Node* nodeToMove);
+void MoveTreeBeforeNode(EditionReference* target, Node* treeToMove);
 
 inline void MoveNodeOverTree(EditionReference* u, Node* n) {
   *u = u->moveNodeOverTree(n);

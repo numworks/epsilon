@@ -28,7 +28,6 @@ bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
       }
       XNTIndex++;
     }
-    // Unknown default code point
     xnt = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
   }
   return field->addXNTCodePoint(xnt);

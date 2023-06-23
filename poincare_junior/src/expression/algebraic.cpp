@@ -77,7 +77,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   // Create Pow(commonDenominator, -1)
   EditionReference power(editionPool->push<BlockType::Power>());
   power.insertTreeAfterNode(commonDenominator);
-  EditionReference(commonDenominator.nextTree()).insertTreeBeforeNode(-1_e);
+  EditionReference(commonDenominator.nextTree()).cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power
   // TODO basicReduction of fraction
   return fraction;

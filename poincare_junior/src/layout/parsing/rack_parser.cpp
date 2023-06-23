@@ -496,9 +496,9 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
         leftHandSide = rightHandSide;
       } else {
         // TODO Opposite instead of multiplication by -1
-        rightHandSide.insertNodeBeforeNode(
+        rightHandSide.cloneNodeBeforeNode(
             Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
-        rightHandSide.insertNodeBeforeNode(-1_e);
+        rightHandSide.cloneNodeBeforeNode(-1_e);
         leftHandSide = rightHandSide.previousNode()->previousNode();
       }
     } else {
@@ -521,7 +521,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // }
     assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
     if (!plus) {
-      leftHandSide.insertNodeBeforeNode(Tree<BlockType::Subtraction>());
+      leftHandSide.cloneNodeBeforeNode(Tree<BlockType::Subtraction>());
       leftHandSide = leftHandSide.previousNode();
       return;
     }
@@ -529,7 +529,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide.numberOfChildren() + 1);
     } else {
-      leftHandSide.insertNodeBeforeNode(
+      leftHandSide.cloneNodeBeforeNode(
           Tree<BlockType::Addition, 2, BlockType::Addition>());
       leftHandSide = leftHandSide.previousNode();
     }
@@ -601,7 +601,7 @@ void RackParser::parseSlash(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
-    leftHandSide.insertNodeBeforeNode(Tree<BlockType::Division>());
+    leftHandSide.cloneNodeBeforeNode(Tree<BlockType::Division>());
     leftHandSide = leftHandSide.previousNode();
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -616,7 +616,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide.numberOfChildren() + 1);
     } else {
-      leftHandSide.insertNodeBeforeNode(
+      leftHandSide.cloneNodeBeforeNode(
           Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
       leftHandSide = leftHandSide.previousNode();
     }
@@ -628,7 +628,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
 static void turnIntoBinaryNode(const Node *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
   assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
-  leftHandSide.insertNodeBeforeNode(node);
+  leftHandSide.cloneNodeBeforeNode(node);
   leftHandSide = leftHandSide.previousNode();
 }
 
@@ -829,7 +829,7 @@ void RackParser::parseBang(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing
   } else {
-    leftHandSide.insertNodeBeforeNode(Tree<BlockType::Factorial>());
+    leftHandSide.cloneNodeBeforeNode(Tree<BlockType::Factorial>());
     leftHandSide = leftHandSide.previousNode();
   }
   isThereImplicitOperator();

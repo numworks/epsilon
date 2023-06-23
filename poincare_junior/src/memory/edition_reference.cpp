@@ -156,7 +156,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
     }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       initializedPlaceHolders++;
-      treeNext.insertTreeBeforeNode(0_e);
+      treeNext.cloneTreeBeforeNode(0_e);
     }
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);
@@ -274,7 +274,7 @@ void InsertNodeBeforeNode(EditionReference* target, const Node* nodeToInsert) {
     previousTarget =
         Node::FromBlocks(previousTarget->block() - nodeToInsert->nodeSize());
   }
-  target->insertNodeBeforeNode(nodeToInsert);
+  target->cloneNodeBeforeNode(nodeToInsert);
   *target = previousTarget;
 }
 
@@ -285,7 +285,7 @@ void InsertTreeBeforeNode(EditionReference* target, const Node* treeToInsert) {
     previousTarget =
         Node::FromBlocks(previousTarget->block() - treeToInsert->treeSize());
   }
-  target->insertTreeBeforeNode(treeToInsert);
+  target->cloneTreeBeforeNode(treeToInsert);
   *target = previousTarget;
 }
 

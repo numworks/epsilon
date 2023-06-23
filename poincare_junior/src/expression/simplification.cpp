@@ -853,7 +853,7 @@ bool Simplification::DistributeOverNAry(EditionReference* reference,
   int numberOfGrandChildren = children.numberOfChildren();
   size_t childIndexOffset = children.block() - reference->block();
   // f(+(A,B,C),E)
-  children.insertNodeBeforeNode(0_e);
+  children.cloneNodeBeforeNode(0_e);
   children.detachTree();
   // f(0,E) ... +(A,B,C)
   Node* grandChild = children.nextNode();

@@ -140,7 +140,7 @@ QUIZ_CASE(pcj_cache_references) {
         EditionReference ref(node);
         ref.insertNodeBeforeNode(
             EditionPool::sharedEditionPool()->push<BlockType::Addition>(2));
-        ref.insertNodeAfterNode(6_e);
+        ref.cloneNodeAfterNode(6_e);
       },
       &reference1);
   assert_check_cache_reference(reference2, {5_e, KAdd(5_e, 6_e)});

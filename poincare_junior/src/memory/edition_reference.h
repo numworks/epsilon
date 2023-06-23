@@ -59,17 +59,29 @@ class EditionReference {
   }
 
   /* Edition operations on Node* */
-  void insertNodeAfterNode(const Node* nodeToInsert) {
+  void insertNodeAfterNode(Node* nodeToInsert) {
     insert(nodeToInsert, false, false);
   }
-  void insertTreeAfterNode(const Node* nodeToInsert) {
+  void insertTreeAfterNode(Node* nodeToInsert) {
     insert(nodeToInsert, false, true);
   }
-  void insertNodeBeforeNode(const Node* nodeToInsert) {
+  void insertNodeBeforeNode(Node* nodeToInsert) {
     insert(nodeToInsert, true, false);
   }
-  void insertTreeBeforeNode(const Node* nodeToInsert) {
+  void insertTreeBeforeNode(Node* nodeToInsert) {
     insert(nodeToInsert, true, true);
+  }
+  void cloneNodeAfterNode(const Node* nodeToClone) {
+    insert(nodeToClone, false, false);
+  }
+  void cloneTreeAfterNode(const Node* nodeToClone) {
+    insert(nodeToClone, false, true);
+  }
+  void cloneNodeBeforeNode(const Node* nodeToClone) {
+    insert(nodeToClone, true, false);
+  }
+  void cloneTreeBeforeNode(const Node* nodeToClone) {
+    insert(nodeToClone, true, true);
   }
   Node* replaceNodeByNode(const Node* n) { return replaceBy(n, false, false); }
   Node* replaceNodeByTree(const Node* n) { return replaceBy(n, false, true); }

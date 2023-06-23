@@ -79,15 +79,15 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_pool_contains(editionPool, {k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions
-  ref2.insertNodeAfterNode(9_e);
+  ref2.cloneNodeAfterNode(9_e);
   assert_pool_contains(editionPool, {k_expr0, k_expr1, k_expr0, 8_e, 9_e});
-  ref2.insertNodeAfterNode(EditionReference(10_e));
+  ref2.cloneNodeAfterNode(10_e);
   assert_pool_contains(editionPool,
                        {k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
   ref2.insertTreeAfterNode(ref0);
   assert_pool_contains(editionPool,
                        {k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
-  ref2.insertNodeBeforeNode(EditionReference(10_e));
+  ref2.cloneNodeBeforeNode(10_e);
   assert_pool_contains(editionPool,
                        {k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
   ref2.insertTreeBeforeNode(ref1);
@@ -142,7 +142,7 @@ QUIZ_CASE(pcj_edition_reference) {
 
   // Detach
   subRef0 = EditionReference(ref0.childAtIndex(0));
-  subRef0.insertTreeBeforeNode(13_e);
+  subRef0.cloneTreeBeforeNode(13_e);
   subRef0.detachTree();
   assert_pool_contains(
       editionPool, {KMult(13_e, 3_e, 4_e), k_subExpr1, 9_e, KAdd(1_e, 2_e)});

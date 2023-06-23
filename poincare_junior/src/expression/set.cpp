@@ -27,13 +27,13 @@ EditionReference Set::Add(EditionReference set, const Node* expression) {
     if (comparison == 0) {
       return set;
     } else if (comparison > 0) {
-      ref.insertTreeBeforeNode(expression);
+      ref.cloneTreeBeforeNode(expression);
       break;
     }
   }
   if (child == set || Comparison::Compare(child, expression) < 0) {
     // Empty set or all elements are < expression
-    EditionReference(child.nextTree()).insertTreeBeforeNode(expression);
+    EditionReference(child.nextTree()).cloneTreeBeforeNode(expression);
   }
   NAry::SetNumberOfChildren(set, set.numberOfChildren() + 1);
   return set;

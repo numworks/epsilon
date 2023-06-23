@@ -784,22 +784,20 @@ EditionReference Simplification::ApplyShallowInDepth(
   return EditionReference(root);
 }
 
-/* Replace target(..., naryChild(A, B, ...), ...)
- * into    naryResult(target(..., A, ...), target(..., B, ...), ...) */
-bool Simplification::ExpandWithNArys(EditionReference* reference,
-                                     BlockType target, BlockType naryChild,
-                                     BlockType naryResult, int childIndex) {
-  assert(naryChild == BlockType::Addition ||
-         naryChild == BlockType::Multiplication);
-  assert(naryResult == BlockType::Addition ||
-         naryResult == BlockType::Multiplication);
+bool Simplification::DistributeOverNAry(EditionReference* reference,
+                                        BlockType target, BlockType naryTarget,
+                                        BlockType naryOutput, int childIndex) {
+  assert(naryTarget == BlockType::Addition ||
+         naryTarget == BlockType::Multiplication);
+  assert(naryOutput == BlockType::Addition ||
+         naryOutput == BlockType::Multiplication);
   if (reference->type() != target) {
     return false;
   }
   int numberOfChildren = reference->numberOfChildren();
   assert(childIndex < numberOfChildren);
   EditionReference children = reference->childAtIndex(childIndex);
-  if (children.type() != naryChild) {
+  if (children.type() != naryTarget) {
     return false;
   }
   EditionPool* editionPool(EditionPool::sharedEditionPool());
@@ -811,14 +809,15 @@ bool Simplification::ExpandWithNArys(EditionReference* reference,
   // f(0,E) ... +(A,B,C)
   Node grandChild = children.nextNode();
   EditionReference output =
-      naryResult == BlockType::Addition
+      naryOutput == BlockType::Addition
           ? editionPool->push<BlockType::Addition>(numberOfGrandChildren)
           : editionPool->push<BlockType::Multiplication>(numberOfGrandChildren);
   // f(0,E) ... +(A,B,C) ... *(,,)
   for (int i = 0; i < numberOfGrandChildren; i++) {
     Node clone = editionPool->clone(*reference, true);
     // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
-    // clone.childAtIndex(childIndex) = Node(clone.block() + childIndexOffset)
+    /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
+     * clone.childAtIndex(childIndex)=Node(clone.block()+childIndexOffset) */
     EditionReference(clone.block() + childIndexOffset)
         .replaceTreeByTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
@@ -862,8 +861,9 @@ bool Simplification::ContractAbs(EditionReference* reference) {
 
 bool Simplification::ExpandAbs(EditionReference* reference) {
   // |A*B*...| = |A|*|B|*...
-  return ExpandWithNArys(reference, BlockType::Abs, BlockType::Multiplication,
-                         BlockType::Multiplication);
+  return DistributeOverNAry(reference, BlockType::Abs,
+                            BlockType::Multiplication,
+                            BlockType::Multiplication);
 }
 
 bool Simplification::ContractLn(EditionReference* reference) {
@@ -878,15 +878,15 @@ bool Simplification::ContractLn(EditionReference* reference) {
 
 bool Simplification::ExpandLn(EditionReference* reference) {
   // ln(A*B*...) = ln(A) + ln(B) + ...
-  return ExpandWithNArys(reference, BlockType::Ln, BlockType::Multiplication,
-                         BlockType::Addition);
+  return DistributeOverNAry(reference, BlockType::Ln, BlockType::Multiplication,
+                            BlockType::Addition);
 }
 
 bool Simplification::ExpandExp(EditionReference* reference) {
   return
       // exp(A+B+...) = exp(A) * exp(B) * ...
-      ExpandWithNArys(reference, BlockType::Exponential, BlockType::Addition,
-                      BlockType::Multiplication) ||
+      DistributeOverNAry(reference, BlockType::Exponential, BlockType::Addition,
+                         BlockType::Multiplication) ||
       // exp(A*B?) = exp(A) ^ B
       reference->matchAndReplace(
           KExp(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
@@ -914,7 +914,7 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
   // TODO : Ensure trig second element is reduced before and after.
   /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
    * ExpandTrigonometric is more complex than other expansions and cannot be
-   * factorized with ExpandWithNArys. */
+   * factorized with DistributeOverNAry. */
   if (reference->matchAndReplace(
           KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
                 KPlaceholder<C>()),
@@ -990,15 +990,16 @@ bool Simplification::ExpandMult(EditionReference* reference) {
   if (childIndex >= numberOfChildren) {
     return false;
   }
-  return ExpandWithNArys(reference, BlockType::Multiplication,
-                         BlockType::Addition, BlockType::Addition, childIndex);
+  return DistributeOverNAry(reference, BlockType::Multiplication,
+                            BlockType::Addition, BlockType::Addition,
+                            childIndex);
 }
 
 bool Simplification::ExpandPower(EditionReference* reference) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   // (A? + B)^2 = (A^2 + 2*A*B + B^2)
   // TODO: Implement a more general (A + B)^C expand.
-  /* This isn't factorized with ExpandWithNArys because of the necessary
+  /* This isn't factorized with DistributeOverNAry because of the necessary
    * second term expansion. */
   if (reference->matchAndReplace(
           KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),

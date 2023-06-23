@@ -70,9 +70,11 @@ class Simplification {
   static EditionReference ApplyShallowInDepth(EditionReference reference,
                                               ShallowOperation shallowOperation,
                                               void *context = nullptr);
-  static bool ExpandWithNArys(EditionReference *reference, BlockType target,
-                              BlockType naryChild, BlockType naryResult,
-                              int childIndex = 0);
+  /* Replace target(..., naryTarget(A, B, ...), ...)
+   * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
+  static bool DistributeOverNAry(EditionReference *reference, BlockType target,
+                                 BlockType naryTarget, BlockType naryOutput,
+                                 int childIndex = 0);
 
   typedef bool (*Operation)(EditionReference *reference);
   // Try all Operations until they all fail consecutively.

@@ -14,7 +14,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
  public:
   AbstractFunctionCell();
 
-  constexpr static KDCoordinate k_colorIndicatorThickness = 3;
+  constexpr static KDCoordinate k_colorIndicatorThickness =
+      Escher::Metric::VerticalColorIndicatorThickness;
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;

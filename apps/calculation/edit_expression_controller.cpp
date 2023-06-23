@@ -125,7 +125,7 @@ void EditExpressionController::layoutFieldDidHandleEvent(
 
 bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField *layoutField, Ion::Events::Event event) {
-  assert(layoutField->isEditing());
+  assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   Context *context = App::app()->localContext();
   if (layoutField->isEmpty()) {
@@ -141,11 +141,11 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
         m_historyController->reload();
       }
     }
-    return true;
+    return false;
   }
-  if (MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
-                                                           event)) {
-    return true;
+  if (!MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
+                                                            event)) {
+    return false;
   }
   Layout layout = layoutField->layout();
   assert(!layout.isUninitialized());
@@ -154,7 +154,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
           ->push(m_workingBuffer, context, HistoryViewCell::Height)
           .pointer()) {
     m_historyController->reload();
-    layoutField->clearLayout();
+    layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }

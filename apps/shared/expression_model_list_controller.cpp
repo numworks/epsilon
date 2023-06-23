@@ -210,28 +210,28 @@ void ExpressionModelListController::finishEdition() {
 
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
+  assert(!layoutField->isEditing());
   char buffer[TextField::MaxBufferSize()];
   layoutField->layout().serializeForParsing(buffer, TextField::MaxBufferSize());
   Poincare::Expression parsedExpression =
       Poincare::Expression::Parse(buffer, nullptr);
   if (parsedExpression.isUninitialized()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
-    return true;
+    return false;
   }
   if (shouldCompleteEquation(parsedExpression)) {
     if (!completeEquation(layoutField)) {
       App::app()->displayWarning(I18n::Message::RequireEquation);
-      return true;
+      return false;
     }
   }
-  if (MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
-                                                           event)) {
-    return true;
+  if (!MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
+                                                            event)) {
+    return false;
   }
-  assert(layoutField->isEditing());
   editSelectedRecordWithText(layoutField->text());
   finishEdition();
-  layoutField->clearAndSetEditing(false);
+  layoutField->clearLayout();
   return true;
 }
 

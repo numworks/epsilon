@@ -99,8 +99,6 @@ class InputCategoricalController : public CategoricalController,
   InputCategoricalTableCell* categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
-  bool handleEditedValue(int i, double p, Escher::AbstractTextField* textField,
-                         Ion::Events::Event event);
   virtual int indexOfEditedParameterAtIndex(int index) const {
     if (index == indexOfSignificanceCell()) {
       return m_statistic->indexOfThreshold();

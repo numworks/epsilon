@@ -6,6 +6,14 @@ using namespace Escher;
 
 namespace Sequence {
 
+EditableSequenceCell::EditableSequenceCell(
+    Escher::Responder* parentResponder,
+    Escher::LayoutFieldDelegate* layoutFieldDelegate)
+    : TemplatedSequenceCell<Shared::WithEditableExpressionCell>() {
+  expressionCell()->layoutField()->setParentResponder(parentResponder);
+  expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
+}
+
 void EditableSequenceCell::layoutSubviews(bool force) {
   setChildFrame(&m_sequenceTitleCell,
                 KDRect(0, 0, k_titlesColmunWidth, bounds().height()), force);

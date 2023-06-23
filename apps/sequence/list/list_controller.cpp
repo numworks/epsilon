@@ -117,9 +117,9 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);
     // Update the expression cell first since the title's baseline depends on it
-    willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), row);
+    willDisplayExpressionCellAtIndex(sequenceCell->mainCell(), row);
     willDisplayTitleCellAtIndex(sequenceCell->titleCell(), row,
-                                sequenceCell->expressionCell());
+                                sequenceCell->mainCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);

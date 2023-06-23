@@ -2,9 +2,9 @@
 #define ESCHER_FUNCTION_CELL_H
 
 #include <apps/i18n.h>
+#include <apps/shared/with_expression_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
-#include <escher/layout_view.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
 
@@ -13,22 +13,17 @@ namespace Graph {
 class AbstractFunctionCell : public Escher::EvenOddCell {
  public:
   AbstractFunctionCell();
-
-  constexpr static KDCoordinate k_colorIndicatorThickness =
-      Escher::Metric::VerticalColorIndicatorThickness;
+  virtual Escher::HighlightCell* mainCell() = 0;
+  const Escher::HighlightCell* mainCell() const {
+    return const_cast<Escher::HighlightCell*>(
+        const_cast<AbstractFunctionCell*>(this)->mainCell());
+  }
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  Poincare::Layout layout() const override { return layoutView()->layout(); }
 
   // EvenOddCell
   void drawRect(KDContext* ctx, KDRect rect) const override;
-
-  // - Layout View
-  void setTextColor(KDColor textColor) {
-    layoutView()->setTextColor(textColor);
-  }
-  void setLayout(Poincare::Layout layout) { layoutView()->setLayout(layout); }
 
   // - Message Text View
   void setMessage(I18n::Message message) {
@@ -48,10 +43,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual const Escher::LayoutView* layoutView() const = 0;
-  virtual Escher::LayoutView* layoutView() = 0;
-  virtual Escher::View* mainView() = 0;
-
+  constexpr static KDCoordinate k_colorIndicatorThickness =
+      Escher::Metric::VerticalColorIndicatorThickness;
   constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
   constexpr static KDCoordinate k_messageMargin =
       Escher::Metric::CellVerticalElementMargin;
@@ -64,20 +57,28 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   KDColor m_ellipsisBackground;
 };
 
-class FunctionCell : public AbstractFunctionCell {
+template <typename T>
+class TemplatedFunctionCell : public AbstractFunctionCell, public T {
  public:
-  FunctionCell() : m_parameterSelected(false) {}
+  TemplatedFunctionCell() : AbstractFunctionCell(), T() {}
+
+ private:
+  Escher::HighlightCell* mainCell() override {
+    return static_cast<T*>(this)->expressionCell();
+  }
+};
+
+class FunctionCell
+    : public TemplatedFunctionCell<Shared::WithNonEditableExpressionCell> {
+ public:
+  FunctionCell()
+      : TemplatedFunctionCell<Shared::WithNonEditableExpressionCell>(),
+        m_parameterSelected(false) {}
   // - Ellipsis View
   void setParameterSelected(bool selected);
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;
-  const Escher::LayoutView* layoutView() const override {
-    return &m_layoutView;
-  }
-  Escher::LayoutView* layoutView() override { return &m_layoutView; }
-  Escher::LayoutView* mainView() override { return &m_layoutView; }
-  Escher::LayoutView m_layoutView;
   bool m_parameterSelected;
 };
 

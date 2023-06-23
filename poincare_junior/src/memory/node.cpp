@@ -296,13 +296,12 @@ int Node::numberOfDescendants(bool includeSelf) const {
 }
 
 const Node* Node::childAtIndex(int i) const {
-  for (const auto [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(this)) {
-    if (index == i) {
-      return child;
-    }
+  assert(i < numberOfChildren());
+  const Node* child = nextNode();
+  for (; i > 0; i--) {
+    child = child->nextTree();
   }
-  return nullptr;
+  return child;
 }
 
 int Node::indexOfChild(const Node* child) const {

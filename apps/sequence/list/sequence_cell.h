@@ -21,7 +21,6 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
  private:
-  KDSize minimalSizeForOptimalDisplay() const override;
   int numberOfSubviews() const override { return 2; }
   Escher::View* subviewAtIndex(int index) override;
   void drawRect(KDContext* ctx, KDRect rect) const override;

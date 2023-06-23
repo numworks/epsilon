@@ -20,7 +20,7 @@ class ListController : public Shared::FunctionListController {
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
   int numberOfExpressionRows() const override;
-  KDCoordinate expressionRowHeight(int j) override;
+  KDCoordinate expressionRowHeight(int row) override;
   void selectPreviousNewSequenceCell();
   void editExpression(Ion::Events::Event event) override;
   /* ViewController */
@@ -52,12 +52,13 @@ class ListController : public Shared::FunctionListController {
   /* Width and margins */
   constexpr static KDCoordinate k_minTitleColumnWidth = 65;
   constexpr static KDCoordinate k_functionTitleSumOfMargins = 25;
-  constexpr static KDCoordinate k_expressionCellVerticalMargin =
-      Escher::Metric::BigCellMargin;
   /* Row numbers */
   constexpr static int k_maxNumberOfRows =
       3 * Shared::SequenceStore::k_maxNumberOfSequences;
 
+  Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
+    return m_editableCell.expressionCell();
+  }
   void initCellSize(Escher::TableView* view) override {}
 
   void computeTitlesColumnWidth(bool forceMax = false);

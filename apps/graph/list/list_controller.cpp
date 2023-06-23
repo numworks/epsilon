@@ -194,18 +194,15 @@ void ListController::editExpression(Ion::Events::Event event) {
 
 /* Responder */
 
-KDCoordinate ListController::expressionRowHeight(int j) {
-  if (j == m_editedCellIndex) {
-    return std::min<KDCoordinate>(
-        m_editableCell.minimalSizeForOptimalDisplay().height(),
-        selectableListView()->bounds().height());
-  }
-  if (typeAtRow(j) == k_addNewModelCellType) {
-    return Shared::FunctionListController::expressionRowHeight(j);
-  }
+KDCoordinate ListController::expressionRowHeight(int row) {
+  assert(typeAtRow(row) == k_expressionCellType);
   FunctionCell tempCell;
-  fillCellForRow(&tempCell, j);
+  fillCellForRow(&tempCell, row);
   return tempCell.minimalSizeForOptimalDisplay().height();
+}
+
+KDCoordinate ListController::editableRowHeight() {
+  return m_editableCell.minimalSizeForOptimalDisplay().height();
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {

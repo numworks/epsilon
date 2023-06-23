@@ -112,7 +112,10 @@ class TextArea : public TextInput, public EditableField {
   class ContentView : public TextInput::ContentView {
    public:
     ContentView(KDFont::Size font)
-        : TextInput::ContentView(font), m_text(nullptr, 0) {
+        : TextInput::ContentView({.style = {.font = font},
+                                  .horizontalAlignment = KDGlyph::k_alignLeft,
+                                  .verticalAlignment = KDGlyph::k_alignCenter}),
+          m_text(nullptr, 0) {
       m_cursorLocation = m_text.text();
     }
     void drawRect(KDContext* ctx, KDRect rect) const override;

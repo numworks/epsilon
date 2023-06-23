@@ -40,15 +40,13 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
  protected:
   class ContentView : public TextCursorView::CursorFieldView {
    public:
-    ContentView(KDFont::Size font,
-                float horizontalAlignment = KDGlyph::k_alignLeft,
-                float verticalAlignment = KDGlyph::k_alignCenter)
+    ContentView(KDGlyph::Format format)
         : TextCursorView::CursorFieldView(),
           m_cursorLocation(nullptr),
           m_selectionStart(nullptr),
-          m_horizontalAlignment(horizontalAlignment),
-          m_verticalAlignment(verticalAlignment),
-          m_font(font) {}
+          m_horizontalAlignment(format.horizontalAlignment),
+          m_verticalAlignment(format.verticalAlignment),
+          m_font(format.style.font) {}
 
     // Font
     void setFont(KDFont::Size font);

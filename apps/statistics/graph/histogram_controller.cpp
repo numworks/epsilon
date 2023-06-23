@@ -93,7 +93,9 @@ bool HistogramController::reloadBannerView() {
   Poincare::Preferences::PrintFloatMode displayMode =
       Poincare::Preferences::sharedPreferences->displayMode();
   constexpr static int k_bufferSize =
-      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+      sizeof("Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[");  // longest case
+  constexpr static int k_maxNumberOfGlyphs =
+      Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
   char buffer[k_bufferSize] = "";
 
   // Display series name
@@ -105,15 +107,9 @@ bool HistogramController::reloadBannerView() {
       m_store->startOfBarAtIndex(selectedSeries(), selectedIndex());
   double upperBound =
       m_store->endOfBarAtIndex(selectedSeries(), selectedIndex());
-  /* In a worst case scenario, the bounds of the interval can be displayed
-   * with 5 significant digits:
-   * "Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[\0" is 45 chars, compared to
-   * k_bufferSize 46 (remembering ᴇ is 3 chars).
-   * We add 1 to account for the fact that both calls to sizeof count the null
-   * character. */
-  Poincare::Print::CustomPrintfWithMaxBufferSize(
-      buffer, k_bufferSize, precision, "%s%s[%*.*ed,%*.*ed%s",
-      I18n::translate(I18n::Message::Interval),
+  Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+      buffer, k_bufferSize, precision, k_maxNumberOfGlyphs,
+      "%s%s[%*.*ed,%*.*ed%s", I18n::translate(I18n::Message::Interval),
       I18n::translate(I18n::Message::ColonConvention), lowerBound, displayMode,
       upperBound, displayMode,
       GlobalPreferences::sharedGlobalPreferences->openIntervalChar(false));

@@ -54,17 +54,14 @@ class Print {
    * For this method, do not pass a number of significant digits as argument to
    * each printed float/double.
    * ex:
-   *   CustomPrintfWithMaxBufferSize(
-   *                 buffer, bufferSize, 7,
+   *   CustomPrintfWithMaxNumberOfGlyphs(
+   *                 buffer, bufferSize, 7, maxNumberOfGlyphs
    *                 "Two doubles are %*.*ed and %*.*ed",
    *                 0.0123456789,
    *                 Preferences::PrintFloatMode::Scientific,
    *                 9.8765432109,
    *                 Preferences::PrintFloatMode::Scientific);
    * */
-  static int CustomPrintfWithMaxBufferSize(char* buffer, size_t bufferSize,
-                                           int maxNumberOfSignificantDigits,
-                                           const char* format, ...);
   constexpr static int k_maxNumberOfSmallGlyphsInScreenWidth =
       (Ion::Display::Width - 2 * Escher::Metric::CommonLargeMargin) /
       KDFont::GlyphWidth(KDFont::Size::Small);

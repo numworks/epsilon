@@ -22,6 +22,7 @@ class Sequence : public Function {
   friend class SequenceStore;
 
  public:
+  constexpr static CodePoint k_sequenceSymbol = 'n';
   enum class Type : uint8_t {
     Explicit = 0,
     SingleRecurrence = 1,
@@ -29,7 +30,7 @@ class Sequence : public Function {
   };
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
   I18n::Message parameterMessageName() const override;
-  CodePoint symbol() const override { return 'n'; }
+  CodePoint symbol() const override { return k_sequenceSymbol; }
   int nameWithArgumentAndType(char *buffer, size_t bufferSize);
 
   // MetaData getters

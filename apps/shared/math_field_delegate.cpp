@@ -6,6 +6,7 @@
 
 #include "continuous_function.h"
 #include "poincare_helpers.h"
+#include "sequence.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -18,7 +19,8 @@ bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
   if (XNTIndex > 0) {
     // Cycle through XNT CodePoints, starting from default code point position
     constexpr CodePoint XNTCodePoints[] = {
-        ContinuousFunction::k_cartesianSymbol, 'n',
+        ContinuousFunction::k_cartesianSymbol,
+        Shared::Sequence::k_sequenceSymbol,
         ContinuousFunction::k_parametricSymbol,
         ContinuousFunction::k_polarSymbol};
     constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);

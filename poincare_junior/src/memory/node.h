@@ -152,6 +152,57 @@ class Node {
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
 
+  // Iterators
+  class AbstractIterator {
+   public:
+    AbstractIterator(const Node* node) : m_node(node) {}
+    const Node* operator*() { return m_node; }
+    bool operator!=(const AbstractIterator& it) const {
+      return m_node != it.m_node;
+    }
+
+   protected:
+    const Node* m_node;
+  };
+
+  template <class Iterator>
+  class ConstRange final {
+   public:
+    ConstRange(const Node* begin, const Node* end)
+        : m_begin(begin), m_end(end) {}
+    Iterator begin() const { return m_begin; }
+    Iterator end() const { return m_end; }
+
+   private:
+    const Node* m_begin;
+    const Node* m_end;
+  };
+
+  class ConstTreeIterator : public AbstractIterator {
+   public:
+    using AbstractIterator::AbstractIterator;
+    ConstTreeIterator& operator++() {
+      m_node = m_node->nextTree();
+      return *this;
+    }
+  };
+
+  class ConstNodeIterator : public AbstractIterator {
+   public:
+    using AbstractIterator::AbstractIterator;
+    ConstNodeIterator& operator++() {
+      m_node = m_node->nextNode();
+      return *this;
+    }
+  };
+
+  using ConstNodeRange = ConstRange<ConstNodeIterator>;
+  using ConstTreeRange = ConstRange<ConstTreeIterator>;
+
+  ConstTreeRange children() const {
+    return ConstTreeRange(nextNode(), nextTree());
+  }
+
  private:
   bool canNavigateNext() const;
   bool canNavigatePrevious() const;

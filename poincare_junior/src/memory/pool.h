@@ -82,68 +82,16 @@ class Pool {
 
 #endif
 
- protected:
-  class AbstractIterator {
-   public:
-    AbstractIterator(const TypeBlock *block)
-        : m_node(Node::FromBlocks(block)) {}
-    const Node *operator*() { return m_node; }
-    bool operator!=(const AbstractIterator &it) const {
-      return (m_node->block() != it.m_node->block());
-    }
-
-   protected:
-    const Node *m_node;
-  };
-
  public:
-  class Nodes final {
-   public:
-    Nodes(TypeBlock *block, int numberOfBlocks)
-        : m_node(numberOfBlocks > 0 ? Node::FromBlocks(block) : nullptr),
-          m_numberOfBlocks(numberOfBlocks) {}
-    class Iterator : public AbstractIterator {
-     public:
-      using AbstractIterator::AbstractIterator;
-      Iterator &operator++() {
-        m_node = m_node->nextNode();
-        return *this;
-      }
-    };
-    Iterator begin() const { return Iterator(m_node->block()); }
-    Iterator end() const {
-      return Iterator(m_node->block() + m_numberOfBlocks);
-    }
+  Node::ConstNodeRange allNodes() {
+    return Node::ConstNodeRange(Node::FromBlocks(firstBlock()),
+                                Node::FromBlocks(lastBlock()));
+  }
 
-   private:
-    const Node *m_node;
-    int m_numberOfBlocks;
-  };
-  Nodes allNodes() { return Nodes(firstBlock(), size()); }
-
-  class Trees final {
-   public:
-    Trees(TypeBlock *block, int numberOfBlocks)
-        : m_node(numberOfBlocks > 0 ? Node::FromBlocks(block) : nullptr),
-          m_numberOfBlocks(numberOfBlocks) {}
-    class Iterator : public AbstractIterator {
-     public:
-      using AbstractIterator::AbstractIterator;
-      Iterator &operator++() {
-        m_node = m_node->nextTree();
-        return *this;
-      }
-    };
-    Iterator begin() const { return Iterator(m_node->block()); }
-    Iterator end() const {
-      return Iterator(m_node->block() + m_numberOfBlocks);
-    }
-
-   private:
-    const Node *m_node;
-    int m_numberOfBlocks;
-  };
-  Trees trees() { return Trees(firstBlock(), size()); }
+  Node::ConstTreeRange trees() {
+    return Node::ConstTreeRange(Node::FromBlocks(firstBlock()),
+                                Node::FromBlocks(lastBlock()));
+  }
 };
 
 }  // namespace PoincareJ

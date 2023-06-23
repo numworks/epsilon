@@ -62,6 +62,11 @@ KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
   return KDSize(bounds().width(), minimalHeight);
 }
 
+bool AbstractFunctionCell::displayFunctionType() const {
+  return !Poincare::Preferences::sharedPreferences->examMode()
+              .forbidImplicitPlots();
+}
+
 View* AbstractFunctionCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:
@@ -81,12 +86,9 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
                 force);
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_margin;
   KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
-  KDCoordinate expressionHeight =
-      mainCell()->minimalSizeForOptimalDisplay().height();
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  setChildFrame(mainCell(),
-                KDRect(leftMargin, k_margin, availableWidth, expressionHeight),
-                force);
+
+  KDCoordinate totalMessageHeight = 0;
   if (displayFunctionType()) {
     KDCoordinate messageHeight =
         m_messageTextView.minimalSizeForOptimalDisplay().height();
@@ -95,7 +97,18 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
         KDRect(leftMargin, bounds().height() - k_margin - messageHeight,
                availableWidth, messageHeight),
         force);
+    totalMessageHeight = messageHeight + k_messageMargin;
   }
+
+  KDCoordinate expressionHeight =
+      mainCell()->minimalSizeForOptimalDisplay().height();
+  KDCoordinate availableHeight =
+      bounds().height() - totalMessageHeight - 2 * k_margin;
+  setChildFrame(
+      mainCell(),
+      KDRect(leftMargin, k_margin + (availableHeight - expressionHeight) / 2,
+             availableWidth, expressionHeight),
+      force);
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {

@@ -41,7 +41,7 @@ class ListController : public Shared::FunctionListController {
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool isAcceptableExpression(const Poincare::Expression expression) override;
-  CodePoint XNT() override { return 'n'; }
+  CodePoint defaultXNT() override { return 'n'; }
 
  private:
   /* Model definitions */

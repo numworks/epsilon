@@ -28,7 +28,7 @@ class ListController : public Shared::FunctionListController,
   // MathLayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
-  CodePoint XNT() override;
+  CodePoint defaultXNT() override;
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController

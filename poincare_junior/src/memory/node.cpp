@@ -13,8 +13,18 @@ namespace PoincareJ {
 #if POINCARE_MEMORY_TREE_LOG
 
 void Node::log(std::ostream &stream, bool recursive, bool verbose,
-               int indentation) const {
+               int indentation, Node comparison) const {
   Indent(stream, indentation);
+  if (!comparison.isUninitialized() && !isIdenticalTo(comparison)) {
+    stream << "<<<<<<<";
+    log(stream, recursive, verbose, indentation);
+    Indent(stream, indentation);
+    stream << "=======";
+    comparison.log(stream, recursive, verbose, indentation);
+    Indent(stream, indentation);
+    stream << ">>>>>>>";
+    return;
+  }
   stream << "<";
   if (isUninitialized()) {
     stream << "Uninitialized/>";
@@ -34,7 +44,9 @@ void Node::log(std::ostream &stream, bool recursive, bool verbose,
         stream << ">";
         tagIsClosed = true;
       }
-      child.log(stream, recursive, verbose, indentation + 1);
+      child.log(stream, recursive, verbose, indentation + 1,
+                comparison.isUninitialized() ? comparison
+                                             : comparison.childAtIndex(index));
     }
   }
   if (tagIsClosed) {

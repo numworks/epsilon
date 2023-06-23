@@ -57,6 +57,9 @@ class ListController : public Shared::ExpressionModelListController,
           Escher::Metric::StoreRowHeight,
           Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
   Escher::SelectableListView* selectableListView() override;
+  Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
+    return &m_editableCell;
+  }
   void reloadButtonMessage();
   void addModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
@@ -67,9 +70,6 @@ class ListController : public Shared::ExpressionModelListController,
     return expression.type() != Poincare::ExpressionNode::Type::Comparison;
   }
   bool completeEquation(Escher::LayoutField* equationField) override;
-
-  // ListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int row) override;
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];

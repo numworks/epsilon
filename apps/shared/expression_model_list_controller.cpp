@@ -32,8 +32,8 @@ int ExpressionModelListController::numberOfExpressionRows() const {
   return modelsCount + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
 }
 
-bool ExpressionModelListController::isAddEmptyRow(int j) const {
-  return j == numberOfExpressionRows() - 1 &&
+bool ExpressionModelListController::isAddEmptyRow(int row) const {
+  return row == numberOfExpressionRows() - 1 &&
          modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
@@ -47,26 +47,33 @@ int ExpressionModelListController::typeAtRow(int row) const {
   return k_expressionCellType;
 }
 
-KDCoordinate ExpressionModelListController::ExpressionRowHeightFromLayoutHeight(
-    KDCoordinate modelHeight) {
-  KDCoordinate modelHeightWithMargins =
-      modelHeight + Metric::StoreRowHeight - KDFont::GlyphHeight(k_font);
-  return Metric::StoreRowHeight > modelHeightWithMargins
-             ? Metric::StoreRowHeight
-             : modelHeightWithMargins;
+KDCoordinate ExpressionModelListController::expressionRowHeight(int row) {
+  assert(typeAtRow(row) == k_expressionCellType);
+  ExpiringPointer<ExpressionModelHandle> m =
+      modelStore()->modelForRecord(modelStore()->recordAtIndex(row));
+  KDCoordinate expressionHeight = m->layout().isUninitialized()
+                                      ? 0
+                                      : m->layout().layoutSize(k_font).height();
+  return expressionHeight + 2 * k_defaultVerticalMargin;
 }
 
-KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
-  if (isAddEmptyRow(j)) {
-    return Metric::StoreRowHeight;
+KDCoordinate ExpressionModelListController::editableRowHeight() {
+  return editableExpressionModelCell()
+             ->minimalSizeForOptimalDisplay()
+             .height() +
+         2 * k_defaultVerticalMargin;
+}
+
+KDCoordinate ExpressionModelListController::nonMemoizedRowHeight(int row) {
+  KDCoordinate expressionHeight = k_defaultRowHeight;
+  if (typeAtRow(row) == k_editableCellType) {
+    // Do not exceed bounds so that the cursor is always visible
+    expressionHeight = std::min<KDCoordinate>(
+        editableRowHeight(), selectableListView()->bounds().height());
+  } else if (typeAtRow(row) == k_expressionCellType) {
+    expressionHeight = expressionRowHeight(row);
   }
-  ExpiringPointer<ExpressionModelHandle> m =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  if (m->layout().isUninitialized()) {
-    return Metric::StoreRowHeight;
-  }
-  return ExpressionRowHeightFromLayoutHeight(
-      m->layout().layoutSize(k_font).height());
+  return std::max<KDCoordinate>(expressionHeight, k_defaultRowHeight);
 }
 
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(

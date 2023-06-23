@@ -2,6 +2,7 @@
 #define ESCHER_FUNCTION_CELL_H
 
 #include <apps/i18n.h>
+#include <apps/shared/expression_model_list_controller.h>
 #include <apps/shared/with_expression_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
@@ -45,7 +46,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
 
   constexpr static KDCoordinate k_colorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
-  constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
+  constexpr static KDCoordinate k_margin =
+      Shared::ExpressionModelListController::k_defaultVerticalMargin;
   constexpr static KDCoordinate k_messageMargin =
       Escher::Metric::CellVerticalElementMargin;
   constexpr static KDCoordinate k_parametersColumnWidth =

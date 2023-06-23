@@ -88,16 +88,6 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   }
 }
 
-KDCoordinate ListController::nonMemoizedRowHeight(int row) {
-  if (row == m_editedCellIndex) {
-    return std::min<KDCoordinate>(
-        ExpressionRowHeightFromLayoutHeight(
-            m_editableCell.minimalSizeForOptimalDisplay().height()),
-        selectableListView()->bounds().height());
-  }
-  return expressionRowHeight(row);
-}
-
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up && selectedRow() == -1) {
     footer()->setSelectedButton(-1);

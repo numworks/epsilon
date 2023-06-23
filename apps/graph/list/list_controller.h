@@ -33,7 +33,8 @@ class ListController : public Shared::FunctionListController,
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController
   void editExpression(Ion::Events::Event event) override;
-  KDCoordinate expressionRowHeight(int j) override;
+  KDCoordinate expressionRowHeight(int row) override;
+  KDCoordinate editableRowHeight() override;
   Shared::ListParameterController* parameterController() override;
   bool canStoreCellAtRow(int row) override { return false; }
 
@@ -46,6 +47,9 @@ class ListController : public Shared::FunctionListController,
   constexpr static int k_maxNumberOfDisplayableRows = 6;
   constexpr static int k_numberOfToolboxExtraCells = 2;
 
+  Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
+    return m_editableCell.expressionCell();
+  }
   void fillWithDefaultFunctionEquation(
       char* buffer, size_t bufferSize,
       FunctionModelsParameterController* modelsParameterController,

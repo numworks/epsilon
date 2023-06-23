@@ -52,19 +52,12 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
-  KDCoordinate expressionHeight =
-      mainCell()->minimalSizeForOptimalDisplay().height();
-  KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
+  KDCoordinate minimalHeight =
+      mainCell()->minimalSizeForOptimalDisplay().height() + 2 * k_margin;
   if (displayFunctionType()) {
     KDCoordinate messageHeight =
         m_messageTextView.minimalSizeForOptimalDisplay().height();
     minimalHeight += k_messageMargin + messageHeight;
-  }
-  KDCoordinate parameterHeight =
-      m_ellipsisView.minimalSizeForOptimalDisplay().height();
-  if (parameterHeight > minimalHeight) {
-    // Leave enough height for parameter's menu elipsis.
-    minimalHeight = parameterHeight;
   }
   return KDSize(bounds().width(), minimalHeight);
 }

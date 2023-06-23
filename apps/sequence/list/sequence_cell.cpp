@@ -4,13 +4,6 @@ using namespace Escher;
 
 namespace Sequence {
 
-KDSize AbstractSequenceCell::minimalSizeForOptimalDisplay() const {
-  KDCoordinate height =
-      std::max(m_sequenceTitleCell.minimalSizeForOptimalDisplay().height(),
-               mainCell()->minimalSizeForOptimalDisplay().height());
-  return KDSize(bounds().width(), height);
-}
-
 View* AbstractSequenceCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:

@@ -44,37 +44,24 @@ int ListController::numberOfExpressionRows() const {
   return numberOfRows + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
 };
 
-KDCoordinate ListController::expressionRowHeight(int j) {
-  // TODO: factorize with ExpressionRowHeightFromLayoutHeight
-  KDCoordinate defaultHeight = Metric::StoreRowHeight;
+KDCoordinate ListController::expressionRowHeight(int row) {
+  assert(typeAtRow(row) == k_expressionCellType);
   KDCoordinate sequenceHeight;
-  if (j == m_editedCellIndex) {
-    sequenceHeight =
-        std::min<KDCoordinate>(m_editableCell.expressionCell()
-                                       ->minimalSizeForOptimalDisplay()
-                                       .height() +
-                                   2 * k_expressionCellVerticalMargin,
-                               selectableListView()->bounds().height());
+  Shared::Sequence *sequence = modelStore()->modelForRecord(
+      modelStore()->recordAtIndex(modelIndexForRow(row)));
+  Layout layout;
+  int sequenceDefinition = sequenceDefinitionForRow(row);
+  if (sequenceDefinition == k_firstInitialCondition) {
+    layout = sequence->firstInitialConditionLayout();
+  } else if (sequenceDefinition == k_secondInitialCondition) {
+    layout = sequence->secondInitialConditionLayout();
   } else {
-    if (isAddEmptyRow(j)) {
-      return defaultHeight;
-    }
-    Shared::Sequence *sequence = modelStore()->modelForRecord(
-        modelStore()->recordAtIndex(modelIndexForRow(j)));
-    Layout layout = sequence->layout();
-    int sequenceDefinition = sequenceDefinitionForRow(j);
-    if (sequenceDefinition == k_firstInitialCondition) {
-      layout = sequence->firstInitialConditionLayout();
-    } else if (sequenceDefinition == k_secondInitialCondition) {
-      layout = sequence->secondInitialConditionLayout();
-    }
-    if (layout.isUninitialized()) {
-      return defaultHeight;
-    }
-    sequenceHeight =
-        layout.layoutSize(k_font).height() + 2 * k_expressionCellVerticalMargin;
+    assert(sequenceDefinition == k_sequenceDefinition);
+    layout = sequence->layout();
   }
-  return std::max<KDCoordinate>(defaultHeight, sequenceHeight);
+  sequenceHeight =
+      layout.isUninitialized() ? 0 : layout.layoutSize(k_font).height();
+  return sequenceHeight + 2 * k_defaultVerticalMargin;
 }
 
 void ListController::selectPreviousNewSequenceCell() {

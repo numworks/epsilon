@@ -56,6 +56,8 @@ class Simplification {
 
  private:
   static bool SimplifyRationalTree(EditionReference *u);
+  static bool SimplifyTrig(EditionReference *u);
+  static bool SimplifyTrigDiff(EditionReference *u);
   static bool SimplifySum(EditionReference *u);
   // SimplifySumRec expects an Add and returns an Add
   static bool SimplifySumRec(EditionReference *u);

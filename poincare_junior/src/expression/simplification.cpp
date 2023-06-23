@@ -70,9 +70,45 @@ bool Simplification::SystematicReduce(EditionReference* u) {
       return SimplifySum(u) || childChanged;
     case BlockType::Multiplication:
       return SimplifyProduct(u) || childChanged;
+    case BlockType::TrigDiff:
+      return SimplifyTrigDiff(u) || childChanged;
+    case BlockType::Trig:
+      return SimplifyTrig(u) || childChanged;
     default:
       return childChanged;
   }
+}
+
+bool Simplification::SimplifyTrigDiff(EditionReference* u) {
+  /* TrigDiff(x,y) = { 0 if x=y, 1 otherwise }
+   * TODO: ContractTrigonometric is the only place this is used. It might not be
+   * worth it. */
+  Node x = u->childAtIndex(0);
+  Node y = u->childAtIndex(1);
+  assert(x.block()->isOfType({BlockType::Zero, BlockType::One}));
+  assert(y.block()->isOfType({BlockType::Zero, BlockType::One}));
+  ReplaceTreeByTree(u, x.treeIsIdenticalTo(y) ? &ZeroBlock : &OneBlock);
+  return true;
+}
+
+bool Simplification::SimplifyTrig(EditionReference* u) {
+  // Trig(x,y) = {-Sin(x) if y=-1, Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2}
+  EditionReference secondArgument = u->childAtIndex(1);
+  /* Trig second element is always expected to be reduced. This will call
+   * SimplifyTrigDiff if needed. */
+  bool changed = SystematicReduce(&secondArgument);
+  if (secondArgument.block()->isOfType({BlockType::MinusOne, BlockType::Two})) {
+    // Simplify second argument to either 0 or 1 and oppose the tree.
+    ReplaceTreeByTree(&secondArgument, secondArgument.type() == BlockType::Two
+                                           ? &ZeroBlock
+                                           : &OneBlock);
+    EditionPool* editionPool(EditionPool::sharedEditionPool());
+    InsertNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
+    InsertNodeBeforeNode(u, editionPool->push<BlockType::Multiplication>(2));
+    return true;
+  }
+  assert(secondArgument.block()->isOfType({BlockType::Zero, BlockType::One}));
+  return changed;
 }
 
 bool Simplification::SimplifyPower(EditionReference* u) {
@@ -913,8 +949,6 @@ bool Simplification::ContractExpPow(EditionReference* reference) {
 }
 
 bool Simplification::ExpandTrigonometric(EditionReference* reference) {
-  // If second element is -1/0/1/2, KTrig is -sin/cos/sin/-cos
-  // TODO : Ensure trig second element is reduced before and after.
   /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
    * ExpandTrigonometric is more complex than other expansions and cannot be
    * factorized with DistributeOverNAry. */
@@ -926,24 +960,30 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
                KMult(
                    KTrig(KAdd(KPlaceholder<A>()), 1_e),
                    KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
+    EditionReference newTrig1(reference->nextNode().nextNode());
+    EditionReference newMult2(reference->nextNode().nextTree());
+    EditionReference newTrig3(newMult2.nextNode());
+    EditionReference newTrig4(newMult2.nextNode().nextTree());
     // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
-    EditionReference newTrig0(reference->nextNode().nextNode());
     // Addition is expected to have been squashed if unary.
-    assert(newTrig0.nextNode().type() != BlockType::Addition ||
-           newTrig0.nextNode().numberOfChildren() > 1);
-    if (ExpandTrigonometric(&newTrig0)) {
-      EditionReference newTrig1(reference->nextNode().nextTree().nextNode());
-      ExpandTrigonometric(&newTrig1);
+    assert(newTrig1.nextNode().type() != BlockType::Addition ||
+           newTrig1.nextNode().numberOfChildren() > 1);
+    if (ExpandTrigonometric(&newTrig1)) {
+      if (!ExpandTrigonometric(&newTrig3)) {
+        assert(false);
+      }
     }
+    /* Shallow reduce last Trig and the multiplication (in case it is opposed).
+     * This step must be performed after sub-expansions since SimplifyProduct
+     * may invalidate newTrig0 and newTrig3. */
+    SimplifyTrig(&newTrig4);
+    SimplifyProduct(&newMult2);
     return true;
   }
   return false;
 }
 
 bool Simplification::ContractTrigonometric(EditionReference* reference) {
-  /* KTrigDiff : If both elements are 1 or both are 0, return 0. 1 Otherwise.
-   * TODO: This is the only place this is used. It might not be worth it.
-   * TODO : Ensure trig second elements are reduced before and after. */
   /* A?*Trig(B, C)*Trig(D, E)*F?
    * = (Trig(B-D, TrigDiff(C,E))*F + Trig(B+D, E+C))*F)*A*0.5
    * F is duplicated in case it contains other Trig trees that could be
@@ -963,14 +1003,33 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
                                KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
                          KPlaceholder<F>())),
               KPlaceholder<A>(), 0.5_e))) {
-    // Contract newly created multiplications
     EditionReference newMult1(reference->nextNode().nextNode());
-    // TODO: SystematicReduce KTrig second elements.
-    // Contract Trig(B-D, TrigDiff(C,E))*F
+    if (newMult1.type() != BlockType::Multiplication) {
+      // F is empty, Multiplications have been squashed.
+      EditionReference newTrig1 = newMult1;
+      EditionReference newTrig2 = newTrig1.nextTree();
+      assert(newTrig1.type() == BlockType::Trig &&
+             newTrig2.type() == BlockType::Trig);
+      SimplifyTrig(&newTrig1);
+      SimplifyTrig(&newTrig2);
+      return true;
+    }
+    EditionReference newTrig1(newMult1.nextNode());
+    EditionReference newMult2(newMult1.nextTree());
+    EditionReference newTrig2(newMult2.nextNode());
+    // Shallow reduce new trigs and multiplications (in case one is opposed)
+    SimplifyTrig(&newTrig1);
+    SimplifyProduct(&newMult1);
+    SimplifyTrig(&newTrig2);
+    SimplifyProduct(&newMult2);
+
+    // Contract newly created multiplications :
+    // - Trig(B-D, TrigDiff(C,E))*F
     if (ContractTrigonometric(&newMult1)) {
-      // Contract Trig(B-D, TrigDiff(C,E))*F
-      EditionReference newMult2(newMult1.nextTree());
-      ContractTrigonometric(&newMult2);
+      // - Trig(B+D, E+C))*F
+      if (!ContractTrigonometric(&newMult2)) {
+        assert(false);
+      }
     }
     return true;
   }

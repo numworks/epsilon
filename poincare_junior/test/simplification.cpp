@@ -17,13 +17,13 @@ QUIZ_CASE(pcj_simplification_expansion) {
   EditionReference ref2(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e));
   quiz_assert(Simplification::ShallowExpand(&ref2));
   assert_trees_are_equal(
-      ref2,
-      KAdd(KMult(KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 0_e)),
-                      KMult(KTrig(π_e, 1_e), KTrig("x"_e, KAdd(0_e, -1_e)))),
-                 KTrig("y"_e, 0_e)),
-           KMult(KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 1_e)),
-                      KMult(KTrig(π_e, 1_e), KTrig("x"_e, KAdd(1_e, -1_e)))),
-                 KTrig("y"_e, KAdd(0_e, -1_e)))));
+      ref2, KAdd(KMult(KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 0_e)),
+                            KMult(-1_e, KTrig(π_e, 1_e), KTrig("x"_e, 1_e))),
+                       KTrig("y"_e, 0_e)),
+                 KMult(-1_e,
+                       KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 1_e)),
+                            KMult(KTrig(π_e, 1_e), KTrig("x"_e, 0_e))),
+                       KTrig("y"_e, 1_e))));
 
   EditionReference ref3(KExp(KAdd(1_e, 2_e, 3_e)));
   quiz_assert(Simplification::ShallowExpand(&ref3));
@@ -47,29 +47,26 @@ QUIZ_CASE(pcj_simplification_contraction) {
       KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e), KTrig("z"_e, 0_e)));
   quiz_assert(Simplification::ShallowContract(&ref2));
   assert_trees_are_equal(
-      ref2, KMult(KAdd(KMult(KAdd(KTrig(KAdd("x"_e, KMult(-1_e, "y"_e),
-                                             KMult(-1_e, "z"_e)),
-                                        KTrigDiff(KTrigDiff(1_e, 0_e), 0_e)),
-                                  KTrig(KAdd("x"_e, KMult(-1_e, "y"_e), "z"_e),
-                                        KAdd(0_e, KTrigDiff(1_e, 0_e)))),
-                             0.5_e),
-                       KMult(KAdd(KTrig(KAdd("x"_e, "y"_e, KMult(-1_e, "z"_e)),
-                                        KTrigDiff(KAdd(0_e, 1_e), 0_e)),
-                                  KTrig(KAdd("x"_e, "y"_e, "z"_e),
-                                        KAdd(0_e, 0_e, 1_e))),
-                             0.5_e)),
-                  0.5_e));
+      ref2,
+      KMult(KAdd(KMult(KAdd(KTrig(KAdd("x"_e, KMult(-1_e, "y"_e),
+                                       KMult(-1_e, "z"_e)),
+                                  1_e),
+                            KTrig(KAdd("x"_e, KMult(-1_e, "y"_e), "z"_e), 1_e)),
+                       0.5_e),
+                 KMult(KAdd(KTrig(KAdd("x"_e, "y"_e, KMult(-1_e, "z"_e)), 1_e),
+                            KTrig(KAdd("x"_e, "y"_e, "z"_e), 1_e)),
+                       0.5_e)),
+            0.5_e));
 
   EditionReference ref3(KMult(KAbs(1_e), KAbs(2_e), KTrig("x"_e, 1_e),
                               KTrig("y"_e, 0_e), KExp(1_e), KExp(2_e)));
   quiz_assert(Simplification::ShallowContract(&ref3));
   assert_trees_are_equal(
-      ref3, KMult(KAdd(KMult(KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)),
-                                   KTrigDiff(1_e, 0_e)),
-                             KExp(KAdd(1_e, 2_e))),
-                       KMult(KTrig(KAdd("x"_e, "y"_e), KAdd(0_e, 1_e)),
-                             KExp(KAdd(1_e, 2_e)))),
-                  KAbs(KMult(1_e, 2_e)), 0.5_e));
+      ref3,
+      KMult(KAdd(KMult(KExp(KAdd(1_e, 2_e)),
+                       KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e)),
+                 KMult(KExp(KAdd(1_e, 2_e)), KTrig(KAdd("x"_e, "y"_e), 1_e))),
+            KAbs(KMult(1_e, 2_e)), 0.5_e));
 
   EditionReference ref4(KMult(KAbs(1_e), KAbs(KMult(2_e, 3_e)), KAbs(4_e),
                               KAbs(KMult(5_e, 6_e))));

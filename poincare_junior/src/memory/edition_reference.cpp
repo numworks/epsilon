@@ -267,25 +267,35 @@ void EditionReference::detach(bool isTree) {
 #endif
 }
 
-void InsertNodeBeforeNode(EditionReference* target, const Node* nodeToInsert) {
+void CloneNodeBeforeNode(EditionReference* target, const Node* nodeToInsert) {
   Node* previousTarget = *target;
-  if (EditionPool::sharedEditionPool()->contains(nodeToInsert->block()) &&
-      nodeToInsert->block() < previousTarget->block()) {
-    previousTarget =
-        Node::FromBlocks(previousTarget->block() - nodeToInsert->nodeSize());
-  }
   target->cloneNodeBeforeNode(nodeToInsert);
   *target = previousTarget;
 }
 
-void InsertTreeBeforeNode(EditionReference* target, const Node* treeToInsert) {
+void CloneTreeBeforeNode(EditionReference* target, const Node* treeToInsert) {
   Node* previousTarget = *target;
-  if (EditionPool::sharedEditionPool()->contains(treeToInsert->block()) &&
-      treeToInsert->block() < previousTarget->block()) {
+  target->cloneTreeBeforeNode(treeToInsert);
+  *target = previousTarget;
+}
+
+void MoveNodeBeforeNode(EditionReference* target, Node* nodeToInsert) {
+  Node* previousTarget = *target;
+  if (nodeToInsert->block() < previousTarget->block()) {
+    previousTarget =
+        Node::FromBlocks(previousTarget->block() - nodeToInsert->nodeSize());
+  }
+  target->moveNodeBeforeNode(nodeToInsert);
+  *target = previousTarget;
+}
+
+void MoveTreeBeforeNode(EditionReference* target, Node* treeToInsert) {
+  Node* previousTarget = *target;
+  if (treeToInsert->block() < previousTarget->block()) {
     previousTarget =
         Node::FromBlocks(previousTarget->block() - treeToInsert->treeSize());
   }
-  target->cloneTreeBeforeNode(treeToInsert);
+  target->moveTreeBeforeNode(treeToInsert);
   *target = previousTarget;
 }
 
@@ -295,9 +305,9 @@ void SwapTrees(EditionReference* u, EditionReference* v) {
   }
   Node* previousU = *u;
   Node* previousV = *v;
-  InsertTreeBeforeNode(v, previousU);
+  MoveTreeBeforeNode(v, previousU);
   *u = EditionReference(previousU);
-  InsertTreeBeforeNode(u, previousV);
+  MoveTreeBeforeNode(u, previousV);
 }
 
 }  // namespace PoincareJ

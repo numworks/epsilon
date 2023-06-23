@@ -16,9 +16,9 @@ void NAry::AddChildAtIndex(EditionReference nary, EditionReference child,
    * private AddChildAtIndex method bypassing this check. */
   // assert(child.parent().isUninitialized());
   if (index == nary.numberOfChildren()) {
-    EditionReference(nary.nextTree()).insertTreeBeforeNode(child);
+    EditionReference(nary.nextTree()).moveTreeBeforeNode(child);
   } else {
-    EditionReference(nary.childAtIndex(index)).insertTreeBeforeNode(child);
+    EditionReference(nary.childAtIndex(index)).moveTreeBeforeNode(child);
   }
   SetNumberOfChildren(nary, nary.numberOfChildren() + 1);
 }
@@ -149,8 +149,8 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
         EditionReference refI = nary->childAtIndex(i);
         EditionReference refJ = nary->childAtIndex(j);
         EditionReference refJNext = refJ.nextTree();
-        refI.insertTreeBeforeNode(refJ);
-        refJNext.insertTreeBeforeNode(refI);
+        refI.moveTreeBeforeNode(refJ);
+        refJNext.moveTreeBeforeNode(refI);
       },
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);

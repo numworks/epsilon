@@ -138,7 +138,7 @@ QUIZ_CASE(pcj_cache_references) {
   Reference reference2(
       [](Node *node) {
         EditionReference ref(node);
-        ref.insertNodeBeforeNode(
+        ref.moveNodeBeforeNode(
             EditionPool::sharedEditionPool()->push<BlockType::Addition>(2));
         ref.cloneNodeAfterNode(6_e);
       },

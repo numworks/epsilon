@@ -59,7 +59,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1,
   EditionReference currentChild1 = set1.nextNode();
   if (pilferSet1Children) {
     // Move set1 right after set0 to easily pilfer children
-    EditionReference(set0.nextTree()).insertTreeBeforeNode(set1);
+    EditionReference(set0.nextTree()).moveTreeBeforeNode(set1);
   }
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
     int comparison = Comparison::Compare(currentChild0, currentChild1);
@@ -91,7 +91,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1,
     if (comparison > 0) {  // Increment child of set 1
       EditionReference nextChild1 = currentChild1.nextTree();
       if (pilferSet1Children) {
-        currentChild0.insertTreeBeforeNode(currentChild1);
+        currentChild0.moveTreeBeforeNode(currentChild1);
       }
       currentChild1 = nextChild1;
       numberOfChildren1ToScan--;

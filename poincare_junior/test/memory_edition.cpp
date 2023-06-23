@@ -84,13 +84,13 @@ QUIZ_CASE(pcj_edition_reference) {
   ref2.cloneNodeAfterNode(10_e);
   assert_pool_contains(editionPool,
                        {k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
-  ref2.insertTreeAfterNode(ref0);
+  ref2.moveTreeAfterNode(ref0);
   assert_pool_contains(editionPool,
                        {k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
   ref2.cloneNodeBeforeNode(10_e);
   assert_pool_contains(editionPool,
                        {k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
-  ref2.insertTreeBeforeNode(ref1);
+  ref2.moveTreeBeforeNode(ref1);
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 

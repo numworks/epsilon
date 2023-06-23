@@ -105,8 +105,8 @@ bool Simplification::SimplifyTrig(EditionReference* u) {
     ReplaceTreeByTree(&secondArgument,
                       secondArgument.type() == BlockType::Two ? 0_e : 1_e);
     EditionPool* editionPool(EditionPool::sharedEditionPool());
-    InsertNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
-    InsertNodeBeforeNode(u, editionPool->push<BlockType::Multiplication>(2));
+    MoveNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
+    MoveNodeBeforeNode(u, editionPool->push<BlockType::Multiplication>(2));
     return true;
   }
   assert(secondArgument.block()->isOfType({BlockType::Zero, BlockType::One}));
@@ -151,7 +151,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     assert(p.nextTree() == static_cast<Node*>(n));
     EditionReference m =
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
-    InsertNodeBeforeNode(&p, m);
+    MoveNodeBeforeNode(&p, m);
     DropNode(u);
     SimplifyProduct(&p);
     assert(IsInteger(p));
@@ -195,7 +195,7 @@ EditionReference PushExponent(Node* u) {
 }
 
 bool WrapWithUnary(EditionReference* u, const Node* n) {
-  InsertNodeBeforeNode(u, n);
+  CloneNodeBeforeNode(u, n);
   NAry::SetNumberOfChildren(*u, 1);
   return true;
 }

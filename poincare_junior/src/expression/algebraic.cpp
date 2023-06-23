@@ -66,17 +66,17 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     // Create Mult(child, commonDenominator) = a*b * b*d
     EditionReference multiplication(
         editionPool->push<BlockType::Multiplication>(1));
-    child.insertNodeBeforeNode(multiplication);
+    child.moveNodeBeforeNode(multiplication);
     EditionReference(child.nextTree())
-        .insertTreeBeforeNode(editionPool->clone(commonDenominator));
+        .moveTreeBeforeNode(editionPool->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
   EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
-  fraction.insertTreeAfterNode(expression);
+  fraction.moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
   EditionReference power(editionPool->push<BlockType::Power>());
-  power.insertTreeAfterNode(commonDenominator);
+  power.moveTreeAfterNode(commonDenominator);
   EditionReference(commonDenominator.nextTree()).cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power
   // TODO basicReduction of fraction

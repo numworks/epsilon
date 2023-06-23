@@ -18,7 +18,7 @@ namespace PoincareJ {
 EditionReference Polynomial::PushEmpty(EditionReference variable) {
   EditionReference pol(
       EditionPool::sharedEditionPool()->push<BlockType::Polynomial>(1, 1));
-  pol.insertTreeAfterNode(variable);
+  pol.moveTreeAfterNode(variable);
   return pol;
 }
 
@@ -69,7 +69,7 @@ void Polynomial::AddMonomial(EditionReference polynomial,
       EditionReference previousChild = currentCoefficient.previousTree();
       EditionReference addition =
           Polynomial::Addition(currentCoefficient, coefficient);
-      EditionReference(previousChild.nextTree()).insertTreeBeforeNode(addition);
+      EditionReference(previousChild.nextTree()).moveTreeBeforeNode(addition);
     } else {
       NAry::AddChildAtIndex(polynomial, coefficient, i + 1);
       InsertExponentAtIndex(polynomial, i, exponent);
@@ -123,8 +123,8 @@ EditionReference Polynomial::Operation(
           blockType == BlockType::Addition
               ? editionPool->push<BlockType::Addition>(2)
               : editionPool->push<BlockType::Multiplication>(2);
-      op.insertTreeAfterNode(polB);
-      op.insertTreeAfterNode(polA);
+      op.moveTreeAfterNode(polB);
+      op.moveTreeAfterNode(polA);
       Simplification::SystematicReduce(&op);
       return op;
     }
@@ -188,7 +188,7 @@ void Polynomial::MultiplicationMonomial(
     EditionReference multiplication =
         Polynomial::Multiplication(currentCoefficient, coeffClone);
     EditionReference(previousChild.nextTree())
-        .insertTreeBeforeNode(multiplication);
+        .moveTreeBeforeNode(multiplication);
   }
 }
 
@@ -392,9 +392,9 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
     // Addition node has been emptied from children
     expression.replaceNodeByTree(polynomial);
   } else {
-    // Insert polynomial next to expression before it's parsed (and likely
+    // Move polynomial next to expression before it's parsed (and likely
     // replaced)
-    expression.insertTreeBeforeNode(polynomial);
+    expression.moveTreeBeforeNode(polynomial);
     Polynomial::AddMonomial(polynomial, ParseMonomial(expression, variable));
   }
   return polynomial;

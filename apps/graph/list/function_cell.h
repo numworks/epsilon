@@ -36,10 +36,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
 
  protected:
   // View
-  bool displayFunctionType() const {
-    return m_messageTextView.text() != nullptr &&
-           m_messageTextView.text()[0] != 0;
-  }
+  bool displayFunctionType() const;
   int numberOfSubviews() const override { return 2 + displayFunctionType(); }
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

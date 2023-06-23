@@ -290,10 +290,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   if (type == k_expressionCellType) {
     FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
     functionCell->expressionCell()->setLayout(f->layout());
-    functionCell->setMessage(
-        Preferences::sharedPreferences->examMode().forbidImplicitPlots()
-            ? I18n::Message::Default
-            : f->properties().caption());
+    functionCell->setMessage(f->properties().caption());
     KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
     functionCell->expressionCell()->setTextColor(textColor);
     static_cast<FunctionCell *>(functionCell)

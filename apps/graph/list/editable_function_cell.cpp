@@ -10,8 +10,6 @@ EditableFunctionCell::EditableFunctionCell(
     Escher::Responder* parentResponder,
     Escher::LayoutFieldDelegate* layoutFieldDelegate)
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>() {
-  // We set a dummy message for the height computation
-  m_messageTextView.setMessage(I18n::Message::UnhandledType);
   // Initialize expression cell
   expressionCell()->layoutField()->setParentResponder(parentResponder);
   expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);

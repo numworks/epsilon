@@ -292,6 +292,9 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
       int decimalMarkerPosition = currentChar + numberOfCharsToShift - 1;
       currentChar +=
           strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
+      if (currentChar >= bufferSize - 1) {
+        return bufferSize - 1;
+      }
       assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) ==
              1);
       for (int i = 0; i < numberOfCharsToShift; i++) {

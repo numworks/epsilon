@@ -17,7 +17,8 @@ class FunctionTitleCell : public Escher::EvenOddCell {
  protected:
   constexpr static KDCoordinate k_separatorThickness =
       Escher::Metric::CellSeparatorThickness;
-  constexpr static KDCoordinate k_colorIndicatorThickness = 2;
+  constexpr static KDCoordinate k_colorIndicatorThickness =
+      Escher::Metric::HorizontalColorIndicatorThickness;
 
   virtual KDRect subviewFrame() const;
 

@@ -17,7 +17,8 @@ class ColumnTitleCell : public EvenOddDoubleBufferTextCell {
   void layoutSubviews(bool force = false) override;
 
  private:
-  constexpr static KDCoordinate k_colorIndicatorThickness = 2;
+  constexpr static KDCoordinate k_colorIndicatorThickness =
+      Escher::Metric::HorizontalColorIndicatorThickness;
   KDColor m_functionColor;
 };
 

@@ -17,7 +17,7 @@ class AbstractMathFieldDelegate {
                                         bool replaceAns,
                                         Poincare::Expression ansExpression,
                                         Poincare::Context* context);
-  virtual CodePoint XNT();
+  virtual CodePoint defaultXNT();
   bool handleXNT(Escher::EditableField* field);
 };
 

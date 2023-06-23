@@ -176,7 +176,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                                    event);
 }
 
-CodePoint ListController::XNT() {
+CodePoint ListController::defaultXNT() {
   int selectedFunctionIndex = selectedRow();
   if (selectedFunctionIndex >= 0) {
     assert(selectedFunctionIndex < modelStore()->numberOfModels());

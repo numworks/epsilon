@@ -13,7 +13,7 @@ using namespace Escher;
 namespace Shared {
 
 bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
-  CodePoint xnt = XNT();
+  CodePoint xnt = defaultXNT();
   int XNTIndex = Ion::Events::repetitionFactor();
   if (XNTIndex > 0) {
     // Cycle through XNT CodePoints, starting from default code point position
@@ -34,7 +34,7 @@ bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
   return field->addXNTCodePoint(xnt);
 }
 
-CodePoint AbstractMathFieldDelegate::XNT() {
+CodePoint AbstractMathFieldDelegate::defaultXNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 

@@ -825,6 +825,7 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   // leftHandSide =
   // Constant::Builder(m_currentToken.text(), m_currentToken.length());
+  assert(m_currentToken.length() == 1);
   leftHandSide =
       EditionPool::sharedEditionPool()->push<BlockType::Constant, char16_t>(
           m_currentToken.toDecoder().nextCodePoint());

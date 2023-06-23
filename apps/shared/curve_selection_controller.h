@@ -36,7 +36,8 @@ class CurveSelectionCellWithAccessory
   void setColor(KDColor color) { m_color = color; }
 
  private:
-  constexpr static KDCoordinate k_colorIndicatorThickness = 3;
+  constexpr static KDCoordinate k_colorIndicatorThickness =
+      Escher::Metric::VerticalColorIndicatorThickness;
   KDColor m_color;
 };
 

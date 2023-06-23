@@ -69,7 +69,7 @@ void Polynomial::AddMonomial(EditionReference polynomial,
       EditionReference previousChild = currentCoefficient.previousTree();
       EditionReference addition =
           Polynomial::Addition(currentCoefficient, coefficient);
-      EditionReference(previousChild.nextTree()).moveTreeBeforeNode(addition);
+      previousChild.nextTree()->moveTreeBeforeNode(addition);
     } else {
       NAry::AddChildAtIndex(polynomial, coefficient, i + 1);
       InsertExponentAtIndex(polynomial, i, exponent);
@@ -187,8 +187,7 @@ void Polynomial::MultiplicationMonomial(
                   EditionPool::sharedEditionPool()->clone(coefficient));
     EditionReference multiplication =
         Polynomial::Multiplication(currentCoefficient, coeffClone);
-    EditionReference(previousChild.nextTree())
-        .moveTreeBeforeNode(multiplication);
+    previousChild.nextTree()->moveTreeBeforeNode(multiplication);
   }
 }
 

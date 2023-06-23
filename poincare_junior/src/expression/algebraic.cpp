@@ -67,8 +67,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     EditionReference multiplication(
         editionPool->push<BlockType::Multiplication>(1));
     child.moveNodeBeforeNode(multiplication);
-    EditionReference(child.nextTree())
-        .moveTreeBeforeNode(editionPool->clone(commonDenominator));
+    child.nextTree()->moveTreeBeforeNode(editionPool->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
@@ -77,7 +76,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   // Create Pow(commonDenominator, -1)
   EditionReference power(editionPool->push<BlockType::Power>());
   power.moveTreeAfterNode(commonDenominator);
-  EditionReference(commonDenominator.nextTree()).cloneTreeBeforeNode(-1_e);
+  commonDenominator.nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power
   // TODO basicReduction of fraction
   return fraction;

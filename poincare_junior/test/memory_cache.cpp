@@ -13,7 +13,7 @@ static constexpr Tree smallTree = 4_e;
 void execute_push_tree_and_modify() {
   PoincareJ::Reference::InitializerFromTreeInplace treeModifier =
       [](Node *tree) {
-        EditionReference(tree).moveNodeOverNode(
+        tree->moveNodeOverNode(
             EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(
                 2));
       };
@@ -130,9 +130,8 @@ QUIZ_CASE(pcj_cache_references) {
   });
   assert_check_cache_reference(reference0, {4_e});
 
-  Reference reference1(
-      [](Node *node) { EditionReference(node).cloneNodeOverNode(5_e); },
-      smallTree);
+  Reference reference1([](Node *node) { node->cloneNodeOverNode(5_e); },
+                       smallTree);
   assert_check_cache_reference(reference1, {5_e});
 
   Reference reference2(

@@ -1336,6 +1336,10 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
         return;
       }
       EditionReference rightHandSide = Parser::Parse(layout.childAtIndex(0));
+      if (rightHandSide.isUninitialized()) {
+        m_status = Status::Error;
+        return;
+      }
       turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
       break;
     }

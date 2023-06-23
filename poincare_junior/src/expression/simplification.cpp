@@ -607,6 +607,7 @@ bool Simplification::Simplify(EditionReference* reference) {
   changed = SystematicReduce(reference) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(reference) || changed;
+  changed = SystematicReduce(reference) || changed;
   changed = DeepBeautify(reference) || changed;
   return changed;
 }

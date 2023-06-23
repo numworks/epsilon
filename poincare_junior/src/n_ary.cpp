@@ -99,7 +99,7 @@ EditionReference NAry::SquashIfUnary(EditionReference reference) {
 
 bool NAry::SquashIfUnary(EditionReference* reference) {
   if (reference->numberOfChildren() == 1) {
-    *reference = reference->replaceTreeByTree(reference->nextNode());
+    *reference = reference->moveTreeOverTree(reference->nextNode());
     return true;
   }
   return false;

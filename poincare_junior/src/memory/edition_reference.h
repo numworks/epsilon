@@ -83,10 +83,10 @@ class EditionReference {
   void cloneTreeBeforeNode(const Node* nodeToClone) {
     insert(nodeToClone, true, true);
   }
-  Node* replaceNodeByNode(Node* n) { return replaceBy(n, false, false); }
-  Node* replaceNodeByTree(Node* n) { return replaceBy(n, false, true); }
-  Node* replaceTreeByNode(Node* n) { return replaceBy(n, true, false); }
-  Node* replaceTreeByTree(Node* n) { return replaceBy(n, true, true); }
+  Node* moveNodeOverNode(Node* n) { return replaceBy(n, false, false); }
+  Node* moveTreeOverNode(Node* n) { return replaceBy(n, false, true); }
+  Node* moveNodeOverTree(Node* n) { return replaceBy(n, true, false); }
+  Node* moveTreeOverTree(Node* n) { return replaceBy(n, true, true); }
   Node* cloneNodeOverNode(const Node* n) { return replaceBy(n, false, false); }
   Node* cloneTreeOverNode(const Node* n) { return replaceBy(n, false, true); }
   Node* cloneNodeOverTree(const Node* n) { return replaceBy(n, true, false); }
@@ -119,20 +119,20 @@ void CloneTreeBeforeNode(EditionReference* target, const Node* treeToInsert);
 void MoveNodeBeforeNode(EditionReference* target, Node* nodeToInsert);
 void MoveTreeBeforeNode(EditionReference* target, Node* treeToInsert);
 
-inline void ReplaceTreeByNode(EditionReference* u, Node* n) {
-  *u = u->replaceTreeByNode(n);
+inline void MoveNodeOverTree(EditionReference* u, Node* n) {
+  *u = u->moveNodeOverTree(n);
 }
 
-inline void ReplaceTreeByTree(EditionReference* u, Node* n) {
-  *u = u->replaceTreeByTree(n);
+inline void MoveTreeOverTree(EditionReference* u, Node* n) {
+  *u = u->moveTreeOverTree(n);
 }
 
-inline void ReplaceNodeByNode(EditionReference* u, Node* n) {
-  *u = u->replaceNodeByNode(n);
+inline void MoveNodeOverNode(EditionReference* u, Node* n) {
+  *u = u->moveNodeOverNode(n);
 }
 
-inline void ReplaceNodeByTree(EditionReference* u, Node* n) {
-  *u = u->replaceNodeByTree(n);
+inline void MoveTreeOverNode(EditionReference* u, Node* n) {
+  *u = u->moveTreeOverNode(n);
 }
 
 inline void CloneTreeOverNode(EditionReference* u, const Node* n) {

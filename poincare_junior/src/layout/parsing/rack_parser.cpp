@@ -453,7 +453,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
           P_POW(editionPool->clone(10_e), Integer::Push(exponent, base)));
 
       float value = Approximation::To<float>(leftHandSide);
-      leftHandSide = leftHandSide.replaceTreeByTree(
+      leftHandSide = leftHandSide.moveTreeOverTree(
           editionPool->push<BlockType::Float>(value));
     }
   }

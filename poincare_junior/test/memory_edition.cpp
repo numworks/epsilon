@@ -101,7 +101,7 @@ QUIZ_CASE(pcj_edition_reference) {
   ref2 = ref1.nextTree();  // 10_e
 
   // Replacements by same
-  ref2 = ref2.replaceNodeByTree(ref2);
+  ref2 = ref2.moveTreeOverNode(ref2);
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
@@ -119,13 +119,13 @@ QUIZ_CASE(pcj_edition_reference) {
   // Replacements from nodes living in the EditionPool
   EditionReference subRef0(ref2.childAtIndex(0)->childAtIndex(1));
   EditionReference subRef1(ref2.childAtIndex(0));
-  ref2 = ref2.replaceTreeByTree(subRef0);  // Child
+  ref2 = ref2.moveTreeOverTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
-  ref1.replaceNodeByNode(ref0);  // Before
+  ref1.moveNodeOverNode(ref0);  // Before
   quiz_assert(ref1.isUninitialized());
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
-  ref0.replaceTreeByTree(ref2);  // After
+  ref0.moveTreeOverTree(ref2);  // After
   quiz_assert(ref0.isUninitialized());
   assert_pool_contains(editionPool, {k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 

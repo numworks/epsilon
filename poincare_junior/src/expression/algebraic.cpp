@@ -19,7 +19,7 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
     editionPool->push<BlockType::Power>();
     Rational::Denominator(expression).pushOnEditionPool();
     editionPool->push<BlockType::MinusOne>();
-    expression.replaceTreeByTree(fraction);
+    expression.moveTreeOverTree(fraction);
     return fraction;
   }
   BlockType type = expression.type();
@@ -89,7 +89,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
     IntegerHandler ator = numerator ? Rational::Numerator(expression)
                                     : Rational::Denominator(expression);
     EditionReference result = ator.pushOnEditionPool();
-    expression.replaceNodeByNode(result);
+    expression.moveNodeOverNode(result);
     return result;
   }
   BlockType type = expression.type();

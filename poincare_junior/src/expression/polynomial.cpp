@@ -85,7 +85,7 @@ EditionReference Polynomial::Addition(EditionReference polA,
       [](EditionReference result, EditionReference polynomial,
          std::pair<EditionReference, uint8_t> monomial, bool isLastTerm) {
         AddMonomial(polynomial, monomial);
-        result.replaceTreeByTree(polynomial);
+        result.moveTreeOverTree(polynomial);
         return polynomial;
       });
 }
@@ -294,7 +294,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
     EditionReference result = polynomial.childAtIndex(1);
-    polynomial.replaceTreeByTree(result);
+    polynomial.moveTreeOverTree(result);
     return result;
   }
   // Assert the exponents are ordered
@@ -390,7 +390,7 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
     }
     polynomial = Polynomial::Sanitize(polynomial);
     // Addition node has been emptied from children
-    expression.replaceNodeByTree(polynomial);
+    expression.moveTreeOverNode(polynomial);
   } else {
     // Move polynomial next to expression before it's parsed (and likely
     // replaced)
@@ -430,7 +430,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
         // basicReduction
         /* TODO: if the previous assertion is wrong, we have to multiply
          * children coefficients and addition children exponents. */
-        child.replaceTreeByTree(childCoefficient);
+        child.moveTreeOverTree(childCoefficient);
         Simplification::SystematicReduce(&expression);
         return std::make_pair(expression, childExponent);
       }
@@ -525,7 +525,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Node*
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at basicReduction
         EditionReference multCopy = EditionReference::Clone(expression);
-        multCopy.childAtIndex(std::get<int>(indexedNode)).replaceTreeByTree(childCoefficient);
+        multCopy.childAtIndex(std::get<int>(indexedNode)).moveTreeOverTree(childCoefficient);
         return std::make_pair(multCopy, childExponent);
       }
       childCoefficient.removeTree();

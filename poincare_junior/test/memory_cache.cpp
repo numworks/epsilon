@@ -13,7 +13,7 @@ static constexpr Tree smallTree = 4_e;
 void execute_push_tree_and_modify() {
   PoincareJ::Reference::InitializerFromTreeInplace treeModifier =
       [](Node *tree) {
-        EditionReference(tree).replaceNodeByNode(
+        EditionReference(tree).moveNodeOverNode(
             EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(
                 2));
       };

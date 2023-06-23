@@ -49,7 +49,7 @@ bool AllChildren(Node* u, bool test(const Node*)) {
 
 bool Simplification::SystematicReduce(EditionReference* u) {
   if (IsRational(*u)) {
-    ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
+    MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
     return true;  // TODO
   }
   if (u->numberOfChildren() == 0) {
@@ -142,7 +142,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   }
   // v^1 -> v
   if (n.type() == BlockType::One) {
-    ReplaceTreeByTree(u, v);
+    MoveTreeOverTree(u, v);
     return true;
   }
   // (w^p)^n -> w^(p*n)
@@ -164,7 +164,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
           EditionPool::sharedEditionPool()->push<BlockType::Power>();
       w.clone();
       n.clone();
-      ReplaceTreeByTree(&w, m);
+      MoveTreeOverTree(&w, m);
       SimplifyPower(&w);
     }
     n.removeTree();
@@ -228,13 +228,13 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
        * can't pass l as the first argument either. Need merge on right ? */
       EditionReference l2 = l->clone();
       MergeProducts(&u1, &l2);
-      ReplaceTreeByTree(l, u1);
+      MoveTreeOverTree(l, u1);
       return true;
     }
     WrapWithUnary(&u1, KMult());
     EditionReference l2 = l->clone();
     MergeProducts(&u1, &l2);
-    ReplaceTreeByTree(l, u1);
+    MoveTreeOverTree(l, u1);
     return true;
   }
   EditionReference u1 = l->childAtIndex(0);
@@ -289,7 +289,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
       CloneNodeOverTree(l, KMult());
       return true;
     }
-    ReplaceTreeByTree(l, P);
+    MoveTreeOverTree(l, P);
     WrapWithUnary(l, KMult());
     return true;
   }
@@ -302,7 +302,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     return true;
   }
   if (p->numberOfChildren() == 0) {
-    ReplaceNodeByTree(p, *q);
+    MoveTreeOverNode(p, *q);
     return true;
   }
   Node* p1 = p->childAtIndex(0);
@@ -319,7 +319,7 @@ bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
     MultPopFirst(p);
     MultPopFirst(q);
     MergeProducts(p, q);
-    ReplaceTreeByTree(&h, h.childAtIndex(0));
+    MoveTreeOverTree(&h, h.childAtIndex(0));
     MultPushFirst(p, &h);
     return true;
   }
@@ -406,13 +406,13 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     if (u1.type() == BlockType::Addition) {
       EditionReference l2 = l->clone();
       MergeSums(&u1, &l2);
-      ReplaceTreeByTree(l, u1);
+      MoveTreeOverTree(l, u1);
       return true;
     }
     WrapWithUnary(&u1, KAdd());
     EditionReference l2 = l->clone();
     MergeSums(&u1, &l2);
-    ReplaceTreeByTree(l, u1);
+    MoveTreeOverTree(l, u1);
     return true;
   }
   EditionReference u1 = l->childAtIndex(0);
@@ -440,12 +440,12 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     return true;
   }
   if (u1.type() == BlockType::Zero) {
-    ReplaceTreeByTree(l, u2);
+    MoveTreeOverTree(l, u2);
     WrapWithUnary(l, KAdd());
     return true;
   }
   if (u2.type() == BlockType::Zero) {
-    ReplaceTreeByTree(l, u1);
+    MoveTreeOverTree(l, u1);
     WrapWithUnary(l, KAdd());
     return true;
   }
@@ -466,7 +466,7 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
       CloneNodeOverTree(l, KAdd());
       return true;
     }
-    ReplaceTreeByTree(l, P);
+    MoveTreeOverTree(l, P);
     WrapWithUnary(l, KAdd());
     return true;
   }
@@ -479,7 +479,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     return true;
   }
   if (p->numberOfChildren() == 0) {
-    ReplaceNodeByTree(p, *q);
+    MoveTreeOverNode(p, *q);
     return true;
   }
   Node* p1 = p->childAtIndex(0);
@@ -496,7 +496,7 @@ bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
     AddPopFirst(p);
     AddPopFirst(q);
     MergeSums(p, q);
-    ReplaceTreeByTree(&h, h.childAtIndex(0));
+    MoveTreeOverTree(&h, h.childAtIndex(0));
     AddPushFirst(p, &h);
     return true;
   }
@@ -538,7 +538,7 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
   }
   if (IsRational(*u)) {
     if (Rational::Denominator(*u).isZero()) {
-      ReplaceTreeByNode(u, P_UNDEF());
+      MoveNodeOverTree(u, P_UNDEF());
       return true;
     }
     return false;
@@ -546,7 +546,7 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
   if (u->numberOfChildren() == 1) {
     assert(u->type() == BlockType::Addition ||
            u->type() == BlockType::Multiplication);
-    ReplaceNodeByTree(u, u->childAtIndex(0));
+    MoveTreeOverNode(u, u->childAtIndex(0));
     return SimplifyRationalTree(u);
   }
   if (u->numberOfChildren() == 2) {
@@ -564,10 +564,10 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
         CloneNodeOverTree(u, KUndef);
         return true;
       }
-      ReplaceTreeByTree(u, (u->type() == BlockType::Addition
-                                ? Rational::Addition
-                                : Rational::Multiplication)(v, w));
-      ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
+      MoveTreeOverTree(u, (u->type() == BlockType::Addition
+                               ? Rational::Addition
+                               : Rational::Multiplication)(v, w));
+      MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
       return true;
     }
     if (u->type() == BlockType::Power) {
@@ -578,8 +578,8 @@ bool Simplification::SimplifyRationalTree(EditionReference* u) {
         return true;
       }
       assert(IsInteger(u->childAtIndex(1)));
-      ReplaceTreeByTree(u, Rational::IntegerPower(v, u->childAtIndex(1)));
-      ReplaceTreeByTree(u, Rational::IrreducibleForm(*u));
+      MoveTreeOverTree(u, Rational::IntegerPower(v, u->childAtIndex(1)));
+      MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
       return true;
     }
   }
@@ -679,11 +679,11 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
         EditionReference additionChildCopy =
             EditionReference(additionCopy.childAtIndex(additionIndex));
         // Replace addition per its child
-        additionCopy.replaceTreeByTree(additionChildCopy);
+        additionCopy.moveTreeOverTree(additionChildCopy);
         assert(multCopy.type() == BlockType::Multiplication);
         DistributeMultiplicationOverAddition(multCopy);
       }
-      reference.replaceTreeByTree(add);
+      reference.moveTreeOverTree(add);
       return add;
     }
   }
@@ -868,13 +868,13 @@ bool Simplification::DistributeOverNAry(EditionReference* reference,
     /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
      * clone.childAtIndex(childIndex)=Node(clone.block()+childIndexOffset) */
     EditionReference(clone->block() + childIndexOffset)
-        .replaceTreeByTree(grandChild);
+        .moveTreeOverTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
   }
   // f(0,E) ... +(,,) ... *(f(A,E), f(B,E), f(C,E))
   children.removeNode();
   // f(0,E) ... *(f(A,E), f(B,E), f(C,E))
-  *reference = reference->replaceTreeByTree(output);
+  *reference = reference->moveTreeOverTree(output);
   // *(f(A,E), f(B,E), f(C,E))
   return true;
 }

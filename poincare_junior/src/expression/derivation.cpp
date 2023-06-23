@@ -20,7 +20,7 @@ bool Derivation::Reduce(EditionReference *ref) {
   Node *result =
       Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
   Derivate(derivand, symbol, symbolValue);
-  *ref = ref->replaceTreeByTree(result);
+  *ref = ref->moveTreeOverTree(result);
   return true;
 }
 

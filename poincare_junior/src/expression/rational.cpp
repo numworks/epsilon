@@ -132,7 +132,7 @@ void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(reference);
   IntegerHandler denominator = Denominator(reference);
   numerator.setSign(sign);
-  reference.replaceNodeByNode(Push(numerator, denominator));
+  reference.moveNodeOverNode(Push(numerator, denominator));
 }
 
 Node* Rational::Addition(const Node* i, const Node* j) {

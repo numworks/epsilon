@@ -199,7 +199,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   // EditionPool: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
 
   // Step 3 - Replace with placeholder matches only
-  replaceTreeByTree(placeholderMatches);
+  moveTreeOverTree(placeholderMatches);
   *this = placeholderMatches;
 
   // EditionPool: ..... | _{3} x y z | ....
@@ -215,7 +215,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
-  replaceTreeByTree(createdRef);
+  moveTreeOverTree(createdRef);
   *this = createdRef;
 
   // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....

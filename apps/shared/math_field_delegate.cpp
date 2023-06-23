@@ -13,7 +13,7 @@ using namespace Escher;
 namespace Shared {
 
 bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
-  CodePoint defaultXNT = XNT();
+  CodePoint xnt = XNT();
   int XNTIndex = Ion::Events::repetitionFactor();
   if (XNTIndex > 0) {
     // Cycle through XNT CodePoints, starting from default code point position
@@ -23,15 +23,15 @@ bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
         ContinuousFunction::k_polarSymbol};
     constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);
     for (size_t i = 0; i < k_numberOfCodePoints; i++) {
-      if (XNTCodePoints[i] == defaultXNT) {
+      if (XNTCodePoints[i] == xnt) {
         break;
       }
       XNTIndex++;
     }
     // Unknown default code point
-    defaultXNT = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
+    xnt = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
   }
-  return field->addXNTCodePoint(defaultXNT);
+  return field->addXNTCodePoint(xnt);
 }
 
 CodePoint AbstractMathFieldDelegate::XNT() {

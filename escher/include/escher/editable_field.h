@@ -15,10 +15,7 @@ namespace Escher {
 class EditableField : public InputEventHandler {
  public:
   using InputEventHandler::InputEventHandler;
-  virtual bool isEditing() const = 0;
-  virtual void setEditing(bool isEditing) = 0;
   virtual bool addXNTCodePoint(CodePoint defaultXNTCodePoint) = 0;
-  virtual bool isEditingAndShouldFinishEditing(Ion::Events::Event event) = 0;
 };
 
 }  // namespace Escher

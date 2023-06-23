@@ -25,8 +25,8 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
               KDGlyph::Format format = {});
   void setDelegate(LayoutFieldDelegate* layoutFieldDelegate);
   Poincare::Context* context() const;
-  bool isEditing() const override { return m_contentView.isEditing(); }
-  void setEditing(bool isEditing) override final;
+  bool isEditing() const { return m_contentView.isEditing(); }
+  void setEditing(bool isEditing);
   void clearLayout();
   void clearAndSetEditing(bool isEditing);
   void scrollToCursor();
@@ -56,7 +56,7 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
                            bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
-  bool isEditingAndShouldFinishEditing(Ion::Events::Event event) override;
+  bool isEditingAndShouldFinishEditing(Ion::Events::Event event);
   void didBecomeFirstResponder() override;
 
   /* View */

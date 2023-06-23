@@ -2,21 +2,17 @@
 #define ESCHER_EDITABLE_SEQUENCE_CELL_H
 
 #include <escher/editable_expression_model_cell.h>
-#include <escher/layout_field.h>
 
 #include "sequence_cell.h"
 
 namespace Sequence {
 
-class EditableSequenceCell : public AbstractSequenceCell {
+class EditableSequenceCell
+    : public TemplatedSequenceCell<Shared::WithEditableExpressionCell> {
  public:
   EditableSequenceCell(Escher::Responder* parentResponder,
-                       Escher::LayoutFieldDelegate* layoutFieldDelegate)
-      : AbstractSequenceCell(),
-        m_expressionModelCell(parentResponder, layoutFieldDelegate) {}
-  Escher::EditableExpressionModelCell* expressionCell() override {
-    return &m_expressionModelCell;
-  }
+                       Escher::LayoutFieldDelegate* layoutFieldDelegate);
+
   void updateSubviewsBackgroundAfterChangingState() override {
     m_expressionBackground = backgroundColor();
   }
@@ -25,7 +21,6 @@ class EditableSequenceCell : public AbstractSequenceCell {
 
  private:
   static constexpr KDCoordinate k_expressionMargin = 5;
-  Escher::EditableExpressionModelCell m_expressionModelCell;
 };
 
 }  // namespace Sequence

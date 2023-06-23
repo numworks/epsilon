@@ -1,8 +1,8 @@
 #ifndef SEQUENCE_SEQUENCE_CELL_H
 #define SEQUENCE_SEQUENCE_CELL_H
 
+#include <apps/shared/with_expression_cell.h>
 #include <escher/even_odd_cell.h>
-#include <escher/layout_view.h>
 
 #include "vertical_sequence_title_cell.h"
 
@@ -13,10 +13,10 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   AbstractSequenceCell()
       : EvenOddCell(), m_expressionBackground(KDColorWhite) {}
   void setParameterSelected(bool selected);
-  virtual Escher::HighlightCell* expressionCell() = 0;
-  const Escher::HighlightCell* expressionCell() const {
+  virtual Escher::HighlightCell* mainCell() = 0;
+  const Escher::HighlightCell* mainCell() const {
     return const_cast<Escher::HighlightCell*>(
-        const_cast<AbstractSequenceCell*>(this)->expressionCell());
+        const_cast<AbstractSequenceCell*>(this)->mainCell());
   }
   VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
@@ -35,16 +35,24 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   bool m_parameterSelected;
 };
 
-class SequenceCell : public AbstractSequenceCell {
+template <typename T>
+class TemplatedSequenceCell : public AbstractSequenceCell, public T {
  public:
-  Escher::EvenOddExpressionCell* expressionCell() override {
-    return &m_expressionCell;
+  TemplatedSequenceCell() : AbstractSequenceCell(), T() {}
+
+ private:
+  Escher::HighlightCell* mainCell() override {
+    return static_cast<T*>(this)->expressionCell();
   }
+};
+
+class SequenceCell
+    : public TemplatedSequenceCell<Shared::WithNonEditableExpressionCell> {
+ public:
   void updateSubviewsBackgroundAfterChangingState() override;
 
  private:
   void setEven(bool even) override;
-  Escher::EvenOddExpressionCell m_expressionCell;
 };
 
 }  // namespace Sequence

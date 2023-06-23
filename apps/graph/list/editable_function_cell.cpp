@@ -9,11 +9,12 @@ namespace Graph {
 EditableFunctionCell::EditableFunctionCell(
     Escher::Responder* parentResponder,
     Escher::LayoutFieldDelegate* layoutFieldDelegate)
-    : AbstractFunctionCell(),
-      m_layoutField(parentResponder, layoutFieldDelegate) {
+    : TemplatedFunctionCell<Shared::WithEditableExpressionCell>() {
   // We set a dummy message for the height computation
   m_messageTextView.setMessage(I18n::Message::UnhandledType);
-  m_layoutField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);
+  // Initialize expression cell
+  expressionCell()->layoutField()->setParentResponder(parentResponder);
+  expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
 }
 
 void EditableFunctionCell::layoutSubviews(bool force) {
@@ -24,14 +25,10 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_expressionMargin;
   KDCoordinate rightMargin = k_expressionMargin + k_parametersColumnWidth;
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  setChildFrame(&m_layoutField,
+  setChildFrame(expressionCell(),
                 KDRect(leftMargin, 0, availableWidth, bounds().height()),
                 force);
   setChildFrame(&m_messageTextView, KDRectZero, force);
-}
-
-void EditableFunctionCell::updateSubviewsBackgroundAfterChangingState() {
-  m_expressionBackground = backgroundColor();
 }
 
 }  // namespace Graph

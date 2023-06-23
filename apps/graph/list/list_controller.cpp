@@ -27,7 +27,7 @@ ListController::ListController(
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite),
       m_parameterColumnSelected(false) {
-  static_assert(k_newModelMargin == FunctionCell::k_colorIndicatorThickness +
+  static_assert(k_newModelMargin == Metric::VerticalColorIndicatorThickness +
                                         Metric::BigCellMargin);
 }
 
@@ -288,24 +288,23 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     return;
   }
   assert(type == k_expressionCellType || type == k_editableCellType);
-  AbstractFunctionCell *functionCell =
-      static_cast<AbstractFunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(row));
   if (type == k_expressionCellType) {
-    functionCell->setLayout(f->layout());
+    FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
+    functionCell->expressionCell()->setLayout(f->layout());
     functionCell->setMessage(
         Preferences::sharedPreferences->examMode().forbidImplicitPlots()
             ? I18n::Message::Default
             : f->properties().caption());
     KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
-    functionCell->setTextColor(textColor);
+    functionCell->expressionCell()->setTextColor(textColor);
     static_cast<FunctionCell *>(functionCell)
         ->setParameterSelected(m_parameterColumnSelected);
   }
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
-  functionCell->setColor(functionColor);
-  functionCell->reloadCell();
+  static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
+  cell->reloadCell();
 }
 
 void ListController::addModel() {

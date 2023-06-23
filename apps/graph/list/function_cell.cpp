@@ -10,7 +10,7 @@ namespace Graph {
  *  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
  * |####|  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _                   |              |
  * |####|  |                             |                   |              |
- * |####|  |   LayoutView                |                   |              |
+ * |####|  | MainCell                    |                   |              |
  * |####|  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|                   | EllipsisView |
  * |####|  _ _ _ _ _ _ _ _ _ _                               |              |
  * |####|  | MessageTextView |                               |              |
@@ -21,7 +21,7 @@ namespace Graph {
  * - Leftmost rectangle is the color indicator.
  * - There are no borders to draw
  * - EllipsisView dictates the minimal height of the cell
- * - LayoutView is cropped in width, but can take significant height
+ * - ExpressionCell is cropped in width, but can take significant height
  * - If inactive, both color indicator and all texts are set to gray
  */
 
@@ -53,7 +53,7 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
   KDCoordinate expressionHeight =
-      layoutView()->minimalSizeForOptimalDisplay().height();
+      mainCell()->minimalSizeForOptimalDisplay().height();
   KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
   if (displayFunctionType()) {
     KDCoordinate messageHeight =
@@ -72,7 +72,7 @@ KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
 View* AbstractFunctionCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:
-      return mainView();
+      return mainCell();
     case 1:
       return &m_ellipsisView;
     default:
@@ -89,9 +89,9 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_margin;
   KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
   KDCoordinate expressionHeight =
-      mainView()->minimalSizeForOptimalDisplay().height();
+      mainCell()->minimalSizeForOptimalDisplay().height();
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  setChildFrame(mainView(),
+  setChildFrame(mainCell(),
                 KDRect(leftMargin, k_margin, availableWidth, expressionHeight),
                 force);
   if (displayFunctionType()) {
@@ -115,7 +115,7 @@ void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
   if (displayFunctionType()) {
     m_messageTextView.setBackgroundColor(m_expressionBackground);
   }
-  layoutView()->setBackgroundColor(m_expressionBackground);
+  expressionCell()->setBackgroundColor(m_expressionBackground);
 }
 
 void FunctionCell::setParameterSelected(bool selected) {

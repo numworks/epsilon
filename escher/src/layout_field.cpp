@@ -542,17 +542,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
   size_t eventTextLength = 0;
   if (event == Ion::Events::Log &&
-      Poincare::Preferences::sharedPreferences->logarithmKeyEvent() !=
-          Poincare::Preferences::LogarithmKeyEvent::Default) {
+      Poincare::Preferences::sharedPreferences->logarithmKeyEvent() ==
+          Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
     constexpr const char *k_logWithBase10 = "log(\x11,10)";
-    constexpr const char *k_logWithEmptyBase = "log(\x11,\x11)";
     eventTextLength =
-        strlcpy(buffer,
-                Poincare::Preferences::sharedPreferences->logarithmKeyEvent() ==
-                        Poincare::Preferences::LogarithmKeyEvent::WithBaseTen
-                    ? k_logWithBase10
-                    : k_logWithEmptyBase,
-                Ion::Events::EventData::k_maxDataSize);
+        strlcpy(buffer, k_logWithBase10, Ion::Events::EventData::k_maxDataSize);
   } else {
     eventTextLength =
         Ion::Events::copyText(static_cast<uint8_t>(event), buffer,

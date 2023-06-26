@@ -403,13 +403,26 @@ Layout ValuesController::memoizedLayoutForCell(int column, int row) {
     // Compute the buffer of the new cells of the memoized table
     int maxCol = std::min(nbOfMemoizedColumns,
                           numberOfValuesColumns() - m_firstMemoizedColumn);
+    int maxRow[maxCol];
+    int maxOfMaxRow = -1;
     for (int col = 0; col < maxCol; col++) {
-      int maxRow = std::min(
+      maxRow[col] = std::min(
           k_maxNumberOfDisplayableRows,
           numberOfElementsInColumn(
               absoluteColumnForValuesColumn(col + m_firstMemoizedColumn)) -
               m_firstMemoizedRow);
-      for (int row = 0; row < maxRow; row++) {
+      maxOfMaxRow = std::max(maxOfMaxRow, maxRow[col]);
+    }
+    /* We first loop on rows to step all sequences at the same time.
+     * TODO: split this behavior between app grapher and app sequences? For
+     * sequences, the number of rows is the same for all column, and for
+     * grapher, this would enable us to restore previous loops (avoid row >=
+     * maxRow[col] etc). */
+    for (int row = 0; row < maxOfMaxRow; row++) {
+      for (int col = 0; col < maxCol; col++) {
+        if (row >= maxRow[col]) {
+          continue;
+        }
         // Escape if already filled
         if (col >= -offsetCol && col < -offsetCol + nbOfMemoizedColumns &&
             row >= -offsetRow &&

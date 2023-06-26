@@ -56,7 +56,7 @@ jobs:
       - name: Binary size summary
         if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
-     - name: Binary size summary (userland only)
+      - name: Binary size summary (userland only)
         if: ${{ steps.epsilon-core.outcome != 'success' }}
         run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: App sizes

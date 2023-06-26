@@ -847,6 +847,7 @@ bool Simplification::ReduceInverseFunction(EditionReference* e) {
 }
 
 bool Simplification::ExpandTranscendentalOnRational(EditionReference* e) {
+  // ln(18/5) = 3ln(3)+ln(2)-ln(5)
   // TODO : Implement
   return false;
 }

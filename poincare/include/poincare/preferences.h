@@ -49,11 +49,7 @@ class Preferences final {
     TopLeft,
   };
   // This is in Poincare and not in Apps because it's used in Escher
-  enum class LogarithmKeyEvent : uint8_t {
-    Default,
-    WithBaseTen,
-    WithEmptyBase
-  };
+  enum class LogarithmKeyEvent : uint8_t { Default, WithBaseTen };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
   Preferences();

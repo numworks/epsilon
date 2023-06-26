@@ -110,7 +110,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     for (int i = 0; i < nbOfActiveModels; i++) {
       Shared::Sequence *s =
           functionStore()->modelForRecord(recordAtCurveIndex(i));
-      zoom.fitFullFunction(evaluator, s);
+      zoom.fitSequence(evaluator, s);
     }
     *result.y() = *zoom.range(true, false).y();
   }

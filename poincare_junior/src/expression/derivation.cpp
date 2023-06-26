@@ -9,7 +9,9 @@ namespace PoincareJ {
 
 bool Derivation::Reduce(EditionReference* ref) {
   // Reference is expected to have been projected beforehand.
-  assert(!Simplification::DeepSystemProjection(ref));
+  /* TODO: This cannot be asserted since SytematicReduction may introduce powers
+   * of additions that would be projected to exponentials. */
+  // assert(!Simplification::DeepSystemProjection(ref));
   // Diff(Derivand, Symbol, SymbolValue)
   assert(ref->type() == BlockType::Derivative);
   Node derivand = ref->childAtIndex(0);

@@ -56,7 +56,7 @@ bool Simplification::SystematicReduce(EditionReference* u) {
     return false;
   }
   bool childChanged = false;
-  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*u)) {
+  for (auto [child, index] : NodeIterator::Children<Editable>(*u)) {
     childChanged = SystematicReduce(&child) || childChanged;
     if (IsUndef(child)) {
       CloneNodeOverTree(u, KUndef);
@@ -159,7 +159,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v.type() == BlockType::Multiplication) {
-    for (auto [w, index] : NodeIterator::Children<Forward, Editable>(v)) {
+    for (auto [w, index] : NodeIterator::Children<Editable>(v)) {
       EditionReference m =
           EditionPool::sharedEditionPool()->push<BlockType::Power>();
       w.clone();
@@ -602,7 +602,7 @@ bool Simplification::Simplify(EditionReference* reference) {
 bool Simplification::AdvancedReduction(EditionReference* reference) {
   bool changed = false;
   for (std::pair<EditionReference, int> indexedNode :
-       NodeIterator::Children<Forward, Editable>(*reference)) {
+       NodeIterator::Children<Editable>(*reference)) {
     changed =
         AdvancedReduction(&std::get<EditionReference>(indexedNode)) || changed;
   }
@@ -662,14 +662,13 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
 EditionReference Simplification::DistributeMultiplicationOverAddition(
     EditionReference reference) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
-  for (auto [child, index] :
-       NodeIterator::Children<Forward, Editable>(reference)) {
+  for (auto [child, index] : NodeIterator::Children<Editable>(reference)) {
     if (child.type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add = EditionReference(
           editionPool->push<BlockType::Addition>(child.numberOfChildren()));
       for (auto [additionChild, additionIndex] :
-           NodeIterator::Children<Forward, Editable>(child)) {
+           NodeIterator::Children<Editable>(child)) {
         // Copy a multiplication
         EditionReference multCopy = editionPool->clone(reference);
         // Find the addition to be replaced

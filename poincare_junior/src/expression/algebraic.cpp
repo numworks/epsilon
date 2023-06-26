@@ -29,7 +29,7 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
   }
   if (type == BlockType::Multiplication) {
     for (std::pair<EditionReference, int> indexedNode :
-         NodeIterator::Children<Forward, Editable>(expression)) {
+         NodeIterator::Children<Editable>(expression)) {
       Rationalize(std::get<EditionReference>(indexedNode));
     }
     return expression;  // TODO return basicReduction
@@ -47,7 +47,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   EditionReference commonDenominator = EditionReference(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<EditionReference, int> indexedNode :
-       NodeIterator::Children<Forward, Editable>(expression)) {
+       NodeIterator::Children<Editable>(expression)) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     child = Rationalize(child);
     EditionReference denominator = Denominator(editionPool->clone(child));
@@ -61,7 +61,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   /* Step 2: Turn the expression into the numerator. We start with this being
    * a/b+c/d and we want to create numerator = a/b*b*d + c/d*b*d = a*d + c*b */
   for (std::pair<EditionReference, int> indexedNode :
-       NodeIterator::Children<Forward, Editable>(expression)) {
+       NodeIterator::Children<Editable>(expression)) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
     EditionReference multiplication(
@@ -108,7 +108,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
   }
   if (type == BlockType::Multiplication) {
     for (std::pair<EditionReference, int> indexedNode :
-         NodeIterator::Children<Forward, Editable>(expression)) {
+         NodeIterator::Children<Editable>(expression)) {
       EditionReference child = std::get<EditionReference>(indexedNode);
       child = NormalFormator(child, numerator);
     }

@@ -345,7 +345,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
                                                     size_t variableIndex) {
   const Node* variable = nullptr;
   for (std::pair<const Node*, int> indexedVariable :
-       NodeIterator::Children<Forward, NoEditable>(variables)) {
+       NodeIterator::Children<NoEditable>(variables)) {
     if (std::get<int>(indexedVariable) < variableIndex) {
       // Skip previously handled variable
       continue;
@@ -362,7 +362,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
   }
   expression = Parse(expression, variable);
   for (std::pair<EditionReference, int> indexedRef :
-       NodeIterator::Children<Forward, Editable>(expression)) {
+       NodeIterator::Children<Editable>(expression)) {
     if (std::get<int>(indexedRef) == 0) {
       // Pass variable child
       continue;
@@ -418,7 +418,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
   }
   if (expression.type() == BlockType::Multiplication) {
     for (std::pair<EditionReference, int> indexedRef :
-         NodeIterator::Children<Forward, Editable>(expression)) {
+         NodeIterator::Children<Editable>(expression)) {
       EditionReference child = std::get<EditionReference>(indexedRef);
       auto [childCoefficient, childExponent] = ParseMonomial(
           EditionPool::sharedEditionPool()->clone(child), variable);
@@ -514,7 +514,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Node*
     }
   }
   if (type == BlockType::Multiplication) {
-    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
+    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<NoEditable>(expression)) {
       Node* child = std::get<const Node *>(indexedNode);
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent > 0) {

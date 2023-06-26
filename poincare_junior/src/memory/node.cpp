@@ -305,8 +305,7 @@ const Node* Node::childAtIndex(int i) const {
 }
 
 int Node::indexOfChild(const Node* child) const {
-  for (const auto [c, index] :
-       NodeIterator::Children<Forward, NoEditable>(this)) {
+  for (const auto [c, index] : NodeIterator::Children<NoEditable>(this)) {
     if (child == c) {
       return index;
     }

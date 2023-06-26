@@ -20,7 +20,7 @@ bool Set::Includes(const Node* set, const Node* expression) {
 
 EditionReference Set::Add(EditionReference set, const Node* expression) {
   EditionReference child = set;
-  for (auto [ref, index] : NodeIterator::Children<Forward, Editable>(set)) {
+  for (auto [ref, index] : NodeIterator::Children<Editable>(set)) {
     child = ref;
     int comparison = Comparison::Compare(ref, expression);
     if (comparison == 0) {

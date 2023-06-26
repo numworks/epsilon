@@ -149,7 +149,7 @@ void Derivation::CloneReplacingSymbolRec(const Node *expression,
     // Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
   }
   for (std::pair<const Node *, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(expression)) {
+       NodeIterator::Children<NoEditable>(expression)) {
     CloneReplacingSymbolRec(indexedNode.first, symbol, symbolValue);
   }
 }

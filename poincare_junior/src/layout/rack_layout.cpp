@@ -21,8 +21,7 @@ KDPoint RackLayout::PositionOfChild(const Node* node, int childIndex,
                                     KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate childBaseline = 0;
-  for (auto [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(node)) {
+  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     if (index == childIndex) {
       childBaseline = Render::Baseline(child, font);
       break;

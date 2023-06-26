@@ -309,6 +309,12 @@ class NodeIterator : public MultipleNodesIterator {
       typename EditablePolicy::NodeType node) {
     return ChildrenScanner<DirectionPolicy, EditablePolicy>(node);
   }
+
+  template <typename EditablePolicy>
+  static ChildrenScanner<ForwardPolicy, EditablePolicy> Children(
+      typename EditablePolicy::NodeType node) {
+    return ChildrenScanner<ForwardPolicy, EditablePolicy>(node);
+  }
 };
 
 typedef MultipleNodesIterator::ForwardPolicy Forward;

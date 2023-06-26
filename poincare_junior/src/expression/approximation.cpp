@@ -65,8 +65,7 @@ T Approximation::To(const Node* node) {
 template <typename T>
 T Approximation::MapAndReduce(const Node* node, Reductor<T> reductor) {
   T res;
-  for (auto [child, index] :
-       NodeIterator::Children<Forward, NoEditable>(node)) {
+  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     T app = Approximation::To<T>(child);
     if (index == 0) {
       res = app;

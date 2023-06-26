@@ -46,7 +46,7 @@ Node* EditionReference::node() const {
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
-  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*this)) {
+  for (auto [child, index] : NodeIterator::Children<Editable>(*this)) {
     child.recursivelyEdit(treeFunction);
   }
   (*treeFunction)(*this);

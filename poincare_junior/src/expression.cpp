@@ -16,7 +16,6 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
                                         EditionReference expressionReference) {
   assert(Builtin::IsBuiltin(expressionReference.type()));
   EditionPool *editionPool = EditionPool::sharedEditionPool();
-  int i = 0;
   UTF8Decoder decoder(Builtin::Name(expressionReference.type()).mainAlias());
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {

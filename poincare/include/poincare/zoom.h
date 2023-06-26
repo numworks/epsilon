@@ -57,7 +57,6 @@ class Zoom {
   void fitPoint(Coordinate2D<float> xy, bool flipped = false,
                 float leftMargin = 0.f, float rightMargin = 0.f,
                 float bottomMargin = 0.f, float topMargin = 0.f);
-  void fitSequence(Function2DWithContext<float> s, const void *model);
   void fitPointsOfInterest(Function2DWithContext<float> f, const void *model,
                            bool vertical = false,
                            Function2DWithContext<double> fDouble = nullptr);
@@ -162,9 +161,9 @@ class Zoom {
                            Solver<double>::FunctionEvaluation fDouble);
   void privateFitPoint(Coordinate2D<float> xy, bool flipped = false);
 
-  /* m_interestingRange is edited by fitSequence, fitPointsOfInterest and
-   * fitIntersections, and will always be included in the final range, up to
-   * values of ±m_floatMax. */
+  /* m_interestingRange is edited by fitPointsOfInterest and fitIntersections,
+   * and will always be included in the final range, up to values of
+   * ±m_floatMax. */
   Range2D m_interestingRange;
   Range2D m_magnitudeRange;
   Range2D m_forcedRange;

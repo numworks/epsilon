@@ -122,14 +122,6 @@ void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
   privateFitPoint(Coordinate2D<float>(xR.max(), yR.max()), flipped);
 }
 
-void Zoom::fitSequence(Function2DWithContext<float> s, const void *model) {
-  int min = std::ceil(m_bounds.min());
-  int max = std::floor(m_bounds.max());
-  for (int i = min; i <= max; i++) {
-    privateFitPoint(s(static_cast<float>(i), model, m_context));
-  }
-}
-
 static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a,
                                                         Coordinate2D<float> b,
                                                         Coordinate2D<float> c,

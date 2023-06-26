@@ -21,7 +21,8 @@ class Expression final : public Reference {
   Layout toLayout() const;
   float approximate() const;
 
-  static EditionReference EditionPoolExpressionToLayout(Node* node);
+  static EditionReference EditionPoolExpressionToLayout(
+      EditionReference expressionReference);
 
  private:
   static void ConvertBuiltinToLayout(EditionReference layoutParent,

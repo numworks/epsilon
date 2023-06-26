@@ -205,12 +205,13 @@ void Expression::ConvertExpressionToLayout(
   expressionReference.removeNode();
 }
 
-EditionReference Expression::EditionPoolExpressionToLayout(Node *node) {
-  assert(node->block()->isExpression());
-  EditionReference ref =
+EditionReference Expression::EditionPoolExpressionToLayout(
+    EditionReference expressionReference) {
+  assert(expressionReference.block()->isExpression());
+  EditionReference layoutParent =
       EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
-  ConvertExpressionToLayout(ref, EditionReference(node));
-  return ref;
+  ConvertExpressionToLayout(layoutParent, expressionReference);
+  return layoutParent;
 }
 
 Expression Expression::Parse(const char *textInput) {

@@ -9,6 +9,7 @@
 #include <poincare_junior/src/memory/placeholder.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "derivation.h"
 #include "number.h"
 
 namespace PoincareJ {
@@ -74,6 +75,8 @@ bool Simplification::SystematicReduce(EditionReference* u) {
       return SimplifyTrigDiff(u) || childChanged;
     case BlockType::Trig:
       return SimplifyTrig(u) || childChanged;
+    case BlockType::Derivative:
+      return Derivation::Reduce(u) || childChanged;
     default:
       return childChanged;
   }

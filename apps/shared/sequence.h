@@ -129,11 +129,9 @@ class Sequence : public Function {
       int subCurveIndex = 0) const override {
     return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
   }
-  template <typename T>
-  T approximateAtContextRank(SequenceContext *sqctx,
-                             bool intermediateComputation) const;
-  template <typename T>
-  T approximateAtRank(int rank, SequenceContext *sqctx) const;
+  double approximateAtContextRank(SequenceContext *sqctx,
+                                  bool intermediateComputation) const;
+  double approximateAtRank(int rank, SequenceContext *sqctx) const;
 
   Poincare::Expression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;

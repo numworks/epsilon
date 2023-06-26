@@ -136,8 +136,9 @@ int Print::CustomPrintfWithMaxNumberOfGlyphs(char *buffer, size_t bufferSize,
   assert(maxNumberOfSignificantDigits > 0);
   int length = bufferSize;
   int nbGlyph = maxNumberOfGlyphs + 1;
-  while ((length >= bufferSize || nbGlyph > maxNumberOfGlyphs) &&
-         maxNumberOfSignificantDigits > 0) {
+  while (
+      (length >= static_cast<int>(bufferSize) || nbGlyph > maxNumberOfGlyphs) &&
+      maxNumberOfSignificantDigits > 0) {
     va_list args;
     va_start(args, format);
     length = PrivateCustomPrintf(buffer, bufferSize,

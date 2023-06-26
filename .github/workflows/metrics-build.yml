@@ -20,36 +20,53 @@ jobs:
       - name: Checkout to most recent ancestor
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PAT }}
-          submodules: true
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
       - name: Install dependencies
         run: cd base && build/setup.sh
-      - name: Build common ancestor for N0110
-        # build the largest target
-        run: cd base && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf && make userland.onboarding.beta.allow3rdparty.A.elf
+      - name: Check for epsilon-core
+        id: epsilon-core
+        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
+        continue-on-error: true
+      - name: Build common ancestor bootloader and kernel for N0110
+        if: ${{ steps.epsilon-core.outcome == 'success' }}
+        run: cd base && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
+      - name: Build common ancestor userland for N0110
+        run: cd base && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Find head of PR
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PAT }}
-          submodules: true
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Install dependencies
         run: cd head && build/setup.sh
-      - name: Build head for N0110
-        run: cd head && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf && make userland.onboarding.beta.allow3rdparty.A.elf
+      - name: Build head bootloader and kernel for N0110
+        if: ${{ steps.epsilon-core.outcome == 'success' }}
+        run: cd head && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
+      - name: Build head userland for N0110
+        run: cd head && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Initialize metrics output
         run: |
           mkdir -p ./metrics-output
           echo ${{ github.event.number }} > ./metrics-output/PR_number
       - name: Binary size summary
+        if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
+     - name: Binary size summary (userland only)
+        if: ${{ steps.epsilon-core.outcome != 'success' }}
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: App sizes
         run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes)" > ./metrics-output/app_sizes
       - name: Binary size N0110
+        if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
+      - name: Binary size N0110 (userland only)
+        if: ${{ steps.epsilon-core.outcome != 'success' }}
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
       - name: Upload metrics output
         uses: actions/upload-artifact@v2
         with:

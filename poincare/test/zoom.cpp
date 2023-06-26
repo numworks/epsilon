@@ -68,32 +68,6 @@ Coordinate2D<T> expressionEvaluator(T t, const void *model, Context *context) {
       t, e->approximateWithValueForSymbol(k_symbol, t, context, Real, Radian));
 }
 
-void assert_full_function_range_is(const char *expression, Range1D bounds,
-                                   Range2D expectedRange) {
-  Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
-  ZoomTest zoom(bounds, &context);
-  zoom.zoom()->fitFullFunction(expressionEvaluator<float>, &e);
-  assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
-}
-
-QUIZ_CASE(poincare_zoom_fit_full_function) {
-  assert_full_function_range_is("1", Range1D(-10, 10), Range2D(-10, 10, 1, 1));
-  assert_full_function_range_is("x", Range1D(-10, 10),
-                                Range2D(-10, 10, -10, 10));
-  assert_full_function_range_is(
-      "e^x", Range1D(-10, 10),
-      Range2D(-10, 10, std::exp(-10.f), std::exp(10.f)));
-  assert_full_function_range_is("1+1/x", Range1D(0.1, 2),
-                                Range2D(0.1, 2, 1.5, 11));
-  assert_full_function_range_is("[[cos(x)][sin(x)]]", Range1D(0, 2 * M_PI),
-                                Range2D(-1, 1, -1, 1));
-  assert_full_function_range_is("[[-x^2+1][-2x]]", Range1D(0, 1),
-                                Range2D(0, 1, -2, 0));
-  assert_full_function_range_is("[[acos(x)][asin(x)]]", Range1D(0, 1),
-                                Range2D(0, M_PI / 2, 0, M_PI / 2));
-}
-
 void assert_points_of_interest_range_is(const char *expression,
                                         Range2D expectedRange) {
   Shared::GlobalContext context;

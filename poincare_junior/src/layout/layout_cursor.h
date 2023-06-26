@@ -65,9 +65,9 @@ class LayoutCursor {
   }
 
   // Getters and setters
-  virtual const Tree* rootNode() const = 0;
-  virtual const Tree* cursorNode() const = 0;
-  void setLayout(const Tree* layout, OMG::HorizontalDirection sideOfLayout);
+  virtual Tree* rootNode() const = 0;
+  virtual Tree* cursorNode() const = 0;
+  void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
   LayoutSelection selection() const {
@@ -113,13 +113,13 @@ class LayoutCursor {
 #endif
 
  protected:
-  virtual void setCursorNode(const Tree* node) = 0;
+  virtual void setCursorNode(Tree* node) = 0;
   int cursorNodeOffset() const {
     return cursorNode()->block() - rootNode()->block();
   }
 
-  const Tree* leftLayout() const;
-  const Tree* rightLayout() const;
+  Tree* leftLayout() const;
+  Tree* rightLayout() const;
   const Tree* layoutToFit(KDFont::Size font) const;
 
   int leftMostPosition() const { return 0; }
@@ -169,10 +169,8 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
 
   TypeBlock* layoutBuffer() { return m_layoutBuffer; }
-  const Tree* rootNode() const override {
-    return Tree::FromBlocks(m_layoutBuffer);
-  }
-  const Tree* cursorNode() const override { return m_cursorNode; }
+  Tree* rootNode() const override { return Tree::FromBlocks(m_layoutBuffer); }
+  Tree* cursorNode() const override { return m_cursorNode; }
 
   /* Layout insertion */
   void addEmptyExponentialLayout(Context* context) {
@@ -211,10 +209,10 @@ class LayoutBufferCursor final : public LayoutCursor {
       setCursorNode(Tree::FromBlocks(rootNode()->block() + cursorOffset));
     }
 
-    const Tree* rootNode() const override {
+    Tree* rootNode() const override {
       return Tree::FromBlocks(SharedEditionPool->firstBlock());
     }
-    const Tree* cursorNode() const override { return m_cursorReference; }
+    Tree* cursorNode() const override { return m_cursorReference; }
 
     // EditionPoolCursor Actions
     void performBackspace(Context* context, const void* nullptrData);
@@ -234,7 +232,7 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     void privateDelete(Render::DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
-    void setCursorNode(const Tree* node) override {
+    void setCursorNode(Tree* node) override {
       m_cursorReference = EditionReference(node);
       assert(cursorNodeOffset() >= 0 &&
              cursorNodeOffset() < k_layoutBufferSize);
@@ -256,7 +254,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   };
   bool execute(Action action, Context* context = nullptr,
                const void* data = nullptr);
-  void setCursorNode(const Tree* node) override {
+  void setCursorNode(Tree* node) override {
     m_cursorNode = node;
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
   }
@@ -264,7 +262,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   // Buffer of cursor's layout
   TypeBlock* m_layoutBuffer;
   // Cursor's node
-  const Tree* m_cursorNode;
+  Tree* m_cursorNode;
 };
 
 }  // namespace PoincareJ

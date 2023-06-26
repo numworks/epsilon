@@ -11,7 +11,7 @@ void assert_polynomial_is_parsed(const Tree* node,
   SharedEditionPool->flush();
   EditionReference variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
-  EditionReference ref(node);
+  EditionReference ref(node->clone());
   EditionReference polynomial =
       PolynomialParser::RecursivelyParse(ref, variables);
   assert_trees_are_equal(polynomial, expectedPolynomial);
@@ -50,7 +50,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
 
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(
-      Polynomial::Addition(polA, polB),
+      Polynomial::Addition(polA->clone(), polB->clone()),
       EditionReference(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
                             KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
                             KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
@@ -60,8 +60,8 @@ QUIZ_CASE(pcj_polynomial_operations) {
   (2y^3+9y^2+
    * 76y)x + 23y + 23 */
   assert_trees_are_equal(
-      Polynomial::Multiplication(EditionReference(polA),
-                                 EditionReference(polB)),
+      Polynomial::Multiplication(EditionReference(polA->clone()),
+                                 EditionReference(polB->clone())),
       EditionReference(KPol(Exponents<5, 4, 3, 2, 1, 0>(), "x"_e, 1_e,
                             KPol(Exponents<1>(), "y"_e, 3_e),
                             KPol(Exponents<2, 1, 0>(), "y"_e, 2_e, 8_e, 1_e),
@@ -87,7 +87,8 @@ QUIZ_CASE(pcj_polynomial_operations) {
   // B = xy + 1
   polB = KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1>(), "y"_e, 1_e), 1_e);
   // A / B = (xy + 1)*(xy - 1) + y + 1
-  auto [quotient, remainder] = Polynomial::PseudoDivision(polA, polB);
+  auto [quotient, remainder] =
+      Polynomial::PseudoDivision(polA->clone(), polB->clone());
   assert_trees_are_equal(
       quotient,
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1>(), "y"_e, 1_e), -1_e));

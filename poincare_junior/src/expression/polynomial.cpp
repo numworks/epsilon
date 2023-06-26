@@ -126,7 +126,7 @@ EditionReference Polynomial::Operation(
     return Operation(polB, polA, blockType, operationMonomial,
                      operationMonomialAndReduce);
   }
-  EditionReference x = Variable(polA);
+  const Tree* x = Variable(polA);
   if (polB->type() == BlockType::Polynomial &&
       Comparison::Compare(x, Variable(polB)) > 0) {
     return Operation(polB, polA, blockType, operationMonomial,
@@ -186,8 +186,7 @@ void Polynomial::MultiplicationMonomial(
 }
 
 static void extractDegreeAndLeadingCoefficient(EditionReference pol,
-                                               EditionReference x,
-                                               uint8_t* degree,
+                                               const Tree* x, uint8_t* degree,
                                                EditionReference* coefficient) {
   if (pol->type() == BlockType::Polynomial &&
       Comparison::AreEqual(x, Polynomial::Variable(pol))) {
@@ -221,16 +220,12 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     polB->removeTree();
     return std::make_pair(EditionReference(0_e), polA);
   }
-  bool isXCloned = false;
-  EditionReference x = Variable(polA);
+  const Tree* var = Variable(polA);
   if (polB->type() == BlockType::Polynomial &&
-      Comparison::Compare(x, Variable(polB)) >= 0) {
-    x = Variable(polB);
-  } else {
-    // Clone x since polA may be altered
-    x = SharedEditionPool->clone(x);
-    isXCloned = true;
+      Comparison::Compare(var, Variable(polB)) >= 0) {
+    var = Variable(polB);
   }
+  EditionReference x = var->clone();
   uint8_t degreeA, degreeB;
   EditionReference leadingCoeffA, leadingCoeffB;
   extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
@@ -262,9 +257,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
   }
   polB->removeTree();
-  if (isXCloned) {
-    x->removeTree();
-  }
+  x->removeTree();
   return std::make_pair(currentQuotient, polA);
 }
 
@@ -300,9 +293,9 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 
 /* PolynomialParser */
 
-const Tree* PolynomialParser::GetVariables(const Tree* expression) {
+Tree* PolynomialParser::GetVariables(const Tree* expression) {
   if (expression->block()->isInteger()) {  // TODO: generic belongToField?
-    return KSet();
+    return SharedEditionPool->clone(KSet());
   }
   BlockType type = expression->type();
   // TODO: match
@@ -312,12 +305,12 @@ const Tree* PolynomialParser::GetVariables(const Tree* expression) {
     if (Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
       EditionReference variables(SharedEditionPool->push<BlockType::Set>(1));
-      SharedEditionPool->clone(base);
+      base->clone();
       return variables;
     }
   }
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
-    EditionReference variables = EditionReference(KSet());
+    EditionReference variables(KSet());
     for (const Tree* child : expression->children()) {
       if (child->type() == BlockType::Addition) {
         assert(type != BlockType::Addition);
@@ -329,7 +322,7 @@ const Tree* PolynomialParser::GetVariables(const Tree* expression) {
     return variables;
   }
   Tree* variables = SharedEditionPool->push<BlockType::Set>(1);
-  SharedEditionPool->clone(expression);
+  expression->clone();
   return variables;
 }
 
@@ -367,7 +360,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
 }
 
 EditionReference PolynomialParser::Parse(EditionReference expression,
-                                         EditionReference variable) {
+                                         const Tree* variable) {
   EditionReference polynomial =
       Polynomial::PushEmpty(SharedEditionPool->clone(variable));
   BlockType type = expression->type();
@@ -391,7 +384,7 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
 }
 
 std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
-    EditionReference expression, EditionReference variable) {
+    EditionReference expression, const Tree* variable) {
   if (Comparison::AreEqual(expression, variable)) {
     return std::make_pair(EditionReference(expression->cloneTreeOverTree(1_e)),
                           static_cast<uint8_t>(1));

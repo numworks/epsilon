@@ -31,8 +31,8 @@ class Layout final : public Reference {
   KDSize size(KDFont::Size font) const;
   bool isEmpty() const;
 
-  static char* Serialize(EditionReference layout, char* buffer, char* end);
-  static const Tree* EditionPoolTextToLayout(const char* text);
+  static char* Serialize(const Tree* layout, char* buffer, char* end);
+  static Tree* EditionPoolTextToLayout(const char* text);
 
  private:
   static size_t EditionPoolTextToLayoutRec(const char* text, Tree* parent,

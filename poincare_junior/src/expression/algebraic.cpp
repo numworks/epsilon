@@ -44,7 +44,7 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
 
 EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   assert(expression->type() == BlockType::Addition);
-  EditionReference commonDenominator = EditionReference(KMult());
+  EditionReference commonDenominator(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<EditionReference, int> indexedNode :
        NodeIterator::Children<Editable>(expression)) {

@@ -216,7 +216,8 @@ class MultipleNodesIterator {
       return Array::MapAction<const Tree *, NodeType, N>(
           array, &offset, [](const Tree *node, void *offset) {
             return node ? EditionReference(Tree::FromBlocks(
-                              node->block() - *static_cast<int *>(offset)))
+                              const_cast<Tree *>(node)->block() -
+                              *static_cast<int *>(offset)))
                         : EditionReference();
           });
     }

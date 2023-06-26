@@ -10,7 +10,7 @@
 
 namespace PoincareJ {
 
-const Tree *Layout::EditionPoolTextToLayout(const char *text) {
+Tree *Layout::EditionPoolTextToLayout(const char *text) {
   Tree *root = P_RACKL();
   EditionPoolTextToLayoutRec(text, root, nullptr);
   return root;
@@ -55,7 +55,7 @@ char *append(const char *text, char *buffer, char *end) {
   return buffer + len;
 }
 
-char *Layout::Serialize(EditionReference layout, char *buffer, char *end) {
+char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
   switch (layout->type()) {
     case BlockType::CodePointLayout: {
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;

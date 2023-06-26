@@ -11,21 +11,6 @@
 
 namespace PoincareJ {
 
-EditionReference::EditionReference(const Tree* node) {
-  if (!node) {
-    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
-    return;
-  }
-  // TODO: maybe make an assertion(pool->contains(node->block()))
-  // and force developers to write EditionReference(EditionPool::clone(2_e))
-  if (!SharedEditionPool->contains(node->block()) &&
-      node->block() != SharedEditionPool->lastBlock()) {
-    *this = EditionReference(SharedEditionPool->clone(node));
-    return;
-  }
-  m_identifier = SharedEditionPool->referenceNode(const_cast<Tree*>(node));
-}
-
 EditionReference::EditionReference(Tree* node) {
   if (!node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;

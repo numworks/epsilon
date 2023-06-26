@@ -100,16 +100,16 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static const Tree* GetVariables(const Tree* expression);
+  static Tree* GetVariables(const Tree* expression);
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
                                            size_t variableIndex = 0);
 
  private:
   static EditionReference Parse(EditionReference expression,
-                                EditionReference variable);
+                                const Tree* variable);
   static std::pair<EditionReference, uint8_t> ParseMonomial(
-      EditionReference expression, EditionReference variable);
+      EditionReference expression, const Tree* variable);
 #if 0
   Tree* PolynomialInterpretation
   Tree* RationalInterpretation --> list of 2 polynomial

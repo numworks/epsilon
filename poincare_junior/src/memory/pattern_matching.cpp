@@ -349,7 +349,8 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
       // Use the last block so that placeholders[i] stays initialized
       placeholders[i] = EditionReference(SharedEditionPool->lastBlock());
     } else {
-      placeholders[i] = EditionReference(ctx.getNode(i));
+      // the context is known to point on non const parts of the source
+      placeholders[i] = EditionReference(const_cast<Tree*>(ctx.getNode(i)));
     }
     // Invalidate context before anything is detached.
     ctx.setNode(i, nullptr, numberOfTrees, ctx.isAnyTree(i));

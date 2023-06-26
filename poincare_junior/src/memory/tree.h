@@ -80,11 +80,24 @@ class Tree {
 
   // Tree Hierarchy
   const Tree* commonAncestor(const Tree* child1, const Tree* child2) const;
+  Tree* commonAncestor(const Tree* child1, const Tree* child2) {
+    // Children may be const but they belong to root which is non-const anyway
+    return Utils::DeconstifyPtr(&Tree::commonAncestor, this, child1, child2);
+  }
   const Tree* parentOfDescendant(const Tree* descendant, int* position) const;
+  Tree* parentOfDescendant(Tree* descendant, int* position) const {
+    return const_cast<Tree*>(
+        parentOfDescendant(const_cast<const Tree*>(descendant), position));
+  }
   // Make position optional
   const Tree* parentOfDescendant(const Tree* descendant) const {
     int dummyPosition;
     return parentOfDescendant(descendant, &dummyPosition);
+  }
+  Tree* parentOfDescendant(const Tree* descendant) {
+    int dummyPosition;
+    return Utils::DeconstifyPtr(&Tree::parentOfDescendant, this, descendant,
+                                &dummyPosition);
   }
   int numberOfDescendants(bool includeSelf) const;
   const Tree* childAtIndex(int index) const;

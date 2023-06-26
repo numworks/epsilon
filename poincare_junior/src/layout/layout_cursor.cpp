@@ -203,8 +203,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   bool forceRight = insertLayoutContext->m_forceRight;
   bool forceLeft = insertLayoutContext->m_forceLeft;
 
-  // We need to keep track of the node in case it lives in the edition pool
-  EditionReference ref(insertLayoutContext->m_tree);
+  // We need to keep track of the node which must live in the edition pool
+  // TODO: do we need ConstReferences on const Nodes in the pool ?
+  EditionReference ref(const_cast<Tree *>(insertLayoutContext->m_tree));
 
   assert(!isUninitialized() && isValid());
   if (Layout::IsEmpty(ref)) {
@@ -710,10 +711,9 @@ void LayoutCursor::beautifyLeft(Context *context) {
 
 /* Private */
 
-void LayoutCursor::setLayout(const Tree *l,
-                             OMG::HorizontalDirection sideOfLayout) {
+void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
   int indexInParent;
-  const Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
+  Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
   if (!Layout::IsHorizontal(l) && parent && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
     m_position = indexInParent + (sideOfLayout.isRight());
@@ -723,7 +723,7 @@ void LayoutCursor::setLayout(const Tree *l,
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
-const Tree *LayoutCursor::leftLayout() const {
+Tree *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
     return m_position == 1 ? cursorNode() : nullptr;
@@ -734,7 +734,7 @@ const Tree *LayoutCursor::leftLayout() const {
   return cursorNode()->childAtIndex(m_position - 1);
 }
 
-const Tree *LayoutCursor::rightLayout() const {
+Tree *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
     return m_position == 0 ? cursorNode() : nullptr;
@@ -762,7 +762,7 @@ const Tree *LayoutCursor::layoutToFit(KDFont::Size font) const {
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
                                   bool *shouldRedrawLayout) {
-  const Tree *nextLayout = nullptr;
+  Tree *nextLayout = nullptr;
   /* Search the nextLayout on the left/right to ask it where
    * the cursor should go when entering from outside.
    *
@@ -882,8 +882,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    *
    * */
   int nextLayoutIndex;
-  const Tree *parent =
-      rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
+  Tree *parent = rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
   const Tree *previousLayout = cursorNode();
   if (parent && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
@@ -904,12 +903,12 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
 
 bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
                                 bool *shouldRedrawLayout) {
-  const Tree *previousLayout = cursorNode();
+  Tree *previousLayout = cursorNode();
   bool moved = verticalMoveWithoutSelection(direction, shouldRedrawLayout);
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorNode()) {
-    const Tree *layoutAncestor =
+    Tree *layoutAncestor =
         rootNode()->commonAncestor(cursorNode(), previousLayout);
     assert(layoutAncestor);
     // Down goes left to right and up goes right to left
@@ -962,7 +961,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * Try to enter right or left layout if it can be entered through up/down
    * */
   if (!isSelecting()) {
-    const Tree *nextLayout = rightLayout();
+    Tree *nextLayout = rightLayout();
     Render::PositionInLayout positionRelativeToNextLayout =
         Render::PositionInLayout::Left;
     // Repeat for right and left

@@ -139,7 +139,7 @@ EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
 
 EditionReference RackParser::parseUntil(Token::Type stoppingType,
                                         EditionReference leftHandSide) {
-  typedef void (RackParser::*TokenParser)(EditionReference &leftHandSide,
+  typedef void (RackParser::*TokenParser)(EditionReference & leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,       // Token::Type::EndOfStream

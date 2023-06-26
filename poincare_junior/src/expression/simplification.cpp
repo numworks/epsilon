@@ -86,11 +86,11 @@ bool Simplification::SimplifyTrigDiff(EditionReference* u) {
   /* TrigDiff(x,y) = { 0 if x=y, 1 otherwise }
    * TODO: ContractTrigonometric is the only place this is used. It might not be
    * worth it. */
-  Node x = u->childAtIndex(0);
-  Node y = u->childAtIndex(1);
-  assert(x.block()->isOfType({BlockType::Zero, BlockType::One}));
-  assert(y.block()->isOfType({BlockType::Zero, BlockType::One}));
-  ReplaceTreeByTree(u, x.treeIsIdenticalTo(y) ? &ZeroBlock : &OneBlock);
+  Node* x = u->childAtIndex(0);
+  Node* y = u->childAtIndex(1);
+  assert(x->block()->isOfType({BlockType::Zero, BlockType::One}));
+  assert(y->block()->isOfType({BlockType::Zero, BlockType::One}));
+  ReplaceTreeByTree(u, x->treeIsIdenticalTo(y) ? 0_e : 1_e);
   return true;
 }
 
@@ -102,9 +102,8 @@ bool Simplification::SimplifyTrig(EditionReference* u) {
   bool changed = SystematicReduce(&secondArgument);
   if (secondArgument.block()->isOfType({BlockType::MinusOne, BlockType::Two})) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
-    ReplaceTreeByTree(&secondArgument, secondArgument.type() == BlockType::Two
-                                           ? &ZeroBlock
-                                           : &OneBlock);
+    ReplaceTreeByTree(&secondArgument,
+                      secondArgument.type() == BlockType::Two ? 0_e : 1_e);
     EditionPool* editionPool(EditionPool::sharedEditionPool());
     InsertNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
     InsertNodeBeforeNode(u, editionPool->push<BlockType::Multiplication>(2));
@@ -623,9 +622,9 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   if (reference->type() == BlockType::Trig) {
-    const Node k_angles[3] = {KPlaceholder<A>(),
-                              KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
-                              KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
+    const Node* k_angles[3] = {
+        KPlaceholder<A>(), KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
+        KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
     EditionReference child(reference->childAtIndex(0));
     child.matchAndReplace(
         KPlaceholder<A>(),
@@ -717,9 +716,9 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
 
   if (ref->block()->isOfType(
           {BlockType::Sine, BlockType::Cosine, BlockType::Tangent})) {
-    const Node k_angles[3] = {KPlaceholder<A>(),
-                              KMult(KPlaceholder<A>(), π_e, KPow(180_e, -1_e)),
-                              KMult(KPlaceholder<A>(), π_e, KPow(200_e, -1_e))};
+    const Node* k_angles[3] = {
+        KPlaceholder<A>(), KMult(KPlaceholder<A>(), π_e, KPow(180_e, -1_e)),
+        KMult(KPlaceholder<A>(), π_e, KPow(200_e, -1_e))};
     EditionReference(ref->childAtIndex(0))
         .matchAndReplace(
             KPlaceholder<A>(),
@@ -764,7 +763,7 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
       // Power of non-integers
       // TODO: Maybe add exp(A) -> e^A with A integer
       (ref->type() == BlockType::Power &&
-       !ref->nextNode().nextTree().block()->isInteger() &&
+       !ref->nextNode()->nextTree()->block()->isInteger() &&
        (  // e^A -> exp(A)
            ref->matchAndReplace(KPow(e_e, KPlaceholder<A>()),
                                 KExp(KPlaceholder<A>())) ||
@@ -857,18 +856,18 @@ bool Simplification::DistributeOverNAry(EditionReference* reference,
   children.insertNodeBeforeNode(0_e);
   children.detachTree();
   // f(0,E) ... +(A,B,C)
-  Node grandChild = children.nextNode();
+  Node* grandChild = children.nextNode();
   EditionReference output =
       naryOutput == BlockType::Addition
           ? editionPool->push<BlockType::Addition>(numberOfGrandChildren)
           : editionPool->push<BlockType::Multiplication>(numberOfGrandChildren);
   // f(0,E) ... +(A,B,C) ... *(,,)
   for (int i = 0; i < numberOfGrandChildren; i++) {
-    Node clone = editionPool->clone(*reference, true);
+    Node* clone = editionPool->clone(*reference, true);
     // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
     /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
      * clone.childAtIndex(childIndex)=Node(clone.block()+childIndexOffset) */
-    EditionReference(clone.block() + childIndexOffset)
+    EditionReference(clone->block() + childIndexOffset)
         .replaceTreeByTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
   }
@@ -970,14 +969,14 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
                    KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
     return false;
   }
-  EditionReference newTrig1(reference->nextNode().nextNode());
-  EditionReference newMult2(reference->nextNode().nextTree());
+  EditionReference newTrig1(reference->nextNode()->nextNode());
+  EditionReference newMult2(reference->nextNode()->nextTree());
   EditionReference newTrig3(newMult2.nextNode());
-  EditionReference newTrig4(newMult2.nextNode().nextTree());
+  EditionReference newTrig4(newMult2.nextNode()->nextTree());
   // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
   // Addition is expected to have been squashed if unary.
-  assert(newTrig1.nextNode().type() != BlockType::Addition ||
-         newTrig1.nextNode().numberOfChildren() > 1);
+  assert(newTrig1.nextNode()->type() != BlockType::Addition ||
+         newTrig1.nextNode()->numberOfChildren() > 1);
   if (ExpandTrigonometric(&newTrig1)) {
     if (!ExpandTrigonometric(&newTrig3)) {
       assert(false);
@@ -1024,7 +1023,7 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
               KPlaceholder<A>(), 0.5_e))) {
     return false;
   }
-  EditionReference newMult1(reference->nextNode().nextNode());
+  EditionReference newMult1(reference->nextNode()->nextNode());
   if (newMult1.type() != BlockType::Multiplication) {
     // F is empty, Multiplications have been squashed.
     EditionReference newTrig1 = newMult1;
@@ -1060,13 +1059,14 @@ bool Simplification::ExpandMult(EditionReference* reference) {
   if (reference->type() != BlockType::Multiplication) {
     return false;
   }
-  Node child = reference->nextNode();
+  Node* child = reference->nextNode();
   int numberOfChildren = reference->numberOfChildren();
   // Find the NAry in children
   int childIndex = 0;
-  while (childIndex < numberOfChildren && child.type() != BlockType::Addition) {
+  while (childIndex < numberOfChildren &&
+         child->type() != BlockType::Addition) {
     childIndex++;
-    child = child.nextTree();
+    child = child->nextTree();
   }
   if (childIndex >= numberOfChildren) {
     return false;
@@ -1092,8 +1092,8 @@ bool Simplification::ExpandPower(EditionReference* reference) {
   // A^2 and 2*A*B may be expanded again, do it recursively
   EditionReference newPow(reference->nextNode());
   // Addition is expected to have been squashed if unary.
-  assert(newPow.nextNode().type() != BlockType::Addition ||
-         newPow.nextNode().numberOfChildren() > 1);
+  assert(newPow.nextNode()->type() != BlockType::Addition ||
+         newPow.nextNode()->numberOfChildren() > 1);
   if (ExpandPower(&newPow)) {
     EditionReference newMult(newPow.nextTree());
     ExpandMult(&newMult);

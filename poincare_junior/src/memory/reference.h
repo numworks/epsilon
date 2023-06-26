@@ -68,9 +68,7 @@ class Reference {
 
   bool isCacheReference() const { return m_initializer != nullptr; }
   // Return true if Reference has no initializers or if tree is uninitialized.
-  bool isUninitialized() const {
-    return !hasInitializers() || getTree().isUninitialized();
-  }
+  bool isUninitialized() const { return !hasInitializers() || !getTree(); }
   uint16_t id() const;  // TODO: make private (public for tests)
 
  private:

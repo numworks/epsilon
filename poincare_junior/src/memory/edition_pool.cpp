@@ -296,7 +296,7 @@ template PoincareJ::Node *PoincareJ::EditionPool::push<
                                                             size_t);
 template PoincareJ::Node *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Derivative>();
-template PoincareJ::Node
+template PoincareJ::Node *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::RackLayout, int>(int);
 template PoincareJ::Node *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::SystemList, int>(int);

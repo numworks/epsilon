@@ -140,7 +140,7 @@ consteval const Node* KBinary(Node* a, Node* b) {
 }
 
 template <Block Tag>
-consteval Node KTrinary(Node a, Node b, Node c) {
+consteval const Node* KTrinary(Node* a, Node* b, Node* c) {
   return Tree<>();
 }
 

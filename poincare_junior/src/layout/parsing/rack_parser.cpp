@@ -39,7 +39,7 @@ EditionReference RackParser::parse() {
   const TypeBlock *endOfPool = EditionPool::sharedEditionPool()->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
   assert(EditionPool::sharedEditionPool()->lastBlock() ==
-         (result.isUninitialized() ? endOfPool : result.nextTree().block()));
+         (result.isUninitialized() ? endOfPool : result.nextTree()->block()));
   assert(result.isUninitialized() || endOfPool == result.block());
   (void)endOfPool;
   if (m_status == Status::Success) {
@@ -1189,7 +1189,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 EditionReference RackParser::parseFunctionParameters() {
   bool parenthesisIsLayout =
       m_nextToken.is(Token::Type::Layout) &&
-      m_nextToken.firstLayout().type() == BlockType::ParenthesisLayout;
+      m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout;
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
     m_status = Status::Error;
@@ -1254,11 +1254,11 @@ EditionReference RackParser::parseVector() {
 
 EditionReference RackParser::parseCommaSeparatedList() {
   if (m_nextToken.is(Token::Type::Layout) &&
-      m_nextToken.firstLayout().type() == BlockType::ParenthesisLayout) {
-    assert(m_nextToken.firstLayout().nextNode().type() ==
+      m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout) {
+    assert(m_nextToken.firstLayout()->nextNode()->type() ==
            BlockType::RackLayout);
     // Parse the RackLayout as a comma separated list.
-    RackParser subParser(m_nextToken.firstLayout().nextNode(), 0,
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(), 0,
                          ParsingContext::ParsingMethod::CommaSeparatedList);
     popToken();
     return subParser.parse();

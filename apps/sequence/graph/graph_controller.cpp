@@ -89,12 +89,6 @@ void GraphController::moveToRank(int n) {
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY,
                                       Range2D originalRange) const {
-  Zoom::Function2DWithContext<float> evaluator = [](float x, const void *model,
-                                                    Context *context) {
-    const Shared::Sequence *s = static_cast<const Shared::Sequence *>(model);
-    return s->evaluateXYAtParameter(x, context);
-  };
-
   Range2D result;
   if (computeX) {
     float xMin = interestingXMin();
@@ -103,14 +97,18 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     *result.x() = *originalRange.x();
   }
   if (computeY) {
+    Poincare::Context *context = App::app()->localContext();
     Zoom zoom(result.xMin(), result.xMax(),
-              InteractiveCurveViewRange::NormalYXRatio(),
-              App::app()->localContext(), k_maxFloat);
+              InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+    int min = std::ceil(result.xMin());
+    int max = std::floor(result.xMax());
     for (int i = 0; i < nbOfActiveModels; i++) {
       Shared::Sequence *s =
           functionStore()->modelForRecord(recordAtCurveIndex(i));
-      zoom.fitSequence(evaluator, s);
+      for (int n = min; n <= max; n++) {
+        zoom.fitPoint(s->evaluateXYAtParameter(static_cast<float>(n), context));
+      }
     }
     *result.y() = *zoom.range(true, false).y();
   }

@@ -109,13 +109,17 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     Zoom zoom(result.xMin(), result.xMax(),
               InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+    Shared::Sequence *sequences[nbOfActiveModels];
+    for (int i = 0; i < nbOfActiveModels; i++) {
+      sequences[i] = functionStore()->modelForRecord(recordAtCurveIndex(i));
+    }
     int min = std::ceil(result.xMin());
     int max = std::floor(result.xMax());
-    for (int i = 0; i < nbOfActiveModels; i++) {
-      Shared::Sequence *s =
-          functionStore()->modelForRecord(recordAtCurveIndex(i));
-      for (int n = min; n <= max; n++) {
-        zoom.fitPoint(s->evaluateXYAtParameter(static_cast<float>(n), context));
+    /* Loop first on abscissa so that sequences step ranks together. */
+    for (int n = min; n <= max; n++) {
+      for (int i = 0; i < nbOfActiveModels; i++) {
+        zoom.fitPoint(sequences[i]->evaluateXYAtParameter(static_cast<float>(n),
+                                                          context));
       }
     }
     *result.y() = *zoom.range(true, false).y();

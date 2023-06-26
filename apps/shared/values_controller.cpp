@@ -361,31 +361,32 @@ void ValuesController::resetLayoutMemoization() {
   m_firstMemoizedRow = INT_MAX;
 }
 
-Layout ValuesController::memoizedLayoutForCell(int i, int j) {
+Layout ValuesController::memoizedLayoutForCell(int column, int row) {
   const int nbOfMemoizedColumns = k_maxNumberOfDisplayableColumns;
   // Conversion of coordinates from absolute table to values table
-  int valuesI = valuesColumnForAbsoluteColumn(i);
-  int valuesJ = valuesRowForAbsoluteRow(j);
+  int valuesCol = valuesColumnForAbsoluteColumn(column);
+  int valuesRow = valuesRowForAbsoluteRow(row);
   /* Compute the required offset to apply to the memoized table in order to
-   * display cell (i,j) */
-  int offsetI = 0;
-  int offsetJ = 0;
-  if (valuesI < m_firstMemoizedColumn) {
-    offsetI = valuesI - m_firstMemoizedColumn;
-  } else if (valuesI >= m_firstMemoizedColumn + nbOfMemoizedColumns) {
-    offsetI = valuesI - nbOfMemoizedColumns - m_firstMemoizedColumn + 1;
+   * display cell (col,row) */
+  int offsetCol = 0;
+  int offsetRow = 0;
+  if (valuesCol < m_firstMemoizedColumn) {
+    offsetCol = valuesCol - m_firstMemoizedColumn;
+  } else if (valuesCol >= m_firstMemoizedColumn + nbOfMemoizedColumns) {
+    offsetCol = valuesCol - nbOfMemoizedColumns - m_firstMemoizedColumn + 1;
   }
-  if (valuesJ < m_firstMemoizedRow) {
-    offsetJ = valuesJ - m_firstMemoizedRow;
-  } else if (valuesJ >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
-    offsetJ = valuesJ - k_maxNumberOfDisplayableRows - m_firstMemoizedRow + 1;
+  if (valuesRow < m_firstMemoizedRow) {
+    offsetRow = valuesRow - m_firstMemoizedRow;
+  } else if (valuesRow >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
+    offsetRow =
+        valuesRow - k_maxNumberOfDisplayableRows - m_firstMemoizedRow + 1;
   }
-  int offset = -offsetJ * nbOfMemoizedColumns - offsetI;
+  int offset = -offsetRow * nbOfMemoizedColumns - offsetCol;
 
   // Apply the offset
   if (offset != 0) {
-    m_firstMemoizedColumn = m_firstMemoizedColumn + offsetI;
-    m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
+    m_firstMemoizedColumn = m_firstMemoizedColumn + offsetCol;
+    m_firstMemoizedRow = m_firstMemoizedRow + offsetRow;
     // Shift already memoized cells
     const int numberOfMemoizedCell =
         k_maxNumberOfDisplayableRows * nbOfMemoizedColumns;
@@ -400,28 +401,31 @@ Layout ValuesController::memoizedLayoutForCell(int i, int j) {
       }
     }
     // Compute the buffer of the new cells of the memoized table
-    int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
-    for (int ii = 0; ii < std::min(nbOfMemoizedColumns, maxI); ii++) {
-      int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(
-                     ii + m_firstMemoizedColumn)) -
-                 m_firstMemoizedRow;
-      for (int jj = 0; jj < std::min(k_maxNumberOfDisplayableRows, maxJ);
-           jj++) {
+    int maxCol = std::min(nbOfMemoizedColumns,
+                          numberOfValuesColumns() - m_firstMemoizedColumn);
+    for (int col = 0; col < maxCol; col++) {
+      int maxRow = std::min(
+          k_maxNumberOfDisplayableRows,
+          numberOfElementsInColumn(
+              absoluteColumnForValuesColumn(col + m_firstMemoizedColumn)) -
+              m_firstMemoizedRow);
+      for (int row = 0; row < maxRow; row++) {
         // Escape if already filled
-        if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns &&
-            jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfDisplayableRows) {
+        if (col >= -offsetCol && col < -offsetCol + nbOfMemoizedColumns &&
+            row >= -offsetRow &&
+            row < -offsetRow + k_maxNumberOfDisplayableRows) {
           continue;
         }
         createMemoizedLayout(
-            absoluteColumnForValuesColumn(m_firstMemoizedColumn + ii),
-            absoluteRowForValuesRow(m_firstMemoizedRow + jj),
-            jj * nbOfMemoizedColumns + ii);
+            absoluteColumnForValuesColumn(m_firstMemoizedColumn + col),
+            absoluteRowForValuesRow(m_firstMemoizedRow + row),
+            row * nbOfMemoizedColumns + col);
       }
     }
   }
-  return *memoizedLayoutAtIndex((valuesJ - m_firstMemoizedRow) *
+  return *memoizedLayoutAtIndex((valuesRow - m_firstMemoizedRow) *
                                     nbOfMemoizedColumns +
-                                (valuesI - m_firstMemoizedColumn));
+                                (valuesCol - m_firstMemoizedColumn));
 }
 
 void ValuesController::clearSelectedColumn() {

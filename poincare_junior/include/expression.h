@@ -34,7 +34,8 @@ class Expression final : public Reference {
   static void ConvertPowerOrDivisionToLayout(
       EditionReference layoutParent, EditionReference expressionReference);
   static void ConvertExpressionToLayout(EditionReference layoutParent,
-                                        EditionReference expressionReference);
+                                        EditionReference expressionReference,
+                                        bool forbidParentheses = false);
 };
 
 static_assert(sizeof(Expression) == sizeof(Reference));

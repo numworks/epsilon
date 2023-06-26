@@ -34,7 +34,8 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
           newParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>(','));
     }
-    ConvertExpressionToLayout(newParent, expressionReference.nextNode());
+    // No parentheses within builtin parameters
+    ConvertExpressionToLayout(newParent, expressionReference.nextNode(), true);
   }
 }
 
@@ -93,24 +94,29 @@ void Expression::ConvertPowerOrDivisionToLayout(
     EditionReference layoutParent, EditionReference expressionReference) {
   EditionPool *editionPool = EditionPool::sharedEditionPool();
   BlockType type = expressionReference.type();
+  /* Use Node so that it stays valid. Once first child has been converted, this
+   * will point to second child. */
+  Node *child = expressionReference.nextNode();
   EditionReference createdLayout;
+  // No parentheses in Fraction roots and Power index.
   if (type == BlockType::Division) {
     createdLayout = editionPool->push<BlockType::FractionLayout>();
     ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                              expressionReference.nextNode());
+                              child, true);
   } else {
     assert(type == BlockType::Power);
-    ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
+    ConvertExpressionToLayout(layoutParent, child);
     createdLayout = editionPool->push<BlockType::VerticalOffsetLayout>();
   }
-  ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                            expressionReference.nextNode());
+  ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0), child,
+                            true);
   NAry::AddChild(layoutParent, createdLayout);
 }
 
 // Remove expressionReference while converting it to a layout in layoutParent
-void Expression::ConvertExpressionToLayout(
-    EditionReference layoutParent, EditionReference expressionReference) {
+void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
+                                           EditionReference expressionReference,
+                                           bool forbidParentheses) {
   /* TODO: ConvertExpressionToLayout is a very temporary implementation and must
    *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
@@ -123,15 +129,15 @@ void Expression::ConvertExpressionToLayout(
     return;
   }
 
-  // Add Parentheses if needed
-  if (layoutParent.numberOfChildren() > 0 &&
-      expressionReference.numberOfChildren() > 1 &&
-      type != BlockType::Multiplication) {
+  /* Add Parentheses if allowed. No parentheses needed around Multiplication and
+   * Power. */
+  if (!forbidParentheses && type != BlockType::Multiplication &&
+      type != BlockType::Power && expressionReference.numberOfChildren() > 1) {
     EditionReference parenthesis =
         editionPool->push<BlockType::ParenthesisLayout>();
     EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
     NAry::AddChild(layoutParent, parenthesis);
-    return ConvertExpressionToLayout(newParent, expressionReference);
+    return ConvertExpressionToLayout(newParent, expressionReference, true);
   }
 
   switch (type) {
@@ -209,7 +215,8 @@ EditionReference Expression::EditionPoolExpressionToLayout(
   assert(expressionReference.block()->isExpression());
   EditionReference layoutParent =
       EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
-  ConvertExpressionToLayout(layoutParent, expressionReference);
+  // No parentheses on root layout.
+  ConvertExpressionToLayout(layoutParent, expressionReference, true);
   return layoutParent;
 }
 

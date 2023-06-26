@@ -26,6 +26,12 @@ QUIZ_CASE(pcj_layout_creation) {
   assert(l4.treeIsIdenticalTo(l1));
 }
 
+QUIZ_CASE(pcj_expression_to_layout) {
+  assert_trees_are_equal(Expression::EditionPoolExpressionToLayout(
+                             EditionReference(KPow(KAdd("x"_e, "y"_e), 2_e))),
+                         KRackL(KParenthesisL("x+y"_l), KVertOffL("2"_l)));
+}
+
 QUIZ_CASE(pcj_layout_render) {
   KDContext* ctx = KDIonContext::SharedContext;
   Layout l = Layout(

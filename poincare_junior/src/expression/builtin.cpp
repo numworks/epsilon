@@ -67,11 +67,18 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
 }
 
 uint8_t Builtin::MinNumberOfParameters(BlockType type) {
-  return type == BlockType::Logarithm ? 2 : 1;
+  switch (type) {
+    case BlockType::Derivative:
+      return 3;
+    case BlockType::Logarithm:
+      return 2;
+    default:
+      return 1;
+  }
 }
 
 uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
-  return type == BlockType::Logarithm ? 2 : 1;
+  return MinNumberOfParameters(type);
 }
 
 EditionReference Builtin::Promote(EditionReference parameterList,

@@ -793,27 +793,51 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference* reference,
   if (change && ReduceInverseFunction(reference)) {
     return true;
   }
-  if (ShallowExpand(reference)) {
-    // TODO: Define a metric to validate (or not) the contraction
-    SystematicReduce(reference);
-    ShallowAdvancedReduction(reference, true);
-    return true;
+  size_t treeSize = static_cast<const Node*>(*reference)->treeSize();
+  EditionReference tempClone(reference->clone());
+  if (ShallowExpand(&tempClone)) {
+    SystematicReduce(&tempClone);
+    assert(tempClone.block()->isAlgebraic());
+    ShallowAdvancedReduction(&tempClone, true);
+    // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
+    if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
+      // Validate the expansion.
+      MoveTreeOverTree(reference, tempClone);
+      return true;
+    }
   }
+  tempClone.removeTree();
   return false;
 }
 
 bool Simplification::AdvanceReduceOnAlgebraic(EditionReference* reference,
                                               bool change) {
-  if (ShallowContract(reference)) {
-    /* TODO: Define a metric to validate (or not) the contraction. It could be :
-     * - Number of node decreased
-     * - Success of SystematicReduce */
-    SystematicReduce(reference);
-    return true;
+  size_t treeSize = static_cast<const Node*>(*reference)->treeSize();
+  EditionReference tempClone(reference->clone());
+  if (ShallowContract(&tempClone)) {
+    SystematicReduce(&tempClone);
+    // TODO: Decide on the metric to use here.
+    if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
+      // Validate the contraction.
+      MoveTreeOverTree(reference, tempClone);
+      return true;
+    }
+    // Reset the clone
+    tempClone.removeTree();
+    tempClone = reference->clone();
   }
-  return ExpandTranscendentalOnRational(reference) +
-         ShallowAlgebraicExpand(reference) +
-         PolynomialInterpretation(reference);
+  if (ExpandTranscendentalOnRational(&tempClone) +
+      ShallowAlgebraicExpand(&tempClone) +
+      PolynomialInterpretation(&tempClone)) {
+    // TODO: Decide on the metric to use here.
+    if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
+      // Validate the contraction.
+      MoveTreeOverTree(reference, tempClone);
+      return true;
+    }
+  }
+  tempClone.removeTree();
+  return false;
 }
 
 bool Simplification::ReduceInverseFunction(EditionReference* e) {

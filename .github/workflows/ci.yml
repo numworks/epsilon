@@ -8,12 +8,12 @@ on:
       - master
 
 env:
-  MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 
 jobs:
   android:
     runs-on: ubuntu-latest
-    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
     steps:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
           name: epsilon-android.apk
           path: output/release/simulator/android/epsilon.apk
   device:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -58,7 +58,7 @@ jobs:
         run: make MODEL=${{ matrix.model }} bench.ram.dfu
   windows:
     runs-on: windows-latest
-    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
     defaults:
        run:
          shell: msys2 {0}
@@ -73,7 +73,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/release/simulator/windows/epsilon.exe
   web:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
@@ -88,7 +88,7 @@ jobs:
           path: output/release/simulator/web/epsilon.zip
           retention-days: 7
   linux:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-llvm@latest
       - uses: actions/checkout@v3
@@ -96,13 +96,13 @@ jobs:
       - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
-        if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
+        if: ${{ (github.repository != 'numworks/epsilon-internal') }}
         with:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
   macos:
     runs-on: macOS-latest
-    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
     steps:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
@@ -115,7 +115,7 @@ jobs:
           path: output/release/simulator/macos/epsilon.app
   ios:
     runs-on: macOS-latest
-    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
     steps:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator

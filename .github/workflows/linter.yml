@@ -4,7 +4,7 @@ on: [pull_request]
 jobs:
   build:
     name: Lint Code Base
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
 
     steps:
       - name: Fetch target branch and PR branch

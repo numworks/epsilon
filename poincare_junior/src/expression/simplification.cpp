@@ -283,6 +283,7 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
     SimplifySum(&S);
     SimplifyPower(&P);
     if (P.type() == BlockType::One) {
+      P.removeTree();
       ReplaceTreeByNode(l, KMult());
       return true;
     }

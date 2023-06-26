@@ -81,6 +81,11 @@ QUIZ_CASE(pcj_simplification_contraction) {
   EditionReference ref6(KPow(KExp("x"_e), 2_e));
   quiz_assert(Simplification::ShallowContract(&ref6));
   assert_trees_are_equal(ref6, KExp(KMult("x"_e, 2_e)));
+
+  EditionReference ref7(KAdd(2_e, KPow(KTrig("x"_e, 0_e), 2_e),
+                             KPow(KTrig("x"_e, 1_e), 2_e), 3_e, 4_e));
+  quiz_assert(Simplification::ShallowContract(&ref7));
+  assert_trees_are_equal(ref7, KAdd(1_e, 2_e, 3_e, 4_e));
 }
 
 QUIZ_CASE(pcj_simplification_algebraic_expansion) {
@@ -210,5 +215,4 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a*a", "a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*(a^(3))*(b^(2))");
   simplifies_to("d+c+b+a", "a+b+c+d");
-  simplifies_to("cos(x)^2-1+sin(x)^2", "0");
 }

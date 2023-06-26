@@ -521,28 +521,11 @@ bool Simplification::SimplifySum(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  bool changed = false;
   if (SimplifySumRec(u)) {
-    changed = true;
     NAry::Sanitize(u);
+    return true;
   }
-  // Now that children are sorted :
-  // TODO : Ensure we can get rid of Placeholder C here.
-  if (u->matchAndReplace(
-          KAdd(KAnyTreesPlaceholder<A>(),
-               KPow(KTrig(KPlaceholder<B>(), 0_e), 2_e),
-               KAnyTreesPlaceholder<C>(),
-               KPow(KTrig(KPlaceholder<D>(), 1_e), 2_e),
-               KAnyTreesPlaceholder<E>()),
-          KAdd(1_e, KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>(),
-               KAnyTreesPlaceholder<E>()))) {
-    if (u->type() == BlockType::Addition) {
-      // Addition could be reduced further.
-      SimplifySum(u);
-    }
-    changed = true;
-  }
-  return changed;
+  return false;
 }
 
 bool Simplification::SimplifyRationalTree(EditionReference* u) {
@@ -1004,6 +987,17 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
 }
 
 bool Simplification::ContractTrigonometric(EditionReference* reference) {
+  // A?+cos(B)^2+C?+sin(D)^2+E? = A + 1 + C + E
+  if (reference->matchAndReplace(
+          KAdd(KAnyTreesPlaceholder<A>(),
+               KPow(KTrig(KPlaceholder<B>(), 0_e), 2_e),
+               KAnyTreesPlaceholder<C>(),
+               KPow(KTrig(KPlaceholder<D>(), 1_e), 2_e),
+               KAnyTreesPlaceholder<E>()),
+          KAdd(1_e, KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>(),
+               KAnyTreesPlaceholder<E>()))) {
+    return true;
+  }
   /* A?*Trig(B, C)*Trig(D, E)*F?
    * = (Trig(B-D, TrigDiff(C,E))*F + Trig(B+D, E+C))*F)*A*0.5
    * F is duplicated in case it contains other Trig trees that could be

@@ -16,7 +16,7 @@ bool AbstractExpressionView::setLayout(Layout layoutR) {
 }
 
 KDSize AbstractExpressionView::minimalSizeForOptimalDisplay() const {
-  if (!getLayout().isInitialized()) {
+  if (getLayout().isUninitialized()) {
     return KDSizeZero;
   }
   KDSize expressionSize = getLayout().size(m_glyphFormat.style.font);
@@ -37,7 +37,7 @@ KDPoint AbstractExpressionView::drawingOrigin() const {
 
 void AbstractExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
-  if (getLayout().isInitialized()) {
+  if (!getLayout().isUninitialized()) {
     // TODO : Implement Selection here (use selection())
     getLayout().draw(ctx, drawingOrigin(), m_glyphFormat.style.font,
                      m_glyphFormat.style.glyphColor,

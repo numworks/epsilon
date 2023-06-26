@@ -26,7 +26,7 @@ class AbstractExpressionView : public Escher::GlyphsView {
   int numberOfLayouts() const { return getLayout().treeSize(); }
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
-  bool layoutHasNode() const { return getLayout().isInitialized(); }
+  bool layoutHasNode() const { return !getLayout().isUninitialized(); }
 
  protected:
   virtual void privateSetLayout(PoincareJ::Layout layoutR) = 0;

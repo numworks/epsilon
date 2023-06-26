@@ -328,7 +328,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText =
       !forceCursorRightOfText && text[0] == UCodePointEmpty;
-  if (linearMode() || !resultLayout.isInitialized()) {
+  if (linearMode() || resultLayout.isUninitialized()) {
     // The text is not parsable (for instance, ",") and is added char by
     // char.
     KDSize previousLayoutSize = minimalSizeForOptimalDisplay();

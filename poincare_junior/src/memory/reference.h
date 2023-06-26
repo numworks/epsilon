@@ -35,7 +35,7 @@ typedef void (*ActionWithContext)(void *context, const void *data);
 
 class Reference {
  public:
-  // Uninitialized Reference constructor
+  // Reference constructor without initializers
   Reference();
   // Reference from a const tree.
   Reference(const Node tree);
@@ -67,14 +67,9 @@ class Reference {
 #endif
 
   bool isCacheReference() const { return m_initializer != nullptr; }
-  bool isInitialized() const {
-    return isCacheReference() || m_data.data() != nullptr;
-  }
-  /* isUninitialized() relates to the reference's tree and is not exactly the
-   * opposite of isInitialized(), which relates to the reference itself without
-   * needing to fetch the tree. */
+  // Return true if Reference has no initializers or if tree is uninitialized.
   bool isUninitialized() const {
-    return !isInitialized() || getTree().isUninitialized();
+    return !hasInitializers() || getTree().isUninitialized();
   }
   uint16_t id() const;  // TODO: make private (public for tests)
 
@@ -87,6 +82,10 @@ class Reference {
 #endif
   );
 
+  // Return true if Reference has neither data nor initializers to build a tree.
+  bool hasInitializers() const {
+    return isCacheReference() || m_data.data() != nullptr;
+  }
   const Node getTree() const;
 
   ActionWithContext m_initializer;

@@ -133,7 +133,7 @@ Reference::Reference(InitializerFromTreeInplace initializer,
 }
 
 void Reference::send(FunctionOnConstTree function, void *context) const {
-  assert(isInitialized());
+  assert(hasInitializers());
   const Node tree = getTree();
   return function(tree, context);
 }
@@ -171,7 +171,7 @@ uint16_t Reference::id() const {
 }
 
 const Node Reference::getTree() const {
-  assert(isInitialized());
+  assert(hasInitializers());
   return isCacheReference()
              ? CachePool::sharedCachePool()->nodeForIdentifier(id())
              : Node(reinterpret_cast<const TypeBlock *>(m_data.data()));

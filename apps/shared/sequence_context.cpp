@@ -12,71 +12,59 @@ using namespace Poincare;
 
 namespace Shared {
 
-template <typename T>
-TemplatedSequenceContext<T>::TemplatedSequenceContext(
-    SequenceContext *sequenceContext)
-    : ContextWithParent(sequenceContext), m_sequenceContext(sequenceContext) {
+SequenceContext::SequenceContext(Poincare::Context *parentContext,
+                                 SequenceStore *sequenceStore)
+    : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {
   resetCache();
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::resetValuesOfSequence(
-    int sequenceIndex, bool intermediateComputation) {
-  T *values = valuesPointer(sequenceIndex, intermediateComputation);
+void SequenceContext::resetValuesOfSequence(int sequenceIndex,
+                                            bool intermediateComputation) {
+  double *values = valuesPointer(sequenceIndex, intermediateComputation);
   for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
        depth++) {
-    *(values + depth) = OMG::SignalingNan<T>();
+    *(values + depth) = OMG::SignalingNan<double>();
   }
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::resetRanksAndValuesOfSequence(
+void SequenceContext::resetRanksAndValuesOfSequence(
     int sequenceIndex, bool intermediateComputation) {
   int *rank = rankPointer(sequenceIndex, intermediateComputation);
   *rank = -1;
   resetValuesOfSequence(sequenceIndex, intermediateComputation);
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::resetDataOfCurrentComputation() {
+void SequenceContext::resetDataOfCurrentComputation() {
   m_isInsideComputation = false;
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     m_smallestRankBeingComputed[i] = -1;
   }
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::resetCache() {
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    resetRanksAndValuesOfSequence(i, true);
-    resetRanksAndValuesOfSequence(i, false);
-  }
-  resetDataOfCurrentComputation();
-}
-
-template <typename T>
-T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
-                                                           int rank) {
+double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
+                                                    int rank) {
+  assert(0 <= sequenceIndex &&
+         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   for (int loop = 0; loop < 2; loop++) {
     int storedRank = loop == 0 ? m_mainRanks[sequenceIndex]
                                : m_intermediateRanks[sequenceIndex];
     if (storedRank >= 0) {
       int offset = storedRank - rank;
       if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1) {
-        T storedValue = loop == 0 ? m_mainValues[sequenceIndex][offset]
-                                  : m_intermediateValues[sequenceIndex][offset];
+        double storedValue = loop == 0
+                                 ? m_mainValues[sequenceIndex][offset]
+                                 : m_intermediateValues[sequenceIndex][offset];
         if (!OMG::IsSignalingNan(storedValue)) {
           return storedValue;
         }
       }
     }
   }
-  return OMG::SignalingNan<T>();
+  return OMG::SignalingNan<double>();
 }
 
-template <typename T>
-int *TemplatedSequenceContext<T>::rankPointer(int sequenceIndex,
-                                              bool intermediateComputation) {
+int *SequenceContext::rankPointer(int sequenceIndex,
+                                  bool intermediateComputation) {
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   int *rank = intermediateComputation ? m_intermediateRanks : m_mainRanks;
@@ -84,50 +72,47 @@ int *TemplatedSequenceContext<T>::rankPointer(int sequenceIndex,
   return rank;
 }
 
-template <typename T>
-T *TemplatedSequenceContext<T>::valuesPointer(int sequenceIndex,
-                                              bool intermediateComputation) {
+double *SequenceContext::valuesPointer(int sequenceIndex,
+                                       bool intermediateComputation) {
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  T *values = intermediateComputation
-                  ? reinterpret_cast<T *>(&m_intermediateValues)
-                  : reinterpret_cast<T *>(&m_mainValues);
+  double *values = intermediateComputation
+                       ? reinterpret_cast<double *>(&m_intermediateValues)
+                       : reinterpret_cast<double *>(&m_mainValues);
   values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
   return values;
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::shiftValuesRight(int sequenceIndex,
-                                                   bool intermediateComputation,
-                                                   int delta) {
+void SequenceContext::shiftValuesRight(int sequenceIndex,
+                                       bool intermediateComputation,
+                                       int delta) {
   assert(delta > 0);
   if (delta > SequenceStore::k_maxRecurrenceDepth) {
     resetValuesOfSequence(sequenceIndex, intermediateComputation);
     return;
   }
-  T *values = valuesPointer(sequenceIndex, intermediateComputation);
+  double *values = valuesPointer(sequenceIndex, intermediateComputation);
   int stop = delta - 1;
   assert(0 <= stop && stop < SequenceStore::k_maxRecurrenceDepth);
   for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > stop; depth--) {
     *(values + depth) = *(values + depth - delta);
   }
   for (int depth = stop; depth >= 0; depth--) {
-    *(values + depth) = OMG::SignalingNan<T>();
+    *(values + depth) = OMG::SignalingNan<double>();
   }
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
+void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
   assert(rank >= 0);
   bool intermediateComputation = m_isInsideComputation;
-  Sequence *s = m_sequenceContext->sequenceAtNameIndex(sequenceIndex);
+  Sequence *s = sequenceAtNameIndex(sequenceIndex);
   bool explicitComputation =
       rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit(this);
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
 
-  T cacheValue = storedValueOfSequenceAtRank(sequenceIndex, rank);
+  double cacheValue = storedValueOfSequenceAtRank(sequenceIndex, rank);
   bool jumpToRank = explicitComputation || !OMG::IsSignalingNan(cacheValue);
 
   m_isInsideComputation = true;
@@ -144,12 +129,10 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   }
 }
 
-template <typename T>
-void TemplatedSequenceContext<T>::stepRanks(int sequenceIndex,
-                                            bool intermediateComputation,
-                                            int step) {
+void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
+                                int step) {
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
-  T *values = valuesPointer(sequenceIndex, intermediateComputation);
+  double *values = valuesPointer(sequenceIndex, intermediateComputation);
 
   // First we increment the rank
   *currentRank += step;
@@ -158,7 +141,8 @@ void TemplatedSequenceContext<T>::stepRanks(int sequenceIndex,
   shiftValuesRight(sequenceIndex, intermediateComputation, step);
 
   // We approximate the value at new rank
-  T otherCacheValue = storedValueOfSequenceAtRank(sequenceIndex, *currentRank);
+  double otherCacheValue =
+      storedValueOfSequenceAtRank(sequenceIndex, *currentRank);
   if (!OMG::IsSignalingNan(otherCacheValue)) {
     // If the other cache already knows this value, use it
     *values = otherCacheValue;
@@ -168,46 +152,42 @@ void TemplatedSequenceContext<T>::stepRanks(int sequenceIndex,
       m_smallestRankBeingComputed[sequenceIndex] = *currentRank;
     } else {
       // We are looping, return NAN as computed result
-      *values = static_cast<T>(NAN);
+      *values = static_cast<double>(NAN);
       return;
     }
-    *values = m_sequenceContext->sequenceAtNameIndex(sequenceIndex)
-                  ->approximateAtContextRank<T>(m_sequenceContext,
-                                                intermediateComputation);
+    *values = sequenceAtNameIndex(sequenceIndex)
+                  ->approximateAtContextRank(this, intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
   }
 }
 
-template <typename T>
-const Expression
-TemplatedSequenceContext<T>::protectedExpressionForSymbolAbstract(
+const Expression SequenceContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() != ExpressionNode::Type::Sequence) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, clone, lastDescendantContext);
   }
-  T result = NAN;
+  double result = NAN;
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
   char name = static_cast<const Symbol &>(symbol).name()[0];
   int index = SequenceStore::SequenceIndexForName(name);
-  Ion::Storage::Record record =
-      m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
+  Ion::Storage::Record record = sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
-    return Float<T>::Builder(result);
+    return Float<double>::Builder(result);
   }
   assert(record.fullName()[0] == symbol.name()[0]);
-  Sequence *seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
+  Sequence *seq = sequenceStore()->modelForRecord(record);
   if (!seq->fullName()) {
-    return Float<T>::Builder(result);
+    return Float<double>::Builder(result);
   }
   Expression rankExpression = symbol.childAtIndex(0).clone();
   /* The lastDesendantContext might contain informations on variables
    * that are contained in the rank expression. */
-  T rankValue = PoincareHelpers::ApproximateToScalar<T>(
+  double rankValue = PoincareHelpers::ApproximateToScalar<double>(
       rankExpression, lastDescendantContext ? lastDescendantContext : this);
-  result = m_sequenceContext->storedValueOfSequenceAtRank<T>(index, rankValue);
+  result = storedValueOfSequenceAtRank(index, rankValue);
   /* We try to approximate the sequence independently from the others at the
    * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for instance).
    * But we avoid doing so if the sequence referencing itself to avoid an
@@ -215,15 +195,18 @@ TemplatedSequenceContext<T>::protectedExpressionForSymbolAbstract(
   if (OMG::IsSignalingNan(result)) {
     // If the rank is not an int, return NAN
     if (std::floor(rankValue) == rankValue) {
-      result = seq->approximateAtRank<T>(rankValue, m_sequenceContext);
+      result = seq->approximateAtRank(rankValue, this);
     }
   }
-  return Float<T>::Builder(result);
+  return Float<double>::Builder(result);
 }
 
 void SequenceContext::resetCache() {
-  m_floatSequenceContext.resetCache();
-  m_doubleSequenceContext.resetCache();
+  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+    resetRanksAndValuesOfSequence(i, true);
+    resetRanksAndValuesOfSequence(i, false);
+  }
+  resetDataOfCurrentComputation();
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     m_sequenceIsNotComputable[i] = Poincare::TrinaryBoolean::Unknown;
   }
@@ -245,16 +228,6 @@ SequenceContext::expressionTypeForIdentifier(const char *identifier,
   }
   return Poincare::ContextWithParent::expressionTypeForIdentifier(identifier,
                                                                   length);
-}
-
-template <>
-TemplatedSequenceContext<float> *SequenceContext::context<float>() {
-  return &m_floatSequenceContext;
-}
-
-template <>
-TemplatedSequenceContext<double> *SequenceContext::context<double>() {
-  return &m_doubleSequenceContext;
 }
 
 Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
@@ -282,7 +255,11 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
          Poincare::TrinaryBoolean::True;
 }
 
-template class TemplatedSequenceContext<float>;
-template class TemplatedSequenceContext<double>;
+int SequenceContext::rank(int sequenceIndex, bool intermediateComputation) {
+  assert(0 <= sequenceIndex &&
+         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  return intermediateComputation ? m_intermediateRanks[sequenceIndex]
+                                 : m_mainRanks[sequenceIndex];
+}
 
 }  // namespace Shared

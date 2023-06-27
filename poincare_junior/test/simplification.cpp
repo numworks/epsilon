@@ -154,6 +154,10 @@ QUIZ_CASE(pcj_simplification_projection) {
                                        {.m_angleUnit = AngleUnit::Degree});
   assert_trees_are_equal(ref3,
                          KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
+
+  EditionReference ref4(KSqrt("y"_e));
+  Simplification::DeepSystemProjection(&ref4);
+  assert_trees_are_equal(ref4, KExp(KMult(0.5_e, KLn("y"_e))));
 }
 
 QUIZ_CASE(pcj_simplification_beautify) {
@@ -168,6 +172,10 @@ QUIZ_CASE(pcj_simplification_beautify) {
   EditionReference ref2(KTrig(π_e, 1_e));
   Simplification::DeepBeautify(&ref2, {.m_angleUnit = AngleUnit::Gradian});
   assert_trees_are_equal(ref2, KSin(200_e));
+
+  EditionReference ref3(KExp(KMult(0.5_e, KLn("y"_e))));
+  Simplification::DeepBeautify(&ref3);
+  assert_trees_are_equal(ref3, KSqrt("y"_e));
 }
 
 void simplifies_to(const char* input, const char* output) {

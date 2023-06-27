@@ -646,6 +646,9 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
       // trig(A, 1) -> sin(A)
       reference->matchAndReplace(KTrig(KPlaceholder<A>(), 1_e),
                                  KSin(KPlaceholder<A>())) ||
+      // exp(0.5*ln(A)) -> Sqrt(A)
+      reference->matchAndReplace(KExp(KMult(0.5_e, KLn(KPlaceholder<A>()))),
+                                 KSqrt(KPlaceholder<A>())) ||
       // exp(ln(A) * B?) -> A^B
       reference->matchAndReplace(
           KExp(KMult(KLn(KPlaceholder<A>()), KAnyTreesPlaceholder<B>())),
@@ -759,6 +762,9 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
       ref->matchAndReplace(
           KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
           KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e))) ||
+      // Sqrt(A) -> exp(0.5*ln(A))
+      ref->matchAndReplace(KSqrt(KPlaceholder<A>()),
+                           KExp(KMult(0.5_e, KLn(KPlaceholder<A>())))) ||
       // Power of non-integers
       // TODO: Maybe add exp(A) -> e^A with A integer
       (ref->type() == BlockType::Power &&

@@ -108,6 +108,8 @@ class ConsoleController : public Escher::ViewController,
                     KDCOORDINATE_MAX / KDFont::GlyphWidth(KDFont::Size::Large),
                 "Accumulation buffer of console is too long for large font");
 
+  int editableCellRow() const { return m_consoleStore.numberOfLines(); }
+
   // RegularListViewDataSource
   KDCoordinate defaultRowHeight() override;
   bool isDisplayingViewController();

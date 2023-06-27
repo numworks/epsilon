@@ -985,6 +985,8 @@ QUIZ_CASE(poincare_simplification_power) {
                                        "√(330)/100000000000000000000");
   assert_parsed_expression_simplify_to("√(3.3×10^(-39))",
                                        "√(33)/100000000000000000000");
+  assert_parsed_expression_simplify_to("(√(2)^√(2))^√(2)", "2");
+
   // Principal angle of root of unity
   assert_parsed_expression_simplify_to("(-5)^(-1/3)",
                                        "root(25,3)/10-root(16875,6)/10×i", User,

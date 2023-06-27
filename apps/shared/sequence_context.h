@@ -46,7 +46,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);
-  void resetDataOfCurrentComputation();
+  void resetComputationStatus();
   const Poincare::Expression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;

@@ -108,10 +108,11 @@ class Sequence : public Function {
   bool canBeHandledAsExplicit(Poincare::Context *context) const {
     return !mainExpressionContainsForbiddenTerms(context, false, false);
   }
-  /* Sequence u is not computable if main expression contains forbidden terms:
+  /* Sequence u (with initial rank i) is not computable if main expression
+   * contains forbidden terms:
    * - explicit: any term of u
-   * - simple recurrence: any term of u other than u(n), u(0)
-   * - double recurrence: any term of u other than u(n+1), u(n), u(1), u(0) */
+   * - simple recurrence: any term of u other than u(n), u(i)
+   * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */
   bool mainExpressionIsNotComputable(Poincare::Context *context) const {
     return mainExpressionContainsForbiddenTerms(context, true, false);
   }

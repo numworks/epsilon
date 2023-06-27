@@ -111,7 +111,7 @@ class ConsoleController : public Escher::ViewController,
   // RegularListViewDataSource
   KDCoordinate defaultRowHeight() override;
   bool isDisplayingViewController();
-  void reloadData(bool isEditing);
+  void reloadData();
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char* text, size_t length);
   void emptyOutputAccumulationBuffer();

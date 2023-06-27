@@ -192,7 +192,8 @@ Node *EditionPool::initFromAddress(const void *address, bool isTree) {
   }
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Copy", copiedTree,
-      isTree ? Node::FromBlockscopiedTree).treeSize() : Node::FromBlockscopiedTree).nodeSize());
+      isTree ? Node::FromBlocks(copiedTree)->treeSize()
+             : Node::FromBlocks(copiedTree)->nodeSize());
 #endif
   return Node::FromBlocks(copiedTree);
 }

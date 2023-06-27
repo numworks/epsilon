@@ -437,20 +437,19 @@ void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree) {
   assert(pool->contains(nodeToMove->block()));
   pool->moveBlocks(destination->block(), nodeToMove->block(), size);
 #if POINCARE_POOL_VISUALIZATION
-  Block* dst = destination.block();
-  Block* addedBlock = dst >= nodeToInsert.block() ? dst - sizeToInsert : dst;
-  Log(LoggerType::Edition, "Insert", addedBlock, sizeToInsert,
-      nodeToInsert.block());
+  Block* dst = destination->block();
+  Block* addedBlock = dst >= nodeToMove->block() ? dst - size : dst;
+  Log(LoggerType::Edition, "Insert", addedBlock, size, nodeToMove->block());
 #endif
 }
 
 void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree) {
   Node* destination = before ? this : nextNode();
-  EditionPool::sharedEditionPool()->insertBlocks(
-      destination->block(), nodeToClone->block(),
-      newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize());
+  size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
+  EditionPool::sharedEditionPool()->insertBlocks(destination->block(),
+                                                 nodeToClone->block(), size);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Insert", destination.block(), sizeToInsert);
+  Log(LoggerType::Edition, "Insert", destination->block(), size);
 #endif
 }
 

@@ -49,12 +49,15 @@ double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
                                                     int rank) {
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  for (int loop = 0; loop < 2; loop++) {
-    int storedRank = *(rankPointer(sequenceIndex, loop));
+  for (int loop = 0; loop < 3; loop++) {
+    int storedRank = loop < 2 ? *(rankPointer(sequenceIndex, loop))
+                              : SequenceStore::k_maxRecurrenceDepth;
     if (storedRank >= 0) {
       int offset = storedRank - rank;
       if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1) {
-        double storedValue = *(valuesPointer(sequenceIndex, loop) + offset);
+        double storedValue =
+            loop < 2 ? *(valuesPointer(sequenceIndex, loop) + offset)
+                     : m_initialValues[sequenceIndex][offset];
         if (!OMG::IsSignalingNan(storedValue)) {
           return storedValue;
         }
@@ -165,6 +168,10 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
     *values = sequenceAtNameIndex(sequenceIndex)
                   ->approximateAtContextRank(this, intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
+    if (*currentRank <= SequenceStore::k_maxRecurrenceDepth) {
+      m_initialValues[sequenceIndex][SequenceStore::k_maxRecurrenceDepth -
+                                     *currentRank] = *values;
+    }
   }
 
   // Update computation state
@@ -217,6 +224,9 @@ void SequenceContext::resetCache() {
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     resetRanksAndValuesOfSequence(i, true);
     resetRanksAndValuesOfSequence(i, false);
+    for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; ++j) {
+      m_initialValues[i][j] = OMG::SignalingNan<double>();
+    }
   }
   resetComputationStatus();
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {

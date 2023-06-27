@@ -865,16 +865,77 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     return m.shallowReduce(reductionContext);
   }
 
+  /* Step 8
+   * Merge with the base if it is a power: (a^b)^c -> a^(b*c)
+   * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
+   * This rule is true if a > 0
+   * OR c is integer
+   *
+   * Note: We also apply if c = -1
+   * If we did not apply this rule on expressions of the form (a^b)^(-1),
+   * we would end up in infinite loop when factorizing an addition on the same
+   * denominator. For ex:
+   * 1+[tan(2)^1/2]^(-1) -->
+   * (tan(2)^1/2+tan(2)^1/2*[tan(2)^1/2]^(-1))/tan(2)^1/2
+   *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
+   *                     -->
+   * tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
+   *                     --> ...
+   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is -1. */
+  if (baseType == ExpressionNode::Type::Power) {
+    Expression a = base.childAtIndex(0);
+    Expression b = base.childAtIndex(1);
+    /* For (a^b)^c, apply the rule :
+     * if c = -1
+     * OR a > 0
+     * OR c is integer */
+    if ((index.isNumber() && (static_cast<Number &>(index).isInteger() ||
+                              static_cast<Number &>(index).isMinusOne())) ||
+        a.isPositive(context) == TrinaryBoolean::True ||
+        a.approximateToScalar<double>(context, reductionContext.complexFormat(),
+                                      reductionContext.angleUnit(),
+                                      true) > Float<double>::EpsilonLax()) {
+      Multiplication m =
+          Multiplication::Builder(base.childAtIndex(1).clone(), index);
+      replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
+      replaceChildAtIndexInPlace(1, m);
+      m.shallowReduce(reductionContext);
+      /* Add dependency if needed.
+       * We should add a dependency if (a^b) is a type of power that
+       * needs dependency and if the newly created power does not need
+       * the same dependency (in which case it does not need to be created
+       * since the dependency info is still contained in the expression).
+       * For example:
+       * - x^(1/2)^4 needs a dependency since x^2 loses the info of x
+       *   needing to be positive (in real mode).
+       * - x^(1/2)^3 does not need a dependency since x^(3/2) keeps the
+       *   same interval of definition as x^(1/2) */
+      List listOfDependencies = List::Builder();
+      AddPowerToListOfDependenciesIfNeeded(base, *this, listOfDependencies,
+                                           reductionContext, false);
+      if (listOfDependencies.numberOfChildren() > 0) {
+        Dependency dep =
+            Dependency::Builder(Undefined::Builder(), listOfDependencies);
+        replaceWithInPlace(dep);
+        dep.replaceChildAtIndexInPlace(0, *this);
+        shallowReduce(reductionContext);
+        return dep.shallowReduce(reductionContext);
+      }
+      return shallowReduce(reductionContext);
+    }
+    return *this;
+  }
+
   /* From this point onward, all simplifications assume index is rational. */
   if (indexType != ExpressionNode::Type::Rational) {
     return *this;
   }
   Rational rationalIndex = static_cast<Rational &>(index);
 
-  /* Step 8
+  /* Step 9
    * Handle the case of base being a number */
   if (base.isNumber()) {
-    /* Step 8.1
+    /* Step 9.1
      * Handle the simple case of r^s, whith r and s rational. */
     if (baseType == ExpressionNode::Type::Rational) {
       Rational rationalBase = static_cast<Rational &>(base);
@@ -886,7 +947,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
       replaceWithInPlace(e);
       return e;
     }
-    /* Step 8.2
+    /* Step 9.2
      * Other cases */
     Expression e = Number::Power(static_cast<Number &>(base), rationalIndex);
     if (e.isUninitialized()) {
@@ -896,7 +957,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     return e;
   }
 
-  /* Step 9
+  /* Step 10
    * Depending on the target, the constant i is not always reduced to a
    * cartesian, but its rational power can be simplified nonetheless. */
   if (baseType == ExpressionNode::Type::ConstantMaths &&
@@ -927,7 +988,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     }
   }
 
-  /* Step 10
+  /* Step 11
    * Distribute power over the multiplication */
   int baseChildren = base.numberOfChildren();
   if (baseType == ExpressionNode::Type::Multiplication) {
@@ -974,67 +1035,6 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         return m.shallowReduce(reductionContext);
       }
     }
-  }
-
-  /* Step 11
-   * Merge with the base if it is a power: (a^b)^c -> a^(b*c)
-   * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
-   * This rule is true if a > 0
-   * OR c is integer
-   *
-   * Note: We also apply if c = -1
-   * If we did not apply this rule on expressions of the form (a^b)^(-1),
-   * we would end up in infinite loop when factorizing an addition on the same
-   * denominator. For ex:
-   * 1+[tan(2)^1/2]^(-1) -->
-   * (tan(2)^1/2+tan(2)^1/2*[tan(2)^1/2]^(-1))/tan(2)^1/2
-   *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
-   *                     -->
-   * tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
-   *                     --> ...
-   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is -1. */
-  if (baseType == ExpressionNode::Type::Power) {
-    Expression a = base.childAtIndex(0);
-    Expression b = base.childAtIndex(1);
-    /* For (a^b)^c, apply the rule :
-     * if c = -1
-     * OR a > 0
-     * OR c is integer */
-    if (rationalIndex.isMinusOne() ||
-        a.isPositive(context) == TrinaryBoolean::True ||
-        a.approximateToScalar<double>(context, reductionContext.complexFormat(),
-                                      reductionContext.angleUnit(),
-                                      true) > Float<double>::EpsilonLax() ||
-        rationalIndex.isInteger()) {
-      Multiplication m =
-          Multiplication::Builder(base.childAtIndex(1).clone(), index);
-      replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
-      replaceChildAtIndexInPlace(1, m);
-      m.shallowReduce(reductionContext);
-      /* Add dependency if needed.
-       * We should add a dependency if (a^b) is a type of power that
-       * needs dependency and if the newly created power does not need
-       * the same dependency (in which case it does not need to be created
-       * since the dependency info is still contained in the expression).
-       * For example:
-       * - x^(1/2)^4 needs a dependency since x^2 loses the info of x
-       *   needing to be positive (in real mode).
-       * - x^(1/2)^3 does not need a dependency since x^(3/2) keeps the
-       *   same interval of definition as x^(1/2) */
-      List listOfDependencies = List::Builder();
-      AddPowerToListOfDependenciesIfNeeded(base, *this, listOfDependencies,
-                                           reductionContext, false);
-      if (listOfDependencies.numberOfChildren() > 0) {
-        Dependency dep =
-            Dependency::Builder(Undefined::Builder(), listOfDependencies);
-        replaceWithInPlace(dep);
-        dep.replaceChildAtIndexInPlace(0, *this);
-        shallowReduce(reductionContext);
-        return dep.shallowReduce(reductionContext);
-      }
-      return shallowReduce(reductionContext);
-    }
-    return *this;
   }
 
   /* Step 12

@@ -38,7 +38,7 @@ void SequenceContext::resetRanksAndValuesOfSequence(
   resetValuesOfSequence(sequenceIndex, intermediateComputation);
 }
 
-void SequenceContext::resetDataOfCurrentComputation() {
+void SequenceContext::resetComputationStatus() {
   m_isInsideComputation = false;
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     m_smallestRankBeingComputed[i] = -1;
@@ -172,7 +172,7 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
 
   // Update computation state
   if (!intermediateComputation) {
-    resetDataOfCurrentComputation();
+    resetComputationStatus();
   }
 }
 
@@ -221,7 +221,7 @@ void SequenceContext::resetCache() {
     resetRanksAndValuesOfSequence(i, true);
     resetRanksAndValuesOfSequence(i, false);
   }
-  resetDataOfCurrentComputation();
+  resetComputationStatus();
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     m_sequenceIsNotComputable[i] = TrinaryBoolean::Unknown;
   }

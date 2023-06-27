@@ -63,6 +63,12 @@ class SequenceContext : public Poincare::ContextWithParent {
   int m_intermediateRanks[SequenceStore::k_maxNumberOfSequences];
   double m_intermediateValues[SequenceStore::k_maxNumberOfSequences]
                              [SequenceStore::k_maxRecurrenceDepth + 1];
+  /* Save initial values to avoid stepping all values back. For example if in an
+   * intermediate computation we ask for v(n) with v(n+1) = v(n)+v(0), we will
+   * always step to rank n and then step back to rank 0, replacing all values
+   * stored in m_intermediateValues. */
+  double m_initialValues[SequenceStore::k_maxNumberOfSequences]
+                        [SequenceStore::k_maxRecurrenceDepth + 1];
 
   SequenceStore* m_sequenceStore;
   bool m_isInsideComputation;

@@ -1,8 +1,5 @@
 name: CI Poincare junior
-on:
-  pull_request:
-    branches:
-      - poincare-junior
+on: [pull_request]
 env:
   MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }} ${{ (github.job == 'device') && 'EMBED_EXTRA_DATA=1' }}
 

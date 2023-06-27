@@ -187,10 +187,8 @@ void ConsoleController::didBecomeFirstResponder() {
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 &&
-        m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
-      const char *text =
-          m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow())
-              .text();
+        typeAtRow(selectedRow()) == k_lineCellType) {
+      const char *text = m_consoleStore.lineAtIndex(selectedRow()).text();
       m_editCell.setEditing(true);
       m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
       App::app()->setFirstResponder(&m_editCell);
@@ -203,11 +201,11 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
     return true;
   } else if (event == Ion::Events::Backspace) {
-    int selectedRow = m_selectableTableView.selectedRow();
-    assert(selectedRow >= 0 && selectedRow < m_consoleStore.numberOfLines());
+    int rowToDelete = selectedRow();
+    assert(typeAtRow(rowToDelete) == k_lineCellType);
     m_selectableTableView.deselectTable();
     int firstDeletedLineIndex =
-        m_consoleStore.deleteCommandAndResultsAtIndex(selectedRow);
+        m_consoleStore.deleteCommandAndResultsAtIndex(rowToDelete);
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCell(firstDeletedLineIndex);
     return true;
@@ -224,9 +222,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int ConsoleController::numberOfRows() const {
-  return m_consoleStore.numberOfLines() + 1;
-}
+int ConsoleController::numberOfRows() const { return editableCellRow() + 1; }
 
 KDCoordinate ConsoleController::defaultRowHeight() {
   return KDFont::GlyphHeight(
@@ -255,12 +251,11 @@ int ConsoleController::reusableCellCount(int type) {
 
 int ConsoleController::typeAtRow(int row) const {
   assert(row >= 0);
-  if (row < m_consoleStore.numberOfLines()) {
+  if (row < editableCellRow()) {
     return k_lineCellType;
-  } else {
-    assert(row == m_consoleStore.numberOfLines());
-    return k_editCellType;
   }
+  assert(row == editableCellRow());
+  return k_editCellType;
 }
 
 void ConsoleController::fillCellForRow(HighlightCell *cell, int row) {
@@ -277,13 +272,13 @@ void ConsoleController::listViewDidChangeSelectionAndDidScroll(
   if (withinTemporarySelection) {
     return;
   }
-  if (l->selectedRow() == m_consoleStore.numberOfLines()) {
+  if (selectedRow() == editableCellRow()) {
     m_editCell.setEditing(true);
     return;
   }
-  if (l->selectedRow() > -1) {
+  if (selectedRow() > -1) {
     if (previousSelectedRow > -1 &&
-        previousSelectedRow < m_consoleStore.numberOfLines()) {
+        typeAtRow(previousSelectedRow) == k_lineCellType) {
       // Reset the scroll of the previous cell
       ConsoleLineCell *previousCell =
           (ConsoleLineCell *)(l->cell(previousSelectedRow));
@@ -320,7 +315,7 @@ bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField *textField,
   }
   if (event == Ion::Events::Up) {
     if (m_consoleStore.numberOfLines() > 0 &&
-        m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
+        typeAtRow(selectedRow()) == k_editCellType) {
       m_editCell.setEditing(false);
       m_selectableTableView.selectCell(m_consoleStore.numberOfLines() - 1);
       return true;

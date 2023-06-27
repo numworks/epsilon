@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-SequenceContext::SequenceContext(Poincare::Context *parentContext,
+SequenceContext::SequenceContext(Context *parentContext,
                                  SequenceStore *sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {
   resetCache();
@@ -208,7 +208,7 @@ void SequenceContext::resetCache() {
   }
   resetDataOfCurrentComputation();
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    m_sequenceIsNotComputable[i] = Poincare::TrinaryBoolean::Unknown;
+    m_sequenceIsNotComputable[i] = TrinaryBoolean::Unknown;
   }
 }
 
@@ -216,18 +216,16 @@ void SequenceContext::tidyDownstreamPoolFrom(TreeNode *treePoolCursor) {
   m_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
-Poincare::Context::SymbolAbstractType
-SequenceContext::expressionTypeForIdentifier(const char *identifier,
-                                             int length) {
+Context::SymbolAbstractType SequenceContext::expressionTypeForIdentifier(
+    const char *identifier, int length) {
   constexpr int numberOfSequencesNames =
       std::size(SequenceStore::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
     if (strncmp(identifier, SequenceStore::k_sequenceNames[i], length) == 0) {
-      return Poincare::Context::SymbolAbstractType::Sequence;
+      return Context::SymbolAbstractType::Sequence;
     }
   }
-  return Poincare::ContextWithParent::expressionTypeForIdentifier(identifier,
-                                                                  length);
+  return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
 Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
@@ -242,17 +240,14 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
 }
 
 bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
-  if (m_sequenceIsNotComputable[sequenceIndex] ==
-      Poincare::TrinaryBoolean::Unknown) {
+  if (m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::Unknown) {
     m_sequenceIsNotComputable[sequenceIndex] =
         sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable(this)
-            ? Poincare::TrinaryBoolean::True
-            : Poincare::TrinaryBoolean::False;
+            ? TrinaryBoolean::True
+            : TrinaryBoolean::False;
   }
-  assert(m_sequenceIsNotComputable[sequenceIndex] !=
-         Poincare::TrinaryBoolean::Unknown);
-  return m_sequenceIsNotComputable[sequenceIndex] ==
-         Poincare::TrinaryBoolean::True;
+  assert(m_sequenceIsNotComputable[sequenceIndex] != TrinaryBoolean::Unknown);
+  return m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::True;
 }
 
 int SequenceContext::rank(int sequenceIndex, bool intermediateComputation) {

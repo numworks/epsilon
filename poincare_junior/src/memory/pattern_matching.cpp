@@ -87,7 +87,7 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Node* source,
                                     MatchContext matchContext) {
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
   int numberOfTrees = 0;
-  context->setNode(tag, source, numberOfTrees);
+  context->setNode(tag, source, numberOfTrees, true);
   Context newResult = *context;
 
   // Give the placeholder a growing number of trees until everything matches.
@@ -127,6 +127,9 @@ bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
       const Node* tagNode = context->getNode(tag);
       if (tagNode) {
+        // AnyTrees status should be preserved if the Placeholder is reused.
+        assert(context->isAnyTree(tag) == (Placeholder::NodeToFilter(pattern) ==
+                                           Placeholder::Filter::AnyTrees));
         // Tag has already been set. Check the trees are the same.
         for (int i = 0; i < context->getNumberOfTrees(tag); i++) {
           if (onlyEmptyPlaceholders || !tagNode->treeIsIdenticalTo(source)) {
@@ -146,7 +149,7 @@ bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
           return false;
         }
         // Set the tag to source's tree
-        context->setNode(tag, source, 1);
+        context->setNode(tag, source, 1, false);
         source = source->nextTree();
       }
       pattern = pattern->nextNode();
@@ -223,10 +226,15 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
     const Node* nodeToInsert = context.getNode(tag);
     int treesToInsert = context.getNumberOfTrees(tag);
-    // Multiple trees can only be inserted into simple nArys
+    // nodeToInsert must be initialized even with 0 treesToInsert
     assert(nodeToInsert && treesToInsert >= 0);
+    // Created tree must match AnyTrees status of the Placeholder used to match
+    assert(context.isAnyTree(tag) ==
+           (Placeholder::NodeToFilter(node) == Placeholder::Filter::AnyTrees));
+    /* AnyTreesPlaceholders trees can only be inserted into simple nArys, even
+     * with 1 treesToInsert. */
+    assert(!(context.isAnyTree(tag) && !withinNAry));
     if (treesToInsert == 0) {
-      assert(withinNAry);
       /* Insert nothing and decrement the number of children which accounted for
        * the empty placeholder. */
       NAry::SetNumberOfChildren(insertedNAry,
@@ -236,7 +244,6 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
       continue;
     }
     if (treesToInsert > 1) {
-      assert(withinNAry);
       NAry::SetNumberOfChildren(
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward

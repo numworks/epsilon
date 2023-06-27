@@ -404,7 +404,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
                           static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx;
-  ctx.setNode(Placeholders::A, static_cast<Node*>(variable), 1);
+  ctx.setNode(Placeholders::A, static_cast<Node*>(variable), 1, false);
   if (PatternMatching::Match(KPow(KPlaceholder<Placeholders::A>(),
                                   KPlaceholder<Placeholders::B>()),
                              expression, &ctx)) {

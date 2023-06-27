@@ -39,9 +39,22 @@ class PatternMatching {
     Context() : m_array() {}
     const Node* getNode(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
-    void setNode(uint8_t tag, const Node* node, uint8_t numberOfTrees) {
+    bool isAnyTree(uint8_t tag) const {
+#if ASSERTIONS
+      return m_isAnyTree[tag];
+#else
+      // Dummy value, unused anyway.
+      return true;
+#endif
+    }
+    void setNode(uint8_t tag, const Node* node, uint8_t numberOfTrees,
+                 bool isAnyTree) {
+      assert(isAnyTree || numberOfTrees == 1);
       m_array[tag] = node;
       m_numberOfTrees[tag] = numberOfTrees;
+#if ASSERTIONS
+      m_isAnyTree[tag] = isAnyTree;
+#endif
     }
     void setNumberOfTrees(uint8_t tag, uint8_t numberOfTrees) {
       m_numberOfTrees[tag] = numberOfTrees;
@@ -55,6 +68,10 @@ class PatternMatching {
    private:
     const Node* m_array[Placeholder::Tag::NumberOfTags];
     uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
+#if ASSERTIONS
+    // Used only to assert AnyTreePlaceholders are properly used when creating
+    bool m_isAnyTree[Placeholder::Tag::NumberOfTags];
+#endif
   };
 
   static bool Match(const Node* pattern, const Node* source, Context* context);

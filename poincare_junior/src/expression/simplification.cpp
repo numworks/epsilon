@@ -637,9 +637,9 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
           KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
                KMult(-1_e, KAnyTreesPlaceholder<C>()),
                KAnyTreesPlaceholder<D>()),
-          KAdd(KSub(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
-                    KMult(KPlaceholder<C>())),
-               KPlaceholder<D>())) ||
+          KAdd(KSub(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
+                    KMult(KAnyTreesPlaceholder<C>())),
+               KAnyTreesPlaceholder<D>())) ||
       // trig(A, 0) -> cos(A)
       reference->matchAndReplace(KTrig(KPlaceholder<A>(), 0_e),
                                  KCos(KPlaceholder<A>())) ||
@@ -649,7 +649,7 @@ bool Simplification::ShallowBeautify(EditionReference* reference,
       // exp(ln(A) * B?) -> A^B
       reference->matchAndReplace(
           KExp(KMult(KLn(KPlaceholder<A>()), KAnyTreesPlaceholder<B>())),
-          KPow(KPlaceholder<A>(), KMult(KPlaceholder<B>()))) ||
+          KPow(KPlaceholder<A>(), KMult(KAnyTreesPlaceholder<B>()))) ||
       // exp(A) -> e^A
       reference->matchAndReplace(KExp(KPlaceholder<A>()),
                                  KPow(e_e, KPlaceholder<A>())) ||
@@ -927,9 +927,9 @@ bool Simplification::ContractAbs(EditionReference* reference) {
   return reference->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
             KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KMult(KPlaceholder<A>(),
-            KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-            KPlaceholder<D>()));
+      KMult(KAnyTreesPlaceholder<A>(),
+            KAbs(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
+            KAnyTreesPlaceholder<D>()));
 }
 
 bool Simplification::ExpandAbs(EditionReference* reference) {
@@ -944,9 +944,9 @@ bool Simplification::ContractLn(EditionReference* reference) {
   return reference->matchAndReplace(
       KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
            KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KPlaceholder<A>(),
-           KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-           KPlaceholder<D>()));
+      KAdd(KAnyTreesPlaceholder<A>(),
+           KLn(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
+           KAnyTreesPlaceholder<D>()));
 }
 
 bool Simplification::ExpandLn(EditionReference* reference) {
@@ -968,8 +968,9 @@ bool Simplification::ContractExpMult(EditionReference* reference) {
   return reference->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
             KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KMult(KPlaceholder<A>(), KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-            KPlaceholder<D>()));
+      KMult(KAnyTreesPlaceholder<A>(),
+            KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+            KAnyTreesPlaceholder<D>()));
 }
 
 bool Simplification::ContractExpPow(EditionReference* reference) {
@@ -986,10 +987,10 @@ bool Simplification::ExpandTrigonometric(EditionReference* reference) {
   if (!reference->matchAndReplace(
           KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
                 KPlaceholder<C>()),
-          KAdd(KMult(KTrig(KAdd(KPlaceholder<A>()), 0_e),
+          KAdd(KMult(KTrig(KAdd(KAnyTreesPlaceholder<A>()), 0_e),
                      KTrig(KPlaceholder<B>(), KPlaceholder<C>())),
                KMult(
-                   KTrig(KAdd(KPlaceholder<A>()), 1_e),
+                   KTrig(KAdd(KAnyTreesPlaceholder<A>()), 1_e),
                    KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
     return false;
   }
@@ -1040,11 +1041,11 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
               KAdd(KMult(KTrig(KAdd(KPlaceholder<B>(),
                                     KMult(-1_e, KPlaceholder<D>())),
                                KTrigDiff(KPlaceholder<C>(), KPlaceholder<E>())),
-                         KPlaceholder<F>()),
+                         KAnyTreesPlaceholder<F>()),
                    KMult(KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
                                KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
-                         KPlaceholder<F>())),
-              KPlaceholder<A>(), 0.5_e))) {
+                         KAnyTreesPlaceholder<F>())),
+              KAnyTreesPlaceholder<A>(), 0.5_e))) {
     return false;
   }
   EditionReference newMult1(reference->nextNode()->nextNode());
@@ -1108,8 +1109,8 @@ bool Simplification::ExpandPower(EditionReference* reference) {
    * second term expansion. */
   if (!reference->matchAndReplace(
           KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
-          KAdd(KPow(KAdd(KPlaceholder<A>()), 2_e),
-               KMult(2_e, KAdd(KPlaceholder<A>()), KPlaceholder<B>()),
+          KAdd(KPow(KAdd(KAnyTreesPlaceholder<A>()), 2_e),
+               KMult(2_e, KAdd(KAnyTreesPlaceholder<A>()), KPlaceholder<B>()),
                KPow(KPlaceholder<B>(), 2_e)))) {
     return false;
   }

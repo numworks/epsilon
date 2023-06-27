@@ -39,7 +39,7 @@ void assert_match_and_create(const Node* source, const Node* pattern,
 
 QUIZ_CASE(pcj_context) {
   PatternMatching::Context ctx;
-  ctx.setNode(Placeholder::A, KAdd(2_e, 1_e), 1);
+  ctx.setNode(Placeholder::A, KAdd(2_e, 1_e), 1, false);
   const Node* structure =
       KMult(5_e, KAdd(KPlaceholder<A>(), KPlaceholder<A>()));
   EditionReference exp = PatternMatching::Create(structure, ctx);
@@ -84,11 +84,11 @@ QUIZ_CASE(pcj_rewrite_replace) {
 QUIZ_CASE(pcj_match_n_ary) {
   assert_no_match(
       KMult(KAdd(1_e, 2_e, 3_e), KAdd(1_e, 2_e)),
-      KMult(KAdd(KAnyTreesPlaceholder<A>()), KAdd(KPlaceholder<A>())));
+      KMult(KAdd(KAnyTreesPlaceholder<A>()), KAdd(KAnyTreesPlaceholder<A>())));
 
   assert_match_and_create(KAdd(1_e),
                           KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
-                          KAdd(KPlaceholder<B>()), 0_e);
+                          KAdd(KAnyTreesPlaceholder<B>()), 0_e);
 
   assert_no_match(KAdd(1_e, 2_e, 3_e, 4_e),
                   KAdd(KAnyTreesPlaceholder<A>(), 3_e, KPlaceholder<B>(), 4_e));
@@ -101,31 +101,33 @@ QUIZ_CASE(pcj_match_n_ary) {
       KMult(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
             KPlaceholder<C>()),
       KAdd(KMult(KPlaceholder<A>(), KPlaceholder<C>()),
-           KMult(KAdd(KPlaceholder<B>()), KPlaceholder<C>())),
+           KMult(KAdd(KAnyTreesPlaceholder<B>()), KPlaceholder<C>())),
       KAdd(KMult(1_e, KAdd(1_e, 2_e)), KMult(KAdd(2_e, 3_e), KAdd(1_e, 2_e))));
 
-  assert_match_and_create(KAdd(1_e, 2_e, 3_e),
-                          KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>(),
-                               3_e, KAnyTreesPlaceholder<C>()),
-                          KAdd(KPlaceholder<A>(), 0_e, KPlaceholder<B>(), 0_e,
-                               KPlaceholder<C>(), 0_e),
-                          KAdd(1_e, 0_e, 2_e, 0_e, 0_e));
+  assert_match_and_create(
+      KAdd(1_e, 2_e, 3_e),
+      KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>(), 3_e,
+           KAnyTreesPlaceholder<C>()),
+      KAdd(KAnyTreesPlaceholder<A>(), 0_e, KPlaceholder<B>(), 0_e,
+           KAnyTreesPlaceholder<C>(), 0_e),
+      KAdd(1_e, 0_e, 2_e, 0_e, 0_e));
 
   assert_match_and_create(
       KAdd(1_e, 2_e, 3_e, KMult(2_e, 3_e), 3_e),
       KAdd(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
-           KMult(KAnyTreesPlaceholder<C>(), KPlaceholder<B>()),
-           KPlaceholder<B>()),
-      KAdd(KPlaceholder<A>(), 0_e, KPlaceholder<B>(), 0_e, KPlaceholder<C>(),
-           0_e),
+           KMult(KAnyTreesPlaceholder<C>(), KAnyTreesPlaceholder<B>()),
+           KAnyTreesPlaceholder<B>()),
+      KAdd(KAnyTreesPlaceholder<A>(), 0_e, KAnyTreesPlaceholder<B>(), 0_e,
+           KAnyTreesPlaceholder<C>(), 0_e),
       KAdd(1_e, 2_e, 0_e, 3_e, 0_e, 2_e, 0_e));
 
   assert_match_and_create(
       KMult(KAdd(1_e, 2_e, 3_e), 4_e, KAdd(2_e, 3_e)),
       KMult(KAdd(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
                  KAnyTreesPlaceholder<C>()),
-            KAnyTreesPlaceholder<D>(), KAdd(KPlaceholder<B>())),
-      KAdd(KAnyTreesPlaceholder<D>(), KPlaceholder<A>(), KPlaceholder<C>()),
+            KAnyTreesPlaceholder<D>(), KAdd(KAnyTreesPlaceholder<B>())),
+      KAdd(KAnyTreesPlaceholder<D>(), KAnyTreesPlaceholder<A>(),
+           KAnyTreesPlaceholder<C>()),
       KAdd(4_e, 1_e));
 
   /* TODO: In this example we first try with 0 trees in A and 1 tree in B.

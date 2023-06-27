@@ -430,19 +430,6 @@ const Node* Node::previousRelative(bool parent) const {
 
 // Node edition
 
-void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree) {
-  Node* destination = before ? this : nextNode();
-  EditionPool* pool = EditionPool::sharedEditionPool();
-  size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
-  assert(pool->contains(nodeToMove->block()));
-  pool->moveBlocks(destination->block(), nodeToMove->block(), size);
-#if POINCARE_POOL_VISUALIZATION
-  Block* dst = destination->block();
-  Block* addedBlock = dst >= nodeToMove->block() ? dst - size : dst;
-  Log(LoggerType::Edition, "Insert", addedBlock, size, nodeToMove->block());
-#endif
-}
-
 void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree) {
   Node* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
@@ -450,6 +437,19 @@ void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree) {
                                                  nodeToClone->block(), size);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Insert", destination->block(), size);
+#endif
+}
+
+void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree) {
+  EditionPool* pool = EditionPool::sharedEditionPool();
+  Node* destination = before ? this : nextNode();
+  size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
+  assert(pool->contains(nodeToMove->block()));
+  pool->moveBlocks(destination->block(), nodeToMove->block(), size);
+#if POINCARE_POOL_VISUALIZATION
+  Block* dst = destination->block();
+  Block* addedBlock = dst >= nodeToMove->block() ? dst - size : dst;
+  Log(LoggerType::Edition, "Insert", addedBlock, size, nodeToMove->block());
 #endif
 }
 
@@ -463,7 +463,6 @@ Node* Node::cloneOver(const Node* newNode, bool oldIsTree, bool newIsTree) {
   if (oldBlock == newBlock && oldSize == newSize) {
     return Node::FromBlocks(oldBlock);
   }
-  Block* finalBlock = oldBlock;
   size_t minSize = std::min(oldSize, newSize);
   pool->replaceBlocks(oldBlock, newBlock, minSize);
   if (oldSize > newSize) {
@@ -473,9 +472,9 @@ Node* Node::cloneOver(const Node* newNode, bool oldIsTree, bool newIsTree) {
                        newSize - oldSize);
   }
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Replace", finalBlock, newSize);
+  Log(LoggerType::Edition, "Replace", oldBlock, newSize);
 #endif
-  return Node::FromBlocks(finalBlock);
+  return Node::FromBlocks(oldBlock);
 }
 
 Node* Node::moveOver(Node* newNode, bool oldIsTree, bool newIsTree) {

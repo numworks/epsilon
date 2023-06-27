@@ -106,7 +106,7 @@ class Sequence : public Function {
    * - simple recurrence: any term of u other than u(i)
    * - double recurrence: any term of u other than u(i+1), u(i) */
   bool canBeHandledAsExplicit(Poincare::Context *context) const {
-    return !mainExpressionContainsForbiddenTerms(context, false, false);
+    return !mainExpressionContainsForbiddenTerms(context, false, true, true);
   }
   /* Sequence u (with initial rank i) is not computable if main expression
    * contains forbidden terms:
@@ -114,7 +114,7 @@ class Sequence : public Function {
    * - simple recurrence: any term of u other than u(n), u(i)
    * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */
   bool mainExpressionIsNotComputable(Poincare::Context *context) const {
-    return mainExpressionContainsForbiddenTerms(context, true, false);
+    return mainExpressionContainsForbiddenTerms(context, true, true, true);
   }
   int order() const { return static_cast<int>(type()); }
   int firstNonInitialRank() const { return initialRank() + order(); }
@@ -249,9 +249,9 @@ class Sequence : public Function {
   const ExpressionModel *model() const override { return &m_definition; }
   RecordDataBuffer *recordData() const;
 
-  bool mainExpressionContainsForbiddenTerms(Poincare::Context *context,
-                                            bool allowRecursion,
-                                            bool forCobweb) const;
+  bool mainExpressionContainsForbiddenTerms(
+      Poincare::Context *context, bool recursionIsAllowed,
+      bool systemSymbolIsAllowed, bool otherSequencesAreAllowed) const;
 
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;

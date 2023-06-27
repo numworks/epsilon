@@ -137,13 +137,12 @@ bool Sequence::isSuitableForCobweb(Context *context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
              initialRank(), reinterpret_cast<SequenceContext *>(context))) &&
-         !mainExpressionContainsForbiddenTerms(context, true, true);
+         !mainExpressionContainsForbiddenTerms(context, true, false, false);
 }
 
-bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
-                                                    bool allowRecursion,
-                                                    bool forCobweb) const {
-  assert((forCobweb && allowRecursion) || !forCobweb);
+bool Sequence::mainExpressionContainsForbiddenTerms(
+    Context *context, bool recursionIsAllowed, bool systemSymbolIsAllowed,
+    bool otherSequencesAreAllowed) const {
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
@@ -152,13 +151,19 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
     Type type;
     int initialRank;
     bool recursion;
-    bool cobweb;
+    bool systemSymbol;
+    bool otherSequences;
   };
-  Pack pack{buffer, type(), initialRank(), allowRecursion, forCobweb};
+  Pack pack{buffer,
+            type(),
+            initialRank(),
+            recursionIsAllowed,
+            systemSymbolIsAllowed,
+            otherSequencesAreAllowed};
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
-        if (pack->cobweb && e.type() == ExpressionNode::Type::Symbol) {
+        if (!pack->systemSymbol && e.type() == ExpressionNode::Type::Symbol) {
           const Symbol symbol = static_cast<const Symbol &>(e);
           return symbol.isSystemSymbol() ? TrinaryBoolean::True
                                          : TrinaryBoolean::Unknown;
@@ -170,7 +175,8 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
             static_cast<const Poincare::Sequence &>(e);
         char *buffer = pack->name;
         if (strcmp(seq.name(), buffer) != 0) {
-          return pack->cobweb ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+          return !pack->otherSequences ? TrinaryBoolean::True
+                                       : TrinaryBoolean::Unknown;
         }
         Expression rank = seq.childAtIndex(0);
         Type type = pack->type;

@@ -13,10 +13,10 @@
 namespace PoincareJ {
 
 void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
-                                        EditionReference expressionReference) {
-  assert(Builtin::IsBuiltin(expressionReference.type()));
+                                        Node *expression) {
+  assert(Builtin::IsBuiltin(expression->type()));
   EditionPool *editionPool = EditionPool::sharedEditionPool();
-  UTF8Decoder decoder(Builtin::Name(expressionReference.type()).mainAlias());
+  UTF8Decoder decoder(Builtin::Name(expression->type()).mainAlias());
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
     NAry::AddChild(
@@ -28,14 +28,14 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
       editionPool->push<BlockType::ParenthesisLayout>();
   EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
-  for (int j = 0; j < expressionReference.numberOfChildren(); j++) {
+  for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (j != 0) {
       NAry::AddChild(
           newParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>(','));
     }
     // No parentheses within builtin parameters
-    ConvertExpressionToLayout(newParent, expressionReference.nextNode(), true);
+    ConvertExpressionToLayout(newParent, expression->nextNode(), true);
   }
 }
 
@@ -70,15 +70,15 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
   } while (value > 0);
 }
 
-void Expression::ConvertInfixOperatorToLayout(
-    EditionReference layoutParent, EditionReference expressionReference) {
-  BlockType type = expressionReference.type();
+void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
+                                              Node *expression) {
+  BlockType type = expression->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication ||
          type == BlockType::Subtraction);
   CodePoint codepoint = (type == BlockType::Addition)         ? '+'
                         : (type == BlockType::Multiplication) ? '*'
                                                               : '-';
-  int childNumber = expressionReference.numberOfChildren();
+  int childNumber = expression->numberOfChildren();
   for (int i = 0; i < childNumber; i++) {
     if (i > 0) {
       NAry::AddChild(
@@ -86,69 +86,63 @@ void Expression::ConvertInfixOperatorToLayout(
           EditionPool::sharedEditionPool()
               ->push<BlockType::CodePointLayout, CodePoint>(codepoint));
     }
-    ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
+    ConvertExpressionToLayout(layoutParent, expression->nextNode());
   }
 }
 
-void Expression::ConvertPowerOrDivisionToLayout(
-    EditionReference layoutParent, EditionReference expressionReference) {
+void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
+                                                Node *expression) {
   EditionPool *editionPool = EditionPool::sharedEditionPool();
-  BlockType type = expressionReference.type();
-  /* Use Node so that it stays valid. Once first child has been converted, this
-   * will point to second child. */
-  Node *child = expressionReference.nextNode();
+  BlockType type = expression->type();
+  /* Once first child has been converted, this will point to second child. */
+  expression = expression->nextNode();
   EditionReference createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (type == BlockType::Division) {
     createdLayout = editionPool->push<BlockType::FractionLayout>();
     ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                              child, true);
+                              expression, true);
   } else {
     assert(type == BlockType::Power);
-    ConvertExpressionToLayout(layoutParent, child);
+    ConvertExpressionToLayout(layoutParent, expression);
     createdLayout = editionPool->push<BlockType::VerticalOffsetLayout>();
   }
-  ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0), child,
-                            true);
+  ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
+                            expression, true);
   NAry::AddChild(layoutParent, createdLayout);
 }
 
-// Remove expressionReference while converting it to a layout in layoutParent
+// Remove expression while converting it to a layout in layoutParent
 void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
-                                           EditionReference expressionReference,
+                                           Node *expression,
                                            bool forbidParentheses) {
   /* TODO: ConvertExpressionToLayout is a very temporary implementation and must
    *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
-  BlockType type = expressionReference.type();
+  BlockType type = expression->type();
   EditionPool *editionPool = EditionPool::sharedEditionPool();
 
-  if (Builtin::IsBuiltin(type)) {
-    ConvertBuiltinToLayout(layoutParent, expressionReference);
-    expressionReference.removeNode();
-    return;
-  }
-
-  /* Add Parentheses if allowed. No parentheses needed around Multiplication and
-   * Power. */
+  /* Add Parentheses if allowed. No parentheses needed around Multiplication,
+   * Power or Builtins. */
   if (!forbidParentheses && type != BlockType::Multiplication &&
-      type != BlockType::Power && expressionReference.numberOfChildren() > 1) {
+      type != BlockType::Power && !Builtin::IsBuiltin(type) &&
+      expression->numberOfChildren() > 1) {
     EditionReference parenthesis =
         editionPool->push<BlockType::ParenthesisLayout>();
     EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
     NAry::AddChild(layoutParent, parenthesis);
-    return ConvertExpressionToLayout(newParent, expressionReference, true);
+    layoutParent = newParent;
   }
 
   switch (type) {
     case BlockType::Addition:
     case BlockType::Multiplication:
     case BlockType::Subtraction:
-      ConvertInfixOperatorToLayout(layoutParent, expressionReference);
+      ConvertInfixOperatorToLayout(layoutParent, expression);
       break;
     case BlockType::Power:
     case BlockType::Division:
-      ConvertPowerOrDivisionToLayout(layoutParent, expressionReference);
+      ConvertPowerOrDivisionToLayout(layoutParent, expression);
       break;
     case BlockType::Zero:
     case BlockType::MinusOne:
@@ -157,8 +151,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig:
-      ConvertIntegerHandlerToLayout(layoutParent,
-                                    Integer::Handler(expressionReference));
+      ConvertIntegerHandlerToLayout(layoutParent, Integer::Handler(expression));
       break;
     case BlockType::Half:
     case BlockType::RationalShort:
@@ -167,31 +160,29 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       EditionReference createdLayout =
           editionPool->push<BlockType::FractionLayout>();
       ConvertIntegerHandlerToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                    Rational::Numerator(expressionReference));
+                                    Rational::Numerator(expression));
       ConvertIntegerHandlerToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                    Rational::Denominator(expressionReference));
+                                    Rational::Denominator(expression));
       NAry::AddChild(layoutParent, createdLayout);
       break;
     }
     case BlockType::Factorial:
-      ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
+      ConvertExpressionToLayout(layoutParent, expression->nextNode());
       NAry::AddChild(
           layoutParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>('!'));
       break;
     case BlockType::Constant:
+      NAry::AddChild(layoutParent,
+                     editionPool->push<BlockType::CodePointLayout, CodePoint>(
+                         Constant::ToCodePoint(Constant::Type(expression))));
+      break;
+    case BlockType::UserSymbol:
+      assert(*reinterpret_cast<const uint8_t *>(expression->block() + 1) == 1);
       NAry::AddChild(
           layoutParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>(
-              Constant::ToCodePoint(Constant::Type(expressionReference))));
-      break;
-    case BlockType::UserSymbol:
-      assert(*reinterpret_cast<const uint8_t *>(expressionReference.block() +
-                                                1) == 1);
-      NAry::AddChild(layoutParent,
-                     editionPool->push<BlockType::CodePointLayout, CodePoint>(
-                         *reinterpret_cast<const char *>(
-                             expressionReference.block() + 2)));
+              *reinterpret_cast<const char *>(expression->block() + 2)));
       break;
     case BlockType::UserFunction:
     case BlockType::UserSequence:
@@ -200,23 +191,29 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::List:
     case BlockType::Polynomial:
     default:
-      assert(false);
-      NAry::AddChild(
-          layoutParent,
-          editionPool->push<BlockType::CodePointLayout, CodePoint>('?'));
-      break;
+      if (Builtin::IsBuiltin(type)) {
+        ConvertBuiltinToLayout(layoutParent, expression);
+      } else {
+        assert(false);
+        NAry::AddChild(
+            layoutParent,
+            editionPool->push<BlockType::CodePointLayout, CodePoint>('?'));
+        break;
+      }
   }
   // Children have already been removed.
-  expressionReference.removeNode();
+  expression->removeNode();
 }
 
-EditionReference Expression::EditionPoolExpressionToLayout(
-    EditionReference expressionReference) {
-  assert(expressionReference.block()->isExpression());
+EditionReference Expression::EditionPoolExpressionToLayout(Node *expression) {
+  assert(expression->block()->isExpression());
+  /* expression lives before layoutParent in the EditionPool and will be
+   * destroyed in the process. An EditionReference is necessary to keep track of
+   * layoutParent's root. */
   EditionReference layoutParent =
       EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
   // No parentheses on root layout.
-  ConvertExpressionToLayout(layoutParent, expressionReference, true);
+  ConvertExpressionToLayout(layoutParent, expression, true);
   return layoutParent;
 }
 

@@ -21,20 +21,19 @@ class Expression final : public Reference {
   Layout toLayout() const;
   float approximate() const;
 
-  static EditionReference EditionPoolExpressionToLayout(
-      EditionReference expressionReference);
+  static EditionReference EditionPoolExpressionToLayout(Node* expression);
 
  private:
   static void ConvertBuiltinToLayout(EditionReference layoutParent,
-                                     EditionReference expressionReference);
+                                     Node* expression);
   static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                             IntegerHandler handler);
-  static void ConvertInfixOperatorToLayout(
-      EditionReference layoutParent, EditionReference expressionReference);
-  static void ConvertPowerOrDivisionToLayout(
-      EditionReference layoutParent, EditionReference expressionReference);
+  static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
+                                           Node* expression);
+  static void ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
+                                             Node* expression);
   static void ConvertExpressionToLayout(EditionReference layoutParent,
-                                        EditionReference expressionReference,
+                                        Node* expression,
                                         bool forbidParentheses = false);
 };
 

@@ -32,7 +32,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   bool sequenceIsNotComputable(int sequenceIndex);
 
   void stepUntilRank(int sequenceIndex, int rank);
-  int rank(int sequenceIndex, bool intermediateComputation);
+  int rank(int sequenceIndex, bool intermediateComputation) {
+    return *(rankPointer(sequenceIndex, intermediateComputation));
+  }
   double storedValueOfSequenceAtRank(int sequenceIndex, int rank);
 
  private:

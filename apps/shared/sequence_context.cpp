@@ -119,27 +119,24 @@ void TemplatedSequenceContext<T>::shiftValuesRight(int sequenceIndex,
 template <typename T>
 void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   assert(rank >= 0);
+  bool intermediateComputation = m_isInsideComputation;
   Sequence *s = m_sequenceContext->sequenceAtNameIndex(sequenceIndex);
   bool explicitComputation =
       rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit(this);
-
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
+
   T cacheValue = storedValueOfSequenceAtRank(sequenceIndex, rank);
-  if (!OMG::IsSignalingNan(cacheValue)) {
-    return;
-  }
+  bool jumpToRank = explicitComputation || !OMG::IsSignalingNan(cacheValue);
 
-  bool intermediateComputation = m_isInsideComputation;
   m_isInsideComputation = true;
-
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
   if (*currentRank > rank) {
     resetRanksAndValuesOfSequence(sequenceIndex, intermediateComputation);
   }
   while (*currentRank < rank) {
-    int step = explicitComputation ? rank - *currentRank : 1;
+    int step = jumpToRank ? rank - *currentRank : 1;
     stepRanks(sequenceIndex, intermediateComputation, step);
   }
   if (!intermediateComputation) {

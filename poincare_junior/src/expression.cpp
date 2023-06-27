@@ -86,7 +86,10 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
           EditionPool::sharedEditionPool()
               ->push<BlockType::CodePointLayout, CodePoint>(codepoint));
     }
-    ConvertExpressionToLayout(layoutParent, expression->nextNode());
+    bool forbidParentheses = (type == BlockType::Addition) ||
+                             ((type == BlockType::Subtraction) && (i == 0));
+    ConvertExpressionToLayout(layoutParent, expression->nextNode(),
+                              forbidParentheses);
   }
 }
 

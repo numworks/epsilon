@@ -100,7 +100,7 @@ void Sequence::setInitialRank(int rank) {
   m_secondInitialCondition.tidyName();
 }
 
-Poincare::Layout Sequence::nameLayout() {
+Layout Sequence::nameLayout() {
   return HorizontalLayout::Builder(
       CodePointLayout::Builder(fullName()[0]),
       VerticalOffsetLayout::Builder(
@@ -133,7 +133,7 @@ bool Sequence::isEmpty() const {
                                       data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::isSuitableForCobweb(Poincare::Context *context) const {
+bool Sequence::isSuitableForCobweb(Context *context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
              initialRank(), reinterpret_cast<SequenceContext *>(context))) &&
@@ -159,8 +159,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
       [](const Expression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
         if (pack->cobweb && e.type() == ExpressionNode::Type::Symbol) {
-          const Poincare::Symbol symbol =
-              static_cast<const Poincare::Symbol &>(e);
+          const Symbol symbol = static_cast<const Symbol &>(e);
           return symbol.isSystemSymbol() ? TrinaryBoolean::True
                                          : TrinaryBoolean::Unknown;
         }
@@ -176,7 +175,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
         Expression rank = seq.childAtIndex(0);
         Type type = pack->type;
         if (rank.type() == ExpressionNode::Type::BasedInteger) {
-          float rankValue = static_cast<const Poincare::BasedInteger &>(rank)
+          float rankValue = static_cast<const BasedInteger &>(rank)
                                 .integer()
                                 .approximate<float>();
           if ((type != Type::Explicit && rankValue == pack->initialRank) ||
@@ -207,7 +206,7 @@ void Sequence::tidyDownstreamPoolFrom(TreeNode *treePoolCursor) const {
 }
 
 template <typename T>
-T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
+T Sequence::privateEvaluateYAtX(T x, Context *context) const {
   int n = std::round(x);
   return static_cast<T>(
       approximateAtRank(n, reinterpret_cast<SequenceContext *>(context)));
@@ -232,7 +231,7 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx,
     return NAN;
   }
   double x;
-  Poincare::Expression e;
+  Expression e;
   if (rank >= firstNonInitialRank()) {
     x = static_cast<double>(rank - order());
     e = expressionReduced(sqctx);
@@ -254,7 +253,7 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx,
 }
 
 Expression Sequence::sumBetweenBounds(double start, double end,
-                                      Poincare::Context *context) const {
+                                      Context *context) const {
   /* Here, we cannot just create the expression sum(u(n), start, end) because
    * the approximation of u(n) is not handled by Poincare (but only by
    * Sequence). */
@@ -284,7 +283,7 @@ Sequence::RecordDataBuffer *Sequence::recordData() const {
 
 /* Sequence Model */
 
-Poincare::Layout Sequence::SequenceModel::name(Sequence *sequence) {
+Layout Sequence::SequenceModel::name(Sequence *sequence) {
   if (m_name.isUninitialized()) {
     buildName(sequence);
   }
@@ -293,7 +292,7 @@ Poincare::Layout Sequence::SequenceModel::name(Sequence *sequence) {
 
 void Sequence::SequenceModel::tidyName(TreeNode *treePoolCursor) const {
   if (treePoolCursor == nullptr || m_name.isDownstreamOf(treePoolCursor)) {
-    m_name = Poincare::Layout();
+    m_name = Layout();
   }
 }
 
@@ -410,9 +409,7 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
           indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
-template double Sequence::privateEvaluateYAtX<double>(
-    double, Poincare::Context *) const;
-template float Sequence::privateEvaluateYAtX<float>(float,
-                                                    Poincare::Context *) const;
+template double Sequence::privateEvaluateYAtX<double>(double, Context *) const;
+template float Sequence::privateEvaluateYAtX<float>(float, Context *) const;
 
 }  // namespace Shared

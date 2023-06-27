@@ -137,7 +137,7 @@ const char *ConsoleController::inputText(const char *prompt) {
   m_editCell.setText("");
 
   // Reload the history
-  reloadData(true);
+  reloadData();
   appsContainer->redrawWindow();
 
   // Launch a new input loop
@@ -168,7 +168,7 @@ void ConsoleController::viewWillAppear() {
     autoImport();
   }
 
-  reloadData(true);
+  reloadData();
 }
 
 void ConsoleController::didBecomeFirstResponder() {
@@ -339,7 +339,7 @@ bool ConsoleController::textFieldDidFinishEditing(AbstractTextField *textField,
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!isDisplayingViewController()) {
-    reloadData(true);
+    reloadData();
   }
   return true;
 }
@@ -407,20 +407,14 @@ bool ConsoleController::isDisplayingViewController() {
 
 void ConsoleController::refreshPrintOutput() {
   if (!isDisplayingViewController()) {
-    reloadData(false);
+    reloadData();
     AppsContainer::sharedAppsContainer()->redrawWindow();
   }
 }
 
-void ConsoleController::reloadData(bool isEditing) {
+void ConsoleController::reloadData() {
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
-  if (isEditing) {
-    m_editCell.setEditing(true);
-    m_editCell.setText("");
-  } else {
-    m_editCell.setEditing(false);
-  }
 }
 
 /* printText is called by the Python machine.
@@ -487,7 +481,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     runAndPrintForCommand(command);
   }
   if (!isDisplayingViewController() && force) {
-    reloadData(true);
+    reloadData();
   }
 }
 

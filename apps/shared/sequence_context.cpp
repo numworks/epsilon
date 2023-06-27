@@ -115,7 +115,6 @@ void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
   double cacheValue = storedValueOfSequenceAtRank(sequenceIndex, rank);
   bool jumpToRank = explicitComputation || !OMG::IsSignalingNan(cacheValue);
 
-  m_isInsideComputation = true;
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
   if (*currentRank > rank) {
     resetRanksAndValuesOfSequence(sequenceIndex, intermediateComputation);
@@ -124,13 +123,13 @@ void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
     int step = jumpToRank ? rank - *currentRank : 1;
     stepRanks(sequenceIndex, intermediateComputation, step);
   }
-  if (!intermediateComputation) {
-    resetDataOfCurrentComputation();
-  }
 }
 
 void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
                                 int step) {
+  // Update computation state
+  m_isInsideComputation = true;
+
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
   double *values = valuesPointer(sequenceIndex, intermediateComputation);
 
@@ -158,6 +157,11 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
     *values = sequenceAtNameIndex(sequenceIndex)
                   ->approximateAtContextRank(this, intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
+  }
+
+  // Update computation state
+  if (!intermediateComputation) {
+    resetDataOfCurrentComputation();
   }
 }
 

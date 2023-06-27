@@ -50,14 +50,11 @@ double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   for (int loop = 0; loop < 2; loop++) {
-    int storedRank = loop == 0 ? m_mainRanks[sequenceIndex]
-                               : m_intermediateRanks[sequenceIndex];
+    int storedRank = *(rankPointer(sequenceIndex, loop));
     if (storedRank >= 0) {
       int offset = storedRank - rank;
       if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1) {
-        double storedValue = loop == 0
-                                 ? m_mainValues[sequenceIndex][offset]
-                                 : m_intermediateValues[sequenceIndex][offset];
+        double storedValue = *(valuesPointer(sequenceIndex, loop) + offset);
         if (!OMG::IsSignalingNan(storedValue)) {
           return storedValue;
         }
@@ -267,13 +264,6 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
   }
   assert(m_sequenceIsNotComputable[sequenceIndex] != TrinaryBoolean::Unknown);
   return m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::True;
-}
-
-int SequenceContext::rank(int sequenceIndex, bool intermediateComputation) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  return intermediateComputation ? m_intermediateRanks[sequenceIndex]
-                                 : m_mainRanks[sequenceIndex];
 }
 
 }  // namespace Shared

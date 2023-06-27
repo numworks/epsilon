@@ -88,6 +88,7 @@ void Node::logName(std::ostream& stream) const {
       "Log",
       "Logarithm",
       "Polynomial",
+      "SquareRoot",
       "Subtraction",
       "Trig",
       "TrigDiff",

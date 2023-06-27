@@ -263,6 +263,8 @@ PoincareJ::EditionPool::push<PoincareJ::BlockType::Power>();
 template PoincareJ::Node *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Factorial>();
 template PoincareJ::Node *
+PoincareJ::EditionPool::push<PoincareJ::BlockType::SquareRoot>();
+template PoincareJ::Node *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Subtraction>();
 template PoincareJ::Node *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Division>();

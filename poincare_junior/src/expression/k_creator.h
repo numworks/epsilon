@@ -67,6 +67,11 @@ consteval auto KFact(Args... args) {
 }
 
 template <class... Args>
+consteval auto KSqrt(Args... args) {
+  return KUnary<BlockType::SquareRoot>(args...);
+}
+
+template <class... Args>
 consteval auto KLogarithm(Args... args) {
   return KBinary<BlockType::Logarithm>(args...);
 }

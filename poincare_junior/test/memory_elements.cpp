@@ -323,6 +323,14 @@ QUIZ_CASE(pcj_type_block) {
                                          .rational = false,
                                          .number = false,
                                          .userNamed = false}),
+      std::make_pair(BlockType::SquareRoot,
+                     TypeBlockProperties{.nAry = false,
+                                         .expression = true,
+                                         .layout = false,
+                                         .integer = false,
+                                         .rational = false,
+                                         .number = false,
+                                         .userNamed = false}),
       std::make_pair(BlockType::Subtraction,
                      TypeBlockProperties{.nAry = false,
                                          .expression = true,
@@ -451,6 +459,8 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
                              TypeBlock(BlockType::Set), OneBlock});
   assert_tree_equals_blocks(KPow(1_e, 2_e),
                             {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(KSqrt(2_e),
+                            {TypeBlock(BlockType::SquareRoot), TwoBlock});
   assert_tree_equals_blocks(
       KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
   assert_tree_equals_blocks(

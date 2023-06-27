@@ -106,10 +106,10 @@ class Sequence : public Function {
    * - simple recurrence: any term of u other than u(i)
    * - double recurrence: any term of u other than u(i+1), u(i) */
   bool canBeHandledAsExplicit(Poincare::Context *context) const {
-    return !mainExpressionContainsForbiddenTerms(context, false, true, true);
+    return !mainExpressionContainsForbiddenTerms(context, false, true, false);
   }
   /* Sequence u (with initial rank i) is not computable if main expression
-   * contains forbidden terms:
+   * contains another sequence or forbidden terms:
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(n), u(i)
    * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */

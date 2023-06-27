@@ -1013,6 +1013,54 @@ constexpr ToolboxMessageTree menu[] = {
 constexpr ToolboxMessageTree toolboxModel =
     ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
+constexpr static bool catalogContainsAllChildren(const ToolboxMessageTree *list,
+                                                 int numberOfChildren) {
+  constexpr int nCatalog = std::size(catalogChildren);
+  for (int i = 0; i < numberOfChildren; i++) {
+    bool isInCatalog = false;
+    for (int j = 0; j < nCatalog; j++) {
+      if (catalogChildren[j].label() == list[i].label() ||
+          catalogChildren[j].text() == list[i].text()) {
+        isInCatalog = true;
+        break;
+      }
+    }
+    if (!isInCatalog) {
+      return false;
+    }
+  }
+  return true;
+}
+
+static_assert(catalogContainsAllChildren(MathModuleChildren,
+                                         std::size(MathModuleChildren)),
+              "Some functions of math module are not in the python catalog.");
+static_assert(catalogContainsAllChildren(CMathModuleChildren,
+                                         std::size(CMathModuleChildren)),
+              "Some functions of cmath module are not in the python catalog.");
+static_assert(
+    catalogContainsAllChildren(MatplotlibPyplotModuleChildren,
+                               std::size(MatplotlibPyplotModuleChildren)),
+    "Some functions of matplotlib module are not in the python catalog.");
+static_assert(catalogContainsAllChildren(NumpyModuleChildren,
+                                         std::size(NumpyModuleChildren)),
+              "Some functions of numpy module are not in the python catalog.");
+static_assert(catalogContainsAllChildren(TurtleModuleChildren,
+                                         std::size(TurtleModuleChildren)),
+              "Some functions of turtle module are not in the python catalog.");
+static_assert(catalogContainsAllChildren(RandomModuleChildren,
+                                         std::size(RandomModuleChildren)),
+              "Some functions of random module are not in the python catalog.");
+static_assert(
+    catalogContainsAllChildren(KandinskyModuleChildren,
+                               std::size(KandinskyModuleChildren)),
+    "Some functions of kandinsky module are not in the python catalog.");
+static_assert(catalogContainsAllChildren(TimeModuleChildren,
+                                         std::size(TimeModuleChildren)),
+              "Some functions of time module are not in the python catalog.");
+/* Most of Ion key functions are not in catalog so this is not asserted for
+ * Ion submodule. */
+
 PythonToolbox::PythonToolbox() : Toolbox(nullptr, rootModel()->label()) {}
 
 const ToolboxMessageTree *PythonToolbox::moduleChildren(

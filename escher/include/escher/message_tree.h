@@ -11,7 +11,7 @@ class MessageTree {
                         const int numberOfChildren = 0)
       : m_label(label), m_numberOfChildren(numberOfChildren){};
   virtual const MessageTree* childAtIndex(int index) const = 0;
-  I18n::Message label() const { return m_label; }
+  constexpr I18n::Message label() const { return m_label; }
   int numberOfChildren() const { return m_numberOfChildren; }
   bool isNull() const { return (m_label == (I18n::Message)0); }
 

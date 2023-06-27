@@ -315,7 +315,15 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * However if the result is complex, it is treated as a complex result instead
    */
   if (!isComplex) {
-    if (Trigonometry::isInverseTrigonometryFunction(i) ||
+    /* If only the input is trigonometric, but it contains symbols, do not
+     * display trigonometric additional informations, in case the symbol value
+     * is later modified/deleted in the storage and can't be retrieved.
+     * Ex: 0->x; tan(x); 3->x;
+     * => The additional results of tan(x) become inconsistent. And if x is
+     * deleted, it crashes. */
+    bool inputHasSymbols = i.deepIsSymbolic(
+        globalContext, SymbolicComputation::DoNotReplaceAnySymbol);
+    if ((Trigonometry::isInverseTrigonometryFunction(i) && !inputHasSymbols) ||
         Trigonometry::isInverseTrigonometryFunction(o)) {
       // The angle cannot be complex since Expression a isn't
       return AdditionalInformations{.inverseTrigonometry = true};
@@ -323,7 +331,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     Expression directExpression;
     if (Trigonometry::isDirectTrigonometryFunction(o)) {
       directExpression = o;
-    } else if (Trigonometry::isDirectTrigonometryFunction(i)) {
+    } else if (Trigonometry::isDirectTrigonometryFunction(i) &&
+               !inputHasSymbols) {
       directExpression = i;
     }
 

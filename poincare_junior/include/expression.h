@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
+#include <poincare/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -22,6 +23,8 @@ class Expression final : public Reference {
   float approximate() const;
 
   static EditionReference EditionPoolExpressionToLayout(Node* expression);
+  static Poincare::Expression ToPoincareExpression(const Node* exp);
+  static Node* FromPoincareExpression(Poincare::Expression exp);
 
  private:
   static void ConvertBuiltinToLayout(EditionReference layoutParent,
@@ -35,6 +38,7 @@ class Expression final : public Reference {
   static void ConvertExpressionToLayout(EditionReference layoutParent,
                                         Node* expression,
                                         bool allowParentheses = true);
+  static void PushPoincareExpression(Poincare::Expression exp);
 };
 
 static_assert(sizeof(Expression) == sizeof(Reference));

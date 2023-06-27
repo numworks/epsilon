@@ -1,3 +1,4 @@
+#include <poincare_expressions.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/builtin.h>
@@ -5,6 +6,7 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -114,6 +116,152 @@ void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
   ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
                             expression, false);
   NAry::AddChild(layoutParent, createdLayout);
+}
+
+Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
+  BlockType type = exp->type();
+
+  if (Builtin::IsBuiltin(type)) {
+    Poincare::Expression child = ToPoincareExpression(exp->childAtIndex(0));
+    switch (type) {
+      case BlockType::Cosine:
+        return Poincare::Cosine::Builder(child);
+      case BlockType::Sine:
+        return Poincare::Sine::Builder(child);
+      case BlockType::Tangent:
+        return Poincare::Tangent::Builder(child);
+    }
+  }
+
+  switch (type) {
+    case BlockType::Addition: {
+      case BlockType::Multiplication:
+        Poincare::NAryExpression nary =
+            type == BlockType::Addition ? static_cast<Poincare::NAryExpression>(
+                                              Poincare::Addition::Builder())
+                                        : Poincare::Multiplication::Builder();
+        for (const Node *child : exp->children()) {
+          nary.addChildAtIndexInPlace(ToPoincareExpression(child),
+                                      nary.numberOfChildren(),
+                                      nary.numberOfChildren());
+        }
+        return nary;
+    }
+    case BlockType::Subtraction:
+    case BlockType::Power:
+    case BlockType::Division: {
+      Poincare::Expression child0 = ToPoincareExpression(exp->childAtIndex(0));
+      Poincare::Expression child1 = ToPoincareExpression(exp->childAtIndex(1));
+      Poincare::Expression result;
+      if (type == BlockType::Subtraction) {
+        result = Poincare::Subtraction::Builder(child0, child1);
+      } else if (type == BlockType::Division) {
+        result = Poincare::Division::Builder(child0, child1);
+      } else {
+        result = Poincare::Power::Builder(child0, child1);
+      }
+      return result;
+    }
+    case BlockType::Zero:
+    case BlockType::MinusOne:
+    case BlockType::One:
+    case BlockType::Two:
+    case BlockType::IntegerShort:
+    case BlockType::IntegerPosBig:
+    case BlockType::IntegerNegBig:
+      return Poincare::Rational::Builder(Integer::Handler(exp).to<double>());
+    case BlockType::Half:
+    case BlockType::RationalShort:
+    case BlockType::RationalPosBig:
+    case BlockType::RationalNegBig:
+      return Poincare::Rational::Builder(
+          Rational::Numerator(exp).to<double>(),
+          Rational::Denominator(exp).to<double>());
+
+    case BlockType::Factorial:
+    case BlockType::Constant:
+    case BlockType::UserSymbol: {
+      char buffer[20];
+      Symbol::GetName(exp, buffer, std::size(buffer));
+      return Poincare::Symbol::Builder(buffer, Symbol::Length(exp));
+    }
+    case BlockType::UserFunction:
+    case BlockType::UserSequence:
+    case BlockType::Float:
+    case BlockType::Set:
+    case BlockType::List:
+    case BlockType::Polynomial:
+    default:
+      assert(false);
+  }
+}
+
+void Expression::PushPoincareExpression(Poincare::Expression exp) {
+  using OT = Poincare::ExpressionNode::Type;
+  EditionPool *pool = EditionPool::sharedEditionPool();
+  switch (exp.type()) {
+    case OT::Cosine:
+      pool->pushBlock(BlockType::Cosine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Sine:
+      pool->pushBlock(BlockType::Sine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Tangent:
+      pool->pushBlock(BlockType::Tangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Addition:
+    case OT::Multiplication:
+    case OT::Subtraction:
+    case OT::Division:
+    case OT::Power:
+      switch (exp.type()) {
+        case OT::Addition:
+          pool->push<BlockType::Addition>(exp.numberOfChildren());
+          break;
+        case OT::Multiplication:
+          pool->push<BlockType::Multiplication>(exp.numberOfChildren());
+          break;
+        case OT::Subtraction:
+          pool->pushBlock(BlockType::Subtraction);
+          break;
+        case OT::Division:
+          pool->pushBlock(BlockType::Division);
+          break;
+        case OT::Power:
+          pool->pushBlock(BlockType::Power);
+          break;
+      }
+      for (int i = 0; i < exp.numberOfChildren(); i++) {
+        PushPoincareExpression(exp.childAtIndex(i));
+      }
+      return;
+    case OT::Rational: {
+      Poincare::Rational rat = static_cast<Poincare::Rational &>(exp);
+      int num = rat.signedIntegerNumerator().approximate<double>();
+      int den = rat.integerDenominator().approximate<double>();
+      Rational::Push(IntegerHandler(num), IntegerHandler(den));
+      return;
+    }
+    case OT::BasedInteger: {
+      Poincare::BasedInteger i = static_cast<Poincare::BasedInteger &>(exp);
+      int num = i.doubleApproximation();
+      Rational::Push(IntegerHandler(num), IntegerHandler(1));
+      return;
+    }
+    case OT::Symbol: {
+      Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
+      pool->push<BlockType::UserSymbol>(s.name(), strlen(s.name()));
+      return;
+    }
+    default:
+      assert(false);
+  }
+}
+
+Node *Expression::FromPoincareExpression(Poincare::Expression exp) {
+  Node *node = Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
+  PushPoincareExpression(exp);
+  return node;
 }
 
 // Remove expression while converting it to a layout in layoutParent

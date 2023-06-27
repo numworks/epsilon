@@ -1,4 +1,5 @@
 #include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/k_creator.h>
 
 #include "helper.h"
 
@@ -66,3 +67,9 @@ Expression expressionViolatingLifetimeOfData() {
 //   e.log();
 // #endif
 // }
+
+QUIZ_CASE(pcj_poincare_and_back) {
+  const Node* exp = KAdd(KCos("ab"_e), 3_e);
+  assert_trees_are_equal(exp, Expression::FromPoincareExpression(
+                                  Expression::ToPoincareExpression(exp)));
+}

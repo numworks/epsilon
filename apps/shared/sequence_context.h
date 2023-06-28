@@ -39,6 +39,7 @@ class SequenceContext : public Poincare::ContextWithParent {
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
+  constexpr static int k_storageDepth = SequenceStore::k_maxRecurrenceDepth + 1;
 
   int* rankPointer(int sequenceIndex, bool intermediateComputation);
   double* valuesPointer(int sequenceIndex, bool intermediateComputation);
@@ -58,17 +59,15 @@ class SequenceContext : public Poincare::ContextWithParent {
    * computations (ex: computation of v(2) in u(3) = v(2) + 4). If ranks are
    * {9,5,4} then values are {{u9,u8,u7}, {v5,v4,v3}, {w4,w3,w2}}. */
   int m_mainRanks[SequenceStore::k_maxNumberOfSequences];
-  double m_mainValues[SequenceStore::k_maxNumberOfSequences]
-                     [SequenceStore::k_maxRecurrenceDepth + 1];
+  double m_mainValues[SequenceStore::k_maxNumberOfSequences][k_storageDepth];
   int m_intermediateRanks[SequenceStore::k_maxNumberOfSequences];
   double m_intermediateValues[SequenceStore::k_maxNumberOfSequences]
-                             [SequenceStore::k_maxRecurrenceDepth + 1];
+                             [k_storageDepth];
   /* Save initial values to avoid stepping all values back. For example if in an
    * intermediate computation we ask for v(n) with v(n+1) = v(n)+v(0), we will
    * always step to rank n and then step back to rank 0, replacing all values
    * stored in m_intermediateValues. */
-  double m_initialValues[SequenceStore::k_maxNumberOfSequences]
-                        [SequenceStore::k_maxRecurrenceDepth + 1];
+  double m_initialValues[SequenceStore::k_maxNumberOfSequences][k_storageDepth];
 
   SequenceStore* m_sequenceStore;
   bool m_isInsideComputation;

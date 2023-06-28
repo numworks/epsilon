@@ -23,8 +23,7 @@ void SequenceContext::resetValuesOfSequence(int sequenceIndex,
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   double *values = valuesPointer(sequenceIndex, intermediateComputation);
-  for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
-       depth++) {
+  for (int depth = 0; depth < k_storageDepth; depth++) {
     *(values + depth) = OMG::SignalingNan<double>();
   }
 }
@@ -50,11 +49,11 @@ double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   for (int loop = 0; loop < 3; loop++) {
-    int storedRank = loop < 2 ? *(rankPointer(sequenceIndex, loop))
-                              : SequenceStore::k_maxRecurrenceDepth;
+    int storedRank =
+        loop < 2 ? *(rankPointer(sequenceIndex, loop)) : k_storageDepth - 1;
     if (storedRank >= 0) {
       int offset = storedRank - rank;
-      if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1) {
+      if (0 <= offset && offset < k_storageDepth) {
         double storedValue =
             loop < 2 ? *(valuesPointer(sequenceIndex, loop) + offset)
                      : m_initialValues[sequenceIndex][offset];
@@ -83,7 +82,7 @@ double *SequenceContext::valuesPointer(int sequenceIndex,
   double *values = intermediateComputation
                        ? reinterpret_cast<double *>(&m_intermediateValues)
                        : reinterpret_cast<double *>(&m_mainValues);
-  values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
+  values += sequenceIndex * (k_storageDepth);
   return values;
 }
 
@@ -93,14 +92,14 @@ void SequenceContext::shiftValuesRight(int sequenceIndex,
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   assert(delta > 0);
-  if (delta > SequenceStore::k_maxRecurrenceDepth) {
+  if (delta > k_storageDepth - 1) {
     resetValuesOfSequence(sequenceIndex, intermediateComputation);
     return;
   }
   double *values = valuesPointer(sequenceIndex, intermediateComputation);
   int stop = delta - 1;
-  assert(0 <= stop && stop < SequenceStore::k_maxRecurrenceDepth);
-  for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > stop; depth--) {
+  assert(0 <= stop && stop < k_storageDepth - 1);
+  for (int depth = k_storageDepth - 1; depth > stop; depth--) {
     *(values + depth) = *(values + depth - delta);
   }
   for (int depth = stop; depth >= 0; depth--) {
@@ -168,9 +167,9 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
     *values = sequenceAtNameIndex(sequenceIndex)
                   ->approximateAtContextRank(this, intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
-    if (*currentRank <= SequenceStore::k_maxRecurrenceDepth) {
-      m_initialValues[sequenceIndex][SequenceStore::k_maxRecurrenceDepth -
-                                     *currentRank] = *values;
+    if (*currentRank < k_storageDepth) {
+      m_initialValues[sequenceIndex][k_storageDepth - 1 - *currentRank] =
+          *values;
     }
   }
 
@@ -224,7 +223,7 @@ void SequenceContext::resetCache() {
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     resetRanksAndValuesOfSequence(i, true);
     resetRanksAndValuesOfSequence(i, false);
-    for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; ++j) {
+    for (int j = 0; j < k_storageDepth; ++j) {
       m_initialValues[i][j] = OMG::SignalingNan<double>();
     }
   }

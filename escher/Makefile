@@ -35,6 +35,7 @@ escher_src += $(addprefix escher/src/,\
   layout_view.cpp \
   gauge_view.cpp \
   glyphs_view.cpp \
+  heavy_table_size_manager.cpp \
   highlight_cell.cpp \
   highlight_image_cell.cpp \
   horizontal_or_vertical_layout.cpp \

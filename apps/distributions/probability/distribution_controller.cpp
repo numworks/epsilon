@@ -81,7 +81,7 @@ void DistributionController::fillCellForRow(HighlightCell *cell, int row) {
 
 KDCoordinate DistributionController::defaultRowHeight() {
   DistributionCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, 0);
+  return protectedNonMemoizedRowHeight(&tempCell, 0);
 }
 
 void DistributionController::setDistributionAccordingToIndex(int index) {

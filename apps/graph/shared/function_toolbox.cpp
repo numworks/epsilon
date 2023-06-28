@@ -99,7 +99,7 @@ void FunctionToolbox::fillCellForRow(HighlightCell *cell, int row) {
 KDCoordinate FunctionToolbox::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_addedCellType) {
     MenuCell<LayoutView> tempCell;
-    return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+    return protectedNonMemoizedRowHeight(&tempCell, row);
   }
   return MathToolbox::nonMemoizedRowHeight(row);
 }

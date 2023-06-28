@@ -50,7 +50,7 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int row) {
     return ExpressionsListController::nonMemoizedRowHeight(row);
   }
   BufferCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 void UnitListController::fillCellForRow(HighlightCell *cell, int row) {

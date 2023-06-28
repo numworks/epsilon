@@ -73,7 +73,7 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int row) {
   }
   assert(typeAtRow(row) == k_switchCellType);
   PressToTestSwitch tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 void PressToTestController::setParamAtIndex(int index, bool value) {

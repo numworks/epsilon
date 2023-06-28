@@ -866,31 +866,13 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
   }
 
   /* Step 8
-   * Merge with the base if it is a power: (a^b)^c -> a^(b*c)
-   * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
-   * This rule is true if a > 0
-   * OR c is integer
-   *
-   * Note: We also apply if c = -1
-   * If we did not apply this rule on expressions of the form (a^b)^(-1),
-   * we would end up in infinite loop when factorizing an addition on the same
-   * denominator. For ex:
-   * 1+[tan(2)^1/2]^(-1) -->
-   * (tan(2)^1/2+tan(2)^1/2*[tan(2)^1/2]^(-1))/tan(2)^1/2
-   *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
-   *                     -->
-   * tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
-   *                     --> ...
-   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is -1. */
+   * Merge with the base if it is a power: (a^b)^c -> a^(b*c) */
   if (baseType == ExpressionNode::Type::Power) {
     Expression a = base.childAtIndex(0);
     Expression b = base.childAtIndex(1);
-    /* For (a^b)^c, apply the rule :
-     * if c = -1
-     * OR a > 0
-     * OR c is integer */
-    if ((index.isNumber() && (static_cast<Number &>(index).isInteger() ||
-                              static_cast<Number &>(index).isMinusOne())) ||
+    /* This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
+     * This rule is true only if a > 0 OR c is integer */
+    if ((index.isNumber() && static_cast<Number &>(index).isInteger()) ||
         a.isPositive(context) == TrinaryBoolean::True ||
         a.approximateToScalar<double>(context, reductionContext.complexFormat(),
                                       reductionContext.angleUnit(),

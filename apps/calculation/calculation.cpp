@@ -322,6 +322,7 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
 
 void Calculation::fillExpressionsForAdditionalResults(
     Expression *input, Expression *exactOutput, Expression *approximateOutput) {
+  return;
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   *input = this->input();

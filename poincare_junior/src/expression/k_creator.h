@@ -10,6 +10,7 @@
 namespace PoincareJ {
 
 // Constructors
+consteval auto KHalf() { return Tree<BlockType::Half>(); }
 
 template <class... Args>
 consteval auto KAbs(Args... args) {

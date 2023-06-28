@@ -92,7 +92,7 @@ bool DetailsListController::canStoreCellAtRow(int row) {
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int row) {
   PhysicalQuantityCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 const DataField *DetailsListController::DataFieldForRow(int row) {

@@ -193,13 +193,13 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int row) {
   if (m_currentPage == Page::RootMenu) {
     if (row == defineVariableCellIndex()) {
       MenuCell<MessageTextView> tempCell;
-      return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+      return protectedNonMemoizedRowHeight(&tempCell, row);
     }
     Escher::NestedMenuController::NodeCell tempCell;
-    return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+    return protectedNonMemoizedRowHeight(&tempCell, row);
   }
   LeafCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 int MathVariableBoxController::typeAtRow(int row) const {

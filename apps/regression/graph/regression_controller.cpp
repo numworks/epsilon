@@ -84,7 +84,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 KDCoordinate RegressionController::nonMemoizedRowHeight(int row) {
   assert(row >= 0 && row < numberOfRows());
   MenuCell<MessageTextView, LayoutView> tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 HighlightCell *RegressionController::reusableCell(int index, int type) {

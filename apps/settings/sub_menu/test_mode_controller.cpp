@@ -10,7 +10,7 @@ namespace Settings {
 
 KDCoordinate TestModeController::nonMemoizedRowHeight(int row) {
   MenuCell<MessageTextView, EmptyCellWidget, ChevronView> tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 HighlightCell* TestModeController::reusableCell(int index, int type) {

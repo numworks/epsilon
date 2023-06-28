@@ -1013,14 +1013,16 @@ constexpr ToolboxMessageTree menu[] = {
 constexpr ToolboxMessageTree toolboxModel =
     ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
-constexpr static bool catalogContainsAllChildren(const ToolboxMessageTree *list,
-                                                 int numberOfChildren) {
+constexpr static bool catalogContainsAllChildren(
+    const ToolboxMessageTree *list, int numberOfChildren,
+    bool sameCaptionIsEnough = false) {
   constexpr int nCatalog = std::size(catalogChildren);
   for (int i = 0; i < numberOfChildren; i++) {
     bool isInCatalog = false;
     for (int j = 0; j < nCatalog; j++) {
-      if (catalogChildren[j].label() == list[i].label() ||
-          catalogChildren[j].text() == list[i].text()) {
+      if (catalogChildren[j].text() == list[i].text() &&
+          (sameCaptionIsEnough ||
+           catalogChildren[j].label() == list[i].label())) {
         isInCatalog = true;
         break;
       }
@@ -1035,8 +1037,9 @@ constexpr static bool catalogContainsAllChildren(const ToolboxMessageTree *list,
 static_assert(catalogContainsAllChildren(MathModuleChildren,
                                          std::size(MathModuleChildren)),
               "Some functions of math module are not in the python catalog.");
+// cos(z) is same as cos(x) so having the same caption is enough for cmath
 static_assert(catalogContainsAllChildren(CMathModuleChildren,
-                                         std::size(CMathModuleChildren)),
+                                         std::size(CMathModuleChildren), true),
               "Some functions of cmath module are not in the python catalog.");
 static_assert(
     catalogContainsAllChildren(MatplotlibPyplotModuleChildren,

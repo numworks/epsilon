@@ -47,10 +47,10 @@ PatternMatching::MatchContext::MatchContext(const Node* source,
       m_globalPatternEnd(m_localPatternEnd) {}
 
 int PatternMatching::MatchContext::remainingLocalTrees(const Node* node) const {
-  assert(m_localSourceRoot->block()->isSimpleNAry());
   if (ReachedLimit(node, m_localSourceEnd)) {
     return 0;
   }
+  assert(m_localSourceRoot->block()->isSimpleNAry());
   // Parent is expected to be m_localSourceRoot, but we need nodePosition.
   int nodePosition;
   const Node* parent =

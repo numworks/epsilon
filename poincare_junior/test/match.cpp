@@ -64,6 +64,26 @@ QUIZ_CASE(pcj_match) {
   quiz_assert(PatternMatching::Match(p, t2, &ctx4));
   assert_trees_are_equal(ctx4.getNode(Placeholder::A), 1_e);
   assert_trees_are_equal(ctx4.getNode(Placeholder::B), 2_e);
+
+  PatternMatching::Context ctx5;
+  const Node* n5 = KExp(KMult(KFact(1_e)));
+  quiz_assert(
+      PatternMatching::Match(KExp(KMult(KAnyTreesPlaceholder<A>(), KFact(1_e),
+                                        KAnyTreesPlaceholder<C>())),
+                             n5, &ctx5));
+  PatternMatching::Context ctx6;
+  const Node* n6 = EditionReference(KMult(1_e, KAdd(1_e, KMult(1_e, 2_e))));
+  quiz_assert(PatternMatching::Match(
+      KMult(1_e, KAdd(1_e, KMult(1_e, 2_e, KAnyTreesPlaceholder<A>()))), n6,
+      &ctx6));
+  PatternMatching::Context ctx7;
+  quiz_assert(PatternMatching::Match(
+      KMult(1_e, KAdd(1_e, KMult(1_e, 2_e), KAnyTreesPlaceholder<A>())), n6,
+      &ctx7));
+  PatternMatching::Context ctx8;
+  quiz_assert(PatternMatching::Match(
+      KMult(1_e, KAdd(1_e, KMult(1_e, 2_e)), KAnyTreesPlaceholder<A>()), n6,
+      &ctx8));
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {

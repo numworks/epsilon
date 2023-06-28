@@ -92,7 +92,7 @@ void SequenceContext::shiftValuesRight(int sequenceIndex,
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   assert(delta > 0);
-  if (delta > k_storageDepth - 1) {
+  if (delta >= k_storageDepth) {
     resetValuesOfSequence(sequenceIndex, intermediateComputation);
     return;
   }

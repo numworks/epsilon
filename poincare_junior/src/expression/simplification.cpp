@@ -651,10 +651,12 @@ bool Simplification::ShallowBeautify(EditionReference* ref, void* context) {
          // exp(0.5*ln(A)) -> Sqrt(A)
          ref->matchAndReplace(KExp(KMult(0.5_e, KLn(KPlaceholder<A>()))),
                               KSqrt(KPlaceholder<A>())) ||
-         // exp(ln(A) * B?) -> A^B
+         // exp(A? * ln(B) * C?) -> B^(A*C)
          ref->matchAndReplace(
-             KExp(KMult(KLn(KPlaceholder<A>()), KAnyTreesPlaceholder<B>())),
-             KPow(KPlaceholder<A>(), KMult(KAnyTreesPlaceholder<B>()))) ||
+             KExp(KMult(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
+                        KAnyTreesPlaceholder<C>())),
+             KPow(KPlaceholder<B>(), KMult(KAnyTreesPlaceholder<A>(),
+                                           KAnyTreesPlaceholder<C>()))) ||
          // exp(A) -> e^A
          ref->matchAndReplace(KExp(KPlaceholder<A>()),
                               KPow(e_e, KPlaceholder<A>())) ||

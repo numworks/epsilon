@@ -177,6 +177,10 @@ QUIZ_CASE(pcj_simplification_beautify) {
   Simplification::DeepBeautify(&ref3);
   assert_trees_are_equal(ref3, KSqrt("y"_e));
 
+  EditionReference ref4(KExp(KMult(2.5_e, KLn("y"_e))));
+  Simplification::DeepBeautify(&ref4);
+  assert_trees_are_equal(ref4, KPow("y"_e, 2.5_e));
+
   EditionReference ref5(
       KAdd(KMult(-1_e, "w"_e), "x"_e, KMult(-1_e, "y"_e), KMult(-1_e, "z"_e)));
   Simplification::DeepBeautify(&ref5);

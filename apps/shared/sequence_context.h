@@ -39,7 +39,7 @@ class SequenceContext : public Poincare::ContextWithParent {
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
-  constexpr static int k_storageDepth = SequenceStore::k_maxRecurrenceDepth + 1;
+  constexpr static int k_storageDepth = 6;
   constexpr static int k_numberOfSequences =
       SequenceStore::k_maxNumberOfSequences;
 

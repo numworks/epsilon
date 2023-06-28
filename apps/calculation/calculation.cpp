@@ -173,6 +173,8 @@ static bool ShouldOnlyDisplayExactOutput(Expression input) {
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
+  // TODO remove this
+  return DisplayOutput::ExactAndApproximate;
   if (m_displayOutput != DisplayOutput::Unknown) {
     return m_displayOutput;
   }

@@ -44,7 +44,7 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeightWithWidthInit(
   if (!tempCell->isVisible()) {
     return 0;
   }
-  tempCell->setSize((KDSize(m_availableWidth, Ion::Display::Height)));
+  initCellSize(tempCell);
   return protectedNonMemoizedRowHeight(tempCell, row);
 }
 
@@ -54,16 +54,20 @@ KDCoordinate ListViewDataSource::protectedNonMemoizedRowHeight(
   if (!cell->isVisible()) {
     return 0;
   }
+  initCellSize(cell);
+  // Setup cell as if it was to be displayed
+  fillCellForRow(cell, row);
+  // Return cell's height
+  return cell->minimalSizeForOptimalDisplay().height();
+}
+
+void ListViewDataSource::initCellSize(HighlightCell* cell) const {
   /* Some cells have to know their width to be able to compute their required
    * height */
   // TODO: setSize only if the cell really needs it
   if (cell->bounds().width() == 0) {
     cell->setSize(KDSize(m_availableWidth, Ion::Display::Height));
   }
-  // Setup cell as if it was to be displayed
-  fillCellForRow(cell, row);
-  // Return cell's height
-  return cell->minimalSizeForOptimalDisplay().height();
 }
 
 }  // namespace Escher

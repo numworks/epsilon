@@ -82,10 +82,10 @@ void Pool::logNode(std::ostream& stream, const Node* node, bool recursive,
   Indent(stream, indentation);
   stream << "<Reference id=\"";
   referenceTable()->logIdsForNode(stream, node);
-  stream << "\">";
+  stream << "\">\n";
   node->log(stream, recursive, verbose, indentation + 1);
   Indent(stream, indentation);
-  stream << "</Reference>";
+  stream << "</Reference>" << std::endl;
 }
 
 void Pool::log(std::ostream& stream, LogFormat format, bool verbose,
@@ -93,7 +93,7 @@ void Pool::log(std::ostream& stream, LogFormat format, bool verbose,
   const char* formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
   stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\""
-         << size() << "\">";
+         << size() << "\">\n";
   if (format == LogFormat::Tree) {
     for (const Node* tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);

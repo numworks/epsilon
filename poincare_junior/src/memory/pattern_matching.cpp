@@ -15,11 +15,11 @@ bool PatternMatching::Context::isUninitialized() const {
 
 #if POINCARE_MEMORY_TREE_LOG
 void PatternMatching::Context::log() const {
-  std::cout << "<Context>";
+  std::cout << "<Context>\n";
   for (int i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     int numberOfTress = m_numberOfTrees[i];
-    std::cout << "\n  <PlaceHolder tag=" << i << " trees=" << numberOfTress
-              << ">";
+    std::cout << "  <PlaceHolder tag=" << i << " trees=" << numberOfTress
+              << ">\n";
     const Node* tree = m_array[i];
     if (tree) {
       for (int j = 0; j < numberOfTress; j++) {
@@ -30,9 +30,9 @@ void PatternMatching::Context::log() const {
       // TODO
       // Node().log(std::cout, true, true, 2);
     }
-    std::cout << "\n  </PlaceHolder>";
+    std::cout << "  </PlaceHolder>\n";
   }
-  std::cout << "\n</Context>\n";
+  std::cout << "</Context>\n";
 }
 #endif
 

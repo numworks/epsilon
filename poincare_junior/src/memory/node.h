@@ -46,16 +46,12 @@ class Node {
   }
 
 #if POINCARE_MEMORY_TREE_LOG
-  __attribute__((__used__)) void log() const {
-    log(std::cout);
-    std::cout << "\n";
-  }
-  __attribute__((__used__)) void logDiffWith(Node* n) const {
+  __attribute__((__used__)) void log() const { log(std::cout); }
+  __attribute__((__used__)) void logDiffWith(const Node* n) const {
     log(std::cout, true, false, 0, n);
-    std::cout << "\n";
   }
   void log(std::ostream& stream, bool recursive = true, bool verbose = true,
-           int indentation = 0, Node* comparison = nullptr) const;
+           int indentation = 0, const Node* comparison = nullptr) const;
   void logName(std::ostream& stream) const;
   void logAttributes(std::ostream& stream) const;
   __attribute__((__used__)) void logBlocks() const { logBlocks(std::cout); }

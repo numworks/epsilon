@@ -13,16 +13,16 @@ namespace PoincareJ {
 #if POINCARE_MEMORY_TREE_LOG
 
 void Node::log(std::ostream& stream, bool recursive, bool verbose,
-               int indentation, Node* comparison) const {
+               int indentation, const Node* comparison) const {
   Indent(stream, indentation);
   if (comparison && !isIdenticalTo(comparison)) {
-    stream << "<<<<<<<";
+    stream << "<<<<<<<\n";
     log(stream, recursive, verbose, indentation);
     Indent(stream, indentation);
-    stream << "=======";
+    stream << "=======\n";
     comparison->log(stream, recursive, verbose, indentation);
     Indent(stream, indentation);
-    stream << ">>>>>>>";
+    stream << ">>>>>>>\n";
     return;
   }
   stream << "<";
@@ -36,7 +36,7 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
   if (recursive) {
     for (auto [child, index] : NodeIterator::Children<NoEditable>(this)) {
       if (!tagIsClosed) {
-        stream << ">";
+        stream << ">\n";
         tagIsClosed = true;
       }
       child->log(stream, recursive, verbose, indentation + 1,
@@ -47,9 +47,9 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
     Indent(stream, indentation);
     stream << "</";
     logName(stream);
-    stream << ">";
+    stream << ">\n";
   } else {
-    stream << "/>";
+    stream << "/>\n";
   }
 }
 

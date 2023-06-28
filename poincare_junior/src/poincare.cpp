@@ -82,9 +82,6 @@ void Log(LoggerType type, const char* event, void* blockAddress,
 
 #if POINCARE_MEMORY_TREE_LOG
 void Indent(std::ostream& stream, int indentation) {
-  if (indentation > 0) {
-    stream << "\n";
-  }
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
   }

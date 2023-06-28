@@ -35,9 +35,8 @@ EditionReference::EditionReference(Node* node) {
 
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
-  std::cout << "id: " << m_identifier;
+  std::cout << "id: " << m_identifier << "\n";
   node()->log(std::cout, true, 1, true);
-  std::cout << std::endl;
 }
 #endif
 

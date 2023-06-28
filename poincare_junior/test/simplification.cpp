@@ -193,11 +193,7 @@ void simplifies_to(const char* input, const char* output) {
   EditionReference expression = RackParser(inputLayout).parse();
   inputLayout.removeTree();
   quiz_assert(!expression.isUninitialized());
-  Simplification::DeepSystemProjection(&expression);
-  quiz_assert(!expression.isUninitialized());
-  Simplification::SystematicReduce(&expression);
-  quiz_assert(!expression.isUninitialized());
-  Simplification::DeepBeautify(&expression);
+  Simplification::Simplify(&expression);
   quiz_assert(!expression.isUninitialized());
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(expression);
@@ -233,4 +229,5 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a*a", "a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*a^(3)*b^(2)");
   simplifies_to("d+c+b+a", "a+b+c+d");
+  simplifies_to("e^(ln(x))", "x");
 }

@@ -800,7 +800,7 @@ bool Simplification::ApplyShallowInDepth(EditionReference* ref,
 
 bool Simplification::AdvanceReduceOnTranscendental(EditionReference* ref,
                                                    bool change) {
-  if (change && ReduceInverseFunction(ref)) {
+  if (change || ReduceInverseFunction(ref)) {
     return true;
   }
   size_t treeSize = ref->treeSize();

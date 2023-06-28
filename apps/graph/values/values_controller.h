@@ -9,6 +9,7 @@
 #include <escher/button_state.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
+#include <escher/heavy_table_size_manager.h>
 #include <escher/scrollable_two_layouts_cell.h>
 #include <escher/toggleable_dot_view.h>
 #include <omg/round.h>
@@ -19,7 +20,8 @@
 namespace Graph {
 
 class ValuesController : public Shared::ValuesController,
-                         public Escher::PrefacedTableViewDelegate {
+                         public Escher::PrefacedTableViewDelegate,
+                         public Escher::HeavyTableSizeManagerDelegate {
  public:
   ValuesController(Escher::Responder *parentResponder,
                    Escher::ButtonRowController *header,
@@ -85,13 +87,25 @@ class ValuesController : public Shared::ValuesController,
    * when exact results are switched on is slow because all layouts
    * need to be computed. The speed optimization could come from either
    * a change of API or a change in the way scrollView/tableView work. */
-  KDCoordinate nonMemoizedColumnWidth(int column) override;
-  KDCoordinate nonMemoizedRowHeight(int row) override;
+  KDCoordinate nonMemoizedColumnWidth(int column) override {
+    assert(false);
+    return -1;
+  }
+  KDCoordinate nonMemoizedRowHeight(int row) override {
+    assert(false);
+    return -1;
+  }
   Escher::TableSize1DManager *columnWidthManager() override {
-    return &m_widthManager;
+    return m_tableSizeManager.columnWidthManager();
   }
   Escher::TableSize1DManager *rowHeightManager() override {
-    return &m_heightManager;
+    return m_tableSizeManager.rowHeightManager();
+  }
+
+  // HeavyTableSizeManagerDelegate
+  KDSize cellSizeAtLocation(int row, int col) override;
+  KDSize maxCellSize() const override {
+    return KDSize(k_maxColumnWidth, k_maxRowHeight);
   }
 
   // ColumnHelper
@@ -101,7 +115,9 @@ class ValuesController : public Shared::ValuesController,
   void reloadEditedCell(int column, int row) override;
   void updateSizeMemoizationForRow(int row,
                                    KDCoordinate rowPreviousHeight) override {
-    m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight);
+    // TODO
+    resetSizeMemoization();
+    // m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight);
   }
   void setTitleCellStyle(Escher::HighlightCell *titleCell, int column) override;
 
@@ -169,8 +185,8 @@ class ValuesController : public Shared::ValuesController,
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
-  Escher::MemoizedColumnWidthManager<7> m_widthManager;
-  Escher::MemoizedRowHeightManager<10> m_heightManager;
+  // TODO: These numerical values are temp
+  Escher::HeavyTableSizeManager<103, 15> m_tableSizeManager;
   bool m_exactValuesAreActivated;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };

@@ -66,8 +66,7 @@ ValuesController::ValuesController(
               },
               this),
           &m_exactValuesDotView, k_cellFont),
-      m_widthManager(this),
-      m_heightManager(this),
+      m_tableSizeManager(this),
       m_exactValuesAreActivated(false) {
   m_prefacedTwiceTableView.setPrefaceDelegate(this);
   initValueCells();
@@ -169,86 +168,43 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
          KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 
-// TableViewDataSource
+// HeavyTableSizeManagerDelegate
 
-KDCoordinate ValuesController::nonMemoizedColumnWidth(int column) {
-  KDCoordinate columnWidth;
-  KDCoordinate maxColumnWidth = k_maxColumnWidth;
+KDSize ValuesController::cellSizeAtLocation(int row, int column) {
+  if (row >= numberOfRows() || column >= numberOfColumns()) {
+    return KDSize(TableSize1DManager::k_undefinedSize,
+                  TableSize1DManager::k_undefinedSize);
+  }
+
+  KDCoordinate columnWidth = Shared::ValuesController::defaultColumnWidth();
+  KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
+
+  // Special case for parametric functions
   int tempI = column;
   ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
-  if (tempI > 0 && symbol == ContinuousFunctionProperties::SymbolType::T) {
-    // Default width is larger for parametric functions
-    columnWidth = ApproximatedParametricCellSize().width();
-  } else {
-    columnWidth = Shared::ValuesController::defaultColumnWidth();
-  }
-  if (typeAtLocation(column, 0) == k_functionTitleCellType) {
-    columnWidth = std::min(
-        maxColumnWidth,
-        std::max(CellSizeWithLayout(functionTitleLayout(column)).width(),
-                 columnWidth));
-  }
-  if (!m_exactValuesAreActivated) {
-    // Width is constant when displaying approximations
-    return columnWidth;
-  }
-  int nRows = numberOfElementsInColumn(column) + 1;
-  for (int row = 0; row < nRows; row++) {
-    if (typeAtLocation(column, row) == k_notEditableValueCellType) {
-      Layout l = memoizedLayoutForCell(column, row);
-      assert(!l.isUninitialized());
-      columnWidth = std::max(CellSizeWithLayout(l).width(), columnWidth);
-      if (columnWidth > maxColumnWidth) {
-        return maxColumnWidth;
-      }
+  if (!m_exactValuesAreActivated && tempI > 0 &&
+      symbol == ContinuousFunctionProperties::SymbolType::T) {
+    if (tempI > 0) {
+      columnWidth = ApproximatedParametricCellSize().width();
+    }
+    if (row <= numberOfElementsInColumn(column) && row > 0) {
+      rowHeight = ApproximatedParametricCellSize().height();
     }
   }
-  return columnWidth;
-}
 
-KDCoordinate ValuesController::nonMemoizedRowHeight(int row) {
-  KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
-  KDCoordinate maxRowHeight = k_maxRowHeight;
-  int nColumns = numberOfColumns();
-  if (row == 0) {
-    for (int i = 0; i < nColumns; i++) {
-      if (typeAtLocation(i, 0) == k_functionTitleCellType) {
-        rowHeight = std::max(
-            CellSizeWithLayout(functionTitleLayout(i)).height(), rowHeight);
-      }
-      if (rowHeight > maxRowHeight) {
-        return maxRowHeight;
-      }
-    }
-    return rowHeight;
+  KDSize size(columnWidth, rowHeight);
+  if (typeAtLocation(column, row) == k_functionTitleCellType) {
+    size = CellSizeWithLayout(functionTitleLayout(column));
+  } else if (m_exactValuesAreActivated &&
+             typeAtLocation(column, row) == k_notEditableValueCellType) {
+    // Size is constant when displaying approximations
+    Layout l = memoizedLayoutForCell(column, row);
+    assert(!l.isUninitialized());
+    size = CellSizeWithLayout(l);
   }
-  for (int i = 0; i < nColumns; i++) {
-    int tempI = i;
-    ContinuousFunctionProperties::SymbolType symbol =
-        symbolTypeAtColumn(&tempI);
-    if (!m_exactValuesAreActivated) {
-      if (symbol != ContinuousFunctionProperties::SymbolType::T ||
-          row >= numberOfElementsInColumn(i) + 1) {
-        /* Height is constant when exact result is not displayed and
-         * either there is no parametric function or it's the last row
-         * of the column. */
-        continue;
-      } else {
-        return ApproximatedParametricCellSize().height();
-      }
-    }
-    if (typeAtLocation(i, row) == k_notEditableValueCellType &&
-        row < numberOfElementsInColumn(i) + 1) {
-      assert(m_exactValuesAreActivated);
-      Layout l = memoizedLayoutForCell(i, row);
-      assert(!l.isUninitialized());
-      rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
-      if (rowHeight > maxRowHeight) {
-        return maxRowHeight;
-      }
-    }
-  }
-  return rowHeight;
+  columnWidth = std::max(size.width(), columnWidth);
+  rowHeight = std::max(size.height(), rowHeight);
+  return KDSize(columnWidth, rowHeight);
 }
 
 // ColumnHelper
@@ -425,8 +381,10 @@ void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(
         k_maxColumnWidth,
         CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {
-      m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth,
-                                               minimalWidthForColumn);
+      // TODO
+      resetSizeMemoization();
+      // m_widthManager.updateMemoizationForIndex(column,
+      // columnPreviousWidth, minimalWidthForColumn);
     }
   }
 }

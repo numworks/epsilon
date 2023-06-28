@@ -46,8 +46,8 @@ double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
                                                     int rank) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   for (int loop = 0; loop < 3; loop++) {
-    int storedRank =
-        loop < 2 ? *(rankPointer(sequenceIndex, loop)) : k_storageDepth - 1;
+    int storedRank = loop < 2 ? *(rankPointer(sequenceIndex, loop))
+                              : rankForInitialValuesStorage(sequenceIndex);
     if (storedRank >= 0) {
       int offset = storedRank - rank;
       if (0 <= offset && offset < k_storageDepth) {
@@ -159,9 +159,10 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
     *values = sequenceAtNameIndex(sequenceIndex)
                   ->approximateAtContextRank(this, intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
-    if (*currentRank < k_storageDepth) {
-      m_initialValues[sequenceIndex][k_storageDepth - 1 - *currentRank] =
-          *values;
+    // Store value in initial storage if rank is in the right range
+    int offset = rankForInitialValuesStorage(sequenceIndex) - *currentRank;
+    if (0 <= offset && offset < k_storageDepth) {
+      m_initialValues[sequenceIndex][offset] = *values;
     }
   }
 
@@ -263,6 +264,10 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
   }
   assert(m_sequenceIsNotComputable[sequenceIndex] != TrinaryBoolean::Unknown);
   return m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::True;
+}
+
+int SequenceContext::rankForInitialValuesStorage(int sequenceIndex) const {
+  return sequenceAtNameIndex(sequenceIndex)->initialRank() + k_storageDepth - 1;
 }
 
 }  // namespace Shared

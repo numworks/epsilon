@@ -56,6 +56,7 @@ class SequenceContext : public Poincare::ContextWithParent {
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
+  int rankForInitialValuesStorage(int sequenceIndex) const;
 
   /* Main ranks for main computations and intermediate ranks for intermediate
    * computations (ex: computation of v(2) in u(3) = v(2) + 4). If ranks are

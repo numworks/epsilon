@@ -124,11 +124,12 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-void ListWithTopAndBottomController::didBecomeFirstResponder() {
+void ListWithTopAndBottomController::viewWillAppear() {
   resetMemoization();
   selectFirstCell();
   setOffset(KDPointZero);
-  m_selectableListView.reloadData();
+  m_selectableListView.reloadData(false);
+  ViewController::viewWillAppear();
 }
 
 }  // namespace Escher

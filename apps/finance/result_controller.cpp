@@ -15,7 +15,7 @@ ResultController::ResultController(Escher::StackViewController* parentResponder)
     : Escher::ListWithTopAndBottomController(parentResponder, &m_messageView),
       m_messageView(I18n::Message::CalculatedValues, k_messageFormat) {}
 
-void ResultController::didBecomeFirstResponder() {
+void ResultController::viewWillAppear() {
   /* Build the result cell here because it only needs to be updated once this
    * controller become first responder. */
   m_cell.label()->setMessage(App::GetInterestData()->labelForParameter(
@@ -33,7 +33,8 @@ void ResultController::didBecomeFirstResponder() {
   m_cell.accessory()->setText(buffer);
   resetMemoization(true);
   selectRow(-1);
-  m_selectableListView.reloadData();
+  m_selectableListView.reloadData(false);
+  ViewController::viewWillAppear();
 }
 
 bool ResultController::handleEvent(Ion::Events::Event event) {

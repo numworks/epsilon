@@ -180,13 +180,13 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void PressToTestController::didBecomeFirstResponder() {
+void PressToTestController::viewWillAppear() {
   // Reset selection and params only if exam mode has been activated.
   if (Preferences::sharedPreferences->examMode().isActive()) {
     resetController();
   }
   setMessages();
-  ListWithTopAndBottomController::didBecomeFirstResponder();
+  ListWithTopAndBottomController::viewWillAppear();
 }
 
 int PressToTestController::numberOfRows() const {

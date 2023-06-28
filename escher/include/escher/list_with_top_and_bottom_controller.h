@@ -91,7 +91,10 @@ class ListWithTopAndBottomController : public SelectableViewController,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
 
-  void didBecomeFirstResponder() override;
+  void didBecomeFirstResponder() override {
+    App::app()->setFirstResponder(&m_selectableListView);
+  }
+  void viewWillAppear() override;
   int innerRowFromRow(int row) const {
     assert(row >= m_outerDataSource.hasTopView());
     return row - m_outerDataSource.hasTopView();

@@ -38,7 +38,7 @@ const char *ParametersController::title() {
   return m_titleBuffer;
 }
 
-void ParametersController::didBecomeFirstResponder() {
+void ParametersController::viewWillAppear() {
   // Init from data
   m_dropdownDataSource.setMessages(
       App::GetInterestData()->dropdownMessageAtIndex(0),
@@ -46,7 +46,7 @@ void ParametersController::didBecomeFirstResponder() {
   m_dropdown.selectRow(App::GetInterestData()->m_booleanParam ? 0 : 1);
   m_dropdown.init();
   m_dropdown.reloadAllCells();
-  ListWithTopAndBottomController::didBecomeFirstResponder();
+  ListWithTopAndBottomController::viewWillAppear();
 }
 
 bool ParametersController::handleEvent(Ion::Events::Event event) {

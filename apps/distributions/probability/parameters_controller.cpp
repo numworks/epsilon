@@ -49,8 +49,6 @@ void ParametersController::viewWillAppear() {
   } else {
     setBottomView(nullptr);
   }
-  resetMemoization();
-  m_selectableListView.reloadData();
   FloatParameterController::viewWillAppear();
 }
 

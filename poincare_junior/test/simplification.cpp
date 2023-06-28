@@ -176,6 +176,12 @@ QUIZ_CASE(pcj_simplification_beautify) {
   EditionReference ref3(KExp(KMult(0.5_e, KLn("y"_e))));
   Simplification::DeepBeautify(&ref3);
   assert_trees_are_equal(ref3, KSqrt("y"_e));
+
+  EditionReference ref5(
+      KAdd(KMult(-1_e, "w"_e), "x"_e, KMult(-1_e, "y"_e), KMult(-1_e, "z"_e)));
+  Simplification::DeepBeautify(&ref5);
+  assert_trees_are_equal(
+      ref5, KSub(KSub(KAdd(KMult(-1_e, "w"_e), "x"_e), "y"_e), "z"_e));
 }
 
 void simplifies_to(const char* input, const char* output) {

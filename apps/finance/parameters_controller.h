@@ -18,7 +18,7 @@ class ParametersController : public Shared::FloatParameterController<double>,
   ParametersController(Escher::StackViewController* parent,
                        ResultController* resultController);
   const char* title() override;
-  void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;

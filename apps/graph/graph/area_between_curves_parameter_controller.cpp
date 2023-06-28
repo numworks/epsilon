@@ -62,12 +62,6 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
          Metric::CellSeparatorThickness;
 }
 
-void AreaBetweenCurvesParameterController::viewWillAppear() {
-  ViewController::viewWillAppear();
-  resetMemoization();
-  m_selectableListView.reloadData();
-}
-
 void AreaBetweenCurvesParameterController::fillCellForRow(
     Escher::HighlightCell *cell, int row) {
   ExpiringPointer<ContinuousFunction> function =

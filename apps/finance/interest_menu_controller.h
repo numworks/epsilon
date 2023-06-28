@@ -19,7 +19,7 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
                          ParametersController* interestController);
-  void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() override;
   ViewController::TitlesDisplay titlesDisplay() override {

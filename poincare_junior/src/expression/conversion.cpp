@@ -39,6 +39,16 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
       case BlockType::Logarithm:
         return Poincare::Logarithm::Builder(
             child, ToPoincareExpression(exp->childAtIndex(1)));
+      case BlockType::Derivative: {
+        Poincare::Expression symbol =
+            ToPoincareExpression(exp->childAtIndex(1));
+        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+          return Poincare::Undefined::Builder();
+        }
+        return Poincare::Derivative::Builder(
+            child, static_cast<Poincare::Symbol &>(symbol),
+            ToPoincareExpression(exp->childAtIndex(2)));
+      }
     }
   }
 
@@ -149,6 +159,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::ArcTangent:
       pool->pushBlock(BlockType::ArcTangent);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::NaperianLogarithm:
+      pool->pushBlock(BlockType::Ln);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
         pool->pushBlock(BlockType::Logarithm);
@@ -160,9 +173,12 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
         PushPoincareExpression(exp.childAtIndex(0));
       }
       return;
-    case OT::NaperianLogarithm:
-      pool->pushBlock(BlockType::Ln);
-      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Derivative:
+      pool->pushBlock(BlockType::Derivative);
+      PushPoincareExpression(exp.childAtIndex(0));
+      PushPoincareExpression(exp.childAtIndex(1));
+      PushPoincareExpression(exp.childAtIndex(2));
+      return;
     case OT::Addition:
     case OT::Multiplication:
     case OT::Subtraction:

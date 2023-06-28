@@ -51,7 +51,7 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int row) {
   }
   assert(typeAtRow(row) == k_bufferCellType);
   BufferCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 void UnitListController::fillCellForRow(HighlightCell *cell, int row) {

@@ -899,7 +899,7 @@ int MathToolbox::typeAtRow(int row) const {
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_leafCellType) {
     LeafCell tempCell;
-    return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+    return protectedNonMemoizedRowHeight(&tempCell, row);
   }
   return Escher::Toolbox::nonMemoizedRowHeight(row);
 }

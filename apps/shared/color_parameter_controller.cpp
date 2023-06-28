@@ -49,7 +49,7 @@ void ColorParameterController::fillCellForRow(HighlightCell *cell, int row) {
 KDCoordinate ColorParameterController::defaultRowHeight() {
   // Use the first row as template for all heights.
   ColorCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, 0);
+  return protectedNonMemoizedRowHeight(&tempCell, 0);
 }
 
 ExpiringPointer<Function> ColorParameterController::function() {

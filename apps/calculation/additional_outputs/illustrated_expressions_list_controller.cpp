@@ -46,7 +46,7 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
     return k_illustrationHeight;
   }
   AdditionnalResultCell tempCell;
-  return nonMemoizedRowHeightWithWidthInit(&tempCell, row);
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 void IllustratedExpressionsListController::fillCellForRow(HighlightCell* cell,

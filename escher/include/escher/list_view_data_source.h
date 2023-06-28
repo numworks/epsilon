@@ -25,8 +25,6 @@ class ListViewDataSource : public TableViewDataSource {
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
   KDCoordinate nonMemoizedRowHeight(int row) override;
-  KDCoordinate nonMemoizedRowHeightWithWidthInit(HighlightCell* tempCell,
-                                                 int row);
   KDCoordinate protectedNonMemoizedRowHeight(HighlightCell* cell, int row);
   void initCellSize(HighlightCell* cell) const;
 

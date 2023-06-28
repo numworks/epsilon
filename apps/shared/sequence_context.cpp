@@ -110,9 +110,9 @@ void SequenceContext::shiftValuesRight(int sequenceIndex,
 void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  assert(rank >= 0);
   bool intermediateComputation = m_isInsideComputation;
   Sequence *s = sequenceAtNameIndex(sequenceIndex);
+  assert(rank >= s->initialRank());
   bool explicitComputation =
       rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit(this);
   if (!explicitComputation && rank > k_maxRecurrentRank) {

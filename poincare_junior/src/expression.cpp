@@ -130,6 +130,19 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
         return Poincare::Sine::Builder(child);
       case BlockType::Tangent:
         return Poincare::Tangent::Builder(child);
+      case BlockType::ArcCosine:
+        return Poincare::ArcCosine::Builder(child);
+      case BlockType::ArcSine:
+        return Poincare::ArcSine::Builder(child);
+      case BlockType::ArcTangent:
+        return Poincare::ArcTangent::Builder(child);
+      case BlockType::Abs:
+        return Poincare::AbsoluteValue::Builder(child);
+      case BlockType::Log:
+        return Poincare::Logarithm::Builder(child);
+      case BlockType::Logarithm:
+        return Poincare::Logarithm::Builder(
+            child, ToPoincareExpression(exp->childAtIndex(1)));
     }
   }
 
@@ -177,6 +190,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
       return Poincare::Rational::Builder(
           Rational::Numerator(exp).to<double>(),
           Rational::Denominator(exp).to<double>());
+    case BlockType::Float:
+      return Poincare::Float<double>::Builder(Approximation::To<double>(exp));
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
           ToPoincareExpression(exp->childAtIndex(0)));
@@ -195,9 +210,10 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
       return Poincare::Undefined::Builder();
     }
     case BlockType::Factorial:
+      return Poincare::Factorial::Builder(
+          ToPoincareExpression(exp->childAtIndex(0)));
     case BlockType::UserFunction:
     case BlockType::UserSequence:
-    case BlockType::Float:
     case BlockType::Set:
     case BlockType::List:
     case BlockType::Polynomial:
@@ -210,6 +226,15 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
   using OT = Poincare::ExpressionNode::Type;
   EditionPool *pool = EditionPool::sharedEditionPool();
   switch (exp.type()) {
+    case OT::Parenthesis:
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::AbsoluteValue:
+      pool->pushBlock(BlockType::Abs);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Opposite:
+      pool->push<BlockType::Multiplication>(2);
+      pool->pushBlock(BlockType::MinusOne);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Cosine:
       pool->pushBlock(BlockType::Cosine);
       return PushPoincareExpression(exp.childAtIndex(0));
@@ -219,6 +244,26 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Tangent:
       pool->pushBlock(BlockType::Tangent);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ArcCosine:
+      pool->pushBlock(BlockType::ArcCosine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ArcSine:
+      pool->pushBlock(BlockType::ArcSine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ArcTangent:
+      pool->pushBlock(BlockType::ArcTangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Logarithm:
+      if (exp.numberOfChildren() == 2) {
+        pool->pushBlock(BlockType::Logarithm);
+        PushPoincareExpression(exp.childAtIndex(0));
+        PushPoincareExpression(exp.childAtIndex(1));
+      } else {
+        assert(exp.numberOfChildren() == 1);
+        pool->pushBlock(BlockType::Log);
+        PushPoincareExpression(exp.childAtIndex(0));
+      }
+      return;
     case OT::NaperianLogarithm:
       pool->pushBlock(BlockType::Ln);
       return PushPoincareExpression(exp.childAtIndex(0));
@@ -259,6 +304,11 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       Poincare::BasedInteger i = static_cast<Poincare::BasedInteger &>(exp);
       int num = i.doubleApproximation();
       Rational::Push(IntegerHandler(num), IntegerHandler(1));
+      return;
+    }
+    case OT::Float: {
+      Poincare::Float<float> f = static_cast<Poincare::Float<float> &>(exp);
+      pool->push<BlockType::Float>(f.value());
       return;
     }
     case OT::Symbol: {

@@ -20,8 +20,7 @@ SequenceContext::SequenceContext(Context *parentContext,
 
 void SequenceContext::resetValuesOfSequence(int sequenceIndex,
                                             bool intermediateComputation) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   double *values = valuesPointer(sequenceIndex, intermediateComputation);
   for (int depth = 0; depth < k_storageDepth; depth++) {
     *(values + depth) = OMG::SignalingNan<double>();
@@ -30,8 +29,7 @@ void SequenceContext::resetValuesOfSequence(int sequenceIndex,
 
 void SequenceContext::resetRanksAndValuesOfSequence(
     int sequenceIndex, bool intermediateComputation) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   int *rank = rankPointer(sequenceIndex, intermediateComputation);
   *rank = -1;
   resetValuesOfSequence(sequenceIndex, intermediateComputation);
@@ -39,15 +37,14 @@ void SequenceContext::resetRanksAndValuesOfSequence(
 
 void SequenceContext::resetComputationStatus() {
   m_isInsideComputation = false;
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+  for (int i = 0; i < k_numberOfSequences; i++) {
     m_smallestRankBeingComputed[i] = -1;
   }
 }
 
 double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
                                                     int rank) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   for (int loop = 0; loop < 3; loop++) {
     int storedRank =
         loop < 2 ? *(rankPointer(sequenceIndex, loop)) : k_storageDepth - 1;
@@ -68,8 +65,7 @@ double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
 
 int *SequenceContext::rankPointer(int sequenceIndex,
                                   bool intermediateComputation) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   int *rank = intermediateComputation ? m_intermediateRanks : m_mainRanks;
   rank += sequenceIndex;
   return rank;
@@ -77,8 +73,7 @@ int *SequenceContext::rankPointer(int sequenceIndex,
 
 double *SequenceContext::valuesPointer(int sequenceIndex,
                                        bool intermediateComputation) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   double *values = intermediateComputation
                        ? reinterpret_cast<double *>(&m_intermediateValues)
                        : reinterpret_cast<double *>(&m_mainValues);
@@ -89,8 +84,7 @@ double *SequenceContext::valuesPointer(int sequenceIndex,
 void SequenceContext::shiftValuesRight(int sequenceIndex,
                                        bool intermediateComputation,
                                        int delta) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   assert(delta > 0);
   if (delta >= k_storageDepth) {
     resetValuesOfSequence(sequenceIndex, intermediateComputation);
@@ -108,8 +102,7 @@ void SequenceContext::shiftValuesRight(int sequenceIndex,
 }
 
 void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   Sequence *s = sequenceAtNameIndex(sequenceIndex);
   assert(rank >= s->initialRank());
@@ -134,8 +127,7 @@ void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
 
 void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
                                 int step) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
 
   // Update computation state
   m_isInsideComputation = true;
@@ -220,7 +212,7 @@ const Expression SequenceContext::protectedExpressionForSymbolAbstract(
 }
 
 void SequenceContext::resetCache() {
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+  for (int i = 0; i < k_numberOfSequences; i++) {
     resetRanksAndValuesOfSequence(i, true);
     resetRanksAndValuesOfSequence(i, false);
     for (int j = 0; j < k_storageDepth; ++j) {
@@ -228,7 +220,7 @@ void SequenceContext::resetCache() {
     }
   }
   resetComputationStatus();
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+  for (int i = 0; i < k_numberOfSequences; i++) {
     m_sequenceIsNotComputable[i] = TrinaryBoolean::Unknown;
   }
 }
@@ -250,8 +242,7 @@ Context::SymbolAbstractType SequenceContext::expressionTypeForIdentifier(
 }
 
 Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   Ion::Storage::Record record =
       m_sequenceStore->recordAtNameIndex(sequenceIndex);
   assert(!record.isNull());
@@ -263,8 +254,7 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
 }
 
 bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::Unknown) {
     m_sequenceIsNotComputable[sequenceIndex] =
         sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable(this)

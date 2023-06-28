@@ -122,6 +122,15 @@ void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
   privateFitPoint(Coordinate2D<float>(xR.max(), yR.max()), flipped);
 }
 
+#if 0
+void Zoom::fitFullFunction(Function2DWithContext<float> f, const void *model) {
+  float step = m_bounds.length() / (k_sampleSize - 1);
+  for (size_t i = 0; i < k_sampleSize; i++) {
+    float t = m_bounds.min() + step * i;
+    privateFitPoint(f(t, model, m_context));
+  }
+#endif
+
 static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a,
                                                         Coordinate2D<float> b,
                                                         Coordinate2D<float> c,

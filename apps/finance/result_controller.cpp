@@ -9,7 +9,7 @@
 
 #include "app.h"
 
-using namespace Finance;
+namespace Finance {
 
 ResultController::ResultController(Escher::StackViewController* parentResponder)
     : Escher::ListWithTopAndBottomController(parentResponder, &m_messageView),
@@ -99,3 +99,5 @@ const char* ResultController::title() {
   m_titleBuffer[length] = 0;
   return m_titleBuffer;
 }
+
+}  // namespace Finance

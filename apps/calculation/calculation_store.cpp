@@ -7,6 +7,9 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/simplification.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -143,15 +146,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
       char *const inputText = endOfCalculations() + sizeof(Calculation);
 
       // Parse and compute the expression
-      inputExpression = Expression::Parse(inputText, context, false);
-      assert(!inputExpression.isUninitialized());
-      PoincareHelpers::CloneAndSimplifyAndApproximate(
-          inputExpression, &exactOutputExpression, &approximateOutputExpression,
-          context,
-          {.symbolicComputation = SymbolicComputation::
-               ReplaceAllSymbolsWithDefinitionsOrUndefined});
-      assert(!exactOutputExpression.isUninitialized() &&
-             !approximateOutputExpression.isUninitialized());
+      PoincareJ::Node *exp =
+          PoincareJ::Expression::FromPoincareExpression(inputExpression);
+      PoincareJ::EditionReference ref = exp;
+      PoincareJ::Simplification::Simplify(&ref);
+      exactOutputExpression = PoincareJ::Expression::ToPoincareExpression(ref);
+      double approx = PoincareJ::Approximation::To<double>(exp);
+      approximateOutputExpression = Poincare::Float<double>::Builder(approx);
 
       // Post-processing of store expression
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);

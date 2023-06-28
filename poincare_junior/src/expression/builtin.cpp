@@ -19,6 +19,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Logarithm, "log"},
     {BlockType::Log, "log"},
     {BlockType::Ln, "ln"},
+    {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases},
 };
 
 bool Builtin::IsBuiltin(BlockType type) {
@@ -117,6 +118,9 @@ EditionReference Builtin::Promote(EditionReference parameterList,
       break;
     case BlockType::Ln:
       header = Tree<BlockType::Ln>();
+      break;
+    case BlockType::SquareRoot:
+      header = Tree<BlockType::SquareRoot>();
       break;
     default:
       assert(false);

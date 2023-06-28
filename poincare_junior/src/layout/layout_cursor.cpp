@@ -396,9 +396,7 @@ void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {
 }
 
 void LayoutBufferCursor::addEmptySquareRootLayout(Context *context) {
-#if 0
-  insertLayout(NthRootLayout::Builder(HorizontalLayout::Builder()));
-#endif
+  insertLayout("sqrt()"_l, context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyPowerLayout(Context *context) {

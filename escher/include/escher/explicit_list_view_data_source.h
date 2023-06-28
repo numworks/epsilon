@@ -22,7 +22,6 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   /* Cells are not reusable: they are filled only once directly in constructor
    * and viewWillAppear. */
   void fillCellForRow(Escher::HighlightCell* cell, int row) override final {}
-  // HighlightCell * selectedCell() { return cell(selectedRow()); }
 
  protected:
   virtual HighlightCell* cell(int index) = 0;

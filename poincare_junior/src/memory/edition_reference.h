@@ -37,6 +37,7 @@ class EditionReference {
   bool isUninitialized() const { return node() == nullptr; }
   TypeBlock* block() { return node()->block(); }
   BlockType type() const { return node()->type(); }
+  size_t treeSize() const { return node()->treeSize(); }
 
   uint16_t identifier() const { return m_identifier; }
 

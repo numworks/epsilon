@@ -793,7 +793,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference* reference,
   if (change && ReduceInverseFunction(reference)) {
     return true;
   }
-  size_t treeSize = static_cast<const Node*>(*reference)->treeSize();
+  size_t treeSize = reference->treeSize();
   EditionReference tempClone(reference->clone());
   if (ShallowExpand(&tempClone)) {
     SystematicReduce(&tempClone);
@@ -812,7 +812,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference* reference,
 
 bool Simplification::AdvanceReduceOnAlgebraic(EditionReference* reference,
                                               bool change) {
-  size_t treeSize = static_cast<const Node*>(*reference)->treeSize();
+  size_t treeSize = reference->treeSize();
   EditionReference tempClone(reference->clone());
   if (ShallowContract(&tempClone)) {
     SystematicReduce(&tempClone);

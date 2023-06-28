@@ -26,6 +26,7 @@ class ListViewDataSource : public TableViewDataSource {
   KDCoordinate nonMemoizedRowHeightWithWidthInit(HighlightCell* tempCell,
                                                  int row);
   KDCoordinate protectedNonMemoizedRowHeight(HighlightCell* cell, int row);
+  void initCellSize(HighlightCell* cell) const;
 
  private:
   // ListViewDataSource has only one column

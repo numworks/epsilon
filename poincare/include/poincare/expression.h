@@ -738,9 +738,9 @@ class Expression : public TreeHandle {
     return node()->unaryFunctionDifferential(reductionContext);
   }
 
- private:
   constexpr static int k_maxSymbolReplacementsCount = 10;
 
+ public:
   /* Add missing parenthesis will add parentheses that easen the reading of the
    * expression or that are required by math rules. For example:
    * 2+-1 --> 2+(-1)
@@ -749,6 +749,7 @@ class Expression : public TreeHandle {
   Expression addMissingParentheses();
   void shallowAddMissingParenthesis();
 
+ private:
   /* Simplification */
   /* The largest integer such that all smaller integers can be stored without
    * any precision loss in IEEE754 double representation is 2E53 as the

@@ -177,14 +177,24 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
       return Poincare::Rational::Builder(
           Rational::Numerator(exp).to<double>(),
           Rational::Denominator(exp).to<double>());
-
-    case BlockType::Factorial:
-    case BlockType::Constant:
+    case BlockType::Ln:
+      return Poincare::NaperianLogarithm::Builder(
+          ToPoincareExpression(exp->childAtIndex(0)));
     case BlockType::UserSymbol: {
       char buffer[20];
       Symbol::GetName(exp, buffer, std::size(buffer));
       return Poincare::Symbol::Builder(buffer, Symbol::Length(exp));
     }
+    case BlockType::Constant: {
+      if (Constant::Type(exp) == Constant::Type::Pi) {
+        return Poincare::Constant::PiBuilder();
+      }
+      if (Constant::Type(exp) == Constant::Type::E) {
+        return Poincare::Constant::ExponentialEBuilder();
+      }
+      return Poincare::Undefined::Builder();
+    }
+    case BlockType::Factorial:
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Float:
@@ -192,7 +202,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
     case BlockType::List:
     case BlockType::Polynomial:
     default:
-      assert(false);
+      return Poincare::Undefined::Builder();
   }
 }
 
@@ -208,6 +218,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Tangent:
       pool->pushBlock(BlockType::Tangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::NaperianLogarithm:
+      pool->pushBlock(BlockType::Ln);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Addition:
     case OT::Multiplication:
@@ -253,8 +266,17 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       pool->push<BlockType::UserSymbol>(s.name(), strlen(s.name()));
       return;
     }
+    case OT::ConstantMaths: {
+      Poincare::Constant c = static_cast<Poincare::Constant &>(exp);
+      if (c.isExponentialE()) {
+        pool->push<BlockType::Constant>(u'e');
+      } else {
+        pool->pushBlock(BlockType::Undefined);
+      }
+      return;
+    }
     default:
-      assert(false);
+      pool->pushBlock(BlockType::Undefined);
   }
 }
 

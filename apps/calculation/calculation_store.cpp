@@ -134,8 +134,10 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Push the input
       Expression inputExpression = Expression::Parse(text, &ansContext);
+#if 0
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
+#endif
       cursor = pushSerializedExpression(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (cursor == k_pushError) {
@@ -155,7 +157,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
       approximateOutputExpression = Poincare::Float<double>::Builder(approx);
 
       // Post-processing of store expression
+#if 0
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
+#endif
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
         Expression exactStoredExpression =

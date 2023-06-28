@@ -40,6 +40,8 @@ class SequenceContext : public Poincare::ContextWithParent {
  private:
   constexpr static int k_maxRecurrentRank = 10000;
   constexpr static int k_storageDepth = SequenceStore::k_maxRecurrenceDepth + 1;
+  constexpr static int k_numberOfSequences =
+      SequenceStore::k_maxNumberOfSequences;
 
   int* rankPointer(int sequenceIndex, bool intermediateComputation);
   double* valuesPointer(int sequenceIndex, bool intermediateComputation);
@@ -58,22 +60,20 @@ class SequenceContext : public Poincare::ContextWithParent {
   /* Main ranks for main computations and intermediate ranks for intermediate
    * computations (ex: computation of v(2) in u(3) = v(2) + 4). If ranks are
    * {9,5,4} then values are {{u9,u8,u7}, {v5,v4,v3}, {w4,w3,w2}}. */
-  int m_mainRanks[SequenceStore::k_maxNumberOfSequences];
-  double m_mainValues[SequenceStore::k_maxNumberOfSequences][k_storageDepth];
-  int m_intermediateRanks[SequenceStore::k_maxNumberOfSequences];
-  double m_intermediateValues[SequenceStore::k_maxNumberOfSequences]
-                             [k_storageDepth];
+  int m_mainRanks[k_numberOfSequences];
+  double m_mainValues[k_numberOfSequences][k_storageDepth];
+  int m_intermediateRanks[k_numberOfSequences];
+  double m_intermediateValues[k_numberOfSequences][k_storageDepth];
   /* Save initial values to avoid stepping all values back. For example if in an
    * intermediate computation we ask for v(n) with v(n+1) = v(n)+v(0), we will
    * always step to rank n and then step back to rank 0, replacing all values
    * stored in m_intermediateValues. */
-  double m_initialValues[SequenceStore::k_maxNumberOfSequences][k_storageDepth];
+  double m_initialValues[k_numberOfSequences][k_storageDepth];
 
   SequenceStore* m_sequenceStore;
   bool m_isInsideComputation;
-  int m_smallestRankBeingComputed[SequenceStore::k_maxNumberOfSequences];
-  Poincare::TrinaryBoolean
-      m_sequenceIsNotComputable[SequenceStore::k_maxNumberOfSequences];
+  int m_smallestRankBeingComputed[k_numberOfSequences];
+  Poincare::TrinaryBoolean m_sequenceIsNotComputable[k_numberOfSequences];
 };
 
 }  // namespace Shared

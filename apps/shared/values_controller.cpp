@@ -39,7 +39,6 @@ void ValuesController::setupSelectableTableViewAndCells() {
     AbstractEvenOddEditableTextCell *c = abscissaCells(i);
     c->setParentResponder(selectableTableView());
     c->editableTextCell()->textField()->setDelegate(this);
-    c->editableTextCell()->textField()->setFont(k_cellFont);
   }
   int numberOfAbscissaTitleCells = abscissaTitleCellsCount();
   for (int i = 0; i < numberOfAbscissaTitleCells; i++) {

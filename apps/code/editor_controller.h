@@ -11,8 +11,7 @@ class MenuController;
 class ScriptParameterController;
 class App;
 
-class EditorController : public Escher::ViewController,
-                         public Escher::TextAreaDelegate {
+class EditorController : public Escher::ViewController {
  public:
   EditorController(MenuController* menuController, App* pythonDelegate);
   void setScript(Script script, int scriptIndex);

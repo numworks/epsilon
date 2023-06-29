@@ -17,9 +17,7 @@ namespace Escher {
 
 TextArea::TextArea(Responder *parentResponder, View *contentView,
                    KDFont::Size font)
-    : TextInput(parentResponder, contentView),
-      InputEventHandler(),
-      m_delegate(nullptr) {}
+    : TextInput(parentResponder, contentView), InputEventHandler() {}
 
 static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
                                           int bufferSize) {
@@ -190,10 +188,6 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
 }
 
 bool TextArea::handleEvent(Ion::Events::Event event) {
-  if (m_delegate != nullptr &&
-      m_delegate->textAreaDidReceiveEvent(this, event)) {
-    return true;
-  }
   if (handleBoxEvent(event)) {
     return true;
   }

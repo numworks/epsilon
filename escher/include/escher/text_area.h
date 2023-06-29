@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include <escher/input_event_handler.h>
-#include <escher/text_area_delegate.h>
 #include <escher/text_input.h>
 #include <omg/directions.h>
 #include <string.h>
@@ -21,7 +20,6 @@ class TextArea : public TextInput, public InputEventHandler {
 
   TextArea(Responder* parentResponder, View* contentView,
            KDFont::Size font = KDFont::Size::Large);
-  void setDelegate(TextAreaDelegate* delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
@@ -153,7 +151,6 @@ class TextArea : public TextInput, public InputEventHandler {
 
  private:
   void selectUpDown(OMG::VerticalDirection direction, int step);
-  TextAreaDelegate* m_delegate;
   // Due to rect size limitation, the editor cannot display more than 1800 lines
   constexpr static int k_maxLines = 999;
   constexpr static int k_maxLineChars = 3000;

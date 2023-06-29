@@ -18,9 +18,7 @@ EditorController::EditorController(MenuController *menuController,
       m_editorView(this, pythonDelegate),
       m_script(Ion::Storage::Record()),
       m_scriptIndex(-1),
-      m_menuController(menuController) {
-  m_editorView.setTextAreaDelegate(this);
-}
+      m_menuController(menuController) {}
 
 void EditorController::setScript(Script script, int scriptIndex) {
   m_script = script;

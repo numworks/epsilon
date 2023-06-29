@@ -105,6 +105,7 @@ void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   Sequence *s = sequenceAtNameIndex(sequenceIndex);
+  assert(s->isDefined());
   assert(rank >= s->initialRank());
   bool explicitComputation =
       rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit(this);
@@ -156,8 +157,9 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
       *values = static_cast<double>(NAN);
       return;
     }
-    *values = sequenceAtNameIndex(sequenceIndex)
-                  ->approximateAtContextRank(this, intermediateComputation);
+    Sequence *s = sequenceAtNameIndex(sequenceIndex);
+    assert(s->isDefined());
+    *values = s->approximateAtContextRank(this, intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
     int offset = rankForInitialValuesStorage(sequenceIndex) - *currentRank;
@@ -248,9 +250,6 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
       m_sequenceStore->recordAtNameIndex(sequenceIndex);
   assert(!record.isNull());
   Sequence *s = m_sequenceStore->modelForRecord(record);
-  /* The case !isDefined() should have been escaped in
-   * Sequence::approximateAtRank. */
-  assert(s->isDefined());
   return s;
 }
 

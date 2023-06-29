@@ -34,7 +34,7 @@ class Expression final : public Reference {
                                              Node* expression);
   static void ConvertExpressionToLayout(EditionReference layoutParent,
                                         Node* expression,
-                                        bool forbidParentheses = false);
+                                        bool allowParentheses = true);
 };
 
 static_assert(sizeof(Expression) == sizeof(Reference));

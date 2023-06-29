@@ -35,7 +35,7 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
           editionPool->push<BlockType::CodePointLayout, CodePoint>(','));
     }
     // No parentheses within builtin parameters
-    ConvertExpressionToLayout(newParent, expression->nextNode(), true);
+    ConvertExpressionToLayout(newParent, expression->nextNode(), false);
   }
 }
 
@@ -86,10 +86,11 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
           EditionPool::sharedEditionPool()
               ->push<BlockType::CodePointLayout, CodePoint>(codepoint));
     }
-    bool forbidParentheses = (type == BlockType::Addition) ||
-                             ((type == BlockType::Subtraction) && (i == 0));
+    // 2*(x+y) or x-(y+z)
+    bool allowParentheses = (type == BlockType::Multiplication) ||
+                            ((type == BlockType::Subtraction) && (i == 1));
     ConvertExpressionToLayout(layoutParent, expression->nextNode(),
-                              forbidParentheses);
+                              allowParentheses);
   }
 }
 
@@ -104,21 +105,21 @@ void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
   if (type == BlockType::Division) {
     createdLayout = editionPool->push<BlockType::FractionLayout>();
     ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                              expression, true);
+                              expression, false);
   } else {
     assert(type == BlockType::Power);
     ConvertExpressionToLayout(layoutParent, expression);
     createdLayout = editionPool->push<BlockType::VerticalOffsetLayout>();
   }
   ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                            expression, true);
+                            expression, false);
   NAry::AddChild(layoutParent, createdLayout);
 }
 
 // Remove expression while converting it to a layout in layoutParent
 void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
                                            Node *expression,
-                                           bool forbidParentheses) {
+                                           bool allowParentheses) {
   /* TODO: ConvertExpressionToLayout is a very temporary implementation and must
    *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
@@ -130,7 +131,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::Subtraction:
       // Add Parentheses if allowed and needed.
       assert(expression->numberOfChildren() > 1);
-      if (!forbidParentheses) {
+      if (allowParentheses) {
         EditionReference parenthesis =
             editionPool->push<BlockType::ParenthesisLayout>();
         EditionReference newParent =
@@ -215,7 +216,7 @@ EditionReference Expression::EditionPoolExpressionToLayout(Node *expression) {
   EditionReference layoutParent =
       EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
   // No parentheses on root layout.
-  ConvertExpressionToLayout(layoutParent, expression, true);
+  ConvertExpressionToLayout(layoutParent, expression, false);
   return layoutParent;
 }
 

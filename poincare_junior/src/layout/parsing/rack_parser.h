@@ -37,7 +37,8 @@ class RackParser {
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),
-        m_waitingSlashForMixedFraction(false) {}
+        m_waitingSlashForMixedFraction(false),
+        m_root(node) {}
 
   EditionReference parse();
   Status getStatus() const { return m_status; }
@@ -183,6 +184,7 @@ class RackParser {
   Token m_nextToken;
   bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
+  const Node* m_root;
 };
 
 }  // namespace PoincareJ

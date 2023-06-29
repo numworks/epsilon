@@ -82,9 +82,9 @@ class Token {
     m_length = length;
   }
 
-  RackLayoutDecoder toDecoder() {
-    const Node* rack = m_firstLayout->parent();
-    size_t start = rack->indexOfChild(m_firstLayout);
+  RackLayoutDecoder toDecoder(const Node* root) {
+    int start = 0;
+    const Node* rack = root->parentOfDescendant(m_firstLayout, &start);
     return RackLayoutDecoder(rack, start, start + m_length);
   }
 

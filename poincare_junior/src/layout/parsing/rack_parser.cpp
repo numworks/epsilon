@@ -405,8 +405,11 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     m_status = Status::Error;  // FIXME
     return;
   }
-  const Node *rack = m_currentToken.firstLayout()->parent();
-  size_t start = rack->indexOfChild(m_currentToken.firstLayout());
+  /* TODO: RackLayoutDecoder could be implemented without mainLayout, start,
+           m_root and parentOfDescendant() call wouldn't be needed. */
+  int start = 0;
+  const Node *rack =
+      m_root->parentOfDescendant(m_currentToken.firstLayout(), &start);
   size_t end = start + m_currentToken.length();
   OMG::Base base(OMG::Base::Decimal);
   if (m_currentToken.type() == Token::Type::HexadecimalNumber ||
@@ -841,7 +844,7 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
   assert(m_currentToken.length() == 1);
   leftHandSide =
       EditionPool::sharedEditionPool()->push<BlockType::Constant, char16_t>(
-          m_currentToken.toDecoder().nextCodePoint());
+          m_currentToken.toDecoder(m_root).nextCodePoint());
   isThereImplicitOperator();
 }
 
@@ -862,7 +865,7 @@ void RackParser::parseUnit(EditionReference &leftHandSide,
 void RackParser::parseReservedFunction(EditionReference &leftHandSide,
                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  RackLayoutDecoder decoder = m_currentToken.toDecoder();
+  RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
   const Builtin *builtin = Builtin::GetReservedFunction(&decoder);
   privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();

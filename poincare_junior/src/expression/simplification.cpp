@@ -649,7 +649,7 @@ bool Simplification::ShallowBeautify(EditionReference* ref, void* context) {
          ref->matchAndReplace(KTrig(KPlaceholder<A>(), 1_e),
                               KSin(KPlaceholder<A>())) ||
          // exp(0.5*ln(A)) -> Sqrt(A)
-         ref->matchAndReplace(KExp(KMult(KHalf(), KLn(KPlaceholder<A>()))),
+         ref->matchAndReplace(KExp(KMult(KHalf, KLn(KPlaceholder<A>()))),
                               KSqrt(KPlaceholder<A>())) ||
          // exp(A? * ln(B) * C?) -> B^(A*C)
          ref->matchAndReplace(
@@ -768,7 +768,7 @@ bool Simplification::ShallowSystemProjection(EditionReference* ref,
           KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e))) ||
       // Sqrt(A) -> exp(0.5*ln(A))
       ref->matchAndReplace(KSqrt(KPlaceholder<A>()),
-                           KExp(KMult(KHalf(), KLn(KPlaceholder<A>())))) ||
+                           KExp(KMult(KHalf, KLn(KPlaceholder<A>())))) ||
       // Power of non-integers
       // TODO: Maybe add exp(A) -> e^A with A integer
       (ref->type() == BlockType::Power &&
@@ -1054,7 +1054,7 @@ bool Simplification::ContractTrigonometric(EditionReference* ref) {
                    KMult(KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
                                KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
                          KAnyTreesPlaceholder<F>())),
-              KAnyTreesPlaceholder<A>(), KHalf()))) {
+              KAnyTreesPlaceholder<A>(), KHalf))) {
     return false;
   }
   EditionReference newMult1(ref->nextNode()->nextNode());

@@ -52,11 +52,11 @@ QUIZ_CASE(pcj_simplification_contraction) {
                                        KMult(-1_e, "z"_e)),
                                   1_e),
                             KTrig(KAdd("x"_e, KMult(-1_e, "y"_e), "z"_e), 1_e)),
-                       KHalf()),
+                       KHalf),
                  KMult(KAdd(KTrig(KAdd("x"_e, "y"_e, KMult(-1_e, "z"_e)), 1_e),
                             KTrig(KAdd("x"_e, "y"_e, "z"_e), 1_e)),
-                       KHalf())),
-            KHalf()));
+                       KHalf)),
+            KHalf));
 
   EditionReference ref3(KMult(KAbs(1_e), KAbs(2_e), KTrig("x"_e, 1_e),
                               KTrig("y"_e, 0_e), KExp(1_e), KExp(2_e)));
@@ -66,7 +66,7 @@ QUIZ_CASE(pcj_simplification_contraction) {
       KMult(KAdd(KMult(KExp(KAdd(1_e, 2_e)),
                        KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e)),
                  KMult(KExp(KAdd(1_e, 2_e)), KTrig(KAdd("x"_e, "y"_e), 1_e))),
-            KAbs(KMult(1_e, 2_e)), KHalf()));
+            KAbs(KMult(1_e, 2_e)), KHalf));
 
   EditionReference ref4(KMult(KAbs(1_e), KAbs(KMult(2_e, 3_e)), KAbs(4_e),
                               KAbs(KMult(5_e, 6_e))));
@@ -157,7 +157,7 @@ QUIZ_CASE(pcj_simplification_projection) {
 
   EditionReference ref4(KSqrt("y"_e));
   Simplification::DeepSystemProjection(&ref4);
-  assert_trees_are_equal(ref4, KExp(KMult(KHalf(), KLn("y"_e))));
+  assert_trees_are_equal(ref4, KExp(KMult(KHalf, KLn("y"_e))));
 }
 
 QUIZ_CASE(pcj_simplification_beautify) {
@@ -173,7 +173,7 @@ QUIZ_CASE(pcj_simplification_beautify) {
   Simplification::DeepBeautify(&ref2, {.m_angleUnit = AngleUnit::Gradian});
   assert_trees_are_equal(ref2, KSin(200_e));
 
-  EditionReference ref3(KExp(KMult(KHalf(), KLn("y"_e))));
+  EditionReference ref3(KExp(KMult(KHalf, KLn("y"_e))));
   Simplification::DeepBeautify(&ref3);
   assert_trees_are_equal(ref3, KSqrt("y"_e));
 

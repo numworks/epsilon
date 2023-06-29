@@ -10,7 +10,6 @@
 namespace PoincareJ {
 
 // Constructors
-consteval auto KHalf() { return Tree<BlockType::Half>(); }
 
 template <class... Args>
 consteval auto KAbs(Args... args) {
@@ -243,6 +242,7 @@ Tree(IntegerLitteral<V>)
 
 // TODO new node_constructor
 constexpr Tree KUndef = Tree<BlockType::Undefined>();
+constexpr Tree KHalf = Tree<BlockType::Half>();
 
 constexpr Tree π_e =
     Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi),

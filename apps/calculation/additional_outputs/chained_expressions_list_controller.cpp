@@ -15,6 +15,13 @@ void ChainedExpressionsListController::viewDidDisappear() {
   ExpressionsListController::viewDidDisappear();
 }
 
+void ChainedExpressionsListController::didBecomeFirstResponder() {
+  /* Width needs to be reinit if tail of controller changed and wasn't already
+   * initialized. */
+  initCellsAvailableWidth(m_listController.selectableListView());
+  ExpressionsListController::didBecomeFirstResponder();
+}
+
 int ChainedExpressionsListController::reusableCellCount(int type) {
   return (type == k_expressionCellType ? k_maxNumberOfRows : 0) +
          (m_tail ? m_tail->reusableCellCount(type) : 0);

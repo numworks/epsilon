@@ -53,18 +53,18 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
   }
 
   switch (type) {
-    case BlockType::Addition: {
-      case BlockType::Multiplication:
-        Poincare::NAryExpression nary =
-            type == BlockType::Addition ? static_cast<Poincare::NAryExpression>(
-                                              Poincare::Addition::Builder())
-                                        : Poincare::Multiplication::Builder();
-        for (const Node *child : exp->children()) {
-          nary.addChildAtIndexInPlace(ToPoincareExpression(child),
-                                      nary.numberOfChildren(),
-                                      nary.numberOfChildren());
-        }
-        return nary;
+    case BlockType::Addition:
+    case BlockType::Multiplication: {
+      Poincare::NAryExpression nary =
+          type == BlockType::Addition ? static_cast<Poincare::NAryExpression>(
+                                            Poincare::Addition::Builder())
+                                      : Poincare::Multiplication::Builder();
+      for (const Node *child : exp->children()) {
+        nary.addChildAtIndexInPlace(ToPoincareExpression(child),
+                                    nary.numberOfChildren(),
+                                    nary.numberOfChildren());
+      }
+      return nary;
     }
     case BlockType::Subtraction:
     case BlockType::Power:
@@ -232,6 +232,8 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       Poincare::Constant c = static_cast<Poincare::Constant &>(exp);
       if (c.isExponentialE()) {
         pool->push<BlockType::Constant>(u'e');
+      } else if (c.isPi()) {
+        pool->push<BlockType::Constant>(u'π');
       } else {
         pool->pushBlock(BlockType::Undefined);
       }

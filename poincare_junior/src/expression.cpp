@@ -1,4 +1,3 @@
-#include <poincare_expressions.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/builtin.h>
@@ -6,7 +5,6 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>

@@ -69,16 +69,25 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
 void App::didBecomeActive(Window *window) {
   // Recompute results: data might have changed in another app.
   snapshot()->statistic()->compute();
+  bool stopAtInputController = !snapshot()->statistic()->validateInputs();
   Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
       *queue = snapshot()->pageQueue();
   int queueLength = queue->length();
   Escher::ViewController *currentController = &m_menuController;
+  bool stop = false;
   for (int i = 0; i < queueLength; i++) {
     /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
      * from popping until the queue is empty. */
     Escher::ViewController *controller = queue->queuePop();
-    currentController->stackOpenPage(controller);
-    currentController = controller;
+    if (!stop) {
+      currentController->stackOpenPage(controller);
+      currentController = controller;
+      stop = stopAtInputController &&
+             (currentController == &m_inputHomogeneityController ||
+              currentController == &m_inputGoodnessController ||
+              currentController == &m_inputSlopeController ||
+              currentController == &m_inputController);
+    }
   }
   Escher::App::didBecomeActive(window);
 }

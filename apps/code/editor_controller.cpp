@@ -80,10 +80,6 @@ void EditorController::viewDidDisappear() {
 
 bool EditorController::textAreaDidReceiveEvent(TextArea *textArea,
                                                Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    prepareVariableBox();
-    return false;
-  }
   if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
@@ -135,32 +131,6 @@ bool EditorController::textAreaDidReceiveEvent(TextArea *textArea,
     }
   }
   return false;
-}
-
-void EditorController::prepareVariableBox() {
-  VariableBoxController *varBox = App::app()->variableBox();
-  // Subtitle display status must be set before as it alter loaded node order
-  varBox->setDisplaySubtitles(true);
-  varBox->setTitle(I18n::Message::Autocomplete);
-  /* If the editor should be autocompleting an identifier, the variable box has
-   * already been loaded. We check shouldAutocomplete and not isAutocompleting,
-   * because the autocompletion result might be empty. */
-  const char *beginningOfAutocompletion = nullptr;
-  const char *cursor = nullptr;
-  PythonTextArea::AutocompletionType autocompType =
-      m_editorView.autocompletionType(&beginningOfAutocompletion, &cursor);
-  if (autocompType == PythonTextArea::AutocompletionType::NoIdentifier) {
-    varBox->loadFunctionsAndVariables(m_scriptIndex, nullptr, 0);
-  } else if (autocompType ==
-             PythonTextArea::AutocompletionType::MiddleOfIdentifier) {
-    varBox->empty();
-  } else {
-    assert(autocompType == PythonTextArea::AutocompletionType::EndOfIdentifier);
-    assert(beginningOfAutocompletion != nullptr && cursor != nullptr);
-    assert(cursor > beginningOfAutocompletion);
-    varBox->loadFunctionsAndVariables(m_scriptIndex, beginningOfAutocompletion,
-                                      cursor - beginningOfAutocompletion);
-  }
 }
 
 StackViewController *EditorController::stackController() {

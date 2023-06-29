@@ -65,8 +65,8 @@ void Polynomial::AddMonomial(EditionReference polynomial,
     if (exponent < exponentOfChildI) {
       continue;
     } else if (exponent == exponentOfChildI) {
-      EditionReference currentCoefficient = polynomial.childAtIndex(i + 1);
-      EditionReference previousChild = currentCoefficient.previousTree();
+      EditionReference previousChild = polynomial.childAtIndex(i);
+      EditionReference currentCoefficient = previousChild.nextTree();
       EditionReference addition =
           Polynomial::Addition(currentCoefficient, coefficient);
       previousChild.nextTree()->moveTreeBeforeNode(addition);
@@ -177,8 +177,8 @@ void Polynomial::MultiplicationMonomial(
     SetExponentAtIndex(polynomial, i,
                        ExponentAtIndex(polynomial, i) + exponent);
     // * coefficient
-    EditionReference currentCoefficient = polynomial.childAtIndex(i + 1);
-    EditionReference previousChild = currentCoefficient.previousTree();
+    EditionReference previousChild = polynomial.childAtIndex(i);
+    EditionReference currentCoefficient = previousChild.nextTree();
     // Avoid one cloning for last term
     EditionReference coeffClone =
         i == nbOfTerms - 1

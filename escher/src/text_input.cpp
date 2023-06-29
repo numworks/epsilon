@@ -8,11 +8,6 @@
 namespace Escher {
 /* TextInput::ContentView */
 
-void TextInput::ContentView::setFont(KDFont::Size font) {
-  m_font = font;
-  markWholeFrameAsDirty();
-}
-
 void TextInput::ContentView::setCursorLocation(const char* location) {
   assert(location != nullptr);
   assert(location >= editedText());

@@ -213,6 +213,8 @@ void Sequence::tidyDownstreamPoolFrom(TreeNode *treePoolCursor) const {
 
 template <typename T>
 T Sequence::privateEvaluateYAtX(T x, Context *context) const {
+  // Round behaviour changes platform-wise if std::isnan(x)
+  assert(!std::isnan(x));
   int n = std::round(x);
   return static_cast<T>(
       approximateAtRank(n, reinterpret_cast<SequenceContext *>(context)));

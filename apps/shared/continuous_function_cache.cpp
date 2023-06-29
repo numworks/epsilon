@@ -112,7 +112,7 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
 int ContinuousFunctionCache::indexForParameter(
     const ContinuousFunction *function, float t, int curveIndex) const {
   assert(!std::isnan(t));
-  if (curveIndex != 0) {
+  if (curveIndex != 0 || std::isinf(t)) {
     /* TODO: For now, second curves are not cached. It may (or not) be slightly
      * better to cache both, but it should also be handled in pan. */
     return -1;
@@ -122,6 +122,8 @@ int ContinuousFunctionCache::indexForParameter(
   if (delta < 0 || delta >= static_cast<float>(INT_MAX)) {
     return -1;
   }
+  // Round behaviour changes platform-wise if std::isnan(delta)
+  assert(!std::isnan(delta));
   int res = std::round(delta);
   assert(res >= 0);
   if ((res >= k_sizeOfCache) ||

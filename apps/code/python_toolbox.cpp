@@ -1082,7 +1082,11 @@ const ToolboxMessageTree *PythonToolbox::moduleChildren(
 }
 
 bool PythonToolbox::handleEvent(Ion::Events::Event event) {
-  if (Toolbox::handleEvent(event)) {
+  if (event == Ion::Events::Var || Toolbox::handleEvent(event)) {
+    /* TODO: Var event is escaped as a quick fix because if the varbox is opened
+     * through the toolbox, the autocompletion won't be properly removed
+     * (PythonTextArea::handleEvent won't be reached) and all autocompletion
+     * will be shifted. */
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};

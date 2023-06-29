@@ -20,6 +20,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
   if (Builtin::IsBuiltin(type)) {
     Poincare::Expression child = ToPoincareExpression(exp->childAtIndex(0));
     switch (type) {
+      case BlockType::SquareRoot:
+        return Poincare::SquareRoot::Builder(child);
       case BlockType::Cosine:
         return Poincare::Cosine::Builder(child);
       case BlockType::Sine:
@@ -140,6 +142,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Opposite:
       pool->push<BlockType::Multiplication>(2);
       pool->pushBlock(BlockType::MinusOne);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::SquareRoot:
+      pool->pushBlock(BlockType::SquareRoot);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Cosine:
       pool->pushBlock(BlockType::Cosine);

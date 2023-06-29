@@ -254,6 +254,7 @@ QUIZ_CASE(pcj_basic_simplification) {
                 "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
   simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
+  simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
   simplifies_to("98765000", "98765000");
@@ -332,6 +333,29 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("abs(x+i*y)",
                 "√(-2*im(y)*re(x)+2*im(x)*re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
                 "re(y)^(2))");
+
+  // Not working yet
+  // simplifies_to("1/x", "1/x");
+  // simplifies_to("abs(x^2)", "x^2");
+
+  // simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");
+  // simplifies_to("1/x + 1/y - (x+y)/(x*y)", "0");
+  // simplifies_to("(x^(2) - 1) / (x - 1)", "x+1");
+  // simplifies_to("1 / (1/a + c/(a*b)) + (a*b*c+a*c^2)/(b+c)^2", "a");
+
+  // simplifies_to("sin(x)^3+cos(x+π/6)^3-sin(x+π/3)^3+sin(3*x)*3/4", "0");
+  // simplifies_to("sin(x)+sin(y)-2*sin(x/2 + y/2)*cos(x/2 - y/2)", "0");
+  // simplifies_to("(√(10)-√(2))×√(5-√(5))-4×√(5-2×√(5))", "0");
+
+  // simplifies_to("1/(1 - (1/(1 - (1/(1-x)))))", "x");
+  // simplifies_to(
+  // "abs(diff(diff(√(4-x^2),x,x),x,x))/(1+diff(√(4-x^2),x,x)^2)^(3/2)",
+  // "1/2");
+
+  // simplifies_to("((abs(x)^(1/2))^(1/2))^8", "abs(x)^(2)");
+  // simplifies_to("((x*y)^(1/2)*z^2)^2", "x*y*z^(4)");
+  // simplifies_to("1-cos(x)^2-sin(x)^2", "0");
+  // simplifies_to("1-cos(x)^2", "sin(x)^2");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

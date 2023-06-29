@@ -489,20 +489,13 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
                                           bool plus, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // +2 = 2, -2 = -2
-    EditionReference rightHandSide =
-        parseUntil(std::max(stoppingType, Token::Type::Minus));
-    if (m_status == Status::Progress) {
-      if (plus) {
-        leftHandSide = rightHandSide;
-      } else {
-        // TODO Opposite instead of multiplication by -1
-        rightHandSide.cloneNodeBeforeNode(
-            Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
-        rightHandSide.cloneNodeBeforeNode(-1_e);
-        leftHandSide = rightHandSide.previousNode()->previousNode();
-      }
-    } else {
-      removeTreeIfInitialized(rightHandSide);
+    leftHandSide = parseUntil(std::max(stoppingType, Token::Type::Minus));
+    if (m_status == Status::Progress && !plus) {
+      // TODO Opposite instead of multiplication by -1
+      CloneTreeBeforeNode(&leftHandSide, -1_e);
+      CloneNodeBeforeNode(
+          &leftHandSide,
+          Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
     }
     return;
   }
@@ -521,17 +514,15 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // }
     assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
     if (!plus) {
-      leftHandSide.cloneNodeBeforeNode(Tree<BlockType::Subtraction>());
-      leftHandSide = leftHandSide.previousNode();
+      CloneNodeBeforeNode(&leftHandSide, Tree<BlockType::Subtraction>());
       return;
     }
     if (leftHandSide.type() == BlockType::Addition) {
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide.numberOfChildren() + 1);
     } else {
-      leftHandSide.cloneNodeBeforeNode(
-          Tree<BlockType::Addition, 2, BlockType::Addition>());
-      leftHandSide = leftHandSide.previousNode();
+      CloneNodeBeforeNode(&leftHandSide,
+                          Tree<BlockType::Addition, 2, BlockType::Addition>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -601,8 +592,7 @@ void RackParser::parseSlash(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
-    leftHandSide.cloneNodeBeforeNode(Tree<BlockType::Division>());
-    leftHandSide = leftHandSide.previousNode();
+    CloneNodeBeforeNode(&leftHandSide, Tree<BlockType::Division>());
   } else {
     removeTreeIfInitialized(rightHandSide);
   }
@@ -616,9 +606,9 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide.numberOfChildren() + 1);
     } else {
-      leftHandSide.cloneNodeBeforeNode(
+      CloneNodeBeforeNode(
+          &leftHandSide,
           Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
-      leftHandSide = leftHandSide.previousNode();
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -628,8 +618,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
 static void turnIntoBinaryNode(const Node *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
   assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
-  leftHandSide.cloneNodeBeforeNode(node);
-  leftHandSide = leftHandSide.previousNode();
+  CloneNodeBeforeNode(&leftHandSide, node);
 }
 
 void RackParser::parseCaret(EditionReference &leftHandSide,
@@ -829,8 +818,7 @@ void RackParser::parseBang(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing
   } else {
-    leftHandSide.cloneNodeBeforeNode(Tree<BlockType::Factorial>());
-    leftHandSide = leftHandSide.previousNode();
+    CloneNodeBeforeNode(&leftHandSide, Tree<BlockType::Factorial>());
   }
   isThereImplicitOperator();
 }

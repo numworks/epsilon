@@ -32,7 +32,11 @@ class Layout final : public Reference {
   bool isEmpty() const;
 
   static char* Serialize(EditionReference layout, char* buffer, char* end);
-  static EditionReference EditionPoolTextToLayout(const char* text);
+  static const Node* EditionPoolTextToLayout(const char* text);
+
+ private:
+  static size_t EditionPoolTextToLayoutRec(const char* text, const Node* parent,
+                                           const Node* parentheses);
 };
 
 static_assert(sizeof(Layout) == sizeof(Reference));

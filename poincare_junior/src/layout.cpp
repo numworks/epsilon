@@ -10,41 +10,44 @@
 
 namespace PoincareJ {
 
-EditionReference Layout::EditionPoolTextToLayout(const char *text) {
-  int n = strlen(text);
+const Node *Layout::EditionPoolTextToLayout(const char *text) {
+  const Node *root = P_RACKL();
+  EditionPoolTextToLayoutRec(text, root, nullptr);
+  return root;
+}
+
+size_t Layout::EditionPoolTextToLayoutRec(const char *text, const Node *parent,
+                                          const Node *parentheses) {
+  assert(parent && parent->isNAry());
+  assert(!parentheses || parentheses->type() == BlockType::ParenthesisLayout);
   EditionPool *editionPool = EditionPool::sharedEditionPool();
-  const EditionReference ref = P_RACKL();
-  EditionReference currentLayout = ref;
-  for (int i = 0; i < n; i++) {
-    EditionReference child;
-    switch (text[i]) {
-      case '(':
-        child =
-            EditionReference(editionPool->push<BlockType::ParenthesisLayout>());
-        P_RACKL();
-        NAry::AddOrMergeChildAtIndex(currentLayout, child,
-                                     currentLayout.numberOfChildren());
-        currentLayout = child.childAtIndex(0);
-        continue;
+  size_t i = 0;
+  while (text[i] != 0) {
+    i++;
+    const Node *child;
+    switch (text[i - 1]) {
       case UCodePointEmpty:
         child = P_RACKL();
         break;
-      case ')':
-        if (currentLayout.parent() && currentLayout.parent()->parent() &&
-            currentLayout.parent()->parent()->type() == BlockType::RackLayout) {
-          currentLayout = currentLayout.parent()->parent();
-          continue;
-        }
-        // Jump to default case
-      default:
-        child = EditionReference(
-            editionPool->push<BlockType::CodePointLayout, CodePoint>(text[i]));
+      case '(': {
+        /* Insert a ParenthesisLayout even if there are no matching right
+         * parenthesis */
+        child = editionPool->push<BlockType::ParenthesisLayout>();
+        i += EditionPoolTextToLayoutRec(text + i, P_RACKL(), child);
         break;
+      }
+      case ')':
+        if (parentheses) {
+          return i;
+        }
+        // Insert ')' codepoint if it has no matching left parenthesis
+      default:
+        child = editionPool->push<BlockType::CodePointLayout, CodePoint>(
+            text[i - 1]);
     }
-    NAry::AddOrMergeChildAtIndex(currentLayout, child,
-                                 currentLayout.numberOfChildren());
+    NAry::AddOrMergeChildAtIndex(parent, child, parent->numberOfChildren());
   }
-  return ref;
+  return i;
 }
 
 char *append(const char *text, char *buffer, char *end) {

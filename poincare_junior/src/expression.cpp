@@ -125,22 +125,21 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
   BlockType type = expression->type();
   EditionPool *editionPool = EditionPool::sharedEditionPool();
 
-  /* Add Parentheses if allowed. No parentheses needed around Multiplication,
-   * Power or Builtins. */
-  if (!forbidParentheses && type != BlockType::Multiplication &&
-      type != BlockType::Power && !Builtin::IsBuiltin(type) &&
-      expression->numberOfChildren() > 1) {
-    EditionReference parenthesis =
-        editionPool->push<BlockType::ParenthesisLayout>();
-    EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
-    NAry::AddChild(layoutParent, parenthesis);
-    layoutParent = newParent;
-  }
-
   switch (type) {
     case BlockType::Addition:
-    case BlockType::Multiplication:
     case BlockType::Subtraction:
+      // Add Parentheses if allowed and needed.
+      assert(expression->numberOfChildren() > 1);
+      if (!forbidParentheses) {
+        EditionReference parenthesis =
+            editionPool->push<BlockType::ParenthesisLayout>();
+        EditionReference newParent =
+            editionPool->push<BlockType::RackLayout>(0);
+        NAry::AddChild(layoutParent, parenthesis);
+        layoutParent = newParent;
+      }
+      // continue
+    case BlockType::Multiplication:
       ConvertInfixOperatorToLayout(layoutParent, expression);
       break;
     case BlockType::Power:

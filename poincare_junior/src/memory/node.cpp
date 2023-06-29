@@ -327,10 +327,10 @@ bool Node::hasChild(const Node* child) const {
 }
 
 bool Node::hasAncestor(const Node* node, bool includeSelf) const {
-  if (block() < node->block()) {
+  if (this < node) {
     return false;
   }
-  if (block() == node->block()) {
+  if (this == node) {
     return includeSelf;
   }
   return block() < node->block() + node->treeSize();

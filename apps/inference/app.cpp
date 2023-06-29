@@ -67,6 +67,8 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_bufferDestructor(nullptr) {}
 
 void App::didBecomeActive(Window *window) {
+  // Recompute results: data might have changed in another app.
+  snapshot()->statistic()->compute();
   Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
       *queue = snapshot()->pageQueue();
   int queueLength = queue->length();

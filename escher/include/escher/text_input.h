@@ -41,12 +41,11 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
         : TextCursorView::CursorFieldView(),
           m_cursorLocation(nullptr),
           m_selectionStart(nullptr),
-          m_horizontalAlignment(format.horizontalAlignment),
-          m_verticalAlignment(format.verticalAlignment),
-          m_font(format.style.font) {}
+          m_format(format) {}
 
-    // Font
-    KDFont::Size font() const { return m_font; }
+    // Format
+    KDFont::Size font() const { return m_format.style.font; }
+    float horizontalAlignment() const { return m_format.horizontalAlignment; }
 
     // Cursor location
     const char *cursorLocation() const {
@@ -75,9 +74,6 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
     bool selectionIsEmpty() const;
     virtual size_t deleteSelection() = 0;
 
-    // Alignment
-    float horizontalAlignment() const { return m_horizontalAlignment; }
-
     // Reload
     void reloadRectFromPosition(const char *position,
                                 bool includeFollowingLines = false);
@@ -90,9 +86,7 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
                                          bool includeFollowingLines) const;
     const char *m_cursorLocation;
     const char *m_selectionStart;
-    float m_horizontalAlignment;
-    float m_verticalAlignment;
-    KDFont::Size m_font;
+    KDGlyph::Format m_format;
 
    private:
     virtual const char *editedText() const = 0;

@@ -96,8 +96,9 @@ class AbstractTextField : public TextInput, public EditableField {
     bool removeEndOfLine() override;
     size_t deleteSelection() override;
 
+    // Format
     void setBackgroundColor(KDColor backgroundColor);
-    KDColor backgroundColor() const { return m_backgroundColor; }
+    KDColor backgroundColor() const { return m_format.style.backgroundColor; }
     void setTextColor(KDColor textColor);
 
     bool isEditing() const { return m_isEditing; }
@@ -121,8 +122,6 @@ class AbstractTextField : public TextInput, public EditableField {
    private:
     char *m_textBuffer;
     size_t m_textBufferSize;
-    KDColor m_textColor;
-    KDColor m_backgroundColor;
     bool m_isEditing;
     /* The textfield is 'Stalling' when the edition has been interrupted (by a
      * 'syntax error pop-up for instance) but should not be discarded. */

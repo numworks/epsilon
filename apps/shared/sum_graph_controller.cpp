@@ -110,7 +110,7 @@ void SumGraphController::makeCursorVisibleAndReload() {
 }
 void SumGraphController::makeCursorVisible() {
   float position = m_cursor->x();
-  if (std::isnan(position)) {
+  if (!std::isfinite(position)) {
     return;
   }
   ExpiringPointer<Function> function =

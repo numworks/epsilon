@@ -24,6 +24,7 @@ class PythonTextArea : public Escher::TextArea {
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  bool handleSpecialEvent(Ion::Events::Event event);
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   bool handleBoxEvent(Ion::Events::Event event) override;

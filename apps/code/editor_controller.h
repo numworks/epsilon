@@ -30,10 +30,6 @@ class EditorController : public Escher::ViewController,
   }
   TELEMETRY_ID("Editor");
 
-  /* TextAreaDelegate */
-  bool textAreaDidReceiveEvent(Escher::TextArea* textArea,
-                               Ion::Events::Event event) override;
-
  private:
   void cleanStorageEmptySpace();
   Escher::StackViewController* stackController();

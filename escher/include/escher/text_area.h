@@ -8,12 +8,16 @@
 #include <omg/directions.h>
 #include <string.h>
 
+#include <array>
+
 namespace Escher {
 // See TODO in EditableField
 
 class TextArea : public TextInput, public InputEventHandler {
  public:
-  constexpr static int k_indentationSpaces = 2;
+  constexpr static char k_indentation[] = "  ";
+  constexpr static int k_indentationSpaces = std::size(k_indentation) - 1;
+  constexpr static char k_newLine[] = "\n";
 
   TextArea(Responder* parentResponder, View* contentView,
            KDFont::Size font = KDFont::Size::Large);

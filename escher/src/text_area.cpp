@@ -221,7 +221,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return handleEventWithText(buffer);
   }
   if (event == Ion::Events::EXE) {
-    return handleEventWithText("\n");
+    return handleEventWithText(k_newLine);
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     if (contentView()->selectionIsEmpty()) {

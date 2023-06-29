@@ -437,17 +437,14 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
         scrollToCursor();
         return true;
       }
-    } else if (event == Ion::Events::Toolbox || event == Ion::Events::Shift ||
-               event == Ion::Events::Alpha || event == Ion::Events::OnOff) {
     } else if (event == Ion::Events::Up || event == Ion::Events::Down) {
       cycleAutocompletion(event == Ion::Events::Down);
       return true;
-    } else if (event == Ion::Events::Var) {
-      /* Remove the autocompletion text so that opening the Varbox does not
-       * invalidate the ScriptNodes name pointers. */
-      m_wasAutocompleting = true;
-      removeAutocompletion();
-    } else if (event.isKeyPress() || event == Ion::Events::USBEnumeration) {
+    } else if ((event.isKeyPress() &&
+                !(event == Ion::Events::Toolbox || event == Ion::Events::Var ||
+                  event == Ion::Events::Shift || event == Ion::Events::Alpha ||
+                  event == Ion::Events::OnOff)) ||
+               event == Ion::Events::USBEnumeration) {
       /* USBEnumeration will pop the view (see EditorController::handleEvent).
        * Autocompletion is stopped to ensure that isAutocompleting() is false
        * when coming back */
@@ -488,6 +485,48 @@ bool PythonTextArea::handleEventWithText(const char *text, bool indentation,
       TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
   addAutocompletion();
   return result;
+}
+
+bool PythonTextArea::handleBoxEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    prepareVariableBoxBeforeOpening();
+    assert(!m_contentView.isAutocompleting());
+  }
+  return TextArea::handleBoxEvent(event);
+}
+
+void PythonTextArea::prepareVariableBoxBeforeOpening() {
+  if (m_contentView.isAutocompleting()) {
+    /* Remove the autocompletion text so that opening the Varbox does not
+     * invalidate the ScriptNodes name pointers. */
+    m_wasAutocompleting = true;
+    removeAutocompletion();
+  }
+  VariableBoxController *varBox = App::app()->variableBox();
+  // Subtitle display status must be set before as it alter loaded node order
+  varBox->setDisplaySubtitles(true);
+  varBox->setTitle(I18n::Message::Autocomplete);
+  /* If the editor should be autocompleting an identifier, the variable box has
+   * already been loaded. We check shouldAutocomplete and not isAutocompleting,
+   * because the autocompletion result might be empty. */
+  const char *beginningOfAutocompletion = nullptr;
+  const char *cursor = nullptr;
+  PythonTextArea::AutocompletionType autocompType =
+      autocompletionType(nullptr, &beginningOfAutocompletion, &cursor);
+  int scriptIndex =
+      m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
+  if (autocompType == PythonTextArea::AutocompletionType::NoIdentifier) {
+    varBox->loadFunctionsAndVariables(scriptIndex, nullptr, 0);
+  } else if (autocompType ==
+             PythonTextArea::AutocompletionType::MiddleOfIdentifier) {
+    varBox->empty();
+  } else {
+    assert(autocompType == PythonTextArea::AutocompletionType::EndOfIdentifier);
+    assert(beginningOfAutocompletion != nullptr && cursor != nullptr);
+    assert(cursor > beginningOfAutocompletion);
+    varBox->loadFunctionsAndVariables(scriptIndex, beginningOfAutocompletion,
+                                      cursor - beginningOfAutocompletion);
+  }
 }
 
 void PythonTextArea::removeAutocompletion() {

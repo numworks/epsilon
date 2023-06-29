@@ -15,7 +15,7 @@ class InputEventHandler {
     return false;
   }
   virtual bool handleStoreEvent() { return false; }
-  bool handleBoxEvent(Ion::Events::Event event);
+  virtual bool handleBoxEvent(Ion::Events::Event event);
 };
 
 }  // namespace Escher

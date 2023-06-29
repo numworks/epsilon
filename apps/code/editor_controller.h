@@ -36,7 +36,6 @@ class EditorController : public Escher::ViewController,
 
  private:
   void cleanStorageEmptySpace();
-  void prepareVariableBox();
   Escher::StackViewController* stackController();
   EditorView m_editorView;
   Script m_script;

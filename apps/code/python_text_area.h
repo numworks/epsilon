@@ -26,6 +26,7 @@ class PythonTextArea : public Escher::TextArea {
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
+  bool handleBoxEvent(Ion::Events::Event event) override;
   /* autocompletionType returns:
    * - EndOfIdentifier if there is currently autocompletion, or if the cursor is
    *   at the end of an identifier,
@@ -73,6 +74,7 @@ class PythonTextArea : public Escher::TextArea {
   };
 
  private:
+  void prepareVariableBoxBeforeOpening();
   void removeAutocompletion();
   // Just removes the suggested text, not the autocompletion mode
   void removeAutocompletionText();

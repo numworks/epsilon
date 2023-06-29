@@ -78,61 +78,6 @@ void EditorController::viewDidDisappear() {
   m_menuController->scriptContentEditionDidFinish();
 }
 
-bool EditorController::textAreaDidReceiveEvent(TextArea *textArea,
-                                               Ion::Events::Event event) {
-  if (App::app()->textInputDidReceiveEvent(textArea, event)) {
-    return true;
-  }
-  if (event == Ion::Events::EXE) {
-    textArea->handleEventWithText("\n", true, false);
-    return true;
-  }
-
-  if (event == Ion::Events::Backspace && textArea->selectionIsEmpty()) {
-    /* If the cursor is on the left of the text of a line, backspace one
-     * indentation space at a time. */
-    const char *text = textArea->text();
-    const char *cursorLocation = textArea->cursorLocation();
-    const char *firstNonSpace =
-        UTF8Helper::NotCodePointSearch(text, ' ', true, cursorLocation);
-    assert(firstNonSpace >= text);
-    bool cursorIsPrecededOnTheLineBySpacesOnly = false;
-    size_t numberOfSpaces = cursorLocation - firstNonSpace;
-    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
-      cursorIsPrecededOnTheLineBySpacesOnly = true;
-      numberOfSpaces -= UTF8Decoder::CharSizeOfCodePoint('\n');
-    } else if (firstNonSpace == text) {
-      cursorIsPrecededOnTheLineBySpacesOnly = true;
-    }
-    numberOfSpaces = numberOfSpaces / UTF8Decoder::CharSizeOfCodePoint(' ');
-    if (cursorIsPrecededOnTheLineBySpacesOnly &&
-        numberOfSpaces >= TextArea::k_indentationSpaces) {
-      for (int i = 0; i < TextArea::k_indentationSpaces; i++) {
-        textArea->removePreviousGlyph();
-      }
-      return true;
-    }
-  } else if (event == Ion::Events::Space) {
-    /* If the cursor is on the left of the text of a line, a space triggers an
-     * indentation. */
-    const char *text = textArea->text();
-    const char *firstNonSpace = UTF8Helper::NotCodePointSearch(
-        text, ' ', true, textArea->cursorLocation());
-    assert(firstNonSpace >= text);
-    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
-      assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-      char indentationBuffer[TextArea::k_indentationSpaces + 1];
-      for (int i = 0; i < TextArea::k_indentationSpaces; i++) {
-        indentationBuffer[i] = ' ';
-      }
-      indentationBuffer[TextArea::k_indentationSpaces] = 0;
-      textArea->handleEventWithText(indentationBuffer);
-      return true;
-    }
-  }
-  return false;
-}
-
 StackViewController *EditorController::stackController() {
   return static_cast<StackViewController *>(parentResponder());
 }

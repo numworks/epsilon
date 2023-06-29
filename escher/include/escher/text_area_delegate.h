@@ -8,7 +8,9 @@ class TextArea;
 class TextAreaDelegate {
  public:
   virtual bool textAreaDidReceiveEvent(TextArea* textArea,
-                                       Ion::Events::Event event) = 0;
+                                       Ion::Events::Event event) {
+    return false;
+  }
 };
 
 }  // namespace Escher

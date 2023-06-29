@@ -457,7 +457,10 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
       }
     }
   }
-  bool result = TextArea::handleEvent(event);
+
+  bool result = App::app()->textInputDidReceiveEvent(this, event) ||
+                handleSpecialEvent(event) || TextArea::handleEvent(event);
+
   if (event == Ion::Events::Backspace && !m_contentView.isAutocompleting() &&
       selectionIsEmpty()) {
     /* We want to add autocompletion when we are editing a word (after adding or
@@ -471,6 +474,48 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     removeAutocompletion();
   }
   return result;
+}
+
+bool PythonTextArea::handleSpecialEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::EXE) {
+    handleEventWithText(k_newLine, true, false);
+    return true;
+  }
+
+  if (event != Ion::Events::Backspace && event != Ion::Events::Space) {
+    return false;
+  }
+
+  /* If the cursor is on the left of the text of a line:
+   * - backspace one indentation space at a time.
+   * - a space triggers an indentation.*/
+  const char *thisText = text();
+  const char *thisCursorLocation = cursorLocation();
+  const char *firstNonSpace =
+      UTF8Helper::NotCodePointSearch(thisText, ' ', true, thisCursorLocation);
+  assert(firstNonSpace >= thisText);
+  bool cursorIsPrecededOnTheLineBySpacesOnly =
+      UTF8Helper::CodePointIs(firstNonSpace, '\n') || firstNonSpace == thisText;
+  if (!cursorIsPrecededOnTheLineBySpacesOnly) {
+    return false;
+  } else if (event == Ion::Events::Space) {
+    handleEventWithText(k_indentation);
+    return true;
+  } else if (event == Ion::Events::Backspace && selectionIsEmpty()) {
+    static_assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1,
+                  "Space is more than 1 char long");
+    constexpr size_t newLineSize = UTF8Decoder::CharSizeOfCodePoint('\n');
+    size_t numberOfSpaces = thisCursorLocation - firstNonSpace -
+                            (firstNonSpace != thisText) * newLineSize;
+    if (numberOfSpaces >= k_indentationSpaces) {
+      for (int i = 0; i < k_indentationSpaces; i++) {
+        removePreviousGlyph();
+      }
+      return true;
+    }
+  }
+
+  return false;
 }
 
 bool PythonTextArea::handleEventWithText(const char *text, bool indentation,

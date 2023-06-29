@@ -103,6 +103,10 @@ QUIZ_CASE(graph_function_properties) {
                    .setFlag(PTTFlags::ForbidInequalityGraphing)
                    .setFlag(PTTFlags::ForbidImplicitPlots)),
   };
+
+  Preferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Cartesian);
+
   for (const ExamMode examMode : examModes) {
     Preferences::SharedPreferences()->setExamMode(examMode);
     bool noInequations = examMode.forbidInequalityGraphing();

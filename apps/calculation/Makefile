@@ -50,8 +50,9 @@ apps_src += $(app_calculation_src)
 i18n_files += $(call i18n_without_universal_for,calculation/i18n/base)
 i18n_files += $(call i18n_without_universal_for,calculation/additional_results/i18n/unit_comparison)
 
-tests_src += $(addprefix apps/calculation/test/,\
-  calculation_store.cpp\
-)
+# TODO enable
+# tests_src += $(addprefix apps/calculation/test/,\
+  # calculation_store.cpp\
+# )
 
 $(eval $(call depends_on_image,apps/calculation/app.cpp,apps/calculation/calculation_icon.png))

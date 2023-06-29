@@ -10,12 +10,12 @@ namespace Escher {
 class EvenOddMessageTextCell : public EvenOddCell {
  public:
   EvenOddMessageTextCell(KDGlyph::Format format = {
+                             .style = {.font = KDFont::Size::Small},
                              .horizontalAlignment = KDGlyph::k_alignCenter});
   void setMessage(I18n::Message textContent) {
     m_messageTextView.setMessage(textContent);
   }
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  void setMessageFont(KDFont::Size font) { m_messageTextView.setFont(font); }
   void setTextColor(KDColor color) { m_messageTextView.setTextColor(color); }
   void setLeftMargin(KDCoordinate margin);
 

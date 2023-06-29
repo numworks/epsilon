@@ -40,11 +40,6 @@ void ValuesController::setupSelectableTableViewAndCells() {
     c->setParentResponder(selectableTableView());
     c->editableTextCell()->textField()->setDelegate(this);
   }
-  int numberOfAbscissaTitleCells = abscissaTitleCellsCount();
-  for (int i = 0; i < numberOfAbscissaTitleCells; i++) {
-    EvenOddMessageTextCell *c = abscissaTitleCells(i);
-    c->setMessageFont(k_cellFont);
-  }
 }
 
 // View Controller

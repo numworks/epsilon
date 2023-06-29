@@ -687,6 +687,17 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(!n1->hasSibling(n1->childAtIndex(2)));
   quiz_assert(n1->nextNode()->hasSibling(n1->childAtIndex(2)));
 
+  quiz_assert(n1->childAtIndex(2)->hasAncestor(n1, true));
+  quiz_assert(n1->childAtIndex(2)->hasAncestor(n1, false));
+  quiz_assert(n1->hasAncestor(n1, true));
+  quiz_assert(!n1->hasAncestor(n1, false));
+  quiz_assert(!n1->hasAncestor(n1->childAtIndex(2), true));
+  quiz_assert(!n1->hasAncestor(n1->childAtIndex(2), false));
+  quiz_assert(!n2->hasAncestor(n1, true));
+  quiz_assert(!n2->hasAncestor(n1, false));
+  quiz_assert(!n1->hasAncestor(n2, true));
+  quiz_assert(!n1->hasAncestor(n2, false));
+
   quiz_assert(n1->commonAncestor(n1, n1) == n1);
   quiz_assert(n1->commonAncestor(n1, n1->childAtIndex(0)->childAtIndex(1)) ==
               n1);

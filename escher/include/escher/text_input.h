@@ -20,7 +20,6 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
   TextInput(Responder *parentResponder, View *contentView)
       : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
                                                            contentView, this) {}
-  void setFont(KDFont::Size font) { contentView()->setFont(font); }
   const char *text() const { return nonEditableContentView()->text(); }
   bool removePreviousGlyph();
   const char *cursorLocation() const {
@@ -47,7 +46,6 @@ class TextInput : public TextCursorView::WithBlinkingCursor<
           m_font(format.style.font) {}
 
     // Font
-    void setFont(KDFont::Size font);
     KDFont::Size font() const { return m_font; }
 
     // Cursor location

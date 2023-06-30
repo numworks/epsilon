@@ -178,7 +178,7 @@ int Addition::getPolynomialCoefficients(Context* context,
   for (int i = 0; i < childrenNumber; i++) {
     int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName,
                                                       intermediateCoefficients);
-    assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
+    assert(d <= deg);
     for (int j = 0; j < d + 1; j++) {
       static_cast<Addition&>(coefficients[j])
           .addChildAtIndexInPlace(intermediateCoefficients[j],

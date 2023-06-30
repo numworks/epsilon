@@ -27,7 +27,7 @@ class AppsContainer;
 namespace Escher {
 
 class Container;
-class InputEventHandler;
+class EditableField;
 
 class App : public Responder {
  public:

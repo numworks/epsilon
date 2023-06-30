@@ -58,7 +58,7 @@ class App : public Shared::SharedApp {
   void allowBoxes(bool allow) { m_allowBoxes = allow; }
 
   /* TextInputDelegate */
-  bool textInputDidReceiveEvent(Escher::InputEventHandler *textInput,
+  bool textInputDidReceiveEvent(Escher::EditableField *textInput,
                                 Ion::Events::Event event);
 
   /* Code::App */

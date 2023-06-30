@@ -34,11 +34,9 @@ class AbstractTextField : public TextInput, public EditableField {
   // TextInput
   void scrollToCursor() override;
 
-  // InputEventHandler
+  // EditableField
   bool handleEventWithText(const char *text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
-
-  // EditableField
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void setEditing(bool isEditing) {
     assert(!isEditing || isEditable());

@@ -3,17 +3,17 @@
 
 namespace Escher {
 
-class InputEventHandler;
+class EditableField;
 
 class PervasiveBox {
  public:
   PervasiveBox() : m_sender(nullptr) {}
-  InputEventHandler* sender() { return m_sender; }
-  void setSender(InputEventHandler* sender) { m_sender = sender; }
+  EditableField* sender() { return m_sender; }
+  void setSender(EditableField* sender) { m_sender = sender; }
   virtual void open() = 0;
 
  private:
-  InputEventHandler* m_sender;
+  EditableField* m_sender;
 };
 
 }  // namespace Escher

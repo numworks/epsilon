@@ -109,7 +109,7 @@ void App::willExitResponderChain(Responder *nextFirstResponder) {
   m_menuController.willExitApp();
 }
 
-bool App::textInputDidReceiveEvent(InputEventHandler *textInput,
+bool App::textInputDidReceiveEvent(EditableField *textInput,
                                    Ion::Events::Event event) {
   const char *pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {

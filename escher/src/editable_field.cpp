@@ -1,11 +1,11 @@
 #include <escher/container.h>
-#include <escher/input_event_handler.h>
+#include <escher/editable_field.h>
 #include <escher/metric.h>
 #include <escher/toolbox.h>
 
 namespace Escher {
 
-bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
+bool EditableField::handleBoxEvent(Ion::Events::Event event) {
   App* app = App::app();
   PervasiveBox* box = nullptr;
   if (event == Ion::Events::Toolbox) {
@@ -20,5 +20,4 @@ bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
   box->open();
   return true;
 }
-
 }  // namespace Escher

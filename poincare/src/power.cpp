@@ -464,27 +464,18 @@ int Power::getPolynomialCoefficients(Context *context, const char *symbolName,
   if (deg <= 0 || deg > Expression::k_maxPolynomialDegree) {
     return defaultGetPolynomialCoefficients(context, symbolName, coefficients);
   }
-  /* Here we only consider the case x^4 as privateGetPolynomialCoefficients is
-   * supposed to be called after reducing the expression. */
-  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol &&
-      strcmp(childAtIndex(0).convert<Symbol>().name(), symbolName) == 0 &&
-      childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-    Rational r = childAtIndex(1).convert<Rational>();
-    if (!r.isInteger() || r.isPositive() == TrinaryBoolean::False) {
-      return -1;
+  assert(childAtIndex(1).type() == ExpressionNode::Type::Rational);
+  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
+    assert(strcmp(childAtIndex(0).convert<Symbol>().name(), symbolName) == 0);
+    assert(childAtIndex(1)
+               .convert<Rational>()
+               .unsignedIntegerNumerator()
+               .extractedInt() == deg);
+    for (int i = 0; i < deg; i++) {
+      coefficients[i] = Rational::Builder(0);
     }
-    Integer num = r.unsignedIntegerNumerator();
-    if (!num.isExtractable()) {
-      return -1;
-    }
-    int n = num.extractedInt();
-    if (n <= k_maxPolynomialDegree) {
-      for (int i = 0; i < n; i++) {
-        coefficients[i] = Rational::Builder(0);
-      }
-      coefficients[n] = Rational::Builder(1);
-      return n;
-    }
+    coefficients[deg] = Rational::Builder(1);
+    return deg;
   }
   return -1;
 }

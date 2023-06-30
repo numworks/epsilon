@@ -204,7 +204,8 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
   }
   columnWidth = std::max(size.width(), columnWidth);
   rowHeight = std::max(size.height(), rowHeight);
-  return KDSize(columnWidth, rowHeight);
+  return KDSize(columnWidth + separatorBeforeColumn(column),
+                rowHeight + separatorBeforeRow(row));
 }
 
 // ColumnHelper

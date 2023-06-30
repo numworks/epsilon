@@ -166,8 +166,8 @@ int Addition::getPolynomialCoefficients(Context* context,
                                         const char* symbolName,
                                         Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
-  if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
-    return -1;
+  if (deg <= 0 || deg > Expression::k_maxPolynomialDegree) {
+    return defaultGetPolynomialCoefficients(context, symbolName, coefficients);
   }
   for (int k = 0; k < deg + 1; k++) {
     coefficients[k] = Addition::Builder();

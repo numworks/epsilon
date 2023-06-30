@@ -27,6 +27,7 @@ class NAry {
   static bool SquashIfUnary(EditionReference* reference);
   static bool SquashIfEmpty(EditionReference* reference);
   static bool Sanitize(EditionReference* reference);
+  static void Sort(Node* nary, int(compare)(const Node*, const Node*));
   static void SortChildren(EditionReference reference,
                            Comparison::Order order = Comparison::Order::User);
 };

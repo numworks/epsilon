@@ -27,6 +27,7 @@ ValuesController::ValuesController(
     Responder *parentResponder, ButtonRowController *header,
     FunctionParameterController *functionParameterController)
     : Shared::ValuesController(parentResponder, header),
+      m_tableSizeManager(this),
       m_functionParameterController(functionParameterController),
       m_intervalParameterController(this),
       m_derivativeParameterController(this),
@@ -66,7 +67,6 @@ ValuesController::ValuesController(
               },
               this),
           &m_exactValuesDotView, k_cellFont),
-      m_tableSizeManager(this),
       m_exactValuesAreActivated(false) {
   m_prefacedTwiceTableView.setPrefaceDelegate(this);
   initValueCells();

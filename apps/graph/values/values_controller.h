@@ -170,6 +170,15 @@ class ValuesController : public Shared::ValuesController,
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(
       int *column) const;
 
+  // + 1 for title row
+  constexpr static int k_maxNumberOfRows =
+      Shared::Interval::k_maxNumberOfElements + 1;
+  // Only k_maxNumberOfMemoizedModels functions are computed
+  constexpr static int k_maxNumberOfColumns =
+      Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes +
+      Shared::ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
+  Escher::HeavyTableSizeManager<k_maxNumberOfRows, k_maxNumberOfColumns>
+      m_tableSizeManager;
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::ExpressionFunctionTitleCell
       m_functionTitleCells[k_maxNumberOfDisplayableColumns];
@@ -185,8 +194,6 @@ class ValuesController : public Shared::ValuesController,
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
-  // TODO: These numerical values are temp
-  Escher::HeavyTableSizeManager<103, 15> m_tableSizeManager;
   bool m_exactValuesAreActivated;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };

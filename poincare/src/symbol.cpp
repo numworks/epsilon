@@ -202,16 +202,15 @@ bool Symbol::derivate(const ReductionContext& reductionContext, Symbol symbol,
 
 int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
                                       Expression coefficients[]) const {
-  if (strcmp(name(), symbolName) == 0) {
-    // This is the symbol we are looking for.
+  int deg = polynomialDegree(context, symbolName);
+  if (deg == 1) {
     coefficients[0] = Rational::Builder(0);
     coefficients[1] = Rational::Builder(1);
-    return 1;
+  } else {
+    assert(deg == 0);
+    coefficients[0] = clone();
   }
-  /* No variable expansion is expected within this method. Only functions are
-   * expanded and replaced. */
-  coefficients[0] = clone();
-  return 0;
+  return deg;
 }
 
 Expression Symbol::deepReplaceReplaceableSymbols(

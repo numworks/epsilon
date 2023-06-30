@@ -90,27 +90,26 @@ TrinaryBoolean PowerNode::isNull(Context *context) const {
 
 int PowerNode::polynomialDegree(Context *context,
                                 const char *symbolName) const {
-  int deg = ExpressionNode::polynomialDegree(context, symbolName);
-  if (deg == 0) {
-    return deg;
+  if (ExpressionNode::polynomialDegree(context, symbolName) == 0) {
+    return 0;
   }
   int op0Deg = childAtIndex(0)->polynomialDegree(context, symbolName);
   if (op0Deg < 0) {
     return -1;
   }
-  if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
-    RationalNode *r = static_cast<RationalNode *>(childAtIndex(1));
-    if (!r->isInteger() || Number(r).isPositive() == TrinaryBoolean::False) {
-      return -1;
-    }
-    Integer numeratorInt = r->signedNumerator();
-    if (!numeratorInt.isExtractable()) {
-      return -1;
-    }
-    op0Deg *= numeratorInt.extractedInt();
-    return op0Deg;
+  if (childAtIndex(1)->type() != ExpressionNode::Type::Rational) {
+    return -1;
   }
-  return -1;
+  RationalNode *r = static_cast<RationalNode *>(childAtIndex(1));
+  if (!r->isInteger() || Number(r).isPositive() == TrinaryBoolean::False) {
+    return -1;
+  }
+  Integer numeratorInt = r->signedNumerator();
+  if (!numeratorInt.isExtractable()) {
+    return -1;
+  }
+  op0Deg *= numeratorInt.extractedInt();
+  return op0Deg;
 }
 
 Expression PowerNode::removeUnit(Expression *unit) {

@@ -73,6 +73,7 @@ void App::didBecomeActive(Window *window) {
   int queueLength = queue->length();
   Escher::ViewController *currentController = &m_menuController;
   bool stop = false;
+  bool resultsWereRecomputed = false;
   for (int i = 0; i < queueLength; i++) {
     /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
      * from popping until the queue is empty. */
@@ -82,6 +83,7 @@ void App::didBecomeActive(Window *window) {
     }
     currentController->stackOpenPage(controller);
     currentController = controller;
+
     if (currentController == &m_inputSlopeController) {
       // X1/Y1 data might have changed outside the app.
       if (!snapshot()->statistic()->validateInputs()) {
@@ -90,7 +92,13 @@ void App::didBecomeActive(Window *window) {
       } else {
         // Recompute results
         snapshot()->statistic()->compute();
+        resultsWereRecomputed = true;
       }
+    } else if (resultsWereRecomputed &&
+               currentController == &m_resultsController &&
+               !snapshot()->statistic()->isGraphable()) {
+      // The results changed and can't be graphed anymore
+      stop = true;
     }
   }
   Escher::App::didBecomeActive(window);

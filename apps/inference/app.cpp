@@ -68,9 +68,6 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_bufferDestructor(nullptr) {}
 
 void App::didBecomeActive(Window *window) {
-  // Recompute results: data might have changed in another app.
-  snapshot()->statistic()->compute();
-  bool stopAtInputController = !snapshot()->statistic()->validateInputs();
   Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
       *queue = snapshot()->pageQueue();
   int queueLength = queue->length();
@@ -80,14 +77,23 @@ void App::didBecomeActive(Window *window) {
     /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
      * from popping until the queue is empty. */
     Escher::ViewController *controller = queue->queuePop();
-    if (!stop) {
-      currentController->stackOpenPage(controller);
-      currentController = controller;
-      stop = stopAtInputController &&
-             (currentController == &m_inputHomogeneityController ||
-              currentController == &m_inputGoodnessController ||
-              currentController == &m_inputSlopeController ||
-              currentController == &m_inputController);
+    if (stop) {
+      continue;
+    }
+    currentController->stackOpenPage(controller);
+    currentController = controller;
+    if (currentController == &m_inputHomogeneityController ||
+        currentController == &m_inputGoodnessController ||
+        currentController == &m_inputSlopeController ||
+        currentController == &m_inputController) {
+      // Data might have changed in another app.
+      if (!snapshot()->statistic()->validateInputs()) {
+        // If input were invalidated, just stop here.
+        stop = true;
+      } else {
+        // Recompute results
+        snapshot()->statistic()->compute();
+      }
     }
   }
   Escher::App::didBecomeActive(window);

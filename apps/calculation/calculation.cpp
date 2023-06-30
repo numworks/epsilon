@@ -340,8 +340,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       Expression angle = directExpression.childAtIndex(0);
       Expression unit;
       PoincareHelpers::CloneAndReduceAndRemoveUnit(
-          &angle, globalContext, ReductionTarget::SystemForApproximation,
-          &unit);
+          &angle, globalContext, ReductionTarget::User, &unit);
       // The angle must be real.
       if ((unit.isPureAngleUnit() || unit.isUninitialized()) &&
           std::isfinite(PoincareHelpers::ApproximateToScalar<double>(

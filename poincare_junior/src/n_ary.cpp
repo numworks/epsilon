@@ -128,19 +128,20 @@ bool NAry::Sanitize(EditionReference* reference) {
   return SquashIfUnary(reference) || flattened;
 }
 
-void NAry::Sort(Node* nary, Comparison::Order order) {
+bool NAry::Sort(Node* nary, Comparison::Order order) {
   // avoid the switch of numberOfChildren() since we know the type ?
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
-    return;
+    return false;
   }
   if (numberOfChildren == 2) {
     Node* child0 = nary->nextNode();
     Node* child1 = child0->nextTree();
     if (Comparison::Compare(child0, child1, order) > 0) {
       child0->moveTreeBeforeNode(child1);
+      return true;
     }
-    return;
+    return false;
   }
   const Node* children[k_maxNumberOfChildren];
   uint8_t indexes[k_maxNumberOfChildren];
@@ -159,7 +160,7 @@ void NAry::Sort(Node* nary, Comparison::Order order) {
       goto push;
     }
   }
-  return;
+  return false;
 push:
   // push children in their destination order
   Node* newNAry = EditionPool::sharedEditionPool()->clone(nary, false);
@@ -169,6 +170,7 @@ push:
   assert(nary->treeSize() == newNAry->treeSize());
   // replace nary with the sorted one
   nary->moveTreeOverTree(newNAry);
+  return true;
 }
 
 void NAry::SortChildren(EditionReference reference, Comparison::Order order) {

@@ -15,7 +15,9 @@ class ZoomAndPanCurveViewController : public ZoomCurveViewController {
   bool handleEvent(Ion::Events::Event event) override;
 
  protected:
-  virtual bool handlePan(Ion::Events::Event event);
+  bool handlePan(Ion::Events::Event event);
+  virtual float xMove() { return interactiveCurveViewRange()->xGridUnit(); }
+  virtual float yMove() { return interactiveCurveViewRange()->yGridUnit(); }
   float xFocus() override { return interactiveCurveViewRange()->xCenter(); }
   float yFocus() override { return interactiveCurveViewRange()->yCenter(); }
 };

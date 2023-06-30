@@ -169,6 +169,9 @@ class ValuesController : public Shared::ValuesController,
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(
       int *column) const;
+  bool cellHasValue(int column, int row, bool includeEmptyLastRow) const {
+    return row <= numberOfElementsInColumn(column) + includeEmptyLastRow;
+  }
 
   // + 1 for title row
   constexpr static int k_maxNumberOfRows =

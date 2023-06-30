@@ -81,11 +81,8 @@ void App::didBecomeActive(Window *window) {
     }
     currentController->stackOpenPage(controller);
     currentController = controller;
-    if (currentController == &m_inputHomogeneityController ||
-        currentController == &m_inputGoodnessController ||
-        currentController == &m_inputSlopeController ||
-        currentController == &m_inputController) {
-      // Data might have changed in another app.
+    if (currentController == &m_inputSlopeController) {
+      // X1/Y1 data might have changed outside the app.
       if (!snapshot()->statistic()->validateInputs()) {
         // If input were invalidated, just stop here.
         stop = true;

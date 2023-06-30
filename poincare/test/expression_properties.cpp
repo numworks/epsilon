@@ -742,28 +742,25 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   const char* coefficient0[] = {"2", "1", "1", 0};
   assert_reduced_expression_has_polynomial_coefficient("x^2+x+2", "x",
                                                        coefficient0);
-  const char* coefficient1[] = {"12+(-6)×π", "12", "3",
-                                0};  // 3×x^2+12×x-6×π+12
+  const char* coefficient1[] = {"12+(-6)×π", "12", "3", 0};
   assert_reduced_expression_has_polynomial_coefficient("3×(x+2)^2-6×π", "x",
                                                        coefficient1);
-  // TODO: decomment when enable 3-degree polynomes
-  // const char * coefficient2[] = {"2+32×x", "2", "6", "2", 0};
-  // //2×n^3+6×n^2+2×n+2+32×x
-  // assert_reduced_expression_has_polynomial_coefficient("2×(n+1)^3-4n+32×x",
-  // "n", coefficient2);
-  const char* coefficient3[] = {"1", "-π", "1", 0};  // x^2-π×x+1
+  const char* coefficient2[] = {"2+32×x", "2", "6", "2", 0};
+  assert_reduced_expression_has_polynomial_coefficient("2×(n+1)^3-4n+32×x", "n",
+                                                       coefficient2);
+  const char* coefficient3[] = {"1", "-π", "1", 0};
   assert_reduced_expression_has_polynomial_coefficient("x^2-π×x+1", "x",
                                                        coefficient3);
 
   // f: x→x^2+Px+1
   assert_reduce_and_store("1+π×x+x^2→f(x)");
-  const char* coefficient4[] = {"1", "π", "1", 0};  // x^2+π×x+1
+  const char* coefficient4[] = {"1", "π", "1", 0};
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x",
                                                        coefficient4);
-  const char* coefficient5[] = {"0", "i", 0};  // √(-1)x
+  const char* coefficient5[] = {"0", "i", 0};
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        coefficient5);
-  const char* coefficient6[] = {Nonreal::Name(), 0};  // √(-1)x
+  const char* coefficient6[] = {Nonreal::Name(), 0};
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        coefficient6, Real);
 

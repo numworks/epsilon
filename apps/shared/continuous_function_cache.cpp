@@ -44,11 +44,10 @@ void ContinuousFunctionCache::PrepareForCaching(void *fun,
   if (function->cache() != cache) {
     cache->clear();
     function->setCache(cache);
-  } else if (tStep != 0.f && tStep != cache->step()) {
+  } else if (tStep != 0.f &&
+             std::fabs(tStep - cache->step()) > k_cacheHitTolerance) {
     cache->clear();
-  }
-
-  if (function->properties().isCartesian() && tStep != 0) {
+  } else if (function->properties().isCartesian() && tStep != 0) {
     function->cache()->pan(function, tMin);
   }
   function->cache()->setRange(tMin, tStep);

@@ -402,68 +402,18 @@ EditionReference PushConstant(Node* u) {
   return P_ONE();
 }
 
-void AddPopFirst(EditionReference* l) {
-  assert(l->type() == BlockType::Addition);
-  NAry::RemoveChildAtIndex(*l, 0);
-}
-
-void AddPushFirst(EditionReference* l, EditionReference* e) {
-  assert(l->type() == BlockType::Addition);
-  NAry::AddChildAtIndex(*l, *e, 0);
-}
-
-bool Simplification::SimplifySumRec(EditionReference* l) {
-  if (l->numberOfChildren() != 2) {
-    EditionReference u1 = NAry::DetachChildAtIndex(*l, 0);
-    SimplifySumRec(l);
-    if (u1.type() == BlockType::Addition) {
-      EditionReference l2 = l->clone();
-      MergeSums(&u1, &l2);
-      MoveTreeOverTree(l, u1);
-      return true;
-    }
-    WrapWithUnary(&u1, KAdd());
-    EditionReference l2 = l->clone();
-    MergeSums(&u1, &l2);
-    MoveTreeOverTree(l, u1);
-    return true;
-  }
-  EditionReference u1 = l->childAtIndex(0);
-  EditionReference u2 = l->childAtIndex(1);
-  if (u1.type() == BlockType::Addition || u2.type() == BlockType::Addition) {
-    l->removeNode();
-    if (u1.type() != BlockType::Addition) {
-      WrapWithUnary(&u1, KAdd());
-    }
-    if (u2.type() != BlockType::Addition) {
-      WrapWithUnary(&u2, KAdd());
-    }
-    MergeSums(&u1, &u2);
-    *l = u1;
-    return true;
-  }
+// returns true if they have been merged in u1
+bool Simplification::MergeSumChildren(Node* u1, Node* u2) {
   // Merge constants
   if (IsConstant(u1) && IsConstant(u2)) {
-    SimplifyRationalTree(l);
-    if (l->type() == BlockType::Zero) {
-      CloneNodeOverNode(l, KAdd());
-      return true;
-    }
-    WrapWithUnary(l, KAdd());
-    return true;
-  }
-  if (u1.type() == BlockType::Zero) {
-    MoveTreeOverTree(l, u2);
-    WrapWithUnary(l, KAdd());
-    return true;
-  }
-  if (u2.type() == BlockType::Zero) {
-    MoveTreeOverTree(l, u1);
-    WrapWithUnary(l, KAdd());
+    Node* add = Rational::Addition(u1, u2);
+    add->moveTreeOverTree(Rational::IrreducibleForm(add));
+    u1->moveTreeOverTree(add);
     return true;
   }
   EditionReference t1 = PushTerm(u1);
   EditionReference t2 = PushTerm(u2);
+  // todo terms are equal
   int termsAreEqual = Comparison::AreEqual(t1, t2);
   t1.removeTree();
   t2.removeTree();
@@ -474,75 +424,47 @@ bool Simplification::SimplifySumRec(EditionReference* l) {
     EditionReference S = P.childAtIndex(0);
     SimplifySum(&S);
     SimplifyProduct(&P);
-    if (P.type() == BlockType::Zero) {
-      P.removeTree();
-      CloneNodeOverTree(l, KAdd());
-      return true;
-    }
-    MoveTreeOverTree(l, P);
-    WrapWithUnary(l, KAdd());
+    u1->moveTreeOverTree(P);
     return true;
   }
-  return Reorder(&u1, &u2);
-}
-
-bool Simplification::MergeSums(EditionReference* p, EditionReference* q) {
-  if (q->numberOfChildren() == 0) {
-    q->removeNode();
-    return true;
-  }
-  if (p->numberOfChildren() == 0) {
-    MoveTreeOverNode(p, *q);
-    return true;
-  }
-  Node* p1 = p->childAtIndex(0);
-  Node* q1 = q->childAtIndex(0);
-  EditionReference h = P_ADD(p1->clone(), q1->clone());
-  SimplifySumRec(&h);
-  if (h.numberOfChildren() == 0) {
-    h.removeNode();
-    AddPopFirst(p);
-    AddPopFirst(q);
-    return MergeSums(p, q);
-  }
-  if (h.numberOfChildren() == 1) {
-    AddPopFirst(p);
-    AddPopFirst(q);
-    MergeSums(p, q);
-    MoveTreeOverTree(&h, h.childAtIndex(0));
-    AddPushFirst(p, &h);
-    return true;
-  }
-  if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
-    assert(Comparison::AreEqual(h.childAtIndex(1), q1));
-    EditionReference pc = p1->clone();
-    h.removeTree();
-    AddPopFirst(p);
-    MergeSums(p, q);
-    AddPushFirst(p, &pc);
-    return true;
-  }
-  if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
-    assert(Comparison::AreEqual(h.childAtIndex(1), p1));
-    EditionReference qc = q1->clone();
-    h.removeTree();
-    AddPopFirst(q);
-    MergeSums(p, q);
-    AddPushFirst(p, &qc);
-    return true;
-  }
-  assert(false);
+  return false;
 }
 
 bool Simplification::SimplifySum(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  if (SimplifySumRec(u)) {
-    NAry::Sanitize(u);
-    return true;
+  bool markerAdded = false;
+  if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
+    EditionPool::sharedEditionPool()->pushBlock(BlockType::Zero);
+    markerAdded = true;
   }
-  return false;
+  int n = u->numberOfChildren();
+  EditionReference end = u->nextTree();
+  Node* child = u->nextNode();
+  Node* next;
+  while ((next = child->nextTree()) < end) {
+    if (child->type() == BlockType::Zero) {
+      child->removeTree();
+      n--;
+      continue;
+    }
+    if (MergeSumChildren(child, next)) {
+      child->nextTree()->removeTree();
+      n--;
+    } else {
+      child = next;
+    }
+  }
+  if (markerAdded) {
+    end.removeNode();
+  }
+  if (n == u->numberOfChildren()) {
+    return false;
+  }
+  NAry::SetNumberOfChildren(*u, n);
+  NAry::Sanitize(u);
+  return true;
 }
 
 bool Simplification::SimplifyRationalTree(EditionReference* u) {

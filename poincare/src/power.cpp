@@ -462,9 +462,8 @@ defaultApproximation:
 int Power::getPolynomialCoefficients(Context *context, const char *symbolName,
                                      Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
-  if (deg <= 0) {
-    return Expression::defaultGetPolynomialCoefficients(context, symbolName,
-                                                        coefficients);
+  if (deg <= 0 || deg > Expression::k_maxPolynomialDegree) {
+    return defaultGetPolynomialCoefficients(context, symbolName, coefficients);
   }
   /* Here we only consider the case x^4 as privateGetPolynomialCoefficients is
    * supposed to be called after reducing the expression. */

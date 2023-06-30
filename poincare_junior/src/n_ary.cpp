@@ -128,7 +128,7 @@ bool NAry::Sanitize(EditionReference* reference) {
   return SquashIfUnary(reference) || flattened;
 }
 
-void NAry::Sort(Node* nary, int(compare)(const Node*, const Node*)) {
+void NAry::Sort(Node* nary, Comparison::Order order) {
   static constexpr size_t k_maxNumberOfChildren = 255;
   // avoid the switch of numberOfChildren() since we know the type ?
   const uint8_t numberOfChildren = nary->numberOfChildren();
@@ -138,7 +138,7 @@ void NAry::Sort(Node* nary, int(compare)(const Node*, const Node*)) {
   if (numberOfChildren == 2) {
     Node* child0 = nary->nextNode();
     Node* child1 = child0->nextTree();
-    if (compare(child0, child1) > 0) {
+    if (Comparison::Compare(child0, child1, order) > 0) {
       child0->moveTreeBeforeNode(child1);
     }
     return;
@@ -152,7 +152,7 @@ void NAry::Sort(Node* nary, int(compare)(const Node*, const Node*)) {
   }
   // sort a list of indexes first
   std::sort(&indexes[0], &indexes[numberOfChildren], [&](uint8_t a, uint8_t b) {
-    return compare(children[a], children[b]) < 0;
+    return Comparison::Compare(children[a], children[b], order) < 0;
   });
   // test if something has changed
   for (int i = 0; i < numberOfChildren; i++) {

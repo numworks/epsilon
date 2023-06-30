@@ -254,9 +254,12 @@ void ValuesController::updateNumberOfColumns() const {
        symbolTypeIndex++) {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
-  int numberOfActiveFunctionsInTable =
-      functionStore()->numberOfActiveFunctionsInTable();
-  for (int i = 0; i < numberOfActiveFunctionsInTable; i++) {
+  /* Value table has severe performances drops when the number of functions
+   * overflows the memoization. */
+  int numberOfDisplayedFunctions =
+      std::min(Shared::ContinuousFunctionStore::k_maxNumberOfMemoizedModels,
+               functionStore()->numberOfActiveFunctionsInTable());
+  for (int i = 0; i < numberOfDisplayedFunctions; i++) {
     Ion::Storage::Record record =
         functionStore()->activeRecordInTableAtIndex(i);
     ExpiringPointer<ContinuousFunction> f =

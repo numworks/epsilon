@@ -81,6 +81,15 @@ class FunctionZoomAndPanCurveViewController
     return m_interactiveRange;
   }
   AbstractPlotView* curveView() override { return m_contentView.curveView(); }
+  /* Moving of a whole number of pixels is cache-friendly and greatly enhance
+   * performances. */
+  float xMove() override {
+    return (Ion::Display::Width / 12) * m_contentView.curveView()->pixelWidth();
+  }
+  float yMove() override {
+    return (Ion::Display::Height / 8) *
+           m_contentView.curveView()->pixelHeight();
+  }
 
   ContentView m_contentView;
   InteractiveCurveViewRange* m_interactiveRange;

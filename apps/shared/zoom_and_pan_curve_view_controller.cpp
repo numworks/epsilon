@@ -17,19 +17,19 @@ bool ZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
 }
 
 bool ZoomAndPanCurveViewController::handlePan(Ion::Events::Event event) {
-  float xMove = 0.0f;
-  float yMove = 0.0f;
+  float x = 0.0f;
+  float y = 0.0f;
   if (event == Ion::Events::Up) {
-    yMove = interactiveCurveViewRange()->yGridUnit();
+    y = yMove();
   } else if (event == Ion::Events::Down) {
-    yMove = -interactiveCurveViewRange()->yGridUnit();
+    y = -yMove();
   } else if (event == Ion::Events::Left) {
-    xMove = -interactiveCurveViewRange()->xGridUnit();
+    x = -xMove();
   } else {
     assert(event == Ion::Events::Right);
-    xMove = interactiveCurveViewRange()->xGridUnit();
+    x = xMove();
   }
-  interactiveCurveViewRange()->panWithVector(xMove, yMove);
+  interactiveCurveViewRange()->panWithVector(x, y);
   /* Restart drawing interrupted curves when the window pans. */
   curveView()->reload(true);
   return true;

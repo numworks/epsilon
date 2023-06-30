@@ -93,10 +93,9 @@ void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
   // Handle hidden cells
   int type = typeAtLocation(column, row);
   if (type == k_notEditableValueCellType || type == k_editableValueCellType) {
-    const int numberOfElementsInCol = numberOfElementsInColumn(column);
     EvenOddCell *eoCell = static_cast<EvenOddCell *>(cell);
-    eoCell->setVisible(row <= numberOfElementsInCol + 1);
-    if (row >= numberOfElementsInCol + 1) {
+    eoCell->setVisible(cellHasValue(column, row, true));
+    if (!cellHasValue(column, row, false)) {
       static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
       if (type == k_notEditableValueCellType) {
         static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
@@ -187,7 +186,7 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
     if (tempI > 0) {
       columnWidth = ApproximatedParametricCellSize().width();
     }
-    if (row <= numberOfElementsInColumn(column) && row > 0) {
+    if (cellHasValue(column, row, false) && row > 0) {
       rowHeight = ApproximatedParametricCellSize().height();
     }
   }
@@ -196,7 +195,8 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
   if (typeAtLocation(column, row) == k_functionTitleCellType) {
     size = CellSizeWithLayout(functionTitleLayout(column));
   } else if (m_exactValuesAreActivated &&
-             typeAtLocation(column, row) == k_notEditableValueCellType) {
+             typeAtLocation(column, row) == k_notEditableValueCellType &&
+             cellHasValue(column, row, false)) {
     // Size is constant when displaying approximations
     Layout l = memoizedLayoutForCell(column, row);
     assert(!l.isUninitialized());

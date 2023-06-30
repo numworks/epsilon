@@ -38,9 +38,6 @@ void TrigonometryListController::setExactAndApproximateExpression(
   Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &exactAngle, context, ReductionTarget::User, &unit);
 
-  assert(std::isfinite(Shared::PoincareHelpers::ApproximateToScalar<double>(
-      exactAngle, context)));
-
   // Set exact angle in [0, 2π]
   if (!exactAngle.isUndefined()) {
     if (!unit.isUninitialized()) {

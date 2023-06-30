@@ -129,7 +129,6 @@ bool NAry::Sanitize(EditionReference* reference) {
 }
 
 void NAry::Sort(Node* nary, Comparison::Order order) {
-  static constexpr size_t k_maxNumberOfChildren = 255;
   // avoid the switch of numberOfChildren() since we know the type ?
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
@@ -198,6 +197,26 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
                                    order) >= 0;
       },
       contextArray, reference.numberOfChildren());
+}
+
+void NAry::SortedInsertChild(EditionReference ref, EditionReference child,
+                             Comparison::Order order) {
+  Node* nary = ref;
+  Node* children[k_maxNumberOfChildren];
+  for (uint8_t index = 0; const Node* child : nary->children()) {
+    children[index++] = const_cast<Node*>(child);
+  }
+  uint8_t a = 0;
+  uint8_t b = nary->numberOfChildren();
+  while (b - a > 0) {
+    uint8_t m = (a + b) / 2;
+    if (Comparison::Compare(children[m], child, order) < 0) {
+      a = (a + b + 1) / 2;
+    } else {
+      b = m;
+    }
+  }
+  AddChildAtIndex(ref, child, a);
 }
 
 }  // namespace PoincareJ

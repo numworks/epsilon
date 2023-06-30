@@ -31,6 +31,12 @@ class NAry {
                    Comparison::Order order = Comparison::Order::User);
   static void SortChildren(EditionReference reference,
                            Comparison::Order order = Comparison::Order::User);
+  static void SortedInsertChild(
+      EditionReference nary, EditionReference child,
+      Comparison::Order order = Comparison::Order::User);
+
+ private:
+  static constexpr size_t k_maxNumberOfChildren = 255;
 };
 
 }  // namespace PoincareJ

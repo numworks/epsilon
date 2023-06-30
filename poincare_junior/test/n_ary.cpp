@@ -87,4 +87,10 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
       addition3, KAdd(0_e, 1_e, 1_e, 3_e, KMult(1_e, 0_e, KLn(2_e)), KLn(1_e),
                       KLn(5_e), KTrig(1_e, 0_e), KTrig(2_e, 1_e),
                       KPow(KTrig(3_e, 0_e), -1_e), KTrig(3_e, 0_e)));
+
+  Node* sorted = editionPool->clone(KAdd(1_e, 2_e, 3_e));
+  NAry::SortedInsertChild(sorted, EditionReference(0_e));
+  NAry::SortedInsertChild(sorted, EditionReference(2_e));
+  NAry::SortedInsertChild(sorted, EditionReference(5_e));
+  assert_trees_are_equal(sorted, KAdd(0_e, 1_e, 2_e, 2_e, 3_e, 5_e));
 }

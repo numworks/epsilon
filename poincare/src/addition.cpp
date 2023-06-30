@@ -179,6 +179,10 @@ int Addition::getPolynomialCoefficients(Context* context,
     int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName,
                                                       intermediateCoefficients);
     assert(d <= deg);
+    if (d < 0) {
+      // We couldn't calculate child's polynomial coefficients
+      return -1;
+    }
     for (int j = 0; j < d + 1; j++) {
       static_cast<Addition&>(coefficients[j])
           .addChildAtIndexInPlace(intermediateCoefficients[j],

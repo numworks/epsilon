@@ -396,7 +396,7 @@ int Multiplication::getPolynomialCoefficients(Context *context,
     // childAtIndex(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
     int degI = childAtIndex(i).getPolynomialCoefficients(
         context, symbolName, intermediateCoefficients);
-    assert(degI <= Expression::k_maxPolynomialDegree);
+    assert(degI <= deg);
     for (int j = deg; j > 0; j--) {
       // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...
       Addition a = Addition::Builder();

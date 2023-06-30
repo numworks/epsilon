@@ -397,6 +397,10 @@ int Multiplication::getPolynomialCoefficients(Context *context,
     int degI = childAtIndex(i).getPolynomialCoefficients(
         context, symbolName, intermediateCoefficients);
     assert(degI <= deg);
+    if (degI < 0) {
+      // We couldn't calculate child's polynomial coefficients
+      return -1;
+    }
     for (int j = deg; j > 0; j--) {
       // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...
       Addition a = Addition::Builder();

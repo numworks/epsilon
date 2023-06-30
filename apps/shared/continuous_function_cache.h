@@ -30,17 +30,17 @@ class ContinuousFunctionCache {
 
  private:
   /* The size of the cache is chosen to optimize the display of cartesian
-   * functions */
-  constexpr static int k_sizeOfCache = Ion::Display::Width;
+   * functions. */
+  constexpr static int k_sizeOfCache = 2 * Ion::Display::Width;
   /* We need a certain amount of tolerance since we try to evaluate the
    * equality of floats. But the value has to be chosen carefully. Too high of
    * a tolerance causes false positives, which lead to errors in curves
    * (ex : 1/x with a vertical line at 0). Too low of a tolerance causes false
    * negatives, which slows down the drawing.
    *
-   * The value 128*FLT_EPSILON has been found to be the lowest for which all
+   * The value 256*FLT_EPSILON has been found to be the lowest for which all
    * indices verify indexForParameter(tMin + index * tStep) = index. */
-  constexpr static float k_cacheHitTolerance = 128.0f * FLT_EPSILON;
+  constexpr static float k_cacheHitTolerance = 256.0f * FLT_EPSILON;
   /* The step is a fraction of tmax-tmin. We will evaluate the function at
    * every step and if the consecutive dots are close enough, we won't
    * evaluate any more dot within the step. We pick a very strange fraction

@@ -89,7 +89,7 @@ void ContinuousFunctionCache::ComputeNonCartesianSteps(float *tStep,
   /* Define cacheStep such that every whole graph steps are equally divided
    * For instance, with :
    *    graphStepDenominator = 10.1
-   *    numberOfCacheablePoints = 160
+   *    numberOfCacheablePoints = 320
    * tMin [----------------|----------------| ... |----------------|**] tMax
    *             step1           step2                  step10       step11
    * There are 11 steps, the first 10 are whole and have an equal size (tStep).

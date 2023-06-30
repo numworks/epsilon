@@ -2,7 +2,7 @@
 #define ESCHER_TEXT_AREA_H
 
 #include <assert.h>
-#include <escher/input_event_handler.h>
+#include <escher/editable_field.h>
 #include <escher/text_input.h>
 #include <omg/directions.h>
 #include <string.h>
@@ -12,7 +12,7 @@
 namespace Escher {
 // See TODO in EditableField
 
-class TextArea : public TextInput, public InputEventHandler {
+class TextArea : public TextInput, public EditableField {
  public:
   constexpr static char k_indentation[] = "  ";
   constexpr static int k_indentationSpaces = std::size(k_indentation) - 1;
@@ -24,6 +24,7 @@ class TextArea : public TextInput, public InputEventHandler {
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   void setText(char* textBuffer, size_t textBufferSize);
+  bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
 
  protected:
   int indentationBeforeCursor() const;

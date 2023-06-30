@@ -17,7 +17,7 @@ namespace Escher {
 
 TextArea::TextArea(Responder *parentResponder, View *contentView,
                    KDFont::Size font)
-    : TextInput(parentResponder, contentView), InputEventHandler() {}
+    : TextInput(parentResponder, contentView), EditableField() {}
 
 static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
                                           int bufferSize) {
@@ -264,6 +264,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
 void TextArea::setText(char *textBuffer, size_t textBufferSize) {
   contentView()->setText(textBuffer, textBufferSize);
   contentView()->moveCursorGeo(0, 0);
+}
+
+bool TextArea::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  return handleEventWithText("x");
 }
 
 int TextArea::indentationBeforeCursor() const {

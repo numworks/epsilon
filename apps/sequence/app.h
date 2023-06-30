@@ -55,7 +55,7 @@ class App : public Shared::FunctionApp {
   }
   TELEMETRY_ID("Sequence");
   /* TODO: override variableBox to lock sequence in the variable box once they
-   * appear there NestedMenuController * variableBox(InputEventHandler *
+   * appear there NestedMenuController * variableBox(EditableField *
    * textInput) override; */
   Shared::SequenceContext *localContext() override {
     return static_cast<Shared::GlobalContext *>(

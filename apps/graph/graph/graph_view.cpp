@@ -91,7 +91,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   KDCoordinate rectMax = axis == Axis::Horizontal
                              ? rect.right() + k_externRectMargin
                              : rect.top() - k_externRectMargin;
-  float tCacheMin, tCacheStep;
+  float tCacheMin, tStep, tCacheStep;
   float tStepNonCartesian = NAN;
   if (f->properties().isCartesian()) {
     float rectLimit = pixelToFloat(axis, rectMin);
@@ -100,7 +100,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
      * entirely invalidated. */
     tCacheMin = std::isnan(rectLimit) ? tmin : std::max(tmin, rectLimit);
     tmax = std::min(pixelToFloat(axis, rectMax), tmax);
-    tCacheStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+    tStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+    tCacheStep = tStep / 2.;
   } else {
     tCacheMin = tmin;
     // Compute tCacheStep and tStepNonCartesian
@@ -119,8 +120,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
           : NoDiscontinuity;
 
   if (f->properties().isCartesian()) {
-    drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax,
-                  tCacheStep, discontinuityEvaluation, axis);
+    drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tStep,
+                  discontinuityEvaluation, axis);
     return;
   }
   if (f->properties().isPolar()) {

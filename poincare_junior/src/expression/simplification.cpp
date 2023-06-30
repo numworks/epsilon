@@ -55,6 +55,12 @@ bool Simplification::SystematicReduce(EditionReference* u) {
   if (u->numberOfChildren() == 0) {
     return false;
   }
+
+  if (u->type() == BlockType::Multiplication ||
+      u->type() == BlockType::Addition) {
+    NAry::Flatten(u);
+  }
+
   bool childChanged = false;
   for (auto [child, index] : NodeIterator::Children<Editable>(*u)) {
     childChanged = SystematicReduce(&child) || childChanged;
@@ -62,6 +68,13 @@ bool Simplification::SystematicReduce(EditionReference* u) {
       CloneNodeOverTree(u, KUndef);
       return true;
     }
+  }
+
+  if (u->type() == BlockType::Multiplication ||
+      u->type() == BlockType::Addition) {
+    Node* n = *u;
+    NAry::Sort(n);
+    *u = n;
   }
 
   switch (u->type()) {

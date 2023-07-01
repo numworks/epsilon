@@ -23,8 +23,8 @@ STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_fill_rect), (mp_obj_t)&modkandinsky_fill_rect_obj },
   { MP_ROM_QSTR(MP_QSTR_fill_circle), (mp_obj_t)&modkandinsky_fill_circle_obj },
   { MP_ROM_QSTR(MP_QSTR_fill_polygon), (mp_obj_t)&modkandinsky_fill_polygon_obj },
-  { MP_ROM_QSTR(MP_QSTR_large_font), mp_const_true },
-  { MP_ROM_QSTR(MP_QSTR_small_font), mp_const_false },
+  { MP_ROM_QSTR(MP_QSTR_large_font), mp_const_false },
+  { MP_ROM_QSTR(MP_QSTR_small_font), mp_const_true },
   { MP_ROM_QSTR(MP_QSTR_wait_vblank), (mp_obj_t)&modkandinsky_wait_vblank_obj },
   { MP_ROM_QSTR(MP_QSTR_get_palette), (mp_obj_t)&modkandinsky_get_palette_obj },
 };

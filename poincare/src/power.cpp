@@ -462,7 +462,8 @@ int Power::getPolynomialCoefficients(Context *context, const char *symbolName,
                                      Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg <= 0 || deg > Expression::k_maxPolynomialDegree) {
-    return defaultGetPolynomialCoefficients(context, symbolName, coefficients);
+    return defaultGetPolynomialCoefficients(deg, context, symbolName,
+                                            coefficients);
   }
   assert(childAtIndex(1).type() == ExpressionNode::Type::Rational);
   if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {

@@ -187,7 +187,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   return false;
 }
 
-EditionReference PushBase(Node* u) {
+Node* PushBase(const Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -197,7 +197,7 @@ EditionReference PushBase(Node* u) {
   return u->clone();
 }
 
-EditionReference PushExponent(Node* u) {
+Node* PushExponent(const Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
@@ -281,15 +281,15 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
 }
 
 // The term of 2ab is ab
-EditionReference PushTerm(Node* u) {
+Node* PushTerm(const Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  EditionReference c = u->clone();
+  Node* c = u->clone();
   if (u->type() == BlockType::Multiplication) {
     if (IsConstant(u->childAtIndex(0))) {
       NAry::RemoveChildAtIndex(c, 0);
-      NAry::SquashIfUnary(&c);
+      NAry::SquashIfUnary(c);
       return c;
     }
     return c;
@@ -298,7 +298,7 @@ EditionReference PushTerm(Node* u) {
 }
 
 // The constant of 2ab is 2
-EditionReference PushConstant(Node* u) {
+Node* PushConstant(const Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }

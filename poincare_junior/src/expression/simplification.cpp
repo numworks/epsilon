@@ -47,6 +47,15 @@ bool AllChildren(Node* u, bool test(const Node*)) {
   return true;
 }
 
+// Add a dummy node after the tree if it is the next tree
+bool AddMarkerIfNeeded(Node* u) {
+  if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
+    EditionPool::sharedEditionPool()->pushBlock(BlockType::TreeBorder);
+    return true;
+  }
+  return false;
+}
+
 bool Simplification::SystematicReduce(EditionReference* u) {
   if (IsRational(*u)) {
     MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
@@ -238,11 +247,7 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  bool markerAdded = false;
-  if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
-    EditionPool::sharedEditionPool()->pushBlock(BlockType::Zero);
-    markerAdded = true;
-  }
+  bool markerAdded = AddMarkerIfNeeded(*u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
   Node* child = u->nextNode();
@@ -341,11 +346,7 @@ bool Simplification::SimplifySum(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  bool markerAdded = false;
-  if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
-    EditionPool::sharedEditionPool()->pushBlock(BlockType::Zero);
-    markerAdded = true;
-  }
+  bool markerAdded = AddMarkerIfNeeded(*u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
   Node* child = u->nextNode();

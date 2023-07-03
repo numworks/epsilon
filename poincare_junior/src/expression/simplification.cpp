@@ -72,9 +72,9 @@ bool Simplification::SystematicReduce(EditionReference* u) {
     case BlockType::Power:
       return SimplifyPower(u) || childChanged;
     case BlockType::Addition:
-      return SimplifySum(u) || childChanged;
+      return SimplifyAddition(u) || childChanged;
     case BlockType::Multiplication:
-      return SimplifyProduct(u) || childChanged;
+      return SimplifyMultiplication(u) || childChanged;
     case BlockType::TrigDiff:
       return SimplifyTrigDiff(u) || childChanged;
     case BlockType::Trig:
@@ -157,7 +157,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
     MoveNodeBeforeNode(&p, m);
     DropNode(u);
-    SimplifyProduct(&p);
+    SimplifyMultiplication(&p);
     assert(IsInteger(p));
     return SimplifyPower(u);
   }
@@ -173,7 +173,7 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     }
     n.removeTree();
     DropNode(u);
-    return SimplifyProduct(u);
+    return SimplifyMultiplication(u);
   }
   return false;
 }
@@ -205,7 +205,7 @@ Node* PushExponent(const Node* u) {
 }
 
 // returns true if they have been merged in u1
-bool Simplification::MergeProductChildren(Node* u1, Node* u2) {
+bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
   // Merge constants
   if (IsConstant(u1) && IsConstant(u2)) {
     Node* mult = Rational::Multiplication(u1, u2);
@@ -218,15 +218,15 @@ bool Simplification::MergeProductChildren(Node* u1, Node* u2) {
     EditionReference P =
         P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
     EditionReference S = P.childAtIndex(1);
-    SimplifySum(&S);
-    SimplifyProduct(&P);
+    SimplifyAddition(&S);
+    SimplifyMultiplication(&P);
     u1->moveTreeOverTree(P);
     return true;
   }
   return false;
 }
 
-bool Simplification::SimplifyProduct(EditionReference* u) {
+bool Simplification::SimplifyMultiplication(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
@@ -250,7 +250,7 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
       n--;
       continue;
     }
-    if (MergeProductChildren(child, next)) {
+    if (MergeMultiplicationChildren(child, next)) {
       child->nextTree()->removeTree();
       n--;
     } else {
@@ -327,7 +327,7 @@ Node* PushConstant(const Node* u) {
 }
 
 // returns true if they have been merged in u1
-bool Simplification::MergeSumChildren(Node* u1, Node* u2) {
+bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
   // Merge constants
   if (IsConstant(u1) && IsConstant(u2)) {
     Node* add = Rational::Addition(u1, u2);
@@ -340,15 +340,15 @@ bool Simplification::MergeSumChildren(Node* u1, Node* u2) {
     EditionReference P =
         P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
     EditionReference S = P.childAtIndex(0);
-    SimplifySum(&S);
-    SimplifyProduct(&P);
+    SimplifyAddition(&S);
+    SimplifyMultiplication(&P);
     u1->moveTreeOverTree(P);
     return true;
   }
   return false;
 }
 
-bool Simplification::SimplifySum(EditionReference* u) {
+bool Simplification::SimplifyAddition(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
@@ -363,7 +363,7 @@ bool Simplification::SimplifySum(EditionReference* u) {
       n--;
       continue;
     }
-    if (MergeSumChildren(child, next)) {
+    if (MergeAdditionChildren(child, next)) {
       child->nextTree()->removeTree();
       n--;
     } else {
@@ -869,7 +869,7 @@ bool Simplification::ExpandTrigonometric(EditionReference* ref) {
    * This step must be performed after sub-expansions since SimplifyProduct
    * may invalidate newTrig0 and newTrig3. */
   SimplifyTrig(&newTrig4);
-  SimplifyProduct(&newMult2);
+  SimplifyMultiplication(&newMult2);
   return true;
 }
 
@@ -922,9 +922,9 @@ bool Simplification::ContractTrigonometric(EditionReference* ref) {
   EditionReference newTrig2(newMult2.nextNode());
   // Shallow reduce new trigs and multiplications (in case one is opposed)
   SimplifyTrig(&newTrig1);
-  SimplifyProduct(&newMult1);
+  SimplifyMultiplication(&newMult1);
   SimplifyTrig(&newTrig2);
-  SimplifyProduct(&newMult2);
+  SimplifyMultiplication(&newMult2);
 
   // Contract newly created multiplications :
   // - Trig(B-D, TrigDiff(C,E))*F

@@ -58,10 +58,10 @@ class Simplification {
   static bool SimplifyRationalTree(EditionReference *u);
   static bool SimplifyTrig(EditionReference *u);
   static bool SimplifyTrigDiff(EditionReference *u);
-  static bool SimplifySum(EditionReference *u);
-  static bool MergeSumChildren(Node *u1, Node *u2);
-  static bool SimplifyProduct(EditionReference *u);
-  static bool MergeProductChildren(Node *u1, Node *u2);
+  static bool SimplifyAddition(EditionReference *u);
+  static bool MergeAdditionChildren(Node *u1, Node *u2);
+  static bool SimplifyMultiplication(EditionReference *u);
+  static bool MergeMultiplicationChildren(Node *u1, Node *u2);
   static bool SimplifyPower(EditionReference *u);
 
   typedef bool (*ShallowOperation)(EditionReference *reference, void *context);

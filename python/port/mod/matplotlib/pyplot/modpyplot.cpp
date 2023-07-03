@@ -370,11 +370,17 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args,
   size_t xIndex = 0;
   while (binIndex < nBins) {
     mp_float_t lowerBound = mp_obj_get_float(edgeItems[binIndex]);
+    if (!std::isfinite(lowerBound)) {
+      return mp_const_none;
+    }
     // Skip xItem if below the lower bound
     while (xIndex < xLength && mp_obj_get_float(xItems[xIndex]) < lowerBound) {
       xIndex++;
     }
     mp_float_t upperBound = mp_obj_get_float(edgeItems[binIndex + 1]);
+    if (!std::isfinite(upperBound)) {
+      return mp_const_none;
+    }
     while (xIndex < xLength &&
            (mp_obj_get_float(xItems[xIndex]) < upperBound ||
             (binIndex == nBins - 1 &&

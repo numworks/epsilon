@@ -47,7 +47,6 @@ class EditionReference {
   Node* previousNode() { return node()->previousNode(); }
   Node* previousTree() { return node()->previousTree(); }
   bool hasChild(EditionReference t) const { return node()->hasChild(t); }
-  bool hasSibling(EditionReference t) const { return node()->hasSibling(t); }
   bool hasAncestor(EditionReference t, bool includeSelf) const {
     return node()->hasAncestor(t, includeSelf);
   }

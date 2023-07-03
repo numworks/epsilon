@@ -109,7 +109,6 @@ class Node {
   int indexInParent() const;
   bool hasChild(const Node* child) const;
   bool hasAncestor(const Node* node, bool includeSelf) const;
-  bool hasSibling(const Node* e) const;
 
   constexpr BlockType type() const { return m_block->type(); }
   constexpr size_t nodeSize() const { return m_block->nodeSize(true); }

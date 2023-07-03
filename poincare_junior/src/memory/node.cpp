@@ -336,19 +336,6 @@ bool Node::hasAncestor(const Node* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
-bool Node::hasSibling(const Node* sibling) const {
-  const Node* p = parent();
-  if (!p) {
-    return false;
-  }
-  for (const Node* child : p->children()) {
-    if (child == sibling) {
-      return true;
-    }
-  }
-  return false;
-}
-
 EditionReference Node::clone() const {
   return EditionPool::sharedEditionPool()->clone(this);
 }

@@ -684,8 +684,6 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(n1->childAtIndex(0)->indexInParent() == 0);
   quiz_assert(!n1->hasChild(e2));
   quiz_assert(n1->hasChild(n1->childAtIndex(2)));
-  quiz_assert(!n1->hasSibling(n1->childAtIndex(2)));
-  quiz_assert(n1->nextNode()->hasSibling(n1->childAtIndex(2)));
 
   quiz_assert(n1->childAtIndex(2)->hasAncestor(n1, true));
   quiz_assert(n1->childAtIndex(2)->hasAncestor(n1, false));

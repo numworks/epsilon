@@ -56,7 +56,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
   // addition1 is 1+(2*3+4+5)+((+6)+7)
-  NAry::Flatten(addition1);
+  NAry::Flatten(&addition1);
   // addition1 is 1+2*3+4+5+6+7
 
   EditionReference addition2 = editionPool->push<BlockType::Addition>(6);

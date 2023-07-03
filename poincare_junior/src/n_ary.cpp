@@ -57,11 +57,6 @@ void NAry::SetNumberOfChildren(EditionReference reference,
   *numberOfChildrenBlock = numberOfChildren;
 }
 
-EditionReference NAry::Flatten(EditionReference reference) {
-  Flatten(&reference);
-  return reference;
-}
-
 bool NAry::Flatten(EditionReference* reference) {
   bool modified = false;
   assert(static_cast<Node*>(*reference)->isNAry());
@@ -85,22 +80,12 @@ bool NAry::Flatten(EditionReference* reference) {
   return false;
 }
 
-EditionReference NAry::SquashIfUnary(EditionReference reference) {
-  SquashIfUnary(&reference);
-  return reference;
-}
-
 bool NAry::SquashIfUnary(EditionReference* reference) {
   if (reference->numberOfChildren() == 1) {
     *reference = reference->moveTreeOverTree(reference->nextNode());
     return true;
   }
   return false;
-}
-
-EditionReference NAry::SquashIfEmpty(EditionReference reference) {
-  SquashIfEmpty(&reference);
-  return reference;
 }
 
 bool NAry::SquashIfEmpty(EditionReference* reference) {
@@ -113,11 +98,6 @@ bool NAry::SquashIfEmpty(EditionReference* reference) {
   *reference = reference->cloneTreeOverTree(
       Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
-}
-
-EditionReference NAry::Sanitize(EditionReference reference) {
-  Sanitize(&reference);
-  return reference;
 }
 
 bool NAry::Sanitize(EditionReference* reference) {

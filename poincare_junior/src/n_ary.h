@@ -19,10 +19,6 @@ class NAry {
   static void RemoveChildAtIndex(EditionReference nary, int index);
   static void SetNumberOfChildren(EditionReference reference,
                                   size_t numberOfChildren);
-  static EditionReference Flatten(EditionReference reference);
-  static EditionReference SquashIfUnary(EditionReference reference);
-  static EditionReference SquashIfEmpty(EditionReference reference);
-  static EditionReference Sanitize(EditionReference reference);
   static bool Flatten(EditionReference* reference);
   static bool SquashIfUnary(EditionReference* reference);
   static bool SquashIfEmpty(EditionReference* reference);

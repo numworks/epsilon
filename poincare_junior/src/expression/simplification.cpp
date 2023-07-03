@@ -309,11 +309,11 @@ Node* PushTerm(const Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
   }
-  Node* c = u->clone();
+  EditionReference c = u->clone();
   if (u->type() == BlockType::Multiplication) {
     if (IsConstant(u->childAtIndex(0))) {
       NAry::RemoveChildAtIndex(c, 0);
-      NAry::SquashIfUnary(c);
+      NAry::SquashIfUnary(&c);
       return c;
     }
     return c;
@@ -996,7 +996,7 @@ bool Simplification::ExpandPower(EditionReference* ref) {
   if (ExpandPower(&newPow)) {
     EditionReference newMult(newPow.nextTree());
     ExpandMult(&newMult);
-    *ref = NAry::Flatten(*ref);
+    NAry::Flatten(ref);
   }
   return true;
 }

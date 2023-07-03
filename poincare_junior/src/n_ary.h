@@ -8,18 +8,16 @@ namespace PoincareJ {
 
 class NAry {
  public:
-  static void AddChild(EditionReference nary, EditionReference child) {
-    return AddChildAtIndex(nary, child, nary.numberOfChildren());
+  static void AddChild(Node* nary, Node* child) {
+    return AddChildAtIndex(nary, child, nary->numberOfChildren());
   }
-  static void AddChildAtIndex(EditionReference nary, EditionReference child,
-                              int index);
+  static void AddChildAtIndex(Node* nary, Node* child, int index);
   static void AddOrMergeChildAtIndex(EditionReference nary,
                                      EditionReference child, int index);
-  static EditionReference DetachChildAtIndex(EditionReference nary, int index);
-  static void RemoveChildAtIndex(EditionReference nary, int index);
-  static void SetNumberOfChildren(EditionReference reference,
-                                  size_t numberOfChildren);
-  static bool Flatten(EditionReference* reference);
+  static EditionReference DetachChildAtIndex(Node* nary, int index);
+  static void RemoveChildAtIndex(Node* nary, int index);
+  static void SetNumberOfChildren(Node* nary, size_t numberOfChildren);
+  static bool Flatten(Node* nary);
   static bool SquashIfUnary(EditionReference* reference);
   static bool SquashIfEmpty(EditionReference* reference);
   static bool Sanitize(EditionReference* reference);

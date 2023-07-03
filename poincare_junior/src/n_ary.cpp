@@ -6,23 +6,16 @@
 
 namespace PoincareJ {
 
-void NAry::AddChildAtIndex(EditionReference nary, EditionReference child,
-                           int index) {
-  assert(static_cast<Node*>(nary)->isNAry());
-  /* Child will be moved, it should be detached from his parent beforehand.
-   * Otherwise, the parent structure will get corrupted.
-   * TODO: Polynomial temporarily deal with corrupted structures to optimize
-   * operations. This assert is therefore commented, maybe there could be a
-   * private AddChildAtIndex method bypassing this check. */
-  // assert(child.parent().isUninitialized());
-  if (index == nary.numberOfChildren()) {
-    nary.nextTree()->moveTreeBeforeNode(child);
-  } else {
-    nary.childAtIndex(index)->moveTreeBeforeNode(child);
-  }
-  SetNumberOfChildren(nary, nary.numberOfChildren() + 1);
+void NAry::AddChildAtIndex(Node* nary, Node* child, int index) {
+  assert(nary->isNAry());
+  Node* insertionPoint = index == nary->numberOfChildren()
+                             ? nary->nextTree()
+                             : nary->childAtIndex(index);
+  SetNumberOfChildren(nary, nary->numberOfChildren() + 1);
+  insertionPoint->moveTreeBeforeNode(child);
 }
 
+// Should these useful refs be hidden in the function ?
 void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
                                   int index) {
   AddChildAtIndex(nary, child, index);
@@ -34,37 +27,35 @@ void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
   }
 }
 
-EditionReference NAry::DetachChildAtIndex(EditionReference nary, int index) {
-  assert(static_cast<Node*>(nary)->isNAry());
-  EditionReference child = nary.childAtIndex(index);
+EditionReference NAry::DetachChildAtIndex(Node* nary, int index) {
+  assert(nary->isNAry());
+  EditionReference child = nary->childAtIndex(index);
   child.detachTree();
-  SetNumberOfChildren(nary, nary.numberOfChildren() - 1);
+  SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;
 }
 
-void NAry::RemoveChildAtIndex(EditionReference nary, int index) {
-  assert(static_cast<Node*>(nary)->isNAry());
-  EditionReference child = nary.childAtIndex(index);
-  child.removeTree();
-  SetNumberOfChildren(nary, nary.numberOfChildren() - 1);
+void NAry::RemoveChildAtIndex(Node* nary, int index) {
+  assert(nary->isNAry());
+  nary->childAtIndex(index)->removeTree();
+  SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
 }
 
-void NAry::SetNumberOfChildren(EditionReference reference,
-                               size_t numberOfChildren) {
-  assert(static_cast<Node*>(reference)->isNAry());
+void NAry::SetNumberOfChildren(Node* nary, size_t numberOfChildren) {
+  assert(nary->isNAry());
   assert(numberOfChildren < UINT8_MAX);
-  Block* numberOfChildrenBlock = reference.block()->next();
+  Block* numberOfChildrenBlock = nary->block()->next();
   *numberOfChildrenBlock = numberOfChildren;
 }
 
-bool NAry::Flatten(EditionReference* reference) {
+bool NAry::Flatten(Node* nary) {
+  assert(nary->isNAry());
   bool modified = false;
-  assert(static_cast<Node*>(*reference)->isNAry());
-  size_t numberOfChildren = reference->numberOfChildren();
+  size_t numberOfChildren = nary->numberOfChildren();
   size_t childIndex = 0;
-  Node* child = reference->nextNode();
+  Node* child = nary->nextNode();
   while (childIndex < numberOfChildren) {
-    if (reference->type() == child->type()) {
+    if (nary->type() == child->type()) {
       modified = true;
       numberOfChildren += child->numberOfChildren() - 1;
       child->removeNode();
@@ -74,7 +65,7 @@ bool NAry::Flatten(EditionReference* reference) {
     }
   }
   if (modified) {
-    SetNumberOfChildren(*reference, numberOfChildren);
+    SetNumberOfChildren(nary, numberOfChildren);
     return true;
   }
   return false;
@@ -101,7 +92,7 @@ bool NAry::SquashIfEmpty(EditionReference* reference) {
 }
 
 bool NAry::Sanitize(EditionReference* reference) {
-  bool flattened = Flatten(reference);
+  bool flattened = Flatten(*reference);
   if (reference->numberOfChildren() == 0) {
     return SquashIfEmpty(reference) || flattened;
   }

@@ -49,7 +49,7 @@ bool Simplification::SystematicReduce(EditionReference* u) {
 
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
-    NAry::Flatten(u);
+    NAry::Flatten(*u);
   }
 
   bool childChanged = false;
@@ -63,7 +63,7 @@ bool Simplification::SystematicReduce(EditionReference* u) {
 
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
-    NAry::Flatten(u);
+    NAry::Flatten(*u);
   }
 
   switch (u->type()) {
@@ -885,7 +885,7 @@ bool Simplification::ExpandTrigonometric(EditionReference* ref) {
    * This step must be performed after sub-expansions since SimplifyProduct
    * may invalidate newTrig0 and newTrig3. */
   SimplifyTrig(&newTrig4);
-  NAry::Flatten(&newMult2);
+  NAry::Flatten(newMult2);
   SimplifyMultiplication(&newMult2);
   return true;
 }
@@ -996,7 +996,7 @@ bool Simplification::ExpandPower(EditionReference* ref) {
   if (ExpandPower(&newPow)) {
     EditionReference newMult(newPow.nextTree());
     ExpandMult(&newMult);
-    NAry::Flatten(ref);
+    NAry::Flatten(*ref);
   }
   return true;
 }

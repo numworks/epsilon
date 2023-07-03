@@ -24,7 +24,7 @@ size_t Layout::EditionPoolTextToLayoutRec(const char *text, const Node *parent,
   size_t i = 0;
   while (text[i] != 0) {
     i++;
-    const Node *child;
+    Node *child;
     switch (text[i - 1]) {
       case UCodePointEmpty:
         child = P_RACKL();

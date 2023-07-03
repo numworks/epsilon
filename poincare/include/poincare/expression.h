@@ -762,7 +762,8 @@ class Expression : public TreeHandle {
       bool* shouldReduce);
 
   /* Properties */
-  int defaultGetPolynomialCoefficients(Context* context, const char* symbol,
+  int defaultGetPolynomialCoefficients(int degree, Context* context,
+                                       const char* symbol,
                                        Expression expression[]) const;
 
   /* Builder */

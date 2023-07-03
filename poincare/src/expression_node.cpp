@@ -35,8 +35,8 @@ int ExpressionNode::polynomialDegree(Context* context,
 int ExpressionNode::getPolynomialCoefficients(Context* context,
                                               const char* symbolName,
                                               Expression coefficients[]) const {
-  return Expression(this).defaultGetPolynomialCoefficients(context, symbolName,
-                                                           coefficients);
+  return Expression(this).defaultGetPolynomialCoefficients(
+      polynomialDegree(context, symbolName), context, symbolName, coefficients);
 }
 
 bool ExpressionNode::involvesCircularity(Context* context, int maxDepth,

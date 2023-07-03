@@ -380,7 +380,8 @@ int Multiplication::getPolynomialCoefficients(Context *context,
                                               Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg <= 0 || deg > Expression::k_maxPolynomialDegree) {
-    return defaultGetPolynomialCoefficients(context, symbolName, coefficients);
+    return defaultGetPolynomialCoefficients(deg, context, symbolName,
+                                            coefficients);
   }
   // Initialization of coefficients
   for (int i = 1; i <= deg; i++) {

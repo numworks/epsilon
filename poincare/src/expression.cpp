@@ -813,9 +813,9 @@ Expression Expression::deepReplaceSymbolWithExpression(
 }
 
 int Expression::defaultGetPolynomialCoefficients(
-    Context *context, const char *symbol, Expression coefficients[]) const {
-  int deg = polynomialDegree(context, symbol);
-  if (deg == 0) {
+    int degree, Context *context, const char *symbol,
+    Expression coefficients[]) const {
+  if (degree == 0) {
     coefficients[0] = clone();
     return 0;
   }

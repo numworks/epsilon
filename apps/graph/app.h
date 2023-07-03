@@ -28,6 +28,7 @@ class App : public Shared::FunctionApp {
     using Shared::FunctionApp::Snapshot::Snapshot;
     App *unpack(Escher::Container *container) override;
     void reset() override;
+    void tidy() override;
     const Descriptor *descriptor() const override;
     Shared::ContinuousFunctionStore *functionStore() override {
       return static_cast<Shared::GlobalContext *>(
@@ -89,6 +90,7 @@ class App : public Shared::FunctionApp {
   };
 
   FunctionParameterController m_functionParameterController;
+  Shared::CachesContainer m_cachesContainer;
   Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
 };
 

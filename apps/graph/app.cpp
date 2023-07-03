@@ -39,6 +39,11 @@ const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
+void App::Snapshot::tidy() {
+  functionStore()->setCachesContainer(nullptr);
+  SharedApp::Snapshot::tidy();
+}
+
 App::ListTab::ListTab()
     : Shared::FunctionApp::ListTab(&m_listController),
       m_listController(&m_listFooter, &m_listHeader, &m_listFooter,
@@ -59,6 +64,8 @@ App::ValuesTab::ValuesTab()
 App::App(Snapshot* snapshot)
     : FunctionApp(snapshot, &m_tabs, ListTab::k_title),
       m_functionParameterController(this, I18n::Message::FunctionColor,
-                                    I18n::Message::DeleteExpression) {}
+                                    I18n::Message::DeleteExpression) {
+  snapshot->functionStore()->setCachesContainer(&m_cachesContainer);
+}
 
 }  // namespace Graph

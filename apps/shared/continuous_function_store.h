@@ -60,9 +60,13 @@ class ContinuousFunctionStore : public FunctionStore {
   KDColor colorForRecord(Ion::Storage::Record record) const override {
     return modelForRecord(record)->color();
   }
+  void setCachesContainer(CachesContainer *container) {
+    m_cachesContainer = container;
+  }
   ContinuousFunctionCache *cacheAtIndex(int i) const {
-    return (i < ContinuousFunctionCache::k_numberOfAvailableCaches)
-               ? m_functionCaches + i
+    return (m_cachesContainer &&
+            i < m_cachesContainer->numberOfAvailableCaches())
+               ? m_cachesContainer->cacheAtIndex(i)
                : nullptr;
   }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
@@ -109,8 +113,7 @@ class ContinuousFunctionStore : public FunctionStore {
   mutable uint32_t m_storageCheckSum;
   mutable int m_memoizedNumberOfActiveFunctions;
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
-  mutable ContinuousFunctionCache
-      m_functionCaches[ContinuousFunctionCache::k_numberOfAvailableCaches];
+  mutable CachesContainer *m_cachesContainer;
 };
 
 }  // namespace Shared

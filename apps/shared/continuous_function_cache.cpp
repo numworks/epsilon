@@ -7,10 +7,6 @@
 
 namespace Shared {
 
-constexpr int ContinuousFunctionCache::k_sizeOfCache;
-constexpr float ContinuousFunctionCache::k_cacheHitTolerance;
-constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
-
 // public
 void ContinuousFunctionCache::PrepareForCaching(void *fun,
                                                 ContinuousFunctionCache *cache,

@@ -105,6 +105,8 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
                               float rangeXMax = 5) {
   GlobalContext globalContext;
   ContinuousFunctionStore functionStore;
+  CachesContainer cachesContainer;
+  functionStore.setCachesContainer(&cachesContainer);
 
   InteractiveCurveViewRange graphRange;
   graphRange.setXMin(rangeXMin);

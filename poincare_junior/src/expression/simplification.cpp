@@ -29,24 +29,6 @@ void DropNode(EditionReference* u) {
   *u = previousU;
 }
 
-bool AnyChildren(Node* u, bool test(const Node*)) {
-  for (const Node* child : u->children()) {
-    if (test(child)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool AllChildren(Node* u, bool test(const Node*)) {
-  for (const Node* child : u->children()) {
-    if (!test(child)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 // Add a dummy node after the tree if it is the next tree
 bool AddMarkerIfNeeded(Node* u) {
   if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
@@ -196,6 +178,12 @@ bool Simplification::SimplifyPower(EditionReference* u) {
   return false;
 }
 
+bool BasesAreEqual(const Node* u1, const Node* u2) {
+  const Node* b1 = u1->type() == BlockType::Power ? u1->childAtIndex(0) : u1;
+  const Node* b2 = u2->type() == BlockType::Power ? u2->childAtIndex(0) : u2;
+  return b1->treeIsIdenticalTo(b2);
+}
+
 Node* PushBase(const Node* u) {
   if (IsNumber(u)) {
     return P_UNDEF();
@@ -225,13 +213,8 @@ bool Simplification::MergeProductChildren(Node* u1, Node* u2) {
     u1->moveTreeOverTree(mult);
     return true;
   }
-  EditionReference t1 = PushBase(u1);
-  EditionReference t2 = PushBase(u2);
-  int basesAreEqual = Comparison::AreEqual(t1, t2);
-  t1.removeTree();
-  t2.removeTree();
   // t^m * t^n -> t^(m+n)
-  if (basesAreEqual) {
+  if (BasesAreEqual(u1, u2)) {
     EditionReference P =
         P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
     EditionReference S = P.childAtIndex(1);
@@ -285,6 +268,35 @@ bool Simplification::SimplifyProduct(EditionReference* u) {
   return true;
 }
 
+bool TermsAreEqual(const Node* u, const Node* v) {
+  if (u->type() != BlockType::Multiplication) {
+    if (v->type() != BlockType::Multiplication) {
+      return u->treeIsIdenticalTo(v);
+    }
+    return TermsAreEqual(v, u);
+  }
+  if (v->type() != BlockType::Multiplication) {
+    return u->numberOfChildren() == 2 && IsConstant(u->childAtIndex(0)) &&
+           u->childAtIndex(1)->treeIsIdenticalTo(v);
+  }
+  bool hasConstU = IsConstant(u->childAtIndex(0));
+  bool hasConstV = IsConstant(v->childAtIndex(0));
+  int n = u->numberOfChildren() - hasConstU;
+  if (n != v->numberOfChildren() - hasConstV) {
+    return false;
+  }
+  const Node* childU = u->childAtIndex(hasConstU);
+  const Node* childV = v->childAtIndex(hasConstV);
+  for (int i = 0; i < n; i++) {
+    if (!childU->treeIsIdenticalTo(childV)) {
+      return false;
+    }
+    childU = childU->nextTree();
+    childV = childV->nextTree();
+  }
+  return true;
+}
+
 // The term of 2ab is ab
 Node* PushTerm(const Node* u) {
   if (IsNumber(u)) {
@@ -323,14 +335,8 @@ bool Simplification::MergeSumChildren(Node* u1, Node* u2) {
     u1->moveTreeOverTree(add);
     return true;
   }
-  EditionReference t1 = PushTerm(u1);
-  EditionReference t2 = PushTerm(u2);
-  // todo terms are equal
-  int termsAreEqual = Comparison::AreEqual(t1, t2);
-  t1.removeTree();
-  t2.removeTree();
   // k1 * a + k2 * a -> (k1+k2) * a
-  if (termsAreEqual) {
+  if (TermsAreEqual(u1, u2)) {
     EditionReference P =
         P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
     EditionReference S = P.childAtIndex(0);

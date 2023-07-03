@@ -71,7 +71,7 @@ class ContinuousFunctionCache {
 
 class CachesContainer {
  public:
-  constexpr static int k_numberOfAvailableCaches = 2;
+  constexpr static int k_numberOfAvailableCaches = 5;
   int numberOfAvailableCaches() const { return k_numberOfAvailableCaches; }
   ContinuousFunctionCache* cacheAtIndex(int i) {
     assert(i < numberOfAvailableCaches());

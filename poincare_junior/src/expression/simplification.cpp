@@ -63,9 +63,7 @@ bool Simplification::SystematicReduce(EditionReference* u) {
 
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
-    Node* n = *u;
-    NAry::Sort(n);
-    *u = n;
+    NAry::Flatten(u);
   }
 
   switch (u->type()) {
@@ -219,7 +217,8 @@ bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
         P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
     EditionReference S = P.childAtIndex(1);
     SimplifyAddition(&S);
-    SimplifyMultiplication(&P);
+    SimplifyPower(&P);
+    assert(P.type() != BlockType::Multiplication);
     u1->moveTreeOverTree(P);
     return true;
   }
@@ -227,9 +226,11 @@ bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
 }
 
 bool Simplification::SimplifyMultiplication(EditionReference* u) {
+  assert(u->type() == BlockType::Multiplication);
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
+  NAry::Sort(u);
   bool markerAdded = AddMarkerIfNeeded(*u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
@@ -251,8 +252,14 @@ bool Simplification::SimplifyMultiplication(EditionReference* u) {
       continue;
     }
     if (MergeMultiplicationChildren(child, next)) {
+      assert(child->type() != BlockType::Multiplication);
       child->nextTree()->removeTree();
       n--;
+      if (child->type() == BlockType::One && child->nextTree() >= end) {
+        child->removeTree();
+        n--;
+        break;
+      }
     } else {
       child = next;
     }
@@ -342,6 +349,7 @@ bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
     EditionReference S = P.childAtIndex(0);
     SimplifyAddition(&S);
     SimplifyMultiplication(&P);
+    assert(P.type() != BlockType::Addition);
     u1->moveTreeOverTree(P);
     return true;
   }
@@ -349,9 +357,11 @@ bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
 }
 
 bool Simplification::SimplifyAddition(EditionReference* u) {
+  assert(u->type() == BlockType::Addition);
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
+  NAry::Sort(u);
   bool markerAdded = AddMarkerIfNeeded(*u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
@@ -364,8 +374,14 @@ bool Simplification::SimplifyAddition(EditionReference* u) {
       continue;
     }
     if (MergeAdditionChildren(child, next)) {
+      assert(child->type() != BlockType::Addition);
       child->nextTree()->removeTree();
       n--;
+      if (child->type() == BlockType::Zero && child->nextTree() >= end) {
+        child->removeTree();
+        n--;
+        break;
+      }
     } else {
       child = next;
     }
@@ -869,6 +885,7 @@ bool Simplification::ExpandTrigonometric(EditionReference* ref) {
    * This step must be performed after sub-expansions since SimplifyProduct
    * may invalidate newTrig0 and newTrig3. */
   SimplifyTrig(&newTrig4);
+  NAry::Flatten(&newMult2);
   SimplifyMultiplication(&newMult2);
   return true;
 }

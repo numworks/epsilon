@@ -29,6 +29,8 @@ class NAry {
   static bool Sanitize(EditionReference* reference);
   static bool Sort(Node* nary,
                    Comparison::Order order = Comparison::Order::User);
+  static bool Sort(EditionReference* reference,
+                   Comparison::Order order = Comparison::Order::User);
   static void SortChildren(EditionReference reference,
                            Comparison::Order order = Comparison::Order::User);
   static void SortedInsertChild(

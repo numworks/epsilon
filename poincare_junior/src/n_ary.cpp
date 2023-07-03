@@ -173,6 +173,13 @@ push:
   return true;
 }
 
+bool NAry::Sort(EditionReference* reference, Comparison::Order order) {
+  Node* u = *reference;
+  bool result = Sort(u, order);
+  *reference = u;
+  return result;
+}
+
 void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
   // Non simple NArys (Polynomial) rely on children order.
   assert(reference.block()->isSimpleNAry());

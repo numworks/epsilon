@@ -11,11 +11,14 @@ Queue* Queue::sharedQueue() {
   return &sQueue;
 }
 
-void Queue::flush(bool resetPreemptiveState) {
+void Queue::flush(bool forStalling) {
   reset();
   Keyboard::resetMemoizedState();
-  Events::resetKeyboardState();
-  if (resetPreemptiveState) {
+  if (!forStalling) {
+    /* If stalling, keep previous keyboard state to ensure that the shift key
+     * is still seen as down after the stall. Also keep the preemptive state in
+     * case an interruption is needed. */
+    Events::resetKeyboardState();
     Events::resetPreemptiveKeyboardState();
   }
 }

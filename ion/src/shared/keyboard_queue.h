@@ -13,7 +13,7 @@ class Queue {
  public:
   static Queue* sharedQueue();
 
-  void flush(bool resetPreemptiveState = true);
+  void flush(bool forStalling = false);
   void push(State s);
   State queuePop();
   size_t length() const { return m_buffer.length(); }

@@ -2,6 +2,7 @@
 #define ION_EVENTS_H
 
 #include <ion/keyboard.h>
+#include <ion/shift_alpha_status.h>
 #if ION_EVENTS_JOURNAL
 #include <string.h>
 #endif
@@ -77,16 +78,6 @@ class Journal {
 void replayFrom(Journal* l);
 void logTo(Journal* l);
 #endif
-
-enum class ShiftAlphaStatus : uint8_t {
-  Default,
-  Shift,
-  Alpha,
-  ShiftAlpha,
-  AlphaLock,
-  ShiftAlphaLock,
-  NumberOfStatus
-};
 
 Event getEvent(int* timeout);
 size_t copyText(uint8_t eventId, char* buffer, size_t bufferSize);

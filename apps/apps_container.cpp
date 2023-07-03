@@ -423,7 +423,7 @@ Timer* AppsContainer::containerTimerAtIndex(int i) {
 }
 
 void AppsContainer::resetShiftAlphaStatus() {
-  Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus());
   updateAlphaLock();
 }
 

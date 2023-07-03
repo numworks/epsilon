@@ -10,16 +10,11 @@ namespace Events {
 class ModifierState {
  public:
   ModifierState()
-      : m_shiftAlphaStatus(ShiftAlphaStatus::Default),
+      : m_shiftAlphaStatus(),
         m_shiftIsHeldAndUsed(false),
         m_alphaIsHeldAndUsed(false),
         m_longPressCounter(0),
         m_repetitionCounter(0) {}
-  void removeShift();
-  void removeAlpha();
-  bool isShiftActive();
-  bool isAlphaActive();
-  bool isLockActive();
   ShiftAlphaStatus shiftAlphaStatus() const { return m_shiftAlphaStatus; }
   void setShiftAlphaStatus(ShiftAlphaStatus s);
   bool wasShiftReleased(Keyboard::State state);

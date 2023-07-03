@@ -207,82 +207,13 @@ EditionReference PushExponent(Node* u) {
   return P_ONE();
 }
 
-bool WrapWithUnary(EditionReference* u, const Node* n) {
-  CloneNodeBeforeNode(u, n);
-  NAry::SetNumberOfChildren(*u, 1);
-  return true;
-}
-
-bool Reorder(EditionReference* u, EditionReference* v) {
-  if (Comparison::Compare(*u, *v) > 0) {
-    SwapTrees(u, v);
-    return true;
-  }
-  return false;
-}
-
-void MultPopFirst(EditionReference* l) {
-  assert(l->type() == BlockType::Multiplication);
-  NAry::RemoveChildAtIndex(*l, 0);
-}
-
-void MultPushFirst(EditionReference* l, EditionReference* e) {
-  assert(l->type() == BlockType::Multiplication);
-  NAry::AddChildAtIndex(*l, *e, 0);
-}
-
-bool Simplification::SimplifyProductRec(EditionReference* l) {
-  if (l->numberOfChildren() != 2) {
-    EditionReference u1 = NAry::DetachChildAtIndex(*l, 0);
-    SimplifyProductRec(l);
-    if (u1.type() == BlockType::Multiplication) {
-      /* TODO merge products consume its second children so we can't pass it l
-       * which needs to be kept at the same place. But since the order counts we
-       * can't pass l as the first argument either. Need merge on right ? */
-      EditionReference l2 = l->clone();
-      MergeProducts(&u1, &l2);
-      MoveTreeOverTree(l, u1);
-      return true;
-    }
-    WrapWithUnary(&u1, KMult());
-    EditionReference l2 = l->clone();
-    MergeProducts(&u1, &l2);
-    MoveTreeOverTree(l, u1);
-    return true;
-  }
-  EditionReference u1 = l->childAtIndex(0);
-  EditionReference u2 = l->childAtIndex(1);
-  if (u1.type() == BlockType::Multiplication ||
-      u2.type() == BlockType::Multiplication) {
-    l->removeNode();
-    if (u1.type() != BlockType::Multiplication) {
-      WrapWithUnary(&u1, KMult());
-    }
-    if (u2.type() != BlockType::Multiplication) {
-      WrapWithUnary(&u2, KMult());
-    }
-    MergeProducts(&u1, &u2);
-    *l = u1;
-    return true;
-  }
+// returns true if they have been merged in u1
+bool Simplification::MergeProductChildren(Node* u1, Node* u2) {
   // Merge constants
   if (IsConstant(u1) && IsConstant(u2)) {
-    SimplifyRationalTree(l);
-    if (l->type() == BlockType::One) {
-      CloneNodeOverNode(l, KMult());
-      return true;
-    }
-    WrapWithUnary(l, KMult());
-    return true;
-  }
-  // 1 * u2 -> u2
-  if (u1.type() == BlockType::One) {
-    NAry::RemoveChildAtIndex(*l, 0);
-    return true;
-  }
-  // u1 * 1 -> u1
-  if (u2.type() == BlockType::One) {
-    NAry::RemoveChildAtIndex(*l, 1);
+    Node* mult = Rational::Multiplication(u1, u2);
+    mult->moveTreeOverTree(Rational::IrreducibleForm(mult));
+    u1->moveTreeOverTree(mult);
     return true;
   }
   EditionReference t1 = PushBase(u1);
@@ -296,79 +227,55 @@ bool Simplification::SimplifyProductRec(EditionReference* l) {
         P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
     EditionReference S = P.childAtIndex(1);
     SimplifySum(&S);
-    SimplifyPower(&P);
-    if (P.type() == BlockType::One) {
-      P.removeTree();
-      CloneNodeOverTree(l, KMult());
-      return true;
-    }
-    MoveTreeOverTree(l, P);
-    WrapWithUnary(l, KMult());
+    SimplifyProduct(&P);
+    u1->moveTreeOverTree(P);
     return true;
   }
-  return Reorder(&u1, &u2);
-}
-
-bool Simplification::MergeProducts(EditionReference* p, EditionReference* q) {
-  if (q->numberOfChildren() == 0) {
-    q->removeNode();
-    return true;
-  }
-  if (p->numberOfChildren() == 0) {
-    MoveTreeOverNode(p, *q);
-    return true;
-  }
-  Node* p1 = p->childAtIndex(0);
-  Node* q1 = q->childAtIndex(0);
-  EditionReference h = P_MULT(p1->clone(), q1->clone());
-  SimplifyProductRec(&h);
-  if (h.numberOfChildren() == 0) {
-    h.removeNode();
-    MultPopFirst(p);
-    MultPopFirst(q);
-    return MergeProducts(p, q);
-  }
-  if (h.numberOfChildren() == 1) {
-    MultPopFirst(p);
-    MultPopFirst(q);
-    MergeProducts(p, q);
-    MoveTreeOverTree(&h, h.childAtIndex(0));
-    MultPushFirst(p, &h);
-    return true;
-  }
-  if (Comparison::AreEqual(h.childAtIndex(0), p1)) {
-    assert(Comparison::AreEqual(h.childAtIndex(1), q1));
-    h.removeTree();
-    EditionReference pc = p1->clone();
-    MultPopFirst(p);
-    MergeProducts(p, q);
-    MultPushFirst(p, &pc);
-    return true;
-  }
-  if (Comparison::AreEqual(h.childAtIndex(0), q1)) {
-    assert(Comparison::AreEqual(h.childAtIndex(1), p1));
-    h.removeTree();
-    EditionReference qc = q1->clone();
-    MultPopFirst(q);
-    MergeProducts(p, q);
-    MultPushFirst(p, &qc);
-    return true;
-  }
-  assert(false);
+  return false;
 }
 
 bool Simplification::SimplifyProduct(EditionReference* u) {
-  // ... * 0 * ... -> 0
-  if (AnyChildren(*u, IsZero)) {
-    CloneNodeOverTree(u, 0_e);
-    return true;
-  }
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  if (!SimplifyProductRec(u)) {
+  bool markerAdded = false;
+  if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
+    EditionPool::sharedEditionPool()->pushBlock(BlockType::Zero);
+    markerAdded = true;
+  }
+  int n = u->numberOfChildren();
+  EditionReference end = u->nextTree();
+  Node* child = u->nextNode();
+  Node* next;
+  while ((next = child->nextTree()) < end) {
+    // ... * 0 * ... -> 0
+    if (child->type() == BlockType::Zero) {
+      NAry::SetNumberOfChildren(*u, n);
+      CloneTreeOverTree(u, 0_e);
+      if (markerAdded) {
+        end.removeNode();
+      }
+      return true;
+    }
+    if (child->type() == BlockType::One) {
+      child->removeTree();
+      n--;
+      continue;
+    }
+    if (MergeProductChildren(child, next)) {
+      child->nextTree()->removeTree();
+      n--;
+    } else {
+      child = next;
+    }
+  }
+  if (markerAdded) {
+    end.removeNode();
+  }
+  if (n == u->numberOfChildren()) {
     return false;
   }
+  NAry::SetNumberOfChildren(*u, n);
   NAry::Sanitize(u);
   return true;
 }
@@ -381,12 +288,12 @@ EditionReference PushTerm(Node* u) {
   EditionReference c = u->clone();
   if (u->type() == BlockType::Multiplication) {
     if (IsConstant(u->childAtIndex(0))) {
-      MultPopFirst(&c);
+      NAry::RemoveChildAtIndex(c, 0);
+      NAry::SquashIfUnary(&c);
       return c;
     }
     return c;
   }
-  WrapWithUnary(&c, KMult());
   return c;
 }
 

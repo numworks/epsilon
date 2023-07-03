@@ -61,9 +61,7 @@ class Simplification {
   static bool SimplifySum(EditionReference *u);
   static bool MergeSumChildren(Node *u1, Node *u2);
   static bool SimplifyProduct(EditionReference *u);
-  // SimplifyProductRec expects a Mult and returns a Mult
-  static bool SimplifyProductRec(EditionReference *u);
-  static bool MergeProducts(EditionReference *p, EditionReference *q);
+  static bool MergeProductChildren(Node *u1, Node *u2);
   static bool SimplifyPower(EditionReference *u);
 
   typedef bool (*ShallowOperation)(EditionReference *reference, void *context);

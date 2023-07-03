@@ -47,14 +47,14 @@ bool Simplification::SystematicReduce(EditionReference* u) {
     return false;
   }
 
+  bool modified = false;
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
-    NAry::Flatten(*u);
+    modified |= NAry::Flatten(*u);
   }
 
-  bool childChanged = false;
   for (auto [child, index] : NodeIterator::Children<Editable>(*u)) {
-    childChanged = SystematicReduce(&child) || childChanged;
+    modified = SystematicReduce(&child) || modified;
     if (IsUndef(child)) {
       CloneNodeOverTree(u, KUndef);
       return true;
@@ -63,24 +63,24 @@ bool Simplification::SystematicReduce(EditionReference* u) {
 
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
-    NAry::Flatten(*u);
+    modified |= NAry::Flatten(*u);
   }
 
   switch (u->type()) {
     case BlockType::Power:
-      return SimplifyPower(u) || childChanged;
+      return SimplifyPower(u) || modified;
     case BlockType::Addition:
-      return SimplifyAddition(u) || childChanged;
+      return SimplifyAddition(u) || modified;
     case BlockType::Multiplication:
-      return SimplifyMultiplication(u) || childChanged;
+      return SimplifyMultiplication(u) || modified;
     case BlockType::TrigDiff:
-      return SimplifyTrigDiff(u) || childChanged;
+      return SimplifyTrigDiff(u) || modified;
     case BlockType::Trig:
-      return SimplifyTrig(u) || childChanged;
+      return SimplifyTrig(u) || modified;
     case BlockType::Derivative:
-      return Derivation::Reduce(u) || childChanged;
+      return Derivation::Reduce(u) || modified;
     default:
-      return childChanged;
+      return modified;
   }
 }
 
@@ -230,7 +230,7 @@ bool Simplification::SimplifyMultiplication(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  NAry::Sort(u);
+  bool modified = NAry::Sort(u);
   bool markerAdded = AddMarkerIfNeeded(*u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
@@ -268,7 +268,7 @@ bool Simplification::SimplifyMultiplication(EditionReference* u) {
     end.removeNode();
   }
   if (n == u->numberOfChildren()) {
-    return false;
+    return modified;
   }
   NAry::SetNumberOfChildren(*u, n);
   NAry::Sanitize(u);
@@ -361,7 +361,7 @@ bool Simplification::SimplifyAddition(EditionReference* u) {
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  NAry::Sort(u);
+  bool modified = NAry::Sort(u);
   bool markerAdded = AddMarkerIfNeeded(*u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
@@ -390,7 +390,7 @@ bool Simplification::SimplifyAddition(EditionReference* u) {
     end.removeNode();
   }
   if (n == u->numberOfChildren()) {
-    return false;
+    return modified;
   }
   NAry::SetNumberOfChildren(*u, n);
   NAry::Sanitize(u);

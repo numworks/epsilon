@@ -12,8 +12,6 @@ class ContinuousFunction;
 
 class ContinuousFunctionCache {
  public:
-  constexpr static int k_numberOfAvailableCaches = 2;
-
   static void PrepareForCaching(void* fun, ContinuousFunctionCache* cache,
                                 float tMin, float tStep);
 
@@ -69,6 +67,19 @@ class ContinuousFunctionCache {
    * with cartesian functions. When dealing with parametric or polar functions,
    * m_startOfCache should be zero.*/
   int m_startOfCache;
+};
+
+class CachesContainer {
+ public:
+  constexpr static int k_numberOfAvailableCaches = 2;
+  int numberOfAvailableCaches() const { return k_numberOfAvailableCaches; }
+  ContinuousFunctionCache* cacheAtIndex(int i) {
+    assert(i < numberOfAvailableCaches());
+    return m_functionCaches + i;
+  }
+
+ private:
+  mutable ContinuousFunctionCache m_functionCaches[k_numberOfAvailableCaches];
 };
 
 }  // namespace Shared

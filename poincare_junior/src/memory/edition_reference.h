@@ -44,15 +44,12 @@ class EditionReference {
   /* Hierarchy */
   Node* nextNode() { return node()->nextNode(); }
   Node* nextTree() { return node()->nextTree(); }
-  Node* previousNode() { return node()->previousNode(); }
-  Node* previousTree() { return node()->previousTree(); }
   bool hasChild(EditionReference t) const { return node()->hasChild(t); }
   bool hasAncestor(EditionReference t, bool includeSelf) const {
     return node()->hasAncestor(t, includeSelf);
   }
   int numberOfChildren() const { return node()->numberOfChildren(); }
   int indexOfChild(EditionReference t) const { return node()->indexOfChild(t); }
-  Node* parent() const { return node()->parent(); }
   Node* childAtIndex(int i) const { return node()->childAtIndex(i); }
   int numberOfDescendants(bool includeSelf) const {
     return node()->numberOfDescendants(includeSelf);

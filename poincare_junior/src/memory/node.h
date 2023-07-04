@@ -66,13 +66,6 @@ class Node {
   // Node Navigation
   const Node* nextNode() const;
   Node* nextNode() { return Utils::DeconstifyPtr(&Node::nextNode, this); };
-  /* TODO : If costly, previousNode could be optimized by sprinkling TreeBorders
-   *        blocks between every tree of the cache. PreviousNode and nextNode
-   *        would only have to check for TreeBorders. */
-  const Node* previousNode() const;
-  Node* previousNode() {
-    return Utils::DeconstifyPtr(&Node::previousNode, this);
-  }
   const Node* nextTree() const {
     const Node* result = this;
     int nbOfChildrenToScan = result->numberOfChildren();
@@ -83,19 +76,11 @@ class Node {
     return result->nextNode();
   }
   Node* nextTree() { return Utils::DeconstifyPtr(&Node::nextTree, this); };
-  const Node* previousTree() const;
-  Node* previousTree() {
-    return Utils::DeconstifyPtr(&Node::previousTree, this);
-  }
 
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }
 
   // Node Hierarchy
-  /* TODO : parent, previousBlock and similar methods navigating backward could
-   *         be forbidden and deleted, optimizing node size and navigation. */
-  const Node* parent() const;
-  Node* parent() { return Utils::DeconstifyPtr(&Node::parent, this); }
   const Node* commonAncestor(const Node* child1, const Node* child2) const;
   const Node* parentOfDescendant(const Node* descendant, int* position) const;
   // Make position optional
@@ -198,8 +183,6 @@ class Node {
 
  private:
   bool canNavigateNext() const;
-  bool canNavigatePrevious() const;
-  const Node* previousRelative(bool parent) const;
 
   void cloneAt(const Node* nodeToClone, bool before, bool newIsTree);
   void moveAt(Node* nodeToMove, bool before, bool newIsTree);

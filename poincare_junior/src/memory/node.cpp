@@ -180,19 +180,6 @@ const Node* Node::nextNode() const {
   return Node::FromBlocks(m_block + nodeSize());
 }
 
-const Node* Node::previousNode() const {
-  if (!canNavigatePrevious()) {
-    return nullptr;
-  }
-  int previousSize =
-      static_cast<const TypeBlock*>(m_block->previous())->nodeSize(false);
-  return Node::FromBlocks(m_block - previousSize);
-}
-
-const Node* Node::previousTree() const { return previousRelative(false); }
-
-const Node* Node::parent() const { return previousRelative(true); }
-
 const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   /* This method find the common ancestor of child1 and child2 within this
    * tree it does without going backward at any point. This tree is parsed
@@ -324,66 +311,30 @@ EditionReference Node::clone() const {
   return EditionPool::sharedEditionPool()->clone(this);
 }
 
-/* When navigating between nodes, ensure that no undefined node is reached.
+/* When navigating between nodes, assert that no undefined node is reached.
  * Also ensure that there is no navigation:
  * - crossing the borders of the CachePool
  * - going across a TreeBorder
- * Node*::nextNode asserts that such events don't occur whereas
- * Node*::previousNode tolerates (and handles) them to identify root nodes.
- * Here are the situations that indicate navigation must stop:
- * nextNode:
+ * Here are the situations indicating nextNode navigation must stop:
  * (1) From a TreeBorder
  * (2) To the Cache first block
  * (3) From the Edition pool last block
  * // (4) To the Cache last block / Edition pool first block
  *
- * previousNode:
- * (5) To a TreeBorder
- * (6) From the Cache first block
- * // (7) From the Edition pool last block
- * // (8) From the Cache last block / Edition pool first block
- *
  * Some notes :
  * - It is expected in (2) and (3) that any tree out of the pool is wrapped in
  *   TreeBorders.
  * - For both pools, last block represent the very first out of limit block.
- *   We need to call previousNode on them to access before last node so (7) and
- *   (8) are not checked.
  * - Cache last block is also Edition first block, and we need to call nextNode
  *   on before last node, so (4) is not checked.
  * - Source node is always expected to be defined. Allowing checks on
- *   nextNode's destination, but not previousNode's. */
+ *   nextNode's destination. */
 
 bool Node::canNavigateNext() const {
   CachePool* cache(CachePool::sharedCachePool());
   return m_block->type() != BlockType::TreeBorder &&
          m_block + nodeSize() != cache->firstBlock() &&
          m_block != cache->editionPool()->lastBlock();
-}
-
-bool Node::canNavigatePrevious() const {
-  CachePool* cache(CachePool::sharedCachePool());
-  BlockType destinationType =
-      static_cast<const TypeBlock*>(m_block->previous())->type();
-  return destinationType != BlockType::TreeBorder &&
-         m_block != cache->firstBlock();
-}
-
-const Node* Node::previousRelative(bool parent) const {
-  const Node* currentNode = this;
-  const Node* closestSibling = nullptr;
-  int nbOfChildrenToScan = 0;
-  do {
-    currentNode = currentNode->previousNode();
-    if (!currentNode) {
-      break;
-    }
-    nbOfChildrenToScan += currentNode->numberOfChildren() - 1;
-    if (nbOfChildrenToScan == -1) {
-      closestSibling = currentNode;
-    }
-  } while (nbOfChildrenToScan < 0);
-  return parent ? currentNode : closestSibling;
 }
 
 // Node edition

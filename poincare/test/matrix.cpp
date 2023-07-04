@@ -11,8 +11,7 @@ static inline void assert_has_rank(const char *exp, int rank) {
   Expression e = parse_expression(exp, &context, false);
   quiz_assert(e.type() == ExpressionNode::Type::Matrix);
   Matrix *m = reinterpret_cast<Matrix *>(&e);
-  quiz_assert(rank == m->rank(&context, Cartesian, Radian, MetricUnitFormat,
-                              SystemForApproximation));
+  quiz_assert(rank == m->rank(&context));
 }
 
 QUIZ_CASE(poincare_matrix_rank) {

@@ -37,7 +37,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
 #endif
   Node* root = Node::FromBlocks(editionPool->firstBlock());
   assert(root->type() == BlockType::Multiplication);
-  Simplification::DistributeMultiplicationOverAddition(EditionReference(root));
+  Simplification::ShallowAlgebraicExpand(root);
 
   log_edition_pool();
 

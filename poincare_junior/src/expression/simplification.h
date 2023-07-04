@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_SIMPLIFICATION_H
 
 #include <omgpj/enums.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {
 
@@ -27,8 +27,6 @@ class Simplification {
                            ProjectionContext projectionContext = {}) {
     return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext);
   }
-  static EditionReference DistributeMultiplicationOverAddition(
-      EditionReference reference);
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   static bool ShallowContract(Node *e, void *context = nullptr) {

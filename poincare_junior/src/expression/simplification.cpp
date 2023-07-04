@@ -431,36 +431,6 @@ bool Simplification::ShallowBeautify(Node* ref, void* context) {
              KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()));
 }
 
-EditionReference Simplification::DistributeMultiplicationOverAddition(
-    EditionReference ref) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
-  for (auto [child, index] : NodeIterator::Children<Editable>(ref)) {
-    if (child->type() == BlockType::Addition) {
-      // Create new addition that will be filled in the following loop
-      EditionReference add = EditionReference(
-          editionPool->push<BlockType::Addition>(child->numberOfChildren()));
-      for (auto [additionChild, additionIndex] :
-           NodeIterator::Children<Editable>(child)) {
-        // Copy a multiplication
-        EditionReference multCopy = editionPool->clone(ref);
-        // Find the addition to be replaced
-        EditionReference additionCopy =
-            EditionReference(multCopy->childAtIndex(index));
-        // Find addition child to replace with
-        EditionReference additionChildCopy =
-            EditionReference(additionCopy->childAtIndex(additionIndex));
-        // Replace addition per its child
-        additionCopy->moveTreeOverTree(additionChildCopy);
-        assert(multCopy->type() == BlockType::Multiplication);
-        DistributeMultiplicationOverAddition(multCopy);
-      }
-      ref->moveTreeOverTree(add);
-      return add;
-    }
-  }
-  return ref;
-}
-
 bool Simplification::DeepSystemProjection(Node* ref,
                                           ProjectionContext projectionContext) {
   if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {

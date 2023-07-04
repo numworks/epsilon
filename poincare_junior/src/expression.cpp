@@ -243,7 +243,7 @@ Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
   return Expression(
       [](Node *tree) {
         EditionReference reference(tree);
-        Simplification::Simplify(&reference);
+        Simplification::Simplify(reference);
       },
       Node::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }

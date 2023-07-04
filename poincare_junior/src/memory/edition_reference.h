@@ -19,6 +19,8 @@ class EditionReference {
   __attribute__((__used__)) void log() const;
 #endif
 
+  Node* operator->() { return node(); }
+
   /* Comparison */
   inline bool operator==(const EditionReference& t) const {
     return m_identifier == t.identifier() ||
@@ -99,45 +101,45 @@ class EditionReference {
   uint16_t m_identifier;
 };
 
-void CloneNodeBeforeNode(EditionReference* target, const Node* nodeToClone);
-void CloneTreeBeforeNode(EditionReference* target, const Node* treeToClone);
+void CloneNodeBeforeNode(EditionReference& target, const Node* nodeToClone);
+void CloneTreeBeforeNode(EditionReference& target, const Node* treeToClone);
 
-void MoveNodeBeforeNode(EditionReference* target, Node* nodeToMove);
-void MoveTreeBeforeNode(EditionReference* target, Node* treeToMove);
+void MoveNodeBeforeNode(EditionReference& target, Node* nodeToMove);
+void MoveTreeBeforeNode(EditionReference& target, Node* treeToMove);
 
-inline void MoveNodeOverTree(EditionReference* u, Node* n) {
-  *u = u->moveNodeOverTree(n);
+inline void MoveNodeOverTree(EditionReference& u, Node* n) {
+  u = u->moveNodeOverTree(n);
 }
 
-inline void MoveTreeOverTree(EditionReference* u, Node* n) {
-  *u = u->moveTreeOverTree(n);
+inline void MoveTreeOverTree(EditionReference& u, Node* n) {
+  u = u->moveTreeOverTree(n);
 }
 
-inline void MoveNodeOverNode(EditionReference* u, Node* n) {
-  *u = u->moveNodeOverNode(n);
+inline void MoveNodeOverNode(EditionReference& u, Node* n) {
+  u = u->moveNodeOverNode(n);
 }
 
-inline void MoveTreeOverNode(EditionReference* u, Node* n) {
-  *u = u->moveTreeOverNode(n);
+inline void MoveTreeOverNode(EditionReference& u, Node* n) {
+  u = u->moveTreeOverNode(n);
 }
 
-inline void CloneTreeOverNode(EditionReference* u, const Node* n) {
-  *u = u->cloneTreeOverNode(n);
+inline void CloneTreeOverNode(EditionReference& u, const Node* n) {
+  u = u->cloneTreeOverNode(n);
 }
 
-inline void CloneTreeOverTree(EditionReference* u, const Node* n) {
-  *u = u->cloneTreeOverTree(n);
+inline void CloneTreeOverTree(EditionReference& u, const Node* n) {
+  u = u->cloneTreeOverTree(n);
 }
 
-inline void CloneNodeOverNode(EditionReference* u, const Node* n) {
-  *u = u->cloneNodeOverNode(n);
+inline void CloneNodeOverNode(EditionReference& u, const Node* n) {
+  u = u->cloneNodeOverNode(n);
 }
 
-inline void CloneNodeOverTree(EditionReference* u, const Node* n) {
-  *u = u->cloneNodeOverTree(n);
+inline void CloneNodeOverTree(EditionReference& u, const Node* n) {
+  u = u->cloneNodeOverTree(n);
 }
 
-void SwapTrees(EditionReference* u, EditionReference* v);
+void SwapTrees(EditionReference& u, EditionReference& v);
 
 }  // namespace PoincareJ
 

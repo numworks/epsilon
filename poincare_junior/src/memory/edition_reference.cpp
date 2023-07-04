@@ -179,46 +179,46 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   return true;
 }
 
-void CloneNodeBeforeNode(EditionReference* target, const Node* nodeToClone) {
-  Node* previousTarget = *target;
+void CloneNodeBeforeNode(EditionReference& target, const Node* nodeToClone) {
+  Node* previousTarget = target;
   target->cloneNodeBeforeNode(nodeToClone);
-  *target = previousTarget;
+  target = previousTarget;
 }
 
-void CloneTreeBeforeNode(EditionReference* target, const Node* treeToClone) {
-  Node* previousTarget = *target;
+void CloneTreeBeforeNode(EditionReference& target, const Node* treeToClone) {
+  Node* previousTarget = target;
   target->cloneTreeBeforeNode(treeToClone);
-  *target = previousTarget;
+  target = previousTarget;
 }
 
-void MoveNodeBeforeNode(EditionReference* target, Node* nodeToMove) {
-  Node* previousTarget = *target;
+void MoveNodeBeforeNode(EditionReference& target, Node* nodeToMove) {
+  Node* previousTarget = target;
   if (nodeToMove->block() < previousTarget->block()) {
     previousTarget =
         Node::FromBlocks(previousTarget->block() - nodeToMove->nodeSize());
   }
   target->moveNodeBeforeNode(nodeToMove);
-  *target = previousTarget;
+  target = previousTarget;
 }
 
-void MoveTreeBeforeNode(EditionReference* target, Node* treeToMove) {
-  Node* previousTarget = *target;
+void MoveTreeBeforeNode(EditionReference& target, Node* treeToMove) {
+  Node* previousTarget = target;
   if (treeToMove->block() < previousTarget->block()) {
     previousTarget =
         Node::FromBlocks(previousTarget->block() - treeToMove->treeSize());
   }
   target->moveTreeBeforeNode(treeToMove);
-  *target = previousTarget;
+  target = previousTarget;
 }
 
-void SwapTrees(EditionReference* u, EditionReference* v) {
+void SwapTrees(EditionReference& u, EditionReference& v) {
   if (u->block() > v->block()) {
     return SwapTrees(v, u);
   }
-  Node* previousU = *u;
-  Node* previousV = *v;
+  Node* previousU = u;
+  Node* previousV = v;
   MoveTreeBeforeNode(v, previousU);
-  *u = EditionReference(previousU);
+  u = EditionReference(previousU);
   MoveTreeBeforeNode(u, previousV);
 }
 

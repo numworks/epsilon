@@ -210,7 +210,7 @@ EditionReference PatternMatching::CreateTree(const Node* structure,
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode);
-        NAry::Sanitize(&insertedNode);
+        NAry::Sanitize(insertedNode);
         node = node->nextTree();
       } else if (withinNAry && node->numberOfChildren() > 0) {
         // Insert the tree recursively to locally remove insertedNAry

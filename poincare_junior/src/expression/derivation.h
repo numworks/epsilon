@@ -8,7 +8,7 @@ namespace PoincareJ {
 class Derivation {
  public:
   // Reduce a derivation Node* inplace.
-  static bool Reduce(EditionReference* ref);
+  static bool Reduce(EditionReference& ref);
   // Push derivand derivation on the pool.
   static void Derivate(const Node* derivand, const Node* symbol,
                        const Node* symbolValue);

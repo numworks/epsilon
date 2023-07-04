@@ -18,12 +18,12 @@ class NAry {
   static void RemoveChildAtIndex(Node* nary, int index);
   static void SetNumberOfChildren(Node* nary, size_t numberOfChildren);
   static bool Flatten(Node* nary);
-  static bool SquashIfUnary(EditionReference* reference);
-  static bool SquashIfEmpty(EditionReference* reference);
-  static bool Sanitize(EditionReference* reference);
+  static bool SquashIfUnary(EditionReference& reference);
+  static bool SquashIfEmpty(EditionReference& reference);
+  static bool Sanitize(EditionReference& reference);
   static bool Sort(Node* nary,
                    Comparison::Order order = Comparison::Order::User);
-  static bool Sort(EditionReference* reference,
+  static bool Sort(EditionReference& reference,
                    Comparison::Order order = Comparison::Order::User);
   static void SortChildren(EditionReference reference,
                            Comparison::Order order = Comparison::Order::User);

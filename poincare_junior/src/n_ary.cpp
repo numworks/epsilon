@@ -71,28 +71,28 @@ bool NAry::Flatten(Node* nary) {
   return false;
 }
 
-bool NAry::SquashIfUnary(EditionReference* reference) {
+bool NAry::SquashIfUnary(EditionReference& reference) {
   if (reference->numberOfChildren() == 1) {
-    *reference = reference->moveTreeOverTree(reference->nextNode());
+    reference = reference->moveTreeOverTree(reference->nextNode());
     return true;
   }
   return false;
 }
 
-bool NAry::SquashIfEmpty(EditionReference* reference) {
+bool NAry::SquashIfEmpty(EditionReference& reference) {
   if (reference->numberOfChildren() >= 1) {
     return false;
   }
   // Return the neutral element
   BlockType type = reference->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
-  *reference = reference->cloneTreeOverTree(
+  reference = reference->cloneTreeOverTree(
       Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
 }
 
-bool NAry::Sanitize(EditionReference* reference) {
-  bool flattened = Flatten(*reference);
+bool NAry::Sanitize(EditionReference& reference) {
+  bool flattened = Flatten(reference);
   if (reference->numberOfChildren() == 0) {
     return SquashIfEmpty(reference) || flattened;
   }
@@ -165,10 +165,10 @@ push:
   return true;
 }
 
-bool NAry::Sort(EditionReference* reference, Comparison::Order order) {
-  Node* u = *reference;
+bool NAry::Sort(EditionReference& reference, Comparison::Order order) {
+  Node* u = reference;
   bool result = Sort(u, order);
-  *reference = u;
+  reference = u;
   return result;
 }
 

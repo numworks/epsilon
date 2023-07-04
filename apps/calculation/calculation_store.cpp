@@ -151,7 +151,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       PoincareJ::Node *exp =
           PoincareJ::Expression::FromPoincareExpression(inputExpression);
       PoincareJ::EditionReference ref = exp;
-      PoincareJ::Simplification::Simplify(&ref);
+      PoincareJ::Simplification::Simplify(ref);
       exactOutputExpression = PoincareJ::Expression::ToPoincareExpression(ref);
       exactOutputExpression = exactOutputExpression.addMissingParentheses();
       double approx = PoincareJ::Approximation::To<double>(exp);

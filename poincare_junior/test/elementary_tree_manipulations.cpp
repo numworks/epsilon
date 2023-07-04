@@ -64,7 +64,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
   std::cout << "\n--- Projection to internal nodes 1-2/3 ---" << std::endl;
 #endif
   subtraction.recursivelyEdit([](EditionReference reference) {
-    Simplification::SystematicReduce(&reference);
+    Simplification::SystematicReduce(reference);
   });
   log_edition_pool();
 }

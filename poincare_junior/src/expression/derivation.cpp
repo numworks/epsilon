@@ -7,7 +7,7 @@
 
 namespace PoincareJ {
 
-bool Derivation::Reduce(EditionReference *ref) {
+bool Derivation::Reduce(EditionReference &ref) {
   // Reference is expected to have been projected beforehand.
   /* TODO: This cannot be asserted since SytematicReduction may introduce powers
    * of additions that would be projected to exponentials. */
@@ -20,7 +20,7 @@ bool Derivation::Reduce(EditionReference *ref) {
   Node *result =
       Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
   Derivate(derivand, symbol, symbolValue);
-  *ref = ref->moveTreeOverTree(result);
+  ref = ref->moveTreeOverTree(result);
   return true;
 }
 

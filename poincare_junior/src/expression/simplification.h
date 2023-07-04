@@ -18,39 +18,35 @@ struct ProjectionContext {
 
 class Simplification {
  public:
-  static bool Simplify(EditionReference &reference);
-  static bool AdvancedReduction(EditionReference &reference);
-  static bool ShallowAdvancedReduction(EditionReference &reference,
-                                       bool change);
+  static bool Simplify(Node *node);
+  static bool AdvancedReduction(Node *node);
+  static bool ShallowAdvancedReduction(Node *node, bool change);
 
-  static bool ShallowBeautify(EditionReference &reference,
-                              void *context = nullptr);
-  static bool DeepBeautify(EditionReference &reference,
+  static bool ShallowBeautify(Node *node, void *context = nullptr);
+  static bool DeepBeautify(Node *node,
                            ProjectionContext projectionContext = {}) {
-    return ApplyShallowInDepth(reference, ShallowBeautify, &projectionContext);
+    return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext);
   }
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool ShallowContract(EditionReference &e, void *context = nullptr) {
+  static bool ShallowContract(Node *e, void *context = nullptr) {
     return TryAllOperations(e, k_contractOperations,
                             std::size(k_contractOperations));
   }
-  static bool ShallowExpand(EditionReference &e, void *context = nullptr) {
+  static bool ShallowExpand(Node *e, void *context = nullptr) {
     return TryAllOperations(e, k_expandOperations,
                             std::size(k_expandOperations));
   }
-  static bool ShallowAlgebraicExpand(EditionReference &e,
-                                     void *context = nullptr) {
+  static bool ShallowAlgebraicExpand(Node *e, void *context = nullptr) {
     return TryAllOperations(e, k_algebraicExpandOperations,
                             std::size(k_algebraicExpandOperations));
   }
 
-  static bool DeepSystemProjection(EditionReference &reference,
+  static bool DeepSystemProjection(Node *reference,
                                    ProjectionContext projectionContext = {});
-  static bool ShallowSystemProjection(EditionReference &reference,
-                                      void *projectionContext);
+  static bool ShallowSystemProjection(Node *reference, void *projectionContext);
 
   static bool SystematicReduce(Node *u);
 
@@ -63,40 +59,37 @@ class Simplification {
   static bool MergeMultiplicationChildren(Node *u1, Node *u2);
   static bool SimplifyPower(Node *u);
 
-  typedef bool (*ShallowOperation)(EditionReference &reference, void *context);
-  static bool ApplyShallowInDepth(EditionReference &reference,
-                                  ShallowOperation shallowOperation,
+  typedef bool (*ShallowOperation)(Node *node, void *context);
+  static bool ApplyShallowInDepth(Node *node, ShallowOperation shallowOperation,
                                   void *context = nullptr);
   /* Replace target(..., naryTarget(A, B, ...), ...)
    * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
-  static bool DistributeOverNAry(EditionReference &reference, BlockType target,
+  static bool DistributeOverNAry(Node *node, BlockType target,
                                  BlockType naryTarget, BlockType naryOutput,
                                  int childIndex = 0);
 
-  static bool AdvanceReduceOnTranscendental(EditionReference &reference,
-                                            bool change);
-  static bool AdvanceReduceOnAlgebraic(EditionReference &reference,
-                                       bool change);
-  static bool ReduceInverseFunction(EditionReference &reference);
-  static bool ExpandTranscendentalOnRational(EditionReference &reference);
-  static bool PolynomialInterpretation(EditionReference &reference);
+  static bool AdvanceReduceOnTranscendental(Node *node, bool change);
+  static bool AdvanceReduceOnAlgebraic(Node *node, bool change);
+  static bool ReduceInverseFunction(Node *node);
+  static bool ExpandTranscendentalOnRational(Node *node);
+  static bool PolynomialInterpretation(Node *node);
 
-  typedef bool (*Operation)(EditionReference &reference);
+  typedef bool (*Operation)(Node *node);
   // Try all Operations until they all fail consecutively.
-  static bool TryAllOperations(EditionReference &e, const Operation *operations,
+  static bool TryAllOperations(Node *node, const Operation *operations,
                                int numberOfOperations);
 
-  static bool ContractAbs(EditionReference &reference);
-  static bool ExpandAbs(EditionReference &reference);
-  static bool ContractLn(EditionReference &reference);
-  static bool ExpandLn(EditionReference &reference);
-  static bool ContractExpMult(EditionReference &reference);
-  static bool ContractExpPow(EditionReference &reference);
-  static bool ExpandExp(EditionReference &reference);
-  static bool ContractTrigonometric(EditionReference &reference);
-  static bool ExpandTrigonometric(EditionReference &reference);
-  static bool ExpandMult(EditionReference &reference);
-  static bool ExpandPower(EditionReference &reference);
+  static bool ContractAbs(Node *node);
+  static bool ExpandAbs(Node *node);
+  static bool ContractLn(Node *node);
+  static bool ExpandLn(Node *node);
+  static bool ContractExpMult(Node *node);
+  static bool ContractExpPow(Node *node);
+  static bool ExpandExp(Node *node);
+  static bool ContractTrigonometric(Node *node);
+  static bool ExpandTrigonometric(Node *node);
+  static bool ExpandMult(Node *node);
+  static bool ExpandPower(Node *node);
 
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractExpPow, ContractAbs, ContractExpMult,

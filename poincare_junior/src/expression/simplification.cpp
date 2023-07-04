@@ -352,7 +352,7 @@ bool Simplification::SimplifyAddition(Node* u) {
   return true;
 }
 
-bool Simplification::Simplify(EditionReference& ref) {
+bool Simplification::Simplify(Node* ref) {
   bool changed = false;
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
@@ -365,7 +365,7 @@ bool Simplification::Simplify(EditionReference& ref) {
   return changed;
 }
 
-bool Simplification::AdvancedReduction(EditionReference& ref) {
+bool Simplification::AdvancedReduction(Node* ref) {
   bool changed = false;
   for (std::pair<EditionReference, int> indexedNode :
        NodeIterator::Children<Editable>(ref)) {
@@ -375,15 +375,14 @@ bool Simplification::AdvancedReduction(EditionReference& ref) {
   return ShallowAdvancedReduction(ref, changed) || changed;
 }
 
-bool Simplification::ShallowAdvancedReduction(EditionReference& ref,
-                                              bool change) {
+bool Simplification::ShallowAdvancedReduction(Node* ref, bool change) {
   return (ref->block()->isAlgebraic()
               ? AdvanceReduceOnAlgebraic
               : AdvanceReduceOnTranscendental)(ref, change);
 }
 
 // Reverse most system projections to display better expressions
-bool Simplification::ShallowBeautify(EditionReference& ref, void* context) {
+bool Simplification::ShallowBeautify(Node* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   if (ref->type() == BlockType::Trig) {
@@ -462,7 +461,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return ref;
 }
 
-bool Simplification::DeepSystemProjection(EditionReference& ref,
+bool Simplification::DeepSystemProjection(Node* ref,
                                           ProjectionContext projectionContext) {
   if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
     ref = Approximation::ReplaceWithApproximation(ref);
@@ -473,8 +472,7 @@ bool Simplification::DeepSystemProjection(EditionReference& ref,
 
 /* The order of nodes in NAry is not a concern here. They will be sorted before
  * SystemReduction. */
-bool Simplification::ShallowSystemProjection(EditionReference& ref,
-                                             void* context) {
+bool Simplification::ShallowSystemProjection(Node* ref, void* context) {
   /* TODO: Most of the projections could be optimized by simply replacing and
    * inserting nodes. This optimization could be applied in matchAndReplace. See
    * comment in matchAndReplace. */
@@ -548,7 +546,7 @@ bool Simplification::ShallowSystemProjection(EditionReference& ref,
                KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())))));
 }
 
-bool Simplification::ApplyShallowInDepth(EditionReference& ref,
+bool Simplification::ApplyShallowInDepth(Node* ref,
                                          ShallowOperation shallowOperation,
                                          void* context) {
   bool changed = shallowOperation(ref, context);
@@ -564,8 +562,7 @@ bool Simplification::ApplyShallowInDepth(EditionReference& ref,
   return changed;
 }
 
-bool Simplification::AdvanceReduceOnTranscendental(EditionReference& ref,
-                                                   bool change) {
+bool Simplification::AdvanceReduceOnTranscendental(Node* ref, bool change) {
   if (change + ReduceInverseFunction(ref)) {
     return true;
   }
@@ -586,8 +583,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference& ref,
   return false;
 }
 
-bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
-                                              bool change) {
+bool Simplification::AdvanceReduceOnAlgebraic(Node* ref, bool change) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
   if (ShallowContract(tempClone)) {
@@ -615,24 +611,24 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
   return false;
 }
 
-bool Simplification::ReduceInverseFunction(EditionReference& e) {
+bool Simplification::ReduceInverseFunction(Node* e) {
   // TODO : Add more
   return e->matchAndReplace(KExp(KLn(KPlaceholder<A>())), KPlaceholder<A>()) ||
          e->matchAndReplace(KLn(KExp(KPlaceholder<A>())), KPlaceholder<A>());
 }
 
-bool Simplification::ExpandTranscendentalOnRational(EditionReference& e) {
+bool Simplification::ExpandTranscendentalOnRational(Node* e) {
   // ln(18/5) = 3ln(3)+ln(2)-ln(5)
   // TODO : Implement
   return false;
 }
 
-bool Simplification::PolynomialInterpretation(EditionReference& e) {
+bool Simplification::PolynomialInterpretation(Node* e) {
   // TODO : Implement
   return false;
 }
 
-bool Simplification::DistributeOverNAry(EditionReference& ref, BlockType target,
+bool Simplification::DistributeOverNAry(Node* ref, BlockType target,
                                         BlockType naryTarget,
                                         BlockType naryOutput, int childIndex) {
   assert(naryTarget == BlockType::Addition ||
@@ -678,8 +674,7 @@ bool Simplification::DistributeOverNAry(EditionReference& ref, BlockType target,
   return true;
 }
 
-bool Simplification::TryAllOperations(EditionReference& e,
-                                      const Operation* operations,
+bool Simplification::TryAllOperations(Node* e, const Operation* operations,
                                       int numberOfOperations) {
   /* For example :
    * Most contraction operations are very shallow.
@@ -697,7 +692,7 @@ bool Simplification::TryAllOperations(EditionReference& e,
   return i > numberOfOperations;
 }
 
-bool Simplification::ContractAbs(EditionReference& ref) {
+bool Simplification::ContractAbs(Node* ref) {
   // A*|B|*|C|*D = A*|BC|*D
   return ref->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
@@ -707,13 +702,13 @@ bool Simplification::ContractAbs(EditionReference& ref) {
             KAnyTreesPlaceholder<D>()));
 }
 
-bool Simplification::ExpandAbs(EditionReference& ref) {
+bool Simplification::ExpandAbs(Node* ref) {
   // |A*B*...| = |A|*|B|*...
   return DistributeOverNAry(ref, BlockType::Abs, BlockType::Multiplication,
                             BlockType::Multiplication);
 }
 
-bool Simplification::ContractLn(EditionReference& ref) {
+bool Simplification::ContractLn(Node* ref) {
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
   return ref->matchAndReplace(
       KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
@@ -723,13 +718,13 @@ bool Simplification::ContractLn(EditionReference& ref) {
            KAnyTreesPlaceholder<D>()));
 }
 
-bool Simplification::ExpandLn(EditionReference& ref) {
+bool Simplification::ExpandLn(Node* ref) {
   // ln(A*B*...) = ln(A) + ln(B) + ...
   return DistributeOverNAry(ref, BlockType::Ln, BlockType::Multiplication,
                             BlockType::Addition);
 }
 
-bool Simplification::ExpandExp(EditionReference& ref) {
+bool Simplification::ExpandExp(Node* ref) {
   // TODO: exp(A?*B) = exp(A)^(B) if B is an integer only
   return
       // exp(A+B+...) = exp(A) * exp(B) * ...
@@ -737,7 +732,7 @@ bool Simplification::ExpandExp(EditionReference& ref) {
                          BlockType::Multiplication);
 }
 
-bool Simplification::ContractExpMult(EditionReference& ref) {
+bool Simplification::ContractExpMult(Node* ref) {
   // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
   return ref->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
@@ -747,14 +742,14 @@ bool Simplification::ContractExpMult(EditionReference& ref) {
             KAnyTreesPlaceholder<D>()));
 }
 
-bool Simplification::ContractExpPow(EditionReference& ref) {
+bool Simplification::ContractExpPow(Node* ref) {
   // exp(A)^B = exp(A*B)
   return ref->matchAndReplace(
       KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
       KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
 }
 
-bool Simplification::ExpandTrigonometric(EditionReference& ref) {
+bool Simplification::ExpandTrigonometric(Node* ref) {
   /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
    * ExpandTrigonometric is more complex than other expansions and cannot be
    * factorized with DistributeOverNAry. */
@@ -790,7 +785,7 @@ bool Simplification::ExpandTrigonometric(EditionReference& ref) {
   return true;
 }
 
-bool Simplification::ContractTrigonometric(EditionReference& ref) {
+bool Simplification::ContractTrigonometric(Node* ref) {
   // A?+cos(B)^2+C?+sin(D)^2+E? = A + 1 + C + E
   if (ref->matchAndReplace(
           KAdd(KAnyTreesPlaceholder<A>(),
@@ -854,7 +849,7 @@ bool Simplification::ContractTrigonometric(EditionReference& ref) {
   return true;
 }
 
-bool Simplification::ExpandMult(EditionReference& ref) {
+bool Simplification::ExpandMult(Node* ref) {
   // A?*(B?+C)*D? = A*B*D + A*C*D
   if (ref->type() != BlockType::Multiplication) {
     return false;
@@ -875,7 +870,7 @@ bool Simplification::ExpandMult(EditionReference& ref) {
                             BlockType::Addition, childIndex);
 }
 
-bool Simplification::ExpandPower(EditionReference& ref) {
+bool Simplification::ExpandPower(Node* ref) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   // (A? + B)^2 = (A^2 + 2*A*B + B^2)
   // TODO: Implement a more general (A + B)^C expand.

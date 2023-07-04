@@ -361,8 +361,12 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     variable--;
   }
 
+  /* forceCanonization = true so that canonization still happens even if
+   * t.approximate() is NAN. If other children of ab have an undef
+   * approximation, the previous rank computation would already have returned
+   * -1. */
   rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
-                 ReductionTarget::SystemForAnalysis);
+                 ReductionTarget::SystemForAnalysis, true);
   if (rank == -1) {
     return Error::EquationUndefined;
   }

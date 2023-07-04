@@ -94,7 +94,7 @@ class Matrix final : public Expression {
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, Preferences::ComplexFormat complexFormat,
            Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-           ReductionTarget reductionTarget);
+           ReductionTarget reductionTarget, bool forceCanonization = false);
   Expression createTrace();
   /* Inverse the array in-place. Array has to be given in the form
    * array[row_index][column_index] */
@@ -130,7 +130,7 @@ class Matrix final : public Expression {
   bool isCanonizable(const ReductionContext& reductionContext);
   Matrix rowCanonize(const ReductionContext& reductionContext,
                      bool* canonizationSuccess, Expression* determinant,
-                     bool reduced = true);
+                     bool reduced = true, bool forceCanonization = false);
   // Row canonize the array in place
   template <typename T>
   static void ArrayRowCanonize(T* array, int numberOfRows, int numberOfColumns,

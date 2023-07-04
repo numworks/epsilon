@@ -145,7 +145,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
                  Preferences::AngleUnit angleUnit,
                  Preferences::UnitFormat unitFormat,
-                 ReductionTarget reductionTarget) {
+                 ReductionTarget reductionTarget, bool forceCanonization) {
   assert(!recursivelyMatches(Expression::IsUninitialized, context));
   if (recursivelyMatches(Expression::IsUndefined, context)) {
     return -1;
@@ -161,7 +161,7 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
     if (ExceptionRun(ecp)) {
       Matrix cannonizedM = clone().convert<Matrix>();
       m = cannonizedM.rowCanonize(systemReductionContext, &canonizationSuccess,
-                                  nullptr);
+                                  nullptr, true, forceCanonization);
     } else {
       /* rowCanonize can create expression that are too big for the pool.
        * If it's the case, compute the rank with approximated values. */
@@ -174,7 +174,7 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
       }
       m = static_cast<Matrix &>(mApproximation)
               .rowCanonize(systemReductionContext, &canonizationSuccess,
-                           nullptr);
+                           nullptr, true, forceCanonization);
     }
   }
 
@@ -273,14 +273,14 @@ bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
 
 Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
                            bool *canonizationSuccess, Expression *determinant,
-                           bool reduced) {
+                           bool reduced, bool forceCanonization) {
   assert(canonizationSuccess);
   *canonizationSuccess = true;
 
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
 
-  if (!isCanonizable(reductionContext)) {
+  if (!forceCanonization && !isCanonizable(reductionContext)) {
     *canonizationSuccess = false;
     return *this;
   }

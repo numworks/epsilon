@@ -180,8 +180,8 @@ void Node::copyTreeTo(void* address) const {
  * // (4) To the Cache last block / Edition pool first block
  *
  * Some notes :
- * - It is expected in (2) and (3) that any tree out of the pool is wrapped in
- *   TreeBorders.
+ * - It is expected in (2) and (3) that any tree out of the pool ends with a
+ *   TreeBorder block.
  * - For both pools, last block represent the very first out of limit block.
  * - Cache last block is also Edition first block, and we need to call nextNode
  *   on before last node, so (4) is not checked.

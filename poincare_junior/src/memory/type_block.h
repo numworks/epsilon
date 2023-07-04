@@ -355,23 +355,18 @@ constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
 constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
 constexpr TypeBlock TreeBorderBlock = TypeBlock(BlockType::TreeBorder);
 
-// Surround tree with TreeBorder blocks to allow uninitialized parent detection
+// Add a TreeBorder blocks at the end to assert we don't navigate out of it.
 template <int size>
 class BlockBuffer {
  public:
-  constexpr BlockBuffer() {
-    m_blocks[0] = TreeBorderBlock;
-    m_blocks[size + 1] = TreeBorderBlock;
-  }
-  constexpr TypeBlock *blocks() {
-    return static_cast<TypeBlock *>(m_blocks + 1);
-  }
+  constexpr BlockBuffer() { m_blocks[size] = TreeBorderBlock; }
+  constexpr TypeBlock *blocks() { return static_cast<TypeBlock *>(m_blocks); }
   consteval const TypeBlock *blocks() const {
-    return static_cast<const TypeBlock *>(m_blocks) + 1;
+    return static_cast<const TypeBlock *>(m_blocks);
   }
 
  private:
-  Block m_blocks[size + 2];
+  Block m_blocks[size + 1];
 };
 
 }  // namespace PoincareJ

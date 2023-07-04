@@ -94,7 +94,7 @@ class Matrix final : public Expression {
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, Preferences::ComplexFormat complexFormat,
            Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-           ReductionTarget reductionTarget, bool inPlace = false);
+           ReductionTarget reductionTarget);
   Expression createTrace();
   /* Inverse the array in-place. Array has to be given in the form
    * array[row_index][column_index] */

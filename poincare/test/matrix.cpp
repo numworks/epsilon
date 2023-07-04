@@ -14,7 +14,7 @@ static inline void assert_has_rank(const char *exp, int rank) {
   quiz_assert(rank == m->rank(&context, Preferences::ComplexFormat::Cartesian,
                               Preferences::AngleUnit::Radian,
                               Preferences::UnitFormat::Metric,
-                              ReductionTarget::SystemForApproximation, true));
+                              ReductionTarget::SystemForApproximation));
 }
 
 QUIZ_CASE(poincare_matrix_rank) {

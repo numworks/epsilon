@@ -42,10 +42,15 @@ class Tree : public AbstractTree {
  public:
   static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
-  // Close with TreeBorder Block when cast into Node* for navigation
   constexpr operator const Node*() const {
     return Node::FromBlocks(
-        &Tree<Blocks..., BlockType::TreeBorder>::k_blocks[0]);
+        &Tree<Blocks...
+#if ASSERTION
+              // Close with TreeBorder Block when cast into Node* for navigation
+              ,
+              BlockType::TreeBorder
+#endif
+              >::k_blocks[0]);
   }
 };
 

@@ -263,7 +263,7 @@ bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
     for (int j = 0; j < n; j++) {
       if (std::isnan(matrixChild(i, j).approximateToScalar<float>(
               reductionContext.context(), reductionContext.complexFormat(),
-              reductionContext.angleUnit(), true))) {
+              reductionContext.angleUnit()))) {
         return false;
       }
     }
@@ -308,7 +308,7 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
           AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone())
               .approximateToScalar<float>(reductionContext.context(),
                                           reductionContext.complexFormat(),
-                                          reductionContext.angleUnit(), true);
+                                          reductionContext.angleUnit());
       // Handle very low pivots
       if (pivot == 0.0f &&
           matrixChild(iPivot_temp, k).isNull(reductionContext.context()) !=

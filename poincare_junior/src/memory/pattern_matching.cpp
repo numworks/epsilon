@@ -260,7 +260,7 @@ Node* PatternMatching::MatchAndCreate(const Node* source, const Node* pattern,
                                       const Node* structure) {
   PatternMatching::Context ctx;
   if (!PatternMatching::Match(pattern, source, &ctx)) {
-    return EditionReference();
+    return nullptr;
   }
   return PatternMatching::Create(structure, ctx);
 }
@@ -345,7 +345,16 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
     }
     // Get a Node to the first placeholder tree, and detach as many as necessary
     Node* trees = Node::FromBlocks(placeholders[i]->block());
-    // If the placeHolder matches the entire Tree, restore it after detaching.
+    if (node == trees) {
+      // full match, move the SystemList node in front instead
+      assert(placeholderMatches->numberOfChildren() == 1);
+      // remove 0
+      node->nextTree()->removeNode();
+      node->moveNodeAtNode(placeholderMatches);
+      placeholderMatches = node;
+      placeholders[i] = node->nextNode();
+      break;
+    }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       if (j == 0) {
         placeholders[i] = trees->detachTree();
@@ -371,12 +380,12 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
   }
 
   // Step 5 - Build the PatternMatching replacement
-  EditionReference createdRef = PatternMatching::Create(structure, ctx);
+  Node* created = PatternMatching::Create(structure, ctx);
 
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
-  node->moveTreeOverTree(createdRef);
+  node->moveTreeOverTree(created);
 
   // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....
   return true;

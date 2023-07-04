@@ -52,16 +52,16 @@ class Simplification {
   static bool ShallowSystemProjection(EditionReference &reference,
                                       void *projectionContext);
 
-  static bool SystematicReduce(EditionReference &u);
+  static bool SystematicReduce(Node *u);
 
  private:
-  static bool SimplifyTrig(EditionReference &u);
-  static bool SimplifyTrigDiff(EditionReference &u);
-  static bool SimplifyAddition(EditionReference &u);
+  static bool SimplifyTrig(Node *u);
+  static bool SimplifyTrigDiff(Node *u);
+  static bool SimplifyAddition(Node *u);
   static bool MergeAdditionChildren(Node *u1, Node *u2);
-  static bool SimplifyMultiplication(EditionReference &u);
+  static bool SimplifyMultiplication(Node *u);
   static bool MergeMultiplicationChildren(Node *u1, Node *u2);
-  static bool SimplifyPower(EditionReference &u);
+  static bool SimplifyPower(Node *u);
 
   typedef bool (*ShallowOperation)(EditionReference &reference, void *context);
   static bool ApplyShallowInDepth(EditionReference &reference,

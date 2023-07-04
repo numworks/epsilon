@@ -23,22 +23,7 @@ bool IsConstant(const Node* u) { return IsNumber(u); }
 bool IsZero(const Node* u) { return u->type() == BlockType::Zero; }
 bool IsUndef(const Node* u) { return u->type() == BlockType::Undefined; }
 
-void DropNode(EditionReference& u) {
-  Node* previousU = u;
-  u->removeNode();
-  u = previousU;
-}
-
-// Add a dummy node after the tree if it is the next tree
-bool AddMarkerIfNeeded(Node* u) {
-  if (u->nextTree()->block() == EditionPool::sharedEditionPool()->lastBlock()) {
-    EditionPool::sharedEditionPool()->pushBlock(BlockType::TreeBorder);
-    return true;
-  }
-  return false;
-}
-
-bool Simplification::SystematicReduce(EditionReference& u) {
+bool Simplification::SystematicReduce(Node* u) {
   if (IsRational(u)) {
     u->moveTreeOverTree(Rational::IrreducibleForm(u));
     return true;  // TODO
@@ -77,14 +62,16 @@ bool Simplification::SystematicReduce(EditionReference& u) {
       return SimplifyTrigDiff(u) || modified;
     case BlockType::Trig:
       return SimplifyTrig(u) || modified;
-    case BlockType::Derivative:
-      return Derivation::Reduce(u) || modified;
+    case BlockType::Derivative: {
+      EditionReference r(u);
+      return Derivation::Reduce(r) || modified;
+    }
     default:
       return modified;
   }
 }
 
-bool Simplification::SimplifyTrigDiff(EditionReference& u) {
+bool Simplification::SimplifyTrigDiff(Node* u) {
   /* TrigDiff(x,y) = { 0 if x=y, 1 otherwise }
    * TODO: ContractTrigonometric is the only place this is used. It might not be
    * worth it. */
@@ -96,7 +83,7 @@ bool Simplification::SimplifyTrigDiff(EditionReference& u) {
   return true;
 }
 
-bool Simplification::SimplifyTrig(EditionReference& u) {
+bool Simplification::SimplifyTrig(Node* u) {
   // Trig(x,y) = {-Sin(x) if y=-1, Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2}
   EditionReference secondArgument = u->childAtIndex(1);
   /* Trig second element is always expected to be reduced. This will call
@@ -116,7 +103,7 @@ bool Simplification::SimplifyTrig(EditionReference& u) {
   return changed;
 }
 
-bool Simplification::SimplifyPower(EditionReference& u) {
+bool Simplification::SimplifyPower(Node* u) {
   EditionReference v = u->childAtIndex(0);
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
@@ -156,7 +143,7 @@ bool Simplification::SimplifyPower(EditionReference& u) {
     assert(p->nextTree() == static_cast<Node*>(n));
     p->moveNodeBeforeNode(
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2));
-    DropNode(u);
+    u->removeNode();
     SimplifyMultiplication(p);
     assert(IsInteger(p));
     return SimplifyPower(u);
@@ -172,7 +159,7 @@ bool Simplification::SimplifyPower(EditionReference& u) {
       SimplifyPower(w);
     }
     n->removeTree();
-    DropNode(u);
+    u->removeNode();
     return SimplifyMultiplication(u);
   }
   return false;
@@ -223,13 +210,12 @@ bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
   return false;
 }
 
-bool Simplification::SimplifyMultiplication(EditionReference& u) {
+bool Simplification::SimplifyMultiplication(Node* u) {
   assert(u->type() == BlockType::Multiplication);
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
   bool modified = NAry::Sort(u);
-  bool markerAdded = AddMarkerIfNeeded(u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
   Node* child = u->nextNode();
@@ -238,9 +224,6 @@ bool Simplification::SimplifyMultiplication(EditionReference& u) {
     if (child->type() == BlockType::Zero) {
       NAry::SetNumberOfChildren(u, n);
       u->cloneTreeOverTree(0_e);
-      if (markerAdded) {
-        end->removeNode();
-      }
       return true;
     }
     if (child->type() == BlockType::One) {
@@ -255,9 +238,6 @@ bool Simplification::SimplifyMultiplication(EditionReference& u) {
     } else {
       child = next;
     }
-  }
-  if (markerAdded) {
-    end->removeNode();
   }
   if (n == u->numberOfChildren()) {
     return modified;
@@ -341,13 +321,12 @@ bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
   return false;
 }
 
-bool Simplification::SimplifyAddition(EditionReference& u) {
+bool Simplification::SimplifyAddition(Node* u) {
   assert(u->type() == BlockType::Addition);
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
   bool modified = NAry::Sort(u);
-  bool markerAdded = AddMarkerIfNeeded(u);
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
   Node* child = u->nextNode();
@@ -364,9 +343,6 @@ bool Simplification::SimplifyAddition(EditionReference& u) {
     } else {
       child = next;
     }
-  }
-  if (markerAdded) {
-    end->removeNode();
   }
   if (n == u->numberOfChildren()) {
     return modified;

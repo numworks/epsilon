@@ -9,12 +9,13 @@ namespace PoincareJ {
 // This is a simplified ParenthesisLayout, with made-up padding and rendering.
 class ParenthesisLayout {
  public:
-  static KDSize Size(const Node* node, KDFont::Size font);
-  static KDCoordinate Baseline(const Node* node, KDFont::Size font);
+  static KDSize Size(const Node* node, const Node* root, KDFont::Size font);
+  static KDCoordinate Baseline(const Node* node, const Node* root,
+                               KDFont::Size font);
   static KDPoint PositionOfChild(const Node* node, int childIndex,
-                                 KDFont::Size font);
-  static void RenderNode(const Node* node, KDContext* ctx, KDPoint p,
-                         KDFont::Size font,
+                                 const Node* root, KDFont::Size font);
+  static void RenderNode(const Node* node, const Node* root, KDContext* ctx,
+                         KDPoint p, KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
   static EditionReference Parse(const Node* node);

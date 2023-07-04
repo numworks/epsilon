@@ -49,6 +49,7 @@ class LayoutField
     scrollToBaselinedRect(
         m_contentView.cursorRect(),
         PoincareJ::Render::Baseline(m_contentView.cursor()->cursorNode(),
+                                    m_contentView.cursor()->rootNode(),
                                     m_contentView.font()));
   }
   bool isEmpty() const { return layout().isEmpty(); }

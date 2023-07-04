@@ -4,44 +4,48 @@
 
 namespace PoincareJ {
 
-KDSize VerticalOffsetLayout::Size(const Node* node, KDFont::Size font) {
+KDSize VerticalOffsetLayout::Size(const Node* node, const Node* root,
+                                  KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
-  KDSize indexSize = Render::Size(node->childAtIndex(0), font);
-  const Node* base = BaseLayout(node);
-  KDCoordinate baseHeight =
-      base ? Render::Size(base, font).height() : KDFont::GlyphHeight(font);
+  KDSize indexSize = Render::Size(node->childAtIndex(0), root, font);
+  const Node* base = BaseLayout(node, root);
+  KDCoordinate baseHeight = base ? Render::Size(base, root, font).height()
+                                 : KDFont::GlyphHeight(font);
 
   return KDSize(indexSize.width(),
                 baseHeight - k_indiceHeight + indexSize.height());
 }
 
-KDCoordinate VerticalOffsetLayout::Baseline(const Node* node,
+KDCoordinate VerticalOffsetLayout::Baseline(const Node* node, const Node* root,
                                             KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
-  const Node* base = BaseLayout(node);
+  const Node* base = BaseLayout(node, root);
   KDCoordinate baseBaseline =
-      base ? Render::Baseline(base, font) : KDFont::GlyphHeight(font) / 2;
-  KDCoordinate indexHeight = Render::Size(node->childAtIndex(0), font).height();
+      base ? Render::Baseline(base, root, font) : KDFont::GlyphHeight(font) / 2;
+  KDCoordinate indexHeight =
+      Render::Size(node->childAtIndex(0), root, font).height();
   return indexHeight - k_indiceHeight + baseBaseline;
 }
 
 KDPoint VerticalOffsetLayout::PositionOfChild(const Node* node, int childIndex,
+                                              const Node* parent,
                                               KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   return KDPointZero;
 }
 
-const Node* VerticalOffsetLayout::BaseLayout(const Node* node) {
-  const Node* parent = node->parent();
+const Node* VerticalOffsetLayout::BaseLayout(const Node* node,
+                                             const Node* root) {
+  int index;
+  const Node* parent = root->parentOfDescendant(node, &index);
   if (parent->type() != BlockType::RackLayout) {
     return nullptr;
   }
   assert(IsSuffixSuperscript(node));
-  const Node* previousNode = node->previousTree();
-  if (previousNode == parent) {
+  if (index == 0) {
     return nullptr;
   }
-  return previousNode;
+  return parent->childAtIndex(index - 1);
 }
 
 }  // namespace PoincareJ

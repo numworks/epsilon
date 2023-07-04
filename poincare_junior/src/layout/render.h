@@ -13,11 +13,13 @@ namespace PoincareJ {
 
 class Render final {
  public:
-  static KDSize Size(const Node* node, KDFont::Size font);
-  static KDPoint AbsoluteOrigin(const Node* node, KDFont::Size font);
+  static KDSize Size(const Node* node, const Node* root, KDFont::Size font);
+  static KDPoint AbsoluteOrigin(const Node* node, const Node* root,
+                                KDFont::Size font);
   static KDPoint PositionOfChild(const Node* node, int childIndex,
-                                 KDFont::Size font);
-  static KDCoordinate Baseline(const Node* node, KDFont::Size font);
+                                 const Node* root, KDFont::Size font);
+  static KDCoordinate Baseline(const Node* node, const Node* root,
+                               KDFont::Size font);
   static void Draw(const Node* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite);
@@ -53,12 +55,12 @@ class Render final {
  private:
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
-  static void PrivateDraw(const Node* node, KDContext* ctx, KDPoint p,
-                          KDFont::Size font,
+  static void PrivateDraw(const Node* node, const Node* root, KDContext* ctx,
+                          KDPoint p, KDFont::Size font,
                           KDColor expressionColor = KDColorBlack,
                           KDColor backgroundColor = KDColorWhite);
-  static void RenderNode(const Node* node, KDContext* ctx, KDPoint p,
-                         KDFont::Size font,
+  static void RenderNode(const Node* node, const Node* root, KDContext* ctx,
+                         KDPoint p, KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
 };

@@ -11,66 +11,70 @@
 
 namespace PoincareJ {
 
-KDSize Render::Size(const Node* node, KDFont::Size font) {
+KDSize Render::Size(const Node* node, const Node* root, KDFont::Size font) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
-      return RackLayout::Size(node, font);
+      return RackLayout::Size(node, root, font);
     case BlockType::FractionLayout:
-      return FractionLayout::Size(node, font);
+      return FractionLayout::Size(node, root, font);
     case BlockType::ParenthesisLayout:
-      return ParenthesisLayout::Size(node, font);
+      return ParenthesisLayout::Size(node, root, font);
     case BlockType::VerticalOffsetLayout:
-      return VerticalOffsetLayout::Size(node, font);
+      return VerticalOffsetLayout::Size(node, root, font);
     case BlockType::CodePointLayout:
-      return CodePointLayout::Size(node, font);
+      return CodePointLayout::Size(node, root, font);
     default:
       assert(false);
   };
   return KDSizeZero;
 }
 
-KDPoint Render::AbsoluteOrigin(const Node* node, KDFont::Size font) {
+KDPoint Render::AbsoluteOrigin(const Node* node, const Node* root,
+                               KDFont::Size font) {
   assert(node->block()->isLayout());
-  const Node* parent = node->parent();
-  if (!parent) {
+  if (node == root) {
     return KDPointZero;
   }
-  return AbsoluteOrigin(parent, font)
-      .translatedBy(PositionOfChild(parent, parent->indexOfChild(node), font));
+  int index;
+  const Node* parent = root->parentOfDescendant(node, &index);
+  return AbsoluteOrigin(parent, root, font)
+      .translatedBy(PositionOfChild(parent, index, root, font));
 }
 
 KDPoint Render::PositionOfChild(const Node* node, int childIndex,
-                                KDFont::Size font) {
+                                const Node* root, KDFont::Size font) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
-      return RackLayout::PositionOfChild(node, childIndex, font);
+      return RackLayout::PositionOfChild(node, childIndex, root, font);
     case BlockType::FractionLayout:
-      return FractionLayout::PositionOfChild(node, childIndex, font);
+      return FractionLayout::PositionOfChild(node, childIndex, root, font);
     case BlockType::ParenthesisLayout:
-      return ParenthesisLayout::PositionOfChild(node, childIndex, font);
+      return ParenthesisLayout::PositionOfChild(node, childIndex, root, font);
     case BlockType::VerticalOffsetLayout:
-      return VerticalOffsetLayout::PositionOfChild(node, childIndex, font);
+      return VerticalOffsetLayout::PositionOfChild(node, childIndex, root,
+                                                   font);
     default:
       assert(false);
       return KDPointZero;
   };
 }
 
-KDCoordinate Render::Baseline(const Node* node, KDFont::Size font) {
+KDCoordinate Render::Baseline(const Node* node, const Node* root,
+                              KDFont::Size font) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
-      return RackLayout::Baseline(node, font);
+      return RackLayout::Baseline(node, root, font);
     case BlockType::FractionLayout:
-      return FractionLayout::Baseline(node, font);
+      return FractionLayout::Baseline(node, root, font);
     case BlockType::ParenthesisLayout:
-      return ParenthesisLayout::Baseline(node, font);
+      return ParenthesisLayout::Baseline(node, root, font);
     case BlockType::VerticalOffsetLayout:
-      return VerticalOffsetLayout::Baseline(node, font);
+      return VerticalOffsetLayout::Baseline(node, root, font);
     case BlockType::CodePointLayout:
-      return CodePointLayout::Baseline(node, font);
+      return CodePointLayout::Baseline(node, root, font);
     default:
       assert(false);
       return static_cast<KDCoordinate>(0);
@@ -83,14 +87,14 @@ void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
   /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
    * Drawing is therefore restricted to the highest parent only. */
   assert(!node->parent());
-  PrivateDraw(node, ctx, p, font, expressionColor, backgroundColor);
+  PrivateDraw(node, node, ctx, p, font, expressionColor, backgroundColor);
 }
 
-void Render::PrivateDraw(const Node* node, KDContext* ctx, KDPoint p,
-                         KDFont::Size font, KDColor expressionColor,
+void Render::PrivateDraw(const Node* node, const Node* root, KDContext* ctx,
+                         KDPoint p, KDFont::Size font, KDColor expressionColor,
                          KDColor backgroundColor) {
   assert(node->block()->isLayout());
-  KDSize size = Size(node, font);
+  KDSize size = Size(node, root, font);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
       size.width() > KDCOORDINATE_MAX - p.x()) {
@@ -100,29 +104,30 @@ void Render::PrivateDraw(const Node* node, KDContext* ctx, KDPoint p,
   /* Redraw the background for each Node* (used with selection which isn't
    * implemented yet) */
   ctx->fillRect(KDRect(p, size), backgroundColor);
-  RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
+  RenderNode(node, root, ctx, p, font, expressionColor, backgroundColor);
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    PrivateDraw(child, ctx, PositionOfChild(node, index, font).translatedBy(p),
-                font, expressionColor, backgroundColor);
+    PrivateDraw(child, root, ctx,
+                PositionOfChild(node, index, root, font).translatedBy(p), font,
+                expressionColor, backgroundColor);
   }
 }
 
-void Render::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
-                        KDFont::Size font, KDColor expressionColor,
+void Render::RenderNode(const Node* node, const Node* root, KDContext* ctx,
+                        KDPoint p, KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::FractionLayout:
-      return FractionLayout::RenderNode(node, ctx, p, font, expressionColor,
-                                        backgroundColor);
+      return FractionLayout::RenderNode(node, root, ctx, p, font,
+                                        expressionColor, backgroundColor);
     case BlockType::ParenthesisLayout:
-      return ParenthesisLayout::RenderNode(node, ctx, p, font, expressionColor,
-                                           backgroundColor);
+      return ParenthesisLayout::RenderNode(node, root, ctx, p, font,
+                                           expressionColor, backgroundColor);
     case BlockType::CodePointLayout:
-      return CodePointLayout::RenderNode(node, ctx, p, font, expressionColor,
-                                         backgroundColor);
+      return CodePointLayout::RenderNode(node, root, ctx, p, font,
+                                         expressionColor, backgroundColor);
     case BlockType::RackLayout:
-      return RackLayout::RenderNode(node, ctx, p, font, expressionColor,
+      return RackLayout::RenderNode(node, root, ctx, p, font, expressionColor,
                                     backgroundColor);
     default:;
   };

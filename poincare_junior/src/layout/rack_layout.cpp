@@ -9,27 +9,28 @@
 
 namespace PoincareJ {
 
-KDSize RackLayout::Size(const Node* node, KDFont::Size font) {
-  return SizeBetweenIndexes(node, 0, node->numberOfChildren(), font);
+KDSize RackLayout::Size(const Node* node, const Node* root, KDFont::Size font) {
+  return SizeBetweenIndexes(node, 0, node->numberOfChildren(), root, font);
 }
 
-KDCoordinate RackLayout::Baseline(const Node* node, KDFont::Size font) {
-  return BaselineBetweenIndexes(node, 0, node->numberOfChildren(), font);
+KDCoordinate RackLayout::Baseline(const Node* node, const Node* root,
+                                  KDFont::Size font) {
+  return BaselineBetweenIndexes(node, 0, node->numberOfChildren(), root, font);
 }
 
 KDPoint RackLayout::PositionOfChild(const Node* node, int childIndex,
-                                    KDFont::Size font) {
+                                    const Node* root, KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate childBaseline = 0;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     if (index == childIndex) {
-      childBaseline = Render::Baseline(child, font);
+      childBaseline = Render::Baseline(child, root, font);
       break;
     }
-    KDSize childSize = Render::Size(child, font);
+    KDSize childSize = Render::Size(child, root, font);
     x += childSize.width();
   }
-  KDCoordinate y = Render::Baseline(node, font) - childBaseline;
+  KDCoordinate y = Render::Baseline(node, root, font) - childBaseline;
   return KDPoint(x, y);
 }
 
@@ -38,7 +39,8 @@ EditionReference RackLayout::Parse(const Node* node) {
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
-                                      int rightIndex, KDFont::Size font) {
+                                      int rightIndex, const Node* root,
+                                      KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
   if (node->numberOfChildren() == 0) {
@@ -52,9 +54,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
     const Node* childi = node->childAtIndex(i);
-    KDSize childSize = Render::Size(childi, font);
+    KDSize childSize = Render::Size(childi, root, font);
     totalWidth += childSize.width();
-    KDCoordinate childBaseline = Render::Baseline(childi, font);
+    KDCoordinate childBaseline = Render::Baseline(childi, root, font);
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, childSize.height() - childBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);
@@ -64,6 +66,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
 
 KDCoordinate RackLayout::BaselineBetweenIndexes(const Node* node, int leftIndex,
                                                 int rightIndex,
+                                                const Node* root,
                                                 KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
@@ -72,7 +75,8 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Node* node, int leftIndex,
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    result = std::max(result, Render::Baseline(node->childAtIndex(i), font));
+    result =
+        std::max(result, Render::Baseline(node->childAtIndex(i), root, font));
   }
   return result;
 }
@@ -82,9 +86,9 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Node* node) {
   return node->numberOfChildren() == 0;
 }
 
-void RackLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
-                            KDFont::Size font, KDColor expressionColor,
-                            KDColor backgroundColor) {
+void RackLayout::RenderNode(const Node* node, const Node* root, KDContext* ctx,
+                            KDPoint p, KDFont::Size font,
+                            KDColor expressionColor, KDColor backgroundColor) {
   if (ShouldDrawEmptyRectangle(node)) {
     EmptyRectangle::DrawEmptyRectangle(ctx, p, font,
                                        EmptyRectangle::Color::Yellow);

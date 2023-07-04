@@ -16,7 +16,8 @@ void CodePointLayout::GetName(const Node* node, char* buffer,
   buffer[size] = 0;
 }
 
-KDSize CodePointLayout::Size(const Node* node, KDFont::Size font) {
+KDSize CodePointLayout::Size(const Node* node, const Node* root,
+                             KDFont::Size font) {
   KDSize glyph = KDFont::GlyphSize(font);
   KDCoordinate width = glyph.width();
   // Handle the case of the middle dot which is thinner than the other glyphs
@@ -26,12 +27,14 @@ KDSize CodePointLayout::Size(const Node* node, KDFont::Size font) {
   return KDSize(width, glyph.height());
 }
 
-KDCoordinate CodePointLayout::Baseline(const Node* node, KDFont::Size font) {
+KDCoordinate CodePointLayout::Baseline(const Node* node, const Node* root,
+                                       KDFont::Size font) {
   return KDFont::GlyphHeight(font) / 2;
 }
 
-void CodePointLayout::RenderNode(const Node* node, KDContext* ctx, KDPoint p,
-                                 KDFont::Size font, KDColor expressionColor,
+void CodePointLayout::RenderNode(const Node* node, const Node* root,
+                                 KDContext* ctx, KDPoint p, KDFont::Size font,
+                                 KDColor expressionColor,
                                  KDColor backgroundColor) {
   CodePoint codePoint = GetCodePoint(node);
   // Handle the case of the middle dot which has to be drawn by hand since it is

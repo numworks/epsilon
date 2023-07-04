@@ -8,19 +8,22 @@ namespace PoincareJ {
 
 class RackLayout {
  public:
-  static KDSize Size(const Node* node, KDFont::Size font);
-  static KDCoordinate Baseline(const Node* node, KDFont::Size font);
+  static KDSize Size(const Node* node, const Node* root, KDFont::Size font);
+  static KDCoordinate Baseline(const Node* node, const Node* root,
+                               KDFont::Size font);
   static KDPoint PositionOfChild(const Node* node, int childIndex,
-                                 KDFont::Size font);
+                                 const Node* root, KDFont::Size font);
   static EditionReference Parse(const Node* node);
   static KDSize SizeBetweenIndexes(const Node* node, int leftPosition,
-                                   int rightPosition, KDFont::Size font);
+                                   int rightPosition, const Node* root,
+                                   KDFont::Size font);
   static KDCoordinate BaselineBetweenIndexes(const Node* node, int leftPosition,
                                              int rightPosition,
+                                             const Node* root,
                                              KDFont::Size font);
   static bool ShouldDrawEmptyRectangle(const Node* node);
-  static void RenderNode(const Node* node, KDContext* ctx, KDPoint p,
-                         KDFont::Size font,
+  static void RenderNode(const Node* node, const Node* root, KDContext* ctx,
+                         KDPoint p, KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
 

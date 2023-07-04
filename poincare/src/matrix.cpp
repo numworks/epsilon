@@ -261,9 +261,11 @@ bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
   int n = numberOfColumns();
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
-      if (std::isnan(matrixChild(i, j).approximateToScalar<float>(
-              reductionContext.context(), reductionContext.complexFormat(),
-              reductionContext.angleUnit()))) {
+      if (std::isnan(
+              AbsoluteValue::Builder(matrixChild(i, j).clone())
+                  .approximateToScalar<float>(reductionContext.context(),
+                                              reductionContext.complexFormat(),
+                                              reductionContext.angleUnit()))) {
         return false;
       }
     }

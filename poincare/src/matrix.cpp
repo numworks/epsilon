@@ -142,18 +142,14 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
                                               : previousNumberOfColumns);
 }
 
-int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
-                 Preferences::AngleUnit angleUnit,
-                 Preferences::UnitFormat unitFormat,
-                 ReductionTarget reductionTarget, bool forceCanonization) {
+int Matrix::rank(Context *context, bool forceCanonization) {
   assert(!recursivelyMatches(Expression::IsUninitialized, context));
   if (recursivelyMatches(Expression::IsUndefined, context)) {
     return -1;
   }
-
   Expression m;
-  ReductionContext systemReductionContext = ReductionContext(
-      context, complexFormat, angleUnit, unitFormat, reductionTarget);
+  ReductionContext systemReductionContext =
+      ReductionContext::DefaultReductionContextForAnalysis(context);
 
   bool canonizationSuccess = true;
   {
@@ -166,7 +162,8 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
       /* rowCanonize can create expression that are too big for the pool.
        * If it's the case, compute the rank with approximated values. */
       Expression mApproximation =
-          approximate<double>(context, complexFormat, angleUnit);
+          approximate<double>(context, systemReductionContext.complexFormat(),
+                              systemReductionContext.angleUnit());
       if (mApproximation.type() != ExpressionNode::Type::Matrix) {
         /* The approximation was able to conclude that a coefficient is undef
          * while the reduction could not. */

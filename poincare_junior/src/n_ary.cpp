@@ -100,7 +100,6 @@ bool NAry::Sanitize(EditionReference* reference) {
 }
 
 bool NAry::Sort(Node* nary, Comparison::Order order) {
-  // avoid the switch of numberOfChildren() since we know the type ?
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;

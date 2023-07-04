@@ -155,11 +155,13 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
   ReductionContext systemReductionContext = ReductionContext(
       context, complexFormat, angleUnit, unitFormat, reductionTarget);
 
+  bool canonizationSuccess = true;
   {
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       Matrix cannonizedM = clone().convert<Matrix>();
-      m = cannonizedM.rowCanonize(systemReductionContext, nullptr);
+      m = cannonizedM.rowCanonize(systemReductionContext, &canonizationSuccess,
+                                  nullptr);
     } else {
       /* rowCanonize can create expression that are too big for the pool.
        * If it's the case, compute the rank with approximated values. */
@@ -171,8 +173,13 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
         return -1;
       }
       m = static_cast<Matrix &>(mApproximation)
-              .rowCanonize(systemReductionContext, nullptr);
+              .rowCanonize(systemReductionContext, &canonizationSuccess,
+                           nullptr);
     }
+  }
+
+  if (!canonizationSuccess) {
+    return -1;
   }
 
   assert(m.type() == ExpressionNode::Type::Matrix);
@@ -251,10 +258,34 @@ int Matrix::ArrayInverse(T *array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
+bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
+  int m = numberOfRows();
+  int n = numberOfColumns();
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      if (std::isnan(matrixChild(i, j).approximateToScalar<float>(
+              reductionContext.context(), reductionContext.complexFormat(),
+              reductionContext.angleUnit(), true))) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
-                           Expression *determinant, bool reduced) {
+                           bool *canonizationSuccess, Expression *determinant,
+                           bool reduced) {
+  assert(canonizationSuccess);
+  *canonizationSuccess = true;
+
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
+
+  if (!isCanonizable(reductionContext)) {
+    *canonizationSuccess = false;
+    return *this;
+  }
 
   Multiplication det = Multiplication::Builder();
 
@@ -509,10 +540,10 @@ Expression Matrix::createRef(const ReductionContext &reductionContext,
      * destroying the child handle, its reference counter would be off by one
      * after the long jump. */
     Matrix result = clone().convert<Matrix>();
-    *couldComputeRef = true;
     /* Reduced row echelon form is also called row canonical form. To compute
      * the row echelon form (non reduced one), fewer steps are required. */
-    result = result.rowCanonize(reductionContext, nullptr, reduced);
+    result =
+        result.rowCanonize(reductionContext, couldComputeRef, nullptr, reduced);
     return std::move(result);
   } else {
     *couldComputeRef = false;
@@ -709,14 +740,17 @@ Expression Matrix::computeInverseOrDeterminant(
       }
     }
     matrixAI.setDimensions(dim, 2 * dim);
-    if (computeDeterminant) {
-      // Compute the determinant
-      Expression d;
-      matrixAI.rowCanonize(reductionContext, &d);
-      return d;
+    Expression det;
+    bool canonizationSuccess = true;
+    matrixAI =
+        matrixAI.rowCanonize(reductionContext, &canonizationSuccess, &det);
+    if (!canonizationSuccess) {
+      *couldCompute = false;
+      return Undefined::Builder();
     }
-    // Compute the inverse
-    matrixAI = matrixAI.rowCanonize(reductionContext, nullptr);
+    if (computeDeterminant) {
+      return det;
+    }
     // Check inversibility
     for (int i = 0; i < dim; i++) {
       if (!matrixAI.matrixChild(i, i).isRationalOne()) {

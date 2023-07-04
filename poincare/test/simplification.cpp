@@ -1690,6 +1690,9 @@ QUIZ_CASE(poincare_simplification_matrix) {
                                        "[[1,-1/4][0,1]]");
   assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])",
                                        "[[1,10^100][0,1]]");
+  // Can't canonize if a child cannot be approximated
+  assert_parsed_expression_simplify_to("ref([[0,0][x,0]])",
+                                       "ref([[0,0][x,0]])");
 
   // Cross product
   assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])",

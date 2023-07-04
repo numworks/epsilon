@@ -21,6 +21,8 @@ QUIZ_CASE(poincare_matrix_rank) {
   assert_has_rank("[[1,0,0][0,1,0][0,0,0][0,0,0][1,1,1][0,0,1]]", 3);
   assert_has_rank("[[1,-1,0][0,1,2][0,1,2][0,1,2][0,1,2][0,1,2]]", 2);
   assert_has_rank("[[1,0,0,0,0,0][-1,1,1,1,1,1][0,2,2,2,2,2]]", 2);
+  // Can't canonize if a child cannot be approximated
+  assert_has_rank("[[1,2,3][1,3,x][1,4,6]]", -1);
 }
 
 QUIZ_CASE(poincare_matrix_undef) {

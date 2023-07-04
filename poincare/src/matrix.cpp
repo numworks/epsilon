@@ -145,7 +145,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
                  Preferences::AngleUnit angleUnit,
                  Preferences::UnitFormat unitFormat,
-                 ReductionTarget reductionTarget, bool inPlace) {
+                 ReductionTarget reductionTarget) {
   assert(!recursivelyMatches(Expression::IsUninitialized, context));
   if (recursivelyMatches(Expression::IsUndefined, context)) {
     return -1;
@@ -184,9 +184,7 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
 
   assert(m.type() == ExpressionNode::Type::Matrix);
   Matrix cannonizedMatrix = static_cast<Matrix &>(m);
-  if (inPlace) {
-    *this = cannonizedMatrix;
-  }
+  *this = cannonizedMatrix;
 
   int rank = cannonizedMatrix.numberOfRows();
   int i = rank - 1;

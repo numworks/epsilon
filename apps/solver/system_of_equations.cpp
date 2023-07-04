@@ -246,7 +246,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   // Compute the rank of (A|b)
   int rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
-                     ReductionTarget::SystemForApproximation, true);
+                     ReductionTarget::SystemForApproximation);
   if (rank == -1) {
     return Error::EquationUndefined;
   }
@@ -362,7 +362,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
 
   rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
-                 ReductionTarget::SystemForAnalysis, true);
+                 ReductionTarget::SystemForAnalysis);
   if (rank == -1) {
     return Error::EquationUndefined;
   }

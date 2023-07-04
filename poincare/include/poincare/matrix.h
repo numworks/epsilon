@@ -126,7 +126,26 @@ class Matrix final : public Expression {
   Expression computeInverseOrDeterminant(
       bool computeDeterminant, const ReductionContext& reductionContext,
       bool* couldCompute) const;
-  // rowCanonize turns a matrix in its row echelon form, reduced or not.
+  /* rowCanonize turns a matrix in its row echelon form, reduced or not.
+   *
+   * If the matrix contains unresolved symbols, the canonization cannot
+   * be properly done. The method will interrupt and set canonizationSuccess to
+   * false.
+   *
+   *  WARNING: If forceCanonization is set to true though, the canonization will
+   * be done anyway. This is very risky since the canonization behaviour is
+   * undef for unknown value. For example, the matrix [[3, 0][x, 5]] does not
+   * canonize the same if x=2 or x=6.
+   * This is used only by the solver when calling rank method to be able to
+   * solve equation systems. It works in this case because we know the matrix
+   * that is canonized is of the form:
+   * [ ... ...  0   0  ]
+   * [ ... ...  0   0  ]
+   * [ ... ...  0   0  ]
+   * [  0   0   t1  0  ]
+   * [  0   0   .....  ]
+   * [  0   0   0   tN ]
+   * */
   bool isCanonizable(const ReductionContext& reductionContext);
   Matrix rowCanonize(const ReductionContext& reductionContext,
                      bool* canonizationSuccess, Expression* determinant,

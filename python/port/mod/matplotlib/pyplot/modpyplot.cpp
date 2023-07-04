@@ -324,25 +324,27 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args,
   // TODO: memory optimization
   // Don't create a list of edges, compute the edge on the go if not present?
   mp_obj_t *edgeItems;
-  size_t nBins;
+  size_t nBins = 10;
   // bin arg
-  mp_obj_t arrayArg = args[1];
+  bool edgesComputed = false;
+  if (n_args >= 2) {
+    mp_obj_t arrayArg = args[1];
 #if NDARRAY_HAS_TOLIST
-    if (n_args >= 2 && mp_obj_is_type(arrayArg, &ulab_ndarray_type)) {
+    if (mp_obj_is_type(arrayArg, &ulab_ndarray_type)) {
       arrayArg = ndarray_tolist(arrayArg);
     }
 #endif
-  if (n_args >= 2 && (mp_obj_is_type(arrayArg, &mp_type_tuple) ||
-                      mp_obj_is_type(arrayArg, &mp_type_list))) {
-    size_t nEdges;
-    mp_obj_get_array(arrayArg, &nEdges, &edgeItems);
-    nBins = nEdges - 1;
-  } else {
-    nBins = 10;
-    if (n_args >= 2) {
+    if ((mp_obj_is_type(arrayArg, &mp_type_tuple) ||
+         mp_obj_is_type(arrayArg, &mp_type_list))) {
+      size_t nEdges;
+      mp_obj_get_array(arrayArg, &nEdges, &edgeItems);
+      nBins = nEdges - 1;
+      edgesComputed = true;
+    } else {
       nBins = mp_obj_get_int(arrayArg);
     }
-
+  }
+  if (!edgesComputed) {
     mp_float_t binWidth = (max - min) / nBins;
     // Handle empty range case
     if (max - min <= FLT_EPSILON) {

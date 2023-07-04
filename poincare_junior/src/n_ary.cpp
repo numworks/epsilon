@@ -29,8 +29,7 @@ void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
 
 EditionReference NAry::DetachChildAtIndex(Node* nary, int index) {
   assert(nary->isNAry());
-  EditionReference child = nary->childAtIndex(index);
-  child->detachTree();
+  EditionReference child = nary->childAtIndex(index)->detachTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;
 }
@@ -108,7 +107,7 @@ bool NAry::Sort(Node* nary, Comparison::Order order) {
     Node* child0 = nary->nextNode();
     Node* child1 = child0->nextTree();
     if (Comparison::Compare(child0, child1, order) > 0) {
-      child0->moveTreeBeforeNode(child1);
+      child0->moveTreeAtNode(child1);
       return true;
     }
     return false;
@@ -186,8 +185,8 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
         EditionReference refI = nary->childAtIndex(i);
         EditionReference refJ = nary->childAtIndex(j);
         EditionReference refJNext = refJ->nextTree();
-        refI->moveTreeBeforeNode(refJ);
-        refJNext->moveTreeBeforeNode(refI);
+        refI->moveTreeAtNode(refJ);
+        refJNext->moveTreeAtNode(refI);
       },
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);

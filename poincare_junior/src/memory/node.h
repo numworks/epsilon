@@ -109,10 +109,14 @@ class Node {
   void moveTreeAfterNode(Node* n) { moveAt(n, false, true); }
   void moveNodeBeforeNode(Node* n) { moveAt(n, true, false); }
   void moveTreeBeforeNode(Node* n) { moveAt(n, true, true); }
+  void moveNodeAtNode(Node* n) { moveAt(n, true, false, true); }
+  void moveTreeAtNode(Node* n) { moveAt(n, true, true, true); }
   void cloneNodeAfterNode(const Node* n) { cloneAt(n, false, false); }
   void cloneTreeAfterNode(const Node* n) { cloneAt(n, false, true); }
   void cloneNodeBeforeNode(const Node* n) { cloneAt(n, true, false); }
   void cloneTreeBeforeNode(const Node* n) { cloneAt(n, true, true); }
+  void cloneNodeAtNode(const Node* n) { cloneAt(n, true, false, true); }
+  void cloneTreeAtNode(const Node* n) { cloneAt(n, true, true, true); }
   Node* moveNodeOverNode(Node* n) { return moveOver(n, false, false); }
   Node* moveTreeOverNode(Node* n) { return moveOver(n, false, true); }
   Node* moveNodeOverTree(Node* n) { return moveOver(n, true, false); }
@@ -180,8 +184,9 @@ class Node {
   }
 
  private:
-  void cloneAt(const Node* nodeToClone, bool before, bool newIsTree);
-  void moveAt(Node* nodeToMove, bool before, bool newIsTree);
+  void cloneAt(const Node* nodeToClone, bool before, bool newIsTree,
+               bool at = false);
+  void moveAt(Node* nodeToMove, bool before, bool newIsTree, bool at = false);
   Node* cloneOver(const Node* n, bool oldIsTree, bool newIsTree);
   Node* moveOver(Node* n, bool oldIsTree, bool newIsTree);
   Node* detach(bool isTree);

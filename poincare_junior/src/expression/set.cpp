@@ -41,7 +41,7 @@ EditionReference Set::Add(EditionReference set, const Node* expression) {
 EditionReference Set::Pop(EditionReference set) {
   assert(set->numberOfChildren() > 0);
   EditionReference expression = set->nextNode();
-  expression->detachTree();
+  expression = expression->detachTree();
   NAry::SetNumberOfChildren(set, set->numberOfChildren() - 1);
   return expression;
 }

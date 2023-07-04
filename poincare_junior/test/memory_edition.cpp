@@ -122,11 +122,9 @@ QUIZ_CASE(pcj_edition_reference) {
   ref2 = ref2->moveTreeOverTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
   ref1->moveNodeOverNode(ref0);  // Before
-  quiz_assert(ref1.isUninitialized());
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
   ref0->moveTreeOverTree(ref2);  // After
-  quiz_assert(ref0.isUninitialized());
   assert_pool_contains(editionPool, {k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 
   // Removals
@@ -135,9 +133,7 @@ QUIZ_CASE(pcj_edition_reference) {
   ref2 = ref1->nextTree();                             // k_expr1
 
   ref2->removeTree();
-  quiz_assert(ref2.isUninitialized());
   ref1->removeNode();
-  quiz_assert(ref1.isUninitialized());
   assert_pool_contains(editionPool, {k_expr0, k_subExpr1, 9_e});
 
   // Detach
@@ -150,12 +146,15 @@ QUIZ_CASE(pcj_edition_reference) {
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {
   CachePool::sharedCachePool()->reset();
-  EditionReference reference0(0_e);
-  for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 1; i++) {
+  EditionReference reference0(KAdd(1_e, 1_e));
+  EditionReference referenceSub0(reference0->childAtIndex(0));
+  EditionReference referenceSub1(reference0->childAtIndex(1));
+  for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 5; i++) {
     EditionReference reference1(1_e);
   }
   /* The reference table is now full but we can reference a new node of another
    * one is out-dated. */
   reference0->removeTree();
+  assert(referenceSub0.isUninitialized());
   EditionReference reference2(2_e);
 }

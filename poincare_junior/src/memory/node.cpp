@@ -333,22 +333,23 @@ EditionReference Node::clone() const {
 
 // Node edition
 
-void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree) {
+void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree,
+                   bool at) {
   Node* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
-  EditionPool::sharedEditionPool()->insertBlocks(destination->block(),
-                                                 nodeToClone->block(), size);
+  EditionPool::sharedEditionPool()->insertBlocks(
+      destination->block(), nodeToClone->block(), size, at);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Insert", destination->block(), size);
 #endif
 }
 
-void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree) {
+void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree, bool at) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Node* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
   assert(pool->contains(nodeToMove->block()));
-  pool->moveBlocks(destination->block(), nodeToMove->block(), size);
+  pool->moveBlocks(destination->block(), nodeToMove->block(), size, at);
 #if POINCARE_POOL_VISUALIZATION
   Block* dst = destination->block();
   Block* addedBlock = dst >= nodeToMove->block() ? dst - size : dst;
@@ -397,7 +398,7 @@ Node* Node::moveOver(Node* newNode, bool oldIsTree, bool newIsTree) {
   if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
     oldSize -= newSize;
   }
-  pool->moveBlocks(oldBlock, newBlock, newSize);
+  pool->moveBlocks(oldBlock, newBlock, newSize, true);
   if (oldBlock > newBlock) {
     finalBlock -= newSize;
   }
@@ -425,12 +426,12 @@ Node* Node::detach(bool isTree) {
   Block* destination = pool->lastBlock();
   size_t sizeToMove = isTree ? treeSize() : nodeSize();
   Block* source = block();
-  pool->moveBlocks(destination, source, sizeToMove);
+  pool->moveBlocks(destination, source, sizeToMove, true);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
       source);
 #endif
-  return Node::FromBlocks(destination);
+  return Node::FromBlocks(destination - sizeToMove);
 }
 
 }  // namespace PoincareJ

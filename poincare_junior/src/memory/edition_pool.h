@@ -39,10 +39,11 @@ class EditionPool final : public Pool {
     return insertBlocks(destination, &block, 1);
   }
   bool insertBlocks(Block *destination, const Block *source,
-                    size_t numberOfBlocks);
+                    size_t numberOfBlocks, bool at = false);
   void popBlock() { removeBlocks(lastBlock() - 1, 1); }
   void removeBlocks(Block *address, size_t numberOfBlocks);
-  void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks);
+  void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks,
+                  bool at = false);
 
   // Initialize trees
   Node *initFromAddress(const void *address, bool isTree = true);

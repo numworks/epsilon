@@ -107,7 +107,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *testedBlock, const Block *destination,
          const Block *source, int numberOfBlocks) {
-        if (testedBlock >= destination &&
+        if (testedBlock > destination &&
             testedBlock < destination + numberOfBlocks) {
           *offset = ReferenceTable::UninitializedOffset;
         }
@@ -116,7 +116,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
 }
 
 bool EditionPool::insertBlocks(Block *destination, const Block *source,
-                               size_t numberOfBlocks) {
+                               size_t numberOfBlocks, bool at) {
   if (destination == source || numberOfBlocks == 0) {
     return true;
   }
@@ -131,11 +131,11 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *testedBlock, const Block *destination,
          const Block *block, int numberOfBlocks) {
-        if (destination <= testedBlock) {
+        if (destination < testedBlock) {
           *offset += numberOfBlocks;
         }
       },
-      destination, nullptr, numberOfBlocks);
+      destination + at - 1, nullptr, numberOfBlocks);
   return true;
 }
 
@@ -152,7 +152,7 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
          const Block *block, int numberOfBlocks) {
         if (testedBlock >= address + numberOfBlocks) {
           *offset -= numberOfBlocks;
-        } else if (testedBlock >= address) {
+        } else if (testedBlock > address) {
           *offset = ReferenceTable::UninitializedOffset;
         }
       },
@@ -160,7 +160,7 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
 }
 
 void EditionPool::moveBlocks(Block *destination, Block *source,
-                             size_t numberOfBlocks) {
+                             size_t numberOfBlocks, bool at) {
   if (destination == source || numberOfBlocks == 0) {
     return;
   }
@@ -168,17 +168,31 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
   uint8_t *dst = reinterpret_cast<uint8_t *>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
   Memory::Rotate(dst, src, len);
-  m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, const Block *dst,
-         const Block *src, int nbOfBlocks) {
-        if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
-          *offset += dst - src - (dst > src ? nbOfBlocks : 0);
-        } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
-                   (testedBlock >= dst && testedBlock < src)) {
-          *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
-        }
-      },
-      destination, source, numberOfBlocks);
+  if (at) {
+    m_referenceTable.updateNodes(
+        [](uint16_t *offset, Block *testedBlock, const Block *dst,
+           const Block *src, int nbOfBlocks) {
+          if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
+            *offset += dst - src - (dst > src ? nbOfBlocks : 0);
+          } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
+                     (testedBlock > dst && testedBlock < src)) {
+            *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
+          }
+        },
+        destination, source, numberOfBlocks);
+  } else {
+    m_referenceTable.updateNodes(
+        [](uint16_t *offset, Block *testedBlock, const Block *dst,
+           const Block *src, int nbOfBlocks) {
+          if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
+            *offset += dst - src - (dst > src ? nbOfBlocks : 0);
+          } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
+                     (testedBlock >= dst && testedBlock < src)) {
+            *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
+          }
+        },
+        destination, source, numberOfBlocks);
+  }
 }
 
 Node *EditionPool::initFromAddress(const void *address, bool isTree) {

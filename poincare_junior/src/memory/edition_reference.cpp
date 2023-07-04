@@ -143,7 +143,11 @@ bool EditionReference::matchAndReplace(const Node* pattern,
     // If the placeHolder matches the entire Tree, restore it after detaching.
     bool restoreReference = trees->block() == node()->block();
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
-      trees->detachTree();
+      if (j == 0) {
+        placeholders[i] = trees->detachTree();
+      } else {
+        trees->detachTree();
+      }
     }
     if (restoreReference) {
       *this = EditionReference(trees);
@@ -154,7 +158,6 @@ bool EditionReference::matchAndReplace(const Node* pattern,
 
   // Step 3 - Replace with placeholder matches only
   node()->moveTreeOverTree(placeholderMatches);
-  *this = placeholderMatches;
 
   // EditionPool: ..... | _{3} x y z | ....
 
@@ -173,7 +176,6 @@ bool EditionReference::matchAndReplace(const Node* pattern,
 
   // Step 6 - Replace with created structure
   node()->moveTreeOverTree(createdRef);
-  *this = createdRef;
 
   // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....
   return true;

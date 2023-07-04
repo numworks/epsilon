@@ -678,7 +678,7 @@ bool Simplification::DistributeOverNAry(EditionReference& ref, BlockType target,
   size_t childIndexOffset = children->block() - ref->block();
   // f(+(A,B,C),E)
   children->cloneNodeBeforeNode(0_e);
-  children->detachTree();
+  children = children->detachTree();
   // f(0,E) ... +(A,B,C)
   Node* grandChild = children->nextNode();
   EditionReference output =

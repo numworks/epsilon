@@ -33,6 +33,9 @@ class EditionReference {
 
   operator Node*() const { return node(); }
   bool isUninitialized() const { return node() == nullptr; }
+  void uninitialize() {
+    m_identifier = EditionPool::ReferenceTable::UninitializedOffset;
+  }
 
   uint16_t identifier() const { return m_identifier; }
 

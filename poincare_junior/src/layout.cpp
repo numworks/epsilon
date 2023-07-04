@@ -11,12 +11,12 @@
 namespace PoincareJ {
 
 const Node *Layout::EditionPoolTextToLayout(const char *text) {
-  const Node *root = P_RACKL();
+  Node *root = P_RACKL();
   EditionPoolTextToLayoutRec(text, root, nullptr);
   return root;
 }
 
-size_t Layout::EditionPoolTextToLayoutRec(const char *text, const Node *parent,
+size_t Layout::EditionPoolTextToLayoutRec(const char *text, Node *parent,
                                           const Node *parentheses) {
   assert(parent && parent->isNAry());
   assert(!parentheses || parentheses->type() == BlockType::ParenthesisLayout);

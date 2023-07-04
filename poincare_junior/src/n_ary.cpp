@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <poincare_junior/src/expression/comparison.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 namespace PoincareJ {
@@ -16,8 +17,9 @@ void NAry::AddChildAtIndex(Node* nary, Node* child, int index) {
 }
 
 // Should these useful refs be hidden in the function ?
-void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
-                                  int index) {
+void NAry::AddOrMergeChildAtIndex(Node* naryNode, Node* childNode, int index) {
+  EditionReference nary = naryNode;
+  EditionReference child = childNode;
   AddChildAtIndex(nary, child, index);
   if (static_cast<Node*>(nary)->type() == static_cast<Node*>(child)->type()) {
     size_t numberOfChildren =
@@ -27,9 +29,9 @@ void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
   }
 }
 
-EditionReference NAry::DetachChildAtIndex(Node* nary, int index) {
+Node* NAry::DetachChildAtIndex(Node* nary, int index) {
   assert(nary->isNAry());
-  EditionReference child = nary->childAtIndex(index)->detachTree();
+  Node* child = nary->childAtIndex(index)->detachTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;
 }
@@ -70,32 +72,32 @@ bool NAry::Flatten(Node* nary) {
   return false;
 }
 
-bool NAry::SquashIfUnary(EditionReference& reference) {
-  if (reference->numberOfChildren() == 1) {
-    reference = reference->moveTreeOverTree(reference->nextNode());
+bool NAry::SquashIfUnary(Node* nary) {
+  if (nary->numberOfChildren() == 1) {
+    nary = nary->moveTreeOverTree(nary->nextNode());
     return true;
   }
   return false;
 }
 
-bool NAry::SquashIfEmpty(EditionReference& reference) {
-  if (reference->numberOfChildren() >= 1) {
+bool NAry::SquashIfEmpty(Node* nary) {
+  if (nary->numberOfChildren() >= 1) {
     return false;
   }
   // Return the neutral element
-  BlockType type = reference->type();
+  BlockType type = nary->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
-  reference = reference->cloneTreeOverTree(
+  nary = nary->cloneTreeOverTree(
       Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
 }
 
-bool NAry::Sanitize(EditionReference& reference) {
-  bool flattened = Flatten(reference);
-  if (reference->numberOfChildren() == 0) {
-    return SquashIfEmpty(reference) || flattened;
+bool NAry::Sanitize(Node* nary) {
+  bool flattened = Flatten(nary);
+  if (nary->numberOfChildren() == 0) {
+    return SquashIfEmpty(nary) || flattened;
   }
-  return SquashIfUnary(reference) || flattened;
+  return SquashIfUnary(nary) || flattened;
 }
 
 bool NAry::Sort(Node* nary, Comparison::Order order) {
@@ -164,44 +166,7 @@ push:
   return true;
 }
 
-bool NAry::Sort(EditionReference& reference, Comparison::Order order) {
-  Node* u = reference;
-  bool result = Sort(u, order);
-  reference = u;
-  return result;
-}
-
-void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
-  // Non simple NArys (Polynomial) rely on children order.
-  assert(reference->block()->isSimpleNAry());
-  Node* nary = reference;
-  void* contextArray[2] = {&nary, &order};
-  /* TODO : This sort is far from being optimized. Calls of childAtIndex are
-   *        very expensive here. A better swap could also be implemented. */
-  List::Sort(
-      [](int i, int j, void* context, int numberOfElements) {
-        void** contextArray = static_cast<void**>(context);
-        Node* nary = *static_cast<Node**>(contextArray[0]);
-        EditionReference refI = nary->childAtIndex(i);
-        EditionReference refJ = nary->childAtIndex(j);
-        EditionReference refJNext = refJ->nextTree();
-        refI->moveTreeAtNode(refJ);
-        refJNext->moveTreeAtNode(refI);
-      },
-      [](int i, int j, void* context, int numberOfElements) {
-        void** contextArray = static_cast<void**>(context);
-        Node* nary = *static_cast<Node**>(contextArray[0]);
-        Comparison::Order order =
-            *static_cast<Comparison::Order*>(contextArray[1]);
-        return Comparison::Compare(nary->childAtIndex(i), nary->childAtIndex(j),
-                                   order) >= 0;
-      },
-      contextArray, reference->numberOfChildren());
-}
-
-void NAry::SortedInsertChild(EditionReference ref, EditionReference child,
-                             Comparison::Order order) {
-  Node* nary = ref;
+void NAry::SortedInsertChild(Node* nary, Node* child, Comparison::Order order) {
   Node* children[k_maxNumberOfChildren];
   for (uint8_t index = 0; const Node* child : nary->children()) {
     children[index++] = const_cast<Node*>(child);
@@ -216,7 +181,7 @@ void NAry::SortedInsertChild(EditionReference ref, EditionReference child,
       b = m;
     }
   }
-  AddChildAtIndex(ref, child, a);
+  AddChildAtIndex(nary, child, a);
 }
 
 }  // namespace PoincareJ

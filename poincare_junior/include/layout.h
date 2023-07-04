@@ -35,7 +35,7 @@ class Layout final : public Reference {
   static const Node* EditionPoolTextToLayout(const char* text);
 
  private:
-  static size_t EditionPoolTextToLayoutRec(const char* text, const Node* parent,
+  static size_t EditionPoolTextToLayoutRec(const char* text, Node* parent,
                                            const Node* parentheses);
 };
 

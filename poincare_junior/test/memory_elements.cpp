@@ -681,7 +681,6 @@ QUIZ_CASE(pcj_node) {
   assert_trees_are_equal(n1->childAtIndex(1),
                          n1->nextNode()->nextNode()->nextNode()->nextNode());
   quiz_assert(n1->indexOfChild(n1->childAtIndex(1)) == 1);
-  quiz_assert(n1->childAtIndex(0)->indexInParent() == 0);
   quiz_assert(!n1->hasChild(e2));
   quiz_assert(n1->hasChild(n1->childAtIndex(2)));
 

@@ -314,14 +314,6 @@ int Node::indexOfChild(const Node* child) const {
   return -1;
 }
 
-int Node::indexInParent() const {
-  const Node* p = parent();
-  if (!p) {
-    return -1;
-  }
-  return p->indexOfChild(this);
-}
-
 bool Node::hasChild(const Node* child) const {
   return indexOfChild(child) >= 0;
 }

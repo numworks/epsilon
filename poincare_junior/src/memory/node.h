@@ -106,7 +106,6 @@ class Node {
     return Utils::DeconstifyPtr(&Node::childAtIndex, this, index);
   }
   int indexOfChild(const Node* child) const;
-  int indexInParent() const;
   bool hasChild(const Node* child) const;
   bool hasAncestor(const Node* node, bool includeSelf) const;
 

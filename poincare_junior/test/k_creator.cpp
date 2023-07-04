@@ -45,6 +45,4 @@ QUIZ_CASE(pcj_k_creator_integer) {
   quiz_assert(Integer::Handler(-123456_e).to<double>() == -123456.0);
   quiz_assert(Integer::Handler(123456789_e).to<double>() == 123456789.0);
   quiz_assert(Integer::Handler(-123456789_e).to<double>() == -123456789.0);
-
-  quiz_assert(!static_cast<const Node*>(12_e)->parent());
 }

@@ -671,9 +671,6 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(n1->treeSize() == 23);  // TODO: Magic Number
   assert_trees_are_equal(n1->nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1->nextTree(), e2);
-  assert_trees_are_equal(n2->previousNode(), 6_e);
-  assert_trees_are_equal(n2->previousTree(), e1);
-  assert_trees_are_equal(n1->nextNode()->nextNode()->parent(), n1->nextNode());
   quiz_assert(n1->numberOfDescendants(false) == 8);
   quiz_assert(n1->numberOfDescendants(true) == 9);
   assert_trees_are_equal(n1->childAtIndex(0), n1->nextNode());

@@ -86,7 +86,6 @@ void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
                   KDColor backgroundColor) {
   /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
    * Drawing is therefore restricted to the highest parent only. */
-  assert(!node->parent());
   PrivateDraw(node, node, ctx, p, font, expressionColor, backgroundColor);
 }
 

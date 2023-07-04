@@ -53,13 +53,6 @@ void NAry::SetNumberOfChildren(EditionReference reference,
                                size_t numberOfChildren) {
   assert(static_cast<Node*>(reference)->isNAry());
   assert(numberOfChildren < UINT8_MAX);
-  if (static_cast<Node*>(reference)->nodeSize() > 1) {
-    /* Increment the tail numberOfChildren block first because the nodeSize
-     * computation might be altered by the head numberOfChildren Block. */
-    Block* numberOfChildrenBlock =
-        reference.nextNode()->block()->previousNth(2);
-    *numberOfChildrenBlock = numberOfChildren;
-  }
   Block* numberOfChildrenBlock = reference.block()->next();
   *numberOfChildrenBlock = numberOfChildren;
 }

@@ -31,14 +31,6 @@ class Block {
   constexpr Block* nextNth(int i) {
     return Utils::DeconstifyPtr(&Block::nextNth, this, i);
   }
-  constexpr const Block* previous() const { return this - 1; }
-  constexpr Block* previous() {
-    return Utils::DeconstifyPtr(&Block::previous, this);
-  }
-  constexpr const Block* previousNth(int i) const { return this - i; }
-  constexpr Block* previousNth(int i) {
-    return Utils::DeconstifyPtr(&Block::previousNth, this, i);
-  }
 
   constexpr explicit operator uint8_t() const { return m_content; }
   constexpr explicit operator int8_t() const { return m_content; }

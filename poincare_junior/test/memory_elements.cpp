@@ -18,7 +18,7 @@ QUIZ_CASE(pcj_block) {
   editionPool->pushBlock(TwoBlock);
   editionPool->pushBlock(ValueBlock(4));
   editionPool->pushBlock(ValueBlock(-4));
-  Block* lastBlock = editionPool->pushBlock(ZeroBlock);
+  editionPool->pushBlock(ZeroBlock);
   assert_pools_block_sizes_are(0, 6);
 
   // Block navigation
@@ -27,8 +27,6 @@ QUIZ_CASE(pcj_block) {
   quiz_assert(*firstBlock->next() == OneBlock);
   quiz_assert(static_cast<uint8_t>(*firstBlock->nextNth(3)) == 4);
   quiz_assert(static_cast<int8_t>(*firstBlock->nextNth(4)) == -4);
-  quiz_assert(*lastBlock->previous() == ValueBlock(-4));
-  quiz_assert(*lastBlock->previousNth(2) == ValueBlock(4));
 }
 
 QUIZ_CASE(pcj_type_block) {
@@ -411,52 +409,39 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(0_e, {TypeBlock(BlockType::Zero)});
   assert_tree_equals_blocks(1_e, {TypeBlock(BlockType::One)});
   assert_tree_equals_blocks(2_e, {TypeBlock(BlockType::Two)});
-  assert_tree_equals_blocks(12_e,
-                            {TypeBlock(BlockType::IntegerShort), ValueBlock(12),
-                             TypeBlock(BlockType::IntegerShort)});
   assert_tree_equals_blocks(
-      127_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(127),
-              TypeBlock(BlockType::IntegerShort)});
+      12_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(12)});
   assert_tree_equals_blocks(
-      128_e,
-      {TypeBlock(BlockType::IntegerPosBig), ValueBlock(1), ValueBlock(128),
-       ValueBlock(1), TypeBlock(BlockType::IntegerPosBig)});
+      127_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(127)});
+  assert_tree_equals_blocks(128_e, {TypeBlock(BlockType::IntegerPosBig),
+                                    ValueBlock(1), ValueBlock(128)});
   assert_tree_equals_blocks(
-      256_e,
-      {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0),
-       ValueBlock(1), ValueBlock(2), TypeBlock(BlockType::IntegerPosBig)});
+      256_e, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0),
+              ValueBlock(1)});
   assert_tree_equals_blocks(-1_e, {TypeBlock(BlockType::MinusOne)});
   assert_tree_equals_blocks(
-      -12_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12),
-              TypeBlock(BlockType::IntegerShort)});
+      -12_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12)});
   assert_tree_equals_blocks(
-      -128_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128),
-               TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks(
-      -129_e,
-      {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129),
-       ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
+      -128_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128)});
+  assert_tree_equals_blocks(-129_e, {TypeBlock(BlockType::IntegerNegBig),
+                                     ValueBlock(1), ValueBlock(129)});
 
   assert_tree_equals_blocks(
       π_e, {TypeBlock(BlockType::Constant),
-            ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)),
-            TypeBlock(BlockType::Constant)});
+            ValueBlock(static_cast<uint8_t>(Constant::Type::Pi))});
   assert_tree_equals_blocks(
       2.0_e, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0),
-              ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
+              ValueBlock(0), ValueBlock(64)});
   assert_tree_equals_blocks(-1_e, {MinusOneBlock});
   assert_tree_equals_blocks(1_e, {OneBlock});
   assert_tree_equals_blocks(
-      KAdd(1_e, 2_e), {TypeBlock(BlockType::Addition), ValueBlock(2),
-                       TypeBlock(BlockType::Addition), OneBlock, TwoBlock});
+      KAdd(1_e, 2_e),
+      {TypeBlock(BlockType::Addition), ValueBlock(2), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(KMult(1_e, 2_e, -1_e),
+                            {TypeBlock(BlockType::Multiplication),
+                             ValueBlock(3), OneBlock, TwoBlock, MinusOneBlock});
   assert_tree_equals_blocks(
-      KMult(1_e, 2_e, -1_e),
-      {TypeBlock(BlockType::Multiplication), ValueBlock(3),
-       TypeBlock(BlockType::Multiplication), OneBlock, TwoBlock,
-       MinusOneBlock});
-  assert_tree_equals_blocks(KSet(1_e),
-                            {TypeBlock(BlockType::Set), ValueBlock(1),
-                             TypeBlock(BlockType::Set), OneBlock});
+      KSet(1_e), {TypeBlock(BlockType::Set), ValueBlock(1), OneBlock});
   assert_tree_equals_blocks(KPow(1_e, 2_e),
                             {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
   assert_tree_equals_blocks(KSqrt(2_e),
@@ -465,10 +450,9 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
       KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
   assert_tree_equals_blocks(
       KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
-  assert_tree_equals_blocks("var"_e,
-                            {TypeBlock(BlockType::UserSymbol), ValueBlock(3),
-                             ValueBlock('v'), ValueBlock('a'), ValueBlock('r'),
-                             ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
+  assert_tree_equals_blocks(
+      "var"_e, {TypeBlock(BlockType::UserSymbol), ValueBlock(3),
+                ValueBlock('v'), ValueBlock('a'), ValueBlock('r')});
 }
 
 QUIZ_CASE(pcj_edition_node_constructor) {
@@ -477,20 +461,17 @@ QUIZ_CASE(pcj_edition_node_constructor) {
       editionPool->push<BlockType::IntegerPosBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32),
-       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4),
-       TypeBlock(BlockType::IntegerPosBig)});
+       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
   assert_node_equals_blocks(
       editionPool->push<BlockType::IntegerNegBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
-       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4),
-       TypeBlock(BlockType::IntegerNegBig)});
+       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
   assert_node_equals_blocks(
       editionPool->push<BlockType::IntegerNegBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
-       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4),
-       TypeBlock(BlockType::IntegerNegBig)});
+       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
 }
 
 QUIZ_CASE(pcj_node_iterator) {
@@ -668,7 +649,7 @@ QUIZ_CASE(pcj_node) {
   constexpr Tree e2 = KPow(5_e, 6_e);
   Node* n1 = EditionReference(e1);
   Node* n2 = EditionReference(e2);
-  quiz_assert(n1->treeSize() == 23);  // TODO: Magic Number
+  quiz_assert(n1->treeSize() == 16);  // TODO: Magic Number
   assert_trees_are_equal(n1->nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1->nextTree(), e2);
   quiz_assert(n1->numberOfDescendants(false) == 8);
@@ -729,10 +710,10 @@ QUIZ_CASE(pcj_node_size) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node* node = editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
-  quiz_assert(node->nodeSize() == 7);
+  quiz_assert(node->nodeSize() == 5);
   node = static_cast<Node*>(editionPool->push<BlockType::IntegerNegBig>(
       static_cast<uint64_t>(0x0000FF00)));
-  quiz_assert(node->nodeSize() == 6);
+  quiz_assert(node->nodeSize() == 4);
 }
 
 QUIZ_CASE(pcj_constructor) {
@@ -745,103 +726,82 @@ QUIZ_CASE(pcj_constructor) {
           TypeBlock(BlockType::RackLayout),
           ValueBlock(4),
           TypeBlock(BlockType::RackLayout),
-          TypeBlock(BlockType::RackLayout),
           ValueBlock(2),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('1'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
           TypeBlock(BlockType::CodePointLayout),
-          TypeBlock(BlockType::CodePointLayout),
           ValueBlock('+'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::ParenthesisLayout),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(2),
           TypeBlock(BlockType::RackLayout),
-          TypeBlock(BlockType::RackLayout),
           ValueBlock(2),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('2'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('*'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::ParenthesisLayout),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(2),
           TypeBlock(BlockType::RackLayout),
-          TypeBlock(BlockType::RackLayout),
           ValueBlock(2),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('1'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('+'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::FractionLayout),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(1),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('1'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(1),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('2'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::VerticalOffsetLayout),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(1),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('2'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(2),
-          TypeBlock(BlockType::RackLayout),
           TypeBlock(BlockType::CodePointLayout),
           ValueBlock('-'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
           TypeBlock(BlockType::CodePointLayout),
-          TypeBlock(BlockType::CodePointLayout),
           ValueBlock('2'),
           ValueBlock(0),
           ValueBlock(0),
           ValueBlock(0),
-          TypeBlock(BlockType::CodePointLayout),
       });
 }
 

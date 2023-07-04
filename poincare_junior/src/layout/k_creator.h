@@ -32,8 +32,7 @@ using KCodePointL = Tree<BlockType::CodePointLayout,
                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 0),
                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 1),
                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
-                         CodePointLayout::SubCodePointLayoutAtIndex(cp, 3),
-                         BlockType::CodePointLayout>;
+                         CodePointLayout::SubCodePointLayoutAtIndex(cp, 3)>;
 
 template <String S,
           typename IS = decltype(std::make_index_sequence<S.size() - 1>())>
@@ -41,8 +40,8 @@ struct _RackLayoutHelper;
 
 template <String S, std::size_t... I>
 struct _RackLayoutHelper<S, std::index_sequence<I...>>
-    : Concat<Tree<BlockType::RackLayout, sizeof...(I), BlockType::RackLayout>,
-             KCodePointL<S[I]>...> {};
+    : Concat<Tree<BlockType::RackLayout, sizeof...(I)>, KCodePointL<S[I]>...> {
+};
 
 template <String S>
 consteval auto operator"" _l() {

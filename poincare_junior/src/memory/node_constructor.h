@@ -34,12 +34,9 @@ class NodeConstructor final {
                                                            Types... args) {
     constexpr int size = sizeof...(args);
     uint8_t values[size] = {static_cast<uint8_t>(args)...};
-    if (size + 1 == index) {
-      *block = TypeBlock(type);
-      return true;
-    }
+    assert(index <= size);
     *block = ValueBlock(values[index - 1]);
-    return false;
+    return index >= size;
   }
 
   template <BlockType blockType, typename... Types>
@@ -61,22 +58,19 @@ class NodeConstructor final {
                                                          size_t blockIndex,
                                                          BlockType type,
                                                          uint64_t value) {
+    static_assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) ==
+                  TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig));
+    size_t numberOfMetaBlocks =
+        TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig);
     uint8_t numberOfDigits = Integer::NumberOfDigits(value);
-    assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) ==
-           TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig));
-    uint8_t numberOfBlocks =
-        TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) +
-        numberOfDigits;
-    if (blockIndex == numberOfBlocks - 1) {
-      *block = TypeBlock(type);
-      return true;
-    }
-    if (blockIndex == 1 || blockIndex == numberOfBlocks - 2) {
+    if (blockIndex < numberOfMetaBlocks) {
+      assert(blockIndex == 1);
       *block = ValueBlock(numberOfDigits);
-      return false;
+      return numberOfDigits == 0;
     }
-    *block = ValueBlock(Integer::DigitAtIndex(value, blockIndex - 2));
-    return false;
+    *block = ValueBlock(
+        Integer::DigitAtIndex(value, blockIndex - numberOfMetaBlocks));
+    return blockIndex + 1 >= numberOfMetaBlocks + numberOfDigits;
   }
 };
 
@@ -93,18 +87,15 @@ template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
     Block* block, size_t blockIndex, const char* name, size_t nameLength) {
-  size_t numberOfBlocks =
-      TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol) + nameLength;
-  if (blockIndex == numberOfBlocks - 1) {
-    *block = TypeBlock(BlockType::UserSymbol);
-    return true;
-  }
-  if (blockIndex == 1 || blockIndex == numberOfBlocks - 2) {
+  size_t numberOfMetaBlocks =
+      TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
+  if (blockIndex < numberOfMetaBlocks) {
+    assert(blockIndex == 1);
     *block = ValueBlock(nameLength);
-    return false;
+    return nameLength == 0;
   }
-  *block = ValueBlock(name[blockIndex - 2]);
-  return false;
+  *block = ValueBlock(name[blockIndex - numberOfMetaBlocks]);
+  return blockIndex - numberOfMetaBlocks >= nameLength - 1;
 }
 
 template <>

@@ -129,8 +129,6 @@ Node *IntegerHandler::pushOnEditionPool() {
   Node *node = Node::FromBlocks(editionPool->pushBlock(typeBlock));
   editionPool->pushBlock(m_numberOfDigits);
   pushDigitsOnEditionPool();
-  editionPool->pushBlock(m_numberOfDigits);
-  editionPool->pushBlock(typeBlock);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "PushInteger", node->block(), node->treeSize());
 #endif

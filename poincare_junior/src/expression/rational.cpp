@@ -119,9 +119,6 @@ Node* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   pool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
   numerator.pushDigitsOnEditionPool();
   denominator.pushDigitsOnEditionPool();
-  pool->pushBlock(
-      ValueBlock(numberOfDigitsOfNumerator + numberOfDigitsOfDenominator));
-  pool->pushBlock(typeBlock);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "PushRational", node->block(), node->treeSize());
 #endif

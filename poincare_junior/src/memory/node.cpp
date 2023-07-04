@@ -151,14 +151,8 @@ void Node::logBlocks(std::ostream& stream, bool recursive,
   logName(stream);
   stream << "]";
   int size = nodeSize();
-  if (size > 1) {
-    for (int i = 1; i < size - 1; i++) {
-      stream << "[" << static_cast<int>(static_cast<uint8_t>(m_block[i]))
-             << "]";
-    }
-    stream << "[";
-    logName(stream);
-    stream << "]";
+  for (int i = 1; i < size; i++) {
+    stream << "[" << static_cast<int>(static_cast<uint8_t>(m_block[i])) << "]";
   }
   stream << "\n";
   if (recursive) {
@@ -175,8 +169,29 @@ void Node::copyTreeTo(void* address) const {
   memcpy(address, m_block, treeSize());
 }
 
+/* When navigating between nodes, assert that no undefined node is reached.
+ * Also ensure that there is no navigation:
+ * - crossing the borders of the CachePool
+ * - going across a TreeBorder
+ * Here are the situations indicating nextNode navigation must stop:
+ * (1) From a TreeBorder
+ * (2) To the Cache first block
+ * (3) From the Edition pool last block
+ * // (4) To the Cache last block / Edition pool first block
+ *
+ * Some notes :
+ * - It is expected in (2) and (3) that any tree out of the pool is wrapped in
+ *   TreeBorders.
+ * - For both pools, last block represent the very first out of limit block.
+ * - Cache last block is also Edition first block, and we need to call nextNode
+ *   on before last node, so (4) is not checked.
+ * - Source node is always expected to be defined. Allowing checks on
+ *   nextNode's destination. */
+
 const Node* Node::nextNode() const {
-  assert(canNavigateNext());
+  assert(m_block->type() != BlockType::TreeBorder);
+  assert(m_block + nodeSize() != CachePool::sharedCachePool()->firstBlock());
+  assert(m_block != CachePool::sharedCachePool()->editionPool()->lastBlock());
   return Node::FromBlocks(m_block + nodeSize());
 }
 
@@ -309,32 +324,6 @@ bool Node::hasAncestor(const Node* node, bool includeSelf) const {
 
 EditionReference Node::clone() const {
   return EditionPool::sharedEditionPool()->clone(this);
-}
-
-/* When navigating between nodes, assert that no undefined node is reached.
- * Also ensure that there is no navigation:
- * - crossing the borders of the CachePool
- * - going across a TreeBorder
- * Here are the situations indicating nextNode navigation must stop:
- * (1) From a TreeBorder
- * (2) To the Cache first block
- * (3) From the Edition pool last block
- * // (4) To the Cache last block / Edition pool first block
- *
- * Some notes :
- * - It is expected in (2) and (3) that any tree out of the pool is wrapped in
- *   TreeBorders.
- * - For both pools, last block represent the very first out of limit block.
- * - Cache last block is also Edition first block, and we need to call nextNode
- *   on before last node, so (4) is not checked.
- * - Source node is always expected to be defined. Allowing checks on
- *   nextNode's destination. */
-
-bool Node::canNavigateNext() const {
-  CachePool* cache(CachePool::sharedCachePool());
-  return m_block->type() != BlockType::TreeBorder &&
-         m_block + nodeSize() != cache->firstBlock() &&
-         m_block != cache->editionPool()->lastBlock();
 }
 
 // Node edition

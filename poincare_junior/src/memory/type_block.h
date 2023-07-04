@@ -19,38 +19,37 @@ namespace PoincareJ {
  * | Z TAG |
  *
  * - IntegerShort IS
- * | IS TAG | SIGNED DIGIT0 | IS TAG |
+ * | IS TAG | SIGNED DIGIT0 |
  *
  * - Integer(Pos/Neg)Big IB: most significant digit last
- * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | IB |
+ * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... |
  *
  * - RationShort RS
- * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | RS TAG |
+ * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT |
  *
  * - Rational(Pos/Neg)Big RB
  * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
- * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS |
- * RB |
+ * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... |
  *
  * - Float F (same for CodePointLayout)
- * | F TAG | VALUE (4 bytes) | F TAG |
+ * | F TAG | VALUE (4 bytes) |
  *
  * - Constant C
- * | C TAG | TYPE | C TAG |
+ * | C TAG | TYPE |
  *
  * - Addition A (same for Multiplication, Set, List, RackLayout)
- * | A TAG | NUMBER OF CHILDREN | A TAG |
+ * | A TAG | NUMBER OF CHILDREN |
  *
  * - Power P (same for Factorial, Subtraction, Division, FractionLayout,
  * ParenthesisLayout, VerticalOffsetLayout) | P TAG |
  *
  * - UserSymbol US (same for UserFunction, UserSequence)
- * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | NUMBER CHARS | US TAG |
+ * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN |
  *
  * - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms
  *   ei are unsigned digits
- *  | P TAG | n+1 | e1 | e2 | ... | en | n+1 | P TAG |
+ *  | P TAG | n+1 | e1 | e2 | ... | en |
  *  This node has n+1 children:
  *  - the first child describes the variable x
  *  - the n following children describe the coefficients.
@@ -229,7 +228,7 @@ class TypeBlock : public Block {
   }
   // NAry with a single metaBlock for number of children
   constexpr bool isSimpleNAry() const {
-    return isNAry() && nodeSize(true) == 3;
+    return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
   constexpr bool isInteger() const {
     return isOfType({BlockType::Zero, BlockType::One, BlockType::Two,
@@ -253,19 +252,19 @@ class TypeBlock : public Block {
     switch (type) {
       case BlockType::IntegerShort:
       case BlockType::Placeholder:
-        return 3;
+        return 2;
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig:
-        return 4;
+        return 2;
       case BlockType::RationalShort:
-        return 4;
+        return 3;
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig:
-        return 5;
+        return 2;
       case BlockType::Float:
-        return 2 + sizeof(float) / sizeof(uint8_t);
+        return 1 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:
-        return 2 + sizeof(CodePoint) / sizeof(uint8_t);
+        return 1 + sizeof(CodePoint) / sizeof(uint8_t);
       case BlockType::Addition:
       case BlockType::Multiplication:
       case BlockType::Constant:
@@ -273,41 +272,37 @@ class TypeBlock : public Block {
       case BlockType::List:
       case BlockType::RackLayout:
       case BlockType::SystemList:
-        return 3;
+        return 2;
       case BlockType::Polynomial:
       case BlockType::UserSymbol:
       case BlockType::UserFunction:
       case BlockType::UserSequence:
-        return 4;
+        return 2;
       default:
         return 1;
     };
   }
 
-  constexpr size_t nodeSize(bool head) const {
+  constexpr size_t nodeSize() const {
     BlockType t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
     switch (t) {
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig: {
-        uint8_t numberOfDigits =
-            static_cast<uint8_t>(*(head ? next() : previous()));
+        uint8_t numberOfDigits = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfDigits;
       }
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig: {
-        uint8_t numberOfDigits =
-            static_cast<uint8_t>(*(head ? nextNth(3) : previous()));
+        uint8_t numberOfDigits = static_cast<uint8_t>(*nextNth(3));
         return numberOfMetaBlocks + numberOfDigits;
       }
       case BlockType::Polynomial: {
-        uint8_t numberOfTerms =
-            static_cast<uint8_t>(*(head ? next() : previous())) - 1;
+        uint8_t numberOfTerms = static_cast<uint8_t>(*next()) - 1;
         return numberOfMetaBlocks + numberOfTerms;
       }
       case BlockType::UserSymbol: {
-        uint8_t numberOfChars =
-            static_cast<uint8_t>(*(head ? next() : previous()));
+        uint8_t numberOfChars = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfChars;
       }
       default:
@@ -315,9 +310,9 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr int numberOfChildren(bool head) const {
+  constexpr int numberOfChildren() const {
     if (isNAry()) {
-      return static_cast<uint8_t>(*(head ? next() : previous()));
+      return static_cast<uint8_t>(*next());
     }
     switch (type()) {
       case BlockType::Derivative:

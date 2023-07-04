@@ -7,8 +7,10 @@
 
 using namespace PoincareJ;
 
-static constexpr Tree bigTree = KAdd(3_e, 4_e);
-static constexpr Tree modifiedBigTree = KMult(3_e, 4_e);
+static constexpr Tree bigTree =
+    KAdd(3_e, KMult(4_e, KLn(5_e), KTrig(6_e, 0_e)));
+static constexpr Tree modifiedBigTree =
+    KMult(3_e, KMult(4_e, KLn(5_e), KTrig(6_e, 0_e)));
 static constexpr Tree smallTree = 4_e;
 
 void execute_push_tree_and_modify() {
@@ -96,6 +98,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // 1. Almost fill the whole cache
   // Fill the cache
   size_t maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks / treeSize;
+  assert(maxNumberOfTreesInCache < CachePool::k_maxNumberOfReferences);
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     assert_pools_tree_sizes_are(i, 0);
     editionPool->clone(bigTree);

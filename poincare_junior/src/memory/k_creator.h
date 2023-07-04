@@ -113,7 +113,7 @@ consteval auto KTrinary(A a, B b, C c) {
 
 template <Block Tag, TreeConcept... CTS>
 static consteval auto __NAry(CTS...) {
-  return Concat<Tree<Tag, sizeof...(CTS), Tag>, CTS...>();
+  return Concat<Tree<Tag, sizeof...(CTS)>, CTS...>();
 }
 
 template <Block Tag, TreeCompatibleConcept... CTS>
@@ -170,15 +170,13 @@ struct String {
 template <Placeholder::Tag Tag>
 consteval auto KPlaceholder() {
   return Tree<BlockType::Placeholder,
-              Placeholder::ParamsToValue(Tag, Placeholder::Filter::None),
-              BlockType::Placeholder>();
+              Placeholder::ParamsToValue(Tag, Placeholder::Filter::None)>();
 }
 
 template <Placeholder::Tag Tag>
 consteval auto KAnyTreesPlaceholder() {
   return Tree<BlockType::Placeholder,
-              Placeholder::ParamsToValue(Tag, Placeholder::Filter::AnyTrees),
-              BlockType::Placeholder>();
+              Placeholder::ParamsToValue(Tag, Placeholder::Filter::AnyTrees)>();
 }
 
 }  // namespace PoincareJ

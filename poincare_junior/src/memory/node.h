@@ -98,10 +98,8 @@ class Node {
   bool hasAncestor(const Node* node, bool includeSelf) const;
 
   constexpr BlockType type() const { return m_block->type(); }
-  constexpr size_t nodeSize() const { return m_block->nodeSize(true); }
-  constexpr int numberOfChildren() const {
-    return m_block->numberOfChildren(true);
-  }
+  constexpr size_t nodeSize() const { return m_block->nodeSize(); }
+  constexpr int numberOfChildren() const { return m_block->numberOfChildren(); }
   constexpr bool isNAry() const { return m_block->isNAry(); }
 
   EditionReference clone() const;
@@ -182,8 +180,6 @@ class Node {
   }
 
  private:
-  bool canNavigateNext() const;
-
   void cloneAt(const Node* nodeToClone, bool before, bool newIsTree);
   void moveAt(Node* nodeToMove, bool before, bool newIsTree);
   Node* cloneOver(const Node* n, bool oldIsTree, bool newIsTree);

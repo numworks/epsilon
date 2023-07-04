@@ -140,8 +140,7 @@ using Exponents = Tree<Values...>;
 template <TreeConcept Exp, TreeConcept... CTS>
 static consteval auto __Pol(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
-  return Concat<Tree<BlockType::Polynomial, Size>, Exp,
-                Tree<Size, BlockType::Polynomial>, CTS...>();
+  return Concat<Tree<BlockType::Polynomial, Size>, Exp, CTS...>();
 }
 
 template <TreeConcept Exp, TreeCompatibleConcept... CTS>
@@ -185,72 +184,65 @@ Tree(IntegerLitteral<2>)->Tree<BlockType::Two>;
 
 template <int V>
   requires(V >= INT8_MIN && V <= INT8_MAX)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerShort, V>;
 
 template <int V>
   requires(V > INT8_MAX && Integer::NumberOfDigits(V) == 1)
 Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerPosBig, 1, Bit::getByteAtIndex(V, 0), 1,
-            BlockType::IntegerPosBig>;
+    -> Tree<BlockType::IntegerPosBig, 1, Bit::getByteAtIndex(V, 0)>;
 
 template <int V>
   requires(V > 0 && Integer::NumberOfDigits(V) == 2)
 Tree(IntegerLitteral<V>)
     -> Tree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
+            Bit::getByteAtIndex(V, 1)>;
 
 template <int V>
   requires(V > 0 && Integer::NumberOfDigits(V) == 3)
 Tree(IntegerLitteral<V>)
     -> Tree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3,
-            BlockType::IntegerPosBig>;
+            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2)>;
 
 template <int V>
   requires(V > 0 && Integer::NumberOfDigits(V) == 4)
 Tree(IntegerLitteral<V>)
     -> Tree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0),
             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-            Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
+            Bit::getByteAtIndex(V, 3)>;
 
 template <int V>
   requires(V < INT8_MIN && Integer::NumberOfDigits(-V) == 1)
 Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerNegBig, 1, Bit::getByteAtIndex(-V, 0), 1,
-            BlockType::IntegerNegBig>;
+    -> Tree<BlockType::IntegerNegBig, 1, Bit::getByteAtIndex(-V, 0)>;
 
 template <int V>
   requires(V < 0 && Integer::NumberOfDigits(-V) == 2)
 Tree(IntegerLitteral<V>)
     -> Tree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0),
-            Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
+            Bit::getByteAtIndex(-V, 1)>;
 
 template <int V>
   requires(V < 0 && Integer::NumberOfDigits(-V) == 3)
 Tree(IntegerLitteral<V>)
     -> Tree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0),
-            Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3,
-            BlockType::IntegerNegBig>;
+            Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2)>;
 
 template <int V>
   requires(V < 0 && Integer::NumberOfDigits(-V) == 4)
 Tree(IntegerLitteral<V>)
     -> Tree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0),
             Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2),
-            Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
+            Bit::getByteAtIndex(-V, 3)>;
 
 // TODO new node_constructor
 constexpr Tree KUndef = Tree<BlockType::Undefined>();
 constexpr Tree KHalf = Tree<BlockType::Half>();
 
 constexpr Tree π_e =
-    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi),
-         BlockType::Constant>();
+    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();
 
 constexpr Tree e_e =
-    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E),
-         BlockType::Constant>();
+    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E)>();
 
 // TODO: move in OMG?
 constexpr static uint64_t IntegerValue(const char* str, size_t size) {
@@ -316,7 +308,7 @@ template <uint32_t V>
 Tree(FloatLitteral<V>)
     -> Tree<BlockType::Float, Bit::getByteAtIndex(V, 0),
             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-            Bit::getByteAtIndex(V, 3), BlockType::Float>;
+            Bit::getByteAtIndex(V, 3)>;
 
 template <char... C>
 consteval auto operator"" _e() {
@@ -340,8 +332,7 @@ template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
   static_assert(!OMG::Print::IsDigit(S[0]),
                 "Integer litterals should be written without quotes");
-  using tree = Tree<BlockType::UserSymbol, sizeof...(I), S[I]..., sizeof...(I),
-                    BlockType::UserSymbol>;
+  using tree = Tree<BlockType::UserSymbol, sizeof...(I), S[I]...>;
 };
 
 template <String S>

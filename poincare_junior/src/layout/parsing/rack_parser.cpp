@@ -496,9 +496,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     if (m_status == Status::Progress && !plus) {
       // TODO Opposite instead of multiplication by -1
       CloneTreeBeforeNode(&leftHandSide, -1_e);
-      CloneNodeBeforeNode(
-          &leftHandSide,
-          Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
+      CloneNodeBeforeNode(&leftHandSide, Tree<BlockType::Multiplication, 2>());
     }
     return;
   }
@@ -524,8 +522,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide.numberOfChildren() + 1);
     } else {
-      CloneNodeBeforeNode(&leftHandSide,
-                          Tree<BlockType::Addition, 2, BlockType::Addition>());
+      CloneNodeBeforeNode(&leftHandSide, Tree<BlockType::Addition, 2>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -609,9 +606,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide.numberOfChildren() + 1);
     } else {
-      CloneNodeBeforeNode(
-          &leftHandSide,
-          Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
+      CloneNodeBeforeNode(&leftHandSide, Tree<BlockType::Multiplication, 2>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);

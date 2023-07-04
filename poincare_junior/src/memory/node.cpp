@@ -193,14 +193,6 @@ const Node* Node::previousTree() const { return previousRelative(false); }
 
 const Node* Node::parent() const { return previousRelative(true); }
 
-const Node* Node::root() const {
-  const Node* ancestor = this;
-  while (ancestor->parent() != nullptr) {
-    ancestor = ancestor->parent();
-  }
-  return ancestor;
-}
-
 const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   /* This method find the common ancestor of child1 and child2 within this
    * tree it does without going backward at any point. This tree is parsed

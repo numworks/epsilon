@@ -96,8 +96,6 @@ class Node {
    *         be forbidden and deleted, optimizing node size and navigation. */
   const Node* parent() const;
   Node* parent() { return Utils::DeconstifyPtr(&Node::parent, this); }
-  const Node* root() const;
-  Node* root() { return Utils::DeconstifyPtr(&Node::root, this); }
   const Node* commonAncestor(const Node* child1, const Node* child2) const;
   const Node* parentOfDescendant(const Node* descendant, int* position) const;
   int numberOfDescendants(bool includeSelf) const;

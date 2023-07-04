@@ -127,8 +127,10 @@ class Matrix final : public Expression {
       bool computeDeterminant, const ReductionContext& reductionContext,
       bool* couldCompute) const;
   // rowCanonize turns a matrix in its row echelon form, reduced or not.
+  bool isCanonizable(const ReductionContext& reductionContext);
   Matrix rowCanonize(const ReductionContext& reductionContext,
-                     Expression* determinant, bool reduced = true);
+                     bool* canonizationSuccess, Expression* determinant,
+                     bool reduced = true);
   // Row canonize the array in place
   template <typename T>
   static void ArrayRowCanonize(T* array, int numberOfRows, int numberOfColumns,

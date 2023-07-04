@@ -121,10 +121,34 @@ bool NAry::Sort(Node* nary, Comparison::Order order) {
     indexes[index] = index;
     index++;
   }
-  // sort a list of indexes first
-  std::sort(&indexes[0], &indexes[numberOfChildren], [&](uint8_t a, uint8_t b) {
-    return Comparison::Compare(children[a], children[b], order) < 0;
-  });
+  // Sort a list of indexes first
+  /* TODO : This sort is far from being optimized. Calls of childAtIndex are
+   *        very expensive here. A better swap could also be implemented. */
+  void* contextArray[] = {&indexes, &children, &order};
+  List::Sort(
+      [](int i, int j, void* context, int numberOfElements) {
+        void** contextArray = static_cast<void**>(context);
+        uint8_t* indexes = static_cast<decltype(indexes)>(contextArray[0]);
+        uint8_t s = indexes[i];
+        indexes[i] = indexes[j];
+        indexes[j] = s;
+        // std::swap(&indexes[i], &indexes[j]);
+      },
+      [](int i, int j, void* context, int numberOfElements) {
+        void** contextArray = static_cast<void**>(context);
+        uint8_t* indexes = static_cast<decltype(indexes)>(contextArray[0]);
+        const Node** children =
+            static_cast<decltype(children)>(contextArray[1]);
+        Comparison::Order order =
+            *static_cast<Comparison::Order*>(contextArray[2]);
+        return Comparison::Compare(children[indexes[i]], children[indexes[j]],
+                                   order) >= 0;
+      },
+      contextArray, numberOfChildren);
+  // TODO use the sort from stdlib instead
+  /* std::sort(&indexes[0], &indexes[numberOfChildren], [&](uint8_t a, uint8_t
+   * b) { return Comparison::Compare(children[a], children[b], order) < 0;
+   * }); */
   // test if something has changed
   for (int i = 0; i < numberOfChildren; i++) {
     if (indexes[i] != i) {

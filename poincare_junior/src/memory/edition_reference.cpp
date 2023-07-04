@@ -181,28 +181,6 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   return true;
 }
 
-void CloneNodeBeforeNode(EditionReference& target, const Node* nodeToClone) {
-  Node* previousTarget = target;
-  target->cloneNodeBeforeNode(nodeToClone);
-  target = previousTarget;
-}
-
-void CloneTreeBeforeNode(EditionReference& target, const Node* treeToClone) {
-  Node* previousTarget = target;
-  target->cloneTreeBeforeNode(treeToClone);
-  target = previousTarget;
-}
-
-void MoveNodeBeforeNode(EditionReference& target, Node* nodeToMove) {
-  Node* previousTarget = target;
-  if (nodeToMove->block() < previousTarget->block()) {
-    previousTarget =
-        Node::FromBlocks(previousTarget->block() - nodeToMove->nodeSize());
-  }
-  target->moveNodeBeforeNode(nodeToMove);
-  target = previousTarget;
-}
-
 void MoveTreeBeforeNode(EditionReference& target, Node* treeToMove) {
   Node* previousTarget = target;
   if (treeToMove->block() < previousTarget->block()) {

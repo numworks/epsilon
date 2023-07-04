@@ -40,7 +40,7 @@ bool AddMarkerIfNeeded(Node* u) {
 
 bool Simplification::SystematicReduce(EditionReference& u) {
   if (IsRational(u)) {
-    MoveTreeOverTree(u, Rational::IrreducibleForm(u));
+    u->moveTreeOverTree(Rational::IrreducibleForm(u));
     return true;  // TODO
   }
   if (u->numberOfChildren() == 0) {
@@ -56,7 +56,7 @@ bool Simplification::SystematicReduce(EditionReference& u) {
   for (auto [child, index] : NodeIterator::Children<Editable>(u)) {
     modified |= SystematicReduce(child);
     if (IsUndef(child)) {
-      CloneNodeOverTree(u, KUndef);
+      u->cloneNodeOverTree(KUndef);
       return true;
     }
   }
@@ -92,7 +92,7 @@ bool Simplification::SimplifyTrigDiff(EditionReference& u) {
   Node* y = u->childAtIndex(1);
   assert(x->block()->isOfType({BlockType::Zero, BlockType::One}));
   assert(y->block()->isOfType({BlockType::Zero, BlockType::One}));
-  CloneTreeOverTree(u, x->treeIsIdenticalTo(y) ? 0_e : 1_e);
+  u->cloneTreeOverTree(x->treeIsIdenticalTo(y) ? 0_e : 1_e);
   return true;
 }
 
@@ -105,11 +105,11 @@ bool Simplification::SimplifyTrig(EditionReference& u) {
   if (secondArgument->block()->isOfType(
           {BlockType::MinusOne, BlockType::Two})) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
-    CloneTreeOverTree(secondArgument,
-                      secondArgument->type() == BlockType::Two ? 0_e : 1_e);
+    secondArgument->cloneTreeOverTree(
+        secondArgument->type() == BlockType::Two ? 0_e : 1_e);
     EditionPool* editionPool(EditionPool::sharedEditionPool());
-    MoveNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
-    MoveNodeBeforeNode(u, editionPool->push<BlockType::Multiplication>(2));
+    u->moveNodeAtNode(editionPool->push<BlockType::MinusOne>());
+    u->moveNodeAtNode(editionPool->push<BlockType::Multiplication>(2));
     return true;
   }
   assert(secondArgument->block()->isOfType({BlockType::Zero, BlockType::One}));
@@ -123,40 +123,39 @@ bool Simplification::SimplifyPower(EditionReference& u) {
   if (v->type() == BlockType::Zero) {
     if (n->type() != BlockType::Zero &&
         Rational::RationalStrictSign(n) == StrictSign::Positive) {
-      CloneNodeOverTree(u, 0_e);
+      u->cloneNodeOverTree(0_e);
       return true;
     }
-    CloneNodeOverTree(u, KUndef);
+    u->cloneNodeOverTree(KUndef);
     return true;
   }
   // 1^n -> 1
   if (v->type() == BlockType::One) {
-    CloneNodeOverTree(u, 1_e);
+    u->cloneNodeOverTree(1_e);
     return true;
   }
   if (IsRational(v)) {
-    MoveTreeOverTree(u, Rational::IntegerPower(v, n));
-    MoveTreeOverTree(u, Rational::IrreducibleForm(u));
+    u->moveTreeOverTree(Rational::IntegerPower(v, n));
+    u->moveTreeOverTree(Rational::IrreducibleForm(u));
     return true;
   }
   assert(IsInteger(n));
   // v^0 -> 1
   if (n->type() == BlockType::Zero) {
-    CloneNodeOverTree(u, 1_e);
+    u->cloneNodeOverTree(1_e);
     return true;
   }
   // v^1 -> v
   if (n->type() == BlockType::One) {
-    MoveTreeOverTree(u, v);
+    u->moveTreeOverTree(v);
     return true;
   }
   // (w^p)^n -> w^(p*n)
   if (v->type() == BlockType::Power) {
     EditionReference p = v->childAtIndex(1);
     assert(p->nextTree() == static_cast<Node*>(n));
-    EditionReference m =
-        EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
-    MoveNodeBeforeNode(p, m);
+    p->moveNodeBeforeNode(
+        EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2));
     DropNode(u);
     SimplifyMultiplication(p);
     assert(IsInteger(p));
@@ -169,7 +168,7 @@ bool Simplification::SimplifyPower(EditionReference& u) {
           EditionPool::sharedEditionPool()->push<BlockType::Power>();
       w->clone();
       n->clone();
-      MoveTreeOverTree(w, m);
+      w->moveTreeOverTree(m);
       SimplifyPower(w);
     }
     n->removeTree();
@@ -238,7 +237,7 @@ bool Simplification::SimplifyMultiplication(EditionReference& u) {
     // ... * 0 * ... -> 0
     if (child->type() == BlockType::Zero) {
       NAry::SetNumberOfChildren(u, n);
-      CloneTreeOverTree(u, 0_e);
+      u->cloneTreeOverTree(0_e);
       if (markerAdded) {
         end->removeNode();
       }
@@ -603,7 +602,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference& ref,
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
     if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
       // Validate the expansion.
-      MoveTreeOverTree(ref, tempClone);
+      ref->moveTreeOverTree(tempClone);
       return true;
     }
   }
@@ -620,7 +619,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
     // TODO: Decide on the metric to use here.
     if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
       // Validate the contraction.
-      MoveTreeOverTree(ref, tempClone);
+      ref->moveTreeOverTree(tempClone);
       return true;
     }
     // Reset the clone
@@ -632,7 +631,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
     // TODO: Decide on the metric to use here.
     if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
       // Validate the contraction.
-      MoveTreeOverTree(ref, tempClone);
+      ref->moveTreeOverTree(tempClone);
       return true;
     }
   }

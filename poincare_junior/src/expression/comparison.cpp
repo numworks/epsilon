@@ -98,7 +98,7 @@ int Comparison::CompareNames(const Node* node0, const Node* node1) {
   int stringComparison =
       strncmp(Symbol::NonNullTerminatedName(node0),
               Symbol::NonNullTerminatedName(node1),
-              std::min(Symbol::Length(node0), Symbol::Length(node1)) + 1);
+              std::min(Symbol::Length(node0), Symbol::Length(node1)));
   if (stringComparison == 0) {
     int delta = Symbol::Length(node0) - Symbol::Length(node1);
     return delta > 0 ? 1 : (delta == 0 ? 0 : -1);

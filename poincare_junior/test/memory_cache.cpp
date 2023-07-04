@@ -8,6 +8,7 @@
 using namespace PoincareJ;
 
 static constexpr Tree bigTree = KAdd(3_e, 4_e);
+static constexpr Tree modifiedBigTree = KMult(3_e, 4_e);
 static constexpr Tree smallTree = 4_e;
 
 void execute_push_tree_and_modify() {
@@ -72,7 +73,7 @@ QUIZ_CASE(pcj_cache_pool) {
 
   // execute
   execute_push_tree_and_modify();
-  assert_pool_contains(cachePool, {KMult(3_e, 4_e)});
+  assert_pool_contains(cachePool, {modifiedBigTree});
   assert_pools_tree_sizes_are(1, 0);
 }
 
@@ -96,6 +97,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // Fill the cache
   size_t maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks / treeSize;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
+    assert_pools_tree_sizes_are(i, 0);
     editionPool->clone(bigTree);
     cachePool->storeEditedTree();
   }
@@ -104,12 +106,13 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // 2. Edit another tree triggering a cache invalidation
   execute_push_tree_and_modify();
   assert(cachePool->numberOfTrees() <= maxNumberOfTreesInCache);
-  assert_trees_are_equal(lastCachePoolTree(), KMult(3_e, 4_e));
+  assert_trees_are_equal(lastCachePoolTree(), modifiedBigTree);
 
   /* test overflowing the cache identifier */
   cachePool->reset();
   // 1. Fill the cache with the max number of identifiers
   for (int i = 0; i < CachePool::k_maxNumberOfReferences; i++) {
+    assert_pools_tree_sizes_are(i, 0);
     editionPool->clone(smallTree);
     cachePool->storeEditedTree();
   }

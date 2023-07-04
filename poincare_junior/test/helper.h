@@ -81,8 +81,8 @@ inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
     const char* poolNames[] = {"cache pool", "edition Pool"};
     if ((pools[i]->*functionSize)() != theoreticalSizes[i]) {
       std::cout << "Expected " << poolNames[i] << " of size "
-                << theoreticalSizes[i] << " but got " << pools[i]->size()
-                << std::endl;
+                << theoreticalSizes[i] << " but got "
+                << (pools[i]->*functionSize)() << std::endl;
       pools[i]->log(std::cout, Pool::LogFormat::Tree, true);
       quiz_assert(false);
     }

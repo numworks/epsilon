@@ -151,9 +151,9 @@ QUIZ_CASE(pcj_cache_references) {
   Reference reference2(
       [](Node *node) {
         EditionReference ref(node);
-        ref.moveNodeBeforeNode(
+        ref->moveNodeBeforeNode(
             EditionPool::sharedEditionPool()->push<BlockType::Addition>(2));
-        ref.cloneNodeAfterNode(6_e);
+        ref->cloneNodeAfterNode(6_e);
       },
       &reference1);
   assert_check_cache_reference(reference2, {5_e, KAdd(5_e, 6_e)});

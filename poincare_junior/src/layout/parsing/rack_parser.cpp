@@ -22,7 +22,7 @@ namespace PoincareJ {
 
 void removeTreeIfInitialized(EditionReference tree) {
   if (!tree.isUninitialized()) {
-    tree.removeTree();
+    tree->removeTree();
   }
 }
 
@@ -39,8 +39,8 @@ EditionReference RackParser::parse() {
   const TypeBlock *endOfPool = EditionPool::sharedEditionPool()->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
   assert(EditionPool::sharedEditionPool()->lastBlock() ==
-         (result.isUninitialized() ? endOfPool : result.nextTree()->block()));
-  assert(result.isUninitialized() || endOfPool == result.block());
+         (result.isUninitialized() ? endOfPool : result->nextTree()->block()));
+  assert(result.isUninitialized() || endOfPool == result->block());
   (void)endOfPool;
   if (m_status == Status::Success) {
     return result;
@@ -456,7 +456,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
           P_POW(editionPool->clone(10_e), Integer::Push(exponent, base)));
 
       float value = Approximation::To<float>(leftHandSide);
-      leftHandSide = leftHandSide.moveTreeOverTree(
+      leftHandSide = leftHandSide->moveTreeOverTree(
           editionPool->push<BlockType::Float>(value));
     }
   }
@@ -513,14 +513,14 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // : Opposite::Builder(rightHandSide.childAtIndex(0)));
     // return;
     // }
-    assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
+    assert(leftHandSide->nextTree() == static_cast<Node *>(rightHandSide));
     if (!plus) {
       CloneNodeBeforeNode(leftHandSide, Tree<BlockType::Subtraction>());
       return;
     }
-    if (leftHandSide.type() == BlockType::Addition) {
+    if (leftHandSide->type() == BlockType::Addition) {
       NAry::SetNumberOfChildren(leftHandSide,
-                                leftHandSide.numberOfChildren() + 1);
+                                leftHandSide->numberOfChildren() + 1);
     } else {
       CloneNodeBeforeNode(leftHandSide, Tree<BlockType::Addition, 2>());
     }
@@ -602,9 +602,9 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
                                    Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
-    if (leftHandSide.type() == BlockType::Multiplication) {
+    if (leftHandSide->type() == BlockType::Multiplication) {
       NAry::SetNumberOfChildren(leftHandSide,
-                                leftHandSide.numberOfChildren() + 1);
+                                leftHandSide->numberOfChildren() + 1);
     } else {
       CloneNodeBeforeNode(leftHandSide, Tree<BlockType::Multiplication, 2>());
     }
@@ -615,7 +615,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
 
 static void turnIntoBinaryNode(const Node *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
-  assert(leftHandSide.nextTree() == static_cast<Node *>(rightHandSide));
+  assert(leftHandSide->nextTree() == static_cast<Node *>(rightHandSide));
   CloneNodeBeforeNode(leftHandSide, node);
 }
 
@@ -960,7 +960,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
    * but not same number of parameters.
    * This is currently only useful for "sum" which can be sum({1,2,3}) or
    * sum(1/k, k, 1, n) */
-  int numberOfParameters = leftHandSide.numberOfChildren();
+  int numberOfParameters = leftHandSide->numberOfChildren();
   // if ((**functionHelper).minNumberOfChildren() >= 0) {
   // while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
   // functionHelper++;
@@ -1289,12 +1289,12 @@ void RackParser::parseList(EditionReference &leftHandSide,
       m_status = Status::Error;  // Right parenthesis missing.
       return;
     }
-    int numberOfParameters = parameter.numberOfChildren();
+    int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
       // leftHandSide = ListSlice::Builder(parameter.childAtIndex(0),
       // parameter.childAtIndex(1), leftHandSide);
     } else if (numberOfParameters == 1) {
-      parameter = parameter.childAtIndex(0);
+      parameter = parameter->childAtIndex(0);
       // leftHandSide = ListElement::Builder(parameter, leftHandSide);
     } else {
       m_status = Status::Error;
@@ -1368,9 +1368,9 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
     EditionReference rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
     if (!rightHandSide.isUninitialized() &&
-        rightHandSide.type() == BlockType::Division &&
-        IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(0)) &&
-        IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(1))) {
+        rightHandSide->type() == BlockType::Division &&
+        IsIntegerBaseTenOrEmptyExpression(rightHandSide->childAtIndex(0)) &&
+        IsIntegerBaseTenOrEmptyExpression(rightHandSide->childAtIndex(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction
       // leftHandSide = MixedFraction::Builder(
       // leftHandSide, static_cast<Division &>(rightHandSide));

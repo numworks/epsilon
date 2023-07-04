@@ -86,8 +86,8 @@ EditionReference Approximation::ReplaceWithApproximation(EditionReference ref) {
 
 bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
   bool hasApproximatedEveryChild = true;
-  Node* node = ref.nextNode();
-  int numberOfChildren = ref.numberOfChildren();
+  Node* node = ref->nextNode();
+  int numberOfChildren = ref->numberOfChildren();
   for (int i = 0; i < numberOfChildren; i++) {
     // Approximate anyway
     hasApproximatedEveryChild =
@@ -102,7 +102,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
   if (std::isnan(approx)) {
     return false;
   }
-  ref = ref.moveTreeOverTree(
+  ref = ref->moveTreeOverTree(
       EditionPool::sharedEditionPool()->push<BlockType::Float>(approx));
   return true;
 }

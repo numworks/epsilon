@@ -26,23 +26,23 @@ EditionReference Set::Add(EditionReference set, const Node* expression) {
     if (comparison == 0) {
       return set;
     } else if (comparison > 0) {
-      ref.cloneTreeBeforeNode(expression);
+      ref->cloneTreeBeforeNode(expression);
       break;
     }
   }
   if (child == set || Comparison::Compare(child, expression) < 0) {
     // Empty set or all elements are < expression
-    child.nextTree()->cloneTreeBeforeNode(expression);
+    child->nextTree()->cloneTreeBeforeNode(expression);
   }
-  NAry::SetNumberOfChildren(set, set.numberOfChildren() + 1);
+  NAry::SetNumberOfChildren(set, set->numberOfChildren() + 1);
   return set;
 }
 
 EditionReference Set::Pop(EditionReference set) {
-  assert(set.numberOfChildren() > 0);
-  EditionReference expression = set.nextNode();
-  expression.detachTree();
-  NAry::SetNumberOfChildren(set, set.numberOfChildren() - 1);
+  assert(set->numberOfChildren() > 0);
+  EditionReference expression = set->nextNode();
+  expression->detachTree();
+  NAry::SetNumberOfChildren(set, set->numberOfChildren() - 1);
   return expression;
 }
 
@@ -50,36 +50,36 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1,
                                   bool removeChildrenOnlyInSet0,
                                   bool pilferSet1Children,
                                   bool removeCommonChildrenInSet0) {
-  size_t numberOfChildren0 = set0.numberOfChildren();
-  size_t numberOfChildren1 = set1.numberOfChildren();
+  size_t numberOfChildren0 = set0->numberOfChildren();
+  size_t numberOfChildren1 = set1->numberOfChildren();
   size_t numberOfChildren0ToScan = numberOfChildren0;
   size_t numberOfChildren1ToScan = numberOfChildren1;
-  EditionReference currentChild0 = set0.nextNode();
-  EditionReference currentChild1 = set1.nextNode();
+  EditionReference currentChild0 = set0->nextNode();
+  EditionReference currentChild1 = set1->nextNode();
   if (pilferSet1Children) {
     // Move set1 right after set0 to easily pilfer children
-    set0.nextTree()->moveTreeBeforeNode(set1);
+    set0->nextTree()->moveTreeBeforeNode(set1);
   }
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
     int comparison = Comparison::Compare(currentChild0, currentChild1);
     if (comparison < 0) {  // Increment child of set 0
-      EditionReference nextChild0 = currentChild0.nextTree();
+      EditionReference nextChild0 = currentChild0->nextTree();
       if (removeChildrenOnlyInSet0) {
-        currentChild0.removeTree();
+        currentChild0->removeTree();
         numberOfChildren0--;
       }
       currentChild0 = nextChild0;
       numberOfChildren0ToScan--;
     }
     if (comparison == 0) {  // Increment both children
-      EditionReference nextChild0 = currentChild0.nextTree();
-      EditionReference nextChild1 = currentChild1.nextTree();
+      EditionReference nextChild0 = currentChild0->nextTree();
+      EditionReference nextChild1 = currentChild1->nextTree();
       if (removeCommonChildrenInSet0) {
-        currentChild0.removeTree();
+        currentChild0->removeTree();
         numberOfChildren0--;
       }
       if (pilferSet1Children) {
-        currentChild1.removeTree();
+        currentChild1->removeTree();
         numberOfChildren1--;
       }
       currentChild0 = nextChild0;
@@ -88,18 +88,18 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1,
       numberOfChildren1ToScan--;
     }
     if (comparison > 0) {  // Increment child of set 1
-      EditionReference nextChild1 = currentChild1.nextTree();
+      EditionReference nextChild1 = currentChild1->nextTree();
       if (pilferSet1Children) {
-        currentChild0.moveTreeBeforeNode(currentChild1);
+        currentChild0->moveTreeBeforeNode(currentChild1);
       }
       currentChild1 = nextChild1;
       numberOfChildren1ToScan--;
     }
   }
   if (pilferSet1Children) {
-    set1.removeNode();
+    set1->removeNode();
   } else {
-    set1.removeTree();
+    set1->removeTree();
     numberOfChildren1 = 0;
   }
   NAry::SetNumberOfChildren(set0, numberOfChildren0 + numberOfChildren1);

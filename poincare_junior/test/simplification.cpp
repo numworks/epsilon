@@ -191,7 +191,7 @@ QUIZ_CASE(pcj_simplification_beautify) {
 void simplifies_to(const char* input, const char* output) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
-  inputLayout.removeTree();
+  inputLayout->removeTree();
   quiz_assert(!expression.isUninitialized());
   Simplification::Simplify(expression);
   quiz_assert(!expression.isUninitialized());
@@ -201,7 +201,7 @@ void simplifies_to(const char* input, const char* output) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
-  outputLayout.removeTree();
+  outputLayout->removeTree();
   assert(EditionPool::sharedEditionPool()->numberOfTrees() == 0);
   bool b = strcmp(output, buffer) == 0;
   if (!b) {

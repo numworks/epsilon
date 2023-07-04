@@ -57,7 +57,7 @@ char *append(const char *text, char *buffer, char *end) {
 }
 
 char *Layout::Serialize(EditionReference layout, char *buffer, char *end) {
-  switch (layout.type()) {
+  switch (layout->type()) {
     case BlockType::CodePointLayout: {
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
       char codepointBuffer[bufferSize];
@@ -67,12 +67,12 @@ char *Layout::Serialize(EditionReference layout, char *buffer, char *end) {
     }
     case BlockType::ParenthesisLayout: {
       buffer = append("(", buffer, end);
-      buffer = Serialize(layout.childAtIndex(0), buffer, end);
+      buffer = Serialize(layout->childAtIndex(0), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }
     case BlockType::RackLayout: {
-      for (const Node *child : layout.children()) {
+      for (const Node *child : layout->children()) {
         buffer = Serialize(child, buffer, end);
         if (buffer == end) {
           return end;
@@ -81,14 +81,14 @@ char *Layout::Serialize(EditionReference layout, char *buffer, char *end) {
       break;
     }
     case BlockType::FractionLayout: {
-      buffer = Serialize(layout.childAtIndex(0), buffer, end);
+      buffer = Serialize(layout->childAtIndex(0), buffer, end);
       buffer = append("/", buffer, end);
-      buffer = Serialize(layout.childAtIndex(1), buffer, end);
+      buffer = Serialize(layout->childAtIndex(1), buffer, end);
       break;
     }
     case BlockType::VerticalOffsetLayout: {
       buffer = append("^(", buffer, end);
-      buffer = Serialize(layout.childAtIndex(0), buffer, end);
+      buffer = Serialize(layout->childAtIndex(0), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }

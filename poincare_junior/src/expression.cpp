@@ -59,7 +59,7 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
   for (int i = numberOfDigits - 1; i >= 0; i--) {
     value = value * (UINT8_MAX + 1) + handler.digits()[i];
   }
-  int firstInsertedIndex = layoutParent.numberOfChildren();
+  int firstInsertedIndex = layoutParent->numberOfChildren();
   do {
     uint8_t digit = value % 10;
     value /= 10;
@@ -225,7 +225,7 @@ Expression Expression::Parse(const char *textInput) {
       [](const char *text) {
         EditionReference layout = Layout::EditionPoolTextToLayout(text);
         Parser::Parse(layout);
-        layout.removeTree();
+        layout->removeTree();
       },
       textInput);
 }

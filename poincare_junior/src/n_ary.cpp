@@ -21,8 +21,8 @@ void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
   AddChildAtIndex(nary, child, index);
   if (static_cast<Node*>(nary)->type() == static_cast<Node*>(child)->type()) {
     size_t numberOfChildren =
-        nary.numberOfChildren() + child.numberOfChildren() - 1;
-    child.removeNode();
+        nary->numberOfChildren() + child->numberOfChildren() - 1;
+    child->removeNode();
     SetNumberOfChildren(nary, numberOfChildren);
   }
 }
@@ -30,7 +30,7 @@ void NAry::AddOrMergeChildAtIndex(EditionReference nary, EditionReference child,
 EditionReference NAry::DetachChildAtIndex(Node* nary, int index) {
   assert(nary->isNAry());
   EditionReference child = nary->childAtIndex(index);
-  child.detachTree();
+  child->detachTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;
 }
@@ -174,7 +174,7 @@ bool NAry::Sort(EditionReference& reference, Comparison::Order order) {
 
 void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
   // Non simple NArys (Polynomial) rely on children order.
-  assert(reference.block()->isSimpleNAry());
+  assert(reference->block()->isSimpleNAry());
   Node* nary = reference;
   void* contextArray[2] = {&nary, &order};
   /* TODO : This sort is far from being optimized. Calls of childAtIndex are
@@ -185,9 +185,9 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
         Node* nary = *static_cast<Node**>(contextArray[0]);
         EditionReference refI = nary->childAtIndex(i);
         EditionReference refJ = nary->childAtIndex(j);
-        EditionReference refJNext = refJ.nextTree();
-        refI.moveTreeBeforeNode(refJ);
-        refJNext.moveTreeBeforeNode(refI);
+        EditionReference refJNext = refJ->nextTree();
+        refI->moveTreeBeforeNode(refJ);
+        refJNext->moveTreeBeforeNode(refI);
       },
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);
@@ -197,7 +197,7 @@ void NAry::SortChildren(EditionReference reference, Comparison::Order order) {
         return Comparison::Compare(nary->childAtIndex(i), nary->childAtIndex(j),
                                    order) >= 0;
       },
-      contextArray, reference.numberOfChildren());
+      contextArray, reference->numberOfChildren());
 }
 
 void NAry::SortedInsertChild(EditionReference ref, EditionReference child,

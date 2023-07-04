@@ -206,7 +206,7 @@ class MultipleNodesIterator {
                                                      int offset = 0) const {
       return Array::MapAction<NodeType, const Node *, N>(
           array, &offset, [](NodeType reference, void *offset) -> const Node * {
-            return Node::FromBlocks(reference.block() +
+            return Node::FromBlocks(reference->block() +
                                     *static_cast<int *>(offset));
           });
     }

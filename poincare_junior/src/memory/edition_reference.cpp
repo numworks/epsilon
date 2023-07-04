@@ -101,7 +101,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   // Step 2 - Detach placeholder matches
   /* Create ZeroBlock for each context node to be detached so that tree size is
    * preserved. */
-  EditionReference treeNext = nextTree();
+  EditionReference treeNext = node()->nextTree();
   int initializedPlaceHolders = 0;
   EditionReference placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
@@ -110,7 +110,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
     }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       initializedPlaceHolders++;
-      treeNext.cloneTreeBeforeNode(0_e);
+      treeNext->cloneTreeBeforeNode(0_e);
     }
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);
@@ -139,11 +139,11 @@ bool EditionReference::matchAndReplace(const Node* pattern,
       continue;
     }
     // Get a Node to the first placeholder tree, and detach as many as necessary
-    Node* trees = Node::FromBlocks(placeholders[i].block());
+    Node* trees = Node::FromBlocks(placeholders[i]->block());
     // If the placeHolder matches the entire Tree, restore it after detaching.
-    bool restoreReference = trees->block() == block();
+    bool restoreReference = trees->block() == node()->block();
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
-      EditionReference(trees).detachTree();
+      trees->detachTree();
     }
     if (restoreReference) {
       *this = EditionReference(trees);
@@ -153,7 +153,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   // EditionPool: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
 
   // Step 3 - Replace with placeholder matches only
-  moveTreeOverTree(placeholderMatches);
+  node()->moveTreeOverTree(placeholderMatches);
   *this = placeholderMatches;
 
   // EditionPool: ..... | _{3} x y z | ....
@@ -172,7 +172,7 @@ bool EditionReference::matchAndReplace(const Node* pattern,
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
-  moveTreeOverTree(createdRef);
+  node()->moveTreeOverTree(createdRef);
   *this = createdRef;
 
   // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....

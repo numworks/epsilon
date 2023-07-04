@@ -102,16 +102,17 @@ bool Simplification::SimplifyTrig(EditionReference& u) {
   /* Trig second element is always expected to be reduced. This will call
    * SimplifyTrigDiff if needed. */
   bool changed = SystematicReduce(secondArgument);
-  if (secondArgument.block()->isOfType({BlockType::MinusOne, BlockType::Two})) {
+  if (secondArgument->block()->isOfType(
+          {BlockType::MinusOne, BlockType::Two})) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
     CloneTreeOverTree(secondArgument,
-                      secondArgument.type() == BlockType::Two ? 0_e : 1_e);
+                      secondArgument->type() == BlockType::Two ? 0_e : 1_e);
     EditionPool* editionPool(EditionPool::sharedEditionPool());
     MoveNodeBeforeNode(u, editionPool->push<BlockType::MinusOne>());
     MoveNodeBeforeNode(u, editionPool->push<BlockType::Multiplication>(2));
     return true;
   }
-  assert(secondArgument.block()->isOfType({BlockType::Zero, BlockType::One}));
+  assert(secondArgument->block()->isOfType({BlockType::Zero, BlockType::One}));
   return changed;
 }
 
@@ -119,8 +120,8 @@ bool Simplification::SimplifyPower(EditionReference& u) {
   EditionReference v = u->childAtIndex(0);
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
-  if (v.type() == BlockType::Zero) {
-    if (n.type() != BlockType::Zero &&
+  if (v->type() == BlockType::Zero) {
+    if (n->type() != BlockType::Zero &&
         Rational::RationalStrictSign(n) == StrictSign::Positive) {
       CloneNodeOverTree(u, 0_e);
       return true;
@@ -129,7 +130,7 @@ bool Simplification::SimplifyPower(EditionReference& u) {
     return true;
   }
   // 1^n -> 1
-  if (v.type() == BlockType::One) {
+  if (v->type() == BlockType::One) {
     CloneNodeOverTree(u, 1_e);
     return true;
   }
@@ -140,19 +141,19 @@ bool Simplification::SimplifyPower(EditionReference& u) {
   }
   assert(IsInteger(n));
   // v^0 -> 1
-  if (n.type() == BlockType::Zero) {
+  if (n->type() == BlockType::Zero) {
     CloneNodeOverTree(u, 1_e);
     return true;
   }
   // v^1 -> v
-  if (n.type() == BlockType::One) {
+  if (n->type() == BlockType::One) {
     MoveTreeOverTree(u, v);
     return true;
   }
   // (w^p)^n -> w^(p*n)
-  if (v.type() == BlockType::Power) {
-    EditionReference p = v.childAtIndex(1);
-    assert(p.nextTree() == static_cast<Node*>(n));
+  if (v->type() == BlockType::Power) {
+    EditionReference p = v->childAtIndex(1);
+    assert(p->nextTree() == static_cast<Node*>(n));
     EditionReference m =
         EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2);
     MoveNodeBeforeNode(p, m);
@@ -162,16 +163,16 @@ bool Simplification::SimplifyPower(EditionReference& u) {
     return SimplifyPower(u);
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
-  if (v.type() == BlockType::Multiplication) {
+  if (v->type() == BlockType::Multiplication) {
     for (auto [w, index] : NodeIterator::Children<Editable>(v)) {
       EditionReference m =
           EditionPool::sharedEditionPool()->push<BlockType::Power>();
-      w.clone();
-      n.clone();
+      w->clone();
+      n->clone();
       MoveTreeOverTree(w, m);
       SimplifyPower(w);
     }
-    n.removeTree();
+    n->removeTree();
     DropNode(u);
     return SimplifyMultiplication(u);
   }
@@ -212,10 +213,10 @@ bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
   if (BasesAreEqual(u1, u2)) {
     EditionReference P =
         P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
-    EditionReference S = P.childAtIndex(1);
+    EditionReference S = P->childAtIndex(1);
     SimplifyAddition(S);
     SimplifyPower(P);
-    assert(P.type() != BlockType::Multiplication);
+    assert(P->type() != BlockType::Multiplication);
     u2->moveTreeOverTree(P);
     u1->removeTree();
     return true;
@@ -239,7 +240,7 @@ bool Simplification::SimplifyMultiplication(EditionReference& u) {
       NAry::SetNumberOfChildren(u, n);
       CloneTreeOverTree(u, 0_e);
       if (markerAdded) {
-        end.removeNode();
+        end->removeNode();
       }
       return true;
     }
@@ -257,7 +258,7 @@ bool Simplification::SimplifyMultiplication(EditionReference& u) {
     }
   }
   if (markerAdded) {
-    end.removeNode();
+    end->removeNode();
   }
   if (n == u->numberOfChildren()) {
     return modified;
@@ -330,10 +331,10 @@ bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
   if (TermsAreEqual(u1, u2)) {
     EditionReference P =
         P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
-    EditionReference S = P.childAtIndex(0);
+    EditionReference S = P->childAtIndex(0);
     SimplifyAddition(S);
     SimplifyMultiplication(P);
-    assert(P.type() != BlockType::Addition);
+    assert(P->type() != BlockType::Addition);
     u2->moveTreeOverTree(P);
     u1->removeTree();
     return true;
@@ -366,7 +367,7 @@ bool Simplification::SimplifyAddition(EditionReference& u) {
     }
   }
   if (markerAdded) {
-    end.removeNode();
+    end->removeNode();
   }
   if (n == u->numberOfChildren()) {
     return modified;
@@ -460,26 +461,26 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
     EditionReference ref) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   for (auto [child, index] : NodeIterator::Children<Editable>(ref)) {
-    if (child.type() == BlockType::Addition) {
+    if (child->type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add = EditionReference(
-          editionPool->push<BlockType::Addition>(child.numberOfChildren()));
+          editionPool->push<BlockType::Addition>(child->numberOfChildren()));
       for (auto [additionChild, additionIndex] :
            NodeIterator::Children<Editable>(child)) {
         // Copy a multiplication
         EditionReference multCopy = editionPool->clone(ref);
         // Find the addition to be replaced
         EditionReference additionCopy =
-            EditionReference(multCopy.childAtIndex(index));
+            EditionReference(multCopy->childAtIndex(index));
         // Find addition child to replace with
         EditionReference additionChildCopy =
-            EditionReference(additionCopy.childAtIndex(additionIndex));
+            EditionReference(additionCopy->childAtIndex(additionIndex));
         // Replace addition per its child
-        additionCopy.moveTreeOverTree(additionChildCopy);
-        assert(multCopy.type() == BlockType::Multiplication);
+        additionCopy->moveTreeOverTree(additionChildCopy);
+        assert(multCopy->type() == BlockType::Multiplication);
         DistributeMultiplicationOverAddition(multCopy);
       }
-      ref.moveTreeOverTree(add);
+      ref->moveTreeOverTree(add);
       return add;
     }
   }
@@ -597,7 +598,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference& ref,
   EditionReference tempClone(ref->clone());
   if (ShallowExpand(tempClone)) {
     SystematicReduce(tempClone);
-    assert(tempClone.block()->isAlgebraic());
+    assert(tempClone->block()->isAlgebraic());
     ShallowAdvancedReduction(tempClone, true);
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
     if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
@@ -606,7 +607,7 @@ bool Simplification::AdvanceReduceOnTranscendental(EditionReference& ref,
       return true;
     }
   }
-  tempClone.removeTree();
+  tempClone->removeTree();
   return false;
 }
 
@@ -623,7 +624,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
       return true;
     }
     // Reset the clone
-    tempClone.removeTree();
+    tempClone->removeTree();
     tempClone = ref->clone();
   }
   if (ExpandTranscendentalOnRational(tempClone) +
@@ -635,7 +636,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
       return true;
     }
   }
-  tempClone.removeTree();
+  tempClone->removeTree();
   return false;
 }
 
@@ -669,17 +670,17 @@ bool Simplification::DistributeOverNAry(EditionReference& ref, BlockType target,
   int numberOfChildren = ref->numberOfChildren();
   assert(childIndex < numberOfChildren);
   EditionReference children = ref->childAtIndex(childIndex);
-  if (children.type() != naryTarget) {
+  if (children->type() != naryTarget) {
     return false;
   }
   EditionPool* editionPool(EditionPool::sharedEditionPool());
-  int numberOfGrandChildren = children.numberOfChildren();
-  size_t childIndexOffset = children.block() - ref->block();
+  int numberOfGrandChildren = children->numberOfChildren();
+  size_t childIndexOffset = children->block() - ref->block();
   // f(+(A,B,C),E)
-  children.cloneNodeBeforeNode(0_e);
-  children.detachTree();
+  children->cloneNodeBeforeNode(0_e);
+  children->detachTree();
   // f(0,E) ... +(A,B,C)
-  Node* grandChild = children.nextNode();
+  Node* grandChild = children->nextNode();
   EditionReference output =
       naryOutput == BlockType::Addition
           ? editionPool->push<BlockType::Addition>(numberOfGrandChildren)
@@ -691,11 +692,11 @@ bool Simplification::DistributeOverNAry(EditionReference& ref, BlockType target,
     /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
      * clone.childAtIndex(childIndex)=Node(clone.block()+childIndexOffset) */
     EditionReference(clone->block() + childIndexOffset)
-        .moveTreeOverTree(grandChild);
+        ->moveTreeOverTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
   }
   // f(0,E) ... +(,,) ... *(f(A,E), f(B,E), f(C,E))
-  children.removeNode();
+  children->removeNode();
   // f(0,E) ... *(f(A,E), f(B,E), f(C,E))
   ref = ref->moveTreeOverTree(output);
   // *(f(A,E), f(B,E), f(C,E))
@@ -793,12 +794,12 @@ bool Simplification::ExpandTrigonometric(EditionReference& ref) {
   }
   EditionReference newTrig1(ref->nextNode()->nextNode());
   EditionReference newMult2(ref->nextNode()->nextTree());
-  EditionReference newTrig3(newMult2.nextNode());
-  EditionReference newTrig4(newMult2.nextNode()->nextTree());
+  EditionReference newTrig3(newMult2->nextNode());
+  EditionReference newTrig4(newMult2->nextNode()->nextTree());
   // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
   // Addition is expected to have been squashed if unary.
-  assert(newTrig1.nextNode()->type() != BlockType::Addition ||
-         newTrig1.nextNode()->numberOfChildren() > 1);
+  assert(newTrig1->nextNode()->type() != BlockType::Addition ||
+         newTrig1->nextNode()->numberOfChildren() > 1);
   if (ExpandTrigonometric(newTrig1)) {
     if (!ExpandTrigonometric(newTrig3)) {
       assert(false);
@@ -847,19 +848,19 @@ bool Simplification::ContractTrigonometric(EditionReference& ref) {
     return false;
   }
   EditionReference newMult1(ref->nextNode()->nextNode());
-  if (newMult1.type() != BlockType::Multiplication) {
-    // F is empty, Multiplications have been squashed.
+  if (newMult1->type() != BlockType::Multiplication) {
+    // F is empty, Multiplications have been squashed->
     EditionReference newTrig1 = newMult1;
-    EditionReference newTrig2 = newTrig1.nextTree();
-    assert(newTrig1.type() == BlockType::Trig &&
-           newTrig2.type() == BlockType::Trig);
+    EditionReference newTrig2 = newTrig1->nextTree();
+    assert(newTrig1->type() == BlockType::Trig &&
+           newTrig2->type() == BlockType::Trig);
     SimplifyTrig(newTrig1);
     SimplifyTrig(newTrig2);
     return true;
   }
-  EditionReference newTrig1(newMult1.nextNode());
-  EditionReference newMult2(newMult1.nextTree());
-  EditionReference newTrig2(newMult2.nextNode());
+  EditionReference newTrig1(newMult1->nextNode());
+  EditionReference newMult2(newMult1->nextTree());
+  EditionReference newTrig2(newMult2->nextNode());
   // Shallow reduce new trigs and multiplications (in case one is opposed)
   SimplifyTrig(newTrig1);
   SimplifyMultiplication(newMult1);
@@ -914,10 +915,10 @@ bool Simplification::ExpandPower(EditionReference& ref) {
   // A^2 and 2*A*B may be expanded again, do it recursively
   EditionReference newPow(ref->nextNode());
   // Addition is expected to have been squashed if unary.
-  assert(newPow.nextNode()->type() != BlockType::Addition ||
-         newPow.nextNode()->numberOfChildren() > 1);
+  assert(newPow->nextNode()->type() != BlockType::Addition ||
+         newPow->nextNode()->numberOfChildren() > 1);
   if (ExpandPower(newPow)) {
-    EditionReference newMult(newPow.nextTree());
+    EditionReference newMult(newPow->nextTree());
     ExpandMult(newMult);
     NAry::Flatten(ref);
   }

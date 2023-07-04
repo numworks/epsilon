@@ -11,7 +11,7 @@ void assert_derivation_inplace_is(const Node *expression,
   EditionReference ref(expression);
   Derivation::Reduce(ref);
   assert_trees_are_equal(ref, expected);
-  ref.removeTree();
+  ref->removeTree();
 }
 
 void assert_derivation_is(const Node *expression, const Node *expected,
@@ -29,7 +29,7 @@ void assert_derivation_is(const Node *expression, const Node *expected,
   EditionReference simplifiedResult(result);
   Simplification::Simplify(simplifiedResult);
   quiz_assert(expected->treeIsIdenticalTo(simplifiedResult));
-  simplifiedResult.removeTree();
+  simplifiedResult->removeTree();
 }
 
 QUIZ_CASE(pcj_derivation) {

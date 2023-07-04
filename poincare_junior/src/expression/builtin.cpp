@@ -125,7 +125,7 @@ EditionReference Builtin::Promote(EditionReference parameterList,
     default:
       assert(false);
   }
-  return EditionReference(parameterList.cloneNodeOverNode(header));
+  return EditionReference(parameterList->cloneNodeOverNode(header));
 }
 
 }  // namespace PoincareJ

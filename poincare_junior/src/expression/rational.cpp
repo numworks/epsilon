@@ -129,7 +129,7 @@ void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(reference);
   IntegerHandler denominator = Denominator(reference);
   numerator.setSign(sign);
-  reference.moveNodeOverNode(Push(numerator, denominator));
+  reference->moveNodeOverNode(Push(numerator, denominator));
 }
 
 Node* Rational::Addition(const Node* i, const Node* j) {
@@ -140,13 +140,13 @@ Node* Rational::Addition(const Node* i, const Node* j) {
       IntegerHandler::Multiplication(Numerator(j), Denominator(i));
   EditionReference newNumerator =
       IntegerHandler::Addition(Integer::Handler(ad), Integer::Handler(cb));
-  ad.removeTree();
-  cb.removeTree();
+  ad->removeTree();
+  cb->removeTree();
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
   EditionReference result = Rational::Push(newNumerator, newDenominator);
-  newNumerator.removeTree();
-  newDenominator.removeTree();
+  newNumerator->removeTree();
+  newDenominator->removeTree();
   return result;
 }
 
@@ -156,8 +156,8 @@ Node* Rational::Multiplication(const Node* i, const Node* j) {
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
   EditionReference result = Rational::Push(newNumerator, newDenominator);
-  newNumerator.removeTree();
-  newDenominator.removeTree();
+  newNumerator->removeTree();
+  newDenominator->removeTree();
   return result;
 }
 
@@ -170,8 +170,8 @@ Node* Rational::IntegerPower(const Node* i, const Node* j) {
   EditionReference result = Sign(j) == NonStrictSign::Negative
                                 ? Rational::Push(newDenominator, newNumerator)
                                 : Rational::Push(newNumerator, newDenominator);
-  newNumerator.removeTree();
-  newDenominator.removeTree();
+  newNumerator->removeTree();
+  newDenominator->removeTree();
   return result;
 }
 
@@ -180,21 +180,21 @@ Node* Rational::IrreducibleForm(const Node* i) {
   if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
     EditionReference numerator =
         IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
-    gcd.removeTree();
+    gcd->removeTree();
     return numerator;
   }
-  if (gcd.type() != BlockType::One) {
+  if (gcd->type() != BlockType::One) {
     EditionReference numerator =
         IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
     EditionReference denominator =
         IntegerHandler::Quotient(Denominator(i), Integer::Handler(gcd));
     EditionReference result = Rational::Push(numerator, denominator);
-    gcd.removeTree();
-    numerator.removeTree();
-    denominator.removeTree();
+    gcd->removeTree();
+    numerator->removeTree();
+    denominator->removeTree();
     return result;
   }
-  gcd.removeTree();
+  gcd->removeTree();
   return EditionPool::sharedEditionPool()->clone(i);
 }
 

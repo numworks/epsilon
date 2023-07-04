@@ -13,18 +13,18 @@ namespace PoincareJ {
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
   EditionPool* editionPool = EditionPool::sharedEditionPool();
-  if (expression.block()->isRational()) {
+  if (expression->block()->isRational()) {
     EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();
     editionPool->push<BlockType::Power>();
     Rational::Denominator(expression).pushOnEditionPool();
     editionPool->push<BlockType::MinusOne>();
-    expression.moveTreeOverTree(fraction);
+    expression->moveTreeOverTree(fraction);
     return fraction;
   }
-  BlockType type = expression.type();
+  BlockType type = expression->type();
   if (type == BlockType::Power) {
-    Rationalize(expression.childAtIndex(0));
+    Rationalize(expression->childAtIndex(0));
     return expression;  // TODO return basicReduction
   }
   if (type == BlockType::Multiplication) {
@@ -42,7 +42,7 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
 }
 
 EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
-  assert(expression.type() == BlockType::Addition);
+  assert(expression->type() == BlockType::Addition);
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   EditionReference commonDenominator = EditionReference(KMult());
   // Step 1: We want to compute the common denominator, b*d
@@ -54,8 +54,8 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
-  assert(commonDenominator.type() != BlockType::Zero);
-  if (commonDenominator.type() == BlockType::One) {
+  assert(commonDenominator->type() != BlockType::Zero);
+  if (commonDenominator->type() == BlockType::One) {
     return expression;
   }
   /* Step 2: Turn the expression into the numerator. We start with this being
@@ -66,17 +66,18 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     // Create Mult(child, commonDenominator) = a*b * b*d
     EditionReference multiplication(
         editionPool->push<BlockType::Multiplication>(1));
-    child.moveNodeBeforeNode(multiplication);
-    child.nextTree()->moveTreeBeforeNode(editionPool->clone(commonDenominator));
+    child->moveNodeBeforeNode(multiplication);
+    child->nextTree()->moveTreeBeforeNode(
+        editionPool->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
   EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
-  fraction.moveTreeAfterNode(expression);
+  fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
   EditionReference power(editionPool->push<BlockType::Power>());
-  power.moveTreeAfterNode(commonDenominator);
-  commonDenominator.nextTree()->cloneTreeBeforeNode(-1_e);
+  power->moveTreeAfterNode(commonDenominator);
+  commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power
   // TODO basicReduction of fraction
   return fraction;
@@ -84,24 +85,24 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
 
 EditionReference Algebraic::NormalFormator(EditionReference expression,
                                            bool numerator) {
-  if (expression.block()->isRational()) {
+  if (expression->block()->isRational()) {
     IntegerHandler ator = numerator ? Rational::Numerator(expression)
                                     : Rational::Denominator(expression);
     EditionReference result = ator.pushOnEditionPool();
-    expression.moveNodeOverNode(result);
+    expression->moveNodeOverNode(result);
     return result;
   }
-  BlockType type = expression.type();
+  BlockType type = expression->type();
   if (type == BlockType::Power) {
-    EditionReference exponent = expression.childAtIndex(1);
+    EditionReference exponent = expression->childAtIndex(1);
     bool negativeRationalExponent =
-        exponent.block()->isRational() &&
+        exponent->block()->isRational() &&
         Rational::RationalStrictSign(exponent) == StrictSign::Negative;
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }
     if (numerator == negativeRationalExponent) {
-      return expression.cloneTreeOverTree(1_e);
+      return expression->cloneTreeOverTree(1_e);
     }
     Simplification::SystematicReduce(expression);
     return expression;

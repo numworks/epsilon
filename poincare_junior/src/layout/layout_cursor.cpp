@@ -287,7 +287,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
   if (Layout::IsHorizontal(cursorNode()) &&
-      ref.type() == BlockType::VerticalOffsetLayout &&
+      ref->type() == BlockType::VerticalOffsetLayout &&
       VerticalOffsetLayout::IsSuffixSuperscript(ref)) {
     if (leftL && leftL->type() == BlockType::VerticalOffsetLayout &&
         VerticalOffsetLayout::IsSuffixSuperscript(leftL)) {
@@ -559,7 +559,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
         EditionPool::sharedEditionPool()
             ->push<BlockType::CodePointLayout, CodePoint>(codePoint);
 #endif
-    int dummy = currentLayout.numberOfChildren();
+    int dummy = currentLayout->numberOfChildren();
     currentLayout = RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild,
                                                         &dummy, rootNode());
     codePoint = nextCodePoint;
@@ -621,7 +621,7 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
       NAry::RemoveChildAtIndex(m_cursorReference, selectionLeftBound);
     }
   } else {
-    assert(m_cursorReference.block() == rootNode()->block() ||
+    assert(m_cursorReference->block() == rootNode()->block() ||
            !Layout::IsHorizontal(
                rootNode()->parentOfDescendant(m_cursorReference)));
     MoveTreeOverTree(
@@ -1075,7 +1075,7 @@ void LayoutCursor::invalidateSizesAndPositions() {
 void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     Render::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
-         m_cursorReference.block() != rootNode()->block());
+         m_cursorReference->block() != rootNode()->block());
 #if 0
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
@@ -1216,7 +1216,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
   }
   assert(
       !Layout::IsHorizontal(m_cursorReference) ||
-      m_cursorReference.block() == rootNode()->block() ||
+      m_cursorReference->block() == rootNode()->block() ||
       !Layout::IsHorizontal(rootNode()->parentOfDescendant(m_cursorReference)));
   assert(m_position != 0);
   m_position--;

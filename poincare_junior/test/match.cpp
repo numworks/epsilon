@@ -26,13 +26,13 @@ void assert_match_and_create(const Node* source, const Node* pattern,
 
   EditionReference createdRef = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(createdRef, output);
-  createdRef.removeTree();
+  createdRef->removeTree();
   // Also test with matchAndReplace
   EditionReference replacedSourceClone =
       EditionReference(EditionPool::sharedEditionPool()->clone(source));
   replacedSourceClone.matchAndReplace(pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
-  replacedSourceClone.removeTree();
+  replacedSourceClone->removeTree();
   // Nothing has leaked
   quiz_assert(numberOfTrees == editionPool->numberOfTrees());
 }

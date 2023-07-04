@@ -345,28 +345,28 @@ QUIZ_CASE(pcj_integer_overflows) {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("1");
     IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
-    a.removeTree();
-    b.removeTree();
+    a->removeTree();
+    b->removeTree();
   });
   assert_did_not_overflow([](void* context, const void* data) {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("1");
     IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
-    a.removeTree();
-    b.removeTree();
+    a->removeTree();
+    b->removeTree();
   });
   assert_did_overflow([](void* context, const void* data) {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("2");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
-    a.removeTree();
-    b.removeTree();
+    a->removeTree();
+    b->removeTree();
   });
   assert_did_not_overflow([](void* context, const void* data) {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("1");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
-    a.removeTree();
-    b.removeTree();
+    a->removeTree();
+    b->removeTree();
   });
 }

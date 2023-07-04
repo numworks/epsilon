@@ -5,7 +5,6 @@
 
 #include <array>
 
-#include "edition_reference.h"
 #include "k_creator.h"
 #include "node.h"
 #include "node_iterator.h"
@@ -70,10 +69,15 @@ class PatternMatching {
   };
 
   static bool Match(const Node* pattern, const Node* source, Context* context);
-  static EditionReference Create(const Node* structure,
-                                 const Context context = Context()) {
+  static Node* Create(const Node* structure,
+                      const Context context = Context()) {
     return CreateTree(structure, context, nullptr);
   }
+  static Node* MatchAndCreate(const Node* source, const Node* pattern,
+                              const Node* structure);
+  // Return true if reference has been replaced
+  static bool MatchAndReplace(Node* node, const Node* pattern,
+                              const Node* structure);
 
  private:
   /* During Match, MatchContext allow keeping track of matched Nary sizes.
@@ -121,8 +125,8 @@ class PatternMatching {
   static bool MatchNodes(const Node* source, const Node* pattern,
                          Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in EditionPool
-  static EditionReference CreateTree(const Node* structure,
-                                     const Context context, Node* insertedNAry);
+  static Node* CreateTree(const Node* structure, const Context context,
+                          Node* insertedNAry);
 };
 
 }  // namespace PoincareJ

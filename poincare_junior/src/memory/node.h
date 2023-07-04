@@ -132,6 +132,8 @@ class Node {
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
 
+  bool matchAndReplace(const Node* pattern, const Node* structure);
+
   // Iterators
   class AbstractIterator {
    public:

@@ -30,7 +30,7 @@ void assert_match_and_create(const Node* source, const Node* pattern,
   // Also test with matchAndReplace
   EditionReference replacedSourceClone =
       EditionReference(EditionPool::sharedEditionPool()->clone(source));
-  replacedSourceClone.matchAndReplace(pattern, structure);
+  replacedSourceClone->matchAndReplace(pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();
   // Nothing has leaked
@@ -93,11 +93,11 @@ QUIZ_CASE(pcj_rewrite_replace) {
   EditionReference ref(editionPool->push<BlockType::Addition>(2));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  EditionReference result = ref.matchAndCreate(p, s);
+  EditionReference result = PatternMatching::MatchAndCreate(ref, p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
-  ref.matchAndReplace(p, s);
+  ref->matchAndReplace(p, s);
   assert_trees_are_equal(result, ref);
-  result = ref.matchAndCreate(p, s);
+  result = PatternMatching::MatchAndCreate(ref, p, s);
   quiz_assert(result.isUninitialized());
 }
 

@@ -415,7 +415,7 @@ bool Simplification::ShallowBeautify(EditionReference& ref, void* context) {
         KPlaceholder<A>(), KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
         KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
     EditionReference child(ref->childAtIndex(0));
-    child.matchAndReplace(
+    child->matchAndReplace(
         KPlaceholder<A>(),
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
     SystematicReduce(child);
@@ -423,7 +423,7 @@ bool Simplification::ShallowBeautify(EditionReference& ref, void* context) {
   bool changed = false;
   // A + B? + (-1)*C + D?-> ((A + B) - C) + D
   // Applied as much as necessary while preserving the order.
-  while (ref.matchAndReplace(
+  while (ref->matchAndReplace(
       KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
            KMult(-1_e, KAnyTreesPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KAdd(KSub(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
@@ -433,25 +433,25 @@ bool Simplification::ShallowBeautify(EditionReference& ref, void* context) {
   }
   return changed ||
          // trig(A, 0) -> cos(A)
-         ref.matchAndReplace(KTrig(KPlaceholder<A>(), 0_e),
-                             KCos(KPlaceholder<A>())) ||
+         ref->matchAndReplace(KTrig(KPlaceholder<A>(), 0_e),
+                              KCos(KPlaceholder<A>())) ||
          // trig(A, 1) -> sin(A)
-         ref.matchAndReplace(KTrig(KPlaceholder<A>(), 1_e),
-                             KSin(KPlaceholder<A>())) ||
+         ref->matchAndReplace(KTrig(KPlaceholder<A>(), 1_e),
+                              KSin(KPlaceholder<A>())) ||
          // exp(0.5*ln(A)) -> Sqrt(A)
-         ref.matchAndReplace(KExp(KMult(KHalf, KLn(KPlaceholder<A>()))),
-                             KSqrt(KPlaceholder<A>())) ||
+         ref->matchAndReplace(KExp(KMult(KHalf, KLn(KPlaceholder<A>()))),
+                              KSqrt(KPlaceholder<A>())) ||
          // exp(A? * ln(B) * C?) -> B^(A*C)
-         ref.matchAndReplace(
+         ref->matchAndReplace(
              KExp(KMult(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
                         KAnyTreesPlaceholder<C>())),
              KPow(KPlaceholder<B>(), KMult(KAnyTreesPlaceholder<A>(),
                                            KAnyTreesPlaceholder<C>()))) ||
          // exp(A) -> e^A
-         ref.matchAndReplace(KExp(KPlaceholder<A>()),
-                             KPow(e_e, KPlaceholder<A>())) ||
+         ref->matchAndReplace(KExp(KPlaceholder<A>()),
+                              KPow(e_e, KPlaceholder<A>())) ||
          // ln(A) * ln(B)^(-1) -> log(A, B)
-         ref.matchAndReplace(
+         ref->matchAndReplace(
              KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e)),
              KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()));
 }
@@ -516,7 +516,7 @@ bool Simplification::ShallowSystemProjection(EditionReference& ref,
         KPlaceholder<A>(), KMult(KPlaceholder<A>(), π_e, KPow(180_e, -1_e)),
         KMult(KPlaceholder<A>(), π_e, KPow(200_e, -1_e))};
     EditionReference(ref->childAtIndex(0))
-        .matchAndReplace(
+        ->matchAndReplace(
             KPlaceholder<A>(),
             k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
   }
@@ -525,49 +525,49 @@ bool Simplification::ShallowSystemProjection(EditionReference& ref,
    * Operator || only is used. */
   return
       // A - B -> A + (-1)*B
-      ref.matchAndReplace(
+      ref->matchAndReplace(
           KSub(KPlaceholder<A>(), KPlaceholder<B>()),
           KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))) ||
       // A / B -> A * B^-1
-      ref.matchAndReplace(
+      ref->matchAndReplace(
           KDiv(KPlaceholder<A>(), KPlaceholder<B>()),
           KMult(KPlaceholder<A>(), KPow(KPlaceholder<B>(), -1_e))) ||
       // cos(A) -> trig(A, 0)
-      ref.matchAndReplace(KCos(KPlaceholder<A>()),
-                          KTrig(KPlaceholder<A>(), 0_e)) ||
+      ref->matchAndReplace(KCos(KPlaceholder<A>()),
+                           KTrig(KPlaceholder<A>(), 0_e)) ||
       // sin(A) -> trig(A, 1)
-      ref.matchAndReplace(KSin(KPlaceholder<A>()),
-                          KTrig(KPlaceholder<A>(), 1_e)) ||
+      ref->matchAndReplace(KSin(KPlaceholder<A>()),
+                           KTrig(KPlaceholder<A>(), 1_e)) ||
       // tan(A) -> sin(A) * cos(A)^(-1)
       /* TODO: Tangent will duplicate its yet to be projected children,
        * replacing it after everything else may be an optimization. */
-      ref.matchAndReplace(KTan(KPlaceholder<A>()),
-                          KMult(KTrig(KPlaceholder<A>(), 1_e),
-                                KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e))) ||
+      ref->matchAndReplace(KTan(KPlaceholder<A>()),
+                           KMult(KTrig(KPlaceholder<A>(), 1_e),
+                                 KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e))) ||
       // log(A, e) -> ln(e)
-      ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
-                          KLn(KPlaceholder<A>())) ||
+      ref->matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
+                           KLn(KPlaceholder<A>())) ||
       // log(A) -> ln(A) * ln(10)^(-1)
       // TODO: Maybe log(A) -> log(A, 10) and rely on next matchAndReplace
-      ref.matchAndReplace(
+      ref->matchAndReplace(
           KLog(KPlaceholder<A>()),
           KMult(KLn(KPlaceholder<A>()), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
-      ref.matchAndReplace(
+      ref->matchAndReplace(
           KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
           KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e))) ||
       // Sqrt(A) -> exp(0.5*ln(A))
-      ref.matchAndReplace(KSqrt(KPlaceholder<A>()),
-                          KExp(KMult(KHalf, KLn(KPlaceholder<A>())))) ||
+      ref->matchAndReplace(KSqrt(KPlaceholder<A>()),
+                           KExp(KMult(KHalf, KLn(KPlaceholder<A>())))) ||
       // Power of non-integers
       // TODO: Maybe add exp(A) -> e^A with A integer
       (ref->type() == BlockType::Power &&
        !ref->nextNode()->nextTree()->block()->isInteger() &&
        (  // e^A -> exp(A)
-           ref.matchAndReplace(KPow(e_e, KPlaceholder<A>()),
-                               KExp(KPlaceholder<A>())) ||
+           ref->matchAndReplace(KPow(e_e, KPlaceholder<A>()),
+                                KExp(KPlaceholder<A>())) ||
            // A^B -> exp(ln(A)*B)
-           ref.matchAndReplace(
+           ref->matchAndReplace(
                KPow(KPlaceholder<A>(), KPlaceholder<B>()),
                KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())))));
 }
@@ -641,8 +641,8 @@ bool Simplification::AdvanceReduceOnAlgebraic(EditionReference& ref,
 
 bool Simplification::ReduceInverseFunction(EditionReference& e) {
   // TODO : Add more
-  return e.matchAndReplace(KExp(KLn(KPlaceholder<A>())), KPlaceholder<A>()) ||
-         e.matchAndReplace(KLn(KExp(KPlaceholder<A>())), KPlaceholder<A>());
+  return e->matchAndReplace(KExp(KLn(KPlaceholder<A>())), KPlaceholder<A>()) ||
+         e->matchAndReplace(KLn(KExp(KPlaceholder<A>())), KPlaceholder<A>());
 }
 
 bool Simplification::ExpandTranscendentalOnRational(EditionReference& e) {
@@ -723,7 +723,7 @@ bool Simplification::TryAllOperations(EditionReference& e,
 
 bool Simplification::ContractAbs(EditionReference& ref) {
   // A*|B|*|C|*D = A*|BC|*D
-  return ref.matchAndReplace(
+  return ref->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
             KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KAnyTreesPlaceholder<A>(),
@@ -739,7 +739,7 @@ bool Simplification::ExpandAbs(EditionReference& ref) {
 
 bool Simplification::ContractLn(EditionReference& ref) {
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
-  return ref.matchAndReplace(
+  return ref->matchAndReplace(
       KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
            KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KAdd(KAnyTreesPlaceholder<A>(),
@@ -763,7 +763,7 @@ bool Simplification::ExpandExp(EditionReference& ref) {
 
 bool Simplification::ContractExpMult(EditionReference& ref) {
   // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
-  return ref.matchAndReplace(
+  return ref->matchAndReplace(
       KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
             KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KAnyTreesPlaceholder<A>(),
@@ -773,15 +773,16 @@ bool Simplification::ContractExpMult(EditionReference& ref) {
 
 bool Simplification::ContractExpPow(EditionReference& ref) {
   // exp(A)^B = exp(A*B)
-  return ref.matchAndReplace(KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
-                             KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
+  return ref->matchAndReplace(
+      KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
+      KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
 }
 
 bool Simplification::ExpandTrigonometric(EditionReference& ref) {
   /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
    * ExpandTrigonometric is more complex than other expansions and cannot be
    * factorized with DistributeOverNAry. */
-  if (!ref.matchAndReplace(
+  if (!ref->matchAndReplace(
           KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
                 KPlaceholder<C>()),
           KAdd(KMult(KTrig(KAdd(KAnyTreesPlaceholder<A>()), 0_e),
@@ -815,7 +816,7 @@ bool Simplification::ExpandTrigonometric(EditionReference& ref) {
 
 bool Simplification::ContractTrigonometric(EditionReference& ref) {
   // A?+cos(B)^2+C?+sin(D)^2+E? = A + 1 + C + E
-  if (ref.matchAndReplace(
+  if (ref->matchAndReplace(
           KAdd(KAnyTreesPlaceholder<A>(),
                KPow(KTrig(KPlaceholder<B>(), 0_e), 2_e),
                KAnyTreesPlaceholder<C>(),
@@ -830,7 +831,7 @@ bool Simplification::ContractTrigonometric(EditionReference& ref) {
    * F is duplicated in case it contains other Trig trees that could be
    * contracted as well. ContractTrigonometric is therefore more complex than
    * other contractions. It handles nested trees itself. */
-  if (!ref.matchAndReplace(
+  if (!ref->matchAndReplace(
           KMult(KAnyTreesPlaceholder<A>(),
                 KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
                 KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
@@ -904,7 +905,7 @@ bool Simplification::ExpandPower(EditionReference& ref) {
   // TODO: Implement a more general (A + B)^C expand.
   /* This isn't factorized with DistributeOverNAry because of the necessary
    * second term expansion. */
-  if (!ref.matchAndReplace(
+  if (!ref->matchAndReplace(
           KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
           KAdd(KPow(KAdd(KAnyTreesPlaceholder<A>()), 2_e),
                KMult(2_e, KAdd(KAnyTreesPlaceholder<A>()), KPlaceholder<B>()),

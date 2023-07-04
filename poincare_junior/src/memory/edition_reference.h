@@ -42,11 +42,6 @@ class EditionReference {
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
-  EditionReference matchAndCreate(const Node* pattern,
-                                  const Node* structure) const;
-  // Return true if reference has been replaced.
-  bool matchAndReplace(const Node* pattern, const Node* structure);
-
  private:
   Node* node() const;
   uint16_t m_identifier;

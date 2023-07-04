@@ -368,7 +368,9 @@ class BlockBuffer {
     m_blocks[size] = TreeBorderBlock;
 #endif
   }
-  constexpr TypeBlock *blocks() { return static_cast<TypeBlock *>(m_blocks); }
+  constexpr TypeBlock *blocks() {
+    return static_cast<TypeBlock *>(static_cast<Block *>(m_blocks));
+  }
   consteval const TypeBlock *blocks() const {
     return static_cast<const TypeBlock *>(m_blocks);
   }

@@ -98,6 +98,11 @@ class Node {
   Node* parent() { return Utils::DeconstifyPtr(&Node::parent, this); }
   const Node* commonAncestor(const Node* child1, const Node* child2) const;
   const Node* parentOfDescendant(const Node* descendant, int* position) const;
+  // Make position optional
+  const Node* parentOfDescendant(const Node* descendant) const {
+    int dummyPosition;
+    return parentOfDescendant(descendant, &dummyPosition);
+  }
   int numberOfDescendants(bool includeSelf) const;
   const Node* childAtIndex(int index) const;
   Node* childAtIndex(int index) {

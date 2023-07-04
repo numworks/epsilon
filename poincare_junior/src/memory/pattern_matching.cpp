@@ -68,16 +68,15 @@ void PatternMatching::MatchContext::setLocal(const Node* source,
 
 void PatternMatching::MatchContext::setLocalFromChild(const Node* source,
                                                       const Node* pattern) {
-  int tmp;
   // If global context limits are reached, set local context back to global.
   const Node* sourceParent =
       ReachedLimit(source, m_globalSourceEnd)
           ? m_globalSourceRoot
-          : m_globalSourceRoot->parentOfDescendant(source, &tmp);
+          : m_globalSourceRoot->parentOfDescendant(source);
   const Node* patternParent =
       ReachedLimit(pattern, m_globalPatternEnd)
           ? m_globalPatternRoot
-          : m_globalPatternRoot->parentOfDescendant(pattern, &tmp);
+          : m_globalPatternRoot->parentOfDescendant(pattern);
   assert(sourceParent && patternParent);
   setLocal(sourceParent, patternParent);
 }

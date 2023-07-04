@@ -101,30 +101,32 @@ int RackLayout::NumberOfLayouts(const Node* node) {
 
 EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference,
                                                      EditionReference child,
-                                                     int* index) {
+                                                     int* index,
+                                                     const Node* root) {
   assert(*index <= NumberOfLayouts(reference));
-  EditionReference nary = RackParent(reference, index);
+  EditionReference nary = RackParent(reference, index, root);
   NAry::AddOrMergeChildAtIndex(nary, child, *index);
   return nary;
 }
 
 EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference,
-                                                 int* index) {
+                                                 int* index, const Node* root) {
   assert(*index <= NumberOfLayouts(reference));
-  EditionReference nary = RackParent(reference, index);
+  EditionReference nary = RackParent(reference, index, root);
   NAry::RemoveChildAtIndex(nary, *index);
   return nary;
 }
 
 // Return the nearest NAry
-EditionReference RackLayout::RackParent(EditionReference reference,
-                                        int* index) {
+EditionReference RackLayout::RackParent(EditionReference reference, int* index,
+                                        const Node* root) {
   if (Layout::IsHorizontal(static_cast<Node*>(reference))) {
     return reference;
   }
   assert(*index <= 1);
   // Find or make a RackLayout parent
-  EditionReference parent = reference.parent();
+  int refIndex;
+  EditionReference parent = root->parentOfDescendant(reference, &refIndex);
   if (parent.isUninitialized() ||
       !Layout::IsHorizontal(static_cast<Node*>(parent))) {
     parent = EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(1);
@@ -134,7 +136,7 @@ EditionReference RackLayout::RackParent(EditionReference reference,
     // For now we do not take advantage of this :/
     assert(false);
     // Index of reference in parent may not be 0
-    *index += parent.indexOfChild(reference);
+    *index += refIndex;
   }
   return parent;
 }

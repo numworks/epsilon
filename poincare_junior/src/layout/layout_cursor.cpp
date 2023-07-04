@@ -334,10 +334,10 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
-  assert(Layout::IsHorizontal(cursorNode()) || !cursorNode()->parent() ||
-         !Layout::IsHorizontal(cursorNode()->parent()));
-  setCursorNode(static_cast<Node *>(
-      RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), ref, &m_position)));
+  assert(Layout::IsHorizontal(cursorNode()) || cursorNode() == rootNode() ||
+         !Layout::IsHorizontal(rootNode()->parentOfDescendant(cursorNode())));
+  setCursorNode(static_cast<Node *>(RackLayout::AddOrMergeLayoutAtIndex(
+      cursorNode(), ref, &m_position, rootNode())));
   assert(Layout::IsHorizontal(cursorNode()));
 
   if (!forceLeft) {
@@ -560,8 +560,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
             ->push<BlockType::CodePointLayout, CodePoint>(codePoint);
 #endif
     int dummy = currentLayout.numberOfChildren();
-    currentLayout =
-        RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild, &dummy);
+    currentLayout = RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild,
+                                                        &dummy, rootNode());
     codePoint = nextCodePoint;
   }
   assert(currentSubscriptDepth == 0);
@@ -592,13 +592,13 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
     privateDelete(deletionMethod, false);
   } else {
     assert(m_position == leftMostPosition());
-    const Node *p = cursorNode()->parent();
+    int index;
+    const Node *p = rootNode()->parentOfDescendant(cursorNode(), &index);
     if (!p) {
       return;
     }
     Render::DeletionMethod deletionMethod =
-        Render::DeletionMethodForCursorLeftOfChild(
-            p, p->indexOfChild(cursorNode()));
+        Render::DeletionMethodForCursorLeftOfChild(p, index);
     privateDelete(deletionMethod, true);
   }
 #if 0
@@ -621,11 +621,12 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
       NAry::RemoveChildAtIndex(m_cursorReference, selectionLeftBound);
     }
   } else {
-    assert(!m_cursorReference.parent() ||
-           !Layout::IsHorizontal(m_cursorReference.parent()));
-    EditionReference emptyRack =
-        EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
-    m_cursorReference = m_cursorReference.moveTreeOverTree(emptyRack);
+    assert(m_cursorReference.block() == rootNode()->block() ||
+           !Layout::IsHorizontal(
+               rootNode()->parentOfDescendant(m_cursorReference)));
+    MoveTreeOverTree(
+        &m_cursorReference,
+        EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0));
   }
   m_position = selectionLeftBound;
   stopSelecting();
@@ -689,10 +690,14 @@ bool LayoutCursor::didExitPosition() {
 
 #if 0
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
-  return cursorNode()->numberOfChildren() == 0 && cursorNode()->parent() &&
-         cursorNode()->parent()->type() == BlockType::FractionLayout &&
-         cursorNode()->parent()->indexOfChild(cursorNode()) == 0 &&
-         cursorNode()->parent()->childAtIndex(1)->numberOfChildren() == 0;
+  if (cursorNode()->numberOfChildren() != 0) {
+    return false;
+  }
+  int indexInParent;
+  const Node *parent =
+      rootNode()->parentOfDescendant(cursorNode(), &indexInParent);
+  return parent && parent->type() == BlockType::FractionLayout &&
+         indexInParent == 0 && parent->childAtIndex(1)->numberOfChildren() == 0;
 }
 
 int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
@@ -711,10 +716,11 @@ void LayoutCursor::beautifyLeft(Context *context) {
 
 void LayoutCursor::setLayout(const Node *l,
                              OMG::HorizontalDirection sideOfLayout) {
-  if (!Layout::IsHorizontal(l) && l->parent() &&
-      Layout::IsHorizontal(l->parent())) {
-    setCursorNode(l->parent());
-    m_position = cursorNode()->indexOfChild(l) + (sideOfLayout.isRight());
+  int indexInParent;
+  const Node *parent = rootNode()->parentOfDescendant(l, &indexInParent);
+  if (!Layout::IsHorizontal(l) && parent && Layout::IsHorizontal(parent)) {
+    setCursorNode(parent);
+    m_position = indexInParent + (sideOfLayout.isRight());
     return;
   }
   setCursorNode(l);
@@ -819,11 +825,11 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
      * ask its parent what it should do when leaving its only child from
      * from the right (leave the square root).
      * */
-    if (!cursorNode()->parent()) {
+    nextLayout =
+        rootNode()->parentOfDescendant(cursorNode(), &currentIndexInNextLayout);
+    if (!nextLayout) {
       return false;
     }
-    nextLayout = cursorNode()->parent();
-    currentIndexInNextLayout = nextLayout->indexOfChild(cursorNode());
   }
   assert(nextLayout);
   assert(!Layout::IsHorizontal(nextLayout));
@@ -879,11 +885,13 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    * / -10                                     / -10           §
    *
    * */
-  const Node *parent = nextLayout->parent();
+  int nextLayoutIndex;
+  const Node *parent =
+      rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
   const Node *previousLayout = cursorNode();
   if (parent && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
-    m_position = cursorNode()->indexOfChild(nextLayout) + (direction.isRight());
+    m_position = nextLayoutIndex + (direction.isRight());
   } else {
     setCursorNode(nextLayout);
     m_position = direction.isRight();
@@ -1066,7 +1074,8 @@ void LayoutCursor::invalidateSizesAndPositions() {
 
 void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     Render::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
-  assert(!deletionAppliedToParent || m_cursorReference.parent());
+  assert(!deletionAppliedToParent ||
+         m_cursorReference.block() != rootNode()->block());
 #if 0
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
@@ -1202,15 +1211,17 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
 #endif
   assert(deletionMethod == Render::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    setLayout(m_cursorReference.parent(), OMG::Direction::Right());
+    setLayout(rootNode()->parentOfDescendant(m_cursorReference),
+              OMG::Direction::Right());
   }
-  assert(!Layout::IsHorizontal(m_cursorReference) ||
-         !m_cursorReference.parent() ||
-         !Layout::IsHorizontal(m_cursorReference.parent()));
+  assert(
+      !Layout::IsHorizontal(m_cursorReference) ||
+      m_cursorReference.block() == rootNode()->block() ||
+      !Layout::IsHorizontal(rootNode()->parentOfDescendant(m_cursorReference)));
   assert(m_position != 0);
   m_position--;
-  setCursorNode(
-      RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position));
+  setCursorNode(RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position,
+                                                rootNode()));
 }
 
 #if 0

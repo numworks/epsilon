@@ -33,12 +33,13 @@ class RackLayout {
   static int NumberOfLayouts(const Node* node);
   static EditionReference AddOrMergeLayoutAtIndex(EditionReference reference,
                                                   EditionReference child,
-                                                  int* index);
+                                                  int* index, const Node* root);
   static EditionReference RemoveLayoutAtIndex(EditionReference reference,
-                                              int* index);
+                                              int* index, const Node* root);
 
  private:
-  static EditionReference RackParent(EditionReference reference, int* index);
+  static EditionReference RackParent(EditionReference reference, int* index,
+                                     const Node* root);
 };
 
 }  // namespace PoincareJ

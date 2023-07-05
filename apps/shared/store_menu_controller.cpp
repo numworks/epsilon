@@ -21,17 +21,6 @@ StoreMenuController::InnerListController::InnerListController(
   m_selectableListView.hideScrollBars();
 }
 
-void StoreMenuController::open() {
-  App::app()->displayModalViewController(
-      this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, 0,
-      Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin, true);
-}
-
-void StoreMenuController::close() {
-  m_cell.layoutField()->setEditing(false);
-  App::app()->modalViewController()->dismissModal();
-}
-
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
   m_selectableListView.selectCell(0);
   m_selectableListView.reloadData();
@@ -89,6 +78,17 @@ void StoreMenuController::setText(const char* text) {
   }
   m_stackViewController.setupActiveView();
   m_preventReload = false;
+}
+
+void StoreMenuController::open() {
+  App::app()->displayModalViewController(
+      this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, 0,
+      Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin, true);
+}
+
+void StoreMenuController::close() {
+  m_cell.layoutField()->setEditing(false);
+  App::app()->modalViewController()->dismissModal();
 }
 
 void StoreMenuController::fillCellForRow(HighlightCell* cell, int row) {

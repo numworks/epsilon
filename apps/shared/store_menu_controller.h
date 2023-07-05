@@ -60,9 +60,6 @@ class StoreMenuController : public Escher::ModalViewController,
     }
     Escher::View* view() override { return &m_selectableListView; }
     void didBecomeFirstResponder() override;
-    Escher::SelectableTableView* selectableTableView() {
-      return &m_selectableListView;
-    }
 
    private:
     Escher::SelectableListView m_selectableListView;

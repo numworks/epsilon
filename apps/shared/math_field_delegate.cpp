@@ -156,7 +156,7 @@ MathTextFieldDelegate *MathTextFieldDelegate::Default() {
 
 bool MathTextFieldDelegate::textFieldDidReceiveEvent(
     AbstractTextField *textField, Ion::Events::Event event) {
-  if (textField->isEditingAndShouldFinishEditing(event)) {
+  if (textField->shouldFinishEditing(event)) {
     if (textField->text()[0] == 0) {
       // Empty field, let the textfield handle the event
       return false;

@@ -396,7 +396,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   return true;
 }
 
-bool LayoutField::isEditingAndShouldFinishEditing(Ion::Events::Event event) {
+bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
   if (isEditing() &&
       m_layoutFieldDelegate->layoutFieldShouldFinishEditing(this, event)) {
     cursor()->stopSelecting();
@@ -502,7 +502,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     if (m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
       return true;
     }
-    if (isEditingAndShouldFinishEditing(event)) {
+    if (shouldFinishEditing(event)) {
       setEditing(false);
       if (!m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
         setEditing(true);

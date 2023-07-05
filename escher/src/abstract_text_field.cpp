@@ -452,7 +452,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
   }
-  if (isEditingAndShouldFinishEditing(event)) {
+  if (shouldFinishEditing(event)) {
     setEditing(false);
     /* We avoid copying the edited text into the other text buffer in case
      * textFieldDidFinishEditing fails - we then want to be able to abort
@@ -584,8 +584,7 @@ void AbstractTextField::scrollToCursor() {
   return TextInput::scrollToCursor();
 }
 
-bool AbstractTextField::isEditingAndShouldFinishEditing(
-    Ion::Events::Event event) {
+bool AbstractTextField::shouldFinishEditing(Ion::Events::Event event) {
   if (isEditing() && m_delegate->textFieldShouldFinishEditing(this, event)) {
     resetSelection();
     return true;

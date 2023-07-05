@@ -14,9 +14,9 @@ using namespace Escher;
 namespace Shared {
 
 StoreMenuController::InnerListController::InnerListController(
-    StoreMenuController* dataSource, SelectableListViewDelegate* delegate)
+    StoreMenuController* dataSource)
     : ViewController(dataSource),
-      m_selectableListView(this, dataSource, dataSource, delegate) {
+      m_selectableListView(this, dataSource, dataSource) {
   m_selectableListView.setMargins(0);
   m_selectableListView.hideScrollBars();
 }

@@ -292,7 +292,7 @@ void HistoryController::tableViewDidChangeSelectionAndDidScroll(
     setSelectedSubviewType(SubviewType::Output, false, previousSelectedCol,
                            previousSelectedRow);
   } else if (selectedRow() == -1) {
-    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCol,
+    setSelectedSubviewType(SubviewType::None, false, previousSelectedCol,
                            previousSelectedRow);
   } else {
     HistoryViewCell *selectedCell = (HistoryViewCell *)(t->selectedCell());

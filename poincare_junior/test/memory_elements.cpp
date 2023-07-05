@@ -724,17 +724,3 @@ QUIZ_CASE(pcj_constructor) {
           ValueBlock(0),
       });
 }
-
-QUIZ_CASE(pcj_edition_reference_swap) {
-  EditionReference a(KCos(2_e));
-  EditionReference b(KMult(4_e, "a"_e));
-  SwapTrees(a, b);
-  assert_trees_are_equal(a, KMult(4_e, "a"_e));
-  assert_trees_are_equal(b, KCos(2_e));
-  EditionReference d(KMult(4_e, "a"_e));
-  EditionReference c(KCos(2_e));
-  SwapTrees(d, c);
-  assert_trees_are_equal(c, KMult(4_e, "a"_e));
-  assert_trees_are_equal(d, KCos(2_e));
-  EditionPool::sharedEditionPool()->flush();
-}

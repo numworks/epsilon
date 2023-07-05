@@ -47,8 +47,6 @@ class EditionReference {
   uint16_t m_identifier;
 };
 
-void SwapTrees(EditionReference& u, EditionReference& v);
-
 }  // namespace PoincareJ
 
 #endif

@@ -55,25 +55,4 @@ void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   (*treeFunction)(*this);
 }
 
-void MoveTreeBeforeNode(EditionReference& target, Node* treeToMove) {
-  Node* previousTarget = target;
-  if (treeToMove->block() < previousTarget->block()) {
-    previousTarget =
-        Node::FromBlocks(previousTarget->block() - treeToMove->treeSize());
-  }
-  target->moveTreeBeforeNode(treeToMove);
-  target = previousTarget;
-}
-
-void SwapTrees(EditionReference& u, EditionReference& v) {
-  if (u->block() > v->block()) {
-    return SwapTrees(v, u);
-  }
-  Node* previousU = u;
-  Node* previousV = v;
-  MoveTreeBeforeNode(v, previousU);
-  u = EditionReference(previousU);
-  MoveTreeBeforeNode(u, previousV);
-}
-
 }  // namespace PoincareJ

@@ -208,7 +208,8 @@ bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
   if (IsConstant(u1) && IsConstant(u2)) {
     Node* mult = Rational::Multiplication(u1, u2);
     mult->moveTreeOverTree(Rational::IrreducibleForm(mult));
-    u1->moveTreeOverTree(mult);
+    u2->moveTreeOverTree(mult);
+    u1->removeTree();
     return true;
   }
   // t^m * t^n -> t^(m+n)
@@ -219,7 +220,8 @@ bool Simplification::MergeMultiplicationChildren(Node* u1, Node* u2) {
     SimplifyAddition(&S);
     SimplifyPower(&P);
     assert(P.type() != BlockType::Multiplication);
-    u1->moveTreeOverTree(P);
+    u2->moveTreeOverTree(P);
+    u1->removeTree();
     return true;
   }
   return false;
@@ -253,7 +255,6 @@ bool Simplification::SimplifyMultiplication(EditionReference* u) {
     Node* next = child->nextTree();
     if (next < end && MergeMultiplicationChildren(child, next)) {
       assert(child->type() != BlockType::Multiplication);
-      child->nextTree()->removeTree();
       n--;
     } else {
       child = next;
@@ -334,7 +335,8 @@ bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
   if (IsConstant(u1) && IsConstant(u2)) {
     Node* add = Rational::Addition(u1, u2);
     add->moveTreeOverTree(Rational::IrreducibleForm(add));
-    u1->moveTreeOverTree(add);
+    u2->moveTreeOverTree(add);
+    u1->removeTree();
     return true;
   }
   // k1 * a + k2 * a -> (k1+k2) * a
@@ -345,7 +347,8 @@ bool Simplification::MergeAdditionChildren(Node* u1, Node* u2) {
     SimplifyAddition(&S);
     SimplifyMultiplication(&P);
     assert(P.type() != BlockType::Addition);
-    u1->moveTreeOverTree(P);
+    u2->moveTreeOverTree(P);
+    u1->removeTree();
     return true;
   }
   return false;
@@ -370,7 +373,6 @@ bool Simplification::SimplifyAddition(EditionReference* u) {
     Node* next = child->nextTree();
     if (next < end && MergeAdditionChildren(child, next)) {
       assert(child->type() != BlockType::Addition);
-      child->nextTree()->removeTree();
       n--;
     } else {
       child = next;

@@ -7,20 +7,20 @@
 
 namespace PoincareJ {
 
-bool Derivation::Reduce(EditionReference &ref) {
+bool Derivation::Reduce(Node *node) {
   // Reference is expected to have been projected beforehand.
   /* TODO: This cannot be asserted since SytematicReduction may introduce powers
    * of additions that would be projected to exponentials. */
   // assert(!Simplification::DeepSystemProjection(ref));
   // Diff(Derivand, Symbol, SymbolValue)
-  assert(ref->type() == BlockType::Derivative);
-  const Node *derivand = ref->childAtIndex(0);
+  assert(node->type() == BlockType::Derivative);
+  const Node *derivand = node->childAtIndex(0);
   const Node *symbol = derivand->nextTree();
   const Node *symbolValue = symbol->nextTree();
   Node *result =
       Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
   Derivate(derivand, symbol, symbolValue);
-  ref = ref->moveTreeOverTree(result);
+  node->moveTreeOverTree(result);
   return true;
 }
 

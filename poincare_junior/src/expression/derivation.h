@@ -1,14 +1,14 @@
 #ifndef POINCARE_EXPRESSION_DERIVATION_H
 #define POINCARE_EXPRESSION_DERIVATION_H
 
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {
 
 class Derivation {
  public:
   // Reduce a derivation Node* inplace.
-  static bool Reduce(EditionReference& ref);
+  static bool Reduce(Node* ref);
   // Push derivand derivation on the pool.
   static void Derivate(const Node* derivand, const Node* symbol,
                        const Node* symbolValue);

@@ -194,14 +194,14 @@ void Polynomial::MultiplicationMonomial(
 static void extractDegreeAndLeadingCoefficient(EditionReference pol,
                                                EditionReference x,
                                                uint8_t* degree,
-                                               EditionReference& coefficient) {
+                                               EditionReference* coefficient) {
   if (pol->type() == BlockType::Polynomial &&
       Comparison::AreEqual(x, Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
-    coefficient = Polynomial::LeadingCoefficient(pol);
+    *coefficient = Polynomial::LeadingCoefficient(pol);
   } else {
     *degree = 0;
-    coefficient = pol;
+    *coefficient = pol;
   }
 }
 
@@ -240,8 +240,8 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   }
   uint8_t degreeA, degreeB;
   EditionReference leadingCoeffA, leadingCoeffB;
-  extractDegreeAndLeadingCoefficient(polA, x, &degreeA, leadingCoeffA);
-  extractDegreeAndLeadingCoefficient(polB, x, &degreeB, leadingCoeffB);
+  extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
+  extractDegreeAndLeadingCoefficient(polB, x, &degreeB, &leadingCoeffB);
   EditionReference currentQuotient(0_e);
   while (degreeA >= degreeB) {
     std::pair<EditionReference, EditionReference> refPair = PseudoDivision(
@@ -264,7 +264,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
         polA, Polynomial::Multiplication(
                   quotient, Polynomial::Multiplication(editionPool->clone(polB),
                                                        xPowerDegAMinusDegB)));
-    extractDegreeAndLeadingCoefficient(polA, x, &degreeA, leadingCoeffA);
+    extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
   }
   polB->removeTree();
   if (isXCloned) {

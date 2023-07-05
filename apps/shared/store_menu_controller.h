@@ -54,8 +54,7 @@ class StoreMenuController : public Escher::ModalViewController,
  private:
   class InnerListController : public ViewController {
    public:
-    InnerListController(StoreMenuController* dataSource,
-                        Escher::SelectableListViewDelegate* delegate = nullptr);
+    InnerListController(StoreMenuController* dataSource);
     const char* title() override {
       return I18n::translate(I18n::Message::DefineVariable);
     }

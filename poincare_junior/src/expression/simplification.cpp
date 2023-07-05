@@ -54,7 +54,7 @@ bool Simplification::SystematicReduce(EditionReference* u) {
   }
 
   for (auto [child, index] : NodeIterator::Children<Editable>(*u)) {
-    modified = SystematicReduce(&child) || modified;
+    modified |= SystematicReduce(&child);
     if (IsUndef(child)) {
       CloneNodeOverTree(u, KUndef);
       return true;
@@ -235,8 +235,7 @@ bool Simplification::SimplifyMultiplication(EditionReference* u) {
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
   Node* child = u->nextNode();
-  Node* next;
-  while ((next = child->nextTree()) < end) {
+  while (child < end) {
     // ... * 0 * ... -> 0
     if (child->type() == BlockType::Zero) {
       NAry::SetNumberOfChildren(*u, n);
@@ -251,15 +250,11 @@ bool Simplification::SimplifyMultiplication(EditionReference* u) {
       n--;
       continue;
     }
-    if (MergeMultiplicationChildren(child, next)) {
+    Node* next = child->nextTree();
+    if (next < end && MergeMultiplicationChildren(child, next)) {
       assert(child->type() != BlockType::Multiplication);
       child->nextTree()->removeTree();
       n--;
-      if (child->type() == BlockType::One && child->nextTree() >= end) {
-        child->removeTree();
-        n--;
-        break;
-      }
     } else {
       child = next;
     }
@@ -366,22 +361,17 @@ bool Simplification::SimplifyAddition(EditionReference* u) {
   int n = u->numberOfChildren();
   EditionReference end = u->nextTree();
   Node* child = u->nextNode();
-  Node* next;
-  while ((next = child->nextTree()) < end) {
+  while (child < end) {
     if (child->type() == BlockType::Zero) {
       child->removeTree();
       n--;
       continue;
     }
-    if (MergeAdditionChildren(child, next)) {
+    Node* next = child->nextTree();
+    if (next < end && MergeAdditionChildren(child, next)) {
       assert(child->type() != BlockType::Addition);
       child->nextTree()->removeTree();
       n--;
-      if (child->type() == BlockType::Zero && child->nextTree() >= end) {
-        child->removeTree();
-        n--;
-        break;
-      }
     } else {
       child = next;
     }

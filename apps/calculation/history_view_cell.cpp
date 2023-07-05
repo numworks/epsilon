@@ -109,9 +109,11 @@ void HistoryViewCell::reloadSubviewHighlight() {
       case HistoryViewCellDataSource::SubviewType::Output:
         m_scrollableOutputView.evenOddCell()->setHighlighted(true);
         return;
-      default:
-        assert(type == HistoryViewCellDataSource::SubviewType::Ellipsis);
+      case HistoryViewCellDataSource::SubviewType::Ellipsis:
         m_ellipsis.setHighlighted(true);
+        return;
+      default:
+        assert(type == HistoryViewCellDataSource::SubviewType::None);
         return;
     }
   }

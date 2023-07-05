@@ -134,7 +134,9 @@ bool Simplification::SimplifyPower(EditionReference* u) {
     return true;
   }
   if (IsRational(v)) {
-    return SimplifyRationalTree(u);
+    MoveTreeOverTree(u, Rational::IntegerPower(v, n));
+    MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
+    return true;
   }
   assert(IsInteger(n));
   // v^0 -> 1
@@ -387,60 +389,6 @@ bool Simplification::SimplifyAddition(EditionReference* u) {
   NAry::SetNumberOfChildren(*u, n);
   NAry::Sanitize(u);
   return true;
-}
-
-bool Simplification::SimplifyRationalTree(EditionReference* u) {
-  if (IsInteger(*u)) {
-    return false;
-  }
-  if (IsRational(*u)) {
-    if (Rational::Denominator(*u).isZero()) {
-      MoveNodeOverTree(u, P_UNDEF());
-      return true;
-    }
-    return false;
-  }
-  if (u->numberOfChildren() == 1) {
-    assert(u->type() == BlockType::Addition ||
-           u->type() == BlockType::Multiplication);
-    MoveTreeOverNode(u, u->childAtIndex(0));
-    return SimplifyRationalTree(u);
-  }
-  if (u->numberOfChildren() == 2) {
-    if (u->type() == BlockType::Addition ||
-        u->type() == BlockType::Multiplication) {
-      EditionReference v = u->childAtIndex(0);
-      SimplifyRationalTree(&v);
-      if (IsUndef(v)) {
-        CloneNodeOverTree(u, KUndef);
-        return true;
-      }
-      EditionReference w = u->childAtIndex(1);
-      SimplifyRationalTree(&w);
-      if (IsUndef(w)) {
-        CloneNodeOverTree(u, KUndef);
-        return true;
-      }
-      MoveTreeOverTree(u, (u->type() == BlockType::Addition
-                               ? Rational::Addition
-                               : Rational::Multiplication)(v, w));
-      MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
-      return true;
-    }
-    if (u->type() == BlockType::Power) {
-      EditionReference v = u->childAtIndex(0);
-      SimplifyRationalTree(&v);
-      if (IsUndef(v)) {
-        CloneNodeOverTree(u, KUndef);
-        return true;
-      }
-      assert(IsInteger(u->childAtIndex(1)));
-      MoveTreeOverTree(u, Rational::IntegerPower(v, u->childAtIndex(1)));
-      MoveTreeOverTree(u, Rational::IrreducibleForm(*u));
-      return true;
-    }
-  }
-  assert(false);
 }
 
 bool Simplification::Simplify(EditionReference* ref) {

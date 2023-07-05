@@ -14,7 +14,7 @@ class HistoryViewCell;
 class HistoryViewCellDataSource {
  public:
   enum class SubviewType { None = 0, Input = 1, Output = 2, Ellipsis = 3 };
-  HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::Output) {}
+  HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::None) {}
   virtual void setSelectedSubviewType(SubviewType subviewType, bool sameCell,
                                       int previousSelectedX = -1,
                                       int previousSelectedY = -1);

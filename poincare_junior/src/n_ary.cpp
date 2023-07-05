@@ -121,8 +121,6 @@ bool NAry::Sort(Node* nary, Comparison::Order order) {
     index++;
   }
   // Sort a list of indexes first
-  /* TODO : This sort is far from being optimized. Calls of childAtIndex are
-   *        very expensive here. A better swap could also be implemented. */
   void* contextArray[] = {&indexes, &children, &order};
   List::Sort(
       [](int i, int j, void* context, int numberOfElements) {

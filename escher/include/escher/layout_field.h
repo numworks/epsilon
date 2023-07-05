@@ -56,7 +56,7 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
                            bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
-  bool isEditingAndShouldFinishEditing(Ion::Events::Event event);
+  bool shouldFinishEditing(Ion::Events::Event event);
   void didBecomeFirstResponder() override;
 
   /* View */

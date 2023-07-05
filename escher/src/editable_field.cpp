@@ -20,4 +20,5 @@ bool EditableField::handleBoxEvent(Ion::Events::Event event) {
   box->open();
   return true;
 }
+
 }  // namespace Escher

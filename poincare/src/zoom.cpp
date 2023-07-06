@@ -603,7 +603,7 @@ bool Zoom::fitWithSolverHelper(float start, float end,
                                Solver<float>::HoneResult hone, bool vertical,
                                Solver<double>::FunctionEvaluation fDouble) {
   constexpr int k_maxPointsOnOneSide = 20;
-  constexpr int k_maxPointsIfInfinite = 5;
+  constexpr int k_thresholdForSavedRange = 3;
 
   /* Search for points of interest in one direction, up to a certain number.
    * - k_maxPointsOnOneSide is the absolute maximum number of points we are
@@ -611,13 +611,17 @@ bool Zoom::fitWithSolverHelper(float start, float end,
    *   polynomial.
    * - if we find more the k_maxPointsOnOneSide points, we assume that there
    *   are an infinite number of points. As such there is no need to display
-   *   all of them, and we only register up to k_maxPointsIfInfinite. This
-   *   trick improves the display of periodic function, which would otherwise
-   *   appear cramped. */
+   *   all of them, and we backtrack to a savedRange. This trick improves the
+   *   display of periodic function, which would otherwise appear cramped.
+   *   The savedRange is created when either the number of roots, or the number
+   *   of other points of interest cross a threshold. Roots and other interests
+   *   are splitted so that cos(x) and cos(x)+2 have the same range. */
 
   Solver<float> solver(start, end);
-  Range2D tempRange;
-  int n = 0;
+  Range2D savedRange;
+  bool savedRangeIsInit = false;
+  int nRoots = 0;
+  int nOthers = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
                            .x())) {  // assignment in condition
@@ -630,11 +634,18 @@ bool Zoom::fitWithSolverHelper(float start, float end,
       return false;
     }
     privateFitPoint(p, vertical);
-    n++;
-    if (n == k_maxPointsIfInfinite) {
-      tempRange = m_interestingRange;
-    } else if (n >= k_maxPointsOnOneSide) {
-      m_interestingRange = tempRange;
+    if (solver.lastInterest() == Solver<float>::Interest::Root) {
+      nRoots++;
+    } else {
+      nOthers++;
+    }
+    if (!savedRangeIsInit && (nRoots >= k_thresholdForSavedRange ||
+                              nOthers >= k_thresholdForSavedRange)) {
+      savedRangeIsInit = true;
+      savedRange = m_interestingRange;
+    } else if (nRoots + nOthers >= k_maxPointsOnOneSide) {
+      assert(savedRangeIsInit);
+      m_interestingRange = savedRange;
       return true;
     }
   }

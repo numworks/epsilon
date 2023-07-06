@@ -53,11 +53,6 @@ class HistoryController : public Escher::ViewController,
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   bool calculationAtIndexToggles(int index);
-  void historyViewCellDidChangeSelection(HistoryViewCell** cell,
-                                         HistoryViewCell** previousCell,
-                                         int previousSelectedRow,
-                                         SubviewType type,
-                                         SubviewType previousType) override;
 
   constexpr static int k_maxNumberOfDisplayedRows = 5;
 

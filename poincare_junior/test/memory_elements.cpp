@@ -477,9 +477,6 @@ QUIZ_CASE(pcj_edition_node_constructor) {
 QUIZ_CASE(pcj_node_iterator) {
   constexpr Tree k_simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   EditionReference mult(k_simpleExpression);
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  size_t numberOfChildren = mult.numberOfChildren();
-#endif
   Tree a = KAdd(1_e, 2_e);
   Tree b = 3_e;
   Tree c = 4_e;
@@ -487,20 +484,10 @@ QUIZ_CASE(pcj_node_iterator) {
 
   // Scan children forward
   for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult)) {
+       NodeIterator::Children<NoEditable>(mult)) {
     assert_trees_are_equal(std::get<const Node*>(indexedNode),
                            children[std::get<int>(indexedNode)]);
   }
-
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  // Scan children backward
-  for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Backward, NoEditable>(mult)) {
-    assert_trees_are_equal(
-        std::get<const Node*>(indexedNode),
-        children[numberOfChildren - 1 - std::get<int>(indexedNode)]);
-  }
-#endif
 
   // Edit children forward
   Tree e = 6_e;
@@ -508,73 +495,32 @@ QUIZ_CASE(pcj_node_iterator) {
   Tree g = 8_e;
   const Node* newChildren[] = {e, f, g};
   for (std::pair<EditionReference, int> indexedRef :
-       NodeIterator::Children<Forward, Editable>(mult)) {
+       NodeIterator::Children<Editable>(mult)) {
     std::get<EditionReference>(indexedRef)
         .cloneTreeOverTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
   for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult)) {
+       NodeIterator::Children<NoEditable>(mult)) {
     assert_trees_are_equal(std::get<const Node*>(indexedNode),
                            newChildren[std::get<int>(indexedNode)]);
   }
 
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  // Edit children backward
-  for (std::pair<EditionReference, int> indexedRef :
-       NodeIterator::Children<Backward, Editable>(mult)) {
-    std::get<EditionReference>(indexedRef)
-        .replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
-  }
-  // Check edition
-  for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult)) {
-    assert_trees_are_equal(
-        std::get<const Node*>(indexedNode),
-        newChildren[numberOfChildren - 1 - std::get<int>(indexedNode)]);
-  }
-#endif
-
   constexpr Tree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
   EditionReference mult2(k_secondSimpleExpression);
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  size_t numberOfChildren2 = mult2.numberOfChildren();
-#endif
   const Node* children2[] = {a, b};
   // Scan two nodes children forward
   for (std::pair<std::array<const Node*, 2>, int> indexedArray :
-       MultipleNodesIterator::Children<Forward, NoEditable, 2>(
+       MultipleNodesIterator::Children<NoEditable, 2>(
            std::array<const Node*, 2>({mult, mult2}))) {
     std::array<const Node*, 2> childrenPair =
         std::get<std::array<const Node*, 2>>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
 
-    assert_trees_are_equal(childrenPair[0],
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-                           newChildren[numberOfChildren - 1 - pairIndex]);
-#else
-                           newChildren[pairIndex]);
-#endif
+    assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
     assert_trees_are_equal(childrenPair[1], children2[pairIndex]);
   }
-
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  // Scan two nodes children backward
-  for (std::pair<std::array<Node*, 2>, int> indexedArray :
-       MultipleNodesIterator::Children<Backward, NoEditable, 2>(
-           std::array<Node*, 2>({mult, mult2}))) {
-    std::array<Node*, 2> childrenPair =
-        std::get<std::array<Node*, 2>>(indexedArray);
-    int pairIndex = std::get<int>(indexedArray);
-    assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
-    assert_trees_are_equal(childrenPair[1],
-                           children2[numberOfChildren2 - 1 - pairIndex]);
-  }
-
-  Tree n6 = 6_e;
-#else
   Tree n6 = 8_e;
-#endif
   Tree n10 = 10_e;
   Tree n11 = 11_e;
   Tree n13 = 13_e;
@@ -583,7 +529,7 @@ QUIZ_CASE(pcj_node_iterator) {
   const Node* newChildren2[] = {n13, n14};
   // Edit two nodes children forward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs :
-       MultipleNodesIterator::Children<Forward, Editable, 2>(
+       MultipleNodesIterator::Children<Editable, 2>(
            std::array<EditionReference, 2>({mult, mult2}))) {
     std::array<EditionReference, 2> childrenPair =
         std::get<std::array<EditionReference, 2>>(indexedRefs);
@@ -594,41 +540,15 @@ QUIZ_CASE(pcj_node_iterator) {
   // Check edition
   const Node* children1[] = {n10, n11, n6};
   for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult)) {
+       NodeIterator::Children<NoEditable>(mult)) {
     assert_trees_are_equal(std::get<const Node*>(indexedNode),
                            children1[std::get<int>(indexedNode)]);
   }
   for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult2)) {
+       NodeIterator::Children<NoEditable>(mult2)) {
     assert_trees_are_equal(std::get<const Node*>(indexedNode),
                            newChildren2[std::get<int>(indexedNode)]);
   }
-
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  // Edit two nodes children backward
-  for (std::pair<std::array<EditionReference, 2>, int> indexedRefs :
-       MultipleNodesIterator::Children<Backward, Editable, 2>(
-           std::array<EditionReference, 2>({mult, mult2}))) {
-    std::array<EditionReference, 2> childrenPair =
-        std::get<std::array<EditionReference, 2>>(indexedRefs);
-    int pairIndex = std::get<int>(indexedRefs);
-    childrenPair[0].replaceTreeByTree(newChildren1[pairIndex]);
-    childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
-  }
-  // Check edition
-  Node* editedChildren1[] = {n10, n11, n10};
-  for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<const Node*>(indexedNode),
-                           editedChildren1[std::get<int>(indexedNode)]);
-  }
-  for (const std::pair<const Node*, int> indexedNode :
-       NodeIterator::Children<Forward, NoEditable>(mult2)) {
-    assert_trees_are_equal(
-        std::get<const Node*>(indexedNode),
-        newChildren2[numberOfChildren2 - 1 - std::get<int>(indexedNode)]);
-  }
-#endif
 }
 
 QUIZ_CASE(pcj_node) {

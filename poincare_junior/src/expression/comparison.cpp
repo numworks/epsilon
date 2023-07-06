@@ -58,17 +58,12 @@ int Comparison::Compare(const Node* node0, const Node* node1, Order order) {
       return CompareConstants(node0, node1);
     case BlockType::Polynomial:
       return ComparePolynomial(node0, node1);
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-    case BlockType::Addition:
-    case BlockType::Multiplication:
-      return CompareChildren(node0, node1, ScanDirection::Backward);
-#endif
     default:
       /* TODO : Either sort Addition/Multiplication children backward or restore
        *        backward scan direction in CompareChildren so that:
        *        (2 + 3) < (1 + 4) */
       // f(0, 1, 4) < f(0, 2, 3)
-      return CompareChildren(node0, node1, ScanDirection::Forward);
+      return CompareChildren(node0, node1);
   }
 }
 
@@ -112,8 +107,7 @@ int Comparison::CompareConstants(const Node* node0, const Node* node1) {
 }
 
 int Comparison::ComparePolynomial(const Node* node0, const Node* node1) {
-  int childrenComparison =
-      CompareChildren(node0, node1, ScanDirection::Forward);
+  int childrenComparison = CompareChildren(node0, node1);
   if (childrenComparison != 0) {
     return childrenComparison;
   }
@@ -129,11 +123,9 @@ int Comparison::ComparePolynomial(const Node* node0, const Node* node1) {
   return 0;
 }
 
-template <typename ScanDirection>
 int PrivateCompareChildren(const Node* node0, const Node* node1) {
   for (std::pair<std::array<const Node*, 2>, int> indexedNodes :
-       MultipleNodesIterator::Children<ScanDirection, NoEditable, 2>(
-           {node0, node1})) {
+       MultipleNodesIterator::Children<NoEditable, 2>({node0, node1})) {
     const Node* child0 = std::get<std::array<const Node*, 2>>(indexedNodes)[0];
     const Node* child1 = std::get<std::array<const Node*, 2>>(indexedNodes)[1];
     int order = Comparison::Compare(child0, child1);
@@ -144,19 +136,10 @@ int PrivateCompareChildren(const Node* node0, const Node* node1) {
   return 0;
 }
 
-int Comparison::CompareChildren(const Node* node0, const Node* node1,
-                                ScanDirection direction) {
+int Comparison::CompareChildren(const Node* node0, const Node* node1) {
   int comparison;
-  if (direction == ScanDirection::Forward) {
-    comparison = PrivateCompareChildren<Forward>(node0, node1);
-  } else {
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-    comparison = PrivateCompareChildren<Backward>(node0, node1);
-#else
-    assert(false);
-#endif
-  }
-  if (comparison) {
+  comparison = PrivateCompareChildren(node0, node1);
+  if (comparison != 0) {
     return comparison;
   }
   int numberOfChildren0 = node0->numberOfChildren();

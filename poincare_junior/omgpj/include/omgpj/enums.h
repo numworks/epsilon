@@ -3,14 +3,6 @@
 
 #include <stdint.h>
 
-enum class ScanDirection {
-  Forward
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-  ,
-  Backward
-#endif
-};
-
 enum class NonStrictSign : int8_t { Positive = 1, Negative = -1 };
 
 enum class StrictSign : int8_t { Positive = 1, Null = 0, Negative = -1 };

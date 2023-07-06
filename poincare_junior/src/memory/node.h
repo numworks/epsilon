@@ -104,19 +104,39 @@ class Node {
 
   EditionReference clone() const;
 
-  // Edition
-  void moveNodeAfterNode(Node* n) { moveAt(n, false, false); }
-  void moveTreeAfterNode(Node* n) { moveAt(n, false, true); }
+  // Node motions
+
+  /*  u     v      u.moveBefore(v)     u     v
+   *  |     |             =>           |     |
+   *  aaaabbcccdd                   cccaaaabbdd
+   */
   void moveNodeBeforeNode(Node* n) { moveAt(n, true, false); }
   void moveTreeBeforeNode(Node* n) { moveAt(n, true, true); }
-  void moveNodeAtNode(Node* n) { moveAt(n, true, false, true); }
-  void moveTreeAtNode(Node* n) { moveAt(n, true, true, true); }
-  void cloneNodeAfterNode(const Node* n) { cloneAt(n, false, false); }
-  void cloneTreeAfterNode(const Node* n) { cloneAt(n, false, true); }
   void cloneNodeBeforeNode(const Node* n) { cloneAt(n, true, false); }
   void cloneTreeBeforeNode(const Node* n) { cloneAt(n, true, true); }
+
+  /*  u     v        u.moveAt(v)    u        v
+   *  |     |            =>         |        |
+   *  aaaabbcccdd                   cccaaaabbdd
+   */
+  void moveNodeAtNode(Node* n) { moveAt(n, true, false, true); }
+  void moveTreeAtNode(Node* n) { moveAt(n, true, true, true); }
   void cloneNodeAtNode(const Node* n) { cloneAt(n, true, false, true); }
   void cloneTreeAtNode(const Node* n) { cloneAt(n, true, true, true); }
+
+  /*  u     v                       u        v
+   *  |     |      u.moveAfter(v)   |        |
+   *  aaaabbcccdd        =>         aaaacccbbdd
+   */
+  void moveNodeAfterNode(Node* n) { moveAt(n, false, false); }
+  void moveTreeAfterNode(Node* n) { moveAt(n, false, true); }
+  void cloneNodeAfterNode(const Node* n) { cloneAt(n, false, false); }
+  void cloneTreeAfterNode(const Node* n) { cloneAt(n, false, true); }
+
+  /*  u     v                       u    v
+   *  |     |       u.moveOver(v)   |    |
+   *  aaaabbcccdd         =>        cccbbdd
+   */
   Node* moveNodeOverNode(Node* n) { return moveOver(n, false, false); }
   Node* moveTreeOverNode(Node* n) { return moveOver(n, false, true); }
   Node* moveNodeOverTree(Node* n) { return moveOver(n, true, false); }
@@ -126,11 +146,19 @@ class Node {
   Node* cloneNodeOverTree(const Node* n) { return cloneOver(n, true, false); }
   Node* cloneTreeOverTree(const Node* n) { return cloneOver(n, true, true); }
 
-  // Move the node/tree to the end of the pool
-  Node* detachNode() { return detach(false); };
-  Node* detachTree() { return detach(true); };
+  /*    u   v                     u+v
+   *    |   |       u.remove()     |
+   *  aabbbbcccdd      =>        aacccdd
+   */
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
+
+  /*    u   v                     u+v      r
+   *    |   |       u.detach()     |       |
+   *  aabbbbcccdd      =>        aacccdd...bbbb
+   */
+  Node* detachNode() { return detach(false); };
+  Node* detachTree() { return detach(true); };
 
   bool matchAndReplace(const Node* pattern, const Node* structure);
 

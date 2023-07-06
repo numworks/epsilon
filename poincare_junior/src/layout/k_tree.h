@@ -12,18 +12,9 @@ consteval auto KRackL(Args... args) {
   return KNAry<BlockType::RackLayout>(args...);
 }
 
-template <class... Args>
-consteval auto KFracL(Args... args) {
-  return KBinary<BlockType::FractionLayout>(args...);
-}
-template <class... Args>
-consteval auto KVertOffL(Args... args) {
-  return KUnary<BlockType::VerticalOffsetLayout>(args...);
-}
-template <class... Args>
-consteval auto KParenthesisL(Args... args) {
-  return KUnary<BlockType::ParenthesisLayout>(args...);
-}
+constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
+constexpr auto KVertOffL = KUnary<BlockType::VerticalOffsetLayout>();
+constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout>();
 
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint

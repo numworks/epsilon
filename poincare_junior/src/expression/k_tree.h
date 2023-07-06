@@ -11,100 +11,26 @@ namespace PoincareJ {
 
 // Constructors
 
-template <class... Args>
-consteval auto KAbs(Args... args) {
-  return KUnary<BlockType::Abs>(args...);
-}
+constexpr auto KAbs = KUnary<BlockType::Abs>();
+constexpr auto KCos = KUnary<BlockType::Cosine>();
+constexpr auto KSin = KUnary<BlockType::Sine>();
+constexpr auto KTan = KUnary<BlockType::Tangent>();
+constexpr auto KACos = KUnary<BlockType::ArcCosine>();
+constexpr auto KASin = KUnary<BlockType::ArcSine>();
+constexpr auto KATan = KUnary<BlockType::ArcTangent>();
+constexpr auto KLog = KUnary<BlockType::Log>();
+constexpr auto KLn = KUnary<BlockType::Ln>();
+constexpr auto KExp = KUnary<BlockType::Exponential>();
+constexpr auto KFact = KUnary<BlockType::Factorial>();
+constexpr auto KSqrt = KUnary<BlockType::SquareRoot>();
 
-template <class... Args>
-consteval auto KCos(Args... args) {
-  return KUnary<BlockType::Cosine>(args...);
-}
-
-template <class... Args>
-consteval auto KSin(Args... args) {
-  return KUnary<BlockType::Sine>(args...);
-}
-
-template <class... Args>
-consteval auto KTan(Args... args) {
-  return KUnary<BlockType::Tangent>(args...);
-}
-
-template <class... Args>
-consteval auto KACos(Args... args) {
-  return KUnary<BlockType::ArcCosine>(args...);
-}
-
-template <class... Args>
-consteval auto KASin(Args... args) {
-  return KUnary<BlockType::ArcSine>(args...);
-}
-
-template <class... Args>
-consteval auto KATan(Args... args) {
-  return KUnary<BlockType::ArcTangent>(args...);
-}
-
-template <class... Args>
-consteval auto KLog(Args... args) {
-  return KUnary<BlockType::Log>(args...);
-}
-
-template <class... Args>
-consteval auto KLn(Args... args) {
-  return KUnary<BlockType::Ln>(args...);
-}
-
-template <class... Args>
-consteval auto KExp(Args... args) {
-  return KUnary<BlockType::Exponential>(args...);
-}
-
-template <class... Args>
-consteval auto KFact(Args... args) {
-  return KUnary<BlockType::Factorial>(args...);
-}
-
-template <class... Args>
-consteval auto KSqrt(Args... args) {
-  return KUnary<BlockType::SquareRoot>(args...);
-}
-
-template <class... Args>
-consteval auto KLogarithm(Args... args) {
-  return KBinary<BlockType::Logarithm>(args...);
-}
-
-template <class... Args>
-consteval auto KTrig(Args... args) {
-  return KBinary<BlockType::Trig>(args...);
-}
-
-template <class... Args>
-consteval auto KTrigDiff(Args... args) {
-  return KBinary<BlockType::TrigDiff>(args...);
-}
-
-template <class... Args>
-consteval auto KDiv(Args... args) {
-  return KBinary<BlockType::Division>(args...);
-}
-
-template <class... Args>
-consteval auto KSub(Args... args) {
-  return KBinary<BlockType::Subtraction>(args...);
-}
-
-template <class... Args>
-consteval auto KPow(Args... args) {
-  return KBinary<BlockType::Power>(args...);
-}
-
-template <class... Args>
-consteval auto KDiff(Args... args) {
-  return KTrinary<BlockType::Derivative>(args...);
-}
+constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();
+constexpr auto KTrig = KBinary<BlockType::Trig>();
+constexpr auto KTrigDiff = KBinary<BlockType::TrigDiff>();
+constexpr auto KDiv = KBinary<BlockType::Division>();
+constexpr auto KSub = KBinary<BlockType::Subtraction>();
+constexpr auto KPow = KBinary<BlockType::Power>();
+constexpr auto KDiff = KTrinary<BlockType::Derivative>();
 
 template <class... Args>
 consteval auto KAdd(Args... args) {

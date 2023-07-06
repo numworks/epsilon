@@ -87,36 +87,59 @@ struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 
 // Helpers
 
-template <Block Tag, Block... B1>
-consteval auto KUnary(KTree<B1...>) {
-  return KTree<Tag, B1...>();
-}
+template <Block Tag>
+struct KUnary : public KTree<Tag> {
+  template <Block... B1>
+  consteval auto operator()(KTree<B1...>) const {
+    return KTree<Tag, B1...>();
+  }
 
-template <Block Tag, TreeCompatibleConcept A>
-consteval auto KUnary(A a) {
-  return KUnary<Tag>(KTree(a));
-}
+  template <TreeCompatibleConcept A>
+  consteval auto operator()(A a) const {
+    return KUnary<Tag>()(KTree(a));
+  }
 
-template <Block Tag, Block... B1, Block... B2>
-consteval auto KBinary(KTree<B1...>, KTree<B2...>) {
-  return KTree<Tag, B1..., B2...>();
-}
+  /* The following dummy constructor is here to make the error message clearer
+   * when someone tries to use a Tree* inside a KTree constructor.  Without
+   * these you get "no matching function for call to 'Unary'" and details on why
+   * each candidate concept is unmatched.  With these constructors, they match
+   * and then you get a "call to consteval function ... is not a constant
+   * expression" since they are marked consteval. */
+  consteval const Tree* operator()(Tree* a) const { return KTree<>(); }
+};
 
-template <Block Tag, Block... B1, Block... B2, Block... B3>
-consteval auto KTrinary(KTree<B1...>, KTree<B2...>, KTree<B3...>) {
-  return KTree<Tag, B1..., B2..., B3...>();
-}
+template <Block Tag>
+struct KBinary : public KTree<Tag> {
+  template <Block... B1, Block... B2>
+  consteval auto operator()(KTree<B1...>, KTree<B2...>) const {
+    return KTree<Tag, B1..., B2...>();
+  }
 
-template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B>
-consteval auto KBinary(A a, B b) {
-  return KBinary<Tag>(KTree(a), KTree(b));
-}
+  template <TreeCompatibleConcept A, TreeCompatibleConcept B>
+  consteval auto operator()(A a, B b) const {
+    return KBinary<Tag>()(KTree(a), KTree(b));
+  }
 
-template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B,
-          TreeCompatibleConcept C>
-consteval auto KTrinary(A a, B b, C c) {
-  return KTrinary<Tag>(KTree(a), KTree(b), KTree(c));
-}
+  consteval const Tree* operator()(Tree* a, Tree* b) const { return KTree<>(); }
+};
+
+template <Block Tag>
+struct KTrinary : public KTree<Tag> {
+  template <Block... B1, Block... B2, Block... B3>
+  consteval auto operator()(KTree<B1...>, KTree<B2...>, KTree<B3...>) const {
+    return KTree<Tag, B1..., B2..., B3...>();
+  }
+
+  template <TreeCompatibleConcept A, TreeCompatibleConcept B,
+            TreeCompatibleConcept C>
+  consteval auto operator()(A a, B b, C c) const {
+    return KTrinary<Tag>()(KTree(a), KTree(b), KTree(c));
+  }
+
+  consteval const Tree* operator()(Tree* a, Tree* b, Tree* c) const {
+    return KTree<>();
+  }
+};
 
 template <Block Tag, TreeConcept... CTS>
 static consteval auto __NAry(CTS...) {
@@ -126,29 +149,6 @@ static consteval auto __NAry(CTS...) {
 template <Block Tag, TreeCompatibleConcept... CTS>
 consteval auto KNAry(CTS... args) {
   return __NAry<Tag>(KTree(args)...);
-}
-
-/* The following dummy constructors are here to make the error message clearer
- * when someone tries to use a Tree* inside a KTree constructor.
- * Without these you get "no matching function for call to 'Unary'" and details
- * on why each candidate concept is unmatched.
- * With these constructors, they match and then you get a "call to consteval
- * function ... is not a constant expression" since they are marked consteval.
- */
-
-template <Block Tag>
-consteval const Tree* KUnary(Tree* a) {
-  return KTree<>();
-}
-
-template <Block Tag>
-consteval const Tree* KBinary(Tree* a, Tree* b) {
-  return KTree<>();
-}
-
-template <Block Tag>
-consteval const Tree* KTrinary(Tree* a, Tree* b, Tree* c) {
-  return KTree<>();
 }
 
 template <class... Args>

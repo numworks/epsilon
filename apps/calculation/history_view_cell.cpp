@@ -108,7 +108,7 @@ Layout HistoryViewCell::layout() const {
 }
 
 void HistoryViewCell::reloadScroll() {
-  m_inputView.reloadScroll();
+  m_inputView.resetScroll();
   m_scrollableOutputView.reloadScroll();
 }
 

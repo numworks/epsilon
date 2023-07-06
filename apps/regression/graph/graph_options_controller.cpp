@@ -67,7 +67,7 @@ void GraphOptionsController::viewWillAppear() {
   m_r2Cell.setVisible(displayR2Cell());
   m_residualPlotCell.setVisible(displayResidualPlotCell());
   // m_regressionEquationCell may have changed size
-  m_regressionEquationCell.label()->reloadScroll();
+  m_regressionEquationCell.label()->resetScroll();
   resetMemoization();
   m_selectableListView.reloadData();
 }

@@ -68,7 +68,7 @@ void ConsoleLineCell::setHighlighted(bool highlight) {
 void ConsoleLineCell::reloadCell() {
   layoutSubviews();
   HighlightCell::reloadCell();
-  m_scrollableView.reloadScroll();
+  m_scrollableView.resetScroll();
 }
 
 int ConsoleLineCell::numberOfSubviews() const {

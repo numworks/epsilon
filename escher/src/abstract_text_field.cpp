@@ -358,7 +358,7 @@ void AbstractTextField::setText(const char *text) {
   if (contentView()->isStalled()) {
     return;
   }
-  reloadScroll();
+  resetScroll();
   contentView()->setText(text);
   if (contentView()->text() == contentView()->editedText()) {
     /* Set the cursor location here and not in ContentView::setText so that
@@ -390,7 +390,7 @@ bool AbstractTextField::privateHandleEventWhileEditing(
       // Clean draft text for next use
       reinitDraftTextBuffer();
       resetSelection();
-      reloadScroll();
+      resetScroll();
       return true;
     }
     setEditing(true);
@@ -417,7 +417,7 @@ bool AbstractTextField::privateHandleEventWhileEditing(
     resetSelection();
     setEditing(false);
     m_delegate->textFieldDidAbortEditing(this);
-    reloadScroll();
+    resetScroll();
     return true;
   }
 
@@ -676,7 +676,7 @@ void AbstractTextField::removeWholeText() {
   resetSelection();
   markWholeFrameAsDirty();
   layoutSubviews();
-  reloadScroll();
+  resetScroll();
 }
 
 bool AbstractTextField::storeInClipboard() const {

@@ -32,7 +32,6 @@ QUIZ_CASE(pcj_integer_constructor) {
   IntegerHandler minusOne(-1);
   IntegerHandler a(12);
   IntegerHandler b(-23);
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(1232424242));
   editionPool->push<BlockType::IntegerNegBig>(static_cast<uint64_t>(23424));
@@ -308,7 +307,6 @@ QUIZ_CASE(pcj_integer_gcd) {
 static inline void assert_might_overflow(ActionWithContext action,
                                          bool overflow) {
   CachePool* cachePool = CachePool::sharedCachePool();
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   const Node* tree = cachePool->nodeForIdentifier(
       editionPool->executeAndCache(action, nullptr, nullptr));
   quiz_assert((tree == nullptr) == overflow);

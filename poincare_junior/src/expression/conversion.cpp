@@ -132,54 +132,53 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
 
 void Expression::PushPoincareExpression(Poincare::Expression exp) {
   using OT = Poincare::ExpressionNode::Type;
-  EditionPool *pool = EditionPool::sharedEditionPool();
   switch (exp.type()) {
     case OT::Parenthesis:
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::AbsoluteValue:
-      pool->pushBlock(BlockType::Abs);
+      editionPool->pushBlock(BlockType::Abs);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Opposite:
-      pool->push<BlockType::Multiplication>(2);
-      pool->pushBlock(BlockType::MinusOne);
+      editionPool->push<BlockType::Multiplication>(2);
+      editionPool->pushBlock(BlockType::MinusOne);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::SquareRoot:
-      pool->pushBlock(BlockType::SquareRoot);
+      editionPool->pushBlock(BlockType::SquareRoot);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Cosine:
-      pool->pushBlock(BlockType::Cosine);
+      editionPool->pushBlock(BlockType::Cosine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Sine:
-      pool->pushBlock(BlockType::Sine);
+      editionPool->pushBlock(BlockType::Sine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Tangent:
-      pool->pushBlock(BlockType::Tangent);
+      editionPool->pushBlock(BlockType::Tangent);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcCosine:
-      pool->pushBlock(BlockType::ArcCosine);
+      editionPool->pushBlock(BlockType::ArcCosine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcSine:
-      pool->pushBlock(BlockType::ArcSine);
+      editionPool->pushBlock(BlockType::ArcSine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcTangent:
-      pool->pushBlock(BlockType::ArcTangent);
+      editionPool->pushBlock(BlockType::ArcTangent);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::NaperianLogarithm:
-      pool->pushBlock(BlockType::Ln);
+      editionPool->pushBlock(BlockType::Ln);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
-        pool->pushBlock(BlockType::Logarithm);
+        editionPool->pushBlock(BlockType::Logarithm);
         PushPoincareExpression(exp.childAtIndex(0));
         PushPoincareExpression(exp.childAtIndex(1));
       } else {
         assert(exp.numberOfChildren() == 1);
-        pool->pushBlock(BlockType::Log);
+        editionPool->pushBlock(BlockType::Log);
         PushPoincareExpression(exp.childAtIndex(0));
       }
       return;
     case OT::Derivative:
-      pool->pushBlock(BlockType::Derivative);
+      editionPool->pushBlock(BlockType::Derivative);
       PushPoincareExpression(exp.childAtIndex(0));
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
@@ -191,19 +190,19 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Power:
       switch (exp.type()) {
         case OT::Addition:
-          pool->push<BlockType::Addition>(exp.numberOfChildren());
+          editionPool->push<BlockType::Addition>(exp.numberOfChildren());
           break;
         case OT::Multiplication:
-          pool->push<BlockType::Multiplication>(exp.numberOfChildren());
+          editionPool->push<BlockType::Multiplication>(exp.numberOfChildren());
           break;
         case OT::Subtraction:
-          pool->pushBlock(BlockType::Subtraction);
+          editionPool->pushBlock(BlockType::Subtraction);
           break;
         case OT::Division:
-          pool->pushBlock(BlockType::Division);
+          editionPool->pushBlock(BlockType::Division);
           break;
         case OT::Power:
-          pool->pushBlock(BlockType::Power);
+          editionPool->pushBlock(BlockType::Power);
           break;
       }
       for (int i = 0; i < exp.numberOfChildren(); i++) {
@@ -225,32 +224,32 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     }
     case OT::Float: {
       Poincare::Float<float> f = static_cast<Poincare::Float<float> &>(exp);
-      pool->push<BlockType::Float>(f.value());
+      editionPool->push<BlockType::Float>(f.value());
       return;
     }
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
-      pool->push<BlockType::UserSymbol>(s.name(), strlen(s.name()));
+      editionPool->push<BlockType::UserSymbol>(s.name(), strlen(s.name()));
       return;
     }
     case OT::ConstantMaths: {
       Poincare::Constant c = static_cast<Poincare::Constant &>(exp);
       if (c.isExponentialE()) {
-        pool->push<BlockType::Constant>(u'e');
+        editionPool->push<BlockType::Constant>(u'e');
       } else if (c.isPi()) {
-        pool->push<BlockType::Constant>(u'π');
+        editionPool->push<BlockType::Constant>(u'π');
       } else {
-        pool->pushBlock(BlockType::Undefined);
+        editionPool->pushBlock(BlockType::Undefined);
       }
       return;
     }
     default:
-      pool->pushBlock(BlockType::Undefined);
+      editionPool->pushBlock(BlockType::Undefined);
   }
 }
 
 Node *Expression::FromPoincareExpression(Poincare::Expression exp) {
-  Node *node = Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
+  Node *node = Node::FromBlocks(editionPool->lastBlock());
   PushPoincareExpression(exp);
   return node;
 }

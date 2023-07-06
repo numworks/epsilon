@@ -17,7 +17,6 @@ void assert_no_match(const Node* source, const Node* pattern) {
 // TODO : Factorize more tests with assert_match_and_create
 void assert_match_and_create(const Node* source, const Node* pattern,
                              const Node* structure, const Node* output) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   int numberOfTrees = editionPool->numberOfTrees();
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(pattern, source, &ctx));
@@ -29,7 +28,7 @@ void assert_match_and_create(const Node* source, const Node* pattern,
   createdRef->removeTree();
   // Also test with matchAndReplace
   EditionReference replacedSourceClone =
-      EditionReference(EditionPool::sharedEditionPool()->clone(source));
+      EditionReference(editionPool->clone(source));
   replacedSourceClone->matchAndReplace(pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();
@@ -87,7 +86,6 @@ QUIZ_CASE(pcj_match) {
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   const Node* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>());
   const Node* s = KMult(2_e, KPlaceholder<A>());
   EditionReference ref(editionPool->push<BlockType::Addition>(2));

@@ -23,8 +23,7 @@ void assert_derivation_is(const Node *expression, const Node *expected,
   if (!symbolValue) {
     symbolValue = "y"_e;
   }
-  Node *result =
-      Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
+  Node *result = Node::FromBlocks(editionPool->lastBlock());
   Derivation::Derivate(expression, symbol, symbolValue);
   EditionReference simplifiedResult(result);
   Simplification::Simplify(simplifiedResult);

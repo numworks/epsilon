@@ -8,8 +8,6 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
-
   EditionReference rackLayout1 = editionPool->push<BlockType::RackLayout>(3);
   editionPool->push<BlockType::CodePointLayout, CodePoint>('x');
   editionPool->push<BlockType::VerticalOffsetLayout>();

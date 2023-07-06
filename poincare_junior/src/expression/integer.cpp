@@ -106,7 +106,6 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
 }
 
 Node *IntegerHandler::pushOnEditionPool() {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (isZero()) {
     return editionPool->push<BlockType::Zero>();
   }
@@ -136,7 +135,6 @@ Node *IntegerHandler::pushOnEditionPool() {
 }
 
 void IntegerHandler::pushDigitsOnEditionPool() {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
     editionPool->pushBlock(ValueBlock(digit(i)));

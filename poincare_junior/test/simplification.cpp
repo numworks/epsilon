@@ -202,7 +202,7 @@ void simplifies_to(const char* input, const char* output) {
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();
-  assert(EditionPool::sharedEditionPool()->numberOfTrees() == 0);
+  assert(editionPool->numberOfTrees() == 0);
   bool b = strcmp(output, buffer) == 0;
   if (!b) {
 #ifndef PLATFORM_DEVICE
@@ -211,7 +211,7 @@ void simplifies_to(const char* input, const char* output) {
 #endif
   }
   quiz_assert(b);
-  EditionPool::sharedEditionPool()->flush();
+  editionPool->flush();
 }
 
 QUIZ_CASE(pcj_basic_simplification) {

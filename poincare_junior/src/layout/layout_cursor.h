@@ -212,7 +212,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     }
 
     const Node* rootNode() const override {
-      return Node::FromBlocks(EditionPool::sharedEditionPool()->firstBlock());
+      return Node::FromBlocks(editionPool->firstBlock());
     }
     const Node* cursorNode() const override { return m_cursorReference; }
 

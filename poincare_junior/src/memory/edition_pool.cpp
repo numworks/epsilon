@@ -14,6 +14,8 @@ namespace PoincareJ {
 
 // ReferenceTable
 
+EditionPool *editionPool = CachePool::sharedCachePool()->editionPool();
+
 Node *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   Node *n = Pool::ReferenceTable::nodeForIdentifier(id);
   if (!m_pool->contains(n->block()) && n->block() != m_pool->lastBlock()) {
@@ -55,10 +57,6 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
 }
 
 // EditionTable
-
-EditionPool *EditionPool::sharedEditionPool() {
-  return CachePool::sharedCachePool()->editionPool();
-}
 
 void EditionPool::reinit(TypeBlock *firstBlock, size_t size) {
   m_firstBlock = firstBlock;

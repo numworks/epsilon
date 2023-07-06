@@ -18,7 +18,6 @@ inline EditionReference createSimpleExpression() {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;
 #endif
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   EditionReference multiplication(
       editionPool->push<BlockType::Multiplication>(3));
   editionPool->push<BlockType::Addition>(2);

@@ -71,7 +71,7 @@ void Log(LoggerType type, const char* event, void* blockAddress,
     pool = CachePool::sharedCachePool();
     format = Pool::LogFormat::Tree;
   } else {
-    pool = EditionPool::sharedEditionPool();
+    pool = editionPool;
     format = Pool::LogFormat::Flat;
   }
   pool->log(Logger(type), format, true, 2);

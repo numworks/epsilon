@@ -53,7 +53,6 @@ QUIZ_CASE(pcj_edition_pool) {
 
 QUIZ_CASE(pcj_edition_reference) {
   CachePool::sharedCachePool()->reset();
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
 
   constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   constexpr KTree k_subExpr1 = 6_e;

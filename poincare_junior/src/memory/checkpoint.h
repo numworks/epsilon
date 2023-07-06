@@ -30,7 +30,7 @@ namespace PoincareJ {
 class Checkpoint {
  public:
  protected:
-  virtual void rollback() { EditionPool::sharedEditionPool()->flush(); }
+  virtual void rollback() { editionPool->flush(); }
 };
 
 }  // namespace PoincareJ

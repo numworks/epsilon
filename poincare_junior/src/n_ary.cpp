@@ -156,7 +156,7 @@ bool NAry::Sort(Node* nary, Comparison::Order order) {
   return false;
 push:
   // push children in their destination order
-  Node* newNAry = EditionPool::sharedEditionPool()->clone(nary, false);
+  Node* newNAry = editionPool->clone(nary, false);
   for (int i = 0; i < numberOfChildren; i++) {
     children[indexes[i]]->clone();
   }

@@ -7,7 +7,7 @@ using namespace PoincareJ;
 
 QUIZ_CASE(pcj_set) {
   // Set::Add
-  Node* set0 = EditionPool::sharedEditionPool()->push<BlockType::Set>(0);
+  Node* set0 = editionPool->push<BlockType::Set>(0);
   Set::Add(set0, 1_e);
   Set::Add(set0, 2_e);
   Set::Add(set0, 3_e);

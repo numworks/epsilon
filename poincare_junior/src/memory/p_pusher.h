@@ -13,27 +13,26 @@
 /* TODO : Fix _PP_NARG being confused by args having bigger templates like
  *        push<CodePointLayout, CodePoint>('0')) */
 
-#define _UNARY_PUSHER(TAG, A)                                             \
-  ([&]() {                                                                \
-    EditionReference ref = EditionPool::sharedEditionPool()->push<TAG>(); \
-    A;                                                                    \
-    return ref;                                                           \
+#define _UNARY_PUSHER(TAG, A)                        \
+  ([&]() {                                           \
+    EditionReference ref = editionPool->push<TAG>(); \
+    A;                                               \
+    return ref;                                      \
   }())
 
-#define _BINARY_PUSHER(TAG, A, B)                                         \
-  ([&]() {                                                                \
-    EditionReference ref = EditionPool::sharedEditionPool()->push<TAG>(); \
-    A;                                                                    \
-    B;                                                                    \
-    return ref;                                                           \
+#define _BINARY_PUSHER(TAG, A, B)                    \
+  ([&]() {                                           \
+    EditionReference ref = editionPool->push<TAG>(); \
+    A;                                               \
+    B;                                               \
+    return ref;                                      \
   }())
 
-#define _NARY_PUSHER(TAG, ...)                                              \
-  ([&]() {                                                                  \
-    EditionReference ref =                                                  \
-        EditionPool::sharedEditionPool()->push<TAG>(_PP_NARG(__VA_ARGS__)); \
-    __VA_ARGS__;                                                            \
-    return ref;                                                             \
+#define _NARY_PUSHER(TAG, ...)                                            \
+  ([&]() {                                                                \
+    EditionReference ref = editionPool->push<TAG>(_PP_NARG(__VA_ARGS__)); \
+    __VA_ARGS__;                                                          \
+    return ref;                                                           \
   }())
 
 #endif

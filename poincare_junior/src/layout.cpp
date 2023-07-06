@@ -20,7 +20,6 @@ size_t Layout::EditionPoolTextToLayoutRec(const char *text, Node *parent,
                                           const Node *parentheses) {
   assert(parent && parent->isNAry());
   assert(!parentheses || parentheses->type() == BlockType::ParenthesisLayout);
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   size_t i = 0;
   while (text[i] != 0) {
     i++;

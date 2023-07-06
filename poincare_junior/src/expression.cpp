@@ -15,7 +15,6 @@ namespace PoincareJ {
 void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
                                         Node *expression) {
   assert(Builtin::IsBuiltin(expression->type()));
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   UTF8Decoder decoder(Builtin::Name(expression->type()).mainAlias());
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
@@ -41,7 +40,6 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
 
 void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                                IntegerHandler handler) {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (handler.strictSign() == StrictSign::Negative) {
     NAry::AddChild(
         layoutParent,
@@ -83,8 +81,7 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
     if (i > 0) {
       NAry::AddChild(
           layoutParent,
-          EditionPool::sharedEditionPool()
-              ->push<BlockType::CodePointLayout, CodePoint>(codepoint));
+          editionPool->push<BlockType::CodePointLayout, CodePoint>(codepoint));
     }
     // 2*(x+y) or x-(y+z)
     bool allowParentheses = (type == BlockType::Multiplication) ||
@@ -96,7 +93,6 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
 
 void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
                                                 Node *expression) {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   BlockType type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->nextNode();
@@ -124,7 +120,6 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
    *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
   BlockType type = expression->type();
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
 
   switch (type) {
     case BlockType::Addition:
@@ -213,8 +208,7 @@ EditionReference Expression::EditionPoolExpressionToLayout(Node *expression) {
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
    * layoutParent's root. */
-  EditionReference layoutParent =
-      EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
+  EditionReference layoutParent = editionPool->push<BlockType::RackLayout>(0);
   // No parentheses on root layout.
   ConvertExpressionToLayout(layoutParent, expression, false);
   return layoutParent;

@@ -194,7 +194,6 @@ bool PatternMatching::Match(const Node* pattern, const Node* source,
 
 Node* PatternMatching::CreateTree(const Node* structure, const Context context,
                                   Node* insertedNAry) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node* top = Node::FromBlocks(editionPool->lastBlock());
   const TypeBlock* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
@@ -297,7 +296,6 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
   if (!PatternMatching::Match(pattern, node, &ctx)) {
     return false;
   }
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   /* Following this example :
    * this (EditionReference): (x + y) * z
    * pattern: (A + B) * C

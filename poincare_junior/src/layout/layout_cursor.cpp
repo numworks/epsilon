@@ -182,7 +182,6 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
 #else
   int leftParenthesisIndex = 0;
 #endif
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   EditionReference parenthesis =
       editionPool->push<BlockType::ParenthesisLayout>();
   EditionReference tempRack = editionPool->push<BlockType::RackLayout>(0);
@@ -382,7 +381,6 @@ void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(
   assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false);
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   EditionReference ref = P_RACKL(
       (editionPool->push<BlockType::CodePointLayout, CodePoint>('e')),
       (editionPool->push<BlockType::VerticalOffsetLayout>(), P_RACKL()));
@@ -412,7 +410,6 @@ void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
 void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(
     Context *context, const void *data) {
   assert(data == nullptr);
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
   /* TODO : P_RACKL gets confused with the comma inside the template, so we have
@@ -556,8 +553,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
     }
 #else
     EditionReference newChild =
-        EditionPool::sharedEditionPool()
-            ->push<BlockType::CodePointLayout, CodePoint>(codePoint);
+        editionPool->push<BlockType::CodePointLayout, CodePoint>(codePoint);
 #endif
     int dummy = currentLayout->numberOfChildren();
     currentLayout = RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild,
@@ -625,7 +621,7 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
            !Layout::IsHorizontal(
                rootNode()->parentOfDescendant(m_cursorReference)));
     m_cursorReference->moveTreeOverTree(
-        EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0));
+        editionPool->push<BlockType::RackLayout>(0));
   }
   m_position = selectionLeftBound;
   stopSelecting();
@@ -1356,14 +1352,13 @@ bool LayoutBufferCursor::execute(Action action, Context *context,
                                  const void *data) {
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
-  return EditionPool::sharedEditionPool()->executeAndDump(
+  return editionPool->executeAndDump(
       [](void *context, const void *data) {
         ExecutionContext *executionContext =
             static_cast<ExecutionContext *>(context);
         LayoutBufferCursor *bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the EditionPool
-        EditionPool::sharedEditionPool()->clone(
-            executionContext->m_cursor->rootNode());
+        editionPool->clone(executionContext->m_cursor->rootNode());
         // Create a temporary cursor
         EditionPoolCursor editionCursor =
             bufferCursor->createEditionPoolCursor();

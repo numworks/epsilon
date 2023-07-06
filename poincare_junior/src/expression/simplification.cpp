@@ -94,7 +94,6 @@ bool Simplification::SimplifyTrig(Node* u) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
     secondArgument->cloneTreeOverTree(
         secondArgument->type() == BlockType::Two ? 0_e : 1_e);
-    EditionPool* editionPool(EditionPool::sharedEditionPool());
     u->moveNodeAtNode(editionPool->push<BlockType::MinusOne>());
     u->moveNodeAtNode(editionPool->push<BlockType::Multiplication>(2));
     return true;
@@ -141,8 +140,7 @@ bool Simplification::SimplifyPower(Node* u) {
   if (v->type() == BlockType::Power) {
     EditionReference p = v->childAtIndex(1);
     assert(p->nextTree() == static_cast<Node*>(n));
-    p->moveNodeBeforeNode(
-        EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2));
+    p->moveNodeBeforeNode(editionPool->push<BlockType::Multiplication>(2));
     u->removeNode();
     SimplifyMultiplication(p);
     assert(IsInteger(p));
@@ -151,8 +149,7 @@ bool Simplification::SimplifyPower(Node* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->type() == BlockType::Multiplication) {
     for (auto [w, index] : NodeIterator::Children<Editable>(v)) {
-      EditionReference m =
-          EditionPool::sharedEditionPool()->push<BlockType::Power>();
+      EditionReference m = editionPool->push<BlockType::Power>();
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);
@@ -614,7 +611,6 @@ bool Simplification::DistributeOverNAry(Node* ref, BlockType target,
   if (children->type() != naryTarget) {
     return false;
   }
-  EditionPool* editionPool(EditionPool::sharedEditionPool());
   int numberOfGrandChildren = children->numberOfChildren();
   size_t childIndexOffset = children->block() - ref->block();
   // f(+(A,B,C),E)

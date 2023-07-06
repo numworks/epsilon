@@ -8,7 +8,7 @@ using namespace PoincareJ;
 void assert_polynomial_is_parsed(const Node* node,
                                  const Node* expectedVariables,
                                  const Node* expectedPolynomial) {
-  EditionPool::sharedEditionPool()->flush();
+  editionPool->flush();
   EditionReference variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   EditionReference ref(node);
@@ -40,7 +40,6 @@ QUIZ_CASE(pcj_polynomial_parsing) {
 }
 
 QUIZ_CASE(pcj_polynomial_operations) {
-  EditionPool* editionPool(EditionPool::sharedEditionPool());
   /* A = x^2 + 3*x*y + y + 1 */
   const Node* polA =
       KPol(Exponents<2, 1, 0>(), "x"_e, 1_e, KPol(Exponents<1>(), "y"_e, 3_e),

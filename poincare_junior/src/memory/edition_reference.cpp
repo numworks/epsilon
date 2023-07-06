@@ -16,15 +16,14 @@ EditionReference::EditionReference(const Node* node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
   }
-  EditionPool* pool = EditionPool::sharedEditionPool();
   // TODO: maybe make an assertion(pool->contains(node->block()))
   // and force developers to write EditionReference(EditionPool::clone(2_e))
-  if (!pool->contains(node->block()) && node->block() != pool->lastBlock()) {
-    *this = EditionReference(pool->clone(node));
+  if (!editionPool->contains(node->block()) &&
+      node->block() != editionPool->lastBlock()) {
+    *this = EditionReference(editionPool->clone(node));
     return;
   }
-  m_identifier =
-      EditionPool::sharedEditionPool()->referenceNode(const_cast<Node*>(node));
+  m_identifier = editionPool->referenceNode(const_cast<Node*>(node));
 }
 
 EditionReference::EditionReference(Node* node) {
@@ -32,9 +31,9 @@ EditionReference::EditionReference(Node* node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
   }
-  assert(EditionPool::sharedEditionPool()->contains(node->block()) ||
-         node->block() == EditionPool::sharedEditionPool()->lastBlock());
-  m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
+  assert(editionPool->contains(node->block()) ||
+         node->block() == editionPool->lastBlock());
+  m_identifier = editionPool->referenceNode(node);
 }
 
 #if POINCARE_MEMORY_TREE_LOG
@@ -45,7 +44,7 @@ void EditionReference::log() const {
 #endif
 
 Node* EditionReference::node() const {
-  return EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
+  return editionPool->nodeForIdentifier(m_identifier);
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {

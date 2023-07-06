@@ -12,7 +12,6 @@ namespace PoincareJ {
 // TODO: tests
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   if (expression->block()->isRational()) {
     EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();
@@ -43,7 +42,6 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
 
 EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   assert(expression->type() == BlockType::Addition);
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   EditionReference commonDenominator = EditionReference(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<EditionReference, int> indexedNode :

@@ -9,13 +9,13 @@
 
 #define P_POW(A, B) _BINARY_PUSHER(BlockType::Power, A, B)
 
-#define P_CLONE(A) EditionPool::sharedEditionPool()->clone(A)
+#define P_CLONE(A) editionPool->clone(A)
 
-#define P_ZERO() EditionPool::sharedEditionPool()->clone(0_e)
+#define P_ZERO() editionPool->clone(0_e)
 
-#define P_ONE() EditionPool::sharedEditionPool()->clone(1_e)
+#define P_ONE() editionPool->clone(1_e)
 
-#define P_UNDEF() EditionPool::sharedEditionPool()->clone(KUndef)
+#define P_UNDEF() editionPool->clone(KUndef)
 
 // Wrap arguments with EditionReference::Clone if they have Node* type to avoid
 // mistakes ?

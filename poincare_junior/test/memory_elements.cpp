@@ -456,7 +456,6 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
 }
 
 QUIZ_CASE(pcj_edition_node_constructor) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   assert_node_equals_blocks(
       editionPool->push<BlockType::IntegerPosBig>(
           static_cast<uint64_t>(1232424242)),
@@ -627,7 +626,6 @@ QUIZ_CASE(pcj_node) {
 }
 
 QUIZ_CASE(pcj_node_size) {
-  EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node* node = editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
   quiz_assert(node->nodeSize() == 5);

@@ -17,8 +17,7 @@ bool Derivation::Reduce(Node *node) {
   const Node *derivand = node->childAtIndex(0);
   const Node *symbol = derivand->nextTree();
   const Node *symbolValue = symbol->nextTree();
-  Node *result =
-      Node::FromBlocks(EditionPool::sharedEditionPool()->lastBlock());
+  Node *result = Node::FromBlocks(editionPool->lastBlock());
   Derivate(derivand, symbol, symbolValue);
   node->moveTreeOverTree(result);
   return true;
@@ -26,7 +25,6 @@ bool Derivation::Reduce(Node *node) {
 
 void Derivation::Derivate(const Node *derivand, const Node *symbol,
                           const Node *symbolValue) {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (symbol->treeIsIdenticalTo(derivand)) {
     editionPool->push<BlockType::One>();
     return;
@@ -66,7 +64,6 @@ void Derivation::Derivate(const Node *derivand, const Node *symbol,
 void Derivation::ShallowPartialDerivate(const Node *derivand,
                                         const Node *symbol,
                                         const Node *symbolValue, int index) {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   switch (derivand->type()) {
     case BlockType::Multiplication:
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
@@ -115,7 +112,6 @@ Node *Derivation::CloneReplacingSymbol(const Node *expression,
                                        const Node *symbol,
                                        const Node *symbolValue) {
   assert(symbol->type() == BlockType::UserSymbol);
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (symbol->treeIsIdenticalTo(symbolValue)) {
     // No need to replace anything
     return editionPool->clone(expression);
@@ -128,7 +124,6 @@ Node *Derivation::CloneReplacingSymbol(const Node *expression,
 void Derivation::CloneReplacingSymbolRec(const Node *expression,
                                          const Node *symbol,
                                          const Node *symbolValue) {
-  EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (symbol->treeIsIdenticalTo(expression)) {
     editionPool->clone(symbolValue);
     return;

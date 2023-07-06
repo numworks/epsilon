@@ -16,7 +16,6 @@ class EditionPool final : public Pool {
         m_numberOfBlocks(numberOfBlocks),
         m_size(size) {}
 
-  static EditionPool *sharedEditionPool();
   void reinit(TypeBlock *firstBlock, size_t size);
 
   uint16_t referenceNode(Node *node);
@@ -113,6 +112,9 @@ class EditionPool final : public Pool {
   int m_numberOfBlocks;
   size_t m_size;
 };
+
+// Global alias
+extern EditionPool *editionPool;
 
 }  // namespace PoincareJ
 

@@ -36,9 +36,9 @@ EditionReference RackParser::parse() {
   /* To check if no other trees are leaked into EditionPool, use the end of pool
    * instead of number of trees since the editionPool may be incomplete, which
    * can happen while parsing a division's denominator. */
-  const TypeBlock *endOfPool = EditionPool::sharedEditionPool()->lastBlock();
+  const TypeBlock *endOfPool = editionPool->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
-  assert(EditionPool::sharedEditionPool()->lastBlock() ==
+  assert(editionPool->lastBlock() ==
          (result.isUninitialized() ? endOfPool : result->nextTree()->block()));
   assert(result.isUninitialized() || endOfPool == result->block());
   (void)endOfPool;
@@ -445,7 +445,6 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
       /* Build (integerDigits + fractionalDigits *
        * 10^(-numberOfFractionalDigits))
        *           * 10^(exponent) */
-      EditionPool *editionPool = EditionPool::sharedEditionPool();
       leftHandSide = P_MULT(
           P_ADD(Integer::Push(integerDigits, base),
                 P_MULT(Integer::Push(fractionalDigits, base),
@@ -837,9 +836,8 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
   // leftHandSide =
   // Constant::Builder(m_currentToken.text(), m_currentToken.length());
   assert(m_currentToken.length() == 1);
-  leftHandSide =
-      EditionPool::sharedEditionPool()->push<BlockType::Constant, char16_t>(
-          m_currentToken.toDecoder(m_root).nextCodePoint());
+  leftHandSide = editionPool->push<BlockType::Constant, char16_t>(
+      m_currentToken.toDecoder(m_root).nextCodePoint());
   isThereImplicitOperator();
 }
 
@@ -1036,7 +1034,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
   char buffer[bufferSize];
   CodePointLayout::GetName(node, buffer, bufferSize);
-  leftHandSide = EditionPool::sharedEditionPool()->push<BlockType::UserSymbol>(
+  leftHandSide = editionPool->push<BlockType::UserSymbol>(
       static_cast<const char *>(buffer), length);
   // privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
   isThereImplicitOperator();
@@ -1249,8 +1247,7 @@ EditionReference RackParser::parseCommaSeparatedList() {
     popToken();
     return subParser.parse();
   }
-  EditionReference list =
-      EditionPool::sharedEditionPool()->push<BlockType::SystemList>(0);
+  EditionReference list = editionPool->push<BlockType::SystemList>(0);
   int length = 0;
   do {
     if (!parseUntil(Token::Type::Comma).isUninitialized()) {

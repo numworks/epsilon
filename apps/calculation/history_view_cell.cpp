@@ -18,8 +18,7 @@ namespace Calculation {
 /* HistoryViewCellDataSource */
 
 void HistoryViewCellDataSource::setSelectedSubviewType(
-    SubviewType subviewType, bool sameCell, int previousSelectedCol,
-    int previousSelectedRow) {
+    SubviewType subviewType, bool sameCell, int previousSelectedRow) {
   HistoryViewCell *selectedCell = nullptr;
   HistoryViewCell *previouslySelectedCell = nullptr;
   SubviewType previousSubviewType = m_selectedSubviewType;

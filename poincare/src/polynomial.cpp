@@ -509,7 +509,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
     *root1 = root1->approximate<double>(context, complexFormat, angleUnit);
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);
-    // Approximate delta in case it was not already
+    /* Approximate delta in case it was not already (if it was, this cost no
+     * time anyway). */
     *delta = delta->approximate<double>(context, complexFormat, angleUnit);
   }
 

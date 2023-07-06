@@ -1,5 +1,5 @@
-#include <poincare_junior/src/expression/k_creator.h>
-#include <poincare_junior/src/layout/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/value_block.h>
 
@@ -475,11 +475,11 @@ QUIZ_CASE(pcj_edition_node_constructor) {
 }
 
 QUIZ_CASE(pcj_node_iterator) {
-  constexpr Tree k_simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr KTree k_simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   EditionReference mult(k_simpleExpression);
-  Tree a = KAdd(1_e, 2_e);
-  Tree b = 3_e;
-  Tree c = 4_e;
+  KTree a = KAdd(1_e, 2_e);
+  KTree b = 3_e;
+  KTree c = 4_e;
   const Node* children[] = {a, b, c};
 
   // Scan children forward
@@ -490,9 +490,9 @@ QUIZ_CASE(pcj_node_iterator) {
   }
 
   // Edit children forward
-  Tree e = 6_e;
-  Tree f = 7_e;
-  Tree g = 8_e;
+  KTree e = 6_e;
+  KTree f = 7_e;
+  KTree g = 8_e;
   const Node* newChildren[] = {e, f, g};
   for (std::pair<EditionReference, int> indexedRef :
        NodeIterator::Children<Editable>(mult)) {
@@ -506,7 +506,7 @@ QUIZ_CASE(pcj_node_iterator) {
                            newChildren[std::get<int>(indexedNode)]);
   }
 
-  constexpr Tree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
+  constexpr KTree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
   EditionReference mult2(k_secondSimpleExpression);
   const Node* children2[] = {a, b};
   // Scan two nodes children forward
@@ -520,11 +520,11 @@ QUIZ_CASE(pcj_node_iterator) {
     assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
     assert_trees_are_equal(childrenPair[1], children2[pairIndex]);
   }
-  Tree n6 = 8_e;
-  Tree n10 = 10_e;
-  Tree n11 = 11_e;
-  Tree n13 = 13_e;
-  Tree n14 = 14_e;
+  KTree n6 = 8_e;
+  KTree n10 = 10_e;
+  KTree n11 = 11_e;
+  KTree n13 = 13_e;
+  KTree n14 = 14_e;
   const Node* newChildren1[] = {n10, n11};
   const Node* newChildren2[] = {n13, n14};
   // Edit two nodes children forward
@@ -565,8 +565,8 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(node2 == node1);
 
   // Node navigation
-  constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
-  constexpr Tree e2 = KPow(5_e, 6_e);
+  constexpr KTree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
+  constexpr KTree e2 = KPow(5_e, 6_e);
   Node* n1 = EditionReference(e1);
   Node* n2 = EditionReference(e2);
   quiz_assert(n1->treeSize() == 16);  // TODO: Magic Number

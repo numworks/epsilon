@@ -1,6 +1,6 @@
 #include "algebraic.h"
 
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 

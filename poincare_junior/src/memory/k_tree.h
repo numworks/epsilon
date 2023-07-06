@@ -1,5 +1,5 @@
-#ifndef POINCARE_MEMORY_K_CREATOR_H
-#define POINCARE_MEMORY_K_CREATOR_H
+#ifndef POINCARE_MEMORY_K_TREE_H
+#define POINCARE_MEMORY_K_TREE_H
 
 #include <omg/print.h>
 #include <omgpj/concept.h>
@@ -30,7 +30,7 @@ class AbstractTree : AbstractTreeCompatible {};
 template <class C>
 concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
 
-/* The Tree template class is the compile time representation of a constexpr
+/* The KTree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters
  * in order to be able to use the address of the static singleton (in flash) as
  * a Node*. It also eliminated identical trees since their are all using the
@@ -38,23 +38,22 @@ concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
  */
 
 template <Block... Blocks>
-class Tree : public AbstractTree {
+class KTree : public AbstractTree {
  public:
   static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
   constexpr operator const Node*() const {
-    return Node::FromBlocks(
-        &Tree<Blocks...
 #if ASSERTION
-              // Close with TreeBorder Block when cast into Node* for navigation
-              ,
-              BlockType::TreeBorder
+    // Close with TreeBorder Block when cast into Node* for navigation
+    return Node::FromBlocks(
+        &Tree<Blocks..., BlockType::TreeBorder>::k_blocks[0]);
+#else
+    return Node::FromBlocks(&k_blocks[0]);
 #endif
-              >::k_blocks[0]);
   }
 };
 
-/* Helper to concatenate Trees */
+/* Helper to concatenate KTrees */
 
 /* Usage:
  * template <Block Tag, TreeConcept CT1, TreeConcept CT2> consteval auto
@@ -69,7 +68,7 @@ struct __BlockConcat;
 template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2],
           std::size_t... I>
 struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
-  using tree = Tree<((I < N1) ? B1[I] : B2[I - N1])...>;
+  using tree = KTree<((I < N1) ? B1[I] : B2[I - N1])...>;
 };
 
 template <TreeConcept CT1, TreeConcept CT2>
@@ -86,48 +85,48 @@ struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 // Helpers
 
 template <Block Tag, Block... B1>
-consteval auto KUnary(Tree<B1...>) {
-  return Tree<Tag, B1...>();
+consteval auto KUnary(KTree<B1...>) {
+  return KTree<Tag, B1...>();
 }
 
 template <Block Tag, TreeCompatibleConcept A>
 consteval auto KUnary(A a) {
-  return KUnary<Tag>(Tree(a));
+  return KUnary<Tag>(KTree(a));
 }
 
 template <Block Tag, Block... B1, Block... B2>
-consteval auto KBinary(Tree<B1...>, Tree<B2...>) {
-  return Tree<Tag, B1..., B2...>();
+consteval auto KBinary(KTree<B1...>, KTree<B2...>) {
+  return KTree<Tag, B1..., B2...>();
 }
 
 template <Block Tag, Block... B1, Block... B2, Block... B3>
-consteval auto KTrinary(Tree<B1...>, Tree<B2...>, Tree<B3...>) {
-  return Tree<Tag, B1..., B2..., B3...>();
+consteval auto KTrinary(KTree<B1...>, KTree<B2...>, KTree<B3...>) {
+  return KTree<Tag, B1..., B2..., B3...>();
 }
 
 template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B>
 consteval auto KBinary(A a, B b) {
-  return KBinary<Tag>(Tree(a), Tree(b));
+  return KBinary<Tag>(KTree(a), KTree(b));
 }
 
 template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B,
           TreeCompatibleConcept C>
 consteval auto KTrinary(A a, B b, C c) {
-  return KTrinary<Tag>(Tree(a), Tree(b), Tree(c));
+  return KTrinary<Tag>(KTree(a), KTree(b), KTree(c));
 }
 
 template <Block Tag, TreeConcept... CTS>
 static consteval auto __NAry(CTS...) {
-  return Concat<Tree<Tag, sizeof...(CTS)>, CTS...>();
+  return Concat<KTree<Tag, sizeof...(CTS)>, CTS...>();
 }
 
 template <Block Tag, TreeCompatibleConcept... CTS>
 consteval auto KNAry(CTS... args) {
-  return __NAry<Tag>(Tree(args)...);
+  return __NAry<Tag>(KTree(args)...);
 }
 
 /* The following dummy constructors are here to make the error message clearer
- * when someone tries to use a Node* inside a Tree constructor.
+ * when someone tries to use a Node* inside a KTree constructor.
  * Without these you get "no matching function for call to 'Unary'" and details
  * on why each candidate concept is unmatched.
  * With these constructors, they match and then you get a "call to consteval
@@ -136,17 +135,17 @@ consteval auto KNAry(CTS... args) {
 
 template <Block Tag>
 consteval const Node* KUnary(Node* a) {
-  return Tree<>();
+  return KTree<>();
 }
 
 template <Block Tag>
 consteval const Node* KBinary(Node* a, Node* b) {
-  return Tree<>();
+  return KTree<>();
 }
 
 template <Block Tag>
 consteval const Node* KTrinary(Node* a, Node* b, Node* c) {
-  return Tree<>();
+  return KTree<>();
 }
 
 template <class... Args>
@@ -154,7 +153,7 @@ concept HasANodeConcept = (false || ... || std::is_same<Node*, Args>::value);
 template <Block Tag, class... Args>
   requires HasANodeConcept<Args...>
 consteval const Node* KNAry(Args... args) {
-  return Tree<>();
+  return KTree<>();
 }
 
 // String type used for templated string litterals
@@ -174,14 +173,15 @@ struct String {
 
 template <Placeholder::Tag Tag>
 consteval auto KPlaceholder() {
-  return Tree<BlockType::Placeholder,
-              Placeholder::ParamsToValue(Tag, Placeholder::Filter::None)>();
+  return KTree<BlockType::Placeholder,
+               Placeholder::ParamsToValue(Tag, Placeholder::Filter::None)>();
 }
 
 template <Placeholder::Tag Tag>
 consteval auto KAnyTreesPlaceholder() {
-  return Tree<BlockType::Placeholder,
-              Placeholder::ParamsToValue(Tag, Placeholder::Filter::AnyTrees)>();
+  return KTree<BlockType::Placeholder,
+               Placeholder::ParamsToValue(Tag,
+                                          Placeholder::Filter::AnyTrees)>();
 }
 
 }  // namespace PoincareJ

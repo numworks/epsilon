@@ -1,8 +1,8 @@
-#ifndef POINCARE_LAYOUT_K_CREATOR_H
-#define POINCARE_LAYOUT_K_CREATOR_H
+#ifndef POINCARE_LAYOUT_K_TREE_H
+#define POINCARE_LAYOUT_K_TREE_H
 
 #include <poincare_junior/src/layout/code_point_layout.h>
-#include <poincare_junior/src/memory/k_creator.h>
+#include <poincare_junior/src/memory/k_tree.h>
 
 namespace PoincareJ {
 
@@ -28,11 +28,11 @@ consteval auto KParenthesisL(Args... args) {
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint
 template <uint32_t cp>
-using KCodePointL = Tree<BlockType::CodePointLayout,
-                         CodePointLayout::SubCodePointLayoutAtIndex(cp, 0),
-                         CodePointLayout::SubCodePointLayoutAtIndex(cp, 1),
-                         CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
-                         CodePointLayout::SubCodePointLayoutAtIndex(cp, 3)>;
+using KCodePointL = KTree<BlockType::CodePointLayout,
+                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 0),
+                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 1),
+                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
+                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 3)>;
 
 template <String S,
           typename IS = decltype(std::make_index_sequence<S.size() - 1>())>
@@ -40,7 +40,7 @@ struct _RackLayoutHelper;
 
 template <String S, std::size_t... I>
 struct _RackLayoutHelper<S, std::index_sequence<I...>>
-    : Concat<Tree<BlockType::RackLayout, sizeof...(I)>, KCodePointL<S[I]>...> {
+    : Concat<KTree<BlockType::RackLayout, sizeof...(I)>, KCodePointL<S[I]>...> {
 };
 
 template <String S>

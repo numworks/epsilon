@@ -1,5 +1,5 @@
 #include <poincare_junior/src/expression/derivation.h>
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
 
 #include "helper.h"

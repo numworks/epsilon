@@ -61,7 +61,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   graph.cpp \
   helper.cpp \
   integer.cpp \
-  k_creator.cpp \
+  k_tree.cpp \
   match.cpp \
   memory_elements.cpp \
   memory_edition.cpp \

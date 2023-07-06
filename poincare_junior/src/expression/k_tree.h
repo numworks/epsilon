@@ -1,9 +1,9 @@
-#ifndef POINCARE_EXPRESSION_K_CREATOR_H
-#define POINCARE_EXPRESSION_K_CREATOR_H
+#ifndef POINCARE_EXPRESSION_K_TREE_H
+#define POINCARE_EXPRESSION_K_TREE_H
 
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/memory/k_creator.h>
+#include <poincare_junior/src/memory/k_tree.h>
 
 #include <bit>
 
@@ -131,7 +131,7 @@ consteval auto KSystemList(Args... args) {
 
 // Alias only for readability
 template <uint8_t... Values>
-using Exponents = Tree<Values...>;
+using Exponents = KTree<Values...>;
 
 /* The first function is responsible of building the actual representation from
  * Trees while the other one is just here to allow the function to take
@@ -140,7 +140,7 @@ using Exponents = Tree<Values...>;
 template <TreeConcept Exp, TreeConcept... CTS>
 static consteval auto __Pol(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
-  return Concat<Tree<BlockType::Polynomial, Size>, Exp, CTS...>();
+  return Concat<KTree<BlockType::Polynomial, Size>, Exp, CTS...>();
 }
 
 template <TreeConcept Exp, TreeCompatibleConcept... CTS>
@@ -149,7 +149,7 @@ static consteval auto KPol(Exp exponents, CTS... args) {
   static_assert(
       Exp::k_size == Size - 1,
       "Number of children and exponents do not match in constant polynomial");
-  return __Pol(exponents, Tree(args)...);
+  return __Pol(exponents, KTree(args)...);
 }
 
 /* Immediates are used to represent numerical constants of the code (like 2_e)
@@ -161,11 +161,11 @@ class IntegerLitteral : public AbstractTreeCompatible {
   // once a deduction guide as required a given Tree from the immediate, build
   // it
   template <Block... B>
-  consteval operator Tree<B...>() {
-    return Tree<B...>();
+  consteval operator KTree<B...>() {
+    return KTree<B...>();
   }
 
-  constexpr operator const Node*() { return Tree(IntegerLitteral<V>()); }
+  constexpr operator const Node*() { return KTree(IntegerLitteral<V>()); }
 
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
@@ -177,72 +177,72 @@ class IntegerLitteral : public AbstractTreeCompatible {
 
 // Deduction guides to create the smallest Tree that can represent the Immediate
 
-Tree(IntegerLitteral<-1>)->Tree<BlockType::MinusOne>;
-Tree(IntegerLitteral<0>)->Tree<BlockType::Zero>;
-Tree(IntegerLitteral<1>)->Tree<BlockType::One>;
-Tree(IntegerLitteral<2>)->Tree<BlockType::Two>;
+KTree(IntegerLitteral<-1>)->KTree<BlockType::MinusOne>;
+KTree(IntegerLitteral<0>)->KTree<BlockType::Zero>;
+KTree(IntegerLitteral<1>)->KTree<BlockType::One>;
+KTree(IntegerLitteral<2>)->KTree<BlockType::Two>;
 
 template <int V>
   requires(V >= INT8_MIN && V <= INT8_MAX)
-Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerShort, V>;
+KTree(IntegerLitteral<V>) -> KTree<BlockType::IntegerShort, V>;
 
 template <int V>
   requires(V > INT8_MAX && Integer::NumberOfDigits(V) == 1)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerPosBig, 1, Bit::getByteAtIndex(V, 0)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerPosBig, 1, Bit::getByteAtIndex(V, 0)>;
 
 template <int V>
   requires(V > 0 && Integer::NumberOfDigits(V) == 2)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0),
+             Bit::getByteAtIndex(V, 1)>;
 
 template <int V>
   requires(V > 0 && Integer::NumberOfDigits(V) == 3)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0),
+             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2)>;
 
 template <int V>
   requires(V > 0 && Integer::NumberOfDigits(V) == 4)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-            Bit::getByteAtIndex(V, 3)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0),
+             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
+             Bit::getByteAtIndex(V, 3)>;
 
 template <int V>
   requires(V < INT8_MIN && Integer::NumberOfDigits(-V) == 1)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerNegBig, 1, Bit::getByteAtIndex(-V, 0)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerNegBig, 1, Bit::getByteAtIndex(-V, 0)>;
 
 template <int V>
   requires(V < 0 && Integer::NumberOfDigits(-V) == 2)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0),
-            Bit::getByteAtIndex(-V, 1)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0),
+             Bit::getByteAtIndex(-V, 1)>;
 
 template <int V>
   requires(V < 0 && Integer::NumberOfDigits(-V) == 3)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0),
-            Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0),
+             Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2)>;
 
 template <int V>
   requires(V < 0 && Integer::NumberOfDigits(-V) == 4)
-Tree(IntegerLitteral<V>)
-    -> Tree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0),
-            Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2),
-            Bit::getByteAtIndex(-V, 3)>;
+KTree(IntegerLitteral<V>)
+    -> KTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0),
+             Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2),
+             Bit::getByteAtIndex(-V, 3)>;
 
 // TODO new node_constructor
-constexpr Tree KUndef = Tree<BlockType::Undefined>();
-constexpr Tree KHalf = Tree<BlockType::Half>();
+constexpr KTree KUndef = KTree<BlockType::Undefined>();
+constexpr KTree KHalf = KTree<BlockType::Half>();
 
-constexpr Tree π_e =
-    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();
+constexpr KTree π_e =
+    KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();
 
-constexpr Tree e_e =
-    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E)>();
+constexpr KTree e_e =
+    KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E)>();
 
 // TODO: move in OMG?
 constexpr static uint64_t IntegerValue(const char* str, size_t size) {
@@ -294,21 +294,21 @@ template <uint32_t V>
 class FloatLitteral : public AbstractTreeCompatible {
  public:
   template <Block... B>
-  consteval operator Tree<B...>() {
-    return Tree<B...>();
+  consteval operator KTree<B...>() {
+    return KTree<B...>();
   }
 
-  constexpr operator const Node*() { return Tree(FloatLitteral<V>()); }
+  constexpr operator const Node*() { return KTree(FloatLitteral<V>()); }
 
   // Since we are using the representation we have to manually flip the sign bit
   consteval auto operator-() { return FloatLitteral<V ^ (1 << 31)>(); }
 };
 
 template <uint32_t V>
-Tree(FloatLitteral<V>)
-    -> Tree<BlockType::Float, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-            Bit::getByteAtIndex(V, 3)>;
+KTree(FloatLitteral<V>)
+    -> KTree<BlockType::Float, Bit::getByteAtIndex(V, 0),
+             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
+             Bit::getByteAtIndex(V, 3)>;
 
 template <char... C>
 consteval auto operator"" _e() {
@@ -332,7 +332,7 @@ template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
   static_assert(!OMG::Print::IsDigit(S[0]),
                 "Integer litterals should be written without quotes");
-  using tree = Tree<BlockType::UserSymbol, sizeof...(I), S[I]...>;
+  using tree = KTree<BlockType::UserSymbol, sizeof...(I), S[I]...>;
 };
 
 template <String S>

@@ -1,17 +1,17 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include "helper.h"
 
 using namespace PoincareJ;
 
-static constexpr Tree bigTree =
+static constexpr KTree bigTree =
     KAdd(3_e, KMult(4_e, KLn(5_e), KTrig(6_e, 0_e)));
-static constexpr Tree modifiedBigTree =
+static constexpr KTree modifiedBigTree =
     KMult(3_e, KMult(4_e, KLn(5_e), KTrig(6_e, 0_e)));
-static constexpr Tree smallTree = 4_e;
+static constexpr KTree smallTree = 4_e;
 
 void execute_push_tree_and_modify() {
   PoincareJ::Reference::InitializerFromTreeInplace treeModifier =

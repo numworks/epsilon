@@ -1,4 +1,4 @@
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include "helper.h"
@@ -10,7 +10,7 @@ QUIZ_CASE(pcj_edition_pool) {
   cachePool->reset();
   EditionPool* pool = cachePool->editionPool();
 
-  constexpr Tree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Node* handingNode = k_expression;
   Node* editedNode = pool->clone(handingNode);
   assert(pool->size() == handingNode->treeSize());
@@ -55,9 +55,9 @@ QUIZ_CASE(pcj_edition_reference) {
   CachePool::sharedCachePool()->reset();
   EditionPool* editionPool = EditionPool::sharedEditionPool();
 
-  constexpr Tree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
-  constexpr Tree k_subExpr1 = 6_e;
-  constexpr Tree k_expr1 = KPow(KSub(5_e, k_subExpr1), 7_e);
+  constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr KTree k_subExpr1 = 6_e;
+  constexpr KTree k_expr1 = KPow(KSub(5_e, k_subExpr1), 7_e);
 
   // Operator ==
   EditionReference ref0;

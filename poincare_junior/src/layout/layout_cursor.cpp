@@ -2,7 +2,7 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/layout/k_creator.h>
+#include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/p_pusher.h>
 #include <poincare_junior/src/layout/rack_layout.h>

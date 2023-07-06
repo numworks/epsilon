@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-#include <poincare_junior/src/memory/k_creator.h>
+#include <poincare_junior/src/memory/k_tree.h>
 
 namespace PoincareJ {
 
@@ -87,40 +87,40 @@ EditionReference Builtin::Promote(EditionReference parameterList,
   const Node *header;
   switch (type) {
     case BlockType::Abs:
-      header = Tree<BlockType::Abs>();
+      header = KTree<BlockType::Abs>();
       break;
     case BlockType::Cosine:
-      header = Tree<BlockType::Cosine>();
+      header = KTree<BlockType::Cosine>();
       break;
     case BlockType::Sine:
-      header = Tree<BlockType::Sine>();
+      header = KTree<BlockType::Sine>();
       break;
     case BlockType::Tangent:
-      header = Tree<BlockType::Tangent>();
+      header = KTree<BlockType::Tangent>();
       break;
     case BlockType::ArcCosine:
-      header = Tree<BlockType::ArcCosine>();
+      header = KTree<BlockType::ArcCosine>();
       break;
     case BlockType::ArcSine:
-      header = Tree<BlockType::ArcSine>();
+      header = KTree<BlockType::ArcSine>();
       break;
     case BlockType::ArcTangent:
-      header = Tree<BlockType::ArcTangent>();
+      header = KTree<BlockType::ArcTangent>();
       break;
     case BlockType::Derivative:
-      header = Tree<BlockType::Derivative>();
+      header = KTree<BlockType::Derivative>();
       break;
     case BlockType::Logarithm:
-      header = Tree<BlockType::Logarithm>();
+      header = KTree<BlockType::Logarithm>();
       break;
     case BlockType::Log:
-      header = Tree<BlockType::Log>();
+      header = KTree<BlockType::Log>();
       break;
     case BlockType::Ln:
-      header = Tree<BlockType::Ln>();
+      header = KTree<BlockType::Ln>();
       break;
     case BlockType::SquareRoot:
-      header = Tree<BlockType::SquareRoot>();
+      header = KTree<BlockType::SquareRoot>();
       break;
     default:
       assert(false);

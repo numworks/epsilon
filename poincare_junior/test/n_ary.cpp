@@ -1,4 +1,4 @@
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 #include <quiz.h>

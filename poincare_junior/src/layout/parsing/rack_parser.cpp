@@ -5,7 +5,7 @@
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
@@ -496,7 +496,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     if (m_status == Status::Progress && !plus) {
       // TODO Opposite instead of multiplication by -1
       leftHandSide->cloneTreeAtNode(-1_e);
-      leftHandSide->cloneNodeAtNode(Tree<BlockType::Multiplication, 2>());
+      leftHandSide->cloneNodeAtNode(KTree<BlockType::Multiplication, 2>());
     }
     return;
   }
@@ -515,14 +515,14 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // }
     assert(leftHandSide->nextTree() == static_cast<Node *>(rightHandSide));
     if (!plus) {
-      leftHandSide->cloneNodeAtNode(Tree<BlockType::Subtraction>());
+      leftHandSide->cloneNodeAtNode(KTree<BlockType::Subtraction>());
       return;
     }
     if (leftHandSide->type() == BlockType::Addition) {
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide->numberOfChildren() + 1);
     } else {
-      leftHandSide->cloneNodeAtNode(Tree<BlockType::Addition, 2>());
+      leftHandSide->cloneNodeAtNode(KTree<BlockType::Addition, 2>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -592,7 +592,7 @@ void RackParser::parseSlash(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
-    leftHandSide->cloneNodeAtNode(Tree<BlockType::Division>());
+    leftHandSide->cloneNodeAtNode(KTree<BlockType::Division>());
   } else {
     removeTreeIfInitialized(rightHandSide);
   }
@@ -606,7 +606,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide->numberOfChildren() + 1);
     } else {
-      leftHandSide->cloneNodeAtNode(Tree<BlockType::Multiplication, 2>());
+      leftHandSide->cloneNodeAtNode(KTree<BlockType::Multiplication, 2>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -624,7 +624,7 @@ void RackParser::parseCaret(EditionReference &leftHandSide,
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::ImplicitTimes)) {
-    turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
+    turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
   } else {
     removeTreeIfInitialized(rightHandSide);
   }
@@ -816,7 +816,7 @@ void RackParser::parseBang(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing
   } else {
-    leftHandSide->cloneNodeAtNode(Tree<BlockType::Factorial>());
+    leftHandSide->cloneNodeAtNode(KTree<BlockType::Factorial>());
   }
   isThereImplicitOperator();
 }
@@ -1326,7 +1326,8 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
         m_status = Status::Error;
         return;
       }
-      turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
+      turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide,
+                         rightHandSide);
       break;
     }
     default:

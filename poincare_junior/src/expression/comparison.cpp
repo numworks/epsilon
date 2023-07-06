@@ -4,7 +4,7 @@
 
 #include "approximation.h"
 #include "constant.h"
-#include "k_creator.h"
+#include "k_tree.h"
 #include "polynomial.h"
 #include "symbol.h"
 

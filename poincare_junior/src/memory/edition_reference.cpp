@@ -2,7 +2,7 @@
 
 #include <ion/unicode/code_point.h>
 #include <poincare_junior/include/poincare.h>
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <string.h>
 
 #include "edition_pool.h"

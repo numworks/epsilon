@@ -1,7 +1,7 @@
 #include "simplification.h"
 
 #include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/memory/node_iterator.h>

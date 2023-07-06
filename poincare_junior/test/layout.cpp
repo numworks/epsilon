@@ -1,8 +1,8 @@
 #include <kandinsky/ion_context.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/k_creator.h>
-#include <poincare_junior/src/layout/k_creator.h>
+#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/render.h>
 
 #include "helper.h"

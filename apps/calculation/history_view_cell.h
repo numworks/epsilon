@@ -24,7 +24,6 @@ class HistoryViewCellDataSource {
   /* This method should belong to a delegate instead of a data source but as
    * both the data source and the delegate will be the same controller, we
    * avoid keeping 2 pointers in HistoryViewCell. */
-  // It returns the selected cell at the end of the method
   virtual void historyViewCellDidChangeSelection(HistoryViewCell** cell,
                                                  HistoryViewCell** previousCell,
                                                  int previousSelectedRow,

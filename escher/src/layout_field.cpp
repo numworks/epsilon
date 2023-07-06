@@ -152,7 +152,7 @@ void LayoutField::clearLayout() {
   // Replace the layout with an empty horizontal layout
   m_contentView.clearLayout();
   // Put the scroll to offset 0
-  reloadScroll();
+  resetScroll();
 }
 
 void LayoutField::clearAndSetEditing(bool isEditing) {

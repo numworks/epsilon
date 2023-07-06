@@ -332,7 +332,7 @@ void AbstractScrollableMultipleLayoutsView::reloadScroll() {
                 0));
   } else {
     /* Scroll to the left extremity. */
-    ScrollableView::reloadScroll();
+    resetScroll();
   }
 }
 void AbstractScrollableMultipleLayoutsView::setDisplayCenter(bool display) {

@@ -185,7 +185,7 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
   }
   myCell->label()->setLayout(symbolLayout);
   myCell->subLabel()->setLayout(expressionLayoutForRecord(record, row));
-  myCell->subLabel()->reloadScroll();
+  myCell->subLabel()->resetScroll();
   myCell->reloadCell();
 }
 

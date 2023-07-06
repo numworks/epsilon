@@ -150,7 +150,8 @@ static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a,
 
 void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
                                const void *model, bool vertical,
-                               Function2DWithContext<double> fDouble) {
+                               Function2DWithContext<double> fDouble,
+                               bool *finiteNumberOfPoints) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const =
       vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
@@ -184,6 +185,10 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
   }
   if (!rightInterrupted) {
     privateFitPoint(asymptotes.right(), vertical);
+  }
+  if (finiteNumberOfPoints) {
+    *finiteNumberOfPoints =
+        *finiteNumberOfPoints && !leftInterrupted && !rightInterrupted;
   }
 }
 

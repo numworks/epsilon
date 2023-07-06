@@ -3,11 +3,13 @@
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
+#include <apps/shared/interactive_curve_view_range.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
 #include <poincare/print_int.h>
 #include <poincare/symbol.h>
+#include <poincare/zoom.h>
 
 #include "app.h"
 #include "poincare/empty_context.h"
@@ -63,6 +65,43 @@ void SystemOfEquations::setApproximateResolutionMaximum(double value) {
   }
 }
 
+void SystemOfEquations::resetApproximateResolutionRange() {
+  m_approximateResolutionMinimum = NAN;
+  m_approximateResolutionMaximum = NAN;
+}
+
+template <typename T>
+static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
+  void **modelArray = reinterpret_cast<void **>(const_cast<void *>(model));
+  const Expression *e = reinterpret_cast<const Expression *>(modelArray[0]);
+  const char *variable = reinterpret_cast<const char *>(modelArray[1]);
+  return Coordinate2D<T>(
+      t, e->approximateWithValueForSymbol<T>(
+             variable, t,
+             ApproximationContext(
+                 context, Preferences::sharedPreferences->complexFormat(),
+                 Preferences::sharedPreferences->angleUnit())));
+}
+
+void SystemOfEquations::autoComputeApproximateResolutionRange(
+    Expression equationStandardForm, Context *context) {
+  // Draft find bounds directly
+  constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
+  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
+            k_maxFloat);
+
+  // Use the intersection between the definition domain of f and the bounds
+  zoom.setBounds(-k_maxFloat, k_maxFloat);
+  void *model[2] = {static_cast<void *>(&equationStandardForm),
+                    static_cast<void *>(m_variables[0])};
+  zoom.fitPointsOfInterest(evaluator<float>, static_cast<void *>(model), false,
+                           evaluator<double>);
+  zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
+  Range2D finalRange = zoom.range(false, false);
+  m_approximateResolutionMinimum = finalRange.x()->min();
+  m_approximateResolutionMaximum = finalRange.x()->max();
+}
+
 void SystemOfEquations::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfResolutionVariables == 1);
@@ -74,7 +113,14 @@ void SystemOfEquations::approximateSolve(Context *context) {
                          ReductionTarget::SystemForApproximation);
   m_numberOfSolutions = 0;
 
-  assert(m_approximateResolutionMinimum <= m_approximateResolutionMaximum);
+  if (std::isnan(m_approximateResolutionMaximum) ||
+      std::isnan(m_approximateResolutionMinimum)) {
+    autoComputeApproximateResolutionRange(undevelopedExpression, context);
+  }
+
+  assert(m_approximateResolutionMinimum <= m_approximateResolutionMaximum &&
+         std::isfinite(m_approximateResolutionMaximum) &&
+         std::isfinite(m_approximateResolutionMinimum));
   Poincare::Solver<double> solver = PoincareHelpers::Solver(
       m_approximateResolutionMinimum, m_approximateResolutionMaximum,
       m_variables[0], context);

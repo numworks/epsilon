@@ -74,6 +74,8 @@ class SystemOfEquations {
   }
   void setApproximateResolutionMinimum(double value);
   void setApproximateResolutionMaximum(double value);
+  void resetApproximateResolutionRange();
+
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
 
@@ -100,6 +102,9 @@ class SystemOfEquations {
         const Poincare::SymbolAbstract& symbol, bool clone,
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
+
+  void autoComputeApproximateResolutionRange(
+      Poincare::Expression equationStandardForm, Poincare::Context* context);
 
   Error privateExactSolve(Poincare::Context* context);
   Error simplifyAndFindVariables(Poincare::Context* context,

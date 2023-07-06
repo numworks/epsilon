@@ -86,9 +86,9 @@ void PrefacedTwiceTableView::resetContentOffset() {
   // Main table and row preface
   PrefacedTableView::resetContentOffset();
   // Column preface
-  m_columnPrefaceView.setContentOffset(KDPointZero);
+  m_columnPrefaceView.resetScroll();
   // Intersection preface
-  m_prefaceIntersectionView.setContentOffset(KDPointZero);
+  m_prefaceIntersectionView.resetScroll();
 }
 
 void PrefacedTwiceTableView::layoutSubviews(bool force) {

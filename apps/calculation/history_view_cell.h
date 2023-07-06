@@ -16,18 +16,10 @@ class HistoryViewCellDataSource {
   enum class SubviewType { None = 0, Input = 1, Output = 2, Ellipsis = 3 };
   HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::None) {}
   virtual void setSelectedSubviewType(SubviewType subviewType, bool sameCell,
-                                      int previousSelectedRow = -1);
+                                      int previousSelectedRow = -1) = 0;
   SubviewType selectedSubviewType() const { return m_selectedSubviewType; }
 
- private:
-  /* This method should belong to a delegate instead of a data source but as
-   * both the data source and the delegate will be the same controller, we
-   * avoid keeping 2 pointers in HistoryViewCell. */
-  virtual void historyViewCellDidChangeSelection(HistoryViewCell** cell,
-                                                 HistoryViewCell** previousCell,
-                                                 int previousSelectedRow,
-                                                 SubviewType type,
-                                                 SubviewType previousType) = 0;
+ protected:
   SubviewType m_selectedSubviewType;
 };
 

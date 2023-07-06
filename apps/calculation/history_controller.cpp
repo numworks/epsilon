@@ -354,38 +354,49 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
       selectedCell->additionalInformations().isEmpty()) {
     subviewType = SubviewType::Output;
   }
-  HistoryViewCellDataSource::setSelectedSubviewType(subviewType, sameCell,
-                                                    previousSelectedRow);
-}
+  SubviewType previousSubviewType = m_selectedSubviewType;
+  m_selectedSubviewType = subviewType;
+  /* We need to notify the whole table that the selection changed if it
+   * involves the selection/deselection of an output. Indeed, only them can
+   * trigger change in the displayed expressions. */
 
-void HistoryController::historyViewCellDidChangeSelection(
-    HistoryViewCell **cell, HistoryViewCell **previousCell,
-    int previousSelectedRow, SubviewType type, SubviewType previousType) {
   /* If the selection change triggers the toggling of the outputs, we update
    * the whole table as the height of the selected cell row might have changed.
    */
-  if ((type == SubviewType::Output || previousType == SubviewType::Output) &&
+  if ((subviewType == SubviewType::Output ||
+       previousSubviewType == SubviewType::Output) &&
       (calculationAtIndexToggles(selectedRow()) ||
        calculationAtIndexToggles(previousSelectedRow))) {
     m_selectableListView.reloadData(false);
   }
 
-  /* It might be necessary to scroll to the sub type if the cell overflows the
-   * screen */
+  /* It might be necessary to scroll to the subviewType if the cell overflows
+   * the screen */
   if (selectedRow() >= 0) {
     m_selectableListView.scrollToSubviewOfTypeOfCellAtRow(
-        type, m_selectableListView.selectedRow());
+        subviewType, m_selectableListView.selectedRow());
   }
-  /* Fill the selected cell and the previous selected cell because cells
+  /* Refill the selected cell and the previous selected cell because cells
    * repartition might have changed */
-  *cell = static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
-  *previousCell = static_cast<HistoryViewCell *>(
+  selectedCell =
+      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
+  HistoryViewCell *previousSelectedCell = static_cast<HistoryViewCell *>(
       m_selectableListView.cell(previousSelectedRow));
   /* 'reloadData' calls 'fillCellForRow' for each cell while the table
    * has been deselected. To reload the expanded cell, we call one more time
    * 'fillCellForRow' but once the right cell has been selected. */
-  if (*cell) {
-    fillCellForRow(*cell, selectedRow());
+  if (selectedCell) {
+    fillCellForRow(selectedCell, selectedRow());
+  }
+
+  previousSubviewType = sameCell ? previousSubviewType : SubviewType::None;
+  if (selectedCell) {
+    selectedCell->reloadSubviewHighlight();
+    selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);
+    App::app()->setFirstResponder(selectedCell, true);
+  }
+  if (previousSelectedCell) {
+    previousSelectedCell->cellDidSelectSubview(SubviewType::Input);
   }
 }
 

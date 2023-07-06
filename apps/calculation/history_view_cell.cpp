@@ -15,32 +15,6 @@ using namespace Poincare;
 
 namespace Calculation {
 
-/* HistoryViewCellDataSource */
-
-void HistoryViewCellDataSource::setSelectedSubviewType(
-    SubviewType subviewType, bool sameCell, int previousSelectedRow) {
-  HistoryViewCell *selectedCell = nullptr;
-  HistoryViewCell *previouslySelectedCell = nullptr;
-  SubviewType previousSubviewType = m_selectedSubviewType;
-  m_selectedSubviewType = subviewType;
-  /* We need to notify the whole table that the selection changed if it
-   * involves the selection/deselection of an output. Indeed, only them can
-   * trigger change in the displayed expressions. */
-  historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell,
-                                    previousSelectedRow, subviewType,
-                                    previousSubviewType);
-
-  previousSubviewType = sameCell ? previousSubviewType : SubviewType::None;
-  if (selectedCell) {
-    selectedCell->reloadSubviewHighlight();
-    selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);
-    App::app()->setFirstResponder(selectedCell, true);
-  }
-  if (previouslySelectedCell) {
-    previouslySelectedCell->cellDidSelectSubview(SubviewType::Input);
-  }
-}
-
 /* HistoryViewCell */
 
 KDCoordinate HistoryViewCell::Height(Calculation *calculation, Context *context,

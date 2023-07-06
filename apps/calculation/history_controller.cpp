@@ -136,8 +136,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableListView.selectCell(focusRow > 0 ? focusRow - 1 : 0);
-    /* The parameters 'sameCell' and 'previousSelectedRow' are chosen to enforce
-     * toggling of the output when necessary. */
     setSelectedSubviewType(
         subviewType, false,
         (subviewType == SubviewType::Input) ? selectedRow() : -1);

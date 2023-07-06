@@ -429,15 +429,15 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);
-
   /* We must make sure the "root" we've found is not an odd vertical asymptote.
-   * We only select roots that are lower than an arbitrary threshold. The
-   * value of the threshold itself does not require fine tuning as the
-   * functions we want to filter out will diverge most of the time.
-   * FIXME This test will fail when confronted with discontinuous functions
-   * that do not have asymptotes. */
-  constexpr float k_threshold = 1.f;
-  if (!(std::fabs(pb.y()) < k_threshold)) {
+   * We thus discard roots that changes direction.
+   */
+  if ((Solver<float>::EvenOrOddRootInBracket(pu, pv, pb, aux) ==
+           Solver<float>::Interest::Root &&
+       (pa.y() <= pu.y()) != (pa.y() <= pb.y())) ||
+      (Solver<float>::EvenOrOddRootInBracket(pa, pu, pv, aux) ==
+           Solver<float>::Interest::Root &&
+       (pv.y() <= pb.y()) != (pa.y() <= pb.y()))) {
     return Coordinate2D<float>();
   }
 

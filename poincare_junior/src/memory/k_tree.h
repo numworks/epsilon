@@ -144,24 +144,33 @@ struct KTrinary : public KTree<Tag> {
   }
 };
 
-template <Block Tag, TreeConcept... CTS>
-static consteval auto __NAry(CTS...) {
-  return Concat<KTree<Tag, sizeof...(CTS)>, CTS...>();
-}
-
-template <Block Tag, TreeCompatibleConcept... CTS>
-consteval auto KNAry(CTS... args) {
-  return __NAry<Tag>(KTree(args)...);
-}
-
 template <class... Args>
-concept HasANodeConcept = (false || ... ||
+concept HasATreeConcept = (false || ... ||
                            std::is_same<const Tree*, Args>::value);
-template <Block Tag, class... Args>
-  requires HasANodeConcept<Args...>
-consteval const Tree* KNAry(Args... args) {
-  return KTree<>();
-}
+
+template <Block Tag>
+class KNAry {
+ public:
+  template <TreeCompatibleConcept... CTS>
+  consteval auto operator()(CTS... args) const {
+    return concat(KTree(args)...);
+  }
+
+  template <size_t Nb>
+  static constexpr KTree<Tag, Nb> node{};
+
+  template <class... Args>
+    requires HasATreeConcept<Args...>
+  consteval const Tree* operator()(Args... args) const {
+    return KTree<>();
+  }
+
+ private:
+  template <TreeConcept... CTS>
+  consteval auto concat(CTS...) const {
+    return Concat<KTree<Tag, sizeof...(CTS)>, CTS...>();
+  }
+};
 
 // String type used for templated string litterals
 

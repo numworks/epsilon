@@ -32,25 +32,10 @@ constexpr auto KSub = KBinary<BlockType::Subtraction>();
 constexpr auto KPow = KBinary<BlockType::Power>();
 constexpr auto KDiff = KTrinary<BlockType::Derivative>();
 
-template <class... Args>
-consteval auto KAdd(Args... args) {
-  return KNAry<BlockType::Addition>(args...);
-}
-
-template <class... Args>
-consteval auto KMult(Args... args) {
-  return KNAry<BlockType::Multiplication>(args...);
-}
-
-template <class... Args>
-consteval auto KSet(Args... args) {
-  return KNAry<BlockType::Set>(args...);
-}
-
-template <class... Args>
-consteval auto KSystemList(Args... args) {
-  return KNAry<BlockType::SystemList>(args...);
-}
+constexpr auto KAdd = KNAry<BlockType::Addition>();
+constexpr auto KMult = KNAry<BlockType::Multiplication>();
+constexpr auto KSet = KNAry<BlockType::Set>();
+constexpr auto KSystemList = KNAry<BlockType::SystemList>();
 
 /* if you want to add operator+ and so on, you can revert them from the commit
  * [poincare_junior] Split tree_constructor.h */
@@ -84,8 +69,7 @@ static consteval auto KPol(Exp exponents, CTS... args) {
 template <int V>
 class IntegerLitteral : public AbstractTreeCompatible {
  public:
-  // once a deduction guide as required a given Tree from the immediate, build
-  // it
+  // Once a deduction guide has chosen the KTree for the litteral, build it
   template <Block... B>
   consteval operator KTree<B...>() {
     return KTree<B...>();

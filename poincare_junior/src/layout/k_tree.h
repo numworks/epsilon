@@ -7,11 +7,7 @@
 namespace PoincareJ {
 
 // TODO : A RackLayout shouldn't have RackLayout children.
-template <class... Args>
-consteval auto KRackL(Args... args) {
-  return KNAry<BlockType::RackLayout>(args...);
-}
-
+constexpr auto KRackL = KNAry<BlockType::RackLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KVertOffL = KUnary<BlockType::VerticalOffsetLayout>();
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout>();

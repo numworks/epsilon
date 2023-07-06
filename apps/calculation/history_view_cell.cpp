@@ -308,6 +308,7 @@ void HistoryViewCell::resetMemoization() {
 void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
                                      Context *context,
                                      bool canChangeDisplayOutput) {
+  bool didChangeExpanded = false;
   if (m_calculationExpanded != expanded) {
     // Change expanded if needed
     m_calculationExpanded =
@@ -318,12 +319,16 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
         m_calculationDisplayOutput ==
             Calculation::DisplayOutput::ExactAndApproximate ||
         m_calculationExpanded);
+    didChangeExpanded = true;
   }
 
   uint32_t newCalculationCRC =
       Ion::crc32Byte((const uint8_t *)calculation,
                      ((char *)calculation->next()) - ((char *)calculation));
   if (newCalculationCRC == m_calculationCRC32) {
+    if (didChangeExpanded) {
+      reloadScroll();
+    }
     return;
   }
 

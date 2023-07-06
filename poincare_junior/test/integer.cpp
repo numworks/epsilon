@@ -109,10 +109,8 @@ QUIZ_CASE(pcj_integer_compare) {
 }
 
 static inline void assert_add_to(const char* a, const char* b, const char* c) {
-  // TODO: remove static_cast<Node*> when Hugo's PR is merged
   quiz_assert(
-      static_cast<Node*>(IntegerHandler::Addition(CreateIntegerHandler(a),
-                                                  CreateIntegerHandler(b)))
+      IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
@@ -144,11 +142,9 @@ QUIZ_CASE(pcj_integer_addition) {
 }
 
 static inline void assert_sub_to(const char* a, const char* b, const char* c) {
-  // TODO: remove static_cast<Node*> when Hugo's PR is merged
-  quiz_assert(
-      static_cast<Node*>(IntegerHandler::Subtraction(CreateIntegerHandler(a),
-                                                     CreateIntegerHandler(b)))
-          ->treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(IntegerHandler::Subtraction(CreateIntegerHandler(a),
+                                          CreateIntegerHandler(b))
+                  ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -183,11 +179,9 @@ QUIZ_CASE(pcj_integer_subtraction) {
 }
 
 static inline void assert_mult_to(const char* a, const char* b, const char* c) {
-  // TODO: remove static_cast<Node*> when Hugo's PR is merged
-  quiz_assert(
-      static_cast<Node*>(IntegerHandler::Multiplication(
-                             CreateIntegerHandler(a), CreateIntegerHandler(b)))
-          ->treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(IntegerHandler::Multiplication(CreateIntegerHandler(a),
+                                             CreateIntegerHandler(b))
+                  ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -262,10 +256,9 @@ QUIZ_CASE(pcj_integer_divide) {
 }
 
 static inline void assert_pow_to(const char* a, const char* b, const char* c) {
-  // TODO: remove static_cast<Node*> when Hugo's PR is merged
-  quiz_assert(static_cast<Node*>(IntegerHandler::Power(CreateIntegerHandler(a),
-                                                       CreateIntegerHandler(b)))
-                  ->treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(
+      IntegerHandler::Power(CreateIntegerHandler(a), CreateIntegerHandler(b))
+          ->treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -280,10 +273,8 @@ QUIZ_CASE(pcj_integer_pow) {
 }
 
 static inline void assert_factorial_to(const char* a, const char* b) {
-  // TODO: remove static_cast<Node*> when Hugo's PR is merged
-  quiz_assert(
-      static_cast<Node*>(IntegerHandler::Factorial(CreateIntegerHandler(a)))
-          ->treeIsIdenticalTo(CreateInteger(b)));
+  quiz_assert(IntegerHandler::Factorial(CreateIntegerHandler(a))
+                  ->treeIsIdenticalTo(CreateInteger(b)));
   reset_pools();
 }
 

@@ -631,8 +631,8 @@ QUIZ_CASE(pcj_node_size) {
   Node* node = editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
   quiz_assert(node->nodeSize() == 5);
-  node = static_cast<Node*>(editionPool->push<BlockType::IntegerNegBig>(
-      static_cast<uint64_t>(0x0000FF00)));
+  node = editionPool->push<BlockType::IntegerNegBig>(
+      static_cast<uint64_t>(0x0000FF00));
   quiz_assert(node->nodeSize() == 4);
 }
 

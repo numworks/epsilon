@@ -543,7 +543,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Node* ref, bool change) {
     assert(tempClone->block()->isAlgebraic());
     ShallowAdvancedReduction(tempClone, true);
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
-    if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
+    if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the expansion.
       ref->moveTreeOverTree(tempClone);
       return true;
@@ -559,7 +559,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(Node* ref, bool change) {
   if (ShallowContract(tempClone)) {
     SystematicReduce(tempClone);
     // TODO: Decide on the metric to use here.
-    if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
+    if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.
       ref->moveTreeOverTree(tempClone);
       return true;
@@ -571,7 +571,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(Node* ref, bool change) {
   if (ExpandTranscendentalOnRational(tempClone) +
       ShallowAlgebraicExpand(tempClone) + PolynomialInterpretation(tempClone)) {
     // TODO: Decide on the metric to use here.
-    if (static_cast<const Node*>(tempClone)->treeSize() < 3 * treeSize) {
+    if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.
       ref->moveTreeOverTree(tempClone);
       return true;

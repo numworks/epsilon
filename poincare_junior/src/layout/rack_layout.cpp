@@ -120,15 +120,14 @@ EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference,
 // Return the nearest NAry
 EditionReference RackLayout::RackParent(EditionReference reference, int* index,
                                         const Node* root) {
-  if (Layout::IsHorizontal(static_cast<Node*>(reference))) {
+  if (Layout::IsHorizontal(reference)) {
     return reference;
   }
   assert(*index <= 1);
   // Find or make a RackLayout parent
   int refIndex;
   EditionReference parent = root->parentOfDescendant(reference, &refIndex);
-  if (parent.isUninitialized() ||
-      !Layout::IsHorizontal(static_cast<Node*>(parent))) {
+  if (parent.isUninitialized() || !Layout::IsHorizontal(parent)) {
     parent = EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(1);
     reference->moveNodeBeforeNode(parent);
   } else {

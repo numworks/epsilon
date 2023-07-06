@@ -336,8 +336,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * be preserved. */
   assert(Layout::IsHorizontal(cursorNode()) || cursorNode() == rootNode() ||
          !Layout::IsHorizontal(rootNode()->parentOfDescendant(cursorNode())));
-  setCursorNode(static_cast<Node *>(RackLayout::AddOrMergeLayoutAtIndex(
-      cursorNode(), ref, &m_position, rootNode())));
+  setCursorNode(RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), ref,
+                                                    &m_position, rootNode()));
   assert(Layout::IsHorizontal(cursorNode()));
 
   if (!forceLeft) {

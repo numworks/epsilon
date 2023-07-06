@@ -102,6 +102,7 @@ class ScrollView : public View {
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
+  void resetScroll() { setContentOffset(KDPointZero); }
 
   void scrollToContentPoint(KDPoint point);
   // Minimal scrolling to make this rect visible

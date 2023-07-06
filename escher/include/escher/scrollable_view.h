@@ -12,7 +12,6 @@ class AbstractScrollableView : public Responder, public ScrollView {
   AbstractScrollableView(Responder* parentResponder, View* view,
                          ScrollViewDataSource* dataSource);
   bool handleEvent(Ion::Events::Event event) override;
-  void resetScroll();
 
  protected:
   KDSize contentSize() const override;

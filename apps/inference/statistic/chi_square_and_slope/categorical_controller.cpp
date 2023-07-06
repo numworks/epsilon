@@ -75,7 +75,7 @@ void CategoricalController::scrollViewDidChangeOffset(
       KDPoint(currentOffset.x(), newOffsetY));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);
-  m_selectableListView.setContentOffset(KDPointZero);
+  m_selectableListView.resetScroll();
   setScrollViewDelegate(this);
 }
 
@@ -175,7 +175,7 @@ bool InputCategoricalController::ButtonAction(
 }
 
 void InputCategoricalController::viewWillAppear() {
-  categoricalTableCell()->selectableTableView()->setContentOffset(KDPointZero);
+  categoricalTableCell()->selectableTableView()->resetScroll();
   categoricalTableCell()->recomputeDimensions();
   PrintValueInTextHolder(m_statistic->threshold(),
                          m_significanceCell.textField(), true, true);

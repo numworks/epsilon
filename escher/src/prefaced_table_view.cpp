@@ -57,8 +57,8 @@ void PrefacedTableView::resetContentOffset() {
    * TableView::layoutSubview first initSize on all cells before computing the
    * actual sizes, the preface resets could mess up the frames set by the main
    * one so call it first. */
-  m_rowPrefaceView.setContentOffset(KDPointZero);
-  m_mainTableView->setContentOffset(KDPointZero);
+  m_rowPrefaceView.resetScroll();
+  m_mainTableView->resetScroll();
 }
 
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(

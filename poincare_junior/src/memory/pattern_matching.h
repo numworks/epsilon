@@ -13,10 +13,6 @@
 
 namespace PoincareJ {
 
-/* TODO: Profile the code to decide whether to reduce node size by
- * unsymmetrizing them but forbid the use of parentOfDescendant.
- */
-
 class PatternMatching {
   /* TODO : Force and ensure via assertions that AnyTrees filter are also used
    * in CreateTree's structure. This could be stored in a boolean array here and

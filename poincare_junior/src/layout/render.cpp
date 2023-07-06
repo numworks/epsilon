@@ -84,8 +84,6 @@ KDCoordinate Render::Baseline(const Node* node, const Node* root,
 void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
                   KDFont::Size font, KDColor expressionColor,
                   KDColor backgroundColor) {
-  /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
-   * Drawing is therefore restricted to the highest parent only. */
   PrivateDraw(node, node, ctx, p, font, expressionColor, backgroundColor);
 }
 

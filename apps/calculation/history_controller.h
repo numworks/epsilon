@@ -56,7 +56,6 @@ class HistoryController : public Escher::ViewController,
   bool calculationAtIndexToggles(int index);
   void historyViewCellDidChangeSelection(HistoryViewCell** cell,
                                          HistoryViewCell** previousCell,
-                                         int previousSelectedCol,
                                          int previousSelectedRow,
                                          SubviewType type,
                                          SubviewType previousType) override;

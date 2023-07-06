@@ -28,8 +28,8 @@ void HistoryViewCellDataSource::setSelectedSubviewType(
    * involves the selection/deselection of an output. Indeed, only them can
    * trigger change in the displayed expressions. */
   historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell,
-                                    previousSelectedCol, previousSelectedRow,
-                                    subviewType, previousSubviewType);
+                                    previousSelectedRow, subviewType,
+                                    previousSubviewType);
 
   previousSubviewType = sameCell ? previousSubviewType : SubviewType::None;
   if (selectedCell) {

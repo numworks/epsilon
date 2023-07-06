@@ -127,7 +127,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   Context *context = App::app()->localContext();
   if (event == Ion::Events::Backspace) {
     int focusRow = selectedRow();
-    SubviewType subviewType = selectedSubviewType();
+    SubviewType subviewType = m_selectedSubviewType;
     m_selectableListView.deselectTable();
     m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
     reload();
@@ -157,7 +157,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   int focusRow = selectedRow();
   HistoryViewCell *selectedCell =
       (HistoryViewCell *)m_selectableListView.selectedCell();
-  SubviewType subviewType = selectedSubviewType();
+  SubviewType subviewType = m_selectedSubviewType;
   EditExpressionController *editController =
       (EditExpressionController *)parentResponder();
   if (subviewType == SubviewType::Input) {
@@ -290,7 +290,7 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
     setSelectedSubviewType(SubviewType::None, false, previousSelectedRow);
   } else {
     HistoryViewCell *selectedCell = (HistoryViewCell *)(list->selectedCell());
-    SubviewType nextSelectedSubviewType = selectedSubviewType();
+    SubviewType nextSelectedSubviewType = m_selectedSubviewType;
     if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedRow < selectedRow()
                                     ? SubviewType::Input
@@ -321,7 +321,7 @@ void HistoryController::fillCellForRow(HighlightCell *cell, int row) {
   Poincare::Context *context = App::app()->localContext();
   myCell->setCalculation(
       calculationAtIndex(row).pointer(),
-      row == selectedRow() && selectedSubviewType() == SubviewType::Output,
+      row == selectedRow() && m_selectedSubviewType == SubviewType::Output,
       context);
   myCell->setEven(row % 2 == 0);
   myCell->reloadSubviewHighlight();
@@ -333,7 +333,7 @@ KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {
   }
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(row);
   bool expanded =
-      row == selectedRow() && selectedSubviewType() == SubviewType::Output;
+      row == selectedRow() && m_selectedSubviewType == SubviewType::Output;
   return calculation->height(expanded);
 }
 

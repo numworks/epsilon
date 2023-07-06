@@ -27,7 +27,6 @@ class HistoryViewCellDataSource {
   // It returns the selected cell at the end of the method
   virtual void historyViewCellDidChangeSelection(HistoryViewCell** cell,
                                                  HistoryViewCell** previousCell,
-                                                 int previousSelectedCol,
                                                  int previousSelectedRow,
                                                  SubviewType type,
                                                  SubviewType previousType) = 0;

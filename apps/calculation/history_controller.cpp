@@ -365,8 +365,7 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
 
 void HistoryController::historyViewCellDidChangeSelection(
     HistoryViewCell **cell, HistoryViewCell **previousCell,
-    int previousSelectedCol, int previousSelectedRow, SubviewType type,
-    SubviewType previousType) {
+    int previousSelectedRow, SubviewType type, SubviewType previousType) {
   /* If the selection change triggers the toggling of the outputs, we update
    * the whole table as the height of the selected cell row might have changed.
    */

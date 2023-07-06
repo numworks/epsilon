@@ -38,8 +38,7 @@ class HistoryController : public Escher::ViewController,
   int reusableCellCount(int type) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell,
-                              int previousSelectedX = -1,
-                              int previousSelectedY = -1) override;
+                              int previousSelectedRow = -1) override;
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* list, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;

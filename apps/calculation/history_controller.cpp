@@ -136,10 +136,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableListView.selectCell(focusRow > 0 ? focusRow - 1 : 0);
-    /* The parameters 'sameCell' and 'previousSelectedY' are chosen to enforce
+    /* The parameters 'sameCell' and 'previousSelectedRow' are chosen to enforce
      * toggling of the output when necessary. */
     setSelectedSubviewType(
-        subviewType, false, 0,
+        subviewType, false,
         (subviewType == SubviewType::Input) ? selectedRow() : -1);
     return true;
   }
@@ -289,9 +289,9 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
     return;
   }
   if (previousSelectedRow == -1) {
-    setSelectedSubviewType(SubviewType::Output, false, 0, previousSelectedRow);
+    setSelectedSubviewType(SubviewType::Output, false, previousSelectedRow);
   } else if (selectedRow() == -1) {
-    setSelectedSubviewType(SubviewType::None, false, 0, previousSelectedRow);
+    setSelectedSubviewType(SubviewType::None, false, previousSelectedRow);
   } else {
     HistoryViewCell *selectedCell = (HistoryViewCell *)(list->selectedCell());
     SubviewType nextSelectedSubviewType = selectedSubviewType();
@@ -300,8 +300,7 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
                                     ? SubviewType::Input
                                     : SubviewType::Output;
     }
-    setSelectedSubviewType(nextSelectedSubviewType, false, 0,
-                           previousSelectedRow);
+    setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedRow);
   }
 }
 
@@ -351,8 +350,7 @@ bool HistoryController::calculationAtIndexToggles(int index) {
 
 void HistoryController::setSelectedSubviewType(SubviewType subviewType,
                                                bool sameCell,
-                                               int previousSelectedX,
-                                               int previousSelectedY) {
+                                               int previousSelectedRow) {
   // Avoid selecting non-displayed ellipsis
   HistoryViewCell *selectedCell =
       static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
@@ -360,8 +358,8 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
       selectedCell->additionalInformations().isEmpty()) {
     subviewType = SubviewType::Output;
   }
-  HistoryViewCellDataSource::setSelectedSubviewType(
-      subviewType, sameCell, previousSelectedX, previousSelectedY);
+  HistoryViewCellDataSource::setSelectedSubviewType(subviewType, sameCell,
+                                                    previousSelectedRow);
 }
 
 void HistoryController::historyViewCellDidChangeSelection(

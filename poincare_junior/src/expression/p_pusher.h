@@ -17,7 +17,7 @@
 
 #define P_UNDEF() editionPool->clone(KUndef)
 
-// Wrap arguments with EditionReference::Clone if they have Node* type to avoid
+// Wrap arguments with EditionReference::Clone if they have Tree* type to avoid
 // mistakes ?
 
 #endif

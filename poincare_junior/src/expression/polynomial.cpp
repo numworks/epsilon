@@ -29,7 +29,7 @@ EditionReference Polynomial::PushMonomial(EditionReference variable,
   return pol;
 }
 
-uint8_t Polynomial::ExponentAtIndex(const Node* polynomial, int index) {
+uint8_t Polynomial::ExponentAtIndex(const Tree* polynomial, int index) {
   assert(index >= 0 && index < NumberOfTerms(polynomial));
   return static_cast<uint8_t>(*(polynomial->block()->nextNth(2 + index)));
 }
@@ -202,7 +202,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   if (polA->type() != BlockType::Polynomial &&
       polB->type() != BlockType::Polynomial) {
     assert(polA->block()->isInteger() && polB->block()->isInteger());
-    std::pair<Node*, Node*> nodePair = IntegerHandler::Division(
+    std::pair<Tree*, Tree*> nodePair = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
     EditionReference quotient = EditionReference(nodePair.first);
     EditionReference remainder = EditionReference(nodePair.second);
@@ -296,15 +296,15 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 
 /* PolynomialParser */
 
-const Node* PolynomialParser::GetVariables(const Node* expression) {
+const Tree* PolynomialParser::GetVariables(const Tree* expression) {
   if (expression->block()->isInteger()) {  // TODO: generic belongToField?
     return KSet();
   }
   BlockType type = expression->type();
   // TODO: match
   if (type == BlockType::Power) {
-    const Node* base = expression->nextNode();
-    const Node* exponent = base->nextTree();
+    const Tree* base = expression->nextNode();
+    const Tree* exponent = base->nextTree();
     if (Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
       EditionReference variables(editionPool->push<BlockType::Set>(1));
@@ -314,7 +314,7 @@ const Node* PolynomialParser::GetVariables(const Node* expression) {
   }
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
     EditionReference variables = EditionReference(KSet());
-    for (const Node* child : expression->children()) {
+    for (const Tree* child : expression->children()) {
       if (child->type() == BlockType::Addition) {
         assert(type != BlockType::Addition);
         variables = Set::Add(variables, child);
@@ -324,7 +324,7 @@ const Node* PolynomialParser::GetVariables(const Node* expression) {
     }
     return variables;
   }
-  Node* variables = editionPool->push<BlockType::Set>(1);
+  Tree* variables = editionPool->push<BlockType::Set>(1);
   editionPool->clone(expression);
   return variables;
 }
@@ -332,16 +332,16 @@ const Node* PolynomialParser::GetVariables(const Node* expression) {
 EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
                                                     EditionReference variables,
                                                     size_t variableIndex) {
-  const Node* variable = nullptr;
-  for (std::pair<const Node*, int> indexedVariable :
+  const Tree* variable = nullptr;
+  for (std::pair<const Tree*, int> indexedVariable :
        NodeIterator::Children<NoEditable>(variables)) {
     if (std::get<int>(indexedVariable) < variableIndex) {
       // Skip previously handled variable
       continue;
     }
     if (Comparison::ContainsSubtree(expression,
-                                    std::get<const Node*>(indexedVariable))) {
-      variable = std::get<const Node*>(indexedVariable);
+                                    std::get<const Tree*>(indexedVariable))) {
+      variable = std::get<const Tree*>(indexedVariable);
       break;
     }
   }
@@ -397,7 +397,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
   if (PatternMatching::Match(KPow(KPlaceholder<Placeholders::A>(),
                                   KPlaceholder<Placeholders::B>()),
                              expression, &ctx)) {
-    const Node* exponent = ctx.getNode(Placeholders::B);
+    const Tree* exponent = ctx.getNode(Placeholders::B);
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);
@@ -429,27 +429,27 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
 }
 
 #if 0
-bool IsInSetOrIsEqual(const Node* expression, const Node* variables) {
+bool IsInSetOrIsEqual(const Tree* expression, const Tree* variables) {
   return variables.type() == BlockType::Set ?
     Set::Includes(variables, expression) :
     Compare::AreEqual(variables, expression);
 }
 
-uint8_t Polynomial::Degree(const Node* expression, const Node* variable) {
+uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
   if (Compare::AreEqual(expression, variable)) {
     return 1;
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
-    Node* base = expression.nextNode();
-    Node* exponent = base.nextTree();
+    Tree* base = expression.nextNode();
+    Tree* exponent = base.nextTree();
     if (Integer::IsUint8(exponent) && Compare::AreEqual(base, variable)) {
       return Integer::Uint8(exponent);
     }
   }
   uint8_t degree = 0;
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
-    for (const Node* child : expression->children()) {
+    for (const Tree* child : expression->children()) {
       uint8_t childDegree = Degree(child, variables);
       if (type == BlockType::Addition) {
         degree = std::max(degree, childDegree);
@@ -462,7 +462,7 @@ uint8_t Polynomial::Degree(const Node* expression, const Node* variable) {
   return degree;
 }
 
-EditionReference Polynomial::Coefficient(const Node* expression, const Node* variable, uint8_t exponent) {
+EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   BlockType type = expression.type();
   if (expression.type() == BlockType::Addition) {
     EditionPool * editionPool = editionPool;
@@ -470,7 +470,7 @@ EditionReference Polynomial::Coefficient(const Node* expression, const Node* var
       return exponent == 1 ? editionPool->push<BlockType::One>() : editionPool->push<BlockType::Zero>();
     }
     EditionReference addition = editionPool->push<BlockType::Addition>(0);
-    for (const Node* child : expression->children()) {
+    for (const Tree* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {
         NAry::AddChild(addition, childCoefficient);
@@ -488,23 +488,23 @@ EditionReference Polynomial::Coefficient(const Node* expression, const Node* var
   return editionPool->push<BlockType::Zero>();
 }
 
-std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Node* expression, const Node* variable) {
+std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
   EditionPool * editionPool = editionPool;
   if (Comparison::AreEqual(expression, variable)) {
     return std::make_pair(editionPool->push<BlockType::One>(), 1);
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
-    Node* base = expression.nextNode();
-    Node* exponent = base.nextTree();
+    Tree* base = expression.nextNode();
+    Tree* exponent = base.nextTree();
     if (Comparison::AreEqual(exponent, variable) && Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
       return std::make_pair(editionPool->push<BlockType::One>(), Integer::Uint8(exponent));
     }
   }
   if (type == BlockType::Multiplication) {
-    for (std::pair<const Node *, int> indexedNode : NodeIterator::Children<NoEditable>(expression)) {
-      Node* child = std::get<const Node *>(indexedNode);
+    for (std::pair<const Tree *, int> indexedNode : NodeIterator::Children<NoEditable>(expression)) {
+      Tree* child = std::get<const Tree *>(indexedNode);
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at basicReduction

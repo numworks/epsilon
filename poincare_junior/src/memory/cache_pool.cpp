@@ -8,7 +8,7 @@ namespace PoincareJ {
 
 // ReferenceTable
 
-Node *CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+Tree *CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
     return nullptr;
   }
@@ -19,7 +19,7 @@ Node *CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return Pool::ReferenceTable::nodeForIdentifier(index);
 }
 
-uint16_t CachePool::ReferenceTable::storeNode(Node *node) {
+uint16_t CachePool::ReferenceTable::storeNode(Tree *node) {
   if (isFull()) {
     removeFirstReferences(1, &node);
   }
@@ -35,7 +35,7 @@ bool CachePool::ReferenceTable::freeOldestBlocks(
   int numberOfFreedBlocks = 0;
   uint16_t newFirstIndex;
   for (uint16_t i = 0; i < m_length; i++) {
-    Node *node = Pool::ReferenceTable::nodeForIdentifier(i);
+    Tree *node = Pool::ReferenceTable::nodeForIdentifier(i);
     numberOfFreedBlocks += node->treeSize();
     if (numberOfFreedBlocks >= numberOfRequiredFreeBlocks) {
       newFirstIndex = i + 1;
@@ -60,7 +60,7 @@ bool CachePool::ReferenceTable::reset() {
 }
 
 void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
-                                                      Node **nodeToUpdate) {
+                                                      Tree **nodeToUpdate) {
   // Compute before corrupting the reference table
   size_t cachePoolSize = m_pool->size();
   uint16_t numberOfFreedBlocks = newFirstIndex == m_length
@@ -76,7 +76,7 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
   }
   if (nodeToUpdate) {
     *nodeToUpdate =
-        Node::FromBlocks((*nodeToUpdate)->block() - numberOfFreedBlocks);
+        Tree::FromBlocks((*nodeToUpdate)->block() - numberOfFreedBlocks);
   }
   static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
                                               cachePoolSize);
@@ -96,7 +96,7 @@ uint16_t CachePool::storeEditedTree() {
   if (m_editionPool.size() == 0) {
     return ReferenceTable::NoNodeIdentifier;
   }
-  uint16_t id = m_referenceTable.storeNode(Node::FromBlocks(lastBlock()));
+  uint16_t id = m_referenceTable.storeNode(Tree::FromBlocks(lastBlock()));
   assert(id != ReferenceTable::NoNodeIdentifier);
   resetEditionPool();
   m_editionPool.flush();

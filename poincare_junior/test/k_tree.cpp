@@ -8,14 +8,14 @@ using namespace PoincareJ;
 QUIZ_CASE(pcj_k_tree) {
   constexpr KTree tree = 3_e;
 
-  const Node* node = KMult(KAdd(5_e, 8_e, 4_e), 3_e, tree);
+  const Tree* node = KMult(KAdd(5_e, 8_e, 4_e), 3_e, tree);
   quiz_assert(node->numberOfChildren() == 3);
   quiz_assert(node->numberOfDescendants(true) == 7);
 
   quiz_assert(("x"_e)->nodeSize() == 3);
   quiz_assert(("var"_e)->nodeSize() == 5);
 
-  const Node* poly = KPol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
+  const Tree* poly = KPol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
   quiz_assert(poly->numberOfChildren() == 3);
   quiz_assert(poly->nodeSize() == 4);
   quiz_assert(poly->treeSize() == 11);

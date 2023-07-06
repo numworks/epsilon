@@ -8,7 +8,7 @@ size_t Pool::numberOfTrees() const {
   const TypeBlock* currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
-    currentBlock = Node::FromBlocks(currentBlock)->nextTree()->block();
+    currentBlock = Tree::FromBlocks(currentBlock)->nextTree()->block();
     result++;
   }
   assert(currentBlock == lastBlock());
@@ -17,7 +17,7 @@ size_t Pool::numberOfTrees() const {
 
 // Reference Table
 
-uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node* node, size_t index) {
+uint16_t Pool::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {
   if (index >= m_length) {
     assert(!isFull());
     // Increment first to make firstBlock != nullptr
@@ -31,7 +31,7 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node* node, size_t index) {
   return index;
 }
 
-Node* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+Tree* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
     return nullptr;
   }
@@ -42,7 +42,7 @@ Node* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
     return nullptr;
   }
   assert(offset <= m_pool->size());
-  return Node::FromBlocks(m_pool->firstBlock() + offset);
+  return Tree::FromBlocks(m_pool->firstBlock() + offset);
 }
 
 bool Pool::ReferenceTable::reset() {
@@ -57,10 +57,10 @@ bool Pool::ReferenceTable::reset() {
 #if POINCARE_MEMORY_TREE_LOG
 
 void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
-                                         const Node* node) const {
+                                         const Tree* node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
-    Node* n = Pool::ReferenceTable::nodeForIdentifier(i);
+    Tree* n = Pool::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
       stream << identifierForIndex(i) << ", ";
       found = true;
@@ -77,7 +77,7 @@ void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Pool::logNode(std::ostream& stream, const Node* node, bool recursive,
+void Pool::logNode(std::ostream& stream, const Tree* node, bool recursive,
                    bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
@@ -95,11 +95,11 @@ void Pool::log(std::ostream& stream, LogFormat format, bool verbose,
   stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\""
          << size() << "\">\n";
   if (format == LogFormat::Tree) {
-    for (const Node* tree : trees()) {
+    for (const Tree* tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);
     }
   } else {
-    for (const Node* tree : allNodes()) {
+    for (const Tree* tree : allNodes()) {
       logNode(stream, tree, false, verbose, indentation + 1);
     }
   }

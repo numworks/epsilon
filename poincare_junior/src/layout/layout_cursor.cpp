@@ -195,7 +195,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
   return leftParenthesisIndex;
 }
 
-/* const Node* insertion */
+/* const Tree* insertion */
 void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
                                                          const void *data) {
   const InsertLayoutContext *insertLayoutContext =
@@ -257,8 +257,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * Later at Step 9, balanceAutocompletedBrackets will make it so:
    * "(1+(3+4)][)|" -> "(1+3(3+4))|"
    * */
-  const Node *leftL = leftLayout();
-  const Node *rightL = rightLayout();
+  const Tree *leftL = leftLayout();
+  const Tree *rightL = rightLayout();
 #if 0
   if (!leftL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
@@ -313,7 +313,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 #if 0
   // - Step 6 - Find position to point to if layout will me merged
   EditionPoolCursor previousCursor = *this;
-  Node* childToPoint;
+  Tree* childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
   if (layoutToInsertIsHorizontal) {
     childToPoint = (forceRight || forceLeft)
@@ -581,7 +581,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
 #if 0
   LayoutCursor previousCursor = *this;
 #endif
-  const Node *leftL = leftLayout();
+  const Tree *leftL = leftLayout();
   if (leftL) {
     Render::DeletionMethod deletionMethod =
         Render::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
@@ -589,7 +589,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
   } else {
     assert(m_position == leftMostPosition());
     int index;
-    const Node *p = rootNode()->parentOfDescendant(cursorNode(), &index);
+    const Tree *p = rootNode()->parentOfDescendant(cursorNode(), &index);
     if (!p) {
       return;
     }
@@ -689,7 +689,7 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
     return false;
   }
   int indexInParent;
-  const Node *parent =
+  const Tree *parent =
       rootNode()->parentOfDescendant(cursorNode(), &indexInParent);
   return parent && parent->type() == BlockType::FractionLayout &&
          indexInParent == 0 && parent->childAtIndex(1)->numberOfChildren() == 0;
@@ -709,10 +709,10 @@ void LayoutCursor::beautifyLeft(Context *context) {
 
 /* Private */
 
-void LayoutCursor::setLayout(const Node *l,
+void LayoutCursor::setLayout(const Tree *l,
                              OMG::HorizontalDirection sideOfLayout) {
   int indexInParent;
-  const Node *parent = rootNode()->parentOfDescendant(l, &indexInParent);
+  const Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
   if (!Layout::IsHorizontal(l) && parent && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
     m_position = indexInParent + (sideOfLayout.isRight());
@@ -722,7 +722,7 @@ void LayoutCursor::setLayout(const Node *l,
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
-const Node *LayoutCursor::leftLayout() const {
+const Tree *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
     return m_position == 1 ? cursorNode() : nullptr;
@@ -733,7 +733,7 @@ const Node *LayoutCursor::leftLayout() const {
   return cursorNode()->childAtIndex(m_position - 1);
 }
 
-const Node *LayoutCursor::rightLayout() const {
+const Tree *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(cursorNode())) {
     return m_position == 0 ? cursorNode() : nullptr;
@@ -745,10 +745,10 @@ const Node *LayoutCursor::rightLayout() const {
   return cursorNode()->childAtIndex(m_position);
 }
 
-const Node *LayoutCursor::layoutToFit(KDFont::Size font) const {
+const Tree *LayoutCursor::layoutToFit(KDFont::Size font) const {
   assert(!isUninitialized());
-  const Node *leftL = leftLayout();
-  const Node *rightL = rightLayout();
+  const Tree *leftL = leftLayout();
+  const Tree *rightL = rightLayout();
   if (!leftL && !rightL) {
     return cursorNode();
   }
@@ -761,7 +761,7 @@ const Node *LayoutCursor::layoutToFit(KDFont::Size font) const {
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
                                   bool *shouldRedrawLayout) {
-  const Node *nextLayout = nullptr;
+  const Tree *nextLayout = nullptr;
   /* Search the nextLayout on the left/right to ask it where
    * the cursor should go when entering from outside.
    *
@@ -881,9 +881,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    *
    * */
   int nextLayoutIndex;
-  const Node *parent =
+  const Tree *parent =
       rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
-  const Node *previousLayout = cursorNode();
+  const Tree *previousLayout = cursorNode();
   if (parent && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
     m_position = nextLayoutIndex + (direction.isRight());
@@ -903,12 +903,12 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
 
 bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
                                 bool *shouldRedrawLayout) {
-  const Node *previousLayout = cursorNode();
+  const Tree *previousLayout = cursorNode();
   bool moved = verticalMoveWithoutSelection(direction, shouldRedrawLayout);
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorNode()) {
-    const Node *layoutAncestor =
+    const Tree *layoutAncestor =
         rootNode()->commonAncestor(cursorNode(), previousLayout);
     assert(layoutAncestor);
     // Down goes left to right and up goes right to left
@@ -961,7 +961,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * Try to enter right or left layout if it can be entered through up/down
    * */
   if (!isSelecting()) {
-    const Node *nextLayout = rightLayout();
+    const Tree *nextLayout = rightLayout();
     Render::PositionInLayout positionRelativeToNextLayout =
         Render::PositionInLayout::Left;
     // Repeat for right and left
@@ -1345,7 +1345,7 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;
   setCursorNode(
-      Node::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset()));
+      Tree::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset()));
 }
 
 bool LayoutBufferCursor::execute(Action action, Context *context,
@@ -1367,7 +1367,7 @@ bool LayoutBufferCursor::execute(Action action, Context *context,
             executionContext->m_context, data);
         // Apply the changes
         bufferCursor->setCursorNode(
-            Node::FromBlocks(bufferCursor->rootNode()->block() +
+            Tree::FromBlocks(bufferCursor->rootNode()->block() +
                              editionCursor.cursorNodeOffset()));
         bufferCursor->applyEditionPoolCursor(editionCursor);
         /* The resulting EditionPool tree will be loaded back into

@@ -4,11 +4,11 @@
 
 namespace PoincareJ {
 
-KDSize VerticalOffsetLayout::Size(const Node* node, const Node* root,
+KDSize VerticalOffsetLayout::Size(const Tree* node, const Tree* root,
                                   KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   KDSize indexSize = Render::Size(node->childAtIndex(0), root, font);
-  const Node* base = BaseLayout(node, root);
+  const Tree* base = BaseLayout(node, root);
   KDCoordinate baseHeight = base ? Render::Size(base, root, font).height()
                                  : KDFont::GlyphHeight(font);
 
@@ -16,10 +16,10 @@ KDSize VerticalOffsetLayout::Size(const Node* node, const Node* root,
                 baseHeight - k_indiceHeight + indexSize.height());
 }
 
-KDCoordinate VerticalOffsetLayout::Baseline(const Node* node, const Node* root,
+KDCoordinate VerticalOffsetLayout::Baseline(const Tree* node, const Tree* root,
                                             KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
-  const Node* base = BaseLayout(node, root);
+  const Tree* base = BaseLayout(node, root);
   KDCoordinate baseBaseline =
       base ? Render::Baseline(base, root, font) : KDFont::GlyphHeight(font) / 2;
   KDCoordinate indexHeight =
@@ -27,17 +27,17 @@ KDCoordinate VerticalOffsetLayout::Baseline(const Node* node, const Node* root,
   return indexHeight - k_indiceHeight + baseBaseline;
 }
 
-KDPoint VerticalOffsetLayout::PositionOfChild(const Node* node, int childIndex,
-                                              const Node* parent,
+KDPoint VerticalOffsetLayout::PositionOfChild(const Tree* node, int childIndex,
+                                              const Tree* parent,
                                               KDFont::Size font) {
   assert(IsSuffixSuperscript(node));
   return KDPointZero;
 }
 
-const Node* VerticalOffsetLayout::BaseLayout(const Node* node,
-                                             const Node* root) {
+const Tree* VerticalOffsetLayout::BaseLayout(const Tree* node,
+                                             const Tree* root) {
   int index;
-  const Node* parent = root->parentOfDescendant(node, &index);
+  const Tree* parent = root->parentOfDescendant(node, &index);
   if (parent->type() != BlockType::RackLayout) {
     return nullptr;
   }

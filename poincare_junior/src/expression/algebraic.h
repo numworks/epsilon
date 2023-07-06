@@ -14,7 +14,7 @@ class Algebraic final {
   // develop the integer part of power of non-integer?
   // what about subexpressions? cos(x*(x+1))? NO?
   static EditionReference Rationalize(EditionReference node);
-  static EditionReference SideRelations(Node* expression);
+  static EditionReference SideRelations(Tree* expression);
 
   static EditionReference Numerator(EditionReference expression) {
     return NormalFormator(expression, true);

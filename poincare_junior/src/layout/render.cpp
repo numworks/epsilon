@@ -11,7 +11,7 @@
 
 namespace PoincareJ {
 
-KDSize Render::Size(const Node* node, const Node* root, KDFont::Size font) {
+KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
@@ -30,20 +30,20 @@ KDSize Render::Size(const Node* node, const Node* root, KDFont::Size font) {
   return KDSizeZero;
 }
 
-KDPoint Render::AbsoluteOrigin(const Node* node, const Node* root,
+KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
                                KDFont::Size font) {
   assert(node->block()->isLayout());
   if (node == root) {
     return KDPointZero;
   }
   int index;
-  const Node* parent = root->parentOfDescendant(node, &index);
+  const Tree* parent = root->parentOfDescendant(node, &index);
   return AbsoluteOrigin(parent, root, font)
       .translatedBy(PositionOfChild(parent, index, root, font));
 }
 
-KDPoint Render::PositionOfChild(const Node* node, int childIndex,
-                                const Node* root, KDFont::Size font) {
+KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
+                                const Tree* root, KDFont::Size font) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
@@ -61,7 +61,7 @@ KDPoint Render::PositionOfChild(const Node* node, int childIndex,
   };
 }
 
-KDCoordinate Render::Baseline(const Node* node, const Node* root,
+KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
                               KDFont::Size font) {
   assert(node->block()->isLayout());
   switch (node->type()) {
@@ -81,13 +81,13 @@ KDCoordinate Render::Baseline(const Node* node, const Node* root,
   };
 }
 
-void Render::Draw(const Node* node, KDContext* ctx, KDPoint p,
+void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
                   KDFont::Size font, KDColor expressionColor,
                   KDColor backgroundColor) {
   PrivateDraw(node, node, ctx, p, font, expressionColor, backgroundColor);
 }
 
-void Render::PrivateDraw(const Node* node, const Node* root, KDContext* ctx,
+void Render::PrivateDraw(const Tree* node, const Tree* root, KDContext* ctx,
                          KDPoint p, KDFont::Size font, KDColor expressionColor,
                          KDColor backgroundColor) {
   assert(node->block()->isLayout());
@@ -98,7 +98,7 @@ void Render::PrivateDraw(const Node* node, const Node* root, KDContext* ctx,
     // Layout size overflows KDCoordinate
     return;
   }
-  /* Redraw the background for each Node* (used with selection which isn't
+  /* Redraw the background for each Tree* (used with selection which isn't
    * implemented yet) */
   ctx->fillRect(KDRect(p, size), backgroundColor);
   RenderNode(node, root, ctx, p, font, expressionColor, backgroundColor);
@@ -109,7 +109,7 @@ void Render::PrivateDraw(const Node* node, const Node* root, KDContext* ctx,
   }
 }
 
-void Render::RenderNode(const Node* node, const Node* root, KDContext* ctx,
+void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                         KDPoint p, KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
   assert(node->block()->isLayout());
@@ -130,7 +130,7 @@ void Render::RenderNode(const Node* node, const Node* root, KDContext* ctx,
   };
 }
 
-int Render::IndexAfterHorizontalCursorMove(const Node* node,
+int Render::IndexAfterHorizontalCursorMove(const Tree* node,
                                            OMG::HorizontalDirection direction,
                                            int currentIndex,
                                            bool* shouldRedraw) {

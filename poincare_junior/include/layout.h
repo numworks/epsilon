@@ -13,14 +13,14 @@ class Layout final : public Reference {
   friend class Expression;
 
  public:
-  constexpr static bool IsHorizontal(const Node* node) {
+  constexpr static bool IsHorizontal(const Tree* node) {
     return node->type() == BlockType::RackLayout;
   }
-  constexpr static bool IsEmpty(const Node* node) {
+  constexpr static bool IsEmpty(const Tree* node) {
     return IsHorizontal(node) && node->numberOfChildren() == 0;
   }
 
-  Layout(const Node* tree) : Reference(tree) {
+  Layout(const Tree* tree) : Reference(tree) {
     assert(tree->block()->isLayout());
   }
   using Reference::Reference;
@@ -32,11 +32,11 @@ class Layout final : public Reference {
   bool isEmpty() const;
 
   static char* Serialize(EditionReference layout, char* buffer, char* end);
-  static const Node* EditionPoolTextToLayout(const char* text);
+  static const Tree* EditionPoolTextToLayout(const char* text);
 
  private:
-  static size_t EditionPoolTextToLayoutRec(const char* text, Node* parent,
-                                           const Node* parentheses);
+  static size_t EditionPoolTextToLayoutRec(const char* text, Tree* parent,
+                                           const Tree* parentheses);
 };
 
 static_assert(sizeof(Layout) == sizeof(Reference));

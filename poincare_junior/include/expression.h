@@ -11,7 +11,7 @@ namespace PoincareJ {
 
 class Expression final : public Reference {
  public:
-  Expression(const Node* tree) : Reference(tree) {
+  Expression(const Tree* tree) : Reference(tree) {
     assert(tree->block()->isExpression());
   }
   using Reference::Reference;
@@ -22,21 +22,21 @@ class Expression final : public Reference {
   Layout toLayout() const;
   float approximate() const;
 
-  static EditionReference EditionPoolExpressionToLayout(Node* expression);
-  static Poincare::Expression ToPoincareExpression(const Node* exp);
-  static Node* FromPoincareExpression(Poincare::Expression exp);
+  static EditionReference EditionPoolExpressionToLayout(Tree* expression);
+  static Poincare::Expression ToPoincareExpression(const Tree* exp);
+  static Tree* FromPoincareExpression(Poincare::Expression exp);
 
  private:
   static void ConvertBuiltinToLayout(EditionReference layoutParent,
-                                     Node* expression);
+                                     Tree* expression);
   static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                             IntegerHandler handler);
   static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
-                                           Node* expression);
+                                           Tree* expression);
   static void ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
-                                             Node* expression);
+                                             Tree* expression);
   static void ConvertExpressionToLayout(EditionReference layoutParent,
-                                        Node* expression,
+                                        Tree* expression,
                                         bool allowParentheses = true);
   static void PushPoincareExpression(Poincare::Expression exp);
 };

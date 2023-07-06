@@ -12,7 +12,7 @@ namespace PoincareJ {
 // TODO: tests
 
 template <typename T>
-T Approximation::To(const Node* node) {
+T Approximation::To(const Tree* node) {
   assert(node->block()->isExpression());
   if (node->block()->isRational()) {
     return Rational::Numerator(node).to<T>() /
@@ -65,7 +65,7 @@ T Approximation::To(const Node* node) {
 }
 
 template <typename T>
-T Approximation::MapAndReduce(const Node* node, Reductor<T> reductor) {
+T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
   T res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     T app = Approximation::To<T>(child);
@@ -79,14 +79,14 @@ T Approximation::MapAndReduce(const Node* node, Reductor<T> reductor) {
 }
 
 EditionReference Approximation::ReplaceWithApproximation(EditionReference ref) {
-  Node* root = ref;
+  Tree* root = ref;
   ApproximateAndReplaceEveryScalar(ref);
   return EditionReference(root);
 }
 
 bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
   bool hasApproximatedEveryChild = true;
-  Node* node = ref->nextNode();
+  Tree* node = ref->nextNode();
   int numberOfChildren = ref->numberOfChildren();
   for (int i = 0; i < numberOfChildren; i++) {
     // Approximate anyway
@@ -108,5 +108,5 @@ bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
 
 }  // namespace PoincareJ
 
-template float PoincareJ::Approximation::To<float>(const PoincareJ::Node*);
-template double PoincareJ::Approximation::To<double>(const PoincareJ::Node*);
+template float PoincareJ::Approximation::To<float>(const PoincareJ::Tree*);
+template double PoincareJ::Approximation::To<double>(const PoincareJ::Tree*);

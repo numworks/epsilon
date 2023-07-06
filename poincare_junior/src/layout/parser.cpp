@@ -10,7 +10,7 @@
 
 namespace PoincareJ {
 
-EditionReference Parser::Parse(const Node* node) {
+EditionReference Parser::Parse(const Tree* node) {
   assert(node->block()->isLayout());
   switch (node->type()) {
     case BlockType::FractionLayout:

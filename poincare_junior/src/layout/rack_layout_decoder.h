@@ -14,7 +14,7 @@ namespace PoincareJ {
 
 class RackLayoutDecoder : public UnicodeDecoder {
  public:
-  RackLayoutDecoder(const Node* layout, size_t initialPosition = 0,
+  RackLayoutDecoder(const Tree* layout, size_t initialPosition = 0,
                     size_t layoutEnd = 0)
       : UnicodeDecoder(initialPosition,
                        layoutEnd ? layoutEnd : layout->numberOfChildren()),
@@ -24,8 +24,8 @@ class RackLayoutDecoder : public UnicodeDecoder {
       m_position = m_end;
     }
   }
-  const Node* mainLayout() const { return m_layout; }
-  const Node* nextLayout() { return layoutAt(m_position++); }
+  const Tree* mainLayout() const { return m_layout; }
+  const Tree* nextLayout() { return layoutAt(m_position++); }
   bool nextLayoutIsCodePoint() {
     return m_position == m_end ||
            (m_position < m_end && m_layout->childAtIndex(m_position)->type() ==
@@ -37,11 +37,11 @@ class RackLayoutDecoder : public UnicodeDecoder {
     assert(0 <= index && index <= m_end);
     m_position = index;
   }
-  void setPosition(const Node* child) {
+  void setPosition(const Tree* child) {
     m_position =
         m_layout->hasChild(child) ? m_layout->indexOfChild(child) : m_end;
   }
-  const Node* layoutAt(size_t index) {
+  const Tree* layoutAt(size_t index) {
     assert(0 <= index && index < m_end);
     return m_layout->childAtIndex(index);
   }
@@ -55,7 +55,7 @@ class RackLayoutDecoder : public UnicodeDecoder {
   }
 
  private:
-  const Node* m_layout;
+  const Tree* m_layout;
 };
 
 }  // namespace PoincareJ

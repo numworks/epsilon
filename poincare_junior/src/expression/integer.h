@@ -44,7 +44,7 @@ class WorkingBuffer {
    * to be able to push either:
    * - the meta blocks of a Big Int before moving the digits from the
    *   WorkingBuffer to the EditionPool,
-   * - the maximal size of an Integer Node* that an immediate digit represents.
+   * - the maximal size of an Integer Tree* that an immediate digit represents.
    */
   constexpr static size_t k_blockOffset =
       TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) +
@@ -119,25 +119,25 @@ class IntegerHandler final {
   operator int8_t() const;
   operator uint8_t() const;
 
-  Node *pushOnEditionPool();
+  Tree *pushOnEditionPool();
   void pushDigitsOnEditionPool();
   template <typename T>
   T to();
 
   // Arithmetic
   static int Compare(const IntegerHandler &a, const IntegerHandler &b);
-  static Node *Addition(const IntegerHandler &a, const IntegerHandler &b);
-  static Node *Subtraction(const IntegerHandler &a, const IntegerHandler &b);
-  static Node *Multiplication(const IntegerHandler &a, const IntegerHandler &b);
-  static std::pair<Node *, Node *> Division(const IntegerHandler &numerator,
+  static Tree *Addition(const IntegerHandler &a, const IntegerHandler &b);
+  static Tree *Subtraction(const IntegerHandler &a, const IntegerHandler &b);
+  static Tree *Multiplication(const IntegerHandler &a, const IntegerHandler &b);
+  static std::pair<Tree *, Tree *> Division(const IntegerHandler &numerator,
                                             const IntegerHandler &denominator);
-  static Node *Quotient(const IntegerHandler &numerator,
+  static Tree *Quotient(const IntegerHandler &numerator,
                         const IntegerHandler &denominator);
-  static Node *Remainder(const IntegerHandler &numerator,
+  static Tree *Remainder(const IntegerHandler &numerator,
                          const IntegerHandler &denominator);
-  static Node *Power(const IntegerHandler &i, const IntegerHandler &j);
-  static Node *Factorial(const IntegerHandler &i);
-  static Node *GCD(const IntegerHandler &a, const IntegerHandler &b);
+  static Tree *Power(const IntegerHandler &i, const IntegerHandler &j);
+  static Tree *Factorial(const IntegerHandler &i);
+  static Tree *GCD(const IntegerHandler &a, const IntegerHandler &b);
 
   constexpr static uint8_t k_maxNumberOfDigits = 128;
   constexpr static uint8_t k_maxNumberOfNativeDigits =
@@ -211,18 +211,18 @@ class IntegerHandler final {
 
 class Integer {
  public:
-  static Node *Push(const char *digits, size_t length,
+  static Tree *Push(const char *digits, size_t length,
                     OMG::Base base = OMG::Base::Decimal) {
     UTF8Decoder decoder(digits, digits, digits + length);
     return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
   }
-  static Node *Push(UnicodeDecoder &decoder,
+  static Tree *Push(UnicodeDecoder &decoder,
                     OMG::Base base = OMG::Base::Decimal) {
     return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
   }
-  static IntegerHandler Handler(const Node *expression);
-  static bool IsUint8(const Node *expression);
-  static uint8_t Uint8(const Node *expression);
+  static IntegerHandler Handler(const Tree *expression);
+  static bool IsUint8(const Tree *expression);
+  static uint8_t Uint8(const Tree *expression);
 
   constexpr static uint8_t NumberOfDigits(uint64_t value) {
     uint8_t numberOfDigits = 0;

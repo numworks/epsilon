@@ -11,7 +11,7 @@
 
 namespace PoincareJ {
 
-EditionReference::EditionReference(const Node* node) {
+EditionReference::EditionReference(const Tree* node) {
   if (!node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
@@ -23,10 +23,10 @@ EditionReference::EditionReference(const Node* node) {
     *this = EditionReference(editionPool->clone(node));
     return;
   }
-  m_identifier = editionPool->referenceNode(const_cast<Node*>(node));
+  m_identifier = editionPool->referenceNode(const_cast<Tree*>(node));
 }
 
-EditionReference::EditionReference(Node* node) {
+EditionReference::EditionReference(Tree* node) {
   if (!node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
@@ -43,7 +43,7 @@ void EditionReference::log() const {
 }
 #endif
 
-Node* EditionReference::node() const {
+Tree* EditionReference::node() const {
   return editionPool->nodeForIdentifier(m_identifier);
 }
 

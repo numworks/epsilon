@@ -7,9 +7,9 @@
 
 namespace PoincareJ {
 
-void NAry::AddChildAtIndex(Node* nary, Node* child, int index) {
+void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
   assert(nary->isNAry());
-  Node* insertionPoint = index == nary->numberOfChildren()
+  Tree* insertionPoint = index == nary->numberOfChildren()
                              ? nary->nextTree()
                              : nary->childAtIndex(index);
   SetNumberOfChildren(nary, nary->numberOfChildren() + 1);
@@ -17,7 +17,7 @@ void NAry::AddChildAtIndex(Node* nary, Node* child, int index) {
 }
 
 // Should these useful refs be hidden in the function ?
-void NAry::AddOrMergeChildAtIndex(Node* naryNode, Node* childNode, int index) {
+void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* childNode, int index) {
   EditionReference nary = naryNode;
   EditionReference child = childNode;
   AddChildAtIndex(nary, child, index);
@@ -29,32 +29,32 @@ void NAry::AddOrMergeChildAtIndex(Node* naryNode, Node* childNode, int index) {
   }
 }
 
-Node* NAry::DetachChildAtIndex(Node* nary, int index) {
+Tree* NAry::DetachChildAtIndex(Tree* nary, int index) {
   assert(nary->isNAry());
-  Node* child = nary->childAtIndex(index)->detachTree();
+  Tree* child = nary->childAtIndex(index)->detachTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;
 }
 
-void NAry::RemoveChildAtIndex(Node* nary, int index) {
+void NAry::RemoveChildAtIndex(Tree* nary, int index) {
   assert(nary->isNAry());
   nary->childAtIndex(index)->removeTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
 }
 
-void NAry::SetNumberOfChildren(Node* nary, size_t numberOfChildren) {
+void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
   assert(nary->isNAry());
   assert(numberOfChildren < UINT8_MAX);
   Block* numberOfChildrenBlock = nary->block()->next();
   *numberOfChildrenBlock = numberOfChildren;
 }
 
-bool NAry::Flatten(Node* nary) {
+bool NAry::Flatten(Tree* nary) {
   assert(nary->isNAry());
   bool modified = false;
   size_t numberOfChildren = nary->numberOfChildren();
   size_t childIndex = 0;
-  Node* child = nary->nextNode();
+  Tree* child = nary->nextNode();
   while (childIndex < numberOfChildren) {
     if (nary->type() == child->type()) {
       modified = true;
@@ -72,7 +72,7 @@ bool NAry::Flatten(Node* nary) {
   return false;
 }
 
-bool NAry::SquashIfUnary(Node* nary) {
+bool NAry::SquashIfUnary(Tree* nary) {
   if (nary->numberOfChildren() == 1) {
     nary->moveTreeOverTree(nary->nextNode());
     return true;
@@ -80,7 +80,7 @@ bool NAry::SquashIfUnary(Node* nary) {
   return false;
 }
 
-bool NAry::SquashIfEmpty(Node* nary) {
+bool NAry::SquashIfEmpty(Tree* nary) {
   if (nary->numberOfChildren() >= 1) {
     return false;
   }
@@ -88,11 +88,11 @@ bool NAry::SquashIfEmpty(Node* nary) {
   BlockType type = nary->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
   nary->cloneTreeOverTree(
-      Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
+      Tree::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
 }
 
-bool NAry::Sanitize(Node* nary) {
+bool NAry::Sanitize(Tree* nary) {
   bool flattened = Flatten(nary);
   if (nary->numberOfChildren() == 0) {
     return SquashIfEmpty(nary) || flattened;
@@ -100,23 +100,23 @@ bool NAry::Sanitize(Node* nary) {
   return SquashIfUnary(nary) || flattened;
 }
 
-bool NAry::Sort(Node* nary, Comparison::Order order) {
+bool NAry::Sort(Tree* nary, Comparison::Order order) {
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;
   }
   if (numberOfChildren == 2) {
-    Node* child0 = nary->nextNode();
-    Node* child1 = child0->nextTree();
+    Tree* child0 = nary->nextNode();
+    Tree* child1 = child0->nextTree();
     if (Comparison::Compare(child0, child1, order) > 0) {
       child0->moveTreeAtNode(child1);
       return true;
     }
     return false;
   }
-  const Node* children[k_maxNumberOfChildren];
+  const Tree* children[k_maxNumberOfChildren];
   uint8_t indexes[k_maxNumberOfChildren];
-  for (uint8_t index = 0; const Node* child : nary->children()) {
+  for (uint8_t index = 0; const Tree* child : nary->children()) {
     children[index] = child;
     indexes[index] = index;
     index++;
@@ -135,7 +135,7 @@ bool NAry::Sort(Node* nary, Comparison::Order order) {
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);
         uint8_t* indexes = static_cast<decltype(indexes)>(contextArray[0]);
-        const Node** children =
+        const Tree** children =
             static_cast<decltype(children)>(contextArray[1]);
         Comparison::Order order =
             *static_cast<Comparison::Order*>(contextArray[2]);
@@ -156,7 +156,7 @@ bool NAry::Sort(Node* nary, Comparison::Order order) {
   return false;
 push:
   // push children in their destination order
-  Node* newNAry = editionPool->clone(nary, false);
+  Tree* newNAry = editionPool->clone(nary, false);
   for (int i = 0; i < numberOfChildren; i++) {
     children[indexes[i]]->clone();
   }
@@ -166,10 +166,10 @@ push:
   return true;
 }
 
-void NAry::SortedInsertChild(Node* nary, Node* child, Comparison::Order order) {
-  Node* children[k_maxNumberOfChildren];
-  for (uint8_t index = 0; const Node* child : nary->children()) {
-    children[index++] = const_cast<Node*>(child);
+void NAry::SortedInsertChild(Tree* nary, Tree* child, Comparison::Order order) {
+  Tree* children[k_maxNumberOfChildren];
+  for (uint8_t index = 0; const Tree* child : nary->children()) {
+    children[index++] = const_cast<Tree*>(child);
   }
   uint8_t a = 0;
   uint8_t b = nary->numberOfChildren();

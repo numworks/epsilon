@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_SIMPLIFICATION_H
 
 #include <omgpj/enums.h>
-#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
 
@@ -18,76 +18,76 @@ struct ProjectionContext {
 
 class Simplification {
  public:
-  static bool Simplify(Node *node);
-  static bool AdvancedReduction(Node *node);
-  static bool ShallowAdvancedReduction(Node *node, bool change);
+  static bool Simplify(Tree *node);
+  static bool AdvancedReduction(Tree *node);
+  static bool ShallowAdvancedReduction(Tree *node, bool change);
 
-  static bool ShallowBeautify(Node *node, void *context = nullptr);
-  static bool DeepBeautify(Node *node,
+  static bool ShallowBeautify(Tree *node, void *context = nullptr);
+  static bool DeepBeautify(Tree *node,
                            ProjectionContext projectionContext = {}) {
     return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext);
   }
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool ShallowContract(Node *e, void *context = nullptr) {
+  static bool ShallowContract(Tree *e, void *context = nullptr) {
     return TryAllOperations(e, k_contractOperations,
                             std::size(k_contractOperations));
   }
-  static bool ShallowExpand(Node *e, void *context = nullptr) {
+  static bool ShallowExpand(Tree *e, void *context = nullptr) {
     return TryAllOperations(e, k_expandOperations,
                             std::size(k_expandOperations));
   }
-  static bool ShallowAlgebraicExpand(Node *e, void *context = nullptr) {
+  static bool ShallowAlgebraicExpand(Tree *e, void *context = nullptr) {
     return TryAllOperations(e, k_algebraicExpandOperations,
                             std::size(k_algebraicExpandOperations));
   }
 
-  static bool DeepSystemProjection(Node *reference,
+  static bool DeepSystemProjection(Tree *reference,
                                    ProjectionContext projectionContext = {});
-  static bool ShallowSystemProjection(Node *reference, void *projectionContext);
+  static bool ShallowSystemProjection(Tree *reference, void *projectionContext);
 
-  static bool SystematicReduce(Node *u);
+  static bool SystematicReduce(Tree *u);
 
  private:
-  static bool SimplifyTrig(Node *u);
-  static bool SimplifyTrigDiff(Node *u);
-  static bool SimplifyAddition(Node *u);
-  static bool MergeAdditionChildren(Node *u1, Node *u2);
-  static bool SimplifyMultiplication(Node *u);
-  static bool MergeMultiplicationChildren(Node *u1, Node *u2);
-  static bool SimplifyPower(Node *u);
+  static bool SimplifyTrig(Tree *u);
+  static bool SimplifyTrigDiff(Tree *u);
+  static bool SimplifyAddition(Tree *u);
+  static bool MergeAdditionChildren(Tree *u1, Tree *u2);
+  static bool SimplifyMultiplication(Tree *u);
+  static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
+  static bool SimplifyPower(Tree *u);
 
-  typedef bool (*ShallowOperation)(Node *node, void *context);
-  static bool ApplyShallowInDepth(Node *node, ShallowOperation shallowOperation,
+  typedef bool (*ShallowOperation)(Tree *node, void *context);
+  static bool ApplyShallowInDepth(Tree *node, ShallowOperation shallowOperation,
                                   void *context = nullptr);
   /* Replace target(..., naryTarget(A, B, ...), ...)
    * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
-  static bool DistributeOverNAry(Node *node, BlockType target,
+  static bool DistributeOverNAry(Tree *node, BlockType target,
                                  BlockType naryTarget, BlockType naryOutput,
                                  int childIndex = 0);
 
-  static bool AdvanceReduceOnTranscendental(Node *node, bool change);
-  static bool AdvanceReduceOnAlgebraic(Node *node, bool change);
-  static bool ReduceInverseFunction(Node *node);
-  static bool ExpandTranscendentalOnRational(Node *node);
-  static bool PolynomialInterpretation(Node *node);
+  static bool AdvanceReduceOnTranscendental(Tree *node, bool change);
+  static bool AdvanceReduceOnAlgebraic(Tree *node, bool change);
+  static bool ReduceInverseFunction(Tree *node);
+  static bool ExpandTranscendentalOnRational(Tree *node);
+  static bool PolynomialInterpretation(Tree *node);
 
-  typedef bool (*Operation)(Node *node);
+  typedef bool (*Operation)(Tree *node);
   // Try all Operations until they all fail consecutively.
-  static bool TryAllOperations(Node *node, const Operation *operations,
+  static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
 
-  static bool ContractAbs(Node *node);
-  static bool ExpandAbs(Node *node);
-  static bool ContractLn(Node *node);
-  static bool ExpandLn(Node *node);
-  static bool ContractExpMult(Node *node);
-  static bool ContractExpPow(Node *node);
-  static bool ExpandExp(Node *node);
-  static bool ContractTrigonometric(Node *node);
-  static bool ExpandTrigonometric(Node *node);
-  static bool ExpandMult(Node *node);
-  static bool ExpandPower(Node *node);
+  static bool ContractAbs(Tree *node);
+  static bool ExpandAbs(Tree *node);
+  static bool ContractLn(Tree *node);
+  static bool ExpandLn(Tree *node);
+  static bool ContractExpMult(Tree *node);
+  static bool ContractExpPow(Tree *node);
+  static bool ExpandExp(Tree *node);
+  static bool ContractTrigonometric(Tree *node);
+  static bool ExpandTrigonometric(Tree *node);
+  static bool ExpandMult(Tree *node);
+  static bool ExpandPower(Tree *node);
 
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractExpPow, ContractAbs, ContractExpMult,

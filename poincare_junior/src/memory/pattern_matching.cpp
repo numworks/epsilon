@@ -5,7 +5,7 @@
 using namespace PoincareJ;
 
 bool PatternMatching::Context::isUninitialized() const {
-  for (const Node* node : m_array) {
+  for (const Tree* node : m_array) {
     if (node) {
       return false;
     }
@@ -20,7 +20,7 @@ void PatternMatching::Context::log() const {
     int numberOfTress = m_numberOfTrees[i];
     std::cout << "  <PlaceHolder tag=" << i << " trees=" << numberOfTress
               << ">\n";
-    const Node* tree = m_array[i];
+    const Tree* tree = m_array[i];
     if (tree) {
       for (int j = 0; j < numberOfTress; j++) {
         tree->log(std::cout, true, true, 2);
@@ -28,7 +28,7 @@ void PatternMatching::Context::log() const {
       }
     } else {
       // TODO
-      // Node().log(std::cout, true, true, 2);
+      // Tree().log(std::cout, true, true, 2);
     }
     std::cout << "  </PlaceHolder>\n";
   }
@@ -36,8 +36,8 @@ void PatternMatching::Context::log() const {
 }
 #endif
 
-PatternMatching::MatchContext::MatchContext(const Node* source,
-                                            const Node* pattern)
+PatternMatching::MatchContext::MatchContext(const Tree* source,
+                                            const Tree* pattern)
     : m_localSourceRoot(source),
       m_localSourceEnd(source->nextTree()->block()),
       m_localPatternEnd(pattern->nextTree()->block()),
@@ -46,34 +46,34 @@ PatternMatching::MatchContext::MatchContext(const Node* source,
       m_globalSourceEnd(m_localSourceEnd),
       m_globalPatternEnd(m_localPatternEnd) {}
 
-int PatternMatching::MatchContext::remainingLocalTrees(const Node* node) const {
+int PatternMatching::MatchContext::remainingLocalTrees(const Tree* node) const {
   if (ReachedLimit(node, m_localSourceEnd)) {
     return 0;
   }
   assert(m_localSourceRoot->block()->isSimpleNAry());
   // Parent is expected to be m_localSourceRoot, but we need nodePosition.
   int nodePosition;
-  const Node* parent =
+  const Tree* parent =
       m_localSourceRoot->parentOfDescendant(node, &nodePosition);
   assert(parent && parent == m_localSourceRoot);
   return m_localSourceRoot->numberOfChildren() - nodePosition;
 }
 
-void PatternMatching::MatchContext::setLocal(const Node* source,
-                                             const Node* pattern) {
+void PatternMatching::MatchContext::setLocal(const Tree* source,
+                                             const Tree* pattern) {
   m_localSourceRoot = source;
   m_localSourceEnd = source->nextTree()->block();
   m_localPatternEnd = pattern->nextTree()->block();
 }
 
-void PatternMatching::MatchContext::setLocalFromChild(const Node* source,
-                                                      const Node* pattern) {
+void PatternMatching::MatchContext::setLocalFromChild(const Tree* source,
+                                                      const Tree* pattern) {
   // If global context limits are reached, set local context back to global.
-  const Node* sourceParent =
+  const Tree* sourceParent =
       ReachedLimit(source, m_globalSourceEnd)
           ? m_globalSourceRoot
           : m_globalSourceRoot->parentOfDescendant(source);
-  const Node* patternParent =
+  const Tree* patternParent =
       ReachedLimit(pattern, m_globalPatternEnd)
           ? m_globalPatternRoot
           : m_globalPatternRoot->parentOfDescendant(pattern);
@@ -81,8 +81,8 @@ void PatternMatching::MatchContext::setLocalFromChild(const Node* source,
   setLocal(sourceParent, patternParent);
 }
 
-bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Node* source,
-                                    const Node* pattern, Context* context,
+bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
+                                    const Tree* pattern, Context* context,
                                     MatchContext matchContext) {
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
   int numberOfTrees = 0;
@@ -104,7 +104,7 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Node* source,
   return true;
 }
 
-bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
+bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
                                  Context* context, MatchContext matchContext) {
   while (!matchContext.reachedLimit(pattern, true, false)) {
     bool onlyEmptyPlaceholders = false;
@@ -124,7 +124,7 @@ bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
 
     if (pattern->type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
-      const Node* tagNode = context->getNode(tag);
+      const Tree* tagNode = context->getNode(tag);
       if (tagNode) {
         // AnyTrees status should be preserved if the Placeholder is reused.
         assert(context->isAnyTree(tag) == (Placeholder::NodeToFilter(pattern) ==
@@ -163,7 +163,7 @@ bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
     bool simpleNAryMatch =
         source->block()->isSimpleNAry() && pattern->type() == source->type();
     if (!simpleNAryMatch && !source->isIdenticalTo(pattern)) {
-      // Node* should match exactly, but it doesn't.
+      // Tree* should match exactly, but it doesn't.
       return false;
     }
     if (source->numberOfChildren() > 0) {
@@ -179,7 +179,7 @@ bool PatternMatching::MatchNodes(const Node* source, const Node* pattern,
   return matchContext.reachedLimit(source, true, true);
 }
 
-bool PatternMatching::Match(const Node* pattern, const Node* source,
+bool PatternMatching::Match(const Tree* pattern, const Tree* source,
                             Context* context) {
   // Use a temporary context to preserve context in case no match is found.
   Context tempContext = *context;
@@ -192,19 +192,19 @@ bool PatternMatching::Match(const Node* pattern, const Node* source,
   return success;
 }
 
-Node* PatternMatching::CreateTree(const Node* structure, const Context context,
-                                  Node* insertedNAry) {
-  Node* top = Node::FromBlocks(editionPool->lastBlock());
+Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
+                                  Tree* insertedNAry) {
+  Tree* top = Tree::FromBlocks(editionPool->lastBlock());
   const TypeBlock* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
   // Skip NAry structure node because it has already been inserted.
-  const Node* node = withinNAry ? structure->nextNode() : structure;
+  const Tree* node = withinNAry ? structure->nextNode() : structure;
   while (node->block() < lastStructureBlock) {
     if (node->type() != BlockType::Placeholder) {
       if (node->block()->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
-        Node* insertedNode = editionPool->clone(node, false);
+        Tree* insertedNode = editionPool->clone(node, false);
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode);
@@ -221,7 +221,7 @@ Node* PatternMatching::CreateTree(const Node* structure, const Context context,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
-    const Node* nodeToInsert = context.getNode(tag);
+    const Tree* nodeToInsert = context.getNode(tag);
     int treesToInsert = context.getNumberOfTrees(tag);
     // nodeToInsert must be initialized even with 0 treesToInsert
     assert(nodeToInsert && treesToInsert >= 0);
@@ -255,8 +255,8 @@ Node* PatternMatching::CreateTree(const Node* structure, const Context context,
   return top;
 }
 
-Node* PatternMatching::MatchAndCreate(const Node* source, const Node* pattern,
-                                      const Node* structure) {
+Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
+                                      const Tree* structure) {
   PatternMatching::Context ctx;
   if (!PatternMatching::Match(pattern, source, &ctx)) {
     return nullptr;
@@ -264,8 +264,8 @@ Node* PatternMatching::MatchAndCreate(const Node* source, const Node* pattern,
   return PatternMatching::Create(structure, ctx);
 }
 
-bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
-                                      const Node* structure) {
+bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
+                                      const Tree* structure) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
@@ -320,7 +320,7 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
     }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       initializedPlaceHolders++;
-      treeNext->cloneTreeBeforeNode(Node::FromBlocks(&ZeroBlock));
+      treeNext->cloneTreeBeforeNode(Tree::FromBlocks(&ZeroBlock));
     }
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);
@@ -348,8 +348,8 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
     if (placeholders[i].isUninitialized()) {
       continue;
     }
-    // Get a Node to the first placeholder tree, and detach as many as necessary
-    Node* trees = Node::FromBlocks(placeholders[i]->block());
+    // Get a Tree to the first placeholder tree, and detach as many as necessary
+    Tree* trees = Tree::FromBlocks(placeholders[i]->block());
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       if (j == 0) {
         placeholders[i] = trees->detachTree();
@@ -375,7 +375,7 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
   }
 
   // Step 5 - Build the PatternMatching replacement
-  Node* created = PatternMatching::Create(structure, ctx);
+  Tree* created = PatternMatching::Create(structure, ctx);
 
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
@@ -386,6 +386,6 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
   return true;
 }
 
-bool Node::matchAndReplace(const Node* pattern, const Node* structure) {
+bool Tree::matchAndReplace(const Tree* pattern, const Tree* structure) {
   return PatternMatching::MatchAndReplace(this, pattern, structure);
 }

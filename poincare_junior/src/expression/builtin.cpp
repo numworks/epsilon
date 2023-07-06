@@ -84,7 +84,7 @@ uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
 
 EditionReference Builtin::Promote(EditionReference parameterList,
                                   BlockType type) {
-  const Node *header;
+  const Tree *header;
   switch (type) {
     case BlockType::Abs:
       header = KTree<BlockType::Abs>();

@@ -148,7 +148,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       char *const inputText = endOfCalculations() + sizeof(Calculation);
 
       // Parse and compute the expression
-      PoincareJ::Node *exp =
+      PoincareJ::Tree *exp =
           PoincareJ::Expression::FromPoincareExpression(inputExpression);
       PoincareJ::EditionReference ref = exp;
       PoincareJ::Simplification::Simplify(ref);

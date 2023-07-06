@@ -1,5 +1,5 @@
-#ifndef POINCARE_MEMORY_NODE_H
-#define POINCARE_MEMORY_NODE_H
+#ifndef POINCARE_MEMORY_TREE_H
+#define POINCARE_MEMORY_TREE_H
 
 #include <string.h>
 
@@ -21,35 +21,35 @@ namespace PoincareJ {
  * [COSINE]
  */
 
-class Node {
+class Tree {
  public:
   // Prevent using Nodes objects directly
-  Node() = delete;
-  void operator=(Node&& other) = delete;
+  Tree() = delete;
+  void operator=(Tree&& other) = delete;
 
-  static const Node* FromBlocks(const Block* blocks) {
-    return reinterpret_cast<const Node*>(blocks);
+  static const Tree* FromBlocks(const Block* blocks) {
+    return reinterpret_cast<const Tree*>(blocks);
   }
 
-  static Node* FromBlocks(Block* blocks) {
-    return reinterpret_cast<Node*>(blocks);
+  static Tree* FromBlocks(Block* blocks) {
+    return reinterpret_cast<Tree*>(blocks);
   }
 
-  bool treeIsIdenticalTo(const Node* other) const {
+  bool treeIsIdenticalTo(const Tree* other) const {
     return memcmp(this, other, treeSize()) == 0;
   }
 
-  bool isIdenticalTo(const Node* other) const {
+  bool isIdenticalTo(const Tree* other) const {
     return memcmp(this, other, nodeSize()) == 0;
   }
 
 #if POINCARE_MEMORY_TREE_LOG
   __attribute__((__used__)) void log() const { log(std::cout); }
-  __attribute__((__used__)) void logDiffWith(const Node* n) const {
+  __attribute__((__used__)) void logDiffWith(const Tree* n) const {
     log(std::cout, true, false, 0, n);
   }
   void log(std::ostream& stream, bool recursive = true, bool verbose = true,
-           int indentation = 0, const Node* comparison = nullptr) const;
+           int indentation = 0, const Tree* comparison = nullptr) const;
   void logName(std::ostream& stream) const;
   void logAttributes(std::ostream& stream) const;
   __attribute__((__used__)) void logBlocks() const { logBlocks(std::cout); }
@@ -61,11 +61,11 @@ class Node {
   constexpr TypeBlock* block() { return m_block; }
   void copyTreeTo(void* address) const;
 
-  // Node Navigation
-  const Node* nextNode() const;
-  Node* nextNode() { return Utils::DeconstifyPtr(&Node::nextNode, this); };
-  const Node* nextTree() const {
-    const Node* result = this;
+  // Tree Navigation
+  const Tree* nextNode() const;
+  Tree* nextNode() { return Utils::DeconstifyPtr(&Tree::nextNode, this); };
+  const Tree* nextTree() const {
+    const Tree* result = this;
     int nbOfChildrenToScan = result->numberOfChildren();
     while (nbOfChildrenToScan > 0) {
       result = result->nextNode();
@@ -73,36 +73,36 @@ class Node {
     }
     return result->nextNode();
   }
-  Node* nextTree() { return Utils::DeconstifyPtr(&Node::nextTree, this); };
+  Tree* nextTree() { return Utils::DeconstifyPtr(&Tree::nextTree, this); };
 
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }
 
-  // Node Hierarchy
-  const Node* commonAncestor(const Node* child1, const Node* child2) const;
-  const Node* parentOfDescendant(const Node* descendant, int* position) const;
+  // Tree Hierarchy
+  const Tree* commonAncestor(const Tree* child1, const Tree* child2) const;
+  const Tree* parentOfDescendant(const Tree* descendant, int* position) const;
   // Make position optional
-  const Node* parentOfDescendant(const Node* descendant) const {
+  const Tree* parentOfDescendant(const Tree* descendant) const {
     int dummyPosition;
     return parentOfDescendant(descendant, &dummyPosition);
   }
   int numberOfDescendants(bool includeSelf) const;
-  const Node* childAtIndex(int index) const;
-  Node* childAtIndex(int index) {
-    return Utils::DeconstifyPtr(&Node::childAtIndex, this, index);
+  const Tree* childAtIndex(int index) const;
+  Tree* childAtIndex(int index) {
+    return Utils::DeconstifyPtr(&Tree::childAtIndex, this, index);
   }
-  int indexOfChild(const Node* child) const;
-  bool hasChild(const Node* child) const;
-  bool hasAncestor(const Node* node, bool includeSelf) const;
+  int indexOfChild(const Tree* child) const;
+  bool hasChild(const Tree* child) const;
+  bool hasAncestor(const Tree* node, bool includeSelf) const;
 
   constexpr BlockType type() const { return m_block->type(); }
   constexpr size_t nodeSize() const { return m_block->nodeSize(); }
   constexpr int numberOfChildren() const { return m_block->numberOfChildren(); }
   constexpr bool isNAry() const { return m_block->isNAry(); }
 
-  Node* clone() const;
+  Tree* clone() const;
 
-  // Node motions
+  // Tree motions
 
   /* In the following comments aaaa represents several blocks of a tree and u
    * and v are EditionReferences that could be pointing to the targeted trees.
@@ -115,41 +115,41 @@ class Node {
    *  |     |             =>           |     |
    *  aaaabbcccdd                   cccaaaabbdd
    */
-  void moveNodeBeforeNode(Node* n) { moveAt(n, true, false); }
-  void moveTreeBeforeNode(Node* n) { moveAt(n, true, true); }
-  void cloneNodeBeforeNode(const Node* n) { cloneAt(n, true, false); }
-  void cloneTreeBeforeNode(const Node* n) { cloneAt(n, true, true); }
+  void moveNodeBeforeNode(Tree* n) { moveAt(n, true, false); }
+  void moveTreeBeforeNode(Tree* n) { moveAt(n, true, true); }
+  void cloneNodeBeforeNode(const Tree* n) { cloneAt(n, true, false); }
+  void cloneTreeBeforeNode(const Tree* n) { cloneAt(n, true, true); }
 
   /*  u     v        u.moveAt(v)    u        v
    *  |     |            =>         |        |
    *  aaaabbcccdd                   cccaaaabbdd
    */
-  void moveNodeAtNode(Node* n) { moveAt(n, true, false, true); }
-  void moveTreeAtNode(Node* n) { moveAt(n, true, true, true); }
-  void cloneNodeAtNode(const Node* n) { cloneAt(n, true, false, true); }
-  void cloneTreeAtNode(const Node* n) { cloneAt(n, true, true, true); }
+  void moveNodeAtNode(Tree* n) { moveAt(n, true, false, true); }
+  void moveTreeAtNode(Tree* n) { moveAt(n, true, true, true); }
+  void cloneNodeAtNode(const Tree* n) { cloneAt(n, true, false, true); }
+  void cloneTreeAtNode(const Tree* n) { cloneAt(n, true, true, true); }
 
   /*  u     v                       u        v
    *  |     |      u.moveAfter(v)   |        |
    *  aaaabbcccdd        =>         aaaacccbbdd
    */
-  void moveNodeAfterNode(Node* n) { moveAt(n, false, false); }
-  void moveTreeAfterNode(Node* n) { moveAt(n, false, true); }
-  void cloneNodeAfterNode(const Node* n) { cloneAt(n, false, false); }
-  void cloneTreeAfterNode(const Node* n) { cloneAt(n, false, true); }
+  void moveNodeAfterNode(Tree* n) { moveAt(n, false, false); }
+  void moveTreeAfterNode(Tree* n) { moveAt(n, false, true); }
+  void cloneNodeAfterNode(const Tree* n) { cloneAt(n, false, false); }
+  void cloneTreeAfterNode(const Tree* n) { cloneAt(n, false, true); }
 
   /*  u     v                       u    v
    *  |     |       u.moveOver(v)   |    |
    *  aaaabbcccdd         =>        cccbbdd
    */
-  Node* moveNodeOverNode(Node* n) { return moveOver(n, false, false); }
-  Node* moveTreeOverNode(Node* n) { return moveOver(n, false, true); }
-  Node* moveNodeOverTree(Node* n) { return moveOver(n, true, false); }
-  Node* moveTreeOverTree(Node* n) { return moveOver(n, true, true); }
-  Node* cloneNodeOverNode(const Node* n) { return cloneOver(n, false, false); }
-  Node* cloneTreeOverNode(const Node* n) { return cloneOver(n, false, true); }
-  Node* cloneNodeOverTree(const Node* n) { return cloneOver(n, true, false); }
-  Node* cloneTreeOverTree(const Node* n) { return cloneOver(n, true, true); }
+  Tree* moveNodeOverNode(Tree* n) { return moveOver(n, false, false); }
+  Tree* moveTreeOverNode(Tree* n) { return moveOver(n, false, true); }
+  Tree* moveNodeOverTree(Tree* n) { return moveOver(n, true, false); }
+  Tree* moveTreeOverTree(Tree* n) { return moveOver(n, true, true); }
+  Tree* cloneNodeOverNode(const Tree* n) { return cloneOver(n, false, false); }
+  Tree* cloneTreeOverNode(const Tree* n) { return cloneOver(n, false, true); }
+  Tree* cloneNodeOverTree(const Tree* n) { return cloneOver(n, true, false); }
+  Tree* cloneTreeOverTree(const Tree* n) { return cloneOver(n, true, true); }
 
   /*    u   v                     u+v
    *    |   |       u.remove()     |
@@ -162,35 +162,35 @@ class Node {
    *    |   |       u.detach()     |       |
    *  aabbbbcccdd      =>        aacccdd...bbbb
    */
-  Node* detachNode() { return detach(false); };
-  Node* detachTree() { return detach(true); };
+  Tree* detachNode() { return detach(false); };
+  Tree* detachTree() { return detach(true); };
 
-  bool matchAndReplace(const Node* pattern, const Node* structure);
+  bool matchAndReplace(const Tree* pattern, const Tree* structure);
 
   // Iterators
   class AbstractIterator {
    public:
-    AbstractIterator(const Node* node) : m_node(node) {}
-    const Node* operator*() { return m_node; }
+    AbstractIterator(const Tree* node) : m_node(node) {}
+    const Tree* operator*() { return m_node; }
     bool operator!=(const AbstractIterator& it) const {
       return m_node != it.m_node;
     }
 
    protected:
-    const Node* m_node;
+    const Tree* m_node;
   };
 
   template <class Iterator>
   class ConstRange final {
    public:
-    ConstRange(const Node* begin, const Node* end)
+    ConstRange(const Tree* begin, const Tree* end)
         : m_begin(begin), m_end(end) {}
     Iterator begin() const { return m_begin; }
     Iterator end() const { return m_end; }
 
    private:
-    const Node* m_begin;
-    const Node* m_end;
+    const Tree* m_begin;
+    const Tree* m_end;
   };
 
   class ConstTreeIterator : public AbstractIterator {
@@ -219,12 +219,12 @@ class Node {
   }
 
  private:
-  void cloneAt(const Node* nodeToClone, bool before, bool newIsTree,
+  void cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                bool at = false);
-  void moveAt(Node* nodeToMove, bool before, bool newIsTree, bool at = false);
-  Node* cloneOver(const Node* n, bool oldIsTree, bool newIsTree);
-  Node* moveOver(Node* n, bool oldIsTree, bool newIsTree);
-  Node* detach(bool isTree);
+  void moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at = false);
+  Tree* cloneOver(const Tree* n, bool oldIsTree, bool newIsTree);
+  Tree* moveOver(Tree* n, bool oldIsTree, bool newIsTree);
+  Tree* detach(bool isTree);
   void remove(bool isTree);
 
   // Should be last - and most likely only - member

@@ -5,9 +5,9 @@
 
 using namespace PoincareJ;
 
-void assert_polynomial_is_parsed(const Node* node,
-                                 const Node* expectedVariables,
-                                 const Node* expectedPolynomial) {
+void assert_polynomial_is_parsed(const Tree* node,
+                                 const Tree* expectedVariables,
+                                 const Tree* expectedPolynomial) {
   editionPool->flush();
   EditionReference variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
@@ -41,11 +41,11 @@ QUIZ_CASE(pcj_polynomial_parsing) {
 
 QUIZ_CASE(pcj_polynomial_operations) {
   /* A = x^2 + 3*x*y + y + 1 */
-  const Node* polA =
+  const Tree* polA =
       KPol(Exponents<2, 1, 0>(), "x"_e, 1_e, KPol(Exponents<1>(), "y"_e, 3_e),
            KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e));
   /* B = x^3 + 2*x*y^2 + 7*x*y + 23 */
-  const Node* polB = KPol(Exponents<3, 1, 0>(), "x"_e, 1_e,
+  const Tree* polB = KPol(Exponents<3, 1, 0>(), "x"_e, 1_e,
                           KPol(Exponents<2, 1>(), "y"_e, 2_e, 7_e), 23_e);
 
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */

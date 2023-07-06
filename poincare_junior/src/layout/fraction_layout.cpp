@@ -4,7 +4,7 @@
 
 namespace PoincareJ {
 
-KDSize FractionLayout::Size(const Node* node, const Node* root,
+KDSize FractionLayout::Size(const Tree* node, const Tree* root,
                             KDFont::Size font) {
   KDSize numeratorSize = Render::Size(node->childAtIndex(0), root, font);
   KDSize denominatorSize = Render::Size(node->childAtIndex(1), root, font);
@@ -17,15 +17,15 @@ KDSize FractionLayout::Size(const Node* node, const Node* root,
   return KDSize(width, height);
 }
 
-KDCoordinate FractionLayout::Baseline(const Node* node, const Node* root,
+KDCoordinate FractionLayout::Baseline(const Tree* node, const Tree* root,
                                       KDFont::Size font) {
   return Render::Size(node->childAtIndex(k_numeratorIndex), root, font)
              .height() +
          k_fractionLineMargin + k_fractionLineHeight;
 }
 
-KDPoint FractionLayout::PositionOfChild(const Node* node, int childIndex,
-                                        const Node* root, KDFont::Size font) {
+KDPoint FractionLayout::PositionOfChild(const Tree* node, int childIndex,
+                                        const Tree* root, KDFont::Size font) {
   KDCoordinate x =
       (Render::Size(node, root, font).width() -
        Render::Size(node->childAtIndex(childIndex), root, font).width()) /
@@ -39,7 +39,7 @@ KDPoint FractionLayout::PositionOfChild(const Node* node, int childIndex,
   return KDPoint(x, y);
 }
 
-void FractionLayout::RenderNode(const Node* node, const Node* root,
+void FractionLayout::RenderNode(const Tree* node, const Tree* root,
                                 KDContext* ctx, KDPoint p, KDFont::Size font,
                                 KDColor expressionColor,
                                 KDColor backgroundColor) {
@@ -54,7 +54,7 @@ void FractionLayout::RenderNode(const Node* node, const Node* root,
       expressionColor);
 }
 
-EditionReference FractionLayout::Parse(const Node* node) {
+EditionReference FractionLayout::Parse(const Tree* node) {
   EditionReference ref = editionPool->push<BlockType::Division>();
   Parser::Parse(node->childAtIndex(k_numeratorIndex));
   Parser::Parse(node->childAtIndex(k_denominatorIndex));

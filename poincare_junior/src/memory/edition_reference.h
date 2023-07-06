@@ -2,7 +2,7 @@
 #define POINCARE_MEMORY_EDITION_REFERENCE_H
 
 #include "edition_pool.h"
-#include "node.h"
+#include "tree.h"
 
 namespace PoincareJ {
 
@@ -10,16 +10,16 @@ class EditionReference {
  public:
   EditionReference()
       : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
-  EditionReference(Node* node);
-  EditionReference(const Node* node);
+  EditionReference(Tree* node);
+  EditionReference(const Tree* node);
   EditionReference(TypeBlock* blocks)
-      : EditionReference(Node::FromBlocks(blocks)) {}
+      : EditionReference(Tree::FromBlocks(blocks)) {}
 
 #if POINCARE_MEMORY_TREE_LOG
   __attribute__((__used__)) void log() const;
 #endif
 
-  Node* operator->() { return node(); }
+  Tree* operator->() { return node(); }
 
   /* Comparison */
   inline bool operator==(const EditionReference& t) const {
@@ -31,7 +31,7 @@ class EditionReference {
            (isUninitialized() || t.isUninitialized() || node() != t.node());
   }
 
-  operator Node*() const { return node(); }
+  operator Tree*() const { return node(); }
   bool isUninitialized() const { return node() == nullptr; }
   void uninitialize() {
     m_identifier = EditionPool::ReferenceTable::UninitializedOffset;
@@ -43,7 +43,7 @@ class EditionReference {
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
  private:
-  Node* node() const;
+  Tree* node() const;
   uint16_t m_identifier;
 };
 

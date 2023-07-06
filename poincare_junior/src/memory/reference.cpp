@@ -48,7 +48,7 @@ Reference::Reference()
       ) {
 }
 
-Reference::Reference(const Node *tree)
+Reference::Reference(const Tree *tree)
     : Reference(nullptr, nullptr, tree->block()
 #if ASSERTIONS
                                       ,
@@ -84,10 +84,10 @@ Reference::Reference(InitializerFromString initializer, const char *string)
       ) {
 }
 
-Reference::Reference(InitializerFromTreeInplace initializer, const Node *tree)
+Reference::Reference(InitializerFromTreeInplace initializer, const Tree *tree)
     : Reference(
           [](void *initializer, const void *data) {
-            Node *editedTree = editionPool->initFromAddress(data);
+            Tree *editedTree = editionPool->initFromAddress(data);
             return (reinterpret_cast<InitializerFromTreeInplace>(initializer))(
                 editedTree);
           },
@@ -106,12 +106,12 @@ Reference::Reference(InitializerFromTreeInplace initializer,
             const Reference *treeReference =
                 static_cast<const Reference *>(data);
             return treeReference->send(
-                [](const Node *tree, void *context) {
-                  /* Copy the cache Node* into the EditionPool for inplace
+                [](const Tree *tree, void *context) {
+                  /* Copy the cache Tree* into the EditionPool for inplace
                    * editing. We couldn't use tree in the initializer since it
                    * may be erased if the editionPool needs space and flushes
                    * the CachePool. */
-                  Node *editedTree = editionPool->clone(tree);
+                  Tree *editedTree = editionPool->clone(tree);
                   return (reinterpret_cast<InitializerFromTreeInplace>(
                       context))(editedTree);
                 },
@@ -136,14 +136,14 @@ void Reference::send(FunctionOnConstTree function, void *context) const {
 }
 
 void Reference::dumpAt(void *address) const {
-  send([](const Node *tree, void *buffer) { tree->copyTreeTo(buffer); },
+  send([](const Tree *tree, void *buffer) { tree->copyTreeTo(buffer); },
        address);
 }
 
 size_t Reference::treeSize() const {
   size_t result;
   send(
-      [](const Node *tree, void *result) {
+      [](const Tree *tree, void *result) {
         size_t *res = static_cast<size_t *>(result);
         *res = tree->treeSize();
       },
@@ -154,13 +154,13 @@ size_t Reference::treeSize() const {
 #if POINCARE_MEMORY_TREE_LOG
 void Reference::log() {
   std::cout << "id: " << m_id;
-  send([](const Node *tree, void *result) { tree->log(std::cout); }, nullptr);
+  send([](const Tree *tree, void *result) { tree->log(std::cout); }, nullptr);
 }
 #endif
 
 uint16_t Reference::id() const {
   assert(isCacheReference());
-  const Node *tree = CachePool::sharedCachePool()->nodeForIdentifier(m_id);
+  const Tree *tree = CachePool::sharedCachePool()->nodeForIdentifier(m_id);
   if (!tree) {
     m_id = editionPool->executeAndCache(m_initializer, m_subInitializer,
                                         m_data.data());
@@ -168,11 +168,11 @@ uint16_t Reference::id() const {
   return m_id;
 }
 
-const Node *Reference::getTree() const {
+const Tree *Reference::getTree() const {
   assert(hasInitializers());
   return isCacheReference()
              ? CachePool::sharedCachePool()->nodeForIdentifier(id())
-             : Node::FromBlocks(
+             : Tree::FromBlocks(
                    reinterpret_cast<const TypeBlock *>(m_data.data()));
 }
 

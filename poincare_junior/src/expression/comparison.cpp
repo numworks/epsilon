@@ -10,7 +10,7 @@
 
 namespace PoincareJ {
 
-int Comparison::Compare(const Node* node0, const Node* node1, Order order) {
+int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   BlockType type0 = node0->type();
   BlockType type1 = node1->type();
   if (type0 > type1) {
@@ -67,11 +67,11 @@ int Comparison::Compare(const Node* node0, const Node* node1, Order order) {
   }
 }
 
-bool Comparison::ContainsSubtree(const Node* tree, const Node* subtree) {
+bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
   if (AreEqual(tree, subtree)) {
     return true;
   }
-  for (const Node* child : tree->children()) {
+  for (const Tree* child : tree->children()) {
     if (ContainsSubtree(child, subtree)) {
       return true;
     }
@@ -79,7 +79,7 @@ bool Comparison::ContainsSubtree(const Node* tree, const Node* subtree) {
   return false;
 }
 
-int Comparison::CompareNumbers(const Node* node0, const Node* node1) {
+int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   if (node0->block()->isRational() && node1->block()->isRational()) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);
@@ -89,7 +89,7 @@ int Comparison::CompareNumbers(const Node* node0, const Node* node1) {
   return approximation == 0.0f ? 0 : (approximation > 0.0f ? 1 : -1);
 }
 
-int Comparison::CompareNames(const Node* node0, const Node* node1) {
+int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
   int stringComparison =
       strncmp(Symbol::NonNullTerminatedName(node0),
               Symbol::NonNullTerminatedName(node1),
@@ -101,12 +101,12 @@ int Comparison::CompareNames(const Node* node0, const Node* node1) {
   return stringComparison;
 }
 
-int Comparison::CompareConstants(const Node* node0, const Node* node1) {
+int Comparison::CompareConstants(const Tree* node0, const Tree* node1) {
   return static_cast<uint8_t>(Constant::Type(node0)) -
          static_cast<uint8_t>(Constant::Type(node1));
 }
 
-int Comparison::ComparePolynomial(const Node* node0, const Node* node1) {
+int Comparison::ComparePolynomial(const Tree* node0, const Tree* node1) {
   int childrenComparison = CompareChildren(node0, node1);
   if (childrenComparison != 0) {
     return childrenComparison;
@@ -123,11 +123,11 @@ int Comparison::ComparePolynomial(const Node* node0, const Node* node1) {
   return 0;
 }
 
-int PrivateCompareChildren(const Node* node0, const Node* node1) {
-  for (std::pair<std::array<const Node*, 2>, int> indexedNodes :
+int PrivateCompareChildren(const Tree* node0, const Tree* node1) {
+  for (std::pair<std::array<const Tree*, 2>, int> indexedNodes :
        MultipleNodesIterator::Children<NoEditable, 2>({node0, node1})) {
-    const Node* child0 = std::get<std::array<const Node*, 2>>(indexedNodes)[0];
-    const Node* child1 = std::get<std::array<const Node*, 2>>(indexedNodes)[1];
+    const Tree* child0 = std::get<std::array<const Tree*, 2>>(indexedNodes)[0];
+    const Tree* child1 = std::get<std::array<const Tree*, 2>>(indexedNodes)[1];
     int order = Comparison::Compare(child0, child1);
     if (order != 0) {
       return order;
@@ -136,7 +136,7 @@ int PrivateCompareChildren(const Node* node0, const Node* node1) {
   return 0;
 }
 
-int Comparison::CompareChildren(const Node* node0, const Node* node1) {
+int Comparison::CompareChildren(const Tree* node0, const Tree* node1) {
   int comparison;
   comparison = PrivateCompareChildren(node0, node1);
   if (comparison != 0) {
@@ -154,7 +154,7 @@ int Comparison::CompareChildren(const Node* node0, const Node* node1) {
   return 0;
 }
 
-int Comparison::CompareLastChild(const Node* node0, const Node* node1) {
+int Comparison::CompareLastChild(const Tree* node0, const Tree* node1) {
   int m = node0->numberOfChildren();
   // Otherwise, node0 should be sanitized beforehand.
   assert(m > 0);
@@ -165,7 +165,7 @@ int Comparison::CompareLastChild(const Node* node0, const Node* node1) {
   return 1;
 }
 
-bool Comparison::AreEqual(const Node* node0, const Node* node1) {
+bool Comparison::AreEqual(const Tree* node0, const Tree* node1) {
   // treeIsidenticalTo is faster since it uses memcmp
   bool areEqual = node0->treeIsIdenticalTo(node1);
   assert((Compare(node0, node1) == 0) == areEqual);

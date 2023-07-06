@@ -16,8 +16,8 @@ namespace PoincareJ {
 
 EditionPool *editionPool = CachePool::sharedCachePool()->editionPool();
 
-Node *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
-  Node *n = Pool::ReferenceTable::nodeForIdentifier(id);
+Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+  Tree *n = Pool::ReferenceTable::nodeForIdentifier(id);
   if (!m_pool->contains(n->block()) && n->block() != m_pool->lastBlock()) {
     /* The node has been corrupted, this is not referenced anymore. Referencing
      * the last block is tolerated though. */
@@ -26,9 +26,9 @@ Node *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
-uint16_t EditionPool::ReferenceTable::storeNode(Node *node) {
+uint16_t EditionPool::ReferenceTable::storeNode(Tree *node) {
   if (isFull()) {
-    Node *n;
+    Tree *n;
     size_t index = 0;
     do {
       n = nodeForIdentifier(index++);
@@ -63,7 +63,7 @@ void EditionPool::reinit(TypeBlock *firstBlock, size_t size) {
   m_size = size;
 }
 
-uint16_t EditionPool::referenceNode(Node *node) {
+uint16_t EditionPool::referenceNode(Tree *node) {
   return m_referenceTable.storeNode(node);
 }
 
@@ -81,8 +81,8 @@ bool EditionPool::executeAndDump(ActionWithContext action, void *context,
   if (!execute(action, context, data, maxSize, relax)) {
     return false;
   }
-  assert(Node::FromBlocks(firstBlock())->treeSize() <= maxSize);
-  Node::FromBlocks(firstBlock())->copyTreeTo(address);
+  assert(Tree::FromBlocks(firstBlock())->treeSize() <= maxSize);
+  Tree::FromBlocks(firstBlock())->copyTreeTo(address);
   flush();
   return true;
 }
@@ -193,9 +193,9 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
   }
 }
 
-Node *EditionPool::initFromAddress(const void *address, bool isTree) {
-  const Node *node =
-      Node::FromBlocks(reinterpret_cast<const TypeBlock *>(address));
+Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
+  const Tree *node =
+      Tree::FromBlocks(reinterpret_cast<const TypeBlock *>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   TypeBlock *copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
@@ -204,10 +204,10 @@ Node *EditionPool::initFromAddress(const void *address, bool isTree) {
   }
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Copy", copiedTree,
-      isTree ? Node::FromBlocks(copiedTree)->treeSize()
-             : Node::FromBlocks(copiedTree)->nodeSize());
+      isTree ? Tree::FromBlocks(copiedTree)->treeSize()
+             : Tree::FromBlocks(copiedTree)->nodeSize());
 #endif
-  return Node::FromBlocks(copiedTree);
+  return Tree::FromBlocks(copiedTree);
 }
 
 bool EditionPool::execute(ActionWithContext action, void *context,
@@ -237,7 +237,7 @@ start_execute:
 }
 
 template <BlockType blockType, typename... Types>
-Node *EditionPool::push(Types... args) {
+Tree *EditionPool::push(Types... args) {
   TypeBlock *newNode = lastBlock();
 
   size_t i = 0;
@@ -251,7 +251,7 @@ Node *EditionPool::push(Types... args) {
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Push", newNode, i);
 #endif
-  return Node::FromBlocks(newNode);
+  return Tree::FromBlocks(newNode);
 }
 
 bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
@@ -264,62 +264,62 @@ bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
 
 }  // namespace PoincareJ
 
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Addition, int>(int);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Multiplication, int>(int);
-template PoincareJ::Node *PoincareJ::EditionPool::push<
+template PoincareJ::Tree *PoincareJ::EditionPool::push<
     PoincareJ::BlockType::Constant, char16_t>(char16_t);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Power>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Factorial>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::SquareRoot>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Subtraction>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Division>();
-template PoincareJ::Node
+template PoincareJ::Tree
     *PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerShort>(int8_t);
-template PoincareJ::Node *
+template PoincareJ::Tree *
     PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerPosBig>(uint64_t);
-template PoincareJ::Node *
+template PoincareJ::Tree *
     PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerNegBig>(uint64_t);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Float, float>(float);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::MinusOne>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Set>(int);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Half>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Zero>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::One>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Two>();
-template PoincareJ::Node
+template PoincareJ::Tree
     *PoincareJ::EditionPool::push<PoincareJ::BlockType::RationalShort>(int8_t,
                                                                        uint8_t);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Polynomial, int, int>(int,
                                                                          int);
-template PoincareJ::Node *PoincareJ::EditionPool::push<
+template PoincareJ::Tree *PoincareJ::EditionPool::push<
     PoincareJ::BlockType::UserSymbol, const char *, size_t>(const char *,
                                                             size_t);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::Derivative>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::RackLayout, int>(int);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::SystemList, int>(int);
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::FractionLayout>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::ParenthesisLayout>();
-template PoincareJ::Node *
+template PoincareJ::Tree *
 PoincareJ::EditionPool::push<PoincareJ::BlockType::VerticalOffsetLayout>();
-template PoincareJ::Node *PoincareJ::EditionPool::push<
+template PoincareJ::Tree *PoincareJ::EditionPool::push<
     PoincareJ::BlockType::CodePointLayout, CodePoint>(CodePoint);

@@ -45,7 +45,7 @@ QUIZ_CASE(pcj_calculation) {
 
 QUIZ_CASE(pcj_calculation_type_block_buffer) {
   Calculation calculation("(1-2)/3/4");
-  const Node* input = Node::FromBlocks(calculation.input());
+  const Tree* input = Tree::FromBlocks(calculation.input());
   quiz_assert(input->type() == BlockType::Division);
 }
 
@@ -68,7 +68,7 @@ Expression expressionViolatingLifetimeOfData() {
 // }
 
 QUIZ_CASE(pcj_poincare_and_back) {
-  const Node* exp = KAdd(KCos("ab"_e), 3_e);
+  const Tree* exp = KAdd(KCos("ab"_e), 3_e);
   assert_trees_are_equal(exp, Expression::FromPoincareExpression(
                                   Expression::ToPoincareExpression(exp)));
 }

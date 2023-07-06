@@ -7,22 +7,22 @@ namespace PoincareJ {
 
 class NAry {
  public:
-  static void AddChild(Node* nary, Node* child) {
+  static void AddChild(Tree* nary, Tree* child) {
     return AddChildAtIndex(nary, child, nary->numberOfChildren());
   }
-  static void AddChildAtIndex(Node* nary, Node* child, int index);
-  static void AddOrMergeChildAtIndex(Node* nary, Node* child, int index);
-  static Node* DetachChildAtIndex(Node* nary, int index);
-  static void RemoveChildAtIndex(Node* nary, int index);
-  static void SetNumberOfChildren(Node* nary, size_t numberOfChildren);
-  static bool Flatten(Node* nary);
-  static bool SquashIfUnary(Node* nary);
-  static bool SquashIfEmpty(Node* nary);
-  static bool Sanitize(Node* nary);
-  static bool Sort(Node* nary,
+  static void AddChildAtIndex(Tree* nary, Tree* child, int index);
+  static void AddOrMergeChildAtIndex(Tree* nary, Tree* child, int index);
+  static Tree* DetachChildAtIndex(Tree* nary, int index);
+  static void RemoveChildAtIndex(Tree* nary, int index);
+  static void SetNumberOfChildren(Tree* nary, size_t numberOfChildren);
+  static bool Flatten(Tree* nary);
+  static bool SquashIfUnary(Tree* nary);
+  static bool SquashIfEmpty(Tree* nary);
+  static bool Sanitize(Tree* nary);
+  static bool Sort(Tree* nary,
                    Comparison::Order order = Comparison::Order::User);
   static void SortedInsertChild(
-      Node* nary, Node* child,
+      Tree* nary, Tree* child,
       Comparison::Order order = Comparison::Order::User);
 
  private:

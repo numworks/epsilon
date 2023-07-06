@@ -7,7 +7,7 @@
  * Each Token has a Type and a range (firstLayout, length). */
 
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
-#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
 
@@ -62,7 +62,7 @@ class Token {
 
   Token(Type type = Type::Undefined)
       : m_type(type), m_firstLayout(), m_length(0){};
-  Token(Type type, const Node* layout, size_t length = 1)
+  Token(Type type, const Tree* layout, size_t length = 1)
       : m_type(type), m_firstLayout(layout), m_length(length){};
 
   Type type() const { return m_type; }
@@ -74,23 +74,23 @@ class Token {
   }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
-  const Node* firstLayout() const { return m_firstLayout; }
+  const Tree* firstLayout() const { return m_firstLayout; }
   size_t length() const { return m_length; }
 
-  void setRange(const Node* firstLayout, size_t length) {
+  void setRange(const Tree* firstLayout, size_t length) {
     m_firstLayout = firstLayout;
     m_length = length;
   }
 
-  RackLayoutDecoder toDecoder(const Node* root) {
+  RackLayoutDecoder toDecoder(const Tree* root) {
     int start = 0;
-    const Node* rack = root->parentOfDescendant(m_firstLayout, &start);
+    const Tree* rack = root->parentOfDescendant(m_firstLayout, &start);
     return RackLayoutDecoder(rack, start, start + m_length);
   }
 
  private:
   Type m_type;
-  const Node* m_firstLayout;
+  const Tree* m_firstLayout;
   size_t m_length;
 };
 

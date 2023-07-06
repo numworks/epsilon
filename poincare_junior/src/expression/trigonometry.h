@@ -7,8 +7,8 @@ namespace PoincareJ {
 
 class Trigonometry final {
  public:
-  static bool IsDirect(const Node* node);
-  static bool IsInverse(const Node* node);
+  static bool IsDirect(const Tree* node);
+  static bool IsInverse(const Tree* node);
 };
 
 }  // namespace PoincareJ

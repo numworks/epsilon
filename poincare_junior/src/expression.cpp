@@ -13,7 +13,7 @@
 namespace PoincareJ {
 
 void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
-                                        Node *expression) {
+                                        Tree *expression) {
   assert(Builtin::IsBuiltin(expression->type()));
   UTF8Decoder decoder(Builtin::Name(expression->type()).mainAlias());
   CodePoint codePoint = decoder.nextCodePoint();
@@ -69,7 +69,7 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
 }
 
 void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
-                                              Node *expression) {
+                                              Tree *expression) {
   BlockType type = expression->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication ||
          type == BlockType::Subtraction);
@@ -92,7 +92,7 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
 }
 
 void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
-                                                Node *expression) {
+                                                Tree *expression) {
   BlockType type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->nextNode();
@@ -114,7 +114,7 @@ void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
 
 // Remove expression while converting it to a layout in layoutParent
 void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
-                                           Node *expression,
+                                           Tree *expression,
                                            bool allowParentheses) {
   /* TODO: ConvertExpressionToLayout is a very temporary implementation and must
    *      be improved in the future. */
@@ -203,7 +203,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
   expression->removeNode();
 }
 
-EditionReference Expression::EditionPoolExpressionToLayout(Node *expression) {
+EditionReference Expression::EditionPoolExpressionToLayout(Tree *expression) {
   assert(expression->block()->isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
@@ -226,7 +226,7 @@ Expression Expression::Parse(const char *textInput) {
 
 Expression Expression::Parse(const Layout *layout) {
   return Expression(
-      [](Node *node) {
+      [](Tree *node) {
         Parser::Parse(node);
         node->removeTree();
       },
@@ -235,21 +235,21 @@ Expression Expression::Parse(const Layout *layout) {
 
 Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
   return Expression(
-      [](Node *tree) {
+      [](Tree *tree) {
         EditionReference reference(tree);
         Simplification::Simplify(reference);
       },
-      Node::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
+      Tree::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
 Layout Expression::toLayout() const {
-  return Layout([](Node *node) { EditionPoolExpressionToLayout(node); }, this);
+  return Layout([](Tree *node) { EditionPoolExpressionToLayout(node); }, this);
 }
 
 float Expression::approximate() const {
   float res;
   send(
-      [](const Node *tree, void *res) {
+      [](const Tree *tree, void *res) {
         float *result = static_cast<float *>(res);
         *result = Approximation::To<float>(tree);
       },

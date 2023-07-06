@@ -6,8 +6,8 @@
 
 namespace PoincareJ {
 
-bool Set::Includes(const Node* set, const Node* expression) {
-  for (const Node* child : set->children()) {
+bool Set::Includes(const Tree* set, const Tree* expression) {
+  for (const Tree* child : set->children()) {
     int comparison = Comparison::Compare(child, expression);
     if (comparison == 0) {
       return true;
@@ -18,7 +18,7 @@ bool Set::Includes(const Node* set, const Node* expression) {
   return false;
 }
 
-EditionReference Set::Add(EditionReference set, const Node* expression) {
+EditionReference Set::Add(EditionReference set, const Tree* expression) {
   EditionReference child = set;
   for (auto [ref, index] : NodeIterator::Children<Editable>(set)) {
     child = ref;

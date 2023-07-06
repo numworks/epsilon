@@ -19,7 +19,7 @@ QUIZ_CASE(pcj_layout_creation) {
   // expression node -> Expression -> Layout
   Expression e2 = Expression(KAdd(1_e, KMult(2_e, 3_e)));
   Layout l3 = e2.toLayout();
-  // layout Node -> Layout
+  // layout Tree -> Layout
   assert(l3.treeIsIdenticalTo(l1));
   // constexpr tree -> Layout
   Layout l4 = Layout("1+2*3"_l);

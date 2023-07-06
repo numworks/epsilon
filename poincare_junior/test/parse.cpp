@@ -39,7 +39,7 @@ QUIZ_CASE(pcj_layout_tokenize) {
               token.length() == 4);
 }
 
-bool is_parsable(const Node* layout) {
+bool is_parsable(const Tree* layout) {
   EditionReference expression = RackParser(layout).parse();
   return !expression.isUninitialized();
 }

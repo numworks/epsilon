@@ -395,7 +395,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 #else
   void *context[3] = {this, &forceCursorRightOfText, &forceCursorLeftOfText};
   resultLayout.send(
-      [](const Node *tree, void *context) {
+      [](const Tree *tree, void *context) {
         void **pointerContext = static_cast<void **>(context);
         LayoutField *layoutField =
             static_cast<LayoutField *>(pointerContext[0]);
@@ -572,7 +572,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(const PoincareJ::Node *layout,
+void LayoutField::insertLayoutAtCursor(const PoincareJ::Tree *layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
   if (!layout) {

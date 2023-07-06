@@ -307,7 +307,7 @@ QUIZ_CASE(pcj_integer_gcd) {
 static inline void assert_might_overflow(ActionWithContext action,
                                          bool overflow) {
   CachePool* cachePool = CachePool::sharedCachePool();
-  const Node* tree = cachePool->nodeForIdentifier(
+  const Tree* tree = cachePool->nodeForIdentifier(
       editionPool->executeAndCache(action, nullptr, nullptr));
   quiz_assert((tree == nullptr) == overflow);
 }

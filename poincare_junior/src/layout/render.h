@@ -7,20 +7,20 @@
 #include <kandinsky/point.h>
 #include <omg/directions.h>
 #include <poincare_junior/src/memory/edition_reference.h>
-#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
 
 class Render final {
  public:
-  static KDSize Size(const Node* node, const Node* root, KDFont::Size font);
-  static KDPoint AbsoluteOrigin(const Node* node, const Node* root,
+  static KDSize Size(const Tree* node, const Tree* root, KDFont::Size font);
+  static KDPoint AbsoluteOrigin(const Tree* node, const Tree* root,
                                 KDFont::Size font);
-  static KDPoint PositionOfChild(const Node* node, int childIndex,
-                                 const Node* root, KDFont::Size font);
-  static KDCoordinate Baseline(const Node* node, const Node* root,
+  static KDPoint PositionOfChild(const Tree* node, int childIndex,
+                                 const Tree* root, KDFont::Size font);
+  static KDCoordinate Baseline(const Tree* node, const Tree* root,
                                KDFont::Size font);
-  static void Draw(const Node* node, KDContext* ctx, KDPoint p,
+  static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite);
 
@@ -37,17 +37,17 @@ class Render final {
     GridLayoutDeleteRow,
     AutocompletedBracketPairMakeTemporary
   };
-  static DeletionMethod DeletionMethodForCursorLeftOfChild(const Node* node,
+  static DeletionMethod DeletionMethodForCursorLeftOfChild(const Tree* node,
                                                            int index) {
     return DeletionMethod::DeleteLayout;
   }
-  static int IndexAfterHorizontalCursorMove(const Node* node,
+  static int IndexAfterHorizontalCursorMove(const Tree* node,
                                             OMG::HorizontalDirection direction,
                                             int currentIndex,
                                             bool* shouldRedrawLayout);
   enum class PositionInLayout : uint8_t { Left, Middle, Right };
   static int IndexAfterVerticalCursorMove(
-      const Node* node, OMG::VerticalDirection direction, int currentIndex,
+      const Tree* node, OMG::VerticalDirection direction, int currentIndex,
       PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout) {
     return k_cantMoveIndex;
   }
@@ -55,11 +55,11 @@ class Render final {
  private:
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
-  static void PrivateDraw(const Node* node, const Node* root, KDContext* ctx,
+  static void PrivateDraw(const Tree* node, const Tree* root, KDContext* ctx,
                           KDPoint p, KDFont::Size font,
                           KDColor expressionColor = KDColorBlack,
                           KDColor backgroundColor = KDColorWhite);
-  static void RenderNode(const Node* node, const Node* root, KDContext* ctx,
+  static void RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                          KDPoint p, KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);

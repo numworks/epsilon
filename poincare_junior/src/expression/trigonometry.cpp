@@ -4,7 +4,7 @@ namespace PoincareJ {
 
 // TODO: tests
 
-bool Trigonometry::IsDirect(const Node* node) {
+bool Trigonometry::IsDirect(const Tree* node) {
   BlockType type = node->type();
   switch (type) {
     case BlockType::Cosine:
@@ -16,7 +16,7 @@ bool Trigonometry::IsDirect(const Node* node) {
   }
 }
 
-bool Trigonometry::IsInverse(const Node* node) {
+bool Trigonometry::IsInverse(const Tree* node) {
   BlockType type = node->type();
   switch (type) {
     case BlockType::ArcCosine:

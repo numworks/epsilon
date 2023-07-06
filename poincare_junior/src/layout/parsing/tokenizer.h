@@ -18,7 +18,7 @@ class Tokenizer {
   friend class InputBeautification;
 
  public:
-  Tokenizer(const Node* node, ParsingContext* parsingContext,
+  Tokenizer(const Tree* node, ParsingContext* parsingContext,
             size_t textEnd = 0)
       : m_decoder(node, 0, textEnd),
         m_parsingContext(parsingContext),

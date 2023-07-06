@@ -44,19 +44,19 @@ class MultipleNodesIterator {
   class ForwardPolicy {
    protected:
     template <size_t N>
-    std::array<const Node *, N> firstElement(
-        std::array<const Node *, N> array) const {
-      return Array::MapAction<const Node *, const Node *, N>(
+    std::array<const Tree *, N> firstElement(
+        std::array<const Tree *, N> array) const {
+      return Array::MapAction<const Tree *, const Tree *, N>(
           array, nullptr,
-          [](const Node *node, void *context) { return node->nextNode(); });
+          [](const Tree *node, void *context) { return node->nextNode(); });
     }
 
     template <size_t N>
-    std::array<const Node *, N> incrementeArray(
-        std::array<const Node *, N> array) const {
-      return Array::MapAction<const Node *, const Node *, N>(
+    std::array<const Tree *, N> incrementeArray(
+        std::array<const Tree *, N> array) const {
+      return Array::MapAction<const Tree *, const Tree *, N>(
           array, nullptr,
-          [](const Node *node, void *context) { return node->nextTree(); });
+          [](const Tree *node, void *context) { return node->nextTree(); });
     }
   };
 
@@ -131,7 +131,7 @@ class MultipleNodesIterator {
 
   class NoEditablePolicy {
    public:
-    typedef const Node *NodeType;
+    typedef const Tree *NodeType;
     template <size_t N>
     using ArrayType = std::array<NodeType, N>;
     template <size_t N>
@@ -173,7 +173,7 @@ class MultipleNodesIterator {
      * updated at each step since children might have been inserted or deleted.
      */
     template <size_t N>
-    int endIndex(std::array<const Node *, N> array) const {
+    int endIndex(std::array<const Tree *, N> array) const {
       return -1;
     }
     template <size_t N>
@@ -189,18 +189,18 @@ class MultipleNodesIterator {
     }
 
     template <size_t N>
-    std::array<const Node *, N> convertFromArrayType(ArrayType<N> array) const {
-      return Array::MapAction<NodeType, const Node *, N>(
+    std::array<const Tree *, N> convertFromArrayType(ArrayType<N> array) const {
+      return Array::MapAction<NodeType, const Tree *, N>(
           array, nullptr,
-          [](NodeType reference, void *context) -> const Node * {
-            return Node::FromBlocks(reference->block());
+          [](NodeType reference, void *context) -> const Tree * {
+            return Tree::FromBlocks(reference->block());
           });
     }
     template <size_t N>
-    ArrayType<N> convertToArrayType(std::array<const Node *, N> array) const {
-      return Array::MapAction<const Node *, NodeType, N>(
-          array, nullptr, [](const Node *node, void *context) {
-            return node ? EditionReference(Node::FromBlocks(node->block()))
+    ArrayType<N> convertToArrayType(std::array<const Tree *, N> array) const {
+      return Array::MapAction<const Tree *, NodeType, N>(
+          array, nullptr, [](const Tree *node, void *context) {
+            return node ? EditionReference(Tree::FromBlocks(node->block()))
                         : EditionReference();
           });
     }

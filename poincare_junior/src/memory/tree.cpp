@@ -12,8 +12,8 @@ namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Node::log(std::ostream& stream, bool recursive, bool verbose,
-               int indentation, const Node* comparison) const {
+void Tree::log(std::ostream& stream, bool recursive, bool verbose,
+               int indentation, const Tree* comparison) const {
   Indent(stream, indentation);
   if (comparison && !isIdenticalTo(comparison)) {
     stream << "<<<<<<<\n";
@@ -53,7 +53,7 @@ void Node::log(std::ostream& stream, bool recursive, bool verbose,
   }
 }
 
-void Node::logName(std::ostream& stream) const {
+void Tree::logName(std::ostream& stream) const {
   constexpr const char* names[] = {
     // Respect the order of BlockType
     "Zero",
@@ -114,7 +114,7 @@ void Node::logName(std::ostream& stream) const {
   stream << names[static_cast<uint8_t>(*m_block)];
 }
 
-void Node::logAttributes(std::ostream& stream) const {
+void Tree::logAttributes(std::ostream& stream) const {
   if (block()->isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
@@ -145,7 +145,7 @@ void Node::logAttributes(std::ostream& stream) const {
   }
 }
 
-void Node::logBlocks(std::ostream& stream, bool recursive,
+void Tree::logBlocks(std::ostream& stream, bool recursive,
                      int indentation) const {
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
@@ -160,7 +160,7 @@ void Node::logBlocks(std::ostream& stream, bool recursive,
   stream << "\n";
   if (recursive) {
     indentation += 1;
-    for (const Node* child : children()) {
+    for (const Tree* child : children()) {
       child->logBlocks(stream, recursive, indentation);
     }
   }
@@ -168,7 +168,7 @@ void Node::logBlocks(std::ostream& stream, bool recursive,
 
 #endif
 
-void Node::copyTreeTo(void* address) const {
+void Tree::copyTreeTo(void* address) const {
   memcpy(address, m_block, treeSize());
 }
 
@@ -191,16 +191,16 @@ void Node::copyTreeTo(void* address) const {
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination. */
 
-const Node* Node::nextNode() const {
+const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(m_block->type() != BlockType::TreeBorder);
 #endif
   assert(m_block + nodeSize() != CachePool::sharedCachePool()->firstBlock());
   assert(m_block != CachePool::sharedCachePool()->editionPool()->lastBlock());
-  return Node::FromBlocks(m_block + nodeSize());
+  return Tree::FromBlocks(m_block + nodeSize());
 }
 
-const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
+const Tree* Tree::commonAncestor(const Tree* child1, const Tree* child2) const {
   /* This method find the common ancestor of child1 and child2 within this
    * tree it does without going backward at any point. This tree is parsed
    * until the last node owning both childs is found. */
@@ -213,11 +213,11 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   if (block1 < block()) {
     return nullptr;
   }
-  const Node* parent = nullptr;
-  const Node* node = this;
+  const Tree* parent = nullptr;
+  const Tree* node = this;
   while (true) {
     assert(block1 >= node->block());
-    const Node* nodeNextTree = node->nextTree();
+    const Tree* nodeNextTree = node->nextTree();
     const bool descendant1 = block1 < nodeNextTree->block();
     const bool descendant2 = block2 < nodeNextTree->block();
     if (!descendant1) {
@@ -246,7 +246,7 @@ const Node* Node::commonAncestor(const Node* child1, const Node* child2) const {
   return nullptr;
 }
 
-const Node* Node::parentOfDescendant(const Node* descendant,
+const Tree* Tree::parentOfDescendant(const Tree* descendant,
                                      int* position) const {
   /* This method find the parent of child within this tree without going
    * backward at any point. This tree is parsed until the last node owning the
@@ -256,11 +256,11 @@ const Node* Node::parentOfDescendant(const Node* descendant,
   if (descendantBlock < block()) {
     return nullptr;
   }
-  const Node* parent = nullptr;
-  const Node* node = this;
+  const Tree* parent = nullptr;
+  const Tree* node = this;
   while (true) {
     assert(descendantBlock >= node->block());
-    const Node* nodeNextTree = node->nextTree();
+    const Tree* nodeNextTree = node->nextTree();
     if (descendantBlock >= nodeNextTree->block()) {
       // node is not descendant's ancestor
       if (!parent) {
@@ -284,10 +284,10 @@ const Node* Node::parentOfDescendant(const Node* descendant,
   return nullptr;
 }
 
-int Node::numberOfDescendants(bool includeSelf) const {
+int Tree::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  const Node* nextTreeNode = nextTree();
-  const Node* currentNode = nextNode();
+  const Tree* nextTreeNode = nextTree();
+  const Tree* currentNode = nextNode();
   while (currentNode != nextTreeNode) {
     result++;
     currentNode = currentNode->nextNode();
@@ -295,16 +295,16 @@ int Node::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
-const Node* Node::childAtIndex(int i) const {
+const Tree* Tree::childAtIndex(int i) const {
   assert(i < numberOfChildren());
-  const Node* child = nextNode();
+  const Tree* child = nextNode();
   for (; i > 0; i--) {
     child = child->nextTree();
   }
   return child;
 }
 
-int Node::indexOfChild(const Node* child) const {
+int Tree::indexOfChild(const Tree* child) const {
   for (const auto [c, index] : NodeIterator::Children<NoEditable>(this)) {
     if (child == c) {
       return index;
@@ -313,11 +313,11 @@ int Node::indexOfChild(const Node* child) const {
   return -1;
 }
 
-bool Node::hasChild(const Node* child) const {
+bool Tree::hasChild(const Tree* child) const {
   return indexOfChild(child) >= 0;
 }
 
-bool Node::hasAncestor(const Node* node, bool includeSelf) const {
+bool Tree::hasAncestor(const Tree* node, bool includeSelf) const {
   if (this < node) {
     return false;
   }
@@ -327,13 +327,13 @@ bool Node::hasAncestor(const Node* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
-Node* Node::clone() const { return editionPool->clone(this); }
+Tree* Tree::clone() const { return editionPool->clone(this); }
 
-// Node edition
+// Tree edition
 
-void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree,
+void Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                    bool at) {
-  Node* destination = before ? this : nextNode();
+  Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
   editionPool->insertBlocks(destination->block(), nodeToClone->block(), size,
                             at);
@@ -342,8 +342,8 @@ void Node::cloneAt(const Node* nodeToClone, bool before, bool newIsTree,
 #endif
 }
 
-void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree, bool at) {
-  Node* destination = before ? this : nextNode();
+void Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
+  Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
   assert(editionPool->contains(nodeToMove->block()));
   editionPool->moveBlocks(destination->block(), nodeToMove->block(), size, at);
@@ -354,14 +354,14 @@ void Node::moveAt(Node* nodeToMove, bool before, bool newIsTree, bool at) {
 #endif
 }
 
-Node* Node::cloneOver(const Node* newNode, bool oldIsTree, bool newIsTree) {
-  Node* oldNode = this;
+Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
+  Tree* oldNode = this;
   int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
   int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
   Block* oldBlock = oldNode->block();
   const Block* newBlock = newNode->block();
   if (oldBlock == newBlock && oldSize == newSize) {
-    return Node::FromBlocks(oldBlock);
+    return Tree::FromBlocks(oldBlock);
   }
   size_t minSize = std::min(oldSize, newSize);
   editionPool->replaceBlocks(oldBlock, newBlock, minSize);
@@ -374,17 +374,17 @@ Node* Node::cloneOver(const Node* newNode, bool oldIsTree, bool newIsTree) {
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Replace", oldBlock, newSize);
 #endif
-  return Node::FromBlocks(oldBlock);
+  return Tree::FromBlocks(oldBlock);
 }
 
-Node* Node::moveOver(Node* newNode, bool oldIsTree, bool newIsTree) {
-  Node* oldNode = this;
+Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
+  Tree* oldNode = this;
   int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
   int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
   Block* oldBlock = oldNode->block();
   Block* newBlock = newNode->block();
   if (oldBlock == newBlock && oldSize == newSize) {
-    return Node::FromBlocks(oldBlock);
+    return Tree::FromBlocks(oldBlock);
   }
   Block* finalBlock = oldBlock;
   assert(editionPool->contains(newNode->block()));
@@ -404,10 +404,10 @@ Node* Node::moveOver(Node* newNode, bool oldIsTree, bool newIsTree) {
   }
   Log(LoggerType::Edition, "Replace", finalBlock, newSize, newBlock);
 #endif
-  return Node::FromBlocks(finalBlock);
+  return Tree::FromBlocks(finalBlock);
 }
 
-void Node::remove(bool isTree) {
+void Tree::remove(bool isTree) {
   Block* b = block();
   size_t size = isTree ? treeSize() : nodeSize();
   editionPool->removeBlocks(b, size);
@@ -416,7 +416,7 @@ void Node::remove(bool isTree) {
 #endif
 }
 
-Node* Node::detach(bool isTree) {
+Tree* Tree::detach(bool isTree) {
   Block* destination = editionPool->lastBlock();
   size_t sizeToMove = isTree ? treeSize() : nodeSize();
   Block* source = block();
@@ -425,7 +425,7 @@ Node* Node::detach(bool isTree) {
   Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
       source);
 #endif
-  return Node::FromBlocks(destination - sizeToMove);
+  return Tree::FromBlocks(destination - sizeToMove);
 }
 
 }  // namespace PoincareJ

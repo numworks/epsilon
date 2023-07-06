@@ -11,8 +11,8 @@ QUIZ_CASE(pcj_edition_pool) {
   EditionPool* pool = cachePool->editionPool();
 
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
-  const Node* handingNode = k_expression;
-  Node* editedNode = pool->clone(handingNode);
+  const Tree* handingNode = k_expression;
+  Tree* editedNode = pool->clone(handingNode);
   assert(pool->size() == handingNode->treeSize());
   assert(pool->numberOfTrees() == 1);
 

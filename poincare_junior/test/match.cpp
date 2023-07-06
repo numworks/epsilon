@@ -8,15 +8,15 @@
 using namespace PoincareJ;
 using namespace Placeholders;
 
-void assert_no_match(const Node* source, const Node* pattern) {
+void assert_no_match(const Tree* source, const Tree* pattern) {
   PatternMatching::Context ctx;
   quiz_assert(!PatternMatching::Match(pattern, source, &ctx));
   quiz_assert(ctx.isUninitialized());
 }
 
 // TODO : Factorize more tests with assert_match_and_create
-void assert_match_and_create(const Node* source, const Node* pattern,
-                             const Node* structure, const Node* output) {
+void assert_match_and_create(const Tree* source, const Tree* pattern,
+                             const Tree* structure, const Tree* output) {
   int numberOfTrees = editionPool->numberOfTrees();
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(pattern, source, &ctx));
@@ -39,14 +39,14 @@ void assert_match_and_create(const Node* source, const Node* pattern,
 QUIZ_CASE(pcj_context) {
   PatternMatching::Context ctx;
   ctx.setNode(Placeholder::A, KAdd(2_e, 1_e), 1, false);
-  const Node* structure =
+  const Tree* structure =
       KMult(5_e, KAdd(KPlaceholder<A>(), KPlaceholder<A>()));
   EditionReference exp = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(exp, KMult(5_e, KAdd(2_e, 1_e, 2_e, 1_e)));
 }
 
 QUIZ_CASE(pcj_match) {
-  const Node* t = KAdd(2_e, 1_e);
+  const Tree* t = KAdd(2_e, 1_e);
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(KPlaceholder<A>(), t, &ctx));
   assert_trees_are_equal(ctx.getNode(Placeholder::A), t);
@@ -57,21 +57,21 @@ QUIZ_CASE(pcj_match) {
   quiz_assert(!PatternMatching::Match(KAdd(KPlaceholder<A>(), 2_e), t, &ctx3));
   quiz_assert(ctx3.isUninitialized());
 
-  const Node* t2 = KAdd(1_e, 1_e, 2_e);
-  const Node* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>(), KPlaceholder<B>());
+  const Tree* t2 = KAdd(1_e, 1_e, 2_e);
+  const Tree* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>(), KPlaceholder<B>());
   PatternMatching::Context ctx4;
   quiz_assert(PatternMatching::Match(p, t2, &ctx4));
   assert_trees_are_equal(ctx4.getNode(Placeholder::A), 1_e);
   assert_trees_are_equal(ctx4.getNode(Placeholder::B), 2_e);
 
   PatternMatching::Context ctx5;
-  const Node* n5 = KExp(KMult(KFact(1_e)));
+  const Tree* n5 = KExp(KMult(KFact(1_e)));
   quiz_assert(
       PatternMatching::Match(KExp(KMult(KAnyTreesPlaceholder<A>(), KFact(1_e),
                                         KAnyTreesPlaceholder<C>())),
                              n5, &ctx5));
   PatternMatching::Context ctx6;
-  const Node* n6 = EditionReference(KMult(1_e, KAdd(1_e, KMult(1_e, 2_e))));
+  const Tree* n6 = EditionReference(KMult(1_e, KAdd(1_e, KMult(1_e, 2_e))));
   quiz_assert(PatternMatching::Match(
       KMult(1_e, KAdd(1_e, KMult(1_e, 2_e, KAnyTreesPlaceholder<A>()))), n6,
       &ctx6));
@@ -86,8 +86,8 @@ QUIZ_CASE(pcj_match) {
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {
-  const Node* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>());
-  const Node* s = KMult(2_e, KPlaceholder<A>());
+  const Tree* p = KAdd(KPlaceholder<A>(), KPlaceholder<A>());
+  const Tree* s = KMult(2_e, KPlaceholder<A>());
   EditionReference ref(editionPool->push<BlockType::Addition>(2));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));

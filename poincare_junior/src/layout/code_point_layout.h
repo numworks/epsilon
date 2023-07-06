@@ -14,12 +14,12 @@ class CodePointLayout {
                                                      int index) {
     return Bit::getByteAtIndex(value, index);
   }
-  static CodePoint GetCodePoint(const Node* node);
-  static void GetName(const Node* node, char* buffer, size_t bufferSize);
-  static KDSize Size(const Node* node, const Node* root, KDFont::Size font);
-  static KDCoordinate Baseline(const Node* node, const Node* root,
+  static CodePoint GetCodePoint(const Tree* node);
+  static void GetName(const Tree* node, char* buffer, size_t bufferSize);
+  static KDSize Size(const Tree* node, const Tree* root, KDFont::Size font);
+  static KDCoordinate Baseline(const Tree* node, const Tree* root,
                                KDFont::Size font);
-  static void RenderNode(const Node* node, const Node* root, KDContext* ctx,
+  static void RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                          KDPoint p, KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);

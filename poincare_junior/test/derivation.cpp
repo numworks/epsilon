@@ -6,24 +6,24 @@
 
 using namespace PoincareJ;
 
-void assert_derivation_inplace_is(const Node *expression,
-                                  const Node *expected) {
+void assert_derivation_inplace_is(const Tree *expression,
+                                  const Tree *expected) {
   EditionReference ref(expression);
   Derivation::Reduce(ref);
   assert_trees_are_equal(ref, expected);
   ref->removeTree();
 }
 
-void assert_derivation_is(const Node *expression, const Node *expected,
-                          const Node *symbol = nullptr,
-                          const Node *symbolValue = nullptr) {
+void assert_derivation_is(const Tree *expression, const Tree *expected,
+                          const Tree *symbol = nullptr,
+                          const Tree *symbolValue = nullptr) {
   if (!symbol) {
     symbol = "x"_e;
   }
   if (!symbolValue) {
     symbolValue = "y"_e;
   }
-  Node *result = Node::FromBlocks(editionPool->lastBlock());
+  Tree *result = Tree::FromBlocks(editionPool->lastBlock());
   Derivation::Derivate(expression, symbol, symbolValue);
   EditionReference simplifiedResult(result);
   Simplification::Simplify(simplifiedResult);

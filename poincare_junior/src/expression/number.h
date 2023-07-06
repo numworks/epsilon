@@ -7,9 +7,9 @@ namespace PoincareJ {
 
 class Number {
  public:
-  static bool IsZero(const Node* n) { return n->type() == BlockType::Zero; }
-  static EditionReference Addition(const Node* i, const Node* j);
-  static EditionReference Multiplication(const Node* i, const Node* j);
+  static bool IsZero(const Tree* n) { return n->type() == BlockType::Zero; }
+  static EditionReference Addition(const Tree* i, const Tree* j);
+  static EditionReference Multiplication(const Tree* i, const Tree* j);
 };
 
 }  // namespace PoincareJ

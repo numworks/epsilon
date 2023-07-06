@@ -41,10 +41,10 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   memory/edition_pool.cpp \
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
-  memory/node.cpp \
   memory/pattern_matching.cpp \
   memory/pool.cpp \
   memory/reference.cpp \
+  memory/tree.cpp \
   n_ary.cpp \
   poincare.cpp \
 )

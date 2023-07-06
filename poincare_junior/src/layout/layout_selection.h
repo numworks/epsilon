@@ -1,7 +1,7 @@
 #ifndef POINCARE_JUNIOR_LAYOUT_SELECTION_H
 #define POINCARE_JUNIOR_LAYOUT_SELECTION_H
 
-#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
 
@@ -20,7 +20,7 @@ class LayoutSelection {
    *     -> LayoutSelection(l, 0, 1) = "A"
    *     -> LayoutSelection(l, 0, 0) = ""
    * */
-  LayoutSelection(const Node* n, int startPosition, int endPosition)
+  LayoutSelection(const Tree* n, int startPosition, int endPosition)
       : m_node(n), m_startPosition(startPosition), m_endPosition(endPosition) {
     assert(!n ||
            (Layout::IsHorizontal(n) && 0 <= startPosition &&
@@ -40,7 +40,7 @@ class LayoutSelection {
 
   bool isEmpty() const { return !m_node || m_startPosition == m_endPosition; }
 
-  const Node* layout() const { return m_node; }
+  const Tree* layout() const { return m_node; }
   /* startPosition can be higher than endPosition if the selection is from
    * right to left. */
   int startPosition() const { return m_startPosition; }
@@ -48,7 +48,7 @@ class LayoutSelection {
   int leftPosition() const { return std::min(m_startPosition, m_endPosition); }
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
-  bool containsNode(const Node* n) const {
+  bool containsNode(const Tree* n) const {
     const TypeBlock* b = n->block();
     return !isEmpty() &&
            (Layout::IsHorizontal(m_node)
@@ -58,7 +58,7 @@ class LayoutSelection {
   }
 
  private:
-  const Node* m_node;
+  const Tree* m_node;
   int m_startPosition;
   int m_endPosition;
 };

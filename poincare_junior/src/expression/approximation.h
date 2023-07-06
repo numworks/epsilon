@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
-#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include <cmath>
 
@@ -18,7 +18,7 @@ namespace PoincareJ {
 class Approximation final {
  public:
   template <typename T>
-  static T To(const Node* node);
+  static T To(const Tree* node);
 
   template <typename T>
   static T FloatAddition(T a, T b) {
@@ -64,7 +64,7 @@ class Approximation final {
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T>
-  static T MapAndReduce(const Node* node, Reductor<T> reductor);
+  static T MapAndReduce(const Tree* node, Reductor<T> reductor);
 };
 
 }  // namespace PoincareJ

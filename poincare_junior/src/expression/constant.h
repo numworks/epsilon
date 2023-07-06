@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_CONSTANT_H
 
 #include <assert.h>
-#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/memory/tree.h>
 #include <stdint.h>
 
 namespace PoincareJ {
@@ -10,7 +10,7 @@ namespace PoincareJ {
 class Constant final {
  public:
   enum class Type : uint8_t { Pi, E, Undefined };
-  static enum Type Type(const Node* node) {
+  static enum Type Type(const Tree* node) {
     assert(node->type() == BlockType::Constant);
     return static_cast<enum Type>(
         static_cast<uint8_t>(*(node->block()->next())));

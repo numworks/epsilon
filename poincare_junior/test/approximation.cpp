@@ -9,7 +9,7 @@
 
 using namespace PoincareJ;
 
-void assert_approximation_is(const Node* n, float f) {
+void assert_approximation_is(const Tree* n, float f) {
   float approx = Approximation::To<float>(n);
   bool result = Float::RoughlyEqual<float>(approx, f, FLT_EPSILON);
 #if POINCARE_MEMORY_TREE_LOG

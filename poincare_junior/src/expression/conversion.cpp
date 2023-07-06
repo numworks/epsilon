@@ -14,7 +14,7 @@
 
 namespace PoincareJ {
 
-Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
+Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
   BlockType type = exp->type();
 
   if (Builtin::IsBuiltin(type)) {
@@ -61,7 +61,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Node *exp) {
           type == BlockType::Addition ? static_cast<Poincare::NAryExpression>(
                                             Poincare::Addition::Builder())
                                       : Poincare::Multiplication::Builder();
-      for (const Node *child : exp->children()) {
+      for (const Tree *child : exp->children()) {
         nary.addChildAtIndexInPlace(ToPoincareExpression(child),
                                     nary.numberOfChildren(),
                                     nary.numberOfChildren());
@@ -248,8 +248,8 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
   }
 }
 
-Node *Expression::FromPoincareExpression(Poincare::Expression exp) {
-  Node *node = Node::FromBlocks(editionPool->lastBlock());
+Tree *Expression::FromPoincareExpression(Poincare::Expression exp) {
+  Tree *node = Tree::FromBlocks(editionPool->lastBlock());
   PushPoincareExpression(exp);
   return node;
 }

@@ -7,24 +7,24 @@
 
 namespace PoincareJ {
 
-bool Derivation::Reduce(Node *node) {
+bool Derivation::Reduce(Tree *node) {
   // Reference is expected to have been projected beforehand.
   /* TODO: This cannot be asserted since SytematicReduction may introduce powers
    * of additions that would be projected to exponentials. */
   // assert(!Simplification::DeepSystemProjection(ref));
   // Diff(Derivand, Symbol, SymbolValue)
   assert(node->type() == BlockType::Derivative);
-  const Node *derivand = node->childAtIndex(0);
-  const Node *symbol = derivand->nextTree();
-  const Node *symbolValue = symbol->nextTree();
-  Node *result = Node::FromBlocks(editionPool->lastBlock());
+  const Tree *derivand = node->childAtIndex(0);
+  const Tree *symbol = derivand->nextTree();
+  const Tree *symbolValue = symbol->nextTree();
+  Tree *result = Tree::FromBlocks(editionPool->lastBlock());
   Derivate(derivand, symbol, symbolValue);
   node->moveTreeOverTree(result);
   return true;
 }
 
-void Derivation::Derivate(const Node *derivand, const Node *symbol,
-                          const Node *symbolValue) {
+void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
+                          const Tree *symbolValue) {
   if (symbol->treeIsIdenticalTo(derivand)) {
     editionPool->push<BlockType::One>();
     return;
@@ -49,7 +49,7 @@ void Derivation::Derivate(const Node *derivand, const Node *symbol,
   if (numberOfChildren > 1) {
     editionPool->push<BlockType::Addition>(numberOfChildren);
   }
-  const Node *derivandChild = derivand->nextNode();
+  const Tree *derivandChild = derivand->nextNode();
   /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
    * With D being the Derivative and Di being the partial derivative on
    * parameter i. */
@@ -61,9 +61,9 @@ void Derivation::Derivate(const Node *derivand, const Node *symbol,
   }
 }
 
-void Derivation::ShallowPartialDerivate(const Node *derivand,
-                                        const Node *symbol,
-                                        const Node *symbolValue, int index) {
+void Derivation::ShallowPartialDerivate(const Tree *derivand,
+                                        const Tree *symbol,
+                                        const Tree *symbolValue, int index) {
   switch (derivand->type()) {
     case BlockType::Multiplication:
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
@@ -108,22 +108,22 @@ void Derivation::ShallowPartialDerivate(const Node *derivand,
   return;
 }
 
-Node *Derivation::CloneReplacingSymbol(const Node *expression,
-                                       const Node *symbol,
-                                       const Node *symbolValue) {
+Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
+                                       const Tree *symbol,
+                                       const Tree *symbolValue) {
   assert(symbol->type() == BlockType::UserSymbol);
   if (symbol->treeIsIdenticalTo(symbolValue)) {
     // No need to replace anything
     return editionPool->clone(expression);
   }
-  Node *result = Node::FromBlocks(editionPool->lastBlock());
+  Tree *result = Tree::FromBlocks(editionPool->lastBlock());
   CloneReplacingSymbolRec(expression, symbol, symbolValue);
   return result;
 }
 
-void Derivation::CloneReplacingSymbolRec(const Node *expression,
-                                         const Node *symbol,
-                                         const Node *symbolValue) {
+void Derivation::CloneReplacingSymbolRec(const Tree *expression,
+                                         const Tree *symbol,
+                                         const Tree *symbolValue) {
   if (symbol->treeIsIdenticalTo(expression)) {
     editionPool->clone(symbolValue);
     return;
@@ -132,7 +132,7 @@ void Derivation::CloneReplacingSymbolRec(const Node *expression,
   // TODO: Extend this escape case to handle all nodes using local context.
   if (expression->type() == BlockType::Derivative) {
     // With x symbol and f(y) symbolValue :
-    const Node *subSymbol = expression->childAtIndex(1);
+    const Tree *subSymbol = expression->childAtIndex(1);
     if (subSymbol->treeIsIdenticalTo(symbol)) {
       // Diff(g(x),x,h(x)) -> Diff(g(x),x,h(f(y)))
       editionPool->clone(expression->nextNode());
@@ -143,7 +143,7 @@ void Derivation::CloneReplacingSymbolRec(const Node *expression,
     // TODO : Diff(g(x,y),y,h(x,y)) -> Diff(g(f(y),z),z,h(f(y),y))
     // Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
   }
-  for (std::pair<const Node *, int> indexedNode :
+  for (std::pair<const Tree *, int> indexedNode :
        NodeIterator::Children<NoEditable>(expression)) {
     CloneReplacingSymbolRec(indexedNode.first, symbol, symbolValue);
   }

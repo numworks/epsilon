@@ -6,9 +6,9 @@
 #include <array>
 
 #include "k_tree.h"
-#include "node.h"
 #include "node_iterator.h"
 #include "pool.h"
+#include "tree.h"
 
 namespace PoincareJ {
 
@@ -31,7 +31,7 @@ class PatternMatching {
   class Context {
    public:
     Context() : m_array() {}
-    const Node* getNode(uint8_t tag) const { return m_array[tag]; }
+    const Tree* getNode(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
     bool isAnyTree(uint8_t tag) const {
 #if ASSERTIONS
@@ -41,7 +41,7 @@ class PatternMatching {
       return true;
 #endif
     }
-    void setNode(uint8_t tag, const Node* node, uint8_t numberOfTrees,
+    void setNode(uint8_t tag, const Tree* node, uint8_t numberOfTrees,
                  bool isAnyTree) {
       assert(isAnyTree || numberOfTrees == 1);
       m_array[tag] = node;
@@ -60,7 +60,7 @@ class PatternMatching {
 #endif
 
    private:
-    const Node* m_array[Placeholder::Tag::NumberOfTags];
+    const Tree* m_array[Placeholder::Tag::NumberOfTags];
     uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
 #if ASSERTIONS
     // Used only to assert AnyTreePlaceholders are properly used when creating
@@ -68,16 +68,16 @@ class PatternMatching {
 #endif
   };
 
-  static bool Match(const Node* pattern, const Node* source, Context* context);
-  static Node* Create(const Node* structure,
+  static bool Match(const Tree* pattern, const Tree* source, Context* context);
+  static Tree* Create(const Tree* structure,
                       const Context context = Context()) {
     return CreateTree(structure, context, nullptr);
   }
-  static Node* MatchAndCreate(const Node* source, const Node* pattern,
-                              const Node* structure);
+  static Tree* MatchAndCreate(const Tree* source, const Tree* pattern,
+                              const Tree* structure);
   // Return true if reference has been replaced
-  static bool MatchAndReplace(Node* node, const Node* pattern,
-                              const Node* structure);
+  static bool MatchAndReplace(Tree* node, const Tree* pattern,
+                              const Tree* structure);
 
  private:
   /* During Match, MatchContext allow keeping track of matched Nary sizes.
@@ -87,46 +87,46 @@ class PatternMatching {
    * and local pattern will be Mult(1). */
   class MatchContext {
    public:
-    MatchContext(const Node* source, const Node* pattern);
-    bool reachedLimit(const Node* node, bool global, bool source) const {
+    MatchContext(const Tree* source, const Tree* pattern);
+    bool reachedLimit(const Tree* node, bool global, bool source) const {
       return ReachedLimit(
           node, global ? (source ? m_globalSourceEnd : m_globalPatternEnd)
                        : (source ? m_localSourceEnd : m_localPatternEnd));
     }
     // Return the number of siblings right of node in local context.
-    int remainingLocalTrees(const Node* node) const;
-    void setLocal(const Node* source, const Node* pattern);
+    int remainingLocalTrees(const Tree* node) const;
+    void setLocal(const Tree* source, const Tree* pattern);
     /* From a local pattern and source node, sets the local context (node's
      * parents) */
-    void setLocalFromChild(const Node* source, const Node* pattern);
+    void setLocalFromChild(const Tree* source, const Tree* pattern);
 
    private:
-    static bool ReachedLimit(const Node* node, const TypeBlock* end) {
+    static bool ReachedLimit(const Tree* node, const TypeBlock* end) {
       assert(node->block() <= end);
       return node->block() == end;
     }
 
     // Local context
-    const Node* m_localSourceRoot;
+    const Tree* m_localSourceRoot;
     const TypeBlock* m_localSourceEnd;
     const TypeBlock* m_localPatternEnd;
     // Global context
-    const Node* m_globalSourceRoot;
-    const Node* m_globalPatternRoot;
+    const Tree* m_globalSourceRoot;
+    const Tree* m_globalPatternRoot;
     const TypeBlock* m_globalSourceEnd;
     const TypeBlock* m_globalPatternEnd;
   };
 
   // Match an AnyTree Placeholder
-  static bool MatchAnyTrees(Placeholder::Tag tag, const Node* source,
-                            const Node* pattern, Context* context,
+  static bool MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
+                            const Tree* pattern, Context* context,
                             MatchContext matchContext);
   // Match source with pattern with given MatchContext constraints.
-  static bool MatchNodes(const Node* source, const Node* pattern,
+  static bool MatchNodes(const Tree* source, const Tree* pattern,
                          Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in EditionPool
-  static Node* CreateTree(const Node* structure, const Context context,
-                          Node* insertedNAry);
+  static Tree* CreateTree(const Tree* structure, const Context context,
+                          Tree* insertedNAry);
 };
 
 }  // namespace PoincareJ

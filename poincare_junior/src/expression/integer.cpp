@@ -105,7 +105,7 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
   }
 }
 
-Node *IntegerHandler::pushOnEditionPool() {
+Tree *IntegerHandler::pushOnEditionPool() {
   if (isZero()) {
     return editionPool->push<BlockType::Zero>();
   }
@@ -125,7 +125,7 @@ Node *IntegerHandler::pushOnEditionPool() {
   TypeBlock typeBlock(sign() == NonStrictSign::Negative
                           ? BlockType::IntegerNegBig
                           : BlockType::IntegerPosBig);
-  Node *node = Node::FromBlocks(editionPool->pushBlock(typeBlock));
+  Tree *node = Tree::FromBlocks(editionPool->pushBlock(typeBlock));
   editionPool->pushBlock(m_numberOfDigits);
   pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION
@@ -274,13 +274,13 @@ int8_t IntegerHandler::Ucmp(const IntegerHandler &a, const IntegerHandler &b) {
   return 0;
 }
 
-Node *IntegerHandler::Addition(const IntegerHandler &a,
+Tree *IntegerHandler::Addition(const IntegerHandler &a,
                                const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
   return Sum(a, b, false, &workingBuffer).pushOnEditionPool();
 }
 
-Node *IntegerHandler::Subtraction(const IntegerHandler &a,
+Tree *IntegerHandler::Subtraction(const IntegerHandler &a,
                                   const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
   return Sum(a, b, true, &workingBuffer).pushOnEditionPool();
@@ -353,7 +353,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler &a,
   return sum;
 }
 
-Node *IntegerHandler::Multiplication(const IntegerHandler &a,
+Tree *IntegerHandler::Multiplication(const IntegerHandler &a,
                                      const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
   return Mult(a, b, &workingBuffer).pushOnEditionPool();
@@ -419,7 +419,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
   return mult;
 }
 
-std::pair<Node *, Node *> IntegerHandler::Division(
+std::pair<Tree *, Tree *> IntegerHandler::Division(
     const IntegerHandler &numerator, const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
@@ -436,12 +436,12 @@ std::pair<Node *, Node *> IntegerHandler::Division(
    * override the other one. */
   assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
          quotient.digits() < remainder.digits());
-  Node *q = quotient.pushOnEditionPool();
-  Node *r = remainder.pushOnEditionPool();
+  Tree *q = quotient.pushOnEditionPool();
+  Tree *r = remainder.pushOnEditionPool();
   return std::make_pair(q, r);
 }
 
-Node *IntegerHandler::Quotient(const IntegerHandler &numerator,
+Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,
                                const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
@@ -454,7 +454,7 @@ Node *IntegerHandler::Quotient(const IntegerHandler &numerator,
   return quotient.pushOnEditionPool();
 }
 
-Node *IntegerHandler::Remainder(const IntegerHandler &numerator,
+Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
                                 const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;
   IntegerHandler remainder =
@@ -552,7 +552,7 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
   return std::pair<IntegerHandler, IntegerHandler>(Q, remainder);
 }
 
-Node *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
+Tree *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
   // TODO Knuth modified like in upy to avoid divisions
   WorkingBuffer workingBuffer;
   IntegerHandler i = a;
@@ -624,7 +624,7 @@ IntegerHandler IntegerHandler::multiplyByPowerOfBase(
   return mult;
 }
 
-Node *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
+Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   assert(j.sign() == NonStrictSign::Positive);
   if (j.isZero()) {
     // TODO : handle 0^0.
@@ -657,7 +657,7 @@ Node *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   return Mult(i1, i2, &workingBuffer).pushOnEditionPool();
 }
 
-Node *IntegerHandler::Factorial(const IntegerHandler &i) {
+Tree *IntegerHandler::Factorial(const IntegerHandler &i) {
   assert(i.sign() == NonStrictSign::Positive);
   IntegerHandler j(2);
   IntegerHandler result(1);
@@ -691,17 +691,17 @@ void IntegerHandler::sanitize() {
 
 // TODO: tests
 
-IntegerHandler Integer::Handler(const Node *expression) {
+IntegerHandler Integer::Handler(const Tree *expression) {
   assert(Rational::Denominator(expression).isOne());
   return Rational::Numerator(expression);
 }
 
-bool Integer::IsUint8(const Node *expression) {
+bool Integer::IsUint8(const Tree *expression) {
   return expression->block()->isInteger() &&
          Integer::Handler(expression).isUnsignedType<uint8_t>();
 }
 
-uint8_t Integer::Uint8(const Node *expression) {
+uint8_t Integer::Uint8(const Tree *expression) {
   assert(IsUint8(expression));
   return static_cast<uint8_t>(Integer::Handler(expression));
 }

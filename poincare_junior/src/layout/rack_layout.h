@@ -8,38 +8,38 @@ namespace PoincareJ {
 
 class RackLayout {
  public:
-  static KDSize Size(const Node* node, const Node* root, KDFont::Size font);
-  static KDCoordinate Baseline(const Node* node, const Node* root,
+  static KDSize Size(const Tree* node, const Tree* root, KDFont::Size font);
+  static KDCoordinate Baseline(const Tree* node, const Tree* root,
                                KDFont::Size font);
-  static KDPoint PositionOfChild(const Node* node, int childIndex,
-                                 const Node* root, KDFont::Size font);
-  static EditionReference Parse(const Node* node);
-  static KDSize SizeBetweenIndexes(const Node* node, int leftPosition,
-                                   int rightPosition, const Node* root,
+  static KDPoint PositionOfChild(const Tree* node, int childIndex,
+                                 const Tree* root, KDFont::Size font);
+  static EditionReference Parse(const Tree* node);
+  static KDSize SizeBetweenIndexes(const Tree* node, int leftPosition,
+                                   int rightPosition, const Tree* root,
                                    KDFont::Size font);
-  static KDCoordinate BaselineBetweenIndexes(const Node* node, int leftPosition,
+  static KDCoordinate BaselineBetweenIndexes(const Tree* node, int leftPosition,
                                              int rightPosition,
-                                             const Node* root,
+                                             const Tree* root,
                                              KDFont::Size font);
-  static bool ShouldDrawEmptyRectangle(const Node* node);
-  static void RenderNode(const Node* node, const Node* root, KDContext* ctx,
+  static bool ShouldDrawEmptyRectangle(const Tree* node);
+  static void RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                          KDPoint p, KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
 
-  /* RackLayout Simplifications: These methods can be called on any Node*
+  /* RackLayout Simplifications: These methods can be called on any Tree*
    * targetted by a LayoutCursor. A RackLayout will be inserted if necessary.
    */
-  static int NumberOfLayouts(const Node* node);
+  static int NumberOfLayouts(const Tree* node);
   static EditionReference AddOrMergeLayoutAtIndex(EditionReference reference,
                                                   EditionReference child,
-                                                  int* index, const Node* root);
+                                                  int* index, const Tree* root);
   static EditionReference RemoveLayoutAtIndex(EditionReference reference,
-                                              int* index, const Node* root);
+                                              int* index, const Tree* root);
 
  private:
   static EditionReference RackParent(EditionReference reference, int* index,
-                                     const Node* root);
+                                     const Tree* root);
 };
 
 }  // namespace PoincareJ

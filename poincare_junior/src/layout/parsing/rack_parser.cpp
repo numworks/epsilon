@@ -408,7 +408,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
   /* TODO: RackLayoutDecoder could be implemented without mainLayout, start,
            m_root and parentOfDescendant() call wouldn't be needed. */
   int start = 0;
-  const Node *rack =
+  const Tree *rack =
       m_root->parentOfDescendant(m_currentToken.firstLayout(), &start);
   size_t end = start + m_currentToken.length();
   OMG::Base base(OMG::Base::Decimal);
@@ -512,7 +512,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // : Opposite::Builder(rightHandSide.childAtIndex(0)));
     // return;
     // }
-    assert(leftHandSide->nextTree() == static_cast<Node *>(rightHandSide));
+    assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
     if (!plus) {
       leftHandSide->cloneNodeAtNode(KTree<BlockType::Subtraction>());
       return;
@@ -612,9 +612,9 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
   }
 }
 
-static void turnIntoBinaryNode(const Node *node, EditionReference &leftHandSide,
+static void turnIntoBinaryNode(const Tree *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
-  assert(leftHandSide->nextTree() == static_cast<Node *>(rightHandSide));
+  assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
   leftHandSide->cloneNodeAtNode(node);
 }
 
@@ -1028,7 +1028,7 @@ void RackParser::parseSpecialIdentifier(EditionReference &leftHandSide,
 void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Node *node = m_currentToken.firstLayout();
+  const Tree *node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
   assert(node->type() == BlockType::CodePointLayout && length == 1);  // TODO
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
@@ -1308,7 +1308,7 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // return;
   // }
   assert(m_currentToken.length() == 1);
-  const Node *layout = m_currentToken.firstLayout();
+  const Tree *layout = m_currentToken.firstLayout();
   assert(layout->block()->isLayout());
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */

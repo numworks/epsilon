@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_CACHE_H
 #define POINCARE_MEMORY_CACHE_H
 
-#include "node.h"
+#include "tree.h"
 
 namespace PoincareJ {
 
@@ -38,7 +38,7 @@ class Reference {
   // Reference constructor without initializers
   Reference();
   // Reference from a const tree.
-  Reference(const Node *tree);
+  Reference(const Tree *tree);
 
   // These Initializers must push one tree on the EditionPool
   typedef void (*Initializer)();
@@ -47,12 +47,12 @@ class Reference {
   Reference(InitializerFromString initializer, const char *string);
 
   // This initializer can edit the given EditionPool node inplace
-  typedef void (*InitializerFromTreeInplace)(Node *);
-  Reference(InitializerFromTreeInplace initializer, const Node *tree);
+  typedef void (*InitializerFromTreeInplace)(Tree *);
+  Reference(InitializerFromTreeInplace initializer, const Tree *tree);
   Reference(InitializerFromTreeInplace initializer,
             const Reference *treeReference);
 
-  typedef void (*FunctionOnConstTree)(const Node *tree, void *context);
+  typedef void (*FunctionOnConstTree)(const Tree *tree, void *context);
   void send(FunctionOnConstTree functionOnTree, void *context) const;
 
   void dumpAt(void *address) const;
@@ -84,7 +84,7 @@ class Reference {
   bool hasInitializers() const {
     return isCacheReference() || m_data.data() != nullptr;
   }
-  const Node *getTree() const;
+  const Tree *getTree() const;
 
   ActionWithContext m_initializer;
   void *m_subInitializer;

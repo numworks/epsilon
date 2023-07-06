@@ -9,17 +9,17 @@
 
 namespace PoincareJ {
 
-KDSize RackLayout::Size(const Node* node, const Node* root, KDFont::Size font) {
+KDSize RackLayout::Size(const Tree* node, const Tree* root, KDFont::Size font) {
   return SizeBetweenIndexes(node, 0, node->numberOfChildren(), root, font);
 }
 
-KDCoordinate RackLayout::Baseline(const Node* node, const Node* root,
+KDCoordinate RackLayout::Baseline(const Tree* node, const Tree* root,
                                   KDFont::Size font) {
   return BaselineBetweenIndexes(node, 0, node->numberOfChildren(), root, font);
 }
 
-KDPoint RackLayout::PositionOfChild(const Node* node, int childIndex,
-                                    const Node* root, KDFont::Size font) {
+KDPoint RackLayout::PositionOfChild(const Tree* node, int childIndex,
+                                    const Tree* root, KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate childBaseline = 0;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
@@ -34,12 +34,12 @@ KDPoint RackLayout::PositionOfChild(const Node* node, int childIndex,
   return KDPoint(x, y);
 }
 
-EditionReference RackLayout::Parse(const Node* node) {
+EditionReference RackLayout::Parse(const Tree* node) {
   return RackParser(node).parse();
 }
 
-KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
-                                      int rightIndex, const Node* root,
+KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
+                                      int rightIndex, const Tree* root,
                                       KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
@@ -53,7 +53,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    const Node* childi = node->childAtIndex(i);
+    const Tree* childi = node->childAtIndex(i);
     KDSize childSize = Render::Size(childi, root, font);
     totalWidth += childSize.width();
     KDCoordinate childBaseline = Render::Baseline(childi, root, font);
@@ -64,9 +64,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Node* node, int leftIndex,
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }
 
-KDCoordinate RackLayout::BaselineBetweenIndexes(const Node* node, int leftIndex,
+KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
                                                 int rightIndex,
-                                                const Node* root,
+                                                const Tree* root,
                                                 KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
@@ -81,12 +81,12 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Node* node, int leftIndex,
   return result;
 }
 
-bool RackLayout::ShouldDrawEmptyRectangle(const Node* node) {
+bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
   // TODO : complete this method
   return node->numberOfChildren() == 0;
 }
 
-void RackLayout::RenderNode(const Node* node, const Node* root, KDContext* ctx,
+void RackLayout::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                             KDPoint p, KDFont::Size font,
                             KDColor expressionColor, KDColor backgroundColor) {
   if (ShouldDrawEmptyRectangle(node)) {
@@ -95,14 +95,14 @@ void RackLayout::RenderNode(const Node* node, const Node* root, KDContext* ctx,
   }
 }
 
-int RackLayout::NumberOfLayouts(const Node* node) {
+int RackLayout::NumberOfLayouts(const Tree* node) {
   return Layout::IsHorizontal(node) ? node->numberOfChildren() : 1;
 }
 
 EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference,
                                                      EditionReference child,
                                                      int* index,
-                                                     const Node* root) {
+                                                     const Tree* root) {
   assert(*index <= NumberOfLayouts(reference));
   EditionReference nary = RackParent(reference, index, root);
   NAry::AddOrMergeChildAtIndex(nary, child, *index);
@@ -110,7 +110,7 @@ EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference,
 }
 
 EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference,
-                                                 int* index, const Node* root) {
+                                                 int* index, const Tree* root) {
   assert(*index <= NumberOfLayouts(reference));
   EditionReference nary = RackParent(reference, index, root);
   NAry::RemoveChildAtIndex(nary, *index);
@@ -119,7 +119,7 @@ EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference,
 
 // Return the nearest NAry
 EditionReference RackLayout::RackParent(EditionReference reference, int* index,
-                                        const Node* root) {
+                                        const Tree* root) {
   if (Layout::IsHorizontal(reference)) {
     return reference;
   }

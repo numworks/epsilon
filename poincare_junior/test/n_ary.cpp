@@ -71,7 +71,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   assert_trees_are_equal(addition1, addition2);
 
   // Sort
-  Node* addition3 = editionPool->clone(
+  Tree* addition3 = editionPool->clone(
       KAdd(KLn(5_e), KLn(1_e), KTrig(3_e, 0_e), 1_e, KTrig(2_e, 1_e), 0_e,
            KTrig(1_e, 0_e), 3_e, KMult(1_e, 0_e, KLn(2_e)), 1_e,
            KPow(KTrig(3_e, 0_e), -1_e)));
@@ -86,7 +86,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
                       KLn(5_e), KTrig(1_e, 0_e), KTrig(2_e, 1_e),
                       KPow(KTrig(3_e, 0_e), -1_e), KTrig(3_e, 0_e)));
 
-  Node* sorted = editionPool->clone(KAdd(1_e, 2_e, 3_e));
+  Tree* sorted = editionPool->clone(KAdd(1_e, 2_e, 3_e));
   NAry::SortedInsertChild(sorted, EditionReference(0_e));
   NAry::SortedInsertChild(sorted, EditionReference(2_e));
   NAry::SortedInsertChild(sorted, EditionReference(5_e));

@@ -15,18 +15,18 @@ class Comparison {
    * -1 if block0 < block1
    *  0 if block0 == block1
    */
-  static int Compare(const Node* node0, const Node* node1,
+  static int Compare(const Tree* node0, const Tree* node1,
                      Order order = Order::User);
-  static bool AreEqual(const Node* node0, const Node* node1);
-  static bool ContainsSubtree(const Node* tree, const Node* subtree);
+  static bool AreEqual(const Tree* node0, const Tree* node1);
+  static bool ContainsSubtree(const Tree* tree, const Tree* subtree);
 
  private:
-  static int CompareNumbers(const Node* node0, const Node* node1);
-  static int CompareNames(const Node* node0, const Node* node1);
-  static int CompareConstants(const Node* node0, const Node* node1);
-  static int ComparePolynomial(const Node* node0, const Node* node1);
-  static int CompareChildren(const Node* node0, const Node* node1);
-  static int CompareLastChild(const Node* node0, const Node* node1);
+  static int CompareNumbers(const Tree* node0, const Tree* node1);
+  static int CompareNames(const Tree* node0, const Tree* node1);
+  static int CompareConstants(const Tree* node0, const Tree* node1);
+  static int ComparePolynomial(const Tree* node0, const Tree* node1);
+  static int CompareChildren(const Tree* node0, const Tree* node1);
+  static int CompareLastChild(const Tree* node0, const Tree* node1);
 };
 
 }  // namespace PoincareJ

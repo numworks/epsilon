@@ -4,19 +4,19 @@
 
 namespace PoincareJ {
 
-CodePoint CodePointLayout::GetCodePoint(const Node* node) {
+CodePoint CodePointLayout::GetCodePoint(const Tree* node) {
   return CodePoint(
       *reinterpret_cast<const uint32_t*>(node->block()->nextNth(1)));
 }
 
-void CodePointLayout::GetName(const Node* node, char* buffer,
+void CodePointLayout::GetName(const Tree* node, char* buffer,
                               size_t bufferSize) {
   CodePoint c = GetCodePoint(node);
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
   buffer[size] = 0;
 }
 
-KDSize CodePointLayout::Size(const Node* node, const Node* root,
+KDSize CodePointLayout::Size(const Tree* node, const Tree* root,
                              KDFont::Size font) {
   KDSize glyph = KDFont::GlyphSize(font);
   KDCoordinate width = glyph.width();
@@ -27,12 +27,12 @@ KDSize CodePointLayout::Size(const Node* node, const Node* root,
   return KDSize(width, glyph.height());
 }
 
-KDCoordinate CodePointLayout::Baseline(const Node* node, const Node* root,
+KDCoordinate CodePointLayout::Baseline(const Tree* node, const Tree* root,
                                        KDFont::Size font) {
   return KDFont::GlyphHeight(font) / 2;
 }
 
-void CodePointLayout::RenderNode(const Node* node, const Node* root,
+void CodePointLayout::RenderNode(const Tree* node, const Tree* root,
                                  KDContext* ctx, KDPoint p, KDFont::Size font,
                                  KDColor expressionColor,
                                  KDColor backgroundColor) {

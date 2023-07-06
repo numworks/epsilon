@@ -198,13 +198,13 @@ void ListController::resolveEquations() {
       case SystemOfEquations::Error::DisabledInExamMode:
         App::app()->displayWarning(I18n::Message::DisabledFeatureInExamMode);
         return;
+      case SystemOfEquations::Error::RequireApproximateSolution:
+        App::app()->system()->resetApproximateResolutionRange();
+        App::app()->system()->approximateSolve(App::app()->localContext());
       default: {
         assert(e == SystemOfEquations::Error::NoError ||
                e == SystemOfEquations::Error::RequireApproximateSolution);
-        stackController()->push(
-            e == SystemOfEquations::Error::RequireApproximateSolution
-                ? App::app()->intervalController()
-                : App::app()->solutionsController());
+        stackController()->push(App::app()->solutionsController());
       }
     }
   } else {

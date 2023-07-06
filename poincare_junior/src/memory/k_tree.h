@@ -105,7 +105,7 @@ struct KUnary : public KTree<Tag> {
    * each candidate concept is unmatched.  With these constructors, they match
    * and then you get a "call to consteval function ... is not a constant
    * expression" since they are marked consteval. */
-  consteval const Tree* operator()(Tree* a) const { return KTree<>(); }
+  consteval const Tree* operator()(const Tree* a) const { return KTree<>(); }
 };
 
 template <Block Tag>
@@ -120,7 +120,9 @@ struct KBinary : public KTree<Tag> {
     return KBinary<Tag>()(KTree(a), KTree(b));
   }
 
-  consteval const Tree* operator()(Tree* a, Tree* b) const { return KTree<>(); }
+  consteval const Tree* operator()(const Tree* a, const Tree* b) const {
+    return KTree<>();
+  }
 };
 
 template <Block Tag>
@@ -136,7 +138,8 @@ struct KTrinary : public KTree<Tag> {
     return KTrinary<Tag>()(KTree(a), KTree(b), KTree(c));
   }
 
-  consteval const Tree* operator()(Tree* a, Tree* b, Tree* c) const {
+  consteval const Tree* operator()(const Tree* a, const Tree* b,
+                                   const Tree* c) const {
     return KTree<>();
   }
 };
@@ -152,7 +155,8 @@ consteval auto KNAry(CTS... args) {
 }
 
 template <class... Args>
-concept HasANodeConcept = (false || ... || std::is_same<Tree*, Args>::value);
+concept HasANodeConcept = (false || ... ||
+                           std::is_same<const Tree*, Args>::value);
 template <Block Tag, class... Args>
   requires HasANodeConcept<Args...>
 consteval const Tree* KNAry(Args... args) {

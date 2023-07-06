@@ -289,9 +289,9 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
     return;
   }
   if (previousSelectedRow == -1) {
-    setSelectedSubviewType(SubviewType::Output, false, previousSelectedRow);
+    setSelectedSubviewType(SubviewType::Output, false, 0, previousSelectedRow);
   } else if (selectedRow() == -1) {
-    setSelectedSubviewType(SubviewType::None, false, previousSelectedRow);
+    setSelectedSubviewType(SubviewType::None, false, 0, previousSelectedRow);
   } else {
     HistoryViewCell *selectedCell = (HistoryViewCell *)(list->selectedCell());
     SubviewType nextSelectedSubviewType = selectedSubviewType();
@@ -300,7 +300,8 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
                                     ? SubviewType::Input
                                     : SubviewType::Output;
     }
-    setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedRow);
+    setSelectedSubviewType(nextSelectedSubviewType, false, 0,
+                           previousSelectedRow);
   }
 }
 

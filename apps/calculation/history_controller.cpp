@@ -136,9 +136,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableListView.selectCell(focusRow > 0 ? focusRow - 1 : 0);
-    setSelectedSubviewType(
-        subviewType, false,
-        (subviewType == SubviewType::Input) ? selectedRow() : -1);
+    setSelectedSubviewType(subviewType, false);
     return true;
   }
   if (event == Ion::Events::Clear) {

@@ -12,8 +12,8 @@ QUIZ_CASE(pcj_k_tree) {
   quiz_assert(node->numberOfChildren() == 3);
   quiz_assert(node->numberOfDescendants(true) == 7);
 
-  quiz_assert(static_cast<const Node*>("x"_e)->nodeSize() == 3);
-  quiz_assert(static_cast<const Node*>("var"_e)->nodeSize() == 5);
+  quiz_assert(("x"_e)->nodeSize() == 3);
+  quiz_assert(("var"_e)->nodeSize() == 5);
 
   const Node* poly = KPol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
   quiz_assert(poly->numberOfChildren() == 3);
@@ -27,14 +27,14 @@ QUIZ_CASE(pcj_k_tree) {
 }
 
 QUIZ_CASE(pcj_k_tree_integer) {
-  quiz_assert(static_cast<const Node*>(1_e)->nodeSize() == 1);
-  quiz_assert(static_cast<const Node*>(12_e)->nodeSize() == 2);
-  quiz_assert(static_cast<const Node*>(1234_e)->nodeSize() == 4);
-  quiz_assert(static_cast<const Node*>(-12345_e)->nodeSize() == 4);
-  quiz_assert(static_cast<const Node*>(123456_e)->nodeSize() == 5);
-  quiz_assert(static_cast<const Node*>(-123456_e)->nodeSize() == 5);
-  quiz_assert(static_cast<const Node*>(123456789_e)->nodeSize() == 6);
-  quiz_assert(static_cast<const Node*>(-123456789_e)->nodeSize() == 6);
+  quiz_assert((1_e)->nodeSize() == 1);
+  quiz_assert((12_e)->nodeSize() == 2);
+  quiz_assert((1234_e)->nodeSize() == 4);
+  quiz_assert((-12345_e)->nodeSize() == 4);
+  quiz_assert((123456_e)->nodeSize() == 5);
+  quiz_assert((-123456_e)->nodeSize() == 5);
+  quiz_assert((123456789_e)->nodeSize() == 6);
+  quiz_assert((-123456789_e)->nodeSize() == 6);
 
   quiz_assert(Integer::Handler(1_e).to<double>() == 1.0);
   quiz_assert(Integer::Handler(12_e).to<double>() == 12.0);

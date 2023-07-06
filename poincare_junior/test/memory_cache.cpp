@@ -34,7 +34,7 @@ void execute_push_tree_and_modify() {
 QUIZ_CASE(pcj_cache_pool) {
   CachePool *cachePool = CachePool::sharedCachePool();
   EditionPool *editionPool = cachePool->editionPool();
-  size_t treeSize = static_cast<const Node *>(bigTree)->treeSize();
+  size_t treeSize = bigTree->treeSize();
   cachePool->reset();
 
   // storeEditedTree
@@ -92,7 +92,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   CachePool *cachePool = CachePool::sharedCachePool();
   EditionPool *editionPool = cachePool->editionPool();
   cachePool->reset();
-  size_t treeSize = static_cast<const Node *>(bigTree)->treeSize();
+  size_t treeSize = bigTree->treeSize();
 
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
@@ -207,13 +207,12 @@ void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
 
 QUIZ_CASE(pcj_cache_reference_invalidation) {
   /* Invalidation when cache memory overflows */
-  size_t treeSize = static_cast<const Node *>(bigTree)->treeSize();
+  size_t treeSize = bigTree->treeSize();
   fill_cache_and_assert_invalidation(
-      1 + CachePool::k_maxNumberOfBlocks / treeSize,
-      static_cast<const Node *>(bigTree));
+      1 + CachePool::k_maxNumberOfBlocks / treeSize, bigTree);
   /* Invalidation when cache identifiers overflow */
   fill_cache_and_assert_invalidation(CachePool::k_maxNumberOfReferences,
-                                     static_cast<const Node *>(smallTree));
+                                     smallTree);
 }
 
 QUIZ_CASE(pcj_cache_reference_shared_data) {

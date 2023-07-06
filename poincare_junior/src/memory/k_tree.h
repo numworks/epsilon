@@ -25,7 +25,9 @@ template <class C>
 concept TreeCompatibleConcept =
     Concept::is_derived_from<C, AbstractTreeCompatible>;
 
-class AbstractTree : AbstractTreeCompatible {};
+class AbstractTree : AbstractTreeCompatible {
+  // TODO add operator-> here if you dare
+};
 
 template <class C>
 concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
@@ -51,6 +53,7 @@ class KTree : public AbstractTree {
     return Node::FromBlocks(&k_blocks[0]);
 #endif
   }
+  const Node* operator->() const { return operator const Node*(); }
 };
 
 /* Helper to concatenate KTrees */

@@ -100,7 +100,10 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     return Range2D(*(computeX ? defaultRange : originalRange).x(),
                    *(computeY ? defaultRange : originalRange).y());
   }
+  bool canComputeIntersections
+      [ContinuousFunctionStore::k_maxNumberOfMemoizedModels];
   int nbFunctions = store->numberOfActiveFunctions();
+  assert(nbFunctions <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels);
   Range1D xBounds =
       computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
   Range1D yBounds =
@@ -110,6 +113,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   zoom.setForcedRange(forcedRange);
 
   for (int i = 0; i < nbFunctions; i++) {
+    canComputeIntersections[i] = false;
     ExpiringPointer<ContinuousFunction> f =
         store->modelForRecord(store->activeRecordAtIndex(i));
     if (f->approximationBasedOnCostlyAlgorithms(context)) {
@@ -184,18 +188,20 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
       }
     } else {
       assert(f->properties().isCartesian());
+      canComputeIntersections[i] = true;
       bool alongY = f->isAlongY();
       Range1D *bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
       zoom.setBounds(std::clamp(f->tMin(), bounds->min(), bounds->max()),
                      std::clamp(f->tMax(), bounds->min(), bounds->max()));
       zoom.fitPointsOfInterest(evaluator<float>, f.operator->(), alongY,
-                               evaluator<double>);
+                               evaluator<double>, canComputeIntersections + i);
       zoom.fitBounds(evaluator<float>, f.operator->(), alongY);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
         zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, f.operator->(),
-                                 alongY, evaluatorSecondCurve<double>);
+                                 alongY, evaluatorSecondCurve<double>,
+                                 canComputeIntersections + i);
         zoom.fitBounds(evaluatorSecondCurve<float>, f.operator->(), alongY);
       }
 
@@ -227,20 +233,21 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
                            Preferences::sharedPreferences->angleUnit(), alongY);
       }
 
-      if (f->properties()
+      if (canComputeIntersections[i] &&
+          f->properties()
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         ContinuousFunction *mainF = f.operator->();
-        for (int j = i + 1; j < nbFunctions; j++) {
+        for (int j = 0; j < i; j++) {
           ExpiringPointer<ContinuousFunction> g =
               store->modelForRecord(store->activeRecordAtIndex(j));
-          if (!g->properties()
-                   .canComputeIntersectionsWithFunctionsAlongSameVariable() ||
-              g->isAlongY() != alongY ||
-              g->approximationBasedOnCostlyAlgorithms(context)) {
-            continue;
+          if (canComputeIntersections[j] &&
+              g->properties()
+                  .canComputeIntersectionsWithFunctionsAlongSameVariable() &&
+              g->isAlongY() == alongY &&
+              !g->approximationBasedOnCostlyAlgorithms(context)) {
+            zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>,
+                                  g.operator->());
           }
-          zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>,
-                                g.operator->());
         }
       }
     }

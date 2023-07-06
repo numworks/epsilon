@@ -59,7 +59,8 @@ class Zoom {
                 float bottomMargin = 0.f, float topMargin = 0.f);
   void fitPointsOfInterest(Function2DWithContext<float> f, const void *model,
                            bool vertical = false,
-                           Function2DWithContext<double> fDouble = nullptr);
+                           Function2DWithContext<double> fDouble = nullptr,
+                           bool *finiteNumberOfPoints = nullptr);
   void fitIntersections(Function2DWithContext<float> f1, const void *model1,
                         Function2DWithContext<float> f2, const void *model2,
                         bool vertical = false);

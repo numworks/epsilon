@@ -171,10 +171,10 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
     m_referenceTable.updateNodes(
         [](uint16_t *offset, Block *testedBlock, const Block *dst,
            const Block *src, int nbOfBlocks) {
-          if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
+          if (testedBlock > src && testedBlock < src + nbOfBlocks) {
             *offset += dst - src - (dst > src ? nbOfBlocks : 0);
-          } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
-                     (testedBlock > dst && testedBlock < src)) {
+          } else if ((testedBlock >= src + nbOfBlocks && testedBlock <= dst) ||
+                     (testedBlock > dst && testedBlock <= src)) {
             *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
           }
         },
@@ -183,10 +183,10 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
     m_referenceTable.updateNodes(
         [](uint16_t *offset, Block *testedBlock, const Block *dst,
            const Block *src, int nbOfBlocks) {
-          if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
+          if (testedBlock > src && testedBlock < src + nbOfBlocks) {
             *offset += dst - src - (dst > src ? nbOfBlocks : 0);
           } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
-                     (testedBlock >= dst && testedBlock < src)) {
+                     (testedBlock >= dst && testedBlock <= src)) {
             *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
           }
         },

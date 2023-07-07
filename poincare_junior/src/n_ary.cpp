@@ -17,10 +17,10 @@ void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
 }
 
 // Should these useful refs be hidden in the function ?
-void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* childNode, int index) {
+void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* child, int index) {
   EditionReference nary = naryNode;
-  EditionReference child = childNode;
   AddChildAtIndex(nary, child, index);
+  child = nary->childAtIndex(index);
   if (nary->type() == child->type()) {
     size_t numberOfChildren =
         nary->numberOfChildren() + child->numberOfChildren() - 1;

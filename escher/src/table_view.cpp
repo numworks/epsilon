@@ -147,6 +147,7 @@ int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
 
 int TableView::ContentView::typeIndexFromSubviewIndex(int index,
                                                       int type) const {
+  assert(index >= 0);
   int typeIndex = 0;
   for (int k = 0; k < index; k++) {
     if (typeOfSubviewAtIndex(k) == type) {
@@ -178,11 +179,13 @@ View* TableView::ContentView::subviewAtIndex(int index) {
    * redraw the top left cells rather than the bottom right cells. Due to the
    * screen driver specifications, blinking is less visible at the top left
    * corner than at the bottom right. */
+  assert(0 <= index && index < numberOfSubviews());
   return static_cast<View*>(
       reusableCellAtIndex(numberOfSubviews() - 1 - index));
 }
 
 HighlightCell* TableView::ContentView::reusableCellAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
   int type = typeOfSubviewAtIndex(index);
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);

@@ -615,7 +615,11 @@ bool Zoom::fitWithSolverHelper(float start, float end,
    *   display of periodic function, which would otherwise appear cramped.
    *   The savedRange is created when either the number of roots, or the number
    *   of other points of interest cross a threshold. Roots and other interests
-   *   are splitted so that cos(x) and cos(x)+2 have the same range. */
+   *   are splitted so that cos(x) and cos(x)+2 have the same range.
+   *
+   *   TODO: We should probably find a better way to detect the period of
+   *         periodic functions, so that we show one or two period instead of a
+   *         fixed number of points of interest. */
 
   Solver<float> solver(start, end);
   Range2D savedRange;

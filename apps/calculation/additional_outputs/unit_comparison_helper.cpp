@@ -503,6 +503,7 @@ int FindUpperAndLowerReferenceValues(
    * Units you can use are listed in k_referenceTables.*/
   const ReferenceValue *referenceTable = nullptr;
   char unitBuffer[k_sizeOfUnitBuffer];
+  assert(!orderedSIUnit.isUninitialized());
   PoincareHelpers::Serialize(orderedSIUnit, unitBuffer, k_sizeOfUnitBuffer);
   int referenceTableIndex = 0;
   while (referenceTableIndex < k_numberOfReferenceTables) {

@@ -23,15 +23,7 @@ bool IsConstant(const Tree* u) { return IsNumber(u); }
 bool IsZero(const Tree* u) { return u->type() == BlockType::Zero; }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
-bool Simplification::SystematicReduce(Tree* u) {
-  if (IsRational(u)) {
-    u->moveTreeOverTree(Rational::IrreducibleForm(u));
-    return true;  // TODO
-  }
-  if (u->numberOfChildren() == 0) {
-    return false;
-  }
-
+bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = false;
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
@@ -39,13 +31,24 @@ bool Simplification::SystematicReduce(Tree* u) {
   }
 
   for (auto [child, index] : NodeIterator::Children<Editable>(u)) {
-    modified |= SystematicReduce(child);
+    modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
       u->cloneNodeOverTree(KUndef);
       return true;
     }
   }
+  return ShallowSystematicReduce(u) || modified;
+}
 
+bool Simplification::ShallowSystematicReduce(Tree* u) {
+  if (IsRational(u)) {
+    u->moveTreeOverTree(Rational::IrreducibleForm(u));
+    return true;  // TODO
+  }
+  if (u->numberOfChildren() == 0) {
+    return false;
+  }
+  bool modified = false;
   if (u->type() == BlockType::Multiplication ||
       u->type() == BlockType::Addition) {
     modified |= NAry::Flatten(u);
@@ -87,7 +90,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
   EditionReference secondArgument = u->childAtIndex(1);
   /* Trig second element is always expected to be reduced. This will call
    * SimplifyTrigDiff if needed. */
-  bool changed = SystematicReduce(secondArgument);
+  bool changed = DeepSystematicReduce(secondArgument);
   if (secondArgument->block()->isOfType(
           {BlockType::MinusOne, BlockType::Two})) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
@@ -351,10 +354,10 @@ bool Simplification::Simplify(Tree* ref) {
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
   changed = DeepSystemProjection(ref) || changed;
-  changed = SystematicReduce(ref) || changed;
+  changed = DeepSystematicReduce(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref) || changed;
-  changed = SystematicReduce(ref) || changed;
+  changed = DeepSystematicReduce(ref) || changed;
   changed = DeepBeautify(ref) || changed;
   return changed;
 }
@@ -387,7 +390,7 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
     child->matchAndReplace(
         KPlaceholder<A>(),
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
-    SystematicReduce(child);
+    DeepSystematicReduce(child);
   }
   bool changed = false;
   // A + B? + (-1)*C + D?-> ((A + B) - C) + D
@@ -531,7 +534,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
   if (ShallowExpand(tempClone)) {
-    SystematicReduce(tempClone);
+    DeepSystematicReduce(tempClone);
     assert(tempClone->block()->isAlgebraic());
     ShallowAdvancedReduction(tempClone, true);
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
@@ -549,7 +552,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, bool change) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
   if (ShallowContract(tempClone)) {
-    SystematicReduce(tempClone);
+    DeepSystematicReduce(tempClone);
     // TODO: Decide on the metric to use here.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.

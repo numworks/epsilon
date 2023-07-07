@@ -46,10 +46,12 @@ class Simplification {
                                    ProjectionContext projectionContext = {});
   static bool ShallowSystemProjection(Tree *reference, void *projectionContext);
 
-  static bool SystematicReduce(Tree *u);
+  static bool ShallowSystematicReduce(Tree *u);
+  static bool DeepSystematicReduce(Tree *u);
 
   EDITION_REF_WRAP(Simplify);
-  EDITION_REF_WRAP(SystematicReduce);
+  EDITION_REF_WRAP(ShallowSystematicReduce);
+  EDITION_REF_WRAP(DeepSystematicReduce);
   EDITION_REF_WRAP(AdvancedReduction);
   EDITION_REF_WRAP_1(ShallowAdvancedReduction, bool);
   EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);

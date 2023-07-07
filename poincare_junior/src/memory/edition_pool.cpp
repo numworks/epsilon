@@ -263,64 +263,35 @@ bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   return true;
 }
 
-}  // namespace PoincareJ
+template Tree *EditionPool::push<BlockType::Addition, int>(int);
+template Tree *EditionPool::push<BlockType::Multiplication, int>(int);
+template Tree *EditionPool::push<BlockType::Constant, char16_t>(char16_t);
+template Tree *EditionPool::push<BlockType::Power>();
+template Tree *EditionPool::push<BlockType::Factorial>();
+template Tree *EditionPool::push<BlockType::SquareRoot>();
+template Tree *EditionPool::push<BlockType::Subtraction>();
+template Tree *EditionPool::push<BlockType::Division>();
+template Tree *EditionPool::push<BlockType::IntegerShort>(int8_t);
+template Tree *EditionPool::push<BlockType::IntegerPosBig>(uint64_t);
+template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);
+template Tree *EditionPool::push<BlockType::Float, float>(float);
+template Tree *EditionPool::push<BlockType::MinusOne>();
+template Tree *EditionPool::push<BlockType::Set>(int);
+template Tree *EditionPool::push<BlockType::Half>();
+template Tree *EditionPool::push<BlockType::Zero>();
+template Tree *EditionPool::push<BlockType::One>();
+template Tree *EditionPool::push<BlockType::Two>();
+template Tree *EditionPool::push<BlockType::RationalShort>(int8_t, uint8_t);
+template Tree *EditionPool::push<BlockType::Polynomial, int, int>(int, int);
+template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
+    const char *, size_t);
+template Tree *EditionPool::push<BlockType::Derivative>();
+template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
+template Tree *EditionPool::push<BlockType::SystemList, int>(int);
+template Tree *EditionPool::push<BlockType::FractionLayout>();
+template Tree *EditionPool::push<BlockType::ParenthesisLayout>();
+template Tree *EditionPool::push<BlockType::VerticalOffsetLayout>();
+template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(
+    CodePoint);
 
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Addition, int>(int);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Multiplication, int>(int);
-template PoincareJ::Tree *PoincareJ::EditionPool::push<
-    PoincareJ::BlockType::Constant, char16_t>(char16_t);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Power>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Factorial>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::SquareRoot>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Subtraction>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Division>();
-template PoincareJ::Tree
-    *PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerShort>(int8_t);
-template PoincareJ::Tree *
-    PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerPosBig>(uint64_t);
-template PoincareJ::Tree *
-    PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerNegBig>(uint64_t);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Float, float>(float);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::MinusOne>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Set>(int);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Half>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Zero>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::One>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Two>();
-template PoincareJ::Tree
-    *PoincareJ::EditionPool::push<PoincareJ::BlockType::RationalShort>(int8_t,
-                                                                       uint8_t);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Polynomial, int, int>(int,
-                                                                         int);
-template PoincareJ::Tree *PoincareJ::EditionPool::push<
-    PoincareJ::BlockType::UserSymbol, const char *, size_t>(const char *,
-                                                            size_t);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::Derivative>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::RackLayout, int>(int);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::SystemList, int>(int);
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::FractionLayout>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::ParenthesisLayout>();
-template PoincareJ::Tree *
-PoincareJ::EditionPool::push<PoincareJ::BlockType::VerticalOffsetLayout>();
-template PoincareJ::Tree *PoincareJ::EditionPool::push<
-    PoincareJ::BlockType::CodePointLayout, CodePoint>(CodePoint);
+}  // namespace PoincareJ

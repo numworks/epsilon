@@ -115,9 +115,7 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
        * whole expression is not. We juste approximate everything but the symbol
        * in case the other parts of the expression make it undef/nonreal.
        * */
-      bool dummy = false;
-      approximation = e.clone().deepApproximateKeepingSymbols(reductionContext,
-                                                              &dummy, &dummy);
+      approximation = e.clone().deepApproximateKeepingSymbols(reductionContext);
     } else {
       approximation = e.approximate<double>(reductionContext.context(),
                                             reductionContext.complexFormat(),

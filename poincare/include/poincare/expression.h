@@ -757,6 +757,10 @@ class Expression : public TreeHandle {
   Expression deepApproximateKeepingSymbols(ReductionContext reductionContext,
                                            bool* parentShouldApproximate,
                                            bool* parentShouldReduce);
+  Expression deepApproximateKeepingSymbols(ReductionContext reductionContext) {
+    bool dummy = false;
+    return deepApproximateKeepingSymbols(reductionContext, &dummy, &dummy);
+  }
   void deepApproximateChildrenKeepingSymbols(
       const ReductionContext& reductionContextbool, bool* shouldApproximate,
       bool* shouldReduce);

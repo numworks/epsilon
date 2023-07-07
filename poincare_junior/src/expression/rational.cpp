@@ -124,39 +124,37 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   return node;
 }
 
-void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
-  IntegerHandler numerator = Numerator(reference);
-  IntegerHandler denominator = Denominator(reference);
+void Rational::SetSign(Tree* tree, NonStrictSign sign) {
+  IntegerHandler numerator = Numerator(tree);
+  IntegerHandler denominator = Denominator(tree);
   numerator.setSign(sign);
-  reference->moveNodeOverNode(Push(numerator, denominator));
+  tree->moveNodeOverNode(Push(numerator, denominator));
 }
 
 Tree* Rational::Addition(const Tree* i, const Tree* j) {
   // a/b + c/d
-  EditionReference ad =
-      IntegerHandler::Multiplication(Numerator(i), Denominator(j));
-  EditionReference cb =
-      IntegerHandler::Multiplication(Numerator(j), Denominator(i));
+  Tree* ad = IntegerHandler::Multiplication(Numerator(i), Denominator(j));
+  Tree* cb = IntegerHandler::Multiplication(Numerator(j), Denominator(i));
   EditionReference newNumerator =
       IntegerHandler::Addition(Integer::Handler(ad), Integer::Handler(cb));
-  ad->removeTree();
   cb->removeTree();
+  ad->removeTree();
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
   EditionReference result = Rational::Push(newNumerator, newDenominator);
-  newNumerator->removeTree();
   newDenominator->removeTree();
+  newNumerator->removeTree();
   return result;
 }
 
 Tree* Rational::Multiplication(const Tree* i, const Tree* j) {
-  EditionReference newNumerator =
+  Tree* newNumerator =
       IntegerHandler::Multiplication(Numerator(i), Numerator(j));
-  EditionReference newDenominator =
+  Tree* newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
   EditionReference result = Rational::Push(newNumerator, newDenominator);
-  newNumerator->removeTree();
   newDenominator->removeTree();
+  newNumerator->removeTree();
   return result;
 }
 
@@ -164,18 +162,18 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
   assert(!(Number::IsZero(i) && Sign(j) == NonStrictSign::Negative));
   IntegerHandler absJ = Integer::Handler(j);
   absJ.setSign(NonStrictSign::Positive);
-  EditionReference newNumerator = IntegerHandler::Power(Numerator(i), absJ);
-  EditionReference newDenominator = IntegerHandler::Power(Denominator(i), absJ);
+  Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
+  Tree* newDenominator = IntegerHandler::Power(Denominator(i), absJ);
   EditionReference result = Sign(j) == NonStrictSign::Negative
                                 ? Rational::Push(newDenominator, newNumerator)
                                 : Rational::Push(newNumerator, newDenominator);
-  newNumerator->removeTree();
   newDenominator->removeTree();
+  newNumerator->removeTree();
   return result;
 }
 
 Tree* Rational::IrreducibleForm(const Tree* i) {
-  EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
+  Tree* gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
   if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
     EditionReference numerator =
         IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
@@ -183,14 +181,14 @@ Tree* Rational::IrreducibleForm(const Tree* i) {
     return numerator;
   }
   if (gcd->type() != BlockType::One) {
-    EditionReference numerator =
+    Tree* numerator =
         IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
-    EditionReference denominator =
+    Tree* denominator =
         IntegerHandler::Quotient(Denominator(i), Integer::Handler(gcd));
     EditionReference result = Rational::Push(numerator, denominator);
-    gcd->removeTree();
-    numerator->removeTree();
     denominator->removeTree();
+    numerator->removeTree();
+    gcd->removeTree();
     return result;
   }
   gcd->removeTree();

@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_RATIONAL_H
 #define POINCARE_EXPRESSION_RATIONAL_H
 
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "integer.h"
 
@@ -19,7 +19,7 @@ class Rational final {
   static StrictSign RationalStrictSign(const Tree* node) {
     return Numerator(node).strictSign();
   }
-  static void SetSign(EditionReference reference, NonStrictSign sign);
+  static void SetSign(Tree* reference, NonStrictSign sign);
 
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);

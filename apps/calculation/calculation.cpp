@@ -359,10 +359,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
         UnitConversion::None);
     double value =
         PoincareHelpers::ApproximateToScalar<double>(oClone, globalContext);
-    if (Unit::ShouldDisplayAdditionalOutputs(
-            value, unit,
-            GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
-        UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
+    if (!unit.isUninitialized() &&
+        (Unit::ShouldDisplayAdditionalOutputs(
+             value, unit,
+             GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
+         UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
       /* Sometimes with angle units, the reduction with UnitConversion::None
        * will be defined but not the reduction with UnitConversion::Default,
        * which will make the unit list controller crash.  */

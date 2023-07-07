@@ -71,7 +71,8 @@ static inline void pushEvent(uint8_t c) {
 
 static inline bool loadFile(FILE* f, bool headlessStateFile) {
   if (!headlessStateFile) {
-    char header[sHeaderLength];
+    char header[sHeaderLength + 1];
+    header[sHeaderLength] = 0;
     if (fread(header, sHeaderLength, 1, f) != 1) {
       return false;
     }

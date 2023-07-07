@@ -32,10 +32,10 @@ class EditionPool final : public Pool {
   void replaceBlocks(Block *destination, const Block *newBlocks,
                      size_t numberOfBlocks);
   Block *pushBlock(Block block) {
-    return insertBlock(lastBlock(), block) ? lastBlock() - 1 : nullptr;
+    return insertBlock(lastBlock(), block, true) ? lastBlock() - 1 : nullptr;
   }
-  bool insertBlock(Block *destination, Block block) {
-    return insertBlocks(destination, &block, 1);
+  bool insertBlock(Block *destination, Block block, bool at = false) {
+    return insertBlocks(destination, &block, 1, at);
   }
   bool insertBlocks(Block *destination, const Block *source,
                     size_t numberOfBlocks, bool at = false);

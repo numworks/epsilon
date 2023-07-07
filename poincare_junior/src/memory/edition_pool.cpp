@@ -123,6 +123,11 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
     return false;
   }
   size_t insertionSize = numberOfBlocks * sizeof(Block);
+  if (at && destination == lastBlock()) {
+    m_numberOfBlocks += numberOfBlocks;
+    memcpy(destination, source, insertionSize);
+    return true;
+  }
   memmove(destination + insertionSize, destination,
           static_cast<Block *>(lastBlock()) - destination);
   m_numberOfBlocks += numberOfBlocks;

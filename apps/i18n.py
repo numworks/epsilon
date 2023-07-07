@@ -137,6 +137,25 @@ def check_redundancy(messages, data, locales):
         sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
         sys.exit(-1)
 
+def check_duplicates(messages, data, locales):
+    redundant_names = set()
+    ConcatenatedToName = {}
+    all_names = set()
+    found = False
+    for name in messages:
+        concatenated=""
+        for i in range(0, len(locales)):
+            concatenated = str(concatenated) + "§" + str(data[locales[i]][name])
+
+        if (concatenated in all_names):
+            found = True
+            redundant_names.add(name + ", " + ConcatenatedToName[concatenated])
+        ConcatenatedToName[concatenated] = name
+        all_names.add(concatenated)
+    if (found):
+        sys.stderr.write("Some localized messages are redundant :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
+        sys.exit(-1)
+
 def parse_files(files):
     data = {}
     messages = set()
@@ -159,6 +178,9 @@ def parse_files(files):
                         sys.stderr.write("Error: Redefinition of message \"" + name + "\" as universal\n")
                         sys.exit(-1)
                     universal_messages.add(name)
+                    if definition in data[locale].values():
+                        sys.stderr.write("Error: Duplicate universal message, text of \"" + name + "\" appears twice.\n")
+                        sys.exit(-1)
                 else:
                     if name in universal_messages:
                         sys.stderr.write("Error: Redefinition of universal message \"" + name + "\" in locale " + locale + "\n")
@@ -170,6 +192,7 @@ def parse_files(files):
                 data[locale][name] = definition
     if (len(args.locales) >= default_number_of_locales):
         check_redundancy(messages, data, args.locales)
+        check_duplicates(messages, data, args.locales)
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
 def parse_codepoints(file):

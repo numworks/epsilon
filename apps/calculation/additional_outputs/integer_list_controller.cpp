@@ -48,7 +48,7 @@ void IntegerListController::setExpression(Poincare::Expression e) {
 I18n::Message IntegerListController::messageAtIndex(int index) {
   switch (index) {
     case 0:
-      return I18n::Message::DecimalBase;
+      return I18n::Message::Decimal;
     case 1:
       return I18n::Message::HexadecimalBase;
     case 2:

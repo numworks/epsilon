@@ -1,7 +1,6 @@
 CalculApp = "Rekenen"
 CalculAppCapital = "REKENEN"
 AdditionalResults = "Aanvullende resultaten"
-DecimalBase = "Decimaal"
 HexadecimalBase = "Hexadecimaal"
 BinaryBase = "Binair"
 PrimeFactors = "Ontbinding in factoren"

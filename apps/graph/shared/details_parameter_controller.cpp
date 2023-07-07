@@ -48,7 +48,7 @@ void DetailsParameterController::fillCellForRow(HighlightCell *cell, int row) {
   assert(0 <= row && row < k_numberOfDataPoints);
   DetailCell *myCell = static_cast<DetailCell *>(cell);
   if (row == k_indexOfCurveTypeRow) {
-    myCell->label()->setMessage(I18n::Message::CurveType);
+    myCell->label()->setMessage(I18n::Message::Type);
     myCell->subLabel()->setMessage(I18n::Message::Default);
     myCell->accessory()->setText(
         I18n::translate(function()->properties().caption()));
@@ -147,7 +147,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
 
   if (functionIsNonVerticalLine()) {
     constexpr I18n::Message k_titles[k_lineDetailsSections] = {
-        I18n::Message::LineEquationTitle,
+        I18n::Message::Equation,
         I18n::Message::LineSlopeTitle,
         I18n::Message::LineYInterceptTitle,
     };

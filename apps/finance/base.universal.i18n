@@ -1,8 +1,6 @@
-FinanceLowerN = "n"
 FinanceRPct = "r%"
 FinanceP = "P"
 FinanceI = "I"
-FinanceN = "N"
 FinancePV = "PV"
 FinancePmt = "Pmt"
 FinanceFV = "FV"

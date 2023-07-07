@@ -216,9 +216,7 @@ class RadiusDataField : public DoubleDataField {
   I18n::Message fieldLegend() const override {
     return I18n::Message::ElementsRadiusLegend;
   }
-  I18n::Message fieldSymbol() const override {
-    return I18n::Message::ElementsRadiusSymbol;
-  }
+  I18n::Message fieldSymbol() const override { return I18n::Message::R; }
   double getDouble(AtomicNumber z) const override;
   const char* rawUnit() const override { return "_pm"; }
   ColorPair minColors() const override {

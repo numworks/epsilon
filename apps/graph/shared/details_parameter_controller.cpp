@@ -148,7 +148,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
   if (functionIsNonVerticalLine()) {
     constexpr I18n::Message k_titles[k_lineDetailsSections] = {
         I18n::Message::Equation,
-        I18n::Message::LineSlopeTitle,
+        I18n::Message::M,
         I18n::Message::LineYInterceptTitle,
     };
     return k_titles[i];
@@ -157,7 +157,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
   switch (function()->properties().conicShape()) {
     case Conic::Shape::Circle: {
       constexpr I18n::Message k_titles[k_circleDetailsSections] = {
-          I18n::Message::CircleRadiusTitle,
+          I18n::Message::R,
           I18n::Message::CenterAbscissaTitle,
           I18n::Message::CenterOrdinateTitle,
       };
@@ -165,10 +165,10 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
     }
     case Conic::Shape::Ellipse: {
       constexpr I18n::Message k_titles[k_ellipseDetailsSections] = {
-          I18n::Message::EllipseSemiMajorAxisTitle,
-          I18n::Message::EllipseSemiMinorAxisTitle,
-          I18n::Message::LinearEccentricityTitle,
-          I18n::Message::EccentricityTitle,
+          I18n::Message::A,
+          I18n::Message::B,
+          I18n::Message::C,
+          I18n::Message::E,
           I18n::Message::CenterAbscissaTitle,
           I18n::Message::CenterOrdinateTitle,
       };
@@ -176,7 +176,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
     }
     case Conic::Shape::Parabola: {
       constexpr I18n::Message k_titles[k_parabolaDetailsSections] = {
-          I18n::Message::ParabolaParameterTitle,
+          I18n::Message::P,
           I18n::Message::ParabolaVertexAbscissaTitle,
           I18n::Message::ParabolaVertexOrdinateTitle,
       };
@@ -185,10 +185,10 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
     default: {
       assert(function()->properties().conicShape() == Conic::Shape::Hyperbola);
       constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
-          I18n::Message::HyperbolaSemiMajorAxisTitle,
-          I18n::Message::HyperbolaSemiMinorAxisTitle,
-          I18n::Message::LinearEccentricityTitle,
-          I18n::Message::EccentricityTitle,
+          I18n::Message::A,
+          I18n::Message::B,
+          I18n::Message::C,
+          I18n::Message::E,
           I18n::Message::CenterAbscissaTitle,
           I18n::Message::CenterOrdinateTitle,
       };

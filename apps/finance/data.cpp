@@ -31,9 +31,8 @@ void InterestData::resetValues() {
 I18n::Message SimpleInterestData::labelForParameter(uint8_t param) const {
   assert(param < numberOfParameters());
   constexpr I18n::Message k_labels[k_numberOfParameters] = {
-      I18n::Message::FinanceLowerN, I18n::Message::FinanceRPct,
-      I18n::Message::FinanceP, I18n::Message::FinanceI,
-      I18n::Message::FinanceYear};
+      I18n::Message::N, I18n::Message::FinanceRPct, I18n::Message::FinanceP,
+      I18n::Message::FinanceI, I18n::Message::FinanceYear};
   return k_labels[param];
 }
 
@@ -91,7 +90,7 @@ double SimpleInterestData::computeUnknownValue() {
 I18n::Message CompoundInterestData::labelForParameter(uint8_t param) const {
   assert(param < numberOfParameters());
   constexpr I18n::Message k_labels[k_numberOfParameters] = {
-      I18n::Message::FinanceN,   I18n::Message::FinanceRPct,
+      I18n::Message::UpperN,     I18n::Message::FinanceRPct,
       I18n::Message::FinancePV,  I18n::Message::FinanceFV,
       I18n::Message::FinancePmt, I18n::Message::FinancePY,
       I18n::Message::FinanceCY,  I18n::Message::FinancePayment};

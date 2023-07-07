@@ -1416,8 +1416,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
   Expression e = clone().deepReduce(*reductionContext);
   if (approximateDuringReduction &&
       !ExceptionCheckpoint::HasBeenInterrupted()) {
-    bool dummy = false;
-    e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
+    e = e.deepApproximateKeepingSymbols(*reductionContext);
   }
   {
     if (ExceptionCheckpoint::HasBeenInterrupted()) {
@@ -1430,8 +1429,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
       e = clone().deepReduce(*reductionContext);
       if (approximateDuringReduction &&
           !ExceptionCheckpoint::HasBeenInterrupted()) {
-        bool dummy = false;
-        e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
+        e = e.deepApproximateKeepingSymbols(*reductionContext);
       }
       if (ExceptionCheckpoint::HasBeenInterrupted()) {
         ExceptionCheckpoint::ClearInterruption();
@@ -1461,9 +1459,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
          * Then "x^rational(2)+x^float(2.)" won't be able to reduce to
          * "2*x^float(2.)" because float(2.) != rational(2.).
          * This does not happen if e is reduced beforehand. */
-        bool dummy = false;
-        reduced = reduced.deepApproximateKeepingSymbols(*reductionContext,
-                                                        &dummy, &dummy);
+        reduced = reduced.deepApproximateKeepingSymbols(*reductionContext);
       }
       e = reduced;
     } else {
@@ -1478,9 +1474,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
         reductionContext->setTarget(ReductionTarget::SystemForApproximation);
         e = clone().deepReduce(*reductionContext);
         if (approximateDuringReduction) {
-          bool dummy = false;
-          e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy,
-                                              &dummy);
+          e = e.deepApproximateKeepingSymbols(*reductionContext);
         }
       } else {
         *reduceFailure = true;

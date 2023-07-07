@@ -1,5 +1,6 @@
 #include "sequence_store.h"
 
+#include <apps/global_preferences.h>
 #include <ion/storage/file_system.h>
 
 #include <algorithm>
@@ -40,8 +41,16 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   KDColor color = Palette::DataColor[nameIndex];
   Sequence::RecordDataBuffer data(color);
   // m_sequences
-  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      name, modelExtension(), &data, sizeof(data));
+  Ion::Storage::Record::ErrorStatus error =
+      Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+          name, modelExtension(), &data, sizeof(data));
+  if (error == Ion::Storage::Record::ErrorStatus::None) {
+    modelForRecord(Ion::Storage::FileSystem::sharedFileSystem
+                       ->recordBaseNamedWithExtension(name, modelExtension()))
+        ->setInitialRank(
+            GlobalPreferences::sharedGlobalPreferences->sequencesInitialRank());
+  }
+  return error;
 }
 
 int SequenceStore::SequenceIndexForName(char name) {

@@ -43,8 +43,8 @@ void Polynomial::SetExponentAtIndex(EditionReference polynomial, int index,
 void Polynomial::InsertExponentAtIndex(EditionReference polynomial, int index,
                                        uint8_t exponent) {
   Block* exponentsAddress = polynomial->block() + 2;
-  SharedEditionPool->insertBlock(exponentsAddress + index,
-                                 ValueBlock(exponent));
+  SharedEditionPool->insertBlock(exponentsAddress + index, ValueBlock(exponent),
+                                 true);
 }
 
 void Polynomial::RemoveExponentAtIndex(EditionReference polynomial, int index) {
@@ -82,8 +82,13 @@ EditionReference Polynomial::Addition(EditionReference polA,
       polA, polB, BlockType::Addition, AddMonomial,
       [](EditionReference result, EditionReference polynomial,
          std::pair<EditionReference, uint8_t> monomial, bool isLastTerm) {
+        /* while the multiplication needs a clean copy of the polynomial for the
+         * latter terms, we can edit it in place for the addition */
+        if (static_cast<Tree*>(result) != static_cast<Tree*>(polynomial)) {
+          assert(result->treeIsIdenticalTo(0_e));
+          result->removeTree();
+        }
         AddMonomial(polynomial, monomial);
-        result->moveTreeOverTree(polynomial);
         return polynomial;
       });
 }
@@ -288,8 +293,8 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
     EditionReference result = polynomial->childAtIndex(1);
-    polynomial->moveTreeOverTree(result);
-    return result;
+    polynomial = polynomial->moveTreeOverTree(result);
+    return polynomial;
   }
   // Assert the exponents are ordered
   for (int i = 1; i < numberOfTerms; i++) {
@@ -380,11 +385,11 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
     }
     polynomial = Polynomial::Sanitize(polynomial);
     // Addition node has been emptied from children
-    expression->moveTreeOverNode(polynomial);
+    polynomial = expression->moveTreeOverNode(polynomial);
   } else {
     // Move polynomial next to expression before it's parsed (and likely
     // replaced)
-    expression->moveTreeBeforeNode(polynomial);
+    polynomial = expression->moveTreeBeforeNode(polynomial);
     Polynomial::AddMonomial(polynomial, ParseMonomial(expression, variable));
   }
   return polynomial;

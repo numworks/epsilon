@@ -115,10 +115,10 @@ class Tree {
    *  |     |             =>           |     |
    *  aaaabbcccdd                   cccaaaabbdd
    */
-  void moveNodeBeforeNode(Tree* n) { moveAt(n, true, false); }
-  void moveTreeBeforeNode(Tree* n) { moveAt(n, true, true); }
-  void cloneNodeBeforeNode(const Tree* n) { cloneAt(n, true, false); }
-  void cloneTreeBeforeNode(const Tree* n) { cloneAt(n, true, true); }
+  Tree* moveNodeBeforeNode(Tree* n) { return moveAt(n, true, false); }
+  Tree* moveTreeBeforeNode(Tree* n) { return moveAt(n, true, true); }
+  Tree* cloneNodeBeforeNode(const Tree* n) { return cloneAt(n, true, false); }
+  Tree* cloneTreeBeforeNode(const Tree* n) { return cloneAt(n, true, true); }
 
   /*  u     v        u.moveAt(v)    u        v
    *  |     |            =>         |        |
@@ -219,9 +219,9 @@ class Tree {
   }
 
  private:
-  void cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
-               bool at = false);
-  void moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at = false);
+  Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
+                bool at = false);
+  Tree* moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at = false);
   Tree* cloneOver(const Tree* n, bool oldIsTree, bool newIsTree);
   Tree* moveOver(Tree* n, bool oldIsTree, bool newIsTree);
   Tree* detach(bool isTree);

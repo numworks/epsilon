@@ -331,8 +331,8 @@ Tree* Tree::clone() const { return SharedEditionPool->clone(this); }
 
 // Tree edition
 
-void Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
-                   bool at) {
+Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
+                    bool at) {
   Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
   SharedEditionPool->insertBlocks(destination->block(), nodeToClone->block(),
@@ -340,9 +340,10 @@ void Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Insert", destination->block(), size);
 #endif
+  return destination;
 }
 
-void Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
+Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
   Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
   assert(SharedEditionPool->contains(nodeToMove->block()));
@@ -353,6 +354,7 @@ void Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
   Block* addedBlock = dst >= nodeToMove->block() ? dst - size : dst;
   Log(LoggerType::Edition, "Insert", addedBlock, size, nodeToMove->block());
 #endif
+  return destination;
 }
 
 Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {

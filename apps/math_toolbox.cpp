@@ -397,7 +397,7 @@ constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
 };
 
 constexpr ToolboxMessageTree unitEnergyChildren[] = {
-    ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu,
+    ToolboxMessageTree::Node(I18n::Message::UnitEnergyJoule,
                              unitEnergyJouleChildren),
     ToolboxMessageTree::Node(I18n::Message::UnitEnergyElectronVolt,
                              unitEnergyElectronVoltChildren),
@@ -827,7 +827,7 @@ constexpr ToolboxMessageTree logicChildren[] = {
                              false, I18n::Message::OrCommandWithSpaces),
     ToolboxMessageTree::Leaf(I18n::Message::NotCommand,
                              I18n::Message::NotMessage, false,
-                             I18n::Message::NotCommandWithSpaces),
+                             I18n::Message::NotCommandWithSpace),
     ToolboxMessageTree::Leaf(I18n::Message::XorCommand,
                              I18n::Message::XorMessage, false,
                              I18n::Message::XorCommandWithSpaces),

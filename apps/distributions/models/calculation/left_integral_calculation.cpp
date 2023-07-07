@@ -22,7 +22,7 @@ I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   if (index == 0) {
     return I18n::Message::LeftIntegralFirstLegend;
   }
-  return I18n::Message::LeftIntegralSecondLegend;
+  return I18n::Message::IntegralSecondLegend;
 }
 
 void LeftIntegralCalculation::setParameterAtIndex(double f, int index) {

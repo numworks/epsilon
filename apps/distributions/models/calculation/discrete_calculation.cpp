@@ -19,7 +19,7 @@ I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   if (index == 0) {
     return I18n::Message::DiscreteLegend;
   }
-  return I18n::Message::LeftIntegralSecondLegend;
+  return I18n::Message::IntegralSecondLegend;
 }
 
 void DiscreteCalculation::setParameterAtIndex(double f, int index) {

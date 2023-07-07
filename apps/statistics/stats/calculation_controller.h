@@ -60,7 +60,7 @@ class CalculationController : public Shared::DoublePairTableController {
 
   constexpr static CalculationRow k_calculationRows[] = {
       // Message, symbol, function, defaultLayout, variant1Layout
-      {I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol,
+      {I18n::Message::TotalFrequency, I18n::Message::N,
        &Store::sumOfOccurrences, 0, 0},
       {I18n::Message::Minimum, I18n::Message::MinimumSymbol, &Store::minValue,
        1, 1},
@@ -70,7 +70,7 @@ class CalculationController : public Shared::DoublePairTableController {
       {I18n::Message::Mean, I18n::Message::MeanSymbol, &Store::mean, 4,
        16},  // Not displayed under variant1Layout
       {I18n::Message::StandardDeviation,
-       I18n::Message::StandardDeviationSigmaSymbol, &Store::standardDeviation,
+       I18n::Message::Sigma, &Store::standardDeviation,
        5, 9},
       {I18n::Message::Deviation, I18n::Message::DeviationSymbol,
        &Store::variance, 6, 10},
@@ -87,7 +87,7 @@ class CalculationController : public Shared::DoublePairTableController {
       {I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol,
        &Store::squaredValueSum, 12, 15},
       {I18n::Message::SampleStandardDeviationS,
-       I18n::Message::SampleStandardDeviationSSymbol,
+       I18n::Message::S,
        &Store::sampleStandardDeviation, 13, 12},
       {I18n::Message::SampleVariance, I18n::Message::SampleVarianceSymbol,
        &Store::sampleVariance, 14, 13},

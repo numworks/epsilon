@@ -21,7 +21,7 @@ I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   if (index == 1) {
     return I18n::Message::FiniteIntegralLegend;
   }
-  return I18n::Message::LeftIntegralSecondLegend;
+  return I18n::Message::IntegralSecondLegend;
 }
 
 void FiniteIntegralCalculation::setParameterAtIndex(double f, int index) {

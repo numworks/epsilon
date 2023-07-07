@@ -56,6 +56,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   // Then, let's recursively draw our children over ourself
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {
+    assert(subviewsNumber == numberOfSubviews());
     View *subview = subviewAtIndex(i);
     if (subview == nullptr) {
       continue;
@@ -140,6 +141,7 @@ void View::translate(KDPoint delta) {
   m_frame = m_frame.translatedBy(delta);
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {
+    assert(subviewsNumber == numberOfSubviews());
     View *subview = subviewAtIndex(i);
     if (subview == nullptr) {
       continue;

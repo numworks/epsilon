@@ -106,24 +106,30 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
   int i = 0;
   while (i < totalNumberOfDependencies) {
     Expression e = dependencies.childAtIndex(i);
-    if (e.deepIsSymbolic(reductionContext.context(),
-                         reductionContext.symbolicComputation())) {
+    Expression approximation;
+    bool hasSymbols = e.deepIsSymbolic(reductionContext.context(),
+                                       reductionContext.symbolicComputation());
+    if (hasSymbols) {
       /* If the dependency involves unresolved symbol/function/sequence,
        * the approximation of the dependency could be undef while the
-       * whole expression is not, so the check is skipped.
+       * whole expression is not. We juste approximate everything but the symbol
+       * in case the other parts of the expression make it undef/nonreal.
        * */
-      i++;
-      continue;
+      bool dummy = false;
+      approximation = e.clone().deepApproximateKeepingSymbols(reductionContext,
+                                                              &dummy, &dummy);
+    } else {
+      approximation = e.approximate<double>(reductionContext.context(),
+                                            reductionContext.complexFormat(),
+                                            reductionContext.angleUnit(), true);
     }
-
-    Expression approximation = e.approximate<double>(
-        reductionContext.context(), reductionContext.complexFormat(),
-        reductionContext.angleUnit(), true);
     if (approximation.isUndefined()) {
       return replaceWithUndefinedInPlace();
-    } else {
+    } else if (!hasSymbols) {
       static_cast<List &>(dependencies).removeChildAtIndexInPlace(i);
       totalNumberOfDependencies--;
+    } else {
+      i++;
     }
   }
 

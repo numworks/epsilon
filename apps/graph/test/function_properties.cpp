@@ -83,7 +83,7 @@ QUIZ_CASE(graph_function_properties) {
 
     assert_check_function_properties(
         "f(x)=cos(x)+ln(x)",
-        FunctionProperties{.m_caption = I18n::Message::FunctionType,
+        FunctionProperties{.m_caption = I18n::Message::Function,
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
@@ -160,7 +160,7 @@ QUIZ_CASE(graph_function_properties) {
 
     assert_check_function_properties(
         "f(x)=diff(x^2,x,x)",
-        FunctionProperties{.m_caption = I18n::Message::FunctionType,
+        FunctionProperties{.m_caption = I18n::Message::Function,
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
@@ -168,7 +168,7 @@ QUIZ_CASE(graph_function_properties) {
     // === Cartesian equations ===
 
     constexpr static FunctionProperties k_cartesianEquationProperties =
-        FunctionProperties{.m_caption = I18n::Message::EquationType,
+        FunctionProperties{.m_caption = I18n::Message::Equation,
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction};
@@ -217,7 +217,7 @@ QUIZ_CASE(graph_function_properties) {
                                                   : k_verticalLineProperties);
 
     constexpr static FunctionProperties k_alongY = FunctionProperties{
-        .m_caption = I18n::Message::EquationType,
+        .m_caption = I18n::Message::Equation,
         .m_symbolType = ContinuousFunctionProperties::SymbolType::X,
         .m_isAlongY = true};
     assert_check_function_properties(
@@ -226,12 +226,12 @@ QUIZ_CASE(graph_function_properties) {
         "y^3=x", noImplicitPlot ? k_bannedProperties : k_alongY);
 
     constexpr static FunctionProperties k_alongYOfDegreeTwoWithTwoSubCurves =
-        FunctionProperties{.m_caption = I18n::Message::EquationType,
+        FunctionProperties{.m_caption = I18n::Message::Equation,
                            .m_isOfDegreeTwo = true,
                            .m_numberOfSubCurves = 2,
                            .m_isAlongY = true};
     constexpr static FunctionProperties k_alongYOfDegreeTwoWithOneSubCurve =
-        FunctionProperties{.m_caption = I18n::Message::EquationType,
+        FunctionProperties{.m_caption = I18n::Message::Equation,
                            .m_isOfDegreeTwo = true,
                            .m_numberOfSubCurves = 1,
                            .m_isAlongY = true};
@@ -364,13 +364,13 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties(
         "y=diff(x^2,x,x)",
         FunctionProperties{
-            .m_caption = I18n::Message::EquationType,
+            .m_caption = I18n::Message::Equation,
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Line,
         });
 
     constexpr static FunctionProperties k_twoSubCurves =
-        FunctionProperties{.m_caption = I18n::Message::EquationType,
+        FunctionProperties{.m_caption = I18n::Message::Equation,
                            .m_isOfDegreeTwo = true,
                            .m_numberOfSubCurves = 2};
     assert_check_function_properties(
@@ -679,7 +679,7 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties(
         "f(x)=im(i*x+1)",
-        FunctionProperties{.m_caption = I18n::Message::FunctionType,
+        FunctionProperties{.m_caption = I18n::Message::Function,
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
@@ -692,7 +692,7 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties(
         "f(x)=im(i*x+1)",
-        FunctionProperties{.m_caption = I18n::Message::FunctionType,
+        FunctionProperties{.m_caption = I18n::Message::Function,
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
@@ -732,7 +732,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
                                    &context);
   assert_check_function_properties(
       "a*y*y+y=x",
-      FunctionProperties{.m_caption = I18n::Message::EquationType,
+      FunctionProperties{.m_caption = I18n::Message::Equation,
                          .m_isOfDegreeTwo = true,
                          .m_numberOfSubCurves = 2},
       &store, &context);

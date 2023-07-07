@@ -192,7 +192,7 @@ void ContinuousFunctionProperties::update(
       }
       setCartesianFunctionProperties(analyzedExpression, context);
       if (genericCaptionOnly) {
-        setCaption(I18n::Message::FunctionType);
+        setCaption(I18n::Message::Function);
       }
       return;
     }
@@ -296,7 +296,7 @@ void ContinuousFunctionProperties::update(
   setCartesianEquationProperties(analyzedExpression, context, complexFormat,
                                  xDeg, yDeg, highestCoefficientIsPositive);
   if (genericCaptionOnly) {
-    setCaption(I18n::Message::EquationType);
+    setCaption(I18n::Message::Equation);
   }
 }
 
@@ -398,7 +398,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   }
 
   // Others
-  setCaption(I18n::Message::FunctionType);
+  setCaption(I18n::Message::Function);
 }
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(
@@ -424,11 +424,11 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
    * Other cases should have been escaped before.
    */
 
-  setCaption(I18n::Message::EquationType);
+  setCaption(I18n::Message::Equation);
 
   if (yDeg != 1 && yDeg != 2) {  // function is along Y
     setIsAlongY(true);
-    setCaption(I18n::Message::EquationType);
+    setCaption(I18n::Message::Equation);
     if (xDeg == 2) {
       setIsOfDegreeTwo(true);
     } else if (yDeg == 0) {

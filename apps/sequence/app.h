@@ -76,7 +76,7 @@ class App : public Shared::FunctionApp {
   App(Snapshot *snapshot) : FunctionApp(snapshot, &m_tabs, ListTab::k_title) {}
 
   struct ListTab : public Shared::FunctionApp::ListTab {
-    static constexpr I18n::Message k_title = I18n::Message::SequenceTab;
+    static constexpr I18n::Message k_title = I18n::Message::Sequences;
     ListTab();
     ListController m_listController;
   };

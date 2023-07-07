@@ -1,6 +1,5 @@
 SequenceApp = "Sequences"
 SequenceAppCapital = "SEQUENCES"
-SequenceTab = "Sequences"
 AddSequence = "Add a sequence"
 ChooseSequenceType = "Choose sequence type"
 SequenceType = "Sequence type"

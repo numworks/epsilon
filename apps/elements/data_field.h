@@ -236,7 +236,7 @@ class MeltingPointDataField : public DoubleDataFieldWithSubscriptSymbol {
     return I18n::Message::ElementsMeltingPointLegend;
   }
   I18n::Message fieldSymbol() const override {
-    return I18n::Message::ElementsMeltingPointSymbol;
+    return I18n::Message::ElementsBoilingMeltingPointSymbol;
   }
   double getDouble(AtomicNumber z) const override;
   const char* rawUnit() const override { return "_°C"; }
@@ -259,7 +259,7 @@ class BoilingPointDataField : public DoubleDataFieldWithSubscriptSymbol {
     return I18n::Message::ElementsBoilingPointLegend;
   }
   I18n::Message fieldSymbol() const override {
-    return I18n::Message::ElementsBoilingPointSymbol;
+    return I18n::Message::ElementsBoilingMeltingPointSymbol;
   }
   double getDouble(AtomicNumber z) const override;
   const char* rawUnit() const override { return "_°C"; }

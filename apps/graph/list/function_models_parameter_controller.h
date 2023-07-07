@@ -104,8 +104,8 @@ class FunctionModelsParameterController
   // Expression cells
   constexpr static I18n::Message
       k_modelDescriptions[k_numberOfExpressionModels] = {
-          I18n::Message::LineEquationTitle,
-          I18n::Message::CartesianNamedTemplate,
+          I18n::Message::Equation,
+          I18n::Message::Function,
           I18n::Message::LineType,
           I18n::Message::LineType,
           I18n::Message::InequalityType,

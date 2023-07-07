@@ -88,6 +88,7 @@ void Tree::logName(std::ostream& stream) const {
     "Log",
     "Logarithm",
     "Polynomial",
+    "PowerReal",
     "SquareRoot",
     "Subtraction",
     "Trig",

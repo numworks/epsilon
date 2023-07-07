@@ -30,6 +30,7 @@ constexpr auto KTrigDiff = KBinary<BlockType::TrigDiff>();
 constexpr auto KDiv = KBinary<BlockType::Division>();
 constexpr auto KSub = KBinary<BlockType::Subtraction>();
 constexpr auto KPow = KBinary<BlockType::Power>();
+constexpr auto KPowReal = KBinary<BlockType::PowerReal>();
 constexpr auto KDiff = KTrinary<BlockType::Derivative>();
 
 constexpr auto KAdd = KNAry<BlockType::Addition>();

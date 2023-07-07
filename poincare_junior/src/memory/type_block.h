@@ -96,6 +96,7 @@ enum class BlockType : uint8_t {
   Log,
   Logarithm,
   Polynomial,
+  PowerReal,
   SquareRoot,
   Subtraction,
   Trig,
@@ -152,6 +153,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Constant);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Addition);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Multiplication);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Power);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::PowerReal);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Abs);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Cosine);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Sine);
@@ -320,6 +322,7 @@ class TypeBlock : public Block {
       case BlockType::Derivative:
         return 3;
       case BlockType::Power:
+      case BlockType::PowerReal:
       case BlockType::Subtraction:
       case BlockType::Division:
       case BlockType::FractionLayout:

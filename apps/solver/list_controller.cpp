@@ -199,7 +199,7 @@ void ListController::resolveEquations() {
         stackController()->push(
             e == SystemOfEquations::Error::RequireApproximateSolution
                 ? App::app()->intervalController()
-                : App::app()->solutionsControllerStack());
+                : App::app()->solutionsController());
       }
     }
   } else {

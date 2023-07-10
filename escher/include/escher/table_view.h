@@ -124,9 +124,11 @@ class TableView : public ScrollView {
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
     int absoluteColumnFromSubviewIndex(int index) const {
+      assert(numberOfDisplayableColumns() > 0);
       return (index % numberOfDisplayableColumns()) + columnsScrollingOffset();
     }
     int absoluteRowFromSubviewIndex(int index) const {
+      assert(numberOfDisplayableColumns() > 0);
       return (index / numberOfDisplayableColumns()) + rowsScrollingOffset();
     }
     int typeOfSubviewAtIndex(int index) const;

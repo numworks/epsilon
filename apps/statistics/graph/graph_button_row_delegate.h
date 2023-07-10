@@ -23,8 +23,7 @@ class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
       : Escher::ButtonRowDelegate(header, nullptr),
         m_stackViewController(stackViewController),
         m_typeViewController(typeViewController),
-        m_typeButton(typeButtonParentResponder,
-                     I18n::Message::Type,
+        m_typeButton(typeButtonParentResponder, I18n::Message::Type,
                      Escher::Invocation::Builder<GraphButtonRowDelegate>(
                          [](GraphButtonRowDelegate *delegate, void *sender) {
                            delegate->pushTypeController();

@@ -40,11 +40,7 @@ InputViewController *SlopeTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
-void SlopeTableCell::reload() {
-  if (!recomputeDimensions()) {
-    m_selectableTableView.reloadData(false);
-  }
-}
+void SlopeTableCell::reload() { recomputeDimensions(true); }
 
 CategoricalController *SlopeTableCell::categoricalController() {
   return m_inputSlopeController;

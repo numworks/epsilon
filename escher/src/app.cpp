@@ -82,14 +82,13 @@ void App::setFirstResponder(Responder* responder, bool force) {
   }
 }
 
-void App::displayModalViewController(
-    ViewController* vc, float verticalAlignment, float horizontalAlignment,
-    KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin,
-    KDCoordinate rightMargin, bool growingOnly) {
+void App::displayModalViewController(ViewController* vc,
+                                     float verticalAlignment,
+                                     float horizontalAlignment,
+                                     KDMargins margins, bool growingOnly) {
   m_modalViewController.dismissPotentialModal();
   m_modalViewController.displayModalViewController(
-      vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin,
-      bottomMargin, rightMargin, growingOnly);
+      vc, verticalAlignment, horizontalAlignment, margins, growingOnly);
 }
 
 void App::displayWarning(I18n::Message warningMessage1,

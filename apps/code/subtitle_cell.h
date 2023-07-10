@@ -27,9 +27,9 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   /* Text can be formed from user input (script names).
    * A char limit on display is enforced */
   constexpr static int k_maxNumberOfCharsInBuffer =
-      (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -
+      (Ion::Display::Width - Escher::Metric::PopUpMargins.width() -
        2 * Escher::Metric::CellSeparatorThickness -
-       Escher::Metric::CellMargins.width() - Escher::Metric::PopUpRightMargin) /
+       Escher::Metric::CellMargins.width()) /
       KDFont::GlyphWidth(KDFont::Size::Small);
   static_assert(k_maxNumberOfCharsInBuffer <
                     Escher::OneLineBufferTextView<>::MaxTextSize(),

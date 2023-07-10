@@ -26,11 +26,8 @@ class Metric {
   constexpr static KDCoordinate CellVerticalElementMargin = 4;
 
   // Pop-up margins
-  constexpr static KDCoordinate PopUpMargin = 27;
-  constexpr static KDCoordinate PopUpBottomMargin = 55;
-  constexpr static KDCoordinate PopUpLeftMargin = PopUpMargin;
-  constexpr static KDCoordinate PopUpRightMargin = PopUpMargin;
-  constexpr static KDCoordinate PopUpTopMargin = PopUpMargin;
+  constexpr static KDMargins PopUpMargins = {27, 27, 27, 55};
+  constexpr static KDMargins PopUpMarginsNoBottom = {27, 27, 27, 0};
 
   // Misc margins
   constexpr static KDCoordinate BannerTextMargin = 2;

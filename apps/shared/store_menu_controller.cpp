@@ -53,12 +53,10 @@ StoreMenuController::StoreMenuController()
   m_abortController.setContentMessage(I18n::Message::InvalidInputWarning);
   /* We need to set the width early since minimalSizeForOptimalDisplay will be
    * called before willDisplayCell. */
-  view()->setChildFrame(&m_cell,
-                        KDRect(0, 0,
-                               Ion::Display::Width - Metric::PopUpLeftMargin -
-                                   Metric::PopUpRightMargin,
-                               0),
-                        false);
+  view()->setChildFrame(
+      &m_cell,
+      KDRect(0, 0, Ion::Display::Width - Metric::PopUpMargins.width(), 0),
+      false);
   m_cell.layoutField()->setTextEditionBuffer(
       m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
 }
@@ -82,8 +80,8 @@ void StoreMenuController::setText(const char* text) {
 
 void StoreMenuController::open() {
   App::app()->displayModalViewController(
-      this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, 0,
-      Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin, true);
+      this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter,
+      {Metric::PopUpMargins.horizontal(), {}}, true);
 }
 
 void StoreMenuController::close() {

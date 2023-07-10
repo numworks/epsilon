@@ -263,9 +263,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 
     if (vc) {
       assert(vc->numberOfRows() > 0);
-      App::app()->displayModalViewController(
-          vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
-          Metric::PopUpRightMargin);
+      App::app()->displayModalViewController(vc, 0.f, 0.f,
+                                             Metric::PopUpMarginsNoBottom);
     }
   }
   return true;

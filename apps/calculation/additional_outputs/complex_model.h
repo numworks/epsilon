@@ -44,9 +44,8 @@ class ComplexModel : public Shared::CurveViewRange, public std::complex<float> {
   constexpr static float k_minHorizontalMarginFactor = -1.0f;
   constexpr static float k_maxHorizontalMarginFactor = 2.0f;
   // Vertical range
-  constexpr static KDCoordinate k_width = Ion::Display::Width -
-                                          Escher::Metric::PopUpRightMargin -
-                                          Escher::Metric::PopUpLeftMargin;
+  constexpr static KDCoordinate k_width =
+      Ion::Display::Width - Escher::Metric::PopUpMargins.width();
   constexpr static KDCoordinate k_height =
       IllustratedExpressionsListController::k_illustrationHeight;
   constexpr static KDCoordinate k_unit = k_width / 3;

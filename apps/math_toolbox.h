@@ -49,7 +49,8 @@ class MathToolbox : public Escher::Toolbox {
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
-          Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
+          Escher::Metric::PopUpMargins.top() +
+              Escher::Metric::StackTitleHeight);
 
  private:
   constexpr static size_t k_maxSizeOfExtraCellExpression = 10;

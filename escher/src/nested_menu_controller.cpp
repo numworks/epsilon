@@ -200,9 +200,8 @@ void NestedMenuController::loadState(NestedMenuController::StackState state) {
 }
 
 void NestedMenuController::open() {
-  App::app()->displayModalViewController(this, 0.f, 0.f, Metric::PopUpTopMargin,
-                                         Metric::PopUpLeftMargin, 0,
-                                         Metric::PopUpRightMargin);
+  App::app()->displayModalViewController(this, 0.f, 0.f,
+                                         Metric::PopUpMarginsNoBottom);
 }
 
 }  // namespace Escher

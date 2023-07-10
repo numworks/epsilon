@@ -60,12 +60,12 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   constexpr static size_t k_maxNumberOfDisplayedItems =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::AbstractMenuCell::k_minimalSmallFontCellHeight,
-          Escher::Metric::PopUpTopMargin);
+          Escher::Metric::PopUpMargins.top());
   constexpr static size_t k_maxNumberOfDisplayedSubtitles =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           SubtitleCell::k_subtitleRowHeight +
               Escher::AbstractMenuCell::k_minimalSmallFontCellHeight,
-          Escher::Metric::PopUpTopMargin);
+          Escher::Metric::PopUpMargins.top());
   constexpr static size_t k_totalBuiltinNodesCount = 107;
   // Chosen without particular reasons
   constexpr static size_t k_maxOtherScriptNodesCount = 32;
@@ -92,9 +92,9 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   /* Labels of item cells can be formed from user variables, a char limit is
    * enforced.*/
   constexpr static int k_labelCharSize =
-      (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -
+      (Ion::Display::Width - Escher::Metric::PopUpMargins.width() -
        2 * Escher::Metric::CellSeparatorThickness -
-       Escher::Metric::CellMargins.width() - Escher::Metric::PopUpRightMargin) /
+       Escher::Metric::CellMargins.width()) /
       KDFont::GlyphWidth(KDFont::Size::Large);
 
   /* Returns:

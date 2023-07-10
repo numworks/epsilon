@@ -1,7 +1,7 @@
 #include "alternate_empty_nested_menu_controller.h"
 
 void AlternateEmptyNestedMenuController::viewDidDisappear() {
-  if (isDisplayingEmptyController()) {
+  if (m_isEmpty) {
     m_isEmpty = false;
     pop();
   }

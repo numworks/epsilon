@@ -3,6 +3,7 @@
 
 #include <escher/even_odd_cell.h>
 #include <escher/layout_field.h>
+#include <kandinsky/margins.h>
 
 namespace Escher {
 
@@ -28,7 +29,7 @@ class EditableExpressionModelCell : public HighlightCell {
     m_layoutField.layoutView()->setAlignment(horizontalAlignment,
                                              verticalAlignment);
   }
-  void setMargins(KDCoordinate leftMargin, KDCoordinate rightMargin);
+  void setMargins(KDHorizontalMargins margins);
   KDPoint drawingOrigin() const {
     return m_layoutField.layoutView()->drawingOrigin();
   }
@@ -42,8 +43,7 @@ class EditableExpressionModelCell : public HighlightCell {
   View* subviewAtIndex(int index) override { return &m_layoutField; }
   void layoutSubviews(bool force = false) override;
   LayoutField m_layoutField;
-  KDCoordinate m_leftMargin;
-  KDCoordinate m_rightMargin;
+  KDHorizontalMargins m_margins;
 };
 
 }  // namespace Escher

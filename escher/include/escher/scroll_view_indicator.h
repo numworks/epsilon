@@ -36,8 +36,8 @@ class ScrollViewHorizontalBar : public ScrollViewBar {
   void drawRect(KDContext *ctx, KDRect rect) const override;
 
  private:
-  constexpr static KDCoordinate k_leftMargin = Metric::CommonLeftMargin;
-  constexpr static KDCoordinate k_rightMargin = Metric::CommonRightMargin;
+  constexpr static KDCoordinate k_leftMargin = Metric::CommonMargins.left();
+  constexpr static KDCoordinate k_rightMargin = Metric::CommonMargins.right();
   KDCoordinate totalLength() const {
     return bounds().width() - k_leftMargin - k_rightMargin;
   }

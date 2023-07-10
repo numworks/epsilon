@@ -68,11 +68,12 @@ void LocalizationController::ContentView::modeHasChanged() {
 void LocalizationController::ContentView::layoutSubviews(bool force) {
   KDCoordinate origin = 0;
   if (m_controller->shouldDisplayTitle()) {
-    origin = layoutTitleSubview(force, Metric::CommonTopMargin + origin);
+    origin = layoutTitleSubview(force, Metric::CommonMargins.top() + origin);
   }
   if (m_controller->shouldDisplayWarning()) {
-    origin = layoutWarningSubview(force, Metric::CommonTopMargin / 2 + origin) +
-             Metric::CommonTopMargin / 2 - 1;
+    origin =
+        layoutWarningSubview(force, Metric::CommonMargins.top() / 2 + origin) +
+        Metric::CommonMargins.top() / 2 - 1;
   }
   origin = layoutTableSubview(force, origin);
   assert(origin <= bounds().height());
@@ -232,11 +233,11 @@ void LocalizationController::fillCellForRow(HighlightCell *cell, int row) {
 
 void LocalizationController::setVerticalMargins() {
   KDCoordinate topMargin =
-      shouldDisplayWarning() ? 0 : Escher::Metric::CommonTopMargin;
+      shouldDisplayWarning() ? 0 : Escher::Metric::CommonMargins.top();
   selectableListView()->setTopMargin(topMargin);
   // Fit m_selectableListView scroll to content size
   selectableListView()->decorator()->setVerticalMargins(
-      topMargin, Escher::Metric::CommonBottomMargin);
+      topMargin, Escher::Metric::CommonMargins.bottom());
 }
 
 }  // namespace Shared

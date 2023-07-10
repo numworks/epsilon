@@ -13,7 +13,7 @@ TableViewWithFrozenHeader::TableViewWithFrozenHeader(
   m_selectableTableView->setTopMargin(0);
   // Fit m_selectableTableView scroll to content size
   m_selectableTableView->decorator()->setVerticalMargins(
-      0, Metric::CommonBottomMargin);
+      0, Metric::CommonMargins.bottom());
 }
 
 void TableViewWithFrozenHeader::drawRect(KDContext* ctx, KDRect rect) const {

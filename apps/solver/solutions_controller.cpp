@@ -46,11 +46,11 @@ void SolutionsController::ContentView::drawRect(KDContext *ctx,
 void SolutionsController::ContentView::setWarning(bool warning) {
   m_displayWarningMoreSolutions = warning;
   KDCoordinate topMargin =
-      m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin;
+      m_displayWarningMoreSolutions ? 0 : Metric::CommonMargins.top();
   m_selectableTableView.setTopMargin(topMargin);
   // Fit m_selectableTableView scroll to content size
   m_selectableTableView.decorator()->setVerticalMargins(
-      topMargin, Metric::CommonBottomMargin);
+      topMargin, Metric::CommonMargins.bottom());
   /* m_displayWarningMoreSolutions might stay the same, but number of rows and
    * messages have changed. */
   layoutSubviews();

@@ -38,7 +38,7 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
 
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth =
-      (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
+      (Ion::Display::Width - 2 * Escher::Metric::CommonMargins.left() -
        k_borderBetweenColumns) /
       2;
 

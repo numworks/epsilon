@@ -46,7 +46,7 @@ ConsoleController::ConsoleController(Responder *parentResponder,
       m_locked(lockOnConsole)
 #endif
 {
-  m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0,
+  m_selectableTableView.setMargins(0, Metric::CommonMargins.right(), 0,
                                    Metric::TitleBarExternHorizontalMargin);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
   m_editCell.setPrompt(sStandardPromptText);

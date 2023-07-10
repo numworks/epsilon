@@ -155,9 +155,9 @@ class SolutionsController : public Escher::ViewController,
           (Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks +
            2) +
       2 * Escher::AbstractEvenOddBufferTextCell::k_horizontalMargin;
-  constexpr static int k_valueCellWidth =
-      Ion::Display::Width - k_symbolCellWidth -
-      Escher::Metric::CommonLeftMargin - Escher::Metric::CommonRightMargin;
+  constexpr static int k_valueCellWidth = Ion::Display::Width -
+                                          k_symbolCellWidth -
+                                          Escher::Metric::CommonMargins.width();
 
   /* Number of cells
    * When displaying approximate solutions for cos(x) = 0 between 0 and 1800 and

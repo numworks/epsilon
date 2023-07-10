@@ -65,7 +65,7 @@ class DoublePairTableController
   // Margins
   constexpr static KDCoordinate k_margin = 8;
   constexpr static KDCoordinate k_scrollBarMargin =
-      Escher::Metric::CommonRightMargin;
+      Escher::Metric::CommonMargins.right();
   // Number of cells
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_numberOfHeaderColumns = 2;

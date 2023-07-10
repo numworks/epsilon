@@ -4,22 +4,19 @@
 #include <ion/display.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
+#include <kandinsky/margins.h>
 
 namespace Escher {
 
 class Metric {
  public:
   // Common margins
-  constexpr static KDCoordinate CommonMargin = 14;
-  constexpr static KDCoordinate ScrollViewBarThickness = 2;
-  constexpr static KDCoordinate CommonBottomMargin = CommonMargin;
+  constexpr static KDMargins CommonMargins = {14};
   constexpr static KDCoordinate CommonLargeMargin = 10;
-  constexpr static KDCoordinate CommonLeftMargin = CommonMargin;
-  constexpr static KDCoordinate CommonMenuMargin =
-      (CommonMargin - ScrollViewBarThickness) / 2;
-  constexpr static KDCoordinate CommonRightMargin = CommonMargin;
   constexpr static KDCoordinate CommonSmallMargin = 5;
-  constexpr static KDCoordinate CommonTopMargin = CommonMargin;
+  constexpr static KDCoordinate ScrollViewBarThickness = 2;
+  constexpr static KDCoordinate CommonMenuMargin =
+      (CommonMargins.left() - ScrollViewBarThickness) / 2;
 
   // General cell margins
   constexpr static KDCoordinate BigCellMargin = 8;

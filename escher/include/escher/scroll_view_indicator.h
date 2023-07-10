@@ -4,6 +4,7 @@
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <escher/view.h>
+#include <kandinsky/margins.h>
 
 namespace Escher {
 
@@ -47,15 +48,13 @@ class ScrollViewVerticalBar : public ScrollViewBar {
  public:
   ScrollViewVerticalBar();
   void drawRect(KDContext *ctx, KDRect rect) const override;
-  void setMargins(KDCoordinate top, KDCoordinate bottom);
-  void setTopMargin(KDCoordinate top) { setMargins(top, m_bottomMargin); }
+  void setMargins(KDVerticalMargins margins) { m_margins = margins; }
 
  private:
   KDCoordinate totalLength() const {
-    return bounds().height() - m_topMargin - m_bottomMargin;
+    return bounds().height() - m_margins.height();
   }
-  KDCoordinate m_topMargin;
-  KDCoordinate m_bottomMargin;
+  KDVerticalMargins m_margins;
 };
 
 class ScrollViewArrow : public ScrollViewIndicator {

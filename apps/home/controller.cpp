@@ -24,7 +24,7 @@ Controller::ContentView::ContentView(
   m_selectableTableView.setMargins(k_margins);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
   m_selectableTableView.decorator()->setVerticalMargins(
-      k_indicatorMargin, k_indicatorMargin - k_bottomMargin);
+      {k_indicatorMargin, k_indicatorMargin - k_bottomMargin});
 }
 
 SelectableTableView *Controller::ContentView::selectableTableView() {

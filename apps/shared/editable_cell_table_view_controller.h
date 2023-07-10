@@ -52,7 +52,7 @@ class EditableCellTableViewController : public TabTableController,
   constexpr static KDCoordinate k_margin =
       Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin =
-      Escher::Metric::CommonRightMargin;
+      Escher::Metric::CommonMargins.right();
 
   constexpr static int k_maxNumberOfDisplayableRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(

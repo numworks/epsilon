@@ -55,7 +55,7 @@ class ScrollView : public View {
   class BarDecorator : public Decorator {
    public:
     constexpr static KDCoordinate k_barsFrameBreadth =
-        Metric::CommonRightMargin;
+        Metric::CommonMargins.right();
     void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {
       m_verticalBar.setMargins(top, bottom);
     }

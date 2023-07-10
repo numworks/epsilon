@@ -39,8 +39,8 @@ void ScrollViewHorizontalBar::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 ScrollViewVerticalBar::ScrollViewVerticalBar()
-    : m_topMargin(Metric::CommonTopMargin),
-      m_bottomMargin(Metric::CommonBottomMargin) {}
+    : m_topMargin(Metric::CommonMargins.top()),
+      m_bottomMargin(Metric::CommonMargins.bottom()) {}
 
 void ScrollViewVerticalBar::setMargins(KDCoordinate top, KDCoordinate bottom) {
   m_topMargin = top;

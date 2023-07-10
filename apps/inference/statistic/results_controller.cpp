@@ -73,8 +73,7 @@ int ResultsController::numberOfRows() const {
 }
 
 KDCoordinate ResultsController::defaultColumnWidth() {
-  return Ion::Display::Width - Metric::CommonLeftMargin -
-         Metric::CommonRightMargin;
+  return Ion::Display::Width - Metric::CommonMargins.width();
 }
 
 void ResultsController::fillCellForRow(HighlightCell *cell, int row) {

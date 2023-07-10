@@ -49,9 +49,9 @@ void SelectableViewWithMessages::layoutSubviews(bool force) {
   KDCoordinate textHeight =
       emptyMessage ? 0
                    : m_messageTextView.minimalSizeForOptimalDisplay().height();
-  KDCoordinate messageOrigin = bounds().height() -
-                               (emptyMessage ? 0 : Metric::CommonBottomMargin) -
-                               textHeight;
+  KDCoordinate messageOrigin =
+      bounds().height() - (emptyMessage ? 0 : Metric::CommonMargins.bottom()) -
+      textHeight;
 
   // Layout the table view
   setChildFrame(m_selectableTableView,

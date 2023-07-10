@@ -16,7 +16,7 @@ class TableViewWithFrozenHeader : public Escher::View {
  private:
   constexpr static KDCoordinate k_textMargin = Metric::CommonSmallMargin;
   // Removing a pixel to skew title's baseline downward.
-  constexpr static KDCoordinate k_titleMargin = Metric::CommonTopMargin - 1;
+  constexpr static KDCoordinate k_titleMargin = Metric::CommonMargins.top() - 1;
   int numberOfSubviews() const override { return 2; };
   View* subviewAtIndex(int index) override;
   MessageTextView m_headerView;

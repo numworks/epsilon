@@ -50,7 +50,7 @@ void SolutionsController::ContentView::setWarning(bool warning) {
   m_selectableTableView.margins()->setTop(topMargin);
   // Fit m_selectableTableView scroll to content size
   m_selectableTableView.decorator()->setVerticalMargins(
-      topMargin, Metric::CommonMargins.bottom());
+      {topMargin, Metric::CommonMargins.bottom()});
   /* m_displayWarningMoreSolutions might stay the same, but number of rows and
    * messages have changed. */
   layoutSubviews();

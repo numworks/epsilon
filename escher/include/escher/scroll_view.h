@@ -50,8 +50,8 @@ class ScrollView : public View {
    public:
     constexpr static KDCoordinate k_barsFrameBreadth =
         Metric::CommonMargins.right();
-    void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {
-      m_verticalBar.setMargins(top, bottom);
+    void setVerticalMargins(KDVerticalMargins margins) {
+      m_verticalBar.setMargins(margins);
     }
     int numberOfIndicators() const override { return m_visible ? 2 : 0; }
     View *indicatorAtIndex(int index) override;

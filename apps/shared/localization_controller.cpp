@@ -237,7 +237,7 @@ void LocalizationController::setVerticalMargins() {
   selectableListView()->margins()->setTop(topMargin);
   // Fit m_selectableListView scroll to content size
   selectableListView()->decorator()->setVerticalMargins(
-      topMargin, Escher::Metric::CommonMargins.bottom());
+      {topMargin, Escher::Metric::CommonMargins.bottom()});
 }
 
 }  // namespace Shared

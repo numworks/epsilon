@@ -39,13 +39,7 @@ void ScrollViewHorizontalBar::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 ScrollViewVerticalBar::ScrollViewVerticalBar()
-    : m_topMargin(Metric::CommonMargins.top()),
-      m_bottomMargin(Metric::CommonMargins.bottom()) {}
-
-void ScrollViewVerticalBar::setMargins(KDCoordinate top, KDCoordinate bottom) {
-  m_topMargin = top;
-  m_bottomMargin = bottom;
-}
+    : m_margins(Metric::CommonMargins.vertical()) {}
 
 void ScrollViewVerticalBar::drawRect(KDContext *ctx, KDRect rect) const {
   if (!visible()) {
@@ -53,12 +47,12 @@ void ScrollViewVerticalBar::drawRect(KDContext *ctx, KDRect rect) const {
   }
   KDCoordinate x = (bounds().width() - k_indicatorThickness) / 2;
   KDCoordinate width = k_indicatorThickness;
-  ctx->fillRect(KDRect(x, m_topMargin, width, totalLength()), k_trackColor);
+  ctx->fillRect(KDRect(x, m_margins.top(), width, totalLength()), k_trackColor);
 
   KDCoordinate y = int(std::round(m_offset * totalLength()));
   KDCoordinate height =
       std::min(int(m_visibleLength * totalLength()), totalLength() - y);
-  ctx->fillRect(KDRect(x, m_topMargin + y, width, height), k_color);
+  ctx->fillRect(KDRect(x, m_margins.top() + y, width, height), k_color);
 }
 
 ScrollViewArrow::ScrollViewArrow()

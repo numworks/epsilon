@@ -159,12 +159,10 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
     /* Due to an initial number of rows/ols of 2, we cannot ensure that at most
      * one row and one col have been deleted here */
     m_selectableTableView.deselectTable();
-    if (!recomputeDimensions()) {
-      /* A row has been deleted, but size didn't change, meaning the number of
-       * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
-       * moved up multiple cells, m_inputTableView should be reloaded. */
-      m_selectableTableView.reloadData(false);
-    }
+    /* A row has been deleted, but size didn't change, meaning the number of
+     * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
+     * moved up multiple cells, m_inputTableView should be reloaded. */
+    recomputeDimensions(true);
     m_selectableTableView.selectCellAtClippedLocation(col, row, true);
     return true;
   }
@@ -186,26 +184,29 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   tableModel()->recomputeData();
   m_selectableTableView.deselectTable();
   m_selectableTableView.resetScroll();
-  if (!recomputeDimensions()) {
-    m_selectableTableView.reloadData(false);
-    categoricalController()->selectableListView()->reloadData(false);
-  }
+  recomputeDimensions(true, true);
   m_selectableTableView.selectCellAtClippedLocation(column, 1, false);
 }
 
-bool InputCategoricalTableCell::recomputeDimensions() {
+bool InputCategoricalTableCell::recomputeDimensions(bool forceReloadTableCell,
+                                                    bool forceReloadPage) {
   Chi2Test::Index2D dimensions = tableModel()->computeDimensions();
-  if (m_numberOfRows == dimensions.row && m_numberOfColumns == dimensions.col) {
-    return false;
+  bool didChange = false;
+  if (m_numberOfRows != dimensions.row || m_numberOfColumns != dimensions.col) {
+    m_numberOfRows = dimensions.row;
+    m_numberOfColumns = dimensions.col;
+    didChange = true;
   }
-  m_numberOfRows = dimensions.row;
-  m_numberOfColumns = dimensions.col;
   /* Relayout when inner table changes size. We need to reload the table because
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */
-  m_selectableTableView.reloadData(false);
-  categoricalController()->selectableListView()->reloadData(false);
-  return true;
+  if (didChange || forceReloadTableCell) {
+    m_selectableTableView.reloadData(false);
+  }
+  if (didChange || forceReloadPage) {
+    categoricalController()->selectableListView()->reloadData(false);
+  }
+  return didChange;
 }
 
 Table *InputCategoricalTableCell::tableModel() {

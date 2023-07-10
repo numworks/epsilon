@@ -8,13 +8,14 @@ void AlternateEmptyNestedMenuController::viewDidDisappear() {
   NestedMenuController::viewDidDisappear();
 }
 
-bool AlternateEmptyNestedMenuController::displayEmptyControllerIfNeeded() {
+void AlternateEmptyNestedMenuController::didBecomeFirstResponder() {
   // If the content is empty, we push an empty controller.
   m_isEmpty = (numberOfRows() == 0);
   if (m_isEmpty) {
     push(emptyViewController());
+    return;
   }
-  return m_isEmpty;
+  Escher::NestedMenuController::didBecomeFirstResponder();
 }
 
 bool AlternateEmptyNestedMenuController::returnToPreviousMenu() {

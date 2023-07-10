@@ -3,6 +3,7 @@
 
 #include <escher/even_odd_cell.h>
 #include <escher/layout_view.h>
+#include <kandinsky/margins.h>
 
 namespace Escher {
 
@@ -17,8 +18,8 @@ class EvenOddExpressionCell : public EvenOddCell {
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
     m_layoutView.setAlignment(horizontalAlignment, verticalAlignment);
   }
-  void setLeftMargin(KDCoordinate margin);
-  void setRightMargin(KDCoordinate margin);
+  KDHorizontalMargins margins() const { return m_margins; }
+  void setMargins(KDHorizontalMargins margins);
   KDPoint drawingOrigin() const { return m_layoutView.drawingOrigin(); }
   Poincare::Layout layout() const override { return m_layoutView.layout(); }
   KDFont::Size font() const { return m_layoutView.font(); }
@@ -30,8 +31,7 @@ class EvenOddExpressionCell : public EvenOddCell {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   LayoutView m_layoutView;
-  KDCoordinate m_leftMargin;
-  KDCoordinate m_rightMargin;
+  KDHorizontalMargins m_margins;
 };
 
 }  // namespace Escher

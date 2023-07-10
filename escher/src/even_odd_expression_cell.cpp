@@ -5,7 +5,7 @@ using namespace Poincare;
 namespace Escher {
 
 EvenOddExpressionCell::EvenOddExpressionCell(KDGlyph::Format format)
-    : EvenOddCell(), m_layoutView(format), m_leftMargin(0), m_rightMargin(0) {}
+    : EvenOddCell(), m_layoutView(format), m_margins() {}
 
 void EvenOddExpressionCell::setLayout(Layout layoutR) {
   m_layoutView.setLayout(layoutR);
@@ -21,26 +21,20 @@ void EvenOddExpressionCell::setTextColor(KDColor textColor) {
 
 KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() const {
   KDSize layoutSize = m_layoutView.minimalSizeForOptimalDisplay();
-  return KDSize(m_leftMargin + layoutSize.width() + m_rightMargin,
-                layoutSize.height());
+  return KDSize(m_margins.width() + layoutSize.width(), layoutSize.height());
 }
 
-void EvenOddExpressionCell::setLeftMargin(KDCoordinate margin) {
-  m_leftMargin = margin;
-  layoutSubviews();
-}
-
-void EvenOddExpressionCell::setRightMargin(KDCoordinate margin) {
-  m_rightMargin = margin;
+void EvenOddExpressionCell::setMargins(KDHorizontalMargins margins) {
+  m_margins = margins;
   layoutSubviews();
 }
 
 void EvenOddExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the margins
-  ctx->fillRect(KDRect(0, 0, m_leftMargin, bounds().height()),
+  ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()),
                 backgroundColor());
-  ctx->fillRect(KDRect(bounds().width() - m_rightMargin, 0, m_rightMargin,
-                       bounds().height()),
+  ctx->fillRect(KDRect(bounds().width() - m_margins.right(), 0,
+                       m_margins.right(), bounds().height()),
                 backgroundColor());
 }
 
@@ -56,11 +50,10 @@ View* EvenOddExpressionCell::subviewAtIndex(int index) {
 }
 
 void EvenOddExpressionCell::layoutSubviews(bool force) {
-  setChildFrame(
-      &m_layoutView,
-      KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin,
-             bounds().height()),
-      force);
+  setChildFrame(&m_layoutView,
+                KDRect(m_margins.left(), 0,
+                       bounds().width() - m_margins.width(), bounds().height()),
+                force);
 }
 
 }  // namespace Escher

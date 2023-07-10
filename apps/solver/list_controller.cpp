@@ -37,8 +37,8 @@ ListController::ListController(Responder *parentResponder,
                               StackViewController::Style::PurpleWhite) {
   m_addNewModelCell.setLeftMargin(k_newModelMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth +
-                                       Metric::CellMargins.left());
+    m_expressionCells[i].setMargins(
+        {EquationListView::k_braceTotalWidth + Metric::CellMargins.left(), 0});
     m_expressionCells[i].setEven(true);
   }
 }
@@ -232,7 +232,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 void ListController::reloadBrace() {
   if (modelStore()->numberOfModels() <= 1) {
     m_equationListView.setBraceStyle(EquationListView::BraceStyle::None);
-    m_expressionCells[0].setLeftMargin(k_newModelMargin);
+    m_expressionCells[0].setMargins({k_newModelMargin, 0});
     // Set editable cell margins to keep the text at the same place when editing
     m_editableCell.layoutField()->margins()->setLeft(k_newModelMargin -
                                                      k_expressionMargin);
@@ -242,8 +242,8 @@ void ListController::reloadBrace() {
         modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()
             ? EquationListView::BraceStyle::Full
             : EquationListView::BraceStyle::OneRowShort);
-    m_expressionCells[0].setLeftMargin(EquationListView::k_braceTotalWidth +
-                                       Metric::CellMargins.left());
+    m_expressionCells[0].setMargins(
+        {EquationListView::k_braceTotalWidth + Metric::CellMargins.left(), 0});
     m_editableCell.layoutField()->margins()->setLeft(
         Metric::CellMargins.left() - k_expressionMargin);
     m_editableCell.setMargins(

@@ -97,15 +97,6 @@ void VariableBoxController::didEnterResponderChain(
       previousFirstResponder);
 }
 
-void VariableBoxController::didBecomeFirstResponder() {
-  if (displayEmptyControllerIfNeeded()) {
-    /* displayEmptyControllerIfNeeded() sets the empty view
-     * controller as first responder when varbox is empty */
-    return;
-  }
-  AlternateEmptyNestedMenuController::didBecomeFirstResponder();
-}
-
 KDCoordinate VariableBoxController::nonMemoizedRowHeight(int row) {
   assert(row >= 0 && row < numberOfRows());
   int cellType = typeAndOriginAtLocation(row);

@@ -20,7 +20,6 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder* previousFirstResponder) override;
 
   /* MemoizedListViewDataSource */

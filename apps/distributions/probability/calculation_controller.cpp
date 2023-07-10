@@ -72,7 +72,7 @@ CalculationController::CalculationController(
       m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
-  m_selectableTableView.setMargins(k_tableMargin);
+  m_selectableTableView.setMargins(k_tableMargins);
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.hideScrollBars();
   m_selectableTableView.setBackgroundColor(KDColorWhite);

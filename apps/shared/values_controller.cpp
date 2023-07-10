@@ -29,8 +29,7 @@ ValuesController::ValuesController(Responder *parentResponder,
       m_abscissaParameterController(this, this) {
   m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
   m_prefacedTwiceTableView.setCellOverlap(0, 0);
-  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin,
-                                      k_scrollBarMargin, k_margin);
+  m_prefacedTwiceTableView.setMargins(k_margins);
 }
 
 void ValuesController::setupSelectableTableViewAndCells() {

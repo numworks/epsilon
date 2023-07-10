@@ -24,6 +24,9 @@ class TabTableController : public Escher::ViewController,
   }
 
  protected:
+  constexpr static KDCoordinate k_scrollBarMargin =
+      Escher::Metric::CommonMargins.right();
+
   virtual Escher::SelectableTableView* selectableTableView() = 0;
   virtual Escher::Responder* tabController() const = 0;
 };

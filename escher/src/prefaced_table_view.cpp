@@ -20,19 +20,12 @@ PrefacedTableView::PrefacedTableView(
   m_rowPrefaceView.hideScrollBars();
 }
 
-void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right,
-                                   KDCoordinate bottom, KDCoordinate left) {
+void PrefacedTableView::setMargins(KDMargins m) {
   // Main table
-  m_mainTableView->setTopMargin(top);
-  m_mainTableView->setRightMargin(right);
-  m_mainTableView->setBottomMargin(bottom);
-  m_mainTableView->setLeftMargin(left);
-  m_mainTableViewTopMargin = top;
+  m_mainTableView->setMargins(m);
+  m_mainTableViewTopMargin = m.top();
   // Row preface
-  m_rowPrefaceView.setLeftMargin(left);
-  m_rowPrefaceView.setRightMargin(right);
-  m_rowPrefaceView.setTopMargin(0);
-  m_rowPrefaceView.setBottomMargin(0);
+  m_rowPrefaceView.setMargins({m.horizontal(), KDVerticalMargins()});
 }
 
 void PrefacedTableView::setBackgroundColor(KDColor color) {
@@ -98,18 +91,19 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
       rowPrefaceHeight > m_prefacedDelegate->maxRowPrefaceHeight();
   bool hideRowPreface =
       m_mainTableView->selectedRow() == -1 || rowPrefaceIsTooLarge ||
-      (m_mainTableView->contentOffset().y() - m_mainTableView->topMargin() <=
+      (m_mainTableView->contentOffset().y() -
+           m_mainTableView->margins()->top() <=
        m_rowPrefaceDataSource.cumulatedHeightBeforePrefaceRow());
 
   // Main table
   if (hideRowPreface) {
-    m_mainTableView->setTopMargin(m_mainTableViewTopMargin);
+    m_mainTableView->margins()->setTop(m_mainTableViewTopMargin);
     setChildFrame(m_mainTableView, rect, force);
   } else {
     /* WARNING: If we need a separator below the preface row, we should set a
      * bottom margin for rowPrefaceView here (follow the implementation used for
      * column preface) */
-    m_mainTableView->setTopMargin(0);
+    m_mainTableView->margins()->setTop(0);
     setChildFrame(m_mainTableView,
                   KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),
                          rect.height() - rowPrefaceHeight),
@@ -126,15 +120,15 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   if (hideRowPreface) {
     setChildFrame(&m_rowPrefaceView, KDRectZero, force);
   } else {
-    m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
+    m_rowPrefaceView.margins()->setLeft(m_mainTableView->margins()->left());
     m_rowPrefaceView.setContentOffset(
         KDPoint(m_mainTableView->contentOffset().x(), 0));
     setChildFrame(&m_rowPrefaceView,
                   KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight),
                   force);
-    assert(m_rowPrefaceView.leftMargin() == m_mainTableView->leftMargin());
-    assert(m_rowPrefaceView.rightMargin() == m_mainTableView->rightMargin());
-    assert(m_rowPrefaceView.topMargin() == 0);
+    assert(m_rowPrefaceView.margins()->horizontal() ==
+           m_mainTableView->margins()->horizontal());
+    assert(m_rowPrefaceView.margins()->top() == 0);
   }
 }
 

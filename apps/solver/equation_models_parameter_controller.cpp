@@ -22,7 +22,7 @@ EquationModelsParameterController::EquationModelsParameterController(
       m_equationStore(equationStore),
       m_listController(listController) {
   m_emptyModelCell.label()->setMessage(I18n::Message::Empty);
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e =

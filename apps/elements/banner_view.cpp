@@ -34,7 +34,7 @@ BannerView::BannerView(Escher::Responder* textFieldParent,
                               .backgroundColor = k_backgroundColor,
                               .font = k_legendSize}}),
       m_button(k_backgroundColor) {
-  m_textField.setLeftMargin(Escher::Metric::CommonSmallMargin);
+  m_textField.margins()->setLeft(Escher::Metric::CommonSmallMargin);
 }
 
 void BannerView::drawRect(KDContext* ctx, KDRect rect) const {

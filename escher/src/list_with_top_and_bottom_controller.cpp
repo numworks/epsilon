@@ -100,8 +100,8 @@ ListWithTopAndBottomController::ListWithTopAndBottomController(
     : SelectableViewController(parentResponder),
       m_selectableListView(this, &m_outerDataSource, this, this),
       m_outerDataSource(this, topView, bottomView) {
-  m_selectableListView.setTopMargin(Metric::CommonLargeMargin);
-  m_selectableListView.setBottomMargin(Metric::CommonLargeMargin);
+  m_selectableListView.margins()->setVertical(
+      {Metric::CommonLargeMargin, Metric::CommonLargeMargin});
 }
 
 void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(

@@ -47,7 +47,7 @@ void SolutionsController::ContentView::setWarning(bool warning) {
   m_displayWarningMoreSolutions = warning;
   KDCoordinate topMargin =
       m_displayWarningMoreSolutions ? 0 : Metric::CommonMargins.top();
-  m_selectableTableView.setTopMargin(topMargin);
+  m_selectableTableView.margins()->setTop(topMargin);
   // Fit m_selectableTableView scroll to content size
   m_selectableTableView.decorator()->setVerticalMargins(
       topMargin, Metric::CommonMargins.bottom());

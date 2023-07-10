@@ -78,7 +78,7 @@ NestedMenuController::NestedMenuController(Responder* parentResponder,
       m_breadcrumbController(this, &m_selectableListView),
       m_listController(this, &m_selectableListView, title),
       m_savedChecksum(0) {
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   /* Title and breadcrumb headers should not overlap. Breadcrumb should.
    * Using default tableCell's border color. */

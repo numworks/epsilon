@@ -22,7 +22,7 @@ TypeController::TypeController(StackViewController *parent,
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_statistic(statistic) {
-  m_selectableListView.setBottomMargin(0);
+  m_selectableListView.margins()->setBottom(0);
   cell(k_indexOfTTest)->label()->setMessage(m_statistic->tDistributionName());
   cell(k_indexOfPooledTest)
       ->label()

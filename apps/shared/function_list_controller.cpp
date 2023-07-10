@@ -35,7 +35,7 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                          },
                          this),
                      KDFont::Size::Small, Palette::PurpleBright) {
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
   m_selectableListView.setVerticalCellOverlap(0);
 }
 

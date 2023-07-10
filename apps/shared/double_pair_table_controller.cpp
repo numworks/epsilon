@@ -12,8 +12,7 @@ DoublePairTableController::DoublePairTableController(
       m_selectableTableView(this, this, this, &m_prefacedTwiceTableView) {
   m_prefacedTwiceTableView.setCellOverlap(0, 0);
   m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin,
-                                      k_scrollBarMargin, k_margin);
+  m_prefacedTwiceTableView.setMargins(k_margins);
   m_prefacedTwiceTableView.setMarginDelegate(this);
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());

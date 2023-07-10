@@ -17,10 +17,7 @@ ListParameterController::ListParameterController(ListController *listController)
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
       m_initialRankCell(&m_selectableListView, this),
-      m_typeParameterController(
-          this, listController, Metric::CommonMargins.top(),
-          Metric::CommonMargins.right(), Metric::CommonMargins.bottom(),
-          Metric::CommonMargins.left()) {
+      m_typeParameterController(this, listController, Metric::CommonMargins) {
   m_typeCell.label()->setMessage(I18n::Message::SequenceType);
   m_initialRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }

@@ -19,19 +19,14 @@ PrefacedTwiceTableView::PrefacedTwiceTableView(
   m_columnPrefaceView.hideScrollBars();
 }
 
-void PrefacedTwiceTableView::setMargins(KDCoordinate top, KDCoordinate right,
-                                        KDCoordinate bottom,
-                                        KDCoordinate left) {
+void PrefacedTwiceTableView::setMargins(KDMargins m) {
   // Main table and row preface
-  PrefacedTableView::setMargins(top, right, bottom, left);
-  m_mainTableViewLeftMargin = left;
+  PrefacedTableView::setMargins(m);
+  m_mainTableViewLeftMargin = m.left();
   // Column preface
-  m_columnPrefaceView.setTopMargin(top);
-  m_columnPrefaceView.setBottomMargin(bottom);
-  m_columnPrefaceView.setLeftMargin(0);
-  // Intersection preface
-  m_columnPrefaceView.setTopMargin(0);
-  m_columnPrefaceView.setLeftMargin(0);
+  m_columnPrefaceView.margins()->setTop(0);
+  m_columnPrefaceView.margins()->setBottom(m.bottom());
+  m_columnPrefaceView.margins()->setHorizontal({0, 0});
 }
 
 void PrefacedTwiceTableView::setBackgroundColor(KDColor color) {
@@ -99,12 +94,13 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   bool hideColumnPreface =
       m_mainTableView->selectedRow() == -1 ||
       m_columnPrefaceDataSource.prefaceColumn() == -1 ||
-      (m_mainTableView->contentOffset().x() - m_mainTableView->leftMargin() <=
+      (m_mainTableView->contentOffset().x() -
+           m_mainTableView->margins()->left() <=
        m_columnPrefaceDataSource.cumulatedWidthBeforePrefaceColumn());
   if (hideColumnPreface) {
     // Main table and row preface
-    m_mainTableView->setLeftMargin(m_mainTableViewLeftMargin);
-    m_rowPrefaceView.setLeftMargin(m_mainTableViewLeftMargin);
+    m_mainTableView->margins()->setLeft(m_mainTableViewLeftMargin);
+    m_rowPrefaceView.margins()->setLeft(m_mainTableViewLeftMargin);
     layoutSubviewsInRect(bounds(), force);
 
     // Column preface
@@ -113,14 +109,14 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     // Intersection preface
     setChildFrame(&m_prefaceIntersectionView, KDRectZero, force);
   } else {
-    m_columnPrefaceView.setRightMargin(
+    m_columnPrefaceView.margins()->setRight(
         m_marginDelegate ? m_marginDelegate->columnPrefaceRightMargin() : 0);
     KDCoordinate columnPrefaceWidth =
         m_columnPrefaceView.minimalSizeForOptimalDisplay().width();
 
     // Main table and row preface
-    m_mainTableView->setLeftMargin(0);
-    m_rowPrefaceView.setLeftMargin(0);
+    m_mainTableView->margins()->setLeft(0);
+    m_rowPrefaceView.margins()->setLeft(0);
     layoutSubviewsInRect(
         KDRect(columnPrefaceWidth, 0, bounds().width() - columnPrefaceWidth,
                bounds().height()),
@@ -128,33 +124,32 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
 
     // Column preface
     KDCoordinate rowPrefaceHeight = m_rowPrefaceView.bounds().height();
-    m_columnPrefaceView.setTopMargin(m_mainTableView->topMargin());
+    m_columnPrefaceView.margins()->setTop(m_mainTableView->margins()->top());
     m_columnPrefaceView.setContentOffset(
         KDPoint(0, m_mainTableView->contentOffset().y()));
     setChildFrame(&m_columnPrefaceView,
                   KDRect(0, rowPrefaceHeight, columnPrefaceWidth,
                          bounds().height() - rowPrefaceHeight),
                   force);
-    assert(m_columnPrefaceView.leftMargin() == 0);
-    assert(m_columnPrefaceView.topMargin() == m_mainTableView->topMargin());
-    assert(m_columnPrefaceView.bottomMargin() ==
-           m_mainTableView->bottomMargin());
+    assert(m_columnPrefaceView.margins()->left() == 0);
+    assert(m_columnPrefaceView.margins()->vertical() ==
+           m_mainTableView->margins()->vertical());
 
     // Intersection preface
-    m_prefaceIntersectionView.setRightMargin(m_columnPrefaceView.rightMargin());
-    m_prefaceIntersectionView.setBottomMargin(m_rowPrefaceView.bottomMargin());
+    m_prefaceIntersectionView.margins()->setHorizontal(
+        m_columnPrefaceView.margins()->horizontal());
+    m_prefaceIntersectionView.margins()->setRight(
+        m_columnPrefaceView.margins()->right());
+    m_prefaceIntersectionView.margins()->setBottom(
+        m_rowPrefaceView.margins()->bottom());
     setChildFrame(&m_prefaceIntersectionView,
                   KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0,
                          rowPrefaceHeight),
                   force);
-    assert(m_prefaceIntersectionView.leftMargin() ==
-           m_columnPrefaceView.leftMargin());
-    assert(m_prefaceIntersectionView.rightMargin() ==
-           m_columnPrefaceView.rightMargin());
-    assert(m_prefaceIntersectionView.topMargin() ==
-           m_rowPrefaceView.topMargin());
-    assert(m_prefaceIntersectionView.bottomMargin() ==
-           m_rowPrefaceView.bottomMargin());
+    assert(m_prefaceIntersectionView.margins()->horizontal() ==
+           m_columnPrefaceView.margins()->horizontal());
+    assert(m_prefaceIntersectionView.margins()->vertical() ==
+           m_rowPrefaceView.margins()->vertical());
     assert(rowPrefaceHeight == 0 ||
            m_prefaceIntersectionView.minimalSizeForOptimalDisplay() ==
                KDSize(columnPrefaceWidth, rowPrefaceHeight));

@@ -16,7 +16,7 @@ ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
       m_statistic(test),
       m_mode(Mode::ExpectedValue),
       m_resultsTableController(resultsTableController) {
-  m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
+  m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
 }
 
 void ResultsHomogeneityTableCell::didBecomeFirstResponder() {

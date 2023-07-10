@@ -21,7 +21,7 @@ Controller::ContentView::ContentView(
     : m_selectableTableView(controller, controller, selectionDataSource,
                             controller) {
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setMargins(0, k_sideMargin, 0, k_sideMargin);
+  m_selectableTableView.setMargins(k_margins);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
   m_selectableTableView.decorator()->setVerticalMargins(
       k_indicatorMargin, k_indicatorMargin - k_bottomMargin);

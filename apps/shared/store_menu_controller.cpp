@@ -17,7 +17,7 @@ StoreMenuController::InnerListController::InnerListController(
     StoreMenuController* dataSource)
     : ViewController(dataSource),
       m_selectableListView(this, dataSource, dataSource) {
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
 }
 

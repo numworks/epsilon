@@ -17,9 +17,8 @@ CategoricalController::CategoricalController(Responder *parent,
       m_nextController(nextController),
       m_next(&m_selectableListView, I18n::Message::Next, invocation,
              Palette::WallScreenDark, Metric::CommonMargins.left()) {
-  m_selectableListView.setTopMargin(0);
-  m_selectableListView.setLeftMargin(0);
-  m_selectableListView.setRightMargin(0);
+  m_selectableListView.margins()->setTop(0);
+  m_selectableListView.margins()->setHorizontal({0, 0});
   m_selectableListView.setBackgroundColor(Palette::WallScreenDark);
   setScrollViewDelegate(this);
 }

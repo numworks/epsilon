@@ -26,8 +26,7 @@ StoreController::StoreController(Responder *parentResponder,
       m_widthManager(this) {
   m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);
   m_prefacedTableView.setCellOverlap(0, 0);
-  m_prefacedTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin,
-                                 k_margin);
+  m_prefacedTableView.setMargins(k_margins);
   for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
     m_editableCells[i].setParentResponder(&m_selectableTableView);
     m_editableCells[i].editableTextCell()->textField()->setDelegate(this);

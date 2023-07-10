@@ -17,7 +17,7 @@ FormulaTemplateMenuController::FormulaTemplateMenuController(
     : SelectableListViewController(parentResponder),
       m_storeColumnHelper(storeColumnHelper) {
   m_emptyTemplateCell.label()->setMessage(I18n::Message::Empty);
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
 }
 

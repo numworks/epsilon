@@ -11,20 +11,20 @@ namespace Escher {
 class AlternateEmptyViewDelegate {
  public:
   AlternateEmptyViewDelegate()
-      : m_message((I18n::Message)0,
-                  {.style = {.backgroundColor = Palette::WallScreen,
-                             .font = KDFont::Size::Small},
-                   .horizontalAlignment = KDGlyph::k_alignCenter}) {}
+      : m_emptyView((I18n::Message)0,
+                    {.style = {.backgroundColor = Palette::WallScreen,
+                               .font = KDFont::Size::Small},
+                     .horizontalAlignment = KDGlyph::k_alignCenter}) {}
   virtual bool isEmpty() const = 0;
   View* emptyView() {
-    m_message.setMessage(emptyMessage());
-    return &m_message;
+    m_emptyView.setMessage(emptyMessage());
+    return &m_emptyView;
   }
   virtual I18n::Message emptyMessage() = 0;
   virtual Responder* responderWhenEmpty() = 0;
 
  private:
-  MessageTextView m_message;
+  MessageTextView m_emptyView;
 };
 
 }  // namespace Escher

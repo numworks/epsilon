@@ -28,8 +28,7 @@ ListController::ListController(Responder *parentResponder,
       m_titlesColumnWidth(k_minTitleColumnWidth),
       m_parameterColumnSelected(false) {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_sequenceCells[i].expressionCell()->setLeftMargin(k_expressionMargin);
-    m_sequenceCells[i].expressionCell()->setRightMargin(0);
+    m_sequenceCells[i].expressionCell()->setMargins({k_expressionMargin, 0});
   }
 }
 

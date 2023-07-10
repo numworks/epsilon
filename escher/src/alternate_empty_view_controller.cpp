@@ -12,14 +12,14 @@ AlternateEmptyViewController::ContentView::ContentView(
 
 View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
-  if (m_delegate->isEmpty()) {
+  if (isEmpty()) {
     return m_delegate->emptyView();
   }
   return m_mainViewController->view();
 }
 
 void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
-  if (alternateEmptyViewDelegate()->isEmpty()) {
+  if (isEmpty()) {
     setChildFrame(m_delegate->emptyView(), bounds(), force);
   } else {
     setChildFrame(m_mainViewController->view(), bounds(), force);
@@ -43,7 +43,7 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
 }
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
-  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+  if (!m_contentView.isEmpty()) {
     App::app()->setFirstResponder(m_contentView.mainViewController());
   } else {
     App::app()->setFirstResponder(
@@ -57,13 +57,13 @@ void AlternateEmptyViewController::initView() {
 
 void AlternateEmptyViewController::viewWillAppear() {
   m_contentView.layoutSubviews();
-  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+  if (!m_contentView.isEmpty()) {
     m_contentView.mainViewController()->viewWillAppear();
   }
 }
 
 void AlternateEmptyViewController::viewDidDisappear() {
-  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+  if (!m_contentView.isEmpty()) {
     m_contentView.mainViewController()->viewDidDisappear();
   }
 }

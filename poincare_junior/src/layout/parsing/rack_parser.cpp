@@ -136,7 +136,7 @@ EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
   EditionReference result;
   if (m_parsingContext.parsingMethod() ==
       ParsingContext::ParsingMethod::CommaSeparatedList) {
-    result = parseCommaSeparatedList();
+    result = parseCommaSeparatedList(true);
   } else {
     result = parseUntil(Token::Type::EndOfStream);
   }
@@ -1236,8 +1236,9 @@ EditionReference RackParser::parseVector() {
   return commaSeparatedList;
 }
 
-EditionReference RackParser::parseCommaSeparatedList() {
-  if (m_nextToken.is(Token::Type::Layout) &&
+EditionReference RackParser::parseCommaSeparatedList(bool isFirstToken) {
+  // First rack's layout cannot be a comma separated list.
+  if (!isFirstToken && m_nextToken.is(Token::Type::Layout) &&
       m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout) {
     assert(m_nextToken.firstLayout()->nextNode()->type() ==
            BlockType::RackLayout);

@@ -154,7 +154,7 @@ class RackParser {
                            Token::Type stoppingType);
   EditionReference parseVector();
   EditionReference parseFunctionParameters();
-  EditionReference parseCommaSeparatedList();
+  EditionReference parseCommaSeparatedList(bool isFirstToken = false);
   void privateParseTimes(EditionReference& leftHandSide,
                          Token::Type stoppingType);
   void privateParseReservedFunction(EditionReference& leftHandSide,

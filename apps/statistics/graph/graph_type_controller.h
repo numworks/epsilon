@@ -37,9 +37,7 @@ class GraphTypeController
   // SelectableCellListPage
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  const char* title() override {
-    return I18n::translate(I18n::Message::Type);
-  }
+  const char* title() override { return I18n::translate(I18n::Message::Type); }
 
  private:
   Escher::TabViewController* m_tabController;

@@ -32,11 +32,13 @@ class EditableExpressionCell : public Bordered,
   constexpr static KDCoordinate k_minimalHeight =
       Metric::ExpressionInputBarMinimalHeight;
   constexpr static KDCoordinate k_maximalHeight = 0.6 * Ion::Display::Height;
-  constexpr static KDCoordinate k_margin = Metric::LayoutViewMargin;
-  // topMargin has + 1 to look the same as when the separator was included in it
-  constexpr static KDCoordinate k_topMargin = k_margin + 1;
   constexpr static KDCoordinate k_separatorThickness =
       Metric::CellSeparatorThickness;
+  // topMargin has + 1 to look the same as when the separator was included in it
+  constexpr static KDMargins k_margins = {
+      {Metric::LayoutViewMargin},
+      {Metric::LayoutViewMargin + k_separatorThickness,
+       Metric::LayoutViewMargin}};
   LayoutField m_layoutField;
   char m_expressionBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };

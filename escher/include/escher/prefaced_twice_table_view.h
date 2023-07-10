@@ -13,16 +13,15 @@ class PrefacedTwiceTableView : public PrefacedTableView {
       SelectableTableViewDelegate* delegate = nullptr,
       PrefacedTableViewDelegate* prefacedTableViewDelegate = nullptr);
 
-  void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom,
-                  KDCoordinate left) override;
+  void setMargins(KDMargins m) override;
   void setBackgroundColor(KDColor color) override;
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
   TableView* columnPrefaceView() { return &m_columnPrefaceView; }
   void resetDataSourceSizeMemoization() override;
   KDCoordinate minVisibleContentWidth() const {
-    return bounds().width() -
-           std::max(m_mainTableViewLeftMargin, m_mainTableView->rightMargin());
+    return bounds().width() - std::max(m_mainTableViewLeftMargin,
+                                       m_mainTableView->margins()->right());
   }
 
  private:
@@ -75,8 +74,8 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   void layoutSubviews(bool force = false) override;
   void resetContentOffset() override;
   KDPoint marginToAddForVirtualOffset() const override {
-    return KDPoint(m_mainTableViewLeftMargin - m_mainTableView->leftMargin(),
-                   m_mainTableViewTopMargin - m_mainTableView->topMargin());
+    return KDPoint(m_mainTableViewLeftMargin, m_mainTableViewTopMargin)
+        .translatedBy((-m_mainTableView->constMargins()).leftTopPoint());
   }
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;

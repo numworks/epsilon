@@ -10,7 +10,7 @@ TableViewWithFrozenHeader::TableViewWithFrozenHeader(
                             .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_selectableTableView(selectableTableView) {
   // Remove selectable table top margin to control margin between text and table
-  m_selectableTableView->setTopMargin(0);
+  m_selectableTableView->margins()->setTop(0);
   // Fit m_selectableTableView scroll to content size
   m_selectableTableView->decorator()->setVerticalMargins(
       0, Metric::CommonMargins.bottom());

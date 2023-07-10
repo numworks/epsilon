@@ -35,7 +35,7 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
       m_editorController(this, pythonDelegate),
       m_reloadConsoleWhenBecomingFirstResponder(false),
       m_shouldDisplayAddScriptRow(true) {
-  m_selectableTableView.setMargins(0);
+  m_selectableTableView.resetMargins();
   m_selectableTableView.hideScrollBars();
   m_addNewScriptCell.setLeftMargin(
       Shared::ExpressionModelListController::k_newModelMargin);

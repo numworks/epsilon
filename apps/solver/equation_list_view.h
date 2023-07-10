@@ -25,8 +25,7 @@ class EquationListView : public Escher::Responder,
   void layoutSubviews(bool force = false) override;
 
  private:
-  constexpr static KDCoordinate k_margin = 10;
-  constexpr static KDCoordinate k_rightMargin = 8;
+  constexpr static KDMargins k_margins = {{10, 8}, {10}};
 
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;
@@ -44,7 +43,7 @@ class EquationListView : public Escher::Responder,
 
  public:
   constexpr static KDCoordinate k_braceTotalWidth =
-      k_margin + k_rightMargin + BraceView::k_braceWidth;
+      k_margins.width() + BraceView::k_braceWidth;
 };
 
 }  // namespace Solver

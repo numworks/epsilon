@@ -65,7 +65,7 @@ InputCategoricalTableCell::InputCategoricalTableCell(
       m_statistic(statistic),
       m_numberOfRows(0),
       m_numberOfColumns(0) {
-  m_selectableTableView.setBottomMargin(k_bottomMargin);
+  m_selectableTableView.margins()->setBottom(k_bottomMargin);
 }
 
 bool InputCategoricalTableCell::textFieldShouldFinishEditing(

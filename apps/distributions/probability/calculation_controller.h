@@ -67,7 +67,7 @@ class CalculationController : public Escher::ViewController,
 
  private:
   constexpr static int k_numberOfCalculationCells = 3;
-  constexpr static KDCoordinate k_tableMargin = 3;
+  constexpr static KDMargins k_tableMargins = {3};
   constexpr static const char* k_unknownParameterBannerText = "%s=%*.*ed";
   constexpr static const char* k_parameterTitle = "%s = %*.*ed ";
 

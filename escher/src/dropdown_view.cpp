@@ -84,7 +84,7 @@ Dropdown::DropdownPopupController::DropdownPopupController(
       m_borderingView(&m_selectableListView),
       m_callback(callback),
       m_dropdown(dropdown) {
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
 }
 
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {

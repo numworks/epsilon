@@ -22,7 +22,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(
     : ExplicitSelectableListViewController(parentResponder),
       m_listController(listController) {
   m_emptyModelCell.label()->setMessage(I18n::Message::Empty);
-  m_selectableListView.setMargins(0);
+  m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   const Model* models = Models();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {

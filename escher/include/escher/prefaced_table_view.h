@@ -40,8 +40,7 @@ class PrefacedTableView : public View,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
 
   SelectableTableView* selectableTableView() { return m_mainTableView; }
-  virtual void setMargins(KDCoordinate top, KDCoordinate right,
-                          KDCoordinate bottom, KDCoordinate left);
+  virtual void setMargins(KDMargins m);
   virtual void setBackgroundColor(KDColor color);
   virtual void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical);
 
@@ -162,7 +161,8 @@ class PrefacedTableView : public View,
   void layoutSubviews(bool force = false) override;
   View* subviewAtIndex(int index) override;
   virtual KDPoint marginToAddForVirtualOffset() const {
-    return KDPoint(0, m_mainTableViewTopMargin - m_mainTableView->topMargin());
+    return KDPoint(
+        0, m_mainTableViewTopMargin - m_mainTableView->margins()->top());
   }
 
   SelectableTableViewDelegate* m_mainTableDelegate;

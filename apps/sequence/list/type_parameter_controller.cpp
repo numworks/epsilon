@@ -19,10 +19,7 @@ namespace Sequence {
 
 TypeParameterController::TypeParameterController(Responder *parentResponder,
                                                  ListController *list,
-                                                 KDCoordinate topMargin,
-                                                 KDCoordinate rightMargin,
-                                                 KDCoordinate bottomMargin,
-                                                 KDCoordinate leftMargin)
+                                                 KDMargins margins)
     : UniformSelectableListController<MenuCell<LayoutView, MessageTextView>,
                                       k_numberOfCells>(parentResponder),
       m_listController(list) {
@@ -33,8 +30,7 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
   cell(k_indexOfDoubleRecurrence)
       ->subLabel()
       ->setMessage(I18n::Message::DoubleRecurrence);
-  m_selectableListView.setMargins(topMargin, rightMargin, bottomMargin,
-                                  leftMargin);
+  m_selectableListView.setMargins(margins);
   m_selectableListView.hideScrollBars();
 }
 

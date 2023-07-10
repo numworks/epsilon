@@ -414,9 +414,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
 }
 
 KDSize ScrollableTwoLayoutsView::minimalSizeForOptimalDisplayFullSize() const {
-  KDSize res = contentCell()->minimalSizeForOptimalDisplayFullSize();
-  return KDSize(res.width() + leftMargin() + rightMargin(),
-                res.height() + topMargin() + bottomMargin());
+  return contentCell()->minimalSizeForOptimalDisplayFullSize() + constMargins();
 }
 
 }  // namespace Escher

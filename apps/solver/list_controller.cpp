@@ -234,8 +234,8 @@ void ListController::reloadBrace() {
     m_equationListView.setBraceStyle(EquationListView::BraceStyle::None);
     m_expressionCells[0].setLeftMargin(k_newModelMargin);
     // Set editable cell margins to keep the text at the same place when editing
-    m_editableCell.layoutField()->setLeftMargin(k_newModelMargin -
-                                                k_expressionMargin);
+    m_editableCell.layoutField()->margins()->setLeft(k_newModelMargin -
+                                                     k_expressionMargin);
     m_editableCell.setMargins(k_expressionMargin, k_expressionMargin);
   } else {
     m_equationListView.setBraceStyle(
@@ -244,8 +244,8 @@ void ListController::reloadBrace() {
             : EquationListView::BraceStyle::OneRowShort);
     m_expressionCells[0].setLeftMargin(EquationListView::k_braceTotalWidth +
                                        Metric::CellMargins.left());
-    m_editableCell.layoutField()->setLeftMargin(Metric::CellMargins.left() -
-                                                k_expressionMargin);
+    m_editableCell.layoutField()->margins()->setLeft(
+        Metric::CellMargins.left() - k_expressionMargin);
     m_editableCell.setMargins(
         EquationListView::k_braceTotalWidth + k_expressionMargin,
         k_expressionMargin);

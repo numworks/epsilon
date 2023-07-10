@@ -14,10 +14,10 @@ EquationListView::EquationListView(ListController *listController)
       m_braceStyle(BraceStyle::None),
       m_listView(this, listController, listController, listController),
       m_scrollBraceView(this, &m_braceView, this) {
-  m_listView.setMargins(0);
+  m_listView.resetMargins();
   m_listView.setVerticalCellOverlap(0);
   listController->setScrollViewDelegate(this);
-  m_scrollBraceView.setMargins(k_margin, k_rightMargin, k_margin, k_margin);
+  m_scrollBraceView.setMargins(k_margins);
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
 }
 
@@ -53,7 +53,7 @@ void EquationListView::layoutSubviews(bool force) {
     KDCoordinate braceWidth =
         m_braceView.minimalSizeForOptimalDisplay().width();
     KDCoordinate braceHeight =
-        m_listView.minimalSizeForOptimalDisplay().height() - 2 * k_margin;
+        m_listView.minimalSizeForOptimalDisplay().height() - k_margins.height();
     braceHeight = m_braceStyle == BraceStyle::OneRowShort
                       ? braceHeight - Metric::StoreRowHeight
                       : braceHeight;

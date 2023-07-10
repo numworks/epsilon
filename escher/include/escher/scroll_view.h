@@ -5,6 +5,7 @@
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 #include <escher/view.h>
+#include <kandinsky/margins.h>
 
 namespace Escher {
 
@@ -18,18 +19,11 @@ class ScrollView : public View {
  public:
   ScrollView(View *contentView, ScrollViewDataSource *dataSource);
   KDSize minimalSizeForOptimalDisplay() const override;
-  void setTopMargin(KDCoordinate m) { m_topMargin = m; }
-  void setRightMargin(KDCoordinate m) { m_rightMargin = m; }
-  void setBottomMargin(KDCoordinate m) { m_bottomMargin = m; }
-  void setLeftMargin(KDCoordinate m) { m_leftMargin = m; }
-  KDCoordinate topMargin() const { return m_topMargin; }
-  KDCoordinate rightMargin() const { return m_rightMargin; }
-  KDCoordinate bottomMargin() const { return m_bottomMargin; }
-  KDCoordinate leftMargin() const { return m_leftMargin; }
 
-  void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom,
-                  KDCoordinate left);
-  void setMargins(KDCoordinate m) { setMargins(m, m, m, m); }
+  KDMargins *margins() { return &m_margins; }
+  KDMargins constMargins() const { return m_margins; }
+  void setMargins(KDMargins m) { m_margins = m; }
+  void resetMargins() { setMargins({}); }
 
   class Decorator {
    public:
@@ -110,10 +104,10 @@ class ScrollView : public View {
 
  protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
-    return bounds().width() - m_leftMargin - m_rightMargin;
+    return (bounds().size() + (-m_margins)).width();
   }
   KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
-    return bounds().height() - m_topMargin - m_bottomMargin;
+    return (bounds().size() + (-m_margins)).height();
   }
   KDRect visibleContentRect();
   void layoutSubviews(bool force = false) override;
@@ -155,10 +149,7 @@ class ScrollView : public View {
   View *m_contentView;
   InnerView m_innerView;
 
-  KDCoordinate m_topMargin;
-  KDCoordinate m_rightMargin;
-  KDCoordinate m_bottomMargin;
-  KDCoordinate m_leftMargin;
+  KDMargins m_margins;
   mutable KDCoordinate m_excessWidth;
   mutable KDCoordinate m_excessHeight;
 

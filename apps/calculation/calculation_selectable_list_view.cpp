@@ -13,7 +13,7 @@ CalculationSelectableListView::CalculationSelectableListView(
     : ::SelectableListView(parentResponder, dataSource, selectionDataSource,
                            delegate) {
   setVerticalCellOverlap(0);
-  setMargins(0);
+  resetMargins();
   hideScrollBars();
 }
 

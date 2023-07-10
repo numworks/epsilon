@@ -111,13 +111,13 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(
       m_selectableListView.minimalSizeForOptimalDisplay().height());
 
   if (m_controller->shouldDisplayWarning()) {
-    setChildFrame(&m_borderView,
-                  KDRect(m_selectableListView.leftMargin(),
-                         verticalOrigin + m_selectableListView.topMargin(),
-                         bounds().width() - m_selectableListView.leftMargin() -
-                             m_selectableListView.rightMargin(),
-                         Metric::CellSeparatorThickness),
-                  force);
+    setChildFrame(
+        &m_borderView,
+        KDRect(m_selectableListView.margins()->left(),
+               verticalOrigin + m_selectableListView.margins()->top(),
+               bounds().width() - m_selectableListView.margins()->width(),
+               Metric::CellSeparatorThickness),
+        force);
   }
   setChildFrame(&m_selectableListView,
                 KDRect(0, verticalOrigin, bounds().width(), tableHeight),
@@ -234,7 +234,7 @@ void LocalizationController::fillCellForRow(HighlightCell *cell, int row) {
 void LocalizationController::setVerticalMargins() {
   KDCoordinate topMargin =
       shouldDisplayWarning() ? 0 : Escher::Metric::CommonMargins.top();
-  selectableListView()->setTopMargin(topMargin);
+  selectableListView()->margins()->setTop(topMargin);
   // Fit m_selectableListView scroll to content size
   selectableListView()->decorator()->setVerticalMargins(
       topMargin, Escher::Metric::CommonMargins.bottom());

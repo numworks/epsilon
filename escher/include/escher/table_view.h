@@ -85,11 +85,11 @@ class TableView : public ScrollView {
     TableViewDataSource *dataSource() { return m_dataSource; }
     KDCoordinate invisibleHeight() const {
       return std::max(
-          m_tableView->contentOffset().y() - m_tableView->topMargin(), 0);
+          m_tableView->contentOffset().y() - m_tableView->margins()->top(), 0);
     }
     KDCoordinate invisibleWidth() const {
       return std::max(
-          m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
+          m_tableView->contentOffset().x() - m_tableView->margins()->left(), 0);
     }
     int rowsScrollingOffset() const;
     int columnsScrollingOffset() const;

@@ -49,10 +49,9 @@ class EditableCellTableViewController : public TabTableController,
           Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision) *
           KDFont::GlyphWidth(k_cellFont) +
       2 * Escher::Metric::SmallCellMargin;
-  constexpr static KDCoordinate k_margin =
-      Escher::Metric::TableSeparatorThickness;
-  constexpr static KDCoordinate k_scrollBarMargin =
-      Escher::Metric::CommonMargins.right();
+  constexpr static KDMargins k_margins = {
+      Escher::Metric::TableSeparatorThickness, k_scrollBarMargin,
+      Escher::Metric::TableSeparatorThickness, k_scrollBarMargin};
 
   constexpr static int k_maxNumberOfDisplayableRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(

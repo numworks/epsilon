@@ -137,8 +137,7 @@ class ScrollableTwoLayoutsView : public AbstractScrollableMultipleLayoutsView {
                            KDFont::Size font = KDFont::Size::Large)
       : AbstractScrollableMultipleLayoutsView(parentResponder, &m_contentCell),
         m_contentCell(horizontalAlignment, font) {
-    setMargins(Metric::CommonSmallMargin, Metric::CommonLargeMargin,
-               Metric::CommonSmallMargin, Metric::CommonLargeMargin);
+    setMargins({{Metric::CommonLargeMargin}, {Metric::CommonSmallMargin}});
   }
   KDSize minimalSizeForOptimalDisplayFullSize() const;
   KDFont::Size font() const { return m_contentCell.font(); }

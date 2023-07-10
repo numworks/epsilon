@@ -3,8 +3,7 @@
 namespace Escher {
 
 void ListViewDataSource::initCellsAvailableWidth(TableView* view) {
-  m_availableWidth =
-      view->bounds().width() - view->rightMargin() - view->leftMargin();
+  m_availableWidth = view->bounds().width() - view->margins()->width();
 }
 
 int ListViewDataSource::typeIndexFromIndex(int index) {

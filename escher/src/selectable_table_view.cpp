@@ -16,8 +16,7 @@ SelectableTableView::SelectableTableView(
       m_selectionDataSource(selectionDataSource),
       m_delegate(delegate) {
   assert(m_selectionDataSource != nullptr);
-  setMargins(Metric::CommonMargins.top(), Metric::CommonMargins.right(),
-             Metric::CommonMargins.bottom(), Metric::CommonMargins.left());
+  setMargins(Metric::CommonMargins);
 }
 
 HighlightCell* SelectableTableView::selectedCell() {

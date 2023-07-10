@@ -10,10 +10,6 @@ AlternateEmptyViewController::ContentView::ContentView(
     ViewController* mainViewController, AlternateEmptyViewDelegate* delegate)
     : m_mainViewController(mainViewController), m_delegate(delegate) {}
 
-int AlternateEmptyViewController::ContentView::numberOfSubviews() const {
-  return 1;
-}
-
 View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   if (m_delegate->isEmpty()) {
@@ -30,16 +26,6 @@ void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
   }
 }
 
-ViewController* AlternateEmptyViewController::ContentView::mainViewController()
-    const {
-  return m_mainViewController;
-}
-
-AlternateEmptyViewDelegate*
-AlternateEmptyViewController::ContentView::alternateEmptyViewDelegate() const {
-  return m_delegate;
-}
-
 /* AlternateEmptyViewController */
 
 AlternateEmptyViewController::AlternateEmptyViewController(
@@ -47,8 +33,6 @@ AlternateEmptyViewController::AlternateEmptyViewController(
     AlternateEmptyViewDelegate* delegate)
     : ViewController(parentResponder),
       m_contentView(mainViewController, delegate) {}
-
-View* AlternateEmptyViewController::view() { return &m_contentView; }
 
 const char* AlternateEmptyViewController::title() {
   return m_contentView.mainViewController()->title();

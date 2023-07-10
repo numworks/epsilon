@@ -12,7 +12,7 @@ class AlternateEmptyViewController : public ViewController {
   AlternateEmptyViewController(Responder* parentResponder,
                                ViewController* mainViewController,
                                AlternateEmptyViewDelegate* delegate);
-  View* view() override;
+  View* view() override { return &m_contentView; }
   const char* title() override;
   ViewController::TitlesDisplay titlesDisplay() override;
   void didBecomeFirstResponder() override;
@@ -25,12 +25,14 @@ class AlternateEmptyViewController : public ViewController {
    public:
     ContentView(ViewController* mainViewController,
                 AlternateEmptyViewDelegate* delegate);
-    ViewController* mainViewController() const;
-    AlternateEmptyViewDelegate* alternateEmptyViewDelegate() const;
+    ViewController* mainViewController() const { return m_mainViewController; }
+    AlternateEmptyViewDelegate* alternateEmptyViewDelegate() const {
+      return m_delegate;
+    }
     void layoutSubviews(bool force = false) override;
 
    private:
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 1; }
     View* subviewAtIndex(int index) override;
     ViewController* m_mainViewController;
     AlternateEmptyViewDelegate* m_delegate;

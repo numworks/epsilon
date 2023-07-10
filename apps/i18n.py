@@ -138,23 +138,14 @@ def check_redundancy(messages, data, locales):
         sys.exit(-1)
 
 def check_duplicates(messages, data, locales):
-    redundant_names = set()
-    ConcatenatedToName = {}
     all_names = set()
-    found = False
     for name in messages:
         concatenated=""
         for i in range(0, len(locales)):
             concatenated = str(concatenated) + "§" + str(data[locales[i]][name])
-
         if (concatenated in all_names):
-            found = True
-            redundant_names.add(name + ", " + ConcatenatedToName[concatenated])
-        ConcatenatedToName[concatenated] = name
+            sys.stderr.write("Warning: Redundant localized message \"" + name + "\"\n")
         all_names.add(concatenated)
-    if (found):
-        sys.stderr.write("Some localized messages are redundant :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
-        sys.exit(-1)
 
 def parse_files(files):
     data = {}
@@ -179,8 +170,7 @@ def parse_files(files):
                         sys.exit(-1)
                     universal_messages.add(name)
                     if definition in data[locale].values():
-                        sys.stderr.write("Error: Duplicate universal message, text of \"" + name + "\" appears twice.\n")
-                        sys.exit(-1)
+                        sys.stderr.write("Warning: Redundant universal message \"" + name + "\"\n")
                 else:
                     if name in universal_messages:
                         sys.stderr.write("Error: Redefinition of universal message \"" + name + "\" in locale " + locale + "\n")

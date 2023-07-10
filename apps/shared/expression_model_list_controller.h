@@ -32,12 +32,11 @@ class ExpressionModelListController
   bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) {
     return handleEventOnExpression(event, true);
   }
-  /* We want all ListControllers to use the same margin and the one in Grapher
-   * asserts it is aligned with its other cells. */
-  constexpr static KDCoordinate k_newModelMargin =
-      Escher::Metric::BigCellMargin + 3;
   constexpr static KDCoordinate k_defaultVerticalMargin =
-      Escher::Metric::BigCellMargin;
+      Escher::Metric::CellMargins.left();
+  /* We want all ListControllers to use the same margin */
+  constexpr static KDCoordinate k_newModelMargin =
+      k_defaultVerticalMargin + Escher::Metric::VerticalColorIndicatorThickness;
   constexpr static KDCoordinate k_defaultRowHeight =
       Escher::Metric::StoreRowHeight;
 

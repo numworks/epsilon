@@ -98,8 +98,8 @@ KDCoordinate GraphController::CurveSelectionController::nonMemoizedRowHeight(
   if (row < 0 || row >= numberOfRows()) {
     return 0;
   }
-  return KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin +
-         Metric::CellBottomMargin;
+  return KDFont::GlyphHeight(KDFont::Size::Large) +
+         Metric::CellMargins.height();
 }
 
 void GraphController::CurveSelectionController::fillCellForRow(

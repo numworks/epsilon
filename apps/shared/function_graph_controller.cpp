@@ -88,8 +88,7 @@ FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
           graphController()->recordAtCurveIndex(row));
   return std::max(function->layout().layoutSize(k_font).height(),
                   nameLayoutAtIndex(row).layoutSize(k_font).height()) +
-         Metric::CellTopMargin + Metric::CellBottomMargin +
-         Metric::CellSeparatorThickness;
+         Metric::CellMargins.height() + Metric::CellSeparatorThickness;
 }
 
 void FunctionGraphController::FunctionSelectionController::fillCellForRow(

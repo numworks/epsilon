@@ -58,8 +58,7 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
   CurveSelectionCell tempCell;
   tempCell.label()->setLayout(function->layout());
   return tempCell.labelView()->minimalSizeForOptimalDisplay().height() +
-         Metric::CellTopMargin + Metric::CellBottomMargin +
-         Metric::CellSeparatorThickness;
+         Metric::CellMargins.height() + Metric::CellSeparatorThickness;
 }
 
 void AreaBetweenCurvesParameterController::fillCellForRow(

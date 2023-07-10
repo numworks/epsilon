@@ -56,19 +56,19 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
    */
 
   constexpr static KDCoordinate k_minimalLargeFontCellHeight =
-      Metric::CellSeparatorThickness + Metric::CellTopMargin +
-      KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin;
+      Metric::CellSeparatorThickness + Metric::CellMargins.height() +
+      KDFont::GlyphHeight(KDFont::Size::Large);
   constexpr static KDCoordinate k_minimalSmallFontCellHeight =
-      Metric::CellSeparatorThickness + Metric::CellTopMargin +
-      KDFont::GlyphHeight(KDFont::Size::Small) + Metric::CellTopMargin;
+      Metric::CellSeparatorThickness + Metric::CellMargins.height() +
+      KDFont::GlyphHeight(KDFont::Size::Small);
 
   constexpr static KDCoordinate k_leftOffset =
-      k_separatorThickness + Metric::CellLeftMargin;
+      k_separatorThickness + Metric::CellMargins.left();
   constexpr static KDCoordinate k_rightOffset =
-      k_separatorThickness + Metric::CellRightMargin;
+      k_separatorThickness + Metric::CellMargins.right();
   constexpr static KDCoordinate k_topOffset =
-      k_separatorThickness + Metric::CellTopMargin;
-  constexpr static KDCoordinate k_bottomOffset = Metric::CellBottomMargin;
+      k_separatorThickness + Metric::CellMargins.top();
+  constexpr static KDCoordinate k_bottomOffset = Metric::CellMargins.bottom();
   constexpr static KDCoordinate k_innerHorizontalMargin =
       Metric::CellHorizontalElementMargin;
   constexpr static KDCoordinate k_innerVerticalMargin =

@@ -26,8 +26,8 @@ void SubtitleCell::layoutSubviews(bool force) {
   if (width == 0 || height == 0) {
     return;
   }
-  KDCoordinate x = k_separatorThickness + Metric::CellLeftMargin;
-  width -= x + Metric::CellRightMargin + k_separatorThickness;
+  KDCoordinate x = k_separatorThickness + Metric::CellMargins.left();
+  width -= x + Metric::CellMargins.right() + k_separatorThickness;
   /* With an enforced 24px height, no vertical margins are enforced. Vertical
    * centering is handled in BufferTextView. Additionally, an offset is added at
    * the top to lower the baseline of the buffer view to look more centered. */

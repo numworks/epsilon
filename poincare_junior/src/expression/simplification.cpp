@@ -66,7 +66,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     case BlockType::Trig:
       return SimplifyTrig(u) || modified;
     case BlockType::Derivative: {
-      return Derivation::Reduce(u) || modified;
+      return Derivation::ShallowSimplify(u) || modified;
     }
     default:
       return modified;

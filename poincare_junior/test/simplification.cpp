@@ -232,4 +232,11 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("e^(ln(x))", "x");
   simplifies_to("e^(ln(x+x))", "2*x");
   simplifies_to("sqrt(x)^2", "e^(ln(x))");  // TODO: This is wrong
+  simplifies_to("diff(x, x, 2)", "1");
+  simplifies_to("diff(23, x, 1)", "0");
+  simplifies_to("diff(1+x, x, y)", "1");
+  simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))*y^(-1)");
+  simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
+                "3*e^(3*y)*ln(y)*y^(4)+4*e^(3*y)*ln(y)*y^(3)+e^(3*y)*y^(3)");
+  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
 }

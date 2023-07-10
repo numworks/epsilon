@@ -188,12 +188,13 @@ QUIZ_CASE(pcj_simplification_beautify) {
       ref5, KSub(KSub(KAdd(KMult(-1_e, "w"_e), "x"_e), "y"_e), "z"_e));
 }
 
-void simplifies_to(const char* input, const char* output) {
+void simplifies_to(const char* input, const char* output,
+                   ProjectionContext projectionContext = {}) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
   inputLayout->removeTree();
   quiz_assert(!expression.isUninitialized());
-  Simplification::Simplify(expression);
+  Simplification::Simplify(expression, projectionContext);
   quiz_assert(!expression.isUninitialized());
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(expression);

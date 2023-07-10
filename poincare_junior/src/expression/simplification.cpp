@@ -349,11 +349,11 @@ bool Simplification::SimplifyAddition(Tree* u) {
   return true;
 }
 
-bool Simplification::Simplify(Tree* ref) {
+bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   bool changed = false;
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
-  changed = DeepSystemProjection(ref) || changed;
+  changed = DeepSystemProjection(ref, projectionContext) || changed;
   changed = DeepSystematicReduce(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref) || changed;

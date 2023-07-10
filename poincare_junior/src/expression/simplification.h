@@ -18,7 +18,7 @@ struct ProjectionContext {
 
 class Simplification {
  public:
-  static bool Simplify(Tree *node);
+  static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   static bool AdvancedReduction(Tree *node);
   static bool ShallowAdvancedReduction(Tree *node, bool change);
 
@@ -49,7 +49,7 @@ class Simplification {
   static bool ShallowSystematicReduce(Tree *u);
   static bool DeepSystematicReduce(Tree *u);
 
-  EDITION_REF_WRAP(Simplify);
+  EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
   EDITION_REF_WRAP(ShallowSystematicReduce);
   EDITION_REF_WRAP(DeepSystematicReduce);
   EDITION_REF_WRAP(AdvancedReduction);

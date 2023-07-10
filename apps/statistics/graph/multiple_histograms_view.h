@@ -17,7 +17,6 @@ class MultipleHistogramsView : public MultipleDataView {
   HistogramView* plotViewForSeries(int series) override;
 
  private:
-  void layoutSubviews(bool force = false) override;
   void changeDataViewSeriesSelection(int series, bool select) override;
   HistogramView m_histogramView1;
   HistogramView m_histogramView2;

@@ -48,10 +48,10 @@ KDSize SubappCell::minimalSizeForOptimalDisplay() const {
   KDSize subTitleSize = m_subTitle.minimalSizeForOptimalDisplay();
   KDSize chevronSize = m_chevron.minimalSizeForOptimalDisplay();
 
-  return KDSize(Metric::CellLeftMargin + iconSize.width() +
+  return KDSize(Metric::CellMargins.width() + iconSize.width() +
                     k_horizontalMarginBetweenTextAndIcon +
                     std::max(titleSize.width(), subTitleSize.width()) +
-                    chevronSize.width() + Metric::CellRightMargin,
+                    chevronSize.width(),
                 k_verticalMarginTop + titleSize.height() +
                     k_verticalMarginBetweenTexts + subTitleSize.height() +
                     k_verticalMarginBottom);
@@ -63,26 +63,27 @@ void SubappCell::layoutSubviews(bool force) {
 
   KDSize iconSize = m_icon.minimalSizeForOptimalDisplay();
   setChildFrame(&m_icon,
-                KDRect(Metric::CellLeftMargin, (height - iconSize.height()) / 2,
-                       iconSize),
+                KDRect(Metric::CellMargins.left(),
+                       (height - iconSize.height()) / 2, iconSize),
                 force);
   KDSize titleSize = m_title.minimalSizeForOptimalDisplay();
   KDSize subTitleSize = m_subTitle.minimalSizeForOptimalDisplay();
-  KDCoordinate textXPosition = Metric::CellLeftMargin + iconSize.width() +
+  KDCoordinate textXPosition = Metric::CellMargins.left() + iconSize.width() +
                                k_horizontalMarginBetweenTextAndIcon;
   setChildFrame(&m_title, KDRect(textXPosition, k_verticalMarginTop, titleSize),
                 force);
   setChildFrame(&m_subTitle,
                 KDRect(textXPosition,
-                       Metric::CellTopMargin + titleSize.height() +
+                       Metric::CellMargins.top() + titleSize.height() +
                            k_verticalMarginBetweenTexts,
                        subTitleSize),
                 force);
   KDSize chevronSize = m_chevron.minimalSizeForOptimalDisplay();
-  setChildFrame(&m_chevron,
-                KDRect(width - chevronSize.width() - Metric::CellRightMargin,
-                       (height - chevronSize.height()) / 2, chevronSize),
-                force);
+  setChildFrame(
+      &m_chevron,
+      KDRect(width - chevronSize.width() - Metric::CellMargins.right(),
+             (height - chevronSize.height()) / 2, chevronSize),
+      force);
 }
 
 void SubappCell::setImage(const Image* image) { m_icon.setImage(image); }

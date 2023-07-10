@@ -26,10 +26,7 @@ ListController::ListController(
       m_modelsParameterController(this, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite),
-      m_parameterColumnSelected(false) {
-  static_assert(k_newModelMargin == Metric::VerticalColorIndicatorThickness +
-                                        Metric::BigCellMargin);
-}
+      m_parameterColumnSelected(false) {}
 
 /* TableViewDataSource */
 

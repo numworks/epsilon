@@ -94,8 +94,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   constexpr static int k_labelCharSize =
       (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -
        2 * Escher::Metric::CellSeparatorThickness -
-       Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin -
-       Escher::Metric::PopUpRightMargin) /
+       Escher::Metric::CellMargins.width() - Escher::Metric::PopUpRightMargin) /
       KDFont::GlyphWidth(KDFont::Size::Large);
 
   /* Returns:

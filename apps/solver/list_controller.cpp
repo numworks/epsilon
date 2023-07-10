@@ -38,7 +38,7 @@ ListController::ListController(Responder *parentResponder,
   m_addNewModelCell.setLeftMargin(k_newModelMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth +
-                                       Metric::BigCellMargin);
+                                       Metric::CellMargins.left());
     m_expressionCells[i].setEven(true);
   }
 }
@@ -243,8 +243,8 @@ void ListController::reloadBrace() {
             ? EquationListView::BraceStyle::Full
             : EquationListView::BraceStyle::OneRowShort);
     m_expressionCells[0].setLeftMargin(EquationListView::k_braceTotalWidth +
-                                       Metric::BigCellMargin);
-    m_editableCell.layoutField()->setLeftMargin(Metric::BigCellMargin -
+                                       Metric::CellMargins.left());
+    m_editableCell.layoutField()->setLeftMargin(Metric::CellMargins.left() -
                                                 k_expressionMargin);
     m_editableCell.setMargins(
         EquationListView::k_braceTotalWidth + k_expressionMargin,

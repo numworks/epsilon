@@ -29,8 +29,7 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   constexpr static int k_maxNumberOfCharsInBuffer =
       (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -
        2 * Escher::Metric::CellSeparatorThickness -
-       Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin -
-       Escher::Metric::PopUpRightMargin) /
+       Escher::Metric::CellMargins.width() - Escher::Metric::PopUpRightMargin) /
       KDFont::GlyphWidth(KDFont::Size::Small);
   static_assert(k_maxNumberOfCharsInBuffer <
                     Escher::OneLineBufferTextView<>::MaxTextSize(),

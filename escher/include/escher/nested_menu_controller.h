@@ -90,8 +90,8 @@ class NestedMenuController : public StackViewController,
    private:
     constexpr static int k_maxTitleLength =
         (Ion::Display::Width - Metric::PopUpLeftMargin -
-         2 * Metric::CellSeparatorThickness - Metric::CellLeftMargin -
-         Metric::CellRightMargin - Metric::PopUpRightMargin) /
+         2 * Metric::CellSeparatorThickness - Metric::CellMargins.width() -
+         Metric::PopUpRightMargin) /
         KDFont::GlyphWidth(KDFont::Size::Small);
     constexpr static int k_maxModelTreeDepth =
         StackViewController::k_maxNumberOfChildren - 1;

@@ -19,12 +19,9 @@ class Metric {
       (CommonMargins.left() - ScrollViewBarThickness) / 2;
 
   // General cell margins
-  constexpr static KDCoordinate BigCellMargin = 8;
-  constexpr static KDCoordinate CellBottomMargin = BigCellMargin;
-  constexpr static KDCoordinate CellHorizontalElementMargin = BigCellMargin;
-  constexpr static KDCoordinate CellLeftMargin = BigCellMargin;
-  constexpr static KDCoordinate CellRightMargin = BigCellMargin;
-  constexpr static KDCoordinate CellTopMargin = BigCellMargin;
+  constexpr static KDMargins CellMargins = {8};
+  constexpr static KDCoordinate CellHorizontalElementMargin =
+      CellMargins.left();
   constexpr static KDCoordinate CellSeparatorThickness = 1;
   constexpr static KDCoordinate CellVerticalElementMargin = 4;
 
@@ -41,7 +38,7 @@ class Metric {
   constexpr static KDCoordinate LayoutViewMargin = 5;
   constexpr static KDCoordinate ExpressionInputBarMinimalHeight = 37;
   constexpr static KDCoordinate EditableExpressionAdditionalMargin =
-      BigCellMargin - LayoutViewMargin;
+      CellMargins.left() - LayoutViewMargin;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;

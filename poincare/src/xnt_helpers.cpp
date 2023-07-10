@@ -42,7 +42,6 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
     location = functionDecoder.position();
   }
   int functionLevel = 0;
-  int cursorLevel = 0;
   bool cursorInVariableField = false;
   bool functionFound = false;
   while (location > textStart && !functionFound) {
@@ -82,7 +81,6 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
         if (!functionFound) {
           // No function found, reset search parameters
           cursorInVariableField = false;
-          cursorLevel += 1;
         }
         break;
       case ',':
@@ -90,7 +88,6 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
           if (cursorInVariableField) {
             // Cursor is out of context, skip to the next matching '('
             functionLevel++;
-            cursorLevel++;
           }
           // Update cursor's position status
           cursorInVariableField = !cursorInVariableField;

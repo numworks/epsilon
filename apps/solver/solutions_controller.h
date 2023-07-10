@@ -20,7 +20,6 @@
 namespace Solver {
 
 class SolutionsController : public Escher::ViewController,
-                            public Escher::AlternateEmptyViewDelegate,
                             public Escher::SelectableTableViewDataSource,
                             public Escher::TableViewDataSource {
  public:
@@ -34,14 +33,6 @@ class SolutionsController : public Escher::ViewController,
   void didEnterResponderChain(
       Escher::Responder *previousFirstResponder) override;
   TELEMETRY_ID("Solutions");
-
-  // AlternateEmptyViewDelegate
-  bool isEmpty() const override { return false; }  // View cannot be empty
-  I18n::Message emptyMessage() override {
-    assert(false);
-    return static_cast<I18n::Message>(0);
-  }
-  Escher::Responder *responderWhenEmpty() override;
 
   // TableViewDataSource
   int numberOfRows() const override;

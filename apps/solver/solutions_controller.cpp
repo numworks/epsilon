@@ -221,11 +221,6 @@ void SolutionsController::didEnterResponderChain(
   }
 }
 
-Responder *SolutionsController::responderWhenEmpty() {
-  tabController()->selectTab();
-  return tabController();
-}
-
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() const {

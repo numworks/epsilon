@@ -48,9 +48,6 @@ class App : public Shared::MathApp {
 
   EquationStore *equationStore() { return snapshot()->equationStore(); }
   SystemOfEquations *system() { return &m_system; }
-  Escher::ViewController *solutionsControllerStack() {
-    return &m_alternateEmptyViewController;
-  }
   Escher::ViewController *intervalController() { return &m_intervalController; }
   SolutionsController *solutionsController() { return &m_solutionsController; }
 
@@ -65,7 +62,6 @@ class App : public Shared::MathApp {
   // Controllers
   SolutionsController m_solutionsController;
   IntervalController m_intervalController;
-  Escher::AlternateEmptyViewController m_alternateEmptyViewController;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
   Escher::StackViewController m_stackViewController;

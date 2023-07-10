@@ -43,10 +43,8 @@ void App::Snapshot::tidy() {
 
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_stackViewController),
-      m_solutionsController(&m_alternateEmptyViewController),
+      m_solutionsController(nullptr),
       m_intervalController(nullptr),
-      m_alternateEmptyViewController(nullptr, &m_solutionsController,
-                                     &m_solutionsController),
       m_listController(&m_listFooter, snapshot->equationStore(), &m_listFooter),
       m_listFooter(&m_stackViewController, &m_listController, &m_listController,
                    ButtonRowController::Position::Bottom,

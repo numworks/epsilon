@@ -328,7 +328,6 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
         mode == Preferences::PrintFloatMode::Engineering
             ? minimalNumberOfMantissaDigits
             : 1;
-    int numberOfZerosRemoved = 0;
     while (digit.isZero() &&
            numberOfCharsForMantissaWithoutSign >
                minimumNumberOfCharsInMantissa &&
@@ -339,7 +338,6 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
       numberOfCharsForMantissaWithoutSign--;
       dividend = quotient;
       Long::DivisionByTen(dividend, &quotient, &digit);
-      numberOfZerosRemoved++;
     }
     if (numberOfCharsForMantissaWithoutSign > availableCharLength) {
       // Escape now if the true number of needed digits is not required

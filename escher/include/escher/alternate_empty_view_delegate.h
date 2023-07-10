@@ -16,7 +16,7 @@ class AlternateEmptyViewDelegate {
                              .font = KDFont::Size::Small},
                    .horizontalAlignment = KDGlyph::k_alignCenter}) {}
   virtual bool isEmpty() const = 0;
-  virtual View* emptyView() {
+  View* emptyView() {
     m_message.setMessage(emptyMessage());
     return &m_message;
   }

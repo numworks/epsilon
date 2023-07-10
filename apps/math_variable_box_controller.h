@@ -45,7 +45,8 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
-          Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
+          Escher::Metric::PopUpMargins.top() +
+              Escher::Metric::StackTitleHeight);
   constexpr static int k_numberOfMenuRows =
       static_cast<int>(Page::NumberOfPages) - 1 /* RootMenu */ +
       1 /* DefineVariable */;

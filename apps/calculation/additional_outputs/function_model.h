@@ -22,9 +22,9 @@ class FunctionModel : public Shared::MemoizedCurveViewRange {
  private:
   // Margin used to separate the drawings from the curve view's border
   constexpr static int k_marginInPixels = 12;
-  constexpr static int k_width =
-      Ion::Display::Width - Escher::Metric::PopUpRightMargin -
-      Escher::Metric::PopUpLeftMargin - 2 * k_marginInPixels;
+  constexpr static int k_width = Ion::Display::Width -
+                                 Escher::Metric::PopUpMargins.width() -
+                                 2 * k_marginInPixels;
   constexpr static int k_height =
       IllustratedExpressionsListController::k_illustrationHeight -
       2 * k_marginInPixels;

@@ -2,6 +2,7 @@
 #define ESCHER_MODAL_VIEW_CONTROLLER_H
 
 #include <escher/view_controller.h>
+#include <kandinsky/margins.h>
 
 namespace Escher {
 
@@ -14,10 +15,7 @@ class ModalViewController : public ViewController {
   void didBecomeFirstResponder() override;
   void displayModalViewController(ViewController* vc, float verticalAlignment,
                                   float horizontalAlignment,
-                                  KDCoordinate topMargin = 0,
-                                  KDCoordinate leftMargin = 0,
-                                  KDCoordinate bottomMargin = 0,
-                                  KDCoordinate rightMargin = 0,
+                                  KDMargins margins = {},
                                   bool growingOnly = false);
   void reloadModal();
   void dismissModal();
@@ -49,9 +47,8 @@ class ModalViewController : public ViewController {
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void presentModalView(View* modalView, float verticalAlignment,
-                          float horizontalAlignment, KDCoordinate topMargin,
-                          KDCoordinate leftMargin, KDCoordinate bottomMargin,
-                          KDCoordinate rightMargin, bool growingOnly);
+                          float horizontalAlignment, KDMargins margins,
+                          bool growingOnly);
     void dismissModalView();
     bool isDisplayingModal() const;
     void reload();
@@ -68,10 +65,7 @@ class ModalViewController : public ViewController {
     bool m_isDisplayingModal;
     float m_verticalAlignment;
     float m_horizontalAlignment;
-    KDCoordinate m_topMargin;
-    KDCoordinate m_leftMargin;
-    KDCoordinate m_bottomMargin;
-    KDCoordinate m_rightMargin;
+    KDMargins m_margins;
     bool m_modalGrowingOnly;
   };
 

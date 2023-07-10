@@ -96,9 +96,8 @@ void StoreColumnHelper::displayFormulaInput() {
     fillFormulaInputWithTemplate(memoizedFormula(index));
     return;
   }
-  App::app()->displayModalViewController(
-      &m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin,
-      Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
+  App::app()->displayModalViewController(&m_templateStackController, 0.f, 0.f,
+                                         Metric::PopUpMarginsNoBottom);
 }
 
 void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {

@@ -37,8 +37,7 @@ class TrigonometryModel : public Shared::CurveViewRange {
  private:
   constexpr static float k_targetRatio = 4.f / 260.f;  // see above
   constexpr static float k_width = Ion::Display::Width -
-                                   Escher::Metric::PopUpRightMargin -
-                                   Escher::Metric::PopUpLeftMargin -
+                                   Escher::Metric::PopUpMargins.width() -
                                    Escher::Metric::CellSeparatorThickness * 2;
   static_assert(k_width == 264,
                 "Trigonometry model is built with the assumption that the "

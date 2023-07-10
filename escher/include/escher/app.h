@@ -62,10 +62,7 @@ class App : public Responder {
   virtual bool processEvent(Ion::Events::Event event);
   void displayModalViewController(ViewController* vc, float verticalAlignment,
                                   float horizontalAlignment,
-                                  KDCoordinate topMargin = 0,
-                                  KDCoordinate leftMargin = 0,
-                                  KDCoordinate bottomMargin = 0,
-                                  KDCoordinate rightMargin = 0,
+                                  KDMargins margins = {},
                                   bool growingOnly = false);
   void displayWarning(I18n::Message warningMessage1,
                       I18n::Message warningMessage2 = (I18n::Message)0,

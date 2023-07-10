@@ -397,9 +397,8 @@ KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
 }
 
 void ListController::addModel() {
-  App::app()->displayModalViewController(
-      &m_typeStackController, 0.f, 0.f, Metric::PopUpTopMargin,
-      Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
+  App::app()->displayModalViewController(&m_typeStackController, 0.f, 0.f,
+                                         Metric::PopUpMarginsNoBottom);
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {

@@ -188,8 +188,8 @@ void Dropdown::open() {
                              ->modalView()
                              ->pointFromPointInView(this, KDPointZero)
                              .translatedBy(borderOffset);
-  App::app()->displayModalViewController(&m_popup, 0.f, 0.f, topLeftAngle.y(),
-                                         topLeftAngle.x());
+  App::app()->displayModalViewController(
+      &m_popup, 0.f, 0.f, {{topLeftAngle.x(), 0}, {topLeftAngle.y(), 0}});
 }
 
 void Dropdown::close() { m_popup.close(); }

@@ -36,7 +36,8 @@ class PythonToolbox : public Escher::Toolbox {
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
-          Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
+          Escher::Metric::PopUpMargins.top() +
+              Escher::Metric::StackTitleHeight);
 
  private:
   void scrollToLetter(char letter);

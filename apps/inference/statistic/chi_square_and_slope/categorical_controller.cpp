@@ -187,13 +187,14 @@ bool InputCategoricalController::ButtonAction(
 }
 
 void InputCategoricalController::viewWillAppear() {
-  categoricalTableCell()->selectableTableView()->resetScroll();
-  categoricalTableCell()->recomputeDimensions();
+  // Significance cell
   PrintValueInTextHolder(m_statistic->threshold(),
                          m_significanceCell.textField(), true, true);
   m_significanceCell.setMessages(m_statistic->thresholdName(),
                                  m_statistic->thresholdDescription());
-  m_selectableListView.reloadData(false);
+  // Table cell
+  categoricalTableCell()->selectableTableView()->resetScroll();
+  categoricalTableCell()->recomputeDimensions(false, true);
 }
 
 HighlightCell *InputCategoricalController::reusableCell(int index, int type) {

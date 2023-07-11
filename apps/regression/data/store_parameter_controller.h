@@ -21,7 +21,7 @@ class StoreParameterController : public Shared::StoreParameterController {
     return Shared::StoreParameterController::numberOfRows() + 1;
   }
   Escher::AbstractMenuCell* cell(int index) override;
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+  void viewWillAppear() override;
 
  private:
   constexpr static int k_changeRegressionCellIndex = 2;

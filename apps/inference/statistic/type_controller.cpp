@@ -88,20 +88,11 @@ int TypeController::numberOfRows() const {
   return m_statistic->numberOfAvailableDistributions();
 }
 
-void TypeController::fillCellForRow(Escher::HighlightCell *cell, int row) {
-  assert(row <= indexOfZTest());
-  I18n::Message message;
-  if (row == k_indexOfTTest) {
-    message = m_statistic->tDistributionName();
-  } else if (row == indexOfZTest()) {
-    message = m_statistic->zDistributionName();
-  } else {
-    assert(row == k_indexOfPooledTest);
-    message = m_statistic->tPooledDistributionName();
-  }
-  static_cast<MenuCell<MessageTextView, EmptyCellWidget, ChevronView> *>(cell)
-      ->label()
-      ->setMessage(message);
+void TypeController::viewWillAppear() {
+  m_cells[k_indexOfTTest].label()->setMessage(m_statistic->tDistributionName());
+  m_cells[k_indexOfPooledTest].label()->setMessage(
+      m_statistic->tPooledDistributionName());
+  m_cells[indexOfZTest()].label()->setMessage(m_statistic->zDistributionName());
 }
 
 }  // namespace Inference

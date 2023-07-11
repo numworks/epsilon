@@ -163,24 +163,30 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       return displayNotSuitableWarning();
     }
   }
+
   StoreContext storeContext(store(), m_parentContext);
   // Create the layout before simplifying
   Layout formulaLayout = formula.createLayout(
       Preferences::sharedPreferences->displayMode(),
       Preferences::sharedPreferences->numberOfSignificantDigits(),
       &storeContext);
+
   PoincareHelpers::CloneAndSimplify(
       &formula, &storeContext, ReductionTarget::SystemForApproximation,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
-  if (formula.recursivelyMatches([](const Expression e, Context *context) {
-        return e.isRandomList();
-      })) {
-    formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
-  }
   if (formula.isUndefined()) {
     return displayNotSuitableWarning();
   }
+
+  if (formula.recursivelyMatches([](const Expression e, Context *context) {
+        return e.isRandomList();
+      }) ||
+      formula.type() != ExpressionNode::Type::List) {
+    // Sometimes the formula is a list but the reduction failed.
+    formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
+  }
+
   if (formula.type() == ExpressionNode::Type::List) {
     bool allChildrenAreUndefined = true;
     int formulaNumberOfChildren = formula.numberOfChildren();
@@ -201,9 +207,8 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     memoizeFormula(formulaLayout, formulaMemoizationIndex(referencedColumn()));
     return true;
   }
-  // If formula contains a random formula, evaluate it for each pairs.
-  bool evaluateForEachPairs = formula.recursivelyMatches(
-      [](const Expression e, Context *context) { return e.isRandomNumber(); });
+
+  // Formula is not a list: set each cell to the same value
   double evaluation =
       PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {
@@ -213,6 +218,10 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   if (numberOfPairs == 0) {
     return true;
   }
+
+  // If formula contains a random formula, evaluate it for each pairs.
+  bool evaluateForEachPairs = formula.recursivelyMatches(
+      [](const Expression e, Context *context) { return e.isRandomNumber(); });
   for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, seriesToFill, columnToFill, j, true, true);
     if (evaluateForEachPairs) {
@@ -220,9 +229,11 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
           PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
+
   if (!store()->updateSeries(seriesToFill, false, false)) {
     return false;
   }
+
   reloadSeriesVisibleCells(seriesToFill);
   memoizeFormula(formulaLayout, formulaMemoizationIndex(referencedColumn()));
   return true;

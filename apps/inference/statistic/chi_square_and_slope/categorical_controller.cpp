@@ -191,6 +191,8 @@ void InputCategoricalController::viewWillAppear() {
   categoricalTableCell()->recomputeDimensions();
   PrintValueInTextHolder(m_statistic->threshold(),
                          m_significanceCell.textField(), true, true);
+  m_significanceCell.setMessages(m_statistic->thresholdName(),
+                                 m_statistic->thresholdDescription());
   m_selectableListView.reloadData(false);
 }
 
@@ -199,15 +201,6 @@ HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
     return &m_significanceCell;
   } else {
     return CategoricalController::reusableCell(index, type);
-  }
-}
-
-void InputCategoricalController::fillCellForRow(Escher::HighlightCell *cell,
-                                                int row) {
-  if (row == indexOfSignificanceCell()) {
-    assert(cell == &m_significanceCell);
-    m_significanceCell.setMessages(m_statistic->thresholdName(),
-                                   m_statistic->thresholdDescription());
   }
 }
 

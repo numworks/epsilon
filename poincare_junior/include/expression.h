@@ -27,6 +27,8 @@ class Expression final : public Reference {
   static Tree* FromPoincareExpression(Poincare::Expression exp);
 
  private:
+  static void ConvertTextToLayout(EditionReference layoutParent,
+                                  const char* text);
   static void ConvertBuiltinToLayout(EditionReference layoutParent,
                                      Tree* expression);
   static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,

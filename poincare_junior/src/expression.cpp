@@ -12,10 +12,9 @@
 
 namespace PoincareJ {
 
-void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
-                                        Tree *expression) {
-  assert(Builtin::IsBuiltin(expression->type()));
-  UTF8Decoder decoder(Builtin::Name(expression->type()).mainAlias());
+void Expression::ConvertTextToLayout(EditionReference layoutParent,
+                                     const char *text) {
+  UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
     NAry::AddChild(
@@ -24,6 +23,13 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
             codePoint));
     codePoint = decoder.nextCodePoint();
   }
+}
+
+void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
+                                        Tree *expression) {
+  assert(Builtin::IsBuiltin(expression->type()));
+  ConvertTextToLayout(layoutParent,
+                      Builtin::Name(expression->type()).mainAlias());
   EditionReference parenthesis =
       SharedEditionPool->push<BlockType::ParenthesisLayout>();
   EditionReference newParent =
@@ -188,6 +194,9 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
           layoutParent,
           SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
               *reinterpret_cast<const char *>(expression->block() + 2)));
+      break;
+    case BlockType::Undefined:
+      ConvertTextToLayout(layoutParent, "undef");
       break;
     case BlockType::UserFunction:
     case BlockType::UserSequence:

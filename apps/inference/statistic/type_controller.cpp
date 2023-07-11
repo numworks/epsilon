@@ -23,6 +23,10 @@ TypeController::TypeController(StackViewController *parent,
       m_inputController(inputController),
       m_statistic(statistic) {
   m_selectableListView.setBottomMargin(0);
+  m_cells[k_indexOfTTest].label()->setMessage(m_statistic->tDistributionName());
+  m_cells[k_indexOfPooledTest].label()->setMessage(
+      m_statistic->tPooledDistributionName());
+  m_cells[k_indexOfZTest].label()->setMessage(m_statistic->zDistributionName());
 
   // Init selection
   selectRow(0);
@@ -42,7 +46,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
   int selRow = selectedRow();
   if (selRow == k_indexOfTTest) {
     type = DistributionType::T;
-  } else if (selRow == indexOfZTest()) {
+  } else if (selRow == k_indexOfZTest) {
     type = DistributionType::Z;
   } else {
     assert(selRow == k_indexOfPooledTest);
@@ -77,21 +81,15 @@ void TypeController::stackOpenPage(ViewController *nextPage) {
       break;
     default:
       assert(m_statistic->distributionType() == DistributionType::Z);
-      selectRow(indexOfZTest());
+      selectRow(k_indexOfZTest);
       break;
   }
   ViewController::stackOpenPage(nextPage);
 }
 
-int TypeController::numberOfRows() const {
-  return m_statistic->numberOfAvailableDistributions();
-}
-
 void TypeController::viewWillAppear() {
-  m_cells[k_indexOfTTest].label()->setMessage(m_statistic->tDistributionName());
-  m_cells[k_indexOfPooledTest].label()->setMessage(
-      m_statistic->tPooledDistributionName());
-  m_cells[indexOfZTest()].label()->setMessage(m_statistic->zDistributionName());
+  m_cells[k_indexOfPooledTest].setVisible(
+      m_statistic->numberOfAvailableDistributions() == numberOfRows());
 }
 
 }  // namespace Inference

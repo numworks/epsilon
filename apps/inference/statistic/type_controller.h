@@ -29,18 +29,17 @@ class TypeController : public Escher::ExplicitSelectableListViewController {
   void stackOpenPage(Escher::ViewController* nextPage) override;
   void didBecomeFirstResponder() override;
   // ListViewDataSource
-  int numberOfRows() const override;
+  int numberOfRows() const override { return k_numberOfRows; }
   Escher::HighlightCell* cell(int index) override { return &m_cells[index]; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 
   constexpr static int k_indexOfTTest = 0;
   constexpr static int k_indexOfPooledTest = 1;
+  constexpr static int k_indexOfZTest = 2;
 
  private:
-  constexpr static int k_numberOfRows = 3;
-
-  int indexOfZTest() const { return numberOfRows() - 1; }
+  constexpr static int k_numberOfRows = k_indexOfZTest + 1;
 
   HypothesisController* m_hypothesisController;
   InputController* m_inputController;

@@ -25,6 +25,7 @@ FunctionParameterController::FunctionParameterController(
       m_useColumnTitle(false) {
   m_detailsCell.label()->setMessage(I18n::Message::Details);
   m_derivativeCell.label()->setMessage(I18n::Message::GraphDerivative);
+  m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
 }
 
 const char *FunctionParameterController::title() {
@@ -74,33 +75,24 @@ int writeInterval(char *buffer, int bufferSize, double min, double max,
       intervalBracket(max, false));
 }
 
-void FunctionParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  if (cell == &m_derivativeCell) {
-    m_derivativeCell.accessory()->setState(function()->displayDerivative());
-    return;
-  }
-  if ((cell == &m_detailsCell || cell == &m_functionDomainCell) &&
-      !m_record.isNull()) {
+void FunctionParameterController::viewWillAppear() {
+  m_derivativeCell.accessory()->setState(function()->displayDerivative());
+  if (!m_record.isNull()) {
     App *myApp = App::app();
-    assert(!m_record.isNull());
     Shared::ExpiringPointer<ContinuousFunction> function =
         myApp->functionStore()->modelForRecord(m_record);
-    if (cell == &m_detailsCell) {
-      m_detailsCell.subLabel()->setMessage(function->properties().caption());
-    } else {
-      assert(cell == &m_functionDomainCell);
-      m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
-      double min = function->tMin();
-      double max = function->tMax();
-      constexpr int bufferSize = OneLineBufferTextView<>::MaxTextSize();
-      char buffer[bufferSize];
-      writeInterval(buffer, bufferSize, min, max,
-                    Preferences::VeryShortNumberOfSignificantDigits,
-                    Preferences::sharedPreferences->displayMode());
-      // Cell's layout will adapt to fit the subLabel.
-      m_functionDomainCell.subLabel()->setText(buffer);
-    }
+    m_detailsCell.subLabel()->setMessage(function->properties().caption());
+    double min = function->tMin();
+    double max = function->tMax();
+    constexpr int bufferSize = OneLineBufferTextView<>::MaxTextSize();
+    char buffer[bufferSize];
+    writeInterval(buffer, bufferSize, min, max,
+                  Preferences::VeryShortNumberOfSignificantDigits,
+                  Preferences::sharedPreferences->displayMode());
+    // Cell's layout will adapt to fit the subLabel.
+    m_functionDomainCell.subLabel()->setText(buffer);
   }
+  Shared::ListParameterController::viewWillAppear();
 }
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
@@ -119,6 +111,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_derivativeCell &&
       m_derivativeCell.canBeActivatedByEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
+    m_derivativeCell.accessory()->setState(function()->displayDerivative());
     m_selectableListView.reloadSelectedCell();
     return true;
   }

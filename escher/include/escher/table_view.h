@@ -61,6 +61,8 @@ class TableView : public ScrollView {
   HighlightCell *reusableCellAtIndex(int index) {
     return m_contentView.reusableCellAtIndex(index);
   }
+  // Ensure that cells are properly filled after scrolling
+  bool alwaysForceRelayoutOfContentView() const override { return true; }
 
   class ContentView : public View {
    public:

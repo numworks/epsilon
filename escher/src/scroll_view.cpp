@@ -172,8 +172,10 @@ void ScrollView::layoutSubviews(bool force) {
                        .opposite()
                        .translatedBy({m_leftMargin, m_topMargin})
                        .relativeTo(innerFrame.origin());
+
   KDRect contentFrame = KDRect(offset, contentSize());
-  m_innerView.setChildFrame(m_contentView, contentFrame, force);
+  m_innerView.setChildFrame(m_contentView, contentFrame,
+                            force || alwaysForceRelayoutOfContentView());
 
   if (!decorator()->layoutBeforeInnerView()) {
     layoutDecorator(force);
@@ -182,7 +184,7 @@ void ScrollView::layoutSubviews(bool force) {
 
 void ScrollView::setContentOffset(KDPoint offset) {
   if (m_dataSource->setOffset(offset)) {
-    layoutSubviews(true);
+    layoutSubviews();
   }
 }
 

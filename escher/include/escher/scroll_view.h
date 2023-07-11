@@ -120,6 +120,7 @@ class ScrollView : public View {
   virtual KDSize contentSize() const {
     return m_contentView->minimalSizeForOptimalDisplay();
   }
+  virtual bool alwaysForceRelayoutOfContentView() const { return false; }
   virtual float marginPortionTolerance() const { return 0.8f; }
 #if ESCHER_VIEW_LOGGING
   const char *className() const override;

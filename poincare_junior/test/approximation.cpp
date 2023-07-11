@@ -11,7 +11,7 @@ using namespace PoincareJ;
 
 void assert_approximation_is(const Tree* n, float f) {
   float approx = Approximation::To<float>(n);
-  bool result = Float::RoughlyEqual<float>(approx, f, FLT_EPSILON);
+  bool result = Float::RoughlyEqual<float>(approx, f, FLT_EPSILON, true);
 #if POINCARE_MEMORY_TREE_LOG
   if (!result) {
     std::cout << "Approximation test failure with: \n";
@@ -42,6 +42,9 @@ QUIZ_CASE(pcj_approximation) {
   assert_approximation_is(KCos(π_e), -1.f);
   assert_approximation_is(KSin(π_e), 0.f);
   assert_approximation_is(KTan(0_e), 0.f);
+  assert_approximation_is(KPowReal(1_e, KDiv(1_e, 3_e)), 1.f);
+  assert_approximation_is(KPowReal(-1_e, KDiv(1_e, 3_e)), NAN);
+  assert_approximation_is(KPowReal(-1_e, 2_e), 1.f);
 
   quiz_assert(std::isnan(Approximation::To<float>("x"_e)));
 }

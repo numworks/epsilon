@@ -33,6 +33,14 @@ class Approximation final {
     return std::pow(a, b);
   }
   template <typename T>
+  static T FloatPowerReal(T a, T b) {
+    /* PowerReal could not be reduced, b's reductions cannot be safely
+     * interpreted as a rational. As a consequence, return NAN a is negative and
+     *  b isn't an integer. */
+    return (a < static_cast<T>(0.0) && b != std::round(b)) ? NAN
+                                                           : FloatPower(a, b);
+  }
+  template <typename T>
   static T FloatSubtraction(T a, T b) {
     return a - b;
   }

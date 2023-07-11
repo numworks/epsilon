@@ -34,6 +34,8 @@ T Approximation::To(const Tree* node) {
       return Approximation::MapAndReduce(node, FloatDivision<T>);
     case BlockType::Subtraction:
       return Approximation::MapAndReduce(node, FloatSubtraction<T>);
+    case BlockType::PowerReal:
+      return Approximation::MapAndReduce(node, FloatPowerReal<T>);
     case BlockType::Power:
       return Approximation::MapAndReduce(node, FloatPower<T>);
     case BlockType::Logarithm:

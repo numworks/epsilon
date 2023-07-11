@@ -23,8 +23,8 @@ class GoodnessTableCell : public DoubleColumnTableCell {
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
 
-  bool recomputeDimensions(bool forceReloadTableCell = false,
-                           bool forceReloadPage = false) override;
+  bool recomputeDimensionsAndReload(bool forceReloadTableCell = false,
+                                    bool forceReloadPage = false) override;
 
  private:
   static_assert(GoodnessTest::k_maxNumberOfColumns ==

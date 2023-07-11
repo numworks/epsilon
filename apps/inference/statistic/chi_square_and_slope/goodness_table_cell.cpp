@@ -34,11 +34,11 @@ bool GoodnessTableCell::textFieldDidFinishEditing(
   return false;
 }
 
-bool GoodnessTableCell::recomputeDimensions(bool forceReloadTableCell,
-                                            bool forceReloadPage) {
+bool GoodnessTableCell::recomputeDimensionsAndReload(bool forceReloadTableCell,
+                                                     bool forceReloadPage) {
   // Update degree of freedom if Number of non-empty rows changed
-  if (InputCategoricalTableCell::recomputeDimensions(forceReloadTableCell,
-                                                     forceReloadPage)) {
+  if (InputCategoricalTableCell::recomputeDimensionsAndReload(
+          forceReloadTableCell, forceReloadPage)) {
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
     statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
     m_inputGoodnessController->updateDegreeOfFreedomCell();

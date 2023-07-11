@@ -35,7 +35,7 @@ InputViewController *SlopeTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
-void SlopeTableCell::reload() { recomputeDimensions(true); }
+void SlopeTableCell::reload() { recomputeDimensionsAndReload(true); }
 
 CategoricalController *SlopeTableCell::categoricalController() {
   return m_inputSlopeController;

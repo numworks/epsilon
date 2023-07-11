@@ -194,7 +194,7 @@ void InputCategoricalController::viewWillAppear() {
                                  m_statistic->thresholdDescription());
   // Table cell
   categoricalTableCell()->selectableTableView()->resetScroll();
-  categoricalTableCell()->recomputeDimensions(true, true);
+  categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 
 HighlightCell *InputCategoricalController::reusableCell(int index, int type) {

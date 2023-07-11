@@ -106,7 +106,7 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
       (column == tableViewDataSource()->numberOfColumns() - 1 &&
        relativeColumn(tableViewDataSource()->numberOfColumns()) <
            tableModel()->maxNumberOfColumns())) {
-    recomputeDimensions();
+    recomputeDimensionsAndReload();
   }
   m_selectableTableView.reloadCellAtLocation(column, row);
   m_selectableTableView.selectCellAtClippedLocation(column, row);
@@ -162,7 +162,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
     /* A row has been deleted, but size didn't change, meaning the number of
      * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
      * moved up multiple cells, m_inputTableView should be reloaded. */
-    recomputeDimensions(true);
+    recomputeDimensionsAndReload(true);
     m_selectableTableView.selectCellAtClippedLocation(col, row, true);
     return true;
   }
@@ -184,12 +184,12 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   tableModel()->recomputeData();
   m_selectableTableView.deselectTable();
   m_selectableTableView.resetScroll();
-  recomputeDimensions(true, true);
+  recomputeDimensionsAndReload(true, true);
   m_selectableTableView.selectCellAtClippedLocation(column, 1, false);
 }
 
-bool InputCategoricalTableCell::recomputeDimensions(bool forceReloadTableCell,
-                                                    bool forceReloadPage) {
+bool InputCategoricalTableCell::recomputeDimensionsAndReload(
+    bool forceReloadTableCell, bool forceReloadPage) {
   Chi2Test::Index2D dimensions = tableModel()->computeDimensions();
   bool didChange = false;
   if (m_numberOfRows != dimensions.row || m_numberOfColumns != dimensions.col) {

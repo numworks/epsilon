@@ -87,8 +87,8 @@ class InputCategoricalTableCell
   // DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>
   void initCell(InferenceEvenOddEditableCell, void *cell, int index) override;
 
-  virtual bool recomputeDimensions(bool forceReloadTableCell = false,
-                                   bool forceReloadPage = false);
+  virtual bool recomputeDimensionsAndReload(bool forceReloadTableCell = false,
+                                            bool forceReloadPage = false);
 
  protected:
   // ClearColumnHelper

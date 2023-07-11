@@ -69,6 +69,64 @@ void GraphOptionsController::viewWillAppear() {
   // m_regressionEquationCell may have changed size
   m_regressionEquationCell.label()->resetScroll();
   resetMemoization();
+
+  int series = m_graphController->selectedSeriesIndex();
+  Regression::Model *model = m_store->modelForSeries(series);
+
+  // Change regression cell
+  m_changeRegressionCell.subLabel()->setMessage(model->name());
+
+  const int significantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
+  Preferences::PrintFloatMode displayMode =
+      Preferences::PrintFloatMode::Decimal;
+
+  // Regression equation cell
+  double *coefficients = m_store->coefficientsForSeries(
+      series, m_graphController->globalContext());
+  m_regressionEquationCell.label()->setLayout(
+      model->equationLayout(coefficients, "y", significantDigits, displayMode));
+
+  // r and r2 cells
+  RCell *rCells[2] = {&m_rCell, &m_r2Cell};
+  for (int i = 0; i < 2; i++) {
+    bool isRCell = rCells[i] == &m_rCell;
+    if (!isRCell) {
+      Model::Type type = m_store->seriesRegressionType(
+          m_graphController->selectedSeriesIndex());
+      assert(Store::DisplayR2(type) != Store::DisplayRSquared(type));
+      Layout r2Layout;
+      if (Store::DisplayR2(type)) {
+        r2Layout = HorizontalLayout::Builder(
+            {CodePointLayout::Builder('R'), CodePointLayout::Builder('2')});
+      } else {
+        r2Layout = HorizontalLayout::Builder(
+            {CodePointLayout::Builder('r'),
+             VerticalOffsetLayout::Builder(
+                 CodePointLayout::Builder('2'),
+                 VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
+      }
+      m_r2Cell.label()->setLayout(r2Layout);
+    }
+    if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
+      rCells[i]->label()->setTextColor(Palette::GrayDark);
+      rCells[i]->accessory()->setTextColor(Palette::GrayDark);
+      rCells[i]->accessory()->setText(I18n::translate(I18n::Message::Disabled));
+      return;
+    }
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+        Preferences::VeryLargeNumberOfSignificantDigits);
+    char buffer[bufferSize];
+    double value = isRCell ? m_store->correlationCoefficient(series)
+                           : m_store->determinationCoefficientForSeries(
+                                 series, m_graphController->globalContext());
+    int insertedChars =
+        Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+            value, buffer, bufferSize, significantDigits, displayMode);
+    assert(insertedChars < bufferSize);
+    (void)insertedChars;  // Silence warnings
+    rCells[i]->accessory()->setText(buffer);
+  }
+
   m_selectableListView.reloadData();
 }
 
@@ -143,63 +201,6 @@ HighlightCell *GraphOptionsController::cell(int index) {
   };
   return cells[index];
 }
-
-void GraphOptionsController::fillCellForRow(HighlightCell *cell, int row) {
-  int series = m_graphController->selectedSeriesIndex();
-  Regression::Model *model = m_store->modelForSeries(series);
-  if (cell == &m_changeRegressionCell) {
-    m_changeRegressionCell.subLabel()->setMessage(model->name());
-    return;
-  }
-  const int significantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
-  Preferences::PrintFloatMode displayMode =
-      Preferences::PrintFloatMode::Decimal;
-  if (cell == &m_regressionEquationCell) {
-    double *coefficients = m_store->coefficientsForSeries(
-        series, m_graphController->globalContext());
-    m_regressionEquationCell.label()->setLayout(model->equationLayout(
-        coefficients, "y", significantDigits, displayMode));
-  } else if (cell == &m_rCell || cell == &m_r2Cell) {
-    bool isRCell = cell == &m_rCell;
-    if (!isRCell) {
-      Model::Type type = m_store->seriesRegressionType(
-          m_graphController->selectedSeriesIndex());
-      assert(Store::DisplayR2(type) != Store::DisplayRSquared(type));
-      Layout r2Layout;
-      if (Store::DisplayR2(type)) {
-        r2Layout = HorizontalLayout::Builder(
-            {CodePointLayout::Builder('R'), CodePointLayout::Builder('2')});
-      } else {
-        r2Layout = HorizontalLayout::Builder(
-            {CodePointLayout::Builder('r'),
-             VerticalOffsetLayout::Builder(
-                 CodePointLayout::Builder('2'),
-                 VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
-      }
-      m_r2Cell.label()->setLayout(r2Layout);
-    }
-    RCell *rCell = static_cast<RCell *>(cell);
-    if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
-      rCell->label()->setTextColor(Palette::GrayDark);
-      rCell->accessory()->setTextColor(Palette::GrayDark);
-      rCell->accessory()->setText(I18n::translate(I18n::Message::Disabled));
-      return;
-    }
-    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        Preferences::VeryLargeNumberOfSignificantDigits);
-    char buffer[bufferSize];
-    double value = isRCell ? m_store->correlationCoefficient(series)
-                           : m_store->determinationCoefficientForSeries(
-                                 series, m_graphController->globalContext());
-    int insertedChars =
-        Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-            value, buffer, bufferSize, significantDigits, displayMode);
-    assert(insertedChars < bufferSize);
-    (void)insertedChars;  // Silence warnings
-    rCell->accessory()->setText(buffer);
-  }
-}
-
 bool GraphOptionsController::displayRegressionEquationCell() const {
   return m_store->coefficientsAreDefined(
       m_graphController->selectedSeriesIndex(),

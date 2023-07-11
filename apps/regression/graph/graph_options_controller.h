@@ -33,7 +33,6 @@ class GraphOptionsController
   }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_maxNumberOfRows; }

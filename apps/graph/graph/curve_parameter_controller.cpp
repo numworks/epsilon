@@ -28,6 +28,7 @@ CurveParameterController::CurveParameterController(
                                        cursor) {
   m_calculationCell.label()->setMessage(I18n::Message::Find);
   m_optionsCell.label()->setMessage(I18n::Message::Options);
+  m_derivativeNumberCell.setEditable(false);
 }
 
 Escher::HighlightCell *CurveParameterController::cell(int index) {
@@ -74,9 +75,6 @@ void CurveParameterController::fillCellForRow(HighlightCell *cell, int row) {
     parameterCells[row]->label()->setMessageWithPlaceholders(name);
     ExplicitFloatParameterController::fillCellForRow(cell, row);
     return;
-  }
-  if (cell == &m_derivativeNumberCell) {
-    m_derivativeNumberCell.setEditable(false);
   }
   if (cell == &m_imageCell || cell == &m_derivativeNumberCell) {
     // The parameter requires a custom name built from the function name

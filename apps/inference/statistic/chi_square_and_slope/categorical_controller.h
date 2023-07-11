@@ -93,7 +93,6 @@ class InputCategoricalController : public CategoricalController,
 
   // ListViewDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
   InputCategoricalTableCell* categoricalTableCell() override = 0;

@@ -8,7 +8,7 @@ EditableExpressionModelCell::EditableExpressionModelCell(
     KDGlyph::Format format)
     : HighlightCell(),
       m_layoutField(parentResponder, layoutDelegate, format),
-      m_margins(0) {
+      m_margins() {
   m_layoutField.margins()->setLeft(Metric::EditableExpressionAdditionalMargin);
 }
 

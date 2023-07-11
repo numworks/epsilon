@@ -36,7 +36,7 @@ class EditableExpressionCell : public Bordered,
       Metric::CellSeparatorThickness;
   // topMargin has + 1 to look the same as when the separator was included in it
   constexpr static KDMargins k_margins = {
-      {Metric::LayoutViewMargin},
+      {Metric::LayoutViewMargin, Metric::LayoutViewMargin},
       {Metric::LayoutViewMargin + k_separatorThickness,
        Metric::LayoutViewMargin}};
   LayoutField m_layoutField;

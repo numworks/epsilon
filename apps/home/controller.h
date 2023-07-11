@@ -86,7 +86,7 @@ class Controller : public Escher::ViewController,
     void layoutSubviews(bool force = false) override;
     Escher::SelectableTableView m_selectableTableView;
   };
-  constexpr static KDMargins k_margins = {{4}, {0}};
+  constexpr static KDMargins k_margins = {4, 4, 0, 0};
   constexpr static KDCoordinate k_bottomMargin = 14;
   constexpr static KDCoordinate k_indicatorMargin = 61;
   constexpr static int k_numberOfColumns = 3;

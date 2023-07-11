@@ -11,7 +11,7 @@ namespace Escher {
 class Metric {
  public:
   // Common margins
-  constexpr static KDMargins CommonMargins = {14};
+  constexpr static KDMargins CommonMargins = KDMargins(14);
   constexpr static KDCoordinate CommonLargeMargin = 10;
   constexpr static KDCoordinate CommonSmallMargin = 5;
   constexpr static KDCoordinate ScrollViewBarThickness = 2;
@@ -19,7 +19,7 @@ class Metric {
       (CommonMargins.left() - ScrollViewBarThickness) / 2;
 
   // General cell margins
-  constexpr static KDMargins CellMargins = {8};
+  constexpr static KDMargins CellMargins = KDMargins(8);
   constexpr static KDCoordinate CellHorizontalElementMargin =
       CellMargins.left();
   constexpr static KDCoordinate CellSeparatorThickness = 1;

@@ -25,7 +25,7 @@ class EquationListView : public Escher::Responder,
   void layoutSubviews(bool force = false) override;
 
  private:
-  constexpr static KDMargins k_margins = {{10, 8}, {10}};
+  constexpr static KDMargins k_margins = {10, 8, 10, 10};
 
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;

@@ -502,11 +502,12 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
 
 bool Simplification::DeepSystemProjection(Tree* ref,
                                           ProjectionContext projectionContext) {
-  if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
-    ref = Approximation::ReplaceWithApproximation(ref);
-  }
+  bool changed =
+      (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
+      Approximation::ApproximateAndReplaceEveryScalar(ref);
   return ApplyShallowInDepth(ref, ShallowSystemProjection,
-                             static_cast<void*>(&projectionContext));
+                             static_cast<void*>(&projectionContext)) ||
+         changed;
 }
 
 /* The order of nodes in NAry is not a concern here. They will be sorted before
@@ -519,8 +520,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
       static_cast<ProjectionContext*>(context);
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
       ref->block()->isInteger()) {
-    ref = Approximation::ReplaceWithApproximation(ref);
-    return true;
+    return Approximation::ApproximateAndReplaceEveryScalar(ref);
   }
 
   if (ref->block()->isOfType(

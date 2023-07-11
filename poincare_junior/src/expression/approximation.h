@@ -65,10 +65,10 @@ class Approximation final {
     assert((a == 0.0 || a == 1.0) && (b == 0.0 || b == 1.0));
     return static_cast<T>(a == b ? 0.0 : 1.0);
   }
-  static EditionReference ReplaceWithApproximation(EditionReference ref);
+  static bool ApproximateAndReplaceEveryScalar(Tree* tree);
+  EDITION_REF_WRAP(ApproximateAndReplaceEveryScalar)
 
  private:
-  static bool ApproximateAndReplaceEveryScalar(EditionReference ref);
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T>

@@ -112,13 +112,13 @@ QUIZ_CASE(pcj_simplification_algebraic_expansion) {
 }
 
 QUIZ_CASE(pcj_simplification_projection) {
-  EditionReference ref1(KCos(KSin(KTan(
+  EditionReference ref(KCos(KSin(KTan(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
            3_e)))));
   Simplification::DeepSystemProjection(
-      ref1, {.m_complexFormat = ComplexFormat::Cartesian});
+      ref, {.m_complexFormat = ComplexFormat::Cartesian});
   assert_trees_are_equal(
-      ref1,
+      ref,
       KTrig(
           KTrig(
               KMult(KTrig(KPow(KExp(KMult(KLn(KExp(KLn(KMult(
@@ -140,31 +140,37 @@ QUIZ_CASE(pcj_simplification_projection) {
               1_e),
           0_e));
 
-  EditionReference ref2(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
+  CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
   Simplification::DeepSystemProjection(
-      ref2, {.m_strategy = Strategy::NumbersToFloat});
+      ref, {.m_complexFormat = ComplexFormat::Cartesian,
+            .m_strategy = Strategy::NumbersToFloat});
   assert_trees_are_equal(
-      ref2,
+      ref,
       KAdd(KTrig(KAdd(2065.0_e, KMult(-1.0_e, 2065.0_e)), 0.0_e), KExp("x"_e)));
-  Simplification::DeepSystemProjection(
-      ref2, {.m_strategy = Strategy::ApproximateToFloat});
-  assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 
-  EditionReference ref3(KCos(100_e));
-  Simplification::DeepSystemProjection(ref3,
-                                       {.m_angleUnit = AngleUnit::Degree});
-  assert_trees_are_equal(ref3,
-                         KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
-
-  EditionReference ref4(KSqrt("y"_e));
+  CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(2_e, "x"_e),
+                              KPow(KLn(e_e), KDiv(1_e, 10_e))));
   Simplification::DeepSystemProjection(
-      ref4, {.m_complexFormat = ComplexFormat::Cartesian});
-  assert_trees_are_equal(ref4, KExp(KMult(KLn("y"_e), KHalf)));
+      ref, {.m_complexFormat = ComplexFormat::Cartesian,
+            .m_strategy = Strategy::ApproximateToFloat});
+  assert_trees_are_equal(ref,
+                         KAdd(1.0_e, KExp(KMult(KLn(2.0_e), "x"_e)), 1.0_e));
 
-  EditionReference ref5(KSqrt("y"_e));
+  CloneTreeOverTree(ref, KCos(100_e));
+  Simplification::DeepSystemProjection(ref, {.m_angleUnit = AngleUnit::Degree});
+  assert_trees_are_equal(ref, KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
+
+  CloneTreeOverTree(ref, KSqrt("y"_e));
   Simplification::DeepSystemProjection(
-      ref5, {.m_complexFormat = ComplexFormat::Real});
-  assert_trees_are_equal(ref5, KPowReal("y"_e, KHalf));
+      ref, {.m_complexFormat = ComplexFormat::Cartesian});
+  assert_trees_are_equal(ref, KExp(KMult(KLn("y"_e), KHalf)));
+
+  CloneTreeOverTree(ref, KSqrt("y"_e));
+  Simplification::DeepSystemProjection(
+      ref, {.m_complexFormat = ComplexFormat::Real});
+  assert_trees_are_equal(ref, KPowReal("y"_e, KHalf));
+
+  ref->removeTree();
 }
 
 QUIZ_CASE(pcj_simplification_beautify) {

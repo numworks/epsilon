@@ -80,32 +80,26 @@ T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
   return res;
 }
 
-EditionReference Approximation::ReplaceWithApproximation(EditionReference ref) {
-  Tree* root = ref;
-  ApproximateAndReplaceEveryScalar(ref);
-  return EditionReference(root);
-}
-
-bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
-  bool hasApproximatedEveryChild = true;
-  Tree* node = ref->nextNode();
-  int numberOfChildren = ref->numberOfChildren();
-  for (int i = 0; i < numberOfChildren; i++) {
-    // Approximate anyway
-    hasApproximatedEveryChild =
-        ApproximateAndReplaceEveryScalar(node) && hasApproximatedEveryChild;
-    node = node->nextTree();
+bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
+  bool changed = false;
+  bool approximateNode = true;
+  Tree* child = tree->nextNode();
+  int numberOfChildren = tree->numberOfChildren();
+  for (std::pair<Tree*, int> indexedNode :
+       NodeIterator::Children<Editable>(tree)) {
+    changed = ApproximateAndReplaceEveryScalar(indexedNode.first) || changed;
+    approximateNode =
+        approximateNode && indexedNode.first->type() == BlockType::Float;
   }
-  if (!hasApproximatedEveryChild) {
+  if (!approximateNode) {
     // TODO: Partially approximate additions and multiplication anyway
-    return false;
+    return changed;
   }
-  float approx = Approximation::To<float>(ref);
+  float approx = Approximation::To<float>(tree);
   if (std::isnan(approx)) {
-    return false;
+    return changed;
   }
-  ref =
-      ref->moveTreeOverTree(SharedEditionPool->push<BlockType::Float>(approx));
+  tree->moveTreeOverTree(SharedEditionPool->push<BlockType::Float>(approx));
   return true;
 }
 

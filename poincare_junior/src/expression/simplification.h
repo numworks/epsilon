@@ -70,6 +70,8 @@ class Simplification {
   static bool SimplifyMultiplication(Tree *u);
   static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
   static bool SimplifyPower(Tree *u);
+  static bool SimplifyPowerReal(Tree *u);
+  static void ConvertPowerRealToPower(Tree *u);
 
   typedef bool (*ShallowOperation)(Tree *node, void *context);
   static bool ApplyShallowInDepth(Tree *node, ShallowOperation shallowOperation,

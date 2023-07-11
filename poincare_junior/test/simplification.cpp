@@ -115,7 +115,8 @@ QUIZ_CASE(pcj_simplification_projection) {
   EditionReference ref1(KCos(KSin(KTan(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
            3_e)))));
-  Simplification::DeepSystemProjection(ref1);
+  Simplification::DeepSystemProjection(
+      ref1, {.m_complexFormat = ComplexFormat::Cartesian});
   assert_trees_are_equal(
       ref1,
       KTrig(
@@ -156,8 +157,14 @@ QUIZ_CASE(pcj_simplification_projection) {
                          KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
 
   EditionReference ref4(KSqrt("y"_e));
-  Simplification::DeepSystemProjection(ref4);
-  assert_trees_are_equal(ref4, KExp(KMult(KHalf, KLn("y"_e))));
+  Simplification::DeepSystemProjection(
+      ref4, {.m_complexFormat = ComplexFormat::Cartesian});
+  assert_trees_are_equal(ref4, KExp(KMult(KLn("y"_e), KHalf)));
+
+  EditionReference ref5(KSqrt("y"_e));
+  Simplification::DeepSystemProjection(
+      ref5, {.m_complexFormat = ComplexFormat::Real});
+  assert_trees_are_equal(ref5, KPowReal("y"_e, KHalf));
 }
 
 QUIZ_CASE(pcj_simplification_beautify) {
@@ -232,7 +239,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("d+c+b+a", "a+b+c+d");
   simplifies_to("e^(ln(x))", "x");
   simplifies_to("e^(ln(x+x))", "2*x");
-  simplifies_to("sqrt(x)^2", "e^(ln(x))");  // TODO: This is wrong
   simplifies_to("diff(x, x, 2)", "1");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
@@ -240,4 +246,27 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
                 "3*e^(3*y)*ln(y)*y^(4)+4*e^(3*y)*ln(y)*y^(3)+e^(3*y)*y^(3)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
+}
+
+QUIZ_CASE(pcj_power_simplification) {
+  // Real powers
+  // - x^y if x is complex or positive
+  simplifies_to("123^(1/3)", "123^(1/3)");
+  // - PowerReal(x,y) y is not a rational
+  simplifies_to("x^(e^(3))", "x^(e^(3))");
+  // - Looking at y's reduced rational form p/q :
+  //   * PowerReal(x,y) if x is of unknown sign and p odd
+  simplifies_to("x^(1/3)", "x^(1/3)");
+  //   * Unreal if q is even and x negative
+  simplifies_to("(-1)^(1/2)", "undef");
+  //   * |x|^y if p is even
+  simplifies_to("(-123)^(4/5)", "abs(-123)^(4/5)");
+  //   * -|x|^y if p is odd
+  simplifies_to("(-123)^(5/7)", "-1*abs(-123)^(5/7)");
+
+  simplifies_to("sqrt(x)^2", "√(x)^(2)");
+  // Complex Power
+  simplifies_to(
+      "sqrt(x)^2", "e^(ln(x))",
+      {.m_complexFormat = ComplexFormat::Cartesian});  // TODO: This is wrong
 }

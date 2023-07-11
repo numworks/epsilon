@@ -57,6 +57,8 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   switch (u->type()) {
     case BlockType::Power:
       return SimplifyPower(u) || modified;
+    case BlockType::PowerReal:
+      return SimplifyPowerReal(u) || modified;
     case BlockType::Addition:
       return SimplifyAddition(u) || modified;
     case BlockType::Multiplication:
@@ -182,6 +184,70 @@ Tree* PushExponent(const Tree* u) {
     return u->childAtIndex(1)->clone();
   }
   return P_ONE();
+}
+
+void Simplification::ConvertPowerRealToPower(Tree* u) {
+  // x^y -> exp(ln(x)*y)
+  u->matchAndReplace(KPowReal(KPlaceholder<A>(), KPlaceholder<B>()),
+                     KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
+  ShallowSystematicReduce(u->nextNode()->nextNode());  // Ln
+  ShallowSystematicReduce(u->nextNode());              // Mult
+  ShallowSystematicReduce(u);                          // Exp
+}
+
+bool Simplification::SimplifyPowerReal(Tree* u) {
+  /* Return :
+   * - x^y if x is complex or positive
+   * - PowerReal(x,y) y is not a rational
+   * - Looking at y's reduced rational form p/q :
+   *   * PowerReal(x,y) if x is of unknown sign and p odd
+   *   * Unreal if q is even and x negative
+   *   * |x|^y if p is even
+   *   * -|x|^y if p is odd
+   */
+  Tree* x = u->childAtIndex(0);
+  bool xIsNumber = IsNumber(x);
+  float xApproximation = xIsNumber ? Approximation::To<float>(x) : NAN;
+  if (xApproximation >= 0.f) {
+    // TODO : Same if x is complex
+    ConvertPowerRealToPower(u);
+    return true;
+  }
+  Tree* y = u->childAtIndex(1);
+  if (!IsRational(y)) {
+    // We don't know enough to simplify further.
+    return false;
+  }
+
+  bool pIsEven = Rational::Numerator(y).isEven();
+  bool qIsEven = Rational::Denominator(y).isEven();
+  // y is simplified, both p and q can't be even
+  assert(!qIsEven || !pIsEven);
+
+  if (!pIsEven && std::isnan(xApproximation)) {
+    // We don't know enough to simplify further.
+    return false;
+  }
+  assert(xApproximation < 0.f || pIsEven);
+
+  if (xApproximation < 0.f && qIsEven) {
+    // TODO: Implement and return NonReal
+    u->cloneNodeOverTree(KUndef);
+    return true;
+  }
+
+  // We can fallback to |x|^y
+  x->cloneNodeAtNode(KAbs);
+  ShallowSystematicReduce(x);
+  ConvertPowerRealToPower(u);
+
+  if (xApproximation < 0.f && !pIsEven) {
+    // -|x|^y
+    u->cloneTreeAtNode(KMult(-1_e));
+    NAry::SetNumberOfChildren(u, 2);
+    ShallowSystematicReduce(u);
+  }
+  return true;
 }
 
 // returns true if they have been merged in u1
@@ -392,6 +458,21 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
     DeepSystematicReduce(child);
   }
+
+  // RealPow(A,B) -> A^B
+  // exp(A? * ln(B) * C?) -> B^(A*C)
+  if (ref->matchAndReplace(KPowReal(KPlaceholder<A>(), KPlaceholder<B>()),
+                           KPow(KPlaceholder<A>(), KPlaceholder<B>())) ||
+      ref->matchAndReplace(
+          KExp(KMult(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
+                     KAnyTreesPlaceholder<C>())),
+          KPow(KPlaceholder<B>(),
+               KMult(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>())))) {
+    // A^0.5 -> Sqrt(A)
+    ref->matchAndReplace(KPow(KPlaceholder<A>(), KHalf),
+                         KSqrt(KPlaceholder<A>()));
+    return true;
+  }
   bool changed = false;
   // A + B? + (-1)*C + D?-> ((A + B) - C) + D
   // Applied as much as necessary while preserving the order.
@@ -410,15 +491,6 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
          // trig(A, 1) -> sin(A)
          ref->matchAndReplace(KTrig(KPlaceholder<A>(), 1_e),
                               KSin(KPlaceholder<A>())) ||
-         // exp(0.5*ln(A)) -> Sqrt(A)
-         ref->matchAndReplace(KExp(KMult(KHalf, KLn(KPlaceholder<A>()))),
-                              KSqrt(KPlaceholder<A>())) ||
-         // exp(A? * ln(B) * C?) -> B^(A*C)
-         ref->matchAndReplace(
-             KExp(KMult(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
-                        KAnyTreesPlaceholder<C>())),
-             KPow(KPlaceholder<B>(), KMult(KAnyTreesPlaceholder<A>(),
-                                           KAnyTreesPlaceholder<C>()))) ||
          // exp(A) -> e^A
          ref->matchAndReplace(KExp(KPlaceholder<A>()),
                               KPow(e_e, KPlaceholder<A>())) ||
@@ -460,6 +532,29 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
         KPlaceholder<A>(),
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
   }
+  // Sqrt(A) -> A^0.5
+  ref->matchAndReplace(KSqrt(KPlaceholder<A>()),
+                       KPow(KPlaceholder<A>(), KHalf));
+  if (ref->type() == BlockType::Power) {
+    const Tree* index = ref->nextNode()->nextTree();
+    if (!index->block()->isInteger()) {
+      // e^A -> exp(A)
+      if (!ref->matchAndReplace(KPow(e_e, KPlaceholder<A>()),
+                                KExp(KPlaceholder<A>()))) {
+        if (projectionContext->m_complexFormat != ComplexFormat::Real) {
+          // A^B -> exp(ln(A)*B)
+          ref->matchAndReplace(
+              KPow(KPlaceholder<A>(), KPlaceholder<B>()),
+              KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
+        } else {
+          // A^B -> RealPow(A,B)
+          ref->matchAndReplace(KPow(KPlaceholder<A>(), KPlaceholder<B>()),
+                               KPowReal(KPlaceholder<A>(), KPlaceholder<B>()));
+        }
+      }
+      return true;
+    }
+  }
 
   /* All replaced structure do not not need further shallow projection.
    * Operator || only is used. */
@@ -495,21 +590,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
       // log(A, B) -> ln(A) * ln(B)^(-1)
       ref->matchAndReplace(
           KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
-          KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e))) ||
-      // Sqrt(A) -> exp(0.5*ln(A))
-      ref->matchAndReplace(KSqrt(KPlaceholder<A>()),
-                           KExp(KMult(KHalf, KLn(KPlaceholder<A>())))) ||
-      // Power of non-integers
-      // TODO: Maybe add exp(A) -> e^A with A integer
-      (ref->type() == BlockType::Power &&
-       !ref->nextNode()->nextTree()->block()->isInteger() &&
-       (  // e^A -> exp(A)
-           ref->matchAndReplace(KPow(e_e, KPlaceholder<A>()),
-                                KExp(KPlaceholder<A>())) ||
-           // A^B -> exp(ln(A)*B)
-           ref->matchAndReplace(
-               KPow(KPlaceholder<A>(), KPlaceholder<B>()),
-               KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())))));
+          KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e)));
 }
 
 bool Simplification::ApplyShallowInDepth(Tree* ref,

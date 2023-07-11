@@ -532,6 +532,10 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
         KPlaceholder<A>(),
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
   }
+  // These types should only be available after projection
+  assert(!ref->block()->isOfType({BlockType::Exponential, BlockType::Trig,
+                                  BlockType::TrigDiff, BlockType::Polynomial,
+                                  BlockType::PowerReal}));
   // Sqrt(A) -> A^0.5
   ref->matchAndReplace(KSqrt(KPlaceholder<A>()),
                        KPow(KPlaceholder<A>(), KHalf));
@@ -575,10 +579,11 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
                            KTrig(KPlaceholder<A>(), 1_e)) ||
       // tan(A) -> sin(A) * cos(A)^(-1)
       /* TODO: Tangent will duplicate its yet to be projected children,
-       * replacing it after everything else may be an optimization. */
+       * replacing it after everything else may be an optimization.
+       * Sin and cos terms will be replaced afterwards. */
       ref->matchAndReplace(KTan(KPlaceholder<A>()),
-                           KMult(KTrig(KPlaceholder<A>(), 1_e),
-                                 KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e))) ||
+                           KMult(KSin(KPlaceholder<A>()),
+                                 KPow(KCos(KPlaceholder<A>()), -1_e))) ||
       // log(A, e) -> ln(e)
       ref->matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
                            KLn(KPlaceholder<A>())) ||

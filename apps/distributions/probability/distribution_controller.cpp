@@ -29,6 +29,10 @@ DistributionController::DistributionController(
       m_distribution(distribution),
       m_parametersController(parametersController) {
   assert(m_distribution != nullptr);
+  for (int i = 0; i < k_numberOfCells; ++i) {
+    m_cells[i].subLabel()->setGlyphFormat(
+        GlyphsView::FormatForWidgetType(CellWidget::Type::Label));
+  }
   // Init selection
   selectRow(0);
 }
@@ -65,8 +69,6 @@ constexpr I18n::Message sMessages[] = {
 
 void DistributionController::fillCellForRow(HighlightCell *cell, int row) {
   DistributionCell *myCell = static_cast<DistributionCell *>(cell);
-  myCell->subLabel()->setGlyphFormat(
-      GlyphsView::FormatForWidgetType(CellWidget::Type::Label));
   myCell->subLabel()->setMessage(sMessages[row]);
   const Image *images[k_totalNumberOfModels] = {
       ImageStore::BinomialIcon,    ImageStore::UniformIcon,

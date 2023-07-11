@@ -55,26 +55,20 @@ const char* FunctionModelsParameterController::title() {
 
 void FunctionModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  for (int i = 0; i < k_numberOfExpressionCells; i++) {
+    Model model = Models()[i];
+    char buffer[k_maxSizeOfNamedModel];
+    Poincare::Expression e = Expression::Parse(
+        ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel),
+        nullptr);  // No context needed
+    m_layouts[i] =
+        e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
+                       Preferences::ShortNumberOfSignificantDigits,
+                       AppsContainer::sharedAppsContainer()->globalContext());
+    m_modelCells[i].label()->setLayout(m_layouts[i]);
+  }
   m_selectableListView.selectCell(0);
   m_selectableListView.reloadData();
-}
-
-void FunctionModelsParameterController::fillCellForRow(
-    Escher::HighlightCell* cell, int row) {
-  if (cell == &m_emptyModelCell) {
-    return;
-  }
-  int i = row - 1;
-  Model model = Models()[i];
-  char buffer[k_maxSizeOfNamedModel];
-  Poincare::Expression e = Expression::Parse(
-      ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel),
-      nullptr);  // No context needed
-  m_layouts[i] =
-      e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
-                     Preferences::ShortNumberOfSignificantDigits,
-                     AppsContainer::sharedAppsContainer()->globalContext());
-  m_modelCells[i].label()->setLayout(m_layouts[i]);
 }
 
 int FunctionModelsParameterController::DefaultName(char buffer[],

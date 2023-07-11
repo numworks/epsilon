@@ -30,6 +30,13 @@ TestController::TestController(StackViewController *parentResponder,
       m_categoricalController(categoricalController),
       m_inputSlopeController(inputSlopeController),
       m_statistic(statistic) {
+  m_cells[k_indexOfOneProp].label()->setMessage(I18n::Message::TestOneProp);
+  m_cells[k_indexOfOneMean].label()->setMessage(I18n::Message::TestOneMean);
+  m_cells[k_indexOfTwoProps].label()->setMessage(I18n::Message::TestTwoProps);
+  m_cells[k_indexOfTwoMeans].label()->setMessage(I18n::Message::TestTwoMeans);
+  m_cells[k_indexOfCategorical].label()->setMessage(
+      I18n::Message::TestCategorical);
+  m_cells[k_indexOfCategorical].subLabel()->setMessage(I18n::Message::X2Test);
   // Init selection
   selectRow(0);
 }
@@ -102,38 +109,18 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-void TestController::fillCellForRow(HighlightCell *cell, int row) {
-  MenuCell<MessageTextView, MessageTextView, ChevronView> *myCell =
-      static_cast<MenuCell<MessageTextView, MessageTextView, ChevronView> *>(
-          cell);
-  if (row == virtualIndexOfSlope()) {
-    myCell->label()->setMessage(I18n::Message::Slope);
-    myCell->subLabel()->setMessage(m_statistic->tStatisticMessage());
-    return;
-  }
-  switch (row) {
-    case k_indexOfOneProp:
-      myCell->label()->setMessage(I18n::Message::TestOneProp);
-      myCell->subLabel()->setMessage(m_statistic->zStatisticMessage());
-      return;
-    case k_indexOfOneMean:
-      myCell->label()->setMessage(I18n::Message::TestOneMean);
-      myCell->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
-      return;
-    case k_indexOfTwoProps:
-      myCell->label()->setMessage(I18n::Message::TestTwoProps);
-      myCell->subLabel()->setMessage(m_statistic->zStatisticMessage());
-      return;
-    case k_indexOfTwoMeans:
-      myCell->label()->setMessage(I18n::Message::TestTwoMeans);
-      myCell->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
-      return;
-    default:
-      assert(row == k_indexOfCategorical);
-      myCell->label()->setMessage(I18n::Message::TestCategorical);
-      myCell->subLabel()->setMessage(I18n::Message::X2Test);
-      return;
-  }
+void TestController::viewWillAppear() {
+  m_cells[k_indexOfOneProp].subLabel()->setMessage(
+      m_statistic->zStatisticMessage());
+  m_cells[k_indexOfOneMean].subLabel()->setMessage(
+      m_statistic->tOrZStatisticMessage());
+  m_cells[k_indexOfTwoProps].subLabel()->setMessage(
+      m_statistic->zStatisticMessage());
+  m_cells[k_indexOfTwoMeans].subLabel()->setMessage(
+      m_statistic->tOrZStatisticMessage());
+  m_cells[virtualIndexOfSlope()].label()->setMessage(I18n::Message::Slope);
+  m_cells[virtualIndexOfSlope()].subLabel()->setMessage(
+      m_statistic->tStatisticMessage());
 }
 
 }  // namespace Inference

@@ -38,7 +38,7 @@ class TestController : public Escher::SelectableListViewController<
   int reusableCellCount(int type) override {
     return Statistic::k_numberOfSignificanceTestType;
   }
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+  void viewWillAppear() override;
 
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;

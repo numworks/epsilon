@@ -14,7 +14,6 @@ SequenceColumnParameterController::SequenceColumnParameterController(
     ValuesController* valuesController)
     : ColumnParameterController(valuesController),
       m_valuesController(valuesController) {
-  m_showSumCell.accessory()->setState(false);
   m_showSumCell.label()->setMessage(I18n::Message::ShowSumOfTerms);
   m_showSumCell.subLabel()->setMessage(I18n::Message::ShowSumOfTermsSublabel);
 }
@@ -38,13 +37,11 @@ bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void SequenceColumnParameterController::fillCellForRow(
-    Escher::HighlightCell* cell, int row) {
-  Shared::ColumnParameterController::fillCellForRow(cell, row);
-  assert(row == 0 && cell == &m_showSumCell);
+void SequenceColumnParameterController::viewWillAppear() {
   ExpiringPointer<Shared::Sequence> currentSequence =
       GlobalContext::sequenceStore->modelForRecord(m_record);
   m_showSumCell.accessory()->setState(currentSequence->displaySum());
+  ColumnParameterController::viewWillAppear();
 }
 
 }  // namespace Sequence

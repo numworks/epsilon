@@ -47,6 +47,8 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       App::app()->displayWarning(I18n::Message::DataNotSuitable);
     } else {
       m_selectableListView.reloadSelectedCell();
+      m_hideCell.accessory()->setState(
+          m_storeColumnHelper->selectedSeriesIsActive());
     }
   } else {
     assert(cell == &m_clearColumn);
@@ -66,12 +68,10 @@ AbstractMenuCell* StoreParameterController::cell(int index) {
   return cells[index];
 }
 
-void StoreParameterController::fillCellForRow(Escher::HighlightCell* cell,
-                                              int row) {
-  if (cell == &m_hideCell) {
-    m_hideCell.accessory()->setState(
-        m_storeColumnHelper->selectedSeriesIsActive());
-  }
+void StoreParameterController::viewWillAppear() {
+  m_hideCell.accessory()->setState(
+      m_storeColumnHelper->selectedSeriesIsActive());
+  ColumnParameterController::viewWillAppear();
 }
 
 ColumnNameHelper* StoreParameterController::columnNameHelper() {

@@ -134,7 +134,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     setChildFrame(&m_columnPrefaceView,
                   KDRect(0, rowPrefaceHeight, columnPrefaceWidth,
                          bounds().height() - rowPrefaceHeight),
-                  true);
+                  force);
     assert(m_columnPrefaceView.leftMargin() == 0);
     assert(m_columnPrefaceView.topMargin() == m_mainTableView->topMargin());
     assert(m_columnPrefaceView.bottomMargin() ==
@@ -146,7 +146,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     setChildFrame(&m_prefaceIntersectionView,
                   KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0,
                          rowPrefaceHeight),
-                  true);
+                  force);
     assert(m_prefaceIntersectionView.leftMargin() ==
            m_columnPrefaceView.leftMargin());
     assert(m_prefaceIntersectionView.rightMargin() ==

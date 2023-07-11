@@ -20,7 +20,7 @@ class SlopeTableCell : public DoubleColumnTableCell,
   constexpr static int k_numberOfReusableCells =
       SlopeTStatistic::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 
-  void willAppear();
+  void fillColumnsNames();
 
  private:
   Escher::HighlightCell *headerCell(int index) override {

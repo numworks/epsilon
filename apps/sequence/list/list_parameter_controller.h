@@ -35,7 +35,7 @@ class ListParameterController : public Shared::ListParameterController,
 
   // MemoizedListViewDataSource
   Escher::HighlightCell *cell(int index) override;
-  void fillCellForRow(Escher::HighlightCell *cell, int row) override;
+  void viewWillAppear() override;
   int numberOfRows() const override {
     return numberOfNonInheritedCells() +
            Shared::ListParameterController::numberOfRows();

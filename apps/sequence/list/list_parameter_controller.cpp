@@ -81,19 +81,15 @@ HighlightCell *ListParameterController::cell(int index) {
   return cells[index];
 }
 
-void ListParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  if (cell == &m_typeCell && !m_record.isNull()) {
+void ListParameterController::viewWillAppear() {
+  if (!m_record.isNull()) {
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
-  }
-  if (cell == &m_initialRankCell && !m_record.isNull()) {
-    if (m_initialRankCell.textField()->isEditing()) {
-      return;
-    }
     char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
     Poincare::Integer(sequence()->initialRank())
         .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
     m_initialRankCell.textField()->setText(buffer);
   }
+  Shared::ListParameterController::viewWillAppear();
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {

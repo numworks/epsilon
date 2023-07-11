@@ -37,16 +37,12 @@ AbstractMenuCell *StoreParameterController::cell(int index) {
       index - (index > k_changeRegressionCellIndex));
 }
 
-void StoreParameterController::fillCellForRow(Escher::HighlightCell *cell,
-                                              int row) {
-  if (cell == &m_changeRegressionCell) {
-    Store *regressionStore = static_cast<Store *>(m_storeColumnHelper->store());
-    m_changeRegressionCell.subLabel()->setMessage(
-        regressionStore->modelForSeries(m_storeColumnHelper->selectedSeries())
-            ->name());
-    return;
-  }
-  Shared::StoreParameterController::fillCellForRow(cell, row);
+void StoreParameterController::viewWillAppear() {
+  Store *regressionStore = static_cast<Store *>(m_storeColumnHelper->store());
+  m_changeRegressionCell.subLabel()->setMessage(
+      regressionStore->modelForSeries(m_storeColumnHelper->selectedSeries())
+          ->name());
+  Shared::StoreParameterController::viewWillAppear();
 }
 
 }  // namespace Regression

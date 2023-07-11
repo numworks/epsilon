@@ -235,7 +235,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
   deselectTable(true);
-  SelectableTableView::layoutSubviews(true);
+  SelectableTableView::layoutSubviews();
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 

@@ -245,7 +245,7 @@ class TypeBlock : public Block {
            isInteger();
   }
   constexpr bool isNumber() const {
-    return isOfType({BlockType::Float}) || isRational();
+    return isOfType({BlockType::Float, BlockType::Constant}) || isRational();
   }
   constexpr bool isUserNamed() const {
     return isOfType({BlockType::UserFunction, BlockType::UserSequence,

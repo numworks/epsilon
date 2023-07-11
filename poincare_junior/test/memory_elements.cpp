@@ -196,7 +196,7 @@ QUIZ_CASE(pcj_type_block) {
                                          .layout = false,
                                          .integer = false,
                                          .rational = false,
-                                         .number = false,
+                                         .number = true,
                                          .userNamed = false}),
       std::make_pair(BlockType::Power, TypeBlockProperties{.nAry = false,
                                                            .expression = true,

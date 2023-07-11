@@ -53,18 +53,14 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     }
     // a(1) < a(2), Scan children
   }
-  switch (type0) {
-    case BlockType::Constant:
-      return CompareConstants(node0, node1);
-    case BlockType::Polynomial:
-      return ComparePolynomial(node0, node1);
-    default:
-      /* TODO : Either sort Addition/Multiplication children backward or restore
-       *        backward scan direction in CompareChildren so that:
-       *        (2 + 3) < (1 + 4) */
-      // f(0, 1, 4) < f(0, 2, 3)
-      return CompareChildren(node0, node1);
+  if (type0 == BlockType::Polynomial) {
+    return ComparePolynomial(node0, node1);
   }
+  /* TODO : Either sort Addition/Multiplication children backward or restore
+   *        backward scan direction in CompareChildren so that:
+   *        (2 + 3) < (1 + 4) */
+  // f(0, 1, 4) < f(0, 2, 3)
+  return CompareChildren(node0, node1);
 }
 
 bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
@@ -80,6 +76,12 @@ bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
 }
 
 int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
+  assert(node0->type() <= node1->type());
+  if (node1->type() == BlockType::Constant) {
+    return node0->type() == BlockType::Constant ? CompareConstants(node0, node1)
+                                                : -1;
+  }
+  assert(node0->type() != BlockType::Constant);
   if (node0->block()->isRational() && node1->block()->isRational()) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);

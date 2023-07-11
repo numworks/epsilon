@@ -327,7 +327,7 @@ bool Node::hasAncestor(const Node* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
-EditionReference Node::clone() const {
+Node* Node::clone() const {
   return EditionPool::sharedEditionPool()->clone(this);
 }
 

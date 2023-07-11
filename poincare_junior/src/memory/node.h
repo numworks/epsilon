@@ -21,8 +21,6 @@ namespace PoincareJ {
  * [COSINE]
  */
 
-class EditionReference;
-
 class Node {
  public:
   // Prevent using Nodes objects directly
@@ -102,7 +100,7 @@ class Node {
   constexpr int numberOfChildren() const { return m_block->numberOfChildren(); }
   constexpr bool isNAry() const { return m_block->isNAry(); }
 
-  EditionReference clone() const;
+  Node* clone() const;
 
   // Node motions
 

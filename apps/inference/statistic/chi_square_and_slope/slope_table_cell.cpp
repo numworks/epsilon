@@ -29,11 +29,7 @@ void SlopeTableCell::willAppear() {
      * model was a valid DoublePairStore. */
     fillColumnName(i, const_cast<char *>(m_header[i].text()));
   }
-  bool bottomOfTableWasSelected = selectedRow() >= numberOfRows();
   m_selectableTableView.reloadData(false);
-  if (bottomOfTableWasSelected) {
-    selectRow(numberOfRows());
-  }
 }
 
 InputViewController *SlopeTableCell::inputViewController() {

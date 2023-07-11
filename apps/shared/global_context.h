@@ -69,9 +69,9 @@ class GlobalContext final : public Poincare::Context {
       const Poincare::SymbolAbstract &symbol, Ion::Storage::Record r,
       Context *ctx);
   // Expression setters
+  /* This modifies the expression. */
   Ion::Storage::Record::ErrorStatus setExpressionForActualSymbol(
-      const Poincare::Expression &expression,
-      const Poincare::SymbolAbstract &symbol,
+      Poincare::Expression &expression, const Poincare::SymbolAbstract &symbol,
       Ion::Storage::Record previousRecord);
   Ion::Storage::Record::ErrorStatus setExpressionForFunction(
       const Poincare::Expression &expression,

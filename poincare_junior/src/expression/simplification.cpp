@@ -185,9 +185,6 @@ bool BasesAreEqual(const Node* u1, const Node* u2) {
 }
 
 Node* PushBase(const Node* u) {
-  if (IsNumber(u)) {
-    return P_UNDEF();
-  }
   if (u->type() == BlockType::Power) {
     return u->childAtIndex(0)->clone();
   }
@@ -195,9 +192,6 @@ Node* PushBase(const Node* u) {
 }
 
 Node* PushExponent(const Node* u) {
-  if (IsNumber(u)) {
-    return P_UNDEF();
-  }
   if (u->type() == BlockType::Power) {
     return u->childAtIndex(1)->clone();
   }
@@ -304,26 +298,17 @@ bool TermsAreEqual(const Node* u, const Node* v) {
 
 // The term of 2ab is ab
 Node* PushTerm(const Node* u) {
-  if (IsNumber(u)) {
-    return P_UNDEF();
-  }
   EditionReference c = u->clone();
-  if (u->type() == BlockType::Multiplication) {
-    if (IsConstant(u->childAtIndex(0))) {
-      NAry::RemoveChildAtIndex(c, 0);
-      NAry::SquashIfUnary(&c);
-      return c;
-    }
-    return c;
+  if (u->type() == BlockType::Multiplication &&
+      IsConstant(u->childAtIndex(0))) {
+    NAry::RemoveChildAtIndex(c, 0);
+    NAry::SquashIfUnary(&c);
   }
   return c;
 }
 
 // The constant of 2ab is 2
 Node* PushConstant(const Node* u) {
-  if (IsNumber(u)) {
-    return P_UNDEF();
-  }
   if (u->type() == BlockType::Multiplication &&
       IsConstant(u->childAtIndex(0))) {
     return u->childAtIndex(0)->clone();

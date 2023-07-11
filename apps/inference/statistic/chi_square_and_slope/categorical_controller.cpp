@@ -192,7 +192,6 @@ void InputCategoricalController::viewWillAppear() {
   PrintValueInTextHolder(m_statistic->threshold(),
                          m_significanceCell.textField(), true, true);
   m_selectableListView.reloadData(false);
-  CategoricalController::viewWillAppear();
 }
 
 HighlightCell *InputCategoricalController::reusableCell(int index, int type) {

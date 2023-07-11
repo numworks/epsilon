@@ -192,7 +192,7 @@ Tree* Rational::IrreducibleForm(const Tree* i) {
     return result;
   }
   gcd->removeTree();
-  return SharedEditionPool->clone(i);
+  return i->clone();
 }
 
 }  // namespace PoincareJ

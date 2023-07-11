@@ -72,7 +72,7 @@ QUIZ_CASE(pcj_edition_reference) {
   assert(ref0 != ref1);
 
   // Constructors
-  SharedEditionPool->clone(ref0);
+  ref0->clone();
   EditionReference ref2 = EditionReference(
       SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(8)));
   assert_pool_contains(SharedEditionPool, {k_expr0, k_expr1, k_expr0, 8_e});

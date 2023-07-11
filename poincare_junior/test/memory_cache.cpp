@@ -35,13 +35,13 @@ QUIZ_CASE(pcj_cache_pool) {
   cachePool->reset();
 
   // storeEditedTree
-  SharedEditionPool->clone(bigTree);
+  bigTree->clone();
   assert_pools_tree_sizes_are(0, 1);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(1, 0);
 
   // freeBlocks
-  SharedEditionPool->clone(bigTree);
+  bigTree->clone();
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(2, 0);
   cachePool->freeBlocks(1);
@@ -49,13 +49,13 @@ QUIZ_CASE(pcj_cache_pool) {
   cachePool->freeBlocks(treeSize - 1);
   assert_pools_tree_sizes_are(0, 0);
   for (int i = 0; i < 3; i++) {
-    SharedEditionPool->clone(bigTree);
+    bigTree->clone();
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(3, 0);
   cachePool->freeBlocks(treeSize + 1);
   assert_pools_tree_sizes_are(1, 0);
-  SharedEditionPool->clone(bigTree);
+  bigTree->clone();
   assert_pools_tree_sizes_are(1, 1);
   EditionReference ref(SharedEditionPool->firstBlock());
   cachePool->freeBlocks(1, false);
@@ -65,7 +65,7 @@ QUIZ_CASE(pcj_cache_pool) {
   assert_pools_tree_sizes_are(1, 0);
 
   // reset
-  SharedEditionPool->clone(bigTree);
+  bigTree->clone();
   assert_pools_tree_sizes_are(1, 1);
   cachePool->reset();
   assert_pools_tree_sizes_are(0, 0);
@@ -97,7 +97,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   assert(maxNumberOfTreesInCache < CachePool::k_maxNumberOfReferences);
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     assert_pools_tree_sizes_are(i, 0);
-    SharedEditionPool->clone(bigTree);
+    bigTree->clone();
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
@@ -112,7 +112,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // 1. Fill the cache with the max number of identifiers
   for (int i = 0; i < CachePool::k_maxNumberOfReferences; i++) {
     assert_pools_tree_sizes_are(i, 0);
-    SharedEditionPool->clone(smallTree);
+    smallTree->clone();
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);

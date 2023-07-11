@@ -34,7 +34,6 @@ class ScriptParameterController
   /* MemoizedListViewDataSource */
   Escher::AbstractMenuCell* cell(int index) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   constexpr static int k_totalNumberOfCell = 4;

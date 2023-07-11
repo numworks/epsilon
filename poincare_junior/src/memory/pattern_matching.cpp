@@ -285,8 +285,15 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
    *      void insert(Block * startSrc, Block * endSrc, Block * dst)
    */
 
+  Context ctx;
+  // Espace case for full matches like A -> cos(A)
+  if (pattern->type() == BlockType::Placeholder) {
+    ctx.setNode(Placeholder::NodeToTag(pattern), node, 1, false);
+    node->moveTreeOverTree(Create(structure, ctx));
+    return true;
+  }
+
   // Step 1 - Match the pattern
-  PatternMatching::Context ctx;
   if (!PatternMatching::Match(pattern, node, &ctx)) {
     return false;
   }
@@ -345,16 +352,6 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
     }
     // Get a Node to the first placeholder tree, and detach as many as necessary
     Node* trees = Node::FromBlocks(placeholders[i]->block());
-    if (node == trees) {
-      // full match, move the SystemList node in front instead
-      assert(placeholderMatches->numberOfChildren() == 1);
-      // remove 0
-      node->nextTree()->removeNode();
-      node->moveNodeAtNode(placeholderMatches);
-      placeholderMatches = node;
-      placeholders[i] = node->nextNode();
-      break;
-    }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       if (j == 0) {
         placeholders[i] = trees->detachTree();

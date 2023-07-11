@@ -59,6 +59,8 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
       return SimplifyPower(u) || modified;
     case BlockType::PowerReal:
       return SimplifyPowerReal(u) || modified;
+    case BlockType::Abs:
+      return SimplifyAbs(u) || modified;
     case BlockType::Addition:
       return SimplifyAddition(u) || modified;
     case BlockType::Multiplication:
@@ -73,6 +75,30 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     default:
       return modified;
   }
+}
+
+bool Simplification::SimplifyAbs(Tree* u) {
+  Tree* child = u->nextNode();
+  bool changed = false;
+  if (child->type() == BlockType::Abs) {
+    // ||x|| -> |x|
+    child->removeNode();
+    changed = true;
+  }
+  if (!IsNumber(child)) {
+    return changed;
+  }
+  float xApproximation = Approximation::To<float>(child);
+  if (xApproximation >= 0.f) {
+    // |3| -> 3
+    u->removeNode();
+  } else {
+    // |-3| -> (-1)*(-3)
+    u->cloneTreeOverNode(KMult(-1_e));
+    NAry::SetNumberOfChildren(u, 2);
+    ShallowSystematicReduce(u);
+  }
+  return true;
 }
 
 bool Simplification::SimplifyTrigDiff(Tree* u) {
@@ -621,8 +647,12 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
   EditionReference tempClone(ref->clone());
   if (ShallowExpand(tempClone)) {
     DeepSystematicReduce(tempClone);
-    assert(tempClone->block()->isAlgebraic());
-    ShallowAdvancedReduction(tempClone, true);
+    if (tempClone->block()->isAlgebraic()) {
+      /* Skip this if the expression is still transcendental to avoid risking
+       * infinite loops. An assert isn't because, for example,
+       * |(-1)*x| -> |(-1)|*|x| -> |x| */
+      ShallowAdvancedReduction(tempClone, true);
+    }
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the expansion.

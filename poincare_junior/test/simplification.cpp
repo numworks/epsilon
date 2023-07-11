@@ -252,6 +252,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
                 "3*e^(3*y)*ln(y)*y^(4)+4*e^(3*y)*ln(y)*y^(3)+e^(3*y)*y^(3)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
+  simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
 }
 
 QUIZ_CASE(pcj_power_simplification) {
@@ -266,9 +267,9 @@ QUIZ_CASE(pcj_power_simplification) {
   //   * Unreal if q is even and x negative
   simplifies_to("(-1)^(1/2)", "undef");
   //   * |x|^y if p is even
-  simplifies_to("(-123)^(4/5)", "abs(-123)^(4/5)");
+  simplifies_to("(-123)^(4/5)", "123^(4/5)");
   //   * -|x|^y if p is odd
-  simplifies_to("(-123)^(5/7)", "-1*abs(-123)^(5/7)");
+  simplifies_to("(-123)^(5/7)", "-1*123^(5/7)");
 
   simplifies_to("sqrt(x)^2", "√(x)^(2)");
   // Complex Power

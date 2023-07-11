@@ -63,6 +63,7 @@ class Simplification {
   EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
 
  private:
+  static bool SimplifyAbs(Tree *u);
   static bool SimplifyTrig(Tree *u);
   static bool SimplifyTrigDiff(Tree *u);
   static bool SimplifyAddition(Tree *u);

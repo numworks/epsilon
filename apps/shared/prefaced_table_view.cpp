@@ -79,7 +79,7 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   if (m_mainTableView->contentOffset() != previousOffset) {
     /* If offset changed, the preface row might need to be relayouted, as well
      * as the main table. */
-    layoutSubviews(true);
+    layoutSubviews();
   } else {
     /* Even if offset did not change, the main table height might have changed,
      * and thus the scrollbar size. */
@@ -142,7 +142,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
         KDPoint(m_mainTableView->contentOffset().x(), 0));
     setChildFrame(&m_rowPrefaceView,
                   KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight),
-                  true);
+                  force);
     assert(m_rowPrefaceView.leftMargin() == m_mainTableView->leftMargin());
     assert(m_rowPrefaceView.rightMargin() == m_mainTableView->rightMargin());
     assert(m_rowPrefaceView.topMargin() == 0);

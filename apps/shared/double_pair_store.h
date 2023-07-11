@@ -57,7 +57,10 @@ class DoublePairStore {
   double get(int series, int i, int j) const;
   bool set(double f, int series, int i, int j, bool delayUpdate = false,
            bool setOtherColumnToDefaultIfEmpty = false);
-  bool setList(Poincare::List List, int series, int i, bool delayUpdate = false,
+  /* WARNING: This method destroy the list passed as an argument after setting
+   * it in the store. */
+  bool setList(Poincare::List &List, int series, int i,
+               bool delayUpdate = false,
                bool setOtherColumnToDefaultIfEmpty = false);
 
   // Counts

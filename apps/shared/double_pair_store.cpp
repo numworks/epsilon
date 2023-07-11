@@ -120,7 +120,7 @@ bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate,
   return updateSeries(series, delayUpdate);
 }
 
-bool DoublePairStore::setList(List list, int series, int i, bool delayUpdate,
+bool DoublePairStore::setList(List &list, int series, int i, bool delayUpdate,
                               bool setOtherColumnToDefaultIfEmpty) {
   /* Approximate the list to turn it into list of doubles since we do not
    * want to work with exact expressions in Regression and Statistics.*/
@@ -137,6 +137,8 @@ bool DoublePairStore::setList(List list, int series, int i, bool delayUpdate,
         list.childAtIndex(j), m_context);
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
+  // This ensures that the list does not take up useless space in the pool.
+  list.~List();
   return updateSeries(series, delayUpdate);
 }
 

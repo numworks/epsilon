@@ -32,7 +32,7 @@ class CalculationParameterController
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+  void fillAreaCell();
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override { return k_numberOfRows; }
   TitlesDisplay titlesDisplay() override {

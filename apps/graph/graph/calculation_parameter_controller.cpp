@@ -58,6 +58,9 @@ void CalculationParameterController::viewWillAppear() {
       areaWasVisible != m_areaCell.isVisible()) {
     resetMemoization();
   }
+  if (m_areaCell.isVisible()) {
+    fillAreaCell();
+  }
   ViewController::viewWillAppear();
   m_selectableListView.reloadData();
 }
@@ -119,12 +122,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void CalculationParameterController::fillCellForRow(HighlightCell *cell,
-                                                    int row) {
-  assert(row >= 0 && row <= numberOfRows());
-  if (cell != &m_areaCell) {
-    return;
-  }
+void CalculationParameterController::fillAreaCell() {
   assert(ShouldDisplayAreaBetweenCurves());
   // If there is only two derivable functions, hide the chevron
   m_areaCell.accessory()->displayChevron(ShouldDisplayChevronInAreaCell());

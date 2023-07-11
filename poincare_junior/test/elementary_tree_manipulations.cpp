@@ -9,7 +9,6 @@ using namespace PoincareJ;
 
 QUIZ_CASE(pcj_elementary_tree_manipulation) {
   CachePool* cache = CachePool::sharedCachePool();
-  EditionPool* editionPool = cache->editionPool();
 
   createSimpleExpression();
 
@@ -27,7 +26,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Edit (1+2)*3*4 ---" << std::endl;
 #endif
-  editionPool->clone(cache->nodeForIdentifier(treeId));
+  SharedEditionPool->clone(cache->nodeForIdentifier(treeId));
 
   log_edition_pool();
   log_cache_pool();
@@ -35,7 +34,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Develop (1+2)*3*4 ---" << std::endl;
 #endif
-  Tree* root = Tree::FromBlocks(editionPool->firstBlock());
+  Tree* root = Tree::FromBlocks(SharedEditionPool->firstBlock());
   assert(root->type() == BlockType::Multiplication);
   Simplification::ShallowAlgebraicExpand(root);
 
@@ -52,11 +51,12 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Create 1-2/3 ---" << std::endl;
 #endif
-  EditionReference subtraction(editionPool->push<BlockType::Subtraction>());
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  editionPool->push<BlockType::Division>();
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  EditionReference subtraction(
+      SharedEditionPool->push<BlockType::Subtraction>());
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  SharedEditionPool->push<BlockType::Division>();
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
 
   log_edition_pool();
 

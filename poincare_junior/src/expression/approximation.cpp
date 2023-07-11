@@ -102,7 +102,8 @@ bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
   if (std::isnan(approx)) {
     return false;
   }
-  ref = ref->moveTreeOverTree(editionPool->push<BlockType::Float>(approx));
+  ref =
+      ref->moveTreeOverTree(SharedEditionPool->push<BlockType::Float>(approx));
   return true;
 }
 

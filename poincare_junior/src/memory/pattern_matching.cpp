@@ -194,7 +194,7 @@ bool PatternMatching::Match(const Tree* pattern, const Tree* source,
 
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
                                   Tree* insertedNAry) {
-  Tree* top = Tree::FromBlocks(editionPool->lastBlock());
+  Tree* top = Tree::FromBlocks(SharedEditionPool->lastBlock());
   const TypeBlock* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
   // Skip NAry structure node because it has already been inserted.
@@ -204,7 +204,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       if (node->block()->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
-        Tree* insertedNode = editionPool->clone(node, false);
+        Tree* insertedNode = SharedEditionPool->clone(node, false);
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode);
@@ -215,7 +215,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         CreateTree(node, context, nullptr);
         node = node->nextTree();
       } else {
-        editionPool->clone(node, false);
+        SharedEditionPool->clone(node, false);
         node = node->nextNode();
       }
       continue;
@@ -245,11 +245,11 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
-        editionPool->clone(nodeToInsert, true);
+        SharedEditionPool->clone(nodeToInsert, true);
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
-    editionPool->clone(nodeToInsert, true);
+    SharedEditionPool->clone(nodeToInsert, true);
     node = node->nextNode();
   }
   return top;
@@ -328,7 +328,7 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
       placeholders[i] = EditionReference();
     } else if (numberOfTrees == 0) {
       // Use the last block so that placeholders[i] stays initialized
-      placeholders[i] = EditionReference(editionPool->lastBlock());
+      placeholders[i] = EditionReference(SharedEditionPool->lastBlock());
     } else {
       placeholders[i] = EditionReference(ctx.getNode(i));
     }
@@ -340,7 +340,7 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
 
   // Detach placeholder matches at the end of the EditionPool in a system list
   EditionReference placeholderMatches(
-      editionPool->push<BlockType::SystemList>(initializedPlaceHolders));
+      SharedEditionPool->push<BlockType::SystemList>(initializedPlaceHolders));
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
 

@@ -50,11 +50,12 @@ class WorkingBuffer {
       TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) +
       sizeof(native_int_t);
   uint8_t *initialStartOfBuffer() {
-    return reinterpret_cast<uint8_t *>(editionPool->lastBlock() +
+    return reinterpret_cast<uint8_t *>(SharedEditionPool->lastBlock() +
                                        k_blockOffset);
   }
   size_t initialSizeOfBuffer() {
-    return (editionPool->fullSize() - editionPool->size() - k_blockOffset);
+    return (SharedEditionPool->fullSize() - SharedEditionPool->size() -
+            k_blockOffset);
   }
   uint8_t *m_start;
   size_t m_remainingSize;

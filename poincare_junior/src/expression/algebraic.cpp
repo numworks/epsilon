@@ -13,11 +13,12 @@ namespace PoincareJ {
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
   if (expression->block()->isRational()) {
-    EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
+    EditionReference fraction(
+        SharedEditionPool->push<BlockType::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();
-    editionPool->push<BlockType::Power>();
+    SharedEditionPool->push<BlockType::Power>();
     Rational::Denominator(expression).pushOnEditionPool();
-    editionPool->push<BlockType::MinusOne>();
+    SharedEditionPool->push<BlockType::MinusOne>();
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
@@ -48,7 +49,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
        NodeIterator::Children<Editable>(expression)) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     child = Rationalize(child);
-    EditionReference denominator = Denominator(editionPool->clone(child));
+    EditionReference denominator = Denominator(SharedEditionPool->clone(child));
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
@@ -63,17 +64,18 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
     EditionReference multiplication(
-        editionPool->push<BlockType::Multiplication>(1));
+        SharedEditionPool->push<BlockType::Multiplication>(1));
     child->moveNodeBeforeNode(multiplication);
     child->nextTree()->moveTreeBeforeNode(
-        editionPool->clone(commonDenominator));
+        SharedEditionPool->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
-  EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
+  EditionReference fraction(
+      SharedEditionPool->push<BlockType::Multiplication>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  EditionReference power(editionPool->push<BlockType::Power>());
+  EditionReference power(SharedEditionPool->push<BlockType::Power>());
   power->moveTreeAfterNode(commonDenominator);
   commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power

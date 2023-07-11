@@ -16,7 +16,7 @@ namespace PoincareJ {
 /* Polynomial */
 
 EditionReference Polynomial::PushEmpty(EditionReference variable) {
-  EditionReference pol(editionPool->push<BlockType::Polynomial>(1, 1));
+  EditionReference pol(SharedEditionPool->push<BlockType::Polynomial>(1, 1));
   pol->moveTreeAfterNode(variable);
   return pol;
 }
@@ -43,12 +43,13 @@ void Polynomial::SetExponentAtIndex(EditionReference polynomial, int index,
 void Polynomial::InsertExponentAtIndex(EditionReference polynomial, int index,
                                        uint8_t exponent) {
   Block* exponentsAddress = polynomial->block() + 2;
-  editionPool->insertBlock(exponentsAddress + index, ValueBlock(exponent));
+  SharedEditionPool->insertBlock(exponentsAddress + index,
+                                 ValueBlock(exponent));
 }
 
 void Polynomial::RemoveExponentAtIndex(EditionReference polynomial, int index) {
   Block* exponentsAddress = polynomial->block() + 2;
-  editionPool->removeBlocks(exponentsAddress + index, 1);
+  SharedEditionPool->removeBlocks(exponentsAddress + index, 1);
 }
 
 void Polynomial::AddMonomial(EditionReference polynomial,
@@ -96,7 +97,7 @@ EditionReference Polynomial::Multiplication(EditionReference polA,
          std::pair<EditionReference, uint8_t> monomial, bool isLastTerm) {
         EditionReference polynomialClone =
             isLastTerm ? polynomial
-                       : EditionReference(editionPool->clone(polynomial));
+                       : EditionReference(SharedEditionPool->clone(polynomial));
         MultiplicationMonomial(polynomialClone, monomial);
         return Addition(result, polynomialClone);
       });
@@ -115,8 +116,8 @@ EditionReference Polynomial::Operation(
     if (polB->type() != BlockType::Polynomial) {
       EditionReference op =
           blockType == BlockType::Addition
-              ? editionPool->push<BlockType::Addition>(2)
-              : editionPool->push<BlockType::Multiplication>(2);
+              ? SharedEditionPool->push<BlockType::Addition>(2)
+              : SharedEditionPool->push<BlockType::Multiplication>(2);
       op->moveTreeAfterNode(polB);
       op->moveTreeAfterNode(polA);
       Simplification::SystematicReduce(op);
@@ -175,8 +176,9 @@ void Polynomial::MultiplicationMonomial(
     EditionReference currentCoefficient = previousChild->nextTree();
     // Avoid one cloning for last term
     EditionReference coeffClone =
-        i == nbOfTerms - 1 ? coefficient
-                           : EditionReference(editionPool->clone(coefficient));
+        i == nbOfTerms - 1
+            ? coefficient
+            : EditionReference(SharedEditionPool->clone(coefficient));
     EditionReference multiplication =
         Polynomial::Multiplication(currentCoefficient, coeffClone);
     previousChild->nextTree()->moveTreeBeforeNode(multiplication);
@@ -226,7 +228,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     x = Variable(polB);
   } else {
     // Clone x since polA may be altered
-    x = editionPool->clone(x);
+    x = SharedEditionPool->clone(x);
     isXCloned = true;
   }
   uint8_t degreeA, degreeB;
@@ -235,8 +237,9 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   extractDegreeAndLeadingCoefficient(polB, x, &degreeB, &leadingCoeffB);
   EditionReference currentQuotient(0_e);
   while (degreeA >= degreeB) {
-    std::pair<EditionReference, EditionReference> refPair = PseudoDivision(
-        editionPool->clone(leadingCoeffA), editionPool->clone(leadingCoeffB));
+    std::pair<EditionReference, EditionReference> refPair =
+        PseudoDivision(SharedEditionPool->clone(leadingCoeffA),
+                       SharedEditionPool->clone(leadingCoeffB));
     EditionReference quotient = refPair.first;
     EditionReference remainder = refPair.second;
     bool stopCondition = remainder->type() != BlockType::Zero;
@@ -245,16 +248,17 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
       quotient->removeTree();
       break;
     }
-    EditionReference xPowerDegAMinusDegB =
-        Polynomial::PushMonomial(editionPool->clone(x), degreeA - degreeB);
+    EditionReference xPowerDegAMinusDegB = Polynomial::PushMonomial(
+        SharedEditionPool->clone(x), degreeA - degreeB);
     currentQuotient = Polynomial::Addition(
-        currentQuotient,
-        Polynomial::Multiplication(editionPool->clone(quotient),
-                                   editionPool->clone(xPowerDegAMinusDegB)));
+        currentQuotient, Polynomial::Multiplication(
+                             SharedEditionPool->clone(quotient),
+                             SharedEditionPool->clone(xPowerDegAMinusDegB)));
     polA = Polynomial::Subtraction(
-        polA, Polynomial::Multiplication(
-                  quotient, Polynomial::Multiplication(editionPool->clone(polB),
-                                                       xPowerDegAMinusDegB)));
+        polA,
+        Polynomial::Multiplication(
+            quotient, Polynomial::Multiplication(SharedEditionPool->clone(polB),
+                                                 xPowerDegAMinusDegB)));
     extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
   }
   polB->removeTree();
@@ -307,8 +311,8 @@ const Tree* PolynomialParser::GetVariables(const Tree* expression) {
     const Tree* exponent = base->nextTree();
     if (Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
-      EditionReference variables(editionPool->push<BlockType::Set>(1));
-      editionPool->clone(base);
+      EditionReference variables(SharedEditionPool->push<BlockType::Set>(1));
+      SharedEditionPool->clone(base);
       return variables;
     }
   }
@@ -324,8 +328,8 @@ const Tree* PolynomialParser::GetVariables(const Tree* expression) {
     }
     return variables;
   }
-  Tree* variables = editionPool->push<BlockType::Set>(1);
-  editionPool->clone(expression);
+  Tree* variables = SharedEditionPool->push<BlockType::Set>(1);
+  SharedEditionPool->clone(expression);
   return variables;
 }
 
@@ -365,7 +369,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
 EditionReference PolynomialParser::Parse(EditionReference expression,
                                          EditionReference variable) {
   EditionReference polynomial =
-      Polynomial::PushEmpty(editionPool->clone(variable));
+      Polynomial::PushEmpty(SharedEditionPool->clone(variable));
   BlockType type = expression->type();
   if (type == BlockType::Addition) {
     for (size_t i = 0; i < expression->numberOfChildren(); i++) {
@@ -410,7 +414,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
          NodeIterator::Children<Editable>(expression)) {
       EditionReference child = std::get<EditionReference>(indexedRef);
       auto [childCoefficient, childExponent] =
-          ParseMonomial(editionPool->clone(child), variable);
+          ParseMonomial(SharedEditionPool->clone(child), variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at
         // basicReduction
@@ -465,11 +469,11 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
 EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   BlockType type = expression.type();
   if (expression.type() == BlockType::Addition) {
-    EditionPool * editionPool = editionPool;
+    EditionPool * SharedEditionPool = SharedEditionPool;
     if (Comparison::AreEqual(expression, variable)) {
-      return exponent == 1 ? editionPool->push<BlockType::One>() : editionPool->push<BlockType::Zero>();
+      return exponent == 1 ? SharedEditionPool->push<BlockType::One>() : SharedEditionPool->push<BlockType::Zero>();
     }
-    EditionReference addition = editionPool->push<BlockType::Addition>(0);
+    EditionReference addition = SharedEditionPool->push<BlockType::Addition>(0);
     for (const Tree* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {
@@ -485,13 +489,13 @@ EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* var
     return exprCoefficient;
   }
   exprCoefficient.removeTree();
-  return editionPool->push<BlockType::Zero>();
+  return SharedEditionPool->push<BlockType::Zero>();
 }
 
 std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
-  EditionPool * editionPool = editionPool;
+  EditionPool * SharedEditionPool = SharedEditionPool;
   if (Comparison::AreEqual(expression, variable)) {
-    return std::make_pair(editionPool->push<BlockType::One>(), 1);
+    return std::make_pair(SharedEditionPool->push<BlockType::One>(), 1);
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
@@ -499,7 +503,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree*
     Tree* exponent = base.nextTree();
     if (Comparison::AreEqual(exponent, variable) && Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
-      return std::make_pair(editionPool->push<BlockType::One>(), Integer::Uint8(exponent));
+      return std::make_pair(SharedEditionPool->push<BlockType::One>(), Integer::Uint8(exponent));
     }
   }
   if (type == BlockType::Multiplication) {

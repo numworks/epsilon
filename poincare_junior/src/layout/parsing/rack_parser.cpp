@@ -34,11 +34,11 @@ EditionReference RackParser::parse() {
   // return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   // }
   /* To check if no other trees are leaked into EditionPool, use the end of pool
-   * instead of number of trees since the editionPool may be incomplete, which
-   * can happen while parsing a division's denominator. */
-  const TypeBlock *endOfPool = editionPool->lastBlock();
+   * instead of number of trees since the SharedEditionPool may be incomplete,
+   * which can happen while parsing a division's denominator. */
+  const TypeBlock *endOfPool = SharedEditionPool->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
-  assert(editionPool->lastBlock() ==
+  assert(SharedEditionPool->lastBlock() ==
          (result.isUninitialized() ? endOfPool : result->nextTree()->block()));
   assert(result.isUninitialized() || endOfPool == result->block());
   (void)endOfPool;
@@ -448,15 +448,15 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
       leftHandSide = P_MULT(
           P_ADD(Integer::Push(integerDigits, base),
                 P_MULT(Integer::Push(fractionalDigits, base),
-                       P_POW(editionPool->clone(10_e),
-                             editionPool->push<BlockType::IntegerShort>(
+                       P_POW(SharedEditionPool->clone(10_e),
+                             SharedEditionPool->push<BlockType::IntegerShort>(
                                  static_cast<int8_t>(-smallE + decimalPoint +
                                                      1))))),
-          P_POW(editionPool->clone(10_e), Integer::Push(exponent, base)));
+          P_POW(SharedEditionPool->clone(10_e), Integer::Push(exponent, base)));
 
       float value = Approximation::To<float>(leftHandSide);
       leftHandSide = leftHandSide->moveTreeOverTree(
-          editionPool->push<BlockType::Float>(value));
+          SharedEditionPool->push<BlockType::Float>(value));
     }
   }
 
@@ -836,7 +836,7 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
   // leftHandSide =
   // Constant::Builder(m_currentToken.text(), m_currentToken.length());
   assert(m_currentToken.length() == 1);
-  leftHandSide = editionPool->push<BlockType::Constant, char16_t>(
+  leftHandSide = SharedEditionPool->push<BlockType::Constant, char16_t>(
       m_currentToken.toDecoder(m_root).nextCodePoint());
   isThereImplicitOperator();
 }
@@ -1034,7 +1034,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
   char buffer[bufferSize];
   CodePointLayout::GetName(node, buffer, bufferSize);
-  leftHandSide = editionPool->push<BlockType::UserSymbol>(
+  leftHandSide = SharedEditionPool->push<BlockType::UserSymbol>(
       static_cast<const char *>(buffer), length);
   // privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
   isThereImplicitOperator();
@@ -1247,7 +1247,7 @@ EditionReference RackParser::parseCommaSeparatedList() {
     popToken();
     return subParser.parse();
   }
-  EditionReference list = editionPool->push<BlockType::SystemList>(0);
+  EditionReference list = SharedEditionPool->push<BlockType::SystemList>(0);
   int length = 0;
   do {
     if (!parseUntil(Token::Type::Comma).isUninitialized()) {

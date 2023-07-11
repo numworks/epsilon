@@ -96,17 +96,17 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
     return numerator.pushOnEditionPool();
   }
   if (numerator.isOne() && denominator.isTwo()) {
-    return editionPool->push<BlockType::Half>();
+    return SharedEditionPool->push<BlockType::Half>();
   }
   if (numerator.isSignedType<int8_t>() &&
       denominator.isUnsignedType<uint8_t>()) {
-    return editionPool->push<BlockType::RationalShort>(
+    return SharedEditionPool->push<BlockType::RationalShort>(
         static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
   TypeBlock typeBlock(numerator.sign() == NonStrictSign::Negative
                           ? BlockType::RationalNegBig
                           : BlockType::RationalPosBig);
-  Tree* node = Tree::FromBlocks(editionPool->pushBlock(typeBlock));
+  Tree* node = Tree::FromBlocks(SharedEditionPool->pushBlock(typeBlock));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
   if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
@@ -114,8 +114,8 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
     ExceptionCheckpoint::Raise();
     return nullptr;
   }
-  editionPool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
-  editionPool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
+  SharedEditionPool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
+  SharedEditionPool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
   numerator.pushDigitsOnEditionPool();
   denominator.pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION
@@ -194,7 +194,7 @@ Tree* Rational::IrreducibleForm(const Tree* i) {
     return result;
   }
   gcd->removeTree();
-  return editionPool->clone(i);
+  return SharedEditionPool->clone(i);
 }
 
 }  // namespace PoincareJ

@@ -20,18 +20,20 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
   while (codePoint != UCodePointNull) {
     NAry::AddChild(
         layoutParent,
-        editionPool->push<BlockType::CodePointLayout, CodePoint>(codePoint));
+        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+            codePoint));
     codePoint = decoder.nextCodePoint();
   }
   EditionReference parenthesis =
-      editionPool->push<BlockType::ParenthesisLayout>();
-  EditionReference newParent = editionPool->push<BlockType::RackLayout>(0);
+      SharedEditionPool->push<BlockType::ParenthesisLayout>();
+  EditionReference newParent =
+      SharedEditionPool->push<BlockType::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (j != 0) {
       NAry::AddChild(
           newParent,
-          editionPool->push<BlockType::CodePointLayout, CodePoint>(','));
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(','));
     }
     // No parentheses within builtin parameters
     ConvertExpressionToLayout(newParent, expression->nextNode(), false);
@@ -43,7 +45,7 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
   if (handler.strictSign() == StrictSign::Negative) {
     NAry::AddChild(
         layoutParent,
-        editionPool->push<BlockType::CodePointLayout, CodePoint>('-'));
+        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-'));
   }
   uint64_t value = 0;
   int numberOfDigits = handler.numberOfDigits();
@@ -51,7 +53,7 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
     assert(false);
     NAry::AddChild(
         layoutParent,
-        editionPool->push<BlockType::CodePointLayout, CodePoint>('?'));
+        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('?'));
     return;
   }
   for (int i = numberOfDigits - 1; i >= 0; i--) {
@@ -63,7 +65,8 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
     value /= 10;
     NAry::AddChildAtIndex(
         layoutParent,
-        editionPool->push<BlockType::CodePointLayout, CodePoint>('0' + digit),
+        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('0' +
+                                                                       digit),
         firstInsertedIndex);
   } while (value > 0);
 }
@@ -81,7 +84,8 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
     if (i > 0) {
       NAry::AddChild(
           layoutParent,
-          editionPool->push<BlockType::CodePointLayout, CodePoint>(codepoint));
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+              codepoint));
     }
     // 2*(x+y) or x-(y+z)
     bool allowParentheses = (type == BlockType::Multiplication) ||
@@ -99,15 +103,15 @@ void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
   EditionReference createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (type == BlockType::Division) {
-    createdLayout = editionPool->push<BlockType::FractionLayout>();
-    ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
+    createdLayout = SharedEditionPool->push<BlockType::FractionLayout>();
+    ConvertExpressionToLayout(SharedEditionPool->push<BlockType::RackLayout>(0),
                               expression, false);
   } else {
     assert(type == BlockType::Power);
     ConvertExpressionToLayout(layoutParent, expression);
-    createdLayout = editionPool->push<BlockType::VerticalOffsetLayout>();
+    createdLayout = SharedEditionPool->push<BlockType::VerticalOffsetLayout>();
   }
-  ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
+  ConvertExpressionToLayout(SharedEditionPool->push<BlockType::RackLayout>(0),
                             expression, false);
   NAry::AddChild(layoutParent, createdLayout);
 }
@@ -128,9 +132,9 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       assert(expression->numberOfChildren() > 1);
       if (allowParentheses) {
         EditionReference parenthesis =
-            editionPool->push<BlockType::ParenthesisLayout>();
+            SharedEditionPool->push<BlockType::ParenthesisLayout>();
         EditionReference newParent =
-            editionPool->push<BlockType::RackLayout>(0);
+            SharedEditionPool->push<BlockType::RackLayout>(0);
         NAry::AddChild(layoutParent, parenthesis);
         layoutParent = newParent;
       }
@@ -156,11 +160,13 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
       EditionReference createdLayout =
-          editionPool->push<BlockType::FractionLayout>();
-      ConvertIntegerHandlerToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                    Rational::Numerator(expression));
-      ConvertIntegerHandlerToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                    Rational::Denominator(expression));
+          SharedEditionPool->push<BlockType::FractionLayout>();
+      ConvertIntegerHandlerToLayout(
+          SharedEditionPool->push<BlockType::RackLayout>(0),
+          Rational::Numerator(expression));
+      ConvertIntegerHandlerToLayout(
+          SharedEditionPool->push<BlockType::RackLayout>(0),
+          Rational::Denominator(expression));
       NAry::AddChild(layoutParent, createdLayout);
       break;
     }
@@ -168,18 +174,19 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       ConvertExpressionToLayout(layoutParent, expression->nextNode());
       NAry::AddChild(
           layoutParent,
-          editionPool->push<BlockType::CodePointLayout, CodePoint>('!'));
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('!'));
       break;
     case BlockType::Constant:
-      NAry::AddChild(layoutParent,
-                     editionPool->push<BlockType::CodePointLayout, CodePoint>(
-                         Constant::ToCodePoint(Constant::Type(expression))));
+      NAry::AddChild(
+          layoutParent,
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+              Constant::ToCodePoint(Constant::Type(expression))));
       break;
     case BlockType::UserSymbol:
       assert(*reinterpret_cast<const uint8_t *>(expression->block() + 1) == 1);
       NAry::AddChild(
           layoutParent,
-          editionPool->push<BlockType::CodePointLayout, CodePoint>(
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
               *reinterpret_cast<const char *>(expression->block() + 2)));
       break;
     case BlockType::UserFunction:
@@ -195,7 +202,8 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
         assert(false);
         NAry::AddChild(
             layoutParent,
-            editionPool->push<BlockType::CodePointLayout, CodePoint>('?'));
+            SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+                '?'));
         break;
       }
   }
@@ -208,7 +216,8 @@ EditionReference Expression::EditionPoolExpressionToLayout(Tree *expression) {
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
    * layoutParent's root. */
-  EditionReference layoutParent = editionPool->push<BlockType::RackLayout>(0);
+  EditionReference layoutParent =
+      SharedEditionPool->push<BlockType::RackLayout>(0);
   // No parentheses on root layout.
   ConvertExpressionToLayout(layoutParent, expression, false);
   return layoutParent;

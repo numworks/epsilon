@@ -55,7 +55,7 @@ void FractionLayout::RenderNode(const Tree* node, const Tree* root,
 }
 
 EditionReference FractionLayout::Parse(const Tree* node) {
-  EditionReference ref = editionPool->push<BlockType::Division>();
+  EditionReference ref = SharedEditionPool->push<BlockType::Division>();
   Parser::Parse(node->childAtIndex(k_numeratorIndex));
   Parser::Parse(node->childAtIndex(k_denominatorIndex));
   return ref;

@@ -87,7 +87,7 @@ Reference::Reference(InitializerFromString initializer, const char *string)
 Reference::Reference(InitializerFromTreeInplace initializer, const Tree *tree)
     : Reference(
           [](void *initializer, const void *data) {
-            Tree *editedTree = editionPool->initFromAddress(data);
+            Tree *editedTree = SharedEditionPool->initFromAddress(data);
             return (reinterpret_cast<InitializerFromTreeInplace>(initializer))(
                 editedTree);
           },
@@ -109,9 +109,9 @@ Reference::Reference(InitializerFromTreeInplace initializer,
                 [](const Tree *tree, void *context) {
                   /* Copy the cache Tree* into the EditionPool for inplace
                    * editing. We couldn't use tree in the initializer since it
-                   * may be erased if the editionPool needs space and flushes
-                   * the CachePool. */
-                  Tree *editedTree = editionPool->clone(tree);
+                   * may be erased if the SharedEditionPool needs space and
+                   * flushes the CachePool. */
+                  Tree *editedTree = SharedEditionPool->clone(tree);
                   return (reinterpret_cast<InitializerFromTreeInplace>(
                       context))(editedTree);
                 },
@@ -162,8 +162,8 @@ uint16_t Reference::id() const {
   assert(isCacheReference());
   const Tree *tree = CachePool::sharedCachePool()->nodeForIdentifier(m_id);
   if (!tree) {
-    m_id = editionPool->executeAndCache(m_initializer, m_subInitializer,
-                                        m_data.data());
+    m_id = SharedEditionPool->executeAndCache(m_initializer, m_subInitializer,
+                                              m_data.data());
   }
   return m_id;
 }

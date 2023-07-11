@@ -94,8 +94,8 @@ bool Simplification::SimplifyTrig(Tree* u) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
     secondArgument->cloneTreeOverTree(
         secondArgument->type() == BlockType::Two ? 0_e : 1_e);
-    u->moveNodeAtNode(editionPool->push<BlockType::MinusOne>());
-    u->moveNodeAtNode(editionPool->push<BlockType::Multiplication>(2));
+    u->moveNodeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
+    u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
     return true;
   }
   assert(secondArgument->block()->isOfType({BlockType::Zero, BlockType::One}));
@@ -140,7 +140,8 @@ bool Simplification::SimplifyPower(Tree* u) {
   if (v->type() == BlockType::Power) {
     EditionReference p = v->childAtIndex(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
-    p->moveNodeBeforeNode(editionPool->push<BlockType::Multiplication>(2));
+    p->moveNodeBeforeNode(
+        SharedEditionPool->push<BlockType::Multiplication>(2));
     u->removeNode();
     SimplifyMultiplication(p);
     assert(IsInteger(p));
@@ -149,7 +150,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->type() == BlockType::Multiplication) {
     for (auto [w, index] : NodeIterator::Children<Editable>(v)) {
-      EditionReference m = editionPool->push<BlockType::Power>();
+      EditionReference m = SharedEditionPool->push<BlockType::Power>();
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);
@@ -620,11 +621,12 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
   Tree* grandChild = children->nextNode();
   EditionReference output =
       naryOutput == BlockType::Addition
-          ? editionPool->push<BlockType::Addition>(numberOfGrandChildren)
-          : editionPool->push<BlockType::Multiplication>(numberOfGrandChildren);
+          ? SharedEditionPool->push<BlockType::Addition>(numberOfGrandChildren)
+          : SharedEditionPool->push<BlockType::Multiplication>(
+                numberOfGrandChildren);
   // f(0,E) ... +(A,B,C) ... *(,,)
   for (int i = 0; i < numberOfGrandChildren; i++) {
-    Tree* clone = editionPool->clone(ref, true);
+    Tree* clone = SharedEditionPool->clone(ref, true);
     // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
     /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
      * clone.childAtIndex(childIndex)=Tree(clone.block()+childIndexOffset) */

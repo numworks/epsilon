@@ -16,11 +16,12 @@ static constexpr KTree smallTree = 4_e;
 void execute_push_tree_and_modify() {
   PoincareJ::Reference::InitializerFromTreeInplace treeModifier =
       [](Tree *tree) {
-        tree->moveNodeOverNode(editionPool->push<BlockType::Multiplication>(2));
+        tree->moveNodeOverNode(
+            SharedEditionPool->push<BlockType::Multiplication>(2));
       };
-  editionPool->executeAndCache(
+  SharedEditionPool->executeAndCache(
       [](void *context, const void *data) {
-        Tree *editedTree = editionPool->initFromAddress(data);
+        Tree *editedTree = SharedEditionPool->initFromAddress(data);
         return (
             reinterpret_cast<PoincareJ::Reference::InitializerFromTreeInplace>(
                 context))(editedTree);
@@ -30,18 +31,17 @@ void execute_push_tree_and_modify() {
 
 QUIZ_CASE(pcj_cache_pool) {
   CachePool *cachePool = CachePool::sharedCachePool();
-  EditionPool *editionPool = cachePool->editionPool();
   size_t treeSize = bigTree->treeSize();
   cachePool->reset();
 
   // storeEditedTree
-  editionPool->clone(bigTree);
+  SharedEditionPool->clone(bigTree);
   assert_pools_tree_sizes_are(0, 1);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(1, 0);
 
   // freeBlocks
-  editionPool->clone(bigTree);
+  SharedEditionPool->clone(bigTree);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(2, 0);
   cachePool->freeBlocks(1);
@@ -49,15 +49,15 @@ QUIZ_CASE(pcj_cache_pool) {
   cachePool->freeBlocks(treeSize - 1);
   assert_pools_tree_sizes_are(0, 0);
   for (int i = 0; i < 3; i++) {
-    editionPool->clone(bigTree);
+    SharedEditionPool->clone(bigTree);
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(3, 0);
   cachePool->freeBlocks(treeSize + 1);
   assert_pools_tree_sizes_are(1, 0);
-  editionPool->clone(bigTree);
+  SharedEditionPool->clone(bigTree);
   assert_pools_tree_sizes_are(1, 1);
-  EditionReference ref(editionPool->firstBlock());
+  EditionReference ref(SharedEditionPool->firstBlock());
   cachePool->freeBlocks(1, false);
   assert_trees_are_equal(ref, bigTree);
   assert_pools_tree_sizes_are(0, 1);
@@ -65,7 +65,7 @@ QUIZ_CASE(pcj_cache_pool) {
   assert_pools_tree_sizes_are(1, 0);
 
   // reset
-  editionPool->clone(bigTree);
+  SharedEditionPool->clone(bigTree);
   assert_pools_tree_sizes_are(1, 1);
   cachePool->reset();
   assert_pools_tree_sizes_are(0, 0);
@@ -87,7 +87,6 @@ const Tree *lastCachePoolTree() {
 
 QUIZ_CASE(pcj_cache_pool_limits) {
   CachePool *cachePool = CachePool::sharedCachePool();
-  EditionPool *editionPool = cachePool->editionPool();
   cachePool->reset();
   size_t treeSize = bigTree->treeSize();
 
@@ -98,7 +97,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   assert(maxNumberOfTreesInCache < CachePool::k_maxNumberOfReferences);
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     assert_pools_tree_sizes_are(i, 0);
-    editionPool->clone(bigTree);
+    SharedEditionPool->clone(bigTree);
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
@@ -113,7 +112,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // 1. Fill the cache with the max number of identifiers
   for (int i = 0; i < CachePool::k_maxNumberOfReferences; i++) {
     assert_pools_tree_sizes_are(i, 0);
-    editionPool->clone(smallTree);
+    SharedEditionPool->clone(smallTree);
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
@@ -136,7 +135,7 @@ void assert_check_cache_reference(
 QUIZ_CASE(pcj_cache_references) {
   // Constructors
   Reference reference0([]() {
-    editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+    SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
   });
   assert_check_cache_reference(reference0, {4_e});
 
@@ -148,14 +147,15 @@ QUIZ_CASE(pcj_cache_references) {
       [](Tree *node) {
         EditionReference ref(node);
         ref->cloneNodeAfterNode(6_e);
-        ref->moveNodeBeforeNode(editionPool->push<BlockType::Addition>(2));
+        ref->moveNodeBeforeNode(
+            SharedEditionPool->push<BlockType::Addition>(2));
       },
       &reference1);
   assert_check_cache_reference(reference2, {5_e, KAdd(5_e, 6_e)});
 
   Reference reference3(
       [](const char *string) {
-        editionPool->push<BlockType::Addition>(string[0] - '0');
+        SharedEditionPool->push<BlockType::Addition>(string[0] - '0');
       },
       "0");
   assert_check_cache_reference(reference3, {KAdd()});
@@ -177,7 +177,7 @@ void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
   CachePool *cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   Reference firstReference([]() {
-    editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(28));
+    SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(28));
   });
   assert_pools_tree_sizes_are(0, 0);
   firstReference.send([](const Tree *tree, void *result) {}, nullptr);

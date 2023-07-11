@@ -23,7 +23,7 @@ void assert_derivation_is(const Tree *expression, const Tree *expected,
   if (!symbolValue) {
     symbolValue = "y"_e;
   }
-  Tree *result = Tree::FromBlocks(editionPool->lastBlock());
+  Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   Derivation::Derivate(expression, symbol, symbolValue);
   EditionReference simplifiedResult(result);
   Simplification::Simplify(simplifiedResult);

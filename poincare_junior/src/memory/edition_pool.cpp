@@ -14,7 +14,8 @@ namespace PoincareJ {
 
 // ReferenceTable
 
-EditionPool *editionPool = CachePool::sharedCachePool()->editionPool();
+EditionPool *const SharedEditionPool =
+    CachePool::sharedCachePool()->editionPool();
 
 Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   Tree *n = Pool::ReferenceTable::nodeForIdentifier(id);

@@ -107,26 +107,26 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
 
 Tree *IntegerHandler::pushOnEditionPool() {
   if (isZero()) {
-    return editionPool->push<BlockType::Zero>();
+    return SharedEditionPool->push<BlockType::Zero>();
   }
   if (isOne()) {
-    return editionPool->push<BlockType::One>();
+    return SharedEditionPool->push<BlockType::One>();
   }
   if (isTwo()) {
-    return editionPool->push<BlockType::Two>();
+    return SharedEditionPool->push<BlockType::Two>();
   }
   if (isMinusOne()) {
-    return editionPool->push<BlockType::MinusOne>();
+    return SharedEditionPool->push<BlockType::MinusOne>();
   }
   if (isSignedType<int8_t>()) {
-    return editionPool->push<BlockType::IntegerShort>(
+    return SharedEditionPool->push<BlockType::IntegerShort>(
         static_cast<int8_t>(*this));
   }
   TypeBlock typeBlock(sign() == NonStrictSign::Negative
                           ? BlockType::IntegerNegBig
                           : BlockType::IntegerPosBig);
-  Tree *node = Tree::FromBlocks(editionPool->pushBlock(typeBlock));
-  editionPool->pushBlock(m_numberOfDigits);
+  Tree *node = Tree::FromBlocks(SharedEditionPool->pushBlock(typeBlock));
+  SharedEditionPool->pushBlock(m_numberOfDigits);
   pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "PushInteger", node->block(), node->treeSize());
@@ -137,7 +137,7 @@ Tree *IntegerHandler::pushOnEditionPool() {
 void IntegerHandler::pushDigitsOnEditionPool() {
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
-    editionPool->pushBlock(ValueBlock(digit(i)));
+    SharedEditionPool->pushBlock(ValueBlock(digit(i)));
   }
 }
 

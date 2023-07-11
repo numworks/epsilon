@@ -17,7 +17,7 @@ bool Derivation::Reduce(Tree *node) {
   const Tree *derivand = node->childAtIndex(0);
   const Tree *symbol = derivand->nextTree();
   const Tree *symbolValue = symbol->nextTree();
-  Tree *result = Tree::FromBlocks(editionPool->lastBlock());
+  Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   Derivate(derivand, symbol, symbolValue);
   node->moveTreeOverTree(result);
   return true;
@@ -26,12 +26,12 @@ bool Derivation::Reduce(Tree *node) {
 void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
                           const Tree *symbolValue) {
   if (symbol->treeIsIdenticalTo(derivand)) {
-    editionPool->push<BlockType::One>();
+    SharedEditionPool->push<BlockType::One>();
     return;
   }
   int numberOfChildren = derivand->numberOfChildren();
   if (numberOfChildren == 0) {
-    editionPool->push<BlockType::Zero>();
+    SharedEditionPool->push<BlockType::Zero>();
     return;
   }
   if (!derivand->block()->isOfType({BlockType::Multiplication,
@@ -39,22 +39,22 @@ void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
                                     BlockType::Power, BlockType::Trig,
                                     BlockType::Ln})) {
     // This derivation is not handled
-    editionPool->push<BlockType::Derivative>();
-    editionPool->clone(derivand);
-    editionPool->clone(symbol);
-    editionPool->clone(symbolValue);
+    SharedEditionPool->push<BlockType::Derivative>();
+    SharedEditionPool->clone(derivand);
+    SharedEditionPool->clone(symbol);
+    SharedEditionPool->clone(symbolValue);
     return;
   }
 
   if (numberOfChildren > 1) {
-    editionPool->push<BlockType::Addition>(numberOfChildren);
+    SharedEditionPool->push<BlockType::Addition>(numberOfChildren);
   }
   const Tree *derivandChild = derivand->nextNode();
   /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
    * With D being the Derivative and Di being the partial derivative on
    * parameter i. */
   for (int i = 0; i < numberOfChildren; i++) {
-    editionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<BlockType::Multiplication>(2);
     Derivate(derivandChild, symbol, symbolValue);
     ShallowPartialDerivate(derivand, symbol, symbolValue, i);
     derivandChild = derivandChild->nextTree();
@@ -72,7 +72,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       return;
     case BlockType::Addition:
       // Di(x0 + x1 + ... + xi + ...) = 1
-      editionPool->push<BlockType::One>();
+      SharedEditionPool->push<BlockType::One>();
       return;
     case BlockType::Exponential:
       // Di(exp(x)) = exp(x)
@@ -80,9 +80,9 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       return;
     case BlockType::Ln:
       // Di(ln(x)) = 1/x
-      editionPool->push<BlockType::Power>();
+      SharedEditionPool->push<BlockType::Power>();
       CloneReplacingSymbol(derivand->childAtIndex(0), symbol, symbolValue);
-      editionPool->push<BlockType::MinusOne>();
+      SharedEditionPool->push<BlockType::MinusOne>();
       return;
     default:
       break;
@@ -93,18 +93,18 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
          derivand->type() == BlockType::Power);
   // Second parameter cannot depend on symbol.
   if (index == 1) {
-    editionPool->push<BlockType::Zero>();
+    SharedEditionPool->push<BlockType::Zero>();
     return;
   }
   if (derivand->type() == BlockType::Power) {
-    editionPool->push<BlockType::Multiplication>(2);
-    editionPool->clone(derivand->childAtIndex(1));
+    SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->clone(derivand->childAtIndex(1));
   }
-  editionPool->clone(derivand, false);
+  SharedEditionPool->clone(derivand, false);
   CloneReplacingSymbol(derivand->childAtIndex(0), symbol, symbolValue);
-  editionPool->push<BlockType::Addition>(2);
-  editionPool->clone(derivand->childAtIndex(1));
-  editionPool->push<BlockType::MinusOne>();
+  SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->clone(derivand->childAtIndex(1));
+  SharedEditionPool->push<BlockType::MinusOne>();
   return;
 }
 
@@ -114,9 +114,9 @@ Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
   assert(symbol->type() == BlockType::UserSymbol);
   if (symbol->treeIsIdenticalTo(symbolValue)) {
     // No need to replace anything
-    return editionPool->clone(expression);
+    return SharedEditionPool->clone(expression);
   }
-  Tree *result = Tree::FromBlocks(editionPool->lastBlock());
+  Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   CloneReplacingSymbolRec(expression, symbol, symbolValue);
   return result;
 }
@@ -125,18 +125,18 @@ void Derivation::CloneReplacingSymbolRec(const Tree *expression,
                                          const Tree *symbol,
                                          const Tree *symbolValue) {
   if (symbol->treeIsIdenticalTo(expression)) {
-    editionPool->clone(symbolValue);
+    SharedEditionPool->clone(symbolValue);
     return;
   }
-  editionPool->clone(expression, false);
+  SharedEditionPool->clone(expression, false);
   // TODO: Extend this escape case to handle all nodes using local context.
   if (expression->type() == BlockType::Derivative) {
     // With x symbol and f(y) symbolValue :
     const Tree *subSymbol = expression->childAtIndex(1);
     if (subSymbol->treeIsIdenticalTo(symbol)) {
       // Diff(g(x),x,h(x)) -> Diff(g(x),x,h(f(y)))
-      editionPool->clone(expression->nextNode());
-      editionPool->clone(subSymbol);
+      SharedEditionPool->clone(expression->nextNode());
+      SharedEditionPool->clone(subSymbol);
       CloneReplacingSymbolRec(subSymbol->nextTree(), symbol, symbolValue);
       return;
     }

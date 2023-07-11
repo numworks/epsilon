@@ -31,7 +31,7 @@ size_t Layout::EditionPoolTextToLayoutRec(const char *text, Tree *parent,
       case '(': {
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
-        child = editionPool->push<BlockType::ParenthesisLayout>();
+        child = SharedEditionPool->push<BlockType::ParenthesisLayout>();
         i += EditionPoolTextToLayoutRec(text + i, P_RACKL(), child);
         break;
       }
@@ -41,7 +41,7 @@ size_t Layout::EditionPoolTextToLayoutRec(const char *text, Tree *parent,
         }
         // Insert ')' codepoint if it has no matching left parenthesis
       default:
-        child = editionPool->push<BlockType::CodePointLayout, CodePoint>(
+        child = SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
             text[i - 1]);
     }
     NAry::AddOrMergeChildAtIndex(parent, child, parent->numberOfChildren());

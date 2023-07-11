@@ -8,17 +8,19 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
-  EditionReference rackLayout1 = editionPool->push<BlockType::RackLayout>(3);
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('x');
-  editionPool->push<BlockType::VerticalOffsetLayout>();
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('2');
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('+');
+  EditionReference rackLayout1 =
+      SharedEditionPool->push<BlockType::RackLayout>(3);
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('x');
+  SharedEditionPool->push<BlockType::VerticalOffsetLayout>();
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('2');
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('+');
   // rackLayout1 is x^2+
 
-  EditionReference rackLayout2 = editionPool->push<BlockType::RackLayout>(3);
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('-');
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('4');
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('3');
+  EditionReference rackLayout2 =
+      SharedEditionPool->push<BlockType::RackLayout>(3);
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-');
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('4');
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('3');
   // rackLayout2 is -43
 
   EditionReference four = NAry::DetachChildAtIndex(rackLayout2, 1);
@@ -30,48 +32,49 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   NAry::RemoveChildAtIndex(rackLayout1, 4);
   // rackLayout1 is x^2-34
 
-  EditionReference rackLayout3 = editionPool->push<BlockType::RackLayout>(5);
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('x');
-  editionPool->push<BlockType::VerticalOffsetLayout>();
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('2');
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('-');
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('3');
-  editionPool->push<BlockType::CodePointLayout, CodePoint>('4');
+  EditionReference rackLayout3 =
+      SharedEditionPool->push<BlockType::RackLayout>(5);
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('x');
+  SharedEditionPool->push<BlockType::VerticalOffsetLayout>();
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('2');
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-');
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('3');
+  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('4');
   // rackLayout3 is x^2-34
 
   assert_trees_are_equal(rackLayout1, rackLayout3);
 
-  EditionReference addition1 = editionPool->push<BlockType::Addition>(3);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  editionPool->push<BlockType::Addition>(3);
-  editionPool->push<BlockType::Multiplication>(2);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  editionPool->push<BlockType::Addition>(2);
-  editionPool->push<BlockType::Addition>(1);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
+  EditionReference addition1 = SharedEditionPool->push<BlockType::Addition>(3);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  SharedEditionPool->push<BlockType::Addition>(3);
+  SharedEditionPool->push<BlockType::Multiplication>(2);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->push<BlockType::Addition>(1);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
   // addition1 is 1+(2*3+4+5)+((+6)+7)
   NAry::Flatten(addition1);
   // addition1 is 1+2*3+4+5+6+7
 
-  EditionReference addition2 = editionPool->push<BlockType::Addition>(6);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  editionPool->push<BlockType::Multiplication>(2);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
+  EditionReference addition2 = SharedEditionPool->push<BlockType::Addition>(6);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  SharedEditionPool->push<BlockType::Multiplication>(2);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
   // addition2 is 1+2+3
 
   assert_trees_are_equal(addition1, addition2);
 
   // Sort
-  Tree* addition3 = editionPool->clone(
+  Tree* addition3 = SharedEditionPool->clone(
       KAdd(KLn(5_e), KLn(1_e), KTrig(3_e, 0_e), 1_e, KTrig(2_e, 1_e), 0_e,
            KTrig(1_e, 0_e), 3_e, KMult(1_e, 0_e, KLn(2_e)), 1_e,
            KPow(KTrig(3_e, 0_e), -1_e)));
@@ -86,7 +89,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
                       KLn(5_e), KTrig(1_e, 0_e), KTrig(2_e, 1_e),
                       KPow(KTrig(3_e, 0_e), -1_e), KTrig(3_e, 0_e)));
 
-  Tree* sorted = editionPool->clone(KAdd(1_e, 2_e, 3_e));
+  Tree* sorted = SharedEditionPool->clone(KAdd(1_e, 2_e, 3_e));
   NAry::SortedInsertChild(sorted, EditionReference(0_e));
   NAry::SortedInsertChild(sorted, EditionReference(2_e));
   NAry::SortedInsertChild(sorted, EditionReference(5_e));

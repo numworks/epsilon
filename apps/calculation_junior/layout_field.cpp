@@ -45,9 +45,9 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  editionPool->executeAndDump(
+  SharedEditionPool->executeAndDump(
       [](void *subAction, const void *data) {
-        editionPool->push<BlockType::RackLayout>(0);
+        SharedEditionPool->push<BlockType::RackLayout>(0);
       },
       nullptr, nullptr, m_layoutBuffer.blocks(),
       PoincareJ::LayoutCursor::k_layoutBufferSize);

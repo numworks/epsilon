@@ -156,7 +156,7 @@ bool NAry::Sort(Tree* nary, Comparison::Order order) {
   return false;
 push:
   // push children in their destination order
-  Tree* newNAry = editionPool->clone(nary, false);
+  Tree* newNAry = SharedEditionPool->clone(nary, false);
   for (int i = 0; i < numberOfChildren; i++) {
     children[indexes[i]]->clone();
   }

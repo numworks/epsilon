@@ -8,7 +8,7 @@ using namespace PoincareJ;
 void assert_polynomial_is_parsed(const Tree* node,
                                  const Tree* expectedVariables,
                                  const Tree* expectedPolynomial) {
-  editionPool->flush();
+  SharedEditionPool->flush();
   EditionReference variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   EditionReference ref(node);
@@ -54,7 +54,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
       EditionReference(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
                             KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
                             KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
-  editionPool->flush();
+  SharedEditionPool->flush();
 
   /* A * B = x^5 + 3yx^4 + (2y^2+8y+1)*x^3 + (6y^3+21y^2+23)x^2 +
   (2y^3+9y^2+
@@ -68,7 +68,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
                             KPol(Exponents<3, 2, 0>(), "y"_e, 6_e, 21_e, 23_e),
                             KPol(Exponents<3, 2, 1>(), "y"_e, 2_e, 9_e, 76_e),
                             KPol(Exponents<1, 0>(), "y"_e, 23_e, 23_e))));
-  editionPool->flush();
+  SharedEditionPool->flush();
 
   /* Test variable order:
    * (y^2) + ((y+1)x + 1 = (y+1)x + y^2 + 1 */
@@ -79,7 +79,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
                                KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e), 1_e))),
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e),
            KPol(Exponents<2, 0>(), "y"_e, 1_e, 1_e)));
-  editionPool->flush();
+  SharedEditionPool->flush();
 
   // A = x^2y^2 + y
   polA = KPol(Exponents<2, 0>(), "x"_e, KPol(Exponents<2>(), "y"_e, 1_e),

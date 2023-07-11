@@ -19,14 +19,14 @@ inline EditionReference createSimpleExpression() {
   std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;
 #endif
   EditionReference multiplication(
-      editionPool->push<BlockType::Multiplication>(3));
-  editionPool->push<BlockType::Addition>(2);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  editionPool->push<BlockType::Addition>(2);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+      SharedEditionPool->push<BlockType::Multiplication>(3));
+  SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   return multiplication;
 }
 
@@ -34,8 +34,7 @@ inline EditionReference createSimpleExpression() {
 
 __attribute__((__used__)) inline void log_edition_pool(
     bool corruptedEditionPool = false) {
-  EditionPool* editionPool = CachePool::sharedCachePool()->editionPool();
-  editionPool->log(
+  SharedEditionPool->log(
       std::cout,
       corruptedEditionPool ? Pool::LogFormat::Flat : Pool::LogFormat::Tree,
       true);
@@ -72,8 +71,7 @@ using FunctionSize = size_t (Pool::*)() const;
 inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
                                    FunctionSize functionSize) {
   CachePool* cachePool = CachePool::sharedCachePool();
-  EditionPool* editionPool = cachePool->editionPool();
-  Pool* pools[] = {cachePool, editionPool};
+  Pool* pools[] = {cachePool, SharedEditionPool};
   size_t theoreticalSizes[] = {cachePoolSize, editionPoolSize};
   for (size_t i = 0; i < sizeof(theoreticalSizes) / sizeof(size_t); i++) {
 #if POINCARE_MEMORY_TREE_LOG
@@ -103,10 +101,8 @@ inline void assert_pools_tree_sizes_are(size_t cachePoolSize,
 }
 
 inline void reset_pools() {
-  CachePool* cachePool = CachePool::sharedCachePool();
-  EditionPool* editionPool = cachePool->editionPool();
-  editionPool->flush();
-  cachePool->reset();
+  SharedEditionPool->flush();
+  CachePool::sharedCachePool()->reset();
 }
 
 inline void assert_pool_contains(Pool* pool,

@@ -212,7 +212,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     }
 
     const Tree* rootNode() const override {
-      return Tree::FromBlocks(editionPool->firstBlock());
+      return Tree::FromBlocks(SharedEditionPool->firstBlock());
     }
     const Tree* cursorNode() const override { return m_cursorReference; }
 

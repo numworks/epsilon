@@ -74,7 +74,7 @@ bool NAry::Flatten(Node* nary) {
 
 bool NAry::SquashIfUnary(Node* nary) {
   if (nary->numberOfChildren() == 1) {
-    nary = nary->moveTreeOverTree(nary->nextNode());
+    nary->moveTreeOverTree(nary->nextNode());
     return true;
   }
   return false;
@@ -87,7 +87,7 @@ bool NAry::SquashIfEmpty(Node* nary) {
   // Return the neutral element
   BlockType type = nary->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
-  nary = nary->cloneTreeOverTree(
+  nary->cloneTreeOverTree(
       Node::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
   return true;
 }

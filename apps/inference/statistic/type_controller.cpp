@@ -18,8 +18,7 @@ TypeController::TypeController(StackViewController *parent,
                                HypothesisController *hypothesisController,
                                InputController *inputController,
                                Statistic *statistic)
-    : Escher::SelectableListViewController<
-          Escher::StandardMemoizedListViewDataSource>(parent),
+    : ExplicitSelectableListViewController(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_statistic(statistic) {
@@ -49,7 +48,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     assert(selRow == k_indexOfPooledTest);
     type = DistributionType::TPooled;
   }
-  Escher::ViewController *controller = m_inputController;
+  ViewController *controller = m_inputController;
   if (m_statistic->hasHypothesisParameters()) {
     controller = m_hypothesisController;
   }
@@ -68,7 +67,7 @@ const char *TypeController::title() {
   return m_titleBuffer;
 }
 
-void TypeController::stackOpenPage(Escher::ViewController *nextPage) {
+void TypeController::stackOpenPage(ViewController *nextPage) {
   switch (m_statistic->distributionType()) {
     case DistributionType::T:
       selectRow(k_indexOfTTest);

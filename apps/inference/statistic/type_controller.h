@@ -15,8 +15,7 @@
 
 namespace Inference {
 
-class TypeController : public Escher::SelectableListViewController<
-                           Escher::StandardMemoizedListViewDataSource> {
+class TypeController : public Escher::ExplicitSelectableListViewController {
  public:
   TypeController(Escher::StackViewController* parent,
                  HypothesisController* hypothesisController,
@@ -31,9 +30,7 @@ class TypeController : public Escher::SelectableListViewController<
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override;
-  Escher::HighlightCell* reusableCell(int i, int type) override {
-    return &m_cells[i];
-  }
+  Escher::HighlightCell* cell(int index) override { return &m_cells[index]; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 

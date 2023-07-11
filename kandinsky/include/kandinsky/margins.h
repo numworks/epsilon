@@ -8,8 +8,6 @@ class KD1DMargins {
  public:
   constexpr KD1DMargins(KDCoordinate firstMargin, KDCoordinate secondMargin)
       : m_firstMargin(firstMargin), m_secondMargin(secondMargin) {}
-  constexpr KD1DMargins(KDCoordinate margin)
-      : m_firstMargin(margin), m_secondMargin(margin) {}
   constexpr KD1DMargins() : m_firstMargin(0), m_secondMargin(0) {}
 
  protected:
@@ -29,7 +27,6 @@ class KD1DMargins {
 };
 
 // KDHorizontalMargins(left, right)
-// KDHorizontalMargins(margin) -> both margins are equal
 // KDHorizontalMargins() -> both margins are 0
 class KDHorizontalMargins : public KD1DMargins {
  public:
@@ -49,7 +46,6 @@ class KDHorizontalMargins : public KD1DMargins {
 };
 
 // KDVerticalMargins(top, bottom)
-// KDVerticalMargins(margin) -> both margins are equal
 // KDVerticalMargins() -> both margins are 0
 class KDVerticalMargins : public KD1DMargins {
  public:
@@ -80,8 +76,8 @@ class KDMargins {
   constexpr KDMargins(KDHorizontalMargins horizontal,
                       KDVerticalMargins vertical)
       : m_horizontal(horizontal), m_vertical(vertical) {}
-  constexpr KDMargins(KDCoordinate margin)
-      : m_horizontal(margin), m_vertical(margin) {}
+  constexpr explicit KDMargins(KDCoordinate margin)
+      : m_horizontal(margin, margin), m_vertical(margin, margin) {}
   constexpr KDMargins() : m_horizontal(), m_vertical() {}
 
   constexpr bool operator==(const KDMargins& other) {

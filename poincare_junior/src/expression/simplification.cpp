@@ -253,7 +253,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 // returns true if they have been merged in u1
 bool Simplification::MergeMultiplicationChildren(Tree* u1, Tree* u2) {
   // Merge constants
-  if (IsConstant(u1) && IsConstant(u2)) {
+  if (IsRational(u1) && IsRational(u2)) {
     Tree* mult = Rational::Multiplication(u1, u2);
     mult->moveTreeOverTree(Rational::IrreducibleForm(mult));
     u2->moveTreeOverTree(mult);
@@ -363,7 +363,7 @@ Tree* PushConstant(const Tree* u) {
 // returns true if they have been merged in u1
 bool Simplification::MergeAdditionChildren(Tree* u1, Tree* u2) {
   // Merge constants
-  if (IsConstant(u1) && IsConstant(u2)) {
+  if (IsRational(u1) && IsRational(u2)) {
     Tree* add = Rational::Addition(u1, u2);
     add->moveTreeOverTree(Rational::IrreducibleForm(add));
     u2->moveTreeOverTree(add);

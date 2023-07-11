@@ -42,7 +42,6 @@ class ListParameterController : public Shared::ListParameterController,
   }
 
  private:
-  void initialRankChanged(int value);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const {
     return 2;

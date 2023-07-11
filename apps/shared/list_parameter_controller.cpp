@@ -20,10 +20,16 @@ ListParameterController::ListParameterController(
   m_enableCell.subLabel()->setMessage(
       I18n::Message::ActivateDeactivateListParamDescription);
   m_deleteCell.label()->setMessage(deleteFunctionMessage);
+  m_colorCell.label()->setMessage(I18n::Message::Color);
 }
 
 void ListParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  m_colorCell.subLabel()->setMessage(
+      ColorNames::NameForColor(function()->color()));
+  if (!m_record.isNull()) {
+    m_enableCell.accessory()->setState(function()->isActive());
+  }
   if (selectedRow() == -1) {
     selectCell(0);
   } else {
@@ -31,17 +37,6 @@ void ListParameterController::viewWillAppear() {
   }
   resetMemoization();
   m_selectableListView.reloadData();
-}
-
-void ListParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  if (cell == &m_enableCell && !m_record.isNull()) {
-    m_enableCell.accessory()->setState(function()->isActive());
-  }
-  if (cell == &m_colorCell) {
-    m_colorCell.label()->setMessage(I18n::Message::Color);
-    m_colorCell.subLabel()->setMessage(
-        ColorNames::NameForColor(function()->color()));
-  }
 }
 
 void ListParameterController::setRecord(Ion::Storage::Record record) {
@@ -56,6 +51,9 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     function()->setActive(!function()->isActive());
+    if (!m_record.isNull()) {
+      m_enableCell.accessory()->setState(function()->isActive());
+    }
     m_selectableListView.reloadSelectedCell();
     return true;
   }

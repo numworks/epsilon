@@ -82,7 +82,6 @@ HighlightCell *ListParameterController::cell(int index) {
 }
 
 void ListParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  Shared::ListParameterController::fillCellForRow(cell, row);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
   }
@@ -107,9 +106,6 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     App::app()->localContext()->resetCache();
-    function()->setActive(!function()->isActive());
-    m_selectableListView.reloadSelectedCell();
-    return true;
   }
   return Shared::ListParameterController::handleEvent(event);
 }

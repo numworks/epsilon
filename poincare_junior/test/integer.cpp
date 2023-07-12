@@ -1,6 +1,4 @@
 #include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/memory/k_tree.h>
 #include <quiz.h>
 
 #include "helper.h"

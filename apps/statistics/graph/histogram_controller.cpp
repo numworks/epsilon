@@ -190,10 +190,16 @@ void HistogramController::initRangeParameters() {
   if ((xMax - xMin) / barWidth > k_maxNumberOfBarsPerWindow) {
     xMax = xMin + k_maxNumberOfBarsPerWindow * barWidth;
   }
+
+  float min = std::clamp(static_cast<float>(xMin), -Range1D::k_maxFloat,
+                         Range1D::k_maxFloat);
+  float max = std::clamp(static_cast<float>(xMax), -Range1D::k_maxFloat,
+                         Range1D::k_maxFloat);
+
   m_histogramRange.setHistogramXMin(
-      xMin - HistogramRange::k_displayLeftMarginRatio * (xMax - xMin), false);
+      min - HistogramRange::k_displayLeftMarginRatio * (max - min), false);
   m_histogramRange.setHistogramXMax(
-      xMax + HistogramRange::k_displayRightMarginRatio * (xMax - xMin), true);
+      max + HistogramRange::k_displayRightMarginRatio * (max - min), true);
 
   initYRangeParameters(selectedSeries());
 }

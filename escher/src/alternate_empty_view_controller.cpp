@@ -10,20 +10,17 @@ AlternateEmptyViewController::ContentView::ContentView(
     ViewController* mainViewController, AlternateEmptyViewDelegate* delegate)
     : m_mainViewController(mainViewController), m_delegate(delegate) {}
 
+View* AlternateEmptyViewController::ContentView::currentView() {
+  return isEmpty() ? m_delegate->emptyView() : m_mainViewController->view();
+}
+
 View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
-  if (isEmpty()) {
-    return m_delegate->emptyView();
-  }
-  return m_mainViewController->view();
+  return currentView();
 }
 
 void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
-  if (isEmpty()) {
-    setChildFrame(m_delegate->emptyView(), bounds(), force);
-  } else {
-    setChildFrame(m_mainViewController->view(), bounds(), force);
-  }
+  setChildFrame(currentView(), bounds(), force);
 }
 
 /* AlternateEmptyViewController */

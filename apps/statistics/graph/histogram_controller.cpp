@@ -143,9 +143,9 @@ bool HistogramController::moveSelectionHorizontally(
   int newSelectedBarIndex = selectedIndex();
   do {
     newSelectedBarIndex += direction.isRight() ? 1 : -1;
-  } while (m_store->heightOfBarAtIndex(selectedSeries(), newSelectedBarIndex) ==
-               0 &&
-           newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars);
+  } while (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
+           m_store->heightOfBarAtIndex(selectedSeries(), newSelectedBarIndex) ==
+               0);
 
   if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
       selectedIndex() != newSelectedBarIndex) {

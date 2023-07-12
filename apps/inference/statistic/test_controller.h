@@ -18,8 +18,7 @@ class TypeController;
 class InputController;
 class InputSlopeController;
 
-class TestController : public Escher::SelectableListViewController<
-                           Escher::StandardMemoizedListViewDataSource> {
+class TestController : public Escher::ExplicitSelectableListViewController {
  public:
   TestController(Escher::StackViewController* parentResponder,
                  HypothesisController* hypothesisController,
@@ -32,12 +31,7 @@ class TestController : public Escher::SelectableListViewController<
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() override;
   int numberOfRows() const override;
-  Escher::HighlightCell* reusableCell(int i, int type) override {
-    return &m_cells[i];
-  }
-  int reusableCellCount(int type) override {
-    return Statistic::k_numberOfSignificanceTestType;
-  }
+  Escher::HighlightCell* cell(int index) override { return &m_cells[index]; }
   void viewWillAppear() override;
 
   constexpr static int k_indexOfOneProp = 0;
@@ -48,10 +42,6 @@ class TestController : public Escher::SelectableListViewController<
   constexpr static int k_indexOfSlope = 5;
 
  private:
-  int virtualIndexOfSlope() const {
-    return m_statistic->numberOfSignificancesTestTypes() - 1;
-  }
-
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_cells[Statistic::k_numberOfSignificanceTestType];

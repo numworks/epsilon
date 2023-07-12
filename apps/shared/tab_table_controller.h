@@ -24,8 +24,12 @@ class TabTableController : public Escher::ViewController,
   }
 
  protected:
+  // Margins
   constexpr static KDCoordinate k_scrollBarMargin =
       Escher::Metric::CommonMargins.right();
+  constexpr static KDMargins k_margins = {
+      Escher::Metric::TableSeparatorThickness, k_scrollBarMargin,
+      Escher::Metric::TableSeparatorThickness, k_scrollBarMargin};
 
   virtual Escher::SelectableTableView* selectableTableView() = 0;
   virtual Escher::Responder* tabController() const = 0;

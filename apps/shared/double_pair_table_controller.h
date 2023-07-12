@@ -62,9 +62,6 @@ class DoublePairTableController
   KDCoordinate separatorBeforeColumn(int index) override;
 
  protected:
-  // Margins
-  constexpr static KDMargins k_margins = {8, k_scrollBarMargin, 8,
-                                          k_scrollBarMargin};
   // Number of cells
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_numberOfHeaderColumns = 2;

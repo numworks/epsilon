@@ -28,25 +28,24 @@ static inline void assert_properties(const Tree* numerator,
   r->removeTree();
 }
 
+// TODO : Handle negative denominator in Rational::Push
 QUIZ_CASE(pcj_rational_properties) {
   assert_properties(3_e, 8_e, BlockType::RationalShort, StrictSign::Positive);
   assert_properties(-1_e, 255_e, BlockType::RationalShort,
                     StrictSign::Negative);
-  // TODO : Handle negative denominator in Rational::Push
   // assert_properties(1_e, -1_e, BlockType::RationalShort,
   // StrictSign::Negative);
   assert_properties(0_e, 5_e, BlockType::RationalShort, StrictSign::Null);
-  // TODO : Fix RationalPosBig
-  // assert_properties(32134123_e, 812312312_e, BlockType::RationalPosBig,
-  //                   StrictSign::Positive);
+  assert_properties(32134123_e, 812312312_e, BlockType::RationalPosBig,
+                    StrictSign::Positive);
   // assert_properties(32134123_e, -812312312_e, BlockType::RationalNegBig,
   //                   StrictSign::Negative);
-  // assert_properties(-32134123_e, 812312312_e, BlockType::RationalNegBig,
-  //                   StrictSign::Negative);
+  assert_properties(-32134123_e, 812312312_e, BlockType::RationalNegBig,
+                    StrictSign::Negative);
   // assert_properties(-32134123_e, -812312312_e, BlockType::RationalPosBig,
   //                   StrictSign::Positive);
-  // assert_properties(0_e, 812312312_e, BlockType::RationalPosBig,
-  //                   StrictSign::Null);
+  assert_properties(0_e, 812312312_e, BlockType::RationalPosBig,
+                    StrictSign::Null);
   // assert_properties(0_e, -812312312_e, BlockType::RationalPosBig,
   //                   StrictSign::Null);
 }
@@ -66,9 +65,8 @@ static inline void assert_irreducible_form(const Tree* iNumerator,
 
 QUIZ_CASE(pcj_rational_irreducible_form) {
   assert_irreducible_form(2_e, 6_e, 1_e, 3_e);
-  // TODO : Fix RationalPosBig
-  // assert_irreducible_form(-15170_e, 50061_e, -10_e, 33_e);
-  // assert_irreducible_form(123169_e, 123191_e, 123169_e, 123191_e);
+  assert_irreducible_form(-15170_e, 50061_e, -10_e, 33_e);
+  assert_irreducible_form(123169_e, 123191_e, 123169_e, 123191_e);
 }
 
 typedef Tree* (*Operation)(const Tree* i, const Tree* j);
@@ -100,17 +98,14 @@ static inline void assert_add_or_mult(
 
 QUIZ_CASE(pcj_rational_addition) {
   assert_add_or_mult(1_e, 2_e, 1_e, 2_e, Rational::Addition, 1_e, 1_e);
-  // TODO : Fix RationalPosBig
-  // assert_add_or_mult(1237_e, 5257_e, -3_e, 4_e, Rational::Addition, -10823_e,
-  //                    21028_e);
+  assert_add_or_mult(1237_e, 5257_e, -3_e, 4_e, Rational::Addition, -10823_e,
+                     21028_e);
 }
 
 QUIZ_CASE(pcj_rational_multiplication) {
   assert_add_or_mult(1_e, 2_e, 1_e, 2_e, Rational::Multiplication, 1_e, 4_e);
-  // TODO : Fix RationalPosBig
-  // assert_add_or_mult(23515_e, 7_e, 2_e, 23515_e, Rational::Multiplication,
-  // 2_e,
-  //                    7_e);
+  assert_add_or_mult(23515_e, 7_e, 2_e, 23515_e, Rational::Multiplication, 2_e,
+                     7_e);
 }
 
 static inline void assert_power(const Tree* iNumerator,
@@ -127,7 +122,6 @@ static inline void assert_power(const Tree* iNumerator,
 
 QUIZ_CASE(pcj_rational_integer_power) {
   assert_power(3_e, 2_e, 3_e, 27_e, 8_e);
-  // TODO : Fix RationalPosBig
-  // assert_power(1_e, 2_e, 10_e, 1_e, 1024_e);
-  // assert_power(7123_e, 3_e, 2_e, 50737129_e, 9_e);
+  assert_power(1_e, 2_e, 10_e, 1_e, 1024_e);
+  assert_power(7123_e, 3_e, 2_e, 50737129_e, 9_e);
 }

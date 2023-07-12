@@ -107,15 +107,8 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
                           ? BlockType::RationalNegBig
                           : BlockType::RationalPosBig);
   Tree* node = Tree::FromBlocks(SharedEditionPool->pushBlock(typeBlock));
-  uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
-  uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
-  if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
-    // TODO: set error type to be "Unrepresentable rational"
-    ExceptionCheckpoint::Raise();
-    return nullptr;
-  }
-  SharedEditionPool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
-  SharedEditionPool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
+  SharedEditionPool->pushBlock(ValueBlock(numerator.numberOfDigits()));
+  SharedEditionPool->pushBlock(ValueBlock(denominator.numberOfDigits()));
   numerator.pushDigitsOnEditionPool();
   denominator.pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION

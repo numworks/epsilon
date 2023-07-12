@@ -261,10 +261,9 @@ class TypeBlock : public Block {
       case BlockType::IntegerNegBig:
         return 2;
       case BlockType::RationalShort:
-        return 3;
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig:
-        return 2;
+        return 3;
       case BlockType::Float:
         return 1 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:
@@ -298,8 +297,11 @@ class TypeBlock : public Block {
       }
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig: {
-        uint8_t numberOfDigits = static_cast<uint8_t>(*nextNth(3));
-        return numberOfMetaBlocks + numberOfDigits;
+        uint8_t numberOfDigitsNumerator = static_cast<uint8_t>(*next());
+        uint8_t numberOfDigitsDenominator = static_cast<uint8_t>(*nextNth(2));
+        return numberOfMetaBlocks +
+               static_cast<size_t>(numberOfDigitsNumerator) +
+               static_cast<size_t>(numberOfDigitsDenominator);
       }
       case BlockType::Polynomial: {
         uint8_t numberOfTerms = static_cast<uint8_t>(*next()) - 1;

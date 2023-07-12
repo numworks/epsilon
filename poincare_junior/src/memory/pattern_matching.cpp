@@ -286,7 +286,7 @@ bool PatternMatching::MatchAndReplace(Node* node, const Node* pattern,
    */
 
   Context ctx;
-  // Espace case for full matches like A -> cos(A)
+  // Escape case for full matches like A -> cos(A)
   if (pattern->type() == BlockType::Placeholder) {
     ctx.setNode(Placeholder::NodeToTag(pattern), node, 1, false);
     node->moveTreeOverTree(Create(structure, ctx));

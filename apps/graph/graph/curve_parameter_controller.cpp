@@ -210,9 +210,7 @@ void CurveParameterController::viewWillAppear() {
   m_derivativeNumberCell.setVisible(
       shouldDisplayDerivative() ||
       function()->properties().numberOfCurveParameters() == 3);
-  resetMemoization();
-  m_selectableListView.reloadData();
-  SelectableListViewController::viewWillAppear();
+  ExplicitFloatParameterController::viewWillAppear();
 }
 
 bool CurveParameterController::shouldDisplayCalculation() const {

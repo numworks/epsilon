@@ -23,7 +23,7 @@ TestController::TestController(StackViewController *parentResponder,
                                InputSlopeController *inputSlopeController,
                                InputController *inputController,
                                Statistic *statistic)
-    : SelectableListViewController<MemoizedListViewDataSource>(parentResponder),
+    : ExplicitSelectableListViewController(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
@@ -37,6 +37,7 @@ TestController::TestController(StackViewController *parentResponder,
   m_cells[k_indexOfCategorical].label()->setMessage(
       I18n::Message::TestCategorical);
   m_cells[k_indexOfCategorical].subLabel()->setMessage(I18n::Message::X2Test);
+  m_cells[k_indexOfSlope].label()->setMessage(I18n::Message::Slope);
   // Init selection
   selectRow(0);
 }
@@ -47,16 +48,14 @@ const char *TestController::title() {
 
 void TestController::stackOpenPage(ViewController *nextPage) {
   SignificanceTestType type = m_statistic->significanceTestType();
-  selectRow(type == SignificanceTestType::Slope ? virtualIndexOfSlope()
-                                                : static_cast<int>(type));
+  selectRow(static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
 }
 
 void TestController::didBecomeFirstResponder() {
-  SelectableListViewController<
-      MemoizedListViewDataSource>::didBecomeFirstResponder();
   resetMemoization();
   m_selectableListView.reloadData();
+  ExplicitSelectableListViewController::didBecomeFirstResponder();
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {
@@ -85,7 +84,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   } else if (row == k_indexOfTwoMeans) {
     testType = SignificanceTestType::TwoMeans;
     controller = m_typeController;
-  } else if (row == virtualIndexOfSlope()) {
+  } else if (row == k_indexOfSlope) {
     testType = SignificanceTestType::Slope;
     controller = m_inputSlopeController;
     if (m_statistic->hasHypothesisParameters()) {
@@ -106,7 +105,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 }
 
 int TestController::numberOfRows() const {
-  return m_statistic->numberOfSignificancesTestTypes();
+  return Statistic::k_numberOfSignificanceTestType;
 }
 
 void TestController::viewWillAppear() {
@@ -118,8 +117,9 @@ void TestController::viewWillAppear() {
       m_statistic->zStatisticMessage());
   m_cells[k_indexOfTwoMeans].subLabel()->setMessage(
       m_statistic->tOrZStatisticMessage());
-  m_cells[virtualIndexOfSlope()].label()->setMessage(I18n::Message::Slope);
-  m_cells[virtualIndexOfSlope()].subLabel()->setMessage(
+  m_cells[k_indexOfCategorical].setVisible(
+      m_statistic->numberOfSignificancesTestTypes() == numberOfRows());
+  m_cells[k_indexOfSlope].subLabel()->setMessage(
       m_statistic->tStatisticMessage());
 }
 

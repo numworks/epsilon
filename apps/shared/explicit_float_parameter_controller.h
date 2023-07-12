@@ -39,8 +39,7 @@ class ExplicitFloatParameterController
 
  private:
   virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
-  virtual Escher::TextField *textFieldOfCellAtIndex(Escher::HighlightCell *cell,
-                                                    int index) = 0;
+  virtual Escher::TextField *textFieldOfCellAtRow(int row) = 0;
 };
 
 }  // namespace Shared

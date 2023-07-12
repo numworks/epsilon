@@ -51,8 +51,7 @@ class CurveParameterController
   Escher::HighlightCell* cell(int index) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
-                                            int index) override;
+  Escher::TextField* textFieldOfCellAtRow(int row) override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;

@@ -52,7 +52,9 @@ void AlternateEmptyViewController::didBecomeFirstResponder() {
 }
 
 void AlternateEmptyViewController::initView() {
-  m_contentView.mainViewController()->initView();
+  if (!m_contentView.isEmpty()) {
+    m_contentView.mainViewController()->initView();
+  }
 }
 
 void AlternateEmptyViewController::viewWillAppear() {

@@ -191,6 +191,7 @@ void HistogramController::initRangeParameters() {
     xMax = xMin + k_maxNumberOfBarsPerWindow * barWidth;
   }
 
+  // TODO: Set the histogram range to double.
   float min = std::clamp(static_cast<float>(xMin), -Range1D::k_maxFloat,
                          Range1D::k_maxFloat);
   float max = std::clamp(static_cast<float>(xMax), -Range1D::k_maxFloat,

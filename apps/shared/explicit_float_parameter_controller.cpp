@@ -26,6 +26,12 @@ void ExplicitFloatParameterController::didBecomeFirstResponder() {
 
 void ExplicitFloatParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  int nRows = numberOfRows();
+  for (int row = 0; row < nRows; row++) {
+    if (cell(row)->isVisible()) {
+      fillParameterCellAtRow(row);
+    }
+  }
   resetMemoization();
   m_selectableListView.reloadData();
 }
@@ -45,8 +51,7 @@ bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ExplicitFloatParameterController::fillCellForRow(HighlightCell *cell,
-                                                      int row) {
+void ExplicitFloatParameterController::fillParameterCellAtRow(int row) {
   if (textFieldOfCellAtRow(row)->isEditing()) {
     return;
   }

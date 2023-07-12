@@ -26,7 +26,6 @@ class CurveParameterController
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void viewWillAppear() override;
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTitle;
@@ -60,6 +59,7 @@ class CurveParameterController
     return cell(index) == &m_derivativeNumberCell &&
            function()->properties().numberOfCurveParameters() == 2;
   };
+  void fillParameterCellAtRow(int row) override;
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =

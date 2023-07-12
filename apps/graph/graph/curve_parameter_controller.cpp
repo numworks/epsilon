@@ -60,7 +60,7 @@ const char *CurveParameterController::title() {
   return m_title;
 }
 
-void CurveParameterController::fillCellForRow(HighlightCell *cell, int row) {
+void CurveParameterController::fillParameterCellAtRow(int row) {
   I18n::Message name = I18n::Message::Default;
   MenuCellWithEditableText<OneLineBufferTextView<KDFont::Size::Large>>
       *parameterCells[] = {&m_abscissaCell, &m_imageCell,
@@ -73,22 +73,22 @@ void CurveParameterController::fillCellForRow(HighlightCell *cell, int row) {
   }
   if (name != I18n::Message::Default) {
     parameterCells[row]->label()->setMessageWithPlaceholders(name);
-    ExplicitFloatParameterController::fillCellForRow(cell, row);
+    ExplicitFloatParameterController::fillParameterCellAtRow(row);
     return;
   }
-  if (cell == &m_imageCell || cell == &m_derivativeNumberCell) {
+  if (cell(row) == &m_imageCell || cell(row) == &m_derivativeNumberCell) {
     // The parameter requires a custom name built from the function name
     constexpr size_t bufferSize =
         Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
     char buffer[bufferSize];
-    if (cell == &m_imageCell) {
+    if (cell(row) == &m_imageCell) {
       function()->nameWithArgument(buffer, bufferSize);
     } else {
-      assert(cell == &m_derivativeNumberCell);
+      assert(cell(row) == &m_derivativeNumberCell);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
     parameterCells[row]->label()->setText(buffer);
-    ExplicitFloatParameterController::fillCellForRow(cell, row);
+    ExplicitFloatParameterController::fillParameterCellAtRow(row);
   }
 }
 

@@ -31,6 +31,7 @@ class AlternateEmptyViewController : public ViewController {
     }
     void layoutSubviews(bool force = false) override;
     bool isEmpty() const { return m_delegate->isEmpty(); }
+    View* currentView();
 
    private:
     int numberOfSubviews() const override { return 1; }

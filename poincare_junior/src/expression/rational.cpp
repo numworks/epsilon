@@ -92,7 +92,16 @@ IntegerHandler Rational::Denominator(const Tree* node) {
 
 Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   assert(!denominator.isZero());
-  if (denominator.isOne()) {
+  /* Settle sign beforehand so that :
+   *   x/-1 is -x
+   *   -1/-2 is Half
+   *   127/-255 can fit as a RationalShort */
+  NonStrictSign numeratorSign = numerator.sign() == denominator.sign()
+                                    ? NonStrictSign::Positive
+                                    : NonStrictSign::Negative;
+  numerator.setSign(numeratorSign);
+  denominator.setSign(NonStrictSign::Positive);
+  if (denominator.isOne() || numerator.isZero()) {
     return numerator.pushOnEditionPool();
   }
   if (numerator.isOne() && denominator.isTwo()) {
@@ -103,10 +112,9 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
     return SharedEditionPool->push<BlockType::RationalShort>(
         static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
-  TypeBlock typeBlock(numerator.sign() == NonStrictSign::Negative
-                          ? BlockType::RationalNegBig
-                          : BlockType::RationalPosBig);
-  Tree* node = Tree::FromBlocks(SharedEditionPool->pushBlock(typeBlock));
+  Tree* node = Tree::FromBlocks(SharedEditionPool->pushBlock(
+      numeratorSign == NonStrictSign::Negative ? BlockType::RationalNegBig
+                                               : BlockType::RationalPosBig));
   SharedEditionPool->pushBlock(ValueBlock(numerator.numberOfDigits()));
   SharedEditionPool->pushBlock(ValueBlock(denominator.numberOfDigits()));
   numerator.pushDigitsOnEditionPool();

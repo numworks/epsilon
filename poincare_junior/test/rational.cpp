@@ -28,26 +28,25 @@ static inline void assert_properties(const Tree* numerator,
   r->removeTree();
 }
 
-// TODO : Handle negative denominator in Rational::Push
 QUIZ_CASE(pcj_rational_properties) {
   assert_properties(3_e, 8_e, BlockType::RationalShort, StrictSign::Positive);
   assert_properties(-1_e, 255_e, BlockType::RationalShort,
                     StrictSign::Negative);
-  // assert_properties(1_e, -1_e, BlockType::RationalShort,
-  // StrictSign::Negative);
-  assert_properties(0_e, 5_e, BlockType::RationalShort, StrictSign::Null);
+  assert_properties(1_e, -1_e, BlockType::MinusOne, StrictSign::Negative);
+  assert_properties(-1_e, -2_e, BlockType::Half, StrictSign::Positive);
+  assert_properties(127_e, -255_e, BlockType::RationalShort,
+                    StrictSign::Negative);
+  assert_properties(0_e, 5_e, BlockType::Zero, StrictSign::Null);
   assert_properties(32134123_e, 812312312_e, BlockType::RationalPosBig,
                     StrictSign::Positive);
-  // assert_properties(32134123_e, -812312312_e, BlockType::RationalNegBig,
-  //                   StrictSign::Negative);
+  assert_properties(32134123_e, -812312312_e, BlockType::RationalNegBig,
+                    StrictSign::Negative);
   assert_properties(-32134123_e, 812312312_e, BlockType::RationalNegBig,
                     StrictSign::Negative);
-  // assert_properties(-32134123_e, -812312312_e, BlockType::RationalPosBig,
-  //                   StrictSign::Positive);
-  assert_properties(0_e, 812312312_e, BlockType::RationalPosBig,
-                    StrictSign::Null);
-  // assert_properties(0_e, -812312312_e, BlockType::RationalPosBig,
-  //                   StrictSign::Null);
+  assert_properties(-32134123_e, -812312312_e, BlockType::RationalPosBig,
+                    StrictSign::Positive);
+  assert_properties(0_e, 812312312_e, BlockType::Zero, StrictSign::Null);
+  assert_properties(0_e, -812312312_e, BlockType::Zero, StrictSign::Null);
 }
 
 static inline void assert_irreducible_form(const Tree* iNumerator,

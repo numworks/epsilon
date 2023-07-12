@@ -507,6 +507,10 @@ double Store::sumOfValuesBetween(int series, double x1, double x2,
   if (!seriesIsValid(series)) {
     return NAN;
   }
+  if (x1 == INFINITY || x2 == -INFINITY) {
+    return 0;
+  }
+  strictUpperBound = strictUpperBound || x2 == INFINITY;
   /* Use roughly_equal to handle impossible double representations such as
    * 12.11 being 12.109999999999999 or 12.110000000000001. The precision we use
    * must be higher than 1e-14 (max number of significant digits) but having it

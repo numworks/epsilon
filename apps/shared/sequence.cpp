@@ -163,6 +163,9 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
+        if (e.isRandom()) {
+          return TrinaryBoolean::True;
+        }
         if (!pack->systemSymbol && e.type() == ExpressionNode::Type::Symbol) {
           const Symbol symbol = static_cast<const Symbol &>(e);
           return symbol.isSystemSymbol() ? TrinaryBoolean::True

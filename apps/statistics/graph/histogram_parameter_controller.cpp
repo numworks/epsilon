@@ -123,8 +123,12 @@ void HistogramParameterController::buttonAction() {
 
 bool HistogramParameterController::authorizedParameters(
     double barWidth, double firstDrawnBarAbscissa) {
-  if (barWidth < 0.0) {
+  if (barWidth < 0.0 || barWidth > Poincare::Range1D::k_maxFloat) {
     // The bar width cannot be negative
+    return false;
+  }
+  if (firstDrawnBarAbscissa > Poincare::Range1D::k_maxFloat ||
+      firstDrawnBarAbscissa < -Poincare::Range1D::k_maxFloat) {
     return false;
   }
   assert(DoublePairStore::k_numberOfSeries > 0);

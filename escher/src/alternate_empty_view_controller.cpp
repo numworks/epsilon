@@ -8,10 +8,13 @@ namespace Escher {
 
 AlternateEmptyViewController::ContentView::ContentView(
     ViewController* mainViewController, AlternateEmptyViewDelegate* delegate)
-    : m_mainViewController(mainViewController), m_delegate(delegate) {}
+    : m_mainViewController(mainViewController),
+      m_delegate(delegate),
+      m_isEmpty(false) {}
 
 View* AlternateEmptyViewController::ContentView::currentView() {
-  return isEmpty() ? m_delegate->emptyView() : m_mainViewController->view();
+  assert(m_isEmpty == m_delegate->isEmpty());
+  return m_isEmpty ? m_delegate->emptyView() : m_mainViewController->view();
 }
 
 View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
@@ -49,6 +52,7 @@ void AlternateEmptyViewController::didBecomeFirstResponder() {
 }
 
 void AlternateEmptyViewController::initView() {
+  m_contentView.updateIsEmpty();
   if (!m_contentView.isEmpty()) {
     m_contentView.mainViewController()->initView();
   }

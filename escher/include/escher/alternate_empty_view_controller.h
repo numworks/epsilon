@@ -30,7 +30,8 @@ class AlternateEmptyViewController : public ViewController {
       return m_delegate;
     }
     void layoutSubviews(bool force = false) override;
-    bool isEmpty() const { return m_delegate->isEmpty(); }
+    bool isEmpty() const { return m_isEmpty; }
+    void updateIsEmpty() { m_isEmpty = m_delegate->isEmpty(); }
     View* currentView();
 
    private:
@@ -38,6 +39,7 @@ class AlternateEmptyViewController : public ViewController {
     View* subviewAtIndex(int index) override;
     ViewController* m_mainViewController;
     AlternateEmptyViewDelegate* m_delegate;
+    bool m_isEmpty;
   };
   ContentView m_contentView;
 };

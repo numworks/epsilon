@@ -68,6 +68,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   n_ary.cpp \
   parse.cpp \
   polynomial.cpp \
+  rational.cpp \
   set.cpp \
   simplification.cpp \
 )

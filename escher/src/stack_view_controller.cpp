@@ -38,7 +38,6 @@ void StackViewController::push(ViewController* vc) {
   assert(m_numberOfChildren < k_maxNumberOfStacks);
   /* Add the frame to the model */
   pushModel(vc);
-  vc->initView();
   if (!m_isVisible) {
     return;
   }
@@ -94,6 +93,7 @@ void StackViewController::pushModel(ViewController* controller) {
 void StackViewController::setupActiveView() {
   ViewController* vc = topViewController();
   if (vc) {
+    vc->initView();
     ViewController::TitlesDisplay topHeaderDisplayParameter =
         vc->titlesDisplay();
     updateStack(topHeaderDisplayParameter);

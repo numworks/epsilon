@@ -260,9 +260,11 @@ static bool expressionIsInterestingFunction(Expression e) {
                   ExpressionNode::Type::Parenthesis})) {
     return expressionIsInterestingFunction(e.childAtIndex(0));
   }
-  return !e.isNumber() && !e.isOfType({ExpressionNode::Type::ConstantMaths,
-                                       ExpressionNode::Type::Sequence,
-                                       ExpressionNode::Type::UnitConvert});
+  return !e.isNumber() &&
+         !e.isOfType({ExpressionNode::Type::ConstantMaths,
+                      ExpressionNode::Type::UnitConvert}) &&
+         !e.recursivelyMatches(Expression::IsSequence) &&
+         e.numberOfNumericalValues() == 1;
 }
 
 Calculation::AdditionalInformations Calculation::additionalInformations() {
@@ -396,9 +398,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   // We want a single numerical value and to avoid showing the identity function
   assert(!a.isUndefined());
-  if (expressionIsInterestingFunction(i) &&
-      a.type() != ExpressionNode::Type::Nonreal &&
-      i.numberOfNumericalValues() == 1) {
+  if (a.type() != ExpressionNode::Type::Nonreal &&
+      expressionIsInterestingFunction(i)) {
     additionalInformations.function = true;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {

@@ -26,13 +26,6 @@ void ExplicitFloatParameterController::didBecomeFirstResponder() {
 
 void ExplicitFloatParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  int selRow = selectedRow();
-  if (selRow == -1) {
-    selectCell(0);
-  } else {
-    selRow = std::min(selectedRow(), numberOfRows() - 1);
-    selectCell(selRow);
-  }
   resetMemoization();
   m_selectableListView.reloadData();
 }

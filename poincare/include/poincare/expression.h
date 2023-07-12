@@ -261,6 +261,9 @@ class Expression : public TreeHandle {
   static bool IsPoint(const Expression e, Context*) {
     return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
   }
+  static bool IsSequence(const Expression e, Context* context) {
+    return e.type() == ExpressionNode::Type::Sequence;
+  }
 
   typedef bool (*PatternTest)(const Expression& e, Context* context,
                               const char* symbol);

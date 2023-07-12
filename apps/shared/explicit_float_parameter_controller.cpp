@@ -54,7 +54,7 @@ bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event event) {
 
 void ExplicitFloatParameterController::fillCellForRow(HighlightCell *cell,
                                                       int row) {
-  if (textFieldOfCellAtIndex(cell, row)->isEditing()) {
+  if (textFieldOfCellAtRow(row)->isEditing()) {
     return;
   }
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
@@ -64,7 +64,7 @@ void ExplicitFloatParameterController::fillCellForRow(HighlightCell *cell,
   PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       parameterAtIndex(row), buffer, bufferSize, precision,
       Preferences::PrintFloatMode::Decimal);
-  textFieldOfCellAtIndex(cell, row)->setText(buffer);
+  textFieldOfCellAtRow(row)->setText(buffer);
 }
 
 bool ExplicitFloatParameterController::textFieldShouldFinishEditing(

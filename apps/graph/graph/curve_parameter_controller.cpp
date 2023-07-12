@@ -157,12 +157,11 @@ bool CurveParameterController::textFieldDidFinishEditing(
   return true;
 }
 
-TextField *CurveParameterController::textFieldOfCellAtIndex(
-    HighlightCell *thisCell, int index) {
-  assert(cell(index) == &m_abscissaCell || cell(index) == &m_imageCell ||
-         cell(index) == &m_derivativeNumberCell);
+TextField *CurveParameterController::textFieldOfCellAtRow(int row) {
+  assert(cell(row) == &m_abscissaCell || cell(row) == &m_imageCell ||
+         cell(row) == &m_derivativeNumberCell);
   return static_cast<MenuCellWithEditableText<
-      OneLineBufferTextView<KDFont::Size::Large>> *>(thisCell)
+      OneLineBufferTextView<KDFont::Size::Large>> *>(cell(row))
       ->textField();
 }
 

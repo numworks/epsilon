@@ -254,16 +254,6 @@ class TypeBlock : public Block {
 
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     switch (type) {
-      case BlockType::IntegerShort:
-      case BlockType::Placeholder:
-        return 2;
-      case BlockType::IntegerPosBig:
-      case BlockType::IntegerNegBig:
-        return 2;
-      case BlockType::RationalShort:
-      case BlockType::RationalPosBig:
-      case BlockType::RationalNegBig:
-        return 3;
       case BlockType::Float:
         return 1 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:
@@ -275,12 +265,19 @@ class TypeBlock : public Block {
       case BlockType::List:
       case BlockType::RackLayout:
       case BlockType::SystemList:
-        return 2;
       case BlockType::Polynomial:
       case BlockType::UserSymbol:
       case BlockType::UserFunction:
       case BlockType::UserSequence:
+      case BlockType::IntegerShort:
+      case BlockType::Placeholder:
+      case BlockType::IntegerPosBig:
+      case BlockType::IntegerNegBig:
         return 2;
+      case BlockType::RationalShort:
+      case BlockType::RationalPosBig:
+      case BlockType::RationalNegBig:
+        return 3;
       default:
         return 1;
     };

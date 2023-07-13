@@ -17,16 +17,14 @@ BoxParameterController::BoxParameterController(
   cellAtIndex(0)->setHighlighted(true);
 }
 
-void BoxParameterController::viewWillAppear() {
-  cellAtIndex(0)->accessory()->setState(m_store->displayOutliers());
-}
+void BoxParameterController::viewWillAppear() { updateDisplayOutliersSwitch(); }
 
 void BoxParameterController::fillCellForRow(HighlightCell* cell, int row) {}
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
   if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
     m_store->setDisplayOutliers(!m_store->displayOutliers());
-    cellAtIndex(0)->accessory()->setState(m_store->displayOutliers());
+    updateDisplayOutliersSwitch();
     // Reset selected box calculation because the total number may have changed
     m_dataViewController->setSelectedIndex(0);
     return true;

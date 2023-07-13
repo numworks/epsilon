@@ -13,7 +13,7 @@ MenuController::MenuController(Escher::StackViewController* parentResponder,
     : Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
+          k_numberOfCells>(parentResponder),
       m_interestMenuController(interestMenuController) {
   selectRow(0);
   cellAtIndex(k_indexOfSimpleInterest)

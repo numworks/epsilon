@@ -21,8 +21,7 @@ using GraphTypeCell =
 
 class GraphTypeController
     : public Escher::AlternateEmptyViewDelegate,
-      public Escher::SelectableCellListPage<GraphTypeCell, 4,
-                                            Escher::RegularListViewDataSource> {
+      public Escher::SelectableCellListPage<GraphTypeCell, 4> {
  public:
   GraphTypeController(Escher::Responder* parentResponder,
                       Escher::TabViewController* tabController,

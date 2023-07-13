@@ -9,7 +9,7 @@ BoxParameterController::BoxParameterController(
     DataViewController* dataViewController)
     : SelectableCellListPage<
           MenuCell<MessageTextView, EmptyCellWidget, SwitchView>,
-          k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
+          k_numberOfCells>(parentResponder),
       m_store(store),
       m_dataViewController(dataViewController) {
   cellAtIndex(0)->label()->setMessage(I18n::Message::DisplayOutliers);
@@ -18,8 +18,6 @@ BoxParameterController::BoxParameterController(
 }
 
 void BoxParameterController::viewWillAppear() { updateDisplayOutliersSwitch(); }
-
-void BoxParameterController::fillCellForRow(HighlightCell* cell, int row) {}
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
   if (cellAtIndex(0)->canBeActivatedByEvent(event)) {

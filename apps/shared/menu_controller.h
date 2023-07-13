@@ -16,8 +16,7 @@ class MenuControllerDelegate {
 };
 
 class MenuController
-    : public Escher::SelectableCellListPage<
-          Escher::SubappCell, 2, Escher::StandardMemoizedListViewDataSource> {
+    : public Escher::SelectableCellListPage<Escher::SubappCell, 2> {
  public:
   MenuController(
       Escher::StackViewController *parentResponder,
@@ -28,7 +27,6 @@ class MenuController
   void stackOpenPage(Escher::ViewController *nextPage) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() const override { return m_delegate->numberOfSubApps(); }
 
  private:
   Escher::ViewController *m_controllers[k_numberOfCells];

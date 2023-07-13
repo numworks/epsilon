@@ -19,10 +19,10 @@ void Calculator::leave(uint32_t leaveAddress) {
       leaveAddress < reinterpret_cast<uint32_t>(&_external_apps_flash_end)) {
     return;
   }
-  Board::switchExecutableSlot(leaveAddress);
+  Board::updateClearanceLevelForUnauthenticatedUserland(leaveAddress);
   USB::didExecuteDFU();
-  /* The jump can't be done from switchExecutableSlot since we need to
-   * terminate the interruption procedure before jumping. */
+  /* The jump can't be done from the svcall since we need to terminate the
+   * interruption procedure before jumping. */
   Reset::jump(leaveAddress + sizeof(UserlandHeader));
 }
 

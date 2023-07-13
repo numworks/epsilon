@@ -19,8 +19,8 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   HighlightCell* reusableCell(int index, int type) override final {
     return cell(type);
   }
-  /* Cells are not reusable: they are filled only once directly in constructor
-   * and viewWillAppear. */
+  /* Cells are not reusable: they are filled only directly in constructor and
+   * viewWillAppear or other methods than can modify them like handleEvent. */
   void fillCellForRow(Escher::HighlightCell* cell, int row) override final {}
 
  protected:

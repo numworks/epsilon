@@ -37,6 +37,10 @@ class StoreParameterController : public ColumnParameterController {
  private:
   ColumnNameHelper* columnNameHelper() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
+  void updateHideCellSwitch() {
+    m_hideCell.accessory()->setState(
+        m_storeColumnHelper->selectedSeriesIsActive());
+  }
 
   Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;

@@ -46,8 +46,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     if (!canSwitchHideStatus) {
       App::app()->displayWarning(I18n::Message::DataNotSuitable);
     } else {
-      m_hideCell.accessory()->setState(
-          m_storeColumnHelper->selectedSeriesIsActive());
+      updateHideCellSwitch();
       m_selectableListView.reloadSelectedCell();
     }
   } else {
@@ -69,8 +68,7 @@ AbstractMenuCell* StoreParameterController::cell(int index) {
 }
 
 void StoreParameterController::viewWillAppear() {
-  m_hideCell.accessory()->setState(
-      m_storeColumnHelper->selectedSeriesIsActive());
+  updateHideCellSwitch();
   ColumnParameterController::viewWillAppear();
 }
 

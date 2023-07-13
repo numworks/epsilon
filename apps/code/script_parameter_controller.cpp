@@ -47,9 +47,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
     m_menuController->renameSelectedScript();
   } else if (cell == &m_autoImportScript) {
     m_script.toggleAutoImportation();
-    if (!m_script.isNull()) {
-      m_autoImportScript.accessory()->setState(m_script.autoImportation());
-    }
+    updateAutoImportSwitch();
     m_selectableListView.reloadSelectedCell();
     m_menuController->reloadConsole();
     App::app()->setFirstResponder(&m_selectableListView);
@@ -64,9 +62,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
 
 void ScriptParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  if (!m_script.isNull()) {
-    m_autoImportScript.accessory()->setState(m_script.autoImportation());
-  }
+  updateAutoImportSwitch();
   resetSizeMemoization();
   m_selectableListView.reloadData();
   m_selectableListView.selectCell(0);
@@ -87,6 +83,12 @@ AbstractMenuCell *ScriptParameterController::cell(int row) {
 
 StackViewController *ScriptParameterController::stackViewController() {
   return static_cast<StackViewController *>(parentResponder());
+}
+
+void ScriptParameterController::updateAutoImportSwitch() {
+  if (!m_script.isNull()) {
+    m_autoImportScript.accessory()->setState(m_script.autoImportation());
+  }
 }
 
 }  // namespace Code

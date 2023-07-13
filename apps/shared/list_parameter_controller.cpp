@@ -27,9 +27,7 @@ void ListParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_colorCell.subLabel()->setMessage(
       ColorNames::NameForColor(function()->color()));
-  if (!m_record.isNull()) {
-    m_enableCell.accessory()->setState(function()->isActive());
-  }
+  updateEnableCellSwitch();
   if (selectedRow() == -1) {
     selectCell(0);
   } else {
@@ -51,9 +49,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     function()->setActive(!function()->isActive());
-    if (!m_record.isNull()) {
-      m_enableCell.accessory()->setState(function()->isActive());
-    }
+    updateEnableCellSwitch();
     m_selectableListView.reloadSelectedCell();
     return true;
   }
@@ -83,6 +79,12 @@ ExpiringPointer<Function> ListParameterController::function() {
 
 FunctionStore *ListParameterController::functionStore() {
   return FunctionApp::app()->functionStore();
+}
+
+void ListParameterController::updateEnableCellSwitch() {
+  if (!m_record.isNull()) {
+    m_enableCell.accessory()->setState(function()->isActive());
+  }
 }
 
 }  // namespace Shared

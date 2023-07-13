@@ -34,6 +34,7 @@ class ListParameterController
   constexpr static int k_numberOfSharedCells = 3;
   FunctionStore* functionStore();
   ExpiringPointer<Function> function();
+  void updateEnableCellSwitch();
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>

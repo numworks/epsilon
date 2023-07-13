@@ -17,7 +17,7 @@ void SVC_ATTRIBUTES willExecuteDFU() {
 
 void SVC_ATTRIBUTES didExecuteDFU() {
   if (Ion::ExternalApps::numberOfApps() > 0) {
-    Board::enableExternalApps();  // Display pop-up
+    Board::updateClearanceLevelForExternalApps();  // Display pop-up
   }
   SVC_RETURNING_VOID(SVC_USB_DID_EXECUTE_DFU)
 }

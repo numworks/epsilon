@@ -8,7 +8,7 @@ namespace Device {
 namespace Board {
 
 void switchExecutableSlot(uint32_t leaveAddress);
-void enableExternalApps();
+void updateClearanceLevelForExternalApps();
 
 }  // namespace Board
 }  // namespace Device

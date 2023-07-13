@@ -24,9 +24,7 @@ class RangeParameterController
 
   const char *title() override { return I18n::translate(I18n::Message::Axis); }
 
-  int numberOfRows() const override {
-    return displayNormalizeCell() + k_numberOfRangeCells + 1;
-  }
+  int numberOfRows() const override { return 4; }
   int typeAtRow(int row) const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
@@ -51,9 +49,6 @@ class RangeParameterController
   constexpr static int k_okCellType = 2;
 
   void buttonAction();
-  bool displayNormalizeCell() const {
-    return !m_tempInteractiveRange.zoomNormalize();
-  }
 
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;

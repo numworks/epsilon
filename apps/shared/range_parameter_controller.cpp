@@ -38,7 +38,7 @@ RangeParameterController::RangeParameterController(
 int RangeParameterController::typeAtRow(int row) const {
   int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType,
                  k_okCellType};
-  return types[row + !displayNormalizeCell()];
+  return types[row];
 }
 
 int RangeParameterController::reusableCellCount(int type) {
@@ -67,19 +67,15 @@ KDCoordinate RangeParameterController::nonMemoizedRowHeight(int row) {
   HighlightCell *cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1,
                             &m_okButton};
   assert(row < numberOfRows());
-  return protectedNonMemoizedRowHeight(cells[row + !displayNormalizeCell()],
-                                       row);
+  return protectedNonMemoizedRowHeight(cells[row], row);
 }
 
 void RangeParameterController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_rangeCellType) {
     float min, max;
     bool isAuto = false;
-    int i =
-        static_cast<
-            MenuCell<MessageTextView, OneLineBufferTextView<>, ChevronView> *>(
-            cell) -
-        m_rangeCells;
+    int i = row - 1;
+    assert(0 <= i && i < k_numberOfRangeCells);
     if (i == 0) {
       if (m_tempInteractiveRange.xAuto()) {
         isAuto = true;
@@ -120,21 +116,18 @@ void RangeParameterController::fillCellForRow(HighlightCell *cell, int row) {
 }
 
 KDCoordinate RangeParameterController::separatorBeforeRow(int row) {
-  return (displayNormalizeCell() && row == 1) || typeAtRow(row) == k_okCellType
-             ? k_defaultRowSeparator
-             : 0;
+  return row == 1 || typeAtRow(row) == k_okCellType ? k_defaultRowSeparator : 0;
 }
 
 void RangeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  m_normalizeCell.setVisible(!m_tempInteractiveRange.zoomNormalize());
   if (selectedRow() == -1) {
     selectCell(0);
   } else {
     /* If the table has not been deselected, it means we come from the
      * SingleRangeController. */
-    int row =
-        (m_singleInteractiveCurveViewRangeController.editXRange() ? 0 : 1) +
-        displayNormalizeCell();
+    int row = m_singleInteractiveCurveViewRangeController.editXRange() ? 1 : 2;
     selectCell(row);
   }
   resetSizeMemoization();
@@ -157,14 +150,13 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     m_confirmPopUpController.presentModally();
     return true;
   }
-  if (displayNormalizeCell() && selectedRow() == 0 &&
-      m_normalizeCell.canBeActivatedByEvent(event)) {
+  if (selectedRow() == 0 && m_normalizeCell.canBeActivatedByEvent(event)) {
     m_normalizeCell.setHighlighted(false);
     m_tempInteractiveRange.normalize();
     buttonAction();
     return true;
   }
-  int index = selectedRow() - displayNormalizeCell();
+  int index = selectedRow() - 1;
   if (index >= 0 && index < k_numberOfRangeCells &&
       m_rangeCells[index].canBeActivatedByEvent(event)) {
     assert(typeAtRow(selectedRow()) == k_rangeCellType);

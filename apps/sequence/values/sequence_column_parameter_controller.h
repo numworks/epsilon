@@ -28,6 +28,8 @@ class SequenceColumnParameterController
  private:
   constexpr static int k_totalNumberOfCell = 1;
   Shared::ColumnNameHelper* columnNameHelper() override;
+  void updateShowSumSwitch();
+
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>
       m_showSumCell;

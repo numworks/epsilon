@@ -15,17 +15,16 @@ namespace PoincareJ {
 
 /* Polynomial */
 
-EditionReference Polynomial::PushEmpty(EditionReference variable) {
-  EditionReference pol(SharedEditionPool->push<BlockType::Polynomial>(1, 1));
-  pol->moveTreeAfterNode(variable);
+Tree* Polynomial::PushEmpty(const Tree* variable) {
+  Tree* pol(SharedEditionPool->push<BlockType::Polynomial>(1, 1));
+  pol->cloneTreeAfterNode(variable);
   return pol;
 }
 
-EditionReference Polynomial::PushMonomial(EditionReference variable,
-                                          uint8_t exponent,
-                                          EditionReference coefficient) {
-  EditionReference pol = PushEmpty(variable);
-  AddMonomial(pol, std::make_pair(coefficient, exponent));
+Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
+                               const Tree* coefficient) {
+  Tree* pol = PushEmpty(variable);
+  AddMonomial(pol, std::make_pair(coefficient->clone(), exponent));
   return pol;
 }
 
@@ -34,20 +33,20 @@ uint8_t Polynomial::ExponentAtIndex(const Tree* polynomial, int index) {
   return static_cast<uint8_t>(*(polynomial->block()->nextNth(2 + index)));
 }
 
-void Polynomial::SetExponentAtIndex(EditionReference polynomial, int index,
+void Polynomial::SetExponentAtIndex(Tree* polynomial, int index,
                                     uint8_t exponent) {
   Block* exponentsAddress = polynomial->block() + 2;
   *(exponentsAddress + index) = exponent;
 }
 
-void Polynomial::InsertExponentAtIndex(EditionReference polynomial, int index,
+void Polynomial::InsertExponentAtIndex(Tree* polynomial, int index,
                                        uint8_t exponent) {
   Block* exponentsAddress = polynomial->block() + 2;
   SharedEditionPool->insertBlock(exponentsAddress + index, ValueBlock(exponent),
                                  true);
 }
 
-void Polynomial::RemoveExponentAtIndex(EditionReference polynomial, int index) {
+void Polynomial::RemoveExponentAtIndex(Tree* polynomial, int index) {
   Block* exponentsAddress = polynomial->block() + 2;
   SharedEditionPool->removeBlocks(exponentsAddress + index, 1);
 }
@@ -161,7 +160,8 @@ EditionReference Polynomial::Operation(
     // polA has been merged in result
     polA = result;
   }
-  return Sanitize(polA);
+  Sanitize(polA);
+  return polA;
 }
 
 void Polynomial::MultiplicationMonomial(
@@ -268,7 +268,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   return std::make_pair(currentQuotient, polA);
 }
 
-EditionReference Polynomial::Sanitize(EditionReference polynomial) {
+void Polynomial::Sanitize(Tree* polynomial) {
   uint8_t nbOfTerms = NumberOfTerms(polynomial);
   size_t i = 0;
   EditionReference coefficient = polynomial->childAtIndex(1);
@@ -284,18 +284,18 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   }
   int numberOfTerms = NumberOfTerms(polynomial);
   if (numberOfTerms == 0) {
-    return EditionReference(polynomial->cloneTreeOverTree(0_e));
+    polynomial->cloneTreeOverTree(0_e);
+    return;
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
-    EditionReference result = polynomial->childAtIndex(1);
-    polynomial = polynomial->moveTreeOverTree(result);
-    return polynomial;
+    polynomial->moveTreeOverTree(polynomial->childAtIndex(1));
+    return;
   }
   // Assert the exponents are ordered
   for (int i = 1; i < numberOfTerms; i++) {
     assert(ExponentAtIndex(polynomial, i - 1) > ExponentAtIndex(polynomial, i));
   }
-  return polynomial;
+  return;
 }
 
 /* PolynomialParser */
@@ -377,7 +377,7 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
       EditionReference child = expression->nextNode();
       Polynomial::AddMonomial(polynomial, ParseMonomial(child, variable));
     }
-    polynomial = Polynomial::Sanitize(polynomial);
+    Polynomial::Sanitize(polynomial);
     // Addition node has been emptied from children
     polynomial = expression->moveTreeOverNode(polynomial);
   } else {

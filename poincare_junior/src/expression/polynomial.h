@@ -31,11 +31,10 @@ class Polynomial final {
   friend class PolynomialParser;
 
  public:
-  static EditionReference PushEmpty(EditionReference variable);
-  static EditionReference PushMonomial(
-      EditionReference variable, uint8_t exponent,
-      EditionReference coefficient =
-          EditionReference(Tree::FromBlocks(&OneBlock)));
+  static Tree* PushEmpty(const Tree* variable);
+  static Tree* PushMonomial(
+      const Tree* variable, uint8_t exponent,
+      const Tree* coefficient = Tree::FromBlocks(&OneBlock));
 
   // Getters
   static uint8_t ExponentAtIndex(const Tree* polynomial, int index);
@@ -56,11 +55,10 @@ class Polynomial final {
   }
 
   // Setters
-  static void SetExponentAtIndex(EditionReference polynomial, int index,
-                                 uint8_t exponent);
-  static void InsertExponentAtIndex(EditionReference polynomial, int index,
+  static void SetExponentAtIndex(Tree* polynomial, int index, uint8_t exponent);
+  static void InsertExponentAtIndex(Tree* polynomial, int index,
                                     uint8_t exponent);
-  static void RemoveExponentAtIndex(EditionReference polynomial, int index);
+  static void RemoveExponentAtIndex(Tree* polynomial, int index);
 
   // Operations
   static void AddMonomial(EditionReference polynomial,
@@ -85,7 +83,7 @@ class Polynomial final {
 
  private:
   // Discard null term and potentially discard the polynomial structure
-  static EditionReference Sanitize(EditionReference pol);
+  static void Sanitize(Tree* pol);
   typedef void (*OperationMonomial)(
       EditionReference polynomial,
       std::pair<EditionReference, uint8_t> monomial);

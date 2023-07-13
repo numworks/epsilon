@@ -76,7 +76,7 @@ int writeInterval(char *buffer, int bufferSize, double min, double max,
 }
 
 void FunctionParameterController::viewWillAppear() {
-  m_derivativeCell.accessory()->setState(function()->displayDerivative());
+  updateDerivaticeCellSwitch();
   if (!m_record.isNull()) {
     App *myApp = App::app();
     Shared::ExpiringPointer<ContinuousFunction> function =
@@ -111,7 +111,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_derivativeCell &&
       m_derivativeCell.canBeActivatedByEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
-    m_derivativeCell.accessory()->setState(function()->displayDerivative());
+    updateDerivaticeCellSwitch();
     m_selectableListView.reloadSelectedCell();
     return true;
   }

@@ -55,6 +55,10 @@ class FunctionParameterController : public Shared::ListParameterController,
   void initializeColumnParameters() override;
   Shared::ColumnNameHelper* columnNameHelper() override;
 
+  void updateDerivaticeCellSwitch() {
+    m_derivativeCell.accessory()->setState(function()->displayDerivative());
+  }
+
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_detailsCell;

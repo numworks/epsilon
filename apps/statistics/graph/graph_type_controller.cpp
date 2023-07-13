@@ -20,12 +20,12 @@ GraphTypeController::GraphTypeController(
       GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
   for (uint8_t i = 0; i < GraphViewModel::k_numberOfGraphViews; i++) {
     GraphViewModel::GraphView graphView = GraphViewModel::GraphViewAtIndex(i);
-    cellAtIndex(i)->subLabel()->setGlyphFormat(
+    typedCell(i)->subLabel()->setGlyphFormat(
         Escher::GlyphsView::FormatForWidgetType(
             Escher::CellWidget::Type::Label));
-    cellAtIndex(i)->subLabel()->setMessage(
+    typedCell(i)->subLabel()->setMessage(
         GraphViewModel::MessageForGraphView(graphView));
-    cellAtIndex(i)->label()->setImage(
+    typedCell(i)->label()->setImage(
         GraphViewModel::ImageForGraphView(graphView));
   }
 }

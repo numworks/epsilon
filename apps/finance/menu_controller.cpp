@@ -16,16 +16,16 @@ MenuController::MenuController(Escher::StackViewController* parentResponder,
           k_numberOfCells>(parentResponder),
       m_interestMenuController(interestMenuController) {
   selectRow(0);
-  cellAtIndex(k_indexOfSimpleInterest)
+  typedCell(k_indexOfSimpleInterest)
       ->label()
       ->setMessage(I18n::Message::SimpleInterest);
-  cellAtIndex(k_indexOfSimpleInterest)
+  typedCell(k_indexOfSimpleInterest)
       ->subLabel()
       ->setMessage(I18n::Message::SimpleInterestDescription);
-  cellAtIndex(k_indexOfCompoundInterest)
+  typedCell(k_indexOfCompoundInterest)
       ->label()
       ->setMessage(I18n::Message::CompoundInterest);
-  cellAtIndex(k_indexOfCompoundInterest)
+  typedCell(k_indexOfCompoundInterest)
       ->subLabel()
       ->setMessage(I18n::Message::CompoundInterestDescription);
   centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);
@@ -37,7 +37,7 @@ void MenuController::didBecomeFirstResponder() {
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
+  if (typedCell(0)->canBeActivatedByEvent(event)) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected ||
            selectedRow() == k_indexOfCompoundInterest);

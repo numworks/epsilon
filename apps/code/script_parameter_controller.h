@@ -38,6 +38,8 @@ class ScriptParameterController
  private:
   constexpr static int k_totalNumberOfCell = 4;
   Escher::StackViewController* stackViewController();
+  void updateAutoImportSwitch();
+
   I18n::Message m_pageTitle;
   Escher::MenuCell<Escher::MessageTextView> m_executeScript;
   Escher::MenuCell<Escher::MessageTextView> m_renameScript;

@@ -28,20 +28,22 @@ bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   if (m_showSumCell.canBeActivatedByEvent(event)) {
     ExpiringPointer<Shared::Sequence> currentSequence =
         GlobalContext::sequenceStore->modelForRecord(m_record);
-    bool currentState = currentSequence->displaySum();
-    assert(m_showSumCell.accessory()->state() == currentState);
-    m_showSumCell.accessory()->setState(!currentState);
-    currentSequence->setDisplaySum(!currentState);
+    currentSequence->setDisplaySum(!currentSequence->displaySum());
+    updateShowSumSwitch();
     return true;
   }
   return false;
 }
 
 void SequenceColumnParameterController::viewWillAppear() {
+  updateShowSumSwitch();
+  ColumnParameterController::viewWillAppear();
+}
+
+void SequenceColumnParameterController::updateShowSumSwitch() {
   ExpiringPointer<Shared::Sequence> currentSequence =
       GlobalContext::sequenceStore->modelForRecord(m_record);
   m_showSumCell.accessory()->setState(currentSequence->displaySum());
-  ColumnParameterController::viewWillAppear();
 }
 
 }  // namespace Sequence

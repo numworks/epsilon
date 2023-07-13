@@ -11,7 +11,7 @@ namespace Shared {
 
 RangeParameterController::RangeParameterController(
     Responder *parentResponder, InteractiveCurveViewRange *interactiveRange)
-    : SelectableListViewController(parentResponder),
+    : ExplicitSelectableListViewController(parentResponder),
       m_interactiveRange(interactiveRange),
       m_tempInteractiveRange(*interactiveRange),
       m_okButton(
@@ -31,75 +31,33 @@ RangeParameterController::RangeParameterController(
       m_singleInteractiveCurveViewRangeController(
           parentResponder, &m_tempInteractiveRange, &m_confirmPopUpController) {
   m_normalizeCell.label()->setMessage(I18n::Message::MakeOrthonormal);
-  m_rangeCells[0].label()->setMessage(I18n::Message::ValuesOfX);
-  m_rangeCells[1].label()->setMessage(I18n::Message::ValuesOfY);
+  m_xRangeCell.label()->setMessage(I18n::Message::ValuesOfX);
+  m_yRangeCell.label()->setMessage(I18n::Message::ValuesOfY);
 }
 
-int RangeParameterController::typeAtRow(int row) const {
-  int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType,
-                 k_okCellType};
-  return types[row];
-}
-
-int RangeParameterController::reusableCellCount(int type) {
-  if (type == k_rangeCellType) {
-    return k_numberOfRangeCells;
-  } else {
-    return 1;
-  }
-}
-
-HighlightCell *RangeParameterController::reusableCell(int index, int type) {
-  if (type == k_normalizeCellType) {
-    assert(index == 0);
-    return &m_normalizeCell;
-  } else if (type == k_rangeCellType) {
-    assert(index < k_numberOfRangeCells);
-    return m_rangeCells + index;
-  } else {
-    assert(type == k_okCellType);
-    assert(index == 0);
-    return &m_okButton;
-  }
-}
-
-KDCoordinate RangeParameterController::nonMemoizedRowHeight(int row) {
-  HighlightCell *cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1,
-                            &m_okButton};
+HighlightCell *RangeParameterController::cell(int row) {
   assert(row < numberOfRows());
-  return protectedNonMemoizedRowHeight(cells[row], row);
+  HighlightCell *cells[] = {&m_normalizeCell, &m_xRangeCell, &m_yRangeCell,
+                            &m_okButton};
+  return cells[row];
 }
 
-void RangeParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  if (typeAtRow(row) == k_rangeCellType) {
-    float min, max;
-    bool isAuto = false;
-    int i = row - 1;
-    assert(0 <= i && i < k_numberOfRangeCells);
-    if (i == 0) {
-      if (m_tempInteractiveRange.xAuto()) {
-        isAuto = true;
-      } else {
-        min = m_tempInteractiveRange.xMin();
-        max = m_tempInteractiveRange.xMax();
-      }
-    } else {
-      assert(i == 1);
-      if (m_tempInteractiveRange.yAuto()) {
-        isAuto = true;
-      } else {
-        min = m_tempInteractiveRange.yMin();
-        max = m_tempInteractiveRange.yMax();
-      }
-    }
-    constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
-    constexpr int bufferSize =
-        2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
-    char buffer[bufferSize];
+void RangeParameterController::fillRangeCells() {
+  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
+  constexpr int bufferSize =
+      2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
+  char buffer[bufferSize];
+  for (int i = 0; i < 2; ++i) {
+    bool isAuto = i == 0 ? m_tempInteractiveRange.xAuto()
+                         : m_tempInteractiveRange.yAuto();
     if (isAuto) {
       strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting),
               bufferSize);
     } else {
+      float min = i == 0 ? m_tempInteractiveRange.xMin()
+                         : m_tempInteractiveRange.yMin();
+      float max = i == 0 ? m_tempInteractiveRange.xMax()
+                         : m_tempInteractiveRange.yMax();
       int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
@@ -111,17 +69,21 @@ void RangeParameterController::fillCellForRow(HighlightCell *cell, int row) {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = '\0';
     }
-    m_rangeCells[i].subLabel()->setText(buffer);
+    RangeCell *cell = i == 0 ? &m_xRangeCell : &m_yRangeCell;
+    cell->subLabel()->setText(buffer);
   }
 }
 
 KDCoordinate RangeParameterController::separatorBeforeRow(int row) {
-  return row == 1 || typeAtRow(row) == k_okCellType ? k_defaultRowSeparator : 0;
+  HighlightCell *cell = this->cell(row);
+  return cell == &m_xRangeCell || cell == &m_okButton ? k_defaultRowSeparator
+                                                      : 0;
 }
 
 void RangeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_normalizeCell.setVisible(!m_tempInteractiveRange.zoomNormalize());
+  fillRangeCells();
   if (selectedRow() == -1) {
     selectCell(0);
   } else {
@@ -150,17 +112,18 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     m_confirmPopUpController.presentModally();
     return true;
   }
-  if (selectedRow() == 0 && m_normalizeCell.canBeActivatedByEvent(event)) {
+  HighlightCell *cell = this->cell(selectedRow());
+  if (cell == &m_normalizeCell &&
+      m_normalizeCell.canBeActivatedByEvent(event)) {
     m_normalizeCell.setHighlighted(false);
     m_tempInteractiveRange.normalize();
     buttonAction();
     return true;
   }
-  int index = selectedRow() - 1;
-  if (index >= 0 && index < k_numberOfRangeCells &&
-      m_rangeCells[index].canBeActivatedByEvent(event)) {
-    assert(typeAtRow(selectedRow()) == k_rangeCellType);
-    m_singleInteractiveCurveViewRangeController.setEditXRange(index == 0);
+  if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
+      static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
+    m_singleInteractiveCurveViewRangeController.setEditXRange(cell ==
+                                                              &m_xRangeCell);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }

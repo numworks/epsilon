@@ -46,9 +46,9 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     if (!canSwitchHideStatus) {
       App::app()->displayWarning(I18n::Message::DataNotSuitable);
     } else {
-      m_selectableListView.reloadSelectedCell();
       m_hideCell.accessory()->setState(
           m_storeColumnHelper->selectedSeriesIsActive());
+      m_selectableListView.reloadSelectedCell();
     }
   } else {
     assert(cell == &m_clearColumn);

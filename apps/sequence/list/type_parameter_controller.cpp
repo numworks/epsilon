@@ -24,8 +24,7 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
                                                  KDCoordinate bottomMargin,
                                                  KDCoordinate leftMargin)
     : SelectableCellListPage<MenuCell<LayoutView, MessageTextView>,
-                             k_numberOfCells, RegularListViewDataSource>(
-          parentResponder),
+                             k_numberOfCells>(parentResponder),
       m_listController(list) {
   cellAtIndex(k_indexOfExplicit)
       ->subLabel()

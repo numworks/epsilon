@@ -17,7 +17,7 @@ class MenuController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          2, Escher::RegularListViewDataSource> {
+          2> {
  public:
   MenuController(Escher::StackViewController* parentResponder,
                  InterestMenuController* interestMenuController);

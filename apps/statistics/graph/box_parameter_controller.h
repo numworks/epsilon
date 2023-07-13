@@ -15,7 +15,7 @@ class BoxParameterController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::SwitchView>,
-          1, Escher::RegularListViewDataSource> {
+          1> {
  public:
   BoxParameterController(Escher::Responder* parentResponder, Store* store,
                          DataViewController* dataViewController);
@@ -23,7 +23,6 @@ class BoxParameterController
   const char* title() override {
     return I18n::translate(I18n::Message::StatisticsGraphSettings);
   }
-  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   bool handleEvent(Ion::Events::Event event) override;

@@ -52,19 +52,12 @@ class ExplicitSelectableListViewController
   HighlightCell* selectedCell() { return cell(selectedRow()); }
 };
 
-/*
- * This Class is useful to create a SelectableListViewController of
+/* This class is useful to create an ExplicitSelectableListViewController of
  * the same type of cells with a constant number of rows that all have their own
  * reusable cell. The number of displayable cells should always be greater or
- * equal to the number of rows.
- */
-template <typename Cell, int NumberOfCells, typename DataSource>
-class SelectableCellListPage : public SelectableListViewController<DataSource> {
-  static_assert(
-      !std::is_same<DataSource, SimpleListViewDataSource>::value,
-      "A SelectableCellListPage shouldn't use SimpleListViewDataSource as "
-      "datasource because reusable cells are already handled here. Use a "
-      "RegularListViewDataSource instead.");
+ * equal to the number of rows. */
+template <typename Cell, int NumberOfCells>
+class SelectableCellListPage : public ExplicitSelectableListViewController {
   static_assert(NumberOfCells <= 5,
                 "There should'nt be a need for more than 5 reusable cells.");
 
@@ -73,17 +66,13 @@ class SelectableCellListPage : public SelectableListViewController<DataSource> {
 
   SelectableCellListPage(Responder* parent,
                          SelectableListViewDelegate* tableDelegate = nullptr)
-      : SelectableListViewController<DataSource>(parent, tableDelegate) {}
+      : ExplicitSelectableListViewController(parent, tableDelegate) {}
   Cell* cellAtIndex(int i) {
     assert(i >= 0 && i < NumberOfCells);
     return &m_cells[i];
   }
-  int numberOfRows() const override { return NumberOfCells; }
-  int reusableCellCount(int type) override { return NumberOfCells; }
-  HighlightCell* reusableCell(int i, int type) override {
-    assert(type == 0);
-    return cellAtIndex(i);
-  }
+  int numberOfRows() const override final { return NumberOfCells; }
+  HighlightCell* cell(int index) override final { return cellAtIndex(index); }
 
  private:
   Cell m_cells[NumberOfCells];

@@ -21,7 +21,7 @@ class CategoricalTypeController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
-          2, Escher::RegularListViewDataSource> {
+          2> {
  public:
   CategoricalTypeController(
       Escher::StackViewController* parent, Chi2Test* statistic,

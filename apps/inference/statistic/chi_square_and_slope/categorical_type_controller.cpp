@@ -21,10 +21,10 @@ CategoricalTypeController::CategoricalTypeController(
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {
   selectRow(0);  // Select first row by default
-  cellAtIndex(k_indexOfGoodnessCell)
+  typedCell(k_indexOfGoodnessCell)
       ->label()
       ->setMessage(I18n::Message::GoodnessOfFit);
-  cellAtIndex(k_indexOfHomogeneityCell)
+  typedCell(k_indexOfHomogeneityCell)
       ->label()
       ->setMessage(I18n::Message::Homogeneity);
 
@@ -40,7 +40,7 @@ void CategoricalTypeController::stackOpenPage(
 
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
+  if (typedCell(0)->canBeActivatedByEvent(event)) {
     Escher::ViewController* controller = nullptr;
     CategoricalType type;
     switch (selectedRow()) {

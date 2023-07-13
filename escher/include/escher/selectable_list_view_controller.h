@@ -67,12 +67,12 @@ class SelectableCellListPage : public ExplicitSelectableListViewController {
   SelectableCellListPage(Responder* parent,
                          SelectableListViewDelegate* tableDelegate = nullptr)
       : ExplicitSelectableListViewController(parent, tableDelegate) {}
-  Cell* cellAtIndex(int i) {
+  Cell* typedCell(int i) {
     assert(i >= 0 && i < NumberOfCells);
     return &m_cells[i];
   }
   int numberOfRows() const override final { return NumberOfCells; }
-  HighlightCell* cell(int index) override final { return cellAtIndex(index); }
+  HighlightCell* cell(int index) override final { return typedCell(index); }
 
  private:
   Cell m_cells[NumberOfCells];

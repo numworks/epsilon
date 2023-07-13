@@ -12,15 +12,15 @@ BoxParameterController::BoxParameterController(
           k_numberOfCells>(parentResponder),
       m_store(store),
       m_dataViewController(dataViewController) {
-  cellAtIndex(0)->label()->setMessage(I18n::Message::DisplayOutliers);
+  typedCell(0)->label()->setMessage(I18n::Message::DisplayOutliers);
   // Being the only cell, it is always highlighted.
-  cellAtIndex(0)->setHighlighted(true);
+  typedCell(0)->setHighlighted(true);
 }
 
 void BoxParameterController::viewWillAppear() { updateDisplayOutliersSwitch(); }
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
-  if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
+  if (typedCell(0)->canBeActivatedByEvent(event)) {
     m_store->setDisplayOutliers(!m_store->displayOutliers());
     updateDisplayOutliersSwitch();
     // Reset selected box calculation because the total number may have changed

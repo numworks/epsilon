@@ -30,11 +30,11 @@ MenuController::MenuController(
   i = 0;
   for (std::initializer_list<I18n::Message> mess : messages) {
     assert(mess.end() - mess.begin() == 2);
-    cellAtIndex(i++)->setMessages(*mess.begin(), *(mess.begin() + 1));
+    typedCell(i++)->setMessages(*mess.begin(), *(mess.begin() + 1));
   }
   i = 0;
   for (const Escher::Image *img : images) {
-    cellAtIndex(i++)->setImage(img);
+    typedCell(i++)->setImage(img);
   }
 
   centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);

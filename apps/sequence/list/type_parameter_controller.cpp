@@ -26,13 +26,11 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
     : SelectableCellListPage<MenuCell<LayoutView, MessageTextView>,
                              k_numberOfCells>(parentResponder),
       m_listController(list) {
-  cellAtIndex(k_indexOfExplicit)
-      ->subLabel()
-      ->setMessage(I18n::Message::Explicit);
-  cellAtIndex(k_indexOfRecurrence)
+  typedCell(k_indexOfExplicit)->subLabel()->setMessage(I18n::Message::Explicit);
+  typedCell(k_indexOfRecurrence)
       ->subLabel()
       ->setMessage(I18n::Message::SingleRecurrence);
-  cellAtIndex(k_indexOfDoubleRecurrence)
+  typedCell(k_indexOfDoubleRecurrence)
       ->subLabel()
       ->setMessage(I18n::Message::DoubleRecurrence);
   m_selectableListView.setMargins(topMargin, rightMargin, bottomMargin,
@@ -51,7 +49,7 @@ void TypeParameterController::viewWillAppear() {
   assert(nextName != nullptr);
   const char *subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
   for (size_t j = 0; j < k_numberOfCells; j++) {
-    cellAtIndex(j)->label()->setLayout(HorizontalLayout::Builder(
+    typedCell(j)->label()->setLayout(HorizontalLayout::Builder(
         CodePointLayout::Builder(nextName[0]),
         VerticalOffsetLayout::Builder(
             LayoutHelper::String(subscripts[j], strlen(subscripts[j])),
@@ -64,7 +62,7 @@ void TypeParameterController::viewWillAppear() {
 void TypeParameterController::viewDidDisappear() {
   // Tidy layouts
   for (size_t i = 0; i < k_numberOfCells; i++) {
-    cellAtIndex(i)->label()->setLayout(Layout());
+    typedCell(i)->label()->setLayout(Layout());
   }
   m_selectableListView.deselectTable();
   ViewController::viewDidDisappear();

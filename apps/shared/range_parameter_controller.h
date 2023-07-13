@@ -14,9 +14,12 @@
 
 namespace Shared {
 
+using RangeCell =
+    Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
+                     Escher::ChevronView>;
+
 class RangeParameterController
-    : public Escher::SelectableListViewController<
-          Escher::StandardMemoizedListViewDataSource> {
+    : public Escher::ExplicitSelectableListViewController {
  public:
   RangeParameterController(
       Escher::Responder *parentResponder,
@@ -25,11 +28,7 @@ class RangeParameterController
   const char *title() override { return I18n::translate(I18n::Message::Axis); }
 
   int numberOfRows() const override { return 4; }
-  int typeAtRow(int row) const override;
-  int reusableCellCount(int type) override;
-  Escher::HighlightCell *reusableCell(int index, int type) override;
-  KDCoordinate nonMemoizedRowHeight(int row) override;
-  void fillCellForRow(Escher::HighlightCell *cell, int row) override;
+  Escher::HighlightCell *cell(int row) override;
   KDCoordinate separatorBeforeRow(int row) override;
 
   void viewWillAppear() override;
@@ -43,21 +42,16 @@ class RangeParameterController
   TELEMETRY_ID("Range");
 
  private:
-  constexpr static int k_numberOfRangeCells = 2;
-  constexpr static int k_normalizeCellType = 0;
-  constexpr static int k_rangeCellType = 1;
-  constexpr static int k_okCellType = 2;
-
   void buttonAction();
+  void fillRangeCells();
 
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::UnequalView>
       m_normalizeCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
-                   Escher::ChevronView>
-      m_rangeCells[k_numberOfRangeCells];
+  RangeCell m_xRangeCell;
+  RangeCell m_yRangeCell;
   Escher::ButtonCell m_okButton;
   Shared::MessagePopUpController m_confirmPopUpController;
   SingleInteractiveCurveViewRangeController

@@ -926,7 +926,7 @@ constexpr ToolboxMessageTree catalogChildren[] = {
                              I18n::Message::PythonTurtleReset, false),
     ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandRight,
                              I18n::Message::PythonTurtleRight),
-    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRound,
+    ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg,
                              I18n::Message::PythonRound),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScatter,
                              I18n::Message::PythonScatter),

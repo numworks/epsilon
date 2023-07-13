@@ -39,6 +39,7 @@ void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
   ViewController* activeVC = children(i);
   if (i != m_dataSource->activeTab()) {
     m_dataSource->setActiveTab(i);
+    activeVC->initView();
     m_view.setActiveView(activeVC->view());
     children(i)->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);

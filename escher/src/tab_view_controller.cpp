@@ -119,6 +119,7 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);
   ViewController* activeVC = children(i);
   if (i != m_dataSource->activeTab()) {
+    activeVC->initView();
     m_view.setActiveView(activeVC->view());
     children(i)->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);

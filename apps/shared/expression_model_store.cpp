@@ -30,9 +30,9 @@ ExpressionModelHandle* ExpressionModelStore::privateModelForRecord(
   return result;
 }
 
-void ExpressionModelStore::removeAll() {
+void ExpressionModelStore::RemoveAll(const char* modelExtension) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyRecordsWithExtension(
-      modelExtension());
+      modelExtension);
 }
 
 void ExpressionModelStore::removeModel(Ion::Storage::Record record) {

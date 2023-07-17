@@ -13,6 +13,7 @@ class EquationStore : public Shared::ExpressionModelStore {
  public:
   constexpr static int k_maxNumberOfEquations =
       Poincare::Expression::k_maxNumberOfVariables;
+  constexpr static const char* k_extension = Ion::Storage::eqExtension;
 
   // ExpressionModelStore
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
@@ -21,12 +22,13 @@ class EquationStore : public Shared::ExpressionModelStore {
     return Shared::ExpiringPointer<Equation>(
         static_cast<Equation*>(privateModelForRecord(record)));
   }
+  static void RemoveAll() {
+    Shared::ExpressionModelStore::RemoveAll(k_extension);
+  }
 
  private:
   // ExpressionModelStore
-  const char* modelExtension() const override {
-    return Ion::Storage::eqExtension;
-  }
+  const char* modelExtension() const override { return k_extension; }
   int maxNumberOfMemoizedModels() const override {
     return k_maxNumberOfEquations;
   }

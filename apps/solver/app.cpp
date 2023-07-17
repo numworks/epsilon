@@ -22,7 +22,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 
 void App::Snapshot::reset() {
   // Delete all equations
-  m_equationStore.removeAll();
+  EquationStore::RemoveAll();
   Shared::SharedApp::Snapshot::reset();
 }
 
@@ -35,24 +35,18 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   equationStore()->storageDidChangeForRecord(record);
 }
 
-void App::Snapshot::tidy() {
-  // Delete all expressions of equations
-  m_equationStore.tidyDownstreamPoolFrom();
-  SharedApp::Snapshot::tidy();
-}
-
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_stackViewController),
       m_solutionsController(nullptr),
       m_intervalController(nullptr),
-      m_listController(&m_listFooter, snapshot->equationStore(), &m_listFooter),
+      m_listController(&m_listFooter, &m_equationStore, &m_listFooter),
       m_listFooter(&m_stackViewController, &m_listController, &m_listController,
                    ButtonRowController::Position::Bottom,
                    ButtonRowController::Style::EmbossedGray,
                    ButtonRowController::Size::Large),
       m_stackViewController(&m_modalViewController, &m_listFooter,
                             StackViewController::Style::GrayGradation),
-      m_system(snapshot->equationStore()),
+      m_system(&m_equationStore),
       m_context(AppsContainer::sharedAppsContainer()->globalContext()) {}
 
 }  // namespace Solver

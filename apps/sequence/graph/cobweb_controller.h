@@ -66,6 +66,8 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
   Ion::Storage::Record m_record;
 
  private:
+  void privateModalViewAltersFirstResponder(
+      FirstResponderAlteration alteration) override;
   constexpr static float k_margin = 0.12;
   int m_step;
   bool m_initialZoom;

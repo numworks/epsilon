@@ -55,7 +55,7 @@ KDRect ModalViewController::ContentView::modalViewFrame() const {
   KDRect modalViewFrame(
       KDPoint(m_horizontalAlignment * (availableWidth - modalWidth),
               m_verticalAlignment * (availableHeight - modalHeight))
-          .translatedBy(m_margins.leftTopPoint()),
+          .translatedBy(m_margins.topLeftPoint()),
       {modalWidth, modalHeight});
   return modalViewFrame;
 }

@@ -11,20 +11,15 @@ class SelectableViewWithMessages : public Escher::View {
  public:
   SelectableViewWithMessages(Escher::SelectableTableView* selectableTableView);
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  void setMessages(I18n::Message* messages, int numberOfMessages);
+  void setMessage(I18n::Message message);
   void reload();
 
  private:
-  int numberOfSubviews() const override { return 1 + m_numberOfMessages; }
+  int numberOfSubviews() const override { return 2; }
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   Escher::SelectableTableView* m_selectableTableView;
-  constexpr static int k_maxNumberOfLines = 3;
-  // When displaying the message, only one row is displayed.
-  constexpr static KDCoordinate k_minSelectableTableViewHeight =
-      Escher::AbstractMenuCell::k_minimalLargeFontCellHeight;
-  Escher::MessageTextView m_messageLines[k_maxNumberOfLines];
-  int m_numberOfMessages;
+  Escher::MessageTextView m_messageTextView;
 };
 
 }  // namespace Settings

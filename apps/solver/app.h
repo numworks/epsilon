@@ -33,11 +33,6 @@ class App : public Shared::MathApp {
     };
     const Descriptor *descriptor() const override;
     void reset() override;
-    EquationStore *equationStore() { return &m_equationStore; }
-
-   private:
-    void tidy() override;
-    EquationStore m_equationStore;
   };
 
   static App *app() { return static_cast<App *>(Escher::App::app()); }
@@ -46,7 +41,7 @@ class App : public Shared::MathApp {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
 
-  EquationStore *equationStore() { return snapshot()->equationStore(); }
+  EquationStore *equationStore() { return &m_equationStore; }
   SystemOfEquations *system() { return &m_system; }
   Escher::ViewController *intervalController() { return &m_intervalController; }
   SolutionsController *solutionsController() { return &m_solutionsController; }
@@ -59,6 +54,7 @@ class App : public Shared::MathApp {
  private:
   App(Snapshot *snapshot);
 
+  EquationStore m_equationStore;
   // Controllers
   SolutionsController m_solutionsController;
   IntervalController m_intervalController;

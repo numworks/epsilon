@@ -37,8 +37,9 @@ class ExpressionModelStore {
 
   // Add and Remove
   virtual Ion::Storage::Record::ErrorStatus addEmptyModel() = 0;
-  void removeAll();
   void removeModel(Ion::Storage::Record record);
+  static void RemoveAll(const char* modelExtension);
+  void removeAll() { RemoveAll(modelExtension()); }
   void setStorageChangeFlag(bool flag) { m_storageChangeFlag = flag; }
   void reset() {
     if (m_storageChangeFlag) {

@@ -23,21 +23,28 @@ TestController::TestController(StackViewController *parentResponder,
                                InputSlopeController *inputSlopeController,
                                InputController *inputController,
                                Statistic *statistic)
-    : ExplicitSelectableListViewController(parentResponder),
+    : SelectableCellListPage(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
       m_inputSlopeController(inputSlopeController),
       m_statistic(statistic) {
-  m_cells[k_indexOfOneProp].label()->setMessage(I18n::Message::TestOneProp);
-  m_cells[k_indexOfOneMean].label()->setMessage(I18n::Message::TestOneMean);
-  m_cells[k_indexOfTwoProps].label()->setMessage(I18n::Message::TestTwoProps);
-  m_cells[k_indexOfTwoMeans].label()->setMessage(I18n::Message::TestTwoMeans);
-  m_cells[k_indexOfCategorical].label()->setMessage(
-      I18n::Message::TestCategorical);
-  m_cells[k_indexOfCategorical].subLabel()->setMessage(I18n::Message::X2Test);
-  m_cells[k_indexOfSlope].label()->setMessage(I18n::Message::Slope);
+  typedCell(k_indexOfOneProp)->label()->setMessage(I18n::Message::TestOneProp);
+  typedCell(k_indexOfOneMean)->label()->setMessage(I18n::Message::TestOneMean);
+  typedCell(k_indexOfTwoProps)
+      ->label()
+      ->setMessage(I18n::Message::TestTwoProps);
+  typedCell(k_indexOfTwoMeans)
+      ->label()
+      ->setMessage(I18n::Message::TestTwoMeans);
+  typedCell(k_indexOfCategorical)
+      ->label()
+      ->setMessage(I18n::Message::TestCategorical);
+  typedCell(k_indexOfCategorical)
+      ->subLabel()
+      ->setMessage(I18n::Message::X2Test);
+  typedCell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
   // Init selection
   selectRow(0);
 }
@@ -60,7 +67,7 @@ void TestController::didBecomeFirstResponder() {
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (!m_cells[0].canBeActivatedByEvent(event)) {
+  if (!typedCell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   SelectableViewController *controller = nullptr;
@@ -104,23 +111,25 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-int TestController::numberOfRows() const {
-  return Statistic::k_numberOfSignificanceTestType;
-}
-
 void TestController::viewWillAppear() {
-  m_cells[k_indexOfOneProp].subLabel()->setMessage(
-      m_statistic->zStatisticMessage());
-  m_cells[k_indexOfOneMean].subLabel()->setMessage(
-      m_statistic->tOrZStatisticMessage());
-  m_cells[k_indexOfTwoProps].subLabel()->setMessage(
-      m_statistic->zStatisticMessage());
-  m_cells[k_indexOfTwoMeans].subLabel()->setMessage(
-      m_statistic->tOrZStatisticMessage());
-  m_cells[k_indexOfCategorical].setVisible(
-      m_statistic->numberOfSignificancesTestTypes() == numberOfRows());
-  m_cells[k_indexOfSlope].subLabel()->setMessage(
-      m_statistic->tStatisticMessage());
+  typedCell(k_indexOfOneProp)
+      ->subLabel()
+      ->setMessage(m_statistic->zStatisticMessage());
+  typedCell(k_indexOfOneMean)
+      ->subLabel()
+      ->setMessage(m_statistic->tOrZStatisticMessage());
+  typedCell(k_indexOfTwoProps)
+      ->subLabel()
+      ->setMessage(m_statistic->zStatisticMessage());
+  typedCell(k_indexOfTwoMeans)
+      ->subLabel()
+      ->setMessage(m_statistic->tOrZStatisticMessage());
+  typedCell(k_indexOfCategorical)
+      ->setVisible(m_statistic->numberOfSignificancesTestTypes() ==
+                   numberOfRows());
+  typedCell(k_indexOfCategorical)
+      ->subLabel()
+      ->setMessage(m_statistic->tStatisticMessage());
 }
 
 }  // namespace Inference

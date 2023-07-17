@@ -68,9 +68,8 @@ typedef enum {
  * - PN_import_as_names_paren;
  * */
 
-VariableBoxController::VariableBoxController(ScriptStore *scriptStore)
+VariableBoxController::VariableBoxController()
     : AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
-      m_scriptStore(scriptStore),
       m_displaySubtitles(true) {
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
   m_originsName[0] = I18n::translate(I18n::Message::ScriptInProgress);
@@ -238,7 +237,7 @@ void VariableBoxController::loadFunctionsAndVariables(
 
   // Always load the builtin functions and variables
   loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
-  Script script = m_scriptStore->scriptAtIndex(scriptIndex);
+  Script script = ScriptStore::ScriptAtIndex(scriptIndex);
   assert(!script.isNull());
 
   /* Handle the fetchedForVariableBox status: we will import the current script
@@ -294,9 +293,9 @@ const char *VariableBoxController::autocompletionAlternativeAtIndex(
 
 void VariableBoxController::loadVariablesImportedFromScripts() {
   empty();
-  const int scriptsCount = m_scriptStore->numberOfScripts();
+  const int scriptsCount = ScriptStore::NumberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
-    Script script = m_scriptStore->scriptAtIndex(i);
+    Script script = ScriptStore::ScriptAtIndex(i);
     if (script.fetchedFromConsole()) {
       loadGlobalAndImportedVariablesInScriptAsImported(script, nullptr, -1,
                                                        false);
@@ -307,7 +306,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
 void VariableBoxController::empty() {
   m_shortenResultCharCount = 0;
   resetSizeMemoization();
-  m_scriptStore->clearVariableBoxFetchInformation();
+  ScriptStore::ClearVariableBoxFetchInformation();
   for (uint8_t i = 0; i < k_maxOrigins; ++i) {
     m_rowsPerOrigins[i] = 0;
     // ScriptInProgress and BuiltinsAndKeywords cells stay unchanged

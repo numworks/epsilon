@@ -25,6 +25,7 @@ App::Snapshot::Snapshot()
     : m_lockOnConsole(false)
 #endif
 {
+  ScriptStore::InitTemplates();
 }
 
 App *App::Snapshot::unpack(Container *container) {
@@ -37,14 +38,12 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-ScriptStore *App::Snapshot::scriptStore() { return &m_scriptStore; }
-
 #if EPSILON_GETOPT
 bool App::Snapshot::lockOnConsole() const { return m_lockOnConsole; }
 
 void App::Snapshot::setOpt(const char *name, const char *value) {
   if (strcmp(name, "script") == 0) {
-    m_scriptStore.deleteAllScripts();
+    ScriptStore::DeleteAllScripts();
     char *separator =
         const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
     if (*separator == 0) {
@@ -66,9 +65,9 @@ void App::Snapshot::setOpt(const char *name, const char *value) {
 App::App(Snapshot *snapshot)
     : Shared::SharedApp(snapshot, &m_codeStackViewController),
       m_pythonUser(nullptr),
-      m_consoleController(nullptr, this, snapshot->scriptStore()
+      m_consoleController(nullptr, this
 #if EPSILON_GETOPT
-                                             ,
+                          ,
                           snapshot->lockOnConsole()
 #endif
                               ),
@@ -76,12 +75,11 @@ App::App(Snapshot *snapshot)
                    &m_menuController, ButtonRowController::Position::Bottom,
                    ButtonRowController::Style::EmbossedGray,
                    ButtonRowController::Size::Large),
-      m_menuController(&m_listFooter, this, snapshot->scriptStore(),
-                       &m_listFooter),
+      m_menuController(&m_listFooter, this, &m_listFooter),
       m_codeStackViewController(
           &m_modalViewController, &m_listFooter,
           Escher::StackViewController::Style::WhiteUniform),
-      m_variableBoxController(snapshot->scriptStore()),
+      m_variableBoxController(),
       m_allowBoxes(true) {
   Clipboard::sharedClipboard()->enterPython();
 }

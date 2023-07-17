@@ -16,7 +16,7 @@ namespace Code {
 
 class VariableBoxController : public AlternateEmptyNestedMenuController {
  public:
-  VariableBoxController(ScriptStore* scriptStore);
+  VariableBoxController();
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
@@ -178,7 +178,6 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
                    Escher::PointerTextView>
       m_itemCells[k_maxNumberOfDisplayedItems];
   SubtitleCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
-  ScriptStore* m_scriptStore;
   size_t m_nodesCount;                      // Number of nodes
   uint8_t m_originsCount;                   // Number of origins
   size_t m_rowsPerOrigins[k_maxOrigins];    // Nodes per origins

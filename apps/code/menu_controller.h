@@ -24,7 +24,7 @@ class MenuController : public Escher::ViewController,
                        public Escher::ButtonRowDelegate {
  public:
   MenuController(Escher::Responder *parentResponder, App *pythonDelegate,
-                 ScriptStore *scriptStore, Escher::ButtonRowController *footer);
+                 Escher::ButtonRowController *footer);
   ConsoleController *consoleController();
   Escher::StackViewController *stackViewController();
   void willExitResponderChain(Escher::Responder *nextFirstResponder) override;
@@ -107,7 +107,6 @@ class MenuController : public Escher::ViewController,
   void forceTextFieldEditionToAbort(bool menuControllerStaysInResponderChain);
   void privateModalViewAltersFirstResponder(
       FirstResponderAlteration alteration) override;
-  ScriptStore *m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   Escher::EvenOddCellWithEllipsis
       m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];

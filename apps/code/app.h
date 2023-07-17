@@ -25,7 +25,6 @@ class App : public Shared::SharedApp {
     Snapshot();
     App *unpack(Escher::Container *container) override;
     const Descriptor *descriptor() const override;
-    ScriptStore *scriptStore();
 #if EPSILON_GETOPT
     bool lockOnConsole() const;
     void setOpt(const char *name, const char *value) override;
@@ -34,7 +33,6 @@ class App : public Shared::SharedApp {
 #if EPSILON_GETOPT
     bool m_lockOnConsole;
 #endif
-    ScriptStore m_scriptStore;
   };
   static App *app() { return static_cast<App *>(Escher::App::app()); }
   ~App();

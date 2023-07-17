@@ -22,8 +22,7 @@ class ConsoleController : public Escher::ViewController,
                           public Escher::TextFieldDelegate,
                           public MicroPython::ExecutionEnvironment {
  public:
-  ConsoleController(Escher::Responder* parentResponder, App* pythonDelegate,
-                    ScriptStore* scriptStore
+  ConsoleController(Escher::Responder* parentResponder, App* pythonDelegate
 #if EPSILON_GETOPT
                     ,
                     bool m_lockOnConsole
@@ -126,7 +125,7 @@ class ConsoleController : public Escher::ViewController,
    * different strings until a new line char appears in the text. When this
    * happens, or when m_outputAccumulationBuffer is full, we create a new
    * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
-  ScriptStore* m_scriptStore;
+  ScriptStore m_scriptStore;
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
   bool m_autoImportScripts;

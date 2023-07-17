@@ -20,8 +20,9 @@ class ScriptStore : public MicroPython::ScriptProvider {
   // Storage information
   static bool ScriptNameIsFree(const char* baseName);
 
-  ScriptStore();
-  Script scriptAtIndex(int index) {
+  static void InitTemplates();
+
+  static Script ScriptAtIndex(int index) {
     return Script(
         Ion::Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
             k_scriptExtension, index));
@@ -35,20 +36,22 @@ class ScriptStore : public MicroPython::ScriptProvider {
         Ion::Storage::FileSystem::sharedFileSystem
             ->recordBaseNamedWithExtension(baseName, k_scriptExtension));
   }
-  int numberOfScripts() {
+  static int NumberOfScripts() {
     return Ion::Storage::FileSystem::sharedFileSystem
         ->numberOfRecordsWithExtension(k_scriptExtension);
   }
-  Ion::Storage::Record::ErrorStatus addNewScript() {
-    return addScriptFromTemplate(ScriptTemplate::Empty());
+  static Ion::Storage::Record::ErrorStatus AddNewScript() {
+    return AddScriptFromTemplate(ScriptTemplate::Empty());
   }
-  void deleteAllScripts();
-  bool isFull();
+  static void DeleteAllScripts();
+  static bool IsFull();
 
   /* MicroPython::ScriptProvider */
-  const char* contentOfScript(const char* name, bool markAsFetched) override;
-  void clearVariableBoxFetchInformation();
-  void clearConsoleFetchInformation();
+  const char* contentOfScript(const char* name,
+                              bool markAsFetched) const override;
+
+  static void ClearVariableBoxFetchInformation();
+  static void ClearConsoleFetchInformation();
 
  private:
   /* If the storage available space has a smaller size than
@@ -62,7 +65,7 @@ class ScriptStore : public MicroPython::ScriptProvider {
       Script::k_defaultScriptNameMaxSize + k_scriptExtensionLength + 1 + 20 +
       10;
 
-  Ion::Storage::Record::ErrorStatus addScriptFromTemplate(
+  static Ion::Storage::Record::ErrorStatus AddScriptFromTemplate(
       const ScriptTemplate* scriptTemplate) {
     return Script::Create(scriptTemplate->name(), scriptTemplate->content());
   }

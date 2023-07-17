@@ -106,7 +106,7 @@ class KDMargins {
 
   constexpr KDCoordinate width() const { return m_horizontal.width(); }
   constexpr KDCoordinate height() const { return m_vertical.height(); }
-  constexpr KDPoint leftTopPoint() const { return KDPoint(left(), top()); }
+  constexpr KDPoint topLeftPoint() const { return KDPoint(left(), top()); }
 
  private:
   KDHorizontalMargins m_horizontal;

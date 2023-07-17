@@ -160,7 +160,7 @@ void ScrollView::layoutSubviews(bool force) {
   setChildFrame(&m_innerView, innerFrame, force);
   KDPoint offset = contentOffset()
                        .opposite()
-                       .translatedBy(m_margins.leftTopPoint())
+                       .translatedBy(m_margins.topLeftPoint())
                        .relativeTo(innerFrame.origin());
 
   KDRect contentFrame = KDRect(offset, contentSize());

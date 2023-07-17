@@ -75,7 +75,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   void resetContentOffset() override;
   KDPoint marginToAddForVirtualOffset() const override {
     return KDPoint(m_mainTableViewLeftMargin, m_mainTableViewTopMargin)
-        .translatedBy((-m_mainTableView->constMargins()).leftTopPoint());
+        .translatedBy((-m_mainTableView->constMargins()).topLeftPoint());
   }
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;

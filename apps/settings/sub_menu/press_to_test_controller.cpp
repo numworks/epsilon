@@ -144,7 +144,7 @@ void PressToTestController::setMessages() {
     m_topMessageView.setMessage(I18n::Message::PressToTestActiveIntro);
     setBottomView(&m_bottomMessageView);
   } else {
-    m_topMessageView.setMessage(I18n::Message::PressToTestIntro1);
+    m_topMessageView.setMessage(I18n::Message::PressToTestIntro);
     setBottomView(nullptr);
   }
 }

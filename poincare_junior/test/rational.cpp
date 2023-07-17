@@ -7,17 +7,16 @@
 
 using namespace PoincareJ;
 
-static inline bool integer_handler_same_absolute_value(IntegerHandler a,
-                                                       IntegerHandler b) {
+static bool integer_handler_same_absolute_value(IntegerHandler a,
+                                                IntegerHandler b) {
   a.setSign(NonStrictSign::Positive);
   b.setSign(NonStrictSign::Positive);
   return IntegerHandler::Compare(a, b) == 0;
 }
 
-static inline void assert_properties(const Tree* numerator,
-                                     const Tree* denominator,
-                                     BlockType expectedBlockType,
-                                     StrictSign strictSign) {
+static void assert_properties(const Tree* numerator, const Tree* denominator,
+                              BlockType expectedBlockType,
+                              StrictSign strictSign) {
   Tree* r = Rational::Push(numerator, denominator);
   quiz_assert(r->type() == expectedBlockType);
   quiz_assert(strictSign == Rational::StrictSign(r));
@@ -49,10 +48,10 @@ QUIZ_CASE(pcj_rational_properties) {
   assert_properties(0_e, -812312312_e, BlockType::Zero, StrictSign::Null);
 }
 
-static inline void assert_irreducible_form(const Tree* iNumerator,
-                                           const Tree* iDenominator,
-                                           const Tree* resNumerator,
-                                           const Tree* resDenominator) {
+static void assert_irreducible_form(const Tree* iNumerator,
+                                    const Tree* iDenominator,
+                                    const Tree* resNumerator,
+                                    const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   Tree* result = Rational::IrreducibleForm(i);
@@ -70,8 +69,8 @@ QUIZ_CASE(pcj_rational_irreducible_form) {
 
 typedef Tree* (*Operation)(const Tree* i, const Tree* j);
 
-static inline void assert_operation(const Tree* i, const Tree* j,
-                                    Operation operation, const Tree* expected) {
+static void assert_operation(const Tree* i, const Tree* j, Operation operation,
+                             const Tree* expected) {
   Tree* result = operation(i, j);
   result->moveTreeOverTree(Rational::IrreducibleForm(result));
   Simplification::ShallowSystematicReduce(result);
@@ -79,10 +78,10 @@ static inline void assert_operation(const Tree* i, const Tree* j,
   result->removeTree();
 }
 
-static inline void assert_add_or_mult(
-    const Tree* iNumerator, const Tree* iDenominator, const Tree* jNumerator,
-    const Tree* jDenominator, Operation operation, const Tree* resNumerator,
-    const Tree* resDenominator) {
+static void assert_add_or_mult(const Tree* iNumerator, const Tree* iDenominator,
+                               const Tree* jNumerator, const Tree* jDenominator,
+                               Operation operation, const Tree* resNumerator,
+                               const Tree* resDenominator) {
   assert(operation == Rational::Addition ||
          operation == Rational::Multiplication);
   Tree* i = Rational::Push(iNumerator, iDenominator);
@@ -107,10 +106,9 @@ QUIZ_CASE(pcj_rational_multiplication) {
                      7_e);
 }
 
-static inline void assert_power(const Tree* iNumerator,
-                                const Tree* iDenominator, const Tree* j,
-                                const Tree* resNumerator,
-                                const Tree* resDenominator) {
+static void assert_power(const Tree* iNumerator, const Tree* iDenominator,
+                         const Tree* j, const Tree* resNumerator,
+                         const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   expected->moveTreeOverTree(Rational::IrreducibleForm(expected));

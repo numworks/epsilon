@@ -5,7 +5,7 @@
 
 using namespace PoincareJ;
 
-static inline EditionReference CreateInteger(const char* digits) {
+static EditionReference CreateInteger(const char* digits) {
   size_t length = strlen(digits);
   OMG::Base base = OMG::Base::Decimal;
   size_t prefixLength = strlen("0b");
@@ -19,7 +19,7 @@ static inline EditionReference CreateInteger(const char* digits) {
   return Integer::Push(digits, length, base);
 }
 
-static inline IntegerHandler CreateIntegerHandler(const char* digits) {
+static IntegerHandler CreateIntegerHandler(const char* digits) {
   return Integer::Handler(CreateInteger(digits));
 }
 
@@ -67,21 +67,21 @@ QUIZ_CASE(pcj_integer_properties) {
          static_cast<uint8_t>(a) == 254);
 }
 
-static inline void assert_equal(const char* a, const char* b) {
+static void assert_equal(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
                                       CreateIntegerHandler(b)) == 0);
 }
-static inline void assert_not_equal(const char* a, const char* b) {
+static void assert_not_equal(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
                                       CreateIntegerHandler(b)) != 0);
 }
 
-static inline void assert_lower(const char* a, const char* b) {
+static void assert_lower(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
                                       CreateIntegerHandler(b)) < 0);
 }
 
-static inline void assert_greater(const char* a, const char* b) {
+static void assert_greater(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
                                       CreateIntegerHandler(b)) > 0);
 }
@@ -106,7 +106,7 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_equal("0b1011", "11");
 }
 
-static inline void assert_add_to(const char* a, const char* b, const char* c) {
+static void assert_add_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
@@ -139,7 +139,7 @@ QUIZ_CASE(pcj_integer_addition) {
   assert_add_to("65537", "65537", "131074");
 }
 
-static inline void assert_sub_to(const char* a, const char* b, const char* c) {
+static void assert_sub_to(const char* a, const char* b, const char* c) {
   quiz_assert(IntegerHandler::Subtraction(CreateIntegerHandler(a),
                                           CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(c)));
@@ -176,7 +176,7 @@ QUIZ_CASE(pcj_integer_subtraction) {
   assert_sub_to("65537", "65537", "0");
 }
 
-static inline void assert_mult_to(const char* a, const char* b, const char* c) {
+static void assert_mult_to(const char* a, const char* b, const char* c) {
   quiz_assert(IntegerHandler::Multiplication(CreateIntegerHandler(a),
                                              CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(c)));
@@ -197,8 +197,8 @@ QUIZ_CASE(pcj_integer_multiplication) {
   assert_mult_to("16013", "773094113280", "12379556035952640");
 }
 
-static inline void assert_div_to(const char* a, const char* b, const char* q,
-                                 const char* r) {
+static void assert_div_to(const char* a, const char* b, const char* q,
+                          const char* r) {
   auto [quotient, remainder] = IntegerHandler::Division(
       CreateIntegerHandler(a), CreateIntegerHandler(b));
   quiz_assert(quotient->treeIsIdenticalTo(CreateInteger(q)) &&
@@ -253,7 +253,7 @@ QUIZ_CASE(pcj_integer_divide) {
                 "5");
 }
 
-static inline void assert_pow_to(const char* a, const char* b, const char* c) {
+static void assert_pow_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::Power(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
@@ -270,7 +270,7 @@ QUIZ_CASE(pcj_integer_pow) {
   assert_pow_to("14", "14", "11112006825558016");
 }
 
-static inline void assert_factorial_to(const char* a, const char* b) {
+static void assert_factorial_to(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Factorial(CreateIntegerHandler(a))
                   ->treeIsIdenticalTo(CreateInteger(b)));
   reset_pools();
@@ -285,7 +285,7 @@ QUIZ_CASE(pcj_integer_factorial) {
       "29519906261646730733907419814952960000000000000000000000000000");
 }
 
-static inline void assert_gcd_to(const char* a, const char* b, const char* c) {
+static void assert_gcd_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::GCD(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
@@ -303,19 +303,18 @@ QUIZ_CASE(pcj_integer_gcd) {
   assert_gcd_to("0", "0", "0");
 }
 
-static inline void assert_might_overflow(ActionWithContext action,
-                                         bool overflow) {
+static void assert_might_overflow(ActionWithContext action, bool overflow) {
   CachePool* cachePool = CachePool::sharedCachePool();
   const Tree* tree = cachePool->nodeForIdentifier(
       SharedEditionPool->executeAndCache(action, nullptr, nullptr));
   quiz_assert((tree == nullptr) == overflow);
 }
 
-static inline void assert_did_overflow(ActionWithContext action) {
+static void assert_did_overflow(ActionWithContext action) {
   assert_might_overflow(action, true);
 }
 
-static inline void assert_did_not_overflow(ActionWithContext action) {
+static void assert_did_not_overflow(ActionWithContext action) {
   assert_might_overflow(action, false);
 }
 

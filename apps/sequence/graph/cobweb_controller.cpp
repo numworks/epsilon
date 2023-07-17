@@ -31,7 +31,6 @@ CobwebController::CobwebController(
     SequenceStore* sequenceStore)
     : Shared::SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_graphView(&m_graphRange, cursor, bannerView, cursorView),
-      m_cursor(cursor),
       m_bannerView(bannerView),
       m_graphRange(),
       m_step(-1),
@@ -131,7 +130,7 @@ bool CobwebController::handleZoom(Ion::Events::Event event) {
           .y();
   interactiveCurveViewRange()->zoom(ratio, value, m_step ? value : 0.f);
   m_graphView.resetCachedStep();
-  curveView()->reload(true);
+  curveView()->reload();
   return true;
 }
 

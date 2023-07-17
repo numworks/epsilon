@@ -40,7 +40,6 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
   }
 
  private:
-  void setStep(int step);
   float cursorBottomMarginRatio() const override {
     return cursorBottomMarginRatioForBannerHeight(
         m_bannerView->minimalSizeForOptimalDisplay().height());
@@ -55,12 +54,10 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
   bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
   bool handleZoom(Ion::Events::Event event) override;
-  void drawStep(int n);
   void setupRange();
   bool updateStep(int delta);
   Shared::ExpiringPointer<Shared::Sequence> sequence() const;
   CobwebGraphView m_graphView;
-  Shared::CurveViewCursor* m_cursor;
   Shared::XYBannerView* m_bannerView;
   Shared::InteractiveCurveViewRange m_graphRange;
   Ion::Storage::Record m_record;

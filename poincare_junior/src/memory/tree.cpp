@@ -82,6 +82,7 @@ void Tree::logName(std::ostream& stream) const {
     "ArcCosine",
     "ArcSine",
     "ArcTangent",
+    "Decimal",
     "Derivative",
     "Exponential",
     "Ln",

@@ -18,6 +18,9 @@ namespace PoincareJ {
  * - Zero Z (same for One, Two, Half, MinusOne, TreeBorder)
  * | Z TAG |
  *
+ * - Decimal D
+ * | D TAG | UNSIGNED DIGIT0 |
+ *
  * - IntegerShort IS
  * | IS TAG | SIGNED DIGIT0 |
  *
@@ -90,6 +93,7 @@ enum class BlockType : uint8_t {
   ArcCosine,
   ArcSine,
   ArcTangent,
+  Decimal,
   Derivative,
   Exponential,
   Ln,
@@ -269,6 +273,7 @@ class TypeBlock : public Block {
       case BlockType::UserSymbol:
       case BlockType::UserFunction:
       case BlockType::UserSequence:
+      case BlockType::Decimal:
       case BlockType::IntegerShort:
       case BlockType::Placeholder:
       case BlockType::IntegerPosBig:
@@ -330,6 +335,7 @@ class TypeBlock : public Block {
       case BlockType::Logarithm:
         return 2;
       case BlockType::Abs:
+      case BlockType::Decimal:
       case BlockType::Cosine:
       case BlockType::Sine:
       case BlockType::Tangent:

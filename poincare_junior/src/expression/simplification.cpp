@@ -88,8 +88,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
   if (!IsNumber(child)) {
     return changed;
   }
-  float xApproximation = Approximation::To<float>(child);
-  if (xApproximation >= 0.f) {
+  if (Number::Sign(child) == NonStrictSign::Positive) {
     // |3| -> 3
     u->removeNode();
   } else {
@@ -233,8 +232,10 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    */
   Tree* x = u->childAtIndex(0);
   bool xIsNumber = IsNumber(x);
-  float xApproximation = xIsNumber ? Approximation::To<float>(x) : NAN;
-  if (xApproximation >= 0.f) {
+  bool xIsPositiveNumber =
+      xIsNumber && Number::Sign(x) == NonStrictSign::Positive;
+  bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
+  if (xIsPositiveNumber) {
     // TODO : Same if x is complex
     ConvertPowerRealToPower(u);
     return true;
@@ -250,13 +251,13 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   // y is simplified, both p and q can't be even
   assert(!qIsEven || !pIsEven);
 
-  if (!pIsEven && std::isnan(xApproximation)) {
+  if (!pIsEven && !xIsNumber) {
     // We don't know enough to simplify further.
     return false;
   }
-  assert(xApproximation < 0.f || pIsEven);
+  assert(xIsNegativeNumber || pIsEven);
 
-  if (xApproximation < 0.f && qIsEven) {
+  if (xIsNegativeNumber && qIsEven) {
     // TODO: Implement and return NonReal
     u->cloneNodeOverTree(KUndef);
     return true;
@@ -267,7 +268,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   ShallowSystematicReduce(x);
   ConvertPowerRealToPower(u);
 
-  if (xApproximation < 0.f && !pIsEven) {
+  if (xIsNegativeNumber && !pIsEven) {
     // -|x|^y
     u->cloneTreeAtNode(KMult(-1_e));
     NAry::SetNumberOfChildren(u, 2);

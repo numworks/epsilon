@@ -287,6 +287,7 @@ template Tree *EditionPool::push<BlockType::IntegerShort>(int8_t);
 template Tree *EditionPool::push<BlockType::IntegerPosBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::Float, float>(float);
+template Tree *EditionPool::push<BlockType::Decimal, uint8_t>(uint8_t);
 template Tree *EditionPool::push<BlockType::MinusOne>();
 template Tree *EditionPool::push<BlockType::Set>(int);
 template Tree *EditionPool::push<BlockType::Half>();

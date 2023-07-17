@@ -100,6 +100,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
           Rational::Denominator(exp).to<double>());
     case BlockType::Float:
       return Poincare::Float<float>::Builder(Float::To(exp));
+      // case BlockType::Decimal: // TODO
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
           ToPoincareExpression(exp->childAtIndex(0)));
@@ -228,6 +229,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       SharedEditionPool->push<BlockType::Float>(f.value());
       return;
     }
+    // case OT::Decimal: // TODO
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
       SharedEditionPool->push<BlockType::UserSymbol>(s.name(),

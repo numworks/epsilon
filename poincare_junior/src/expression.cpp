@@ -2,6 +2,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
+#include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
@@ -47,7 +48,8 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
 }
 
 void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
-                                               IntegerHandler handler) {
+                                               IntegerHandler handler,
+                                               int decimalOffset) {
   if (handler.strictSign() == StrictSign::Negative) {
     NAry::AddChild(
         layoutParent,
@@ -74,7 +76,14 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
         SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('0' +
                                                                        digit),
         firstInsertedIndex);
-  } while (value > 0);
+    decimalOffset--;
+    if (decimalOffset == 0) {
+      NAry::AddChildAtIndex(
+          layoutParent,
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('.'),
+          firstInsertedIndex);
+    }
+  } while (value > 0 && decimalOffset <= 0);
 }
 
 void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
@@ -176,6 +185,11 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       NAry::AddChild(layoutParent, createdLayout);
       break;
     }
+    case BlockType::Decimal:
+      ConvertIntegerHandlerToLayout(layoutParent,
+                                    Rational::Numerator(expression->nextNode()),
+                                    Decimal::DecimalOffset(expression));
+      expression->nextNode()->removeTree();
     case BlockType::Factorial:
       ConvertExpressionToLayout(layoutParent, expression->nextNode());
       NAry::AddChild(

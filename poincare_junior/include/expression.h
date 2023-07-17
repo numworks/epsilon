@@ -32,7 +32,8 @@ class Expression final : public Reference {
   static void ConvertBuiltinToLayout(EditionReference layoutParent,
                                      Tree* expression);
   static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
-                                            IntegerHandler handler);
+                                            IntegerHandler handler,
+                                            int decimalOffset = 0);
   static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
                                            Tree* expression);
   static void ConvertPowerOrDivisionToLayout(EditionReference layoutParent,

@@ -438,25 +438,28 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     RackLayoutDecoder exponent(rack, smallE + 1,
                                end);  // TODO may have a minus sign
 
-    if (decimalPoint == end && smallE == end) {
+    if (decimalPoint == end) {
       // Decimal integer
       leftHandSide = Integer::Push(integerDigits, OMG::Base::Decimal);
     } else {
-      /* Build (integerDigits + fractionalDigits *
-       * 10^(-numberOfFractionalDigits))
-       *           * 10^(exponent) */
-      leftHandSide = P_MULT(
-          P_ADD(Integer::Push(integerDigits, base),
-                P_MULT(Integer::Push(fractionalDigits, base),
-                       P_POW(SharedEditionPool->clone(10_e),
-                             SharedEditionPool->push<BlockType::IntegerShort>(
-                                 static_cast<int8_t>(-smallE + decimalPoint +
-                                                     1))))),
-          P_POW(SharedEditionPool->clone(10_e), Integer::Push(exponent, base)));
-
-      float value = Approximation::To<float>(leftHandSide);
-      leftHandSide = leftHandSide->moveTreeOverTree(
-          SharedEditionPool->push<BlockType::Float>(value));
+      int offset = smallE - decimalPoint - 1;
+      assert(offset > 0);
+      // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
+      leftHandSide =
+          SharedEditionPool->push<BlockType::Decimal, uint8_t>(offset);
+      Tree *child =
+          IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
+      child->moveTreeOverTree(IntegerHandler::Multiplication(
+          Integer::Handler(child), IntegerHandler::Parse(integerDigits, base)));
+      child->moveTreeOverTree(IntegerHandler::Addition(
+          Integer::Handler(child),
+          IntegerHandler::Parse(fractionalDigits, base)));
+    }
+    if (smallE != end) {
+      // Decimal * 10^exponent
+      leftHandSide->moveTreeAtNode(
+          P_MULT(P_POW((10_e)->clone(), Integer::Push(exponent, base))));
+      NAry::SetNumberOfChildren(leftHandSide, 2);
     }
   }
 

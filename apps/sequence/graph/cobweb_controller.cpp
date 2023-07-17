@@ -154,4 +154,14 @@ bool CobwebController::updateStep(int delta) {
   return true;
 }
 
+void CobwebController::privateModalViewAltersFirstResponder(
+    FirstResponderAlteration alteration) {
+  if (alteration == FirstResponderAlteration::DidRestore) {
+    /* This avoids that previous grey dotted line is saved in a buffer when the
+     * same grey dotted line is drawn over it.*/
+    m_graphView.resetCachedStep();
+    m_graphView.reload(false, true);
+  }
+}
+
 }  // namespace Sequence

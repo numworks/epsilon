@@ -16,8 +16,14 @@ class KDSize {
   KDSize operator+(const KDSize &other) const {
     return KDSize(m_width + other.width(), m_height + other.height());
   }
+  KDSize operator-(const KDSize &other) const {
+    return KDSize(m_width - other.width(), m_height - other.height());
+  }
   KDSize operator+(const KDMargins &margins) const {
     return KDSize(m_width + margins.width(), m_height + margins.height());
+  }
+  KDSize operator-(const KDMargins &margins) const {
+    return KDSize(m_width - margins.width(), m_height - margins.height());
   }
 
  private:

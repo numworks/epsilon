@@ -104,10 +104,10 @@ class ScrollView : public View {
 
  protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
-    return (bounds().size() + (-m_margins)).width();
+    return (bounds().size() - m_margins).width();
   }
   KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
-    return (bounds().size() + (-m_margins)).height();
+    return (bounds().size() - m_margins).height();
   }
   KDRect visibleContentRect();
   void layoutSubviews(bool force = false) override;

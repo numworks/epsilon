@@ -141,10 +141,9 @@ void ScrollView::scrollToContentRect(KDRect rect) {
 }
 
 KDRect ScrollView::visibleContentRect() {
-  KDSize sizeWithExcess(bounds().width() + m_excessWidth,
-                        bounds().height() + m_excessHeight);
-  return KDRect(KDPoint(contentOffset().x(), contentOffset().y()),
-                sizeWithExcess + (-m_margins));
+  return KDRect(
+      KDPoint(contentOffset().x(), contentOffset().y()),
+      bounds().size() + KDSize(m_excessWidth, m_excessHeight) - m_margins);
 }
 
 void ScrollView::layoutSubviews(bool force) {

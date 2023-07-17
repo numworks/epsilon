@@ -1,6 +1,7 @@
 #include "simplification.h"
 
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
@@ -548,6 +549,11 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
       ref->block()->isInteger()) {
     return Approximation::ApproximateAndReplaceEveryScalar(ref);
+  }
+
+  if (ref->type() == BlockType::Decimal) {
+    Decimal::Project(ref);
+    return true;
   }
 
   if (ref->block()->isOfType(

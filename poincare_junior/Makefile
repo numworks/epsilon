@@ -16,6 +16,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/derivation.cpp \
   expression/comparison.cpp \
   expression/conversion.cpp \
+  expression/decimal.cpp \
   expression/integer.cpp \
   expression/number.cpp \
   expression/polynomial.cpp \

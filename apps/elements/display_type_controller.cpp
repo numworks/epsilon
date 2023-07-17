@@ -8,14 +8,18 @@ namespace Elements {
 
 DisplayTypeController::DisplayTypeController(
     StackViewController *stackController)
-    : SelectableListViewController(stackController) {}
+    : SelectableCellListPage(stackController) {
+  for (int i = 0; i < k_numberOfCells; ++i) {
+    typedCell(i)->label()->setMessage(k_fields[i]->fieldLegend());
+  }
+}
 
 void DisplayTypeController::viewWillAppear() {
   size_t fieldIndex = 0;
   const DataField *currentField = App::app()->elementsViewDataSource()->field();
   while (k_fields[fieldIndex] != currentField) {
     fieldIndex++;
-    assert(fieldIndex < k_numberOfRows);
+    assert(fieldIndex < k_numberOfCells);
   }
   selectCell(fieldIndex);
 }
@@ -27,14 +31,7 @@ bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
     stackViewController()->pop();
     return true;
   }
-  return SelectableListViewController::handleEvent(e);
-}
-
-void DisplayTypeController::fillCellForRow(HighlightCell *cell, int row) {
-  assert(cell - static_cast<HighlightCell *>(m_cells) <
-         static_cast<int>(k_numberOfCells * sizeof(m_cells[0])));
-  static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
-      k_fields[row]->fieldLegend());
+  return false;
 }
 
 }  // namespace Elements

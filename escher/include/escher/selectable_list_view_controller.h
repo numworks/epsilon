@@ -58,9 +58,6 @@ class ExplicitSelectableListViewController
  * equal to the number of rows. */
 template <typename Cell, int NumberOfCells>
 class SelectableCellListPage : public ExplicitSelectableListViewController {
-  static_assert(NumberOfCells <= 6,
-                "There should'nt be a need for more than 6 reusable cells.");
-
  public:
   constexpr static int k_numberOfCells = NumberOfCells;
 

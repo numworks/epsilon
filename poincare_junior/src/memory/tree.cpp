@@ -128,7 +128,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     }
     return;
   }
-  if (block()->isNumber() || type() == BlockType::Constant) {
+  if (block()->isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;
   }

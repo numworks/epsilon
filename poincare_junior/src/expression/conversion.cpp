@@ -8,11 +8,32 @@
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/parser.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
+
+Poincare::Expression LazyToPoincareExpression(const Tree *exp) {
+  EditionReference outputLayout =
+      Expression::EditionPoolExpressionToLayout(exp->clone());
+  constexpr size_t bufferSize = 256;
+  char buffer[bufferSize];
+  *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+  outputLayout->removeTree();
+  return Poincare::Expression::Parse(buffer, nullptr, false, false);
+}
+
+void LazyPushPoincareExpression(Poincare::Expression exp) {
+  constexpr size_t bufferSize = 256;
+  char buffer[bufferSize];
+  exp.serialize(buffer, bufferSize);
+  EditionReference inputLayout = Layout::EditionPoolTextToLayout(buffer);
+  EditionReference expression = RackParser(inputLayout).parse();
+  inputLayout->removeTree();
+  return;
+}
 
 Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
   BlockType type = exp->type();
@@ -90,17 +111,13 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig:
-      return Poincare::Rational::Builder(Integer::Handler(exp).to<double>());
     case BlockType::Half:
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
-      return Poincare::Rational::Builder(
-          Rational::Numerator(exp).to<double>(),
-          Rational::Denominator(exp).to<double>());
     case BlockType::Float:
-      return Poincare::Float<float>::Builder(Float::To(exp));
-      // case BlockType::Decimal: // TODO
+    case BlockType::Decimal:
+      return LazyToPoincareExpression(exp);
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
           ToPoincareExpression(exp->childAtIndex(0)));
@@ -211,25 +228,11 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
         PushPoincareExpression(exp.childAtIndex(i));
       }
       return;
-    case OT::Rational: {
-      Poincare::Rational rat = static_cast<Poincare::Rational &>(exp);
-      int num = rat.signedIntegerNumerator().approximate<double>();
-      int den = rat.integerDenominator().approximate<double>();
-      Rational::Push(IntegerHandler(num), IntegerHandler(den));
-      return;
-    }
-    case OT::BasedInteger: {
-      Poincare::BasedInteger i = static_cast<Poincare::BasedInteger &>(exp);
-      int num = i.doubleApproximation();
-      Rational::Push(IntegerHandler(num), IntegerHandler(1));
-      return;
-    }
-    case OT::Float: {
-      Poincare::Float<float> f = static_cast<Poincare::Float<float> &>(exp);
-      SharedEditionPool->push<BlockType::Float>(f.value());
-      return;
-    }
-    // case OT::Decimal: // TODO
+    case OT::Rational:
+    case OT::BasedInteger:
+    case OT::Float:
+    case OT::Decimal:
+      return LazyPushPoincareExpression(exp);
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
       SharedEditionPool->push<BlockType::UserSymbol>(s.name(),

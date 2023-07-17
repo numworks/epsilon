@@ -15,12 +15,10 @@ using namespace Escher;
 namespace Code {
 
 MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
-                               ScriptStore *scriptStore,
                                ButtonRowController *footer)
     : ViewController(parentResponder),
       RegularHeightTableViewDataSource(),
       ButtonRowDelegate(nullptr, footer),
-      m_scriptStore(scriptStore),
       m_addNewScriptCell(KDGlyph::Format{}),
       m_consoleButton(
           this, I18n::Message::Console,
@@ -74,7 +72,7 @@ void MenuController::didBecomeFirstResponder() {
     m_selectableTableView.selectCellAtLocation(0, 0);
   }
   assert(m_selectableTableView.selectedRow() <
-         m_scriptStore->numberOfScripts() + 1);
+         ScriptStore::NumberOfScripts() + 1);
   App::app()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
   if (consoleController()->locked()) {
@@ -113,7 +111,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int selectedRow = m_selectableTableView.selectedRow();
     int selectedColumn = m_selectableTableView.selectedColumn();
-    if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts()) {
+    if (selectedRow >= 0 && selectedRow < ScriptStore::NumberOfScripts()) {
       if (selectedColumn == 1) {
         configureScript();
         return true;
@@ -122,7 +120,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
       editScriptAtIndex(selectedRow);
       return true;
     } else if (m_shouldDisplayAddScriptRow && selectedColumn == 0 &&
-               selectedRow == m_scriptStore->numberOfScripts()) {
+               selectedRow == ScriptStore::NumberOfScripts()) {
       addScript();
       return true;
     }
@@ -132,8 +130,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 
 void MenuController::renameSelectedScript() {
   assert(m_selectableTableView.selectedRow() >= 0);
-  assert(m_selectableTableView.selectedRow() <
-         m_scriptStore->numberOfScripts());
+  assert(m_selectableTableView.selectedRow() < ScriptStore::NumberOfScripts());
   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(
       Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(
@@ -176,7 +173,7 @@ void MenuController::willExitApp() {
 }
 
 int MenuController::numberOfRows() const {
-  return m_scriptStore->numberOfScripts() + m_shouldDisplayAddScriptRow;
+  return ScriptStore::NumberOfScripts() + m_shouldDisplayAddScriptRow;
 }
 
 void MenuController::fillCellForLocation(HighlightCell *cell, int column,
@@ -184,7 +181,7 @@ void MenuController::fillCellForLocation(HighlightCell *cell, int column,
   if (typeAtLocation(column, row) == k_scriptCellType) {
     (static_cast<ScriptNameCell *>(cell))
         ->textField()
-        ->setText(m_scriptStore->scriptAtIndex(row).fullName());
+        ->setText(ScriptStore::ScriptAtIndex(row).fullName());
   }
   static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
 }
@@ -293,7 +290,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
     newName = const_cast<const char *>(numberedDefaultName);
   }
   Script script =
-      m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+      ScriptStore::ScriptAtIndex(m_selectableTableView.selectedRow());
   Script::ErrorStatus error =
       Script::NameCompliant(newName)
           ? Ion::Storage::Record::SetFullName(&script, newName)
@@ -339,8 +336,8 @@ void MenuController::textFieldDidHandleEvent(AbstractTextField *textField) {
 }
 
 void MenuController::addScript() {
-  Script::ErrorStatus error = m_scriptStore->addNewScript();
-  /* Adding a new script is called when !m_scriptStore.isFull() which guarantees
+  Script::ErrorStatus error = ScriptStore::AddNewScript();
+  /* Adding a new script is called when !ScriptStore::IsFull() which guarantees
    * that the available space in the storage is big enough */
   assert(error == Script::ErrorStatus::None);
   (void)error;  // Silence the compiler
@@ -350,22 +347,21 @@ void MenuController::addScript() {
 
 void MenuController::configureScript() {
   assert(m_selectableTableView.selectedRow() >= 0);
-  assert(m_selectableTableView.selectedRow() <
-         m_scriptStore->numberOfScripts());
+  assert(m_selectableTableView.selectedRow() < ScriptStore::NumberOfScripts());
   m_scriptParameterController.setScript(
-      m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()));
+      ScriptStore::ScriptAtIndex(m_selectableTableView.selectedRow()));
   stackViewController()->push(&m_scriptParameterController);
 }
 
 void MenuController::editScriptAtIndex(int scriptIndex) {
-  assert(scriptIndex >= 0 && scriptIndex < m_scriptStore->numberOfScripts());
-  Script script = m_scriptStore->scriptAtIndex(scriptIndex);
+  assert(scriptIndex >= 0 && scriptIndex < ScriptStore::NumberOfScripts());
+  Script script = ScriptStore::ScriptAtIndex(scriptIndex);
   m_editorController.setScript(script, scriptIndex);
   stackViewController()->push(&m_editorController);
 }
 
 void MenuController::updateAddScriptRowDisplay() {
-  m_shouldDisplayAddScriptRow = !m_scriptStore->isFull();
+  m_shouldDisplayAddScriptRow = !ScriptStore::IsFull();
   m_selectableTableView.reloadData();
 }
 
@@ -375,7 +371,7 @@ bool MenuController::privateTextFieldDidAbortEditing(
    * methods that might call setFirstResponder, because we might be in the
    * middle of another setFirstResponder call. */
   Script script =
-      m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+      ScriptStore::ScriptAtIndex(m_selectableTableView.selectedRow());
   const char *scriptName = script.fullName();
   if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
@@ -416,7 +412,7 @@ void MenuController::forceTextFieldEditionToAbort(
     bool menuControllerStaysInResponderChain) {
   int selectedRow = m_selectableTableView.selectedRow();
   int selectedColumn = m_selectableTableView.selectedColumn();
-  if (selectedRow < 0 || selectedRow >= m_scriptStore->numberOfScripts() ||
+  if (selectedRow < 0 || selectedRow >= ScriptStore::NumberOfScripts() ||
       selectedColumn != 0) {
     return;
   }

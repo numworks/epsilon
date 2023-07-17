@@ -25,8 +25,7 @@ namespace Code {
 constexpr static const char *sStandardPromptText = ">>> ";
 
 ConsoleController::ConsoleController(Responder *parentResponder,
-                                     App *pythonDelegate,
-                                     ScriptStore *scriptStore
+                                     App *pythonDelegate
 #if EPSILON_GETOPT
                                      ,
                                      bool lockOnConsole
@@ -40,7 +39,6 @@ ConsoleController::ConsoleController(Responder *parentResponder,
       m_importScriptsWhenViewAppears(false),
       m_selectableTableView(this, this, this, this),
       m_editCell(this, this),
-      m_scriptStore(scriptStore),
       m_sandboxController(this),
       m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
@@ -59,10 +57,10 @@ ConsoleController::ConsoleController(Responder *parentResponder,
 
 bool ConsoleController::loadPythonEnvironment() {
   if (!m_pythonDelegate->isPythonUser(this)) {
-    m_scriptStore->clearConsoleFetchInformation();
+    ScriptStore::ClearConsoleFetchInformation();
     emptyOutputAccumulationBuffer();
     m_pythonDelegate->initPythonWithUser(this);
-    MicroPython::registerScriptProvider(m_scriptStore);
+    MicroPython::registerScriptProvider(&m_scriptStore);
     m_importScriptsWhenViewAppears = m_autoImportScripts;
   }
   return true;
@@ -76,9 +74,9 @@ void ConsoleController::unloadPythonEnvironment() {
 }
 
 void ConsoleController::autoImport() {
-  int numberOfScripts = m_scriptStore->numberOfScripts();
+  int numberOfScripts = ScriptStore::NumberOfScripts();
   for (int i = 0; i < numberOfScripts; i++) {
-    autoImportScript(m_scriptStore->scriptAtIndex(i));
+    autoImportScript(ScriptStore::ScriptAtIndex(i));
   }
 }
 

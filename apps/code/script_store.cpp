@@ -8,25 +8,26 @@ bool ScriptStore::ScriptNameIsFree(const char* baseName) {
   return ScriptBaseNamed(baseName).isNull();
 }
 
-ScriptStore::ScriptStore() {
-  addScriptFromTemplate(ScriptTemplate::Squares());
-  addScriptFromTemplate(ScriptTemplate::Parabola());
-  addScriptFromTemplate(ScriptTemplate::Mandelbrot());
-  addScriptFromTemplate(ScriptTemplate::Polynomial());
+void ScriptStore::InitTemplates() {
+  AddScriptFromTemplate(ScriptTemplate::Squares());
+  AddScriptFromTemplate(ScriptTemplate::Parabola());
+  AddScriptFromTemplate(ScriptTemplate::Mandelbrot());
+  AddScriptFromTemplate(ScriptTemplate::Polynomial());
 }
 
-void ScriptStore::deleteAllScripts() {
-  for (int i = numberOfScripts() - 1; i >= 0; i--) {
-    scriptAtIndex(i).destroy();
+void ScriptStore::DeleteAllScripts() {
+  for (int i = NumberOfScripts() - 1; i >= 0; i--) {
+    ScriptAtIndex(i).destroy();
   }
 }
 
-bool ScriptStore::isFull() {
+bool ScriptStore::IsFull() {
   return Ion::Storage::FileSystem::sharedFileSystem->availableSize() <
          k_fullFreeSpaceSizeLimit;
 }
 
-const char* ScriptStore::contentOfScript(const char* name, bool markAsFetched) {
+const char* ScriptStore::contentOfScript(const char* name,
+                                         bool markAsFetched) const {
   Script script = ScriptNamed(name);
   if (script.isNull()) {
     return nullptr;
@@ -37,19 +38,19 @@ const char* ScriptStore::contentOfScript(const char* name, bool markAsFetched) {
   return script.content();
 }
 
-void ScriptStore::clearVariableBoxFetchInformation() {
+void ScriptStore::ClearVariableBoxFetchInformation() {
   // TODO optimize fetches
-  const int scriptsCount = numberOfScripts();
+  const int scriptsCount = NumberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
-    scriptAtIndex(i).setFetchedForVariableBox(false);
+    ScriptAtIndex(i).setFetchedForVariableBox(false);
   }
 }
 
-void ScriptStore::clearConsoleFetchInformation() {
+void ScriptStore::ClearConsoleFetchInformation() {
   // TODO optimize fetches
-  const int scriptsCount = numberOfScripts();
+  const int scriptsCount = NumberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
-    scriptAtIndex(i).setFetchedFromConsole(false);
+    ScriptAtIndex(i).setFetchedFromConsole(false);
   }
 }
 

@@ -15,21 +15,20 @@ void assert_variables_are(const char *script,
                           const char **expectedVariables,
                           int expectedVariablesCount) {
   // Clean the store
-  ScriptStore store;
-  store.deleteAllScripts();
+  ScriptStore::DeleteAllScripts();
 
   // Add the script
-  store.addNewScript();
+  ScriptStore::AddNewScript();
   constexpr int dataBufferSize = 500;
   char dataBuffer[dataBufferSize];
   Ion::Storage::Record::Data data = {.buffer = &dataBuffer,
                                      .size = dataBufferSize};
   strlcpy(dataBuffer, script, dataBufferSize);
   constexpr int scriptIndex = 0;
-  store.scriptAtIndex(scriptIndex).setValue(data);
+  ScriptStore::ScriptAtIndex(scriptIndex).setValue(data);
 
   // Load the variable box
-  VariableBoxController varBox(&store);
+  VariableBoxController varBox;
 
   const char *nameToComplete = script + nameToCompleteOffsetInScript;
   varBox.loadFunctionsAndVariables(scriptIndex, nameToComplete,

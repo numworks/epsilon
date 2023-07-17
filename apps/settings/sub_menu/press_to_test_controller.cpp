@@ -19,7 +19,7 @@ PressToTestController::PressToTestController(Responder *parentResponder)
     : ListWithTopAndBottomController(parentResponder, &m_topMessageView,
                                      &m_bottomMessageView),
       m_topMessageView(I18n::Message::Default, k_messageFormat),
-      m_bottomMessageView(I18n::Message::ToDeactivatePressToTest1,
+      m_bottomMessageView(I18n::Message::ToDeactivatePressToTest,
                           k_messageFormat),
       m_tempPressToTestParams{},
       m_activateButton(

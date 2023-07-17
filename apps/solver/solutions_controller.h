@@ -73,7 +73,7 @@ class SolutionsController : public Escher::ViewController,
     ContentView(SolutionsController *controller);
     void drawRect(KDContext *ctx, KDRect rect) const override;
     void setWarning(bool warning);
-    void setWarningMessages(I18n::Message message0, I18n::Message message1);
+    void setWarningMessage(I18n::Message message);
     Escher::SelectableTableView *selectableTableView() {
       return &m_selectableTableView;
     }
@@ -91,8 +91,7 @@ class SolutionsController : public Escher::ViewController,
     int numberOfSubviews() const override;
     Escher::View *subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    Escher::MessageTextView m_warningMessageView0;
-    Escher::MessageTextView m_warningMessageView1;
+    Escher::MessageTextView m_warningMessageView;
     Escher::SelectableTableView m_selectableTableView;
     bool m_displayWarningMoreSolutions;
   };

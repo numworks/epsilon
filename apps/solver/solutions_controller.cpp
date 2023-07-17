@@ -24,8 +24,7 @@ namespace Solver {
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController *controller)
-    : m_warningMessageView0(I18n::Message::Default, k_warningFormat),
-      m_warningMessageView1(I18n::Message::Default, k_warningFormat),
+    : m_warningMessageView(I18n::Message::Default, k_warningFormat),
       m_selectableTableView(controller, controller, controller),
       m_displayWarningMoreSolutions(false) {
   m_selectableTableView.setBackgroundColor(k_backgroundColor);
@@ -57,49 +56,39 @@ void SolutionsController::ContentView::setWarning(bool warning) {
   layoutSubviews();
 }
 
-void SolutionsController::ContentView::setWarningMessages(
-    I18n::Message message0, I18n::Message message1) {
-  m_warningMessageView0.setMessage(message0);
-  m_warningMessageView1.setMessage(message1);
+void SolutionsController::ContentView::setWarningMessage(
+    I18n::Message message) {
+  m_warningMessageView.setMessage(message);
 }
 
 int SolutionsController::ContentView::numberOfSubviews() const {
   // Exclude selectableTableView if there are no rows to display
-  return (hideTableView() ? 0 : 1) + 2 * m_displayWarningMoreSolutions;
+  return (hideTableView() ? 0 : 1) + m_displayWarningMoreSolutions;
 }
 
 View *SolutionsController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
-  if (m_displayWarningMoreSolutions) {
-    if (index == 0) {
-      return &m_warningMessageView0;
-    }
-    if (index == 1) {
-      return &m_warningMessageView1;
-    }
+  if (m_displayWarningMoreSolutions && index == 0) {
+    return &m_warningMessageView;
   }
   return &m_selectableTableView;
 }
 
 void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
-    KDCoordinate textHeight = KDFont::GlyphHeight(k_warningMessageFont);
     KDCoordinate topMargin;
     // Empty warning messages are handled to center both single or double lines
-    KDCoordinate warningMessage0Height =
-        m_warningMessageView0.text()[0] == 0 ? 0 : textHeight;
-    KDCoordinate warningMessage1Height =
-        m_warningMessageView1.text()[0] == 0 ? 0 : textHeight;
+    KDCoordinate warningMessageHeight =
+        m_warningMessageView.text()[0] == 0
+            ? 0
+            : m_warningMessageView.minimalSizeForOptimalDisplay().height();
     // Warning messages are vertically centered.
     if (hideTableView()) {
       // Warning messages must fit into the entire bound height
-      topMargin =
-          (bounds().height() - warningMessage0Height - warningMessage1Height) /
-          2;
+      topMargin = (bounds().height() - warningMessageHeight) / 2;
     } else {
       // Warning messages must fit into a k_topMargin height bound
-      topMargin =
-          (k_topMargin - warningMessage0Height - warningMessage1Height) / 2;
+      topMargin = (k_topMargin - warningMessageHeight) / 2;
       // Set table frame
       setChildFrame(&m_selectableTableView,
                     KDRect(0, k_topMargin, bounds().width(),
@@ -107,12 +96,8 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
                     force);
     }
     assert(topMargin >= 0);
-    setChildFrame(&m_warningMessageView0,
-                  KDRect(0, topMargin, bounds().width(), warningMessage0Height),
-                  force);
-    setChildFrame(&m_warningMessageView1,
-                  KDRect(0, topMargin + warningMessage0Height, bounds().width(),
-                         warningMessage1Height),
+    setChildFrame(&m_warningMessageView,
+                  KDRect(0, topMargin, bounds().width(), warningMessageHeight),
                   force);
   } else {
     // Table frame occupy the entire view
@@ -170,14 +155,11 @@ void SolutionsController::viewWillAppear() {
   SystemOfEquations *system = App::app()->system();
   if (system->numberOfSolutions() == 0) {
     // There are no solutions
-    m_contentView.setWarningMessages(noSolutionMessage(),
-                                     I18n::Message::Default);
+    m_contentView.setWarningMessage(noSolutionMessage());
   } else if (system->type() == SystemOfEquations::Type::GeneralMonovariable &&
              system->hasMoreSolutions()) {
     // There are more approximate solutions
-    m_contentView.setWarningMessages(
-        I18n::Message::OnlyFirstSolutionsDisplayed0,
-        I18n::Message::OnlyFirstSolutionsDisplayed1);
+    m_contentView.setWarningMessage(I18n::Message::OnlyFirstSolutionsDisplayed);
   } else if (system->type() ==
                  SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {
@@ -185,18 +167,14 @@ void SolutionsController::viewWillAppear() {
     if (system->degree() == 2) {
       assert(Preferences::sharedPreferences->complexFormat() ==
              Preferences::ComplexFormat::Real);
-      m_contentView.setWarningMessages(
-          I18n::Message::PolynomeHasNoRealSolution0,
-          I18n::Message::PolynomeHasNoRealSolution1);
+      m_contentView.setWarningMessage(I18n::Message::PolynomeHasNoRealSolution);
     } else {
       // TODO : Message could be updated. The user did not input any interval.
-      m_contentView.setWarningMessages(I18n::Message::NoSolutionInterval,
-                                       I18n::Message::Default);
+      m_contentView.setWarningMessage(I18n::Message::NoSolutionInterval);
     }
   } else if (system->type() == SystemOfEquations::Type::LinearSystem &&
              system->hasMoreSolutions()) {
-    m_contentView.setWarningMessages(I18n::Message::InfiniteNumberOfSolutions,
-                                     I18n::Message::Default);
+    m_contentView.setWarningMessage(I18n::Message::InfiniteNumberOfSolutions);
   } else {
     requireWarning = false;
   }

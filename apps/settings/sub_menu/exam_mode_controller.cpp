@@ -35,13 +35,9 @@ void ExamModeController::didEnterResponderChain(
   m_contentView.reload();
   // We add a message when the mode exam is on
   if (Preferences::sharedPreferences->examMode().isActive()) {
-    I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1,
-                                          I18n::Message::ToDeactivateExamMode2,
-                                          I18n::Message::ToDeactivateExamMode3};
-    m_contentView.setMessages(deactivateMessages,
-                              k_numberOfDeactivationMessageLines);
+    m_contentView.setMessage(I18n::Message::ToDeactivateExamMode);
   } else {
-    m_contentView.setMessages(nullptr, 0);
+    m_contentView.setMessage(I18n::Message::Default);
   }
 }
 

@@ -18,15 +18,20 @@ TypeController::TypeController(StackViewController *parent,
                                HypothesisController *hypothesisController,
                                InputController *inputController,
                                Statistic *statistic)
-    : ExplicitSelectableListViewController(parent),
+    : SelectableCellListPage(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_statistic(statistic) {
   m_selectableListView.setBottomMargin(0);
-  m_cells[k_indexOfTTest].label()->setMessage(m_statistic->tDistributionName());
-  m_cells[k_indexOfPooledTest].label()->setMessage(
-      m_statistic->tPooledDistributionName());
-  m_cells[k_indexOfZTest].label()->setMessage(m_statistic->zDistributionName());
+  typedCell(k_indexOfTTest)
+      ->label()
+      ->setMessage(m_statistic->tDistributionName());
+  typedCell(k_indexOfPooledTest)
+      ->label()
+      ->setMessage(m_statistic->tPooledDistributionName());
+  typedCell(k_indexOfZTest)
+      ->label()
+      ->setMessage(m_statistic->zDistributionName());
 
   // Init selection
   selectRow(0);
@@ -39,7 +44,7 @@ void TypeController::didBecomeFirstResponder() {
 
 bool TypeController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (!m_cells[0].canBeActivatedByEvent(event)) {
+  if (!typedCell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   DistributionType type;
@@ -88,8 +93,9 @@ void TypeController::stackOpenPage(ViewController *nextPage) {
 }
 
 void TypeController::viewWillAppear() {
-  m_cells[k_indexOfPooledTest].setVisible(
-      m_statistic->numberOfAvailableDistributions() == numberOfRows());
+  typedCell(k_indexOfPooledTest)
+      ->setVisible(m_statistic->numberOfAvailableDistributions() ==
+                   numberOfRows());
 }
 
 }  // namespace Inference

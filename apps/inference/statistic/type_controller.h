@@ -15,7 +15,11 @@
 
 namespace Inference {
 
-class TypeController : public Escher::ExplicitSelectableListViewController {
+class TypeController
+    : public Escher::SelectableCellListPage<
+          Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                           Escher::ChevronView>,
+          3> {
  public:
   TypeController(Escher::StackViewController* parent,
                  HypothesisController* hypothesisController,
@@ -28,9 +32,6 @@ class TypeController : public Escher::ExplicitSelectableListViewController {
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;
   void didBecomeFirstResponder() override;
-  // ListViewDataSource
-  int numberOfRows() const override { return k_numberOfRows; }
-  Escher::HighlightCell* cell(int index) override { return &m_cells[index]; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 
@@ -39,14 +40,8 @@ class TypeController : public Escher::ExplicitSelectableListViewController {
   constexpr static int k_indexOfZTest = 2;
 
  private:
-  constexpr static int k_numberOfRows = k_indexOfZTest + 1;
-
   HypothesisController* m_hypothesisController;
   InputController* m_inputController;
-
-  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                   Escher::ChevronView>
-      m_cells[k_numberOfRows];
 
   constexpr static int k_titleBufferSize =
       sizeof("intervalle pour une moyenne à deux échantillons");

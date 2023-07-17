@@ -20,6 +20,7 @@ class ZoomCurveViewController : public Escher::ViewController {
       : Escher::ViewController(parentResponder) {}
   Escher::View* view() override { return curveView(); }
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
 
  protected:
   virtual bool handleZoom(Ion::Events::Event event);

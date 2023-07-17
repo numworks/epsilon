@@ -29,7 +29,6 @@ SumGraphController::SumGraphController(
       m_legendView(this, inputEventHandlerDelegate) {}
 
 void SumGraphController::viewWillAppear() {
-  SimpleInteractiveCurveViewController::viewWillAppear();
   panToMakeCursorVisible();
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
@@ -37,7 +36,8 @@ void SumGraphController::viewWillAppear() {
   m_graphView->setAreaHighlightColor(false);
   m_graphView->setAreaHighlight(NAN, NAN);
   m_step = Step::FirstParameter;
-  makeCursorVisibleAndReload();
+  makeCursorVisibleAndReloadBanner();
+  SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
 void SumGraphController::didBecomeFirstResponder() {
@@ -100,15 +100,16 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
                                   std::max(m_startSum, m_cursor->x()));
   }
   m_legendView.setEditableZone(m_cursor->x());
-  makeCursorVisibleAndReload();
+  makeCursorVisibleAndReloadBanner();
+  m_graphView->reload(true);
   return true;
 }
 
-void SumGraphController::makeCursorVisibleAndReload() {
+void SumGraphController::makeCursorVisibleAndReloadBanner() {
   makeCursorVisible();
   reloadBannerView();
-  m_graphView->reload();
 }
+
 void SumGraphController::makeCursorVisible() {
   float position = m_cursor->x();
   if (!std::isfinite(position)) {

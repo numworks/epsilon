@@ -20,13 +20,11 @@ const char* FunctionZoomAndPanCurveViewController::title() {
 }
 
 void FunctionZoomAndPanCurveViewController::viewWillAppear() {
-  ViewController::viewWillAppear();
   /* We need to change the curve range to keep the same visual aspect of the
    * view. */
   adaptRangeForHeaders(true);
   setLegendVisible(true);
-  /* Force a reload in case some curves were interrupted. */
-  m_contentView.curveView()->reload(true);
+  ZoomAndPanCurveViewController::viewWillAppear();
 }
 
 void FunctionZoomAndPanCurveViewController::viewDidDisappear() {

@@ -28,7 +28,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
 
  protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
-  void makeCursorVisibleAndReload();
+  void makeCursorVisibleAndReloadBanner();
   void makeCursorVisible();
   virtual void makeCursorVisibleOnSecondCurve(float x);
   void makeDotVisible(float x, float y, bool zoomOut);

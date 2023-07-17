@@ -83,7 +83,7 @@ void CalculationGraphController::viewWillAppear() {
     panToMakeCursorVisible();
   }
   m_graphView->setInterest(specialInterest());
-  m_graphView->reload();
+  Shared::SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
 void CalculationGraphController::setRecord(Ion::Storage::Record record) {

@@ -122,7 +122,7 @@ void InteractiveCurveViewController::viewWillAppear() {
     header()->setSelectedButton(-1);
   }
 
-  curveView()->reload(true);
+  SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
 void InteractiveCurveViewController::refreshCursor(bool ignoreMargins,

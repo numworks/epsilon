@@ -28,6 +28,11 @@ bool ZoomCurveViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void ZoomCurveViewController::viewWillAppear() {
+  /* Force a reload in case some curves were interrupted. */
+  curveView()->reload(true);
+}
+
 bool ZoomCurveViewController::handleZoom(Ion::Events::Event event) {
   float ratio =
       event == Ion::Events::Plus ? 1.f / k_zoomOutRatio : k_zoomOutRatio;

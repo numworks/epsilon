@@ -32,7 +32,7 @@ void TangentGraphController::viewWillAppear() {
   m_bannerView->setDisplayParameters(false, true, true);
   reloadBannerView();
   panToMakeCursorVisible();
-  m_graphView->reload();
+  Shared::SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
 void TangentGraphController::didBecomeFirstResponder() {

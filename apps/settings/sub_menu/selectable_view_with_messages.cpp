@@ -17,6 +17,7 @@ SelectableViewWithMessages::SelectableViewWithMessages(
     m_messageLines[i].setFont(KDFont::Size::Small);
     m_messageLines[i].setAlignment(KDGlyph::k_alignCenter,
                                    KDGlyph::k_alignCenter);
+    m_messageLines[i].setTextColor(Palette::GrayDark);
     m_messageLines[i].setBackgroundColor(Palette::WallScreen);
   }
 }

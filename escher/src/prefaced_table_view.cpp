@@ -73,15 +73,7 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   if (m_mainTableView->selectedRow() == -1) {
     resetContentOffset();
   }
-  if (m_mainTableView->contentOffset() != previousOffset) {
-    /* If offset changed, the preface row might need to be relayouted, as well
-     * as the main table. */
-    layoutSubviews();
-  } else {
-    /* Even if offset did not change, the main table height might have changed,
-     * and thus the scrollbar size. */
-    layoutScrollbars(false);
-  }
+  layoutSubviews();
 }
 
 View* PrefacedTableView::subviewAtIndex(int index) {

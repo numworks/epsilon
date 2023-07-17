@@ -30,11 +30,14 @@ const char* TermSumController::title() {
 }
 
 bool TermSumController::moveCursorHorizontallyToPosition(double position) {
-  if (position < 0.0) {
+  ExpiringPointer<Shared::Sequence> sequence =
+      App::app()->functionStore()->modelForRecord(selectedRecord());
+  int initialRank = sequence->initialRank();
+  int intPosition = std::round(position);
+  if (intPosition < initialRank) {
     return false;
   }
-  return SumGraphController::moveCursorHorizontallyToPosition(
-      std::round(position));
+  return SumGraphController::moveCursorHorizontallyToPosition(intPosition);
 }
 
 I18n::Message TermSumController::legendMessageAtStep(Step step) {

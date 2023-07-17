@@ -1,8 +1,8 @@
 #include <poincare_expressions.h>
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
+#include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
@@ -99,7 +99,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
           Rational::Numerator(exp).to<double>(),
           Rational::Denominator(exp).to<double>());
     case BlockType::Float:
-      return Poincare::Float<double>::Builder(Approximation::To<double>(exp));
+      return Poincare::Float<float>::Builder(Float::To(exp));
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
           ToPoincareExpression(exp->childAtIndex(0)));

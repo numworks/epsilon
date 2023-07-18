@@ -78,10 +78,9 @@ void PopupItemView::drawRect(KDContext *ctx, KDRect rect) const {
 Dropdown::DropdownPopupController::DropdownPopupController(
     Responder *parentResponder, ListViewDataSource *listDataSource,
     Dropdown *dropdown, DropdownCallback *callback)
-    : SelectableViewController(parentResponder),
+    : SelectableListViewController(parentResponder),
       m_listViewDataSource(listDataSource),
       m_memoizedCellWidth(-1),
-      m_selectableListView(this, this, this),
       m_borderingView(&m_selectableListView),
       m_callback(callback),
       m_dropdown(dropdown) {
@@ -93,7 +92,7 @@ void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(0);
   }
-  App::app()->setFirstResponder(&m_selectableListView);
+  SelectableListViewController::didBecomeFirstResponder();
 }
 
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {

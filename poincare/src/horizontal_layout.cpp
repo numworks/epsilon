@@ -73,7 +73,6 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(
            nextChildType == LayoutNode::Type::BinomialCoefficientLayout ||
            nextChildType == LayoutNode::Type::CeilingLayout ||
            nextChildType == LayoutNode::Type::ConjugateLayout ||
-           nextChildType == LayoutNode::Type::CeilingLayout ||
            nextChildType == LayoutNode::Type::FloorLayout ||
            nextChildType == LayoutNode::Type::IntegralLayout ||
            nextChildType ==

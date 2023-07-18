@@ -100,13 +100,13 @@ class Dropdown : public PopupItemView, public Responder {
     PopupItemView* reusableCell(int index, int type) override;
     void fillCellForRow(HighlightCell* cell, int row) override;
     void resetSizeMemoization() override;
-    HighlightCell* innerCellAtIndex(int index);
 
-    constexpr static int k_maxNumberOfPopupItems = 4;
+    HighlightCell* innerCellAtIndex(int index);
+    KDPoint topLeftCornerForSelection(View* originView);
+    void reloadListView() { m_selectableListView.reloadData(false); }
 
    private:
-    KDPoint topLeftCornerForSelection(View* originView);
-
+    constexpr static int k_maxNumberOfPopupItems = 4;
     ListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;

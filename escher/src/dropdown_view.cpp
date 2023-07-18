@@ -89,10 +89,9 @@ Dropdown::DropdownPopupController::DropdownPopupController(
 }
 
 void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
-  resetSizeMemoization();
+  resetMemoizationAndReload();
   if (selectedRow() < 0) {
     selectRow(0);
-    reloadListView();
   }
   App::app()->setFirstResponder(&m_selectableListView);
 }
@@ -172,6 +171,11 @@ HighlightCell *Dropdown::DropdownPopupController::innerCellAtRow(int row) {
       row, m_listViewDataSource->typeAtRow(row));
 }
 
+void Dropdown::DropdownPopupController::resetMemoizationAndReload() {
+  resetSizeMemoization();
+  m_selectableListView.reloadData(false);
+}
+
 Dropdown::Dropdown(Responder *parentResponder,
                    ListViewDataSource *listDataSource,
                    DropdownCallback *callback)
@@ -189,9 +193,7 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 }
 
 void Dropdown::reloadAllCells() {
-  // Reload popup list
-  m_popup.resetSizeMemoization();
-  m_popup.reloadListView();
+  m_popup.resetMemoizationAndReload();
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width. */
     m_popup.fillCell(m_popup.selectedRow());
@@ -208,10 +210,7 @@ void Dropdown::init() {
 }
 
 void Dropdown::open() {
-  // Reload popup list
-  m_popup.resetSizeMemoization();
-  m_popup.reloadListView();
-
+  m_popup.resetMemoizationAndReload();
   KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
                                  -BorderingView::k_separatorThickness);
   KDPoint topLeftAngle = App::app()

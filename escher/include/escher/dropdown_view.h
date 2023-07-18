@@ -101,7 +101,6 @@ class Dropdown : public PopupItemView, public Responder {
     void resetSizeMemoization() override;
 
     HighlightCell* innerCellAtRow(int row);
-    KDPoint topLeftCornerForSelection(View* originView);
     void reloadListView() { m_selectableListView.reloadData(false); }
     void fillCell(int row);
 

@@ -128,16 +128,6 @@ void Dropdown::DropdownPopupController::close() {
   App::app()->modalViewController()->dismissModal();
 }
 
-KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(
-    View *originView) {
-  KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
-                                 -BorderingView::k_separatorThickness);
-  return App::app()
-      ->modalView()
-      ->pointFromPointInView(originView, KDPointZero)
-      .translatedBy(borderOffset);
-}
-
 KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
   if (m_memoizedCellWidth < 0) {
     HighlightCell *cell = reusableCell(0, 0);
@@ -222,7 +212,12 @@ void Dropdown::open() {
   m_popup.resetSizeMemoization();
   m_popup.reloadListView();
 
-  KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
+  KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
+                                 -BorderingView::k_separatorThickness);
+  KDPoint topLeftAngle = App::app()
+                             ->modalView()
+                             ->pointFromPointInView(this, KDPointZero)
+                             .translatedBy(borderOffset);
   App::app()->displayModalViewController(&m_popup, 0.f, 0.f, topLeftAngle.y(),
                                          topLeftAngle.x());
 }

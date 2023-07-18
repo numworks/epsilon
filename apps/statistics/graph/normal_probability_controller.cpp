@@ -60,7 +60,8 @@ bool NormalProbabilityController::moveSelectionHorizontally(
                     totalValues(selectedSeries()));
   if (nextIndex != selectedIndex()) {
     setSelectedIndex(nextIndex);
-    moveCursorToSelectedIndex();
+    // Skip setColor when moving horizontally
+    PlotController::moveCursorToSelectedIndex();
     return true;
   }
   return false;

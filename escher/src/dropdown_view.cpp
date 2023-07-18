@@ -149,9 +149,7 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
 }
 
 void Dropdown::DropdownPopupController::fillCell(int row) {
-  HighlightCell *innerCell = innerCellAtRow(row);
-  m_popupViews[row].setInnerCell(innerCell);
-  m_listViewDataSource->fillCellForRow(innerCell, row);
+  m_popupViews[row].setInnerCell(innerCellAtRow(row));
 }
 
 void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,

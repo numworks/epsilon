@@ -21,7 +21,12 @@ PlotController::PlotController(Escher::Responder *parentResponder,
        * here */
       m_curveView(&m_graphRange, &m_cursor, nullptr, this) {}
 
-void PlotController::moveCursorToSelectedIndex() {
+void PlotController::moveCursorToSelectedIndex(bool setColor) {
+  if (setColor) {
+    cursorView()->setColor(
+        Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
+        &m_curveView);
+  }
   double x = valueAtIndex(selectedSeries(), selectedIndex());
   double y = resultAtIndex(selectedSeries(), selectedIndex());
   m_cursor.moveTo(x, x, y);
@@ -33,7 +38,7 @@ void PlotController::viewWillAppearBeforeReload() {
   // Sanitize m_selectedBarIndex and cursor's position
   setSelectedIndex(
       SanitizeIndex(selectedIndex(), totalValues(selectedSeries())));
-  moveCursorToSelectedIndex();
+  moveCursorToSelectedIndex(true);
 }
 
 bool PlotController::moveSelectionVertically(OMG::VerticalDirection direction) {
@@ -41,7 +46,7 @@ bool PlotController::moveSelectionVertically(OMG::VerticalDirection direction) {
   bool result = DataViewController::moveSelectionVertically(direction);
   if (result && previousSeries != selectedSeries()) {
     // Cursor has been moved into another curve, cursor must be switched
-    moveCursorToSelectedIndex();
+    moveCursorToSelectedIndex(true);
     // Reload to draw selected curve on top
     m_curveView.reload(false, true);
   }

@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/curve_view_cursor.h>
+#include <apps/shared/memoized_cursor_view.h>
 #include <apps/shared/plot_view.h>
 #include <escher/button_row_controller.h>
 #include <escher/responder.h>
@@ -57,7 +58,7 @@ class PlotController : public DataViewController {
     return std::max(0, std::min(index, numberOfPairs - 1));
   }
 
-  virtual void moveCursorToSelectedIndex();
+  virtual void moveCursorToSelectedIndex(bool setColor);
 
   // DataViewController
   virtual void reloadValueInBanner(
@@ -72,6 +73,8 @@ class PlotController : public DataViewController {
   }
 
   virtual PlotBannerView *bannerView() = 0;
+  virtual Shared::MemoizedCursorView *cursorView() = 0;
+
   Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;
   PlotView m_view;

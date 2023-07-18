@@ -47,6 +47,19 @@ class EditionReference {
   uint16_t m_identifier;
 };
 
+// Helper to turn Tree* inplace editions into EditionReference*
+inline bool Inplace(bool func(Tree*), EditionReference* ref) {
+  Tree* previous = *ref;
+  bool result = func(previous);
+  *ref = previous;
+  return result;
+}
+
+/* We could define a variadic macro to add several wrappers at once. It is
+ *  complicated but maybe worth ? */
+#define INPLACE(F) \
+  static bool F(EditionReference* r) { return Inplace(F, r); }
+
 }  // namespace PoincareJ
 
 #endif

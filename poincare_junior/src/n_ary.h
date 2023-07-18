@@ -24,6 +24,10 @@ class NAry {
   static void SortedInsertChild(
       Tree* nary, Tree* child,
       Comparison::Order order = Comparison::Order::User);
+  INPLACE(Flatten);
+  INPLACE(SquashIfEmpty);
+  INPLACE(SquashIfUnary);
+  INPLACE(Sanitize);
 
  private:
   static constexpr size_t k_maxNumberOfChildren = 255;

@@ -23,19 +23,22 @@ ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
   }
 }
 
-void ComparisonOperatorPopupDataSource::fillCellForRow(
-    Escher::HighlightCell *cell, int row) {
+void ComparisonOperatorPopupDataSource::updateMessages() {
   const char *symbol = m_test->hypothesisSymbol();
-  constexpr int bufferSize = k_cellBufferSize;
+  double firstParam = m_test->hypothesisParams()->firstParam();
+  constexpr int bufferSize = 7 /* μ1-μ2 */ + 3 /* ≠ */ +
+                             Constants::k_shortFloatNumberOfChars /* float */ +
+                             1 /* \0 */;
   char buffer[bufferSize];
-  Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "%s%s%*.*ed", symbol,
-      Poincare::ComparisonNode::ComparisonOperatorString(
-          OperatorTypeForRow(row)),
-      m_test->hypothesisParams()->firstParam(),
-      Poincare::Preferences::PrintFloatMode::Decimal,
-      Poincare::Preferences::ShortNumberOfSignificantDigits);
-  static_cast<SmallBufferTextHighlightCell *>(cell)->setText(buffer);
+  for (int row = 0; row < k_numberOfOperators; row++) {
+    Poincare::Print::CustomPrintf(
+        buffer, bufferSize, "%s%s%*.*ed", symbol,
+        Poincare::ComparisonNode::ComparisonOperatorString(
+            OperatorTypeForRow(row)),
+        firstParam, Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::ShortNumberOfSignificantDigits);
+    m_cells[row].setText(buffer);
+  }
 }
 
 }  // namespace Inference

@@ -144,7 +144,9 @@ KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int row) {
 PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
                                                                int type) {
   assert(index >= 0 && index < numberOfRows());
-  return &m_popupViews[index];
+  assert(type >= 0 && type < numberOfRows());
+  assert(index == 0 || type == 0);
+  return &m_popupViews[index + type];
 }
 
 void Dropdown::DropdownPopupController::fillCell(int row) {

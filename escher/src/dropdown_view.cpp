@@ -161,10 +161,10 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
 
 void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
                                                        int row) {
-  PopupItemView *popupView = static_cast<PopupItemView *>(cell);
-  popupView->setInnerCell(innerCellAtIndex(row));
-  popupView->setPopping(true);
-  m_listViewDataSource->fillCellForRow(popupView->innerCell(), row);
+  assert(cell == &m_popupViews[row]);
+  m_popupViews[row].setInnerCell(innerCellAtIndex(row));
+  m_popupViews[row].setPopping(true);
+  m_listViewDataSource->fillCellForRow(m_popupViews[row].innerCell(), row);
 }
 
 void Dropdown::DropdownPopupController::resetSizeMemoization() {

@@ -81,7 +81,6 @@ class FrequencyController : public PlotController,
   PlotBannerView *bannerView() override {
     return &m_bannerViewWithEditableField;
   }
-  Shared::MemoizedCursorView *cursorView() { return &m_cursorView; }
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   PlotBannerViewWithEditableField m_bannerViewWithEditableField;

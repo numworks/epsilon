@@ -58,10 +58,10 @@ int PopupItemView::numberOfSubviews() const {
 }
 
 View *PopupItemView::subviewAtIndex(int i) {
-  assert(i >= 0 && ((m_isPoppingUp && i == 0) || (i < 2)));
   if (i == 0) {
     return m_cell;
   }
+  assert(i == 1 && !m_isPoppingUp);
   return &m_caret;
 }
 
@@ -92,7 +92,7 @@ void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
   resetSizeMemoization();
   if (selectedRow() < 0) {
     selectRow(0);
-    m_selectableListView.reloadData(false);
+    reloadListView();
   }
   App::app()->setFirstResponder(&m_selectableListView);
 }
@@ -162,8 +162,7 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
 void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
                                                        int row) {
   PopupItemView *popupView = static_cast<PopupItemView *>(cell);
-  popupView->setInnerCell(
-      m_listViewDataSource->reusableCell(row, typeAtRow(row)));
+  popupView->setInnerCell(innerCellAtIndex(row));
   popupView->setPopping(true);
   m_listViewDataSource->fillCellForRow(popupView->innerCell(), row);
 }
@@ -196,8 +195,8 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::reloadAllCells() {
   // Reload popup list
-  m_popup.resetSizeMemoization();  // Reset computed width
-  m_popup.m_selectableListView.reloadData(false);
+  m_popup.resetSizeMemoization();
+  m_popup.reloadListView();
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width.
      * Mimicking Dropdown::DropdownPopupController::fillCellForRow
@@ -223,7 +222,7 @@ void Dropdown::init() {
 void Dropdown::open() {
   // Reload popup list
   m_popup.resetSizeMemoization();
-  m_popup.m_selectableListView.reloadData(false);
+  m_popup.reloadListView();
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
   App::app()->displayModalViewController(&m_popup, 0.f, 0.f, topLeftAngle.y(),

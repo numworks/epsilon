@@ -30,13 +30,11 @@ class PopupItemView : public HighlightCell, public Bordered {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void setPopping(bool popping) { m_isPoppingUp = popping; }
 
- protected:
-  bool m_isPoppingUp;
-
  private:
   constexpr static int k_marginCaretRight = 2;
   constexpr static int k_marginImageHorizontal = 3;
   constexpr static int k_marginImageVertical = 2;
+  bool m_isPoppingUp;
   HighlightCell* m_cell;
   TransparentImageView m_caret;
 };
@@ -82,7 +80,6 @@ class Dropdown : public PopupItemView, public Responder {
     View* view() override { return &m_borderingView; }
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event e) override;
-    void close();
 
     // MemoizedListViewDataSource
     int numberOfRows() const override {
@@ -97,12 +94,13 @@ class Dropdown : public PopupItemView, public Responder {
       return m_listViewDataSource->reusableCellCount(type);
     }
     PopupItemView* reusableCell(int index, int type) override;
-    void fillCellForRow(HighlightCell* cell, int row) override;
     void resetSizeMemoization() override;
 
     HighlightCell* innerCellAtRow(int row);
     void resetMemoizationAndReload();
     void init();
+    void open();
+    void close();
 
    private:
     constexpr static int k_maxNumberOfPopupItems = 4;

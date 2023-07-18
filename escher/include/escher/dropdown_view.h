@@ -60,7 +60,7 @@ class Dropdown : public PopupItemView, public Responder {
   bool handleEvent(Ion::Events::Event e) override;
   void reloadAllCells();
   void init();
-  void selectRow(int row) { m_popup.selectRow(row); }
+  void selectRow(int row) { m_popup.selectRowAndSetInnerCell(row); }
 
   void open();
   void close();
@@ -69,7 +69,7 @@ class Dropdown : public PopupItemView, public Responder {
   /* List of PopupViews shown in a modal view + Wraps a ListViewDataSource to
    * return PopupViews. */
 
-  class DropdownPopupController : public ViewController,
+  class DropdownPopupController : public SelectableViewController,
                                   public StandardMemoizedListViewDataSource {
    public:
     friend Dropdown;
@@ -82,8 +82,7 @@ class Dropdown : public PopupItemView, public Responder {
     View* view() override { return &m_borderingView; }
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event e) override;
-    int selectedRow() { return m_selectionDataSource.selectedRow(); }
-    void selectRow(int row);
+    void selectRowAndSetInnerCell(int row);
     void close();
 
     // MemoizedListViewDataSource
@@ -111,7 +110,6 @@ class Dropdown : public PopupItemView, public Responder {
     ListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
-    SelectableListViewDataSource m_selectionDataSource;
     SelectableListView m_selectableListView;
     BorderingView m_borderingView;
     DropdownCallback* m_callback;

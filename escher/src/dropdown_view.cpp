@@ -78,11 +78,10 @@ void PopupItemView::drawRect(KDContext *ctx, KDRect rect) const {
 Dropdown::DropdownPopupController::DropdownPopupController(
     Responder *parentResponder, ListViewDataSource *listDataSource,
     Dropdown *dropdown, DropdownCallback *callback)
-    : ViewController(parentResponder),
+    : SelectableViewController(parentResponder),
       m_listViewDataSource(listDataSource),
       m_memoizedCellWidth(-1),
-      m_selectionDataSource(),
-      m_selectableListView(this, this, &m_selectionDataSource),
+      m_selectableListView(this, this, this),
       m_borderingView(&m_selectableListView),
       m_callback(callback),
       m_dropdown(dropdown) {
@@ -91,8 +90,8 @@ Dropdown::DropdownPopupController::DropdownPopupController(
 
 void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
   resetSizeMemoization();
-  if (m_selectionDataSource.selectedRow() < 0) {
-    m_selectionDataSource.selectRow(0);
+  if (selectedRow() < 0) {
+    selectRow(0);
     m_selectableListView.reloadData(false);
   }
   App::app()->setFirstResponder(&m_selectableListView);
@@ -104,11 +103,11 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
   }
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     // Set correct inner cell
-    int row = m_selectionDataSource.selectedRow();
-    selectRow(row);
+    int row = selectedRow();
+    selectRowAndSetInnerCell(row);
     close();
     if (m_callback) {
-      m_callback->onDropdownSelected(m_selectionDataSource.selectedRow());
+      m_callback->onDropdownSelected(selectedRow());
     }
     return true;
   }
@@ -119,8 +118,8 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void Dropdown::DropdownPopupController::selectRow(int row) {
-  m_selectionDataSource.selectRow(row);
+void Dropdown::DropdownPopupController::selectRowAndSetInnerCell(int row) {
+  selectRow(row);
   m_dropdown->setInnerCell(innerCellAtIndex(row));
 }
 
@@ -204,7 +203,7 @@ void Dropdown::reloadAllCells() {
      * Mimicking Dropdown::DropdownPopupController::fillCellForRow
      * without altering highlight status and popping status.
      * TODO : rework this entire class so that this isn't necessary. */
-    int index = m_popup.m_selectionDataSource.selectedRow();
+    int index = m_popup.selectedRow();
     PopupItemView *cell =
         static_cast<PopupItemView *>(m_popup.reusableCell(index, 0));
     cell->setInnerCell(m_popup.innerCellAtIndex(index));
@@ -214,12 +213,11 @@ void Dropdown::reloadAllCells() {
 }
 
 void Dropdown::init() {
-  if (m_popup.m_selectionDataSource.selectedRow() < 0 ||
-      m_popup.m_selectionDataSource.selectedRow() >= m_popup.numberOfRows()) {
-    m_popup.m_selectionDataSource.selectRow(0);
+  if (m_popup.selectedRow() < 0 ||
+      m_popup.selectedRow() >= m_popup.numberOfRows()) {
+    m_popup.selectRow(0);
   }
-  setInnerCell(
-      m_popup.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
+  setInnerCell(m_popup.innerCellAtIndex(m_popup.selectedRow()));
 }
 
 void Dropdown::open() {

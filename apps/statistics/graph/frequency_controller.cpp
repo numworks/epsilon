@@ -138,7 +138,9 @@ bool FrequencyController::moveSelectionHorizontally(
     assert((xTarget >= xNextIndex) == (step > 0.0));
     // Step is too big, snap on the next interesting value
     setSelectedIndex(index + (step > 0.0));
-    moveCursorToSelectedIndex();
+    // Skip setColor when moving horizontally
+    m_cursorView.setIsRing(true);
+    PlotController::moveCursorToSelectedIndex();
     return true;
   }
   m_cursorView.setIsRing(false);
@@ -169,9 +171,6 @@ bool FrequencyController::moveSelectionHorizontally(
   // Compute the cursor's position
   double y =
       yValueForComputedXValues(selectedSeries(), index, x, xIndex, xNextIndex);
-  m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
-      &m_curveView);
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;

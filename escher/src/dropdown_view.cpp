@@ -102,7 +102,7 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     // Set correct inner cell
     int row = selectedRow();
-    selectRowAndSetInnerCell(row);
+    m_dropdown->selectRow(row);
     close();
     if (m_callback) {
       m_callback->onDropdownSelected(selectedRow());
@@ -114,11 +114,6 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
     return true;
   }
   return false;
-}
-
-void Dropdown::DropdownPopupController::selectRowAndSetInnerCell(int row) {
-  selectRow(row);
-  m_dropdown->setInnerCell(innerCellAtRow(row));
 }
 
 void Dropdown::DropdownPopupController::close() {
@@ -205,6 +200,11 @@ void Dropdown::init() {
     m_popup.selectRow(0);
   }
   setInnerCell(m_popup.innerCellAtRow(m_popup.selectedRow()));
+}
+
+void Dropdown::selectRow(int row) {
+  m_popup.selectRow(row);
+  setInnerCell(m_popup.innerCellAtRow(row));
 }
 
 void Dropdown::open() {

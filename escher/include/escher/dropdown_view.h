@@ -61,7 +61,7 @@ class Dropdown : public PopupItemView, public Responder {
   bool handleEvent(Ion::Events::Event e) override;
   void reloadAllCells();
   void init();
-  void selectRow(int row) { m_popup.selectRowAndSetInnerCell(row); }
+  void selectRow(int row);
 
   void open();
   void close();
@@ -82,7 +82,6 @@ class Dropdown : public PopupItemView, public Responder {
     View* view() override { return &m_borderingView; }
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event e) override;
-    void selectRowAndSetInnerCell(int row);
     void close();
 
     // MemoizedListViewDataSource

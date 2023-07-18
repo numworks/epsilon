@@ -116,6 +116,14 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
+void Dropdown::DropdownPopupController::open() {
+  resetMemoizationAndReload();
+  int nRows = numberOfRows();
+  for (int row = 0; row < nRows; row++) {
+    m_popupViews[row].setPopping(true);
+  }
+}
+
 void Dropdown::DropdownPopupController::close() {
   m_dropdown->layoutSubviews(true);
   App::app()->modalViewController()->dismissModal();
@@ -148,12 +156,6 @@ void Dropdown::DropdownPopupController::init() {
   if (selectedRow() < 0 || selectedRow() >= nRows) {
     selectRow(0);
   }
-}
-
-void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
-                                                       int row) {
-  assert(cell == &m_popupViews[row]);
-  m_popupViews[row].setPopping(true);
 }
 
 void Dropdown::DropdownPopupController::resetSizeMemoization() {
@@ -203,7 +205,7 @@ void Dropdown::selectRow(int row) {
 }
 
 void Dropdown::open() {
-  m_popup.resetMemoizationAndReload();
+  m_popup.open();
   KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
                                  -BorderingView::k_separatorThickness);
   KDPoint topLeftAngle = App::app()

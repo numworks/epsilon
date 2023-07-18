@@ -102,7 +102,7 @@ class Dropdown : public PopupItemView, public Responder {
 
     HighlightCell* innerCellAtRow(int row);
     void resetMemoizationAndReload();
-    void fillCell(int row);
+    void init();
 
    private:
     constexpr static int k_maxNumberOfPopupItems = 4;

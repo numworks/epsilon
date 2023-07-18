@@ -143,14 +143,19 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
   return &m_popupViews[type];
 }
 
-void Dropdown::DropdownPopupController::fillCell(int row) {
-  m_popupViews[row].setInnerCell(innerCellAtRow(row));
+void Dropdown::DropdownPopupController::init() {
+  int nRows = numberOfRows();
+  for (int row = 0; row < nRows; row++) {
+    m_popupViews[row].setInnerCell(innerCellAtRow(row));
+  }
+  if (selectedRow() < 0 || selectedRow() >= nRows) {
+    selectRow(0);
+  }
 }
 
 void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
                                                        int row) {
   assert(cell == &m_popupViews[row]);
-  fillCell(row);
   m_popupViews[row].setPopping(true);
 }
 
@@ -187,18 +192,11 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::reloadAllCells() {
   m_popup.resetMemoizationAndReload();
-  if (!m_isPoppingUp) {
-    /* Build the innerCell so that is has the right width. */
-    m_popup.fillCell(m_popup.selectedRow());
-  }
   PopupItemView::reloadCell();
 }
 
 void Dropdown::init() {
-  if (m_popup.selectedRow() < 0 ||
-      m_popup.selectedRow() >= m_popup.numberOfRows()) {
-    m_popup.selectRow(0);
-  }
+  m_popup.init();
   setInnerCell(m_popup.innerCellAtRow(m_popup.selectedRow()));
 }
 

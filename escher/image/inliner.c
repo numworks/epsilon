@@ -16,7 +16,8 @@
 #include <assert.h>
 #include "../../ion/src/external/lz4/lz4hc.h"
 
-#define ERROR_IF(cond, message) if (cond) { printf(message "\n"); return -1; };
+#define ERROR_IF_BEFORE_OPEN_OK(cond, message) if (cond) { printf(message "\n"); return -1; };
+#define ERROR_IF(cond, message) if (cond) { printf(message "\n"); fclose(inputFile); return -1; };
 #define MAX_FILENAME_LENGTH 255
 
 typedef uint8_t bool;
@@ -33,15 +34,15 @@ void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * up
 // TODO: truncate the app image dimensions to 55x56 pixels
 
 int main(int argc, char * argv[]) {
-  ERROR_IF(argc != 4 && argc != 5, "Usage: inliner source.png output.h output.cpp [--transparent]");
+  ERROR_IF_BEFORE_OPEN_OK(argc != 4 && argc != 5, "Usage: inliner source.png output.h output.cpp [--transparent]");
   const char * inputPath = argv[1];
   bool transparent = FALSE;
   if (argc == 5) {
-    ERROR_IF(strcmp(argv[4], "--transparent") != 0, "Last argument must be '--transparent'");
+    ERROR_IF_BEFORE_OPEN_OK(strcmp(argv[4], "--transparent") != 0, "Last argument must be '--transparent'");
     transparent = TRUE;
   }
   FILE * inputFile = fopen(inputPath, "rb");
-  ERROR_IF(inputFile == NULL, "Error: could not open input file.");
+  ERROR_IF_BEFORE_OPEN_OK(inputFile == NULL, "Error: could not open input file.");
 
   unsigned char magic[8];
   fread(magic, 1, 8, inputFile);

@@ -120,7 +120,7 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::DropdownPopupController::selectRowAndSetInnerCell(int row) {
   selectRow(row);
-  m_dropdown->setInnerCell(innerCellAtIndex(row));
+  m_dropdown->setInnerCell(innerCellAtRow(row));
 }
 
 void Dropdown::DropdownPopupController::close() {
@@ -160,7 +160,7 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
 }
 
 void Dropdown::DropdownPopupController::fillCell(int row) {
-  HighlightCell *innerCell = innerCellAtIndex(row);
+  HighlightCell *innerCell = innerCellAtRow(row);
   m_popupViews[row].setInnerCell(innerCell);
   m_listViewDataSource->fillCellForRow(innerCell, row);
 }
@@ -177,9 +177,9 @@ void Dropdown::DropdownPopupController::resetSizeMemoization() {
   MemoizedListViewDataSource::resetSizeMemoization();
 }
 
-HighlightCell *Dropdown::DropdownPopupController::innerCellAtIndex(int index) {
+HighlightCell *Dropdown::DropdownPopupController::innerCellAtRow(int row) {
   return m_listViewDataSource->reusableCell(
-      index, m_listViewDataSource->typeAtRow(index));
+      row, m_listViewDataSource->typeAtRow(row));
 }
 
 Dropdown::Dropdown(Responder *parentResponder,
@@ -214,7 +214,7 @@ void Dropdown::init() {
       m_popup.selectedRow() >= m_popup.numberOfRows()) {
     m_popup.selectRow(0);
   }
-  setInnerCell(m_popup.innerCellAtIndex(m_popup.selectedRow()));
+  setInnerCell(m_popup.innerCellAtRow(m_popup.selectedRow()));
 }
 
 void Dropdown::open() {

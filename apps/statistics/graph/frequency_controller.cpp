@@ -94,12 +94,9 @@ void FrequencyController::reloadValueInBanner(
   m_bannerViewWithEditableField.value()->setText(buffer);
 }
 
-void FrequencyController::moveCursorToSelectedIndex() {
+void FrequencyController::moveCursorToSelectedIndex(bool setColor) {
   m_cursorView.setIsRing(true);
-  m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
-      &m_curveView);
-  PlotController::moveCursorToSelectedIndex();
+  PlotController::moveCursorToSelectedIndex(setColor);
 }
 
 bool FrequencyController::moveSelectionHorizontally(
@@ -139,9 +136,8 @@ bool FrequencyController::moveSelectionHorizontally(
     assert((xTarget >= xNextIndex) == (step > 0.0));
     // Step is too big, snap on the next interesting value
     setSelectedIndex(index + (step > 0.0));
-    // Skip setColor when moving horizontally
-    m_cursorView.setIsRing(true);
-    PlotController::moveCursorToSelectedIndex();
+    // Skip setColor to prevent invalidating cursor buffer
+    moveCursorToSelectedIndex(false);
     return true;
   }
   m_cursorView.setIsRing(false);

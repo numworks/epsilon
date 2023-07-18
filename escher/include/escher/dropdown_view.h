@@ -101,7 +101,7 @@ class Dropdown : public PopupItemView, public Responder {
     void resetSizeMemoization() override;
 
     HighlightCell* innerCellAtRow(int row);
-    void reloadListView() { m_selectableListView.reloadData(false); }
+    void resetMemoizationAndReload();
     void fillCell(int row);
 
    private:

@@ -106,7 +106,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *block, const Block *destination,
          const Block *source, int size) {
-        if (block > destination && block < destination + size) {
+        if (block >= destination && block < destination + size) {
           *offset = ReferenceTable::UninitializedOffset;
         }
       },
@@ -134,7 +134,7 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *block, const Block *destination,
          const Block *source, int size) {
-        if (destination < block) {
+        if (destination <= block) {
           *offset += size;
         }
       },
@@ -155,7 +155,7 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
          const Block *source, int size) {
         if (block >= address + size) {
           *offset -= size;
-        } else if (block > address) {
+        } else if (block >= address) {
           *offset = ReferenceTable::UninitializedOffset;
         }
       },
@@ -175,11 +175,11 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
     m_referenceTable.updateNodes(
         [](uint16_t *offset, Block *block, const Block *dst, const Block *src,
            int size) {
-          if (src < block && block < src + size) {
+          if (src <= block && block < src + size) {
             *offset += dst - src - (dst > src ? size : 0);
           } else if (src + size <= block && block <= dst) {
             *offset -= size;
-          } else if (dst < block && block <= src) {
+          } else if (dst < block && block < src) {
             *offset += size;
           }
         },
@@ -188,11 +188,11 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
     m_referenceTable.updateNodes(
         [](uint16_t *offset, Block *block, const Block *dst, const Block *src,
            int size) {
-          if (src < block && block < src + size) {
+          if (src <= block && block < src + size) {
             *offset += dst - src - (dst > src ? size : 0);
           } else if (src + size <= block && block < dst) {
             *offset -= size;
-          } else if (dst <= block && block <= src) {
+          } else if (dst <= block && block < src) {
             *offset += size;
           }
         },

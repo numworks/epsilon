@@ -63,13 +63,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       Poincare::BasedInteger::Builder(sequence->initialRank()));
   Poincare::Expression initialExpression =
       sequence->firstInitialConditionExpressionReduced(context);
-  function.replaceSymbolWithExpression(initialSymbol, initialExpression);
+  function =
+      function.replaceSymbolWithExpression(initialSymbol, initialExpression);
 
   // Replace u(n) by n: u(n) becomes the variable
   Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(
       name, strlen(name), Poincare::Symbol::SystemSymbol());
   Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
-  function.replaceSymbolWithExpression(sequenceSymbol, variable);
+  function = function.replaceSymbolWithExpression(sequenceSymbol, variable);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
                                                  void *context) {
     Poincare::Expression *e = (Poincare::Expression *)model;

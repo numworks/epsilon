@@ -69,8 +69,8 @@ class Dropdown : public PopupItemView, public Responder {
   /* List of PopupViews shown in a modal view + Wraps a ListViewDataSource to
    * return PopupViews. */
 
-  class DropdownPopupController : public SelectableViewController,
-                                  public StandardMemoizedListViewDataSource {
+  class DropdownPopupController : public SelectableListViewController<
+                                      StandardMemoizedListViewDataSource> {
    public:
     DropdownPopupController(Responder* parentResponder,
                             ListViewDataSource* listDataSource,
@@ -109,7 +109,6 @@ class Dropdown : public PopupItemView, public Responder {
     ListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
-    SelectableListView m_selectableListView;
     BorderingView m_borderingView;
     DropdownCallback* m_callback;
     Dropdown* m_dropdown;

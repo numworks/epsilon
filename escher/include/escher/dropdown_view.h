@@ -54,7 +54,8 @@ class DropdownCallback {
  * choose from It requires a DropdownDataSource to provide a list of views */
 class Dropdown : public PopupItemView, public Responder {
  public:
-  Dropdown(Responder* parentResponder, ListViewDataSource* listDataSource,
+  Dropdown(Responder* parentResponder,
+           ExplicitListViewDataSource* listDataSource,
            DropdownCallback* callback = nullptr);
   Responder* responder() override { return this; }
   bool handleEvent(Ion::Events::Event e) override;
@@ -73,7 +74,7 @@ class Dropdown : public PopupItemView, public Responder {
                                       StandardMemoizedListViewDataSource> {
    public:
     DropdownPopupController(Responder* parentResponder,
-                            ListViewDataSource* listDataSource,
+                            ExplicitListViewDataSource* listDataSource,
                             Dropdown* dropdown,
                             DropdownCallback* callback = nullptr);
 
@@ -106,7 +107,7 @@ class Dropdown : public PopupItemView, public Responder {
 
    private:
     constexpr static int k_maxNumberOfPopupItems = 4;
-    ListViewDataSource* m_listViewDataSource;
+    ExplicitListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
     BorderingView m_borderingView;

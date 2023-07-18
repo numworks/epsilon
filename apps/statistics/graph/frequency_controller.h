@@ -59,7 +59,7 @@ class FrequencyController : public PlotController,
   // PlotController
   void reloadValueInBanner(Poincare::Preferences::PrintFloatMode displayMode,
                            int precision) override;
-  void moveCursorToSelectedIndex() override;
+  void moveCursorToSelectedIndex(bool setColor) override;
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   void computeYBounds(float *yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return true; }
@@ -80,6 +80,8 @@ class FrequencyController : public PlotController,
   PlotBannerView *bannerView() override {
     return &m_bannerViewWithEditableField;
   }
+  Shared::MemoizedCursorView *cursorView() { return &m_cursorView; }
+
   Shared::ToggleableRingRoundCursorView m_cursorView;
   PlotBannerViewWithEditableField m_bannerViewWithEditableField;
 };

@@ -159,12 +159,17 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
   return &m_popupViews[index];
 }
 
+void Dropdown::DropdownPopupController::fillCell(int row) {
+  HighlightCell *innerCell = innerCellAtIndex(row);
+  m_popupViews[row].setInnerCell(innerCell);
+  m_listViewDataSource->fillCellForRow(innerCell, row);
+}
+
 void Dropdown::DropdownPopupController::fillCellForRow(HighlightCell *cell,
                                                        int row) {
   assert(cell == &m_popupViews[row]);
-  m_popupViews[row].setInnerCell(innerCellAtIndex(row));
+  fillCell(row);
   m_popupViews[row].setPopping(true);
-  m_listViewDataSource->fillCellForRow(m_popupViews[row].innerCell(), row);
 }
 
 void Dropdown::DropdownPopupController::resetSizeMemoization() {
@@ -198,15 +203,8 @@ void Dropdown::reloadAllCells() {
   m_popup.resetSizeMemoization();
   m_popup.reloadListView();
   if (!m_isPoppingUp) {
-    /* Build the innerCell so that is has the right width.
-     * Mimicking Dropdown::DropdownPopupController::fillCellForRow
-     * without altering highlight status and popping status.
-     * TODO : rework this entire class so that this isn't necessary. */
-    int index = m_popup.selectedRow();
-    PopupItemView *cell =
-        static_cast<PopupItemView *>(m_popup.reusableCell(index, 0));
-    cell->setInnerCell(m_popup.innerCellAtIndex(index));
-    m_popup.m_listViewDataSource->fillCellForRow(cell->innerCell(), index);
+    /* Build the innerCell so that is has the right width. */
+    m_popup.fillCell(m_popup.selectedRow());
   }
   PopupItemView::reloadCell();
 }

@@ -72,7 +72,6 @@ class Dropdown : public PopupItemView, public Responder {
   class DropdownPopupController : public SelectableViewController,
                                   public StandardMemoizedListViewDataSource {
    public:
-    friend Dropdown;
     DropdownPopupController(Responder* parentResponder,
                             ListViewDataSource* listDataSource,
                             Dropdown* dropdown,
@@ -104,6 +103,7 @@ class Dropdown : public PopupItemView, public Responder {
     HighlightCell* innerCellAtIndex(int index);
     KDPoint topLeftCornerForSelection(View* originView);
     void reloadListView() { m_selectableListView.reloadData(false); }
+    void fillCell(int row);
 
    private:
     constexpr static int k_maxNumberOfPopupItems = 4;

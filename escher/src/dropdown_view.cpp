@@ -76,7 +76,7 @@ void PopupItemView::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 Dropdown::DropdownPopupController::DropdownPopupController(
-    Responder *parentResponder, ListViewDataSource *listDataSource,
+    Responder *parentResponder, ExplicitListViewDataSource *listDataSource,
     Dropdown *dropdown, DropdownCallback *callback)
     : SelectableListViewController(parentResponder),
       m_listViewDataSource(listDataSource),
@@ -143,10 +143,9 @@ KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int row) {
 
 PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
                                                                int type) {
-  assert(index >= 0 && index < numberOfRows());
+  assert(index == 0);
   assert(type >= 0 && type < numberOfRows());
-  assert(index == 0 || type == 0);
-  return &m_popupViews[index + type];
+  return &m_popupViews[type];
 }
 
 void Dropdown::DropdownPopupController::fillCell(int row) {
@@ -178,7 +177,7 @@ void Dropdown::DropdownPopupController::resetMemoizationAndReload() {
 }
 
 Dropdown::Dropdown(Responder *parentResponder,
-                   ListViewDataSource *listDataSource,
+                   ExplicitListViewDataSource *listDataSource,
                    DropdownCallback *callback)
     : Responder(parentResponder),
       m_popup(this, listDataSource, this, callback) {

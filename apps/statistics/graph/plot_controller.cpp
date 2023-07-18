@@ -23,7 +23,7 @@ PlotController::PlotController(Escher::Responder *parentResponder,
 
 void PlotController::moveCursorToSelectedIndex(bool setColor) {
   if (setColor) {
-    cursorView()->setColor(
+    m_curveView.cursorView()->setColor(
         Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
         &m_curveView);
   }

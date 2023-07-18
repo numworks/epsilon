@@ -72,7 +72,6 @@ class NormalProbabilityController : public PlotController,
     return I18n::Message::StatisticsNormalProbabilityZScore;
   }
   PlotBannerView *bannerView() override { return &m_simpleBannerView; }
-  Shared::MemoizedCursorView *cursorView() { return &m_cursorView; }
 
   Shared::RingCursorView m_cursorView;
   SimplePlotBannerView m_simpleBannerView;

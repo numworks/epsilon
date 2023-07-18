@@ -60,7 +60,6 @@ class Dropdown : public PopupItemView, public Responder {
   bool handleEvent(Ion::Events::Event e) override;
   void reloadAllCells();
   void init();
-  int selectedRow() { return m_popup.selectedRow(); }
   void selectRow(int row) { m_popup.selectRow(row); }
 
   void open();

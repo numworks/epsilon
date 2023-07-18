@@ -123,17 +123,14 @@ void Dropdown::DropdownPopupController::close() {
 
 KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
   if (m_memoizedCellWidth < 0) {
-    HighlightCell *cell = reusableCell(0, 0);
-    fillCellForRow(cell, 0);
-    m_memoizedCellWidth = cell->minimalSizeForOptimalDisplay().width();
+    m_memoizedCellWidth =
+        m_popupViews[0].minimalSizeForOptimalDisplay().width();
   }
   return m_memoizedCellWidth;
 }
 
 KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int row) {
-  HighlightCell *cell = reusableCell(0, 0);
-  fillCellForRow(cell, 0);
-  return cell->minimalSizeForOptimalDisplay().height();
+  return m_popupViews[row].minimalSizeForOptimalDisplay().height();
 }
 
 PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,

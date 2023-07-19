@@ -102,7 +102,6 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   InteractiveCurveViewRangeDelegate* m_delegate;
 
  private:
-  int normalizationSignificantBits() const;
   void privateSetZoomAuto(bool xAuto, bool yAuto);
   void privateComputeRanges(bool computeX, bool computeY);
 

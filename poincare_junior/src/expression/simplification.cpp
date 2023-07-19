@@ -37,8 +37,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 
 bool Simplification::ShallowSystematicReduce(Tree* u) {
   if (IsRational(u)) {
-    u->moveTreeOverTree(Rational::IrreducibleForm(u));
-    return true;  // TODO
+    return Rational::MakeIrreducible(u);
   }
   if (u->numberOfChildren() == 0) {
     return false;
@@ -138,7 +137,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   if (IsRational(v)) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
-    u->moveTreeOverTree(Rational::IrreducibleForm(u));
+    Rational::MakeIrreducible(u);
     return true;
   }
   assert(IsInteger(n));
@@ -272,7 +271,7 @@ bool Simplification::MergeMultiplicationChildren(Tree* u1, Tree* u2) {
   // Merge constants
   if (IsRational(u1) && IsRational(u2)) {
     Tree* mult = Rational::Multiplication(u1, u2);
-    mult->moveTreeOverTree(Rational::IrreducibleForm(mult));
+    Rational::MakeIrreducible(mult);
     u2->moveTreeOverTree(mult);
     u1->removeTree();
     return true;
@@ -383,7 +382,7 @@ bool Simplification::MergeAdditionChildren(Tree* u1, Tree* u2) {
   // Merge constants
   if (IsRational(u1) && IsRational(u2)) {
     Tree* add = Rational::Addition(u1, u2);
-    add->moveTreeOverTree(Rational::IrreducibleForm(add));
+    Rational::MakeIrreducible(add);
     u2->moveTreeOverTree(add);
     u1->removeTree();
     return true;

@@ -25,7 +25,7 @@ class Rational final {
   static Tree* Multiplication(const Tree* i, const Tree* j);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
   static Tree* IntegerPower(const Tree* i, const Tree* j);
-  static Tree* IrreducibleForm(const Tree* i);
+  static bool MakeIrreducible(Tree* i);
 };
 
 }  // namespace PoincareJ

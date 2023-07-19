@@ -54,7 +54,8 @@ static void assert_irreducible_form(const Tree* iNumerator,
                                     const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
-  Tree* result = Rational::IrreducibleForm(i);
+  Tree* result = i->clone();
+  Rational::MakeIrreducible(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
   expected->removeTree();
@@ -72,7 +73,7 @@ typedef Tree* (*Operation)(const Tree* i, const Tree* j);
 static void assert_operation(const Tree* i, const Tree* j, Operation operation,
                              const Tree* expected) {
   Tree* result = operation(i, j);
-  result->moveTreeOverTree(Rational::IrreducibleForm(result));
+  Rational::MakeIrreducible(result);
   Simplification::ShallowSystematicReduce(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
@@ -87,7 +88,7 @@ static void assert_add_or_mult(const Tree* iNumerator, const Tree* iDenominator,
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* j = Rational::Push(jNumerator, jDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
-  expected->moveTreeOverTree(Rational::IrreducibleForm(expected));
+  Rational::MakeIrreducible(expected);
   assert_operation(i, j, operation, expected);
   expected->removeTree();
   j->removeTree();
@@ -111,7 +112,7 @@ static void assert_power(const Tree* iNumerator, const Tree* iDenominator,
                          const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
-  expected->moveTreeOverTree(Rational::IrreducibleForm(expected));
+  Rational::MakeIrreducible(expected);
   assert_operation(i, j, Rational::IntegerPower, expected);
   expected->removeTree();
   i->removeTree();

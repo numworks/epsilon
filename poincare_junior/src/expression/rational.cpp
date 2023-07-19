@@ -173,27 +173,25 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
   return result;
 }
 
-Tree* Rational::IrreducibleForm(const Tree* i) {
-  Tree* gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
-  if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
-    EditionReference numerator =
-        IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
+bool Rational::MakeIrreducible(Tree* i) {
+  EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
+  if (Number::IsOne(gcd)) {
     gcd->removeTree();
-    return numerator;
+    return false;
   }
-  if (!Number::IsOne(gcd)) {
-    Tree* numerator =
-        IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
-    Tree* denominator =
+  EditionReference numerator =
+      IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
+  if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
+    i->moveTreeOverTree(numerator);
+  } else {
+    EditionReference denominator =
         IntegerHandler::Quotient(Denominator(i), Integer::Handler(gcd));
-    EditionReference result = Rational::Push(numerator, denominator);
+    i->moveTreeOverTree(Rational::Push(numerator, denominator));
     denominator->removeTree();
     numerator->removeTree();
-    gcd->removeTree();
-    return result;
   }
   gcd->removeTree();
-  return i->clone();
+  return true;
 }
 
 }  // namespace PoincareJ

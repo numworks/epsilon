@@ -25,11 +25,6 @@ bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = false;
-  if (u->type() == BlockType::Multiplication ||
-      u->type() == BlockType::Addition) {
-    modified |= NAry::Flatten(u);
-  }
-
   for (auto [child, index] : NodeIterator::Children<Editable>(u)) {
     modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
@@ -48,32 +43,26 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   if (u->numberOfChildren() == 0) {
     return false;
   }
-  bool modified = false;
-  if (u->type() == BlockType::Multiplication ||
-      u->type() == BlockType::Addition) {
-    modified |= NAry::Flatten(u);
-  }
 
   switch (u->type()) {
     case BlockType::Power:
-      return SimplifyPower(u) || modified;
-    case BlockType::PowerReal:
-      return SimplifyPowerReal(u) || modified;
-    case BlockType::Abs:
-      return SimplifyAbs(u) || modified;
+      return SimplifyPower(u);
     case BlockType::Addition:
-      return SimplifyAddition(u) || modified;
+      return SimplifyAddition(u);
     case BlockType::Multiplication:
-      return SimplifyMultiplication(u) || modified;
+      return SimplifyMultiplication(u);
+    case BlockType::PowerReal:
+      return SimplifyPowerReal(u);
+    case BlockType::Abs:
+      return SimplifyAbs(u);
     case BlockType::TrigDiff:
-      return SimplifyTrigDiff(u) || modified;
+      return SimplifyTrigDiff(u);
     case BlockType::Trig:
-      return SimplifyTrig(u) || modified;
-    case BlockType::Derivative: {
-      return Derivation::ShallowSimplify(u) || modified;
-    }
+      return SimplifyTrig(u);
+    case BlockType::Derivative:
+      return Derivation::ShallowSimplify(u);
     default:
-      return modified;
+      return false;
   }
 }
 
@@ -300,10 +289,11 @@ bool Simplification::MergeMultiplicationChildren(Tree* u1, Tree* u2) {
 
 bool Simplification::SimplifyMultiplication(Tree* u) {
   assert(u->type() == BlockType::Multiplication);
+  bool modified = NAry::Flatten(u);
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  bool modified = NAry::Sort(u);
+  modified = NAry::Sort(u) || modified;
   int n = u->numberOfChildren();
   int i = 0;
   Tree* child = u->nextNode();
@@ -410,10 +400,11 @@ bool Simplification::MergeAdditionChildren(Tree* u1, Tree* u2) {
 
 bool Simplification::SimplifyAddition(Tree* u) {
   assert(u->type() == BlockType::Addition);
+  bool modified = NAry::Flatten(u);
   if (NAry::SquashIfUnary(u)) {
     return true;
   }
-  bool modified = NAry::Sort(u);
+  modified = NAry::Sort(u) || modified;
   int n = u->numberOfChildren();
   int i = 0;
   Tree* child = u->nextNode();

@@ -77,7 +77,6 @@ class Dropdown : public PopupItemView, public Responder {
 
     // View Controller
     View* view() override { return &m_borderingView; }
-    void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event e) override;
 
     // MemoizedListViewDataSource

@@ -123,8 +123,7 @@ void HypothesisController::didBecomeFirstResponder() {
       static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
   m_haDropdown.init();
   loadHypothesisParam();
-  resetSizeMemoization();
-  m_selectableListView.reloadData(true);
+  App::app()->setFirstResponder(&m_selectableListView);
 }
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,

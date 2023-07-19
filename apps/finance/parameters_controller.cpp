@@ -45,7 +45,7 @@ void ParametersController::viewWillAppear() {
       App::GetInterestData()->dropdownMessageAtIndex(1));
   m_dropdown.selectRow(App::GetInterestData()->m_booleanParam ? 0 : 1);
   m_dropdown.init();
-  m_dropdown.reloadAllCells();
+  m_dropdown.reloadCell();
   ListWithTopAndBottomController::viewWillAppear();
 }
 

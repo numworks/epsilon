@@ -57,7 +57,6 @@ class Dropdown : public PopupItemView, public Responder {
            DropdownCallback* callback = nullptr);
   Responder* responder() override { return this; }
   bool handleEvent(Ion::Events::Event e) override;
-  void reloadAllCells();
   void init();
   void selectRow(int row);
 

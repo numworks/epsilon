@@ -88,7 +88,6 @@ Dropdown::DropdownPopupController::DropdownPopupController(
 }
 
 void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
-  resetMemoizationAndReload();
   if (selectedRow() < 0) {
     selectRow(0);
   }

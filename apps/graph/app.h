@@ -41,7 +41,6 @@ class App : public Shared::FunctionApp {
     }
 
    private:
-    void tidy() override;
     Shared::InteractiveCurveViewRange m_graphRange;
     Shared::Interval m_interval
         [Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes];

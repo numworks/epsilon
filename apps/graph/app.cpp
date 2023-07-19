@@ -39,11 +39,6 @@ const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::tidy() {
-  m_graphRange.setDelegate(nullptr);
-  SharedApp::Snapshot::tidy();
-}
-
 App::ListTab::ListTab()
     : Shared::FunctionApp::ListTab(&m_listController),
       m_listController(&m_listFooter, &m_listHeader, &m_listFooter,

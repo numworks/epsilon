@@ -189,11 +189,6 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void Dropdown::reloadAllCells() {
-  m_popup.resetMemoizationAndReload();
-  PopupItemView::reloadCell();
-}
-
 void Dropdown::init() {
   m_popup.init();
   setInnerCell(m_popup.innerCellAtRow(m_popup.selectedRow()));

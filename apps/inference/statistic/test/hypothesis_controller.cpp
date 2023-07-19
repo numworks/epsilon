@@ -147,7 +147,7 @@ void HypothesisController::loadHypothesisParam() {
       Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.textField()->setText(buffer);
   m_operatorDataSource.updateMessages();
-  m_haDropdown.reloadAllCells();
+  m_haDropdown.reloadCell();
   resetSizeMemoization();
   m_selectableListView.reloadData();
 }

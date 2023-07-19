@@ -124,14 +124,10 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-void ListWithTopAndBottomController::initView() {
+void ListWithTopAndBottomController::viewWillAppear() {
   resetSizeMemoization();
   selectFirstCell();
   setOffset(KDPointZero);
-}
-
-void ListWithTopAndBottomController::viewWillAppear() {
-  initView();
   m_selectableListView.reloadData(false);
   ViewController::viewWillAppear();
 }

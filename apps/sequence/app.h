@@ -44,7 +44,6 @@ class App : public Shared::FunctionApp {
     }
 
    private:
-    void tidy() override;
     CurveViewRange m_graphRange;
     Shared::Interval m_interval;
     bool m_intervalModifiedByUser;

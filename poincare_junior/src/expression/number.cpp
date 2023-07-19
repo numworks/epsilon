@@ -17,22 +17,32 @@ EditionReference Number::Multiplication(const Tree* i, const Tree* j) {
 }
 
 NonStrictSign Number::Sign(const Tree* node) {
-  if (node->type() != BlockType::Float) {
-    assert(node->block()->isRational());
-    return Rational::Sign(node);
+  switch (node->type()) {
+    case BlockType::Constant:
+      return NonStrictSign::Positive;
+    case BlockType::Float:
+      return Float::To(node) >= 0 ? NonStrictSign::Positive
+                                  : NonStrictSign::Negative;
+    default:
+      assert(node->block()->isRational());
+      return Rational::Sign(node);
   }
-  return Float::To(node) >= 0 ? NonStrictSign::Positive
-                              : NonStrictSign::Negative;
 }
 
 StrictSign Number::StrictSign(const Tree* node) {
-  if (node->type() != BlockType::Float) {
-    assert(node->block()->isRational());
-    return Rational::RationalStrictSign(node);
+  switch (node->type()) {
+    case BlockType::Constant:
+      return StrictSign::Positive;
+    case BlockType::Float: {
+      float value = Float::To(node);
+      return value == 0
+                 ? StrictSign::Null
+                 : (value > 0 ? StrictSign::Positive : StrictSign::Negative);
+    }
+    default:
+      assert(node->block()->isRational());
+      return Rational::RationalStrictSign(node);
   }
-  float value = Float::To(node);
-  return value == 0 ? StrictSign::Null
-                    : (value > 0 ? StrictSign::Positive : StrictSign::Negative);
 }
 
 }  // namespace PoincareJ

@@ -84,7 +84,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
     // |-3| -> (-1)*(-3)
     u->cloneTreeOverNode(KMult(-1_e));
     NAry::SetNumberOfChildren(u, 2);
-    ShallowSystematicReduce(u);
+    SimplifyMultiplication(u);
   }
   return true;
 }
@@ -202,9 +202,12 @@ void Simplification::ConvertPowerRealToPower(Tree* u) {
   // x^y -> exp(ln(x)*y)
   u->matchAndReplace(KPowReal(KPlaceholder<A>(), KPlaceholder<B>()),
                      KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
-  ShallowSystematicReduce(u->nextNode()->nextNode());  // Ln
-  ShallowSystematicReduce(u->nextNode());              // Mult
-  ShallowSystematicReduce(u);                          // Exp
+  // Ln - Add if there is a systematic shallow simplification
+  assert(!ShallowSystematicReduce(u->nextNode()->nextNode()));
+  // Mult
+  SimplifyMultiplication(u->nextNode());
+  // Exp - Add if there is a systematic shallow simplification
+  assert(!ShallowSystematicReduce(u));
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {
@@ -252,14 +255,14 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 
   // We can fallback to |x|^y
   x->cloneNodeAtNode(KAbs);
-  ShallowSystematicReduce(x);
+  SimplifyAbs(x);
   ConvertPowerRealToPower(u);
 
   if (xIsNegativeNumber && !pIsEven) {
     // -|x|^y
     u->cloneTreeAtNode(KMult(-1_e));
     NAry::SetNumberOfChildren(u, 2);
-    ShallowSystematicReduce(u);
+    SimplifyMultiplication(u);
   }
   return true;
 }

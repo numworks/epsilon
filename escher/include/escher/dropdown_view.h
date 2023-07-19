@@ -95,7 +95,6 @@ class Dropdown : public PopupItemView, public Responder {
     void resetSizeMemoization() override;
 
     HighlightCell* innerCellAtRow(int row);
-    void resetMemoizationAndReload();
     void init();
     void open();
     void close();

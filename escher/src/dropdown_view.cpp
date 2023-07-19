@@ -109,7 +109,8 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
 }
 
 void Dropdown::DropdownPopupController::open() {
-  resetMemoizationAndReload();
+  resetSizeMemoization();
+  m_selectableListView.reloadData(false);
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
     m_popupViews[row].setPopping(true);
@@ -158,11 +159,6 @@ void Dropdown::DropdownPopupController::resetSizeMemoization() {
 HighlightCell *Dropdown::DropdownPopupController::innerCellAtRow(int row) {
   return m_listViewDataSource->reusableCell(
       row, m_listViewDataSource->typeAtRow(row));
-}
-
-void Dropdown::DropdownPopupController::resetMemoizationAndReload() {
-  resetSizeMemoization();
-  m_selectableListView.reloadData(false);
 }
 
 Dropdown::Dropdown(Responder *parentResponder,

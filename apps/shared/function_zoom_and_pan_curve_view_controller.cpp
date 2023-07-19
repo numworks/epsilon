@@ -20,15 +20,8 @@ const char* FunctionZoomAndPanCurveViewController::title() {
 }
 
 void FunctionZoomAndPanCurveViewController::viewWillAppear() {
-  /* We need to change the curve range to keep the same visual aspect of the
-   * view. */
-  adaptRangeForHeaders(true);
   setLegendVisible(true);
   ZoomAndPanCurveViewController::viewWillAppear();
-}
-
-void FunctionZoomAndPanCurveViewController::viewDidDisappear() {
-  setLegendVisible(false);
 }
 
 void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
@@ -43,7 +36,6 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(
   if (event == Ion::Events::Back || event == Ion::Events::Home ||
       event == Ion::Events::OK || event == Ion::Events::EXE) {
     setLegendVisible(false);
-    adaptRangeForHeaders(false);
     return ZoomAndPanCurveViewController::handleEvent(event);
   }
 
@@ -58,24 +50,18 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(
   return (didHandleEvent || didChangeLegend) && (event != Ion::Events::OnOff);
 }
 
-void FunctionZoomAndPanCurveViewController::adaptRangeForHeaders(
-    bool viewWillAppear) {
-  assert(!m_contentView.displayLegend());
+float FunctionZoomAndPanCurveViewController::offscreenYAxis() const {
+  /* We need to change the curve range to keep the same visual aspect of the
+   * view. */
   float yMin = m_interactiveRange->yMin(), yMax = m_interactiveRange->yMax();
-  if (viewWillAppear) {
-    assert(m_interactiveRange->offscreenYAxis() == 0.f);
-    /* We want the new graph to have the exact same pixel height as the old
-     * one, to avoid seeing some grid lines move when entering navigation. */
-    float oldPixelHeight = (yMax - yMin) / (k_standardViewHeight - 1);
-    float newYMax =
-        yMin + oldPixelHeight * (m_contentView.bounds().height() - 1);
-    float dY = newYMax - yMax;
-    m_interactiveRange->setOffscreenYAxis(-dY);
-    /* As we are adding space and the Y range that should not be taken into
-     * account for computing the grid, we count it as negative offscreen. */
-  } else {
-    m_interactiveRange->setOffscreenYAxis(0.f);
-  }
+  /* We want the new graph to have the exact same pixel height as the old
+   * one, to avoid seeing some grid lines move when entering navigation. */
+  float oldPixelHeight = (yMax - yMin) / (k_standardViewHeight - 1);
+  float newYMax = yMin + oldPixelHeight * (m_contentView.bounds().height() - 1);
+  float dY = newYMax - yMax;
+  /* As we are adding space and the Y range that should not be taken into
+   * account for computing the grid, we count it as negative offscreen. */
+  return -dY;
 }
 
 bool FunctionZoomAndPanCurveViewController::setLegendVisible(

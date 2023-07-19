@@ -29,6 +29,7 @@ class ZoomCurveViewController : public Escher::ViewController {
   virtual AbstractPlotView* curveView() = 0;
   virtual float xFocus() = 0;
   virtual float yFocus() = 0;
+  virtual float offscreenYAxis() const { return 0.f; }
   CurveViewCursor* m_cursor;
 };
 

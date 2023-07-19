@@ -29,6 +29,7 @@ bool ZoomCurveViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void ZoomCurveViewController::viewWillAppear() {
+  interactiveCurveViewRange()->setOffscreenYAxis(offscreenYAxis());
   /* Force a reload in case some curves were interrupted. */
   curveView()->reload(true);
 }

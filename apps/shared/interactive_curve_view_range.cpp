@@ -77,6 +77,9 @@ void InteractiveCurveViewRange::setYMax(float yMax) {
 }
 
 void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
+  if (f == m_offscreenYAxis) {
+    return;
+  }
   float d = m_offscreenYAxis - f;
   m_offscreenYAxis = f;
   MemoizedCurveViewRange::protectedSetYMax(yMax() + d, true, k_maxFloat);
@@ -328,12 +331,7 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
 
 void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
                                                      bool computeY) {
-  if (offscreenYAxis() != 0.f) {
-    /* The Navigation window was exited without being cleaned up, probably
-     * because the User pressed the Home button.
-     * We reset the value here to prevent skewing the grid unit. */
-    setOffscreenYAxis(0.f);
-  }
+  assert(offscreenYAxis() == 0.f);
 
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
    * yGridUnit, even if the range were not truly normalized. We use

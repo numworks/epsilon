@@ -87,13 +87,6 @@ Dropdown::DropdownPopupController::DropdownPopupController(
   m_selectableListView.setMargins(0);
 }
 
-void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectRow(0);
-  }
-  SelectableListViewController::didBecomeFirstResponder();
-}
-
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
   if (m_callback->popupDidReceiveEvent(e, this)) {
     return true;

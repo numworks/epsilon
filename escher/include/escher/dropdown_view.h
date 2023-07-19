@@ -67,8 +67,7 @@ class Dropdown : public PopupItemView, public Responder {
   /* List of PopupViews shown in a modal view + Wraps a ListViewDataSource to
    * return PopupViews. */
 
-  class DropdownPopupController : public SelectableListViewController<
-                                      StandardMemoizedListViewDataSource> {
+  class DropdownPopupController : public ExplicitSelectableListViewController {
    public:
     DropdownPopupController(Responder* parentResponder,
                             ExplicitListViewDataSource* listDataSource,
@@ -84,14 +83,8 @@ class Dropdown : public PopupItemView, public Responder {
       return m_listViewDataSource->numberOfRows();
     }
     KDCoordinate defaultColumnWidth() override;
-    int typeAtRow(int row) const override {
-      return m_listViewDataSource->typeAtRow(row);
-    }
     KDCoordinate nonMemoizedRowHeight(int row) override;
-    int reusableCellCount(int type) override {
-      return m_listViewDataSource->reusableCellCount(type);
-    }
-    PopupItemView* reusableCell(int index, int type) override;
+    HighlightCell* cell(int row) override { return &m_popupViews[row]; }
     void resetSizeMemoization() override;
 
     HighlightCell* innerCellAtRow(int row);

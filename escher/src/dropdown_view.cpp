@@ -78,7 +78,7 @@ void PopupItemView::drawRect(KDContext *ctx, KDRect rect) const {
 Dropdown::DropdownPopupController::DropdownPopupController(
     Responder *parentResponder, ExplicitListViewDataSource *listDataSource,
     Dropdown *dropdown, DropdownCallback *callback)
-    : SelectableListViewController(parentResponder),
+    : ExplicitSelectableListViewController(parentResponder),
       m_listViewDataSource(listDataSource),
       m_memoizedCellWidth(-1),
       m_borderingView(&m_selectableListView),
@@ -110,11 +110,11 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::DropdownPopupController::open() {
   resetSizeMemoization();
-  m_selectableListView.reloadData(false);
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
     m_popupViews[row].setPopping(true);
   }
+  m_selectableListView.layoutSubviews();
 }
 
 void Dropdown::DropdownPopupController::close() {
@@ -134,13 +134,6 @@ KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int row) {
   return m_popupViews[row].minimalSizeForOptimalDisplay().height();
 }
 
-PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
-                                                               int type) {
-  assert(index == 0);
-  assert(type >= 0 && type < numberOfRows());
-  return &m_popupViews[type];
-}
-
 void Dropdown::DropdownPopupController::init() {
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
@@ -153,7 +146,7 @@ void Dropdown::DropdownPopupController::init() {
 
 void Dropdown::DropdownPopupController::resetSizeMemoization() {
   m_memoizedCellWidth = -1;
-  MemoizedListViewDataSource::resetSizeMemoization();
+  ExplicitListViewDataSource::resetSizeMemoization();
 }
 
 HighlightCell *Dropdown::DropdownPopupController::innerCellAtRow(int row) {

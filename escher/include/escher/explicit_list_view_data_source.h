@@ -25,8 +25,8 @@ class ExplicitListViewDataSource : public ListViewDataSource {
 
  protected:
   virtual HighlightCell* cell(int index) = 0;
-  // This method fills the cell.
-  KDCoordinate nonMemoizedRowHeight(int row) override final {
+  // TODO: Make this method final (take the example of DropdownPopupController)
+  KDCoordinate nonMemoizedRowHeight(int row) override {
     return protectedNonMemoizedRowHeight(cell(row), row);
   }
 

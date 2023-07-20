@@ -1668,10 +1668,12 @@ Expression Expression::deepApproximateKeepingSymbols(
   deepApproximateChildrenKeepingSymbols(
       reductionContext, &thisShouldApproximate, &thisShouldReduce);
   /* No need to approximate lists and matrices. Approximating their children is
-   * enough. */
+   * enough.
+   * Do not approximate random because it can be considered as a symbol that
+   * always changes values each time it's evaluated. */
   if (thisShouldApproximate && type() != ExpressionNode::Type::Symbol &&
       type() != ExpressionNode::Type::List &&
-      type() != ExpressionNode::Type::Matrix) {
+      type() != ExpressionNode::Type::Matrix && !isRandom()) {
     Expression a = approximate<double>(reductionContext.context(),
                                        reductionContext.complexFormat(),
                                        reductionContext.angleUnit());

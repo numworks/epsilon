@@ -1,6 +1,4 @@
 CategoricalTypeControllerTitle = "Test χ2"
-ConclusionFailure = " non può essere rifiutato\nperché p-value > α"
-ConclusionSuccess = " può essere rifiutato\nperché p-value < α"
 Confidence = "Confidenza"
 ConfidenceInterval = "Intervallo di confidenza"
 ConfidenceLevel = "Livello di confidenza"

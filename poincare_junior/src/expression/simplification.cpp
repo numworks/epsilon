@@ -66,6 +66,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
 }
 
 bool Simplification::SimplifyAbs(Tree* u) {
+  assert(u->type() == BlockType::Abs);
   Tree* child = u->nextNode();
   bool changed = false;
   if (child->type() == BlockType::Abs) {
@@ -89,6 +90,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
 }
 
 bool Simplification::SimplifyTrigDiff(Tree* u) {
+  assert(u->type() == BlockType::TrigDiff);
   /* TrigDiff(x,y) = { 0 if x=y, 1 otherwise }
    * TODO: ContractTrigonometric is the only place this is used. It might not be
    * worth it. */
@@ -101,6 +103,7 @@ bool Simplification::SimplifyTrigDiff(Tree* u) {
 }
 
 bool Simplification::SimplifyTrig(Tree* u) {
+  assert(u->type() == BlockType::Trig);
   // Trig(x,y) = {-Sin(x) if y=-1, Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2}
   EditionReference secondArgument = u->childAtIndex(1);
   /* Trig second element is always expected to be reduced. This will call
@@ -119,6 +122,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
 }
 
 bool Simplification::SimplifyPower(Tree* u) {
+  assert(u->type() == BlockType::Power);
   Tree* v = u->childAtIndex(0);
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
@@ -210,6 +214,7 @@ void Simplification::ConvertPowerRealToPower(Tree* u) {
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {
+  assert(u->type() == BlockType::PowerReal);
   /* Return :
    * - x^y if x is complex or positive
    * - PowerReal(x,y) y is not a rational

@@ -55,11 +55,11 @@ void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
     Tree *mult = SharedEditionPool->push<BlockType::Multiplication>(2);
     Derivate(derivandChild, symbol, symbolValue);
     ShallowPartialDerivate(derivand, symbol, symbolValue, i);
-    Simplification::ShallowSystematicReduce(mult);
+    Simplification::SimplifyMultiplication(mult);
     derivandChild = derivandChild->nextTree();
   }
   if (numberOfChildren > 1) {
-    Simplification::ShallowSystematicReduce(result);
+    Simplification::SimplifyAddition(result);
   }
 }
 
@@ -83,7 +83,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
         }
       }
       if (numberOfChildren > 2) {
-        Simplification::ShallowSystematicReduce(mult);
+        Simplification::SimplifyMultiplication(mult);
       }
       return;
     }
@@ -100,7 +100,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       Tree *power = SharedEditionPool->push<BlockType::Power>();
       CloneReplacingSymbol(derivand->childAtIndex(0), symbol, symbolValue);
       SharedEditionPool->push<BlockType::MinusOne>();
-      Simplification::ShallowSystematicReduce(power);
+      Simplification::SimplifyPower(power);
       return;
     }
     default:

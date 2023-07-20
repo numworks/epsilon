@@ -62,16 +62,17 @@ class Simplification {
   EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
   EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
 
- private:
   static bool SimplifyAbs(Tree *u);
   static bool SimplifyTrig(Tree *u);
   static bool SimplifyTrigDiff(Tree *u);
   static bool SimplifyAddition(Tree *u);
-  static bool MergeAdditionChildren(Tree *u1, Tree *u2);
   static bool SimplifyMultiplication(Tree *u);
-  static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
   static bool SimplifyPower(Tree *u);
   static bool SimplifyPowerReal(Tree *u);
+
+ private:
+  static bool MergeAdditionChildren(Tree *u1, Tree *u2);
+  static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
   static void ConvertPowerRealToPower(Tree *u);
 
   typedef bool (*ShallowOperation)(Tree *node, void *context);

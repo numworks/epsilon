@@ -19,7 +19,9 @@ class Test : public Statistic {
 
   bool initializeSignificanceTest(SignificanceTestType type,
                                   Shared::GlobalContext* context) override;
-  I18n::Message statisticTitle() const override { return I18n::Message::Tests; }
+  I18n::Message statisticTitle() const override {
+    return I18n::Message::TestDescr;
+  }
   I18n::Message statisticBasicTitle() const override {
     return I18n::Message::Test;
   }

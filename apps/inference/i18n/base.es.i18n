@@ -1,6 +1,4 @@
 CategoricalTypeControllerTitle = "Prueba χ2"
-ConclusionFailure = " no se puede rechazar\nya que valor-p > α"
-ConclusionSuccess = " puede rechazarse\nya que valor-p < α"
 Confidence = "Confianza"
 ConfidenceInterval = "Intervalo de confianza"
 ConfidenceLevel = "Nivel de confianza"

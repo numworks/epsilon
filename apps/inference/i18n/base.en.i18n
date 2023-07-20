@@ -1,6 +1,4 @@
 CategoricalTypeControllerTitle = "χ2-test"
-ConclusionFailure = " cannot be rejected\nbecause p-value > α"
-ConclusionSuccess = " can be rejected\nbecause p-value < α"
 Confidence = "Confidence"
 ConfidenceInterval = "Confidence interval"
 ConfidenceLevel = "Confidence level"

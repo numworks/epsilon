@@ -1,6 +1,4 @@
 CategoricalTypeControllerTitle = "χ2-toets"
-ConclusionFailure = " kan niet worden verworpen\nomdat p-waarde > α"
-ConclusionSuccess = " kan worden verworpen\nomdat p-waarde < α"
 Confidence = "Betrouwbaarheid"
 ConfidenceInterval = "Betrouwbaarheidsinterval"
 ConfidenceLevel = "Betrouwbaarheid"

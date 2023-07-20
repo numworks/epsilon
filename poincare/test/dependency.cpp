@@ -156,8 +156,10 @@ QUIZ_CASE(poincare_dependency_power) {
 QUIZ_CASE(poincare_dependency_multiplication) {
   assert_expression_simplify_to_with_dependencies("ln(x)-ln(x)", "0",
                                                   {"ln(x)"});
-  assert_expression_simplify_to_with_dependencies("0*randint(1,0)",
-                                                  Undefined::Name(), {""});
+  assert_expression_simplify_to_with_dependencies("0*random()", "0",
+                                                  {"random()"});
+  assert_expression_simplify_to_with_dependencies("0*randint(1,0)", "0",
+                                                  {"randint(1,0)"});
   // Dependency is properly reduced even when containing symbols
   assert_expression_simplify_to_with_dependencies("0x^arcsin(π)", "0", {"x"});
   assert_expression_simplify_to_with_dependencies(

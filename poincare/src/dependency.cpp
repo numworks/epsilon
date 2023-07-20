@@ -107,9 +107,11 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
   while (i < totalNumberOfDependencies) {
     Expression e = dependencies.childAtIndex(i);
     Expression approximation;
-    bool hasSymbols = e.deepIsSymbolic(reductionContext.context(),
-                                       reductionContext.symbolicComputation());
-    if (hasSymbols) {
+    bool hasSymbolsOrRandom =
+        e.deepIsSymbolic(reductionContext.context(),
+                         reductionContext.symbolicComputation()) ||
+        e.recursivelyMatches(Expression::IsRandom, reductionContext.context());
+    if (hasSymbolsOrRandom) {
       /* If the dependency involves unresolved symbol/function/sequence,
        * the approximation of the dependency could be undef while the
        * whole expression is not. We juste approximate everything but the symbol
@@ -123,7 +125,7 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
     }
     if (approximation.isUndefined()) {
       return replaceWithUndefinedInPlace();
-    } else if (!hasSymbols) {
+    } else if (!hasSymbolsOrRandom) {
       static_cast<List &>(dependencies).removeChildAtIndexInPlace(i);
       totalNumberOfDependencies--;
     } else {

@@ -260,11 +260,11 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
 
 Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
                                       const Tree* structure) {
-  PatternMatching::Context ctx;
-  if (!PatternMatching::Match(pattern, source, &ctx)) {
+  Context ctx;
+  if (!Match(pattern, source, &ctx)) {
     return nullptr;
   }
-  return PatternMatching::Create(structure, ctx);
+  return Create(structure, ctx);
 }
 
 bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
@@ -296,7 +296,7 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
   }
 
   // Step 1 - Match the pattern
-  if (!PatternMatching::Match(pattern, node, &ctx)) {
+  if (!Match(pattern, node, &ctx)) {
     return false;
   }
   /* Following this example :
@@ -378,7 +378,7 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
   }
 
   // Step 5 - Build the PatternMatching replacement
-  Tree* created = PatternMatching::Create(structure, ctx);
+  Tree* created = Create(structure, ctx);
 
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 

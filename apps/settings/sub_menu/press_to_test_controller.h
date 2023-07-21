@@ -37,8 +37,8 @@ class PressToTestController : public Escher::ListWithTopAndBottomController {
   constexpr static int k_switchCellType = 0;
   constexpr static int k_buttonCellType = 1;
   /* Switch cells count */
-  constexpr static int k_numberOfSwitchCells = 9;
-  constexpr static int k_numberOfReusableSwitchCells = 6;
+  constexpr static int k_numberOfSwitchCells = 10;
+  constexpr static int k_numberOfReusableSwitchCells = 7;
 
   // Switch Cells
   void setParamAtIndex(int index, bool value);

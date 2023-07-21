@@ -91,6 +91,9 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
     case I18n::Message::PressToTestImplicitPlots:
       m_tempPressToTestParams.forbidImplicitPlots = value;
       break;
+    case I18n::Message::PressToTestGraphDetails:
+      m_tempPressToTestParams.forbidGraphDetails = value;
+      break;
     case I18n::Message::PressToTestElements:
       m_tempPressToTestParams.forbidElementsApp = value;
       break;
@@ -121,6 +124,8 @@ bool PressToTestController::getParamAtIndex(int index) {
       return m_tempPressToTestParams.forbidInequalityGraphing;
     case I18n::Message::PressToTestImplicitPlots:
       return m_tempPressToTestParams.forbidImplicitPlots;
+    case I18n::Message::PressToTestGraphDetails:
+      return m_tempPressToTestParams.forbidGraphDetails;
     case I18n::Message::PressToTestElements:
       return m_tempPressToTestParams.forbidElementsApp;
     case I18n::Message::PressToTestStatDiagnostics:
@@ -241,6 +246,7 @@ I18n::Message PressToTestController::LabelAtIndex(int i) {
       I18n::Message::PressToTestEquationSolver,
       I18n::Message::PressToTestInequalityGraphing,
       I18n::Message::PressToTestImplicitPlots,
+      I18n::Message::PressToTestGraphDetails,
       I18n::Message::PressToTestElements,
       I18n::Message::PressToTestStatDiagnostics,
       I18n::Message::PressToTestVectors,
@@ -255,8 +261,6 @@ I18n::Message PressToTestController::SubLabelAtIndex(int i) {
       return I18n::Message::PressToTestStatDiagnosticsDescription;
     case I18n::Message::PressToTestVectors:
       return I18n::Message::PressToTestVectorsDescription;
-    case I18n::Message::PressToTestImplicitPlots:
-      return I18n::Message::PressToTestImplicitPlotsDescription;
     default:
       return I18n::Message::Default;
   }

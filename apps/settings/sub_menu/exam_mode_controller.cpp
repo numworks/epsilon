@@ -57,6 +57,7 @@ int ExamModeController::numberOfRows() const {
     case ExamMode::Ruleset::English:
     case ExamMode::Ruleset::STAAR:
     case ExamMode::Ruleset::Keystone:
+    case ExamMode::Ruleset::SouthCarolina:
       // Reactivation button
       return 1;
     default:
@@ -72,8 +73,8 @@ int ExamModeController::numberOfRows() const {
     case CountryPreferences::AvailableExamModes::EnglishOnly:
       return 1;
     case CountryPreferences::AvailableExamModes::AmericanAll:
-      // STAAR, Keystone and IB
-      return 3;
+      // STAAR, Keystone, SouthCarolina and IB
+      return 4;
     default:
       assert(availableExamModes == CountryPreferences::AvailableExamModes::All);
   }
@@ -139,10 +140,10 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
                  CountryPreferences::AvailableExamModes::AmericanAll ||
              availableExamModes == CountryPreferences::AvailableExamModes::All);
       constexpr ExamMode::Ruleset modes[] = {
-          ExamMode::Ruleset::Standard,   ExamMode::Ruleset::Dutch,
-          ExamMode::Ruleset::Portuguese, ExamMode::Ruleset::English,
-          ExamMode::Ruleset::STAAR,      ExamMode::Ruleset::Keystone,
-          ExamMode::Ruleset::IBTest};
+          ExamMode::Ruleset::Standard,      ExamMode::Ruleset::Dutch,
+          ExamMode::Ruleset::Portuguese,    ExamMode::Ruleset::English,
+          ExamMode::Ruleset::STAAR,         ExamMode::Ruleset::Keystone,
+          ExamMode::Ruleset::SouthCarolina, ExamMode::Ruleset::IBTest};
       static_assert(std::size(modes) == k_maxNumberOfCells,
                     "modes must contain each available exam mode");
       assert(index < std::size(modes));
@@ -183,6 +184,9 @@ I18n::Message ExamModeController::examModeActivationMessage(
       // Keystone
       I18n::Message::ActivateKeystoneExamMode,
       I18n::Message::ReactivateKeystoneExamMode,
+      // SouthCarolina
+      I18n::Message::ActivateSouthCarolinaExamMode,
+      I18n::Message::ReactivateSouthCarolinaExamMode,
   };
   static_assert(std::size(messages) == numberOfModes * messagesPerMode,
                 "messages size is invalid");

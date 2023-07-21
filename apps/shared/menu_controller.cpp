@@ -18,8 +18,8 @@ MenuController::MenuController(
     std::initializer_list<std::initializer_list<I18n::Message>> messages,
     std::initializer_list<const Escher::Image *> images,
     MenuControllerDelegate *delegate)
-    : Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells>(
-          parentResponder),
+    : Escher::UniformSelectableListController<Escher::SubappCell,
+                                              k_numberOfCells>(parentResponder),
       m_delegate(delegate) {
   selectRow(0);
 

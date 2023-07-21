@@ -16,7 +16,7 @@ class MenuControllerDelegate {
 };
 
 class MenuController
-    : public Escher::SelectableCellListPage<Escher::SubappCell, 2> {
+    : public Escher::UniformSelectableListController<Escher::SubappCell, 2> {
  public:
   MenuController(
       Escher::StackViewController *parentResponder,

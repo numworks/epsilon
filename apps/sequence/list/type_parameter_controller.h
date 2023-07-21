@@ -14,7 +14,7 @@ namespace Sequence {
 class ListController;
 
 class TypeParameterController
-    : public Escher::SelectableCellListPage<
+    : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>, 3> {
  public:
   TypeParameterController(Escher::Responder* parentResponder,

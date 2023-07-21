@@ -7,7 +7,7 @@ namespace Statistics {
 BoxParameterController::BoxParameterController(
     Responder* parentResponder, Store* store,
     DataViewController* dataViewController)
-    : SelectableCellListPage<
+    : UniformSelectableListController<
           MenuCell<MessageTextView, EmptyCellWidget, SwitchView>,
           k_numberOfCells>(parentResponder),
       m_store(store),

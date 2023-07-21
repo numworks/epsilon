@@ -14,7 +14,7 @@
 namespace Finance {
 
 class MenuController
-    : public Escher::SelectableCellListPage<
+    : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
           2> {

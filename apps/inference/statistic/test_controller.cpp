@@ -23,7 +23,7 @@ TestController::TestController(StackViewController *parentResponder,
                                InputSlopeController *inputSlopeController,
                                InputController *inputController,
                                Statistic *statistic)
-    : SelectableCellListPage(parentResponder),
+    : UniformSelectableListController(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),

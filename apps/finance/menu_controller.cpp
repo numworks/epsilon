@@ -10,7 +10,7 @@ using namespace Finance;
 
 MenuController::MenuController(Escher::StackViewController* parentResponder,
                                InterestMenuController* interestMenuController)
-    : Escher::SelectableCellListPage<
+    : Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
           k_numberOfCells>(parentResponder),

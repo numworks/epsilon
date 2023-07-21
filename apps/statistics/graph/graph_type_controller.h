@@ -21,7 +21,7 @@ using GraphTypeCell =
 
 class GraphTypeController
     : public Escher::AlternateEmptyViewDelegate,
-      public Escher::SelectableCellListPage<GraphTypeCell, 4> {
+      public Escher::UniformSelectableListController<GraphTypeCell, 4> {
  public:
   GraphTypeController(Escher::Responder* parentResponder,
                       Escher::TabViewController* tabController,
@@ -33,7 +33,7 @@ class GraphTypeController
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
   Escher::Responder* responderWhenEmpty() override;
 
-  // SelectableCellListPage
+  // UniformSelectableListController
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   const char* title() override { return I18n::translate(I18n::Message::Type); }

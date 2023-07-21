@@ -8,7 +8,7 @@ namespace Elements {
 
 DisplayTypeController::DisplayTypeController(
     StackViewController *stackController)
-    : SelectableCellListPage(stackController) {
+    : UniformSelectableListController(stackController) {
   for (int i = 0; i < k_numberOfCells; ++i) {
     cell(i)->label()->setMessage(k_fields[i]->fieldLegend());
   }

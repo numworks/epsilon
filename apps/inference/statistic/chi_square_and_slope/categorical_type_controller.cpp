@@ -13,7 +13,7 @@ CategoricalTypeController::CategoricalTypeController(
     Escher::StackViewController* parent, Chi2Test* statistic,
     InputGoodnessController* inputGoodnessController,
     InputHomogeneityController* inputHomogeneityController)
-    : Escher::SelectableCellListPage<
+    : Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
           k_numberOfCells>(parent),

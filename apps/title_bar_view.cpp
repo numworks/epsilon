@@ -117,6 +117,9 @@ void TitleBarView::layoutSubviews(bool force) {
       case ExamMode::Ruleset::Keystone:
         examModeMessage = I18n::Message::ExamModeTitleBarKeystone;
         break;
+      case ExamMode::Ruleset::SouthCarolina:
+        examModeMessage = I18n::Message::ExamModeTitleBarSouthCarolina;
+        break;
       default:
         examModeMessage = I18n::Message::Default;
     }

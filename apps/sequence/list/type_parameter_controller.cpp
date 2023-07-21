@@ -23,8 +23,8 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
                                                  KDCoordinate rightMargin,
                                                  KDCoordinate bottomMargin,
                                                  KDCoordinate leftMargin)
-    : SelectableCellListPage<MenuCell<LayoutView, MessageTextView>,
-                             k_numberOfCells>(parentResponder),
+    : UniformSelectableListController<MenuCell<LayoutView, MessageTextView>,
+                                      k_numberOfCells>(parentResponder),
       m_listController(list) {
   cell(k_indexOfExplicit)->subLabel()->setMessage(I18n::Message::Explicit);
   cell(k_indexOfRecurrence)

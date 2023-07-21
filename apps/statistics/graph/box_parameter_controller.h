@@ -12,7 +12,7 @@
 namespace Statistics {
 
 class BoxParameterController
-    : public Escher::SelectableCellListPage<
+    : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::SwitchView>,
           1> {

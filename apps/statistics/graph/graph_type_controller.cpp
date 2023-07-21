@@ -10,7 +10,7 @@ GraphTypeController::GraphTypeController(
     Escher::TabViewController* tabController,
     Escher::StackViewController* stackView, Store* store,
     GraphViewModel* graphViewModel)
-    : Escher::SelectableCellListPage<GraphTypeCell, k_numberOfCells>(
+    : Escher::UniformSelectableListController<GraphTypeCell, k_numberOfCells>(
           parentResponder),
       m_tabController(tabController),
       m_stackViewController(stackView),

@@ -18,7 +18,7 @@ class InputGoodnessController;
 class InputHomogeneityController;
 
 class CategoricalTypeController
-    : public Escher::SelectableCellListPage<
+    : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
           2> {

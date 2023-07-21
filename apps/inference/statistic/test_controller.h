@@ -19,7 +19,7 @@ class InputController;
 class InputSlopeController;
 
 class TestController
-    : public Escher::SelectableCellListPage<
+    : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
           Statistic::k_numberOfSignificanceTestType> {

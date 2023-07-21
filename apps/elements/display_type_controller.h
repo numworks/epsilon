@@ -11,7 +11,7 @@
 namespace Elements {
 
 class DisplayTypeController
-    : public Escher::SelectableCellListPage<
+    : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView>, 8> {
  public:
   DisplayTypeController(Escher::StackViewController *stackController);

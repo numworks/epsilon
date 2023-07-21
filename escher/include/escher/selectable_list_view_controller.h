@@ -52,15 +52,14 @@ class ExplicitSelectableListViewController
   HighlightCell* selectedCell() { return cell(selectedRow()); }
 };
 
-/* This class is useful to create an ExplicitSelectableListViewController of
- * the same type of cells. */
 template <typename Cell, int NumberOfCells>
-class SelectableCellListPage : public ExplicitSelectableListViewController {
+class UniformSelectableListController
+    : public ExplicitSelectableListViewController {
  public:
   constexpr static int k_numberOfCells = NumberOfCells;
 
-  SelectableCellListPage(Responder* parent,
-                         SelectableListViewDelegate* tableDelegate = nullptr)
+  UniformSelectableListController(
+      Responder* parent, SelectableListViewDelegate* tableDelegate = nullptr)
       : ExplicitSelectableListViewController(parent, tableDelegate) {}
   int numberOfRows() const override final { return NumberOfCells; }
   Cell* cell(int row) override final {

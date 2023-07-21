@@ -18,7 +18,7 @@ TypeController::TypeController(StackViewController *parent,
                                HypothesisController *hypothesisController,
                                InputController *inputController,
                                Statistic *statistic)
-    : SelectableCellListPage(parent),
+    : UniformSelectableListController(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_statistic(statistic) {

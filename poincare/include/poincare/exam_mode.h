@@ -26,6 +26,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
     bool forbidEquationSolver : 1;
     bool forbidInequalityGraphing : 1;
     bool forbidImplicitPlots : 1;
+    bool forbidGraphDetails : 1;
     bool forbidStatsDiagnostics : 1;
     bool forbidVectors : 1;
     bool forbidBasedLogarithm : 1;
@@ -33,7 +34,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
     bool forbidExactResults : 1;
     bool forbidElementsApp : 1;
     // These bits are available, unused and preserved at 0 for == operator
-    Ion::ExamMode::Int unusedBits : 5;
+    Ion::ExamMode::Int unusedBits : 4;
     // These bits will be discarded when cast into 14 bits in a Configuration
     Ion::ExamMode::Int discardedBits : 2;
   };
@@ -59,7 +60,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
   }
   bool forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
   bool forbidGraphDetails() const {
-    return ruleset() == Ruleset::IBTest || ruleset() == Ruleset::Keystone;
+    return flags().forbidGraphDetails || ruleset() == Ruleset::IBTest ||
+           ruleset() == Ruleset::Keystone;
   }
   bool forbidInequalityGraphing() const {
     return flags().forbidInequalityGraphing || ruleset() == Ruleset::STAAR;

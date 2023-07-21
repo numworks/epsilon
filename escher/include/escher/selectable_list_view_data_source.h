@@ -8,7 +8,6 @@ namespace Escher {
 class SelectableListViewDataSource : public SelectableTableViewDataSource {
  public:
   using SelectableTableViewDataSource::SelectableTableViewDataSource;
-  void selectCell(int row) { selectRow(row); }
 
  private:
   using SelectableTableViewDataSource::selectCellAtLocation;

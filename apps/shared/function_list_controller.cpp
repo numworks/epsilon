@@ -76,12 +76,12 @@ void FunctionListController::willExitResponderChain(
 
 void FunctionListController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
-    selectCell(0);
+    selectRow(0);
   } else {
-    selectCell(selectedRow());
+    selectRow(selectedRow());
   }
   if (selectedRow() >= numberOfExpressionRows()) {
-    selectCell(numberOfExpressionRows() - 1);
+    selectRow(numberOfExpressionRows() - 1);
   }
   footer()->setSelectedButton(-1);
   if (m_editedCellIndex != -1) {

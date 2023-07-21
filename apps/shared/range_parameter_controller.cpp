@@ -85,12 +85,12 @@ void RangeParameterController::viewWillAppear() {
   m_normalizeCell.setVisible(!m_tempInteractiveRange.zoomNormalize());
   fillRangeCells();
   if (selectedRow() == -1) {
-    selectCell(0);
+    selectRow(0);
   } else {
     /* If the table has not been deselected, it means we come from the
      * SingleRangeController. */
     int row = m_singleInteractiveCurveViewRangeController.editXRange() ? 1 : 2;
-    selectCell(row);
+    selectRow(row);
   }
   resetSizeMemoization();
   m_selectableListView.reloadData();

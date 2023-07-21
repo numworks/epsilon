@@ -29,9 +29,9 @@ void ListParameterController::viewWillAppear() {
       ColorNames::NameForColor(function()->color()));
   updateEnableCellSwitch();
   if (selectedRow() == -1) {
-    selectCell(0);
+    selectRow(0);
   } else {
-    selectCell(selectedRow());
+    selectRow(selectedRow());
   }
   resetSizeMemoization();
   m_selectableListView.reloadData();
@@ -39,7 +39,7 @@ void ListParameterController::viewWillAppear() {
 
 void ListParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  selectCell(0);
+  selectRow(0);
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {

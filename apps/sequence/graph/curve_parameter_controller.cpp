@@ -36,7 +36,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
 
 void CurveParameterController::viewWillAppear() {
   if (selectedRow() < 0 || !selectedCell()->isVisible()) {
-    selectCell(0);
+    selectRow(0);
   }
   ExplicitSelectableListViewController::viewWillAppear();
   m_selectableListView.reloadData();

@@ -34,7 +34,7 @@ const char *DetailsParameterController::title() {
 void DetailsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   assert(!m_record.isNull());
-  selectCell(0);
+  selectRow(0);
   resetSizeMemoization();
   m_selectableListView.reloadData();
 }

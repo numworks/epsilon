@@ -19,7 +19,7 @@ ExplicitFloatParameterController::ExplicitFloatParameterController(
 void ExplicitFloatParameterController::didBecomeFirstResponder() {
   if (selectedRow() >= 0) {
     int selRow = std::min(selectedRow(), numberOfRows() - 1);
-    selectCell(selRow);
+    selectRow(selRow);
   }
   ExplicitSelectableListViewController::didBecomeFirstResponder();
 }

@@ -69,8 +69,8 @@ void TypeParameterController::viewDidDisappear() {
 }
 
 void TypeParameterController::didBecomeFirstResponder() {
-  selectCell(isNewModel() ? k_indexOfExplicit
-                          : static_cast<uint8_t>(sequence()->type()));
+  selectRow(isNewModel() ? k_indexOfExplicit
+                         : static_cast<uint8_t>(sequence()->type()));
   SelectableListViewController::didBecomeFirstResponder();
 }
 

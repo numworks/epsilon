@@ -108,12 +108,12 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 
 void ListController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
-    selectCell(0);
+    selectRow(0);
   } else {
-    selectCell(selectedRow());
+    selectRow(selectedRow());
   }
   if (selectedRow() >= numberOfRows()) {
-    selectCell(numberOfRows() - 1);
+    selectRow(numberOfRows() - 1);
   }
   footer()->setSelectedButton(-1);
   App::app()->setFirstResponder(selectableListView());

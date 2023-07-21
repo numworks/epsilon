@@ -166,7 +166,7 @@ LocalizationController::LocalizationController(
 
 void LocalizationController::resetSelection() {
   selectableListView()->deselectTable();
-  selectCell(indexOfCellToSelectOnReset());
+  selectRow(indexOfCellToSelectOnReset());
 }
 
 void LocalizationController::setMode(LocalizationController::Mode mode) {

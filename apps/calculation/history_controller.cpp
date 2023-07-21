@@ -64,7 +64,7 @@ void HistoryController::viewWillAppear() {
 }
 
 void HistoryController::didBecomeFirstResponder() {
-  selectCell(numberOfRows() - 1);
+  selectRow(numberOfRows() - 1);
   App::app()->setFirstResponder(&m_selectableListView);
 }
 

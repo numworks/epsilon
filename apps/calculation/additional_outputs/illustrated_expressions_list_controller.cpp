@@ -14,7 +14,7 @@ using namespace Escher;
 namespace Calculation {
 
 void IllustratedExpressionsListController::didBecomeFirstResponder() {
-  selectCell(showIllustration());
+  selectRow(showIllustration());
   ExpressionsListController::didBecomeFirstResponder();
 }
 

@@ -57,7 +57,7 @@ void RegressionController::didBecomeFirstResponder() {
     assert(!Store::HasCoefficients(type) ||
            type == ModelTypeAtIndex(initialIndex));
   }
-  selectCell(initialIndex);
+  m_selectableListView.selectCell(initialIndex);
   SelectableListViewController<
       MemoizedListViewDataSource>::didBecomeFirstResponder();
 }

@@ -14,7 +14,7 @@ class CalculationPopupDataSource : public Escher::ExplicitListViewDataSource {
   CalculationPopupDataSource(Distribution* distribution);
   int numberOfRows() const override;
   Escher::HighlightCell* cell(int row) override {
-    return m_imageCells + absoluteRow(row);
+    return &m_imageCells[absoluteRow(row)];
   }
   int absoluteRow(int currentRow) const;
 

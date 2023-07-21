@@ -69,7 +69,7 @@ void ScriptParameterController::viewWillAppear() {
 }
 
 void ScriptParameterController::didBecomeFirstResponder() {
-  selectCell(0);
+  selectRow(0);
   ExplicitSelectableListViewController::didBecomeFirstResponder();
 }
 

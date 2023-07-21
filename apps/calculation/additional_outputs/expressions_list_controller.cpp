@@ -56,7 +56,7 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
 }
 
 void ExpressionsListController::didBecomeFirstResponder() {
-  selectCell(0);
+  selectRow(0);
   resetSizeMemoization();
   App::app()->setFirstResponder(&m_listController);
   // Additional outputs should have at least one row to display

@@ -106,7 +106,7 @@ bool ExpressionModelListController::handleEventOnExpression(
       int newSelectedRow = selectedRow() >= numberOfExpressionRows()
                                ? numberOfExpressionRows() - 1
                                : selectedRow();
-      selectCell(newSelectedRow);
+      selectRow(newSelectedRow);
       selectableListView()->reloadData();
     }
     return true;

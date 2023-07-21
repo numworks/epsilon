@@ -67,7 +67,7 @@ KDCoordinate ListController::expressionRowHeight(int row) {
 void ListController::selectPreviousNewSequenceCell() {
   int row = selectedRow();
   if (sequenceDefinitionForRow(row) >= 0) {
-    selectCell(row - sequenceDefinitionForRow(row));
+    selectRow(row - sequenceDefinitionForRow(row));
   }
 }
 
@@ -158,7 +158,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (removeModelRow(record)) {
       int newSelectedRow =
           selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
-      selectCell(newSelectedRow);
+      selectRow(newSelectedRow);
       selectableListView()->reloadData();
     }
     return true;

@@ -28,7 +28,7 @@ const char *FormulaTemplateMenuController::title() {
 void FormulaTemplateMenuController::viewWillAppear() {
   computeUninitializedLayouts();
   ViewController::viewWillAppear();
-  selectCell(0);
+  selectRow(0);
 }
 
 void FormulaTemplateMenuController::fillCellForRow(HighlightCell *cell,

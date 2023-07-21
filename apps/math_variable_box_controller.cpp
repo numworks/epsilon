@@ -68,7 +68,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
         return true;
       }
       int newSelectedRow = row >= numberOfRows() ? numberOfRows() - 1 : row;
-      selectCell(newSelectedRow);
+      selectRow(newSelectedRow);
       resetSizeMemoization();
       m_selectableListView.reloadData();
       if (numberOfRows() == 0) {

@@ -82,7 +82,7 @@ class ListWithTopAndBottomController : public SelectableViewController,
   void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
-  void selectFirstCell() { selectCell(m_outerDataSource.hasTopView()); }
+  void selectFirstCell() { selectRow(m_outerDataSource.hasTopView()); }
 
  protected:
   constexpr static KDGlyph::Format k_messageFormat = {
@@ -101,8 +101,8 @@ class ListWithTopAndBottomController : public SelectableViewController,
   }
   int innerSelectedRow() const { return innerRowFromRow(selectedRow()); }
   void selectLastCell() {
-    selectCell(m_outerDataSource.numberOfRows() - 1 -
-               m_outerDataSource.hasBottomView());
+    selectRow(m_outerDataSource.numberOfRows() - 1 -
+              m_outerDataSource.hasBottomView());
   }
   void setTopView(View* view) { m_outerDataSource.setTopView(view); }
   void setBottomView(View* view) { m_outerDataSource.setBottomView(view); }

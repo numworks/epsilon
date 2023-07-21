@@ -40,7 +40,7 @@ const char* EquationModelsParameterController::title() {
 
 void EquationModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  selectCell(0);
+  selectRow(0);
 }
 
 bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {

@@ -27,7 +27,7 @@ class BoxParameterController
  private:
   bool handleEvent(Ion::Events::Event event) override;
   void updateDisplayOutliersSwitch() {
-    typedCell(0)->accessory()->setState(m_store->displayOutliers());
+    cell(0)->accessory()->setState(m_store->displayOutliers());
   }
   Store* m_store;
   DataViewController* m_dataViewController;

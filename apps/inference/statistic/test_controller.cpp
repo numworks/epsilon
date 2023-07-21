@@ -30,21 +30,15 @@ TestController::TestController(StackViewController *parentResponder,
       m_categoricalController(categoricalController),
       m_inputSlopeController(inputSlopeController),
       m_statistic(statistic) {
-  typedCell(k_indexOfOneProp)->label()->setMessage(I18n::Message::TestOneProp);
-  typedCell(k_indexOfOneMean)->label()->setMessage(I18n::Message::TestOneMean);
-  typedCell(k_indexOfTwoProps)
-      ->label()
-      ->setMessage(I18n::Message::TestTwoProps);
-  typedCell(k_indexOfTwoMeans)
-      ->label()
-      ->setMessage(I18n::Message::TestTwoMeans);
-  typedCell(k_indexOfCategorical)
+  cell(k_indexOfOneProp)->label()->setMessage(I18n::Message::TestOneProp);
+  cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::TestOneMean);
+  cell(k_indexOfTwoProps)->label()->setMessage(I18n::Message::TestTwoProps);
+  cell(k_indexOfTwoMeans)->label()->setMessage(I18n::Message::TestTwoMeans);
+  cell(k_indexOfCategorical)
       ->label()
       ->setMessage(I18n::Message::TestCategorical);
-  typedCell(k_indexOfCategorical)
-      ->subLabel()
-      ->setMessage(I18n::Message::X2Test);
-  typedCell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
+  cell(k_indexOfCategorical)->subLabel()->setMessage(I18n::Message::X2Test);
+  cell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
   // Init selection
   selectRow(0);
 }
@@ -67,7 +61,7 @@ void TestController::didBecomeFirstResponder() {
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (!typedCell(0)->canBeActivatedByEvent(event)) {
+  if (!cell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   SelectableViewController *controller = nullptr;
@@ -112,22 +106,22 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 }
 
 void TestController::viewWillAppear() {
-  typedCell(k_indexOfOneProp)
+  cell(k_indexOfOneProp)
       ->subLabel()
       ->setMessage(m_statistic->zStatisticMessage());
-  typedCell(k_indexOfOneMean)
+  cell(k_indexOfOneMean)
       ->subLabel()
       ->setMessage(m_statistic->tOrZStatisticMessage());
-  typedCell(k_indexOfTwoProps)
+  cell(k_indexOfTwoProps)
       ->subLabel()
       ->setMessage(m_statistic->zStatisticMessage());
-  typedCell(k_indexOfTwoMeans)
+  cell(k_indexOfTwoMeans)
       ->subLabel()
       ->setMessage(m_statistic->tOrZStatisticMessage());
-  typedCell(k_indexOfCategorical)
+  cell(k_indexOfCategorical)
       ->setVisible(m_statistic->numberOfSignificancesTestTypes() ==
                    numberOfRows());
-  typedCell(k_indexOfCategorical)
+  cell(k_indexOfCategorical)
       ->subLabel()
       ->setMessage(m_statistic->tStatisticMessage());
 }

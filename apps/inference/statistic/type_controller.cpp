@@ -23,15 +23,11 @@ TypeController::TypeController(StackViewController *parent,
       m_inputController(inputController),
       m_statistic(statistic) {
   m_selectableListView.setBottomMargin(0);
-  typedCell(k_indexOfTTest)
-      ->label()
-      ->setMessage(m_statistic->tDistributionName());
-  typedCell(k_indexOfPooledTest)
+  cell(k_indexOfTTest)->label()->setMessage(m_statistic->tDistributionName());
+  cell(k_indexOfPooledTest)
       ->label()
       ->setMessage(m_statistic->tPooledDistributionName());
-  typedCell(k_indexOfZTest)
-      ->label()
-      ->setMessage(m_statistic->zDistributionName());
+  cell(k_indexOfZTest)->label()->setMessage(m_statistic->zDistributionName());
 
   // Init selection
   selectRow(0);
@@ -44,7 +40,7 @@ void TypeController::didBecomeFirstResponder() {
 
 bool TypeController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (!typedCell(0)->canBeActivatedByEvent(event)) {
+  if (!cell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   DistributionType type;
@@ -93,7 +89,7 @@ void TypeController::stackOpenPage(ViewController *nextPage) {
 }
 
 void TypeController::viewWillAppear() {
-  typedCell(k_indexOfPooledTest)
+  cell(k_indexOfPooledTest)
       ->setVisible(m_statistic->numberOfAvailableDistributions() ==
                    numberOfRows());
 }

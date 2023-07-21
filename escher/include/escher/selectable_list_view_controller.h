@@ -53,9 +53,7 @@ class ExplicitSelectableListViewController
 };
 
 /* This class is useful to create an ExplicitSelectableListViewController of
- * the same type of cells with a constant number of rows that all have their own
- * reusable cell. The number of displayable cells should always be greater or
- * equal to the number of rows. */
+ * the same type of cells. */
 template <typename Cell, int NumberOfCells>
 class SelectableCellListPage : public ExplicitSelectableListViewController {
  public:

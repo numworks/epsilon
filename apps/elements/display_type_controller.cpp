@@ -10,7 +10,7 @@ DisplayTypeController::DisplayTypeController(
     StackViewController *stackController)
     : SelectableCellListPage(stackController) {
   for (int i = 0; i < k_numberOfCells; ++i) {
-    typedCell(i)->label()->setMessage(k_fields[i]->fieldLegend());
+    cell(i)->label()->setMessage(k_fields[i]->fieldLegend());
   }
 }
 

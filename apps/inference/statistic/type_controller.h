@@ -25,7 +25,6 @@ class TypeController
                  HypothesisController* hypothesisController,
                  InputController* intervalInputController,
                  Statistic* statistic);
-  Escher::View* view() override { return &m_selectableListView; }
   const char* title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;

@@ -135,8 +135,8 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
   if (std::abs(alpha) > k_displayWidthToSTDRatio ||
-      std::abs(z) > k_displayWidthToSTDRatio) {
-    // Alpha or z is out of the view, don't try to zoom
+      std::abs(z) > k_displayWidthToSTDRatio || alpha * z < 0) {
+    // Alpha or z is out of the view or their signs differ, don't try to zoom
     Shared::Inference::computeCurveViewRange();
     return false;
   }

@@ -283,7 +283,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   if (type == k_expressionCellType) {
     functionCell->setLayout(f->layout());
     functionCell->setMessage(
-        Preferences::sharedPreferences->examMode().forbidImplicitPlots()
+        Preferences::sharedPreferences->examMode().forbidGraphDetails()
             ? I18n::Message::Default
             : f->properties().caption());
     KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;

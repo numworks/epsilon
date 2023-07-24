@@ -62,16 +62,20 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView *plotView,
                                    KDContext *ctx, KDRect rect, float z,
                                    ComparisonNode::OperatorType op,
                                    double factor) const {
+  CurveViewRange *range = plotView->range();
   if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
     z = std::fabs(z);
-    drawTestCurve(plotView, ctx, rect, z,
-                  Poincare::ComparisonNode::OperatorType::Superior, 0.5);
-    drawTestCurve(plotView, ctx, rect, -z,
-                  Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
+    if (range->xMax() > 0) {
+      drawTestCurve(plotView, ctx, rect, z,
+                    Poincare::ComparisonNode::OperatorType::Superior, 0.5);
+    }
+    if (range->xMin() < 0) {
+      drawTestCurve(plotView, ctx, rect, -z,
+                    Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
+    }
     return;
   }
 
-  CurveViewRange *range = plotView->range();
   float xAlpha = m_test->thresholdAbscissa(op, factor);
   float clampedXAlpha = std::clamp(xAlpha, range->xMin(), range->xMax());
   float clampedZ = std::clamp(z, range->xMin(), range->xMax());

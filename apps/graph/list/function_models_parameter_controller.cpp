@@ -34,7 +34,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(
      * entering exam mode or changing country which requires exiting the app and
      * rebuilding the cells when re-entering. */
     m_modelCells[i].subLabel()->setMessage(
-        Preferences::sharedPreferences->examMode().forbidImplicitPlots()
+        Preferences::sharedPreferences->examMode().forbidGraphDetails()
             ? I18n::Message::Default
             : k_modelDescriptions[static_cast<int>(models[i]) - 1]);
   }

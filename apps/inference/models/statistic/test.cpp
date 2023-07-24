@@ -119,16 +119,19 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
-  if (hypothesisParams()->comparisonOperator() !=
+  if (hypothesisParams()->comparisonOperator() ==
       Poincare::ComparisonNode::OperatorType::NotEqual) {
-    alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
-  } else if (zoomSide) {
-    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Superior,
-                              0.5);
+    if (zoomSide) {
+      alpha = thresholdAbscissa(
+          Poincare::ComparisonNode::OperatorType::Superior, 0.5);
+      z = abs(z);
+    } else {
+      alpha = thresholdAbscissa(
+          Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
+      z = -abs(z);
+    }
   } else {
-    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Inferior,
-                              0.5);
-    z *= -1;
+    alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
   }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
   if (std::abs(alpha) > k_displayWidthToSTDRatio ||

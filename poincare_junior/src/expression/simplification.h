@@ -116,6 +116,7 @@ class Simplification {
   EDITION_REF_WRAP(ExpandPower);
   EDITION_REF_WRAP(ExpandTranscendentalOnRational);
   EDITION_REF_WRAP(PolynomialInterpretation);
+  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, bool);
 
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractExpPow, ContractAbs, ContractExpMult,

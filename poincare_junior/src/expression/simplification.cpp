@@ -511,8 +511,8 @@ bool Simplification::AdvancedReduction(Tree* ref) {
 
 bool Simplification::ShallowAdvancedReduction(Tree* ref, bool change) {
   return (ref->block()->isAlgebraic()
-              ? AdvanceReduceOnAlgebraic
-              : AdvanceReduceOnTranscendental)(ref, change);
+              ? AdvanceReduceOnAlgebraic(ref, change)
+              : AdvanceReduceOnTranscendental(ref, change));
 }
 
 // Reverse most system projections to display better expressions
@@ -700,7 +700,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
       /* Skip this if the expression is still transcendental to avoid risking
        * infinite loops. An assert isn't because, for example,
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      ShallowAdvancedReduction(tempClone, true);
+      AdvanceReduceOnAlgebraic(tempClone, true);
     }
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
     if (tempClone->treeSize() < 3 * treeSize) {

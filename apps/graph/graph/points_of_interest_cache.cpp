@@ -241,6 +241,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
         start, end, ContinuousFunction::k_unknownName, context);
     solver.setSearchStep(searchStep);
     solver.stretch();
+    solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
     Coordinate2D<double> solution;
     while (std::isfinite(
         (solution = (solver.*next)(e)).x())) {  // assignment in condition

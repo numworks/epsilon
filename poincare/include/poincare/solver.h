@@ -24,6 +24,8 @@ class Solver {
     Other,
   };
 
+  enum class GrowthSpeed : bool { Fast, Precise };
+
   typedef T (*FunctionEvaluation)(T, const void *);
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
                                   Coordinate2D<T>, const void *);
@@ -112,6 +114,7 @@ class Solver {
    * interval. */
   void stretch();
   void setSearchStep(T step) { m_maximalXStep = step; }
+  void setGrowthSpeed(GrowthSpeed speed) { m_growthSpeed = speed; }
 
  private:
   struct FunctionEvaluationParameters {
@@ -177,6 +180,7 @@ class Solver {
   Preferences::ComplexFormat m_complexFormat;
   Preferences::AngleUnit m_angleUnit;
   Interest m_lastInterest;
+  GrowthSpeed m_growthSpeed;
 };
 
 }  // namespace Poincare

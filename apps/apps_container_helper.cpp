@@ -5,3 +5,12 @@
 Shared::GlobalContext* AppsContainerHelper::sharedAppsContainerGlobalContext() {
   return AppsContainer::sharedAppsContainer()->globalContext();
 }
+
+void AppsContainerHelper::notifyCountryChangeToSnapshots() {
+  int nApps = AppsContainer::sharedAppsContainer()->numberOfBuiltinApps();
+  for (int i = 0; i < nApps; i++) {
+    AppsContainer::sharedAppsContainer()
+        ->appSnapshotAtIndex(i)
+        ->countryWasUpdated();
+  }
+}

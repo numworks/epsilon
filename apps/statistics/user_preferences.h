@@ -14,9 +14,7 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
   UserPreferences()
       : m_barWidth(1.0),
         m_firstDrawnBarAbscissa(0.0),
-        m_displayOutliers(
-            GlobalPreferences::sharedGlobalPreferences->outliersStatus() ==
-            CountryPreferences::OutlierDefaultVisibility::Displayed),
+        m_displayOutliers(false),
         m_displayCumulatedFrequencies{false, false, false} {}
 
   bool displayCumulatedFrequencies(int series) {

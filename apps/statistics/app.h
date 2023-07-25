@@ -33,6 +33,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
     App *unpack(Escher::Container *container) override;
     void reset() override;
+    void countryWasUpdated() override;
     const Descriptor *descriptor() const override;
     uint32_t *storeVersion() { return &m_storeVersion; }
     GraphViewModel *graphViewModel() { return &m_graphViewModel; }

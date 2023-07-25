@@ -43,6 +43,7 @@ class StoreController : public EditableCellTableViewController,
 
   // ViewController
   Escher::View* view() override { return &m_prefacedTableView; }
+  void viewWillAppear() override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -108,6 +109,8 @@ class StoreController : public EditableCellTableViewController,
 
   // TableViewDataSource
   Escher::TableSize1DManager* columnWidthManager() override {
+    /* Do not implement a RegularTableSize1DManager for width since it does not
+     * work with table separators. */
     return &m_widthManager;
   }
   Escher::TableSize1DManager* rowHeightManager() override {
@@ -119,7 +122,7 @@ class StoreController : public EditableCellTableViewController,
 
   BufferFunctionTitleCell m_titleCells[k_maxNumberOfDisplayableColumns];
 
-  Escher::RegularTableSize1DManager m_widthManager;
+  Escher::MemoizedColumnWidthManager<6> m_widthManager;
   Escher::RegularTableSize1DManager m_heightManager;
 };
 

@@ -182,8 +182,8 @@ void ScrollView::layoutSubviews(bool force) {
   }
 }
 
-void ScrollView::setContentOffset(KDPoint offset) {
-  if (m_dataSource->setOffset(offset)) {
+void ScrollView::setContentOffset(KDPoint offset, bool relayout) {
+  if (m_dataSource->setOffset(offset) && relayout) {
     layoutSubviews();
   }
 }

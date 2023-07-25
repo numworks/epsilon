@@ -100,7 +100,7 @@ class ScrollView : public View {
   }
   KDColor backgroundColor() const { return m_backgroundColor; }
 
-  virtual void setContentOffset(KDPoint offset);
+  virtual void setContentOffset(KDPoint offset, bool relayout = true);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
 
   void scrollToContentPoint(KDPoint point);

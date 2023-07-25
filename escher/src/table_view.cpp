@@ -15,11 +15,11 @@ TableView::TableView(TableViewDataSource* dataSource,
   m_decorator.setVisibility(true);
 }
 
-void TableView::setContentOffset(KDPoint offset) {
+void TableView::setContentOffset(KDPoint offset, bool relayout) {
   if (offset != contentOffset()) {
     m_contentView.resetMemoizedColumnAndRowOffsets();
   }
-  ScrollView::setContentOffset(offset);
+  ScrollView::setContentOffset(offset, relayout);
 }
 
 void TableView::reloadVisibleCellsAtColumn(int column) {

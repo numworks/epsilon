@@ -60,6 +60,47 @@ inline bool Inplace(bool func(Tree*), EditionReference* ref) {
 #define INPLACE(F) \
   static bool F(EditionReference* r) { return Inplace(F, r); }
 
+void SwapTrees(EditionReference& u, EditionReference& v);
+void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone);
+void CloneTreeAtNode(EditionReference& target, const Tree* treeToClone);
+
+void MoveNodeAtNode(EditionReference& target, Tree* nodeToMove);
+void MoveTreeAtNode(EditionReference& target, Tree* treeToMove);
+
+inline void MoveNodeOverTree(EditionReference& u, Tree* n) {
+  u = u->moveNodeOverTree(n);
+}
+
+inline void MoveTreeOverTree(EditionReference& u, Tree* n) {
+  u = u->moveTreeOverTree(n);
+}
+
+inline void MoveNodeOverNode(EditionReference& u, Tree* n) {
+  u = u->moveNodeOverNode(n);
+}
+
+inline void MoveTreeOverNode(EditionReference& u, Tree* n) {
+  u = u->moveTreeOverNode(n);
+}
+
+inline void CloneTreeOverNode(EditionReference& u, const Tree* n) {
+  u = u->cloneTreeOverNode(n);
+}
+
+inline void CloneTreeOverTree(EditionReference& u, const Tree* n) {
+  u = u->cloneTreeOverTree(n);
+}
+
+inline void CloneNodeOverNode(EditionReference& u, const Tree* n) {
+  u = u->cloneNodeOverNode(n);
+}
+
+inline void CloneNodeOverTree(EditionReference& u, const Tree* n) {
+  u = u->cloneNodeOverTree(n);
+}
+
+void SwapTrees(EditionReference& u, EditionReference& v);
+
 }  // namespace PoincareJ
 
 #endif

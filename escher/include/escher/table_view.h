@@ -33,6 +33,7 @@ class TableView : public ScrollView {
   int totalNumberOfRows() { return dataSource()->numberOfRows(); }
   int totalNumberOfColumns() { return dataSource()->numberOfColumns(); }
 
+  void setContentOffset(KDPoint offset) override final;
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
   virtual void scrollToCell(int col, int row) {
@@ -90,11 +91,11 @@ class TableView : public ScrollView {
       return std::max(
           m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
     }
-    int rowsScrollingOffset() const {
-      return m_dataSource->rowAfterCumulatedHeight(invisibleHeight());
-    }
-    int columnsScrollingOffset() const {
-      return m_dataSource->columnAfterCumulatedWidth(invisibleWidth());
+    int rowsScrollingOffset() const;
+    int columnsScrollingOffset() const;
+    void resetMemoizedColumnAndRowOffsets() {
+      m_rowsScrollingOffset = -1;
+      m_columnsScrollingOffset = -1;
     }
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
@@ -142,6 +143,8 @@ class TableView : public ScrollView {
     TableViewDataSource *m_dataSource;
     KDCoordinate m_horizontalCellOverlap;
     KDCoordinate m_verticalCellOverlap;
+    mutable int m_rowsScrollingOffset;
+    mutable int m_columnsScrollingOffset;
   };
   BarDecorator m_decorator;
   ContentView m_contentView;

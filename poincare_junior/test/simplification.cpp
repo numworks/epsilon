@@ -262,6 +262,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.E1", "50");
+  simplifies_to("2*sin(2y)*sin(y)", "cos(y)-cos(3*y)");
+  simplifies_to("2*sin(2y)*cos(y)", "sin(y)+sin(3*y)");
+  simplifies_to("2*cos(2y)*sin(y)", "-1*sin(y)+sin(3*y)");
+  simplifies_to("2*cos(2y)*cos(y)", "cos(y)+cos(3*y)");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

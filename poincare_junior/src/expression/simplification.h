@@ -71,6 +71,7 @@ class Simplification {
   static bool SimplifyPowerReal(Tree *u);
 
  private:
+  static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);
   static bool MergeAdditionChildren(Tree *u1, Tree *u2);
   static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
   static void ConvertPowerRealToPower(Tree *u);

@@ -1,6 +1,7 @@
 #include "simplification.h"
 
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/p_pusher.h>
@@ -89,35 +90,78 @@ bool Simplification::SimplifyAbs(Tree* u) {
   return true;
 }
 
+bool Simplification::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
+  // Trig second element is always expected to be a reduced integer.
+  assert(IsInteger(u) && !DeepSystematicReduce(u));
+  IntegerHandler i = Integer::Handler(u);
+  Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));
+  if (Comparison::Compare(remainder, 2_e) >= 0) {
+    *isOpposed = !*isOpposed;
+    remainder->moveTreeOverTree(
+        IntegerHandler::Remainder(i, IntegerHandler(2)));
+  }
+  bool changed = Comparison::Compare(remainder, u) != 0;
+  u->moveTreeOverTree(remainder);
+  // Simplified second element should have only two possible values.
+  assert(Number::IsZero(u) || Number::IsOne(u));
+  return changed;
+}
+
 bool Simplification::SimplifyTrigDiff(Tree* u) {
   assert(u->type() == BlockType::TrigDiff);
-  /* TrigDiff(x,y) = { 0 if x=y, 1 otherwise }
-   * TODO: ContractTrigonometric is the only place this is used. It might not be
-   * worth it. */
+  /* TrigDiff is used to factorize Trigonometric contraction. It determines the
+   * first term of these equations :
+   * 2*sin(x)*sin(y) = cos(x-y) - cos(x+y)  -> TrigDiff(1,1) = 0
+   * 2*sin(x)*cos(y) = sin(x-y) + sin(x+y)  -> TrigDiff(1,0) = 1
+   * 2*cos(x)*sin(y) =-sin(x-y) + sin(x+y)  -> TrigDiff(0,1) = 3
+   * 2*cos(x)*cos(y) = cos(x-y) + cos(x+y)  -> TrigDiff(0,0) = 0
+   */
+  // Simplify children as trigonometry second elements.
+  bool isOpposed = false;
   Tree* x = u->childAtIndex(0);
-  Tree* y = u->childAtIndex(1);
-  assert(Number::IsZero(x) || Number::IsOne(x));
-  assert(Number::IsZero(y) || Number::IsOne(y));
-  u->cloneTreeOverTree(x->treeIsIdenticalTo(y) ? 0_e : 1_e);
+  SimplifyTrigSecondElement(x, &isOpposed);
+  Tree* y = x->nextTree();
+  SimplifyTrigSecondElement(y, &isOpposed);
+  // Find TrigDiff value depending on children types (sin or cos)
+  bool isDifferent = x->type() != y->type();
+  // Account for sign difference between TrigDiff(1,0) and TrigDiff(0,1)
+  if (isDifferent && Number::IsZero(x)) {
+    isOpposed = !isOpposed;
+  }
+  // Replace TrigDiff with result
+  u->cloneTreeOverTree(isDifferent ? (isOpposed ? 3_e : 1_e)
+                                   : (isOpposed ? 2_e : 0_e));
   return true;
 }
 
 bool Simplification::SimplifyTrig(Tree* u) {
   assert(u->type() == BlockType::Trig);
-  // Trig(x,y) = {-Sin(x) if y=-1, Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2}
-  EditionReference secondArgument = u->childAtIndex(1);
-  /* Trig second element is always expected to be reduced. This will call
-   * SimplifyTrigDiff if needed. */
-  bool changed = DeepSystematicReduce(secondArgument);
-  if (Number::IsTwo(secondArgument) || Number::IsMinusOne(secondArgument)) {
-    // Simplify second argument to either 0 or 1 and oppose the tree.
-    secondArgument->cloneTreeOverTree(Number::IsTwo(secondArgument) ? 0_e
-                                                                    : 1_e);
+  // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
+  Tree* secondArgument = u->childAtIndex(1);
+  bool isOpposed = false;
+  bool changed = SimplifyTrigSecondElement(secondArgument, &isOpposed);
+  assert(Number::IsZero(secondArgument) || Number::IsOne(secondArgument));
+  bool isSin = Number::IsOne(secondArgument);
+  // cos(-x) = cos(x) and sin(-x) = -sin(x)
+  Tree* firstArgument = u->nextNode();
+  if (firstArgument->matchAndReplace(
+          KMult(KAnyTreesPlaceholder<A>(), -1_e, KAnyTreesPlaceholder<B>()),
+          KMult(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>()))) {
+    changed = true;
+    if (isSin) {
+      isOpposed = !isOpposed;
+    }
+    // Multiplication could have been squashed.
+    if (firstArgument->type() == BlockType::Multiplication) {
+      SimplifyMultiplication(firstArgument);
+    }
+  }
+
+  if (isOpposed) {
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
-    return true;
+    changed = true;
   }
-  assert(Number::IsZero(secondArgument) || Number::IsOne(secondArgument));
   return changed;
 }
 
@@ -862,6 +906,7 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
   /* Shallow reduce last Trig and the multiplication (in case it is opposed).
    * This step must be performed after sub-expansions since SimplifyProduct
    * may invalidate newTrig0 and newTrig3. */
+  SimplifyAddition(newTrig4->childAtIndex(1));
   SimplifyTrig(newTrig4);
   NAry::Flatten(newMult2);
   SimplifyMultiplication(newMult2);
@@ -902,24 +947,34 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
     return false;
   }
   EditionReference newMult1(ref->nextNode()->nextNode());
-  if (newMult1->type() != BlockType::Multiplication) {
-    // F is empty, Multiplications have been squashed->
-    EditionReference newTrig1 = newMult1;
-    EditionReference newTrig2 = newTrig1->nextTree();
-    assert(newTrig1->type() == BlockType::Trig &&
-           newTrig2->type() == BlockType::Trig);
-    SimplifyTrig(newTrig1);
-    SimplifyTrig(newTrig2);
-    return true;
-  }
-  EditionReference newTrig1(newMult1->nextNode());
   EditionReference newMult2(newMult1->nextTree());
-  EditionReference newTrig2(newMult2->nextNode());
-  // Shallow reduce new trigs and multiplications (in case one is opposed)
+  EditionReference newTrig1;
+  EditionReference newTrig2;
+  // If F is empty, Multiplications have been squashed
+  bool fIsEmpty = (newMult1->type() != BlockType::Multiplication);
+  if (fIsEmpty) {
+    newTrig1 = newMult1;
+    newTrig2 = newMult2;
+  } else {
+    newTrig1 = newMult1->nextNode();
+    newTrig2 = newMult2->nextNode();
+  }
+
+  // Shallow reduce new trigs
+  SimplifyAddition(newTrig1->childAtIndex(0));
+  SimplifyTrigDiff(newTrig1->childAtIndex(1));
   SimplifyTrig(newTrig1);
-  SimplifyMultiplication(newMult1);
+  SimplifyAddition(newTrig2->childAtIndex(0));
+  SimplifyAddition(newTrig2->childAtIndex(1));
   SimplifyTrig(newTrig2);
-  SimplifyMultiplication(newMult2);
+
+  if (fIsEmpty) {
+    return true;
+  } else {
+    // Shallow reduce multiplications in case one is opposed
+    SimplifyMultiplication(newMult1);
+    SimplifyMultiplication(newMult2);
+  }
 
   // Contract newly created multiplications :
   // - Trig(B-D, TrigDiff(C,E))*F

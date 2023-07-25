@@ -18,7 +18,9 @@ Solver<T>::Solver(T xStart, T xEnd, const char *unknown, Context *context,
       m_unknown(unknown),
       m_complexFormat(complexFormat),
       m_angleUnit(angleUnit),
-      m_lastInterest(Interest::None) {}
+      m_lastInterest(Interest::None),
+      m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
+                                                : GrowthSpeed::Fast) {}
 
 template <typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
@@ -470,10 +472,10 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
    *   i.e. 0.1 < |(t+dt)/t| < 10
    * - there is a minimal value for dt, to allow crossing zero.
    * - always sample a minimal number of points in the whole interval. */
-  constexpr T baseGrowthSpeed =
-      sizeof(T) == sizeof(double) ? static_cast<T>(1.01) : static_cast<T>(1.05);
-  static_assert(baseGrowthSpeed > static_cast<T>(1.),
-                "Growth speed must be greater than 1");
+  T baseGrowthSpeed = m_growthSpeed == GrowthSpeed::Precise
+                          ? static_cast<T>(1.01)
+                          : static_cast<T>(1.05);
+  assert(baseGrowthSpeed > static_cast<T>(1.));
   constexpr T maximalGrowthSpeed = static_cast<T>(10.);
   constexpr T growthSpeedAcceleration = static_cast<T>(1e-2);
   /* Increase density between 0.1 and 100 */

@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 class Polynomial final {
   /* We opt for the recursive representation.
-   * - Tree:
+   * - Node:
    *   | P TAG | number of terms | highest exponant | second highest exponant |
    * ... | number of terms | P TAG |
    * - Children: the first child is the variable, the others are the
@@ -83,7 +83,7 @@ class Polynomial final {
 
  private:
   // Discard null term and potentially discard the polynomial structure
-  static void Sanitize(Tree* pol);
+  static EditionReference Sanitize(EditionReference pol);
   typedef void (*OperationMonomial)(
       EditionReference polynomial,
       std::pair<EditionReference, uint8_t> monomial);

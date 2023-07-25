@@ -494,7 +494,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   changed = DeepSystematicReduce(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref) || changed;
-  changed = DeepSystematicReduce(ref) || changed;
+  assert(!DeepSystematicReduce(ref));
   changed = DeepBeautify(ref) || changed;
   return changed;
 }
@@ -696,7 +696,6 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
   if (ShallowExpand(tempClone)) {
-    DeepSystematicReduce(tempClone);
     if (tempClone->block()->isAlgebraic()) {
       /* Skip this if the expression is still transcendental to avoid risking
        * infinite loops. An assert isn't because, for example,
@@ -718,7 +717,6 @@ bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, bool change) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
   if (ShallowContract(tempClone)) {
-    DeepSystematicReduce(tempClone);
     // TODO: Decide on the metric to use here.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.
@@ -789,19 +787,24 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
                 numberOfGrandChildren);
   // f(0,E) ... +(A,B,C) ... *(,,)
   for (int i = 0; i < numberOfGrandChildren; i++) {
-    Tree* clone = SharedEditionPool->clone(ref, true);
+    EditionReference clone = SharedEditionPool->clone(ref, true);
     // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
     /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
      * clone.childAtIndex(childIndex)=Tree(clone.block()+childIndexOffset) */
     EditionReference(clone->block() + childIndexOffset)
         ->moveTreeOverTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
+    /* TODO: clone is always of the same type, the exact simplify method could
+     * be passed as an argument. */
+    ShallowSystematicReduce(clone);
   }
   // f(0,E) ... +(,,) ... *(f(A,E), f(B,E), f(C,E))
   children->removeNode();
   // f(0,E) ... *(f(A,E), f(B,E), f(C,E))
   ref = ref->moveTreeOverTree(output);
   // *(f(A,E), f(B,E), f(C,E))
+  // TODO: SimplifyAddition or SimplifyMultiplication
+  ShallowSystematicReduce(ref);
   return true;
 }
 
@@ -818,6 +821,8 @@ bool Simplification::TryAllOperations(Tree* e, const Operation* operations,
   int i = 0;
   while (failures < numberOfOperations) {
     failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
+    // EveryOperation should preserve e's reduced status
+    assert(!DeepSystematicReduce(e));
     i++;
   }
   return i > numberOfOperations;
@@ -830,7 +835,8 @@ bool Simplification::ContractAbs(Tree* ref) {
             KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KAnyTreesPlaceholder<A>(),
             KAbs(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
-            KAnyTreesPlaceholder<D>()));
+            KAnyTreesPlaceholder<D>()),
+      true);
 }
 
 bool Simplification::ExpandAbs(Tree* ref) {
@@ -846,7 +852,8 @@ bool Simplification::ContractLn(Tree* ref) {
            KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KAdd(KAnyTreesPlaceholder<A>(),
            KLn(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()));
+           KAnyTreesPlaceholder<D>()),
+      true);
 }
 
 bool Simplification::ExpandLn(Tree* ref) {
@@ -857,10 +864,9 @@ bool Simplification::ExpandLn(Tree* ref) {
 
 bool Simplification::ExpandExp(Tree* ref) {
   // TODO: exp(A?*B) = exp(A)^(B) if B is an integer only
-  return
-      // exp(A+B+...) = exp(A) * exp(B) * ...
-      DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
-                         BlockType::Multiplication);
+  // exp(A+B+...) = exp(A) * exp(B) * ...
+  return DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
+                            BlockType::Multiplication);
 }
 
 bool Simplification::ContractExpMult(Tree* ref) {
@@ -870,55 +876,66 @@ bool Simplification::ContractExpMult(Tree* ref) {
             KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KAnyTreesPlaceholder<A>(),
             KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-            KAnyTreesPlaceholder<D>()));
+            KAnyTreesPlaceholder<D>()),
+      true);
 }
 
 bool Simplification::ContractExpPow(Tree* ref) {
   // exp(A)^B = exp(A*B)
-  return ref->matchAndReplace(
-      KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
-      KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
+  return ref->matchAndReplace(KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
+                              KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())),
+                              true);
 }
+
+/* TODO : Find an easier solution for nested expand/contract smart shallow
+ * simplification. */
 
 bool Simplification::ExpandTrigonometric(Tree* ref) {
   /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
    * ExpandTrigonometric is more complex than other expansions and cannot be
    * factorized with DistributeOverNAry. */
+  // MatchAndReplace's simplify cannot be used because of nested expansion.
   if (!ref->matchAndReplace(
           KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
                 KPlaceholder<C>()),
           KAdd(KMult(KTrig(KAdd(KAnyTreesPlaceholder<A>()), 0_e),
                      KTrig(KPlaceholder<B>(), KPlaceholder<C>())),
-               KMult(
-                   KTrig(KAdd(KAnyTreesPlaceholder<A>()), 1_e),
-                   KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
+               KMult(KTrig(KAdd(KAnyTreesPlaceholder<A>()), 1_e),
+                     KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))),
+          false)) {
     return false;
   }
-  EditionReference newTrig1(ref->nextNode()->nextNode());
-  EditionReference newMult2(ref->nextNode()->nextTree());
+  EditionReference newMult1(ref->nextNode());
+  EditionReference newTrig1(newMult1->nextNode());
+  EditionReference newTrig2(newTrig1->nextTree());
+  EditionReference newMult2(newMult1->nextTree());
   EditionReference newTrig3(newMult2->nextNode());
-  EditionReference newTrig4(newMult2->nextNode()->nextTree());
-  // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
+  EditionReference newTrig4(newTrig3->nextTree());
   // Addition is expected to have been squashed if unary.
   assert(newTrig1->nextNode()->type() != BlockType::Addition ||
          newTrig1->nextNode()->numberOfChildren() > 1);
+  // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
   if (ExpandTrigonometric(newTrig1)) {
     if (!ExpandTrigonometric(newTrig3)) {
       assert(false);
     }
+  } else {
+    SimplifyTrig(newTrig1);
+    SimplifyTrig(newTrig3);
   }
-  /* Shallow reduce last Trig and the multiplication (in case it is opposed).
-   * This step must be performed after sub-expansions since SimplifyProduct
-   * may invalidate newTrig0 and newTrig3. */
+  /* Shallow reduce new trees. This step must be performed after sub-expansions
+   * since SimplifyProduct may invalidate newTrig1 and newTrig3. */
   SimplifyAddition(newTrig4->childAtIndex(1));
+  SimplifyTrig(newTrig2);
   SimplifyTrig(newTrig4);
-  NAry::Flatten(newMult2);
+  SimplifyMultiplication(newMult1);
   SimplifyMultiplication(newMult2);
+  SimplifyAddition(ref);
   return true;
 }
 
 bool Simplification::ContractTrigonometric(Tree* ref) {
-  // A?+cos(B)^2+C?+sin(D)^2+E? = A + 1 + C + E
+  // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
   if (ref->matchAndReplace(
           KAdd(KAnyTreesPlaceholder<A>(),
                KPow(KTrig(KPlaceholder<B>(), 0_e), 2_e),
@@ -926,7 +943,8 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
                KPow(KTrig(KPlaceholder<D>(), 1_e), 2_e),
                KAnyTreesPlaceholder<E>()),
           KAdd(1_e, KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>(),
-               KAnyTreesPlaceholder<E>()))) {
+               KAnyTreesPlaceholder<E>()),
+          true)) {
     return true;
   }
   /* A?*Trig(B, C)*Trig(D, E)*F?
@@ -934,60 +952,60 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
    * F is duplicated in case it contains other Trig trees that could be
    * contracted as well. ContractTrigonometric is therefore more complex than
    * other contractions. It handles nested trees itself. */
+  // MatchAndReplace's simplify cannot be used because of nested contraction.
   if (!ref->matchAndReplace(
           KMult(KAnyTreesPlaceholder<A>(),
                 KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
                 KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
                 KAnyTreesPlaceholder<F>()),
           KMult(
-              KAdd(KMult(KTrig(KAdd(KPlaceholder<B>(),
-                                    KMult(-1_e, KPlaceholder<D>())),
+              KAdd(KMult(KTrig(KAdd(KMult(-1_e, KPlaceholder<D>()),
+                                    KPlaceholder<B>()),
                                KTrigDiff(KPlaceholder<C>(), KPlaceholder<E>())),
                          KAnyTreesPlaceholder<F>()),
                    KMult(KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
                                KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
                          KAnyTreesPlaceholder<F>())),
-              KAnyTreesPlaceholder<A>(), KHalf))) {
+              KAnyTreesPlaceholder<A>(), KHalf),
+          false)) {
     return false;
   }
-  EditionReference newMult1(ref->nextNode()->nextNode());
+  // TODO : Find the replaced nodes and ShallowSystematicReduce smartly
+  EditionReference newAdd(ref->nextNode());
+  EditionReference newMult1(newAdd->nextNode());
   EditionReference newMult2(newMult1->nextTree());
-  EditionReference newTrig1;
-  EditionReference newTrig2;
   // If F is empty, Multiplications have been squashed
-  bool fIsEmpty = (newMult1->type() != BlockType::Multiplication);
-  if (fIsEmpty) {
-    newTrig1 = newMult1;
-    newTrig2 = newMult2;
-  } else {
-    newTrig1 = newMult1->nextNode();
-    newTrig2 = newMult2->nextNode();
-  }
+  bool fIsEmpty = newMult1->type() != BlockType::Multiplication;
+  EditionReference newTrig1 =
+      fIsEmpty ? newMult1 : EditionReference(newMult1->nextNode());
+  EditionReference newTrig2 =
+      fIsEmpty ? newMult2 : EditionReference(newMult2->nextNode());
 
-  // Shallow reduce new trigs
-  SimplifyAddition(newTrig1->childAtIndex(0));
+  // Shallow reduce new trees
+  EditionReference newTrig1Add = newTrig1->nextNode();
+  EditionReference newTrig1AddMult = newTrig1Add->nextNode();
+  SimplifyMultiplication(newTrig1AddMult);
+  SimplifyAddition(newTrig1Add);
   SimplifyTrigDiff(newTrig1->childAtIndex(1));
   SimplifyTrig(newTrig1);
   SimplifyAddition(newTrig2->childAtIndex(0));
   SimplifyAddition(newTrig2->childAtIndex(1));
   SimplifyTrig(newTrig2);
 
-  if (fIsEmpty) {
-    return true;
-  } else {
-    // Shallow reduce multiplications in case one is opposed
+  if (!fIsEmpty) {
     SimplifyMultiplication(newMult1);
     SimplifyMultiplication(newMult2);
-  }
-
-  // Contract newly created multiplications :
-  // - Trig(B-D, TrigDiff(C,E))*F
-  if (ContractTrigonometric(newMult1)) {
-    // - Trig(B+D, E+C))*F
-    if (!ContractTrigonometric(newMult2)) {
-      assert(false);
+    // Contract newly created multiplications :
+    // - Trig(B-D, TrigDiff(C,E))*F
+    if (ContractTrigonometric(newMult1)) {
+      // - Trig(B+D, E+C))*F
+      if (!ContractTrigonometric(newMult2)) {
+        assert(false);
+      }
     }
   }
+  SimplifyAddition(newAdd);
+  SimplifyMultiplication(ref);
   return true;
 }
 
@@ -1018,22 +1036,31 @@ bool Simplification::ExpandPower(Tree* ref) {
   // TODO: Implement a more general (A + B)^C expand.
   /* This isn't factorized with DistributeOverNAry because of the necessary
    * second term expansion. */
+  // MatchAndReplace's simplify cannot be used because of nested expansion.
   if (!ref->matchAndReplace(
           KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
           KAdd(KPow(KAdd(KAnyTreesPlaceholder<A>()), 2_e),
                KMult(2_e, KAdd(KAnyTreesPlaceholder<A>()), KPlaceholder<B>()),
-               KPow(KPlaceholder<B>(), 2_e)))) {
+               KPow(KPlaceholder<B>(), 2_e)),
+          false)) {
     return false;
   }
+  // TODO : Find the replaced nodes and ShallowSystematicReduce smartly
   // A^2 and 2*A*B may be expanded again, do it recursively
-  EditionReference newPow(ref->nextNode());
+  EditionReference newPow1(ref->nextNode());
+  EditionReference newMult(newPow1->nextTree());
+  EditionReference newPow2(newMult->nextTree());
   // Addition is expected to have been squashed if unary.
-  assert(newPow->nextNode()->type() != BlockType::Addition ||
-         newPow->nextNode()->numberOfChildren() > 1);
-  if (ExpandPower(newPow)) {
-    ExpandMult(newPow->nextTree());
-    NAry::Flatten(ref);
+  assert(newPow1->nextNode()->type() != BlockType::Addition ||
+         newPow1->nextNode()->numberOfChildren() > 1);
+  if (ExpandPower(newPow1)) {
+    ExpandMult(newPow1->nextTree());
+  } else {
+    SimplifyPower(newPow1);
+    SimplifyMultiplication(newMult);
   }
+  SimplifyPower(newPow2);
+  SimplifyAddition(ref);
   return true;
 }
 

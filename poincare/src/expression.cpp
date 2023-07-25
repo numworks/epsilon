@@ -1667,22 +1667,43 @@ Expression Expression::deepApproximateKeepingSymbols(
   bool thisShouldApproximate, thisShouldReduce;
   deepApproximateChildrenKeepingSymbols(
       reductionContext, &thisShouldApproximate, &thisShouldReduce);
-  /* No need to approximate lists and matrices. Approximating their children is
-   * enough.
-   * Do not approximate random because it can be considered as a symbol that
-   * always changes values each time it's evaluated. */
-  if (thisShouldApproximate && type() != ExpressionNode::Type::Symbol &&
-      type() != ExpressionNode::Type::List &&
-      type() != ExpressionNode::Type::Matrix && !isRandom()) {
-    Expression a = approximate<double>(reductionContext.context(),
-                                       reductionContext.complexFormat(),
-                                       reductionContext.angleUnit());
-    replaceWithInPlace(a);
-    *parentShouldApproximate = true;
-    *parentShouldReduce = true;
-    /* approximate can return an Opposite or a Subtraction, so we need to
-     * re-reduce the expression.*/
-    return a.shallowReduce(reductionContext);
+  if (thisShouldApproximate) {
+    if (type() == ExpressionNode::Type::Rational) {
+      /* It's better not to approximate rational because some reduction and
+       * approximation routines check for the presence of rationals to compute
+       * properly (like for example PowerNode::templatedApproximate).
+       * Currently, approximateKeepingSymbols is used:
+       *  - For the exact solver solutions when exact results are forbidden by
+       *    the exam mode. In this case, we can keep rationals because "Forbid
+       *    exact results" allows to display fractions.
+       *  - For the expressionApproximated of ContinuousFunctions which use this
+       *    to have an expression faster to evaluate when graphing. In this
+       *    case, we NEED to keep rationals, so that
+       *    PowerNode::templateApproximated works correctly. (if not, x^(1/3)
+       *    would be undef for x < 0. in RealMode).
+       * We still set parentShouldApproximate to true in case the parent needs
+       * to approximate so that it does not assumes that this contains symbols.
+       */
+      *parentShouldApproximate = true;
+    } else if (type() != ExpressionNode::Type::Symbol &&
+               type() != ExpressionNode::Type::List &&
+               type() != ExpressionNode::Type::Matrix && !isRandom()) {
+      /* No need to approximate lists and matrices. Approximating their children
+       * is enough.
+       * Do not approximate symbols because we are "KeepingSymbols".
+       * Do not approximate random because it can be considered as a
+       * symbol that always changes values each time it's evaluated.
+       * */
+      Expression a = approximate<double>(reductionContext.context(),
+                                         reductionContext.complexFormat(),
+                                         reductionContext.angleUnit());
+      replaceWithInPlace(a);
+      *parentShouldApproximate = true;
+      *parentShouldReduce = true;
+      /* approximate can return an Opposite or a Subtraction, so we need to
+       * re-reduce the expression.*/
+      return a.shallowReduce(reductionContext);
+    }
   }
 
   if (thisShouldReduce) {

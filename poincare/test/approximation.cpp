@@ -2170,10 +2170,12 @@ QUIZ_CASE(poincare_approximation_keeping_symbols) {
   assert_expression_approximates_keeping_symbols_to("int(x,x,0,2)+int(x,x,0,x)",
                                                     "int(x,x,0,x)+2");
   assert_expression_approximates_keeping_symbols_to(
-      "[[x,1/2][1/2+x,cos(4/3+x)]]", "[[x,0.5][x+0.5,cos(x+1.333333333)]]");
-  assert_expression_approximates_keeping_symbols_to("{x,undef,3/4+x,1/2}",
-                                                    "{x,undef,x+0.75,0.5}");
-  assert_expression_approximates_keeping_symbols_to("3/5→x", "0.6→x");
+      "[[x,cos(10)][1/2+x,cos(4/3+x)]]",
+      "[[x,0.984807753][\u00122×x+1\u0013/2,cos(\u00123×x+4\u0013/3)]]");
+  assert_expression_approximates_keeping_symbols_to(
+      "{x,undef,cos(10)+x,cos(10)}", "{x,undef,x+0.984807753,0.984807753}");
+  assert_expression_approximates_keeping_symbols_to("cos(10)→x",
+                                                    "0.984807753→x");
   assert_expression_approximates_keeping_symbols_to("4×kg×s^(-3)",
                                                     Undefined::Name());
   assert_expression_approximates_keeping_symbols_to("piecewise(T×x<0)",

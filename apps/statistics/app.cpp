@@ -48,6 +48,12 @@ void App::Snapshot::reset() {
   Shared::SharedApp::Snapshot::reset();
 }
 
+void App::Snapshot::countryWasUpdated() {
+  m_userPreferences.setDisplayOutliers(
+      GlobalPreferences::sharedGlobalPreferences->outliersStatus() ==
+      CountryPreferences::OutlierDefaultVisibility::Displayed);
+}
+
 constexpr static App::Descriptor sDescriptor;
 
 const App::Descriptor *App::Snapshot::descriptor() const {

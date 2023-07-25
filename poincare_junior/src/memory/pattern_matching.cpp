@@ -1,6 +1,7 @@
 #include "pattern_matching.h"
 
 #include <poincare_junior/src/expression/number.h>
+#include <poincare_junior/src/expression/simplification.h>
 
 #include "../n_ary.h"
 
@@ -196,7 +197,7 @@ bool PatternMatching::Match(const Tree* pattern, const Tree* source,
 }
 
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
-                                  Tree* insertedNAry) {
+                                  Tree* insertedNAry, bool simplify) {
   Tree* top = Tree::FromBlocks(SharedEditionPool->lastBlock());
   const TypeBlock* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
@@ -204,22 +205,34 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
   const Tree* node = withinNAry ? structure->nextNode() : structure;
   while (node->block() < lastStructureBlock) {
     if (node->type() != BlockType::Placeholder) {
+      int numberOfChildren = node->numberOfChildren();
       if (node->block()->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
         Tree* insertedNode = SharedEditionPool->clone(node, false);
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
-        CreateTree(node, context, insertedNode);
-        NAry::Sanitize(insertedNode);
+        CreateTree(node, context, insertedNode, simplify);
+        if (simplify) {
+          Simplification::ShallowSystematicReduce(insertedNode);
+        } else {
+          NAry::Sanitize(insertedNode);
+        }
         node = node->nextTree();
-      } else if (withinNAry && node->numberOfChildren() > 0) {
+      } else if (withinNAry && numberOfChildren > 0) {
         // Insert the tree recursively to locally remove insertedNAry
-        CreateTree(node, context, nullptr);
+        CreateTree(node, context, nullptr, simplify);
         node = node->nextTree();
       } else {
-        SharedEditionPool->clone(node, false);
+        Tree* result = SharedEditionPool->clone(node, false);
         node = node->nextNode();
+        if (simplify) {
+          for (size_t i = 0; i < numberOfChildren; i++) {
+            CreateTree(node, context, nullptr, simplify);
+            node = node->nextTree();
+          }
+          Simplification::ShallowSystematicReduce(result);
+        }
       }
       continue;
     }
@@ -248,11 +261,13 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
-        SharedEditionPool->clone(nodeToInsert, true);
+        Tree* inserted = SharedEditionPool->clone(nodeToInsert, true);
+        assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
-    SharedEditionPool->clone(nodeToInsert, true);
+    Tree* inserted = SharedEditionPool->clone(nodeToInsert, true);
+    assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
     node = node->nextNode();
   }
   return top;
@@ -268,7 +283,7 @@ Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
 }
 
 bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
-                                      const Tree* structure) {
+                                      const Tree* structure, bool simplify) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
@@ -378,7 +393,7 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
   }
 
   // Step 5 - Build the PatternMatching replacement
-  Tree* created = Create(structure, ctx);
+  Tree* created = Create(structure, ctx, simplify);
 
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
@@ -389,6 +404,7 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
   return true;
 }
 
-bool Tree::matchAndReplace(const Tree* pattern, const Tree* structure) {
-  return PatternMatching::MatchAndReplace(this, pattern, structure);
+bool Tree::matchAndReplace(const Tree* pattern, const Tree* structure,
+                           bool simplify) {
+  return PatternMatching::MatchAndReplace(this, pattern, structure, simplify);
 }

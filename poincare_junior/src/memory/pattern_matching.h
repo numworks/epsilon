@@ -69,15 +69,15 @@ class PatternMatching {
   };
 
   static bool Match(const Tree* pattern, const Tree* source, Context* context);
-  static Tree* Create(const Tree* structure,
-                      const Context context = Context()) {
-    return CreateTree(structure, context, nullptr);
+  static Tree* Create(const Tree* structure, const Context context = Context(),
+                      bool simplify = false) {
+    return CreateTree(structure, context, nullptr, simplify);
   }
   static Tree* MatchAndCreate(const Tree* source, const Tree* pattern,
                               const Tree* structure);
   // Return true if reference has been replaced
   static bool MatchAndReplace(Tree* node, const Tree* pattern,
-                              const Tree* structure);
+                              const Tree* structure, bool simplify = false);
 
  private:
   /* During Match, MatchContext allow keeping track of matched Nary sizes.
@@ -126,7 +126,7 @@ class PatternMatching {
                          Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in EditionPool
   static Tree* CreateTree(const Tree* structure, const Context context,
-                          Tree* insertedNAry);
+                          Tree* insertedNAry, bool simplify);
 };
 
 }  // namespace PoincareJ

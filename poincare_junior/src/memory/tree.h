@@ -165,7 +165,8 @@ class Tree {
   Tree* detachNode() { return detach(false); };
   Tree* detachTree() { return detach(true); };
 
-  bool matchAndReplace(const Tree* pattern, const Tree* structure);
+  bool matchAndReplace(const Tree* pattern, const Tree* structure,
+                       bool simplify = false);
 
   // Iterators
   class AbstractIterator {

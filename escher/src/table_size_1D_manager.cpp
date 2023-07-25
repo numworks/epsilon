@@ -80,6 +80,10 @@ int MemoizedTableSize1DManager::computeIndexAfterCumulatedSize(
   if (offset < m_memoizedCumulatedSizeOffset / 2) {
     return k_undefinedSize;
   }
+  if (offset == m_lastCumulatedSize) {
+    return m_lastIndexAfterCumulatedSize;
+  }
+  m_lastCumulatedSize = offset;
   /* Take advantage of m_memoizedCumulatedSizeOffset as offset is closer to
    * m_memoizedCumulatedSizeOffset than 0. */
   if (m_memoizedCumulatedSizeOffset == k_undefinedSize) {
@@ -93,6 +97,7 @@ int MemoizedTableSize1DManager::computeIndexAfterCumulatedSize(
   // Search index around m_memoizedIndexOffset
   KDCoordinate cumulatedSize = m_memoizedCumulatedSizeOffset;
   if (offset == cumulatedSize) {
+    m_lastIndexAfterCumulatedSize = m_memoizedIndexOffset;
     return m_memoizedIndexOffset;
   }
   if (offset > m_memoizedCumulatedSizeOffset) {
@@ -101,19 +106,23 @@ int MemoizedTableSize1DManager::computeIndexAfterCumulatedSize(
       // From here on, memoization might be updated.
       cumulatedSize += sizeAtIndex(i);
       if (offset < cumulatedSize) {
+        m_lastIndexAfterCumulatedSize = i;
         return i;
       }
     }
+    m_lastIndexAfterCumulatedSize = nLines;
     return nLines;
   }
   for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
     // From here on, memoization might be updated.
     cumulatedSize -= sizeAtIndex(i);
     if (offset >= cumulatedSize) {
+      m_lastIndexAfterCumulatedSize = i;
       return i;
     }
   }
   assert(cumulatedSize == 0);
+  m_lastIndexAfterCumulatedSize = 0;
   return 0;
 }
 
@@ -137,6 +146,8 @@ void MemoizedTableSize1DManager::resetSizeMemoization(bool force) {
   // Reset memoized index and corresponding cumulated size.
   m_memoizedIndexOffset = 0;
   m_memoizedCumulatedSizeOffset = 0;
+  m_lastCumulatedSize = 0;
+  m_lastIndexAfterCumulatedSize = 0;
   if (force) {
     // Do not preserve total size
     m_memoizedTotalSize = k_undefinedSize;
@@ -159,6 +170,8 @@ void MemoizedTableSize1DManager::updateMemoizationForIndex(
         m_memoizedCumulatedSizeOffset - previousSize + newSize;
     assert(m_memoizedCumulatedSizeOffset >= 0);
   }
+  m_lastCumulatedSize = 0;
+  m_lastIndexAfterCumulatedSize = 0;
   if (!sizeAtIndexIsMemoized(index)) {
     return;
   }

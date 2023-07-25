@@ -88,8 +88,18 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
   void setMemoizationIndex(int index);
   void shiftMemoization(bool lowerIndex);
   KDCoordinate m_memoizedCumulatedSizeOffset;
-  KDCoordinate m_memoizedTotalSize;
   int m_memoizedIndexOffset;
+  KDCoordinate m_memoizedTotalSize;
+  /* These two values store the last computed value of
+   * computeIndexAfterCumulatedSize. Indeed, this method is called a countless
+   * amount of time each time a table is layouted because it is used to know the
+   * numberOfDisplayableRows which is called by methods like cellAtLocation or
+   * numberOfSubviews.
+   * Most of the time, computeIndexAfterCumulatedSize is always called with the
+   * same offset argument, so we just need to memoize the last computed value to
+   * greatly improve the performances.*/
+  int m_lastIndexAfterCumulatedSize;
+  KDCoordinate m_lastCumulatedSize;
   mutable int m_memoizationLockedLevel;
 };
 

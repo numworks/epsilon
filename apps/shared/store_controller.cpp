@@ -22,7 +22,8 @@ StoreController::StoreController(Responder *parentResponder,
       ButtonRowDelegate(header, nullptr),
       StoreColumnHelper(this, parentContext, this),
       m_prefacedTableView(0, this, &m_selectableTableView, this),
-      m_store(store) {
+      m_store(store),
+      m_widthManager(this) {
   m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);
   m_prefacedTableView.setCellOverlap(0, 0);
   m_prefacedTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin,
@@ -119,6 +120,11 @@ KDCoordinate StoreController::separatorBeforeColumn(int column) {
   return column > 0 && m_store->relativeColumn(column) == 0
              ? Escher::Metric::TableSeparatorThickness
              : 0;
+}
+
+void StoreController::viewWillAppear() {
+  resetSizeMemoization();  // In case the number of columns changed
+  EditableCellTableViewController::viewWillAppear();
 }
 
 void StoreController::setTitleCellText(HighlightCell *cell, int column) {

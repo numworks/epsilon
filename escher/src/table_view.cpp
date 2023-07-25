@@ -15,6 +15,13 @@ TableView::TableView(TableViewDataSource* dataSource,
   m_decorator.setVisibility(true);
 }
 
+void TableView::setContentOffset(KDPoint offset) {
+  if (offset != contentOffset()) {
+    m_contentView.resetMemoizedColumnAndRowOffsets();
+  }
+  ScrollView::setContentOffset(offset);
+}
+
 void TableView::reloadVisibleCellsAtColumn(int column) {
   // Reload visible cells of the selected column
   int firstVisibleCol = firstDisplayedColumn();
@@ -42,7 +49,9 @@ TableView::ContentView::ContentView(TableView* tableView,
       m_tableView(tableView),
       m_dataSource(dataSource),
       m_horizontalCellOverlap(horizontalCellOverlap),
-      m_verticalCellOverlap(verticalCellOverlap) {}
+      m_verticalCellOverlap(verticalCellOverlap),
+      m_rowsScrollingOffset(-1),
+      m_columnsScrollingOffset(-1) {}
 
 void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   /* The separators between cells need to be filled with background color.
@@ -169,6 +178,22 @@ HighlightCell* TableView::ContentView::cellAtLocation(int col, int row) {
   int index = relativeRow * numberOfDisplayableColumns() + relativeColumn;
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
+}
+
+int TableView::ContentView::rowsScrollingOffset() const {
+  if (m_rowsScrollingOffset < 0) {
+    m_rowsScrollingOffset =
+        m_dataSource->rowAfterCumulatedHeight(invisibleHeight());
+  }
+  return m_rowsScrollingOffset;
+}
+
+int TableView::ContentView::columnsScrollingOffset() const {
+  if (m_columnsScrollingOffset < 0) {
+    m_columnsScrollingOffset =
+        m_dataSource->columnAfterCumulatedWidth(invisibleWidth());
+  }
+  return m_columnsScrollingOffset;
 }
 
 View* TableView::ContentView::subviewAtIndex(int index) {

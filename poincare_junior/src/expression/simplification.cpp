@@ -26,12 +26,16 @@ bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = false;
-  for (auto [child, index] : NodeIterator::Children<Editable>(u)) {
+  int numberOfChildren = u->numberOfChildren();
+  Tree* child = u->nextNode();
+  while (numberOfChildren > 0) {
     modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
       u->cloneNodeOverTree(KUndef);
       return true;
     }
+    child = child->nextTree();
+    numberOfChildren--;
   }
   return ShallowSystematicReduce(u) || modified;
 }

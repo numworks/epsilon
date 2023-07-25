@@ -727,8 +727,7 @@ bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, bool change) {
     tempClone->removeTree();
     tempClone = ref->clone();
   }
-  if (ExpandTranscendentalOnRational(tempClone) +
-      ShallowAlgebraicExpand(tempClone) + PolynomialInterpretation(tempClone)) {
+  if (PolynomialInterpretation(tempClone)) {
     // TODO: Decide on the metric to use here.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.
@@ -753,8 +752,11 @@ bool Simplification::ExpandTranscendentalOnRational(Tree* e) {
 }
 
 bool Simplification::PolynomialInterpretation(Tree* e) {
-  // TODO : Implement
-  return false;
+  // Prepare the expression for Polynomial interpretation:
+  bool changed = ExpandTranscendentalOnRational(e);
+  changed = ShallowAlgebraicExpand(e) || changed;
+  // TODO : Implement PolynomialInterpretation
+  return changed;
 }
 
 bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,

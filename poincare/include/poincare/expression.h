@@ -758,14 +758,14 @@ class Expression : public TreeHandle {
       Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
 
   Expression deepApproximateKeepingSymbols(ReductionContext reductionContext,
-                                           bool* parentShouldApproximate,
+                                           bool* parentCanApproximate,
                                            bool* parentShouldReduce);
   Expression deepApproximateKeepingSymbols(ReductionContext reductionContext) {
     bool dummy = false;
     return deepApproximateKeepingSymbols(reductionContext, &dummy, &dummy);
   }
   void deepApproximateChildrenKeepingSymbols(
-      const ReductionContext& reductionContextbool, bool* shouldApproximate,
+      const ReductionContext& reductionContextbool, bool* canApproximate,
       bool* shouldReduce);
 
   /* Properties */

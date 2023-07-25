@@ -1660,14 +1660,14 @@ Expression Expression::cloneAndApproximateKeepingSymbols(
 }
 
 Expression Expression::deepApproximateKeepingSymbols(
-    ReductionContext reductionContext, bool *parentShouldApproximate,
+    ReductionContext reductionContext, bool *parentCanApproximate,
     bool *parentShouldReduce) {
-  *parentShouldApproximate = false;
+  *parentCanApproximate = false;
   *parentShouldReduce = false;
-  bool thisShouldApproximate, thisShouldReduce;
-  deepApproximateChildrenKeepingSymbols(
-      reductionContext, &thisShouldApproximate, &thisShouldReduce);
-  if (thisShouldApproximate) {
+  bool thisCanApproximate, thisShouldReduce;
+  deepApproximateChildrenKeepingSymbols(reductionContext, &thisCanApproximate,
+                                        &thisShouldReduce);
+  if (thisCanApproximate) {
     if (type() == ExpressionNode::Type::Rational) {
       /* It's better not to approximate rational because some reduction and
        * approximation routines check for the presence of rationals to compute
@@ -1681,10 +1681,8 @@ Expression Expression::deepApproximateKeepingSymbols(
        *    case, we NEED to keep rationals, so that
        *    PowerNode::templateApproximated works correctly. (if not, x^(1/3)
        *    would be undef for x < 0. in RealMode).
-       * We still set parentShouldApproximate to true in case the parent needs
-       * to approximate so that it does not assumes that this contains symbols.
        */
-      *parentShouldApproximate = true;
+      *parentCanApproximate = true;
     } else if (type() != ExpressionNode::Type::Symbol &&
                type() != ExpressionNode::Type::List &&
                type() != ExpressionNode::Type::Matrix && !isRandom()) {
@@ -1698,7 +1696,7 @@ Expression Expression::deepApproximateKeepingSymbols(
                                          reductionContext.complexFormat(),
                                          reductionContext.angleUnit());
       replaceWithInPlace(a);
-      *parentShouldApproximate = true;
+      *parentCanApproximate = true;
       *parentShouldReduce = true;
       /* approximate can return an Opposite or a Subtraction, so we need to
        * re-reduce the expression.*/
@@ -1719,9 +1717,9 @@ Expression Expression::deepApproximateKeepingSymbols(
 }
 
 void Expression::deepApproximateChildrenKeepingSymbols(
-    const ReductionContext &reductionContext, bool *shouldApproximate,
+    const ReductionContext &reductionContext, bool *canApproximate,
     bool *shouldReduce) {
-  *shouldApproximate = true;
+  *canApproximate = true;
   *shouldReduce = false;
   const int childrenCount = numberOfChildren();
   bool parameteredExpression = isParameteredExpression();
@@ -1741,18 +1739,18 @@ void Expression::deepApproximateChildrenKeepingSymbols(
           (type() == ExpressionNode::Type::Logarithm && i == 1 &&
            child.type() == ExpressionNode::Type::ConstantMaths &&
            static_cast<Constant &>(child).isExponentialE()))) {
-      bool thisShouldApproximate, thisShouldReduce;
+      bool thisCanApproximate, thisShouldReduce;
       childAtIndex(i).deepApproximateKeepingSymbols(
-          reductionContext, &thisShouldApproximate, &thisShouldReduce);
+          reductionContext, &thisCanApproximate, &thisShouldReduce);
       /* If at least 1 child failed approximation, no need to approximate: it
        * means it has symbols */
-      *shouldApproximate = *shouldApproximate && thisShouldApproximate;
+      *canApproximate = *canApproximate && thisCanApproximate;
       /* If at least 1 child changed, re-reduce its parent. */
       *shouldReduce = *shouldReduce || thisShouldReduce;
     }
   }
   if (storeExpression) {
-    *shouldApproximate = false;
+    *canApproximate = false;
     *shouldReduce = false;
   }
 }

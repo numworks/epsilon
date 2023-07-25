@@ -15,7 +15,7 @@ class GlobalPreferences {
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
-  void setCountry(I18n::Country country);
+  void setCountry(I18n::Country country, bool updateSnapshots = true);
 
   CountryPreferences::AvailableExamModes availableExamModes() const {
     return preferences().availableExamModes();
@@ -108,7 +108,7 @@ class GlobalPreferences {
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
         m_font(KDFont::Size::Large) {
     setLanguage(I18n::Language::EN);
-    setCountry(I18n::Country::WW);
+    setCountry(I18n::Country::WW, false);
   }
 
   I18n::Language m_language;

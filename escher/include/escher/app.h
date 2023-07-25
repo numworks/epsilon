@@ -51,6 +51,7 @@ class App : public Responder {
 #endif
     /* tidy clean all dynamically-allocated data */
     virtual void tidy() {}
+    virtual void countryWasUpdated() {}
   };
   /* The destructor has to be virtual. Otherwise calling a destructor on an
    * App * pointing to a Derived App would have undefined behaviour. */

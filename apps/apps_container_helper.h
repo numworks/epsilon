@@ -4,10 +4,12 @@
 #include <apps/shared/global_context.h>
 
 /* This intermediary class allow the unit tests to catch and handle global
- * context calls, even though it has no apps container. */
+ * context calls, as well as calling some methods even though it has no apps
+ * container. */
 class AppsContainerHelper {
  public:
   static Shared::GlobalContext* sharedAppsContainerGlobalContext();
+  static void notifyCountryChangeToSnapshots();
 };
 
 #endif

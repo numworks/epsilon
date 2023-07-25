@@ -5,3 +5,7 @@ Shared::GlobalContext* AppsContainerHelper::sharedAppsContainerGlobalContext() {
   static Shared::GlobalContext s_globalContext;
   return &s_globalContext;
 }
+
+void AppsContainerHelper::notifyCountryChangeToSnapshots() {
+  // No snapshots
+}

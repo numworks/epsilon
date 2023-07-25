@@ -1,8 +1,11 @@
 #include "global_preferences.h"
 
+#include "apps_container_helper.h"
+
 OMG::GlobalBox<GlobalPreferences> GlobalPreferences::sharedGlobalPreferences;
 
-void GlobalPreferences::setCountry(I18n::Country country) {
+void GlobalPreferences::setCountry(I18n::Country country,
+                                   bool updateSnapshots) {
   m_country = country;
   Poincare::Preferences::sharedPreferences->setCombinatoricSymbols(
       combinatoricsSymbols());
@@ -14,6 +17,10 @@ void GlobalPreferences::setCountry(I18n::Country country) {
       logarithmKeyEvent());
   Poincare::Preferences::sharedPreferences->setParabolaParameter(
       parabolaParameter());
+  if (!updateSnapshots) {
+    return;
+  }
+  AppsContainerHelper::notifyCountryChangeToSnapshots();
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {

@@ -63,8 +63,7 @@ bool Simplification::SystematicReduce(Tree* u) {
     case BlockType::Trig:
       return SimplifyTrig(u) || modified;
     case BlockType::Derivative: {
-      EditionReference r(u);
-      return Derivation::Reduce(r) || modified;
+      return Derivation::Reduce(u) || modified;
     }
     default:
       return modified;

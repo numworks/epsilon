@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_DERIVATION_H
 #define POINCARE_EXPRESSION_DERIVATION_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 namespace PoincareJ {
 
@@ -13,6 +13,7 @@ class Derivation {
   static void Derivate(const Tree* derivand, const Tree* symbol,
                        const Tree* symbolValue);
 
+  INPLACE(Reduce)
  private:
   // Shallow partial derivate parameterized expression at given index.
   static void ShallowPartialDerivate(const Tree* derivand, const Tree* symbol,

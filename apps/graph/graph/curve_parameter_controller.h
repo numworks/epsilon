@@ -27,6 +27,7 @@ class CurveParameterController
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   void viewWillAppear() override;
+  void didBecomeFirstResponder() override;
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTitle;
   }

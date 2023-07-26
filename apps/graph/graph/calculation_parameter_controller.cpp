@@ -69,17 +69,14 @@ template <class T>
 void CalculationParameterController::push(T *controller, bool pop) {
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
+  assert(App::app()->functionStore()->modelForRecord(m_record)->isActive());
   controller->setRecord(m_record);
-  bool hasControllerToPush =
-      !pop || App::app()->functionStore()->modelForRecord(m_record)->isActive();
   if (pop) {
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
-        !hasControllerToPush);
+        false);
   }
-  if (hasControllerToPush) {
-    stack->push(controller);
-  }
+  stack->push(controller);
 }
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {

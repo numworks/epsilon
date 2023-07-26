@@ -48,17 +48,21 @@ class EditionReference {
 };
 
 // Helper to turn Tree* inplace editions into EditionReference*
-inline bool Inplace(bool func(Tree*), EditionReference* ref) {
+template <class... Args>
+inline bool Inplace(bool func(Tree*, Args...), EditionReference* ref,
+                    Args... args) {
   Tree* previous = *ref;
-  bool result = func(previous);
+  bool result = func(previous, args...);
   *ref = previous;
   return result;
 }
 
 /* We could define a variadic macro to add several wrappers at once. It is
  *  complicated but maybe worth ? */
-#define INPLACE(F) \
-  static bool F(EditionReference* r) { return Inplace(F, r); }
+#define INPLACE(F, ...)                              \
+  static bool F(EditionReference* r) {               \
+    return Inplace(F, r __VA_OPT__(, ) __VA_ARGS__); \
+  }
 
 void SwapTrees(EditionReference& u, EditionReference& v);
 void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone);

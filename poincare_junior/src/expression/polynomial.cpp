@@ -119,7 +119,7 @@ EditionReference Polynomial::Operation(
               : SharedEditionPool->push<BlockType::Multiplication>(2);
       op->moveTreeAfterNode(polB);
       op->moveTreeAfterNode(polA);
-      Simplification::SystematicReduce(op);
+      Simplification::SystematicReduce(&op);
       return op;
     }
     return Operation(polB, polA, blockType, operationMonomial,

@@ -123,10 +123,10 @@ class PatternMatching {
     const TypeBlock* m_localSourceEnd;
     const TypeBlock* m_localPatternEnd;
     // Global context
-    const Tree* m_globalSourceRoot;
-    const Tree* m_globalPatternRoot;
-    const TypeBlock* m_globalSourceEnd;
-    const TypeBlock* m_globalPatternEnd;
+    const Tree* const m_globalSourceRoot;
+    const Tree* const m_globalPatternRoot;
+    const TypeBlock* const m_globalSourceEnd;
+    const TypeBlock* const m_globalPatternEnd;
   };
 
   // Match an AnyTree Placeholder

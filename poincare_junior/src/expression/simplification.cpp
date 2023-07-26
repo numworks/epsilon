@@ -701,55 +701,59 @@ bool Simplification::ApplyShallowInDepth(Tree* ref,
   return changed;
 }
 
+int Metric(const Tree* root) {
+  // TODO: Decide on the metric to use here.
+  return root->treeSize();
+}
+
+bool ShouldValidateOperation(int previousMetric, int newMetric) {
+  // Factor 3 allow (x+y)^2 expansion.
+  return newMetric < 3 * previousMetric;
+}
+
 bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
                                                    bool changed) {
   if (changed + ReduceInverseFunction(ref)) {
     return true;
   }
-  size_t treeSize = ref->treeSize();
-  EditionReference tempClone(ref->clone());
-  if (ShallowExpand(tempClone)) {
-    if (tempClone->block()->isAlgebraic()) {
+  int previousMetric = Metric(root);
+  EditionReference clone(ref->clone());
+  if (ShallowExpand(ref)) {
+    if (ref->block()->isAlgebraic()) {
       /* Skip this if the expression is still transcendental to avoid risking
-       * infinite loops. An assert isn't because, for example,
+       * infinite loops. An assert isn't possible because, for example,
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      AdvanceReduceOnAlgebraic(tempClone, root, true);
+      AdvanceReduceOnAlgebraic(ref, root, true);
     }
-    // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
-    if (tempClone->treeSize() < 3 * treeSize) {
-      // Validate the expansion.
-      ref->moveTreeOverTree(tempClone);
+    if (ShouldValidateOperation(previousMetric, Metric(root))) {
+      clone->removeTree();
       return true;
     }
   }
-  tempClone->removeTree();
+  // Restore ref
+  ref->moveTreeOverTree(clone);
   return false;
 }
 
 bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
                                               bool changed) {
-  size_t treeSize = ref->treeSize();
-  EditionReference tempClone(ref->clone());
-  if (ShallowContract(tempClone)) {
-    // TODO: Decide on the metric to use here.
-    if (tempClone->treeSize() < 3 * treeSize) {
-      // Validate the contraction.
-      ref->moveTreeOverTree(tempClone);
+  int previousMetric = Metric(root);
+  EditionReference clone(ref->clone());
+  if (ShallowContract(ref)) {
+    if (ShouldValidateOperation(previousMetric, Metric(root))) {
+      clone->removeTree();
       return true;
     }
-    // Reset the clone
-    tempClone->removeTree();
-    tempClone = ref->clone();
+    // Restore ref
+    ref->moveTreeOverTree(clone);
   }
-  if (PolynomialInterpretation(tempClone)) {
-    // TODO: Decide on the metric to use here.
-    if (tempClone->treeSize() < 3 * treeSize) {
-      // Validate the contraction.
-      ref->moveTreeOverTree(tempClone);
-      return true;
-    }
+  if (PolynomialInterpretation(ref) &&
+      ShouldValidateOperation(previousMetric, Metric(root))) {
+    clone->removeTree();
+    return true;
   }
-  tempClone->removeTree();
+  // Restore ref
+  ref->moveTreeOverTree(clone);
   return false;
 }
 

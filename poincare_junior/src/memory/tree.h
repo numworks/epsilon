@@ -111,8 +111,8 @@ class Tree {
    * before the target in the pool).
    */
 
-  /*  u     v      u.moveBefore(v)     u     v
-   *  |     |             =>           |     |
+  /*  u     v      u.moveBefore(v)  v  u
+   *  |     |            =>         |  |
    *  aaaabbcccdd                   cccaaaabbdd
    */
   Tree* moveNodeBeforeNode(Tree* n) { return moveAt(n, true, false); }
@@ -120,8 +120,8 @@ class Tree {
   Tree* cloneNodeBeforeNode(const Tree* n) { return cloneAt(n, true, false); }
   Tree* cloneTreeBeforeNode(const Tree* n) { return cloneAt(n, true, true); }
 
-  /*  u     v        u.moveAt(v)    u        v
-   *  |     |            =>         |        |
+  /*  u     v        u.moveAt(v)   u+v
+   *  |     |            =>         |
    *  aaaabbcccdd                   cccaaaabbdd
    */
   void moveNodeAtNode(Tree* n) { moveAt(n, true, false, true); }
@@ -129,8 +129,8 @@ class Tree {
   void cloneNodeAtNode(const Tree* n) { cloneAt(n, true, false, true); }
   void cloneTreeAtNode(const Tree* n) { cloneAt(n, true, true, true); }
 
-  /*  u     v                       u        v
-   *  |     |      u.moveAfter(v)   |        |
+  /*  u     v                       u   v
+   *  |     |      u.moveAfter(v)   |   |
    *  aaaabbcccdd        =>         aaaacccbbdd
    */
   void moveNodeAfterNode(Tree* n) { moveAt(n, false, false); }
@@ -138,9 +138,9 @@ class Tree {
   void cloneNodeAfterNode(const Tree* n) { cloneAt(n, false, false); }
   void cloneTreeAfterNode(const Tree* n) { cloneAt(n, false, true); }
 
-  /*  u     v                       u    v
-   *  |     |       u.moveOver(v)   |    |
-   *  aaaabbcccdd         =>        cccbbdd
+  /*  u     v                       v
+   *  |     |       u.moveOver(v)   |
+   *  aaaabbcccdd        =>         cccbbdd
    */
   Tree* moveNodeOverNode(Tree* n) { return moveOver(n, false, false); }
   Tree* moveTreeOverNode(Tree* n) { return moveOver(n, false, true); }
@@ -151,16 +151,16 @@ class Tree {
   Tree* cloneNodeOverTree(const Tree* n) { return cloneOver(n, true, false); }
   Tree* cloneTreeOverTree(const Tree* n) { return cloneOver(n, true, true); }
 
-  /*    u   v                     u+v
+  /*    u   v                      v
    *    |   |       u.remove()     |
-   *  aabbbbcccdd      =>        aacccdd
+   *  aabbbbcccdd       =>       aacccdd
    */
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
 
-  /*    u   v                     u+v      r
+  /*    u   v                      v       u
    *    |   |       u.detach()     |       |
-   *  aabbbbcccdd      =>        aacccdd...bbbb
+   *  aabbbbcccdd       =>       aacccdd...bbbb
    */
   Tree* detachNode() { return detach(false); };
   Tree* detachTree() { return detach(true); };

@@ -58,6 +58,8 @@ class MultipleNodesIterator {
           array, nullptr,
           [](const Tree *node, void *context) { return node->nextTree(); });
     }
+
+    int offset() const { return 1; }
   };
 
   /* Iterator */
@@ -70,15 +72,15 @@ class MultipleNodesIterator {
 
     Iterator(ArrayType array, int index) : m_array(array), m_index(index) {}
     std::pair<ArrayType, int> operator*() {
-      return std::pair(convertToArrayType(convertFromArrayType(m_array)),
-                       m_index);
+      return std::pair(
+          convertToArrayType(convertFromArrayType(m_array, offset())), m_index);
     }
     bool operator!=(Iterator<EditablePolicy, N> &it) {
       return equality(m_array, m_index, it.m_array, it.m_index);
     }
     Iterator<EditablePolicy, N> &operator++() {
-      m_array =
-          convertToArrayType(incrementeArray(convertFromArrayType(m_array)));
+      m_array = convertToArrayType(
+          incrementeArray(convertFromArrayType(m_array, offset())), offset());
       m_index++;
       return *this;
     }
@@ -88,6 +90,7 @@ class MultipleNodesIterator {
     using EditablePolicy::convertToArrayType;
     using EditablePolicy::equality;
     using ForwardPolicy::incrementeArray;
+    using ForwardPolicy::offset;
 
     ArrayType m_array;
     int m_index;
@@ -105,7 +108,9 @@ class MultipleNodesIterator {
     ChildrenScanner(ArrayType array) : m_array(array) {}
     Iterator<EditablePolicy, N> begin() const {
       return Iterator<EditablePolicy, N>(
-          convertToArrayType(firstElement(convertFromArrayType(m_array))), 0);
+          convertToArrayType(firstElement(convertFromArrayType(m_array)),
+                             offset()),
+          0);
     }
     Iterator<EditablePolicy, N> end() const {
       return Iterator<EditablePolicy, N>(
@@ -117,6 +122,7 @@ class MultipleNodesIterator {
     using EditablePolicy::convertToArrayType;
     using EditablePolicy::endIndex;
     using ForwardPolicy::firstElement;
+    using ForwardPolicy::offset;
 
     ArrayType m_array;
   };
@@ -151,11 +157,13 @@ class MultipleNodesIterator {
       return (index0 != index1);
     }
     template <size_t N>
-    std::array<NodeType, N> convertFromArrayType(ArrayType<N> array) const {
+    std::array<NodeType, N> convertFromArrayType(ArrayType<N> array,
+                                                 int offset = 0) const {
       return array;
     }
     template <size_t N>
-    ArrayType<N> convertToArrayType(std::array<NodeType, N> array) const {
+    ArrayType<N> convertToArrayType(std::array<NodeType, N> array,
+                                    int offset = 0) const {
       return array;
     }
   };
@@ -188,19 +196,27 @@ class MultipleNodesIterator {
       return index0 != index1;
     }
 
+    /* Hack: we keep a reference to a block right before (or after) the
+     * currenNode to handle cases where the current node is replaced by
+     * another one. The assertion that the previous children aren't modified
+     * ensure the validity of this hack. */
+
     template <size_t N>
-    std::array<const Tree *, N> convertFromArrayType(ArrayType<N> array) const {
+    std::array<const Tree *, N> convertFromArrayType(ArrayType<N> array,
+                                                     int offset = 0) const {
       return Array::MapAction<NodeType, const Tree *, N>(
-          array, nullptr,
-          [](NodeType reference, void *context) -> const Tree * {
-            return Tree::FromBlocks(reference->block());
+          array, &offset, [](NodeType reference, void *offset) -> const Tree * {
+            return Tree::FromBlocks(reference->block() +
+                                    *static_cast<int *>(offset));
           });
     }
     template <size_t N>
-    ArrayType<N> convertToArrayType(std::array<const Tree *, N> array) const {
+    ArrayType<N> convertToArrayType(std::array<const Tree *, N> array,
+                                    int offset = 0) const {
       return Array::MapAction<const Tree *, NodeType, N>(
-          array, nullptr, [](const Tree *node, void *context) {
-            return node ? EditionReference(Tree::FromBlocks(node->block()))
+          array, &offset, [](const Tree *node, void *offset) {
+            return node ? EditionReference(Tree::FromBlocks(
+                              node->block() - *static_cast<int *>(offset)))
                         : EditionReference();
           });
     }

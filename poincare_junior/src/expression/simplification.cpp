@@ -88,7 +88,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
   EditionReference secondArgument = u->childAtIndex(1);
   /* Trig second element is always expected to be reduced. This will call
    * SimplifyTrigDiff if needed. */
-  bool changed = SystematicReduce(secondArgument);
+  bool changed = SystematicReduce(&secondArgument);
   if (secondArgument->block()->isOfType(
           {BlockType::MinusOne, BlockType::Two})) {
     // Simplify second argument to either 0 or 1 and oppose the tree.

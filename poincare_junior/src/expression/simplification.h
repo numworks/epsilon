@@ -47,8 +47,14 @@ class Simplification {
   static bool ShallowSystemProjection(Tree *reference, void *projectionContext);
 
   static bool SystematicReduce(Tree *u);
+
   INPLACE(Simplify);
   INPLACE(SystematicReduce);
+  INPLACE(AdvancedReduction);
+  INPLACE(ShallowBeautify, (void *)nullptr);
+  INPLACE(ShallowContract, (void *)nullptr);
+  INPLACE(ShallowExpand, (void *)nullptr);
+  INPLACE(ShallowAlgebraicExpand, (void *)nullptr);
 
  private:
   static bool SimplifyTrig(Tree *u);

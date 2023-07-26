@@ -39,7 +39,7 @@ bool Simplification::SystematicReduce(Tree* u) {
   }
 
   for (auto [child, index] : NodeIterator::Children<Editable>(u)) {
-    modified |= SystematicReduce(child);
+    modified |= SystematicReduce(&child);
     if (IsUndef(child)) {
       u->cloneNodeOverTree(KUndef);
       return true;
@@ -103,7 +103,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
 }
 
 bool Simplification::SimplifyPower(Tree* u) {
-  EditionReference v = u->childAtIndex(0);
+  Tree* v = u->childAtIndex(0);
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
   if (v->type() == BlockType::Zero) {
@@ -144,7 +144,6 @@ bool Simplification::SimplifyPower(Tree* u) {
         SharedEditionPool->push<BlockType::Multiplication>(2));
     u->removeNode();
     SimplifyMultiplication(p);
-    assert(IsInteger(p));
     return SimplifyPower(u);
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
@@ -154,7 +153,7 @@ bool Simplification::SimplifyPower(Tree* u) {
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);
-      SimplifyPower(w);
+      SimplifyPower(m);
     }
     n->removeTree();
     u->removeNode();
@@ -195,10 +194,8 @@ bool Simplification::MergeMultiplicationChildren(Tree* u1, Tree* u2) {
   }
   // t^m * t^n -> t^(m+n)
   if (BasesAreEqual(u1, u2)) {
-    EditionReference P =
-        P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
-    EditionReference S = P->childAtIndex(1);
-    SimplifyAddition(S);
+    Tree* P = P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
+    SimplifyAddition(P->childAtIndex(1));
     SimplifyPower(P);
     assert(P->type() != BlockType::Multiplication);
     u2->moveTreeOverTree(P);
@@ -215,9 +212,9 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
   }
   bool modified = NAry::Sort(u);
   int n = u->numberOfChildren();
-  EditionReference end = u->nextTree();
+  int i = 0;
   Tree* child = u->nextNode();
-  while (child < end) {
+  while (i < n) {
     // ... * 0 * ... -> 0
     if (child->type() == BlockType::Zero) {
       NAry::SetNumberOfChildren(u, n);
@@ -230,11 +227,12 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
       continue;
     }
     Tree* next = child->nextTree();
-    if (next < end && MergeMultiplicationChildren(child, next)) {
+    if (i + 1 < n && MergeMultiplicationChildren(child, next)) {
       assert(child->type() != BlockType::Multiplication);
       n--;
     } else {
       child = next;
+      i++;
     }
   }
   if (n == u->numberOfChildren()) {
@@ -276,7 +274,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
-  EditionReference c = u->clone();
+  Tree* c = u->clone();
   if (u->type() == BlockType::Multiplication &&
       IsConstant(u->childAtIndex(0))) {
     NAry::RemoveChildAtIndex(c, 0);
@@ -306,10 +304,8 @@ bool Simplification::MergeAdditionChildren(Tree* u1, Tree* u2) {
   }
   // k1 * a + k2 * a -> (k1+k2) * a
   if (TermsAreEqual(u1, u2)) {
-    EditionReference P =
-        P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
-    EditionReference S = P->childAtIndex(0);
-    SimplifyAddition(S);
+    Tree* P = P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
+    SimplifyAddition(P->childAtIndex(0));
     SimplifyMultiplication(P);
     assert(P->type() != BlockType::Addition);
     u2->moveTreeOverTree(P);
@@ -326,20 +322,21 @@ bool Simplification::SimplifyAddition(Tree* u) {
   }
   bool modified = NAry::Sort(u);
   int n = u->numberOfChildren();
-  EditionReference end = u->nextTree();
+  int i = 0;
   Tree* child = u->nextNode();
-  while (child < end) {
+  while (i < n) {
     if (child->type() == BlockType::Zero) {
       child->removeTree();
       n--;
       continue;
     }
     Tree* next = child->nextTree();
-    if (next < end && MergeAdditionChildren(child, next)) {
+    if (i + 1 < n && MergeAdditionChildren(child, next)) {
       assert(child->type() != BlockType::Addition);
       n--;
     } else {
       child = next;
+      i++;
     }
   }
   if (n == u->numberOfChildren()) {

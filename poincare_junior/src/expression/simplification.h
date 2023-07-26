@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_SIMPLIFICATION_H
 
 #include <omgpj/enums.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 namespace PoincareJ {
 
@@ -47,6 +47,8 @@ class Simplification {
   static bool ShallowSystemProjection(Tree *reference, void *projectionContext);
 
   static bool SystematicReduce(Tree *u);
+  INPLACE(Simplify);
+  INPLACE(SystematicReduce);
 
  private:
   static bool SimplifyTrig(Tree *u);

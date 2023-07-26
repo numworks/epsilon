@@ -193,7 +193,7 @@ void simplifies_to(const char* input, const char* output) {
   EditionReference expression = RackParser(inputLayout).parse();
   inputLayout->removeTree();
   quiz_assert(!expression.isUninitialized());
-  Simplification::Simplify(expression);
+  Simplification::Simplify(&expression);
   quiz_assert(!expression.isUninitialized());
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(expression);

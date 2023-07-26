@@ -138,7 +138,7 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
           *offset += size;
         }
       },
-      destination + at - 1, nullptr, numberOfBlocks);
+      destination + at, nullptr, numberOfBlocks);
   return true;
 }
 

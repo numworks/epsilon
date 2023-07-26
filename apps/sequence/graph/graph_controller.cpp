@@ -45,12 +45,12 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
+  m_view.setCursorView(&m_cursorView);
+  m_cursorView.resetMemoization();
   if (m_cobwebController.stepIsInitialized()) {
     moveToRank(m_cobwebController.rankAtCurrentStep());
     m_cobwebController.resetStep();
   }
-  m_view.setCursorView(&m_cursorView);
-  m_cursorView.resetMemoization();
   m_smallestRank = m_sequenceStore->smallestInitialRank();
   FunctionGraphController::viewWillAppear();
 }

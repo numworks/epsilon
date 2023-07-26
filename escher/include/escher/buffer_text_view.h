@@ -24,10 +24,11 @@ class AbstractBufferTextView : public TextView {
   void setText(const char* text) override;
 
   void setMessageWithPlaceholders(I18n::Message message, ...);
+  bool unsafeSetMessageWithPlaceholders(I18n::Message message, ...);
   void appendText(const char* text);
 
  protected:
-  void privateSetMessageWithPlaceholders(I18n::Message message, va_list args);
+  bool privateSetMessageWithPlaceholders(I18n::Message message, va_list args);
   virtual char* buffer() = 0;
   virtual int maxTextSize() const = 0;
 };

@@ -153,11 +153,12 @@ void CalculationParameterController::fillAreaCell() {
     // If there are more than 2 functions, display "Area between f(x) and"
     secondPlaceHolder[0] = 0;
   }
-  m_areaCell.label()->setMessageWithPlaceholders(
+  bool labelFitsInBuffer = m_areaCell.label()->unsafeSetMessageWithPlaceholders(
       I18n::Message::AreaBetweenCurvesWithFunctionName, mainFunctionName,
       secondPlaceHolder);
-  if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() >
-      m_areaCell.innerWidth()) {
+  if (!labelFitsInBuffer ||
+      m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() >
+          m_areaCell.innerWidth()) {
     // If there is not enough space in the cell, display "Area between curves"
     m_areaCell.label()->setMessageWithPlaceholders(
         I18n::Message::AreaBetweenCurves);

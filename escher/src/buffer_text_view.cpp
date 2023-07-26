@@ -15,17 +15,27 @@ void AbstractBufferTextView::setMessageWithPlaceholders(I18n::Message message,
                                                         ...) {
   va_list args;
   va_start(args, message);
-  privateSetMessageWithPlaceholders(message, args);
+  bool result = privateSetMessageWithPlaceholders(message, args);
+  assert(result);
+  (void)result;
   va_end(args);
 }
 
-void AbstractBufferTextView::privateSetMessageWithPlaceholders(
+bool AbstractBufferTextView::unsafeSetMessageWithPlaceholders(
+    I18n::Message message, ...) {
+  va_list args;
+  va_start(args, message);
+  bool result = privateSetMessageWithPlaceholders(message, args);
+  va_end(args);
+  return result;
+}
+
+bool AbstractBufferTextView::privateSetMessageWithPlaceholders(
     I18n::Message message, va_list args) {
   int length = Poincare::Print::PrivateCustomPrintf(
       buffer(), maxTextSize(), I18n::translate(message), args);
-  assert(length < maxTextSize());
-  (void)length;
   markWholeFrameAsDirty();
+  return length < maxTextSize();
 }
 
 void AbstractBufferTextView::appendText(const char* text) {

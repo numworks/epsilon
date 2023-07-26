@@ -497,26 +497,28 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   changed = DeepSystemProjection(ref, projectionContext) || changed;
   changed = DeepSystematicReduce(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
-  changed = AdvancedReduction(ref) || changed;
+  changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
   changed = DeepBeautify(ref) || changed;
   return changed;
 }
 
-bool Simplification::AdvancedReduction(Tree* ref) {
+bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
   bool changed = false;
   for (std::pair<EditionReference, int> indexedNode :
        NodeIterator::Children<Editable>(ref)) {
     changed =
-        AdvancedReduction(std::get<EditionReference>(indexedNode)) || changed;
+        AdvancedReduction(std::get<EditionReference>(indexedNode), root) ||
+        changed;
   }
-  return ShallowAdvancedReduction(ref, changed) || changed;
+  return ShallowAdvancedReduction(ref, root, changed) || changed;
 }
 
-bool Simplification::ShallowAdvancedReduction(Tree* ref, bool change) {
+bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
+                                              bool changed) {
   return (ref->block()->isAlgebraic()
-              ? AdvanceReduceOnAlgebraic(ref, change)
-              : AdvanceReduceOnTranscendental(ref, change));
+              ? AdvanceReduceOnAlgebraic(ref, root, changed)
+              : AdvanceReduceOnTranscendental(ref, root, changed));
 }
 
 // Reverse most system projections to display better expressions
@@ -699,8 +701,9 @@ bool Simplification::ApplyShallowInDepth(Tree* ref,
   return changed;
 }
 
-bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
-  if (change + ReduceInverseFunction(ref)) {
+bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
+                                                   bool changed) {
+  if (changed + ReduceInverseFunction(ref)) {
     return true;
   }
   size_t treeSize = ref->treeSize();
@@ -710,7 +713,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
       /* Skip this if the expression is still transcendental to avoid risking
        * infinite loops. An assert isn't because, for example,
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      AdvanceReduceOnAlgebraic(tempClone, true);
+      AdvanceReduceOnAlgebraic(tempClone, root, true);
     }
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
     if (tempClone->treeSize() < 3 * treeSize) {
@@ -723,7 +726,8 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
   return false;
 }
 
-bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, bool change) {
+bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
+                                              bool changed) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
   if (ShallowContract(tempClone)) {

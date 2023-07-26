@@ -20,10 +20,11 @@ class Simplification {
  public:
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
-  static bool AdvancedReduction(Tree *node);
-  EDITION_REF_WRAP(AdvancedReduction);
-  static bool ShallowAdvancedReduction(Tree *node, bool change);
-  EDITION_REF_WRAP_1(ShallowAdvancedReduction, bool);
+  static bool AdvancedReduction(Tree *node, const Tree *root);
+  EDITION_REF_WRAP_1(AdvancedReduction, const Tree *);
+  static bool ShallowAdvancedReduction(Tree *node, const Tree *root,
+                                       bool change);
+  EDITION_REF_WRAP_2(ShallowAdvancedReduction, const Tree *, bool);
 
   static bool ShallowBeautify(Tree *node, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
@@ -99,10 +100,12 @@ class Simplification {
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
 
-  static bool AdvanceReduceOnTranscendental(Tree *node, bool change);
-  EDITION_REF_WRAP_1(AdvanceReduceOnTranscendental, bool);
-  static bool AdvanceReduceOnAlgebraic(Tree *node, bool change);
-  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, bool);
+  static bool AdvanceReduceOnTranscendental(Tree *node, const Tree *root,
+                                            bool change);
+  EDITION_REF_WRAP_2(AdvanceReduceOnTranscendental, const Tree *, bool);
+  static bool AdvanceReduceOnAlgebraic(Tree *node, const Tree *root,
+                                       bool change);
+  EDITION_REF_WRAP_2(AdvanceReduceOnAlgebraic, const Tree *, bool);
   static bool ReduceInverseFunction(Tree *node);
   EDITION_REF_WRAP(ReduceInverseFunction);
   static bool ExpandTranscendentalOnRational(Tree *node);

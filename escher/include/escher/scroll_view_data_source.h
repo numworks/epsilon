@@ -6,7 +6,6 @@
 namespace Escher {
 
 class ScrollViewDataSource;
-class ScrollView;
 
 class ScrollViewDelegate {
  public:

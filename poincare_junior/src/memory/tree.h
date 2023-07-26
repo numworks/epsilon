@@ -103,7 +103,7 @@ class Tree {
   Tree* clone() const;
 
   // Tree motions
-
+  // TODO
   /* In the following comments aaaa represents several blocks of a tree and u
    * and v are EditionReferences that could be pointing to the targeted trees.
    * Beware that the Node * used in this methods (this and n) may point to a

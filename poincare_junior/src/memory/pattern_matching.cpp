@@ -119,11 +119,10 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
       }
       // Update the local pattern.
       matchContext.setLocalFromChild(source, pattern);
-    } else {
-      /* Source has been entirely checked but there are pattern nodes remaining.
-       * It can only be empty tree placeholders. */
-      onlyEmptyPlaceholders = matchContext.reachedLimit(source, false, true);
     }
+    /* If source has been entirely checked but pattern nodes are remaining it
+     * can only be empty tree placeholders. */
+    onlyEmptyPlaceholders = matchContext.reachedLimit(source, false, true);
 
     if (pattern->type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);

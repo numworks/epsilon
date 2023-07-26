@@ -28,6 +28,7 @@ class CurveParameterController
   int numberOfRows() const override { return k_numberOfRows; }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void viewWillAppear() override;
+  void didBecomeFirstResponder() override;
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTitle;
   }

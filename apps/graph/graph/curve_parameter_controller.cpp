@@ -229,4 +229,15 @@ bool CurveParameterController::shouldDisplayDerivative() const {
   return function()->displayDerivative();
 }
 
+void CurveParameterController::didBecomeFirstResponder() {
+  if (!function()->isActive()) {
+    static_cast<StackViewController *>(parentResponder())
+        ->popUntilDepth(
+            Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+            true);
+    return;
+  }
+  Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
+}
+
 }  // namespace Graph

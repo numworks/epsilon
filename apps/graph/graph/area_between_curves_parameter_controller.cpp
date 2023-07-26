@@ -87,9 +87,13 @@ bool AreaBetweenCurvesParameterController::handleEvent(
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    Ion::Storage::Record secondRecord =
+        DerivableActiveFunctionAtIndex(innerSelectedRow(), m_mainRecord);
+    assert(
+        App::app()->functionStore()->modelForRecord(m_mainRecord)->isActive() &&
+        App::app()->functionStore()->modelForRecord(secondRecord)->isActive());
     m_areaGraphController->setRecord(m_mainRecord);
-    m_areaGraphController->setSecondRecord(
-        DerivableActiveFunctionAtIndex(innerSelectedRow(), m_mainRecord));
+    m_areaGraphController->setSecondRecord(secondRecord);
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         true);

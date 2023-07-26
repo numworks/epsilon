@@ -18,32 +18,28 @@ bool Set::Includes(const Tree* set, const Tree* expression) {
   return false;
 }
 
-EditionReference Set::Add(EditionReference set, const Tree* expression) {
-  EditionReference child = set;
-  for (auto [ref, index] : NodeIterator::Children<Editable>(set)) {
-    child = ref;
-    int comparison = Comparison::Compare(ref, expression);
+void Set::Add(Tree* set, const Tree* expression) {
+  Tree* target = set->nextNode();
+  // If set is empty, target is set's next tree
+  int numberOfChildren = set->numberOfChildren();
+  for (int i = 0; i < numberOfChildren; i++) {
+    int comparison = Comparison::Compare(target, expression);
     if (comparison == 0) {
-      return set;
+      return;
     } else if (comparison > 0) {
-      ref->cloneTreeBeforeNode(expression);
       break;
     }
+    target = target->nextTree();
   }
-  if (child == set || Comparison::Compare(child, expression) < 0) {
-    // Empty set or all elements are < expression
-    child->nextTree()->cloneTreeBeforeNode(expression);
-  }
-  NAry::SetNumberOfChildren(set, set->numberOfChildren() + 1);
-  return set;
+  // target is either set's next tree or one of its children
+  target->cloneTreeBeforeNode(expression);
+  NAry::SetNumberOfChildren(set, numberOfChildren + 1);
 }
 
-EditionReference Set::Pop(EditionReference set) {
+Tree* Set::Pop(Tree* set) {
   assert(set->numberOfChildren() > 0);
-  EditionReference expression = set->nextNode();
-  expression->detachTree();
   NAry::SetNumberOfChildren(set, set->numberOfChildren() - 1);
-  return expression;
+  return set->nextNode()->detachTree();
 }
 
 static EditionReference MergeSets(EditionReference set0, EditionReference set1,

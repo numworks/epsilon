@@ -294,35 +294,31 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 /* PolynomialParser */
 
 Tree* PolynomialParser::GetVariables(const Tree* expression) {
+  Tree* variables = SharedEditionPool->push<BlockType::Set>(0);
   if (expression->block()->isInteger()) {  // TODO: generic belongToField?
-    return SharedEditionPool->clone(KSet());
+    return variables;
   }
   BlockType type = expression->type();
   // TODO: match
   if (type == BlockType::Power) {
     const Tree* base = expression->nextNode();
     const Tree* exponent = base->nextTree();
-    if (Integer::IsUint8(exponent)) {
-      assert(Integer::Uint8(exponent) > 1);
-      EditionReference variables(SharedEditionPool->push<BlockType::Set>(1));
-      base->clone();
-      return variables;
-    }
-  }
-  if (type == BlockType::Addition || type == BlockType::Multiplication) {
-    EditionReference variables(KSet());
+    assert(exponent->block()->isInteger());
+    assert(!Integer::IsUint8(exponent) || Integer::Uint8(exponent) > 1);
+    Set::Add(variables, Integer::IsUint8(exponent) ? base : expression);
+  } else if (type == BlockType::Addition || type == BlockType::Multiplication) {
     for (const Tree* child : expression->children()) {
       if (child->type() == BlockType::Addition) {
         assert(type != BlockType::Addition);
-        variables = Set::Add(variables, child);
+        Set::Add(variables, child);
       } else {
+        // TODO: variables isn't expected to actually change.
         variables = Set::Union(variables, GetVariables(child));
       }
     }
-    return variables;
+  } else {
+    Set::Add(variables, expression);
   }
-  Tree* variables = SharedEditionPool->push<BlockType::Set>(1);
-  expression->clone();
   return variables;
 }
 

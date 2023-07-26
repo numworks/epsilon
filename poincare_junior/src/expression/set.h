@@ -11,8 +11,8 @@ class Set {
    */
  public:
   static bool Includes(const Tree* set, const Tree* expression);
-  static EditionReference Add(EditionReference set, const Tree* expression);
-  static EditionReference Pop(EditionReference set);
+  static void Add(Tree* set, const Tree* expression);
+  static Tree* Pop(Tree* set);
   static EditionReference Union(EditionReference set0, EditionReference set1);
   static EditionReference Intersection(EditionReference set0,
                                        EditionReference set1);

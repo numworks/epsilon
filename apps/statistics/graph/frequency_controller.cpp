@@ -220,7 +220,8 @@ int FrequencyController::nextSubviewWhenMovingVertically(
     double y = yValueAtAbscissa(seriesIndex, cursorX);
     if (y == cursorY && seriesIndex * step > selectedSeries() * step) {
       // series is on the same spot and in the right direction in series list
-      return seriesIndex;
+      return m_store->activeSeriesIndexFromSeriesIndex(seriesIndex,
+                                                       activeSeriesMethod());
     }
     if (y * step < cursorY * step &&
         (std::isnan(closestYUpOrDown) || closestYUpOrDown * step < y * step)) {

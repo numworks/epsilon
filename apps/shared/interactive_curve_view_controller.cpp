@@ -63,7 +63,6 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       header()->setSelectedButton(0);
       return true;
     }
-    return false;
   } else if (event == Ion::Events::Toolbox) {
     openMenu();
     return true;

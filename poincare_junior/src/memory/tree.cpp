@@ -396,7 +396,7 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
   if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
     oldSize -= newSize;
   }
-  SharedEditionPool->moveBlocks(oldBlock, newBlock, newSize, true);
+  SharedEditionPool->moveBlocks(oldBlock, newBlock, newSize);
   if (oldBlock > newBlock) {
     finalBlock -= newSize;
   }

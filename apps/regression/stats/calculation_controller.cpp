@@ -73,7 +73,8 @@ bool CalculationController::canStoreCellAtLocation(int column, int row) {
   }
   if (c == Calculation::CorrelationCoeff || c > Calculation::Regression) {
     AbstractEvenOddBufferTextCell *bufferCell =
-        static_cast<AbstractEvenOddBufferTextCell *>(reusableCell(column, row));
+        static_cast<AbstractEvenOddBufferTextCell *>(
+            m_selectableTableView.cellAtLocation(column, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
            strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
   }

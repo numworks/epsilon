@@ -104,10 +104,9 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
                                 size_t numberOfBlocks) {
   memcpy(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, const Block *destination,
-         const Block *source, int numberOfBlocks) {
-        if (testedBlock > destination &&
-            testedBlock < destination + numberOfBlocks) {
+      [](uint16_t *offset, Block *block, const Block *destination,
+         const Block *source, int size) {
+        if (block > destination && block < destination + size) {
           *offset = ReferenceTable::UninitializedOffset;
         }
       },
@@ -133,10 +132,10 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   m_numberOfBlocks += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, const Block *destination,
-         const Block *block, int numberOfBlocks) {
-        if (destination < testedBlock) {
-          *offset += numberOfBlocks;
+      [](uint16_t *offset, Block *block, const Block *destination,
+         const Block *source, int size) {
+        if (destination < block) {
+          *offset += size;
         }
       },
       destination + at - 1, nullptr, numberOfBlocks);
@@ -152,11 +151,11 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
   memmove(address, address + deletionSize,
           static_cast<Block *>(lastBlock()) - address);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, const Block *address,
-         const Block *block, int numberOfBlocks) {
-        if (testedBlock >= address + numberOfBlocks) {
-          *offset -= numberOfBlocks;
-        } else if (testedBlock > address) {
+      [](uint16_t *offset, Block *block, const Block *address,
+         const Block *source, int size) {
+        if (block >= address + size) {
+          *offset -= size;
+        } else if (block > address) {
           *offset = ReferenceTable::UninitializedOffset;
         }
       },
@@ -174,27 +173,27 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
   Memory::Rotate(dst, src, len);
   if (at) {
     m_referenceTable.updateNodes(
-        [](uint16_t *offset, Block *testedBlock, const Block *dst,
-           const Block *src, int nbOfBlocks) {
-          if (src < testedBlock && testedBlock < src + nbOfBlocks) {
-            *offset += dst - src - (dst > src ? nbOfBlocks : 0);
-          } else if (src + nbOfBlocks <= testedBlock && testedBlock <= dst) {
-            *offset -= nbOfBlocks;
-          } else if (dst < testedBlock && testedBlock <= src) {
-            *offset += nbOfBlocks;
+        [](uint16_t *offset, Block *block, const Block *dst, const Block *src,
+           int size) {
+          if (src < block && block < src + size) {
+            *offset += dst - src - (dst > src ? size : 0);
+          } else if (src + size <= block && block <= dst) {
+            *offset -= size;
+          } else if (dst < block && block <= src) {
+            *offset += size;
           }
         },
         destination, source, numberOfBlocks);
   } else {
     m_referenceTable.updateNodes(
-        [](uint16_t *offset, Block *testedBlock, const Block *dst,
-           const Block *src, int nbOfBlocks) {
-          if (src < testedBlock && testedBlock < src + nbOfBlocks) {
-            *offset += dst - src - (dst > src ? nbOfBlocks : 0);
-          } else if (src + nbOfBlocks <= testedBlock && testedBlock < dst) {
-            *offset -= nbOfBlocks;
-          } else if (dst <= testedBlock && testedBlock <= src) {
-            *offset += nbOfBlocks;
+        [](uint16_t *offset, Block *block, const Block *dst, const Block *src,
+           int size) {
+          if (src < block && block < src + size) {
+            *offset += dst - src - (dst > src ? size : 0);
+          } else if (src + size <= block && block < dst) {
+            *offset -= size;
+          } else if (dst <= block && block <= src) {
+            *offset += size;
           }
         },
         destination, source, numberOfBlocks);

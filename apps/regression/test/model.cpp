@@ -67,7 +67,8 @@ void assert_regression_is(const double* xi, const double* yi,
     assert(std::isnan(r) && std::isnan(trueR));
   } else {
     quiz_assert(r >= -1.0 && r <= 1.0);
-    quiz_assert(roughly_equal(r, trueR, precision, false, 0.0));
+    quiz_assert(
+        roughly_equal(r, trueR, precision, false, nullExpectedPrecision));
   }
 
   if (Store::DisplayR(modelType) && Store::DisplayRSquared(modelType)) {
@@ -344,7 +345,7 @@ QUIZ_CASE(regression_power) {
   constexpr double y4[] = {10.0, 10.0, 10.0, 10.0, 10.0,
                            10.0, 10.0, 10.0, 10.0, 10.0};
   static_assert(std::size(x4) == std::size(y4), "Column sizes are different");
-  constexpr double coefficients4[] = {10.0, -2.75494376E-15};  // FIXME
+  constexpr double coefficients4[] = {10.0, 0};
   constexpr double r4 = 1.0;
   constexpr double r24 = 1.0;
   constexpr double sr4 = 0.0;

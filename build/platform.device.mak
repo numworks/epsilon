@@ -1,5 +1,4 @@
 MODEL ?= n0110
-TOOLCHAIN ?= arm-gcc-m7f
 USE_LIBA = 1
 EXE = elf
 

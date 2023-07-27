@@ -47,6 +47,10 @@ class EditionReference {
   uint16_t m_identifier;
 };
 
+inline bool operator==(Tree* n, const EditionReference& r) {
+  return n == static_cast<Tree*>(r);
+}
+
 // Helper to turn Tree* inplace editions into EditionReference*
 template <class... Args>
 inline bool Inplace(bool func(Tree*, Args...), EditionReference* ref,

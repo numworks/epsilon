@@ -159,3 +159,30 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
   assert(referenceSub0.isUninitialized());
   EditionReference reference2(2_e);
 }
+
+QUIZ_CASE(pcj_tree_comments) {
+  EditionReference u, v;
+  auto setup = [&]() {
+    SharedEditionPool->flush();
+    u = "aaaa"_e->clone();
+    "bb"_e->clone();
+    v = "ccc"_e->clone();
+    "dd"_e->clone();
+  };
+  setup();
+  u->moveNodeBeforeNode(v);
+  QUIZ_ASSERT(v->nextNode() == u && u->isIdenticalTo("aaaa"_e) &&
+              v->isIdenticalTo("ccc"_e));
+  setup();
+  u->moveNodeAtNode(v);
+  QUIZ_ASSERT(u == v && u->isIdenticalTo("ccc"_e));
+  setup();
+  u->moveNodeAfterNode(v);
+  QUIZ_ASSERT(u->nextNode() == v && u->isIdenticalTo("aaaa"_e) &&
+              v->isIdenticalTo("ccc"_e));
+  setup();
+  u->moveTreeOverNode(v);
+  QUIZ_ASSERT(v->nextNode()->isIdenticalTo("bb"_e) && u.isUninitialized() &&
+              v->isIdenticalTo("ccc"_e));
+  SharedEditionPool->flush();
+}

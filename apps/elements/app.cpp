@@ -25,11 +25,6 @@ const Escher::Image* App::Descriptor::icon() const {
 
 // App::Snapshot
 
-App::Snapshot::Snapshot()
-    : m_field(&ElementsDataBase::GroupField),
-      m_selectedElement(1),
-      m_previousElement(ElementsDataBase::k_noElement) {}
-
 App* App::Snapshot::unpack(Escher::Container* container) {
   return new (container->currentAppBuffer()) App(this);
 }
@@ -37,6 +32,17 @@ App* App::Snapshot::unpack(Escher::Container* container) {
 const App::Descriptor* App::Snapshot::descriptor() const {
   constexpr static Descriptor s_descriptor;
   return &s_descriptor;
+}
+
+void App::Snapshot::reset() {
+  Shared::SharedApp::Snapshot::reset();
+  init();
+}
+
+void App::Snapshot::init() {
+  m_field = &ElementsDataBase::GroupField;
+  m_selectedElement = 1;
+  m_previousElement = ElementsDataBase::k_noElement;
 }
 
 // App

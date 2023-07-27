@@ -21,10 +21,11 @@ class App : public Shared::AppWithStoreMenu {
 
   class Snapshot : public Shared::SharedApp::Snapshot {
    public:
-    Snapshot();
+    Snapshot() { init(); };
 
     App *unpack(Escher::Container *container) override;
     const Descriptor *descriptor() const override;
+    void reset() override;
 
     const DataField *field() const { return m_field; }
     void setField(const DataField *field) { m_field = field; }
@@ -38,6 +39,8 @@ class App : public Shared::AppWithStoreMenu {
     }
 
    private:
+    void init();
+
     const DataField *m_field;
     AtomicNumber m_selectedElement;
     AtomicNumber m_previousElement;

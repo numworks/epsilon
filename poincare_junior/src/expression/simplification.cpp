@@ -384,8 +384,8 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
         KPlaceholder<A>(), KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
         KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
     EditionReference child(ref->childAtIndex(0));
-    child->matchAndReplace(
-        KPlaceholder<A>(),
+    MatchAndReplace(
+        &child, KPlaceholder<A>(),
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
     SystematicReduce(child);
   }
@@ -453,10 +453,9 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
     const Tree* k_angles[3] = {
         KPlaceholder<A>(), KMult(KPlaceholder<A>(), π_e, KPow(180_e, -1_e)),
         KMult(KPlaceholder<A>(), π_e, KPow(200_e, -1_e))};
-    EditionReference(ref->childAtIndex(0))
-        ->matchAndReplace(
-            KPlaceholder<A>(),
-            k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
+    ref->childAtIndex(0)->matchAndReplace(
+        KPlaceholder<A>(),
+        k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
   }
 
   /* All replaced structure do not not need further shallow projection.
@@ -518,8 +517,7 @@ bool Simplification::ApplyShallowInDepth(Tree* ref,
   Tree* node = ref->nextNode();
   while (treesToProject > 0) {
     treesToProject--;
-    EditionReference subRef(node);
-    changed = shallowOperation(subRef, context) || changed;
+    changed = shallowOperation(node, context) || changed;
     treesToProject += node->numberOfChildren();
     node = node->nextNode();
   }
@@ -532,10 +530,10 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
   }
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
-  if (ShallowExpand(tempClone)) {
-    SystematicReduce(tempClone);
+  if (ShallowExpand(&tempClone)) {
+    SystematicReduce(&tempClone);
     assert(tempClone->block()->isAlgebraic());
-    ShallowAdvancedReduction(tempClone, true);
+    ShallowAdvancedReduction(&tempClone, true);
     // TODO: Decide on the metric to use here. Factor 3 allow (x+y)^2 expansion.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the expansion.
@@ -550,8 +548,8 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, bool change) {
 bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, bool change) {
   size_t treeSize = ref->treeSize();
   EditionReference tempClone(ref->clone());
-  if (ShallowContract(tempClone)) {
-    SystematicReduce(tempClone);
+  if (ShallowContract(&tempClone)) {
+    SystematicReduce(&tempClone);
     // TODO: Decide on the metric to use here.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.
@@ -562,8 +560,9 @@ bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, bool change) {
     tempClone->removeTree();
     tempClone = ref->clone();
   }
-  if (ExpandTranscendentalOnRational(tempClone) +
-      ShallowAlgebraicExpand(tempClone) + PolynomialInterpretation(tempClone)) {
+  if (ExpandTranscendentalOnRational(&tempClone) +
+      ShallowAlgebraicExpand(&tempClone) +
+      PolynomialInterpretation(&tempClone)) {
     // TODO: Decide on the metric to use here.
     if (tempClone->treeSize() < 3 * treeSize) {
       // Validate the contraction.
@@ -735,17 +734,17 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
   // Addition is expected to have been squashed if unary.
   assert(newTrig1->nextNode()->type() != BlockType::Addition ||
          newTrig1->nextNode()->numberOfChildren() > 1);
-  if (ExpandTrigonometric(newTrig1)) {
-    if (!ExpandTrigonometric(newTrig3)) {
+  if (ExpandTrigonometric(&newTrig1)) {
+    if (!ExpandTrigonometric(&newTrig3)) {
       assert(false);
     }
   }
   /* Shallow reduce last Trig and the multiplication (in case it is opposed).
    * This step must be performed after sub-expansions since SimplifyProduct
    * may invalidate newTrig0 and newTrig3. */
-  SimplifyTrig(newTrig4);
-  NAry::Flatten(newMult2);
-  SimplifyMultiplication(newMult2);
+  SimplifyTrig(&newTrig4);
+  NAry::Flatten(&newMult2);
+  SimplifyMultiplication(&newMult2);
   return true;
 }
 
@@ -797,16 +796,16 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
   EditionReference newMult2(newMult1->nextTree());
   EditionReference newTrig2(newMult2->nextNode());
   // Shallow reduce new trigs and multiplications (in case one is opposed)
-  SimplifyTrig(newTrig1);
-  SimplifyMultiplication(newMult1);
-  SimplifyTrig(newTrig2);
-  SimplifyMultiplication(newMult2);
+  SimplifyTrig(&newTrig1);
+  SimplifyMultiplication(&newMult1);
+  SimplifyTrig(&newTrig2);
+  SimplifyMultiplication(&newMult2);
 
   // Contract newly created multiplications :
   // - Trig(B-D, TrigDiff(C,E))*F
-  if (ContractTrigonometric(newMult1)) {
+  if (ContractTrigonometric(&newMult1)) {
     // - Trig(B+D, E+C))*F
-    if (!ContractTrigonometric(newMult2)) {
+    if (!ContractTrigonometric(&newMult2)) {
       assert(false);
     }
   }
@@ -852,9 +851,9 @@ bool Simplification::ExpandPower(Tree* ref) {
   // Addition is expected to have been squashed if unary.
   assert(newPow->nextNode()->type() != BlockType::Addition ||
          newPow->nextNode()->numberOfChildren() > 1);
-  if (ExpandPower(newPow)) {
+  if (ExpandPower(&newPow)) {
     EditionReference newMult(newPow->nextTree());
-    ExpandMult(newMult);
+    ExpandMult(&newMult);
     NAry::Flatten(ref);
   }
   return true;

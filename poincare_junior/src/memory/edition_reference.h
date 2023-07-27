@@ -68,6 +68,12 @@ inline bool Inplace(bool func(Tree*, Args...), EditionReference* ref,
     return Inplace(F, r __VA_OPT__(, ) __VA_ARGS__); \
   }
 
+#define INPLACE_1(F, T, D) \
+  static bool F(EditionReference* r, T a1 = D) { return Inplace(F, r, a1); }
+
+bool MatchAndReplace(EditionReference* target, const Tree* pattern,
+                     const Tree* structure);
+
 void SwapTrees(EditionReference* u, EditionReference* v);
 void CloneNodeAtNode(EditionReference* target, const Tree* nodeToClone);
 void CloneTreeAtNode(EditionReference* target, const Tree* treeToClone);

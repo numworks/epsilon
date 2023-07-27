@@ -51,10 +51,14 @@ class Simplification {
   INPLACE(Simplify);
   INPLACE(SystematicReduce);
   INPLACE(AdvancedReduction);
-  INPLACE(ShallowBeautify, (void *)nullptr);
+  INPLACE_1(ShallowAdvancedReduction, bool, false);
+  INPLACE_1(ShallowBeautify, void *, nullptr);
+  INPLACE_1(DeepBeautify, ProjectionContext, {});
   INPLACE(ShallowContract, (void *)nullptr);
   INPLACE(ShallowExpand, (void *)nullptr);
   INPLACE(ShallowAlgebraicExpand, (void *)nullptr);
+  INPLACE_1(ShallowSystemProjection, void *, nullptr);
+  INPLACE_1(DeepSystemProjection, ProjectionContext, {});
 
  private:
   static bool SimplifyTrig(Tree *u);
@@ -96,6 +100,15 @@ class Simplification {
   static bool ExpandTrigonometric(Tree *node);
   static bool ExpandMult(Tree *node);
   static bool ExpandPower(Tree *node);
+
+  INPLACE(SimplifyTrig);
+  INPLACE(SimplifyMultiplication);
+  INPLACE(ContractTrigonometric);
+  INPLACE(ExpandTrigonometric);
+  INPLACE(ExpandMult);
+  INPLACE(ExpandPower);
+  INPLACE(ExpandTranscendentalOnRational);
+  INPLACE(PolynomialInterpretation);
 
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractExpPow, ContractAbs, ContractExpMult,

@@ -349,12 +349,12 @@ Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
   assert(SharedEditionPool->contains(nodeToMove->block()));
   SharedEditionPool->moveBlocks(destination->block(), nodeToMove->block(), size,
                                 at);
-#if POINCARE_POOL_VISUALIZATION
   Block* dst = destination->block();
-  Block* addedBlock = dst >= nodeToMove->block() ? dst - size : dst;
+  Block* addedBlock = dst > nodeToMove->block() ? dst - size : dst;
+#if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Insert", addedBlock, size, nodeToMove->block());
 #endif
-  return destination;
+  return Tree::FromBlocks(addedBlock);
 }
 
 Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {

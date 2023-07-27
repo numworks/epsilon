@@ -332,6 +332,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
       // Skip previously handled variable
       continue;
     }
+    variableIndex += 1;
     if (Comparison::ContainsSubtree(expression,
                                     std::get<const Tree*>(indexedVariable))) {
       variable = std::get<const Tree*>(indexedVariable);
@@ -350,7 +351,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
       continue;
     }
     EditionReference child = std::get<EditionReference>(indexedRef);
-    RecursivelyParse(child, variables, variableIndex + 1);
+    RecursivelyParse(child, variables, variableIndex);
   }
   return expression;
 }

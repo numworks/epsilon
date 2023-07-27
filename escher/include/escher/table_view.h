@@ -33,7 +33,6 @@ class TableView : public ScrollView {
   int totalNumberOfRows() { return dataSource()->numberOfRows(); }
   int totalNumberOfColumns() { return dataSource()->numberOfColumns(); }
 
-  void setContentOffset(KDPoint offset, bool relayout = true) override final;
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
   virtual void scrollToCell(int col, int row) {

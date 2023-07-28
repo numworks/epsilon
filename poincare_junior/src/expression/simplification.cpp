@@ -383,9 +383,9 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
     const Tree* k_angles[3] = {
         KPlaceholder<A>(), KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
         KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
-    EditionReference child(ref->childAtIndex(0));
-    MatchAndReplace(
-        child, KPlaceholder<A>(),
+    Tree* child = ref->childAtIndex(0);
+    child->matchAndReplace(
+        KPlaceholder<A>(),
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
     SystematicReduce(child);
   }
@@ -851,8 +851,7 @@ bool Simplification::ExpandPower(Tree* ref) {
   assert(newPow->nextNode()->type() != BlockType::Addition ||
          newPow->nextNode()->numberOfChildren() > 1);
   if (ExpandPower(newPow)) {
-    EditionReference newMult(newPow->nextTree());
-    ExpandMult(newMult);
+    ExpandMult(newPow->nextTree());
     NAry::Flatten(ref);
   }
   return true;

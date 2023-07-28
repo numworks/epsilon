@@ -108,29 +108,27 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t length =
       principalDirection == PrincipalDirection::X ? xLength : yLength;
 
-  if (length > 1) {
-    // Tweening function
-    for (int i = 1; i < length; i++) {
-      mp_float_t progress = i / length;
-      erase();
-      /* We make sure that each pixel along the principal direction is drawn. If
-       * the computation of the position on the principal coordinate is done
-       * using a barycenter, roundings might skip some pixels, which results in
-       * a dotted line. */
-      mp_float_t currentX = xLength == 0
-                                ? x
-                                : (principalDirection == PrincipalDirection::Y
-                                       ? x * progress + oldx * (1 - progress)
-                                       : oldx + (x > oldx ? i : -i));
-      mp_float_t currentY = yLength == 0
-                                ? y
-                                : (principalDirection == PrincipalDirection::X
-                                       ? y * progress + oldy * (1 - progress)
-                                       : oldy + (y > oldy ? i : -i));
-      if (dot(currentX, currentY) || draw(false)) {
-        // Keyboard interruption. Return now to let MicroPython process it.
-        return true;
-      }
+  // Tweening function
+  for (int i = 1; i < length; i++) {
+    mp_float_t progress = i / length;
+    erase();
+    /* We make sure that each pixel along the principal direction is drawn. If
+      * the computation of the position on the principal coordinate is done
+      * using a barycenter, roundings might skip some pixels, which results in
+      * a dotted line. */
+    mp_float_t currentX = xLength == 0
+                              ? x
+                              : (principalDirection == PrincipalDirection::Y
+                                      ? x * progress + oldx * (1 - progress)
+                                      : oldx + (x > oldx ? i : -i));
+    mp_float_t currentY = yLength == 0
+                              ? y
+                              : (principalDirection == PrincipalDirection::X
+                                      ? y * progress + oldy * (1 - progress)
+                                      : oldy + (y > oldy ? i : -i));
+    if (dot(currentX, currentY) || draw(false)) {
+      // Keyboard interruption. Return now to let MicroPython process it.
+      return true;
     }
   }
 

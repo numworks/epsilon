@@ -282,13 +282,8 @@ void ValuesController::didChangeCell(int column, int row) {
     /* Recomputing the layout might change the column width. To avoid reseting
      * all the memoization, it's only updated by knowing the difference between
      * the previous and the new width.
-     * Do not call `columnWidth` if it's not memoized, since it would call
-     * memoizedLayoutAtIndex() which might not be already computed and will be
-     * computed in the next line.
      * */
-    KDCoordinate previousWidth = columnWidthManager()->sizeAtIndexIsMemoized(i)
-                                     ? columnWidth(i)
-                                     : TableSize1DManager::k_undefinedSize;
+    KDCoordinate previousWidth = columnWidth(i);
     createMemoizedLayout(i, row, nbOfMemoizedColumns * memoizedRow + memoizedI);
     if (previousWidth != TableSize1DManager::k_undefinedSize) {
       updateSizeMemoizationForColumnAfterIndexChanged(i, previousWidth, row);

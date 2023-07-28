@@ -114,11 +114,8 @@ class ValuesController : public Shared::ValuesController,
 
   // EditableCellTableViewController
   void reloadEditedCell(int column, int row) override;
-  void updateSizeMemoizationForRow(int row,
-                                   KDCoordinate rowPreviousHeight) override {
-    // TODO
-    resetSizeMemoization();
-    // m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight);
+  void updateSizeMemoizationForRow(int row) override {
+    m_tableSizeManager.rowDidChange(row);
   }
   void setTitleCellStyle(Escher::HighlightCell *titleCell, int column) override;
 

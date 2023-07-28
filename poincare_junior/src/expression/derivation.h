@@ -13,7 +13,7 @@ class Derivation {
   static void Derivate(const Tree* derivand, const Tree* symbol,
                        const Tree* symbolValue);
 
-  INPLACE(Reduce)
+  EDITION_REF_WRAP(Reduce)
  private:
   // Shallow partial derivate parameterized expression at given index.
   static void ShallowPartialDerivate(const Tree* derivand, const Tree* symbol,

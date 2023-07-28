@@ -48,17 +48,17 @@ class Simplification {
 
   static bool SystematicReduce(Tree *u);
 
-  INPLACE(Simplify);
-  INPLACE(SystematicReduce);
-  INPLACE(AdvancedReduction);
-  INPLACE_1(ShallowAdvancedReduction, bool, false);
-  INPLACE_1(ShallowBeautify, void *, nullptr);
-  INPLACE_1(DeepBeautify, ProjectionContext, {});
-  INPLACE(ShallowContract, (void *)nullptr);
-  INPLACE(ShallowExpand, (void *)nullptr);
-  INPLACE(ShallowAlgebraicExpand, (void *)nullptr);
-  INPLACE_1(ShallowSystemProjection, void *, nullptr);
-  INPLACE_1(DeepSystemProjection, ProjectionContext, {});
+  EDITION_REF_WRAP(Simplify);
+  EDITION_REF_WRAP(SystematicReduce);
+  EDITION_REF_WRAP(AdvancedReduction);
+  EDITION_REF_WRAP_1(ShallowAdvancedReduction, bool);
+  EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
+  EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
+  EDITION_REF_WRAP_1D(ShallowContract, void *, nullptr);
+  EDITION_REF_WRAP_1D(ShallowExpand, void *, nullptr);
+  EDITION_REF_WRAP_1D(ShallowAlgebraicExpand, void *, nullptr);
+  EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
+  EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
 
  private:
   static bool SimplifyTrig(Tree *u);
@@ -101,14 +101,14 @@ class Simplification {
   static bool ExpandMult(Tree *node);
   static bool ExpandPower(Tree *node);
 
-  INPLACE(SimplifyTrig);
-  INPLACE(SimplifyMultiplication);
-  INPLACE(ContractTrigonometric);
-  INPLACE(ExpandTrigonometric);
-  INPLACE(ExpandMult);
-  INPLACE(ExpandPower);
-  INPLACE(ExpandTranscendentalOnRational);
-  INPLACE(PolynomialInterpretation);
+  EDITION_REF_WRAP(SimplifyTrig);
+  EDITION_REF_WRAP(SimplifyMultiplication);
+  EDITION_REF_WRAP(ContractTrigonometric);
+  EDITION_REF_WRAP(ExpandTrigonometric);
+  EDITION_REF_WRAP(ExpandMult);
+  EDITION_REF_WRAP(ExpandPower);
+  EDITION_REF_WRAP(ExpandTranscendentalOnRational);
+  EDITION_REF_WRAP(PolynomialInterpretation);
 
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractExpPow, ContractAbs, ContractExpMult,

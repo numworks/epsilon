@@ -51,25 +51,38 @@ inline bool operator==(Tree* n, const EditionReference& r) {
   return n == static_cast<Tree*>(r);
 }
 
-// Helper to turn Tree* inplace editions into EditionReference*
-template <class... Args>
-inline bool Inplace(bool func(Tree*, Args...), EditionReference* ref,
-                    Args... args) {
-  Tree* previous = *ref;
-  bool result = func(previous, args...);
-  *ref = previous;
+/* We have a semantical conflict between most our functions that want to alter a
+ * tree where it is and the EditionReference update mechanism that invalidates
+ * the reference when the tree it points to is replaced by something else. This
+ * helper is used to associate to F(Tree *) that alters a tree in-place a
+ * wrapper F(EditionReference &) that alters the tree pointed by the reference
+ * and keeps the reference valid. */
+template <class Result, class... Args>
+inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
+                                       EditionReference* ref, Args... args) {
+  Tree* location = *ref;
+  Result result = treeFunction(location, args...);
+  *ref = location;
   return result;
 }
 
-/* We could define a variadic macro to add several wrappers at once. It is
- *  complicated but maybe worth ? */
-#define INPLACE(F, ...)                              \
-  static bool F(EditionReference* r) {               \
-    return Inplace(F, r __VA_OPT__(, ) __VA_ARGS__); \
+/* Macros to define a method working with references from a method on tree */
+
+/* No argument */
+#define EDITION_REF_WRAP(F) \
+  static bool F(EditionReference* r) { return ApplyPreservingReference(F, r); }
+
+/* One argument */
+#define EDITION_REF_WRAP_1(F, T)               \
+  static bool F(EditionReference* r, T a1) {   \
+    return ApplyPreservingReference(F, r, a1); \
   }
 
-#define INPLACE_1(F, T, D) \
-  static bool F(EditionReference* r, T a1 = D) { return Inplace(F, r, a1); }
+/* One argument with default value */
+#define EDITION_REF_WRAP_1D(F, T, D)             \
+  static bool F(EditionReference* r, T a1 = D) { \
+    return ApplyPreservingReference(F, r, a1);   \
+  }
 
 bool MatchAndReplace(EditionReference* target, const Tree* pattern,
                      const Tree* structure);

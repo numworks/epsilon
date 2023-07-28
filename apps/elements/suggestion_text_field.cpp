@@ -43,7 +43,9 @@ void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
 
 SuggestionTextField::SuggestionTextField(Responder* parentResponder,
                                          TextFieldDelegate* delegate)
-    : AbstractTextField(parentResponder, &m_contentView, delegate) {}
+    : AbstractTextField(parentResponder, &m_contentView, delegate) {
+  setBackgroundColor(KDColorWhite);
+}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() &&

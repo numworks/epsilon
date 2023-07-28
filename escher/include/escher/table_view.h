@@ -61,6 +61,7 @@ class TableView : public ScrollView {
   HighlightCell *reusableCellAtIndex(int index) {
     return m_contentView.reusableCellAtIndex(index);
   }
+  void layoutSubviews(bool force = false) override;
   // Ensure that cells are properly filled after scrolling
   bool alwaysForceRelayoutOfContentView() const override { return true; }
 

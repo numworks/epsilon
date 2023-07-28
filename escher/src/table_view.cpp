@@ -32,6 +32,14 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
   }
 }
 
+void TableView::layoutSubviews(bool force) {
+  /* Reset memoization in case scrolling offset or frame changed.
+   * This is done here and not in ContentView::layoutSubviews because if the
+   * content view frame is empty, subviews won't be relayouted. */
+  m_contentView.resetMemoizedColumnAndRowOffsets();
+  ScrollView::layoutSubviews(force);
+}
+
 /* TableView::ContentView */
 
 TableView::ContentView::ContentView(TableView* tableView,
@@ -210,8 +218,6 @@ HighlightCell* TableView::ContentView::reusableCellAtIndex(int index) {
 }
 
 void TableView::ContentView::layoutSubviews(bool force) {
-  // Reset memoization in case scrolling offset changed
-  resetMemoizedColumnAndRowOffsets();
   /* The number of cells might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfDisplayableCells(); index++) {

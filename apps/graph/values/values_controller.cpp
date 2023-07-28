@@ -391,10 +391,7 @@ void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(
         k_maxColumnWidth,
         CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {
-      // TODO
-      resetSizeMemoization();
-      // m_widthManager.updateMemoizationForIndex(column,
-      // columnPreviousWidth, minimalWidthForColumn);
+      m_tableSizeManager.columnDidChange(column);
     }
   }
 }

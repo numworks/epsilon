@@ -5,6 +5,28 @@
 
 namespace Escher {
 
+void AbstractHeavyTableSizeManager::rowDidChange(int row) {
+  assert(row >= 0 && row < maxNumberOfRows());
+  int nC = maxNumberOfColumns();
+  KDSize maxCellSize = m_delegate->maxCellSize();
+  for (int c = 0; c < nC; c++) {
+    KDSize cellSize = m_delegate->cellSizeAtLocation(row, c);
+    *memoizedRowHeight(row) = std::clamp(
+        *memoizedRowHeight(row), cellSize.height(), maxCellSize.height());
+  }
+}
+
+void AbstractHeavyTableSizeManager::columnDidChange(int column) {
+  assert(column >= 0 && column < maxNumberOfColumns());
+  int nR = maxNumberOfRows();
+  KDSize maxCellSize = m_delegate->maxCellSize();
+  for (int r = 0; r < nR; r++) {
+    KDSize cellSize = m_delegate->cellSizeAtLocation(r, column);
+    *memoizedColumnWidth(column) = std::clamp(
+        *memoizedColumnWidth(column), cellSize.width(), maxCellSize.width());
+  }
+}
+
 void AbstractHeavyTableSizeManager::deleteRowMemoization(int row) {
   int nR = maxNumberOfRows();
   assert(row >= 0 && row < nR);

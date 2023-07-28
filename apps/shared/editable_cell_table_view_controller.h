@@ -67,8 +67,7 @@ class EditableCellTableViewController : public TabTableController,
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }
   KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
 
-  virtual void updateSizeMemoizationForRow(int row,
-                                           KDCoordinate rowPreviousHeight) {}
+  virtual void updateSizeMemoizationForRow(int row) {}
 
   // ClearColumnHelper
   Escher::SelectableTableView* table() override {

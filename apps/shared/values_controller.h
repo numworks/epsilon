@@ -105,6 +105,7 @@ class ValuesController : public EditableCellTableViewController,
   virtual Poincare::Layout* memoizedLayoutAtIndex(int i) = 0;
   // Coordinates of memoizedLayoutForCell refer to the absolute table
   Poincare::Layout memoizedLayoutForCell(int i, int j);
+  virtual void rowWasDeleted(int row, int colum);
 
   Escher::SelectableViewController* columnParameterController() override;
   Shared::ColumnParameters* columnParameters() override;

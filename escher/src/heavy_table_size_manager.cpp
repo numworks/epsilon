@@ -5,6 +5,16 @@
 
 namespace Escher {
 
+void AbstractHeavyTableSizeManager::deleteRowMemoization(int row) {
+  int nR = maxNumberOfRows();
+  assert(row >= 0 && row < nR);
+  for (int r = row; r < nR - 1; r++) {
+    *memoizedRowHeight(r) =
+        std::max(*memoizedRowHeight(r), *memoizedRowHeight(r + 1));
+  }
+  *memoizedRowHeight(nR - 1) = TableSize1DManager::k_undefinedSize;
+}
+
 KDCoordinate AbstractHeavyTableSizeManager::computeSizeAtIndex(
     int i, Dimension dimension) {
   KDCoordinate returnValue = memoizedSizeAtIndex(i, dimension);

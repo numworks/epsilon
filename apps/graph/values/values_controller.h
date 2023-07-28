@@ -101,6 +101,7 @@ class ValuesController : public Shared::ValuesController,
   Escher::TableSize1DManager *rowHeightManager() override {
     return m_tableSizeManager.rowHeightManager();
   }
+  void rowWasDeleted(int column, int row) override;
 
   // HeavyTableSizeManagerDelegate
   KDSize cellSizeAtLocation(int row, int col) override;

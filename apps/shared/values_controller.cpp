@@ -85,11 +85,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     int column = selectedColumn();
     intervalAtColumn(column)->deleteElementAtIndex(row - k_numberOfTitleRows);
     // Reload memoization
-    int nRows = numberOfElementsInColumn(column) + k_numberOfTitleRows;
-    for (int i = row; i < nRows; i++) {
-      didChangeCell(column, i);
-    }
-    resetSizeMemoization();  // This is slow but it works
+    rowWasDeleted(row, column);
     selectableTableView()->reloadData();
     return true;
   }
@@ -432,6 +428,50 @@ Layout ValuesController::memoizedLayoutForCell(int column, int row) {
   return *memoizedLayoutAtIndex((valuesRow - m_firstMemoizedRow) *
                                     nbOfMemoizedColumns +
                                 (valuesCol - m_firstMemoizedColumn));
+}
+
+void ValuesController::rowWasDeleted(int row, int column) {
+  // Shift layout memoization
+
+  // Conversion of coordinates from absolute table to values table
+  int memoizedRow = valuesRowForAbsoluteRow(row) - m_firstMemoizedRow;
+  if (0 > memoizedRow || memoizedRow >= k_maxNumberOfDisplayableRows) {
+    // The changed row is out of the memoized table
+    return;
+  }
+
+  // Find the abscissa column corresponding to column
+  int abscissaColumn = 0;
+  int nbOfColumns = numberOfColumnsForAbscissaColumn(abscissaColumn);
+  while (column >= nbOfColumns) {
+    abscissaColumn = nbOfColumns;
+    nbOfColumns += numberOfColumnsForAbscissaColumn(abscissaColumn);
+  }
+
+  // Update the memoization of rows below the deleted one:
+  int nbOfColumnsForAbscissa = numberOfColumnsForAbscissaColumn(abscissaColumn);
+  for (int r = memoizedRow; r < k_maxNumberOfDisplayableRows; r++) {
+    for (int i = abscissaColumn + 1;
+         i < abscissaColumn + nbOfColumnsForAbscissa; i++) {
+      int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
+      if (memoizedI < 0 || memoizedI >= k_maxNumberOfDisplayableColumns) {
+        // The changed column is out of the memoized table
+        continue;
+      }
+      if (r + 1 < k_maxNumberOfDisplayableRows) {
+        *memoizedLayoutAtIndex(r * k_maxNumberOfDisplayableColumns +
+                               memoizedI) =
+            *memoizedLayoutAtIndex((r + 1) * k_maxNumberOfDisplayableColumns +
+                                   memoizedI);
+      } else {
+        int currentAbsoluteRow = row + r - memoizedRow;
+        if (currentAbsoluteRow < numberOfRowsAtColumn(i) - 1) {
+          createMemoizedLayout(i, currentAbsoluteRow,
+                               r * k_maxNumberOfDisplayableColumns + memoizedI);
+        }
+      }
+    }
+  }
 }
 
 void ValuesController::clearSelectedColumn() {

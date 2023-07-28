@@ -123,6 +123,12 @@ KDCoordinate ValuesController::separatorBeforeColumn(int column) {
              : 0;
 }
 
+void ValuesController::rowWasDeleted(int row, int column) {
+  // Shift size memoization
+  m_tableSizeManager.deleteRowMemoization(row);
+  Shared::ValuesController::rowWasDeleted(row, column);
+}
+
 // ButtonRowDelegate
 
 Escher::AbstractButtonCell *ValuesController::buttonAtIndex(

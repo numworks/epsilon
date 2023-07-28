@@ -14,9 +14,8 @@ class Float {
     return Bit::getByteAtIndex(std::bit_cast<uint32_t>(value), index);
   }
   static float To(const Tree *tree) {
-    volatile const uint32_t value =
-        *reinterpret_cast<const uint32_t *>(tree->block()->next());
-    return std::bit_cast<float>(value);
+    return std::bit_cast<float>(
+        *reinterpret_cast<const uint32_t *>(tree->block()->next()));
   }
 };
 

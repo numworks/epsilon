@@ -135,8 +135,10 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   }
 
   erase();
-  dot(x, y);
-  draw(true);
+  if (dot(x, y) || draw(true)) {
+    // Keyboard interruption. Return now to let MicroPython process it.
+    return true;
+  }
   return false;
 }
 

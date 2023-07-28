@@ -41,7 +41,7 @@ StrictSign Number::StrictSign(const Tree* node) {
     }
     default:
       assert(node->block()->isRational());
-      return Rational::RationalStrictSign(node);
+      return Rational::StrictSign(node);
   }
 }
 

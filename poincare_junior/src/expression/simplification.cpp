@@ -137,7 +137,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // 0^n -> 0
   if (v->type() == BlockType::Zero) {
     if (n->type() != BlockType::Zero &&
-        Rational::RationalStrictSign(n) == StrictSign::Positive) {
+        Rational::StrictSign(n) == StrictSign::Positive) {
       u->cloneNodeOverTree(0_e);
       return true;
     }

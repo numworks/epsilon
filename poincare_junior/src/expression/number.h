@@ -11,7 +11,7 @@ class Number {
   static EditionReference Addition(const Tree* i, const Tree* j);
   static EditionReference Multiplication(const Tree* i, const Tree* j);
   static NonStrictSign Sign(const Tree* node);
-  static StrictSign StrictSign(const Tree* node);
+  static enum StrictSign StrictSign(const Tree* node);
 };
 
 }  // namespace PoincareJ

@@ -16,7 +16,7 @@ class Rational final {
   static IntegerHandler Numerator(const Tree* node);
   static IntegerHandler Denominator(const Tree* node);
   static NonStrictSign Sign(const Tree* node) { return Numerator(node).sign(); }
-  static StrictSign RationalStrictSign(const Tree* node) {
+  static enum StrictSign StrictSign(const Tree* node) {
     return Numerator(node).strictSign();
   }
   static void SetSign(Tree* reference, NonStrictSign sign);

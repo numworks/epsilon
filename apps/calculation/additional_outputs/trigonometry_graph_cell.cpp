@@ -11,16 +11,17 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   assert(m_model && plotView);
 
   float angle = m_model->angle();
-#if 0
-  if (!std::isfinite(angle)) {
-    /* I think this should not happen, but if it does, restore this code so
-     * that the angle is not drawn, and remove the assert(std::isfinite(angle))
-     * in TrigonometryListController. */
-    return;
-  }
-#endif
   assert(std::isfinite(angle));
   assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
+  if (!std::isfinite(angle)) {
+    /* This is defensive coding to avoid looping infinitely in drawArcOfEllipse
+     * when angle is not finite. This should not happen since some asserts
+     * prevent it, but history has shown that we always end up with
+     * trigonometric additionnal results that trigger these asserts, and loop
+     * infinitely in release. This code should be removed once the additionnal
+     * results are refactored. */
+    return;
+  }
   float s = std::sin(angle);
   float c = std::cos(angle);
 

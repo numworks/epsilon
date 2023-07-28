@@ -46,7 +46,9 @@ SuggestionTextField::SuggestionTextField(
     InputEventHandlerDelegate* inputEventHandlerDelegate,
     TextFieldDelegate* delegate)
     : AbstractTextField(parentResponder, &m_contentView,
-                        inputEventHandlerDelegate, delegate) {}
+                        inputEventHandlerDelegate, delegate) {
+  setBackgroundColor(KDColorWhite);
+}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() &&

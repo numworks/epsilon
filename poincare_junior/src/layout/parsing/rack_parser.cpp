@@ -494,8 +494,8 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     leftHandSide = parseUntil(std::max(stoppingType, Token::Type::Minus));
     if (m_status == Status::Progress && !plus) {
       // TODO Opposite instead of multiplication by -1
-      CloneTreeAtNode(&leftHandSide, -1_e);
-      CloneNodeAtNode(&leftHandSide, KTree<BlockType::Multiplication, 2>());
+      CloneTreeAtNode(leftHandSide, -1_e);
+      CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
     }
     return;
   }
@@ -514,14 +514,14 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // }
     assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
     if (!plus) {
-      CloneNodeAtNode(&leftHandSide, KTree<BlockType::Subtraction>());
+      CloneNodeAtNode(leftHandSide, KTree<BlockType::Subtraction>());
       return;
     }
     if (leftHandSide->type() == BlockType::Addition) {
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide->numberOfChildren() + 1);
     } else {
-      CloneNodeAtNode(&leftHandSide, KTree<BlockType::Addition, 2>());
+      CloneNodeAtNode(leftHandSide, KTree<BlockType::Addition, 2>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -591,7 +591,7 @@ void RackParser::parseSlash(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
-    CloneNodeAtNode(&leftHandSide, KTree<BlockType::Division>());
+    CloneNodeAtNode(leftHandSide, KTree<BlockType::Division>());
   } else {
     removeTreeIfInitialized(rightHandSide);
   }
@@ -605,7 +605,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
       NAry::SetNumberOfChildren(leftHandSide,
                                 leftHandSide->numberOfChildren() + 1);
     } else {
-      CloneNodeAtNode(&leftHandSide, KTree<BlockType::Multiplication, 2>());
+      CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
     }
   } else {
     removeTreeIfInitialized(rightHandSide);
@@ -615,7 +615,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
 static void turnIntoBinaryNode(const Tree *node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
   assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
-  CloneNodeAtNode(&leftHandSide, node);
+  CloneNodeAtNode(leftHandSide, node);
 }
 
 void RackParser::parseCaret(EditionReference &leftHandSide,
@@ -815,7 +815,7 @@ void RackParser::parseBang(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing
   } else {
-    CloneNodeAtNode(&leftHandSide, KTree<BlockType::Factorial>());
+    CloneNodeAtNode(leftHandSide, KTree<BlockType::Factorial>());
   }
   isThereImplicitOperator();
 }

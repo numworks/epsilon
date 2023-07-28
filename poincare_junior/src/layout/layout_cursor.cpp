@@ -621,7 +621,7 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
     assert(m_cursorReference->block() == rootNode()->block() ||
            !Layout::IsHorizontal(
                rootNode()->parentOfDescendant(m_cursorReference)));
-    MoveTreeOverTree(&m_cursorReference,
+    MoveTreeOverTree(m_cursorReference,
                      SharedEditionPool->push<BlockType::RackLayout>(0));
   }
   m_position = selectionLeftBound;

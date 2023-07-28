@@ -54,46 +54,46 @@ void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   (*treeFunction)(*this);
 }
 
-void CloneNodeAtNode(EditionReference* target, const Tree* nodeToClone) {
-  Tree* previousTarget = *target;
-  previousTarget->cloneNodeAtNode(nodeToClone);
-  *target = previousTarget;
+void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone) {
+  Tree* previousTarget = target;
+  target->cloneNodeAtNode(nodeToClone);
+  target = previousTarget;
 }
 
-void CloneTreeAtNode(EditionReference* target, const Tree* treeToClone) {
-  Tree* previousTarget = *target;
-  previousTarget->cloneTreeAtNode(treeToClone);
-  *target = previousTarget;
+void CloneTreeAtNode(EditionReference& target, const Tree* treeToClone) {
+  Tree* previousTarget = target;
+  target->cloneTreeAtNode(treeToClone);
+  target = previousTarget;
 }
 
-void MoveNodeAtNode(EditionReference* target, Tree* nodeToMove) {
-  Tree* previousTarget = *target;
+void MoveNodeAtNode(EditionReference& target, Tree* nodeToMove) {
+  Tree* previousTarget = target;
   if (nodeToMove->block() < previousTarget->block()) {
     previousTarget =
         Tree::FromBlocks(previousTarget->block() - nodeToMove->nodeSize());
   }
-  previousTarget->moveNodeAtNode(nodeToMove);
-  *target = previousTarget;
+  target->moveNodeAtNode(nodeToMove);
+  target = previousTarget;
 }
 
-void MoveTreeAtNode(EditionReference* target, Tree* treeToMove) {
-  Tree* previousTarget = *target;
+void MoveTreeAtNode(EditionReference& target, Tree* treeToMove) {
+  Tree* previousTarget = target;
   if (treeToMove->block() < previousTarget->block()) {
     previousTarget =
         Tree::FromBlocks(previousTarget->block() - treeToMove->treeSize());
   }
-  previousTarget->moveTreeAtNode(treeToMove);
-  *target = previousTarget;
+  target->moveTreeAtNode(treeToMove);
+  target = previousTarget;
 }
 
-void SwapTrees(EditionReference* u, EditionReference* v) {
-  if ((*u)->block() > (*v)->block()) {
+void SwapTrees(EditionReference& u, EditionReference& v) {
+  if (u->block() > v->block()) {
     return SwapTrees(v, u);
   }
-  Tree* previousU = *u;
-  Tree* previousV = *v;
+  Tree* previousU = u;
+  Tree* previousV = v;
   MoveTreeAtNode(v, previousU);
-  *u = previousU;
+  u = EditionReference(previousU);
   MoveTreeAtNode(u, previousV);
 }
 

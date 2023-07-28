@@ -10,6 +10,7 @@ class EditionPool final : public Pool {
   friend class EditionReference;
 
  public:
+  static void InitSharedEditionPool();
   EditionPool(TypeBlock *firstBlock, size_t size, int numberOfBlocks = 0)
       : m_referenceTable(this),
         m_firstBlock(firstBlock),

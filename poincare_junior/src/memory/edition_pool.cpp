@@ -17,6 +17,12 @@ namespace PoincareJ {
 EditionPool *const SharedEditionPool =
     CachePool::sharedCachePool()->editionPool();
 
+void EditionPool::InitSharedEditionPool() {
+  // TODO is this a defined behavior ?
+  EditionPool **pool = const_cast<EditionPool **>(&SharedEditionPool);
+  *pool = CachePool::sharedCachePool()->editionPool();
+}
+
 Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   Tree *n = Pool::ReferenceTable::nodeForIdentifier(id);
   if (!m_pool->contains(n->block()) && n->block() != m_pool->lastBlock()) {

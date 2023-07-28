@@ -11,7 +11,7 @@
 
 namespace PoincareJ {
 
-void Init() {}
+void Init() { EditionPool::InitSharedEditionPool(); }
 
 void Shutdown() {
 #if POINCARE_POOL_VISUALIZATION

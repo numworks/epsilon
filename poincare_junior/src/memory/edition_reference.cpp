@@ -39,11 +39,11 @@ EditionReference::EditionReference(Tree* node) {
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
   std::cout << "id: " << m_identifier << "\n";
-  node()->log(std::cout, true, 1, true);
+  tree()->log(std::cout, true, 1, true);
 }
 #endif
 
-Tree* EditionReference::node() const {
+Tree* EditionReference::tree() const {
   return SharedEditionPool->nodeForIdentifier(m_identifier);
 }
 

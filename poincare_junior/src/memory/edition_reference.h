@@ -19,20 +19,20 @@ class EditionReference {
   __attribute__((__used__)) void log() const;
 #endif
 
-  Tree* operator->() { return node(); }
+  Tree* operator->() { return tree(); }
 
   /* Comparison */
   inline bool operator==(const EditionReference& t) const {
     return m_identifier == t.identifier() ||
-           (!isUninitialized() && !t.isUninitialized() && node() == t.node());
+           (!isUninitialized() && !t.isUninitialized() && tree() == t.tree());
   }
   inline bool operator!=(const EditionReference& t) const {
     return m_identifier != t.identifier() &&
-           (isUninitialized() || t.isUninitialized() || node() != t.node());
+           (isUninitialized() || t.isUninitialized() || tree() != t.tree());
   }
 
-  operator Tree*() const { return node(); }
-  bool isUninitialized() const { return node() == nullptr; }
+  operator Tree*() const { return tree(); }
+  bool isUninitialized() const { return tree() == nullptr; }
   void uninitialize() {
     m_identifier = EditionPool::ReferenceTable::UninitializedOffset;
   }
@@ -43,7 +43,7 @@ class EditionReference {
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
  private:
-  Tree* node() const;
+  Tree* tree() const;
   uint16_t m_identifier;
 };
 

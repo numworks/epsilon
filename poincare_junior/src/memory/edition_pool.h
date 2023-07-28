@@ -96,7 +96,7 @@ class EditionPool final : public Pool {
                      const Block *contextSelection2, int contextAlteration);
 
    private:
-    size_t maxNumberOfReferences() override {
+    size_t maxNumberOfReferences() const override {
       return EditionPool::k_maxNumberOfReferences;
     }
     uint16_t *nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }

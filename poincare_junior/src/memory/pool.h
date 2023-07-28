@@ -60,7 +60,7 @@ class Pool {
 #endif
    protected:
     uint16_t storeNodeAtIndex(Tree *node, size_t index);
-    virtual size_t maxNumberOfReferences() = 0;
+    virtual size_t maxNumberOfReferences() const = 0;
     virtual uint16_t *nodeOffsetArray() = 0;
     uint16_t m_length;
     Pool *m_pool;

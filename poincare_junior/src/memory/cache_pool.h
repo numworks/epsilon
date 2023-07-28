@@ -82,7 +82,7 @@ class CachePool final : public Pool {
     bool reset() override;
 
    private:
-    size_t maxNumberOfReferences() override {
+    size_t maxNumberOfReferences() const override {
       return CachePool::k_maxNumberOfReferences;
     }
     uint16_t *nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }

@@ -964,6 +964,10 @@ ndarray_obj_t *ndarray_from_iterable(mp_obj_t obj, uint8_t dtype) {
     }
 
     ndarray_obj_t *ndarray = ndarray_new_dense_ndarray(ndim, shape, dtype);
+    if (ndim == 0) {
+      return ndarray;
+    }
+
     item = obj;
     for(uint8_t i = 0; i < ndim - 1; i++) {
         // if ndim > 1, descend into the hierarchy

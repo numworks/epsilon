@@ -30,6 +30,7 @@ class AbstractHeavyTableSizeManager {
 
   TableSize1DManager* rowHeightManager() { return &m_rowHeightManager; }
   TableSize1DManager* columnWidthManager() { return &m_columnWidthManager; }
+  void deleteRowMemoization(int row);
 
  protected:
   class HeavyTableSize1DManager : public TableSize1DManager {

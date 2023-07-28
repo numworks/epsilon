@@ -133,11 +133,8 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   }
 
   erase();
-  if (dot(x, y) || draw(true)) {
-    // Keyboard interruption. Return now to let MicroPython process it.
-    return true;
-  }
-  return false;
+  // Keyboard interruption. Return now to let MicroPython process it.
+  return dot(x, y) || draw(true);
 }
 
 void Turtle::setHeading(mp_float_t angle) {

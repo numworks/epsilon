@@ -59,10 +59,10 @@ inline bool operator==(Tree* n, const EditionReference& r) {
  * and keeps the reference valid. */
 template <class Result, class... Args>
 inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
-                                       EditionReference* ref, Args... args) {
-  Tree* location = *ref;
+                                       EditionReference& ref, Args... args) {
+  Tree* location = ref;
   Result result = treeFunction(location, args...);
-  *ref = location;
+  ref = location;
   return result;
 }
 
@@ -70,21 +70,21 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
 
 /* No argument */
 #define EDITION_REF_WRAP(F) \
-  static bool F(EditionReference* r) { return ApplyPreservingReference(F, r); }
+  static bool F(EditionReference& r) { return ApplyPreservingReference(F, r); }
 
 /* One argument */
 #define EDITION_REF_WRAP_1(F, T)               \
-  static bool F(EditionReference* r, T a1) {   \
+  static bool F(EditionReference& r, T a1) {   \
     return ApplyPreservingReference(F, r, a1); \
   }
 
 /* One argument with default value */
 #define EDITION_REF_WRAP_1D(F, T, D)             \
-  static bool F(EditionReference* r, T a1 = D) { \
+  static bool F(EditionReference& r, T a1 = D) { \
     return ApplyPreservingReference(F, r, a1);   \
   }
 
-bool MatchAndReplace(EditionReference* target, const Tree* pattern,
+bool MatchAndReplace(EditionReference& target, const Tree* pattern,
                      const Tree* structure);
 
 void SwapTrees(EditionReference* u, EditionReference* v);

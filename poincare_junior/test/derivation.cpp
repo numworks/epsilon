@@ -9,7 +9,7 @@ using namespace PoincareJ;
 void assert_derivation_inplace_is(const Tree *expression,
                                   const Tree *expected) {
   EditionReference ref(expression);
-  Derivation::Reduce(&ref);
+  Derivation::Reduce(ref);
   assert_trees_are_equal(ref, expected);
   ref->removeTree();
 }
@@ -26,7 +26,7 @@ void assert_derivation_is(const Tree *expression, const Tree *expected,
   Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   Derivation::Derivate(expression, symbol, symbolValue);
   EditionReference simplifiedResult(result);
-  Simplification::Simplify(&simplifiedResult);
+  Simplification::Simplify(simplifiedResult);
   quiz_assert(expected->treeIsIdenticalTo(simplifiedResult));
   simplifiedResult->removeTree();
 }

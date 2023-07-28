@@ -97,11 +97,11 @@ void SwapTrees(EditionReference* u, EditionReference* v) {
   MoveTreeAtNode(u, previousV);
 }
 
-bool MatchAndReplace(EditionReference* target, const Tree* pattern,
+bool MatchAndReplace(EditionReference& target, const Tree* pattern,
                      const Tree* structure) {
-  Tree* previous = *target;
+  Tree* previous = target;
   bool result = previous->matchAndReplace(pattern, structure);
-  *target = previous;
+  target = previous;
   return result;
 }
 

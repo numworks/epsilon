@@ -119,7 +119,7 @@ EditionReference Polynomial::Operation(
               : SharedEditionPool->push<BlockType::Multiplication>(2);
       op->moveTreeAfterNode(polB);
       op->moveTreeAfterNode(polA);
-      Simplification::SystematicReduce(&op);
+      Simplification::SystematicReduce(op);
       return op;
     }
     return Operation(polB, polA, blockType, operationMonomial,
@@ -420,7 +420,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
         /* TODO: if the previous assertion is wrong, we have to multiply
          * children coefficients and addition children exponents. */
         child->moveTreeOverTree(childCoefficient);
-        Simplification::SystematicReduce(&expression);
+        Simplification::SystematicReduce(expression);
         return std::make_pair(expression, childExponent);
       }
       childCoefficient->removeTree();

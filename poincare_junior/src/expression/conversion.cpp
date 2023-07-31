@@ -15,7 +15,7 @@
 
 namespace PoincareJ {
 
-Poincare::Expression LazyToPoincareExpression(const Tree *exp) {
+Poincare::Expression ToPoincareExpressionViaParse(const Tree *exp) {
   EditionReference outputLayout =
       Expression::EditionPoolExpressionToLayout(exp->clone());
   constexpr size_t bufferSize = 256;
@@ -25,7 +25,7 @@ Poincare::Expression LazyToPoincareExpression(const Tree *exp) {
   return Poincare::Expression::Parse(buffer, nullptr, false, false);
 }
 
-void LazyPushPoincareExpression(Poincare::Expression exp) {
+void PushPoincareExpressionViaParse(Poincare::Expression exp) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   exp.serialize(buffer, bufferSize);
@@ -117,7 +117,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     case BlockType::RationalNegBig:
     case BlockType::Float:
     case BlockType::Decimal:
-      return LazyToPoincareExpression(exp);
+      return ToPoincareExpressionViaParse(exp);
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
           ToPoincareExpression(exp->childAtIndex(0)));
@@ -232,7 +232,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::BasedInteger:
     case OT::Float:
     case OT::Decimal:
-      return LazyPushPoincareExpression(exp);
+      return PushPoincareExpressionViaParse(exp);
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
       SharedEditionPool->push<BlockType::UserSymbol>(s.name(),

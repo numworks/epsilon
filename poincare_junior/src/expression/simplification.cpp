@@ -25,7 +25,11 @@ bool IsConstant(const Tree* u) { return IsNumber(u); }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
-  bool modified = false;
+  /* Although they are also flattened in ShallowSystematicReduce, flattening
+   * here could save multiple ShallowSystematicReduce and flatten calls. */
+  bool modified = (u->type() == BlockType::Multiplication ||
+                   u->type() == BlockType::Addition) &&
+                  NAry::Flatten(u);
   int numberOfChildren = u->numberOfChildren();
   Tree* child = u->nextNode();
   while (numberOfChildren > 0) {

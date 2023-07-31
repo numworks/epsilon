@@ -1,6 +1,5 @@
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/memory/edition_reference.h>
-#include <poincare_junior/src/memory/node_iterator.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -9,62 +8,49 @@ using namespace PoincareJ;
 
 QUIZ_CASE(pcj_elementary_tree_manipulation) {
   CachePool* cache = CachePool::sharedCachePool();
+  reset_pools();
 
-  createSimpleExpression();
+  // Create (1 + 2) * 3 * (4 + 5)
+  const Tree* simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, KAdd(4_e, 5_e));
+  Tree* createdExpr = SharedEditionPool->push<BlockType::Multiplication>(3);
+  SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->push<BlockType::One>();
+  SharedEditionPool->push<BlockType::Two>();
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
 
-  log_edition_pool();
-  log_cache_pool();
+  quiz_assert(cache->numberOfTrees() == 0);
+  quiz_assert(SharedEditionPool->numberOfTrees() == 1);
+  assert_trees_are_equal(createdExpr, simpleExpression);
 
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Store (1+2)*3*4 ---" << std::endl;
-#endif
+  // Store (1 + 2) * 3 * (4 + 5)
   uint16_t treeId = cache->storeEditedTree();
 
-  log_edition_pool();
-  log_cache_pool();
+  quiz_assert(cache->numberOfTrees() == 1);
+  quiz_assert(SharedEditionPool->numberOfTrees() == 0);
+  assert_trees_are_equal(cache->nodeForIdentifier(treeId), simpleExpression);
 
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Edit (1+2)*3*4 ---" << std::endl;
-#endif
-  SharedEditionPool->clone(cache->nodeForIdentifier(treeId));
+  // Edit (1 + 2) * 3 * (4 + 5)
+  Tree* editedExpr = SharedEditionPool->clone(cache->nodeForIdentifier(treeId));
 
-  log_edition_pool();
-  log_cache_pool();
+  quiz_assert(cache->numberOfTrees() == 1);
+  quiz_assert(SharedEditionPool->numberOfTrees() == 1);
+  assert_trees_are_equal(editedExpr, simpleExpression);
+  quiz_assert(Tree::FromBlocks(SharedEditionPool->firstBlock()) == editedExpr);
 
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Develop (1+2)*3*4 ---" << std::endl;
-#endif
-  Tree* root = Tree::FromBlocks(SharedEditionPool->firstBlock());
-  assert(root->type() == BlockType::Multiplication);
-  Simplification::ShallowAlgebraicExpand(root);
+  // Simplify (1 + 2) * 3 * (4 + 5)
+  Simplification::Simplify(editedExpr);
 
-  log_edition_pool();
+  quiz_assert(cache->numberOfTrees() == 1);
+  quiz_assert(SharedEditionPool->numberOfTrees() == 1);
+  assert_trees_are_equal(editedExpr, 81_e);
 
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Store developed 1*3*4+2*3*4 ---" << std::endl;
-#endif
+  // Store simplified 81
   treeId = cache->storeEditedTree();
 
-  log_edition_pool();
-  log_cache_pool();
-
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Create 1-2/3 ---" << std::endl;
-#endif
-  EditionReference subtraction(
-      SharedEditionPool->push<BlockType::Subtraction>());
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  SharedEditionPool->push<BlockType::Division>();
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-
-  log_edition_pool();
-
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Projection to internal nodes 1-2/3 ---" << std::endl;
-#endif
-  subtraction.recursivelyEdit([](EditionReference reference) {
-    Simplification::DeepSystematicReduce(reference);
-  });
-  log_edition_pool();
+  quiz_assert(cache->numberOfTrees() == 2);
+  quiz_assert(SharedEditionPool->numberOfTrees() == 0);
+  assert_trees_are_equal(cache->nodeForIdentifier(treeId), 81_e);
 }

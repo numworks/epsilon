@@ -13,23 +13,6 @@
 
 using namespace PoincareJ;
 
-// TODO: remove
-inline EditionReference createSimpleExpression() {
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;
-#endif
-  EditionReference multiplication(
-      SharedEditionPool->push<BlockType::Multiplication>(3));
-  SharedEditionPool->push<BlockType::Addition>(2);
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  SharedEditionPool->push<BlockType::Addition>(2);
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  return multiplication;
-}
-
 #if POINCARE_MEMORY_TREE_LOG
 
 __attribute__((__used__)) inline void log_edition_pool(

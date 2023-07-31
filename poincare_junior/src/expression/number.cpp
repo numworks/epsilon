@@ -59,10 +59,7 @@ bool Number::IsSanitized(const Tree* n) {
     return true;
   }
   // Re-push the optimized tree on the EditionPool, and compare with original.
-  Tree* temp =
-      (n->block()->isRational())
-          ? Rational::Push(Rational::Numerator(n), Rational::Denominator(n))
-          : Integer::Handler(n).pushOnEditionPool();
+  Tree* temp = Rational::Push(Rational::Numerator(n), Rational::Denominator(n));
   bool result = n->treeIsIdenticalTo(temp);
   temp->removeTree();
   return result;

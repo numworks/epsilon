@@ -174,6 +174,9 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
 }
 
 bool Rational::MakeIrreducible(Tree* i) {
+  if (!Number::IsStrictRational(i) || Number::IsHalf(i)) {
+    return false;
+  }
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
   if (Number::IsOne(gcd)) {
     gcd->removeTree();

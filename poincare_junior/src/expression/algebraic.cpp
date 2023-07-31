@@ -13,7 +13,7 @@ namespace PoincareJ {
 // TODO: tests
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
-  if (expression->block()->isRational()) {
+  if (Number::IsStrictRational(expression)) {
     EditionReference fraction(
         SharedEditionPool->push<BlockType::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();

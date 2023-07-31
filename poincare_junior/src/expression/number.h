@@ -32,6 +32,12 @@ class Number {
     assert(IsSanitized(t));
     return t->type() == BlockType::Half;
   }
+  static bool IsStrictRational(const Tree* t) {
+    assert(IsSanitized(t));
+    return t->block()->isOfType({BlockType::Half, BlockType::RationalShort,
+                                 BlockType::RationalNegBig,
+                                 BlockType::RationalPosBig});
+  }
 
   static EditionReference Addition(const Tree* i, const Tree* j);
   static EditionReference Multiplication(const Tree* i, const Tree* j);

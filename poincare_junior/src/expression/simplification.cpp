@@ -45,11 +45,9 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 }
 
 bool Simplification::ShallowSystematicReduce(Tree* u) {
-  if (IsRational(u)) {
-    return Rational::MakeIrreducible(u);
-  }
   if (u->numberOfChildren() == 0) {
-    return false;
+    // Strict rationals are the only childless trees that can be reduced.
+    return Rational::MakeIrreducible(u);
   }
 
   switch (u->type()) {

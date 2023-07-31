@@ -32,14 +32,7 @@ Calculation::Calculation(const char* textInput) {
   m_output = Expression::CreateSimplifyReduction(m_buffer.blocks());
 }
 
-QUIZ_CASE(pcj_calculation) {
-  Calculation calculation("(1-2)/3/4");
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------"
-            << std::endl;
-  calculation.output().log();
-#endif
-}
+QUIZ_CASE(pcj_calculation) { Calculation calculation("(1-2)/3/4"); }
 
 // Check BlockBuffer
 

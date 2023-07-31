@@ -25,13 +25,7 @@ Graph::Graph(const char* text) {
 float Graph::approximateAtAbscissa() const { return m_function.approximate(); }
 
 QUIZ_CASE(pcj_graph) {
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n---------------- Push Graph (1-2)/3/4 ----------------"
-            << std::endl;
-#endif
-  Graph graph("(1-2)/3/4");
+  Graph graph("(1-2)/8/4");
   float valueAt0 = graph.approximateAtAbscissa();
-#if POINCARE_MEMORY_TREE_LOG
-  std::cout << "Approximation = " << valueAt0 << std::endl;
-#endif
+  quiz_assert(valueAt0 == -0.03125);
 }

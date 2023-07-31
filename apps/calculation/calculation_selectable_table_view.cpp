@@ -27,7 +27,7 @@ void CalculationSelectableTableView::scrollToBottom() {
 
 void CalculationSelectableTableView::scrollToCell(int i, int j) {
   ::SelectableTableView::scrollToCell(i, j);
-  ScrollView::layoutSubviews();
+  TableView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() <
       bounds().height()) {
     // Avoid empty space at the end of the table

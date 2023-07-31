@@ -23,12 +23,6 @@ TypeController::TypeController(StackViewController *parent,
       m_inputController(inputController),
       m_statistic(statistic) {
   m_selectableListView.margins()->setBottom(0);
-  cell(k_indexOfTTest)->label()->setMessage(m_statistic->tDistributionName());
-  cell(k_indexOfPooledTest)
-      ->label()
-      ->setMessage(m_statistic->tPooledDistributionName());
-  cell(k_indexOfZTest)->label()->setMessage(m_statistic->zDistributionName());
-
   // Init selection
   selectRow(0);
 }
@@ -89,6 +83,11 @@ void TypeController::stackOpenPage(ViewController *nextPage) {
 }
 
 void TypeController::viewWillAppear() {
+  cell(k_indexOfTTest)->label()->setMessage(m_statistic->tDistributionName());
+  cell(k_indexOfPooledTest)
+      ->label()
+      ->setMessage(m_statistic->tPooledDistributionName());
+  cell(k_indexOfZTest)->label()->setMessage(m_statistic->zDistributionName());
   cell(k_indexOfPooledTest)
       ->setVisible(m_statistic->numberOfAvailableDistributions() ==
                    numberOfRows());

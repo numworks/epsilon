@@ -21,7 +21,6 @@ bool IsInteger(const Tree* u) { return u->block()->isInteger(); }
 bool IsNumber(const Tree* u) { return u->block()->isNumber(); }
 bool IsRational(const Tree* u) { return u->block()->isRational(); }
 bool IsConstant(const Tree* u) { return IsNumber(u); }
-bool IsZero(const Tree* u) { return u->type() == BlockType::Zero; }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
@@ -107,8 +106,8 @@ bool Simplification::SimplifyTrigDiff(Tree* u) {
    * worth it. */
   Tree* x = u->childAtIndex(0);
   Tree* y = u->childAtIndex(1);
-  assert(x->block()->isOfType({BlockType::Zero, BlockType::One}));
-  assert(y->block()->isOfType({BlockType::Zero, BlockType::One}));
+  assert(Number::IsZero(x) || Number::IsOne(x));
+  assert(Number::IsZero(y) || Number::IsOne(y));
   u->cloneTreeOverTree(x->treeIsIdenticalTo(y) ? 0_e : 1_e);
   return true;
 }
@@ -119,16 +118,15 @@ bool Simplification::SimplifyTrig(Tree* u) {
   /* Trig second element is always expected to be reduced. This will call
    * SimplifyTrigDiff if needed. */
   bool changed = DeepSystematicReduce(secondArgument);
-  if (secondArgument->block()->isOfType(
-          {BlockType::MinusOne, BlockType::Two})) {
+  if (Number::IsTwo(secondArgument) || Number::IsMinusOne(secondArgument)) {
     // Simplify second argument to either 0 or 1 and oppose the tree.
-    secondArgument->cloneTreeOverTree(
-        secondArgument->type() == BlockType::Two ? 0_e : 1_e);
+    secondArgument->cloneTreeOverTree(Number::IsTwo(secondArgument) ? 0_e
+                                                                    : 1_e);
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
     return true;
   }
-  assert(secondArgument->block()->isOfType({BlockType::Zero, BlockType::One}));
+  assert(Number::IsZero(secondArgument) || Number::IsOne(secondArgument));
   return changed;
 }
 
@@ -136,9 +134,8 @@ bool Simplification::SimplifyPower(Tree* u) {
   Tree* v = u->childAtIndex(0);
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
-  if (v->type() == BlockType::Zero) {
-    if (n->type() != BlockType::Zero &&
-        Rational::StrictSign(n) == StrictSign::Positive) {
+  if (Number::IsZero(v)) {
+    if (!Number::IsZero(n) && Rational::StrictSign(n) == StrictSign::Positive) {
       u->cloneNodeOverTree(0_e);
       return true;
     }
@@ -146,7 +143,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // 1^n -> 1
-  if (v->type() == BlockType::One) {
+  if (Number::IsOne(v)) {
     u->cloneNodeOverTree(1_e);
     return true;
   }
@@ -157,12 +154,12 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   assert(IsInteger(n));
   // v^0 -> 1
-  if (n->type() == BlockType::Zero) {
+  if (Number::IsZero(n)) {
     u->cloneNodeOverTree(1_e);
     return true;
   }
   // v^1 -> v
-  if (n->type() == BlockType::One) {
+  if (Number::IsOne(n)) {
     u->moveTreeOverTree(v);
     return true;
   }
@@ -312,12 +309,12 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
   Tree* child = u->nextNode();
   while (i < n) {
     // ... * 0 * ... -> 0
-    if (child->type() == BlockType::Zero) {
+    if (Number::IsZero(child)) {
       NAry::SetNumberOfChildren(u, n);
       u->cloneTreeOverTree(0_e);
       return true;
     }
-    if (child->type() == BlockType::One) {
+    if (Number::IsOne(child)) {
       child->removeTree();
       n--;
       continue;
@@ -421,7 +418,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
   int i = 0;
   Tree* child = u->nextNode();
   while (i < n) {
-    if (child->type() == BlockType::Zero) {
+    if (Number::IsZero(child)) {
       child->removeTree();
       n--;
       continue;

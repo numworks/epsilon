@@ -1,5 +1,7 @@
 #include "pattern_matching.h"
 
+#include <poincare_junior/src/expression/number.h>
+
 #include "../n_ary.h"
 
 using namespace PoincareJ;
@@ -162,6 +164,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
      * The number of children is therefore not expected to match. */
     bool simpleNAryMatch =
         source->block()->isSimpleNAry() && pattern->type() == source->type();
+    assert(Number::IsSanitized(source) && Number::IsSanitized(pattern));
     if (!simpleNAryMatch && !source->nodeIsIdenticalTo(pattern)) {
       // Tree* should match exactly, but it doesn't.
       return false;

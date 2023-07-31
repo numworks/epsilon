@@ -181,7 +181,7 @@ Tree* Rational::IrreducibleForm(const Tree* i) {
     gcd->removeTree();
     return numerator;
   }
-  if (gcd->type() != BlockType::One) {
+  if (!Number::IsOne(gcd)) {
     Tree* numerator =
         IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
     Tree* denominator =

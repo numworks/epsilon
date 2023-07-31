@@ -1,6 +1,7 @@
 #include "polynomial.h"
 
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/value_block.h>
@@ -208,7 +209,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     EditionReference quotient = EditionReference(nodePair.first);
     EditionReference remainder = EditionReference(nodePair.second);
     polB->removeTree();
-    if (remainder->type() == BlockType::Zero) {
+    if (Number::IsZero(remainder)) {
       polA->removeTree();
       return std::make_pair(quotient, remainder);
     }
@@ -241,7 +242,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
                        SharedEditionPool->clone(leadingCoeffB));
     EditionReference quotient = refPair.first;
     EditionReference remainder = refPair.second;
-    bool stopCondition = remainder->type() != BlockType::Zero;
+    bool stopCondition = !Number::IsZero(remainder);
     remainder->removeTree();
     if (stopCondition) {
       quotient->removeTree();
@@ -273,7 +274,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   EditionReference coefficient = polynomial->childAtIndex(1);
   while (i < nbOfTerms) {
     EditionReference nextCoefficient = coefficient->nextTree();
-    if (coefficient->type() == BlockType::Zero) {
+    if (Number::IsZero(coefficient)) {
       coefficient->removeTree();
       NAry::SetNumberOfChildren(polynomial, polynomial->numberOfChildren() - 1);
       RemoveExponentAtIndex(polynomial, i);

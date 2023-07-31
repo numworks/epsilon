@@ -1,6 +1,7 @@
 #include "algebraic.h"
 
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -53,8 +54,8 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
-  assert(commonDenominator->type() != BlockType::Zero);
-  if (commonDenominator->type() == BlockType::One) {
+  assert(!Number::IsZero(commonDenominator));
+  if (Number::IsOne(commonDenominator)) {
     return expression;
   }
   /* Step 2: Turn the expression into the numerator. We start with this being

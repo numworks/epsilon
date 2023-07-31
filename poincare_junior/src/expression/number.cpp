@@ -45,4 +45,27 @@ StrictSign Number::StrictSign(const Tree* node) {
   }
 }
 
+bool Number::IsSanitized(const Tree* n) {
+  if (!n->block()->isOfType(
+          {BlockType::RationalShort, BlockType::RationalPosBig,
+           BlockType::RationalNegBig, BlockType::IntegerShort,
+           BlockType::IntegerPosBig, BlockType::IntegerNegBig})) {
+    assert(
+        !n->block()->isNumber() ||
+        n->block()->isOfType({BlockType::Float, BlockType::Constant,
+                              BlockType::Half, BlockType::Zero, BlockType::One,
+                              BlockType::Two, BlockType::MinusOne}));
+    // Non numbers or optimal BlockType numbers
+    return true;
+  }
+  // Re-push the optimized tree on the EditionPool, and compare with original.
+  Tree* temp =
+      (n->block()->isRational())
+          ? Rational::Push(Rational::Numerator(n), Rational::Denominator(n))
+          : Integer::Handler(n).pushOnEditionPool();
+  bool result = n->treeIsIdenticalTo(temp);
+  temp->removeTree();
+  return result;
+}
+
 }  // namespace PoincareJ

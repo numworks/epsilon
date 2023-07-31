@@ -171,18 +171,18 @@ QUIZ_CASE(pcj_tree_comments) {
   };
   setup();
   u->moveNodeBeforeNode(v);
-  QUIZ_ASSERT(v->nextNode() == u && u->isIdenticalTo("aaaa"_e) &&
-              v->isIdenticalTo("ccc"_e));
+  QUIZ_ASSERT(v->nextNode() == u && u->treeIsIdenticalTo("aaaa"_e) &&
+              v->treeIsIdenticalTo("ccc"_e));
   setup();
   u->moveNodeAtNode(v);
-  QUIZ_ASSERT(u == v && u->isIdenticalTo("ccc"_e));
+  QUIZ_ASSERT(u == v && u->treeIsIdenticalTo("ccc"_e));
   setup();
   u->moveNodeAfterNode(v);
-  QUIZ_ASSERT(u->nextNode() == v && u->isIdenticalTo("aaaa"_e) &&
-              v->isIdenticalTo("ccc"_e));
+  QUIZ_ASSERT(u->nextNode() == v && u->treeIsIdenticalTo("aaaa"_e) &&
+              v->treeIsIdenticalTo("ccc"_e));
   setup();
   u->moveTreeOverNode(v);
-  QUIZ_ASSERT(v->nextNode()->isIdenticalTo("bb"_e) && u.isUninitialized() &&
-              v->isIdenticalTo("ccc"_e));
+  QUIZ_ASSERT(v->nextNode()->treeIsIdenticalTo("bb"_e) && u.isUninitialized() &&
+              v->treeIsIdenticalTo("ccc"_e));
   SharedEditionPool->flush();
 }

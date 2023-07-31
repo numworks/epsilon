@@ -39,7 +39,7 @@ class Tree {
     return memcmp(this, other, treeSize()) == 0;
   }
 
-  bool isIdenticalTo(const Tree* other) const {
+  bool nodeIsIdenticalTo(const Tree* other) const {
     return memcmp(this, other, nodeSize()) == 0;
   }
 

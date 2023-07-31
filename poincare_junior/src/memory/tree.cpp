@@ -15,7 +15,7 @@ namespace PoincareJ {
 void Tree::log(std::ostream& stream, bool recursive, bool verbose,
                int indentation, const Tree* comparison) const {
   Indent(stream, indentation);
-  if (comparison && !isIdenticalTo(comparison)) {
+  if (comparison && !nodeIsIdenticalTo(comparison)) {
     stream << "<<<<<<<\n";
     log(stream, recursive, verbose, indentation);
     Indent(stream, indentation);

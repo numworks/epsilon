@@ -13,28 +13,6 @@
 
 using namespace PoincareJ;
 
-#if POINCARE_MEMORY_TREE_LOG
-
-__attribute__((__used__)) inline void log_edition_pool(
-    bool corruptedEditionPool = false) {
-  SharedEditionPool->log(
-      std::cout,
-      corruptedEditionPool ? Pool::LogFormat::Flat : Pool::LogFormat::Tree,
-      true);
-}
-
-__attribute__((__used__)) inline void log_cache_pool() {
-  CachePool::sharedCachePool()->log(std::cout, Pool::LogFormat::Tree, true);
-}
-
-#else
-
-inline void log_edition_pool(bool corruptedEditionPool = false) {}
-inline void log_edition_references() {}
-inline void log_cache_pool() {}
-inline void log_cache_references() {}
-#endif
-
 inline void assert_node_equals_blocks(const Tree* node,
                                       std::initializer_list<Block> blocks) {
   const Block* block = node->block();

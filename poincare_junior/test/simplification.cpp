@@ -259,6 +259,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("012345.67890", "123456789/10000");
   simplifies_to("012345.67890E5", "1234567890");
   simplifies_to("012345.67890E-3", "123456789/10000000");
+  simplifies_to("5.0", "5");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

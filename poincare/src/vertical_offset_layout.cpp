@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/serialization_helper.h>
@@ -31,18 +32,24 @@ int VerticalOffsetLayoutNode::serialize(
       return bufferSize - 1;
     }
 
+    int numberOfChar = 0;
+
     /* If the layout is a subscript or a prefix, write "\x14{indice\x14}".
      * System braces are used to avoid confusion with lists. */
-    int numberOfChar =
-        SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
-    if (numberOfChar >= bufferSize - 1) {
-      return bufferSize - 1;
+    size_t lengthCPSystem = UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem);
+    size_t lengthLeftBracket = UTF8Decoder::CharSizeOfCodePoint('{');
+    size_t lengthRightBracket = UTF8Decoder::CharSizeOfCodePoint('}');
+
+    if (numberOfChar + lengthCPSystem + lengthLeftBracket >= bufferSize - 1) {
+      return numberOfChar;
     }
+
+    numberOfChar =
+        SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
+    assert(numberOfChar < bufferSize - 1);
     numberOfChar += SerializationHelper::CodePoint(
         buffer + numberOfChar, bufferSize - numberOfChar, '{');
-    if (numberOfChar >= bufferSize - 1) {
-      return bufferSize - 1;
-    }
+    assert(numberOfChar < bufferSize - 1);
 
     numberOfChar +=
         const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(
@@ -52,14 +59,16 @@ int VerticalOffsetLayoutNode::serialize(
       return bufferSize - 1;
     }
 
-    numberOfChar += SerializationHelper::CodePoint(
-        buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
-    if (numberOfChar >= bufferSize - 1) {
-      return bufferSize - 1;
+    if (numberOfChar + lengthCPSystem + lengthRightBracket >= bufferSize - 1) {
+      return numberOfChar;
     }
     numberOfChar += SerializationHelper::CodePoint(
+        buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
+    assert(numberOfChar < bufferSize - 1);
+    numberOfChar += SerializationHelper::CodePoint(
         buffer + numberOfChar, bufferSize - numberOfChar, '}');
-    return std::min(numberOfChar, bufferSize - 1);
+    assert(numberOfChar < bufferSize - 1);
+    return numberOfChar;
   }
 
   assert(verticalPosition() == VerticalPosition::Superscript);

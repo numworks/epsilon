@@ -438,7 +438,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     RackLayoutDecoder exponent(rack, smallE + 1,
                                end);  // TODO may have a minus sign
 
-    if (decimalPoint == end) {
+    if (decimalPoint == end || smallE == decimalPoint + 1) {
       // Decimal integer
       leftHandSide = Integer::Push(integerDigits, OMG::Base::Decimal);
     } else {

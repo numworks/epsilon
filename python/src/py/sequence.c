@@ -37,10 +37,10 @@
 // memory-adjacent in sequence.
 void mp_seq_multiply(const void *items, size_t item_sz, size_t len, size_t times, void *dest) {
     /* Warning: this is a NumWorks change to MicroPython 1.17 */
-    if (len == 0) {
-      return;
+    if (len == 0 || times == 0 || item_sz == 0) {
+        return;
     }
-    if (item_sz != 0 && len != 0 && times != 0 && (len > SIZE_MAX / item_sz || times > SIZE_MAX / (item_sz * len))) {
+    if (len > SIZE_MAX / item_sz || times > SIZE_MAX / (item_sz * len)) {
         // dest couldn't be correctly allocated in memory because
         // item_sz * len * times overflows SIZE_MAX.
         m_malloc_fail(SIZE_MAX);

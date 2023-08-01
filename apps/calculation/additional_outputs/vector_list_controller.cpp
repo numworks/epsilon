@@ -100,7 +100,6 @@ void VectorListController::setExpression(Poincare::Expression e) {
         m_model.setVector(xApproximation, yApproximation);
         m_model.setAngle(angleApproximation);
         setShowIllustration(true);
-        illustrationCell()->reloadCell();
       }
     }
   }

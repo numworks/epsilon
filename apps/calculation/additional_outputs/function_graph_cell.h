@@ -76,9 +76,9 @@ class FunctionGraphView
 class FunctionGraphCell : public IllustrationCell {
  public:
   FunctionGraphCell(FunctionModel* model) : m_view(model) {}
+  void reload() override { m_view.reload(); }
 
  private:
-  void reloadCell() override { m_view.reload(); }
   View* view() override { return &m_view; }
   FunctionGraphView m_view;
 };

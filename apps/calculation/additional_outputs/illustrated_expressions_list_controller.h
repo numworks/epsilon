@@ -22,6 +22,8 @@ class IllustratedExpressionsListController
 
   // Responder
   void didBecomeFirstResponder() override;
+  // ViewController
+  void viewWillAppear() override;
 
   // MemoizedListViewDataSource
   int numberOfRows() const override;

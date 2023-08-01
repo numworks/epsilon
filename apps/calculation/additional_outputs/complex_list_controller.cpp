@@ -18,11 +18,6 @@ using namespace Shared;
 
 namespace Calculation {
 
-void ComplexListController::viewWillAppear() {
-  IllustratedExpressionsListController::viewWillAppear();
-  m_complexGraphCell.reload();  // compute labels
-}
-
 void ComplexListController::setExactAndApproximateExpression(
     Poincare::Expression exactExpression,
     Poincare::Expression approximateExpression) {

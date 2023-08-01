@@ -13,9 +13,6 @@ class ComplexListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_complexGraphCell(&m_model) {}
 
-  // ViewController
-  void viewWillAppear() override;
-
   void setExactAndApproximateExpression(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;

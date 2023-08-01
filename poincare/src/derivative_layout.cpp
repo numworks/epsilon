@@ -2,6 +2,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/derivative.h>
 #include <poincare/derivative_layout.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/serialization_helper.h>
@@ -212,6 +213,21 @@ KDCoordinate DerivativeLayoutNode::computeBaseline(KDFont::Size font) {
 
 KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode* child,
                                               KDFont::Size font) {
+  /* The derivative layout could overflow KDCoordinate if the variable or the
+   * order layouts are too large. Since they are duplicated, if there are nested
+   * derivative layouts, the size can be very large while the layout doesn't
+   * overflow the pool. This limit is to prevent this from happening. */
+  constexpr static KDCoordinate k_maxVariableAndOrderSize =
+      KDCOORDINATE_MAX / 4;
+  KDSize variableSize = variableLayout()->layoutSize(font);
+  KDSize orderSize = KDSize(orderWidth(font), orderHeightOffset(font));
+  if (variableSize.height() >= k_maxVariableAndOrderSize ||
+      variableSize.width() >= k_maxVariableAndOrderSize ||
+      orderSize.height() >= k_maxVariableAndOrderSize ||
+      orderSize.width() >= k_maxVariableAndOrderSize) {
+    ExceptionCheckpoint::Raise();
+  }
+
   if (child == variableLayout()) {
     return m_variableSlot == VariableSlot::Fraction
                ? positionOfVariableInFractionSlot(font)

@@ -72,6 +72,7 @@ class LayoutNode : public TreeNode {
   bool isIdenticalTo(Layout l, bool makeEditable = false);
 
   // Rendering
+  constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
   void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
             const LayoutSelection &selection,
             KDColor selectionColor = KDColorRed);

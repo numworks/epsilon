@@ -21,18 +21,16 @@ void VectorModel::recomputeViewRange() {
   bool verticallyCapped = height * k_xyRatio > width;
   float ratio = verticallyCapped ? height / k_height : width / k_width;
 
-  /* When the vector points downward, we need to keep space around the origin
-   * for the arc which extends on the other side of the vector. */
-  float arcHorizontalMargin =
-      x > 0 && y < 0 && !verticallyCapped
-          ? VectorGraphPolicy::k_arcRadiusInPixels * ratio
-          : 0.f;
-  float arcVerticalMargin = y < 0 && verticallyCapped
-                                ? VectorGraphPolicy::k_arcRadiusInPixels * ratio
-                                : 0.f;
+  /* When the vector points downward or left, we need to keep space around the
+   * origin for the arc which extends on the other side of the vector. */
+  float arcDefaultMargin = VectorGraphPolicy::k_arcRadiusInPixels * ratio;
+  float arcLeftMargin =
+      x > 0 && y < 0 && !verticallyCapped ? arcDefaultMargin : 0.f;
+  float arcRightMargin = x < 0 && !verticallyCapped ? arcDefaultMargin : 0.f;
+  float arcTopMargin = y < 0 && verticallyCapped ? arcDefaultMargin : 0.f;
 
-  width += arcHorizontalMargin;
-  height += arcVerticalMargin;
+  width += arcLeftMargin + arcRightMargin;
+  height += arcTopMargin;
 
   /* Recompute ratio with updated size */
   verticallyCapped = height * k_xyRatio > width;
@@ -43,10 +41,10 @@ void VectorModel::recomputeViewRange() {
   float yMargin = k_marginInPixels * ratio +
                   (verticallyCapped ? 0.f : (width / k_xyRatio - height) / 2.f);
 
-  setXMin(std::min(-arcHorizontalMargin, x) - xMargin);
-  setXMax(std::max(0.f, x) + xMargin);
+  setXMin(std::min(-arcLeftMargin, x) - xMargin);
+  setXMax(std::max(arcRightMargin, x) + xMargin);
   setYMin(std::min(0.f, y) - yMargin);
-  setYMax(std::max(arcVerticalMargin, y) + yMargin);
+  setYMax(std::max(arcTopMargin, y) + yMargin);
 }
 
 }  // namespace Calculation

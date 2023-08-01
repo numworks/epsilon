@@ -14,6 +14,8 @@ class AlternateEmptyNestedMenuController : public Escher::NestedMenuController {
   virtual Escher::ViewController* emptyViewController() = 0;
   void didBecomeFirstResponder() override;
   bool returnToPreviousMenu() override;
+
+ private:
   bool m_isEmpty;
 };
 

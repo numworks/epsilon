@@ -136,11 +136,17 @@ KDSize HorizontalLayoutNode::layoutSizeBetweenIndexes(int leftIndex,
   for (int i = leftIndex; i < rightIndex; i++) {
     LayoutNode *childi = childAtIndex(i);
     KDSize childSize = childi->layoutSize(font);
-    totalWidth += childSize.width();
     KDCoordinate childBaseline = childi->baseline(font);
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, childSize.height() - childBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);
+    if (totalWidth >= k_maxLayoutSize - childSize.width()) {
+      /* If the width overflows k_maxLayoutSize, break now to avoid overflowing
+       * KDCoordinate. */
+      totalWidth = k_maxLayoutSize;
+      break;
+    }
+    totalWidth += childSize.width();
   }
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }

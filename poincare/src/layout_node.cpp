@@ -83,26 +83,19 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) {
     KDSize size = computeSize(font);
 
     /* This method will raise an exception if the size of the layout that is
-     * passed is beyond k_maxLayoutSize.
+     * passed is beyond maxLayoutSize.
+     *
      * The purpose of this hack is to avoid overflowing KDCoordinate when
-     * drawing a derivative layout that has a huge variable/order layout. Since
-     * these two layouts are duplicated when drawn, if multiple derivative
-     * layouts are nested inside the variable layout or the order layout,
-     * KDCoordinate can overflow before the pool is full.
+     * drawing a layout. Currently, the only layouts that can overflow
+     * KDCoordinate without overflowing the pool are:
+     *  - the derivative layouts (if multiple derivative layouts are nested
+     *    inside the variable layout or the order layout)
+     *  - the list layouts (when a very long list is generated through a
+     *    sequence)
      *
-     * Currently, only the derivative layout can overflow KDCoordinate before
-     * the pool is full, but this solution should prevent other future layouts
-     * to easily overflow KDCoordinate.
-     *
-     * Raising an exception might not be the best option though, for two
-     * reasons:
-     * -> First, we could just handle the max size better and simply crop the
-     * layout (which is not that easy to implement), instead of raising an
-     * exception.
-     * -> Second, KDCoordinate could theoretically still overflow if the layout
-     * is for example a matrix of 1 line and 6 columns, and each of its child is
-     * of size KDCOORDINATE_MAX / 5. This is just in theory because for now we
-     * never encountered such a problem before a pool overflow.
+     * Raising an exception might not be the best option though. We could just
+     * handle the max size better and simply crop the layout (which is not that
+     * easy to implement), instead of raising an exception.
      *
      * The following solutions were also explored but deemed too complicated for
      * the current state of the issue:
@@ -114,8 +107,9 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) {
      *  - Check for an overflow before each translation of p in the render
      * methods
      * */
-    constexpr KDCoordinate k_maxLayoutSize = KDCOORDINATE_MAX / 4;
-    if (size.height() > k_maxLayoutSize || size.width() > k_maxLayoutSize) {
+    KDCoordinate maxLayoutSize =
+        KDCOORDINATE_MAX / (parent() ? parent()->numberOfChildren() : 1);
+    if (size.height() >= maxLayoutSize || size.width() >= maxLayoutSize) {
       ExceptionCheckpoint::Raise();
     }
 

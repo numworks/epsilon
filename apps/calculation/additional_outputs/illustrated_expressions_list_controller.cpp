@@ -18,6 +18,11 @@ void IllustratedExpressionsListController::didBecomeFirstResponder() {
   ExpressionsListController::didBecomeFirstResponder();
 }
 
+void IllustratedExpressionsListController::viewWillAppear() {
+  ChainedExpressionsListController::viewWillAppear();
+  illustrationCell()->reload();  // compute labels
+}
+
 int IllustratedExpressionsListController::numberOfRows() const {
   return ChainedExpressionsListController::numberOfRows() + showIllustration();
 }

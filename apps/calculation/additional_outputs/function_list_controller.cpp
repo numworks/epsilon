@@ -55,8 +55,6 @@ void FunctionListController::setExactAndApproximateExpression(
           .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
           .createLayout(preferences->displayMode(),
                         preferences->numberOfSignificantDigits(), context));
-
-  illustrationCell()->reloadCell();
   setShowIllustration(true);
 }
 

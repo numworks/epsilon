@@ -32,9 +32,9 @@ class VectorGraphView
 class VectorGraphCell : public IllustrationCell {
  public:
   VectorGraphCell(VectorModel* model) : m_view(model) {}
+  void reload() override { m_view.reload(); }
 
  private:
-  void reloadCell() override { m_view.reload(); }
   View* view() override { return &m_view; }
   VectorGraphView m_view;
 };

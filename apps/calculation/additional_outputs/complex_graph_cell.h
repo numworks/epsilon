@@ -27,7 +27,7 @@ class ComplexGraphView
 class ComplexGraphCell : public IllustrationCell {
  public:
   ComplexGraphCell(ComplexModel* complexModel) : m_view(complexModel) {}
-  void reload() { m_view.reload(); }
+  void reload() override { m_view.reload(); }
 
  private:
   Escher::View* view() override { return &m_view; }

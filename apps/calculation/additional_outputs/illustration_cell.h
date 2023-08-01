@@ -10,6 +10,7 @@ class IllustrationCell : public Escher::Bordered, public Escher::HighlightCell {
  public:
   void setHighlighted(bool highlight) override { return; }
   void drawRect(KDContext* ctx, KDRect rect) const override;
+  virtual void reload() {}
 
  private:
   int numberOfSubviews() const override { return 1; }

@@ -2,7 +2,6 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/derivative.h>
 #include <poincare/derivative_layout.h>
-#include <poincare/exception_checkpoint.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/serialization_helper.h>
@@ -203,7 +202,7 @@ KDSize DerivativeLayoutNode::computeSize(KDFont::Size font) {
       variableSize.width() >= k_maxVariableAndOrderSize ||
       orderSize.height() >= k_maxVariableAndOrderSize ||
       orderSize.width() >= k_maxVariableAndOrderSize) {
-    ExceptionCheckpoint::Raise();
+    return KDSize(k_maxLayoutSize, k_maxLayoutSize);
   }
 
   KDPoint abscissaPosition = positionOfChild(abscissaLayout(), font);

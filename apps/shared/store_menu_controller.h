@@ -17,15 +17,12 @@ namespace Shared {
 class StoreMenuController : public Escher::ModalViewController,
                             public Escher::ListViewDataSource,
                             public Escher::SelectableListViewDataSource,
-                            public MathLayoutFieldDelegate,
-                            public Escher::PervasiveBox {
+                            public MathLayoutFieldDelegate {
  public:
   StoreMenuController();
   void setText(const char* text);
 
-  // PervasiveBox
-  void open() override;
-
+  void open();
   void close();
 
   // Responder

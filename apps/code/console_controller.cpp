@@ -11,8 +11,8 @@
 #include <algorithm>
 
 #include "app.h"
+#include "python_variable_box.h"
 #include "script.h"
-#include "variable_box_controller.h"
 
 extern "C" {
 #include <stdlib.h>
@@ -360,7 +360,7 @@ bool ConsoleController::textFieldDidAbortEditing(AbstractTextField *textField) {
 }
 
 void ConsoleController::prepareVariableBox() {
-  VariableBoxController *varBox = App::app()->variableBox();
+  PythonVariableBox *varBox = App::app()->variableBox();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(false);
   varBox->loadVariablesImportedFromScripts();

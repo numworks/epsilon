@@ -1,4 +1,4 @@
-#include "../variable_box_controller.h"
+#include "../python_variable_box.h"
 
 #include <quiz.h>
 #include <string.h>
@@ -28,7 +28,7 @@ void assert_variables_are(const char *script,
   ScriptStore::ScriptAtIndex(scriptIndex).setValue(data);
 
   // Load the variable box
-  VariableBoxController varBox;
+  PythonVariableBox varBox;
 
   const char *nameToComplete = script + nameToCompleteOffsetInScript;
   varBox.loadFunctionsAndVariables(scriptIndex, nameToComplete,
@@ -58,7 +58,7 @@ void assert_variables_are(const char *script,
   quiz_assert(index == 0);
 }
 
-QUIZ_CASE(variable_box_controller) {
+QUIZ_CASE(python_variable_box) {
   const char *expectedVariables[] = {"froo", "from", "frozenset()"};
   // FIXME This test does not load imported variables for now
   assert_variables_are("\x01 from math import *\nfroo=3", 21, 2,

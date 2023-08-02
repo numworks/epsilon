@@ -7,8 +7,8 @@
 #include "console_controller.h"
 #include "menu_controller.h"
 #include "python_toolbox.h"
+#include "python_variable_box.h"
 #include "script_store.h"
-#include "variable_box_controller.h"
 
 namespace Code {
 
@@ -50,8 +50,8 @@ class App : public Shared::SharedApp {
   PythonToolbox *toolbox() override {
     return m_allowBoxes ? &m_toolbox : nullptr;
   }
-  VariableBoxController *variableBox() override {
-    return m_allowBoxes ? &m_variableBoxController : nullptr;
+  PythonVariableBox *variableBox() override {
+    return m_allowBoxes ? &m_variableBox : nullptr;
   }
   void allowBoxes(bool allow) { m_allowBoxes = allow; }
 
@@ -84,7 +84,7 @@ class App : public Shared::SharedApp {
   MenuController m_menuController;
   Escher::StackViewController m_codeStackViewController;
   PythonToolbox m_toolbox;
-  VariableBoxController m_variableBoxController;
+  PythonVariableBox m_variableBox;
 #if PLATFORM_DEVICE
   /* On the device, we reach 64K of heap by repurposing the unused tree pool.
    * The linker must make sure that the pool and the apps buffer are

@@ -1,4 +1,4 @@
-#include "variable_box_controller.h"
+#include "python_variable_box.h"
 
 #include <apps/i18n.h>
 #include <apps/shared/toolbox_helpers.h>
@@ -68,7 +68,7 @@ typedef enum {
  * - PN_import_as_names_paren;
  * */
 
-VariableBoxController::VariableBoxController()
+PythonVariableBox::PythonVariableBox()
     : AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
       m_displaySubtitles(true) {
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
@@ -78,25 +78,25 @@ VariableBoxController::VariableBoxController()
   empty();
 }
 
-bool VariableBoxController::handleEvent(Ion::Events::Event event) {
+bool PythonVariableBox::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
     return true;
   }
   return NestedMenuController::handleEvent(event);
 }
 
-void VariableBoxController::didEnterResponderChain(
+void PythonVariableBox::didEnterResponderChain(
     Responder *previousFirstResponder) {
-  /* Code::VariableBoxController should always be called from an environment
+  /* Code::PythonVariableBox should always be called from an environment
    * where Python has already been inited. This way, we do not deinit Python
-   * when leaving the VariableBoxController, so we do not lose the environment
-   * that was loaded when entering the VariableBoxController. */
+   * when leaving the PythonVariableBox, so we do not lose the environment
+   * that was loaded when entering the PythonVariableBox. */
   assert(App::app()->pythonIsInited());
   AlternateEmptyNestedMenuController::didEnterResponderChain(
       previousFirstResponder);
 }
 
-KDCoordinate VariableBoxController::nonMemoizedRowHeight(int row) {
+KDCoordinate PythonVariableBox::nonMemoizedRowHeight(int row) {
   assert(row >= 0 && row < numberOfRows());
   int cellType = typeAndOriginAtLocation(row);
   if (cellType == k_itemCellType) {
@@ -107,7 +107,7 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-int VariableBoxController::numberOfRows() const {
+int PythonVariableBox::numberOfRows() const {
   int result = 0;
   for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
     int nodeCount = nodesCountForOrigin(origin);
@@ -118,7 +118,7 @@ int VariableBoxController::numberOfRows() const {
   return result;
 }
 
-HighlightCell *VariableBoxController::reusableCell(int index, int type) {
+HighlightCell *PythonVariableBox::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_itemCellType) {
     return m_itemCells + index;
@@ -128,7 +128,7 @@ HighlightCell *VariableBoxController::reusableCell(int index, int type) {
   return m_subtitleCells + index;
 }
 
-int VariableBoxController::reusableCellCount(int type) {
+int PythonVariableBox::reusableCellCount(int type) {
   if (type == k_subtitleCellType) {
     assert(m_displaySubtitles);
     return k_maxNumberOfDisplayedSubtitles;
@@ -137,7 +137,7 @@ int VariableBoxController::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedItems;
 }
 
-void VariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
+void PythonVariableBox::fillCellForRow(HighlightCell *cell, int row) {
   assert(row >= 0 && row < numberOfRows());
   uint8_t cellOrigin = k_currentScriptOrigin;
   int cumulatedOriginsCount = 0;
@@ -197,7 +197,7 @@ void VariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
   myCell->textView()->appendText(I18n::translate(suffix));
 }
 
-void VariableBoxController::listViewDidChangeSelectionAndDidScroll(
+void PythonVariableBox::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
@@ -209,11 +209,11 @@ void VariableBoxController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-int VariableBoxController::typeAtRow(int row) const {
+int PythonVariableBox::typeAtRow(int row) const {
   return typeAndOriginAtLocation(row);
 }
 
-void VariableBoxController::loadFunctionsAndVariables(
+void PythonVariableBox::loadFunctionsAndVariables(
     int scriptIndex, const char *textToAutocomplete,
     int textToAutocompleteLength) {
   assert(scriptIndex >= 0);
@@ -256,7 +256,7 @@ void VariableBoxController::loadFunctionsAndVariables(
                                textToAutocompleteLength);
 }
 
-const char *VariableBoxController::autocompletionAlternativeAtIndex(
+const char *PythonVariableBox::autocompletionAlternativeAtIndex(
     int textToAutocompleteLength, int *textToInsertLength, bool *addParentheses,
     int index, int *indexToUpdate) {
   if (numberOfRows() == 0) {
@@ -291,7 +291,7 @@ const char *VariableBoxController::autocompletionAlternativeAtIndex(
   return currentName + textToAutocompleteLength;
 }
 
-void VariableBoxController::loadVariablesImportedFromScripts() {
+void PythonVariableBox::loadVariablesImportedFromScripts() {
   empty();
   const int scriptsCount = ScriptStore::NumberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
@@ -303,7 +303,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
   }
 }
 
-void VariableBoxController::empty() {
+void PythonVariableBox::empty() {
   m_shortenResultCharCount = 0;
   resetSizeMemoization();
   ScriptStore::ClearVariableBoxFetchInformation();
@@ -318,11 +318,11 @@ void VariableBoxController::empty() {
   m_nodesCount = 0;
 }
 
-void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
+void PythonVariableBox::insertAutocompletionResultAtIndex(int index) {
   ScriptNode *selectedScriptNode = scriptNodeAtIndex(index);
   if (selectedScriptNode == nullptr) {
     /* Autocompletion has not been found. It can happen if the index is no
-     * longer valid, when the VariableBoxController has been emptied and
+     * longer valid, when the PythonVariableBox has been emptied and
      * recomputed differently between the index initialization and this call.*/
     return;
   }
@@ -345,9 +345,9 @@ void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
 
 // PRIVATE METHODS
 
-int VariableBoxController::NodeNameCompare(ScriptNode *node, const char *name,
-                                           int nameLength,
-                                           bool *strictlyStartsWith) {
+int PythonVariableBox::NodeNameCompare(ScriptNode *node, const char *name,
+                                       int nameLength,
+                                       bool *strictlyStartsWith) {
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
   assert(nameLength > 0);
   const char *nodeName = node->name();
@@ -369,7 +369,7 @@ int VariableBoxController::NodeNameCompare(ScriptNode *node, const char *name,
                                       : -*(name + nodeNameLength);
 }
 
-bool VariableBoxController::maxNodesReachedForOrigin(uint8_t origin) const {
+bool PythonVariableBox::maxNodesReachedForOrigin(uint8_t origin) const {
   if (origin == k_currentScriptOrigin) {
     return nodesCountForOrigin(k_currentScriptOrigin) >=
            k_maxOtherScriptNodesCount;
@@ -382,11 +382,11 @@ bool VariableBoxController::maxNodesReachedForOrigin(uint8_t origin) const {
                              k_maxOtherScriptNodesCount;
 }
 
-size_t VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
+size_t PythonVariableBox::nodesCountForOrigin(uint8_t origin) const {
   return m_rowsPerOrigins[origin];
 }
 
-ScriptNode *VariableBoxController::scriptNodeAtIndex(int index) {
+ScriptNode *PythonVariableBox::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
   assert(index < static_cast<int>(m_nodesCount));
   assert(m_nodesCount <= k_maxScriptNodesCount);
@@ -394,7 +394,7 @@ ScriptNode *VariableBoxController::scriptNodeAtIndex(int index) {
   return m_scriptNodes + index;
 }
 
-int VariableBoxController::typeAndOriginAtLocation(
+int PythonVariableBox::typeAndOriginAtLocation(
     int i, uint8_t *resultOrigin, int *cumulatedOriginsCount) const {
   assert(i < static_cast<int>(m_nodesCount +
                               (m_displaySubtitles ? m_originsCount : 0)));
@@ -429,7 +429,7 @@ int VariableBoxController::typeAndOriginAtLocation(
   return k_itemCellType;
 }
 
-bool VariableBoxController::selectLeaf(int row) {
+bool PythonVariableBox::selectLeaf(int row) {
   assert(row >= 0 && row < numberOfRows());
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(row, nullptr, &cumulatedOriginsCount);
@@ -443,8 +443,7 @@ bool VariableBoxController::selectLeaf(int row) {
   return true;
 }
 
-void VariableBoxController::insertTextInCaller(const char *text,
-                                               int textLength) {
+void PythonVariableBox::insertTextInCaller(const char *text, int textLength) {
   int textLen = textLength < 0 ? strlen(text) : textLength;
   constexpr int k_maxScriptObjectNameSize = 100;  // Ad hoc value
   int commandBufferMaxSize = std::min(k_maxScriptObjectNameSize, textLen + 1);
@@ -454,8 +453,8 @@ void VariableBoxController::insertTextInCaller(const char *text,
   sender()->handleEventWithText(commandBuffer);
 }
 
-void VariableBoxController::loadBuiltinNodes(const char *textToAutocomplete,
-                                             int textToAutocompleteLength) {
+void PythonVariableBox::loadBuiltinNodes(const char *textToAutocomplete,
+                                         int textToAutocompleteLength) {
   /* TODO Could be great to use strings defined in STATIC const char *const
    * tok_kw[] in python/lexer.c
    * The commented values do not work with our current MicroPython but might
@@ -608,7 +607,7 @@ typedef struct _mp_reader_mem_t {
   const byte *end;
 } mp_reader_mem_t;
 
-void VariableBoxController::loadImportedVariablesInScript(
+void PythonVariableBox::loadImportedVariablesInScript(
     const char *scriptContent, const char *textToAutocomplete,
     int textToAutocompleteLength) {
   /* Load the imported variables and functions: lex and the parse on a line per
@@ -653,7 +652,7 @@ void VariableBoxController::loadImportedVariablesInScript(
              textToAutocomplete >= scriptContent &&
              textToAutocomplete <= strlen(scriptContent) + scriptContent &&
              nlr_push(&nlr) == 0) {
-    /* When VariableBoxController has been emptied, and the text to autocomplete
+    /* When PythonVariableBox has been emptied, and the text to autocomplete
      * is within scriptContent, an unfinished Autocompletion might remain as
      * ImportedVariables are being reloaded. Parsing this unfinished line may
      * fail, preventing the ongoing autocompletion from being reloaded.
@@ -680,7 +679,7 @@ void VariableBoxController::loadImportedVariablesInScript(
   }
 }
 
-void VariableBoxController::loadCurrentVariablesInScript(
+void PythonVariableBox::loadCurrentVariablesInScript(
     const char *scriptContent, const char *textToAutocomplete,
     int textToAutocompleteLength) {
   /* To find variable and function names: we lex the script and keep all
@@ -742,7 +741,7 @@ void VariableBoxController::loadCurrentVariablesInScript(
   }
 }
 
-void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(
+void PythonVariableBox::loadGlobalAndImportedVariablesInScriptAsImported(
     Script script, const char *textToAutocomplete, int textToAutocompleteLength,
     bool importFromModules) {
   if (script.fetchedForVariableBox()) {
@@ -803,7 +802,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(
   script.setFetchedForVariableBox(true);
 }
 
-bool VariableBoxController::addNodesFromImportMaybe(
+bool PythonVariableBox::addNodesFromImportMaybe(
     mp_parse_node_struct_t *parseNode, const char *textToAutocomplete,
     int textToAutocompleteLength, bool importFromModules) {
   // Determine if the node is an import structure
@@ -928,7 +927,7 @@ bool VariableBoxController::addNodesFromImportMaybe(
   return true;
 }
 
-const char *VariableBoxController::importationSourceNameFromNode(
+const char *PythonVariableBox::importationSourceNameFromNode(
     mp_parse_node_t &node) {
   if (MP_PARSE_NODE_IS_LEAF(node) &&
       MP_PARSE_NODE_LEAF_KIND(node) == MP_PARSE_NODE_ID) {
@@ -964,7 +963,7 @@ const char *VariableBoxController::importationSourceNameFromNode(
   return nullptr;
 }
 
-bool VariableBoxController::importationSourceIsModule(
+bool PythonVariableBox::importationSourceIsModule(
     const char *sourceName, const ToolboxMessageTree **moduleChildren,
     int *numberOfModuleChildren) {
   const ToolboxMessageTree *children =
@@ -979,9 +978,9 @@ bool VariableBoxController::importationSourceIsModule(
   return mp_module_get(qstr_from_str(sourceName)) != MP_OBJ_NULL;
 }
 
-bool VariableBoxController::importationSourceIsScript(
-    const char *sourceName, const char **scriptFullName,
-    Script *retreivedScript) {
+bool PythonVariableBox::importationSourceIsScript(const char *sourceName,
+                                                  const char **scriptFullName,
+                                                  Script *retreivedScript) {
   // Try fetching the nodes from a script
   Script importedScript = ScriptStore::ScriptBaseNamed(sourceName);
   if (importedScript.isNull()) {
@@ -1009,7 +1008,7 @@ const char *structName(mp_parse_node_struct_t *structNode) {
   return nullptr;
 }
 
-bool VariableBoxController::addImportStructFromScript(
+bool PythonVariableBox::addImportStructFromScript(
     mp_parse_node_struct_t *pns, uint structKind, const char *scriptName,
     const char *textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
@@ -1026,7 +1025,7 @@ bool VariableBoxController::addImportStructFromScript(
 }
 
 // The returned boolean means we should escape the process
-bool VariableBoxController::addNodeIfMatches(
+bool PythonVariableBox::addNodeIfMatches(
     const char *textToAutocomplete, int textToAutocompleteLength,
     ScriptNode::Type nodeType, uint8_t nodeOrigin, const char *nodeName,
     int nodeNameLength, const char *nodeSourceName,

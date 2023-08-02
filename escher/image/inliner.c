@@ -7,48 +7,72 @@
  * and the header exposes a pointer to this variable. The Image embedds the
  * bitmap data in the RGB565 format. */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <assert.h>
+#include <ctype.h>
 #include <png.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <assert.h>
+
 #include "../../ion/src/external/lz4/lz4hc.h"
 
-#define ERROR_IF_BEFORE_OPEN_OK(cond, message) if (cond) { printf(message "\n"); return -1; };
-#define ERROR_IF(cond, message) if (cond) { printf(message "\n"); fclose(inputFile); return -1; };
+#define ERROR_IF_BEFORE_OPEN_OK(cond, message) \
+  if (cond) {                                  \
+    printf(message "\n");                      \
+    return -1;                                 \
+  };
+#define ERROR_IF(cond, message) \
+  if (cond) {                   \
+    printf(message "\n");       \
+    fclose(inputFile);          \
+    return -1;                  \
+  };
 #define MAX_FILENAME_LENGTH 255
 
 typedef uint8_t bool;
 #define TRUE 1
 #define FALSE 0
 
-void generateHeaderFromImage(FILE * file, const char * guardian, const char * variable);
-void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers, bool transparent);
-void fileNameToSnakeCaseName(const char * fileName, char * snakeCaseName, size_t maxLength);
-void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnakeCaseName, size_t maxLength);
-void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * upperSnakeCaseName, char * camelCaseName, size_t maxLength);
+void generateHeaderFromImage(FILE *file, const char *guardian,
+                             const char *variable);
+void generateImplementationFromImage(FILE *file, const char *header,
+                                     const char *variable, uint32_t width,
+                                     uint32_t height,
+                                     png_bytep *pixelsRowPointers,
+                                     bool transparent);
+void fileNameToSnakeCaseName(const char *fileName, char *snakeCaseName,
+                             size_t maxLength);
+void snakeCaseNameToUpperSnakeName(const char *snakeCaseName,
+                                   char *upperSnakeCaseName, size_t maxLength);
+void camelCaseNameFromSnakeCaseNames(const char *snakeCaseName,
+                                     const char *upperSnakeCaseName,
+                                     char *camelCaseName, size_t maxLength);
 
 // TODO: fix inliner to handle any png file
 // TODO: truncate the app image dimensions to 55x56 pixels
 
-int main(int argc, char * argv[]) {
-  ERROR_IF_BEFORE_OPEN_OK(argc != 4 && argc != 5, "Usage: inliner source.png output.h output.cpp [--transparent]");
-  const char * inputPath = argv[1];
+int main(int argc, char *argv[]) {
+  ERROR_IF_BEFORE_OPEN_OK(
+      argc != 4 && argc != 5,
+      "Usage: inliner source.png output.h output.cpp [--transparent]");
+  const char *inputPath = argv[1];
   bool transparent = FALSE;
   if (argc == 5) {
-    ERROR_IF_BEFORE_OPEN_OK(strcmp(argv[4], "--transparent") != 0, "Last argument must be '--transparent'");
+    ERROR_IF_BEFORE_OPEN_OK(strcmp(argv[4], "--transparent") != 0,
+                            "Last argument must be '--transparent'");
     transparent = TRUE;
   }
-  FILE * inputFile = fopen(inputPath, "rb");
-  ERROR_IF_BEFORE_OPEN_OK(inputFile == NULL, "Error: could not open input file.");
+  FILE *inputFile = fopen(inputPath, "rb");
+  ERROR_IF_BEFORE_OPEN_OK(inputFile == NULL,
+                          "Error: could not open input file.");
 
   unsigned char magic[8];
   fread(magic, 1, 8, inputFile);
   ERROR_IF(png_sig_cmp(magic, 0, 8), "Error: Input file is not a PNG file");
 
-  png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png =
+      png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   ERROR_IF(png == NULL, "Could not read png struct");
 
   png_infop info = png_create_info_struct(png);
@@ -64,11 +88,12 @@ int main(int argc, char * argv[]) {
   png_byte colorType = png_get_color_type(png, info);
   png_byte bitDepth = png_get_bit_depth(png, info);
 
-  ERROR_IF(colorType != PNG_COLOR_TYPE_RGB_ALPHA, "Error: Inliner only handles RGBA PNG images.");
+  ERROR_IF(colorType != PNG_COLOR_TYPE_RGB_ALPHA,
+           "Error: Inliner only handles RGBA PNG images.");
   ERROR_IF(bitDepth != 8, "Error: Inliner only handles RGBA8888 PNG images.");
 
-  png_bytep * rowPointers = (png_bytep *)malloc(sizeof(png_bytep)*height);
-  for (int i=0; i<height; i++) {
+  png_bytep *rowPointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+  for (int i = 0; i < height; i++) {
     rowPointers[i] = (png_byte *)malloc(png_get_rowbytes(png, info));
   }
   png_read_image(png, rowPointers);
@@ -76,30 +101,35 @@ int main(int argc, char * argv[]) {
   char lowerSnakeCaseName[MAX_FILENAME_LENGTH];
   char upperSnakeCaseName[MAX_FILENAME_LENGTH];
   char camelCaseName[MAX_FILENAME_LENGTH];
-  const char * inputFileName = inputPath;
+  const char *inputFileName = inputPath;
   // Let's keep only the last path component
-  for (const char * currentChar=inputPath; *currentChar != 0; currentChar++) {
+  for (const char *currentChar = inputPath; *currentChar != 0; currentChar++) {
     if (*currentChar == '/') {
-      inputFileName = currentChar+1;
+      inputFileName = currentChar + 1;
     }
   }
 
-  fileNameToSnakeCaseName(inputFileName, lowerSnakeCaseName, MAX_FILENAME_LENGTH);
-  snakeCaseNameToUpperSnakeName(lowerSnakeCaseName, upperSnakeCaseName, MAX_FILENAME_LENGTH);
-  camelCaseNameFromSnakeCaseNames(lowerSnakeCaseName, upperSnakeCaseName, camelCaseName, MAX_FILENAME_LENGTH);
+  fileNameToSnakeCaseName(inputFileName, lowerSnakeCaseName,
+                          MAX_FILENAME_LENGTH);
+  snakeCaseNameToUpperSnakeName(lowerSnakeCaseName, upperSnakeCaseName,
+                                MAX_FILENAME_LENGTH);
+  camelCaseNameFromSnakeCaseNames(lowerSnakeCaseName, upperSnakeCaseName,
+                                  camelCaseName, MAX_FILENAME_LENGTH);
 
-  char * headerPath = argv[2];
-  char * implementationPath = argv[3];
+  char *headerPath = argv[2];
+  char *implementationPath = argv[3];
 
-  FILE * header = fopen(headerPath, "w");
+  FILE *header = fopen(headerPath, "w");
   generateHeaderFromImage(header, upperSnakeCaseName, camelCaseName);
   fclose(header);
 
-  FILE * implementation = fopen(implementationPath, "w");
-  generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, rowPointers, transparent);
+  FILE *implementation = fopen(implementationPath, "w");
+  generateImplementationFromImage(implementation, lowerSnakeCaseName,
+                                  camelCaseName, width, height, rowPointers,
+                                  transparent);
   fclose(implementation);
-  
-  for (int i=0; i<height; i++) {
+
+  for (int i = 0; i < height; i++) {
     free(rowPointers[i]);
   }
   free(rowPointers);
@@ -108,19 +138,21 @@ int main(int argc, char * argv[]) {
   fclose(inputFile);
 }
 
-void fileNameToSnakeCaseName(const char * fileName, char * snakeCaseName, size_t maxLength) {
-  for (int i=0; i<maxLength; i++) {
+void fileNameToSnakeCaseName(const char *fileName, char *snakeCaseName,
+                             size_t maxLength) {
+  for (int i = 0; i < maxLength; i++) {
     snakeCaseName[i] = fileName[i];
     if (fileName[i] == '.') {
       snakeCaseName[i] = 0;
       break;
     }
   }
-  snakeCaseName[maxLength-1] = 0;
+  snakeCaseName[maxLength - 1] = 0;
 }
 
-void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnakeCaseName, size_t maxLength) {
-  for (int i=0; i<maxLength; i++) {
+void snakeCaseNameToUpperSnakeName(const char *snakeCaseName,
+                                   char *upperSnakeCaseName, size_t maxLength) {
+  for (int i = 0; i < maxLength; i++) {
     char nextLetter = snakeCaseName[i];
     upperSnakeCaseName[i] = toupper(nextLetter);
     if (nextLetter == 0) {
@@ -129,14 +161,16 @@ void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnake
   }
 }
 
-void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * upperSnakeCaseName, char * camelCaseName, size_t maxLength) {
-  int j=0;
-  for (int i=0; i<maxLength; i++) {
+void camelCaseNameFromSnakeCaseNames(const char *snakeCaseName,
+                                     const char *upperSnakeCaseName,
+                                     char *camelCaseName, size_t maxLength) {
+  int j = 0;
+  for (int i = 0; i < maxLength; i++) {
     char nextLetter = snakeCaseName[i];
     if (nextLetter == '_') {
       continue;
     }
-    if (i==0 || snakeCaseName[i-1] == '_') {
+    if (i == 0 || snakeCaseName[i - 1] == '_') {
       nextLetter = upperSnakeCaseName[i];
     }
     if (nextLetter == 0) {
@@ -147,8 +181,10 @@ void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * up
   camelCaseName[j] = 0;
 }
 
-void generateHeaderFromImage(FILE * file, const char * guardian, const char * variable) {
-  fprintf(file, "// This file is auto-generated by Inliner. Do not edit manually.\n");
+void generateHeaderFromImage(FILE *file, const char *guardian,
+                             const char *variable) {
+  fprintf(file,
+          "// This file is auto-generated by Inliner. Do not edit manually.\n");
   fprintf(file, "#ifndef IMAGE_STORE_%s_H\n", guardian);
   fprintf(file, "#define IMAGE_STORE_%s_H\n\n", guardian);
   fprintf(file, "#include <escher/image.h>\n\n");
@@ -158,67 +194,75 @@ void generateHeaderFromImage(FILE * file, const char * guardian, const char * va
   fprintf(file, "#endif\n");
 }
 
-void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers, bool transparent) {
-
+void generateImplementationFromImage(FILE *file, const char *header,
+                                     const char *variable, uint32_t width,
+                                     uint32_t height,
+                                     png_bytep *pixelsRowPointers,
+                                     bool transparent) {
   int sizeOfPixelBuffer = width * height * sizeof(uint16_t);
   if (transparent) {
     sizeOfPixelBuffer += width * height * sizeof(uint8_t);
   }
-  uint16_t * pixelBuffer = (uint16_t *)malloc(sizeOfPixelBuffer);
+  uint16_t *pixelBuffer = (uint16_t *)malloc(sizeOfPixelBuffer);
 
-  for (int j=0; j<height; j++) {
+  for (int j = 0; j < height; j++) {
     png_bytep pixelRow = pixelsRowPointers[j];
-    for (int i=0; i<width; i++) {
-      png_bytep pixel = &(pixelRow[i*4]);
-      double red = pixel[0]/255.0;
-      double green = pixel[1]/255.0;
-      double blue = pixel[2]/255.0;
-      double alpha = pixel[3]/255.0;
+    for (int i = 0; i < width; i++) {
+      png_bytep pixel = &(pixelRow[i * 4]);
+      double red = pixel[0] / 255.0;
+      double green = pixel[1] / 255.0;
+      double blue = pixel[2] / 255.0;
+      double alpha = pixel[3] / 255.0;
       // Assume a white background (1.0, 1.0, 1.0) in the blending
-      double blendedRed = red*alpha + 1.0*(1.0-alpha);
-      double blendedGreen = green*alpha + 1.0*(1.0-alpha);
-      double blendedBlue = blue*alpha + 1.0*(1.0-alpha);
-      uint8_t intRed = blendedRed*0xFF;
-      uint8_t intGreen = blendedGreen*0xFF;
-      uint8_t intBlue = blendedBlue*0xFF;
-      uint16_t rgb565value = (intRed>>3)<<11 | (intGreen>>2) << 5 | (intBlue>>3);
-      pixelBuffer[j*width+i] = rgb565value;
+      double blendedRed = red * alpha + 1.0 * (1.0 - alpha);
+      double blendedGreen = green * alpha + 1.0 * (1.0 - alpha);
+      double blendedBlue = blue * alpha + 1.0 * (1.0 - alpha);
+      uint8_t intRed = blendedRed * 0xFF;
+      uint8_t intGreen = blendedGreen * 0xFF;
+      uint8_t intBlue = blendedBlue * 0xFF;
+      uint16_t rgb565value =
+          (intRed >> 3) << 11 | (intGreen >> 2) << 5 | (intBlue >> 3);
+      pixelBuffer[j * width + i] = rgb565value;
 
       if (transparent) {
-        uint8_t * transparentBuffer = (uint8_t *)(&pixelBuffer[width * height]);
-        transparentBuffer[j*width+i] = (uint8_t)(alpha * 0xFF);
+        uint8_t *transparentBuffer = (uint8_t *)(&pixelBuffer[width * height]);
+        transparentBuffer[j * width + i] = (uint8_t)(alpha * 0xFF);
       }
     }
   }
 
   int maxSizeOfCompressedPixelBuffer = LZ4_compressBound(sizeOfPixelBuffer);
-  uint8_t * compressedPixelBuffer = malloc(maxSizeOfCompressedPixelBuffer);
+  uint8_t *compressedPixelBuffer = malloc(maxSizeOfCompressedPixelBuffer);
   int sizeOfCompressedPixelBuffer = LZ4_compress_HC(
-    (const char *)pixelBuffer,
-    (char *)compressedPixelBuffer,
-    sizeOfPixelBuffer,
-    maxSizeOfCompressedPixelBuffer,
-    LZ4HC_CLEVEL_MAX
-  );
+      (const char *)pixelBuffer, (char *)compressedPixelBuffer,
+      sizeOfPixelBuffer, maxSizeOfCompressedPixelBuffer, LZ4HC_CLEVEL_MAX);
 
   assert(sizeOfCompressedPixelBuffer != 0);
 
-  fprintf(file, "// This file is auto-generated by Inliner. Do not edit manually.\n");
+  fprintf(file,
+          "// This file is auto-generated by Inliner. Do not edit manually.\n");
   fprintf(file, "#include \"%s.h\"\n\n", header);
 
-  fprintf(file, "// Compressed %d pixels into %d bytes (%.2f%% compression ratio)/\n", width*height, sizeOfCompressedPixelBuffer, 100.0*sizeOfCompressedPixelBuffer/sizeOfPixelBuffer);
+  fprintf(file,
+          "// Compressed %d pixels into %d bytes (%.2f%% compression ratio)/\n",
+          width * height, sizeOfCompressedPixelBuffer,
+          100.0 * sizeOfCompressedPixelBuffer / sizeOfPixelBuffer);
 
-  fprintf(file, "const uint8_t compressedPixelData[%d] = {", sizeOfCompressedPixelBuffer);
-  for (int i=0; i<sizeOfCompressedPixelBuffer; i++) {
+  fprintf(file, "const uint8_t compressedPixelData[%d] = {",
+          sizeOfCompressedPixelBuffer);
+  for (int i = 0; i < sizeOfCompressedPixelBuffer; i++) {
     fprintf(file, "0x%02x, ", compressedPixelBuffer[i]);
   }
-
 
   free(compressedPixelBuffer);
   free(pixelBuffer);
 
-
   fprintf(file, "\n};\n\n");
-  fprintf(file, "constexpr Escher::Image image = Escher::Image(%d, %d, compressedPixelData, %d, %s);\n\n", width, height, sizeOfCompressedPixelBuffer, transparent ? "true" : "false");
-  fprintf(file, "const Escher::Image * const ImageStore::%s = &image;\n", variable);
+  fprintf(file,
+          "constexpr Escher::Image image = Escher::Image(%d, %d, "
+          "compressedPixelData, %d, %s);\n\n",
+          width, height, sizeOfCompressedPixelBuffer,
+          transparent ? "true" : "false");
+  fprintf(file, "const Escher::Image * const ImageStore::%s = &image;\n",
+          variable);
 }

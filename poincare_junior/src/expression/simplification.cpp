@@ -791,7 +791,7 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
                 numberOfGrandChildren);
   // f(0,E) ... +(A,B,C) ... *(,,)
   for (int i = 0; i < numberOfGrandChildren; i++) {
-    EditionReference clone = SharedEditionPool->clone(ref, true);
+    EditionReference clone = ref->clone();
     // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
     /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
      * clone.childAtIndex(childIndex)=Tree(clone.block()+childIndexOffset) */

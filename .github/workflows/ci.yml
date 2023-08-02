@@ -1,8 +1,7 @@
 name: Continuous Integration
 on:
   push:
-    branches:
-      - master
+    branches: [ master, 'version-*' ]
   pull_request:
 
 concurrency:

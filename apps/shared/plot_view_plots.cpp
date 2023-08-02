@@ -249,6 +249,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
     constexpr float dangerousSlope = 1e6f;
+    bool straightJoinDots = true;
     if (m_curveDouble &&
         std::fabs((p2.y() - p1.y()) / (p2.x() - p1.x())) > dangerousSlope) {
       /* We need to make sure we're not drawing a vertical asymptote because of
@@ -261,50 +262,51 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
           m_curveDouble(t12, m_curve.model(), m_context);
       if (pointInBoundingBox(xy1Double.x(), xy1Double.y(), xy2Double.x(),
                              xy2Double.y(), xy12Double.x(), xy12Double.y())) {
-        drawPattern(plotView, ctx, rect, t12, xy12);
-        plotView->straightJoinDots(
-            ctx, rect, plotView->floatToPixel2D(xy1Double),
-            plotView->floatToPixel2D(xy2Double), m_color, m_thick);
-        return;
+        p1 = plotView->floatToPixel2D(xy1Double);
+        p2 = plotView->floatToPixel2D(xy2Double);
+      } else {
+        straightJoinDots = false;
       }
-    } else {
+    }
+    if (straightJoinDots) {
       drawPattern(plotView, ctx, rect, t12, xy12);
       plotView->straightJoinDots(ctx, rect, p1, p2, m_color, m_thick);
       return;
     }
   }
 
-  if (remainingIterations > 0) {
-    remainingIterations--;
-
-    CurveViewRange *range = plotView->range();
-    float xMin = range->xMin();
-    float xMax = range->xMax();
-    float yMin = range->yMin();
-    float yMax = range->yMax();
-    if ((xMax < xy1.x() && xMax < xy2.x()) ||
-        (xy1.x() < xMin && xy2.x() < xMin) ||
-        (yMax < xy1.y() && yMax < xy2.y()) ||
-        (xy1.y() < yMin && xy2.y() < yMin)) {
-      /* Discard some recursion steps to save computation time on dots that are
-       * likely not to be drawn. This makes it so some parametric functions
-       * are drawn faster. Example: f(t) = [floor(t)*cos(t), floor(t)*sin(t)]
-       * If t is in [0, 60pi], and you zoom in a lot, the curve used to take
-       * too much time to draw outside of the screen.
-       * It can alter precision with some functions though, especially when
-       * zooming excessively (compared to plot range) on local minimums
-       * For instance, plotting parametric function [t,|t-π|] with t in
-       * [0,3000], x in [-1,20] and y in [-1,3] will show inaccuracies that
-       * would otherwise have been visible at higher zoom only, with x in [2,4]
-       * and y in [-0.2,0.2] in this case. */
-      remainingIterations /= 2;
-    }
-
-    joinDots(plotView, ctx, rect, t1, xy1, t12, xy12, remainingIterations,
-             discontinuous ? m_discontinuity : NoDiscontinuity);
-    joinDots(plotView, ctx, rect, t12, xy12, t2, xy2, remainingIterations,
-             discontinuous ? m_discontinuity : NoDiscontinuity);
+  if (remainingIterations <= 0) {
+    return;
   }
+  remainingIterations--;
+
+  CurveViewRange *range = plotView->range();
+  float xMin = range->xMin();
+  float xMax = range->xMax();
+  float yMin = range->yMin();
+  float yMax = range->yMax();
+  if ((xMax < xy1.x() && xMax < xy2.x()) ||
+      (xy1.x() < xMin && xy2.x() < xMin) ||
+      (yMax < xy1.y() && yMax < xy2.y()) ||
+      (xy1.y() < yMin && xy2.y() < yMin)) {
+    /* Discard some recursion steps to save computation time on dots that are
+     * likely not to be drawn. This makes it so some parametric functions
+     * are drawn faster. Example: f(t) = [floor(t)*cos(t), floor(t)*sin(t)]
+     * If t is in [0, 60pi], and you zoom in a lot, the curve used to take
+     * too much time to draw outside of the screen.
+     * It can alter precision with some functions though, especially when
+     * zooming excessively (compared to plot range) on local minimums
+     * For instance, plotting parametric function [t,|t-π|] with t in
+     * [0,3000], x in [-1,20] and y in [-1,3] will show inaccuracies that
+     * would otherwise have been visible at higher zoom only, with x in [2,4]
+     * and y in [-0.2,0.2] in this case. */
+    remainingIterations /= 2;
+  }
+
+  joinDots(plotView, ctx, rect, t1, xy1, t12, xy12, remainingIterations,
+           discontinuous ? m_discontinuity : NoDiscontinuity);
+  joinDots(plotView, ctx, rect, t12, xy12, t2, xy2, remainingIterations,
+           discontinuous ? m_discontinuity : NoDiscontinuity);
 }
 
 void WithCurves::CurveDrawing::drawPattern(

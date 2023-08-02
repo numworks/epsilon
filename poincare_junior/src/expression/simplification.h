@@ -19,54 +19,56 @@ struct ProjectionContext {
 class Simplification {
  public:
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
+  EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
   static bool AdvancedReduction(Tree *node);
+  EDITION_REF_WRAP(AdvancedReduction);
   static bool ShallowAdvancedReduction(Tree *node, bool change);
+  EDITION_REF_WRAP_1(ShallowAdvancedReduction, bool);
 
   static bool ShallowBeautify(Tree *node, void *context = nullptr);
+  EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
   static bool DeepBeautify(Tree *node,
                            ProjectionContext projectionContext = {}) {
     return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext);
   }
+  EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   static bool ShallowContract(Tree *e, void *context = nullptr) {
     return TryAllOperations(e, k_contractOperations,
                             std::size(k_contractOperations));
   }
+  EDITION_REF_WRAP_1D(ShallowContract, void *, nullptr);
   static bool ShallowExpand(Tree *e, void *context = nullptr) {
     return TryAllOperations(e, k_expandOperations,
                             std::size(k_expandOperations));
   }
+  EDITION_REF_WRAP_1D(ShallowExpand, void *, nullptr);
   static bool ShallowAlgebraicExpand(Tree *e, void *context = nullptr) {
     return TryAllOperations(e, k_algebraicExpandOperations,
                             std::size(k_algebraicExpandOperations));
   }
+  EDITION_REF_WRAP_1D(ShallowAlgebraicExpand, void *, nullptr);
 
   static bool DeepSystemProjection(Tree *reference,
                                    ProjectionContext projectionContext = {});
+  EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
+
   static bool ShallowSystemProjection(Tree *reference, void *projectionContext);
+  EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
 
   static bool ShallowSystematicReduce(Tree *u);
-  static bool DeepSystematicReduce(Tree *u);
-
-  EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
   EDITION_REF_WRAP(ShallowSystematicReduce);
+  static bool DeepSystematicReduce(Tree *u);
   EDITION_REF_WRAP(DeepSystematicReduce);
-  EDITION_REF_WRAP(AdvancedReduction);
-  EDITION_REF_WRAP_1(ShallowAdvancedReduction, bool);
-  EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
-  EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
-  EDITION_REF_WRAP_1D(ShallowContract, void *, nullptr);
-  EDITION_REF_WRAP_1D(ShallowExpand, void *, nullptr);
-  EDITION_REF_WRAP_1D(ShallowAlgebraicExpand, void *, nullptr);
-  EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
-  EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
 
   static bool SimplifyAbs(Tree *u);
   static bool SimplifyTrig(Tree *u);
+  EDITION_REF_WRAP(SimplifyTrig);
   static bool SimplifyTrigDiff(Tree *u);
   static bool SimplifyAddition(Tree *u);
   static bool SimplifyMultiplication(Tree *u);
+  EDITION_REF_WRAP(SimplifyMultiplication);
   static bool SimplifyPower(Tree *u);
   static bool SimplifyPowerReal(Tree *u);
 
@@ -87,9 +89,12 @@ class Simplification {
 
   static bool AdvanceReduceOnTranscendental(Tree *node, bool change);
   static bool AdvanceReduceOnAlgebraic(Tree *node, bool change);
+  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, bool);
   static bool ReduceInverseFunction(Tree *node);
   static bool ExpandTranscendentalOnRational(Tree *node);
+  EDITION_REF_WRAP(ExpandTranscendentalOnRational);
   static bool PolynomialInterpretation(Tree *node);
+  EDITION_REF_WRAP(PolynomialInterpretation);
 
   typedef bool (*Operation)(Tree *node);
   // Try all Operations until they all fail consecutively.
@@ -104,19 +109,13 @@ class Simplification {
   static bool ContractExpPow(Tree *node);
   static bool ExpandExp(Tree *node);
   static bool ContractTrigonometric(Tree *node);
-  static bool ExpandTrigonometric(Tree *node);
-  static bool ExpandMult(Tree *node);
-  static bool ExpandPower(Tree *node);
-
-  EDITION_REF_WRAP(SimplifyTrig);
-  EDITION_REF_WRAP(SimplifyMultiplication);
   EDITION_REF_WRAP(ContractTrigonometric);
+  static bool ExpandTrigonometric(Tree *node);
   EDITION_REF_WRAP(ExpandTrigonometric);
+  static bool ExpandMult(Tree *node);
   EDITION_REF_WRAP(ExpandMult);
+  static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
-  EDITION_REF_WRAP(ExpandTranscendentalOnRational);
-  EDITION_REF_WRAP(PolynomialInterpretation);
-  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, bool);
 
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractExpPow, ContractAbs, ContractExpMult,

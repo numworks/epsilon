@@ -17,16 +17,16 @@
 
 #include "../../ion/src/external/lz4/lz4hc.h"
 
-#define ERROR_IF_BEFORE_OPEN_OK(cond, message) \
-  if (cond) {                                  \
-    printf(message "\n");                      \
-    return -1;                                 \
-  };
 #define ERROR_IF(cond, message) \
   if (cond) {                   \
     printf(message "\n");       \
-    fclose(inputFile);          \
     return -1;                  \
+  };
+#define ERROR_AND_CLOSE_FILE_IF(cond, message) \
+  if (cond) {                                  \
+    printf(message "\n");                      \
+    fclose(inputFile);                         \
+    return -1;                                 \
   };
 #define MAX_FILENAME_LENGTH 255
 
@@ -53,30 +53,29 @@ void camelCaseNameFromSnakeCaseNames(const char *snakeCaseName,
 // TODO: truncate the app image dimensions to 55x56 pixels
 
 int main(int argc, char *argv[]) {
-  ERROR_IF_BEFORE_OPEN_OK(
-      argc != 4 && argc != 5,
-      "Usage: inliner source.png output.h output.cpp [--transparent]");
+  ERROR_IF(argc != 4 && argc != 5,
+           "Usage: inliner source.png output.h output.cpp [--transparent]");
   const char *inputPath = argv[1];
   bool transparent = FALSE;
   if (argc == 5) {
-    ERROR_IF_BEFORE_OPEN_OK(strcmp(argv[4], "--transparent") != 0,
-                            "Last argument must be '--transparent'");
+    ERROR_IF(strcmp(argv[4], "--transparent") != 0,
+             "Last argument must be '--transparent'");
     transparent = TRUE;
   }
   FILE *inputFile = fopen(inputPath, "rb");
-  ERROR_IF_BEFORE_OPEN_OK(inputFile == NULL,
-                          "Error: could not open input file.");
+  ERROR_IF(inputFile == NULL, "Error: could not open input file.");
 
   unsigned char magic[8];
   fread(magic, 1, 8, inputFile);
-  ERROR_IF(png_sig_cmp(magic, 0, 8), "Error: Input file is not a PNG file");
+  ERROR_AND_CLOSE_FILE_IF(png_sig_cmp(magic, 0, 8),
+                          "Error: Input file is not a PNG file");
 
   png_structp png =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  ERROR_IF(png == NULL, "Could not read png struct");
+  ERROR_AND_CLOSE_FILE_IF(png == NULL, "Could not read png struct");
 
   png_infop info = png_create_info_struct(png);
-  ERROR_IF(info == NULL, "Could not read info struct");
+  ERROR_AND_CLOSE_FILE_IF(info == NULL, "Could not read info struct");
 
   png_init_io(png, inputFile);
   png_set_sig_bytes(png, 8);
@@ -88,9 +87,10 @@ int main(int argc, char *argv[]) {
   png_byte colorType = png_get_color_type(png, info);
   png_byte bitDepth = png_get_bit_depth(png, info);
 
-  ERROR_IF(colorType != PNG_COLOR_TYPE_RGB_ALPHA,
-           "Error: Inliner only handles RGBA PNG images.");
-  ERROR_IF(bitDepth != 8, "Error: Inliner only handles RGBA8888 PNG images.");
+  ERROR_AND_CLOSE_FILE_IF(colorType != PNG_COLOR_TYPE_RGB_ALPHA,
+                          "Error: Inliner only handles RGBA PNG images.");
+  ERROR_AND_CLOSE_FILE_IF(bitDepth != 8,
+                          "Error: Inliner only handles RGBA8888 PNG images.");
 
   png_bytep *rowPointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
   for (int i = 0; i < height; i++) {

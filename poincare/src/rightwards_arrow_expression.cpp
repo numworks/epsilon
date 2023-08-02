@@ -1,5 +1,7 @@
+#include <ion/unicode/utf8_decoder.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/rightwards_arrow_expression.h>
 #include <poincare/serialization_helper.h>
 
@@ -21,19 +23,13 @@ int RightwardsArrowExpressionNode::serialize(
 Layout RightwardsArrowExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
-  HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      0);
-  result.addChildAtIndexInPlace(
-      CodePointLayout::Builder(UCodePointRightwardsArrow),
-      result.numberOfChildren(), result.numberOfChildren());
-  result.addOrMergeChildAtIndex(
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      result.numberOfChildren());
-  return std::move(result);
+  constexpr CodePoint arrow = UCodePointRightwardsArrow;
+  constexpr size_t k_sizeOfArrow = UTF8Decoder::CharSizeOfCodePoint(arrow) + 1;
+  char arrowString[k_sizeOfArrow];
+  UTF8Decoder::CodePointToCharsWithNullTermination(arrow, arrowString,
+                                                   k_sizeOfArrow);
+  return LayoutHelper::Infix(Expression(this), floatDisplayMode,
+                             numberOfSignificantDigits, arrowString, context);
 }
 
 }  // namespace Poincare

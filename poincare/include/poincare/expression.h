@@ -118,6 +118,7 @@ class Expression : public TreeHandle {
   friend class Randint;
   friend class RandintNode;
   friend class RealPart;
+  friend class RightwardsArrowExpressionNode;
   friend class Round;
   friend class Secant;
   friend class Sequence;

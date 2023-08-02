@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
 #define SEQUENCE_SEQUENCE_TOOLBOX_H
 
-#include <apps/math_toolbox.h>
+#include <apps/shared/math_toolbox.h>
 #include <apps/shared/sequence_store.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
@@ -9,7 +9,8 @@
 
 namespace Sequence {
 
-class SequenceToolboxDataSource : public MathToolboxExtraCellsDataSource {
+class SequenceToolboxDataSource
+    : public Shared::MathToolboxExtraCellsDataSource {
  public:
   SequenceToolboxDataSource() : m_numberOfAddedCells(0) {}
   int numberOfExtraCells() override {

@@ -1,6 +1,7 @@
 #include "math_variable_box_controller.h"
 
 #include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/app_with_store_menu.h>
 #include <apps/shared/sequence.h>
 #include <assert.h>
@@ -13,14 +14,14 @@
 
 #include <algorithm>
 
-#include "global_preferences.h"
-#include "shared/continuous_function.h"
-#include "shared/global_context.h"
+#include "continuous_function.h"
+#include "global_context.h"
 
 using namespace Poincare;
-using namespace Shared;
 using namespace Ion;
 using namespace Escher;
+
+namespace Shared {
 
 MathVariableBoxController::MathVariableBoxController()
     : NestedMenuController(nullptr, I18n::Message::Variables),
@@ -451,3 +452,5 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
   m_layouts[k_maxNumberOfDisplayedRows - 1] = Layout();
   return true;
 }
+
+}  // namespace Shared

@@ -1,9 +1,9 @@
 #ifndef GRAPH_LIST_CONTROLLER_H
 #define GRAPH_LIST_CONTROLLER_H
 
-#include <apps/math_toolbox.h>
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_list_controller.h>
+#include <apps/shared/math_toolbox.h>
 
 #include "../graph/graph_controller.h"
 #include "../shared/function_parameter_controller.h"
@@ -14,7 +14,7 @@
 namespace Graph {
 
 class ListController : public Shared::FunctionListController,
-                       public MathToolboxExtraCellsDataSource {
+                       public Shared::MathToolboxExtraCellsDataSource {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::ButtonRowController* header,

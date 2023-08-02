@@ -1,10 +1,9 @@
 #ifndef SHARED_MATH_APP_H
 #define SHARED_MATH_APP_H
 
-#include <apps/math_toolbox.h>
-#include <apps/math_variable_box_controller.h>
-
 #include "app_with_store_menu.h"
+#include "math_toolbox.h"
+#include "math_variable_box_controller.h"
 
 namespace Shared {
 

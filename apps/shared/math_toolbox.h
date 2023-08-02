@@ -8,6 +8,8 @@
 #include <escher/scrollable_layout_view.h>
 #include <escher/toolbox.h>
 
+namespace Shared {
+
 class MathToolboxExtraCellsDataSource {
  public:
   virtual int numberOfExtraCells() = 0;
@@ -68,5 +70,7 @@ class MathToolbox : public Escher::Toolbox {
   // These cells are at the top of the root menu
   MathToolboxExtraCellsDataSource* m_extraCellsDataSource;
 };
+
+}  // namespace Shared
 
 #endif

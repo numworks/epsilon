@@ -1,6 +1,7 @@
 #include "math_toolbox.h"
 
 #include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/layout_helper.h>
@@ -8,13 +9,14 @@
 
 #include <array>
 
-#include "./shared/toolbox_helpers.h"
 #include "apps/i18n.h"
-#include "global_preferences.h"
-#include "shared/global_context.h"
+#include "global_context.h"
+#include "toolbox_helpers.h"
 
 using namespace Poincare;
 using namespace Escher;
+
+namespace Shared {
 
 /* TODO
  * Unit submenu should be created from the Poincare::Unit::Representative table.
@@ -1016,8 +1018,8 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   if (messageTree->stripInsertedText()) {
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
-    Shared::ToolboxHelpers::TextToInsertForCommandText(
-        text, -1, textToInsert, maxTextToInsertLength, true);
+    ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert,
+                                               maxTextToInsertLength, true);
     text = textToInsert;
   }
   sender()->handleEventWithText(text);
@@ -1098,3 +1100,5 @@ int MathToolbox::numberOfExtraCellsInCurrentMenu() const {
              ? m_extraCellsDataSource->numberOfExtraCells()
              : 0;
 }
+
+}  // namespace Shared

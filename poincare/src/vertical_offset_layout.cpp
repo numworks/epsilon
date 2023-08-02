@@ -42,7 +42,8 @@ int VerticalOffsetLayoutNode::serialize(
     static_assert(UTF8Decoder::CharSizeOfCodePoint('}') ==
                       UTF8Decoder::CharSizeOfCodePoint('{'),
                   "Right and left brackets not the same size");
-    if (numberOfChar + k_lengthSystemAndBracket >= bufferSize - 1) {
+    if (numberOfChar + k_lengthSystemAndBracket >=
+        static_cast<size_t>(bufferSize - 1)) {
       return numberOfChar;
     }
 
@@ -61,7 +62,8 @@ int VerticalOffsetLayoutNode::serialize(
       return bufferSize - 1;
     }
 
-    if (numberOfChar + k_lengthSystemAndBracket >= bufferSize - 1) {
+    if (numberOfChar + k_lengthSystemAndBracket >=
+        static_cast<size_t>(bufferSize - 1)) {
       return numberOfChar;
     }
     numberOfChar += SerializationHelper::CodePoint(

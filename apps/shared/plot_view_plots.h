@@ -108,6 +108,9 @@ class WithCurves {
                   float t1, Poincare::Coordinate2D<float> xy1, float t2,
                   Poincare::Coordinate2D<float> xy2, int remainingIterations,
                   DiscontinuityTest discontinuity) const;
+    void drawPattern(const AbstractPlotView *plotView, KDContext *ctx,
+                     KDRect rect, float t,
+                     Poincare::Coordinate2D<float> xy) const;
 
     Curve2D m_curve;
     Curve2D m_patternLowerBound;

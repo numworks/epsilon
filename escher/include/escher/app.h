@@ -1,10 +1,10 @@
 #ifndef ESCHER_APP_H
 #define ESCHER_APP_H
 
+#include <escher/editable_fiel_help_box.h>
 #include <escher/i18n.h>
 #include <escher/image.h>
 #include <escher/modal_view_controller.h>
-#include <escher/pervasive_box.h>
 #include <escher/responder.h>
 #include <escher/telemetry.h>
 #include <escher/timer.h>
@@ -95,8 +95,8 @@ class App : public Responder {
     return nullptr;
   }
   virtual Poincare::Context* localContext() { return nullptr; }
-  virtual PervasiveBox* toolbox() { return nullptr; }
-  virtual PervasiveBox* variableBox() { return nullptr; }
+  virtual EditableFieldHelpBox* toolbox() { return nullptr; }
+  virtual EditableFieldHelpBox* variableBox() { return nullptr; }
 
   virtual bool storageCanChangeForRecordName(
       const Ion::Storage::Record::Name recordName) const {

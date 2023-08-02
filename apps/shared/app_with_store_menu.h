@@ -10,14 +10,14 @@ class AppWithStoreMenu : public SharedApp {
  public:
   void storeValue(const char* text = "") override;
   bool isStoreMenuOpen() const;
-  Escher::PervasiveBox* toolbox() override final {
+  Escher::EditableFieldHelpBox* toolbox() override final {
     return isStoreMenuOpen() ? nullptr : defaultToolbox();
   }
-  Escher::PervasiveBox* variableBox() override final {
+  Escher::EditableFieldHelpBox* variableBox() override final {
     return isStoreMenuOpen() ? nullptr : defaultVariableBox();
   }
-  virtual Escher::PervasiveBox* defaultToolbox() { return nullptr; }
-  virtual Escher::PervasiveBox* defaultVariableBox() { return nullptr; }
+  virtual Escher::EditableFieldHelpBox* defaultToolbox() { return nullptr; }
+  virtual Escher::EditableFieldHelpBox* defaultVariableBox() { return nullptr; }
 
   virtual void prepareForIntrusiveStorageChange() {
     assert(!m_intrusiveStorageChangeFlag);

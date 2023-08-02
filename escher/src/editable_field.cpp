@@ -7,7 +7,7 @@ namespace Escher {
 
 bool EditableField::handleBoxEvent(Ion::Events::Event event) {
   App* app = App::app();
-  PervasiveBox* box = nullptr;
+  EditableFieldHelpBox* box = nullptr;
   if (event == Ion::Events::Toolbox) {
     box = app->toolbox();
   } else if (event == Ion::Events::Var) {

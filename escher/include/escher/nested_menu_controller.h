@@ -3,13 +3,13 @@
 
 #include <escher/chevron_view.h>
 #include <escher/container.h>
+#include <escher/editable_fiel_help_box.h>
 #include <escher/editable_field.h>
 #include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
-#include <escher/pervasive_box.h>
 #include <escher/selectable_list_view.h>
 #include <escher/stack_view_controller.h>
 #include <ion.h>
@@ -21,7 +21,7 @@ class NestedMenuController : public StackViewController,
                              public StandardMemoizedListViewDataSource,
                              public SelectableListViewDataSource,
                              public SelectableListViewDelegate,
-                             public PervasiveBox {
+                             public EditableFieldHelpBox {
  public:
   NestedMenuController(Responder* parentResponder,
                        I18n::Message title = (I18n::Message)0);

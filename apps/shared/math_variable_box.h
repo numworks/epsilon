@@ -1,5 +1,5 @@
-#ifndef APPS_MATH_VARIABLE_BOX_CONTROLLER_H
-#define APPS_MATH_VARIABLE_BOX_CONTROLLER_H
+#ifndef APPS_MATH_VARIABLE_BOX_H
+#define APPS_MATH_VARIABLE_BOX_H
 
 #include <apps/i18n.h>
 #include <escher/layout_view.h>
@@ -14,9 +14,9 @@ namespace Shared {
 /*  WARNING: MathVariableBox can only be used within AppWithStoreMenu, since it
  * does intrusive storage changes. */
 
-class MathVariableBoxController : public Escher::NestedMenuController {
+class MathVariableBox : public Escher::NestedMenuController {
  public:
-  MathVariableBoxController();
+  MathVariableBox();
 
   // View Controller
   void viewDidDisappear() override;

@@ -63,17 +63,25 @@ class Simplification {
   EDITION_REF_WRAP(DeepSystematicReduce);
 
   static bool SimplifyAbs(Tree *u);
+  EDITION_REF_WRAP(SimplifyAbs);
   static bool SimplifyTrig(Tree *u);
   EDITION_REF_WRAP(SimplifyTrig);
   static bool SimplifyTrigDiff(Tree *u);
+  EDITION_REF_WRAP(SimplifyTrigDiff);
   static bool SimplifyAddition(Tree *u);
+  EDITION_REF_WRAP(SimplifyAddition);
   static bool SimplifyMultiplication(Tree *u);
   EDITION_REF_WRAP(SimplifyMultiplication);
   static bool SimplifyPower(Tree *u);
+  EDITION_REF_WRAP(SimplifyPower);
   static bool SimplifyPowerReal(Tree *u);
+  EDITION_REF_WRAP(SimplifyPowerReal);
 
  private:
   static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);
+  EDITION_REF_WRAP_1(SimplifyTrigSecondElement, bool *);
+  /* The following methods should not be called with EditionReferences.
+   * TODO : ensure it cannot. */
   static bool MergeAdditionChildren(Tree *u1, Tree *u2);
   static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
   static void ConvertPowerRealToPower(Tree *u);
@@ -86,28 +94,36 @@ class Simplification {
   static bool DistributeOverNAry(Tree *node, BlockType target,
                                  BlockType naryTarget, BlockType naryOutput,
                                  int childIndex = 0);
-
-  static bool AdvanceReduceOnTranscendental(Tree *node, bool change);
-  static bool AdvanceReduceOnAlgebraic(Tree *node, bool change);
-  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, bool);
-  static bool ReduceInverseFunction(Tree *node);
-  static bool ExpandTranscendentalOnRational(Tree *node);
-  EDITION_REF_WRAP(ExpandTranscendentalOnRational);
-  static bool PolynomialInterpretation(Tree *node);
-  EDITION_REF_WRAP(PolynomialInterpretation);
-
   typedef bool (*Operation)(Tree *node);
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
 
+  static bool AdvanceReduceOnTranscendental(Tree *node, bool change);
+  EDITION_REF_WRAP_1(AdvanceReduceOnTranscendental, bool);
+  static bool AdvanceReduceOnAlgebraic(Tree *node, bool change);
+  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, bool);
+  static bool ReduceInverseFunction(Tree *node);
+  EDITION_REF_WRAP(ReduceInverseFunction);
+  static bool ExpandTranscendentalOnRational(Tree *node);
+  EDITION_REF_WRAP(ExpandTranscendentalOnRational);
+  static bool PolynomialInterpretation(Tree *node);
+  EDITION_REF_WRAP(PolynomialInterpretation);
+
   static bool ContractAbs(Tree *node);
+  EDITION_REF_WRAP(ContractAbs);
   static bool ExpandAbs(Tree *node);
+  EDITION_REF_WRAP(ExpandAbs);
   static bool ContractLn(Tree *node);
+  EDITION_REF_WRAP(ContractLn);
   static bool ExpandLn(Tree *node);
+  EDITION_REF_WRAP(ExpandLn);
   static bool ContractExpMult(Tree *node);
+  EDITION_REF_WRAP(ContractExpMult);
   static bool ContractExpPow(Tree *node);
+  EDITION_REF_WRAP(ContractExpPow);
   static bool ExpandExp(Tree *node);
+  EDITION_REF_WRAP(ExpandExp);
   static bool ContractTrigonometric(Tree *node);
   EDITION_REF_WRAP(ContractTrigonometric);
   static bool ExpandTrigonometric(Tree *node);

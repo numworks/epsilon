@@ -39,20 +39,34 @@ class App : public Responder {
     }
     virtual const Image* icon() const { return nullptr; }
   };
+
+  /* The Snapshot is the part of the App that is never destroyed, even when the
+   * App is closed.
+   *
+   * IMPORTANT: When adding a variable to the Snapshot the functions `reset` and
+   * `tidy` might need to be updated.
+   *
+   * - The `reset` function is called when all snapshot's variables need to be
+   * set to their initial values (when the exam mode is activated for example).
+   *
+   * - The `tidy` function is called each time the app is closed, in case some
+   * values in the Snapshot need to be cleaned (mainly to clean the pool).
+   * */
   class Snapshot {
    public:
     virtual App* unpack(Container* container) = 0;
     void pack(App* app);
     /* reset all instances to their initial values */
     virtual void reset() {}
+    /* tidy clean all dynamically-allocated data */
+    virtual void tidy() {}
     virtual const Descriptor* descriptor() const = 0;
 #if EPSILON_GETOPT
     virtual void setOpt(const char* name, const char* value) {}
 #endif
-    /* tidy clean all dynamically-allocated data */
-    virtual void tidy() {}
     virtual void countryWasUpdated() {}
   };
+
   /* The destructor has to be virtual. Otherwise calling a destructor on an
    * App * pointing to a Derived App would have undefined behaviour. */
   virtual ~App() = default;

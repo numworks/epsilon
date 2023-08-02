@@ -60,6 +60,7 @@ bool Number::IsSanitized(const Tree* n) {
   }
   // Re-push the optimized tree on the EditionPool, and compare with original.
   Tree* temp = Rational::Push(Rational::Numerator(n), Rational::Denominator(n));
+  Rational::MakeIrreducible(temp);
   bool result = n->treeIsIdenticalTo(temp);
   temp->removeTree();
   return result;

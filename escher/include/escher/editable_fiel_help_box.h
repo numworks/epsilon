@@ -1,13 +1,13 @@
-#ifndef ESCHER_PERVASIVE_BOX_H
-#define ESCHER_PERVASIVE_BOX_H
+#ifndef ESCHER_EDITABLE_FIELD_HELP_BOX_H
+#define ESCHER_EDITABLE_FIELD_HELP_BOX_H
 
 namespace Escher {
 
 class EditableField;
 
-class PervasiveBox {
+class EditableFieldHelpBox {
  public:
-  PervasiveBox() : m_sender(nullptr) {}
+  EditableFieldHelpBox() : m_sender(nullptr) {}
   EditableField* sender() { return m_sender; }
   void setSender(EditableField* sender) { m_sender = sender; }
   virtual void open() = 0;

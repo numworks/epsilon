@@ -1,5 +1,5 @@
-#ifndef CODE_VARIABLE_BOX_CONTROLLER_H
-#define CODE_VARIABLE_BOX_CONTROLLER_H
+#ifndef CODE_PYTHON_VARIABLE_BOX_H
+#define CODE_PYTHON_VARIABLE_BOX_H
 
 #include <escher/buffer_text_view.h>
 #include <escher/menu_cell.h>
@@ -7,16 +7,16 @@
 #include <escher/toolbox_message_tree.h>
 
 #include "alternate_empty_nested_menu_controller.h"
+#include "empty_python_variable_box.h"
 #include "script_node.h"
 #include "script_store.h"
 #include "subtitle_cell.h"
-#include "variable_box_empty_controller.h"
 
 namespace Code {
 
-class VariableBoxController : public AlternateEmptyNestedMenuController {
+class PythonVariableBox : public AlternateEmptyNestedMenuController {
  public:
-  VariableBoxController();
+  PythonVariableBox();
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
@@ -40,10 +40,10 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
 
   // AlternateEmptyNestedMenuController
   Escher::ViewController* emptyViewController() override {
-    return &m_variableBoxEmptyController;
+    return &m_emptyPythonVariableBox;
   }
 
-  /* VariableBoxController */
+  /* PythonVariableBox */
   void setDisplaySubtitles(bool display) { m_displaySubtitles = display; }
   void loadFunctionsAndVariables(int scriptIndex,
                                  const char* textToAutocomplete,
@@ -171,7 +171,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
                         int nodeNameLength = -1,
                         const char* nodeSourceName = nullptr,
                         const char* description = nullptr);
-  VariableBoxEmptyController m_variableBoxEmptyController;
+  EmptyPythonVariableBox m_emptyPythonVariableBox;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
   Escher::MenuCell<Escher::BufferTextView<k_labelCharSize>,
                    Escher::PointerTextView>

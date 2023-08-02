@@ -547,7 +547,7 @@ void PythonTextArea::prepareVariableBoxBeforeOpening() {
     m_wasAutocompleting = true;
     removeAutocompletion();
   }
-  VariableBoxController *varBox = App::app()->variableBox();
+  PythonVariableBox *varBox = App::app()->variableBox();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(true);
   varBox->setTitle(I18n::Message::Autocomplete);
@@ -626,7 +626,7 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex,
   }
   assert(type == AutocompletionType::EndOfIdentifier);
   (void)type;  // Silence warnings
-  VariableBoxController *varBox = m_contentView.pythonDelegate()->variableBox();
+  PythonVariableBox *varBox = m_contentView.pythonDelegate()->variableBox();
   int textToInsertLength = 0;
   bool addParentheses = false;
   const char *textToInsert = varBox->autocompletionAlternativeAtIndex(

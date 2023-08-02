@@ -25,13 +25,13 @@ app_code_test_src = $(addprefix apps/code/,\
   script_store.cpp \
   script_template.cpp \
   subtitle_cell.cpp \
-  variable_box_empty_controller.cpp \
-  variable_box_controller.cpp \
+  empty_python_variable_box.cpp \
+  python_variable_box.cpp \
 )
 
 tests_src += $(addprefix apps/code/test/,\
   clipboard.cpp \
-  variable_box_controller.cpp\
+  python_variable_box.cpp\
 )
 
 app_code_src += $(app_code_test_src)

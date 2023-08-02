@@ -5,7 +5,7 @@
 
 namespace Code {
 
-class VariableBoxEmptyController : public Escher::ModalViewEmptyController {
+class EmptyPythonVariableBox : public Escher::ModalViewEmptyController {
  public:
   using Escher::ModalViewEmptyController::ModalViewEmptyController;
   // View Controller

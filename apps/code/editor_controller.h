@@ -2,8 +2,8 @@
 #define CODE_EDITOR_CONTROLLER_H
 
 #include "editor_view.h"
+#include "python_variable_box.h"
 #include "script.h"
-#include "variable_box_controller.h"
 
 namespace Code {
 

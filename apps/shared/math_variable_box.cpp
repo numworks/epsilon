@@ -1,4 +1,4 @@
-#include "math_variable_box_controller.h"
+#include "math_variable_box.h"
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
@@ -23,7 +23,7 @@ using namespace Escher;
 
 namespace Shared {
 
-MathVariableBoxController::MathVariableBoxController()
+MathVariableBox::MathVariableBox()
     : NestedMenuController(nullptr, I18n::Message::Variables),
       m_currentPage(Page::RootMenu),
       m_firstMemoizedLayoutIndex(0) {
@@ -34,15 +34,15 @@ MathVariableBoxController::MathVariableBoxController()
   }
 }
 
-void MathVariableBoxController::viewDidDisappear() {
+void MathVariableBox::viewDidDisappear() {
   NestedMenuController::viewDidDisappear();
 
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
-   * use the MathVariableBoxController cell heights memoization. We thus reset
-   * the MathVariableBoxController layouts only after calling the parent's
+   * use the MathVariableBox cell heights memoization. We thus reset
+   * the MathVariableBox layouts only after calling the parent's
    * viewDidDisappear. */
 
-  /* Tidy the layouts displayed in the MathVariableBoxController to clean
+  /* Tidy the layouts displayed in the MathVariableBox to clean
    * TreePool */
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].label()->setLayout(Layout());
@@ -54,7 +54,7 @@ void MathVariableBoxController::viewDidDisappear() {
   resetVarBoxMemoization();
 }
 
-bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
+bool MathVariableBox::handleEvent(Ion::Events::Event event) {
   /* We do not want to handle backspace event if:
    * - On the root menu page
    *   The deletion on the current page is locked
@@ -90,7 +90,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
-int MathVariableBoxController::numberOfRows() const {
+int MathVariableBox::numberOfRows() const {
   return numberOfElements(m_currentPage);
 }
 
@@ -100,7 +100,7 @@ static int NumberOfFunctions() {
       Ion::Storage::funcExtension);
 }
 
-int MathVariableBoxController::numberOfElements(Page page) const {
+int MathVariableBox::numberOfElements(Page page) const {
   if (page == Page::RootMenu) {
     int numberOfRows = 1;  // Define a variable
     for (int i = 1; i < static_cast<int>(Page::NumberOfPages); i++) {
@@ -119,7 +119,7 @@ int MathVariableBoxController::numberOfElements(Page page) const {
       Extension(page));
 }
 
-int MathVariableBoxController::reusableCellCount(int type) {
+int MathVariableBox::reusableCellCount(int type) {
   assert(type < 3);
   if (type == k_defineVariableCellType) {
     assert(m_currentPage == Page::RootMenu);
@@ -131,7 +131,7 @@ int MathVariableBoxController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
+void MathVariableBox::fillCellForRow(HighlightCell *cell, int row) {
   int type = typeAtRow(row);
   if (type == k_defineVariableCellType) {
     return;
@@ -190,7 +190,7 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
   myCell->reloadCell();
 }
 
-KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int row) {
+KDCoordinate MathVariableBox::nonMemoizedRowHeight(int row) {
   if (m_currentPage == Page::RootMenu) {
     if (row == defineVariableCellIndex()) {
       MenuCell<MessageTextView> tempCell;
@@ -203,7 +203,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-int MathVariableBoxController::typeAtRow(int row) const {
+int MathVariableBox::typeAtRow(int row) const {
   if (m_currentPage == Page::RootMenu) {
     if (row == defineVariableCellIndex()) {
       return k_defineVariableCellType;
@@ -213,7 +213,7 @@ int MathVariableBoxController::typeAtRow(int row) const {
   return k_leafCellType;
 }
 
-HighlightCell *MathVariableBoxController::reusableCell(int index, int type) {
+HighlightCell *MathVariableBox::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_defineVariableCellType) {
     return &m_defineVariableCell;
@@ -224,24 +224,20 @@ HighlightCell *MathVariableBoxController::reusableCell(int index, int type) {
   return nodeCellAtIndex(index);
 }
 
-MathVariableBoxController::LeafCell *MathVariableBoxController::leafCellAtIndex(
-    int index) {
+MathVariableBox::LeafCell *MathVariableBox::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-Escher::NestedMenuController::NodeCell *
-MathVariableBoxController::nodeCellAtIndex(int index) {
+Escher::NestedMenuController::NodeCell *MathVariableBox::nodeCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
   return &m_nodeCells[index];
 }
 
-I18n::Message MathVariableBoxController::subTitle() {
-  return nodeLabel(m_currentPage);
-}
+I18n::Message MathVariableBox::subTitle() { return nodeLabel(m_currentPage); }
 
-MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(
-    int index) {
+MathVariableBox::Page MathVariableBox::pageAtIndex(int index) {
   assert(index >= 0 && index < numberOfElements(Page::RootMenu));
   for (int pageId = static_cast<int>(Page::Expression);
        pageId < static_cast<int>(Page::NumberOfPages); pageId++) {
@@ -256,27 +252,27 @@ MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(
   return static_cast<Page>(Page::Function);
 }
 
-void MathVariableBoxController::setPage(Page page) {
+void MathVariableBox::setPage(Page page) {
   m_currentPage = page;
   resetVarBoxMemoization();
 }
 
-bool MathVariableBoxController::selectSubMenu(int selectedRow) {
+bool MathVariableBox::selectSubMenu(int selectedRow) {
   setPage(pageAtIndex(selectedRow));
   return NestedMenuController::selectSubMenu(selectedRow);
 }
 
-bool MathVariableBoxController::returnToPreviousMenu() {
+bool MathVariableBox::returnToPreviousMenu() {
   setPage(Page::RootMenu);
   return NestedMenuController::returnToPreviousMenu();
 }
 
-bool MathVariableBoxController::returnToRootMenu() {
+bool MathVariableBox::returnToRootMenu() {
   assert(stackDepth() == 1);
   return returnToPreviousMenu();
 }
 
-bool MathVariableBoxController::selectLeaf(int selectedRow) {
+bool MathVariableBox::selectLeaf(int selectedRow) {
   // Deselect the table
   assert(selectedRow >= 0 && selectedRow < numberOfRows());
 
@@ -322,7 +318,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   return true;
 }
 
-I18n::Message MathVariableBoxController::nodeLabel(Page page) {
+I18n::Message MathVariableBox::nodeLabel(Page page) {
   switch (page) {
     case Page::Expression:
       return I18n::Message::Expressions;
@@ -340,8 +336,8 @@ I18n::Message MathVariableBoxController::nodeLabel(Page page) {
   }
 }
 
-Layout MathVariableBoxController::expressionLayoutForRecord(
-    Storage::Record record, int index) {
+Layout MathVariableBox::expressionLayoutForRecord(Storage::Record record,
+                                                  int index) {
   assert(m_currentPage != Page::RootMenu);
   assert(index >= 0);
   if (index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows ||
@@ -380,7 +376,7 @@ Layout MathVariableBoxController::expressionLayoutForRecord(
   return m_layouts[index - m_firstMemoizedLayoutIndex];
 }
 
-const char *MathVariableBoxController::Extension(Page page) {
+const char *MathVariableBox::Extension(Page page) {
   // Function contains two extensions (func and reg)
   assert(page != Page::RootMenu && page != Page::Function);
   switch (page) {
@@ -396,7 +392,7 @@ const char *MathVariableBoxController::Extension(Page page) {
   }
 }
 
-Storage::Record MathVariableBoxController::recordAtIndex(int row) {
+Storage::Record MathVariableBox::recordAtIndex(int row) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
@@ -418,14 +414,14 @@ Storage::Record MathVariableBoxController::recordAtIndex(int row) {
   return record;
 }
 
-void MathVariableBoxController::resetVarBoxMemoization() {
+void MathVariableBox::resetVarBoxMemoization() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_layouts[i] = Layout();
   }
   m_firstMemoizedLayoutIndex = 0;
 }
 
-bool MathVariableBoxController::destroyRecordAtRow(int row) {
+bool MathVariableBox::destroyRecordAtRow(int row) {
   {
     Storage::Record record = recordAtIndex(row);
     if (record.hasExtension(Ion::Storage::regExtension)) {

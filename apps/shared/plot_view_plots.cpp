@@ -155,12 +155,6 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView *plotView,
 
   float previousT = NAN, t = NAN;
   Coordinate2D<float> previousXY, xy;
-  float (Coordinate2D<float>::*abscissa)() const =
-      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::x
-                                                   : &Coordinate2D<float>::y;
-  float (Coordinate2D<float>::*ordinate)() const =
-      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::y
-                                                   : &Coordinate2D<float>::x;
   int i = 0;
   bool isLastSegment = false;
 
@@ -180,31 +174,6 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView *plotView,
     }
     previousXY = xy;
     xy = m_curve.evaluate(t, m_context);
-
-    // Draw a line with the pattern
-    float patternMin =
-        ((m_patternLowerBound ? m_patternLowerBound.evaluate(t, m_context)
-                              : xy).*
-         ordinate)();
-    float patternMax =
-        ((m_patternUpperBound ? m_patternUpperBound.evaluate(t, m_context)
-                              : xy).*
-         ordinate)();
-    if (m_patternWithoutCurve) {
-      if (std::isnan(patternMin)) {
-        patternMin = -INFINITY;
-      }
-      if (std::isnan(patternMax)) {
-        patternMax = INFINITY;
-      }
-    }
-    if (!(std::isnan(patternMin) || std::isnan(patternMax)) &&
-        patternMin != patternMax && m_patternStart <= t && t < m_patternEnd) {
-      m_pattern.drawInLine(plotView, ctx, rect,
-                           AbstractPlotView::OtherAxis(m_axis),
-                           (xy.*abscissa)(), patternMin, patternMax);
-    }
-
     joinDots(plotView, ctx, rect, previousT, previousXY, t, xy,
              k_maxNumberOfIterations, m_discontinuity);
   } while (!isLastSegment);
@@ -227,6 +196,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
                                         int remainingIterations,
                                         DiscontinuityTest discontinuity) const {
   assert(plotView);
+  drawPattern(plotView, ctx, rect, t2, xy2);
 
   bool isFirstDot = std::isnan(t1);
   bool isLeftDotValid = std::isfinite(xy1.x()) && std::isfinite(xy1.y());
@@ -291,12 +261,14 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
           m_curveDouble(t12, m_curve.model(), m_context);
       if (pointInBoundingBox(xy1Double.x(), xy1Double.y(), xy2Double.x(),
                              xy2Double.y(), xy12Double.x(), xy12Double.y())) {
+        drawPattern(plotView, ctx, rect, t12, xy12);
         plotView->straightJoinDots(
             ctx, rect, plotView->floatToPixel2D(xy1Double),
             plotView->floatToPixel2D(xy2Double), m_color, m_thick);
         return;
       }
     } else {
+      drawPattern(plotView, ctx, rect, t12, xy12);
       plotView->straightJoinDots(ctx, rect, p1, p2, m_color, m_thick);
       return;
     }
@@ -332,6 +304,38 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
              discontinuous ? m_discontinuity : NoDiscontinuity);
     joinDots(plotView, ctx, rect, t12, xy12, t2, xy2, remainingIterations,
              discontinuous ? m_discontinuity : NoDiscontinuity);
+  }
+}
+
+void WithCurves::CurveDrawing::drawPattern(
+    const AbstractPlotView *plotView, KDContext *ctx, KDRect rect, float t,
+    Poincare::Coordinate2D<float> xy) const {
+  // Draw a line with the pattern
+  float (Coordinate2D<float>::*abscissa)() const =
+      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::x
+                                                   : &Coordinate2D<float>::y;
+  float (Coordinate2D<float>::*ordinate)() const =
+      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::y
+                                                   : &Coordinate2D<float>::x;
+  float patternMin =
+      ((m_patternLowerBound ? m_patternLowerBound.evaluate(t, m_context) : xy).*
+       ordinate)();
+  float patternMax =
+      ((m_patternUpperBound ? m_patternUpperBound.evaluate(t, m_context) : xy).*
+       ordinate)();
+  if (m_patternWithoutCurve) {
+    if (std::isnan(patternMin)) {
+      patternMin = -INFINITY;
+    }
+    if (std::isnan(patternMax)) {
+      patternMax = INFINITY;
+    }
+  }
+  if (!(std::isnan(patternMin) || std::isnan(patternMax)) &&
+      patternMin != patternMax && m_patternStart <= t && t < m_patternEnd) {
+    m_pattern.drawInLine(plotView, ctx, rect,
+                         AbstractPlotView::OtherAxis(m_axis), (xy.*abscissa)(),
+                         patternMin, patternMax);
   }
 }
 

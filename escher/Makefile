@@ -3,6 +3,7 @@ SFLAGS += -Iescher/include
 escher_src += $(addprefix escher/src/,\
   abstract_button_cell.cpp \
   abstract_text_field.cpp \
+  alternate_empty_nested_menu_controller.cpp \
   alternate_empty_view_controller.cpp \
   alternate_view_controller.cpp \
   app.cpp \

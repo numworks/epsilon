@@ -1,4 +1,6 @@
-#include "alternate_empty_nested_menu_controller.h"
+#include <escher/alternate_empty_nested_menu_controller.h>
+
+namespace Escher {
 
 void AlternateEmptyNestedMenuController::viewDidDisappear() {
   if (m_isEmpty) {
@@ -15,10 +17,12 @@ void AlternateEmptyNestedMenuController::didBecomeFirstResponder() {
     push(emptyViewController());
     return;
   }
-  Escher::NestedMenuController::didBecomeFirstResponder();
+  NestedMenuController::didBecomeFirstResponder();
 }
 
 bool AlternateEmptyNestedMenuController::returnToPreviousMenu() {
   m_isEmpty = false;
   return NestedMenuController::returnToPreviousMenu();
 }
+
+}  // namespace Escher

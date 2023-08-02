@@ -1,12 +1,12 @@
 #ifndef CODE_PYTHON_VARIABLE_BOX_H
 #define CODE_PYTHON_VARIABLE_BOX_H
 
+#include <escher/alternate_empty_nested_menu_controller.h>
 #include <escher/buffer_text_view.h>
 #include <escher/menu_cell.h>
 #include <escher/pointer_text_view.h>
 #include <escher/toolbox_message_tree.h>
 
-#include "alternate_empty_nested_menu_controller.h"
 #include "empty_python_variable_box.h"
 #include "script_node.h"
 #include "script_store.h"
@@ -14,7 +14,7 @@
 
 namespace Code {
 
-class PythonVariableBox : public AlternateEmptyNestedMenuController {
+class PythonVariableBox : public Escher::AlternateEmptyNestedMenuController {
  public:
   PythonVariableBox();
 

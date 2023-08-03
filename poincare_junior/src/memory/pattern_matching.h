@@ -77,9 +77,21 @@ class PatternMatching {
                               const Tree* structure);
   // Return true if reference has been replaced
   static bool MatchAndReplace(Tree* node, const Tree* pattern,
-                              const Tree* structure, bool simplify = false);
+                              const Tree* structure) {
+    return PrivateMatchAndReplace(node, pattern, structure, false);
+  }
+  EDITION_REF_WRAP_2(MatchAndReplace, const Tree*, const Tree*);
+  // Return true if reference has been replaced
+  static bool MatchReplaceAndSimplify(Tree* node, const Tree* pattern,
+                                      const Tree* structure) {
+    return PrivateMatchAndReplace(node, pattern, structure, true);
+  }
+  EDITION_REF_WRAP_2(MatchReplaceAndSimplify, const Tree*, const Tree*);
 
  private:
+  static bool PrivateMatchAndReplace(Tree* node, const Tree* pattern,
+                                     const Tree* structure, bool simplify);
+
   /* During Match, MatchContext allow keeping track of matched Nary sizes.
    * It keeps track of both source and pattern.
    * For example, we want to prevent source Add(Mult(1,2),3) from matching with

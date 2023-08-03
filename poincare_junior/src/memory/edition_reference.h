@@ -84,8 +84,11 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
     return ApplyPreservingReference(F, r, a1);   \
   }
 
-bool MatchAndReplace(EditionReference& target, const Tree* pattern,
-                     const Tree* structure);
+/* Two argument */
+#define EDITION_REF_WRAP_2(F, T, U)                \
+  static bool F(EditionReference& r, T a1, U u1) { \
+    return ApplyPreservingReference(F, r, a1, u1); \
+  }
 
 void SwapTrees(EditionReference& u, EditionReference& v);
 void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone);

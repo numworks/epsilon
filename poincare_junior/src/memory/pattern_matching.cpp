@@ -282,8 +282,9 @@ Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
   return Create(structure, ctx);
 }
 
-bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
-                                      const Tree* structure, bool simplify) {
+bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
+                                             const Tree* structure,
+                                             bool simplify) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
@@ -402,9 +403,4 @@ bool PatternMatching::MatchAndReplace(Tree* node, const Tree* pattern,
 
   // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....
   return true;
-}
-
-bool Tree::matchAndReplace(const Tree* pattern, const Tree* structure,
-                           bool simplify) {
-  return PatternMatching::MatchAndReplace(this, pattern, structure, simplify);
 }

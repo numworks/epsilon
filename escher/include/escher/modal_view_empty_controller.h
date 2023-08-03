@@ -12,7 +12,6 @@ class ModalViewEmptyController : public ViewController {
  public:
   ModalViewEmptyController() : ViewController(nullptr) {}
   void setMessages(I18n::Message *messages);
-  // View Controller
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
@@ -27,17 +26,12 @@ class ModalViewEmptyController : public ViewController {
     void reload();
 
    private:
-    constexpr static int k_layoutViewRow = 2;
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;
     int numberOfSubviews() const override;
     View *subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     virtual int numberOfMessageTextViews() const = 0;
     virtual MessageTextView *messageTextViewAtIndex(int index) = 0;
-    bool hasLayoutView() const {
-      return const_cast<ModalViewEmptyView *>(this)->layoutView() != nullptr;
-    }
-    virtual LayoutView *layoutView() { return nullptr; }
   };
 };
 

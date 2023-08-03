@@ -85,9 +85,9 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
   }
 
 /* Two argument */
-#define EDITION_REF_WRAP_2(F, T, U)                \
-  static bool F(EditionReference& r, T a1, U u1) { \
-    return ApplyPreservingReference(F, r, a1, u1); \
+#define EDITION_REF_WRAP_2(F, T1, T2)                \
+  static bool F(EditionReference& r, T1 u1, T2 u2) { \
+    return ApplyPreservingReference(F, r, u1, u2);   \
   }
 
 void SwapTrees(EditionReference& u, EditionReference& v);

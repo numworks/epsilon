@@ -18,6 +18,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/conversion.cpp \
   expression/decimal.cpp \
   expression/integer.cpp \
+  expression/metric.cpp \
   expression/number.cpp \
   expression/polynomial.cpp \
   expression/rational.cpp \

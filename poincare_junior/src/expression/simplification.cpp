@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/memory/node_iterator.h>
@@ -701,59 +702,55 @@ bool Simplification::ApplyShallowInDepth(Tree* ref,
   return changed;
 }
 
-int Metric(const Tree* root) {
-  // TODO: Decide on the metric to use here.
-  return root->treeSize();
-}
-
-bool ShouldValidateOperation(int previousMetric, int newMetric) {
-  // Factor 3 allow (x+y)^2 expansion.
-  return newMetric < 3 * previousMetric;
-}
-
 bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
                                                    bool changed) {
   if (changed + ReduceInverseFunction(ref)) {
     return true;
   }
-  int previousMetric = Metric(root);
+  const Metric metric(ref, root);
   EditionReference clone(ref->clone());
   if (ShallowExpand(ref)) {
-    if (ref->block()->isAlgebraic()) {
-      /* Skip this if the expression is still transcendental to avoid risking
-       * infinite loops. An assert isn't possible because, for example,
+    if (metric.hasImproved()) {
+      /* AdvanceReduce further the expression only if it is algebraic.
+       * Transcendental tree can expand but stay transcendental:
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      AdvanceReduceOnAlgebraic(ref, root, true);
-    }
-    if (ShouldValidateOperation(previousMetric, Metric(root))) {
-      clone->removeTree();
-      return true;
-    }
-  }
-  // Restore ref
-  ref->moveTreeOverTree(clone);
-  return false;
-}
-
-bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
-                                              bool changed) {
-  int previousMetric = Metric(root);
-  EditionReference clone(ref->clone());
-  if (ShallowContract(ref)) {
-    if (ShouldValidateOperation(previousMetric, Metric(root))) {
+      bool reducedAlgebraic = ref->block()->isAlgebraic() &&
+                              AdvanceReduceOnAlgebraic(ref, root, true);
+      // If algebraic got advanced reduced, metric must have been improved.
+      assert(!reducedAlgebraic || metric.hasImproved());
       clone->removeTree();
       return true;
     }
     // Restore ref
     ref->moveTreeOverTree(clone);
-  }
-  if (PolynomialInterpretation(ref) &&
-      ShouldValidateOperation(previousMetric, Metric(root))) {
+  } else {
     clone->removeTree();
-    return true;
   }
-  // Restore ref
-  ref->moveTreeOverTree(clone);
+  return false;
+}
+
+bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
+                                              bool changed) {
+  const Metric metric(ref, root);
+  EditionReference clone(ref->clone());
+  if (ShallowContract(ref)) {
+    if (metric.hasImproved()) {
+      clone->removeTree();
+      return true;
+    }
+    // Restore ref
+    ref->cloneTreeOverTree(clone);
+  }
+  if (PolynomialInterpretation(ref)) {
+    if (metric.hasImproved()) {
+      clone->removeTree();
+      return true;
+    }
+    // Restore ref
+    ref->moveTreeOverTree(clone);
+  } else {
+    clone->removeTree();
+  }
   return false;
 }
 

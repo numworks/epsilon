@@ -28,13 +28,8 @@ void RationalListController::setExpression(Expression e) {
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");
 
-  bool negative = false;
-  Expression div = m_expression;
-  if (m_expression.type() == ExpressionNode::Type::Opposite) {
-    negative = true;
-    div = m_expression.childAtIndex(0);
-  }
-
+  bool negative = m_expression.type() == ExpressionNode::Type::Opposite;
+  Expression div = negative ? m_expression.childAtIndex(0) : m_expression;
   assert(div.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(div.childAtIndex(0));
   numerator.setNegative(negative != numerator.isNegative());

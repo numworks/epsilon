@@ -54,6 +54,7 @@ I18n::Message IntegerListController::messageAtIndex(int index) {
     case 2:
       return I18n::Message::BinaryBase;
     default:
+      assert(index == 3);
       return I18n::Message::PrimeFactors;
   }
 }

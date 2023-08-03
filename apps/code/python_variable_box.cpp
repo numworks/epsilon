@@ -69,7 +69,8 @@ typedef enum {
  * */
 
 PythonVariableBox::PythonVariableBox()
-    : AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
+    : AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables,
+                                         I18n::Message::NoWordAvailableHere),
       m_displaySubtitles(true) {
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
   m_originsName[0] = I18n::translate(I18n::Message::ScriptInProgress);

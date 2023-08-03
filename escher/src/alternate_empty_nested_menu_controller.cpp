@@ -2,6 +2,13 @@
 
 namespace Escher {
 
+AlternateEmptyNestedMenuController::EmptyNestedMenuController::
+    EmptyNestedMenuView::EmptyNestedMenuView(I18n::Message message)
+    : ModalViewEmptyController::ModalViewEmptyView() {
+  initMessageViews();
+  m_message.setMessage(message);
+}
+
 void AlternateEmptyNestedMenuController::viewDidDisappear() {
   if (m_isEmpty) {
     m_isEmpty = false;
@@ -14,7 +21,7 @@ void AlternateEmptyNestedMenuController::didBecomeFirstResponder() {
   // If the content is empty, we push an empty controller.
   m_isEmpty = (numberOfRows() == 0);
   if (m_isEmpty) {
-    push(emptyViewController());
+    push(&m_emptyController);
     return;
   }
   NestedMenuController::didBecomeFirstResponder();

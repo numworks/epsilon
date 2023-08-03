@@ -7,7 +7,6 @@
 #include <escher/pointer_text_view.h>
 #include <escher/toolbox_message_tree.h>
 
-#include "empty_python_variable_box.h"
 #include "script_node.h"
 #include "script_store.h"
 #include "subtitle_cell.h"
@@ -37,11 +36,6 @@ class PythonVariableBox : public Escher::AlternateEmptyNestedMenuController {
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* l, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
-
-  // AlternateEmptyNestedMenuController
-  Escher::ViewController* emptyViewController() override {
-    return &m_emptyPythonVariableBox;
-  }
 
   /* PythonVariableBox */
   void setDisplaySubtitles(bool display) { m_displaySubtitles = display; }
@@ -171,7 +165,6 @@ class PythonVariableBox : public Escher::AlternateEmptyNestedMenuController {
                         int nodeNameLength = -1,
                         const char* nodeSourceName = nullptr,
                         const char* description = nullptr);
-  EmptyPythonVariableBox m_emptyPythonVariableBox;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
   Escher::MenuCell<Escher::BufferTextView<k_labelCharSize>,
                    Escher::PointerTextView>

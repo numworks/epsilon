@@ -10,28 +10,38 @@ namespace Escher {
 
 class ModalViewEmptyController : public ViewController {
  public:
-  ModalViewEmptyController() : ViewController(nullptr) {}
-  void setMessages(I18n::Message *messages);
+  ModalViewEmptyController(I18n::Message message = (I18n::Message)0)
+      : ViewController(nullptr), m_view(message) {}
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
+  View *view() override { return &m_view; }
 
  protected:
   class ModalViewEmptyView : public View, public Bordered {
    public:
-    constexpr static KDFont::Size k_font = KDFont::Size::Small;
-    void initMessageViews();
-    void setMessages(I18n::Message *message);
+    ModalViewEmptyView(I18n::Message message)
+        : View(), m_messageTextView(message, k_format) {}
     void drawRect(KDContext *ctx, KDRect rect) const override;
 
    private:
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;
-    int numberOfSubviews() const override;
-    View *subviewAtIndex(int index) override;
+    constexpr static KDFont::Size k_font = KDFont::Size::Small;
+    constexpr static KDGlyph::Format k_format = {
+        .style = {.backgroundColor = k_backgroundColor, .font = k_font},
+        .horizontalAlignment = KDGlyph::k_alignCenter,
+        .verticalAlignment = KDGlyph::k_alignCenter};
+
+    int numberOfSubviews() const override { return 1; }
+    View *subviewAtIndex(int index) override {
+      assert(index == 0);
+      return &m_messageTextView;
+    }
     void layoutSubviews(bool force = false) override;
-    virtual int numberOfMessageTextViews() const = 0;
-    virtual MessageTextView *messageTextViewAtIndex(int index) = 0;
+
+    MessageTextView m_messageTextView;
   };
+  ModalViewEmptyView m_view;
 };
 
 }  // namespace Escher

@@ -20,30 +20,7 @@ class AlternateEmptyNestedMenuController : public NestedMenuController {
   bool returnToPreviousMenu() override;
 
  private:
-  class EmptyNestedMenuController : public ModalViewEmptyController {
-   public:
-    EmptyNestedMenuController(I18n::Message message)
-        : ModalViewEmptyController(), m_view(message) {}
-    View* view() override { return &m_view; }
-
-   private:
-    class EmptyNestedMenuView
-        : public ModalViewEmptyController::ModalViewEmptyView {
-     public:
-      EmptyNestedMenuView(I18n::Message message);
-
-     private:
-      int numberOfMessageTextViews() const override { return 1; }
-      MessageTextView* messageTextViewAtIndex(int index) override {
-        assert(index == 0);
-        return &m_message;
-      }
-      MessageTextView m_message;
-    };
-    EmptyNestedMenuView m_view;
-  };
-
-  EmptyNestedMenuController m_emptyController;
+  ModalViewEmptyController m_emptyController;
   bool m_isEmpty;
 };
 

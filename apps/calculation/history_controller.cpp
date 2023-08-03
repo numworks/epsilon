@@ -279,7 +279,7 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *list, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(list == &m_selectableListView);
-  m_selectableListView.clipToBottomIfSpaceRemains();
+  m_selectableListView.didChangeSelectionAndDidScroll();
   if (withinTemporarySelection || previousSelectedRow == selectedRow()) {
     return;
   }

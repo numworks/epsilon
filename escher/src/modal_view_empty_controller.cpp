@@ -4,10 +4,8 @@
 
 namespace Escher {
 
-constexpr KDColor
-    ModalViewEmptyController::ModalViewEmptyView::k_backgroundColor;
-
 // ModalViewEmptyController::ModalViewEmptyView
+
 void ModalViewEmptyController::ModalViewEmptyView::initMessageViews() {
   const int numberOfMessageViews = numberOfMessageTextViews();
   for (int i = 0; i < numberOfMessageViews; i++) {

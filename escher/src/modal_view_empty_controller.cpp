@@ -37,7 +37,7 @@ void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext *ctx,
 }
 
 int ModalViewEmptyController::ModalViewEmptyView::numberOfSubviews() const {
-  return numberOfMessageTextViews() + hasLayoutView();
+  return numberOfMessageTextViews();
 }
 
 void ModalViewEmptyController::ModalViewEmptyView::reload() {
@@ -45,38 +45,17 @@ void ModalViewEmptyController::ModalViewEmptyView::reload() {
 }
 
 View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
-  if (hasLayoutView()) {
-    if (index == k_layoutViewRow) {
-      return layoutView();
-    }
-    return messageTextViewAtIndex(index + (index < k_layoutViewRow ? 0 : -1));
-  }
   return messageTextViewAtIndex(index);
 }
 
 void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   const int numberOfMessageViews = numberOfMessageTextViews();
-  const bool hasLayout = hasLayoutView();
   KDCoordinate width = bounds().width() - 2 * k_separatorThickness;
   KDCoordinate height = bounds().height() - 2 * k_separatorThickness;
   KDCoordinate textHeight = KDFont::GlyphHeight(k_font);
-  KDCoordinate layoutHeight =
-      hasLayout ? layoutView()->minimalSizeForOptimalDisplay().height() : 0;
-  KDCoordinate margin =
-      (height - numberOfMessageViews * textHeight - layoutHeight) / 2;
-  if (hasLayout) {
-    setChildFrame(
-        layoutView(),
-        KDRect(k_separatorThickness,
-               k_separatorThickness + margin + k_layoutViewRow * textHeight,
-               width, layoutHeight),
-        force);
-  }
+  KDCoordinate margin = (height - numberOfMessageViews * textHeight) / 2;
   KDCoordinate currentHeight = k_separatorThickness;
   for (uint8_t i = 0; i < numberOfMessageViews; i++) {
-    if (hasLayout && i == k_layoutViewRow) {
-      currentHeight += layoutHeight;
-    }
     KDCoordinate h = (i == 0 || i == numberOfMessageViews - 1)
                          ? textHeight + margin
                          : textHeight;

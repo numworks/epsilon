@@ -2,13 +2,6 @@
 
 namespace Escher {
 
-AlternateEmptyNestedMenuController::EmptyNestedMenuController::
-    EmptyNestedMenuView::EmptyNestedMenuView(I18n::Message message)
-    : ModalViewEmptyController::ModalViewEmptyView() {
-  initMessageViews();
-  m_message.setMessage(message);
-}
-
 void AlternateEmptyNestedMenuController::viewDidDisappear() {
   if (m_isEmpty) {
     m_isEmpty = false;

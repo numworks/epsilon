@@ -40,10 +40,6 @@ int ModalViewEmptyController::ModalViewEmptyView::numberOfSubviews() const {
   return numberOfMessageTextViews();
 }
 
-void ModalViewEmptyController::ModalViewEmptyView::reload() {
-  layoutSubviews();
-}
-
 View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
   return messageTextViewAtIndex(index);
 }

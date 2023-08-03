@@ -23,7 +23,6 @@ class ModalViewEmptyController : public ViewController {
     void initMessageViews();
     void setMessages(I18n::Message *message);
     void drawRect(KDContext *ctx, KDRect rect) const override;
-    void reload();
 
    private:
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;

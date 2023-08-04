@@ -18,19 +18,19 @@ class Constant final {
   constexpr static enum Type Type(char16_t name) {
     switch (name) {
       case 'e':
-        return Constant::Type::E;
+        return Type::E;
       case u'π':
-        return Constant::Type::Pi;
+        return Type::Pi;
       default:
-        return Constant::Type::Undefined;
+        return Type::Undefined;
     }
   }
   template <typename T>
   static T To(enum Type type) {
     switch (type) {
-      case Constant::Type::Pi:
+      case Type::Pi:
         return M_PI;
-      case Constant::Type::E:
+      case Type::E:
         return M_E;
       default:
         assert(false);
@@ -38,9 +38,9 @@ class Constant final {
   }
   constexpr static CodePoint ToCodePoint(enum Type type) {
     switch (type) {
-      case Constant::Type::Pi:
+      case Type::Pi:
         return CodePoint(u'π');
-      case Constant::Type::E:
+      case Type::E:
         return CodePoint('e');
       default:
         assert(false);

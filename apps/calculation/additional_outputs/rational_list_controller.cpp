@@ -24,8 +24,6 @@ Integer extractInteger(const Expression e) {
 
 void RationalListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
-  ExpressionsListController::setExactAndApproximateExpression(
-      exactExpression, approximateExpression);
   assert(!exactExpression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");

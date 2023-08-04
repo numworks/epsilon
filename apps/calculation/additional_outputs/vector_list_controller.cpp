@@ -18,8 +18,6 @@ namespace Calculation {
 
 void VectorListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
-  ExpressionsListController::setExactAndApproximateExpression(
-      exactExpression, approximateExpression);
   assert(!exactExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

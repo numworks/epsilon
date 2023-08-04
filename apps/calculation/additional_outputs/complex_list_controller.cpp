@@ -21,9 +21,6 @@ namespace Calculation {
 void ComplexListController::setExactAndApproximateExpression(
     Poincare::Expression exactExpression,
     Poincare::Expression approximateExpression) {
-  IllustratedExpressionsListController::setExactAndApproximateExpression(
-      exactExpression, approximateExpression);
-
   Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
   preferencesComplex.setComplexFormat(
       Poincare::Preferences::ComplexFormat::Cartesian);

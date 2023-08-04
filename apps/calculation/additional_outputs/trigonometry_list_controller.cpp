@@ -14,9 +14,6 @@ namespace Calculation {
 
 void TrigonometryListController::setExactAndApproximateExpression(
     Poincare::Expression exactAngle, Poincare::Expression approximateAngle) {
-  IllustratedExpressionsListController::setExactAndApproximateExpression(
-      exactAngle, approximateAngle);
-
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context* context = App::app()->localContext();

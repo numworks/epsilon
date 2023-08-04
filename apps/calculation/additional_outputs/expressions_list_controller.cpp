@@ -117,12 +117,6 @@ int ExpressionsListController::numberOfRows() const {
   return nbOfRows;
 }
 
-void ExpressionsListController::setExactAndApproximateExpression(
-    Expression exactExpression, Expression approximateExpression) {
-  // Reinitialize memoization
-  tidy();
-}
-
 int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
                                            HighlightCell* cell, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);

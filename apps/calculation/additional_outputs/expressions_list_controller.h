@@ -41,7 +41,7 @@ class ExpressionsListController
 
   virtual void setExactAndApproximateExpression(
       Poincare::Expression exactExpression,
-      Poincare::Expression approximateExpression);
+      Poincare::Expression approximateExpression) = 0;
   virtual int textAtIndex(char* buffer, size_t bufferSize,
                           Escher::HighlightCell* cell, int index);
 

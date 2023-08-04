@@ -70,9 +70,6 @@ int UnitListController::numberOfRows() const {
 
 void UnitListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
-  ExpressionsListController::setExactAndApproximateExpression(
-      exactExpression, approximateExpression);
-
   /* I. Handle expression cells
    *   0. Initialize expressions and layouts */
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];

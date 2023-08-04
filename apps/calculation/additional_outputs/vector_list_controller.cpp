@@ -36,7 +36,7 @@ void VectorListController::computeAdditionalResults(
   assert(approximateExpression.type() == ExpressionNode::Type::Matrix);
   Matrix vector = static_cast<Matrix &>(approximateExpression);
   assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
-  bool isColumn = (vector.numberOfColumns() == 1);
+  bool isColumn = vector.numberOfColumns() == 1;
   size_t index = 0;
   size_t messageIndex = 0;
 
@@ -68,19 +68,12 @@ void VectorListController::computeAdditionalResults(
     setLineAtIndex(index++, Expression(), normalized, context,
                    &preferencesCopy);
     if ((isColumn ? vector.numberOfRows() : vector.numberOfColumns()) == 2) {
+      assert(vector.numberOfChildren() == 2 &&
+             normalized.numberOfChildren() == 2);
       // 3. Angle with x-axis
-      Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
-      Expression y = static_cast<Matrix &>(vector).matrixChild(
-          isColumn ? 1 : 0, isColumn ? 0 : 1);
-      float xApproximation =
-          PoincareHelpers::ApproximateToScalar<float>(x, context);
-      float yApproximation =
-          PoincareHelpers::ApproximateToScalar<float>(y, context);
-      x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
-      y = static_cast<Matrix &>(normalized)
-              .matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
-      Expression angle = ArcCosine::Builder(x);
-      if (y.isPositive(context) == TrinaryBoolean::False) {
+      Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
+      if (normalized.childAtIndex(1).isPositive(context) ==
+          TrinaryBoolean::False) {
         angle = Subtraction::Builder(
             Multiplication::Builder(Rational::Builder(2),
                                     Poincare::Constant::PiBuilder()),
@@ -90,6 +83,10 @@ void VectorListController::computeAdditionalResults(
       setLineAtIndex(index++,
                      Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
                      angle, context, &preferencesCopy);
+      float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
+          vector.childAtIndex(0), context);
+      float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
+          vector.childAtIndex(1), context);
       float angleApproximation =
           PoincareHelpers::ApproximateToScalar<float>(angle, context);
       if (std::isfinite(xApproximation) && std::isfinite(yApproximation) &&

@@ -78,7 +78,7 @@ class CachesContainer {
   }
 
  private:
-  mutable ContinuousFunctionCache m_functionCaches[k_numberOfAvailableCaches];
+  ContinuousFunctionCache m_functionCaches[k_numberOfAvailableCaches];
 };
 
 }  // namespace Shared

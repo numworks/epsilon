@@ -112,7 +112,7 @@ class ContinuousFunctionStore : public FunctionStore {
   mutable uint32_t m_storageCheckSum;
   mutable int m_memoizedNumberOfActiveFunctions;
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
-  mutable CachesContainer *m_cachesContainer;
+  CachesContainer *m_cachesContainer;
 };
 
 }  // namespace Shared

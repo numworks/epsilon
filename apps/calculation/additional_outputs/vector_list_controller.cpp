@@ -37,8 +37,6 @@ void VectorListController::computeAdditionalResults(
   Matrix vector = static_cast<Matrix &>(approximateExpression);
   assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
   bool isColumn = (vector.numberOfColumns() == 1);
-  bool is2D =
-      (isColumn ? vector.numberOfRows() : vector.numberOfColumns()) == 2;
   size_t index = 0;
   size_t messageIndex = 0;
 
@@ -69,7 +67,7 @@ void VectorListController::computeAdditionalResults(
     m_indexMessageMap[index] = messageIndex++;
     setLineAtIndex(index++, Expression(), normalized, context,
                    &preferencesCopy);
-    if (is2D) {
+    if ((isColumn ? vector.numberOfRows() : vector.numberOfColumns()) == 2) {
       // 3. Angle with x-axis
       Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
       Expression y = static_cast<Matrix &>(vector).matrixChild(

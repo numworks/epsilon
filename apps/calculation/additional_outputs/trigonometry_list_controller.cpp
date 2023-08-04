@@ -15,6 +15,17 @@ namespace Calculation {
 void TrigonometryListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
+  assert(!approximateExpression.isUninitialized());
+
+  Preferences* preferences = Preferences::sharedPreferences;
+  Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
+  Context* context = App::app()->localContext();
+  size_t index = 0;
+
+  Expression period = Multiplication::Builder(
+      Rational::Builder(2),
+      Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
+
   // Find the angle
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
@@ -28,26 +39,14 @@ void TrigonometryListController::computeAdditionalResults(
   } else {
     exactAngle = exactExpression;
     approximateAngle = approximateExpression;
+    assert(!approximateAngle.isUninitialized());
+    if (approximateAngle.isPositive(context) == TrinaryBoolean::False) {
+      // If the approximate angle is in [-π, π], set it in [0, 2π]
+      approximateAngle = Addition::Builder(period.clone(), approximateAngle);
+    }
   }
 
-  Preferences* preferences = Preferences::sharedPreferences;
-  Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
-  Context* context = App::app()->localContext();
-  size_t index = 0;
-
-  Expression period = Multiplication::Builder(
-      Rational::Builder(2),
-      Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
-
-  Expression simplifiedAngle;
-  Expression unit;
-
-  // If the approximate angle is in [-π, π], set it in [0, 2π]
-  if (!approximateAngle.isUninitialized() &&
-      approximateAngle.isPositive(context) == TrinaryBoolean::False) {
-    approximateAngle = Addition::Builder(period.clone(), approximateAngle);
-  }
-
+  Expression simplifiedAngle, unit;
   Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &exactAngle, context, ReductionTarget::User, &unit);
 

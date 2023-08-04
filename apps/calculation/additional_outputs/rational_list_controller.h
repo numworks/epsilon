@@ -10,7 +10,9 @@ class RationalListController : public ChainableExpressionsListController {
   RationalListController(EditExpressionController* editExpressionController)
       : ChainableExpressionsListController(editExpressionController, true) {}
 
-  void setExpression(Poincare::Expression e) override;
+  void setExactAndApproximateExpression(
+      Poincare::Expression exactExpression,
+      Poincare::Expression approximateExpression) override;
 
  private:
   I18n::Message messageAtIndex(int index) override;

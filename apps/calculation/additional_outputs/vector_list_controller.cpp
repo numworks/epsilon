@@ -16,8 +16,10 @@ using namespace Shared;
 
 namespace Calculation {
 
-void VectorListController::setExpression(Poincare::Expression e) {
-  ExpressionsListController::setExpression(e);
+void VectorListController::setExactAndApproximateExpression(
+    Expression exactExpression, Expression approximateExpression) {
+  ExpressionsListController::setExactAndApproximateExpression(
+      exactExpression, approximateExpression);
   assert(!m_expression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
@@ -27,8 +29,8 @@ void VectorListController::setExpression(Poincare::Expression e) {
   Poincare::Preferences preferencesCopy =
       Preferences::ClonePreferencesWithNewComplexFormat(
           Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-              Poincare::Preferences::sharedPreferences->complexFormat(), e,
-              context));
+              Poincare::Preferences::sharedPreferences->complexFormat(),
+              m_expression, context));
 
   setShowIllustration(false);
 

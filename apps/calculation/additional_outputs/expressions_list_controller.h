@@ -39,13 +39,9 @@ class ExpressionsListController
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int numberOfRows() const override;
 
-  virtual void setExpression(Poincare::Expression e);
   virtual void setExactAndApproximateExpression(
       Poincare::Expression exactExpression,
-      Poincare::Expression approximateExpression) {
-    // WARNING: Default only uses exactExpression
-    setExpression(exactExpression);
-  }
+      Poincare::Expression approximateExpression);
   virtual int textAtIndex(char* buffer, size_t bufferSize,
                           Escher::HighlightCell* cell, int index);
 

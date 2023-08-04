@@ -10,7 +10,9 @@ class IntegerListController : public ChainableExpressionsListController {
   IntegerListController(EditExpressionController* editExpressionController)
       : ChainableExpressionsListController(editExpressionController, true) {}
 
-  void setExpression(Poincare::Expression e) override;
+  void setExactAndApproximateExpression(
+      Poincare::Expression exactExpression,
+      Poincare::Expression approximateExpression) override;
 
  private:
   constexpr static int k_indexOfFactorExpression = 3;

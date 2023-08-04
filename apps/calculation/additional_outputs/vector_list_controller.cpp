@@ -33,8 +33,8 @@ void VectorListController::computeAdditionalResults(
 
   setShowIllustration(false);
 
-  assert(exactExpression.type() == ExpressionNode::Type::Matrix);
-  Matrix vector = static_cast<Matrix &>(exactExpression);
+  assert(approximateExpression.type() == ExpressionNode::Type::Matrix);
+  Matrix vector = static_cast<Matrix &>(approximateExpression);
   assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
   bool isColumn = (vector.numberOfColumns() == 1);
   bool is2D =

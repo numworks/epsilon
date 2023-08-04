@@ -116,7 +116,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     return true;
   }
-  Context *context = App::app()->localContext();
   if (event == Ion::Events::Backspace) {
     int focusRow = selectedRow();
     SubviewType subviewType = m_selectedSubviewType;
@@ -131,9 +130,15 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     setSelectedSubviewType(subviewType, false);
     return true;
   }
-  if (event != Ion::Events::OK && event != Ion::Events::EXE) {
-    return false;
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    handleOK();
+    return true;
   }
+  return false;
+}
+
+void HistoryController::handleOK() {
+  Context *context = App::app()->localContext();
   int focusRow = selectedRow();
   HistoryViewCell *selectedCell =
       static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
@@ -243,7 +248,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
                                              Metric::PopUpMarginsNoBottom);
     }
   }
-  return true;
 }
 
 Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(

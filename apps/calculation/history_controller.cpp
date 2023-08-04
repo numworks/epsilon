@@ -103,8 +103,13 @@ static void breakableComputeAdditionalResults(ExpressionsListController **vc,
 }
 
 bool HistoryController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Down) {
+  if (event == Ion::Events::Down || event == Ion::Events::Back ||
+      event == Ion::Events::Clear) {
     m_selectableListView.deselectTable();
+    if (event == Ion::Events::Clear) {
+      m_calculationStore->deleteAll();
+      reload();
+    }
     App::app()->setFirstResponder(parentResponder());
     return true;
   }
@@ -124,18 +129,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     }
     m_selectableListView.selectCell(focusRow > 0 ? focusRow - 1 : 0);
     setSelectedSubviewType(subviewType, false);
-    return true;
-  }
-  if (event == Ion::Events::Clear) {
-    m_selectableListView.deselectTable();
-    m_calculationStore->deleteAll();
-    reload();
-    App::app()->setFirstResponder(parentResponder());
-    return true;
-  }
-  if (event == Ion::Events::Back) {
-    m_selectableListView.deselectTable();
-    App::app()->setFirstResponder(parentResponder());
     return true;
   }
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {

@@ -16,6 +16,7 @@ class FunctionListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController, true),
         m_graphCell(&m_model) {}
   void computeAdditionalResults(
+      Poincare::Expression inputExpression,
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
   void viewDidDisappear() override;

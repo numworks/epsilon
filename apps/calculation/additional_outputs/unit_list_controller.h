@@ -30,6 +30,7 @@ class UnitListController : public ExpressionsListController {
   int numberOfRows() const override;
 
   virtual void computeAdditionalResults(
+      Poincare::Expression inputExpression,
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

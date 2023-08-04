@@ -14,6 +14,7 @@ class ComplexListController : public IllustratedExpressionsListController {
         m_complexGraphCell(&m_model) {}
 
   void computeAdditionalResults(
+      Poincare::Expression inputExpression,
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

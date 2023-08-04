@@ -21,8 +21,8 @@ using namespace Shared;
 namespace Calculation {
 
 void FunctionListController::computeAdditionalResults(
-    Poincare::Expression exactExpression,
-    Poincare::Expression approximateExpression) {
+    Expression inputExpression, Expression exactExpression,
+    Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

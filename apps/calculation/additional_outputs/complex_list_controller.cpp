@@ -19,8 +19,8 @@ using namespace Shared;
 namespace Calculation {
 
 void ComplexListController::computeAdditionalResults(
-    Poincare::Expression exactExpression,
-    Poincare::Expression approximateExpression) {
+    Expression inputExpression, Expression exactExpression,
+    Expression approximateExpression) {
   Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
   preferencesComplex.setComplexFormat(
       Poincare::Preferences::ComplexFormat::Cartesian);

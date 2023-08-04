@@ -23,7 +23,8 @@ Integer extractInteger(const Expression e) {
 }
 
 void RationalListController::computeAdditionalResults(
-    Expression exactExpression, Expression approximateExpression) {
+    Expression inputExpression, Expression exactExpression,
+    Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");

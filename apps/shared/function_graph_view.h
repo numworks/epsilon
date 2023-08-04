@@ -25,7 +25,6 @@ class FunctionGraphPolicy {
   virtual int selectedRecordIndex() const = 0;
   virtual FunctionStore *functionStore() const = 0;
 
-  bool allFunctionsInterrupted() const;
   bool functionWasInterrupted(int index) const;
   void setFunctionInterrupted(int index) const;
 
@@ -42,7 +41,6 @@ class FunctionGraphView
                     CursorView *cursorView);
 
   // AbstractPlotView
-  void drawRect(KDContext *ctx, KDRect rect) const override;
   void reload(bool resetInterrupted = false, bool force = false) override;
   void resetInterruption() override { m_functionsInterrupted = 0; }
 

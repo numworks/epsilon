@@ -36,7 +36,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   while (numberOfChildren > 0) {
     modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
-      u->cloneNodeOverTree(KUndef);
+      u->cloneTreeOverTree(KUndef);
       return true;
     }
     child = child->nextTree();
@@ -166,7 +166,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
   }
 
   if (isOpposed) {
-    u->moveNodeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
+    u->moveTreeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
     changed = true;
   }
@@ -180,15 +180,15 @@ bool Simplification::SimplifyPower(Tree* u) {
   // 0^n -> 0
   if (Number::IsZero(v)) {
     if (!Number::IsZero(n) && Rational::StrictSign(n) == StrictSign::Positive) {
-      u->cloneNodeOverTree(0_e);
+      u->cloneTreeOverTree(0_e);
       return true;
     }
-    u->cloneNodeOverTree(KUndef);
+    u->cloneTreeOverTree(KUndef);
     return true;
   }
   // 1^n -> 1
   if (Number::IsOne(v)) {
-    u->cloneNodeOverTree(1_e);
+    u->cloneTreeOverTree(1_e);
     return true;
   }
   if (IsRational(v)) {
@@ -199,7 +199,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   assert(IsInteger(n));
   // v^0 -> 1
   if (Number::IsZero(n)) {
-    u->cloneNodeOverTree(1_e);
+    u->cloneTreeOverTree(1_e);
     return true;
   }
   // v^1 -> v
@@ -306,7 +306,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 
   if (xIsNegativeNumber && qIsEven) {
     // TODO: Implement and return NonReal
-    u->cloneNodeOverTree(KUndef);
+    u->cloneTreeOverTree(KUndef);
     return true;
   }
 
@@ -798,7 +798,7 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
   int numberOfGrandChildren = children->numberOfChildren();
   size_t childIndexOffset = children->block() - ref->block();
   // f(+(A,B,C),E)
-  children->cloneNodeBeforeNode(0_e);
+  children->cloneTreeBeforeNode(0_e);
   children = children->detachTree();
   // f(0,E) ... +(A,B,C)
   Tree* grandChild = children->nextNode();

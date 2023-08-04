@@ -512,6 +512,9 @@ bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
         AdvancedReduction(std::get<EditionReference>(indexedNode), root) ||
         changed;
   }
+  if (changed) {
+    ShallowSystematicReduce(ref);
+  }
   return ShallowAdvancedReduction(ref, root, changed) || changed;
 }
 

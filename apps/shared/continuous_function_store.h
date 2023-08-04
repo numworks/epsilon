@@ -64,8 +64,7 @@ class ContinuousFunctionStore : public FunctionStore {
     m_cachesContainer = container;
   }
   ContinuousFunctionCache *cacheAtIndex(int i) const {
-    return (m_cachesContainer &&
-            i < m_cachesContainer->numberOfAvailableCaches())
+    return (m_cachesContainer && i < CachesContainer::k_numberOfAvailableCaches)
                ? m_cachesContainer->cacheAtIndex(i)
                : nullptr;
   }

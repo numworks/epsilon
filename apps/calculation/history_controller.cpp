@@ -95,7 +95,7 @@ static bool isFractionInput(Expression e) {
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
-static void breakableSetExpressionInListController(
+static void breakableComputeAdditionalResults(
     ExpressionsListController **vc, Poincare::Expression exact,
     Poincare::Expression approximate) {
   if (*vc == nullptr) {
@@ -239,7 +239,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       vc = &m_rationalController;
     }
 
-    breakableSetExpressionInListController(&vc, e, a);
+    breakableComputeAdditionalResults(&vc, e, a);
 
     if (additionalInformations.function) {
       assert(vc == nullptr || vc == &m_integerController ||
@@ -250,7 +250,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       new (&m_unionController) FunctionListController(editController);
       m_unionController.m_functionController.setTail(tail);
       vc = m_unionController.listController();
-      breakableSetExpressionInListController(&vc, i, a);
+      breakableComputeAdditionalResults(&vc, i, a);
     } else if (additionalInformations.scientificNotation) {
       // TODO function and scientific ?
       assert(vc == nullptr || vc == &m_integerController ||
@@ -259,7 +259,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           static_cast<ChainableExpressionsListController *>(vc);
       m_scientificNotationListController.setTail(tail);
       vc = &m_scientificNotationListController;
-      breakableSetExpressionInListController(&vc, e, a);
+      breakableComputeAdditionalResults(&vc, e, a);
     }
 
     if (vc) {

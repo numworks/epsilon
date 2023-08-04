@@ -25,7 +25,7 @@ void FunctionListController::setExactAndApproximateExpression(
     Poincare::Expression approximateExpression) {
   ExpressionsListController::setExactAndApproximateExpression(
       exactExpression, approximateExpression);
-  assert(!m_expression.isUninitialized());
+  assert(!exactExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");

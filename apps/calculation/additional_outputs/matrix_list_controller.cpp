@@ -21,7 +21,7 @@ void MatrixListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
   ExpressionsListController::setExactAndApproximateExpression(
       exactExpression, approximateExpression);
-  assert(!m_expression.isUninitialized());
+  assert(!exactExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -40,10 +40,10 @@ void MatrixListController::setExactAndApproximateExpression(
 
   Context *context = App::app()->localContext();
   // The expression must be reduced to call methods such as determinant or trace
-  assert(m_expression.type() == ExpressionNode::Type::Matrix);
+  assert(exactExpression.type() == ExpressionNode::Type::Matrix);
 
-  bool mIsSquared = (static_cast<Matrix &>(m_expression).numberOfRows() ==
-                     static_cast<Matrix &>(m_expression).numberOfColumns());
+  bool mIsSquared = (static_cast<Matrix &>(exactExpression).numberOfRows() ==
+                     static_cast<Matrix &>(exactExpression).numberOfColumns());
   size_t index = 0;
   size_t messageIndex = 0;
   // 1. Matrix determinant if square matrix
@@ -51,7 +51,7 @@ void MatrixListController::setExactAndApproximateExpression(
     /* Determinant is reduced so that a null determinant can be detected.
      * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
      * not be reduced to a rational, but will be null in theory. */
-    Expression determinant = Determinant::Builder(m_expression);
+    Expression determinant = Determinant::Builder(exactExpression);
     PoincareHelpers::CloneAndSimplify(
         &determinant, context, ReductionTarget::SystemForApproximation,
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -65,12 +65,12 @@ void MatrixListController::setExactAndApproximateExpression(
       // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index++] = getLayoutFromExpression(
-          MatrixInverse::Builder(m_expression), context, preferences);
+          MatrixInverse::Builder(exactExpression), context, preferences);
     }
   }
   // 3. Matrix row echelon form
   messageIndex = 2;
-  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(m_expression);
+  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(exactExpression);
   m_indexMessageMap[index] = messageIndex++;
   m_layouts[index++] =
       getLayoutFromExpression(rowEchelonForm, context, preferences);
@@ -84,7 +84,7 @@ void MatrixListController::setExactAndApproximateExpression(
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
     m_layouts[index++] = getLayoutFromExpression(
-        MatrixTrace::Builder(m_expression), context, preferences);
+        MatrixTrace::Builder(exactExpression), context, preferences);
   }
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);

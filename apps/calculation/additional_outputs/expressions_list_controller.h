@@ -51,7 +51,6 @@ class ExpressionsListController
   Poincare::Layout getLayoutFromExpression(Poincare::Expression e,
                                            Poincare::Context* context,
                                            Poincare::Preferences* preferences);
-  Poincare::Expression m_expression;
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];

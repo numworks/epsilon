@@ -26,12 +26,12 @@ void RationalListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
   ExpressionsListController::setExactAndApproximateExpression(
       exactExpression, approximateExpression);
-  assert(!m_expression.isUninitialized());
+  assert(!exactExpression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");
 
-  bool negative = m_expression.type() == ExpressionNode::Type::Opposite;
-  Expression div = negative ? m_expression.childAtIndex(0) : m_expression;
+  bool negative = exactExpression.type() == ExpressionNode::Type::Opposite;
+  Expression div = negative ? exactExpression.childAtIndex(0) : exactExpression;
   assert(div.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(div.childAtIndex(0));
   numerator.setNegative(negative != numerator.isNegative());

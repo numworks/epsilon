@@ -31,14 +31,14 @@ void IntegerListController::setExactAndApproximateExpression(
   static_assert(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
-  assert(!m_expression.isUninitialized() &&
-         m_expression.type() == ExpressionNode::Type::BasedInteger);
-  Integer integer = static_cast<BasedInteger &>(m_expression).integer();
+  assert(!exactExpression.isUninitialized() &&
+         exactExpression.type() == ExpressionNode::Type::BasedInteger);
+  Integer integer = static_cast<BasedInteger &>(exactExpression).integer();
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     m_layouts[index] = integer.createLayout(baseAtIndex(index));
   }
   // Computing factorExpression
-  Expression factor = Factor::Builder(m_expression);
+  Expression factor = Factor::Builder(exactExpression);
   PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext(),
                                     ReductionTarget::User);
   if (!factor.isUndefined()) {

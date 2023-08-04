@@ -172,8 +172,7 @@ void HistoryController::handleOK() {
   }
 
   assert(m_selectedSubviewType == SubviewType::Ellipsis);
-  /* Only function results can be chained (with integer or rational).
-   * TODO: Refactor to avoid writing an if for each parent * child. */
+  /* TODO: Refactor to avoid writing an if for each parent * child. */
   ExpressionsListController *vc = nullptr;
   Calculation::AdditionalInformations additionalInformations =
       selectedCell->additionalInformations();

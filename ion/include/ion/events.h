@@ -19,60 +19,55 @@ class ShiftAlphaStatus {
     NumberOfStatuses
   };
 
-  constexpr ShiftAlphaStatus(ShiftStatus shiftStatus, AlphaStatus alphaStatus)
-      : m_value(0) {
-    updateValue(shiftStatus, alphaStatus);
-  }
+  constexpr ShiftAlphaStatus(ShiftStatus shift, AlphaStatus alpha)
+      : m_value{.fields = {.shift = shift, .alpha = alpha}} {}
 
   constexpr ShiftAlphaStatus()
       : ShiftAlphaStatus(ShiftStatus::Inactive, AlphaStatus::Inactive) {}
 
-  operator uint8_t() const { return m_value; }
+  operator uint8_t() const { return m_value.raw; }
 
   bool operator==(const ShiftAlphaStatus& other) {
-    return m_value == other.m_value;
+    return m_value.raw == other.m_value.raw;
   }
   bool operator!=(const ShiftAlphaStatus& other) { return !(*this == other); }
 
-  bool shiftIsActive() const { return shiftStatus() != ShiftStatus::Inactive; }
-  bool alphaIsActive() const { return alphaStatus() != AlphaStatus::Inactive; }
-  bool alphaIsLocked() const { return alphaStatus() == AlphaStatus::Locked; }
+  bool shiftIsActive() const {
+    return m_value.fields.shift != ShiftStatus::Inactive;
+  }
+  bool alphaIsActive() const {
+    return m_value.fields.alpha != AlphaStatus::Inactive;
+  }
+  bool alphaIsLocked() const {
+    return m_value.fields.alpha == AlphaStatus::Locked;
+  }
 
-  void removeShift() { updateValue(ShiftStatus::Inactive, alphaStatus()); }
-  void removeAlpha() { updateValue(shiftStatus(), AlphaStatus::Inactive); }
+  void removeShift() { m_value.fields.shift = ShiftStatus::Inactive; }
+  void removeAlpha() { m_value.fields.alpha = AlphaStatus::Inactive; }
 
   void toggleShift() {
-    updateValue(static_cast<ShiftStatus>(!static_cast<bool>(shiftStatus())),
-                alphaStatus());
+    m_value.fields.shift =
+        static_cast<ShiftStatus>(!static_cast<bool>(m_value.fields.shift));
   }
   void cycleAlpha() {
-    uint8_t nextAlphaStatus = static_cast<uint8_t>(alphaStatus()) + 1;
-    if (nextAlphaStatus >=
-        static_cast<uint8_t>(AlphaStatus::NumberOfStatuses)) {
-      m_value = 0;
-      return;
+    m_value.fields.alpha = static_cast<AlphaStatus>(
+        (static_cast<uint8_t>(m_value.fields.alpha) + 1) %
+        static_cast<uint8_t>(AlphaStatus::NumberOfStatuses));
+    if (m_value.fields.alpha == AlphaStatus::Inactive) {
+      removeShift();
     }
-    updateValue(shiftStatus(), static_cast<AlphaStatus>(nextAlphaStatus));
   }
 
  private:
-  constexpr void updateValue(ShiftStatus shiftStatus, AlphaStatus alphaStatus) {
-    m_value = (static_cast<uint8_t>(alphaStatus) << 1) |
-              static_cast<uint8_t>(shiftStatus);
-  }
-
-  ShiftStatus shiftStatus() const {
-    return static_cast<ShiftStatus>(m_value & 0b001);
-  }
-  AlphaStatus alphaStatus() const {
-    return static_cast<AlphaStatus>(m_value >> 1);
-  }
-
-  /* uint8_t m_value = 00000AAS
-   * Right-most bit is shiftStatus (S), 2 bits left of it is alpha status (A).
-   * This is implemented as an uint8_t so that only 1 register has to be passed
+  /* This is implemented as an uint8_t so that only 1 register has to be passed
    * through SVCalls. */
-  uint8_t m_value;
+  union {
+    uint8_t raw;
+    struct {
+      ShiftStatus shift : 1;
+      AlphaStatus alpha : 2;
+    } fields;
+  } m_value;
 };
 
 class Event {

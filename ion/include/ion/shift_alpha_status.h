@@ -9,8 +9,12 @@ namespace Events {
 class ShiftAlphaStatus {
  public:
   enum class ShiftStatus : bool { Inactive = false, Active = true };
-  enum class AlphaStatus : uint8_t { Inactive = 0, Active = 1, Locked = 2 };
-  constexpr static int k_numberOfAlphaStatus = 3;
+  enum class AlphaStatus : uint8_t {
+    Inactive = 0,
+    Active,
+    Locked,
+    NumberOfStatuses
+  };
 
   constexpr ShiftAlphaStatus(ShiftStatus shiftStatus, AlphaStatus alphaStatus)
       : m_value(0) {
@@ -40,7 +44,8 @@ class ShiftAlphaStatus {
   }
   void cycleAlpha() {
     uint8_t nextAlphaStatus = static_cast<uint8_t>(alphaStatus()) + 1;
-    if (nextAlphaStatus >= k_numberOfAlphaStatus) {
+    if (nextAlphaStatus >=
+        static_cast<uint8_t>(AlphaStatus::NumberOfStatuses)) {
       m_value = 0;
       return;
     }

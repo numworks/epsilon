@@ -399,7 +399,8 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
   // if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
   // return Token::Type::SpecialIdentifier;
   // }
-  if (*length == 1 && m_decoder.codePointAt(string) == 'e') {
+  if (*length == 1 && (m_decoder.codePointAt(string) == 'e' ||
+                       m_decoder.codePointAt(string) == 'i')) {
     return Token::Type::Constant;
   }
   // if (Constant::IsConstant(string, *length)) {

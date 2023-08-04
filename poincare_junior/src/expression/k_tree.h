@@ -156,6 +156,9 @@ constexpr KTree π_e =
 constexpr KTree e_e =
     KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E)>();
 
+constexpr KTree i_e =
+    KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::I)>();
+
 // TODO: move in OMG?
 constexpr static uint64_t IntegerValue(const char* str, size_t size) {
   uint64_t value = 0;

@@ -248,8 +248,12 @@ class TypeBlock : public Block {
                      BlockType::RationalPosBig, BlockType::RationalNegBig}) ||
            isInteger();
   }
+  // TODO: Handle complex numbers
+  constexpr static uint8_t k_maxNumberConstantType = 1;
   constexpr bool isNumber() const {
-    return isOfType({BlockType::Float, BlockType::Constant}) || isRational();
+    return type() == BlockType::Float || isRational() ||
+           (type() == BlockType::Constant &&
+            static_cast<uint8_t>(*next()) <= k_maxNumberConstantType);
   }
   constexpr bool isUserNamed() const {
     return isOfType({BlockType::UserFunction, BlockType::UserSequence,

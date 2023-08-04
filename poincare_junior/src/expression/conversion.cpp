@@ -127,6 +127,9 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       return Poincare::Symbol::Builder(buffer, Symbol::Length(exp));
     }
     case BlockType::Constant: {
+      if (Constant::Type(exp) == Constant::Type::I) {
+        return Poincare::Constant::ComplexIBuilder();
+      }
       if (Constant::Type(exp) == Constant::Type::Pi) {
         return Poincare::Constant::PiBuilder();
       }
@@ -245,6 +248,8 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
         SharedEditionPool->push<BlockType::Constant>(u'e');
       } else if (c.isPi()) {
         SharedEditionPool->push<BlockType::Constant>(u'π');
+      } else if (c.isComplexI()) {
+        SharedEditionPool->push<BlockType::Constant>(u'i');
       } else {
         SharedEditionPool->pushBlock(BlockType::Undefined);
       }

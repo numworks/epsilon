@@ -237,7 +237,6 @@ void HistoryController::handleOK() {
     vc = m_unionController.listController();
     breakableComputeAdditionalResults(&vc, i, e, a);
   } else if (additionalInformations.scientificNotation) {
-    // TODO function and scientific ?
     assert(vc == nullptr || vc == &m_integerController ||
            vc == &m_rationalController);
     ChainableExpressionsListController *tail =

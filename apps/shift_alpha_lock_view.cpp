@@ -23,17 +23,12 @@ void ShiftAlphaLockView::drawRect(KDContext* ctx, KDRect rect) const {
 bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
   if (status != m_status) {
     m_status = status;
-    bool shiftIsActive = m_status.shiftIsActive();
-    bool alphaIsActive = m_status.alphaIsActive();
-    if (!shiftIsActive && alphaIsActive) {
-      m_shiftAlphaView.setMessage(I18n::Message::Alpha);
-    } else if (shiftIsActive && alphaIsActive) {
-      m_shiftAlphaView.setMessage(I18n::Message::CapitalAlpha);
-    } else if (shiftIsActive) {
-      m_shiftAlphaView.setMessage(I18n::Message::Shift);
-    } else {
-      m_shiftAlphaView.setMessage(I18n::Message::Default);
-    }
+
+    constexpr I18n::Message k_messages[2][2] = {
+        {I18n::Message::Default, I18n::Message::Shift},
+        {I18n::Message::Alpha, I18n::Message::CapitalAlpha}};
+    m_shiftAlphaView.setMessage(
+        k_messages[m_status.alphaIsActive()][m_status.shiftIsActive()]);
 
     layoutSubviews();
     markWholeFrameAsDirty();

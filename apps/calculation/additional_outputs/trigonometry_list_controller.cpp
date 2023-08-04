@@ -13,8 +13,23 @@ using namespace Poincare;
 namespace Calculation {
 
 void TrigonometryListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactAngle,
-    Expression approximateAngle) {
+    Expression inputExpression, Expression exactExpression,
+    Expression approximateExpression) {
+  // Find the angle
+  Expression exactAngle, approximateAngle;
+  if (m_directTrigonometry) {
+    if (Trigonometry::isDirectTrigonometryFunction(exactExpression)) {
+      exactAngle = exactExpression.childAtIndex(0);
+    } else {
+      assert(Trigonometry::isDirectTrigonometryFunction(inputExpression));
+      exactAngle = inputExpression.childAtIndex(0);
+    }
+    approximateAngle = Expression();
+  } else {
+    exactAngle = exactExpression;
+    approximateAngle = approximateExpression;
+  }
+
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context* context = App::app()->localContext();
@@ -44,8 +59,8 @@ void TrigonometryListController::computeAdditionalResults(
                  Unit::k_angleRepresentatives +
                      Unit::k_radianRepresentativeIndex);
       /* After a reduction, all angle units are converted to radians, so we
-       * convert e again here to fit the angle unit that will be used in
-       * reductions below. */
+       * convert exactAngle again here to fit the angle unit that will be used
+       * in reductions below. */
       exactAngle = Multiplication::Builder(
           exactAngle, Trigonometry::UnitConversionFactor(
                           Preferences::AngleUnit::Radian, userAngleUnit));

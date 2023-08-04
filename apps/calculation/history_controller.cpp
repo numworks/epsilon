@@ -205,18 +205,8 @@ void HistoryController::handleOK() {
     } else if (additionalInformations.directTrigonometry ||
                additionalInformations.inverseTrigonometry) {
       new (&m_unionController) TrigonometryListController(editController);
-      if (additionalInformations.directTrigonometry) {
-        // Find the angle
-        if (Trigonometry::isDirectTrigonometryFunction(e)) {
-          e = e.childAtIndex(0);
-        } else {
-          assert(Trigonometry::isDirectTrigonometryFunction(i));
-          e = i.childAtIndex(0);
-        }
-        /* The approximation of the new e is not yet computed and will be
-         * by the controller. */
-        a = Expression();
-      }
+      m_unionController.m_trigonometryController.setTrigonometryType(
+          additionalInformations.directTrigonometry);
     }
   } else if (additionalInformations.integer) {
     vc = &m_integerController;

@@ -12,12 +12,16 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   TrigonometryListController(EditExpressionController* editExpressionController)
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
-  // Theses expressions are the expressions of the angle, not the user input
-  void computeAdditionalResults(Poincare::Expression inputExpression,
-                                Poincare::Expression exactAngle,
-                                Poincare::Expression approximateAngle) override;
+  void computeAdditionalResults(
+      Poincare::Expression inputExpression,
+      Poincare::Expression exactExpression,
+      Poincare::Expression approximateExpression) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+
+  void setTrigonometryType(bool directTrigonometry) {
+    m_directTrigonometry = directTrigonometry;
+  }
 
   /* See comment in parent class for why we need this. Since we need to display
    * fractions of radians in the angle cell, we reduce the graph further. */
@@ -32,6 +36,7 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;
   bool m_isStrictlyEqual[k_numberOfExpressionRows];
+  bool m_directTrigonometry;
 };
 
 }  // namespace Calculation

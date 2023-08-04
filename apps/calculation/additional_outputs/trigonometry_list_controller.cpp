@@ -87,6 +87,7 @@ void TrigonometryListController::computeAdditionalResults(
           exactAngle, simplifiedAngle, approximateAngle, context)) {
     if (approximateAngle.isUninitialized()) {
       assert(!exactAngle.isUndefined());
+      assert(m_directTrigonometry);
       /* In case of direct trigonometry, the approximate expression of the angle
        * is not yet computed, so it needs to be computed here.
        * Do not approximate the FracPart, which could lead to truncation error

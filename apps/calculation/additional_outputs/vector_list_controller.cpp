@@ -20,7 +20,7 @@ void VectorListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
   ExpressionsListController::setExactAndApproximateExpression(
       exactExpression, approximateExpression);
-  assert(!m_expression.isUninitialized());
+  assert(!exactExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -30,12 +30,12 @@ void VectorListController::setExactAndApproximateExpression(
       Preferences::ClonePreferencesWithNewComplexFormat(
           Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
               Poincare::Preferences::sharedPreferences->complexFormat(),
-              m_expression, context));
+              exactExpression, context));
 
   setShowIllustration(false);
 
-  assert(m_expression.type() == ExpressionNode::Type::Matrix);
-  Matrix vector = static_cast<Matrix &>(m_expression);
+  assert(exactExpression.type() == ExpressionNode::Type::Matrix);
+  Matrix vector = static_cast<Matrix &>(exactExpression);
   assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
   bool isColumn = (vector.numberOfColumns() == 1);
   bool is2D =
@@ -48,7 +48,7 @@ void VectorListController::setExactAndApproximateExpression(
   constexpr static SymbolicComputation k_symbolicComputation =
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   // 1. Vector norm
-  Expression norm = VectorNorm::Builder(m_expression);
+  Expression norm = VectorNorm::Builder(exactExpression);
   PoincareHelpers::CloneAndSimplify(&norm, context, k_target,
                                     k_symbolicComputation);
   m_indexMessageMap[index] = messageIndex++;
@@ -60,7 +60,7 @@ void VectorListController::setExactAndApproximateExpression(
       approximatedNorm.isNull(context) == TrinaryBoolean::False &&
       !Expression::IsInfinity(approximatedNorm, context)) {
     // 2. Normalized vector
-    Expression normalized = Division::Builder(m_expression, norm);
+    Expression normalized = Division::Builder(exactExpression, norm);
     PoincareHelpers::CloneAndSimplify(&normalized, context, k_target,
                                       k_symbolicComputation);
     if (normalized.type() != ExpressionNode::Type::Matrix) {

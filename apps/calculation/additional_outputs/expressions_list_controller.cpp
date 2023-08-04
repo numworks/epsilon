@@ -80,7 +80,6 @@ void ExpressionsListController::tidy() {
     m_exactLayouts[i] = Layout();
     m_approximatedLayouts[i] = Layout();
   }
-  m_expression = Expression();
 }
 
 int ExpressionsListController::reusableCellCount(int type) {
@@ -122,8 +121,6 @@ void ExpressionsListController::setExactAndApproximateExpression(
     Expression exactExpression, Expression approximateExpression) {
   // Reinitialize memoization
   tidy();
-  m_expression = exactExpression;
-  // WARNING: Default only uses exactExpression
 }
 
 int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,

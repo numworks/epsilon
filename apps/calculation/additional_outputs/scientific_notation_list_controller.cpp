@@ -3,13 +3,17 @@
 #include "../app.h"
 #include "scientific_notation_helper.h"
 
+using namespace Poincare;
+
 namespace Calculation {
 
 void ScientificNotationListController::setExactAndApproximateExpression(
-    Poincare::Expression e, Poincare::Expression a) {
-  Poincare::Context* context = App::app()->localContext();
-  assert(ScientificNotationHelper::HasAdditionalOutputs(a, context));
-  m_layouts[0] = ScientificNotationHelper::ScientificLayout(a, context);
+    Expression exactExpression, Expression approximateExpression) {
+  Context* context = App::app()->localContext();
+  assert(ScientificNotationHelper::HasAdditionalOutputs(approximateExpression,
+                                                        context));
+  m_layouts[0] = ScientificNotationHelper::ScientificLayout(
+      approximateExpression, context);
 }
 
 I18n::Message ScientificNotationListController::messageAtIndex(int index) {

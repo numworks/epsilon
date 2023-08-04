@@ -83,7 +83,7 @@ void UnitListController::setExactAndApproximateExpression(
 
   /*   1. First rows: miscellaneous classic units for some dimensions, in both
    *      metric and imperial units. */
-  Expression copy = m_expression;
+  Expression copy = exactExpression;
   Expression units;
   // Reduce to be able to recognize units
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -94,7 +94,7 @@ void UnitListController::setExactAndApproximateExpression(
   ReductionContext reductionContext(
       App::app()->localContext(),
       Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::sharedPreferences->complexFormat(), m_expression,
+          Preferences::sharedPreferences->complexFormat(), exactExpression,
           App::app()->localContext()),
       Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
@@ -102,7 +102,7 @@ void UnitListController::setExactAndApproximateExpression(
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   int numberOfExpressions = Unit::SetAdditionalExpressions(
       units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
-      m_expression);
+      exactExpression);
 
   Expression siExpression;
   const Unit::Representative *representative =
@@ -114,11 +114,11 @@ void UnitListController::setExactAndApproximateExpression(
       representative->dimensionVector() ==
           Unit::AngleRepresentative::Default().dimensionVector()) {
     // Needs to be defined for the unit comparison but is not used with angles
-    siExpression = m_expression;
+    siExpression = exactExpression;
   } else {
     //  2. SI units only
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
-    expressions[numberOfExpressions] = m_expression;
+    expressions[numberOfExpressions] = exactExpression;
     Shared::PoincareHelpers::CloneAndSimplify(
         &expressions[numberOfExpressions], App::app()->localContext(),
         ReductionTarget::User,
@@ -132,8 +132,8 @@ void UnitListController::setExactAndApproximateExpression(
   /*  3. Get rid of duplicates
    * We find duplicates by comparing the serializations, to eliminate
    * expressions that only differ by the types of their number nodes. */
-  Expression reduceExpression = m_expression;
-  /* Make m_expression comparable to expressions (turn BasedInteger into
+  Expression reduceExpression = exactExpression;
+  /* Make exactExpression comparable to expressions (turn BasedInteger into
    * Rational for instance) */
   Shared::PoincareHelpers::CloneAndSimplify(
       &reduceExpression, App::app()->localContext(), ReductionTarget::User,
@@ -148,7 +148,7 @@ void UnitListController::setExactAndApproximateExpression(
                                            buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
       /* Compare the currentExpression to all previous expressions and to
-       * m_expression */
+       * exactExpression */
       Expression comparedExpression =
           i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());

@@ -58,19 +58,6 @@ Ion::Storage::Record FunctionGraphPolicy::initModelBeforeDrawingPlot(
   return record;
 }
 
-bool FunctionGraphPolicy::allFunctionsInterrupted() const {
-  /* The number of functions displayed at the same time is theoretically
-   * unbounded, but we only store the status of 32 functions. */
-  int numberOfFunctions = numberOfDrawnRecords();
-  if (numberOfFunctions <= 0 ||
-      static_cast<size_t>(numberOfFunctions) >
-          OMG::BitHelper::numberOfBitsIn(m_functionsInterrupted)) {
-    return false;
-  }
-  return m_functionsInterrupted ==
-         static_cast<uint32_t>((1 << numberOfFunctions) - 1);
-}
-
 bool FunctionGraphPolicy::functionWasInterrupted(int index) const {
   if (index < 0 || static_cast<size_t>(index) >=
                        OMG::BitHelper::numberOfBitsIn(m_functionsInterrupted)) {
@@ -104,12 +91,6 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange* range,
   // WithCursor
   m_cursor = cursor;
   m_cursorView = cursorView;
-}
-
-void FunctionGraphView::drawRect(KDContext* ctx, KDRect rect) const {
-  if (!allFunctionsInterrupted()) {
-    PlotView::drawRect(ctx, rect);
-  }
 }
 
 void FunctionGraphView::reload(bool resetInterrupted, bool force) {

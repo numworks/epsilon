@@ -41,13 +41,7 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(
 
   bool didHandleEvent = ZoomAndPanCurveViewController::handleEvent(event);
   bool didChangeLegend = setLegendVisible(!didHandleEvent);
-  /* If we intercept the OnOff event, the device will still be suspended by
-   * preemption, but when turning back on, we would prevent the AppsContainer
-   * from redrawing the whole frame, leaving the screen filled with noise, with
-   * only the legend visible.
-   * FIXME: We might want to simply not pass the OnOff event through
-   * handleEvent ? */
-  return (didHandleEvent || didChangeLegend) && (event != Ion::Events::OnOff);
+  return (didHandleEvent || didChangeLegend);
 }
 
 float FunctionZoomAndPanCurveViewController::offscreenYAxis() const {

@@ -77,24 +77,6 @@ void HistoryController::willExitResponderChain(Responder *nextFirstResponder) {
   }
 }
 
-static bool isIntegerInput(Expression e) {
-  return (e.type() == ExpressionNode::Type::BasedInteger ||
-          (e.type() == ExpressionNode::Type::Opposite &&
-           isIntegerInput(e.childAtIndex(0))));
-}
-
-static bool isFractionInput(Expression e) {
-  if (e.type() == ExpressionNode::Type::Opposite) {
-    return isFractionInput(e.childAtIndex(0));
-  }
-  if (e.type() != ExpressionNode::Type::Division) {
-    return false;
-  }
-  Expression num = e.childAtIndex(0);
-  Expression den = e.childAtIndex(1);
-  return isIntegerInput(num) && isIntegerInput(den);
-}
-
 static Expression safeClone(Expression e) {
   return !e.isUninitialized() ? e.clone() : Expression();
 }
@@ -237,9 +219,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     } else if (additionalInformations.integer) {
       vc = &m_integerController;
     } else if (additionalInformations.rational) {
-      if (isFractionInput(i)) {
-        e = i;
-      }
       vc = &m_rationalController;
     }
 

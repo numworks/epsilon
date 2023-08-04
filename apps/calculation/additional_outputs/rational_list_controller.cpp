@@ -22,15 +22,35 @@ Integer extractInteger(const Expression e) {
   return static_cast<const BasedInteger &>(e).integer();
 }
 
+static bool isIntegerInput(Expression e) {
+  return (e.type() == ExpressionNode::Type::BasedInteger ||
+          (e.type() == ExpressionNode::Type::Opposite &&
+           isIntegerInput(e.childAtIndex(0))));
+}
+
+static bool isFractionInput(Expression e) {
+  if (e.type() == ExpressionNode::Type::Opposite) {
+    return isFractionInput(e.childAtIndex(0));
+  }
+  if (e.type() != ExpressionNode::Type::Division) {
+    return false;
+  }
+  Expression num = e.childAtIndex(0);
+  Expression den = e.childAtIndex(1);
+  return isIntegerInput(num) && isIntegerInput(den);
+}
+
 void RationalListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
-  assert(!exactExpression.isUninitialized());
+  Expression e =
+      isFractionInput(inputExpression) ? inputExpression : exactExpression;
+  assert(!e.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");
 
-  bool negative = exactExpression.type() == ExpressionNode::Type::Opposite;
-  Expression div = negative ? exactExpression.childAtIndex(0) : exactExpression;
+  bool negative = e.type() == ExpressionNode::Type::Opposite;
+  Expression div = negative ? e.childAtIndex(0) : e;
   assert(div.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(div.childAtIndex(0));
   numerator.setNegative(negative != numerator.isNegative());

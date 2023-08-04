@@ -18,7 +18,8 @@ using namespace Shared;
 namespace Calculation {
 
 void MatrixListController::computeAdditionalResults(
-    Expression exactExpression, Expression approximateExpression) {
+    Expression inputExpression, Expression exactExpression,
+    Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

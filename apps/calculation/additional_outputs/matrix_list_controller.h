@@ -11,6 +11,7 @@ class MatrixListController : public ExpressionsListController {
       : ExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
+      Poincare::Expression inputExpression,
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

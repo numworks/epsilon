@@ -25,7 +25,8 @@ OMG::Base baseAtIndex(int index) {
 }
 
 void IntegerListController::computeAdditionalResults(
-    Expression exactExpression, Expression approximateExpression) {
+    Expression inputExpression, Expression exactExpression,
+    Expression approximateExpression) {
   static_assert(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");

@@ -13,6 +13,7 @@ class ScientificNotationListController
       : ChainedExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
+      Poincare::Expression inputExpression,
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

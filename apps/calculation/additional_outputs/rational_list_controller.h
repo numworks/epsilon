@@ -11,6 +11,7 @@ class RationalListController : public ChainableExpressionsListController {
       : ChainableExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
+      Poincare::Expression inputExpression,
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

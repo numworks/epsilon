@@ -13,7 +13,8 @@ class TrigonometryListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
   // Theses expressions are the expressions of the angle, not the user input
-  void computeAdditionalResults(Poincare::Expression exactAngle,
+  void computeAdditionalResults(Poincare::Expression inputExpression,
+                                Poincare::Expression exactAngle,
                                 Poincare::Expression approximateAngle) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;

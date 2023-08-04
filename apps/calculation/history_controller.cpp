@@ -99,19 +99,21 @@ static Expression safeClone(Expression e) {
   return !e.isUninitialized() ? e.clone() : Expression();
 }
 
-static void breakableComputeAdditionalResults(
-    ExpressionsListController **vc, Poincare::Expression exact,
-    Poincare::Expression approximate) {
+static void breakableComputeAdditionalResults(ExpressionsListController **vc,
+                                              Expression input,
+                                              Expression exact,
+                                              Expression approximate) {
   if (*vc == nullptr) {
     return;
   }
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
+    Expression inputClone = safeClone(input);
     Expression exactClone = safeClone(exact);
     Expression approximateClone = safeClone(approximate);
     (*vc)->tidy();
-    (*vc)->computeAdditionalResults(exactClone, approximateClone);
+    (*vc)->computeAdditionalResults(inputClone, exactClone, approximateClone);
   } else {
     (*vc)->tidy();
     *vc = nullptr;
@@ -241,7 +243,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       vc = &m_rationalController;
     }
 
-    breakableComputeAdditionalResults(&vc, e, a);
+    breakableComputeAdditionalResults(&vc, i, e, a);
 
     if (additionalInformations.function) {
       assert(vc == nullptr || vc == &m_integerController ||
@@ -252,7 +254,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       new (&m_unionController) FunctionListController(editController);
       m_unionController.m_functionController.setTail(tail);
       vc = m_unionController.listController();
-      breakableComputeAdditionalResults(&vc, i, a);
+      breakableComputeAdditionalResults(&vc, i, i, a);
     } else if (additionalInformations.scientificNotation) {
       // TODO function and scientific ?
       assert(vc == nullptr || vc == &m_integerController ||
@@ -261,7 +263,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           static_cast<ChainableExpressionsListController *>(vc);
       m_scientificNotationListController.setTail(tail);
       vc = &m_scientificNotationListController;
-      breakableComputeAdditionalResults(&vc, e, a);
+      breakableComputeAdditionalResults(&vc, i, e, a);
     }
 
     if (vc) {

@@ -13,7 +13,7 @@ class ComplexListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_complexGraphCell(&m_model) {}
 
-  void setExactAndApproximateExpression(
+  void computeAdditionalResults(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

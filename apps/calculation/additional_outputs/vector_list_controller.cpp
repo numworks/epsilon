@@ -16,7 +16,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-void VectorListController::setExactAndApproximateExpression(
+void VectorListController::computeAdditionalResults(
     Expression exactExpression, Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   static_assert(

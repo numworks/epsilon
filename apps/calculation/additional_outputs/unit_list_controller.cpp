@@ -68,7 +68,7 @@ int UnitListController::numberOfRows() const {
   return m_numberOfExpressionCells + m_numberOfBufferCells;
 }
 
-void UnitListController::setExactAndApproximateExpression(
+void UnitListController::computeAdditionalResults(
     Expression exactExpression, Expression approximateExpression) {
   /* I. Handle expression cells
    *   0. Initialize expressions and layouts */

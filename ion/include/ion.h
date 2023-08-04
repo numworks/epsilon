@@ -16,7 +16,6 @@
 #include <ion/persisting_bytes.h>
 #include <ion/power.h>
 #include <ion/reset.h>
-#include <ion/shift_alpha_status.h>
 #include <ion/storage/file_system.h>
 #include <ion/timing.h>
 #include <ion/unicode/utf8_decoder.h>

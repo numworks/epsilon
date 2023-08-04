@@ -235,7 +235,7 @@ void HistoryController::handleOK() {
     new (&m_unionController) FunctionListController(editController);
     m_unionController.m_functionController.setTail(tail);
     vc = m_unionController.listController();
-    breakableComputeAdditionalResults(&vc, i, i, a);
+    breakableComputeAdditionalResults(&vc, i, e, a);
   } else if (additionalInformations.scientificNotation) {
     // TODO function and scientific ?
     assert(vc == nullptr || vc == &m_integerController ||

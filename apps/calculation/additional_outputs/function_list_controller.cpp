@@ -23,7 +23,7 @@ namespace Calculation {
 void FunctionListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
-  assert(!exactExpression.isUninitialized());
+  assert(!inputExpression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -31,11 +31,11 @@ void FunctionListController::computeAdditionalResults(
   Preferences* preferences = Preferences::sharedPreferences;
   Context* context = App::app()->localContext();
 
-  float abscissa = exactExpression.getNumericalValue();
+  float abscissa = inputExpression.getNumericalValue();
   Symbol variable = Symbol::SystemSymbol();
-  exactExpression.replaceNumericalValuesWithSymbol(variable);
+  inputExpression.replaceNumericalValuesWithSymbol(variable);
 
-  Expression simplifiedExpression = exactExpression;
+  Expression simplifiedExpression = inputExpression;
   PoincareHelpers::CloneAndSimplify(&simplifiedExpression, context,
                                     ReductionTarget::SystemForApproximation);
 
@@ -50,7 +50,7 @@ void FunctionListController::computeAdditionalResults(
 
   m_layouts[0] = HorizontalLayout::Builder(
       LayoutHelper::String("y="),
-      exactExpression
+      inputExpression
           .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
           .createLayout(preferences->displayMode(),
                         preferences->numberOfSignificantDigits(), context));

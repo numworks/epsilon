@@ -113,7 +113,7 @@ void TrigonometryListController::computeAdditionalResults(
 
   m_layouts[index] = LayoutHelper::String("θ");
 
-  Expression withAngleUnit = Multiplication::Builder(
+  Expression exactAngleWithUnit = Multiplication::Builder(
       exactAngle.clone(),
       Unit::Builder(
           UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
@@ -122,13 +122,13 @@ void TrigonometryListController::computeAdditionalResults(
   Expression radians = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_radianRepresentativeIndex);
   m_exactLayouts[index] = getLayoutFromExpression(
-      UnitConvert::Builder(withAngleUnit.clone(), radians), context,
+      UnitConvert::Builder(exactAngleWithUnit.clone(), radians), context,
       preferences);
 
   Expression degrees = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_degreeRepresentativeIndex);
   m_approximatedLayouts[index] = getLayoutFromExpression(
-      UnitConvert::Builder(withAngleUnit.clone(), degrees), context,
+      UnitConvert::Builder(exactAngleWithUnit.clone(), degrees), context,
       preferences);
 
   Expression theta = Symbol::Builder(k_symbol);

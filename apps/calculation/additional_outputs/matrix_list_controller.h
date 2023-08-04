@@ -10,7 +10,7 @@ class MatrixListController : public ExpressionsListController {
   MatrixListController(EditExpressionController* editExpressionController)
       : ExpressionsListController(editExpressionController, true) {}
 
-  void setExactAndApproximateExpression(
+  void computeAdditionalResults(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

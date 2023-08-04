@@ -20,7 +20,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-void FunctionListController::setExactAndApproximateExpression(
+void FunctionListController::computeAdditionalResults(
     Poincare::Expression exactExpression,
     Poincare::Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());

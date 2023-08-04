@@ -18,7 +18,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-void ComplexListController::setExactAndApproximateExpression(
+void ComplexListController::computeAdditionalResults(
     Poincare::Expression exactExpression,
     Poincare::Expression approximateExpression) {
   Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;

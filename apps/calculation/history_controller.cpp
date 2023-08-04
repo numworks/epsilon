@@ -109,7 +109,7 @@ static void breakableSetExpressionInListController(
     Expression approximateClone =
         !approximate.isUninitialized() ? approximate.clone() : Expression();
     (*vc)->tidy();
-    (*vc)->setExactAndApproximateExpression(exactClone, approximateClone);
+    (*vc)->computeAdditionalResults(exactClone, approximateClone);
   } else {
     (*vc)->tidy();
     *vc = nullptr;

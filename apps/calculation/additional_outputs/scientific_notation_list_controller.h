@@ -12,7 +12,7 @@ class ScientificNotationListController
       EditExpressionController* editExpressionController)
       : ChainedExpressionsListController(editExpressionController, true) {}
 
-  void setExactAndApproximateExpression(
+  void computeAdditionalResults(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

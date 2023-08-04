@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void TrigonometryListController::setExactAndApproximateExpression(
+void TrigonometryListController::computeAdditionalResults(
     Poincare::Expression exactAngle, Poincare::Expression approximateAngle) {
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();

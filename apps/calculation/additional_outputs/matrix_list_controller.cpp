@@ -17,7 +17,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-void MatrixListController::setExactAndApproximateExpression(
+void MatrixListController::computeAdditionalResults(
     Expression exactExpression, Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   static_assert(

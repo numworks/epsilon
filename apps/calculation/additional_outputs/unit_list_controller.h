@@ -29,7 +29,7 @@ class UnitListController : public ExpressionsListController {
 
   int numberOfRows() const override;
 
-  virtual void setExactAndApproximateExpression(
+  virtual void computeAdditionalResults(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

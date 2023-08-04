@@ -12,7 +12,7 @@ class VectorListController : public IllustratedExpressionsListController {
   VectorListController(EditExpressionController* editExpressionController)
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
-  virtual void setExactAndApproximateExpression(
+  virtual void computeAdditionalResults(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;
 

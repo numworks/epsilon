@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void ScientificNotationListController::setExactAndApproximateExpression(
+void ScientificNotationListController::computeAdditionalResults(
     Expression exactExpression, Expression approximateExpression) {
   Context* context = App::app()->localContext();
   assert(ScientificNotationHelper::HasAdditionalOutputs(approximateExpression,

@@ -22,7 +22,7 @@ Integer extractInteger(const Expression e) {
   return static_cast<const BasedInteger &>(e).integer();
 }
 
-void RationalListController::setExactAndApproximateExpression(
+void RationalListController::computeAdditionalResults(
     Expression exactExpression, Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,

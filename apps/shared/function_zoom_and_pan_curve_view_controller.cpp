@@ -64,6 +64,20 @@ float FunctionZoomAndPanCurveViewController::offscreenYAxis() const {
   return -dY;
 }
 
+/* Moving of a whole number of pixels is cache-friendly and greatly enhances
+ * performances. */
+float FunctionZoomAndPanCurveViewController::xMove() {
+  return std::round(ZoomAndPanCurveViewController::xMove() /
+                    m_contentView.curveView()->pixelWidth()) *
+         m_contentView.curveView()->pixelWidth();
+}
+
+float FunctionZoomAndPanCurveViewController::yMove() {
+  return std::round(ZoomAndPanCurveViewController::yMove() /
+                    m_contentView.curveView()->pixelHeight()) *
+         m_contentView.curveView()->pixelHeight();
+}
+
 bool FunctionZoomAndPanCurveViewController::setLegendVisible(
     bool legendWillAppear) {
   if (legendWillAppear == m_contentView.displayLegend()) {

@@ -67,6 +67,7 @@ class HistoryController : public Escher::ViewController,
     ExpressionsListController* listController() {
       return static_cast<ExpressionsListController*>(&m_complexController);
     }
+    // These results cannot exist at the same time
     ComplexListController m_complexController;
     TrigonometryListController m_trigonometryController;
     UnitListController m_unitController;

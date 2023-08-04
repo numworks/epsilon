@@ -226,23 +226,22 @@ void HistoryController::handleOK() {
 
   breakableComputeAdditionalResults(&vc, i, e, a);
 
-  if (additionalInformations.function) {
+  if (additionalInformations.function ||
+      additionalInformations.scientificNotation) {
     assert(vc == nullptr || vc == &m_integerController ||
            vc == &m_rationalController);
     ChainableExpressionsListController *tail =
         static_cast<ChainableExpressionsListController *>(vc);
-    m_unionController.~UnionController();
-    new (&m_unionController) FunctionListController(editController);
-    m_unionController.m_functionController.setTail(tail);
-    vc = m_unionController.listController();
-    breakableComputeAdditionalResults(&vc, i, e, a);
-  } else if (additionalInformations.scientificNotation) {
-    assert(vc == nullptr || vc == &m_integerController ||
-           vc == &m_rationalController);
-    ChainableExpressionsListController *tail =
-        static_cast<ChainableExpressionsListController *>(vc);
-    m_scientificNotationListController.setTail(tail);
-    vc = &m_scientificNotationListController;
+    if (additionalInformations.function) {
+      m_unionController.~UnionController();
+      new (&m_unionController) FunctionListController(editController);
+      m_unionController.m_functionController.setTail(tail);
+      vc = m_unionController.listController();
+    } else {
+      assert(additionalInformations.scientificNotation);
+      m_scientificNotationListController.setTail(tail);
+      vc = &m_scientificNotationListController;
+    }
     breakableComputeAdditionalResults(&vc, i, e, a);
   }
 

@@ -136,14 +136,13 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
   int focusRow = selectedRow();
   HistoryViewCell *selectedCell =
-      (HistoryViewCell *)m_selectableListView.selectedCell();
-  SubviewType subviewType = m_selectedSubviewType;
+      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
   EditExpressionController *editController =
-      (EditExpressionController *)parentResponder();
-  if (subviewType == SubviewType::Input) {
+      static_cast<EditExpressionController *>(parentResponder());
+  if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();
     editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
-  } else if (subviewType == SubviewType::Output) {
+  } else if (m_selectedSubviewType == SubviewType::Output) {
     m_selectableListView.deselectTable();
     Shared::ExpiringPointer<Calculation> calculation =
         calculationAtIndex(focusRow);
@@ -161,7 +160,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       editController->insertTextBody(calculation->exactOutputText());
     }
   } else {
-    assert(subviewType == SubviewType::Ellipsis);
+    assert(m_selectedSubviewType == SubviewType::Ellipsis);
     /* Only function results can be chained (with integer or rational).
      * TODO: Refactor to avoid writing an if for each parent * child. */
     ExpressionsListController *vc = nullptr;

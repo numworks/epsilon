@@ -95,6 +95,10 @@ static bool isFractionInput(Expression e) {
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
+static Expression safeClone(Expression e) {
+  return !e.isUninitialized() ? e.clone() : Expression();
+}
+
 static void breakableComputeAdditionalResults(
     ExpressionsListController **vc, Poincare::Expression exact,
     Poincare::Expression approximate) {
@@ -104,10 +108,8 @@ static void breakableComputeAdditionalResults(
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    Expression exactClone =
-        !exact.isUninitialized() ? exact.clone() : Expression();
-    Expression approximateClone =
-        !approximate.isUninitialized() ? approximate.clone() : Expression();
+    Expression exactClone = safeClone(exact);
+    Expression approximateClone = safeClone(approximate);
     (*vc)->tidy();
     (*vc)->computeAdditionalResults(exactClone, approximateClone);
   } else {

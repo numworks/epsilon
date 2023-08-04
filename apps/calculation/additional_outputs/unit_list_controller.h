@@ -29,7 +29,9 @@ class UnitListController : public ExpressionsListController {
 
   int numberOfRows() const override;
 
-  void setExpression(Poincare::Expression e) override;
+  virtual void setExactAndApproximateExpression(
+      Poincare::Expression exactExpression,
+      Poincare::Expression approximateExpression) override;
 
  private:
   constexpr static int k_bufferCellType = 1;

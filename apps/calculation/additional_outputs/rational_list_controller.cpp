@@ -22,8 +22,10 @@ Integer extractInteger(const Expression e) {
   return static_cast<const BasedInteger &>(e).integer();
 }
 
-void RationalListController::setExpression(Expression e) {
-  ExpressionsListController::setExpression(e);
+void RationalListController::setExactAndApproximateExpression(
+    Expression exactExpression, Expression approximateExpression) {
+  ExpressionsListController::setExactAndApproximateExpression(
+      exactExpression, approximateExpression);
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");

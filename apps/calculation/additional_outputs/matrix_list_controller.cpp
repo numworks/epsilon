@@ -17,8 +17,10 @@ using namespace Shared;
 
 namespace Calculation {
 
-void MatrixListController::setExpression(Poincare::Expression e) {
-  ExpressionsListController::setExpression(e);
+void MatrixListController::setExactAndApproximateExpression(
+    Expression exactExpression, Expression approximateExpression) {
+  ExpressionsListController::setExactAndApproximateExpression(
+      exactExpression, approximateExpression);
   assert(!m_expression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

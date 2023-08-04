@@ -68,9 +68,10 @@ int UnitListController::numberOfRows() const {
   return m_numberOfExpressionCells + m_numberOfBufferCells;
 }
 
-void UnitListController::setExpression(Poincare::Expression e) {
-  resetSizeMemoization();
-  m_expression = e;
+void UnitListController::setExactAndApproximateExpression(
+    Expression exactExpression, Expression approximateExpression) {
+  ExpressionsListController::setExactAndApproximateExpression(
+      exactExpression, approximateExpression);
 
   /* I. Handle expression cells
    *   0. Initialize expressions and layouts */

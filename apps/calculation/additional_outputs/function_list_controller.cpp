@@ -23,7 +23,8 @@ namespace Calculation {
 void FunctionListController::setExactAndApproximateExpression(
     Poincare::Expression exactExpression,
     Poincare::Expression approximateExpression) {
-  ExpressionsListController::setExpression(exactExpression);
+  ExpressionsListController::setExactAndApproximateExpression(
+      exactExpression, approximateExpression);
   assert(!m_expression.isUninitialized());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

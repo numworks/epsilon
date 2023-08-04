@@ -118,10 +118,12 @@ int ExpressionsListController::numberOfRows() const {
   return nbOfRows;
 }
 
-void ExpressionsListController::setExpression(Expression e) {
+void ExpressionsListController::setExactAndApproximateExpression(
+    Expression exactExpression, Expression approximateExpression) {
   // Reinitialize memoization
   tidy();
-  m_expression = e;
+  m_expression = exactExpression;
+  // WARNING: Default only uses exactExpression
 }
 
 int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,

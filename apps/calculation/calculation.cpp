@@ -356,7 +356,6 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     }
   }
   if (e.hasUnit()) {
-    AdditionalInformations additionalInformations = {};
     Expression unit;
     Expression eClone = e.clone();
     PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -377,10 +376,10 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       PoincareHelpers::CloneAndReduceAndRemoveUnit(
           &e, globalContext, ReductionTarget::User, &unit);
       if (!unit.isUninitialized()) {
-        additionalInformations.unit = true;
+        return AdditionalInformations{.unit = true};
       }
     }
-    return additionalInformations;
+    return AdditionalInformations{};
   }
   if (e.type() == ExpressionNode::Type::Matrix) {
     if (static_cast<const Matrix &>(e).vectorType() !=

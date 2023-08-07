@@ -289,6 +289,20 @@ bool Calculation::ForbidAdditionalResults(Expression input,
              nullptr);
 }
 
+bool Calculation::HasIntegerAdditionalResults(Expression exactOutput) {
+  assert(!exactOutput.isUninitialized());
+  return exactOutput.isBasedIntegerCappedBy(
+      k_maximalIntegerWithAdditionalInformation);
+}
+
+bool Calculation::HasRationalAdditionalResults(Expression exactOutput) {
+  // Find forms like [12]/[23] or -[12]/[23]
+  assert(!exactOutput.isUninitialized());
+  return exactOutput.isDivisionOfIntegers() ||
+         (exactOutput.type() == ExpressionNode::Type::Opposite &&
+          exactOutput.childAtIndex(0).isDivisionOfIntegers());
+}
+
 Calculation::AdditionalInformations Calculation::additionalInformations() {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
@@ -405,13 +419,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       expressionIsInterestingFunction(i)) {
     additionalInformations.function = true;
   }
-  if (e.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
+  if (HasIntegerAdditionalResults(e)) {
     additionalInformations.integer = true;
     return additionalInformations;
   }
-  // Find forms like [12]/[23] or -[12]/[23]
-  if (e.isDivisionOfIntegers() || (e.type() == ExpressionNode::Type::Opposite &&
-                                   e.childAtIndex(0).isDivisionOfIntegers())) {
+  if (HasRationalAdditionalResults(e)) {
     additionalInformations.rational = true;
     return additionalInformations;
   }

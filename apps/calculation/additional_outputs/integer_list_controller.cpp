@@ -30,8 +30,7 @@ void IntegerListController::computeAdditionalResults(
   static_assert(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
-  assert(!exactExpression.isUninitialized() &&
-         exactExpression.type() == ExpressionNode::Type::BasedInteger);
+  assert(Calculation::HasIntegerAdditionalResults(exactExpression));
   Integer integer = static_cast<BasedInteger &>(exactExpression).integer();
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     m_layouts[index] = integer.createLayout(baseAtIndex(index));

@@ -421,11 +421,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   if (HasIntegerAdditionalResults(e)) {
     additionalInformations.integer = true;
-    return additionalInformations;
-  }
-  if (HasRationalAdditionalResults(e)) {
+  } else if (HasRationalAdditionalResults(e)) {
     additionalInformations.rational = true;
-    return additionalInformations;
   }
   return additionalInformations;
 }

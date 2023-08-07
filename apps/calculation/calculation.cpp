@@ -277,6 +277,20 @@ bool Calculation::ForbidAdditionalResults(Expression input,
              nullptr);
 }
 
+bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
+  assert(!exactOutput.isUninitialized());
+  return exactOutput.type() == ExpressionNode::Type::Matrix &&
+         static_cast<const Matrix &>(exactOutput).vectorType() !=
+             Array::VectorType::None;
+}
+
+bool Calculation::HasMatrixAdditionalResults(Expression exactOutput) {
+  assert(!exactOutput.isUninitialized());
+  return exactOutput.type() == ExpressionNode::Type::Matrix &&
+         static_cast<const Matrix &>(exactOutput).vectorType() ==
+             Array::VectorType::None;
+}
+
 bool Calculation::HasScientificNotationAdditionalResults(
     Expression approximateOutput) {
   assert(!approximateOutput.hasUnit());
@@ -417,11 +431,10 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     }
     return AdditionalInformations{};
   }
-  if (e.type() == ExpressionNode::Type::Matrix) {
-    if (static_cast<const Matrix &>(e).vectorType() !=
-        Array::VectorType::None) {
-      return AdditionalInformations{.vector = true};
-    }
+  if (HasVectorAdditionalResults(e)) {
+    return AdditionalInformations{.vector = true};
+  }
+  if (HasMatrixAdditionalResults(e)) {
     return AdditionalInformations{.matrix = true};
   }
   if (isComplex) {

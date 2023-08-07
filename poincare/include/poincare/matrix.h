@@ -80,6 +80,7 @@ class Matrix final : public Expression {
 
   void setDimensions(int rows, int columns);
   Array::VectorType vectorType() const { return node()->vectorType(); }
+  bool isVector() const { return node()->isVector(); }
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   using TreeHandle::addChildAtIndexInPlace;

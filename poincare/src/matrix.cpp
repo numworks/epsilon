@@ -623,7 +623,7 @@ Expression Matrix::determinant(const ReductionContext &reductionContext,
 
 Expression Matrix::norm(const ReductionContext &reductionContext) const {
   // Norm is defined on vectors only
-  assert(vectorType() != Array::VectorType::None);
+  assert(isVector());
   Addition sum = Addition::Builder();
   int childrenNumber = numberOfChildren();
   for (int j = 0; j < childrenNumber; j++) {
@@ -643,8 +643,7 @@ Expression Matrix::norm(const ReductionContext &reductionContext) const {
 Expression Matrix::dot(Matrix *b,
                        const ReductionContext &reductionContext) const {
   // Dot product is defined between two vectors of same size and type
-  assert(vectorType() != Array::VectorType::None &&
-         vectorType() == b->vectorType() &&
+  assert(isVector() && vectorType() == b->vectorType() &&
          numberOfChildren() == b->numberOfChildren());
   Addition sum = Addition::Builder();
   int childrenNumber = numberOfChildren();
@@ -662,9 +661,8 @@ Expression Matrix::dot(Matrix *b,
 Matrix Matrix::cross(Matrix *b,
                      const ReductionContext &reductionContext) const {
   // Cross product is defined between two vectors of size 3 and of same type.
-  assert(vectorType() != Array::VectorType::None &&
-         vectorType() == b->vectorType() && numberOfChildren() == 3 &&
-         b->numberOfChildren() == 3);
+  assert(isVector() && vectorType() == b->vectorType() &&
+         numberOfChildren() == 3 && b->numberOfChildren() == 3);
   Matrix matrix = Matrix::Builder();
   for (int j = 0; j < 3; j++) {
     int j1 = (j + 1) % 3;

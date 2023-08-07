@@ -280,15 +280,13 @@ bool Calculation::ForbidAdditionalResults(Expression input,
 bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   return exactOutput.type() == ExpressionNode::Type::Matrix &&
-         static_cast<const Matrix &>(exactOutput).vectorType() !=
-             Array::VectorType::None;
+         static_cast<const Matrix &>(exactOutput).isVector();
 }
 
 bool Calculation::HasMatrixAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   return exactOutput.type() == ExpressionNode::Type::Matrix &&
-         static_cast<const Matrix &>(exactOutput).vectorType() ==
-             Array::VectorType::None;
+         !static_cast<const Matrix &>(exactOutput).isVector();
 }
 
 bool Calculation::HasScientificNotationAdditionalResults(

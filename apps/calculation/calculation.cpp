@@ -435,9 +435,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};
   }
   if (HasVectorAdditionalResults(e)) {
+    assert(!isComplex);
     return AdditionalInformations{.vector = true};
   }
   if (HasMatrixAdditionalResults(e)) {
+    assert(!isComplex);
     return AdditionalInformations{.matrix = true};
   }
   if (isComplex) {

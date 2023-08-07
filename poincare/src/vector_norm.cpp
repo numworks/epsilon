@@ -63,7 +63,7 @@ Expression VectorNorm::shallowReduce(ReductionContext reductionContext) {
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild = static_cast<Matrix&>(c);
     // Norm is only defined on vectors only
-    if (matrixChild.vectorType() == Array::VectorType::None) {
+    if (!matrixChild.isVector()) {
       return replaceWithUndefinedInPlace();
     }
     Expression a = matrixChild.norm(reductionContext);

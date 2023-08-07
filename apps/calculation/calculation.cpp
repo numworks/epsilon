@@ -277,6 +277,18 @@ bool Calculation::ForbidAdditionalResults(Expression input,
              nullptr);
 }
 
+bool Calculation::HasScientificNotationAdditionalResults(
+    Expression approximateOutput) {
+  assert(!approximateOutput.hasUnit());
+  Context *globalContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
+  return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
+         Preferences::sharedPreferences->displayMode() !=
+             Preferences::PrintFloatMode::Scientific &&
+         ScientificNotationHelper::HasAdditionalOutputs(approximateOutput,
+                                                        globalContext);
+}
+
 static bool expressionIsInterestingFunction(Expression e) {
   assert(!e.isUninitialized());
   if (e.isOfType({ExpressionNode::Type::Opposite,
@@ -416,12 +428,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations{.complex = true};
   }
   AdditionalInformations additionalInformations = {};
-  if (a.type() != ExpressionNode::Type::Nonreal &&
-      preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
-    // There should be no units at this point
-    assert(!a.hasUnit());
-    additionalInformations.scientificNotation =
-        ScientificNotationHelper::HasAdditionalOutputs(a, globalContext);
+  if (HasScientificNotationAdditionalResults(a)) {
+    additionalInformations.scientificNotation = true;
   }
   if (HasFunctionAdditionalResults(i, a)) {
     additionalInformations.function = true;

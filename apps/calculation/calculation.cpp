@@ -386,7 +386,6 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
           preferences->complexFormat(), a, nullptr);
   bool isComplex = a.hasDefinedComplexApproximation<double>(
       nullptr, complexFormat, preferences->angleUnit());
-  assert(!isComplex || !e.hasUnit());
   /* Trigonometry additional results are displayed if either input or output is
    * a direct or inverse trigonometric function. Indeed, we want to capture both
    * cases:
@@ -433,6 +432,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     }
   }
   if (isComplex) {
+    assert(!e.hasUnit());
     return AdditionalInformations{.complex = true};
   }
   if (e.hasUnit()) {

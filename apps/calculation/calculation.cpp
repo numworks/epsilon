@@ -434,16 +434,14 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (e.hasUnit()) {
     return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};
   }
+  if (isComplex) {
+    return AdditionalInformations{.complex = true};
+  }
   if (HasVectorAdditionalResults(e)) {
-    assert(!isComplex);
     return AdditionalInformations{.vector = true};
   }
   if (HasMatrixAdditionalResults(e)) {
-    assert(!isComplex);
     return AdditionalInformations{.matrix = true};
-  }
-  if (isComplex) {
-    return AdditionalInformations{.complex = true};
   }
   AdditionalInformations additionalInformations = {};
   if (HasScientificNotationAdditionalResults(a)) {

@@ -432,12 +432,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       }
     }
   }
-  if (e.hasUnit()) {
-    assert(!isComplex);
-    return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};
-  }
   if (isComplex) {
     return AdditionalInformations{.complex = true};
+  }
+  if (e.hasUnit()) {
+    return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};
   }
   if (HasVectorAdditionalResults(e)) {
     return AdditionalInformations{.vector = true};

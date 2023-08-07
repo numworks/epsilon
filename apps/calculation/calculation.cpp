@@ -267,13 +267,29 @@ static bool expressionIsInterestingFunction(Expression e) {
          e.numberOfNumericalValues() == 1;
 }
 
+bool Calculation::ForbidAdditionalResults(Expression input,
+                                          Expression exactOutput,
+                                          Expression approximateOutput) {
+  /* Special case for Store:
+   * Store nodes have to be at the root of the expression, which prevents
+   * from creating new expressions with store node as a child. We don't
+   * return any additional outputs for them to avoid bothering with special
+   * cases. */
+  return Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
+         input.isUninitialized() || exactOutput.isUninitialized() ||
+         approximateOutput.isUninitialized() ||
+         approximateOutput.isUndefined() ||
+         input.type() == ExpressionNode::Type::Store ||
+         exactOutput.type() == ExpressionNode::Type::List ||
+         approximateOutput.type() == ExpressionNode::Type::List ||
+         approximateOutput.recursivelyMatches(
+             [](const Expression e, Context *c) {
+               return e.isOfType({ExpressionNode::Type::Infinity});
+             },
+             nullptr);
+}
+
 Calculation::AdditionalInformations Calculation::additionalInformations() {
-  if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
-      strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
-             Undefined::Name()) == 0) {
-    return AdditionalInformations();
-  }
-  Preferences *preferences = Preferences::sharedPreferences;
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression i = input();
@@ -282,22 +298,10 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
                          Calculation::DisplayOutput::ApproximateOnly
                      ? exactOutput()
                      : a;
-  /* Special case for Store:
-   * Store nodes have to be at the root of the expression, which prevents
-   * from creating new expressions with store node as a child. We don't
-   * return any additional outputs for them to avoid bothering with special
-   * cases. */
-  if (i.isUninitialized() || e.isUninitialized() || a.isUninitialized() ||
-      i.type() == ExpressionNode::Type::Store ||
-      e.type() == ExpressionNode::Type::List ||
-      a.type() == ExpressionNode::Type::List || a.isUndefined() ||
-      a.recursivelyMatches(
-          [](const Expression e, Context *c) {
-            return e.isOfType({ExpressionNode::Type::Infinity});
-          },
-          nullptr)) {
+  if (ForbidAdditionalResults(i, e, a)) {
     return AdditionalInformations{};
   }
+  Preferences *preferences = Preferences::sharedPreferences;
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */

@@ -108,6 +108,9 @@ class Calculation {
       Poincare::Context* context);
 
   // Additional Informations
+  static bool ForbidAdditionalResults(Poincare::Expression input,
+                                      Poincare::Expression exactOutput,
+                                      Poincare::Expression approximateOutput);
   AdditionalInformations additionalInformations();
 
  private:

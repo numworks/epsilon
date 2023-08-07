@@ -293,6 +293,58 @@ bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
   return false;
 }
 
+bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
+                                                  Expression exactOutput) {
+  /* Trigonometry additional results are displayed if either input or output is
+   * a direct function. Indeed, we want to capture both cases:
+   * - > input: cos(60)
+   *   > output: 1/2
+   * - > input: 2cos(2) - cos(2)
+   *   > output: cos(2)
+   * However if the result is complex, it is treated as a complex result
+   * instead. If only the input is trigonometric, but it contains symbols, do
+   * not display trigonometric additional informations, in case the symbol value
+   * is later modified/deleted in the storage and can't be retrieved.
+   * Ex: 0->x; tan(x); 3->x;
+   * => The additional results of tan(x) become inconsistent. And if x is
+   * deleted, it crashes. */
+  Context *globalContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
+  Expression directExpression;
+  if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
+    directExpression = exactOutput;
+  } else if (Trigonometry::isDirectTrigonometryFunction(input) &&
+             !input.deepIsSymbolic(
+                 globalContext, SymbolicComputation::DoNotReplaceAnySymbol)) {
+    directExpression = input;
+  } else {
+    return false;
+  }
+  assert(!directExpression.isUninitialized());
+  Expression angle = directExpression.childAtIndex(0);
+  Expression unit;
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(&angle, globalContext,
+                                               ReductionTarget::User, &unit);
+  // The angle must be real.
+  return (unit.isPureAngleUnit() || unit.isUninitialized()) &&
+         std::isfinite(PoincareHelpers::ApproximateToScalar<double>(
+             angle, globalContext));
+}
+
+bool Calculation::HasInverseTrigoAdditionalResults(Expression input,
+                                                   Expression exactOutput) {
+  Context *globalContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
+  /* - If only the input is trigonometric but it contains symbols, do not
+   *   display trigonometric additional informations, in case the symbol value
+   *   is later modified/deleted in the storage and can't be retrieved.
+   * - The angle cannot be complex since Expression a isn't. */
+  return (Trigonometry::isInverseTrigonometryFunction(input) &&
+          !input.deepIsSymbolic(globalContext,
+                                SymbolicComputation::DoNotReplaceAnySymbol)) ||
+         Trigonometry::isInverseTrigonometryFunction(exactOutput);
+}
+
 bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
   assert(exactOutput.hasUnit());
   Context *globalContext =
@@ -396,48 +448,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (HasComplexAdditionalResults(a)) {
     return AdditionalInformations{.complex = true};
   }
-  /* Trigonometry additional results are displayed if either input or output is
-   * a direct or inverse trigonometric function. Indeed, we want to capture both
-   * cases:
-   *
-   * - > input: cos(60)
-   *   > output: 1/2
-   * - > input: 2cos(2) - cos(2)
-   *   > output: cos(2)
-   * However if the result is complex, it is treated as a complex result instead
-   */
-  /* If only the input is trigonometric, but it contains symbols, do not
-   * display trigonometric additional informations, in case the symbol value
-   * is later modified/deleted in the storage and can't be retrieved.
-   * Ex: 0->x; tan(x); 3->x;
-   * => The additional results of tan(x) become inconsistent. And if x is
-   * deleted, it crashes. */
-  bool inputHasSymbols = i.deepIsSymbolic(
-      globalContext, SymbolicComputation::DoNotReplaceAnySymbol);
-  if ((Trigonometry::isInverseTrigonometryFunction(i) && !inputHasSymbols) ||
-      Trigonometry::isInverseTrigonometryFunction(e)) {
-    // The angle cannot be complex since Expression a isn't
+  if (HasDirectTrigoAdditionalResults(i, e)) {
+    return AdditionalInformations{.directTrigonometry = true};
+  }
+  if (HasInverseTrigoAdditionalResults(i, e)) {
     return AdditionalInformations{.inverseTrigonometry = true};
-  }
-  Expression directExpression;
-  if (Trigonometry::isDirectTrigonometryFunction(e)) {
-    directExpression = e;
-  } else if (Trigonometry::isDirectTrigonometryFunction(i) &&
-             !inputHasSymbols) {
-    directExpression = i;
-  }
-
-  if (!directExpression.isUninitialized()) {
-    Expression angle = directExpression.childAtIndex(0);
-    Expression unit;
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(&angle, globalContext,
-                                                 ReductionTarget::User, &unit);
-    // The angle must be real.
-    if ((unit.isPureAngleUnit() || unit.isUninitialized()) &&
-        std::isfinite(PoincareHelpers::ApproximateToScalar<double>(
-            angle, globalContext))) {
-      return AdditionalInformations{.directTrigonometry = true};
-    }
   }
   if (e.hasUnit()) {
     return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};

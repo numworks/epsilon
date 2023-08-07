@@ -15,7 +15,11 @@ namespace Calculation {
 void TrigonometryListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
-  assert(!approximateExpression.isUninitialized());
+  assert(
+      (m_directTrigonometry && Calculation::HasDirectTrigoAdditionalResults(
+                                   inputExpression, exactExpression)) ||
+      (!m_directTrigonometry && Calculation::HasInverseTrigoAdditionalResults(
+                                    inputExpression, exactExpression)));
 
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();

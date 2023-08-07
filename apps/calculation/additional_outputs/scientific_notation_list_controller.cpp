@@ -8,13 +8,12 @@ using namespace Poincare;
 namespace Calculation {
 
 void ScientificNotationListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
-  assert(Calculation::HasScientificNotationAdditionalResults(
-      approximateExpression));
+    Expression input, Expression exactOutput, Expression approximateOutput) {
+  assert(
+      Calculation::HasScientificNotationAdditionalResults(approximateOutput));
   Context* context = App::app()->localContext();
-  m_layouts[0] = ScientificNotationHelper::ScientificLayout(
-      approximateExpression, context);
+  m_layouts[0] =
+      ScientificNotationHelper::ScientificLayout(approximateOutput, context);
 }
 
 I18n::Message ScientificNotationListController::messageAtIndex(int index) {

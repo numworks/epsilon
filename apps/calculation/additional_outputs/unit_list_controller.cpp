@@ -69,9 +69,8 @@ int UnitListController::numberOfRows() const {
 }
 
 void UnitListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
-  assert(Calculation::HasUnitAdditionalResults(exactExpression));
+    Expression input, Expression exactOutput, Expression approximateOutput) {
+  assert(Calculation::HasUnitAdditionalResults(exactOutput));
   /* I. Handle expression cells
    *   0. Initialize expressions and layouts */
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];
@@ -82,7 +81,7 @@ void UnitListController::computeAdditionalResults(
 
   /*   1. First rows: miscellaneous classic units for some dimensions, in both
    *      metric and imperial units. */
-  Expression copy = exactExpression;
+  Expression copy = exactOutput;
   Expression units;
   // Reduce to be able to recognize units
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -93,7 +92,7 @@ void UnitListController::computeAdditionalResults(
   ReductionContext reductionContext(
       App::app()->localContext(),
       Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::sharedPreferences->complexFormat(), exactExpression,
+          Preferences::sharedPreferences->complexFormat(), exactOutput,
           App::app()->localContext()),
       Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
@@ -101,7 +100,7 @@ void UnitListController::computeAdditionalResults(
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   int numberOfExpressions = Unit::SetAdditionalExpressions(
       units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
-      exactExpression);
+      exactOutput);
 
   Expression siExpression;
   const Unit::Representative *representative =
@@ -113,11 +112,11 @@ void UnitListController::computeAdditionalResults(
       representative->dimensionVector() ==
           Unit::AngleRepresentative::Default().dimensionVector()) {
     // Needs to be defined for the unit comparison but is not used with angles
-    siExpression = exactExpression;
+    siExpression = exactOutput;
   } else {
     //  2. SI units only
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
-    expressions[numberOfExpressions] = exactExpression;
+    expressions[numberOfExpressions] = exactOutput;
     Shared::PoincareHelpers::CloneAndSimplify(
         &expressions[numberOfExpressions], App::app()->localContext(),
         ReductionTarget::User,
@@ -131,8 +130,8 @@ void UnitListController::computeAdditionalResults(
   /*  3. Get rid of duplicates
    * We find duplicates by comparing the serializations, to eliminate
    * expressions that only differ by the types of their number nodes. */
-  Expression reduceExpression = exactExpression;
-  /* Make exactExpression comparable to expressions (turn BasedInteger into
+  Expression reduceExpression = exactOutput;
+  /* Make exactOutput comparable to expressions (turn BasedInteger into
    * Rational for instance) */
   Shared::PoincareHelpers::CloneAndSimplify(
       &reduceExpression, App::app()->localContext(), ReductionTarget::User,
@@ -147,7 +146,7 @@ void UnitListController::computeAdditionalResults(
                                            buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
       /* Compare the currentExpression to all previous expressions and to
-       * exactExpression */
+       * exactOutput */
       Expression comparedExpression =
           i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());

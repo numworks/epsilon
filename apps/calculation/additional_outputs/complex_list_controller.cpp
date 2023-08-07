@@ -19,16 +19,15 @@ using namespace Shared;
 namespace Calculation {
 
 void ComplexListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
-  assert(Calculation::HasComplexAdditionalResults(approximateExpression));
+    Expression input, Expression exactOutput, Expression approximateOutput) {
+  assert(Calculation::HasComplexAdditionalResults(approximateOutput));
   Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
   preferencesComplex.setComplexFormat(
       Poincare::Preferences::ComplexFormat::Cartesian);
   Context* context = App::app()->localContext();
 
   // Fill Calculation Store
-  Expression e = exactExpression;
+  Expression e = exactOutput;
   Expression z = Symbol::Builder(k_symbol);
   size_t index = 0;
   setLineAtIndex(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e),
@@ -44,7 +43,7 @@ void ComplexListController::computeAdditionalResults(
   double realPart;
   double imagPart;
   bool hasComplexApprox =
-      approximateExpression.hasDefinedComplexApproximation<double>(
+      approximateOutput.hasDefinedComplexApproximation<double>(
           context, preferencesComplex.complexFormat(),
           preferencesComplex.angleUnit(), &realPart, &imagPart);
 

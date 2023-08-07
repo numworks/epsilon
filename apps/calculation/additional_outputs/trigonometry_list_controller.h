@@ -13,9 +13,8 @@ class TrigonometryListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
   void computeAdditionalResults(
-      Poincare::Expression inputExpression,
-      Poincare::Expression exactExpression,
-      Poincare::Expression approximateExpression) override;
+      Poincare::Expression input, Poincare::Expression exactOutput,
+      Poincare::Expression approximateOutput) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 

@@ -14,9 +14,8 @@ class ComplexListController : public IllustratedExpressionsListController {
         m_complexGraphCell(&m_model) {}
 
   void computeAdditionalResults(
-      Poincare::Expression inputExpression,
-      Poincare::Expression exactExpression,
-      Poincare::Expression approximateExpression) override;
+      Poincare::Expression input, Poincare::Expression exactOutput,
+      Poincare::Expression approximateOutput) override;
 
  private:
   constexpr static CodePoint k_symbol = 'z';

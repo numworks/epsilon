@@ -13,9 +13,8 @@ class VectorListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
   virtual void computeAdditionalResults(
-      Poincare::Expression inputExpression,
-      Poincare::Expression exactExpression,
-      Poincare::Expression approximateExpression) override;
+      Poincare::Expression input, Poincare::Expression exactOutput,
+      Poincare::Expression approximateOutput) override;
 
  private:
   IllustrationCell* illustrationCell() override { return &m_graphCell; }

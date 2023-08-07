@@ -40,9 +40,8 @@ class ExpressionsListController
   int numberOfRows() const override;
 
   virtual void computeAdditionalResults(
-      Poincare::Expression inputExpression,
-      Poincare::Expression exactExpression,
-      Poincare::Expression approximateExpression) = 0;
+      Poincare::Expression input, Poincare::Expression exactOutput,
+      Poincare::Expression approximateOutput) = 0;
   virtual int textAtIndex(char* buffer, size_t bufferSize,
                           Escher::HighlightCell* cell, int index);
 

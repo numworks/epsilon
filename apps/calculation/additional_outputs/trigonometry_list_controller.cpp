@@ -13,13 +13,11 @@ using namespace Poincare;
 namespace Calculation {
 
 void TrigonometryListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
-  assert(
-      (m_directTrigonometry && Calculation::HasDirectTrigoAdditionalResults(
-                                   inputExpression, exactExpression)) ||
-      (!m_directTrigonometry && Calculation::HasInverseTrigoAdditionalResults(
-                                    inputExpression, exactExpression)));
+    Expression input, Expression exactOutput, Expression approximateOutput) {
+  assert((m_directTrigonometry &&
+          Calculation::HasDirectTrigoAdditionalResults(input, exactOutput)) ||
+         (!m_directTrigonometry &&
+          Calculation::HasInverseTrigoAdditionalResults(input, exactOutput)));
 
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
@@ -33,16 +31,16 @@ void TrigonometryListController::computeAdditionalResults(
   // Find the angle
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
-    if (Trigonometry::isDirectTrigonometryFunction(exactExpression)) {
-      exactAngle = exactExpression.childAtIndex(0);
+    if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
+      exactAngle = exactOutput.childAtIndex(0);
     } else {
-      assert(Trigonometry::isDirectTrigonometryFunction(inputExpression));
-      exactAngle = inputExpression.childAtIndex(0);
+      assert(Trigonometry::isDirectTrigonometryFunction(input));
+      exactAngle = input.childAtIndex(0);
     }
     approximateAngle = Expression();
   } else {
-    exactAngle = exactExpression;
-    approximateAngle = approximateExpression;
+    exactAngle = exactOutput;
+    approximateAngle = approximateOutput;
     assert(!approximateAngle.isUninitialized());
     if (approximateAngle.isPositive(context) == TrinaryBoolean::False) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]

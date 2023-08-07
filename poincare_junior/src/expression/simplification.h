@@ -84,7 +84,19 @@ class Simplification {
   /* The following methods should not be called with EditionReferences.
    * TODO : ensure it cannot. */
   static bool MergeAdditionChildren(Tree *u1, Tree *u2);
-  static bool MergeMultiplicationChildren(Tree *u1, Tree *u2);
+  // Return true if child has been merged with next sibling.
+  static bool MergeMultiplicationChildWithNext(Tree *child);
+  // Return true if child has been merged with one or more next siblings.
+  static bool MergeMultiplicationChildrenFrom(Tree *child, int index,
+                                              int *numberOfSiblings,
+                                              bool *zero);
+  /* Return true if child has been merged with siblings. Recursively merge next
+   * siblings. */
+  static bool SimplifyMultiplicationChildRec(Tree *child, int index,
+                                             int *numberOfSiblings, bool *zero,
+                                             bool *multiplicationChanged);
+  // Simplify a sorted and sanitized multiplication.
+  static bool SimplifySortedMultiplication(Tree *multiplication);
   static void ConvertPowerRealToPower(Tree *u);
 
   typedef bool (*ShallowOperation)(Tree *node, void *context);

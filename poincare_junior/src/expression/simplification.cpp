@@ -324,66 +324,115 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   return true;
 }
 
-// returns true if they have been merged in u1
-bool Simplification::MergeMultiplicationChildren(Tree* u1, Tree* u2) {
-  // Merge constants
-  if (IsRational(u1) && IsRational(u2)) {
-    Tree* mult = Rational::Multiplication(u1, u2);
-    Rational::MakeIrreducible(mult);
-    u2->moveTreeOverTree(mult);
-    u1->removeTree();
+bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
+  Tree* next = child->nextTree();
+  Tree* merge = nullptr;
+  if (IsRational(child) && IsRational(next)) {
+    // Merge constants
+    merge = Rational::Multiplication(child, next);
+    Rational::MakeIrreducible(merge);
+  } else if (BasesAreEqual(child, next)) {
+    // t^m * t^n -> t^(m+n)
+    merge =
+        P_POW(PushBase(child), P_ADD(PushExponent(child), PushExponent(next)));
+    SimplifyAddition(merge->childAtIndex(1));
+    SimplifyPower(merge);
+    assert(merge->type() != BlockType::Multiplication);
+  }
+  if (!merge) {
+    return false;
+  }
+  // Replace both child and next with merge
+  next->moveTreeOverTree(merge);
+  child->removeTree();
+  return true;
+}
+
+bool Simplification::MergeMultiplicationChildrenFrom(Tree* child, int index,
+                                                     int* numberOfSiblings,
+                                                     bool* zero) {
+  bool changed = false;
+  while (index < *numberOfSiblings) {
+    if (Number::IsZero(child)) {
+      *zero = true;
+      return false;
+    }
+    if (Number::IsOne(child)) {
+      child->removeTree();
+    } else if (!(index + 1 < *numberOfSiblings &&
+                 MergeMultiplicationChildWithNext(child))) {
+      // Child is neither 0, 1 and can't be merged with next child (or is last).
+      return changed;
+    }
+    (*numberOfSiblings)--;
+    changed = true;
+  }
+  return changed;
+}
+
+bool Simplification::SimplifyMultiplicationChildRec(Tree* child, int index,
+                                                    int* numberOfSiblings,
+                                                    bool* multiplicationChanged,
+                                                    bool* zero) {
+  assert(index < *numberOfSiblings);
+  // Merge child with right siblings as much as possible.
+  bool childChanged =
+      MergeMultiplicationChildrenFrom(child, index, numberOfSiblings, zero);
+  // Simplify starting from next child.
+  if (!*zero && index + 1 < *numberOfSiblings &&
+      SimplifyMultiplicationChildRec(child->nextTree(), index + 1,
+                                     numberOfSiblings, multiplicationChanged,
+                                     zero)) {
+    // Next child changed, child may now merge with it.
+    assert(!*zero);
+    childChanged =
+        MergeMultiplicationChildrenFrom(child, index, numberOfSiblings, zero) ||
+        childChanged;
+  }
+  if (*zero) {
+    return false;
+  }
+  *multiplicationChanged = *multiplicationChanged || childChanged;
+  return childChanged;
+}
+
+bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
+  int n = multiplication->numberOfChildren();
+  bool changed = false;
+  bool zero = false;
+  /* Recursively merge children.
+   * Keep track of n, changed status and presence of zero child. */
+  SimplifyMultiplicationChildRec(multiplication->nextNode(), 0, &n, &changed,
+                                 &zero);
+  NAry::SetNumberOfChildren(multiplication, n);
+  if (zero) {
+    multiplication->cloneTreeOverTree(0_e);
     return true;
   }
-  // t^m * t^n -> t^(m+n)
-  if (BasesAreEqual(u1, u2)) {
-    Tree* P = P_POW(PushBase(u1), P_ADD(PushExponent(u1), PushExponent(u2)));
-    SimplifyAddition(P->childAtIndex(1));
-    SimplifyPower(P);
-    assert(P->type() != BlockType::Multiplication);
-    u2->moveTreeOverTree(P);
-    u1->removeTree();
-    return true;
+  if (!changed || NAry::SquashIfUnary(multiplication) ||
+      NAry::SquashIfEmpty(multiplication)) {
+    return changed;
   }
-  return false;
+  /* Merging children can un-sort the multiplication. It must then be simplified
+   * again once sorted again. For example:
+   * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
+  if (NAry::Sort(multiplication)) {
+    SimplifySortedMultiplication(multiplication);
+  }
+  return true;
 }
 
 bool Simplification::SimplifyMultiplication(Tree* u) {
   assert(u->type() == BlockType::Multiplication);
-  bool modified = NAry::Flatten(u);
-  if (NAry::SquashIfUnary(u)) {
+  bool changed = NAry::Flatten(u);
+  if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
     return true;
   }
-  modified = NAry::Sort(u) || modified;
-  int n = u->numberOfChildren();
-  int i = 0;
-  Tree* child = u->nextNode();
-  while (i < n) {
-    // ... * 0 * ... -> 0
-    if (Number::IsZero(child)) {
-      NAry::SetNumberOfChildren(u, n);
-      u->cloneTreeOverTree(0_e);
-      return true;
-    }
-    if (Number::IsOne(child)) {
-      child->removeTree();
-      n--;
-      continue;
-    }
-    Tree* next = child->nextTree();
-    if (i + 1 < n && MergeMultiplicationChildren(child, next)) {
-      assert(child->type() != BlockType::Multiplication);
-      n--;
-    } else {
-      child = next;
-      i++;
-    }
-  }
-  if (n == u->numberOfChildren()) {
-    return modified;
-  }
-  NAry::SetNumberOfChildren(u, n);
-  NAry::Sanitize(u);
-  return true;
+  changed = NAry::Sort(u) || changed;
+  changed = SimplifySortedMultiplication(u) || changed;
+  assert(!changed || u->type() != BlockType::Multiplication ||
+         !SimplifyMultiplication(u));
+  return changed;
 }
 
 bool TermsAreEqual(const Tree* u, const Tree* v) {
@@ -487,7 +536,18 @@ bool Simplification::SimplifyAddition(Tree* u) {
     return modified;
   }
   NAry::SetNumberOfChildren(u, n);
-  NAry::Sanitize(u);
+  if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
+    return true;
+  }
+  /* TODO: SimplifyAddition may encounter the same issues as the multiplication.
+   * If this assert can't be preserved, SimplifyAddition must handle one or both
+   * of this cases as handled in multiplication:
+   * With a,b and c the sorted addition children (a < b < c), M(a,b) the result
+   * of merging children a and b (with MergeAdditionChildren) if it exists.
+   * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
+   * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
+   *   merging again when child merged with nextCHild) */
+  assert(!SimplifyAddition(u));
   return true;
 }
 
@@ -505,6 +565,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
 }
 
 bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
+  assert(!DeepSystematicReduce(ref));
   bool changed = false;
   for (std::pair<EditionReference, int> indexedNode :
        NodeIterator::Children<Editable>(ref)) {
@@ -520,6 +581,7 @@ bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
 
 bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
                                               bool changed) {
+  assert(!DeepSystematicReduce(ref));
   return (ref->block()->isAlgebraic()
               ? AdvanceReduceOnAlgebraic(ref, root, changed)
               : AdvanceReduceOnTranscendental(ref, root, changed));

@@ -94,6 +94,8 @@ static void breakableComputeAdditionalResults(ExpressionsListController **vc,
     Expression inputClone = safeClone(input);
     Expression exactClone = safeClone(exact);
     Expression approximateClone = safeClone(approximate);
+    assert(!Calculation::ForbidAdditionalResults(inputClone, exactClone,
+                                                 approximateClone));
     (*vc)->tidy();
     (*vc)->computeAdditionalResults(inputClone, exactClone, approximateClone);
   } else {

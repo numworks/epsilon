@@ -278,7 +278,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression i = input();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
-  Expression o = displayOutput(globalContext) !=
+  Expression e = displayOutput(globalContext) !=
                          Calculation::DisplayOutput::ApproximateOnly
                      ? exactOutput()
                      : a;
@@ -287,9 +287,9 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (i.isUninitialized() || o.isUninitialized() || a.isUninitialized() ||
+  if (i.isUninitialized() || e.isUninitialized() || a.isUninitialized() ||
       i.type() == ExpressionNode::Type::Store ||
-      o.type() == ExpressionNode::Type::List ||
+      e.type() == ExpressionNode::Type::List ||
       a.type() == ExpressionNode::Type::List || a.isUndefined() ||
       a.recursivelyMatches(
           [](const Expression e, Context *c) {
@@ -326,13 +326,13 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     bool inputHasSymbols = i.deepIsSymbolic(
         globalContext, SymbolicComputation::DoNotReplaceAnySymbol);
     if ((Trigonometry::isInverseTrigonometryFunction(i) && !inputHasSymbols) ||
-        Trigonometry::isInverseTrigonometryFunction(o)) {
+        Trigonometry::isInverseTrigonometryFunction(e)) {
       // The angle cannot be complex since Expression a isn't
       return AdditionalInformations{.inverseTrigonometry = true};
     }
     Expression directExpression;
-    if (Trigonometry::isDirectTrigonometryFunction(o)) {
-      directExpression = o;
+    if (Trigonometry::isDirectTrigonometryFunction(e)) {
+      directExpression = e;
     } else if (Trigonometry::isDirectTrigonometryFunction(i) &&
                !inputHasSymbols) {
       directExpression = i;
@@ -351,16 +351,16 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       }
     }
   }
-  if (o.hasUnit()) {
+  if (e.hasUnit()) {
     AdditionalInformations additionalInformations = {};
     Expression unit;
-    Expression oClone = o.clone();
+    Expression eClone = e.clone();
     PoincareHelpers::CloneAndReduceAndRemoveUnit(
-        &oClone, globalContext, ReductionTarget::User, &unit,
+        &eClone, globalContext, ReductionTarget::User, &unit,
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
         UnitConversion::None);
     double value =
-        PoincareHelpers::ApproximateToScalar<double>(oClone, globalContext);
+        PoincareHelpers::ApproximateToScalar<double>(eClone, globalContext);
     if (!unit.isUninitialized() &&
         (Unit::ShouldDisplayAdditionalOutputs(
              value, unit,
@@ -371,15 +371,15 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
        * which will make the unit list controller crash.  */
       unit = Expression();
       PoincareHelpers::CloneAndReduceAndRemoveUnit(
-          &o, globalContext, ReductionTarget::User, &unit);
+          &e, globalContext, ReductionTarget::User, &unit);
       if (!unit.isUninitialized()) {
         additionalInformations.unit = true;
       }
     }
     return additionalInformations;
   }
-  if (o.type() == ExpressionNode::Type::Matrix) {
-    if (static_cast<const Matrix &>(o).vectorType() !=
+  if (e.type() == ExpressionNode::Type::Matrix) {
+    if (static_cast<const Matrix &>(e).vectorType() !=
         Array::VectorType::None) {
       return AdditionalInformations{.vector = true};
     }
@@ -402,13 +402,13 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       expressionIsInterestingFunction(i)) {
     additionalInformations.function = true;
   }
-  if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
+  if (e.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     additionalInformations.integer = true;
     return additionalInformations;
   }
   // Find forms like [12]/[23] or -[12]/[23]
-  if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite &&
-                                   o.childAtIndex(0).isDivisionOfIntegers())) {
+  if (e.isDivisionOfIntegers() || (e.type() == ExpressionNode::Type::Opposite &&
+                                   e.childAtIndex(0).isDivisionOfIntegers())) {
     additionalInformations.rational = true;
     return additionalInformations;
   }

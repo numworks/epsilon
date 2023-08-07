@@ -207,6 +207,23 @@ bool Simplification::SimplifyPower(Tree* u) {
     u->moveTreeOverTree(v);
     return true;
   }
+  if (v->type() == BlockType::Constant &&
+      Constant::Type(v) == Constant::Type::I) {
+    EditionReference remainder =
+        IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
+    if (Number::IsZero(remainder)) {
+      u->cloneTreeOverTree(1_e);
+    } else if (Number::IsOne(remainder)) {
+      u->cloneTreeOverTree(i_e);
+    } else if (Number::IsTwo(remainder)) {
+      u->cloneTreeOverTree(-1_e);
+    } else {
+      assert(Approximation::To<float>(remainder) == 3.0);
+      u->cloneTreeOverTree(KMult(-1_e, i_e));
+    }
+    remainder->removeTree();
+    return true;
+  }
   // (w^p)^n -> w^(p*n)
   if (v->type() == BlockType::Power) {
     EditionReference p = v->childAtIndex(1);

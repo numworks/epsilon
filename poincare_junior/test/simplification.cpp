@@ -245,6 +245,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a*a*b", "b*a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*a^(3)*b^(2)");
   simplifies_to("1*1*1*1", "1");
+  simplifies_to("2*i*i", "-2");
+  simplifies_to("1+i*(1+i*(1+i))", "0");
   simplifies_to("d+c+b+a", "a+b+c+d");
   simplifies_to("e^(ln(x))", "x");
   simplifies_to("e^(ln(x+x))", "2*x");

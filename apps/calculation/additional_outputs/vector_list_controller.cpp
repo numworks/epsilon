@@ -19,7 +19,7 @@ namespace Calculation {
 void VectorListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
-  assert(!exactExpression.isUninitialized());
+  assert(Calculation::HasVectorAdditionalResults(exactExpression));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");

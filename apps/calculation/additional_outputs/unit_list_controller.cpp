@@ -71,6 +71,7 @@ int UnitListController::numberOfRows() const {
 void UnitListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
+  assert(Calculation::HasUnitAdditionalResults(exactExpression));
   /* I. Handle expression cells
    *   0. Initialize expressions and layouts */
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];

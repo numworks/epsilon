@@ -277,6 +277,34 @@ bool Calculation::ForbidAdditionalResults(Expression input,
              nullptr);
 }
 
+bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
+  assert(exactOutput.hasUnit());
+  Context *globalContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
+  Expression unit;
+  Expression clone = exactOutput.clone();
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &clone, globalContext, ReductionTarget::User, &unit,
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      UnitConversion::None);
+  double value =
+      PoincareHelpers::ApproximateToScalar<double>(clone, globalContext);
+  if (!unit.isUninitialized() &&
+      (Unit::ShouldDisplayAdditionalOutputs(
+           value, unit,
+           GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
+       UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
+    /* Sometimes with angle units, the reduction with UnitConversion::None
+     * will be defined but not the reduction with UnitConversion::Default,
+     * which will make the unit list controller crash.  */
+    unit = Expression();
+    PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactOutput, globalContext,
+                                                 ReductionTarget::User, &unit);
+    return !unit.isUninitialized();
+  }
+  return false;
+}
+
 bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   return exactOutput.type() == ExpressionNode::Type::Matrix &&
@@ -404,30 +432,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     }
   }
   if (e.hasUnit()) {
-    Expression unit;
-    Expression eClone = e.clone();
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(
-        &eClone, globalContext, ReductionTarget::User, &unit,
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        UnitConversion::None);
-    double value =
-        PoincareHelpers::ApproximateToScalar<double>(eClone, globalContext);
-    if (!unit.isUninitialized() &&
-        (Unit::ShouldDisplayAdditionalOutputs(
-             value, unit,
-             GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
-         UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
-      /* Sometimes with angle units, the reduction with UnitConversion::None
-       * will be defined but not the reduction with UnitConversion::Default,
-       * which will make the unit list controller crash.  */
-      unit = Expression();
-      PoincareHelpers::CloneAndReduceAndRemoveUnit(
-          &e, globalContext, ReductionTarget::User, &unit);
-      if (!unit.isUninitialized()) {
-        return AdditionalInformations{.unit = true};
-      }
-    }
-    return AdditionalInformations{};
+    return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};
   }
   if (HasVectorAdditionalResults(e)) {
     return AdditionalInformations{.vector = true};

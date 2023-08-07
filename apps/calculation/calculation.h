@@ -111,6 +111,10 @@ class Calculation {
   static bool ForbidAdditionalResults(Poincare::Expression input,
                                       Poincare::Expression exactOutput,
                                       Poincare::Expression approximateOutput);
+  static bool HasDirectTrigoAdditionalResults(Poincare::Expression input,
+                                              Poincare::Expression exactOutput);
+  static bool HasInverseTrigoAdditionalResults(
+      Poincare::Expression input, Poincare::Expression exactOutput);
   static bool HasComplexAdditionalResults(
       Poincare::Expression approximateOutput);
   static bool HasUnitAdditionalResults(Poincare::Expression exactOutput);

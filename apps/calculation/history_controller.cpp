@@ -140,6 +140,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 void HistoryController::handleOK() {
   Context *context = App::app()->localContext();
   int focusRow = selectedRow();
+  Calculation::DisplayOutput displayOutput =
+      calculationAtIndex(focusRow)->displayOutput(context);
   HistoryViewCell *selectedCell =
       static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
   EditExpressionController *editController =
@@ -159,13 +161,11 @@ void HistoryController::handleOK() {
         selectedCell->outputView()->selectedSubviewPosition();
     if (outputSubviewPosition ==
             ScrollableTwoLayoutsView::SubviewPosition::Right &&
-        calculation->displayOutput(context) !=
-            Calculation::DisplayOutput::ExactOnly) {
+        displayOutput != Calculation::DisplayOutput::ExactOnly) {
       editController->insertTextBody(calculation->approximateOutputText(
           Calculation::NumberOfSignificantDigits::Maximal));
     } else {
-      assert(calculation->displayOutput(context) !=
-             Calculation::DisplayOutput::ApproximateOnly);
+      assert(displayOutput != Calculation::DisplayOutput::ApproximateOnly);
       editController->insertTextBody(calculation->exactOutputText());
     }
     return;
@@ -177,13 +177,11 @@ void HistoryController::handleOK() {
   Calculation::AdditionalInformations additionalInformations =
       selectedCell->additionalInformations();
   ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
-  assert(focusCalculation->displayOutput(context) !=
-         Calculation::DisplayOutput::ExactOnly);
+  assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
   Expression i = focusCalculation->input();
   Expression a = focusCalculation->approximateOutput(
       Calculation::NumberOfSignificantDigits::Maximal);
-  Expression e = focusCalculation->displayOutput(context) !=
-                         Calculation::DisplayOutput::ApproximateOnly
+  Expression e = displayOutput != Calculation::DisplayOutput::ApproximateOnly
                      ? focusCalculation->exactOutput()
                      : a;
   if (additionalInformations.complex || additionalInformations.unit ||

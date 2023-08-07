@@ -308,8 +308,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
     Set::Add(variables, Integer::IsUint8(exponent) ? base : expression);
   } else if (type == BlockType::Addition || type == BlockType::Multiplication) {
     for (const Tree* child : expression->children()) {
-      if (child->type() == BlockType::Addition) {
-        assert(type != BlockType::Addition);
+      if (child->type() == BlockType::Addition && type != BlockType::Addition) {
         Set::Add(variables, child);
       } else {
         // TODO: variables isn't expected to actually change.

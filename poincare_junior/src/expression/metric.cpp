@@ -6,6 +6,7 @@ namespace PoincareJ {
 
 bool Metric::hasImproved() const {
   assert(m_algebraicRoot == AlgebraicRoot(m_tree, m_root));
+  // Warning: m_algebraicRoot may not be simplified, even if m_tree is.
   int numberOfVariables = NumberOfVariables(m_algebraicRoot);
   if (numberOfVariables != m_numberOfVariables) {
     return numberOfVariables < m_numberOfVariables;

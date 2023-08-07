@@ -111,6 +111,8 @@ class Calculation {
   static bool ForbidAdditionalResults(Poincare::Expression input,
                                       Poincare::Expression exactOutput,
                                       Poincare::Expression approximateOutput);
+  static bool HasFunctionAdditionalResults(
+      Poincare::Expression input, Poincare::Expression approximateOutput);
   static bool HasIntegerAdditionalResults(Poincare::Expression exactOutput);
   static bool HasRationalAdditionalResults(Poincare::Expression exactOutput);
   AdditionalInformations additionalInformations();

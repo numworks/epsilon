@@ -255,18 +255,6 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
   }
 }
 
-static bool expressionIsInterestingFunction(Expression e) {
-  if (e.isOfType({ExpressionNode::Type::Opposite,
-                  ExpressionNode::Type::Parenthesis})) {
-    return expressionIsInterestingFunction(e.childAtIndex(0));
-  }
-  return !e.isNumber() &&
-         !e.isOfType({ExpressionNode::Type::ConstantMaths,
-                      ExpressionNode::Type::UnitConvert}) &&
-         !e.recursivelyMatches(Expression::IsSequence) &&
-         e.numberOfNumericalValues() == 1;
-}
-
 bool Calculation::ForbidAdditionalResults(Expression input,
                                           Expression exactOutput,
                                           Expression approximateOutput) {
@@ -287,6 +275,28 @@ bool Calculation::ForbidAdditionalResults(Expression input,
                return e.isOfType({ExpressionNode::Type::Infinity});
              },
              nullptr);
+}
+
+static bool expressionIsInterestingFunction(Expression e) {
+  assert(!e.isUninitialized());
+  if (e.isOfType({ExpressionNode::Type::Opposite,
+                  ExpressionNode::Type::Parenthesis})) {
+    return expressionIsInterestingFunction(e.childAtIndex(0));
+  }
+  return !e.isNumber() &&
+         !e.isOfType({ExpressionNode::Type::ConstantMaths,
+                      ExpressionNode::Type::UnitConvert}) &&
+         !e.recursivelyMatches(Expression::IsSequence) &&
+         e.numberOfNumericalValues() == 1;
+}
+
+bool Calculation::HasFunctionAdditionalResults(Expression input,
+                                               Expression approximateOutput) {
+  // We want a single numerical value and to avoid showing the identity function
+  assert(!input.isUninitialized());
+  assert(!approximateOutput.isUndefined());
+  return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
+         expressionIsInterestingFunction(input);
 }
 
 bool Calculation::HasIntegerAdditionalResults(Expression exactOutput) {
@@ -413,10 +423,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     additionalInformations.scientificNotation =
         ScientificNotationHelper::HasAdditionalOutputs(a, globalContext);
   }
-  // We want a single numerical value and to avoid showing the identity function
-  assert(!a.isUndefined());
-  if (a.type() != ExpressionNode::Type::Nonreal &&
-      expressionIsInterestingFunction(i)) {
+  if (HasFunctionAdditionalResults(i, a)) {
     additionalInformations.function = true;
   }
   if (HasIntegerAdditionalResults(e)) {

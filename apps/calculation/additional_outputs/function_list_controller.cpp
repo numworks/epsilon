@@ -23,7 +23,8 @@ namespace Calculation {
 void FunctionListController::computeAdditionalResults(
     Expression inputExpression, Expression exactExpression,
     Expression approximateExpression) {
-  assert(!inputExpression.isUninitialized());
+  assert(Calculation::HasFunctionAdditionalResults(inputExpression,
+                                                   approximateExpression));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");

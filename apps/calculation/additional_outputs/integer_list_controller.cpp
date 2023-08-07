@@ -25,18 +25,17 @@ OMG::Base baseAtIndex(int index) {
 }
 
 void IntegerListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
+    Expression input, Expression exactOutput, Expression approximateOutput) {
   static_assert(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
-  assert(Calculation::HasIntegerAdditionalResults(exactExpression));
-  Integer integer = static_cast<BasedInteger &>(exactExpression).integer();
+  assert(Calculation::HasIntegerAdditionalResults(exactOutput));
+  Integer integer = static_cast<BasedInteger &>(exactOutput).integer();
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     m_layouts[index] = integer.createLayout(baseAtIndex(index));
   }
   // Computing factorExpression
-  Expression factor = Factor::Builder(exactExpression);
+  Expression factor = Factor::Builder(exactOutput);
   PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext(),
                                     ReductionTarget::User);
   if (!factor.isUndefined()) {

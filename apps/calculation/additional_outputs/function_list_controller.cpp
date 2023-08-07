@@ -21,10 +21,8 @@ using namespace Shared;
 namespace Calculation {
 
 void FunctionListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
-  assert(Calculation::HasFunctionAdditionalResults(inputExpression,
-                                                   approximateExpression));
+    Expression input, Expression exactOutput, Expression approximateOutput) {
+  assert(Calculation::HasFunctionAdditionalResults(input, approximateOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -32,27 +30,26 @@ void FunctionListController::computeAdditionalResults(
   Preferences* preferences = Preferences::sharedPreferences;
   Context* context = App::app()->localContext();
 
-  float abscissa = inputExpression.getNumericalValue();
+  float abscissa = input.getNumericalValue();
   Symbol variable = Symbol::SystemSymbol();
-  inputExpression.replaceNumericalValuesWithSymbol(variable);
+  input.replaceNumericalValuesWithSymbol(variable);
 
-  Expression simplifiedExpression = inputExpression;
+  Expression simplifiedExpression = input;
   PoincareHelpers::CloneAndSimplify(&simplifiedExpression, context,
                                     ReductionTarget::SystemForApproximation);
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.
    * Sometimes when the reduction has some mistakes, the approximation of
-   * simplifiedExpression(abscissa) can differ for the approximateExpression.
+   * simplifiedExpression(abscissa) can differ for the approximateOutput.
    */
-  float ordinate = PoincareHelpers::ApproximateToScalar<float>(
-      approximateExpression, context);
+  float ordinate =
+      PoincareHelpers::ApproximateToScalar<float>(approximateOutput, context);
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = HorizontalLayout::Builder(
       LayoutHelper::String("y="),
-      inputExpression
-          .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
+      input.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
           .createLayout(preferences->displayMode(),
                         preferences->numberOfSignificantDigits(), context));
   setShowIllustration(true);

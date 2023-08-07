@@ -18,9 +18,8 @@ using namespace Shared;
 namespace Calculation {
 
 void MatrixListController::computeAdditionalResults(
-    Expression inputExpression, Expression exactExpression,
-    Expression approximateExpression) {
-  assert(Calculation::HasMatrixAdditionalResults(exactExpression));
+    Expression input, Expression exactOutput, Expression approximateOutput) {
+  assert(Calculation::HasMatrixAdditionalResults(exactOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -39,10 +38,10 @@ void MatrixListController::computeAdditionalResults(
 
   Context *context = App::app()->localContext();
   // The expression must be reduced to call methods such as determinant or trace
-  assert(exactExpression.type() == ExpressionNode::Type::Matrix);
+  assert(exactOutput.type() == ExpressionNode::Type::Matrix);
 
-  bool mIsSquared = (static_cast<Matrix &>(exactExpression).numberOfRows() ==
-                     static_cast<Matrix &>(exactExpression).numberOfColumns());
+  bool mIsSquared = (static_cast<Matrix &>(exactOutput).numberOfRows() ==
+                     static_cast<Matrix &>(exactOutput).numberOfColumns());
   size_t index = 0;
   size_t messageIndex = 0;
   // 1. Matrix determinant if square matrix
@@ -50,7 +49,7 @@ void MatrixListController::computeAdditionalResults(
     /* Determinant is reduced so that a null determinant can be detected.
      * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
      * not be reduced to a rational, but will be null in theory. */
-    Expression determinant = Determinant::Builder(exactExpression);
+    Expression determinant = Determinant::Builder(exactOutput);
     PoincareHelpers::CloneAndSimplify(
         &determinant, context, ReductionTarget::SystemForApproximation,
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -64,12 +63,12 @@ void MatrixListController::computeAdditionalResults(
       // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index++] = getLayoutFromExpression(
-          MatrixInverse::Builder(exactExpression), context, preferences);
+          MatrixInverse::Builder(exactOutput), context, preferences);
     }
   }
   // 3. Matrix row echelon form
   messageIndex = 2;
-  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(exactExpression);
+  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(exactOutput);
   m_indexMessageMap[index] = messageIndex++;
   m_layouts[index++] =
       getLayoutFromExpression(rowEchelonForm, context, preferences);
@@ -83,7 +82,7 @@ void MatrixListController::computeAdditionalResults(
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
     m_layouts[index++] = getLayoutFromExpression(
-        MatrixTrace::Builder(exactExpression), context, preferences);
+        MatrixTrace::Builder(exactOutput), context, preferences);
   }
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);

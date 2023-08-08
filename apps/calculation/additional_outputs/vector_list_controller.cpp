@@ -16,6 +16,20 @@ using namespace Shared;
 
 namespace Calculation {
 
+Expression VectorListController::BuildVectorNorm(Expression exactOutput) {
+  assert(!exactOutput.isUninitialized());
+  assert(!exactOutput.hasUnit());
+  Context *context = App::app()->localContext();
+  if (exactOutput.type() != ExpressionNode::Type::Matrix ||
+      !static_cast<const Matrix &>(exactOutput).isVector()) {
+    return Expression();
+  }
+  Expression norm = VectorNorm::Builder(exactOutput);
+  PoincareHelpers::CloneAndSimplify(&norm, context, k_target,
+                                    k_symbolicComputation);
+  return norm.isUninitialized() || norm.isUndefined() ? Expression() : norm;
+}
+
 void VectorListController::computeAdditionalResults(
     Expression input, Expression exactOutput, Expression approximateOutput) {
   assert(Calculation::HasVectorAdditionalResults(exactOutput));
@@ -38,23 +52,16 @@ void VectorListController::computeAdditionalResults(
   size_t index = 0;
   size_t messageIndex = 0;
 
-  constexpr static ReductionTarget k_target =
-      ReductionTarget::SystemForApproximation;
-  constexpr static SymbolicComputation k_symbolicComputation =
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
-
   // 1. Vector norm
-  Expression norm = VectorNorm::Builder(exactOutput);
-  PoincareHelpers::CloneAndSimplify(&norm, context, k_target,
-                                    k_symbolicComputation);
+  Expression norm = BuildVectorNorm(exactOutput);
+  assert(!norm.isUninitialized() && !norm.isUndefined());
   m_indexMessageMap[index] = messageIndex++;
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
   // 2. Normalized vector
   Expression approximatedNorm =
       PoincareHelpers::Approximate<double>(norm, context);
-  if (norm.isUndefined() ||
-      approximatedNorm.isNull(context) != TrinaryBoolean::False ||
+  if (approximatedNorm.isNull(context) != TrinaryBoolean::False ||
       Expression::IsInfinity(approximatedNorm, context)) {
     return;
   }

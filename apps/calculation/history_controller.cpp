@@ -250,14 +250,9 @@ void HistoryController::computeAdditionalResultsOfSelectedRow(
   if (*vc == nullptr) {
     return;
   }
-  Context *context = App::app()->localContext();
-  ExpiringPointer<Calculation> calculation = calculationAtIndex(selectedRow());
-  Expression i = calculation->input();
-  Expression a = calculation->approximateOutput(
-      Calculation::NumberOfSignificantDigits::Maximal);
-  Expression e = Calculation::DisplaysExact(calculation->displayOutput(context))
-                     ? calculation->exactOutput()
-                     : a;
+  Expression i, a, e;
+  calculationAtIndex(selectedRow())
+      ->fillExpressionsForAdditionalResults(&i, &e, &a);
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {

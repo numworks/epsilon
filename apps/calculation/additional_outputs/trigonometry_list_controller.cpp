@@ -55,6 +55,7 @@ void TrigonometryListController::computeAdditionalResults(
   // Set exact angle in [0, 2π]
   assert(!exactAngle.isUndefined());
   if (!unit.isUninitialized()) {
+    assert(m_directTrigonometry);
     assert(unit.isPureAngleUnit() &&
            static_cast<Unit&>(unit).representative() ==
                Unit::k_angleRepresentatives +

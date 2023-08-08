@@ -326,8 +326,10 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
   } else {
     return false;
   }
-  assert(!directExpression.isUninitialized());
+  assert(!directExpression.isUninitialized() &&
+         !directExpression.isUndefined());
   Expression angle = directExpression.childAtIndex(0);
+  assert(!angle.isUninitialized() && !angle.isUndefined());
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(&angle, globalContext,
                                                ReductionTarget::User, &unit);

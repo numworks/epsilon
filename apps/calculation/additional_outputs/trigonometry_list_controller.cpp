@@ -31,15 +31,37 @@ void TrigonometryListController::computeAdditionalResults(
   // Find the angle
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
+    // 1. Exact angle
     if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
       exactAngle = exactOutput.childAtIndex(0);
     } else {
       assert(Trigonometry::isDirectTrigonometryFunction(input));
       exactAngle = input.childAtIndex(0);
     }
+    assert(!exactAngle.isUndefined());
+    Expression unit;
+    Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
+        &exactAngle, context, ReductionTarget::User, &unit);
+    if (!unit.isUninitialized()) {
+      // Convert exact angle to radians
+      assert(unit.isPureAngleUnit() &&
+             static_cast<Unit&>(unit).representative() ==
+                 Unit::k_angleRepresentatives +
+                     Unit::k_radianRepresentativeIndex);
+      /* After a reduction, all angle units are converted to radians, so we
+       * convert exactAngle again here to fit the angle unit that will be used
+       * in reductions below. */
+      exactAngle = Multiplication::Builder(
+          exactAngle, Trigonometry::UnitConversionFactor(
+                          Preferences::AngleUnit::Radian, userAngleUnit));
+    }
+    // 2. Approximate angle
     approximateAngle = Expression();
   } else {
+    // 1. Exact angle
     exactAngle = exactOutput;
+    assert(!exactAngle.isUndefined());
+    // 2. Approximate angle
     approximateAngle = approximateOutput;
     assert(!approximateAngle.isUninitialized());
     if (approximateAngle.isPositive(context) == TrinaryBoolean::False) {
@@ -48,27 +70,9 @@ void TrigonometryListController::computeAdditionalResults(
     }
   }
 
-  Expression simplifiedAngle, unit;
-  Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &exactAngle, context, ReductionTarget::User, &unit);
-
-  // Set exact angle in [0, 2π]
-  assert(!exactAngle.isUndefined());
-  if (!unit.isUninitialized()) {
-    assert(m_directTrigonometry);
-    assert(unit.isPureAngleUnit() &&
-           static_cast<Unit&>(unit).representative() ==
-               Unit::k_angleRepresentatives +
-                   Unit::k_radianRepresentativeIndex);
-    /* After a reduction, all angle units are converted to radians, so we
-     * convert exactAngle again here to fit the angle unit that will be used
-     * in reductions below. */
-    exactAngle = Multiplication::Builder(
-        exactAngle, Trigonometry::UnitConversionFactor(
-                        Preferences::AngleUnit::Radian, userAngleUnit));
-  }
-
-  // Use the reduction of frac part to compute mod 1 on rationals
+  /* Set exact angle in [0, 2π].
+   * Use the reduction of frac part to compute modulo. */
+  Expression simplifiedAngle;
   simplifiedAngle = Multiplication::Builder(
       FracPart::Builder(Division::Builder(exactAngle, period.clone())),
       period.clone());

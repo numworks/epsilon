@@ -93,14 +93,15 @@ void VectorListController::computeAdditionalResults(
       vector.childAtIndex(1), context);
   float angleApproximation =
       PoincareHelpers::ApproximateToScalar<float>(angle, context);
-  if (std::isfinite(xApproximation) && std::isfinite(yApproximation) &&
-      std::isfinite(angleApproximation) &&
-      (OMG::LaxToZero(xApproximation) != 0.f ||
-       OMG::LaxToZero(yApproximation) != 0.f)) {
-    m_model.setVector(xApproximation, yApproximation);
-    m_model.setAngle(angleApproximation);
-    setShowIllustration(true);
+  if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
+      !std::isfinite(angleApproximation) ||
+      (OMG::LaxToZero(xApproximation) == 0.f &&
+       OMG::LaxToZero(yApproximation) == 0.f)) {
+    return;
   }
+  m_model.setVector(xApproximation, yApproximation);
+  m_model.setAngle(angleApproximation);
+  setShowIllustration(true);
 }
 
 I18n::Message VectorListController::messageAtIndex(int index) {

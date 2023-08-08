@@ -277,20 +277,24 @@ bool Calculation::ForbidAdditionalResults(Expression input,
              nullptr);
 }
 
-bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
+static bool isScalarComplex(Expression expression) {
   Preferences *preferences = Preferences::sharedPreferences;
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */
   Preferences::ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
-          preferences->complexFormat(), approximateOutput, nullptr);
-  if (approximateOutput.hasDefinedComplexApproximation<double>(
+          preferences->complexFormat(), expression, nullptr);
+  if (expression.hasDefinedComplexApproximation<double>(
           nullptr, complexFormat, preferences->angleUnit())) {
-    assert(!approximateOutput.hasUnit());
+    assert(!expression.hasUnit());
     return true;
   }
   return false;
+}
+
+bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
+  return isScalarComplex(approximateOutput);
 }
 
 bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
@@ -308,7 +312,7 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
    * Ex: 0->x; tan(x); 3->x;
    * => The additional results of tan(x) become inconsistent. And if x is
    * deleted, it crashes. */
-  assert(!HasComplexAdditionalResults(exactOutput));
+  assert(!isScalarComplex(exactOutput));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression directExpression;
@@ -335,7 +339,7 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
 bool Calculation::HasInverseTrigoAdditionalResults(Expression input,
                                                    Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!HasComplexAdditionalResults(exactOutput));
+  assert(!isScalarComplex(exactOutput));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   /* - If only the input is trigonometric but it contains symbols, do not

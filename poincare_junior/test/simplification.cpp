@@ -247,6 +247,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("1*1*1*1", "1");
   simplifies_to("2*i*i", "-2");
   simplifies_to("1+i*(1+i*(1+i))", "0");
+  simplifies_to("(1+i)*(3+2i)", "1+5*i");
   simplifies_to("2a+3b+4a", "6*a+3*b");
   simplifies_to("-6*b-4*a*b-2*b+3*a*b-4*b+2*a*b+3*b+6*a*b", "-9*b+7*a*b");
   simplifies_to("d+c+b+a", "a+b+c+d");

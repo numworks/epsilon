@@ -1128,8 +1128,24 @@ bool Simplification::ExpandMult(Tree* ref) {
   if (childIndex >= numberOfChildren) {
     return false;
   }
-  return DistributeOverNAry(ref, BlockType::Multiplication, BlockType::Addition,
-                            BlockType::Addition, childIndex);
+  if (!DistributeOverNAry(ref, BlockType::Multiplication, BlockType::Addition,
+                          BlockType::Addition, childIndex)) {
+    return false;
+  }
+  // Recursively expand multiplication children.
+  assert(ref->type() == BlockType::Addition);
+  bool changedAgain = false;
+  child = ref->nextNode();
+  for (size_t i = 0; i < ref->numberOfChildren(); i++) {
+    if (ExpandMult(child)) {
+      changedAgain = true;
+    }
+    child = child->nextTree();
+  }
+  if (changedAgain) {
+    SimplifyAddition(ref);
+  }
+  return true;
 }
 
 bool Simplification::ExpandPower(Tree* ref) {

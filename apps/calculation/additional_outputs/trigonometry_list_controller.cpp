@@ -53,27 +53,26 @@ void TrigonometryListController::computeAdditionalResults(
       &exactAngle, context, ReductionTarget::User, &unit);
 
   // Set exact angle in [0, 2π]
-  if (!exactAngle.isUndefined()) {
-    if (!unit.isUninitialized()) {
-      assert(unit.isPureAngleUnit() &&
-             static_cast<Unit&>(unit).representative() ==
-                 Unit::k_angleRepresentatives +
-                     Unit::k_radianRepresentativeIndex);
-      /* After a reduction, all angle units are converted to radians, so we
-       * convert exactAngle again here to fit the angle unit that will be used
-       * in reductions below. */
-      exactAngle = Multiplication::Builder(
-          exactAngle, Trigonometry::UnitConversionFactor(
-                          Preferences::AngleUnit::Radian, userAngleUnit));
-    }
-
-    // Use the reduction of frac part to compute mod 1 on rationals
-    simplifiedAngle = Multiplication::Builder(
-        FracPart::Builder(Division::Builder(exactAngle, period.clone())),
-        period.clone());
-    Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
-                                              ReductionTarget::User);
+  assert(!exactAngle.isUndefined());
+  if (!unit.isUninitialized()) {
+    assert(unit.isPureAngleUnit() &&
+           static_cast<Unit&>(unit).representative() ==
+               Unit::k_angleRepresentatives +
+                   Unit::k_radianRepresentativeIndex);
+    /* After a reduction, all angle units are converted to radians, so we
+     * convert exactAngle again here to fit the angle unit that will be used
+     * in reductions below. */
+    exactAngle = Multiplication::Builder(
+        exactAngle, Trigonometry::UnitConversionFactor(
+                        Preferences::AngleUnit::Radian, userAngleUnit));
   }
+
+  // Use the reduction of frac part to compute mod 1 on rationals
+  simplifiedAngle = Multiplication::Builder(
+      FracPart::Builder(Division::Builder(exactAngle, period.clone())),
+      period.clone());
+  Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
+                                            ReductionTarget::User);
 
   /* Approximate the angle if:
    * - The reduction failed
@@ -88,7 +87,6 @@ void TrigonometryListController::computeAdditionalResults(
       Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           exactAngle, simplifiedAngle, approximateAngle, context)) {
     if (approximateAngle.isUninitialized()) {
-      assert(!exactAngle.isUndefined());
       assert(m_directTrigonometry);
       /* In case of direct trigonometry, the approximate expression of the angle
        * is not yet computed, so it needs to be computed here.

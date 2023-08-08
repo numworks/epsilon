@@ -43,6 +43,7 @@ void VectorListController::computeAdditionalResults(
       ReductionTarget::SystemForApproximation;
   constexpr static SymbolicComputation k_symbolicComputation =
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+
   // 1. Vector norm
   Expression norm = VectorNorm::Builder(exactOutput);
   PoincareHelpers::CloneAndSimplify(&norm, context, k_target,
@@ -52,53 +53,51 @@ void VectorListController::computeAdditionalResults(
       PoincareHelpers::Approximate<double>(norm, context);
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
-  if (!norm.isUndefined() &&
-      approximatedNorm.isNull(context) == TrinaryBoolean::False &&
-      !Expression::IsInfinity(approximatedNorm, context)) {
-    // 2. Normalized vector
-    Expression normalized = Division::Builder(exactOutput, norm);
-    PoincareHelpers::CloneAndSimplify(&normalized, context, k_target,
-                                      k_symbolicComputation);
-    if (normalized.type() != ExpressionNode::Type::Matrix) {
-      // The reduction might have failed
-      return;
-    }
-    m_indexMessageMap[index] = messageIndex++;
-    setLineAtIndex(index++, Expression(), normalized, context,
-                   &preferencesCopy);
-    if ((isColumn ? vector.numberOfRows() : vector.numberOfColumns()) != 2) {
-      // Vector is not 2D: do not display angle and illustration
-      return;
-    }
-    assert(vector.numberOfChildren() == 2 &&
-           normalized.numberOfChildren() == 2);
-    // 3. Angle with x-axis
-    Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
-    if (normalized.childAtIndex(1).isPositive(context) ==
-        TrinaryBoolean::False) {
-      angle = Subtraction::Builder(
-          Multiplication::Builder(Rational::Builder(2),
-                                  Poincare::Constant::PiBuilder()),
-          angle);
-    }
-    m_indexMessageMap[index] = messageIndex++;
-    setLineAtIndex(index++,
-                   Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
-                   angle, context, &preferencesCopy);
-    float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
-        vector.childAtIndex(0), context);
-    float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
-        vector.childAtIndex(1), context);
-    float angleApproximation =
-        PoincareHelpers::ApproximateToScalar<float>(angle, context);
-    if (std::isfinite(xApproximation) && std::isfinite(yApproximation) &&
-        std::isfinite(angleApproximation) &&
-        (OMG::LaxToZero(xApproximation) != 0.f ||
-         OMG::LaxToZero(yApproximation) != 0.f)) {
-      m_model.setVector(xApproximation, yApproximation);
-      m_model.setAngle(angleApproximation);
-      setShowIllustration(true);
-    }
+  if (norm.isUndefined() ||
+      approximatedNorm.isNull(context) != TrinaryBoolean::False ||
+      Expression::IsInfinity(approximatedNorm, context)) {
+    return;
+  }
+  // 2. Normalized vector
+  Expression normalized = Division::Builder(exactOutput, norm);
+  PoincareHelpers::CloneAndSimplify(&normalized, context, k_target,
+                                    k_symbolicComputation);
+  if (normalized.type() != ExpressionNode::Type::Matrix) {
+    // The reduction might have failed
+    return;
+  }
+  m_indexMessageMap[index] = messageIndex++;
+  setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
+  if ((isColumn ? vector.numberOfRows() : vector.numberOfColumns()) != 2) {
+    // Vector is not 2D: do not display angle and illustration
+    return;
+  }
+  assert(vector.numberOfChildren() == 2 && normalized.numberOfChildren() == 2);
+  // 3. Angle with x-axis
+  Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
+  if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
+    angle = Subtraction::Builder(
+        Multiplication::Builder(Rational::Builder(2),
+                                Poincare::Constant::PiBuilder()),
+        angle);
+  }
+  m_indexMessageMap[index] = messageIndex++;
+  setLineAtIndex(index++,
+                 Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
+                 angle, context, &preferencesCopy);
+  float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
+      vector.childAtIndex(0), context);
+  float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
+      vector.childAtIndex(1), context);
+  float angleApproximation =
+      PoincareHelpers::ApproximateToScalar<float>(angle, context);
+  if (std::isfinite(xApproximation) && std::isfinite(yApproximation) &&
+      std::isfinite(angleApproximation) &&
+      (OMG::LaxToZero(xApproximation) != 0.f ||
+       OMG::LaxToZero(yApproximation) != 0.f)) {
+    m_model.setVector(xApproximation, yApproximation);
+    m_model.setAngle(angleApproximation);
+    setShowIllustration(true);
   }
 }
 

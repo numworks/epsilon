@@ -91,11 +91,9 @@ void TrigonometryListController::computeAdditionalResults(
           }) ||
       Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           exactAngle, simplifiedAngle, approximateAngle, context)) {
-    if (approximateAngle.isUninitialized()) {
-      assert(m_directTrigonometry);
-      /* In case of direct trigonometry, the approximate expression of the angle
-       * is not yet computed, so it needs to be computed here.
-       * Do not approximate the FracPart, which could lead to truncation error
+    if (m_directTrigonometry) {
+      assert(approximateAngle.isUninitialized());
+      /* Do not approximate the FracPart, which could lead to truncation error
        * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
        * the same sine and cosine. */
       approximateAngle =
@@ -108,6 +106,7 @@ void TrigonometryListController::computeAdditionalResults(
             Subtraction::Builder(period.clone(), approximateAngle);
       }
     }
+    assert(!approximateAngle.isUninitialized());
     approximateAngle = Shared::PoincareHelpers::Approximate<double>(
         approximateAngle, context, preferences);
     exactAngle = approximateAngle;

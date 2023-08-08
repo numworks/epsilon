@@ -56,11 +56,10 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (type0 == BlockType::Polynomial) {
     return ComparePolynomial(node0, node1);
   }
-  /* TODO : Either sort Addition/Multiplication children backward or restore
-   *        backward scan direction in CompareChildren so that:
-   *        (2 + 3) < (1 + 4) */
-  // f(0, 1, 4) < f(0, 2, 3)
-  return CompareChildren(node0, node1);
+  // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
+  return CompareChildren(
+      node0, node1,
+      type0 == BlockType::Addition || type0 == BlockType::Multiplication);
 }
 
 bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
@@ -138,9 +137,36 @@ int PrivateCompareChildren(const Tree* node0, const Tree* node1) {
   return 0;
 }
 
-int Comparison::CompareChildren(const Tree* node0, const Tree* node1) {
-  int comparison;
-  comparison = PrivateCompareChildren(node0, node1);
+// Use a recursive method to compare the trees backward. Both number of
+// nextTree() and comparison is optimal.
+int CompareNextTreePairOrItself(const Tree* node0, const Tree* node1,
+                                int numberOfComparisons) {
+  int nextTreeComparison =
+      numberOfComparisons > 1
+          ? CompareNextTreePairOrItself(node0->nextTree(), node1->nextTree(),
+                                        numberOfComparisons - 1)
+          : 0;
+  return nextTreeComparison != 0 ? nextTreeComparison
+                                 : Comparison::Compare(node0, node1);
+}
+
+int PrivateCompareChildrenBackwards(const Tree* node0, const Tree* node1) {
+  int numberOfChildren0 = node0->numberOfChildren();
+  int numberOfChildren1 = node1->numberOfChildren();
+  int numberOfComparisons = std::min(numberOfChildren0, numberOfChildren1);
+  if (numberOfComparisons == 0) {
+    return 0;
+  }
+  return CompareNextTreePairOrItself(
+      node0->childAtIndex(numberOfChildren0 - numberOfComparisons),
+      node1->childAtIndex(numberOfChildren1 - numberOfComparisons),
+      numberOfComparisons);
+}
+
+int Comparison::CompareChildren(const Tree* node0, const Tree* node1,
+                                bool backward) {
+  int comparison = (backward ? PrivateCompareChildrenBackwards
+                             : PrivateCompareChildren)(node0, node1);
   if (comparison != 0) {
     return comparison;
   }

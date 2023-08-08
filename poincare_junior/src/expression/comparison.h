@@ -25,7 +25,8 @@ class Comparison {
   static int CompareNames(const Tree* node0, const Tree* node1);
   static int CompareConstants(const Tree* node0, const Tree* node1);
   static int ComparePolynomial(const Tree* node0, const Tree* node1);
-  static int CompareChildren(const Tree* node0, const Tree* node1);
+  static int CompareChildren(const Tree* node0, const Tree* node1,
+                             bool backward = false);
   static int CompareLastChild(const Tree* node0, const Tree* node1);
 };
 

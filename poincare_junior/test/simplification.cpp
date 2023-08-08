@@ -18,13 +18,13 @@ QUIZ_CASE(pcj_simplification_expansion) {
   Simplification::DeepSystematicReduce(ref2);
   quiz_assert(Simplification::ShallowExpand(ref2));
   assert_trees_are_equal(
-      ref2, KAdd(KMult(-1_e,
-                       KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 1_e)),
-                            KMult(KTrig(π_e, 1_e), KTrig("x"_e, 0_e))),
-                       KTrig("y"_e, 1_e)),
-                 KMult(KAdd(KMult(-1_e, KTrig(π_e, 1_e), KTrig("x"_e, 1_e)),
-                            KMult(KTrig(π_e, 0_e), KTrig("x"_e, 0_e))),
-                       KTrig("y"_e, 0_e))));
+      ref2, KAdd(KMult(KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 0_e)),
+                            KMult(-1_e, KTrig(π_e, 1_e), KTrig("x"_e, 1_e))),
+                       KTrig("y"_e, 0_e)),
+                 KMult(-1_e,
+                       KAdd(KMult(KTrig(π_e, 1_e), KTrig("x"_e, 0_e)),
+                            KMult(KTrig(π_e, 0_e), KTrig("x"_e, 1_e))),
+                       KTrig("y"_e, 1_e))));
 
   EditionReference ref3(KExp(KAdd("x"_e, "y"_e, "z"_e)));
   quiz_assert(Simplification::ShallowExpand(ref3));
@@ -247,6 +247,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("1*1*1*1", "1");
   simplifies_to("2*i*i", "-2");
   simplifies_to("1+i*(1+i*(1+i))", "0");
+  simplifies_to("2a+3b+4a", "6*a+3*b");
+  simplifies_to("-6*b-4*a*b-2*b+3*a*b-4*b+2*a*b+3*b+6*a*b", "-9*b+7*a*b");
   simplifies_to("d+c+b+a", "a+b+c+d");
   simplifies_to("e^(ln(x))", "x");
   simplifies_to("e^(ln(x+x))", "2*x");
@@ -255,7 +257,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(1+x, x, y)", "1");
   simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))*y^(-1)");
   simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
-                "3*e^(3*y)*ln(y)*y^(4)+4*e^(3*y)*ln(y)*y^(3)+e^(3*y)*y^(3)");
+                "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
   simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
   simplifies_to("0.1875", "3/16");

@@ -81,6 +81,11 @@ void VectorListController::computeAdditionalResults(
                                 Poincare::Constant::PiBuilder()),
         angle);
   }
+  float angleApproximation =
+      PoincareHelpers::ApproximateToScalar<float>(angle, context);
+  if (!std::isfinite(angleApproximation)) {
+    return;
+  }
   m_indexMessageMap[index] = messageIndex++;
   setLineAtIndex(index++,
                  Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
@@ -91,10 +96,7 @@ void VectorListController::computeAdditionalResults(
       vector.childAtIndex(0), context);
   float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
       vector.childAtIndex(1), context);
-  float angleApproximation =
-      PoincareHelpers::ApproximateToScalar<float>(angle, context);
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
-      !std::isfinite(angleApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {
     return;

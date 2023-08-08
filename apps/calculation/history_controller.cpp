@@ -77,33 +77,6 @@ void HistoryController::willExitResponderChain(Responder *nextFirstResponder) {
   }
 }
 
-static Expression safeClone(Expression e) {
-  return !e.isUninitialized() ? e.clone() : Expression();
-}
-
-static void breakableComputeAdditionalResults(ExpressionsListController **vc,
-                                              Expression input,
-                                              Expression exact,
-                                              Expression approximate) {
-  if (*vc == nullptr) {
-    return;
-  }
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    Expression inputClone = safeClone(input);
-    Expression exactClone = safeClone(exact);
-    Expression approximateClone = safeClone(approximate);
-    assert(!Calculation::ForbidAdditionalResults(inputClone, exactClone,
-                                                 approximateClone));
-    (*vc)->tidy();
-    (*vc)->computeAdditionalResults(inputClone, exactClone, approximateClone);
-  } else {
-    (*vc)->tidy();
-    *vc = nullptr;
-  }
-}
-
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down || event == Ion::Events::Back ||
       event == Ion::Events::Clear) {
@@ -137,108 +110,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-void HistoryController::handleOK() {
-  Context *context = App::app()->localContext();
-  int focusRow = selectedRow();
-  Calculation::DisplayOutput displayOutput =
-      calculationAtIndex(focusRow)->displayOutput(context);
-  HistoryViewCell *selectedCell =
-      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
-  EditExpressionController *editController =
-      static_cast<EditExpressionController *>(parentResponder());
-
-  if (m_selectedSubviewType == SubviewType::Input) {
-    m_selectableListView.deselectTable();
-    editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
-    return;
-  }
-
-  if (m_selectedSubviewType == SubviewType::Output) {
-    m_selectableListView.deselectTable();
-    Shared::ExpiringPointer<Calculation> calculation =
-        calculationAtIndex(focusRow);
-    ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
-        selectedCell->outputView()->selectedSubviewPosition();
-    if (outputSubviewPosition ==
-            ScrollableTwoLayoutsView::SubviewPosition::Right &&
-        displayOutput != Calculation::DisplayOutput::ExactOnly) {
-      editController->insertTextBody(calculation->approximateOutputText(
-          Calculation::NumberOfSignificantDigits::Maximal));
-    } else {
-      assert(displayOutput != Calculation::DisplayOutput::ApproximateOnly);
-      editController->insertTextBody(calculation->exactOutputText());
-    }
-    return;
-  }
-
-  assert(m_selectedSubviewType == SubviewType::Ellipsis);
-  /* TODO: Refactor to avoid writing an if for each parent * child. */
-  ExpressionsListController *vc = nullptr;
-  Calculation::AdditionalInformations additionalInformations =
-      selectedCell->additionalInformations();
-  ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
-  assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
-  Expression i = focusCalculation->input();
-  Expression a = focusCalculation->approximateOutput(
-      Calculation::NumberOfSignificantDigits::Maximal);
-  Expression e = Calculation::DisplaysExact(displayOutput)
-                     ? focusCalculation->exactOutput()
-                     : a;
-  if (additionalInformations.complex || additionalInformations.unit ||
-      additionalInformations.vector || additionalInformations.matrix ||
-      additionalInformations.directTrigonometry ||
-      additionalInformations.inverseTrigonometry) {
-    // The main controllers have to be initialized before use
-    m_unionController.~UnionController();
-    vc = m_unionController.listController();
-    if (additionalInformations.complex) {
-      new (&m_unionController) ComplexListController(editController);
-    } else if (additionalInformations.unit) {
-      new (&m_unionController) UnitListController(editController);
-    } else if (additionalInformations.vector) {
-      new (&m_unionController) VectorListController(editController);
-    } else if (additionalInformations.matrix) {
-      new (&m_unionController) MatrixListController(editController);
-    } else if (additionalInformations.directTrigonometry ||
-               additionalInformations.inverseTrigonometry) {
-      new (&m_unionController) TrigonometryListController(editController);
-      m_unionController.m_trigonometryController.setTrigonometryType(
-          additionalInformations.directTrigonometry);
-    }
-  } else if (additionalInformations.integer) {
-    vc = &m_integerController;
-  } else if (additionalInformations.rational) {
-    vc = &m_rationalController;
-  }
-
-  breakableComputeAdditionalResults(&vc, i, e, a);
-
-  if (additionalInformations.function ||
-      additionalInformations.scientificNotation) {
-    assert(vc == nullptr || vc == &m_integerController ||
-           vc == &m_rationalController);
-    ChainableExpressionsListController *tail =
-        static_cast<ChainableExpressionsListController *>(vc);
-    if (additionalInformations.function) {
-      m_unionController.~UnionController();
-      new (&m_unionController) FunctionListController(editController);
-      m_unionController.m_functionController.setTail(tail);
-      vc = m_unionController.listController();
-    } else {
-      assert(additionalInformations.scientificNotation);
-      m_scientificNotationListController.setTail(tail);
-      vc = &m_scientificNotationListController;
-    }
-    breakableComputeAdditionalResults(&vc, i, e, a);
-  }
-
-  if (vc) {
-    assert(vc->numberOfRows() > 0);
-    App::app()->displayModalViewController(vc, 0.f, 0.f,
-                                           Metric::PopUpMarginsNoBottom);
-  }
 }
 
 Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
@@ -367,6 +238,134 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
   }
   if (previousSelectedCell) {
     previousSelectedCell->cellDidSelectSubview(SubviewType::Input);
+  }
+}
+
+static Expression safeClone(Expression e) {
+  return !e.isUninitialized() ? e.clone() : Expression();
+}
+
+static void breakableComputeAdditionalResults(ExpressionsListController **vc,
+                                              Expression input,
+                                              Expression exact,
+                                              Expression approximate) {
+  if (*vc == nullptr) {
+    return;
+  }
+  CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
+    Expression iClone = safeClone(i);
+    Expression eClone = safeClone(e);
+    Expression aClone = safeClone(a);
+    assert(!Calculation::ForbidAdditionalResults(iClone, eClone, aClone));
+    (*vc)->tidy();
+    (*vc)->computeAdditionalResults(iClone, eClone, aClone);
+  } else {
+    (*vc)->tidy();
+    *vc = nullptr;
+  }
+}
+
+void HistoryController::handleOK() {
+  Context *context = App::app()->localContext();
+  int focusRow = selectedRow();
+  Calculation::DisplayOutput displayOutput =
+      calculationAtIndex(focusRow)->displayOutput(context);
+  HistoryViewCell *selectedCell =
+      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
+  EditExpressionController *editController =
+      static_cast<EditExpressionController *>(parentResponder());
+
+  if (m_selectedSubviewType == SubviewType::Input) {
+    m_selectableListView.deselectTable();
+    editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
+    return;
+  }
+
+  if (m_selectedSubviewType == SubviewType::Output) {
+    m_selectableListView.deselectTable();
+    Shared::ExpiringPointer<Calculation> calculation =
+        calculationAtIndex(focusRow);
+    ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
+        selectedCell->outputView()->selectedSubviewPosition();
+    if (outputSubviewPosition ==
+            ScrollableTwoLayoutsView::SubviewPosition::Right &&
+        displayOutput != Calculation::DisplayOutput::ExactOnly) {
+      editController->insertTextBody(calculation->approximateOutputText(
+          Calculation::NumberOfSignificantDigits::Maximal));
+    } else {
+      assert(displayOutput != Calculation::DisplayOutput::ApproximateOnly);
+      editController->insertTextBody(calculation->exactOutputText());
+    }
+    return;
+  }
+
+  assert(m_selectedSubviewType == SubviewType::Ellipsis);
+  /* TODO: Refactor to avoid writing an if for each parent * child. */
+  ExpressionsListController *vc = nullptr;
+  Calculation::AdditionalInformations additionalInformations =
+      selectedCell->additionalInformations();
+  ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
+  assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
+  Expression i = focusCalculation->input();
+  Expression a = focusCalculation->approximateOutput(
+      Calculation::NumberOfSignificantDigits::Maximal);
+  Expression e = Calculation::DisplaysExact(displayOutput)
+                     ? focusCalculation->exactOutput()
+                     : a;
+  if (additionalInformations.complex || additionalInformations.unit ||
+      additionalInformations.vector || additionalInformations.matrix ||
+      additionalInformations.directTrigonometry ||
+      additionalInformations.inverseTrigonometry) {
+    // The main controllers have to be initialized before use
+    m_unionController.~UnionController();
+    vc = m_unionController.listController();
+    if (additionalInformations.complex) {
+      new (&m_unionController) ComplexListController(editController);
+    } else if (additionalInformations.unit) {
+      new (&m_unionController) UnitListController(editController);
+    } else if (additionalInformations.vector) {
+      new (&m_unionController) VectorListController(editController);
+    } else if (additionalInformations.matrix) {
+      new (&m_unionController) MatrixListController(editController);
+    } else if (additionalInformations.directTrigonometry ||
+               additionalInformations.inverseTrigonometry) {
+      new (&m_unionController) TrigonometryListController(editController);
+      m_unionController.m_trigonometryController.setTrigonometryType(
+          additionalInformations.directTrigonometry);
+    }
+  } else if (additionalInformations.integer) {
+    vc = &m_integerController;
+  } else if (additionalInformations.rational) {
+    vc = &m_rationalController;
+  }
+
+  breakableComputeAdditionalResults(&vc, i, e, a);
+
+  if (additionalInformations.function ||
+      additionalInformations.scientificNotation) {
+    assert(vc == nullptr || vc == &m_integerController ||
+           vc == &m_rationalController);
+    ChainableExpressionsListController *tail =
+        static_cast<ChainableExpressionsListController *>(vc);
+    if (additionalInformations.function) {
+      m_unionController.~UnionController();
+      new (&m_unionController) FunctionListController(editController);
+      m_unionController.m_functionController.setTail(tail);
+      vc = m_unionController.listController();
+    } else {
+      assert(additionalInformations.scientificNotation);
+      m_scientificNotationListController.setTail(tail);
+      vc = &m_scientificNotationListController;
+    }
+    breakableComputeAdditionalResults(&vc, i, e, a);
+  }
+
+  if (vc) {
+    assert(vc->numberOfRows() > 0);
+    App::app()->displayModalViewController(vc, 0.f, 0.f,
+                                           Metric::PopUpMarginsNoBottom);
   }
 }
 

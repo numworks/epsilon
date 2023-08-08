@@ -343,15 +343,7 @@ bool Calculation::HasInverseTrigoAdditionalResults(Expression input,
                                                    Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!isScalarComplex(exactOutput));
-  Context *globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  /* - If only the input is trigonometric but it contains symbols, do not
-   *   display trigonometric additional informations, in case the symbol value
-   *   is later modified/deleted in the storage and can't be retrieved.
-   * - The angle cannot be complex since Expression a isn't. */
-  return (Trigonometry::isInverseTrigonometryFunction(input) &&
-          !input.deepIsSymbolic(globalContext,
-                                SymbolicComputation::DoNotReplaceAnySymbol)) ||
+  return (Trigonometry::isInverseTrigonometryFunction(input)) ||
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
 }
 

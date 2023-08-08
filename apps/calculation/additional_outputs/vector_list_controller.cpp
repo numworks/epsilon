@@ -50,12 +50,10 @@ void VectorListController::computeAdditionalResults(
   Matrix vector = static_cast<Matrix &>(approximateOutput);
   assert(vector.isVector());
   size_t index = 0;
-  size_t messageIndex = 0;
 
   // 1. Vector norm
   Expression norm = BuildVectorNorm(exactOutput);
   assert(!norm.isUninitialized() && !norm.isUndefined());
-  m_indexMessageMap[index] = messageIndex++;
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
   // 2. Normalized vector
@@ -72,7 +70,6 @@ void VectorListController::computeAdditionalResults(
     // The reduction might have failed
     return;
   }
-  m_indexMessageMap[index] = messageIndex++;
   setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
 
   // 3. Angle with x-axis
@@ -93,7 +90,6 @@ void VectorListController::computeAdditionalResults(
   if (!std::isfinite(angleApproximation)) {
     return;
   }
-  m_indexMessageMap[index] = messageIndex++;
   setLineAtIndex(index++,
                  Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
                  angle, context, &preferencesCopy);
@@ -121,7 +117,7 @@ I18n::Message VectorListController::messageAtIndex(int index) {
       I18n::Message::UnitVector,
       I18n::Message::AngleWithFirstAxis,
   };
-  return messages[m_indexMessageMap[index]];
+  return messages[index];
 }
 
 }  // namespace Calculation

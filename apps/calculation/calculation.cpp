@@ -382,19 +382,29 @@ bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
 
 bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
   Expression norm = VectorListController::BuildVectorNorm(exactOutput);
-  return !norm.isUninitialized();
+  if (norm.isUninitialized()) {
+    return false;
+  }
+  assert(!norm.isUndefined());
+  int nChildren = exactOutput.numberOfChildren();
+  for (int i = 0; i < nChildren; ++i) {
+    if (isScalarComplex(exactOutput.childAtIndex(i))) {
+      return false;
+    }
+  }
+  return true;
 }
 
 bool Calculation::HasMatrixAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
-  return exactOutput.type() == ExpressionNode::Type::Matrix &&
-         !static_cast<const Matrix &>(exactOutput).isVector();
+  return exactOutput.type() == ExpressionNode::Type::Matrix;
 }
 
 bool Calculation::HasScientificNotationAdditionalResults(
     Expression approximateOutput) {
   assert(!approximateOutput.hasUnit());
+  assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
@@ -423,6 +433,7 @@ bool Calculation::HasFunctionAdditionalResults(Expression input,
   assert(!input.isUninitialized());
   assert(!approximateOutput.isUndefined());
   assert(!approximateOutput.hasUnit());
+  assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
   return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
          expressionIsInterestingFunction(input);
 }

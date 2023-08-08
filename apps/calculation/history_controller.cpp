@@ -245,13 +245,19 @@ static Expression safeClone(Expression e) {
   return !e.isUninitialized() ? e.clone() : Expression();
 }
 
-static void breakableComputeAdditionalResults(ExpressionsListController **vc,
-                                              Expression input,
-                                              Expression exact,
-                                              Expression approximate) {
+void HistoryController::computeAdditionalResultsOfSelectedRow(
+    ExpressionsListController **vc) {
   if (*vc == nullptr) {
     return;
   }
+  Context *context = App::app()->localContext();
+  ExpiringPointer<Calculation> calculation = calculationAtIndex(selectedRow());
+  Expression i = calculation->input();
+  Expression a = calculation->approximateOutput(
+      Calculation::NumberOfSignificantDigits::Maximal);
+  Expression e = Calculation::DisplaysExact(calculation->displayOutput(context))
+                     ? calculation->exactOutput()
+                     : a;
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
@@ -306,14 +312,7 @@ void HistoryController::handleOK() {
   ExpressionsListController *vc = nullptr;
   Calculation::AdditionalInformations additionalInformations =
       selectedCell->additionalInformations();
-  ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
-  Expression i = focusCalculation->input();
-  Expression a = focusCalculation->approximateOutput(
-      Calculation::NumberOfSignificantDigits::Maximal);
-  Expression e = Calculation::DisplaysExact(displayOutput)
-                     ? focusCalculation->exactOutput()
-                     : a;
   if (additionalInformations.complex || additionalInformations.unit ||
       additionalInformations.vector || additionalInformations.matrix ||
       additionalInformations.directTrigonometry ||
@@ -340,8 +339,7 @@ void HistoryController::handleOK() {
   } else if (additionalInformations.rational) {
     vc = &m_rationalController;
   }
-
-  breakableComputeAdditionalResults(&vc, i, e, a);
+  computeAdditionalResultsOfSelectedRow(&vc);
 
   if (additionalInformations.function ||
       additionalInformations.scientificNotation) {
@@ -359,7 +357,7 @@ void HistoryController::handleOK() {
       m_scientificNotationListController.setTail(tail);
       vc = &m_scientificNotationListController;
     }
-    breakableComputeAdditionalResults(&vc, i, e, a);
+    computeAdditionalResultsOfSelectedRow(&vc);
   }
 
   if (vc) {

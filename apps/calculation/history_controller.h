@@ -53,6 +53,7 @@ class HistoryController : public Escher::ViewController,
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   bool calculationAtIndexToggles(int index);
+  void computeAdditionalResultsOfSelectedRow(ExpressionsListController** vc);
   void handleOK();
 
   constexpr static int k_maxNumberOfDisplayedRows = 5;

@@ -308,6 +308,7 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
    * Ex: 0->x; tan(x); 3->x;
    * => The additional results of tan(x) become inconsistent. And if x is
    * deleted, it crashes. */
+  assert(!HasComplexAdditionalResults(exactOutput));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression directExpression;
@@ -333,6 +334,8 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
 
 bool Calculation::HasInverseTrigoAdditionalResults(Expression input,
                                                    Expression exactOutput) {
+  // If the result is complex, it is treated as a complex result instead.
+  assert(!HasComplexAdditionalResults(exactOutput));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   /* - If only the input is trigonometric but it contains symbols, do not
@@ -375,12 +378,14 @@ bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
 
 bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
+  assert(!exactOutput.hasUnit());
   return exactOutput.type() == ExpressionNode::Type::Matrix &&
          static_cast<const Matrix &>(exactOutput).isVector();
 }
 
 bool Calculation::HasMatrixAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
+  assert(!exactOutput.hasUnit());
   return exactOutput.type() == ExpressionNode::Type::Matrix &&
          !static_cast<const Matrix &>(exactOutput).isVector();
 }
@@ -415,12 +420,14 @@ bool Calculation::HasFunctionAdditionalResults(Expression input,
   // We want a single numerical value and to avoid showing the identity function
   assert(!input.isUninitialized());
   assert(!approximateOutput.isUndefined());
+  assert(!approximateOutput.hasUnit());
   return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
          expressionIsInterestingFunction(input);
 }
 
 bool Calculation::HasIntegerAdditionalResults(Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
+  assert(!exactOutput.hasUnit());
   return exactOutput.isBasedIntegerCappedBy(
       k_maximalIntegerWithAdditionalInformation);
 }
@@ -428,6 +435,7 @@ bool Calculation::HasIntegerAdditionalResults(Expression exactOutput) {
 bool Calculation::HasRationalAdditionalResults(Expression exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
   assert(!exactOutput.isUninitialized());
+  assert(!exactOutput.hasUnit());
   return exactOutput.isDivisionOfIntegers() ||
          (exactOutput.type() == ExpressionNode::Type::Opposite &&
           exactOutput.childAtIndex(0).isDivisionOfIntegers());

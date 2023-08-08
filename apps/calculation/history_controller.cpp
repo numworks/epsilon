@@ -183,7 +183,7 @@ void HistoryController::handleOK() {
   Expression i = focusCalculation->input();
   Expression a = focusCalculation->approximateOutput(
       Calculation::NumberOfSignificantDigits::Maximal);
-  Expression e = displayOutput != Calculation::DisplayOutput::ApproximateOnly
+  Expression e = Calculation::DisplaysExact(displayOutput)
                      ? focusCalculation->exactOutput()
                      : a;
   if (additionalInformations.complex || additionalInformations.unit ||

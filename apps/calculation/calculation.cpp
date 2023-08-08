@@ -444,10 +444,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression i = input();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
-  Expression e = displayOutput(globalContext) !=
-                         Calculation::DisplayOutput::ApproximateOnly
-                     ? exactOutput()
-                     : a;
+  Expression e =
+      DisplaysExact(displayOutput(globalContext)) ? exactOutput() : a;
   if (ForbidAdditionalResults(i, e, a)) {
     return AdditionalInformations{};
   }

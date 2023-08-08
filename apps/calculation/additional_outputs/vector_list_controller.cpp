@@ -53,12 +53,12 @@ void VectorListController::computeAdditionalResults(
       PoincareHelpers::Approximate<double>(norm, context);
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
+  // 2. Normalized vector
   if (norm.isUndefined() ||
       approximatedNorm.isNull(context) != TrinaryBoolean::False ||
       Expression::IsInfinity(approximatedNorm, context)) {
     return;
   }
-  // 2. Normalized vector
   Expression normalized = Division::Builder(exactOutput, norm);
   PoincareHelpers::CloneAndSimplify(&normalized, context, k_target,
                                     k_symbolicComputation);
@@ -68,12 +68,13 @@ void VectorListController::computeAdditionalResults(
   }
   m_indexMessageMap[index] = messageIndex++;
   setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
+
+  // 3. Angle with x-axis
   if ((isColumn ? vector.numberOfRows() : vector.numberOfColumns()) != 2) {
-    // Vector is not 2D: do not display angle and illustration
+    // Vector is not 2D
     return;
   }
   assert(vector.numberOfChildren() == 2 && normalized.numberOfChildren() == 2);
-  // 3. Angle with x-axis
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
   if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
     angle = Subtraction::Builder(
@@ -85,6 +86,8 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++,
                  Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
                  angle, context, &preferencesCopy);
+
+  // 4. Illustration
   float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
       vector.childAtIndex(0), context);
   float yApproximation = PoincareHelpers::ApproximateToScalar<float>(

@@ -377,10 +377,8 @@ bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
 }
 
 bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  return exactOutput.type() == ExpressionNode::Type::Matrix &&
-         static_cast<const Matrix &>(exactOutput).isVector();
+  Expression norm = VectorListController::BuildVectorNorm(exactOutput);
+  return !norm.isUninitialized();
 }
 
 bool Calculation::HasMatrixAdditionalResults(Expression exactOutput) {

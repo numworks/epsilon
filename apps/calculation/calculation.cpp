@@ -263,18 +263,21 @@ bool Calculation::ForbidAdditionalResults(Expression input,
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  return Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
-         input.isUninitialized() || exactOutput.isUninitialized() ||
-         approximateOutput.isUninitialized() ||
-         approximateOutput.isUndefined() ||
-         input.type() == ExpressionNode::Type::Store ||
-         exactOutput.type() == ExpressionNode::Type::List ||
-         approximateOutput.type() == ExpressionNode::Type::List ||
-         approximateOutput.recursivelyMatches(
-             [](const Expression e, Context *c) {
-               return e.isOfType({ExpressionNode::Type::Infinity});
-             },
-             nullptr);
+  if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
+      input.isUninitialized() || exactOutput.isUninitialized() ||
+      approximateOutput.isUninitialized() || approximateOutput.isUndefined() ||
+      input.type() == ExpressionNode::Type::Store ||
+      exactOutput.type() == ExpressionNode::Type::List ||
+      approximateOutput.type() == ExpressionNode::Type::List ||
+      approximateOutput.recursivelyMatches(
+          [](const Expression e, Context *c) {
+            return e.isOfType({ExpressionNode::Type::Infinity});
+          },
+          nullptr)) {
+    return true;
+  }
+  assert(!input.isUndefined() && !exactOutput.isUndefined());
+  return false;
 }
 
 static bool isScalarComplex(Expression expression) {

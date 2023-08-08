@@ -34,8 +34,7 @@ void VectorListController::computeAdditionalResults(
 
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
   Matrix vector = static_cast<Matrix &>(approximateOutput);
-  assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
-  bool isColumn = vector.numberOfColumns() == 1;
+  assert(vector.isVector());
   size_t index = 0;
   size_t messageIndex = 0;
 
@@ -49,11 +48,11 @@ void VectorListController::computeAdditionalResults(
   PoincareHelpers::CloneAndSimplify(&norm, context, k_target,
                                     k_symbolicComputation);
   m_indexMessageMap[index] = messageIndex++;
-  Expression approximatedNorm =
-      PoincareHelpers::Approximate<double>(norm, context);
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
   // 2. Normalized vector
+  Expression approximatedNorm =
+      PoincareHelpers::Approximate<double>(norm, context);
   if (norm.isUndefined() ||
       approximatedNorm.isNull(context) != TrinaryBoolean::False ||
       Expression::IsInfinity(approximatedNorm, context)) {
@@ -70,11 +69,11 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
 
   // 3. Angle with x-axis
-  if ((isColumn ? vector.numberOfRows() : vector.numberOfColumns()) != 2) {
+  if (vector.numberOfChildren() != 2) {
     // Vector is not 2D
     return;
   }
-  assert(vector.numberOfChildren() == 2 && normalized.numberOfChildren() == 2);
+  assert(normalized.numberOfChildren() == 2);
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
   if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
     angle = Subtraction::Builder(

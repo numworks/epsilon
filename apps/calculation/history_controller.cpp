@@ -303,18 +303,20 @@ void HistoryController::handleOK() {
   }
 
   assert(m_selectedSubviewType == SubviewType::Ellipsis);
+
+  // Head controller
   /* TODO: Refactor to avoid writing an if for each parent * child. */
-  ExpressionsListController *vc = nullptr;
+  ExpressionsListController *mainController = nullptr;
   Calculation::AdditionalInformations additionalInformations =
       selectedCell->additionalInformations();
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
   if (additionalInformations.complex || additionalInformations.unit ||
       additionalInformations.vector || additionalInformations.matrix ||
       additionalInformations.directTrigonometry ||
-      additionalInformations.inverseTrigonometry) {
-    // The main controllers have to be initialized before use
+      additionalInformations.inverseTrigonometry ||
+      additionalInformations.function) {
     m_unionController.~UnionController();
-    vc = m_unionController.listController();
+    mainController = m_unionController.listController();
     if (additionalInformations.complex) {
       new (&m_unionController) ComplexListController(editController);
     } else if (additionalInformations.unit) {
@@ -328,36 +330,37 @@ void HistoryController::handleOK() {
       new (&m_unionController) TrigonometryListController(editController);
       m_unionController.m_trigonometryController.setTrigonometryType(
           additionalInformations.directTrigonometry);
-    }
-  } else if (additionalInformations.integer) {
-    vc = &m_integerController;
-  } else if (additionalInformations.rational) {
-    vc = &m_rationalController;
-  }
-  computeAdditionalResultsOfSelectedRow(&vc);
-
-  if (additionalInformations.function ||
-      additionalInformations.scientificNotation) {
-    assert(vc == nullptr || vc == &m_integerController ||
-           vc == &m_rationalController);
-    ChainableExpressionsListController *tail =
-        static_cast<ChainableExpressionsListController *>(vc);
-    if (additionalInformations.function) {
-      m_unionController.~UnionController();
-      new (&m_unionController) FunctionListController(editController);
-      m_unionController.m_functionController.setTail(tail);
-      vc = m_unionController.listController();
     } else {
-      assert(additionalInformations.scientificNotation);
-      m_scientificNotationListController.setTail(tail);
-      vc = &m_scientificNotationListController;
+      assert(additionalInformations.function);
+      new (&m_unionController) FunctionListController(editController);
     }
-    computeAdditionalResultsOfSelectedRow(&vc);
+  } else if (additionalInformations.scientificNotation) {
+    mainController = &m_scientificNotationListController;
   }
+  computeAdditionalResultsOfSelectedRow(&mainController);
 
-  if (vc) {
-    assert(vc->numberOfRows() > 0);
-    App::app()->displayModalViewController(vc, 0.f, 0.f,
+  // Tail controller
+  ExpressionsListController *tailController = nullptr;
+  if (additionalInformations.integer) {
+    tailController = &m_integerController;
+  } else if (additionalInformations.rational) {
+    tailController = &m_rationalController;
+  }
+  computeAdditionalResultsOfSelectedRow(&tailController);
+
+  if (tailController) {
+    if (mainController) {
+      static_cast<ChainedExpressionsListController *>(mainController)
+          ->setTail(static_cast<ChainableExpressionsListController *>(
+              tailController));
+    } else {
+      mainController = tailController;
+      tailController = nullptr;
+    }
+  }
+  if (mainController) {
+    assert(mainController->numberOfRows() > 0);
+    App::app()->displayModalViewController(mainController, 0.f, 0.f,
                                            Metric::PopUpMarginsNoBottom);
   }
 }

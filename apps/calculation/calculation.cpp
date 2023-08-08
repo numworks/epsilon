@@ -454,13 +454,21 @@ bool Calculation::HasRationalAdditionalResults(Expression exactOutput) {
           exactOutput.childAtIndex(0).isDivisionOfIntegers());
 }
 
-Calculation::AdditionalInformations Calculation::additionalInformations() {
+void Calculation::fillExpressionsForAdditionalResults(
+    Expression *input, Expression *exactOutput, Expression *approximateOutput) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression i = input();
-  Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
-  Expression e =
-      DisplaysExact(displayOutput(globalContext)) ? exactOutput() : a;
+  *input = this->input();
+  *approximateOutput =
+      this->approximateOutput(NumberOfSignificantDigits::Maximal);
+  *exactOutput = DisplaysExact(displayOutput(globalContext))
+                     ? this->exactOutput()
+                     : *approximateOutput;
+}
+
+Calculation::AdditionalInformations Calculation::additionalInformations() {
+  Expression i, a, e;
+  fillExpressionsForAdditionalResults(&i, &e, &a);
   if (ForbidAdditionalResults(i, e, a)) {
     return AdditionalInformations{};
   }

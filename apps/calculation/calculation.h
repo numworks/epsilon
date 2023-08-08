@@ -126,6 +126,9 @@ class Calculation {
       Poincare::Expression input, Poincare::Expression approximateOutput);
   static bool HasIntegerAdditionalResults(Poincare::Expression exactOutput);
   static bool HasRationalAdditionalResults(Poincare::Expression exactOutput);
+  void fillExpressionsForAdditionalResults(
+      Poincare::Expression* input, Poincare::Expression* exactOutput,
+      Poincare::Expression* approximateOutput);
   AdditionalInformations additionalInformations();
 
  private:

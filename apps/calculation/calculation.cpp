@@ -289,41 +289,10 @@ bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
 
 bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
                                                   Expression exactOutput) {
-  /* Trigonometry additional results are displayed if either input or output is
-   * a direct function. Indeed, we want to capture both cases:
-   * - > input: cos(60)
-   *   > output: 1/2
-   * - > input: 2cos(2) - cos(2)
-   *   > output: cos(2)
-   * However if the result is complex, it is treated as a complex result. */
-  assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
-  Context *globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression directExpression;
-  if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
-    directExpression = exactOutput;
-  } else if (Trigonometry::isDirectTrigonometryFunction(input) &&
-             !input.deepIsSymbolic(
-                 globalContext, SymbolicComputation::DoNotReplaceAnySymbol)) {
-    /* Do not display trigonometric additional informations, in case the symbol
-     * value is later modified/deleted in the storage and can't be retrieved.
-     * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become
-     * inconsistent. And if x is deleted, it crashes. */
-    directExpression = input;
-  } else {
-    return false;
-  }
-  assert(!directExpression.isUninitialized() &&
-         !directExpression.isUndefined());
-  Expression angle = directExpression.childAtIndex(0);
-  assert(!angle.isUninitialized() && !angle.isUndefined());
-  Expression unit;
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(&angle, globalContext,
-                                               ReductionTarget::User, &unit);
-  // The angle must be real.
-  return (unit.isPureAngleUnit() || unit.isUninitialized()) &&
-         std::isfinite(PoincareHelpers::ApproximateToScalar<double>(
-             angle, globalContext));
+  Expression exactAngle =
+      TrigonometryListController::ExtractExactAngleFromDirectTrigo(input,
+                                                                   exactOutput);
+  return !exactAngle.isUninitialized();
 }
 
 bool Calculation::HasInverseTrigoAdditionalResults(Expression input,

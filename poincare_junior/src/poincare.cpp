@@ -52,8 +52,8 @@ void CloseLogger(LoggerType type) {
   s_forceClosed[static_cast<int>(type)] = true;
 }
 
-void Log(LoggerType type, const char* event, void* blockAddress,
-         size_t blockSize, void* pointerAddress) {
+void Log(LoggerType type, const char* event, const void* blockAddress,
+         size_t blockSize, const void* pointerAddress) {
   Logger(type) << "  <" << event;
   if (blockAddress) {
     Logger(type) << " blockAddress=\"" << blockAddress << "\"";

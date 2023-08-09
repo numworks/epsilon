@@ -69,9 +69,31 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
       return SimplifyTrig(u);
     case BlockType::Derivative:
       return Derivation::ShallowSimplify(u);
+    case BlockType::Ln:
+      return SimplifyLn(u);
     default:
       return false;
   }
+}
+
+bool Simplification::SimplifyLn(Tree* u) {
+  Tree* child = u->nextNode();
+  if (!IsInteger(child)) {
+    return false;
+  }
+  if (Number::IsMinusOne(child)) {
+    // Necessary so that sqrt(-1)->i
+    u->cloneTreeOverTree(KMult(i_e, π_e));
+    SimplifyMultiplication(u);
+    return true;
+  } else if (Number::IsOne(child)) {
+    u->cloneTreeOverTree(0_e);
+    return true;
+  } else if (Number::IsZero(child)) {
+    u->cloneTreeOverTree(KUndef);
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::SimplifyAbs(Tree* u) {
@@ -998,8 +1020,35 @@ bool Simplification::ExpandLn(Tree* ref) {
 bool Simplification::ExpandExp(Tree* ref) {
   // TODO: exp(A?*B) = exp(A)^(B) if B is an integer only
   // exp(A+B+...) = exp(A) * exp(B) * ...
-  return DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
-                            BlockType::Multiplication);
+  if (DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
+                         BlockType::Multiplication)) {
+    // Multiplication children may be extended again.
+    assert(ref->type() == BlockType::Multiplication);
+    int n = ref->numberOfChildren();
+    Tree* child = ref->nextNode();
+    for (size_t i = 0; i < n; i++) {
+      ExpandExp(child);
+      child = child->nextTree();
+    }
+    return true;
+  }
+
+  return
+      // exp(A*i*B) = cos(A*B) + i*sin(A*B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref,
+          KExp(
+              KMult(KAnyTreesPlaceholder<A>(), i_e, KAnyTreesPlaceholder<B>())),
+          KAdd(
+              KTrig(KMult(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
+                    0_e),
+              KMult(KTrig(KMult(KAnyTreesPlaceholder<A>(),
+                                KAnyTreesPlaceholder<B>()),
+                          1_e),
+                    i_e))) ||
+      // exp(i) = cos(1) + i*sin(1) - TODO: Find a better solution
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KExp(i_e), KAdd(KTrig(1_e, 0_e), KMult(KTrig(1_e, 1_e), i_e)));
 }
 
 bool Simplification::ContractExpMult(Tree* ref) {

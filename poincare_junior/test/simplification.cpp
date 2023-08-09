@@ -277,6 +277,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2*sin(2y)*cos(y)", "sin(y)+sin(3*y)");
   simplifies_to("2*cos(2y)*sin(y)", "-1*sin(y)+sin(3*y)");
   simplifies_to("2*cos(2y)*cos(y)", "cos(y)+cos(3*y)");
+  simplifies_to("ln(0)", "undef");
+  simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
+  simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO: Fix this simplification
+  //   simplifies_to("sin(17*π/12)^2+cos(5*π/12)^2", "1",
+  //                 {.m_complexFormat = ComplexFormat::Cartesian});
 }
 
 QUIZ_CASE(pcj_power_simplification) {

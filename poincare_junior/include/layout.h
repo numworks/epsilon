@@ -1,6 +1,7 @@
 #ifndef POINCARE_LAYOUT_H
 #define POINCARE_LAYOUT_H
 
+#include <ion/unicode/utf8_decoder.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
@@ -35,8 +36,8 @@ class Layout final : public Reference {
   static Tree* EditionPoolTextToLayout(const char* text);
 
  private:
-  static size_t EditionPoolTextToLayoutRec(const char* text, Tree* parent,
-                                           const Tree* parentheses);
+  static void EditionPoolTextToLayoutRec(UTF8Decoder* decoder, Tree* parent,
+                                         const Tree* parentheses);
 };
 
 static_assert(sizeof(Layout) == sizeof(Reference));

@@ -12,19 +12,19 @@ namespace PoincareJ {
 
 Tree *Layout::EditionPoolTextToLayout(const char *text) {
   Tree *root = P_RACKL();
-  EditionPoolTextToLayoutRec(text, root, nullptr);
+  UTF8Decoder decoder(text);
+  EditionPoolTextToLayoutRec(&decoder, root, nullptr);
   return root;
 }
 
-size_t Layout::EditionPoolTextToLayoutRec(const char *text, Tree *parent,
-                                          const Tree *parentheses) {
+void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
+                                        const Tree *parentheses) {
+  CodePoint codePoint = decoder->nextCodePoint();
   assert(parent && parent->isNAry());
   assert(!parentheses || parentheses->type() == BlockType::ParenthesisLayout);
-  size_t i = 0;
-  while (text[i] != 0) {
-    i++;
+  while (codePoint != UCodePointNull) {
     Tree *child;
-    switch (text[i - 1]) {
+    switch (codePoint) {
       case UCodePointEmpty:
         child = P_RACKL();
         break;
@@ -32,21 +32,21 @@ size_t Layout::EditionPoolTextToLayoutRec(const char *text, Tree *parent,
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
         child = SharedEditionPool->push<BlockType::ParenthesisLayout>();
-        i += EditionPoolTextToLayoutRec(text + i, P_RACKL(), child);
+        EditionPoolTextToLayoutRec(decoder, P_RACKL(), child);
         break;
       }
       case ')':
         if (parentheses) {
-          return i;
+          return;
         }
         // Insert ')' codepoint if it has no matching left parenthesis
       default:
         child = SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-            text[i - 1]);
+            codePoint);
     }
     NAry::AddOrMergeChildAtIndex(parent, child, parent->numberOfChildren());
+    codePoint = decoder->nextCodePoint();
   }
-  return i;
 }
 
 char *append(const char *text, char *buffer, char *end) {

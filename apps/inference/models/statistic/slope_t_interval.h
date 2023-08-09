@@ -34,7 +34,7 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
   bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
 
   // Distribution: t
-  const char* estimateSymbol() const override { return "x̅"; }
+  const char* estimateSymbol() const override { return "b"; }
   Poincare::Layout testCriticalValueSymbol() override {
     return DistributionT::TestCriticalValueSymbol();
   }

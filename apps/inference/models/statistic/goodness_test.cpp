@@ -18,16 +18,16 @@ GoodnessTest::GoodnessTest() {
 }
 
 void GoodnessTest::setGraphTitle(char* buffer, size_t bufferSize) const {
-  const char* format = I18n::translate(
-      I18n::Message::StatisticGraphControllerTestTitleFormatGoodnessTest);
   Poincare::Print::CustomPrintf(
-      buffer, bufferSize, format, degreeOfFreedom(),
-      Poincare::Preferences::PrintFloatMode::Decimal,
-      Poincare::Preferences::ShortNumberOfSignificantDigits, threshold(),
+      buffer, bufferSize, "df=%*.*ed %s=%*.*ed χ2=%*.*ed %s=%*.*ed",
+      degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      I18n::translate(I18n::Message::GreekAlpha), threshold(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits,
       testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal,
-      Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(),
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      I18n::translate(I18n::Message::PValue), pValue(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }

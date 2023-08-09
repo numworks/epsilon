@@ -19,9 +19,6 @@ class SlopeTTest : public Test, public SlopeTStatistic {
     return DistributionType::T;
   }
   I18n::Message title() const override { return SlopeTStatistic::title(); }
-  I18n::Message graphTitleFormat() const override {
-    return DistributionT::GraphTitleFormat();
-  }
 
   // Inference
   bool authorizedParameterAtPosition(double p, int row,

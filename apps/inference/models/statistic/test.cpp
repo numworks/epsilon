@@ -182,4 +182,18 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   return true;
 }
 
+I18n::Message Test::graphTitleFormat() const {
+  DistributionType type = distributionType();
+  switch (type) {
+    case DistributionType::T:
+    case DistributionType::TPooled:
+      return I18n::Message::StatisticGraphControllerTestTitleFormatTTest;
+    case DistributionType::Z:
+      return I18n::Message::StatisticGraphControllerTestTitleFormatZtest;
+    default:
+      assert(type == DistributionType::Chi2);
+      return I18n::Message::Default;
+  }
+}
+
 }  // namespace Inference

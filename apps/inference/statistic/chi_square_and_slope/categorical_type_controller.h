@@ -31,7 +31,7 @@ class CategoricalTypeController
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   const char* title() override {
-    return I18n::translate(I18n::Message::CategoricalTypeControllerTitle);
+    return I18n::translate(I18n::Message::Chi2Test);
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;

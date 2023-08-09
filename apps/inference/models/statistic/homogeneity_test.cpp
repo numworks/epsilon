@@ -16,11 +16,12 @@ HomogeneityTest::HomogeneityTest() {
 
 void HomogeneityTest::setGraphTitle(char* buffer, size_t bufferSize) const {
   Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "%s=%*.*ed χ2=%*.*ed %s=%*.*ed",
+      buffer, bufferSize, "%s=%*.*ed %s=%*.*ed %s=%*.*ed",
       I18n::translate(I18n::Message::GreekAlpha), threshold(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits,
-      testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal,
+      I18n::translate(I18n::Message::Chi2), testCriticalValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits,
       I18n::translate(I18n::Message::PValue), pValue(),
       Poincare::Preferences::PrintFloatMode::Decimal,

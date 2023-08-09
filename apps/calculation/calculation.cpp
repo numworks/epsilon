@@ -282,9 +282,6 @@ bool Calculation::ForbidAdditionalResults(Expression input,
 
 static bool isScalarComplex(Expression expression) {
   Preferences *preferences = Preferences::sharedPreferences;
-  /* Using the approximated output instead of the user input to guess the
-   * complex format makes additional results more consistent when the user has
-   * created complexes in Complex mode and then switched back to Real mode. */
   Preferences::ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
           preferences->complexFormat(), expression, nullptr);
@@ -297,6 +294,9 @@ static bool isScalarComplex(Expression expression) {
 }
 
 bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
+  /* Using the approximated output instead of the user input to guess the
+   * complex format makes additional results more consistent when the user has
+   * created complexes in Complex mode and then switched back to Real mode. */
   return isScalarComplex(approximateOutput);
 }
 

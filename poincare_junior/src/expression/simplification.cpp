@@ -228,9 +228,10 @@ bool Simplification::SimplifyPower(Tree* u) {
   if (v->type() == BlockType::Power) {
     EditionReference p = v->childAtIndex(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
-    p->moveNodeBeforeNode(
-        SharedEditionPool->push<BlockType::Multiplication>(2));
-    u->removeNode();
+    // PowU PowV w p n
+    v->removeNode();
+    MoveNodeAtNode(p, SharedEditionPool->push<BlockType::Multiplication>(2));
+    // PowU w Mult<2> p n
     SimplifyMultiplication(p);
     return SimplifyPower(u);
   }

@@ -47,22 +47,6 @@ class TwoMeansTTest : public Test {
 
   void compute() override { TwoMeans::ComputeTTest(this); }
 
-  // Distribution: t
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionT::CriticalValueSymbolLayout();
-  }
-  float canonicalDensityFunction(float x) const override {
-    return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionT::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionT::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
-  }
-
  private:
   // Significance Test: TwoMeans
   bool validateInputs() override { return TwoMeans::TValidateInputs(m_params); }
@@ -74,11 +58,6 @@ class TwoMeansTTest : public Test {
     return TwoMeans::TParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-
-  // Distribution: t
-  float computeYMax() const override {
-    return DistributionT::YMax(m_degreesOfFreedom);
-  }
 
   double m_params[TwoMeans::k_numberOfParams];
 };

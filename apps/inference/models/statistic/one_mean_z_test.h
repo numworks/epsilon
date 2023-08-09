@@ -45,22 +45,6 @@ class OneMeanZTest : public Test {
 
   void compute() override { OneMean::ComputeZTest(this); }
 
-  // Distribution: z
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionZ::CriticalValueSymbolLayout();
-  }
-  float canonicalDensityFunction(float x) const override {
-    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionZ::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
-  }
-
  private:
   // Significance Test
   int numberOfStatisticParameters() const override {
@@ -71,11 +55,6 @@ class OneMeanZTest : public Test {
     return OneMean::ZParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-
-  // Distribution: z
-  float computeYMax() const override {
-    return DistributionZ::YMax(m_degreesOfFreedom);
-  }
 
   double m_params[OneMean::k_numberOfParams];
 };

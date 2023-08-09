@@ -47,22 +47,6 @@ class TwoMeansZTest : public Test {
 
   void compute() override { TwoMeans::ComputeZTest(this); }
 
-  // Distribution: z
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionZ::CriticalValueSymbolLayout();
-  }
-  float canonicalDensityFunction(float x) const override {
-    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionZ::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
-  }
-
  private:
   // Significance Test: TwoMeans
   bool validateInputs() override { return TwoMeans::ZValidateInputs(m_params); }
@@ -74,11 +58,6 @@ class TwoMeansZTest : public Test {
     return TwoMeans::ZParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-
-  // Distribution: z
-  float computeYMax() const override {
-    return DistributionZ::YMax(m_degreesOfFreedom);
-  }
 
   double m_params[TwoMeans::k_numberOfParams];
 };

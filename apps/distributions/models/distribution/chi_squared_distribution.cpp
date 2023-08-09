@@ -19,12 +19,6 @@ bool ChiSquaredDistribution::authorizedParameterAtIndex(double x,
   return x > 0.0 && x == (double)((int)x) && x <= k_maxK;
 }
 
-double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(
-    double x) const {
-  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(
-      x, m_parameter);
-}
-
 double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(
     double p) const {
   return Poincare::Chi2Distribution::

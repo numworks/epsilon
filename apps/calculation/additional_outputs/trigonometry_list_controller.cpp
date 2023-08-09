@@ -9,6 +9,7 @@
 #include "../app.h"
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Calculation {
 
@@ -40,8 +41,8 @@ void TrigonometryListController::computeAdditionalResults(
     }
     assert(!exactAngle.isUndefined());
     Expression unit;
-    Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
-        &exactAngle, context, ReductionTarget::User, &unit);
+    PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, context,
+                                                 ReductionTarget::User, &unit);
     if (!unit.isUninitialized()) {
       // Convert exact angle to radians
       assert(unit.isPureAngleUnit() &&
@@ -76,8 +77,8 @@ void TrigonometryListController::computeAdditionalResults(
   simplifiedAngle = Multiplication::Builder(
       FracPart::Builder(Division::Builder(exactAngle, period.clone())),
       period.clone());
-  Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
-                                            ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
+                                    ReductionTarget::User);
 
   /* Approximate the angle if:
    * - The reduction failed
@@ -89,7 +90,7 @@ void TrigonometryListController::computeAdditionalResults(
           [](const Expression e, Context* context) {
             return e.type() == ExpressionNode::Type::FracPart;
           }) ||
-      Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+      ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           exactAngle, simplifiedAngle, approximateAngle, context)) {
     if (m_directTrigonometry) {
       assert(approximateAngle.isUninitialized());
@@ -100,14 +101,14 @@ void TrigonometryListController::computeAdditionalResults(
           ArcCosine::Builder(Cosine::Builder(exactAngle.clone()));
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
-      if (Shared::PoincareHelpers::ApproximateToScalar<double>(
+      if (PoincareHelpers::ApproximateToScalar<double>(
               Sine::Builder(exactAngle), context, preferences) < 0) {
         approximateAngle =
             Subtraction::Builder(period.clone(), approximateAngle);
       }
     }
     assert(!approximateAngle.isUninitialized());
-    approximateAngle = Shared::PoincareHelpers::Approximate<double>(
+    approximateAngle = PoincareHelpers::Approximate<double>(
         approximateAngle, context, preferences);
     exactAngle = approximateAngle;
     m_isStrictlyEqual[index] = false;
@@ -152,10 +153,9 @@ void TrigonometryListController::computeAdditionalResults(
    * cast it to float because approximation in float can overflow during the
    * computation. The angle should be between 0 and 2*pi so the approximation in
    * double is castable in float. */
-  float angle =
-      static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(
-          approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
-          context));
+  float angle = static_cast<float>(PoincareHelpers::ApproximateToScalar<double>(
+      approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
+      context));
   // Convert angle to radians
   if (userAngleUnit != Preferences::AngleUnit::Radian) {
     angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);

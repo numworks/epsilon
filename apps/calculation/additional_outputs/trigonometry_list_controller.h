@@ -22,9 +22,6 @@ class TrigonometryListController : public IllustratedExpressionsListController {
     m_directTrigonometry = directTrigonometry;
   }
 
-  static Poincare::Expression ExtractExactAngleFromDirectTrigo(
-      Poincare::Expression input, Poincare::Expression exactOutput);
-
   /* See comment in parent class for why we need this. Since we need to display
    * fractions of radians in the angle cell, we reduce the graph further. */
   constexpr static KDCoordinate k_illustrationHeight = 105;

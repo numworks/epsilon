@@ -38,8 +38,8 @@ class OneMeanZInterval : public Interval {
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();
   }
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionZ::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionZ::CriticalValueSymbolLayout();
   }
 
   // Distribution: z

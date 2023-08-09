@@ -23,8 +23,8 @@ class Chi2Test : public Test, public Table {
   }
   bool initializeCategoricalType(CategoricalType type);
 
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionChi2::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionChi2::CriticalValueSymbolLayout();
   }
 
   float canonicalDensityFunction(float x) const override {

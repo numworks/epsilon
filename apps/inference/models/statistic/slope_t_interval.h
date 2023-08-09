@@ -35,8 +35,8 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
 
   // Distribution: t
   const char* estimateSymbol() const override { return "b"; }
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionT::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionT::CriticalValueSymbolLayout();
   }
   float canonicalDensityFunction(float x) const override {
     return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom);

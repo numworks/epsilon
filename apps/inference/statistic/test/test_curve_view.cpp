@@ -28,7 +28,7 @@ void TestPlotPolicy::drawZLabelAndZGraduation(
     ComparisonNode::OperatorType op) const {
   if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
     AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(
-        m_test->testCriticalValueSymbol());
+        m_test->criticalValueSymbolLayout());
     drawLabelAndGraduation(plotView, ctx, rect, std::abs(z), absolute);
     absolute.invalidAllSizesPositionsAndBaselines();
     drawLabelAndGraduation(
@@ -36,7 +36,7 @@ void TestPlotPolicy::drawZLabelAndZGraduation(
         HorizontalLayout::Builder(CodePointLayout::Builder('-'), absolute));
   } else {
     drawLabelAndGraduation(plotView, ctx, rect, z,
-                           m_test->testCriticalValueSymbol());
+                           m_test->criticalValueSymbolLayout());
   }
 }
 

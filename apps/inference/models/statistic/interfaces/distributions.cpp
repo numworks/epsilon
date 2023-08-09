@@ -63,7 +63,7 @@ float DistributionZ::YMax(double degreesOfFreedom) {
 
 /* Distribution chi 2 */
 
-Poincare::Layout DistributionChi2::TestCriticalValueSymbol() {
+Poincare::Layout DistributionChi2::CriticalValueSymbolLayout() {
   return Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder(UCodePointGreekSmallLetterChi),
       Poincare::VerticalOffsetLayout::Builder(

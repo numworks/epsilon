@@ -43,8 +43,8 @@ class TwoMeansZInterval : public Interval {
   Poincare::Layout estimateLayout() const override {
     return TwoMeans::EstimateLayout(&m_estimateLayout);
   }
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionZ::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionZ::CriticalValueSymbolLayout();
   }
   I18n::Message estimateDescription() override {
     return TwoMeans::EstimateDescription();

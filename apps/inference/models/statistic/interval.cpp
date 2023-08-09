@@ -80,7 +80,7 @@ void Interval::tidy() { m_estimateLayout = Poincare::Layout(); }
 
 Poincare::Layout Interval::intervalCriticalValueSymbol() {
   return Poincare::HorizontalLayout::Builder(
-      testCriticalValueSymbol(),
+      criticalValueSymbolLayout(),
       Poincare::VerticalOffsetLayout::Builder(
           Poincare::CodePointLayout::Builder('*'),
           Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript));

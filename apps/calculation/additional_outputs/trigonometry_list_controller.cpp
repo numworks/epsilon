@@ -13,6 +13,62 @@ using namespace Shared;
 
 namespace Calculation {
 
+Expression TrigonometryListController::ExtractExactAngleFromDirectTrigo(
+    Expression input, Expression exactOutput) {
+  /* Trigonometry additional results are displayed if either input or output is
+   * a direct function. Indeed, we want to capture both cases:
+   * - > input: cos(60)
+   *   > output: 1/2
+   * - > input: 2cos(2) - cos(2)
+   *   > output: cos(2)
+   * However if the result is complex, it is treated as a complex result. */
+  Preferences* preferences = Preferences::sharedPreferences;
+  assert(!exactOutput.isScalarComplex(preferences));
+  Context* context = App::app()->localContext();
+  Expression directTrigoFunction;
+  if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
+    directTrigoFunction = exactOutput;
+  } else if (Trigonometry::isDirectTrigonometryFunction(input) &&
+             !input.deepIsSymbolic(
+                 context, SymbolicComputation::DoNotReplaceAnySymbol)) {
+    /* Do not display trigonometric additional informations, in case the symbol
+     * value is later modified/deleted in the storage and can't be retrieved.
+     * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become
+     * inconsistent. And if x is deleted, it crashes. */
+    directTrigoFunction = input;
+  } else {
+    return Expression();
+  }
+  assert(!directTrigoFunction.isUninitialized() &&
+         !directTrigoFunction.isUndefined());
+  Expression exactAngle = directTrigoFunction.childAtIndex(0);
+  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
+  Expression unit;
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, context,
+                                               ReductionTarget::User, &unit);
+  if (!unit.isUninitialized()) {
+    if (!unit.isPureAngleUnit()) {
+      return Expression();
+    }
+    assert(static_cast<Unit&>(unit).representative() ==
+           Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
+    /* After a reduction, all angle units are converted to radians, so we
+     * convert exactAngle again here to fit the angle unit that will be used
+     * in reductions below. */
+    exactAngle = Multiplication::Builder(
+        exactAngle,
+        Trigonometry::UnitConversionFactor(Preferences::AngleUnit::Radian,
+                                           preferences->angleUnit()));
+  }
+  // The angle must be real.
+  if (!std::isfinite(
+          PoincareHelpers::ApproximateToScalar<double>(exactAngle, context))) {
+    return Expression();
+  }
+  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
+  return exactAngle;
+}
+
 void TrigonometryListController::computeAdditionalResults(
     Expression input, Expression exactOutput, Expression approximateOutput) {
   assert((m_directTrigonometry &&
@@ -32,44 +88,19 @@ void TrigonometryListController::computeAdditionalResults(
   // Find the angle
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
-    // 1. Exact angle
-    if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
-      exactAngle = exactOutput.childAtIndex(0);
-    } else {
-      assert(Trigonometry::isDirectTrigonometryFunction(input));
-      exactAngle = input.childAtIndex(0);
-    }
-    assert(!exactAngle.isUndefined());
-    Expression unit;
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, context,
-                                                 ReductionTarget::User, &unit);
-    if (!unit.isUninitialized()) {
-      // Convert exact angle to radians
-      assert(unit.isPureAngleUnit() &&
-             static_cast<Unit&>(unit).representative() ==
-                 Unit::k_angleRepresentatives +
-                     Unit::k_radianRepresentativeIndex);
-      /* After a reduction, all angle units are converted to radians, so we
-       * convert exactAngle again here to fit the angle unit that will be used
-       * in reductions below. */
-      exactAngle = Multiplication::Builder(
-          exactAngle, Trigonometry::UnitConversionFactor(
-                          Preferences::AngleUnit::Radian, userAngleUnit));
-    }
-    // 2. Approximate angle
+    exactAngle = ExtractExactAngleFromDirectTrigo(input, exactOutput);
     approximateAngle = Expression();
   } else {
-    // 1. Exact angle
     exactAngle = exactOutput;
-    assert(!exactAngle.isUndefined());
-    // 2. Approximate angle
     approximateAngle = approximateOutput;
-    assert(!approximateAngle.isUninitialized());
+    assert(!approximateAngle.isUninitialized() &&
+           !approximateAngle.isUndefined());
     if (approximateAngle.isPositive(context) == TrinaryBoolean::False) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]
       approximateAngle = Addition::Builder(period.clone(), approximateAngle);
     }
   }
+  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
   /* Set exact angle in [0, 2π].
    * Use the reduction of frac part to compute modulo. */

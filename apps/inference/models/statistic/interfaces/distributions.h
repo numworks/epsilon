@@ -15,7 +15,7 @@ class DistributionInterface {
 
 class DistributionT : public DistributionInterface {
  public:
-  static Poincare::Layout TestCriticalValueSymbol() {
+  static Poincare::Layout CriticalValueSymbolLayout() {
     return Poincare::LayoutHelper::String("t", -1);
   }
   static I18n::Message GraphTitleFormat() {
@@ -32,7 +32,7 @@ class DistributionT : public DistributionInterface {
 
 class DistributionZ : public DistributionInterface {
  public:
-  static Poincare::Layout TestCriticalValueSymbol() {
+  static Poincare::Layout CriticalValueSymbolLayout() {
     return Poincare::LayoutHelper::String("z", -1);
   }
   static I18n::Message GraphTitleFormat() {
@@ -49,7 +49,7 @@ class DistributionZ : public DistributionInterface {
 
 class DistributionChi2 : public DistributionInterface {
  public:
-  static Poincare::Layout TestCriticalValueSymbol();
+  static Poincare::Layout CriticalValueSymbolLayout();
   static float CanonicalDensityFunction(float x, double degreesOfFreedom);
   static double CumulativeNormalizedDistributionFunction(
       double x, double degreesOfFreedom);

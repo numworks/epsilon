@@ -85,7 +85,7 @@ void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
   switch (index) {
     case ResultOrder::Z:
       *value = testCriticalValue();
-      *message = testCriticalValueSymbol();
+      *message = criticalValueSymbolLayout();
       *subMessage = I18n::Message::TestStatistic;
       break;
     case ResultOrder::PValue:

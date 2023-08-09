@@ -48,8 +48,8 @@ class TwoMeansTTest : public Test {
   void compute() override { TwoMeans::ComputeTTest(this); }
 
   // Distribution: t
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionT::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionT::CriticalValueSymbolLayout();
   }
   float canonicalDensityFunction(float x) const override {
     return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom);

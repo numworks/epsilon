@@ -40,8 +40,8 @@ class OneMeanTInterval : public Interval {
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();
   }
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionT::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionT::CriticalValueSymbolLayout();
   }
 
   // Distribution: t

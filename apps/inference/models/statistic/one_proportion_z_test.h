@@ -54,8 +54,8 @@ class OneProportionZTest : public Test {
   }
 
   // Distribution: z
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionZ::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionZ::CriticalValueSymbolLayout();
   }
   float canonicalDensityFunction(float x) const override {
     return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);

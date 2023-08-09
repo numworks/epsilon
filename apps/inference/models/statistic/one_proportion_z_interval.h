@@ -34,8 +34,8 @@ class OneProportionZInterval : public Interval {
   const char* estimateSymbol() const override {
     return OneProportion::EstimateSymbol();
   }
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionZ::TestCriticalValueSymbol();
+  Poincare::Layout criticalValueSymbolLayout() override {
+    return DistributionZ::CriticalValueSymbolLayout();
   }
   Poincare::Layout estimateLayout() const override {
     return OneProportion::EstimateLayout(&m_estimateLayout);

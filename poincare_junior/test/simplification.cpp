@@ -17,14 +17,9 @@ QUIZ_CASE(pcj_simplification_expansion) {
   EditionReference ref2(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e));
   Simplification::DeepSystematicReduce(ref2);
   quiz_assert(Simplification::ShallowExpand(ref2));
-  assert_trees_are_equal(
-      ref2, KAdd(KMult(KAdd(KMult(KTrig(π_e, 0_e), KTrig("x"_e, 0_e)),
-                            KMult(-1_e, KTrig(π_e, 1_e), KTrig("x"_e, 1_e))),
-                       KTrig("y"_e, 0_e)),
-                 KMult(-1_e,
-                       KAdd(KMult(KTrig(π_e, 1_e), KTrig("x"_e, 0_e)),
-                            KMult(KTrig(π_e, 0_e), KTrig("x"_e, 1_e))),
-                       KTrig("y"_e, 1_e))));
+  assert_trees_are_equal(ref2,
+                         KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
+                              KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))));
 
   EditionReference ref3(KExp(KAdd("x"_e, "y"_e, "z"_e)));
   quiz_assert(Simplification::ShallowExpand(ref3));
@@ -270,6 +265,14 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.E1", "50");
+  //   // Trigonometry identities
+  simplifies_to("sin(π)", "0");
+  simplifies_to("cos(π)", "-1");
+  simplifies_to("cos(7*π/12)", "-1/2*(-1+√(3))*√(2)^(-1)");
+  simplifies_to("cos(13*π/12)", "-1/2*√(2)^(-1)+-1/2*√(3)*√(2)^(-1)");
+  simplifies_to("sin(π/3)", "1/2*√(3)");
+  simplifies_to("cos(π*2/3)", "-1/2");
+  simplifies_to("cos(π*15/4)", "2^(-1/2)");
   simplifies_to("2*sin(2y)*sin(y)", "cos(y)-cos(3*y)");
   simplifies_to("2*sin(2y)*cos(y)", "sin(y)+sin(3*y)");
   simplifies_to("2*cos(2y)*sin(y)", "-1*sin(y)+sin(3*y)");

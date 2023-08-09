@@ -25,6 +25,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/simplification.cpp \
   expression/set.cpp \
   expression/symbol.cpp \
+  expression/trigonometry.cpp \
   expression.cpp \
   layout/code_point_layout.cpp \
   layout/empty_rectangle.cpp \

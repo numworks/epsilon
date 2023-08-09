@@ -7,6 +7,7 @@
 #include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
+#include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/placeholder.h>
@@ -165,9 +166,36 @@ bool Simplification::SimplifyTrig(Tree* u) {
     }
   }
 
+  // Replace Trig((n/12)*pi,*) with exact value.
+  if (firstArgument->treeIsIdenticalTo(π_e) ||
+      (firstArgument->type() == BlockType::Multiplication &&
+       firstArgument->numberOfChildren() == 2 &&
+       IsRational(firstArgument->nextNode()) &&
+       firstArgument->childAtIndex(1)->treeIsIdenticalTo(π_e))) {
+    const Tree* piFactor = firstArgument->type() == BlockType::Multiplication
+                               ? firstArgument->nextNode()
+                               : 1_e;
+    // Compute n such that firstArgument = (n/12)*pi
+    Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
+    Rational::MakeIrreducible(multipleTree);
+    if (IsInteger(multipleTree)) {
+      // Trig is 2pi periodic, n can be retrieved as a uint8_t.
+      multipleTree->moveTreeOverTree(IntegerHandler::Remainder(
+          Integer::Handler(multipleTree), IntegerHandler(24)));
+      uint8_t n = Integer::Uint8(multipleTree);
+      multipleTree->removeTree();
+      u->cloneTreeOverTree(Trigonometry::ExactFormula(n, isSin, &isOpposed));
+      DeepSystematicReduce(u);
+      changed = true;
+    } else {
+      multipleTree->removeTree();
+    }
+  }
+
   if (isOpposed) {
     u->moveTreeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
+    SimplifyMultiplication(u);
     changed = true;
   }
   return changed;

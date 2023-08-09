@@ -10,25 +10,12 @@
 #include <string.h>
 
 #include "../app.h"
+#include "vector_helper.h"
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Calculation {
-
-Expression VectorListController::BuildVectorNorm(Expression exactOutput) {
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  Context *context = App::app()->localContext();
-  if (exactOutput.type() != ExpressionNode::Type::Matrix ||
-      !static_cast<const Matrix &>(exactOutput).isVector()) {
-    return Expression();
-  }
-  Expression norm = VectorNorm::Builder(exactOutput);
-  PoincareHelpers::CloneAndSimplify(&norm, context, k_target,
-                                    k_symbolicComputation);
-  return norm.isUninitialized() || norm.isUndefined() ? Expression() : norm;
-}
 
 void VectorListController::computeAdditionalResults(
     Expression input, Expression exactOutput, Expression approximateOutput) {
@@ -52,7 +39,7 @@ void VectorListController::computeAdditionalResults(
   size_t index = 0;
 
   // 1. Vector norm
-  Expression norm = BuildVectorNorm(exactOutput);
+  Expression norm = VectorHelper::BuildVectorNorm(exactOutput, context);
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 

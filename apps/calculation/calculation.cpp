@@ -17,6 +17,8 @@
 #include <cmath>
 
 #include "additional_outputs/scientific_notation_helper.h"
+#include "additional_outputs/trigonometry_helper.h"
+#include "additional_outputs/vector_helper.h"
 #include "app.h"
 #include "poincare/expression_node.h"
 
@@ -289,9 +291,10 @@ bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
 
 bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
                                                   Expression exactOutput) {
-  Expression exactAngle =
-      TrigonometryListController::ExtractExactAngleFromDirectTrigo(input,
-                                                                   exactOutput);
+  Context *globalContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
+  Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
+      input, exactOutput, globalContext);
   return !exactAngle.isUninitialized();
 }
 
@@ -332,7 +335,9 @@ bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
 }
 
 bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
-  Expression norm = VectorListController::BuildVectorNorm(exactOutput);
+  Context *globalContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
+  Expression norm = VectorHelper::BuildVectorNorm(exactOutput, globalContext);
   if (norm.isUninitialized()) {
     return false;
   }

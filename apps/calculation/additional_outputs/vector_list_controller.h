@@ -12,17 +12,17 @@ class VectorListController : public IllustratedExpressionsListController {
   VectorListController(EditExpressionController* editExpressionController)
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
-  static Poincare::Expression BuildVectorNorm(Poincare::Expression exactOutput);
   virtual void computeAdditionalResults(
       Poincare::Expression input, Poincare::Expression exactOutput,
       Poincare::Expression approximateOutput) override;
 
- private:
   constexpr static Poincare::ReductionTarget k_target =
       Poincare::ReductionTarget::SystemForApproximation;
   constexpr static Poincare::SymbolicComputation k_symbolicComputation =
       Poincare::SymbolicComputation::
           ReplaceAllSymbolsWithDefinitionsOrUndefined;
+
+ private:
   constexpr static int k_maxNumberOfOutputRows = 3;
 
   IllustrationCell* illustrationCell() override { return &m_graphCell; }

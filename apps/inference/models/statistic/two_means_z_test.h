@@ -18,9 +18,6 @@ class TwoMeansZTest : public Test {
     return DistributionType::Z;
   }
   I18n::Message title() const override { return TwoMeans::ZTitle(); }
-  I18n::Message graphTitleFormat() const override {
-    return DistributionZ::GraphTitleFormat();
-  }
 
   // Significance Test: TwoMeans
   bool initializeDistribution(DistributionType distributionType) override {

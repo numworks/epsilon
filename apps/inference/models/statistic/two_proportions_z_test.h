@@ -18,9 +18,6 @@ class TwoProportionsZTest : public Test {
     return DistributionType::Z;
   }
   I18n::Message title() const override { return TwoProportions::Title(); }
-  I18n::Message graphTitleFormat() const override {
-    return DistributionZ::GraphTitleFormat();
-  }
   void tidy() override { m_p1p2Layout = m_p2Layout = Poincare::Layout(); }
 
   // Significance Test: TwoProportions

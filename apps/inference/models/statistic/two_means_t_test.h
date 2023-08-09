@@ -18,9 +18,6 @@ class TwoMeansTTest : public Test {
     return DistributionType::T;
   }
   I18n::Message title() const override { return TwoMeans::TTitle(); }
-  I18n::Message graphTitleFormat() const override {
-    return DistributionT::GraphTitleFormat();
-  }
 
   // Significance Test: TwoMeans
   bool initializeDistribution(DistributionType distributionType) override {

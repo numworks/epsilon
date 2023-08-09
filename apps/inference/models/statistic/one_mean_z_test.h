@@ -16,9 +16,6 @@ class OneMeanZTest : public Test {
     return DistributionType::Z;
   }
   I18n::Message title() const override { return OneMean::ZTitle(); }
-  I18n::Message graphTitleFormat() const override {
-    return DistributionZ::GraphTitleFormat();
-  }
 
   // Significance Test: OneMean
   bool initializeDistribution(DistributionType distributionType) override {

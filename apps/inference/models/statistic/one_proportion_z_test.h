@@ -18,9 +18,6 @@ class OneProportionZTest : public Test {
     return DistributionType::Z;
   }
   I18n::Message title() const override { return OneProportion::Title(); }
-  I18n::Message graphTitleFormat() const override {
-    return DistributionZ::GraphTitleFormat();
-  }
   void tidy() override { m_estimateLayout = Poincare::Layout(); }
 
   // Significance Test: OneProportion

@@ -37,7 +37,7 @@ TestController::TestController(StackViewController *parentResponder,
   cell(k_indexOfCategorical)
       ->label()
       ->setMessage(I18n::Message::TestCategorical);
-  cell(k_indexOfCategorical)->subLabel()->setMessage(I18n::Message::X2Test);
+  cell(k_indexOfCategorical)->subLabel()->setMessage(I18n::Message::Chi2Test);
   cell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
   // Init selection
   selectRow(0);

@@ -133,8 +133,13 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
     memcpy(destination, source, insertionSize);
     return true;
   }
-  memmove(destination + insertionSize, destination,
-          static_cast<Block *>(lastBlock()) - destination);
+  size_t editionPoolRightSize = static_cast<Block *>(lastBlock()) - destination;
+  memmove(destination + insertionSize, destination, editionPoolRightSize);
+  if (source >= destination && source < destination + editionPoolRightSize) {
+    // Source has been memmoved.
+    source += insertionSize;
+  }
+
   m_numberOfBlocks += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(

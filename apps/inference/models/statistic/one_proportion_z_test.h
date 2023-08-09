@@ -53,22 +53,6 @@ class OneProportionZTest : public Test {
     return OneProportion::EstimateDescription();
   }
 
-  // Distribution: z
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionZ::CriticalValueSymbolLayout();
-  }
-  float canonicalDensityFunction(float x) const override {
-    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionZ::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
-  }
-
  private:
   // Significance Test: OneProportion
   bool validateInputs() override {
@@ -82,10 +66,6 @@ class OneProportionZTest : public Test {
     return OneProportion::ParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-  // Distribution: z
-  float computeYMax() const override {
-    return DistributionZ::YMax(m_degreesOfFreedom);
-  }
 
   double m_params[OneProportion::k_numberOfParams];
   mutable Poincare::Layout m_estimateLayout;

@@ -103,6 +103,10 @@ class Statistic : public Shared::Inference {
   }
   double parameterAtIndex(int i) const override;
   void setParameterAtIndex(double f, int i) override;
+  double cumulativeDistributiveFunctionAtAbscissa(
+      double x) const override final;
+  double cumulativeDistributiveInverseForProbability(
+      double probability) const override final;
   double threshold() const {
     assert(0 <= m_threshold && m_threshold <= 1);
     return m_threshold;
@@ -113,7 +117,7 @@ class Statistic : public Shared::Inference {
   int indexOfThreshold() const { return numberOfStatisticParameters(); }
   virtual I18n::Message thresholdName() const = 0;
   virtual I18n::Message thresholdDescription() const = 0;
-  virtual Poincare::Layout criticalValueSymbolLayout() = 0;
+  Poincare::Layout criticalValueSymbolLayout();
 
   // Outputs
   virtual int numberOfResults() const = 0;
@@ -131,7 +135,8 @@ class Statistic : public Shared::Inference {
   virtual bool isGraphable() const { return true; }
 
  protected:
-  virtual float canonicalDensityFunction(float x) const = 0;
+  float computeYMax() const override final;
+  float canonicalDensityFunction(float x) const;
   virtual int numberOfStatisticParameters() const = 0;
 
   /* Threshold is either the confidence level or the significance level */

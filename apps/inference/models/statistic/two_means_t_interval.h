@@ -45,23 +45,8 @@ class TwoMeansTInterval : public Interval {
   Poincare::Layout estimateLayout() const override {
     return TwoMeans::EstimateLayout(&m_estimateLayout);
   }
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionT::CriticalValueSymbolLayout();
-  }
   I18n::Message estimateDescription() override {
     return TwoMeans::EstimateDescription();
-  };
-  // Distribution: t
-  float canonicalDensityFunction(float x) const override {
-    return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionT::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionT::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
   }
 
  private:
@@ -75,11 +60,6 @@ class TwoMeansTInterval : public Interval {
     return TwoMeans::TParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-
-  // Distribution: t
-  float computeYMax() const override {
-    return DistributionT::YMax(m_degreesOfFreedom);
-  }
 
   void privateCompute() override { TwoMeans::ComputeTInterval(this); }
 

@@ -46,22 +46,6 @@ class TwoProportionsZTest : public Test {
   Poincare::Layout estimateLayout(int index) const override;
   I18n::Message estimateDescription(int index) override;
 
-  // Distribution: z
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionZ::CriticalValueSymbolLayout();
-  }
-  float canonicalDensityFunction(float x) const override {
-    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionZ::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
-  }
-
  private:
   // Significance Test: TwoProportions
   bool validateInputs() override {
@@ -75,10 +59,6 @@ class TwoProportionsZTest : public Test {
     return TwoProportions::ParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-  // Distribution: z
-  float computeYMax() const override {
-    return DistributionZ::YMax(m_degreesOfFreedom);
-  }
 
   double m_params[TwoProportions::k_numberOfParams];
   enum class EstimatesOrder { P1, P2, Pooled };

@@ -37,24 +37,8 @@ class TwoProportionsZInterval : public Interval {
   Poincare::Layout estimateLayout() const override {
     return TwoProportions::EstimateLayout(&m_estimateLayout);
   }
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionZ::CriticalValueSymbolLayout();
-  }
   I18n::Message estimateDescription() override {
     return TwoProportions::EstimateDescription();
-  };
-
-  // Distribution: z
-  float canonicalDensityFunction(float x) const override {
-    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionZ::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(double p) const override {
-    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
-        p, m_degreesOfFreedom);
   }
 
  private:
@@ -70,11 +54,6 @@ class TwoProportionsZInterval : public Interval {
     return TwoProportions::ParameterRepresentationAtIndex(i);
   }
   double* parametersArray() override { return m_params; }
-
-  // Distribution: z
-  float computeYMax() const override {
-    return DistributionZ::YMax(m_degreesOfFreedom);
-  }
 
   void privateCompute() override { TwoProportions::ComputeInterval(this); }
 

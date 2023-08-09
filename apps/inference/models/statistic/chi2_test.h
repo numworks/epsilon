@@ -23,23 +23,6 @@ class Chi2Test : public Test, public Table {
   }
   bool initializeCategoricalType(CategoricalType type);
 
-  Poincare::Layout criticalValueSymbolLayout() override {
-    return DistributionChi2::CriticalValueSymbolLayout();
-  }
-
-  float canonicalDensityFunction(float x) const override {
-    return DistributionChi2::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionChi2::CumulativeNormalizedDistributionFunction(
-        x, m_degreesOfFreedom);
-  }
-  double cumulativeDistributiveInverseForProbability(
-      double proba) const override {
-    return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(
-        proba, m_degreesOfFreedom);
-  }
-
   // Table
   void setParameterAtPosition(double value, int row, int column) override {
     assert(index2DToIndex(row, column) < numberOfStatisticParameters());
@@ -78,9 +61,6 @@ class Chi2Test : public Test, public Table {
   }
   float computeXMax() const override {
     return DistributionChi2::XMax(m_degreesOfFreedom);
-  }
-  float computeYMax() const override {
-    return DistributionChi2::YMax(m_degreesOfFreedom);
   }
 };
 

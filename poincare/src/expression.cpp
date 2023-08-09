@@ -598,6 +598,18 @@ bool Expression::hasDefinedComplexApproximation(
   return true;
 }
 
+bool Expression::isScalarComplex(Preferences *preferences) const {
+  Preferences::ComplexFormat complexFormat =
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          preferences->complexFormat(), *this, nullptr);
+  if (hasDefinedComplexApproximation<double>(nullptr, complexFormat,
+                                             preferences->angleUnit())) {
+    assert(!hasUnit());
+    return true;
+  }
+  return false;
+}
+
 bool Expression::involvesDiscontinuousFunction(Context *context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }

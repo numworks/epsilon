@@ -280,24 +280,11 @@ bool Calculation::ForbidAdditionalResults(Expression input,
   return false;
 }
 
-static bool isScalarComplex(Expression expression) {
-  Preferences *preferences = Preferences::sharedPreferences;
-  Preferences::ComplexFormat complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          preferences->complexFormat(), expression, nullptr);
-  if (expression.hasDefinedComplexApproximation<double>(
-          nullptr, complexFormat, preferences->angleUnit())) {
-    assert(!expression.hasUnit());
-    return true;
-  }
-  return false;
-}
-
 bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */
-  return isScalarComplex(approximateOutput);
+  return approximateOutput.isScalarComplex(Preferences::sharedPreferences);
 }
 
 bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
@@ -309,7 +296,7 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
    * - > input: 2cos(2) - cos(2)
    *   > output: cos(2)
    * However if the result is complex, it is treated as a complex result. */
-  assert(!isScalarComplex(exactOutput));
+  assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression directExpression;
@@ -342,7 +329,7 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
 bool Calculation::HasInverseTrigoAdditionalResults(Expression input,
                                                    Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!isScalarComplex(exactOutput));
+  assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
   return (Trigonometry::isInverseTrigonometryFunction(input)) ||
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
 }
@@ -383,7 +370,8 @@ bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
   assert(!norm.isUndefined());
   int nChildren = exactOutput.numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (isScalarComplex(exactOutput.childAtIndex(i))) {
+    if (exactOutput.childAtIndex(i).isScalarComplex(
+            Preferences::sharedPreferences)) {
       return false;
     }
   }

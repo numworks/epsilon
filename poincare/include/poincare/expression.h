@@ -200,6 +200,7 @@ class Expression : public TreeHandle {
                                       Preferences::AngleUnit angleUnit,
                                       T* returnRealPart = nullptr,
                                       T* returnImagPart = nullptr) const;
+  bool isScalarComplex(Preferences* preferences) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
   /* This two functions only return true if the discontinuity is not asymptotic
    * (i.e. for the functions random, randint, round, floor and ceil).

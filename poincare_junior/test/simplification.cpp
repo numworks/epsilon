@@ -70,7 +70,7 @@ QUIZ_CASE(pcj_simplification_contraction) {
                          KAbs(KMult("a"_e, "b"_e, "c"_e, "d"_e, "e"_e, "f"_e)));
 
   EditionReference ref5(
-      KAdd(KLn("a"_e), KLn("b"_e), KLn(KMult("c"_e, "d"_e)), "e"_e, "f"_e));
+      KAdd("e"_e, "f"_e, KLn("a"_e), KLn("b"_e), KLn(KMult("c"_e, "d"_e))));
   quiz_assert(Simplification::ShallowContract(ref5));
   assert_trees_are_equal(
       ref5, KAdd("e"_e, "f"_e, KLn(KMult("a"_e, "b"_e, "c"_e, "d"_e))));
@@ -201,8 +201,8 @@ void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
   EditionReference expression = RackParser(inputLayout).parse();
-  inputLayout->removeTree();
   quiz_assert(!expression.isUninitialized());
+  inputLayout->removeTree();
   Simplification::Simplify(expression, projectionContext);
   quiz_assert(!expression.isUninitialized());
   EditionReference outputLayout =
@@ -265,7 +265,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.E1", "50");
-  //   // Trigonometry identities
+  // Trigonometry identities
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
   simplifies_to("cos(7*π/12)", "-1/2*(-1+√(3))*√(2)^(-1)");

@@ -842,6 +842,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
 
 bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
                                               bool changed) {
+  assert(!DeepSystematicReduce(ref));
   const Metric metric(ref, root);
   EditionReference clone(ref->clone());
   if (ShallowContract(ref)) {
@@ -880,6 +881,7 @@ bool Simplification::ExpandTranscendentalOnRational(Tree* e) {
 }
 
 bool Simplification::PolynomialInterpretation(Tree* e) {
+  assert(!DeepSystematicReduce(e));
   // Prepare the expression for Polynomial interpretation:
   bool changed = ExpandTranscendentalOnRational(e);
   changed = ShallowAlgebraicExpand(e) || changed;
@@ -949,6 +951,7 @@ bool Simplification::TryAllOperations(Tree* e, const Operation* operations,
    * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
   int failures = 0;
   int i = 0;
+  assert(!DeepSystematicReduce(e));
   while (failures < numberOfOperations) {
     failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
     // EveryOperation should preserve e's reduced status

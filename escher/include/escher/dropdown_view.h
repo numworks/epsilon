@@ -83,7 +83,6 @@ class Dropdown : public PopupItemView, public Responder {
       return m_listViewDataSource->numberOfRows();
     }
     KDCoordinate defaultColumnWidth() override;
-    KDCoordinate nonMemoizedRowHeight(int row) override;
     HighlightCell* cell(int row) override { return &m_popupViews[row]; }
     void resetSizeMemoization() override;
 

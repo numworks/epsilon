@@ -130,10 +130,6 @@ KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
   return m_memoizedCellWidth;
 }
 
-KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int row) {
-  return m_popupViews[row].minimalSizeForOptimalDisplay().height();
-}
-
 void Dropdown::DropdownPopupController::init() {
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {

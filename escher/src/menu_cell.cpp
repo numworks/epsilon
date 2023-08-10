@@ -14,7 +14,6 @@ void AbstractMenuCell::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 KDSize AbstractMenuCell::minimalSizeForOptimalDisplay() const {
-  assert(bounds().width() > 0);
   return KDSize(bounds().width(), minimalHeightForOptimalDisplay());
 }
 

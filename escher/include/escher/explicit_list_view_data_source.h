@@ -25,10 +25,7 @@ class ExplicitListViewDataSource : public ListViewDataSource {
 
  protected:
   virtual HighlightCell* cell(int index) = 0;
-  // TODO: Make this method final (take the example of DropdownPopupController)
-  KDCoordinate nonMemoizedRowHeight(int row) override {
-    return protectedNonMemoizedRowHeight(cell(row), row);
-  }
+  KDCoordinate nonMemoizedRowHeight(int row) override final;
 
  private:
   /* This size manager leverages the fact that each cell object
@@ -37,7 +34,7 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   class ExplicitListRowHeightManager : public TableSize1DManager {
    public:
     ExplicitListRowHeightManager(ExplicitListViewDataSource* dataSource)
-        : m_dataSource(dataSource), m_sizesAreComputed(false) {}
+        : m_dataSource(dataSource) {}
     KDCoordinate computeSizeAtIndex(int i) override;
     KDCoordinate computeCumulatedSizeBeforeIndex(
         int i, KDCoordinate defaultSize) override {
@@ -48,13 +45,8 @@ class ExplicitListViewDataSource : public ListViewDataSource {
       return k_undefinedSize;
     }
 
-    void resetSizeMemoization(bool force) override {
-      m_sizesAreComputed = false;
-    }
-
    private:
     ExplicitListViewDataSource* m_dataSource;
-    bool m_sizesAreComputed;
   };
 
   bool canSelectCellAtRow(int row) override;

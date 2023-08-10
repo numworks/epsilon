@@ -26,6 +26,13 @@ bool IsRational(const Tree* u) { return u->block()->isRational(); }
 bool IsConstant(const Tree* u) { return IsNumber(u); }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
+const Tree* RealPart(const Tree* tree) {
+  return tree->type() == BlockType::Complex ? tree->nextNode() : tree;
+}
+const Tree* ImagPart(const Tree* tree) {
+  return tree->type() == BlockType::Complex ? tree->childAtIndex(1) : 0_e;
+}
+
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
    * here could save multiple ShallowSystematicReduce and flatten calls. */
@@ -73,9 +80,33 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
       return SimplifyLn(u);
     case BlockType::Exponential:
       return SimplifyExp(u);
+    case BlockType::Complex:
+      return SimplifyComplex(u);
     default:
       return false;
   }
+}
+
+bool Simplification::SimplifyComplex(Tree* u) {
+  Tree* real = u->nextNode();
+  Tree* imag = real->nextTree();
+  if (Number::IsZero(imag)) {
+    // (A+0*i) -> A
+    imag->removeTree();
+    u->removeNode();
+    return true;
+  }
+  if (real->type() != BlockType::Complex &&
+      imag->type() != BlockType::Complex) {
+    return false;
+  }
+  // (A+B*i + (C+D*i)*i) -> (A+B*i) + (0 + 1*i)*(C+D*i)
+  imag->cloneTreeAtNode(KComplex(0_e, 1_e));
+  imag->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
+  SimplifyMultiplication(imag);
+  u->moveNodeOverNode(SharedEditionPool->push<BlockType::Addition>(2));
+  SimplifyAddition(u);
+  return true;
 }
 
 bool Simplification::SimplifyExp(Tree* u) {
@@ -115,9 +146,8 @@ bool Simplification::SimplifyLn(Tree* u) {
     return false;
   }
   if (Number::IsMinusOne(child)) {
-    // Necessary so that sqrt(-1)->i
-    u->cloneTreeOverTree(KMult(i_e, π_e));
-    SimplifyMultiplication(u);
+    // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
+    u->cloneTreeOverTree(KComplex(0_e, π_e));
     return true;
   } else if (Number::IsOne(child)) {
     u->cloneTreeOverTree(0_e);
@@ -290,21 +320,29 @@ bool Simplification::SimplifyPower(Tree* u) {
     u->moveTreeOverTree(v);
     return true;
   }
-  if (v->type() == BlockType::Constant &&
-      Constant::Type(v) == Constant::Type::I) {
-    EditionReference remainder =
+  if (v->type() == BlockType::Complex && Number::IsZero(v->nextNode())) {
+    // (0 + A*i)^n -> ±(A^n) or (0±(A^n)*i)
+    Tree* remainder =
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
-    if (Number::IsZero(remainder)) {
-      u->cloneTreeOverTree(1_e);
-    } else if (Number::IsOne(remainder)) {
-      u->cloneTreeOverTree(i_e);
-    } else if (Number::IsTwo(remainder)) {
-      u->cloneTreeOverTree(-1_e);
-    } else {
-      assert(Approximation::To<float>(remainder) == 3.0);
-      u->cloneTreeOverTree(KMult(-1_e, i_e));
-    }
+    int rem = Integer::Uint8(remainder);
     remainder->removeTree();
+    v->nextNode()->removeTree();
+    v->removeNode();
+    // A^n
+    SimplifyPower(u);
+    // u could be any tree from this point forward
+    if (rem > 1) {
+      // -u
+      u->moveTreeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
+      u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
+      SimplifyMultiplication(u);
+    }
+    if (rem % 2 == 1) {
+      // u is a pure imaginary
+      u->moveTreeAtNode(SharedEditionPool->push<BlockType::Zero>());
+      u->moveNodeAtNode(SharedEditionPool->push<BlockType::Complex>());
+      assert(!SimplifyComplex(u));
+    }
     return true;
   }
   // (w^p)^n -> w^(p*n)
@@ -442,6 +480,33 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     SimplifyAddition(merge->childAtIndex(1));
     SimplifyPower(merge);
     assert(merge->type() != BlockType::Multiplication);
+  } else if (child->type() == BlockType::Complex ||
+             next->type() == BlockType::Complex) {
+    // (A+B*i)*(C+D*i) -> ((AC-BD)+(AD+BC)*i)
+    merge = SharedEditionPool->push<BlockType::Complex>();
+    Tree* addition = SharedEditionPool->push<BlockType::Addition>(2);
+    Tree* multiplication =
+        SharedEditionPool->push<BlockType::Multiplication>(2);
+    RealPart(child)->clone();
+    RealPart(next)->clone();
+    SimplifyMultiplication(multiplication);
+    multiplication = SharedEditionPool->push<BlockType::Multiplication>(3);
+    SharedEditionPool->push<BlockType::MinusOne>();
+    ImagPart(child)->clone();
+    ImagPart(next)->clone();
+    SimplifyMultiplication(multiplication);
+    SimplifyAddition(addition);
+    addition = SharedEditionPool->push<BlockType::Addition>(2);
+    multiplication = SharedEditionPool->push<BlockType::Multiplication>(2);
+    RealPart(child)->clone();
+    ImagPart(next)->clone();
+    SimplifyMultiplication(multiplication);
+    multiplication = SharedEditionPool->push<BlockType::Multiplication>(2);
+    ImagPart(child)->clone();
+    RealPart(next)->clone();
+    SimplifyMultiplication(multiplication);
+    SimplifyAddition(addition);
+    SimplifyComplex(merge);
   }
   if (!merge) {
     return false;
@@ -602,6 +667,19 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
     SimplifyAddition(merge->childAtIndex(0));
     SimplifyMultiplication(merge);
     assert(merge->type() != BlockType::Addition);
+  } else if (child->type() == BlockType::Complex ||
+             next->type() == BlockType::Complex) {
+    // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
+    merge = SharedEditionPool->push<BlockType::Complex>();
+    Tree* addition = SharedEditionPool->push<BlockType::Addition>(2);
+    RealPart(child)->clone();
+    RealPart(next)->clone();
+    SimplifyAddition(addition);
+    addition = SharedEditionPool->push<BlockType::Addition>(2);
+    ImagPart(child)->clone();
+    ImagPart(next)->clone();
+    SimplifyAddition(addition);
+    SimplifyComplex(merge);
   }
   if (!merge) {
     return false;
@@ -736,6 +814,15 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
     changed = true;
   }
   return changed ||
+         // Complex(0,1) -> i
+         PatternMatching::MatchAndReplace(ref, KComplex(0_e, 1_e), i_e) ||
+         // Complex(0,A) -> A*i
+         PatternMatching::MatchAndReplace(ref, KComplex(0_e, KPlaceholder<A>()),
+                                          KMult(KPlaceholder<A>(), i_e)) ||
+         // Complex(A,B) -> A+B*i
+         PatternMatching::MatchAndReplace(
+             ref, KComplex(KPlaceholder<A>(), KPlaceholder<B>()),
+             KAdd(KPlaceholder<A>(), KMult(KPlaceholder<B>(), i_e))) ||
          // trig(A, 0) -> cos(A)
          PatternMatching::MatchAndReplace(ref, KTrig(KPlaceholder<A>(), 0_e),
                                           KCos(KPlaceholder<A>())) ||
@@ -821,6 +908,8 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   /* All replaced structure do not not need further shallow projection.
    * Operator || only is used. */
   return
+      // i -> Complex(0,1)
+      PatternMatching::MatchAndReplace(ref, i_e, KComplex(0_e, 1_e)) ||
       // A - B -> A + (-1)*B
       PatternMatching::MatchAndReplace(
           ref, KSub(KPlaceholder<A>(), KPlaceholder<B>()),
@@ -1059,36 +1148,16 @@ bool Simplification::ExpandLn(Tree* ref) {
 }
 
 bool Simplification::ExpandExp(Tree* ref) {
-  // exp(A+B+...) = exp(A) * exp(B) * ...
-  if (DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
-                         BlockType::Multiplication)) {
-    // Multiplication children may be extended again.
-    assert(ref->type() == BlockType::Multiplication);
-    int n = ref->numberOfChildren();
-    Tree* child = ref->nextNode();
-    for (size_t i = 0; i < n; i++) {
-      ExpandExp(child);
-      child = child->nextTree();
-    }
-    return true;
-  }
-
   return
-      // exp(A*i*B) = cos(A*B) + i*sin(A*B)
+      // exp(A+iB) = exp(A)*(cos(B) + i*sin(B))
       PatternMatching::MatchReplaceAndSimplify(
-          ref,
-          KExp(
-              KMult(KAnyTreesPlaceholder<A>(), i_e, KAnyTreesPlaceholder<B>())),
-          KAdd(
-              KTrig(KMult(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
-                    0_e),
-              KMult(KTrig(KMult(KAnyTreesPlaceholder<A>(),
-                                KAnyTreesPlaceholder<B>()),
-                          1_e),
-                    i_e))) ||
-      // exp(i) = cos(1) + i*sin(1) - TODO: Find a better solution
-      PatternMatching::MatchReplaceAndSimplify(
-          ref, KExp(i_e), KAdd(KTrig(1_e, 0_e), KMult(KTrig(1_e, 1_e), i_e)));
+          ref, KExp(KComplex(KPlaceholder<A>(), KPlaceholder<B>())),
+          KMult(KExp(KPlaceholder<A>()),
+                KComplex(KTrig(KPlaceholder<B>(), 0_e),
+                         KTrig(KPlaceholder<B>(), 1_e)))) ||
+      // exp(A+B+...) = exp(A) * exp(B) * ...
+      DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
+                         BlockType::Multiplication);
 }
 
 bool Simplification::ContractExpMult(Tree* ref) {
@@ -1260,6 +1329,15 @@ bool Simplification::ExpandMult(Tree* ref) {
     SimplifyAddition(ref);
   }
   return true;
+}
+
+bool Simplification::ExpandPowerComplex(Tree* ref) {
+  // (A + B*i)^2 = (A^2 -2*B^2 + 2*A*B*i)
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KPow(KComplex(KPlaceholder<A>(), KPlaceholder<B>()), 2_e),
+      KComplex(KAdd(KPow(KPlaceholder<A>(), 2_e),
+                    KMult(-1_e, KPow(KPlaceholder<B>(), 2_e))),
+               KMult(2_e, KPlaceholder<A>(), KPlaceholder<B>())));
 }
 
 bool Simplification::ExpandPower(Tree* ref) {

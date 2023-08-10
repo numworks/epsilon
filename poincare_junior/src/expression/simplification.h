@@ -81,6 +81,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyLn);
   static bool SimplifyExp(Tree *u);
   EDITION_REF_WRAP(SimplifyExp);
+  static bool SimplifyComplex(Tree *u);
+  EDITION_REF_WRAP(SimplifyComplex);
 
  private:
   static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);
@@ -148,6 +150,8 @@ class Simplification {
   EDITION_REF_WRAP(ExpandTrigonometric);
   static bool ExpandMult(Tree *node);
   EDITION_REF_WRAP(ExpandMult);
+  static bool ExpandPowerComplex(Tree *node);
+  EDITION_REF_WRAP(ExpandPowerComplex);
   static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
 
@@ -155,8 +159,8 @@ class Simplification {
       ContractLn, ContractAbs, ContractExpMult, ContractTrigonometric};
   constexpr static Operation k_expandOperations[] = {
       ExpandAbs, ExpandLn, ExpandExp, ExpandTrigonometric};
-  constexpr static Operation k_algebraicExpandOperations[] = {ExpandPower,
-                                                              ExpandMult};
+  constexpr static Operation k_algebraicExpandOperations[] = {
+      ExpandPower, ExpandPowerComplex, ExpandMult};
 };
 
 }  // namespace PoincareJ

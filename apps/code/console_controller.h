@@ -7,7 +7,7 @@
 #include "console_edit_cell.h"
 #include "console_line_cell.h"
 #include "console_store.h"
-#include "python_variable_box.h"
+#include "python_variable_box_controller.h"
 #include "sandbox_controller.h"
 #include "script_store.h"
 

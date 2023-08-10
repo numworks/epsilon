@@ -24,7 +24,7 @@ app_code_test_src = $(addprefix apps/code/,\
   script_store.cpp \
   script_template.cpp \
   subtitle_cell.cpp \
-  python_variable_box.cpp \
+  python_variable_box_controller.cpp \
 )
 
 tests_src += $(addprefix apps/code/test/,\

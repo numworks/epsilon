@@ -1,10 +1,9 @@
-#include "../python_variable_box.h"
-
 #include <quiz.h>
 #include <string.h>
 
 #include <array>
 
+#include "../python_variable_box_controller.h"
 #include "../script_store.h"
 
 using namespace Code;
@@ -28,7 +27,7 @@ void assert_variables_are(const char *script,
   ScriptStore::ScriptAtIndex(scriptIndex).setValue(data);
 
   // Load the variable box
-  PythonVariableBox varBox;
+  PythonVariableBoxController varBox;
 
   const char *nameToComplete = script + nameToCompleteOffsetInScript;
   varBox.loadFunctionsAndVariables(scriptIndex, nameToComplete,

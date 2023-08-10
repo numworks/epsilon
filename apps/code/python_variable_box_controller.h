@@ -1,5 +1,5 @@
-#ifndef CODE_PYTHON_VARIABLE_BOX_H
-#define CODE_PYTHON_VARIABLE_BOX_H
+#ifndef CODE_PYTHON_VARIABLE_BOX_CONTROLLER_H
+#define CODE_PYTHON_VARIABLE_BOX_CONTROLLER_H
 
 #include <escher/alternate_empty_nested_menu_controller.h>
 #include <escher/buffer_text_view.h>
@@ -13,9 +13,10 @@
 
 namespace Code {
 
-class PythonVariableBox : public Escher::AlternateEmptyNestedMenuController {
+class PythonVariableBoxController
+    : public Escher::AlternateEmptyNestedMenuController {
  public:
-  PythonVariableBox();
+  PythonVariableBoxController();
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
@@ -37,7 +38,7 @@ class PythonVariableBox : public Escher::AlternateEmptyNestedMenuController {
       Escher::SelectableListView* l, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
 
-  /* PythonVariableBox */
+  /* PythonVariableBoxController */
   void setDisplaySubtitles(bool display) { m_displaySubtitles = display; }
   void loadFunctionsAndVariables(int scriptIndex,
                                  const char* textToAutocomplete,

@@ -1122,14 +1122,13 @@ const ToolboxMessageTree *PythonToolboxController::rootModel() const {
   return &toolboxModel;
 }
 
-MenuCell<MessageTextView, MessageTextView> *
-PythonToolboxController::leafCellAtIndex(int index) {
+ToolboxLeafCell *PythonToolboxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-Escher::NestedMenuController::NodeCell *
-PythonToolboxController::nodeCellAtIndex(int index) {
+NestedMenuController::NodeCell *PythonToolboxController::nodeCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
@@ -1143,7 +1142,7 @@ KDCoordinate PythonToolboxController::nonMemoizedRowHeight(int row) {
     ToolboxLeafCell tempCell;
     return protectedNonMemoizedRowHeight(&tempCell, row);
   }
-  return Escher::Toolbox::nonMemoizedRowHeight(row);
+  return Toolbox::nonMemoizedRowHeight(row);
 }
 
 void PythonToolboxController::fillCellForRow(HighlightCell *cell, int row) {
@@ -1166,7 +1165,7 @@ void PythonToolboxController::fillCellForRow(HighlightCell *cell, int row) {
     return;
   }
   assert(typeAtRow(row) == k_nodeCellType);
-  Escher::Toolbox::fillCellForRow(cell, row);
+  Toolbox::fillCellForRow(cell, row);
 }
 
 void PythonToolboxController::scrollToLetter(char letter) {

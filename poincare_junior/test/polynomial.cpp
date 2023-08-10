@@ -47,10 +47,9 @@ QUIZ_CASE(pcj_polynomial_variables) {
   assert_trees_are_equal(
       PolynomialParser::GetVariables(KAdd("x"_e, KPow("y"_e, -1_e))),
       KSet("x"_e, KPow("y"_e, -1_e)));
-  //   assert_trees_are_equal(PolynomialParser::GetVariables(KComplex(
-  //                              KMult(KExp(KMult(KHalf, KLn(2_e))), "x"_e),
-  //                              π_e)),
-  //                          KSet(π_e, "x"_e)); // TODO: Fix it
+  assert_trees_are_equal(PolynomialParser::GetVariables(KComplex(
+                             KMult(KExp(KMult(KHalf, KLn(2_e))), "x"_e), π_e)),
+                         KSet(π_e, "x"_e));
 }
 
 QUIZ_CASE(pcj_polynomial_operations) {

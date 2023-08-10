@@ -32,9 +32,9 @@ void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
     return;
   }
   if (!derivand->block()->isOfType({BlockType::Multiplication,
-                                    BlockType::Addition, BlockType::Exponential,
-                                    BlockType::Power, BlockType::Trig,
-                                    BlockType::Ln})) {
+                                    BlockType::Addition, BlockType::Complex,
+                                    BlockType::Exponential, BlockType::Power,
+                                    BlockType::Trig, BlockType::Ln})) {
     // This derivation is not handled
     SharedEditionPool->push<BlockType::Derivative>();
     SharedEditionPool->clone(derivand);
@@ -87,6 +87,15 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       }
       return;
     }
+    case BlockType::Complex:
+      // TODO: Should we actually handle this ?
+      if (index == 1) {
+        SharedEditionPool->push<BlockType::Complex>();
+        SharedEditionPool->push<BlockType::Zero>();
+        SharedEditionPool->push<BlockType::One>();
+        return;
+      }
+      // Fall through Addition
     case BlockType::Addition:
       // Di(x0 + x1 + ... + xi + ...) = 1
       SharedEditionPool->push<BlockType::One>();

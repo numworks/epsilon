@@ -15,7 +15,7 @@ bool Metric::hasImproved() const {
   if (type != m_type) {
     // Addition > Multiplication > Anything.
     for (BlockType betterType :
-         {BlockType::Addition, BlockType::Multiplication}) {
+         {BlockType::Addition, BlockType::Complex, BlockType::Multiplication}) {
       if (m_type == betterType || type == betterType) {
         return type == betterType;
       }
@@ -32,7 +32,8 @@ bool Metric::hasImproved() const {
 const Tree* Metric::AlgebraicRoot(const Tree* tree, const Tree* root) {
   const Tree* parent = root->parentOfDescendant(tree);
   if (parent) {
-    if (parent->type() == BlockType::Addition) {
+    if (parent->type() == BlockType::Addition ||
+        parent->type() == BlockType::Complex) {
       return parent;
     }
     if (parent->type() == BlockType::Multiplication) {

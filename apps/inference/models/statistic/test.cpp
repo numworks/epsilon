@@ -20,11 +20,11 @@
 namespace Inference {
 
 void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
-  const char* format = I18n::translate(graphTitleFormat());
   Poincare::Print::CustomPrintf(
-      buffer, bufferSize, format, testCriticalValue(),
-      Poincare::Preferences::PrintFloatMode::Decimal,
-      Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(),
+      buffer, bufferSize, "%s=%*.*ed %s=%*.*ed", criticalValueSymbol(),
+      testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      I18n::translate(I18n::Message::PValue), pValue(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
@@ -182,17 +182,16 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   return true;
 }
 
-I18n::Message Test::graphTitleFormat() const {
+const char* Test::criticalValueSymbol() const {
   DistributionType type = distributionType();
   switch (type) {
     case DistributionType::T:
     case DistributionType::TPooled:
-      return I18n::Message::StatisticGraphControllerTestTitleFormatTTest;
-    case DistributionType::Z:
-      return I18n::Message::StatisticGraphControllerTestTitleFormatZtest;
+      return DistributionT::CriticalValueSymbol();
     default:
-      assert(type == DistributionType::Chi2);
-      return I18n::Message::Default;
+      // Chi2 doesn't need this method
+      assert(type == DistributionType::Z);
+      return DistributionZ::CriticalValueSymbol();
   }
 }
 

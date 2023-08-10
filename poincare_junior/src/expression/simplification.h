@@ -79,6 +79,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyPowerReal);
   static bool SimplifyLn(Tree *u);
   EDITION_REF_WRAP(SimplifyLn);
+  static bool SimplifyExp(Tree *u);
+  EDITION_REF_WRAP(SimplifyExp);
 
  private:
   static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);

@@ -71,13 +71,32 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
       return Derivation::ShallowSimplify(u);
     case BlockType::Ln:
       return SimplifyLn(u);
+    case BlockType::Exponential:
+      return SimplifyExp(u);
     default:
       return false;
   }
 }
 
+bool Simplification::SimplifyExp(Tree* u) {
+  Tree* child = u->nextNode();
+  if (child->type() == BlockType::Ln) {
+    // exp(ln(x)) -> x
+    u->removeNode();
+    u->removeNode();
+    return true;
+  }
+  return false;
+}
+
 bool Simplification::SimplifyLn(Tree* u) {
   Tree* child = u->nextNode();
+  if (child->type() == BlockType::Exponential) {
+    // ln(exp(x)) -> x
+    u->removeNode();
+    u->removeNode();
+    return true;
+  }
   if (!IsInteger(child)) {
     return false;
   }
@@ -837,7 +856,7 @@ bool Simplification::ApplyShallowInDepth(Tree* ref,
 
 bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
                                                    bool changed) {
-  if (changed + ReduceInverseFunction(ref)) {
+  if (ReduceInverseFunction(ref) || changed) {
     return true;
   }
   const Metric metric(ref, root);
@@ -889,11 +908,15 @@ bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
 }
 
 bool Simplification::ReduceInverseFunction(Tree* e) {
-  // TODO : Add more
-  return PatternMatching::MatchAndReplace(e, KExp(KLn(KPlaceholder<A>())),
-                                          KPlaceholder<A>()) ||
-         PatternMatching::MatchAndReplace(e, KLn(KExp(KPlaceholder<A>())),
-                                          KPlaceholder<A>());
+  /* TODO :Transformations such as exp(ln) were expected to be performed here
+   * but have been moved to systematicReduce because ln(2x) (in exp(ln(2x))
+   * advance reduce to ln(2)+ln(x) before ReduceInverseFunction is called on the
+   * Exponential tree. Possible solutions :
+   * - Keep inverse function reduction in systematicReduce
+   * - ln(2x) doesn't advance reduce to ln(2)+ln(x)
+   * - Call ReduceInverseFunction before (and after ?) advanceReduce on children
+   */
+  return false;
 }
 
 bool Simplification::ExpandTranscendentalOnRational(Tree* e) {

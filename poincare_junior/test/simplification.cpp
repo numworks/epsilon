@@ -247,7 +247,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("-6*b-4*a*b-2*b+3*a*b-4*b+2*a*b+3*b+6*a*b", "-9*b+7*a*b");
   simplifies_to("d+c+b+a", "a+b+c+d");
   simplifies_to("e^(ln(x))", "x");
-  //   simplifies_to("e^(ln(x+x))", "2*x"); // TODO: Fix it
+  simplifies_to("e^(ln(x+x))", "2*x");
   simplifies_to("diff(x, x, 2)", "1");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
@@ -301,9 +301,7 @@ QUIZ_CASE(pcj_power_simplification) {
   //   * -|x|^y if p is odd
   simplifies_to("(-123)^(5/7)", "-1*123^(5/7)");
 
-  simplifies_to("sqrt(x)^2", "√(x)^(2)");
+  simplifies_to("√(x)^2", "√(x)^(2)", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
-  simplifies_to(
-      "sqrt(x)^2", "e^(ln(x))",
-      {.m_complexFormat = ComplexFormat::Cartesian});  // TODO: This is wrong
+  simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
 }

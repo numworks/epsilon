@@ -15,6 +15,7 @@ class DistributionInterface {
 
 class DistributionT : public DistributionInterface {
  public:
+  static const char* CriticalValueSymbol() { return "t"; }
   static Poincare::Layout CriticalValueSymbolLayout() {
     return Poincare::LayoutHelper::String("t", -1);
   }
@@ -29,6 +30,7 @@ class DistributionT : public DistributionInterface {
 
 class DistributionZ : public DistributionInterface {
  public:
+  static const char* CriticalValueSymbol() { return "z"; }
   static Poincare::Layout CriticalValueSymbolLayout() {
     return Poincare::LayoutHelper::String("z", -1);
   }

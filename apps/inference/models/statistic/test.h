@@ -104,7 +104,7 @@ class Test : public Statistic {
  protected:
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
-  I18n::Message graphTitleFormat() const;
+  const char* criticalValueSymbol() const;
   // Hypothesis chosen
   HypothesisParams m_hypothesisParams;
   // Cached values

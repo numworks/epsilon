@@ -19,7 +19,7 @@ app_code_src = $(addprefix apps/code/,\
 
 app_code_test_src = $(addprefix apps/code/,\
   clipboard.cpp \
-  python_toolbox.cpp \
+  python_toolbox_controller.cpp \
   script.cpp \
   script_store.cpp \
   script_template.cpp \

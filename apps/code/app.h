@@ -6,7 +6,7 @@
 
 #include "console_controller.h"
 #include "menu_controller.h"
-#include "python_toolbox.h"
+#include "python_toolbox_controller.h"
 #include "python_variable_box_controller.h"
 #include "script_store.h"
 
@@ -47,7 +47,7 @@ class App : public Shared::SharedApp {
   bool handleEvent(Ion::Events::Event event) override;
   void willExitResponderChain(Escher::Responder *nextFirstResponder) override;
 
-  PythonToolbox *toolbox() override {
+  PythonToolboxController *toolbox() override {
     return m_allowBoxes ? &m_toolbox : nullptr;
   }
   PythonVariableBoxController *variableBox() override {
@@ -83,7 +83,7 @@ class App : public Shared::SharedApp {
   Escher::ButtonRowController m_listFooter;
   MenuController m_menuController;
   Escher::StackViewController m_codeStackViewController;
-  PythonToolbox m_toolbox;
+  PythonToolboxController m_toolbox;
   PythonVariableBoxController m_variableBox;
 #if PLATFORM_DEVICE
   /* On the device, we reach 64K of heap by repurposing the unused tree pool.

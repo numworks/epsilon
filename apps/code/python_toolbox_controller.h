@@ -1,5 +1,5 @@
-#ifndef CODE_PYTHON_TOOLBOX_H
-#define CODE_PYTHON_TOOLBOX_H
+#ifndef CODE_PYTHON_TOOLBOX_CONTROLLER_H
+#define CODE_PYTHON_TOOLBOX_CONTROLLER_H
 
 #include <apps/i18n.h>
 #include <escher/container.h>
@@ -13,10 +13,10 @@ namespace Code {
 using ToolboxLeafCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView>;
 
-class PythonToolbox : public Escher::Toolbox {
+class PythonToolboxController : public Escher::Toolbox {
  public:
-  // PythonToolbox
-  PythonToolbox();
+  // PythonToolboxController
+  PythonToolboxController();
   const Escher::ToolboxMessageTree* moduleChildren(const char* name,
                                                    int* numberOfNodes) const;
 

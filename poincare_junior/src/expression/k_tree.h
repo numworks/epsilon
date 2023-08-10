@@ -24,6 +24,7 @@ constexpr auto KExp = KUnary<BlockType::Exponential>();
 constexpr auto KFact = KUnary<BlockType::Factorial>();
 constexpr auto KSqrt = KUnary<BlockType::SquareRoot>();
 
+constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();
 constexpr auto KTrig = KBinary<BlockType::Trig>();
 constexpr auto KTrigDiff = KBinary<BlockType::TrigDiff>();

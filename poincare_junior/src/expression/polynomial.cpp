@@ -293,6 +293,29 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 
 /* PolynomialParser */
 
+bool ContainsVariable(const Tree* tree) {
+  int numberOfChildren = tree->numberOfChildren();
+  if (numberOfChildren == 0) {
+    return tree->block()->isOfType(
+        {BlockType::UserFunction, BlockType::UserSequence,
+         BlockType::UserSymbol, BlockType::Constant});
+  }
+  const Tree* child = tree->nextNode();
+  for (int i = 0; i < numberOfChildren; i++) {
+    if (ContainsVariable(child)) {
+      return true;
+    }
+    child = child->nextTree();
+  }
+  return false;
+}
+
+void AddVariable(Tree* set, const Tree* variable) {
+  if (ContainsVariable(variable)) {
+    Set::Add(set, variable);
+  }
+}
+
 Tree* PolynomialParser::GetVariables(const Tree* expression) {
   Tree* variables = SharedEditionPool->push<BlockType::Set>(0);
   if (expression->block()->isInteger()) {  // TODO: generic belongToField?
@@ -305,18 +328,18 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
     const Tree* exponent = base->nextTree();
     assert(exponent->block()->isInteger());
     assert(!Integer::IsUint8(exponent) || Integer::Uint8(exponent) > 1);
-    Set::Add(variables, Integer::IsUint8(exponent) ? base : expression);
+    AddVariable(variables, Integer::IsUint8(exponent) ? base : expression);
   } else if (type == BlockType::Addition || type == BlockType::Multiplication) {
     for (const Tree* child : expression->children()) {
       if (child->type() == BlockType::Addition && type != BlockType::Addition) {
-        Set::Add(variables, child);
+        AddVariable(variables, child);
       } else {
         // TODO: variables isn't expected to actually change.
         variables = Set::Union(variables, GetVariables(child));
       }
     }
   } else {
-    Set::Add(variables, expression);
+    AddVariable(variables, expression);
   }
   return variables;
 }

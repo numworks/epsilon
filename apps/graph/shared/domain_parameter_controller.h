@@ -4,7 +4,7 @@
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/expiring_pointer.h>
 #include <apps/shared/interactive_curve_view_controller.h>
-#include <apps/shared/math_toolbox.h>
+#include <apps/shared/math_toolbox_controller.h>
 #include <apps/shared/single_range_controller.h>
 
 namespace Graph {

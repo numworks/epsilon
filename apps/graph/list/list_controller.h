@@ -3,7 +3,7 @@
 
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_list_controller.h>
-#include <apps/shared/math_toolbox.h>
+#include <apps/shared/math_toolbox_controller.h>
 
 #include "../graph/graph_controller.h"
 #include "../shared/function_parameter_controller.h"

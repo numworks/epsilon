@@ -8,6 +8,11 @@
 
 #include "node_iterator.h"
 
+#if POINCARE_MEMORY_TREE_LOG
+#include <ion/unicode/utf8_decoder.h>
+#include <poincare_junior/src/expression/constant.h>
+#endif
+
 namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
@@ -128,6 +133,13 @@ void Tree::logAttributes(std::ostream& stream) const {
       }
     }
     return;
+  }
+  if (type() == BlockType::Constant) {
+    char buffer[4];
+    size_t size = UTF8Decoder::CodePointToChars(
+        Constant::ToCodePoint(Constant::Type(this)), buffer, 4);
+    buffer[size] = 0;
+    stream << " type=\"" << buffer << "\"";
   }
   if (block()->isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";

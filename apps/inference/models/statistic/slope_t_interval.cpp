@@ -1,6 +1,20 @@
 #include "slope_t_interval.h"
 
+#include <poincare/string_layout.h>
+
 namespace Inference {
+
+void SlopeTInterval::tidy() {
+  Interval::tidy();
+  DoublePairStore::tidy();
+}
+
+Poincare::Layout SlopeTInterval::estimateLayout() const {
+  if (m_estimateLayout.isUninitialized()) {
+    m_estimateLayout = Poincare::StringLayout::Builder(estimateSymbol());
+  }
+  return m_estimateLayout;
+}
 
 void SlopeTInterval::privateCompute() {
   double n = doubleCastedNumberOfPairsOfSeries(0);

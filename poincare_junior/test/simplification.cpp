@@ -75,10 +75,6 @@ QUIZ_CASE(pcj_simplification_contraction) {
   assert_trees_are_equal(
       ref5, KAdd("e"_e, "f"_e, KLn(KMult("a"_e, "b"_e, "c"_e, "d"_e))));
 
-  EditionReference ref6(KPow(KExp("x"_e), 2_e));
-  quiz_assert(Simplification::ShallowContract(ref6));
-  assert_trees_are_equal(ref6, KExp(KMult(2_e, "x"_e)));
-
   EditionReference ref7(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                              KPow(KTrig("x"_e, 1_e), 2_e)));
   quiz_assert(Simplification::ShallowContract(ref7));
@@ -246,6 +242,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2a+3b+4a", "6*a+3*b");
   simplifies_to("-6*b-4*a*b-2*b+3*a*b-4*b+2*a*b+3*b+6*a*b", "-9*b+7*a*b");
   simplifies_to("d+c+b+a", "a+b+c+d");
+  simplifies_to("(e^(x))^2", "e^(2*x)");
   simplifies_to("e^(ln(x))", "x");
   simplifies_to("e^(ln(x+x))", "2*x");
   simplifies_to("diff(x, x, 2)", "1");
@@ -268,8 +265,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   // Trigonometry identities
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7*π/12)", "1/2*√(2)^(-1)+-1/2*√(3)*√(2)^(-1)");
-  simplifies_to("cos(13*π/12)", "-1/2*√(2)^(-1)+-1/2*√(3)*√(2)^(-1)");
+  simplifies_to("cos(7*π/12)", "1/2*2^(-1/2)+-1/2*2^(-1/2)*√(3)");
+  simplifies_to("cos(13*π/12)", "-1/2*2^(-1/2)+-1/2*2^(-1/2)*√(3)");
   simplifies_to("sin(π/3)", "1/2*√(3)");
   simplifies_to("cos(π*2/3)", "-1/2");
   simplifies_to("cos(π*15/4)", "2^(-1/2)");
@@ -280,9 +277,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
-  // TODO: Fix this simplification
-  //   simplifies_to("sin(17*π/12)^2+cos(5*π/12)^2", "1",
-  //                 {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("sin(17*π/12)^2+cos(5*π/12)^2", "1",
+                {.m_complexFormat = ComplexFormat::Cartesian});
 }
 
 QUIZ_CASE(pcj_power_simplification) {

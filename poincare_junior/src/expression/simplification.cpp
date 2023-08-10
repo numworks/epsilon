@@ -86,6 +86,20 @@ bool Simplification::SimplifyExp(Tree* u) {
     u->removeNode();
     return true;
   }
+  if (Number::IsZero(child)) {
+    // exp(0) = 1
+    u->cloneTreeOverTree(1_e);
+    return true;
+  }
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(
+          KExp(KMult(KPlaceholder<A>(), KLn(KPlaceholder<B>()))), u, &ctx) &&
+      IsInteger(ctx.getNode(A))) {
+    // exp(n*ln(x)) -> x^n with n an integer
+    u->moveTreeOverTree(PatternMatching::Create(
+        KPow(KPlaceholder<B>(), KPlaceholder<A>()), ctx, true));
+    return true;
+  }
   return false;
 }
 
@@ -317,7 +331,10 @@ bool Simplification::SimplifyPower(Tree* u) {
     u->removeNode();
     return SimplifyMultiplication(u);
   }
-  return false;
+  // exp(a)^b -> exp(a*b)
+  return PatternMatching::MatchReplaceAndSimplify(
+      u, KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
+      KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
 }
 
 bool BasesAreEqual(const Tree* u1, const Tree* u2) {
@@ -1041,7 +1058,6 @@ bool Simplification::ExpandLn(Tree* ref) {
 }
 
 bool Simplification::ExpandExp(Tree* ref) {
-  // TODO: exp(A?*B) = exp(A)^(B) if B is an integer only
   // exp(A+B+...) = exp(A) * exp(B) * ...
   if (DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
                          BlockType::Multiplication)) {
@@ -1083,13 +1099,6 @@ bool Simplification::ContractExpMult(Tree* ref) {
       KMult(KAnyTreesPlaceholder<A>(),
             KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
             KAnyTreesPlaceholder<D>()));
-}
-
-bool Simplification::ContractExpPow(Tree* ref) {
-  // exp(A)^B = exp(A*B)
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
-      KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
 }
 
 /* TODO : Find an easier solution for nested expand/contract smart shallow

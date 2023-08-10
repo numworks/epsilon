@@ -10,15 +10,6 @@ namespace PoincareJ {
 class Constant final {
  public:
   enum class Type : uint8_t { Pi = 0, E = 1, I = 2, Undefined = 3 };
-  // TypeBlock expects a specific order for TypeBlock::IsNumber
-  static_assert(static_cast<uint8_t>(Type::Pi) <=
-                TypeBlock::k_maxNumberConstantType);
-  static_assert(static_cast<uint8_t>(Type::E) <=
-                TypeBlock::k_maxNumberConstantType);
-  static_assert(static_cast<uint8_t>(Type::I) >
-                TypeBlock::k_maxNumberConstantType);
-  static_assert(static_cast<uint8_t>(Type::Undefined) >
-                TypeBlock::k_maxNumberConstantType);
   static enum Type Type(const Tree* node) {
     assert(node->type() == BlockType::Constant);
     return static_cast<enum Type>(

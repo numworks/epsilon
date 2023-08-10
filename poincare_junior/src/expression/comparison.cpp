@@ -56,14 +56,6 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (type0 == BlockType::Polynomial) {
     return ComparePolynomial(node0, node1);
   }
-  if (type0 == BlockType::Constant) {
-    // At least one of them is not a number. π < i
-    assert(Constant::Type(node0) == Constant::Type::I ||
-           Constant::Type(node1) == Constant::Type::I);
-    return Constant::Type(node0) == Constant::Type::I
-               ? (Constant::Type(node1) == Constant::Type::I ? 0 : 1)
-               : -1;
-  }
   // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
   return CompareChildren(
       node0, node1,
@@ -111,8 +103,9 @@ int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
 }
 
 int Comparison::CompareConstants(const Tree* node0, const Tree* node1) {
-  assert(node0->block()->isNumber() && node1->block()->isNumber());
-  assert(TypeBlock::k_maxNumberConstantType == 1);
+  // Only e and π should be compared.
+  assert(static_cast<uint8_t>(Constant::Type(node0)) <= 1);
+  assert(static_cast<uint8_t>(Constant::Type(node1)) <= 1);
   return static_cast<uint8_t>(Constant::Type(node0)) -
          static_cast<uint8_t>(Constant::Type(node1));
 }

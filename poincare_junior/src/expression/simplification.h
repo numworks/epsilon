@@ -87,7 +87,8 @@ class Simplification {
   EDITION_REF_WRAP_1(SimplifyTrigSecondElement, bool *);
   /* The following methods should not be called with EditionReferences.
    * TODO : ensure it cannot. */
-  static bool MergeAdditionChildren(Tree *u1, Tree *u2);
+  // Return true if child has been merged with next sibling.
+  static bool MergeAdditionChildWithNext(Tree *child, Tree *next);
   // Return true if child has been merged with next sibling.
   static bool MergeMultiplicationChildWithNext(Tree *child);
   // Return true if child has been merged with one or more next siblings.

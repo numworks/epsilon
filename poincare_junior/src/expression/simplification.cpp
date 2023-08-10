@@ -588,27 +588,28 @@ Tree* PushConstant(const Tree* u) {
   return P_ONE();
 }
 
-// returns true if they have been merged in u1
-bool Simplification::MergeAdditionChildren(Tree* u1, Tree* u2) {
-  // Merge constants
-  if (IsRational(u1) && IsRational(u2)) {
-    Tree* add = Rational::Addition(u1, u2);
-    Rational::MakeIrreducible(add);
-    u2->moveTreeOverTree(add);
-    u1->removeTree();
-    return true;
+bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
+  assert(next == child->nextTree());
+  Tree* merge = nullptr;
+  if (IsRational(child) && IsRational(next)) {
+    // Merge constants
+    merge = Rational::Addition(child, next);
+    Rational::MakeIrreducible(merge);
+  } else if (TermsAreEqual(child, next)) {
+    // k1 * a + k2 * a -> (k1+k2) * a
+    merge =
+        P_MULT(P_ADD(PushConstant(child), PushConstant(next)), PushTerm(child));
+    SimplifyAddition(merge->childAtIndex(0));
+    SimplifyMultiplication(merge);
+    assert(merge->type() != BlockType::Addition);
   }
-  // k1 * a + k2 * a -> (k1+k2) * a
-  if (TermsAreEqual(u1, u2)) {
-    Tree* P = P_MULT(P_ADD(PushConstant(u1), PushConstant(u2)), PushTerm(u1));
-    SimplifyAddition(P->childAtIndex(0));
-    SimplifyMultiplication(P);
-    assert(P->type() != BlockType::Addition);
-    u2->moveTreeOverTree(P);
-    u1->removeTree();
-    return true;
+  if (!merge) {
+    return false;
   }
-  return false;
+  // Replace both child and next with merge
+  next->moveTreeOverTree(merge);
+  child->removeTree();
+  return true;
 }
 
 bool Simplification::SimplifyAddition(Tree* u) {
@@ -628,7 +629,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
       continue;
     }
     Tree* next = child->nextTree();
-    if (i + 1 < n && MergeAdditionChildren(child, next)) {
+    if (i + 1 < n && MergeAdditionChildWithNext(child, next)) {
       assert(child->type() != BlockType::Addition);
       n--;
     } else {
@@ -647,7 +648,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
    * If this assert can't be preserved, SimplifyAddition must handle one or both
    * of this cases as handled in multiplication:
    * With a,b and c the sorted addition children (a < b < c), M(a,b) the result
-   * of merging children a and b (with MergeAdditionChildren) if it exists.
+   * of merging children a and b (with MergeAdditionChildWithNext) if it exists.
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
    *   merging again when child merged with nextCHild) */

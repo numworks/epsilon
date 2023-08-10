@@ -12,7 +12,7 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
  public:
   SlopeTInterval(Shared::GlobalContext* context) : SlopeTStatistic(context) {}
   void init() override { DoublePairStore::initListsFromStorage(); }
-  void tidy() override { DoublePairStore::tidy(); }
+  void tidy() override;
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::Slope;
   }
@@ -35,6 +35,10 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
 
   // Distribution: t
   const char* estimateSymbol() const override { return "b"; }
+  Poincare::Layout estimateLayout() const override;
+  I18n::Message estimateDescription() override {
+    return I18n::Message::SampleSlope;
+  }
 
  private:
   // Significance Test: Slope

@@ -45,6 +45,7 @@ class DistributionZ : public DistributionInterface {
 
 class DistributionChi2 : public DistributionInterface {
  public:
+  static const char* CriticalValueSymbol() { return "χ2"; }
   static Poincare::Layout CriticalValueSymbolLayout();
   static float CanonicalDensityFunction(float x, double degreesOfFreedom);
   static double CumulativeNormalizedDistributionFunction(

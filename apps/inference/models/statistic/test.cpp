@@ -188,10 +188,11 @@ const char* Test::criticalValueSymbol() const {
     case DistributionType::T:
     case DistributionType::TPooled:
       return DistributionT::CriticalValueSymbol();
-    default:
-      // Chi2 doesn't need this method
-      assert(type == DistributionType::Z);
+    case DistributionType::Z:
       return DistributionZ::CriticalValueSymbol();
+    default:
+      assert(type == DistributionType::Chi2);
+      return DistributionChi2::CriticalValueSymbol();
   }
 }
 

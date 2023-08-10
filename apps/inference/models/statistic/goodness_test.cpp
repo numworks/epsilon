@@ -25,7 +25,7 @@ void GoodnessTest::setGraphTitle(char* buffer, size_t bufferSize) const {
       I18n::translate(I18n::Message::GreekAlpha), threshold(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits,
-      I18n::translate(I18n::Message::Chi2), testCriticalValue(),
+      criticalValueSymbol(), testCriticalValue(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits,
       I18n::translate(I18n::Message::PValue), pValue(),

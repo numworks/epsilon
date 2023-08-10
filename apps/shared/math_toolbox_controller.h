@@ -1,5 +1,5 @@
-#ifndef APPS_MATH_TOOLBOX_H
-#define APPS_MATH_TOOLBOX_H
+#ifndef APPS_MATH_TOOLBOX_CONTROLLER_H
+#define APPS_MATH_TOOLBOX_CONTROLLER_H
 
 #include <apps/i18n.h>
 #include <escher/container.h>
@@ -16,9 +16,9 @@ class MathToolboxExtraCellsDataSource {
   virtual Poincare::Layout extraCellLayoutAtRow(int row) = 0;
 };
 
-class MathToolbox : public Escher::Toolbox {
+class MathToolboxController : public Escher::Toolbox {
  public:
-  MathToolbox();
+  MathToolboxController();
   bool handleEvent(Ion::Events::Event event) override;
   // View Controller
   void viewDidDisappear() override;

@@ -1,4 +1,4 @@
-#include "math_toolbox.h"
+#include "math_toolbox_controller.h"
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
@@ -863,10 +863,10 @@ constexpr ToolboxMessageTree menu[] = {
 constexpr ToolboxMessageTree toolboxModel =
     ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
-MathToolbox::MathToolbox()
+MathToolboxController::MathToolboxController()
     : Toolbox(nullptr, rootModel()->label()), m_extraCellsDataSource(nullptr) {}
 
-bool MathToolbox::handleEvent(Ion::Events::Event event) {
+bool MathToolboxController::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
       rowIndex < numberOfExtraCellsInCurrentMenu()) {
@@ -875,30 +875,31 @@ bool MathToolbox::handleEvent(Ion::Events::Event event) {
   return Toolbox::handleEvent(event);
 }
 
-void MathToolbox::viewDidDisappear() {
+void MathToolboxController::viewDidDisappear() {
   Toolbox::viewDidDisappear();
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
-   * use the MathToolbox cell heights memoization. We thus reset the MathToolbox
-   * layouts only after calling the parent's viewDidDisappear. */
+   * use the MathToolboxController cell heights memoization. We thus reset the
+   * MathToolboxController layouts only after calling the parent's
+   * viewDidDisappear. */
 
-  // Tidy the layouts displayed in the MathToolbox to clean TreePool
+  // Tidy the layouts displayed in the MathToolboxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].label()->setLayout(Layout());
   }
 }
 
-int MathToolbox::numberOfRows() const {
+int MathToolboxController::numberOfRows() const {
   return Toolbox::numberOfRows() + numberOfExtraCellsInCurrentMenu();
 }
 
-int MathToolbox::typeAtRow(int row) const {
+int MathToolboxController::typeAtRow(int row) const {
   if (row < numberOfExtraCellsInCurrentMenu()) {
     return k_leafCellType;
   }
   return Escher::Toolbox::typeAtRow(row);
 }
 
-KDCoordinate MathToolbox::nonMemoizedRowHeight(int row) {
+KDCoordinate MathToolboxController::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_leafCellType) {
     LeafCell tempCell;
     return protectedNonMemoizedRowHeight(&tempCell, row);
@@ -906,7 +907,7 @@ KDCoordinate MathToolbox::nonMemoizedRowHeight(int row) {
   return Escher::Toolbox::nonMemoizedRowHeight(row);
 }
 
-bool MathToolbox::isMessageTreeDisabled(
+bool MathToolboxController::isMessageTreeDisabled(
     const ToolboxMessageTree *messageTree) const {
   I18n::Message label = messageTree->label();
   ExamMode examMode = Preferences::sharedPreferences->examMode();
@@ -921,7 +922,7 @@ bool MathToolbox::isMessageTreeDisabled(
          (label == I18n::Message::UnitAndConstant && examMode.forbidUnits());
 }
 
-bool MathToolbox::displayMessageTreeDisabledPopUp(
+bool MathToolboxController::displayMessageTreeDisabledPopUp(
     const Escher::ToolboxMessageTree *messageTree) {
   if (isMessageTreeDisabled(messageTree)) {
     // TODO : It would be better if warning did not dismiss the toolbox
@@ -932,7 +933,7 @@ bool MathToolbox::displayMessageTreeDisabledPopUp(
   return false;
 }
 
-void MathToolbox::fillCellForRow(HighlightCell *cell, int row) {
+void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
   if (row < numberOfExtraCellsInCurrentMenu()) {
     assert(m_extraCellsDataSource);
     static_cast<LeafCell *>(cell)->label()->setLayout(
@@ -992,13 +993,13 @@ void MathToolbox::fillCellForRow(HighlightCell *cell, int row) {
   }
 }
 
-bool MathToolbox::selectSubMenu(int selectedRow) {
+bool MathToolboxController::selectSubMenu(int selectedRow) {
   return displayMessageTreeDisabledPopUp(
              messageTreeModelAtIndex(selectedRow)) ||
          Toolbox::selectSubMenu(selectedRow);
 }
 
-bool MathToolbox::selectLeaf(int selectedRow) {
+bool MathToolboxController::selectLeaf(int selectedRow) {
   assert(typeAtRow(selectedRow) == k_leafCellType);
   if (GlobalPreferences::sharedGlobalPreferences->listsStatsOrderInToolbox() ==
           CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
@@ -1027,7 +1028,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   return true;
 }
 
-bool MathToolbox::selectExtraCell(int selectedRow) {
+bool MathToolboxController::selectExtraCell(int selectedRow) {
   assert(m_extraCellsDataSource);
   Layout l = m_extraCellsDataSource->extraCellLayoutAtRow(selectedRow);
   char buffer[k_maxSizeOfExtraCellExpression];
@@ -1038,23 +1039,24 @@ bool MathToolbox::selectExtraCell(int selectedRow) {
   return true;
 }
 
-const ToolboxMessageTree *MathToolbox::rootModel() const {
+const ToolboxMessageTree *MathToolboxController::rootModel() const {
   return &toolboxModel;
 }
 
-MathToolbox::LeafCell *MathToolbox::leafCellAtIndex(int index) {
+MathToolboxController::LeafCell *MathToolboxController::leafCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-Escher::NestedMenuController::NodeCell *MathToolbox::nodeCellAtIndex(
+Escher::NestedMenuController::NodeCell *MathToolboxController::nodeCellAtIndex(
     int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 
-const Escher::ToolboxMessageTree *MathToolbox::messageTreeModelAtIndex(
-    int index) const {
+const Escher::ToolboxMessageTree *
+MathToolboxController::messageTreeModelAtIndex(int index) const {
   assert(index >= numberOfExtraCellsInCurrentMenu() &&
          index - numberOfExtraCellsInCurrentMenu() <
              m_messageTreeModel->numberOfChildren());
@@ -1062,11 +1064,11 @@ const Escher::ToolboxMessageTree *MathToolbox::messageTreeModelAtIndex(
                                           numberOfExtraCellsInCurrentMenu());
 }
 
-int MathToolbox::maxNumberOfDisplayedRows() {
+int MathToolboxController::maxNumberOfDisplayedRows() {
   return k_maxNumberOfDisplayedRows;
 }
 
-int MathToolbox::controlChecksum() const {
+int MathToolboxController::controlChecksum() const {
   return static_cast<int>(
              Preferences::sharedPreferences->examMode().ruleset()) *
              I18n::NumberOfCountries +
@@ -1078,7 +1080,7 @@ int MathToolbox::controlChecksum() const {
              I18n::NumberOfCountries;
 }
 
-int MathToolbox::indexAfterFork(
+int MathToolboxController::indexAfterFork(
     const ToolboxMessageTree *forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
     if (Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
@@ -1095,7 +1097,7 @@ int MathToolbox::indexAfterFork(
   return 1;
 }
 
-int MathToolbox::numberOfExtraCellsInCurrentMenu() const {
+int MathToolboxController::numberOfExtraCellsInCurrentMenu() const {
   return (m_extraCellsDataSource && m_messageTreeModel == rootModel())
              ? m_extraCellsDataSource->numberOfExtraCells()
              : 0;

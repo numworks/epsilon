@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
 #define SEQUENCE_SEQUENCE_TOOLBOX_H
 
-#include <apps/shared/math_toolbox.h>
+#include <apps/shared/math_toolbox_controller.h>
 #include <apps/shared/sequence_store.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>

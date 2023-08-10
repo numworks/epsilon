@@ -3,7 +3,7 @@
 
 #include "app_with_store_menu.h"
 #include "math_toolbox_controller.h"
-#include "math_variable_box.h"
+#include "math_variable_box_controller.h"
 
 namespace Shared {
 
@@ -12,7 +12,7 @@ class MathApp : public AppWithStoreMenu {
   MathToolboxController* defaultToolbox() override final {
     return &m_mathToolbox;
   }
-  MathVariableBox* defaultVariableBox() override final {
+  MathVariableBoxController* defaultVariableBox() override final {
     return &m_mathVariableBox;
   }
 
@@ -21,7 +21,7 @@ class MathApp : public AppWithStoreMenu {
 
  private:
   MathToolboxController m_mathToolbox;
-  MathVariableBox m_mathVariableBox;
+  MathVariableBoxController m_mathVariableBox;
 };
 
 }  // namespace Shared

@@ -1,4 +1,4 @@
-#include "python_toolbox.h"
+#include "python_toolbox_controller.h"
 
 #include <apps/shared/toolbox_helpers.h>
 #include <assert.h>
@@ -1064,9 +1064,10 @@ static_assert(catalogContainsAllChildren(TimeModuleChildren,
 /* Most of Ion key functions are not in catalog so this is not asserted for
  * Ion submodule. */
 
-PythonToolbox::PythonToolbox() : Toolbox(nullptr, rootModel()->label()) {}
+PythonToolboxController::PythonToolboxController()
+    : Toolbox(nullptr, rootModel()->label()) {}
 
-const ToolboxMessageTree *PythonToolbox::moduleChildren(
+const ToolboxMessageTree *PythonToolboxController::moduleChildren(
     const char *name, int *numberOfNodes) const {
   for (ToolboxMessageTree t : modulesChildren) {
     if (strcmp(I18n::translate(t.label()), name) == 0) {
@@ -1081,7 +1082,7 @@ const ToolboxMessageTree *PythonToolbox::moduleChildren(
   return nullptr;
 }
 
-bool PythonToolbox::handleEvent(Ion::Events::Event event) {
+bool PythonToolboxController::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
   }
@@ -1098,7 +1099,7 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool PythonToolbox::selectLeaf(int selectedRow) {
+bool PythonToolboxController::selectLeaf(int selectedRow) {
   const ToolboxMessageTree *node = static_cast<const ToolboxMessageTree *>(
       m_messageTreeModel->childAtIndex(selectedRow));
   const char *editedText = I18n::translate(node->insertedText());
@@ -1117,27 +1118,27 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
   return true;
 }
 
-const ToolboxMessageTree *PythonToolbox::rootModel() const {
+const ToolboxMessageTree *PythonToolboxController::rootModel() const {
   return &toolboxModel;
 }
 
-MenuCell<MessageTextView, MessageTextView> *PythonToolbox::leafCellAtIndex(
-    int index) {
+MenuCell<MessageTextView, MessageTextView> *
+PythonToolboxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-Escher::NestedMenuController::NodeCell *PythonToolbox::nodeCellAtIndex(
-    int index) {
+Escher::NestedMenuController::NodeCell *
+PythonToolboxController::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 
-int PythonToolbox::maxNumberOfDisplayedRows() {
+int PythonToolboxController::maxNumberOfDisplayedRows() {
   return k_maxNumberOfDisplayedRows;
 }
 
-KDCoordinate PythonToolbox::nonMemoizedRowHeight(int row) {
+KDCoordinate PythonToolboxController::nonMemoizedRowHeight(int row) {
   if (m_messageTreeModel->childAtIndex(row)->numberOfChildren() == 0) {
     ToolboxLeafCell tempCell;
     return protectedNonMemoizedRowHeight(&tempCell, row);
@@ -1145,7 +1146,7 @@ KDCoordinate PythonToolbox::nonMemoizedRowHeight(int row) {
   return Escher::Toolbox::nonMemoizedRowHeight(row);
 }
 
-void PythonToolbox::fillCellForRow(HighlightCell *cell, int row) {
+void PythonToolboxController::fillCellForRow(HighlightCell *cell, int row) {
   const ToolboxMessageTree *messageTree =
       static_cast<const ToolboxMessageTree *>(
           m_messageTreeModel->childAtIndex(row));
@@ -1168,7 +1169,7 @@ void PythonToolbox::fillCellForRow(HighlightCell *cell, int row) {
   Escher::Toolbox::fillCellForRow(cell, row);
 }
 
-void PythonToolbox::scrollToLetter(char letter) {
+void PythonToolboxController::scrollToLetter(char letter) {
   assert(CodePoint(letter).isLatinLetter());
   /* We look for a child MessageTree that starts with the wanted letter. If we
    * do not find one, we scroll to the first child MessageTree that starts with
@@ -1192,7 +1193,7 @@ void PythonToolbox::scrollToLetter(char letter) {
   }
 }
 
-void PythonToolbox::scrollToAndSelectChild(int i) {
+void PythonToolboxController::scrollToAndSelectChild(int i) {
   assert(i >= 0 && i < m_messageTreeModel->numberOfChildren());
   m_selectableListView.scrollToCell(i);
   m_selectableListView.selectCell(i);

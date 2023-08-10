@@ -11,7 +11,7 @@
 #include <algorithm>
 
 #include "app.h"
-#include "python_toolbox.h"
+#include "python_toolbox_controller.h"
 #include "script.h"
 #include "subtitle_cell.h"
 

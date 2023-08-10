@@ -10,7 +10,7 @@ namespace Escher {
 
 class ModalViewEmptyController : public ViewController {
  public:
-  ModalViewEmptyController(I18n::Message message = (I18n::Message)0)
+  ModalViewEmptyController(I18n::Message message)
       : ViewController(nullptr), m_view(message) {}
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::NeverDisplayOwnTitle;

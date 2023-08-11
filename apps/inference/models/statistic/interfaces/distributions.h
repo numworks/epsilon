@@ -7,13 +7,7 @@
 
 namespace Inference {
 
-class DistributionInterface {
- public:
-  static float XMin() { return -Test::k_displayWidthToSTDRatio; }
-  static float XMax() { return Test::k_displayWidthToSTDRatio; }
-};
-
-class DistributionT : public DistributionInterface {
+class DistributionT {
  public:
   static const char* CriticalValueSymbol() { return "t"; }
   static Poincare::Layout CriticalValueSymbolLayout() {
@@ -28,7 +22,7 @@ class DistributionT : public DistributionInterface {
   static float YMax(double degreesOfFreedom);
 };
 
-class DistributionZ : public DistributionInterface {
+class DistributionZ {
  public:
   static const char* CriticalValueSymbol() { return "z"; }
   static Poincare::Layout CriticalValueSymbolLayout() {
@@ -43,7 +37,7 @@ class DistributionZ : public DistributionInterface {
   static float YMax(double degreesOfFreedom);
 };
 
-class DistributionChi2 : public DistributionInterface {
+class DistributionChi2 {
  public:
   static const char* CriticalValueSymbol() { return "χ2"; }
   static Poincare::Layout CriticalValueSymbolLayout();

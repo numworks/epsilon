@@ -33,8 +33,6 @@ enum class CategoricalType {
 };
 
 class Statistic : public Shared::Inference {
-  friend class DistributionInterface;
-
  public:
   Statistic() : m_threshold(-1), m_degreesOfFreedom(NAN) {}
 

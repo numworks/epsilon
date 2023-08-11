@@ -2,13 +2,6 @@
 
 namespace Escher {
 
-KDCoordinate
-ExplicitListViewDataSource::ExplicitListRowHeightManager::computeSizeAtIndex(
-    int i) {
-  return m_dataSource->nonMemoizedRowHeight(i) +
-         m_dataSource->separatorBeforeRow(i);
-}
-
 KDCoordinate ExplicitListViewDataSource::nonMemoizedRowHeight(int row) {
   HighlightCell* cell = this->cell(row);
   return cell->isVisible() ? cell->minimalSizeForOptimalDisplay().height() : 0;

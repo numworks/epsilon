@@ -12,7 +12,7 @@ namespace Escher {
  * with a long or dynamic cell count. */
 class ExplicitListViewDataSource : public ListViewDataSource {
  public:
-  ExplicitListViewDataSource() : ListViewDataSource(), m_heightManager(this) {}
+  ExplicitListViewDataSource() : ListViewDataSource() {}
 
   int typeAtRow(int row) const override final { return row; }
   int reusableCellCount(int type) override final { return 1; }
@@ -28,32 +28,7 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   KDCoordinate nonMemoizedRowHeight(int row) override final;
 
  private:
-  /* This size manager leverages the fact that each cell object
-   * is only used by one explicit cell. Once the cell has been filled with its
-   * content, it's not very costly to call minimalSizeForOptimalDisplay. */
-  class ExplicitListRowHeightManager : public TableSize1DManager {
-   public:
-    ExplicitListRowHeightManager(ExplicitListViewDataSource* dataSource)
-        : m_dataSource(dataSource) {}
-    KDCoordinate computeSizeAtIndex(int i) override;
-    KDCoordinate computeCumulatedSizeBeforeIndex(
-        int i, KDCoordinate defaultSize) override {
-      return k_undefinedSize;
-    }
-    int computeIndexAfterCumulatedSize(KDCoordinate offset,
-                                       KDCoordinate defaultSize) override {
-      return k_undefinedSize;
-    }
-
-   private:
-    ExplicitListViewDataSource* m_dataSource;
-  };
-
   bool canSelectCellAtRow(int row) override;
-
-  TableSize1DManager* rowHeightManager() override { return &m_heightManager; }
-
-  ExplicitListRowHeightManager m_heightManager;
 };
 
 }  // namespace Escher

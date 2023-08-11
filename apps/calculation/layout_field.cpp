@@ -24,7 +24,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::Multiplication || event == Ion::Events::Plus ||
        event == Ion::Events::Power || event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
-    handleEventWithText(Symbol::k_ansAliases.mainAlias());
+    insertText(Symbol::k_ansAliases.mainAlias());
   }
   if (event == Ion::Events::Sto) {
     handleEventWithText("→");

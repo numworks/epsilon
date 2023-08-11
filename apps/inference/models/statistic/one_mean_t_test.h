@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_T_TEST_H
 #define INFERENCE_MODELS_STATISTIC_ONE_MEAN_T_TEST_H
 
-#include "interfaces/distributions.h"
-#include "interfaces/significance_tests.h"
 #include "test.h"
 
 namespace Inference {

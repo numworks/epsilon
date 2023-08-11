@@ -1,5 +1,7 @@
 #include "distributions.h"
 
+#include <inference/models/statistic/statistic.h>
+#include <inference/models/statistic/test.h>
 #include <poincare/chi2_distribution.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/normal_distribution.h>

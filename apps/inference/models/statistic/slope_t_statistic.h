@@ -4,7 +4,6 @@
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
 
-#include "interfaces/significance_tests.h"
 #include "table.h"
 
 namespace Inference {

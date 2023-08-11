@@ -1,7 +1,6 @@
 #include "goodness_test.h"
 
 #include <float.h>
-#include <inference/models/statistic/interfaces/significance_tests.h>
 #include <poincare/print.h>
 
 #include "homogeneity_test.h"

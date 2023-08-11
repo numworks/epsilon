@@ -5,7 +5,6 @@
 
 #include "goodness_test.h"
 #include "homogeneity_test.h"
-#include "interfaces/significance_tests.h"
 
 namespace Inference {
 

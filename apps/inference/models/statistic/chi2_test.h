@@ -56,10 +56,10 @@ class Chi2Test : public Test, public Table {
  private:
   // Inference
   float computeXMin() const override {
-    return DistributionChi2::XMin(m_degreesOfFreedom);
+    return DistribChi2.xMin(m_degreesOfFreedom);
   }
   float computeXMax() const override {
-    return DistributionChi2::XMax(m_degreesOfFreedom);
+    return DistribChi2.xMax(m_degreesOfFreedom);
   }
 };
 

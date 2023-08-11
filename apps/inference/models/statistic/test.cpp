@@ -183,17 +183,7 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
 }
 
 const char* Test::criticalValueSymbol() const {
-  DistributionType type = distributionType();
-  switch (type) {
-    case DistributionType::T:
-    case DistributionType::TPooled:
-      return DistributionT::CriticalValueSymbol();
-    case DistributionType::Z:
-      return DistributionZ::CriticalValueSymbol();
-    default:
-      assert(type == DistributionType::Chi2);
-      return DistributionChi2::CriticalValueSymbol();
-  }
+  return distribution()->criticalValueSymbol();
 }
 
 }  // namespace Inference

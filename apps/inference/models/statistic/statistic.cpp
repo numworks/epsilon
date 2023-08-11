@@ -5,6 +5,20 @@
 
 namespace Inference {
 
+const Distribution *Statistic::distribution() const {
+  DistributionType type = distributionType();
+  switch (type) {
+    case DistributionType::T:
+    case DistributionType::TPooled:
+      return &DistribT;
+    case DistributionType::Z:
+      return &DistribZ;
+    default:
+      assert(type == DistributionType::Chi2);
+      return &DistribChi2;
+  }
+}
+
 double Statistic::parameterAtIndex(int i) const {
   assert(i <= indexOfThreshold() &&
          indexOfThreshold() == numberOfStatisticParameters());
@@ -25,38 +39,14 @@ void Statistic::setParameterAtIndex(double f, int i) {
 }
 
 double Statistic::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  DistributionType type = distributionType();
-  switch (type) {
-    case DistributionType::T:
-    case DistributionType::TPooled:
-      return DistributionT::CumulativeNormalizedDistributionFunction(
-          x, m_degreesOfFreedom);
-    case DistributionType::Z:
-      return DistributionZ::CumulativeNormalizedDistributionFunction(
-          x, m_degreesOfFreedom);
-    default:
-      assert(type == DistributionType::Chi2);
-      return DistributionChi2::CumulativeNormalizedDistributionFunction(
-          x, m_degreesOfFreedom);
-  }
+  return distribution()->cumulativeNormalizedDistributionFunction(
+      x, m_degreesOfFreedom);
 }
 
 double Statistic::cumulativeDistributiveInverseForProbability(
     double probability) const {
-  DistributionType type = distributionType();
-  switch (type) {
-    case DistributionType::T:
-    case DistributionType::TPooled:
-      return DistributionT::CumulativeNormalizedInverseDistributionFunction(
-          probability, m_degreesOfFreedom);
-    case DistributionType::Z:
-      return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
-          probability, m_degreesOfFreedom);
-    default:
-      assert(type == DistributionType::Chi2);
-      return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(
-          probability, m_degreesOfFreedom);
-  }
+  return distribution()->cumulativeNormalizedInverseDistributionFunction(
+      probability, m_degreesOfFreedom);
 }
 
 bool Statistic::Initialize(Statistic *statistic, SubApp subApp) {
@@ -82,45 +72,15 @@ bool Statistic::Initialize(Statistic *statistic, SubApp subApp) {
 }
 
 Poincare::Layout Statistic::criticalValueSymbolLayout() {
-  DistributionType type = distributionType();
-  switch (type) {
-    case DistributionType::T:
-    case DistributionType::TPooled:
-      return DistributionT::CriticalValueSymbolLayout();
-    case DistributionType::Z:
-      return DistributionZ::CriticalValueSymbolLayout();
-    default:
-      assert(type == DistributionType::Chi2);
-      return DistributionChi2::CriticalValueSymbolLayout();
-  }
+  return distribution()->criticalValueSymbolLayout();
 }
 
 float Statistic::computeYMax() const {
-  DistributionType type = distributionType();
-  switch (type) {
-    case DistributionType::T:
-    case DistributionType::TPooled:
-      return DistributionT::YMax(m_degreesOfFreedom);
-    case DistributionType::Z:
-      return DistributionZ::YMax(m_degreesOfFreedom);
-    default:
-      assert(type == DistributionType::Chi2);
-      return DistributionChi2::YMax(m_degreesOfFreedom);
-  }
+  return distribution()->yMax(m_degreesOfFreedom);
 }
 
 float Statistic::canonicalDensityFunction(float x) const {
-  DistributionType type = distributionType();
-  switch (type) {
-    case DistributionType::T:
-    case DistributionType::TPooled:
-      return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom);
-    case DistributionType::Z:
-      return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
-    default:
-      assert(type == DistributionType::Chi2);
-      return DistributionChi2::CanonicalDensityFunction(x, m_degreesOfFreedom);
-  }
+  return distribution()->canonicalDensityFunction(x, m_degreesOfFreedom);
 }
 
 }  // namespace Inference

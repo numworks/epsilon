@@ -60,7 +60,6 @@ EditExpressionController::EditExpressionController(
 void EditExpressionController::insertTextBody(const char *text) {
   App::app()->setFirstResponder(this);
   m_contentView.layoutField()->handleEventWithText(text, false, true);
-  memoizeInput();
 }
 
 void EditExpressionController::didBecomeFirstResponder() {

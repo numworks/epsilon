@@ -277,8 +277,8 @@ void LayoutField::reload(KDSize previousSize) {
 using LayoutInsertionMethod =
     void (Poincare::LayoutCursor::*)(Context *context);
 
-bool LayoutField::handleEventWithText(const char *text, bool indentation,
-                                      bool forceCursorRightOfText) {
+bool LayoutField::insertText(const char *text, bool indentation,
+                             bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
@@ -365,7 +365,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
    * the cursor won't go inside the parenthesis but rather right of it, so
    * the parenthesis should be kept pemanent on the right.
    *
-   * This is done here and not before calling "handleEventWithText" for
+   * This is done here and not before calling "insertText" for
    * multiple reasons:
    *   - In layout_events.cpp, we do not want to change the text of the Cos
    *     event since it should still output "cos()" in 1D fields.
@@ -424,7 +424,7 @@ const char *LayoutField::text() {
 
 void LayoutField::setText(const char *text) {
   clearLayout();
-  handleEventWithText(text, false, true);
+  insertText(text, false, true);
 }
 
 bool LayoutField::inputViewHeightDidChange() {
@@ -466,24 +466,21 @@ KDCoordinate LayoutField::inputViewHeight() const {
                   ScrollView::minimalSizeForOptimalDisplay().height());
 }
 
+bool LayoutField::handleEventWithText(const char *text, bool indentation,
+                                      bool forceCursorRightOfText) {
+  KDSize previousSize = minimalSizeForOptimalDisplay();
+  bool didHandle = insertText(text, indentation, forceCursorRightOfText);
+  return didHandleEvent(didHandle, didHandle, true, previousSize);
+}
+
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRedrawLayout;
   bool shouldUpdateCursor;
-  bool didHandleEvent =
+  bool didHandle =
       privateHandleEvent(event, &shouldRedrawLayout, &shouldUpdateCursor);
-  if (!shouldRedrawLayout) {
-    if (shouldUpdateCursor) {
-      m_contentView.cursorPositionChanged();
-      scrollToCursor();
-    }
-  } else {
-    reload(previousSize);
-  }
-  if (didHandleEvent && m_layoutFieldDelegate) {
-    m_layoutFieldDelegate->layoutFieldDidHandleEvent(this);
-  }
-  return didHandleEvent;
+  return didHandleEvent(didHandle, shouldRedrawLayout, shouldUpdateCursor,
+                        previousSize);
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
@@ -553,8 +550,8 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     if (!isEditing()) {
       setEditing(true);
     }
-    bool didHandleEvent = handleEventWithText(
-        Clipboard::SharedClipboard()->storedText(), false, true);
+    bool didHandleEvent =
+        insertText(Clipboard::SharedClipboard()->storedText(), false, true);
     *shouldRedrawLayout = didHandleEvent;
     return didHandleEvent;
   }
@@ -607,7 +604,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     if (!isEditing()) {
       setEditing(true);
     }
-    bool didHandleEvent = handleEventWithText(buffer);
+    bool didHandleEvent = insertText(buffer);
     *shouldRedrawLayout = didHandleEvent;
     return didHandleEvent;
   }
@@ -631,6 +628,22 @@ bool LayoutField::handleMoveEvent(Ion::Events::Event event,
   return cursor()->moveMultipleSteps(
       OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent,
       shouldRedrawLayout, context());
+}
+
+bool LayoutField::didHandleEvent(bool didHandleEvent, bool shouldRedrawLayout,
+                                 bool shouldUpdateCursor, KDSize previousSize) {
+  if (!shouldRedrawLayout) {
+    if (shouldUpdateCursor) {
+      m_contentView.cursorPositionChanged();
+      scrollToCursor();
+    }
+  } else {
+    reload(previousSize);
+  }
+  if (didHandleEvent && m_layoutFieldDelegate) {
+    m_layoutFieldDelegate->layoutFieldDidHandleEvent(this);
+  }
+  return didHandleEvent;
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {

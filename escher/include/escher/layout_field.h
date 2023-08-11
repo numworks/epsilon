@@ -86,6 +86,8 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
     return Poincare::Preferences::sharedPreferences->editionMode() ==
            Poincare::Preferences::EditionMode::Edition1D;
   }
+  bool insertText(const char* text, bool indentation = false,
+                  bool forceCursorRightOfText = false);
 
  private:
   constexpr static int k_maxNumberOfLayouts = 220;
@@ -98,6 +100,8 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
   bool privateHandleEvent(Ion::Events::Event event, bool* shouldRedrawLayout,
                           bool* shouldUpdateCursor);
   bool handleMoveEvent(Ion::Events::Event event, bool* shouldRedrawLayout);
+  bool didHandleEvent(bool didHandleEvent, bool shouldRedrawLayout,
+                      bool shouldUpdateCursor, KDSize previousSize);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR,
                             bool forceCursorRightOfLayout = false,

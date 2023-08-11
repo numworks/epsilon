@@ -468,8 +468,8 @@ KDCoordinate LayoutField::inputViewHeight() const {
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool shouldRedrawLayout = false;
-  bool shouldUpdateCursor = true;
+  bool shouldRedrawLayout;
+  bool shouldUpdateCursor;
   bool didHandleEvent =
       privateHandleEvent(event, &shouldRedrawLayout, &shouldUpdateCursor);
   if (!shouldRedrawLayout) {
@@ -489,6 +489,9 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *shouldRedrawLayout,
                                      bool *shouldUpdateCursor) {
+  *shouldRedrawLayout = false;
+  *shouldUpdateCursor = true;
+
   // Handle move and selection
   if (handleMoveEvent(event, shouldRedrawLayout)) {
     if (!isEditing()) {

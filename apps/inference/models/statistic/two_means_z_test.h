@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
 #define INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
 
-#include "interfaces/distributions.h"
-#include "interfaces/significance_tests.h"
 #include "test.h"
 
 namespace Inference {

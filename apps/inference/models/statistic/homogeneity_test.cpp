@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <float.h>
-#include <inference/models/statistic/interfaces/significance_tests.h>
 #include <poincare/print.h>
 
 namespace Inference {

@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H
 #define INFERENCE_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H
 
-#include "interfaces/distributions.h"
-#include "interfaces/significance_tests.h"
 #include "interval.h"
 
 namespace Inference {

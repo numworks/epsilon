@@ -5,6 +5,8 @@
 #include <apps/shared/inference.h>
 
 #include "hypothesis_params.h"
+#include "interfaces/distributions.h"
+#include "interfaces/significance_tests.h"
 
 namespace Inference {
 

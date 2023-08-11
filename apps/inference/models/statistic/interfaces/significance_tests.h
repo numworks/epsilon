@@ -1,11 +1,15 @@
 #ifndef INFERENCE_MODELS_STATISTIC_INTERFACES_SIGNIFICANCE_TESTS_H
 #define INFERENCE_MODELS_STATISTIC_INTERFACES_SIGNIFICANCE_TESTS_H
 
-#include <inference/models/statistic/interval.h>
-#include <inference/models/statistic/test.h>
+#include <apps/shared/inference.h>
 #include <omg/round.h>
 
 namespace Inference {
+
+class Statistic;
+class Test;
+class Interval;
+enum class DistributionType;
 
 class SignificanceTest {
  public:

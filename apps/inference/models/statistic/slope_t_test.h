@@ -1,7 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_SLOPE_T_TEST_H
 #define INFERENCE_MODELS_STATISTIC_SLOPE_T_TEST_H
 
-#include "interfaces/distributions.h"
 #include "slope_t_statistic.h"
 #include "test.h"
 

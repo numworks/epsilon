@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_INTERFACES_DISTRIBUTIONS_H
 #define INFERENCE_MODELS_STATISTIC_INTERFACES_DISTRIBUTIONS_H
 
-#include <inference/models/statistic/statistic.h>
-#include <inference/models/statistic/test.h>
 #include <poincare/layout_helper.h>
 
 namespace Inference {

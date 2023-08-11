@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_ONE_PROPORTION_Z_INTERVAL_H
 #define INFERENCE_MODELS_STATISTIC_ONE_PROPORTION_Z_INTERVAL_H
 
-#include "interfaces/distributions.h"
-#include "interfaces/significance_tests.h"
 #include "interval.h"
 
 namespace Inference {

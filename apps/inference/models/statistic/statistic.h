@@ -40,6 +40,10 @@ class Statistic : public Shared::Inference {
 
   enum class SubApp { Test, Interval, NumberOfSubApps };
 
+  constexpr static DistributionT DistribT = DistributionT();
+  constexpr static DistributionZ DistribZ = DistributionZ();
+  constexpr static DistributionChi2 DistribChi2 = DistributionChi2();
+
   virtual void init() {}
   virtual void tidy() {}
 
@@ -88,6 +92,7 @@ class Statistic : public Shared::Inference {
     return testType != significanceTestType();
   }  // Default implementation used in final implementation
   virtual DistributionType distributionType() const = 0;
+  const Distribution* distribution() const;
   virtual bool initializeDistribution(DistributionType distribution) {
     return distribution != distributionType();
   }  // Default implementation used in final implementation

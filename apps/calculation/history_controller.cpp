@@ -192,7 +192,7 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
   HistoryViewCell *selectedCell =
       static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
   if (subviewType == SubviewType::Ellipsis && selectedCell &&
-      selectedCell->additionalInformations().isEmpty()) {
+      !selectedCell->hasEllipsis()) {
     subviewType = SubviewType::Output;
   }
   SubviewType previousSubviewType = m_selectedSubviewType;

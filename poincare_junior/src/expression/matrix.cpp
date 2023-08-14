@@ -22,6 +22,24 @@ Tree* Matrix::Identity(const Tree* n) {
   return result;
 }
 
+Tree* Matrix::Trace(const Tree* matrix) {
+  int n = NumberOfRows(matrix);
+  if (n != NumberOfColumns(matrix)) {
+    return KUndef->clone();
+  }
+  Tree* result = SharedEditionPool->push<BlockType::Addition>(n);
+  const Tree* child = matrix->nextNode();
+  for (int i = 0; i < n - 1; i++) {
+    child->clone();
+    for (int j = 0; j < n + 1; j++) {
+      child = child->nextTree();
+    }
+  }
+  child->clone();
+  Simplification::SimplifyAddition(result);
+  return result;
+}
+
 Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   // should be an assert after dimensional analysis
   if (!(NumberOfRows(u) == NumberOfRows(v) &&

@@ -22,6 +22,7 @@ struct Matrix {
     return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);
   }
   static Tree* Identity(const Tree* n);
+  static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* a, const Tree* b);
   static Tree* Multiplication(const Tree* a, const Tree* b);
 };

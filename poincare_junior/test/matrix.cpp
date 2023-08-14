@@ -18,7 +18,8 @@ QUIZ_CASE(pcj_matrix) {
   const Tree* w2 = KMatrix<3, 1>()(7_e, 8_e, 9_e);
   assert_trees_are_equal(Matrix::Multiplication(w1, w2),
                          KMatrix<2, 1>()(50_e, 122_e));
-  SharedEditionPool->flush();
   assert_trees_are_equal(Matrix::Multiplication(w1, Matrix::Identity(3_e)), w1);
+
+  assert_trees_are_equal(Matrix::Trace(Matrix::Identity(12_e)), 12_e);
   SharedEditionPool->flush();
 }

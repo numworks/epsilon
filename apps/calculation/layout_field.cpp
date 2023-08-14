@@ -16,19 +16,11 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     return false;
   }
-  if (event == Ion::Events::Ans) {
-    handleEventWithText(Symbol::k_ansAliases.mainAlias());
-    return true;
-  }
   if (isEditing() && isEmpty() &&
       (event == Ion::Events::Multiplication || event == Ion::Events::Plus ||
        event == Ion::Events::Power || event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
     insertText(Symbol::k_ansAliases.mainAlias());
-  }
-  if (event == Ion::Events::Sto) {
-    handleEventWithText("→");
-    return true;
   }
   if (event == Ion::Events::Minus && isEditing() &&
       fieldContainsSingleMinusSymbol()) {

@@ -99,6 +99,7 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
   void reload(KDSize previousSize);
   bool privateHandleEvent(Ion::Events::Event event, bool* shouldRedrawLayout,
                           bool* shouldUpdateCursor);
+  bool eventHasText(Ion::Events::Event event, char* buffer, size_t bufferSize);
   bool handleMoveEvent(Ion::Events::Event event, bool* shouldRedrawLayout);
   bool didHandleEvent(bool didHandleEvent, bool shouldRedrawLayout,
                       bool shouldUpdateCursor, KDSize previousSize);

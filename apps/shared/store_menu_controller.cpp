@@ -181,15 +181,4 @@ void StoreMenuController::layoutFieldDidAbortEditing(
   close();
 }
 
-bool StoreMenuController::layoutFieldDidReceiveEvent(
-    Escher::LayoutField* layoutField, Ion::Events::Event event) {
-  assert(layoutField == m_cell.layoutField());
-  if (event == Ion::Events::Sto) {
-    layoutField->handleEventWithText("→");
-    return true;
-  }
-  return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
-                                                             event);
-}
-
 }  // namespace Shared

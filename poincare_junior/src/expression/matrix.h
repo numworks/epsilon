@@ -12,6 +12,7 @@ struct Matrix {
   static uint8_t NumberOfColumns(const Tree* matrix) {
     return static_cast<uint8_t>(matrix->block(2));
   }
+  static Tree* Addition(const Tree* a, const Tree* b);
 };
 
 }  // namespace PoincareJ

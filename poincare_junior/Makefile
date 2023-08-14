@@ -18,6 +18,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/conversion.cpp \
   expression/decimal.cpp \
   expression/integer.cpp \
+  expression/matrix.cpp \
   expression/metric.cpp \
   expression/number.cpp \
   expression/polynomial.cpp \
@@ -64,6 +65,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   integer.cpp \
   k_tree.cpp \
   match.cpp \
+  matrix.cpp \
   memory_elements.cpp \
   memory_edition.cpp \
   memory_cache.cpp \

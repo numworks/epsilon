@@ -168,7 +168,7 @@ class KNAry {
  private:
   template <TreeConcept... CTS>
   consteval auto concat(CTS...) const {
-    return Concat<KTree<Tag, sizeof...(CTS)>, CTS...>();
+    return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
   }
 };
 

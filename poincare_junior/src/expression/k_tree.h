@@ -39,6 +39,30 @@ constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KSet = KNAry<BlockType::Set>();
 constexpr auto KSystemList = KNAry<BlockType::SystemList>();
 
+template <uint8_t Rows, uint8_t Cols>
+class KMatrix {
+ public:
+  template <TreeCompatibleConcept... CTS>
+  consteval auto operator()(CTS... args) const {
+    return concat(KTree(args)...);
+  }
+
+  static constexpr KTree<BlockType::Matrix, Rows, Cols> node{};
+
+  template <class... Args>
+    requires HasATreeConcept<Args...>
+  consteval const Tree* operator()(Args... args) const {
+    return KTree<>();
+  }
+
+ private:
+  template <TreeConcept... CTS>
+    requires(sizeof...(CTS) == Rows * Cols)
+  consteval auto concat(CTS...) const {
+    return Concat<decltype(node), CTS...>();
+  }
+};
+
 /* if you want to add operator+ and so on, you can revert them from the commit
  * [poincare_junior] Split tree_constructor.h */
 

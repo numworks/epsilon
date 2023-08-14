@@ -351,6 +351,7 @@ bool Tree::hasAncestor(const Tree* node, bool includeSelf) const {
 }
 
 Tree* Tree::clone() const { return SharedEditionPool->clone(this); }
+Tree* Tree::cloneNode() const { return SharedEditionPool->clone(this, false); }
 
 // Tree edition
 

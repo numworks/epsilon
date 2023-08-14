@@ -58,6 +58,10 @@ class Tree {
 #endif
 
   constexpr const TypeBlock* block() const { return m_block; }
+  const TypeBlock block(int i) const {
+    assert(i < nodeSize());
+    return m_block[i];
+  }
   constexpr TypeBlock* block() { return m_block; }
   void copyTreeTo(void* address) const;
 
@@ -114,6 +118,7 @@ class Tree {
   constexpr bool isNAry() const { return m_block->isNAry(); }
 
   Tree* clone() const;
+  Tree* cloneNode() const;
 
   // Tree motions
   // TODO

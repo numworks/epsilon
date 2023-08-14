@@ -241,10 +241,6 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
   }
 }
 
-static Expression safeClone(Expression e) {
-  return e.isUninitialized() ? Expression() : e.clone();
-}
-
 void HistoryController::computeAdditionalResultsOfSelectedRow(
     ExpressionsListController **vc) {
   if (*vc == nullptr) {
@@ -253,13 +249,13 @@ void HistoryController::computeAdditionalResultsOfSelectedRow(
   Expression i, a, e;
   calculationAtIndex(selectedRow())
       ->fillExpressionsForAdditionalResults(&i, &e, &a);
+  assert(!Calculation::ForbidAdditionalResults(i, e, a));
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    Expression iClone = safeClone(i);
-    Expression eClone = safeClone(e);
-    Expression aClone = safeClone(a);
-    assert(!Calculation::ForbidAdditionalResults(iClone, eClone, aClone));
+    Expression iClone = i.clone();
+    Expression eClone = e.clone();
+    Expression aClone = a.clone();
     (*vc)->tidy();
     (*vc)->computeAdditionalResults(iClone, eClone, aClone);
   } else {

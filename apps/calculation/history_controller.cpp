@@ -1,11 +1,9 @@
 #include "history_controller.h"
 
-#include <apps/calculation/additional_results/additional_results_controller.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/trigonometry.h>
 
 #include "app.h"
 
@@ -21,10 +19,7 @@ HistoryController::HistoryController(
     : ViewController(editExpressionController),
       m_selectableListView(this, this, this, this),
       m_calculationStore(calculationStore),
-      m_unionController(editExpressionController),
-      m_integerController(editExpressionController),
-      m_rationalController(editExpressionController),
-      m_scientificNotationListController(editExpressionController) {
+      m_additionalResultsController(editExpressionController) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableListView);
     m_calculationHistory[i].setDataSource(this);
@@ -242,26 +237,6 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
   }
 }
 
-void HistoryController::computeAdditionalResultsOfSelectedRow(
-    ExpressionsListController **vc) {
-  if (*vc == nullptr) {
-    return;
-  }
-  Expression i, a, e;
-  calculationAtIndex(selectedRow())
-      ->fillExpressionsForAdditionalResults(&i, &e, &a);
-  assert(!AdditionalResultsController::ForbidAdditionalResults(i, e, a));
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    (*vc)->tidy();
-    (*vc)->computeAdditionalResults(i, e, a);
-  } else {
-    (*vc)->tidy();
-    *vc = nullptr;
-  }
-}
-
 void HistoryController::handleOK() {
   Context *context = App::app()->localContext();
   int focusRow = selectedRow();
@@ -297,62 +272,12 @@ void HistoryController::handleOK() {
   }
 
   assert(m_selectedSubviewType == SubviewType::Ellipsis);
-
-  // Head controller
-  /* TODO: Refactor to avoid writing an if for each parent * child. */
-  ExpressionsListController *mainController = nullptr;
-  AdditionalResultsController::AdditionalResultsType type =
-      selectedCell->additionalResultsType();
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
-  if (type.complex || type.unit || type.vector || type.matrix ||
-      type.directTrigonometry || type.inverseTrigonometry || type.function) {
-    m_unionController.~UnionController();
-    mainController = m_unionController.listController();
-    if (type.complex) {
-      new (&m_unionController) ComplexListController(editController);
-    } else if (type.unit) {
-      new (&m_unionController) UnitListController(editController);
-    } else if (type.vector) {
-      new (&m_unionController) VectorListController(editController);
-    } else if (type.matrix) {
-      new (&m_unionController) MatrixListController(editController);
-    } else if (type.directTrigonometry || type.inverseTrigonometry) {
-      new (&m_unionController) TrigonometryListController(editController);
-      m_unionController.m_trigonometryController.setTrigonometryType(
-          type.directTrigonometry);
-    } else {
-      assert(type.function);
-      new (&m_unionController) FunctionListController(editController);
-    }
-  } else if (type.scientificNotation) {
-    mainController = &m_scientificNotationListController;
-  }
-  computeAdditionalResultsOfSelectedRow(&mainController);
-
-  // Tail controller
-  ExpressionsListController *tailController = nullptr;
-  if (type.integer) {
-    tailController = &m_integerController;
-  } else if (type.rational) {
-    tailController = &m_rationalController;
-  }
-  computeAdditionalResultsOfSelectedRow(&tailController);
-
-  if (tailController) {
-    if (mainController) {
-      static_cast<ChainedExpressionsListController *>(mainController)
-          ->setTail(static_cast<ChainableExpressionsListController *>(
-              tailController));
-    } else {
-      mainController = tailController;
-      tailController = nullptr;
-    }
-  }
-  if (mainController) {
-    assert(mainController->numberOfRows() > 0);
-    App::app()->displayModalViewController(mainController, 0.f, 0.f,
-                                           Metric::PopUpMarginsNoBottom);
-  }
+  Expression i, a, e;
+  calculationAtIndex(selectedRow())
+      ->fillExpressionsForAdditionalResults(&i, &e, &a);
+  m_additionalResultsController.openAdditionalResults(
+      selectedCell->additionalResultsType(), i, e, a);
 }
 
 }  // namespace Calculation

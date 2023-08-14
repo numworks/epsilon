@@ -40,8 +40,8 @@ void MatrixListController::computeAdditionalResults(
   // The expression must be reduced to call methods such as determinant or trace
   assert(exactOutput.type() == ExpressionNode::Type::Matrix);
 
-  bool mIsSquared = (static_cast<Matrix &>(exactOutput).numberOfRows() ==
-                     static_cast<Matrix &>(exactOutput).numberOfColumns());
+  bool mIsSquared = (exactOutput.convert<Matrix>().numberOfRows() ==
+                     exactOutput.convert<Matrix>().numberOfColumns());
   size_t index = 0;
   size_t messageIndex = 0;
   // 1. Matrix determinant if square matrix

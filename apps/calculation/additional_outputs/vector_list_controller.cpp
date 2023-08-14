@@ -34,7 +34,7 @@ void VectorListController::computeAdditionalResults(
   setShowIllustration(false);
 
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
-  Matrix vector = static_cast<Matrix &>(approximateOutput);
+  Matrix vector = approximateOutput.convert<Matrix>();
   assert(vector.isVector());
   size_t index = 0;
 

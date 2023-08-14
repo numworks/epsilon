@@ -56,7 +56,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void setCalculation(Calculation* calculation, bool expanded,
                       Poincare::Context* context,
                       bool canChangeDisplayOutput = false);
-  int numberOfSubviews() const override { return 2 + displayedEllipsis(); }
+  int numberOfSubviews() const override { return 2 + isDisplayingEllipsis(); }
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
@@ -81,7 +81,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void reloadScroll();
   void reloadOutputSelection(
       HistoryViewCellDataSource::SubviewType previousType);
-  bool displayedEllipsis() const { return isHighlighted() && hasEllipsis(); }
+  bool isDisplayingEllipsis() const { return isHighlighted() && hasEllipsis(); }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformations m_calculationAdditionInformations;

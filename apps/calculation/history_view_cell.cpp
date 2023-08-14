@@ -220,7 +220,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
   assert(ellipsisFrame != nullptr && inputFrame != nullptr &&
          outputFrame != nullptr);
 
-  if (displayedEllipsis()) {
+  if (isDisplayingEllipsis()) {
     *ellipsisFrame = KDRect(frameWidth - Metric::EllipsisCellWidth, 0,
                             Metric::EllipsisCellWidth, frameHeight);
     frameWidth -= Metric::EllipsisCellWidth;
@@ -437,8 +437,9 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
         HistoryViewCellDataSource::SubviewType::None,
         HistoryViewCellDataSource::SubviewType::Input,
         HistoryViewCellDataSource::SubviewType::Output,
-        displayedEllipsis() ? HistoryViewCellDataSource::SubviewType::Ellipsis
-                            : HistoryViewCellDataSource::SubviewType::None,
+        isDisplayingEllipsis()
+            ? HistoryViewCellDataSource::SubviewType::Ellipsis
+            : HistoryViewCellDataSource::SubviewType::None,
         HistoryViewCellDataSource::SubviewType::None,
     };
     if (event == Ion::Events::Right || event == Ion::Events::Left) {
@@ -455,7 +456,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     otherSubviewType = HistoryViewCellDataSource::SubviewType::Input;
   } else if (event == Ion::Events::Right &&
              type != HistoryViewCellDataSource::SubviewType::Ellipsis &&
-             displayedEllipsis()) {
+             isDisplayingEllipsis()) {
     otherSubviewType = HistoryViewCellDataSource::SubviewType::Ellipsis;
   }
   if (otherSubviewType == HistoryViewCellDataSource::SubviewType::None) {

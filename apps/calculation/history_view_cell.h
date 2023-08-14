@@ -68,6 +68,9 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Calculation::AdditionalInformations additionalInformations() const {
     return m_calculationAdditionInformations;
   }
+  bool hasEllipsis() const {
+    return !m_calculationAdditionInformations.isEmpty();
+  }
 
  private:
   constexpr static KDCoordinate k_resultWidth = 80;
@@ -78,9 +81,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void reloadScroll();
   void reloadOutputSelection(
       HistoryViewCellDataSource::SubviewType previousType);
-  bool displayedEllipsis() const {
-    return isHighlighted() && !m_calculationAdditionInformations.isEmpty();
-  }
+  bool displayedEllipsis() const { return isHighlighted() && hasEllipsis(); }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformations m_calculationAdditionInformations;

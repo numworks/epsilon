@@ -236,7 +236,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
   m_calculationSingleLine = ViewsCanBeSingleLine(
       inputSize.width(),
       m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(),
-      !m_calculationAdditionInformations.isEmpty());
+      hasEllipsis());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;

@@ -567,6 +567,24 @@ class Expression : public TreeHandle {
     return Direct<Expression, ExpressionNode>(*this);
   }
 
+  template <class T>
+  T convert() const {
+    /* This function allows to convert Expression to derived Expressions.
+     * The asserts ensure that the Expression can only be casted to another
+     * Expression, but this does not prevent Expression types mismatches (cast
+     * Float to Symbol for instance).
+     *
+     * We could have overridden the operator T(). However, even with the
+     * 'explicit' keyword (which prevents implicit casts), direct initialization
+     * are enable which can lead to weird code:
+     * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'
+     * */
+
+    assert(T::IsExpression());
+    static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
+    return *reinterpret_cast<T*>(const_cast<Expression*>(this));
+  }
+
  protected:
   Expression(const ExpressionNode* n) : TreeHandle(n) {}
 
@@ -603,24 +621,6 @@ class Expression : public TreeHandle {
       expression.addChildAtIndexInPlace(children.childAtIndex(i), i, i);
     }
     return std::move(expression);
-  }
-
-  template <class T>
-  T convert() const {
-    /* This function allows to convert Expression to derived Expressions.
-     * The asserts ensure that the Expression can only be casted to another
-     * Expression, but this does not prevent Expression types mismatches (cast
-     * Float to Symbol for instance).
-     *
-     * We could have overridden the operator T(). However, even with the
-     * 'explicit' keyword (which prevents implicit casts), direct initialization
-     * are enable which can lead to weird code:
-     * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'
-     * */
-
-    assert(T::IsExpression());
-    static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
-    return *reinterpret_cast<T*>(const_cast<Expression*>(this));
   }
 
   static_assert(sizeof(TreeHandle::Tuple) == sizeof(Tuple), "Size mismatch");

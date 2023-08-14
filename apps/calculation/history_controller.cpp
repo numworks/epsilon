@@ -1,5 +1,6 @@
 #include "history_controller.h"
 
+#include <apps/calculation/additional_results/additional_results_controller.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
@@ -249,7 +250,7 @@ void HistoryController::computeAdditionalResultsOfSelectedRow(
   Expression i, a, e;
   calculationAtIndex(selectedRow())
       ->fillExpressionsForAdditionalResults(&i, &e, &a);
-  assert(!Calculation::ForbidAdditionalResults(i, e, a));
+  assert(!AdditionalResultsController::ForbidAdditionalResults(i, e, a));
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
@@ -300,43 +301,39 @@ void HistoryController::handleOK() {
   // Head controller
   /* TODO: Refactor to avoid writing an if for each parent * child. */
   ExpressionsListController *mainController = nullptr;
-  Calculation::AdditionalInformations additionalInformations =
-      selectedCell->additionalInformations();
+  AdditionalResultsController::AdditionalResultsType type =
+      selectedCell->additionalResultsType();
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
-  if (additionalInformations.complex || additionalInformations.unit ||
-      additionalInformations.vector || additionalInformations.matrix ||
-      additionalInformations.directTrigonometry ||
-      additionalInformations.inverseTrigonometry ||
-      additionalInformations.function) {
+  if (type.complex || type.unit || type.vector || type.matrix ||
+      type.directTrigonometry || type.inverseTrigonometry || type.function) {
     m_unionController.~UnionController();
     mainController = m_unionController.listController();
-    if (additionalInformations.complex) {
+    if (type.complex) {
       new (&m_unionController) ComplexListController(editController);
-    } else if (additionalInformations.unit) {
+    } else if (type.unit) {
       new (&m_unionController) UnitListController(editController);
-    } else if (additionalInformations.vector) {
+    } else if (type.vector) {
       new (&m_unionController) VectorListController(editController);
-    } else if (additionalInformations.matrix) {
+    } else if (type.matrix) {
       new (&m_unionController) MatrixListController(editController);
-    } else if (additionalInformations.directTrigonometry ||
-               additionalInformations.inverseTrigonometry) {
+    } else if (type.directTrigonometry || type.inverseTrigonometry) {
       new (&m_unionController) TrigonometryListController(editController);
       m_unionController.m_trigonometryController.setTrigonometryType(
-          additionalInformations.directTrigonometry);
+          type.directTrigonometry);
     } else {
-      assert(additionalInformations.function);
+      assert(type.function);
       new (&m_unionController) FunctionListController(editController);
     }
-  } else if (additionalInformations.scientificNotation) {
+  } else if (type.scientificNotation) {
     mainController = &m_scientificNotationListController;
   }
   computeAdditionalResultsOfSelectedRow(&mainController);
 
   // Tail controller
   ExpressionsListController *tailController = nullptr;
-  if (additionalInformations.integer) {
+  if (type.integer) {
     tailController = &m_integerController;
-  } else if (additionalInformations.rational) {
+  } else if (type.rational) {
     tailController = &m_rationalController;
   }
   computeAdditionalResultsOfSelectedRow(&tailController);

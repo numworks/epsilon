@@ -11,6 +11,7 @@ app_calculation_test_src += $(addprefix apps/calculation/,\
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\
+  additional_results/additional_results_controller.cpp \
   additional_results/chained_expressions_list_controller.cpp \
   additional_results/complex_graph_cell.cpp \
   additional_results/complex_model.cpp \

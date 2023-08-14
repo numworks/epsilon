@@ -35,24 +35,6 @@ class Calculation {
     ExactAndApproximateToggle
   };
 
-  struct AdditionalInformations {
-    bool integer : 1;
-    bool rational : 1;
-    bool directTrigonometry : 1;
-    bool inverseTrigonometry : 1;
-    bool unit : 1;
-    bool matrix : 1;
-    bool vector : 1;
-    bool complex : 1;
-    bool function : 1;
-    bool scientificNotation : 1;
-    bool isEmpty() const {
-      return !(integer || rational || directTrigonometry ||
-               inverseTrigonometry || unit || matrix || vector || complex ||
-               function || scientificNotation);
-    }
-  };
-
   static bool DisplaysExact(DisplayOutput d) {
     return d != DisplayOutput::ApproximateOnly;
   }
@@ -107,39 +89,12 @@ class Calculation {
   EqualSign exactAndApproximateDisplayedOutputsEqualSign(
       Poincare::Context* context);
 
-  // Additional Informations
-  static bool ForbidAdditionalResults(
-      const Poincare::Expression input, const Poincare::Expression exactOutput,
-      const Poincare::Expression approximateOutput);
-  static bool HasDirectTrigoAdditionalResults(
-      const Poincare::Expression input, const Poincare::Expression exactOutput);
-  static bool HasInverseTrigoAdditionalResults(
-      const Poincare::Expression input, const Poincare::Expression exactOutput);
-  static bool HasComplexAdditionalResults(
-      const Poincare::Expression approximateOutput);
-  static bool HasUnitAdditionalResults(const Poincare::Expression exactOutput);
-  static bool HasVectorAdditionalResults(
-      const Poincare::Expression exactOutput);
-  static bool HasMatrixAdditionalResults(
-      const Poincare::Expression exactOutput);
-  static bool HasScientificNotationAdditionalResults(
-      const Poincare::Expression approximateOutput);
-  static bool HasFunctionAdditionalResults(
-      const Poincare::Expression input,
-      const Poincare::Expression approximateOutput);
-  static bool HasIntegerAdditionalResults(
-      const Poincare::Expression exactOutput);
-  static bool HasRationalAdditionalResults(
-      const Poincare::Expression exactOutput);
   void fillExpressionsForAdditionalResults(
       Poincare::Expression* input, Poincare::Expression* exactOutput,
       Poincare::Expression* approximateOutput);
-  AdditionalInformations additionalInformations();
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
-  constexpr static const char* k_maximalIntegerWithAdditionalInformation =
-      "10000000000000000";
 
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
 

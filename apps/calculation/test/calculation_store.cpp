@@ -1,5 +1,6 @@
 #include "../calculation_store.h"
 
+#include <apps/calculation/additional_results/additional_results_controller.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
@@ -9,8 +10,8 @@
 #include <quiz.h>
 #include <string.h>
 
-typedef ::Calculation::Calculation::AdditionalInformations
-    AdditionalInformations;
+typedef ::Calculation::AdditionalResultsController::AdditionalResultsType
+    AdditionalResultsType;
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
 typedef ::Calculation::Calculation::EqualSign EqualSign;
 typedef ::Calculation::Calculation::NumberOfSignificantDigits
@@ -738,8 +739,8 @@ QUIZ_CASE(calculation_involving_sequence) {
   seqStore->tidyDownstreamPoolFrom();
 }
 
-bool operator==(const AdditionalInformations &a,
-                const AdditionalInformations &b) {
+bool operator==(const AdditionalResultsType &a,
+                const AdditionalResultsType &b) {
   // TODO C++20 Use a default comparison operator
   return a.integer == b.integer && a.rational == b.rational &&
          a.directTrigonometry == b.directTrigonometry &&
@@ -750,14 +751,13 @@ bool operator==(const AdditionalInformations &a,
 }
 
 void assertCalculationAdditionalResultTypeHas(
-    const char *input, const AdditionalInformations additionalInformationType,
+    const char *input, const AdditionalResultsType additionalResultsType,
     Context *context, CalculationStore *store) {
   store->push(input, context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert_print_if_failure(
-      lastCalculation->additionalInformations() == additionalInformationType,
-      input);
+      lastCalculation->additionalResultsType() == additionalResultsType, input);
   store->deleteAll();
 }
 

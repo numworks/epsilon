@@ -85,6 +85,14 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Constant>(
 
 template <>
 constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Matrix>(
+    Block* block, size_t blockIndex, int rows, int cols) {
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
+                                            BlockType::Matrix, rows, cols);
+}
+
+template <>
+constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
     Block* block, size_t blockIndex, const char* name, size_t nameLength) {
   size_t numberOfMetaBlocks =

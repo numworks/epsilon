@@ -49,6 +49,10 @@ namespace PoincareJ {
  * - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN |
  *
+ * - Matrix M
+ * | M TAG | NUMBER OF ROWS | NUMBER OF COLUMNS |
+ * Children are ordered the row-major way
+ *
  * - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms
  *   ei are unsigned digits
@@ -111,6 +115,7 @@ enum class BlockType : uint8_t {
   // 1 - D - Order dependant expressions
   List,
   Set,
+  Matrix,
   Undefined,
   NumberOfExpressions,
   // 2 - Layout
@@ -181,6 +186,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::SquareRoot);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Subtraction);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Division);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Set);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Matrix);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Derivative);
@@ -286,6 +292,7 @@ class TypeBlock : public Block {
       case BlockType::RationalShort:
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig:
+      case BlockType::Matrix:
         return 3;
       default:
         return 1;
@@ -327,6 +334,9 @@ class TypeBlock : public Block {
       return static_cast<uint8_t>(*next());
     }
     switch (type()) {
+      case BlockType::Matrix:
+        return static_cast<uint8_t>(*next()) *
+               static_cast<uint8_t>(*nextNth(2));
       case BlockType::Derivative:
         return 3;
       case BlockType::Power:

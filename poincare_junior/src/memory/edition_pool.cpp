@@ -295,12 +295,14 @@ template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::Float, float>(float);
 template Tree *EditionPool::push<BlockType::Decimal, uint8_t>(uint8_t);
 template Tree *EditionPool::push<BlockType::MinusOne>();
-template Tree *EditionPool::push<BlockType::Set>(int);
 template Tree *EditionPool::push<BlockType::Half>();
 template Tree *EditionPool::push<BlockType::Zero>();
 template Tree *EditionPool::push<BlockType::One>();
 template Tree *EditionPool::push<BlockType::Two>();
 template Tree *EditionPool::push<BlockType::RationalShort>(int8_t, uint8_t);
+template Tree *EditionPool::push<BlockType::Matrix, uint8_t, uint8_t>(uint8_t,
+                                                                      uint8_t);
+template Tree *EditionPool::push<BlockType::Set>(int);
 template Tree *EditionPool::push<BlockType::Polynomial, int, int>(int, int);
 template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);

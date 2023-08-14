@@ -1,5 +1,6 @@
 #include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
@@ -104,6 +105,7 @@ void Tree::logName(std::ostream& stream) const {
     "UserSequence",
     "List",
     "Set",
+    "Matrix",
     "Undefined",
     "RackLayout",
     "FractionLayout",
@@ -134,6 +136,12 @@ void Tree::logAttributes(std::ostream& stream) const {
       }
     }
     return;
+  }
+  if (type() == BlockType::Matrix) {
+    stream << " numberOfRows=\"" << static_cast<int>(Matrix::NumberOfRows(this))
+           << "\"";
+    stream << " numberOfColumns=\""
+           << static_cast<int>(Matrix::NumberOfColumns(this)) << "\"";
   }
   if (type() == BlockType::Constant) {
     char buffer[4];

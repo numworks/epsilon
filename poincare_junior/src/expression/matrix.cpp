@@ -51,17 +51,44 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   uint8_t internal = NumberOfColumns(u);
   uint8_t cols = NumberOfColumns(v);
   Tree* result = SharedEditionPool->push<BlockType::Matrix>(rows, cols);
+  /* The complexity of the naive multiplication is n^3 by itself but if we do
+   * not take care, indexing the children with childAtIndex will add an n^2
+   * factor. To avoid this, we keep track of each row of v. */
+  const Tree* rowsV[internal];
+  {
+    // Initialize row pointers
+    const Tree* childV = v->nextNode();
+    for (int k = 0; k < internal; k++) {
+      rowsV[k] = childV;
+      for (int c = 0; c < cols; c++) {
+        childV = childV->nextTree();
+      }
+    }
+  }
+  const Tree* childURow0 = u->nextNode();
+  const Tree* childURowK;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
       Tree* add = SharedEditionPool->push<BlockType::Addition, int>(internal);
+      childURowK = childURow0;
       for (int k = 0; k < internal; k++) {
         Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(2);
-        ChildAtIndex(u, row, k)->clone();
-        ChildAtIndex(v, k, col)->clone();
+        assert(childURowK == ChildAtIndex(u, row, k));
+        childURowK->clone();
+        childURowK = childURowK->nextTree();
+        assert(rowsV[k] == ChildAtIndex(v, k, col));
+        rowsV[k]->clone();
+        rowsV[k] = rowsV[k]->nextTree();
         Simplification::SimplifyMultiplication(mult);
       }
       Simplification::SimplifyAddition(add);
     }
+    childURow0 = childURowK;
+    // Since each row has moved cols times we can shift them to restore them
+    for (int k = internal - 1; k > 0; k--) {
+      rowsV[k] = rowsV[k - 1];
+    }
+    rowsV[0] = v->nextNode();
   }
   return result;
 }

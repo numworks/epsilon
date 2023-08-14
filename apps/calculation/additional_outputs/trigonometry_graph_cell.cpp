@@ -17,8 +17,8 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
     /* This is defensive coding to avoid looping infinitely in drawArcOfEllipse
      * when angle is not finite. This should not happen since some asserts
      * prevent it, but history has shown that we always end up with
-     * trigonometric additionnal results that trigger these asserts, and loop
-     * infinitely in release. This code should be removed once the additionnal
+     * trigonometric additional results that trigger these asserts, and loop
+     * infinitely in release. This code should be removed once the additional
      * results are refactored. */
     return;
   }

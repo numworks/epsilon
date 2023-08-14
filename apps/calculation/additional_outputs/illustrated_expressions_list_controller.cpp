@@ -5,7 +5,7 @@
 #include <poincare/symbol.h>
 
 #include "../app.h"
-#include "additionnal_result_cell.h"
+#include "additional_result_cell.h"
 #include "expressions_list_controller.h"
 
 using namespace Poincare;
@@ -50,7 +50,7 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
   if (typeAtRow(row) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
-  AdditionnalResultCell tempCell;
+  AdditionalResultCell tempCell;
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 

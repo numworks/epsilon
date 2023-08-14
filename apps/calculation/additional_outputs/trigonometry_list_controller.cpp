@@ -173,7 +173,7 @@ void TrigonometryListController::fillCellForRow(Escher::HighlightCell* cell,
   if (typeAtRow(row) == k_expressionCellType) {
     int expressionIndex = row - showIllustration();
     assert(0 <= expressionIndex && expressionIndex < k_numberOfExpressionRows);
-    static_cast<AdditionnalResultCell*>(cell)
+    static_cast<AdditionalResultCell*>(cell)
         ->label()
         ->setExactAndApproximateAreStriclyEqual(
             m_isStrictlyEqual[expressionIndex]);

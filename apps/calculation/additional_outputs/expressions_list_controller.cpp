@@ -91,7 +91,7 @@ HighlightCell* ExpressionsListController::reusableCell(int index, int type) {
 }
 
 KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int row) {
-  AdditionnalResultCell tempCell;
+  AdditionalResultCell tempCell;
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
@@ -99,7 +99,7 @@ void ExpressionsListController::fillCellForRow(HighlightCell* cell, int row) {
   /* Note : To further optimize memoization space in the pool, layout
    * serialization could be memoized instead, and layout would be recomputed
    * here, when setting cell's layout. */
-  AdditionnalResultCell* myCell = static_cast<AdditionnalResultCell*>(cell);
+  AdditionalResultCell* myCell = static_cast<AdditionalResultCell*>(cell);
   myCell->label()->setLayouts(m_layouts[row], m_exactLayouts[row],
                               m_approximatedLayouts[row]);
   myCell->subLabel()->setMessage(messageAtIndex(row));
@@ -121,7 +121,7 @@ int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
                                            HighlightCell* cell, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   ScrollableThreeLayoutsView::SubviewPosition position =
-      static_cast<AdditionnalResultCell*>(cell)
+      static_cast<AdditionalResultCell*>(cell)
           ->label()
           ->selectedSubviewPosition();
   Layout layout;

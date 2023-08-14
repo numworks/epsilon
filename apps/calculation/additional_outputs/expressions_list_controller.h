@@ -9,7 +9,7 @@
 #include <escher/stack_view_controller.h>
 #include <poincare/expression.h>
 
-#include "additionnal_result_cell.h"
+#include "additional_result_cell.h"
 
 namespace Calculation {
 
@@ -55,7 +55,7 @@ class ExpressionsListController
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_approximatedLayouts[k_maxNumberOfRows];
-  AdditionnalResultCell m_cells[k_maxNumberOfRows];
+  AdditionalResultCell m_cells[k_maxNumberOfRows];
 
   class InnerListController : public ViewController {
    public:

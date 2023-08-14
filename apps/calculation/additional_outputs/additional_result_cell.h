@@ -1,5 +1,5 @@
-#ifndef CALCULATION_ADDITIONNAL_RESULT_CELL_H
-#define CALCULATION_ADDITIONNAL_RESULT_CELL_H
+#ifndef CALCULATION_ADDITIONAL_RESULT_CELL_H
+#define CALCULATION_ADDITIONAL_RESULT_CELL_H
 
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -10,11 +10,10 @@
 
 namespace Calculation {
 
-class AdditionnalResultCell
-    : public Escher::MenuCell<ScrollableThreeLayoutsView,
-                              Escher::MessageTextView> {
+class AdditionalResultCell : public Escher::MenuCell<ScrollableThreeLayoutsView,
+                                                     Escher::MessageTextView> {
  public:
-  AdditionnalResultCell(I18n::Message subLabelMessage = I18n::Message::Default)
+  AdditionalResultCell(I18n::Message subLabelMessage = I18n::Message::Default)
       : Escher::MenuCell<ScrollableThreeLayoutsView, Escher::MessageTextView>(),
         m_highlightWholeCell(false) {}
 

@@ -769,7 +769,7 @@ Expression ContinuousFunction::Model::expressionEquation(
     /* Replace all y symbols with UCodePointTemporaryUnknown so that they are
      * not replaced if they had a predefined value. This will not replace the y
      * symbols nested in function, which is not a supported behavior anyway.
-     * TODO: Make a consistent behavior calculation/additional_outputs using a
+     * TODO: Make a consistent behavior calculation/additional_results using a
      *       VariableContext to temporary disable y's predefinition. */
     result = result.replaceSymbolWithExpression(
         Symbol::Builder(k_ordinateSymbol),

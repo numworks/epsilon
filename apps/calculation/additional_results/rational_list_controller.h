@@ -1,13 +1,13 @@
-#ifndef CALCULATION_ADDITIONAL_OUTPUTS_INTEGER_LIST_CONTROLLER_H
-#define CALCULATION_ADDITIONAL_OUTPUTS_INTEGER_LIST_CONTROLLER_H
+#ifndef CALCULATION_RATIONAL_LIST_CONTROLLER_H
+#define CALCULATION_RATIONAL_LIST_CONTROLLER_H
 
 #include "chainable_expressions_list_controller.h"
 
 namespace Calculation {
 
-class IntegerListController : public ChainableExpressionsListController {
+class RationalListController : public ChainableExpressionsListController {
  public:
-  IntegerListController(EditExpressionController* editExpressionController)
+  RationalListController(EditExpressionController* editExpressionController)
       : ChainableExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
@@ -15,8 +15,9 @@ class IntegerListController : public ChainableExpressionsListController {
       const Poincare::Expression approximateOutput) override;
 
  private:
-  constexpr static int k_indexOfFactorExpression = 3;
   I18n::Message messageAtIndex(int index) override;
+  int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
+                  int index) override;
 };
 
 }  // namespace Calculation

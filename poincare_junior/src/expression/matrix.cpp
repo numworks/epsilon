@@ -5,6 +5,23 @@
 
 namespace PoincareJ {
 
+Tree* Matrix::Identity(const Tree* n) {
+  if (!n->block()->isNumber() || Integer::Handler(n).numberOfDigits() > 1) {
+    return KUndef->clone();
+  }
+  uint8_t nb = *Integer::Handler(n).digits();
+  Tree* result = SharedEditionPool->push<BlockType::Matrix>(nb, nb);
+  for (int i = 0; i < nb - 1; i++) {
+    (1_e)->clone();
+    // cloning n zeros is indeed a memset(0)
+    for (int j = 0; j < nb; j++) {
+      (0_e)->clone();
+    }
+  }
+  (1_e)->clone();
+  return result;
+}
+
 Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   // should be an assert after dimensional analysis
   if (!(NumberOfRows(u) == NumberOfRows(v) &&
@@ -26,4 +43,26 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   return result;
 }
 
+Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
+  if (!(NumberOfColumns(u) == NumberOfRows(v))) {
+    return KUndef->clone();
+  }
+  uint8_t rows = NumberOfRows(u);
+  uint8_t internal = NumberOfColumns(u);
+  uint8_t cols = NumberOfColumns(v);
+  Tree* result = SharedEditionPool->push<BlockType::Matrix>(rows, cols);
+  for (int row = 0; row < rows; row++) {
+    for (int col = 0; col < cols; col++) {
+      Tree* add = SharedEditionPool->push<BlockType::Addition, int>(internal);
+      for (int k = 0; k < internal; k++) {
+        Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(2);
+        ChildAtIndex(u, row, k)->clone();
+        ChildAtIndex(v, k, col)->clone();
+        Simplification::SimplifyMultiplication(mult);
+      }
+      Simplification::SimplifyAddition(add);
+    }
+  }
+  return result;
+}
 }  // namespace PoincareJ

@@ -10,6 +10,7 @@
 #include <poincare/linear_layout_decoder.h>
 #include <poincare/parametered_expression.h>
 #include <poincare/parenthesis_layout.h>
+#include <poincare/symbol.h>
 #include <poincare/xnt_helpers.h>
 #include <string.h>
 
@@ -511,6 +512,18 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     }
   }
 
+  // Handle events that have text
+  constexpr const size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
+  char buffer[bufferSize] = {0};
+  if (eventHasText(event, buffer, bufferSize)) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
+    bool didHandleEvent = insertText(buffer);
+    *shouldRedrawLayout = didHandleEvent;
+    return didHandleEvent;
+  }
+
   /* If move event was not caught neither by handleMoveEvent nor by
    * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
    * event up. */
@@ -586,31 +599,30 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     return true;
   }
 
-  // Handle special events with text
-  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  *shouldUpdateCursor = false;
+  return false;
+}
+
+bool LayoutField::eventHasText(Ion::Events::Event event, char *buffer,
+                               size_t bufferSize) {
   size_t eventTextLength = 0;
   if (event == Ion::Events::Log &&
       Poincare::Preferences::sharedPreferences->logarithmKeyEvent() ==
           Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
     constexpr const char *k_logWithBase10 = "log(\x11,10)";
+    eventTextLength = strlcpy(buffer, k_logWithBase10, bufferSize);
+  } else if (event == Ion::Events::Sto && m_layoutFieldDelegate &&
+             m_layoutFieldDelegate->textForStoEvent(this)) {
+    eventTextLength = strlcpy(buffer, "→", bufferSize);
+  } else if (event == Ion::Events::Ans && m_layoutFieldDelegate &&
+             m_layoutFieldDelegate->textForAnsEvent(this)) {
     eventTextLength =
-        strlcpy(buffer, k_logWithBase10, Ion::Events::EventData::k_maxDataSize);
+        strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
   } else {
     eventTextLength =
-        Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
-                              Ion::Events::EventData::k_maxDataSize);
+        Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
   }
-  if (eventTextLength > 0) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    bool didHandleEvent = insertText(buffer);
-    *shouldRedrawLayout = didHandleEvent;
-    return didHandleEvent;
-  }
-
-  *shouldUpdateCursor = false;
-  return false;
+  return eventTextLength > 0;
 }
 
 bool LayoutField::handleStoreEvent() {

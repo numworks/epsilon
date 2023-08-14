@@ -26,6 +26,13 @@ class LayoutFieldDelegate : public ContextProvider {
   virtual void layoutFieldDidAbortEditing(LayoutField* layoutField) {}
   virtual void layoutFieldDidHandleEvent(LayoutField* layoutField) {}
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
+
+  virtual bool textForStoEvent(Escher::LayoutField* layoutField) const {
+    return false;
+  }
+  virtual bool textForAnsEvent(Escher::LayoutField* layoutField) const {
+    return false;
+  }
 };
 
 }  // namespace Escher

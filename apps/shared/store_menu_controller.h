@@ -43,10 +43,11 @@ class StoreMenuController : public Escher::ModalViewController,
   // LayoutFieldDelegate
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
-                                  Ion::Events::Event event) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
+  bool textForStoEvent(Escher::LayoutField* layoutField) const override {
+    return true;
+  }
 
  private:
   class InnerListController : public ViewController {

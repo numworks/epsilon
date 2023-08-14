@@ -94,6 +94,7 @@ void StoreMenuController::fillCellForRow(HighlightCell* cell, int row) {
 }
 
 void StoreMenuController::layoutFieldDidChangeSize(LayoutField* layoutField) {
+  assert(layoutField == m_cell.layoutField());
   if (m_preventReload) {
     return;
   }
@@ -157,6 +158,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
 
 bool StoreMenuController::layoutFieldDidFinishEditing(
     Escher::LayoutField* layoutField, Ion::Events::Event event) {
+  assert(layoutField == m_cell.layoutField());
   assert(!layoutField->isEditing());
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
@@ -171,6 +173,7 @@ bool StoreMenuController::layoutFieldDidFinishEditing(
 
 void StoreMenuController::layoutFieldDidAbortEditing(
     Escher::LayoutField* layoutField) {
+  assert(layoutField == m_cell.layoutField());
   /* Since dismissing the controller will call layoutFieldDidChangeSize, we need
    * to set the flag to avoid reloadData from happening which would otherwise
    * setFirstResponder on the store menu while it is hidden. */
@@ -180,6 +183,7 @@ void StoreMenuController::layoutFieldDidAbortEditing(
 
 bool StoreMenuController::layoutFieldDidReceiveEvent(
     Escher::LayoutField* layoutField, Ion::Events::Event event) {
+  assert(layoutField == m_cell.layoutField());
   if (event == Ion::Events::Sto) {
     layoutField->handleEventWithText("→");
     return true;

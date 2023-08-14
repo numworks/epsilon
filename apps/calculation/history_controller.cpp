@@ -242,7 +242,7 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
 }
 
 static Expression safeClone(Expression e) {
-  return !e.isUninitialized() ? e.clone() : Expression();
+  return e.isUninitialized() ? Expression() : e.clone();
 }
 
 void HistoryController::computeAdditionalResultsOfSelectedRow(

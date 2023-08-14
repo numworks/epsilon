@@ -12,6 +12,14 @@ struct Matrix {
   static uint8_t NumberOfColumns(const Tree* matrix) {
     return static_cast<uint8_t>(matrix->block(2));
   }
+  static uint8_t SetNumberOfRows(Tree* matrix, uint8_t rows) {
+    Block* nbRows = matrix->block() + 1;
+    *(nbRows) = rows;
+  }
+  static uint8_t SetNumberOfColumns(Tree* matrix, uint8_t cols) {
+    Block* nbCols = matrix->block() + 2;
+    *(nbCols) = cols;
+  }
   static Tree* ChildAtIndex(Tree* matrix, uint8_t row, uint8_t col) {
     return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);
   }
@@ -25,6 +33,7 @@ struct Matrix {
   static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* a, const Tree* b);
   static Tree* Multiplication(const Tree* a, const Tree* b);
+  static Tree* Transpose(const Tree* matrix);
 };
 
 }  // namespace PoincareJ

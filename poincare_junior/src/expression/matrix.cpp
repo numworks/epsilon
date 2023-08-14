@@ -40,6 +40,33 @@ Tree* Matrix::Trace(const Tree* matrix) {
   return result;
 }
 
+Tree* Matrix::Transpose(const Tree* m) {
+  uint8_t rows = NumberOfRows(m);
+  uint8_t cols = NumberOfColumns(m);
+  if (rows == 1 || cols == 1) {
+    Tree* result = m->clone();
+    SetNumberOfRows(result, cols);
+    SetNumberOfColumns(result, rows);
+    return result;
+  }
+  Tree* result = SharedEditionPool->push<BlockType::Matrix>(cols, rows);
+  const Tree* rowsM[rows];
+  const Tree* child = m->nextNode();
+  for (int row = 0; row < rows; row++) {
+    rowsM[row] = child;
+    for (int col = 0; col < cols; col++) {
+      child = child->nextTree();
+    }
+  }
+  for (int col = 0; col < cols; col++) {
+    for (int row = 0; row < rows; row++) {
+      rowsM[row]->clone();
+      rowsM[row] = rowsM[row]->nextTree();
+    }
+  }
+  return result;
+}
+
 Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   // should be an assert after dimensional analysis
   if (!(NumberOfRows(u) == NumberOfRows(v) &&

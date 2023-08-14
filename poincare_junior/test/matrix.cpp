@@ -21,5 +21,7 @@ QUIZ_CASE(pcj_matrix) {
   assert_trees_are_equal(Matrix::Multiplication(w1, Matrix::Identity(3_e)), w1);
 
   assert_trees_are_equal(Matrix::Trace(Matrix::Identity(12_e)), 12_e);
+  assert_trees_are_equal(Matrix::Transpose(w1),
+                         KMatrix<3, 2>()(1_e, 4_e, 2_e, 5_e, 3_e, 6_e));
   SharedEditionPool->flush();
 }

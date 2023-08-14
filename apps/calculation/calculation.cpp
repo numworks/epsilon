@@ -16,9 +16,9 @@
 #include <algorithm>
 #include <cmath>
 
-#include "additional_outputs/scientific_notation_helper.h"
-#include "additional_outputs/trigonometry_helper.h"
-#include "additional_outputs/vector_helper.h"
+#include "additional_results/scientific_notation_helper.h"
+#include "additional_results/trigonometry_helper.h"
+#include "additional_results/vector_helper.h"
 #include "app.h"
 #include "poincare/expression_node.h"
 

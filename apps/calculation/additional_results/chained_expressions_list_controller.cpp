@@ -1,7 +1,7 @@
 #include "chained_expressions_list_controller.h"
 
 #include "../app.h"
-#include "apps/calculation/additional_outputs/expressions_list_controller.h"
+#include "apps/calculation/additional_results/expressions_list_controller.h"
 
 using namespace Poincare;
 using namespace Escher;

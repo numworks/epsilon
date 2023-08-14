@@ -331,7 +331,7 @@ class Expression : public TreeHandle {
    * a symbol. Beware that 2^3 is generalized as x^3, not x^x. */
   void replaceNumericalValuesWithSymbol(Symbol x);
   /* Return any numerical value in the expression. */
-  float getNumericalValue();
+  float getNumericalValue() const;
 
   /* Units */
   // Call this method on properly reduced expressions only

@@ -1950,7 +1950,7 @@ void Expression::replaceNumericalValuesWithSymbol(Symbol x) {
   }
 }
 
-float Expression::getNumericalValue() {
+float Expression::getNumericalValue() const {
   assert(numberOfNumericalValues() <= 1);
   if (isNumber()) {
     return convert<Number>().doubleApproximation();

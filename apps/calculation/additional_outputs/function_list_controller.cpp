@@ -21,7 +21,8 @@ using namespace Shared;
 namespace Calculation {
 
 void FunctionListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert(Calculation::HasFunctionAdditionalResults(input, approximateOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
@@ -30,11 +31,12 @@ void FunctionListController::computeAdditionalResults(
   Preferences* preferences = Preferences::sharedPreferences;
   Context* context = App::app()->localContext();
 
-  float abscissa = input.getNumericalValue();
+  Expression inputClone = input.clone();
+  float abscissa = inputClone.getNumericalValue();
   Symbol variable = Symbol::SystemSymbol();
-  input.replaceNumericalValuesWithSymbol(variable);
+  inputClone.replaceNumericalValuesWithSymbol(variable);
 
-  Expression simplifiedExpression = input;
+  Expression simplifiedExpression = inputClone;
   PoincareHelpers::CloneAndSimplify(&simplifiedExpression, context,
                                     ReductionTarget::SystemForApproximation);
 
@@ -49,7 +51,8 @@ void FunctionListController::computeAdditionalResults(
 
   m_layouts[0] = HorizontalLayout::Builder(
       LayoutHelper::String("y="),
-      input.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
+      inputClone
+          .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
           .createLayout(preferences->displayMode(),
                         preferences->numberOfSignificantDigits(), context));
   setShowIllustration(true);

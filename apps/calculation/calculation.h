@@ -108,24 +108,29 @@ class Calculation {
       Poincare::Context* context);
 
   // Additional Informations
-  static bool ForbidAdditionalResults(Poincare::Expression input,
-                                      Poincare::Expression exactOutput,
-                                      Poincare::Expression approximateOutput);
-  static bool HasDirectTrigoAdditionalResults(Poincare::Expression input,
-                                              Poincare::Expression exactOutput);
+  static bool ForbidAdditionalResults(
+      const Poincare::Expression input, const Poincare::Expression exactOutput,
+      const Poincare::Expression approximateOutput);
+  static bool HasDirectTrigoAdditionalResults(
+      const Poincare::Expression input, const Poincare::Expression exactOutput);
   static bool HasInverseTrigoAdditionalResults(
-      Poincare::Expression input, Poincare::Expression exactOutput);
+      const Poincare::Expression input, const Poincare::Expression exactOutput);
   static bool HasComplexAdditionalResults(
-      Poincare::Expression approximateOutput);
-  static bool HasUnitAdditionalResults(Poincare::Expression exactOutput);
-  static bool HasVectorAdditionalResults(Poincare::Expression exactOutput);
-  static bool HasMatrixAdditionalResults(Poincare::Expression exactOutput);
+      const Poincare::Expression approximateOutput);
+  static bool HasUnitAdditionalResults(const Poincare::Expression exactOutput);
+  static bool HasVectorAdditionalResults(
+      const Poincare::Expression exactOutput);
+  static bool HasMatrixAdditionalResults(
+      const Poincare::Expression exactOutput);
   static bool HasScientificNotationAdditionalResults(
-      Poincare::Expression approximateOutput);
+      const Poincare::Expression approximateOutput);
   static bool HasFunctionAdditionalResults(
-      Poincare::Expression input, Poincare::Expression approximateOutput);
-  static bool HasIntegerAdditionalResults(Poincare::Expression exactOutput);
-  static bool HasRationalAdditionalResults(Poincare::Expression exactOutput);
+      const Poincare::Expression input,
+      const Poincare::Expression approximateOutput);
+  static bool HasIntegerAdditionalResults(
+      const Poincare::Expression exactOutput);
+  static bool HasRationalAdditionalResults(
+      const Poincare::Expression exactOutput);
   void fillExpressionsForAdditionalResults(
       Poincare::Expression* input, Poincare::Expression* exactOutput,
       Poincare::Expression* approximateOutput);

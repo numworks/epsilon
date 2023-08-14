@@ -1214,7 +1214,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
 int Unit::SetAdditionalExpressions(Expression units, double value,
                                    Expression* dest, int availableLength,
                                    const ReductionContext& reductionContext,
-                                   Expression exactOutput) {
+                                   const Expression exactOutput) {
   if (units.isUninitialized()) {
     return 0;
   }

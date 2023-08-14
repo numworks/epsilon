@@ -257,9 +257,9 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
   }
 }
 
-bool Calculation::ForbidAdditionalResults(Expression input,
-                                          Expression exactOutput,
-                                          Expression approximateOutput) {
+bool Calculation::ForbidAdditionalResults(const Expression input,
+                                          const Expression exactOutput,
+                                          const Expression approximateOutput) {
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with store node as a child. We don't
@@ -282,15 +282,16 @@ bool Calculation::ForbidAdditionalResults(Expression input,
   return false;
 }
 
-bool Calculation::HasComplexAdditionalResults(Expression approximateOutput) {
+bool Calculation::HasComplexAdditionalResults(
+    const Expression approximateOutput) {
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */
   return approximateOutput.isScalarComplex(Preferences::sharedPreferences);
 }
 
-bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
-                                                  Expression exactOutput) {
+bool Calculation::HasDirectTrigoAdditionalResults(
+    const Expression input, const Expression exactOutput) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
@@ -298,15 +299,15 @@ bool Calculation::HasDirectTrigoAdditionalResults(Expression input,
   return !exactAngle.isUninitialized();
 }
 
-bool Calculation::HasInverseTrigoAdditionalResults(Expression input,
-                                                   Expression exactOutput) {
+bool Calculation::HasInverseTrigoAdditionalResults(
+    const Expression input, const Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
   return (Trigonometry::isInverseTrigonometryFunction(input)) ||
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
 }
 
-bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
+bool Calculation::HasUnitAdditionalResults(const Expression exactOutput) {
   assert(exactOutput.hasUnit());
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
@@ -327,17 +328,19 @@ bool Calculation::HasUnitAdditionalResults(Expression exactOutput) {
      * will be defined but not the reduction with UnitConversion::Default,
      * which will make the unit list controller crash.  */
     unit = Expression();
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactOutput, globalContext,
+    clone = exactOutput.clone();
+    PoincareHelpers::CloneAndReduceAndRemoveUnit(&clone, globalContext,
                                                  ReductionTarget::User, &unit);
     return !unit.isUninitialized();
   }
   return false;
 }
 
-bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
+bool Calculation::HasVectorAdditionalResults(const Expression exactOutput) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression norm = VectorHelper::BuildVectorNorm(exactOutput, globalContext);
+  Expression norm =
+      VectorHelper::BuildVectorNorm(exactOutput.clone(), globalContext);
   if (norm.isUninitialized()) {
     return false;
   }
@@ -352,14 +355,14 @@ bool Calculation::HasVectorAdditionalResults(Expression exactOutput) {
   return true;
 }
 
-bool Calculation::HasMatrixAdditionalResults(Expression exactOutput) {
+bool Calculation::HasMatrixAdditionalResults(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   return exactOutput.type() == ExpressionNode::Type::Matrix;
 }
 
 bool Calculation::HasScientificNotationAdditionalResults(
-    Expression approximateOutput) {
+    const Expression approximateOutput) {
   assert(!approximateOutput.hasUnit());
   assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
   Context *globalContext =
@@ -371,7 +374,7 @@ bool Calculation::HasScientificNotationAdditionalResults(
                                                         globalContext);
 }
 
-static bool expressionIsInterestingFunction(Expression e) {
+static bool expressionIsInterestingFunction(const Expression e) {
   assert(!e.isUninitialized());
   if (e.isOfType({ExpressionNode::Type::Opposite,
                   ExpressionNode::Type::Parenthesis})) {
@@ -384,8 +387,8 @@ static bool expressionIsInterestingFunction(Expression e) {
          e.numberOfNumericalValues() == 1;
 }
 
-bool Calculation::HasFunctionAdditionalResults(Expression input,
-                                               Expression approximateOutput) {
+bool Calculation::HasFunctionAdditionalResults(
+    const Expression input, const Expression approximateOutput) {
   // We want a single numerical value and to avoid showing the identity function
   assert(!input.isUninitialized());
   assert(!approximateOutput.isUndefined());
@@ -395,14 +398,14 @@ bool Calculation::HasFunctionAdditionalResults(Expression input,
          expressionIsInterestingFunction(input);
 }
 
-bool Calculation::HasIntegerAdditionalResults(Expression exactOutput) {
+bool Calculation::HasIntegerAdditionalResults(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   return exactOutput.isBasedIntegerCappedBy(
       k_maximalIntegerWithAdditionalInformation);
 }
 
-bool Calculation::HasRationalAdditionalResults(Expression exactOutput) {
+bool Calculation::HasRationalAdditionalResults(const Expression exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());

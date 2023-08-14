@@ -30,8 +30,8 @@ class UnitListController : public ExpressionsListController {
   int numberOfRows() const override;
 
   void computeAdditionalResults(
-      Poincare::Expression input, Poincare::Expression exactOutput,
-      Poincare::Expression approximateOutput) override;
+      const Poincare::Expression input, const Poincare::Expression exactOutput,
+      const Poincare::Expression approximateOutput) override;
 
  private:
   constexpr static int k_bufferCellType = 1;

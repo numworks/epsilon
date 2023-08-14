@@ -253,11 +253,8 @@ void HistoryController::computeAdditionalResultsOfSelectedRow(
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    Expression iClone = i.clone();
-    Expression eClone = e.clone();
-    Expression aClone = a.clone();
     (*vc)->tidy();
-    (*vc)->computeAdditionalResults(iClone, eClone, aClone);
+    (*vc)->computeAdditionalResults(i, e, a);
   } else {
     (*vc)->tidy();
     *vc = nullptr;

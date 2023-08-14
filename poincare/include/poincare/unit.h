@@ -1473,7 +1473,7 @@ class Unit : public Expression {
   static int SetAdditionalExpressions(Expression units, double value,
                                       Expression* dest, int availableLength,
                                       const ReductionContext& reductionContext,
-                                      Expression exactOutput);
+                                      const Expression exactOutput);
   static Expression BuildSplit(double value, const Unit* units, int length,
                                const ReductionContext& reductionContext);
   static Expression ConvertTemperatureUnits(

@@ -18,7 +18,8 @@ using namespace Shared;
 namespace Calculation {
 
 void MatrixListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert(Calculation::HasMatrixAdditionalResults(exactOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
@@ -39,9 +40,9 @@ void MatrixListController::computeAdditionalResults(
   Context *context = App::app()->localContext();
   // The expression must be reduced to call methods such as determinant or trace
   assert(exactOutput.type() == ExpressionNode::Type::Matrix);
+  Matrix matrix = exactOutput.clone().convert<Matrix>();
 
-  bool mIsSquared = (exactOutput.convert<Matrix>().numberOfRows() ==
-                     exactOutput.convert<Matrix>().numberOfColumns());
+  bool mIsSquared = matrix.numberOfRows() == matrix.numberOfColumns();
   size_t index = 0;
   size_t messageIndex = 0;
   // 1. Matrix determinant if square matrix
@@ -49,7 +50,7 @@ void MatrixListController::computeAdditionalResults(
     /* Determinant is reduced so that a null determinant can be detected.
      * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
      * not be reduced to a rational, but will be null in theory. */
-    Expression determinant = Determinant::Builder(exactOutput);
+    Expression determinant = Determinant::Builder(matrix);
     PoincareHelpers::CloneAndSimplify(
         &determinant, context, ReductionTarget::SystemForApproximation,
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -63,12 +64,12 @@ void MatrixListController::computeAdditionalResults(
       // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index++] = getLayoutFromExpression(
-          MatrixInverse::Builder(exactOutput), context, preferences);
+          MatrixInverse::Builder(matrix), context, preferences);
     }
   }
   // 3. Matrix row echelon form
   messageIndex = 2;
-  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(exactOutput);
+  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(matrix);
   m_indexMessageMap[index] = messageIndex++;
   m_layouts[index++] =
       getLayoutFromExpression(rowEchelonForm, context, preferences);
@@ -81,8 +82,8 @@ void MatrixListController::computeAdditionalResults(
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] = getLayoutFromExpression(
-        MatrixTrace::Builder(exactOutput), context, preferences);
+    m_layouts[index++] = getLayoutFromExpression(MatrixTrace::Builder(matrix),
+                                                 context, preferences);
   }
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);

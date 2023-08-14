@@ -8,7 +8,7 @@ namespace Calculation {
 namespace TrigonometryHelper {
 
 Poincare::Expression ExtractExactAngleFromDirectTrigo(
-    Poincare::Expression input, Poincare::Expression exactOutput,
+    const Poincare::Expression input, const Poincare::Expression exactOutput,
     Poincare::Context* context);
 
 }

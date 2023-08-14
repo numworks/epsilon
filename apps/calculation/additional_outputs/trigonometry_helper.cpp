@@ -12,8 +12,8 @@ namespace Calculation {
 
 namespace TrigonometryHelper {
 
-Expression ExtractExactAngleFromDirectTrigo(Expression input,
-                                            Expression exactOutput,
+Expression ExtractExactAngleFromDirectTrigo(const Expression input,
+                                            const Expression exactOutput,
                                             Context* context) {
   /* Trigonometry additional results are displayed if either input or output is
    * a direct function. Indeed, we want to capture both cases:

@@ -13,7 +13,7 @@ namespace Calculation {
 
 namespace VectorHelper {
 
-Expression BuildVectorNorm(Expression exactOutput, Context *context) {
+Expression BuildVectorNorm(const Expression exactOutput, Context *context) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||

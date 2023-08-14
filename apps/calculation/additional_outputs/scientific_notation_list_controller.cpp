@@ -8,7 +8,8 @@ using namespace Poincare;
 namespace Calculation {
 
 void ScientificNotationListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert(
       Calculation::HasScientificNotationAdditionalResults(approximateOutput));
   Context* context = App::app()->localContext();

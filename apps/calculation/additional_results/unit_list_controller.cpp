@@ -71,7 +71,7 @@ int UnitListController::numberOfRows() const {
 void UnitListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(Calculation::HasUnitAdditionalResults(exactOutput));
+  assert(AdditionalResultsController::HasUnitAdditionalResults(exactOutput));
   Expression exactClone = exactOutput.clone();
 
   /* I. Handle expression cells

@@ -43,7 +43,8 @@ static bool isFractionInput(Expression e) {
 void RationalListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(Calculation::HasRationalAdditionalResults(exactOutput));
+  assert(
+      AdditionalResultsController::HasRationalAdditionalResults(exactOutput));
   Expression e = isFractionInput(input) ? input : exactOutput;
   assert(!e.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,

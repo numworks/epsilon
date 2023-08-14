@@ -20,7 +20,7 @@ namespace Calculation {
 void MatrixListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(Calculation::HasMatrixAdditionalResults(exactOutput));
+  assert(AdditionalResultsController::HasMatrixAdditionalResults(exactOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");

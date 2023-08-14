@@ -1,24 +1,15 @@
 #include "calculation.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
-#include <apps/shared/poincare_helpers.h>
-#include <escher/scrollable_multiple_layouts_view.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/matrix.h>
 #include <poincare/nonreal.h>
-#include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
-#include <poincare/unit.h>
 #include <string.h>
 
 #include <algorithm>
 #include <cmath>
 
-#include "additional_results/scientific_notation_helper.h"
-#include "additional_results/trigonometry_helper.h"
-#include "additional_results/vector_helper.h"
 #include "app.h"
 #include "poincare/expression_node.h"
 
@@ -257,163 +248,6 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
   }
 }
 
-bool Calculation::ForbidAdditionalResults(const Expression input,
-                                          const Expression exactOutput,
-                                          const Expression approximateOutput) {
-  /* Special case for Store:
-   * Store nodes have to be at the root of the expression, which prevents
-   * from creating new expressions with store node as a child. We don't
-   * return any additional outputs for them to avoid bothering with special
-   * cases. */
-  if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
-      input.isUninitialized() || exactOutput.isUninitialized() ||
-      approximateOutput.isUninitialized() || approximateOutput.isUndefined() ||
-      input.type() == ExpressionNode::Type::Store ||
-      exactOutput.type() == ExpressionNode::Type::List ||
-      approximateOutput.type() == ExpressionNode::Type::List ||
-      approximateOutput.recursivelyMatches(
-          [](const Expression e, Context *c) {
-            return e.isOfType({ExpressionNode::Type::Infinity});
-          },
-          nullptr)) {
-    return true;
-  }
-  assert(!input.isUndefined() && !exactOutput.isUndefined());
-  return false;
-}
-
-bool Calculation::HasComplexAdditionalResults(
-    const Expression approximateOutput) {
-  /* Using the approximated output instead of the user input to guess the
-   * complex format makes additional results more consistent when the user has
-   * created complexes in Complex mode and then switched back to Real mode. */
-  return approximateOutput.isScalarComplex(Preferences::sharedPreferences);
-}
-
-bool Calculation::HasDirectTrigoAdditionalResults(
-    const Expression input, const Expression exactOutput) {
-  Context *globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-      input, exactOutput, globalContext);
-  return !exactAngle.isUninitialized();
-}
-
-bool Calculation::HasInverseTrigoAdditionalResults(
-    const Expression input, const Expression exactOutput) {
-  // If the result is complex, it is treated as a complex result instead.
-  assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
-  return (Trigonometry::isInverseTrigonometryFunction(input)) ||
-         Trigonometry::isInverseTrigonometryFunction(exactOutput);
-}
-
-bool Calculation::HasUnitAdditionalResults(const Expression exactOutput) {
-  assert(exactOutput.hasUnit());
-  Context *globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression unit;
-  Expression clone = exactOutput.clone();
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &clone, globalContext, ReductionTarget::User, &unit,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      UnitConversion::None);
-  double value =
-      PoincareHelpers::ApproximateToScalar<double>(clone, globalContext);
-  if (!unit.isUninitialized() &&
-      (Unit::ShouldDisplayAdditionalOutputs(
-           value, unit,
-           GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
-       UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
-    /* Sometimes with angle units, the reduction with UnitConversion::None
-     * will be defined but not the reduction with UnitConversion::Default,
-     * which will make the unit list controller crash.  */
-    unit = Expression();
-    clone = exactOutput.clone();
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(&clone, globalContext,
-                                                 ReductionTarget::User, &unit);
-    return !unit.isUninitialized();
-  }
-  return false;
-}
-
-bool Calculation::HasVectorAdditionalResults(const Expression exactOutput) {
-  Context *globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression norm =
-      VectorHelper::BuildVectorNorm(exactOutput.clone(), globalContext);
-  if (norm.isUninitialized()) {
-    return false;
-  }
-  assert(!norm.isUndefined());
-  int nChildren = exactOutput.numberOfChildren();
-  for (int i = 0; i < nChildren; ++i) {
-    if (exactOutput.childAtIndex(i).isScalarComplex(
-            Preferences::sharedPreferences)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool Calculation::HasMatrixAdditionalResults(const Expression exactOutput) {
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  return exactOutput.type() == ExpressionNode::Type::Matrix;
-}
-
-bool Calculation::HasScientificNotationAdditionalResults(
-    const Expression approximateOutput) {
-  assert(!approximateOutput.hasUnit());
-  assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
-  Context *globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
-         Preferences::sharedPreferences->displayMode() !=
-             Preferences::PrintFloatMode::Scientific &&
-         ScientificNotationHelper::HasAdditionalOutputs(approximateOutput,
-                                                        globalContext);
-}
-
-static bool expressionIsInterestingFunction(const Expression e) {
-  assert(!e.isUninitialized());
-  if (e.isOfType({ExpressionNode::Type::Opposite,
-                  ExpressionNode::Type::Parenthesis})) {
-    return expressionIsInterestingFunction(e.childAtIndex(0));
-  }
-  return !e.isNumber() &&
-         !e.isOfType({ExpressionNode::Type::ConstantMaths,
-                      ExpressionNode::Type::UnitConvert}) &&
-         !e.recursivelyMatches(Expression::IsSequence) &&
-         e.numberOfNumericalValues() == 1;
-}
-
-bool Calculation::HasFunctionAdditionalResults(
-    const Expression input, const Expression approximateOutput) {
-  // We want a single numerical value and to avoid showing the identity function
-  assert(!input.isUninitialized());
-  assert(!approximateOutput.isUndefined());
-  assert(!approximateOutput.hasUnit());
-  assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
-  return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
-         expressionIsInterestingFunction(input);
-}
-
-bool Calculation::HasIntegerAdditionalResults(const Expression exactOutput) {
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  return exactOutput.isBasedIntegerCappedBy(
-      k_maximalIntegerWithAdditionalInformation);
-}
-
-bool Calculation::HasRationalAdditionalResults(const Expression exactOutput) {
-  // Find forms like [12]/[23] or -[12]/[23]
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  return exactOutput.isDivisionOfIntegers() ||
-         (exactOutput.type() == ExpressionNode::Type::Opposite &&
-          exactOutput.childAtIndex(0).isDivisionOfIntegers());
-}
-
 void Calculation::fillExpressionsForAdditionalResults(
     Expression *input, Expression *exactOutput, Expression *approximateOutput) {
   Context *globalContext =
@@ -424,45 +258,6 @@ void Calculation::fillExpressionsForAdditionalResults(
   *exactOutput = DisplaysExact(displayOutput(globalContext))
                      ? this->exactOutput()
                      : *approximateOutput;
-}
-
-Calculation::AdditionalInformations Calculation::additionalInformations() {
-  Expression i, a, e;
-  fillExpressionsForAdditionalResults(&i, &e, &a);
-  if (ForbidAdditionalResults(i, e, a)) {
-    return AdditionalInformations{};
-  }
-  if (HasComplexAdditionalResults(a)) {
-    return AdditionalInformations{.complex = true};
-  }
-  if (HasDirectTrigoAdditionalResults(i, e)) {
-    return AdditionalInformations{.directTrigonometry = true};
-  }
-  if (HasInverseTrigoAdditionalResults(i, e)) {
-    return AdditionalInformations{.inverseTrigonometry = true};
-  }
-  if (e.hasUnit()) {
-    return AdditionalInformations{.unit = HasUnitAdditionalResults(e)};
-  }
-  if (HasVectorAdditionalResults(e)) {
-    return AdditionalInformations{.vector = true};
-  }
-  if (HasMatrixAdditionalResults(e)) {
-    return AdditionalInformations{.matrix = true};
-  }
-  AdditionalInformations additionalInformations = {};
-  if (HasScientificNotationAdditionalResults(a)) {
-    additionalInformations.scientificNotation = true;
-  }
-  if (HasFunctionAdditionalResults(i, a)) {
-    additionalInformations.function = true;
-  }
-  if (HasIntegerAdditionalResults(e)) {
-    additionalInformations.integer = true;
-  } else if (HasRationalAdditionalResults(e)) {
-    additionalInformations.rational = true;
-  }
-  return additionalInformations;
 }
 
 }  // namespace Calculation

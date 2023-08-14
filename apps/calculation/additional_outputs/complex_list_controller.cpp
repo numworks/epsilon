@@ -19,7 +19,8 @@ using namespace Shared;
 namespace Calculation {
 
 void ComplexListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert(Calculation::HasComplexAdditionalResults(approximateOutput));
   Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
   preferencesComplex.setComplexFormat(
@@ -27,7 +28,7 @@ void ComplexListController::computeAdditionalResults(
   Context* context = App::app()->localContext();
 
   // Fill Calculation Store
-  Expression e = exactOutput;
+  Expression e = exactOutput.clone();
   Expression z = Symbol::Builder(k_symbol);
   size_t index = 0;
   setLineAtIndex(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e),

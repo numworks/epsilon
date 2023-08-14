@@ -15,7 +15,8 @@ using namespace Shared;
 namespace Calculation {
 
 void TrigonometryListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert((m_directTrigonometry &&
           Calculation::HasDirectTrigoAdditionalResults(input, exactOutput)) ||
          (!m_directTrigonometry &&
@@ -34,11 +35,12 @@ void TrigonometryListController::computeAdditionalResults(
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
     exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-        input, exactOutput, context);
+                     input, exactOutput, context)
+                     .clone();
     approximateAngle = Expression();
   } else {
-    exactAngle = exactOutput;
-    approximateAngle = approximateOutput;
+    exactAngle = exactOutput.clone();
+    approximateAngle = approximateOutput.clone();
     assert(!approximateAngle.isUninitialized() &&
            !approximateAngle.isUndefined());
     if (approximateAngle.isPositive(context) == TrinaryBoolean::False) {

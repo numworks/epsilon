@@ -69,8 +69,11 @@ int UnitListController::numberOfRows() const {
 }
 
 void UnitListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert(Calculation::HasUnitAdditionalResults(exactOutput));
+  Expression exactClone = exactOutput.clone();
+
   /* I. Handle expression cells
    *   0. Initialize expressions and layouts */
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];
@@ -81,7 +84,7 @@ void UnitListController::computeAdditionalResults(
 
   /*   1. First rows: miscellaneous classic units for some dimensions, in both
    *      metric and imperial units. */
-  Expression copy = exactOutput;
+  Expression copy = exactClone;
   Expression units;
   // Reduce to be able to recognize units
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -92,7 +95,7 @@ void UnitListController::computeAdditionalResults(
   ReductionContext reductionContext(
       App::app()->localContext(),
       Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::sharedPreferences->complexFormat(), exactOutput,
+          Preferences::sharedPreferences->complexFormat(), exactClone,
           App::app()->localContext()),
       Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
@@ -100,7 +103,7 @@ void UnitListController::computeAdditionalResults(
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   int numberOfExpressions = Unit::SetAdditionalExpressions(
       units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
-      exactOutput);
+      exactClone);
 
   Expression siExpression;
   const Unit::Representative *representative =
@@ -112,11 +115,11 @@ void UnitListController::computeAdditionalResults(
       representative->dimensionVector() ==
           Unit::AngleRepresentative::Default().dimensionVector()) {
     // Needs to be defined for the unit comparison but is not used with angles
-    siExpression = exactOutput;
+    siExpression = exactClone;
   } else {
     //  2. SI units only
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
-    expressions[numberOfExpressions] = exactOutput;
+    expressions[numberOfExpressions] = exactClone;
     Shared::PoincareHelpers::CloneAndSimplify(
         &expressions[numberOfExpressions], App::app()->localContext(),
         ReductionTarget::User,
@@ -130,8 +133,8 @@ void UnitListController::computeAdditionalResults(
   /*  3. Get rid of duplicates
    * We find duplicates by comparing the serializations, to eliminate
    * expressions that only differ by the types of their number nodes. */
-  Expression reduceExpression = exactOutput;
-  /* Make exactOutput comparable to expressions (turn BasedInteger into
+  Expression reduceExpression = exactClone;
+  /* Make exactClone comparable to expressions (turn BasedInteger into
    * Rational for instance) */
   Shared::PoincareHelpers::CloneAndSimplify(
       &reduceExpression, App::app()->localContext(), ReductionTarget::User,
@@ -146,7 +149,7 @@ void UnitListController::computeAdditionalResults(
                                            buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
       /* Compare the currentExpression to all previous expressions and to
-       * exactOutput */
+       * exactClone */
       Expression comparedExpression =
           i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());

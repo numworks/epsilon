@@ -11,8 +11,8 @@ class IntegerListController : public ChainableExpressionsListController {
       : ChainableExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
-      Poincare::Expression input, Poincare::Expression exactOutput,
-      Poincare::Expression approximateOutput) override;
+      const Poincare::Expression input, const Poincare::Expression exactOutput,
+      const Poincare::Expression approximateOutput) override;
 
  private:
   constexpr static int k_indexOfFactorExpression = 3;

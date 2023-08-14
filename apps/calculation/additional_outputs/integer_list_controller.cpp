@@ -25,7 +25,8 @@ OMG::Base baseAtIndex(int index) {
 }
 
 void IntegerListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   static_assert(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
@@ -35,7 +36,7 @@ void IntegerListController::computeAdditionalResults(
     m_layouts[index] = integer.createLayout(baseAtIndex(index));
   }
   // Computing factorExpression
-  Expression factor = Factor::Builder(exactOutput);
+  Expression factor = Factor::Builder(exactOutput.clone());
   PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext(),
                                     ReductionTarget::User);
   if (!factor.isUndefined()) {

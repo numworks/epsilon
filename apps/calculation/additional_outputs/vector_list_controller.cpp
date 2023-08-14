@@ -18,7 +18,8 @@ using namespace Shared;
 namespace Calculation {
 
 void VectorListController::computeAdditionalResults(
-    Expression input, Expression exactOutput, Expression approximateOutput) {
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   assert(Calculation::HasVectorAdditionalResults(exactOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
@@ -33,9 +34,10 @@ void VectorListController::computeAdditionalResults(
 
   setShowIllustration(false);
   size_t index = 0;
+  Expression exactClone = exactOutput.clone();
 
   // 1. Vector norm
-  Expression norm = VectorHelper::BuildVectorNorm(exactOutput, context);
+  Expression norm = VectorHelper::BuildVectorNorm(exactClone, context);
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
@@ -46,7 +48,7 @@ void VectorListController::computeAdditionalResults(
       Expression::IsInfinity(approximatedNorm, context)) {
     return;
   }
-  Expression normalized = Division::Builder(exactOutput, norm);
+  Expression normalized = Division::Builder(exactClone, norm);
   PoincareHelpers::CloneAndSimplify(&normalized, context, k_target,
                                     k_symbolicComputation);
   if (normalized.type() != ExpressionNode::Type::Matrix) {

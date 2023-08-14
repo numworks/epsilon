@@ -32,10 +32,6 @@ void VectorListController::computeAdditionalResults(
               exactOutput, context));
 
   setShowIllustration(false);
-
-  assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
-  Matrix vector = approximateOutput.convert<Matrix>();
-  assert(vector.isVector());
   size_t index = 0;
 
   // 1. Vector norm
@@ -60,6 +56,9 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
 
   // 3. Angle with x-axis
+  assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
+  Matrix vector = approximateOutput.convert<Matrix>();
+  assert(vector.isVector());
   if (vector.numberOfChildren() != 2) {
     // Vector is not 2D
     return;

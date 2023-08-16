@@ -27,10 +27,10 @@ class LayoutFieldDelegate : public ContextProvider {
   virtual void layoutFieldDidHandleEvent(LayoutField* layoutField) {}
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
 
-  virtual bool textForStoEvent(Escher::LayoutField* layoutField) const {
+  virtual bool insertTextForStoEvent(Escher::LayoutField* layoutField) const {
     return false;
   }
-  virtual bool textForAnsEvent(Escher::LayoutField* layoutField) const {
+  virtual bool insertTextForAnsEvent(Escher::LayoutField* layoutField) const {
     return false;
   }
 };

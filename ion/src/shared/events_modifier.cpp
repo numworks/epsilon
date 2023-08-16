@@ -10,10 +10,10 @@ OMG::GlobalBox<ModifierState> SharedModifierState;
 // Implementation of public Ion::Events functions
 
 ShiftAlphaStatus shiftAlphaStatus() {
-  return SharedModifierState->shiftAlphaStatus();
+  return *SharedModifierState->shiftAlphaStatus();
 }
 void setShiftAlphaStatus(ShiftAlphaStatus s) {
-  SharedModifierState->setShiftAlphaStatus(s);
+  *SharedModifierState->shiftAlphaStatus() = s;
 }
 
 int repetitionFactor() { return SharedModifierState->repetitionFactor(); }
@@ -21,10 +21,6 @@ int repetitionFactor() { return SharedModifierState->repetitionFactor(); }
 int longPressCounter() { return SharedModifierState->longPressCounter(); }
 
 // Internal functions
-void ModifierState::setShiftAlphaStatus(ShiftAlphaStatus s) {
-  m_shiftAlphaStatus = s;
-}
-
 bool ModifierState::wasShiftReleased(Keyboard::State state) {
   if (m_shiftIsHeldAndUsed && !state.keyDown(Keyboard::Key::Shift)) {
     m_shiftIsHeldAndUsed = false;

@@ -107,7 +107,7 @@ Event State::privateSharedGetEvent(int* timeout) {
       return platformEvent;
     }
 
-    bool lock = SharedModifierState->shiftAlphaStatus().alphaIsLocked();
+    bool lock = SharedModifierState->shiftAlphaStatus()->alphaIsLocked();
     uint64_t keysSeenTransitioningFromUpToDown;
     Keyboard::State state;
     while ((state = Keyboard::popState()) != Keyboard::State(-1)) {
@@ -133,9 +133,9 @@ Event State::privateSharedGetEvent(int* timeout) {
             63 - __builtin_clzll(keysSeenTransitioningFromUpToDown));
         didPressNewKey();
         m_lastEventShift =
-            SharedModifierState->shiftAlphaStatus().shiftIsActive();
+            SharedModifierState->shiftAlphaStatus()->shiftIsActive();
         m_lastEventAlpha =
-            SharedModifierState->shiftAlphaStatus().alphaIsActive();
+            SharedModifierState->shiftAlphaStatus()->alphaIsActive();
         Event event(key, m_lastEventShift, m_lastEventAlpha, lock);
         SharedModifierState->updateModifiersFromEvent(event, state);
         SharedModifierState->incrementOrResetRepetition(event == m_lastEvent);

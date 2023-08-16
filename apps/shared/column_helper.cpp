@@ -50,11 +50,6 @@ void ClearColumnHelper::setClearPopUpContent() {
 
 /* StoreColumnHelper */
 
-bool displayNotSuitableWarning() {
-  App::app()->displayWarning(I18n::Message::DataNotSuitable);
-  return false;
-}
-
 StoreColumnHelper::StoreColumnHelper(Escher::Responder *responder,
                                      Context *parentContext,
                                      ClearColumnHelper *clearColumnHelper)
@@ -122,51 +117,72 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
             static_cast<StoreColumnHelper *>(context);
         InputViewController *thisInputViewController =
             static_cast<InputViewController *>(sender);
-        return storeColumnHelper->createExpressionForFillingColumnWithFormula(
+        return storeColumnHelper->fillColumnWithFormula(
             thisInputViewController->textBody());
       },
       [](void *context, void *sender) { return true; });
 }
 
-bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
-    const char *text) {
-  StoreContext storeContext(store(), m_parentContext);
-  Expression expression = Expression::Parse(text, &storeContext);
-  if (expression.isUninitialized()) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
-    return false;
-  }
-  if (fillColumnWithFormula(expression)) {
+bool StoreColumnHelper::fillColumnWithFormula(const char *text) {
+  int column = store()->relativeColumn(referencedColumn());
+  int series = store()->seriesAtColumn(referencedColumn());
+  Layout formulaLayout;
+  FillColumnStatus status =
+      privateFillColumnWithFormula(text, &series, &column, &formulaLayout);
+  if (status == FillColumnStatus::Success ||
+      status == FillColumnStatus::NoDataToStore) {
     App::app()->setFirstResponder(table());
+    if (status == FillColumnStatus::Success) {
+      /* We want to update the series only after the expression of the formula
+       * is destroyed, to avoid carrying multiple huge lists in the pool. That's
+       * why the formula is created in another scope
+       * (privateFillColumnWithFormula). */
+      if (!store()->updateSeries(series)) {
+        return false;
+      }
+      reload();
+      memoizeFormula(formulaLayout,
+                     formulaMemoizationIndex(referencedColumn()));
+    }
     return true;
+  }
+  if (status == FillColumnStatus::SyntaxError ||
+      status == FillColumnStatus::DataNotSuitable) {
+    App::app()->displayWarning(status == FillColumnStatus::SyntaxError
+                                   ? I18n::Message::SyntaxError
+                                   : I18n::Message::DataNotSuitable);
   }
   return false;
 }
 
-bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
-  assert(!formula.isUninitialized());
-  int columnToFill = store()->relativeColumn(referencedColumn());
-  int seriesToFill = store()->seriesAtColumn(referencedColumn());
+StoreColumnHelper::FillColumnStatus
+StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
+                                                int *column,
+                                                Layout *formulaLayout) {
+  StoreContext storeContext(store(), m_parentContext);
+  Expression formula = Expression::Parse(text, &storeContext);
+  if (formula.isUninitialized()) {
+    return FillColumnStatus::SyntaxError;
+  }
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
     Expression leftOfEqual = formula.childAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
       Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
-                                strlen(symbolLeftOfEqual.name()), &seriesToFill,
-                                &columnToFill)) {
+                                strlen(symbolLeftOfEqual.name()), series,
+                                column)) {
         formula = formula.childAtIndex(1);
         isValidEquality = true;
       }
     }
     if (!isValidEquality) {
-      return displayNotSuitableWarning();
+      return FillColumnStatus::DataNotSuitable;
     }
   }
 
-  StoreContext storeContext(store(), m_parentContext);
   // Create the layout before simplifying
-  Layout formulaLayout = formula.createLayout(
+  *formulaLayout = formula.createLayout(
       Preferences::sharedPreferences->displayMode(),
       Preferences::sharedPreferences->numberOfSignificantDigits(),
       &storeContext);
@@ -176,7 +192,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
   if (formula.isUndefined()) {
-    return displayNotSuitableWarning();
+    return FillColumnStatus::DataNotSuitable;
   }
 
   if (formula.recursivelyMatches([](const Expression e, Context *context) {
@@ -197,46 +213,39 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       }
     }
     if (allChildrenAreUndefined) {
-      return displayNotSuitableWarning();
+      return FillColumnStatus::DataNotSuitable;
     }
-    if (!store()->setList(static_cast<List &>(formula), seriesToFill,
-                          columnToFill, false, true)) {
-      return false;
-    }
-    reload();
-    memoizeFormula(formulaLayout, formulaMemoizationIndex(referencedColumn()));
-    return true;
+    /* Delay the update of the series so that not too much data exists at the
+     * same time in the pool. We might be working with huge lists right now, so
+     * it's better to get out of the scope and destroy the list before storing
+     * the data of the double pair store in the storage. */
+    store()->setList(static_cast<List &>(formula), *series, *column, true,
+                     true);
+    return FillColumnStatus::Success;
   }
 
   // Formula is not a list: set each cell to the same value
   double evaluation =
       PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {
-    return displayNotSuitableWarning();
+    return FillColumnStatus::DataNotSuitable;
   }
-  int numberOfPairs = store()->numberOfPairsOfSeries(seriesToFill);
+  int numberOfPairs = store()->numberOfPairsOfSeries(*series);
   if (numberOfPairs == 0) {
-    return true;
+    return FillColumnStatus::NoDataToStore;
   }
 
   // If formula contains a random formula, evaluate it for each pairs.
   bool evaluateForEachPairs = formula.recursivelyMatches(
       [](const Expression e, Context *context) { return e.isRandomNumber(); });
   for (int j = 0; j < numberOfPairs; j++) {
-    store()->set(evaluation, seriesToFill, columnToFill, j, true, true);
+    store()->set(evaluation, *series, *column, j, true, true);
     if (evaluateForEachPairs) {
       evaluation =
           PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
-
-  if (!store()->updateSeries(seriesToFill, false)) {
-    return false;
-  }
-
-  reloadSeriesVisibleCells(seriesToFill);
-  memoizeFormula(formulaLayout, formulaMemoizationIndex(referencedColumn()));
-  return true;
+  return FillColumnStatus::Success;
 }
 
 void StoreColumnHelper::reloadSeriesVisibleCells(int series,

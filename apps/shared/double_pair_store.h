@@ -96,8 +96,7 @@ class DoublePairStore {
   }
   bool hasActiveSeries(
       ActiveSeriesTest activeSeriesTest = &DefaultActiveSeriesTest) const;
-  virtual void updateSeriesValidity(int series,
-                                    bool updateDisplayAdditionalColumn = true);
+  virtual void updateSeriesValidity(int series);
   int numberOfActiveSeries(
       ActiveSeriesTest activeSeriesTest = &DefaultActiveSeriesTest) const;
   int seriesIndexFromActiveSeriesIndex(
@@ -158,10 +157,8 @@ class DoublePairStore {
   }
   /* This must be called each time the lists are modified.
    * It deletes the pairs of empty values and the trailing undef values,
-   * updates the valid series, and stores the lists in the storage
-   * TODO: find a better way than adding bool updateDisplayAdditionalColumn */
-  virtual bool updateSeries(int series, bool delayUpdate = false,
-                            bool updateDisplayAdditionalColumn = true);
+   * updates the valid series, and stores the lists in the storage. */
+  virtual bool updateSeries(int series, bool delayUpdate = false);
   virtual bool valueValidInColumn(double value, int relativeColumn) const {
     return !std::isnan(value) && value >= -Poincare::Range1D::k_maxFloat &&
            value <= Poincare::Range1D::k_maxFloat;

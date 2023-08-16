@@ -160,18 +160,16 @@ int Store::numberOfBoxPlotCalculations(int series) const {
          numberOfUpperOutliers(series);
 }
 
-void Store::updateSeriesValidity(int series,
-                                 bool updateDisplayAdditionalColumn) {
+void Store::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   bool oldValidity = seriesIsValid(series);
-  DoublePairStore::updateSeriesValidity(series, updateDisplayAdditionalColumn);
+  DoublePairStore::updateSeriesValidity(series);
   userPreferences()->setSeriesValid(
       series, seriesIsValid(series) && frequenciesAreValid(series));
   // Reset the graph view any time one of the series gets invalidated
   m_graphViewInvalidated =
       m_graphViewInvalidated || (oldValidity && !seriesIsValid(series));
-  if (updateDisplayAdditionalColumn && m_graphViewInvalidated &&
-      numberOfPairsOfSeries(series) == 0) {
+  if (m_graphViewInvalidated && numberOfPairsOfSeries(series) == 0) {
     // Hide the cumulated frequencies if series is invalidated and empty
     userPreferences()->setDisplayCumulatedFrequencies(series, false);
   }
@@ -494,12 +492,10 @@ int Store::computeRelativeColumnAndSeries(int* i) const {
   return seriesIndex;
 }
 
-bool Store::updateSeries(int series, bool delayUpdate,
-                         bool updateDisplayAdditionalColumn) {
+bool Store::updateSeries(int series, bool delayUpdate) {
   m_datasets[series].setHasBeenModified();
   m_memoizedMaxNumberOfModes = -1;
-  return DoublePairStore::updateSeries(series, delayUpdate,
-                                       updateDisplayAdditionalColumn);
+  return DoublePairStore::updateSeries(series, delayUpdate);
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2,

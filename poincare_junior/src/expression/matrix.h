@@ -20,11 +20,10 @@ struct Matrix {
     Block* nbCols = matrix->block() + 2;
     *(nbCols) = cols;
   }
-  static Tree* ChildAtIndex(Tree* matrix, uint8_t row, uint8_t col) {
+  static Tree* Child(Tree* matrix, uint8_t row, uint8_t col) {
     return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);
   }
-  static const Tree* ChildAtIndex(const Tree* matrix, uint8_t row,
-                                  uint8_t col) {
+  static const Tree* Child(const Tree* matrix, uint8_t row, uint8_t col) {
     assert(row < NumberOfRows(matrix));
     assert(col < NumberOfColumns(matrix));
     return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);

@@ -134,10 +134,10 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
       childURowK = childURow0;
       for (int k = 0; k < internal; k++) {
         Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(2);
-        assert(childURowK == ChildAtIndex(u, row, k));
+        assert(childURowK == Child(u, row, k));
         childURowK->clone();
         childURowK = childURowK->nextTree();
-        assert(rowsV[k] == ChildAtIndex(v, k, col));
+        assert(rowsV[k] == Child(v, k, col));
         rowsV[k]->clone();
         rowsV[k] = rowsV[k]->nextTree();
         Simplification::SimplifyMultiplication(mult);
@@ -180,7 +180,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
     float bestPivot = 0.0;
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
-      Tree* pivotChild = ChildAtIndex(matrix, iPivot_temp, k);
+      Tree* pivotChild = Child(matrix, iPivot_temp, k);
       float pivot = abs(Approximation::To<float>(pivotChild));
       // Handle very low pivots
       if (pivot == 0.0f && !Number::IsZero(pivotChild)) {
@@ -203,7 +203,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
-    if (Number::IsZero(ChildAtIndex(matrix, iPivot, k))) {
+    if (Number::IsZero(Child(matrix, iPivot, k))) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {
@@ -214,8 +214,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
-          SwapTrees(ChildAtIndex(matrix, iPivot, col),
-                    ChildAtIndex(matrix, h, col));
+          SwapTrees(Child(matrix, iPivot, col), Child(matrix, h, col));
         }
         if (determinant) {
           // Update determinant: det *= -1
@@ -223,7 +222,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
         }
       }
       // Set to 1 M[h][k] by linear combination
-      Tree* divisor = ChildAtIndex(matrix, h, k);
+      Tree* divisor = Child(matrix, h, k);
       if (determinant) {
         // Update determinant: det *= divisor
         NAry::AddChild(det, divisor->clone());
@@ -251,10 +250,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
         if (i == h) {
           continue;
         }
-        Tree* factor = ChildAtIndex(matrix, i, k);
+        Tree* factor = Child(matrix, i, k);
         Tree* opIJ = factor;
-        EditionReference opHJ =
-            ChildAtIndex(matrix, h, k);  // opHJ may be after opIJ
+        EditionReference opHJ = Child(matrix, h, k);  // opHJ may be after opIJ
         for (int j = k + 1; j < n; j++) {
           opIJ = opIJ->nextTree();
           opHJ = opHJ->nextTree();

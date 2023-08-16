@@ -61,17 +61,16 @@ bool LayoutField::handleDivision() {
      * Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction (->
      * MixedFraction) -> DenominatorOfAnsFraction -> etc with the mixed fraction
      * step only kept when the country enables it */
+    clearLayout();
     switch (m_currentStep) {
       case DivisionCycleStep::DenominatorOfAnsFraction:
         // DenominatorOfAnsFraction -> NumeratorOfEmptyFraction
         m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
-        setText("");
         break;
       case DivisionCycleStep::NumeratorOfEmptyFraction:
         // NumeratorOfEmptyFraction -> MixedFraction
         m_currentStep = DivisionCycleStep::MixedFraction;
         if (mixedFractionsEnabled) {
-          clearLayout();
           return handleEventWithText(
               I18n::translate(I18n::Message::MixedFractionCommand));
         }
@@ -82,7 +81,7 @@ bool LayoutField::handleDivision() {
         assert(m_currentStep == DivisionCycleStep::Start ||
                m_currentStep == DivisionCycleStep::MixedFraction);
         m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        setText(Symbol::k_ansAliases.mainAlias());
+        insertText(Symbol::k_ansAliases.mainAlias());
     }
   } else if (mixedFractionsEnabled) {
     assert(m_divisionCycleWithAns == TrinaryBoolean::False);

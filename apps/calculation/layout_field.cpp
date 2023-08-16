@@ -52,9 +52,7 @@ bool LayoutField::handleDivision() {
   assert(m_divisionCycleWithAns != TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled =
       Preferences::sharedPreferences->mixedFractionsAreEnabled();
-  bool editionIn1D = linearMode();
   Ion::Events::Event event = Ion::Events::Division;
-  bool handled = true;
 
   if (m_divisionCycleWithAns == TrinaryBoolean::True) {
     /* When we are in the "Ans" case, the cycle is the following :
@@ -85,6 +83,8 @@ bool LayoutField::handleDivision() {
     }
   } else if (mixedFractionsEnabled) {
     assert(m_divisionCycleWithAns == TrinaryBoolean::False);
+    bool editionIn1D = linearMode();
+    bool handled = true;
     /* When we are in NOT the "Ans" case, the cycle is the following :
      *   - in 1D: Start -> DenominatorOfEmptyFraction ->
      * NumeratorOfEmptyFraction   -> MixedFraction -> DenominatorOfEmptyFraction

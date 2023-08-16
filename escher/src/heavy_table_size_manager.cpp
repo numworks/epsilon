@@ -5,28 +5,6 @@
 
 namespace Escher {
 
-void AbstractHeavyTableSizeManager::rowDidChange(int row) {
-  assert(row >= 0 && row < maxNumberOfRows());
-  int nC = maxNumberOfColumns();
-  KDSize maxCellSize = m_delegate->maxCellSize();
-  for (int c = 0; c < nC; c++) {
-    KDSize cellSize = m_delegate->cellSizeAtLocation(row, c);
-    *memoizedRowHeight(row) = std::clamp(
-        *memoizedRowHeight(row), cellSize.height(), maxCellSize.height());
-  }
-}
-
-void AbstractHeavyTableSizeManager::columnDidChange(int column) {
-  assert(column >= 0 && column < maxNumberOfColumns());
-  int nR = maxNumberOfRows();
-  KDSize maxCellSize = m_delegate->maxCellSize();
-  for (int r = 0; r < nR; r++) {
-    KDSize cellSize = m_delegate->cellSizeAtLocation(r, column);
-    *memoizedColumnWidth(column) = std::clamp(
-        *memoizedColumnWidth(column), cellSize.width(), maxCellSize.width());
-  }
-}
-
 void AbstractHeavyTableSizeManager::deleteRowMemoization(int row) {
   int nR = maxNumberOfRows();
   assert(row >= 0 && row < nR);
@@ -71,6 +49,24 @@ void AbstractHeavyTableSizeManager::computeAllSizes() {
       *memoizedColumnWidth(c) = std::clamp(
           *memoizedColumnWidth(c), cellSize.width(), maxCellSize.width());
     }
+  }
+}
+
+void AbstractHeavyTableSizeManager::lineDidChange(int index, Dimension dim) {
+  bool rowChanged = dim == Dimension::Row;
+  assert(index >= 0 && ((rowChanged && index < maxNumberOfRows()) ||
+                        (!rowChanged && index < maxNumberOfColumns())));
+  int numberOfElementsInLine =
+      rowChanged ? maxNumberOfColumns() : maxNumberOfRows();
+  KDCoordinate max1DSize = rowChanged ? m_delegate->maxCellSize().height()
+                                      : m_delegate->maxCellSize().width();
+  KDCoordinate* memoized1DSize =
+      rowChanged ? memoizedRowHeight(index) : memoizedColumnWidth(index);
+  for (int i = 0; i < numberOfElementsInLine; i++) {
+    KDCoordinate current1DSize =
+        rowChanged ? m_delegate->cellSizeAtLocation(index, i).height()
+                   : m_delegate->cellSizeAtLocation(i, index).width();
+    *memoized1DSize = std::clamp(*memoized1DSize, current1DSize, max1DSize);
   }
 }
 

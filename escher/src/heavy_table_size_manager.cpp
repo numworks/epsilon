@@ -67,6 +67,9 @@ void AbstractHeavyTableSizeManager::lineDidChange(int index, Dimension dim) {
         rowChanged ? m_delegate->cellSizeAtLocation(index, i).height()
                    : m_delegate->cellSizeAtLocation(i, index).width();
     *memoized1DSize = std::clamp(*memoized1DSize, current1DSize, max1DSize);
+    if (*memoized1DSize == max1DSize) {
+      return;
+    }
   }
 }
 

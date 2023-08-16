@@ -149,4 +149,135 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   return result;
 }
 
+Matrix Matrix::rowCanonize(const ReductionContext& reductionContext,
+                           Expression* determinant, bool reduced) {
+  // The matrix children have to be reduced to be able to spot 0
+  deepReduceChildren(reductionContext);
+
+  Multiplication det = Multiplication::Builder();
+
+  int m = numberOfRows();
+  int n = numberOfColumns();
+
+  int h = 0;  // row pivot
+  int k = 0;  // column pivot
+
+  while (h < m && k < n) {
+    /* In non-reduced form, the pivot selection method will affect the output.
+     * Here we prioritize the biggest pivot (in value) to get an output that
+     * does not depends on the order of the rows of the matrix.
+     * We could also take lowest non null pivots, or just first non null as we
+     * already do with reduced forms. Output would be different, but correct. */
+    int iPivot_temp = h;
+    int iPivot = h;
+    float bestPivot = 0.0;
+    while (iPivot_temp < m) {
+      // Using float to find the biggest pivot is sufficient.
+      float pivot =
+          AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone())
+              .approximateToScalar<float>(reductionContext.context(),
+                                          reductionContext.complexFormat(),
+                                          reductionContext.angleUnit(), true);
+      // Handle very low pivots
+      if (pivot == 0.0f &&
+          matrixChild(iPivot_temp, k).isNull(reductionContext.context()) !=
+              TrinaryBoolean::True) {
+        pivot = FLT_MIN;
+      }
+
+      if (pivot > bestPivot) {
+        // Update best pivot
+        bestPivot = pivot;
+        iPivot = iPivot_temp;
+        if (reduced) {
+          /* In reduced form, taking the first non null pivot is enough, and
+           * more efficient. */
+          break;
+        }
+      }
+      iPivot_temp++;
+    }
+    /* TODO: Handle isNull == TrinaryBoolean::Unknown : rowCanonize will
+     * output a mathematically wrong result (and divide expressions by a null
+     * expression) if expression is actually null. For examples,
+     * 1-cos(x)^2-sin(x)^2 would be mishandled. */
+    if (matrixChild(iPivot, k).isNull(reductionContext.context()) ==
+        TrinaryBoolean::True) {
+      // No non-null coefficient in this column, skip
+      k++;
+      if (determinant) {
+        // Update determinant: det *= 0
+        det.addChildAtIndexInPlace(Rational::Builder(0), det.numberOfChildren(),
+                                   det.numberOfChildren());
+      }
+    } else {
+      // Swap row h and iPivot
+      if (iPivot != h) {
+        for (int col = h; col < n; col++) {
+          swapChildrenInPlace(iPivot * n + col, h * n + col);
+        }
+        if (determinant) {
+          // Update determinant: det *= -1
+          det.addChildAtIndexInPlace(Rational::Builder(-1),
+                                     det.numberOfChildren(),
+                                     det.numberOfChildren());
+        }
+      }
+      // Set to 1 M[h][k] by linear combination
+      Expression divisor = matrixChild(h, k);
+      // Update determinant: det *= divisor
+      if (determinant) {
+        det.addChildAtIndexInPlace(divisor.clone(), det.numberOfChildren(),
+                                   det.numberOfChildren());
+      }
+      for (int j = k + 1; j < n; j++) {
+        Expression opHJ = matrixChild(h, j);
+        Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
+        replaceChildAtIndexInPlace(h * n + j, newOpHJ);
+        newOpHJ = newOpHJ.shallowReduce(reductionContext);
+        if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
+            newOpHJ.type() == ExpressionNode::Type::Dependency) {
+          Expression e = newOpHJ.childAtIndex(0);
+          newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
+          newOpHJ.replaceWithInPlace(e);
+        }
+      }
+      replaceChildInPlace(divisor, Rational::Builder(1));
+
+      int l = reduced ? 0 : h + 1;
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
+       * non-reduced form is computed (ref), only rows below the pivot are
+       * reduced, i > h as well */
+      for (int i = l; i < m; i++) {
+        if (i == h) {
+          continue;
+        }
+        Expression factor = matrixChild(i, k);
+        for (int j = k + 1; j < n; j++) {
+          Expression opIJ = matrixChild(i, j);
+          Expression newOpIJ = Subtraction::Builder(
+              opIJ, Multiplication::Builder(matrixChild(h, j).clone(),
+                                            factor.clone()));
+          replaceChildAtIndexInPlace(i * n + j, newOpIJ);
+          newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
+          newOpIJ = newOpIJ.shallowReduce(reductionContext);
+          if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
+              newOpIJ.type() == ExpressionNode::Type::Dependency) {
+            Expression e = newOpIJ.childAtIndex(0);
+            newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
+            newOpIJ.replaceWithInPlace(e);
+          }
+        }
+        replaceChildAtIndexInPlace(i * n + k, Rational::Builder(0));
+      }
+      h++;
+      k++;
+    }
+  }
+  if (determinant) {
+    *determinant = det;
+  }
+  return *this;
+}
+
 }  // namespace PoincareJ

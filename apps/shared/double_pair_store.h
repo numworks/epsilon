@@ -57,8 +57,8 @@ class DoublePairStore {
   double get(int series, int i, int j) const;
   bool set(double f, int series, int i, int j, bool delayUpdate = false,
            bool setOtherColumnToDefaultIfEmpty = false);
-  /* WARNING: This method destroy the list passed as an argument after setting
-   * it in the store. */
+  /* TODO: The "delayUpdate" parameter is kept for consistency but is currently
+   * always called with true. Should it be removed ? */
   bool setList(Poincare::List &List, int series, int i,
                bool delayUpdate = false,
                bool setOtherColumnToDefaultIfEmpty = false);

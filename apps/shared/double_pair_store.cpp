@@ -135,8 +135,6 @@ bool DoublePairStore::setList(List &list, int series, int i, bool delayUpdate,
         list.childAtIndex(j), m_context);
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
-  // This ensures that the list does not take up useless space in the pool.
-  list.~List();
   return updateSeries(series, delayUpdate);
 }
 

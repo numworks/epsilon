@@ -180,12 +180,10 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
     float bestPivot = 0.0;
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
-      Tree* pivotTree = SharedEditionPool->push<BlockType::Abs>();
-      ChildAtIndex(matrix, iPivot_temp, k)->clone();
-      float pivot = Approximation::To<float>(pivotTree);
+      Tree* pivotChild = ChildAtIndex(matrix, iPivot_temp, k);
+      float pivot = abs(Approximation::To<float>(pivotChild));
       // Handle very low pivots
-      if (pivot == 0.0f &&
-          !Number::IsZero(ChildAtIndex(matrix, iPivot_temp, k))) {
+      if (pivot == 0.0f && !Number::IsZero(pivotChild)) {
         pivot = FLT_MIN;
       }
 
@@ -230,8 +228,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
         // Update determinant: det *= divisor
         NAry::AddChild(det, divisor->clone());
       }
+      Tree* opHJ = divisor;
       for (int j = k + 1; j < n; j++) {
-        Tree* opHJ = ChildAtIndex(matrix, h, j);
+        opHJ = opHJ->nextTree();
         Tree* newOpHJ = SharedEditionPool->push<BlockType::Multiplication>(2);
         opHJ->clone();
         Tree* pow = SharedEditionPool->push<BlockType::Power>();
@@ -253,13 +252,17 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
           continue;
         }
         Tree* factor = ChildAtIndex(matrix, i, k);
+        Tree* opIJ = factor;
+        EditionReference opHJ =
+            ChildAtIndex(matrix, h, k);  // opHJ may be after opIJ
         for (int j = k + 1; j < n; j++) {
-          Tree* opIJ = ChildAtIndex(matrix, i, j);
+          opIJ = opIJ->nextTree();
+          opHJ = opHJ->nextTree();
           Tree* newOpIJ = SharedEditionPool->push<BlockType::Addition>(2);
           opIJ->clone();
           Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(3);
           (-1_e)->clone();
-          ChildAtIndex(matrix, h, j)->clone();
+          opHJ->clone();
           factor->clone();
           Simplification::ShallowSystematicReduce(mult);
           Simplification::ShallowSystematicReduce(newOpIJ);

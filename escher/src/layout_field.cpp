@@ -612,10 +612,10 @@ bool LayoutField::eventHasText(Ion::Events::Event event, char *buffer,
     constexpr const char *k_logWithBase10 = "log(\x11,10)";
     eventTextLength = strlcpy(buffer, k_logWithBase10, bufferSize);
   } else if (event == Ion::Events::Sto && m_layoutFieldDelegate &&
-             m_layoutFieldDelegate->textForStoEvent(this)) {
+             m_layoutFieldDelegate->insertTextForStoEvent(this)) {
     eventTextLength = strlcpy(buffer, "→", bufferSize);
   } else if (event == Ion::Events::Ans && m_layoutFieldDelegate &&
-             m_layoutFieldDelegate->textForAnsEvent(this)) {
+             m_layoutFieldDelegate->insertTextForAnsEvent(this)) {
     eventTextLength =
         strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
   } else {

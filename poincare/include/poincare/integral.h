@@ -99,6 +99,11 @@ class IntegralNode final : public ParameteredExpressionNode {
   DetailedResult<T> adaptiveQuadrature(
       T a, T b, T eps, int numberOfIterations, Substitution<T> substitution,
       const ApproximationContext& approximationContext) const;
+  template <typename T>
+  DetailedResult<T> iterateAdaptiveQuadrature(
+      DetailedResult<T> quadKG, T a, T b, T eps, int numberOfIterations,
+      Substitution<T> substitution,
+      const ApproximationContext& approximationContext) const;
 #endif
 };
 

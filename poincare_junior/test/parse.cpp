@@ -60,4 +60,7 @@ QUIZ_CASE(pcj_layout_parse) {
   quiz_assert(!is_parsable("ln(ln(2"_l));
   quiz_assert(is_parsable("log(2)"_l));
   quiz_assert(is_parsable("log(2,3)"_l));
+  quiz_assert(is_parsable("[[1,2][3,4]]"_l));
+  quiz_assert(!is_parsable("[[1,2][3]]"_l));
+  quiz_assert(!is_parsable("[]"_l));
 }

@@ -6,6 +6,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
@@ -1201,28 +1202,35 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
     m_status = Status::Error;  // FIXME
     return;
   }
-  // Matrix matrix = Matrix::Builder();
-  // int numberOfRows = 0;
-  // int numberOfColumns = 0;
-  // while (!popTokenIfType(Token::Type::RightBracket)) {
-  // EditionReference row = parseVector();
-  // if (m_status != Status::Progress) {
-  // return;
-  // }
-  // if ((numberOfRows == 0 &&
-  // (numberOfColumns = row.numberOfChildren()) == 0) ||
-  // (numberOfColumns != row.numberOfChildren())) {
-  // m_status = Status::Error;  // Incorrect matrix.
-  // return;
-  // } else {
-  // matrix.addChildrenAsRowInPlace(row, numberOfRows++);
-  // }
-  // }
-  // if (numberOfRows == 0) {
-  // m_status = Status::Error;  // Empty matrix
-  // } else {
-  // leftHandSide = matrix;
-  // }
+  uint8_t numberOfRows = 0;
+  uint8_t numberOfColumns = 0;
+  Tree *matrix =
+      SharedEditionPool->push<BlockType::Matrix>(numberOfRows, numberOfColumns);
+  while (!popTokenIfType(Token::Type::RightBracket)) {
+    EditionReference row = parseVector();
+    if (m_status != Status::Progress) {
+      return;
+    }
+    if ((numberOfRows == 0 &&
+         (numberOfColumns = row->numberOfChildren()) == 0) ||
+        (numberOfColumns != row->numberOfChildren())) {
+      m_status = Status::Error;  // Incorrect matrix.
+      removeTreeIfInitialized(row);
+      matrix->removeTree();
+      return;
+    } else {
+      numberOfColumns = row->numberOfChildren();
+      Matrix::SetNumberOfColumns(matrix, numberOfColumns);
+      Matrix::SetNumberOfRows(matrix, ++numberOfRows);
+      row->removeNode();
+    }
+  }
+  if (numberOfRows == 0) {
+    m_status = Status::Error;  // Empty matrix
+    matrix->removeTree();
+  } else {
+    leftHandSide = matrix;
+  }
   isThereImplicitOperator();
 }
 

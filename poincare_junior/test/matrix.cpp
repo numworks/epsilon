@@ -1,8 +1,20 @@
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 #include "helper.h"
 using namespace PoincareJ;
+
+Tree* parse_matrix(const char* input) {
+  EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
+  EditionReference expression = RackParser(inputLayout).parse();
+  quiz_assert(!expression.isUninitialized() &&
+              expression->type() == BlockType::Matrix);
+  inputLayout->removeTree();
+  return expression;
+}
 
 QUIZ_CASE(pcj_matrix) {
   const Tree* u = KMatrix<1, 2>()(1_e, 2_e);
@@ -24,4 +36,16 @@ QUIZ_CASE(pcj_matrix) {
   assert_trees_are_equal(Matrix::Transpose(w1),
                          KMatrix<3, 2>()(1_e, 4_e, 2_e, 5_e, 3_e, 6_e));
   SharedEditionPool->flush();
+
+  assert_trees_are_equal(parse_matrix("[[1,2,3][4,5,6]]"), w1);
+
+  Tree* m = parse_matrix("[[0,2,-1][5,6,7][12,11,10]]");
+  Tree* det;
+  Simplification::DeepSystematicReduce(m);
+  Matrix::RowCanonize(m, false, &det);
+  Tree* res = parse_matrix("[[1,11/12,5/6][0,1,-1/2][0,0,1]]");
+  Simplification::DeepSystemProjection(res);
+  Simplification::DeepSystematicReduce(res);
+  assert_trees_are_equal(m, res);
+  assert_trees_are_equal(det, 85_e);
 }

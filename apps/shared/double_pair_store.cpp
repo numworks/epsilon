@@ -213,8 +213,7 @@ bool DoublePairStore::seriesIsValid(int series) const {
   return m_storePreferences->seriesIsValid(series);
 }
 
-void DoublePairStore::updateSeriesValidity(int series,
-                                           bool updateDisplayAdditionalColumn) {
+void DoublePairStore::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   int numberOfPairs = numberOfPairsOfSeries(series);
   if (numberOfPairs == 0 ||
@@ -405,8 +404,7 @@ double DoublePairStore::defaultValue(int series, int i, int j) const {
                            : defaultValueForColumn1();
 }
 
-bool DoublePairStore::updateSeries(int series, bool delayUpdate,
-                                   bool updateDisplayAdditionalColumn) {
+bool DoublePairStore::updateSeries(int series, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (delayUpdate) {
     return true;
@@ -421,7 +419,7 @@ bool DoublePairStore::updateSeries(int series, bool delayUpdate,
      * and make sure updateSeries isn't called again. */
     initListsFromStorage(true);
   } else {
-    updateSeriesValidity(series, updateDisplayAdditionalColumn);
+    updateSeriesValidity(series);
   }
   return success;
 }

@@ -168,10 +168,8 @@ int Store::nextDot(int series, OMG::HorizontalDirection direction, int dot,
 
 /* Series */
 
-void Store::updateSeriesValidity(int series,
-                                 bool updateDisplayAdditionalColumn) {
-  LinearRegressionStore::updateSeriesValidity(series,
-                                              updateDisplayAdditionalColumn);
+void Store::updateSeriesValidity(int series) {
+  LinearRegressionStore::updateSeriesValidity(series);
   if (!seriesIsValid(series)) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
@@ -179,11 +177,9 @@ void Store::updateSeriesValidity(int series,
   }
 }
 
-bool Store::updateSeries(int series, bool delayUpdate,
-                         bool updateDisplayAdditionalColumn) {
+bool Store::updateSeries(int series, bool delayUpdate) {
   m_recomputeCoefficients[series] = true;
-  return DoublePairStore::updateSeries(series, delayUpdate,
-                                       updateDisplayAdditionalColumn);
+  return DoublePairStore::updateSeries(series, delayUpdate);
 }
 
 /* Calculations */

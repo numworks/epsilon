@@ -230,7 +230,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     }
   }
 
-  if (!store()->updateSeries(seriesToFill, false, false)) {
+  if (!store()->updateSeries(seriesToFill, false)) {
     return false;
   }
 

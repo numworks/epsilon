@@ -59,8 +59,7 @@ class Store : public Shared::LinearRegressionStore {
   }
 
   // Series
-  void updateSeriesValidity(int series,
-                            bool updateDisplayAdditionalColumn = true) override;
+  void updateSeriesValidity(int series) override;
 
   // Calculation
   void updateCoefficients(int series, Poincare::Context* globalContext);
@@ -86,8 +85,7 @@ class Store : public Shared::LinearRegressionStore {
   float minValueOfColumn(int series, int i) const;
 
   // Double Pair Store
-  bool updateSeries(int series, bool delayUpdate = false,
-                    bool updateDisplayAdditionalColumn = true) override;
+  bool updateSeries(int series, bool delayUpdate = false) override;
 
   // Type-specific properties
   typedef bool (*TypeProperty)(Model::Type type);

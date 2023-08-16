@@ -1,6 +1,7 @@
 #include "matrix.h"
 
 #include <float.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
 #include "k_tree.h"
@@ -153,11 +154,14 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   return result;
 }
 
-bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
+bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
   // The matrix children have to be reduced to be able to spot 0
   assert(!Simplification::DeepSystematicReduce(matrix));
 
-  // Tree * det = SharedEditionPool->push<BlockType::Multiplication>(0);
+  EditionReference det;
+  if (determinant) {
+    det = SharedEditionPool->push<BlockType::Multiplication>(0);
+  }
 
   int m = NumberOfRows(matrix);
   int n = NumberOfColumns(matrix);
@@ -204,11 +208,10 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
     if (Number::IsZero(ChildAtIndex(matrix, iPivot, k))) {
       // No non-null coefficient in this column, skip
       k++;
-      // if (determinant) {
-      // Update determinant: det *= 0
-      // det.addChildAtIndexInPlace(Rational::Builder(0),
-      // det.numberOfChildren(), det.numberOfChildren());
-      // }
+      if (determinant) {
+        // Update determinant: det *= 0
+        NAry::AddChild(det, (0_e)->clone());
+      }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -216,20 +219,17 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
           SwapTrees(ChildAtIndex(matrix, iPivot, col),
                     ChildAtIndex(matrix, h, col));
         }
-        // if (determinant) {
-        // Update determinant: det *= -1
-        // det.addChildAtIndexInPlace(Rational::Builder(-1),
-        // det.numberOfChildren(),
-        // det.numberOfChildren());
-        // }
+        if (determinant) {
+          // Update determinant: det *= -1
+          NAry::AddChild(det, (-1_e)->clone());
+        }
       }
       // Set to 1 M[h][k] by linear combination
       Tree* divisor = ChildAtIndex(matrix, h, k);
-      // Update determinant: det *= divisor
-      // if (determinant) {
-      // det.addChildAtIndexInPlace(divisor.clone(), det.numberOfChildren(),
-      // det.numberOfChildren());
-      // }
+      if (determinant) {
+        // Update determinant: det *= divisor
+        NAry::AddChild(det, divisor->clone());
+      }
       for (int j = k + 1; j < n; j++) {
         Tree* opHJ = ChildAtIndex(matrix, h, j);
         Tree* newOpHJ = SharedEditionPool->push<BlockType::Multiplication>(2);
@@ -240,12 +240,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
         Simplification::ShallowSystematicReduce(pow);
         Simplification::ShallowSystematicReduce(newOpHJ);
         opHJ->moveTreeOverTree(newOpHJ);
-        // if (reductionContext.target() == ReductionTarget::SystemForAnalysis
-        // && newOpHJ.type() == ExpressionNode::Type::Dependency) {
-        // Expression e = newOpHJ.childAtIndex(0);
-        // newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
-        // newOpHJ.replaceWithInPlace(e);
-        // }
+        // TODO : Dependency
       }
       divisor->cloneTreeOverTree(1_e);
 
@@ -269,12 +264,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
           Simplification::ShallowSystematicReduce(mult);
           Simplification::ShallowSystematicReduce(newOpIJ);
           opIJ->moveTreeOverTree(newOpIJ);
-          // if (reductionContext.target() == ReductionTarget::SystemForAnalysis
-          // && newOpIJ.type() == ExpressionNode::Type::Dependency) {
-          // Expression e = newOpIJ.childAtIndex(0);
-          // newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
-          // newOpIJ.replaceWithInPlace(e);
-          // }
+          // TODO : Dependency
         }
         factor->cloneTreeOverTree(0_e);
       }
@@ -282,9 +272,10 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
       k++;
     }
   }
-  // if (determinant) {
-  // *determinant = det;
-  // }
+  if (determinant) {
+    Simplification::ShallowSystematicReduce(det);
+    *determinant = det;
+  }
   return true;
 }
 

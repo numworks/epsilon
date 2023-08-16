@@ -35,7 +35,7 @@ struct Matrix {
   static Tree* ScalarMultiplication(const Tree* s, const Tree* m);
   static Tree* Multiplication(const Tree* a, const Tree* b);
   static Tree* Transpose(const Tree* matrix);
-  static bool RowCanonize(Tree* m, bool reduced);
+  static bool RowCanonize(Tree* m, bool reduced, Tree** determinant = nullptr);
 };
 
 }  // namespace PoincareJ

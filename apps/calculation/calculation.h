@@ -1,6 +1,7 @@
 #ifndef CALCULATION_CALCULATION_H
 #define CALCULATION_CALCULATION_H
 
+#include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/context.h>
@@ -92,6 +93,7 @@ class Calculation {
   void fillExpressionsForAdditionalResults(
       Poincare::Expression* input, Poincare::Expression* exactOutput,
       Poincare::Expression* approximateOutput);
+  AdditionalResultsType additionalResultsType();
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;

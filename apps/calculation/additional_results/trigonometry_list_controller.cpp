@@ -18,11 +18,9 @@ void TrigonometryListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
   assert((m_directTrigonometry &&
-          AdditionalResultsController::HasDirectTrigoAdditionalResults(
-              input, exactOutput)) ||
+          HasDirectTrigoAdditionalResults(input, exactOutput)) ||
          (!m_directTrigonometry &&
-          AdditionalResultsController::HasInverseTrigoAdditionalResults(
-              input, exactOutput)));
+          HasInverseTrigoAdditionalResults(input, exactOutput)));
 
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();

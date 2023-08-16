@@ -310,8 +310,7 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
-  m_additionalResultsType =
-      AdditionalResultsController::AdditionalResultsForCalculation(calculation);
+  m_additionalResultsType = calculation->additionalResultsType();
   m_inputView.setLayout(calculation->createInputLayout());
 
   /* All expressions have to be updated at the same time. Otherwise,

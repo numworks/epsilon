@@ -1,7 +1,7 @@
 #ifndef CALCULATION_HISTORY_VIEW_CELL_H
 #define CALCULATION_HISTORY_VIEW_CELL_H
 
-#include <apps/calculation/additional_results/additional_results_controller.h>
+#include <apps/calculation/additional_results/additional_results_type.h>
 #include <escher/even_odd_cell_with_ellipsis.h>
 #include <escher/scrollable_layout_view.h>
 #include <escher/scrollable_multiple_layouts_view.h>
@@ -66,8 +66,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
     return &m_scrollableOutputView;
   }
   Escher::ScrollableLayoutView* inputView() { return &m_inputView; }
-  AdditionalResultsController::AdditionalResultsType additionalResultsType()
-      const {
+  AdditionalResultsType additionalResultsType() const {
     return m_additionalResultsType;
   }
   bool hasEllipsis() const { return m_additionalResultsType.isNotEmpty(); }
@@ -84,7 +83,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   bool isDisplayingEllipsis() const { return isHighlighted() && hasEllipsis(); }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
-  AdditionalResultsController::AdditionalResultsType m_additionalResultsType;
+  AdditionalResultsType m_additionalResultsType;
   Escher::ScrollableLayoutView m_inputView;
   Escher::ScrollableTwoLayoutsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;

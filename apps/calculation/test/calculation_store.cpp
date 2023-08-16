@@ -1,6 +1,6 @@
 #include "../calculation_store.h"
 
-#include <apps/calculation/additional_results/additional_results_controller.h>
+#include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
@@ -10,8 +10,7 @@
 #include <quiz.h>
 #include <string.h>
 
-typedef ::Calculation::AdditionalResultsController::AdditionalResultsType
-    AdditionalResultsType;
+typedef ::Calculation::AdditionalResultsType AdditionalResultsType;
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
 typedef ::Calculation::Calculation::EqualSign EqualSign;
 typedef ::Calculation::Calculation::NumberOfSignificantDigits

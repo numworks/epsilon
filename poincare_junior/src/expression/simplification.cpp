@@ -508,6 +508,12 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     SimplifyMultiplication(multiplication);
     SimplifyAddition(addition);
     SimplifyComplex(merge);
+  } else if (next->type() == BlockType::Matrix) {
+    if (child->type() == BlockType::Matrix) {
+      merge = Matrix::Multiplication(child, next);
+    } else {
+      merge = Matrix::ScalarMultiplication(child, next);
+    }
   }
   if (!merge) {
     return false;
@@ -681,6 +687,12 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
     ImagPart(next)->clone();
     SimplifyAddition(addition);
     SimplifyComplex(merge);
+  } else if (next->type() == BlockType::Matrix) {
+    if (child->type() == BlockType::Matrix) {
+      merge = Matrix::Addition(child, next);
+    } else {
+      merge = KUndef->clone();
+    }
   }
   if (!merge) {
     return false;

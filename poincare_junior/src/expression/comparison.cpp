@@ -23,6 +23,10 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if ((block0->isNumber() && block1->isNumber())) {
     return CompareNumbers(node0, node1);
   }
+  if ((type0 == BlockType::Matrix && type1 == BlockType::Matrix)) {
+    // do not reorder matrices since their multiplication is not commutative
+    return CompareChildren(node0, node1) == 0 ? 0 : -1;
+  }
   if (type0 < type1) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */

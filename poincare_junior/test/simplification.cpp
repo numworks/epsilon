@@ -291,6 +291,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("rref([[1,2][3,4]])", "[[1,0][0,1]]");
   simplifies_to("det([[1,2][3,4]])", "-2");
   simplifies_to("trace(identity(3))", "3");
+  simplifies_to("2+[[3]]", "undef");
+  simplifies_to("[[2]]+[[3]]", "[[5]]");
+  simplifies_to("2*[[3]]", "[[6]]");
+  simplifies_to("[[1,2][3,4]]*[[2,3][4,5]]", "[[10,13][22,29]]");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

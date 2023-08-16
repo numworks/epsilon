@@ -59,13 +59,6 @@ StoreColumnHelper::StoreColumnHelper(Escher::Responder *responder,
                                 StackViewController::Style::PurpleWhite),
       m_parentContext(parentContext) {}
 
-int StoreColumnHelper::formulaMemoizationIndex(int column) {
-  // Index without ECC which can't be modified
-  return DoublePairStore::k_numberOfColumnsPerSeries *
-             store()->seriesAtColumn(column) +
-         store()->relativeColumn(column);
-}
-
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   int series = selectedSeries();
   bool previousStatus = store()->seriesIsActive(series);
@@ -86,7 +79,9 @@ void StoreColumnHelper::sortSelectedColumn() {
 }
 
 void StoreColumnHelper::displayFormulaInput() {
-  int index = formulaMemoizationIndex(referencedColumn());
+  int index =
+      formulaMemoizationIndex(store()->seriesAtColumn(referencedColumn()),
+                              store()->relativeColumn(referencedColumn()));
   if (!memoizedFormula(index).isUninitialized()) {
     fillFormulaInputWithTemplate(memoizedFormula(index));
     return;
@@ -141,8 +136,7 @@ bool StoreColumnHelper::fillColumnWithFormula(const char *text) {
         return false;
       }
       reload();
-      memoizeFormula(formulaLayout,
-                     formulaMemoizationIndex(referencedColumn()));
+      memoizeFormula(formulaLayout, formulaMemoizationIndex(series, column));
     }
     return true;
   }
@@ -153,6 +147,11 @@ bool StoreColumnHelper::fillColumnWithFormula(const char *text) {
                                    : I18n::Message::DataNotSuitable);
   }
   return false;
+}
+
+int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
+  // Index without ECC which can't be modified
+  return DoublePairStore::k_numberOfColumnsPerSeries * series + column;
 }
 
 StoreColumnHelper::FillColumnStatus

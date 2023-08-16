@@ -45,7 +45,6 @@ class StoreColumnHelper {
                     ClearColumnHelper* clearColumnHelper);
 
   int referencedColumn() { return table()->selectedColumn(); }
-  int formulaMemoizationIndex(int column);
   ClearColumnHelper* clearColumnHelper() { return m_clearColumnHelper; }
   void selectColumn(int column) { table()->selectColumn(column); }
 
@@ -87,6 +86,7 @@ class StoreColumnHelper {
     return Poincare::Layout();
   }
   virtual void memoizeFormula(Poincare::Layout formula, int index) {}
+  int formulaMemoizationIndex(int series, int relativeColumn);
   enum class FillColumnStatus : uint8_t {
     Success,
     NoDataToStore,

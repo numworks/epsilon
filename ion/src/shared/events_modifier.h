@@ -29,10 +29,10 @@ class ModifierState {
   ShiftAlphaStatus m_shiftAlphaStatus;
   bool m_shiftIsHeldAndUsed;
   bool m_alphaIsHeldAndUsed;
-  int m_longPressCounter;   // How long the event has been pressed (Computed
-                            // value)
-  int m_repetitionCounter;  // How much the event has been repeatedly pressed
-                            // (Raw value)
+  // How long the event has been pressed (Computed value)
+  int m_longPressCounter;
+  // How much the event has been repeatedly pressed (Raw value)
+  int m_repetitionCounter;
 };
 
 extern OMG::GlobalBox<ModifierState> SharedModifierState;

@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
@@ -740,6 +741,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
    * projection context. */
   changed = DeepSystemProjection(ref, projectionContext) || changed;
   changed = DeepSystematicReduce(ref) || changed;
+  changed = DeepApplyMatrixOperators(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
@@ -1371,6 +1373,57 @@ bool Simplification::ExpandPower(Tree* ref) {
   SimplifyPower(newPow2);
   SimplifyAddition(ref);
   return true;
+}
+
+bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
+  if (tree->numberOfChildren() != 1) {
+    return false;
+  }
+  Tree* child = tree->childAtIndex(0);
+  if (tree->type() == BlockType::Identity) {
+    if (IsNumber(child)) {
+      tree->moveTreeOverTree(Matrix::Identity(child));
+    } else {
+      tree->cloneTreeOverTree(KUndef);
+    }
+    return true;
+  }
+  // assert(child->type() == BlockType::Matrix);
+  switch (tree->type()) {
+    case BlockType::Ref:
+      Matrix::RowCanonize(child, false);
+      tree->removeNode();
+      return true;
+    case BlockType::Rref:
+      Matrix::RowCanonize(child, true);
+      tree->removeNode();
+      return true;
+    case BlockType::Trace:
+      tree->moveTreeOverTree(Matrix::Trace(child));
+      return true;
+    case BlockType::Transpose:
+      tree->moveTreeOverTree(Matrix::Transpose(child));
+      return true;
+    case BlockType::Dim: {
+      Tree* dim = SharedEditionPool->push<BlockType::Matrix>(1, 2);
+      IntegerHandler(Matrix::NumberOfRows(child)).pushOnEditionPool();
+      IntegerHandler(Matrix::NumberOfColumns(child)).pushOnEditionPool();
+      tree->moveTreeOverTree(dim);
+      return true;
+    }
+    case BlockType::Det: {
+      Tree* determinant;
+      Matrix::RowCanonize(child, true, &determinant);
+      tree->moveTreeOverTree(determinant);
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+
+bool Simplification::DeepApplyMatrixOperators(Tree* ref) {
+  return ApplyShallowInDepth(ref, ShallowApplyMatrixOperators, nullptr);
 }
 
 }  // namespace PoincareJ

@@ -214,12 +214,19 @@ void Tree::copyTreeTo(void* address) const {
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination. */
 
+#if !PLATFORM_DEVICE
+uint32_t Tree::nextNodeCount = 0;
+#endif
+
 const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(m_block->type() != BlockType::TreeBorder);
 #endif
   assert(m_block + nodeSize() != CachePool::sharedCachePool()->firstBlock());
   assert(m_block != CachePool::sharedCachePool()->editionPool()->lastBlock());
+#if !PLATFORM_DEVICE
+  nextNodeCount++;
+#endif
   return Tree::FromBlocks(m_block + nodeSize());
 }
 

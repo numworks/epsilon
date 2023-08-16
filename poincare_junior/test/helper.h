@@ -80,11 +80,49 @@ inline void assert_pool_contains(Pool* pool,
 #if PLATFORM_DEVICE
 #define QUIZ_ASSERT(test) quiz_assert(test)
 #else
+#include <chrono>
+#include <iomanip>
 #include <iostream>
 #define QUIZ_ASSERT(test)                                                     \
   if (!(test)) {                                                              \
     std::cerr << __FILE__ << ':' << __LINE__ << ": test failed" << std::endl; \
     std::exit(1);                                                             \
+  }
+
+inline void assertionsWarn() {
+#if ASSERTIONS
+  std::cout << "Compile with DEBUG=0 and ASSERTIONS=0 for more precise results"
+            << std::endl;
+#endif
+}
+
+#define METRICS(F)                                                         \
+  {                                                                        \
+    Tree::nextNodeCount = 0;                                               \
+    int refId;                                                             \
+    {                                                                      \
+      EditionReference r(0_e);                                             \
+      refId = r.identifier();                                              \
+      r->removeNode();                                                     \
+    }                                                                      \
+    auto startTime = std::chrono::high_resolution_clock::now();            \
+    F;                                                                     \
+    auto elapsed = std::chrono::high_resolution_clock::now() - startTime;  \
+    {                                                                      \
+      EditionReference r(0_e);                                             \
+      refId = r.identifier() - refId;                                      \
+      r->removeNode();                                                     \
+    }                                                                      \
+    std::cout << "Metrics [" << #F << "]\n"                                \
+              << "  references:   " << std::right << std::setw(6) << refId \
+              << "\n  nextNode:     " << std::right << std::setw(6)        \
+              << Tree::nextNodeCount << "\n  microseconds: " << std::right \
+              << std::setw(6)                                              \
+              << std::chrono::duration_cast<std::chrono::microseconds>(    \
+                     elapsed)                                              \
+                     .count()                                              \
+              << std::endl;                                                \
+    assertionsWarn();                                                      \
   }
 #endif
 

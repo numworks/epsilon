@@ -23,6 +23,9 @@ namespace PoincareJ {
 
 class Tree {
  public:
+#if !PLATFORM_DEVICE
+  static uint32_t nextNodeCount;
+#endif
   // Prevent using Nodes objects directly
   Tree() = delete;
   void operator=(Tree&& other) = delete;

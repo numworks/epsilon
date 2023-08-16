@@ -247,6 +247,8 @@ class Tree {
   TypeBlock m_block[0];
 };
 
+void SwapTrees(Tree* u, Tree* v);
+
 }  // namespace PoincareJ
 
 #endif

@@ -455,4 +455,12 @@ Tree* Tree::detach(bool isTree) {
   return Tree::FromBlocks(destination - sizeToMove);
 }
 
+void SwapTrees(Tree* u, Tree* v) {
+  if (u->block() > v->block()) {
+    return SwapTrees(v, u);
+  }
+  v->moveTreeBeforeNode(u);
+  u->moveTreeBeforeNode(v);
+}
+
 }  // namespace PoincareJ

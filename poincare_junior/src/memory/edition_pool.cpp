@@ -284,6 +284,7 @@ template Tree *EditionPool::push<BlockType::Addition, int>(int);
 template Tree *EditionPool::push<BlockType::Multiplication, int>(int);
 template Tree *EditionPool::push<BlockType::Constant, char16_t>(char16_t);
 template Tree *EditionPool::push<BlockType::Power>();
+template Tree *EditionPool::push<BlockType::Abs>();
 template Tree *EditionPool::push<BlockType::Factorial>();
 template Tree *EditionPool::push<BlockType::Complex>();
 template Tree *EditionPool::push<BlockType::SquareRoot>();

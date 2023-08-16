@@ -1,6 +1,10 @@
 #include "matrix.h"
 
+#include <float.h>
+
+#include "approximation.h"
 #include "k_tree.h"
+#include "number.h"
 #include "simplification.h"
 
 namespace PoincareJ {
@@ -149,15 +153,14 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   return result;
 }
 
-Matrix Matrix::rowCanonize(const ReductionContext& reductionContext,
-                           Expression* determinant, bool reduced) {
+bool Matrix::RowCanonize(Tree* matrix, bool reduced) {
   // The matrix children have to be reduced to be able to spot 0
-  deepReduceChildren(reductionContext);
+  assert(!Simplification::DeepSystematicReduce(matrix));
 
-  Multiplication det = Multiplication::Builder();
+  // Tree * det = SharedEditionPool->push<BlockType::Multiplication>(0);
 
-  int m = numberOfRows();
-  int n = numberOfColumns();
+  int m = NumberOfRows(matrix);
+  int n = NumberOfColumns(matrix);
 
   int h = 0;  // row pivot
   int k = 0;  // column pivot
@@ -173,15 +176,12 @@ Matrix Matrix::rowCanonize(const ReductionContext& reductionContext,
     float bestPivot = 0.0;
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
-      float pivot =
-          AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone())
-              .approximateToScalar<float>(reductionContext.context(),
-                                          reductionContext.complexFormat(),
-                                          reductionContext.angleUnit(), true);
+      Tree* pivotTree = SharedEditionPool->push<BlockType::Abs>();
+      ChildAtIndex(matrix, iPivot_temp, k)->clone();
+      float pivot = Approximation::To<float>(pivotTree);
       // Handle very low pivots
       if (pivot == 0.0f &&
-          matrixChild(iPivot_temp, k).isNull(reductionContext.context()) !=
-              TrinaryBoolean::True) {
+          !Number::IsZero(ChildAtIndex(matrix, iPivot_temp, k))) {
         pivot = FLT_MIN;
       }
 
@@ -201,48 +201,53 @@ Matrix Matrix::rowCanonize(const ReductionContext& reductionContext,
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
-    if (matrixChild(iPivot, k).isNull(reductionContext.context()) ==
-        TrinaryBoolean::True) {
+    if (Number::IsZero(ChildAtIndex(matrix, iPivot, k))) {
       // No non-null coefficient in this column, skip
       k++;
-      if (determinant) {
-        // Update determinant: det *= 0
-        det.addChildAtIndexInPlace(Rational::Builder(0), det.numberOfChildren(),
-                                   det.numberOfChildren());
-      }
+      // if (determinant) {
+      // Update determinant: det *= 0
+      // det.addChildAtIndexInPlace(Rational::Builder(0),
+      // det.numberOfChildren(), det.numberOfChildren());
+      // }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
-          swapChildrenInPlace(iPivot * n + col, h * n + col);
+          SwapTrees(ChildAtIndex(matrix, iPivot, col),
+                    ChildAtIndex(matrix, h, col));
         }
-        if (determinant) {
-          // Update determinant: det *= -1
-          det.addChildAtIndexInPlace(Rational::Builder(-1),
-                                     det.numberOfChildren(),
-                                     det.numberOfChildren());
-        }
+        // if (determinant) {
+        // Update determinant: det *= -1
+        // det.addChildAtIndexInPlace(Rational::Builder(-1),
+        // det.numberOfChildren(),
+        // det.numberOfChildren());
+        // }
       }
       // Set to 1 M[h][k] by linear combination
-      Expression divisor = matrixChild(h, k);
+      Tree* divisor = ChildAtIndex(matrix, h, k);
       // Update determinant: det *= divisor
-      if (determinant) {
-        det.addChildAtIndexInPlace(divisor.clone(), det.numberOfChildren(),
-                                   det.numberOfChildren());
-      }
+      // if (determinant) {
+      // det.addChildAtIndexInPlace(divisor.clone(), det.numberOfChildren(),
+      // det.numberOfChildren());
+      // }
       for (int j = k + 1; j < n; j++) {
-        Expression opHJ = matrixChild(h, j);
-        Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
-        replaceChildAtIndexInPlace(h * n + j, newOpHJ);
-        newOpHJ = newOpHJ.shallowReduce(reductionContext);
-        if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
-            newOpHJ.type() == ExpressionNode::Type::Dependency) {
-          Expression e = newOpHJ.childAtIndex(0);
-          newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
-          newOpHJ.replaceWithInPlace(e);
-        }
+        Tree* opHJ = ChildAtIndex(matrix, h, j);
+        Tree* newOpHJ = SharedEditionPool->push<BlockType::Multiplication>(2);
+        opHJ->clone();
+        Tree* pow = SharedEditionPool->push<BlockType::Power>();
+        divisor->clone();
+        (-1_e)->clone();
+        Simplification::ShallowSystematicReduce(pow);
+        Simplification::ShallowSystematicReduce(newOpHJ);
+        opHJ->moveTreeOverTree(newOpHJ);
+        // if (reductionContext.target() == ReductionTarget::SystemForAnalysis
+        // && newOpHJ.type() == ExpressionNode::Type::Dependency) {
+        // Expression e = newOpHJ.childAtIndex(0);
+        // newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
+        // newOpHJ.replaceWithInPlace(e);
+        // }
       }
-      replaceChildInPlace(divisor, Rational::Builder(1));
+      divisor->cloneTreeOverTree(1_e);
 
       int l = reduced ? 0 : h + 1;
       /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
@@ -252,32 +257,35 @@ Matrix Matrix::rowCanonize(const ReductionContext& reductionContext,
         if (i == h) {
           continue;
         }
-        Expression factor = matrixChild(i, k);
+        Tree* factor = ChildAtIndex(matrix, i, k);
         for (int j = k + 1; j < n; j++) {
-          Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = Subtraction::Builder(
-              opIJ, Multiplication::Builder(matrixChild(h, j).clone(),
-                                            factor.clone()));
-          replaceChildAtIndexInPlace(i * n + j, newOpIJ);
-          newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
-          newOpIJ = newOpIJ.shallowReduce(reductionContext);
-          if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
-              newOpIJ.type() == ExpressionNode::Type::Dependency) {
-            Expression e = newOpIJ.childAtIndex(0);
-            newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
-            newOpIJ.replaceWithInPlace(e);
-          }
+          Tree* opIJ = ChildAtIndex(matrix, i, j);
+          Tree* newOpIJ = SharedEditionPool->push<BlockType::Addition>(2);
+          opIJ->clone();
+          Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(3);
+          (-1_e)->clone();
+          ChildAtIndex(matrix, h, j)->clone();
+          factor->clone();
+          Simplification::ShallowSystematicReduce(mult);
+          Simplification::ShallowSystematicReduce(newOpIJ);
+          opIJ->moveTreeOverTree(newOpIJ);
+          // if (reductionContext.target() == ReductionTarget::SystemForAnalysis
+          // && newOpIJ.type() == ExpressionNode::Type::Dependency) {
+          // Expression e = newOpIJ.childAtIndex(0);
+          // newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
+          // newOpIJ.replaceWithInPlace(e);
+          // }
         }
-        replaceChildAtIndexInPlace(i * n + k, Rational::Builder(0));
+        factor->cloneTreeOverTree(0_e);
       }
       h++;
       k++;
     }
   }
-  if (determinant) {
-    *determinant = det;
-  }
-  return *this;
+  // if (determinant) {
+  // *determinant = det;
+  // }
+  return true;
 }
 
 }  // namespace PoincareJ

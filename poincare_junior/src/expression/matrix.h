@@ -12,11 +12,11 @@ struct Matrix {
   static uint8_t NumberOfColumns(const Tree* matrix) {
     return static_cast<uint8_t>(matrix->block(2));
   }
-  static uint8_t SetNumberOfRows(Tree* matrix, uint8_t rows) {
+  static void SetNumberOfRows(Tree* matrix, uint8_t rows) {
     Block* nbRows = matrix->block() + 1;
     *(nbRows) = rows;
   }
-  static uint8_t SetNumberOfColumns(Tree* matrix, uint8_t cols) {
+  static void SetNumberOfColumns(Tree* matrix, uint8_t cols) {
     Block* nbCols = matrix->block() + 2;
     *(nbCols) = cols;
   }
@@ -35,6 +35,7 @@ struct Matrix {
   static Tree* ScalarMultiplication(const Tree* s, const Tree* m);
   static Tree* Multiplication(const Tree* a, const Tree* b);
   static Tree* Transpose(const Tree* matrix);
+  static bool RowCanonize(Tree* m, bool reduced);
 };
 
 }  // namespace PoincareJ

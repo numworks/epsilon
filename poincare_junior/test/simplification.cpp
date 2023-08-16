@@ -280,6 +280,16 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
   simplifies_to("sin(17*π/12)^2+cos(5*π/12)^2", "1",
                 {.m_complexFormat = ComplexFormat::Cartesian});
+  // Matrices
+  simplifies_to("[[1+2]]", "[[3]]");
+  simplifies_to("trace([[1,2][3,4]])", "5");
+  simplifies_to("identity(2)", "[[1,0][0,1]]");
+  simplifies_to("transpose([[1][3]])", "[[1,3]]");
+  simplifies_to("transpose([[1,2][3,4]])", "[[1,3][2,4]]");
+  simplifies_to("dim([[1,2][3,4][5,6]])", "[[3,2]]");
+  simplifies_to("ref([[1,2][3,4]])", "[[1,4/3][0,1]]");
+  simplifies_to("rref([[1,2][3,4]])", "[[1,0][0,1]]");
+  simplifies_to("det([[1,2][3,4]])", "-2");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

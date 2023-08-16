@@ -15,8 +15,7 @@ class ModifierState {
         m_alphaIsHeldAndUsed(false),
         m_longPressCounter(0),
         m_repetitionCounter(0) {}
-  ShiftAlphaStatus shiftAlphaStatus() const { return m_shiftAlphaStatus; }
-  void setShiftAlphaStatus(ShiftAlphaStatus s);
+  ShiftAlphaStatus* shiftAlphaStatus() { return &m_shiftAlphaStatus; }
   bool wasShiftReleased(Keyboard::State state);
   bool wasAlphaReleased(Keyboard::State state);
   void updateModifiersFromEvent(Event e, Keyboard::State state);

@@ -31,8 +31,8 @@ class AbstractHeavyTableSizeManager {
   TableSize1DManager* rowHeightManager() { return &m_rowHeightManager; }
   TableSize1DManager* columnWidthManager() { return &m_columnWidthManager; }
 
-  void rowDidChange(int row);
-  void columnDidChange(int column);
+  void rowDidChange(int row) { lineDidChange(row, Dimension::Row); }
+  void columnDidChange(int column) { lineDidChange(column, Dimension::Column); }
   void deleteRowMemoization(int row);
 
  protected:
@@ -101,6 +101,9 @@ class AbstractHeavyTableSizeManager {
   HeavyTableRowHeightManager m_rowHeightManager;
   HeavyTableColumnWidthManager m_columnWidthManager;
   HeavyTableSizeManagerDelegate* m_delegate;
+
+ private:
+  void lineDidChange(int index, Dimension dim);
 };
 
 template <int NRows, int NCols>

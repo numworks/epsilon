@@ -71,14 +71,9 @@ bool LayoutField::handleDivision() {
         // NumeratorOfEmptyFraction -> MixedFraction
         m_currentStep = DivisionCycleStep::MixedFraction;
         if (mixedFractionsEnabled) {
-          if (editionIn1D) {
-            setText(" /");
-          } else {
-            setText("");
-            handleEventWithText(
-                I18n::translate(I18n::Message::MixedFractionCommand));
-          }
-          return true;
+          clearLayout();
+          return handleEventWithText(
+              I18n::translate(I18n::Message::MixedFractionCommand));
         }
         /* If mixed fractions are not enabled, fall under next case
          * in order to skip the MixedFraction step */

@@ -848,4 +848,6 @@ QUIZ_CASE(calculation_additional_results) {
       Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
+                                           &globalContext, &store);
 }

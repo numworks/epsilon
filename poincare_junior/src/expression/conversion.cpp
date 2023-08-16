@@ -63,6 +63,30 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       case BlockType::Logarithm:
         return Poincare::Logarithm::Builder(
             child, ToPoincareExpression(exp->childAtIndex(1)));
+      case BlockType::Cross:
+        return Poincare::VectorCross::Builder(
+            child, ToPoincareExpression(exp->childAtIndex(1)));
+      case BlockType::Dot:
+        return Poincare::VectorDot::Builder(
+            child, ToPoincareExpression(exp->childAtIndex(1)));
+      case BlockType::Det:
+        return Poincare::Determinant::Builder(child);
+      case BlockType::Dim:
+        return Poincare::Dimension::Builder(child);
+      case BlockType::Identity:
+        return Poincare::MatrixIdentity::Builder(child);
+      case BlockType::Inverse:
+        return Poincare::MatrixInverse::Builder(child);
+      case BlockType::Norm:
+        return Poincare::AbsoluteValue::Builder(child);
+      case BlockType::Ref:
+        return Poincare::MatrixRowEchelonForm::Builder(child);
+      case BlockType::Rref:
+        return Poincare::MatrixReducedRowEchelonForm::Builder(child);
+      case BlockType::Trace:
+        return Poincare::MatrixTrace::Builder(child);
+      case BlockType::Transpose:
+        return Poincare::MatrixTranspose::Builder(child);
       case BlockType::Derivative: {
         Poincare::Expression symbol =
             ToPoincareExpression(exp->childAtIndex(1));
@@ -199,6 +223,41 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::NaperianLogarithm:
       SharedEditionPool->pushBlock(BlockType::Ln);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Dimension:
+      SharedEditionPool->pushBlock(BlockType::Dim);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Determinant:
+      SharedEditionPool->pushBlock(BlockType::Det);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::MatrixIdentity:
+      SharedEditionPool->pushBlock(BlockType::Identity);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::MatrixInverse:
+      SharedEditionPool->pushBlock(BlockType::Inverse);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    // case OT::: // FIXME Norm is AbsoluteValue
+    // SharedEditionPool->pushBlock(BlockType::Norm);
+    // return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::MatrixTrace:
+      SharedEditionPool->pushBlock(BlockType::Trace);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::MatrixTranspose:
+      SharedEditionPool->pushBlock(BlockType::Transpose);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::MatrixRowEchelonForm:
+      SharedEditionPool->pushBlock(BlockType::Ref);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::MatrixReducedRowEchelonForm:
+      SharedEditionPool->pushBlock(BlockType::Rref);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::VectorCross:
+      SharedEditionPool->pushBlock(BlockType::Cross);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::VectorDot:
+      SharedEditionPool->pushBlock(BlockType::Dot);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
         SharedEditionPool->pushBlock(BlockType::Logarithm);

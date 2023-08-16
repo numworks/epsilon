@@ -20,6 +20,17 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Log, "log"},
     {BlockType::Ln, "ln"},
     {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases},
+    {BlockType::Cross, "cross"},
+    {BlockType::Det, "det"},
+    {BlockType::Dim, "dim"},
+    {BlockType::Dot, "dot"},
+    {BlockType::Identity, "identity"},
+    {BlockType::Inverse, "inverse"},
+    {BlockType::Norm, "norm"},
+    {BlockType::Ref, "ref"},
+    {BlockType::Rref, "rref"},
+    {BlockType::Trace, "trace"},
+    {BlockType::Transpose, "transpose"},
 };
 
 bool Builtin::IsBuiltin(BlockType type) {
@@ -72,6 +83,8 @@ uint8_t Builtin::MinNumberOfParameters(BlockType type) {
     case BlockType::Derivative:
       return 3;
     case BlockType::Logarithm:
+    case BlockType::Cross:
+    case BlockType::Dot:
       return 2;
     default:
       return 1;
@@ -121,6 +134,39 @@ EditionReference Builtin::Promote(EditionReference parameterList,
       break;
     case BlockType::SquareRoot:
       header = KTree<BlockType::SquareRoot>();
+      break;
+    case BlockType::Cross:
+      header = KTree<BlockType::Cross>();
+      break;
+    case BlockType::Det:
+      header = KTree<BlockType::Det>();
+      break;
+    case BlockType::Dim:
+      header = KTree<BlockType::Dim>();
+      break;
+    case BlockType::Dot:
+      header = KTree<BlockType::Dot>();
+      break;
+    case BlockType::Identity:
+      header = KTree<BlockType::Identity>();
+      break;
+    case BlockType::Inverse:
+      header = KTree<BlockType::Inverse>();
+      break;
+    case BlockType::Norm:
+      header = KTree<BlockType::Norm>();
+      break;
+    case BlockType::Ref:
+      header = KTree<BlockType::Ref>();
+      break;
+    case BlockType::Rref:
+      header = KTree<BlockType::Rref>();
+      break;
+    case BlockType::Trace:
+      header = KTree<BlockType::Trace>();
+      break;
+    case BlockType::Transpose:
+      header = KTree<BlockType::Transpose>();
       break;
     default:
       assert(false);

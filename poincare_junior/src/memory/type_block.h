@@ -112,7 +112,19 @@ enum class BlockType : uint8_t {
   TrigDiff,
   UserFunction,
   UserSequence,
-  // 1 - D - Order dependant expressions
+  // 1 - D - Matrix and vector builtins
+  Cross,
+  Det,
+  Dim,
+  Dot,
+  Identity,
+  Inverse,
+  Norm,
+  Ref,
+  Rref,
+  Trace,
+  Transpose,
+  // 1 - E - Order dependant expressions
   List,
   Set,
   Matrix,
@@ -348,6 +360,8 @@ class TypeBlock : public Block {
       case BlockType::Trig:
       case BlockType::TrigDiff:
       case BlockType::Logarithm:
+      case BlockType::Cross:
+      case BlockType::Dot:
         return 2;
       case BlockType::Abs:
       case BlockType::Decimal:
@@ -361,6 +375,15 @@ class TypeBlock : public Block {
       case BlockType::Ln:
       case BlockType::Exponential:
       case BlockType::Factorial:
+      case BlockType::Det:
+      case BlockType::Dim:
+      case BlockType::Identity:
+      case BlockType::Inverse:
+      case BlockType::Norm:
+      case BlockType::Ref:
+      case BlockType::Rref:
+      case BlockType::Trace:
+      case BlockType::Transpose:
       case BlockType::ParenthesisLayout:
       case BlockType::SquareRoot:
       case BlockType::VerticalOffsetLayout:

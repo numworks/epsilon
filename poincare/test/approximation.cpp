@@ -866,6 +866,10 @@ QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<float>("int(1/x,x,0,1)", Undefined::Name());
 
+  // Ensure this does not take up too much time
+  assert_expression_approximates_to<double>("int(e^(x^3),x,0,6)",
+                                            Undefined::Name());
+
   assert_expression_approximates_to<float>("int(1+cos(a),a, 0, 180)", "180");
   assert_expression_approximates_to<double>("int(1+cos(a),a, 0, 180)", "180");
 

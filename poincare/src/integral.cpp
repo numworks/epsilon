@@ -168,11 +168,17 @@ Evaluation<T> IntegralNode::templatedApproximate(
   DetailedResult<T> detailedResult =
       adaptiveQuadrature<T>(start, end, precision, k_maxNumberOfIterations,
                             substitution, approximationContext);
-  constexpr T minimumPrecisionForDisplay = 0.1;
-  T result = detailedResult.absoluteError > minimumPrecisionForDisplay
-                 ? NAN
-                 : scale * detailedResult.integral;
+  T result = DetailedResultIsValid(detailedResult)
+                 ? scale * detailedResult.integral
+                 : NAN;
   return Complex<T>::Builder(result);
+}
+
+template <typename T>
+bool IntegralNode::DetailedResultIsValid(DetailedResult<T> result) {
+  constexpr T maximumErrorForDisplay = 0.1;
+  return !std::isnan(result.integral) &&
+         result.absoluteError < maximumErrorForDisplay;
 }
 
 template <typename T>
@@ -479,8 +485,14 @@ IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(
     T m = (a + b) / 2;
     DetailedResult<T> left = adaptiveQuadrature<T>(
         a, m, eps / 2, numberOfIterations, substitution, approximationContext);
+    if (!DetailedResultIsValid(left)) {
+      return {NAN, NAN};
+    }
     DetailedResult<T> right = adaptiveQuadrature<T>(
         m, b, eps / 2, numberOfIterations, substitution, approximationContext);
+    if (!DetailedResultIsValid(right)) {
+      return {NAN, NAN};
+    }
     DetailedResult<T> result;
     result.integral = left.integral + right.integral;
     result.absoluteError = left.absoluteError + right.absoluteError;

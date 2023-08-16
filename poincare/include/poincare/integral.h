@@ -56,6 +56,8 @@ class IntegralNode final : public ParameteredExpressionNode {
     T integral;
     T absoluteError;
   };
+  template <typename T>
+  static bool DetailedResultIsValid(DetailedResult<T> result);
   constexpr static int k_maxNumberOfIterations = 20;
 #ifdef LAGRANGE_METHOD
   template <typename T>

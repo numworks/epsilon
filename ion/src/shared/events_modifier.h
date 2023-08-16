@@ -19,8 +19,8 @@ class ModifierState {
   bool wasShiftReleased(Keyboard::State state);
   bool wasAlphaReleased(Keyboard::State state);
   void updateModifiersFromEvent(Event e, Keyboard::State state);
-  int longPressCounter() { return m_longPressCounter; }
-  int repetitionFactor() { return m_repetitionCounter; }
+  int longPressCounter() const { return m_longPressCounter; }
+  int repetitionFactor() const { return m_repetitionCounter; }
   void resetLongPress() { m_longPressCounter = 0; }
   void incrementLongPress() { m_longPressCounter++; }
   void incrementOrResetRepetition(bool increment);

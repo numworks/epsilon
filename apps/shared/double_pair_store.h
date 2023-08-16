@@ -41,7 +41,7 @@ class DoublePairStore {
   DoublePairStore(const DoublePairStore &) = delete;
 
   // Call this after initializing the store
-  void initListsFromStorage(bool seriesShouldUpdate = true);
+  void initListsFromStorage(bool delayUpdate = false);
 
   // Clean the pool
   void tidy();

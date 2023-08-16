@@ -28,7 +28,7 @@ Store::Store(GlobalContext* context, UserPreferences* userPreferences)
       m_graphViewInvalidated(true) {
   /* Update series after having set the datasets, which are needed in
    * updateSeries */
-  initListsFromStorage(false);
+  initListsFromStorage(true);
   for (int s = 0; s < k_numberOfSeries; s++) {
     m_datasets[s] = Poincare::StatisticsDataset<double>(&m_dataLists[s][0],
                                                         &m_dataLists[s][1]);

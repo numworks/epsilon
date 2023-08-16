@@ -88,6 +88,17 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   return result;
 }
 
+Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m) {
+  Tree* result = m->cloneNode();
+  for (const Tree* child : m->children()) {
+    Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(2);
+    scalar->clone();
+    child->clone();
+    Simplification::SimplifyMultiplication(mult);
+  }
+  return result;
+}
+
 Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   if (!(NumberOfColumns(u) == NumberOfRows(v))) {
     return KUndef->clone();
@@ -137,4 +148,5 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   }
   return result;
 }
+
 }  // namespace PoincareJ

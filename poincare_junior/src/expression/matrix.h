@@ -32,6 +32,7 @@ struct Matrix {
   static Tree* Identity(const Tree* n);
   static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* a, const Tree* b);
+  static Tree* ScalarMultiplication(const Tree* s, const Tree* m);
   static Tree* Multiplication(const Tree* a, const Tree* b);
   static Tree* Transpose(const Tree* matrix);
 };

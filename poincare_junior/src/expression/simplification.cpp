@@ -1422,8 +1422,16 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
 }
 
-bool Simplification::DeepApplyMatrixOperators(Tree* ref) {
-  return ApplyShallowInDepth(ref, ShallowApplyMatrixOperators, nullptr);
+bool Simplification::DeepApplyMatrixOperators(Tree* tree) {
+  int n = tree->numberOfChildren();
+  Tree* child = tree->nextNode();
+  bool changed = false;
+  while (n--) {
+    changed |= DeepApplyMatrixOperators(child);
+    child = child->nextTree();
+  }
+  changed |= ShallowApplyMatrixOperators(tree);
+  return changed;
 }
 
 }  // namespace PoincareJ

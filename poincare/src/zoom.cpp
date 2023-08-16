@@ -435,7 +435,7 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);
   /* We must make sure the "root" we've found is not an odd vertical asymptote.
-   * We thus discard roots that changes direction.
+   * We thus discard roots that change direction.
    */
   if ((Solver<float>::EvenOrOddRootInBracket(pu, pv, pb, aux) ==
            Solver<float>::Interest::Root &&

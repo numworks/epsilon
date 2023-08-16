@@ -479,27 +479,48 @@ IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(
     const ApproximationContext& approximationContext) const {
   DetailedResult<T> quadKG =
       kronrodGaussQuadrature(a, b, substitution, approximationContext);
+  return iterateAdaptiveQuadrature(quadKG, a, b, eps, numberOfIterations,
+                                   substitution, approximationContext);
+}
+
+template <typename T>
+IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
+    DetailedResult<T> quadKG, T a, T b, T eps, int numberOfIterations,
+    Substitution<T> substitution,
+    const ApproximationContext& approximationContext) const {
   if (quadKG.absoluteError <= eps) {
     return quadKG;
-  } else if (--numberOfIterations > 0) {
-    T m = (a + b) / 2;
-    DetailedResult<T> left = adaptiveQuadrature<T>(
-        a, m, eps / 2, numberOfIterations, substitution, approximationContext);
-    if (!DetailedResultIsValid(left)) {
-      return {NAN, NAN};
-    }
-    DetailedResult<T> right = adaptiveQuadrature<T>(
-        m, b, eps / 2, numberOfIterations, substitution, approximationContext);
-    if (!DetailedResultIsValid(right)) {
-      return {NAN, NAN};
-    }
-    DetailedResult<T> result;
-    result.integral = left.integral + right.integral;
-    result.absoluteError = left.absoluteError + right.absoluteError;
-    return result;
-  } else {
-    return quadKG;
   }
+
+  if (--numberOfIterations > 0) {
+    T m = (a + b) / 2;
+    DetailedResult<T> left =
+        kronrodGaussQuadrature(a, m, substitution, approximationContext);
+    DetailedResult<T> right =
+        kronrodGaussQuadrature(m, b, substitution, approximationContext);
+
+    /* Start by the side with the biggest error to reach maximumError faster if
+     * it can be reached. */
+    bool leftFirst = left.absoluteError >= right.absoluteError;
+    for (int i = 0; i < 2; i++) {
+      bool currentIsLeft = ((i == 0) == leftFirst);
+      DetailedResult<T>* current = currentIsLeft ? &left : &right;
+      T lowerBound = currentIsLeft ? a : m;
+      T upperBound = currentIsLeft ? m : b;
+      *current = iterateAdaptiveQuadrature(*current, lowerBound, upperBound,
+                                           eps / 2, numberOfIterations,
+                                           substitution, approximationContext);
+      if (!DetailedResultIsValid(*current)) {
+        return {NAN, NAN};
+      }
+    }
+    DetailedResult<T> result = {
+        .integral = left.integral + right.integral,
+        .absoluteError = left.absoluteError + right.absoluteError};
+    return result;
+  }
+
+  return quadKG;
 }
 #endif
 

@@ -260,4 +260,10 @@ void Calculation::fillExpressionsForAdditionalResults(
                      : *approximateOutput;
 }
 
+AdditionalResultsType Calculation::additionalResultsType() {
+  Expression i, a, e;
+  fillExpressionsForAdditionalResults(&i, &e, &a);
+  return AdditionalResultsForExpressions(i, e, a);
+}
+
 }  // namespace Calculation

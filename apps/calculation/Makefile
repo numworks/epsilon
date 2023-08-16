@@ -4,6 +4,7 @@ app_headers += apps/calculation/app.h
 app_calculation_test_src += $(addprefix apps/calculation/,\
   calculation.cpp \
   calculation_store.cpp \
+  additional_results/additional_results_type.cpp \
   additional_results/unit_comparison_helper.cpp \
   additional_results/scientific_notation_helper.cpp \
   additional_results/vector_helper.cpp \

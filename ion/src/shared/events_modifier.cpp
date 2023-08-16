@@ -69,11 +69,7 @@ void ModifierState::updateModifiersFromEvent(Event e, Keyboard::State state) {
 }
 
 void ModifierState::incrementOrResetRepetition(bool increment) {
-  if (increment) {
-    m_repetitionCounter++;
-  } else {
-    m_repetitionCounter = 0;
-  }
+  m_repetitionCounter = increment ? m_repetitionCounter + 1 : 0;
 }
 
 }  // namespace Events

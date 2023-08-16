@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/parser.h>
@@ -110,6 +111,36 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
   }
 }
 
+void Expression::ConvertMatrixToLayout(EditionReference layoutParent,
+                                       Tree *expression) {
+  // TODO : matrix layout
+  NAry::AddChild(
+      layoutParent,
+      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('['));
+  int cols = Matrix::NumberOfColumns(expression);
+  int rows = Matrix::NumberOfRows(expression);
+  for (int row = 0; row < rows; row++) {
+    NAry::AddChild(
+        layoutParent,
+        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('['));
+    for (int col = 0; col < cols; col++) {
+      if (col > 0) {
+        NAry::AddChild(
+            layoutParent,
+            SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+                ','));
+      }
+      ConvertExpressionToLayout(layoutParent, expression->nextNode());
+    }
+    NAry::AddChild(
+        layoutParent,
+        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(']'));
+  }
+  NAry::AddChild(
+      layoutParent,
+      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(']'));
+}
+
 void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
                                                 Tree *expression) {
   BlockType type = expression->type();
@@ -211,6 +242,9 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       break;
     case BlockType::Undefined:
       ConvertTextToLayout(layoutParent, "undef");
+      break;
+    case BlockType::Matrix:
+      ConvertMatrixToLayout(layoutParent, expression);
       break;
     case BlockType::UserFunction:
     case BlockType::UserSequence:

@@ -36,6 +36,8 @@ class Expression final : public Reference {
                                             int decimalOffset = 0);
   static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
                                            Tree* expression);
+  static void ConvertMatrixToLayout(EditionReference layoutParent,
+                                    Tree* expression);
   static void ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
                                              Tree* expression);
   static void ConvertExpressionToLayout(EditionReference layoutParent,

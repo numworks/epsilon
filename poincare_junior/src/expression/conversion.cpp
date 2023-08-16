@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/symbol.h>
@@ -88,6 +89,17 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
                                     nary.numberOfChildren());
       }
       return nary;
+    }
+    case BlockType::Matrix: {
+      Poincare::Matrix mat = Poincare::Matrix::Builder();
+      for (const Tree *child : exp->children()) {
+        mat.addChildAtIndexInPlace(ToPoincareExpression(child),
+                                   mat.numberOfChildren(),
+                                   mat.numberOfChildren());
+      }
+      mat.setDimensions(Matrix::NumberOfRows(exp),
+                        Matrix::NumberOfColumns(exp));
+      return mat;
     }
     case BlockType::Subtraction:
     case BlockType::Power:
@@ -209,6 +221,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Subtraction:
     case OT::Division:
     case OT::Power:
+    case OT::Matrix:
       switch (exp.type()) {
         case OT::Addition:
           SharedEditionPool->push<BlockType::Addition>(exp.numberOfChildren());
@@ -225,6 +238,11 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
           break;
         case OT::Power:
           SharedEditionPool->pushBlock(BlockType::Power);
+          break;
+        case OT::Matrix:
+          SharedEditionPool->push<BlockType::Matrix>(
+              static_cast<Poincare::Matrix &>(exp).numberOfRows(),
+              static_cast<Poincare::Matrix &>(exp).numberOfColumns());
           break;
       }
       for (int i = 0; i < exp.numberOfChildren(); i++) {

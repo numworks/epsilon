@@ -92,10 +92,6 @@ const char *AbstractTextField::ContentView::editedText() const {
   return s_draftTextBuffer;
 }
 
-size_t AbstractTextField::ContentView::editedTextLength() const {
-  return strlen(s_draftTextBuffer);
-}
-
 void AbstractTextField::ContentView::setText(const char *text) {
   size_t textRealLength = strlen(text);
   size_t maxBufferSize = m_isEditing ? draftTextBufferSize() : m_textBufferSize;

@@ -84,7 +84,6 @@ class AbstractTextField : public TextInput {
     // TextInput::ContentView
     const char *text() const override;
     const char *editedText() const override;
-    size_t editedTextLength() const override;
     /* If the text to be appended is too long to be added without overflowing
      * the buffer, nothing is done (not even adding few letters from the text to
      * reach the maximum buffer capacity) and false is returned. */

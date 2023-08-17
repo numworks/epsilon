@@ -74,19 +74,19 @@ class TextInput : public EditableField {
     void reloadRectFromPosition(const char *position,
                                 bool includeFollowingLines = false);
 
+    virtual const char *editedText() const = 0;
+    size_t editedTextLength() const { return strlen(editedText()); }
+
    protected:
     void reloadRectFromAndToPositions(const char *start, const char *end);
     virtual KDRect glyphFrameAtPosition(const char *buffer,
                                         const char *position) const = 0;
     virtual KDRect dirtyRectFromPosition(const char *position,
                                          bool includeFollowingLines) const;
+
     const char *m_cursorLocation;
     const char *m_selectionStart;
     KDGlyph::Format m_format;
-
-   private:
-    virtual const char *editedText() const = 0;
-    virtual size_t editedTextLength() const = 0;
   };
 
   /* If the text to be appended is too long to be added without overflowing the

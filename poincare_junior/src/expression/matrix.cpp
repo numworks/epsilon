@@ -280,4 +280,26 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
   return true;
 }
 
+int Matrix::Rank(const Tree* m) {
+  Tree* copy = m->clone();
+  RowCanonize(copy);
+  int rank = NumberOfRows(copy);
+  int i = rank - 1;
+  while (i >= 0) {
+    int j = NumberOfColumns(copy) - 1;
+    // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
+    while (j >= i && Number::IsZero(Child(copy, i, j))) {
+      j--;
+    }
+    if (j <= i - 1) {
+      rank--;
+    } else {
+      break;
+    }
+    i--;
+  }
+  copy->removeTree();
+  return rank;
+}
+
 }  // namespace PoincareJ

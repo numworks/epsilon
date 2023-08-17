@@ -45,7 +45,7 @@ class PlotBannerViewWithEditableField
   Escher::TextField* value() { return editableField(); }
 
  private:
-  Escher::View* valueView() override { return editablView(); }
+  Escher::View* valueView() override { return editableView(); }
 };
 
 }  // namespace Statistics

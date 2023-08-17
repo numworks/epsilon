@@ -331,6 +331,8 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("2*3^x*3^(-x)", "\u0014dep(2,{x})");
   assert_parsed_expression_simplify_to("10-1/(3^x)",
                                        "\u001210×3^x-1\u0013/3^x");
+  assert_parsed_expression_simplify_to("2×cos(π/12)×e^(5πi/12)",
+                                       "1/2+\U000000122+√(3)\U00000013/2×i");
   // Do not factorize exponent if the multiplication result is over DBL_MAX
 #if !EMSCRIPTEN
   /* TODO: This assert does not work on web-simulator because exceptions are

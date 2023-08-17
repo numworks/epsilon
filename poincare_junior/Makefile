@@ -59,6 +59,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   calculation.cpp \
   comparison.cpp \
   context.cpp \
+  dimension.cpp \
   expression_comparison.cpp \
   layout.cpp \
   graph.cpp \

@@ -8,8 +8,6 @@
 #include <omg/directions.h>
 #include <string.h>
 
-// See TODO in EditableField
-
 namespace Escher {
 
 class TextInput : public EditableField {

@@ -6,7 +6,6 @@
 #include <string.h>
 
 namespace Escher {
-// See TODO in EditableField
 
 /* TODO: TextField currently uses using 2 buffers:
  * - one to keep the displayed text

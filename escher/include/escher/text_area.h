@@ -9,7 +9,6 @@
 #include <array>
 
 namespace Escher {
-// See TODO in EditableField
 
 class TextArea : public TextInput {
  public:

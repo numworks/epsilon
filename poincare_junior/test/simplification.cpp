@@ -290,6 +290,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ref([[1,2][3,4]])", "[[1,4/3][0,1]]");
   simplifies_to("rref([[1,2][3,4]])", "[[1,0][0,1]]");
   simplifies_to("det([[1,2][3,4]])", "-2");
+  simplifies_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
   simplifies_to("trace(identity(3))", "3");
   simplifies_to("2+[[3]]", "undef");
   simplifies_to("[[2]]+[[3]]", "[[5]]");

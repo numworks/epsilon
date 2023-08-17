@@ -1410,6 +1410,9 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   // assert(child->type() == BlockType::Matrix);
   switch (tree->type()) {
+    case BlockType::Inverse:
+      tree->moveTreeOverTree(Matrix::Inverse(child));
+      return true;
     case BlockType::Ref:
       Matrix::RowCanonize(child, false);
       tree->removeNode();

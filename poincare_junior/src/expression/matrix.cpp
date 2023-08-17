@@ -302,4 +302,42 @@ int Matrix::Rank(const Tree* m) {
   return rank;
 }
 
+Tree* Matrix::Inverse(const Tree* m) {
+  int dim = NumberOfRows(m);
+  /* Create the matrix (A|I) with A is the input matrix and I the dim
+   * identity matrix */
+  Tree* matrixAI = SharedEditionPool->push<BlockType::Matrix>(dim, dim * 2);
+  const Tree* childIJ = m->nextNode();
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      childIJ->clone();
+      childIJ = childIJ->nextTree();
+    }
+    for (int j = 0; j < dim; j++) {
+      (i == j ? 1_e : 0_e)->clone();
+    }
+  }
+  // Compute the inverse
+  RowCanonize(matrixAI);
+  // Check inversibility
+  for (int i = 0; i < dim; i++) {
+    if (!Number::IsOne(Child(matrixAI, i, i))) {
+      matrixAI->removeTree();
+      return KUndef->clone();
+    }
+  }
+  // Remove A from (A|I)
+  Tree* child = matrixAI->nextNode();
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      child->removeTree();
+    }
+    for (int j = 0; j < dim; j++) {
+      child = child->nextTree();
+    }
+  }
+  SetNumberOfColumns(matrixAI, dim);
+  return matrixAI;
+}
+
 }  // namespace PoincareJ

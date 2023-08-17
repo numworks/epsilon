@@ -295,6 +295,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("[[2]]+[[3]]", "[[5]]");
   simplifies_to("2*[[3]]", "[[6]]");
   simplifies_to("[[1,2][3,4]]*[[2,3][4,5]]", "[[10,13][22,29]]");
+  simplifies_to("norm([[1,2,3]])", "√(14)");
+  simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
+  simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

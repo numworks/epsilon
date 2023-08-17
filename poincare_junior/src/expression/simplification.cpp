@@ -10,6 +10,7 @@
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/trigonometry.h>
+#include <poincare_junior/src/expression/vector.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/placeholder.h>
@@ -1395,7 +1396,7 @@ bool Simplification::ExpandPower(Tree* ref) {
 }
 
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
-  if (tree->numberOfChildren() != 1) {
+  if (tree->numberOfChildren() < 1) {
     return false;
   }
   Tree* child = tree->childAtIndex(0);
@@ -1436,6 +1437,15 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
       tree->moveTreeOverTree(determinant);
       return true;
     }
+    case BlockType::Cross:
+      tree->moveTreeOverTree(Vector::Cross(child, child->nextTree()));
+      return true;
+    case BlockType::Dot:
+      tree->moveTreeOverTree(Vector::Dot(child, child->nextTree()));
+      return true;
+    case BlockType::Norm:
+      tree->moveTreeOverTree(Vector::Norm(child));
+      return true;
     default:
       return false;
   }

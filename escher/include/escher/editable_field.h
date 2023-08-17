@@ -9,11 +9,6 @@
 
 namespace Escher {
 
-/* TODO: improve classes hierarchy to share selection handling (and some other
- * features) between EditableField and TextInput. Refactor the following
- * classes: TextInput, TextArea, EditableField, LayoutField,
- * TextField, and their delegates! */
-
 class EditableField : public TextCursorView::WithBlinkingCursor<
                           ScrollableView<ScrollView::NoDecorator>>,
                       public ScrollViewDataSource {

@@ -9,8 +9,6 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/preferences.h>
 
-// See TODO in EditableField
-
 namespace Escher {
 
 class LayoutField : public EditableField {

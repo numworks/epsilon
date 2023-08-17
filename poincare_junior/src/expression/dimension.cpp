@@ -15,8 +15,6 @@ Dimension Dimension::ComputeDimension(const Tree* t) {
     childDim[i++] = dim;
   }
   switch (t->type()) {
-    case BlockType::Undefined:
-      return Invalid();
     case BlockType::Addition:
     case BlockType::Subtraction:
       assert(t->numberOfChildren() > 0);

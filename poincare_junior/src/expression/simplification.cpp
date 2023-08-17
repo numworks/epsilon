@@ -3,6 +3,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/decimal.h>
+#include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/metric.h>
@@ -55,6 +56,8 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 }
 
 bool Simplification::ShallowSystematicReduce(Tree* u) {
+  // This assert is quite costly, should be an assert level 2 ?
+  assert(!Dimension::ComputeDimension(u).isInvalid());
   if (u->numberOfChildren() == 0) {
     // Strict rationals are the only childless trees that can be reduced.
     return Rational::MakeIrreducible(u);
@@ -748,6 +751,10 @@ bool Simplification::SimplifyAddition(Tree* u) {
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
+  if (Dimension::ComputeDimension(ref).isInvalid()) {
+    ref->cloneTreeOverTree(KUndef);
+    return true;
+  }
   bool changed = false;
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */

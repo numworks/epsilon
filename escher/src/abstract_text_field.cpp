@@ -17,7 +17,6 @@
 
 namespace Escher {
 static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
-static size_t s_currentDraftTextLength;
 
 /* AbstractTextField::ContentView */
 
@@ -94,7 +93,7 @@ const char *AbstractTextField::ContentView::editedText() const {
 }
 
 size_t AbstractTextField::ContentView::editedTextLength() const {
-  return s_currentDraftTextLength;
+  return strlen(s_draftTextBuffer);
 }
 
 void AbstractTextField::ContentView::setText(const char *text) {
@@ -107,17 +106,12 @@ void AbstractTextField::ContentView::setText(const char *text) {
     buffer[0] = 0;
     return;
   }
-  int textLength = std::min(textRealLength, maxBufferSize - 1);
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);
   /* Replace System parentheses (used to keep layout tree structure) by normal
    * parentheses */
   Poincare::SerializationHelper::
       ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
-  // Update the draft text length
-  if (buffer == s_draftTextBuffer) {
-    s_currentDraftTextLength = textLength;
-  }
   markWholeFrameAsDirty();
 }
 
@@ -132,9 +126,6 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   m_isEditing = isEditing;
   const char *buffer = editedText();
   size_t textLength = strlen(buffer);
-  if (buffer == const_cast<const char *>(s_draftTextBuffer)) {
-    s_currentDraftTextLength = textLength;
-  }
   if (m_cursorLocation < buffer || m_cursorLocation > buffer + textLength) {
     m_cursorLocation = buffer + textLength;
   }
@@ -153,7 +144,6 @@ void AbstractTextField::ContentView::reinitDraftTextBuffer() {
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
   s_draftTextBuffer[0] = 0;
-  s_currentDraftTextLength = 0;
   setCursorLocation(editedText());
 }
 
@@ -183,10 +173,6 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;
-  if (buffer == s_draftTextBuffer) {
-    s_currentDraftTextLength +=
-        copySize - 1;  // Do no count the null-termination
-  }
 
   reloadRectFromPosition(m_format.horizontalAlignment == 0.0f ? location
                                                               : buffer);
@@ -221,12 +207,6 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
     return false;
   }
 
-  if (buffer == s_draftTextBuffer) {
-    // Update the draft buffer length
-    s_currentDraftTextLength -= removedLength;
-    assert(s_draftTextBuffer[s_currentDraftTextLength] == 0);
-  }
-
   // Set the cursor location and reload the view
   assert(cursorLocation() - removedLength >= buffer);
   setCursorLocation(cursorLocation() - removedLength);
@@ -246,9 +226,6 @@ bool AbstractTextField::ContentView::removeEndOfLine() {
   }
   reloadRectFromPosition(m_format.horizontalAlignment == 0.0f ? cursorLocation()
                                                               : buffer);
-  if (buffer == s_draftTextBuffer) {
-    s_currentDraftTextLength = lengthToCursor;
-  }
   *(const_cast<char *>(cursorLocation())) = 0;
   layoutSubviews();
   return true;
@@ -264,7 +241,6 @@ void AbstractTextField::ContentView::willModifyTextBuffer() {
 void AbstractTextField::ContentView::didModifyTextBuffer() {
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
-  s_currentDraftTextLength = strlen(s_draftTextBuffer);
   layoutSubviews();
 }
 
@@ -290,10 +266,6 @@ size_t AbstractTextField::ContentView::deleteSelection() {
           draftTextBufferSize() - (selectionLeft() - buffer));
   // We cannot call resetSelection() because m_selectionEnd is invalid.
   m_selectionStart = nullptr;
-  if (buffer == s_draftTextBuffer) {
-    assert(removedLength <= s_currentDraftTextLength);
-    s_currentDraftTextLength -= removedLength;
-  }
   return removedLength;
 }
 

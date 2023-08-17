@@ -7,12 +7,12 @@ namespace PoincareJ {
 
 struct Dimension {
   enum class Type {
-    Undef,
+    Invalid,
     Scalar,
     Matrix,
   };
 
-  static Dimension Undef() { return {Type::Undef}; }
+  static Dimension Invalid() { return {Type::Invalid}; }
   static Dimension Scalar() { return {Type::Scalar}; }
   static Dimension Matrix(uint8_t rows, uint8_t cols) {
     return {.type = Type::Matrix, .matrix = {rows, cols}};
@@ -21,7 +21,7 @@ struct Dimension {
   bool operator==(const Dimension& other) const;
   bool operator!=(const Dimension& other) const { return !(*this == other); };
 
-  bool isUndef() const { return type == Type::Undef; }
+  bool isInvalid() const { return type == Type::Invalid; }
   bool isScalar() const { return type == Type::Scalar; }
   bool isMatrix() const { return type == Type::Matrix; }
   bool isSquareMatrix() const {

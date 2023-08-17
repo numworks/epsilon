@@ -21,7 +21,7 @@ class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
  protected:
   Escher::View* subviewAtIndex(int index) override {
     assert(0 <= index && index < k_numberOfSubviews);
-    return index == 0 ? editablView() : &m_ordinateView;
+    return index == 0 ? editableView() : &m_ordinateView;
   }
 
  private:

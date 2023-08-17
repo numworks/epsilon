@@ -29,7 +29,7 @@ class EditableFieldBannerViewDelegate {
     return &m_editableFieldLabel;
   }
   Escher::TextField* editableField() { return &m_editableField; }
-  Escher::View* editablView() { return &m_editableView; }
+  Escher::View* editableView() { return &m_editableView; }
 
  private:
   constexpr static KDCoordinate k_bufferSize =

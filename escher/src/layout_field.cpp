@@ -120,8 +120,7 @@ LayoutField::ContentView::ContentView(KDGlyph::Format format)
 }
 
 /* TODO: This buffer could probably be shared with some other temporary
- * space. It can't be shared with the one from TextField if we want to remove
- * double buffering in TextField and still open the store menu within texts. */
+ * space (for example the one from TextField). */
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
 LayoutField::LayoutField(Responder *parentResponder,

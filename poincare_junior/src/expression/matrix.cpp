@@ -340,4 +340,30 @@ Tree* Matrix::Inverse(const Tree* m) {
   return matrixAI;
 }
 
+Tree* Matrix::Power(const Tree* m, int p) {
+  if (p < 0) {
+    Tree* result = Power(m, -p);
+    result->moveTreeOverTree(Inverse(result));
+    return result;
+  }
+  if (p == 0) {
+    Tree* result = IntegerHandler(NumberOfRows(m)).pushOnEditionPool();
+    result->moveTreeOverTree(Identity(result));
+    return result;
+  }
+  if (p == 1) {
+    return m->clone();
+  }
+  if (p == 2) {
+    return Multiplication(m, m);
+  }
+  // Quick exponentiation
+  Tree* result = Matrix::Power(m, p / 2);
+  result->moveTreeOverTree(Multiplication(result, result));
+  if (p % 2 == 1) {
+    result->moveTreeOverTree(Multiplication(m, result));
+  }
+  return result;
+}
+
 }  // namespace PoincareJ

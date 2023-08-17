@@ -38,6 +38,7 @@ struct Matrix {
                           Tree** determinant = nullptr);
   static int Rank(const Tree* m);
   static Tree* Inverse(const Tree* m);
+  static Tree* Power(const Tree* m, int p);
 };
 
 }  // namespace PoincareJ

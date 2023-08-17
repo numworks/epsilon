@@ -40,6 +40,12 @@ Dimension Dimension::ComputeDimension(const Tree* t) {
       }
       return current;
     }
+    case BlockType::Power:
+      if (!childDim[1].isScalar() ||
+          (childDim[0].isMatrix() && !childDim[0].isSquareMatrix())) {
+        return Invalid();
+      }
+      return childDim[0];
     case BlockType::Matrix:
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!childDim[i].isScalar()) {

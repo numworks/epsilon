@@ -316,7 +316,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   assert(IsInteger(n));
   // v^0 -> 1
-  if (Number::IsZero(n)) {
+  if (Number::IsZero(n) && v->type() != BlockType::Matrix) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
@@ -761,7 +761,10 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
    * projection context. */
   changed = DeepSystemProjection(ref, projectionContext) || changed;
   changed = DeepSystematicReduce(ref) || changed;
-  changed = DeepApplyMatrixOperators(ref) || changed;
+  if (DeepApplyMatrixOperators(ref)) {
+    DeepSystematicReduce(ref);
+    changed = true;
+  }
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
@@ -907,7 +910,8 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
                                    KPow(KPlaceholder<A>(), KHalf));
   if (ref->type() == BlockType::Power) {
     const Tree* index = ref->nextNode()->nextTree();
-    if (!index->block()->isInteger()) {
+    if (!index->block()->isInteger() &&
+        Dimension::ComputeDimension(ref->nextNode()).isScalar()) {
       // e^A -> exp(A)
       if (!PatternMatching::MatchAndReplace(ref, KPow(e_e, KPlaceholder<A>()),
                                             KExp(KPlaceholder<A>()))) {
@@ -1410,6 +1414,15 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   // assert(child->type() == BlockType::Matrix);
   switch (tree->type()) {
+    case BlockType::Power: {
+      Tree* index = child->nextTree();
+      if (child->type() != BlockType::Matrix || !index->block()->isInteger()) {
+        return false;
+      }
+      int p = Approximation::To<float>(index);
+      tree->moveTreeOverTree(Matrix::Power(child, p));
+      return true;
+    }
     case BlockType::Inverse:
       tree->moveTreeOverTree(Matrix::Inverse(child));
       return true;

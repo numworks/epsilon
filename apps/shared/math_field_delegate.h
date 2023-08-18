@@ -18,7 +18,8 @@ class AbstractMathFieldDelegate {
                                         Poincare::Expression ansExpression,
                                         Poincare::Context* context);
   virtual CodePoint defaultXNT();
-  bool handleXNT(Escher::EditableField* field);
+  bool handleEventForField(Escher::EditableField* field,
+                           Ion::Events::Event event);
 };
 
 class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
@@ -28,7 +29,9 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
 
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
-                                  Ion::Events::Event event) override;
+                                  Ion::Events::Event event) override {
+    return handleEventForField(layoutField, event);
+  }
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
 
@@ -42,7 +45,9 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
-                                Ion::Events::Event event) override;
+                                Ion::Events::Event event) override {
+    return handleEventForField(textField, event);
+  }
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 

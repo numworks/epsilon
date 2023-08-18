@@ -153,6 +153,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       PoincareJ::EditionReference ref = exp;
       PoincareJ::Simplification::Simplify(ref);
       exactOutputExpression = PoincareJ::Expression::ToPoincareExpression(ref);
+      ref->removeTree();
       exactOutputExpression = exactOutputExpression.addMissingParentheses();
       double approx = PoincareJ::Approximation::To<double>(exp);
       approximateOutputExpression = Poincare::Float<double>::Builder(approx);

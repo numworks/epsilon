@@ -123,10 +123,10 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   }
   resetSelection();
   m_isEditing = isEditing;
-  const char *buffer = draftText();
-  size_t textLength = strlen(buffer);
-  if (m_cursorLocation < buffer || m_cursorLocation > buffer + textLength) {
-    m_cursorLocation = buffer + textLength;
+  const char *bufferStart = draftText();
+  const char *bufferEnd = draftTextEnd();
+  if (m_cursorLocation < bufferStart || m_cursorLocation > bufferEnd) {
+    m_cursorLocation = bufferEnd;
   }
   markWholeFrameAsDirty();
   layoutSubviews();

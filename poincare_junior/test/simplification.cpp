@@ -302,6 +302,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("norm([[1,2,3]])", "√(14)");
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
+  simplifies_to("N*M", "N*M");
+  simplifies_to("N+M", "M+N");
+  simplifies_to("N^2*M", "N^(2)*M");
+  simplifies_to("N^2*M^2", "N^(2)*M^(2)");
+  simplifies_to("n^2*m", "m*n^(2)");
+  simplifies_to("M*M^2", "M^(3)");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

@@ -4,6 +4,7 @@
 
 #include "approximation.h"
 #include "constant.h"
+#include "dimension.h"
 #include "k_tree.h"
 #include "polynomial.h"
 #include "symbol.h"
@@ -11,6 +12,16 @@
 namespace PoincareJ {
 
 int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
+  if (order == Order::PreserveMatrices) {
+    if (Dimension::ComputeDimension(node0).isMatrix() &&
+        Dimension::ComputeDimension(node1).isMatrix()) {
+      if (node0->treeIsIdenticalTo(node1)) {
+        return 0;
+      }
+      return node0 < node1 ? -1 : 1;
+    }
+    order = Order::User;
+  }
   BlockType type0 = node0->type();
   BlockType type1 = node1->type();
   if (type0 > type1) {
@@ -22,10 +33,6 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   const TypeBlock* block1 = node1->block();
   if ((block0->isNumber() && block1->isNumber())) {
     return CompareNumbers(node0, node1);
-  }
-  if ((type0 == BlockType::Matrix && type1 == BlockType::Matrix)) {
-    // do not reorder matrices since their multiplication is not commutative
-    return CompareChildren(node0, node1) == 0 ? 0 : -1;
   }
   if (type0 < type1) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)

@@ -2,6 +2,7 @@
 
 #include "approximation.h"
 #include "matrix.h"
+#include "symbol.h"
 
 namespace PoincareJ {
 
@@ -87,6 +88,15 @@ Dimension Dimension::ComputeDimension(const Tree* t) {
                       childDim[0].matrix.cols == 3)
                  ? childDim[0]
                  : Invalid();
+    case BlockType::UserSymbol: {
+      char s[2];
+      Symbol::GetName(t, s, 2);
+      if ('A' <= s[0] && s[0] <= 'Z') {
+        // TODO query the actual symbol and assume no unknown matrices
+        return Matrix(1, 1);
+      }
+      return Scalar();
+    }
     default:
       // Scalar-only constants and functions
       for (int i = 0; i < t->numberOfChildren(); i++) {

@@ -596,7 +596,7 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
   /* Merging children can un-sort the multiplication. It must then be simplified
    * again once sorted again. For example:
    * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
-  if (NAry::Sort(multiplication)) {
+  if (NAry::Sort(multiplication, Comparison::Order::PreserveMatrices)) {
     SimplifySortedMultiplication(multiplication);
   }
   return true;
@@ -608,7 +608,7 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
   if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
     return true;
   }
-  changed = NAry::Sort(u) || changed;
+  changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
   changed = SimplifySortedMultiplication(u) || changed;
   assert(!changed || u->type() != BlockType::Multiplication ||
          !SimplifyMultiplication(u));

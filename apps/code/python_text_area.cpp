@@ -176,7 +176,7 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     const char *firstNonSpace =
-        UTF8Helper::BeginningOfWord(m_contentView.editedText(), location);
+        UTF8Helper::BeginningOfWord(m_contentView.draftText(), location);
     mp_lexer_t *lex = mp_lexer_new_from_str_len(
         0, firstNonSpace, UTF8Helper::EndOfWord(location) - firstNonSpace, 0);
 
@@ -237,7 +237,7 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(
 }
 
 const char *PythonTextArea::ContentView::textToAutocomplete() const {
-  return UTF8Helper::BeginningOfWord(editedText(), cursorLocation());
+  return UTF8Helper::BeginningOfWord(draftText(), cursorLocation());
 }
 
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {

@@ -62,7 +62,7 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
                     glyphStyle);
   } else {
     assert(m_isEditing);
-    int selectionOffset = selectionLeft() - editedText();
+    int selectionOffset = selectionLeft() - draftText();
     const char *textToDraw = text();
     // Draw the non selected text on the left of the selection
     ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(),
@@ -89,7 +89,7 @@ const char *AbstractTextField::ContentView::text() const {
                                               : m_textBuffer);
 }
 
-const char *AbstractTextField::ContentView::editedText() const {
+const char *AbstractTextField::ContentView::draftText() const {
   return s_draftTextBuffer;
 }
 
@@ -121,7 +121,7 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   }
   resetSelection();
   m_isEditing = isEditing;
-  const char *buffer = editedText();
+  const char *buffer = draftText();
   size_t textLength = strlen(buffer);
   if (m_cursorLocation < buffer || m_cursorLocation > buffer + textLength) {
     m_cursorLocation = buffer + textLength;
@@ -141,7 +141,7 @@ void AbstractTextField::ContentView::reinitDraftTextBuffer() {
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
   s_draftTextBuffer[0] = 0;
-  setCursorLocation(editedText());
+  setCursorLocation(draftText());
 }
 
 bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
@@ -149,8 +149,8 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
                                                           int textLen) {
   assert(m_isEditing);
 
-  char *buffer = const_cast<char *>(editedText());
-  size_t editedLength = editedTextLength();
+  char *buffer = const_cast<char *>(draftText());
+  size_t editedLength = draftTextLength();
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
@@ -189,7 +189,7 @@ KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
 bool AbstractTextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
-  char *buffer = const_cast<char *>(editedText());
+  char *buffer = const_cast<char *>(draftText());
 
   if (m_format.horizontalAlignment > 0.0f) {
     /* Reload the view. If we do it later, the text beins supposedly shorter, we
@@ -216,9 +216,9 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
 
 bool AbstractTextField::ContentView::removeEndOfLine() {
   assert(m_isEditing);
-  char *buffer = const_cast<char *>(editedText());
+  char *buffer = const_cast<char *>(draftText());
   size_t lengthToCursor = (size_t)(cursorLocation() - buffer);
-  if (editedTextLength() == lengthToCursor) {
+  if (draftTextLength() == lengthToCursor) {
     return false;
   }
   reloadRectFromPosition(m_format.horizontalAlignment == 0.0f ? cursorLocation()
@@ -232,7 +232,7 @@ void AbstractTextField::ContentView::willModifyTextBuffer() {
   assert(m_isEditing);
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
-  reloadRectFromPosition(editedText());
+  reloadRectFromPosition(draftText());
 }
 
 void AbstractTextField::ContentView::didModifyTextBuffer() {
@@ -258,7 +258,7 @@ size_t AbstractTextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);
   size_t removedLength = selectionRight() - selectionLeft();
-  char *buffer = const_cast<char *>(editedText());
+  char *buffer = const_cast<char *>(draftText());
   strlcpy(const_cast<char *>(selectionLeft()), selectionRight(),
           draftTextBufferSize() - (selectionLeft() - buffer));
   // We cannot call resetSelection() because m_selectionEnd is invalid.
@@ -317,7 +317,7 @@ bool AbstractTextField::isEditing() const {
 
 size_t AbstractTextField::draftTextLength() const {
   assert(isEditing());
-  return nonEditableContentView()->editedTextLength();
+  return nonEditableContentView()->draftTextLength();
 }
 
 void AbstractTextField::setText(const char *text) {

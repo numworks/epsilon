@@ -13,26 +13,30 @@ using namespace Escher;
 
 namespace Shared {
 
-bool AbstractMathFieldDelegate::handleXNT(EditableField *field) {
-  CodePoint xnt = defaultXNT();
-  int XNTIndex = Ion::Events::repetitionFactor();
-  if (XNTIndex > 0) {
-    // Cycle through XNT CodePoints, starting from default code point position
-    constexpr CodePoint XNTCodePoints[] = {
-        ContinuousFunction::k_cartesianSymbol,
-        Shared::Sequence::k_sequenceSymbol,
-        ContinuousFunction::k_parametricSymbol,
-        ContinuousFunction::k_polarSymbol};
-    constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);
-    for (size_t i = 0; i < k_numberOfCodePoints; i++) {
-      if (XNTCodePoints[i] == xnt) {
-        break;
+bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
+                                                    Ion::Events::Event event) {
+  if (event == Ion::Events::XNT) {
+    CodePoint xnt = defaultXNT();
+    int XNTIndex = Ion::Events::repetitionFactor();
+    if (XNTIndex > 0) {
+      // Cycle through XNT CodePoints, starting from default code point position
+      constexpr CodePoint XNTCodePoints[] = {
+          ContinuousFunction::k_cartesianSymbol,
+          Shared::Sequence::k_sequenceSymbol,
+          ContinuousFunction::k_parametricSymbol,
+          ContinuousFunction::k_polarSymbol};
+      constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);
+      for (size_t i = 0; i < k_numberOfCodePoints; i++) {
+        if (XNTCodePoints[i] == xnt) {
+          break;
+        }
+        XNTIndex++;
       }
-      XNTIndex++;
+      xnt = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
     }
-    xnt = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
+    return field->addXNTCodePoint(xnt);
   }
-  return field->addXNTCodePoint(xnt);
+  return false;
 }
 
 CodePoint AbstractMathFieldDelegate::defaultXNT() {
@@ -83,14 +87,6 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char *text) {
 MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
   static MathLayoutFieldDelegate s_defaultMathLayoutFieldDelegate;
   return &s_defaultMathLayoutFieldDelegate;
-}
-
-bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
-    LayoutField *layoutField, Ion::Events::Event event) {
-  if (event == Ion::Events::XNT) {
-    return handleXNT(layoutField);
-  }
-  return false;
 }
 
 bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
@@ -162,14 +158,6 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
     return false;
   }
   return true;
-}
-
-bool MathTextFieldDelegate::textFieldDidReceiveEvent(
-    AbstractTextField *textField, Ion::Events::Event event) {
-  if (event == Ion::Events::XNT) {
-    return handleXNT(textField);
-  }
-  return false;
 }
 
 template <typename T>

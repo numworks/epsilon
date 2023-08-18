@@ -42,7 +42,6 @@ class AbstractTextField : public TextInput {
   }
 
   bool isEditing() const { return nonEditableContentView()->isEditing(); }
-  bool shouldFinishEditing(Ion::Events::Event event);
   bool isEditable() { return m_delegate->textFieldIsEditable(this); }
   void setDelegate(TextFieldDelegate *delegate) { m_delegate = delegate; }
   void setText(const char *text);

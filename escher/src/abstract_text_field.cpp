@@ -405,7 +405,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
     if (m_delegate->textFieldDidReceiveEvent(this, event)) {
       return true;
     }
-    if (shouldFinishEditing(event)) {
+    if (isEditing() && m_delegate->textFieldShouldFinishEditing(this, event)) {
       setEditing(false);
       if (m_delegate->textFieldDidFinishEditing(this, event)) {
         /* Text has been updated with draft text. We can clean the draft text
@@ -533,11 +533,6 @@ void AbstractTextField::scrollToCursor() {
     return;
   }
   return TextInput::scrollToCursor();
-}
-
-bool AbstractTextField::shouldFinishEditing(Ion::Events::Event event) {
-  assert(m_delegate);
-  return isEditing() && m_delegate->textFieldShouldFinishEditing(this, event);
 }
 
 bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {

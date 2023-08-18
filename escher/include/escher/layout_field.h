@@ -49,7 +49,6 @@ class LayoutField : public EditableField {
                            bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
-  bool shouldFinishEditing(Ion::Events::Event event);
   void didBecomeFirstResponder() override;
 
   /* View */

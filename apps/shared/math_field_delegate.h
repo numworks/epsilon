@@ -45,7 +45,7 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
                                 Ion::Events::Event event) override;
 
   template <typename T>
-  static T ParseInputtedFloatValue(const char* text);
+  static T ParseInputFloatValue(const char* text);
   template <typename T>
   static bool HasUndefinedValue(T value, bool enablePlusInfinity = false,
                                 bool enableMinusInfinity = false);

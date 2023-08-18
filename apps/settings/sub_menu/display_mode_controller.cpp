@@ -66,7 +66,7 @@ bool DisplayModeController::textFieldShouldFinishEditing(
 
 bool DisplayModeController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody = ParseInputtedFloatValue<double>(textField->draftText());
+  double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

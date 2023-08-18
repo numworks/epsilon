@@ -173,7 +173,7 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 }
 
 template <typename T>
-T MathTextFieldDelegate::ParseInputtedFloatValue(const char *text) {
+T MathTextFieldDelegate::ParseInputFloatValue(const char *text) {
   return Expression::ParseAndSimplifyAndApproximateToScalar<T>(
       text, App::app()->localContext());
 }
@@ -190,9 +190,8 @@ bool MathTextFieldDelegate::HasUndefinedValue(T value, bool enablePlusInfinity,
   return isUndefined;
 }
 
-template float MathTextFieldDelegate::ParseInputtedFloatValue<float>(
-    const char *);
-template double MathTextFieldDelegate::ParseInputtedFloatValue<double>(
+template float MathTextFieldDelegate::ParseInputFloatValue<float>(const char *);
+template double MathTextFieldDelegate::ParseInputFloatValue<double>(
     const char *);
 template bool MathTextFieldDelegate::HasUndefinedValue(float, bool, bool);
 template bool MathTextFieldDelegate::HasUndefinedValue(double, bool, bool);

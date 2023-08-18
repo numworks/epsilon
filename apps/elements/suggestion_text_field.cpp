@@ -14,10 +14,10 @@ void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
                                                 KDRect rect) const {
   AbstractTextField::ContentView::drawRect(ctx, rect);
   if (m_suggestion) {
-    assert(strlen(m_suggestion) >= editedTextLength());
+    assert(strlen(m_suggestion) >= draftTextLength());
     ctx->drawString(
         suggestionSuffix(),
-        glyphFrameAtPosition(text(), text() + editedTextLength()).origin(),
+        glyphFrameAtPosition(text(), text() + draftTextLength()).origin(),
         {.glyphColor = Palette::GrayDark,
          .backgroundColor = KDColorWhite,
          .font = m_format.style.font});

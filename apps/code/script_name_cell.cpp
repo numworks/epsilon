@@ -20,7 +20,7 @@ void ScriptNameCell::ScriptNameTextField::willSetCursorLocation(
   size_t textLength = strlen(text());
   assert(textLength >= k_extensionLength);
   const char *maxLocation =
-      m_contentView.editedText() + (textLength - k_extensionLength);
+      m_contentView.draftText() + (textLength - k_extensionLength);
   if (*location > maxLocation) {
     *location = maxLocation;
   }
@@ -39,21 +39,21 @@ bool ScriptNameCell::ScriptNameTextField::removeTextBeforeExtension(
     bool whole) {
   assert(isEditing());
   const char *extension =
-      m_contentView.editedText() + (strlen(text()) - k_extensionLength);
-  assert(extension >= m_contentView.editedText() &&
-         extension < m_contentView.editedText() +
+      m_contentView.draftText() + (strlen(text()) - k_extensionLength);
+  assert(extension >= m_contentView.draftText() &&
+         extension < m_contentView.draftText() +
                          (ContentView::k_maxBufferSize - k_extensionLength));
   char *destination =
-      const_cast<char *>(whole ? m_contentView.editedText() : cursorLocation());
+      const_cast<char *>(whole ? m_contentView.draftText() : cursorLocation());
   if (destination == extension) {
     return false;
   }
-  assert(destination >= m_contentView.editedText());
+  assert(destination >= m_contentView.draftText());
   assert(destination < extension);
   m_contentView.willModifyTextBuffer();
-  strlcpy(destination, extension,
-          ContentView::k_maxBufferSize -
-              (destination - m_contentView.editedText()));
+  strlcpy(
+      destination, extension,
+      ContentView::k_maxBufferSize - (destination - m_contentView.draftText()));
   m_contentView.setCursorLocation(destination);
   m_contentView.didModifyTextBuffer();
   layoutSubviews();

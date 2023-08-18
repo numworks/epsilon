@@ -51,13 +51,16 @@ class AbstractTextField : public TextInput {
     return const_cast<char *>(nonEditableContentView()->draftText());
   }
   size_t draftTextLength() const;
+  char *draftTextEnd() const {
+    return const_cast<char *>(nonEditableContentView()->draftTextEnd());
+  }
   void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
   KDFont::Size font() const { return nonEditableContentView()->font(); }
   void setTextColor(KDColor textColor);
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char *buffer,
                         size_t bufferLength);
   bool cursorAtEndOfText() const {
-    return isEditing() && cursorLocation() == text() + draftTextLength();
+    return isEditing() && cursorLocation() == draftTextEnd();
   }
   size_t dumpContent(char *buffer, size_t bufferSize, int *cursorOffset);
 

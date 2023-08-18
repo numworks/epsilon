@@ -76,6 +76,7 @@ class TextInput : public EditableField {
 
     virtual const char *draftText() const = 0;
     size_t draftTextLength() const { return strlen(draftText()); }
+    const char *draftTextEnd() const { return draftText() + draftTextLength(); }
 
    protected:
     void reloadRectFromAndToPositions(const char *start, const char *end);

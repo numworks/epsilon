@@ -29,9 +29,7 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(
                                                              event) ||
          (event == Ion::Events::Down && selectedRow() < numberOfRows()) ||
          (event == Ion::Events::Up && selectedRow() > 0) ||
-         (event == Ion::Events::Right &&
-          (textField->cursorLocation() ==
-           textField->draftText() + textField->draftTextLength()) &&
+         (event == Ion::Events::Right && textField->cursorAtEndOfText() &&
           selectedColumn() < numberOfColumns() - 1) ||
          (event == Ion::Events::Left &&
           textField->cursorLocation() == textField->draftText() &&

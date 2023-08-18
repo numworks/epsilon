@@ -303,23 +303,6 @@ void AbstractTextField::setBackgroundColor(KDColor backgroundColor) {
   contentView()->setBackgroundColor(backgroundColor);
 }
 
-void AbstractTextField::setTextColor(KDColor textColor) {
-  contentView()->setTextColor(textColor);
-}
-
-void AbstractTextField::setDelegate(TextFieldDelegate *delegate) {
-  m_delegate = delegate;
-}
-
-bool AbstractTextField::isEditing() const {
-  return nonEditableContentView()->isEditing();
-}
-
-size_t AbstractTextField::draftTextLength() const {
-  assert(isEditing());
-  return nonEditableContentView()->draftTextLength();
-}
-
 void AbstractTextField::setText(const char *text) {
   if (contentView()->isStalled()) {
     return;

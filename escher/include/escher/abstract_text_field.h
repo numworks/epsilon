@@ -40,23 +40,27 @@ class AbstractTextField : public TextInput {
     assert(!isEditing || isEditable());
     contentView()->setEditing(isEditing);
   }
-  bool isEditing() const;
+
+  bool isEditing() const { return nonEditableContentView()->isEditing(); }
   bool shouldFinishEditing(Ion::Events::Event event);
-
   bool isEditable() { return m_delegate->textFieldIsEditable(this); }
-
-  void setDelegate(TextFieldDelegate *delegate);
+  void setDelegate(TextFieldDelegate *delegate) { m_delegate = delegate; }
   void setText(const char *text);
   char *draftText() const {
     return const_cast<char *>(nonEditableContentView()->draftText());
   }
-  size_t draftTextLength() const;
+  size_t draftTextLength() const {
+    assert(isEditing());
+    return nonEditableContentView()->draftTextLength();
+  }
   char *draftTextEnd() const {
     return const_cast<char *>(nonEditableContentView()->draftTextEnd());
   }
   void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
   KDFont::Size font() const { return nonEditableContentView()->font(); }
-  void setTextColor(KDColor textColor);
+  void setTextColor(KDColor textColor) {
+    contentView()->setTextColor(textColor);
+  }
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char *buffer,
                         size_t bufferLength);
   bool cursorAtEndOfText() const {

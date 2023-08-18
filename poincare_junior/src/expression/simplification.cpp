@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/dimension.h>
+#include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/metric.h>
@@ -294,6 +295,10 @@ bool Simplification::SimplifyTrig(Tree* u) {
 bool Simplification::SimplifyPower(Tree* u) {
   assert(u->type() == BlockType::Power);
   Tree* v = u->childAtIndex(0);
+  if (v->type() == BlockType::Matrix) {
+    // TODO what about unreduced matrices ?
+    return false;
+  }
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
   if (Number::IsZero(v)) {
@@ -316,7 +321,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   assert(IsInteger(n));
   // v^0 -> 1
-  if (Number::IsZero(n) && v->type() != BlockType::Matrix) {
+  if (Number::IsZero(n)) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
@@ -474,7 +479,10 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
-  if (IsRational(child) && IsRational(next)) {
+  if (child->type() == BlockType::Float && next->type() == BlockType::Float) {
+    merge = SharedEditionPool->push<BlockType::Float>(Float::To(child) *
+                                                      Float::To(next));
+  } else if (IsRational(child) && IsRational(next)) {
     // Merge constants
     merge = Rational::Multiplication(child, next);
     Rational::MakeIrreducible(merge);
@@ -661,7 +669,10 @@ Tree* PushConstant(const Tree* u) {
 bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
-  if (IsRational(child) && IsRational(next)) {
+  if (child->type() == BlockType::Float && next->type() == BlockType::Float) {
+    merge = SharedEditionPool->push<BlockType::Float>(Float::To(child) +
+                                                      Float::To(next));
+  } else if (IsRational(child) && IsRational(next)) {
     // Merge constants
     merge = Rational::Addition(child, next);
     Rational::MakeIrreducible(merge);
@@ -1440,10 +1451,11 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   if (tree->type() == BlockType::Power) {
     Tree* index = child->nextTree();
-    if (!index->block()->isInteger()) {
+    if (!index->block()->isInteger() && index->type() != BlockType::Float) {
       return false;
     }
-    int p = Approximation::To<float>(index);
+    int p = index->block()->isInteger() ? Integer::Handler(index).to<float>()
+                                        : Float::To(index);
     tree->moveTreeOverTree(Matrix::Power(child, p));
     return true;
   }

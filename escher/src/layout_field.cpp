@@ -150,7 +150,9 @@ void LayoutField::clearLayout() {
   m_contentView.clearLayout();
   // Put the scroll to offset 0
   resetScroll();
-  m_delegate->layoutFieldDidChangeSize(this);
+  if (m_delegate) {
+    m_delegate->layoutFieldDidChangeSize(this);
+  }
 }
 
 void LayoutField::clearAndSetEditing(bool isEditing) {
@@ -395,6 +397,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
 }
 
 bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
+  assert(m_delegate);
   if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) {
     cursor()->resetSelection();
     return true;
@@ -574,7 +577,9 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   // Handle back
   if (event == Ion::Events::Back && isEditing()) {
     clearAndSetEditing(false);
-    m_delegate->layoutFieldDidAbortEditing(this);
+    if (m_delegate) {
+      m_delegate->layoutFieldDidAbortEditing(this);
+    }
     return true;
   }
 

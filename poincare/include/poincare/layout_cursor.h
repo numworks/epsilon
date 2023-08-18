@@ -99,7 +99,7 @@ class LayoutCursor final {
   /* Layout deletion */
   void performBackspace();
 
-  void stopSelecting();
+  void resetSelection();
 
   /* Set empty rectangle visibility and gray rectangle in grids. */
   bool didEnterCurrentPosition(LayoutCursor previousPosition = LayoutCursor());

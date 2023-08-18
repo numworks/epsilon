@@ -17,6 +17,8 @@
 
 namespace Escher {
 
+/* Draft text used when editing, in order to save previous text
+ * in case edition fails or abort.*/
 static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 
 /* AbstractTextField::ContentView */
@@ -404,14 +406,9 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   }
   if (shouldFinishEditing(event)) {
     setEditing(false);
-    /* We avoid copying the edited text into the other text buffer in case
-     * textFieldDidFinishEditing fails - we then want to be able to abort
-     * edition and find the old text back. Anyway, if textFieldDidFinishEditing
-     * does not fail, it will save the editedText in a model and reload the
-     * content of the textfield buffer using the very same model - that has
-     * been updated. */
     if (m_delegate->textFieldDidFinishEditing(this, event)) {
-      // Clean draft text for next use
+      /* Text has been updated with draft text. We can clean the draft text for
+       * next use. */
       reinitDraftTextBuffer();
       resetSelection();
       resetScroll();

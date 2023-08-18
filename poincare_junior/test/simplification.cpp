@@ -308,6 +308,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("N^2*M^2", "N^(2)*M^(2)");
   simplifies_to("n^2*m", "m*n^(2)");
   simplifies_to("M*M^2", "M^(3)");
+  simplifies_to("det(M)", "det(M)");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

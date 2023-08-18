@@ -1412,11 +1412,29 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     }
     return true;
   }
-  // assert(child->type() == BlockType::Matrix);
+  if (child->type() != BlockType::Matrix) {
+    return false;
+  }
+  if (tree->numberOfChildren() == 2) {
+    Tree* child2 = child->nextTree();
+    if (child2->type() != BlockType::Matrix) {
+      return false;
+    }
+    switch (tree->type()) {
+      case BlockType::Cross:
+        tree->moveTreeOverTree(Vector::Cross(child, child2));
+        return true;
+      case BlockType::Dot:
+        tree->moveTreeOverTree(Vector::Dot(child, child2));
+        return true;
+      default:
+        return false;
+    }
+  }
   switch (tree->type()) {
     case BlockType::Power: {
       Tree* index = child->nextTree();
-      if (child->type() != BlockType::Matrix || !index->block()->isInteger()) {
+      if (!index->block()->isInteger()) {
         return false;
       }
       int p = Approximation::To<float>(index);
@@ -1453,12 +1471,6 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
       tree->moveTreeOverTree(determinant);
       return true;
     }
-    case BlockType::Cross:
-      tree->moveTreeOverTree(Vector::Cross(child, child->nextTree()));
-      return true;
-    case BlockType::Dot:
-      tree->moveTreeOverTree(Vector::Dot(child, child->nextTree()));
-      return true;
     case BlockType::Norm:
       tree->moveTreeOverTree(Vector::Norm(child));
       return true;

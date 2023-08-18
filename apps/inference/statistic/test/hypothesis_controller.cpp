@@ -80,7 +80,7 @@ bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
       Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<double>(
-          textField->draftTextBuffer(),
+          textField->draftText(),
           AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {

@@ -47,7 +47,7 @@ class AbstractTextField : public TextInput {
 
   void setDelegate(TextFieldDelegate *delegate);
   void setText(const char *text);
-  char *draftTextBuffer() const {
+  char *draftText() const {
     return const_cast<char *>(nonEditableContentView()->draftText());
   }
   size_t draftTextLength() const;

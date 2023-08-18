@@ -31,17 +31,16 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(
          (event == Ion::Events::Up && selectedRow() > 0) ||
          (event == Ion::Events::Right &&
           (textField->cursorLocation() ==
-           textField->draftTextBuffer() + textField->draftTextLength()) &&
+           textField->draftText() + textField->draftTextLength()) &&
           selectedColumn() < numberOfColumns() - 1) ||
          (event == Ion::Events::Left &&
-          textField->cursorLocation() == textField->draftTextBuffer() &&
+          textField->cursorLocation() == textField->draftText() &&
           selectedColumn() > 0);
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody =
-      ParseInputtedFloatValue<double>(textField->draftTextBuffer());
+  double floatBody = ParseInputtedFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

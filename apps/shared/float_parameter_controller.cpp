@@ -92,7 +92,7 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(
 template <typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  char *text = textField->draftTextBuffer();
+  char *text = textField->draftText();
   T floatBody = ParseInputtedFloatValue<T>(text);
   if (hasUndefinedValue(text, floatBody) ||
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {

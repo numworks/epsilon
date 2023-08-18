@@ -44,7 +44,7 @@ bool DomainParameterController::textFieldDidFinishEditing(
   switchToolboxContent(textField, false);
   assert(!textField->isEditing());
   textField->setEditing(true);  // To edit draft text buffer in setText
-  if (textField->draftTextBuffer()[0] == '\0') {
+  if (textField->draftText()[0] == '\0') {
     if (textField == m_boundsCells[0].textField()) {
       textField->setText(Infinity::Name(true));
     } else {

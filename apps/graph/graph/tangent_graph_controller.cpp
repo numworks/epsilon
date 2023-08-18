@@ -45,8 +45,7 @@ void TangentGraphController::didBecomeFirstResponder() {
 
 bool TangentGraphController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody =
-      ParseInputtedFloatValue<double>(textField->draftTextBuffer());
+  double floatBody = ParseInputtedFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

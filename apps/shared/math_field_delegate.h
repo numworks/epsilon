@@ -43,6 +43,8 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
+                                 Ion::Events::Event event) override;
 
   template <typename T>
   static T ParseInputFloatValue(const char* text);

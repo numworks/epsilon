@@ -154,18 +154,18 @@ MathTextFieldDelegate *MathTextFieldDelegate::Default() {
   return &s_defaultMathTextFieldDelegate;
 }
 
+bool MathTextFieldDelegate::textFieldDidFinishEditing(
+    AbstractTextField *textField, Ion::Events::Event event) {
+  assert(!textField->isEditing());
+  if (textField->text()[0] != 0 && !isAcceptableText(textField->text())) {
+    App::app()->displayWarning(I18n::Message::SyntaxError);
+    return false;
+  }
+  return true;
+}
+
 bool MathTextFieldDelegate::textFieldDidReceiveEvent(
     AbstractTextField *textField, Ion::Events::Event event) {
-  if (textField->shouldFinishEditing(event)) {
-    if (textField->text()[0] == 0) {
-      // Empty field, let the textfield handle the event
-      return false;
-    }
-    if (!isAcceptableText(textField->text())) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-  }
   if (event == Ion::Events::XNT) {
     return handleXNT(textField);
   }

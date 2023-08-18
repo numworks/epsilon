@@ -261,7 +261,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
   constexpr static int bufferSize = Script::k_defaultScriptNameMaxSize + 1 +
                                     ScriptStore::k_scriptExtensionLength;
   char numberedDefaultName[bufferSize];
-  char *text = textField->draftTextBuffer();
+  char *text = textField->draftText();
 
   if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
     newName = text;
@@ -280,8 +280,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
      * default name and let the user modify it. */
     if (!foundDefaultName) {
       textField->setText(numberedDefaultName);
-      textField->setCursorLocation(textField->draftTextBuffer() +
-                                   defaultNameLength);
+      textField->setCursorLocation(textField->draftText() + defaultNameLength);
     }
     newName = const_cast<const char *>(numberedDefaultName);
   }

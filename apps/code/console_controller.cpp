@@ -329,7 +329,7 @@ bool ConsoleController::textFieldDidFinishEditing(AbstractTextField *textField,
     m_inputRunLoopActive = false;
     return false;
   }
-  char *text = textField->draftTextBuffer();
+  char *text = textField->draftText();
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!isDisplayingViewController()) {

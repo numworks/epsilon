@@ -84,7 +84,7 @@ bool InputCategoricalTableCell::textFieldShouldFinishEditing(
 
 bool InputCategoricalTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField *textField, Ion::Events::Event event) {
-  double p = ParseInputtedFloatValue<double>(textField->draftTextBuffer());
+  double p = ParseInputtedFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(p)) {
     return false;
   }

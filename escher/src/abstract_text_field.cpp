@@ -248,8 +248,8 @@ size_t AbstractTextField::dumpContent(char *buffer, size_t bufferSize,
     buffer[0] = 0;
     *cursorOffset = -1;
   } else {
-    memcpy(buffer, draftTextBuffer(), size);
-    *cursorOffset = cursorLocation() - draftTextBuffer();
+    memcpy(buffer, draftText(), size);
+    *cursorOffset = cursorLocation() - draftText();
   }
   return 0;
 }
@@ -326,10 +326,10 @@ void AbstractTextField::setText(const char *text) {
   }
   resetScroll();
   contentView()->setText(text);
-  if (this->text() == draftTextBuffer()) {
+  if (this->text() == draftText()) {
     /* Set the cursor location here and not in ContentView::setText so that
      * TextInput::willSetCursorLocation is called. */
-    setCursorLocation(draftTextBuffer() + strlen(text));
+    setCursorLocation(draftText() + strlen(text));
   }
 }
 
@@ -355,7 +355,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
   }
-  assert(text() == draftTextBuffer());
+  assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
   bool defaultXNTHasChanged = false;
   if (Poincare::FindXNTSymbol(decoder, &defaultXNTHasChanged,
@@ -563,7 +563,7 @@ bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
-  const char *draftBuffer = draftTextBuffer();
+  const char *draftBuffer = draftText();
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     if (!selectionIsEmpty()) {
       resetSelection();

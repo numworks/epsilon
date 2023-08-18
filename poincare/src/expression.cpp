@@ -146,7 +146,8 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
                SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
            // We need only those cases for now
            || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol);
-
+    /* WARNING/TODO: This replaces symbols inside integrals/derivative while it
+     * shouldn't */
     if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol ||
         (replaceSymbols ==
              SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions &&

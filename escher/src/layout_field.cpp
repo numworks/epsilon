@@ -397,11 +397,6 @@ bool LayoutField::insertText(const char *text, bool indentation,
   return true;
 }
 
-bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
-  assert(m_delegate);
-  return isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event);
-}
-
 void LayoutField::didBecomeFirstResponder() {
   m_inputViewMemoizedHeight = inputViewHeight();
   TextCursorView::WithBlinkingCursor<
@@ -499,7 +494,8 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     if (m_delegate->layoutFieldDidReceiveEvent(this, event)) {
       return true;
     }
-    if (shouldFinishEditing(event)) {
+    if (isEditing() &&
+        m_delegate->layoutFieldShouldFinishEditing(this, event)) {
       setEditing(false);
       if (!m_delegate->layoutFieldDidFinishEditing(this, event)) {
         setEditing(true);

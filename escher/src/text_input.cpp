@@ -11,8 +11,7 @@ namespace Escher {
 void TextInput::ContentView::setCursorLocation(const char* location) {
   assert(location != nullptr);
   assert(location >= draftText());
-  const char* adjustedLocation =
-      std::min(location, draftText() + draftTextLength());
+  const char* adjustedLocation = std::min(location, draftTextEnd());
   m_cursorLocation = adjustedLocation;
   layoutSubviews();
 }

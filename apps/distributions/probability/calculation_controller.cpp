@@ -193,8 +193,7 @@ bool CalculationController::textFieldShouldFinishEditing(
   return MathTextFieldDelegate::textFieldShouldFinishEditing(textField,
                                                              event) ||
          (event == Ion::Events::Right &&
-          textField->cursorLocation() ==
-              textField->text() + textField->draftTextLength() &&
+          textField->cursorLocation() == textField->draftTextEnd() &&
           selectedColumn() < m_calculation->numberOfParameters()) ||
          (event == Ion::Events::Left &&
           textField->cursorLocation() == textField->text());

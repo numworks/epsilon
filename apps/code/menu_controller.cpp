@@ -321,9 +321,8 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
 void MenuController::textFieldDidHandleEvent(AbstractTextField *textField) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing()) {
-    const char *maxPointerLocation = textField->text() +
-                                     textField->draftTextLength() -
-                                     scriptExtensionLength;
+    const char *maxPointerLocation =
+        textField->draftTextEnd() - scriptExtensionLength;
     if (textField->cursorLocation() > maxPointerLocation) {
       textField->setCursorLocation(maxPointerLocation);
     }

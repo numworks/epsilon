@@ -563,17 +563,15 @@ bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
-  const char *draftBuffer = draftText();
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     if (!selectionIsEmpty()) {
       resetSelection();
       return true;
     }
-    if (event == Ion::Events::Left && cursorLocation() > draftBuffer) {
+    if (event == Ion::Events::Left && cursorLocation() > draftText()) {
       return TextInput::moveCursorLeft();
     }
-    if (event == Ion::Events::Right &&
-        cursorLocation() < draftBuffer + draftTextLength()) {
+    if (event == Ion::Events::Right && cursorLocation() < draftTextEnd()) {
       return TextInput::moveCursorRight();
     }
   }

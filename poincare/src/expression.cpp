@@ -146,8 +146,6 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
                SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
            // We need only those cases for now
            || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol);
-    /* WARNING/TODO: This replaces symbols inside integrals/derivative while it
-     * shouldn't */
     if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol ||
         (replaceSymbols ==
              SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions &&
@@ -162,10 +160,25 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
   }
 
   const int childrenCount = this->numberOfChildren();
+  bool isParametered = isParameteredExpression();
   // Run loop backwards to find lists and matrices quicker in NAry expressions
   for (int i = childrenCount - 1; i >= 0; i--) {
-    if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols,
-                                           auxiliary)) {
+    if (isParametered && i == ParameteredExpression::ParameterChildIndex()) {
+      continue;
+    }
+    Expression childToAnalyze = childAtIndex(i);
+    if (isParametered && i == ParameteredExpression::ParameteredChildIndex()) {
+      // Replace the parameter with '0' to analyze the child ignoring it
+      // TODO: This is bad if you try to recursively match '0'
+      childToAnalyze = childToAnalyze.clone();
+      Expression parameter =
+          childAtIndex(ParameteredExpression::ParameterChildIndex());
+      assert(parameter.type() == ExpressionNode::Type::Symbol);
+      childToAnalyze = childToAnalyze.replaceSymbolWithExpression(
+          static_cast<Symbol &>(parameter), Rational::Builder(0));
+    }
+    if (childToAnalyze.recursivelyMatches(test, context, replaceSymbols,
+                                          auxiliary)) {
       return true;
     }
   }
@@ -330,37 +343,7 @@ bool Expression::IsDiscontinuous(const Expression e, Context *context) {
 
 bool Expression::deepIsSymbolic(Context *context,
                                 SymbolicComputation replaceSymbols) const {
-  return recursivelyMatches(
-      [](const Expression e, Context *context, void *auxiliary) {
-        if (e.isParameteredExpression()) {
-          // Do not check IsSymbolic for parametered child.
-          bool n = e.numberOfChildren();
-          SymbolicComputation *replaceSymbols =
-              reinterpret_cast<SymbolicComputation *>(auxiliary);
-          for (int i = 0; i < n; i++) {
-            if (i == ParameteredExpression::ParameterChildIndex()) {
-              continue;
-            }
-            Expression childToAnalyze = e.childAtIndex(i);
-            if (i == ParameteredExpression::ParameteredChildIndex()) {
-              // Replace the parameter with '0' to analyze the child ignoring it
-              childToAnalyze = e.childAtIndex(i).clone();
-              Expression parameter =
-                  e.childAtIndex(ParameteredExpression::ParameterChildIndex());
-              assert(parameter.type() == ExpressionNode::Type::Symbol);
-              childToAnalyze = childToAnalyze.replaceSymbolWithExpression(
-                  static_cast<Symbol &>(parameter), Rational::Builder(0));
-            }
-            if (childToAnalyze.deepIsSymbolic(context, *replaceSymbols)) {
-              return TrinaryBoolean::True;
-            }
-          }
-          return TrinaryBoolean::False;
-        }
-        return IsSymbolic(e, context) ? TrinaryBoolean::True
-                                      : TrinaryBoolean::Unknown;
-      },
-      context, replaceSymbols, reinterpret_cast<void *>(&replaceSymbols));
+  return recursivelyMatches(IsSymbolic, context, replaceSymbols);
 }
 
 bool Expression::IsSymbolic(const Expression e, Context *context) {

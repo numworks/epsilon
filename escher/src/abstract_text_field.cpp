@@ -16,6 +16,7 @@
 #include <algorithm>
 
 namespace Escher {
+
 static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 
 /* AbstractTextField::ContentView */
@@ -325,10 +326,10 @@ void AbstractTextField::setText(const char *text) {
   }
   resetScroll();
   contentView()->setText(text);
-  if (contentView()->text() == contentView()->editedText()) {
+  if (this->text() == draftTextBuffer()) {
     /* Set the cursor location here and not in ContentView::setText so that
      * TextInput::willSetCursorLocation is called. */
-    setCursorLocation(contentView()->editedText() + strlen(text));
+    setCursorLocation(draftTextBuffer() + strlen(text));
   }
 }
 
@@ -354,7 +355,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
   }
-  assert(text() == contentView()->editedText());
+  assert(text() == draftTextBuffer());
   UTF8Decoder decoder(text(), cursorLocation());
   bool defaultXNTHasChanged = false;
   if (Poincare::FindXNTSymbol(decoder, &defaultXNTHasChanged,
@@ -469,7 +470,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   // Handle cut
   if (event == Ion::Events::Cut) {
     if (storeInClipboard()) {
-      if (!contentView()->selectionIsEmpty()) {
+      if (!selectionIsEmpty()) {
         deleteSelection();
       } else {
         removeWholeText();
@@ -489,7 +490,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Enter edition
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
-    const char *previousText = contentView()->text();
+    const char *previousText = text();
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
@@ -510,7 +511,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle backspace
   if (event == Ion::Events::Backspace && isEditing()) {
-    if (contentView()->selectionIsEmpty()) {
+    if (selectionIsEmpty()) {
       return (*textDidChange = removePreviousGlyph());
     }
     deleteSelection();
@@ -520,7 +521,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle clear
   if (event == Ion::Events::Clear && isEditing()) {
-    if (!contentView()->selectionIsEmpty()) {
+    if (!selectionIsEmpty()) {
       deleteSelection();
     } else if (!removeEndOfLine()) {
       removeWholeText();
@@ -562,9 +563,9 @@ bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
-  const char *draftBuffer = contentView()->editedText();
+  const char *draftBuffer = draftTextBuffer();
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    if (!contentView()->selectionIsEmpty()) {
+    if (!selectionIsEmpty()) {
       resetSelection();
       return true;
     }
@@ -606,7 +607,7 @@ bool AbstractTextField::privateHandleEventWithText(
   assert(isEditing());
 
   // Delete the selected text if needed
-  if (!contentView()->selectionIsEmpty()) {
+  if (!selectionIsEmpty()) {
     deleteSelection();
   }
 
@@ -672,7 +673,7 @@ bool AbstractTextField::storeInClipboard() const {
   if (!isEditing()) {
     Clipboard::SharedClipboard()->store(text());
     return true;
-  } else if (!nonEditableContentView()->selectionIsEmpty()) {
+  } else if (!selectionIsEmpty()) {
     const char *start = nonEditableContentView()->selectionLeft();
     Clipboard::SharedClipboard()->store(
         start, nonEditableContentView()->selectionRight() - start);
@@ -684,7 +685,7 @@ bool AbstractTextField::storeInClipboard() const {
 bool AbstractTextField::handleStoreEvent() {
   if (!isEditing() && m_delegate->textFieldIsStorable(this)) {
     App::app()->storeValue(text());
-  } else if (isEditing() && !nonEditableContentView()->selectionIsEmpty()) {
+  } else if (isEditing() && !selectionIsEmpty()) {
     const char *start = nonEditableContentView()->selectionLeft();
     static_assert(TextField::MaxBufferSize() ==
                   Escher::Clipboard::k_bufferSize);

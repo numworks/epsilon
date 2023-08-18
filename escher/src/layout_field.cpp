@@ -124,19 +124,18 @@ LayoutField::ContentView::ContentView(KDGlyph::Format format)
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
 LayoutField::LayoutField(Responder *parentResponder,
-                         LayoutFieldDelegate *layoutFieldDelegate,
-                         KDGlyph::Format format)
+                         LayoutFieldDelegate *delegate, KDGlyph::Format format)
     : EditableField(parentResponder, &m_contentView),
       m_contentView(format),
-      m_layoutFieldDelegate(layoutFieldDelegate),
+      m_delegate(delegate),
       m_inputViewMemoizedHeight(0),
       m_draftBuffer(s_draftBuffer),
       m_draftBufferSize(AbstractTextField::MaxBufferSize()) {
   setBackgroundColor(KDColorWhite);
 }
 
-void LayoutField::setDelegate(LayoutFieldDelegate *layoutFieldDelegate) {
-  m_layoutFieldDelegate = layoutFieldDelegate;
+void LayoutField::setDelegate(LayoutFieldDelegate *delegate) {
+  m_delegate = delegate;
 }
 
 void LayoutField::setEditing(bool isEditing) {
@@ -151,7 +150,7 @@ void LayoutField::clearLayout() {
   m_contentView.clearLayout();
   // Put the scroll to offset 0
   resetScroll();
-  m_layoutFieldDelegate->layoutFieldDidChangeSize(this);
+  m_delegate->layoutFieldDidChangeSize(this);
 }
 
 void LayoutField::clearAndSetEditing(bool isEditing) {
@@ -176,8 +175,7 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
 }
 
 Context *LayoutField::context() const {
-  return (m_layoutFieldDelegate != nullptr) ? m_layoutFieldDelegate->context()
-                                            : nullptr;
+  return m_delegate ? m_delegate->context() : nullptr;
 }
 
 size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
@@ -266,8 +264,8 @@ void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
 
 void LayoutField::reload(KDSize previousSize) {
   KDSize newSize = minimalSizeForOptimalDisplay();
-  if (m_layoutFieldDelegate && previousSize.height() != newSize.height()) {
-    m_layoutFieldDelegate->layoutFieldDidChangeSize(this);
+  if (m_delegate && previousSize.height() != newSize.height()) {
+    m_delegate->layoutFieldDidChangeSize(this);
   }
   m_contentView.cursorPositionChanged();
   scrollToCursor();
@@ -397,8 +395,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
 }
 
 bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
-  if (isEditing() &&
-      m_layoutFieldDelegate->layoutFieldShouldFinishEditing(this, event)) {
+  if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) {
     cursor()->resetSelection();
     return true;
   }
@@ -498,13 +495,13 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Notify delegate
-  if (m_layoutFieldDelegate) {
-    if (m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
+  if (m_delegate) {
+    if (m_delegate->layoutFieldDidReceiveEvent(this, event)) {
       return true;
     }
     if (shouldFinishEditing(event)) {
       setEditing(false);
-      if (!m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, event)) {
+      if (!m_delegate->layoutFieldDidFinishEditing(this, event)) {
         setEditing(true);
       }
       return true;
@@ -577,7 +574,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   // Handle back
   if (event == Ion::Events::Back && isEditing()) {
     clearAndSetEditing(false);
-    m_layoutFieldDelegate->layoutFieldDidAbortEditing(this);
+    m_delegate->layoutFieldDidAbortEditing(this);
     return true;
   }
 
@@ -610,11 +607,11 @@ bool LayoutField::eventHasText(Ion::Events::Event event, char *buffer,
           Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
     constexpr const char *k_logWithBase10 = "log(\x11,10)";
     eventTextLength = strlcpy(buffer, k_logWithBase10, bufferSize);
-  } else if (event == Ion::Events::Sto && m_layoutFieldDelegate &&
-             m_layoutFieldDelegate->insertTextForStoEvent(this)) {
+  } else if (event == Ion::Events::Sto && m_delegate &&
+             m_delegate->insertTextForStoEvent(this)) {
     eventTextLength = strlcpy(buffer, "→", bufferSize);
-  } else if (event == Ion::Events::Ans && m_layoutFieldDelegate &&
-             m_layoutFieldDelegate->insertTextForAnsEvent(this)) {
+  } else if (event == Ion::Events::Ans && m_delegate &&
+             m_delegate->insertTextForAnsEvent(this)) {
     eventTextLength =
         strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
   } else {
@@ -651,8 +648,8 @@ bool LayoutField::didHandleEvent(bool didHandleEvent, bool shouldRedrawLayout,
   } else {
     reload(previousSize);
   }
-  if (didHandleEvent && m_layoutFieldDelegate) {
-    m_layoutFieldDelegate->layoutFieldDidHandleEvent(this);
+  if (didHandleEvent && m_delegate) {
+    m_delegate->layoutFieldDidHandleEvent(this);
   }
   return didHandleEvent;
 }

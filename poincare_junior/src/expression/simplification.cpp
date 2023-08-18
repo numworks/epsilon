@@ -512,12 +512,6 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     SimplifyMultiplication(multiplication);
     SimplifyAddition(addition);
     SimplifyComplex(merge);
-  } else if (next->type() == BlockType::Matrix) {
-    if (child->type() == BlockType::Matrix) {
-      merge = Matrix::Multiplication(child, next);
-    } else {
-      merge = Matrix::ScalarMultiplication(child, next);
-    }
   }
   if (!merge) {
     return false;
@@ -691,12 +685,6 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
     ImagPart(next)->clone();
     SimplifyAddition(addition);
     SimplifyComplex(merge);
-  } else if (next->type() == BlockType::Matrix) {
-    if (child->type() == BlockType::Matrix) {
-      merge = Matrix::Addition(child, next);
-    } else {
-      merge = KUndef->clone();
-    }
   }
   if (!merge) {
     return false;
@@ -761,10 +749,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
    * projection context. */
   changed = DeepSystemProjection(ref, projectionContext) || changed;
   changed = DeepSystematicReduce(ref) || changed;
-  if (DeepApplyMatrixOperators(ref)) {
-    DeepSystematicReduce(ref);
-    changed = true;
-  }
+  changed = DeepApplyMatrixOperators(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
@@ -1412,8 +1397,55 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     }
     return true;
   }
+  if (tree->type() == BlockType::Multiplication) {
+    int numberOfMatrices = tree->numberOfChildren();
+    // Find first matrix
+    const Tree* firstMatrix = nullptr;
+    for (const Tree* child : tree->children()) {
+      if (child->type() == BlockType::Matrix) {
+        firstMatrix = child;
+        break;
+      }
+      numberOfMatrices--;
+    }
+    if (!firstMatrix) {
+      return false;
+    }
+    Tree* result = firstMatrix->clone();
+    Tree* child = tree->nextNode();
+    // Merge matrices
+    while (child < firstMatrix) {
+      result->moveTreeOverTree(Matrix::ScalarMultiplication(child, result));
+      child = child->nextTree();
+    }
+    while (--numberOfMatrices) {
+      child = child->nextTree();
+      result->moveTreeOverTree(Matrix::Multiplication(result, child));
+    }
+    tree->moveTreeOverTree(result);
+    return true;
+  }
   if (child->type() != BlockType::Matrix) {
     return false;
+  }
+  if (tree->type() == BlockType::Addition) {
+    int n = tree->numberOfChildren() - 1;
+    Tree* result = child->clone();
+    while (n--) {
+      child = child->nextTree();
+      result->moveTreeOverTree(Matrix::Addition(result, child));
+    }
+    tree->moveTreeOverTree(result);
+    return true;
+  }
+  if (tree->type() == BlockType::Power) {
+    Tree* index = child->nextTree();
+    if (!index->block()->isInteger()) {
+      return false;
+    }
+    int p = Approximation::To<float>(index);
+    tree->moveTreeOverTree(Matrix::Power(child, p));
+    return true;
   }
   if (tree->numberOfChildren() == 2) {
     Tree* child2 = child->nextTree();
@@ -1432,15 +1464,6 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     }
   }
   switch (tree->type()) {
-    case BlockType::Power: {
-      Tree* index = child->nextTree();
-      if (!index->block()->isInteger()) {
-        return false;
-      }
-      int p = Approximation::To<float>(index);
-      tree->moveTreeOverTree(Matrix::Power(child, p));
-      return true;
-    }
     case BlockType::Inverse:
       tree->moveTreeOverTree(Matrix::Inverse(child));
       return true;

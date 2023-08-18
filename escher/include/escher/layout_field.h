@@ -14,9 +14,9 @@ namespace Escher {
 class LayoutField : public EditableField {
  public:
   LayoutField(Responder* parentResponder,
-              LayoutFieldDelegate* layoutFieldDelegate = nullptr,
+              LayoutFieldDelegate* delegate = nullptr,
               KDGlyph::Format format = {});
-  void setDelegate(LayoutFieldDelegate* layoutFieldDelegate);
+  void setDelegate(LayoutFieldDelegate* delegate);
   Poincare::Context* context() const;
   bool isEditing() const { return m_contentView.isEditing(); }
   void setEditing(bool isEditing);
@@ -137,7 +137,7 @@ class LayoutField : public EditableField {
   };
 
   ContentView m_contentView;
-  LayoutFieldDelegate* m_layoutFieldDelegate;
+  LayoutFieldDelegate* m_delegate;
   KDCoordinate m_inputViewMemoizedHeight;
   char* m_draftBuffer;
   size_t m_draftBufferSize;

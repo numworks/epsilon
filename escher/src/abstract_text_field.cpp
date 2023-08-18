@@ -338,7 +338,9 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
-    m_delegate->textFieldDidStartEditing(this);
+    if (m_delegate) {
+      m_delegate->textFieldDidStartEditing(this);
+    }
   }
   assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
@@ -378,11 +380,10 @@ void AbstractTextField::willResignFirstResponder() {
 }
 
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
-  assert(m_delegate != nullptr);
   assert(!contentView()->isStalled());
   bool textDidChange;
   bool didHandleEvent = privateHandleEvent(event, &textDidChange);
-  if (didHandleEvent && textDidChange) {
+  if (didHandleEvent && textDidChange && m_delegate) {
     m_delegate->textFieldDidHandleEvent(this);
   }
   return didHandleEvent;
@@ -390,7 +391,6 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
 
 bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
                                            bool *textDidChange) {
-  assert(m_delegate);
   assert(!contentView()->isStalled());
   size_t previousTextLength = strlen(text());
   *textDidChange = false;
@@ -401,21 +401,23 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Notify delegate
-  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
-    return true;
-  }
-  if (shouldFinishEditing(event)) {
-    setEditing(false);
-    if (m_delegate->textFieldDidFinishEditing(this, event)) {
-      /* Text has been updated with draft text. We can clean the draft text for
-       * next use. */
-      reinitDraftTextBuffer();
-      resetScroll();
-    } else {
-      setEditing(true);
+  if (m_delegate) {
+    if (m_delegate->textFieldDidReceiveEvent(this, event)) {
+      return true;
     }
-    *textDidChange = previousTextLength != strlen(text());
-    return true;
+    if (shouldFinishEditing(event)) {
+      setEditing(false);
+      if (m_delegate->textFieldDidFinishEditing(this, event)) {
+        /* Text has been updated with draft text. We can clean the draft text
+         * for next use. */
+        reinitDraftTextBuffer();
+        resetScroll();
+      } else {
+        setEditing(true);
+      }
+      *textDidChange = previousTextLength != strlen(text());
+      return true;
+    }
   }
 
   /* If move event was not caught neither by handleMoveEvent nor by
@@ -471,7 +473,9 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     const char *previousText = text();
     setEditing(true);
-    m_delegate->textFieldDidStartEditing(this);
+    if (m_delegate) {
+      m_delegate->textFieldDidStartEditing(this);
+    }
     setText(previousText);
     *textDidChange = true;
     return true;
@@ -482,7 +486,9 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
     reinitDraftTextBuffer();
     resetSelection();
     setEditing(false);
-    m_delegate->textFieldDidAbortEditing(this);
+    if (m_delegate) {
+      m_delegate->textFieldDidAbortEditing(this);
+    }
     resetScroll();
     *textDidChange = previousTextLength != strlen(text());
     return true;
@@ -531,6 +537,7 @@ void AbstractTextField::scrollToCursor() {
 }
 
 bool AbstractTextField::shouldFinishEditing(Ion::Events::Event event) {
+  assert(m_delegate);
   if (isEditing() && m_delegate->textFieldShouldFinishEditing(this, event)) {
     resetSelection();
     return true;
@@ -578,7 +585,9 @@ bool AbstractTextField::privateHandleEventWithText(
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
-    m_delegate->textFieldDidStartEditing(this);
+    if (m_delegate) {
+      m_delegate->textFieldDidStartEditing(this);
+    }
   }
 
   assert(isEditing());
@@ -630,7 +639,8 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
   /* TODO: this method should not exist, we should only have
    * privateHandleEventWithText and always call handleEvent. */
   if (privateHandleEventWithText(eventText, indentation,
-                                 forceCursorRightOfText)) {
+                                 forceCursorRightOfText) &&
+      m_delegate) {
     m_delegate->textFieldDidHandleEvent(this);
     return true;
   }
@@ -660,7 +670,7 @@ bool AbstractTextField::storeInClipboard() const {
 }
 
 bool AbstractTextField::handleStoreEvent() {
-  if (!isEditing() && m_delegate->textFieldIsStorable(this)) {
+  if (!isEditing() && m_delegate && m_delegate->textFieldIsStorable(this)) {
     App::app()->storeValue(text());
   } else if (isEditing() && !selectionIsEmpty()) {
     const char *start = nonEditableContentView()->selectionLeft();

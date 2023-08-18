@@ -484,7 +484,6 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   // Handle back
   if (event == Ion::Events::Back && isEditing()) {
     reinitDraftTextBuffer();
-    resetSelection();
     setEditing(false);
     if (m_delegate) {
       m_delegate->textFieldDidAbortEditing(this);
@@ -538,11 +537,7 @@ void AbstractTextField::scrollToCursor() {
 
 bool AbstractTextField::shouldFinishEditing(Ion::Events::Event event) {
   assert(m_delegate);
-  if (isEditing() && m_delegate->textFieldShouldFinishEditing(this, event)) {
-    resetSelection();
-    return true;
-  }
-  return false;
+  return isEditing() && m_delegate->textFieldShouldFinishEditing(this, event);
 }
 
 bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {

@@ -25,6 +25,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return false;
   }
+  m_cursor.resetSelection();
   m_isEditing = isEditing;
   markWholeFrameAsDirty();
   bool layoutChanged = false;
@@ -398,11 +399,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
 
 bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
   assert(m_delegate);
-  if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) {
-    cursor()->resetSelection();
-    return true;
-  }
-  return false;
+  return isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event);
 }
 
 void LayoutField::didBecomeFirstResponder() {

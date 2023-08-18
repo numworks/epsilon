@@ -84,7 +84,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
                         bool *shouldRedrawLayout, Context *context) {
   *shouldRedrawLayout = false;
   if (!selecting && isSelecting()) {
-    stopSelecting();
+    resetSelection();
     *shouldRedrawLayout = true;
     return true;
   }
@@ -116,7 +116,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   }
 
   if (isSelecting() && selection().isEmpty()) {
-    stopSelecting();
+    resetSelection();
   }
 
   if (*shouldRedrawLayout) {
@@ -590,7 +590,7 @@ void LayoutCursor::deleteAndResetSelection() {
     m_layout = hLayout;
   }
   m_position = selectionLeftBound;
-  stopSelecting();
+  resetSelection();
   balanceAutocompletedBracketsAndKeepAValidCursor();
   removeEmptyRowOrColumnOfGridParentIfNeeded();
   didEnterCurrentPosition();
@@ -965,7 +965,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
 
 void LayoutCursor::privateStartSelecting() { m_startOfSelection = m_position; }
 
-void LayoutCursor::stopSelecting() { m_startOfSelection = -1; }
+void LayoutCursor::resetSelection() { m_startOfSelection = -1; }
 
 bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
     EmptyRectangle::State state) {

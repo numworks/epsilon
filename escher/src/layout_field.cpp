@@ -399,7 +399,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
 bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
   if (isEditing() &&
       m_layoutFieldDelegate->layoutFieldShouldFinishEditing(this, event)) {
-    cursor()->stopSelecting();
+    cursor()->resetSelection();
     return true;
   }
   return false;

@@ -434,6 +434,10 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);
+/* The following if condition was supposed to discard vertical asymptotes but it
+ * seems to be irrelevant for now since the autozoom also focuses on asymptotes.
+ * Removing it thus changes nothing and avoids discarding false positives. */
+#if 0
   /* We must make sure the "root" we've found is not an odd vertical asymptote.
    * We thus discard roots that change direction.
    */
@@ -445,7 +449,7 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
        (pv.y() <= pb.y()) != (pa.y() <= pb.y()))) {
     return Coordinate2D<float>();
   }
-
+#endif
   const IntersectionParameters *p =
       static_cast<const IntersectionParameters *>(aux);
   return p->f1(pb.x(), p->model1, p->context);

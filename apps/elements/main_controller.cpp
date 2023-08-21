@@ -143,10 +143,9 @@ bool MainController::textFieldDidFinishEditing(
   return true;
 }
 
-bool MainController::textFieldDidAbortEditing(
+void MainController::textFieldDidAbortEditing(
     Escher::AbstractTextField* textField) {
   endElementSearch(App::app()->elementsViewDataSource()->previousElement());
-  return false;
 }
 
 void MainController::textFieldDidHandleEvent(

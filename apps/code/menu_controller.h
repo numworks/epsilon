@@ -69,8 +69,8 @@ class MenuController : public Escher::ViewController,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::AbstractTextField *textField) override {
-    return privateTextFieldDidAbortEditing(textField, true);
+  void textFieldDidAbortEditing(Escher::AbstractTextField *textField) override {
+    privateTextFieldDidAbortEditing(textField, true);
   }
   void textFieldDidHandleEvent(Escher::AbstractTextField *textField) override;
 
@@ -100,7 +100,7 @@ class MenuController : public Escher::ViewController,
   void configureScript();
   void editScriptAtIndex(int scriptIndex);
   void updateAddScriptRowDisplay();
-  bool privateTextFieldDidAbortEditing(
+  void privateTextFieldDidAbortEditing(
       Escher::AbstractTextField *textField,
       bool menuControllerStaysInResponderChain);
   void forceTextFieldEditionToAbort(bool menuControllerStaysInResponderChain);

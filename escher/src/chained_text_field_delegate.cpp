@@ -23,11 +23,11 @@ bool ChainedTextFieldDelegate::textFieldDidFinishEditing(
              : false;
 }
 
-bool ChainedTextFieldDelegate::textFieldDidAbortEditing(
+void ChainedTextFieldDelegate::textFieldDidAbortEditing(
     AbstractTextField* textField) {
-  return m_parentDelegate
-             ? m_parentDelegate->textFieldDidAbortEditing(textField)
-             : false;
+  if (m_parentDelegate) {
+    m_parentDelegate->textFieldDidAbortEditing(textField);
+  }
 }
 
 void ChainedTextFieldDelegate::textFieldDidHandleEvent(

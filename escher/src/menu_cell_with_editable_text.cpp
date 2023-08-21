@@ -29,11 +29,11 @@ bool AbstractWithEditableText::textFieldDidFinishEditing(
   return false;
 }
 
-bool AbstractWithEditableText::textFieldDidAbortEditing(
+void AbstractWithEditableText::textFieldDidAbortEditing(
     AbstractTextField* textField) {
   // Relayout to show sublabel
   relayout();
-  return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
+  ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
 }
 
 }  // namespace Escher

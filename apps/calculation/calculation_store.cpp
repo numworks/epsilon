@@ -57,34 +57,37 @@ Expression CalculationStore::ansExpression(Context *context) const {
     return defaultAns;
   }
   ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
-  Expression exactOutput = mostRecentCalculation->exactOutput();
   Expression input = mostRecentCalculation->input();
-  if (exactOutput.isUninitialized() || input.isUninitialized()) {
-    return defaultAns;
-  }
-  if (input.recursivelyMatches(Expression::IsApproximate, context)) {
-    Expression approximate = mostRecentCalculation->approximateOutput(
-        Calculation::NumberOfSignificantDigits::Maximal);
-    if (approximate.isUninitialized()) {
-      return defaultAns;
-    }
-    return approximate;
-  }
-  /* Special case: If exact output was hidden, it should not be accessible using
-   * ans, unless it is equal to an approximation that is neither undefined nor
-   * nonreal. */
-  const char *exactOutputText = mostRecentCalculation->exactOutputText();
-  const char *approximateOutputText =
-      mostRecentCalculation->approximateOutputText(
-          Calculation::NumberOfSignificantDigits::UserDefined);
+  Expression exactOutput = mostRecentCalculation->exactOutput();
+  Expression approxOutput = mostRecentCalculation->approximateOutput(
+      Calculation::NumberOfSignificantDigits::Maximal);
+  Expression ansExpr;
   if (mostRecentCalculation->displayOutput(context) ==
           Calculation::DisplayOutput::ApproximateOnly &&
-      (strcmp(approximateOutputText, exactOutputText) != 0 ||
+      (strcmp(mostRecentCalculation->approximateOutputText(
+                  Calculation::NumberOfSignificantDigits::UserDefined),
+              mostRecentCalculation->exactOutputText()) != 0 ||
        exactOutput.type() == ExpressionNode::Type::Nonreal ||
        exactOutput.type() == ExpressionNode::Type::Undefined)) {
-    return input;
+    /* Case 1.
+     * If exact output was hidden, it should not be accessible using Ans, unless
+     * it is equal to an approximation that is neither undefined nor nonreal.
+     * Return input instead so that no precision is lost.*/
+    ansExpr = input;
+  } else if (input.recursivelyMatches(Expression::IsApproximate, context) &&
+             mostRecentCalculation->equalSign(context) ==
+                 Calculation::EqualSign::Equal) {
+    /* Case 2.
+     * If the user used a decimal in the input and the exact output is equal to
+     * the approximation, prefer using the approximation too keep the decimal
+     * form. */
+    ansExpr = approxOutput;
+  } else {
+    /* Case 3.
+     * Default to the exact output.*/
+    ansExpr = exactOutput;
   }
-  return exactOutput;
+  return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(

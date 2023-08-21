@@ -180,6 +180,8 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(-1-1)", "√(-1-1)", &globalContext, &store);
   assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)",
               &globalContext, &store);
+  assertAnsIs("int(diff(x^2.1,x,x),x,0,1)", "int(diff(x^2.1,x,x),x,0,1)",
+              &globalContext, &store);
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 

@@ -16,48 +16,48 @@ using namespace Shared;
 
 namespace Calculation {
 
-AdditionalResultsType AdditionalResultsForExpressions(
+AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{};
   }
-  if (HasComplexAdditionalResults(approximateOutput)) {
+  if (HasComplex(approximateOutput)) {
     return AdditionalResultsType{.complex = true};
   }
-  if (HasDirectTrigoAdditionalResults(input, exactOutput)) {
+  if (HasDirectTrigo(input, exactOutput)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
-  if (HasInverseTrigoAdditionalResults(input, exactOutput)) {
+  if (HasInverseTrigo(input, exactOutput)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
   if (exactOutput.hasUnit()) {
-    return AdditionalResultsType{.unit = HasUnitAdditionalResults(exactOutput)};
+    return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
-  if (HasVectorAdditionalResults(exactOutput)) {
+  if (HasVector(exactOutput)) {
     return AdditionalResultsType{.vector = true};
   }
-  if (HasMatrixAdditionalResults(exactOutput)) {
+  if (HasMatrix(exactOutput)) {
     return AdditionalResultsType{.matrix = true};
   }
   AdditionalResultsType type = {};
-  if (HasFunctionAdditionalResults(input, approximateOutput)) {
+  if (HasFunction(input, approximateOutput)) {
     type.function = true;
   }
-  if (HasScientificNotationAdditionalResults(approximateOutput)) {
+  if (HasScientificNotation(approximateOutput)) {
     type.scientificNotation = true;
   }
-  if (HasIntegerAdditionalResults(exactOutput)) {
+  if (HasInteger(exactOutput)) {
     type.integer = true;
-  } else if (HasRationalAdditionalResults(exactOutput)) {
+  } else if (HasRational(exactOutput)) {
     type.rational = true;
   }
   return type;
 }
 
-bool ForbidAdditionalResults(const Expression input,
-                             const Expression exactOutput,
-                             const Expression approximateOutput) {
+bool AdditionalResultsType::ForbidAdditionalResults(
+    const Expression input, const Expression exactOutput,
+    const Expression approximateOutput) {
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with store node as a child. We don't
@@ -80,15 +80,15 @@ bool ForbidAdditionalResults(const Expression input,
   return false;
 }
 
-bool HasComplexAdditionalResults(const Expression approximateOutput) {
+bool AdditionalResultsType::HasComplex(const Expression approximateOutput) {
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */
   return approximateOutput.isScalarComplex(Preferences::sharedPreferences);
 }
 
-bool HasDirectTrigoAdditionalResults(const Expression input,
-                                     const Expression exactOutput) {
+bool AdditionalResultsType::HasDirectTrigo(const Expression input,
+                                           const Expression exactOutput) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
@@ -96,15 +96,15 @@ bool HasDirectTrigoAdditionalResults(const Expression input,
   return !exactAngle.isUninitialized();
 }
 
-bool HasInverseTrigoAdditionalResults(const Expression input,
-                                      const Expression exactOutput) {
+bool AdditionalResultsType::HasInverseTrigo(const Expression input,
+                                            const Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
   return (Trigonometry::isInverseTrigonometryFunction(input)) ||
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
 }
 
-bool HasUnitAdditionalResults(const Expression exactOutput) {
+bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
   assert(exactOutput.hasUnit());
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
@@ -133,7 +133,7 @@ bool HasUnitAdditionalResults(const Expression exactOutput) {
   return false;
 }
 
-bool HasVectorAdditionalResults(const Expression exactOutput) {
+bool AdditionalResultsType::HasVector(const Expression exactOutput) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression norm =
@@ -152,7 +152,7 @@ bool HasVectorAdditionalResults(const Expression exactOutput) {
   return true;
 }
 
-bool HasMatrixAdditionalResults(const Expression exactOutput) {
+bool AdditionalResultsType::HasMatrix(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   return exactOutput.type() == ExpressionNode::Type::Matrix;
@@ -171,8 +171,8 @@ static bool expressionIsInterestingFunction(const Expression e) {
          e.numberOfNumericalValues() == 1;
 }
 
-bool HasFunctionAdditionalResults(const Expression input,
-                                  const Expression approximateOutput) {
+bool AdditionalResultsType::HasFunction(const Expression input,
+                                        const Expression approximateOutput) {
   // We want a single numerical value and to avoid showing the identity function
   assert(!input.isUninitialized());
   assert(!approximateOutput.isUndefined());
@@ -182,7 +182,7 @@ bool HasFunctionAdditionalResults(const Expression input,
          expressionIsInterestingFunction(input);
 }
 
-bool HasScientificNotationAdditionalResults(
+bool AdditionalResultsType::HasScientificNotation(
     const Expression approximateOutput) {
   assert(!approximateOutput.hasUnit());
   assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
@@ -195,7 +195,7 @@ bool HasScientificNotationAdditionalResults(
                                                         globalContext);
 }
 
-bool HasIntegerAdditionalResults(const Expression exactOutput) {
+bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   constexpr const char *k_maximalIntegerWithAdditionalResults =
@@ -204,7 +204,7 @@ bool HasIntegerAdditionalResults(const Expression exactOutput) {
       k_maximalIntegerWithAdditionalResults);
 }
 
-bool HasRationalAdditionalResults(const Expression exactOutput) {
+bool AdditionalResultsType::HasRational(const Expression exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());

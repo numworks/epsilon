@@ -76,7 +76,8 @@ void AdditionalResultsController::computeResults(
   if (*expressionsListController == nullptr) {
     return;
   }
-  assert(!ForbidAdditionalResults(input, exactOutput, approximateOutput));
+  assert(!AdditionalResultsType::ForbidAdditionalResults(input, exactOutput,
+                                                         approximateOutput));
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {

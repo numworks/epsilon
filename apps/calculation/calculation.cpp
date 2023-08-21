@@ -263,7 +263,7 @@ void Calculation::fillExpressionsForAdditionalResults(
 AdditionalResultsType Calculation::additionalResultsType() {
   Expression i, a, e;
   fillExpressionsForAdditionalResults(&i, &e, &a);
-  return AdditionalResultsForExpressions(i, e, a);
+  return AdditionalResultsType::AdditionalResultsForExpressions(i, e, a);
 }
 
 }  // namespace Calculation

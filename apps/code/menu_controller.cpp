@@ -359,7 +359,7 @@ void MenuController::updateAddScriptRowDisplay() {
   m_selectableTableView.reloadData();
 }
 
-bool MenuController::privateTextFieldDidAbortEditing(
+void MenuController::privateTextFieldDidAbortEditing(
     AbstractTextField *textField, bool menuControllerStaysInResponderChain) {
   /* If menuControllerStaysInResponderChain is false, we do not want to use
    * methods that might call setFirstResponder, because we might be in the
@@ -375,7 +375,7 @@ bool MenuController::privateTextFieldDidAbortEditing(
     if (!foundDefaultName) {
       // If we did not find a default name, delete the script
       deleteScript(script);
-      return true;
+      return;
     }
     Script::ErrorStatus error = Ion::Storage::Record::SetBaseNameWithExtension(
         &script, numberedDefaultName, ScriptStore::k_scriptExtension);
@@ -399,7 +399,6 @@ bool MenuController::privateTextFieldDidAbortEditing(
   }
   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(
       Ion::Events::ShiftAlphaStatus());
-  return true;
 }
 
 void MenuController::forceTextFieldEditionToAbort(

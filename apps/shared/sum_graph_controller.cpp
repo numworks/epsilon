@@ -162,10 +162,9 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
   return handleEnter();
 }
 
-bool SumGraphController::textFieldDidAbortEditing(
+void SumGraphController::textFieldDidAbortEditing(
     AbstractTextField *textField) {
   reloadBannerView();
-  return true;
 }
 
 bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {

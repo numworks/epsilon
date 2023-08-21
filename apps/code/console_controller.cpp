@@ -338,7 +338,7 @@ bool ConsoleController::textFieldDidFinishEditing(AbstractTextField *textField,
   return true;
 }
 
-bool ConsoleController::textFieldDidAbortEditing(AbstractTextField *textField) {
+void ConsoleController::textFieldDidAbortEditing(AbstractTextField *textField) {
   if (m_inputRunLoopActive) {
     m_inputRunLoopActive = false;
   } else {
@@ -357,7 +357,6 @@ bool ConsoleController::textFieldDidAbortEditing(AbstractTextField *textField) {
     }
 #endif
   }
-  return true;
 }
 
 void ConsoleController::prepareVariableBox() {

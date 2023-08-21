@@ -52,10 +52,9 @@ bool DomainParameterController::textFieldDidFinishEditing(
   return SingleRangeController::textFieldDidFinishEditing(textField, event);
 }
 
-bool DomainParameterController::textFieldDidAbortEditing(
+void DomainParameterController::textFieldDidAbortEditing(
     AbstractTextField* textField) {
   switchToolboxContent(textField, false);
-  return false;
 }
 
 I18n::Message DomainParameterController::parameterMessage(int index) const {

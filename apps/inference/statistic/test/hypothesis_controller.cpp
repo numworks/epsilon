@@ -94,11 +94,10 @@ bool HypothesisController::textFieldDidFinishEditing(
   return true;
 }
 
-bool HypothesisController::textFieldDidAbortEditing(
+void HypothesisController::textFieldDidAbortEditing(
     AbstractTextField* textField) {
   // Reload params to add "p=..."
   loadHypothesisParam();
-  return true;
 }
 
 void HypothesisController::onDropdownSelected(int selectedRow) {

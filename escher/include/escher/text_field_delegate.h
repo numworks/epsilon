@@ -21,9 +21,7 @@ class TextFieldDelegate {
                                          Ion::Events::Event event) {
     return false;
   }
-  virtual bool textFieldDidAbortEditing(AbstractTextField* textField) {
-    return false;
-  }
+  virtual void textFieldDidAbortEditing(AbstractTextField* textField) {}
   virtual void textFieldDidHandleEvent(AbstractTextField* textField) {}
   virtual bool textFieldIsEditable(AbstractTextField* textField) {
     return true;

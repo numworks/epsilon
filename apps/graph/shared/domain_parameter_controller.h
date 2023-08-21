@@ -29,7 +29,7 @@ class DomainParameterController
                                 Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
+  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   bool isVisible() const {

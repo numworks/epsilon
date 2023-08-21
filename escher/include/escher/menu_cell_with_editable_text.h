@@ -68,7 +68,7 @@ class AbstractWithEditableText : public Responder,
   void textFieldDidStartEditing(AbstractTextField* textField) override;
   bool textFieldDidFinishEditing(AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(AbstractTextField* textField) override;
+  void textFieldDidAbortEditing(AbstractTextField* textField) override;
   bool textFieldIsEditable(AbstractTextField* textField) override {
     return m_editable;
   }

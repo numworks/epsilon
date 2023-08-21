@@ -16,35 +16,36 @@ struct AdditionalResultsType {
   bool complex : 1;
   bool function : 1;
   bool scientificNotation : 1;
+
   bool isNotEmpty() const {
     return integer || rational || directTrigonometry || inverseTrigonometry ||
            unit || matrix || vector || complex || function ||
            scientificNotation;
   }
+
+  static AdditionalResultsType AdditionalResultsForExpressions(
+      const Poincare::Expression input, const Poincare::Expression exactOutput,
+      const Poincare::Expression approximateOutput);
+
+  static bool ForbidAdditionalResults(
+      const Poincare::Expression input, const Poincare::Expression exactOutput,
+      const Poincare::Expression approximateOutput);
+
+  static bool HasComplex(const Poincare::Expression approximateOutput);
+  static bool HasDirectTrigo(const Poincare::Expression input,
+                             const Poincare::Expression exactOutput);
+  static bool HasInverseTrigo(const Poincare::Expression input,
+                              const Poincare::Expression exactOutput);
+  static bool HasUnit(const Poincare::Expression exactOutput);
+  static bool HasVector(const Poincare::Expression exactOutput);
+  static bool HasMatrix(const Poincare::Expression exactOutput);
+  static bool HasFunction(const Poincare::Expression input,
+                          const Poincare::Expression approximateOutput);
+  static bool HasScientificNotation(
+      const Poincare::Expression approximateOutput);
+  static bool HasInteger(const Poincare::Expression exactOutput);
+  static bool HasRational(const Poincare::Expression exactOutput);
 };
-
-AdditionalResultsType AdditionalResultsForExpressions(
-    const Poincare::Expression input, const Poincare::Expression exactOutput,
-    const Poincare::Expression approximateOutput);
-
-bool ForbidAdditionalResults(const Poincare::Expression input,
-                             const Poincare::Expression exactOutput,
-                             const Poincare::Expression approximateOutput);
-
-bool HasComplexAdditionalResults(const Poincare::Expression approximateOutput);
-bool HasDirectTrigoAdditionalResults(const Poincare::Expression input,
-                                     const Poincare::Expression exactOutput);
-bool HasInverseTrigoAdditionalResults(const Poincare::Expression input,
-                                      const Poincare::Expression exactOutput);
-bool HasUnitAdditionalResults(const Poincare::Expression exactOutput);
-bool HasVectorAdditionalResults(const Poincare::Expression exactOutput);
-bool HasMatrixAdditionalResults(const Poincare::Expression exactOutput);
-bool HasFunctionAdditionalResults(const Poincare::Expression input,
-                                  const Poincare::Expression approximateOutput);
-bool HasScientificNotationAdditionalResults(
-    const Poincare::Expression approximateOutput);
-bool HasIntegerAdditionalResults(const Poincare::Expression exactOutput);
-bool HasRationalAdditionalResults(const Poincare::Expression exactOutput);
 
 }  // namespace Calculation
 

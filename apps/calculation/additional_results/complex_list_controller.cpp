@@ -21,7 +21,7 @@ namespace Calculation {
 void ComplexListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(HasComplexAdditionalResults(approximateOutput));
+  assert(AdditionalResultsType::HasComplex(approximateOutput));
   Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
   preferencesComplex.setComplexFormat(
       Poincare::Preferences::ComplexFormat::Cartesian);

@@ -20,7 +20,7 @@ namespace Calculation {
 void VectorListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(HasVectorAdditionalResults(exactOutput));
+  assert(AdditionalResultsType::HasVector(exactOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");

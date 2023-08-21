@@ -10,7 +10,7 @@ namespace Calculation {
 void ScientificNotationListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(HasScientificNotationAdditionalResults(approximateOutput));
+  assert(AdditionalResultsType::HasScientificNotation(approximateOutput));
   Context* context = App::app()->localContext();
   m_layouts[0] =
       ScientificNotationHelper::ScientificLayout(approximateOutput, context);

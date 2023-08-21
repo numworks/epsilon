@@ -59,7 +59,7 @@ void VectorListController::computeAdditionalResults(
 
   // 3. Angle with x-axis
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
-  Matrix vector = approximateOutput.convert<Matrix>();
+  Matrix vector = static_cast<const Matrix &>(approximateOutput);
   assert(vector.isVector());
   if (vector.numberOfChildren() != 2) {
     // Vector is not 2D

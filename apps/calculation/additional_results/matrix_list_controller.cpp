@@ -40,7 +40,8 @@ void MatrixListController::computeAdditionalResults(
   Context *context = App::app()->localContext();
   // The expression must be reduced to call methods such as determinant or trace
   assert(exactOutput.type() == ExpressionNode::Type::Matrix);
-  Matrix matrix = exactOutput.clone().convert<Matrix>();
+  Expression exactClone = exactOutput.clone();
+  Matrix matrix = static_cast<const Matrix &>(exactClone);
 
   bool mIsSquared = matrix.numberOfRows() == matrix.numberOfColumns();
   size_t index = 0;

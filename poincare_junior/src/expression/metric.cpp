@@ -13,10 +13,10 @@ bool Metric::hasImproved() const {
   BlockType type = m_tree->type();
   if (type != m_type) {
     // Addition > Multiplication > Anything.
-    BlockType types[] = {BlockType::Addition, BlockType::Multiplication};
-    for (int i = 0; i < std::size(types); i++) {
-      if (m_type == types[i] || type == types[i]) {
-        return type == types[i];
+    for (BlockType betterType :
+         {BlockType::Addition, BlockType::Multiplication}) {
+      if (m_type == betterType || type == betterType) {
+        return type == betterType;
       }
     }
   }

@@ -16,13 +16,11 @@ class EditableFieldBannerViewDelegate {
                                   Escher::TextFieldDelegate* textFieldDelegate)
       : m_editableFieldLabel({.style = BannerView::k_bannerFieldFormat.style,
                               .horizontalAlignment = KDGlyph::k_alignRight}),
-        m_editableField(parentResponder, m_textBody, k_bufferSize,
+        m_editableField(parentResponder, nullptr, k_bufferSize,
                         textFieldDelegate,
                         {.style = BannerView::k_bannerFieldFormat.style,
                          .horizontalAlignment = KDGlyph::k_alignLeft}),
-        m_editableView(&m_editableFieldLabel, &m_editableField) {
-    m_textBody[0] = 0;
-  }
+        m_editableView(&m_editableFieldLabel, &m_editableField) {}
 
  protected:
   BannerView::BannerBufferTextView* editableFieldLabel() {
@@ -38,7 +36,6 @@ class EditableFieldBannerViewDelegate {
   BannerView::BannerBufferTextView m_editableFieldLabel;
   Escher::TextField m_editableField;
   BannerView::LabelledView m_editableView;
-  char m_textBody[k_bufferSize];
 };
 
 }  // namespace Shared

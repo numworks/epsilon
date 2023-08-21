@@ -49,6 +49,7 @@ bool ListParameterController::textFieldDidFinishEditing(
   App::app()->localContext()->resetCache();
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.handleEvent(event);
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

@@ -90,6 +90,7 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
   } else {
     m_selectableListView.handleEvent(event);
   }
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

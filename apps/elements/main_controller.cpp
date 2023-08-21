@@ -140,6 +140,7 @@ bool MainController::textFieldDidFinishEditing(
     match = 1;
   }
   endElementSearch(match);
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

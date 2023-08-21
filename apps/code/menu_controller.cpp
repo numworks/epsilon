@@ -305,6 +305,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
     App::app()->setFirstResponder(&m_selectableTableView);
     AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(
         Ion::Events::ShiftAlphaStatus());
+    textField->reinitDraftTextBuffer();
     return true;
   } else if (error == Script::ErrorStatus::NameTaken) {
     App::app()->displayWarning(I18n::Message::NameTaken);

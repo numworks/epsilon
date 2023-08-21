@@ -87,8 +87,7 @@ class Calculation {
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context* context);
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
-  EqualSign exactAndApproximateDisplayedOutputsEqualSign(
-      Poincare::Context* context);
+  EqualSign equalSign(Poincare::Context* context);
 
   void fillExpressionsForAdditionalResults(
       Poincare::Expression* input, Poincare::Expression* exactOutput,

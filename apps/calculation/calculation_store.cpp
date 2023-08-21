@@ -65,14 +65,19 @@ Expression CalculationStore::ansExpression(Context *context) const {
   if (mostRecentCalculation->displayOutput(context) ==
           Calculation::DisplayOutput::ApproximateOnly &&
       (strcmp(mostRecentCalculation->approximateOutputText(
-                  Calculation::NumberOfSignificantDigits::UserDefined),
+                  Calculation::NumberOfSignificantDigits::Maximal),
               mostRecentCalculation->exactOutputText()) != 0 ||
        exactOutput.type() == ExpressionNode::Type::Nonreal ||
        exactOutput.type() == ExpressionNode::Type::Undefined)) {
     /* Case 1.
-     * If exact output was hidden, it should not be accessible using Ans, unless
-     * it is equal to an approximation that is neither undefined nor nonreal.
-     * Return input instead so that no precision is lost.*/
+     * If exact output was hidden, is   should not be accessible using Ans.
+     * Return input instead so that no precision is lost.
+     * If the exact output is equal to its approximation and is not Nonreal
+     * neither Undefined, it can mean that the calculation involves units or is
+     * a store expression that hides exact results (with an integral for
+     * example). In this case, do not keep the input in Ans but rather the
+     * output.
+     **/
     ansExpr = input;
   } else if (input.recursivelyMatches(Expression::IsApproximate, context) &&
              mostRecentCalculation->equalSign(context) ==
@@ -87,6 +92,8 @@ Expression CalculationStore::ansExpression(Context *context) const {
      * Default to the exact output.*/
     ansExpr = exactOutput;
   }
+  assert(ansExpr.isUninitialized() ||
+         ansExpr.type() != ExpressionNode::Type::Store);
   return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 

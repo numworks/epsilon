@@ -17,7 +17,7 @@ Expression BuildVectorNorm(const Expression exactOutput, Context *context) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||
-      !exactOutput.convert<Matrix>().isVector()) {
+      !static_cast<const Matrix &>(exactOutput).isVector()) {
     return Expression();
   }
   Expression norm = VectorNorm::Builder(exactOutput);

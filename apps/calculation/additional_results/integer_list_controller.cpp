@@ -31,7 +31,7 @@ void IntegerListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
   assert(HasIntegerAdditionalResults(exactOutput));
-  Integer integer = exactOutput.convert<BasedInteger>().integer();
+  Integer integer = static_cast<const BasedInteger &>(exactOutput).integer();
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     m_layouts[index] = integer.createLayout(baseAtIndex(index));
   }

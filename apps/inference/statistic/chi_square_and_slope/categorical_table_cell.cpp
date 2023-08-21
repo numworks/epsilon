@@ -114,6 +114,7 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
     event = Ion::Events::Down;
   }
   m_selectableTableView.handleEvent(event);
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

@@ -51,6 +51,7 @@ class InteractiveCurveViewController
                                 Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
+  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   // ButtonRowController
   int numberOfButtons(

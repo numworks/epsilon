@@ -107,6 +107,7 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
   } else {
     m_selectableListView.handleEvent(event);
   }
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

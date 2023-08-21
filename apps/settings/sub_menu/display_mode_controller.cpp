@@ -87,6 +87,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
     m_selectableListView.handleEvent(event);
   }
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

@@ -59,6 +59,7 @@ bool TangentGraphController::textFieldDidFinishEditing(
   panToMakeCursorVisible();
   reloadBannerView();
   curveView()->reload();
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

@@ -22,6 +22,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   TELEMETRY_ID("Sum");
   void setRecord(Ion::Storage::Record record);
@@ -105,7 +106,6 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     Escher::LayoutView m_sum;
     Escher::MessageTextView m_legend;
     Escher::TextField m_editableZone;
-    char m_textBuffer[k_editableZoneBufferSize];
   };
 
   LegendView m_legendView;

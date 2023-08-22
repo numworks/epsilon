@@ -6,10 +6,10 @@
 
 namespace PoincareJ {
 
-Dimension Dimension::ComputeDimension(const Tree* t) {
+Dimension Dimension::DeepCheckDimensions(const Tree* t) {
   Dimension childDim[t->numberOfChildren()];
   for (int i = 0; const Tree* child : t->children()) {
-    Dimension dim = ComputeDimension(child);
+    Dimension dim = DeepCheckDimensions(child);
     if (dim.isInvalid()) {
       return Invalid();
     }
@@ -106,6 +106,56 @@ Dimension Dimension::ComputeDimension(const Tree* t) {
           return Invalid();
         }
       }
+      return Scalar();
+  }
+}
+
+Dimension Dimension::GetDimension(const Tree* t) {
+  switch (t->type()) {
+    case BlockType::Multiplication: {
+      uint8_t rows = 0;
+      uint8_t cols = 0;
+      for (const Tree* child : t->children()) {
+        Dimension dim = GetDimension(child);
+        if (dim.isMatrix()) {
+          if (rows == 0) {
+            rows = dim.matrix.rows;
+          }
+          cols = dim.matrix.cols;
+        }
+      }
+      return rows > 0 ? Matrix(rows, cols) : Scalar();
+    }
+    case BlockType::Addition:
+    case BlockType::Subtraction:
+    case BlockType::Cross:
+    case BlockType::Inverse:
+    case BlockType::Power:
+    case BlockType::Ref:
+    case BlockType::Rref:
+      return GetDimension(t->nextNode());
+    case BlockType::Matrix:
+      return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
+    case BlockType::Dim:
+      return Matrix(1, 2);
+    case BlockType::Transpose: {
+      Dimension dim = GetDimension(t->nextNode());
+      return Matrix(dim.matrix.cols, dim.matrix.rows);
+    }
+    case BlockType::Identity: {
+      int n = Approximation::To<float>(t->childAtIndex(0));
+      return Matrix(n, n);
+    }
+    case BlockType::UserSymbol: {
+      char s[2];
+      Symbol::GetName(t, s, 2);
+      if ('A' <= s[0] && s[0] <= 'Z') {
+        // TODO query the actual symbol and assume no unknown matrices
+        return Matrix(1, 1);
+      }
+      return Scalar();
+    }
+    default:
       return Scalar();
   }
 }

@@ -13,8 +13,8 @@ namespace PoincareJ {
 
 int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (order == Order::PreserveMatrices) {
-    if (Dimension::ComputeDimension(node0).isMatrix() &&
-        Dimension::ComputeDimension(node1).isMatrix()) {
+    if (Dimension::GetDimension(node0).isMatrix() &&
+        Dimension::GetDimension(node1).isMatrix()) {
       if (node0->treeIsIdenticalTo(node1)) {
         return 0;
       }

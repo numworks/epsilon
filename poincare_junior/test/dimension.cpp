@@ -11,7 +11,10 @@ Dimension dim(const char* input) {
   EditionReference expression = RackParser(inputLayout).parse();
   quiz_assert(!expression.isUninitialized());
   inputLayout->removeTree();
-  Dimension dim = Dimension::ComputeDimension(expression);
+  Dimension dim = Dimension::DeepCheckDimensions(expression);
+  if (!dim.isInvalid()) {
+    assert(dim == Dimension::GetDimension(expression));
+  }
   expression->removeTree();
   return dim;
 }

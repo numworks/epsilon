@@ -31,7 +31,8 @@ struct Dimension {
     return type == Type::Matrix && (matrix.rows == 1 || matrix.cols == 1);
   }
 
-  static Dimension ComputeDimension(const Tree* t);
+  static Dimension GetDimension(const Tree* t);
+  static Dimension DeepCheckDimensions(const Tree* t);
 
   Type type;
   union {

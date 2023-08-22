@@ -74,8 +74,8 @@ Tree* Matrix::Transpose(const Tree* m) {
 
 Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   // should be an assert after dimensional analysis
-  if (!(NumberOfRows(u) == NumberOfRows(v) &&
-        NumberOfColumns(u) == NumberOfColumns(v))) {
+  if (NumberOfRows(u) != NumberOfRows(v) ||
+      NumberOfColumns(u) != NumberOfColumns(v)) {
     return KUndef->clone();
   }
   const Tree* childU = u->nextNode();
@@ -105,7 +105,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m) {
 }
 
 Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
-  if (!(NumberOfColumns(u) == NumberOfRows(v))) {
+  if (NumberOfColumns(u) != NumberOfRows(v)) {
     return KUndef->clone();
   }
   uint8_t rows = NumberOfRows(u);

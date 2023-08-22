@@ -764,6 +764,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
   changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
+  assert(!DeepApplyMatrixOperators(ref));
   changed = DeepBeautify(ref) || changed;
   return changed;
 }
@@ -1401,11 +1402,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   Tree* child = tree->childAtIndex(0);
   if (tree->type() == BlockType::Identity) {
-    if (IsNumber(child)) {
-      tree->moveTreeOverTree(Matrix::Identity(child));
-    } else {
-      tree->cloneTreeOverTree(KUndef);
-    }
+    tree->moveTreeOverTree(Matrix::Identity(child));
     return true;
   }
   if (tree->type() == BlockType::Multiplication) {

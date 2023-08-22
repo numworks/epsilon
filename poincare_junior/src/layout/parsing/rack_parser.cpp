@@ -1211,21 +1211,18 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
     if (m_status != Status::Progress) {
       return;
     }
-    if ((numberOfRows == 0 &&
-         (numberOfColumns = row->numberOfChildren()) == 0) ||
-        (numberOfColumns != row->numberOfChildren())) {
+    if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {
       m_status = Status::Error;  // Incorrect matrix.
       removeTreeIfInitialized(row);
       matrix->removeTree();
       return;
-    } else {
-      numberOfColumns = row->numberOfChildren();
-      Matrix::SetNumberOfColumns(matrix, numberOfColumns);
-      Matrix::SetNumberOfRows(matrix, ++numberOfRows);
-      row->removeNode();
     }
+    numberOfColumns = row->numberOfChildren();
+    Matrix::SetNumberOfColumns(matrix, numberOfColumns);
+    Matrix::SetNumberOfRows(matrix, ++numberOfRows);
+    row->removeNode();
   }
-  if (numberOfRows == 0) {
+  if (numberOfRows == 0 || numberOfColumns == 0) {
     m_status = Status::Error;  // Empty matrix
     matrix->removeTree();
   } else {

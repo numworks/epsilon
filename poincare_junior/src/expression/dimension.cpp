@@ -30,13 +30,15 @@ Dimension Dimension::ComputeDimension(const Tree* t) {
       Dimension current = childDim[0];
       for (int i = 1; i < t->numberOfChildren(); i++) {
         Dimension next = childDim[i];
-        if (current.isMatrix() && next.isMatrix()) {
+        if (current.isScalar()) {
+          current = next;
+          continue;
+        }
+        if (next.isMatrix()) {
           if (current.matrix.cols != next.matrix.rows) {
             return Invalid();
           }
           current = Matrix(current.matrix.rows, next.matrix.cols);
-        } else {
-          current = next;
         }
       }
       return current;

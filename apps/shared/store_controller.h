@@ -82,8 +82,6 @@ class StoreController : public EditableCellTableViewController,
   void memoizeFormula(Poincare::Layout formula, int index) override;
 
   Escher::PrefacedTableView m_prefacedTableView;
-  Escher::EvenOddEditableTextCell<>
-      m_editableCells[k_maxNumberOfDisplayableCells];
   DoublePairStore* m_store;
   Poincare::Layout
       m_memoizedFormulas[DoublePairStore::k_numberOfSeries *
@@ -111,6 +109,8 @@ class StoreController : public EditableCellTableViewController,
   DoublePairStore* store() override { return m_store; }
 
   BufferFunctionTitleCell m_titleCells[k_maxNumberOfDisplayableColumns];
+  Escher::EvenOddEditableTextCell<>
+      m_editableCells[k_maxNumberOfDisplayableCells];
 
   Escher::MemoizedColumnWidthManager<6> m_widthManager;
   Escher::RegularTableSize1DManager m_heightManager;

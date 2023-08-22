@@ -27,7 +27,6 @@ class AbstractEditableTextCell : public HighlightCell, public Responder {
  private:
   constexpr static KDCoordinate k_separatorThickness =
       Metric::CellSeparatorThickness;
-  virtual char* textBody() = 0;
 };
 
 template <int NumberOfSignificantDigits =
@@ -49,7 +48,6 @@ class EditableTextCell : public AbstractEditableTextCell {
   TextField* textField() override { return &m_textField; }
 
  private:
-  char* textBody() override { return m_textBody; }
   TextField m_textField;
   char m_textBody[k_bufferSize];
 };

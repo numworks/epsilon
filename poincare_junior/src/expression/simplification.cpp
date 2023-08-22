@@ -59,7 +59,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 
 bool Simplification::ShallowSystematicReduce(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
-  assert(!Dimension::DeepCheckDimensions(u).isInvalid());
+  assert(Dimension::DeepCheckDimensions(u));
   if (u->numberOfChildren() == 0) {
     // Strict rationals are the only childless trees that can be reduced.
     return Rational::MakeIrreducible(u);
@@ -751,7 +751,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
-  if (Dimension::DeepCheckDimensions(ref).isInvalid()) {
+  if (!Dimension::DeepCheckDimensions(ref)) {
     ref->cloneTreeOverTree(KUndef);
     return true;
   }

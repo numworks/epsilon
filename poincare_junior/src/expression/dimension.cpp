@@ -6,14 +6,13 @@
 
 namespace PoincareJ {
 
-Dimension Dimension::DeepCheckDimensions(const Tree* t) {
+bool Dimension::DeepCheckDimensions(const Tree* t) {
   Dimension childDim[t->numberOfChildren()];
   for (int i = 0; const Tree* child : t->children()) {
-    Dimension dim = DeepCheckDimensions(child);
-    if (dim.isInvalid()) {
-      return Invalid();
+    if (!DeepCheckDimensions(child)) {
+      return false;
     }
-    childDim[i++] = dim;
+    childDim[i++] = GetDimension(child);
   }
   switch (t->type()) {
     case BlockType::Addition:
@@ -21,92 +20,60 @@ Dimension Dimension::DeepCheckDimensions(const Tree* t) {
       assert(t->numberOfChildren() > 0);
       for (int i = 1; i < t->numberOfChildren(); i++) {
         if (childDim[0] != childDim[i]) {
-          return Invalid();
+          return false;
         }
       }
-      return childDim[0];
+      return true;
     case BlockType::Multiplication: {
       assert(t->numberOfChildren() > 0);
-      Dimension current = childDim[0];
-      for (int i = 1; i < t->numberOfChildren(); i++) {
+      uint8_t cols = 0;
+      for (int i = 0; i < t->numberOfChildren(); i++) {
         Dimension next = childDim[i];
-        if (current.isScalar()) {
-          current = next;
-          continue;
-        }
         if (next.isMatrix()) {
-          if (current.matrix.cols != next.matrix.rows) {
-            return Invalid();
+          if (cols && cols != next.matrix.rows) {
+            return false;
           }
-          current = Matrix(current.matrix.rows, next.matrix.cols);
+          cols = next.matrix.cols;
         }
       }
-      return current;
+      return true;
     }
     case BlockType::Power:
-      if (!childDim[1].isScalar() ||
-          (childDim[0].isMatrix() && !childDim[0].isSquareMatrix())) {
-        return Invalid();
-      }
-      return childDim[0];
+      return childDim[1].isScalar() &&
+             (!childDim[0].isMatrix() || childDim[0].isSquareMatrix());
     case BlockType::Matrix:
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!childDim[i].isScalar()) {
-          return Invalid();
+          return false;
         }
       }
-      return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
+      return true;
     case BlockType::Dim:
-      return childDim[0].isMatrix() ? Matrix(1, 2) : Invalid();
-    case BlockType::Det:
-    case BlockType::Trace:
-      return childDim[0].isSquareMatrix() ? Scalar() : Invalid();
-    case BlockType::Inverse:
-      return childDim[0].isSquareMatrix() ? childDim[0] : Invalid();
-    case BlockType::Transpose:
-      return childDim[0].isMatrix()
-                 ? Matrix(childDim[0].matrix.cols, childDim[0].matrix.rows)
-                 : Invalid();
     case BlockType::Ref:
     case BlockType::Rref:
-      return childDim[0].isMatrix() ? childDim[0] : Invalid();
-    case BlockType::Identity: {
-      if (!childDim[0].isScalar() ||
-          !t->childAtIndex(0)->block()->isInteger()) {
-        // what should be done with unknown arg ?
-        return Invalid();
-      }
-      int n = Approximation::To<float>(t->childAtIndex(0));
-      return Matrix(n, n);
-    }
+    case BlockType::Transpose:
+      return childDim[0].isMatrix();
+    case BlockType::Det:
+    case BlockType::Trace:
+    case BlockType::Inverse:
+      return childDim[0].isSquareMatrix();
+    case BlockType::Identity:
+      return childDim[0].isScalar() && t->childAtIndex(0)->block()->isInteger();
     case BlockType::Norm:
-      return childDim[0].isVector() ? Scalar() : Invalid();
+      return childDim[0].isVector();
     case BlockType::Dot:
-      return childDim[0].isVector() && (childDim[0] == childDim[1]) ? Scalar()
-                                                                    : Invalid();
+      return childDim[0].isVector() && (childDim[0] == childDim[1]);
     case BlockType::Cross:
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
-                     (childDim[0].matrix.rows == 3 ||
-                      childDim[0].matrix.cols == 3)
-                 ? childDim[0]
-                 : Invalid();
-    case BlockType::UserSymbol: {
-      char s[2];
-      Symbol::GetName(t, s, 2);
-      if ('A' <= s[0] && s[0] <= 'Z') {
-        // TODO query the actual symbol and assume no unknown matrices
-        return Matrix(1, 1);
-      }
-      return Scalar();
-    }
+             (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
     default:
       // Scalar-only constants and functions
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!childDim[i].isScalar()) {
-          return Invalid();
+          return false;
         }
       }
-      return Scalar();
+      return true;
   }
 }
 

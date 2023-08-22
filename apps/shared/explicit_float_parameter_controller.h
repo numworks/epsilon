@@ -28,6 +28,7 @@ class ExplicitFloatParameterController
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
+  void textFieldDidAbortEditing(Escher::AbstractTextField *textField) override;
 
  protected:
   Escher::StackViewController *stackController() {
@@ -39,6 +40,7 @@ class ExplicitFloatParameterController
  private:
   virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
   virtual Escher::TextField *textFieldOfCellAtRow(int row) = 0;
+  void setParameterCellValue(int row);
 };
 
 }  // namespace Shared

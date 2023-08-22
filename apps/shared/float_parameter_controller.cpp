@@ -92,7 +92,7 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(
 template <typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  char *text = textField->draftText();
+  char *text = textField->text();
   T floatBody = ParseInputFloatValue<T>(text);
   if (hasUndefinedValue(text, floatBody) ||
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {
@@ -107,8 +107,13 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
   } else {
     m_selectableListView.handleEvent(event);
   }
-  textField->reinitDraftTextBuffer();
   return true;
+}
+
+template <typename T>
+void FloatParameterController<T>::textFieldDidAbortEditing(
+    AbstractTextField *textField) {
+  m_selectableListView.reloadSelectedCell();
 }
 
 template <typename T>

@@ -149,7 +149,7 @@ void SumGraphController::setRecord(Ion::Storage::Record record) {
 
 bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
                                                    Ion::Events::Event event) {
-  double floatBody = ParseInputFloatValue<double>(textField->draftText());
+  double floatBody = ParseInputFloatValue<double>(textField->text());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -159,9 +159,7 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  handleEnter();
-  textField->reinitDraftTextBuffer();
-  return true;
+  return handleEnter();
 }
 
 void SumGraphController::textFieldDidAbortEditing(

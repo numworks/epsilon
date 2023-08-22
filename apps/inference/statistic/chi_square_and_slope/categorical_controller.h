@@ -82,6 +82,7 @@ class InputCategoricalController : public CategoricalController,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
+  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   static bool ButtonAction(InputCategoricalController* controller, void* s);
 

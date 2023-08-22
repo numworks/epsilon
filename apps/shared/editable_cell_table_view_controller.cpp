@@ -32,13 +32,13 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(
          (event == Ion::Events::Right && textField->cursorAtEndOfText() &&
           selectedColumn() < numberOfColumns() - 1) ||
          (event == Ion::Events::Left &&
-          textField->cursorLocation() == textField->draftText() &&
+          textField->cursorLocation() == textField->text() &&
           selectedColumn() > 0);
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody = ParseInputFloatValue<double>(textField->draftText());
+  double floatBody = ParseInputFloatValue<double>(textField->text());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -73,8 +73,12 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(
   } else {
     selectableTableView()->handleEvent(event);
   }
-  textField->reinitDraftTextBuffer();
   return true;
+}
+
+void EditableCellTableViewController::textFieldDidAbortEditing(
+    Escher::AbstractTextField *textField) {
+  reloadEditedCell(selectedColumn(), selectedRow());
 }
 
 int EditableCellTableViewController::numberOfRows() const {

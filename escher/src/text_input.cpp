@@ -10,14 +10,14 @@ namespace Escher {
 
 void TextInput::ContentView::setCursorLocation(const char* location) {
   assert(location != nullptr);
-  assert(location >= draftText());
-  const char* adjustedLocation = std::min(location, draftTextEnd());
+  assert(location >= text());
+  const char* adjustedLocation = std::min(location, textEnd());
   m_cursorLocation = adjustedLocation;
   layoutSubviews();
 }
 
 KDRect TextInput::ContentView::cursorRect() const {
-  return glyphFrameAtPosition(draftText(), m_cursorLocation);
+  return glyphFrameAtPosition(text(), m_cursorLocation);
 }
 
 void TextInput::ContentView::updateSelection(

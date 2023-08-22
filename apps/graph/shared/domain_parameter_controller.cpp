@@ -38,16 +38,13 @@ bool DomainParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   switchToolboxContent(textField, false);
   assert(!textField->isEditing());
-  if (function()->properties().isCartesian() &&
-      textField->draftText()[0] == '\0') {
-    textField->setEditing(true);  // To edit draft text buffer in setText
+  if (function()->properties().isCartesian() && textField->text()[0] == '\0') {
     if (textField == m_boundsCells[0].textField()) {
       textField->setText(Infinity::Name(true));
     } else {
       assert(textField == m_boundsCells[1].textField());
       textField->setText(Infinity::Name(false));
     }
-    textField->setEditing(false);  // set editing back to previous value
   }
   return SingleRangeController::textFieldDidFinishEditing(textField, event);
 }
@@ -55,6 +52,7 @@ bool DomainParameterController::textFieldDidFinishEditing(
 void DomainParameterController::textFieldDidAbortEditing(
     AbstractTextField* textField) {
   switchToolboxContent(textField, false);
+  SingleRangeController::textFieldDidAbortEditing(textField);
 }
 
 I18n::Message DomainParameterController::parameterMessage(int index) const {

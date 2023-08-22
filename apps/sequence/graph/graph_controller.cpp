@@ -69,7 +69,7 @@ float GraphController::interestingXMin() const {
 
 bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
                                                 Ion::Events::Event event) {
-  double floatBody = ParseInputFloatValue<double>(textField->draftText());
+  double floatBody = ParseInputFloatValue<double>(textField->text());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

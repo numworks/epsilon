@@ -207,6 +207,10 @@ class TypeBlock : public Block {
       case BlockType::Rref:
       case BlockType::Trace:
       case BlockType::Transpose:
+      case BlockType::ComplexArgument:
+      case BlockType::Conjugate:
+      case BlockType::ImaginaryPart:
+      case BlockType::RealPart:
       case BlockType::ParenthesisLayout:
       case BlockType::SquareRoot:
       case BlockType::VerticalOffsetLayout:

@@ -87,6 +87,14 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::MatrixTrace::Builder(child);
       case BlockType::Transpose:
         return Poincare::MatrixTranspose::Builder(child);
+      case BlockType::ComplexArgument:
+        return Poincare::ComplexArgument::Builder(child);
+      case BlockType::Conjugate:
+        return Poincare::Conjugate::Builder(child);
+      case BlockType::ImaginaryPart:
+        return Poincare::ImaginaryPart::Builder(child);
+      case BlockType::RealPart:
+        return Poincare::RealPart::Builder(child);
       case BlockType::Derivative: {
         Poincare::Expression symbol =
             ToPoincareExpression(exp->childAtIndex(1));
@@ -259,6 +267,18 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       SharedEditionPool->pushBlock(BlockType::Dot);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::ComplexArgument:
+      SharedEditionPool->pushBlock(BlockType::ComplexArgument);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Conjugate:
+      SharedEditionPool->pushBlock(BlockType::Conjugate);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ImaginaryPart:
+      SharedEditionPool->pushBlock(BlockType::ImaginaryPart);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::RealPart:
+      SharedEditionPool->pushBlock(BlockType::RealPart);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
         SharedEditionPool->pushBlock(BlockType::Logarithm);

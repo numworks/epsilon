@@ -31,6 +31,10 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Rref, "rref"},
     {BlockType::Trace, "trace"},
     {BlockType::Transpose, "transpose"},
+    {BlockType::ComplexArgument, "arg"},
+    {BlockType::RealPart, "re"},
+    {BlockType::ImaginaryPart, "im"},
+    {BlockType::Conjugate, "conj"},
 };
 
 bool Builtin::IsBuiltin(BlockType type) {
@@ -150,6 +154,18 @@ EditionReference Builtin::Promote(EditionReference parameterList,
       break;
     case BlockType::Transpose:
       header = KTree<BlockType::Transpose>();
+      break;
+    case BlockType::ComplexArgument:
+      header = KTree<BlockType::ComplexArgument>();
+      break;
+    case BlockType::RealPart:
+      header = KTree<BlockType::RealPart>();
+      break;
+    case BlockType::ImaginaryPart:
+      header = KTree<BlockType::ImaginaryPart>();
+      break;
+    case BlockType::Conjugate:
+      header = KTree<BlockType::Conjugate>();
       break;
     default:
       assert(false);

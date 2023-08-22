@@ -18,8 +18,12 @@ class Builtin : public std::pair<BlockType, Aliases> {
   static bool HasReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(BlockType type);
-  static uint8_t MinNumberOfParameters(BlockType type);
-  static uint8_t MaxNumberOfParameters(BlockType type);
+  static uint8_t MinNumberOfParameters(BlockType type) {
+    return TypeBlock::NumberOfChildren(type);
+  }
+  static uint8_t MaxNumberOfParameters(BlockType type) {
+    return MinNumberOfParameters(type);
+  }
   static EditionReference Promote(EditionReference parameterList,
                                   BlockType type);
 };

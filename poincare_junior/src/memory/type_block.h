@@ -57,8 +57,8 @@ class TypeBlock : public Block {
            m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts);
   }
 
-  constexpr bool isOfType(std::initializer_list<BlockType> types) const {
-    BlockType thisType = type();
+  constexpr static bool IsOfType(BlockType thisType,
+                                 std::initializer_list<BlockType> types) {
     for (BlockType t : types) {
       if (thisType == t) {
         return true;
@@ -67,12 +67,21 @@ class TypeBlock : public Block {
     return false;
   }
 
-  constexpr bool isNAry() const {
-    return isOfType({BlockType::Addition, BlockType::Multiplication,
-                     BlockType::RackLayout, BlockType::Set, BlockType::List,
-                     BlockType::Polynomial, BlockType::SystemList});
+  constexpr bool isOfType(std::initializer_list<BlockType> types) const {
+    return IsOfType(type(), types);
   }
-  // NAry with a single metaBlock for number of children
+
+  static constexpr std::initializer_list<BlockType> k_nAryBlockTypes = {
+      BlockType::Addition,  BlockType::Multiplication, BlockType::RackLayout,
+      BlockType::Set,       BlockType::List,           BlockType::Polynomial,
+      BlockType::SystemList};
+
+  // Their next metaBlock contains the numberOfChildren
+  constexpr static bool IsNAry(BlockType thisType) {
+    return IsOfType(thisType, k_nAryBlockTypes);
+  }
+  constexpr bool isNAry() const { return IsNAry(type()); }
+  // NAry with a single metaBlock
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
@@ -159,14 +168,9 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr int numberOfChildren() const {
-    if (isNAry()) {
-      return static_cast<uint8_t>(*next());
-    }
-    switch (type()) {
-      case BlockType::Matrix:
-        return static_cast<uint8_t>(*next()) *
-               static_cast<uint8_t>(*nextNth(2));
+  constexpr static int NumberOfChildren(BlockType type) {
+    assert(type != BlockType::Matrix && !IsNAry(type));
+    switch (type) {
       case BlockType::Derivative:
         return 3;
       case BlockType::Power:
@@ -210,6 +214,17 @@ class TypeBlock : public Block {
       default:
         return 0;
     }
+  }
+
+  constexpr int numberOfChildren() const {
+    if (isNAry()) {
+      return static_cast<uint8_t>(*next());
+    }
+    BlockType thisType = type();
+    if (thisType == BlockType::Matrix) {
+      return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
+    }
+    return NumberOfChildren(thisType);
   }
 
   bool isScalarOnly() const {

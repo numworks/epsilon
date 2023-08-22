@@ -78,23 +78,6 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
   assert(false);
 }
 
-uint8_t Builtin::MinNumberOfParameters(BlockType type) {
-  switch (type) {
-    case BlockType::Derivative:
-      return 3;
-    case BlockType::Logarithm:
-    case BlockType::Cross:
-    case BlockType::Dot:
-      return 2;
-    default:
-      return 1;
-  }
-}
-
-uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
-  return MinNumberOfParameters(type);
-}
-
 EditionReference Builtin::Promote(EditionReference parameterList,
                                   BlockType type) {
   const Tree *header;

@@ -64,7 +64,7 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
                     glyphStyle);
   } else {
     assert(m_isEditing);
-    int selectionOffset = selectionLeft() - draftText();
+    int selectionOffset = selectionLeft() - text();
     const char *textToDraw = text();
     // Draw the non selected text on the left of the selection
     ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(),
@@ -153,10 +153,11 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
 
   char *buffer = const_cast<char *>(draftText());
   size_t editedLength = draftTextLength();
+  size_t bufferSize = draftTextBufferSize();
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
-  if (editedLength + textLength >= draftTextBufferSize() || textLength == 0) {
+  if (editedLength + textLength >= bufferSize || textLength == 0) {
     return false;
   }
 
@@ -166,8 +167,7 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
   /* Caution: One byte will be overridden by the null-terminating char of
    * strlcpy */
   size_t copySize = std::min(
-      textLength + 1,
-      static_cast<size_t>((buffer + draftTextBufferSize()) - location));
+      textLength + 1, static_cast<size_t>((buffer + bufferSize) - location));
   char *overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);

@@ -29,8 +29,7 @@ class SuggestionTextField : public Escher::AbstractTextField {
 
     const char* suggestion() const { return m_suggestion; }
     const char* suggestionSuffix() const {
-      return UTF8Helper::SuffixCaseInsensitiveNoCombining(draftText(),
-                                                          m_suggestion);
+      return UTF8Helper::SuffixCaseInsensitiveNoCombining(text(), m_suggestion);
     }
     void setSuggestion(const char* suggestion);
 

@@ -84,7 +84,7 @@ bool InputCategoricalTableCell::textFieldShouldFinishEditing(
 
 bool InputCategoricalTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField *textField, Ion::Events::Event event) {
-  double p = ParseInputFloatValue<double>(textField->draftText());
+  double p = ParseInputFloatValue<double>(textField->text());
   if (HasUndefinedValue(p)) {
     return false;
   }
@@ -114,8 +114,14 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
     event = Ion::Events::Down;
   }
   m_selectableTableView.handleEvent(event);
-  textField->reinitDraftTextBuffer();
   return true;
+}
+
+void InputCategoricalTableCell::textFieldDidAbortEditing(
+    Escher::AbstractTextField *textField) {
+  m_selectableTableView.reloadCellAtLocation(
+      m_selectableTableView.selectedColumn(),
+      m_selectableTableView.selectedRow());
 }
 
 bool InputCategoricalTableCell::handleEvent(Ion::Events::Event event) {

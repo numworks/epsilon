@@ -128,7 +128,6 @@ class TextArea : public TextInput {
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char* textBuffer, size_t textBufferSize);
     const char* text() const override { return m_text.text(); }
-    const char* draftText() const override { return m_text.text(); }
     const Text* getText() const { return &m_text; }
     bool insertTextAtLocation(const char* text, char* location,
                               int textLength = -1) override;

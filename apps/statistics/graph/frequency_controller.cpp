@@ -31,7 +31,7 @@ void FrequencyController::didBecomeFirstResponder() {
 
 bool FrequencyController::textFieldDidFinishEditing(
     Escher::AbstractTextField *textField, Ion::Events::Event event) {
-  double newX = ParseInputFloatValue<double>(textField->draftText());
+  double newX = ParseInputFloatValue<double>(textField->text());
   if (HasUndefinedValue(newX)) {
     return false;
   }

@@ -154,7 +154,7 @@ bool InputCategoricalController::textFieldShouldFinishEditing(
 bool InputCategoricalController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   // Parse and check significance level
-  double p = ParseInputFloatValue<double>(textField->draftText());
+  double p = ParseInputFloatValue<double>(textField->text());
   if (HasUndefinedValue(p)) {
     return false;
   }
@@ -172,8 +172,14 @@ bool InputCategoricalController::textFieldDidFinishEditing(
     event = Ion::Events::Down;
   }
   m_selectableListView.handleEvent(event);
-  textField->reinitDraftTextBuffer();
   return true;
+}
+
+void InputCategoricalController::textFieldDidAbortEditing(
+    AbstractTextField *textField) {
+  int i = indexOfEditedParameterAtIndex(m_selectableListView.selectedRow());
+  double p = m_statistic->parameterAtIndex(i);
+  PrintValueInTextHolder(p, textField, true, true);
 }
 
 bool InputCategoricalController::ButtonAction(

@@ -17,9 +17,7 @@
 
 namespace Escher {
 
-/* Draft text used when editing, in order to save previous text
- * in case edition fails or abort.*/
-static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
+static char s_sharedTextBuffer[AbstractTextField::MaxBufferSize()];
 
 /* AbstractTextField::ContentView */
 
@@ -32,10 +30,9 @@ AbstractTextField::ContentView::ContentView(char *textBuffer,
       m_isEditing(false),
       m_isStalled(false) {
   if (textBuffer == nullptr) {
-    m_textBuffer = s_draftTextBuffer;
+    m_textBuffer = s_sharedTextBuffer;
   }
   assert(m_textBufferSize <= k_maxBufferSize);
-  reinitDraftTextBuffer();
 }
 
 void AbstractTextField::ContentView::setBackgroundColor(
@@ -87,17 +84,12 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
 }
 
 const char *AbstractTextField::ContentView::text() const {
-  return const_cast<const char *>(m_isEditing ? s_draftTextBuffer
-                                              : m_textBuffer);
-}
-
-const char *AbstractTextField::ContentView::draftText() const {
-  return s_draftTextBuffer;
+  return const_cast<const char *>(m_textBuffer);
 }
 
 void AbstractTextField::ContentView::setText(const char *text) {
   size_t textRealLength = strlen(text);
-  size_t maxBufferSize = m_isEditing ? draftTextBufferSize() : m_textBufferSize;
+  size_t maxBufferSize = m_textBufferSize;
   char *buffer = const_cast<char *>(this->text());
   if (textRealLength > maxBufferSize - 1) {
     /* The text was too long to be copied
@@ -123,8 +115,8 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   }
   resetSelection();
   m_isEditing = isEditing;
-  const char *bufferStart = draftText();
-  const char *bufferEnd = draftTextEnd();
+  const char *bufferStart = text();
+  const char *bufferEnd = textEnd();
   if (m_cursorLocation < bufferStart || m_cursorLocation > bufferEnd) {
     m_cursorLocation = bufferEnd;
   }
@@ -138,12 +130,12 @@ void AbstractTextField::ContentView::stallOrStopEditing() {
   }
 }
 
-void AbstractTextField::ContentView::reinitDraftTextBuffer() {
+void AbstractTextField::ContentView::reinitTextBuffer() {
   /* We first need to clear the buffer, otherwise setCursorLocation might do
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
-  s_draftTextBuffer[0] = 0;
-  setCursorLocation(draftText());
+  m_textBuffer[0] = 0;
+  setCursorLocation(text());
 }
 
 bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
@@ -151,9 +143,9 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
                                                           int textLen) {
   assert(m_isEditing);
 
-  char *buffer = const_cast<char *>(draftText());
-  size_t editedLength = draftTextLength();
-  size_t bufferSize = draftTextBufferSize();
+  char *buffer = const_cast<char *>(this->text());
+  size_t editedLength = textLength();
+  size_t bufferSize = textBufferSize();
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
@@ -191,7 +183,7 @@ KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
 bool AbstractTextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
-  char *buffer = const_cast<char *>(draftText());
+  char *buffer = const_cast<char *>(text());
 
   if (m_format.horizontalAlignment > 0.0f) {
     /* Reload the view. If we do it later, the text beins supposedly shorter, we
@@ -218,9 +210,9 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
 
 bool AbstractTextField::ContentView::removeEndOfLine() {
   assert(m_isEditing);
-  char *buffer = const_cast<char *>(draftText());
+  char *buffer = const_cast<char *>(text());
   size_t lengthToCursor = (size_t)(cursorLocation() - buffer);
-  if (draftTextLength() == lengthToCursor) {
+  if (textLength() == lengthToCursor) {
     return false;
   }
   reloadRectFromPosition(m_format.horizontalAlignment == 0.0f ? cursorLocation()
@@ -234,7 +226,7 @@ void AbstractTextField::ContentView::willModifyTextBuffer() {
   assert(m_isEditing);
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
-  reloadRectFromPosition(draftText());
+  reloadRectFromPosition(text());
 }
 
 void AbstractTextField::ContentView::didModifyTextBuffer() {
@@ -245,13 +237,13 @@ void AbstractTextField::ContentView::didModifyTextBuffer() {
 
 size_t AbstractTextField::dumpContent(char *buffer, size_t bufferSize,
                                       int *cursorOffset) {
-  size_t size = draftTextLength() + 1;
+  size_t size = textLength() + 1;
   if (size > bufferSize) {
     buffer[0] = 0;
     *cursorOffset = -1;
   } else {
-    memcpy(buffer, draftText(), size);
-    *cursorOffset = cursorLocation() - draftText();
+    memcpy(buffer, text(), size);
+    *cursorOffset = cursorLocation() - text();
   }
   return 0;
 }
@@ -260,9 +252,9 @@ size_t AbstractTextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);
   size_t removedLength = selectionRight() - selectionLeft();
-  char *buffer = const_cast<char *>(draftText());
+  char *buffer = const_cast<char *>(text());
   strlcpy(const_cast<char *>(selectionLeft()), selectionRight(),
-          draftTextBufferSize() - (selectionLeft() - buffer));
+          textBufferSize() - (selectionLeft() - buffer));
   // We cannot call resetSelection() because m_selectionEnd is invalid.
   m_selectionStart = nullptr;
   return removedLength;
@@ -309,13 +301,11 @@ void AbstractTextField::setText(const char *text) {
   if (contentView()->isStalled()) {
     return;
   }
-  resetScroll();
   contentView()->setText(text);
-  if (this->text() == draftText()) {
-    /* Set the cursor location here and not in ContentView::setText so that
-     * TextInput::willSetCursorLocation is called. */
-    setCursorLocation(draftText() + strlen(text));
-  }
+  resetScroll();
+  /* Set the cursor location here and not in ContentView::setText so that
+   * TextInput::willSetCursorLocation is called. */
+  setCursorLocation(this->text() + strlen(text));
 }
 
 void AbstractTextField::removePreviousGlyphIfRepetition(
@@ -336,13 +326,12 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
                                          char *buffer, size_t bufferLength) {
   assert(isEditable());
   if (!isEditing()) {
-    reinitDraftTextBuffer();
     setEditing(true);
+    reinitTextBuffer();
     if (m_delegate) {
       m_delegate->textFieldDidStartEditing(this);
     }
   }
-  assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
   bool defaultXNTHasChanged = false;
   if (Poincare::FindXNTSymbol(decoder, &defaultXNTHasChanged,
@@ -480,7 +469,6 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle back
   if (event == Ion::Events::Back && isEditing()) {
-    reinitDraftTextBuffer();
     setEditing(false);
     if (m_delegate) {
       m_delegate->textFieldDidAbortEditing(this);
@@ -541,10 +529,10 @@ bool AbstractTextField::handleMoveEvent(Ion::Events::Event event) {
       resetSelection();
       return true;
     }
-    if (event == Ion::Events::Left && cursorLocation() > draftText()) {
+    if (event == Ion::Events::Left && cursorLocation() > text()) {
       return TextInput::moveCursorLeft();
     }
-    if (event == Ion::Events::Right && cursorLocation() < draftTextEnd()) {
+    if (event == Ion::Events::Right && cursorLocation() < textEnd()) {
       return TextInput::moveCursorRight();
     }
   }
@@ -570,8 +558,8 @@ bool AbstractTextField::privateHandleEventWithText(
     const char *eventText, bool indentation, bool forceCursorRightOfText) {
   assert(isEditable());
   if (!isEditing()) {
-    reinitDraftTextBuffer();
     setEditing(true);
+    reinitTextBuffer();
     if (m_delegate) {
       m_delegate->textFieldDidStartEditing(this);
     }
@@ -636,8 +624,8 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
 
 void AbstractTextField::removeWholeText() {
   assert(isEditable());
-  reinitDraftTextBuffer();
   resetSelection();
+  reinitTextBuffer();
   markWholeFrameAsDirty();
   layoutSubviews();
   resetScroll();

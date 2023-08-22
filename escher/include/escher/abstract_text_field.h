@@ -7,14 +7,6 @@
 
 namespace Escher {
 
-/* TODO: TextField currently uses using 2 buffers:
- * - one to keep the displayed text
- * - another one to edit the text while keeping the previous text in the first
- *   buffer to be able to abort edition.
- * We could actually use only one buffer if for all textfields we implement the
- * delegate method 'textFieldDidAbortEdition' in the way that it reloads the
- * previous text from the model instead of from the textfield buffer. */
-
 class AbstractTextField : public TextInput {
  public:
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
@@ -45,17 +37,14 @@ class AbstractTextField : public TextInput {
   bool isEditable() { return m_delegate->textFieldIsEditable(this); }
   void setDelegate(TextFieldDelegate *delegate) { m_delegate = delegate; }
   void setText(const char *text);
-  char *draftText() const {
-    return const_cast<char *>(nonEditableContentView()->draftText());
+  char *text() const {
+    return const_cast<char *>(nonEditableContentView()->text());
   }
-  size_t draftTextLength() const {
-    assert(isEditing());
-    return nonEditableContentView()->draftTextLength();
+  size_t textLength() const { return nonEditableContentView()->textLength(); }
+  char *textEnd() const {
+    return const_cast<char *>(nonEditableContentView()->textEnd());
   }
-  char *draftTextEnd() const {
-    return const_cast<char *>(nonEditableContentView()->draftTextEnd());
-  }
-  void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
+  void reinitTextBuffer() { contentView()->reinitTextBuffer(); }
   KDFont::Size font() const { return nonEditableContentView()->font(); }
   void setTextColor(KDColor textColor) {
     contentView()->setTextColor(textColor);
@@ -63,7 +52,7 @@ class AbstractTextField : public TextInput {
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char *buffer,
                         size_t bufferLength);
   bool cursorAtEndOfText() const {
-    return isEditing() && cursorLocation() == draftTextEnd();
+    return isEditing() && cursorLocation() == textEnd();
   }
   size_t dumpContent(char *buffer, size_t bufferSize, int *cursorOffset);
 
@@ -89,7 +78,6 @@ class AbstractTextField : public TextInput {
 
     // TextInput::ContentView
     const char *text() const override;
-    const char *draftText() const override;
     /* If the text to be appended is too long to be added without overflowing
      * the buffer, nothing is done (not even adding few letters from the text to
      * reach the maximum buffer capacity) and false is returned. */
@@ -107,8 +95,8 @@ class AbstractTextField : public TextInput {
     bool isEditing() const { return m_isEditing; }
     void setText(const char *text);
     void setEditing(bool isEditing);
-    void reinitDraftTextBuffer();
-    size_t draftTextBufferSize() const { return MaxBufferSize(); }
+    void reinitTextBuffer();
+    size_t textBufferSize() const { return m_textBufferSize; }
     void willModifyTextBuffer();
     void didModifyTextBuffer();
 

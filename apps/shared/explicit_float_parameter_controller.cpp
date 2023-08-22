@@ -55,14 +55,7 @@ void ExplicitFloatParameterController::fillParameterCellAtRow(int row) {
   if (textFieldOfCellAtRow(row)->isEditing()) {
     return;
   }
-  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
-  constexpr int bufferSize =
-      PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-      parameterAtIndex(row), buffer, bufferSize, precision,
-      Preferences::PrintFloatMode::Decimal);
-  textFieldOfCellAtRow(row)->setText(buffer);
+  setParameterCellValue(row);
 }
 
 bool ExplicitFloatParameterController::textFieldShouldFinishEditing(
@@ -74,7 +67,7 @@ bool ExplicitFloatParameterController::textFieldShouldFinishEditing(
 
 bool ExplicitFloatParameterController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  float floatBody = ParseInputFloatValue<double>(textField->draftText());
+  float floatBody = ParseInputFloatValue<double>(textField->text());
   int row = selectedRow();
   if (HasUndefinedValue(floatBody)) {
     return false;
@@ -90,8 +83,23 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
   } else {
     m_selectableListView.handleEvent(event);
   }
-  textField->reinitDraftTextBuffer();
   return true;
+}
+
+void ExplicitFloatParameterController::textFieldDidAbortEditing(
+    AbstractTextField *textField) {
+  setParameterCellValue(m_selectableListView.selectedRow());
+}
+
+void ExplicitFloatParameterController::setParameterCellValue(int row) {
+  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
+  constexpr int bufferSize =
+      PrintFloat::charSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      parameterAtIndex(row), buffer, bufferSize, precision,
+      Preferences::PrintFloatMode::Decimal);
+  textFieldOfCellAtRow(row)->setText(buffer);
 }
 
 }  // namespace Shared

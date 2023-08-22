@@ -52,6 +52,7 @@ class GoodnessTest final : public Chi2Test {
   constexpr static int k_maxDegreeOfFreedom = 10000;
 
   // Statistic
+  double parameterAtIndex(int i) const override;
   void setParameterAtIndex(double p, int i) override;
   bool authorizedParameterAtIndex(double p, int i) const override;
 

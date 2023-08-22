@@ -82,6 +82,11 @@ bool GoodnessTest::validateInputs() {
   return true;
 }
 
+double GoodnessTest::parameterAtIndex(int i) const {
+  return i == indexOfDegreeOfFreedom() ? m_degreesOfFreedom
+                                       : Statistic::parameterAtIndex(i);
+}
+
 void GoodnessTest::setParameterAtIndex(double p, int i) {
   if (i == indexOfDegreeOfFreedom()) {
     m_degreesOfFreedom = p;

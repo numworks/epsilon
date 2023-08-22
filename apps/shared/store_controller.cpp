@@ -39,7 +39,7 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField *textField,
   assert(selectedRow() != 0);
   int series = m_store->seriesAtColumn(selectedColumn());
   bool wasSeriesValid = m_store->seriesIsActive(series);
-  if (textField->draftText()[0] == 0) {  // If text = "", delete the cell
+  if (textField->text()[0] == 0) {  // If text = "", delete the cell
     bool didDeleteRow = false;
     handleDeleteEvent(true, &didDeleteRow);
     if (event == Ion::Events::Up || event == Ion::Events::Left ||
@@ -49,7 +49,6 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField *textField,
        * it already selects the next row. */
       selectableTableView()->handleEvent(event);
     }
-    textField->reinitDraftTextBuffer();
     return true;
   }
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(

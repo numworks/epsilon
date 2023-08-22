@@ -80,7 +80,7 @@ bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
       Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<double>(
-          textField->draftText(),
+          textField->text(),
           AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
@@ -91,7 +91,6 @@ bool HypothesisController::textFieldDidFinishEditing(
   m_test->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
   m_selectableListView.selectCell(k_indexOfHa);
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

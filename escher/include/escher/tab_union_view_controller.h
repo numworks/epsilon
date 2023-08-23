@@ -106,13 +106,13 @@ class TabUnionViewController : public TabViewController {
   const char* tabName(uint8_t index) override {
     return I18n::translate(m_titles[index]);
   };
-  void viewWillAppear() override;
 
  private:
   ViewController* children(uint8_t index) override {
     assert(index == m_tabs->activeTab());
     return m_tabs->tab()->top();
   }
+  void updateUnionActiveTab() override;
   I18n::Message m_titles[3];
   AbstractTabUnion* m_tabs;
 };

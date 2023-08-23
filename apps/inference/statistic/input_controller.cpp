@@ -19,8 +19,10 @@ InputController::InputController(Escher::StackViewController *parent,
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
       m_statistic(statistic),
       m_resultsController(resultsController),
-      m_significanceCell(&m_selectableListView, this) {
+      m_significanceCell(&m_selectableListView, this),
+      m_messageView(I18n::Message::DefineParameters, k_messageFormat) {
   m_okButton.setMessage(I18n::Message::Next);
+  setTopView(&m_messageView);
 }
 
 KDCoordinate InputController::nonMemoizedRowHeight(int row) {

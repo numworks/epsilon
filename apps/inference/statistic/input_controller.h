@@ -77,6 +77,7 @@ class InputController
   Escher::MenuCellWithEditableText<Escher::MessageTextView,
                                    Escher::MessageTextView>
       m_significanceCell;
+  Escher::MessageTextView m_messageView;
 };
 
 }  // namespace Inference

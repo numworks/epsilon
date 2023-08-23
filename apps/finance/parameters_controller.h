@@ -67,6 +67,7 @@ class ParametersController : public Shared::FloatParameterController<double>,
   char m_titleBuffer[k_titleBufferSize];
 
   ResultController* m_resultController;
+  Escher::MessageTextView m_messageView;
 };
 
 }  // namespace Finance

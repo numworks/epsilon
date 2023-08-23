@@ -12,12 +12,14 @@ ParametersController::ParametersController(StackViewController *parent,
                                            ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
       m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),
-      m_resultController(resultController) {
+      m_resultController(resultController),
+      m_messageView(I18n::Message::DefineParameters, k_messageFormat) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
     m_cells[i].setParentResponder(&m_selectableListView);
     m_cells[i].setDelegate(this);
   }
   m_dropdownCell.accessory()->setDropdown(&m_dropdown);
+  setTopView(&m_messageView);
 }
 
 const char *ParametersController::title() {

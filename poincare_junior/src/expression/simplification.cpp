@@ -53,7 +53,15 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
     child = child->nextTree();
     numberOfChildren--;
   }
-  return ShallowSystematicReduce(u) || modified;
+#if ASSERTIONS
+  EditionReference previousTree = u->clone();
+#endif
+  bool shallowModified = ShallowSystematicReduce(u);
+#if ASSERTIONS
+  assert(shallowModified != u->treeIsIdenticalTo(previousTree));
+  previousTree->removeTree();
+#endif
+  return shallowModified || modified;
 }
 
 bool Simplification::ShallowSystematicReduce(Tree* u) {
@@ -362,7 +370,8 @@ bool Simplification::SimplifyPower(Tree* u) {
     MoveNodeAtNode(p, SharedEditionPool->push<BlockType::Multiplication>(2));
     // PowU w Mult<2> p n
     SimplifyMultiplication(p);
-    return SimplifyPower(u);
+    SimplifyPower(u);
+    return true;
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->type() == BlockType::Multiplication) {
@@ -375,7 +384,8 @@ bool Simplification::SimplifyPower(Tree* u) {
     }
     n->removeTree();
     u->removeNode();
-    return SimplifyMultiplication(u);
+    SimplifyMultiplication(u);
+    return true;
   }
   // exp(a)^b -> exp(a*b)
   return PatternMatching::MatchReplaceAndSimplify(u, KPow(KExp(KA), KB),

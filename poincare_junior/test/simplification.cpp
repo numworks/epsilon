@@ -234,6 +234,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(a*b*c)^2", "a^(2)*b^(2)*c^(2)");
   // simplifies_to("a*a^(-1)", "1"); // FIXME
   // simplifies_to("2*a^1*(2a)^(-1)", "1");
+  simplifies_to("(x^3)^2", "x^(6)");
   simplifies_to("a*a*a", "a^(3)");
   simplifies_to("a*a*a*b", "b*a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*a^(3)*b^(2)");

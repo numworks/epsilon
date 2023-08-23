@@ -16,6 +16,10 @@ bool Derivation::ShallowSimplify(Tree *node) {
   const Tree *symbolValue = symbol->nextTree();
   Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   Derivate(derivand, symbol, symbolValue);
+  if (result->treeIsIdenticalTo(node)) {
+    result->removeTree();
+    return false;
+  }
   node->moveTreeOverTree(result);
   return true;
 }

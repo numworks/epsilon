@@ -484,11 +484,6 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
     return true;
   }
 
-  // Handle boxes
-  if (handleBoxEvent(event)) {
-    return true;
-  }
-
   // Handle copy
   if (event == Ion::Events::Copy) {
     storeInClipboard();
@@ -499,6 +494,11 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
     return false;
   }
   // From now on, we only consider editable fields
+
+  // Handle boxes
+  if (handleBoxEvent(event)) {
+    return true;
+  }
 
   // Handle cut
   if (event == Ion::Events::Cut) {

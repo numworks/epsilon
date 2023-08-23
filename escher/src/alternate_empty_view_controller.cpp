@@ -2,6 +2,8 @@
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/container.h>
 
+using namespace Poincare;
+
 namespace Escher {
 
 /* ContentView */
@@ -10,11 +12,18 @@ AlternateEmptyViewController::ContentView::ContentView(
     ViewController* mainViewController, AlternateEmptyViewDelegate* delegate)
     : m_mainViewController(mainViewController),
       m_delegate(delegate),
-      m_isEmpty(false) {}
+      m_isEmpty(TrinaryBoolean::Unknown) {}
+
+bool AlternateEmptyViewController::ContentView::isEmpty() {
+  if (m_isEmpty == TrinaryBoolean::Unknown) {
+    m_isEmpty = BinaryToTrinaryBool(m_delegate->isEmpty());
+  }
+  return TrinaryToBinaryBool(m_isEmpty);
+}
 
 View* AlternateEmptyViewController::ContentView::currentView() {
-  assert(m_isEmpty == m_delegate->isEmpty());
-  return m_isEmpty ? m_delegate->emptyView() : m_mainViewController->view();
+  assert(m_isEmpty == BinaryToTrinaryBool(m_delegate->isEmpty()));
+  return isEmpty() ? m_delegate->emptyView() : m_mainViewController->view();
 }
 
 View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
@@ -52,7 +61,7 @@ void AlternateEmptyViewController::didBecomeFirstResponder() {
 }
 
 void AlternateEmptyViewController::initView() {
-  m_contentView.updateIsEmpty();
+  m_contentView.resetIsEmpty();
   if (!m_contentView.isEmpty()) {
     m_contentView.mainViewController()->initView();
   }
@@ -69,6 +78,7 @@ void AlternateEmptyViewController::viewDidDisappear() {
   if (!m_contentView.isEmpty()) {
     m_contentView.mainViewController()->viewDidDisappear();
   }
+  m_contentView.resetIsEmpty();
 }
 
 }  // namespace Escher

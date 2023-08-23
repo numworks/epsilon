@@ -10,15 +10,20 @@ TXT_HEADER = 'NWS'
 #   echo "*.nws diff=nws" >> .git/info/attributes
 #   git config diff.nws.textconv "python3 build/screenshots/nws2txt.py"
 
-event_names = []
+events_names = []
+events_names_extended = []
 
-with open('ion/src/shared/events_names.inc') as f:
+def import_events_names(path, array):
+  with open(path) as f:
     for line in f:
         if line.startswith('//'): continue
-        event_names.append(line[1:-3]) # "Left",\n
+        array.append(line[1:-3]) # "Left",\n
 
-event_names += [""] * (256 - len(event_names))
-event_ids = {event_names[i] : i for i in range(256) if event_names[i]}
+import_events_names('ion/src/shared/events_names.inc', events_names);
+import_events_names('ion/src/shared/events_names_extended.inc', events_names_extended);
+
+events_names += [""] * (256 - len(events_names))
+events_ids = {events_names[i] : i for i in range(256) if events_names[i]}
 
 def is_binary_nws(path):
     with open(path, 'rb') as f:
@@ -44,7 +49,7 @@ def print_as_text(nwspath):
     print(language.decode())
 
     for c in events:
-        print(event_names[c])
+        print(events_names_extended[c])
 
 def print_as_nws(txtpath):
     with open(txtpath, encoding='ascii') as f:
@@ -54,7 +59,7 @@ def print_as_nws(txtpath):
         assert 0 < formatVersion < 256
         language = f.readline().strip()
         assert len(language) == 2
-        events = [event_ids[line.strip()] for line in f]
+        events = [events_ids[line.strip()] for line in f]
 
     out = sys.stdout.buffer
     out.write(BIN_HEADER)

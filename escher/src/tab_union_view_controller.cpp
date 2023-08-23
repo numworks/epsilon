@@ -52,14 +52,8 @@ void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
   }
 }
 
-void TabUnionViewController::viewWillAppear() {
-  if (m_dataSource->activeTab() < 0) {
-    m_dataSource->setActiveTab(0);
-  }
+void TabUnionViewController::updateUnionActiveTab() {
   m_tabs->setActiveTab(m_dataSource->activeTab());
-  m_view.setActiveView(activeViewController()->view());
-  activeViewController()->viewWillAppear();
-  m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());
 }
 
 }  // namespace Escher

@@ -70,6 +70,11 @@ inline TrinaryBoolean BinaryToTrinaryBool(bool b) {
   return b ? TrinaryBoolean::True : TrinaryBoolean::False;
 }
 
+inline bool TrinaryToBinaryBool(TrinaryBoolean b) {
+  assert(b != TrinaryBoolean::Unknown);
+  return b == TrinaryBoolean::True;
+}
+
 }  // namespace Poincare
 
 #endif

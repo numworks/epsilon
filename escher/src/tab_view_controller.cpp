@@ -125,7 +125,7 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
     m_view.m_tabView.setActiveIndex(i);
   }
   if (i != m_dataSource->activeTab()) {
-    children(m_dataSource->activeTab())->viewDidDisappear();
+    activeViewController()->viewDidDisappear();
     m_dataSource->setActiveTab(i);
   }
   /* If enter is false, we switch to the ith tab but the focus stays on the tab

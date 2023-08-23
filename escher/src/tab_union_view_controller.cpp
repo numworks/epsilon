@@ -33,7 +33,7 @@ void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
     if (!m_isSelected) {
       App::app()->setFirstResponder(nullptr);
     }
-    children(m_dataSource->activeTab())->viewDidDisappear();
+    activeViewController()->viewDidDisappear();
     m_tabs->setActiveTab(i);
   }
   ViewController* activeVC = children(i);
@@ -57,7 +57,7 @@ void TabUnionViewController::viewWillAppear() {
     m_dataSource->setActiveTab(0);
   }
   m_tabs->setActiveTab(m_dataSource->activeTab());
-  m_view.setActiveView(children(m_dataSource->activeTab())->view());
+  m_view.setActiveView(activeViewController()->view());
   activeViewController()->viewWillAppear();
   m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());
 }

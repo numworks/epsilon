@@ -257,12 +257,10 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::Unknown) {
     m_sequenceIsNotComputable[sequenceIndex] =
-        sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable(this)
-            ? TrinaryBoolean::True
-            : TrinaryBoolean::False;
+        BinaryToTrinaryBool(sequenceAtNameIndex(sequenceIndex)
+                                ->mainExpressionIsNotComputable(this));
   }
-  assert(m_sequenceIsNotComputable[sequenceIndex] != TrinaryBoolean::Unknown);
-  return m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::True;
+  return TrinaryToBinaryBool(m_sequenceIsNotComputable[sequenceIndex]);
 }
 
 int SequenceContext::rankForInitialValuesStorage(int sequenceIndex) const {

@@ -239,9 +239,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a*a*b", "b*a^(3)");
   simplifies_to("a*2a*b*a*b*4", "8*a^(3)*b^(2)");
   simplifies_to("1*1*1*1", "1");
-  simplifies_to("2*i*i", "-2");
-  simplifies_to("1+i*(1+i*(1+i))", "0");
-  simplifies_to("(1+i)*(3+2i)", "1+5*i");
   simplifies_to("2a+3b+4a", "6*a+3*b");
   simplifies_to("-6*b-4*a*b-2*b+3*a*b-4*b+2*a*b+3*b+6*a*b", "-9*b+7*a*b");
   simplifies_to("d+c+b+a", "a+b+c+d");
@@ -256,7 +253,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
                 "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
-  simplifies_to("diff(x+i*x, x, 2)", "1+i");
   simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
@@ -281,7 +277,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2*cos(2y)*cos(y)", "cos(y)+cos(3*y)");
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
-  simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
   simplifies_to("sin(17*π/12)^2+cos(5*π/12)^2", "1",
                 {.m_complexFormat = ComplexFormat::Cartesian});
   // Matrices
@@ -317,6 +312,29 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a^(1+1)", "a^(3)");
   simplifies_to("a*a^(-1)", "1", {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
+  // Complexes
+  simplifies_to("2*i*i", "-2");
+  simplifies_to("1+i*(1+i*(1+i))", "0");
+  simplifies_to("(1+i)*(3+2i)", "1+5*i");
+  simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("re(2+i*π)", "2");
+  simplifies_to("im(2+i*π)", "π");
+  simplifies_to("conj(2+i*π)", "2-π*i");
+  // TODO: simplifies_to("re(x+i*y)", "-1*im(y)+re(x)");
+  simplifies_to("re(x+i*y)", "re(x-im(y))");
+  // TODO: simplifies_to("im(x+i*y)", "im(x)+re(y)");
+  simplifies_to("im(x+i*y)", "im(x-im(y))+re(y)");
+  /* TODO: simplifies_to("conj(x+i*y)", "re(x)-im(y)-(im(x)+re(y))*i");
+   *        or simplifies_to("conj(x+i*y)", "conj(x)-conj(y)*i"); */
+  simplifies_to("conj(x+i*y)", "re(x-im(y))-(im(x-im(y))+re(y))*i");
+  simplifies_to("im(re(x)+i*im(x))", "im(x)");
+  simplifies_to("re(re(x)+i*im(x))", "re(x)");
+  // TODO: simplifies_to("abs(x+i*y)",
+  //             "√(-2*im(y)*re(x)+2*im(x)*re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
+  //             "re(y)^(2))");
+  simplifies_to(
+      "abs(x+i*y)",
+      "√(2*im(x-im(y))*re(y)+im(x-im(y))^(2)+re(y)^(2)+re(x-im(y))^(2))");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

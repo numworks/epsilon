@@ -2,6 +2,7 @@
 
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/comparison.h>
+#include <poincare_junior/src/expression/complex.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/float.h>
@@ -28,13 +29,6 @@ bool IsNumber(const Tree* u) { return u->block()->isNumber(); }
 bool IsRational(const Tree* u) { return u->block()->isRational(); }
 bool IsConstant(const Tree* u) { return IsNumber(u); }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
-
-const Tree* RealPart(const Tree* tree) {
-  return tree->type() == BlockType::Complex ? tree->nextNode() : tree;
-}
-const Tree* ImagPart(const Tree* tree) {
-  return tree->type() == BlockType::Complex ? tree->childAtIndex(1) : 0_e;
-}
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
@@ -94,32 +88,18 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     case BlockType::Exponential:
       return SimplifyExp(u);
     case BlockType::Complex:
-      return SimplifyComplex(u);
+      return Complex::SimplifyComplex(u);
+    case BlockType::ComplexArgument:
+      return Complex::SimplifyComplexArgument(u);
+    case BlockType::Conjugate:
+      return Complex::SimplifyConjugate(u);
+    case BlockType::ImaginaryPart:
+      return Complex::SimplifyImaginaryPart(u);
+    case BlockType::RealPart:
+      return Complex::SimplifyRealPart(u);
     default:
       return false;
   }
-}
-
-bool Simplification::SimplifyComplex(Tree* u) {
-  Tree* real = u->nextNode();
-  Tree* imag = real->nextTree();
-  if (Number::IsZero(imag)) {
-    // (A+0*i) -> A
-    imag->removeTree();
-    u->removeNode();
-    return true;
-  }
-  if (real->type() != BlockType::Complex &&
-      imag->type() != BlockType::Complex) {
-    return false;
-  }
-  // (A+B*i + (C+D*i)*i) -> (A+B*i) + (0 + 1*i)*(C+D*i)
-  imag->cloneTreeAtNode(KComplex(0_e, 1_e));
-  imag->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
-  SimplifyMultiplication(imag);
-  u->moveNodeOverNode(SharedEditionPool->push<BlockType::Addition>(2));
-  SimplifyAddition(u);
-  return true;
 }
 
 bool Simplification::SimplifyExp(Tree* u) {
@@ -178,6 +158,9 @@ bool Simplification::SimplifyAbs(Tree* u) {
     // ||x|| -> |x|
     child->removeNode();
     changed = true;
+  }
+  if (child->type() == BlockType::Complex) {
+    return Complex::SimplifyAbs(u) || changed;
   }
   if (!IsNumber(child)) {
     return changed;
@@ -357,7 +340,7 @@ bool Simplification::SimplifyPower(Tree* u) {
       // u is a pure imaginary
       u->moveTreeAtNode(SharedEditionPool->push<BlockType::Zero>());
       u->moveNodeAtNode(SharedEditionPool->push<BlockType::Complex>());
-      assert(!SimplifyComplex(u));
+      assert(!Complex::SimplifyComplex(u));
     }
     return true;
   }
@@ -486,10 +469,10 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     merge = PatternMatching::CreateAndSimplify(
         KComplex(KAdd(KMult(KA, KC), KMult(-1_e, KB, KD)),
                  KAdd(KMult(KA, KD), KMult(KB, KC))),
-        {.KA = RealPart(child),
-         .KB = ImagPart(child),
-         .KC = RealPart(next),
-         .KD = ImagPart(next)});
+        {.KA = Complex::UnSanitizedRealPart(child),
+         .KB = Complex::UnSanitizedImagPart(child),
+         .KC = Complex::UnSanitizedRealPart(next),
+         .KD = Complex::UnSanitizedImagPart(next)});
   }
   if (!merge) {
     return false;
@@ -659,10 +642,11 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
              next->type() == BlockType::Complex) {
     // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
     merge = PatternMatching::CreateAndSimplify(
-        KComplex(KAdd(KA, KC), KAdd(KB, KD)), {.KA = RealPart(child),
-                                               .KB = ImagPart(child),
-                                               .KC = RealPart(next),
-                                               .KD = ImagPart(next)});
+        KComplex(KAdd(KA, KC), KAdd(KB, KD)),
+        {.KA = Complex::UnSanitizedRealPart(child),
+         .KB = Complex::UnSanitizedImagPart(child),
+         .KC = Complex::UnSanitizedRealPart(next),
+         .KD = Complex::UnSanitizedImagPart(next)});
   }
   if (!merge) {
     return false;
@@ -1415,5 +1399,15 @@ bool Simplification::DeepApplyMatrixOperators(Tree* tree) {
   changed |= ShallowApplyMatrixOperators(tree);
   return changed;
 }
+
+/* TODO : Expand/Contract :
+ * complex(re(x),im(x)) <-> x
+ * arg(x*y) <-> arg(x)*arg(z)
+ * conj(x+y) <-> conj(x)+conj(z)
+ * Im(x+y) <-> Im(x)+Im(z)
+ * Re(x+y) <-> Re(x)+Re(z)
+ * DistributeOverNAry(tree, BlockType::RealPart, BlockType::Addition,
+ *                    BlockType::Addition, ShallowApplyComplexOperators);
+ */
 
 }  // namespace PoincareJ

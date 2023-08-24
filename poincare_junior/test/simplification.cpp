@@ -256,7 +256,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
                 "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
-  simplifies_to("diff(x+i*x, x, 2)", "1+1*i");
+  simplifies_to("diff(x+i*x, x, 2)", "1+i");
   simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");

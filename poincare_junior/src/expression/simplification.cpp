@@ -798,6 +798,15 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
          // Complex(0,A) -> A*i
          PatternMatching::MatchAndReplace(ref, KComplex(0_e, KA),
                                           KMult(KA, i_e)) ||
+         // Complex(A,1) -> A+i
+         PatternMatching::MatchAndReplace(ref, KComplex(KA, 1_e),
+                                          KAdd(KA, i_e)) ||
+         // Complex(A,-1) -> A-i
+         PatternMatching::MatchAndReplace(ref, KComplex(KA, -1_e),
+                                          KSub(KA, i_e)) ||
+         // Complex(A,-B) -> A-B*i
+         PatternMatching::MatchAndReplace(ref, KComplex(KA, KMult(-1_e, KTB)),
+                                          KSub(KA, KMult(KTB, i_e))) ||
          // Complex(A,B) -> A+B*i
          PatternMatching::MatchAndReplace(ref, KComplex(KA, KB),
                                           KAdd(KA, KMult(KB, i_e))) ||

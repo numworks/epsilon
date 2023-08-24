@@ -91,8 +91,6 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
       return Complex::SimplifyComplex(u);
     case BlockType::ComplexArgument:
       return Complex::SimplifyComplexArgument(u);
-    case BlockType::Conjugate:
-      return Complex::SimplifyConjugate(u);
     case BlockType::ImaginaryPart:
       return Complex::SimplifyImaginaryPart(u);
     case BlockType::RealPart:
@@ -865,6 +863,9 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   return
       // e -> exp(1)
       PatternMatching::MatchAndReplace(ref, e_e, KExp(1_e)) ||
+      // conj(A) -> re(A)-i*re(B)
+      PatternMatching::MatchAndReplace(
+          ref, KConj(KA), KComplex(KRe(KA), KMult(-1_e, KIm(KA)))) ||
       // i -> Complex(0,1)
       PatternMatching::MatchAndReplace(ref, i_e, KComplex(0_e, 1_e)) ||
       // A - B -> A + (-1)*B
@@ -1289,23 +1290,6 @@ bool Simplification::ExpandIm(Tree* tree) {
   return DistributeOverNAry(tree, BlockType::ImaginaryPart, BlockType::Addition,
                             BlockType::Addition,
                             Complex::SimplifyImaginaryPart);
-}
-
-bool Simplification::ContractConj(Tree* ref) {
-  // A? + conj(B) + conj(C) + D? = A + conj(B+C) + D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KAdd(KAnyTreesPlaceholder<A>(), KConj(KPlaceholder<B>()),
-           KConj(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KAnyTreesPlaceholder<A>(),
-           KConj(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()));
-}
-
-bool Simplification::ExpandConj(Tree* tree) {
-  // conj(x+y) = conj(x)+conj(z)
-  return DistributeOverNAry(tree, BlockType::Conjugate, BlockType::Addition,
-                            BlockType::Addition, Complex::SimplifyConjugate);
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {

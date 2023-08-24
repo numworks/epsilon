@@ -18,8 +18,6 @@ struct Complex {
   EDITION_REF_WRAP(SimplifyRealPart);
   static bool SimplifyImaginaryPart(Tree* t);
   EDITION_REF_WRAP(SimplifyImaginaryPart);
-  static bool SimplifyConjugate(Tree* t);
-  EDITION_REF_WRAP(SimplifyConjugate);
   // Simplify abs on complexes
   static bool SimplifyAbs(Tree* t);
   EDITION_REF_WRAP(SimplifyAbs);

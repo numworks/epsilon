@@ -320,10 +320,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("re(2+i*π)", "2");
   simplifies_to("im(2+i*π)", "π");
   simplifies_to("conj(2+i*π)", "2-π*i");
-  // TODO: simplifies_to("re(conj(x))-re(x)", "0");
-  simplifies_to("re(conj(x))-re(x)", "-1*re(x)+re(conj(x))");
-  // TODO: simplifies_to("conj(conj(x))", "x");
-  simplifies_to("conj(conj(x))", "conj(conj(x))");
+  simplifies_to("re(conj(x))-re(x)", "0");
+  simplifies_to("conj(conj(x))", "x");
   // TODO: simplifies_to("re(x+im(y))", "re(x)+im(y)");
   simplifies_to("re(x+im(y))", "re(x+im(y))");
   simplifies_to("re(x)+i*im(x)", "x");

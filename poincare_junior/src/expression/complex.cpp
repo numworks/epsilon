@@ -20,7 +20,7 @@ bool Complex::IsReal(const Tree* tree) {
   if (tree->block()->isOfType({
           BlockType::Addition, BlockType::Multiplication,
           BlockType::Exponential, BlockType::Ln, BlockType::Power,
-          // BlockType::Conjugate,   BlockType::Cross,
+          // BlockType::Cross,
           // BlockType::Derivative,  BlockType::Det,
           // BlockType::Dot,         BlockType::Inverse,
           // BlockType::List,        BlockType::Matrix,
@@ -116,23 +116,6 @@ bool Complex::SimplifyImaginaryPart(Tree* tree) {
     return true;
   }
   return false;
-}
-
-bool Complex::SimplifyConjugate(Tree* tree) {
-  assert(tree->type() == BlockType::Conjugate);
-  Tree* child = tree->childAtIndex(0);
-  if (IsReal(child)) {
-    tree->removeNode();
-    return true;
-  }
-  if (child->type() != BlockType::Complex) {
-    return false;
-  }
-  assert(IsSanitized(child));
-  // conj(x+i*y) = x-i*y if x and y are reals
-  return PatternMatching::MatchReplaceAndSimplify(
-      tree, KConj(KComplex(KPlaceholder<A>(), KPlaceholder<B>())),
-      KComplex(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())));
 }
 
 bool Complex::SimplifyAbs(Tree* tree) {

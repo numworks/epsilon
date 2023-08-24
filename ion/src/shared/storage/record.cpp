@@ -45,7 +45,7 @@ Record::Record(Record::Name name) {
       Ion::crc32Byte((const uint8_t *)name.baseName, name.baseNameLength);
   crc32Results[1] =
       Ion::crc32Byte((const uint8_t *)name.extension, strlen(name.extension));
-  m_fullNameCRC32 = Ion::crc32Word(crc32Results, 2);
+  m_fullNameCRC32 = Ion::crc32DoubleWord(crc32Results, 2);
 }
 
 Record::Record(const char *fullName)
@@ -69,7 +69,7 @@ uint32_t Record::checksum() const {
   crc32Results[0] = m_fullNameCRC32;
   Data data = value();
   crc32Results[1] = Ion::crc32Byte((const uint8_t *)data.buffer, data.size);
-  return Ion::crc32Word(crc32Results, 2);
+  return Ion::crc32DoubleWord(crc32Results, 2);
 }
 
 Record::Name Record::name() const {

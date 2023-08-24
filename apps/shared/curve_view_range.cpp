@@ -16,7 +16,8 @@ uint32_t CurveViewRange::rangeChecksum() {
   size_t dataLengthInBytes = sizeof(data);
   // Assert that dataLengthInBytes is a multiple of 4
   assert((dataLengthInBytes & 0x3) == 0);
-  return Ion::crc32Word((uint32_t *)data, dataLengthInBytes / sizeof(uint32_t));
+  return Ion::crc32DoubleWord((uint32_t *)data,
+                              dataLengthInBytes / sizeof(uint32_t));
 }
 
 float CurveViewRange::computeGridUnit(float minNumberOfUnits,

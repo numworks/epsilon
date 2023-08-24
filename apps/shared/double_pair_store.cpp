@@ -360,7 +360,7 @@ uint32_t DoublePairStore::storeChecksum() const {
   for (int i = 0; i < k_numberOfSeries; i++) {
     checkSumPerSeries[i] = storeChecksumForSeries(i);
   }
-  return Ion::crc32Word(checkSumPerSeries, k_numberOfSeries);
+  return Ion::crc32DoubleWord(checkSumPerSeries, k_numberOfSeries);
 }
 
 /* TODO: This function is temporary. We want to create a function with a

@@ -28,7 +28,7 @@ static uint32_t crc32Helper(const uint8_t *data, size_t length,
   return crc;
 }
 
-uint32_t crc32Word(const uint32_t *data, size_t length) {
+uint32_t crc32DoubleWord(const uint32_t *data, size_t length) {
   return crc32Helper(reinterpret_cast<const uint8_t *>(data), length, true);
 }
 

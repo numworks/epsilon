@@ -1000,7 +1000,8 @@ bool Simplification::PolynomialInterpretation(Tree* e) {
 
 bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
                                         BlockType naryTarget,
-                                        BlockType naryOutput, int childIndex) {
+                                        BlockType naryOutput,
+                                        Operation operation, int childIndex) {
   assert(naryTarget == BlockType::Addition ||
          naryTarget == BlockType::Multiplication);
   assert(naryOutput == BlockType::Addition ||
@@ -1035,9 +1036,7 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
     EditionReference(clone->block() + childIndexOffset)
         ->moveTreeOverTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
-    /* TODO: clone is always of the same type, the exact simplify method could
-     * be passed as an argument. */
-    ShallowSystematicReduce(clone);
+    operation(clone);
   }
   // f(0,E) ... +(,,) ... *(f(A,E), f(B,E), f(C,E))
   children->removeNode();
@@ -1080,7 +1079,7 @@ bool Simplification::ContractAbs(Tree* ref) {
 bool Simplification::ExpandAbs(Tree* ref) {
   // |A*B*...| = |A|*|B|*...
   return DistributeOverNAry(ref, BlockType::Abs, BlockType::Multiplication,
-                            BlockType::Multiplication);
+                            BlockType::Multiplication, SimplifyAbs);
 }
 
 bool Simplification::ContractLn(Tree* ref) {
@@ -1093,7 +1092,7 @@ bool Simplification::ContractLn(Tree* ref) {
 bool Simplification::ExpandLn(Tree* ref) {
   // ln(A*B*...) = ln(A) + ln(B) + ...
   return DistributeOverNAry(ref, BlockType::Ln, BlockType::Multiplication,
-                            BlockType::Addition);
+                            BlockType::Addition, SimplifyLn);
 }
 
 bool Simplification::ExpandExp(Tree* ref) {
@@ -1104,7 +1103,7 @@ bool Simplification::ExpandExp(Tree* ref) {
           KMult(KExp(KA), KComplex(KTrig(KB, 0_e), KTrig(KB, 1_e)))) ||
       // exp(A+B+...) = exp(A) * exp(B) * ...
       DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
-                         BlockType::Multiplication);
+                         BlockType::Multiplication, SimplifyExp);
 }
 
 bool Simplification::ContractExpMult(Tree* ref) {
@@ -1236,24 +1235,9 @@ bool Simplification::ExpandMult(Tree* ref) {
   if (childIndex >= numberOfChildren) {
     return false;
   }
-  if (!DistributeOverNAry(ref, BlockType::Multiplication, BlockType::Addition,
-                          BlockType::Addition, childIndex)) {
-    return false;
-  }
-  // Recursively expand multiplication children.
-  assert(ref->type() == BlockType::Addition);
-  bool changedAgain = false;
-  child = ref->nextNode();
-  for (size_t i = 0; i < ref->numberOfChildren(); i++) {
-    if (ExpandMult(child)) {
-      changedAgain = true;
-    }
-    child = child->nextTree();
-  }
-  if (changedAgain) {
-    SimplifyAddition(ref);
-  }
-  return true;
+  return DistributeOverNAry(ref, BlockType::Multiplication, BlockType::Addition,
+                            BlockType::Addition, ExpandMultSubOperation,
+                            childIndex);
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {

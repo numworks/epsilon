@@ -115,12 +115,13 @@ class Simplification {
   typedef bool (*ShallowOperation)(Tree *node, void *context);
   static bool ApplyShallowInDepth(Tree *node, ShallowOperation shallowOperation,
                                   void *context = nullptr);
+  typedef bool (*Operation)(Tree *node);
   /* Replace target(..., naryTarget(A, B, ...), ...)
    * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
   static bool DistributeOverNAry(Tree *node, BlockType target,
                                  BlockType naryTarget, BlockType naryOutput,
+                                 Operation operation = ShallowSystematicReduce,
                                  int childIndex = 0);
-  typedef bool (*Operation)(Tree *node);
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
@@ -155,6 +156,9 @@ class Simplification {
   static bool ExpandTrigonometric(Tree *node);
   EDITION_REF_WRAP(ExpandTrigonometric);
   static bool ExpandMult(Tree *node);
+  static bool ExpandMultSubOperation(Tree *node) {
+    return SimplifyMultiplication(node) + ExpandMult(node);
+  }
   EDITION_REF_WRAP(ExpandMult);
   static bool ExpandPowerComplex(Tree *node);
   EDITION_REF_WRAP(ExpandPowerComplex);

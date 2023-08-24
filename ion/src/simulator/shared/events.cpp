@@ -89,20 +89,15 @@ Event getEvent(int *timeout) {
 #if ESCHER_LOG_EVENTS_NAME
       Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
 #endif
-#if ION_SIMULATOR_FILES
-      // Save screenshot
-      Simulator::Screenshot::commandlineScreenshot()->capture();
-#endif
     } else {
       nextEvent = sSourceJournal->popEvent();
 #if ESCHER_LOG_EVENTS_NAME
       Ion::Console::writeLine("(From state file) ", false);
 #endif
-#if ION_SIMULATOR_FILES
-      // Save step screenshot
-      Simulator::Screenshot::commandlineScreenshot()->captureStep(nextEvent);
-#endif
     }
+#if ION_SIMULATOR_FILES
+    Simulator::Screenshot::commandlineScreenshot()->capture(nextEvent);
+#endif
   }
 
   if (nextEvent == Events::None) {

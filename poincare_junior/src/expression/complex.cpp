@@ -61,6 +61,12 @@ bool Complex::SimplifyComplex(Tree* tree) {
     tree->removeNode();
     return true;
   }
+  if (PatternMatching::MatchAndReplace(
+          tree, KComplex(KRe(KPlaceholder<A>()), KIm(KPlaceholder<A>())),
+          KPlaceholder<A>())) {
+    // re(x)+i*im(x) = x
+    return true;
+  }
   if (IsSanitized(tree)) {
     return false;
   }

@@ -326,8 +326,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("conj(conj(x))", "conj(conj(x))");
   // TODO: simplifies_to("re(x+im(y))", "re(x)+im(y)");
   simplifies_to("re(x+im(y))", "re(x+im(y))");
-  // TODO: simplifies_to("re(x)+i*im(x)", "x");
-  simplifies_to("re(x)+i*im(x)", "re(x)+im(x)*i");
+  simplifies_to("re(x)+i*im(x)", "x");
   // TODO: simplifies_to("re(x+i*y)", "-1*im(y)+re(x)");
   simplifies_to("re(x+i*y)", "re(x-im(y))");
   simplifies_to("im(x+i*y)", "im(x)+re(y)");

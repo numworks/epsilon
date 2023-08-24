@@ -1075,8 +1075,13 @@ bool Simplification::ExpandAbs(Tree* ref) {
                             BlockType::Multiplication, SimplifyAbs);
 }
 
+/* TODO:
+ * - ContractLn and ExpandLn doesn't handle powers properly
+ * - Many Contract methods could be factorized similarly to DistributeOverNAry
+ */
+
 bool Simplification::ContractLn(Tree* ref) {
-  // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
+  // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
   return PatternMatching::MatchReplaceAndSimplify(
       ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
       KAdd(KTA, KLn(KMult(KB, KC)), KTD));
@@ -1231,6 +1236,76 @@ bool Simplification::ExpandMult(Tree* ref) {
   return DistributeOverNAry(ref, BlockType::Multiplication, BlockType::Addition,
                             BlockType::Addition, ExpandMultSubOperation,
                             childIndex);
+}
+
+bool Simplification::ContractArg(Tree* ref) {
+  // A? + arg(B) + arg(C) + D? = A + arg(BC) + D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref,
+      KAdd(KAnyTreesPlaceholder<A>(), KArg(KPlaceholder<B>()),
+           KArg(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KAdd(KAnyTreesPlaceholder<A>(),
+           KArg(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
+           KAnyTreesPlaceholder<D>()));
+}
+
+bool Simplification::ExpandArg(Tree* tree) {
+  // arg(A*B*...) = arg(A) + arg(B) + ...
+  return DistributeOverNAry(tree, BlockType::ComplexArgument,
+                            BlockType::Multiplication, BlockType::Addition,
+                            Complex::SimplifyComplexArgument);
+}
+
+bool Simplification::ContractRe(Tree* ref) {
+  // A? + re(B) + re(C) + D? = A + re(B+C) + D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref,
+      KAdd(KAnyTreesPlaceholder<A>(), KRe(KPlaceholder<B>()),
+           KRe(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KAdd(KAnyTreesPlaceholder<A>(),
+           KRe(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+           KAnyTreesPlaceholder<D>()));
+}
+
+bool Simplification::ExpandRe(Tree* tree) {
+  // re(x+y) = re(x)+re(z)
+  return DistributeOverNAry(tree, BlockType::RealPart, BlockType::Addition,
+                            BlockType::Addition, Complex::SimplifyRealPart);
+}
+
+bool Simplification::ContractIm(Tree* ref) {
+  // A? + im(B) + im(C) + D? = A + im(B+C) + D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref,
+      KAdd(KAnyTreesPlaceholder<A>(), KIm(KPlaceholder<B>()),
+           KIm(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KAdd(KAnyTreesPlaceholder<A>(),
+           KIm(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+           KAnyTreesPlaceholder<D>()));
+}
+
+bool Simplification::ExpandIm(Tree* tree) {
+  // im(x+y) = im(x)+im(z)
+  return DistributeOverNAry(tree, BlockType::ImaginaryPart, BlockType::Addition,
+                            BlockType::Addition,
+                            Complex::SimplifyImaginaryPart);
+}
+
+bool Simplification::ContractConj(Tree* ref) {
+  // A? + conj(B) + conj(C) + D? = A + conj(B+C) + D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref,
+      KAdd(KAnyTreesPlaceholder<A>(), KConj(KPlaceholder<B>()),
+           KConj(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KAdd(KAnyTreesPlaceholder<A>(),
+           KConj(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+           KAnyTreesPlaceholder<D>()));
+}
+
+bool Simplification::ExpandConj(Tree* tree) {
+  // conj(x+y) = conj(x)+conj(z)
+  return DistributeOverNAry(tree, BlockType::Conjugate, BlockType::Addition,
+                            BlockType::Addition, Complex::SimplifyConjugate);
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {
@@ -1399,15 +1474,5 @@ bool Simplification::DeepApplyMatrixOperators(Tree* tree) {
   changed |= ShallowApplyMatrixOperators(tree);
   return changed;
 }
-
-/* TODO : Expand/Contract :
- * complex(re(x),im(x)) <-> x
- * arg(x*y) <-> arg(x)*arg(z)
- * conj(x+y) <-> conj(x)+conj(z)
- * Im(x+y) <-> Im(x)+Im(z)
- * Re(x+y) <-> Re(x)+Re(z)
- * DistributeOverNAry(tree, BlockType::RealPart, BlockType::Addition,
- *                    BlockType::Addition, ShallowApplyComplexOperators);
- */
 
 }  // namespace PoincareJ

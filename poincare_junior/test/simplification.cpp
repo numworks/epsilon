@@ -320,21 +320,27 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("re(2+i*π)", "2");
   simplifies_to("im(2+i*π)", "π");
   simplifies_to("conj(2+i*π)", "2-π*i");
+  // TODO: simplifies_to("re(conj(x))-re(x)", "0");
+  simplifies_to("re(conj(x))-re(x)", "-1*re(x)+re(conj(x))");
+  // TODO: simplifies_to("conj(conj(x))", "x");
+  simplifies_to("conj(conj(x))", "conj(conj(x))");
+  // TODO: simplifies_to("re(x+im(y))", "re(x)+im(y)");
+  simplifies_to("re(x+im(y))", "re(x+im(y))");
+  // TODO: simplifies_to("re(x)+i*im(x)", "x");
+  simplifies_to("re(x)+i*im(x)", "re(x)+im(x)*i");
   // TODO: simplifies_to("re(x+i*y)", "-1*im(y)+re(x)");
   simplifies_to("re(x+i*y)", "re(x-im(y))");
-  // TODO: simplifies_to("im(x+i*y)", "im(x)+re(y)");
-  simplifies_to("im(x+i*y)", "im(x-im(y))+re(y)");
+  simplifies_to("im(x+i*y)", "im(x)+re(y)");
   /* TODO: simplifies_to("conj(x+i*y)", "re(x)-im(y)-(im(x)+re(y))*i");
    *        or simplifies_to("conj(x+i*y)", "conj(x)-conj(y)*i"); */
-  simplifies_to("conj(x+i*y)", "re(x-im(y))-(im(x-im(y))+re(y))*i");
+  simplifies_to("conj(x+i*y)", "re(x-im(y))-(im(x)+re(y))*i");
   simplifies_to("im(re(x)+i*im(x))", "im(x)");
   simplifies_to("re(re(x)+i*im(x))", "re(x)");
   // TODO: simplifies_to("abs(x+i*y)",
   //             "√(-2*im(y)*re(x)+2*im(x)*re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
   //             "re(y)^(2))");
-  simplifies_to(
-      "abs(x+i*y)",
-      "√(2*im(x-im(y))*re(y)+im(x-im(y))^(2)+re(y)^(2)+re(x-im(y))^(2))");
+  simplifies_to("abs(x+i*y)",
+                "√(2*im(x)*re(y)+im(x)^(2)+re(y)^(2)+re(x-im(y))^(2))");
 }
 
 QUIZ_CASE(pcj_power_simplification) {

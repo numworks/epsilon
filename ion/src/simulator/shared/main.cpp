@@ -196,8 +196,8 @@ int main(int argc, char *argv[]) {
 
   const char *allScreenshotsFolder = args.pop("--take-all-screenshots");
   if (allScreenshotsFolder) {
-    Ion::Simulator::Screenshot::commandlineScreenshot()->initEachStep(
-        allScreenshotsFolder);
+    Ion::Simulator::Screenshot::commandlineScreenshot()->init(
+        allScreenshotsFolder, true);
   }
 #if !defined(_WIN32)
   signal(SIGUSR1, Ion::Simulator::Actions::handleUSR1Sig);

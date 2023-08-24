@@ -23,6 +23,10 @@ constexpr auto KLn = KUnary<BlockType::Ln>();
 constexpr auto KExp = KUnary<BlockType::Exponential>();
 constexpr auto KFact = KUnary<BlockType::Factorial>();
 constexpr auto KSqrt = KUnary<BlockType::SquareRoot>();
+constexpr auto KRe = KUnary<BlockType::RealPart>();
+constexpr auto KIm = KUnary<BlockType::ImaginaryPart>();
+constexpr auto KArg = KUnary<BlockType::ComplexArgument>();
+constexpr auto KConj = KUnary<BlockType::Conjugate>();
 
 constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();

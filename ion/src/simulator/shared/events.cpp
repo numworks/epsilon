@@ -81,7 +81,7 @@ void replayFrom(Journal *l) { sSourceJournal = l; }
 void logTo(Journal *l) { sDestinationJournal = l; }
 
 Event getEvent(int *timeout) {
-  Event res = Events::None;
+  Event nextEvent = Events::None;
   // Replay
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
@@ -94,24 +94,24 @@ Event getEvent(int *timeout) {
       Simulator::Screenshot::commandlineScreenshot()->capture();
 #endif
     } else {
-      res = sSourceJournal->popEvent();
+      nextEvent = sSourceJournal->popEvent();
 #if ESCHER_LOG_EVENTS_NAME
       Ion::Console::writeLine("(From state file) ", false);
 #endif
 #if ION_SIMULATOR_FILES
       // Save step screenshot
-      Simulator::Screenshot::commandlineScreenshot()->captureStep(res);
+      Simulator::Screenshot::commandlineScreenshot()->captureStep(nextEvent);
 #endif
     }
   }
 
-  if (res == Events::None) {
-    res = sharedGetEvent(timeout);
+  if (nextEvent == Events::None) {
+    nextEvent = sharedGetEvent(timeout);
   }
   if (sDestinationJournal != nullptr) {
-    sDestinationJournal->pushEvent(res);
+    sDestinationJournal->pushEvent(nextEvent);
   }
-  return res;
+  return nextEvent;
 }
 
 #else

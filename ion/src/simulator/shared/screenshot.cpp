@@ -36,12 +36,6 @@ void Screenshot::init(const char* path, bool eachStep) {
   m_stepNumber = 0;
 }
 
-void Screenshot::captureStep(Events::Event nextEvent) {
-  if (m_eachStep) {
-    capture(nextEvent);
-  }
-}
-
 #if DEBUG
 static void drawEventNameInBuffer(Events::Event e, KDColor* pixelsBuffer,
                                   int width, int height, int abscissaOfDraw,
@@ -72,6 +66,10 @@ static void drawEventNameInBuffer(Events::Event e, KDColor* pixelsBuffer,
 #endif
 
 void Screenshot::capture(Events::Event nextEvent) {
+  if (nextEvent != Events::None && !m_eachStep) {
+    return;
+  }
+
   constexpr static int k_maxHeight =
       Display::Height + k_glyphHeight + 2 * k_margin;
   constexpr static int k_width = Display::Width;

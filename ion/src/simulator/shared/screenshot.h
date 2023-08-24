@@ -10,7 +10,6 @@ class Screenshot {
  public:
   Screenshot(const char* path = nullptr);
   void init(const char* path, bool eachStep = false);
-  void captureStep(Events::Event nextEvent);
   void capture(Events::Event nextEvent = Events::None);
   static Screenshot* commandlineScreenshot();
 

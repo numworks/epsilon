@@ -88,13 +88,13 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     case BlockType::Exponential:
       return SimplifyExp(u);
     case BlockType::Complex:
-      return Complex::SimplifyComplex(u);
+      return SimplifyComplex(u);
     case BlockType::ComplexArgument:
-      return Complex::SimplifyComplexArgument(u);
+      return SimplifyComplexArgument(u);
     case BlockType::ImaginaryPart:
-      return Complex::SimplifyImaginaryPart(u);
+      return SimplifyImaginaryPart(u);
     case BlockType::RealPart:
-      return Complex::SimplifyRealPart(u);
+      return SimplifyRealPart(u);
     default:
       return false;
   }
@@ -158,7 +158,13 @@ bool Simplification::SimplifyAbs(Tree* u) {
     changed = true;
   }
   if (child->type() == BlockType::Complex) {
-    return Complex::SimplifyAbs(u) || changed;
+    assert(Complex::IsSanitized(child));
+    // |x+iy| = √(x^2+y^2) if x and y are reals
+    return PatternMatching::MatchReplaceAndSimplify(
+               u, KAbs(KComplex(KPlaceholder<A>(), KPlaceholder<B>())),
+               KExp(KMult(KHalf, KLn(KAdd(KPow(KPlaceholder<A>(), 2_e),
+                                          KPow(KPlaceholder<B>(), 2_e)))))) ||
+           changed;
   }
   if (!IsNumber(child)) {
     return changed;
@@ -338,7 +344,7 @@ bool Simplification::SimplifyPower(Tree* u) {
       // u is a pure imaginary
       u->moveTreeAtNode(SharedEditionPool->push<BlockType::Zero>());
       u->moveNodeAtNode(SharedEditionPool->push<BlockType::Complex>());
-      assert(!Complex::SimplifyComplex(u));
+      assert(!SimplifyComplex(u));
     }
     return true;
   }
@@ -697,6 +703,72 @@ bool Simplification::SimplifyAddition(Tree* u) {
    *   merging again when child merged with nextCHild) */
   assert(!SimplifyAddition(u));
   return true;
+}
+
+bool Simplification::SimplifyComplex(Tree* tree) {
+  assert(tree->type() == BlockType::Complex);
+  Tree* imag = tree->childAtIndex(1);
+  if (Number::IsZero(imag)) {
+    // (A+0*i) -> A
+    imag->removeTree();
+    tree->removeNode();
+    return true;
+  }
+  if (PatternMatching::MatchAndReplace(
+          tree, KComplex(KRe(KPlaceholder<A>()), KIm(KPlaceholder<A>())),
+          KPlaceholder<A>())) {
+    // re(x)+i*im(x) = x
+    return true;
+  }
+  if (Complex::IsSanitized(tree)) {
+    return false;
+  }
+  // x+iy = (re(x)-im(y)) + i*(im(x)+re(y))
+  bool result = PatternMatching::MatchReplaceAndSimplify(
+      tree, KComplex(KPlaceholder<A>(), KPlaceholder<B>()),
+      KComplex(
+          KAdd(KRe(KPlaceholder<A>()), KMult(-1_e, KIm(KPlaceholder<B>()))),
+          KAdd(KIm(KPlaceholder<A>()), KRe(KPlaceholder<B>()))));
+  assert(result && Complex::IsSanitized(tree));
+  return result;
+}
+
+bool Simplification::SimplifyComplexArgument(Tree* tree) {
+  assert(tree->type() == BlockType::ComplexArgument);
+  Tree* child = tree->childAtIndex(0);
+  if (child->block()->isNumber()) {
+    StrictSign sign = Number::StrictSign(child);
+    tree->cloneTreeOverTree(sign == StrictSign::Null       ? KUndef
+                            : sign == StrictSign::Positive ? 0_e
+                                                           : π_e);
+    return true;
+  }
+  // TODO: Implement for complexes
+  return false;
+}
+
+bool Simplification::SimplifyRealPart(Tree* tree) {
+  assert(tree->type() == BlockType::RealPart);
+  Tree* child = tree->childAtIndex(0);
+  if (child->type() == BlockType::Complex || Complex::IsReal(child)) {
+    assert(Complex::IsSanitized(child));
+    // re(x+i*y) = x if x and y are reals
+    tree->cloneTreeOverTree(Complex::UnSanitizedRealPart(child));
+    return true;
+  }
+  return false;
+}
+
+bool Simplification::SimplifyImaginaryPart(Tree* tree) {
+  assert(tree->type() == BlockType::ImaginaryPart);
+  Tree* child = tree->childAtIndex(0);
+  if (child->type() == BlockType::Complex || Complex::IsReal(child)) {
+    assert(Complex::IsSanitized(child));
+    // im(x+i*y) = y if x and y are reals
+    tree->cloneTreeOverTree(Complex::UnSanitizedImagPart(child));
+    return true;
+  }
+  return false;
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
@@ -1254,7 +1326,7 @@ bool Simplification::ExpandArg(Tree* tree) {
   // arg(A*B*...) = arg(A) + arg(B) + ...
   return DistributeOverNAry(tree, BlockType::ComplexArgument,
                             BlockType::Multiplication, BlockType::Addition,
-                            Complex::SimplifyComplexArgument);
+                            SimplifyComplexArgument);
 }
 
 bool Simplification::ContractRe(Tree* ref) {
@@ -1271,7 +1343,7 @@ bool Simplification::ContractRe(Tree* ref) {
 bool Simplification::ExpandRe(Tree* tree) {
   // re(x+y) = re(x)+re(z)
   return DistributeOverNAry(tree, BlockType::RealPart, BlockType::Addition,
-                            BlockType::Addition, Complex::SimplifyRealPart);
+                            BlockType::Addition, SimplifyRealPart);
 }
 
 bool Simplification::ContractIm(Tree* ref) {
@@ -1288,8 +1360,7 @@ bool Simplification::ContractIm(Tree* ref) {
 bool Simplification::ExpandIm(Tree* tree) {
   // im(x+y) = im(x)+im(z)
   return DistributeOverNAry(tree, BlockType::ImaginaryPart, BlockType::Addition,
-                            BlockType::Addition,
-                            Complex::SimplifyImaginaryPart);
+                            BlockType::Addition, SimplifyImaginaryPart);
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {

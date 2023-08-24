@@ -756,7 +756,11 @@ bool Simplification::SimplifyRealPart(Tree* tree) {
     tree->cloneTreeOverTree(Complex::UnSanitizedRealPart(child));
     return true;
   }
-  return false;
+  // re(x+y) = re(x)+re(z)
+  return (child->type() == BlockType::Addition) &&
+         Simplification::DistributeOverNAry(
+             tree, BlockType::RealPart, BlockType::Addition,
+             BlockType::Addition, SimplifyRealPart);
 }
 
 bool Simplification::SimplifyImaginaryPart(Tree* tree) {
@@ -768,7 +772,11 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
     tree->cloneTreeOverTree(Complex::UnSanitizedImagPart(child));
     return true;
   }
-  return false;
+  // im(x+y) = im(x)+im(z)
+  return (child->type() == BlockType::Addition) &&
+         Simplification::DistributeOverNAry(
+             tree, BlockType::ImaginaryPart, BlockType::Addition,
+             BlockType::Addition, SimplifyImaginaryPart);
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
@@ -1327,40 +1335,6 @@ bool Simplification::ExpandArg(Tree* tree) {
   return DistributeOverNAry(tree, BlockType::ComplexArgument,
                             BlockType::Multiplication, BlockType::Addition,
                             SimplifyComplexArgument);
-}
-
-bool Simplification::ContractRe(Tree* ref) {
-  // A? + re(B) + re(C) + D? = A + re(B+C) + D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KAdd(KAnyTreesPlaceholder<A>(), KRe(KPlaceholder<B>()),
-           KRe(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KAnyTreesPlaceholder<A>(),
-           KRe(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()));
-}
-
-bool Simplification::ExpandRe(Tree* tree) {
-  // re(x+y) = re(x)+re(z)
-  return DistributeOverNAry(tree, BlockType::RealPart, BlockType::Addition,
-                            BlockType::Addition, SimplifyRealPart);
-}
-
-bool Simplification::ContractIm(Tree* ref) {
-  // A? + im(B) + im(C) + D? = A + im(B+C) + D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KAdd(KAnyTreesPlaceholder<A>(), KIm(KPlaceholder<B>()),
-           KIm(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KAnyTreesPlaceholder<A>(),
-           KIm(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()));
-}
-
-bool Simplification::ExpandIm(Tree* tree) {
-  // im(x+y) = im(x)+im(z)
-  return DistributeOverNAry(tree, BlockType::ImaginaryPart, BlockType::Addition,
-                            BlockType::Addition, SimplifyImaginaryPart);
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {

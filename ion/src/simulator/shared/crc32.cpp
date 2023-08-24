@@ -3,7 +3,7 @@
 
 namespace Ion {
 
-static uint32_t crc32Helper(const uint8_t *data, size_t length) {
+uint32_t crc32Byte(const uint8_t *data, size_t length) {
   if (length == 0) {
     return 0;
   }
@@ -27,12 +27,8 @@ static uint32_t crc32Helper(const uint8_t *data, size_t length) {
 }
 
 uint32_t crc32DoubleWord(const uint32_t *data, size_t length) {
-  return crc32Helper(reinterpret_cast<const uint8_t *>(data),
-                     length * (sizeof(uint32_t) / sizeof(uint8_t)));
-}
-
-uint32_t crc32Byte(const uint8_t *data, size_t length) {
-  return crc32Helper(data, length);
+  return crc32Byte(reinterpret_cast<const uint8_t *>(data),
+                   length * (sizeof(uint32_t) / sizeof(uint8_t)));
 }
 
 }  // namespace Ion

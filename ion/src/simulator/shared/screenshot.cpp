@@ -46,7 +46,7 @@ void Screenshot::captureStep(Events::Event nextEvent) {
 static void drawEventNameInBuffer(Events::Event e, KDColor* pixelsBuffer,
                                   int width, int height, int abscissaOfDraw,
                                   int ordinateOfDraw) {
-  if (!e.name()) {
+  if (!e.name() || e == Events::None) {
     return;
   }
 
@@ -83,7 +83,7 @@ void Screenshot::capture(Events::Event nextEvent) {
   }
 
 #if DEBUG
-  if (nextEvent != Events::None) {
+  if (m_eachStep) {
     height = k_maxHeight;
     for (int i = Display::Height * k_width; i < height * k_width; i++) {
       pixelsBuffer[i] = k_backgroundColor;

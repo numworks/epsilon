@@ -72,6 +72,8 @@ class Tree {
   // Tree Navigation
   const Tree* nextNode() const;
   Tree* nextNode() { return Utils::DeconstifyPtr(&Tree::nextNode, this); };
+  const Tree* firstChild() const { return nextNode(); }
+  Tree* firstChild() { return nextNode(); }
   const Tree* nextTree() const {
     const Tree* result = this;
     int nbOfChildrenToScan = result->numberOfChildren();

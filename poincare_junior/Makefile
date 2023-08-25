@@ -27,6 +27,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/rational.cpp \
   expression/simplification.cpp \
   expression/set.cpp \
+  expression/sign.cpp \
   expression/symbol.cpp \
   expression/trigonometry.cpp \
   expression/vector.cpp \
@@ -78,6 +79,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   polynomial.cpp \
   rational.cpp \
   set.cpp \
+  sign.cpp \
   simplification.cpp \
 )
 

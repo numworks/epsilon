@@ -128,6 +128,7 @@ enum class BlockType : uint8_t {
   List,
   Set,
   Matrix,
+  MatrixPower,
   Undefined,
   NumberOfExpressions,
   // 2 - Layout
@@ -353,6 +354,7 @@ class TypeBlock : public Block {
         return 3;
       case BlockType::Power:
       case BlockType::PowerReal:
+      case BlockType::MatrixPower:
       case BlockType::Subtraction:
       case BlockType::Complex:
       case BlockType::Division:

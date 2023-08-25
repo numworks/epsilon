@@ -295,10 +295,6 @@ bool Simplification::SimplifyTrig(Tree* u) {
 bool Simplification::SimplifyPower(Tree* u) {
   assert(u->type() == BlockType::Power);
   Tree* v = u->childAtIndex(0);
-  if (v->type() == BlockType::Matrix) {
-    // TODO what about unreduced matrices ?
-    return false;
-  }
   EditionReference n = u->childAtIndex(1);
   // 0^n -> 0
   if (Number::IsZero(v)) {
@@ -907,6 +903,11 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
                                    KPow(KPlaceholder<A>(), KHalf));
   if (ref->type() == BlockType::Power) {
     const Tree* index = ref->nextNode()->nextTree();
+    if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
+      PatternMatching::MatchAndReplace(
+          ref, KPow(KPlaceholder<A>(), KPlaceholder<B>()),
+          KPowMatrix(KPlaceholder<A>(), KPlaceholder<B>()));
+    }
     if (!index->block()->isInteger() &&
         Dimension::GetDimension(ref->nextNode()).isScalar()) {
       // e^A -> exp(A)
@@ -1446,7 +1447,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     tree->moveTreeOverTree(result);
     return true;
   }
-  if (tree->type() == BlockType::Power) {
+  if (tree->type() == BlockType::MatrixPower) {
     Tree* index = child->nextTree();
     if (!index->block()->isInteger() && index->type() != BlockType::Float) {
       return false;

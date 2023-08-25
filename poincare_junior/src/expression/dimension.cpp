@@ -39,6 +39,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return true;
     }
     case BlockType::Power:
+    case BlockType::MatrixPower:
       return childDim[1].isScalar() &&
              (!childDim[0].isMatrix() || childDim[0].isSquareMatrix());
     case BlockType::Matrix:
@@ -98,6 +99,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Cross:
     case BlockType::Inverse:
     case BlockType::Power:
+    case BlockType::MatrixPower:
     case BlockType::Ref:
     case BlockType::Rref:
       return GetDimension(t->nextNode());

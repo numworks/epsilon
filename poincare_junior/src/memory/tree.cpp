@@ -117,6 +117,7 @@ void Tree::logName(std::ostream& stream) const {
     "List",
     "Set",
     "Matrix",
+    "MatrixPower",
     "Undefined",
     "RackLayout",
     "FractionLayout",

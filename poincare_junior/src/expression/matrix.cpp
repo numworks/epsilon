@@ -11,7 +11,8 @@
 namespace PoincareJ {
 
 Tree* Matrix::Identity(const Tree* n) {
-  if (!n->block()->isNumber() || Integer::Handler(n).numberOfDigits() > 1) {
+  assert(n->block()->isNumber());
+  if (Integer::Handler(n).numberOfDigits() > 1) {
     return KUndef->clone();
   }
   uint8_t nb = *Integer::Handler(n).digits();
@@ -29,9 +30,7 @@ Tree* Matrix::Identity(const Tree* n) {
 
 Tree* Matrix::Trace(const Tree* matrix) {
   int n = NumberOfRows(matrix);
-  if (n != NumberOfColumns(matrix)) {
-    return KUndef->clone();
-  }
+  assert(n == NumberOfColumns(matrix));
   Tree* result = SharedEditionPool->push<BlockType::Addition>(n);
   const Tree* child = matrix->nextNode();
   for (int i = 0; i < n - 1; i++) {
@@ -74,10 +73,8 @@ Tree* Matrix::Transpose(const Tree* m) {
 
 Tree* Matrix::Addition(const Tree* u, const Tree* v) {
   // should be an assert after dimensional analysis
-  if (NumberOfRows(u) != NumberOfRows(v) ||
-      NumberOfColumns(u) != NumberOfColumns(v)) {
-    return KUndef->clone();
-  }
+  assert(NumberOfRows(u) == NumberOfRows(v) &&
+         NumberOfColumns(u) == NumberOfColumns(v));
   const Tree* childU = u->nextNode();
   const Tree* childV = v->nextNode();
   int n = u->numberOfChildren();
@@ -105,9 +102,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m) {
 }
 
 Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
-  if (NumberOfColumns(u) != NumberOfRows(v)) {
-    return KUndef->clone();
-  }
+  assert(NumberOfColumns(u) == NumberOfRows(v));
   uint8_t rows = NumberOfRows(u);
   uint8_t internal = NumberOfColumns(u);
   uint8_t cols = NumberOfColumns(v);
@@ -303,6 +298,7 @@ int Matrix::Rank(const Tree* m) {
 }
 
 Tree* Matrix::Inverse(const Tree* m) {
+  assert(NumberOfRows(m) == NumberOfColumns(m));
   int dim = NumberOfRows(m);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
    * identity matrix */
@@ -341,6 +337,7 @@ Tree* Matrix::Inverse(const Tree* m) {
 }
 
 Tree* Matrix::Power(const Tree* m, int p) {
+  assert(NumberOfRows(m) == NumberOfColumns(m));
   if (p < 0) {
     Tree* result = Power(m, -p);
     result->moveTreeOverTree(Inverse(result));

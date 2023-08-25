@@ -25,6 +25,7 @@ Tree* Vector::Norm(const Tree* v) {
 
 Tree* Vector::Dot(const Tree* u, const Tree* v) {
   // Dot product is defined between two vectors of same size and type
+  assert(u->numberOfChildren() == v->numberOfChildren());
   int childrenNumber = v->numberOfChildren();
   Tree* sum = SharedEditionPool->push<BlockType::Addition>(childrenNumber);
   const Tree* childV = v->nextNode();
@@ -41,6 +42,7 @@ Tree* Vector::Dot(const Tree* u, const Tree* v) {
 
 Tree* Vector::Cross(const Tree* u, const Tree* v) {
   // Cross product is defined between two vectors of size 3 and of same type.
+  assert(u->numberOfChildren() == 3 && v->numberOfChildren() == 3);
   Tree* result = u->cloneNode();
   for (int j = 0; j < 3; j++) {
     int j1 = (j + 1) % 3;

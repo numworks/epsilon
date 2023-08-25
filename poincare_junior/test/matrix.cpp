@@ -28,6 +28,7 @@ QUIZ_CASE(pcj_matrix) {
 
   const Tree* w1 = KMatrix<2, 3>()(1_e, 2_e, 3_e, 4_e, 5_e, 6_e);
   const Tree* w2 = KMatrix<3, 1>()(7_e, 8_e, 9_e);
+  QUIZ_ASSERT(Matrix::Rank(w2) == 1);
   assert_trees_are_equal(Matrix::Multiplication(w1, w2),
                          KMatrix<2, 1>()(50_e, 122_e));
   assert_trees_are_equal(Matrix::Multiplication(w1, Matrix::Identity(3_e)), w1);
@@ -42,10 +43,10 @@ QUIZ_CASE(pcj_matrix) {
   Tree* m = parse_matrix("[[0,2,-1][5,6,7][12,11,10]]");
   Tree* det;
   Simplification::DeepSystematicReduce(m);
+  QUIZ_ASSERT(Matrix::Rank(m) == 3);
   Matrix::RowCanonize(m, false, &det);
   Tree* res = parse_matrix("[[1,11/12,5/6][0,1,-1/2][0,0,1]]");
-  Simplification::DeepSystemProjection(res);
-  Simplification::DeepSystematicReduce(res);
+  Simplification::Simplify(res);
   assert_trees_are_equal(m, res);
   assert_trees_are_equal(det, 85_e);
 }

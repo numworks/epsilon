@@ -17,7 +17,8 @@ template <typename T>
 class FloatParameterController : public Escher::ListWithTopAndBottomController,
                                  public ParameterTextFieldDelegate {
  public:
-  FloatParameterController(Escher::Responder *parentResponder);
+  FloatParameterController(Escher::Responder *parentResponder,
+                           Escher::View *topView = nullptr);
 
   // ListWithTopAndBottomController
   bool handleEvent(Ion::Events::Event event) override;

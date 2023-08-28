@@ -14,8 +14,8 @@ namespace Shared {
 
 template <typename T>
 FloatParameterController<T>::FloatParameterController(
-    Responder *parentResponder)
-    : ListWithTopAndBottomController(parentResponder),
+    Responder *parentResponder, View *topView)
+    : ListWithTopAndBottomController(parentResponder, topView),
       m_okButton(
           &m_selectableListView, I18n::Message::Ok,
           Invocation::Builder<FloatParameterController>(

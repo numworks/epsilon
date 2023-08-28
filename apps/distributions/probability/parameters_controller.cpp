@@ -13,7 +13,7 @@ namespace Distributions {
 ParametersController::ParametersController(
     Escher::StackViewController *parentResponder, Distribution *distribution,
     CalculationController *calculationController)
-    : FloatParameterController<double>(parentResponder),
+    : FloatParameterController<double>(parentResponder, &m_headerView),
       m_headerView(I18n::Message::DefineParameters, k_messageFormat),
       m_bottomView(I18n::Message::LeaveAFieldEmpty, k_messageFormat),
       m_distribution(distribution),
@@ -24,7 +24,6 @@ ParametersController::ParametersController(
     m_menuListCell[i].setParentResponder(&m_selectableListView);
     m_menuListCell[i].setDelegate(this);
   }
-  setTopView(&m_headerView);
 }
 
 const char *ParametersController::title() {

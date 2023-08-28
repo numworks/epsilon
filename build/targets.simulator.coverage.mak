@@ -25,7 +25,7 @@ to_exclude = \
 
 $(BUILD_DIR)/coverage.info: $(BUILD_DIR)/unit/test_coverage.$(EXE) $(BUILD_DIR)/integration/test_coverage.$(EXE)
 	$(Q) ./$< --headless --limit-stack-usage
-	$(Q) for state_file in tests/screenshots_dataset/scenari/*.nws; do ./$(word 2,$^) --headless --limit-stack-usage --load-state-file $$state_file; done
+	$(Q) for state_file in tests/screenshots_dataset/*/*.nws; do ./$(word 2,$^) --headless --limit-stack-usage --load-state-file $$state_file; done
 	$(Q) lcov --capture --directory $(BUILD_DIR) --output-file $@
 	$(Q) lcov --remove $@ $(to_exclude) -o $@
 

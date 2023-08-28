@@ -25,7 +25,9 @@ bool Metric::hasImproved() const {
   if (treeSize != m_treeSize) {
     return treeSize < m_treeSize;
   }
-  // Use the type order as order of preference.
+  /* Use the type order as order of preference. In case of identical type, false
+   * must be returned to prevent any further simplification loop (A->B->A->...)
+   */
   return static_cast<uint8_t>(type) < static_cast<uint8_t>(m_type);
 }
 

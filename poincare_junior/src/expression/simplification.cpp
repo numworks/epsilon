@@ -943,7 +943,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   return
       // e -> exp(1)
       PatternMatching::MatchAndReplace(ref, e_e, KExp(1_e)) ||
-      // conj(A) -> re(A)-i*re(B)
+      // conj(A) -> re(A)-i*re(A)
       PatternMatching::MatchAndReplace(
           ref, KConj(KA), KComplex(KRe(KA), KMult(-1_e, KIm(KA)))) ||
       // i -> Complex(0,1)

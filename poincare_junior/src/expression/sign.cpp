@@ -32,7 +32,7 @@ Sign GetSign(const Tree* t) {
       Sign s = Sign::Positive;
       for (const Tree* c : t->children()) {
         s = Mult(s, GetSign(c));
-        if (s == Sign::Unknown) {
+        if (s == Sign::Unknown || s == Sign::Null) {
           break;
         }
       }
@@ -57,12 +57,12 @@ Sign GetSign(const Tree* t) {
       Sign s = GetSign(t->firstChild());
       return Make(MayBeNull(s), MayBePos(s) || MayBeNeg(s), false);
     }
-    case BlockType::ArcCosine:
     case BlockType::ArcSine:
     case BlockType::ArcTangent:
-    case BlockType::Factorial:
-      return GetSign(t->firstChild());
+    case BlockType::ArcCosine:
+      return Sign::PositiveOrNull;
     case BlockType::Exponential:
+    case BlockType::Factorial:
       return Sign::Positive;
     default:
       return Sign::Unknown;

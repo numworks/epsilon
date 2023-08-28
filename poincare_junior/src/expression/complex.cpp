@@ -19,7 +19,9 @@ using namespace Placeholders;
 bool Complex::IsReal(const Tree* tree) {
   if (tree->block()->isOfType({
           BlockType::Addition, BlockType::Multiplication,
-          BlockType::Exponential, BlockType::Ln, BlockType::Power,
+          BlockType::Exponential, BlockType::Power,
+          // TODO: Handle Ln so that reduced abs(z) is always real.
+          // BlockType::Ln,
           // BlockType::Cross,
           // BlockType::Derivative,  BlockType::Det,
           // BlockType::Dot,         BlockType::Inverse,

@@ -17,6 +17,10 @@ EPSILON_BIN=${2:-}
 mkdir $FOLDER
 python3 build/state_file/nws2txt.py $ORIGINAL_NWS > $TXT_FILE
 
+save_file() {
+  mv $NWS_FILE $ORIGINAL_NWS && echo "$ORIGINAL_NWS was successfully edited";
+}
+
 while true
 do
   ${EDITOR:-vim} $TXT_FILE
@@ -31,13 +35,15 @@ do
     else
       echo "Gif of the new state file could not be generated. Your state file could be badly formatted or your epsilon.bin path could be incorrect."
     fi
+    read -s -n 1 -p "Do you want to Continue edition / Save changes and quit / Quit without saving ? [c/S/q]" csq
+    echo
+    case $csq in
+      [Cc]* ) echo "Continue edition";;
+      [Qq]* ) echo "$ORIGINAL_NWS was not modified"; break;;
+      * ) save_file; break;;
+    esac
+  else
+    save_file; break;
   fi
-  read -s -n 1 -p "Do you want to Continue edition / Save changes and quit / Quit without saving ? [c/S/q]" csq
-  echo
-  case $csq in
-    [Cc]* ) echo "Continue edition";;
-    [Qq]* ) echo "$ORIGINAL_NWS was not modified"; break;;
-    * ) mv $NWS_FILE $ORIGINAL_NWS && echo "$ORIGINAL_NWS was successfully edited"; break;;
-  esac
 done
 rm -rf $FOLDER

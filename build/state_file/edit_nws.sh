@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# This script is used to edit a .nws
+# Use `./edit_nws.sh scenario.nws` to simply edit a .nws
+# Use `./edit_nws.sh scenario.nws epsilon.bin` to follow the changes you did
+# through a gif of your state-file
+#
+
 if [ $# -lt 1 ]; then
   echo "Not enough parameters."
   echo "Syntax: 'edit_nws.sh NWS_PATH [EPSILON_BIN]'"

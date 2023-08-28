@@ -10,7 +10,7 @@ namespace Finance {
 
 ParametersController::ParametersController(StackViewController *parent,
                                            ResultController *resultController)
-    : Shared::FloatParameterController<double>(parent),
+    : Shared::FloatParameterController<double>(parent, &m_messageView),
       m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController),
       m_messageView(I18n::Message::DefineParameters, k_messageFormat) {
@@ -19,7 +19,6 @@ ParametersController::ParametersController(StackViewController *parent,
     m_cells[i].setDelegate(this);
   }
   m_dropdownCell.accessory()->setDropdown(&m_dropdown);
-  setTopView(&m_messageView);
 }
 
 const char *ParametersController::title() {

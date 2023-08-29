@@ -376,24 +376,12 @@ bool Simplification::SimplifyPower(Tree* u) {
                                                   KExp(KMult(KA, KB)));
 }
 
-bool BasesAreEqual(const Tree* u1, const Tree* u2) {
-  const Tree* b1 = u1->type() == BlockType::Power ? u1->childAtIndex(0) : u1;
-  const Tree* b2 = u2->type() == BlockType::Power ? u2->childAtIndex(0) : u2;
-  return b1->treeIsIdenticalTo(b2);
+const Tree* Base(const Tree* u) {
+  return u->type() == BlockType::Power ? u->childAtIndex(0) : u;
 }
 
-Tree* PushBase(const Tree* u) {
-  if (u->type() == BlockType::Power) {
-    return u->childAtIndex(0)->clone();
-  }
-  return u->clone();
-}
-
-Tree* PushExponent(const Tree* u) {
-  if (u->type() == BlockType::Power) {
-    return u->childAtIndex(1)->clone();
-  }
-  return P_ONE();
+const Tree* Exponent(const Tree* u) {
+  return u->type() == BlockType::Power ? u->childAtIndex(1) : 1_e;
 }
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
@@ -476,12 +464,11 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     // Merge constants
     merge = Rational::Multiplication(child, next);
     Rational::MakeIrreducible(merge);
-  } else if (BasesAreEqual(child, next)) {
+  } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
-    merge =
-        P_POW(PushBase(child), P_ADD(PushExponent(child), PushExponent(next)));
-    SimplifyAddition(merge->childAtIndex(1));
-    SimplifyPower(merge);
+    merge = PatternMatching::Create(
+        KPow(KA, KAdd(KB, KC)),
+        {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)}, true);
     assert(merge->type() != BlockType::Multiplication);
   } else if (child->type() == BlockType::Complex ||
              next->type() == BlockType::Complex) {
@@ -632,12 +619,12 @@ Tree* PushTerm(const Tree* u) {
 }
 
 // The constant of 2ab is 2
-Tree* PushConstant(const Tree* u) {
+const Tree* Constant(const Tree* u) {
   if (u->type() == BlockType::Multiplication &&
       IsConstant(u->childAtIndex(0))) {
-    return u->childAtIndex(0)->clone();
+    return u->childAtIndex(0);
   }
-  return P_ONE();
+  return 1_e;
 }
 
 bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
@@ -652,10 +639,12 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
     Rational::MakeIrreducible(merge);
   } else if (TermsAreEqual(child, next)) {
     // k1 * a + k2 * a -> (k1+k2) * a
-    merge =
-        P_MULT(P_ADD(PushConstant(child), PushConstant(next)), PushTerm(child));
-    SimplifyAddition(merge->childAtIndex(0));
-    SimplifyMultiplication(merge);
+    Tree* term = PushTerm(child);
+    merge = PatternMatching::Create(
+        KMult(KAdd(KA, KB), KC),
+        {.KA = Constant(child), .KB = Constant(next), .KC = term}, true);
+    term->removeTree();
+    merge = term;
     assert(merge->type() != BlockType::Addition);
   } else if (child->type() == BlockType::Complex ||
              next->type() == BlockType::Complex) {

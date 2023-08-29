@@ -43,11 +43,11 @@ def get_file_with_extension(folder, file_extension):
    for file in sorted(os.listdir(folder)):
       if os.path.splitext(file)[1] == file_extension:
          if found_file != '':
-            print("Error: too many", file_extension, "in", folder, "folder")
+            print("Error: too many", file_extension, "in", folder)
             sys.exit(1)
          found_file = os.path.join(folder, file)
    if found_file == '':
-      print("Error: no", file_extension, "in", folder, "folder")
+      print("Error: no", file_extension, "in", folder)
       sys.exit(1)
    return found_file
 

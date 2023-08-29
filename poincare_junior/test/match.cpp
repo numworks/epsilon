@@ -37,10 +37,8 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
 }
 
 QUIZ_CASE(pcj_context) {
-  PatternMatching::Context ctx;
-  ctx.setNode(Placeholder::A, KAdd(2_e, 1_e), 1, false);
-  const Tree* structure = KMult(5_e, KAdd(KA, KA));
-  EditionReference exp = PatternMatching::Create(structure, ctx);
+  EditionReference exp =
+      PatternMatching::Create(KMult(5_e, KAdd(KA, KA)), {.KA = KAdd(2_e, 1_e)});
   assert_trees_are_equal(exp, KMult(5_e, KAdd(2_e, 1_e, 2_e, 1_e)));
 }
 

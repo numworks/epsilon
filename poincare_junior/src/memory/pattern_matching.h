@@ -28,9 +28,29 @@ class PatternMatching {
    * optional filter method in Matching.
    */
  public:
+  struct ContextTrees {
+    const Tree* KA = nullptr;
+    const Tree* KB = nullptr;
+    const Tree* KC = nullptr;
+    const Tree* KD = nullptr;
+    const Tree* KE = nullptr;
+    const Tree* KF = nullptr;
+    const Tree* KG = nullptr;
+  };
+
   class Context {
    public:
     Context() : m_array() {}
+    Context(const ContextTrees& trees) : m_trees(trees) {
+      for (int i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
+        if (m_array[i]) {
+          m_numberOfTrees[i] = 1;
+        }
+#if ASSERTIONS
+        m_isAnyTree[i] = false;
+#endif
+      }
+    }
     const Tree* getNode(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
     bool isAnyTree(uint8_t tag) const {
@@ -60,18 +80,29 @@ class PatternMatching {
 #endif
 
    private:
-    const Tree* m_array[Placeholder::Tag::NumberOfTags];
-    uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
+    union {
+      ContextTrees m_trees;
+      struct {
+        const Tree* m_array[Placeholder::Tag::NumberOfTags];
+        uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
 #if ASSERTIONS
-    // Used only to assert AnyTreePlaceholders are properly used when creating
-    bool m_isAnyTree[Placeholder::Tag::NumberOfTags];
+        // Used only to assert AnyTreePlaceholders are properly used when
+        // creating
+        bool m_isAnyTree[Placeholder::Tag::NumberOfTags];
 #endif
+      };
+      static_assert(sizeof(m_trees) == sizeof(m_array));
+    };
   };
 
   static bool Match(const Tree* pattern, const Tree* source, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),
                       bool simplify = false) {
     return CreateTree(structure, context, nullptr, simplify);
+  }
+  static Tree* Create(const Tree* structure, const ContextTrees& context,
+                      bool simplify = false) {
+    return Create(structure, Context(context), simplify);
   }
   static Tree* MatchAndCreate(const Tree* source, const Tree* pattern,
                               const Tree* structure);

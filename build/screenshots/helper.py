@@ -36,3 +36,7 @@ def generate_screenshot(state_file, executable, screenshot):
    if not os.path.isfile(screenshot):
       print("Error: couldn't take screenshot")
       sys.exit(1)
+
+def generate_all_screenshots(state_file, executable, folder):
+   print("Generating all screenshots of", state_file)
+   subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=subprocess.DEVNULL)

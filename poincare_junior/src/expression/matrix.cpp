@@ -1,6 +1,7 @@
 #include "matrix.h"
 
 #include <float.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
@@ -226,14 +227,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
       Tree* opHJ = divisor;
       for (int j = k + 1; j < n; j++) {
         opHJ = opHJ->nextTree();
-        Tree* newOpHJ = SharedEditionPool->push<BlockType::Multiplication>(2);
-        opHJ->clone();
-        Tree* pow = SharedEditionPool->push<BlockType::Power>();
-        divisor->clone();
-        (-1_e)->clone();
-        Simplification::ShallowSystematicReduce(pow);
-        Simplification::ShallowSystematicReduce(newOpHJ);
-        opHJ->moveTreeOverTree(newOpHJ);
+        opHJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+            KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
         // TODO : Dependency
       }
       divisor->cloneTreeOverTree(1_e);
@@ -252,15 +247,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
         for (int j = k + 1; j < n; j++) {
           opIJ = opIJ->nextTree();
           opHJ = opHJ->nextTree();
-          Tree* newOpIJ = SharedEditionPool->push<BlockType::Addition>(2);
-          opIJ->clone();
-          Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(3);
-          (-1_e)->clone();
-          opHJ->clone();
-          factor->clone();
-          Simplification::ShallowSystematicReduce(mult);
-          Simplification::ShallowSystematicReduce(newOpIJ);
-          opIJ->moveTreeOverTree(newOpIJ);
+          opIJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+              KAdd(KA, KMult(-1_e, KB, KC)),
+              {.KA = opIJ, .KB = opHJ, .KC = factor}));
           // TODO : Dependency
         }
         factor->cloneTreeOverTree(0_e);

@@ -96,33 +96,35 @@ inline void assertionsWarn() {
 #endif
 }
 
-#define METRICS(F)                                                         \
-  {                                                                        \
-    Tree::nextNodeCount = 0;                                               \
-    int refId;                                                             \
-    {                                                                      \
-      EditionReference r(0_e);                                             \
-      refId = r.identifier();                                              \
-      r->removeNode();                                                     \
-    }                                                                      \
-    auto startTime = std::chrono::high_resolution_clock::now();            \
-    F;                                                                     \
-    auto elapsed = std::chrono::high_resolution_clock::now() - startTime;  \
-    {                                                                      \
-      EditionReference r(0_e);                                             \
-      refId = r.identifier() - refId;                                      \
-      r->removeNode();                                                     \
-    }                                                                      \
-    std::cout << "Metrics [" << #F << "]\n"                                \
-              << "  references:   " << std::right << std::setw(6) << refId \
-              << "\n  nextNode:     " << std::right << std::setw(6)        \
-              << Tree::nextNodeCount << "\n  microseconds: " << std::right \
-              << std::setw(6)                                              \
-              << std::chrono::duration_cast<std::chrono::microseconds>(    \
-                     elapsed)                                              \
-                     .count()                                              \
-              << std::endl;                                                \
-    assertionsWarn();                                                      \
+#define METRICS(F)                                                          \
+  {                                                                         \
+    Tree::nextNodeCount = 0;                                                \
+    Tree::nextNodeInPoolCount = 0;                                          \
+    int refId;                                                              \
+    {                                                                       \
+      EditionReference r(0_e);                                              \
+      refId = r.identifier();                                               \
+      r->removeNode();                                                      \
+    }                                                                       \
+    auto startTime = std::chrono::high_resolution_clock::now();             \
+    F;                                                                      \
+    auto elapsed = std::chrono::high_resolution_clock::now() - startTime;   \
+    {                                                                       \
+      EditionReference r(0_e);                                              \
+      refId = r.identifier() - refId;                                       \
+      r->removeNode();                                                      \
+    }                                                                       \
+    std::cout << "Metrics [" << #F << "]\n"                                 \
+              << "  references:    " << std::right << std::setw(6) << refId \
+              << "\n  nextNode:      " << std::right << std::setw(6)        \
+              << Tree::nextNodeCount << "\n  nextNodeInPool:" << std::right \
+              << std::setw(6) << Tree::nextNodeInPoolCount                  \
+              << "\n  microseconds:  " << std::right << std::setw(6)        \
+              << std::chrono::duration_cast<std::chrono::microseconds>(     \
+                     elapsed)                                               \
+                     .count()                                               \
+              << std::endl;                                                 \
+    assertionsWarn();                                                       \
   }
 #endif
 

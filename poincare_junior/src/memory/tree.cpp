@@ -228,6 +228,7 @@ void Tree::copyTreeTo(void* address) const {
 
 #if !PLATFORM_DEVICE
 uint32_t Tree::nextNodeCount = 0;
+uint32_t Tree::nextNodeInPoolCount = 0;
 #endif
 
 const Tree* Tree::nextNode() const {
@@ -237,6 +238,10 @@ const Tree* Tree::nextNode() const {
   assert(m_block + nodeSize() != CachePool::sharedCachePool()->firstBlock());
   assert(m_block != CachePool::sharedCachePool()->editionPool()->lastBlock());
 #if !PLATFORM_DEVICE
+  if (SharedEditionPool->firstBlock() <= m_block &&
+      m_block <= SharedEditionPool->lastBlock()) {
+    nextNodeInPoolCount++;
+  }
   nextNodeCount++;
 #endif
   return Tree::FromBlocks(m_block + nodeSize());

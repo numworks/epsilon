@@ -25,6 +25,7 @@ class Tree {
  public:
 #if !PLATFORM_DEVICE
   static uint32_t nextNodeCount;
+  static uint32_t nextNodeInPoolCount;
 #endif
   // Prevent using Nodes objects directly
   Tree() = delete;

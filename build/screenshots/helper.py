@@ -36,4 +36,3 @@ def generate_screenshot(state_file, executable, screenshot):
    if not os.path.isfile(screenshot):
       print("Error: couldn't take screenshot")
       sys.exit(1)
-   return screenshot

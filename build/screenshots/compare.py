@@ -38,24 +38,24 @@ def check_dataset(dataset):
       print("Error:", dataset, "is not a directory")
       sys.exit(1)
 
-def get_file_with_extension(folder, file_extension, file_type):
+def get_file_with_extension(folder, file_extension):
    found_file = ''
    for file in sorted(os.listdir(folder)):
       if os.path.splitext(file)[1] == file_extension:
          if found_file != '':
-            print("Error: too many", file_type + "s", "in", folder, "folder")
+            print("Error: too many", file_extension, "in", folder, "folder")
             sys.exit(1)
          found_file = os.path.join(folder, file)
    if found_file == '':
-      print("Error: no", file_type, "in", folder, "folder")
+      print("Error: no", file_extension, "in", folder, "folder")
       sys.exit(1)
    return found_file
 
 def get_state_file(folder):
-   return get_file_with_extension(folder, state_file_extension, "state file")
+   return get_file_with_extension(folder, state_file_extension)
 
 def get_reference_image(folder):
-   return get_file_with_extension(folder, screenshot_extension, "image")
+   return get_file_with_extension(folder, screenshot_extension)
 
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))

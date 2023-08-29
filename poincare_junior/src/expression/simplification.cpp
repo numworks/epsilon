@@ -486,30 +486,14 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
   } else if (child->type() == BlockType::Complex ||
              next->type() == BlockType::Complex) {
     // (A+B*i)*(C+D*i) -> ((AC-BD)+(AD+BC)*i)
-    merge = SharedEditionPool->push<BlockType::Complex>();
-    Tree* addition = SharedEditionPool->push<BlockType::Addition>(2);
-    Tree* multiplication =
-        SharedEditionPool->push<BlockType::Multiplication>(2);
-    RealPart(child)->clone();
-    RealPart(next)->clone();
-    SimplifyMultiplication(multiplication);
-    multiplication = SharedEditionPool->push<BlockType::Multiplication>(3);
-    SharedEditionPool->push<BlockType::MinusOne>();
-    ImagPart(child)->clone();
-    ImagPart(next)->clone();
-    SimplifyMultiplication(multiplication);
-    SimplifyAddition(addition);
-    addition = SharedEditionPool->push<BlockType::Addition>(2);
-    multiplication = SharedEditionPool->push<BlockType::Multiplication>(2);
-    RealPart(child)->clone();
-    ImagPart(next)->clone();
-    SimplifyMultiplication(multiplication);
-    multiplication = SharedEditionPool->push<BlockType::Multiplication>(2);
-    ImagPart(child)->clone();
-    RealPart(next)->clone();
-    SimplifyMultiplication(multiplication);
-    SimplifyAddition(addition);
-    SimplifyComplex(merge);
+    merge = PatternMatching::Create(
+        KComplex(KAdd(KMult(KA, KC), KMult(-1_e, KB, KD)),
+                 KAdd(KMult(KA, KD), KMult(KB, KC))),
+        {.KA = RealPart(child),
+         .KB = ImagPart(child),
+         .KC = RealPart(next),
+         .KD = ImagPart(next)},
+        true);
   }
   if (!merge) {
     return false;

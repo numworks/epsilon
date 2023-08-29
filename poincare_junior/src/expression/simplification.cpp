@@ -385,14 +385,9 @@ const Tree* Exponent(const Tree* u) {
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
   // x^y -> exp(ln(x)*y)
-  PatternMatching::MatchAndReplace(u, KPowReal(KA, KB),
-                                   KExp(KMult(KLn(KA), KB)));
-  // Ln - Add if there is a systematic shallow simplification
-  assert(!ShallowSystematicReduce(u->nextNode()->nextNode()));
-  // Mult
-  SimplifyMultiplication(u->nextNode());
-  // Exp - Add if there is a systematic shallow simplification
-  assert(!ShallowSystematicReduce(u));
+  bool result = PatternMatching::MatchReplaceAndSimplify(
+      u, KPowReal(KA, KB), KExp(KMult(KLn(KA), KB)));
+  assert(result);
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {

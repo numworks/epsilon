@@ -6,11 +6,11 @@ screenshot_extension = '.png'
 def main(argv):
    if len(argv) != 1:
       print(help_message)
-      sys.exit()
+      sys.exit(1)
    compare_output_folder = argv[0]
    if not os.path.isdir(compare_output_folder):
       print("Error:", compare_output_folder, "is not a directory")
-      sys.exit()
+      sys.exit(1)
 
    extension = '-2' + screenshot_extension
 

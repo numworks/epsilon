@@ -9,14 +9,18 @@ namespace Simulator {
 class Screenshot {
  public:
   Screenshot(const char* path = nullptr);
-  void init(const char* path, bool eachStep = false);
+  void init(const char* path, bool eachStep = false, bool computeCRC32 = false);
   void capture(Events::Event nextEvent = Events::None);
   static Screenshot* commandlineScreenshot();
 
  private:
+  void printCRC32();
+
   const char* m_path;
   int m_stepNumber;
   bool m_eachStep;
+  bool m_computeCRC32;
+  uint32_t m_CRC32;
 };
 
 }  // namespace Simulator

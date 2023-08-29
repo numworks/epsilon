@@ -153,7 +153,7 @@ void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
     ConvertExpressionToLayout(SharedEditionPool->push<BlockType::RackLayout>(0),
                               expression, false);
   } else {
-    assert(type == BlockType::Power || type == BlockType::MatrixPower);
+    assert(type == BlockType::Power || type == BlockType::PowerMatrix);
     ConvertExpressionToLayout(layoutParent, expression);
     createdLayout = SharedEditionPool->push<BlockType::VerticalOffsetLayout>();
   }
@@ -189,7 +189,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       ConvertInfixOperatorToLayout(layoutParent, expression);
       break;
     case BlockType::Power:
-    case BlockType::MatrixPower:
+    case BlockType::PowerMatrix:
     case BlockType::Division:
       ConvertPowerOrDivisionToLayout(layoutParent, expression);
       break;

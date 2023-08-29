@@ -126,8 +126,8 @@ enum class BlockType : uint8_t {
   Rref,
   Transpose,
   Matrix,
-  MatrixPower,
-  LastMatrix = MatrixPower,
+  PowerMatrix,
+  LastMatrix = PowerMatrix,
   // 1 - E - Order dependant expressions
   List,
   Set,
@@ -356,7 +356,7 @@ class TypeBlock : public Block {
         return 3;
       case BlockType::Power:
       case BlockType::PowerReal:
-      case BlockType::MatrixPower:
+      case BlockType::PowerMatrix:
       case BlockType::Subtraction:
       case BlockType::Complex:
       case BlockType::Division:

@@ -1447,7 +1447,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     tree->moveTreeOverTree(result);
     return true;
   }
-  if (tree->type() == BlockType::MatrixPower) {
+  if (tree->type() == BlockType::PowerMatrix) {
     Tree* index = child->nextTree();
     if (!index->block()->isInteger() && index->type() != BlockType::Float) {
       return false;

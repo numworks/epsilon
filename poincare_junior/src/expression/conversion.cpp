@@ -127,7 +127,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     }
     case BlockType::Subtraction:
     case BlockType::Power:
-    case BlockType::MatrixPower:
+    case BlockType::PowerMatrix:
     case BlockType::Division: {
       Poincare::Expression child0 = ToPoincareExpression(exp->childAtIndex(0));
       Poincare::Expression child1 = ToPoincareExpression(exp->childAtIndex(1));

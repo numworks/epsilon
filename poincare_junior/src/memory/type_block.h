@@ -113,22 +113,24 @@ enum class BlockType : uint8_t {
   UserFunction,
   UserSequence,
   // 1 - D - Matrix and vector builtins
+  FirstMatrix,
+  Dot = FirstMatrix,
+  Norm,
+  Trace,
   Cross,
   Det,
   Dim,
-  Dot,
   Identity,
   Inverse,
-  Norm,
   Ref,
   Rref,
-  Trace,
   Transpose,
+  Matrix,
+  MatrixPower,
+  LastMatrix = MatrixPower,
   // 1 - E - Order dependant expressions
   List,
   Set,
-  Matrix,
-  MatrixPower,
   Undefined,
   NumberOfExpressions,
   // 2 - Layout
@@ -393,6 +395,11 @@ class TypeBlock : public Block {
       default:
         return 0;
     }
+  }
+
+  bool isScalarOnly() const {
+    return !(BlockType::FirstMatrix <= type() &&
+             type() <= BlockType::LastMatrix);
   }
 };
 

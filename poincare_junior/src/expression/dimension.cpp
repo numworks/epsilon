@@ -69,6 +69,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
     default:
+      assert(t->block()->isScalarOnly());
       // Scalar-only constants and functions
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!childDim[i].isScalar()) {

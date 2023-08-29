@@ -9,17 +9,17 @@ def get_args(argv):
    if len(argv) < 1:
       print("Error: missing parameter")
       print(help_message)
-      sys.exit()
+      sys.exit(1)
    if len(argv) > 2:
       print("Error: too many parameters")
       print(help_message)
-      sys.exit()
+      sys.exit(1)
 
    # Get state file
    state_file = argv[0]
    if not os.path.exists(state_file) or os.path.splitext(state_file)[1] != state_file_extension:
       print("Error:", state_file, "is not a state file")
-      sys.exit()
+      sys.exit(1)
 
    # Get name
    name = os.path.splitext(state_file)[0]
@@ -37,7 +37,7 @@ def main(argv):
    new_dir = os.path.join("tests/screenshots_dataset", name)
    if os.path.exists(new_dir):
       print("Error:", new_dir, "already exists. Choose another name.")
-      sys.exit()
+      sys.exit(1)
    os.mkdir(new_dir)
 
    # Add the state file

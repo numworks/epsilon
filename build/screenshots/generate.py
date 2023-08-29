@@ -10,7 +10,7 @@ def parse_args(argv):
    if len(argv) < 1:
       print("Error: missing parameters")
       print(help_message)
-      sys.exit()
+      sys.exit(1)
    # Default arguments
    scenari = argv[0]
    executable = helper.executable_built_path()
@@ -20,7 +20,7 @@ def parse_args(argv):
       opts, args = getopt.getopt(argv[1:],"he:g:",["help"])
    except getopt.GetoptError:
       print(help_message)
-      sys.exit(2)
+      sys.exit(1)
    for opt, arg in opts:
       if opt in ("-h", "--help"):
          print(help_message)

@@ -30,12 +30,7 @@ bool DomainParameterController::textFieldDidReceiveEvent(
   if (event == Ion::Events::Toolbox) {
     switchToolboxContent(textField, true);
   }
-  /* Do not refuse empty text for functions of x, as that will later be
-   * replaced by ±inf. */
-  return !(function()->properties().isCartesian() &&
-           textFieldShouldFinishEditing(textField, event) &&
-           textField->text()[0] == '\0') &&
-         FloatParameterController<float>::textFieldDidReceiveEvent(textField,
+  return FloatParameterController<float>::textFieldDidReceiveEvent(textField,
                                                                    event);
 }
 
@@ -43,16 +38,17 @@ bool DomainParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   switchToolboxContent(textField, false);
   assert(!textField->isEditing());
-  textField->setEditing(true);  // To edit draft text buffer in setText
-  if (textField->draftText()[0] == '\0') {
+  if (function()->properties().isCartesian() &&
+      textField->draftText()[0] == '\0') {
+    textField->setEditing(true);  // To edit draft text buffer in setText
     if (textField == m_boundsCells[0].textField()) {
       textField->setText(Infinity::Name(true));
     } else {
       assert(textField == m_boundsCells[1].textField());
       textField->setText(Infinity::Name(false));
     }
+    textField->setEditing(false);  // set editing back to previous value
   }
-  textField->setEditing(false);  // set editing back to previous value
   return SingleRangeController::textFieldDidFinishEditing(textField, event);
 }
 

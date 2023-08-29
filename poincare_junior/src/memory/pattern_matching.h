@@ -100,9 +100,16 @@ class PatternMatching {
                       bool simplify = false) {
     return CreateTree(structure, context, nullptr, simplify);
   }
+  static Tree* CreateAndSimplify(const Tree* structure, const Context context) {
+    return CreateTree(structure, context, nullptr, true);
+  }
   static Tree* Create(const Tree* structure, const ContextTrees& context,
                       bool simplify = false) {
     return Create(structure, Context(context), simplify);
+  }
+  static Tree* CreateAndSimplify(const Tree* structure,
+                                 const ContextTrees& context) {
+    return Create(structure, Context(context), true);
   }
   static Tree* MatchAndCreate(const Tree* source, const Tree* pattern,
                               const Tree* structure);

@@ -131,7 +131,7 @@ bool Simplification::SimplifyExp(Tree* u) {
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
       IsInteger(ctx.getNode(A))) {
     // exp(n*ln(x)) -> x^n with n an integer
-    u->moveTreeOverTree(PatternMatching::Create(KPow(KB, KA), ctx, true));
+    u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;
   }
   return false;
@@ -465,21 +465,20 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     Rational::MakeIrreducible(merge);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
-    merge = PatternMatching::Create(
+    merge = PatternMatching::CreateAndSimplify(
         KPow(KA, KAdd(KB, KC)),
-        {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)}, true);
+        {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
     assert(merge->type() != BlockType::Multiplication);
   } else if (child->type() == BlockType::Complex ||
              next->type() == BlockType::Complex) {
     // (A+B*i)*(C+D*i) -> ((AC-BD)+(AD+BC)*i)
-    merge = PatternMatching::Create(
+    merge = PatternMatching::CreateAndSimplify(
         KComplex(KAdd(KMult(KA, KC), KMult(-1_e, KB, KD)),
                  KAdd(KMult(KA, KD), KMult(KB, KC))),
         {.KA = RealPart(child),
          .KB = ImagPart(child),
          .KC = RealPart(next),
-         .KD = ImagPart(next)},
-        true);
+         .KD = ImagPart(next)});
   }
   if (!merge) {
     return false;
@@ -639,21 +638,20 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   } else if (TermsAreEqual(child, next)) {
     // k1 * a + k2 * a -> (k1+k2) * a
     Tree* term = PushTerm(child);
-    merge = PatternMatching::Create(
+    merge = PatternMatching::CreateAndSimplify(
         KMult(KAdd(KA, KB), KC),
-        {.KA = Constant(child), .KB = Constant(next), .KC = term}, true);
+        {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();
     merge = term;
     assert(merge->type() != BlockType::Addition);
   } else if (child->type() == BlockType::Complex ||
              next->type() == BlockType::Complex) {
     // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
-    merge = PatternMatching::Create(KComplex(KAdd(KA, KC), KAdd(KB, KD)),
-                                    {.KA = RealPart(child),
-                                     .KB = ImagPart(child),
-                                     .KC = RealPart(next),
-                                     .KD = ImagPart(next)},
-                                    true);
+    merge = PatternMatching::CreateAndSimplify(
+        KComplex(KAdd(KA, KC), KAdd(KB, KD)), {.KA = RealPart(child),
+                                               .KB = ImagPart(child),
+                                               .KC = RealPart(next),
+                                               .KD = ImagPart(next)});
   }
   if (!merge) {
     return false;

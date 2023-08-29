@@ -676,16 +676,12 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   } else if (child->type() == BlockType::Complex ||
              next->type() == BlockType::Complex) {
     // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
-    merge = SharedEditionPool->push<BlockType::Complex>();
-    Tree* addition = SharedEditionPool->push<BlockType::Addition>(2);
-    RealPart(child)->clone();
-    RealPart(next)->clone();
-    SimplifyAddition(addition);
-    addition = SharedEditionPool->push<BlockType::Addition>(2);
-    ImagPart(child)->clone();
-    ImagPart(next)->clone();
-    SimplifyAddition(addition);
-    SimplifyComplex(merge);
+    merge = PatternMatching::Create(KComplex(KAdd(KA, KC), KAdd(KB, KD)),
+                                    {.KA = RealPart(child),
+                                     .KB = ImagPart(child),
+                                     .KC = RealPart(next),
+                                     .KD = ImagPart(next)},
+                                    true);
   }
   if (!merge) {
     return false;

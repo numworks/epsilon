@@ -141,6 +141,23 @@ class PatternMatching {
                           Tree* insertedNAry, bool simplify);
 };
 
+// Aliases for convenience
+constexpr auto KA = KPlaceholder<Placeholder::Tag::A>();
+constexpr auto KB = KPlaceholder<Placeholder::Tag::B>();
+constexpr auto KC = KPlaceholder<Placeholder::Tag::C>();
+constexpr auto KD = KPlaceholder<Placeholder::Tag::D>();
+constexpr auto KE = KPlaceholder<Placeholder::Tag::E>();
+constexpr auto KF = KPlaceholder<Placeholder::Tag::F>();
+constexpr auto KG = KPlaceholder<Placeholder::Tag::G>();
+
+constexpr auto KTA = KAnyTreesPlaceholder<Placeholder::Tag::A>();
+constexpr auto KTB = KAnyTreesPlaceholder<Placeholder::Tag::B>();
+constexpr auto KTC = KAnyTreesPlaceholder<Placeholder::Tag::C>();
+constexpr auto KTD = KAnyTreesPlaceholder<Placeholder::Tag::D>();
+constexpr auto KTE = KAnyTreesPlaceholder<Placeholder::Tag::E>();
+constexpr auto KTF = KAnyTreesPlaceholder<Placeholder::Tag::F>();
+constexpr auto KTG = KAnyTreesPlaceholder<Placeholder::Tag::G>();
+
 }  // namespace PoincareJ
 
 #endif

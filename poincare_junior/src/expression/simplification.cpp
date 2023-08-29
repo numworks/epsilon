@@ -129,12 +129,10 @@ bool Simplification::SimplifyExp(Tree* u) {
     return true;
   }
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(
-          KExp(KMult(KPlaceholder<A>(), KLn(KPlaceholder<B>()))), u, &ctx) &&
+  if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
       IsInteger(ctx.getNode(A))) {
     // exp(n*ln(x)) -> x^n with n an integer
-    u->moveTreeOverTree(PatternMatching::Create(
-        KPow(KPlaceholder<B>(), KPlaceholder<A>()), ctx, true));
+    u->moveTreeOverTree(PatternMatching::Create(KPow(KB, KA), ctx, true));
     return true;
   }
   return false;
@@ -243,10 +241,8 @@ bool Simplification::SimplifyTrig(Tree* u) {
   bool isSin = Number::IsOne(secondArgument);
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
   Tree* firstArgument = u->nextNode();
-  if (PatternMatching::MatchAndReplace(
-          firstArgument,
-          KMult(KAnyTreesPlaceholder<A>(), -1_e, KAnyTreesPlaceholder<B>()),
-          KMult(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>()))) {
+  if (PatternMatching::MatchAndReplace(firstArgument, KMult(KTA, -1_e, KTB),
+                                       KMult(KTA, KTB))) {
     changed = true;
     if (isSin) {
       isOpposed = !isOpposed;
@@ -376,9 +372,8 @@ bool Simplification::SimplifyPower(Tree* u) {
     return SimplifyMultiplication(u);
   }
   // exp(a)^b -> exp(a*b)
-  return PatternMatching::MatchReplaceAndSimplify(
-      u, KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
-      KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
+  return PatternMatching::MatchReplaceAndSimplify(u, KPow(KExp(KA), KB),
+                                                  KExp(KMult(KA, KB)));
 }
 
 bool BasesAreEqual(const Tree* u1, const Tree* u2) {
@@ -403,9 +398,8 @@ Tree* PushExponent(const Tree* u) {
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
   // x^y -> exp(ln(x)*y)
-  PatternMatching::MatchAndReplace(
-      u, KPowReal(KPlaceholder<A>(), KPlaceholder<B>()),
-      KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
+  PatternMatching::MatchAndReplace(u, KPowReal(KA, KB),
+                                   KExp(KMult(KLn(KA), KB)));
   // Ln - Add if there is a systematic shallow simplification
   assert(!ShallowSystematicReduce(u->nextNode()->nextNode()));
   // Mult
@@ -793,68 +787,50 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   if (ref->type() == BlockType::Trig) {
-    const Tree* k_angles[3] = {
-        KPlaceholder<A>(), KMult(KPlaceholder<A>(), 180_e, KPow(π_e, -1_e)),
-        KMult(KPlaceholder<A>(), 200_e, KPow(π_e, -1_e))};
+    const Tree* k_angles[3] = {KA, KMult(KA, 180_e, KPow(π_e, -1_e)),
+                               KMult(KA, 200_e, KPow(π_e, -1_e))};
     Tree* child = ref->childAtIndex(0);
     PatternMatching::MatchAndReplace(
-        child, KPlaceholder<A>(),
+        child, KA,
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
     DeepSystematicReduce(child);
   }
 
   // RealPow(A,B) -> A^B
   // exp(A? * ln(B) * C?) -> B^(A*C)
-  if (PatternMatching::MatchAndReplace(
-          ref, KPowReal(KPlaceholder<A>(), KPlaceholder<B>()),
-          KPow(KPlaceholder<A>(), KPlaceholder<B>())) ||
-      PatternMatching::MatchAndReplace(
-          ref,
-          KExp(KMult(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
-                     KAnyTreesPlaceholder<C>())),
-          KPow(KPlaceholder<B>(),
-               KMult(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>())))) {
+  if (PatternMatching::MatchAndReplace(ref, KPowReal(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchAndReplace(ref, KExp(KMult(KTA, KLn(KB), KTC)),
+                                       KPow(KB, KMult(KTA, KTC)))) {
     // A^0.5 -> Sqrt(A)
-    PatternMatching::MatchAndReplace(ref, KPow(KPlaceholder<A>(), KHalf),
-                                     KSqrt(KPlaceholder<A>()));
+    PatternMatching::MatchAndReplace(ref, KPow(KA, KHalf), KSqrt(KA));
     return true;
   }
   bool changed = false;
   // A + B? + (-1)*C + D?-> ((A + B) - C) + D
   // Applied as much as necessary while preserving the order.
   while (PatternMatching::MatchAndReplace(
-      ref,
-      KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
-           KMult(-1_e, KAnyTreesPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KSub(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
-                KMult(KAnyTreesPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()))) {
+      ref, KAdd(KA, KTB, KMult(-1_e, KTC), KTD),
+      KAdd(KSub(KAdd(KA, KTB), KMult(KTC)), KTD))) {
     changed = true;
   }
   return changed ||
          // Complex(0,1) -> i
          PatternMatching::MatchAndReplace(ref, KComplex(0_e, 1_e), i_e) ||
          // Complex(0,A) -> A*i
-         PatternMatching::MatchAndReplace(ref, KComplex(0_e, KPlaceholder<A>()),
-                                          KMult(KPlaceholder<A>(), i_e)) ||
+         PatternMatching::MatchAndReplace(ref, KComplex(0_e, KA),
+                                          KMult(KA, i_e)) ||
          // Complex(A,B) -> A+B*i
-         PatternMatching::MatchAndReplace(
-             ref, KComplex(KPlaceholder<A>(), KPlaceholder<B>()),
-             KAdd(KPlaceholder<A>(), KMult(KPlaceholder<B>(), i_e))) ||
+         PatternMatching::MatchAndReplace(ref, KComplex(KA, KB),
+                                          KAdd(KA, KMult(KB, i_e))) ||
          // trig(A, 0) -> cos(A)
-         PatternMatching::MatchAndReplace(ref, KTrig(KPlaceholder<A>(), 0_e),
-                                          KCos(KPlaceholder<A>())) ||
+         PatternMatching::MatchAndReplace(ref, KTrig(KA, 0_e), KCos(KA)) ||
          // trig(A, 1) -> sin(A)
-         PatternMatching::MatchAndReplace(ref, KTrig(KPlaceholder<A>(), 1_e),
-                                          KSin(KPlaceholder<A>())) ||
+         PatternMatching::MatchAndReplace(ref, KTrig(KA, 1_e), KSin(KA)) ||
          // exp(A) -> e^A
-         PatternMatching::MatchAndReplace(ref, KExp(KPlaceholder<A>()),
-                                          KPow(e_e, KPlaceholder<A>())) ||
+         PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
          // ln(A) * ln(B)^(-1) -> log(A, B)
          PatternMatching::MatchAndReplace(
-             ref,
-             KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e)),
-             KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()));
+             ref, KMult(KLn(KA), KPow(KLn(KB), -1_e)), KLogarithm(KA, KB));
 }
 
 bool Simplification::DeepSystemProjection(Tree* ref,
@@ -887,11 +863,10 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
 
   if (ref->block()->isOfType(
           {BlockType::Sine, BlockType::Cosine, BlockType::Tangent})) {
-    const Tree* k_angles[3] = {
-        KPlaceholder<A>(), KMult(KPlaceholder<A>(), π_e, KPow(180_e, -1_e)),
-        KMult(KPlaceholder<A>(), π_e, KPow(200_e, -1_e))};
+    const Tree* k_angles[3] = {KA, KMult(KA, π_e, KPow(180_e, -1_e)),
+                               KMult(KA, π_e, KPow(200_e, -1_e))};
     PatternMatching::MatchAndReplace(
-        ref->childAtIndex(0), KPlaceholder<A>(),
+        ref->childAtIndex(0), KA,
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
   }
   // These types should only be available after projection
@@ -899,30 +874,23 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
                                   BlockType::TrigDiff, BlockType::Polynomial,
                                   BlockType::PowerReal}));
   // Sqrt(A) -> A^0.5
-  PatternMatching::MatchAndReplace(ref, KSqrt(KPlaceholder<A>()),
-                                   KPow(KPlaceholder<A>(), KHalf));
+  PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
   if (ref->type() == BlockType::Power) {
     const Tree* index = ref->nextNode()->nextTree();
     if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
-      PatternMatching::MatchAndReplace(
-          ref, KPow(KPlaceholder<A>(), KPlaceholder<B>()),
-          KPowMatrix(KPlaceholder<A>(), KPlaceholder<B>()));
+      PatternMatching::MatchAndReplace(ref, KPow(KA, KB), KPowMatrix(KA, KB));
     }
     if (!index->block()->isInteger() &&
         Dimension::GetDimension(ref->nextNode()).isScalar()) {
       // e^A -> exp(A)
-      if (!PatternMatching::MatchAndReplace(ref, KPow(e_e, KPlaceholder<A>()),
-                                            KExp(KPlaceholder<A>()))) {
+      if (!PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
         if (projectionContext->m_complexFormat != ComplexFormat::Real) {
           // A^B -> exp(ln(A)*B)
-          PatternMatching::MatchAndReplace(
-              ref, KPow(KPlaceholder<A>(), KPlaceholder<B>()),
-              KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
+          PatternMatching::MatchAndReplace(ref, KPow(KA, KB),
+                                           KExp(KMult(KLn(KA), KB)));
         } else {
           // A^B -> RealPow(A,B)
-          PatternMatching::MatchAndReplace(
-              ref, KPow(KPlaceholder<A>(), KPlaceholder<B>()),
-              KPowReal(KPlaceholder<A>(), KPlaceholder<B>()));
+          PatternMatching::MatchAndReplace(ref, KPow(KA, KB), KPowReal(KA, KB));
         }
       }
       return true;
@@ -935,39 +903,30 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
       // i -> Complex(0,1)
       PatternMatching::MatchAndReplace(ref, i_e, KComplex(0_e, 1_e)) ||
       // A - B -> A + (-1)*B
-      PatternMatching::MatchAndReplace(
-          ref, KSub(KPlaceholder<A>(), KPlaceholder<B>()),
-          KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))) ||
+      PatternMatching::MatchAndReplace(ref, KSub(KA, KB),
+                                       KAdd(KA, KMult(-1_e, KB))) ||
       // A / B -> A * B^-1
-      PatternMatching::MatchAndReplace(
-          ref, KDiv(KPlaceholder<A>(), KPlaceholder<B>()),
-          KMult(KPlaceholder<A>(), KPow(KPlaceholder<B>(), -1_e))) ||
+      PatternMatching::MatchAndReplace(ref, KDiv(KA, KB),
+                                       KMult(KA, KPow(KB, -1_e))) ||
       // cos(A) -> trig(A, 0)
-      PatternMatching::MatchAndReplace(ref, KCos(KPlaceholder<A>()),
-                                       KTrig(KPlaceholder<A>(), 0_e)) ||
+      PatternMatching::MatchAndReplace(ref, KCos(KA), KTrig(KA, 0_e)) ||
       // sin(A) -> trig(A, 1)
-      PatternMatching::MatchAndReplace(ref, KSin(KPlaceholder<A>()),
-                                       KTrig(KPlaceholder<A>(), 1_e)) ||
+      PatternMatching::MatchAndReplace(ref, KSin(KA), KTrig(KA, 1_e)) ||
       // tan(A) -> sin(A) * cos(A)^(-1)
       /* TODO: Tangent will duplicate its yet to be projected children,
        * replacing it after everything else may be an optimization.
        * Sin and cos terms will be replaced afterwards. */
-      PatternMatching::MatchAndReplace(
-          ref, KTan(KPlaceholder<A>()),
-          KMult(KSin(KPlaceholder<A>()),
-                KPow(KCos(KPlaceholder<A>()), -1_e))) ||
+      PatternMatching::MatchAndReplace(ref, KTan(KA),
+                                       KMult(KSin(KA), KPow(KCos(KA), -1_e))) ||
       // log(A, e) -> ln(e)
-      PatternMatching::MatchAndReplace(ref, KLogarithm(KPlaceholder<A>(), e_e),
-                                       KLn(KPlaceholder<A>())) ||
+      PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)
       // TODO: Maybe log(A) -> log(A, 10) and rely on next matchAndReplace
-      PatternMatching::MatchAndReplace(
-          ref, KLog(KPlaceholder<A>()),
-          KMult(KLn(KPlaceholder<A>()), KPow(KLn(10_e), -1_e))) ||
+      PatternMatching::MatchAndReplace(ref, KLog(KA),
+                                       KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
-      PatternMatching::MatchAndReplace(
-          ref, KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
-          KMult(KLn(KPlaceholder<A>()), KPow(KLn(KPlaceholder<B>()), -1_e)));
+      PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
+                                       KMult(KLn(KA), KPow(KLn(KB), -1_e)));
 }
 
 bool Simplification::ApplyShallowInDepth(Tree* ref,
@@ -1140,12 +1099,8 @@ bool Simplification::TryAllOperations(Tree* e, const Operation* operations,
 bool Simplification::ContractAbs(Tree* ref) {
   // A*|B|*|C|*D = A*|BC|*D
   return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
-            KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KMult(KAnyTreesPlaceholder<A>(),
-            KAbs(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
-            KAnyTreesPlaceholder<D>()));
+      ref, KMult(KTA, KAbs(KB), KAbs(KC), KTD),
+      KMult(KTA, KAbs(KMult(KB, KC)), KTD));
 }
 
 bool Simplification::ExpandAbs(Tree* ref) {
@@ -1157,12 +1112,8 @@ bool Simplification::ExpandAbs(Tree* ref) {
 bool Simplification::ContractLn(Tree* ref) {
   // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
   return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
-           KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KAnyTreesPlaceholder<A>(),
-           KLn(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()));
+      ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
+      KAdd(KTA, KLn(KMult(KB, KC)), KTD));
 }
 
 bool Simplification::ExpandLn(Tree* ref) {
@@ -1175,10 +1126,8 @@ bool Simplification::ExpandExp(Tree* ref) {
   return
       // exp(A+iB) = exp(A)*(cos(B) + i*sin(B))
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KExp(KComplex(KPlaceholder<A>(), KPlaceholder<B>())),
-          KMult(KExp(KPlaceholder<A>()),
-                KComplex(KTrig(KPlaceholder<B>(), 0_e),
-                         KTrig(KPlaceholder<B>(), 1_e)))) ||
+          ref, KExp(KComplex(KA, KB)),
+          KMult(KExp(KA), KComplex(KTrig(KB, 0_e), KTrig(KB, 1_e)))) ||
       // exp(A+B+...) = exp(A) * exp(B) * ...
       DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
                          BlockType::Multiplication);
@@ -1187,12 +1136,8 @@ bool Simplification::ExpandExp(Tree* ref) {
 bool Simplification::ContractExpMult(Tree* ref) {
   // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
   return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
-            KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KMult(KAnyTreesPlaceholder<A>(),
-            KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
-            KAnyTreesPlaceholder<D>()));
+      ref, KMult(KTA, KExp(KB), KExp(KC), KTD),
+      KMult(KTA, KExp(KAdd(KB, KC)), KTD));
 }
 
 /* TODO : Find an easier solution for nested expand/contract smart shallow
@@ -1204,14 +1149,9 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
    * factorized with DistributeOverNAry. */
   // MatchReplaceAndSimplify's cannot be used because of nested expansion.
   if (!PatternMatching::MatchAndReplace(
-          ref,
-          KTrig(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()),
-                KPlaceholder<C>()),
-          KAdd(KMult(KTrig(KAdd(KAnyTreesPlaceholder<A>()), 0_e),
-                     KTrig(KPlaceholder<B>(), KPlaceholder<C>())),
-               KMult(
-                   KTrig(KAdd(KAnyTreesPlaceholder<A>()), 1_e),
-                   KTrig(KPlaceholder<B>(), KAdd(KPlaceholder<C>(), -1_e)))))) {
+          ref, KTrig(KAdd(KTA, KB), KC),
+          KAdd(KMult(KTrig(KAdd(KTA), 0_e), KTrig(KB, KC)),
+               KMult(KTrig(KAdd(KTA), 1_e), KTrig(KB, KAdd(KC, -1_e)))))) {
     return false;
   }
   EditionReference newMult1(ref->nextNode());
@@ -1247,13 +1187,9 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
   // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
   if (PatternMatching::MatchReplaceAndSimplify(
           ref,
-          KAdd(KAnyTreesPlaceholder<A>(),
-               KPow(KTrig(KPlaceholder<B>(), 0_e), 2_e),
-               KAnyTreesPlaceholder<C>(),
-               KPow(KTrig(KPlaceholder<D>(), 1_e), 2_e),
-               KAnyTreesPlaceholder<E>()),
-          KAdd(1_e, KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<C>(),
-               KAnyTreesPlaceholder<E>()))) {
+          KAdd(KTA, KPow(KTrig(KB, 0_e), 2_e), KTC, KPow(KTrig(KD, 1_e), 2_e),
+               KTE),
+          KAdd(1_e, KTA, KTC, KTE))) {
     return true;
   }
   /* A?*Trig(B, C)*Trig(D, E)*F?
@@ -1263,20 +1199,11 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
    * other contractions. It handles nested trees itself. */
   // MatchReplaceAndSimplify's cannot be used because of nested contraction.
   if (!PatternMatching::MatchAndReplace(
-          ref,
-          KMult(KAnyTreesPlaceholder<A>(),
-                KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
-                KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
-                KAnyTreesPlaceholder<F>()),
-          KMult(
-              KAdd(KMult(KTrig(KAdd(KMult(-1_e, KPlaceholder<D>()),
-                                    KPlaceholder<B>()),
-                               KTrigDiff(KPlaceholder<C>(), KPlaceholder<E>())),
-                         KAnyTreesPlaceholder<F>()),
-                   KMult(KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
-                               KAdd(KPlaceholder<E>(), KPlaceholder<C>())),
-                         KAnyTreesPlaceholder<F>())),
-              KAnyTreesPlaceholder<A>(), KHalf))) {
+          ref, KMult(KTA, KTrig(KB, KC), KTrig(KD, KE), KTF),
+          KMult(KAdd(KMult(KTrig(KAdd(KMult(-1_e, KD), KB), KTrigDiff(KC, KE)),
+                           KTF),
+                     KMult(KTrig(KAdd(KB, KD), KAdd(KE, KC)), KTF)),
+                KTA, KHalf))) {
     return false;
   }
   // TODO : Find the replaced nodes and ShallowSystematicReduce smartly
@@ -1358,10 +1285,9 @@ bool Simplification::ExpandMult(Tree* ref) {
 bool Simplification::ExpandPowerComplex(Tree* ref) {
   // (A + B*i)^2 = (A^2 -2*B^2 + 2*A*B*i)
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KPow(KComplex(KPlaceholder<A>(), KPlaceholder<B>()), 2_e),
-      KComplex(KAdd(KPow(KPlaceholder<A>(), 2_e),
-                    KMult(-1_e, KPow(KPlaceholder<B>(), 2_e))),
-               KMult(2_e, KPlaceholder<A>(), KPlaceholder<B>())));
+      ref, KPow(KComplex(KA, KB), 2_e),
+      KComplex(KAdd(KPow(KA, 2_e), KMult(-1_e, KPow(KB, 2_e))),
+               KMult(2_e, KA, KB)));
 }
 
 bool Simplification::ExpandPower(Tree* ref) {
@@ -1372,10 +1298,9 @@ bool Simplification::ExpandPower(Tree* ref) {
    * second term expansion. */
   // MatchReplaceAndSimplify's cannot be used because of nested expansion.
   if (!PatternMatching::MatchAndReplace(
-          ref, KPow(KAdd(KAnyTreesPlaceholder<A>(), KPlaceholder<B>()), 2_e),
-          KAdd(KPow(KAdd(KAnyTreesPlaceholder<A>()), 2_e),
-               KMult(2_e, KAdd(KAnyTreesPlaceholder<A>()), KPlaceholder<B>()),
-               KPow(KPlaceholder<B>(), 2_e)))) {
+          ref, KPow(KAdd(KTA, KB), 2_e),
+          KAdd(KPow(KAdd(KTA), 2_e), KMult(2_e, KAdd(KTA), KB),
+               KPow(KB, 2_e)))) {
     return false;
   }
   // TODO : Find the replaced nodes and ShallowSystematicReduce smartly

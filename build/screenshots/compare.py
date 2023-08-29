@@ -51,12 +51,6 @@ def get_file_with_extension(folder, file_extension):
       sys.exit(1)
    return found_file
 
-def get_state_file(folder):
-   return get_file_with_extension(folder, state_file_extension)
-
-def get_reference_image(folder):
-   return get_file_with_extension(folder, screenshot_extension)
-
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
    mae_value = res.split(" ")[0]
@@ -104,10 +98,10 @@ def main(argv):
       count = count + 1
 
       # Get state file
-      state_file = get_state_file(scenario_folder)
+      state_file = get_file_with_extension(scenario_folder, state_file_extension)
 
       # Get reference screenshot
-      reference_image = get_reference_image(scenario_folder)
+      reference_image =  get_file_with_extension(scenario_folder, screenshot_extension)
       screenshot_1 = os.path.join(output_folder, scenario_name + '-1' + screenshot_extension)
       shutil.copy(reference_image, screenshot_1)
 

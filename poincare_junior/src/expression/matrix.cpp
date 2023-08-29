@@ -176,6 +176,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
+      // TODO use Abs node when there are complexes
       float pivot = abs(Approximation::To<float>(pivotChild));
       // Handle very low pivots
       if (pivot == 0.0f && !Number::IsZero(pivotChild)) {
@@ -340,6 +341,7 @@ Tree* Matrix::Power(const Tree* m, int p) {
   assert(NumberOfRows(m) == NumberOfColumns(m));
   if (p < 0) {
     Tree* result = Power(m, -p);
+    // TODO is it worth to compute inverse first ?
     result->moveTreeOverTree(Inverse(result));
     return result;
   }

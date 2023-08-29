@@ -59,6 +59,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Inverse:
       return childDim[0].isSquareMatrix();
     case BlockType::Identity:
+      // TODO check for unknowns and display error message if not integral
       return childDim[0].isScalar() && t->childAtIndex(0)->block()->isInteger();
     case BlockType::Norm:
       return childDim[0].isVector();

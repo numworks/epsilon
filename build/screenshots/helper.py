@@ -31,7 +31,7 @@ def check_executable(executable):
       sys.exit(1)
 
 def generate_screenshot(state_file, executable, screenshot):
-   print("Generate screenshot of", state_file)
+   print("Generating screenshot of", state_file)
    subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-screenshot " + screenshot, shell=True, stdout=subprocess.DEVNULL)
    if not os.path.isfile(screenshot):
       print("Error: couldn't take screenshot")

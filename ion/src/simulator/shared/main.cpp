@@ -199,6 +199,12 @@ int main(int argc, char *argv[]) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(
         allScreenshotsFolder, true);
   }
+
+  bool computeScreenshotsHash = args.popFlag("--compute-hash");
+  if (computeScreenshotsHash) {
+    Ion::Simulator::Screenshot::commandlineScreenshot()->init(nullptr, true,
+                                                              true);
+  }
 #if !defined(_WIN32)
   signal(SIGUSR1, Ion::Simulator::Actions::handleUSR1Sig);
 #endif

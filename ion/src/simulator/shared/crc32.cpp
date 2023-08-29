@@ -27,6 +27,11 @@ uint32_t crc32Byte(const uint8_t *data, size_t length) {
   return crc;
 }
 
+uint32_t crc32Word(const uint16_t *data, size_t length) {
+  return crc32Byte(reinterpret_cast<const uint8_t *>(data),
+                   length * (sizeof(uint16_t) / sizeof(uint8_t)));
+}
+
 uint32_t crc32DoubleWord(const uint32_t *data, size_t length) {
   return crc32Byte(reinterpret_cast<const uint8_t *>(data),
                    length * k_uint32ByteLength);

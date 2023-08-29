@@ -40,3 +40,26 @@ def generate_screenshot(state_file, executable, screenshot):
 def generate_all_screenshots(state_file, executable, folder):
    print("Generating all screenshots of", state_file)
    subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=subprocess.DEVNULL)
+
+def find_crc32_in_log(log_file):
+   with open(log_file) as f:
+      lines = f.readlines()
+   assert len(lines) > 2
+   crc_line = lines[-2]
+   assert "CRC32 of all screenshots: " in crc_line
+   return crc_line.split()[-1]
+   return
+
+def compute_crc32(state_file, executable, log_file):
+   print("Computing crc32 of", state_file)
+   with open(log_file, "w") as f:
+      subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash", shell=True, stdout=f)
+   return find_crc32_in_log(log_file)
+
+def store_crc32(crc32, crc_file):
+   with open(crc_file, "w") as f:
+      f.write(crc32)
+
+def compute_and_store_crc32(state_file, executable, crc_file):
+   crc32 = compute_crc32(state_file, executable, crc_file)
+   store_crc32(crc32, crc_file)

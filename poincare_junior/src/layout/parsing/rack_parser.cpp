@@ -7,7 +7,6 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
@@ -458,8 +457,11 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     }
     if (smallE != end) {
       // Decimal * 10^exponent
-      leftHandSide->moveTreeAtNode(
-          P_MULT(P_POW((10_e)->clone(), Integer::Push(exponent, base))));
+      Tree *mult = SharedEditionPool->push<BlockType::Multiplication>(1);
+      SharedEditionPool->push<BlockType::Power>();
+      (10_e)->clone();
+      Integer::Push(exponent, base);
+      leftHandSide->moveTreeAtNode(mult);
       NAry::SetNumberOfChildren(leftHandSide, 2);
     }
   }

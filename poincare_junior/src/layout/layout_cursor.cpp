@@ -4,7 +4,6 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
-#include <poincare_junior/src/layout/p_pusher.h>
 #include <poincare_junior/src/layout/rack_layout.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -381,10 +380,7 @@ void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(
     Context *context, const void *data) {
   assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
-  // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false);
-  EditionReference ref = P_RACKL(
-      (SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('e')),
-      (SharedEditionPool->push<BlockType::VerticalOffsetLayout>(), P_RACKL()));
+  EditionReference ref = KRackL("e"_l, KVertOffL(""_l))->clone();
   InsertLayoutContext insertLayoutContext{ref, false, false};
   insertLayout(context, &insertLayoutContext);
 }
@@ -415,10 +411,7 @@ void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
   /* TODO : P_RACKL gets confused with the comma inside the template, so we have
    *        to surround CodePointLayout pushes with () */
-  EditionReference ref = P_RACKL(
-      (SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('1')),
-      (SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('0')),
-      P_VERTOFFL(P_RACKL()));
+  EditionReference ref = KRackL("10"_l, KVertOffL(""_l))->clone();
   InsertLayoutContext insertLayoutContext{ref, false, false};
   insertLayout(context, &insertLayoutContext);
 }
@@ -447,7 +440,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
   /* - Step 1 -
    * Read the text from left to right and create an Horizontal layout
    * containing the layouts corresponding to each code point. */
-  EditionReference layoutToInsert = P_RACKL();
+  EditionReference layoutToInsert = KRackL()->clone();
   EditionReference currentLayout = layoutToInsert;
   // This is only used to check if we properly left the last subscript
   int currentSubscriptDepth = 0;
@@ -469,7 +462,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
             insertLayoutContext{layoutToInsert, forceCursorRightOfText,
                                 forceCursorLeftOfText};
         insertLayout(context, &insertLayoutContext);
-        layoutToInsert = P_RACKL();
+        layoutToInsert = KRackL()->clone();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
         setCursorToFirstEmptyCodePoint = false;

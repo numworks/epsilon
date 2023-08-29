@@ -8,7 +8,6 @@
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/metric.h>
-#include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/expression/vector.h>

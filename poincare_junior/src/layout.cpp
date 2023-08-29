@@ -2,7 +2,7 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
-#include <poincare_junior/src/layout/p_pusher.h>
+#include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
@@ -11,7 +11,7 @@
 namespace PoincareJ {
 
 Tree *Layout::EditionPoolTextToLayout(const char *text) {
-  Tree *root = P_RACKL();
+  Tree *root = KRackL()->clone();
   UTF8Decoder decoder(text);
   EditionPoolTextToLayoutRec(&decoder, root, nullptr);
   return root;
@@ -26,13 +26,13 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
     Tree *child;
     switch (codePoint) {
       case UCodePointEmpty:
-        child = P_RACKL();
+        child = KRackL()->clone();
         break;
       case '(': {
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
         child = SharedEditionPool->push<BlockType::ParenthesisLayout>();
-        EditionPoolTextToLayoutRec(decoder, P_RACKL(), child);
+        EditionPoolTextToLayoutRec(decoder, KRackL()->clone(), child);
         break;
       }
       case ')':

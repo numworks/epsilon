@@ -815,7 +815,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
-      ref->block()->isInteger()) {
+      ref->block()->isNumber()) {
     return Approximation::ApproximateAndReplaceEveryScalar(ref);
   }
 

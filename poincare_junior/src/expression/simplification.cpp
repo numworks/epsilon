@@ -832,10 +832,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
         ref->childAtIndex(0), KA,
         k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
   }
-  // These types should only be available after projection
-  assert(!ref->block()->isOfType({BlockType::Exponential, BlockType::Trig,
-                                  BlockType::TrigDiff, BlockType::Polynomial,
-                                  BlockType::PowerReal}));
+
   // Sqrt(A) -> A^0.5
   PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
   if (ref->type() == BlockType::Power) {
@@ -860,8 +857,8 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
     }
   }
 
-  /* All replaced structure do not not need further shallow projection.
-   * Operator || only is used. */
+  /* In following replacements, ref node isn't supposed to be replaced with a
+   * node needing further projection. */
   return
       // i -> Complex(0,1)
       PatternMatching::MatchAndReplace(ref, i_e, KComplex(0_e, 1_e)) ||
@@ -901,6 +898,7 @@ bool Simplification::ApplyShallowInDepth(Tree* ref,
   while (treesToProject > 0) {
     treesToProject--;
     changed = shallowOperation(node, context) || changed;
+    assert(!shallowOperation(node, context));
     treesToProject += node->numberOfChildren();
     node = node->nextNode();
   }

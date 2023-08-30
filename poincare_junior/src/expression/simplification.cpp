@@ -747,19 +747,21 @@ bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
 bool Simplification::ShallowBeautify(Tree* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
-  if (ref->type() == BlockType::Trig) {
-    const Tree* k_angles[3] = {KA, KMult(KA, 180_e, KPow(π_e, -1_e)),
-                               KMult(KA, 200_e, KPow(π_e, -1_e))};
+  PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
+  if (ref->type() == BlockType::Trig &&
+      angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->childAtIndex(0);
-    PatternMatching::MatchAndReplace(
-        child, KA,
-        k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
-    DeepSystematicReduce(child);
+    child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KMult(KA, KB, KPow(π_e, -1_e)),
+        {.KA = child,
+         .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
   }
 
-  // RealPow(A,B) -> A^B
+  // PowerReal(A,B) -> A^B
+  // PowerMatrix(A,B) -> A^B
   // exp(A? * ln(B) * C?) -> B^(A*C)
-  if (PatternMatching::MatchAndReplace(ref, KPowReal(KA, KB), KPow(KA, KB)) ||
+  if (PatternMatching::MatchAndReplace(ref, KPowMatrix(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchAndReplace(ref, KPowReal(KA, KB), KPow(KA, KB)) ||
       PatternMatching::MatchAndReplace(ref, KExp(KMult(KTA, KLn(KB), KTC)),
                                        KPow(KB, KMult(KTA, KTC)))) {
     // A^0.5 -> Sqrt(A)

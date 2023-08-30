@@ -15,8 +15,6 @@ enum class BlockType : uint8_t {
 // Add all the types to the enum
 #define TYPE(F) F,
 #define ALIAS(F)
-#include <poincare_junior/src/expression/block_types.h>
-#include <poincare_junior/src/layout/block_types.h>
 #include <poincare_junior/src/memory/block_types.h>
 #undef TYPE
 #undef ALIAS
@@ -24,8 +22,6 @@ enum class BlockType : uint8_t {
 // Add all the aliases after the types (for them not to increment the tags)
 #define TYPE(F)
 #define ALIAS(F) F,
-#include <poincare_junior/src/expression/block_types.h>
-#include <poincare_junior/src/layout/block_types.h>
 #include <poincare_junior/src/memory/block_types.h>
 #undef TYPE
 #undef ALIAS

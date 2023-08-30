@@ -63,8 +63,6 @@ void Tree::logName(std::ostream& stream) const {
   constexpr const char* names[] = {
 #define TYPE(F) #F,
 #define ALIAS(F)
-#include <poincare_junior/src/expression/block_types.h>
-#include <poincare_junior/src/layout/block_types.h>
 #include <poincare_junior/src/memory/block_types.h>
 #undef TYPE
 #undef ALIAS

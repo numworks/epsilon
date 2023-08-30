@@ -7,63 +7,6 @@
 
 namespace PoincareJ {
 
-/* TODO:
- * - Are Zero, One etc useful?
- * - Short integers could be coded on n-bytes (with n static) instead of 1-byte.
- * Choosing n = 4 and aligning the node could be useful?
- * - aligning all nodes on 4 bytes might speed up every computation
- */
-
-/* Tree* description by type:
- * - Zero Z (same for One, Two, Half, MinusOne, TreeBorder)
- * | Z TAG |
- *
- * - Decimal D
- * | D TAG | UNSIGNED DIGIT0 |
- *
- * - IntegerShort IS
- * | IS TAG | SIGNED DIGIT0 |
- *
- * - Integer(Pos/Neg)Big IB: most significant digit last
- * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... |
- *
- * - RationShort RS
- * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT |
- *
- * - Rational(Pos/Neg)Big RB
- * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
- * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... |
- *
- * - Float F (same for CodePointLayout)
- * | F TAG | VALUE (4 bytes) |
- *
- * - Constant C
- * | C TAG | TYPE |
- *
- * - Addition A (same for Multiplication, Set, List, RackLayout)
- * | A TAG | NUMBER OF CHILDREN |
- *
- * - Power P (same for Factorial, Subtraction, Division, FractionLayout,
- * ParenthesisLayout, VerticalOffsetLayout) | P TAG |
- *
- * - UserSymbol US (same for UserFunction, UserSequence)
- * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN |
- *
- * - Matrix M
- * | M TAG | NUMBER OF ROWS | NUMBER OF COLUMNS |
- * Children are ordered the row-major way
- *
- * - Polynomial P = a1*x^e1 + ... + an*x^en
- *   n = number of terms
- *   ei are unsigned digits
- *  | P TAG | n+1 | e1 | e2 | ... | en |
- *  This node has n+1 children:
- *  - the first child describes the variable x
- *  - the n following children describe the coefficients.
- *  Polynomials can be recursive (have polynomials children)
- *
- * */
-
 enum class BlockType : uint8_t {
 // Add all the types to the enum
 #define TYPE(F) F,

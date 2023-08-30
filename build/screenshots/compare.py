@@ -38,19 +38,6 @@ def check_dataset(dataset):
       print("Error:", dataset, "is not a directory")
       sys.exit(1)
 
-def get_file_with_extension(folder, file_extension):
-   found_file = ''
-   for file in sorted(os.listdir(folder)):
-      if os.path.splitext(file)[1] == file_extension:
-         if found_file != '':
-            print("Error: too many", file_extension, "in", folder)
-            sys.exit(1)
-         found_file = os.path.join(folder, file)
-   if found_file == '':
-      print("Error: no", file_extension, "in", folder)
-      sys.exit(1)
-   return found_file
-
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
    mae_value = res.split(" ")[0]
@@ -98,10 +85,10 @@ def main(argv):
       count = count + 1
 
       # Get state file
-      state_file = get_file_with_extension(scenario_folder, state_file_extension)
+      state_file = helper.get_file_with_extension(scenario_folder, state_file_extension)
 
       # Get reference screenshot
-      reference_image =  get_file_with_extension(scenario_folder, screenshot_extension)
+      reference_image = helper.get_file_with_extension(scenario_folder, screenshot_extension)
       screenshot_1 = os.path.join(output_folder, scenario_name + '-1' + screenshot_extension)
       shutil.copy(reference_image, screenshot_1)
 

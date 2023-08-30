@@ -21,8 +21,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - run: build/setup.sh --only-simulator
+      - name: Build PR head
+        run: make -j32 PLATFORM=simulator DEBUG=1
       - name: Compare screenshot images
-        run: python3 build/screenshots/compare.py -g ${{ github.event.pull_request.head.sha }}
+        run: python3 build/screenshots/compare.py
       - name: Gather screenshots
         if: ${{ github.event.inputs.downloadArtifacts == 'yes' }}
         uses: actions/upload-artifact@v2
@@ -31,4 +33,4 @@ jobs:
           path: compare_output_*/
       - name: Cleanup
         if: always()
-        run: rm -rf compare_output_*
+        run: rm -rf compare_output_* && rm -rf output

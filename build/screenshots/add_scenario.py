@@ -38,6 +38,7 @@ def main(argv):
    if os.path.exists(new_dir):
       print("Error:", new_dir, "already exists. Choose another name.")
       sys.exit(1)
+   print("Creating folder", new_dir)
    os.mkdir(new_dir)
 
    # Add the state file

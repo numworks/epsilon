@@ -236,6 +236,7 @@ class Integer {
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return Bit::getByteAtIndex(value, index);
   }
+  static Tree *SetSign(Tree *reference, NonStrictSign sign);
 };
 
 }  // namespace PoincareJ

@@ -1,4 +1,5 @@
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -104,6 +105,21 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_greater("123456789123456789", "123456789123456788");
   assert_equal("0x2BABE", "178878");
   assert_equal("0b1011", "11");
+}
+
+static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
+                               const Tree* r) {
+  Tree* t = i->clone();
+  t = Integer::SetSign(t, sign);
+  quiz_assert(t->treeIsIdenticalTo(r));
+  t->removeTree();
+}
+
+QUIZ_CASE(pcj_integer_set_sign) {
+  assert_set_sign_to(0_e, NonStrictSign::Negative, 0_e);
+  assert_set_sign_to(0_e, NonStrictSign::Positive, 0_e);
+  assert_set_sign_to(2_e, NonStrictSign::Negative, -2_e);
+  assert_set_sign_to(-3_e, NonStrictSign::Positive, 3_e);
 }
 
 static void assert_add_to(const char* a, const char* b, const char* c) {

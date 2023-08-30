@@ -1,37 +1,21 @@
-import sys, os, shutil
+import sys, os, shutil, argparse
 import helper
+import args_types
 
-help_message = "Use command line: add_scenario.py <state_file.nws> <name>\nIf no name is given, we use the one of the state file."
 state_file_extension = '.nws'
 screenshot_extension = '.png'
 
-def get_args(argv):
-   if len(argv) < 1:
-      print("Error: missing parameter")
-      print(help_message)
-      sys.exit(1)
-   if len(argv) > 2:
-      print("Error: too many parameters")
-      print(help_message)
-      sys.exit(1)
+parser = argparse.ArgumentParser(description='This script adds a scenario to the test screenshots dataset. It takes a state file, generates its screenshot, and place them is a subfolder of the screenshots dataset.')
+parser.add_argument('state_file', metavar='STATE_FILE', type=args_types.existing_state_file, help='state file (with extension .nws)')
+parser.add_argument('-n', '--name', help='name of the subfolder (if no name is given, we take the name of the state file)')
 
-   # Get state file
-   state_file = argv[0]
-   if not os.path.exists(state_file) or os.path.splitext(state_file)[1] != state_file_extension:
-      print("Error:", state_file, "is not a state file")
-      sys.exit(1)
-
-   # Get name
-   name = os.path.splitext(state_file)[0]
-   if len(argv) == 2:
-      name = argv[1]
-
-   return state_file, name
-
-def main(argv):
-
-   # Get params
-   state_file, name = get_args(argv)
+def main():
+   # Parse args
+   args = parser.parse_args()
+   name = args.name
+   if name is None:
+      # If no name was given, we take the name of the state file
+      name = os.path.splitext(args.state_file)[0]
 
    # Create new folder
    new_dir = helper.folder(name)
@@ -43,7 +27,7 @@ def main(argv):
 
    # Add the state file
    new_state_file_path = os.path.join(new_dir, "scenario" + state_file_extension)
-   shutil.copy(state_file, new_state_file_path)
+   shutil.copy(args.state_file, new_state_file_path)
 
    # Generate the corresponding screenshot
    screenshot = os.path.join(new_dir, "screenshot" + screenshot_extension)
@@ -51,4 +35,4 @@ def main(argv):
    helper.generate_screenshot(new_state_file_path, executable, screenshot)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

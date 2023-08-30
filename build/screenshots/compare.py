@@ -1,33 +1,13 @@
-import sys, getopt, os, shutil, subprocess
+import sys, os, shutil, subprocess, argparse
 from datetime import datetime
 import helper
 
-help_message = "Use command line: compare.py [-e <executable>] [-g <git_ref>]"
 state_file_extension = '.nws'
 screenshot_extension = '.png'
 
-def parse_args(argv):
-   # Default values
-   executable = helper.executable_built_path()
-   git_ref = ''
-   # Get arguments
-   try:
-      opts, args = getopt.getopt(argv,"he:g:",["help"])
-   except getopt.GetoptError:
-      print(help_message)
-      sys.exit(1)
-   for opt, arg in opts:
-      if opt in ("-h", "--help"):
-         print(help_message)
-         print("Compare two sources of screenshots on a sequence of scenari (state files).")
-         print("- executable: the epsilon executable")
-         print("- git_ref: the epsilon git reference to build the executable")
-         sys.exit(1)
-      elif opt == "-e":
-         executable = arg
-      elif opt == "-g":
-         git_ref = arg
-   return executable, git_ref
+parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
+parser.add_argument('-e', '--executable', default=helper.executable_built_path(), help='the executable (ignored if a git reference is given)')
+parser.add_argument('-g', '--git_ref', help='the git reference to build the executable from')
 
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
@@ -50,17 +30,18 @@ def print_report(fails, count):
    else:
       print("All good!")
 
-def main(argv):
-   # Parse arguments
-   executable, git_ref = parse_args(argv)
+def main():
+   # Parse args
+   args = parser.parse_args()
+   executable = args.executable
 
    # Create output folder
    output_folder = 'compare_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')
    os.mkdir(output_folder)
 
    # Create executable
-   if git_ref != '':
-      executable = helper.create_executable(git_ref)
+   if not args.git_ref is None:
+      executable = helper.create_executable(args.git_ref)
    helper.check_executable(executable)
 
    # Compare screenshots
@@ -105,4 +86,4 @@ def main(argv):
    sys.exit(fails)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

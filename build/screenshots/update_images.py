@@ -1,24 +1,22 @@
-import sys, os, shutil
+import sys, os, shutil, argparse
 import helper
+import args_types
 
-help_message = "Use command line: update_images.py <compare_output_folder>"
 screenshot_extension = '.png'
 
-def main(argv):
-   if len(argv) != 1:
-      print(help_message)
-      sys.exit(1)
-   compare_output_folder = argv[0]
-   if not os.path.isdir(compare_output_folder):
-      print("Error:", compare_output_folder, "is not a directory")
-      sys.exit(1)
+parser = argparse.ArgumentParser(description='This script takes the new images saved in the output folder of compare.py and move them in the test screenshots dataset to replace the old ones.')
+parser.add_argument('compare_output_folder', type=args_types.existing_directory, help='output folder of compare.py')
+
+def main():
+   # Parse args
+   args = parser.parse_args()
 
    extension = '-2' + screenshot_extension
 
-   for file in os.listdir(compare_output_folder):
+   for file in os.listdir(args.compare_output_folder):
       if not file.endswith(extension):
          continue
-      current_image_path =  os.path.join(compare_output_folder, file)
+      current_image_path =  os.path.join(args.compare_output_folder, file)
       scenario_name = file.replace(extension, '')
       destination_image_path = os.path.join(helper.folder(scenario_name), 'screenshot' + screenshot_extension)
       if os.path.exists(destination_image_path):
@@ -28,4 +26,4 @@ def main(argv):
       shutil.copy(current_image_path, destination_image_path)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

@@ -1,5 +1,11 @@
 import sys, os, time, subprocess
 
+def dataset():
+   return "tests/screenshots_dataset"
+
+def folder(scenario_name):
+   return os.path.join(dataset(), scenario_name)
+
 def get_file_with_extension(folder, file_extension):
    found_file = ''
    for file in sorted(os.listdir(folder)):

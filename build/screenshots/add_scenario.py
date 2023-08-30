@@ -34,7 +34,7 @@ def main(argv):
    state_file, name = get_args(argv)
 
    # Create new folder
-   new_dir = os.path.join("tests/screenshots_dataset", name)
+   new_dir = helper.folder(name)
    if os.path.exists(new_dir):
       print("Error:", new_dir, "already exists. Choose another name.")
       sys.exit(1)

@@ -53,7 +53,6 @@ def print_report(fails, count):
 def main(argv):
    # Parse arguments
    executable, git_ref = parse_args(argv)
-   dataset = 'tests/screenshots_dataset'
 
    # Create output folder
    output_folder = 'compare_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')
@@ -69,8 +68,8 @@ def main(argv):
    print("==============================")
    fails = 0
    count = 0
-   for scenario_name in sorted(os.listdir(dataset)):
-      scenario_folder = os.path.join(dataset, scenario_name)
+   for scenario_name in sorted(os.listdir(helper.dataset())):
+      scenario_folder = helper.folder(scenario_name)
       if not os.path.isdir(scenario_folder):
          continue
       count = count + 1

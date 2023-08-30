@@ -113,22 +113,22 @@ QUIZ_CASE(pcj_simplification_projection) {
       ref,
       KTrig(
           KTrig(
-              KMult(KTrig(KPow(KExp(KMult(KLn(KExp(KLn(KMult(
-                                              KLn(KMult(KLn(π_e),
-                                                        KPow(KLn(10_e), -1_e))),
-                                              KPow(KLn(2_e), -1_e))))),
-                                          π_e)),
-                               3_e),
-                          1_e),
-                    KPow(KTrig(KPow(KExp(KMult(
-                                        KLn(KExp(KLn(KMult(
-                                            KLn(KMult(KLn(π_e),
-                                                      KPow(KLn(10_e), -1_e))),
-                                            KPow(KLn(2_e), -1_e))))),
-                                        π_e)),
-                                    3_e),
-                               0_e),
-                         -1_e)),
+              KMult(
+                  KTrig(
+                      KPow(KPow(KExp(KLn(KMult(
+                                    KLn(KMult(KLn(π_e), KPow(KLn(10_e), -1_e))),
+                                    KPow(KLn(2_e), -1_e)))),
+                                π_e),
+                           3_e),
+                      1_e),
+                  KPow(KTrig(KPow(KPow(KExp(KLn(KMult(
+                                           KLn(KMult(KLn(π_e),
+                                                     KPow(KLn(10_e), -1_e))),
+                                           KPow(KLn(2_e), -1_e)))),
+                                       π_e),
+                                  3_e),
+                             0_e),
+                       -1_e)),
               1_e),
           0_e));
 
@@ -145,17 +145,17 @@ QUIZ_CASE(pcj_simplification_projection) {
   Simplification::DeepSystemProjection(
       ref, {.m_complexFormat = ComplexFormat::Cartesian,
             .m_strategy = Strategy::ApproximateToFloat});
-  assert_trees_are_equal(ref,
-                         KAdd(1.0_e, KExp(KMult(KLn(2.0_e), "x"_e)), 1.0_e));
+  assert_trees_are_equal(ref, KAdd(1.0_e, KPow(2.0_e, "x"_e), 1.0_e));
 
   CloneTreeOverTree(ref, KCos(100_e));
   Simplification::DeepSystemProjection(ref, {.m_angleUnit = AngleUnit::Degree});
-  assert_trees_are_equal(ref, KTrig(KMult(100_e, π_e, KPow(180_e, -1_e)), 0_e));
+  assert_trees_are_equal(ref,
+                         KTrig(KMult(100_e, π_e, KPowReal(180_e, -1_e)), 0_e));
 
   CloneTreeOverTree(ref, KSqrt("y"_e));
   Simplification::DeepSystemProjection(
       ref, {.m_complexFormat = ComplexFormat::Cartesian});
-  assert_trees_are_equal(ref, KExp(KMult(KLn("y"_e), KHalf)));
+  assert_trees_are_equal(ref, KPow("y"_e, KHalf));
 
   CloneTreeOverTree(ref, KSqrt("y"_e));
   Simplification::DeepSystemProjection(
@@ -309,8 +309,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("N^2*M", "N^(2)*M");
   simplifies_to("N^2*M^2", "N^(2)*M^(2)");
   simplifies_to("n^2*m", "m*n^(2)");
-  // simplifies_to("M*M^2", "M^(3)");
+  //   simplifies_to("M*M^2", "M^(3)");
   simplifies_to("det(M)", "det(M)");
+  // Power
+  simplifies_to("a*a^(-1)", "1");
+  simplifies_to("a*a^(1+1)", "a^(3)");
+  simplifies_to("a*a^(-1)", "1", {.m_complexFormat = ComplexFormat::Real});
+  simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
 }
 
 QUIZ_CASE(pcj_power_simplification) {

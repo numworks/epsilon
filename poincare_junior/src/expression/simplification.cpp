@@ -290,7 +290,19 @@ bool Simplification::SimplifyTrig(Tree* u) {
 bool Simplification::SimplifyPower(Tree* u) {
   assert(u->type() == BlockType::Power);
   Tree* v = u->childAtIndex(0);
+  // 1^x -> 1
+  if (Number::IsOne(v)) {
+    u->cloneTreeOverTree(1_e);
+    return true;
+  }
+  // u^n
   EditionReference n = u->childAtIndex(1);
+  // After systematic reduction, a power can only have integer index.
+  if (!n->block()->isInteger()) {
+    // TODO: Handle 0^x with x > 0 before to avoid ln(0)
+    return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
+                                                    KExp(KMult(KLn(KA), KB)));
+  }
   // 0^n -> 0
   if (Number::IsZero(v)) {
     if (!Number::IsZero(n) && Rational::StrictSign(n) == StrictSign::Positive) {
@@ -298,11 +310,6 @@ bool Simplification::SimplifyPower(Tree* u) {
       return true;
     }
     u->cloneTreeOverTree(KUndef);
-    return true;
-  }
-  // 1^n -> 1
-  if (Number::IsOne(v)) {
-    u->cloneTreeOverTree(1_e);
     return true;
   }
   if (IsRational(v)) {
@@ -384,17 +391,15 @@ const Tree* Exponent(const Tree* u) {
 }
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
-  // x^y -> exp(ln(x)*y)
-  bool result = PatternMatching::MatchReplaceAndSimplify(
-      u, KPowReal(KA, KB), KExp(KMult(KLn(KA), KB)));
-  assert(result);
+  u->cloneNodeOverNode(KPow);
+  SimplifyPower(u);
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {
   assert(u->type() == BlockType::PowerReal);
   /* Return :
-   * - x^y if x is complex or positive
-   * - PowerReal(x,y) y is not a rational
+   * - x^y if x is complex or positive or y is integer
+   * - PowerReal(x,y) if y is not a rational
    * - Looking at y's reduced rational form p/q :
    *   * PowerReal(x,y) if x is of unknown sign and p odd
    *   * Unreal if q is even and x negative
@@ -402,16 +407,17 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    *   * -|x|^y if p is odd
    */
   Tree* x = u->childAtIndex(0);
+  Tree* y = u->childAtIndex(1);
   bool xIsNumber = IsNumber(x);
   bool xIsPositiveNumber =
       xIsNumber && Number::Sign(x) == NonStrictSign::Positive;
   bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
-  if (xIsPositiveNumber) {
-    // TODO : Same if x is complex
+  if (xIsPositiveNumber || x->type() == BlockType::Complex || IsInteger(y)) {
+    // TODO : Handle sign and complex status not only on numbers
     ConvertPowerRealToPower(u);
     return true;
   }
-  Tree* y = u->childAtIndex(1);
+
   if (!IsRational(y)) {
     // We don't know enough to simplify further.
     return false;
@@ -824,42 +830,38 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
     return true;
   }
 
+  // Project angles depending on context
+  PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
   if (ref->block()->isOfType(
-          {BlockType::Sine, BlockType::Cosine, BlockType::Tangent})) {
-    const Tree* k_angles[3] = {KA, KMult(KA, π_e, KPow(180_e, -1_e)),
-                               KMult(KA, π_e, KPow(200_e, -1_e))};
-    PatternMatching::MatchAndReplace(
-        ref->childAtIndex(0), KA,
-        k_angles[static_cast<uint8_t>(projectionContext->m_angleUnit)]);
+          {BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
+      angleUnit != PoincareJ::AngleUnit::Radian) {
+    Tree* child = ref->childAtIndex(0);
+    child->moveTreeOverTree(PatternMatching::Create(
+        KMult(KA, π_e, KPow(KB, -1_e)),
+        {.KA = child,
+         .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
   }
 
   // Sqrt(A) -> A^0.5
-  PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
+  bool changed =
+      PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
   if (ref->type() == BlockType::Power) {
-    const Tree* index = ref->nextNode()->nextTree();
-    if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
-      PatternMatching::MatchAndReplace(ref, KPow(KA, KB), KPowMatrix(KA, KB));
+    if (PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
+    } else if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
+      ref->cloneNodeOverNode(KPowMatrix);
+    } else if (projectionContext->m_complexFormat == ComplexFormat::Real) {
+      ref->cloneNodeOverNode(KPowReal);
+    } else {
+      return changed;
     }
-    if (!index->block()->isInteger() &&
-        Dimension::GetDimension(ref->nextNode()).isScalar()) {
-      // e^A -> exp(A)
-      if (!PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
-        if (projectionContext->m_complexFormat != ComplexFormat::Real) {
-          // A^B -> exp(ln(A)*B)
-          PatternMatching::MatchAndReplace(ref, KPow(KA, KB),
-                                           KExp(KMult(KLn(KA), KB)));
-        } else {
-          // A^B -> RealPow(A,B)
-          PatternMatching::MatchAndReplace(ref, KPow(KA, KB), KPowReal(KA, KB));
-        }
-      }
-      return true;
-    }
+    return true;
   }
 
   /* In following replacements, ref node isn't supposed to be replaced with a
    * node needing further projection. */
   return
+      // e -> exp(1)
+      PatternMatching::MatchAndReplace(ref, e_e, KExp(1_e)) ||
       // i -> Complex(0,1)
       PatternMatching::MatchAndReplace(ref, i_e, KComplex(0_e, 1_e)) ||
       // A - B -> A + (-1)*B
@@ -886,7 +888,8 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
                                        KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
-                                       KMult(KLn(KA), KPow(KLn(KB), -1_e)));
+                                       KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
+      changed;
 }
 
 bool Simplification::ApplyShallowInDepth(Tree* ref,

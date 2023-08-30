@@ -19,7 +19,7 @@ class Rational final {
   static enum StrictSign StrictSign(const Tree* node) {
     return Numerator(node).strictSign();
   }
-  static void SetSign(Tree* reference, NonStrictSign sign);
+  static Tree* SetSign(Tree* reference, NonStrictSign sign);
 
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);

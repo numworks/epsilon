@@ -125,11 +125,11 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   return node;
 }
 
-void Rational::SetSign(Tree* tree, NonStrictSign sign) {
+Tree* Rational::SetSign(Tree* tree, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(tree);
   IntegerHandler denominator = Denominator(tree);
   numerator.setSign(sign);
-  tree->moveNodeOverNode(Push(numerator, denominator));
+  return tree->moveNodeOverNode(Push(numerator, denominator));
 }
 
 Tree* Rational::Addition(const Tree* i, const Tree* j) {

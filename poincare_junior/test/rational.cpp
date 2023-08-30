@@ -48,6 +48,24 @@ QUIZ_CASE(pcj_rational_properties) {
   assert_properties(0_e, -812312312_e, BlockType::Zero, StrictSign::Null);
 }
 
+static void assert_set_sign(const Tree* iNumerator, const Tree* iDenominator,
+                            NonStrictSign sign, const Tree* resNumerator,
+                            const Tree* resDenominator) {
+  Tree* i = Rational::Push(iNumerator, iDenominator);
+  i = Rational::SetSign(i, sign);
+  Tree* expected = Rational::Push(resNumerator, resDenominator);
+  quiz_assert(i->treeIsIdenticalTo(expected));
+  expected->removeTree();
+  i->removeTree();
+}
+
+QUIZ_CASE(pcj_rational_set_sign) {
+  assert_set_sign(0_e, 1_e, NonStrictSign::Negative, 0_e, 1_e);
+  assert_set_sign(0_e, 1_e, NonStrictSign::Positive, 0_e, 1_e);
+  assert_set_sign(2_e, 1_e, NonStrictSign::Negative, -2_e, 1_e);
+  assert_set_sign(-3_e, 4_e, NonStrictSign::Positive, 3_e, 4_e);
+}
+
 static void assert_irreducible_form(const Tree* iNumerator,
                                     const Tree* iDenominator,
                                     const Tree* resNumerator,

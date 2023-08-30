@@ -79,6 +79,9 @@ T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
 }
 
 bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
+  if (tree->type() == BlockType::Float) {
+    return false;
+  }
   bool changed = false;
   bool approximateNode = true;
   Tree* child = tree->nextNode();

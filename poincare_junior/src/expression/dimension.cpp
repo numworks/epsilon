@@ -42,13 +42,6 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::PowerMatrix:
       return childDim[1].isScalar() &&
              (!childDim[0].isMatrix() || childDim[0].isSquareMatrix());
-    case BlockType::Matrix:
-      for (int i = 0; i < t->numberOfChildren(); i++) {
-        if (!childDim[i].isScalar()) {
-          return false;
-        }
-      }
-      return true;
     case BlockType::Dim:
     case BlockType::Ref:
     case BlockType::Rref:
@@ -70,7 +63,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
     default:
       assert(t->block()->isScalarOnly());
-      // Scalar-only constants and functions
+    case BlockType::Matrix:
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!childDim[i].isScalar()) {
           return false;

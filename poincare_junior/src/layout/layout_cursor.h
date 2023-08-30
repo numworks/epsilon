@@ -173,16 +173,12 @@ class LayoutBufferCursor final : public LayoutCursor {
   Tree* cursorNode() const override { return m_cursorNode; }
 
   /* Layout insertion */
-  void addEmptyExponentialLayout(Context* context) {
-    execute(&EditionPoolCursor::addEmptyExponentialLayout, context);
-  }
   void addEmptyMatrixLayout(Context* context);
   void addEmptyPowerLayout(Context* context);
   void addEmptySquareRootLayout(Context* context);
   void addEmptySquarePowerLayout(Context* context);
-  void addEmptyTenPowerLayout(Context* context) {
-    execute(&EditionPoolCursor::addEmptyTenPowerLayout, context);
-  }
+  void addEmptyExponentialLayout(Context* context);
+  void addEmptyTenPowerLayout(Context* context);
   void addFractionLayoutAndCollapseSiblings(Context* context);
   void insertText(const char* text, Context* context, bool forceRight = false,
                   bool forceLeft = false, bool linearMode = false) {
@@ -217,8 +213,6 @@ class LayoutBufferCursor final : public LayoutCursor {
     // EditionPoolCursor Actions
     void performBackspace(Context* context, const void* nullptrData);
     void deleteAndResetSelection(Context* context, const void* nullptrData);
-    void addEmptyExponentialLayout(Context* context, const void* nullptrData);
-    void addEmptyTenPowerLayout(Context* context, const void* nullptrData);
     struct InsertLayoutContext {
       const Tree* m_tree;
       bool m_forceRight, m_forceLeft;

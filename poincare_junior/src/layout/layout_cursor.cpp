@@ -376,13 +376,14 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 #endif
 }
 
-void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(
-    Context *context, const void *data) {
-  assert(data == nullptr);
-  // TODO : Avoid the RackLayout inside a RackLayout
-  EditionReference ref = KRackL("e"_l, KVertOffL(""_l))->clone();
-  InsertLayoutContext insertLayoutContext{ref, false, false};
-  insertLayout(context, &insertLayoutContext);
+void LayoutBufferCursor::addEmptyExponentialLayout(Context *context) {
+  // TODO : Avoid the RackLayout inside a RackLayout ?
+  insertLayout(KRackL("e"_l, KVertOffL(""_l)), context, false, false);
+}
+
+void LayoutBufferCursor::addEmptyTenPowerLayout(Context *context) {
+  // TODO : Avoid the RackLayout inside a RackLayout ?
+  insertLayout(KRackL("10"_l, KVertOffL(""_l)), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {
@@ -402,18 +403,6 @@ void LayoutBufferCursor::addEmptyPowerLayout(Context *context) {
 void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
   /* Force the cursor right of the layout. */
   insertLayout(KVertOffL("2"_l), context, true, false);
-}
-
-void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(
-    Context *context, const void *data) {
-  assert(data == nullptr);
-  // TODO : Avoid the RackLayout inside a RackLayout
-  // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
-  /* TODO : P_RACKL gets confused with the comma inside the template, so we have
-   *        to surround CodePointLayout pushes with () */
-  EditionReference ref = KRackL("10"_l, KVertOffL(""_l))->clone();
-  InsertLayoutContext insertLayoutContext{ref, false, false};
-  insertLayout(context, &insertLayoutContext);
 }
 
 void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(

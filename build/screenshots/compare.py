@@ -2,18 +2,17 @@ import sys, getopt, os, shutil, subprocess
 from datetime import datetime
 import helper
 
-help_message = "Use command line: compare.py [-d <dataset>] [-e <executable>] [-g <git_ref>]"
+help_message = "Use command line: compare.py [-e <executable>] [-g <git_ref>]"
 state_file_extension = '.nws'
 screenshot_extension = '.png'
 
 def parse_args(argv):
    # Default values
-   dataset = 'tests/screenshots_dataset'
    executable = helper.executable_built_path()
    git_ref = ''
    # Get arguments
    try:
-      opts, args = getopt.getopt(argv,"hd:e:g:",["help"])
+      opts, args = getopt.getopt(argv,"he:g:",["help"])
    except getopt.GetoptError:
       print(help_message)
       sys.exit(1)
@@ -21,22 +20,14 @@ def parse_args(argv):
       if opt in ("-h", "--help"):
          print(help_message)
          print("Compare two sources of screenshots on a sequence of scenari (state files).")
-         print("- dataset: the folder containing 1 subfolder for each scenario containing screenshot.png and scenario.nws")
          print("- executable: the epsilon executable")
          print("- git_ref: the epsilon git reference to build the executable")
          sys.exit(1)
-      elif opt == "-d":
-         dataset = arg
       elif opt == "-e":
          executable = arg
       elif opt == "-g":
          git_ref = arg
-   return dataset, executable, git_ref
-
-def check_dataset(dataset):
-   if not os.path.isdir(dataset):
-      print("Error:", dataset, "is not a directory")
-      sys.exit(1)
+   return executable, git_ref
 
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
@@ -61,8 +52,8 @@ def print_report(fails, count):
 
 def main(argv):
    # Parse arguments
-   dataset, executable, git_ref = parse_args(argv)
-   check_dataset(dataset)
+   executable, git_ref = parse_args(argv)
+   dataset = 'tests/screenshots_dataset'
 
    # Create output folder
    output_folder = 'compare_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')

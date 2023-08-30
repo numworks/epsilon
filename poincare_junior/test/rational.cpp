@@ -88,13 +88,20 @@ QUIZ_CASE(pcj_rational_irreducible_form) {
 
 typedef Tree* (*Operation)(const Tree* i, const Tree* j);
 
-static void assert_operation(const Tree* i, const Tree* j, Operation operation,
-                             const Tree* expected) {
+static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
+                             const Tree* j, Operation operation,
+                             const Tree* resNumerator,
+                             const Tree* resDenominator) {
+  Tree* i = Rational::Push(iNumerator, iDenominator);
+  Tree* expected = Rational::Push(resNumerator, resDenominator);
+  Rational::MakeIrreducible(expected);
   Tree* result = operation(i, j);
   Rational::MakeIrreducible(result);
   Simplification::ShallowSystematicReduce(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
+  expected->removeTree();
+  i->removeTree();
 }
 
 static void assert_add_or_mult(const Tree* iNumerator, const Tree* iDenominator,
@@ -103,14 +110,10 @@ static void assert_add_or_mult(const Tree* iNumerator, const Tree* iDenominator,
                                const Tree* resDenominator) {
   assert(operation == Rational::Addition ||
          operation == Rational::Multiplication);
-  Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* j = Rational::Push(jNumerator, jDenominator);
-  Tree* expected = Rational::Push(resNumerator, resDenominator);
-  Rational::MakeIrreducible(expected);
-  assert_operation(i, j, operation, expected);
-  expected->removeTree();
+  assert_operation(iNumerator, iDenominator, j, operation, resNumerator,
+                   resDenominator);
   j->removeTree();
-  i->removeTree();
 }
 
 QUIZ_CASE(pcj_rational_addition) {
@@ -128,12 +131,8 @@ QUIZ_CASE(pcj_rational_multiplication) {
 static void assert_power(const Tree* iNumerator, const Tree* iDenominator,
                          const Tree* j, const Tree* resNumerator,
                          const Tree* resDenominator) {
-  Tree* i = Rational::Push(iNumerator, iDenominator);
-  Tree* expected = Rational::Push(resNumerator, resDenominator);
-  Rational::MakeIrreducible(expected);
-  assert_operation(i, j, Rational::IntegerPower, expected);
-  expected->removeTree();
-  i->removeTree();
+  assert_operation(iNumerator, iDenominator, j, Rational::IntegerPower,
+                   resNumerator, resDenominator);
 }
 
 QUIZ_CASE(pcj_rational_integer_power) {

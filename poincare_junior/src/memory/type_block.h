@@ -27,67 +27,6 @@ enum class BlockType : uint8_t {
 #undef ALIAS
 };
 
-#define BLOCK_TYPE_IS_EXPRESSION_NUMBER(type)        \
-  static_assert(type >= static_cast<BlockType>(0) && \
-                type < BlockType::NumberOfNumbersExpression);
-#define BLOCK_TYPE_IS_EXPRESSION(type)                          \
-  static_assert(type >= BlockType::NumberOfNumbersExpression && \
-                type < BlockType::NumberOfExpressions);
-#define BLOCK_TYPE_IS_LAYOUT(type)                \
-  static_assert(type >= BlockType::FirstLayout && \
-                type <= BlockType::LastLayout);
-
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Zero);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::One);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Two);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Half);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::MinusOne);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::IntegerShort);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::IntegerPosBig);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::IntegerNegBig);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::RationalShort);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::RationalPosBig);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::RationalNegBig);
-BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Float);
-
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Constant);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Addition);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Multiplication);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Power);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::PowerReal);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Abs);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Cosine);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Sine);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Tangent);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcCosine);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcSine);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcTangent);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Complex);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Logarithm);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Log);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Ln);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Exponential);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Trig);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::TrigDiff);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Factorial);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::UserSymbol);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::UserFunction);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::UserSequence);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::SquareRoot);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Subtraction);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Division);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Set);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Matrix);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Derivative);
-
-BLOCK_TYPE_IS_LAYOUT(BlockType::RackLayout);
-BLOCK_TYPE_IS_LAYOUT(BlockType::FractionLayout);
-BLOCK_TYPE_IS_LAYOUT(BlockType::ParenthesisLayout);
-BLOCK_TYPE_IS_LAYOUT(BlockType::VerticalOffsetLayout);
-BLOCK_TYPE_IS_LAYOUT(BlockType::CodePointLayout);
-
 // TODO:
 // - if the number of BlockType > 256, add a special tag that prefixes the least
 //   used tags

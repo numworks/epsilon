@@ -61,75 +61,13 @@ void Tree::log(std::ostream& stream, bool recursive, bool verbose,
 
 void Tree::logName(std::ostream& stream) const {
   constexpr const char* names[] = {
-    // Respect the order of BlockType
-    "Zero",
-    "One",
-    "Two",
-    "Half",
-    "MinusOne",
-    "IntegerShort",
-    "IntegerPosBig",
-    "IntegerNegBig",
-    "RationalShort",
-    "RationalPosBig",
-    "RationalNegBig",
-    "Float",
-    "Multiplication",
-    "Power",
-    "Addition",
-    "Factorial",
-    "Division",
-    "Constant",
-    "UserSymbol",
-    "Sine",
-    "Cosine",
-    "Tangent",
-    "Abs",
-    "ArcCosine",
-    "ArcSine",
-    "ArcTangent",
-    "Complex",
-    "Decimal",
-    "Derivative",
-    "Exponential",
-    "Ln",
-    "Log",
-    "Logarithm",
-    "Polynomial",
-    "PowerReal",
-    "SquareRoot",
-    "Subtraction",
-    "Trig",
-    "TrigDiff",
-    "UserFunction",
-    "UserSequence",
-    "Dot",
-    "Norm",
-    "Trace",
-    "Cross",
-    "Det",
-    "Dim",
-    "Identity",
-    "Inverse",
-    "Ref",
-    "Rref",
-    "Transpose",
-    "Matrix",
-    "PowerMatrix",
-    "List",
-    "Set",
-    "Undefined",
-    "RackLayout",
-    "FractionLayout",
-    "ParenthesisLayout",
-    "VerticalOffsetLayout",
-    "CodePointLayout",
-    "Placeholder",
-    "SystemList"
-#if ASSERTIONS
-    ,
-    "TreeBorder",
-#endif
+#define TYPE(F) #F,
+#define ALIAS(F)
+#include <poincare_junior/src/expression/block_types.h>
+#include <poincare_junior/src/layout/block_types.h>
+#include <poincare_junior/src/memory/block_types.h>
+#undef TYPE
+#undef ALIAS
   };
   static_assert(sizeof(names) / sizeof(const char*) ==
                 static_cast<uint8_t>(BlockType::NumberOfTypes));

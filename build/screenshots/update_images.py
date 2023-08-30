@@ -1,4 +1,5 @@
 import sys, os, shutil
+import helper
 
 help_message = "Use command line: update_images.py <compare_output_folder>"
 screenshot_extension = '.png'
@@ -19,7 +20,7 @@ def main(argv):
          continue
       current_image_path =  os.path.join(compare_output_folder, file)
       scenario_name = file.replace(extension, '')
-      destination_image_path = os.path.join('tests/screenshots_dataset', scenario_name, 'screenshot' + screenshot_extension)
+      destination_image_path = os.path.join(helper.folder(scenario_name), 'screenshot' + screenshot_extension)
       if os.path.exists(destination_image_path):
          os.remove(destination_image_path)
       else:

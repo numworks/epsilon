@@ -51,8 +51,8 @@ QUIZ_CASE(pcj_integer_properties) {
   IntegerHandler one(1);
   IntegerHandler two(2);
   IntegerHandler minusOne(-1);
-  IntegerHandler a = Integer::Handler(254_e);
-  IntegerHandler b = Integer::Handler(-13_e);
+  IntegerHandler a = CreateIntegerHandler("254");
+  IntegerHandler b = CreateIntegerHandler("-13");
 
   assert(a.strictSign() == StrictSign::Positive);
   assert(b.strictSign() == StrictSign::Negative);
@@ -68,42 +68,52 @@ QUIZ_CASE(pcj_integer_properties) {
          static_cast<uint8_t>(a) == 254);
 }
 
-static int compare(const char* a, const char* b) {
-  return IntegerHandler::Compare(CreateIntegerHandler(a), CreateIntegerHandler(b));
+static void assert_equal(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) == 0);
+}
+static void assert_not_equal(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) != 0);
 }
 
-static int compare(const Tree* a, const Tree* b) {
-  return IntegerHandler::Compare(Integer::Handler(a), Integer::Handler(b));
+static void assert_lower(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) < 0);
+}
+
+static void assert_greater(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) > 0);
 }
 
 QUIZ_CASE(pcj_integer_compare) {
-  quiz_assert(compare(123_e, 123_e) == 0);
-  quiz_assert(compare(-123_e, -123_e) == 0);
-  quiz_assert(compare(-123_e, 123_e) != 0);
-  quiz_assert(compare("1234567891011121314", "1234567891011121314") == 0);
-  quiz_assert(compare("1234567891011121314", "1234567891011121314") == 0);
-  quiz_assert(compare("-1234567891011121314", "1234567891011121314") != 0);
-  quiz_assert(compare(123_e, 456_e) < 0);
-  quiz_assert(compare(456_e, 123_e) > 0);
-  quiz_assert(compare(-100_e, 2_e) < 0);
-  quiz_assert(compare(-200_e, -100_e) < 0);
-  quiz_assert(compare("123", "123456789123456789") < 0);
-  quiz_assert(compare("-123", "123456789123456789") < 0);
-  quiz_assert(compare("123456789123456788", "123456789123456789") < 0);
-  quiz_assert(compare("-1234567891234567892109209109", "123456789123456789") <
-              0);
-  quiz_assert(compare("123456789123456789", "123456789123456788") > 0);
-  quiz_assert(compare("0x2BABE", "178878") == 0);
-  quiz_assert(compare("0b1011", "11") == 0);
+  assert_equal("123", "123");
+  assert_equal("-123", "-123");
+  assert_not_equal("-123", "123");
+  assert_equal("1234567891011121314", "1234567891011121314");
+  assert_equal("1234567891011121314", "1234567891011121314");
+  assert_not_equal("-1234567891011121314", "1234567891011121314");
+  assert_lower("123", "456");
+  assert_greater("456", "123");
+  assert_lower("-100", "2");
+  assert_lower("-200", "-100");
+  assert_lower("123", "123456789123456789");
+  assert_lower("-123", "123456789123456789");
+  assert_lower("123456789123456788", "123456789123456789");
+  assert_lower("-1234567891234567892109209109", "123456789123456789");
+  assert_greater("123456789123456789", "123456789123456788");
+  assert_equal("0x2BABE", "178878");
+  assert_equal("0b1011", "11");
 }
 
-static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
-                               const Tree* r) {
-  Tree* t = i->clone();
+static void assert_set_sign_to(const Tree* i, NonStrictSign sign, const Tree* r) {
+  Tree * t = i->clone();
   t = Integer::SetSign(t, sign);
   quiz_assert(t->treeIsIdenticalTo(r));
   t->removeTree();
 }
+
 
 QUIZ_CASE(pcj_integer_set_sign) {
   assert_set_sign_to(0_e, NonStrictSign::Negative, 0_e);

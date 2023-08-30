@@ -65,90 +65,29 @@ namespace PoincareJ {
  * */
 
 enum class BlockType : uint8_t {
-  // 1 - Expression
-  // 1 - A - Numbers
-  Zero = 0,
-  One = 1,
-  Two = 2,
-  Half,
-  MinusOne,
-  // TODO: add 180, 200?
-  IntegerShort,
-  IntegerPosBig,
-  IntegerNegBig,
-  RationalShort,
-  RationalPosBig,
-  RationalNegBig,
-  Float,
-  NumberOfNumbersExpression,
-  // 1 - B - Order dependant expressions
-  Multiplication = NumberOfNumbersExpression,
-  Power,
-  Addition,
-  Factorial,
-  Division,
-  Constant,
-  UserSymbol,
-  Sine,
-  Cosine,
-  Tangent,
-  // 1 - C - Other expressions in Alphabetic order
-  Abs,
-  ArcCosine,
-  ArcSine,
-  ArcTangent,
-  Complex,
-  Decimal,
-  Derivative,
-  Exponential,
-  Ln,
-  Log,
-  Logarithm,
-  Polynomial,
-  PowerReal,
-  SquareRoot,
-  Subtraction,
-  Trig,
-  TrigDiff,
-  UserFunction,
-  UserSequence,
-  // 1 - D - Matrix and vector builtins
-  FirstMatrix,
-  Dot = FirstMatrix,
-  Norm,
-  Trace,
-  Cross,
-  Det,
-  Dim,
-  Identity,
-  Inverse,
-  Ref,
-  Rref,
-  Transpose,
-  Matrix,
-  PowerMatrix,
-  LastMatrix = PowerMatrix,
-  // 1 - E - Order dependant expressions
-  List,
-  Set,
-  Undefined,
-  NumberOfExpressions,
-  // 2 - Layout
-  FirstLayout = NumberOfExpressions,
-  RackLayout = FirstLayout,
-  FractionLayout,
-  ParenthesisLayout,
-  VerticalOffsetLayout,
-  CodePointLayout,
-  LastLayout = CodePointLayout,
-  NumberOfLayouts,
-  // 3 - Others
-  Placeholder = NumberOfLayouts,
+// Add all the types to the enum
+#define TYPE(F) F,
+#define ALIAS(F)
+#include <poincare_junior/src/expression/block_types.h>
+#include <poincare_junior/src/layout/block_types.h>
+#undef TYPE
+#undef ALIAS
+
+  // Add shared tags
+  Placeholder,
   SystemList,
 #if ASSERTIONS
   TreeBorder,
 #endif
-  NumberOfTypes
+  NumberOfTypes,
+
+// Add all the aliases after the types (for them not to increment the tags)
+#define TYPE(F)
+#define ALIAS(F) F,
+#include <poincare_junior/src/expression/block_types.h>
+#include <poincare_junior/src/layout/block_types.h>
+#undef TYPE
+#undef ALIAS
 };
 
 #define BLOCK_TYPE_IS_EXPRESSION_NUMBER(type)        \

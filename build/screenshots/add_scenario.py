@@ -5,6 +5,7 @@ import args_types
 parser = argparse.ArgumentParser(description='This script adds a scenario to the test screenshots dataset. It takes a state file, generates its screenshot, and place them is a subfolder of the screenshots dataset.')
 parser.add_argument('state_file', metavar='STATE_FILE', type=args_types.existing_state_file, help='state file (with extension .nws)')
 parser.add_argument('-n', '--name', help='name of the subfolder (if no name is given, we take the name of the state file)')
+parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
 
 def main():
    # Parse args
@@ -28,8 +29,7 @@ def main():
 
    # Generate the corresponding screenshot
    screenshot = os.path.join(new_dir, "screenshot.png")
-   executable = helper.executable_built_path()
-   helper.generate_screenshot(new_state_file_path, executable, screenshot)
+   helper.generate_screenshot(new_state_file_path, args.executable, screenshot)
 
 if __name__ == "__main__":
     main()

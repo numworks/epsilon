@@ -63,3 +63,15 @@ def store_crc32(crc32, crc_file):
 def compute_and_store_crc32(state_file, executable, crc_file):
    crc32 = compute_crc32(state_file, executable, crc_file)
    store_crc32(crc32, crc_file)
+
+def print_report(fails, count):
+   if count == 0:
+      print("No state file found")
+      return
+   print("==============================")
+   print(count, "scenari tested")
+   if fails > 0:
+      print(fails, "failed")
+   else:
+      print("All good!")
+   print("")

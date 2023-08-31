@@ -98,7 +98,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
     EditionReference exponent = expression->childAtIndex(1);
     bool negativeRationalExponent =
         exponent->block()->isRational() &&
-        Rational::StrictSign(exponent) == StrictSign::Negative;
+        Rational::Sign(exponent).isStrictlyNegative();
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }

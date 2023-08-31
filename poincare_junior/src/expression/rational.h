@@ -4,6 +4,7 @@
 #include <poincare_junior/src/memory/tree.h>
 
 #include "integer.h"
+#include "sign.h"
 
 namespace PoincareJ {
 
@@ -15,9 +16,14 @@ class Rational final {
   }
   static IntegerHandler Numerator(const Tree* node);
   static IntegerHandler Denominator(const Tree* node);
-  static NonStrictSign Sign(const Tree* node) { return Numerator(node).sign(); }
-  static enum StrictSign StrictSign(const Tree* node) {
-    return Numerator(node).strictSign();
+  static Sign::Sign Sign(const Tree* node) {
+    StrictSign s = Numerator(node).strictSign();
+    return {
+        .canBeNull = s == StrictSign::Null,
+        .canBePositive = s == StrictSign::Positive,
+        .canBeNegative = s == StrictSign::Negative,
+        .isInteger = node->block()->isInteger(),
+    };
   }
   static void SetSign(Tree* reference, NonStrictSign sign);
 

@@ -16,32 +16,18 @@ EditionReference Number::Multiplication(const Tree* i, const Tree* j) {
   return Rational::Multiplication(i, j);
 }
 
-NonStrictSign Number::Sign(const Tree* node) {
+Sign::Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
     case BlockType::Constant:
-      return NonStrictSign::Positive;
-    case BlockType::Float:
-      return Float::To(node) >= 0 ? NonStrictSign::Positive
-                                  : NonStrictSign::Negative;
-    default:
-      assert(node->block()->isRational());
-      return Rational::Sign(node);
-  }
-}
-
-StrictSign Number::StrictSign(const Tree* node) {
-  switch (node->type()) {
-    case BlockType::Constant:
-      return StrictSign::Positive;
+      return Sign::Positive;
     case BlockType::Float: {
       float value = Float::To(node);
-      return value == 0
-                 ? StrictSign::Null
-                 : (value > 0 ? StrictSign::Positive : StrictSign::Negative);
+      // Should floats never be considered integers ?
+      return {value == 0, value > 0, value < 0, value == (int)value};
     }
     default:
       assert(node->block()->isRational());
-      return Rational::StrictSign(node);
+      return Rational::Sign(node);
   }
 }
 

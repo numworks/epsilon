@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/edition_reference.h>
 
+#include "sign.h"
+
 namespace PoincareJ {
 
 class Number {
@@ -41,8 +43,7 @@ class Number {
 
   static EditionReference Addition(const Tree* i, const Tree* j);
   static EditionReference Multiplication(const Tree* i, const Tree* j);
-  static NonStrictSign Sign(const Tree* node);
-  static enum StrictSign StrictSign(const Tree* node);
+  static Sign::Sign Sign(const Tree* node);
   // Return false if tree is a number and isn't the unique best representation.
   static bool IsSanitized(const Tree* n);
 };

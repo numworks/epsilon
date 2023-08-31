@@ -168,7 +168,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
   if (!IsNumber(child)) {
     return changed;
   }
-  if (Number::Sign(child) == NonStrictSign::Positive) {
+  if (Number::Sign(child).isPositive()) {
     // |3| -> 3
     u->removeNode();
   } else {
@@ -299,7 +299,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   // 0^n -> 0
   if (Number::IsZero(v)) {
-    if (!Number::IsZero(n) && Rational::StrictSign(n) == StrictSign::Positive) {
+    if (!Number::IsZero(n) && Rational::Sign(n).isStrictlyPositive()) {
       u->cloneTreeOverTree(0_e);
       return true;
     }
@@ -405,8 +405,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   Tree* x = u->childAtIndex(0);
   Tree* y = u->childAtIndex(1);
   bool xIsNumber = IsNumber(x);
-  bool xIsPositiveNumber =
-      xIsNumber && Number::Sign(x) == NonStrictSign::Positive;
+  bool xIsPositiveNumber = xIsNumber && Number::Sign(x).isPositive();
   bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
   if (xIsPositiveNumber || x->type() == BlockType::Complex || IsInteger(y)) {
     // TODO : Handle sign and complex status not only on numbers
@@ -732,10 +731,10 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->type() == BlockType::ComplexArgument);
   Tree* child = tree->childAtIndex(0);
   if (child->block()->isNumber()) {
-    StrictSign sign = Number::StrictSign(child);
-    tree->cloneTreeOverTree(sign == StrictSign::Null       ? KUndef
-                            : sign == StrictSign::Positive ? 0_e
-                                                           : π_e);
+    Sign::Sign sign = Number::Sign(child);
+    tree->cloneTreeOverTree(sign.isZero()               ? KUndef
+                            : sign.isStrictlyPositive() ? 0_e
+                                                        : π_e);
     return true;
   }
   // TODO: Implement for complexes

@@ -32,13 +32,7 @@ Sign Add(Sign s1, Sign s2) {
 Sign GetSign(const Tree* t) {
   assert(Dimension::GetDimension(t).isScalar());
   if (t->block()->isNumber()) {
-    StrictSign s = Number::StrictSign(t);
-    return {
-        .canBeNull = s == StrictSign::Null,
-        .canBePositive = s == StrictSign::Positive,
-        .canBeNegative = s == StrictSign::Negative,
-        .isInteger = t->block()->isInteger(),
-    };
+    return Number::Sign(t);
   }
   switch (t->type()) {
     case BlockType::Multiplication: {

@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_SIGN_H
 #define POINCARE_EXPRESSION_SIGN_H
 
-
 namespace PoincareJ {
 class Tree;
 
@@ -16,6 +15,8 @@ struct Sign {
   bool isZero() const { return !(canBePositive || canBeNegative); }
   bool isStrictlyPositive() const { return !(canBeNull || canBeNegative); }
   bool isStrictlyNegative() const { return !(canBeNull || canBePositive); }
+  bool isNegative() const { return !canBePositive; }
+  bool isPositive() const { return !canBeNegative; }
 
   bool operator==(const Sign&) const = default;
 };
@@ -28,6 +29,9 @@ constexpr Sign Negative{.canBeNegative = true};
 constexpr Sign NegativeOrNull{.canBeNull = true, .canBeNegative = true};
 constexpr Sign Unknown{
     .canBeNull = true, .canBePositive = true, .canBeNegative = true};
+
+constexpr Sign PositiveInteger{.canBePositive = true, .isInteger = true};
+constexpr Sign NegativeInteger{.canBeNegative = true, .isInteger = true};
 
 Sign Add(Sign s1, Sign s2);
 Sign Mult(Sign s1, Sign s2);

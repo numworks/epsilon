@@ -160,12 +160,12 @@ Tree* Rational::Multiplication(const Tree* i, const Tree* j) {
 }
 
 Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
-  assert(!(Number::IsZero(i) && Sign(j) == NonStrictSign::Negative));
+  assert(!(Number::IsZero(i) && Sign(j).isNegative()));
   IntegerHandler absJ = Integer::Handler(j);
   absJ.setSign(NonStrictSign::Positive);
   Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
   Tree* newDenominator = IntegerHandler::Power(Denominator(i), absJ);
-  EditionReference result = Sign(j) == NonStrictSign::Negative
+  EditionReference result = Sign(j).isNegative()
                                 ? Rational::Push(newDenominator, newNumerator)
                                 : Rational::Push(newNumerator, newDenominator);
   newDenominator->removeTree();

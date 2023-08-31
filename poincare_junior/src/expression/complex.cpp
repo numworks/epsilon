@@ -40,7 +40,7 @@ bool Complex::IsReal(const Tree* tree) {
     if (tree->type() == BlockType::Power) {
       const Tree* index = tree->childAtIndex(1);
       assert(index->block()->isNumber());
-      return Number::Sign(index) != NonStrictSign::Negative;
+      return Number::Sign(index).isStrictlyPositive();
     }
     return true;
   }

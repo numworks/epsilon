@@ -6,6 +6,7 @@ import args_types
 parser = argparse.ArgumentParser(description='This script takes a screenshot for each event of a scenario and creates a gif.')
 parser.add_argument('state_file', metavar='STATE_FILE', type=args_types.existing_state_file, help='state file (with extension .nws)')
 parser.add_argument('-o', '--output_folder', default='screenshots_each_step', help='output folder')
+parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
 
 def main():
    # Parse args
@@ -18,8 +19,7 @@ def main():
    os.mkdir(args.output_folder)
 
    # Generate the screenshots
-   executable = helper.executable_built_path()
-   helper.generate_all_screenshots(args.state_file, executable, args.output_folder)
+   helper.generate_all_screenshots(args.state_file, args.executable, args.output_folder)
    list_images = [image.as_posix() for image in sorted(Path(args.output_folder).glob("*.png"))]
    if len(list_images) == 0:
       print("Error: couldn't take screenshots")

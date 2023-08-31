@@ -8,7 +8,7 @@ namespace PoincareJ {
 Tree* Vector::Norm(const Tree* v) {
   // Norm is defined on vectors only
   int childrenNumber = v->numberOfChildren();
-  Tree* result = KPowReal->cloneNode();
+  Tree* result = KPow->cloneNode();
   Tree* sum = SharedEditionPool->push<BlockType::Addition>(childrenNumber);
   for (const Tree* child : v->children()) {
     Tree* squaredAbsValue = KPow->cloneNode();

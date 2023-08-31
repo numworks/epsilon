@@ -13,20 +13,6 @@
 namespace PoincareJ {
 
 class PatternMatching {
-  /* TODO : Force and ensure via assertions that AnyTrees filter are also used
-   * in CreateTree's structure. This could be stored in a boolean array here and
-   * checked on creation.
-   * This would prevent mistakes such as replacing
-   * KMult(KPlaceholder<A>(),KAdd(KPlaceholder<B>(),KAnyTreesPlaceholder<C>()))
-   * with
-   * KAdd(KMult(KPlaceholder<A>(), KPlaceholder<B>()),
-   *      KMult(KPlaceholder<A>(), KPlaceholder<C>()))
-   * instead of
-   * KAdd(KMult(KPlaceholder<A>(), KPlaceholder<B>()),
-   *      KMult(KPlaceholder<A>(), KAdd(KAnyTreesPlaceholder<C>())))
-   * Such assertion might not be possible anymore if we remove filters for an
-   * optional filter method in Matching.
-   */
  public:
   struct ContextTrees {
     const Tree* KA = nullptr;

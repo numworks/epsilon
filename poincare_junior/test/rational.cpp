@@ -52,7 +52,7 @@ static void assert_set_sign(const Tree* iNumerator, const Tree* iDenominator,
                             NonStrictSign sign, const Tree* resNumerator,
                             const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
-  i = Rational::SetSign(i, sign);
+  Rational::SetSign(i, sign);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   quiz_assert(i->treeIsIdenticalTo(expected));
   expected->removeTree();

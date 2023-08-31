@@ -706,10 +706,10 @@ uint8_t Integer::Uint8(const Tree *expression) {
   return static_cast<uint8_t>(Integer::Handler(expression));
 }
 
-Tree *Integer::SetSign(Tree *tree, NonStrictSign sign) {
+void Integer::SetSign(Tree *tree, NonStrictSign sign) {
   IntegerHandler h = Handler(tree);
   h.setSign(sign);
-  return tree->moveNodeOverNode(h.pushOnEditionPool());
+  tree->moveNodeOverNode(h.pushOnEditionPool());
 }
 
 }  // namespace PoincareJ

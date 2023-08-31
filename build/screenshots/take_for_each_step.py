@@ -15,13 +15,17 @@ def main():
    # Create output folder
    helper.clean_or_create_folder(args.output_folder)
 
+   # Create subfolder to contains all images
+   images_folder = os.path.join(args.output_folder, "images")
+   os.mkdir(images_folder)
+
    # Generate the screenshots
-   helper.generate_all_screenshots(args.state_file, args.executable, args.output_folder)
-   list_images = [image.as_posix() for image in sorted(Path(args.output_folder).glob("*.png"))]
+   helper.generate_all_screenshots(args.state_file, args.executable, images_folder)
+   list_images = [image.as_posix() for image in sorted(Path(images_folder).glob("*.png"))]
    if len(list_images) == 0:
       print("Error: couldn't take screenshots")
       sys.exit(1)
-   print("All done, screenshots taken in", args.output_folder)
+   print("All done, screenshots taken in", images_folder)
 
    # Create gif
    print("Creating gif")

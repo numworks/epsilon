@@ -83,6 +83,8 @@ class PercentAdditionNode final : public PercentSimpleNode {
   Type type() const override { return Type::PercentAddition; }
   TrinaryBoolean isPositive(Context* context) const override;
   TrinaryBoolean isNull(Context* context) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression& child,
+                                        int childIndex) const override;
 
  private:
   // PercentSimpleNode

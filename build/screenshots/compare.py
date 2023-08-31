@@ -16,17 +16,6 @@ def compare_images(screenshot_1, screenshot_2, screenshot_diff):
       return True
    return False
 
-def print_report(fails, count):
-   if count == 0:
-      print("No state file found")
-      return
-   print("==============================")
-   print(count, "scenari tested")
-   if fails > 0:
-      print(fails, "failed")
-   else:
-      print("All good!")
-
 def main():
    # Parse args
    args = parser.parse_args()
@@ -68,7 +57,7 @@ def main():
          print('\033[1m' + scenario_folder + '\t \033[31mFAILED\033[0m')
 
    # Print report
-   print_report(fails, count)
+   helper.print_report(fails, count)
 
    # Clean up
    if fails == 0:

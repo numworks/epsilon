@@ -1,5 +1,7 @@
 import sys, os, shutil, subprocess
 from pathlib import Path
+from PIL import Image
+import numpy as np
 
 def dataset():
    return "tests/screenshots_dataset"
@@ -26,6 +28,9 @@ def get_file_with_extension(folder, file_extension):
       sys.exit(1)
    return found_file
 
+def list_images_in_folder(folder):
+   return [image.as_posix() for image in sorted(Path(folder).glob("*.png"))]
+
 def executable_built_path():
    host = os.uname()[0]
    if host == "Linux":
@@ -48,16 +53,16 @@ def generate_all_screenshots(state_file, executable, folder):
    print("Generating all screenshots of", state_file)
    clean_or_create_folder(folder)
    subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=subprocess.DEVNULL)
-   list_images = [image.as_posix() for image in sorted(Path(folder).glob("*.png"))]
+   list_images = list_images_in_folder(folder)
    if len(list_images) == 0:
       print("Error: no screenshots taken")
       sys.exit(1)
    print("All done, screenshots taken in", folder)
    return list_images
 
-def create_gif(list_images, folder):
+def create_gif(list_images, folder, gif_name = "scenario"):
    print("Creating gif")
-   gif = os.path.join(folder, "scenario.gif")
+   gif = os.path.join(folder, gif_name + ".gif")
    subprocess.run("convert -set delay '%[fx:t==(n-1) ? 175 : 35]' " + ' '.join(list_images) + " " + gif, shell=True)
    if not os.path.exists(gif):
       print("Error: couldn't create gif")
@@ -68,6 +73,7 @@ def generate_all_screenshots_and_create_gif(state_file, executable, folder):
    clean_or_create_folder(folder)
    list_images = generate_all_screenshots(state_file, executable, os.path.join(folder, "images"))
    create_gif(list_images, folder)
+   return list_images
 
 def find_crc32_in_log(log_file):
    with open(log_file) as f:
@@ -108,3 +114,8 @@ def print_report(fails, count):
    else:
       print("All good!")
    print("")
+
+def concatenate_images(list_images, output):
+   # Concatenate same size images
+   concatenated = Image.fromarray(np.concatenate([np.array(Image.open(im).convert("RGBA")) for im in list_images], axis=1))
+   concatenated.save(output)

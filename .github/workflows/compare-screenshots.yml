@@ -33,4 +33,4 @@ jobs:
           path: compare_output_*/
       - name: Cleanup
         if: always()
-        run: rm -rf compare_output_* && rm -rf output
+        run: rm -rf output && rm -rf compare_output_*

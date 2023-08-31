@@ -30,11 +30,6 @@ def executable_built_path():
       sys.exit(1)
    return os.path.join("output/debug/simulator", exe)
 
-def check_executable(executable):
-   if not os.path.isfile(executable):
-      print("Error: couldn't find executable")
-      sys.exit(1)
-
 def generate_screenshot(state_file, executable, screenshot):
    print("Generating screenshot of", state_file)
    subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-screenshot " + screenshot, shell=True, stdout=subprocess.DEVNULL)

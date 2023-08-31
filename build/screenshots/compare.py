@@ -1,12 +1,13 @@
 import sys, os, shutil, subprocess, argparse
 from datetime import datetime
 import helper
+import args_types
 
 state_file_extension = '.nws'
 screenshot_extension = '.png'
 
 parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
-parser.add_argument('-e', '--executable', default=helper.executable_built_path(), help='epsilon executable')
+parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
 
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
@@ -32,14 +33,10 @@ def print_report(fails, count):
 def main():
    # Parse args
    args = parser.parse_args()
-   executable = args.executable
 
    # Create output folder
    output_folder = 'compare_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')
    os.mkdir(output_folder)
-
-   # Check executable
-   helper.check_executable(executable)
 
    # Compare screenshots
    print("Comparing screenshots")
@@ -62,7 +59,7 @@ def main():
 
       # Generate new screenshot
       screenshot_2 = os.path.join(output_folder, scenario_name + '-2' + screenshot_extension)
-      helper.generate_screenshot(state_file, executable, screenshot_2)
+      helper.generate_screenshot(state_file, args.executable, screenshot_2)
 
       # Compare screenshots
       screenshot_diff = os.path.join(output_folder, scenario_name + '-diff' + screenshot_extension)

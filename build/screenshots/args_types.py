@@ -1,6 +1,13 @@
 import argparse
 import os
 
+def existing_file(string):
+    if not os.path.exists(string):
+        raise argparse.ArgumentTypeError(string + " does not exist")
+    if not os.path.isfile(string):
+        raise argparse.ArgumentTypeError(string + " is not a file")
+    return string
+
 def existing_directory(string):
     if not os.path.exists(string):
         raise argparse.ArgumentTypeError(string + " does not exist")

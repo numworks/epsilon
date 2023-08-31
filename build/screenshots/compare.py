@@ -3,9 +3,6 @@ from datetime import datetime
 import helper
 import args_types
 
-state_file_extension = '.nws'
-screenshot_extension = '.png'
-
 parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
 parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
 
@@ -50,19 +47,19 @@ def main():
       count = count + 1
 
       # Get state file
-      state_file = helper.get_file_with_extension(scenario_folder, state_file_extension)
+      state_file = helper.get_file_with_extension(scenario_folder, '.nws')
 
       # Get reference screenshot
-      reference_image = helper.get_file_with_extension(scenario_folder, screenshot_extension)
-      screenshot_1 = os.path.join(output_folder, scenario_name + '-1' + screenshot_extension)
+      reference_image = helper.get_file_with_extension(scenario_folder, '.png')
+      screenshot_1 = os.path.join(output_folder, scenario_name + '-1.png')
       shutil.copy(reference_image, screenshot_1)
 
       # Generate new screenshot
-      screenshot_2 = os.path.join(output_folder, scenario_name + '-2' + screenshot_extension)
+      screenshot_2 = os.path.join(output_folder, scenario_name + '-2.png')
       helper.generate_screenshot(state_file, args.executable, screenshot_2)
 
       # Compare screenshots
-      screenshot_diff = os.path.join(output_folder, scenario_name + '-diff' + screenshot_extension)
+      screenshot_diff = os.path.join(output_folder, scenario_name + '-diff.png')
       same_image = compare_images(screenshot_1, screenshot_2, screenshot_diff)
       if same_image:
          print('\033[1m' + scenario_folder + '\t \033[32mOK\033[0m')

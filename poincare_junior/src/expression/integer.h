@@ -257,6 +257,7 @@ class Integer {
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return Bit::getByteAtIndex(value, index);
   }
+  static NonStrictSign Sign(Tree *tree) { return Handler(tree).sign(); }
   static void SetSign(Tree *tree, NonStrictSign sign);
 };
 

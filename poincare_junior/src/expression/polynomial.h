@@ -45,6 +45,7 @@ class Polynomial final {
     assert(NumberOfTerms(polynomial) > 0);
     return polynomial->child(1);
   }
+  static Tree* LeadingIntegerCoefficient(Tree* polynomial);
   static uint8_t NumberOfTerms(const Tree* polynomial) {
     assert(polynomial->type() == BlockType::Polynomial);
     return polynomial->numberOfChildren() - 1;
@@ -80,6 +81,10 @@ class Polynomial final {
    * variable and  x^2y^2+x = (xy-1)*(xy+1) + x+1 if y is the first variable. */
   static std::pair<EditionReference, EditionReference> PseudoDivision(
       EditionReference polA, EditionReference polB);
+
+  // In-place transformations
+  static void Inverse(Tree *pol);
+  static void Normalize(Tree *pol);
 
  private:
   // Discard null term and potentially discard the polynomial structure

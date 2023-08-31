@@ -29,6 +29,14 @@ Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
   return pol;
 }
 
+Tree* Polynomial::LeadingIntegerCoefficient(Tree* polynomial) {
+  Tree* result = polynomial;
+  while (result->type() == BlockType::Polynomial) {
+    result = LeadingCoefficient(result);
+  }
+  return result;
+}
+
 uint8_t Polynomial::ExponentAtIndex(const Tree* polynomial, int index) {
   assert(index >= 0 && index < NumberOfTerms(polynomial));
   return polynomial->nodeValue(1 + index);
@@ -257,6 +265,25 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
   polB->removeTree();
   x->removeTree();
   return std::make_pair(currentQuotient, polA);
+}
+
+void Polynomial::Inverse(Tree* pol) {
+  if (pol->type() != BlockType::Polynomial) {
+    Integer::SetSign(pol, Integer::Sign(pol) == NonStrictSign::Positive
+                              ? NonStrictSign::Negative
+                              : NonStrictSign::Positive);
+    return;
+  }
+  for (int i = 1; i <= NumberOfTerms(pol); i++) {
+    Inverse(pol->child(i));
+  }
+}
+
+void Polynomial::Normalize(Tree* pol) {
+  Tree* leadingIntCoeff = LeadingIntegerCoefficient(pol);
+  if (Integer::Sign(leadingIntCoeff) == NonStrictSign::Negative) {
+    Inverse(pol);
+  }
 }
 
 EditionReference Polynomial::Sanitize(EditionReference polynomial) {

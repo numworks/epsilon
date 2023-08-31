@@ -60,6 +60,24 @@ QUIZ_CASE(pcj_polynomial_operations) {
   /* B = x^3 + 2*x*y^2 + 7*x*y + 23 */
   const Tree* polB = KPol(Exponents<3, 1, 0>(), "x"_e, 1_e,
                           KPol(Exponents<2, 1>(), "y"_e, 2_e, 7_e), 23_e);
+  /* C = -2x^3 + 7*x*y + 23 */
+  const Tree* polC = KPol(Exponents<3, 1, 0>(), "x"_e, -2_e,
+                          KPol(Exponents<1>(), "y"_e, 7_e), 23_e);
+
+  /* Inverse(A) = -x^2 - 3*x*y - y - 1 */
+  Tree* inv = polA->clone();
+  Polynomial::Inverse(inv);
+  assert_trees_are_equal(
+      inv, EditionReference(KPol(Exponents<2, 1, 0>(), "x"_e, -1_e,
+                                 KPol(Exponents<1>(), "y"_e, -3_e),
+                                 KPol(Exponents<1, 0>(), "y"_e, -1_e, -1_e))));
+
+  /* Normalize(C) = 2x^3 - 7*x*y - 23*/
+  Tree* norm = polC->clone();
+  Polynomial::Normalize(norm);
+  assert_trees_are_equal(
+      norm, EditionReference(KPol(Exponents<3, 1, 0>(), "x"_e, 2_e,
+                                  KPol(Exponents<1>(), "y"_e, -7_e), -23_e)));
 
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(

@@ -8,23 +8,21 @@ namespace PoincareJ {
 
 namespace Sign {
 
-enum Sign : uint8_t {
-  // Organized as a bit field with positive bit = 1 => may be positive...
-  Null = 0b001,
-  Positive = 0b010,
-  Negative = 0b100,
-  PositiveOrNull = Positive | Null,
-  NegativeOrNull = Negative | Null,
-  Unknown = Positive | Negative | Null,
+struct Sign {
+  bool canBeNull : 1 = false;
+  bool canBePositive : 1 = false;
+  bool canBeNegative : 1 = false;
+
+  bool operator==(const Sign&) const = default;
 };
 
-inline bool MayBePos(Sign s) { return s & Positive; }
-inline bool MayBeNeg(Sign s) { return s & Negative; }
-inline bool MayBeNull(Sign s) { return s & Null; }
-
-inline Sign Make(bool mayBeNull, bool mayBePos, bool mayBeNeg) {
-  return static_cast<Sign>(mayBeNeg << 2 | mayBePos << 1 | mayBeNull);
-}
+constexpr Sign Null{.canBeNull = true};
+constexpr Sign Positive{.canBePositive = true};
+constexpr Sign PositiveOrNull{.canBeNull = true, .canBePositive = true};
+constexpr Sign Negative{.canBeNegative = true};
+constexpr Sign NegativeOrNull{.canBeNull = true, .canBeNegative = true};
+constexpr Sign Unknown{
+    .canBeNull = true, .canBePositive = true, .canBeNegative = true};
 
 Sign Add(Sign s1, Sign s2);
 Sign Mult(Sign s1, Sign s2);

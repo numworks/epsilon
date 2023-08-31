@@ -123,6 +123,15 @@ TrinaryBoolean PercentAdditionNode::isNull(Context* context) const {
              : TrinaryBoolean::False;
 }
 
+bool PercentAdditionNode::childAtIndexNeedsUserParentheses(
+    const Expression& child, int childIndex) const {
+  if (childIndex == 1 && child.isOfType({Type::Opposite})) {
+    // Do not add parenthesis since this will be transformed with a down arrow
+    return false;
+  }
+  return PercentSimpleNode::childAtIndexNeedsUserParentheses(child, childIndex);
+}
+
 // PercentSimpleNode
 
 int PercentAdditionNode::createSecondChildLayout(

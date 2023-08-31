@@ -22,7 +22,7 @@ def main():
 
    # Create output folder
    output_folder = 'compare_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')
-   os.mkdir(output_folder)
+   helper.clean_or_create_folder(output_folder)
 
    # Compare screenshots
    print("Comparing screenshots")

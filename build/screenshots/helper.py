@@ -1,10 +1,16 @@
-import sys, os, subprocess
+import sys, os, shutil, subprocess
 
 def dataset():
    return "tests/screenshots_dataset"
 
 def folder(scenario_name):
    return os.path.join(dataset(), scenario_name)
+
+def clean_or_create_folder(folder):
+   if os.path.exists(folder):
+      print("Warning:", folder, "already exists. Its content will be erased.")
+      shutil.rmtree(folder)
+   os.mkdir(folder)
 
 def get_file_with_extension(folder, file_extension):
    found_file = ''

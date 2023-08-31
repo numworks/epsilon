@@ -1,5 +1,4 @@
-import sys, os, shutil, subprocess, argparse
-from pathlib import Path
+import argparse
 import helper
 import args_types
 
@@ -9,30 +8,8 @@ parser.add_argument('-o', '--output_folder', default='screenshots_each_step', he
 parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
 
 def main():
-   # Parse args
    args = parser.parse_args()
-
-   # Create output folder
-   helper.clean_or_create_folder(args.output_folder)
-
-   # Create subfolder to contains all images
-   images_folder = os.path.join(args.output_folder, "images")
-   os.mkdir(images_folder)
-
-   # Generate the screenshots
-   helper.generate_all_screenshots(args.state_file, args.executable, images_folder)
-   list_images = [image.as_posix() for image in sorted(Path(images_folder).glob("*.png"))]
-   if len(list_images) == 0:
-      print("Error: couldn't take screenshots")
-      sys.exit(1)
-   print("All done, screenshots taken in", images_folder)
-
-   # Create gif
-   print("Creating gif")
-   gif = os.path.join(args.output_folder, "scenario.gif")
-   subprocess.run("convert -set delay '%[fx:t==(n-1) ? 175 : 35]' " + ' '.join(list_images) + " " + gif, shell=True)
-   if not os.path.exists(gif):
-      print("Error: couldn't create gif")
+   helper.generate_all_screenshots_and_create_gif(args.state_file, args.executable, args.output_folder)
 
 if __name__ == "__main__":
     main()

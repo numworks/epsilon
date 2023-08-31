@@ -1,4 +1,5 @@
 import sys, os, shutil, subprocess
+from pathlib import Path
 
 def dataset():
    return "tests/screenshots_dataset"
@@ -45,7 +46,28 @@ def generate_screenshot(state_file, executable, screenshot):
 
 def generate_all_screenshots(state_file, executable, folder):
    print("Generating all screenshots of", state_file)
+   clean_or_create_folder(folder)
    subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=subprocess.DEVNULL)
+   list_images = [image.as_posix() for image in sorted(Path(folder).glob("*.png"))]
+   if len(list_images) == 0:
+      print("Error: no screenshots taken")
+      sys.exit(1)
+   print("All done, screenshots taken in", folder)
+   return list_images
+
+def create_gif(list_images, folder):
+   print("Creating gif")
+   gif = os.path.join(folder, "scenario.gif")
+   subprocess.run("convert -set delay '%[fx:t==(n-1) ? 175 : 35]' " + ' '.join(list_images) + " " + gif, shell=True)
+   if not os.path.exists(gif):
+      print("Error: couldn't create gif")
+      sys.exit(1)
+   print("Done, gif created in", folder)
+
+def generate_all_screenshots_and_create_gif(state_file, executable, folder):
+   clean_or_create_folder(folder)
+   list_images = generate_all_screenshots(state_file, executable, os.path.join(folder, "images"))
+   create_gif(list_images, folder)
 
 def find_crc32_in_log(log_file):
    with open(log_file) as f:

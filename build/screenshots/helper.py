@@ -1,4 +1,4 @@
-import sys, os, time, subprocess
+import sys, os, subprocess
 
 def dataset():
    return "tests/screenshots_dataset"
@@ -19,9 +19,6 @@ def get_file_with_extension(folder, file_extension):
       sys.exit(1)
    return found_file
 
-def checkout_ref(git_ref):
-   return subprocess.run(["git", "checkout", git_ref], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-
 def executable_built_path():
    host = os.uname()[0]
    if host == "Linux":
@@ -32,17 +29,6 @@ def executable_built_path():
       print("Error: couldn't find executable")
       sys.exit(1)
    return os.path.join("output/debug/simulator", exe)
-
-def create_executable(git_ref):
-   previous_git_ref = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
-   print("Creating executable from ref", git_ref, "...")
-   time.sleep(1) # To avoid changed files and target having the same last modified date
-   subprocess.run(["git", "checkout", git_ref], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-   checkout_ref(git_ref)
-   subprocess.run("make -j32 PLATFORM=simulator DEBUG=1", shell=True, stdout=subprocess.DEVNULL)
-   print("Executable successfully created")
-   checkout_ref(previous_git_ref)
-   return executable_built_path()
 
 def check_executable(executable):
    if not os.path.isfile(executable):

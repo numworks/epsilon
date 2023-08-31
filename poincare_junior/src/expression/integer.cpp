@@ -709,7 +709,7 @@ uint8_t Integer::Uint8(const Tree *expression) {
 void Integer::SetSign(Tree *tree, NonStrictSign sign) {
   IntegerHandler h = Handler(tree);
   h.setSign(sign);
-  tree->moveNodeOverNode(h.pushOnEditionPool());
+  tree->moveTreeOverTree(h.pushOnEditionPool());
 }
 
 }  // namespace PoincareJ

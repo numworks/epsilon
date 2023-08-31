@@ -161,9 +161,8 @@ bool Simplification::SimplifyAbs(Tree* u) {
     assert(Complex::IsSanitized(child));
     // |x+iy| = √(x^2+y^2) if x and y are reals
     return PatternMatching::MatchReplaceAndSimplify(
-               u, KAbs(KComplex(KPlaceholder<A>(), KPlaceholder<B>())),
-               KExp(KMult(KHalf, KLn(KAdd(KPow(KPlaceholder<A>(), 2_e),
-                                          KPow(KPlaceholder<B>(), 2_e)))))) ||
+               u, KAbs(KComplex(KA, KB)),
+               KExp(KMult(KHalf, KLn(KAdd(KPow(KA, 2_e), KPow(KB, 2_e)))))) ||
            changed;
   }
   if (!IsNumber(child)) {
@@ -714,9 +713,7 @@ bool Simplification::SimplifyComplex(Tree* tree) {
     tree->removeNode();
     return true;
   }
-  if (PatternMatching::MatchAndReplace(
-          tree, KComplex(KRe(KPlaceholder<A>()), KIm(KPlaceholder<A>())),
-          KPlaceholder<A>())) {
+  if (PatternMatching::MatchAndReplace(tree, KComplex(KRe(KA), KIm(KA)), KA)) {
     // re(x)+i*im(x) = x
     return true;
   }
@@ -725,10 +722,8 @@ bool Simplification::SimplifyComplex(Tree* tree) {
   }
   // x+iy = (re(x)-im(y)) + i*(im(x)+re(y))
   bool result = PatternMatching::MatchReplaceAndSimplify(
-      tree, KComplex(KPlaceholder<A>(), KPlaceholder<B>()),
-      KComplex(
-          KAdd(KRe(KPlaceholder<A>()), KMult(-1_e, KIm(KPlaceholder<B>()))),
-          KAdd(KIm(KPlaceholder<A>()), KRe(KPlaceholder<B>()))));
+      tree, KComplex(KA, KB),
+      KComplex(KAdd(KRe(KA), KMult(-1_e, KIm(KB))), KAdd(KIm(KA), KRe(KB))));
   assert(result && Complex::IsSanitized(tree));
   return result;
 }
@@ -1322,12 +1317,8 @@ bool Simplification::ExpandMult(Tree* ref) {
 bool Simplification::ContractArg(Tree* ref) {
   // A? + arg(B) + arg(C) + D? = A + arg(BC) + D
   return PatternMatching::MatchReplaceAndSimplify(
-      ref,
-      KAdd(KAnyTreesPlaceholder<A>(), KArg(KPlaceholder<B>()),
-           KArg(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
-      KAdd(KAnyTreesPlaceholder<A>(),
-           KArg(KMult(KPlaceholder<B>(), KPlaceholder<C>())),
-           KAnyTreesPlaceholder<D>()));
+      ref, KAdd(KTA, KArg(KB), KArg(KC), KTD),
+      KAdd(KTA, KArg(KMult(KB, KC)), KTD));
 }
 
 bool Simplification::ExpandArg(Tree* tree) {

@@ -18,6 +18,7 @@ def main():
       scenario_name = file.replace(extension, '')
       destination_image_path = os.path.join(helper.folder(scenario_name), "screenshot.png")
       if os.path.exists(destination_image_path):
+         print("Replacing", destination_image_path)
          os.remove(destination_image_path)
       else:
          print("Couldn't find previous image for", scenario_name)

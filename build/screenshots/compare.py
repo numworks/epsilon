@@ -6,8 +6,7 @@ state_file_extension = '.nws'
 screenshot_extension = '.png'
 
 parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
-parser.add_argument('-e', '--executable', default=helper.executable_built_path(), help='the executable (ignored if a git reference is given)')
-parser.add_argument('-g', '--git_ref', help='the git reference to build the executable from')
+parser.add_argument('-e', '--executable', default=helper.executable_built_path(), help='epsilon executable')
 
 def compare_images(screenshot_1, screenshot_2, screenshot_diff):
    res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
@@ -39,9 +38,7 @@ def main():
    output_folder = 'compare_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')
    os.mkdir(output_folder)
 
-   # Create executable
-   if not args.git_ref is None:
-      executable = helper.create_executable(args.git_ref)
+   # Check executable
    helper.check_executable(executable)
 
    # Compare screenshots

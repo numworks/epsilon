@@ -89,10 +89,10 @@ void GraphOptionsController::viewWillAppear() {
   // r and r2 cells
   RCell *rCells[2] = {&m_rCell, &m_r2Cell};
   for (int i = 0; i < 2; i++) {
-    bool isRCell = rCells[i] == &m_rCell;
     if (!rCells[i]->isVisible()) {
       continue;
     }
+    bool isRCell = rCells[i] == &m_rCell;
     if (!isRCell) {
       Model::Type type = m_store->seriesRegressionType(
           m_graphController->selectedSeriesIndex());

@@ -2,9 +2,6 @@ import sys, os, shutil, argparse
 import helper
 import args_types
 
-state_file_extension = '.nws'
-screenshot_extension = '.png'
-
 parser = argparse.ArgumentParser(description='This script adds a scenario to the test screenshots dataset. It takes a state file, generates its screenshot, and place them is a subfolder of the screenshots dataset.')
 parser.add_argument('state_file', metavar='STATE_FILE', type=args_types.existing_state_file, help='state file (with extension .nws)')
 parser.add_argument('-n', '--name', help='name of the subfolder (if no name is given, we take the name of the state file)')
@@ -26,11 +23,11 @@ def main():
    os.mkdir(new_dir)
 
    # Add the state file
-   new_state_file_path = os.path.join(new_dir, "scenario" + state_file_extension)
+   new_state_file_path = os.path.join(new_dir, "scenario.nws")
    shutil.copy(args.state_file, new_state_file_path)
 
    # Generate the corresponding screenshot
-   screenshot = os.path.join(new_dir, "screenshot" + screenshot_extension)
+   screenshot = os.path.join(new_dir, "screenshot.png")
    executable = helper.executable_built_path()
    helper.generate_screenshot(new_state_file_path, executable, screenshot)
 

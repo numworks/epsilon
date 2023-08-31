@@ -12,11 +12,8 @@ def main():
    # Parse args
    args = parser.parse_args()
 
-   # Clean or create output folder
-   if os.path.exists(args.output_folder):
-      print("Warning:", args.output_folder, "already exists. Its content will be erased.")
-      shutil.rmtree(args.output_folder)
-   os.mkdir(args.output_folder)
+   # Create output folder
+   helper.clean_or_create_folder(args.output_folder)
 
    # Generate the screenshots
    helper.generate_all_screenshots(args.state_file, args.executable, args.output_folder)

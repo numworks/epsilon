@@ -306,6 +306,8 @@ template Tree *EditionPool::push<BlockType::Zero>();
 template Tree *EditionPool::push<BlockType::One>();
 template Tree *EditionPool::push<BlockType::Two>();
 template Tree *EditionPool::push<BlockType::RationalShort>(int8_t, uint8_t);
+template Tree *EditionPool::push<BlockType::Unit, uint8_t, uint8_t>(uint8_t,
+                                                                    uint8_t);
 template Tree *EditionPool::push<BlockType::Matrix, uint8_t, uint8_t>(uint8_t,
                                                                       uint8_t);
 template Tree *EditionPool::push<BlockType::Matrix, int, int>(int, int);

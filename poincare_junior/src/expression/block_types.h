@@ -123,6 +123,9 @@ ALIAS(FirstMatrix = Dot)
 ALIAS(LastMatrix = Matrix)
 
 // 5 - Order dependant expressions
+/* - Unit U
+ * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
+TYPE(Unit)
 TYPE(List)
 TYPE(Set)
 TYPE(Undefined)

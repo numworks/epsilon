@@ -37,6 +37,7 @@ void PushPoincareExpressionViaParse(Poincare::Expression exp) {
 }
 
 Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
+  // TODO: Make sure new BlockTypes are handled here.
   BlockType type = exp->type();
 
   if (Builtin::IsBuiltin(type)) {
@@ -162,6 +163,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     case BlockType::RationalNegBig:
     case BlockType::Float:
     case BlockType::Decimal:
+    case BlockType::Unit:
       return ToPoincareExpressionViaParse(exp);
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
@@ -333,6 +335,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::BasedInteger:
     case OT::Float:
     case OT::Decimal:
+    case OT::Unit:
       return PushPoincareExpressionViaParse(exp);
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);

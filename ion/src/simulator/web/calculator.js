@@ -96,7 +96,7 @@ function Calculator(emModule) {
 
   function resizeImgForWebp(img) {
     if (img.currentSrc.endsWith(".webp")) {
-      calculatorElement.style.top = "0.6%";
+      calculatorElement.style.top = "0.5%";
       calculatorElement.style.left = "7.9%";
       calculatorElement.style.width = "84.1%";
       calculatorElement.style.height = "89.1%";

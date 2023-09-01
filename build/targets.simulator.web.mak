@@ -13,4 +13,4 @@ $(foreach target,$(htmlpack_targets),$(eval $(call rule_htmlpack,$(target))))
 
 $(BUILD_DIR)/epsilon%html: $(BUILD_DIR)/epsilon%js $(BUILD_DIR)/ion/src/simulator/web/simulator.html output/release/simulator/ion/src/simulator/assets/background.jpg
 	@echo "INLINE  $@"
-	$(Q) ion/src/simulator/web/inline.py --image $(BUILD_DIR)ion/src/simulator/assets/background.jpg --script $< $(BUILD_DIR)/ion/src/simulator/web/simulator.html > $@
+	$(Q) ion/src/simulator/web/inline.py --script $< --image ion/src/simulator/assets/background-with-shadow.webp --image $(BUILD_DIR)ion/src/simulator/assets/background.jpg $(BUILD_DIR)/ion/src/simulator/web/simulator.html > $@

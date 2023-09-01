@@ -81,12 +81,12 @@ jobs:
           sdk: 3.1.43
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js
+      - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-web.zip
-          path: output/release/simulator/web/epsilon.zip
+          path: output/release/simulator/web/epsilon.html
           retention-days: 7
   linux:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}

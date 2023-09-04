@@ -92,6 +92,11 @@ def compute_and_store_crc32(state_file, executable, crc_file):
    crc32 = compute_crc32(state_file, executable, crc_file)
    store_crc32(crc32, crc_file)
 
+def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
+   res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
+   mae = res.split(" ")[0]
+   return mae == "0"
+
 def print_report(fails, count):
    if count == 0:
       print("No state file found")

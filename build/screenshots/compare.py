@@ -1,20 +1,10 @@
-import sys, os, shutil, subprocess, argparse
+import sys, os, shutil, argparse
 from datetime import datetime
 import helper
 import args_types
 
 parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
 parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
-
-def compare_images(screenshot_1, screenshot_2, screenshot_diff):
-   res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
-   mae_value = res.split(" ")[0]
-   if mae_value == "0":
-      os.remove(screenshot_1)
-      os.remove(screenshot_2)
-      os.remove(screenshot_diff)
-      return True
-   return False
 
 def main():
    # Parse args
@@ -49,8 +39,11 @@ def main():
 
       # Compare screenshots
       screenshot_diff = os.path.join(output_folder, scenario_name + '-diff.png')
-      same_image = compare_images(screenshot_1, screenshot_2, screenshot_diff)
+      same_image = helper.images_are_identical(screenshot_1, screenshot_2, screenshot_diff)
       if same_image:
+         os.remove(screenshot_1)
+         os.remove(screenshot_2)
+         os.remove(screenshot_diff)
          print('\033[1m' + scenario_folder + '\t \033[32mOK\033[0m')
       else:
          fails = fails + 1

@@ -36,11 +36,11 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
 $(call object_for,ion/src/simulator/shared/compilation_flags.cpp): SFLAGS += -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL)
 
 ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,background-with-shadow.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png)
-$(addprefix $(BUILD_DIR),$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp)): ion/src/simulator/assets/background-with-shadow.webp
+$(addprefix $(BUILD_DIR)/,$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp)): ion/src/simulator/assets/background-with-shadow.webp
 	$(call rule_label,CONVERT)
 	$(Q) mkdir -p $(dir $@)
 	$(Q) convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
-ion_simulator_assets_paths += $(addprefix $(BUILD_DIR),$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp))
+ion_simulator_assets_paths += $(addprefix $(BUILD_DIR)/,$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp))
 simulator_app_deps += $(ion_simulator_assets_paths)
 
 # layout.cpp generation

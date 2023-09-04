@@ -35,11 +35,13 @@ uint8_t *WorkingBuffer::allocate(size_t size) {
 }
 
 void WorkingBuffer::garbageCollect(
-    std::initializer_list<IntegerHandler *> keptIntegers) {
+    std::initializer_list<IntegerHandler *> keptIntegers,
+    uint8_t *const localStart) {
+  assert(initialStartOfBuffer() <= localStart && localStart <= m_start);
   uint8_t *previousEnd = m_start;
   (void)previousEnd;  // Silent warning
-  m_start = initialStartOfBuffer();
-  m_remainingSize = initialSizeOfBuffer();
+  m_remainingSize += (m_start - localStart);
+  m_start = localStart;
   uint8_t *digits = nullptr;
   for (IntegerHandler *integer : keptIntegers) {
     /* Immediate digits are actually directly stored within the integer handler
@@ -71,14 +73,15 @@ IntegerHandler IntegerHandler::Parse(UnicodeDecoder &decoder, OMG::Base base) {
   IntegerHandler result(0);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   WorkingBuffer workingBuffer;
+  uint8_t *const localStart = workingBuffer.localStart();
   while (CodePoint codePoint = decoder.nextCodePoint()) {
     IntegerHandler multiplication = Mult(result, baseInteger, &workingBuffer);
-    workingBuffer.garbageCollect({&baseInteger, &multiplication});
+    workingBuffer.garbageCollect({&baseInteger, &multiplication}, localStart);
     IntegerHandler digit =
         IntegerHandler(OMG::Print::DigitForCharacter(codePoint));
     digit.setSign(sign);
     result = Sum(multiplication, digit, false, &workingBuffer);
-    workingBuffer.garbageCollect({&baseInteger, &result});
+    workingBuffer.garbageCollect({&baseInteger, &result}, localStart);
   }
   return result;
 }
@@ -471,6 +474,7 @@ Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
 std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
     const IntegerHandler &numerator, const IntegerHandler &denominator,
     WorkingBuffer *workingBuffer) {
+  uint8_t *const localStart = workingBuffer->localStart();
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */
   // TODO: implement Svoboda algorithm or divide and conquer methods
@@ -508,7 +512,7 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
     Q.setDigit<half_native_uint_t>(1, m);         // q[m] = 1
     IntegerHandler newA =
         Usum(A, betaMB, true, workingBuffer, true);  // A-B*beta^m
-    workingBuffer->garbageCollect({&B, &Q, &betaMB, &newA});
+    workingBuffer->garbageCollect({&B, &Q, &betaMB, &newA}, localStart);
     A = newA;
   }
   native_uint_t base =
@@ -530,24 +534,26 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
                               betaJM, workingBuffer, true);
     IntegerHandler newA = IntegerHandler::Sum(A, qBj, true, workingBuffer,
                                               true);  // A-q[j]*beta^j*B
-    workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA});
+    workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA},
+                                  localStart);
     A = newA;
     if (A.sign() == NonStrictSign::Negative) {
       while (A.sign() == NonStrictSign::Negative) {
         Q.setDigit<half_native_uint_t>(Q.digit<half_native_uint_t>(j) - 1,
                                        j);                  // q[j] = q[j]-1
         newA = Sum(A, betaJM, false, workingBuffer, true);  // A = B*beta^j+A
-        workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA});
+        workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA},
+                                      localStart);
         A = newA;
       }
     }
-    workingBuffer->garbageCollect({&B, &Q, &betaMB, &A});
+    workingBuffer->garbageCollect({&B, &Q, &betaMB, &A}, localStart);
   }
   IntegerHandler remainder = A;
   if (pow > 0 && !remainder.isZero()) {
     IntegerHandler newRemainder =
         remainder.divideByPowerOf2(pow, workingBuffer);
-    workingBuffer->garbageCollect({&Q, &newRemainder});
+    workingBuffer->garbageCollect({&Q, &newRemainder}, localStart);
     remainder = newRemainder;
   }
   Q.sanitize();
@@ -638,6 +644,7 @@ Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   IntegerHandler i2(i);
   IntegerHandler exp(j);
   WorkingBuffer workingBuffer;
+  uint8_t *const localStart = workingBuffer.localStart();
   while (!exp.isOne()) {
     auto [quotient, remainder] = Udiv(exp, IntegerHandler(2), &workingBuffer);
     exp = quotient;
@@ -646,16 +653,17 @@ Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
     bool i1AfterExp = false;
     if (remainder.isOne()) {
       IntegerHandler i1i2 = Mult(i1, i2, &workingBuffer);
-      workingBuffer.garbageCollect({&i2, &exp, &i1i2});
+      workingBuffer.garbageCollect({&i2, &exp, &i1i2}, localStart);
       i1 = i1i2;
       i1AfterExp = true;
     }
     IntegerHandler squaredI2 = Mult(i2, i2, &workingBuffer);
     workingBuffer.garbageCollect(
-        {i1AfterExp ? &exp : &i1, i1AfterExp ? &i1 : &exp, &squaredI2});
+        {i1AfterExp ? &exp : &i1, i1AfterExp ? &i1 : &exp, &squaredI2},
+        localStart);
     i2 = squaredI2;
   }
-  workingBuffer.garbageCollect({&i1, &i2});
+  workingBuffer.garbageCollect({&i1, &i2}, localStart);
   return Mult(i1, i2, &workingBuffer).pushOnEditionPool();
 }
 
@@ -664,10 +672,11 @@ Tree *IntegerHandler::Factorial(const IntegerHandler &i) {
   IntegerHandler j(2);
   IntegerHandler result(1);
   WorkingBuffer workingBuffer;
+  uint8_t *const localStart = workingBuffer.localStart();
   while (Ucmp(i, j) >= 0) {
     result = Mult(j, result, &workingBuffer);
     j = Usum(j, IntegerHandler(1), false, &workingBuffer);
-    workingBuffer.garbageCollect({&result, &j});
+    workingBuffer.garbageCollect({&result, &j}, localStart);
   }
   return result.pushOnEditionPool();
 }

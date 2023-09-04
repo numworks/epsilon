@@ -36,8 +36,11 @@ class WorkingBuffer {
  public:
   WorkingBuffer();
   uint8_t *allocate(size_t size);
-  /* Clean the working buffer from all integers but the sorted keptInteger. */
-  void garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers);
+  /* Clean the working buffer from all integers after start but the sorted
+   * keptInteger. */
+  void garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers,
+                      uint8_t *const localStart);
+  uint8_t *const localStart() const { return m_start; }
 
  private:
   /* We let an offset at the end of the edition pool before the working buffer

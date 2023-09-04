@@ -314,6 +314,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a^(1+1)", "a^(3)");
   simplifies_to("a*a^(-1)", "1", {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
+  simplifies_to("2^(64)", "18446744073709551616");
   // Complexes
   simplifies_to("2*i*i", "-2");
   simplifies_to("1+i*(1+i*(1+i))", "0");

@@ -40,18 +40,20 @@ void WorkingBuffer::garbageCollect(
   (void)previousEnd;  // Silent warning
   m_start = initialStartOfBuffer();
   m_remainingSize = initialSizeOfBuffer();
+  uint8_t *digits = nullptr;
   for (IntegerHandler *integer : keptIntegers) {
     /* Immediate digits are actually directly stored within the integer handler
      * object */
     if (!integer->usesImmediateDigit()) {
-      assert(m_start <= integer->digits() &&
-             integer->digits() + integer->numberOfDigits() * sizeof(uint8_t) <=
+      // keptIntegers list should be sorted by increasing digits address.
+      assert(digits < integer->digits());
+      digits = integer->digits();
+      assert(m_start <= digits &&
+             digits + integer->numberOfDigits() * sizeof(uint8_t) <=
                  previousEnd);
-      // TODO: assert that the Integer are sorted by digits() pointer
       uint8_t nbOfDigits = integer->numberOfDigits();
       uint8_t *newDigitsPointer = allocate(nbOfDigits);
-      memmove(newDigitsPointer, integer->digits(),
-              nbOfDigits * sizeof(uint8_t));
+      memmove(newDigitsPointer, digits, nbOfDigits * sizeof(uint8_t));
       *integer = IntegerHandler(newDigitsPointer, nbOfDigits, integer->sign());
     }
   }

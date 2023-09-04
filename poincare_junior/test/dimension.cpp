@@ -24,10 +24,12 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(!dim("[[1][[[2]]]]"));
   QUIZ_ASSERT(!dim("[[1,2][3,4]]+[[2]]"));
   QUIZ_ASSERT(!dim("cos([[2]])"));
+  QUIZ_ASSERT(!dim("1/[[1][3]]"));
 
   QUIZ_ASSERT(dim("1", Scalar));
   QUIZ_ASSERT(dim("cos(sin(1+3))*2^3", Scalar));
   QUIZ_ASSERT(dim("[[1][3]]", Matrix(2, 1)));
+  QUIZ_ASSERT(dim("[[1][3]]/3", Matrix(2, 1)));
   QUIZ_ASSERT(dim("ref([[1,2][3,4]])", Matrix(2, 2)));
   QUIZ_ASSERT(dim("inverse(identity(2))", Matrix(2, 2)));
   QUIZ_ASSERT(dim("cross([[1,2,3]],[[1,2,3]])", Matrix(1, 3)));

@@ -13,7 +13,10 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return false;
     }
     childDim[i++] = GetDimension(child);
+    assert(childDim[i - 1].isSanitized());
   }
+  bool unitsAllowed = false;
+  bool angleUnitsAllowed = false;
   switch (t->type()) {
     case BlockType::Addition:
     case BlockType::Subtraction:
@@ -24,24 +27,46 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         }
       }
       return true;
+    case BlockType::Division:
     case BlockType::Multiplication: {
+      /* TODO: Forbid Complex * units. Units are already forbidden in complex
+       * builtins. */
       assert(t->numberOfChildren() > 0);
       uint8_t cols = 0;
+      DimensionVector unitVector = DimensionVector::Empty();
       for (int i = 0; i < t->numberOfChildren(); i++) {
+        bool secondDivisionChild = (i == 1 && t->type() == BlockType::Division);
         Dimension next = childDim[i];
         if (next.isMatrix()) {
-          if (cols && cols != next.matrix.rows) {
+          // Matrix size must match. Forbid Matrices on denominator
+          if ((cols && cols != next.matrix.rows) || secondDivisionChild) {
             return false;
           }
           cols = next.matrix.cols;
+        } else if (next.isUnit()) {
+          unitVector.addAllCoefficients(next.unit,
+                                        secondDivisionChild ? -1 : 1);
         }
       }
-      return true;
+      // Forbid units * matrices
+      return unitVector.isEmpty() || cols == 0;
     }
     case BlockType::Power:
-    case BlockType::PowerMatrix:
-      return childDim[1].isScalar() &&
-             (!childDim[0].isMatrix() || childDim[0].isSquareMatrix());
+    case BlockType::PowerReal:
+    case BlockType::PowerMatrix: {
+      if (!childDim[1].isScalar()) {
+        return false;
+      }
+      if (childDim[0].isMatrix()) {
+        return childDim[0].isSquareMatrix();
+      }
+      if (!childDim[0].isUnit()) {
+        return true;
+      }
+      const Tree* index = t->childAtIndex(1);
+      // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
+      return index->type().isRational() || index->type() == BlockType::Decimal;
+    }
     case BlockType::Dim:
     case BlockType::Ref:
     case BlockType::Rref:
@@ -61,13 +86,27 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Cross:
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
+    case BlockType::Abs:
+    // case BlockType::SquareRoot: TODO: Handle _m^(1/2)
+    case BlockType::UserFunction:
+      unitsAllowed = true;
+    case BlockType::Cosine:
+    case BlockType::Sine:
+    case BlockType::Tangent:
+    case BlockType::Trig:
+      angleUnitsAllowed = true;
     default:
       assert(t->type().isScalarOnly());
     case BlockType::Matrix:
       for (int i = 0; i < t->numberOfChildren(); i++) {
-        if (!childDim[i].isScalar()) {
-          return false;
+        if (childDim[i].isScalar() ||
+            (childDim[i].isUnit() &&
+             (unitsAllowed ||
+              (angleUnitsAllowed && (childDim[i].unit.angle = 1) &&
+               (childDim[i].unit.supportSize() == 1))))) {
+          continue;
         }
+        return false;
       }
       return true;
   }
@@ -75,9 +114,12 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 
 Dimension Dimension::GetDimension(const Tree* t) {
   switch (t->type()) {
+    case BlockType::Division:
     case BlockType::Multiplication: {
       uint8_t rows = 0;
       uint8_t cols = 0;
+      DimensionVector unitVector = DimensionVector::Empty();
+      bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {
         Dimension dim = GetDimension(child);
         if (dim.isMatrix()) {
@@ -85,16 +127,34 @@ Dimension Dimension::GetDimension(const Tree* t) {
             rows = dim.matrix.rows;
           }
           cols = dim.matrix.cols;
+        } else if (dim.isUnit()) {
+          unitVector.addAllCoefficients(dim.unit, secondDivisionChild ? -1 : 1);
         }
+        secondDivisionChild = (t->type() == BlockType::Division);
       }
-      return rows > 0 ? Matrix(rows, cols) : Scalar();
+      return rows > 0 ? Matrix(rows, cols)
+                      : (unitVector.isEmpty() ? Scalar() : Unit(unitVector));
     }
+    case BlockType::PowerMatrix:
+    case BlockType::PowerReal:
+    case BlockType::Power: {
+      Dimension dim = GetDimension(t->nextNode());
+      if (dim.isUnit()) {
+        float index = Approximation::To<float>(t->childAtIndex(1));
+        // TODO: Handle/forbid index > int8_t
+        assert(!isnan(index) && std::abs(index) < static_cast<float>(INT8_MAX));
+        DimensionVector result = DimensionVector::Empty();
+        result.addAllCoefficients(dim.unit, static_cast<int8_t>(index));
+        return result;
+      }
+    }
+    case BlockType::Abs:
+    case BlockType::SquareRoot:
+    case BlockType::UserFunction:
     case BlockType::Addition:
     case BlockType::Subtraction:
     case BlockType::Cross:
     case BlockType::Inverse:
-    case BlockType::Power:
-    case BlockType::PowerMatrix:
     case BlockType::Ref:
     case BlockType::Rref:
       return GetDimension(t->nextNode());
@@ -110,6 +170,12 @@ Dimension Dimension::GetDimension(const Tree* t) {
       int n = Approximation::To<float>(t->childAtIndex(0));
       return Matrix(n, n);
     }
+    case BlockType::Unit:
+      return Dimension::Unit(t);
+    case BlockType::ArcCosine:
+    case BlockType::ArcSine:
+    case BlockType::ArcTangent:
+      // TODO: Return angle units ?
     default:
       return Scalar();
   }
@@ -121,6 +187,9 @@ bool Dimension::operator==(const Dimension& other) const {
   }
   if (type == Type::Matrix) {
     return matrix.rows == other.matrix.rows && matrix.cols == other.matrix.cols;
+  }
+  if (type == Type::Unit) {
+    return unit == other.unit;
   }
   return true;
 }

@@ -105,7 +105,7 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
   }
 }
 
-Tree *IntegerHandler::pushOnEditionPool() {
+Tree *IntegerHandler::pushOnEditionPool() const {
   if (isZero()) {
     return SharedEditionPool->push<BlockType::Zero>();
   }
@@ -134,7 +134,7 @@ Tree *IntegerHandler::pushOnEditionPool() {
   return node;
 }
 
-void IntegerHandler::pushDigitsOnEditionPool() {
+void IntegerHandler::pushDigitsOnEditionPool() const {
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
     SharedEditionPool->pushBlock(ValueBlock(digit(i)));

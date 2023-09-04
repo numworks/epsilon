@@ -120,8 +120,8 @@ class IntegerHandler final {
   operator int8_t() const;
   operator uint8_t() const;
 
-  Tree *pushOnEditionPool();
-  void pushDigitsOnEditionPool();
+  Tree *pushOnEditionPool() const;
+  void pushDigitsOnEditionPool() const;
   template <typename T>
   T to();
 

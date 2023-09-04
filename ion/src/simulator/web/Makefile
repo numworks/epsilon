@@ -43,7 +43,7 @@ $(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css):
 
 $(BUILD_DIR)/ion/src/simulator/web/simulator.html: $(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css)
 
-$(BUILD_DIR)/epsilon%zip: $(BUILD_DIR)/epsilon%js $(BUILD_DIR)/ion/src/simulator/web/simulator.html $(BUILD_DIR)ion/src/simulator/assets/background.jpg
+$(BUILD_DIR)/epsilon%zip: $(BUILD_DIR)/epsilon%js $(BUILD_DIR)/ion/src/simulator/web/simulator.html $(BUILD_DIR)/ion/src/simulator/assets/background.jpg
 	@rm -rf $(basename $@)
 	@mkdir -p $(basename $@)
 	@cp $< $(basename $@)/epsilon.js

@@ -143,6 +143,21 @@ class IntegerHandler final {
   constexpr static uint8_t k_maxNumberOfDigits = 128;
   constexpr static uint8_t k_maxNumberOfNativeDigits =
       k_maxNumberOfDigits / sizeof(native_uint_t);
+#if POINCARE_MEMORY_TREE_LOG
+  void log() const {
+    std::cout << "<IntegerHandler size="
+              << (int)numberOfDigits<native_uint_t>();
+    if (usesImmediateDigit()) {
+      std::cout << " m_digit=" << (int)(immediateDigit()) << "/>\n";
+      return;
+    }
+    std::cout << " m_digits=" << (void *)m_digitAccessor.m_digits << ">";
+    for (uint8_t i = 0; i < numberOfDigits<native_uint_t>(); i++) {
+      std::cout << "[" << (int)digit<native_uint_t>(i) << "]";
+    }
+    std::cout << "</IntegerHandler>\n";
+  }
+#endif
 
  private:
   static constexpr float k_digitBase =

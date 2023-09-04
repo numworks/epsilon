@@ -32,8 +32,8 @@ all_release:
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0120.onboarding.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
-	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip
-	@ cp output/release/simulator/web/epsilon.zip output/all_official/simulator.web.zip
+	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.html
+	@ cp output/release/simulator/web/epsilon.html output/all_official/simulator.web.html
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web htmlpack.zip
 	@ cp output/release/simulator/web/htmlpack.zip output/all_official/htmlpack.zip

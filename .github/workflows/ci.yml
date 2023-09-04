@@ -85,7 +85,7 @@ jobs:
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
         with:
-          name: epsilon-web.zip
+          name: epsilon.html
           path: output/release/simulator/web/epsilon.html
           retention-days: 7
   linux:

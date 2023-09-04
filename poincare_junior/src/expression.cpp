@@ -5,6 +5,7 @@
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/parser.h>
@@ -56,35 +57,29 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
         layoutParent,
         SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-'));
   }
-  uint64_t value = 0;
-  int numberOfDigits = handler.numberOfDigits();
-  if (numberOfDigits > 8) {
-    assert(false);
-    NAry::AddChild(
-        layoutParent,
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('?'));
-    return;
-  }
-  for (int i = numberOfDigits - 1; i >= 0; i--) {
-    value = value * (UINT8_MAX + 1) + handler.digits()[i];
-  }
+  handler.setSign(NonStrictSign::Positive);
   int firstInsertedIndex = layoutParent->numberOfChildren();
+  EditionReference value = handler.pushOnEditionPool();
   do {
-    uint8_t digit = value % 10;
-    value /= 10;
+    std::pair<PoincareJ::Tree *, PoincareJ::Tree *> result =
+        IntegerHandler::Division(Integer::Handler(value), IntegerHandler(10));
+    uint8_t digit = Integer::Handler(result.second);
+    assert(result.second > result.first);
+    result.second->removeTree();
+    MoveTreeOverTree(value, result.first);
     NAry::AddChildAtIndex(
         layoutParent,
         SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('0' +
                                                                        digit),
         firstInsertedIndex);
-    decimalOffset--;
-    if (decimalOffset == 0) {
+    if (--decimalOffset == 0) {
       NAry::AddChildAtIndex(
           layoutParent,
           SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('.'),
           firstInsertedIndex);
     }
-  } while (value > 0 && decimalOffset <= 0);
+  } while (!Number::IsZero(value) && decimalOffset <= 0);
+  value->removeTree();
 }
 
 void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,

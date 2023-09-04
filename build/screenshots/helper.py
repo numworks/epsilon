@@ -1,7 +1,5 @@
 import sys, os, shutil, subprocess
 from pathlib import Path
-from PIL import Image
-import numpy as np
 
 def dataset():
    return "tests/screenshots_dataset"
@@ -116,6 +114,8 @@ def print_report(fails, count):
    print("")
 
 def concatenate_images(list_images, output):
+   from PIL import Image
+   import numpy as np
    # Concatenate same size images
    concatenated = Image.fromarray(np.concatenate([np.array(Image.open(im).convert("RGBA")) for im in list_images], axis=1))
    concatenated.save(output)

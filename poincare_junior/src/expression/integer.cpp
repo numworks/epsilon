@@ -50,9 +50,13 @@ void WorkingBuffer::garbageCollect(
       // keptIntegers list should be sorted by increasing digits address.
       assert(digits < integer->digits());
       digits = integer->digits();
-      assert(m_start <= digits &&
-             digits + integer->numberOfDigits() * sizeof(uint8_t) <=
-                 previousEnd);
+      if (digits < m_start) {
+        assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <= m_start);
+        // Some IntegerHandler have their digits stored in EditionPool's trees.
+        continue;
+      }
+      assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <=
+             previousEnd);
       uint8_t nbOfDigits = integer->numberOfDigits();
       uint8_t *newDigitsPointer = allocate(nbOfDigits);
       memmove(newDigitsPointer, digits, nbOfDigits * sizeof(uint8_t));

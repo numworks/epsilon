@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  compare_screenshots:
+  compare:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - name: Checkout PR head
@@ -34,3 +34,18 @@ jobs:
       - name: Cleanup
         if: always()
         run: rm -rf output && rm -rf compare_output_*
+  compare_crc:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: build/setup.sh --only-simulator
+      - name: Build PR head
+        run: make -j32 PLATFORM=simulator DEBUG=1
+      - name: Compare screenshot images
+        run: python3 build/screenshots/compare_crc.py
+      - name: Cleanup
+        if: always()
+        run: rm -rf output

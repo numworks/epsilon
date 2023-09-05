@@ -119,10 +119,9 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
 HighlightCell *CategoricalController::reusableCell(int index, int type) {
   if (type == k_indexOfTableCell) {
     return categoricalTableCell();
-  } else {
-    assert(type == indexOfNextCell());
-    return &m_next;
   }
+  assert(type == indexOfNextCell());
+  return &m_next;
 }
 
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
@@ -199,9 +198,8 @@ void InputCategoricalController::viewWillAppear() {
 HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
   if (type == indexOfSignificanceCell()) {
     return &m_significanceCell;
-  } else {
-    return CategoricalController::reusableCell(index, type);
   }
+  return CategoricalController::reusableCell(index, type);
 }
 
 }  // namespace Inference

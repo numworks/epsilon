@@ -99,11 +99,8 @@ class InputCategoricalController : public CategoricalController,
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
   virtual int indexOfEditedParameterAtIndex(int index) const {
-    if (index == indexOfSignificanceCell()) {
-      return m_statistic->indexOfThreshold();
-    }
-    assert(false);
-    return -1;
+    assert(index == indexOfSignificanceCell());
+    return m_statistic->indexOfThreshold();
   }
 
   Statistic* m_statistic;

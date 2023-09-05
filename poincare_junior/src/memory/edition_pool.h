@@ -11,13 +11,13 @@ class EditionPool final : public Pool {
 
  public:
   static void InitSharedEditionPool();
-  EditionPool(TypeBlock *firstBlock, size_t size, int numberOfBlocks = 0)
+  EditionPool(Block *firstBlock, size_t size, int numberOfBlocks = 0)
       : m_referenceTable(this),
         m_firstBlock(firstBlock),
         m_numberOfBlocks(numberOfBlocks),
         m_size(size) {}
 
-  void reinit(TypeBlock *firstBlock, size_t size);
+  void reinit(Block *firstBlock, size_t size);
 
   uint16_t referenceNode(Tree *node);
   void flush();
@@ -54,10 +54,10 @@ class EditionPool final : public Pool {
   Tree *push(Types... args);
 
   using Pool::firstBlock;
-  const TypeBlock *firstBlock() const override { return m_firstBlock; }
+  const Block *firstBlock() const override { return m_firstBlock; }
   using Pool::lastBlock;
   // If EditionPool is empty, first and last blocks are the same one
-  const TypeBlock *lastBlock() const override {
+  const Block *lastBlock() const override {
     return m_firstBlock + m_numberOfBlocks;
   }
   size_t fullSize() const { return m_size; }
@@ -109,7 +109,7 @@ class EditionPool final : public Pool {
   /* TODO: if we end up needing too many EditionReference, we could ref-count
    * them in m_referenceTable and implement a destructor on EditionReference. */
   ReferenceTable m_referenceTable;
-  TypeBlock *m_firstBlock;
+  Block *m_firstBlock;
   int m_numberOfBlocks;
   size_t m_size;
 };

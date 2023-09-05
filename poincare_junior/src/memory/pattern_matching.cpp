@@ -198,7 +198,7 @@ bool PatternMatching::Match(const Tree* pattern, const Tree* source,
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
                                   Tree* insertedNAry, bool simplify) {
   Tree* top = Tree::FromBlocks(SharedEditionPool->lastBlock());
-  const TypeBlock* lastStructureBlock = structure->nextTree()->block();
+  const Block* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
   // Skip NAry structure node because it has already been inserted.
   const Tree* node = withinNAry ? structure->nextNode() : structure;

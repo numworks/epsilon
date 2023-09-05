@@ -137,20 +137,20 @@ class PatternMatching {
     void setLocalFromChild(const Tree* source, const Tree* pattern);
 
    private:
-    static bool ReachedLimit(const Tree* node, const TypeBlock* end) {
+    static bool ReachedLimit(const Tree* node, const Block* end) {
       assert(node->block() <= end);
       return node->block() == end;
     }
 
     // Local context
     const Tree* m_localSourceRoot;
-    const TypeBlock* m_localSourceEnd;
-    const TypeBlock* m_localPatternEnd;
+    const Block* m_localSourceEnd;
+    const Block* m_localPatternEnd;
     // Global context
     const Tree* const m_globalSourceRoot;
     const Tree* const m_globalPatternRoot;
-    const TypeBlock* const m_globalSourceEnd;
-    const TypeBlock* const m_globalPatternEnd;
+    const Block* const m_globalSourceEnd;
+    const Block* const m_globalPatternEnd;
   };
 
   // Match an AnyTree Placeholder

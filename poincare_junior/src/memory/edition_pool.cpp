@@ -65,7 +65,7 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
 
 // EditionTable
 
-void EditionPool::reinit(TypeBlock *firstBlock, size_t size) {
+void EditionPool::reinit(Block *firstBlock, size_t size) {
   m_firstBlock = firstBlock;
   m_size = size;
 }
@@ -212,10 +212,9 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
 }
 
 Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
-  const Tree *node =
-      Tree::FromBlocks(reinterpret_cast<const TypeBlock *>(address));
+  const Tree *node = Tree::FromBlocks(reinterpret_cast<const Block *>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
-  TypeBlock *copiedTree = lastBlock();
+  Block *copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
                     size * sizeof(Block))) {
     return nullptr;
@@ -256,7 +255,7 @@ start_execute:
 
 template <BlockType blockType, typename... Types>
 Tree *EditionPool::push(Types... args) {
-  TypeBlock *newNode = lastBlock();
+  Block *newNode = lastBlock();
 
   size_t i = 0;
   bool endOfNode = false;

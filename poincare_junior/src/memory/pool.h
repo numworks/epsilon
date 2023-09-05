@@ -26,14 +26,13 @@ class Pool {
   bool contains(const Block *block) const {
     return block >= firstBlock() && block < lastBlock();
   }
-  virtual const TypeBlock *firstBlock() const = 0;
-  TypeBlock *firstBlock() {
-    return const_cast<TypeBlock *>(
-        const_cast<const Pool *>(this)->firstBlock());
+  virtual const Block *firstBlock() const = 0;
+  Block *firstBlock() {
+    return const_cast<Block *>(const_cast<const Pool *>(this)->firstBlock());
   }
-  virtual const TypeBlock *lastBlock() const = 0;
-  TypeBlock *lastBlock() {
-    return const_cast<TypeBlock *>(const_cast<const Pool *>(this)->lastBlock());
+  virtual const Block *lastBlock() const = 0;
+  Block *lastBlock() {
+    return const_cast<Block *>(const_cast<const Pool *>(this)->lastBlock());
   }
   size_t size() const { return lastBlock() - firstBlock(); }
   size_t numberOfTrees() const;

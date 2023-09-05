@@ -169,7 +169,7 @@ uint32_t Tree::nextNodeInPoolCount = 0;
 
 const Tree* Tree::nextNode() const {
 #if ASSERTIONS
-  assert(m_block->type() != BlockType::TreeBorder);
+  assert(type() != BlockType::TreeBorder);
 #endif
   assert(m_block + nodeSize() != CachePool::sharedCachePool()->firstBlock());
   assert(m_block != CachePool::sharedCachePool()->editionPool()->lastBlock());
@@ -187,8 +187,8 @@ const Tree* Tree::commonAncestor(const Tree* child1, const Tree* child2) const {
   /* This method find the common ancestor of child1 and child2 within this
    * tree it does without going backward at any point. This tree is parsed
    * until the last node owning both childs is found. */
-  const TypeBlock* block1 = child1->block();
-  const TypeBlock* block2 = child2->block();
+  const Block* block1 = child1->block();
+  const Block* block2 = child2->block();
   if (block1 > block2) {
     return commonAncestor(child2, child1);
   }
@@ -235,7 +235,7 @@ const Tree* Tree::parentOfDescendant(const Tree* descendant,
    * backward at any point. This tree is parsed until the last node owning the
    * child is found. This also find position in the parent. */
   *position = 0;
-  const TypeBlock* descendantBlock = descendant->block();
+  const Block* descendantBlock = descendant->block();
   if (descendantBlock < block()) {
     return nullptr;
   }

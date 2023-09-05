@@ -22,16 +22,14 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     }
     order = Order::User;
   }
-  BlockType type0 = node0->type();
-  BlockType type1 = node1->type();
+  TypeBlock type0 = node0->type();
+  TypeBlock type1 = node1->type();
   if (type0 > type1) {
     /* We handle this case first to implement only the upper diagonal of the
      * comparison table. */
     return -Compare(node1, node0);
   }
-  const TypeBlock* block0 = node0->block();
-  const TypeBlock* block1 = node1->block();
-  if ((block0->isNumber() && block1->isNumber())) {
+  if ((type0.isNumber() && type1.isNumber())) {
     return CompareNumbers(node0, node1);
   }
   if (type0 < type1) {
@@ -56,7 +54,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     return -1;
   }
   assert(type0 == type1);
-  if (block0->isUserNamed()) {
+  if (type0.isUserNamed()) {
     int nameComparison = CompareNames(node0, node1);
     if (nameComparison != 0) {
       // a(x) < b(y)

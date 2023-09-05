@@ -49,7 +49,7 @@ class LayoutSelection {
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
   bool containsNode(const Tree* n) const {
-    const TypeBlock* b = n->block();
+    const Block* b = n->block();
     return !isEmpty() &&
            (Layout::IsHorizontal(m_node)
                 ? (b >= m_node->childAtIndex(leftPosition())->block() &&

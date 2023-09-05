@@ -36,7 +36,7 @@ EditionReference RackParser::parse() {
   /* To check if no other trees are leaked into EditionPool, use the end of pool
    * instead of number of trees since the SharedEditionPool may be incomplete,
    * which can happen while parsing a division's denominator. */
-  const TypeBlock *endOfPool = SharedEditionPool->lastBlock();
+  const Block *endOfPool = SharedEditionPool->lastBlock();
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
   assert(SharedEditionPool->lastBlock() ==
          (result.isUninitialized() ? endOfPool : result->nextTree()->block()));

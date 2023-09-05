@@ -61,12 +61,12 @@ class Tree {
                  int indentation = 0) const;
 #endif
 
-  constexpr const TypeBlock* block() const { return m_block; }
-  const TypeBlock block(int i) const {
+  const Block block(int i) const {
     assert(i < nodeSize());
     return m_block[i];
   }
-  constexpr TypeBlock* block() { return m_block; }
+  constexpr const Block* block() const { return m_block; }
+  constexpr Block* block() { return m_block; }
   void copyTreeTo(void* address) const;
 
   // Tree Navigation

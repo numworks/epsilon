@@ -5,7 +5,7 @@
 namespace PoincareJ {
 
 size_t Pool::numberOfTrees() const {
-  const TypeBlock* currentBlock = firstBlock();
+  const Block* currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
     currentBlock = Tree::FromBlocks(currentBlock)->nextTree()->block();
@@ -23,8 +23,8 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {
     // Increment first to make firstBlock != nullptr
     m_length++;
   }
-  nodeOffsetArray()[index] =
-      static_cast<uint16_t>(node->block() - m_pool->firstBlock());
+  nodeOffsetArray()[index] = static_cast<uint16_t>(
+      static_cast<Block*>(node->block()) - m_pool->firstBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
   assert(m_pool->contains(node->block()) ||
          node->block() == m_pool->lastBlock());

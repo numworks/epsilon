@@ -16,7 +16,7 @@ class EditionReference {
   template <TreeCompatibleConcept T>
   EditionReference(T t) : EditionReference(static_cast<const Tree*>(t)) {}
 
-  EditionReference(TypeBlock* blocks)
+  EditionReference(Block* blocks)
       : EditionReference(Tree::FromBlocks(blocks)) {}
 
 #if POINCARE_MEMORY_TREE_LOG

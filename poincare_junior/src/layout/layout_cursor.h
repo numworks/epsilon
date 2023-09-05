@@ -160,7 +160,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
   LayoutBufferCursor(
-      TypeBlock* layoutBuffer, Tree* layout,
+      Block* layoutBuffer, Tree* layout,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
       : LayoutCursor(0, -1), m_layoutBuffer(layoutBuffer) {
     if (layout) {
@@ -168,7 +168,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     }
   }
 
-  TypeBlock* layoutBuffer() { return m_layoutBuffer; }
+  Block* layoutBuffer() { return m_layoutBuffer; }
   Tree* rootNode() const override { return Tree::FromBlocks(m_layoutBuffer); }
   Tree* cursorNode() const override { return m_cursorNode; }
 
@@ -254,7 +254,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
 
   // Buffer of cursor's layout
-  TypeBlock* m_layoutBuffer;
+  Block* m_layoutBuffer;
   // Cursor's node
   Tree* m_cursorNode;
 };

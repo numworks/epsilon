@@ -44,6 +44,10 @@ class TypeBlock : public Block {
   }
   constexpr BlockType type() const { return static_cast<BlockType>(m_content); }
 
+  bool operator==(const TypeBlock &other) const = default;
+  constexpr bool operator==(BlockType t) const { return type() == t; }
+  constexpr operator BlockType() const { return type(); }
+
   constexpr bool isExpression() const {
     return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions);
   }

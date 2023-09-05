@@ -118,7 +118,7 @@ class Tree {
   bool hasChild(const Tree* child) const;
   bool hasAncestor(const Tree* node, bool includeSelf) const;
 
-  constexpr BlockType type() const { return m_block->type(); }
+  constexpr TypeBlock type() const { return *m_block; }
   constexpr size_t nodeSize() const { return m_block->nodeSize(); }
   constexpr int numberOfChildren() const { return m_block->numberOfChildren(); }
   constexpr bool isNAry() const { return m_block->isNAry(); }

@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-bool EditableField::handleBoxEvent(Ion::Events::Event event) {
+bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
   App* app = App::app();
   EditableFieldHelpBox* box = nullptr;
   if (event == Ion::Events::Toolbox) {

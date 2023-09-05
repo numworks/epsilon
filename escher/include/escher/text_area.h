@@ -2,7 +2,6 @@
 #define ESCHER_TEXT_AREA_H
 
 #include <assert.h>
-#include <escher/editable_field.h>
 #include <escher/text_input.h>
 #include <omg/directions.h>
 #include <string.h>
@@ -12,7 +11,7 @@
 namespace Escher {
 // See TODO in EditableField
 
-class TextArea : public TextInput, public EditableField {
+class TextArea : public TextInput {
  public:
   constexpr static char k_indentation[] = "  ";
   constexpr static int k_indentationSpaces = std::size(k_indentation) - 1;

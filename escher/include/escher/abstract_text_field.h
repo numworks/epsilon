@@ -1,7 +1,6 @@
 #ifndef ESCHER_ABSTRACT_TEXT_FIELD_H
 #define ESCHER_ABSTRACT_TEXT_FIELD_H
 
-#include <escher/editable_field.h>
 #include <escher/text_field_delegate.h>
 #include <escher/text_input.h>
 #include <string.h>
@@ -17,7 +16,7 @@ namespace Escher {
  * delegate method 'textFieldDidAbortEdition' in the way that it reloads the
  * previous text from the model instead of from the textfield buffer. */
 
-class AbstractTextField : public TextInput, public EditableField {
+class AbstractTextField : public TextInput {
  public:
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 

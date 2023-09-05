@@ -327,9 +327,7 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
 AbstractTextField::AbstractTextField(Responder *parentResponder,
                                      View *contentView,
                                      TextFieldDelegate *delegate)
-    : TextInput(parentResponder, contentView),
-      EditableField(),
-      m_delegate(delegate) {}
+    : TextInput(parentResponder, contentView), m_delegate(delegate) {}
 
 void AbstractTextField::setBackgroundColor(KDColor backgroundColor) {
   ScrollView::setBackgroundColor(backgroundColor);
@@ -496,7 +494,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   // From now on, we only consider editable fields
 
   // Handle boxes
-  if (handleBoxEvent(event)) {
+  if (privateHandleBoxEvent(event)) {
     return true;
   }
 

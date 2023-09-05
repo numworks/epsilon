@@ -127,9 +127,7 @@ static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 LayoutField::LayoutField(Responder *parentResponder,
                          LayoutFieldDelegate *layoutFieldDelegate,
                          KDGlyph::Format format)
-    : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
-                                                         &m_contentView, this),
-      EditableField(),
+    : EditableField(parentResponder, &m_contentView),
       m_contentView(format),
       m_layoutFieldDelegate(layoutFieldDelegate),
       m_inputViewMemoizedHeight(0),
@@ -539,7 +537,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Handle boxes
-  if (handleBoxEvent(event)) {
+  if (privateHandleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
     }

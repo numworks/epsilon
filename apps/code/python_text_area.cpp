@@ -458,6 +458,11 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     }
   }
 
+  if (event == Ion::Events::Var) {
+    prepareVariableBoxBeforeOpening();
+    assert(!m_contentView.isAutocompleting());
+  }
+
   bool result = App::app()->textInputDidReceiveEvent(this, event) ||
                 handleSpecialEvent(event) || TextArea::handleEvent(event);
 
@@ -530,14 +535,6 @@ bool PythonTextArea::handleEventWithText(const char *text, bool indentation,
       TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
   addAutocompletion();
   return result;
-}
-
-bool PythonTextArea::handleBoxEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    prepareVariableBoxBeforeOpening();
-    assert(!m_contentView.isAutocompleting());
-  }
-  return TextArea::handleBoxEvent(event);
 }
 
 void PythonTextArea::prepareVariableBoxBeforeOpening() {

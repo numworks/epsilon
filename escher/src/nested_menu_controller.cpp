@@ -122,9 +122,7 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::Toolbox && !isToolbox())) {
     App::app()->modalViewController()->dismissModal();
     assert(sender());
-    /* WARNING: This won't go through TextField::privateHandleEvent. Thus,
-     *          textFieldDidReceiveEvent won't be called.*/
-    return sender()->handleBoxEvent(event);
+    return sender()->handleEvent(event);
   }
   if (selectedRow() < 0) {
     return false;

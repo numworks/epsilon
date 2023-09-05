@@ -17,7 +17,7 @@ namespace Escher {
 
 TextArea::TextArea(Responder *parentResponder, View *contentView,
                    KDFont::Size font)
-    : TextInput(parentResponder, contentView), EditableField() {}
+    : TextInput(parentResponder, contentView) {}
 
 static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
                                           int bufferSize) {
@@ -188,7 +188,7 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
 }
 
 bool TextArea::handleEvent(Ion::Events::Event event) {
-  if (handleBoxEvent(event)) {
+  if (privateHandleBoxEvent(event)) {
     return true;
   }
   int step = Ion::Events::longPressFactor();

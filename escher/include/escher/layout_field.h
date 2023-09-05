@@ -4,8 +4,6 @@
 #include <escher/editable_field.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/layout_view.h>
-#include <escher/scrollable_view.h>
-#include <escher/text_cursor_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
 #include <poincare/layout_cursor.h>
@@ -15,10 +13,7 @@
 
 namespace Escher {
 
-class LayoutField : public TextCursorView::WithBlinkingCursor<
-                        ScrollableView<ScrollView::NoDecorator>>,
-                    public ScrollViewDataSource,
-                    public EditableField {
+class LayoutField : public EditableField {
  public:
   LayoutField(Responder* parentResponder,
               LayoutFieldDelegate* layoutFieldDelegate = nullptr,

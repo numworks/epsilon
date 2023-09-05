@@ -2,6 +2,7 @@
 #define ESCHER_TEXT_INPUT_H
 
 #include <assert.h>
+#include <escher/editable_field.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
 #include <omg/directions.h>
@@ -11,15 +12,12 @@
 
 namespace Escher {
 
-class TextInput : public TextCursorView::WithBlinkingCursor<
-                      ScrollableView<ScrollView::NoDecorator>>,
-                  public ScrollViewDataSource {
+class TextInput : public EditableField {
   friend class LayoutField;
 
  public:
-  TextInput(Responder *parentResponder, View *contentView)
-      : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
-                                                           contentView, this) {}
+  using EditableField::EditableField;
+
   const char *text() const { return nonEditableContentView()->text(); }
   bool removePreviousGlyph();
   const char *cursorLocation() const {

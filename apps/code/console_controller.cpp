@@ -91,6 +91,7 @@ void ConsoleController::runAndPrintForCommand(const char *command) {
 
   runCode(storedCommand);
 
+  m_editCell.setText("");
   m_editCell.setPrompt(sStandardPromptText);
   m_editCell.setEditing(true);
 

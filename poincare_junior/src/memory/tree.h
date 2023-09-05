@@ -118,10 +118,14 @@ class Tree {
   bool hasChild(const Tree* child) const;
   bool hasAncestor(const Tree* node, bool includeSelf) const;
 
-  constexpr TypeBlock type() const { return *m_block; }
-  constexpr size_t nodeSize() const { return m_block->nodeSize(); }
-  constexpr int numberOfChildren() const { return m_block->numberOfChildren(); }
-  constexpr bool isNAry() const { return m_block->isNAry(); }
+  constexpr TypeBlock type() const {
+    return *static_cast<const TypeBlock*>(m_block);
+  }
+  constexpr size_t nodeSize() const { return typeBlock()->nodeSize(); }
+  constexpr int numberOfChildren() const {
+    return typeBlock()->numberOfChildren();
+  }
+  constexpr bool isNAry() const { return typeBlock()->isNAry(); }
 
   Tree* clone() const;
   Tree* cloneNode() const;
@@ -249,8 +253,12 @@ class Tree {
   Tree* detach(bool isTree);
   void remove(bool isTree);
 
+  const TypeBlock* typeBlock() const {
+    return static_cast<const TypeBlock*>(m_block);
+  }
+
   // Should be last - and most likely only - member
-  TypeBlock m_block[0];
+  Block m_block[0];
 };
 
 void SwapTrees(Tree* u, Tree* v);

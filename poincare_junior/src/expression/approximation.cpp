@@ -14,8 +14,8 @@ namespace PoincareJ {
 
 template <typename T>
 T Approximation::To(const Tree* node) {
-  assert(node->block()->isExpression());
-  if (node->block()->isRational()) {
+  assert(node->type().isExpression());
+  if (node->type().isRational()) {
     return Rational::Numerator(node).to<T>() /
            Rational::Denominator(node).to<T>();
   }

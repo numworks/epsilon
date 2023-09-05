@@ -12,7 +12,7 @@
 namespace PoincareJ {
 
 Tree* Matrix::Identity(const Tree* n) {
-  assert(n->block()->isNumber());
+  assert(n->type().isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {
     return KUndef->clone();
   }

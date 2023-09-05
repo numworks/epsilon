@@ -26,21 +26,21 @@ Sign::Sign Number::Sign(const Tree* node) {
       return {value == 0, value > 0, value < 0, false};
     }
     default:
-      assert(node->block()->isRational());
+      assert(node->type().isRational());
       return Rational::Sign(node);
   }
 }
 
 bool Number::IsSanitized(const Tree* n) {
-  if (!n->block()->isOfType(
-          {BlockType::RationalShort, BlockType::RationalPosBig,
-           BlockType::RationalNegBig, BlockType::IntegerShort,
-           BlockType::IntegerPosBig, BlockType::IntegerNegBig})) {
+  if (!n->type().isOfType({BlockType::RationalShort, BlockType::RationalPosBig,
+                            BlockType::RationalNegBig, BlockType::IntegerShort,
+                            BlockType::IntegerPosBig,
+                            BlockType::IntegerNegBig})) {
     assert(
-        !n->block()->isNumber() ||
-        n->block()->isOfType({BlockType::Float, BlockType::Constant,
-                              BlockType::Half, BlockType::Zero, BlockType::One,
-                              BlockType::Two, BlockType::MinusOne}));
+        !n->type().isNumber() ||
+        n->type().isOfType({BlockType::Float, BlockType::Constant,
+                             BlockType::Half, BlockType::Zero, BlockType::One,
+                             BlockType::Two, BlockType::MinusOne}));
     // Non numbers or optimal BlockType numbers
     return true;
   }

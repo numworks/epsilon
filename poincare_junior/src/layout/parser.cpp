@@ -11,7 +11,7 @@
 namespace PoincareJ {
 
 EditionReference Parser::Parse(const Tree* node) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   switch (node->type()) {
     case BlockType::FractionLayout:
       return FractionLayout::Parse(node);

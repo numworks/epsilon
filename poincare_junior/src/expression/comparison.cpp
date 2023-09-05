@@ -92,7 +92,7 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
                                                 : -1;
   }
   assert(node0->type() != BlockType::Constant);
-  if (node0->block()->isRational() && node1->block()->isRational()) {
+  if (node0->type().isRational() && node1->type().isRational()) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);
   }

@@ -22,7 +22,7 @@ class Layout final : public Reference {
   }
 
   Layout(const Tree* tree) : Reference(tree) {
-    assert(tree->block()->isLayout());
+    assert(tree->type().isLayout());
   }
   using Reference::Reference;
   static Layout Parse(const char* text);

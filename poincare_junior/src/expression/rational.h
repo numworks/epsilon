@@ -22,7 +22,7 @@ class Rational final {
         .canBeNull = s == StrictSign::Null,
         .canBePositive = s == StrictSign::Positive,
         .canBeNegative = s == StrictSign::Negative,
-        .isInteger = node->block()->isInteger(),
+        .isInteger = node->type().isInteger(),
     };
   }
   static void SetSign(Tree* reference, NonStrictSign sign);

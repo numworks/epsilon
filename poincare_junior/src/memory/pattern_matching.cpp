@@ -53,7 +53,7 @@ int PatternMatching::MatchContext::remainingLocalTrees(const Tree* node) const {
   if (ReachedLimit(node, m_localSourceEnd)) {
     return 0;
   }
-  assert(m_localSourceRoot->block()->isSimpleNAry());
+  assert(m_localSourceRoot->type().isSimpleNAry());
   // Parent is expected to be m_localSourceRoot, but we need nodePosition.
   int nodePosition;
   const Tree* parent =
@@ -163,7 +163,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
     /* AnyTrees placeholders are expected among children of simple NArys.
      * The number of children is therefore not expected to match. */
     bool simpleNAryMatch =
-        source->block()->isSimpleNAry() && pattern->type() == source->type();
+        source->type().isSimpleNAry() && pattern->type() == source->type();
     assert(Number::IsSanitized(source) && Number::IsSanitized(pattern));
     if (!simpleNAryMatch && !source->nodeIsIdenticalTo(pattern)) {
       // Tree* should match exactly, but it doesn't.
@@ -205,7 +205,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
   while (node->block() < lastStructureBlock) {
     if (node->type() != BlockType::Placeholder) {
       int numberOfChildren = node->numberOfChildren();
-      if (node->block()->isSimpleNAry()) {
+      if (node->type().isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
         Tree* insertedNode = SharedEditionPool->clone(node, false);

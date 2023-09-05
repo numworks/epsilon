@@ -12,7 +12,7 @@
 namespace PoincareJ {
 
 KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
       return RackLayout::Size(node, root, font);
@@ -32,7 +32,7 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
 
 KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
                                KDFont::Size font) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   if (node == root) {
     return KDPointZero;
   }
@@ -44,7 +44,7 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
 
 KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
                                 const Tree* root, KDFont::Size font) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
       return RackLayout::PositionOfChild(node, childIndex, root, font);
@@ -63,7 +63,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
 
 KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
                               KDFont::Size font) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   switch (node->type()) {
     case BlockType::RackLayout:
       return RackLayout::Baseline(node, root, font);
@@ -90,7 +90,7 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
 void Render::PrivateDraw(const Tree* node, const Tree* root, KDContext* ctx,
                          KDPoint p, KDFont::Size font, KDColor expressionColor,
                          KDColor backgroundColor) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   KDSize size = Size(node, root, font);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
@@ -112,7 +112,7 @@ void Render::PrivateDraw(const Tree* node, const Tree* root, KDContext* ctx,
 void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                         KDPoint p, KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
-  assert(node->block()->isLayout());
+  assert(node->type().isLayout());
   switch (node->type()) {
     case BlockType::FractionLayout:
       return FractionLayout::RenderNode(node, root, ctx, p, font,

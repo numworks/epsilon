@@ -73,7 +73,7 @@ void Tree::logName(std::ostream& stream) const {
 }
 
 void Tree::logAttributes(std::ostream& stream) const {
-  if (block()->isNAry()) {
+  if (type().isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
       for (int i = 0; i < Polynomial::NumberOfTerms(this); i++) {
@@ -98,13 +98,13 @@ void Tree::logAttributes(std::ostream& stream) const {
     buffer[size] = 0;
     stream << " type=\"" << buffer << "\"";
   }
-  if (block()->isNumber()) {
+  if (type().isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;
   }
-  if (block()->isUserNamed() || type() == BlockType::CodePointLayout) {
+  if (type().isUserNamed() || type() == BlockType::CodePointLayout) {
     char buffer[64];
-    (block()->isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
+    (type().isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
         this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
     return;

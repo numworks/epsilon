@@ -12,7 +12,7 @@ namespace PoincareJ {
 class Expression final : public Reference {
  public:
   Expression(const Tree* tree) : Reference(tree) {
-    assert(tree->block()->isExpression());
+    assert(tree->type().isExpression());
   }
   using Reference::Reference;
   // TODO : Delete this method and adapt tests ?

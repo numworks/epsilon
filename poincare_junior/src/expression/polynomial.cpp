@@ -202,7 +202,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     EditionReference polA, EditionReference polB) {
   if (polA->type() != BlockType::Polynomial &&
       polB->type() != BlockType::Polynomial) {
-    assert(polA->block()->isInteger() && polB->block()->isInteger());
+    assert(polA->type().isInteger() && polB->type().isInteger());
     std::pair<Tree*, Tree*> nodePair = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
     EditionReference quotient = EditionReference(nodePair.first);
@@ -296,9 +296,9 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 bool ContainsVariable(const Tree* tree) {
   int numberOfChildren = tree->numberOfChildren();
   if (numberOfChildren == 0) {
-    return tree->block()->isOfType(
-        {BlockType::UserFunction, BlockType::UserSequence,
-         BlockType::UserSymbol, BlockType::Constant});
+    return tree->type().isOfType({BlockType::UserFunction,
+                                   BlockType::UserSequence,
+                                   BlockType::UserSymbol, BlockType::Constant});
   }
   const Tree* child = tree->nextNode();
   for (int i = 0; i < numberOfChildren; i++) {
@@ -318,7 +318,7 @@ void AddVariable(Tree* set, const Tree* variable) {
 
 Tree* PolynomialParser::GetVariables(const Tree* expression) {
   Tree* variables = SharedEditionPool->push<BlockType::Set>(0);
-  if (expression->block()->isInteger()) {  // TODO: generic belongToField?
+  if (expression->type().isInteger()) {  // TODO: generic belongToField?
     return variables;
   }
   BlockType type = expression->type();
@@ -326,7 +326,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
   if (type == BlockType::Power) {
     const Tree* base = expression->nextNode();
     const Tree* exponent = base->nextTree();
-    assert(exponent->block()->isInteger());
+    assert(exponent->type().isInteger());
     assert(!Integer::IsUint8(exponent) || Integer::Uint8(exponent) > 1);
     AddVariable(variables, Integer::IsUint8(exponent) ? base : expression);
   } else if (type == BlockType::Addition || type == BlockType::Multiplication ||

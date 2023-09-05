@@ -174,9 +174,8 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
 }
 
 bool Rational::MakeIrreducible(Tree* i) {
-  if (!i->block()->isOfType({BlockType::RationalShort,
-                             BlockType::RationalNegBig,
-                             BlockType::RationalPosBig})) {
+  if (!i->type().isOfType({BlockType::RationalShort, BlockType::RationalNegBig,
+                            BlockType::RationalPosBig})) {
     return false;
   }
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));

@@ -1320,7 +1320,7 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // }
   assert(m_currentToken.length() == 1);
   const Tree *layout = m_currentToken.firstLayout();
-  assert(layout->block()->isLayout());
+  assert(layout->type().isLayout());
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */
   switch (layout->type()) {

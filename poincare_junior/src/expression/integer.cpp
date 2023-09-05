@@ -712,7 +712,7 @@ IntegerHandler Integer::Handler(const Tree *expression) {
 }
 
 bool Integer::IsUint8(const Tree *expression) {
-  return expression->block()->isInteger() &&
+  return expression->type().isInteger() &&
          Integer::Handler(expression).isUnsignedType<uint8_t>();
 }
 

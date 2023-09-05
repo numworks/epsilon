@@ -24,9 +24,9 @@ namespace PoincareJ {
 
 using namespace Placeholders;
 
-bool IsInteger(const Tree* u) { return u->block()->isInteger(); }
-bool IsNumber(const Tree* u) { return u->block()->isNumber(); }
-bool IsRational(const Tree* u) { return u->block()->isRational(); }
+bool IsInteger(const Tree* u) { return u->type().isInteger(); }
+bool IsNumber(const Tree* u) { return u->type().isNumber(); }
+bool IsRational(const Tree* u) { return u->type().isRational(); }
 bool IsConstant(const Tree* u) { return IsNumber(u); }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
@@ -292,7 +292,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // u^n
   EditionReference n = u->childAtIndex(1);
   // After systematic reduction, a power can only have integer index.
-  if (!n->block()->isInteger()) {
+  if (!n->type().isInteger()) {
     // TODO: Handle 0^x with x > 0 before to avoid ln(0)
     return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
                                                     KExp(KMult(KLn(KA), KB)));
@@ -730,7 +730,7 @@ bool Simplification::SimplifyComplex(Tree* tree) {
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->type() == BlockType::ComplexArgument);
   Tree* child = tree->childAtIndex(0);
-  if (child->block()->isNumber()) {
+  if (child->type().isNumber()) {
     Sign::Sign sign = Number::Sign(child);
     tree->cloneTreeOverTree(sign.isZero()               ? KUndef
                             : sign.isStrictlyPositive() ? 0_e
@@ -814,7 +814,7 @@ bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
 bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
                                               bool changed) {
   assert(!DeepSystematicReduce(ref));
-  return (ref->block()->isAlgebraic()
+  return (ref->type().isAlgebraic()
               ? AdvanceReduceOnAlgebraic(ref, root, changed)
               : AdvanceReduceOnTranscendental(ref, root, changed));
 }
@@ -900,7 +900,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
-      ref->block()->isNumber()) {
+      ref->type().isNumber()) {
     return Approximation::ApproximateAndReplaceEveryScalar(ref);
   }
 
@@ -911,7 +911,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->block()->isOfType(
+  if (ref->type().isOfType(
           {BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->childAtIndex(0);
@@ -1002,7 +1002,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
       /* AdvanceReduce further the expression only if it is algebraic.
        * Transcendental tree can expand but stay transcendental:
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      bool reducedAlgebraic = ref->block()->isAlgebraic() &&
+      bool reducedAlgebraic = ref->type().isAlgebraic() &&
                               AdvanceReduceOnAlgebraic(ref, root, true);
       // If algebraic got advanced reduced, metric must have been improved.
       assert(!reducedAlgebraic || metric.hasImproved());
@@ -1409,11 +1409,11 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   if (tree->type() == BlockType::PowerMatrix) {
     Tree* index = child->nextTree();
-    if (!index->block()->isInteger() && index->type() != BlockType::Float) {
+    if (!index->type().isInteger() && index->type() != BlockType::Float) {
       return false;
     }
-    int p = index->block()->isInteger() ? Integer::Handler(index).to<float>()
-                                        : Float::To(index);
+    int p = index->type().isInteger() ? Integer::Handler(index).to<float>()
+                                       : Float::To(index);
     tree->moveTreeOverTree(Matrix::Power(child, p));
     return true;
   }

@@ -268,7 +268,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
 }
 
 EditionReference Expression::EditionPoolExpressionToLayout(Tree *expression) {
-  assert(expression->block()->isExpression());
+  assert(expression->type().isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
    * layoutParent's root. */

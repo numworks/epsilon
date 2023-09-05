@@ -17,7 +17,7 @@ using namespace Placeholders;
  * TODO: Maybe use dimension analysis ? Handle other obvious types ?
  */
 bool Complex::IsReal(const Tree* tree) {
-  if (tree->block()->isOfType({
+  if (tree->type().isOfType({
           BlockType::Addition, BlockType::Multiplication,
           BlockType::Exponential, BlockType::Power,
           // TODO: Handle Ln so that reduced abs(z) is always real.
@@ -39,13 +39,13 @@ bool Complex::IsReal(const Tree* tree) {
     }
     if (tree->type() == BlockType::Power) {
       const Tree* index = tree->childAtIndex(1);
-      assert(index->block()->isNumber());
+      assert(index->type().isNumber());
       return Number::Sign(index).isStrictlyPositive();
     }
     return true;
   }
-  return tree->block()->isNumber() ||
-         tree->block()->isOfType({
+  return tree->type().isNumber() ||
+         tree->type().isOfType({
              BlockType::ImaginaryPart, BlockType::RealPart,
              // BlockType::Abs,
              // BlockType::ComplexArgument, BlockType::Dim,

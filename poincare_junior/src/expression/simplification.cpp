@@ -1314,20 +1314,6 @@ bool Simplification::ExpandMult(Tree* ref) {
                             childIndex);
 }
 
-bool Simplification::ContractArg(Tree* ref) {
-  // A? + arg(B) + arg(C) + D? = A + arg(BC) + D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KAdd(KTA, KArg(KB), KArg(KC), KTD),
-      KAdd(KTA, KArg(KMult(KB, KC)), KTD));
-}
-
-bool Simplification::ExpandArg(Tree* tree) {
-  // arg(A*B*...) = arg(A) + arg(B) + ...
-  return DistributeOverNAry(tree, BlockType::ComplexArgument,
-                            BlockType::Multiplication, BlockType::Addition,
-                            SimplifyComplexArgument);
-}
-
 bool Simplification::ExpandPowerComplex(Tree* ref) {
   // (A + B*i)^2 = (A^2 -2*B^2 + 2*A*B*i)
   return PatternMatching::MatchReplaceAndSimplify(

@@ -17,8 +17,7 @@ class TextArea : public TextInput {
   constexpr static int k_indentationSpaces = std::size(k_indentation) - 1;
   constexpr static char k_newLine[] = "\n";
 
-  TextArea(Responder* parentResponder, View* contentView,
-           KDFont::Size font = KDFont::Size::Large);
+  TextArea(Responder* parentResponder, View* contentView);
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;

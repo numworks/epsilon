@@ -16,7 +16,7 @@ class PythonTextArea : public Escher::TextArea {
   };
   PythonTextArea(Escher::Responder* parentResponder, App* pythonDelegate,
                  KDFont::Size font)
-      : Escher::TextArea(parentResponder, &m_contentView, font),
+      : Escher::TextArea(parentResponder, &m_contentView),
         m_contentView(pythonDelegate, font),
         m_autocompletionResultIndex(0),
         m_wasAutocompleting(false) {}

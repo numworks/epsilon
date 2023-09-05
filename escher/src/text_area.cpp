@@ -15,8 +15,7 @@
 namespace Escher {
 /* TextArea */
 
-TextArea::TextArea(Responder *parentResponder, View *contentView,
-                   KDFont::Size font)
+TextArea::TextArea(Responder *parentResponder, View *contentView)
     : TextInput(parentResponder, contentView) {}
 
 static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,

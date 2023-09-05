@@ -31,6 +31,13 @@ HighlightCell *InputGoodnessController::reusableCell(int index, int type) {
   }
 }
 
+KDCoordinate InputGoodnessController::nonMemoizedRowHeight(int row) {
+  if (row == k_indexOfDegreeOfFreedom) {
+    return m_degreeOfFreedomCell.minimalSizeForOptimalDisplay().height();
+  }
+  return InputCategoricalController::nonMemoizedRowHeight(row);
+}
+
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
   if (index == k_indexOfDegreeOfFreedom) {
     return static_cast<GoodnessTest *>(m_statistic)->indexOfDegreeOfFreedom();

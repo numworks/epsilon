@@ -30,6 +30,9 @@ class ResultController : public Escher::ListWithTopAndBottomController {
     assert(type == 0 && i == 0);
     return &m_cell;
   }
+  KDCoordinate nonMemoizedRowHeight(int row) override {
+    return m_cell.minimalSizeForOptimalDisplay().height();
+  }
 
  private:
   constexpr static int k_titleBufferSize =

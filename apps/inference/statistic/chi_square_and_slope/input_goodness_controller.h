@@ -25,6 +25,7 @@ class InputGoodnessController : public InputCategoricalController {
 
   // ListViewDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
  private:
   constexpr static int k_indexOfDegreeOfFreedom = 1;

@@ -95,6 +95,8 @@ class InputCategoricalController : public CategoricalController,
   Escher::HighlightCell* reusableCell(int index, int type) override;
 
  protected:
+  KDCoordinate nonMemoizedRowHeight(int row) override;
+
   InputCategoricalTableCell* categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }

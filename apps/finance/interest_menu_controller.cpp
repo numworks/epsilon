@@ -44,6 +44,10 @@ int InterestMenuController::numberOfRows() const {
   return App::GetInterestData()->numberOfUnknowns();
 }
 
+KDCoordinate InterestMenuController::nonMemoizedRowHeight(int row) {
+  return protectedNonMemoizedRowHeight(&m_cells[row], row);
+}
+
 uint8_t InterestMenuController::paramaterAtIndex(int index) const {
   // Parameters are displayed in the same order as the enum order.
   assert(index >= 0 && index < App::GetInterestData()->numberOfUnknowns());

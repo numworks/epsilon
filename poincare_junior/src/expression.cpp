@@ -59,6 +59,9 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
   }
   handler.setSign(NonStrictSign::Positive);
   int firstInsertedIndex = layoutParent->numberOfChildren();
+  /* We can't manipulate an IntegerHandler in a workingBuffer since we're
+   * pushing layouts on the EditionPool at each steps. Value is therefore
+   * temporarily stored and updated on the EditionPool. */
   EditionReference value = handler.pushOnEditionPool();
   do {
     std::pair<PoincareJ::Tree *, PoincareJ::Tree *> result =

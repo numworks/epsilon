@@ -76,8 +76,7 @@ using StandardMemoizedListViewDataSource = MemoizedListViewDataSource<7>;
 class RegularListViewDataSource : public ListViewDataSource {
  private:
   KDCoordinate defaultRowHeight() override {
-    // See ListViewDataSource::nonMemoizedRowHeight comment
-    return ListViewDataSource::nonMemoizedRowHeight(0);
+    return protectedNonMemoizedRowHeight(reusableCell(0, typeAtRow(0)), 0);
   }
   KDCoordinate nonMemoizedRowHeight(int row) override final {
     return defaultRowHeight();

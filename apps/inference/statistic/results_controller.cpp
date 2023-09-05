@@ -96,6 +96,7 @@ HighlightCell *ResultsController::reusableCell(int index, int type) {
   if (type == k_resultCellType) {
     return cell(index);
   }
+  assert(type == k_buttonCellType);
   return &m_next;
 }
 
@@ -111,6 +112,14 @@ int ResultsController::typeAtRow(int row) const {
     return k_buttonCellType;
   }
   return k_resultCellType;
+}
+
+KDCoordinate ResultsController::nonMemoizedRowHeight(int row) {
+  if (typeAtRow(row) == k_resultCellType) {
+    return cell(row)->minimalSizeForOptimalDisplay().height();
+  }
+  assert(typeAtRow(row) == k_buttonCellType);
+  return m_next.minimalSizeForOptimalDisplay().height();
 }
 
 }  // namespace Inference

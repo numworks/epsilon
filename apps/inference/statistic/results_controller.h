@@ -42,6 +42,7 @@ class ResultsController
   KDCoordinate separatorBeforeRow(int row) override {
     return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
   // DynamicCellsDataSourceDelegate
   Escher::SelectableListView* tableView() override {

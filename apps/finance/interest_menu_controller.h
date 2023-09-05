@@ -34,6 +34,7 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
     assert(i >= 0 && i < InterestData::k_maxNumberOfUnknowns);
     return &m_cells[i];
   }
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
  private:
   uint8_t paramaterAtIndex(int index) const;

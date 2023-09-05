@@ -131,7 +131,8 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
             categoricalTableCell()->selectableTableView()->contentOffset().y(),
         static_cast<int>(m_selectableListView.bounds().height()));
   }
-  return ListViewDataSource::nonMemoizedRowHeight(row);
+  assert(row == indexOfNextCell());
+  return m_next.minimalSizeForOptimalDisplay().height();
 }
 
 InputCategoricalController::InputCategoricalController(
@@ -200,6 +201,13 @@ HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
     return &m_significanceCell;
   }
   return CategoricalController::reusableCell(index, type);
+}
+
+KDCoordinate InputCategoricalController::nonMemoizedRowHeight(int row) {
+  if (row == indexOfSignificanceCell()) {
+    return m_significanceCell.minimalSizeForOptimalDisplay().height();
+  }
+  return CategoricalController::nonMemoizedRowHeight(row);
 }
 
 }  // namespace Inference

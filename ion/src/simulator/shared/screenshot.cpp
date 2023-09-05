@@ -19,7 +19,7 @@ namespace Simulator {
 constexpr static KDFont::Size k_fontSize = KDFont::Size::Large;
 constexpr static int k_glyphHeight = KDFont::GlyphHeight(k_fontSize);
 constexpr static int k_margin = 6;
-#if DEBUG
+#if DEBUG && ESCHER_LOG_EVENTS_NAME
 constexpr static int k_glyphWidth = KDFont::GlyphWidth(k_fontSize);
 constexpr static KDColor k_backgroundColor = KDColorBlack;
 constexpr static KDColor k_glyphColor = KDColorWhite;
@@ -41,7 +41,7 @@ void Screenshot::init(const char* path, bool eachStep, bool computeCRC32) {
   m_computeCRC32 = computeCRC32;
 }
 
-#if DEBUG
+#if DEBUG && ESCHER_LOG_EVENTS_NAME
 static void drawEventNameInBuffer(Events::Event e, KDColor* pixelsBuffer,
                                   int width, int height, int abscissaOfDraw,
                                   int ordinateOfDraw) {
@@ -112,7 +112,7 @@ void Screenshot::capture(Events::Event nextEvent) {
     return;
   }
 
-#if DEBUG
+#if DEBUG && ESCHER_LOG_EVENTS_NAME
   if (m_eachStep) {
     height = k_maxHeight;
     for (int i = Display::Height * k_width; i < height * k_width; i++) {

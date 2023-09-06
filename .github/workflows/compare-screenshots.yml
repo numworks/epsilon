@@ -22,7 +22,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - run: build/setup.sh --only-simulator
       - name: Build PR head
-        run: make -j32 PLATFORM=simulator ASSERTIONS=1
+        run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
         run: python3 build/screenshots/compare.py output/release/simulator/linux/epsilon.bin
       - name: Gather screenshots
@@ -43,7 +43,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - run: build/setup.sh --only-simulator
       - name: Build PR head
-        run: make -j32 PLATFORM=simulator ASSERTIONS=1
+        run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
         run: python3 build/screenshots/compare_crc.py output/release/simulator/linux/epsilon.bin
       - name: Cleanup

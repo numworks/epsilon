@@ -11,6 +11,7 @@
 #include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/trigonometry.h>
+#include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/expression/vector.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
@@ -775,6 +776,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
     ref->cloneTreeOverTree(KUndef);
     return true;
   }
+  projectionContext.m_dimension = Dimension::GetDimension(ref);
   bool changed = false;
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
@@ -788,7 +790,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
   assert(!DeepApplyMatrixOperators(ref));
-  changed = DeepBeautify(ref) || changed;
+  changed = DeepBeautify(ref, projectionContext) || changed;
   Variables::BeautifyToName(ref, variables);
   variables->removeTree();
   return changed;
@@ -816,6 +818,22 @@ bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
   return (ref->type().isAlgebraic()
               ? AdvanceReduceOnAlgebraic(ref, root, changed)
               : AdvanceReduceOnTranscendental(ref, root, changed));
+}
+
+bool Simplification::DeepBeautify(Tree* node,
+                                  ProjectionContext projectionContext) {
+  bool appendUnits = (projectionContext.m_dimension.isUnit());
+  if (appendUnits) {
+    assert(!projectionContext.m_dimension.unit.isEmpty());
+    EditionReference baseUnits =
+        projectionContext.m_dimension.unit.toBaseUnits();
+    node->moveTreeOverTree(
+        PatternMatching::Create(KMult(KA, KB), {.KA = node, .KB = baseUnits}));
+    baseUnits->removeTree();
+    // TODO: ShallowSimplify node
+  }
+  return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext) ||
+         appendUnits;
 }
 
 // Reverse most system projections to display better expressions
@@ -886,7 +904,7 @@ bool Simplification::DeepSystemProjection(Tree* ref,
       (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
       Approximation::ApproximateAndReplaceEveryScalar(ref);
   return ApplyShallowInDepth(ref, ShallowSystemProjection,
-                             static_cast<void*>(&projectionContext)) ||
+                             &projectionContext) ||
          changed;
 }
 
@@ -898,9 +916,16 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
    * comment in matchAndReplace. */
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
+
+  bool changed = false;
+  if (ref->type() == BlockType::Unit) {
+    Unit::RemoveUnit(ref);
+    changed = true;
+  }
+
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
       ref->type().isNumber()) {
-    return Approximation::ApproximateAndReplaceEveryScalar(ref);
+    return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
   }
 
   if (ref->type() == BlockType::Decimal) {
@@ -921,8 +946,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   }
 
   // Sqrt(A) -> A^0.5
-  bool changed =
-      PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
+  changed = PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
   if (ref->type() == BlockType::Power) {
     if (PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
     } else if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {

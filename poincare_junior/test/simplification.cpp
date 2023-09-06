@@ -361,3 +361,22 @@ QUIZ_CASE(pcj_variables) {
   QUIZ_ASSERT(
       Variables::GetVariables(e)->treeIsIdenticalTo(KSet("m"_e, "x"_e, "y"_e)));
 }
+
+QUIZ_CASE(pcj_unit_simplification) {
+  simplifies_to("12_m", "12*_m");
+  simplifies_to("1_s", "1*_s");
+  simplifies_to("1_m+1_s", "undef");
+  simplifies_to("1_m+x", "undef");
+  simplifies_to("1_m+1_km", "1001*_m");
+  simplifies_to("1_mm+1_km", "1000001/1000*_m");
+  // TODO: Handle ratios
+  //   simplifies_to("2_month*7_dm", "3681720*_m*_s");
+
+  // TODO: Handle BestRepresentative
+  //   simplifies_to("1_m+1_km", "1.001km");
+
+  // TODO: Decide on implicit '_' parsing
+  //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k*m" / "m+km" );
+  //   simplifies_to("1m+1s", "undef" / "m+s");
+  //   simplifies_to("1m+x", "m+x" / "undef");
+}

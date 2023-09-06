@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_SIMPLIFICATION_H
 
 #include <omgpj/enums.h>
+#include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
 #include "context.h"
@@ -12,6 +13,7 @@ struct ProjectionContext {
   ComplexFormat m_complexFormat = ComplexFormat::Real;
   AngleUnit m_angleUnit = AngleUnit::Radian;
   Strategy m_strategy = Strategy::Default;
+  Dimension m_dimension = Dimension();
 };
 
 class Simplification {
@@ -27,9 +29,7 @@ class Simplification {
   static bool ShallowBeautify(Tree *node, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
   static bool DeepBeautify(Tree *node,
-                           ProjectionContext projectionContext = {}) {
-    return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext);
-  }
+                           ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
@@ -116,6 +116,7 @@ class Simplification {
   static bool SimplifySortedMultiplication(Tree *multiplication);
   static void ConvertPowerRealToPower(Tree *u);
 
+  // Apply Shallow operation in a Top Down manner.
   typedef bool (*ShallowOperation)(Tree *node, void *context);
   static bool ApplyShallowInDepth(Tree *node, ShallowOperation shallowOperation,
                                   void *context = nullptr);

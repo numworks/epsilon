@@ -7,6 +7,7 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
@@ -850,14 +851,14 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
 void RackParser::parseUnit(EditionReference &leftHandSide,
                            Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  // const Unit::Representative *unitRepresentative = nullptr;
-  // const Unit::Prefix *unitPrefix = nullptr;
-  // if (!Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
-  // &unitRepresentative, &unitPrefix)) {
-  // m_status = Status::Error;  // Unit does not exist
-  // return;
-  // }
-  // leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
+  const UnitRepresentative *unitRepresentative = nullptr;
+  const UnitPrefix *unitPrefix = nullptr;
+  RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
+  if (!Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
+    m_status = Status::Error;  // Unit does not exist
+    return;
+  }
+  leftHandSide = Unit::Push(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
 }
 

@@ -5,6 +5,7 @@
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtin.h>
+#include <poincare_junior/src/expression/unit.h>
 
 namespace PoincareJ {
 
@@ -415,9 +416,9 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
   // &logicalOperatorType)) { return logicalOperatorType;
   // }
   if (m_decoder.codePointAt(string) == '_') {
-    // if (Unit::CanParse(string, *length, nullptr, nullptr)) {
-    // return Token::Type::Unit;
-    // }
+    if (Unit::CanParse(&subString, nullptr, nullptr)) {
+      return Token::Type::Unit;
+    }
     // Only constants and units can be prefixed with a '_'
     return Token::Type::Undefined;
   }

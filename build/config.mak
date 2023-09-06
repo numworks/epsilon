@@ -6,7 +6,7 @@ DEVELOPMENT ?= 0
 
 EPSILON_VERSION ?= 23.1.0
 EXTERNAL_APPS_API_LEVEL ?= 0
-EPSILON_APPS ?= calculation_junior calculation graph code statistics distributions inference solver sequence regression elements finance settings
+EPSILON_APPS ?= calculation graph code statistics distributions inference solver sequence regression elements finance settings
 EPSILON_GETOPT ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0
 ESCHER_LOG_EVENTS_NAME ?= $(DEBUG)

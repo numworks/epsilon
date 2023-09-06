@@ -29,17 +29,6 @@ def get_file_with_extension(folder, file_extension):
 def list_images_in_folder(folder):
    return [image.as_posix() for image in sorted(Path(folder).glob("*.png"))]
 
-def executable_built_path():
-   host = os.uname()[0]
-   if host == "Linux":
-      exe = "linux/epsilon.bin"
-   elif host == "Darwin":
-      exe = "macos/epsilon.app/Contents/MacOS/Epsilon"
-   else:
-      print("Error: couldn't find executable")
-      sys.exit(1)
-   return os.path.join("output/debug/simulator", exe)
-
 def generate_screenshot(state_file, executable, screenshot):
    print("Generating screenshot of", state_file)
    subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-screenshot " + screenshot, shell=True, stdout=subprocess.DEVNULL)

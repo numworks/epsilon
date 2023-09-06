@@ -3,8 +3,8 @@ import helper
 import args_types
 
 parser = argparse.ArgumentParser(description='This script updates the screenshot and the crc32 of a state file in the test screenshots dataset.')
+parser.add_argument('executable', metavar='EXE', type=args_types.existing_file, help='epsilon executable')
 parser.add_argument('name', metavar='NAME', help='name of scenario folder in the test screenshots dataset')
-parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
 
 def main():
    # Parse args

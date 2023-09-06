@@ -31,9 +31,6 @@ jobs:
         with:
           name: screenshots
           path: compare_output_*/
-      - name: Cleanup
-        if: always()
-        run: rm -rf output && rm -rf compare_output_*
   compare_crc:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
@@ -46,6 +43,3 @@ jobs:
         run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
         run: python3 build/screenshots/compare_crc.py output/release/simulator/linux/epsilon.bin
-      - name: Cleanup
-        if: always()
-        run: rm -rf output

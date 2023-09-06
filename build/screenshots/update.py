@@ -22,6 +22,8 @@ def main():
    state_file = helper.get_file_with_extension(scenario_folder, ".nws")
    reference_image =  helper.get_file_with_extension(scenario_folder, ".png")
    crc_file = helper.get_file_with_extension(scenario_folder, ".txt")
+   if state_file == '' or reference_image == '' or crc_file == '':
+      sys.exit(1)
 
    # Update screenshot
    print("Replacing", reference_image)

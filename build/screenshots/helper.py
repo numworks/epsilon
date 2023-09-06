@@ -18,12 +18,11 @@ def get_file_with_extension(folder, file_extension):
    for file in sorted(os.listdir(folder)):
       if os.path.splitext(file)[1] == file_extension:
          if found_file != '':
-            print("Error: too many", file_extension, "in", folder)
-            sys.exit(1)
+            print("\033[1m\033[31mError:\033[0m too many ", file_extension, "in", folder)
+            return ''
          found_file = os.path.join(folder, file)
    if found_file == '':
-      print("Error: no", file_extension, "in", folder)
-      sys.exit(1)
+      print("\033[1m\033[31mError:\033[0m no", file_extension, "in", folder)
    return found_file
 
 def list_images_in_folder(folder):

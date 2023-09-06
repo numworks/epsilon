@@ -26,13 +26,18 @@ def main():
       scenario_folder = helper.folder(scenario_name)
       if not os.path.isdir(scenario_folder):
          continue
-      count = count + 1
+
+      print("Getting data from", scenario_folder)
 
       # Get state file
       state_file = helper.get_file_with_extension(scenario_folder, '.nws')
+      if state_file == '':
+         continue
 
       # Get reference crc32
       reference_crc32_file = helper.get_file_with_extension(scenario_folder, '.txt')
+      if reference_crc32_file == '':
+         continue
       with open(reference_crc32_file) as f:
          lines = f.readlines()
       assert len(lines) == 1
@@ -45,6 +50,7 @@ def main():
       success = computed_crc32 == reference_crc32
 
       # Print report
+      count = count + 1
       if success:
          print('\033[1m' + scenario_folder + '\t \033[32mOK\033[0m')
       else:

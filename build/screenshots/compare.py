@@ -23,13 +23,18 @@ def main():
       scenario_folder = helper.folder(scenario_name)
       if not os.path.isdir(scenario_folder):
          continue
-      count = count + 1
+
+      print("Getting data from", scenario_folder)
 
       # Get state file
       state_file = helper.get_file_with_extension(scenario_folder, '.nws')
+      if state_file == '':
+         continue
 
       # Get reference screenshot
       reference_image = helper.get_file_with_extension(scenario_folder, '.png')
+      if reference_image == '':
+         continue
       screenshot_1 = os.path.join(output_folder, scenario_name + '-1.png')
       shutil.copy(reference_image, screenshot_1)
 
@@ -40,6 +45,9 @@ def main():
       # Compare screenshots
       screenshot_diff = os.path.join(output_folder, scenario_name + '-diff.png')
       same_image = helper.images_are_identical(screenshot_1, screenshot_2, screenshot_diff)
+
+      # Print report
+      count = count + 1
       if same_image:
          os.remove(screenshot_1)
          os.remove(screenshot_2)

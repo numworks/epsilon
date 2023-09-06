@@ -76,8 +76,12 @@ def generate_all_screenshots_and_create_gif(state_file, executable, folder):
 def find_crc32_in_log(log_file):
    with open(log_file) as f:
       lines = f.readlines()
-   assert len(lines) > 2
-   crc_line = lines[-2]
+   # Assertion mode: crc32 line is the only line
+   crc_line = lines[0]
+   if len(lines) > 1:
+      # Debug mode: crc32 line is the before to last line
+      assert len(lines) > 3
+      crc_line = lines[-2]
    assert "CRC32 of all screenshots: " in crc_line
    return crc_line.split()[-1]
    return

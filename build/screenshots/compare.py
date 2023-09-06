@@ -4,7 +4,7 @@ import helper
 import args_types
 
 parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
-parser.add_argument('-e', '--executable', default=helper.executable_built_path(), type=args_types.existing_file, help='epsilon executable')
+parser.add_argument('executable', metavar='EXE', type=args_types.existing_file, help='epsilon executable to test')
 
 def main():
    # Parse args

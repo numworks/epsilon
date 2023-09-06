@@ -1,12 +1,6 @@
 name: Screenshots
 on:
   pull_request:
-  workflow_dispatch:
-    inputs:
-      downloadArtifacts:
-        description: 'Download screenshots'
-        required: true
-        default: 'yes'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,12 +19,13 @@ jobs:
         run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
         run: python3 build/screenshots/compare.py output/release/simulator/linux/epsilon.bin
-      - name: Gather screenshots
-        if: ${{ github.event.inputs.downloadArtifacts == 'yes' }}
-        uses: actions/upload-artifact@v2
+      - name: Download output
+        if: failure()
+        uses: actions/upload-artifact@v3
         with:
-          name: screenshots
+          name: failed_screenshots
           path: compare_output_*/
+          retention-days: 7
   compare_crc:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
@@ -43,3 +38,10 @@ jobs:
         run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
         run: python3 build/screenshots/compare_crc.py output/release/simulator/linux/epsilon.bin
+      - name: Download output
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: failed_crc
+          path: compare_crc_output_*/
+          retention-days: 7

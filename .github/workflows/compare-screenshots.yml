@@ -9,6 +9,9 @@ concurrency:
 jobs:
   compare:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        script-name: [compare, compare_crc]
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v3
@@ -18,30 +21,11 @@ jobs:
       - name: Build PR head
         run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
-        run: python3 build/screenshots/compare.py output/release/simulator/linux/epsilon.bin
+        run: python3 build/screenshots/${{ matrix.script-name }}.py output/release/simulator/linux/epsilon.bin
       - name: Download output
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: failed_screenshots
-          path: compare_output_*/
-          retention-days: 7
-  compare_crc:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
-    steps:
-      - name: Checkout PR head
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - run: build/setup.sh --only-simulator
-      - name: Build PR head
-        run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
-      - name: Compare screenshot images
-        run: python3 build/screenshots/compare_crc.py output/release/simulator/linux/epsilon.bin
-      - name: Download output
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: failed_crc
-          path: compare_crc_output_*/
+          name: output_${{ matrix.script-name }}
+          path: ${{ matrix.script-name }}_output_*/
           retention-days: 7

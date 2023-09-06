@@ -4,11 +4,9 @@
 #include <omgpj/enums.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
-namespace PoincareJ {
+#include "context.h"
 
-enum class ComplexFormat { Real, Cartesian, Polar };
-enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
-enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
+namespace PoincareJ {
 
 struct ProjectionContext {
   ComplexFormat m_complexFormat = ComplexFormat::Real;

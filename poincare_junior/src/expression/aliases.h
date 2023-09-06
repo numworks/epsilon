@@ -35,7 +35,7 @@ class Aliases {
  public:
   constexpr Aliases(const char* formattedAliases)
       : m_formattedAliases(formattedAliases) {}
-
+  constexpr operator const char*() const { return m_formattedAliases; }
   constexpr const char* mainAlias() const {
     return m_formattedAliases + hasMultipleAliases();
   }

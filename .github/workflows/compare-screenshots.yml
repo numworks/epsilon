@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       downloadArtifacts:
-        description: 'Download screenshots and executables'
+        description: 'Download screenshots'
         required: true
         default: 'yes'
 

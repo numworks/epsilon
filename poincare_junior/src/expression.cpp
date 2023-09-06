@@ -139,6 +139,16 @@ void Expression::ConvertMatrixToLayout(EditionReference layoutParent,
       SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(']'));
 }
 
+void Expression::ConvertUnitToLayout(EditionReference layoutParent,
+                                     Tree *expression) {
+  NAry::AddChild(
+      layoutParent,
+      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('_'));
+  ConvertTextToLayout(layoutParent, Unit::GetPrefix(expression)->symbol());
+  ConvertTextToLayout(layoutParent,
+                      Unit::GetRepresentative(expression)->rootSymbols());
+}
+
 void Expression::ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
                                                 Tree *expression) {
   BlockType type = expression->type();
@@ -244,6 +254,9 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       break;
     case BlockType::Matrix:
       ConvertMatrixToLayout(layoutParent, expression);
+      break;
+    case BlockType::Unit:
+      ConvertUnitToLayout(layoutParent, expression);
       break;
     case BlockType::UserFunction:
     case BlockType::UserSequence:

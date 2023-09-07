@@ -41,8 +41,8 @@ class Number {
                                BlockType::RationalPosBig});
   }
 
-  static EditionReference Addition(const Tree* i, const Tree* j);
-  static EditionReference Multiplication(const Tree* i, const Tree* j);
+  static Tree* Addition(const Tree* i, const Tree* j);
+  static Tree* Multiplication(const Tree* i, const Tree* j);
   static Sign::Sign Sign(const Tree* node);
   // Return false if tree is a number and isn't the unique best representation.
   static bool IsSanitized(const Tree* n);

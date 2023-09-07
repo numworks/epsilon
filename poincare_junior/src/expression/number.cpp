@@ -5,12 +5,12 @@
 
 namespace PoincareJ {
 
-EditionReference Number::Addition(const Tree* i, const Tree* j) {
+Tree* Number::Addition(const Tree* i, const Tree* j) {
   // TODO: handle Float
   assert(i->type() != BlockType::Float && j->type() != BlockType::Float);
   return Rational::Addition(i, j);
 }
-EditionReference Number::Multiplication(const Tree* i, const Tree* j) {
+Tree* Number::Multiplication(const Tree* i, const Tree* j) {
   // TODO: handle Float
   assert(i->type() != BlockType::Float && j->type() != BlockType::Float);
   return Rational::Multiplication(i, j);

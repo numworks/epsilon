@@ -80,22 +80,7 @@ def main():
 
             # Generate diff gif
             print("\033[4mDiff\033[0m:")
-            diff_folder = os.path.join(output_scenario_folder, "diff")
-            os.mkdir(diff_folder)
-            n = len(list_computed_images)
-            assert len(list_reference_images) == n
-            print("Generating all diff images")
-            temp = os.path.join(diff_folder, "diff.png")
-            for i in range(n):
-               helper.images_are_identical(list_reference_images[i], list_computed_images[i], temp)
-               diff_image = os.path.join(diff_folder, "img-{:04d}.png".format(i))
-               helper.concatenate_images([list_reference_images[i], list_computed_images[i], temp], diff_image)
-            os.remove(temp)
-            print("All done")
-            list_diff_images = helper.list_images_in_folder(diff_folder)
-            assert len(list_diff_images) == n
-            helper.create_gif(list_diff_images, output_scenario_folder, "diff")
-            shutil.rmtree(diff_folder)
+            helper.create_diff_gif(list_reference_images, list_computed_images, output_scenario_folder)
 
          print("--------")
 

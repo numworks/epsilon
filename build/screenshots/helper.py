@@ -111,3 +111,23 @@ def concatenate_images(list_images, output):
    # Concatenate same size images
    concatenated = Image.fromarray(np.concatenate([np.array(Image.open(im).convert("RGBA")) for im in list_images], axis=1))
    concatenated.save(output)
+
+def create_diff_gif(list_images_1, list_images_2, gif_destination_folder):
+   diff_folder = os.path.join(gif_destination_folder, "diff")
+   os.mkdir(diff_folder)
+   n = len(list_images_2)
+   if len(list_images_1) != n:
+      print("Error: lists of images are not the same size. Cannot compare.")
+      sys.exit(1)
+   print("Generating all diff images")
+   diff_image = os.path.join(diff_folder, "diff.png")
+   for i in range(n):
+      images_are_identical(list_images_1[i], list_images_2[i], diff_image)
+      concatenated_image = os.path.join(diff_folder, "img-{:04d}.png".format(i))
+      concatenate_images([list_images_1[i], list_images_2[i], diff_image], concatenated_image)
+   os.remove(diff_image)
+   print("All done")
+   list_diff_images = list_images_in_folder(diff_folder)
+   assert len(list_diff_images) == n
+   create_gif(list_diff_images, gif_destination_folder, "diff")
+   shutil.rmtree(diff_folder)

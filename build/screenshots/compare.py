@@ -1,4 +1,4 @@
-import sys, getopt, os, time, shutil, subprocess
+import sys, getopt, os, shutil, subprocess
 from datetime import datetime
 import helper
 

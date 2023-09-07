@@ -362,6 +362,18 @@ QUIZ_CASE(pcj_variables) {
       Variables::GetVariables(e)->treeIsIdenticalTo(KSet("m"_e, "x"_e, "y"_e)));
 }
 
+QUIZ_CASE(pcj_float_simplification) {
+  simplifies_to("2", "2.000000", {.m_strategy = Strategy::ApproximateToFloat});
+  // simplifies_to("2.3", "2.300000",
+  //               {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("1+π", "4.141593",
+                {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("1+π+x", "4.141593+x",
+                {.m_strategy = Strategy::ApproximateToFloat});
+  // simplifies_to("cos(x-x)", "1.000000",
+  //               {.m_strategy = Strategy::ApproximateToFloat});
+}
+
 QUIZ_CASE(pcj_unit_simplification) {
   // TODO: This is broken due to Float simplification and display
 #if 0

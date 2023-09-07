@@ -39,15 +39,16 @@ def main():
       if reference_crc32_file == '':
          continue
       with open(reference_crc32_file) as f:
-         lines = f.readlines()
-      assert len(lines) == 1
-      reference_crc32 = lines[0]
+         reference_crc32 = f.read().splitlines()
+      # There can be several lines if crc32 differs between computer architectures
+      # TODO: fix inconsistent approximation accross platforms to only have one crc32
+      assert len(reference_crc32) == 1 or len(reference_crc32) == 2
 
       # Compute new crc32
       computed_crc32 = helper.compute_crc32(state_file, args.executable, log_file)
 
       # Compare crc32
-      success = computed_crc32 == reference_crc32
+      success = computed_crc32 in reference_crc32
 
       # Print report
       count = count + 1
@@ -75,7 +76,7 @@ def main():
             print("\033[4mReference executable\033[0m:")
             reference_folder = os.path.join(output_scenario_folder, "reference")
             list_reference_images = helper.generate_all_screenshots_and_create_gif(state_file, args.ref, reference_folder)
-            helper.store_crc32(reference_crc32, os.path.join(reference_folder, "crc32.txt"))
+            shutil.copy(reference_crc32_file, os.path.join(reference_folder, "crc32.txt"))
 
             # Generate diff gif
             print("\033[4mDiff\033[0m:")

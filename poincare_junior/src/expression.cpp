@@ -3,6 +3,7 @@
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
+#include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/number.h>
@@ -258,9 +259,13 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::Unit:
       ConvertUnitToLayout(layoutParent, expression);
       break;
+    case BlockType::Float:
+      // TODO: Implement this for device as well.
+      ConvertTextToLayout(layoutParent,
+                          std::to_string(Float::To(expression)).c_str());
+      break;
     case BlockType::UserFunction:
     case BlockType::UserSequence:
-    case BlockType::Float:
     case BlockType::Set:
     case BlockType::List:
     case BlockType::Polynomial:

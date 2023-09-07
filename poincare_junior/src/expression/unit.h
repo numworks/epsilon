@@ -5,6 +5,7 @@
 
 #include <array>
 
+#include "approximation.h"
 #include "builtin.h"
 #include "context.h"
 #include "k_tree.h"
@@ -132,14 +133,13 @@ class UnitRepresentative {
   static const UnitRepresentative* const* DefaultRepresentatives();
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
-  constexpr UnitRepresentative(Aliases rootSymbol, const char* ratioExpression,
-                               double ratio, Prefixable inputPrefixable,
+  constexpr UnitRepresentative(Aliases rootSymbol, const Block* ratioExpression,
+                               Prefixable inputPrefixable,
                                Prefixable outputPrefixable)
       : m_rootSymbols(rootSymbol),
         m_ratioExpression(ratioExpression),
         m_inputPrefixable(inputPrefixable),
-        m_outputPrefixable(outputPrefixable),
-        m_ratio(ratio) {}
+        m_outputPrefixable(outputPrefixable) {}
 
   virtual const DimensionVector dimensionVector() const {
     return DimensionVector::Empty();
@@ -177,7 +177,9 @@ class UnitRepresentative {
 #endif
 
   Aliases rootSymbols() const { return m_rootSymbols; }
-  double ratio() const { return m_ratio; }
+  double ratio() const {
+    return Approximation::To<double>(ratioExpressionReduced());
+  }
   bool isInputPrefixable() const {
     return m_inputPrefixable != Prefixable::None;
   }
@@ -198,10 +200,7 @@ class UnitRepresentative {
   const UnitPrefix* findBestPrefix(double value, double exponent) const;
 #endif
   const Tree* ratioExpressionReduced() const {
-    // TODO PCJ: implement using const Tree * in m_ratioExpression
-    return 1_e;
-    // return Expression::Parse(m_ratioExpression, nullptr)
-    //     .deepReduce(reductionContext);
+    return Tree::FromBlocks(m_ratioExpression);
   }
 
  protected:
@@ -212,16 +211,18 @@ class UnitRepresentative {
 #endif
 
   Aliases m_rootSymbols;
-  /* m_ratio is the factor used to convert a unit made of the representative
-   * and its base prefix into base SI units.
-   * ex : m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m).
-   *      m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
-   * m_ratioExpression is the expression expressed as a formula, to be used
-   * as an expression in reductions. */
-  const char* m_ratioExpression;
+  /* m_ratioExpression is the expression of the factor used to convert a unit
+   * made of the representative and its base prefix into base SI units. ex :
+   * m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m).
+   * m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
+   *
+   * TODO: We have to use Block * instead of Tree * so that representatives
+   * lists can be constexpr because, casting Block* into Tree* requires a
+   * reinterpret cast. */
+
+  const Block* m_ratioExpression;
   const Prefixable m_inputPrefixable;
   const Prefixable m_outputPrefixable;
-  double m_ratio;
 };
 
 class TimeRepresentative : public UnitRepresentative {
@@ -229,7 +230,7 @@ class TimeRepresentative : public UnitRepresentative {
 
  public:
   constexpr static TimeRepresentative Default() {
-    return TimeRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return TimeRepresentative(nullptr, nullptr, Prefixable::None,
                               Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -266,7 +267,7 @@ class DistanceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static DistanceRepresentative Default() {
-    return DistanceRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return DistanceRepresentative(nullptr, nullptr, Prefixable::None,
                                   Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -306,7 +307,7 @@ class AngleRepresentative : public UnitRepresentative {
 
  public:
   constexpr static AngleRepresentative Default() {
-    return AngleRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return AngleRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
   }
   static const UnitRepresentative* DefaultRepresentativeForAngleUnit(
@@ -354,7 +355,7 @@ class MassRepresentative : public UnitRepresentative {
 
  public:
   constexpr static MassRepresentative Default() {
-    return MassRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return MassRepresentative(nullptr, nullptr, Prefixable::None,
                               Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -395,7 +396,7 @@ class CurrentRepresentative : public UnitRepresentative {
 
  public:
   constexpr static CurrentRepresentative Default() {
-    return CurrentRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return CurrentRepresentative(nullptr, nullptr, Prefixable::None,
                                  Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -428,7 +429,7 @@ class TemperatureRepresentative : public UnitRepresentative {
                                     const UnitRepresentative* target);
 #endif
   constexpr static TemperatureRepresentative Default() {
-    return TemperatureRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return TemperatureRepresentative(nullptr, nullptr, Prefixable::None,
                                      Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -472,8 +473,8 @@ class AmountOfSubstanceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static AmountOfSubstanceRepresentative Default() {
-    return AmountOfSubstanceRepresentative(nullptr, nullptr, NAN,
-                                           Prefixable::None, Prefixable::None);
+    return AmountOfSubstanceRepresentative(nullptr, nullptr, Prefixable::None,
+                                           Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 0,
@@ -500,8 +501,8 @@ class LuminousIntensityRepresentative : public UnitRepresentative {
 
  public:
   constexpr static LuminousIntensityRepresentative Default() {
-    return LuminousIntensityRepresentative(nullptr, nullptr, NAN,
-                                           Prefixable::None, Prefixable::None);
+    return LuminousIntensityRepresentative(nullptr, nullptr, Prefixable::None,
+                                           Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 0,
@@ -528,7 +529,7 @@ class FrequencyRepresentative : public UnitRepresentative {
 
  public:
   constexpr static FrequencyRepresentative Default() {
-    return FrequencyRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return FrequencyRepresentative(nullptr, nullptr, Prefixable::None,
                                    Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -553,7 +554,7 @@ class ForceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static ForceRepresentative Default() {
-    return ForceRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return ForceRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -578,7 +579,7 @@ class PressureRepresentative : public UnitRepresentative {
 
  public:
   constexpr static PressureRepresentative Default() {
-    return PressureRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return PressureRepresentative(nullptr, nullptr, Prefixable::None,
                                   Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -603,7 +604,7 @@ class EnergyRepresentative : public UnitRepresentative {
 
  public:
   constexpr static EnergyRepresentative Default() {
-    return EnergyRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return EnergyRepresentative(nullptr, nullptr, Prefixable::None,
                                 Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -638,7 +639,7 @@ class PowerRepresentative : public UnitRepresentative {
 
  public:
   constexpr static PowerRepresentative Default() {
-    return PowerRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return PowerRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -664,7 +665,7 @@ class ElectricChargeRepresentative : public UnitRepresentative {
  public:
   using UnitRepresentative::UnitRepresentative;
   constexpr static ElectricChargeRepresentative Default() {
-    return ElectricChargeRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return ElectricChargeRepresentative(nullptr, nullptr, Prefixable::None,
                                         Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -686,8 +687,8 @@ class ElectricPotentialRepresentative : public UnitRepresentative {
 
  public:
   constexpr static ElectricPotentialRepresentative Default() {
-    return ElectricPotentialRepresentative(nullptr, nullptr, NAN,
-                                           Prefixable::None, Prefixable::None);
+    return ElectricPotentialRepresentative(nullptr, nullptr, Prefixable::None,
+                                           Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -3,
@@ -711,8 +712,8 @@ class ElectricCapacitanceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static ElectricCapacitanceRepresentative Default() {
-    return ElectricCapacitanceRepresentative(
-        nullptr, nullptr, NAN, Prefixable::None, Prefixable::None);
+    return ElectricCapacitanceRepresentative(nullptr, nullptr, Prefixable::None,
+                                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 4,
@@ -736,8 +737,8 @@ class ElectricResistanceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static ElectricResistanceRepresentative Default() {
-    return ElectricResistanceRepresentative(nullptr, nullptr, NAN,
-                                            Prefixable::None, Prefixable::None);
+    return ElectricResistanceRepresentative(nullptr, nullptr, Prefixable::None,
+                                            Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -3,
@@ -761,8 +762,8 @@ class ElectricConductanceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static ElectricConductanceRepresentative Default() {
-    return ElectricConductanceRepresentative(
-        nullptr, nullptr, NAN, Prefixable::None, Prefixable::None);
+    return ElectricConductanceRepresentative(nullptr, nullptr, Prefixable::None,
+                                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 3,
@@ -786,7 +787,7 @@ class MagneticFluxRepresentative : public UnitRepresentative {
 
  public:
   constexpr static MagneticFluxRepresentative Default() {
-    return MagneticFluxRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return MagneticFluxRepresentative(nullptr, nullptr, Prefixable::None,
                                       Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -811,7 +812,7 @@ class MagneticFieldRepresentative : public UnitRepresentative {
 
  public:
   constexpr static MagneticFieldRepresentative Default() {
-    return MagneticFieldRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return MagneticFieldRepresentative(nullptr, nullptr, Prefixable::None,
                                        Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -836,7 +837,7 @@ class InductanceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static InductanceRepresentative Default() {
-    return InductanceRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return InductanceRepresentative(nullptr, nullptr, Prefixable::None,
                                     Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -861,8 +862,8 @@ class CatalyticActivityRepresentative : public UnitRepresentative {
 
  public:
   constexpr static CatalyticActivityRepresentative Default() {
-    return CatalyticActivityRepresentative(nullptr, nullptr, NAN,
-                                           Prefixable::None, Prefixable::None);
+    return CatalyticActivityRepresentative(nullptr, nullptr, Prefixable::None,
+                                           Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -1,
@@ -886,7 +887,7 @@ class SurfaceRepresentative : public UnitRepresentative {
 
  public:
   constexpr static SurfaceRepresentative Default() {
-    return SurfaceRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return SurfaceRepresentative(nullptr, nullptr, Prefixable::None,
                                  Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -923,7 +924,7 @@ class VolumeRepresentative : public UnitRepresentative {
 
  public:
   constexpr static VolumeRepresentative Default() {
-    return VolumeRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return VolumeRepresentative(nullptr, nullptr, Prefixable::None,
                                 Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -960,7 +961,7 @@ class SpeedRepresentative : public UnitRepresentative {
 
  public:
   constexpr static SpeedRepresentative Default() {
-    return SpeedRepresentative(nullptr, nullptr, NAN, Prefixable::None,
+    return SpeedRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
@@ -1040,13 +1041,6 @@ class UnitNode final : public ExpressionNode {
 };
 #endif
 
-/* For each representative, we need two definitions at compile time : one as a
- * parsable expression (to be used in reductions) and one as a floating-point
- * number, to be used for all other use cases. We use a macro to duplicate the
- * definition, so as to not write it twice. */
-#define STR(x) #x
-#define DEFINE_TWICE(x) STR(x), x
-
 class Unit {
  public:
   constexpr static int k_numberOfBaseUnits = 8;
@@ -1065,166 +1059,177 @@ class Unit {
           UnitPrefix("T", 12),
   };
   typedef UnitRepresentative::Prefixable Prefixable;
+  // Use KTree(1.0_e).k_blocks to cast FloatLiteral into KTree into Blocks *
   constexpr static const TimeRepresentative k_timeRepresentatives[] = {
-      TimeRepresentative("s", DEFINE_TWICE(1.), Prefixable::All,
+      TimeRepresentative("s", KTree(1.0_e).k_blocks, Prefixable::All,
                          Prefixable::NegativeLongScale),
-      TimeRepresentative("min", DEFINE_TWICE(60.), Prefixable::None,
+      TimeRepresentative("min", KTree(60.0_e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("h", DEFINE_TWICE(3600.), Prefixable::None,
+      TimeRepresentative("h", KTree(3600.0_e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("day", DEFINE_TWICE(86400.), Prefixable::None,
+      TimeRepresentative("day", KTree(86400.0_e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("week", DEFINE_TWICE(604800.), Prefixable::None,
+      TimeRepresentative("week", KTree(604800.0_e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("month", DEFINE_TWICE(2629800.), Prefixable::None,
+      TimeRepresentative("month", KTree(2629800.0_e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("year", DEFINE_TWICE(31557600.), Prefixable::None,
+      TimeRepresentative("year", KTree(31557600.0_e).k_blocks, Prefixable::None,
                          Prefixable::None),
   };
   constexpr static const DistanceRepresentative k_distanceRepresentatives[] = {
-      DistanceRepresentative("m", DEFINE_TWICE(1.), Prefixable::All,
+      DistanceRepresentative("m", KTree(1.0_e).k_blocks, Prefixable::All,
                              Prefixable::NegativeAndKilo),
-      DistanceRepresentative("au", DEFINE_TWICE(149597870700.),
+      DistanceRepresentative("au", KTree(149597870700.0_e).k_blocks,
                              Prefixable::None, Prefixable::None),
-      DistanceRepresentative("ly", DEFINE_TWICE(299792458. * 31557600.),
+      DistanceRepresentative("ly", KMult(299792458.0_e, 31557600.0_e).k_blocks,
                              Prefixable::None, Prefixable::None),
-      DistanceRepresentative("pc", "180*3600/π*149587870700",
-                             180 * 3600 / M_PI * 149587870700, Prefixable::None,
+      DistanceRepresentative(
+          "pc", KMult(180.0_e, KDiv(3600.0_e, π_e), 149587870700.0_e).k_blocks,
+          Prefixable::None, Prefixable::None),
+      DistanceRepresentative("in", KTree(0.0254_e).k_blocks, Prefixable::None,
                              Prefixable::None),
-      DistanceRepresentative("in", DEFINE_TWICE(0.0254), Prefixable::None,
-                             Prefixable::None),
-      DistanceRepresentative("ft", DEFINE_TWICE(12 * 0.0254), Prefixable::None,
-                             Prefixable::None),
-      DistanceRepresentative("yd", DEFINE_TWICE(36 * 0.0254), Prefixable::None,
-                             Prefixable::None),
-      DistanceRepresentative("mi", DEFINE_TWICE(63360 * 0.0254),
+      DistanceRepresentative("ft", KMult(12.0_e, 0.0254_e).k_blocks,
+                             Prefixable::None, Prefixable::None),
+      DistanceRepresentative("yd", KMult(36.0_e, 0.0254_e).k_blocks,
+                             Prefixable::None, Prefixable::None),
+      DistanceRepresentative("mi", KMult(63360.0_e, 0.0254_e).k_blocks,
                              Prefixable::None, Prefixable::None),
   };
+  /* Only AngleRepresentative have non-float ratio expression because exact
+   * result are expected. */
   static constexpr const AngleRepresentative k_angleRepresentatives[] = {
-      AngleRepresentative("rad", DEFINE_TWICE(1.), Prefixable::None,
+      AngleRepresentative("rad", KTree(1_e).k_blocks, Prefixable::None,
                           Prefixable::None),
-      AngleRepresentative("\"", "π/648000", M_PI / 648000, Prefixable::None,
+      AngleRepresentative("\"", KDiv(π_e, 648000_e).k_blocks, Prefixable::None,
                           Prefixable::None),
-      AngleRepresentative("'", "π/10800", M_PI / 10800, Prefixable::None,
+      AngleRepresentative("'", KDiv(π_e, 10800_e).k_blocks, Prefixable::None,
                           Prefixable::None),
-      AngleRepresentative("°", "π/180", M_PI / 180, Prefixable::None,
+      AngleRepresentative("°", KDiv(π_e, 180_e).k_blocks, Prefixable::None,
                           Prefixable::None),
-      AngleRepresentative("gon", "π/200", M_PI / 200, Prefixable::None,
+      AngleRepresentative("gon", KDiv(π_e, 200_e).k_blocks, Prefixable::None,
                           Prefixable::None),
   };
   constexpr static const MassRepresentative k_massRepresentatives[] = {
-      MassRepresentative("g", DEFINE_TWICE(1.), Prefixable::All,
+      MassRepresentative("g", KTree(1.0_e).k_blocks, Prefixable::All,
                          Prefixable::NegativeAndKilo),
-      MassRepresentative("t", DEFINE_TWICE(1000.),
+      MassRepresentative("t", KTree(1000.0_e).k_blocks,
                          Prefixable::PositiveLongScale,
                          Prefixable::PositiveLongScale),
-      MassRepresentative("Da", "1/(6.02214076ᴇ26)", 1 / (6.02214076e26),
+      MassRepresentative("Da",
+                         KDiv(KPow(10.0_e, -26.0_e), 6.02214076_e).k_blocks,
                          Prefixable::All, Prefixable::All),
-      MassRepresentative("oz", DEFINE_TWICE(0.028349523125), Prefixable::None,
-                         Prefixable::None),
-      MassRepresentative("lb", DEFINE_TWICE(16 * 0.028349523125),
+      MassRepresentative("oz", KTree(0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
-      MassRepresentative("shtn", DEFINE_TWICE(2000 * 16 * 0.028349523125),
+      MassRepresentative("lb", KMult(16.0_e, 0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
-      MassRepresentative("lgtn", DEFINE_TWICE(2240 * 16 * 0.028349523125),
+      MassRepresentative("shtn",
+                         KMult(2000.0_e, 16.0_e, 0.028349523125_e).k_blocks,
+                         Prefixable::None, Prefixable::None),
+      MassRepresentative("lgtn",
+                         KMult(2240.0_e, 16.0_e, 0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
   };
   constexpr static const CurrentRepresentative k_currentRepresentatives[] = {
-      CurrentRepresentative("A", DEFINE_TWICE(1.), Prefixable::All,
+      CurrentRepresentative("A", KTree(1.0_e).k_blocks, Prefixable::All,
                             Prefixable::LongScale)};
   constexpr static const TemperatureRepresentative
       k_temperatureRepresentatives[] = {
-          TemperatureRepresentative("K", DEFINE_TWICE(1.), Prefixable::All,
+          TemperatureRepresentative("K", KTree(1.0_e).k_blocks, Prefixable::All,
                                     Prefixable::None),
-          TemperatureRepresentative("°C", DEFINE_TWICE(1.), Prefixable::None,
-                                    Prefixable::None),
-          TemperatureRepresentative("°F", DEFINE_TWICE(5. / 9.),
+          TemperatureRepresentative("°C", KTree(1.0_e).k_blocks,
+                                    Prefixable::None, Prefixable::None),
+          TemperatureRepresentative("°F", KDiv(5.0_e, 9.0_e).k_blocks,
                                     Prefixable::None, Prefixable::None),
   };
   constexpr static const AmountOfSubstanceRepresentative
       k_amountOfSubstanceRepresentatives[] = {AmountOfSubstanceRepresentative(
-          "mol", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "mol", KTree(1.0_e).k_blocks, Prefixable::All,
+          Prefixable::LongScale)};
   constexpr static const LuminousIntensityRepresentative
       k_luminousIntensityRepresentatives[] = {LuminousIntensityRepresentative(
-          "cd", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "cd", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const FrequencyRepresentative k_frequencyRepresentatives[] =
-      {FrequencyRepresentative("Hz", DEFINE_TWICE(1.), Prefixable::All,
+      {FrequencyRepresentative("Hz", KTree(1.0_e).k_blocks, Prefixable::All,
                                Prefixable::LongScale)};
   constexpr static const ForceRepresentative k_forceRepresentatives[] = {
-      ForceRepresentative("N", DEFINE_TWICE(1.), Prefixable::All,
+      ForceRepresentative("N", KTree(1.0_e).k_blocks, Prefixable::All,
                           Prefixable::LongScale)};
   constexpr static const PressureRepresentative k_pressureRepresentatives[] = {
-      PressureRepresentative("Pa", DEFINE_TWICE(1.), Prefixable::All,
+      PressureRepresentative("Pa", KTree(1.0_e).k_blocks, Prefixable::All,
                              Prefixable::LongScale),
-      PressureRepresentative("bar", DEFINE_TWICE(100000.), Prefixable::All,
+      PressureRepresentative("bar", KTree(100000.0_e).k_blocks, Prefixable::All,
                              Prefixable::LongScale),
-      PressureRepresentative("atm", DEFINE_TWICE(101325.), Prefixable::None,
-                             Prefixable::None),
+      PressureRepresentative("atm", KTree(101325.0_e).k_blocks,
+                             Prefixable::None, Prefixable::None),
   };
   constexpr static const EnergyRepresentative k_energyRepresentatives[] = {
-      EnergyRepresentative("J", DEFINE_TWICE(1.), Prefixable::All,
+      EnergyRepresentative("J", KTree(1.0_e).k_blocks, Prefixable::All,
                            Prefixable::LongScale),
-      EnergyRepresentative("eV", "1.602176634ᴇ-19", 1.602176634e-19,
+      EnergyRepresentative("eV",
+                           KMult(1.602176634_e, KPow(10.0_e, -19_e)).k_blocks,
                            Prefixable::All, Prefixable::LongScale),
   };
   constexpr static const PowerRepresentative k_powerRepresentatives[] = {
 
-      PowerRepresentative("W", DEFINE_TWICE(1.), Prefixable::All,
+      PowerRepresentative("W", KTree(1.0_e).k_blocks, Prefixable::All,
                           Prefixable::LongScale),
-      PowerRepresentative("hp", DEFINE_TWICE(745.699872), Prefixable::None,
+      PowerRepresentative("hp", KTree(745.699872_e).k_blocks, Prefixable::None,
                           Prefixable::None)};
   constexpr static const ElectricChargeRepresentative
       k_electricChargeRepresentatives[] = {ElectricChargeRepresentative(
-          "C", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "C", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const ElectricPotentialRepresentative
       k_electricPotentialRepresentatives[] = {ElectricPotentialRepresentative(
-          "V", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "V", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const ElectricCapacitanceRepresentative
       k_electricCapacitanceRepresentatives[] = {
-          ElectricCapacitanceRepresentative(
-              "F", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          ElectricCapacitanceRepresentative("F", KTree(1.0_e).k_blocks,
+                                            Prefixable::All,
+                                            Prefixable::LongScale)};
   constexpr static const ElectricResistanceRepresentative
       k_electricResistanceRepresentatives[] = {ElectricResistanceRepresentative(
-          "Ω", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "Ω", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const ElectricConductanceRepresentative
       k_electricConductanceRepresentatives[] = {
-          ElectricConductanceRepresentative(
-              "S", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          ElectricConductanceRepresentative("S", KTree(1.0_e).k_blocks,
+                                            Prefixable::All,
+                                            Prefixable::LongScale)};
   constexpr static const MagneticFluxRepresentative
       k_magneticFluxRepresentatives[] = {MagneticFluxRepresentative(
-          "Wb", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "Wb", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const MagneticFieldRepresentative
       k_magneticFieldRepresentatives[] = {MagneticFieldRepresentative(
-          "T", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "T", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const InductanceRepresentative
       k_inductanceRepresentatives[] = {InductanceRepresentative(
-          "H", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "H", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const CatalyticActivityRepresentative
       k_catalyticActivityRepresentatives[] = {CatalyticActivityRepresentative(
-          "kat", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale)};
+          "kat", KTree(1.0_e).k_blocks, Prefixable::All,
+          Prefixable::LongScale)};
   constexpr static const SurfaceRepresentative k_surfaceRepresentatives[] = {
-      SurfaceRepresentative("ha", DEFINE_TWICE(10000.), Prefixable::None,
+      SurfaceRepresentative("ha", KTree(10000.0_e).k_blocks, Prefixable::None,
                             Prefixable::None),
-      SurfaceRepresentative("acre", DEFINE_TWICE(4046.8564224),
+      SurfaceRepresentative("acre", KTree(4046.8564224_e).k_blocks,
                             Prefixable::None, Prefixable::None),
   };
   constexpr static const VolumeRepresentative k_volumeRepresentatives[] = {
       VolumeRepresentative(BuiltinsAliases::k_litersAliases,
-                           DEFINE_TWICE(0.001), Prefixable::All,
+                           KTree(0.001_e).k_blocks, Prefixable::All,
                            Prefixable::Negative),
-      VolumeRepresentative("tsp", DEFINE_TWICE(0.00000492892159375),
+      VolumeRepresentative("tsp", KTree(0.00000492892159375_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("tbsp", DEFINE_TWICE(3 * 0.00000492892159375),
+      VolumeRepresentative("tbsp", KMult(3.0_e, 0.00000492892159375_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("floz", DEFINE_TWICE(0.0000295735295625),
+      VolumeRepresentative("floz", KTree(0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("cup", DEFINE_TWICE(8 * 0.0000295735295625),
+      VolumeRepresentative("cup", KMult(8.0_e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("pt", DEFINE_TWICE(16 * 0.0000295735295625),
+      VolumeRepresentative("pt", KMult(16.0_e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("qt", DEFINE_TWICE(32 * 0.0000295735295625),
+      VolumeRepresentative("qt", KMult(32.0_e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("gal", DEFINE_TWICE(128 * 0.0000295735295625),
+      VolumeRepresentative("gal", KMult(128.0_e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
   };
 

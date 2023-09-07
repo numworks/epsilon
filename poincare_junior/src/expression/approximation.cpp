@@ -5,6 +5,7 @@
 #include <bit>
 
 #include "constant.h"
+#include "decimal.h"
 #include "float.h"
 #include "rational.h"
 
@@ -58,6 +59,9 @@ T Approximation::To(const Tree* node) {
       return std::sin(Approximation::To<T>(node->nextNode()));
     case BlockType::Tangent:
       return std::tan(Approximation::To<T>(node->nextNode()));
+    case BlockType::Decimal:
+      return Approximation::To<T>(node->nextNode()) *
+             std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     default:
       // TODO: Implement more BlockTypes
       return NAN;

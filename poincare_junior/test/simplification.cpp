@@ -364,8 +364,8 @@ QUIZ_CASE(pcj_variables) {
 
 QUIZ_CASE(pcj_float_simplification) {
   simplifies_to("2", "2.000000", {.m_strategy = Strategy::ApproximateToFloat});
-  // simplifies_to("2.3", "2.300000",
-  //               {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("2.3", "2.300000",
+                {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π", "4.141593",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π+x", "4.141593+x",

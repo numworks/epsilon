@@ -110,15 +110,6 @@ Dimension Dimension::GetDimension(const Tree* t) {
       int n = Approximation::To<float>(t->childAtIndex(0));
       return Matrix(n, n);
     }
-    case BlockType::UserSymbol: {
-      char s[2];
-      Symbol::GetName(t, s, 2);
-      if ('A' <= s[0] && s[0] <= 'Z') {
-        // TODO query the actual symbol and assume no unknown matrices
-        return Matrix(1, 1);
-      }
-      return Scalar();
-    }
     default:
       return Scalar();
   }

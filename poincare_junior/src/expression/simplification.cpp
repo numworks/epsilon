@@ -450,13 +450,11 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
-  if (child->type() == BlockType::Float && next->type() == BlockType::Float) {
-    merge = SharedEditionPool->push<BlockType::Float>(Float::To(child) *
-                                                      Float::To(next));
-  } else if (IsRational(child) && IsRational(next)) {
-    // Merge constants
-    merge = Rational::Multiplication(child, next);
-    Rational::MakeIrreducible(merge);
+  if (IsNumber(child) && IsNumber(next) &&
+      !((child->type() == BlockType::Constant) ||
+        next->type() == BlockType::Constant)) {
+    // Merge numbers
+    merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
     merge = PatternMatching::CreateAndSimplify(
@@ -622,13 +620,11 @@ const Tree* Constant(const Tree* u) {
 bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
-  if (child->type() == BlockType::Float && next->type() == BlockType::Float) {
-    merge = SharedEditionPool->push<BlockType::Float>(Float::To(child) +
-                                                      Float::To(next));
-  } else if (IsRational(child) && IsRational(next)) {
-    // Merge constants
-    merge = Rational::Addition(child, next);
-    Rational::MakeIrreducible(merge);
+  if (IsNumber(child) && IsNumber(next) &&
+      !((child->type() == BlockType::Constant) ||
+        next->type() == BlockType::Constant)) {
+    // Merge numbers
+    merge = Number::Addition(child, next);
   } else if (TermsAreEqual(child, next)) {
     // k1 * a + k2 * a -> (k1+k2) * a
     Tree* term = PushTerm(child);
@@ -771,12 +767,21 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
              BlockType::Addition, SimplifyImaginaryPart);
 }
 
+bool ShouldApproximateOnSimplify(Dimension dimension) {
+  // TODO: Find a better place for this condition.
+  return (dimension.isUnit() &&
+          !(dimension.unit.supportSize() == 1 && dimension.unit.angle != 0));
+}
+
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   if (!Dimension::DeepCheckDimensions(ref)) {
     ref->cloneTreeOverTree(KUndef);
     return true;
   }
   projectionContext.m_dimension = Dimension::GetDimension(ref);
+  if (ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
+    projectionContext.m_strategy = Strategy::ApproximateToFloat;
+  }
   bool changed = false;
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
@@ -822,18 +827,24 @@ bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
 
 bool Simplification::DeepBeautify(Tree* node,
                                   ProjectionContext projectionContext) {
+  // Simplification might have unlocked more approximations. Try again.
+  bool changed =
+      (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
+      Approximation::ApproximateAndReplaceEveryScalar(node);
   bool appendUnits = (projectionContext.m_dimension.isUnit());
   if (appendUnits) {
     assert(!projectionContext.m_dimension.unit.isEmpty());
     EditionReference baseUnits =
         projectionContext.m_dimension.unit.toBaseUnits();
+    DeepSystematicReduce(baseUnits);
     node->moveTreeOverTree(
         PatternMatching::Create(KMult(KA, KB), {.KA = node, .KB = baseUnits}));
     baseUnits->removeTree();
-    // TODO: ShallowSimplify node
+    ShallowSystematicReduce(node);
+    changed = true;
   }
   return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext) ||
-         appendUnits;
+         changed;
 }
 
 // Reverse most system projections to display better expressions

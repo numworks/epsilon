@@ -1,19 +1,30 @@
 #include "number.h"
 
+#include "approximation.h"
 #include "float.h"
 #include "rational.h"
 
 namespace PoincareJ {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
-  // TODO: handle Float
-  assert(i->type() != BlockType::Float && j->type() != BlockType::Float);
-  return Rational::Addition(i, j);
+  if (i->type() == BlockType::Float || j->type() == BlockType::Float) {
+    return SharedEditionPool->push<BlockType::Float>(
+        Approximation::To<float>(i) + Approximation::To<float>(j));
+  }
+  assert(i->type() != BlockType::Constant && j->type() != BlockType::Constant);
+  Tree* result = Rational::Addition(i, j);
+  Rational::MakeIrreducible(result);
+  return result;
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
-  // TODO: handle Float
-  assert(i->type() != BlockType::Float && j->type() != BlockType::Float);
-  return Rational::Multiplication(i, j);
+  if (i->type() == BlockType::Float || j->type() == BlockType::Float) {
+    return SharedEditionPool->push<BlockType::Float>(
+        Approximation::To<float>(i) * Approximation::To<float>(j));
+  }
+  assert(i->type() != BlockType::Constant && j->type() != BlockType::Constant);
+  Tree* result = Rational::Multiplication(i, j);
+  Rational::MakeIrreducible(result);
+  return result;
 }
 
 Sign::Sign Number::Sign(const Tree* node) {

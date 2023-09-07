@@ -370,22 +370,18 @@ QUIZ_CASE(pcj_float_simplification) {
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π+x", "4.141593+x",
                 {.m_strategy = Strategy::ApproximateToFloat});
-  // simplifies_to("cos(x-x)", "1.000000",
-  //               {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("cos(x-x)", "1.000000",
+                {.m_strategy = Strategy::ApproximateToFloat});
 }
 
 QUIZ_CASE(pcj_unit_simplification) {
-  // TODO: This is broken due to Float simplification and display
-#if 0
-  simplifies_to("12_m", "12*_m");
-  simplifies_to("1_s", "1*_s");
+  simplifies_to("12_m", "12.000000*_m");
+  simplifies_to("1_s", "1.000000*_s");
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+x", "undef");
-  simplifies_to("1_m+1_km", "1001*_m");
-  simplifies_to("1_mm+1_km", "1000001/1000*_m");
-#endif
-  // TODO: Handle ratios
-  //   simplifies_to("2_month*7_dm", "3681720*_m*_s");
+  simplifies_to("1_m+1_km", "1001.000000*_m");
+  simplifies_to("1_mm+1_km", "1000.000977*_m");
+  simplifies_to("2_month*7_dm", "3681720.000000*_s*_m");
 
   // TODO: Handle BestRepresentative
   //   simplifies_to("1_m+1_km", "1.001km");

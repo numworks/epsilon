@@ -784,9 +784,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
    * projection context. */
   changed = DeepSystemProjection(ref, projectionContext) || changed;
   Tree* variables = Variables::GetVariables(ref);
-  ref->moveTreeBeforeNode(variables);
-  variables = ref;
-  ref = ref->nextTree();
+  SwapTrees(&ref, &variables);
   Variables::ProjectToId(ref, variables);
   changed = DeepSystematicReduce(ref) || changed;
   changed = DeepApplyMatrixOperators(ref) || changed;

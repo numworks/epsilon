@@ -265,6 +265,10 @@ class Tree {
 
 void SwapTrees(Tree* u, Tree* v);
 
+/* This overload exchanges the trees pointed to by the pointers and update the
+ * pointers. */
+void SwapTrees(Tree** u, Tree** v);
+
 }  // namespace PoincareJ
 
 #endif

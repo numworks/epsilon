@@ -428,4 +428,14 @@ void SwapTrees(Tree* u, Tree* v) {
   u->moveTreeBeforeNode(v);
 }
 
+void SwapTrees(Tree** u, Tree** v) {
+  if (*u > *v) {
+    SwapTrees(v, u);
+  }
+  Block* newV = (*v)->block() - ((*u)->treeSize() - (*v)->treeSize());
+  SwapTrees(*u, *v);
+  *v = *u;
+  *u = Tree::FromBlocks(newV);
+}
+
 }  // namespace PoincareJ

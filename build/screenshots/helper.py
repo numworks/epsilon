@@ -1,4 +1,5 @@
-import sys, os, shutil, subprocess
+import sys, os, shutil
+from subprocess import Popen, DEVNULL, PIPE
 from pathlib import Path
 
 def dataset():
@@ -28,9 +29,18 @@ def get_file_with_extension(folder, file_extension):
 def list_images_in_folder(folder):
    return [image.as_posix() for image in sorted(Path(folder).glob("*.png"))]
 
+def print_error(stderr):
+   err = stderr.read().decode()
+   if err:
+      if err[-1] == "\n":
+         err = err[:-1]
+      print(err)
+      sys.exit(1)
+
 def generate_screenshot(state_file, executable, screenshot):
    print("Generating screenshot of", state_file)
-   subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-screenshot " + screenshot, shell=True, stdout=subprocess.DEVNULL)
+   p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --take-screenshot " + screenshot, shell=True, stdout=DEVNULL, stderr=PIPE)
+   print_error(p.stderr)
    if not os.path.isfile(screenshot):
       print("Error: couldn't take screenshot")
       sys.exit(1)
@@ -38,7 +48,8 @@ def generate_screenshot(state_file, executable, screenshot):
 def generate_all_screenshots(state_file, executable, folder):
    print("Generating all screenshots of", state_file)
    clean_or_create_folder(folder)
-   subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=subprocess.DEVNULL)
+   p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=DEVNULL, stderr=PIPE)
+   print_error(p.stderr)
    list_images = list_images_in_folder(folder)
    if len(list_images) == 0:
       print("Error: no screenshots taken")
@@ -49,7 +60,8 @@ def generate_all_screenshots(state_file, executable, folder):
 def create_gif(list_images, folder, gif_name = "scenario"):
    print("Creating gif")
    gif = os.path.join(folder, gif_name + ".gif")
-   subprocess.run("convert -set delay '%[fx:t==(n-1) ? 175 : 35]' " + ' '.join(list_images) + " " + gif, shell=True)
+   p = Popen("convert -set delay '%[fx:t==(n-1) ? 175 : 35]' " + ' '.join(list_images) + " " + gif, shell=True, stdout=DEVNULL, stderr=PIPE)
+   print_error(p.stderr)
    if not os.path.exists(gif):
       print("Error: couldn't create gif")
       sys.exit(1)
@@ -77,7 +89,8 @@ def find_crc32_in_log(log_file):
 def compute_crc32(state_file, executable, log_file):
    print("Computing crc32 of", state_file)
    with open(log_file, "w") as f:
-      subprocess.run("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash", shell=True, stdout=f)
+      p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash", shell=True, stdout=f, stderr=PIPE)
+      print_error(p.stderr)
    return find_crc32_in_log(log_file)
 
 def store_crc32(crc32, crc_file):
@@ -89,8 +102,8 @@ def compute_and_store_crc32(state_file, executable, crc_file):
    store_crc32(crc32, crc_file)
 
 def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
-   res = subprocess.getoutput(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]))
-   mae = res.split(" ")[0]
+   p = Popen(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]), shell=True, stdout=DEVNULL, stderr=PIPE)
+   mae = p.stderr.read().decode().split(" ")[0]
    return mae == "0"
 
 def print_report(fails, count):

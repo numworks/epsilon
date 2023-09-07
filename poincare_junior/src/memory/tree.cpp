@@ -3,6 +3,7 @@
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
+#include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/placeholder.h>
@@ -107,6 +108,10 @@ void Tree::logAttributes(std::ostream& stream) const {
     (type().isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
         this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
+    return;
+  }
+  if (type() == BlockType::Variable) {
+    stream << " id=" << static_cast<int>(Variables::Id(this));
     return;
   }
   if (type() == BlockType::Placeholder) {

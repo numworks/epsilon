@@ -1,10 +1,13 @@
 #include "set.h"
 
 #include <poincare_junior/src/expression/comparison.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
+
+Tree* Set::PushEmpty() { return KSet.node<0>->cloneNode(); }
 
 bool Set::Includes(const Tree* set, const Tree* expression) {
   for (const Tree* child : set->children()) {

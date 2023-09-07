@@ -126,6 +126,7 @@ class TypeBlock : public Block {
       case BlockType::UserSymbol:
       case BlockType::UserFunction:
       case BlockType::UserSequence:
+      case BlockType::Variable:
       case BlockType::Decimal:
       case BlockType::IntegerShort:
       case BlockType::Placeholder:

@@ -10,6 +10,7 @@ class Set {
    * Set elements are always ordered and unique
    */
  public:
+  static Tree* PushEmpty();
   static bool Includes(const Tree* set, const Tree* expression);
   static void Add(Tree* set, const Tree* expression);
   static Tree* Pop(Tree* set);

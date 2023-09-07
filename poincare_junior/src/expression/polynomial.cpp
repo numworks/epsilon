@@ -296,9 +296,9 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 bool ContainsVariable(const Tree* tree) {
   int numberOfChildren = tree->numberOfChildren();
   if (numberOfChildren == 0) {
-    return tree->type().isOfType({BlockType::UserFunction,
-                                  BlockType::UserSequence,
-                                  BlockType::UserSymbol, BlockType::Constant});
+    return tree->type().isOfType(
+        {BlockType::UserFunction, BlockType::UserSequence,
+         BlockType::UserSymbol, BlockType::Constant, BlockType::Variable});
   }
   const Tree* child = tree->nextNode();
   for (int i = 0; i < numberOfChildren; i++) {

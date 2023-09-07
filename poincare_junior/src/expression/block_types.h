@@ -54,6 +54,13 @@ TYPE(Constant)
 /* - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
 TYPE(UserSymbol)
+TYPE(UserFunction)
+TYPE(UserSequence)
+
+/* - Variable V
+ * | V TAG | ID | */
+TYPE(Variable)
+
 TYPE(Sine)
 TYPE(Cosine)
 TYPE(Tangent)
@@ -91,8 +98,6 @@ TYPE(SquareRoot)
 TYPE(Subtraction)
 TYPE(Trig)
 TYPE(TrigDiff)
-TYPE(UserFunction)
-TYPE(UserSequence)
 
 // 4 - Matrix and vector builtins
 

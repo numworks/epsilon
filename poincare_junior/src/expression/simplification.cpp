@@ -19,6 +19,7 @@
 
 #include "derivation.h"
 #include "number.h"
+#include "poincare_junior/src/expression/variables.h"
 
 namespace PoincareJ {
 
@@ -782,6 +783,11 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
   changed = DeepSystemProjection(ref, projectionContext) || changed;
+  Tree* variables = Variables::GetVariables(ref);
+  ref->moveTreeBeforeNode(variables);
+  variables = ref;
+  ref = ref->nextTree();
+  Variables::ProjectToId(ref, variables);
   changed = DeepSystematicReduce(ref) || changed;
   changed = DeepApplyMatrixOperators(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
@@ -789,6 +795,8 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   assert(!DeepSystematicReduce(ref));
   assert(!DeepApplyMatrixOperators(ref));
   changed = DeepBeautify(ref) || changed;
+  Variables::BeautifyToName(ref, variables);
+  variables->removeTree();
   return changed;
 }
 

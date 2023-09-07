@@ -149,7 +149,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
 Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
                                        const Tree *symbol,
                                        const Tree *symbolValue) {
-  assert(symbol->type() == BlockType::UserSymbol);
+  assert(symbol->type() == BlockType::Variable);
   if (symbol->treeIsIdenticalTo(symbolValue)) {
     // No need to replace anything
     return SharedEditionPool->clone(expression);

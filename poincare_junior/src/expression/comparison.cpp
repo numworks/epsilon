@@ -6,8 +6,10 @@
 #include "constant.h"
 #include "dimension.h"
 #include "k_tree.h"
+#include "poincare_junior/src/memory/type_block.h"
 #include "polynomial.h"
 #include "symbol.h"
+#include "variables.h"
 
 namespace PoincareJ {
 
@@ -64,6 +66,9 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   }
   if (type0 == BlockType::Polynomial) {
     return ComparePolynomial(node0, node1);
+  }
+  if (type0 == BlockType::Variable) {
+    return Variables::Id(node0) - Variables::Id(node1);
   }
   // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
   return CompareChildren(

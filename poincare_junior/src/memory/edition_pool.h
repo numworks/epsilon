@@ -65,6 +65,11 @@ class EditionPool final : public Pool {
     m_numberOfBlocks = numberOfBlocks;
   }
 
+  // Will changing the modified tree alter the other tree ?
+  bool isAfter(const Tree *other, Tree *modified) {
+    return !contains(other->block()) || other < modified;
+  }
+
   constexpr static int k_maxNumberOfReferences = 1024;
 
  private:

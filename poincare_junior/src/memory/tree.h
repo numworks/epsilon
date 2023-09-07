@@ -242,6 +242,10 @@ class Tree {
     return ConstTreeRange(nextNode(), nextTree());
   }
 
+  ConstNodeRange descendants() const {
+    return ConstNodeRange(nextNode(), nextTree());
+  }
+
  private:
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                 bool at = false);

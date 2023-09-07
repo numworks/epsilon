@@ -6,6 +6,7 @@
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 #include "helper.h"
+#include "poincare_junior/src/expression/variables.h"
 
 using namespace PoincareJ;
 
@@ -357,4 +358,11 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("√(x)^2", "√(x)^(2)", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
   simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
+}
+
+QUIZ_CASE(pcj_variables) {
+  QUIZ_ASSERT(Variables::GetVariables(0_e, KSet()));
+  const Tree* e = KMult(
+      "x"_e, KAdd(KSin("y"_e), KDiff(KPow(3_e, "x"_e), "x"_e, 2_e)), "m"_e);
+  QUIZ_ASSERT(Variables::GetVariables(e, KSet("m"_e, "x"_e, "y"_e)));
 }

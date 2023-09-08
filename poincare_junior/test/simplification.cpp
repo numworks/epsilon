@@ -1,4 +1,5 @@
 #include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/dependency.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
 
@@ -430,4 +431,17 @@ QUIZ_CASE(pcj_unit_simplification) {
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k*m" / "m+km" );
   //   simplifies_to("1m+1s", "undef" / "m+s");
   //   simplifies_to("1m+x", "m+x" / "undef");
+}
+
+QUIZ_CASE(pcj_dependencies) {
+  Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e)->clone();
+  const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KSet(0_e));
+  Dependency::ShallowBubbleUpDependencies(e1);
+  QUIZ_ASSERT(e1->treeIsIdenticalTo(r1));
+
+  Tree* e2 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e, KDep(5_e, KSet(6_e)))
+                 ->clone();
+  const Tree* r2 = KDep(KAdd(KMult(2_e, 3_e), 4_e, 5_e), KSet(0_e, 6_e));
+  Dependency::ShallowBubbleUpDependencies(e2);
+  QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
 }

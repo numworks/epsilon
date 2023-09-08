@@ -126,6 +126,7 @@ ALIAS(LastMatrix = Matrix)
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
 TYPE(Unit)
+TYPE(Dependency)
 TYPE(List)
 TYPE(Set)
 TYPE(Undefined)

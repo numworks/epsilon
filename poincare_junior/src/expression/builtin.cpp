@@ -35,6 +35,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::RealPart, "re"},
     {BlockType::ImaginaryPart, "im"},
     {BlockType::Conjugate, "conj"},
+    {BlockType::Dependency, "dep"},  // hack
 };
 
 bool Builtin::IsBuiltin(BlockType type) {

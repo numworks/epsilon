@@ -194,6 +194,7 @@ class TypeBlock : public Block {
       case BlockType::Logarithm:
       case BlockType::Cross:
       case BlockType::Dot:
+      case BlockType::Dependency:
         return 2;
       case BlockType::Abs:
       case BlockType::Decimal:

@@ -225,16 +225,13 @@ bool Expression::deepIsMatrix(Context *context, bool canContainMatrices,
             }
           }
         }
-        // Dependency are matrices only if their first child is a matrix
-        if (e.type() == ExpressionNode::Type::Dependency) {
-          return e.childAtIndex(0).deepIsMatrix(context)
-                     ? TrinaryBoolean::True
-                     : TrinaryBoolean::False;
-        }
-        // These types are matrices if one of their children is one
+        /* These types are matrices if one of their children is one.
+         * For dependencies, we will check only the first child thanks
+         * to dependencyRecursivelyMatches.*/
         if (e.isOfType(
                 {ExpressionNode::Type::Power, ExpressionNode::Type::Opposite,
-                 ExpressionNode::Type::Sum, ExpressionNode::Type::Product})) {
+                 ExpressionNode::Type::Sum, ExpressionNode::Type::Product,
+                 ExpressionNode::Type::Dependency})) {
           return TrinaryBoolean::Unknown;
         }
         // Any other type is not a matrix

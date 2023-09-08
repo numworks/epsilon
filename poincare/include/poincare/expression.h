@@ -242,7 +242,7 @@ class Expression : public TreeHandle {
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr) const;
 
-  bool deepIsMatrix(Context* context, bool canContainMatrices = true,
+  bool deepIsMatrix(Context* context = nullptr, bool canContainMatrices = true,
                     bool isReduced = true) const;
   bool deepIsList(Context* context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches

@@ -119,7 +119,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
       break;
-    case ExamMode::Ruleset::Keystone:
+    case ExamMode::Ruleset::Pennsylvania:
       quiz_assert(mode.forbidSolverApp());
       quiz_assert(!mode.forbidElementsApp());
       quiz_assert(!mode.forbidCodeApp());

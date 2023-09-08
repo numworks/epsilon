@@ -68,7 +68,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       // STAAR
       I18n::Message::ActiveTxPaScIbExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
-      // Keystone
+      // Pennsylvania
       I18n::Message::ActiveTxPaScIbExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
       // SouthCarolina

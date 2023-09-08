@@ -18,7 +18,7 @@ enum class Ruleset : Int {
   Portuguese,
   English,
   STAAR,
-  Keystone,
+  Pennsylvania,
   SouthCarolina,
   NumberOfRulesets,
 };

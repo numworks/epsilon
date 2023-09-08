@@ -95,6 +95,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyImaginaryPart);
 
  private:
+  static bool SimplifySwitch(Tree *u);
+  EDITION_REF_WRAP(SimplifySwitch);
   static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);
   EDITION_REF_WRAP_1(SimplifyTrigSecondElement, bool *);
   /* The following methods should not be called with EditionReferences.

@@ -20,6 +20,7 @@
 
 #include "derivation.h"
 #include "number.h"
+#include "poincare_junior/src/expression/dependency.h"
 #include "poincare_junior/src/expression/variables.h"
 
 namespace PoincareJ {
@@ -67,7 +68,16 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     // Strict rationals are the only childless trees that can be reduced.
     return Rational::MakeIrreducible(u);
   }
+  bool changed = false;
+  changed |= SimplifySwitch(u);
+  if (Dependency::ShallowBubbleUpDependencies(u)) {
+    ShallowSystematicReduce(u->nextNode());
+    changed = true;
+  }
+  return changed;
+}
 
+bool Simplification::SimplifySwitch(Tree* u) {
   switch (u->type()) {
     case BlockType::Power:
       return SimplifyPower(u);
@@ -316,6 +326,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   assert(IsInteger(n));
   // v^0 -> 1
   if (Number::IsZero(n)) {
+    PatternMatching::MatchAndReplace(u, KPow(KA, 0_e), KDep(1_e, KA));
     u->cloneTreeOverTree(1_e);
     return true;
   }

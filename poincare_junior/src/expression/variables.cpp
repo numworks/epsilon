@@ -68,4 +68,13 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables) {
   }
 }
 
+bool Variables::HasVariables(const Tree* expr) {
+  for (const Tree* child : expr->selfAndDescendants()) {
+    if (child->type() == BlockType::Variable) {
+      return true;
+    }
+  }
+  return false;
+}
+
 }  // namespace PoincareJ

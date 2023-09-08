@@ -24,6 +24,9 @@ class Variables {
   static void BeautifyToName(Tree* t, const Tree* variables);
   static uint8_t Id(const Tree* variable);
 
+  // On projected expressions
+  static bool HasVariables(const Tree* t);
+
  private:
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);

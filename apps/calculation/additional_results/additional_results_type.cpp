@@ -37,8 +37,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasVector(exactOutput)) {
     return AdditionalResultsType{.vector = true};
   }
-  if (HasMatrix(exactOutput)) {
-    return AdditionalResultsType{.matrix = true};
+  if (exactOutput.deepIsMatrix()) {
+    return AdditionalResultsType{.matrix = HasMatrix(exactOutput)};
   }
   AdditionalResultsType type = {};
   if (HasFunction(input, approximateOutput)) {
@@ -155,7 +155,8 @@ bool AdditionalResultsType::HasVector(const Expression exactOutput) {
 bool AdditionalResultsType::HasMatrix(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
-  return exactOutput.type() == ExpressionNode::Type::Matrix;
+  return exactOutput.type() == ExpressionNode::Type::Matrix &&
+         !exactOutput.recursivelyMatches(Expression::IsUndefined);
 }
 
 static bool expressionIsInterestingFunction(const Expression e) {

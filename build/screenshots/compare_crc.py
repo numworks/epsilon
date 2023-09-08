@@ -2,6 +2,7 @@ import sys, os, shutil, argparse
 from datetime import datetime
 import helper
 import args_types
+from print_format import bold, red, green, print_underlined
 
 parser = argparse.ArgumentParser(description='This script compares the crc32 of the test screenshots dataset with crc32 generated from a given epsilon executable.')
 parser.add_argument('executable', metavar='EXE', type=args_types.existing_file, help='epsilon executable to test')
@@ -53,10 +54,10 @@ def main():
       # Print report
       count = count + 1
       if success:
-         print('\033[1m' + scenario_folder + '\t \033[32mOK\033[0m')
+         print(bold(scenario_folder + '\t' + green("OK")))
       else:
          fails = fails + 1
-         print('\033[1m' + scenario_folder + '\t \033[31mFAILED\033[0m')
+         print(bold(scenario_folder + '\t' + red("FAILED")))
 
       # Take screenshot at each step
       if not success:
@@ -66,20 +67,20 @@ def main():
          os.mkdir(output_scenario_folder)
 
          # Generate all screenshots and create a gif
-         print("\033[4mBugged executable\033[0m:")
+         print_underlined("Bugged executable")
          computed_folder = os.path.join(output_scenario_folder, "computed")
          list_computed_images = helper.generate_all_screenshots_and_create_gif(state_file, args.executable, computed_folder)
          helper.store_crc32(computed_crc32, os.path.join(computed_folder, "crc32.txt"))
 
          # Compare with ref
          if not args.ref is None:
-            print("\033[4mReference executable\033[0m:")
+            print_underlined("Reference executable")
             reference_folder = os.path.join(output_scenario_folder, "reference")
             list_reference_images = helper.generate_all_screenshots_and_create_gif(state_file, args.ref, reference_folder)
             shutil.copy(reference_crc32_file, os.path.join(reference_folder, "crc32.txt"))
 
             # Generate diff gif
-            print("\033[4mDiff\033[0m:")
+            print_underlined("Diff")
             helper.create_diff_gif(list_reference_images, list_computed_images, output_scenario_folder)
 
          print("--------")

@@ -383,6 +383,22 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("1_mm+1_km", "1000.000977*_m");
   simplifies_to("2_month*7_dm", "3681720.000000*_s*_m");
 
+  /* This test fails because dimension is scalar but there are Floats. This ends
+   * up being 2.000000*1.000000^(-1). Not simplified further because:
+   * - Pow(float, int) is not handled
+   * - Since dimension is Scalar, there is no NumbersToFloat strategy.
+   * Four solutions are available :
+   * 1 - Handle Float better during simplification (if one of the children is a
+   *     Float, try to approximate it)
+   * 2 - Update strategy to NumbersToFloat if a float is detected during
+   *     simplification
+   * 3 - Update strategy to NumbersToFloat if there are units but the dimension
+   *     is scalar.
+   * 4 - Do not use Float in Units ratio expressions. They will be replaced by
+   *     float only if final dimension is a non-angle unit.
+   */
+  // simplifies_to("2*_m/_m", "2.000000");
+
   // TODO: Handle BestRepresentative
   //   simplifies_to("1_m+1_km", "1.001km");
 

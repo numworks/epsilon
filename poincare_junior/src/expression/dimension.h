@@ -7,9 +7,14 @@
 
 namespace PoincareJ {
 
-struct RowColVector {
+struct MatrixDimension {
   uint8_t rows;
   uint8_t cols;
+};
+
+struct UnitDimension {
+  DimensionVector vector;
+  bool hasNonKelvin;
 };
 
 struct Dimension {
@@ -20,24 +25,24 @@ struct Dimension {
   };
 
   Dimension() : type(Type::Scalar){};
-  Dimension(RowColVector iMatrix) : type(Type::Matrix), matrix(iMatrix){};
-  Dimension(DimensionVector iUnit) : type(Type::Unit), unit(iUnit){};
+  Dimension(MatrixDimension iMatrix) : type(Type::Matrix), matrix(iMatrix){};
+  Dimension(UnitDimension iUnit) : type(Type::Unit), unit(iUnit){};
 
   static Dimension Scalar() { return Dimension(); }
   static Dimension Matrix(uint8_t rows, uint8_t cols) {
     return Dimension({.rows = rows, .cols = cols});
   }
-  static Dimension Unit(DimensionVector vector) { return Dimension(vector); }
-  static Dimension Unit(const Tree* unit) {
-    return Dimension(DimensionVector::FromBaseUnits(unit));
+  static Dimension Unit(DimensionVector vector, bool hasNonKelvin) {
+    return Dimension({.vector = vector, .hasNonKelvin = hasNonKelvin});
   }
+  static Dimension Unit(const Tree* unit);
 
   bool operator==(const Dimension& other) const;
   bool operator!=(const Dimension& other) const { return !(*this == other); };
 
   bool isSanitized() const {
     return !(isMatrix() && matrix.rows * matrix.cols == 0) &&
-           !(isUnit() && unit.isEmpty());
+           !(isUnit() && unit.vector.isEmpty());
   }
 
   bool isScalar() const { return type == Type::Scalar; }
@@ -49,14 +54,17 @@ struct Dimension {
   bool isVector() const {
     return type == Type::Matrix && (matrix.rows == 1 || matrix.cols == 1);
   }
+  bool hasNonKelvinTemperatureUnit() const {
+    return type == Type::Unit && unit.hasNonKelvin;
+  }
 
   static Dimension GetDimension(const Tree* t);
   static bool DeepCheckDimensions(const Tree* t);
 
   Type type;
   union {
-    RowColVector matrix;
-    DimensionVector unit;
+    MatrixDimension matrix;
+    UnitDimension unit;
     // TODO lists
   };
 };

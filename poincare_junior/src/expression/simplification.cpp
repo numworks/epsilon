@@ -773,8 +773,8 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
 
 bool ShouldApproximateOnSimplify(Dimension dimension) {
   // TODO: Find a better place for this condition.
-  return (dimension.isUnit() &&
-          !(dimension.unit.supportSize() == 1 && dimension.unit.angle != 0));
+  return (dimension.isUnit() && !(dimension.unit.vector.supportSize() == 1 &&
+                                  dimension.unit.vector.angle != 0));
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
@@ -837,9 +837,9 @@ bool Simplification::DeepBeautify(Tree* node,
       Approximation::ApproximateAndReplaceEveryScalar(node);
   bool appendUnits = (projectionContext.m_dimension.isUnit());
   if (appendUnits) {
-    assert(!projectionContext.m_dimension.unit.isEmpty());
+    assert(!projectionContext.m_dimension.unit.vector.isEmpty());
     EditionReference baseUnits =
-        projectionContext.m_dimension.unit.toBaseUnits();
+        projectionContext.m_dimension.unit.vector.toBaseUnits();
     DeepSystematicReduce(baseUnits);
     node->moveTreeOverTree(
         PatternMatching::Create(KMult(KA, KB), {.KA = node, .KB = baseUnits}));

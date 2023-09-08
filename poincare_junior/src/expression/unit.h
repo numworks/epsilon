@@ -1457,8 +1457,6 @@ class Unit {
                           const ReductionContext& reductionContext);
   static Tree* ConvertTemperatureUnits(
       Tree* e, Unit unit, const ReductionContext& reductionContext);
-
-  static bool IsForbiddenTemperatureProduct(const Tree* e);
 #endif
 
   // These must be sorted in order, from smallest to biggest

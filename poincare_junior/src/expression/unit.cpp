@@ -1354,44 +1354,6 @@ Expression Unit::ConvertTemperatureUnits(
       unit.clone());
 }
 
-bool Unit::IsForbiddenTemperatureProduct(Expression e) {
-  assert(e.type() == ExpressionNode::Type::Multiplication);
-  if (e.numberOfChildren() != 2) {
-    /* A multiplication cannot contain a °C or °F if it does not have 2
-     * children, as otherwise the temperature would have reduced itself to
-     * undef. */
-    return false;
-  }
-  int temperatureChildIndex = -1;
-  for (int i = 0; i < 2; i++) {
-    Expression child = e.childAtIndex(i);
-    if (child.type() == ExpressionNode::Type::Unit &&
-        (static_cast<Unit&>(child).node()->representative() ==
-             k_temperatureRepresentatives + k_celsiusRepresentativeIndex ||
-         static_cast<Unit&>(child).node()->representative() ==
-             k_temperatureRepresentatives + k_fahrenheitRepresentativeIndex)) {
-      temperatureChildIndex = i;
-      break;
-    }
-  }
-  if (temperatureChildIndex < 0) {
-    return false;
-  }
-  if (e.childAtIndex(1 - temperatureChildIndex).hasUnit()) {
-    return true;
-  }
-  Expression p = e.parent();
-  if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
-      p.type() == ExpressionNode::Type::Store) {
-    return false;
-  }
-  Expression pp = p.parent();
-  return !(p.type() == ExpressionNode::Type::Opposite &&
-           (pp.isUninitialized() ||
-            pp.type() == ExpressionNode::Type::UnitConvert ||
-            pp.type() == ExpressionNode::Type::Store));
-}
-
 #endif
 
 bool Unit::AllowImplicitAddition(

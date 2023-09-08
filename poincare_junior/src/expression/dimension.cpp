@@ -6,14 +6,40 @@
 
 namespace PoincareJ {
 
+Dimension Dimension::Unit(const Tree* unit) {
+  DimensionVector vector = DimensionVector::FromBaseUnits(unit);
+  bool hasNonKelvin =
+      (vector == DimensionVector{.temperature = 1} &&
+       Unit::GetRepresentative(unit) != Unit::k_temperatureRepresentatives +
+                                            Unit::k_kelvinRepresentativeIndex);
+  return Unit(DimensionVector::FromBaseUnits(unit), hasNonKelvin);
+}
+
 bool Dimension::DeepCheckDimensions(const Tree* t) {
   Dimension childDim[t->numberOfChildren()];
+  bool hasUnitChild = false;
+  bool hasNonKelvinChild = false;
   for (int i = 0; const Tree* child : t->children()) {
     if (!DeepCheckDimensions(child)) {
       return false;
     }
-    childDim[i++] = GetDimension(child);
-    assert(childDim[i - 1].isSanitized());
+    childDim[i] = GetDimension(child);
+    if (childDim[i].isUnit()) {
+      // Cannot mix non-Kelvin temperature unit with any unit.
+      // TODO: UnitConvert should be able to handle this.
+      if (hasNonKelvinChild) {
+        return false;
+      }
+      if (childDim[i].hasNonKelvinTemperatureUnit()) {
+        if (hasUnitChild) {
+          return false;
+        }
+        hasNonKelvinChild = true;
+      }
+      hasUnitChild = true;
+    }
+    assert(childDim[i].isSanitized());
+    i++;
   }
   bool unitsAllowed = false;
   bool angleUnitsAllowed = false;
@@ -44,7 +70,12 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
           }
           cols = next.matrix.cols;
         } else if (next.isUnit()) {
-          unitVector.addAllCoefficients(next.unit,
+          if (hasNonKelvinChild && secondDivisionChild) {
+            // Cannot divide by non-Kelvin temperature unit
+            assert(next.hasNonKelvinTemperatureUnit());
+            return false;
+          }
+          unitVector.addAllCoefficients(next.unit.vector,
                                         secondDivisionChild ? -1 : 1);
         }
       }
@@ -62,6 +93,11 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       if (!childDim[0].isUnit()) {
         return true;
+      }
+      if (hasNonKelvinChild) {
+        assert(childDim[0].hasNonKelvinTemperatureUnit());
+        // Powers of non-Kelvin temperature unit are forbidden
+        return false;
       }
       const Tree* index = t->childAtIndex(1);
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
@@ -98,12 +134,17 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     default:
       assert(t->type().isScalarOnly());
     case BlockType::Matrix:
+      if (hasNonKelvinChild ||
+          (hasUnitChild && !(unitsAllowed || angleUnitsAllowed))) {
+        // Early escape. By default, non-Kelvin temperature unit are forbidden.
+        return false;
+      }
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (childDim[i].isScalar() ||
             (childDim[i].isUnit() &&
              (unitsAllowed ||
-              (angleUnitsAllowed && (childDim[i].unit.angle = 1) &&
-               (childDim[i].unit.supportSize() == 1))))) {
+              (angleUnitsAllowed && (childDim[i].unit.vector.angle = 1) &&
+               (childDim[i].unit.vector.supportSize() == 1))))) {
           continue;
         }
         return false;
@@ -118,6 +159,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Multiplication: {
       uint8_t rows = 0;
       uint8_t cols = 0;
+      bool hasNonKelvin;
       DimensionVector unitVector = DimensionVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {
@@ -128,12 +170,15 @@ Dimension Dimension::GetDimension(const Tree* t) {
           }
           cols = dim.matrix.cols;
         } else if (dim.isUnit()) {
-          unitVector.addAllCoefficients(dim.unit, secondDivisionChild ? -1 : 1);
+          unitVector.addAllCoefficients(dim.unit.vector,
+                                        secondDivisionChild ? -1 : 1);
+          hasNonKelvin = hasNonKelvin || dim.unit.hasNonKelvin;
         }
         secondDivisionChild = (t->type() == BlockType::Division);
       }
       return rows > 0 ? Matrix(rows, cols)
-                      : (unitVector.isEmpty() ? Scalar() : Unit(unitVector));
+                      : (unitVector.isEmpty() ? Scalar()
+                                              : Unit(unitVector, hasNonKelvin));
     }
     case BlockType::PowerMatrix:
     case BlockType::PowerReal:
@@ -143,9 +188,10 @@ Dimension Dimension::GetDimension(const Tree* t) {
         float index = Approximation::To<float>(t->childAtIndex(1));
         // TODO: Handle/forbid index > int8_t
         assert(!isnan(index) && std::abs(index) < static_cast<float>(INT8_MAX));
-        DimensionVector result = DimensionVector::Empty();
-        result.addAllCoefficients(dim.unit, static_cast<int8_t>(index));
-        return result;
+        DimensionVector unitVector = DimensionVector::Empty();
+        unitVector.addAllCoefficients(dim.unit.vector,
+                                      static_cast<int8_t>(index));
+        return Unit(unitVector, dim.unit.hasNonKelvin);
       }
     }
     case BlockType::Abs:
@@ -189,7 +235,8 @@ bool Dimension::operator==(const Dimension& other) const {
     return matrix.rows == other.matrix.rows && matrix.cols == other.matrix.cols;
   }
   if (type == Type::Unit) {
-    return unit == other.unit;
+    return unit.vector == other.unit.vector &&
+           unit.hasNonKelvin == other.unit.hasNonKelvin;
   }
   return true;
 }

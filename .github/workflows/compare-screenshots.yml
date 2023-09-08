@@ -22,7 +22,7 @@ jobs:
         run: make -j32 PLATFORM=simulator ASSERTIONS=1 epsilon.bin
       - name: Compare screenshot images
         run: python3 build/screenshots/${{ matrix.script-name }}.py output/release/simulator/linux/epsilon.bin
-      - name: Download output
+      - name: Upload output
         if: failure()
         uses: actions/upload-artifact@v3
         with:

@@ -148,14 +148,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
       char *const inputText = endOfCalculations() + sizeof(Calculation);
 
       // Parse and compute the expression
-      PoincareJ::Tree *exp =
+      PoincareJ::Tree *tree =
           PoincareJ::Expression::FromPoincareExpression(inputExpression);
-      PoincareJ::EditionReference ref = exp;
-      PoincareJ::Simplification::Simplify(ref);
-      exactOutputExpression = PoincareJ::Expression::ToPoincareExpression(ref);
-      ref->removeTree();
+      PoincareJ::Simplification::Simplify(tree);
+      double approx = PoincareJ::Approximation::To<double>(tree);
+      exactOutputExpression = PoincareJ::Expression::ToPoincareExpression(tree);
+      tree->removeTree();
       exactOutputExpression = exactOutputExpression.addMissingParentheses();
-      double approx = PoincareJ::Approximation::To<double>(exp);
       approximateOutputExpression = Poincare::Float<double>::Builder(approx);
 
       // Post-processing of store expression

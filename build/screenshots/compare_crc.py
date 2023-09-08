@@ -73,7 +73,7 @@ def main():
          helper.store_crc32(computed_crc32, os.path.join(computed_folder, "crc32.txt"))
 
          # Compare with ref
-         if not args.ref is None:
+         if args.ref is not None:
             print_underlined("Reference executable")
             reference_folder = os.path.join(output_scenario_folder, "reference")
             list_reference_images = helper.generate_all_screenshots_and_create_gif(state_file, args.ref, reference_folder)

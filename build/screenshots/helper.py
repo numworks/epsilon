@@ -103,7 +103,7 @@ def compute_and_store_crc32(state_file, executable, crc_file):
    store_crc32(crc32, crc_file)
 
 def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
-   p = Popen(" ".join(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff]), shell=True, stdout=DEVNULL, stderr=PIPE)
+   p = Popen(["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff], stdout=DEVNULL, stderr=PIPE)
    mae = p.stderr.read().decode().split(" ")[0]
    return mae == "0"
 

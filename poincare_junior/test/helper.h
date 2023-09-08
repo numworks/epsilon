@@ -88,7 +88,7 @@ inline void assert_pool_contains(Pool* pool,
 #define QUIZ_ASSERT(test)                                                     \
   if (!(test)) {                                                              \
     std::cerr << __FILE__ << ':' << __LINE__ << ": test failed" << std::endl; \
-    std::exit(1);                                                             \
+    abort();                                                                  \
   }
 
 inline void assertionsWarn() {

@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/simplification.h>
 
 #include "../n_ary.h"
+#include "poincare_junior/src/memory/type_block.h"
 
 using namespace PoincareJ;
 
@@ -215,7 +216,10 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         if (simplify) {
           Simplification::ShallowSystematicReduce(insertedNode);
         } else {
-          NAry::Sanitize(insertedNode);
+          // TODO proper fix
+          if (insertedNode->type() != BlockType::Set) {
+            NAry::Sanitize(insertedNode);
+          }
         }
         node = node->nextTree();
       } else if (withinNAry && numberOfChildren > 0) {

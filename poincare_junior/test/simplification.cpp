@@ -444,4 +444,9 @@ QUIZ_CASE(pcj_dependencies) {
   const Tree* r2 = KDep(KAdd(KMult(2_e, 3_e), 4_e, 5_e), KSet(0_e, 6_e));
   Dependency::ShallowBubbleUpDependencies(e2);
   QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
+
+  Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->clone();
+  const Tree* r3 = KDep(3_e, KSet("a"_e));
+  Simplification::Simplify(e3);
+  QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 }

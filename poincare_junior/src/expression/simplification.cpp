@@ -38,17 +38,21 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = (u->type() == BlockType::Multiplication ||
                    u->type() == BlockType::Addition) &&
                   NAry::Flatten(u);
+  bool hasFloatChild = false;
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
       u->cloneTreeOverTree(KUndef);
       return true;
     }
+    hasFloatChild = hasFloatChild || (child->type() == BlockType::Float);
   }
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
 #endif
-  bool shallowModified = ShallowSystematicReduce(u);
+  bool shallowModified =
+      (hasFloatChild && Approximation::ApproximateAndReplaceEveryScalar(u)) ||
+      ShallowSystematicReduce(u);
 #if ASSERTIONS
   assert(shallowModified != u->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();

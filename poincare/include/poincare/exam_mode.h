@@ -51,7 +51,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
 
   // Exam mode permissions
   bool forbidSolverApp() const {
-    return flags().forbidEquationSolver || ruleset() == Ruleset::Keystone ||
+    return flags().forbidEquationSolver || ruleset() == Ruleset::Pennsylvania ||
            ruleset() == Ruleset::SouthCarolina;
   }
   bool forbidElementsApp() const {
@@ -62,7 +62,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
   bool forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
   bool forbidGraphDetails() const {
     return flags().forbidGraphDetails || ruleset() == Ruleset::IBTest ||
-           ruleset() == Ruleset::Keystone || ruleset() == Ruleset::STAAR ||
+           ruleset() == Ruleset::Pennsylvania || ruleset() == Ruleset::STAAR ||
            ruleset() == Ruleset::SouthCarolina;
   }
   bool forbidInequalityGraphing() const {
@@ -70,7 +70,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
   }
   bool forbidImplicitPlots() const {
     return flags().forbidImplicitPlots || ruleset() == Ruleset::IBTest ||
-           ruleset() == Ruleset::Keystone || ruleset() == Ruleset::STAAR;
+           ruleset() == Ruleset::Pennsylvania || ruleset() == Ruleset::STAAR;
   }
   bool forbidStatsDiagnostics() const { return flags().forbidStatsDiagnostics; }
   bool forbidVectorProduct() const {
@@ -87,7 +87,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
   }
   bool forbidExactResults() const {
     return flags().forbidExactResults || ruleset() == Ruleset::Dutch ||
-           ruleset() == Ruleset::Keystone ||
+           ruleset() == Ruleset::Pennsylvania ||
            ruleset() == Ruleset::SouthCarolina;
   }
 

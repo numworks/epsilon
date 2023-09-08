@@ -82,14 +82,12 @@ class Pool {
 #endif
 
  public:
-  Tree::ConstNodeRange allNodes() {
-    return Tree::ConstNodeRange(Tree::FromBlocks(firstBlock()),
-                                Tree::FromBlocks(lastBlock()));
+  Tree::ConstNodes allNodes() {
+    return Tree::ConstNodes(Tree::FromBlocks(firstBlock()), numberOfTrees());
   }
 
-  Tree::ConstTreeRange trees() {
-    return Tree::ConstTreeRange(Tree::FromBlocks(firstBlock()),
-                                Tree::FromBlocks(lastBlock()));
+  Tree::ConstTrees trees() {
+    return Tree::ConstTrees(Tree::FromBlocks(firstBlock()), numberOfTrees());
   }
 };
 

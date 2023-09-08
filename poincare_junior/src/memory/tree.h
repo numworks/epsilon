@@ -191,60 +191,85 @@ class Tree {
   Tree* detachNode() { return detach(false); };
   Tree* detachTree() { return detach(true); };
 
+ private:
   // Iterators
+  template <typename T>
   class AbstractIterator {
    public:
-    AbstractIterator(const Tree* node) : m_node(node) {}
-    const Tree* operator*() { return m_node; }
+    using Type = T;
+    AbstractIterator(Type node, int remaining)
+        : m_node(node), m_remaining(remaining) {}
+    Type operator*() { return m_node; }
     bool operator!=(const AbstractIterator& it) const {
-      return m_node != it.m_node;
+      // All Iterators with nothing remaining compare equal
+      return m_remaining > 0 && m_node != it.m_node;
     }
 
    protected:
-    const Tree* m_node;
+    Type m_node;
+    int m_remaining;
   };
 
   template <class Iterator>
-  class ConstRange final {
+  class ElementList final {
+    using Type = typename Iterator::Type;
+
    public:
-    ConstRange(const Tree* begin, const Tree* end)
-        : m_begin(begin), m_end(end) {}
-    Iterator begin() const { return m_begin; }
-    Iterator end() const { return m_end; }
+    ElementList(Type begin, int remaining)
+        : m_begin(begin), m_remaining(remaining) {}
+    Iterator begin() const { return Iterator(m_begin, m_remaining); }
+    Iterator end() const { return Iterator(nullptr, 0); }
 
    private:
-    const Tree* m_begin;
-    const Tree* m_end;
+    Type m_begin;
+    int m_remaining;
   };
 
-  class ConstTreeIterator : public AbstractIterator {
+  template <typename T>
+  class ChildrenIterator : public AbstractIterator<T> {
+    using Parent = AbstractIterator<T>;
+
    public:
-    using AbstractIterator::AbstractIterator;
-    ConstTreeIterator& operator++() {
-      m_node = m_node->nextTree();
+    using Parent::AbstractIterator;
+    ChildrenIterator<T>& operator++() {
+      Parent::m_remaining--;
+      Parent::m_node = Parent::m_node->nextTree();
       return *this;
     }
   };
 
-  class ConstNodeIterator : public AbstractIterator {
+  template <typename T>
+  class DescendantsIterator : public AbstractIterator<T> {
+    using Parent = AbstractIterator<T>;
+
    public:
-    using AbstractIterator::AbstractIterator;
-    ConstNodeIterator& operator++() {
-      m_node = m_node->nextNode();
+    using Parent::AbstractIterator;
+    DescendantsIterator<T>& operator++() {
+      Parent::m_remaining += Parent::m_node->numberOfChildren() - 1;
+      Parent::m_node = Parent::m_node->nextNode();
       return *this;
     }
   };
 
-  using ConstNodeRange = ConstRange<ConstNodeIterator>;
-  using ConstTreeRange = ConstRange<ConstTreeIterator>;
+ public:
+  using ConstTrees = ElementList<ChildrenIterator<const Tree*>>;
+  using Trees = ElementList<ChildrenIterator<Tree*>>;
+  using ConstNodes = ElementList<DescendantsIterator<const Tree*>>;
+  using Nodes = ElementList<DescendantsIterator<Tree*>>;
 
-  ConstTreeRange children() const {
-    return ConstTreeRange(nextNode(), nextTree());
-  }
+  ConstTrees selfAndChildren() const { return {this, 1}; }
+  ConstNodes selfAndDescendants() const { return {this, 1}; }
+  // Do not alter number of children while iterating
+  Trees selfAndChildren() { return {this, 1}; }
+  // Do not alter number of children while iterating
+  Nodes selfAndDescendants() { return {this, 1}; }
 
-  ConstNodeRange descendants() const {
-    return ConstNodeRange(nextNode(), nextTree());
-  }
+  ConstTrees children() const { return {nextNode(), numberOfChildren()}; }
+  ConstNodes descendants() const { return {nextNode(), numberOfChildren()}; }
+  // Do not alter number of children while iterating
+  Trees children() { return {nextNode(), numberOfChildren()}; }
+  // Do not alter number of children while iterating
+  Nodes descendants() { return {nextNode(), numberOfChildren()}; }
 
  private:
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,

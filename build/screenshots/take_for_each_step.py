@@ -9,7 +9,7 @@ parser.add_argument('-o', '--output_folder', default='screenshots_each_step', he
 
 def main():
    args = parser.parse_args()
-   helper.generate_all_screenshots_and_create_gif(args.state_file, args.executable, args.output_folder)
+   helper.generate_all_screenshots_and_create_gif(args.state_file, args.executable, args.output_folder, False)
 
 if __name__ == "__main__":
     main()

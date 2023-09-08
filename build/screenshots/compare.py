@@ -2,6 +2,7 @@ import sys, os, shutil, argparse
 from datetime import datetime
 import helper
 import args_types
+from print_format import print_bold, red, green
 
 parser = argparse.ArgumentParser(description='This script compares the screenshots of the test screenshots dataset with screenshots generated from a given epsilon executable.')
 parser.add_argument('executable', metavar='EXE', type=args_types.existing_file, help='epsilon executable to test')
@@ -52,10 +53,10 @@ def main():
          os.remove(screenshot_1)
          os.remove(screenshot_2)
          os.remove(screenshot_diff)
-         print('\033[1m' + scenario_folder + '\t \033[32mOK\033[0m')
+         print_bold(scenario_folder + '\t' + green("OK"))
       else:
          fails = fails + 1
-         print('\033[1m' + scenario_folder + '\t \033[31mFAILED\033[0m')
+         print_bold(scenario_folder + '\t' + red("FAILED"))
 
    # Print report
    helper.print_report(fails, count)

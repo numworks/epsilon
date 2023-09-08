@@ -2,7 +2,7 @@ import sys, os, shutil, argparse
 import helper
 import args_types
 
-parser = argparse.ArgumentParser(description='This script adds a scenario to the test screenshots dataset. It takes a state file, generates its screenshot, computes its crc32 and place them is a subfolder of the screenshots dataset.')
+parser = argparse.ArgumentParser(description='This script adds a scenario to the test screenshots dataset. It takes a state file, generates its screenshot, computes its crc32 and place them in a subfolder of the screenshots dataset.')
 parser.add_argument('executable', metavar='EXE', type=args_types.existing_file, help='epsilon executable')
 parser.add_argument('state_file', metavar='STATE_FILE', type=args_types.existing_state_file, help='state file (with extension .nws)')
 parser.add_argument('-n', '--name', help='name of the subfolder (if no name is given, we take the name of the state file)')

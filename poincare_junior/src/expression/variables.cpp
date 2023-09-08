@@ -27,13 +27,17 @@ const Tree* Variables::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->childAtIndex(id);
 }
 
-Tree* Variables::GetVariables(const Tree* t) {
+Tree* Variables::GetVariables(const Tree* expr) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
-  for (const Tree* child : t->descendants()) {
+  const Tree* child = expr;
+  int remainingNodes = 1;
+  while (remainingNodes) {
     if (child->type() == BlockType::UserSymbol) {
       Set::Add(set, child);
     }
+    remainingNodes += child->numberOfChildren() - 1;
+    child = child->nextNode();
   }
   return set;
 }

@@ -222,6 +222,7 @@ void simplifies_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_basic_simplification) {
+  simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
   simplifies_to("(2*3(2^2)) + 2*2", "28");
@@ -233,8 +234,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*(a*a)", "a^(3)");
   simplifies_to("(a*b)^2", "a^(2)*b^(2)");
   simplifies_to("(a*b*c)^2", "a^(2)*b^(2)*c^(2)");
-  // simplifies_to("a*a^(-1)", "1"); // FIXME
-  // simplifies_to("2*a^1*(2a)^(-1)", "1");
   simplifies_to("(x^3)^2", "x^(6)");
   simplifies_to("a*a*a", "a^(3)");
   simplifies_to("a*a*a*b", "b*a^(3)");
@@ -309,6 +308,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a*a^(1+1)", "a^(3)");
   simplifies_to("a*a^(-1)", "1", {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
+  simplifies_to("2*a^1*(2a)^(-1)", "1");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
   // Complexes

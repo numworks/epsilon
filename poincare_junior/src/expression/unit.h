@@ -194,7 +194,6 @@ class UnitRepresentative {
                                const UnitPrefix** prefix) const;
   bool canParse(const char* symbol, size_t length,
                 const UnitPrefix** prefix) const;
-  Tree* toBaseUnits() const;
   bool canPrefix(const UnitPrefix* prefix, bool input) const;
 #if 0
   const UnitPrefix* findBestPrefix(double value, double exponent) const;

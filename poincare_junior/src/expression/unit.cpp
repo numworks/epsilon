@@ -356,20 +356,6 @@ bool UnitRepresentative::canParse(const char* symbol, size_t length,
   return false;
 }
 
-Tree* UnitRepresentative::toBaseUnits() const {
-  Tree* result = SharedEditionPool->push<BlockType::Multiplication>(3);
-  IntegerHandler::Power(IntegerHandler(10),
-                        IntegerHandler(-basePrefix()->exponent()));
-  ratioExpressionReduced();
-  if (isBaseUnit()) {
-    result = Unit::Push(this, basePrefix());
-  } else {
-    result = dimensionVector().toBaseUnits();
-  }
-  Simplification::SimplifyMultiplication(result);
-  return result;
-}
-
 bool UnitRepresentative::canPrefix(const UnitPrefix* prefix, bool input) const {
   Prefixable prefixable = (input) ? m_inputPrefixable : m_outputPrefixable;
   if (prefix->exponent() == 0) {

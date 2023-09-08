@@ -30,13 +30,14 @@ def get_file_with_extension(folder, file_extension):
 def list_images_in_folder(folder):
    return [image.as_posix() for image in sorted(Path(folder).glob("*.png"))]
 
-def print_error(stderr):
+def print_error(stderr, exit = True):
    err = stderr.read().decode()
    if err:
       if err[-1] == "\n":
          err = err[:-1]
       print(err)
-      sys.exit(1)
+      if exit:
+         sys.exit(1)
 
 def generate_screenshot(state_file, executable, screenshot):
    print("Generating screenshot of", state_file)
@@ -46,11 +47,11 @@ def generate_screenshot(state_file, executable, screenshot):
       print("Error: couldn't take screenshot")
       sys.exit(1)
 
-def generate_all_screenshots(state_file, executable, folder):
+def generate_all_screenshots(state_file, executable, folder, exit_if_error = True):
    print("Generating all screenshots of", state_file)
    clean_or_create_folder(folder)
    p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --take-all-screenshots " + folder, shell=True, stdout=DEVNULL, stderr=PIPE)
-   print_error(p.stderr)
+   print_error(p.stderr, exit_if_error)
    list_images = list_images_in_folder(folder)
    if len(list_images) == 0:
       print("Error: no screenshots taken")
@@ -68,9 +69,9 @@ def create_gif(list_images, folder, gif_name = "scenario"):
       sys.exit(1)
    print("Done, gif created in", folder)
 
-def generate_all_screenshots_and_create_gif(state_file, executable, folder):
+def generate_all_screenshots_and_create_gif(state_file, executable, folder, exit_if_error = True):
    clean_or_create_folder(folder)
-   list_images = generate_all_screenshots(state_file, executable, os.path.join(folder, "images"))
+   list_images = generate_all_screenshots(state_file, executable, os.path.join(folder, "images"), exit_if_error)
    create_gif(list_images, folder)
    return list_images
 

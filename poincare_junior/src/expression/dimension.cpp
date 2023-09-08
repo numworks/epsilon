@@ -7,12 +7,8 @@
 namespace PoincareJ {
 
 Dimension Dimension::Unit(const Tree* unit) {
-  DimensionVector vector = DimensionVector::FromBaseUnits(unit);
-  bool hasNonKelvin =
-      (vector == DimensionVector{.temperature = 1} &&
-       Unit::GetRepresentative(unit) != Unit::k_temperatureRepresentatives +
-                                            Unit::k_kelvinRepresentativeIndex);
-  return Unit(DimensionVector::FromBaseUnits(unit), hasNonKelvin);
+  return Unit(DimensionVector::FromBaseUnits(unit),
+              Unit::GetRepresentative(unit));
 }
 
 bool Dimension::DeepCheckDimensions(const Tree* t) {
@@ -159,7 +155,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Multiplication: {
       uint8_t rows = 0;
       uint8_t cols = 0;
-      bool hasNonKelvin;
+      const UnitRepresentative* representative = nullptr;
       DimensionVector unitVector = DimensionVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {
@@ -172,13 +168,15 @@ Dimension Dimension::GetDimension(const Tree* t) {
         } else if (dim.isUnit()) {
           unitVector.addAllCoefficients(dim.unit.vector,
                                         secondDivisionChild ? -1 : 1);
-          hasNonKelvin = hasNonKelvin || dim.unit.hasNonKelvin;
+          representative = dim.unit.representative;
         }
         secondDivisionChild = (t->type() == BlockType::Division);
       }
-      return rows > 0 ? Matrix(rows, cols)
-                      : (unitVector.isEmpty() ? Scalar()
-                                              : Unit(unitVector, hasNonKelvin));
+      // If other than a non-kelvin temperature, representative doesn't matter.
+      return rows > 0
+                 ? Matrix(rows, cols)
+                 : (unitVector.isEmpty() ? Scalar()
+                                         : Unit(unitVector, representative));
     }
     case BlockType::PowerMatrix:
     case BlockType::PowerReal:
@@ -191,7 +189,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
         DimensionVector unitVector = DimensionVector::Empty();
         unitVector.addAllCoefficients(dim.unit.vector,
                                       static_cast<int8_t>(index));
-        return Unit(unitVector, dim.unit.hasNonKelvin);
+        return Unit(unitVector, dim.unit.representative);
       }
     }
     case BlockType::Abs:
@@ -236,7 +234,7 @@ bool Dimension::operator==(const Dimension& other) const {
   }
   if (type == Type::Unit) {
     return unit.vector == other.unit.vector &&
-           unit.hasNonKelvin == other.unit.hasNonKelvin;
+           unit.representative == other.unit.representative;
   }
   return true;
 }

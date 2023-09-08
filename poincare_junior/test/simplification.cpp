@@ -384,11 +384,11 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("2_month*7_dm", "3681720.000000*_s*_m");
   simplifies_to("2*_m/_m", "2.000000");
 
-  // TODO: C -> K <- F ratio
-  simplifies_to("4_°C", "4.000000*_K");
+  simplifies_to("4_°C", "4.000000*_°C");
   // Note: this used to be undef in previous Poincare.
-  simplifies_to("((4-2)_°C)*2", "4.000000*_K");
-  simplifies_to("8_°C/2", "4.000000*_K");
+  simplifies_to("((4-2)_°C)*2", "4.000000*_°C");
+  simplifies_to("((4-2)_°F)*2", "4.000000*_°F");
+  simplifies_to("8_°C/2", "4.000000*_°C");
 
   simplifies_to("2_K+2_K", "4.000000*_K");
   simplifies_to("2_K*2_K", "4.000000*_K^(2)");

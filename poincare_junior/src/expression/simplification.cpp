@@ -838,8 +838,14 @@ bool Simplification::DeepBeautify(Tree* node,
   bool appendUnits = (projectionContext.m_dimension.isUnit());
   if (appendUnits) {
     assert(!projectionContext.m_dimension.unit.vector.isEmpty());
-    EditionReference baseUnits =
-        projectionContext.m_dimension.unit.vector.toBaseUnits();
+    EditionReference baseUnits;
+    if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
+      assert(projectionContext.m_dimension.unit.vector.supportSize() == 1);
+      baseUnits = Unit::Push(projectionContext.m_dimension.unit.representative,
+                             UnitPrefix::EmptyPrefix());
+    } else {
+      baseUnits = projectionContext.m_dimension.unit.vector.toBaseUnits();
+    }
     DeepSystematicReduce(baseUnits);
     node->moveTreeOverTree(
         PatternMatching::Create(KMult(KA, KB), {.KA = node, .KB = baseUnits}));

@@ -1131,13 +1131,14 @@ class Unit {
   constexpr static const CurrentRepresentative k_currentRepresentatives[] = {
       CurrentRepresentative("A", KTree(1.0_e).k_blocks, Prefixable::All,
                             Prefixable::LongScale)};
+  // Ratios are 1.0 because temperatures conversion are an exception.
   constexpr static const TemperatureRepresentative
       k_temperatureRepresentatives[] = {
           TemperatureRepresentative("K", KTree(1.0_e).k_blocks, Prefixable::All,
                                     Prefixable::None),
           TemperatureRepresentative("°C", KTree(1.0_e).k_blocks,
                                     Prefixable::None, Prefixable::None),
-          TemperatureRepresentative("°F", KDiv(5.0_e, 9.0_e).k_blocks,
+          TemperatureRepresentative("°F", KTree(1.0_e).k_blocks,
                                     Prefixable::None, Prefixable::None),
   };
   constexpr static const AmountOfSubstanceRepresentative

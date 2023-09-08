@@ -434,9 +434,6 @@ template <class T>
 T *ValuesController::parameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (!functionStore()->modelForRecord(record)->properties().isCartesian()) {
-    return nullptr;
-  }
   if (isDerivative) {
     m_derivativeParameterController.setRecord(record);
     return &m_derivativeParameterController;

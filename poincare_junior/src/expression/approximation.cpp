@@ -84,13 +84,9 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
   }
   bool changed = false;
   bool approximateNode = true;
-  Tree* child = tree->nextNode();
-  int numberOfChildren = tree->numberOfChildren();
-  for (std::pair<Tree*, int> indexedNode :
-       NodeIterator::Children<Editable>(tree)) {
-    changed = ApproximateAndReplaceEveryScalar(indexedNode.first) || changed;
-    approximateNode =
-        approximateNode && indexedNode.first->type() == BlockType::Float;
+  for (Tree* child : tree->children()) {
+    changed = ApproximateAndReplaceEveryScalar(child) || changed;
+    approximateNode = approximateNode && child->type() == BlockType::Float;
   }
   if (!approximateNode) {
     // TODO: Partially approximate additions and multiplication anyway

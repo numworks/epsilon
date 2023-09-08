@@ -76,12 +76,12 @@ class Tree {
   Tree* firstChild() { return nextNode(); }
   const Tree* nextTree() const {
     const Tree* result = this;
-    int nbOfChildrenToScan = result->numberOfChildren();
+    int nbOfChildrenToScan = 1;
     while (nbOfChildrenToScan > 0) {
-      result = result->nextNode();
       nbOfChildrenToScan += result->numberOfChildren() - 1;
+      result = result->nextNode();
     }
-    return result->nextNode();
+    return result;
   }
   Tree* nextTree() { return Utils::DeconstifyPtr(&Tree::nextTree, this); };
 

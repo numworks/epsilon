@@ -185,10 +185,8 @@ bool Derivation::CloneReplacingSymbolRec(const Tree *expression,
     // Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
   }
   bool changed = false;
-  for (std::pair<const Tree *, int> indexedNode :
-       NodeIterator::Children<NoEditable>(expression)) {
-    changed = CloneReplacingSymbolRec(indexedNode.first, symbol, symbolValue) ||
-              changed;
+  for (const Tree *child : expression->children()) {
+    changed = CloneReplacingSymbolRec(child, symbol, symbolValue) || changed;
   }
   if (changed) {
     Simplification::ShallowSystematicReduce(result);

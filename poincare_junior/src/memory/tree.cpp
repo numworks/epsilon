@@ -274,11 +274,9 @@ const Tree* Tree::parentOfDescendant(const Tree* descendant,
 
 int Tree::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  const Tree* nextTreeNode = nextTree();
-  const Tree* currentNode = nextNode();
-  while (currentNode != nextTreeNode) {
+  for (const Tree* currentNode : descendants()) {
+    (void)currentNode;
     result++;
-    currentNode = currentNode->nextNode();
   }
   return result;
 }

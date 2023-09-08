@@ -30,44 +30,32 @@ const Tree* Variables::ToSymbol(const Tree* variables, uint8_t id) {
 Tree* Variables::GetVariables(const Tree* expr) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
-  const Tree* child = expr;
-  int remainingNodes = 1;
-  while (remainingNodes) {
+  for (const Tree* child : expr->selfAndDescendants()) {
     if (child->type() == BlockType::UserSymbol) {
       Set::Add(set, child);
     }
-    remainingNodes += child->numberOfChildren() - 1;
-    child = child->nextNode();
   }
   return set;
 }
 
 void Variables::ProjectToId(Tree* expr, const Tree* variables) {
   assert(SharedEditionPool->isAfter(variables, expr));
-  Tree* child = expr;
-  int remainingNodes = 1;
-  while (remainingNodes) {
+  for (Tree* child : expr->selfAndDescendants()) {
     if (child->type() == BlockType::UserSymbol) {
       Tree* var = SharedEditionPool->push<BlockType::Variable>(
           ToId(variables, Symbol::NonNullTerminatedName(child),
                Symbol::Length(child)));
       child->moveNodeOverNode(var);
     }
-    remainingNodes += child->numberOfChildren() - 1;
-    child = child->nextNode();
   }
 }
 
 void Variables::BeautifyToName(Tree* expr, const Tree* variables) {
   assert(SharedEditionPool->isAfter(variables, expr));
-  Tree* child = expr;
-  int remainingNodes = 1;
-  while (remainingNodes) {
+  for (Tree* child : expr->selfAndDescendants()) {
     if (child->type() == BlockType::Variable) {
       child->cloneNodeOverNode(Variables::ToSymbol(variables, Id(child)));
     }
-    remainingNodes += child->numberOfChildren() - 1;
-    child = child->nextNode();
   }
 }
 

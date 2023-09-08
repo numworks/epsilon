@@ -37,16 +37,12 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = (u->type() == BlockType::Multiplication ||
                    u->type() == BlockType::Addition) &&
                   NAry::Flatten(u);
-  int numberOfChildren = u->numberOfChildren();
-  Tree* child = u->nextNode();
-  while (numberOfChildren > 0) {
+  for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
       u->cloneTreeOverTree(KUndef);
       return true;
     }
-    child = child->nextTree();
-    numberOfChildren--;
   }
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
@@ -362,7 +358,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->type() == BlockType::Multiplication) {
-    for (auto [w, index] : NodeIterator::Children<Editable>(v)) {
+    for (Tree* w : v->children()) {
       EditionReference m = SharedEditionPool->push<BlockType::Power>();
       w->clone();
       n->clone();
@@ -805,11 +801,8 @@ bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
     return false;
   }
   bool changed = false;
-  for (std::pair<EditionReference, int> indexedNode :
-       NodeIterator::Children<Editable>(ref)) {
-    changed =
-        AdvancedReduction(std::get<EditionReference>(indexedNode), root) ||
-        changed;
+  for (Tree* child : ref->children()) {
+    changed = AdvancedReduction(child, root) || changed;
   }
   if (changed) {
     ShallowSystematicReduce(ref);
@@ -983,15 +976,10 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
 bool Simplification::ApplyShallowInDepth(Tree* ref,
                                          ShallowOperation shallowOperation,
                                          void* context) {
-  bool changed = shallowOperation(ref, context);
-  int treesToProject = ref->numberOfChildren();
-  Tree* node = ref->nextNode();
-  while (treesToProject > 0) {
-    treesToProject--;
+  bool changed = false;
+  for (Tree* node : ref->selfAndDescendants()) {
     changed = shallowOperation(node, context) || changed;
     assert(!shallowOperation(node, context));
-    treesToProject += node->numberOfChildren();
-    node = node->nextNode();
   }
   return changed;
 }
@@ -1306,21 +1294,17 @@ bool Simplification::ExpandMult(Tree* ref) {
   if (ref->type() != BlockType::Multiplication) {
     return false;
   }
-  Tree* child = ref->nextNode();
-  int numberOfChildren = ref->numberOfChildren();
   // Find the NAry in children
   int childIndex = 0;
-  while (childIndex < numberOfChildren &&
-         child->type() != BlockType::Addition) {
+  for (Tree* child : ref->children()) {
+    if (child->type() == BlockType::Addition) {
+      return DistributeOverNAry(ref, BlockType::Multiplication,
+                                BlockType::Addition, BlockType::Addition,
+                                ExpandMultSubOperation, childIndex);
+    }
     childIndex++;
-    child = child->nextTree();
   }
-  if (childIndex >= numberOfChildren) {
-    return false;
-  }
-  return DistributeOverNAry(ref, BlockType::Multiplication, BlockType::Addition,
-                            BlockType::Addition, ExpandMultSubOperation,
-                            childIndex);
+  return false;
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {
@@ -1479,12 +1463,9 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
 }
 
 bool Simplification::DeepApplyMatrixOperators(Tree* tree) {
-  int n = tree->numberOfChildren();
-  Tree* child = tree->nextNode();
   bool changed = false;
-  while (n--) {
+  for (Tree* child : tree->children()) {
     changed |= DeepApplyMatrixOperators(child);
-    child = child->nextTree();
   }
   changed |= ShallowApplyMatrixOperators(tree);
   return changed;

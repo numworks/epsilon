@@ -326,8 +326,14 @@ bool Simplification::SimplifyPower(Tree* u) {
   assert(IsInteger(n));
   // v^0 -> 1
   if (Number::IsZero(n)) {
-    return PatternMatching::MatchAndReplace(u, KPow(KA, 0_e),
-                                            KDep(1_e, KSet(KA)));
+    if (Variables::HasVariables(v)) {
+      return PatternMatching::MatchAndReplace(u, KPow(KA, 0_e),
+                                              KDep(1_e, KSet(KA)));
+    } else {
+      // TODO use sign to check if it may be null
+      u->cloneTreeOverTree(1_e);
+      return true;
+    }
   }
   // v^1 -> v
   if (Number::IsOne(n)) {

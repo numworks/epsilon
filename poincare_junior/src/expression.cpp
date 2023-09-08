@@ -275,6 +275,9 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:
+      // TODO
+      ConvertExpressionToLayout(layoutParent, expression->nextNode());
+      break;
     case BlockType::List:
     case BlockType::Polynomial:
     default:

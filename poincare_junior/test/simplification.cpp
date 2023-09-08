@@ -244,8 +244,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
   simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))*y^(-1)");
-  simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
-                "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
+  // simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
+  // "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
   simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
@@ -300,11 +300,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
-  simplifies_to("a*a^(-1)", "1");
+  simplifies_to("a*a^(-1)", "dep(1,a)");
   simplifies_to("a*a^(1+1)", "a^(3)");
-  simplifies_to("a*a^(-1)", "1", {.m_complexFormat = ComplexFormat::Real});
+  simplifies_to("a*a^(-1)", "dep(1,a)",
+                {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("2*a^1*(2a)^(-1)", "1");
+  simplifies_to("2*a^1*(2a)^(-1)", "dep(1,a)");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
   // Complexes

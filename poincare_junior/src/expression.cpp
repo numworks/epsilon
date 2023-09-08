@@ -15,6 +15,8 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "poincare_junior/src/expression/symbol.h"
+
 namespace PoincareJ {
 
 void Expression::ConvertTextToLayout(EditionReference layoutParent,
@@ -245,11 +247,11 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
               Constant::ToCodePoint(Constant::Type(expression))));
       break;
     case BlockType::UserSymbol:
-      assert(*reinterpret_cast<const uint8_t *>(expression->block() + 1) == 1);
+      assert(Symbol::Length(expression) == 1);
       NAry::AddChild(
           layoutParent,
           SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-              *reinterpret_cast<const char *>(expression->block() + 2)));
+              *Symbol::NonNullTerminatedName(expression)));
       break;
     case BlockType::Undefined:
       ConvertTextToLayout(layoutParent, "undef");

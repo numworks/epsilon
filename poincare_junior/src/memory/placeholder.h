@@ -48,7 +48,7 @@ class Placeholder {
   }
   constexpr static uint8_t NodeToValue(const Tree* placeholder) {
     assert(placeholder->type() == BlockType::Placeholder);
-    return static_cast<uint8_t>(*(placeholder->block()->next()));
+    return placeholder->nodeValue(0);
   }
   constexpr static Tag ValueToTag(uint8_t value) {
     return static_cast<Tag>(Bit::getBitRange(value, k_bitsForTag - 1, 0));

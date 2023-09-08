@@ -31,25 +31,23 @@ Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
 
 uint8_t Polynomial::ExponentAtIndex(const Tree* polynomial, int index) {
   assert(index >= 0 && index < NumberOfTerms(polynomial));
-  return static_cast<uint8_t>(*(polynomial->block()->nextNth(2 + index)));
+  return polynomial->nodeValue(1 + index);
 }
 
 void Polynomial::SetExponentAtIndex(Tree* polynomial, int index,
                                     uint8_t exponent) {
-  Block* exponentsAddress = polynomial->block() + 2;
-  *(exponentsAddress + index) = exponent;
+  polynomial->setNodeValue(1 + index, exponent);
 }
 
 void Polynomial::InsertExponentAtIndex(Tree* polynomial, int index,
                                        uint8_t exponent) {
-  Block* exponentsAddress = polynomial->block() + 2;
-  SharedEditionPool->insertBlock(exponentsAddress + index, ValueBlock(exponent),
-                                 true);
+  ValueBlock* exponentsAddress = polynomial->nodeValueBlock(1 + index);
+  SharedEditionPool->insertBlock(exponentsAddress, ValueBlock(exponent), true);
 }
 
 void Polynomial::RemoveExponentAtIndex(Tree* polynomial, int index) {
-  Block* exponentsAddress = polynomial->block() + 2;
-  SharedEditionPool->removeBlocks(exponentsAddress + index, 1);
+  ValueBlock* exponentsAddress = polynomial->nodeValueBlock(1 + index);
+  SharedEditionPool->removeBlocks(exponentsAddress, 1);
 }
 
 void Polynomial::AddMonomial(EditionReference polynomial,

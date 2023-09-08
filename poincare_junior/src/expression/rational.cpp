@@ -24,13 +24,13 @@ IntegerHandler Rational::Numerator(const Tree* node) {
     case BlockType::Half:
       return IntegerHandler(1);
     case BlockType::IntegerShort: {
-      int8_t value = static_cast<int8_t>(*(node->block()->next()));
+      int8_t value = static_cast<int8_t>(node->nodeValue(0));
       return IntegerHandler(value);
     }
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig: {
       const Block* block = node->block();
-      uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
+      uint8_t numberOfDigits = node->nodeValue(0);
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(2));
       return IntegerHandler(digits, numberOfDigits,
@@ -39,13 +39,13 @@ IntegerHandler Rational::Numerator(const Tree* node) {
                                 : NonStrictSign::Positive);
     }
     case BlockType::RationalShort: {
-      int8_t value = static_cast<int8_t>(*(node->block()->next()));
+      int8_t value = static_cast<int8_t>(node->nodeValue(0));
       return IntegerHandler(value);
     }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
       const Block* block = node->block();
-      uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
+      uint8_t numberOfDigits = node->nodeValue(0);
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(3));
       return IntegerHandler(digits, numberOfDigits,
@@ -71,15 +71,13 @@ IntegerHandler Rational::Denominator(const Tree* node) {
     case BlockType::Half:
       return IntegerHandler(2);
     case BlockType::RationalShort: {
-      uint8_t value = static_cast<uint8_t>(*(node->block()->nextNth(2)));
-      return IntegerHandler(value);
+      return IntegerHandler(node->nodeValue(1));
     }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
       const Block* block = node->block();
-      uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(block->next()));
-      uint8_t denominatorNumberOfDigits =
-          static_cast<uint8_t>(*(block->nextNth(2)));
+      uint8_t numeratorNumberOfDigits = node->nodeValue(0);
+      uint8_t denominatorNumberOfDigits = node->nodeValue(1);
       const uint8_t* digits = reinterpret_cast<const uint8_t*>(
           block->nextNth(3 + numeratorNumberOfDigits));
       return IntegerHandler(digits, denominatorNumberOfDigits,

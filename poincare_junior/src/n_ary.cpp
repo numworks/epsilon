@@ -46,8 +46,7 @@ void NAry::RemoveChildAtIndex(Tree* nary, int index) {
 void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
   assert(nary->isNAry());
   assert(numberOfChildren < UINT8_MAX);
-  Block* numberOfChildrenBlock = nary->block()->next();
-  *numberOfChildrenBlock = numberOfChildren;
+  nary->setNodeValue(0, numberOfChildren);
 }
 
 bool NAry::Flatten(Tree* nary) {

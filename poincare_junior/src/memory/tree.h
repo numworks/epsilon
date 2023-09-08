@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "type_block.h"
+#include "value_block.h"
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>
@@ -61,10 +62,19 @@ class Tree {
                  int indentation = 0) const;
 #endif
 
-  const Block block(uint8_t i) const {
-    assert(i < nodeSize());
-    return m_block[i];
+  // Get the i-th value block (after the type block)
+  constexpr uint8_t nodeValue(uint8_t index) const {
+    assert(index + 1 < nodeSize());
+    return static_cast<uint8_t>(m_block[index + 1]);
   }
+  void setNodeValue(int index, uint8_t value) {
+    assert(index + 1 < nodeSize());
+    m_block[index + 1] = Block(value);
+  }
+  ValueBlock* nodeValueBlock(int index) {
+    return static_cast<ValueBlock*>(&m_block[index + 1]);
+  }
+
   constexpr const Block* block() const { return m_block; }
   constexpr Block* block() { return m_block; }
   void copyTreeTo(void* address) const;

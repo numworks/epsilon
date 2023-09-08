@@ -79,9 +79,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     if (type() == BlockType::Polynomial) {
       for (int i = 0; i < Polynomial::NumberOfTerms(this); i++) {
         stream << " exponent" << i << "=\""
-               << static_cast<int>(
-                      static_cast<uint8_t>(*(block()->nextNth(2 + i))))
-               << "\"";
+               << static_cast<int>(nodeValue(1 + i)) << "\"";
       }
     }
     return;

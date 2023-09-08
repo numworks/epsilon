@@ -7,18 +7,16 @@ namespace PoincareJ {
 
 struct Matrix {
   static uint8_t NumberOfRows(const Tree* matrix) {
-    return static_cast<uint8_t>(matrix->block(1));
+    return matrix->nodeValue(0);
   }
   static uint8_t NumberOfColumns(const Tree* matrix) {
-    return static_cast<uint8_t>(matrix->block(2));
+    return matrix->nodeValue(1);
   }
   static void SetNumberOfRows(Tree* matrix, uint8_t rows) {
-    Block* nbRows = matrix->block() + 1;
-    *(nbRows) = rows;
+    matrix->setNodeValue(0, rows);
   }
   static void SetNumberOfColumns(Tree* matrix, uint8_t cols) {
-    Block* nbCols = matrix->block() + 2;
-    *(nbCols) = cols;
+    matrix->setNodeValue(1, cols);
   }
   static Tree* Child(Tree* matrix, uint8_t row, uint8_t col) {
     assert(col < NumberOfColumns(matrix));

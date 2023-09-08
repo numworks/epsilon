@@ -7,9 +7,7 @@ namespace PoincareJ {
 
 class Symbol final {
  public:
-  static uint8_t Length(const Tree* node) {
-    return static_cast<uint8_t>(*node->block()->next());
-  }
+  static uint8_t Length(const Tree* node) { return node->nodeValue(0); }
   static void GetName(const Tree* node, char* buffer, size_t bufferSize);
   static const char* NonNullTerminatedName(const Tree* node);
 };

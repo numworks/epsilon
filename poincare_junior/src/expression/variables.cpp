@@ -17,7 +17,7 @@ Variables::Variable::Variable(uint8_t id) {
 
 uint8_t Variables::Id(const Tree* variable) {
   assert(variable->type() == BlockType::Variable);
-  return static_cast<uint8_t>(variable->block(1));
+  return variable->nodeValue(0);
 }
 
 uint8_t Variables::ToId(const Tree* variables, const char* name,

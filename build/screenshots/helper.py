@@ -83,7 +83,9 @@ def find_crc32_in_log(log_file):
       # Debug mode: crc32 line is the before to last line
       assert len(lines) > 3
       crc_line = lines[-2]
-   assert "CRC32 of all screenshots: " in crc_line
+   if "CRC32 of all screenshots: " not in crc_line:
+      print("Error: couldn't find crc32 in log")
+      sys.exit(1)
    return crc_line.split()[-1]
    return
 

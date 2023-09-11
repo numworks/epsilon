@@ -15,6 +15,7 @@ class IntervalController : public Shared::FloatParameterController<double> {
   const char* title() override;
   TELEMETRY_ID("Interval");
   int numberOfRows() const override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
  private:
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;

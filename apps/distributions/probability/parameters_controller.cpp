@@ -73,6 +73,16 @@ void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
   FloatParameterController::fillCellForRow(cell, row);
 }
 
+KDCoordinate ParametersController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
+  if (type == k_parameterCellType) {
+    MenuCellWithEditableText<LayoutView, MessageTextView> tempCell;
+    return protectedNonMemoizedRowHeight(&tempCell, row);
+  }
+  assert(type == k_buttonCellType);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
+}
+
 HighlightCell *ParametersController::reusableParameterCell(int index,
                                                            int type) {
   assert(index >= 0);

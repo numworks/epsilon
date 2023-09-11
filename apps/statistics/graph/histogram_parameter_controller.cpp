@@ -45,6 +45,15 @@ const char *HistogramParameterController::title() {
   return I18n::translate(I18n::Message::StatisticsGraphSettings);
 }
 
+KDCoordinate HistogramParameterController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
+  if (type == k_parameterCellType) {
+    return m_cells[row].minimalSizeForOptimalDisplay().height();
+  }
+  assert(type == k_buttonCellType);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
+}
+
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back &&
       (extractParameterAtIndex(0) != parameterAtIndex(0) ||

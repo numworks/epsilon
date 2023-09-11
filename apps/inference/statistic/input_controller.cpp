@@ -25,9 +25,13 @@ InputController::InputController(Escher::StackViewController *parent,
 }
 
 KDCoordinate InputController::nonMemoizedRowHeight(int row) {
-  if (typeAtRow(row) == k_parameterCellType) {
+  int type = typeAtRow(row);
+  if (type == k_parameterCellType) {
     ParameterCell tempCell;
     return protectedNonMemoizedRowHeight(&tempCell, row);
+  }
+  if (type == k_significanceCellType) {
+    return m_significanceCell.minimalSizeForOptimalDisplay().height();
   }
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }

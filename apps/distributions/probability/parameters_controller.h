@@ -26,6 +26,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
   TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
  private:
   int reusableParameterCellCount(int type) override;

@@ -16,6 +16,7 @@ class GoToParameterController : public FloatParameterController<double> {
                           CurveViewCursor* cursor);
   int numberOfRows() const override { return 2; }
   bool handleEvent(Ion::Events::Event event) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
  protected:
   void setParameterName(I18n::Message message) {

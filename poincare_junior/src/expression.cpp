@@ -260,7 +260,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       ConvertUnitToLayout(layoutParent, expression);
       break;
     case BlockType::Float:
-      // TODO: Implement this for device as well.
+      // TODO: Implement for all platforms. See Poincare::ConvertFloatToText.
       ConvertTextToLayout(layoutParent,
                           std::to_string(Float::To(expression)).c_str());
       break;

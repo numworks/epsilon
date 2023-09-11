@@ -216,7 +216,7 @@ class UnitRepresentative {
    * m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
    *
    * TODO: We have to use Block * instead of Tree * so that representatives
-   * lists can be constexpr because, casting Block* into Tree* requires a
+   * lists can be constexpr because casting Block* into Tree* requires a
    * reinterpret cast. */
 
   const Block* m_ratioExpression;

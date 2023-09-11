@@ -37,7 +37,7 @@ void PushPoincareExpressionViaParse(Poincare::Expression exp) {
 }
 
 Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
-  // TODO: Make sure new BlockTypes are handled here.
+  // NOTE: Make sure new BlockTypes are handled here.
   BlockType type = exp->type();
 
   if (Builtin::IsBuiltin(type)) {

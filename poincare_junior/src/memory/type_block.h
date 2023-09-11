@@ -110,7 +110,7 @@ class TypeBlock : public Block {
   }
 
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
-    // TODO: Make sure new BlockTypes are handled here.
+    // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
       case BlockType::Float:
         return 1 + sizeof(float) / sizeof(uint8_t);
@@ -148,7 +148,7 @@ class TypeBlock : public Block {
   constexpr size_t nodeSize() const {
     BlockType t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
-    // TODO: Make sure new BlockTypes are handled here.
+    // NOTE: Make sure new BlockTypes are handled here.
     switch (t) {
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig: {
@@ -178,7 +178,7 @@ class TypeBlock : public Block {
 
   constexpr static int NumberOfChildren(BlockType type) {
     assert(type != BlockType::Matrix && !IsNAry(type));
-    // TODO: Make sure new BlockTypes are handled here.
+    // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
       case BlockType::Derivative:
         return 3;

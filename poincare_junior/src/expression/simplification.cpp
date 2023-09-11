@@ -772,7 +772,7 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
 }
 
 bool ShouldApproximateOnSimplify(Dimension dimension) {
-  // TODO: Find a better place for this condition.
+  // Only angle units are expected not to be approximated.
   return (dimension.isUnit() && !(dimension.unit.vector.supportSize() == 1 &&
                                   dimension.unit.vector.angle != 0));
 }
@@ -835,8 +835,7 @@ bool Simplification::DeepBeautify(Tree* node,
   bool changed =
       (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
       Approximation::ApproximateAndReplaceEveryScalar(node);
-  bool appendUnits = (projectionContext.m_dimension.isUnit());
-  if (appendUnits) {
+  if (projectionContext.m_dimension.isUnit()) {
     assert(!projectionContext.m_dimension.unit.vector.isEmpty());
     EditionReference baseUnits;
     if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
@@ -845,12 +844,11 @@ bool Simplification::DeepBeautify(Tree* node,
                              UnitPrefix::EmptyPrefix());
     } else {
       baseUnits = projectionContext.m_dimension.unit.vector.toBaseUnits();
+      DeepSystematicReduce(baseUnits);
     }
-    DeepSystematicReduce(baseUnits);
-    node->moveTreeOverTree(
-        PatternMatching::Create(KMult(KA, KB), {.KA = node, .KB = baseUnits}));
+    node->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KMult(KA, KB), {.KA = node, .KB = baseUnits}));
     baseUnits->removeTree();
-    ShallowSystematicReduce(node);
     changed = true;
   }
   return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext) ||

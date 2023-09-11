@@ -219,7 +219,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::ArcCosine:
     case BlockType::ArcSine:
     case BlockType::ArcTangent:
-      // TODO: Return angle units ?
+      // Note: Angle units could be returned here.
     default:
       return Scalar();
   }

@@ -36,9 +36,9 @@ void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
     return;
   }
   if (!derivand->type().isOfType({BlockType::Multiplication,
-                                   BlockType::Addition, BlockType::Complex,
-                                   BlockType::Exponential, BlockType::Power,
-                                   BlockType::Trig, BlockType::Ln})) {
+                                  BlockType::Addition, BlockType::Complex,
+                                  BlockType::Exponential, BlockType::Power,
+                                  BlockType::Trig, BlockType::Ln})) {
     // This derivation is not handled
     SharedEditionPool->push<BlockType::Derivative>();
     SharedEditionPool->clone(derivand);

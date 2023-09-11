@@ -1413,7 +1413,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
       return false;
     }
     int p = index->type().isInteger() ? Integer::Handler(index).to<float>()
-                                       : Float::To(index);
+                                      : Float::To(index);
     tree->moveTreeOverTree(Matrix::Power(child, p));
     return true;
   }

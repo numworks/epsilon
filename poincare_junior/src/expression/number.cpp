@@ -33,14 +33,13 @@ Sign::Sign Number::Sign(const Tree* node) {
 
 bool Number::IsSanitized(const Tree* n) {
   if (!n->type().isOfType({BlockType::RationalShort, BlockType::RationalPosBig,
-                            BlockType::RationalNegBig, BlockType::IntegerShort,
-                            BlockType::IntegerPosBig,
-                            BlockType::IntegerNegBig})) {
-    assert(
-        !n->type().isNumber() ||
-        n->type().isOfType({BlockType::Float, BlockType::Constant,
-                             BlockType::Half, BlockType::Zero, BlockType::One,
-                             BlockType::Two, BlockType::MinusOne}));
+                           BlockType::RationalNegBig, BlockType::IntegerShort,
+                           BlockType::IntegerPosBig,
+                           BlockType::IntegerNegBig})) {
+    assert(!n->type().isNumber() ||
+           n->type().isOfType({BlockType::Float, BlockType::Constant,
+                               BlockType::Half, BlockType::Zero, BlockType::One,
+                               BlockType::Two, BlockType::MinusOne}));
     // Non numbers or optimal BlockType numbers
     return true;
   }

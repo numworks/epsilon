@@ -35,7 +35,6 @@ class ResultsController
 
   // StandardMemoizedListViewDataSource
   int numberOfRows() const override;
-  KDCoordinate defaultColumnWidth() override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

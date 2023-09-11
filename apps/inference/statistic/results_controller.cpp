@@ -72,10 +72,6 @@ int ResultsController::numberOfRows() const {
   return m_statistic->numberOfResults() + 1 /* button */;
 }
 
-KDCoordinate ResultsController::defaultColumnWidth() {
-  return Ion::Display::Width - Metric::CommonMargins.width();
-}
-
 void ResultsController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) != k_resultCellType) {
     return;

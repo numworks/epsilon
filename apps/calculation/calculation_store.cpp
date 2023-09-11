@@ -72,8 +72,8 @@ Expression CalculationStore::ansExpression(Context *context) const {
     /* Case 1.
      * If exact output was hidden, is   should not be accessible using Ans.
      * Return input instead so that no precision is lost.
-     * If the exact output is equal to its approximation and is not Nonreal
-     * neither Undefined, it can mean that the calculation involves units or is
+     * If the exact output is equal to its approximation and is neither Nonreal
+     * nor Undefined, it can mean that the calculation involves units or is
      * a store expression that hides exact results (with an integral for
      * example). In this case, do not keep the input in Ans but rather the
      * output.

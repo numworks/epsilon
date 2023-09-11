@@ -191,17 +191,19 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     Shared::CurveViewCursor* cursor, Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  double derivative = 0.0;
+  double derivative =
+      function->approximateDerivative(cursor->x(), App::app()->localContext());
 
-  // Force derivative to 0 if cursor is at an extremum
+  /* Force derivative to 0 if cursor is at an extremum where the function is
+   * differentiable. */
   PointsOfInterestCache* pointsOfInterest =
       App::app()->graphController()->pointsOfInterestForRecord(record);
-  if (!pointsOfInterest->hasInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum) &&
-      !pointsOfInterest->hasInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
-    derivative = function->approximateDerivative(cursor->x(),
-                                                 App::app()->localContext());
+  if (std::isfinite(derivative) &&
+      (pointsOfInterest->hasInterestAtCoordinates(
+           cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum) ||
+       pointsOfInterest->hasInterestAtCoordinates(
+           cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum))) {
+    derivative = 0.;
   }
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;

@@ -257,10 +257,7 @@ class Tree {
   using ConstNodes = ElementList<DescendantsIterator<const Tree*>>;
   using Nodes = ElementList<DescendantsIterator<Tree*>>;
 
-  ConstTrees selfAndChildren() const { return {this, 1}; }
   ConstNodes selfAndDescendants() const { return {this, 1}; }
-  // Do not alter number of children while iterating
-  Trees selfAndChildren() { return {this, 1}; }
   // Do not alter number of children while iterating
   Nodes selfAndDescendants() { return {this, 1}; }
 

@@ -133,10 +133,10 @@ void ModalViewController::displayModalViewController(ViewController* vc,
   App::app()->firstResponder()->modalViewAltersFirstResponder(
       FirstResponderAlteration::WillSpoil);
   m_previousResponder = App::app()->firstResponder();
-  m_currentModalViewController->initView();
+  vc->initView();
   m_contentView.presentModalView(vc->view(), verticalAlignment,
                                  horizontalAlignment, margins, growingOnly);
-  m_currentModalViewController->viewWillAppear();
+  vc->viewWillAppear();
   App::app()->setFirstResponder(vc);
 }
 

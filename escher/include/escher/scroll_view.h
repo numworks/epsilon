@@ -102,13 +102,14 @@ class ScrollView : public View {
   // Minimal scrolling to make this rect visible
   void scrollToContentRect(KDRect rect);
 
- protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
     return (bounds().size() - m_margins).width();
   }
   KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
     return (bounds().size() - m_margins).height();
   }
+
+ protected:
   KDRect visibleContentRect();
   void layoutSubviews(bool force = false) override;
   virtual KDSize contentSize() const {

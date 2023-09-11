@@ -61,7 +61,7 @@ class Tree {
                  int indentation = 0) const;
 #endif
 
-  const Block block(int i) const {
+  const Block block(uint8_t i) const {
     assert(i < nodeSize());
     return m_block[i];
   }
@@ -118,9 +118,7 @@ class Tree {
   bool hasChild(const Tree* child) const;
   bool hasAncestor(const Tree* node, bool includeSelf) const;
 
-  constexpr TypeBlock type() const {
-    return *static_cast<const TypeBlock*>(m_block);
-  }
+  constexpr TypeBlock type() const { return *typeBlock(); }
   constexpr size_t nodeSize() const { return typeBlock()->nodeSize(); }
   constexpr int numberOfChildren() const {
     return typeBlock()->numberOfChildren();
@@ -253,8 +251,8 @@ class Tree {
   Tree* detach(bool isTree);
   void remove(bool isTree);
 
-  const TypeBlock* typeBlock() const {
-    return static_cast<const TypeBlock*>(m_block);
+  constexpr const TypeBlock* typeBlock() const {
+    return static_cast<const TypeBlock*>(static_cast<const Block*>(m_block));
   }
 
   // Should be last - and most likely only - member

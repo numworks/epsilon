@@ -22,6 +22,7 @@ class IntervalParameterController : public FloatParameterController<double> {
   const char* title() override;
   void setTitle(I18n::Message title) { m_title = title; }
   int numberOfRows() const override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
   void setStartEndMessages(I18n::Message startMessage,
                            I18n::Message endMessage);
 

@@ -29,6 +29,15 @@ const char *IntervalController::title() {
 
 int IntervalController::numberOfRows() const { return k_maxNumberOfCells + 1; }
 
+KDCoordinate IntervalController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
+  if (type == k_parameterCellType) {
+    return m_intervalCell[row].minimalSizeForOptimalDisplay().height();
+  }
+  assert(type == k_buttonCellType);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
+}
+
 HighlightCell *IntervalController::reusableParameterCell(int index, int type) {
   assert(0 <= index && index < k_maxNumberOfCells);
   return &m_intervalCell[index];

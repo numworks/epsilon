@@ -45,6 +45,15 @@ int IntervalParameterController::numberOfRows() const {
   return k_totalNumberOfCell + 1;
 }
 
+KDCoordinate IntervalParameterController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
+  if (type == k_parameterCellType) {
+    return m_intervalCells[row].minimalSizeForOptimalDisplay().height();
+  }
+  assert(type == k_buttonCellType);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
+}
+
 void IntervalParameterController::setStartEndMessages(
     I18n::Message startMessage, I18n::Message endMessage) {
   m_startMessage = startMessage;

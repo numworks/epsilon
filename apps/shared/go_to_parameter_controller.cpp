@@ -40,6 +40,15 @@ bool GoToParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+KDCoordinate GoToParameterController::nonMemoizedRowHeight(int row) {
+  int type = typeAtRow(row);
+  if (type == k_parameterCellType) {
+    return m_parameterCell.minimalSizeForOptimalDisplay().height();
+  }
+  assert(type == k_buttonCellType);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
+}
+
 void GoToParameterController::viewWillAppear() {
   // Initialize m_tempParameter to the extracted value.
   setParameterAtIndex(0, extractParameterAtIndex(0));

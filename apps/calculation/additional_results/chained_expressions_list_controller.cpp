@@ -18,7 +18,7 @@ void ChainedExpressionsListController::viewDidDisappear() {
 void ChainedExpressionsListController::didBecomeFirstResponder() {
   /* Width needs to be reinit if tail of controller changed and wasn't already
    * initialized. */
-  initCellsAvailableWidth(m_listController.selectableListView());
+  initWidth(m_listController.selectableListView());
   ExpressionsListController::didBecomeFirstResponder();
 }
 
@@ -39,11 +39,10 @@ HighlightCell* ChainedExpressionsListController::reusableCell(int index,
   return &m_cells[index];
 }
 
-void ChainedExpressionsListController::initCellsAvailableWidth(
-    Escher::TableView* view) {
-  ExpressionsListController::initCellsAvailableWidth(view);
+void ChainedExpressionsListController::initWidth(Escher::TableView* tableView) {
+  ExpressionsListController::initWidth(tableView);
   if (m_tail) {
-    m_tail->initCellsAvailableWidth(view);
+    m_tail->initWidth(tableView);
   }
 }
 

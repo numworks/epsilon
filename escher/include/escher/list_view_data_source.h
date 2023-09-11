@@ -11,8 +11,8 @@ class ListViewDataSource : public TableViewDataSource {
   friend class ListWithTopAndBottomDataSource;
 
  public:
-  ListViewDataSource() : m_availableWidth(0) {}
-  virtual void initCellsAvailableWidth(TableView* view);
+  ListViewDataSource() : m_width(0) {}
+  virtual void initWidth(TableView* tableView);
   /* reusableCellCount have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   int reusableCellCount(int type) override { return numberOfRows(); }
@@ -54,7 +54,7 @@ class ListViewDataSource : public TableViewDataSource {
   }
   int typeIndexFromIndex(int index);
   // TODO there are only two possible widths: settings-like and toolbox-like
-  KDCoordinate m_availableWidth;
+  KDCoordinate m_width;
 };
 
 template <int N>

@@ -118,11 +118,17 @@ Tree* DimensionVector::toBaseUnits() const {
     if (exponent == 0) {
       continue;
     }
-    if (exponent == 1) {
-      Unit::Push(representative, prefix);
-    } else {
+    if (exponent != 1) {
       SharedEditionPool->push<BlockType::Power>();
-      Unit::Push(representative, prefix);
+    }
+    if (prefix != UnitPrefix::EmptyPrefix()) {
+      SharedEditionPool->push<BlockType::Multiplication>(2);
+      SharedEditionPool->push<BlockType::Power>();
+      IntegerHandler(10).pushOnEditionPool();
+      IntegerHandler(-prefix->exponent()).pushOnEditionPool();
+    }
+    Unit::Push(representative, prefix);
+    if (exponent != 1) {
       IntegerHandler(exponent).pushOnEditionPool();
     }
     NAry::SetNumberOfChildren(result, ++numberOfChildren);

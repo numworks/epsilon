@@ -383,6 +383,7 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("1_mm+1_km", "1000.000977*_m");
   simplifies_to("2_month*7_dm", "3681720.000000*_s*_m");
   simplifies_to("2*_m/_m", "2.000000");
+  simplifies_to("1234_g", "1.234000*_kg");
 
   simplifies_to("4_°C", "4.000000*_°C");
   // Note: this used to be undef in previous Poincare.

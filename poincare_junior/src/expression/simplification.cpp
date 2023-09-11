@@ -249,14 +249,14 @@ bool Simplification::SimplifyTrig(Tree* u) {
   }
 
   // Replace Trig((n/12)*pi,*) with exact value.
-  if (firstArgument->treeIsIdenticalTo(π_e) ||
+  if (firstArgument->treeIsIdenticalTo(π_e) || Number::IsZero(firstArgument) ||
       (firstArgument->type() == BlockType::Multiplication &&
        firstArgument->numberOfChildren() == 2 &&
        IsRational(firstArgument->nextNode()) &&
        firstArgument->childAtIndex(1)->treeIsIdenticalTo(π_e))) {
     const Tree* piFactor = firstArgument->type() == BlockType::Multiplication
                                ? firstArgument->nextNode()
-                               : 1_e;
+                               : (Number::IsZero(firstArgument) ? 0_e : 1_e);
     // Compute n such that firstArgument = (n/12)*pi
     Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
     Rational::MakeIrreducible(multipleTree);

@@ -266,6 +266,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.", "5");
   simplifies_to("5.E1", "50");
   // Trigonometry identities
+  simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
   simplifies_to("cos(7*π/12)", "1/2*2^(-1/2)+-1/2*2^(-1/2)*√(3)");

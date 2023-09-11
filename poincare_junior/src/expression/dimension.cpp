@@ -185,7 +185,8 @@ Dimension Dimension::GetDimension(const Tree* t) {
       if (dim.isUnit()) {
         float index = Approximation::To<float>(t->childAtIndex(1));
         // TODO: Handle/forbid index > int8_t
-        assert(!isnan(index) && std::abs(index) < static_cast<float>(INT8_MAX));
+        assert(!std::isnan(index) &&
+               std::fabs(index) < static_cast<float>(INT8_MAX));
         DimensionVector unitVector = DimensionVector::Empty();
         unitVector.addAllCoefficients(dim.unit.vector,
                                       static_cast<int8_t>(index));

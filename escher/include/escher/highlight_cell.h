@@ -24,6 +24,7 @@ class HighlightCell : public View {
   virtual Responder* responder() { return nullptr; }
   virtual const char* text() const { return nullptr; }
   virtual Poincare::Layout layout() const { return Poincare::Layout(); }
+  virtual void initSize(KDCoordinate width) {}
 
  protected:
   bool isHighlighted() const { return m_state == State::Highlighted; }

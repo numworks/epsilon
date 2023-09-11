@@ -124,6 +124,8 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
     return widget(CellWidget::Type::Accessory)->canBeActivatedByEvent(event);
   }
 
+  void initSize(KDCoordinate width) override;
+
  protected:
   // View
   int numberOfSubviews() const override;

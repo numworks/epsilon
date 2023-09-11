@@ -43,21 +43,11 @@ KDCoordinate ListViewDataSource::protectedNonMemoizedRowHeight(
   if (!cell->isVisible()) {
     return 0;
   }
-  initCellSize(cell);
+  cell->initSize(m_width);
   // Setup cell as if it was to be displayed
   fillCellForRow(cell, row);
   // Return cell's height
   return cell->minimalSizeForOptimalDisplay().height();
-}
-
-void ListViewDataSource::initCellSize(HighlightCell* cell) const {
-  /* Some cells have to know their width to be able to compute their required
-   * height */
-  // TODO: setSize only if the cell really needs it
-  if (cell->bounds().width() == 0) {
-    assert(m_width > 0);
-    cell->setSize(KDSize(m_width, Ion::Display::Height));
-  }
 }
 
 }  // namespace Escher

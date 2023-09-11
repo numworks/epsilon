@@ -22,7 +22,7 @@ class ListViewDataSource : public TableViewDataSource {
   virtual bool canStoreCellAtRow(int row) { return true; }
 
  protected:
-  KDCoordinate defaultColumnWidth() override { return KDCOORDINATE_MAX; }
+  KDCoordinate defaultColumnWidth() override { return m_width; }
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
   KDCoordinate nonMemoizedRowHeight(int row) override;

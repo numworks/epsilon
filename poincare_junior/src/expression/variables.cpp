@@ -45,7 +45,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables) {
       Tree* var = SharedEditionPool->push<BlockType::Variable>(
           ToId(variables, Symbol::NonNullTerminatedName(child),
                Symbol::Length(child)));
-      child->moveNodeOverNode(var);
+      child->moveTreeOverTree(var);
     }
   }
 }
@@ -54,7 +54,7 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables) {
   assert(SharedEditionPool->isAfter(variables, expr));
   for (Tree* child : expr->selfAndDescendants()) {
     if (child->type() == BlockType::Variable) {
-      child->cloneNodeOverNode(Variables::ToSymbol(variables, Id(child)));
+      child->cloneTreeOverTree(Variables::ToSymbol(variables, Id(child)));
     }
   }
 }

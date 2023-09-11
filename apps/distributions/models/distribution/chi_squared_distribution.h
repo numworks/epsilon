@@ -25,6 +25,7 @@ class ChiSquaredDistribution : public OneParameterDistribution {
   double defaultParameterAtIndex(int index) const override {
     return k_defaultK;
   }
+  double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double p) const override;
 
  private:

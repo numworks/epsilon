@@ -115,9 +115,6 @@ KDRect TableView::ContentView::cellFrame(int col, int row) const {
   if (columnWidth == 0 || rowHeight == 0) {
     return KDRectZero;
   }
-  if (columnWidth == KDCOORDINATE_MAX) {  // For ListViewDataSource
-    columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
-  }
   return KDRect(m_dataSource->cumulatedWidthBeforeColumn(col) +
                     m_dataSource->separatorBeforeColumn(col),
                 m_dataSource->cumulatedHeightBeforeRow(row) +
@@ -127,13 +124,9 @@ KDRect TableView::ContentView::cellFrame(int col, int row) const {
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  int result = m_dataSource->cumulatedWidthBeforeColumn(
-                   m_dataSource->numberOfColumns()) +
-               m_horizontalCellOverlap;
-  // handle the case of list: cumulatedWidthBeforeColumn() = KDCOORDINATE_MAX
-  return result == KDCOORDINATE_MAX
-             ? m_tableView->maxContentWidthDisplayableWithoutScrolling()
-             : result;
+  return m_dataSource->cumulatedWidthBeforeColumn(
+             m_dataSource->numberOfColumns()) +
+         m_horizontalCellOverlap;
 }
 
 void TableView::ContentView::reloadCellAtLocation(int col, int row,

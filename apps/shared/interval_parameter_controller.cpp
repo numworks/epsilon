@@ -23,9 +23,12 @@ IntervalParameterController::IntervalParameterController(
             return true;
           },
           this)) {
+  I18n::Message messages[k_totalNumberOfCell] = {m_startMessage, m_endMessage,
+                                                 I18n::Message::Step};
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableListView);
     m_intervalCells[i].setDelegate(this);
+    m_intervalCells[i].label()->setMessage(messages[i]);
   }
 }
 
@@ -46,20 +49,6 @@ void IntervalParameterController::setStartEndMessages(
     I18n::Message startMessage, I18n::Message endMessage) {
   m_startMessage = startMessage;
   m_endMessage = endMessage;
-}
-
-void IntervalParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  if (typeAtRow(row) == k_buttonCellType) {
-    return;
-  }
-  assert(typeAtRow(row) == k_parameterCellType);
-  assert(row >= 0 && row < k_totalNumberOfCell);
-  I18n::Message messages[k_totalNumberOfCell] = {m_startMessage, m_endMessage,
-                                                 I18n::Message::Step};
-  static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
-      ->label()
-      ->setMessage(messages[row]);
-  FloatParameterController::fillCellForRow(cell, row);
 }
 
 double IntervalParameterController::parameterAtIndex(int index) {

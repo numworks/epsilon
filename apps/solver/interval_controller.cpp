@@ -15,6 +15,8 @@ IntervalController::IntervalController(Responder *parentResponder)
       m_instructions(I18n::Message::ApproximateSolutionIntervalInstruction,
                      k_messageFormat) {
   m_okButton.setMessage(I18n::Message::ResolveEquation);
+  m_intervalCell[0].label()->setMessage(I18n::Message::XMin);
+  m_intervalCell[1].label()->setMessage(I18n::Message::XMax);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i].setParentResponder(&m_selectableListView);
     m_intervalCell[i].setDelegate(this);
@@ -27,23 +29,8 @@ const char *IntervalController::title() {
 
 int IntervalController::numberOfRows() const { return k_maxNumberOfCells + 1; }
 
-void IntervalController::fillCellForRow(HighlightCell *cell, int row) {
-  if (typeAtRow(row) == k_buttonCellType) {
-    return;
-  }
-  assert(typeAtRow(row) == k_parameterCellType);
-  assert(0 <= row && row < k_maxNumberOfCells);
-  I18n::Message labels[k_maxNumberOfCells] = {I18n::Message::XMin,
-                                              I18n::Message::XMax};
-  static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
-      ->label()
-      ->setMessage(labels[row]);
-  FloatParameterController::fillCellForRow(cell, row);
-}
-
 HighlightCell *IntervalController::reusableParameterCell(int index, int type) {
-  assert(index >= 0);
-  assert(index < 2);
+  assert(0 <= index && index < k_maxNumberOfCells);
   return &m_intervalCell[index];
 }
 

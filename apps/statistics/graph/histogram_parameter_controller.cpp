@@ -27,6 +27,10 @@ HistogramParameterController::HistogramParameterController(
     m_cells[i].setParentResponder(&m_selectableListView);
     m_cells[i].setDelegate(this);
   }
+  m_cells[0].label()->setMessage(I18n::Message::RectangleWidth);
+  m_cells[0].subLabel()->setMessage(I18n::Message::RectangleWidthDescription);
+  m_cells[1].label()->setMessage(I18n::Message::BarStart);
+  m_cells[1].subLabel()->setMessage(I18n::Message::BarStartDescrition);
 }
 
 void HistogramParameterController::viewWillAppear() {
@@ -39,25 +43,6 @@ void HistogramParameterController::viewWillAppear() {
 
 const char *HistogramParameterController::title() {
   return I18n::translate(I18n::Message::StatisticsGraphSettings);
-}
-
-void HistogramParameterController::fillCellForRow(HighlightCell *cell,
-                                                  int row) {
-  if (typeAtRow(row) == k_buttonCellType) {
-    return;
-  }
-  assert(typeAtRow(row) == k_parameterCellType);
-  MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
-      static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView> *>(
-          cell);
-  I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth,
-                                           I18n::Message::BarStart};
-  I18n::Message sublabels[k_numberOfCells] = {
-      I18n::Message::RectangleWidthDescription,
-      I18n::Message::BarStartDescrition};
-  myCell->label()->setMessage(labels[row]);
-  myCell->subLabel()->setMessage(sublabels[row]);
-  FloatParameterController::fillCellForRow(cell, row);
 }
 
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {

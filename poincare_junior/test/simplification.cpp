@@ -363,38 +363,36 @@ QUIZ_CASE(pcj_variables) {
 }
 
 QUIZ_CASE(pcj_float_simplification) {
-  simplifies_to("2", "2.000000", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("2.3", "2.300000",
-                {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("2", "2", {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("2.3", "2.3", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π", "4.141593",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π+x", "4.141593+x",
                 {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("cos(x-x)", "1.000000",
-                {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
 }
 
 QUIZ_CASE(pcj_unit_simplification) {
-  simplifies_to("12_m", "12.000000*_m");
-  simplifies_to("1_s", "1.000000*_s");
+  simplifies_to("12_m", "12*_m");
+  simplifies_to("1_s", "1*_s");
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+x", "undef");
-  simplifies_to("1_m+1_km", "1001.000000*_m");
-  simplifies_to("1_mm+1_km", "1000.000977*_m");
-  simplifies_to("2_month*7_dm", "3681720.000000*_s*_m");
-  simplifies_to("2*_m/_m", "2.000000");
-  simplifies_to("1234_g", "1.234000*_kg");
+  simplifies_to("1_m+1_km", "1001*_m");
+  simplifies_to("1_mm+1_km", "1000.001*_m");
+  simplifies_to("2_month*7_dm", "3681720*_s*_m");
+  simplifies_to("2*_m/_m", "2");
+  simplifies_to("1234_g", "1.234*_kg");
 
-  simplifies_to("4_°C", "4.000000*_°C");
+  simplifies_to("4_°C", "4*_°C");
   // Note: this used to be undef in previous Poincare.
-  simplifies_to("((4-2)_°C)*2", "4.000000*_°C");
-  simplifies_to("((4-2)_°F)*2", "4.000000*_°F");
-  simplifies_to("8_°C/2", "4.000000*_°C");
+  simplifies_to("((4-2)_°C)*2", "4*_°C");
+  simplifies_to("((4-2)_°F)*2", "4*_°F");
+  simplifies_to("8_°C/2", "4*_°C");
 
-  simplifies_to("2_K+2_K", "4.000000*_K");
-  simplifies_to("2_K*2_K", "4.000000*_K^(2)");
-  simplifies_to("1/_K", "1.000000*_K^(-1)");
-  simplifies_to("(2_K)^2", "4.000000*_K^(2)");
+  simplifies_to("2_K+2_K", "4*_K");
+  simplifies_to("2_K*2_K", "4*_K^(2)");
+  simplifies_to("1/_K", "1*_K^(-1)");
+  simplifies_to("(2_K)^2", "4*_K^(2)");
 
   simplifies_to("2_°C-1_°C", "undef");
   simplifies_to("2_°C+2_K", "undef");

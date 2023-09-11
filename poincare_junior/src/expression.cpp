@@ -1,3 +1,4 @@
+#include <poincare/print_float.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/builtin.h>
@@ -259,11 +260,16 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::Unit:
       ConvertUnitToLayout(layoutParent, expression);
       break;
-    case BlockType::Float:
-      // TODO: Implement for all platforms. See Poincare::ConvertFloatToText.
-      ConvertTextToLayout(layoutParent,
-                          std::to_string(Float::To(expression)).c_str());
+    case BlockType::Float: {
+      char buffer[20];
+      Poincare::PrintFloat::ConvertFloatToText(
+          Float::To(expression), buffer, std::size(buffer),
+          Poincare::PrintFloat::k_maxFloatGlyphLength,
+          Poincare::PrintFloat::SignificantDecimalDigits<float>(),
+          Poincare::Preferences::PrintFloatMode::Decimal);
+      ConvertTextToLayout(layoutParent, buffer);
       break;
+    }
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:

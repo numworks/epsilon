@@ -134,9 +134,9 @@ bool SignFunction::derivate(const ReductionContext& reductionContext,
 
   /* This function derivate is equal to 0 everywhere but in 0 where
    * it's not defined.
-   * We use a piecewie function instead of a dependency as derivate will strip
+   * We use a piecewise function instead of a dependency as derivate will strip
    * all dependencies that arise during the derivation process.
-   * This derivative is used in the derivative of arccot(x).
+   * This derivative is used in the derivative of arccot(x) and abs(x).
    */
   Comparison condition = Comparison::Builder(
       childAtIndex(0), ComparisonNode::OperatorType::NotEqual,

@@ -25,7 +25,7 @@ class ListViewDataSource : public TableViewDataSource {
   KDCoordinate defaultColumnWidth() override { return m_width; }
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
-  KDCoordinate nonMemoizedRowHeight(int row) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override = 0;
   KDCoordinate protectedNonMemoizedRowHeight(HighlightCell* cell, int row);
 
   // TODO there are only two possible widths: settings-like and toolbox-like
@@ -57,8 +57,6 @@ class ListViewDataSource : public TableViewDataSource {
   KDCoordinate nonMemoizedColumnWidth(int column) override final {
     return TableViewDataSource::nonMemoizedColumnWidth(column);
   }
-  int typeIndexFromIndex(int index);
-  void initCellSize(HighlightCell* cell) const;
 };
 
 template <int N>

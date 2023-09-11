@@ -111,12 +111,32 @@ bool Expression::isInteger() const {
           childAtIndex(0).isInteger());
 }
 
+static bool IsIgnoredSymbol(const Expression *e,
+                            Expression::IgnoredSymbols *ignoredSymbols) {
+  if (e->type() != ExpressionNode::Type::Symbol) {
+    return false;
+  }
+  while (ignoredSymbols) {
+    assert(ignoredSymbols->head);
+    if (ignoredSymbols->head->isIdenticalTo(*e)) {
+      return true;
+    }
+    ignoredSymbols =
+        reinterpret_cast<Expression::IgnoredSymbols *>(ignoredSymbols->tail);
+  }
+  return false;
+}
+
 bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
                                     Context *context,
                                     SymbolicComputation replaceSymbols,
-                                    void *auxiliary) const {
+                                    void *auxiliary,
+                                    IgnoredSymbols *ignoredSymbols) const {
   if (!context) {
     replaceSymbols = SymbolicComputation::DoNotReplaceAnySymbol;
+  }
+  if (IsIgnoredSymbol(this, ignoredSymbols)) {
+    return false;
   }
   TrinaryBoolean testResult = test(*this, context, auxiliary);
   if (testResult == TrinaryBoolean::True) {
@@ -131,12 +151,12 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
   if (t == ExpressionNode::Type::Dependency) {
     Expression e = *this;
     return static_cast<Dependency &>(e).dependencyRecursivelyMatches(
-        test, context, replaceSymbols, auxiliary);
+        test, context, replaceSymbols, auxiliary, ignoredSymbols);
   }
   if (t == ExpressionNode::Type::Store) {
     Expression e = *this;
     return static_cast<Store &>(e).storeRecursivelyMatches(
-        test, context, replaceSymbols, auxiliary);
+        test, context, replaceSymbols, auxiliary, ignoredSymbols);
   }
   if (t == ExpressionNode::Type::Symbol ||
       t == ExpressionNode::Type::Function) {
@@ -156,7 +176,7 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
            t == ExpressionNode::Type::Function);
     return SymbolAbstract::matches(convert<const SymbolAbstract>(), test,
-                                   context, auxiliary);
+                                   context, auxiliary, ignoredSymbols);
   }
 
   const int childrenCount = this->numberOfChildren();
@@ -167,18 +187,20 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
       continue;
     }
     Expression childToAnalyze = childAtIndex(i);
+    bool matches;
     if (isParametered && i == ParameteredExpression::ParameteredChildIndex()) {
-      // Replace the parameter with '0' to analyze the child ignoring it
-      // TODO: This is bad if you try to recursively match '0'
-      childToAnalyze = childToAnalyze.clone();
-      Expression parameter =
+      Expression symbolExpr =
           childAtIndex(ParameteredExpression::ParameterChildIndex());
-      assert(parameter.type() == ExpressionNode::Type::Symbol);
-      childToAnalyze = childToAnalyze.replaceSymbolWithExpression(
-          static_cast<Symbol &>(parameter), Rational::Builder(0));
+      Symbol symbol = static_cast<Symbol &>(symbolExpr);
+      IgnoredSymbols updatedIgnoredSymbols = {.head = &symbol,
+                                              .tail = ignoredSymbols};
+      matches = childToAnalyze.recursivelyMatches(
+          test, context, replaceSymbols, auxiliary, &updatedIgnoredSymbols);
+    } else {
+      matches = childToAnalyze.recursivelyMatches(test, context, replaceSymbols,
+                                                  auxiliary, ignoredSymbols);
     }
-    if (childToAnalyze.recursivelyMatches(test, context, replaceSymbols,
-                                          auxiliary)) {
+    if (matches) {
       return true;
     }
   }

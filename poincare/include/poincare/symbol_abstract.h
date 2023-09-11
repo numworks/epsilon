@@ -99,7 +99,8 @@ class SymbolAbstract : public Expression {
   bool hasSameNameAs(const SymbolAbstract &other) const;
   static size_t TruncateExtension(char *dst, const char *src, size_t size);
   static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
-                      Context *context, void *auxiliary = nullptr);
+                      Context *context, void *auxiliary,
+                      Expression::IgnoredSymbols *ignoredSymbols);
   Expression replaceSymbolWithExpression(const SymbolAbstract &symbol,
                                          const Expression &expression);
 

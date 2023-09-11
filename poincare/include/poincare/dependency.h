@@ -92,11 +92,10 @@ class Dependency : public Expression {
   Expression extractDependencies(List l);
   bool dependencyRecursivelyMatches(
       ExpressionTrinaryTest test, Context* context,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr) const {
+      SymbolicComputation replaceSymbols, void* auxiliary,
+      Expression::IgnoredSymbols* ignoredSymbols) const {
     return mainExpression().recursivelyMatches(test, context, replaceSymbols,
-                                               auxiliary);
+                                               auxiliary, ignoredSymbols);
   }
 
   Expression removeUselessDependencies(

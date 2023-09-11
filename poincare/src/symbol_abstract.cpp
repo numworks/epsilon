@@ -106,7 +106,8 @@ size_t SymbolAbstract::TruncateExtension(char *dst, const char *src,
 
 bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                              ExpressionTrinaryTest test, Context *context,
-                             void *auxiliary) {
+                             void *auxiliary,
+                             Expression::IgnoredSymbols *ignoredSymbols) {
   // Undefined symbols must be preserved.
   Expression e = SymbolAbstract::Expand(
       symbol, context, true,
@@ -114,7 +115,7 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
   return !e.isUninitialized() &&
          e.recursivelyMatches(test, context,
                               SymbolicComputation::DoNotReplaceAnySymbol,
-                              auxiliary);
+                              auxiliary, ignoredSymbols);
 }
 
 Expression SymbolAbstract::replaceSymbolWithExpression(

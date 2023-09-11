@@ -274,6 +274,20 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }
 
+QUIZ_CASE(poincare_properties_in_parametric) {
+  Shared::GlobalContext context;
+  assert_expression_has_property("2x+1", &context, Expression::IsSymbolic);
+  assert_expression_has_not_property("diff(x^2,x,3)", &context,
+                                     Expression::IsSymbolic);
+  assert_expression_has_property("diff(y^2+x^2,x,3)", &context,
+                                 Expression::IsSymbolic);
+  assert_reduce_and_store("1+inf→x");
+  assert_expression_has_property("x", &context, Expression::IsInfinity);
+  assert_expression_has_not_property("diff(x^2,x,3)", &context,
+                                     Expression::IsInfinity);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+}
+
 void assert_reduced_expression_sign(
     const char* expression, Poincare::TrinaryBoolean isPositive,
     Preferences::ComplexFormat complexFormat = Cartesian,

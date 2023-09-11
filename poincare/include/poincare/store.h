@@ -67,10 +67,10 @@ class Store final : public ExpressionTwoChildren<Store, StoreNode> {
 
   bool storeRecursivelyMatches(
       ExpressionTrinaryTest test, Context* context,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr) const {
-    return value().recursivelyMatches(test, context, replaceSymbols, auxiliary);
+      SymbolicComputation replaceSymbols, void* auxiliary,
+      Expression::IgnoredSymbols* ignoredSymbols) const {
+    return value().recursivelyMatches(test, context, replaceSymbols, auxiliary,
+                                      ignoredSymbols);
   }
 
  private:

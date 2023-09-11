@@ -795,6 +795,10 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
 
 bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
   assert(!DeepSystematicReduce(ref));
+  if (ref->type() == BlockType::Matrix) {
+    // Escape matrices because no nested advanced reduction is expected.
+    return false;
+  }
   bool changed = false;
   for (std::pair<EditionReference, int> indexedNode :
        NodeIterator::Children<Editable>(ref)) {

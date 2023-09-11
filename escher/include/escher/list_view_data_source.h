@@ -33,6 +33,7 @@ class ListViewDataSource : public TableViewDataSource {
   int numberOfColumns() const override final { return 1; }
   void fillCellForLocation(HighlightCell* cell, int column,
                            int row) override final {
+    assert(column == 0);
     if (cell->isVisible()) {  // Frame is already set to zero if hidden
       fillCellForRow(cell, row);
     }
@@ -42,9 +43,11 @@ class ListViewDataSource : public TableViewDataSource {
     return typeAtRow(row);
   }
   bool canSelectCellAtLocation(int column, int row) override final {
+    assert(column == 0);
     return canSelectCellAtRow(row);
   }
   bool canStoreCellAtLocation(int column, int row) override final {
+    assert(column == 0);
     return canStoreCellAtRow(row);
   }
   // Just make this method final without changing behaviour

@@ -240,7 +240,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
   int row = selectedRow();
   KDPoint previousOffset = contentOffset();
   deselectTable(true);
-  SelectableTableView::layoutSubviews();
+  layoutSubviews();
   setContentOffset(previousOffset);
   selectCellAtLocation(col, row, setFirstResponder, true);
 }

@@ -383,6 +383,7 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("2_month*7_dm", "3681720*_s*_m");
   simplifies_to("2*_m/_m", "2");
   simplifies_to("1234_g", "1.234*_kg");
+  simplifies_to("cos(0_rad)", "1");
 
   simplifies_to("4_°C", "4*_°C");
   // Note: this used to be undef in previous Poincare.
@@ -401,6 +402,8 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("2_K*2_°C", "undef");
   simplifies_to("1/_°C", "undef");
   simplifies_to("(1_°C)^2", "undef");
+  simplifies_to("tan(2_m)", "undef");
+  simplifies_to("tan(2_rad^2)", "undef");
 
   // TODO: Handle BestRepresentative
   //   simplifies_to("1_m+1_km", "1.001km");

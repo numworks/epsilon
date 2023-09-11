@@ -2,8 +2,8 @@
 
 namespace Escher {
 
-void ListViewDataSource::initCellsAvailableWidth(TableView* view) {
-  m_availableWidth = view->maxContentWidthDisplayableWithoutScrolling();
+void ListViewDataSource::initWidth(TableView* tableView) {
+  m_width = tableView->maxContentWidthDisplayableWithoutScrolling();
 }
 
 int ListViewDataSource::typeIndexFromIndex(int index) {
@@ -55,8 +55,8 @@ void ListViewDataSource::initCellSize(HighlightCell* cell) const {
    * height */
   // TODO: setSize only if the cell really needs it
   if (cell->bounds().width() == 0) {
-    assert(m_availableWidth > 0);
-    cell->setSize(KDSize(m_availableWidth, Ion::Display::Height));
+    assert(m_width > 0);
+    cell->setSize(KDSize(m_width, Ion::Display::Height));
   }
 }
 

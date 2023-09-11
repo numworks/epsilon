@@ -234,6 +234,7 @@ const UnitRepresentative* UnitRepresentative::FromId(uint8_t id) {
   return UnitRepresentative::DefaultRepresentatives()[0];
 }
 
+#if 0
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
     DimensionVector vector) {
   for (int i = 0; i < k_numberOfDimensions; i++) {
@@ -246,7 +247,6 @@ const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
   return nullptr;
 }
 
-#if 0
 static bool compareMagnitudeOrders(float order, float otherOrder) {
   /* Precision can be lost (with a year conversion for instance), so the order
    * value is rounded */

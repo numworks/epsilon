@@ -131,8 +131,10 @@ class UnitRepresentative {
   static const UnitRepresentative* FromId(uint8_t id);
 
   static const UnitRepresentative* const* DefaultRepresentatives();
+#if 0
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
+#endif
   constexpr UnitRepresentative(Aliases rootSymbol, const Block* ratioExpression,
                                Prefixable inputPrefixable,
                                Prefixable outputPrefixable)
@@ -177,9 +179,11 @@ class UnitRepresentative {
 #endif
 
   Aliases rootSymbols() const { return m_rootSymbols; }
+#if 0
   double ratio() const {
     return Approximation::To<double>(ratioExpressionReduced());
   }
+#endif
   bool isInputPrefixable() const {
     return m_inputPrefixable != Prefixable::None;
   }
@@ -1613,13 +1617,11 @@ class Unit {
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext);
   Expression shallowBeautify();
-#endif
 
   static bool IsBaseUnit(const Tree* unit) {
     return GetRepresentative(unit)->isBaseUnit() &&
            GetPrefix(unit) == GetRepresentative(unit)->basePrefix();
   }
-#if 0
   void chooseBestRepresentativeAndPrefix(
       double* value, double exponent, const ReductionContext& reductionContext,
       bool optimizePrefix);

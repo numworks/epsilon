@@ -16,4 +16,12 @@ bool ExplicitListViewDataSource::canSelectCellAtRow(int row) {
   return cell(row)->isVisible();
 }
 
+void ExplicitListViewDataSource::initWidth(TableView* tableView) {
+  ListViewDataSource::initWidth(tableView);
+  int n = numberOfRows();
+  for (int row = 0; row < n; row++) {
+    cell(row)->initSize(m_width);
+  }
+}
+
 }  // namespace Escher

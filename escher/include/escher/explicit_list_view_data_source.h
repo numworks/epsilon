@@ -23,6 +23,8 @@ class ExplicitListViewDataSource : public ListViewDataSource {
    * viewWillAppear or other methods than can modify them like handleEvent. */
   void fillCellForRow(Escher::HighlightCell* cell, int row) override final {}
 
+  void initWidth(TableView* tableView) override;
+
  protected:
   virtual HighlightCell* cell(int index) = 0;
   KDCoordinate nonMemoizedRowHeight(int row) override final;

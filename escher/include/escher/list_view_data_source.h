@@ -28,6 +28,9 @@ class ListViewDataSource : public TableViewDataSource {
   KDCoordinate nonMemoizedRowHeight(int row) override;
   KDCoordinate protectedNonMemoizedRowHeight(HighlightCell* cell, int row);
 
+  // TODO there are only two possible widths: settings-like and toolbox-like
+  KDCoordinate m_width;
+
  private:
   // ListViewDataSource has only one column
   int numberOfColumns() const override final { return 1; }
@@ -56,8 +59,6 @@ class ListViewDataSource : public TableViewDataSource {
   }
   int typeIndexFromIndex(int index);
   void initCellSize(HighlightCell* cell) const;
-  // TODO there are only two possible widths: settings-like and toolbox-like
-  KDCoordinate m_width;
 };
 
 template <int N>

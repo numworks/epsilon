@@ -22,9 +22,7 @@ DisplayModeController::DisplayModeController(Responder *parentResponder)
 
 KDCoordinate DisplayModeController::nonMemoizedRowHeight(int row) {
   if (row == numberOfRows() - 1) {
-    // Do not call protectedNonMemoizedRowHeight as it will reset edited text.
-    initCellSize(&m_editableCell);
-    return m_editableCell.minimalSizeForOptimalDisplay().height();
+    return protectedNonMemoizedRowHeight(&m_editableCell, row);
   }
   return PreferencesController::nonMemoizedRowHeight(row);
 }

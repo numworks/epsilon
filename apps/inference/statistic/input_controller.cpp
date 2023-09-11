@@ -85,6 +85,13 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
   return ViewController::TitlesDisplay::DisplayLastTitle;
 }
 
+void InputController::viewWillAppear() {
+  m_significanceCell.label()->setMessage(m_statistic->thresholdName());
+  m_significanceCell.subLabel()->setMessage(
+      m_statistic->thresholdDescription());
+  FloatParameterController::viewWillAppear();
+}
+
 int InputController::typeAtRow(int row) const {
   if (row == m_statistic->indexOfThreshold()) {
     return k_significanceCellType;
@@ -107,11 +114,6 @@ void InputController::fillCellForRow(Escher::HighlightCell *cell, int row) {
     ParameterCell *mCell = static_cast<ParameterCell *>(cell);
     mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(row));
     mCell->subLabel()->setMessage(m_statistic->parameterDefinitionAtIndex(row));
-  } else if (type == k_significanceCellType) {
-    assert(cell == &m_significanceCell);
-    m_significanceCell.label()->setMessage(m_statistic->thresholdName());
-    m_significanceCell.subLabel()->setMessage(
-        m_statistic->thresholdDescription());
   }
   FloatParameterController<double>::fillCellForRow(cell, row);
 }

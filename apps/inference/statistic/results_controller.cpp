@@ -116,7 +116,8 @@ int ResultsController::typeAtRow(int row) const {
 
 KDCoordinate ResultsController::nonMemoizedRowHeight(int row) {
   if (typeAtRow(row) == k_resultCellType) {
-    return cell(row)->minimalSizeForOptimalDisplay().height();
+    ResultCell tempCell;
+    return protectedNonMemoizedRowHeight(&tempCell, row);
   }
   assert(typeAtRow(row) == k_buttonCellType);
   return m_next.minimalSizeForOptimalDisplay().height();

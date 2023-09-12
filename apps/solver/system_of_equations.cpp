@@ -11,6 +11,7 @@
 
 #include "app.h"
 #include "poincare/empty_context.h"
+#include "poincare/variable_context.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -420,7 +421,21 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   }
   SolutionType type =
       solutionsAreApproximate ? SolutionType::Approximate : SolutionType::Exact;
+
   for (size_t i = 0; i < numberOfSolutions; i++) {
+    if (simplifiedEquations[0].type() == ExpressionNode::Type::Dependency) {
+      VariableContext contextWithSolution(variable(0), context);
+      contextWithSolution.setExpressionForSymbolAbstract(
+          x[i], Symbol::Builder(variable(0), strlen(variable(0))));
+      ReductionContext reductionContextWithSolution = reductionContext;
+      reductionContextWithSolution.setContext(&contextWithSolution);
+      if (simplifiedEquations[0]
+              .cloneAndReduce(reductionContextWithSolution)
+              .isUndefined()) {
+        continue;
+      }
+    }
+
     Error error = registerSolution(x[i], context, type);
     // Ignore EquationNonreal error on solutions since delta may still be real.
     if (error != Error::NoError && error != Error::EquationNonreal) {

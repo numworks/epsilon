@@ -334,9 +334,6 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("2×cos(π/12)×e^(5πi/12)",
                                        "1/2+\U000000122+√(3)\U00000013/2×i");
   // Do not factorize exponent if the multiplication result is over DBL_MAX
-#if !EMSCRIPTEN
-  /* TODO: This assert does not work on web-simulator because exceptions are
-   * not properly caught. */
   assert_parsed_expression_simplify_to(
       "((1.63871ᴇ182)^(1/256))*((1.93871ᴇ157)^(1/256))",
       "root("
@@ -346,7 +343,6 @@ QUIZ_CASE(poincare_simplification_multiplication) {
       "163871000000000000000000000000000000000000000000000000000000000000000000"
       "000000000000000000000000000000000000000000000000000000000000000000000000"
       "000000000000000000000000000000000000000,256)");
-#endif
 }
 
 /* Some of these are currently not tested because their units are weirdly

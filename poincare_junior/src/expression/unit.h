@@ -1066,40 +1066,40 @@ class Unit {
           UnitPrefix("T", 12),
   };
   typedef UnitRepresentative::Prefixable Prefixable;
-  // Use KTree(1.0_e).k_blocks to cast FloatLiteral into KTree into Blocks *
+  // Use KTree(1._e).k_blocks to cast FloatLiteral into KTree into Blocks *
   constexpr static const TimeRepresentative k_timeRepresentatives[] = {
-      TimeRepresentative("s", KTree(1.0_e).k_blocks, Prefixable::All,
+      TimeRepresentative("s", KTree(1._e).k_blocks, Prefixable::All,
                          Prefixable::NegativeLongScale),
-      TimeRepresentative("min", KTree(60.0_e).k_blocks, Prefixable::None,
+      TimeRepresentative("min", KTree(60._e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("h", KTree(3600.0_e).k_blocks, Prefixable::None,
+      TimeRepresentative("h", KTree(3600._e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("day", KTree(86400.0_e).k_blocks, Prefixable::None,
+      TimeRepresentative("day", KTree(86400._e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("week", KTree(604800.0_e).k_blocks, Prefixable::None,
+      TimeRepresentative("week", KTree(604800._e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("month", KTree(2629800.0_e).k_blocks, Prefixable::None,
+      TimeRepresentative("month", KTree(2629800._e).k_blocks, Prefixable::None,
                          Prefixable::None),
-      TimeRepresentative("year", KTree(31557600.0_e).k_blocks, Prefixable::None,
+      TimeRepresentative("year", KTree(31557600._e).k_blocks, Prefixable::None,
                          Prefixable::None),
   };
   constexpr static const DistanceRepresentative k_distanceRepresentatives[] = {
-      DistanceRepresentative("m", KTree(1.0_e).k_blocks, Prefixable::All,
+      DistanceRepresentative("m", KTree(1._e).k_blocks, Prefixable::All,
                              Prefixable::NegativeAndKilo),
-      DistanceRepresentative("au", KTree(149597870700.0_e).k_blocks,
+      DistanceRepresentative("au", KTree(149597870700._e).k_blocks,
                              Prefixable::None, Prefixable::None),
-      DistanceRepresentative("ly", KMult(299792458.0_e, 31557600.0_e).k_blocks,
+      DistanceRepresentative("ly", KMult(299792458._e, 31557600._e).k_blocks,
                              Prefixable::None, Prefixable::None),
       DistanceRepresentative(
-          "pc", KMult(180.0_e, KDiv(3600.0_e, π_e), 149587870700.0_e).k_blocks,
+          "pc", KMult(180._e, KDiv(3600._e, π_e), 149587870700._e).k_blocks,
           Prefixable::None, Prefixable::None),
       DistanceRepresentative("in", KTree(0.0254_e).k_blocks, Prefixable::None,
                              Prefixable::None),
-      DistanceRepresentative("ft", KMult(12.0_e, 0.0254_e).k_blocks,
+      DistanceRepresentative("ft", KMult(12._e, 0.0254_e).k_blocks,
                              Prefixable::None, Prefixable::None),
-      DistanceRepresentative("yd", KMult(36.0_e, 0.0254_e).k_blocks,
+      DistanceRepresentative("yd", KMult(36._e, 0.0254_e).k_blocks,
                              Prefixable::None, Prefixable::None),
-      DistanceRepresentative("mi", KMult(63360.0_e, 0.0254_e).k_blocks,
+      DistanceRepresentative("mi", KMult(63360._e, 0.0254_e).k_blocks,
                              Prefixable::None, Prefixable::None),
   };
   /* Only AngleRepresentative have non-float ratio expression because exact
@@ -1117,106 +1117,103 @@ class Unit {
                           Prefixable::None),
   };
   constexpr static const MassRepresentative k_massRepresentatives[] = {
-      MassRepresentative("g", KTree(1.0_e).k_blocks, Prefixable::All,
+      MassRepresentative("g", KTree(1._e).k_blocks, Prefixable::All,
                          Prefixable::NegativeAndKilo),
-      MassRepresentative("t", KTree(1000.0_e).k_blocks,
+      MassRepresentative("t", KTree(1000._e).k_blocks,
                          Prefixable::PositiveLongScale,
                          Prefixable::PositiveLongScale),
-      MassRepresentative("Da",
-                         KDiv(KPow(10.0_e, -26.0_e), 6.02214076_e).k_blocks,
+      MassRepresentative("Da", KDiv(KPow(10._e, -26._e), 6.02214076_e).k_blocks,
                          Prefixable::All, Prefixable::All),
       MassRepresentative("oz", KTree(0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
-      MassRepresentative("lb", KMult(16.0_e, 0.028349523125_e).k_blocks,
+      MassRepresentative("lb", KMult(16._e, 0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
       MassRepresentative("shtn",
-                         KMult(2000.0_e, 16.0_e, 0.028349523125_e).k_blocks,
+                         KMult(2000._e, 16._e, 0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
       MassRepresentative("lgtn",
-                         KMult(2240.0_e, 16.0_e, 0.028349523125_e).k_blocks,
+                         KMult(2240._e, 16._e, 0.028349523125_e).k_blocks,
                          Prefixable::None, Prefixable::None),
   };
   constexpr static const CurrentRepresentative k_currentRepresentatives[] = {
-      CurrentRepresentative("A", KTree(1.0_e).k_blocks, Prefixable::All,
+      CurrentRepresentative("A", KTree(1._e).k_blocks, Prefixable::All,
                             Prefixable::LongScale)};
   // Ratios are 1.0 because temperatures conversion are an exception.
   constexpr static const TemperatureRepresentative
       k_temperatureRepresentatives[] = {
-          TemperatureRepresentative("K", KTree(1.0_e).k_blocks, Prefixable::All,
+          TemperatureRepresentative("K", KTree(1._e).k_blocks, Prefixable::All,
                                     Prefixable::None),
-          TemperatureRepresentative("°C", KTree(1.0_e).k_blocks,
+          TemperatureRepresentative("°C", KTree(1._e).k_blocks,
                                     Prefixable::None, Prefixable::None),
-          TemperatureRepresentative("°F", KTree(1.0_e).k_blocks,
+          TemperatureRepresentative("°F", KTree(1._e).k_blocks,
                                     Prefixable::None, Prefixable::None),
   };
   constexpr static const AmountOfSubstanceRepresentative
       k_amountOfSubstanceRepresentatives[] = {AmountOfSubstanceRepresentative(
-          "mol", KTree(1.0_e).k_blocks, Prefixable::All,
-          Prefixable::LongScale)};
+          "mol", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const LuminousIntensityRepresentative
       k_luminousIntensityRepresentatives[] = {LuminousIntensityRepresentative(
-          "cd", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "cd", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const FrequencyRepresentative k_frequencyRepresentatives[] =
-      {FrequencyRepresentative("Hz", KTree(1.0_e).k_blocks, Prefixable::All,
+      {FrequencyRepresentative("Hz", KTree(1._e).k_blocks, Prefixable::All,
                                Prefixable::LongScale)};
   constexpr static const ForceRepresentative k_forceRepresentatives[] = {
-      ForceRepresentative("N", KTree(1.0_e).k_blocks, Prefixable::All,
+      ForceRepresentative("N", KTree(1._e).k_blocks, Prefixable::All,
                           Prefixable::LongScale)};
   constexpr static const PressureRepresentative k_pressureRepresentatives[] = {
-      PressureRepresentative("Pa", KTree(1.0_e).k_blocks, Prefixable::All,
+      PressureRepresentative("Pa", KTree(1._e).k_blocks, Prefixable::All,
                              Prefixable::LongScale),
-      PressureRepresentative("bar", KTree(100000.0_e).k_blocks, Prefixable::All,
+      PressureRepresentative("bar", KTree(100000._e).k_blocks, Prefixable::All,
                              Prefixable::LongScale),
-      PressureRepresentative("atm", KTree(101325.0_e).k_blocks,
-                             Prefixable::None, Prefixable::None),
+      PressureRepresentative("atm", KTree(101325._e).k_blocks, Prefixable::None,
+                             Prefixable::None),
   };
   constexpr static const EnergyRepresentative k_energyRepresentatives[] = {
-      EnergyRepresentative("J", KTree(1.0_e).k_blocks, Prefixable::All,
+      EnergyRepresentative("J", KTree(1._e).k_blocks, Prefixable::All,
                            Prefixable::LongScale),
       EnergyRepresentative("eV",
-                           KMult(1.602176634_e, KPow(10.0_e, -19_e)).k_blocks,
+                           KMult(1.602176634_e, KPow(10._e, -19_e)).k_blocks,
                            Prefixable::All, Prefixable::LongScale),
   };
   constexpr static const PowerRepresentative k_powerRepresentatives[] = {
 
-      PowerRepresentative("W", KTree(1.0_e).k_blocks, Prefixable::All,
+      PowerRepresentative("W", KTree(1._e).k_blocks, Prefixable::All,
                           Prefixable::LongScale),
       PowerRepresentative("hp", KTree(745.699872_e).k_blocks, Prefixable::None,
                           Prefixable::None)};
   constexpr static const ElectricChargeRepresentative
       k_electricChargeRepresentatives[] = {ElectricChargeRepresentative(
-          "C", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "C", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const ElectricPotentialRepresentative
       k_electricPotentialRepresentatives[] = {ElectricPotentialRepresentative(
-          "V", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "V", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const ElectricCapacitanceRepresentative
       k_electricCapacitanceRepresentatives[] = {
-          ElectricCapacitanceRepresentative("F", KTree(1.0_e).k_blocks,
+          ElectricCapacitanceRepresentative("F", KTree(1._e).k_blocks,
                                             Prefixable::All,
                                             Prefixable::LongScale)};
   constexpr static const ElectricResistanceRepresentative
       k_electricResistanceRepresentatives[] = {ElectricResistanceRepresentative(
-          "Ω", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "Ω", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const ElectricConductanceRepresentative
       k_electricConductanceRepresentatives[] = {
-          ElectricConductanceRepresentative("S", KTree(1.0_e).k_blocks,
+          ElectricConductanceRepresentative("S", KTree(1._e).k_blocks,
                                             Prefixable::All,
                                             Prefixable::LongScale)};
   constexpr static const MagneticFluxRepresentative
       k_magneticFluxRepresentatives[] = {MagneticFluxRepresentative(
-          "Wb", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "Wb", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const MagneticFieldRepresentative
       k_magneticFieldRepresentatives[] = {MagneticFieldRepresentative(
-          "T", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "T", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const InductanceRepresentative
       k_inductanceRepresentatives[] = {InductanceRepresentative(
-          "H", KTree(1.0_e).k_blocks, Prefixable::All, Prefixable::LongScale)};
+          "H", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const CatalyticActivityRepresentative
       k_catalyticActivityRepresentatives[] = {CatalyticActivityRepresentative(
-          "kat", KTree(1.0_e).k_blocks, Prefixable::All,
-          Prefixable::LongScale)};
+          "kat", KTree(1._e).k_blocks, Prefixable::All, Prefixable::LongScale)};
   constexpr static const SurfaceRepresentative k_surfaceRepresentatives[] = {
-      SurfaceRepresentative("ha", KTree(10000.0_e).k_blocks, Prefixable::None,
+      SurfaceRepresentative("ha", KTree(10000._e).k_blocks, Prefixable::None,
                             Prefixable::None),
       SurfaceRepresentative("acre", KTree(4046.8564224_e).k_blocks,
                             Prefixable::None, Prefixable::None),
@@ -1227,17 +1224,17 @@ class Unit {
                            Prefixable::Negative),
       VolumeRepresentative("tsp", KTree(0.00000492892159375_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("tbsp", KMult(3.0_e, 0.00000492892159375_e).k_blocks,
+      VolumeRepresentative("tbsp", KMult(3._e, 0.00000492892159375_e).k_blocks,
                            Prefixable::None, Prefixable::None),
       VolumeRepresentative("floz", KTree(0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("cup", KMult(8.0_e, 0.0000295735295625_e).k_blocks,
+      VolumeRepresentative("cup", KMult(8._e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("pt", KMult(16.0_e, 0.0000295735295625_e).k_blocks,
+      VolumeRepresentative("pt", KMult(16._e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("qt", KMult(32.0_e, 0.0000295735295625_e).k_blocks,
+      VolumeRepresentative("qt", KMult(32._e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
-      VolumeRepresentative("gal", KMult(128.0_e, 0.0000295735295625_e).k_blocks,
+      VolumeRepresentative("gal", KMult(128._e, 0.0000295735295625_e).k_blocks,
                            Prefixable::None, Prefixable::None),
   };
 

@@ -7,6 +7,27 @@ namespace PoincareJ {
 
 namespace Sign {
 
+bool Sign::isZero() const {
+  assert(isValid());
+  return !(canBePositive || canBeNegative);
+}
+bool Sign::isStrictlyPositive() const {
+  assert(isValid());
+  return !(canBeNull || canBeNegative);
+}
+bool Sign::isStrictlyNegative() const {
+  assert(isValid());
+  return !(canBeNull || canBePositive);
+}
+bool Sign::isNegative() const {
+  assert(isValid());
+  return !canBePositive;
+}
+bool Sign::isPositive() const {
+  assert(isValid());
+  return !canBeNegative;
+}
+
 Sign Mult(Sign s1, Sign s2) {
   return {
       .canBeNull = s1.canBeNull || s2.canBeNull,

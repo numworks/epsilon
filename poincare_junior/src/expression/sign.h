@@ -12,11 +12,12 @@ struct Sign {
   bool canBeNegative : 1 = false;
   bool isInteger : 1 = false;  // = !canBeNonIntegral
 
-  bool isZero() const { return !(canBePositive || canBeNegative); }
-  bool isStrictlyPositive() const { return !(canBeNull || canBeNegative); }
-  bool isStrictlyNegative() const { return !(canBeNull || canBePositive); }
-  bool isNegative() const { return !canBePositive; }
-  bool isPositive() const { return !canBeNegative; }
+  bool isValid() const { return canBeNull || canBePositive || canBeNegative; }
+  bool isZero() const;
+  bool isStrictlyPositive() const;
+  bool isStrictlyNegative() const;
+  bool isNegative() const;
+  bool isPositive() const;
 
   bool operator==(const Sign&) const = default;
 };

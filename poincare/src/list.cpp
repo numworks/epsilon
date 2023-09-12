@@ -88,11 +88,12 @@ int ListNode::extremumIndex(const ApproximationContext& approximationContext,
 template <typename T>
 Evaluation<T> ListNode::extremumApproximation(
     const ApproximationContext& approximationContext, bool minimum) {
-  if (numberOfChildren() == 0) {
+  int index = extremumIndex(approximationContext, minimum, false);
+  if (index < 0) {
     return Complex<T>::Undefined();
   }
-  return childAtIndex(extremumIndex(approximationContext, minimum, false))
-      ->approximate(static_cast<T>(0), approximationContext);
+  return childAtIndex(index)->approximate(static_cast<T>(0),
+                                          approximationContext);
 }
 
 template <typename T>

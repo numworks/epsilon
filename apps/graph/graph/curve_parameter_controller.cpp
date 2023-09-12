@@ -93,28 +93,27 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 }
 
 float CurveParameterController::parameterAtIndex(int index) {
+  Poincare::Context *ctx = App::app()->localContext();
   if (isDerivative(index)) {
     assert(function()->canDisplayDerivative());
-    return function()->approximateDerivative(m_cursor->x(),
-                                             App::app()->localContext());
+    return function()->approximateDerivative(m_cursor->x(), ctx);
   }
   float t = m_cursor->t();
   float x = m_cursor->x();
   float y = m_cursor->y();
   if (function()->properties().isScatterPlot() &&
       (t != std::round(t) ||
-       t >= function()->iterateScatterPlot(nullptr).length())) {
+       t >= function()->iterateScatterPlot(ctx).length())) {
     /* FIXME This will display the first point of a multi-point scatter plot
      * when accessed through the Calculate button, which is not super useful,
      * but there is no real alternative barring some UX changes. */
     t = 0.f;
     Poincare::Coordinate2D<float> xy =
-        function()->evaluateXYAtParameter(t, nullptr);
+        function()->evaluateXYAtParameter(t, ctx);
     x = xy.x();
     y = xy.y();
   }
-  return function()->evaluateCurveParameter(index, t, x, y,
-                                            App::app()->localContext());
+  return function()->evaluateCurveParameter(index, t, x, y, ctx);
 }
 
 bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,

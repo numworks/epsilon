@@ -22,8 +22,8 @@ Sign::Sign Number::Sign(const Tree* node) {
       return Sign::Positive;
     case BlockType::Float: {
       float value = Float::To(node);
-      // Should floats never be considered integers ?
-      return {value == 0, value > 0, value < 0, value == (int)value};
+      // Floats are not considered integer since they may have been rounded
+      return {value == 0, value > 0, value < 0, false};
     }
     default:
       assert(node->block()->isRational());

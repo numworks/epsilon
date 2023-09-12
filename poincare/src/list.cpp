@@ -200,6 +200,9 @@ bool List::isListOfPoints(Context* context) const {
   for (int i = 0; i < n; i++) {
     Expression e = childAtIndex(i);
     if (IsSymbolic(e, context)) {
+      if (!context) {
+        return false;
+      }
       Expression ve = context->expressionForSymbolAbstract(
           static_cast<SymbolAbstract&>(e), false);
       if (!(ve.isUninitialized() || IsPoint(ve, context))) {

@@ -160,18 +160,9 @@ Expression Symbol::shallowReduce(ReductionContext reductionContext) {
   }
 
   /* Recursively replace symbols and catch circular references involving symbols
-   * as well as functions.
-   * A symbol does not behave the same as a function : any nested symbol that
-   * is either undefined or was the parameter of a function defined in the
-   * parents of this expression must be replaced with undefined.
-   * For example, within the expression 'diff(a,x,3)', with 'a' defined as
-   * 'diff(x,x,x)' :
-   * If x is globally undefined, 'a' should be expanded to 'diff(x,x,undef)'
-   * If x is defined as '2', 'a' should be expanded to 'diff(x,x,2)'.
-   * Reduction's symbolic computation only apply on non-nested variables. */
-  Expression result = SymbolAbstract::Expand(
-      *this, reductionContext.context(), true,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+   * as well as functions. */
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(),
+                                             true, symbolicComputation);
   if (result.isUninitialized()) {
     if (symbolicComputation ==
         SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {

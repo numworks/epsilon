@@ -890,7 +890,7 @@ class Unit {
           UnitPrefix("k", 3),   UnitPrefix("M", 6),  UnitPrefix("G", 9),
           UnitPrefix("T", 12),
   };
-  typedef UnitRepresentative::Prefixable Prefixable;
+  using Prefixable = UnitRepresentative::Prefixable;
   // Use KTree(1._e).k_blocks to cast FloatLiteral into KTree into Blocks *
   constexpr static const TimeRepresentative k_timeRepresentatives[] = {
       TimeRepresentative("s", KTree(1._e).k_blocks, Prefixable::All,

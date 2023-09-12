@@ -241,14 +241,7 @@ class TimeRepresentative : public UnitRepresentative {
                               Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 1,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -278,14 +271,7 @@ class DistanceRepresentative : public UnitRepresentative {
                                   Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 1,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.distance = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -326,14 +312,7 @@ class AngleRepresentative : public UnitRepresentative {
                     const ReductionContext& reductionContext) const;
 #endif
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 0,
-                           .angle = 1,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.angle = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -366,14 +345,7 @@ class MassRepresentative : public UnitRepresentative {
                               Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.mass = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -407,14 +379,7 @@ class CurrentRepresentative : public UnitRepresentative {
                                  Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 1,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.current = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -440,14 +405,7 @@ class TemperatureRepresentative : public UnitRepresentative {
                                      Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 1,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.temperature = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -484,14 +442,7 @@ class AmountOfSubstanceRepresentative : public UnitRepresentative {
                                            Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 1,
-                           .luminousIntensity = 0};
+    return DimensionVector{.amountOfSubstance = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -512,14 +463,7 @@ class LuminousIntensityRepresentative : public UnitRepresentative {
                                            Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 1};
+    return DimensionVector{.luminousIntensity = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -540,14 +484,7 @@ class FrequencyRepresentative : public UnitRepresentative {
                                    Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -1,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -565,14 +502,7 @@ class ForceRepresentative : public UnitRepresentative {
                                Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -2,
-                           .distance = 1,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -2, .distance = 1, .mass = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -590,14 +520,7 @@ class PressureRepresentative : public UnitRepresentative {
                                   Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -2,
-                           .distance = -1,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -2, .distance = -1, .mass = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -615,14 +538,7 @@ class EnergyRepresentative : public UnitRepresentative {
                                 Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -2,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -2, .distance = 2, .mass = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -650,14 +566,7 @@ class PowerRepresentative : public UnitRepresentative {
                                Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -3,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -3, .distance = 2, .mass = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -676,14 +585,7 @@ class ElectricChargeRepresentative : public UnitRepresentative {
                                         Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 1,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 1,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = 1, .current = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -698,14 +600,7 @@ class ElectricPotentialRepresentative : public UnitRepresentative {
                                            Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -3,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = -1,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -3, .distance = 2, .mass = 1, .current = -1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -723,14 +618,7 @@ class ElectricCapacitanceRepresentative : public UnitRepresentative {
                                              Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 4,
-                           .distance = -2,
-                           .angle = 0,
-                           .mass = -1,
-                           .current = 2,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = 4, .distance = -2, .mass = -1, .current = 2};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -748,14 +636,7 @@ class ElectricResistanceRepresentative : public UnitRepresentative {
                                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -3,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = -2,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -3, .distance = 2, .mass = 1, .current = -2};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -773,14 +654,7 @@ class ElectricConductanceRepresentative : public UnitRepresentative {
                                              Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 3,
-                           .distance = -2,
-                           .angle = 0,
-                           .mass = -1,
-                           .current = 2,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = 3, .distance = -2, .mass = -1, .current = 2};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -798,14 +672,7 @@ class MagneticFluxRepresentative : public UnitRepresentative {
                                       Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -2,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = -1,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -2, .distance = 2, .mass = 1, .current = -1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -823,14 +690,7 @@ class MagneticFieldRepresentative : public UnitRepresentative {
                                        Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -2,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = -1,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -2, .mass = 1, .current = -1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -848,14 +708,7 @@ class InductanceRepresentative : public UnitRepresentative {
                                     Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -2,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 1,
-                           .current = -2,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -2, .distance = 2, .mass = 1, .current = -2};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -873,14 +726,7 @@ class CatalyticActivityRepresentative : public UnitRepresentative {
                                            Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -1,
-                           .distance = 0,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 1,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -1, .amountOfSubstance = 1};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -898,14 +744,7 @@ class SurfaceRepresentative : public UnitRepresentative {
                                  Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 2,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.distance = 2};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -935,14 +774,7 @@ class VolumeRepresentative : public UnitRepresentative {
                                 Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = 0,
-                           .distance = 3,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.distance = 3};
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -972,14 +804,7 @@ class SpeedRepresentative : public UnitRepresentative {
                                Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
-    return DimensionVector{.time = -1,
-                           .distance = 1,
-                           .angle = 0,
-                           .mass = 0,
-                           .current = 0,
-                           .temperature = 0,
-                           .amountOfSubstance = 0,
-                           .luminousIntensity = 0};
+    return DimensionVector{.time = -1, .distance = 1};
   }
 #if 0
   const UnitRepresentative* standardRepresentative(

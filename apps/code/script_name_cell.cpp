@@ -8,6 +8,13 @@ using namespace Escher;
 
 namespace Code {
 
+bool ScriptNameCell::ScriptNameTextField::handleEvent(
+    Ion::Events::Event event) {
+  // Prevent using VarBox and ToolBox
+  return event != Ion::Events::Var && event != Ion::Events::Toolbox &&
+         Escher::TextField::handleEvent(event);
+}
+
 const char* ScriptNameCell::text() const {
   if (!m_textField.isEditing()) {
     return m_textField.text();

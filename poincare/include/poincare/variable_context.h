@@ -9,7 +9,7 @@ namespace Poincare {
 
 class VariableContext : public ContextWithParent {
  public:
-  VariableContext(const char* name, Context* parentContext)
+  VariableContext(const char* name = nullptr, Context* parentContext = nullptr)
       : ContextWithParent(parentContext), m_name(name) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */

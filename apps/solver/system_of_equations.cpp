@@ -442,6 +442,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
       solutionsAreApproximate ? SolutionType::Approximate : SolutionType::Exact;
 
   for (size_t i = 0; i < numberOfSolutions; i++) {
+    /* Since getPolynomialReducedCoefficients passes right through dependencies,
+     * we need to handle them now. */
     if (simplifiedEquations[0].type() == ExpressionNode::Type::Dependency) {
       VariableContext contextWithSolution(variable(0), context);
       contextWithSolution.setExpressionForSymbolAbstract(

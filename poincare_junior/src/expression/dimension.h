@@ -51,13 +51,19 @@ struct Dimension {
   bool isMatrix() const { return type == Type::Matrix; }
   bool isUnit() const { return type == Type::Unit; }
   bool isSquareMatrix() const {
-    return type == Type::Matrix && matrix.rows == matrix.cols;
+    return isMatrix() && matrix.rows == matrix.cols;
   }
   bool isVector() const {
-    return type == Type::Matrix && (matrix.rows == 1 || matrix.cols == 1);
+    return isMatrix() && (matrix.rows == 1 || matrix.cols == 1);
+  }
+  bool isAngleUnit() const {
+    return isUnit() && unit.vector.angle != 0 && unit.vector.supportSize() == 1;
+  }
+  bool isSimpleAngleUnit() const {
+    return isAngleUnit() && unit.vector.angle == 1;
   }
   bool hasNonKelvinTemperatureUnit() const {
-    return type == Type::Unit &&
+    return isUnit() &&
            IsNonKelvinTemperatureRepresentative(unit.representative);
   }
   static bool IsNonKelvinTemperatureRepresentative(

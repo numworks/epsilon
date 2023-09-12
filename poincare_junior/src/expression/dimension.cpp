@@ -139,8 +139,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         if (childDim[i].isScalar() ||
             (childDim[i].isUnit() &&
              (unitsAllowed ||
-              (angleUnitsAllowed && (childDim[i].unit.vector.angle == 1) &&
-               (childDim[i].unit.vector.supportSize() == 1))))) {
+              (angleUnitsAllowed && childDim[i].isSimpleAngleUnit())))) {
           continue;
         }
         return false;

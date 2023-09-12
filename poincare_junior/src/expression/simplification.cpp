@@ -773,8 +773,7 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
 
 bool ShouldApproximateOnSimplify(Dimension dimension) {
   // Only angle units are expected not to be approximated.
-  return (dimension.isUnit() && !(dimension.unit.vector.supportSize() == 1 &&
-                                  dimension.unit.vector.angle != 0));
+  return (dimension.isUnit() && !dimension.isAngleUnit());
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {

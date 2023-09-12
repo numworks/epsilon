@@ -49,6 +49,14 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_no_solution("e=1");
   assert_solves_to_no_solution("i=5");
   assert_solves_to_no_solution("x-x+2=0");
+  assert_solves_to_no_solution("x/x-1+x=0");
+
+  assert_solves_to("√(x)^(2)=-1", {"x=-1"});
+  assert_solves_to("sin(asin(x))=2", {"x=2"});
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Real);
+  assert_solves_to_no_solution("√(x)^(2)=-1");
+  assert_solves_to_no_solution("sin(asin(x))=2");
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Cartesian);
 }
 
 QUIZ_CASE(solver_polynomial_system) {
@@ -76,6 +84,8 @@ QUIZ_CASE(solver_polynomial_system) {
   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
   assert_solves_to("x^3-4x^2+6x-24=0",
                    {"x=4", "x=-√(6)×i", "x=√(6)×i", "delta=-11616"});
+  assert_solves_to("x^2+x/x-1=0", {"delta=0"});
+  assert_solves_to("x^2*(x-1)/x=0", {"x=1", "delta=1"});
 }
 
 QUIZ_CASE(solver_approximate) {

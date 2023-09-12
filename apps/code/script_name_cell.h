@@ -52,7 +52,13 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
   }
   void layoutSubviews(bool force = false) override;
 
-  Shared::TextFieldWithExtension m_textField;
+  class ScriptNameTextField : public Shared::TextFieldWithExtension {
+   public:
+    using Shared::TextFieldWithExtension::TextFieldWithExtension;
+    bool handleEvent(Ion::Events::Event event) override;
+  };
+
+  ScriptNameTextField m_textField;
   char m_textBody[Escher::TextField::MaxBufferSize()];
 };
 

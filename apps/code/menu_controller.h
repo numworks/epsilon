@@ -44,7 +44,6 @@ class MenuController : public Escher::ViewController,
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  void viewDidDisappear() override;
   TELEMETRY_ID("Menu");
 
   /* TableViewDataSource */

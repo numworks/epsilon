@@ -79,8 +79,7 @@ App::App(Snapshot *snapshot)
       m_codeStackViewController(
           &m_modalViewController, &m_listFooter,
           Escher::StackViewController::Style::WhiteUniform),
-      m_variableBox(),
-      m_allowBoxes(true) {
+      m_variableBox() {
   Clipboard::sharedClipboard()->enterPython();
 }
 

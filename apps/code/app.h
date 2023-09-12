@@ -47,13 +47,8 @@ class App : public Shared::SharedApp {
   bool handleEvent(Ion::Events::Event event) override;
   void willExitResponderChain(Escher::Responder *nextFirstResponder) override;
 
-  PythonToolboxController *toolbox() override {
-    return m_allowBoxes ? &m_toolbox : nullptr;
-  }
-  PythonVariableBoxController *variableBox() override {
-    return m_allowBoxes ? &m_variableBox : nullptr;
-  }
-  void allowBoxes(bool allow) { m_allowBoxes = allow; }
+  PythonToolboxController *toolbox() override { return &m_toolbox; }
+  PythonVariableBoxController *variableBox() override { return &m_variableBox; }
 
   /* TextInputDelegate */
   bool textInputDidReceiveEvent(Escher::EditableField *textInput,
@@ -109,7 +104,6 @@ class App : public Shared::SharedApp {
   char *pythonHeap() { return m_pythonHeap; }
   char m_pythonHeap[k_pythonHeapSize];
 #endif
-  bool m_allowBoxes;
 };
 
 }  // namespace Code

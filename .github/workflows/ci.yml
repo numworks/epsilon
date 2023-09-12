@@ -3,7 +3,6 @@ name: Continuous Integration
 on:
   push:
     branches: [ master, 'version-*' ]
-  pull_request:
 
   workflow_dispatch:
     inputs:

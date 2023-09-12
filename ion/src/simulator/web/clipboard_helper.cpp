@@ -73,7 +73,7 @@ void fetchFromSystemClipboard(char* buffer, size_t bufferSize) {
   get_clipboard_text(buffer, static_cast<uint32_t>(bufferSize), &lock,
                      AsyncStatus::Failure, AsyncStatus::Success);
   while (lock == AsyncStatus::Pending) {
-    emscripten_sleep_with_yield(10);
+    emscripten_sleep(10);
   }
   if (lock == AsyncStatus::Success) {
     return;

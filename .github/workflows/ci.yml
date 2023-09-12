@@ -78,7 +78,7 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
-          sdk: 1.39.16-fastcomp
+          sdk: 3.1.43
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js

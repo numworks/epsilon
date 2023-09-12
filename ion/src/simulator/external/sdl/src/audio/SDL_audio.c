@@ -288,6 +288,12 @@ SDL_AudioFreeDeviceHandle_Default(void *handle)
 {                               /* no-op. */
 }
 
+#if __EMSCRIPTEN__
+/* TODO : Numworks hack to make audio compile with recent emscripten (we don't
+ * need audio anyway), replace with updated SDL instead. */
+int SDL_LockMutex(SDL_mutex * mutex) {}
+int SDL_UnlockMutex(SDL_mutex * mutex) {}
+#endif
 
 static int
 SDL_AudioOpenDevice_Default(_THIS, void *handle, const char *devname, int iscapture)

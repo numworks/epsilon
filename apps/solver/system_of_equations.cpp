@@ -214,7 +214,8 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   Expression coefficients[EquationStore::k_maxNumberOfEquations]
                          [Expression::k_maxNumberOfVariables];
   Expression constants[EquationStore::k_maxNumberOfEquations];
-  int m = m_store->numberOfDefinedModels();
+  const int numberOfOriginalEquations = m_store->numberOfDefinedModels();
+  int m = numberOfOriginalEquations;
   for (int i = 0; i < m; i++) {
     bool isLinear = simplifiedEquations[i].getLinearCoefficients(
         &m_variables[0][0], SymbolAbstractNode::k_maxNameSize, coefficients[i],
@@ -363,6 +364,32 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   // System is fully qualified, register the solutions.
   m_numberOfSolutions = 0;
+
+  // Make sure the solution satisfies dependencies in equations
+  VariableContext solutionContexts[k_maxNumberOfSolutions];
+  for (int i = 0; i < n; i++) {
+    solutionContexts[i] = VariableContext(
+        variable(i), i == 0 ? context : &solutionContexts[i - 1]);
+    solutionContexts[i].setExpressionForSymbolAbstract(
+        ab.matrixChild(i, n),
+        Symbol::Builder(variable(i), strlen(variable(i))));
+  }
+  ReductionContext reductionContextWithSolutions(
+      &solutionContexts[n - 1], m_complexFormat,
+      Preferences::sharedPreferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
+      ReductionTarget::SystemForAnalysis);
+  for (int i = 0; i < numberOfOriginalEquations; i++) {
+    if (simplifiedEquations[i].type() != ExpressionNode::Type::Dependency) {
+      continue;
+    }
+    if (simplifiedEquations[i]
+            .cloneAndReduce(reductionContextWithSolutions)
+            .isUndefined()) {
+      return Error::NoError;
+    }
+  }
+
   SolutionType solutionType =
       m_hasMoreSolutions ? SolutionType::Formal : SolutionType::Exact;
   for (int i = 0; i < n; i++) {

@@ -220,7 +220,7 @@ class UnitRepresentative {
   Aliases m_rootSymbols;
   /* m_ratioExpression is the expression of the factor used to convert a unit
    * made of the representative and its base prefix into base SI units. ex :
-   * m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m).
+   * m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m^3).
    * m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
    *
    * TODO: We have to use Block * instead of Tree * so that representatives

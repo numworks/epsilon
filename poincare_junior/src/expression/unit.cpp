@@ -95,8 +95,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
     // Fill the vector with the unit's exponent
     assert(factor->type() == BlockType::Unit);
     vector.addAllCoefficients(
-        Unit::GetRepresentative(factor)->dimensionVector(),
-        exponent);  // 7 in .time appears
+        Unit::GetRepresentative(factor)->dimensionVector(), exponent);
     if (++factorIndex >= numberOfFactors) {
       break;
     }
@@ -157,7 +156,7 @@ void DimensionVector::setCoefficientAtIndex(int8_t coefficient, uint8_t i) {
                                      &amountOfSubstance,
                                      &luminousIntensity};
   static_assert(std::size(coefficientsAddresses) == k_numberOfBaseUnits);
-  *(coefficientsAddresses[i]) = coefficient;  // Something weird here ...
+  *(coefficientsAddresses[i]) = coefficient;
 }
 
 // UnitRepresentative

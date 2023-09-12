@@ -641,7 +641,7 @@ Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   if (j.isZero()) {
     // TODO : handle 0^0.
     assert(!i.isZero());
-    return IntegerHandler(1).pushOnEditionPool();
+    return Integer::Push(1);
   }
   // Exponentiate by squaring : i^j = (i*i)^(j/2) * i^(j%2)
   IntegerHandler i1(1);

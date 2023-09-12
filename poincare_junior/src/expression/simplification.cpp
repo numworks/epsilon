@@ -1485,8 +1485,8 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
       return true;
     case BlockType::Dim: {
       Tree* dim = SharedEditionPool->push<BlockType::Matrix>(1, 2);
-      IntegerHandler(Matrix::NumberOfRows(child)).pushOnEditionPool();
-      IntegerHandler(Matrix::NumberOfColumns(child)).pushOnEditionPool();
+      Integer::Push(Matrix::NumberOfRows(child));
+      Integer::Push(Matrix::NumberOfColumns(child));
       tree->moveTreeOverTree(dim);
       return true;
     }

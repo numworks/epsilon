@@ -335,7 +335,7 @@ Tree* Matrix::Power(const Tree* m, int p) {
     return result;
   }
   if (p == 0) {
-    Tree* result = IntegerHandler(NumberOfRows(m)).pushOnEditionPool();
+    Tree* result = Integer::Push(NumberOfRows(m));
     result->moveTreeOverTree(Identity(result));
     return result;
   }

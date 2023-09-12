@@ -123,12 +123,12 @@ Tree* DimensionVector::toBaseUnits() const {
     if (prefix != UnitPrefix::EmptyPrefix()) {
       SharedEditionPool->push<BlockType::Multiplication>(2);
       SharedEditionPool->push<BlockType::Power>();
-      IntegerHandler(10).pushOnEditionPool();
-      IntegerHandler(-prefix->exponent()).pushOnEditionPool();
+      Integer::Push(10);
+      Integer::Push(-prefix->exponent());
     }
     Unit::Push(representative, prefix);
     if (exponent != 1) {
-      IntegerHandler(exponent).pushOnEditionPool();
+      Integer::Push(exponent);
     }
     NAry::SetNumberOfChildren(result, ++numberOfChildren);
   }
@@ -1512,8 +1512,8 @@ void Unit::RemoveUnit(Tree* unit) {
   Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
   GetRepresentative(unit)->ratioExpressionReduced()->clone();
   SharedEditionPool->push<BlockType::Power>();
-  IntegerHandler(10).pushOnEditionPool();
-  IntegerHandler(GetPrefix(unit)->exponent()).pushOnEditionPool();
+  Integer::Push(10);
+  Integer::Push(GetPrefix(unit)->exponent());
   unit->moveTreeOverTree(result);
 }
 

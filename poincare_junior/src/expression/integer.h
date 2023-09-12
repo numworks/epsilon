@@ -239,6 +239,9 @@ class Integer {
                     OMG::Base base = OMG::Base::Decimal) {
     return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
   }
+  static Tree *Push(native_int_t value) {
+    return IntegerHandler(value).pushOnEditionPool();
+  }
   static IntegerHandler Handler(const Tree *expression);
   static bool IsUint8(const Tree *expression);
   static uint8_t Uint8(const Tree *expression);

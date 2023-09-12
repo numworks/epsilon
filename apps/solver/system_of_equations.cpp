@@ -269,112 +269,104 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     }
   }
 
-  if (rank == n && n > 0) {
-    /* The rank is equal to the number of variables: the system has n solutions,
-     * and after canonization their values are the values on the last column. */
-    assert(m_numberOfSolutions == 0);
-    Error error;
-    for (int i = 0; i < n; i++) {
-      error =
-          registerSolution(ab.matrixChild(i, n), context, SolutionType::Exact);
-      if (error != Error::NoError) {
-        break;
-      }
-    }
-    assert(error != Error::NoError ||
-           m_numberOfSolutions == static_cast<size_t>(n));
-    return error;
-  }
-
-  /* The system is insufficiently qualified: bind the value of n-rank
-   * variables to parameters. */
-  m_hasMoreSolutions = true;
-
   /* Use a context without t to avoid replacing the t? parameters with a value
-   * if the user stored something in them but they are not used by the system..
-   */
+   * if the user stored something in them but they are not used by the
+   * system.
+   * It is declared here as it needs to be accessible when registering the
+   * solutions at the end. */
   ContextWithoutT noTContext(context);
-  context = &noTContext;
 
-  // 't' + 2 digits + '\0'
-  constexpr size_t parameterNameSize = 1 + 2 + 1;
-  char parameterName[parameterNameSize] = {k_parameterPrefix};
-  size_t parameterIndex = n - rank == 1 ? 0 : 1;
-  uint32_t usedParameterIndices = tagParametersUsedAsVariables();
+  if (rank != n || n <= 0) {
+    /* The system is insufficiently qualified: bind the value of n-rank
+     * variables to parameters. */
+    m_hasMoreSolutions = true;
 
-  int variable = n - 1;
-  int row = m - 1;
-  int firstVariableInRow = -1;
-  while (variable >= 0) {
-    // Find the first variable with a non-null coefficient in the current row
-    if (row >= 0) {
-      for (int col = 0; firstVariableInRow < 0 && col < n; col++) {
-        if (ab.matrixChild(row, col).isNull(context) != TrinaryBoolean::True) {
-          firstVariableInRow = col;
+    context = &noTContext;
+
+    // 't' + 2 digits + '\0'
+    constexpr size_t parameterNameSize = 1 + 2 + 1;
+    char parameterName[parameterNameSize] = {k_parameterPrefix};
+    size_t parameterIndex = n - rank == 1 ? 0 : 1;
+    uint32_t usedParameterIndices = tagParametersUsedAsVariables();
+
+    int variable = n - 1;
+    int row = m - 1;
+    int firstVariableInRow = -1;
+    while (variable >= 0) {
+      // Find the first variable with a non-null coefficient in the current row
+      if (row >= 0) {
+        for (int col = 0; firstVariableInRow < 0 && col < n; col++) {
+          if (ab.matrixChild(row, col).isNull(context) !=
+              TrinaryBoolean::True) {
+            firstVariableInRow = col;
+          }
+        }
+
+        if (firstVariableInRow < 0 || firstVariableInRow == variable) {
+          /* If firstVariableInRow < 0, the row is null and provides no
+           * information. If variable is the first with a non-null coefficient,
+           * the current row uniquely qualifies it, no need to bind a parameter
+           * to it. */
+          row--;
+          if (firstVariableInRow == variable) {
+            variable--;
+          }
+          firstVariableInRow = -1;
+          continue;
         }
       }
+      /* If row < 0, there are still unbound variables after scanning all the
+       * row, so simply bind them all. */
 
-      if (firstVariableInRow < 0 || firstVariableInRow == variable) {
-        /* If firstVariableInRow < 0, the row is null and provides no
-         * information. If variable is the first with a non-null coefficient,
-         * the current row uniquely qualifies it, no need to bind a parameter to
-         * it. */
-        row--;
-        if (firstVariableInRow == variable) {
-          variable--;
-        }
-        firstVariableInRow = -1;
-        continue;
+      assert(firstVariableInRow < variable);
+      /* No row uniquely qualifies the current variable, bind it to a parameter.
+       * Add the row variable=parameter to increase the rank of the system. */
+      for (int i = 0; i < n; i++) {
+        ab.addChildAtIndexInPlace(Rational::Builder(i == variable ? 1 : 0),
+                                  abChildren, abChildren);
+        ++abChildren;
       }
-    }
-    /* If row < 0, there are still unbound variables after scanning all the row,
-     * so simply bind them all. */
 
-    assert(firstVariableInRow < variable);
-    /* No row uniquely qualifies the current variable, bind it to a parameter.
-     * Add the row variable=parameter to increase the rank of the system. */
-    for (int i = 0; i < n; i++) {
-      ab.addChildAtIndexInPlace(Rational::Builder(i == variable ? 1 : 0),
-                                abChildren, abChildren);
-      ++abChildren;
-    }
-
-    // Generate a unique identifier t? that does not collide with variables.
-    while (OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
+      // Generate a unique identifier t? that does not collide with variables.
+      while (OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
+        parameterIndex++;
+        assert(parameterIndex <
+               OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
+      }
+      size_t parameterNameLength =
+          parameterIndex == 0
+              ? 1
+              : 1 + PrintInt::Left(parameterIndex, parameterName + 1,
+                                   parameterNameSize - 2);
       parameterIndex++;
-      assert(parameterIndex <
-             OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
+      assert(parameterNameLength >= 1 &&
+             parameterNameLength < parameterNameSize);
+      parameterName[parameterNameLength] = '\0';
+      ab.addChildAtIndexInPlace(
+          Symbol::Builder(parameterName, parameterNameLength), abChildren,
+          abChildren);
+      ++abChildren;
+      ab.setDimensions(++m, n + 1);
+      variable--;
     }
-    size_t parameterNameLength =
-        parameterIndex == 0
-            ? 1
-            : 1 + PrintInt::Left(parameterIndex, parameterName + 1,
-                                 parameterNameSize - 2);
-    parameterIndex++;
-    assert(parameterNameLength >= 1 && parameterNameLength < parameterNameSize);
-    parameterName[parameterNameLength] = '\0';
-    ab.addChildAtIndexInPlace(
-        Symbol::Builder(parameterName, parameterNameLength), abChildren,
-        abChildren);
-    ++abChildren;
-    ab.setDimensions(++m, n + 1);
-    variable--;
-  }
 
-  /* forceCanonization = true so that canonization still happens even if
-   * t.approximate() is NAN. If other children of ab have an undef
-   * approximation, the previous rank computation would already have returned
-   * -1. */
-  rank = ab.rank(context, true);
-  if (rank == -1) {
-    return Error::EquationUndefined;
+    /* forceCanonization = true so that canonization still happens even if
+     * t.approximate() is NAN. If other children of ab have an undef
+     * approximation, the previous rank computation would already have returned
+     * -1. */
+    rank = ab.rank(context, true);
+    if (rank == -1) {
+      return Error::EquationUndefined;
+    }
   }
   assert(rank == n);
-  // System is fully qualified, register the parametric solutions.
+
+  // System is fully qualified, register the solutions.
   m_numberOfSolutions = 0;
+  SolutionType solutionType =
+      m_hasMoreSolutions ? SolutionType::Formal : SolutionType::Exact;
   for (int i = 0; i < n; i++) {
-    Error error =
-        registerSolution(ab.matrixChild(i, n), context, SolutionType::Formal);
+    Error error = registerSolution(ab.matrixChild(i, n), context, solutionType);
     if (error != Error::NoError) {
       return error;
     }

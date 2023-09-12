@@ -260,7 +260,9 @@ void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
   LayoutCursor previousCursor = *cursor();
   m_contentView.setCursor(
       LayoutCursor(m_contentView.layoutView()->layout(), side));
-  cursor()->didEnterCurrentPosition(previousCursor);
+  if (isEditing()) {
+    cursor()->didEnterCurrentPosition(previousCursor);
+  }
 }
 
 void LayoutField::reload(KDSize previousSize) {
@@ -676,9 +678,14 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
+  if (!isEditing()) {
+    cursor()->didEnterCurrentPosition();
+  }
   cursor()->insertLayout(layout, context(), forceCursorRightOfLayout,
                          forceCursorLeftOfLayout);
-
+  if (!isEditing()) {
+    cursor()->didExitPosition();
+  }
   // Reload
   reload(previousSize);
   scrollToCursor();

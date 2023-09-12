@@ -24,10 +24,7 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
 
   Shared::TextFieldWithExtension* textField() { return &m_textField; }
   Escher::Responder* responder() override {
-    if (m_textField.isEditing()) {
-      return this;
-    }
-    return nullptr;
+    return m_textField.isEditing() ? this : nullptr;
   }
   const char* text() const override;
   // View

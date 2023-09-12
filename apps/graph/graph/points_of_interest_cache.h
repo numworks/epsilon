@@ -61,12 +61,6 @@ class PointsOfInterestCache {
   }
 
  private:
-#if __EMSCRIPTEN__
-  /* Since emscripten does not handle ExceptionCheckpoint and will crash if the
-   * pool is overflown, the total number of cached points is capped. Pool can
-   * still be overflown, but it is less likely. */
-  constexpr static int k_numberOfPointsToOverflowEmscripten = 128;
-#endif
   constexpr static int k_maxNumberOfDisplayablePoints = 64;
   constexpr static float k_numberOfSteps = 25.0;
 

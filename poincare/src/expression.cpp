@@ -1427,33 +1427,6 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
    * without any user interruption (too many nodes were generated), we try again
    * with ReductionTarget::SystemForApproximation. */
   *reduceFailure = false;
-#if __EMSCRIPTEN__
-  Expression e = clone().deepReduce(*reductionContext);
-  if (approximateDuringReduction &&
-      !ExceptionCheckpoint::HasBeenInterrupted()) {
-    e = e.deepApproximateKeepingSymbols(*reductionContext);
-  }
-  {
-    if (ExceptionCheckpoint::HasBeenInterrupted()) {
-      ExceptionCheckpoint::ClearInterruption();
-      if (reductionContext->target() ==
-          ReductionTarget::SystemForApproximation) {
-        goto failure;
-      }
-      reductionContext->setTarget(ReductionTarget::SystemForApproximation);
-      e = clone().deepReduce(*reductionContext);
-      if (approximateDuringReduction &&
-          !ExceptionCheckpoint::HasBeenInterrupted()) {
-        e = e.deepApproximateKeepingSymbols(*reductionContext);
-      }
-      if (ExceptionCheckpoint::HasBeenInterrupted()) {
-        ExceptionCheckpoint::ClearInterruption();
-      failure:
-        *reduceFailure = true;
-      }
-    }
-  }
-#else
   Expression e;
   {
     TreeNode *treePoolCursor = TreePool::sharedPool->cursor();
@@ -1496,7 +1469,6 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
       }
     }
   }
-#endif
   if (*reduceFailure) {
     // Cloning outside of ecp's scope in case it raises an exception
     e = clone();

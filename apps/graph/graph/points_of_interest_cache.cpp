@@ -297,14 +297,6 @@ void PointsOfInterestCache::append(double x, double y,
                                    Solver<double>::Interest interest,
                                    uint32_t data, int subCurveIndex) {
   assert(std::isfinite(x) && std::isfinite(y));
-#if __EMSCRIPTEN__
-  // Cap the total number of points
-  if (m_interestingPointsOverflowPool ||
-      (numberOfPoints() > k_numberOfPointsToOverflowEmscripten)) {
-    m_interestingPointsOverflowPool = true;
-    return;
-  }
-#endif
   ExpiringPointer<ContinuousFunction> f =
       App::app()->functionStore()->modelForRecord(m_record);
   m_list.append(x, y, data, interest, f->isAlongY(), subCurveIndex);

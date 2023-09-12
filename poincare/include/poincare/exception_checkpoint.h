@@ -12,10 +12,6 @@ namespace Poincare {
 class ExceptionCheckpoint final : public Checkpoint {
  public:
   static void Raise();
-#if __EMSCRIPTEN__
-  static bool HasBeenInterrupted();
-  static void ClearInterruption();
-#endif
 
   using Checkpoint::Checkpoint;
 

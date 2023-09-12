@@ -141,14 +141,6 @@ Tree* DimensionVector::toBaseUnits() const {
 void DimensionVector::addAllCoefficients(const DimensionVector other,
                                          int8_t factor) {
   for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
-    assert(static_cast<double>(coefficientAtIndex(i)) +
-               static_cast<double>(other.coefficientAtIndex(i)) *
-                   static_cast<double>(factor) <=
-           static_cast<double>(INT8_MAX));
-    assert(static_cast<double>(coefficientAtIndex(i)) +
-               static_cast<double>(other.coefficientAtIndex(i)) *
-                   static_cast<double>(factor) >=
-           static_cast<double>(INT8_MIN));
     setCoefficientAtIndex(
         coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor, i);
   }

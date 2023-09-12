@@ -90,7 +90,7 @@ void MenuController::viewWillAppear() {
 }
 
 void MenuController::viewDidDisappear() {
-  ViewController::viewWillAppear();
+  ViewController::viewDidDisappear();
   App::app()->allowBoxes(true);
 }
 

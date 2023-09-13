@@ -37,7 +37,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasVector(exactOutput)) {
     return AdditionalResultsType{.vector = true};
   }
-  if (exactOutput.deepIsMatrix()) {
+  if (approximateOutput.deepIsMatrix()) {
     return AdditionalResultsType{.matrix = HasMatrix(exactOutput)};
   }
   AdditionalResultsType type = {};

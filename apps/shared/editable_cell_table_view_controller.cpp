@@ -91,7 +91,8 @@ int EditableCellTableViewController::numberOfRows() const {
 
 void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
     HighlightCell *cell, int column, int row,
-    Preferences::PrintFloatMode floatDisplayMode) {
+    Preferences::PrintFloatMode floatDisplayMode,
+    uint8_t numberOfSignificantDigits) {
   static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
   if (row == 0) {
     setTitleCellText(cell, column);
@@ -100,8 +101,8 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
   }
   // The cell is editable
   if (cellAtLocationIsEditable(column, row)) {
-    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+    const int bufferSize =
+        PrintFloat::charSizeForFloatsWithPrecision(numberOfSignificantDigits);
     char buffer[bufferSize];
     // Special case 1: last row and NaN
     if (row == numberOfElementsInColumn(column) + 1 ||
@@ -110,7 +111,7 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
           dataAtLocation(column, row), buffer, bufferSize,
-          AbstractEvenOddBufferTextCell::k_defaultPrecision, floatDisplayMode);
+          numberOfSignificantDigits, floatDisplayMode);
     }
     static_cast<AbstractEvenOddEditableTextCell *>(cell)
         ->editableTextCell()

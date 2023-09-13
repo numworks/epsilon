@@ -282,7 +282,7 @@ void ValuesController::updateNumberOfColumns() const {
   }
 }
 
-Poincare::Layout *ValuesController::memoizedLayoutAtIndex(int i) {
+Layout *ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
   return &m_memoizedLayouts[i];
 }
@@ -340,7 +340,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &isDerivative);
-  Poincare::Context *context = App::app()->localContext();
+  Context *context = App::app()->localContext();
   Expression result;
   if (isDerivative) {
     // Compute derivative approximate result
@@ -349,20 +349,18 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   } else {
     // Compute exact result
     result = function->expressionReduced(context);
-    Poincare::VariableContext abscissaContext =
-        Poincare::VariableContext(Shared::Function::k_unknownName, context);
-    Poincare::Expression abscissaExpression =
-        Poincare::Decimal::Builder<double>(abscissa);
+    VariableContext abscissaContext =
+        VariableContext(Shared::Function::k_unknownName, context);
+    Expression abscissaExpression = Decimal::Builder<double>(abscissa);
     abscissaContext.setExpressionForSymbolAbstract(
         abscissaExpression,
         Symbol::Builder(Shared::Function::k_unknownName,
                         strlen(Shared::Function::k_unknownName)));
     bool simplificationFailure = false;
     PoincareHelpers::CloneAndSimplify(
-        &result, &abscissaContext, Poincare::ReductionTarget::User,
-        Poincare::SymbolicComputation::
-            ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        Poincare::UnitConversion::Default, &simplificationFailure);
+        &result, &abscissaContext, ReductionTarget::User,
+        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+        UnitConversion::Default, &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
     Expression approximation =

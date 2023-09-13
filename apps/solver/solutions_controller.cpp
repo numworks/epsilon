@@ -16,7 +16,6 @@
 
 #include "app.h"
 
-using namespace Poincare;
 using namespace Shared;
 using namespace Escher;
 
@@ -180,14 +179,14 @@ SolutionsController::SolutionsController(Responder *parentResponder,
       GlobalPreferences::SharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   const char *equalB = "=b";
-  m_delta2Layout = HorizontalLayout::Builder(
-      LayoutHelper::String(delta, lenDelta),
-      LayoutHelper::String(equalB, strlen(equalB)),
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      LayoutHelper::String("-4ac", 4));
-  m_delta3Layout = LayoutHelper::String(delta, lenDelta);
+  m_delta2Layout = Poincare::HorizontalLayout::Builder(
+      Poincare::LayoutHelper::String(delta, lenDelta),
+      Poincare::LayoutHelper::String(equalB, strlen(equalB)),
+      Poincare::VerticalOffsetLayout::Builder(
+          Poincare::CodePointLayout::Builder('2'),
+          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+      Poincare::LayoutHelper::String("-4ac", 4));
+  m_delta3Layout = Poincare::LayoutHelper::String(delta, lenDelta);
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(
         m_contentView.selectableTableView());
@@ -344,7 +343,7 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
      * if it has quotation marks, in which case it can have up to 9
      * chars, including the quotation marks). */
     constexpr size_t k_maxSize =
-        SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
+        Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
     constexpr size_t bufferSize = k_maxSize + 2;
     char bufferSymbol[bufferSize];
     if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
@@ -353,16 +352,16 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
         /* The system has more than one variable: the cell text is the
          * variable name */
         const char *varName = system->variable(row);
-        SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
-                                                      varName, strlen(varName));
+        Poincare::SymbolAbstractNode::NameWithoutQuotationMarks(
+            bufferSymbol, bufferSize, varName, strlen(varName));
       } else {
         /* The system has one variable but might have many solutions: the cell
          * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
         const char *varName = system->variable(0);
-        size_t length = SymbolAbstractNode::NameWithoutQuotationMarks(
+        size_t length = Poincare::SymbolAbstractNode::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
-        length +=
-            PrintInt::Left(row + 1, bufferSymbol + length, bufferSize - length);
+        length += Poincare::PrintInt::Left(row + 1, bufferSymbol + length,
+                                           bufferSize - length);
         bufferSymbol[length] = 0;
       }
     } else {
@@ -370,16 +369,17 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
       assert(rowOfUserVariablesMessage >= 0);
       const char *varName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
-                                                    varName, strlen(varName));
+      Poincare::SymbolAbstractNode::NameWithoutQuotationMarks(
+          bufferSymbol, bufferSize, varName, strlen(varName));
     }
     static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(bufferSymbol);
   }
   if (type == k_approximateValueCellType) {
     assert(system->numberOfSolutions() > 0);
     // Get values of the solutions
-    constexpr size_t bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+    constexpr size_t bufferSize =
+        Poincare::PrintFloat::charSizeForFloatsWithPrecision(
+            AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char bufferValue[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(
         system->solution(row)->approximate(), bufferValue, bufferSize,
@@ -398,7 +398,7 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
        * be swapped.
        * FIXME This is quirky and could be changed. */
       if (solution->approximateLayout().isUninitialized()) {
-        valueCell->setLayouts(Layout(), solution->exactLayout());
+        valueCell->setLayouts(Poincare::Layout(), solution->exactLayout());
       } else {
         valueCell->setLayouts(solution->exactLayout(),
                               solution->approximateLayout());
@@ -409,12 +409,12 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
       // It's a user variable row, get values of the solutions or discriminant
       const char *symbol =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      Layout layout = PoincareHelpers::CreateLayout(
+      Poincare::Layout layout = PoincareHelpers::CreateLayout(
           App::app()->localContext()->expressionForSymbolAbstract(
-              Symbol::Builder(symbol, strlen(symbol)), false),
+              Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
           App::app()->localContext());
-      static_cast<ScrollableTwoLayoutsCell *>(cell)->setLayouts(Layout(),
-                                                                layout);
+      static_cast<ScrollableTwoLayoutsCell *>(cell)->setLayouts(
+          Poincare::Layout(), layout);
     }
   }
   static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
@@ -429,8 +429,9 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
     if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
-    Layout exactLayout = system->solution(row)->exactLayout();
-    Layout approximateLayout = system->solution(row)->approximateLayout();
+    Poincare::Layout exactLayout = system->solution(row)->exactLayout();
+    Poincare::Layout approximateLayout =
+        system->solution(row)->approximateLayout();
     KDCoordinate layoutHeight;
     if (exactLayout.isUninitialized()) {
       assert(!approximateLayout.isUninitialized());
@@ -459,9 +460,9 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   // TODO: memoize user symbols if too slow
   const char *symbol =
       system->userVariable(row - rowOfUserVariablesMessage - 1);
-  Layout layout = PoincareHelpers::CreateLayout(
+  Poincare::Layout layout = PoincareHelpers::CreateLayout(
       App::app()->localContext()->expressionForSymbolAbstract(
-          Symbol::Builder(symbol, strlen(symbol)), false),
+          Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
       App::app()->localContext());
   return layout.layoutSize(k_solutionsFont).height() +
          2 * Metric::CommonSmallMargin;

@@ -7,7 +7,6 @@
 
 #include "list_controller.h"
 
-using namespace Poincare;
 using namespace Escher;
 
 namespace Solver {
@@ -25,11 +24,11 @@ EquationModelsParameterController::EquationModelsParameterController(
   m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression e =
-        Expression::Parse(k_models[i + 1], nullptr);  // No context needed
-    m_layouts[i] =
-        e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
-                       Preferences::ShortNumberOfSignificantDigits, nullptr);
+    Poincare::Expression e = Poincare::Expression::Parse(
+        k_models[i + 1], nullptr);  // No context needed
+    m_layouts[i] = e.createLayout(
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::ShortNumberOfSignificantDigits, nullptr);
     m_modelCells[i].label()->setLayout(m_layouts[i]);
   }
 }

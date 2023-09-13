@@ -38,7 +38,7 @@ struct AdditionalResultsType {
                               const Poincare::Expression exactOutput);
   static bool HasUnit(const Poincare::Expression exactOutput);
   static bool HasVector(const Poincare::Expression exactOutput);
-  static bool HasMatrix(const Poincare::Expression exactOutput);
+  static bool HasMatrix(const Poincare::Expression approximateOutput);
   static bool HasFunction(const Poincare::Expression input,
                           const Poincare::Expression approximateOutput);
   static bool HasScientificNotation(

@@ -20,7 +20,7 @@ namespace Calculation {
 void MatrixListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(AdditionalResultsType::HasMatrix(exactOutput));
+  assert(AdditionalResultsType::HasMatrix(approximateOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -39,9 +39,11 @@ void MatrixListController::computeAdditionalResults(
       preferences->angleUnit());
 
   // The expression must be reduced to call methods such as determinant or trace
-  assert(exactOutput.type() == ExpressionNode::Type::Matrix);
-  Expression exactClone = exactOutput.clone();
-  Matrix matrix = static_cast<const Matrix &>(exactClone);
+  assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
+  Expression clone = exactOutput.type() == ExpressionNode::Type::Matrix
+                         ? exactOutput.clone()
+                         : approximateOutput.clone();
+  Matrix matrix = static_cast<const Matrix &>(clone);
 
   bool mIsSquared = matrix.numberOfRows() == matrix.numberOfColumns();
   size_t index = 0;

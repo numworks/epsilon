@@ -50,13 +50,13 @@ class CalculationController : public Shared::DoublePairTableController {
               Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision),
           Escher::EvenOddCell::k_horizontalMargin);
 
-  typedef struct {
+  struct CalculationRow {
     I18n::Message title;
     I18n::Message symbol;
     Store::CalculPointer calculationMethod;
     uint8_t defaultIndex;
     uint8_t variant1Index;
-  } CalculationRow;
+  };
 
   constexpr static CalculationRow k_calculationRows[] = {
       // Message, symbol, function, defaultLayout, variant1Layout

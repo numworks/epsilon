@@ -158,7 +158,7 @@ int ValuesController::columnToFreeze() {
 KDSize ValuesController::ApproximatedParametricCellSize() {
   KDSize layoutSize = SquareBracketPairLayoutNode::SizeGivenChildSize(KDSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
-          ::Preferences::VeryLargeNumberOfSignificantDigits) *
+          Preferences::sharedPreferences->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont),
       2 * KDFont::GlyphHeight(k_cellFont) + GridLayoutNode::k_gridEntryMargin));
   return layoutSize +
@@ -335,6 +335,7 @@ void ValuesController::setStartEndMessages(
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
+  Preferences *preferences = Preferences::sharedPreferences;
   double abscissa;
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function =
@@ -373,9 +374,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       result = approximation;
     }
   }
-  *memoizedLayoutAtIndex(index) = result.createLayout(
-      Preferences::PrintFloatMode::Decimal,
-      Preferences::VeryLargeNumberOfSignificantDigits, context);
+  *memoizedLayoutAtIndex(index) =
+      result.createLayout(preferences->displayMode(),
+                          preferences->numberOfSignificantDigits(), context);
 }
 
 int ValuesController::numberOfColumnsForAbscissaColumn(int column) {

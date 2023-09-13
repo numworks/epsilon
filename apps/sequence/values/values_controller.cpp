@@ -145,6 +145,7 @@ Layout *ValuesController::memoizedLayoutAtIndex(int i) {
 
 Layout ValuesController::functionTitleLayout(int column,
                                              bool forceShortVersion) {
+  Preferences *preferences = Preferences::sharedPreferences;
   bool isSumColumn = false;
   Shared::Sequence *sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
@@ -160,12 +161,13 @@ Layout ValuesController::functionTitleLayout(int column,
                    Symbol::Builder(k_variable, strlen(k_variable)),
                    BasedInteger::Builder(sequence->initialRank()),
                    Symbol::Builder(n_variable, strlen(n_variable)));
-  return sumExpression.createLayout(
-      Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits(), nullptr);
+  return sumExpression.createLayout(preferences->displayMode(),
+                                    preferences->numberOfSignificantDigits(),
+                                    nullptr);
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
+  Preferences *preferences = Preferences::sharedPreferences;
   double abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;
@@ -181,9 +183,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         sequence->evaluateXYAtParameter(abscissa, context);
     result = Float<double>::Builder(xy.y());
   }
-  *memoizedLayoutAtIndex(index) = result.createLayout(
-      Preferences::PrintFloatMode::Decimal,
-      Preferences::VeryLargeNumberOfSignificantDigits, context);
+  *memoizedLayoutAtIndex(index) =
+      result.createLayout(preferences->displayMode(),
+                          preferences->numberOfSignificantDigits(), context);
 }
 
 Shared::Interval *ValuesController::intervalAtColumn(int column) {

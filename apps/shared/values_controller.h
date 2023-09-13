@@ -74,6 +74,7 @@ class ValuesController : public EditableCellTableViewController,
   bool setDataAtLocation(double floatBody, int column, int row) override;
   void didChangeCell(int column, int row) override;
   int numberOfElementsInColumn(int column) const override;
+  KDCoordinate defaultColumnWidth() override;
 
   // Constructor helper
   void setupSelectableTableViewAndCells();

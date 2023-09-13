@@ -605,12 +605,12 @@ void PythonVariableBoxController::loadBuiltinNodes(
  * This is done to get the lexer position during lexing. As the _mp_reader_mem_t
  * struct is private and declared in python/src/py/reader.c, we copy-paste it
  * here to be able to use it. */
-typedef struct _mp_reader_mem_t {
+struct mp_reader_mem_t {
   size_t free_len;  // if >0 mem is freed on close by: m_free(beg, free_len)
   const byte *beg;
   const byte *cur;
   const byte *end;
-} mp_reader_mem_t;
+};
 
 void PythonVariableBoxController::loadImportedVariablesInScript(
     const char *scriptContent, const char *textToAutocomplete,

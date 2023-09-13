@@ -224,10 +224,10 @@ class Expression : public TreeHandle {
   typedef TrinaryBoolean (*ExpressionTrinaryTest)(const Expression e,
                                                   Context* context,
                                                   void* auxiliary);
-  typedef struct {
+  struct IgnoredSymbols {
     Symbol* head;
     void* tail;
-  } IgnoredSymbols;
+  };
   bool recursivelyMatches(
       ExpressionTrinaryTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =

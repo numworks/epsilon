@@ -94,12 +94,12 @@ class RecordNameVerifier {
       Record previousRecord, const char* newExtension) const;
 
  private:
-  typedef struct {
+  struct ReservedNamesArray {
     const char* const* namePrefixes;
     const char* extension;
     int prefixRepetitions;
     int numberOfElements;
-  } ReservedNamesArray;
+  };
 
   // This can be changed if you need more restrictive extensions
   constexpr static int k_maxNumberOfRestrictiveExtensions = 6;

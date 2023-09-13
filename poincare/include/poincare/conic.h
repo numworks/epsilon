@@ -20,10 +20,10 @@ class Conic {
 
   enum class CoordinateType : uint8_t { Cartesian = 0, Polar, Parametric };
 
-  typedef struct {
+  struct Type {
     CoordinateType coordinateType;
     Shape shape;
-  } Type;
+  };
 
   Conic() : m_shape(Shape::Unknown) {}
   Type conicType() const { return {coordinateType(), m_shape}; }

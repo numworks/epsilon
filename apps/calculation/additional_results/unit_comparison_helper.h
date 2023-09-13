@@ -17,17 +17,17 @@ constexpr static int k_sizeOfUnitBuffer = 30;
 constexpr static int k_numberOfSignicativeDigits = 2;
 constexpr static float k_maxPercentageRatioDisplay = 1.05;
 
-typedef struct {
+struct ReferenceUnit {
   const char* SIUnit;
   const char* displayedUnit;
-} ReferenceUnit;
+};
 
-typedef struct {
+struct ReferenceValue {
   I18n::Message title1;
   I18n::Message title2;
   I18n::Message subtitle;
   float value;
-} ReferenceValue;
+};
 
 int FindUpperAndLowerReferenceValues(
     double inputValue, Poincare::Expression orderedSIUnit,

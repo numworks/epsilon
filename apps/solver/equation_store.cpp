@@ -4,14 +4,10 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/matrix.h>
-#include <poincare/polynomial.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/symbol.h>
 
 #include "app.h"
 
-using namespace Poincare;
 using namespace Shared;
 
 namespace Solver {
@@ -21,7 +17,8 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   char name[bufferSize];
   static_assert(k_maxNumberOfEquations < 9,
                 "Equation name record might not fit");
-  size_t length = SerializationHelper::CodePoint(name, bufferSize, 'e');
+  size_t length =
+      Poincare::SerializationHelper::CodePoint(name, bufferSize, 'e');
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
       name, length, bufferSize, Ion::Storage::equationExtension,
       k_maxNumberOfEquations);

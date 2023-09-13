@@ -24,6 +24,32 @@ namespace PoincareJ {
  * Given an representative and a UnitPrefix allowed for that representative, one
  * may get a symbol and an expression tree. */
 
+/* TODO: Rethink the representative structures to alleviate this header's size.
+ * In unit.cpp:
+ *  const EnergyRepresentatives energyRepresentatives = {
+ *      .joules{
+ *          "J",
+ *          KTree(1.0_e).k_blocks,
+ *          Prefixable::All,
+ *          Prefixable::LongScale,
+ *      },
+ *      .electronVolts{
+ *          "eV",
+ *          KMult(1.602176634_e, KPow(10.0_e, -19_e)).k_blocks,
+ *          Prefixable::All,
+ *          Prefixable::LongScale,
+ *      }};
+ * In unit.h:
+ *  struct EnergyRepresentatives {
+ *    EnergyRepresentative joules;
+ *    EnergyRepresentative electronVolts;
+ *  };
+ *  extern const EnergyRepresentatives energyRepresentatives;
+ *  (...)
+ *  constexpr static const EnergyRepresentative* k_energyRepresentatives =
+ *        &energyRepresentatives.joules;
+ */
+
 // Copied from poincare/helpers.h
 /* FIXME : This can be replaced by std::string_view when moving to C++17 */
 constexpr static bool StringsAreEqual(const char* s1, const char* s2) {

@@ -9,6 +9,16 @@ class TimeRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_secondRepresentativeIndex = 0;
+  constexpr static int k_minuteRepresentativeIndex = 1;
+  constexpr static int k_hourRepresentativeIndex = 2;
+
+  constexpr static int k_dayRepresentativeIndex = 3;
+
+  constexpr static int k_monthRepresentativeIndex = 5;
+
+  constexpr static int k_yearRepresentativeIndex = 6;
+
   constexpr static TimeRepresentative Default() {
     return TimeRepresentative(nullptr, nullptr, Prefixable::None,
                               Prefixable::None);
@@ -39,6 +49,16 @@ class DistanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_meterRepresentativeIndex = 0;
+
+  constexpr static int k_inchRepresentativeIndex = 4;
+
+  constexpr static int k_footRepresentativeIndex = 5;
+
+  constexpr static int k_yardRepresentativeIndex = 6;
+
+  constexpr static int k_mileRepresentativeIndex = 7;
+
   constexpr static DistanceRepresentative Default() {
     return DistanceRepresentative(nullptr, nullptr, Prefixable::None,
                                   Prefixable::None);
@@ -72,6 +92,16 @@ class AngleRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_radianRepresentativeIndex = 0;
+
+  constexpr static int k_arcSecondRepresentativeIndex = 1;
+
+  constexpr static int k_arcMinuteRepresentativeIndex = 2;
+
+  constexpr static int k_degreeRepresentativeIndex = 3;
+
+  constexpr static int k_gradianRepresentativeIndex = 4;
+
   constexpr static AngleRepresentative Default() {
     return AngleRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
@@ -113,6 +143,16 @@ class MassRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_gramRepresentativeIndex = 0;
+
+  constexpr static int k_tonRepresentativeIndex = 1;
+
+  constexpr static int k_ounceRepresentativeIndex = 3;
+
+  constexpr static int k_poundRepresentativeIndex = 4;
+
+  constexpr static int k_shortTonRepresentativeIndex = 5;
+
   constexpr static MassRepresentative Default() {
     return MassRepresentative(nullptr, nullptr, Prefixable::None,
                               Prefixable::None);
@@ -168,6 +208,12 @@ class TemperatureRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_kelvinRepresentativeIndex = 0;
+
+  constexpr static int k_celsiusRepresentativeIndex = 1;
+
+  constexpr static int k_fahrenheitRepresentativeIndex = 2;
+
 #if 0
   static double ConvertTemperatures(double value,
                                     const UnitRepresentative* source,
@@ -306,6 +352,10 @@ class EnergyRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_jouleRepresentativeIndex = 0;
+
+  constexpr static int k_electronVoltRepresentativeIndex = 1;
+
   constexpr static EnergyRepresentative Default() {
     return EnergyRepresentative(nullptr, nullptr, Prefixable::None,
                                 Prefixable::None);
@@ -334,6 +384,8 @@ class PowerRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_wattRepresentativeIndex = 0;
+
   constexpr static PowerRepresentative Default() {
     return PowerRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
@@ -512,6 +564,10 @@ class SurfaceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_hectareRepresentativeIndex = 0;
+
+  constexpr static int k_acreRepresentativeIndex = 1;
+
   constexpr static SurfaceRepresentative Default() {
     return SurfaceRepresentative(nullptr, nullptr, Prefixable::None,
                                  Prefixable::None);
@@ -542,6 +598,16 @@ class VolumeRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  constexpr static int k_literRepresentativeIndex = 0;
+
+  constexpr static int k_cupRepresentativeIndex = 4;
+
+  constexpr static int k_pintRepresentativeIndex = 5;
+
+  constexpr static int k_quartRepresentativeIndex = 6;
+
+  constexpr static int k_gallonRepresentativeIndex = 7;
+
   constexpr static VolumeRepresentative Default() {
     return VolumeRepresentative(nullptr, nullptr, Prefixable::None,
                                 Prefixable::None);

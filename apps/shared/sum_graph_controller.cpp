@@ -290,14 +290,12 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
                                                   CodePoint sumSymbol) {
   assert(!std::isnan(start) || step == Step::FirstParameter);
   assert(!std::isnan(end) || step != Step::Result);
-  Layout sumLayout = CodePointLayout::Builder(sumSymbol);
-  if (step != Step::FirstParameter) {
-    Layout startLayout = valueLayout(start, k_valuesBufferSize,
-                                     k_valuesPrecision, k_valuesDisplayMode);
-    Layout endLayout = valueLayout(end, k_valuesBufferSize, k_valuesPrecision,
+  Layout startLayout = valueLayout(start, k_valuesBufferSize, k_valuesPrecision,
                                    k_valuesDisplayMode);
-    sumLayout = CondensedSumLayout::Builder(sumLayout, startLayout, endLayout);
-  }
+  Layout endLayout = valueLayout(end, k_valuesBufferSize, k_valuesPrecision,
+                                 k_valuesDisplayMode);
+  Layout sumLayout = CondensedSumLayout::Builder(
+      CodePointLayout::Builder(sumSymbol), startLayout, endLayout);
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = LayoutHelper::String(" = ", 3);
@@ -351,8 +349,7 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDRect sumFrame = bounds();
   KDRect legendFrame = KDRectZero;
   if (legendWidth > 0) {
-    sumFrame = KDRect(horizontalMargin, symbolHeightMargin, width - legendWidth,
-                      m_sum.minimalSizeForOptimalDisplay().height());
+    sumFrame = KDRect(horizontalMargin, 0, width - legendWidth, heigth);
     legendFrame =
         KDRect(width - legendWidth - horizontalMargin, 0, legendWidth, heigth);
   }

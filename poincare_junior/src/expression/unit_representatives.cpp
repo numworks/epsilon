@@ -18,28 +18,24 @@ const Time Time::year = {"year", 31557600._e, None, None};
 
 const Distance Distance::meter = {"m", 1._e, All, NegativeAndKilo};
 const Distance Distance::astronomicalUnit = {"au", 149597870700._e, None, None};
-const Distance Distance::lightYear = {
-    "ly", KMult(299792458._e, 31557600._e).k_blocks, None, None};
+const Distance Distance::lightYear = {"ly", KMult(299792458._e, 31557600._e),
+                                      None, None};
 const Distance Distance::parsec = {
-  "pc", KMult(180._e, KDiv(3600._e, π_e}; 149587870700._e).k_blocks,
-  None, None
+    "pc", KMult(180._e, KDiv(3600._e, π_e), 149587870700._e), None,
+    None
 
-const Distance Distance::inch = {
-    "in", 0.0254_e, None, None};
-const Distance Distance::foot = {"ft", KMult(12._e, 0.0254_e).k_blocks, None,
-                                 None};
-const Distance Distance::yard = {"yd", KMult(36._e, 0.0254_e).k_blocks, None,
-                                 None};
-const Distance Distance::mile = {"mi", KMult(63360._e, 0.0254_e).k_blocks, None,
-                                 None};
+    const Distance Distance::inch = {"in", 0.0254_e, None, None};
+const Distance Distance::foot = {"ft", KMult(12._e, 0.0254_e), None, None};
+const Distance Distance::yard = {"yd", KMult(36._e, 0.0254_e), None, None};
+const Distance Distance::mile = {"mi", KMult(63360._e, 0.0254_e), None, None};
 
 /* Only AngleRepresentative have non-float ratio expression because exact
  * result are expected. */
 const Angle Angle::radian = {"rad", 1_e, None, None};
-const Angle Angle::arcSecond = {"\"", KDiv(π_e, 648000_e).k_blocks, None, None};
-const Angle Angle::arcMinute = {"'", KDiv(π_e, 10800_e).k_blocks, None, None};
-const Angle Angle::degree = {"°", KDiv(π_e, 180_e).k_blocks, None, None};
-const Angle Angle::gradian = {"gon", KDiv(π_e, 200_e).k_blocks, None, None};
+const Angle Angle::arcSecond = {"\"", KDiv(π_e, 648000_e), None, None};
+const Angle Angle::arcMinute = {"'", KDiv(π_e, 10800_e), None, None};
+const Angle Angle::degree = {"°", KDiv(π_e, 180_e), None, None};
+const Angle Angle::gradian = {"gon", KDiv(π_e, 200_e), None, None};
 
 const Mass Mass::gram = {"g", 1._e, All, NegativeAndKilo};
 const Mass Mass::ton = {"t", 1000._e, PositiveLongScale, PositiveLongScale};
@@ -47,10 +43,10 @@ const Mass Mass::dalton = {"Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All,
                            All};
 const Mass Mass::once = {"oz", 0.028349523125_e, None, None};
 const Mass Mass::pound = {"lb", 16._e, 0.028349523125_e, None, None};
-const Mass Mass::shortTon = {"shtn",           2000._e, 16._e,
-                             0.028349523125_e, None,    None};
-const Mass Mass::longTon = {"lgtn",           2240._e, 16._e,
-                            0.028349523125_e, None,    None};
+const Mass Mass::shortTon = {"shtn", KMult(2000._e, 16._e, 0.028349523125_e),
+                             None, None};
+const Mass Mass::longTon = {"lgtn", KMult(2240._e, 16._e, 0.028349523125_e),
+                            None, None};
 
 const Current Current::ampere = {"A", 1._e, All,
                           LongScale)};
@@ -77,8 +73,8 @@ const Pressure Pressure::bar = {"bar", 100000._e, All, LongScale};
 const Pressure Pressure::atmosphere = {"atm", 101325._e, None, None};
 
 const Energy Energy::joule = {"J", 1._e, All, LongScale};
-const Energy Energy::electronVolt = {"eV", 1.602176634_e, KPow(10._e, -19_e),
-                                     All, LongScale};
+const Energy Energy::electronVolt = {
+    "eV", KMult(1.602176634_e, KPow(10._e, -19_e)), All, LongScale};
 
 const Power Power::watt = {"W", 1._e, All, LongScale};
 const Power Power::horsePower = {"hp", 745.699872_e, None,
@@ -117,13 +113,17 @@ const Surface Surface::acre = {"acre", 4046.8564224_e, None, None};
 const Volume Volume::liter = {BuiltinsAliases::k_litersAliases, 0.001_e, All,
                               Negative};
 const Volume Volume::teaSpoon = {"tsp", 0.00000492892159375_e, None, None};
-const Volume Volume::tableSpoon = {"tbsp", 3._e, 0.00000492892159375_e, None,
-                                   None};
+const Volume Volume::tableSpoon = {"tbsp", KMult(3._e, 0.00000492892159375_e),
+                                   None, None};
 const Volume Volume::fluidOnce = {"floz", 0.0000295735295625_e, None, None};
-const Volume Volume::cup = {"cup", 8._e, 0.0000295735295625_e, None, None};
-const Volume Volume::pint = {"pt", 16._e, 0.0000295735295625_e, None, None};
-const Volume Volume::quart = {"qt", 32._e, 0.0000295735295625_e, None, None};
-const Volume Volume::gallon = {"gal", 128._e, 0.0000295735295625_e, None, None};
+const Volume Volume::cup = {"cup", KMult(8._e, 0.0000295735295625_e), None,
+                            None};
+const Volume Volume::pint = {"pt", KMult(16._e, 0.0000295735295625_e), None,
+                             None};
+const Volume Volume::quart = {"qt", KMult(32._e, 0.0000295735295625_e), None,
+                              None};
+const Volume Volume::gallon = {"gal", KMult(128._e, 0.0000295735295625_e), None,
+                               None};
 
 /* Define access points to some prefixes and representatives. */
 constexpr static int k_emptyPrefixIndex = 6;

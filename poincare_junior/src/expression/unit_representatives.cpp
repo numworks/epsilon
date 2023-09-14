@@ -21,10 +21,9 @@ const Distance Distance::astronomicalUnit = {"au", 149597870700._e, None, None};
 const Distance Distance::lightYear = {"ly", KMult(299792458._e, 31557600._e),
                                       None, None};
 const Distance Distance::parsec = {
-    "pc", KMult(180._e, KDiv(3600._e, π_e), 149587870700._e), None,
-    None
+    "pc", KMult(180._e, KDiv(3600._e, π_e), 149587870700._e), None, None};
 
-    const Distance Distance::inch = {"in", 0.0254_e, None, None};
+const Distance Distance::inch = {"in", 0.0254_e, None, None};
 const Distance Distance::foot = {"ft", KMult(12._e, 0.0254_e), None, None};
 const Distance Distance::yard = {"yd", KMult(36._e, 0.0254_e), None, None};
 const Distance Distance::mile = {"mi", KMult(63360._e, 0.0254_e), None, None};
@@ -41,32 +40,28 @@ const Mass Mass::gram = {"g", 1._e, All, NegativeAndKilo};
 const Mass Mass::ton = {"t", 1000._e, PositiveLongScale, PositiveLongScale};
 const Mass Mass::dalton = {"Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All,
                            All};
-const Mass Mass::once = {"oz", 0.028349523125_e, None, None};
-const Mass Mass::pound = {"lb", 16._e, 0.028349523125_e, None, None};
+const Mass Mass::ounce = {"oz", 0.028349523125_e, None, None};
+const Mass Mass::pound = {"lb", KMult(16._e, 0.028349523125_e), None, None};
 const Mass Mass::shortTon = {"shtn", KMult(2000._e, 16._e, 0.028349523125_e),
                              None, None};
 const Mass Mass::longTon = {"lgtn", KMult(2240._e, 16._e, 0.028349523125_e),
                             None, None};
 
-const Current Current::ampere = {"A", 1._e, All,
-                          LongScale)};
+const Current Current::ampere = {"A", 1._e, All, LongScale};
 
 // Ratios are 1.0 because temperatures conversion are an exception.
 const Temperature Temperature::kelvin = {"K", 1._e, All, None};
 const Temperature Temperature::celsius = {"°C", 1._e, None, None};
-const Temperature Temperature::farenheit = {"°F", 1._e, None, None};
+const Temperature Temperature::fahrenheit = {"°F", 1._e, None, None};
 
-const AmountOfSubstance AmountOfSubstance::mole = {
-  "mol", 1._e, All, LongScale)};
+const AmountOfSubstance AmountOfSubstance::mole = {"mol", 1._e, All, LongScale};
 
-const LuminousIntensity LuminousIntensity::candela = {
-  "cd", 1._e, All, LongScale)};
+const LuminousIntensity LuminousIntensity::candela = {"cd", 1._e, All,
+                                                      LongScale};
 
-const Frequency Frequency::hertz = {"Hz", 1._e, All,
-  LongScale)};
+const Frequency Frequency::hertz = {"Hz", 1._e, All, LongScale};
 
-const Force Force::newton = {"N", 1._e, All,
-  LongScale)};
+const Force Force::newton = {"N", 1._e, All, LongScale};
 
 const Pressure Pressure::pascal = {"Pa", 1._e, All, LongScale};
 const Pressure Pressure::bar = {"bar", 100000._e, All, LongScale};
@@ -77,35 +72,28 @@ const Energy Energy::electronVolt = {
     "eV", KMult(1.602176634_e, KPow(10._e, -19_e)), All, LongScale};
 
 const Power Power::watt = {"W", 1._e, All, LongScale};
-const Power Power::horsePower = {"hp", 745.699872_e, None,
-  None)};
+const Power Power::horsePower = {"hp", 745.699872_e, None, None};
 
-const ElectricCharge ElectricCharge::coulomb = {
-  "C", 1._e, All, LongScale)};
+const ElectricCharge ElectricCharge::coulomb = {"C", 1._e, All, LongScale};
 
-const ElectricPotential ElectricPotential::volt = {
-  "V", 1._e, All, LongScale)};
+const ElectricPotential ElectricPotential::volt = {"V", 1._e, All, LongScale};
 
-const ElectricCapacitance ElectricCapacitance::farad = {
-  "F", 1._e, All, LongScale)};
+const ElectricCapacitance ElectricCapacitance::farad = {"F", 1._e, All,
+                                                        LongScale};
 
-const ElectricResistance ElectricResistance::ohm = {
-  "Ω", 1._e, All, LongScale)};
+const ElectricResistance ElectricResistance::ohm = {"Ω", 1._e, All, LongScale};
 
-const ElectricConductance ElectricConductance::siemens = {
-  "S", 1._e, All, LongScale)};
+const ElectricConductance ElectricConductance::siemens = {"S", 1._e, All,
+                                                          LongScale};
 
-const MagneticFlux MagneticFlux::weber = {
-  "Wb", 1._e, All, LongScale)};
+const MagneticFlux MagneticFlux::weber = {"Wb", 1._e, All, LongScale};
 
-const MagneticField MagneticField::tesla = {
-  "T", 1._e, All, LongScale)};
+const MagneticField MagneticField::tesla = {"T", 1._e, All, LongScale};
 
-const Inductance Inductance::henry = {"H", 1._e, All,
-  LongScale)};
+const Inductance Inductance::henry = {"H", 1._e, All, LongScale};
 
-const CatalyticActivity CatalyticActivity::katal = {
-  "kat", 1._e, All, LongScale)};
+const CatalyticActivity CatalyticActivity::katal = {"kat", 1._e, All,
+                                                    LongScale};
 
 const Surface Surface::hectare = {"ha", 10000._e, None, None};
 const Surface Surface::acre = {"acre", 4046.8564224_e, None, None};
@@ -124,7 +112,6 @@ const Volume Volume::quart = {"qt", KMult(32._e, 0.0000295735295625_e), None,
                               None};
 const Volume Volume::gallon = {"gal", KMult(128._e, 0.0000295735295625_e), None,
                                None};
-
 
 #if 0
 int Time::setAdditionalExpressions(
@@ -199,22 +186,20 @@ int Distance::setAdditionalExpressions(
   return 1;
 }
 
-#endif
 
 const UnitRepresentative* Angle::DefaultRepresentativeForAngleUnit(
     AngleUnit angleUnit) {
   switch (angleUnit) {
     case AngleUnit::Degree:
-      return Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex;
+      return &Angle::degree;
     case AngleUnit::Radian:
-      return Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex;
+      return &Angle::radian;
     default:
       assert(angleUnit == AngleUnit::Gradian);
-      return Unit::k_angleRepresentatives + Unit::k_gradianRepresentativeIndex;
+      return &Angle::gradian;
   }
 }
 
-#if 0
 const UnitRepresentative* Angle::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,
     const UnitPrefix** prefix) const {
@@ -573,6 +558,6 @@ int Speed::setAdditionalExpressions(
                          Rational::Builder(-1))));
   return 2;
 }
-
+#endif
 }
 }  // namespace PoincareJ

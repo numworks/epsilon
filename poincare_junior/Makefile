@@ -31,6 +31,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/symbol.cpp \
   expression/trigonometry.cpp \
   expression/unit.cpp \
+  expression/unit_representatives.cpp \
   expression/variables.cpp \
   expression/vector.cpp \
   expression.cpp \

@@ -165,7 +165,7 @@ class UnitRepresentative {
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
 #endif
-  constexpr UnitRepresentative(Aliases rootSymbol, const Block* ratioExpression,
+  constexpr UnitRepresentative(Aliases rootSymbol, const Tree* ratioExpression,
                                Prefixable inputPrefixable,
                                Prefixable outputPrefixable)
       : m_rootSymbols(rootSymbol),
@@ -232,9 +232,7 @@ class UnitRepresentative {
 #if 0
   const UnitPrefix* findBestPrefix(double value, double exponent) const;
 #endif
-  const Tree* ratioExpressionReduced() const {
-    return Tree::FromBlocks(m_ratioExpression);
-  }
+  const Tree* ratioExpressionReduced() const { return m_ratioExpression; }
 
  protected:
 #if 0
@@ -248,12 +246,9 @@ class UnitRepresentative {
    * made of the representative and its base prefix into base SI units. ex :
    * m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m^3).
    * m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
-   *
-   * TODO: We have to use Block * instead of Tree * so that representatives
-   * lists can be constexpr because casting Block* into Tree* requires a
-   * reinterpret cast. */
+   * */
 
-  const Block* m_ratioExpression;
+  const Tree* m_ratioExpression;
   const Prefixable m_inputPrefixable;
   const Prefixable m_outputPrefixable;
 };

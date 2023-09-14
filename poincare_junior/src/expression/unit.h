@@ -165,11 +165,13 @@ class UnitRepresentative {
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
 #endif
-  constexpr UnitRepresentative(Aliases rootSymbol, const Tree* ratioExpression,
+  // TODO it may be marked consteval with Clang but not with GCC
+  template <TreeCompatibleConcept T>
+  constexpr UnitRepresentative(Aliases rootSymbol, T ratioExpression,
                                Prefixable inputPrefixable,
                                Prefixable outputPrefixable)
       : m_rootSymbols(rootSymbol),
-        m_ratioExpression(ratioExpression),
+        m_ratioExpression(static_cast<const Block*>(KTree(ratioExpression))),
         m_inputPrefixable(inputPrefixable),
         m_outputPrefixable(outputPrefixable) {}
 
@@ -232,7 +234,9 @@ class UnitRepresentative {
 #if 0
   const UnitPrefix* findBestPrefix(double value, double exponent) const;
 #endif
-  const Tree* ratioExpressionReduced() const { return m_ratioExpression; }
+  const Tree* ratioExpressionReduced() const {
+    return Tree::FromBlocks(m_ratioExpression);
+  }
 
  protected:
 #if 0
@@ -248,7 +252,7 @@ class UnitRepresentative {
    * m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
    * */
 
-  const Tree* m_ratioExpression;
+  const Block* m_ratioExpression;
   const Prefixable m_inputPrefixable;
   const Prefixable m_outputPrefixable;
 };

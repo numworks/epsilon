@@ -44,14 +44,16 @@ class KTree : public AbstractTree {
  public:
   static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
-  constexpr operator const Tree*() const {
+  constexpr explicit operator const Block*() const {
 #if ASSERTION
     // Close with TreeBorder Block when cast into Tree* for navigation
-    return Tree::FromBlocks(
-        &Tree<Blocks..., BlockType::TreeBorder>::k_blocks[0]);
+    return &Tree<Blocks..., BlockType::TreeBorder>::k_blocks[0];
 #else
-    return Tree::FromBlocks(&k_blocks[0]);
+    return &k_blocks[0];
 #endif
+  }
+  constexpr operator const Tree*() const {
+    return Tree::FromBlocks(static_cast<const Block*>(*this));
   }
   const Tree* operator->() const { return operator const Tree*(); }
 };

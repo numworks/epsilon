@@ -65,6 +65,17 @@ struct DimensionVector {
     }
     return supportSize;
   }
+  constexpr bool isSI() const {
+    size_t numberOfOnes = 0;
+    for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
+      if (coefficientAtIndex(i) == 1) {
+        numberOfOnes++;
+      } else if (coefficientAtIndex(i) != 0) {
+        return false;
+      }
+    }
+    return numberOfOnes == 1;
+  }
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static DimensionVector Empty() { return {}; }
 

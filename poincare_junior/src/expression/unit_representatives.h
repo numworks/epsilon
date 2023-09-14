@@ -20,6 +20,13 @@ class Helper : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return R::DimensionVector;
   }
+  bool isBaseUnit() const override {
+    if constexpr (R::DimensionVector.isSI()) {
+      return this == representativesOfSameDimension();
+    } else {
+      return false;
+    }
+  }
 
  protected:
   using UnitRepresentative::UnitRepresentative;
@@ -39,9 +46,6 @@ class Time : public Helper<Time> {
   constexpr static const Time* representatives[] = {
       &second, &minute, &hour, &day, &week, &month, &year};
 
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
 #if 0
     bool hasSpecialAdditionalExpressions(double value,
                                          UnitFormat unitFormat) const override {
@@ -71,9 +75,6 @@ class Distance : public Helper<Distance> {
       &meter,     &inch,  &foot, &yard, &mile, &astronomicalUnit,
       &lightYear, &parsec};
 
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
 #if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,
@@ -107,12 +108,6 @@ class Angle : public Helper<Angle> {
   // Returns a beautified expression
   Tree* convertInto(Tree* value, const UnitRepresentative* other,
                     const ReductionContext& reductionContext) const;
-#endif
-
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,
       const UnitPrefix** prefix) const override;
@@ -144,9 +139,7 @@ class Mass : public Helper<Mass> {
       &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
 
   const UnitPrefix* basePrefix() const override;
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
+
 #if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,
@@ -171,10 +164,6 @@ class Current : public Helper<Current> {
   const static Current ampere;
   constexpr static const Current* representatives[] = {&ampere};
 
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
-
  private:
   using Helper::Helper;
 };
@@ -193,12 +182,6 @@ class Temperature : public Helper<Temperature> {
   static double ConvertTemperatures(double value,
                                     const UnitRepresentative* source,
                                     const UnitRepresentative* target);
-#endif
-
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,
       const UnitPrefix** prefix) const override {
@@ -226,10 +209,6 @@ class AmountOfSubstance : public Helper<AmountOfSubstance> {
   const static AmountOfSubstance mole;
   constexpr static const AmountOfSubstance* representatives[] = {&mole};
 
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
-
  private:
   using Helper::Helper;
 };
@@ -240,10 +219,6 @@ class LuminousIntensity : public Helper<LuminousIntensity> {
 
   const static LuminousIntensity candela;
   constexpr static const LuminousIntensity* representatives[] = {&candela};
-
-  bool isBaseUnit() const override {
-    return this == representativesOfSameDimension();
-  }
 
  private:
   using Helper::Helper;

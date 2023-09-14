@@ -27,8 +27,6 @@ class Helper : public UnitRepresentative {
       return false;
     }
   }
-
- protected:
   using UnitRepresentative::UnitRepresentative;
 };
 
@@ -55,7 +53,6 @@ class Time : public Helper<Time> {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
- private:
   using Helper::Helper;
 };
 
@@ -88,7 +85,6 @@ class Distance : public Helper<Distance> {
         const ReductionContext& reductionContext) const override;
 #endif
 
- private:
   using Helper::Helper;
 };
 
@@ -120,7 +116,6 @@ class Angle : public Helper<Angle> {
         int availableLength, const ReductionContext& reductionContext) const;
 #endif
 
- private:
   using Helper::Helper;
 };
 
@@ -153,7 +148,6 @@ class Mass : public Helper<Mass> {
         const ReductionContext& reductionContext) const override;
 #endif
 
- private:
   using Helper::Helper;
 };
 
@@ -164,7 +158,6 @@ class Current : public Helper<Current> {
   const static Current ampere;
   constexpr static const Current* representatives[] = {&ampere};
 
- private:
   using Helper::Helper;
 };
 
@@ -195,11 +188,11 @@ class Temperature : public Helper<Temperature> {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
+  using Helper::Helper;
 
  private:
   constexpr static double k_celsiusOrigin = 273.15;
   constexpr static double k_fahrenheitOrigin = 459.67;
-  using Helper::Helper;
 };
 
 class AmountOfSubstance : public Helper<AmountOfSubstance> {
@@ -209,7 +202,6 @@ class AmountOfSubstance : public Helper<AmountOfSubstance> {
   const static AmountOfSubstance mole;
   constexpr static const AmountOfSubstance* representatives[] = {&mole};
 
- private:
   using Helper::Helper;
 };
 
@@ -220,7 +212,6 @@ class LuminousIntensity : public Helper<LuminousIntensity> {
   const static LuminousIntensity candela;
   constexpr static const LuminousIntensity* representatives[] = {&candela};
 
- private:
   using Helper::Helper;
 };
 
@@ -231,7 +222,6 @@ class Frequency : public Helper<Frequency> {
   const static Frequency hertz;
   constexpr static const Frequency* representatives[] = {&hertz};
 
- private:
   using Helper::Helper;
 };
 
@@ -243,7 +233,6 @@ class Force : public Helper<Force> {
   const static Force newton;
   constexpr static const Force* representatives[] = {&newton};
 
- private:
   using Helper::Helper;
 };
 
@@ -258,7 +247,6 @@ class Pressure : public Helper<Pressure> {
   constexpr static const Pressure* representatives[] = {&pascal, &bar,
                                                         &atmosphere};
 
- private:
   using Helper::Helper;
 };
 
@@ -281,7 +269,6 @@ class Energy : public Helper<Energy> {
         const ReductionContext& reductionContext) const override;
 #endif
 
- private:
   using Helper::Helper;
 };
 
@@ -294,7 +281,6 @@ class Power : public Helper<Power> {
   const static Power horsePower;
   constexpr static const Power* representatives[] = {&watt, &horsePower};
 
- private:
   using Helper::Helper;
 };
 
@@ -305,7 +291,6 @@ class ElectricCharge : public Helper<ElectricCharge> {
   const static ElectricCharge coulomb;
   constexpr static const ElectricCharge* representatives[] = {&coulomb};
 
- private:
   using Helper::Helper;
 };
 
@@ -317,7 +302,6 @@ class ElectricPotential : public Helper<ElectricPotential> {
   const static ElectricPotential volt;
   constexpr static const ElectricPotential* representatives[] = {&volt};
 
- private:
   using Helper::Helper;
 };
 
@@ -329,7 +313,6 @@ class ElectricCapacitance : public Helper<ElectricCapacitance> {
   const static ElectricCapacitance farad;
   constexpr static const ElectricCapacitance* representatives[] = {&farad};
 
- private:
   using Helper::Helper;
 };
 
@@ -341,7 +324,6 @@ class ElectricResistance : public Helper<ElectricResistance> {
   const static ElectricResistance ohm;
   constexpr static const ElectricResistance* representatives[] = {&ohm};
 
- private:
   using Helper::Helper;
 };
 
@@ -353,7 +335,6 @@ class ElectricConductance : public Helper<ElectricConductance> {
   const static ElectricConductance siemens;
   constexpr static const ElectricConductance* representatives[] = {&siemens};
 
- private:
   using Helper::Helper;
 };
 
@@ -365,7 +346,6 @@ class MagneticFlux : public Helper<MagneticFlux> {
   const static MagneticFlux weber;
   constexpr static const MagneticFlux* representatives[] = {&weber};
 
- private:
   using Helper::Helper;
 };
 
@@ -377,7 +357,6 @@ class MagneticField : public Helper<MagneticField> {
   const static MagneticField tesla;
   constexpr static const MagneticField* representatives[] = {&tesla};
 
- private:
   using Helper::Helper;
 };
 
@@ -389,7 +368,6 @@ class Inductance : public Helper<Inductance> {
   const static Inductance henry;
   constexpr static const Inductance* representatives[] = {&henry};
 
- private:
   using Helper::Helper;
 };
 
@@ -401,7 +379,6 @@ class CatalyticActivity : public Helper<CatalyticActivity> {
   const static CatalyticActivity katal;
   constexpr static const CatalyticActivity* representatives[] = {&katal};
 
- private:
   using Helper::Helper;
 };
 
@@ -425,8 +402,6 @@ class Surface : public Helper<Surface> {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
-
- private:
   using Helper::Helper;
 };
 
@@ -457,8 +432,6 @@ class Volume : public Helper<Volume> {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
-
- private:
   using Helper::Helper;
 };
 
@@ -480,8 +453,6 @@ class Speed : public Helper<Speed> {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
-
- private:
   using Helper::Helper;
 };
 

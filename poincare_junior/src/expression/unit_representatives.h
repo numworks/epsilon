@@ -18,10 +18,10 @@ class Helper : public UnitRepresentative {
     return R::representatives[0];
   };
   const DimensionVector dimensionVector() const override {
-    return R::DimensionVector;
+    return R::Dimension;
   }
   bool isBaseUnit() const override {
-    if constexpr (R::DimensionVector.isSI()) {
+    if constexpr (R::Dimension.isSI()) {
       return this == representativesOfSameDimension();
     } else {
       return false;
@@ -34,7 +34,7 @@ class Helper : public UnitRepresentative {
 
 class Time : public Helper<Time> {
  public:
-  constexpr static DimensionVector DimensionVector{.time = 1};
+  constexpr static DimensionVector Dimension{.time = 1};
 
   const static Time second;
   const static Time minute;
@@ -61,7 +61,7 @@ class Time : public Helper<Time> {
 
 class Distance : public Helper<Distance> {
  public:
-  constexpr static DimensionVector DimensionVector{.distance = 1};
+  constexpr static DimensionVector Dimension{.distance = 1};
 
   const static Distance meter;
   const static Distance inch;
@@ -94,7 +94,7 @@ class Distance : public Helper<Distance> {
 
 class Angle : public Helper<Angle> {
  public:
-  constexpr static DimensionVector DimensionVector{.angle = 1};
+  constexpr static DimensionVector Dimension{.angle = 1};
 
   const static Angle radian;
   const static Angle arcSecond;
@@ -126,7 +126,7 @@ class Angle : public Helper<Angle> {
 
 class Mass : public Helper<Mass> {
  public:
-  constexpr static DimensionVector DimensionVector{.mass = 1};
+  constexpr static DimensionVector Dimension{.mass = 1};
 
   const static Mass gram;
   const static Mass ton;
@@ -159,7 +159,7 @@ class Mass : public Helper<Mass> {
 
 class Current : public Helper<Current> {
  public:
-  constexpr static DimensionVector DimensionVector{.current = 1};
+  constexpr static DimensionVector Dimension{.current = 1};
 
   const static Current ampere;
   constexpr static const Current* representatives[] = {&ampere};
@@ -170,7 +170,7 @@ class Current : public Helper<Current> {
 
 class Temperature : public Helper<Temperature> {
  public:
-  constexpr static DimensionVector DimensionVector{.temperature = 1};
+  constexpr static DimensionVector Dimension{.temperature = 1};
 
   const static Temperature kelvin;
   const static Temperature celsius;
@@ -204,7 +204,7 @@ class Temperature : public Helper<Temperature> {
 
 class AmountOfSubstance : public Helper<AmountOfSubstance> {
  public:
-  constexpr static DimensionVector DimensionVector{.amountOfSubstance = 1};
+  constexpr static DimensionVector Dimension{.amountOfSubstance = 1};
 
   const static AmountOfSubstance mole;
   constexpr static const AmountOfSubstance* representatives[] = {&mole};
@@ -215,7 +215,7 @@ class AmountOfSubstance : public Helper<AmountOfSubstance> {
 
 class LuminousIntensity : public Helper<LuminousIntensity> {
  public:
-  constexpr static DimensionVector DimensionVector{.luminousIntensity = 1};
+  constexpr static DimensionVector Dimension{.luminousIntensity = 1};
 
   const static LuminousIntensity candela;
   constexpr static const LuminousIntensity* representatives[] = {&candela};
@@ -226,7 +226,7 @@ class LuminousIntensity : public Helper<LuminousIntensity> {
 
 class Frequency : public Helper<Frequency> {
  public:
-  constexpr static DimensionVector DimensionVector{.time = -1};
+  constexpr static DimensionVector Dimension{.time = -1};
 
   const static Frequency hertz;
   constexpr static const Frequency* representatives[] = {&hertz};
@@ -237,7 +237,7 @@ class Frequency : public Helper<Frequency> {
 
 class Force : public Helper<Force> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -2, .distance = 1, .mass = 1};
 
   const static Force newton;
@@ -249,7 +249,7 @@ class Force : public Helper<Force> {
 
 class Pressure : public Helper<Pressure> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -2, .distance = -1, .mass = 1};
 
   const static Pressure pascal;
@@ -264,7 +264,7 @@ class Pressure : public Helper<Pressure> {
 
 class Energy : public Helper<Energy> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -2, .distance = 2, .mass = 1};
 
   const static Energy joule;
@@ -287,7 +287,7 @@ class Energy : public Helper<Energy> {
 
 class Power : public Helper<Power> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -3, .distance = 2, .mass = 1};
 
   const static Power watt;
@@ -300,7 +300,7 @@ class Power : public Helper<Power> {
 
 class ElectricCharge : public Helper<ElectricCharge> {
  public:
-  constexpr static DimensionVector DimensionVector{.time = 1, .current = 1};
+  constexpr static DimensionVector Dimension{.time = 1, .current = 1};
 
   const static ElectricCharge coulomb;
   constexpr static const ElectricCharge* representatives[] = {&coulomb};
@@ -311,7 +311,7 @@ class ElectricCharge : public Helper<ElectricCharge> {
 
 class ElectricPotential : public Helper<ElectricPotential> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -3, .distance = 2, .mass = 1, .current = -1};
 
   const static ElectricPotential volt;
@@ -323,7 +323,7 @@ class ElectricPotential : public Helper<ElectricPotential> {
 
 class ElectricCapacitance : public Helper<ElectricCapacitance> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = 4, .distance = -2, .mass = -1, .current = 2};
 
   const static ElectricCapacitance farad;
@@ -335,7 +335,7 @@ class ElectricCapacitance : public Helper<ElectricCapacitance> {
 
 class ElectricResistance : public Helper<ElectricResistance> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -3, .distance = 2, .mass = 1, .current = -2};
 
   const static ElectricResistance ohm;
@@ -347,7 +347,7 @@ class ElectricResistance : public Helper<ElectricResistance> {
 
 class ElectricConductance : public Helper<ElectricConductance> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = 3, .distance = -2, .mass = -1, .current = 2};
 
   const static ElectricConductance siemens;
@@ -359,7 +359,7 @@ class ElectricConductance : public Helper<ElectricConductance> {
 
 class MagneticFlux : public Helper<MagneticFlux> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -2, .distance = 2, .mass = 1, .current = -1};
 
   const static MagneticFlux weber;
@@ -371,7 +371,7 @@ class MagneticFlux : public Helper<MagneticFlux> {
 
 class MagneticField : public Helper<MagneticField> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -2, .mass = 1, .current = -1};
 
   const static MagneticField tesla;
@@ -383,7 +383,7 @@ class MagneticField : public Helper<MagneticField> {
 
 class Inductance : public Helper<Inductance> {
  public:
-  constexpr static DimensionVector DimensionVector{
+  constexpr static DimensionVector Dimension{
       .time = -2, .distance = 2, .mass = 1, .current = -2};
 
   const static Inductance henry;
@@ -395,8 +395,8 @@ class Inductance : public Helper<Inductance> {
 
 class CatalyticActivity : public Helper<CatalyticActivity> {
  public:
-  constexpr static DimensionVector DimensionVector{.time = -1,
-                                                   .amountOfSubstance = 1};
+  constexpr static DimensionVector Dimension{.time = -1,
+                                             .amountOfSubstance = 1};
 
   const static CatalyticActivity katal;
   constexpr static const CatalyticActivity* representatives[] = {&katal};
@@ -407,7 +407,7 @@ class CatalyticActivity : public Helper<CatalyticActivity> {
 
 class Surface : public Helper<Surface> {
  public:
-  constexpr static DimensionVector DimensionVector{.distance = 2};
+  constexpr static DimensionVector Dimension{.distance = 2};
 
   const static Surface hectare;
   const static Surface acre;
@@ -432,7 +432,7 @@ class Surface : public Helper<Surface> {
 
 class Volume : public Helper<Volume> {
  public:
-  constexpr static DimensionVector DimensionVector{.distance = 3};
+  constexpr static DimensionVector Dimension{.distance = 3};
 
   const static Volume liter;
   const static Volume cup;
@@ -464,7 +464,7 @@ class Volume : public Helper<Volume> {
 
 class Speed : public Helper<Speed> {
  public:
-  constexpr static DimensionVector DimensionVector{.time = -1, .distance = 1};
+  constexpr static DimensionVector Dimension{.time = -1, .distance = 1};
 
 #if 0
   const UnitRepresentative* standardRepresentative(

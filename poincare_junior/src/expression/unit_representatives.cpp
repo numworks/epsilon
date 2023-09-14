@@ -125,13 +125,6 @@ const Volume Volume::quart = {"qt", KMult(32._e, 0.0000295735295625_e), None,
 const Volume Volume::gallon = {"gal", KMult(128._e, 0.0000295735295625_e), None,
                                None};
 
-/* Define access points to some prefixes and representatives. */
-constexpr static int k_emptyPrefixIndex = 6;
-static_assert(k_prefixes[k_emptyPrefixIndex].m_exponent == 0,
-              "Index for the Empty UnitPrefix is incorrect.");
-constexpr static int k_kiloPrefixIndex = 9;
-static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3,
-              "Index for the Kilo UnitPrefix is incorrect.");
 
 #if 0
 int Time::setAdditionalExpressions(

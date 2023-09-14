@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_UNIT_REPRESENTATIVES_H
 #define POINCARE_EXPRESSION_UNIT_REPRESENTATIVES_H
 
-#include "k_tree.h"
+#include "unit.h"
 
 namespace PoincareJ {
 
@@ -20,8 +20,9 @@ class Time : public UnitRepresentative {
       &second, &minute, &hour, &day, &week, &month, &year};
 
   // These must be sorted in order, from smallest to biggest
-  constexpr static const Time* representativesAllowingImplicitAddition[] = {
-      &second, &minute, &hour, &day, &month, &year};
+  constexpr static const UnitRepresentative*
+      representativesAllowingImplicitAddition[] = {&second, &minute, &hour,
+                                                   &day,    &month,  &year};
 
   const DimensionVector dimensionVector() const override { return {.time = 1}; }
   bool isBaseUnit() const override {
@@ -38,10 +39,10 @@ class Time : public UnitRepresentative {
 #endif
 
  private:
-  using Time::Time;
+  using UnitRepresentative::UnitRepresentative;
 };
 
-class Distance : public Time {
+class Distance : public UnitRepresentative {
  public:
   const static Distance meter;
   const static Distance inch;
@@ -56,8 +57,8 @@ class Distance : public Time {
       &lightYear, &parsec};
 
   // These must be sorted in order, from smallest to biggest
-  constexpr static const Distance* representativesAllowingImplicitAddition[] = {
-      &inch, &foot, &yard, &mile};
+  constexpr static const UnitRepresentative*
+      representativesAllowingImplicitAddition[] = {&inch, &foot, &yard, &mile};
 
   const DimensionVector dimensionVector() const override {
     return {.distance = 1};
@@ -93,8 +94,9 @@ class Angle : public UnitRepresentative {
       &radian, &arcSecond, &arcMinute, &degree, &gradian};
 
   // These must be sorted in order, from smallest to biggest
-  constexpr static const Angle* representativesAllowingImplicitAddition[] = {
-      &arcSecond, &arcMinute, &degree};
+  constexpr static const UnitRepresentative*
+      representativesAllowingImplicitAddition[] = {&arcSecond, &arcMinute,
+                                                   &degree};
 
 #if 0
   // Returns a beautified expression
@@ -138,8 +140,8 @@ class Mass : public UnitRepresentative {
       &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
 
   // These must be sorted in order, from smallest to biggest
-  constexpr static const Mass* representativesAllowingImplicitAddition[] = {
-      &ounce, &pound};
+  constexpr static const UnitRepresentative*
+      representativesAllowingImplicitAddition[] = {&ounce, &pound};
 
   const DimensionVector dimensionVector() const override { return {.mass = 1}; }
   const UnitRepresentative* representativesOfSameDimension() const override;
@@ -227,9 +229,9 @@ class AmountOfSubstance : public UnitRepresentative {
   const static AmountOfSubstance mole;
   constexpr static const AmountOfSubstance* representatives[] = {&mole};
 
-} const DimensionVector dimensionVector() const override {
-  return {.amountOfSubstance = 1};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.amountOfSubstance = 1};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 bool isBaseUnit() const override {
   return this == representativesOfSameDimension();
@@ -244,9 +246,9 @@ class LuminousIntensity : public UnitRepresentative {
   const static LuminousIntensity candela;
   constexpr static const LuminousIntensity* representatives[] = {&candela};
 
-} const DimensionVector dimensionVector() const override {
-  return {.luminousIntensity = 1};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.luminousIntensity = 1};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 bool isBaseUnit() const override {
   return this == representativesOfSameDimension();
@@ -275,9 +277,9 @@ class Force : public UnitRepresentative {
   const static Force newton;
   constexpr static const Force* representatives[] = {&newton};
 
-} const DimensionVector dimensionVector() const override {
-  return {.time = -2, .distance = 1, .mass = 1};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.time = -2, .distance = 1, .mass = 1};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 
 private:
@@ -361,9 +363,9 @@ class ElectricPotential : public UnitRepresentative {
   const static ElectricPotential volt;
   constexpr static const ElectricPotential* representatives[] = {&volt};
 
-} const DimensionVector dimensionVector() const override {
-  return {.time = -3, .distance = 2, .mass = 1, .current = -1};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.time = -3, .distance = 2, .mass = 1, .current = -1};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 
 private:
@@ -376,9 +378,9 @@ class ElectricCapacitance : public UnitRepresentative {
   const static ElectricCapacitance farad;
   constexpr static const ElectricCapacitance* representatives[] = {&farad};
 
-} const DimensionVector dimensionVector() const override {
-  return {.time = 4, .distance = -2, .mass = -1, .current = 2};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.time = 4, .distance = -2, .mass = -1, .current = 2};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 
 private:
@@ -386,29 +388,28 @@ using UnitRepresentative::UnitRepresentative;
 }
 ;
 
-class ElectricResistanceRepresentative : public UnitRepresentative {
+class ElectricResistance : public UnitRepresentative {
  public:
   const static ElectricResistance ohm;
   constexpr static const ElectricResistance* representatives[] = {&ohm};
 
-} const DimensionVector dimensionVector() const override {
-  return {.time = -3, .distance = 2, .mass = 1, .current = -2};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.time = -3, .distance = 2, .mass = 1, .current = -2};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 
 private:
 using UnitRepresentative::UnitRepresentative;
-}
-;
+};
 
 class ElectricConductance : public UnitRepresentative {
  public:
   const static ElectricConductance siemens;
   constexpr static const ElectricConductance* representatives[] = {&siemens};
 
-} const DimensionVector dimensionVector() const override {
-  return {.time = 3, .distance = -2, .mass = -1, .current = 2};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.time = 3, .distance = -2, .mass = -1, .current = 2};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 
 private:
@@ -463,9 +464,9 @@ class CatalyticActivity : public UnitRepresentative {
   const static CatalyticActivity katal;
   constexpr static const CatalyticActivity* representatives[] = {&katal};
 
-} const DimensionVector dimensionVector() const override {
-  return {.time = -1, .amountOfSubstance = 1};
-}
+  const DimensionVector dimensionVector() const override {
+    return {.time = -1, .amountOfSubstance = 1};
+  }
 const UnitRepresentative* representativesOfSameDimension() const override;
 
 private:

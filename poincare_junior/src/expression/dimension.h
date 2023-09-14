@@ -3,7 +3,7 @@
 
 #include <poincare_junior/src/memory/tree.h>
 
-#include "unit.h"
+#include "unit_representatives.h"
 
 namespace PoincareJ {
 
@@ -68,10 +68,8 @@ struct Dimension {
   }
   static bool IsNonKelvinTemperatureRepresentative(
       const UnitRepresentative* representative) {
-    return representative == Unit::k_temperatureRepresentatives +
-                                 Unit::k_celsiusRepresentativeIndex ||
-           representative == Unit::k_temperatureRepresentatives +
-                                 Unit::k_fahrenheitRepresentativeIndex;
+    return representative == &Representatives::Temperature::celsius ||
+           representative == &Representatives::Temperature::fahrenheit;
   }
 
   static Dimension GetDimension(const Tree* t);

@@ -323,6 +323,15 @@ class Unit {
           UnitPrefix("k", 3),   UnitPrefix("M", 6),  UnitPrefix("G", 9),
           UnitPrefix("T", 12),
   };
+
+  /* Define access points to some prefixes. */
+  constexpr static int k_emptyPrefixIndex = 6;
+  static_assert(k_prefixes[k_emptyPrefixIndex].m_exponent == 0,
+                "Index for the Empty UnitPrefix is incorrect.");
+  constexpr static int k_kiloPrefixIndex = 9;
+  static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3,
+                "Index for the Kilo UnitPrefix is incorrect.");
+
   using Prefixable = UnitRepresentative::Prefixable;
 
   static bool CanParse(UnicodeDecoder* name,

@@ -94,12 +94,12 @@ function Calculator(emModule) {
     span.addEventListener('pointerup', upHandler);
   });
 
-  function resizeImgForWebp(img) {
-    if (img.currentSrc.endsWith(".webp") || img.currentSrc.startsWith("data:image/webp")) {
-      calculatorElement.style.top = "0.5%";
-      calculatorElement.style.left = "7.9%";
-      calculatorElement.style.width = "84.1%";
-      calculatorElement.style.height = "89.1%";
+  function resizeImgForJpg(img) {
+    if (img.currentSrc.endsWith(".jpg") || img.currentSrc.startsWith("data:image/jpg")) {
+      calculatorElement.style.top = "0";
+      calculatorElement.style.left = "0";
+      calculatorElement.style.width = "100%";
+      calculatorElement.style.height = "100%";
     }
   }
 
@@ -107,10 +107,10 @@ function Calculator(emModule) {
   // On Chrome, the img may take time to load the currentSrc, so we need to add
   // a callback.
   if (calculatorImg.complete) {
-    resizeImgForWebp(calculatorImg);
+    resizeImgForJpg(calculatorImg);
   } else {
     calculatorImg.onload = function() {
-      resizeImgForWebp(calculatorImg);
+      resizeImgForJpg(calculatorImg);
     }
   }
 }

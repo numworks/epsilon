@@ -9,15 +9,15 @@ class TimeRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_secondRepresentativeIndex = 0;
-  constexpr static int k_minuteRepresentativeIndex = 1;
-  constexpr static int k_hourRepresentativeIndex = 2;
-
-  constexpr static int k_dayRepresentativeIndex = 3;
-
-  constexpr static int k_monthRepresentativeIndex = 5;
-
-  constexpr static int k_yearRepresentativeIndex = 6;
+  const static TimeRepresentative second;
+  const static TimeRepresentative minute;
+  const static TimeRepresentative hour;
+  const static TimeRepresentative day;
+  const static TimeRepresentative week;
+  const static TimeRepresentative month;
+  const static TimeRepresentative year;
+  constexpr static const TimeRepresentative* representatives[] = {
+      &second, &minute, &hour, &day, &week, &month, &year};
 
   constexpr static TimeRepresentative Default() {
     return TimeRepresentative(nullptr, nullptr, Prefixable::None,
@@ -49,15 +49,17 @@ class DistanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_meterRepresentativeIndex = 0;
-
-  constexpr static int k_inchRepresentativeIndex = 4;
-
-  constexpr static int k_footRepresentativeIndex = 5;
-
-  constexpr static int k_yardRepresentativeIndex = 6;
-
-  constexpr static int k_mileRepresentativeIndex = 7;
+  const static DistanceRepresentative meter;
+  const static DistanceRepresentative inch;
+  const static DistanceRepresentative foot;
+  const static DistanceRepresentative yard;
+  const static DistanceRepresentative mile;
+  const static DistanceRepresentative astronomicalUnit;
+  const static DistanceRepresentative lightYear;
+  const static DistanceRepresentative parsec;
+  constexpr static const DistanceRepresentative* representatives[] = {
+      &meter,     &inch,  &foot, &yard, &mile, &astronomicalUnit,
+      &lightYear, &parsec};
 
   constexpr static DistanceRepresentative Default() {
     return DistanceRepresentative(nullptr, nullptr, Prefixable::None,
@@ -92,21 +94,19 @@ class AngleRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_radianRepresentativeIndex = 0;
-
-  constexpr static int k_arcSecondRepresentativeIndex = 1;
-
-  constexpr static int k_arcMinuteRepresentativeIndex = 2;
-
-  constexpr static int k_degreeRepresentativeIndex = 3;
-
-  constexpr static int k_gradianRepresentativeIndex = 4;
+  const static AngleRepresentative radian;
+  const static AngleRepresentative arcSecond;
+  const static AngleRepresentative arcMinute;
+  const static AngleRepresentative degree;
+  const static AngleRepresentative gradian;
+  constexpr static const AngleRepresentative* representatives[] = {
+      &radian, &arcSecond, &arcMinute, &degree, &gradian};
 
   constexpr static AngleRepresentative Default() {
     return AngleRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
   }
-  static const UnitRepresentative* DefaultRepresentativeForAngleUnit(
+  const static UnitRepresentative* DefaultRepresentativeForAngleUnit(
       AngleUnit angleUnit);
 
 #if 0
@@ -143,15 +143,15 @@ class MassRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_gramRepresentativeIndex = 0;
-
-  constexpr static int k_tonRepresentativeIndex = 1;
-
-  constexpr static int k_ounceRepresentativeIndex = 3;
-
-  constexpr static int k_poundRepresentativeIndex = 4;
-
-  constexpr static int k_shortTonRepresentativeIndex = 5;
+  const static MassRepresentative gram;
+  const static MassRepresentative ton;
+  const static MassRepresentative ounce;
+  const static MassRepresentative pound;
+  const static MassRepresentative shortTon;
+  const static MassRepresentative longTon;
+  const static MassRepresentative dalton;
+  constexpr static const MassRepresentative* representatives[] = {
+      &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
 
   constexpr static MassRepresentative Default() {
     return MassRepresentative(nullptr, nullptr, Prefixable::None,
@@ -187,6 +187,9 @@ class CurrentRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static CurrentRepresentative ampere;
+  constexpr static const CurrentRepresentative* representatives[] = {&ampere};
+
   constexpr static CurrentRepresentative Default() {
     return CurrentRepresentative(nullptr, nullptr, Prefixable::None,
                                  Prefixable::None);
@@ -208,11 +211,11 @@ class TemperatureRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_kelvinRepresentativeIndex = 0;
-
-  constexpr static int k_celsiusRepresentativeIndex = 1;
-
-  constexpr static int k_fahrenheitRepresentativeIndex = 2;
+  const static TemperatureRepresentative kelvin;
+  const static TemperatureRepresentative celsius;
+  const static TemperatureRepresentative fahrenheit;
+  constexpr static const TemperatureRepresentative* representatives[] = {
+      &kelvin, &celsius, &fahrenheit};
 
 #if 0
   static double ConvertTemperatures(double value,
@@ -256,6 +259,10 @@ class AmountOfSubstanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static AmountOfSubstanceRepresentative mole;
+  constexpr static const AmountOfSubstanceRepresentative* representatives[] = {
+      &mole};
+
   constexpr static AmountOfSubstanceRepresentative Default() {
     return AmountOfSubstanceRepresentative(nullptr, nullptr, Prefixable::None,
                                            Prefixable::None);
@@ -277,6 +284,10 @@ class LuminousIntensityRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static LuminousIntensityRepresentative candela;
+  constexpr static const LuminousIntensityRepresentative* representatives[] = {
+      &candela};
+
   constexpr static LuminousIntensityRepresentative Default() {
     return LuminousIntensityRepresentative(nullptr, nullptr, Prefixable::None,
                                            Prefixable::None);
@@ -298,6 +309,9 @@ class FrequencyRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static FrequencyRepresentative hertz;
+  constexpr static const FrequencyRepresentative* representatives[] = {&hertz};
+
   constexpr static FrequencyRepresentative Default() {
     return FrequencyRepresentative(nullptr, nullptr, Prefixable::None,
                                    Prefixable::None);
@@ -316,6 +330,9 @@ class ForceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static ForceRepresentative newton;
+  constexpr static const ForceRepresentative* representatives[] = {&newton};
+
   constexpr static ForceRepresentative Default() {
     return ForceRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
@@ -334,6 +351,12 @@ class PressureRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static PressureRepresentative pascal;
+  const static PressureRepresentative bar;
+  const static PressureRepresentative atmosphere;
+  constexpr static const PressureRepresentative* representatives[] = {
+      &pascal, &bar, &atmosphere};
+
   constexpr static PressureRepresentative Default() {
     return PressureRepresentative(nullptr, nullptr, Prefixable::None,
                                   Prefixable::None);
@@ -352,9 +375,10 @@ class EnergyRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_jouleRepresentativeIndex = 0;
-
-  constexpr static int k_electronVoltRepresentativeIndex = 1;
+  const static EnergyRepresentative joule;
+  const static EnergyRepresentative electronVolt;
+  constexpr static const EnergyRepresentative* representatives[] = {
+      &joule, &electronVolt};
 
   constexpr static EnergyRepresentative Default() {
     return EnergyRepresentative(nullptr, nullptr, Prefixable::None,
@@ -384,7 +408,10 @@ class PowerRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_wattRepresentativeIndex = 0;
+  const static PowerRepresentative watt;
+  const static PowerRepresentative horsePower;
+  constexpr static const PowerRepresentative* representatives[] = {&watt,
+                                                                   &horsePower};
 
   constexpr static PowerRepresentative Default() {
     return PowerRepresentative(nullptr, nullptr, Prefixable::None,
@@ -404,7 +431,10 @@ class ElectricChargeRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  using UnitRepresentative::UnitRepresentative;
+  const static ElectricChargeRepresentative coulomb;
+  constexpr static const ElectricChargeRepresentative* representatives[] = {
+      &coulomb};
+
   constexpr static ElectricChargeRepresentative Default() {
     return ElectricChargeRepresentative(nullptr, nullptr, Prefixable::None,
                                         Prefixable::None);
@@ -414,12 +444,19 @@ class ElectricChargeRepresentative : public UnitRepresentative {
   }
   int numberOfRepresentatives() const override;
   const UnitRepresentative* representativesOfSameDimension() const override;
+
+ private:
+  using UnitRepresentative::UnitRepresentative;
 };
 
 class ElectricPotentialRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static ElectricPotentialRepresentative volt;
+  constexpr static const ElectricPotentialRepresentative* representatives[] = {
+      &volt};
+
   constexpr static ElectricPotentialRepresentative Default() {
     return ElectricPotentialRepresentative(nullptr, nullptr, Prefixable::None,
                                            Prefixable::None);
@@ -438,6 +475,10 @@ class ElectricCapacitanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static ElectricCapacitanceRepresentative farad;
+  constexpr static const ElectricCapacitanceRepresentative* representatives[] =
+      {&farad};
+
   constexpr static ElectricCapacitanceRepresentative Default() {
     return ElectricCapacitanceRepresentative(nullptr, nullptr, Prefixable::None,
                                              Prefixable::None);
@@ -456,6 +497,10 @@ class ElectricResistanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static ElectricResistanceRepresentative ohm;
+  constexpr static const ElectricResistanceRepresentative* representatives[] = {
+      &ohm};
+
   constexpr static ElectricResistanceRepresentative Default() {
     return ElectricResistanceRepresentative(nullptr, nullptr, Prefixable::None,
                                             Prefixable::None);
@@ -474,6 +519,10 @@ class ElectricConductanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static ElectricConductanceRepresentative siemens;
+  constexpr static const ElectricConductanceRepresentative* representatives[] =
+      {&siemens};
+
   constexpr static ElectricConductanceRepresentative Default() {
     return ElectricConductanceRepresentative(nullptr, nullptr, Prefixable::None,
                                              Prefixable::None);
@@ -492,6 +541,10 @@ class MagneticFluxRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static MagneticFluxRepresentative weber;
+  constexpr static const MagneticFluxRepresentative* representatives[] = {
+      &weber};
+
   constexpr static MagneticFluxRepresentative Default() {
     return MagneticFluxRepresentative(nullptr, nullptr, Prefixable::None,
                                       Prefixable::None);
@@ -510,6 +563,10 @@ class MagneticFieldRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static MagneticFieldRepresentative tesla;
+  constexpr static const MagneticFieldRepresentative* representatives[] = {
+      &tesla};
+
   constexpr static MagneticFieldRepresentative Default() {
     return MagneticFieldRepresentative(nullptr, nullptr, Prefixable::None,
                                        Prefixable::None);
@@ -528,6 +585,9 @@ class InductanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static InductanceRepresentative henry;
+  constexpr static const InductanceRepresentative* representatives[] = {&henry};
+
   constexpr static InductanceRepresentative Default() {
     return InductanceRepresentative(nullptr, nullptr, Prefixable::None,
                                     Prefixable::None);
@@ -546,6 +606,10 @@ class CatalyticActivityRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
+  const static CatalyticActivityRepresentative katal;
+  constexpr static const CatalyticActivityRepresentative* representatives[] = {
+      &katal};
+
   constexpr static CatalyticActivityRepresentative Default() {
     return CatalyticActivityRepresentative(nullptr, nullptr, Prefixable::None,
                                            Prefixable::None);
@@ -564,9 +628,10 @@ class SurfaceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_hectareRepresentativeIndex = 0;
-
-  constexpr static int k_acreRepresentativeIndex = 1;
+  const static SurfaceRepresentative hectare;
+  const static SurfaceRepresentative acre;
+  constexpr static const SurfaceRepresentative* representatives[] = {&hectare,
+                                                                     &acre};
 
   constexpr static SurfaceRepresentative Default() {
     return SurfaceRepresentative(nullptr, nullptr, Prefixable::None,
@@ -598,15 +663,16 @@ class VolumeRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static int k_literRepresentativeIndex = 0;
-
-  constexpr static int k_cupRepresentativeIndex = 4;
-
-  constexpr static int k_pintRepresentativeIndex = 5;
-
-  constexpr static int k_quartRepresentativeIndex = 6;
-
-  constexpr static int k_gallonRepresentativeIndex = 7;
+  const static VolumeRepresentative liter;
+  const static VolumeRepresentative cup;
+  const static VolumeRepresentative pint;
+  const static VolumeRepresentative quart;
+  const static VolumeRepresentative gallon;
+  const static VolumeRepresentative teaSpoon;
+  const static VolumeRepresentative tableSpoon;
+  const static VolumeRepresentative fluidOnce;
+  constexpr static const VolumeRepresentative* representatives[] = {
+      &liter, &cup, &pint, &quart, &gallon, &teaSpoon, &tableSpoon, &fluidOnce};
 
   constexpr static VolumeRepresentative Default() {
     return VolumeRepresentative(nullptr, nullptr, Prefixable::None,

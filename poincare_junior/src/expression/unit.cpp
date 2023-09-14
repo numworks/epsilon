@@ -766,8 +766,7 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
    *      UnitConversion is set to None in this case. */
   if (node()->representative()->dimensionVector() ==
           TemperatureRepresentative::Default().dimensionVector() &&
-      node()->representative() !=
-          k_temperatureRepresentatives + k_kelvinRepresentativeIndex) {
+      node()->representative() != &Representatives::Temperature::kelvin) {
     Expression p = parent();
     if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
         p.type() == ExpressionNode::Type::Store ||

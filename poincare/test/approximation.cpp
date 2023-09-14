@@ -2082,11 +2082,19 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("min({1,2,3})", 1.);
   // undef is never the min (unless there are only undef in the list)
   assert_expression_approximates_to<double>("min({undef})", Undefined::Name());
-  assert_expression_approximates_to_scalar<double>("min({1,undef,3})", 1.);
+  assert_expression_approximates_to<double>("min({1,undef,3})",
+                                            Undefined::Name());
+  assert_expression_approximates_to<double>("min({1,undef,i})",
+                                            Undefined::Name());
+  assert_expression_approximates_to<double>("min({1,7,i})", Undefined::Name());
   assert_expression_approximates_to_scalar<double>("max({1,2,3})", 3.);
   // undef is never the max (unless there are only undef in the list)
   assert_expression_approximates_to<double>("max({undef})", Undefined::Name());
-  assert_expression_approximates_to_scalar<double>("max({1,undef,3})", 3.);
+  assert_expression_approximates_to<double>("max({1,undef,3})",
+                                            Undefined::Name());
+  assert_expression_approximates_to<double>("max({1,undef,i})",
+                                            Undefined::Name());
+  assert_expression_approximates_to<double>("max({1,7,i})", Undefined::Name());
   assert_expression_approximates_to_scalar<double>("sum({1,2,3})", 6.);
   assert_expression_approximates_to_scalar<double>("prod({1,4,9})", 36.);
 }

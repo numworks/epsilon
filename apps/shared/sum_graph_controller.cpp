@@ -259,55 +259,66 @@ void SumGraphController::LegendView::setEditableZone(double d) {
   m_editableZone.setText(buffer);
 }
 
+static Layout valueLayout(double value, int bufferSize,
+                          int numberOfSignificantDigits,
+                          Preferences::PrintFloatMode displayMode) {
+  Layout layout;
+  if (std::isnan(value)) {
+    layout = HorizontalLayout::Builder();
+    static_cast<HorizontalLayout &>(layout).setEmptyVisibility(
+        EmptyRectangle::State::Hidden);
+  } else {
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+        value, buffer, bufferSize, numberOfSignificantDigits, displayMode);
+    layout = LayoutHelper::String(buffer, strlen(buffer));
+  }
+  return layout;
+}
+
+static Layout areaMessageLayout() {
+  constexpr static int bufferSize = sizeof("Oppervlakte") + 1;
+  char buffer[bufferSize];
+  int length = Print::CustomPrintf(buffer, bufferSize, "%s",
+                                   I18n::translate(I18n::Message::Area));
+  return LayoutHelper::String(buffer, length);
+}
+
 void SumGraphController::LegendView::setSumLayout(Step step, double start,
                                                   double end, double result,
                                                   Layout functionLayout,
                                                   CodePoint sumSymbol) {
+  assert(!std::isnan(start) || step == Step::FirstParameter);
+  assert(!std::isnan(end) || step != Step::Result);
   Layout sumLayout = CodePointLayout::Builder(sumSymbol);
   if (step != Step::FirstParameter) {
-    static_assert(k_valuesBufferSize <= k_editableZoneBufferSize);
-    char buffer[k_editableZoneBufferSize];
-    Layout endLayout;
-    if (step == Step::SecondParameter) {
-      endLayout = HorizontalLayout::Builder();
-      static_cast<HorizontalLayout &>(endLayout).setEmptyVisibility(
-          EmptyRectangle::State::Hidden);
+    Layout startLayout = valueLayout(start, k_valuesBufferSize,
+                                     k_valuesPrecision, k_valuesDisplayMode);
+    Layout endLayout = valueLayout(end, k_valuesBufferSize, k_valuesPrecision,
+                                   k_valuesDisplayMode);
+    sumLayout = CondensedSumLayout::Builder(sumLayout, startLayout, endLayout);
+  }
+  if (step == Step::Result) {
+    Layout leftLayout;
+    Layout equalLayout = LayoutHelper::String(" = ", 3);
+    Preferences *preferences = Preferences::sharedPreferences;
+    Layout resultLayout = valueLayout(result, k_editableZoneBufferSize,
+                                      preferences->numberOfSignificantDigits(),
+                                      preferences->displayMode());
+    if (functionLayout.isUninitialized() ||
+        (sumLayout.layoutSize(k_font).width() +
+             functionLayout.layoutSize(k_font).width() +
+             equalLayout.layoutSize(k_font).width() +
+             resultLayout.layoutSize(k_font).width() >
+         bounds().width())) {
+      assert(sumSymbol == UCodePointIntegral);
+      leftLayout = areaMessageLayout();
     } else {
-      PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-          end, buffer, k_valuesBufferSize, k_valuesPrecision,
-          Preferences::PrintFloatMode::Decimal);
-      endLayout = LayoutHelper::String(buffer, strlen(buffer));
+      leftLayout = HorizontalLayout::Builder(sumLayout, functionLayout);
     }
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-        start, buffer, k_valuesBufferSize, k_valuesPrecision,
-        Preferences::PrintFloatMode::Decimal);
-    sumLayout = CondensedSumLayout::Builder(
-        sumLayout, LayoutHelper::String(buffer, strlen(buffer)), endLayout);
-    if (step == Step::Result) {
-      int resultPrecision =
-          Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
-      PoincareHelpers::ConvertFloatToText<double>(
-          result, buffer, k_editableZoneBufferSize, resultPrecision);
-      if (functionLayout.isUninitialized()) {
-        /* If function is uninitialized, display "Area = "
-         * This case should not occur with a sum of terms of a sequence
-         * If it does, "Area = " should be replaced with "Sum = " */
-        assert(sumSymbol == UCodePointIntegral);
-        sumLayout = defaultSumResultLayout(buffer);
-      } else {
-        sumLayout = HorizontalLayout::Builder(
-            sumLayout, functionLayout, LayoutHelper::String(" = ", 3),
-            LayoutHelper::String(buffer, strlen(buffer)));
-        if (sumLayout.layoutSize(KDFont::Size::Small).width() >
-            bounds().width()) {
-          /* If layout is too large, display "Area = "
-           * This case should not occur with a sum of terms of a sequence
-           * If it does, "Area = " should be replaced with "Sum = " */
-          assert(sumSymbol == UCodePointIntegral);
-          sumLayout = defaultSumResultLayout(buffer);
-        }
-      }
-    }
+
+    sumLayout =
+        HorizontalLayout::Builder(leftLayout, equalLayout, resultLayout);
   }
   m_sum.setLayout(sumLayout);
   m_sum.setAlignment(
@@ -334,46 +345,33 @@ void SumGraphController::LegendView::layoutSubviews(bool force) {
 void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate heigth = bounds().height();
-  KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();
+  KDCoordinate legendWidth = m_legend.minimalSizeForOptimalDisplay().width();
   constexpr static KDCoordinate horizontalMargin = 7;
 
-  if (legendSize.width() > 0) {
-    setChildFrame(&m_sum,
-                  KDRect(horizontalMargin, k_symbolHeightMargin,
-                         width - legendSize.width(),
-                         m_sum.minimalSizeForOptimalDisplay().height()),
-                  force);
-    setChildFrame(&m_legend,
-                  KDRect(width - legendSize.width() - horizontalMargin, 0,
-                         legendSize.width(), heigth),
-                  force);
-  } else {
-    setChildFrame(&m_sum, bounds(), force);
-    setChildFrame(&m_legend, KDRectZero, force);
+  KDRect sumFrame = bounds();
+  KDRect legendFrame = KDRectZero;
+  if (legendWidth > 0) {
+    sumFrame = KDRect(horizontalMargin, symbolHeightMargin, width - legendWidth,
+                      m_sum.minimalSizeForOptimalDisplay().height());
+    legendFrame =
+        KDRect(width - legendWidth - horizontalMargin, 0, legendWidth, heigth);
   }
+  setChildFrame(&m_sum, sumFrame, force);
+  setChildFrame(&m_legend, legendFrame, force);
 
-  KDRect frame =
-      (step == Step::Result)
-          ? KDRectZero
-          : KDRect(horizontalMargin + KDFont::GlyphWidth(k_font),
-                   k_symbolHeightMargin + k_sigmaHeight / 2 -
-                       (step == Step::SecondParameter) * editableZoneHeight(),
-                   editableZoneWidth(), editableZoneHeight());
-  setChildFrame(&m_editableZone, frame, force);
-}
-
-Layout SumGraphController::LegendView::defaultSumResultLayout(
-    const char *resultBuffer) {
-  // Create layout of "Area = [result]"
-  const char *areaMessage = I18n::translate(I18n::Message::Area);
-  // strlen("Oppervlakte") + strlen(" = ") + 0;
-  constexpr static int bufferSize = 11 + 3 + 1;
-  char buffer[bufferSize];
-  int length = Print::CustomPrintf(buffer, bufferSize, "%s = ", areaMessage);
-  assert(length < bufferSize);
-  return HorizontalLayout::Builder(
-      LayoutHelper::String(buffer, length),
-      LayoutHelper::String(resultBuffer, strlen(resultBuffer)));
+  KDRect editableZoneFrame = KDRectZero;
+  if (step != Step::Result) {
+    constexpr static KDCoordinate sumSymbolWidth = KDFont::GlyphWidth(k_font);
+    constexpr static KDCoordinate editableZoneWidth =
+        12 * KDFont::GlyphWidth(k_font);
+    constexpr static KDCoordinate editableZoneHeight =
+        KDFont::GlyphHeight(k_font);
+    editableZoneFrame = KDRect(
+        horizontalMargin + sumSymbolWidth,
+        heigth / 2 - (step == Step::SecondParameter) * editableZoneHeight,
+        editableZoneWidth, editableZoneHeight);
+  }
+  setChildFrame(&m_editableZone, editableZoneFrame, force);
 }
 
 }  // namespace Shared

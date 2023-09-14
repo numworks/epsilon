@@ -87,28 +87,20 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
         Poincare::PrintFloat::k_maxFloatCharSize;
     constexpr static int k_valuesPrecision =
         Poincare::Preferences::MediumNumberOfSignificantDigits;
+    constexpr static Poincare::Preferences::PrintFloatMode k_valuesDisplayMode =
+        Poincare::Preferences::PrintFloatMode::Decimal;
     constexpr static int k_valuesBufferSize =
         Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_valuesPrecision);
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
-    constexpr static KDCoordinate k_symbolHeightMargin = 8;
-    constexpr static KDCoordinate k_sigmaHeight = 18;
     constexpr static KDGlyph::Format k_glyphsFormat = {
         .style = {.backgroundColor = Escher::Palette::GrayMiddle,
                   .font = k_font}};
-
-    constexpr static KDCoordinate editableZoneWidth() {
-      return 12 * KDFont::GlyphWidth(k_font);
-    }
-    constexpr static KDCoordinate editableZoneHeight() {
-      return KDFont::GlyphHeight(k_font);
-    }
 
     int numberOfSubviews() const override { return 3; }
     Escher::View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutSubviews(Step step, bool force);
-    Poincare::Layout defaultSumResultLayout(const char* resultBuffer);
 
     Escher::LayoutView m_sum;
     Escher::MessageTextView m_legend;

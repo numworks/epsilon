@@ -263,9 +263,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
                                                   double end, double result,
                                                   Layout functionLayout,
                                                   CodePoint sumSymbol) {
-  constexpr int sigmaLength = 2;
-  const CodePoint sigma[sigmaLength] = {' ', sumSymbol};
-  Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
+  Layout sumLayout = CodePointLayout::Builder(sumSymbol);
   if (step != Step::FirstParameter) {
     static_assert(k_valuesBufferSize <= k_editableZoneBufferSize);
     char buffer[k_editableZoneBufferSize];
@@ -337,16 +335,18 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate heigth = bounds().height();
   KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();
+  constexpr static KDCoordinate horizontalMargin = 7;
 
   if (legendSize.width() > 0) {
     setChildFrame(&m_sum,
-                  KDRect(0, k_symbolHeightMargin, width - legendSize.width(),
+                  KDRect(horizontalMargin, k_symbolHeightMargin,
+                         width - legendSize.width(),
                          m_sum.minimalSizeForOptimalDisplay().height()),
                   force);
-    setChildFrame(
-        &m_legend,
-        KDRect(width - legendSize.width(), 0, legendSize.width(), heigth),
-        force);
+    setChildFrame(&m_legend,
+                  KDRect(width - legendSize.width() - horizontalMargin, 0,
+                         legendSize.width(), heigth),
+                  force);
   } else {
     setChildFrame(&m_sum, bounds(), force);
     setChildFrame(&m_legend, KDRectZero, force);
@@ -355,7 +355,7 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDRect frame =
       (step == Step::Result)
           ? KDRectZero
-          : KDRect(2 * KDFont::GlyphWidth(KDFont::Size::Small),
+          : KDRect(horizontalMargin + KDFont::GlyphWidth(k_font),
                    k_symbolHeightMargin + k_sigmaHeight / 2 -
                        (step == Step::SecondParameter) * editableZoneHeight(),
                    editableZoneWidth(), editableZoneHeight());

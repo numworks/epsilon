@@ -46,7 +46,7 @@ class ListNode : public ExpressionNode {
 
   // Helper functions
   int extremumIndex(const ApproximationContext& approximationContext,
-                    bool minimum, bool returnMinusOneIfCantApproximate);
+                    bool minimum);
   template <typename T>
   Evaluation<T> extremumApproximation(
       const ApproximationContext& approximationContext, bool minimum);

@@ -58,8 +58,7 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 
 // Helper functions
 int ListNode::extremumIndex(const ApproximationContext& approximationContext,
-                            bool minimum,
-                            bool returnMinusOneIfCantApproximate) {
+                            bool minimum) {
   int numberOfElements = numberOfChildren();
   float currentExtremumValue = NAN;
   int returnIndex = -1;
@@ -68,16 +67,12 @@ int ListNode::extremumIndex(const ApproximationContext& approximationContext,
     float newValue =
         child->approximate(static_cast<float>(0), approximationContext)
             .toScalar();
-    /* Return -1 if the child approximation is undef but the child is not
-     * directly the expression "undef" or "nonreal" */
-    if (returnMinusOneIfCantApproximate && !child->isUndefined() &&
-        std::isnan(newValue)) {
+    if (std::isnan(newValue)) {
       return -1;
     }
-    bool newIsGreater =
-        Helpers::FloatIsGreater(newValue, currentExtremumValue, minimum);
-    if (returnIndex < 0 || (minimum && !newIsGreater) ||
-        (!minimum && newIsGreater)) {
+    assert(!std::isnan(currentExtremumValue) || returnIndex < 0);
+    if (returnIndex < 0 || (minimum && newValue < currentExtremumValue) ||
+        (!minimum && newValue > currentExtremumValue)) {
       returnIndex = i;
       currentExtremumValue = newValue;
     }
@@ -88,7 +83,7 @@ int ListNode::extremumIndex(const ApproximationContext& approximationContext,
 template <typename T>
 Evaluation<T> ListNode::extremumApproximation(
     const ApproximationContext& approximationContext, bool minimum) {
-  int index = extremumIndex(approximationContext, minimum, false);
+  int index = extremumIndex(approximationContext, minimum);
   if (index < 0) {
     return Complex<T>::Undefined();
   }
@@ -188,8 +183,7 @@ Expression List::shallowReduce(ReductionContext reductionContext) {
 Expression List::extremum(const ReductionContext& reductionContext,
                           bool minimum) {
   const ApproximationContext approximationContext(reductionContext, true);
-  int extremumIndex =
-      node()->extremumIndex(approximationContext, minimum, true);
+  int extremumIndex = node()->extremumIndex(approximationContext, minimum);
   if (extremumIndex < 0) {
     return Undefined::Builder();
   }

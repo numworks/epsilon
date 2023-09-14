@@ -600,7 +600,7 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
     return 0;
   }
   if (representative->dimensionVector() ==
-      AngleRepresentative::Default().dimensionVector()) {
+      AngleRepresentative::DimensionVector) {
     /* Angles are the only unit where we want to display the exact value. */
     Expression exactValue = exactOutput.clone();
     Expression unit;
@@ -673,7 +673,7 @@ Expression Unit::ConvertTemperatureUnits(
   const UnitRepresentative* targetRepr = unit.representative();
   const UnitPrefix* targetPrefix = unit.node()->prefix();
   assert(unit.representative()->dimensionVector() ==
-         TemperatureRepresentative::Default().dimensionVector());
+         TemperatureRepresentative::DimensionVector);
 
   Expression startUnit;
   e = e.removeUnit(&startUnit);
@@ -684,7 +684,7 @@ Expression Unit::ConvertTemperatureUnits(
   const UnitRepresentative* startRepr =
       static_cast<Unit&>(startUnit).representative();
   if (startRepr->dimensionVector() !=
-      TemperatureRepresentative::Default().dimensionVector()) {
+      TemperatureRepresentative::DimensionVector) {
     return Undefined::Builder();
   }
 
@@ -825,7 +825,7 @@ void Unit::chooseBestRepresentativeAndPrefix(
   if ((std::isinf(*value) ||
        (*value == 0.0 &&
         node()->representative()->dimensionVector() !=
-            TemperatureRepresentative::Default().dimensionVector()))) {
+            TemperatureRepresentative::DimensionVector))) {
     /* Use the base unit to represent an infinite or null value, as all units
      * are equivalent.
      * This is not true for temperatures (0 K != 0°C != 0°F). */

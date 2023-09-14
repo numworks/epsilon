@@ -5,29 +5,30 @@
 
 namespace PoincareJ {
 
-class TimeRepresentative : public UnitRepresentative {
+namespace Representatives {
+
+class Time : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static TimeRepresentative second;
-  const static TimeRepresentative minute;
-  const static TimeRepresentative hour;
-  const static TimeRepresentative day;
-  const static TimeRepresentative week;
-  const static TimeRepresentative month;
-  const static TimeRepresentative year;
-  constexpr static const TimeRepresentative* representatives[] = {
+  const static Time second;
+  const static Time minute;
+  const static Time hour;
+  const static Time day;
+  const static Time week;
+  const static Time month;
+  const static Time year;
+  constexpr static const Time* representatives[] = {
       &second, &minute, &hour, &day, &week, &month, &year};
 
-  constexpr static TimeRepresentative Default() {
-    return TimeRepresentative(nullptr, nullptr, Prefixable::None,
-                              Prefixable::None);
+  constexpr static Time Default() {
+    return Time(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 1};
   }
   int numberOfRepresentatives() const override;
-  const UnitRepresentative* representativesOfSameDimension() const override;
+  const Time* representativesOfSameDimension() const override;
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
   }
@@ -42,34 +43,33 @@ class TimeRepresentative : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Time::Time;
 };
 
-class DistanceRepresentative : public UnitRepresentative {
+class Distance : public Time {
   friend class Unit;
 
  public:
-  const static DistanceRepresentative meter;
-  const static DistanceRepresentative inch;
-  const static DistanceRepresentative foot;
-  const static DistanceRepresentative yard;
-  const static DistanceRepresentative mile;
-  const static DistanceRepresentative astronomicalUnit;
-  const static DistanceRepresentative lightYear;
-  const static DistanceRepresentative parsec;
-  constexpr static const DistanceRepresentative* representatives[] = {
+  const static Distance meter;
+  const static Distance inch;
+  const static Distance foot;
+  const static Distance yard;
+  const static Distance mile;
+  const static Distance astronomicalUnit;
+  const static Distance lightYear;
+  const static Distance parsec;
+  constexpr static const Distance* representatives[] = {
       &meter,     &inch,  &foot, &yard, &mile, &astronomicalUnit,
       &lightYear, &parsec};
 
-  constexpr static DistanceRepresentative Default() {
-    return DistanceRepresentative(nullptr, nullptr, Prefixable::None,
-                                  Prefixable::None);
+  constexpr static Distance Default() {
+    return Distance(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.distance = 1};
   }
   int numberOfRepresentatives() const override;
-  const UnitRepresentative* representativesOfSameDimension() const override;
+  const Time* representativesOfSameDimension() const override;
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
   }
@@ -90,21 +90,20 @@ class DistanceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class AngleRepresentative : public UnitRepresentative {
+class Angle : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static AngleRepresentative radian;
-  const static AngleRepresentative arcSecond;
-  const static AngleRepresentative arcMinute;
-  const static AngleRepresentative degree;
-  const static AngleRepresentative gradian;
-  constexpr static const AngleRepresentative* representatives[] = {
+  const static Angle radian;
+  const static Angle arcSecond;
+  const static Angle arcMinute;
+  const static Angle degree;
+  const static Angle gradian;
+  constexpr static const Angle* representatives[] = {
       &radian, &arcSecond, &arcMinute, &degree, &gradian};
 
-  constexpr static AngleRepresentative Default() {
-    return AngleRepresentative(nullptr, nullptr, Prefixable::None,
-                               Prefixable::None);
+  constexpr static Angle Default() {
+    return Angle(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const static UnitRepresentative* DefaultRepresentativeForAngleUnit(
       AngleUnit angleUnit);
@@ -139,23 +138,22 @@ class AngleRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class MassRepresentative : public UnitRepresentative {
+class Mass : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static MassRepresentative gram;
-  const static MassRepresentative ton;
-  const static MassRepresentative ounce;
-  const static MassRepresentative pound;
-  const static MassRepresentative shortTon;
-  const static MassRepresentative longTon;
-  const static MassRepresentative dalton;
-  constexpr static const MassRepresentative* representatives[] = {
+  const static Mass gram;
+  const static Mass ton;
+  const static Mass ounce;
+  const static Mass pound;
+  const static Mass shortTon;
+  const static Mass longTon;
+  const static Mass dalton;
+  constexpr static const Mass* representatives[] = {
       &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
 
-  constexpr static MassRepresentative Default() {
-    return MassRepresentative(nullptr, nullptr, Prefixable::None,
-                              Prefixable::None);
+  constexpr static Mass Default() {
+    return Mass(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.mass = 1};
@@ -183,16 +181,15 @@ class MassRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class CurrentRepresentative : public UnitRepresentative {
+class Current : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static CurrentRepresentative ampere;
-  constexpr static const CurrentRepresentative* representatives[] = {&ampere};
+  const static Current ampere;
+  constexpr static const Current* representatives[] = {&ampere};
 
-  constexpr static CurrentRepresentative Default() {
-    return CurrentRepresentative(nullptr, nullptr, Prefixable::None,
-                                 Prefixable::None);
+  constexpr static Current Default() {
+    return Current(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.current = 1};
@@ -207,24 +204,23 @@ class CurrentRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class TemperatureRepresentative : public UnitRepresentative {
+class Temperature : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static TemperatureRepresentative kelvin;
-  const static TemperatureRepresentative celsius;
-  const static TemperatureRepresentative fahrenheit;
-  constexpr static const TemperatureRepresentative* representatives[] = {
-      &kelvin, &celsius, &fahrenheit};
+  const static Temperature kelvin;
+  const static Temperature celsius;
+  const static Temperature fahrenheit;
+  constexpr static const Temperature* representatives[] = {&kelvin, &celsius,
+                                                           &fahrenheit};
 
 #if 0
   static double ConvertTemperatures(double value,
                                     const UnitRepresentative* source,
                                     const UnitRepresentative* target);
 #endif
-  constexpr static TemperatureRepresentative Default() {
-    return TemperatureRepresentative(nullptr, nullptr, Prefixable::None,
-                                     Prefixable::None);
+  constexpr static Temperature Default() {
+    return Temperature(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.temperature = 1};
@@ -255,17 +251,16 @@ class TemperatureRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class AmountOfSubstanceRepresentative : public UnitRepresentative {
+class AmountOfSubstance : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static AmountOfSubstanceRepresentative mole;
-  constexpr static const AmountOfSubstanceRepresentative* representatives[] = {
-      &mole};
+  const static AmountOfSubstance mole;
+  constexpr static const AmountOfSubstance* representatives[] = {&mole};
 
-  constexpr static AmountOfSubstanceRepresentative Default() {
-    return AmountOfSubstanceRepresentative(nullptr, nullptr, Prefixable::None,
-                                           Prefixable::None);
+  constexpr static AmountOfSubstance Default() {
+    return AmountOfSubstance(nullptr, nullptr, Prefixable::None,
+                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.amountOfSubstance = 1};
@@ -280,17 +275,16 @@ class AmountOfSubstanceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class LuminousIntensityRepresentative : public UnitRepresentative {
+class LuminousIntensity : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static LuminousIntensityRepresentative candela;
-  constexpr static const LuminousIntensityRepresentative* representatives[] = {
-      &candela};
+  const static LuminousIntensity candela;
+  constexpr static const LuminousIntensity* representatives[] = {&candela};
 
-  constexpr static LuminousIntensityRepresentative Default() {
-    return LuminousIntensityRepresentative(nullptr, nullptr, Prefixable::None,
-                                           Prefixable::None);
+  constexpr static LuminousIntensity Default() {
+    return LuminousIntensity(nullptr, nullptr, Prefixable::None,
+                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.luminousIntensity = 1};
@@ -305,16 +299,15 @@ class LuminousIntensityRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class FrequencyRepresentative : public UnitRepresentative {
+class Frequency : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static FrequencyRepresentative hertz;
-  constexpr static const FrequencyRepresentative* representatives[] = {&hertz};
+  const static Frequency hertz;
+  constexpr static const Frequency* representatives[] = {&hertz};
 
-  constexpr static FrequencyRepresentative Default() {
-    return FrequencyRepresentative(nullptr, nullptr, Prefixable::None,
-                                   Prefixable::None);
+  constexpr static Frequency Default() {
+    return Frequency(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -1};
@@ -326,14 +319,14 @@ class FrequencyRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class ForceRepresentative : public UnitRepresentative {
+class Force : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static ForceRepresentative newton;
-  constexpr static const ForceRepresentative* representatives[] = {&newton};
+  const static Force newton;
+  constexpr static const Force* representatives[] = {&newton};
 
-  constexpr static ForceRepresentative Default() {
+  constexpr static Force Default() {
     return ForceRepresentative(nullptr, nullptr, Prefixable::None,
                                Prefixable::None);
   }
@@ -347,19 +340,18 @@ class ForceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class PressureRepresentative : public UnitRepresentative {
+class Pressure : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static PressureRepresentative pascal;
-  const static PressureRepresentative bar;
-  const static PressureRepresentative atmosphere;
-  constexpr static const PressureRepresentative* representatives[] = {
-      &pascal, &bar, &atmosphere};
+  const static Pressure pascal;
+  const static Pressure bar;
+  const static Pressure atmosphere;
+  constexpr static const Pressure* representatives[] = {&pascal, &bar,
+                                                        &atmosphere};
 
-  constexpr static PressureRepresentative Default() {
-    return PressureRepresentative(nullptr, nullptr, Prefixable::None,
-                                  Prefixable::None);
+  constexpr static Pressure Default() {
+    return Pressure(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -2, .distance = -1, .mass = 1};
@@ -371,18 +363,16 @@ class PressureRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class EnergyRepresentative : public UnitRepresentative {
+class Energy : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static EnergyRepresentative joule;
-  const static EnergyRepresentative electronVolt;
-  constexpr static const EnergyRepresentative* representatives[] = {
-      &joule, &electronVolt};
+  const static Energy joule;
+  const static Energy electronVolt;
+  constexpr static const Energy* representatives[] = {&joule, &electronVolt};
 
-  constexpr static EnergyRepresentative Default() {
-    return EnergyRepresentative(nullptr, nullptr, Prefixable::None,
-                                Prefixable::None);
+  constexpr static Energy Default() {
+    return Energy(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -2, .distance = 2, .mass = 1};
@@ -404,18 +394,16 @@ class EnergyRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class PowerRepresentative : public UnitRepresentative {
+class Power : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static PowerRepresentative watt;
-  const static PowerRepresentative horsePower;
-  constexpr static const PowerRepresentative* representatives[] = {&watt,
-                                                                   &horsePower};
+  const static Power watt;
+  const static Power horsePower;
+  constexpr static const Power* representatives[] = {&watt, &horsePower};
 
-  constexpr static PowerRepresentative Default() {
-    return PowerRepresentative(nullptr, nullptr, Prefixable::None,
-                               Prefixable::None);
+  constexpr static Power Default() {
+    return Power(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -3, .distance = 2, .mass = 1};
@@ -427,17 +415,15 @@ class PowerRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class ElectricChargeRepresentative : public UnitRepresentative {
+class ElectricCharge : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static ElectricChargeRepresentative coulomb;
-  constexpr static const ElectricChargeRepresentative* representatives[] = {
-      &coulomb};
+  const static ElectricCharge coulomb;
+  constexpr static const ElectricCharge* representatives[] = {&coulomb};
 
-  constexpr static ElectricChargeRepresentative Default() {
-    return ElectricChargeRepresentative(nullptr, nullptr, Prefixable::None,
-                                        Prefixable::None);
+  constexpr static ElectricCharge Default() {
+    return ElectricCharge(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 1, .current = 1};
@@ -449,17 +435,16 @@ class ElectricChargeRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class ElectricPotentialRepresentative : public UnitRepresentative {
+class ElectricPotential : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static ElectricPotentialRepresentative volt;
-  constexpr static const ElectricPotentialRepresentative* representatives[] = {
-      &volt};
+  const static ElectricPotential volt;
+  constexpr static const ElectricPotential* representatives[] = {&volt};
 
-  constexpr static ElectricPotentialRepresentative Default() {
-    return ElectricPotentialRepresentative(nullptr, nullptr, Prefixable::None,
-                                           Prefixable::None);
+  constexpr static ElectricPotential Default() {
+    return ElectricPotential(nullptr, nullptr, Prefixable::None,
+                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -3, .distance = 2, .mass = 1, .current = -1};
@@ -471,17 +456,16 @@ class ElectricPotentialRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class ElectricCapacitanceRepresentative : public UnitRepresentative {
+class ElectricCapacitance : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static ElectricCapacitanceRepresentative farad;
-  constexpr static const ElectricCapacitanceRepresentative* representatives[] =
-      {&farad};
+  const static ElectricCapacitance farad;
+  constexpr static const ElectricCapacitance* representatives[] = {&farad};
 
-  constexpr static ElectricCapacitanceRepresentative Default() {
-    return ElectricCapacitanceRepresentative(nullptr, nullptr, Prefixable::None,
-                                             Prefixable::None);
+  constexpr static ElectricCapacitance Default() {
+    return ElectricCapacitance(nullptr, nullptr, Prefixable::None,
+                               Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 4, .distance = -2, .mass = -1, .current = 2};
@@ -497,13 +481,12 @@ class ElectricResistanceRepresentative : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static ElectricResistanceRepresentative ohm;
-  constexpr static const ElectricResistanceRepresentative* representatives[] = {
-      &ohm};
+  const static ElectricResistance ohm;
+  constexpr static const ElectricResistance* representatives[] = {&ohm};
 
-  constexpr static ElectricResistanceRepresentative Default() {
-    return ElectricResistanceRepresentative(nullptr, nullptr, Prefixable::None,
-                                            Prefixable::None);
+  constexpr static ElectricResistance Default() {
+    return ElectricResistance(nullptr, nullptr, Prefixable::None,
+                              Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -3, .distance = 2, .mass = 1, .current = -2};
@@ -515,17 +498,16 @@ class ElectricResistanceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class ElectricConductanceRepresentative : public UnitRepresentative {
+class ElectricConductance : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static ElectricConductanceRepresentative siemens;
-  constexpr static const ElectricConductanceRepresentative* representatives[] =
-      {&siemens};
+  const static ElectricConductance siemens;
+  constexpr static const ElectricConductance* representatives[] = {&siemens};
 
-  constexpr static ElectricConductanceRepresentative Default() {
-    return ElectricConductanceRepresentative(nullptr, nullptr, Prefixable::None,
-                                             Prefixable::None);
+  constexpr static ElectricConductance Default() {
+    return ElectricConductance(nullptr, nullptr, Prefixable::None,
+                               Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = 3, .distance = -2, .mass = -1, .current = 2};
@@ -537,17 +519,15 @@ class ElectricConductanceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class MagneticFluxRepresentative : public UnitRepresentative {
+class MagneticFlux : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static MagneticFluxRepresentative weber;
-  constexpr static const MagneticFluxRepresentative* representatives[] = {
-      &weber};
+  const static MagneticFlux weber;
+  constexpr static const MagneticFlux* representatives[] = {&weber};
 
-  constexpr static MagneticFluxRepresentative Default() {
-    return MagneticFluxRepresentative(nullptr, nullptr, Prefixable::None,
-                                      Prefixable::None);
+  constexpr static MagneticFlux Default() {
+    return MagneticFlux(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -2, .distance = 2, .mass = 1, .current = -1};
@@ -559,17 +539,15 @@ class MagneticFluxRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class MagneticFieldRepresentative : public UnitRepresentative {
+class MagneticField : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static MagneticFieldRepresentative tesla;
-  constexpr static const MagneticFieldRepresentative* representatives[] = {
-      &tesla};
+  const static MagneticField tesla;
+  constexpr static const MagneticField* representatives[] = {&tesla};
 
-  constexpr static MagneticFieldRepresentative Default() {
-    return MagneticFieldRepresentative(nullptr, nullptr, Prefixable::None,
-                                       Prefixable::None);
+  constexpr static MagneticField Default() {
+    return MagneticField(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -2, .mass = 1, .current = -1};
@@ -581,16 +559,15 @@ class MagneticFieldRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class InductanceRepresentative : public UnitRepresentative {
+class Inductance : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static InductanceRepresentative henry;
-  constexpr static const InductanceRepresentative* representatives[] = {&henry};
+  const static Inductance henry;
+  constexpr static const Inductance* representatives[] = {&henry};
 
-  constexpr static InductanceRepresentative Default() {
-    return InductanceRepresentative(nullptr, nullptr, Prefixable::None,
-                                    Prefixable::None);
+  constexpr static Inductance Default() {
+    return Inductance(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -2, .distance = 2, .mass = 1, .current = -2};
@@ -602,17 +579,16 @@ class InductanceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class CatalyticActivityRepresentative : public UnitRepresentative {
+class CatalyticActivity : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static CatalyticActivityRepresentative katal;
-  constexpr static const CatalyticActivityRepresentative* representatives[] = {
-      &katal};
+  const static CatalyticActivity katal;
+  constexpr static const CatalyticActivity* representatives[] = {&katal};
 
-  constexpr static CatalyticActivityRepresentative Default() {
-    return CatalyticActivityRepresentative(nullptr, nullptr, Prefixable::None,
-                                           Prefixable::None);
+  constexpr static CatalyticActivity Default() {
+    return CatalyticActivity(nullptr, nullptr, Prefixable::None,
+                             Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -1, .amountOfSubstance = 1};
@@ -624,18 +600,16 @@ class CatalyticActivityRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class SurfaceRepresentative : public UnitRepresentative {
+class Surface : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static SurfaceRepresentative hectare;
-  const static SurfaceRepresentative acre;
-  constexpr static const SurfaceRepresentative* representatives[] = {&hectare,
-                                                                     &acre};
+  const static Surface hectare;
+  const static Surface acre;
+  constexpr static const Surface* representatives[] = {&hectare, &acre};
 
-  constexpr static SurfaceRepresentative Default() {
-    return SurfaceRepresentative(nullptr, nullptr, Prefixable::None,
-                                 Prefixable::None);
+  constexpr static Surface Default() {
+    return Surface(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.distance = 2};
@@ -659,24 +633,23 @@ class SurfaceRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class VolumeRepresentative : public UnitRepresentative {
+class Volume : public UnitRepresentative {
   friend class Unit;
 
  public:
-  const static VolumeRepresentative liter;
-  const static VolumeRepresentative cup;
-  const static VolumeRepresentative pint;
-  const static VolumeRepresentative quart;
-  const static VolumeRepresentative gallon;
-  const static VolumeRepresentative teaSpoon;
-  const static VolumeRepresentative tableSpoon;
-  const static VolumeRepresentative fluidOnce;
-  constexpr static const VolumeRepresentative* representatives[] = {
+  const static Volume liter;
+  const static Volume cup;
+  const static Volume pint;
+  const static Volume quart;
+  const static Volume gallon;
+  const static Volume teaSpoon;
+  const static Volume tableSpoon;
+  const static Volume fluidOnce;
+  constexpr static const Volume* representatives[] = {
       &liter, &cup, &pint, &quart, &gallon, &teaSpoon, &tableSpoon, &fluidOnce};
 
-  constexpr static VolumeRepresentative Default() {
-    return VolumeRepresentative(nullptr, nullptr, Prefixable::None,
-                                Prefixable::None);
+  constexpr static Volume Default() {
+    return Volume(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.distance = 3};
@@ -700,13 +673,12 @@ class VolumeRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
-class SpeedRepresentative : public UnitRepresentative {
+class Speed : public UnitRepresentative {
   friend class Unit;
 
  public:
-  constexpr static SpeedRepresentative Default() {
-    return SpeedRepresentative(nullptr, nullptr, Prefixable::None,
-                               Prefixable::None);
+  constexpr static Speed Default() {
+    return Speed(nullptr, nullptr, Prefixable::None, Prefixable::None);
   }
   const DimensionVector dimensionVector() const override {
     return DimensionVector{.time = -1, .distance = 1};
@@ -730,6 +702,7 @@ class SpeedRepresentative : public UnitRepresentative {
   using UnitRepresentative::UnitRepresentative;
 };
 
+}  // namespace Representatives
 }  // namespace PoincareJ
 
 #endif

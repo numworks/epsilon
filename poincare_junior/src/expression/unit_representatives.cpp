@@ -4,157 +4,126 @@
 
 namespace PoincareJ {
 
+namespace Representatives {
+
 using enum UnitRepresentative::Prefixable;
 
-const TimeRepresentative TimeRepresentative::second = {"s", 1._e, All,
-                                                       NegativeLongScale};
-const TimeRepresentative TimeRepresentative::minute = {"min", 60._e, None,
-                                                       None};
-const TimeRepresentative TimeRepresentative::hour = {"h", 3600._e, None, None};
-const TimeRepresentative TimeRepresentative::day = {"day", 86400._e, None,
-                                                    None};
-const TimeRepresentative TimeRepresentative::week = {"week", 604800._e, None,
-                                                     None};
-const TimeRepresentative TimeRepresentative::month = {"month", 2629800._e, None,
-                                                      None};
-const TimeRepresentative TimeRepresentative::year = {"year", 31557600._e, None,
-                                                     None};
+const Time Time::second = {"s", 1._e, All, NegativeLongScale};
+const Time Time::minute = {"min", 60._e, None, None};
+const Time Time::hour = {"h", 3600._e, None, None};
+const Time Time::day = {"day", 86400._e, None, None};
+const Time Time::week = {"week", 604800._e, None, None};
+const Time Time::month = {"month", 2629800._e, None, None};
+const Time Time::year = {"year", 31557600._e, None, None};
 
-const DistanceRepresentative DistanceRepresentative::meter = {"m", 1._e, All,
-                                                              NegativeAndKilo};
-const DistanceRepresentative DistanceRepresentative::astronomicalUnit = {
-    "au", 149597870700._e, None, None};
-const DistanceRepresentative DistanceRepresentative::lightYear = {
+const Distance Distance::meter = {"m", 1._e, All, NegativeAndKilo};
+const Distance Distance::astronomicalUnit = {"au", 149597870700._e, None, None};
+const Distance Distance::lightYear = {
     "ly", KMult(299792458._e, 31557600._e).k_blocks, None, None};
-const DistanceRepresentative DistanceRepresentative::parsec = {
+const Distance Distance::parsec = {
   "pc", KMult(180._e, KDiv(3600._e, π_e}; 149587870700._e).k_blocks,
   None, None
 
-const DistanceRepresentative DistanceRepresentative::inch = {
+const Distance Distance::inch = {
     "in", 0.0254_e, None, None};
-const DistanceRepresentative DistanceRepresentative::foot = {
-    "ft", KMult(12._e, 0.0254_e).k_blocks, None, None};
-const DistanceRepresentative DistanceRepresentative::yard = {
-    "yd", KMult(36._e, 0.0254_e).k_blocks, None, None};
-const DistanceRepresentative DistanceRepresentative::mile = {
-    "mi", KMult(63360._e, 0.0254_e).k_blocks, None, None};
+const Distance Distance::foot = {"ft", KMult(12._e, 0.0254_e).k_blocks, None,
+                                 None};
+const Distance Distance::yard = {"yd", KMult(36._e, 0.0254_e).k_blocks, None,
+                                 None};
+const Distance Distance::mile = {"mi", KMult(63360._e, 0.0254_e).k_blocks, None,
+                                 None};
 
 /* Only AngleRepresentative have non-float ratio expression because exact
  * result are expected. */
-const AngleRepresentative AngleRepresentative::radian = {"rad", 1_e, None,
-                                                         None};
-const AngleRepresentative AngleRepresentative::arcSecond = {
-    "\"", KDiv(π_e, 648000_e).k_blocks, None, None};
-const AngleRepresentative AngleRepresentative::arcMinute = {
-    "'", KDiv(π_e, 10800_e).k_blocks, None, None};
-const AngleRepresentative AngleRepresentative::degree = {
-    "°", KDiv(π_e, 180_e).k_blocks, None, None};
-const AngleRepresentative AngleRepresentative::gradian = {
-    "gon", KDiv(π_e, 200_e).k_blocks, None, None};
+const Angle Angle::radian = {"rad", 1_e, None, None};
+const Angle Angle::arcSecond = {"\"", KDiv(π_e, 648000_e).k_blocks, None, None};
+const Angle Angle::arcMinute = {"'", KDiv(π_e, 10800_e).k_blocks, None, None};
+const Angle Angle::degree = {"°", KDiv(π_e, 180_e).k_blocks, None, None};
+const Angle Angle::gradian = {"gon", KDiv(π_e, 200_e).k_blocks, None, None};
 
-const MassRepresentative MassRepresentative::gram = {"g", 1._e, All,
-                                                     NegativeAndKilo};
-const MassRepresentative MassRepresentative::ton = {
-    "t", 1000._e, PositiveLongScale, PositiveLongScale};
-const MassRepresentative MassRepresentative::dalton = {
-    "Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All, All};
-const MassRepresentative MassRepresentative::once = {"oz", 0.028349523125_e,
-                                                     None, None};
-const MassRepresentative MassRepresentative::pound = {
-    "lb", 16._e, 0.028349523125_e, None, None};
-const MassRepresentative MassRepresentative::shortTon = {
-    "shtn", 2000._e, 16._e, 0.028349523125_e, None, None};
-const MassRepresentative MassRepresentative::longTon = {
-    "lgtn", 2240._e, 16._e, 0.028349523125_e, None, None};
+const Mass Mass::gram = {"g", 1._e, All, NegativeAndKilo};
+const Mass Mass::ton = {"t", 1000._e, PositiveLongScale, PositiveLongScale};
+const Mass Mass::dalton = {"Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All,
+                           All};
+const Mass Mass::once = {"oz", 0.028349523125_e, None, None};
+const Mass Mass::pound = {"lb", 16._e, 0.028349523125_e, None, None};
+const Mass Mass::shortTon = {"shtn",           2000._e, 16._e,
+                             0.028349523125_e, None,    None};
+const Mass Mass::longTon = {"lgtn",           2240._e, 16._e,
+                            0.028349523125_e, None,    None};
 
-const CurrentRepresentative CurrentRepresentative::ampere = {"A", 1._e, All,
+const Current Current::ampere = {"A", 1._e, All,
                           LongScale)};
 
 // Ratios are 1.0 because temperatures conversion are an exception.
-const TemperatureRepresentative TemperatureRepresentative::kelvin = {"K", 1._e,
-                                                                     All, None};
-const TemperatureRepresentative TemperatureRepresentative::celsius = {
-    "°C", 1._e, None, None};
-const TemperatureRepresentative TemperatureRepresentative::farenheit = {
-    "°F", 1._e, None, None};
+const Temperature Temperature::kelvin = {"K", 1._e, All, None};
+const Temperature Temperature::celsius = {"°C", 1._e, None, None};
+const Temperature Temperature::farenheit = {"°F", 1._e, None, None};
 
-const AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative::mole = {
+const AmountOfSubstance AmountOfSubstance::mole = {
   "mol", 1._e, All, LongScale)};
 
-const LuminousIntensityRepresentative LuminousIntensityRepresentative::candela = {
+const LuminousIntensity LuminousIntensity::candela = {
   "cd", 1._e, All, LongScale)};
 
-const FrequencyRepresentative FrequencyRepresentative::hertz = {"Hz", 1._e, All,
+const Frequency Frequency::hertz = {"Hz", 1._e, All,
   LongScale)};
 
-const ForceRepresentative ForceRepresentative::newton = {"N", 1._e, All,
+const Force Force::newton = {"N", 1._e, All,
   LongScale)};
 
-const PressureRepresentative PressureRepresentative::pascal = {"Pa", 1._e, All,
-                                                               LongScale};
-const PressureRepresentative PressureRepresentative::bar = {"bar", 100000._e,
-                                                            All, LongScale};
-const PressureRepresentative PressureRepresentative::atmosphere = {
-    "atm", 101325._e, None, None};
+const Pressure Pressure::pascal = {"Pa", 1._e, All, LongScale};
+const Pressure Pressure::bar = {"bar", 100000._e, All, LongScale};
+const Pressure Pressure::atmosphere = {"atm", 101325._e, None, None};
 
-const EnergyRepresentative EnergyRepresentative::joule = {"J", 1._e, All,
-                                                          LongScale};
-const EnergyRepresentative EnergyRepresentative::electronVolt = {
-    "eV", 1.602176634_e, KPow(10._e, -19_e), All, LongScale};
+const Energy Energy::joule = {"J", 1._e, All, LongScale};
+const Energy Energy::electronVolt = {"eV", 1.602176634_e, KPow(10._e, -19_e),
+                                     All, LongScale};
 
-const PowerRepresentative PowerRepresentative::watt = {"W", 1._e, All,
-                                                       LongScale};
-const PowerRepresentative PowerRepresentative::horsePower = {"hp", 745.699872_e, None,
+const Power Power::watt = {"W", 1._e, All, LongScale};
+const Power Power::horsePower = {"hp", 745.699872_e, None,
   None)};
 
-const ElectricChargeRepresentative ElectricChargeRepresentative::coulomb = {
+const ElectricCharge ElectricCharge::coulomb = {
   "C", 1._e, All, LongScale)};
 
-const ElectricPotentialRepresentative ElectricPotentialRepresentative::volt = {
+const ElectricPotential ElectricPotential::volt = {
   "V", 1._e, All, LongScale)};
 
-const ElectricCapacitanceRepresentative ElectricCapacitanceRepresentative::farad = {
+const ElectricCapacitance ElectricCapacitance::farad = {
   "F", 1._e, All, LongScale)};
 
-const ElectricResistanceRepresentative ElectricResistanceRepresentative::ohm = {
+const ElectricResistance ElectricResistance::ohm = {
   "Ω", 1._e, All, LongScale)};
 
-const ElectricConductanceRepresentative ElectricConductanceRepresentative::siemens = {
+const ElectricConductance ElectricConductance::siemens = {
   "S", 1._e, All, LongScale)};
 
-const MagneticFluxRepresentative MagneticFluxRepresentative::weber = {
+const MagneticFlux MagneticFlux::weber = {
   "Wb", 1._e, All, LongScale)};
 
-const MagneticFieldRepresentative MagneticFieldRepresentative::tesla = {
+const MagneticField MagneticField::tesla = {
   "T", 1._e, All, LongScale)};
 
-const InductanceRepresentative InductanceRepresentative::henry = {"H", 1._e, All,
+const Inductance Inductance::henry = {"H", 1._e, All,
   LongScale)};
 
-const CatalyticActivityRepresentative CatalyticActivityRepresentative::katal = {
+const CatalyticActivity CatalyticActivity::katal = {
   "kat", 1._e, All, LongScale)};
 
-const SurfaceRepresentative SurfaceRepresentative::hectare = {"ha", 10000._e,
-                                                              None, None};
-const SurfaceRepresentative SurfaceRepresentative::acre = {
-    "acre", 4046.8564224_e, None, None};
+const Surface Surface::hectare = {"ha", 10000._e, None, None};
+const Surface Surface::acre = {"acre", 4046.8564224_e, None, None};
 
-const VolumeRepresentative VolumeRepresentative::liter = {
-    BuiltinsAliases::k_litersAliases, 0.001_e, All, Negative};
-const VolumeRepresentative VolumeRepresentative::teaSpoon = {
-    "tsp", 0.00000492892159375_e, None, None};
-const VolumeRepresentative VolumeRepresentative::tableSpoon = {
-    "tbsp", 3._e, 0.00000492892159375_e, None, None};
-const VolumeRepresentative VolumeRepresentative::fluidOnce = {
-    "floz", 0.0000295735295625_e, None, None};
-const VolumeRepresentative VolumeRepresentative::cup = {
-    "cup", 8._e, 0.0000295735295625_e, None, None};
-const VolumeRepresentative VolumeRepresentative::pint = {
-    "pt", 16._e, 0.0000295735295625_e, None, None};
-const VolumeRepresentative VolumeRepresentative::quart = {
-    "qt", 32._e, 0.0000295735295625_e, None, None};
-const VolumeRepresentative VolumeRepresentative::gallon = {
-    "gal", 128._e, 0.0000295735295625_e, None, None};
+const Volume Volume::liter = {BuiltinsAliases::k_litersAliases, 0.001_e, All,
+                              Negative};
+const Volume Volume::teaSpoon = {"tsp", 0.00000492892159375_e, None, None};
+const Volume Volume::tableSpoon = {"tbsp", 3._e, 0.00000492892159375_e, None,
+                                   None};
+const Volume Volume::fluidOnce = {"floz", 0.0000295735295625_e, None, None};
+const Volume Volume::cup = {"cup", 8._e, 0.0000295735295625_e, None, None};
+const Volume Volume::pint = {"pt", 16._e, 0.0000295735295625_e, None, None};
+const Volume Volume::quart = {"qt", 32._e, 0.0000295735295625_e, None, None};
+const Volume Volume::gallon = {"gal", 128._e, 0.0000295735295625_e, None, None};
 
 /* Define access points to some prefixes and representatives. */
 constexpr static int k_emptyPrefixIndex = 6;
@@ -165,7 +134,7 @@ static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3,
               "Index for the Kilo UnitPrefix is incorrect.");
 
 #if 0
-int TimeRepresentative::setAdditionalExpressions(
+int Time::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
@@ -195,7 +164,7 @@ int TimeRepresentative::setAdditionalExpressions(
   return 1;
 }
 
-const UnitRepresentative* DistanceRepresentative::standardRepresentative(
+const UnitRepresentative* Distance::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,
     const UnitPrefix** prefix) const {
   return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric)
@@ -211,7 +180,7 @@ const UnitRepresentative* DistanceRepresentative::standardRepresentative(
                  numberOfRepresentatives() - 1, prefix);
 }
 
-int DistanceRepresentative::setAdditionalExpressions(
+int Distance::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
@@ -239,8 +208,8 @@ int DistanceRepresentative::setAdditionalExpressions(
 
 #endif
 
-const UnitRepresentative*
-AngleRepresentative::DefaultRepresentativeForAngleUnit(AngleUnit angleUnit) {
+const UnitRepresentative* Angle::DefaultRepresentativeForAngleUnit(
+    AngleUnit angleUnit) {
   switch (angleUnit) {
     case AngleUnit::Degree:
       return Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex;
@@ -253,7 +222,7 @@ AngleRepresentative::DefaultRepresentativeForAngleUnit(AngleUnit angleUnit) {
 }
 
 #if 0
-const UnitRepresentative* AngleRepresentative::standardRepresentative(
+const UnitRepresentative* Angle::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,
     const UnitPrefix** prefix) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
@@ -265,7 +234,7 @@ const UnitRepresentative* AngleRepresentative::standardRepresentative(
   return DefaultRepresentativeForAngleUnit(reductionContext.angleUnit());
 }
 
-Expression AngleRepresentative::convertInto(
+Expression Angle::convertInto(
     Expression value, const UnitRepresentative* other,
     const ReductionContext& reductionContext) const {
   assert(dimensionVector() == other->dimensionVector());
@@ -281,7 +250,7 @@ Expression AngleRepresentative::convertInto(
   return Multiplication::Builder(inOther, unit);
 }
 
-int AngleRepresentative::setAdditionalExpressionsWithExactValue(
+int Angle::setAdditionalExpressionsWithExactValue(
     Expression exactValue, double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
@@ -325,13 +294,13 @@ int AngleRepresentative::setAdditionalExpressionsWithExactValue(
 }
 #endif
 
-const UnitPrefix* MassRepresentative::basePrefix() const {
+const UnitPrefix* Mass::basePrefix() const {
   return isBaseUnit() ? UnitPrefix::Prefixes() + Unit::k_kiloPrefixIndex
                       : UnitPrefix::EmptyPrefix();
 }
 
 #if 0
-const UnitRepresentative* MassRepresentative::standardRepresentative(
+const UnitRepresentative* Mass::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,
     const UnitPrefix** prefix) const {
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Imperial) {
@@ -353,7 +322,7 @@ const UnitRepresentative* MassRepresentative::standardRepresentative(
       1, prefix);
 }
 
-int MassRepresentative::setAdditionalExpressions(
+int Mass::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
@@ -376,13 +345,13 @@ int MassRepresentative::setAdditionalExpressions(
   return 1;
 }
 
-double TemperatureRepresentative::ConvertTemperatures(
+double Temperature::ConvertTemperatures(
     double value, const UnitRepresentative* source,
     const UnitRepresentative* target) {
   assert(source->dimensionVector() ==
-         TemperatureRepresentative::Default().dimensionVector());
+         Temperature::Default().dimensionVector());
   assert(target->dimensionVector() ==
-         TemperatureRepresentative::Default().dimensionVector());
+         Temperature::Default().dimensionVector());
   if (source == target) {
     return value;
   }
@@ -398,18 +367,18 @@ double TemperatureRepresentative::ConvertTemperatures(
          targetOrigin;
 }
 
-int TemperatureRepresentative::setAdditionalExpressions(
+int Temperature::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   const UnitRepresentative* celsius =
-      TemperatureRepresentative::Default().representativesOfSameDimension() +
+      Temperature::Default().representativesOfSameDimension() +
       Unit::k_celsiusRepresentativeIndex;
   const UnitRepresentative* fahrenheit =
-      TemperatureRepresentative::Default().representativesOfSameDimension() +
+      Temperature::Default().representativesOfSameDimension() +
       Unit::k_fahrenheitRepresentativeIndex;
   const UnitRepresentative* kelvin =
-      TemperatureRepresentative::Default().representativesOfSameDimension() +
+      Temperature::Default().representativesOfSameDimension() +
       Unit::k_kelvinRepresentativeIndex;
   const UnitRepresentative* targets[] = {
       reductionContext.unitFormat() == Preferences::UnitFormat::Metric
@@ -426,7 +395,7 @@ int TemperatureRepresentative::setAdditionalExpressions(
       continue;
     }
     dest[numberOfExpressionsSet++] = Multiplication::Builder(
-        Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(
+        Float<double>::Builder(Temperature::ConvertTemperatures(
             value, this, targets[i])),
         Unit::Builder(targets[i], UnitPrefix::EmptyPrefix()));
   }
@@ -434,7 +403,7 @@ int TemperatureRepresentative::setAdditionalExpressions(
   return numberOfExpressionsSet;
 }
 
-int EnergyRepresentative::setAdditionalExpressions(
+int Energy::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
@@ -451,10 +420,10 @@ int EnergyRepresentative::setAdditionalExpressions(
    * As value is expressed in SI units (ie _kg_m^2_s^-2), the ratio is that of
    * hours to seconds. */
   const UnitRepresentative* hour =
-      TimeRepresentative::Default().representativesOfSameDimension() +
+      Time::Default().representativesOfSameDimension() +
       Unit::k_hourRepresentativeIndex;
   const UnitRepresentative* watt =
-      PowerRepresentative::Default().representativesOfSameDimension() +
+      Power::Default().representativesOfSameDimension() +
       Unit::k_wattRepresentativeIndex;
   double adjustedValue = value / hour->ratio() / watt->ratio();
   const UnitPrefix* wattPrefix = watt->findBestPrefix(adjustedValue, 1.);
@@ -475,7 +444,7 @@ int EnergyRepresentative::setAdditionalExpressions(
   return index;
 }
 
-const UnitRepresentative* SurfaceRepresentative::standardRepresentative(
+const UnitRepresentative* Surface::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,
     const UnitPrefix** prefix) const {
   *prefix = UnitPrefix::EmptyPrefix();
@@ -485,7 +454,7 @@ const UnitRepresentative* SurfaceRepresentative::standardRepresentative(
               : Unit::k_acreRepresentativeIndex);
 }
 
-int SurfaceRepresentative::setAdditionalExpressions(
+int Surface::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
@@ -515,7 +484,7 @@ int SurfaceRepresentative::setAdditionalExpressions(
   return 2;
 }
 
-const UnitRepresentative* VolumeRepresentative::standardRepresentative(
+const UnitRepresentative* Volume::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,
     const UnitPrefix** prefix) const {
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
@@ -527,7 +496,7 @@ const UnitRepresentative* VolumeRepresentative::standardRepresentative(
                                        numberOfRepresentatives() - 1, prefix);
 }
 
-int VolumeRepresentative::setAdditionalExpressions(
+int Volume::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
@@ -571,7 +540,7 @@ int VolumeRepresentative::setAdditionalExpressions(
   return 2;
 }
 
-int SpeedRepresentative::setAdditionalExpressions(
+int Speed::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
@@ -585,10 +554,10 @@ int SpeedRepresentative::setAdditionalExpressions(
   }
   // 1. Convert to km/h
   const UnitRepresentative* meter =
-      DistanceRepresentative::Default().representativesOfSameDimension() +
+      Distance::Default().representativesOfSameDimension() +
       Unit::k_meterRepresentativeIndex;
   const UnitRepresentative* hour =
-      TimeRepresentative::Default().representativesOfSameDimension() +
+      Time::Default().representativesOfSameDimension() +
       Unit::k_hourRepresentativeIndex;
   *destMetric = Multiplication::Builder(
       Float<double>::Builder(value / 1000. * hour->ratio()),
@@ -601,7 +570,7 @@ int SpeedRepresentative::setAdditionalExpressions(
     return 1;
   }
   const UnitRepresentative* mile =
-      DistanceRepresentative::Default().representativesOfSameDimension() +
+      Distance::Default().representativesOfSameDimension() +
       Unit::k_mileRepresentativeIndex;
   *destImperial = Multiplication::Builder(
       Float<double>::Builder(value / mile->ratio() * hour->ratio()),
@@ -612,4 +581,5 @@ int SpeedRepresentative::setAdditionalExpressions(
   return 2;
 }
 
+}
 }  // namespace PoincareJ

@@ -175,19 +175,15 @@ class UnitRepresentative {
         m_inputPrefixable(inputPrefixable),
         m_outputPrefixable(outputPrefixable) {}
 
-  virtual const DimensionVector dimensionVector() const {
-    return DimensionVector::Empty();
-  };
-  virtual int numberOfRepresentatives() const { return 0; };
+  virtual const DimensionVector dimensionVector() const = 0;
+  virtual int numberOfRepresentatives() const = 0;
   /* representativesOfSameDimension returns a pointer to the array containing
    * all representatives for this's dimension. */
-  virtual const UnitRepresentative* representativesOfSameDimension() const {
-    return nullptr;
-  };
+  virtual const UnitRepresentative* representativesOfSameDimension() const = 0;
   virtual const UnitPrefix* basePrefix() const {
     return UnitPrefix::EmptyPrefix();
   }
-  virtual bool isBaseUnit() const { return false; }
+  virtual bool isBaseUnit() const = 0;
 #if 0
   virtual const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,

@@ -45,7 +45,8 @@ Evaluation<T> ListMinimumNode::templatedApproximate(
 Expression ListMinimum::shallowReduce(ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List ||
-      child.numberOfChildren() == 0) {
+      child.numberOfChildren() == 0 ||
+      recursivelyMatches(Expression::IsUndefined, nullptr)) {
     return replaceWithUndefinedInPlace();
   }
   Expression result =

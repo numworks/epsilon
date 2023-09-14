@@ -7,7 +7,22 @@ namespace PoincareJ {
 
 namespace Representatives {
 
-class Time : public UnitRepresentative {
+// Helper class to add overrides using the static member "representatives"
+template <class R>
+class Helper : public UnitRepresentative {
+ public:
+  int numberOfRepresentatives() const override {
+    return std::size(R::representatives);
+  };
+  const UnitRepresentative* representativesOfSameDimension() const override {
+    return R::representatives[0];
+  };
+
+ protected:
+  using UnitRepresentative::UnitRepresentative;
+};
+
+class Time : public Helper<Time> {
  public:
   const static Time second;
   const static Time minute;
@@ -37,12 +52,11 @@ class Time : public UnitRepresentative {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
-
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Distance : public UnitRepresentative {
+class Distance : public Helper<Distance> {
  public:
   const static Distance meter;
   const static Distance inch;
@@ -80,10 +94,10 @@ class Distance : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Angle : public UnitRepresentative {
+class Angle : public Helper<Angle> {
  public:
   const static Angle radian;
   const static Angle arcSecond;
@@ -106,7 +120,6 @@ class Angle : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.angle = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
   }
@@ -124,10 +137,10 @@ class Angle : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Mass : public UnitRepresentative {
+class Mass : public Helper<Mass> {
  public:
   const static Mass gram;
   const static Mass ton;
@@ -144,7 +157,6 @@ class Mass : public UnitRepresentative {
       representativesAllowingImplicitAddition[] = {&ounce, &pound};
 
   const DimensionVector dimensionVector() const override { return {.mass = 1}; }
-  const UnitRepresentative* representativesOfSameDimension() const override;
   const UnitPrefix* basePrefix() const override;
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
@@ -163,10 +175,10 @@ class Mass : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Current : public UnitRepresentative {
+class Current : public Helper<Current> {
  public:
   const static Current ampere;
   constexpr static const Current* representatives[] = {&ampere};
@@ -174,16 +186,15 @@ class Current : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.current = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
   }
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Temperature : public UnitRepresentative {
+class Temperature : public Helper<Temperature> {
  public:
   const static Temperature kelvin;
   const static Temperature celsius;
@@ -199,7 +210,6 @@ class Temperature : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.temperature = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
   }
@@ -221,10 +231,10 @@ class Temperature : public UnitRepresentative {
  private:
   constexpr static double k_celsiusOrigin = 273.15;
   constexpr static double k_fahrenheitOrigin = 459.67;
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class AmountOfSubstance : public UnitRepresentative {
+class AmountOfSubstance : public Helper<AmountOfSubstance> {
  public:
   const static AmountOfSubstance mole;
   constexpr static const AmountOfSubstance* representatives[] = {&mole};
@@ -232,16 +242,15 @@ class AmountOfSubstance : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.amountOfSubstance = 1};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
-bool isBaseUnit() const override {
-  return this == representativesOfSameDimension();
-}
+  bool isBaseUnit() const override {
+    return this == representativesOfSameDimension();
+  }
 
-private:
-using UnitRepresentative::UnitRepresentative;
+ private:
+  using Helper::Helper;
 };
 
-class LuminousIntensity : public UnitRepresentative {
+class LuminousIntensity : public Helper<LuminousIntensity> {
  public:
   const static LuminousIntensity candela;
   constexpr static const LuminousIntensity* representatives[] = {&candela};
@@ -249,16 +258,15 @@ class LuminousIntensity : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.luminousIntensity = 1};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
-bool isBaseUnit() const override {
-  return this == representativesOfSameDimension();
-}
+  bool isBaseUnit() const override {
+    return this == representativesOfSameDimension();
+  }
 
-private:
-using UnitRepresentative::UnitRepresentative;
+ private:
+  using Helper::Helper;
 };
 
-class Frequency : public UnitRepresentative {
+class Frequency : public Helper<Frequency> {
  public:
   const static Frequency hertz;
   constexpr static const Frequency* representatives[] = {&hertz};
@@ -266,13 +274,12 @@ class Frequency : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Force : public UnitRepresentative {
+class Force : public Helper<Force> {
  public:
   const static Force newton;
   constexpr static const Force* representatives[] = {&newton};
@@ -280,14 +287,12 @@ class Force : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -2, .distance = 1, .mass = 1};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
 
-private:
-using UnitRepresentative::UnitRepresentative;
-}
-;
+ private:
+  using Helper::Helper;
+};
 
-class Pressure : public UnitRepresentative {
+class Pressure : public Helper<Pressure> {
  public:
   const static Pressure pascal;
   const static Pressure bar;
@@ -298,13 +303,12 @@ class Pressure : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -2, .distance = -1, .mass = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Energy : public UnitRepresentative {
+class Energy : public Helper<Energy> {
  public:
   const static Energy joule;
   const static Energy electronVolt;
@@ -313,7 +317,6 @@ class Energy : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -2, .distance = 2, .mass = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
 #if 0
     bool hasSpecialAdditionalExpressions(double value,
@@ -326,10 +329,10 @@ class Energy : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Power : public UnitRepresentative {
+class Power : public Helper<Power> {
  public:
   const static Power watt;
   const static Power horsePower;
@@ -338,13 +341,12 @@ class Power : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -3, .distance = 2, .mass = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class ElectricCharge : public UnitRepresentative {
+class ElectricCharge : public Helper<ElectricCharge> {
  public:
   const static ElectricCharge coulomb;
   constexpr static const ElectricCharge* representatives[] = {&coulomb};
@@ -352,13 +354,12 @@ class ElectricCharge : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = 1, .current = 1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class ElectricPotential : public UnitRepresentative {
+class ElectricPotential : public Helper<ElectricPotential> {
  public:
   const static ElectricPotential volt;
   constexpr static const ElectricPotential* representatives[] = {&volt};
@@ -366,14 +367,12 @@ class ElectricPotential : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -3, .distance = 2, .mass = 1, .current = -1};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
 
-private:
-using UnitRepresentative::UnitRepresentative;
-}
-;
+ private:
+  using Helper::Helper;
+};
 
-class ElectricCapacitance : public UnitRepresentative {
+class ElectricCapacitance : public Helper<ElectricCapacitance> {
  public:
   const static ElectricCapacitance farad;
   constexpr static const ElectricCapacitance* representatives[] = {&farad};
@@ -381,14 +380,12 @@ class ElectricCapacitance : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = 4, .distance = -2, .mass = -1, .current = 2};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
 
-private:
-using UnitRepresentative::UnitRepresentative;
-}
-;
+ private:
+  using Helper::Helper;
+};
 
-class ElectricResistance : public UnitRepresentative {
+class ElectricResistance : public Helper<ElectricResistance> {
  public:
   const static ElectricResistance ohm;
   constexpr static const ElectricResistance* representatives[] = {&ohm};
@@ -396,13 +393,12 @@ class ElectricResistance : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -3, .distance = 2, .mass = 1, .current = -2};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
 
-private:
-using UnitRepresentative::UnitRepresentative;
+ private:
+  using Helper::Helper;
 };
 
-class ElectricConductance : public UnitRepresentative {
+class ElectricConductance : public Helper<ElectricConductance> {
  public:
   const static ElectricConductance siemens;
   constexpr static const ElectricConductance* representatives[] = {&siemens};
@@ -410,14 +406,12 @@ class ElectricConductance : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = 3, .distance = -2, .mass = -1, .current = 2};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
 
-private:
-using UnitRepresentative::UnitRepresentative;
-}
-;
+ private:
+  using Helper::Helper;
+};
 
-class MagneticFlux : public UnitRepresentative {
+class MagneticFlux : public Helper<MagneticFlux> {
  public:
   const static MagneticFlux weber;
   constexpr static const MagneticFlux* representatives[] = {&weber};
@@ -425,13 +419,12 @@ class MagneticFlux : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -2, .distance = 2, .mass = 1, .current = -1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class MagneticField : public UnitRepresentative {
+class MagneticField : public Helper<MagneticField> {
  public:
   const static MagneticField tesla;
   constexpr static const MagneticField* representatives[] = {&tesla};
@@ -439,13 +432,12 @@ class MagneticField : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -2, .mass = 1, .current = -1};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Inductance : public UnitRepresentative {
+class Inductance : public Helper<Inductance> {
  public:
   const static Inductance henry;
   constexpr static const Inductance* representatives[] = {&henry};
@@ -453,13 +445,12 @@ class Inductance : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -2, .distance = 2, .mass = 1, .current = -2};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class CatalyticActivity : public UnitRepresentative {
+class CatalyticActivity : public Helper<CatalyticActivity> {
  public:
   const static CatalyticActivity katal;
   constexpr static const CatalyticActivity* representatives[] = {&katal};
@@ -467,14 +458,12 @@ class CatalyticActivity : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.time = -1, .amountOfSubstance = 1};
   }
-const UnitRepresentative* representativesOfSameDimension() const override;
 
-private:
-using UnitRepresentative::UnitRepresentative;
-}
-;
+ private:
+  using Helper::Helper;
+};
 
-class Surface : public UnitRepresentative {
+class Surface : public Helper<Surface> {
  public:
   const static Surface hectare;
   const static Surface acre;
@@ -483,7 +472,6 @@ class Surface : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.distance = 2};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 #if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,
@@ -498,10 +486,10 @@ class Surface : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Volume : public UnitRepresentative {
+class Volume : public Helper<Volume> {
  public:
   const static Volume liter;
   const static Volume cup;
@@ -517,7 +505,6 @@ class Volume : public UnitRepresentative {
   const DimensionVector dimensionVector() const override {
     return {.distance = 3};
   }
-  const UnitRepresentative* representativesOfSameDimension() const override;
 #if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,
@@ -532,10 +519,10 @@ class Volume : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
-class Speed : public UnitRepresentative {
+class Speed : public Helper<Speed> {
  public:
   const DimensionVector dimensionVector() const override {
     return {.time = -1, .distance = 1};
@@ -556,7 +543,7 @@ class Speed : public UnitRepresentative {
 #endif
 
  private:
-  using UnitRepresentative::UnitRepresentative;
+  using Helper::Helper;
 };
 
 struct RepresentativesList {

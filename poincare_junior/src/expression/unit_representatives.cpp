@@ -4,165 +4,157 @@
 
 namespace PoincareJ {
 
-using Prefixable = UnitRepresentative::Prefixable;
+using enum UnitRepresentative::Prefixable;
 
-const TimeRepresentative TimeRepresentative::second = {
-    "s", 1._e, Prefixable::All, Prefixable::NegativeLongScale};
-const TimeRepresentative TimeRepresentative::minute = {
-    "min", 60._e, Prefixable::None, Prefixable::None};
-const TimeRepresentative TimeRepresentative::hour = {
-    "h", 3600._e, Prefixable::None, Prefixable::None};
-const TimeRepresentative TimeRepresentative::day = {
-    "day", 86400._e, Prefixable::None, Prefixable::None};
-const TimeRepresentative TimeRepresentative::week = {
-    "week", 604800._e, Prefixable::None, Prefixable::None};
-const TimeRepresentative TimeRepresentative::month = {
-    "month", 2629800._e, Prefixable::None, Prefixable::None};
-const TimeRepresentative TimeRepresentative::year = {
-    "year", 31557600._e, Prefixable::None, Prefixable::None};
+const TimeRepresentative TimeRepresentative::second = {"s", 1._e, All,
+                                                       NegativeLongScale};
+const TimeRepresentative TimeRepresentative::minute = {"min", 60._e, None,
+                                                       None};
+const TimeRepresentative TimeRepresentative::hour = {"h", 3600._e, None, None};
+const TimeRepresentative TimeRepresentative::day = {"day", 86400._e, None,
+                                                    None};
+const TimeRepresentative TimeRepresentative::week = {"week", 604800._e, None,
+                                                     None};
+const TimeRepresentative TimeRepresentative::month = {"month", 2629800._e, None,
+                                                      None};
+const TimeRepresentative TimeRepresentative::year = {"year", 31557600._e, None,
+                                                     None};
 
-const DistanceRepresentative DistanceRepresentative::meter = {
-    "m", 1._e, Prefixable::All, Prefixable::NegativeAndKilo};
+const DistanceRepresentative DistanceRepresentative::meter = {"m", 1._e, All,
+                                                              NegativeAndKilo};
 const DistanceRepresentative DistanceRepresentative::astronomicalUnit = {
-    "au", 149597870700._e, Prefixable::None, Prefixable::None};
+    "au", 149597870700._e, None, None};
 const DistanceRepresentative DistanceRepresentative::lightYear = {
-    "ly", KMult(299792458._e, 31557600._e).k_blocks, Prefixable::None,
-    Prefixable::None};
+    "ly", KMult(299792458._e, 31557600._e).k_blocks, None, None};
 const DistanceRepresentative DistanceRepresentative::parsec = {
   "pc", KMult(180._e, KDiv(3600._e, π_e}; 149587870700._e).k_blocks,
-  Prefixable::None, Prefixable::None
+  None, None
 
 const DistanceRepresentative DistanceRepresentative::inch = {
-    "in", 0.0254_e, Prefixable::None, Prefixable::None};
+    "in", 0.0254_e, None, None};
 const DistanceRepresentative DistanceRepresentative::foot = {
-    "ft", KMult(12._e, 0.0254_e).k_blocks, Prefixable::None, Prefixable::None};
+    "ft", KMult(12._e, 0.0254_e).k_blocks, None, None};
 const DistanceRepresentative DistanceRepresentative::yard = {
-    "yd", KMult(36._e, 0.0254_e).k_blocks, Prefixable::None, Prefixable::None};
+    "yd", KMult(36._e, 0.0254_e).k_blocks, None, None};
 const DistanceRepresentative DistanceRepresentative::mile = {
-    "mi", KMult(63360._e, 0.0254_e).k_blocks, Prefixable::None,
-    Prefixable::None};
+    "mi", KMult(63360._e, 0.0254_e).k_blocks, None, None};
 
 /* Only AngleRepresentative have non-float ratio expression because exact
  * result are expected. */
-const AngleRepresentative AngleRepresentative::radian = {
-    "rad", 1_e, Prefixable::None, Prefixable::None};
+const AngleRepresentative AngleRepresentative::radian = {"rad", 1_e, None,
+                                                         None};
 const AngleRepresentative AngleRepresentative::arcSecond = {
-    "\"", KDiv(π_e, 648000_e).k_blocks, Prefixable::None, Prefixable::None};
+    "\"", KDiv(π_e, 648000_e).k_blocks, None, None};
 const AngleRepresentative AngleRepresentative::arcMinute = {
-    "'", KDiv(π_e, 10800_e).k_blocks, Prefixable::None, Prefixable::None};
+    "'", KDiv(π_e, 10800_e).k_blocks, None, None};
 const AngleRepresentative AngleRepresentative::degree = {
-    "°", KDiv(π_e, 180_e).k_blocks, Prefixable::None, Prefixable::None};
+    "°", KDiv(π_e, 180_e).k_blocks, None, None};
 const AngleRepresentative AngleRepresentative::gradian = {
-    "gon", KDiv(π_e, 200_e).k_blocks, Prefixable::None, Prefixable::None};
+    "gon", KDiv(π_e, 200_e).k_blocks, None, None};
 
-const MassRepresentative MassRepresentative::gram = {
-    "g", 1._e, Prefixable::All, Prefixable::NegativeAndKilo};
+const MassRepresentative MassRepresentative::gram = {"g", 1._e, All,
+                                                     NegativeAndKilo};
 const MassRepresentative MassRepresentative::ton = {
-    "t", 1000._e, Prefixable::PositiveLongScale, Prefixable::PositiveLongScale};
+    "t", 1000._e, PositiveLongScale, PositiveLongScale};
 const MassRepresentative MassRepresentative::dalton = {
-    "Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), Prefixable::All,
-    Prefixable::All};
-const MassRepresentative MassRepresentative::once = {
-    "oz", 0.028349523125_e, Prefixable::None, Prefixable::None};
+    "Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All, All};
+const MassRepresentative MassRepresentative::once = {"oz", 0.028349523125_e,
+                                                     None, None};
 const MassRepresentative MassRepresentative::pound = {
-    "lb", 16._e, 0.028349523125_e, Prefixable::None, Prefixable::None};
+    "lb", 16._e, 0.028349523125_e, None, None};
 const MassRepresentative MassRepresentative::shortTon = {
-    "shtn",           2000._e,          16._e,
-    0.028349523125_e, Prefixable::None, Prefixable::None};
+    "shtn", 2000._e, 16._e, 0.028349523125_e, None, None};
 const MassRepresentative MassRepresentative::longTon = {
-    "lgtn",           2240._e,          16._e,
-    0.028349523125_e, Prefixable::None, Prefixable::None};
+    "lgtn", 2240._e, 16._e, 0.028349523125_e, None, None};
 
-const CurrentRepresentative CurrentRepresentative::ampere = {"A", 1._e, Prefixable::All,
-                          Prefixable::LongScale)};
+const CurrentRepresentative CurrentRepresentative::ampere = {"A", 1._e, All,
+                          LongScale)};
 
 // Ratios are 1.0 because temperatures conversion are an exception.
-const TemperatureRepresentative TemperatureRepresentative::kelvin = {
-    "K", 1._e, Prefixable::All, Prefixable::None};
+const TemperatureRepresentative TemperatureRepresentative::kelvin = {"K", 1._e,
+                                                                     All, None};
 const TemperatureRepresentative TemperatureRepresentative::celsius = {
-    "°C", 1._e, Prefixable::None, Prefixable::None};
+    "°C", 1._e, None, None};
 const TemperatureRepresentative TemperatureRepresentative::farenheit = {
-    "°F", 1._e, Prefixable::None, Prefixable::None};
+    "°F", 1._e, None, None};
 
 const AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative::mole = {
-  "mol", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "mol", 1._e, All, LongScale)};
 
 const LuminousIntensityRepresentative LuminousIntensityRepresentative::candela = {
-  "cd", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "cd", 1._e, All, LongScale)};
 
-const FrequencyRepresentative FrequencyRepresentative::hertz = {"Hz", 1._e, Prefixable::All,
-  Prefixable::LongScale)};
+const FrequencyRepresentative FrequencyRepresentative::hertz = {"Hz", 1._e, All,
+  LongScale)};
 
-const ForceRepresentative ForceRepresentative::newton = {"N", 1._e, Prefixable::All,
-  Prefixable::LongScale)};
+const ForceRepresentative ForceRepresentative::newton = {"N", 1._e, All,
+  LongScale)};
 
-const PressureRepresentative PressureRepresentative::pascal = {
-    "Pa", 1._e, Prefixable::All, Prefixable::LongScale};
-const PressureRepresentative PressureRepresentative::bar = {
-    "bar", 100000._e, Prefixable::All, Prefixable::LongScale};
+const PressureRepresentative PressureRepresentative::pascal = {"Pa", 1._e, All,
+                                                               LongScale};
+const PressureRepresentative PressureRepresentative::bar = {"bar", 100000._e,
+                                                            All, LongScale};
 const PressureRepresentative PressureRepresentative::atmosphere = {
-    "atm", 101325._e, Prefixable::None, Prefixable::None};
+    "atm", 101325._e, None, None};
 
-const EnergyRepresentative EnergyRepresentative::joule = {
-    "J", 1._e, Prefixable::All, Prefixable::LongScale};
+const EnergyRepresentative EnergyRepresentative::joule = {"J", 1._e, All,
+                                                          LongScale};
 const EnergyRepresentative EnergyRepresentative::electronVolt = {
-    "eV", 1.602176634_e, KPow(10._e, -19_e), Prefixable::All,
-    Prefixable::LongScale};
+    "eV", 1.602176634_e, KPow(10._e, -19_e), All, LongScale};
 
-const PowerRepresentative PowerRepresentative::watt = {
-    "W", 1._e, Prefixable::All, Prefixable::LongScale};
-const PowerRepresentative PowerRepresentative::horsePower = {"hp", 745.699872_e, Prefixable::None,
-  Prefixable::None)};
+const PowerRepresentative PowerRepresentative::watt = {"W", 1._e, All,
+                                                       LongScale};
+const PowerRepresentative PowerRepresentative::horsePower = {"hp", 745.699872_e, None,
+  None)};
 
 const ElectricChargeRepresentative ElectricChargeRepresentative::coulomb = {
-  "C", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "C", 1._e, All, LongScale)};
 
 const ElectricPotentialRepresentative ElectricPotentialRepresentative::volt = {
-  "V", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "V", 1._e, All, LongScale)};
 
 const ElectricCapacitanceRepresentative ElectricCapacitanceRepresentative::farad = {
-  "F", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "F", 1._e, All, LongScale)};
 
 const ElectricResistanceRepresentative ElectricResistanceRepresentative::ohm = {
-  "Ω", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "Ω", 1._e, All, LongScale)};
 
 const ElectricConductanceRepresentative ElectricConductanceRepresentative::siemens = {
-  "S", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "S", 1._e, All, LongScale)};
 
 const MagneticFluxRepresentative MagneticFluxRepresentative::weber = {
-  "Wb", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "Wb", 1._e, All, LongScale)};
 
 const MagneticFieldRepresentative MagneticFieldRepresentative::tesla = {
-  "T", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "T", 1._e, All, LongScale)};
 
-const InductanceRepresentative InductanceRepresentative::henry = {"H", 1._e, Prefixable::All,
-  Prefixable::LongScale)};
+const InductanceRepresentative InductanceRepresentative::henry = {"H", 1._e, All,
+  LongScale)};
 
 const CatalyticActivityRepresentative CatalyticActivityRepresentative::katal = {
-  "kat", 1._e, Prefixable::All, Prefixable::LongScale)};
+  "kat", 1._e, All, LongScale)};
 
-const SurfaceRepresentative SurfaceRepresentative::hectare = {
-    "ha", 10000._e, Prefixable::None, Prefixable::None};
+const SurfaceRepresentative SurfaceRepresentative::hectare = {"ha", 10000._e,
+                                                              None, None};
 const SurfaceRepresentative SurfaceRepresentative::acre = {
-    "acre", 4046.8564224_e, Prefixable::None, Prefixable::None};
+    "acre", 4046.8564224_e, None, None};
 
 const VolumeRepresentative VolumeRepresentative::liter = {
-    BuiltinsAliases::k_litersAliases, 0.001_e, Prefixable::All,
-    Prefixable::Negative};
+    BuiltinsAliases::k_litersAliases, 0.001_e, All, Negative};
 const VolumeRepresentative VolumeRepresentative::teaSpoon = {
-    "tsp", 0.00000492892159375_e, Prefixable::None, Prefixable::None};
+    "tsp", 0.00000492892159375_e, None, None};
 const VolumeRepresentative VolumeRepresentative::tableSpoon = {
-    "tbsp", 3._e, 0.00000492892159375_e, Prefixable::None, Prefixable::None};
+    "tbsp", 3._e, 0.00000492892159375_e, None, None};
 const VolumeRepresentative VolumeRepresentative::fluidOnce = {
-    "floz", 0.0000295735295625_e, Prefixable::None, Prefixable::None};
+    "floz", 0.0000295735295625_e, None, None};
 const VolumeRepresentative VolumeRepresentative::cup = {
-    "cup", 8._e, 0.0000295735295625_e, Prefixable::None, Prefixable::None};
+    "cup", 8._e, 0.0000295735295625_e, None, None};
 const VolumeRepresentative VolumeRepresentative::pint = {
-    "pt", 16._e, 0.0000295735295625_e, Prefixable::None, Prefixable::None};
+    "pt", 16._e, 0.0000295735295625_e, None, None};
 const VolumeRepresentative VolumeRepresentative::quart = {
-    "qt", 32._e, 0.0000295735295625_e, Prefixable::None, Prefixable::None};
+    "qt", 32._e, 0.0000295735295625_e, None, None};
 const VolumeRepresentative VolumeRepresentative::gallon = {
-    "gal", 128._e, 0.0000295735295625_e, Prefixable::None, Prefixable::None};
+    "gal", 128._e, 0.0000295735295625_e, None, None};
 
 /* Define access points to some prefixes and representatives. */
 constexpr static int k_emptyPrefixIndex = 6;

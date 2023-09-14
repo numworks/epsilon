@@ -114,7 +114,7 @@ void GraphOptionsController::viewWillAppear() {
       rCells[i]->label()->setTextColor(Palette::GrayDark);
       rCells[i]->accessory()->setTextColor(Palette::GrayDark);
       rCells[i]->accessory()->setText(I18n::translate(I18n::Message::Disabled));
-      return;
+      continue;
     }
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         Preferences::VeryLargeNumberOfSignificantDigits);

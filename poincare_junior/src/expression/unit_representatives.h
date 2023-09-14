@@ -34,11 +34,6 @@ class Time : public Helper<Time> {
   constexpr static const Time* representatives[] = {
       &second, &minute, &hour, &day, &week, &month, &year};
 
-  // These must be sorted in order, from smallest to biggest
-  constexpr static const UnitRepresentative*
-      representativesAllowingImplicitAddition[] = {&second, &minute, &hour,
-                                                   &day,    &month,  &year};
-
   const DimensionVector dimensionVector() const override { return {.time = 1}; }
   bool isBaseUnit() const override {
     return this == representativesOfSameDimension();
@@ -69,10 +64,6 @@ class Distance : public Helper<Distance> {
   constexpr static const Distance* representatives[] = {
       &meter,     &inch,  &foot, &yard, &mile, &astronomicalUnit,
       &lightYear, &parsec};
-
-  // These must be sorted in order, from smallest to biggest
-  constexpr static const UnitRepresentative*
-      representativesAllowingImplicitAddition[] = {&inch, &foot, &yard, &mile};
 
   const DimensionVector dimensionVector() const override {
     return {.distance = 1};
@@ -106,11 +97,6 @@ class Angle : public Helper<Angle> {
   const static Angle gradian;
   constexpr static const Angle* representatives[] = {
       &radian, &arcSecond, &arcMinute, &degree, &gradian};
-
-  // These must be sorted in order, from smallest to biggest
-  constexpr static const UnitRepresentative*
-      representativesAllowingImplicitAddition[] = {&arcSecond, &arcMinute,
-                                                   &degree};
 
 #if 0
   // Returns a beautified expression
@@ -151,10 +137,6 @@ class Mass : public Helper<Mass> {
   const static Mass dalton;
   constexpr static const Mass* representatives[] = {
       &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
-
-  // These must be sorted in order, from smallest to biggest
-  constexpr static const UnitRepresentative*
-      representativesAllowingImplicitAddition[] = {&ounce, &pound};
 
   const DimensionVector dimensionVector() const override { return {.mass = 1}; }
   const UnitPrefix* basePrefix() const override;
@@ -546,21 +528,41 @@ class Speed : public Helper<Speed> {
   using Helper::Helper;
 };
 
+// Implicit addition
+
 struct RepresentativesList {
   const UnitRepresentative* const* representativesList;
   int length;
 };
 
+// These must be sorted in order, from smallest to biggest
+constexpr const UnitRepresentative*
+    k_timeRepresentativesAllowingImplicitAddition[] = {
+        &Time::second, &Time::minute, &Time::hour,
+        &Time::day,    &Time::month,  &Time::year};
+
+constexpr static const UnitRepresentative*
+    k_distanceRepresentativesAllowingImplicitAddition[] = {
+        &Distance::inch, &Distance::foot, &Distance::yard, &Distance::mile};
+
+constexpr static const UnitRepresentative*
+    k_massRepresentativesAllowingImplicitAddition[] = {&Mass::ounce,
+                                                       &Mass::pound};
+
+constexpr static const UnitRepresentative*
+    k_angleRepresentativesAllowingImplicitAddition[] = {
+        &Angle::arcSecond, &Angle::arcMinute, &Angle::degree};
+
 constexpr static RepresentativesList
     k_representativesAllowingImplicitAddition[] = {
-        {Time::representativesAllowingImplicitAddition,
-         std::size(Time::representativesAllowingImplicitAddition)},
-        {Distance::representativesAllowingImplicitAddition,
-         std::size(Distance::representativesAllowingImplicitAddition)},
-        {Mass::representativesAllowingImplicitAddition,
-         std::size(Mass::representativesAllowingImplicitAddition)},
-        {Angle::representativesAllowingImplicitAddition,
-         std::size(Angle::representativesAllowingImplicitAddition)}};
+        {k_timeRepresentativesAllowingImplicitAddition,
+         std::size(k_timeRepresentativesAllowingImplicitAddition)},
+        {k_distanceRepresentativesAllowingImplicitAddition,
+         std::size(k_distanceRepresentativesAllowingImplicitAddition)},
+        {k_massRepresentativesAllowingImplicitAddition,
+         std::size(k_massRepresentativesAllowingImplicitAddition)},
+        {k_angleRepresentativesAllowingImplicitAddition,
+         std::size(k_angleRepresentativesAllowingImplicitAddition)}};
 constexpr static int k_representativesAllowingImplicitAdditionLength =
     std::size(k_representativesAllowingImplicitAddition);
 

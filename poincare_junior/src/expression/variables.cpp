@@ -87,7 +87,19 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables) {
 
 bool Variables::HasVariables(const Tree* expr) {
   for (const Tree* child : expr->selfAndDescendants()) {
+    assert(child->type() != BlockType::UserSymbol);
     if (child->type() == BlockType::Variable) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Variables::HasVariable(const Tree* expr, const Tree* variable) {
+  assert(variable->type() == BlockType::Variable);
+  for (const Tree* child : expr->selfAndDescendants()) {
+    assert(child->type() != BlockType::UserSymbol);
+    if (child->nodeIsIdenticalTo(variable)) {
       return true;
     }
   }

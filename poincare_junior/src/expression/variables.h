@@ -27,6 +27,9 @@ class Variables {
   // On projected expressions
   static bool HasVariables(const Tree* t);
 
+  // On projected expressions
+  static bool HasVariable(const Tree* t, const Tree* variable);
+
   // Replace occurrences of variable with value and simplify inside expr
   static bool Replace(Tree* expr, const Tree* variable, const Tree* value);
 

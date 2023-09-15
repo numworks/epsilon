@@ -996,7 +996,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     return;
   }
 
-  leftHandSide = Builtin::Promote(leftHandSide, builtin->blockType());
+  Builtin::Promote(leftHandSide, builtin->blockType());
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args
     return;

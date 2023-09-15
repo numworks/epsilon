@@ -2,6 +2,8 @@
 
 #include <poincare_junior/src/memory/k_tree.h>
 
+#include "poincare_junior/src/memory/edition_pool.h"
+
 namespace PoincareJ {
 
 /* TODO Choose between the map and the switch, and sort along one of the two
@@ -86,95 +88,10 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
   assert(false);
 }
 
-EditionReference Builtin::Promote(EditionReference parameterList,
-                                  BlockType type) {
-  const Tree *header;
-  switch (type) {
-    case BlockType::Abs:
-      header = KTree<BlockType::Abs>();
-      break;
-    case BlockType::Cosine:
-      header = KTree<BlockType::Cosine>();
-      break;
-    case BlockType::Sine:
-      header = KTree<BlockType::Sine>();
-      break;
-    case BlockType::Tangent:
-      header = KTree<BlockType::Tangent>();
-      break;
-    case BlockType::ArcCosine:
-      header = KTree<BlockType::ArcCosine>();
-      break;
-    case BlockType::ArcSine:
-      header = KTree<BlockType::ArcSine>();
-      break;
-    case BlockType::ArcTangent:
-      header = KTree<BlockType::ArcTangent>();
-      break;
-    case BlockType::Derivative:
-      header = KTree<BlockType::Derivative>();
-      break;
-    case BlockType::Logarithm:
-      header = KTree<BlockType::Logarithm>();
-      break;
-    case BlockType::Log:
-      header = KTree<BlockType::Log>();
-      break;
-    case BlockType::Ln:
-      header = KTree<BlockType::Ln>();
-      break;
-    case BlockType::SquareRoot:
-      header = KTree<BlockType::SquareRoot>();
-      break;
-    case BlockType::Cross:
-      header = KTree<BlockType::Cross>();
-      break;
-    case BlockType::Det:
-      header = KTree<BlockType::Det>();
-      break;
-    case BlockType::Dim:
-      header = KTree<BlockType::Dim>();
-      break;
-    case BlockType::Dot:
-      header = KTree<BlockType::Dot>();
-      break;
-    case BlockType::Identity:
-      header = KTree<BlockType::Identity>();
-      break;
-    case BlockType::Inverse:
-      header = KTree<BlockType::Inverse>();
-      break;
-    case BlockType::Norm:
-      header = KTree<BlockType::Norm>();
-      break;
-    case BlockType::Ref:
-      header = KTree<BlockType::Ref>();
-      break;
-    case BlockType::Rref:
-      header = KTree<BlockType::Rref>();
-      break;
-    case BlockType::Trace:
-      header = KTree<BlockType::Trace>();
-      break;
-    case BlockType::Transpose:
-      header = KTree<BlockType::Transpose>();
-      break;
-    case BlockType::ComplexArgument:
-      header = KTree<BlockType::ComplexArgument>();
-      break;
-    case BlockType::RealPart:
-      header = KTree<BlockType::RealPart>();
-      break;
-    case BlockType::ImaginaryPart:
-      header = KTree<BlockType::ImaginaryPart>();
-      break;
-    case BlockType::Conjugate:
-      header = KTree<BlockType::Conjugate>();
-      break;
-    default:
-      assert(false);
-  }
-  return EditionReference(parameterList->cloneNodeOverNode(header));
+bool Builtin::Promote(Tree *parameterList, BlockType type) {
+  parameterList->moveNodeOverNode(
+      Tree::FromBlocks(SharedEditionPool->pushBlock(type)));
+  return true;
 }
 
 }  // namespace PoincareJ

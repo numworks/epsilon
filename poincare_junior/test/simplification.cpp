@@ -1,9 +1,6 @@
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 #include "helper.h"
 #include "poincare_junior/src/expression/variables.h"
@@ -196,15 +193,11 @@ QUIZ_CASE(pcj_simplification_beautify) {
 
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
-  EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
-  EditionReference expression = RackParser(inputLayout).parse();
-  quiz_assert(!expression.isUninitialized());
-  inputLayout->removeTree();
+  Tree* expression = TextToTree(input);
   Simplification::Simplify(expression, projectionContext);
-  quiz_assert(!expression.isUninitialized());
-  EditionReference outputLayout =
-      Expression::EditionPoolExpressionToLayout(expression);
-  quiz_assert(!outputLayout.isUninitialized());
+  quiz_assert(expression);
+  Tree* outputLayout = Expression::EditionPoolExpressionToLayout(expression);
+  quiz_assert(outputLayout);
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;

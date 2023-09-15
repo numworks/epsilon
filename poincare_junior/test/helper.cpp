@@ -36,3 +36,10 @@ const char * ApproximatedParsedIntegerString() {
   return s;
 }
 #endif
+
+Tree* TextToTree(const char* input) {
+  Tree* expression = Layout::EditionPoolTextToLayout(input);
+  expression->moveTreeOverTree(RackParser(expression).parse());
+  quiz_assert(expression);
+  return expression;
+}

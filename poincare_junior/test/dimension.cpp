@@ -1,16 +1,11 @@
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/dimension.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 #include "helper.h"
 
 using namespace PoincareJ;
 
 bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0)) {
-  EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
-  EditionReference expression = RackParser(inputLayout).parse();
-  quiz_assert(!expression.isUninitialized());
-  inputLayout->removeTree();
+  Tree* expression = TextToTree(input);
   bool result = Dimension::DeepCheckDimensions(expression) &&
                 d == Dimension::GetDimension(expression);
   expression->removeTree();

@@ -1,7 +1,9 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/comparison.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -137,5 +139,9 @@ const char* BigOverflowedIntegerString();  // OverflowedIntegerString with a 2
                                            // on first digit
 const char* MaxParsedIntegerString();
 const char* ApproximatedParsedIntegerString();
+
+// Parsing
+
+Tree* TextToTree(const char* input);
 
 #endif

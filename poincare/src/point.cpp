@@ -26,9 +26,7 @@ Expression PointNode::shallowReduce(const ReductionContext& reductionContext) {
 template <typename T>
 Evaluation<T> PointNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  Coordinate2D<T> xy = Point(this).approximate2D<T>(
-      approximationContext.context(), approximationContext.complexFormat(),
-      approximationContext.angleUnit());
+  Coordinate2D<T> xy = Point(this).approximate2D<T>(approximationContext);
   if (std::isnan(xy.x()) || std::isnan(xy.y())) {
     return Complex<T>::Undefined();
   }

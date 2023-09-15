@@ -268,12 +268,23 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
 int Matrix::Rank(const Tree* m) {
   Tree* copy = m->clone();
   RowCanonize(copy);
-  int rank = NumberOfRows(copy);
+  int rank = RankOfCanonized(copy);
+  copy->removeTree();
+  return rank;
+}
+
+int Matrix::CanonizeAndRank(Tree* m) {
+  RowCanonize(m);
+  return RankOfCanonized(m);
+}
+
+int Matrix::RankOfCanonized(const Tree* m) {
+  int rank = NumberOfRows(m);
   int i = rank - 1;
   while (i >= 0) {
-    int j = NumberOfColumns(copy) - 1;
+    int j = NumberOfColumns(m) - 1;
     // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
-    while (j >= i && Number::IsZero(Child(copy, i, j))) {
+    while (j >= i && Number::IsZero(Child(m, i, j))) {
       j--;
     }
     if (j <= i - 1) {
@@ -283,7 +294,6 @@ int Matrix::Rank(const Tree* m) {
     }
     i--;
   }
-  copy->removeTree();
   return rank;
 }
 

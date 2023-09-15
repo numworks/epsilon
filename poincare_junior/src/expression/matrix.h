@@ -37,6 +37,8 @@ struct Matrix {
   static bool RowCanonize(Tree* m, bool reduced = true,
                           Tree** determinant = nullptr);
   static int Rank(const Tree* m);
+  static int CanonizeAndRank(Tree* m);
+  static int RankOfCanonized(const Tree* m);
   static Tree* Inverse(const Tree* m);
   static Tree* Power(const Tree* m, int p);
 };

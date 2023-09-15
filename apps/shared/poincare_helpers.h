@@ -115,11 +115,12 @@ inline T ApproximateToScalar(const Poincare::Expression e,
                              Poincare::Preferences* preferences =
                                  Poincare::Preferences::sharedPreferences,
                              bool updateComplexFormatAndAngleUnit = true) {
-  return e.approximateToScalar<T>(
+  Poincare::ApproximationContext approximationContext(
       context,
       ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit,
                                   e, context),
       preferences->angleUnit());
+  return e.approximateToScalar<T>(approximationContext);
 }
 
 template <class T>

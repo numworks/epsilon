@@ -514,10 +514,7 @@ class Expression : public TreeHandle {
   Expression approximateKeepingUnits(
       const ReductionContext& reductionContext) const;
   template <typename U>
-  U approximateToScalar(Context* context,
-                        Preferences::ComplexFormat complexFormat,
-                        Preferences::AngleUnit angleUnit,
-                        bool withinReduce = false) const;
+  U approximateToScalar(const ApproximationContext& approximationContext) const;
   template <typename U>
   U approximateWithValueForSymbol(const char* symbol, U x, Context* context,
                                   Preferences::ComplexFormat complexFormat,

@@ -17,7 +17,9 @@ void assert_expression_approximates_to_scalar(
   Shared::GlobalContext globalContext;
   Preferences::sharedPreferences->enableMixedFractions(mixedFractionsParameter);
   Expression e = parse_expression(expression, &globalContext, false);
-  T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
+  ApproximationContext approximationContext(&globalContext, complexFormat,
+                                            angleUnit);
+  T result = e.approximateToScalar<T>(approximationContext);
   quiz_assert_print_if_failure(
       roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
                     true),
@@ -443,7 +445,8 @@ void assert_expression_approximation_is_bounded(const char *expression,
                                                 bool upBoundIncluded = false) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, true);
-  T result = e.approximateToScalar<T>(&globalContext, Cartesian, Radian);
+  ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
+  T result = e.approximateToScalar<T>(approximationContext);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);

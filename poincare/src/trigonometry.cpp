@@ -690,6 +690,8 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
     const Expression& e, ReductionContext reductionContext, const char* symbol,
     bool acceptAddition, double* coefficientBeforeCos,
     double* coefficientBeforeSymbol, double* angle) {
+  ApproximationContext approximationContext(reductionContext);
+
   if (e.type() == ExpressionNode::Type::Multiplication ||
       (acceptAddition && e.type() == ExpressionNode::Type::Addition)) {
     /* Check if expression is a*b*cos(theta+constant) or if
@@ -714,9 +716,8 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
       }
       if (coefficientBeforeCos &&
           e.type() == ExpressionNode::Type::Multiplication) {
-        *coefficientBeforeCos *= eWithoutCos.approximateToScalar<double>(
-            reductionContext.context(), reductionContext.complexFormat(),
-            reductionContext.angleUnit());
+        *coefficientBeforeCos *=
+            eWithoutCos.approximateToScalar<double>(approximationContext);
       }
       return true;
     }
@@ -750,9 +751,7 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
   }
 
   if (angle) {
-    *angle = coefficients[0].approximateToScalar<double>(
-        reductionContext.context(), reductionContext.complexFormat(),
-        reductionContext.angleUnit());
+    *angle = coefficients[0].approximateToScalar<double>(approximationContext);
     if (e.type() == ExpressionNode::Type::Sine) {
       *angle -= M_PI_2;
     }
@@ -760,9 +759,8 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
   }
 
   if (coefficientBeforeSymbol) {
-    *coefficientBeforeSymbol = coefficients[1].approximateToScalar<double>(
-        reductionContext.context(), reductionContext.complexFormat(),
-        reductionContext.angleUnit());
+    *coefficientBeforeSymbol =
+        coefficients[1].approximateToScalar<double>(approximationContext);
   }
   return true;
 }

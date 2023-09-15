@@ -73,9 +73,8 @@ Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   } else if (c.isPositive(context) == TrinaryBoolean::False) {
     res = Constant::PiBuilder();
   } else {
-    double approximation =
-        c.approximateToScalar<double>(context, reductionContext.complexFormat(),
-                                      reductionContext.angleUnit(), true);
+    ApproximationContext approximationContext(reductionContext, true);
+    double approximation = c.approximateToScalar<double>(approximationContext);
     if (approximation < 0.0) {
       res = Constant::PiBuilder();
     } else if (approximation > 0.0) {

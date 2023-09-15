@@ -558,6 +558,7 @@ static bool CanSimplifyUnitProduct(
 
 Expression Multiplication::shallowBeautify(
     const ReductionContext &reductionContext) {
+  ApproximationContext approximationContext(reductionContext);
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Recognize derived units in the product of units
@@ -598,9 +599,7 @@ Expression Multiplication::shallowBeautify(
     if (units.isPureAngleUnit()) {
       if (unitConversionMode == UnitConversion::Default) {
         // Pure angle unit is the only unit allowed to be evaluated exactly
-        double value = self.approximateToScalar<double>(
-            reductionContext.context(), reductionContext.complexFormat(),
-            reductionContext.angleUnit());
+        double value = self.approximateToScalar<double>(approximationContext);
         Expression toUnit = units.clone();
         Unit::ChooseBestRepresentativeAndPrefixForValue(toUnit, &value,
                                                         reductionContext);
@@ -723,9 +722,7 @@ Expression Multiplication::shallowBeautify(
      * most relevant.
      */
 
-    double value = self.approximateToScalar<double>(
-        reductionContext.context(), reductionContext.complexFormat(),
-        reductionContext.angleUnit());
+    double value = self.approximateToScalar<double>(approximationContext);
     if (std::isnan(value)) {
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();

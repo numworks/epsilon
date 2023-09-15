@@ -1602,12 +1602,12 @@ Expression Expression::approximateKeepingUnits(
 }
 
 template <typename U>
-U Expression::approximateToScalar(Context *context,
-                                  Preferences::ComplexFormat complexFormat,
-                                  Preferences::AngleUnit angleUnit,
-                                  bool withinReduce) const {
-  return approximateToEvaluation<U>(context, complexFormat, angleUnit,
-                                    withinReduce)
+U Expression::approximateToScalar(
+    const ApproximationContext &approximationContext) const {
+  return approximateToEvaluation<U>(approximationContext.context(),
+                                    approximationContext.complexFormat(),
+                                    approximationContext.angleUnit(),
+                                    approximationContext.withinReduce())
       .toScalar();
 }
 
@@ -1622,7 +1622,8 @@ U Expression::ParseAndSimplifyAndApproximateToScalar(
   complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
       complexFormat, exp, context);
   assert(!exp.isUninitialized());
-  return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
+  return exp.approximateToScalar<U>(
+      ApproximationContext(context, complexFormat, angleUnit));
 }
 
 template <typename U>
@@ -1632,7 +1633,8 @@ U Expression::approximateWithValueForSymbol(
     Preferences::AngleUnit angleUnit) const {
   VariableContext variableContext = VariableContext(symbol, context);
   variableContext.setApproximationForVariable<U>(x);
-  return approximateToScalar<U>(&variableContext, complexFormat, angleUnit);
+  return approximateToScalar<U>(
+      ApproximationContext(&variableContext, complexFormat, angleUnit));
 }
 
 Expression Expression::cloneAndApproximateKeepingSymbols(
@@ -1948,13 +1950,10 @@ template Expression Expression::approximate<double>(
     Context *context, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit, bool withinReduce) const;
 
-template float Expression::approximateToScalar(Context *context,
-                                               Preferences::ComplexFormat,
-                                               Preferences::AngleUnit angleUnit,
-                                               bool withinReduce) const;
+template float Expression::approximateToScalar(
+    const ApproximationContext &approximationContext) const;
 template double Expression::approximateToScalar(
-    Context *context, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit, bool withinReduce) const;
+    const ApproximationContext &approximationContext) const;
 
 template float Expression::ParseAndSimplifyAndApproximateToScalar<float>(
     const char *text, Context *context,

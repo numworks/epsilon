@@ -204,15 +204,16 @@ void ContinuousFunction::getLineParameters(double *slope, double *intercept,
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateToScalar<double>(
+    ApproximationContext approximationContext(
         context, complexFormat(context),
         Poincare::Preferences::sharedPreferences->angleUnit());
+    *intercept =
+        coefficients[0].approximateToScalar<double>(approximationContext);
     if (d == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateToScalar<double>(
-          context, complexFormat(context),
-          Poincare::Preferences::sharedPreferences->angleUnit());
+      *slope =
+          coefficients[1].approximateToScalar<double>(approximationContext);
     }
   }
 }

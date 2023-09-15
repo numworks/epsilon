@@ -254,15 +254,13 @@ int Matrix::ArrayInverse(T *array, int numberOfRows, int numberOfColumns) {
 }
 
 bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
+  ApproximationContext approximationContext(reductionContext);
   int m = numberOfRows();
   int n = numberOfColumns();
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
-      if (std::isnan(
-              AbsoluteValue::Builder(matrixChild(i, j).clone())
-                  .approximateToScalar<float>(reductionContext.context(),
-                                              reductionContext.complexFormat(),
-                                              reductionContext.angleUnit()))) {
+      if (std::isnan(AbsoluteValue::Builder(matrixChild(i, j).clone())
+                         .approximateToScalar<float>(approximationContext))) {
         return false;
       }
     }
@@ -292,6 +290,8 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
   int h = 0;  // row pivot
   int k = 0;  // column pivot
 
+  ApproximationContext approximationContext(reductionContext);
+
   while (h < m && k < n) {
     /* In non-reduced form, the pivot selection method will affect the output.
      * Here we prioritize the biggest pivot (in value) to get an output that
@@ -303,11 +303,8 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
     float bestPivot = 0.0;
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
-      float pivot =
-          AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone())
-              .approximateToScalar<float>(reductionContext.context(),
-                                          reductionContext.complexFormat(),
-                                          reductionContext.angleUnit());
+      float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone())
+                        .approximateToScalar<float>(approximationContext);
       // Handle very low pivots
       if (pivot == 0.0f &&
           matrixChild(iPivot_temp, k).isNull(reductionContext.context()) !=

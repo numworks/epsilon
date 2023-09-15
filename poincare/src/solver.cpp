@@ -596,16 +596,17 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression &e) const {
         [](const Expression e, Context *context, void *aux) {
           const Solver<T> *solver = static_cast<const Solver<T> *>(aux);
           T exponent = k_NAN;
+          ApproximationContext approximationContext(
+              context, solver->m_complexFormat, solver->m_angleUnit);
           if (e.type() == ExpressionNode::Type::SquareRoot) {
             exponent = static_cast<T>(0.5);
           } else if (e.type() == ExpressionNode::Type::Power) {
-            exponent = e.childAtIndex(1).approximateToScalar<T>(
-                context, solver->m_complexFormat, solver->m_angleUnit);
+            exponent =
+                e.childAtIndex(1).approximateToScalar<T>(approximationContext);
           } else if (e.type() == ExpressionNode::Type::NthRoot) {
             exponent =
                 static_cast<T>(1.) /
-                e.childAtIndex(1).approximateToScalar<T>(
-                    context, solver->m_complexFormat, solver->m_angleUnit);
+                e.childAtIndex(1).approximateToScalar<T>(approximationContext);
           }
           if (std::isnan(exponent)) {
             return false;

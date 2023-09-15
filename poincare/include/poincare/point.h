@@ -51,16 +51,9 @@ class Point : public ExpressionTwoChildren<Point, PointNode> {
   template <typename T>
   Coordinate2D<T> approximate2D(
       const ApproximationContext& approximationContext) {
-    return Coordinate2D<T>(childAtIndex(0).approximateToScalar<T>(
-                               approximationContext.context(),
-                               approximationContext.complexFormat(),
-                               approximationContext.angleUnit(),
-                               approximationContext.withinReduce()),
-                           childAtIndex(1).approximateToScalar<T>(
-                               approximationContext.context(),
-                               approximationContext.complexFormat(),
-                               approximationContext.angleUnit(),
-                               approximationContext.withinReduce()));
+    return Coordinate2D<T>(
+        childAtIndex(0).approximateToScalar<T>(approximationContext),
+        childAtIndex(1).approximateToScalar<T>(approximationContext));
   }
 };
 

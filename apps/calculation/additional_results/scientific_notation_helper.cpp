@@ -23,8 +23,9 @@ Layout ScientificLayout(const Expression a, Context* context) {
     return Shared::PoincareHelpers::CreateLayout(a, context, &preferences);
   }
   // Based Integer must be approximated to be layouted in scientific mode
-  Expression floatRepr = Float<double>::Builder(a.approximateToScalar<double>(
-      context, preferences.complexFormat(), preferences.angleUnit()));
+  ApproximationContext approximationContext(context);
+  Expression floatRepr = Float<double>::Builder(
+      a.approximateToScalar<double>(approximationContext));
   return Shared::PoincareHelpers::CreateLayout(floatRepr, context,
                                                &preferences);
 }

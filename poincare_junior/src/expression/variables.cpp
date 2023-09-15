@@ -4,6 +4,7 @@
 
 #include "k_tree.h"
 #include "set.h"
+#include "simplification.h"
 #include "symbol.h"
 
 namespace PoincareJ {
@@ -45,6 +46,22 @@ Tree* Variables::GetVariables(const Tree* expr) {
     }
   }
   return set;
+}
+
+bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value) {
+  assert(variable->type() == BlockType::Variable);
+  if (expr->nodeIsIdenticalTo(variable)) {
+    expr->cloneTreeOverTree(value);
+    return true;
+  }
+  bool changed = false;
+  for (Tree* child : expr->children()) {
+    changed = Replace(child, variable, value) || changed;
+  }
+  if (changed) {
+    Simplification::ShallowSystematicReduce(expr);
+  }
+  return changed;
 }
 
 void Variables::ProjectToId(Tree* expr, const Tree* variables) {

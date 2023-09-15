@@ -27,6 +27,9 @@ class Variables {
   // On projected expressions
   static bool HasVariables(const Tree* t);
 
+  // Replace occurrences of variable with value and simplify inside expr
+  static bool Replace(Tree* expr, const Tree* variable, const Tree* value);
+
  private:
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);

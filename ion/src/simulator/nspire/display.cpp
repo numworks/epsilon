@@ -21,25 +21,10 @@ void quit() {
 }
 
 void draw() {
-  // copy framebuffer
-  const short unsigned int * ptr = (const short unsigned int *) Ion::Simulator::Framebuffer::address();
-  Gc * gcptr = get_gc();
-  for (int j = 0; j < LCD_HEIGHT_PX; ++j) {
-    for (int i = 0; i < LCD_WIDTH_PX;){
-      int c = *ptr;
-      int k = 1;
-      for (; k+i < LCD_WIDTH_PX; ++k) {
-      	if (ptr[k]!=c) {
-	        break;
-        }
-      }
-      gui_gc_setColor(*gcptr,c_rgb565to888(c));
-      gui_gc_drawRect(*gcptr,i,j,k-1,0);
-      ptr += k;
-      i += k;
-    }
-  }
-  sync_screen();
+  unsigned short * ionFramebuffer = (unsigned short *) Ion::Simulator::Framebuffer::address();
+  // we specify the screen fmt here because the "native" fmt varies between calculator revisions
+  // some default to a 240x320 specification, which results in a 90-degree framebuffer rotation and other terribleness.
+  lcd_blit(ionFramebuffer,SCR_320x240_565);
 }
 
 }

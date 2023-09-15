@@ -119,57 +119,52 @@ void Helpers::Sort(Swap swap, Compare compare, void *context,
 }
 
 template <typename T>
-bool Helpers::CompareInScalarList(int i, int j, void *context,
-                                  int numberOfElements) {
-  ListComplex<T> *list = reinterpret_cast<ListComplex<T> *>(context);
-  Evaluation<T> eI = list->childAtIndex(i);
-  Evaluation<T> eJ = list->childAtIndex(j);
-  assert(eI.isDefinedScalar() && eJ.isDefinedScalar());
-  float xI = eI.toScalar();
-  float xJ = eJ.toScalar();
-  assert(!std::isnan(xI) && !std::isnan(xJ));
-  return xI > xJ;
-}
-
-template <typename T>
-bool Helpers::CompareInPointList(int i, int j, void *context,
-                                 int numberOfElements) {
-  ListComplex<T> *list = reinterpret_cast<ListComplex<T> *>(context);
-  Evaluation<T> eI = list->childAtIndex(i);
-  Evaluation<T> eJ = list->childAtIndex(j);
+bool Helpers::CompareInList(int i, int j, void *context, int numberOfElements) {
+  struct Pack {
+    ListComplex<T> *listComplex;
+    bool scalars;
+  };
+  Pack *pack = static_cast<Pack *>(context);
+  ListComplex<T> *listComplex =
+      reinterpret_cast<ListComplex<T> *>(pack->listComplex);
+  Evaluation<T> eI = listComplex->childAtIndex(i);
+  Evaluation<T> eJ = listComplex->childAtIndex(j);
+  if (pack->scalars) {
+    assert(eI.isDefinedScalar() && eJ.isDefinedScalar());
+    float xI = eI.toScalar();
+    float xJ = eJ.toScalar();
+    assert(!std::isnan(xI) && !std::isnan(xJ));
+    return xI > xJ;
+  }
   assert(eI.isDefinedPoint() && eJ.isDefinedPoint());
   Coordinate2D<float> cI = static_cast<PointEvaluation<T> &>(eI).xy();
   Coordinate2D<float> cJ = static_cast<PointEvaluation<T> &>(eJ).xy();
   return cI.isGreaterThan(cJ);
 }
 
-bool Helpers::EvaluateAndCompareInScalarList(int i, int j, void *context,
-                                             int numberOfElements) {
-  void **c = reinterpret_cast<void **>(context);
-  ListNode *list = reinterpret_cast<ListNode *>(c[0]);
+bool Helpers::EvaluateAndCompareInList(int i, int j, void *context,
+                                       int numberOfElements) {
+  struct Pack {
+    ListNode *listNode;
+    ApproximationContext *approximationContext;
+    List *list;
+    bool scalars;
+  };
+  Pack *pack = static_cast<Pack *>(context);
+  ListNode *listNode = reinterpret_cast<ListNode *>(pack->listNode);
   ApproximationContext *approximationContext =
-      reinterpret_cast<ApproximationContext *>(c[1]);
-  Evaluation<float> eI = list->childAtIndex(i)->approximate(
+      reinterpret_cast<ApproximationContext *>(pack->approximationContext);
+  Evaluation<float> eI = listNode->childAtIndex(i)->approximate(
       static_cast<float>(0), *approximationContext);
-  Evaluation<float> eJ = list->childAtIndex(j)->approximate(
+  Evaluation<float> eJ = listNode->childAtIndex(j)->approximate(
       static_cast<float>(0), *approximationContext);
-  assert(eI.isDefinedScalar() && eJ.isDefinedScalar());
-  float xI = eI.toScalar();
-  float xJ = eJ.toScalar();
-  assert(!std::isnan(xI) && !std::isnan(xJ));
-  return xI > xJ;
-}
-
-bool Helpers::EvaluateAndCompareInPointList(int i, int j, void *context,
-                                            int numberOfElements) {
-  void **c = reinterpret_cast<void **>(context);
-  ListNode *list = reinterpret_cast<ListNode *>(c[0]);
-  ApproximationContext *approximationContext =
-      reinterpret_cast<ApproximationContext *>(c[1]);
-  Evaluation<float> eI = list->childAtIndex(i)->approximate(
-      static_cast<float>(0), *approximationContext);
-  Evaluation<float> eJ = list->childAtIndex(j)->approximate(
-      static_cast<float>(0), *approximationContext);
+  if (pack->scalars) {
+    assert(eI.isDefinedScalar() && eJ.isDefinedScalar());
+    float xI = eI.toScalar();
+    float xJ = eJ.toScalar();
+    assert(!std::isnan(xI) && !std::isnan(xJ));
+    return xI > xJ;
+  }
   assert(eI.isDefinedPoint() && eJ.isDefinedPoint());
   Coordinate2D<float> cI = static_cast<PointEvaluation<float> &>(eI).xy();
   Coordinate2D<float> cJ = static_cast<PointEvaluation<float> &>(eJ).xy();
@@ -187,9 +182,7 @@ bool Helpers::RelativelyEqual(T observed, T expected, T relativeThreshold) {
 
 template bool Helpers::RelativelyEqual<float>(float, float, float);
 template bool Helpers::RelativelyEqual<double>(double, double, double);
-template bool Helpers::CompareInScalarList<float>(int, int, void *, int);
-template bool Helpers::CompareInScalarList<double>(int, int, void *, int);
-template bool Helpers::CompareInPointList<float>(int, int, void *, int);
-template bool Helpers::CompareInPointList<double>(int, int, void *, int);
+template bool Helpers::CompareInList<float>(int, int, void *, int);
+template bool Helpers::CompareInList<double>(int, int, void *, int);
 
 }  // namespace Poincare

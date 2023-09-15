@@ -66,19 +66,23 @@ ListComplex<T> ListComplex<T>::sort() {
   if (!listOfDefinedScalars && !listOfDefinedPoints) {
     return *this;
   }
-  void *ctx = this;
+  struct Pack {
+    ListComplex<T> *listComplex;
+    bool scalars;
+  };
+  Pack pack{this, listOfDefinedScalars};
   Helpers::Sort(
       // Swap
       [](int i, int j, void *context, int n) {
-        ListComplex<T> *list = reinterpret_cast<ListComplex<T> *>(context);
-        assert(list->numberOfChildren() == n && 0 <= i && 0 <= j && i < n &&
-               j < n);
-        list->swapChildrenInPlace(i, j);
+        Pack *pack = static_cast<Pack *>(context);
+        ListComplex<T> *listComplex =
+            reinterpret_cast<ListComplex<T> *>(pack->listComplex);
+        assert(listComplex->numberOfChildren() == n && 0 <= i && 0 <= j &&
+               i < n && j < n);
+        listComplex->swapChildrenInPlace(i, j);
       },
       // Compare
-      listOfDefinedScalars ? Helpers::CompareInScalarList<T>
-                           : Helpers::CompareInPointList<T>,
-      ctx, numberOfChildren());
+      Helpers::CompareInList<T>, &pack, numberOfChildren());
   return *this;
 }
 

@@ -2,6 +2,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/list_complex.h>
 #include <poincare/list_sort.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -68,20 +69,24 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
 
-  void* pack[] = {list.node(), &approximationContext, &list};
+  struct Pack {
+    ListNode* listNode;
+    ApproximationContext* approximationContext;
+    List* list;
+    bool scalars;
+  };
+  Pack pack{list.node(), &approximationContext, &list, listOfDefinedScalars};
   Helpers::Sort(
       // Swap
-      [](int i, int j, void* ctx, int n) {
-        void** p = reinterpret_cast<void**>(ctx);
-        Expression* e = reinterpret_cast<Expression*>(p[2]);
-        assert(e->numberOfChildren() == n && 0 <= i && 0 <= j && i < n &&
+      [](int i, int j, void* context, int n) {
+        Pack* pack = static_cast<Pack*>(context);
+        List* list = reinterpret_cast<List*>(pack->list);
+        assert(list->numberOfChildren() == n && 0 <= i && 0 <= j && i < n &&
                j < n);
-        e->swapChildrenInPlace(i, j);
+        list->swapChildrenInPlace(i, j);
       },
       // Compare
-      listOfDefinedScalars ? Helpers::EvaluateAndCompareInScalarList
-                           : Helpers::EvaluateAndCompareInPointList,
-      pack, child.numberOfChildren());
+      Helpers::EvaluateAndCompareInList, &pack, child.numberOfChildren());
   replaceWithInPlace(child);
   return child;
 }

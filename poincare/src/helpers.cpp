@@ -145,19 +145,15 @@ bool Helpers::CompareInList(int i, int j, void *context, int numberOfElements) {
 bool Helpers::EvaluateAndCompareInList(int i, int j, void *context,
                                        int numberOfElements) {
   struct Pack {
-    ListNode *listNode;
-    ApproximationContext *approximationContext;
     List *list;
+    ListComplex<float> *listComplex;
     bool scalars;
   };
   Pack *pack = static_cast<Pack *>(context);
-  ListNode *listNode = reinterpret_cast<ListNode *>(pack->listNode);
-  ApproximationContext *approximationContext =
-      reinterpret_cast<ApproximationContext *>(pack->approximationContext);
-  Evaluation<float> eI = listNode->childAtIndex(i)->approximate(
-      static_cast<float>(0), *approximationContext);
-  Evaluation<float> eJ = listNode->childAtIndex(j)->approximate(
-      static_cast<float>(0), *approximationContext);
+  ListComplex<float> *listComplex =
+      reinterpret_cast<ListComplex<float> *>(pack->listComplex);
+  Evaluation<float> eI = listComplex->childAtIndex(i);
+  Evaluation<float> eJ = listComplex->childAtIndex(j);
   if (pack->scalars) {
     assert(eI.isDefinedScalar() && eJ.isDefinedScalar());
     float xI = eI.toScalar();

@@ -1,5 +1,16 @@
 #include "helper.h"
 
+#include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
+
+Tree* parse(const char* input) {
+  Tree* inputLayout = Layout::EditionPoolTextToLayout(input);
+  Tree* expression = RackParser(inputLayout).parse();
+  quiz_assert(expression);
+  inputLayout->removeTree();
+  return inputLayout;
+}
+
 const char* AlmostMaxIntegerString() {
   static const char* s =
       "179769313486231590772930519078902473361797697894230657273430081157732675"

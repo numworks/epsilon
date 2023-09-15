@@ -130,6 +130,8 @@ inline void assertionsWarn() {
   }
 #endif
 
+Tree* parse(const char* input);
+
 // Integer
 
 const char* MaxIntegerString();            // (2^8)^k_maxNumberOfDigits-1

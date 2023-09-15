@@ -2,9 +2,9 @@
 #include <poincare_junior/src/expression/dependency.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/variables.h>
 
 #include "helper.h"
-#include "poincare_junior/src/expression/variables.h"
 
 using namespace PoincareJ;
 
@@ -194,24 +194,33 @@ QUIZ_CASE(pcj_simplification_beautify) {
 
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
-  Tree* expression = TextToTree(input);
+  EditionReference expected = TextToTree(output);
+  EditionReference expression = TextToTree(input);
   Simplification::Simplify(expression, projectionContext);
-  quiz_assert(expression);
-  Tree* outputLayout = Expression::EditionPoolExpressionToLayout(expression);
-  quiz_assert(outputLayout);
-  constexpr size_t bufferSize = 256;
-  char buffer[bufferSize];
-  *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
-  outputLayout->removeTree();
-  assert(SharedEditionPool->numberOfTrees() == 0);
-  bool b = strcmp(output, buffer) == 0;
-  if (!b) {
+  quiz_assert(!expression.isUninitialized());
+  bool ok = expression->treeIsIdenticalTo(expected);
+  if (!ok) {
+    EditionReference outputLayout =
+        Expression::EditionPoolExpressionToLayout(expression->clone());
+    quiz_assert(!outputLayout.isUninitialized());
+    constexpr size_t bufferSize = 256;
+    char buffer[bufferSize];
+    *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+    outputLayout->removeTree();
+    bool visuallyOk = strcmp(output, buffer) == 0;
+    if (visuallyOk) {
+      ok = true;
+    } else {
 #ifndef PLATFORM_DEVICE
-    std::cout << input << " reduced to " << buffer << " instead of " << output
-              << std::endl;
+      std::cout << input << " reduced to " << buffer << " instead of " << output
+                << std::endl;
 #endif
+    }
   }
-  quiz_assert(b);
+  quiz_assert(ok);
+  expression->removeTree();
+  expected->removeTree();
+  assert(SharedEditionPool->numberOfTrees() == 0);
   SharedEditionPool->flush();
 }
 

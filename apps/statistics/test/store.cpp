@@ -1019,9 +1019,8 @@ QUIZ_CASE(data_statistics_histograms) {
   setStoreData(&store, v1, n1, listLength1, seriesIndex1);
   userPreferences.setBarWidth(barWidth1);
   userPreferences.setFirstDrawnBarAbscissa(firstDrawnBarAbscissa1);
-
-  int numberOfBars = store.numberOfBars(seriesIndex1);
-  for (int i = 0; i < numberOfBars; i++) {
+  quiz_assert(store.numberOfBars(seriesIndex1) == numberOfBars1);
+  for (int i = 0; i < numberOfBars1; i++) {
     quiz_assert(store.heightOfBarAtIndex(seriesIndex1, i) == barHeight1[i]);
   }
 }

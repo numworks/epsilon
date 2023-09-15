@@ -110,8 +110,16 @@ double Store::endOfBarAtIndex(int series, int index) const {
 
 int Store::numberOfBars(int series) const {
   double firstBarAbscissa = startOfBarAtIndex(series, 0);
-  return static_cast<int>(
-      std::floor((maxValue(series) - firstBarAbscissa) / barWidth()) + 1);
+  double maxVal = maxValue(series);
+  int nBars = static_cast<int>(
+      std::floor((maxVal - firstBarAbscissa) / barWidth()) + 1);
+  if (Poincare::Helpers::RelativelyEqual<double>(
+          maxVal, firstBarAbscissa + nBars * barWidth(), k_precision)) {
+    /* If the maxValue is on the upper bound of the last bar, we need to add
+     * one bar to be consistent with sumOfValuesBetween. */
+    nBars++;
+  }
+  return nBars;
 }
 
 I18n::Message Store::boxPlotCalculationMessageAtIndex(int series,
@@ -511,11 +519,6 @@ double Store::sumOfValuesBetween(int series, double x1, double x2,
     return 0;
   }
   bool stopIfEqual = strictUpperBound && x2 != INFINITY;
-  /* Use roughly_equal to handle impossible double representations such as
-   * 12.11 being 12.109999999999999 or 12.110000000000001. The precision we use
-   * must be higher than 1e-14 (max number of significant digits) but having it
-   * higher than DBL_EPSILON wouldn't be effective. */
-  constexpr static double k_precision = 1e-15;
   double result = 0;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {

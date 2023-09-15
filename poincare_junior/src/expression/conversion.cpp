@@ -14,6 +14,8 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "poincare_junior/src/memory/type_block.h"
+
 namespace PoincareJ {
 
 Poincare::Expression ToPoincareExpressionViaParse(const Tree *exp) {
@@ -104,6 +106,28 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         }
         return Poincare::Derivative::Builder(
             child, static_cast<Poincare::Symbol &>(symbol),
+            ToPoincareExpression(exp->childAtIndex(2)));
+      }
+      case BlockType::Sum: {
+        Poincare::Expression symbol = child;
+        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+          return Poincare::Undefined::Builder();
+        }
+        return Poincare::Sum::Builder(
+            ToPoincareExpression(exp->childAtIndex(3)),
+            static_cast<Poincare::Symbol &>(symbol),
+            ToPoincareExpression(exp->childAtIndex(1)),
+            ToPoincareExpression(exp->childAtIndex(2)));
+      }
+      case BlockType::Product: {
+        Poincare::Expression symbol = child;
+        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+          return Poincare::Undefined::Builder();
+        }
+        return Poincare::Product::Builder(
+            ToPoincareExpression(exp->childAtIndex(3)),
+            static_cast<Poincare::Symbol &>(symbol),
+            ToPoincareExpression(exp->childAtIndex(1)),
             ToPoincareExpression(exp->childAtIndex(2)));
       }
     }
@@ -297,6 +321,15 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
+      return;
+    case OT::Sum:
+    case OT::Product:
+      SharedEditionPool->pushBlock(exp.type() == OT::Sum ? BlockType::Sum
+                                                         : BlockType::Product);
+      PushPoincareExpression(exp.childAtIndex(1));
+      PushPoincareExpression(exp.childAtIndex(2));
+      PushPoincareExpression(exp.childAtIndex(3));
+      PushPoincareExpression(exp.childAtIndex(0));
       return;
     case OT::Addition:
     case OT::Multiplication:

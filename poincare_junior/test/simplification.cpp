@@ -329,6 +329,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("abs(x+i*y)",
                 "√(-2*im(y)*re(x)+2*im(x)*re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
                 "re(y)^(2))");
+  // Parametrics
+  simplifies_to("sum(k, 2, 5, (2k)^2)", "216");
+  simplifies_to("sum(k, n, n+2, k+1)", "6+3*n");
 
   // Not working yet
   // simplifies_to("1/x", "1/x");

@@ -9,6 +9,7 @@
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/metric.h>
+#include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/expression/unit.h>
@@ -22,6 +23,7 @@
 #include "number.h"
 #include "poincare_junior/src/expression/dependency.h"
 #include "poincare_junior/src/expression/variables.h"
+#include "poincare_junior/src/memory/type_block.h"
 
 namespace PoincareJ {
 
@@ -1403,6 +1405,15 @@ bool Simplification::ExpandPower(Tree* ref) {
   SimplifyAddition(ref);
   return true;
 }
+
+bool Simplification::ExpandSum(Tree* expr) {
+  if (expr->type() == BlockType::Sum) {
+    return Parametric::Explicit(expr);
+  }
+  return false;
+}
+
+bool Simplification::ExpandProduct(Tree* expr) { return false; }
 
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   if (tree->numberOfChildren() < 1) {

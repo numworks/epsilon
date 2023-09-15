@@ -13,22 +13,23 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/aliases.cpp \
   expression/approximation.cpp \
   expression/builtin.cpp \
-  expression/derivation.cpp \
   expression/comparison.cpp \
   expression/complex.cpp \
   expression/conversion.cpp \
   expression/decimal.cpp \
   expression/dependency.cpp \
+  expression/derivation.cpp \
   expression/dimension.cpp \
   expression/integer.cpp \
   expression/matrix.cpp \
   expression/metric.cpp \
   expression/number.cpp \
+  expression/parametric.cpp \
   expression/polynomial.cpp \
   expression/rational.cpp \
-  expression/simplification.cpp \
   expression/set.cpp \
   expression/sign.cpp \
+  expression/simplification.cpp \
   expression/solver.cpp \
   expression/symbol.cpp \
   expression/trigonometry.cpp \

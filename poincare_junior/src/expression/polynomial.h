@@ -104,10 +104,10 @@ class PolynomialParser final {
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
                                            size_t variableIndex = 0);
-
- private:
   static EditionReference Parse(EditionReference expression,
                                 const Tree* variable);
+
+ private:
   static std::pair<EditionReference, uint8_t> ParseMonomial(
       EditionReference expression, const Tree* variable);
 #if 0

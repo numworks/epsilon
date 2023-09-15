@@ -433,8 +433,9 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    return static_cast<Point &>(point).approximate2D<T>(
+    ApproximationContext approximationContext(
         context, preferences.complexFormat(), preferences.angleUnit());
+    return static_cast<Point &>(point).approximate2D<T>(approximationContext);
   }
 
   if (!properties().isParametric()) {

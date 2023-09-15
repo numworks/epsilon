@@ -181,10 +181,9 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
     } else if (f->properties().isScatterPlot()) {
+      ApproximationContext approximationContext(context);
       for (Point p : f->iterateScatterPlot(context)) {
-        zoom.fitPoint(p.approximate2D<float>(
-            context, Preferences::sharedPreferences->complexFormat(),
-            Preferences::sharedPreferences->angleUnit()));
+        zoom.fitPoint(p.approximate2D<float>(approximationContext));
       }
     } else {
       assert(f->properties().isCartesian());
@@ -406,15 +405,11 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 
   Poincare::Context *context = App::app()->localContext();
   if (function->properties().isScatterPlot()) {
-    Preferences::ComplexFormat complexFormat =
-        Preferences::sharedPreferences->complexFormat();
-    Preferences::AngleUnit angleUnit =
-        Preferences::sharedPreferences->angleUnit();
+    ApproximationContext approximationContext(context);
     float t = 0;
     for (Point p : function->iterateScatterPlot(context)) {
       if (isCursorVisibleAtPosition(
-              p.approximate2D<float>(context, complexFormat, angleUnit),
-              ignoreMargins)) {
+              p.approximate2D<float>(approximationContext), ignoreMargins)) {
         return t;
       }
       ++t;
@@ -455,10 +450,6 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Context *context = App::app()->localContext();
-  Preferences::ComplexFormat complexFormat =
-      Preferences::sharedPreferences->complexFormat();
-  Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
 
   int nextSubCurve = 0;
   int nextFunction =
@@ -481,9 +472,9 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double nextX = nextT;
     nextT = -1;
     double previousX = -INFINITY;
+    ApproximationContext approximationContext(context);
     for (Point p : nextF->iterateScatterPlot(context)) {
-      Coordinate2D<double> xy =
-          p.approximate2D<float>(context, complexFormat, angleUnit);
+      Coordinate2D<double> xy = p.approximate2D<float>(approximationContext);
       if (xy.x() >= nextX) {
         if (xy.x() - nextX < nextX - previousX) {
           ++nextT;

@@ -49,15 +49,18 @@ class Point : public ExpressionTwoChildren<Point, PointNode> {
   Expression shallowReduce(ReductionContext reductionContext);
 
   template <typename T>
-  Coordinate2D<T> approximate2D(Context* context,
-                                Preferences::ComplexFormat complexFormat,
-                                Preferences::AngleUnit angleUnit,
-                                bool withinReduce = false) {
-    return Coordinate2D<T>(
-        childAtIndex(0).approximateToScalar<T>(context, complexFormat,
-                                               angleUnit, withinReduce),
-        childAtIndex(1).approximateToScalar<T>(context, complexFormat,
-                                               angleUnit, withinReduce));
+  Coordinate2D<T> approximate2D(
+      const ApproximationContext& approximationContext) {
+    return Coordinate2D<T>(childAtIndex(0).approximateToScalar<T>(
+                               approximationContext.context(),
+                               approximationContext.complexFormat(),
+                               approximationContext.angleUnit(),
+                               approximationContext.withinReduce()),
+                           childAtIndex(1).approximateToScalar<T>(
+                               approximationContext.context(),
+                               approximationContext.complexFormat(),
+                               approximationContext.angleUnit(),
+                               approximationContext.withinReduce()));
   }
 };
 

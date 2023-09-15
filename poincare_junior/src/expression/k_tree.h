@@ -40,6 +40,10 @@ constexpr auto KPowMatrix = KBinary<BlockType::PowerMatrix>();
 constexpr auto KDep = KBinary<BlockType::Dependency>();
 constexpr auto KDiff = KTrinary<BlockType::Derivative>();
 
+constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
+constexpr auto KProduct = KFixedArity<4, BlockType::Product>();
+constexpr auto KIntegral = KFixedArity<4, BlockType::Integral>();
+
 constexpr auto KAdd = KNAry<BlockType::Addition>();
 constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KSet = KNAry<BlockType::Set>();

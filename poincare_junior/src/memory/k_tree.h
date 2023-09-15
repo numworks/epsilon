@@ -174,6 +174,29 @@ class KNAry {
   }
 };
 
+template <size_t Nb, Block Tag>
+class KFixedArity {
+ public:
+  template <TreeCompatibleConcept... CTS>
+    requires(sizeof...(CTS) == Nb)
+  consteval auto operator()(CTS... args) const {
+    return concat(KTree(args)...);
+  }
+
+  template <class... Args>
+    requires(HasATreeConcept<Args...> && sizeof...(Args) == Nb)
+  consteval const Tree* operator()(Args... args) const {
+    return KTree<>();
+  }
+
+ private:
+  template <TreeConcept... CTS>
+    requires(sizeof...(CTS) == Nb)
+  consteval auto concat(CTS...) const {
+    return Concat<KTree<Tag>, CTS...>();
+  }
+};
+
 // String type used for templated string litterals
 
 template <size_t N>

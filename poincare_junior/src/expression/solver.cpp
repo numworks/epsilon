@@ -1,0 +1,230 @@
+#include "solver.h"
+
+#include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/polynomial.h>
+#include <poincare_junior/src/expression/sign.h>
+#include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/n_ary.h>
+
+namespace PoincareJ {
+
+Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
+                         Error* error) {
+  context->overrideUserVariables = false;
+  Tree* result = PrivateExactSolve(equationsSet, *context, error);
+  if (*error == Error::RequireApproximateSolution ||
+      (*error == Error::NoError && result->numberOfChildren() > 0)) {
+    return result;
+  }
+  assert((result == nullptr) || (result->numberOfChildren() == 0));
+
+  Error secondError = Error::NoError;
+  context->overrideUserVariables = true;
+  result = PrivateExactSolve(equationsSet, *context, &secondError);
+  if (*error != Error::NoError || secondError == Error::NoError ||
+      secondError == Error::RequireApproximateSolution) {
+    *error = secondError;
+  } else {
+    assert(!result);
+    context->overrideUserVariables = false;
+    if (*error == Error::NoError) {
+      /* The system becomes invalid when overriding the user variables: the
+       * first solution was better. Restore inital empty set */
+      result = SharedEditionPool->push<BlockType::Set>(0);
+    }
+  }
+  return result;
+}
+
+Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context context,
+                                Error* error) {
+  Tree* simplifiedEquationSet = equationsSet->clone();
+  Tree* variables =
+      SimplifyAndFindVariables(simplifiedEquationSet, context, error);
+  EditionReference result;
+  if (*error == Error::NoError) {
+    result =
+        SolveLinearSystem(simplifiedEquationSet, variables, context, error);
+    if (*error == Error::NonLinearSystem &&
+        variables->numberOfChildren() <= 1 &&
+        equationsSet->numberOfChildren() <= 1) {
+      assert(result.isUninitialized());
+      result =
+          SolvePolynomial(simplifiedEquationSet, variables, context, error);
+      // TODO: Handle GeneralMonovariable solving.
+    }
+  }
+  variables->removeTree();
+  simplifiedEquationSet->removeTree();
+  return result;
+}
+
+Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
+                                       Error* error) {
+  assert(*error == Error::NoError);
+  /* TODO:
+   * - Use (or not depending on context) user variables.
+   * - Implement a number of variable limit (Error::TooManyVariables).
+   * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
+   *   and Error::EquationUndefined).
+   * - Pass ProjectionContext and project equality into subtraction.
+   * - Use Variables::ProjectToId and Variables::BeautifyToName
+   */
+  Tree* variables = Variables::GetVariables(equationsSet);
+  SwapTrees(&equationsSet, &variables);
+  for (Tree* equation : equationsSet->children()) {
+    if (!Dimension::DeepCheckDimensions(equation) ||
+        !Dimension::GetDimension(equation).isScalar()) {
+      *error = Error::EquationUndefined;
+      break;
+    }
+    Simplification::DeepSystemProjection(equation);
+    Simplification::DeepSystematicReduce(equation);
+    Simplification::AdvancedReduction(equation, equation);
+  }
+  SwapTrees(&variables, &equationsSet);
+  return variables;
+}
+
+Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet,
+                                const Tree* variables, Context context,
+                                Error* error) {
+  context.exactResults = true;
+  // n unknown variables and rows equations
+  int n = variables->numberOfChildren();
+  int cols = n + 1;
+  int rows = simplifiedEquationSet->numberOfChildren();
+  Tree* matrix = SharedEditionPool->push<BlockType::Matrix>(0, 0);
+  // Create the matrix (A|b) for the equation Ax=b;
+  for (const Tree* equation : simplifiedEquationSet->children()) {
+    Tree* coefficients = GetLinearCoefficients(equation, variables, context);
+    if (!coefficients) {
+      *error = Error::NonLinearSystem;
+      matrix->removeTree();
+      return nullptr;
+    }
+    assert(coefficients->numberOfChildren() == cols);
+    coefficients->removeNode();
+    Matrix::SetNumberOfColumns(matrix, cols);
+    Matrix::SetNumberOfRows(matrix, Matrix::NumberOfRows(matrix) + 1);
+  }
+  assert(Matrix::NumberOfRows(matrix) == rows);
+  // Compute the rank of (A|b)
+  int rank = Matrix::CanonizeAndRank(matrix);
+  if (rank == -1) {
+    *error = Error::EquationUndefined;
+    matrix->removeTree();
+    return nullptr;
+  }
+  const Tree* coefficient = matrix->nextNode();
+  for (int row = 0; row < rows; row++) {
+    bool allCoefficientsNull = true;
+    for (int col = 0; col < n; col++) {
+      if (allCoefficientsNull && !Sign::GetSign(coefficient).isZero()) {
+        allCoefficientsNull = false;
+      }
+      coefficient = coefficient->nextTree();
+    }
+    if (allCoefficientsNull && !Sign::GetSign(coefficient).isZero()) {
+      /* Row j describes an equation of the form '0=b', the system has no
+       * solution. */
+      matrix->removeTree();
+      *error = Error::NoError;
+      return SharedEditionPool->push<BlockType::Set>(0);
+    }
+    coefficient = coefficient->nextTree();
+  }
+  if (rank == n && n > 0) {
+    /* The rank is equal to the number of variables: the system has n
+     * solutions, and after canonization their values are the first n values on
+     * the last column. */
+    const Tree* variable = variables->nextNode();
+    Tree* child = matrix->nextNode();
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        if (row < n && col == cols - 1) {
+          if (*error == Error::NoError) {
+            *error = RegisterSolution(child, variable, context);
+            variable = variable->nextTree();
+            // Continue anyway to preserve EditionPool integrity
+          }
+          child = child->nextTree();
+        } else {
+          child->removeTree();
+        }
+      }
+    }
+    matrix->moveNodeOverNode(SharedEditionPool->push<BlockType::Set>(n));
+    return matrix;
+  }
+  // TODO: Introduce temporary variables to formally solve the system.
+  matrix->removeTree();
+  *error = Error::TooManyVariables;
+  return nullptr;
+}
+
+Tree* Solver::GetLinearCoefficients(const Tree* equation, const Tree* variables,
+                                    Context context) {
+  EditionReference result = SharedEditionPool->push<BlockType::SystemList>(0);
+  EditionReference tree = equation->clone();
+  for (const Tree* variable : variables->children()) {
+    // TODO: PolynomialParser::Parse may need to handle more block types.
+    Tree* polynomial = PolynomialParser::Parse(tree, variable);
+    if (polynomial->type() != BlockType::Polynomial) {
+      // tree did not depend on variable. Continue.
+      tree = polynomial;
+      NAry::AddChild(result, SharedEditionPool->push<BlockType::Zero>());
+      continue;
+    }
+    if (Polynomial::Degree(polynomial) != 1) {
+      /* Degree is supposed to be 0 or 1. Otherwise, it means that equation
+       * is 'undefined' due to the reduction of 0*inf for example.
+       * (ie, x*y*inf = 0) */
+      polynomial->removeTree();
+      result->removeTree();
+      return nullptr;
+    }
+    bool nullConstant = (Polynomial::NumberOfTerms(polynomial) == 1);
+    /* The equation can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
+     * The equation supposed to be linear in all variables, so we can look for
+     * the coefficients linked to the other variables in a_0. */
+    // Pilfer polynomial result : [P][Variable][Coeff1][?Coeff0]
+    polynomial->removeNode();  // Remove Node : [Variable][Coeff1][?Coeff0]
+    polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
+    // Update tree to follow [Coeff0] if it exists for next variables.
+    tree = nullConstant ? SharedEditionPool->push<BlockType::Zero>()
+                        : polynomial->nextTree();
+    /* This will detach [Coeff1] into result, leaving tree alone and polynomial
+     * properly pilfered. */
+    NAry::AddChild(result, polynomial);
+  }
+  // Constant term is remaining [Coeff0].
+  Tree* constant = tree->detachTree();
+  NAry::AddChild(result, constant);
+  /* The expression can be linear on all coefficients taken one by one but
+   * non-linear (ex: xy = 2). We delete the results and return false if one of
+   * the coefficients contains a variable. */
+  // TODO: Return nullptr if any elements of result contains variables.
+  return result;
+}
+
+Solver::Error Solver::RegisterSolution(Tree* solution, const Tree* variable,
+                                       Context context) {
+  /* TODO:
+   * - Implement equations. Here a x=2 solution will register as x-2.
+   * - Handle exact results being forbidden.
+   * - Pass more context.
+   * - Handle NonReal and Undefined solutions.
+   * - Handle approximate display.
+   */
+  solution->cloneTreeBeforeNode(variable);
+  solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
+  Simplification::DeepSystematicReduce(solution);
+  Simplification::AdvancedReduction(solution, solution);
+  Simplification::DeepBeautify(solution);
+  return Error::NoError;
+}
+
+}  // namespace PoincareJ

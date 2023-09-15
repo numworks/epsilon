@@ -108,6 +108,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyImaginaryPart(u);
     case BlockType::RealPart:
       return SimplifyRealPart(u);
+    case BlockType::Sum:
+    case BlockType::Product:
+      return Parametric::SimplifySumOrProduct(u);
     default:
       return false;
   }
@@ -1408,14 +1411,14 @@ bool Simplification::ExpandPower(Tree* ref) {
 
 bool Simplification::ExpandSum(Tree* expr) {
   if (expr->type() == BlockType::Sum) {
-    return Parametric::Explicit(expr);
+    return Parametric::ExpandSumOrProduct(expr) || Parametric::Explicit(expr);
   }
   return false;
 }
 
 bool Simplification::ExpandProduct(Tree* expr) {
   if (expr->type() == BlockType::Product) {
-    return Parametric::Explicit(expr);
+    return Parametric::ExpandSumOrProduct(expr) || Parametric::Explicit(expr);
   }
   return false;
 }

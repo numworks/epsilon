@@ -7,6 +7,9 @@ namespace PoincareJ {
 
 class Parametric {
  public:
+  static bool SimplifySumOrProduct(Tree* t);
+  static bool ExpandSumOrProduct(Tree* t);
+  static bool ContractSumOrProduct(Tree* t);
   static bool Explicit(Tree* t);
 
   static constexpr uint8_t k_variableIndex = 0;

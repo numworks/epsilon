@@ -269,6 +269,7 @@ void Calculation::createOutputLayouts(Layout *exactOutput,
 }
 
 Calculation::EqualSign Calculation::equalSign(Context *context) {
+  return EqualSign::Unknown;
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;

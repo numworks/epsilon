@@ -180,7 +180,8 @@ class Simplification {
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractAbs, ContractExpMult, ContractTrigonometric};
   constexpr static Operation k_expandOperations[] = {
-      ExpandAbs, ExpandLn, ExpandExp, ExpandTrigonometric, ExpandSum};
+      ExpandAbs,           ExpandLn,  ExpandExp,
+      ExpandTrigonometric, ExpandSum, ExpandProduct};
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};
 };

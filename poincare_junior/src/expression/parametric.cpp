@@ -10,6 +10,8 @@
 namespace PoincareJ {
 
 bool Parametric::Explicit(Tree* expr) {
+  assert(expr->type() == BlockType::Sum || expr->type() == BlockType::Product);
+  bool isSum = expr->type() == BlockType::Sum;
   Tree* variable = expr->firstChild();
   Tree* lowerBound = variable->nextTree();
   Tree* upperBound = lowerBound->nextTree();
@@ -23,7 +25,7 @@ bool Parametric::Explicit(Tree* expr) {
   }
   uint8_t numberOfTerms = Integer::Uint8(boundsDifference) + 1;
   boundsDifference->removeTree();
-  Tree* result = (0_e)->clone();
+  Tree* result = (isSum ? 0_e : 1_e)->clone();
   for (uint8_t step = 0; step < numberOfTerms; step++) {
     Tree* n = Integer::Push(step);
     Tree* value = PatternMatching::CreateAndSimplify(
@@ -33,10 +35,9 @@ bool Parametric::Explicit(Tree* expr) {
     Tree* clone = child->clone();
     Variables::Replace(clone, variable, value);
     value->removeTree();
-    Tree* add = SharedEditionPool->push<BlockType::Addition>(2);
-    result->moveNodeAtNode(add);
+    result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool
-    Simplification::SimplifyAddition(result);
+    Simplification::ShallowSystematicReduce(result);
   }
   expr->moveTreeOverTree(result);
   return true;

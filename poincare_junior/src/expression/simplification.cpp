@@ -1413,7 +1413,12 @@ bool Simplification::ExpandSum(Tree* expr) {
   return false;
 }
 
-bool Simplification::ExpandProduct(Tree* expr) { return false; }
+bool Simplification::ExpandProduct(Tree* expr) {
+  if (expr->type() == BlockType::Product) {
+    return Parametric::Explicit(expr);
+  }
+  return false;
+}
 
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   if (tree->numberOfChildren() < 1) {

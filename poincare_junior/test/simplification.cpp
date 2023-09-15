@@ -332,6 +332,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   // Parametrics
   simplifies_to("sum(k, 2, 5, (2k)^2)", "216");
   simplifies_to("sum(k, n, n+2, k+1)", "6+3*n");
+  simplifies_to("product(k, 1, 12, k*π)", "479001600*π^(12)");
 
   // Not working yet
   // simplifies_to("1/x", "1/x");

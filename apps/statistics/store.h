@@ -164,6 +164,12 @@ class Store : public Shared::DoublePairStore {
       &Store::lowerWhisker, &Store::firstQuartile, &Store::median,
       &Store::thirdQuartile, &Store::upperWhisker};
 
+  /* Use RelativelyEqual to handle impossible double representations such as
+   * 12.11 being 12.109999999999999 or 12.110000000000001. The precision we use
+   * must be higher than 1e-14 (max number of significant digits) but having it
+   * higher than DBL_EPSILON wouldn't be effective. */
+  constexpr static double k_precision = 1e-15;
+
   int computeRelativeColumnAndSeries(int *i) const;
 
   // DoublePairStore

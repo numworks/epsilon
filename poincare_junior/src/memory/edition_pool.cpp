@@ -312,7 +312,7 @@ template Tree *EditionPool::push<BlockType::Matrix, uint8_t, uint8_t>(uint8_t,
                                                                       uint8_t);
 template Tree *EditionPool::push<BlockType::Matrix, int, int>(int, int);
 template Tree *EditionPool::push<BlockType::Set>(int);
-template Tree *EditionPool::push<BlockType::Polynomial, int, int>(int, int);
+template Tree *EditionPool::push<BlockType::Polynomial, int>(int);
 template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);
 template Tree *EditionPool::push<BlockType::Variable>(uint8_t);

@@ -17,7 +17,7 @@ namespace PoincareJ {
 /* Polynomial */
 
 Tree* Polynomial::PushEmpty(const Tree* variable) {
-  Tree* pol(SharedEditionPool->push<BlockType::Polynomial>(1, 1));
+  Tree* pol(SharedEditionPool->push<BlockType::Polynomial>(1));
   pol->cloneTreeAfterNode(variable);
   return pol;
 }
@@ -382,8 +382,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
 
 EditionReference PolynomialParser::Parse(EditionReference expression,
                                          const Tree* variable) {
-  EditionReference polynomial =
-      Polynomial::PushEmpty(SharedEditionPool->clone(variable));
+  EditionReference polynomial = Polynomial::PushEmpty(variable);
   BlockType type = expression->type();
   if (type == BlockType::Addition) {
     for (size_t i = 0; i < expression->numberOfChildren(); i++) {
@@ -400,6 +399,7 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
     // replaced)
     expression->moveTreeBeforeNode(polynomial);
     Polynomial::AddMonomial(polynomial, ParseMonomial(expression, variable));
+    polynomial = Polynomial::Sanitize(polynomial);
   }
   return polynomial;
 }

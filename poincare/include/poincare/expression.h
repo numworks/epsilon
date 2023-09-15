@@ -571,6 +571,10 @@ class Expression : public TreeHandle {
   Direct<Expression, ExpressionNode> directChildren() const {
     return Direct<Expression, ExpressionNode>(*this);
   }
+  template <typename U>
+  Evaluation<U> approximateToEvaluation(
+      Context* context, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
 
  protected:
   Expression(const ExpressionNode* n) : TreeHandle(n) {}
@@ -759,11 +763,6 @@ class Expression : public TreeHandle {
   Expression defaultUnaryFunctionDifferential() { return *this; }
 
   /* Approximation */
-  template <typename U>
-  Evaluation<U> approximateToEvaluation(
-      Context* context, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
-
   Expression deepApproximateKeepingSymbols(ReductionContext reductionContext,
                                            bool* parentCanApproximate,
                                            bool* parentShouldReduce);

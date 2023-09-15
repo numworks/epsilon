@@ -31,10 +31,10 @@ class Coordinate2D final {
     return coordinateIsIn(false, start, end, includeStart, includeEnd);
   }
 
-  bool isGreaterThan(const Coordinate2D& other, bool nanIsGreatest) {
-    return (m_x == other.m_x &&
-            Helpers::FloatIsGreater(m_y, other.m_y, nanIsGreatest)) ||
-           (Helpers::FloatIsGreater(m_x, other.m_x, nanIsGreatest));
+  bool isGreaterThan(const Coordinate2D& other) {
+    assert(!std::isnan(m_x) && !std::isnan(m_y));
+    assert(!std::isnan(other.m_x) && !std::isnan(other.m_y));
+    return (m_x == other.m_x && m_y > other.m_y) || m_x > other.m_x;
   }
 
  private:

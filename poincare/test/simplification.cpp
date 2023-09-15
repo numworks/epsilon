@@ -2620,12 +2620,28 @@ QUIZ_CASE(poincare_simplification_list) {
   // Product of elements
   assert_parsed_expression_simplify_to("prod({})", "1");
   assert_parsed_expression_simplify_to("prod({1,4,9})", "36");
-  // Sorting a list
+  // Sort a list of complexes
   assert_parsed_expression_simplify_to("sort({})", "{}");
-  assert_parsed_expression_simplify_to("sort({1})", "{1}");
-  assert_parsed_expression_simplify_to("sort({3,2,1})", "{1,2,3}");
-  assert_parsed_expression_simplify_to("sort({undef,-1,-2,-inf,inf})",
-                                       "{-∞,-2,-1,∞,undef}");
+  assert_parsed_expression_simplify_to("sort({4})", "{4}");
+  assert_parsed_expression_simplify_to("sort({undef})", "{undef}");
+  assert_parsed_expression_simplify_to("sort({i})", "sort({i})");
+  assert_parsed_expression_simplify_to("sort({-1,5,2+6,-0})", "{-1,0,5,8}");
+  assert_parsed_expression_simplify_to("sort({-1,-2,-inf,inf})",
+                                       "{-∞,-2,-1,∞}");
+  assert_parsed_expression_simplify_to("sort({-1,undef,-2,-inf,inf})",
+                                       "{-1,undef,-2,-∞,∞}");
+  assert_parsed_expression_simplify_to("sort({-1,i,8,-0})", "sort({-1,i,8,0})");
+  assert_parsed_expression_simplify_to("sort({-1,undef,1})", "{-1,undef,1}");
+  // Sort list of points
+  assert_parsed_expression_simplify_to("sort({(8,1),(5,0),(5,-3),(1,0),(5,9)})",
+                                       "{(1,0),(5,-3),(5,0),(5,9),(8,1)}");
+  assert_parsed_expression_simplify_to("sort({(8,1),(5,i),(5,-3)})",
+                                       "sort({(8,1),(5,i),(5,-3)})");
+  assert_parsed_expression_simplify_to("sort({(undef,1),(6,1),(5,-3)})",
+                                       "{undef,(6,1),(5,-3)}");
+  assert_parsed_expression_simplify_to(
+      "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
+      "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
   // Mean of a list
   assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
   assert_parsed_expression_simplify_to("mean({1,2,3})", "2");

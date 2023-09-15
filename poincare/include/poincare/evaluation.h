@@ -39,6 +39,11 @@ class EvaluationNode : public TreeNode {
   virtual T toScalar() const { return NAN; }
   virtual Expression complexToExpression(
       Preferences::ComplexFormat complexFormat) const = 0;
+
+  bool isDefinedScalar() const;
+  bool isDefinedPoint() const;
+  bool isListOfDefinedScalars() const;
+  bool isListOfDefinedPoints() const;
 };
 
 template <typename T>
@@ -75,6 +80,13 @@ class Evaluation : public TreeHandle {
   T toScalar() const { return node()->toScalar(); }
   Expression complexToExpression(
       Preferences::ComplexFormat complexFormat) const;
+
+  bool isDefinedScalar() const { return node()->isDefinedScalar(); }
+  bool isDefinedPoint() const { return node()->isDefinedPoint(); }
+  bool isListOfDefinedScalars() const {
+    return node()->isListOfDefinedScalars();
+  }
+  bool isListOfDefinedPoints() const { return node()->isListOfDefinedPoints(); }
 
  protected:
   Evaluation(EvaluationNode<T> *n) : TreeHandle(n) {}

@@ -51,21 +51,37 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
     }
     return *this;
   }
+  if (recursivelyMatches(Expression::IsUndefined, nullptr)) {
+    // Cannot sort if a child is the expression Undefined
+    replaceWithInPlace(child);
+    return child;
+  }
+
   List list = static_cast<List&>(child);
   ApproximationContext approximationContext(reductionContext, true);
-  void* pack[] = {list.node(), &approximationContext,
-                  const_cast<bool*>(&k_nanIsGreatest), &list};
+  Evaluation<float> approximatedList = list.approximateToEvaluation<float>(
+      reductionContext.context(), reductionContext.complexFormat(),
+      reductionContext.angleUnit());
+  bool listOfDefinedScalars = approximatedList.isListOfDefinedScalars();
+  bool listOfDefinedPoints = approximatedList.isListOfDefinedPoints();
+  if (!listOfDefinedScalars && !listOfDefinedPoints) {
+    return *this;
+  }
+
+  void* pack[] = {list.node(), &approximationContext, &list};
   Helpers::Sort(
       // Swap
       [](int i, int j, void* ctx, int n) {
         void** p = reinterpret_cast<void**>(ctx);
-        Expression* e = reinterpret_cast<Expression*>(p[3]);
+        Expression* e = reinterpret_cast<Expression*>(p[2]);
         assert(e->numberOfChildren() == n && 0 <= i && 0 <= j && i < n &&
                j < n);
         e->swapChildrenInPlace(i, j);
       },
       // Compare
-      Helpers::ListEvaluationComparisonAtIndex, pack, child.numberOfChildren());
+      listOfDefinedScalars ? Helpers::EvaluateAndCompareInScalarList
+                           : Helpers::EvaluateAndCompareInPointList,
+      pack, child.numberOfChildren());
   replaceWithInPlace(child);
   return child;
 }

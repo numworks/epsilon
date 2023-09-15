@@ -2040,8 +2040,32 @@ QUIZ_CASE(poincare_approximation_lists_access) {
 }
 
 QUIZ_CASE(poincare_approximation_lists_functions) {
-  assert_expression_approximates_to<double>("sort({5,8,7,undef,-inf})",
-                                            "{-∞,5,7,8,undef}");
+  // Sort a list of complexes
+  assert_expression_approximates_to<double>("sort({})", "{}");
+  assert_expression_approximates_to<double>("sort({4})", "{4}");
+  assert_expression_approximates_to<double>("sort({undef})", "{undef}");
+  assert_expression_approximates_to<double>("sort({i})", "{i}");
+  assert_expression_approximates_to<double>("sort({-1,5,2+6,-0})",
+                                            "{-1,0,5,8}");
+  assert_expression_approximates_to<double>("sort({-1,-2,-inf,inf})",
+                                            "{-∞,-2,-1,∞}");
+  assert_expression_approximates_to<double>("sort({-1,undef,-2,-inf,inf})",
+                                            "{-1,undef,-2,-∞,∞}");
+  assert_expression_approximates_to<double>("sort({-1,i,8,-0})", "{-1,i,8,0}");
+  assert_expression_approximates_to<double>("sort({-1,undef,1})",
+                                            "{-1,undef,1}");
+  // Sort list of points
+  assert_expression_approximates_to<double>(
+      "sort({(8,1),(5,0),(5,-3),(1,0),(5,9)})",
+      "{(1,0),(5,-3),(5,0),(5,9),(8,1)}");
+  assert_expression_approximates_to<double>("sort({(8,1),(5,i),(5,-3)})",
+                                            "{(8,1),undef,(5,-3)}");
+  assert_expression_approximates_to<double>("sort({(undef,1),(6,1),(5,-3)})",
+                                            "{undef,(6,1),(5,-3)}");
+  assert_expression_approximates_to<double>(
+      "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
+      "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
+  // Mean
   assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
   assert_expression_approximates_to_scalar<double>(
       "mean({5,8,7,4,12},{1,2,3,5,6})", 7.882352941176471);

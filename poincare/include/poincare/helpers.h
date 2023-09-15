@@ -20,12 +20,18 @@ class Helpers {
   static bool Rotate(uint32_t* dst, uint32_t* src, size_t len);
   static void Sort(Swap swap, Compare compare, void* context,
                    int numberOfElements);
-  static bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest);
 
-  /* This is a default *Compare function. Context first three elements must be:
-   * {ListNode *, ApproximationContext *, bool * nanIsGreatest} */
-  static bool ListEvaluationComparisonAtIndex(int i, int j, void* context,
-                                              int numberOfElements);
+  template <typename T>
+  static bool CompareInScalarList(int i, int j, void* context,
+                                  int numberOfElements);
+  template <typename T>
+  static bool CompareInPointList(int i, int j, void* context,
+                                 int numberOfElements);
+  static bool EvaluateAndCompareInScalarList(int i, int j, void* context,
+                                             int numberOfElements);
+  static bool EvaluateAndCompareInPointList(int i, int j, void* context,
+                                            int numberOfElements);
+
   // Return true if observed and expected are approximately equal
   template <typename T>
   static bool RelativelyEqual(T observed, T expected, T relativeThreshold);

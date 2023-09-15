@@ -70,20 +70,24 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
   }
 
   struct Pack {
-    ListNode* listNode;
-    ApproximationContext* approximationContext;
     List* list;
+    ListComplex<float>* listComplex;
     bool scalars;
   };
-  Pack pack{list.node(), &approximationContext, &list, listOfDefinedScalars};
+  Pack pack{&list, static_cast<ListComplex<float>*>(&approximatedList),
+            listOfDefinedScalars};
   Helpers::Sort(
       // Swap
       [](int i, int j, void* context, int n) {
         Pack* pack = static_cast<Pack*>(context);
         List* list = reinterpret_cast<List*>(pack->list);
-        assert(list->numberOfChildren() == n && 0 <= i && 0 <= j && i < n &&
-               j < n);
+        ListComplex<float>* listComplex =
+            reinterpret_cast<ListComplex<float>*>(pack->listComplex);
+        assert(list->numberOfChildren() == n);
+        assert(list->numberOfChildren() == listComplex->numberOfChildren());
+        assert(0 <= i && i < n && 0 <= j && j < n);
         list->swapChildrenInPlace(i, j);
+        listComplex->swapChildrenInPlace(i, j);
       },
       // Compare
       Helpers::EvaluateAndCompareInList, &pack, child.numberOfChildren());

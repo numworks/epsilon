@@ -9,10 +9,21 @@
 
 namespace Poincare {
 
+class List;
+template <typename T>
+class ListComplex;
+
 class Helpers {
  public:
   typedef void (*Swap)(int i, int j, void* context, int numberOfElements);
   typedef bool (*Compare)(int i, int j, void* context, int numberOfElements);
+
+  template <typename T>
+  struct ListSortPack {
+    List* list;
+    ListComplex<T>* listComplex;
+    bool scalars;
+  };
 
   static size_t AlignedSize(size_t realSize, size_t alignment);
   static size_t Gcd(size_t a, size_t b);
@@ -22,9 +33,9 @@ class Helpers {
                    int numberOfElements);
 
   template <typename T>
+  static void SwapInList(int i, int j, void* context, int numberOfElements);
+  template <typename T>
   static bool CompareInList(int i, int j, void* context, int numberOfElements);
-  static bool EvaluateAndCompareInList(int i, int j, void* context,
-                                       int numberOfElements);
 
   // Return true if observed and expected are approximately equal
   template <typename T>

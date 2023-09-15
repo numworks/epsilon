@@ -22,15 +22,9 @@ class Helpers {
                    int numberOfElements);
 
   template <typename T>
-  static bool CompareInScalarList(int i, int j, void* context,
-                                  int numberOfElements);
-  template <typename T>
-  static bool CompareInPointList(int i, int j, void* context,
-                                 int numberOfElements);
-  static bool EvaluateAndCompareInScalarList(int i, int j, void* context,
-                                             int numberOfElements);
-  static bool EvaluateAndCompareInPointList(int i, int j, void* context,
-                                            int numberOfElements);
+  static bool CompareInList(int i, int j, void* context, int numberOfElements);
+  static bool EvaluateAndCompareInList(int i, int j, void* context,
+                                       int numberOfElements);
 
   // Return true if observed and expected are approximately equal
   template <typename T>

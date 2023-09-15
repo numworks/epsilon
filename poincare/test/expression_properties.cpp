@@ -464,14 +464,14 @@ void assert_sign_sets_to(
   Shared::GlobalContext context;
   TrinaryBoolean eSign = e.isPositive(&context);
   assert(eSign == TrinaryBoolean::True || eSign == TrinaryBoolean::False);
-  double eValue =
-      e.approximateToScalar<double>(&context, complexFormat, angleUnit);
-  Expression f = e.setSign(
-      isPositive == TrinaryBoolean::True,
-      ReductionContext(&context, complexFormat, angleUnit, unitFormat, User));
+  ReductionContext reductionContext(&context, complexFormat, angleUnit,
+                                    unitFormat, User);
+  ApproximationContext approximationContext(reductionContext);
+  double eValue = e.approximateToScalar<double>(approximationContext);
+  Expression f =
+      e.setSign(isPositive == TrinaryBoolean::True, reductionContext);
   quiz_assert(f.isPositive(&context) == isPositive);
-  double fValue =
-      f.approximateToScalar<double>(&context, complexFormat, angleUnit);
+  double fValue = f.approximateToScalar<double>(approximationContext);
   quiz_assert(fValue == (eSign == isPositive ? eValue : -eValue) ||
               (std::isnan(fValue) == std::isnan(eValue)));
 }
@@ -856,14 +856,14 @@ void assert_additional_results_compute_to(
   constexpr int maxNumberOfResults = 5;
   assert(length <= maxNumberOfResults);
   Expression additional[maxNumberOfResults];
-  ReductionContext reductionContext =
-      ReductionContext(&globalContext, Cartesian, Degree, unitFormat, User,
-                       ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
+  ReductionContext reductionContext(
+      &globalContext, Cartesian, Degree, unitFormat, User,
+      ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
+  ApproximationContext approximationContext(reductionContext);
   Expression units;
   Expression e = parse_expression(expression, &globalContext, false)
                      .cloneAndReduceAndRemoveUnit(reductionContext, &units);
-  double value =
-      e.approximateToScalar<double>(&globalContext, Cartesian, Degree);
+  double value = e.approximateToScalar<double>(approximationContext);
 
   if (!Unit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
     quiz_assert(length == 0);

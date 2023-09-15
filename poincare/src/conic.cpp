@@ -49,6 +49,7 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation symbolicComputation =
       SymbolicComputation::DoNotReplaceAnySymbol;
+  ApproximationContext approximationContext(context, complexFormat, angleUnit);
   // Reduce Conic for analysis
   Expression reducedExpression = e.cloneAndReduce(
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
@@ -73,8 +74,7 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
       m_shape = Shape::Undefined;
       return;
     }
-    m_c = coefficientsY[2].approximateToScalar<double>(context, complexFormat,
-                                                       angleUnit);
+    m_c = coefficientsY[2].approximateToScalar<double>(approximationContext);
   }
   // Extract B and E terms
   int dx = coefficientsY[1].getPolynomialReducedCoefficients(
@@ -85,11 +85,9 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
     return;
   }
   if (dx == 1) {
-    m_b = coefficientsX[1].approximateToScalar<double>(context, complexFormat,
-                                                       angleUnit);
+    m_b = coefficientsX[1].approximateToScalar<double>(approximationContext);
   }
-  m_e = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
-                                                     angleUnit);
+  m_e = coefficientsX[0].approximateToScalar<double>(approximationContext);
   // Extract A, D and F terms
   dx = coefficientsY[0].getPolynomialReducedCoefficients(
       x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
@@ -101,15 +99,12 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
     return;
   }
   if (dx == 2) {
-    m_a = coefficientsX[2].approximateToScalar<double>(context, complexFormat,
-                                                       angleUnit);
+    m_a = coefficientsX[2].approximateToScalar<double>(approximationContext);
   }
   if (dx >= 1) {
-    m_d = coefficientsX[1].approximateToScalar<double>(context, complexFormat,
-                                                       angleUnit);
+    m_d = coefficientsX[1].approximateToScalar<double>(approximationContext);
   }
-  m_f = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
-                                                     angleUnit);
+  m_f = coefficientsX[0].approximateToScalar<double>(approximationContext);
   // Round the coefficients to 0 if they are neglectable against the other ones
   roundCoefficientsIfNeglectable();
   if (!isConic()) {
@@ -505,8 +500,9 @@ PolarConic::PolarConic(const Expression& e, Context* context,
   }
   // All theta terms should have been removed
   assert(denominator.polynomialDegree(context, theta) == 0);
-  coefficientBeforeCos /= denominator.approximateToScalar<double>(
-      context, complexFormat, angleUnit);
+  ApproximationContext approximationContext(reductionContext);
+  coefficientBeforeCos /=
+      denominator.approximateToScalar<double>(approximationContext);
 
   double absValueCoefficient = std::fabs(coefficientBeforeCos);
   if (absValueCoefficient < 1.0) {

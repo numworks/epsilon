@@ -37,6 +37,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
   // Step 2. Look for an expression of type "cosh(acosh(z))", return z
   ExpressionNode::Type t = type();
   ExpressionNode::Type childT = c.type();
+  ApproximationContext approximationContext(reductionContext, true);
   {
     Expression result;
     if (t == ExpressionNode::Type::HyperbolicCosine) {
@@ -46,9 +47,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
                       reductionContext.shouldCheckMatrices()) &&
-             e.approximateToScalar<double>(
-                 reductionContext.context(), reductionContext.complexFormat(),
-                 reductionContext.angleUnit(), true) >= 1.0)) {
+             e.approximateToScalar<double>(approximationContext) >= 1.0)) {
           result = e;
         }
       }
@@ -59,9 +58,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
                       reductionContext.shouldCheckMatrices()) &&
-             e.approximateToScalar<double>(
-                 reductionContext.context(), reductionContext.complexFormat(),
-                 reductionContext.angleUnit(), true) >= 0.0)) {
+             e.approximateToScalar<double>(approximationContext) >= 0.0)) {
           result = e;
         }
       }
@@ -80,9 +77,8 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
                       reductionContext.shouldCheckMatrices()) &&
-             std::fabs(e.approximateToScalar<double>(
-                 reductionContext.context(), reductionContext.complexFormat(),
-                 reductionContext.angleUnit(), true)) < 1.0)) {
+             std::fabs(e.approximateToScalar<double>(approximationContext)) <
+                 1.0)) {
           result = e;
         }
       }

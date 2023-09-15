@@ -669,12 +669,13 @@ bool ContinuousFunctionProperties::HasNonNullCoefficients(
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   // Degree should be >= 0 but reduction failure may result in a -1 degree.
   assert(degree <= Expression::k_maxPolynomialDegree);
+  ApproximationContext approximationContext(context, complexFormat, angleUnit);
   if (highestDegreeCoefficientIsPositive != nullptr && degree >= 0) {
     TrinaryBoolean isPositive = coefficients[degree].isPositive(context);
     if (isPositive == TrinaryBoolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[degree].approximateToScalar<double>(
-          context, complexFormat, angleUnit);
+          approximationContext);
       if (!std::isnan(approximation) && approximation != 0.0) {
         isPositive = BinaryToTrinaryBool(approximation > 0.0);
       }
@@ -689,8 +690,8 @@ bool ContinuousFunctionProperties::HasNonNullCoefficients(
     }
     if (isNull == TrinaryBoolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = coefficients[d].approximateToScalar<double>(
-          context, complexFormat, angleUnit);
+      double approximation =
+          coefficients[d].approximateToScalar<double>(approximationContext);
       if (!std::isnan(approximation) && approximation != 0.0) {
         return true;
       }

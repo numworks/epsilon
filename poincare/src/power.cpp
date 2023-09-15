@@ -545,6 +545,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
   }
 
   Context *context = reductionContext.context();
+  ApproximationContext approximationContext(reductionContext, true);
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
   ExpressionNode::Type baseType = base.type();
@@ -864,9 +865,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
      * This rule is true only if a > 0 OR c is integer */
     if ((index.isNumber() && static_cast<Number &>(index).isInteger()) ||
         a.isPositive(context) == TrinaryBoolean::True ||
-        a.approximateToScalar<double>(context, reductionContext.complexFormat(),
-                                      reductionContext.angleUnit(),
-                                      true) > Float<double>::EpsilonLax()) {
+        a.approximateToScalar<double>(approximationContext) >
+            Float<double>::EpsilonLax()) {
       Multiplication m =
           Multiplication::Builder(base.childAtIndex(1).clone(), index);
       replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
@@ -1221,9 +1221,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         return *this;
       }
       Expression result = Addition::Builder(firstTerm, secondTerm);
-      if (result.approximateToScalar<float>(
-              context, reductionContext.complexFormat(),
-              reductionContext.angleUnit(), true) < 0.f) {
+      if (result.approximateToScalar<float>(approximationContext) < 0.f) {
         Multiplication m =
             Multiplication::Builder(Rational::Builder(-1), result);
         result.shallowReduce(reductionContext);

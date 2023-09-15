@@ -75,7 +75,6 @@ TYPE(Complex)
 TYPE(ComplexArgument)
 TYPE(Conjugate)
 TYPE(Decimal)
-TYPE(Derivative)
 TYPE(Exponential)
 TYPE(ImaginaryPart)
 TYPE(Ln)
@@ -99,7 +98,14 @@ TYPE(Subtraction)
 TYPE(Trig)
 TYPE(TrigDiff)
 
-// 4 - Matrix and vector builtins
+// 4 - Parametric types
+
+TYPE(Sum)
+TYPE(Product)
+TYPE(Derivative)
+TYPE(Integral)
+
+// 5 - Matrix and vector builtins
 
 TYPE(Dot)
 TYPE(Norm)
@@ -122,7 +128,7 @@ TYPE(Matrix)
 ALIAS(FirstMatrix = Dot)
 ALIAS(LastMatrix = Matrix)
 
-// 5 - Order dependant expressions
+// 6 - Order dependant expressions
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
 TYPE(Unit)

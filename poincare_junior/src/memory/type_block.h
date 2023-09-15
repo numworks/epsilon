@@ -56,6 +56,10 @@ class TypeBlock : public Block {
            isOfType({BlockType::Addition, BlockType::Multiplication,
                      BlockType::Power});
   }
+  constexpr bool isParametric() const {
+    return isOfType({BlockType::Sum, BlockType::Product, BlockType::Derivative,
+                     BlockType::Integral});
+  }
   constexpr bool isLayout() const {
     return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) &&
            m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts);
@@ -180,6 +184,10 @@ class TypeBlock : public Block {
     assert(type != BlockType::Matrix && !IsNAry(type));
     // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
+      case BlockType::Sum:
+      case BlockType::Product:
+      case BlockType::Integral:
+        return 4;
       case BlockType::Derivative:
         return 3;
       case BlockType::Power:

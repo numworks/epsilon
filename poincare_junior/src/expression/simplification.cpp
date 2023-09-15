@@ -1274,7 +1274,7 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
     SimplifyTrig(newTrig3);
   }
   /* Shallow reduce new trees. This step must be performed after sub-expansions
-   * since SimplifyProduct may invalidate newTrig1 and newTrig3. */
+   * since SimplifyMultiplication may invalidate newTrig1 and newTrig3. */
   SimplifyAddition(newTrig4->childAtIndex(1));
   SimplifyTrig(newTrig2);
   SimplifyTrig(newTrig4);

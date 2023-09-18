@@ -68,7 +68,7 @@ class ListComplex final : public Evaluation<T>, public DatasetColumn<T> {
   using TreeHandle::removeChildInPlace;
 
   // Helper function
-  ListComplex<T> sort();
+  bool sort();
 
   // DataSetColumn
   T valueAtIndex(int index) const override {

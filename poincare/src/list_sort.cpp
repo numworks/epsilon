@@ -40,7 +40,7 @@ Evaluation<T> ListSortNode::templatedApproximate(
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
-  listChild = listChild.sort();
+  listChild.sort();
   return std::move(listChild);
 }
 

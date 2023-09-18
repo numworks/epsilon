@@ -1,0 +1,40 @@
+name: Device build
+on:
+  workflow_dispatch:
+    inputs:
+      beta:
+       type: boolean
+       default: 'false'
+
+env:
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta == 'true'] }}
+
+jobs:
+  build:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - name: Download toolchain
+        uses: numworks/setup-arm-toolchain@latest
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
+      - name: Setup
+        run: build/setup.sh
+      - name: Check for epsilon-core
+        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
+      # Not using matrix strategy to avoid multiplying setups and uploads.
+      - name: Build n0110
+        run: make MODEL=n0110 epsilon.onboarding$BETA$.dfu epsilon.onboarding$BETA$.allow3rdparty.dfu
+      - name: Build n0115
+        run: make MODEL=n0115 epsilon.onboarding$BETA$.dfu epsilon.onboarding$BETA$.allow3rdparty.dfu
+      - name: Build n0120
+        run: make MODEL=n0120 epsilon.onboarding$BETA$.dfu epsilon.onboarding$BETA$.allow3rdparty.dfu
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsigned-device-builds.zip
+          path: output/release/device/*/epsilon/*.dfu
+          retention-days: 7

@@ -71,13 +71,17 @@ Expression CalculationStore::ansExpression(Context *context) const {
     /* Case 1.
      * If exact output was hidden, is   should not be accessible using Ans.
      * Return input instead so that no precision is lost.
-     * If the exact output is equal to its approximation and is neither Nonreal
-     * nor Undefined, it can mean that the calculation involves units or is
-     * a store expression that hides exact results (with an integral for
-     * example). In this case, do not keep the input in Ans but rather the
-     * output.
-     **/
+     * Except if the exact output is equal to its approximation and is neither
+     * Nonreal nor Undefined, in which case the exact output can be used as Ans
+     * since it's exactly the approx (this happens mainly with units).
+     * */
     ansExpr = input;
+    if (ansExpr.type() == ExpressionNode::Type::Store) {
+      /* Case 1.1 If the input is a store expression, keep only the first child
+       * of the input in Ans because the whole store can't be used in a
+       * calculation. */
+      ansExpr = ansExpr.childAtIndex(0);
+    }
   } else if (input.recursivelyMatches(Expression::IsApproximate, context) &&
              mostRecentCalculation->equalSign(context) ==
                  Calculation::EqualSign::Equal) {

@@ -173,6 +173,7 @@ QUIZ_CASE(calculation_ans) {
                      "2.6366666666667") == 0);
 
   assertAnsIs("1+1→a", "2", &globalContext, &store);
+  assertAnsIs("0^0→a", "0^0", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   assertAnsIs("1+1", "2", &globalContext, &store);

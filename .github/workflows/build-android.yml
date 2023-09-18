@@ -1,0 +1,36 @@
+name: Android Build
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+       type: boolean
+       default: 'false'
+
+env:
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  DEBUG: ${{ fromJSON('["0", "1"]')[github.event.inputs.debug == 'true'] }}
+  OUTPUT_PATH: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/android
+
+jobs:
+  build:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - name: Download SDK Manager
+        run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        run: build/setup.sh --only-simulator
+      - name: Build
+        run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
+      - name: Optimize ()
+        # Optimize twice since first try will fail.
+        run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 ${{ OUTPUT_PATH }}/epsilon.apk ${{ OUTPUT_PATH }}/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 ${{ OUTPUT_PATH }}/epsilon_temp.apk ${{ OUTPUT_PATH }}/epsilon_optimized.apk
+        # Delete temporary files.
+        run: rm ${{ OUTPUT_PATH }}/epsilon_temp.apk ${{ OUTPUT_PATH }}/epsilon.apk
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsigned-epsilon-android.apk
+          path: ${{ OUTPUT_PATH }}/epsilon_optimized.apk
+          retention-days: 7

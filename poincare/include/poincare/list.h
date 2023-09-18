@@ -7,6 +7,7 @@ namespace Poincare {
 
 class ListNode : public ExpressionNode {
  public:
+  friend class List;
   // TreeNode
   size_t size() const override { return sizeof(ListNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
@@ -59,7 +60,12 @@ class ListNode : public ExpressionNode {
  private:
   template <typename T>
   Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
+      const ApproximationContext& approximationContext) const {
+    return templatedApproximate<T>(approximationContext, true);
+  }
+  template <typename T>
+  Evaluation<T> templatedApproximate(
+      const ApproximationContext& approximationContext, bool keepUndef) const;
 
   /* See comment on NAryExpressionNode */
   uint16_t m_numberOfChildren;
@@ -82,6 +88,9 @@ class List : public Expression {
   Expression extremum(const ReductionContext& reductionContext, bool minimum);
   Expression shallowReduce(ReductionContext reductionContext);
   bool isListOfPoints(Context* context) const;
+  template <typename T>
+  Expression approximateAndRemoveUndefAndSort(
+      const ApproximationContext& approximationContext) const;
 };
 
 }  // namespace Poincare

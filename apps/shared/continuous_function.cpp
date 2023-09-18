@@ -493,11 +493,17 @@ Expression ContinuousFunction::Model::expressionReduced(
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
-      m_expression = PoincareHelpers::Approximate<double>(
-          m_expression.type() == ExpressionNode::Type::List
-              ? ListSort::Builder(m_expression)
-              : m_expression,
-          context);
+      if (m_expression.type() == ExpressionNode::Type::List) {
+        m_expression =
+            static_cast<List &>(m_expression)
+                .approximateAndRemoveUndefAndSort<double>(
+                    ApproximationContext(context, preferences.complexFormat(),
+                                         preferences.angleUnit()));
+      } else {
+        assert(m_expression.type() == ExpressionNode::Type::Point);
+        m_expression =
+            PoincareHelpers::Approximate<double>(m_expression, context);
+      }
     } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
                !thisProperties.isScatterPlot() &&
                (record->fullName() == nullptr ||

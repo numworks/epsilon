@@ -134,12 +134,14 @@ Expression ListNode::shallowReduce(const ReductionContext& reductionContext) {
 
 template <typename T>
 Evaluation<T> ListNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
+    const ApproximationContext& approximationContext, bool keepUndef) const {
   ListComplex<T> list = ListComplex<T>::Builder();
   for (ExpressionNode* c : children()) {
-    list.addChildAtIndexInPlace(c->approximate(T(), approximationContext),
-                                list.numberOfChildren(),
-                                list.numberOfChildren());
+    Evaluation<T> eval = c->approximate(T(), approximationContext);
+    if (keepUndef || !eval.isUndefined()) {
+      int n = list.numberOfChildren();
+      list.addChildAtIndexInPlace(eval, n, n);
+    }
   }
   return std::move(list);
 }
@@ -210,6 +212,21 @@ bool List::isListOfPoints(Context* context) const {
   return true;
 }
 
+template <typename T>
+Expression List::approximateAndRemoveUndefAndSort(
+    const ApproximationContext& approximationContext) const {
+  if (isUninitialized()) {
+    return Undefined::Builder();
+  }
+  Evaluation<T> eval =
+      node()->templatedApproximate<T>(approximationContext, false);
+  if (eval.type() != EvaluationNode<T>::Type::ListComplex) {
+    return Undefined::Builder();
+  }
+  static_cast<ListComplex<T>&>(eval).sort();
+  return eval.complexToExpression(approximationContext.complexFormat());
+}
+
 template Evaluation<float> ListNode::templatedApproximate(
     const ApproximationContext& approximationContext) const;
 template Evaluation<double> ListNode::templatedApproximate(
@@ -229,4 +246,9 @@ template Evaluation<float> ListNode::productOfElements<float>(
     const ApproximationContext& approximationContext);
 template Evaluation<double> ListNode::productOfElements<double>(
     const ApproximationContext& approximationContext);
+
+template Expression List::approximateAndRemoveUndefAndSort<float>(
+    const ApproximationContext& approximationContext) const;
+template Expression List::approximateAndRemoveUndefAndSort<double>(
+    const ApproximationContext& approximationContext) const;
 }  // namespace Poincare

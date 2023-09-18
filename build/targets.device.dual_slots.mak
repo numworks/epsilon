@@ -38,6 +38,7 @@ $(shell sed -n -e 's/^.* $(1) = \(.*\);.*/\1/p' ion/src/device/include/$(MODEL)/
 endef
 
 FLASHER_ADDRESS = $$(( $(call extract_value_from_board_h,SRAMOrigin) + $(call extract_value_from_board_h,SRAMLength) - $(call extract_value_from_board_h,FlasherLength) ))
+FLASHER_ADDRESS_HEX = $(shell printf "%x" $(FLASHER_ADDRESS))
 
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
@@ -50,7 +51,7 @@ FLASHER_ADDRESS = $$(( $(call extract_value_from_board_h,SRAMOrigin) + $(call ex
 	$(Q) if [[ "$(DFU_SLAVE)" == *"0483:df11"* ]]; \
 	  then \
 	    $(MAKE) FIRMWARE_COMPONENT=flasher DEBUG=0 flasher.dfu; \
-	    $(PYTHON) build/device/dfu.py -s $(FLASHER_ADDRESS):leave -D $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu; \
+	    $(PYTHON) build/device/dfu.py -s $(FLASHER_ADDRESS_HEX):leave -D $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu; \
 	    sleep 2; \
 	fi
 	$(Q) $(PYTHON) build/device/dfu.py -D $(word 1,$^)

@@ -14,19 +14,19 @@ jobs:
   build:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - uses: numworks/setup-emscripten@latest
+      - name: Download emscripten
+        uses: numworks/setup-emscripten@latest
         with:
           sdk: 3.1.43
-      - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
-      - run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=web epsilon.zip htmlpack.zip
-      - uses: actions/upload-artifact@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        run: build/setup.sh --only-simulator
+      - name: Build
+        run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=web epsilon.zip htmlpack.zip
+      - name: Upload epsilon.zip and htmlpack.zip
+        uses: actions/upload-artifact@v3
         with:
           name: epsilon-web.zip
-          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/web/epsilon.zip
-          retention-days: 7
-      - uses: actions/upload-artifact@v3
-        with:
-          name: htmlpack.zip
-          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/web/htmlpack.zip
+          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/web/*.zip
           retention-days: 7

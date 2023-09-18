@@ -226,9 +226,15 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Expression exactOutputExpression = exactOutput();
-    if (input().recursivelyMatches(Expression::IsPercent, context)) {
-      /* When the input contains percent, the exact expression is not fully
-       * reduced so we need to reduce it again prior to computing equal sign */
+    if (input().recursivelyMatches(
+            [](const Expression e, Context *context) {
+              return Expression::IsPercent(e, context) ||
+                     e.type() == ExpressionNode::Type::Factor;
+            },
+            context)) {
+      /* When the input contains percent or factor, the exact expression is not
+       * fully reduced so we need to reduce it again prior to computing equal
+       * sign */
       PoincareHelpers::CloneAndSimplify(
           &exactOutputExpression, context, ReductionTarget::User,
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);

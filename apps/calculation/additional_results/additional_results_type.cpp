@@ -164,7 +164,12 @@ static bool expressionIsInterestingFunction(const Expression e) {
   return !e.isNumber() &&
          !e.isOfType({ExpressionNode::Type::ConstantMaths,
                       ExpressionNode::Type::UnitConvert}) &&
-         !e.recursivelyMatches(Expression::IsSequence) &&
+         !e.deepIsOfType({ExpressionNode::Type::Sequence,
+                          ExpressionNode::Type::Factor,
+                          ExpressionNode::Type::RealPart,
+                          ExpressionNode::Type::ImaginaryPart,
+                          ExpressionNode::Type::ComplexArgument,
+                          ExpressionNode::Type::Conjugate}) &&
          e.numberOfNumericalValues() == 1;
 }
 

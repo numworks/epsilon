@@ -308,11 +308,8 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
   // f(x) = piecewise(...)
-  if (analyzedExpression.recursivelyMatches(
-          [](const Expression e) {
-            return e.type() == ExpressionNode::Type::PiecewiseOperator;
-          },
-          context)) {
+  if (analyzedExpression.deepIsOfType({ExpressionNode::Type::PiecewiseOperator},
+                                      context)) {
     setCaption(I18n::Message::PiecewiseType);
     return;
   }

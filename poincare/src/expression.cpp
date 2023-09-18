@@ -249,6 +249,20 @@ bool Expression::recursivelyMatches(ExpressionTestAuxiliary test,
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
 }
 
+bool Expression::deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
+                              Context *context) const {
+  return recursivelyMatches(
+      [](const Expression e, Context *context, void *auxiliary) {
+        return e.isOfType(
+                   *static_cast<std::initializer_list<ExpressionNode::Type> *>(
+                       auxiliary))
+                   ? TrinaryBoolean::True
+                   : TrinaryBoolean::Unknown;
+      },
+      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      &types);
+}
+
 bool Expression::deepIsMatrix(Context *context, bool canContainMatrices,
                               bool isReduced) const {
   if (!canContainMatrices) {
@@ -365,11 +379,7 @@ bool Expression::IsDiscontinuous(const Expression e, Context *context) {
            e.type() == ExpressionNode::Type::Ceiling ||
            e.type() == ExpressionNode::Type::FracPart ||
            e.type() == ExpressionNode::Type::AbsoluteValue) &&
-          e.recursivelyMatches(
-              [](const Expression e) {
-                return e.type() == ExpressionNode::Type::Symbol;
-              },
-              context));
+          e.deepIsOfType({ExpressionNode::Type::Symbol}, context));
 }
 
 bool Expression::deepIsSymbolic(Context *context,

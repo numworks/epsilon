@@ -388,11 +388,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
       Expression cardano =
           CardanoNumber(delta0, delta1, &approximate, complexContext);
       if (cardano.type() == ExpressionNode::Type::Undefined ||
-          cardano.recursivelyMatches(
-              [](const Expression e) {
-                return e.type() == ExpressionNode::Type::Undefined ||
-                       e.type() == ExpressionNode::Type::Infinity;
-              },
+          cardano.deepIsOfType(
+              {ExpressionNode::Type::Undefined, ExpressionNode::Type::Infinity},
               context)) {
         if (approximateSolutions) {
           *approximateSolutions = true;

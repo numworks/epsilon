@@ -69,11 +69,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       input.type() == ExpressionNode::Type::Store ||
       exactOutput.type() == ExpressionNode::Type::List ||
       approximateOutput.type() == ExpressionNode::Type::List ||
-      approximateOutput.recursivelyMatches(
-          [](const Expression e) {
-            return e.isOfType({ExpressionNode::Type::Infinity});
-          },
-          nullptr)) {
+      approximateOutput.recursivelyMatches(Expression::IsInfinity, nullptr)) {
     return true;
   }
   assert(!input.isUndefined() && !exactOutput.isUndefined());

@@ -52,8 +52,8 @@ Expression Equation::Model::standardForm(
     returnedExpression = Nonreal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
                  [](const Expression e, Context *context) {
-                   return e.type() == ExpressionNode::Type::Undefined ||
-                          e.type() == ExpressionNode::Type::Infinity ||
+                   return e.isOfType({ExpressionNode::Type::Undefined,
+                                      ExpressionNode::Type::Infinity}) ||
                           Expression::IsMatrix(e, context);
                  },
                  contextToUse)) {

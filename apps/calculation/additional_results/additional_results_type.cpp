@@ -70,7 +70,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       exactOutput.type() == ExpressionNode::Type::List ||
       approximateOutput.type() == ExpressionNode::Type::List ||
       approximateOutput.recursivelyMatches(
-          [](const Expression e, Context *c) {
+          [](const Expression e) {
             return e.isOfType({ExpressionNode::Type::Infinity});
           },
           nullptr)) {

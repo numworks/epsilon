@@ -45,7 +45,7 @@ void VectorListController::computeAdditionalResults(
   Expression approximatedNorm =
       PoincareHelpers::Approximate<double>(norm, context);
   if (approximatedNorm.isNull(context) != TrinaryBoolean::False ||
-      Expression::IsInfinity(approximatedNorm, context)) {
+      Expression::IsInfinity(approximatedNorm)) {
     return;
   }
   Expression normalized = Division::Builder(exactClone, norm);

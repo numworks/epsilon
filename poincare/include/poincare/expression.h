@@ -239,6 +239,11 @@ class Expression : public TreeHandle {
       ExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  typedef bool (*SimpleExpressionTest)(const Expression e);
+  bool recursivelyMatches(
+      SimpleExpressionTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context* context,
                                           void* auxiliary);
   bool recursivelyMatches(
@@ -251,24 +256,22 @@ class Expression : public TreeHandle {
                     bool isReduced = true) const;
   bool deepIsList(Context* context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
-  static bool IsUninitialized(const Expression e, Context* context) {
+  static bool IsUninitialized(const Expression e) {
     return e.isUninitialized();
   }
-  static bool IsUndefined(const Expression e, Context* context) {
-    return e.isUndefined();
-  }
-  static bool IsNAry(const Expression e, Context* context);
-  static bool IsApproximate(const Expression e, Context* context);
-  static bool IsRandom(const Expression e, Context* context);
+  static bool IsUndefined(const Expression e) { return e.isUndefined(); }
+  static bool IsNAry(const Expression e);
+  static bool IsApproximate(const Expression e);
+  static bool IsRandom(const Expression e);
   static bool IsMatrix(const Expression e, Context* context);
-  static bool IsInfinity(const Expression e, Context* context);
-  static bool IsPercent(const Expression e, Context* context);
+  static bool IsInfinity(const Expression e);
+  static bool IsPercent(const Expression e);
   static bool IsDiscontinuous(const Expression e, Context* context);
-  static bool IsSymbolic(const Expression e, Context* context);
-  static bool IsPoint(const Expression e, Context*) {
+  static bool IsSymbolic(const Expression e);
+  static bool IsPoint(const Expression e) {
     return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
   }
-  static bool IsSequence(const Expression e, Context* context) {
+  static bool IsSequence(const Expression e) {
     return e.type() == ExpressionNode::Type::Sequence;
   }
 

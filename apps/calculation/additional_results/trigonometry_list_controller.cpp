@@ -65,10 +65,9 @@ void TrigonometryListController::computeAdditionalResults(
    * multiple of pi)
    * - Displaying the exact expression is forbidden. */
   if (simplifiedAngle.isUninitialized() ||
-      simplifiedAngle.recursivelyMatches(
-          [](const Expression e, Context* context) {
-            return e.type() == ExpressionNode::Type::FracPart;
-          }) ||
+      simplifiedAngle.recursivelyMatches([](const Expression e) {
+        return e.type() == ExpressionNode::Type::FracPart;
+      }) ||
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           exactAngle, simplifiedAngle, approximateAngle, context)) {
     if (m_directTrigonometry) {

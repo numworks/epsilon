@@ -199,18 +199,43 @@ QUIZ_CASE(poincare_properties_is_rational_number) {
                    .isAlternativeFormOfRationalNumber());
 }
 
+void assert_expression_has_property_or_not(const char* expression,
+                                           Context* context,
+                                           Expression::ExpressionTest test,
+                                           bool hasProperty) {
+  Expression e = parse_expression(expression, context, false);
+  quiz_assert_print_if_failure(
+      e.recursivelyMatches(test, context) == hasProperty, expression);
+}
+
+void assert_expression_has_property_or_not(
+    const char* expression, Context* context,
+    Expression::SimpleExpressionTest test, bool hasProperty) {
+  Expression e = parse_expression(expression, context, false);
+  quiz_assert_print_if_failure(
+      e.recursivelyMatches(test, context) == hasProperty, expression);
+}
+
 void assert_expression_has_property(const char* expression, Context* context,
                                     Expression::ExpressionTest test) {
-  Expression e = parse_expression(expression, context, false);
-  quiz_assert_print_if_failure(e.recursivelyMatches(test, context), expression);
+  assert_expression_has_property_or_not(expression, context, test, true);
+}
+
+void assert_expression_has_property(const char* expression, Context* context,
+                                    Expression::SimpleExpressionTest test) {
+  assert_expression_has_property_or_not(expression, context, test, true);
 }
 
 void assert_expression_has_not_property(const char* expression,
                                         Context* context,
                                         Expression::ExpressionTest test) {
-  Expression e = parse_expression(expression, context, false);
-  quiz_assert_print_if_failure(!e.recursivelyMatches(test, context),
-                               expression);
+  assert_expression_has_property_or_not(expression, context, test, false);
+}
+
+void assert_expression_has_not_property(const char* expression,
+                                        Context* context,
+                                        Expression::SimpleExpressionTest test) {
+  assert_expression_has_property_or_not(expression, context, test, false);
 }
 
 QUIZ_CASE(poincare_properties_is_approximate) {

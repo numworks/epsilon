@@ -8,7 +8,7 @@ TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type,
     return TrinaryBoolean::False;
   }
 
-  if (expression.isUndefined() || Expression::IsInfinity(expression, context)) {
+  if (expression.isUndefined() || Expression::IsInfinity(expression)) {
     return TrinaryBoolean::False;
   }
 

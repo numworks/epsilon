@@ -389,7 +389,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
           CardanoNumber(delta0, delta1, &approximate, complexContext);
       if (cardano.type() == ExpressionNode::Type::Undefined ||
           cardano.recursivelyMatches(
-              [](const Expression e, Context *context) {
+              [](const Expression e) {
                 return e.type() == ExpressionNode::Type::Undefined ||
                        e.type() == ExpressionNode::Type::Infinity;
               },

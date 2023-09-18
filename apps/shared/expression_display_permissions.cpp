@@ -26,7 +26,7 @@ bool NeverDisplayReductionOfInput(Expression input, Context* context) {
     return false;
   }
   return input.recursivelyMatches(
-      [](const Expression e, Context* c) {
+      [](const Expression e) {
         return e.isOfType({
             ExpressionNode::Type::ConstantPhysics,
             ExpressionNode::Type::Randint,
@@ -48,7 +48,7 @@ bool NeverDisplayReductionOfInput(Expression input, Context* context) {
 static bool isPrimeFactorization(Expression expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
-  return !expression.recursivelyMatches([](const Expression e, Context*) {
+  return !expression.recursivelyMatches([](const Expression e) {
     return e.isUninitialized() ||
            !(e.type() == ExpressionNode::Type::BasedInteger ||
              e.type() == ExpressionNode::Type::Multiplication ||
@@ -92,7 +92,7 @@ static bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
        * be a reduction that failed and was interrupted which can lead to
        * dependencies not being properly bubbled-up */
       exactOutput.recursivelyMatches(
-          [](const Expression e, Context* c) {
+          [](const Expression e) {
             return e.isOfType({ExpressionNode::Type::Comparison,
                                ExpressionNode::Type::Dependency});
           },

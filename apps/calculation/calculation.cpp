@@ -227,8 +227,8 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
   if (ExceptionRun(ecp)) {
     Expression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
-            [](const Expression e, Context *context) {
-              return Expression::IsPercent(e, context) ||
+            [](const Expression e) {
+              return Expression::IsPercent(e) ||
                      e.type() == ExpressionNode::Type::Factor;
             },
             context)) {

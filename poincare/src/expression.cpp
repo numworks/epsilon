@@ -218,6 +218,17 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context *context,
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
+bool Expression::recursivelyMatches(SimpleExpressionTest test, Context *context,
+                                    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const Expression e, Context *context,
+                                     void *auxiliary) {
+    SimpleExpressionTest *trueTest =
+        static_cast<SimpleExpressionTest *>(auxiliary);
+    return (*trueTest)(e) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+  };
+  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+}
+
 bool Expression::recursivelyMatches(ExpressionTestAuxiliary test,
                                     Context *context,
                                     SymbolicComputation replaceSymbols,
@@ -248,7 +259,7 @@ bool Expression::deepIsMatrix(Context *context, bool canContainMatrices,
         if (IsMatrix(e, context)) {
           return TrinaryBoolean::True;
         }
-        if (IsNAry(e, context) && e.numberOfChildren() > 0) {
+        if (IsNAry(e) && e.numberOfChildren() > 0) {
           bool *isReduced = static_cast<bool *>(auxiliary);
           /* If reduction didn't fail, the children were sorted so any
            * expression which is a matrix (deeply) would be at the end.
@@ -312,17 +323,15 @@ bool Expression::deepIsList(Context *context) const {
       context);
 }
 
-bool Expression::IsApproximate(const Expression e, Context *context) {
+bool Expression::IsApproximate(const Expression e) {
   return e.type() == ExpressionNode::Type::Decimal ||
          e.type() == ExpressionNode::Type::Float ||
          e.type() == ExpressionNode::Type::Double;
 }
 
-bool Expression::IsRandom(const Expression e, Context *context) {
-  return e.isRandom();
-}
+bool Expression::IsRandom(const Expression e) { return e.isRandom(); }
 
-bool Expression::IsNAry(const Expression e, Context *context) {
+bool Expression::IsNAry(const Expression e) {
   return e.type() == ExpressionNode::Type::Addition ||
          e.type() == ExpressionNode::Type::Multiplication;
 }
@@ -340,11 +349,11 @@ bool Expression::IsMatrix(const Expression e, Context *context) {
          e.type() == ExpressionNode::Type::VectorCross;
 }
 
-bool Expression::IsInfinity(const Expression e, Context *context) {
+bool Expression::IsInfinity(const Expression e) {
   return e.type() == ExpressionNode::Type::Infinity;
 }
 
-bool Expression::IsPercent(const Expression e, Context *context) {
+bool Expression::IsPercent(const Expression e) {
   return e.type() == ExpressionNode::Type::PercentSimple ||
          e.type() == ExpressionNode::Type::PercentAddition;
 }
@@ -357,7 +366,7 @@ bool Expression::IsDiscontinuous(const Expression e, Context *context) {
            e.type() == ExpressionNode::Type::FracPart ||
            e.type() == ExpressionNode::Type::AbsoluteValue) &&
           e.recursivelyMatches(
-              [](const Expression e, Context *context) {
+              [](const Expression e) {
                 return e.type() == ExpressionNode::Type::Symbol;
               },
               context));
@@ -368,7 +377,7 @@ bool Expression::deepIsSymbolic(Context *context,
   return recursivelyMatches(IsSymbolic, context, replaceSymbols);
 }
 
-bool Expression::IsSymbolic(const Expression e, Context *context) {
+bool Expression::IsSymbolic(const Expression e) {
   return e.isOfType({ExpressionNode::Type::Symbol,
                      ExpressionNode::Type::Function,
                      ExpressionNode::Type::Sequence});
@@ -954,7 +963,7 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
   }
 
   // NAryExpresions are real if all children are real
-  if (IsNAry(*this, context)) {
+  if (IsNAry(*this)) {
     return convert<NAryExpression>().allChildrenAreReal(context,
                                                         canContainMatrices);
   }
@@ -1555,7 +1564,7 @@ Expression Expression::setSign(bool positive,
 int Expression::lengthOfListChildren() const {
   int lastLength = k_noList;
   int n = numberOfChildren();
-  bool isNAry = IsNAry(*this, nullptr);
+  bool isNAry = IsNAry(*this);
   for (int i = n - 1; i >= 0; i--) {
     if (isNAry && childAtIndex(i).type() < ExpressionNode::Type::List) {
       return lastLength;

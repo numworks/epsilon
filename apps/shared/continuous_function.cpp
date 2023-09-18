@@ -348,7 +348,7 @@ float ContinuousFunction::autoTMin() const {
 bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
     Context *context) const {
   return expressionApproximated(context).recursivelyMatches(
-      [](const Expression e, Context *context) {
+      [](const Expression e) {
         return !e.isUninitialized() &&
                (e.type() == ExpressionNode::Type::Sequence ||
                 e.type() == ExpressionNode::Type::Integral ||
@@ -415,7 +415,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
 
   if (properties().isScatterPlot()) {
     Expression point;
-    if (Expression::IsPoint(e, context)) {
+    if (Expression::IsPoint(e)) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();
       }
@@ -429,7 +429,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = point = e.childAtIndex(tInt);
     }
-    assert(!point.isUninitialized() && Expression::IsPoint(point, context));
+    assert(!point.isUninitialized() && Expression::IsPoint(point));
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
@@ -915,12 +915,11 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
     ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1),
                                               symbol);
   } else {
-    if (expressionToStore.recursivelyMatches(
-            [](const Expression e, Context *context) {
-              return e.type() == ExpressionNode::Type::Symbol &&
-                     AliasesLists::k_thetaAliases.contains(
-                         static_cast<const Symbol &>(e).name());
-            })) {
+    if (expressionToStore.recursivelyMatches([](const Expression e) {
+          return e.type() == ExpressionNode::Type::Symbol &&
+                 AliasesLists::k_thetaAliases.contains(
+                     static_cast<const Symbol &>(e).name());
+        })) {
       symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))
                    ? k_radiusSymbol

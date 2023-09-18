@@ -194,9 +194,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
     return FillColumnStatus::DataNotSuitable;
   }
 
-  if (formula.recursivelyMatches([](const Expression e, Context *context) {
-        return e.isRandomList();
-      }) ||
+  if (formula.recursivelyMatches(
+          [](const Expression e) { return e.isRandomList(); }) ||
       formula.type() != ExpressionNode::Type::List) {
     // Sometimes the formula is a list but the reduction failed.
     formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
@@ -236,7 +235,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
 
   // If formula contains a random formula, evaluate it for each pairs.
   bool evaluateForEachPairs = formula.recursivelyMatches(
-      [](const Expression e, Context *context) { return e.isRandomNumber(); });
+      [](const Expression e) { return e.isRandomNumber(); });
   for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, *series, *column, j, true, true);
     if (evaluateForEachPairs) {

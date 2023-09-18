@@ -1038,9 +1038,8 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
         Expression o0 = childAtIndex(0);
         Number m = Number::Multiplication(static_cast<Number &>(o0),
                                           static_cast<Number &>(o));
-        if ((IsInfinity(m, context) || m.isUndefined()) &&
-            !IsInfinity(o0, context) && !o0.isUndefined() &&
-            !IsInfinity(o, context) && !o.isUndefined()) {
+        if ((IsInfinity(m) || m.isUndefined()) && !IsInfinity(o0) &&
+            !o0.isUndefined() && !IsInfinity(o) && !o.isUndefined()) {
           // Stop the reduction due to a multiplication overflow
           ExceptionCheckpoint::Raise();
         }
@@ -1088,7 +1087,7 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
         // Check that other children don't match inf or matrix
         if (!recursivelyMatches(
                 [](const Expression e, Context *context) {
-                  return IsInfinity(e, context) || IsMatrix(e, context);
+                  return IsInfinity(e) || IsMatrix(e, context);
                 },
                 context)) {
           Expression result = Rational::Builder(0);

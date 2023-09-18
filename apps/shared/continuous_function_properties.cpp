@@ -309,7 +309,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
   // f(x) = piecewise(...)
   if (analyzedExpression.recursivelyMatches(
-          [](const Expression e, Context* context) {
+          [](const Expression e) {
             return e.type() == ExpressionNode::Type::PiecewiseOperator;
           },
           context)) {

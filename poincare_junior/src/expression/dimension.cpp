@@ -2,6 +2,7 @@
 
 #include "approximation.h"
 #include "matrix.h"
+#include "parametric.h"
 #include "symbol.h"
 
 namespace PoincareJ {
@@ -99,6 +100,14 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
       return index->type().isRational() || index->type() == BlockType::Decimal;
     }
+    case BlockType::Sum:
+    case BlockType::Product:
+      return childDim[Parametric::k_variableIndex].isScalar() &&
+             childDim[Parametric::k_lowerBoundIndex].isScalar() &&
+             childDim[Parametric::k_upperBoundIndex].isScalar() &&
+             (t->type() != BlockType::Product ||
+              childDim[Parametric::k_functionIndex].isScalar() ||
+              childDim[Parametric::k_functionIndex].isSquareMatrix());
     case BlockType::Dim:
     case BlockType::Ref:
     case BlockType::Rref:
@@ -177,6 +186,9 @@ Dimension Dimension::GetDimension(const Tree* t) {
                  : (unitVector.isEmpty() ? Scalar()
                                          : Unit(unitVector, representative));
     }
+    case BlockType::Sum:
+    case BlockType::Product:
+      return GetDimension(t->childAtIndex(Parametric::k_functionIndex));
     case BlockType::PowerMatrix:
     case BlockType::PowerReal:
     case BlockType::Power: {

@@ -4,6 +4,7 @@
 
 #include "integer.h"
 #include "k_tree.h"
+#include "matrix.h"
 #include "simplification.h"
 #include "variables.h"
 
@@ -71,7 +72,13 @@ bool Parametric::Explicit(Tree* expr) {
   }
   uint8_t numberOfTerms = Integer::Uint8(boundsDifference) + 1;
   boundsDifference->removeTree();
-  Tree* result = (isSum ? 0_e : 1_e)->clone();
+  Tree* result;
+  if (isSum) {
+    Dimension d = Dimension::GetDimension(child);
+    result = d.isMatrix() ? Matrix::Zero(d.matrix) : (0_e)->clone();
+  } else {
+    result = (1_e)->clone();
+  }
   for (uint8_t step = 0; step < numberOfTerms; step++) {
     Tree* n = Integer::Push(step);
     Tree* value = PatternMatching::CreateAndSimplify(

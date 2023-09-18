@@ -337,48 +337,27 @@ bool Expression::deepIsList(Context *context) const {
       context);
 }
 
-bool Expression::IsApproximate(const Expression e) {
-  return e.type() == ExpressionNode::Type::Decimal ||
-         e.type() == ExpressionNode::Type::Float ||
-         e.type() == ExpressionNode::Type::Double;
-}
-
 bool Expression::IsRandom(const Expression e) { return e.isRandom(); }
-
-bool Expression::IsNAry(const Expression e) {
-  return e.type() == ExpressionNode::Type::Addition ||
-         e.type() == ExpressionNode::Type::Multiplication;
-}
 
 bool Expression::IsMatrix(const Expression e, Context *context) {
   return e.type() == ExpressionNode::Type::Matrix
          /* A Dimension is a matrix unless its child is a list. */
          || (e.type() == ExpressionNode::Type::Dimension &&
              !e.childAtIndex(0).deepIsList(context)) ||
-         e.type() == ExpressionNode::Type::MatrixInverse ||
-         e.type() == ExpressionNode::Type::MatrixIdentity ||
-         e.type() == ExpressionNode::Type::MatrixTranspose ||
-         e.type() == ExpressionNode::Type::MatrixRowEchelonForm ||
-         e.type() == ExpressionNode::Type::MatrixReducedRowEchelonForm ||
-         e.type() == ExpressionNode::Type::VectorCross;
-}
-
-bool Expression::IsInfinity(const Expression e) {
-  return e.type() == ExpressionNode::Type::Infinity;
-}
-
-bool Expression::IsPercent(const Expression e) {
-  return e.type() == ExpressionNode::Type::PercentSimple ||
-         e.type() == ExpressionNode::Type::PercentAddition;
+         e.isOfType({ExpressionNode::Type::MatrixInverse,
+                     ExpressionNode::Type::MatrixIdentity,
+                     ExpressionNode::Type::MatrixTranspose,
+                     ExpressionNode::Type::MatrixRowEchelonForm,
+                     ExpressionNode::Type::MatrixReducedRowEchelonForm,
+                     ExpressionNode::Type::VectorCross});
 }
 
 bool Expression::IsDiscontinuous(const Expression e, Context *context) {
   return e.isRandom() || e.type() == ExpressionNode::Type::PiecewiseOperator ||
-         ((e.type() == ExpressionNode::Type::Floor ||
-           e.type() == ExpressionNode::Type::Round ||
-           e.type() == ExpressionNode::Type::Ceiling ||
-           e.type() == ExpressionNode::Type::FracPart ||
-           e.type() == ExpressionNode::Type::AbsoluteValue) &&
+         (e.isOfType({ExpressionNode::Type::Floor, ExpressionNode::Type::Round,
+                      ExpressionNode::Type::Ceiling,
+                      ExpressionNode::Type::FracPart,
+                      ExpressionNode::Type::AbsoluteValue}) &&
           e.deepIsOfType({ExpressionNode::Type::Symbol}, context));
 }
 
@@ -395,8 +374,8 @@ bool Expression::IsSymbolic(const Expression e) {
 
 bool Expression::IsRationalFraction(const Expression &e, Context *context,
                                     const char *symbol) {
-  if (e.type() != ExpressionNode::Type::Multiplication &&
-      e.type() != ExpressionNode::Type::Power) {
+  if (!e.isOfType({ExpressionNode::Type::Multiplication,
+                   ExpressionNode::Type::Power})) {
     return false;
   }
 
@@ -577,9 +556,9 @@ bool Expression::isDivisionOfIntegers() const {
 }
 
 bool Expression::isAlternativeFormOfRationalNumber() const {
-  return type() == ExpressionNode::Type::Rational ||
-         type() == ExpressionNode::Type::BasedInteger ||
-         type() == ExpressionNode::Type::Decimal ||
+  return isOfType({ExpressionNode::Type::Rational,
+                   ExpressionNode::Type::BasedInteger,
+                   ExpressionNode::Type::Decimal}) ||
          (type() == ExpressionNode::Type::Division &&
           childAtIndex(0).isAlternativeFormOfRationalNumber() &&
           childAtIndex(1).isAlternativeFormOfRationalNumber()) ||
@@ -644,9 +623,8 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
     return true;
   }
   bool isDiscontinuous = false;
-  if (type() == ExpressionNode::Type::Ceiling ||
-      type() == ExpressionNode::Type::Floor ||
-      type() == ExpressionNode::Type::Round) {
+  if (isOfType({ExpressionNode::Type::Ceiling, ExpressionNode::Type::Floor,
+                ExpressionNode::Type::Round})) {
     // is discontinuous if it changes value
     isDiscontinuous = approximateWithValueForSymbol<float>(
                           symbol, x1, context, complexFormat, angleUnit) !=
@@ -659,8 +637,8 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
             symbol, x1, context, complexFormat, angleUnit)) !=
         std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(
             symbol, x2, context, complexFormat, angleUnit));
-  } else if (type() == ExpressionNode::Type::AbsoluteValue ||
-             type() == ExpressionNode::Type::SignFunction) {
+  } else if (isOfType({ExpressionNode::Type::AbsoluteValue,
+                       ExpressionNode::Type::SignFunction})) {
     // is discontinuous if the child changes sign
     isDiscontinuous =
         (childAtIndex(0).approximateWithValueForSymbol<float>(
@@ -689,10 +667,10 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
 }
 
 bool Expression::hasBooleanValue() const {
-  return type() == ExpressionNode::Type::Boolean ||
-         type() == ExpressionNode::Type::Comparison ||
-         type() == ExpressionNode::Type::LogicalOperatorNot ||
-         type() == ExpressionNode::Type::BinaryLogicalOperator;
+  return isOfType({ExpressionNode::Type::Boolean,
+                   ExpressionNode::Type::Comparison,
+                   ExpressionNode::Type::LogicalOperatorNot,
+                   ExpressionNode::Type::BinaryLogicalOperator});
 }
 
 bool Expression::derivate(const ReductionContext &reductionContext,
@@ -1287,8 +1265,8 @@ void Expression::beautifyAndApproximateScalar(
 void Expression::SimplifyAndApproximateChildren(
     Expression input, Expression *simplifiedOutput,
     Expression *approximateOutput, const ReductionContext &reductionContext) {
-  assert(input.type() == ExpressionNode::Type::Matrix ||
-         input.type() == ExpressionNode::Type::List);
+  assert(input.isOfType(
+      {ExpressionNode::Type::Matrix, ExpressionNode::Type::List}));
   List simplifiedChildren = List::Builder(),
        approximatedChildren = List::Builder();
   int n = input.numberOfChildren();
@@ -1372,8 +1350,7 @@ void Expression::cloneAndSimplifyAndApproximate(
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix or a list : We scan the
    * children to beautify them with the right complex format. */
-  if (e.type() == ExpressionNode::Type::Matrix ||
-      e.type() == ExpressionNode::Type::List) {
+  if (e.isOfType({ExpressionNode::Type::Matrix, ExpressionNode::Type::List})) {
     SimplifyAndApproximateChildren(e, simplifiedExpression,
                                    approximateExpression, userReductionContext);
   } else {
@@ -1524,8 +1501,8 @@ Expression Expression::deepReduce(ReductionContext reductionContext) {
    *  - int(ln(1.0025)*e^(x*ln(1.0025)+ln(200), x, 0, 1000)
    * TODO: This solution is obviously not ideal and the simplification
    * of logarithm should be reworked. */
-  if (type() == ExpressionNode::Type::Derivative ||
-      type() == ExpressionNode::Type::Integral) {
+  if (isOfType(
+          {ExpressionNode::Type::Derivative, ExpressionNode::Type::Integral})) {
     reductionContext.setExpandLogarithm(false);
   }
   deepReduceChildren(reductionContext);

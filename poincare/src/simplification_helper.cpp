@@ -138,8 +138,7 @@ Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
     Expression value = e.shallowReduce(reductionContext);
-    if (value.type() == ExpressionNode::Type::Nonreal ||
-        value.type() == ExpressionNode::Type::Undefined) {
+    if (value.isUndefined()) {
       // Undefined * _unit is Undefined. Same with Nonreal.
       mul.replaceWithInPlace(value);
       return value;

@@ -67,8 +67,7 @@ Expression CalculationStore::ansExpression(Context *context) const {
       (strcmp(mostRecentCalculation->approximateOutputText(
                   Calculation::NumberOfSignificantDigits::Maximal),
               mostRecentCalculation->exactOutputText()) != 0 ||
-       exactOutput.type() == ExpressionNode::Type::Nonreal ||
-       exactOutput.type() == ExpressionNode::Type::Undefined)) {
+       exactOutput.isUndefined())) {
     /* Case 1.
      * If exact output was hidden, is   should not be accessible using Ans.
      * Return input instead so that no precision is lost.

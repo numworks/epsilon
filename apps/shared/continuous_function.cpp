@@ -350,9 +350,9 @@ bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
   return expressionApproximated(context).recursivelyMatches(
       [](const Expression e) {
         return !e.isUninitialized() &&
-               (e.type() == ExpressionNode::Type::Sequence ||
-                e.type() == ExpressionNode::Type::Integral ||
-                e.type() == ExpressionNode::Type::Derivative);
+               e.isOfType({ExpressionNode::Type::Sequence,
+                           ExpressionNode::Type::Integral,
+                           ExpressionNode::Type::Derivative});
       });
 }
 

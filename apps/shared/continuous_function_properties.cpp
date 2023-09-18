@@ -384,9 +384,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   if (userReducedExpression.isLinearCombinationOfFunction(
           context,
           [](const Expression& e, Context* context, const char* symbol) {
-            return (e.type() == ExpressionNode::Type::Cosine ||
-                    e.type() == ExpressionNode::Type::Sine ||
-                    e.type() == ExpressionNode::Type::Tangent) &&
+            return Poincare::Trigonometry::isDirectTrigonometryFunction(e) &&
                    e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
           },
           Function::k_unknownName)) {

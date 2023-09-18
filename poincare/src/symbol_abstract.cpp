@@ -124,8 +124,8 @@ Expression SymbolAbstract::replaceSymbolWithExpression(
   if (symbol.type() == type() && hasSameNameAs(symbol)) {
     Expression exp = expression.clone();
     if (numberOfChildren() > 0) {
-      assert(type() == ExpressionNode::Type::Function ||
-             type() == ExpressionNode::Type::Sequence);
+      assert(isOfType(
+          {ExpressionNode::Type::Function, ExpressionNode::Type::Sequence}));
       assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
       Expression myVariable = childAtIndex(0).clone();
       Expression symbolVariable = symbol.childAtIndex(0);

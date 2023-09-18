@@ -112,12 +112,10 @@ static bool rootSmallerThan(const Expression *root1, const Expression *root2,
                             Context *context,
                             Preferences::ComplexFormat complexFormat,
                             Preferences::AngleUnit angleUnit) {
-  if (root2->type() == ExpressionNode::Type::Undefined ||
-      root2->type() == ExpressionNode::Type::Nonreal) {
+  if (root2->isUndefined()) {
     return true;
   }
-  if (root1->type() == ExpressionNode::Type::Undefined ||
-      root1->type() == ExpressionNode::Type::Nonreal) {
+  if (root1->isUndefined()) {
     return false;
   }
   float r1 =

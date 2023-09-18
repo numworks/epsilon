@@ -60,16 +60,16 @@ ListComplex<T> ListComplex<T>::Undefined() {
 }
 
 template <typename T>
-ListComplex<T> ListComplex<T>::sort() {
+bool ListComplex<T>::sort() {
   bool listOfDefinedScalars = this->isListOfDefinedScalars();
   bool listOfDefinedPoints = this->isListOfDefinedPoints();
   if (!listOfDefinedScalars && !listOfDefinedPoints) {
-    return *this;
+    return false;
   }
   Helpers::ListSortPack<T> pack{nullptr, this, listOfDefinedScalars};
   Helpers::Sort(Helpers::SwapInList<T>, Helpers::CompareInList<T>, &pack,
                 numberOfChildren());
-  return *this;
+  return true;
 }
 
 template class ListComplexNode<float>;

@@ -25,22 +25,20 @@ bool NeverDisplayReductionOfInput(Expression input, Context* context) {
   if (input.isUninitialized()) {
     return false;
   }
-  return input.recursivelyMatches(
-      [](const Expression e) {
-        return e.isOfType({
-            ExpressionNode::Type::ConstantPhysics,
-            ExpressionNode::Type::Randint,
-            ExpressionNode::Type::RandintNoRepeat,
-            ExpressionNode::Type::Random,
-            ExpressionNode::Type::Round,
-            ExpressionNode::Type::FracPart,
-            ExpressionNode::Type::Integral,
-            ExpressionNode::Type::Product,
-            ExpressionNode::Type::Sum,
-            ExpressionNode::Type::Derivative,
-            ExpressionNode::Type::Sequence,
-            ExpressionNode::Type::DistributionDispatcher,
-        });
+  return input.deepIsOfType(
+      {
+          ExpressionNode::Type::ConstantPhysics,
+          ExpressionNode::Type::Randint,
+          ExpressionNode::Type::RandintNoRepeat,
+          ExpressionNode::Type::Random,
+          ExpressionNode::Type::Round,
+          ExpressionNode::Type::FracPart,
+          ExpressionNode::Type::Integral,
+          ExpressionNode::Type::Product,
+          ExpressionNode::Type::Sum,
+          ExpressionNode::Type::Derivative,
+          ExpressionNode::Type::Sequence,
+          ExpressionNode::Type::DistributionDispatcher,
       },
       context);
 }
@@ -91,11 +89,8 @@ static bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
        * displayed to avoid outputs like 5 ≈ undef and also because it could
        * be a reduction that failed and was interrupted which can lead to
        * dependencies not being properly bubbled-up */
-      exactOutput.recursivelyMatches(
-          [](const Expression e) {
-            return e.isOfType({ExpressionNode::Type::Comparison,
-                               ExpressionNode::Type::Dependency});
-          },
+      exactOutput.deepIsOfType(
+          {ExpressionNode::Type::Comparison, ExpressionNode::Type::Dependency},
           context) ||
       // Angle units can have an exact output contrary to other units
       exactOutput.hasUnit(true);

@@ -11,6 +11,14 @@
 
 namespace PoincareJ {
 
+Tree* Matrix::Zero(MatrixDimension d) {
+  Tree* result = SharedEditionPool->push<BlockType::Matrix>(d.rows, d.cols);
+  for (int i = 0; i < d.rows * d.cols; i++) {
+    (0_e)->clone();
+  }
+  return result;
+}
+
 Tree* Matrix::Identity(const Tree* n) {
   assert(n->type().isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {

@@ -1,7 +1,9 @@
 #ifndef POINCARE_EXPRESSION_MATRIX_H
 #define POINCARE_EXPRESSION_MATRIX_H
 
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree.h>
+
+#include "dimension.h"
 
 namespace PoincareJ {
 
@@ -26,6 +28,7 @@ struct Matrix {
     assert(col < NumberOfColumns(matrix));
     return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);
   }
+  static Tree* Zero(MatrixDimension d);
   static Tree* Identity(const Tree* n);
   static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* a, const Tree* b);

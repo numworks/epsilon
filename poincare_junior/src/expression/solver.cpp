@@ -81,7 +81,7 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
    *   and Error::EquationUndefined).
    * - Pass ProjectionContext and project equality into subtraction.
    */
-  Tree* variables = Variables::GetVariables(equationsSet);
+  Tree* variables = Variables::GetUserSymbols(equationsSet);
   SwapTrees(&equationsSet, &variables);
   for (Tree* equation : equationsSet->children()) {
     if (!Dimension::DeepCheckDimensions(equation) ||

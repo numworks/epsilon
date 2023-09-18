@@ -37,7 +37,7 @@ const Tree* Variables::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->childAtIndex(id);
 }
 
-Tree* Variables::GetVariables(const Tree* expr) {
+Tree* Variables::GetUserSymbols(const Tree* expr) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
   for (const Tree* child : expr->selfAndDescendants()) {

@@ -18,8 +18,8 @@ class Variables {
         TypeBlock::NumberOfMetaBlocks(BlockType::Variable);
     Block m_blocks[k_size];
   };
-  // Push a Set with the variables of the expression
-  static Tree* GetVariables(const Tree* t);
+  // Push a Set with the free user symbols of the expression
+  static Tree* GetUserSymbols(const Tree* t);
   static void ProjectToId(Tree* t, const Tree* variables);
   static void BeautifyToName(Tree* t, const Tree* variables);
   static uint8_t Id(const Tree* variable);

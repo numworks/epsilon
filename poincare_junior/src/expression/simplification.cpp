@@ -809,7 +809,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   /* TODO: If simplification fails, come back to this step with a simpler
    * projection context. */
   changed = DeepSystemProjection(ref, projectionContext) || changed;
-  Tree* variables = Variables::GetVariables(ref);
+  Tree* variables = Variables::GetUserSymbols(ref);
   SwapTrees(&ref, &variables);
   Variables::ProjectToId(ref, variables);
   changed = DeepSystematicReduce(ref) || changed;

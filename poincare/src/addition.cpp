@@ -340,8 +340,8 @@ Expression Addition::shallowReduce(ReductionContext reductionContext) {
     parentOfThis = parentOfThis.parent();
   }
   if (!parentOfThis.isUninitialized() &&
-      (parentOfThis.type() == ExpressionNode::Type::Addition ||
-       parentOfThis.type() == ExpressionNode::Type::Subtraction)) {
+      parentOfThis.isOfType({ExpressionNode::Type::Addition,
+                             ExpressionNode::Type::Subtraction})) {
     return *this;
   }
 
@@ -383,8 +383,7 @@ Expression Addition::shallowReduce(ReductionContext reductionContext) {
        * Recurse to run the reduction, then create the result
        * result = MUL( addition, unit1, unit2...) */
       Expression addition = shallowReduce(reductionContext);
-      if (addition.type() == ExpressionNode::Type::Nonreal ||
-          addition.type() == ExpressionNode::Type::Undefined) {
+      if (addition.isUndefined()) {
         return replaceWithUndefinedInPlace();
       }
       Multiplication result = Multiplication::Builder(unit);
@@ -777,8 +776,8 @@ bool Addition::TermHasSquaredTrigFunctionWithBase(
     const Expression& e, const ReductionContext& reductionContext,
     Expression& base, Expression& coefficient, bool* cosine) {
   if (e.type() == ExpressionNode::Type::Power &&
-      (e.childAtIndex(0).type() == ExpressionNode::Type::Cosine ||
-       e.childAtIndex(0).type() == ExpressionNode::Type::Sine) &&
+      e.childAtIndex(0).isOfType(
+          {ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}) &&
       e.childAtIndex(1).isIdenticalTo(Rational::Builder(2))) {
     *cosine = e.childAtIndex(0).type() == ExpressionNode::Type::Cosine;
     coefficient = Rational::Builder(1);

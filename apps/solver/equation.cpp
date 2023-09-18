@@ -71,8 +71,8 @@ Expression Equation::Model::standardForm(
         GlobalPreferences::sharedGlobalPreferences->unitFormat(),
         reductionTarget));
   } else {
-    assert(simplifiedInput.type() == ExpressionNode::Type::Boolean ||
-           simplifiedInput.type() == ExpressionNode::Type::List);
+    assert(simplifiedInput.isOfType(
+        {ExpressionNode::Type::Boolean, ExpressionNode::Type::List}));
     /* The equality has disappeared after reduction. This may be because:
      * - the comparison was always true or false (e.g. 1 = 0) and has been
      *   reduced to a boolean.

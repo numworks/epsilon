@@ -1354,15 +1354,15 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
     return true;
   }
   Expression p = e.parent();
-  if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
-      p.type() == ExpressionNode::Type::Store) {
+  if (p.isUninitialized() || p.isOfType({ExpressionNode::Type::UnitConvert,
+                                         ExpressionNode::Type::Store})) {
     return false;
   }
   Expression pp = p.parent();
-  return !(p.type() == ExpressionNode::Type::Opposite &&
-           (pp.isUninitialized() ||
-            pp.type() == ExpressionNode::Type::UnitConvert ||
-            pp.type() == ExpressionNode::Type::Store));
+  return !(
+      p.type() == ExpressionNode::Type::Opposite &&
+      (pp.isUninitialized() || pp.isOfType({ExpressionNode::Type::UnitConvert,
+                                            ExpressionNode::Type::Store})));
 }
 
 bool Unit::AllowImplicitAddition(
@@ -1430,11 +1430,12 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
       node()->representative() !=
           k_temperatureRepresentatives + k_kelvinRepresentativeIndex) {
     Expression p = parent();
-    if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
-        p.type() == ExpressionNode::Type::Store ||
+    if (p.isUninitialized() ||
+        p.isOfType({ExpressionNode::Type::UnitConvert,
+                    ExpressionNode::Type::Store,
+                    ExpressionNode::Type::Opposite}) ||
         (p.type() == ExpressionNode::Type::Multiplication &&
-         p.numberOfChildren() == 2) ||
-        p.type() == ExpressionNode::Type::Opposite) {
+         p.numberOfChildren() == 2)) {
       /* If the parent is a UnitConvert, the temperature is always legal.
        * Otherwise, we need to wait until the reduction of the multiplication
        * to fully detect forbidden forms. */

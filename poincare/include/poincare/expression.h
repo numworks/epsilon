@@ -262,12 +262,24 @@ class Expression : public TreeHandle {
     return e.isUninitialized();
   }
   static bool IsUndefined(const Expression e) { return e.isUndefined(); }
-  static bool IsNAry(const Expression e);
-  static bool IsApproximate(const Expression e);
+  static bool IsNAry(const Expression e) {
+    return e.isOfType(
+        {ExpressionNode::Type::Addition, ExpressionNode::Type::Multiplication});
+  }
+  static bool IsApproximate(const Expression e) {
+    return e.isOfType({ExpressionNode::Type::Decimal,
+                       ExpressionNode::Type::Float,
+                       ExpressionNode::Type::Double});
+  }
   static bool IsRandom(const Expression e);
   static bool IsMatrix(const Expression e, Context* context);
-  static bool IsInfinity(const Expression e);
-  static bool IsPercent(const Expression e);
+  static bool IsInfinity(const Expression e) {
+    return e.isOfType({ExpressionNode::Type::Infinity});
+  }
+  static bool IsPercent(const Expression e) {
+    return e.isOfType({ExpressionNode::Type::PercentSimple,
+                       ExpressionNode::Type::PercentAddition});
+  }
   static bool IsDiscontinuous(const Expression e, Context* context);
   static bool IsSymbolic(const Expression e);
   static bool IsPoint(const Expression e) {

@@ -80,27 +80,26 @@ double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
 }
 
 bool Trigonometry::isDirectTrigonometryFunction(const Expression& e) {
-  return e.type() == ExpressionNode::Type::Cosine ||
-         e.type() == ExpressionNode::Type::Sine ||
-         e.type() == ExpressionNode::Type::Tangent;
+  return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
+                     ExpressionNode::Type::Tangent});
 }
 
 bool Trigonometry::isInverseTrigonometryFunction(const Expression& e) {
-  return e.type() == ExpressionNode::Type::ArcCosine ||
-         e.type() == ExpressionNode::Type::ArcSine ||
-         e.type() == ExpressionNode::Type::ArcTangent;
+  return e.isOfType({ExpressionNode::Type::ArcCosine,
+                     ExpressionNode::Type::ArcSine,
+                     ExpressionNode::Type::ArcTangent});
 }
 
 bool Trigonometry::isAdvancedTrigonometryFunction(const Expression& e) {
-  return e.type() == ExpressionNode::Type::Secant ||
-         e.type() == ExpressionNode::Type::Cosecant ||
-         e.type() == ExpressionNode::Type::Cotangent;
+  return e.isOfType({ExpressionNode::Type::Secant,
+                     ExpressionNode::Type::Cosecant,
+                     ExpressionNode::Type::Cotangent});
 }
 
 bool Trigonometry::isInverseAdvancedTrigonometryFunction(const Expression& e) {
-  return e.type() == ExpressionNode::Type::ArcSecant ||
-         e.type() == ExpressionNode::Type::ArcCosecant ||
-         e.type() == ExpressionNode::Type::ArcCotangent;
+  return e.isOfType({ExpressionNode::Type::ArcSecant,
+                     ExpressionNode::Type::ArcCosecant,
+                     ExpressionNode::Type::ArcCotangent});
 }
 
 bool Trigonometry::AreInverseFunctions(const Expression& directFunction,
@@ -264,8 +263,8 @@ Expression Trigonometry::shallowReduceDirectFunction(
    * cos(atan(x)) --> 1/sqrt(1+x^2)
    * sin(atan(x)) --> x/sqrt(1+x^2)
    * These equalities are true on complexes */
-  if ((e.type() == ExpressionNode::Type::Cosine ||
-       e.type() == ExpressionNode::Type::Sine) &&
+  if ((e.isOfType(
+          {ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine})) &&
       e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
     // Build 1/sqrt(1+x^2)
@@ -354,8 +353,8 @@ Expression Trigonometry::shallowReduceDirectFunction(
          * So we can take the new angle π - r'/q*π, which changes cosinus or
          * tangent, but not sinus. The new rational is 1-r'/q = (q-r')/q. */
         div.remainder = Integer::Subtraction(piDivisor, div.remainder);
-        if (e.type() == ExpressionNode::Type::Cosine ||
-            e.type() == ExpressionNode::Type::Tangent) {
+        if (e.isOfType({ExpressionNode::Type::Cosine,
+                        ExpressionNode::Type::Tangent})) {
           unaryCoefficient *= -1;
         }
       }
@@ -764,12 +763,8 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
 
 static Expression AddAngleUnitToDirectFunctionIfNeeded(
     Expression& e, Preferences::AngleUnit angleUnit) {
-  assert(e.type() == ExpressionNode::Type::Cosine ||
-         e.type() == ExpressionNode::Type::Sine ||
-         e.type() == ExpressionNode::Type::Tangent ||
-         e.type() == ExpressionNode::Type::Cosecant ||
-         e.type() == ExpressionNode::Type::Secant ||
-         e.type() == ExpressionNode::Type::Cotangent);
+  assert(Trigonometry::isDirectTrigonometryFunction(e) ||
+         Trigonometry::isAdvancedTrigonometryFunction(e));
 
   assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
 
@@ -792,11 +787,11 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
             if (e.isNumber()) {
               return TrinaryBoolean::False;
             }
-            if (e.type() == ExpressionNode::Type::Addition ||
-                e.type() == ExpressionNode::Type::Subtraction ||
-                e.type() == ExpressionNode::Type::Multiplication ||
-                e.type() == ExpressionNode::Type::Division ||
-                e.type() == ExpressionNode::Type::Power) {
+            if (e.isOfType({ExpressionNode::Type::Addition,
+                            ExpressionNode::Type::Subtraction,
+                            ExpressionNode::Type::Multiplication,
+                            ExpressionNode::Type::Division,
+                            ExpressionNode::Type::Power})) {
               return TrinaryBoolean::Unknown;
             }
             // Stop search if the expression is not one of the above
@@ -818,8 +813,8 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
   Unit unit = Unit::Builder(
       UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
           angleUnit));
-  if (child.type() == ExpressionNode::Type::Addition ||
-      child.type() == ExpressionNode::Type::Subtraction) {
+  if (child.isOfType({ExpressionNode::Type::Addition,
+                      ExpressionNode::Type::Subtraction})) {
     child = Parenthesis::Builder(child);
   }
   Expression newChild = Multiplication::Builder(child, unit);
@@ -829,12 +824,7 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
 
 Expression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
     Expression& e, Preferences::AngleUnit angleUnit) {
-  if (e.type() == ExpressionNode::Type::Cosine ||
-      e.type() == ExpressionNode::Type::Sine ||
-      e.type() == ExpressionNode::Type::Tangent ||
-      e.type() == ExpressionNode::Type::Cosecant ||
-      e.type() == ExpressionNode::Type::Secant ||
-      e.type() == ExpressionNode::Type::Cotangent) {
+  if (isDirectTrigonometryFunction(e) || isAdvancedTrigonometryFunction(e)) {
     e = AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
     return e;
   }

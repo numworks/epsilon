@@ -49,8 +49,7 @@ Evaluation<T> DependencyNode::templatedApproximate(
     const ApproximationContext &approximationContext) const {
   ExpressionNode *dependencies =
       childAtIndex(Dependency::k_indexOfDependenciesList);
-  if (dependencies->type() == Type::Undefined ||
-      dependencies->type() == Type::Nonreal) {
+  if (dependencies->isUndefined()) {
     return Complex<T>::Undefined();
   }
   assert(dependencies->type() == ExpressionNode::Type::List);
@@ -207,8 +206,8 @@ Expression Dependency::removeUselessDependencies(
   for (int i = 0; i < dependencies.numberOfChildren(); i++) {
     Expression depI = dependencies.childAtIndex(i);
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
-    if (depI.type() == ExpressionNode::Type::Multiplication ||
-        depI.type() == ExpressionNode::Type::Addition) {
+    if (depI.isOfType({ExpressionNode::Type::Multiplication,
+                       ExpressionNode::Type::Addition})) {
       if (depI.numberOfChildren() == 1) {
         depI.replaceWithInPlace(depI.childAtIndex(0));
       } else {

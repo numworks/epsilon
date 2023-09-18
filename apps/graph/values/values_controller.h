@@ -73,10 +73,6 @@ class ValuesController : public Shared::ValuesController,
       OMG::CeilDivision(k_maxNumberOfDisplayableColumns, 2);
   constexpr static int k_maxNumberOfDisplayableAbscissaCells =
       k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
-  constexpr static int k_valuesCellBufferSize =
-      2 * Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-              Poincare::Preferences::VeryLargeNumberOfSignificantDigits) +
-      3;  // The largest buffer holds (-1.234567E-123;-1.234567E-123)
   constexpr static KDCoordinate k_maxColumnWidth = 2 * k_cellWidth;
   constexpr static KDCoordinate k_maxRowHeight = 5 * k_cellHeight;
   static KDSize ApproximatedParametricCellSize();

@@ -40,10 +40,6 @@ class ValuesController : public Shared::ValuesController,
   }
 
  private:
-  constexpr static int k_valuesCellBufferSize =
-      Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-          Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
-
   // TableViewDataSource
   Escher::TableSize1DManager *columnWidthManager() override {
     return &m_widthManager;

@@ -13,8 +13,11 @@ class Context {
   constexpr static const char* k_extensions[] = {pcjExtension};
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
+  static bool DeepReplaceIdentifiersWithTrees(Tree* tree);
+  static const Tree* TreeForIdentifier(const char* identifier,
+                                       size_t identifierLength);
   static const Tree* TreeForIdentifier(const char* identifier);
-  static bool SetTreeForIdentifier(const Tree* node, const char* identifier);
+  static bool SetTreeForIdentifier(const Tree* tree, const char* identifier);
   static void DeleteTreeForIdentifier(const char* identifier);
 };
 

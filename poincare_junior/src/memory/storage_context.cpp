@@ -18,10 +18,8 @@ bool StorageContext::DeepReplaceIdentifiersWithTrees(Tree* tree) {
     }
     return false;
   }
-  Tree* child = tree->nextNode();
-  for (int i = 0; i < tree->numberOfChildren(); i++) {
+  for (Tree* child : tree->children()) {
     changed = DeepReplaceIdentifiersWithTrees(child) || changed;
-    child = child->nextTree();
   }
   return changed;
 }

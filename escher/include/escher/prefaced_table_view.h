@@ -39,7 +39,7 @@ class PrefacedTableView : public View,
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
   KDPoint actualOffset(const SelectableTableView* t) const override {
-    return m_actualOffsetWithMargins;
+    return m_virtualOffset;
   }
 
   SelectableTableView* selectableTableView() { return m_mainTableView; }
@@ -148,6 +148,7 @@ class PrefacedTableView : public View,
 
   void layoutSubviewsInRect(KDRect rect, bool force);
   void layoutScrollbars(bool force);
+  void updateVirtualOffset();
   virtual void resetContentOffset();
 
   RowPrefaceDataSource m_rowPrefaceDataSource;
@@ -169,7 +170,7 @@ class PrefacedTableView : public View,
   }
 
   SelectableTableViewDelegate* m_mainTableDelegate;
-  KDPoint m_actualOffsetWithMargins;
+  KDPoint m_virtualOffset;
 };
 
 }  // namespace Escher

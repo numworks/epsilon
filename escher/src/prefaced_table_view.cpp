@@ -60,8 +60,8 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   assert(t == m_mainTableView);
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(
-        t, previousSelectedCol, previousSelectedRow, previousOffset,
-        withinTemporarySelection);
+        m_mainTableView, previousSelectedCol, previousSelectedRow,
+        previousOffset, withinTemporarySelection);
   }
   if (m_mainTableView->selectedRow() == -1) {
     resetContentOffset();

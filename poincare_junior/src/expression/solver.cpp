@@ -41,23 +41,30 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
 Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context context,
                                 Error* error) {
   Tree* simplifiedEquationSet = equationsSet->clone();
+  // TODO: Replace overriden variable before SimplifyAndFindVariables
   Tree* variables =
       SimplifyAndFindVariables(simplifiedEquationSet, context, error);
+  uint8_t numberOfVariables = variables->numberOfChildren();
+  SwapTrees(&simplifiedEquationSet, &variables);
+  Variables::ProjectToId(simplifiedEquationSet, variables);
   EditionReference result;
   if (*error == Error::NoError) {
-    result =
-        SolveLinearSystem(simplifiedEquationSet, variables, context, error);
+    result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
+                               context, error);
     if (*error == Error::NonLinearSystem &&
         variables->numberOfChildren() <= 1 &&
         equationsSet->numberOfChildren() <= 1) {
       assert(result.isUninitialized());
-      result =
-          SolvePolynomial(simplifiedEquationSet, variables, context, error);
+      result = SolvePolynomial(simplifiedEquationSet, numberOfVariables,
+                               context, error);
       // TODO: Handle GeneralMonovariable solving.
     }
   }
-  variables->removeTree();
+  if (!result.isUninitialized()) {
+    Variables::BeautifyToName(result, variables);
+  }
   simplifiedEquationSet->removeTree();
+  variables->removeTree();
   return result;
 }
 
@@ -70,7 +77,6 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
    * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
    *   and Error::EquationUndefined).
    * - Pass ProjectionContext and project equality into subtraction.
-   * - Use Variables::ProjectToId and Variables::BeautifyToName
    */
   Tree* variables = Variables::GetVariables(equationsSet);
   SwapTrees(&equationsSet, &variables);
@@ -88,18 +94,16 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
   return variables;
 }
 
-Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet,
-                                const Tree* variables, Context context,
-                                Error* error) {
+Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
+                                Context context, Error* error) {
   context.exactResults = true;
   // n unknown variables and rows equations
-  int n = variables->numberOfChildren();
-  int cols = n + 1;
-  int rows = simplifiedEquationSet->numberOfChildren();
+  uint8_t cols = n + 1;
+  uint8_t rows = simplifiedEquationSet->numberOfChildren();
   Tree* matrix = SharedEditionPool->push<BlockType::Matrix>(0, 0);
   // Create the matrix (A|b) for the equation Ax=b;
   for (const Tree* equation : simplifiedEquationSet->children()) {
-    Tree* coefficients = GetLinearCoefficients(equation, variables, context);
+    Tree* coefficients = GetLinearCoefficients(equation, n, context);
     if (!coefficients) {
       *error = Error::NonLinearSystem;
       matrix->removeTree();
@@ -119,9 +123,9 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet,
     return nullptr;
   }
   const Tree* coefficient = matrix->nextNode();
-  for (int row = 0; row < rows; row++) {
+  for (uint8_t row = 0; row < rows; row++) {
     bool allCoefficientsNull = true;
-    for (int col = 0; col < n; col++) {
+    for (uint8_t col = 0; col < n; col++) {
       if (allCoefficientsNull && !Sign::GetSign(coefficient).isZero()) {
         allCoefficientsNull = false;
       }
@@ -140,14 +144,13 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet,
     /* The rank is equal to the number of variables: the system has n
      * solutions, and after canonization their values are the first n values on
      * the last column. */
-    const Tree* variable = variables->nextNode();
+    uint8_t variableId = 0;
     Tree* child = matrix->nextNode();
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < cols; col++) {
+    for (uint8_t row = 0; row < rows; row++) {
+      for (uint8_t col = 0; col < cols; col++) {
         if (row < n && col == cols - 1) {
           if (*error == Error::NoError) {
-            *error = RegisterSolution(child, variable, context);
-            variable = variable->nextTree();
+            *error = RegisterSolution(child, variableId++, context);
             // Continue anyway to preserve EditionPool integrity
           }
           child = child->nextTree();
@@ -165,13 +168,14 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet,
   return nullptr;
 }
 
-Tree* Solver::GetLinearCoefficients(const Tree* equation, const Tree* variables,
+Tree* Solver::GetLinearCoefficients(const Tree* equation,
+                                    uint8_t numberOfVariables,
                                     Context context) {
   EditionReference result = SharedEditionPool->push<BlockType::SystemList>(0);
   EditionReference tree = equation->clone();
-  for (const Tree* variable : variables->children()) {
+  for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
-    Tree* polynomial = PolynomialParser::Parse(tree, variable);
+    Tree* polynomial = PolynomialParser::Parse(tree, Variables::Variable(i));
     if (polynomial->type() != BlockType::Polynomial) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
@@ -210,7 +214,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation, const Tree* variables,
   return result;
 }
 
-Solver::Error Solver::RegisterSolution(Tree* solution, const Tree* variable,
+Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
                                        Context context) {
   /* TODO:
    * - Implement equations. Here a x=2 solution will register as x-2.
@@ -219,7 +223,8 @@ Solver::Error Solver::RegisterSolution(Tree* solution, const Tree* variable,
    * - Handle NonReal and Undefined solutions.
    * - Handle approximate display.
    */
-  solution->cloneTreeBeforeNode(variable);
+  solution->moveTreeBeforeNode(
+      SharedEditionPool->push<BlockType::Variable>(variableId));
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
   Simplification::AdvancedReduction(solution, solution);

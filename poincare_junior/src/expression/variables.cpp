@@ -1,10 +1,19 @@
 #include "variables.h"
 
+#include <poincare_junior/src/memory/edition_pool.h>
+
 #include "k_tree.h"
 #include "set.h"
 #include "symbol.h"
 
 namespace PoincareJ {
+
+Variables::Variable::Variable(uint8_t id) {
+  Tree* temp = SharedEditionPool->push<BlockType::Variable>(id);
+  assert(k_size == temp->treeSize());
+  temp->copyTreeTo(m_blocks);
+  temp->removeTree();
+}
 
 uint8_t Variables::Id(const Tree* variable) {
   assert(variable->type() == BlockType::Variable);

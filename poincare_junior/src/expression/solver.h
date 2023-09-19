@@ -37,20 +37,22 @@ class Solver {
                                         Error* error);
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
-                                 const Tree* variables, Context context,
+                                 uint8_t numberOfVariables, Context context,
                                  Error* error);
   // Return list of solutions for a polynomial equation.
-  static Tree* SolvePolynomial(const Tree* equationsSet, const Tree* variables,
-                               Context context, Error* error) {
+  static Tree* SolvePolynomial(const Tree* equationsSet,
+                               uint8_t numberOfVariables, Context context,
+                               Error* error) {
     // TODO: Implement
     *error = Error::EquationUndefined;
     return nullptr;
   }
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
-                                     const Tree* variables, Context context);
+                                     uint8_t numberOfVariables,
+                                     Context context);
   // Prepare a solution before display
-  static Error RegisterSolution(Tree* solution, const Tree* variable,
+  static Error RegisterSolution(Tree* solution, uint8_t variableId,
                                 Context context);
 };
 

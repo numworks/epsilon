@@ -154,6 +154,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
            m_prefaceIntersectionView.minimalSizeForOptimalDisplay() ==
                KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
+  updateVirtualOffset();
   layoutScrollbars(force);
 }
 

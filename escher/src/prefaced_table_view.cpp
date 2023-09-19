@@ -15,7 +15,7 @@ PrefacedTableView::PrefacedTableView(
       m_prefacedDelegate(prefacedTableViewDelegate),
       m_mainTableViewTopMargin(0),
       m_mainTableDelegate(delegate),
-      m_actualOffsetWithMargins(KDPointZero) {
+      m_virtualOffset(KDPointZero) {
   m_mainTableView->setParentResponder(parentResponder);
   m_mainTableView->setDelegate(this);
   m_rowPrefaceView.hideScrollBars();
@@ -68,14 +68,6 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
     resetContentOffset();
   }
   layoutSubviews();
-
-  // Update actual offset
-  m_actualOffsetWithMargins =
-      m_mainTableView->contentOffset()
-          .relativeTo(relativeChildOrigin(m_mainTableView))
-          .translatedBy(marginToAddForVirtualOffset());
-  assert(m_actualOffsetWithMargins.x() >= 0 &&
-         m_actualOffsetWithMargins.y() >= 0);
 }
 
 View* PrefacedTableView::subviewAtIndex(int index) {
@@ -143,20 +135,24 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
 
 void PrefacedTableView::layoutScrollbars(bool force) {
   m_mainTableView->hideScrollBars();
-  // Content offset if we had no prefaces hiding a part of the table
-  KDPoint virtualOffset = m_mainTableView->contentOffset()
-                              .relativeTo(relativeChildOrigin(m_mainTableView))
-                              .translatedBy(marginToAddForVirtualOffset());
   KDRect r1 = KDRectZero;
   KDRect r2 = KDRectZero;
   m_barDecorator.layoutIndicators(
-      this, m_mainTableView->minimalSizeForOptimalDisplay(), virtualOffset,
+      this, m_mainTableView->minimalSizeForOptimalDisplay(), m_virtualOffset,
       bounds(), &r1, &r2, force);
 }
 
 void PrefacedTableView::layoutSubviews(bool force) {
   layoutSubviewsInRect(bounds(), force);
+  updateVirtualOffset();
   layoutScrollbars(force);
+}
+
+void PrefacedTableView::updateVirtualOffset() {
+  m_virtualOffset = m_mainTableView->contentOffset()
+                        .relativeTo(relativeChildOrigin(m_mainTableView))
+                        .translatedBy(marginToAddForVirtualOffset());
+  assert(m_virtualOffset.x() >= 0 && m_virtualOffset.y() >= 0);
 }
 
 HighlightCell* PrefacedTableView::IntermediaryDataSource::reusableCell(

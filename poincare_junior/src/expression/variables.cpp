@@ -92,30 +92,25 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value) {
 
 bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
   if (expr->type() == BlockType::UserSymbol &&
-      Symbol::Length(expr) == Symbol::Length(symbol) &&
-      strncmp(Symbol::NonNullTerminatedName(expr),
-              Symbol::NonNullTerminatedName(symbol),
-              Symbol::Length(symbol)) == 0) {
+      expr->treeIsIdenticalTo(symbol)) {
     Tree* var =
         SharedEditionPool->push<BlockType::Variable>(static_cast<uint8_t>(id));
     expr->moveTreeOverTree(var);
     return true;
   }
-  if (expr->type().isParametric()) {
-    Tree* child = expr->childAtIndex(Parametric::FunctionIndex(expr));
-    if (Symbol::Length(child) == Symbol::Length(symbol) &&
-        strncmp(Symbol::NonNullTerminatedName(child),
-                Symbol::NonNullTerminatedName(symbol),
-                Symbol::Length(symbol)) == 0) {
-      return false;
-    }
-  }
   bool isParametric = expr->type().isParametric();
   bool changed = false;
   for (int i = 0; Tree * child : expr->children()) {
-    int updatedId =
-        id + (isParametric && i++ == Parametric::FunctionIndex(expr));
-    changed = ReplaceSymbol(child, symbol, updatedId) || changed;
+    if (isParametric && i == Parametric::k_variableIndex) {
+    } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
+      Tree* newSymbol = expr->childAtIndex(Parametric::k_variableIndex);
+      if (!newSymbol->treeIsIdenticalTo(symbol)) {
+        changed = ReplaceSymbol(child, symbol, id + 1) || changed;
+      }
+    } else {
+      changed = ReplaceSymbol(child, symbol, id) || changed;
+    }
+    i++;
   }
   return changed;
 }

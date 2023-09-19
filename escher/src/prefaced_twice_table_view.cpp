@@ -86,7 +86,8 @@ void PrefacedTwiceTableView::resetContentOffset() {
   m_prefaceIntersectionView.resetScroll();
 }
 
-void PrefacedTwiceTableView::layoutSubviews(bool force) {
+void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
+  assert(rect == bounds());
   if (m_prefacedDelegate) {
     m_columnPrefaceDataSource.setPrefaceColumn(
         m_prefacedDelegate->columnToFreeze());
@@ -101,7 +102,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     // Main table and row preface
     m_mainTableView->margins()->setLeft(m_mainTableViewLeftMargin);
     m_rowPrefaceView.margins()->setLeft(m_mainTableViewLeftMargin);
-    layoutSubviewsInRect(bounds(), force);
+    PrefacedTableView::layoutSubviewsInRect(bounds(), force);
 
     // Column preface
     setChildFrame(&m_columnPrefaceView, KDRectZero, force);
@@ -117,7 +118,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     // Main table and row preface
     m_mainTableView->margins()->setLeft(0);
     m_rowPrefaceView.margins()->setLeft(0);
-    layoutSubviewsInRect(
+    PrefacedTableView::layoutSubviewsInRect(
         KDRect(columnPrefaceWidth, 0, bounds().width() - columnPrefaceWidth,
                bounds().height()),
         force);
@@ -154,8 +155,6 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
            m_prefaceIntersectionView.minimalSizeForOptimalDisplay() ==
                KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
-  updateVirtualOffset();
-  layoutScrollbars(force);
 }
 
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::

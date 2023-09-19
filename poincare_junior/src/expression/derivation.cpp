@@ -2,6 +2,7 @@
 
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -26,7 +27,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
 
 void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
                           const Tree *symbolValue) {
-  if (symbol->treeIsIdenticalTo(derivand)) {
+  if (derivand->treeIsIdenticalTo(KVar<0>)) {
     SharedEditionPool->push<BlockType::One>();
     return;
   }
@@ -149,49 +150,12 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
 Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
                                        const Tree *symbol,
                                        const Tree *symbolValue) {
-  assert(symbol->type() == BlockType::Variable);
-  if (symbol->treeIsIdenticalTo(symbolValue)) {
-    // No need to replace anything
-    return SharedEditionPool->clone(expression);
-  }
-  Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
-  CloneReplacingSymbolRec(expression, symbol, symbolValue);
+  Tree *result = expression->clone();
+  Variables::Replace(result, 0, symbolValue);
   return result;
 }
 
-bool Derivation::CloneReplacingSymbolRec(const Tree *expression,
-                                         const Tree *symbol,
-                                         const Tree *symbolValue) {
-  if (symbol->treeIsIdenticalTo(expression)) {
-    SharedEditionPool->clone(symbolValue);
-    // symbolValue is already expected to be reduced.
-    return true;
-  }
-  Tree *result = SharedEditionPool->clone(expression, false);
-  // TODO: Extend this escape case to handle all nodes using local context.
-  if (expression->type() == BlockType::Derivative) {
-    // With x symbol and f(y) symbolValue :
-    const Tree *subSymbol = expression->childAtIndex(0);
-    if (subSymbol->treeIsIdenticalTo(symbol)) {
-      // Diff(g(x),x,h(x)) -> Diff(g(x),x,h(f(y)))
-      SharedEditionPool->clone(subSymbol);
-      CloneReplacingSymbolRec(subSymbol->nextTree(), symbol, symbolValue);
-      SharedEditionPool->clone(expression->nextNode());
-      /* Not calling ShallowSystematicReduce because, since Diff was there after
-       * reduction, changing symbolValue will not help further. */
-      return true;
-    }
-    // TODO : Diff(g(x,y),y,h(x,y)) -> Diff(g(f(y),z),z,h(f(y),y))
-    // Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
-  }
-  bool changed = false;
-  for (const Tree *child : expression->children()) {
-    changed = CloneReplacingSymbolRec(child, symbol, symbolValue) || changed;
-  }
-  if (changed) {
-    Simplification::ShallowSystematicReduce(result);
-  }
-  return changed;
-}
+// TODO : Diff(g(x,y),y,h(x,y)) -> Diff(g(f(y),z),z,h(f(y),y))
+// Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
 
 }  // namespace PoincareJ

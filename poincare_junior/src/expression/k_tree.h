@@ -49,6 +49,9 @@ constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KSet = KNAry<BlockType::Set>();
 constexpr auto KSystemList = KNAry<BlockType::SystemList>();
 
+template <uint8_t Id>
+constexpr auto KVar = KTree<BlockType::Variable, Id>();
+
 template <uint8_t Rows, uint8_t Cols>
 class KMatrix {
  public:

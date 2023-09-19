@@ -23,9 +23,6 @@ class Derivation {
   // Clone expression replacing symbol with symbolValue.
   static Tree* CloneReplacingSymbol(const Tree* expression, const Tree* symbol,
                                     const Tree* symbolValue);
-  static bool CloneReplacingSymbolRec(const Tree* expression,
-                                      const Tree* symbol,
-                                      const Tree* symbolValue);
 };
 
 }  // namespace PoincareJ

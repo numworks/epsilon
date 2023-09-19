@@ -100,6 +100,7 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
+  static bool ContainsVariable(const Tree* tree);
   static Tree* GetVariables(const Tree* expression);
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
@@ -108,6 +109,7 @@ class PolynomialParser final {
                                 const Tree* variable);
 
  private:
+  static void AddVariable(Tree* set, const Tree* variable);
   static std::pair<EditionReference, uint8_t> ParseMonomial(
       EditionReference expression, const Tree* variable);
 #if 0

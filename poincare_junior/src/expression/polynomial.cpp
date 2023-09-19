@@ -293,7 +293,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 
 /* PolynomialParser */
 
-bool ContainsVariable(const Tree* tree) {
+bool PolynomialParser::ContainsVariable(const Tree* tree) {
   int numberOfChildren = tree->numberOfChildren();
   if (numberOfChildren == 0) {
     return tree->type().isOfType(
@@ -310,7 +310,7 @@ bool ContainsVariable(const Tree* tree) {
   return false;
 }
 
-void AddVariable(Tree* set, const Tree* variable) {
+void PolynomialParser::AddVariable(Tree* set, const Tree* variable) {
   if (ContainsVariable(variable)) {
     Set::Add(set, variable);
   }

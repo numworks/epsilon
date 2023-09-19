@@ -46,6 +46,7 @@ QUIZ_CASE(pcj_solver) {
   // Errors
   check_solutions({"x+y+z", "x-y"}, {}, Solver::Error::TooManyVariables);
   check_solutions({"x^2", "y"}, {}, Solver::Error::NonLinearSystem);
+  check_solutions({"x*y+y", "y-1"}, {}, Solver::Error::NonLinearSystem);
   check_solutions({"identity(3)"}, {}, Solver::Error::EquationUndefined);
   // check_solutions({"x^2+1"}, {}, Solver::Error::EquationNonreal);
   // check_solutions({"sin(x)"}, {}, Solver::Error::RequireApproximateSolution);

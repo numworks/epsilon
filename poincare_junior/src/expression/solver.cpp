@@ -200,6 +200,17 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
     // Update tree to follow [Coeff0] if it exists for next variables.
     tree = nullConstant ? SharedEditionPool->push<BlockType::Zero>()
                         : polynomial->nextTree();
+    if (PolynomialParser::ContainsVariable(polynomial) ||
+        (i == numberOfVariables - 1 &&
+         PolynomialParser::ContainsVariable(tree))) {
+      /* The expression can be linear on all coefficients taken one by one but
+       * non-linear (ex: xy = 2). We delete the results and return false if one
+       * of the coefficients (or last constant term) contains a variable. */
+      tree->removeTree();
+      polynomial->removeTree();
+      result->removeTree();
+      return nullptr;
+    }
     /* This will detach [Coeff1] into result, leaving tree alone and polynomial
      * properly pilfered. */
     NAry::AddChild(result, polynomial);
@@ -207,10 +218,6 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
   // Constant term is remaining [Coeff0].
   Tree* constant = tree->detachTree();
   NAry::AddChild(result, constant);
-  /* The expression can be linear on all coefficients taken one by one but
-   * non-linear (ex: xy = 2). We delete the results and return false if one of
-   * the coefficients contains a variable. */
-  // TODO: Return nullptr if any elements of result contains variables.
   return result;
 }
 

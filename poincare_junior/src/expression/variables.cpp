@@ -47,18 +47,23 @@ Tree* Variables::GetUserSymbols(const Tree* expr) {
 
 void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
   if (expr->type() == BlockType::UserSymbol) {
-    Set::Add(set, expr);
-  } else if (expr->type().isParametric()) {
-    Tree* subSet = Set::PushEmpty();
-    GetUserSymbols(expr->childAtIndex(Parametric::k_functionIndex), subSet);
-    Tree* boundSymbols = Set::PushEmpty();
-    Set::Add(boundSymbols, expr->childAtIndex(Parametric::k_variableIndex));
-    subSet = Set::Difference(subSet, boundSymbols);
-    set = Set::Union(set, subSet);
-  } else {
-    for (const Tree* child : expr->children()) {
+    return Set::Add(set, expr);
+  }
+  bool isParametric = expr->type().isParametric();
+  for (int i = 0; const Tree* child : expr->children()) {
+    if (isParametric && i == Parametric::k_variableIndex) {
+    } else if (isParametric && i == Parametric::k_functionIndex) {
+      Tree* subSet = Set::PushEmpty();
+      GetUserSymbols(child, subSet);
+      Tree* boundSymbols = Set::PushEmpty();
+      Set::Add(boundSymbols, expr->childAtIndex(Parametric::k_variableIndex));
+      subSet = Set::Difference(subSet, boundSymbols);
+      set = Set::Union(set, subSet);
+      continue;
+    } else {
       GetUserSymbols(child, set);
     }
+    i++;
   }
 }
 
@@ -72,12 +77,11 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value) {
     expr->cloneTreeOverTree(value);
     return true;
   }
-  if (expr->type().isParametric()) {
-    id++;
-  }
+  bool isParametric = expr->type().isParametric();
   bool changed = false;
-  for (Tree* child : expr->children()) {
-    changed = Replace(child, id, value) || changed;
+  for (int i = 0; Tree * child : expr->children()) {
+    int updatedId = id + (isParametric && i++ == Parametric::k_functionIndex);
+    changed = Replace(child, updatedId, value) || changed;
   }
   if (changed) {
     Simplification::ShallowSystematicReduce(expr);
@@ -104,11 +108,12 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
                 Symbol::Length(symbol)) == 0) {
       return false;
     }
-    id++;
   }
+  bool isParametric = expr->type().isParametric();
   bool changed = false;
-  for (Tree* child : expr->children()) {
-    changed = ReplaceSymbol(child, symbol, id) || changed;
+  for (int i = 0; Tree * child : expr->children()) {
+    int updatedId = id + (isParametric && i++ == Parametric::k_functionIndex);
+    changed = ReplaceSymbol(child, symbol, updatedId) || changed;
   }
   return changed;
 }
@@ -122,15 +127,17 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
                  Symbol::Length(expr)) +
             depth));
     expr->moveTreeOverTree(var);
-  } else if (expr->type().isParametric()) {
-    Tree* child = expr->childAtIndex(Parametric::k_functionIndex);
-    ReplaceSymbol(child, expr->childAtIndex(Parametric::k_variableIndex), 0);
-    ProjectToId(child, variables, depth + 1);
-    // TODO bounds
-    return;
   }
-  for (Tree* child : expr->children()) {
-    ProjectToId(child, variables, depth);
+  bool isParametric = expr->type().isParametric();
+  for (int i = 0; Tree * child : expr->children()) {
+    if (isParametric && i == Parametric::k_variableIndex) {
+    } else if (isParametric && i == Parametric::k_functionIndex) {
+      ReplaceSymbol(child, expr->childAtIndex(Parametric::k_variableIndex), 0);
+      ProjectToId(child, variables, depth + 1);
+    } else {
+      ProjectToId(child, variables, depth);
+    }
+    i++;
   }
 }
 
@@ -139,24 +146,24 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
   assert(SharedEditionPool->isAfter(variables, expr));
   if (expr->type() == BlockType::Variable && depth <= Id(expr)) {
     expr->cloneTreeOverTree(Variables::ToSymbol(variables, Id(expr) - depth));
-  } else if (expr->type().isParametric()) {
-    Tree* child = expr->childAtIndex(Parametric::k_functionIndex);
-    // beautify outer variables
-    BeautifyToName(child, variables, depth + 1);
-    // beautify variable introduced by this scope
-    // TODO check that name is available here or make new name
-    Variables::Replace(child, 0,
-                       expr->childAtIndex(Parametric::k_variableIndex));
-    return;
   }
-  for (Tree* child : expr->children()) {
+  bool isParametric = expr->type().isParametric();
+  for (int i = 0; Tree * child : expr->children()) {
+    if (isParametric && i++ == Parametric::k_functionIndex) {
+      // beautify outer variables
+      BeautifyToName(child, variables, depth + 1);
+      // beautify variable introduced by this scope
+      // TODO check that name is available here or make new name
+      Variables::Replace(child, 0,
+                         expr->childAtIndex(Parametric::k_variableIndex));
+      continue;
+    }
     BeautifyToName(child, variables, depth);
   }
 }
 
 bool Variables::HasVariables(const Tree* expr) {
   for (const Tree* child : expr->selfAndDescendants()) {
-    assert(child->type() != BlockType::UserSymbol);
     if (child->type() == BlockType::Variable) {
       return true;
     }
@@ -171,14 +178,13 @@ bool Variables::HasVariable(const Tree* expr, const Tree* variable) {
 }
 
 bool Variables::HasVariable(const Tree* expr, int id) {
-  assert(expr->type() != BlockType::UserSymbol);
   if (expr->type() == BlockType::Variable) {
     return Id(expr) == id;
-  } else if (expr->type().isParametric()) {
-    id++;
   }
-  for (const Tree* child : expr->children()) {
-    if (HasVariable(child, id)) {
+  bool isParametric = expr->type().isParametric();
+  for (int i = 0; const Tree* child : expr->children()) {
+    int updatedId = id + (isParametric && i++ == Parametric::k_functionIndex);
+    if (HasVariable(child, updatedId)) {
       return true;
     }
   }

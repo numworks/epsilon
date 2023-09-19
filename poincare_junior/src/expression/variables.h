@@ -41,12 +41,16 @@ class Variables {
 
   // Replace occurrences of variable with value and simplify inside expr
   static bool Replace(Tree* expr, const Tree* variable, const Tree* value);
-  static bool Replace(Tree* expr, int id, const Tree* value);
+  static bool Replace(Tree* expr, int id, const Tree* value,
+                      bool leave = false);
 
   // Increment variables indexes
   static void EnterScope(Tree* expr);
   // Decrement variables indexes
   static void LeaveScope(Tree* expr);
+  static void LeaveScopeWithReplacement(Tree* expr, const Tree* value) {
+    Replace(expr, 0, value, true);
+  }
 
  private:
   static void GetUserSymbols(const Tree* t, Tree* set);

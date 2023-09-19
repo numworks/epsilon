@@ -141,7 +141,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
 Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
                                        const Tree *symbolValue) {
   Tree *result = expression->clone();
-  Variables::Replace(result, symbolVar, symbolValue);
+  Variables::LeaveScopeWithReplacement(result, symbolValue);
   return result;
 }
 

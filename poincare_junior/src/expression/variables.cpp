@@ -72,17 +72,24 @@ bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value) {
   return Replace(expr, Id(variable), value);
 }
 
-bool Variables::Replace(Tree* expr, int id, const Tree* value) {
-  if (expr->type() == BlockType::Variable && Id(expr) == id) {
-    expr->cloneTreeOverTree(value);
-    return true;
+bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
+  if (expr->type() == BlockType::Variable) {
+    if (Id(expr) == id) {
+      expr->cloneTreeOverTree(value);
+      return true;
+    }
+    if (leave) {
+      expr->setNodeValue(0, Id(expr) - 1);
+      return true;
+    }
+    return false;
   }
   bool isParametric = expr->type().isParametric();
   bool changed = false;
   for (int i = 0; Tree * child : expr->children()) {
     int updatedId =
         id + (isParametric && i++ == Parametric::FunctionIndex(expr));
-    changed = Replace(child, updatedId, value) || changed;
+    changed = Replace(child, updatedId, value, leave) || changed;
   }
   if (changed) {
     Simplification::ShallowSystematicReduce(expr);

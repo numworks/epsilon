@@ -250,6 +250,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("e^(ln(x))", "x");
   simplifies_to("e^(ln(x+x))", "2*x");
   simplifies_to("diff(x, x, 2)", "1");
+  simplifies_to("diff(a*x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
   simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))*y^(-1)");

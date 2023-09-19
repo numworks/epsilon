@@ -192,16 +192,14 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 
 HighlightCell *GraphOptionsController::cell(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  HighlightCell *cells[k_maxNumberOfRows] = {
-      &m_changeRegressionCell,
-      &m_regressionEquationCell,
-      &m_rCell,
-      &m_r2Cell,
-      &m_residualPlotCell,
-      &m_xParameterCell,
-      &m_yParameterCell,
-      &m_removeRegressionCell,
-  };
+  HighlightCell *cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
+                                             &m_regressionEquationCell,
+                                             &m_rCell,
+                                             &m_r2Cell,
+                                             &m_residualPlotCell,
+                                             &m_xParameterCell,
+                                             &m_yParameterCell,
+                                             &m_removeRegressionCell};
   return cells[index];
 }
 bool GraphOptionsController::displayRegressionEquationCell() const {

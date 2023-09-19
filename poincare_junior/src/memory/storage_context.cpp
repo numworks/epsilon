@@ -1,7 +1,7 @@
+#include "storage_context.h"
+
 #include <ion/storage/file_system.h>
 #include <poincare_junior/src/expression/symbol.h>
-
-#include "storage_context.h"
 
 namespace PoincareJ {
 
@@ -11,10 +11,12 @@ bool StorageContext::DeepReplaceIdentifiersWithTrees(Tree* tree) {
     const Tree* replacement = TreeForIdentifier(
         Symbol::NonNullTerminatedName(tree), Symbol::Length(tree));
     if (replacement) {
-      // TODO: Prevent infinite replacement loops in case of cycles.
       tree->cloneTreeOverTree(replacement);
-      changed = true;
+      // Nested UserSymbol shouldn't exist and are therefore not replaced.
+      assert(!DeepReplaceIdentifiersWithTrees(tree));
+      return true;
     }
+    return false;
   }
   Tree* child = tree->nextNode();
   for (int i = 0; i < tree->numberOfChildren(); i++) {

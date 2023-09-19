@@ -5,6 +5,14 @@
 
 namespace PoincareJ {
 
+/* Textual UserSymbols in expressions are projected into de Bruijn indices.  The
+ * global free variables have an index corresponding to their alphabetical order
+ * in global variables.  When a scope (parametric) is entered, all the indices
+ * are shifted by one which leaves room to represent the new local variable with
+ * the index \0. The user symbol of the local variable is kept as an hint for
+ * the beautification.
+ * For instance:  x + sum(x + 2k, k, 0, n) => \0 + sum(\1 + 2*\0, k, 0, \1) */
+
 class Variables {
  public:
   // Used to store a Variable constant tree on the stack.
@@ -20,8 +28,8 @@ class Variables {
   };
   // Push a Set with the free user symbols of the expression
   static Tree* GetUserSymbols(const Tree* t);
-  static void ProjectToId(Tree* t, const Tree* variables);
-  static void BeautifyToName(Tree* t, const Tree* variables);
+  static void ProjectToId(Tree* t, const Tree* variables, uint8_t depth = 0);
+  static void BeautifyToName(Tree* t, const Tree* variables, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);
 
   // On projected expressions
@@ -29,11 +37,20 @@ class Variables {
 
   // On projected expressions
   static bool HasVariable(const Tree* t, const Tree* variable);
+  static bool HasVariable(const Tree* t, int id);
 
   // Replace occurrences of variable with value and simplify inside expr
   static bool Replace(Tree* expr, const Tree* variable, const Tree* value);
+  static bool Replace(Tree* expr, int id, const Tree* value);
+
+  // Increment variables indexes
+  static void EnterScope(Tree* expr);
+  // Decrement variables indexes
+  static void LeaveScope(Tree* expr);
 
  private:
+  static void GetUserSymbols(const Tree* t, Tree* set);
+  static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id);
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);
 };

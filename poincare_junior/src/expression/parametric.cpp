@@ -12,13 +12,13 @@ namespace PoincareJ {
 
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
   bool isSum = expr->type() == BlockType::Sum;
-  Tree* variable = expr->firstChild();
-  Tree* lowerBound = variable->nextTree();
+  Tree* lowerBound = expr->childAtIndex(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
-  if (!Variables::HasVariable(child, variable)) {
+  if (!Variables::HasVariable(child, k_localVariableId)) {
     // TODO : add ceil around bounds
     constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
+    Variables::LeaveScope(child);
     Tree* result = PatternMatching::CreateAndSimplify(
         isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
         {.KA = upperBound, .KB = lowerBound, .KC = child});
@@ -59,8 +59,7 @@ bool Parametric::ContractSumOrProduct(Tree* expr) {
 bool Parametric::Explicit(Tree* expr) {
   assert(expr->type() == BlockType::Sum || expr->type() == BlockType::Product);
   bool isSum = expr->type() == BlockType::Sum;
-  Tree* variable = expr->firstChild();
-  Tree* lowerBound = variable->nextTree();
+  Tree* lowerBound = expr->childAtIndex(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
   Tree* boundsDifference = PatternMatching::CreateAndSimplify(
@@ -86,7 +85,7 @@ bool Parametric::Explicit(Tree* expr) {
     n->removeTree();
     value = n;
     Tree* clone = child->clone();
-    Variables::Replace(clone, variable, value);
+    Variables::Replace(clone, k_localVariableId, value);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool

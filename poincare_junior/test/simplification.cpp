@@ -400,9 +400,9 @@ QUIZ_CASE(pcj_power_simplification) {
 QUIZ_CASE(pcj_variables) {
   QUIZ_ASSERT(Variables::GetUserSymbols(0_e)->treeIsIdenticalTo(KSet()));
   const Tree* e = KMult(
-      "x"_e, KAdd(KSin("y"_e), KDiff(KPow(3_e, "x"_e), "x"_e, 2_e)), "m"_e);
+      KAdd(KSin("y"_e), KSum("x"_e, 2_e, 4_e, KPow("z"_e, "x"_e))), "m"_e);
   QUIZ_ASSERT(Variables::GetUserSymbols(e)->treeIsIdenticalTo(
-      KSet("m"_e, "x"_e, "y"_e)));
+      KSet("m"_e, "y"_e, "z"_e)));
 }
 
 QUIZ_CASE(pcj_float_simplification) {

@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_CONTEXT_H
-#define POINCARE_JUNIOR_CONTEXT_H
+#ifndef POINCARE_MEMORY_STORAGE_CONTEXT_H
+#define POINCARE_MEMORY_STORAGE_CONTEXT_H
 
 #include "tree.h"
 
@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 constexpr static char pcjExtension[] = "pcj";
 
-class Context {
+class StorageContext {
  public:
   constexpr static char pcjExtension[] = "pcj";
   constexpr static const char* k_extensions[] = {pcjExtension};

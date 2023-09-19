@@ -1,11 +1,11 @@
-#include "context.h"
-
 #include <ion/storage/file_system.h>
 #include <poincare_junior/src/expression/symbol.h>
 
+#include "storage_context.h"
+
 namespace PoincareJ {
 
-bool Context::DeepReplaceIdentifiersWithTrees(Tree* tree) {
+bool StorageContext::DeepReplaceIdentifiersWithTrees(Tree* tree) {
   bool changed = false;
   if (tree->type() == BlockType::UserSymbol) {
     const Tree* replacement = TreeForIdentifier(
@@ -24,8 +24,8 @@ bool Context::DeepReplaceIdentifiersWithTrees(Tree* tree) {
   return changed;
 }
 
-const Tree* Context::TreeForIdentifier(const char* identifier,
-                                       size_t identifierLength) {
+const Tree* StorageContext::TreeForIdentifier(const char* identifier,
+                                              size_t identifierLength) {
   // TODO: Use privateRecordBasedNamedWithExtensions directly.
   assert(identifierLength < 10);
   char buffer[10];
@@ -34,21 +34,22 @@ const Tree* Context::TreeForIdentifier(const char* identifier,
   return TreeForIdentifier(buffer);
 }
 
-const Tree* Context::TreeForIdentifier(const char* identifier) {
+const Tree* StorageContext::TreeForIdentifier(const char* identifier) {
   Ion::Storage::Record r =
       Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtensions(
           identifier, k_extensions, k_numberOfExtensions);
   return Tree::FromBlocks(static_cast<const TypeBlock*>(r.value().buffer));
 }
 
-bool Context::SetTreeForIdentifier(const Tree* tree, const char* identifier) {
+bool StorageContext::SetTreeForIdentifier(const Tree* tree,
+                                          const char* identifier) {
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
           identifier, pcjExtension, tree->block(), tree->treeSize());
   return error == Ion::Storage::Record::ErrorStatus::None;
 }
 
-void Context::DeleteTreeForIdentifier(const char* identifier) {
+void StorageContext::DeleteTreeForIdentifier(const char* identifier) {
   Ion::Storage::Record r =
       Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtensions(
           identifier, k_extensions, k_numberOfExtensions);

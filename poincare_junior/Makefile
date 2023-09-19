@@ -49,13 +49,13 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/vertical_offset_layout.cpp \
   layout.cpp \
   memory/cache_pool.cpp \
-  memory/context.cpp \
   memory/edition_pool.cpp \
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
   memory/pattern_matching.cpp \
   memory/pool.cpp \
   memory/reference.cpp \
+  memory/storage_context.cpp \
   memory/tree.cpp \
   n_ary.cpp \
   poincare.cpp \
@@ -65,7 +65,6 @@ tests_src += $(addprefix poincare_junior/test/,\
   approximation.cpp \
   calculation.cpp \
   comparison.cpp \
-  context.cpp \
   dimension.cpp \
   expression_comparison.cpp \
   layout.cpp \
@@ -86,6 +85,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   sign.cpp \
   simplification.cpp \
   solver.cpp \
+  storage_context.cpp \
 )
 
 tests_src += $(poincare_junior_src)

@@ -38,6 +38,9 @@ class PrefacedTableView : public View,
   void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
+  KDPoint actualOffset(const SelectableTableView* t) const override {
+    return m_actualOffsetWithMargins;
+  }
 
   SelectableTableView* selectableTableView() { return m_mainTableView; }
   virtual void setMargins(KDMargins m);
@@ -166,6 +169,7 @@ class PrefacedTableView : public View,
   }
 
   SelectableTableViewDelegate* m_mainTableDelegate;
+  KDPoint m_actualOffsetWithMargins;
 };
 
 }  // namespace Escher

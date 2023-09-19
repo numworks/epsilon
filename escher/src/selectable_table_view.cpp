@@ -238,10 +238,10 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
 void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
-  KDPoint previousOffset = contentOffset();
+  KDPoint offset = actualOffset();
   deselectTable(true);
   layoutSubviews();
-  setContentOffset(previousOffset);
+  setContentOffset(offset);
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 

@@ -17,6 +17,7 @@ class SelectableTableViewDelegate : public ContextProvider {
   virtual void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) {}
+  virtual KDPoint actualOffset(const SelectableTableView* t) const;
 };
 
 }  // namespace Escher

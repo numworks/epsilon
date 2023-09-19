@@ -73,6 +73,7 @@ escher_src += $(addprefix escher/src/,\
   scrollable_multiple_layouts_view.cpp \
   scrollable_two_layouts_cell.cpp \
   selectable_table_view.cpp \
+  selectable_table_view_delegate.cpp \
   solid_color_view.cpp \
   stack_view.cpp \
   stack_view_controller.cpp \

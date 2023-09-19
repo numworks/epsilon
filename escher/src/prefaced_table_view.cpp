@@ -14,7 +14,8 @@ PrefacedTableView::PrefacedTableView(
       m_marginDelegate(nullptr),
       m_prefacedDelegate(prefacedTableViewDelegate),
       m_mainTableViewTopMargin(0),
-      m_mainTableDelegate(delegate) {
+      m_mainTableDelegate(delegate),
+      m_actualOffsetWithMargins(KDPointZero) {
   m_mainTableView->setParentResponder(parentResponder);
   m_mainTableView->setDelegate(this);
   m_rowPrefaceView.hideScrollBars();
@@ -67,6 +68,14 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
     resetContentOffset();
   }
   layoutSubviews();
+
+  // Update actual offset
+  m_actualOffsetWithMargins =
+      m_mainTableView->contentOffset()
+          .relativeTo(relativeChildOrigin(m_mainTableView))
+          .translatedBy(marginToAddForVirtualOffset());
+  assert(m_actualOffsetWithMargins.x() >= 0 &&
+         m_actualOffsetWithMargins.y() >= 0);
 }
 
 View* PrefacedTableView::subviewAtIndex(int index) {

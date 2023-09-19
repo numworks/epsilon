@@ -69,8 +69,10 @@ void VectorListController::computeAdditionalResults(
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
   if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
     angle = Subtraction::Builder(
-        Multiplication::Builder(Rational::Builder(2),
-                                Poincare::Constant::PiBuilder()),
+        Multiplication::Builder(
+            Rational::Builder(2),
+            Trigonometry::PiExpressionInAngleUnit(
+                Preferences::sharedPreferences->angleUnit())),
         angle);
   }
   float angleApproximation =

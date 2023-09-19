@@ -339,18 +339,18 @@ QUIZ_CASE(pcj_basic_simplification) {
                 "√(-2*im(y)*re(x)+2*im(x)*re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
                 "re(y)^(2))");
   // Parametrics
-  simplifies_to("sum(k, 1, n, n)", "n^2");
-  simplifies_to("product(k, m, n, p)", "p^(1-m+n)");
-  simplifies_to("sum(k, 2, 5, (2k)^2)", "216");
+  simplifies_to("sum(n, k, 1, n)", "n^2");
+  simplifies_to("product(p, k, m, n)", "p^(1-m+n)");
+  simplifies_to("sum((2k)^2, k, 2, 5)", "216");
 
   // TODO works but rejected by metric
-  // simplifies_to("sum(k, 1, n, k+n)", "sum(k, 1, n, k)+n^2");
-  // simplifies_to("sum(k, n, n+2, k+1)", "6+3*n");
-  // simplifies_to("sum(k, n-2, n, k+1)", ""); // FIXME
-  // simplifies_to("product(k, 1, 12, k*π)", "479001600*π^(12)");
+  // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
+  // simplifies_to("sum(k+1, k, n, n+2)", "6+3*n");
+  // simplifies_to("sum(k+1, k, n-2, n)", "1");  // FIXME
+  // simplifies_to("product(k*π, k, 1, 12)", "479001600*π^(12)");
 
   // TODO SimplifyAddition on matrices
-  // simplifies_to("sum(k, 1, 4, [[k][n]])", "[[10],[4*n]]");
+  // simplifies_to("sum([[k][n]], k, 1, 4)", "[[10],[4*n]]");
 
   // Not working yet
   // simplifies_to("1/x", "1/x");

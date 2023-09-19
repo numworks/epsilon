@@ -159,7 +159,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
   /* TODO: ConvertExpressionToLayout is a very temporary implementation and must
    *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
-  BlockType type = expression->type();
+  TypeBlock type = expression->type();
 
   switch (type) {
     case BlockType::Addition:
@@ -256,6 +256,11 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
     case BlockType::Polynomial:
     default:
       if (Builtin::IsBuiltin(type)) {
+        if (type.isParametric()) {
+          // Move sub-expression first
+          expression->childAtIndex(0)->moveTreeBeforeNode(
+              expression->childAtIndex(expression->numberOfChildren() - 1));
+        }
         ConvertBuiltinToLayout(layoutParent, expression);
       } else {
         assert(false);

@@ -24,8 +24,8 @@ class Builtin : public std::pair<BlockType, Aliases> {
   static uint8_t MaxNumberOfParameters(BlockType type) {
     return MinNumberOfParameters(type);
   }
-  static bool Promote(Tree* parameterList, BlockType type);
-  EDITION_REF_WRAP_1(Promote, BlockType);
+  static bool Promote(Tree* parameterList, TypeBlock type);
+  EDITION_REF_WRAP_1(Promote, TypeBlock);
 };
 
 namespace BuiltinsAliases {

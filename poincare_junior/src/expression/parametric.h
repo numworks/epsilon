@@ -5,6 +5,10 @@
 
 namespace PoincareJ {
 
+/* In nodes that introduce a variable, the variable is the first child, the
+ * child expression last and bounds are in between. The variable is always
+ * refered as Variable 0 in the child expression. */
+
 class Parametric {
  public:
   static bool SimplifySumOrProduct(Tree* t);

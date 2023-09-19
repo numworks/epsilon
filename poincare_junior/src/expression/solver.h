@@ -11,7 +11,7 @@ namespace PoincareJ {
 class Solver {
  public:
   struct Context {
-    bool overrideUserVariables;
+    bool overrideUserVariables;  // If true, defined userVariables are ignored.
     bool exactResults;
   };
 

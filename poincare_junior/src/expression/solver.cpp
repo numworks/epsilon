@@ -6,6 +6,7 @@
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/storage_context.h>
 #include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
@@ -41,7 +42,10 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
 Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context context,
                                 Error* error) {
   Tree* simplifiedEquationSet = equationsSet->clone();
-  // TODO: Replace overriden variable before SimplifyAndFindVariables
+  if (!context.overrideUserVariables) {
+    // Replace user variables before SimplifyAndFindVariables
+    StorageContext::DeepReplaceIdentifiersWithTrees(simplifiedEquationSet);
+  }
   Tree* variables =
       SimplifyAndFindVariables(simplifiedEquationSet, context, error);
   uint8_t numberOfVariables = variables->numberOfChildren();
@@ -72,7 +76,6 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
                                        Error* error) {
   assert(*error == Error::NoError);
   /* TODO:
-   * - Use (or not depending on context) user variables.
    * - Implement a number of variable limit (Error::TooManyVariables).
    * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
    *   and Error::EquationUndefined).

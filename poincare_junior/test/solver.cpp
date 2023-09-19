@@ -1,6 +1,7 @@
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/solver.h>
 #include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/storage_context.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "helper.h"
@@ -43,6 +44,12 @@ QUIZ_CASE(pcj_solver) {
   check_solutions({"1"}, {});
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
                   {"a+1/6", "b+1/6", "c+1/6", "d+1/6", "f+1/6", "g+1/6"});
+  // User variables
+  StorageContext::SetTreeForIdentifier(2_e, "a");
+  check_solutions({"a*x-2"}, {"x-1"});
+  check_solutions({"a+x-2", "x"}, {"x"});
+  check_solutions({"a+x-3", "x"}, {"a-3", "x"});
+  StorageContext::DeleteTreeForIdentifier("a");
   // Errors
   check_solutions({"x+y+z", "x-y"}, {}, Solver::Error::TooManyVariables);
   check_solutions({"x^2", "y"}, {}, Solver::Error::NonLinearSystem);

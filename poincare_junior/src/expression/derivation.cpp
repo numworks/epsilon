@@ -15,37 +15,28 @@ bool Derivation::ShallowSimplify(Tree *node) {
   const Tree *symbol = node->childAtIndex(0);
   const Tree *symbolValue = symbol->nextTree();
   const Tree *derivand = symbolValue->nextTree();
-  Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
-  Derivate(derivand, symbol, symbolValue);
-  if (result->treeIsIdenticalTo(node)) {
-    result->removeTree();
+  Tree *result = Derivate(derivand, symbolValue);
+  if (!result) {
     return false;
   }
   node->moveTreeOverTree(result);
   return true;
 }
 
-void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
-                          const Tree *symbolValue) {
+Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue) {
   if (derivand->treeIsIdenticalTo(KVar<0>)) {
-    SharedEditionPool->push<BlockType::One>();
-    return;
+    return (1_e)->clone();
   }
   int numberOfChildren = derivand->numberOfChildren();
   if (numberOfChildren == 0) {
-    SharedEditionPool->push<BlockType::Zero>();
-    return;
+    return (0_e)->clone();
   }
   if (!derivand->type().isOfType({BlockType::Multiplication,
                                   BlockType::Addition, BlockType::Complex,
                                   BlockType::Exponential, BlockType::Power,
                                   BlockType::Trig, BlockType::Ln})) {
     // This derivation is not handled
-    SharedEditionPool->push<BlockType::Derivative>();
-    SharedEditionPool->clone(symbol);
-    SharedEditionPool->clone(symbolValue);
-    SharedEditionPool->clone(derivand);
-    return;
+    return nullptr;
   }
 
   Tree *result;
@@ -58,18 +49,18 @@ void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
    * parameter i. */
   for (int i = 0; i < numberOfChildren; i++) {
     Tree *mult = SharedEditionPool->push<BlockType::Multiplication>(2);
-    Derivate(derivandChild, symbol, symbolValue);
-    ShallowPartialDerivate(derivand, symbol, symbolValue, i);
+    Derivate(derivandChild, symbolValue);
+    ShallowPartialDerivate(derivand, symbolValue, i);
     Simplification::SimplifyMultiplication(mult);
     derivandChild = derivandChild->nextTree();
   }
   if (numberOfChildren > 1) {
     Simplification::SimplifyAddition(result);
   }
+  return result;
 }
 
 void Derivation::ShallowPartialDerivate(const Tree *derivand,
-                                        const Tree *symbol,
                                         const Tree *symbolValue, int index) {
   switch (derivand->type()) {
     case BlockType::Multiplication: {
@@ -84,7 +75,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       for (std::pair<const Tree *, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
         if (indexedNode.second != index) {
-          CloneReplacingSymbol(indexedNode.first, symbol, symbolValue);
+          CloneReplacingSymbol(indexedNode.first, symbolValue);
         }
       }
       if (numberOfChildren > 2) {
@@ -107,12 +98,12 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       return;
     case BlockType::Exponential:
       // Di(exp(x)) = exp(x)
-      CloneReplacingSymbol(derivand, symbol, symbolValue);
+      CloneReplacingSymbol(derivand, symbolValue);
       return;
     case BlockType::Ln: {
       // Di(ln(x)) = 1/x
       Tree *power = SharedEditionPool->push<BlockType::Power>();
-      CloneReplacingSymbol(derivand->childAtIndex(0), symbol, symbolValue);
+      CloneReplacingSymbol(derivand->childAtIndex(0), symbolValue);
       SharedEditionPool->push<BlockType::MinusOne>();
       Simplification::SimplifyPower(power);
       return;
@@ -135,7 +126,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
     SharedEditionPool->clone(derivand->childAtIndex(1));
   }
   Tree *newNode = SharedEditionPool->clone(derivand, false);
-  CloneReplacingSymbol(derivand->childAtIndex(0), symbol, symbolValue);
+  CloneReplacingSymbol(derivand->childAtIndex(0), symbolValue);
   Tree *addition = SharedEditionPool->push<BlockType::Addition>(2);
   SharedEditionPool->clone(derivand->childAtIndex(1));
   SharedEditionPool->push<BlockType::MinusOne>();
@@ -148,10 +139,9 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
 }
 
 Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
-                                       const Tree *symbol,
                                        const Tree *symbolValue) {
   Tree *result = expression->clone();
-  Variables::Replace(result, 0, symbolValue);
+  Variables::Replace(result, symbolVar, symbolValue);
   return result;
 }
 

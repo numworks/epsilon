@@ -12,16 +12,15 @@ class Derivation {
 
  private:
   // Push derivand derivation on the pool.
-  static void Derivate(const Tree* derivand, const Tree* symbol,
-                       const Tree* symbolValue);
+  static Tree* Derivate(const Tree* derivand, const Tree* symbolValue);
 
   EDITION_REF_WRAP(ShallowSimplify)
 
   // Shallow partial derivate parameterized expression at given index.
-  static void ShallowPartialDerivate(const Tree* derivand, const Tree* symbol,
+  static void ShallowPartialDerivate(const Tree* derivand,
                                      const Tree* symbolValue, int index);
   // Clone expression replacing symbol with symbolValue.
-  static Tree* CloneReplacingSymbol(const Tree* expression, const Tree* symbol,
+  static Tree* CloneReplacingSymbol(const Tree* expression,
                                     const Tree* symbolValue);
 };
 

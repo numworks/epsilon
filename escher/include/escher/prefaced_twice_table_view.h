@@ -71,7 +71,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   // View
   int numberOfSubviews() const override { return 6; }
   View* subviewAtIndex(int index) override;
-  void layoutSubviews(bool force = false) override;
+  void layoutSubviewsInRect(KDRect rect, bool force) override;
   void resetContentOffset() override;
   KDPoint marginToAddForVirtualOffset() const override {
     return KDPoint(m_mainTableViewLeftMargin, m_mainTableViewTopMargin)

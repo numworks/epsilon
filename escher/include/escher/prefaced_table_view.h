@@ -146,7 +146,7 @@ class PrefacedTableView : public View,
     MemoizedRowHeightManager<1> m_rowHeigthManager;
   };
 
-  void layoutSubviewsInRect(KDRect rect, bool force);
+  virtual void layoutSubviewsInRect(KDRect rect, bool force);
   void layoutScrollbars(bool force);
   void updateVirtualOffset();
   virtual void resetContentOffset();

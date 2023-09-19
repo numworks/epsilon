@@ -35,12 +35,20 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
     return false;
   }
   // TODO is it worth to split the child in a part that depends on k ?
-  return PatternMatching::MatchReplaceAndSimplify(
-             expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
-             KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
-         PatternMatching::MatchReplaceAndSimplify(
-             expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
-             KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE))));
+  return
+      // split sum
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
+          KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
+      // split product
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
+          KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE)))) ||
+      // n*(n-1)/2 with any lower bound
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KA, KB, KC, KVar<0>),
+          KAdd(KMult(KHalf, KC, KAdd(1_e, KC)),
+               KMult(-1_e, KHalf, KB, KAdd(-1_e, KB))));
 
   // TODO well-known forms
 }

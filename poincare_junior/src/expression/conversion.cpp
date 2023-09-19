@@ -99,14 +99,14 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       case BlockType::RealPart:
         return Poincare::RealPart::Builder(child);
       case BlockType::Derivative: {
-        Poincare::Expression symbol =
-            ToPoincareExpression(exp->childAtIndex(1));
+        Poincare::Expression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Derivative::Builder(
-            child, static_cast<Poincare::Symbol &>(symbol),
-            ToPoincareExpression(exp->childAtIndex(2)));
+            ToPoincareExpression(exp->childAtIndex(2)),
+            static_cast<Poincare::Symbol &>(symbol),
+            ToPoincareExpression(exp->childAtIndex(1)));
       }
       case BlockType::Sum: {
         Poincare::Expression symbol = child;
@@ -318,9 +318,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return;
     case OT::Derivative:
       SharedEditionPool->pushBlock(BlockType::Derivative);
-      PushPoincareExpression(exp.childAtIndex(0));
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
+      PushPoincareExpression(exp.childAtIndex(0));
       return;
     case OT::Sum:
     case OT::Product:

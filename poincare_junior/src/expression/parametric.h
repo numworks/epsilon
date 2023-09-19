@@ -16,11 +16,19 @@ class Parametric {
   static bool ContractSumOrProduct(Tree* t);
   static bool Explicit(Tree* t);
 
+  static uint8_t FunctionIndex(const Tree* t) {
+    return (t->type() == BlockType::Derivative) ? k_derivativeFunctionIndex
+                                                : k_sumFunctionIndex;
+  }
+
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;
+
   static constexpr uint8_t k_lowerBoundIndex = 1;
   static constexpr uint8_t k_upperBoundIndex = 2;
-  static constexpr uint8_t k_functionIndex = 3;
+  static constexpr uint8_t k_sumFunctionIndex = 3;
+
+  static constexpr uint8_t k_derivativeFunctionIndex = 2;
 };
 
 }  // namespace PoincareJ

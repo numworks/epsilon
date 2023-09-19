@@ -91,8 +91,7 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
 bool Builtin::Promote(Tree *parameterList, TypeBlock type) {
   parameterList->moveNodeOverNode(
       Tree::FromBlocks(SharedEditionPool->pushBlock(type)));
-  if (type.isOfType(
-          {BlockType::Sum, BlockType::Product, BlockType::Integral})) {
+  if (type.isParametric()) {
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(
         parameterList->childAtIndex(0));

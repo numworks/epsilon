@@ -11,9 +11,9 @@ bool Derivation::ShallowSimplify(Tree *node) {
   // Reference is expected to have been reduced beforehand.
   assert(node->type() == BlockType::Derivative);
   // Diff(Derivand, Symbol, SymbolValue)
-  const Tree *derivand = node->childAtIndex(0);
-  const Tree *symbol = derivand->nextTree();
+  const Tree *symbol = node->childAtIndex(0);
   const Tree *symbolValue = symbol->nextTree();
+  const Tree *derivand = symbolValue->nextTree();
   Tree *result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   Derivate(derivand, symbol, symbolValue);
   if (result->treeIsIdenticalTo(node)) {
@@ -41,9 +41,9 @@ void Derivation::Derivate(const Tree *derivand, const Tree *symbol,
                                   BlockType::Trig, BlockType::Ln})) {
     // This derivation is not handled
     SharedEditionPool->push<BlockType::Derivative>();
-    SharedEditionPool->clone(derivand);
     SharedEditionPool->clone(symbol);
     SharedEditionPool->clone(symbolValue);
+    SharedEditionPool->clone(derivand);
     return;
   }
 
@@ -171,12 +171,12 @@ bool Derivation::CloneReplacingSymbolRec(const Tree *expression,
   // TODO: Extend this escape case to handle all nodes using local context.
   if (expression->type() == BlockType::Derivative) {
     // With x symbol and f(y) symbolValue :
-    const Tree *subSymbol = expression->childAtIndex(1);
+    const Tree *subSymbol = expression->childAtIndex(0);
     if (subSymbol->treeIsIdenticalTo(symbol)) {
       // Diff(g(x),x,h(x)) -> Diff(g(x),x,h(f(y)))
-      SharedEditionPool->clone(expression->nextNode());
       SharedEditionPool->clone(subSymbol);
       CloneReplacingSymbolRec(subSymbol->nextTree(), symbol, symbolValue);
+      SharedEditionPool->clone(expression->nextNode());
       /* Not calling ShallowSystematicReduce because, since Diff was there after
        * reduction, changing symbolValue will not help further. */
       return true;

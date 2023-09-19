@@ -106,8 +106,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
              childDim[Parametric::k_lowerBoundIndex].isScalar() &&
              childDim[Parametric::k_upperBoundIndex].isScalar() &&
              (t->type() != BlockType::Product ||
-              childDim[Parametric::k_functionIndex].isScalar() ||
-              childDim[Parametric::k_functionIndex].isSquareMatrix());
+              childDim[Parametric::k_sumFunctionIndex].isScalar() ||
+              childDim[Parametric::k_sumFunctionIndex].isSquareMatrix());
     case BlockType::Dim:
     case BlockType::Ref:
     case BlockType::Rref:
@@ -188,7 +188,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case BlockType::Sum:
     case BlockType::Product:
-      return GetDimension(t->childAtIndex(Parametric::k_functionIndex));
+      return GetDimension(t->childAtIndex(Parametric::k_sumFunctionIndex));
     case BlockType::PowerMatrix:
     case BlockType::PowerReal:
     case BlockType::Power: {

@@ -2,7 +2,10 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
 #include <poincare/symbol.h>
+#include <poincare/trigonometry.h>
 
 #include "../app.h"
 #include "additional_result_cell.h"
@@ -102,5 +105,11 @@ void IllustratedExpressionsListController::setLineAtIndex(
   m_approximatedLayouts[index] =
       exact.isIdenticalTo(approximated, true) ? Layout() : approximated;
 };
+
+Expression IllustratedExpressionsListController::AnglePeriodInUserAngleUnit() {
+  return Multiplication::Builder(
+      Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(
+                                Preferences::sharedPreferences->angleUnit()));
+}
 
 }  // namespace Calculation

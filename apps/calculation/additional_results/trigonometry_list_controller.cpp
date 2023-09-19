@@ -27,9 +27,7 @@ void TrigonometryListController::computeAdditionalResults(
   Context* context = App::app()->localContext();
   size_t index = 0;
 
-  Expression period = Multiplication::Builder(
-      Rational::Builder(2),
-      Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
+  Expression period = AnglePeriodInUserAngleUnit();
 
   // Find the angle
   Expression exactAngle, approximateAngle;

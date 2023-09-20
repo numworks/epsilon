@@ -502,10 +502,8 @@ class Expression : public TreeHandle {
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template <typename U>
-  Expression approximate(Context* context,
-                         Preferences::ComplexFormat complexFormat,
-                         Preferences::AngleUnit angleUnit,
-                         bool withinReduce = false) const;
+  Expression approximate(
+      const ApproximationContext& approximationContext) const;
   // WARNING: this will reduce the expression before removing units
   template <typename U>
   Expression approximateKeepingUnits(

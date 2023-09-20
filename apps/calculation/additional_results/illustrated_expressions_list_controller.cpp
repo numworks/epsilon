@@ -97,9 +97,7 @@ void IllustratedExpressionsListController::setLineAtIndex(
       formula, computationContext.context());
   Layout exact = getLayoutFromExpression(expression, computationContext);
   Layout approximated = getLayoutFromExpression(
-      expression.approximate<double>(computationContext.context(),
-                                     computationContext.complexFormat(),
-                                     computationContext.angleUnit()),
+      expression.approximate<double>(ApproximationContext(computationContext)),
       computationContext);
   /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
    * String("-1") */

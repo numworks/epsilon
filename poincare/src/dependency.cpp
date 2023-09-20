@@ -118,9 +118,8 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
        * */
       approximation = e.clone().deepApproximateKeepingSymbols(reductionContext);
     } else {
-      approximation = e.approximate<double>(reductionContext.context(),
-                                            reductionContext.complexFormat(),
-                                            reductionContext.angleUnit(), true);
+      approximation =
+          e.approximate<double>(ApproximationContext(reductionContext, true));
     }
     if (approximation.isUndefined()) {
       return replaceWithUndefinedInPlace();

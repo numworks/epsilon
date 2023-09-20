@@ -1197,8 +1197,8 @@ void Expression::beautifyAndApproximateScalar(
     Expression *simplifiedExpression, Expression *approximateExpression,
     ReductionContext userReductionContext) {
   bool hasUnits = hasUnit();
+  ApproximationContext approximationContext(userReductionContext);
   Context *context = userReductionContext.context();
-  Preferences::AngleUnit angleUnit = userReductionContext.angleUnit();
   Preferences::ComplexFormat complexFormat =
       userReductionContext.complexFormat();
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
@@ -1225,7 +1225,7 @@ void Expression::beautifyAndApproximateScalar(
       ecomplexClone.real().deepBeautify(userReductionContext);
       ecomplexClone.imag().deepBeautify(userReductionContext);
       *approximateExpression =
-          ecomplexClone.approximate<double>(context, complexFormat, angleUnit);
+          ecomplexClone.approximate<double>(approximationContext);
     }
     // Step 2: create the simplified expression with the required complex format
     Expression ra = complexFormat == Preferences::ComplexFormat::Polar
@@ -1338,7 +1338,7 @@ void Expression::cloneAndSimplifyAndApproximate(
     *simplifiedExpression = e;
     if (approximateExpression) {
       *approximateExpression = simplifiedExpression->approximate<double>(
-          context, complexFormat, angleUnit);
+          ApproximationContext(userReductionContext));
     }
     return;
   }
@@ -1567,15 +1567,12 @@ int Expression::lengthOfListChildren() const {
 /* Evaluation */
 
 template <typename U>
-Expression Expression::approximate(Context *context,
-                                   Preferences::ComplexFormat complexFormat,
-                                   Preferences::AngleUnit angleUnit,
-                                   bool withinReduce) const {
-  return isUninitialized() ? Undefined::Builder()
-                           : approximateToEvaluation<U>(
-                                 ApproximationContext(context, complexFormat,
-                                                      angleUnit, withinReduce))
-                                 .complexToExpression(complexFormat);
+Expression Expression::approximate(
+    const ApproximationContext &approximationContext) const {
+  return isUninitialized()
+             ? Undefined::Builder()
+             : approximateToEvaluation<U>(approximationContext)
+                   .complexToExpression(approximationContext.complexFormat());
 }
 
 template <typename U>
@@ -1590,8 +1587,7 @@ Expression Expression::approximateKeepingUnits(
     expressionWithoutUnits = cloneAndReduceAndRemoveUnit(childContext, &units);
   }
   Expression approximationWithoutUnits = expressionWithoutUnits.approximate<U>(
-      reductionContext.context(), reductionContext.complexFormat(),
-      reductionContext.angleUnit());
+      ApproximationContext(reductionContext));
   if (units.isUninitialized()) {
     return approximationWithoutUnits;
   }
@@ -1671,9 +1667,8 @@ Expression Expression::deepApproximateKeepingSymbols(
        * Do not approximate random because it can be considered as a
        * symbol that always changes values each time it's evaluated.
        * */
-      Expression a = approximate<double>(reductionContext.context(),
-                                         reductionContext.complexFormat(),
-                                         reductionContext.angleUnit());
+      Expression a =
+          approximate<double>(ApproximationContext(reductionContext));
       replaceWithInPlace(a);
       *parentCanApproximate = true;
       *parentShouldReduce = true;
@@ -1938,11 +1933,9 @@ float Expression::getNumericalValue() const {
 }
 
 template Expression Expression::approximate<float>(
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, bool withinReduce) const;
+    const ApproximationContext &approximationContext) const;
 template Expression Expression::approximate<double>(
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, bool withinReduce) const;
+    const ApproximationContext &approximationContext) const;
 
 template float Expression::approximateToScalar(
     const ApproximationContext &approximationContext) const;

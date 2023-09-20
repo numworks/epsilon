@@ -71,7 +71,8 @@ void assert_float_approximates_to(Float<T> f, const char *result) {
   Shared::GlobalContext globalContext;
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
-  f.template approximate<T>(&globalContext, Cartesian, Radian)
+  f.template approximate<T>(
+       ApproximationContext(&globalContext, Cartesian, Radian))
       .serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
@@ -831,7 +832,8 @@ void assert_no_duplicates_in_list(const char *expression) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, true);
   e = ListSort::Builder(e);
-  Expression result = e.approximate<T>(&globalContext, Cartesian, Radian);
+  Expression result =
+      e.approximate<T>(ApproximationContext(&globalContext, Cartesian, Radian));
   assert(result.type() == ExpressionNode::Type::List);
   List list = static_cast<List &>(result);
   int n = list.numberOfChildren();

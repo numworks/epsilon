@@ -34,23 +34,12 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
   if (!expr->type().isOfType({BlockType::Sum, BlockType::Product})) {
     return false;
   }
-  // TODO is it worth to split the child in a part that depends on k ?
-  bool changed =
-      // split sum
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
-          KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
-      // split product
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
-          KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE)))) ||
-      // sum(k,k,b,c) = sum(k,k,0,c) - sum(k,k,0,b-1) = c(c+1)/2 - (b-1)b/2
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KVar<0>),
-          KAdd(KMult(KHalf, KC, KAdd(1_e, KC)),
-               KMult(-1_e, KHalf, KB, KAdd(-1_e, KB))));
+  bool isSum = expr->type() == BlockType::Sum;
+  BlockType associatedOperation =
+      isSum ? BlockType::Addition : BlockType::Multiplication;
+  bool changed = isSum ? ExpandOneSum(expr) : ExpandOneProduct(expr);
   // TODO well-known forms
-  if (changed && expr->type() == BlockType::Addition) {
+  if (changed && expr->type() == associatedOperation) {
     // Expand should be shallow but is responsible to apply on its new children
     bool childChanged = false;
     for (Tree* child : expr->children()) {
@@ -61,6 +50,28 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
     }
   }
   return changed;
+}
+
+bool Parametric::ExpandOneSum(Tree* expr) {
+  // TODO Split the child in a part that depends on k ?
+  return
+      // split sum
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
+          KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
+      // sum(k,k,b,c) = sum(k,k,0,c) - sum(k,k,0,b-1) = c(c+1)/2 - (b-1)b/2
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KA, KB, KC, KVar<0>),
+          KAdd(KMult(KHalf, KC, KAdd(1_e, KC)),
+               KMult(-1_e, KHalf, KB, KAdd(-1_e, KB))));
+}
+
+bool Parametric::ExpandOneProduct(Tree* expr) {
+  return
+      // split product
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
+          KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE))));
 }
 
 // TODO try swapping sigmas

@@ -21,6 +21,9 @@ class Parametric {
                                                 : k_sumFunctionIndex;
   }
 
+  static bool ExpandOneSum(Tree* t);
+  static bool ExpandOneProduct(Tree* t);
+
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;
 

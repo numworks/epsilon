@@ -189,16 +189,13 @@ inline void CloneAndSimplify(
 inline void CloneAndSimplifyAndApproximate(
     Poincare::Expression e, Poincare::Expression* simplifiedExpression,
     Poincare::Expression* approximatedExpression, Poincare::Context* context,
+    Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool updateComplexFormatAndAngleUnit = true) {
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   e.cloneAndSimplifyAndApproximate(
       simplifiedExpression, approximatedExpression, context,
-      ComplexFormatForPreferences(preferences->complexFormat(),
-                                  updateComplexFormatAndAngleUnit, e, context),
-      preferences->angleUnit(),
+      ComplexFormatForPreferences(complexFormat, true, e, context),
+      Poincare::Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       symbolicComputation, unitConversion);
 }

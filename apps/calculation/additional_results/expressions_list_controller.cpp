@@ -151,8 +151,8 @@ Layout ExpressionsListController::getLayoutFromExpression(
   Expression simplifiedExpression;
   Shared::PoincareHelpers::CloneAndSimplifyAndApproximate(
       e, &simplifiedExpression, &approximateExpression, context,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      UnitConversion::Default, preferences);
+      preferences->complexFormat(),
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // simplify might have been interrupted, in which case we use approximate
   if (simplifiedExpression.isUninitialized()) {
     assert(!approximateExpression.isUninitialized());

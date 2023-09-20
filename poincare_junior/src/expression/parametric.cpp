@@ -44,7 +44,7 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
       PatternMatching::MatchReplaceAndSimplify(
           expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
           KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE)))) ||
-      // n*(n-1)/2 with any lower bound
+      // sum(k,k,b,c) = sum(k,k,0,c) - sum(k,k,0,b-1) = c(c+1)/2 - (b-1)b/2
       PatternMatching::MatchReplaceAndSimplify(
           expr, KSum(KA, KB, KC, KVar<0>),
           KAdd(KMult(KHalf, KC, KAdd(1_e, KC)),

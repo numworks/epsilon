@@ -110,6 +110,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
       Tree* newSymbol = expr->childAtIndex(Parametric::k_variableIndex);
+      // No need to continue if symbol is hidden by a local definition
       if (!newSymbol->treeIsIdenticalTo(symbol)) {
         changed = ReplaceSymbol(child, symbol, id + 1) || changed;
       }

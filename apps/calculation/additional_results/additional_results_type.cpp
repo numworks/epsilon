@@ -25,14 +25,14 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput)) {
     return AdditionalResultsType{.complex = true};
   }
+  if (exactOutput.hasUnit(true)) {
+    return AdditionalResultsType{.unit = HasUnit(exactOutput)};
+  }
   if (HasDirectTrigo(input, exactOutput)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
   if (HasInverseTrigo(input, exactOutput)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
-  }
-  if (exactOutput.hasUnit(true)) {
-    return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
   if (HasVector(exactOutput)) {
     return AdditionalResultsType{.vector = true};
@@ -85,6 +85,7 @@ bool AdditionalResultsType::HasComplex(const Expression approximateOutput) {
 
 bool AdditionalResultsType::HasDirectTrigo(const Expression input,
                                            const Expression exactOutput) {
+  assert(!exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
@@ -96,6 +97,7 @@ bool AdditionalResultsType::HasInverseTrigo(const Expression input,
                                             const Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
+  assert(!exactOutput.hasUnit(true));
   return (Trigonometry::isInverseTrigonometryFunction(input)) ||
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
 }

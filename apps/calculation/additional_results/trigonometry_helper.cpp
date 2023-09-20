@@ -45,9 +45,7 @@ Expression ExtractExactAngleFromDirectTrigo(const Expression input,
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, &unit, context);
   if (!unit.isUninitialized()) {
-    if (!unit.isPureAngleUnit()) {
-      return Expression();
-    }
+    assert(unit.isPureAngleUnit());
     assert(static_cast<Unit&>(unit).representative() ==
            Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
     /* After a reduction, all angle units are converted to radians, so we

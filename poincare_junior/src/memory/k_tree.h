@@ -212,18 +212,30 @@ struct String {
   constexpr const char& operator[](std::size_t i) const { return m_data[i]; }
 };
 
-template <Placeholder::Tag Tag>
-consteval auto KPlaceholder() {
-  return KTree<BlockType::Placeholder,
-               Placeholder::ParamsToValue(Tag, Placeholder::Filter::None)>();
-}
+template <Placeholder::Tag T, Placeholder::Filter F>
+struct KPlaceholderFilter : public AbstractTreeCompatible {
+  template <Block... B>
+  consteval operator KTree<B...>() {
+    return KTree<B...>();
+  }
+
+  constexpr operator const Tree*() const {
+    return KTree(KPlaceholderFilter<T, F>());
+  }
+  const Tree* operator->() const { return KTree(KPlaceholderFilter<T, F>()); }
+  static constexpr Placeholder::Tag k_tag = T;
+};
+
+template <Placeholder::Tag T, Placeholder::Filter F>
+KTree(KPlaceholderFilter<T, F>)
+    -> KTree<BlockType::Placeholder, Placeholder::ParamsToValue(T, F)>;
 
 template <Placeholder::Tag Tag>
-consteval auto KAnyTreesPlaceholder() {
-  return KTree<BlockType::Placeholder,
-               Placeholder::ParamsToValue(Tag,
-                                          Placeholder::Filter::AnyTrees)>();
-}
+using KPlaceholder = KPlaceholderFilter<Tag, Placeholder::Filter::None>;
+
+template <Placeholder::Tag Tag>
+using KAnyTreesPlaceholder =
+    KPlaceholderFilter<Tag, Placeholder::Filter::AnyTrees>;
 
 }  // namespace PoincareJ
 

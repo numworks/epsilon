@@ -26,11 +26,12 @@ void VectorListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context *context = App::app()->localContext();
-  Poincare::Preferences preferencesCopy =
-      Preferences::ClonePreferencesWithNewComplexFormat(
-          Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-              Poincare::Preferences::sharedPreferences->complexFormat(),
-              exactOutput, context));
+  ComputationContext computationContext(
+      context,
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Poincare::Preferences::sharedPreferences->complexFormat(),
+          exactOutput, context),
+      Preferences::sharedPreferences->angleUnit());
 
   setShowIllustration(false);
   size_t index = 0;
@@ -39,7 +40,7 @@ void VectorListController::computeAdditionalResults(
   // 1. Vector norm
   Expression norm = VectorHelper::BuildVectorNorm(exactClone, context);
   assert(!norm.isUninitialized() && !norm.isUndefined());
-  setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
+  setLineAtIndex(index++, Expression(), norm, computationContext);
 
   // 2. Normalized vector
   Expression approximatedNorm =
@@ -55,7 +56,7 @@ void VectorListController::computeAdditionalResults(
     // The reduction might have failed
     return;
   }
-  setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
+  setLineAtIndex(index++, Expression(), normalized, computationContext);
 
   // 3. Angle with x-axis
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
@@ -69,7 +70,7 @@ void VectorListController::computeAdditionalResults(
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
   if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
     angle = Subtraction::Builder(
-        Trigonometry::AnglePeriodInAngleUnit(preferencesCopy.angleUnit()),
+        Trigonometry::AnglePeriodInAngleUnit(computationContext.angleUnit()),
         angle);
   }
   float angleApproximation =
@@ -79,7 +80,7 @@ void VectorListController::computeAdditionalResults(
   }
   setLineAtIndex(index++,
                  Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
-                 angle, context, &preferencesCopy);
+                 angle, computationContext);
 
   // 4. Illustration
   float xApproximation = PoincareHelpers::ApproximateToScalar<float>(

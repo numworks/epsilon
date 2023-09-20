@@ -91,15 +91,15 @@ int IllustratedExpressionsListController::textAtIndex(char* buffer,
 }
 
 void IllustratedExpressionsListController::setLineAtIndex(
-    int index, Poincare::Expression formula, Poincare::Expression expression,
-    Poincare::Context* context, Poincare::Preferences* preferences) {
-  m_layouts[index] = Shared::PoincareHelpers::CreateLayout(formula, context);
-  ComputationContext computationContext(context, preferences->complexFormat(),
-                                        preferences->angleUnit());
+    int index, Expression formula, Expression expression,
+    const ComputationContext& computationContext) {
+  m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
+      formula, computationContext.context());
   Layout exact = getLayoutFromExpression(expression, computationContext);
   Layout approximated = getLayoutFromExpression(
-      expression.approximate<double>(context, preferences->complexFormat(),
-                                     preferences->angleUnit()),
+      expression.approximate<double>(computationContext.context(),
+                                     computationContext.complexFormat(),
+                                     computationContext.angleUnit()),
       computationContext);
   /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
    * String("-1") */

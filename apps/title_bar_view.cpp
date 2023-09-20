@@ -60,7 +60,7 @@ View* TitleBarView::subviewAtIndex(int index) {
   View* views[] = {&m_titleView,          &m_preferenceView,
                    &m_examModeIconView,   &m_examModeTextView,
                    &m_shiftAlphaLockView, &m_batteryView};
-  assert(0 <= index && index < std::size(views));
+  assert(0 <= index && index < static_cast<int>(std::size(views)));
   return views[index];
 }
 

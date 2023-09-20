@@ -28,7 +28,7 @@ class TrigonometryListController : public IllustratedExpressionsListController {
 
  private:
   constexpr static CodePoint k_symbol = UCodePointGreekSmallLetterTheta;
-  constexpr static CodePoint k_numberOfExpressionRows = 4;
+  constexpr static int k_numberOfExpressionRows = 4;
   I18n::Message messageAtIndex(int index) override;
   IllustrationCell* illustrationCell() override { return &m_graphCell; }
   void updateIsStrictlyEqualAtIndex(int index, Poincare::Context* context);

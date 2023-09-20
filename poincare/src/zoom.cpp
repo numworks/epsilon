@@ -223,27 +223,27 @@ void Zoom::fitConditions(PiecewiseOperator p,
     Zoom *zoom;
     PiecewiseOperator p;
     const char *symbol;
-    Preferences::ComplexFormat complexFormat;
-    Preferences::AngleUnit angleUnit;
+    const ApproximationContext &approximationContext;
     Function2DWithContext<float> fullFunction;
     const void *model;
     bool vertical;
   };
-  const ConditionsParameters params = {.zoom = this,
-                                       .p = p,
-                                       .symbol = symbol,
-                                       .complexFormat = complexFormat,
-                                       .angleUnit = angleUnit,
-                                       .fullFunction = fullFunction,
-                                       .model = model,
-                                       .vertical = vertical};
+  ApproximationContext approximationContext(m_context, complexFormat,
+                                            angleUnit);
+  const ConditionsParameters params = {
+      .zoom = this,
+      .p = p,
+      .symbol = symbol,
+      .approximationContext = approximationContext,
+      .fullFunction = fullFunction,
+      .model = model,
+      .vertical = vertical};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
     const ConditionsParameters *params =
         static_cast<const ConditionsParameters *>(aux);
     return static_cast<float>(
         params->p.indexOfFirstTrueConditionWithValueForSymbol(
-            params->symbol, t, params->zoom->m_context, params->complexFormat,
-            params->angleUnit));
+            params->symbol, t, params->approximationContext));
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,

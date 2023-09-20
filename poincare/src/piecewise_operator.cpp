@@ -231,16 +231,17 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
 
 template <typename T>
 int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(
-    const char* symbol, T x, Context* context,
-    Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) const {
+    const char* symbol, T x,
+    const ApproximationContext& approximationContext) const {
   assert(numberOfChildren() > 0);
-  VariableContext variableContext = VariableContext(symbol, context);
+  VariableContext variableContext =
+      VariableContext(symbol, approximationContext.context());
   variableContext.setApproximationForVariable<T>(x);
-  ApproximationContext approximationContext =
-      ApproximationContext(&variableContext, complexFormat, angleUnit);
+  ApproximationContext newContext = ApproximationContext(
+      &variableContext, approximationContext.complexFormat(),
+      approximationContext.angleUnit());
   return static_cast<PiecewiseOperatorNode*>(node())
-      ->indexOfFirstTrueCondition<T>(approximationContext);
+      ->indexOfFirstTrueCondition<T>(newContext);
 }
 
 Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
@@ -343,12 +344,10 @@ template int PiecewiseOperatorNode::indexOfFirstTrueCondition<double>(
     const ApproximationContext& approximationContext) const;
 
 template int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol<
-    float>(const char* symbol, float x, Context* context,
-           Preferences::ComplexFormat complexFormat,
-           Preferences::AngleUnit angleUnit) const;
+    float>(const char* symbol, float x,
+           const ApproximationContext& approximationContext) const;
 template int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol<
-    double>(const char* symbol, double x, Context* context,
-            Preferences::ComplexFormat complexFormat,
-            Preferences::AngleUnit angleUnit) const;
+    double>(const char* symbol, double x,
+            const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

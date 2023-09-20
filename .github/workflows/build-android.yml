@@ -22,7 +22,7 @@ jobs:
       - name: Setup
         run: build/setup.sh --only-simulator
       - name: Build
-        run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
+        run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=android epsilon.apk
       - name: Optimize ()
         # Optimize twice since first try will fail.
         run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 ${{ OUTPUT_PATH }}/epsilon.apk ${{ OUTPUT_PATH }}/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 ${{ OUTPUT_PATH }}/epsilon_temp.apk ${{ OUTPUT_PATH }}/epsilon_optimized.apk

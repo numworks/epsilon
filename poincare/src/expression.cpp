@@ -797,13 +797,11 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(
 
 template <typename U>
 Evaluation<U> Expression::approximateToEvaluation(
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, bool withinReduce) const {
+    const ApproximationContext &approximationContext) const {
   s_approximationEncounteredComplex = false;
-  Evaluation<U> e = node()->approximate(
-      U(),
-      ApproximationContext(context, complexFormat, angleUnit, withinReduce));
-  if (complexFormat == Preferences::ComplexFormat::Real &&
+  Evaluation<U> e = node()->approximate(U(), approximationContext);
+  if (approximationContext.complexFormat() ==
+          Preferences::ComplexFormat::Real &&
       s_approximationEncounteredComplex) {
     e = Complex<U>::Undefined();
   }
@@ -1574,8 +1572,9 @@ Expression Expression::approximate(Context *context,
                                    Preferences::AngleUnit angleUnit,
                                    bool withinReduce) const {
   return isUninitialized() ? Undefined::Builder()
-                           : approximateToEvaluation<U>(context, complexFormat,
-                                                        angleUnit, withinReduce)
+                           : approximateToEvaluation<U>(
+                                 ApproximationContext(context, complexFormat,
+                                                      angleUnit, withinReduce))
                                  .complexToExpression(complexFormat);
 }
 
@@ -1602,11 +1601,7 @@ Expression Expression::approximateKeepingUnits(
 template <typename U>
 U Expression::approximateToScalar(
     const ApproximationContext &approximationContext) const {
-  return approximateToEvaluation<U>(approximationContext.context(),
-                                    approximationContext.complexFormat(),
-                                    approximationContext.angleUnit(),
-                                    approximationContext.withinReduce())
-      .toScalar();
+  return approximateToEvaluation<U>(approximationContext).toScalar();
 }
 
 template <typename U>
@@ -1966,11 +1961,9 @@ template double Expression::ParseAndSimplifyAndApproximateToScalar<double>(
     SymbolicComputation symbolicComputation);
 
 template Evaluation<float> Expression::approximateToEvaluation(
-    Context *context, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit, bool withinReduce) const;
+    const ApproximationContext &approximationContext) const;
 template Evaluation<double> Expression::approximateToEvaluation(
-    Context *context, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit, bool withinReduce) const;
+    const ApproximationContext &approximationContext) const;
 
 template float Expression::approximateWithValueForSymbol(
     const char *symbol, float x,

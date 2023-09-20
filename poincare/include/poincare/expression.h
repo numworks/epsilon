@@ -584,8 +584,7 @@ class Expression : public TreeHandle {
   }
   template <typename U>
   Evaluation<U> approximateToEvaluation(
-      Context* context, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+      const ApproximationContext& approximationContext) const;
 
  protected:
   Expression(const ExpressionNode* n) : TreeHandle(n) {}

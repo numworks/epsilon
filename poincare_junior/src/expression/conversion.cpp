@@ -214,6 +214,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     }
     case BlockType::Factorial:
       return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
+    case BlockType::Nonreal:
+      return Poincare::Nonreal::Builder();
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:
@@ -371,6 +373,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       for (int i = 0; i < exp.numberOfChildren(); i++) {
         PushPoincareExpression(exp.childAtIndex(i));
       }
+      return;
+    case OT::Nonreal:
+      SharedEditionPool->pushBlock(BlockType::Nonreal);
       return;
     case OT::Rational:
     case OT::BasedInteger:

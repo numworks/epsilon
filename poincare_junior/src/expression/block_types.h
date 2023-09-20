@@ -135,6 +135,7 @@ TYPE(Unit)
 TYPE(Dependency)
 TYPE(List)
 TYPE(Set)
+TYPE(Nonreal)
 TYPE(Undefined)
 
 ALIAS(NumberOfExpressions = Undefined + 1)

@@ -186,6 +186,7 @@ KTree(IntegerLitteral<V>)
 
 // TODO new node_constructor
 constexpr KTree KUndef = KTree<BlockType::Undefined>();
+constexpr KTree KNonreal = KTree<BlockType::Nonreal>();
 constexpr KTree KHalf = KTree<BlockType::Half>();
 
 constexpr KTree π_e =

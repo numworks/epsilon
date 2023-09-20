@@ -27,8 +27,6 @@
 
 namespace PoincareJ {
 
-using namespace Placeholders;
-
 bool IsInteger(const Tree* u) { return u->type().isInteger(); }
 bool IsNumber(const Tree* u) { return u->type().isNumber(); }
 bool IsRational(const Tree* u) { return u->type().isRational(); }
@@ -131,7 +129,7 @@ bool Simplification::SimplifyExp(Tree* u) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
-      IsInteger(ctx.getNode(A))) {
+      IsInteger(ctx.getNode(KA))) {
     // exp(n*ln(x)) -> x^n with n an integer
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;

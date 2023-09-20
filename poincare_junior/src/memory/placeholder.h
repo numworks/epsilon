@@ -59,16 +59,6 @@ class Placeholder {
   }
 };
 
-namespace Placeholders {
-static constexpr Placeholder::Tag A = Placeholder::Tag::A;
-static constexpr Placeholder::Tag B = Placeholder::Tag::B;
-static constexpr Placeholder::Tag C = Placeholder::Tag::C;
-static constexpr Placeholder::Tag D = Placeholder::Tag::D;
-static constexpr Placeholder::Tag E = Placeholder::Tag::E;
-static constexpr Placeholder::Tag F = Placeholder::Tag::F;
-static constexpr Placeholder::Tag G = Placeholder::Tag::G;
-}  // namespace Placeholders
-
 }  // namespace PoincareJ
 
 #endif

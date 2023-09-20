@@ -6,7 +6,6 @@
 #include "helper.h"
 
 using namespace PoincareJ;
-using namespace Placeholders;
 
 void assert_no_match(const Tree* source, const Tree* pattern) {
   PatternMatching::Context ctx;

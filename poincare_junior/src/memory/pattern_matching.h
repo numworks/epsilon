@@ -37,6 +37,10 @@ class PatternMatching {
 #endif
       }
     }
+    template <Placeholder::Tag T>
+    const Tree* getNode(KPlaceholder<T>) const {
+      return getNode(T);
+    }
     const Tree* getNode(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
     bool isAnyTree(uint8_t tag) const {
@@ -46,6 +50,11 @@ class PatternMatching {
       // Dummy value, unused anyway.
       return true;
 #endif
+    }
+    template <Placeholder::Tag T>
+    void setNode(KPlaceholder<T>, const Tree* node, uint8_t numberOfTrees,
+                 bool isAnyTree) {
+      return setNode(T, node, numberOfTrees, isAnyTree);
     }
     void setNode(uint8_t tag, const Tree* node, uint8_t numberOfTrees,
                  bool isAnyTree) {

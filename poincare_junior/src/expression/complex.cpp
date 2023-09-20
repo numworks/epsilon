@@ -9,8 +9,6 @@
 
 namespace PoincareJ {
 
-using namespace Placeholders;
-
 /* Must at least handle Addition, Multiplications, Numbers and Real/Imaginary
  * parts so that any simplified complex is sanitized. Also handle Exp, Ln and
  * Powers of positive integers so that abs(z) remains real after reduction.

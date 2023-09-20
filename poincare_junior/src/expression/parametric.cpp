@@ -67,9 +67,9 @@ bool Parametric::ContractSumOrProduct(Tree* expr) {
 bool Parametric::Explicit(Tree* expr) {
   assert(expr->type() == BlockType::Sum || expr->type() == BlockType::Product);
   bool isSum = expr->type() == BlockType::Sum;
-  Tree* lowerBound = expr->childAtIndex(k_lowerBoundIndex);
-  Tree* upperBound = lowerBound->nextTree();
-  Tree* child = upperBound->nextTree();
+  const Tree* lowerBound = expr->childAtIndex(k_lowerBoundIndex);
+  const Tree* upperBound = lowerBound->nextTree();
+  const Tree* child = upperBound->nextTree();
   Tree* boundsDifference = PatternMatching::CreateAndSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
   // TODO larger type than uint8
@@ -87,11 +87,12 @@ bool Parametric::Explicit(Tree* expr) {
     result = (1_e)->clone();
   }
   for (uint8_t step = 0; step < numberOfTerms; step++) {
-    Tree* n = Integer::Push(step);
-    Tree* value = PatternMatching::CreateAndSimplify(
-        KAdd(KA, KB), {.KA = lowerBound, .KB = n});
-    n->removeTree();
-    value = n;
+    // Create k value at this step
+    Tree* value = SharedEditionPool->push<BlockType::Addition>(2);
+    lowerBound->clone();
+    Integer::Push(step);
+    Simplification::ShallowSystematicReduce(value);
+    // Clone the child and replace k with its value
     Tree* clone = child->clone();
     Variables::Replace(clone, k_localVariableId, value);
     value->removeTree();

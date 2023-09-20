@@ -647,13 +647,9 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
     PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
     isDiscontinuous =
         pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x1, approximationContext.context(),
-            approximationContext.complexFormat(),
-            approximationContext.angleUnit()) !=
+            symbol, x1, approximationContext) !=
         pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x2, approximationContext.context(),
-            approximationContext.complexFormat(),
-            approximationContext.angleUnit());
+            symbol, x2, approximationContext);
   }
   if (isDiscontinuous) {
     return true;

@@ -84,9 +84,8 @@ class PiecewiseOperator final : public Expression {
   // Returns -1 if every condition is false
   template <typename T>
   int indexOfFirstTrueConditionWithValueForSymbol(
-      const char* symbol, T x, Context* context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit) const;
+      const char* symbol, T x,
+      const ApproximationContext& approximationContext) const;
 
  private:
   static PiecewiseOperator Builder(const Tuple& children) {

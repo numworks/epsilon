@@ -148,18 +148,19 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
 void Variables::BeautifyToName(Tree* expr, const Tree* variables,
                                uint8_t depth) {
   assert(SharedEditionPool->isAfter(variables, expr));
-  if (expr->type() == BlockType::Variable && depth <= Id(expr)) {
+  if (expr->type() == BlockType::Variable) {
+    assert(depth <= Id(expr));
     expr->cloneTreeOverTree(Variables::ToSymbol(variables, Id(expr) - depth));
   }
   bool isParametric = expr->type().isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
-      // beautify outer variables
-      BeautifyToName(child, variables, depth + 1);
       // beautify variable introduced by this scope
       // TODO check that name is available here or make new name
       Variables::Replace(child, 0,
                          expr->childAtIndex(Parametric::k_variableIndex));
+      // beautify outer variables
+      BeautifyToName(child, variables, depth + 1);
       continue;
     }
     BeautifyToName(child, variables, depth);

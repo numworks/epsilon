@@ -26,6 +26,9 @@ void ComplexListController::computeAdditionalResults(
   preferencesComplex.setComplexFormat(
       Poincare::Preferences::ComplexFormat::Cartesian);
   Context* context = App::app()->localContext();
+  ApproximationContext approximationContext(context,
+                                            preferencesComplex.complexFormat(),
+                                            preferencesComplex.angleUnit());
 
   // Fill Calculation Store
   Expression e = exactOutput.clone();
@@ -45,8 +48,7 @@ void ComplexListController::computeAdditionalResults(
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          context, preferencesComplex.complexFormat(),
-          preferencesComplex.angleUnit(), &realPart, &imagPart);
+          approximationContext, &realPart, &imagPart);
 
   assert(hasComplexApprox);
   (void)hasComplexApprox;  // Silence the compiler;

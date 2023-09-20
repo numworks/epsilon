@@ -568,16 +568,15 @@ bool Expression::isAlternativeFormOfRationalNumber() const {
 
 template <typename T>
 bool Expression::hasDefinedComplexApproximation(
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, T *returnRealPart,
+    const ApproximationContext &approximationContext, T *returnRealPart,
     T *returnImagPart) const {
-  if (complexFormat == Preferences::ComplexFormat::Real) {
+  if (approximationContext.complexFormat() ==
+      Preferences::ComplexFormat::Real) {
     return false;
   }
   /* We return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
-  Evaluation<T> approximation = node()->approximate(
-      T(), ApproximationContext(context, complexFormat, angleUnit));
+  Evaluation<T> approximation = node()->approximate(T(), approximationContext);
   if (approximation.type() != EvaluationNode<T>::Type::Complex) {
     return false;
   }
@@ -603,8 +602,9 @@ bool Expression::isScalarComplex(Preferences *preferences) const {
   Preferences::ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
           preferences->complexFormat(), *this, nullptr);
-  if (hasDefinedComplexApproximation<double>(nullptr, complexFormat,
-                                             preferences->angleUnit())) {
+  ApproximationContext approximationContext(nullptr, complexFormat,
+                                            preferences->angleUnit());
+  if (hasDefinedComplexApproximation<double>(approximationContext)) {
     assert(!hasUnit());
     return true;
   }
@@ -1986,12 +1986,10 @@ template Expression Expression::approximateKeepingUnits<double>(
     const ReductionContext &reductionContext) const;
 
 template bool Expression::hasDefinedComplexApproximation<float>(
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, float *returnRealPart,
+    const ApproximationContext &approximationContext, float *returnRealPart,
     float *returnImagPart) const;
 template bool Expression::hasDefinedComplexApproximation<double>(
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, double *returnRealPart,
+    const ApproximationContext &approximationContext, double *returnRealPart,
     double *returnImagPart) const;
 
 }  // namespace Poincare

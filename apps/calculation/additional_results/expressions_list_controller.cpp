@@ -144,22 +144,23 @@ int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
 }
 
 Layout ExpressionsListController::getLayoutFromExpression(
-    Expression e, Context* context, Preferences* preferences) {
+    Expression e, const ComputationContext& computationContext) {
   assert(!e.isUninitialized());
   // Simplify or approximate expression
   Expression approximateExpression;
   Expression simplifiedExpression;
   Shared::PoincareHelpers::CloneAndSimplifyAndApproximate(
-      e, &simplifiedExpression, &approximateExpression, context,
-      preferences->complexFormat(),
+      e, &simplifiedExpression, &approximateExpression,
+      computationContext.context(), computationContext.complexFormat(),
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // simplify might have been interrupted, in which case we use approximate
   if (simplifiedExpression.isUninitialized()) {
     assert(!approximateExpression.isUninitialized());
     return Shared::PoincareHelpers::CreateLayout(approximateExpression,
-                                                 context);
+                                                 computationContext.context());
   }
-  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression, context);
+  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression,
+                                               computationContext.context());
 }
 
 }  // namespace Calculation

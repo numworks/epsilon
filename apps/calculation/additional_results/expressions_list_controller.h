@@ -48,9 +48,9 @@ class ExpressionsListController
  protected:
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 5;
-  Poincare::Layout getLayoutFromExpression(Poincare::Expression e,
-                                           Poincare::Context* context,
-                                           Poincare::Preferences* preferences);
+  Poincare::Layout getLayoutFromExpression(
+      Poincare::Expression e,
+      const Poincare::ComputationContext& computationContext);
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];

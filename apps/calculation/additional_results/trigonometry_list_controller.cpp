@@ -25,6 +25,8 @@ void TrigonometryListController::computeAdditionalResults(
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context* context = App::app()->localContext();
+  ComputationContext computationContext(context, preferences->complexFormat(),
+                                        userAngleUnit);
   size_t index = 0;
 
   Expression period = Trigonometry::AnglePeriodInAngleUnit(userAngleUnit);
@@ -102,14 +104,14 @@ void TrigonometryListController::computeAdditionalResults(
   Expression radians = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_radianRepresentativeIndex);
   m_exactLayouts[index] = getLayoutFromExpression(
-      UnitConvert::Builder(exactAngleWithUnit.clone(), radians), context,
-      preferences);
+      UnitConvert::Builder(exactAngleWithUnit.clone(), radians),
+      computationContext);
 
   Expression degrees = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_degreeRepresentativeIndex);
   m_approximatedLayouts[index] = getLayoutFromExpression(
-      UnitConvert::Builder(exactAngleWithUnit.clone(), degrees), context,
-      preferences);
+      UnitConvert::Builder(exactAngleWithUnit.clone(), degrees),
+      computationContext);
 
   Expression theta = Symbol::Builder(k_symbol);
   setLineAtIndex(++index, Cosine::Builder(theta),

@@ -66,8 +66,9 @@ class CalculationStore {
   static void SetCalculationHeights(Calculation *calculation,
                                     HeightComputer heightComputer,
                                     Poincare::Context *context) {
-    calculation->setHeights(heightComputer(calculation, context, false),
-                            heightComputer(calculation, context, true));
+    KDCoordinate unexpandedHeight = heightComputer(calculation, context, false);
+    KDCoordinate expandedHeight = heightComputer(calculation, context, true);
+    calculation->setHeights(unexpandedHeight, expandedHeight);
   }
 
   char *pointerArea() const {

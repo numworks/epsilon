@@ -162,8 +162,7 @@ int Matrix::rank(Context *context, bool forceCanonization) {
       /* rowCanonize can create expression that are too big for the pool.
        * If it's the case, compute the rank with approximated values. */
       Expression mApproximation =
-          approximate<double>(context, systemReductionContext.complexFormat(),
-                              systemReductionContext.angleUnit());
+          approximate<double>(ApproximationContext(systemReductionContext));
       if (mApproximation.type() != ExpressionNode::Type::Matrix) {
         /* The approximation was able to conclude that a coefficient is undef
          * while the reduction could not. */

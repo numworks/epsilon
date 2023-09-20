@@ -172,9 +172,7 @@ void assert_expression_approximates_to(const char *expression,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
       [](Expression e, ReductionContext reductionContext) {
-        return e.approximate<T>(reductionContext.context(),
-                                reductionContext.complexFormat(),
-                                reductionContext.angleUnit());
+        return e.approximate<T>(ApproximationContext(reductionContext));
       },
       numberOfSignificantDigits);
 }
@@ -211,9 +209,7 @@ void assert_expression_simplifies_approximates_to(
       DefaultUnitConversion,
       [](Expression e, ReductionContext reductionContext) {
         e = e.cloneAndSimplify(reductionContext);
-        return e.approximate<T>(reductionContext.context(),
-                                reductionContext.complexFormat(),
-                                reductionContext.angleUnit());
+        return e.approximate<T>(ApproximationContext(reductionContext));
       },
       numberOfSignificantDigits);
 }

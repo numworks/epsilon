@@ -1247,9 +1247,7 @@ Expression Power::shallowBeautify(const ReductionContext &reductionContext) {
   if (!p.isUninitialized()) {
     if (Trigonometry::isDirectTrigonometryFunction(p) &&
         (p.type() != ExpressionNode::Type::Tangent ||
-         !p.approximate<float>(reductionContext.context(),
-                               reductionContext.complexFormat(),
-                               reductionContext.angleUnit(), true)
+         !p.approximate<float>(ApproximationContext(reductionContext, true))
               .isUndefined())) {
       /* Replace this inverse with denominator's advanced equivalent.
        * except if it's 1/tan(x) and tan(x) = undef.

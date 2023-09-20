@@ -1493,9 +1493,7 @@ bool Multiplication::factorizeSineAndCosine(
    * cos/sin into 1/tan. Indeed, cos(pi/2)/sin(pi/2) is defined, but tan(pi/2)
    * is undef. */
   if (tanPower.isPositive() == TrinaryBoolean::False &&
-      tan.approximate<float>(reductionContext.context(),
-                             reductionContext.complexFormat(),
-                             reductionContext.angleUnit(), true)
+      tan.approximate<float>(ApproximationContext(reductionContext, true))
           .isUndefined()) {
     return false;
   }

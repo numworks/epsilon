@@ -91,11 +91,11 @@ inline Poincare::Expression Approximate(
     Poincare::Preferences* preferences =
         Poincare::Preferences::sharedPreferences,
     bool updateComplexFormat = true) {
-  return e.approximate<T>(
+  return e.approximate<T>(Poincare::ApproximationContext(
       context,
       ComplexFormatForPreferences(preferences->complexFormat(),
                                   updateComplexFormat, e, context),
-      preferences->angleUnit());
+      preferences->angleUnit()));
 }
 
 template <class T>

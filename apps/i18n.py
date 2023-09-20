@@ -16,6 +16,7 @@ import re
 import sys
 import unicodedata
 import lz4.frame
+import unused_i18n
 
 
 parser = argparse.ArgumentParser(description="Process some i18n files.")
@@ -534,3 +535,5 @@ if args.implementation:
         print_compressed_implementation(data, args.implementation, args.locales)
     else:
         print_implementation(data, args.implementation, args.locales)
+if args.header:
+  unused_i18n.checkUnusedMessages(args.header, args.implementation if args.implementation else "")

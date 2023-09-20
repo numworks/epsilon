@@ -106,10 +106,4 @@ void IllustratedExpressionsListController::setLineAtIndex(
       exact.isIdenticalTo(approximated, true) ? Layout() : approximated;
 };
 
-Expression IllustratedExpressionsListController::AnglePeriodInUserAngleUnit() {
-  return Multiplication::Builder(
-      Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(
-                                Preferences::sharedPreferences->angleUnit()));
-}
-
 }  // namespace Calculation

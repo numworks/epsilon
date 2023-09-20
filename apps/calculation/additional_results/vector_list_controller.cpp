@@ -68,7 +68,9 @@ void VectorListController::computeAdditionalResults(
   assert(normalized.numberOfChildren() == 2);
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
   if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
-    angle = Subtraction::Builder(AnglePeriodInUserAngleUnit(), angle);
+    angle = Subtraction::Builder(
+        Trigonometry::AnglePeriodInAngleUnit(preferencesCopy.angleUnit()),
+        angle);
   }
   float angleApproximation =
       PoincareHelpers::ApproximateToScalar<float>(angle, context);

@@ -52,7 +52,6 @@ class IllustratedExpressionsListController
  protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_expressionCellType = 1;
-  static Poincare::Expression AnglePeriodInUserAngleUnit();
   bool showIllustration() const { return m_showIllustration; }
   void setShowIllustration(bool showIllustration) {
     m_showIllustration = showIllustration;

@@ -12,6 +12,7 @@ class Trigonometry final {
     Cosine = 0,
     Sine = 1,
   };
+  static Expression AnglePeriodInAngleUnit(Preferences::AngleUnit angleUnit);
   static Expression PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit);
   static double PiInAngleUnit(Preferences::AngleUnit angleUnit);
   static bool isDirectTrigonometryFunction(const Expression& e);

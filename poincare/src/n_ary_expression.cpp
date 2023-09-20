@@ -90,15 +90,18 @@ Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
        * complex or finite non-integer number. Otherwise, rely on template
        * approximations. hasDefinedComplexApproximation is given Cartesian
        * complex format to force imaginary part approximation. */
+      ApproximationContext approximationContext(reductionContext, true);
+      Preferences::ComplexFormat complexFormat =
+          approximationContext.complexFormat();
+      approximationContext.setComplextFormat(
+          Preferences::ComplexFormat::Cartesian);
       if (!c.isReal(reductionContext.context(),
                     reductionContext.shouldCheckMatrices()) &&
-          c.hasDefinedComplexApproximation<float>(
-              reductionContext.context(), Preferences::ComplexFormat::Cartesian,
-              reductionContext.angleUnit())) {
+          c.hasDefinedComplexApproximation<float>(approximationContext)) {
         return replaceWithUndefinedInPlace();
       }
       // If c was complex but with a null imaginary part, real part is checked.
-      ApproximationContext approximationContext(reductionContext, true);
+      approximationContext.setComplextFormat(complexFormat);
       double app = c.approximateToScalar<double>(approximationContext);
       if (std::isfinite(app) && app != std::round(app)) {
         return replaceWithUndefinedInPlace();

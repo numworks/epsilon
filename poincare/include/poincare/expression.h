@@ -195,11 +195,9 @@ class Expression : public TreeHandle {
   bool isDivisionOfIntegers() const;
   bool isAlternativeFormOfRationalNumber() const;
   template <typename T>
-  bool hasDefinedComplexApproximation(Context* context,
-                                      Preferences::ComplexFormat complexFormat,
-                                      Preferences::AngleUnit angleUnit,
-                                      T* returnRealPart = nullptr,
-                                      T* returnImagPart = nullptr) const;
+  bool hasDefinedComplexApproximation(
+      const ApproximationContext& approximationContext,
+      T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
   bool isScalarComplex(Preferences* preferences) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
   /* This two functions only return true if the discontinuity is not asymptotic

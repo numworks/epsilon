@@ -15,7 +15,7 @@ namespace VectorHelper {
 
 Expression BuildVectorNorm(const Expression exactOutput, Context *context) {
   assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
+  assert(!exactOutput.hasUnit(true));
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||
       !static_cast<const Matrix &>(exactOutput).isVector()) {
     return Expression();

@@ -31,7 +31,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasInverseTrigo(input, exactOutput)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
-  if (exactOutput.hasUnit()) {
+  if (exactOutput.hasUnit(true)) {
     return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
   if (HasVector(exactOutput)) {
@@ -101,7 +101,7 @@ bool AdditionalResultsType::HasInverseTrigo(const Expression input,
 }
 
 bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
-  assert(exactOutput.hasUnit());
+  assert(exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression unit;
@@ -198,7 +198,7 @@ bool AdditionalResultsType::HasScientificNotation(
 
 bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
+  assert(!exactOutput.hasUnit(true));
   constexpr const char *k_maximalIntegerWithAdditionalResults =
       "10000000000000000";
   return exactOutput.isBasedIntegerCappedBy(
@@ -208,7 +208,7 @@ bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
 bool AdditionalResultsType::HasRational(const Expression exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
   assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
+  assert(!exactOutput.hasUnit(true));
   return exactOutput.isDivisionOfIntegers() ||
          (exactOutput.type() == ExpressionNode::Type::Opposite &&
           exactOutput.childAtIndex(0).isDivisionOfIntegers());

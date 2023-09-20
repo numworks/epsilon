@@ -15,8 +15,10 @@ void assert_parsed_expression_approximates_with_value_for_symbol(
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
-  T result = expression.approximateWithValueForSymbol(
-      symbol, value, &globalContext, complexFormat, angleUnit);
+  ApproximationContext approximationContext(&globalContext, complexFormat,
+                                            angleUnit);
+  T result = expression.approximateWithValueForSymbol(symbol, value,
+                                                      approximationContext);
   assert_roughly_equal(result, approximation, Poincare::Float<T>::Epsilon(),
                        true);
 }

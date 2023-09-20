@@ -89,16 +89,17 @@ Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
   if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
     return Coordinate2D<T>(NAN, NAN);
   }
-  FunctionEvaluationParameters parameters = {.context = m_context,
-                                             .unknown = m_unknown,
-                                             .expression = e,
-                                             .complexFormat = m_complexFormat,
-                                             .angleUnit = m_angleUnit};
+  ApproximationContext approximationContext(m_context, m_complexFormat,
+                                            m_angleUnit);
+  FunctionEvaluationParameters parameters = {
+      .approximationContext = approximationContext,
+      .unknown = m_unknown,
+      .expression = e};
   FunctionEvaluation f = [](T x, const void *aux) {
     const FunctionEvaluationParameters *p =
         reinterpret_cast<const FunctionEvaluationParameters *>(aux);
-    return p->expression.approximateWithValueForSymbol(
-        p->unknown, x, p->context, p->complexFormat, p->angleUnit);
+    return p->expression.approximateWithValueForSymbol(p->unknown, x,
+                                                       p->approximationContext);
   };
 
   return next(f, &parameters, test, hone, &DiscontinuityTestForExpression);
@@ -178,12 +179,13 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Expression &e1,
                               .cloneAndSimplify(reductionContext);
   }
   nextRoot(*memoizedDifference);
+  ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
-    T y1 = e1.approximateWithValueForSymbol<T>(m_unknown, m_xStart, m_context,
-                                               m_complexFormat, m_angleUnit);
-    T y2 = e2.approximateWithValueForSymbol<T>(m_unknown, m_xStart, m_context,
-                                               m_complexFormat, m_angleUnit);
+    T y1 =
+        e1.approximateWithValueForSymbol<T>(m_unknown, m_xStart, approxContext);
+    T y2 =
+        e2.approximateWithValueForSymbol<T>(m_unknown, m_xStart, approxContext);
     if (!std::isfinite(y1) || !std::isfinite(y2)) {
       /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
        * or undef expressions in specific points like x^2/x, the root of the
@@ -302,7 +304,7 @@ bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void *aux) {
   const Solver<T>::FunctionEvaluationParameters *p =
       reinterpret_cast<const Solver<T>::FunctionEvaluationParameters *>(aux);
   return p->expression.isDiscontinuousBetweenValuesForSymbol(
-      p->unknown, x1, x2, p->context, p->complexFormat, p->angleUnit);
+      p->unknown, x1, x2, p->approximationContext);
 };
 
 template <typename T>
@@ -546,9 +548,9 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
     ebis.replaceChildAtIndexInPlace(childIndex, Rational::Builder(0));
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
+    ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
     if (std::fabs(ebis.approximateWithValueForSymbol<T>(
-            m_unknown, xRoot, m_context, m_complexFormat, m_angleUnit)) <
-        NullTolerance(xRoot)) {
+            m_unknown, xRoot, approxContext)) < NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }
   }

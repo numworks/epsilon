@@ -118,11 +118,9 @@ class Solver {
 
  private:
   struct FunctionEvaluationParameters {
-    Context *context;
+    const ApproximationContext &approximationContext;
     const char *unknown;
     Expression expression;
-    Preferences::ComplexFormat complexFormat;
-    Preferences::AngleUnit angleUnit;
   };
 
   constexpr static T k_NAN = static_cast<T>(NAN);

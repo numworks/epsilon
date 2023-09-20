@@ -6,6 +6,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 
 #include "context.h"
+#include "parametric.h"
 
 namespace PoincareJ {
 
@@ -172,16 +173,11 @@ class Simplification {
   static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
 
-  static bool ExpandSum(Tree *node);
-  EDITION_REF_WRAP(ExpandSum);
-  static bool ExpandProduct(Tree *node);
-  EDITION_REF_WRAP(ExpandProduct);
-
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractAbs, ContractExpMult, ContractTrigonometric};
   constexpr static Operation k_expandOperations[] = {
-      ExpandAbs,           ExpandLn,  ExpandExp,
-      ExpandTrigonometric, ExpandSum, ExpandProduct};
+      ExpandAbs, ExpandLn, ExpandExp, ExpandTrigonometric,
+      Parametric::ExpandSumOrProduct};
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};
 };

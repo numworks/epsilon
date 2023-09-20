@@ -43,7 +43,20 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
     // Expand should be shallow but is responsible to apply on its new children
     bool childChanged = false;
     for (Tree* child : expr->children()) {
-      childChanged = ExpandSumOrProduct(child) || childChanged;
+      if (child->type() ==
+          (isSum ? BlockType::Multiplication : BlockType::Power)) {
+        bool grandChildChanged = false;
+        for (Tree* grandChild : child->children()) {
+          grandChildChanged =
+              ExpandSumOrProduct(grandChild) || grandChildChanged;
+        }
+        if (grandChildChanged) {
+          Simplification::ShallowSystematicReduce(child);
+          childChanged = true;
+        }
+      } else {
+        childChanged = ExpandSumOrProduct(child) || childChanged;
+      }
     }
     if (childChanged) {
       Simplification::ShallowSystematicReduce(expr);
@@ -53,25 +66,41 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
 }
 
 bool Parametric::ExpandOneSum(Tree* expr) {
+  assert(expr->type() == BlockType::Sum);
   // TODO Split the child in a part that depends on k ?
   return
-      // split sum
+      // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
       PatternMatching::MatchReplaceAndSimplify(
           expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
           KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
-      // sum(k,k,b,c) = sum(k,k,0,c) - sum(k,k,0,b-1) = c(c+1)/2 - (b-1)b/2
+      // sum(e,k,a,b) = sum(e,k,0,b) - sum(e,k,0,a-1)
+      // TODO what if a < 0 ?
+      (expr->childAtIndex(k_lowerBoundIndex)->type() != BlockType::Zero &&
+       PatternMatching::MatchReplaceAndSimplify(
+           expr, KSum(KA, KB, KC, KD),
+           KAdd(KSum(KA, 0_e, KC, KD),
+                KMult(-1_e, KSum(KA, 0_e, KAdd(KB, -1_e), KD))))) ||
+      // sum(k,k,0,n) = n(n+1)/2
       PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KVar<0>),
-          KAdd(KMult(KHalf, KC, KAdd(1_e, KC)),
-               KMult(-1_e, KHalf, KB, KAdd(-1_e, KB))));
+          expr, KSum(KA, 0_e, KC, KVar<0>), KMult(KHalf, KC, KAdd(1_e, KC))) ||
+      // sum(k^2,k,0,n) = n(n+1)(2n+1)/6
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KPow(KA, 2_e), 0_e, KC, KVar<0>),
+          KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e),
+                KPow(6_e, -1_e))) ||
+      // sum(x_k, k, 0, n) = x_0 + ... + x_n
+      Explicit(expr);
 }
 
 bool Parametric::ExpandOneProduct(Tree* expr) {
+  assert(expr->type() == BlockType::Product);
   return
       // split product
       PatternMatching::MatchReplaceAndSimplify(
           expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
-          KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE))));
+          KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE)))) ||
+      Explicit(expr);
+  ;
 }
 
 // TODO try swapping sigmas

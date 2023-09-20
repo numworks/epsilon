@@ -1407,20 +1407,6 @@ bool Simplification::ExpandPower(Tree* ref) {
   return true;
 }
 
-bool Simplification::ExpandSum(Tree* expr) {
-  if (expr->type() == BlockType::Sum) {
-    return Parametric::ExpandSumOrProduct(expr) || Parametric::Explicit(expr);
-  }
-  return false;
-}
-
-bool Simplification::ExpandProduct(Tree* expr) {
-  if (expr->type() == BlockType::Product) {
-    return Parametric::ExpandSumOrProduct(expr) || Parametric::Explicit(expr);
-  }
-  return false;
-}
-
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   if (tree->numberOfChildren() < 1) {
     return false;

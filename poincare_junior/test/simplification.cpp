@@ -343,7 +343,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(1-m+n)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
-  simplifies_to("2*sum(k, k, 1, n)+n", "2n+n^2");
+  simplifies_to("2*sum(k, k, 0, n)+n", "2n + n^2");
+  simplifies_to("2*sum(k, k, 3, n)+n", "-6+2*n+n^(2)");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

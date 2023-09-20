@@ -35,7 +35,7 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
     return false;
   }
   // TODO is it worth to split the child in a part that depends on k ?
-  return
+  bool changed =
       // split sum
       PatternMatching::MatchReplaceAndSimplify(
           expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
@@ -49,8 +49,18 @@ bool Parametric::ExpandSumOrProduct(Tree* expr) {
           expr, KSum(KA, KB, KC, KVar<0>),
           KAdd(KMult(KHalf, KC, KAdd(1_e, KC)),
                KMult(-1_e, KHalf, KB, KAdd(-1_e, KB))));
-
   // TODO well-known forms
+  if (changed && expr->type() == BlockType::Addition) {
+    // Expand should be shallow but is responsible to apply on its new children
+    bool childChanged = false;
+    for (Tree* child : expr->children()) {
+      childChanged = ExpandSumOrProduct(child) || childChanged;
+    }
+    if (childChanged) {
+      Simplification::ShallowSystematicReduce(expr);
+    }
+  }
+  return changed;
 }
 
 // TODO try swapping sigmas

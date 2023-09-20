@@ -60,9 +60,8 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
 
   List list = static_cast<List&>(child);
   ApproximationContext approximationContext(reductionContext, true);
-  Evaluation<float> approximatedList = list.approximateToEvaluation<float>(
-      reductionContext.context(), reductionContext.complexFormat(),
-      reductionContext.angleUnit());
+  Evaluation<float> approximatedList =
+      list.approximateToEvaluation<float>(approximationContext);
   bool listOfDefinedScalars = approximatedList.isListOfDefinedScalars();
   bool listOfDefinedPoints = approximatedList.isListOfDefinedPoints();
   if (!listOfDefinedScalars && !listOfDefinedPoints) {

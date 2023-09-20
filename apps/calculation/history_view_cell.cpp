@@ -281,25 +281,11 @@ void HistoryViewCell::resetMemoization() {
 void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
                                      Context *context,
                                      bool canChangeDisplayOutput) {
-  bool didChangeExpanded = false;
-  if (m_calculationExpanded != expanded) {
-    // Change expanded if needed
-    m_calculationExpanded =
-        expanded && calculation->displayOutput(context) ==
-                        ::Calculation::Calculation::DisplayOutput::
-                            ExactAndApproximateToggle;
-    m_scrollableOutputView.setDisplayCenter(
-        m_calculationDisplayOutput ==
-            Calculation::DisplayOutput::ExactAndApproximate ||
-        m_calculationExpanded);
-    didChangeExpanded = true;
-  }
-
   uint32_t newCalculationCRC =
       Ion::crc32Byte((const uint8_t *)calculation,
                      ((char *)calculation->next()) - ((char *)calculation));
   if (newCalculationCRC == m_calculationCRC32) {
-    if (didChangeExpanded) {
+    if (updateExpanded(expanded)) {
       reloadScroll();
     }
     return;
@@ -381,6 +367,8 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
     }
   }
   m_calculationDisplayOutput = calculation->displayOutput(context);
+  // Call this once m_calculationDisplayOutput is computed
+  updateExpanded(expanded);
 
   /* We must set which subviews are displayed before setLayouts to mark the
    * right rectangle as dirty */
@@ -463,6 +451,22 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     return false;
   }
   m_dataSource->setSelectedSubviewType(otherSubviewType, true);
+  return true;
+}
+
+bool HistoryViewCell::updateExpanded(bool expanded) {
+  if (m_calculationExpanded == expanded) {
+    return false;
+  }
+  // Change expanded if needed
+  m_calculationExpanded =
+      expanded &&
+      m_calculationDisplayOutput ==
+          ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle;
+  m_scrollableOutputView.setDisplayCenter(
+      m_calculationDisplayOutput ==
+          Calculation::DisplayOutput::ExactAndApproximate ||
+      m_calculationExpanded);
   return true;
 }
 

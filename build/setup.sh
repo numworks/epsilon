@@ -9,8 +9,7 @@ set -o pipefail
 INSTALL_ARM_GCC=1
 if [[ "${1-}" == "--only-simulator" ]]; then
   INSTALL_ARM_GCC=0
-fi
-if [ -x "$(command -v arm-none-eabi-gcc)" ]; then
+elif [ -x "$(command -v arm-none-eabi-gcc)" ]; then
   # We don't reinstall arm-none-eabi-gcc as the user may want to use a custom
   # version. For example, this is what the setup-arm-toolchain action will do on
   # GitHub.

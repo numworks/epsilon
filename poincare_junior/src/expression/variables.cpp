@@ -59,7 +59,6 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
       Set::Add(boundSymbols, expr->childAtIndex(Parametric::k_variableIndex));
       subSet = Set::Difference(subSet, boundSymbols);
       set = Set::Union(set, subSet);
-      continue;
     } else {
       GetUserSymbols(child, set);
     }

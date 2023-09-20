@@ -32,7 +32,7 @@ Escher::App::Snapshot* AppsContainerStorage::appSnapshotAtIndex(int index) {
   assert(index < numberOfBuiltinApps());
   Escher::App::Snapshot* snapshots[] = {homeAppSnapshot()
                                             APPS_CONTAINER_SNAPSHOT_LIST};
-  assert(std::size(snapshots) == numberOfBuiltinApps());
+  assert(static_cast<int>(std::size(snapshots)) == numberOfBuiltinApps());
   assert(index >= 0 && index < numberOfBuiltinApps());
   return snapshots[index];
 }

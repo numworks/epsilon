@@ -19,8 +19,7 @@ namespace Poincare {
 
 SymbolAbstractNode::SymbolAbstractNode(const char *newName, int length)
     : ExpressionNode() {
-  assert(length <= k_maxNameLengthWithoutQuotationMarks ||
-         (NameHasQuotationMarks(newName, length) && length <= k_maxNameLength));
+  assert(NameLengthIsValid(newName, length));
   strlcpy(m_name, newName, length + 1);
 }
 

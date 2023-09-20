@@ -79,6 +79,12 @@ double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   }
 }
 
+Expression Trigonometry::AnglePeriodInAngleUnit(
+    Preferences::AngleUnit angleUnit) {
+  return Multiplication::Builder(
+      Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
+}
+
 bool Trigonometry::isDirectTrigonometryFunction(const Expression& e) {
   return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
                      ExpressionNode::Type::Tangent});

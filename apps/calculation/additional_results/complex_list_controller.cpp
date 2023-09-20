@@ -22,26 +22,23 @@ void ComplexListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
   assert(AdditionalResultsType::HasComplex(approximateOutput));
-  Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
-  preferencesComplex.setComplexFormat(
-      Poincare::Preferences::ComplexFormat::Cartesian);
-  Context* context = App::app()->localContext();
-  ApproximationContext approximationContext(context,
-                                            preferencesComplex.complexFormat(),
-                                            preferencesComplex.angleUnit());
+  ComputationContext computationContext(
+      App::app()->localContext(), Preferences::ComplexFormat::Cartesian,
+      Preferences::sharedPreferences->angleUnit());
+  ApproximationContext approximationContext(computationContext);
 
   // Fill Calculation Store
   Expression e = exactOutput.clone();
   Expression z = Symbol::Builder(k_symbol);
   size_t index = 0;
   setLineAtIndex(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e),
-                 context, &preferencesComplex);
+                 computationContext);
   setLineAtIndex(index++, ComplexArgument::Builder(z),
-                 ComplexArgument::Builder(e), context, &preferencesComplex);
-  setLineAtIndex(index++, RealPart::Builder(z), RealPart::Builder(e), context,
-                 &preferencesComplex);
+                 ComplexArgument::Builder(e), computationContext);
+  setLineAtIndex(index++, RealPart::Builder(z), RealPart::Builder(e),
+                 computationContext);
   setLineAtIndex(index++, ImaginaryPart::Builder(z), ImaginaryPart::Builder(e),
-                 context, &preferencesComplex);
+                 computationContext);
 
   // Set Complex illustration
   double realPart;

@@ -27,6 +27,7 @@ void TrigonometryListController::computeAdditionalResults(
   Context* context = App::app()->localContext();
   ComputationContext computationContext(context, preferences->complexFormat(),
                                         userAngleUnit);
+
   size_t index = 0;
 
   Expression period = Trigonometry::AnglePeriodInAngleUnit(userAngleUnit);
@@ -115,13 +116,13 @@ void TrigonometryListController::computeAdditionalResults(
 
   Expression theta = Symbol::Builder(k_symbol);
   setLineAtIndex(++index, Cosine::Builder(theta),
-                 Cosine::Builder(exactAngle.clone()), context, preferences);
+                 Cosine::Builder(exactAngle.clone()), computationContext);
   updateIsStrictlyEqualAtIndex(index, context);
   setLineAtIndex(++index, Sine::Builder(theta),
-                 Sine::Builder(exactAngle.clone()), context, preferences);
+                 Sine::Builder(exactAngle.clone()), computationContext);
   updateIsStrictlyEqualAtIndex(index, context);
   setLineAtIndex(++index, Tangent::Builder(theta),
-                 Tangent::Builder(exactAngle.clone()), context, preferences);
+                 Tangent::Builder(exactAngle.clone()), computationContext);
   updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration

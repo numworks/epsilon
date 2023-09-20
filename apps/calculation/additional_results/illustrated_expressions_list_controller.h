@@ -59,8 +59,7 @@ class IllustratedExpressionsListController
   /* Helper to add a line in the format func(arg) = exact ~ approx */
   void setLineAtIndex(int index, Poincare::Expression formula,
                       Poincare::Expression expression,
-                      Poincare::Context* context,
-                      Poincare::Preferences* preferences);
+                      const Poincare::ComputationContext& computationContext);
 
  private:
   int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,

@@ -616,9 +616,8 @@ bool Expression::involvesDiscontinuousFunction(Context *context) const {
 }
 
 bool Expression::isDiscontinuousBetweenValuesForSymbol(
-    const char *symbol, float x1, float x2, Context *context,
-    Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) const {
+    const char *symbol, float x1, float x2,
+    const ApproximationContext &approximationContext) const {
   if (isRandom()) {
     return true;
   }
@@ -626,32 +625,35 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
   if (isOfType({ExpressionNode::Type::Ceiling, ExpressionNode::Type::Floor,
                 ExpressionNode::Type::Round})) {
     // is discontinuous if it changes value
-    isDiscontinuous = approximateWithValueForSymbol<float>(
-                          symbol, x1, context, complexFormat, angleUnit) !=
-                      approximateWithValueForSymbol<float>(
-                          symbol, x2, context, complexFormat, angleUnit);
+    isDiscontinuous =
+        approximateWithValueForSymbol<float>(symbol, x1,
+                                             approximationContext) !=
+        approximateWithValueForSymbol<float>(symbol, x2, approximationContext);
   } else if (type() == ExpressionNode::Type::FracPart) {
     // is discontinuous if the child changes int value
     isDiscontinuous =
         std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(
-            symbol, x1, context, complexFormat, angleUnit)) !=
+            symbol, x1, approximationContext)) !=
         std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(
-            symbol, x2, context, complexFormat, angleUnit));
+            symbol, x2, approximationContext));
   } else if (isOfType({ExpressionNode::Type::AbsoluteValue,
                        ExpressionNode::Type::SignFunction})) {
     // is discontinuous if the child changes sign
-    isDiscontinuous =
-        (childAtIndex(0).approximateWithValueForSymbol<float>(
-             symbol, x1, context, complexFormat, angleUnit) > 0.0) !=
-        (childAtIndex(0).approximateWithValueForSymbol<float>(
-             symbol, x2, context, complexFormat, angleUnit) > 0.0);
+    isDiscontinuous = (childAtIndex(0).approximateWithValueForSymbol<float>(
+                           symbol, x1, approximationContext) > 0.0) !=
+                      (childAtIndex(0).approximateWithValueForSymbol<float>(
+                           symbol, x2, approximationContext) > 0.0);
   } else if (type() == ExpressionNode::Type::PiecewiseOperator) {
     PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
     isDiscontinuous =
         pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x1, context, complexFormat, angleUnit) !=
+            symbol, x1, approximationContext.context(),
+            approximationContext.complexFormat(),
+            approximationContext.angleUnit()) !=
         pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x2, context, complexFormat, angleUnit);
+            symbol, x2, approximationContext.context(),
+            approximationContext.complexFormat(),
+            approximationContext.angleUnit());
   }
   if (isDiscontinuous) {
     return true;
@@ -659,7 +661,7 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).isDiscontinuousBetweenValuesForSymbol(
-            symbol, x1, x2, context, complexFormat, angleUnit)) {
+            symbol, x1, x2, approximationContext)) {
       return true;
     }
   }
@@ -1628,13 +1630,14 @@ U Expression::ParseAndSimplifyAndApproximateToScalar(
 
 template <typename U>
 U Expression::approximateWithValueForSymbol(
-    const char *symbol, U x, Context *context,
-    Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) const {
-  VariableContext variableContext = VariableContext(symbol, context);
+    const char *symbol, U x,
+    const ApproximationContext &approximationContext) const {
+  VariableContext variableContext =
+      VariableContext(symbol, approximationContext.context());
   variableContext.setApproximationForVariable<U>(x);
-  return approximateToScalar<U>(
-      ApproximationContext(&variableContext, complexFormat, angleUnit));
+  ApproximationContext newContext = approximationContext;
+  newContext.setContext(&variableContext);
+  return approximateToScalar<U>(newContext);
 }
 
 Expression Expression::cloneAndApproximateKeepingSymbols(
@@ -1974,13 +1977,11 @@ template Evaluation<double> Expression::approximateToEvaluation(
     Preferences::AngleUnit angleUnit, bool withinReduce) const;
 
 template float Expression::approximateWithValueForSymbol(
-    const char *symbol, float x, Context *context,
-    Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) const;
+    const char *symbol, float x,
+    const ApproximationContext &approximationContext) const;
 template double Expression::approximateWithValueForSymbol(
-    const char *symbol, double x, Context *context,
-    Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) const;
+    const char *symbol, double x,
+    const ApproximationContext &approximationContext) const;
 
 template Expression Expression::approximateKeepingUnits<double>(
     const ReductionContext &reductionContext) const;

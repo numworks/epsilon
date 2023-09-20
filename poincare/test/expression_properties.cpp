@@ -1029,9 +1029,10 @@ void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
   Shared::GlobalContext context;
   Expression e = parse_expression(expression, &context, false);
+  ApproximationContext approximationContext(&context, Cartesian, Degree);
   quiz_assert_print_if_failure(
       !isContinuous == e.isDiscontinuousBetweenValuesForSymbol(
-                           "x", x1, x2, &context, Cartesian, Degree),
+                           "x", x1, x2, approximationContext),
       expression);
 }
 

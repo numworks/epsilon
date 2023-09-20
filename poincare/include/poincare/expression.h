@@ -206,9 +206,8 @@ class Expression : public TreeHandle {
    * discontinuous. */
   bool involvesDiscontinuousFunction(Context* context) const;
   bool isDiscontinuousBetweenValuesForSymbol(
-      const char* symbol, float x1, float x2, Context* context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit) const;
+      const char* symbol, float x1, float x2,
+      const ApproximationContext& approximationContext) const;
   bool hasBooleanValue() const;
   bool hasMatrixOrListChild(Context* context, bool isReduced = true) const {
     return node()->hasMatrixOrListChild(context, isReduced);
@@ -514,9 +513,9 @@ class Expression : public TreeHandle {
   template <typename U>
   U approximateToScalar(const ApproximationContext& approximationContext) const;
   template <typename U>
-  U approximateWithValueForSymbol(const char* symbol, U x, Context* context,
-                                  Preferences::ComplexFormat complexFormat,
-                                  Preferences::AngleUnit angleUnit) const;
+  U approximateWithValueForSymbol(
+      const char* symbol, U x,
+      const ApproximationContext& approximationContext) const;
   // This also reduces the expression. Approximation is in double.
   Expression cloneAndApproximateKeepingSymbols(
       ReductionContext reductionContext) const;

@@ -180,9 +180,11 @@ bool ContinuousFunction::isNamed() const {
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context *context) const {
   Expression equation = expressionReduced(context);
-  return equation.isDiscontinuousBetweenValuesForSymbol(
-      k_unknownName, x1, x2, context, complexFormat(context),
+  ApproximationContext approximationContext(
+      context, complexFormat(context),
       Poincare::Preferences::sharedPreferences->angleUnit());
+  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2,
+                                                        approximationContext);
 }
 
 void ContinuousFunction::getLineParameters(double *slope, double *intercept,

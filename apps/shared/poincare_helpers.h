@@ -131,10 +131,12 @@ inline T ApproximateWithValueForSymbol(
         Poincare::Preferences::sharedPreferences,
     bool updateComplexFormatAndAngleUnit = true) {
   return e.approximateWithValueForSymbol<T>(
-      symbol, x, context,
-      ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit,
-                                  e, context),
-      preferences->angleUnit());
+      symbol, x,
+      Poincare::ApproximationContext(
+          context,
+          ComplexFormatForPreferences(
+              preferences, updateComplexFormatAndAngleUnit, e, context),
+          preferences->angleUnit()));
 }
 
 // This method automatically updates complex format and angle unit

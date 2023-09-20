@@ -61,12 +61,13 @@ inline int Serialize(
 }
 
 inline Poincare::Preferences::ComplexFormat ComplexFormatForPreferences(
-    Poincare::Preferences* preferences, bool updateComplexFormat,
-    const Poincare::Expression e, Poincare::Context* context) {
+    Poincare::Preferences::ComplexFormat complexFormat,
+    bool updateComplexFormat, const Poincare::Expression e,
+    Poincare::Context* context) {
   return updateComplexFormat
              ? Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-                   preferences->complexFormat(), e, context)
-             : preferences->complexFormat();
+                   complexFormat, e, context)
+             : complexFormat;
 }
 
 inline Poincare::ReductionContext ReductionContextForParameters(
@@ -77,7 +78,8 @@ inline Poincare::ReductionContext ReductionContextForParameters(
     bool updateComplexFormat) {
   return Poincare::ReductionContext(
       context,
-      ComplexFormatForPreferences(preferences, updateComplexFormat, e, context),
+      ComplexFormatForPreferences(preferences->complexFormat(),
+                                  updateComplexFormat, e, context),
       preferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
       symbolicComputation, unitConversion);
@@ -91,7 +93,8 @@ inline Poincare::Expression Approximate(
     bool updateComplexFormat = true) {
   return e.approximate<T>(
       context,
-      ComplexFormatForPreferences(preferences, updateComplexFormat, e, context),
+      ComplexFormatForPreferences(preferences->complexFormat(),
+                                  updateComplexFormat, e, context),
       preferences->angleUnit());
 }
 
@@ -117,8 +120,8 @@ inline T ApproximateToScalar(const Poincare::Expression e,
                              bool updateComplexFormatAndAngleUnit = true) {
   Poincare::ApproximationContext approximationContext(
       context,
-      ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit,
-                                  e, context),
+      ComplexFormatForPreferences(preferences->complexFormat(),
+                                  updateComplexFormatAndAngleUnit, e, context),
       preferences->angleUnit());
   return e.approximateToScalar<T>(approximationContext);
 }
@@ -134,8 +137,9 @@ inline T ApproximateWithValueForSymbol(
       symbol, x,
       Poincare::ApproximationContext(
           context,
-          ComplexFormatForPreferences(
-              preferences, updateComplexFormatAndAngleUnit, e, context),
+          ComplexFormatForPreferences(preferences->complexFormat(),
+                                      updateComplexFormatAndAngleUnit, e,
+                                      context),
           preferences->angleUnit()));
 }
 
@@ -192,8 +196,8 @@ inline void CloneAndSimplifyAndApproximate(
     bool updateComplexFormatAndAngleUnit = true) {
   e.cloneAndSimplifyAndApproximate(
       simplifiedExpression, approximatedExpression, context,
-      ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit,
-                                  e, context),
+      ComplexFormatForPreferences(preferences->complexFormat(),
+                                  updateComplexFormatAndAngleUnit, e, context),
       preferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       symbolicComputation, unitConversion);

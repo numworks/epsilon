@@ -795,18 +795,15 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
     } else {
       m_expressionDerivate = Derivative::Builder(
           expression, Symbol::SystemSymbol(), Symbol::SystemSymbol());
-      Preferences preferences =
-          Preferences::ClonePreferencesWithNewComplexFormat(
-              complexFormat(record, context));
       /* On complex functions, this step can take a significant time.
        * A workaround could be to identify big functions to skip simplification
        * at the cost of possible inaccurate evaluations (such as
        * diff(abs(x),x,0) not being undefined). */
       PoincareHelpers::CloneAndSimplify(
-          &m_expressionDerivate, context,
+          &m_expressionDerivate, context, complexFormat(record, context),
           ReductionTarget::SystemForApproximation,
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-          PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+          PoincareHelpers::k_defaultUnitConversion);
     }
   }
   return m_expressionDerivate;

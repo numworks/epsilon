@@ -286,10 +286,9 @@ double ContinuousFunction::approximateDerivative(double x, Context *context,
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context);
   assert(subCurveIndex == 0);
-  Preferences preferences =
-      Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
-  return PoincareHelpers::ApproximateWithValueForSymbol(
-      derivate, k_unknownName, x, context, &preferences, false);
+  ApproximationContext approximationContext(context, complexFormat(context));
+  return derivate.approximateWithValueForSymbol(k_unknownName, x,
+                                                approximationContext);
 }
 
 Poincare::Layout ContinuousFunction::derivativeTitleLayout() {
@@ -409,8 +408,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   Expression e = expressionApproximated(context);
-  Preferences preferences =
-      Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
+  ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
     Expression point;
@@ -432,8 +430,6 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    ApproximationContext approximationContext(context,
-                                              preferences.complexFormat());
     return static_cast<Point &>(point).approximate2D<T>(approximationContext);
   }
 
@@ -444,16 +440,13 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     } else {
       assert(subCurveIndex == 0);
     }
+    T value =
+        e.approximateWithValueForSymbol(k_unknownName, t, approximationContext);
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
-      return Coordinate2D<T>(
-          PoincareHelpers::ApproximateWithValueForSymbol(
-              e, k_unknownName, t, context, &preferences, false),
-          t);
+      return Coordinate2D<T>(value, t);
     }
-    return Coordinate2D<T>(
-        t, PoincareHelpers::ApproximateWithValueForSymbol(
-               e, k_unknownName, t, context, &preferences, false));
+    return Coordinate2D<T>(t, value);
   }
   if (e.type() == ExpressionNode::Type::Dependency) {
     e = e.childAtIndex(0);
@@ -465,11 +458,10 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   assert(e.type() == ExpressionNode::Type::Matrix);
   assert(static_cast<Matrix &>(e).numberOfRows() == 2);
   assert(static_cast<Matrix &>(e).numberOfColumns() == 1);
-  return Coordinate2D<T>(
-      PoincareHelpers::ApproximateWithValueForSymbol(
-          e.childAtIndex(0), k_unknownName, t, context, &preferences, false),
-      PoincareHelpers::ApproximateWithValueForSymbol(
-          e.childAtIndex(1), k_unknownName, t, context, &preferences, false));
+  return Coordinate2D<T>(e.childAtIndex(0).approximateWithValueForSymbol(
+                             k_unknownName, t, approximationContext),
+                         e.childAtIndex(1).approximateWithValueForSymbol(
+                             k_unknownName, t, approximationContext));
 }
 
 /* ContinuousFunction::Model */

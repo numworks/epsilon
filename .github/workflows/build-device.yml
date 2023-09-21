@@ -7,7 +7,8 @@ on:
        default: 'false'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  # Temporarily use -j1 to investigate build failures.
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j1' || '-j2' }}
   BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta == 'true'] }}
 
 jobs:

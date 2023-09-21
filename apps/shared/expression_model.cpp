@@ -60,20 +60,10 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
     const Storage::Record* record, Context* context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     Expression e = ExpressionModel::expressionClone(record);
-    if (e.isUninitialized()) {
-      m_expressionComplexFormat = MemoizedComplexFormat::Any;
-    } else {
-      Preferences::ComplexFormat expressionUpdatedComplexFormat =
-          Preferences::UpdatedComplexFormatWithExpressionInput(
-              Preferences::ComplexFormat::Real, e, context);
-      m_expressionComplexFormat =
-          expressionUpdatedComplexFormat ==
-                  Preferences::k_defautComplexFormatIfNotReal
-              ? MemoizedComplexFormat::Complex
-              : MemoizedComplexFormat::Any;
-    }
+    m_expressionComplexFormat = !e.isUninitialized() && e.hasComplexI(context)
+                                    ? MemoizedComplexFormat::Complex
+                                    : MemoizedComplexFormat::Any;
   }
-
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
   Preferences::ComplexFormat userComplexFormat =
       Preferences::sharedPreferences->complexFormat();

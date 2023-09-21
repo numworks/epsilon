@@ -581,10 +581,9 @@ Expression ContinuousFunction::Model::expressionReduced(
       Expression resultForApproximation = expressionEquation(record, context);
       if (!resultForApproximation.isUninitialized()) {
         PoincareHelpers::CloneAndReduce(
-            &resultForApproximation, context,
+            &resultForApproximation, context, preferences.complexFormat(),
             ReductionTarget::SystemForApproximation,
-            SymbolicComputation::DoNotReplaceAnySymbol,
-            PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+            SymbolicComputation::DoNotReplaceAnySymbol);
         if (resultForApproximation.numberOfDescendants(true) <
             m_expression.numberOfDescendants(true)) {
           m_expression = resultForApproximation;
@@ -623,11 +622,11 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
   Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
       complexFormat(record, context));
   if (!result.isUndefined()) {
-    PoincareHelpers::CloneAndReduce(
-        &result, context, ReductionTarget::SystemForAnalysis,
-        // Symbols have already been replaced.
-        SymbolicComputation::DoNotReplaceAnySymbol,
-        PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+    PoincareHelpers::CloneAndReduce(&result, context,
+                                    preferences.complexFormat(),
+                                    ReductionTarget::SystemForAnalysis,
+                                    // Symbols have already been replaced.
+                                    SymbolicComputation::DoNotReplaceAnySymbol);
   }
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.

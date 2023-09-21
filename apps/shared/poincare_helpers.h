@@ -88,20 +88,6 @@ inline Poincare::Expression Approximate(const Poincare::Expression e,
 }
 
 template <class T>
-inline Poincare::Expression ApproximateKeepingUnits(
-    const Poincare::Expression e, Poincare::Context* context,
-    Poincare::ReductionTarget target = Poincare::ReductionTarget::User,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool updateComplexFormat = true) {
-  return e.approximateKeepingUnits<T>(ReductionContextForParameters(
-      e, context, target, symbolicComputation, unitConversion, preferences,
-      updateComplexFormat));
-}
-
-template <class T>
 inline T ApproximateToScalar(const Poincare::Expression e,
                              Poincare::Context* context) {
   return e.approximateToScalar<T>(
@@ -114,6 +100,17 @@ inline T ApproximateWithValueForSymbol(const Poincare::Expression e,
                                        Poincare::Context* context) {
   return e.approximateWithValueForSymbol<T>(
       symbol, x, ApproximationContextForParameters(e, context));
+}
+
+template <class T>
+inline Poincare::Expression ApproximateKeepingUnits(
+    const Poincare::Expression e, Poincare::Context* context,
+    Poincare::ReductionTarget target = Poincare::ReductionTarget::User,
+    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+  return e.approximateKeepingUnits<T>(ReductionContextForParameters(
+      e, context, target, symbolicComputation, unitConversion,
+      Poincare::Preferences::sharedPreferences, true));
 }
 
 // This method automatically updates complex format and angle unit

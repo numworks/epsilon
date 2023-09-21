@@ -87,8 +87,8 @@ void UnitListController::computeAdditionalResults(
   Expression copy = exactClone;
   Expression units;
   // Reduce to be able to recognize units
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &copy, App::app()->localContext(), ReductionTarget::User, &units);
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(&copy, &units,
+                                               App::app()->localContext());
   assert(!units.isUninitialized());
   double value = Shared::PoincareHelpers::ApproximateToScalar<double>(
       copy, App::app()->localContext());
@@ -208,7 +208,7 @@ void UnitListController::computeAdditionalResults(
   assert(siExpression.hasUnit());
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &siExpression, App::app()->localContext(), ReductionTarget::User, &unit,
+      &siExpression, &unit, App::app()->localContext(), ReductionTarget::User,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       UnitConversion::None);
   m_SIValue = PoincareHelpers::ApproximateToScalar<double>(

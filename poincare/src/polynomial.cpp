@@ -106,10 +106,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
 }
 
 static bool rootSmallerThan(const Expression *root1, const Expression *root2,
-                            Context *context,
-                            Preferences::ComplexFormat complexFormat,
-                            Preferences::AngleUnit angleUnit) {
-  ApproximationContext approximationContext(context, complexFormat, angleUnit);
+                            const ApproximationContext *approximationContext) {
   if (root2->type() == ExpressionNode::Type::Undefined ||
       root2->type() == ExpressionNode::Type::Nonreal) {
     return true;
@@ -117,8 +114,8 @@ static bool rootSmallerThan(const Expression *root1, const Expression *root2,
   if (root1->isUndefined()) {
     return false;
   }
-  float r1 = root1->approximateToScalar<float>(approximationContext);
-  float r2 = root2->approximateToScalar<float>(approximationContext);
+  float r1 = root1->approximateToScalar<float>(*approximationContext);
+  float r2 = root2->approximateToScalar<float>(*approximationContext);
 
   if (!std::isnan(r1) || !std::isnan(r2)) {
     // std::isnan(r1) => (r1 <= r2) is false
@@ -127,9 +124,9 @@ static bool rootSmallerThan(const Expression *root1, const Expression *root2,
 
   // r1 and r2 aren't finite, compare the real part
   float rr1 = RealPart::Builder(root1->clone())
-                  .approximateToScalar<float>(approximationContext);
+                  .approximateToScalar<float>(*approximationContext);
   float rr2 = RealPart::Builder(root2->clone())
-                  .approximateToScalar<float>(approximationContext);
+                  .approximateToScalar<float>(*approximationContext);
 
   if (rr1 != rr2) {
     return rr1 <= rr2;
@@ -137,9 +134,9 @@ static bool rootSmallerThan(const Expression *root1, const Expression *root2,
 
   // Compare the imaginary part
   float ir1 = ImaginaryPart::Builder(root1->clone())
-                  .approximateToScalar<float>(approximationContext);
+                  .approximateToScalar<float>(*approximationContext);
   float ir2 = ImaginaryPart::Builder(root2->clone())
-                  .approximateToScalar<float>(approximationContext);
+                  .approximateToScalar<float>(*approximationContext);
   return ir1 <= ir2;
 }
 
@@ -529,9 +526,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
         Expression **tab = reinterpret_cast<Expression **>(pack);
         ApproximationContext *approximationContext =
             reinterpret_cast<ApproximationContext *>(pack[3]);
-        return rootSmallerThan(tab[j], tab[i], approximationContext->context(),
-                               approximationContext->complexFormat(),
-                               approximationContext->angleUnit());
+        return rootSmallerThan(tab[j], tab[i], approximationContext);
       },
       pack, degree);
 

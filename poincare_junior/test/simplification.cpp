@@ -343,6 +343,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(1-m+n)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
+  simplifies_to("sum(k^2, k, 2, 5)", "54");
   simplifies_to("2*sum(k, k, 0, n)+n", "2n + n^2");
   simplifies_to("2*sum(k, k, 3, n)+n", "-6+2*n+n^(2)");
 

@@ -27,7 +27,7 @@ jobs:
         # Optimize twice since first try will fail.
         run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon.apk $OUTPUT_PATH/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon_optimized.apk
         # Delete temporary files.
-        run: rm $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon.apk
+      - run: rm $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon.apk
       - name: Upload apk
         uses: actions/upload-artifact@v3
         with:

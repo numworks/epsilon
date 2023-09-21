@@ -19,15 +19,25 @@
 
 namespace PoincareJ {
 
+static void PushCodePoint(Tree *layout, CodePoint codePoint) {
+  NAry::AddChild(layout,
+                 SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+                     codePoint));
+}
+
+static void InsertCodePointAt(Tree *layout, CodePoint codePoint, int index) {
+  NAry::AddChildAtIndex(
+      layout,
+      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(codePoint),
+      index);
+}
+
 void Expression::ConvertTextToLayout(EditionReference layoutParent,
                                      const char *text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
-    NAry::AddChild(
-        layoutParent,
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-            codePoint));
+    PushCodePoint(layoutParent, codePoint);
     codePoint = decoder.nextCodePoint();
   }
 }
@@ -44,9 +54,7 @@ void Expression::ConvertBuiltinToLayout(EditionReference layoutParent,
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (j != 0) {
-      NAry::AddChild(
-          newParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(','));
+      PushCodePoint(newParent, ',');
     }
     // No parentheses within builtin parameters
     ConvertExpressionToLayout(newParent, expression->nextNode(), false);
@@ -57,9 +65,7 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                                IntegerHandler handler,
                                                int decimalOffset) {
   if (handler.strictSign() == StrictSign::Negative) {
-    NAry::AddChild(
-        layoutParent,
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-'));
+    PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
   int firstInsertedIndex = layoutParent->numberOfChildren();
@@ -74,16 +80,9 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
     assert(result.second > result.first);
     result.second->removeTree();
     MoveTreeOverTree(value, result.first);
-    NAry::AddChildAtIndex(
-        layoutParent,
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('0' +
-                                                                       digit),
-        firstInsertedIndex);
+    InsertCodePointAt(layoutParent, '0' + digit, firstInsertedIndex);
     if (--decimalOffset == 0) {
-      NAry::AddChildAtIndex(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('.'),
-          firstInsertedIndex);
+      InsertCodePointAt(layoutParent, '.', firstInsertedIndex);
     }
   } while (!Number::IsZero(value) && decimalOffset <= 0);
   value->removeTree();
@@ -95,9 +94,7 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
   int childNumber = expression->numberOfChildren();
   for (int i = 0; i < childNumber; i++) {
     if (i > 0) {
-      NAry::AddChild(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(op));
+      PushCodePoint(layoutParent, op);
     }
     // 2*(x+y) or x-(y+z)
     bool allowParentheses = (type == BlockType::Multiplication) ||
@@ -110,38 +107,25 @@ void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
 void Expression::ConvertMatrixToLayout(EditionReference layoutParent,
                                        Tree *expression) {
   // TODO : matrix layout
-  NAry::AddChild(
-      layoutParent,
-      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('['));
+  PushCodePoint(layoutParent, '[');
   int cols = Matrix::NumberOfColumns(expression);
   int rows = Matrix::NumberOfRows(expression);
   for (int row = 0; row < rows; row++) {
-    NAry::AddChild(
-        layoutParent,
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('['));
+    PushCodePoint(layoutParent, '[');
     for (int col = 0; col < cols; col++) {
       if (col > 0) {
-        NAry::AddChild(
-            layoutParent,
-            SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-                ','));
+        PushCodePoint(layoutParent, ',');
       }
       ConvertExpressionToLayout(layoutParent, expression->nextNode());
     }
-    NAry::AddChild(
-        layoutParent,
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(']'));
+    PushCodePoint(layoutParent, ']');
   }
-  NAry::AddChild(
-      layoutParent,
-      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(']'));
+  PushCodePoint(layoutParent, ']');
 }
 
 void Expression::ConvertUnitToLayout(EditionReference layoutParent,
                                      Tree *expression) {
-  NAry::AddChild(
-      layoutParent,
-      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('_'));
+  PushCodePoint(layoutParent, '_');
   ConvertTextToLayout(layoutParent, Unit::GetPrefix(expression)->symbol());
   ConvertTextToLayout(layoutParent,
                       Unit::GetRepresentative(expression)->rootSymbols());
@@ -234,22 +218,15 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       expression->nextNode()->removeTree();
     case BlockType::Factorial:
       ConvertExpressionToLayout(layoutParent, expression->nextNode());
-      NAry::AddChild(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('!'));
+      PushCodePoint(layoutParent, '!');
       break;
     case BlockType::Constant:
-      NAry::AddChild(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-              Constant::ToCodePoint(Constant::Type(expression))));
+      PushCodePoint(layoutParent,
+                    Constant::ToCodePoint(Constant::Type(expression)));
       break;
     case BlockType::UserSymbol:
       assert(Symbol::Length(expression) == 1);
-      NAry::AddChild(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-              *Symbol::NonNullTerminatedName(expression)));
+      PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));
       break;
     case BlockType::Undefined:
       ConvertTextToLayout(layoutParent, "undef");
@@ -271,13 +248,9 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       break;
     }
     case BlockType::Set:
-      NAry::AddChild(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('{'));
+      PushCodePoint(layoutParent, '{');
       ConvertInfixOperatorToLayout(layoutParent, expression, ',');
-      NAry::AddChild(
-          layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('}'));
+      PushCodePoint(layoutParent, '}');
       break;
     case BlockType::List:
     case BlockType::Polynomial:
@@ -286,10 +259,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
         ConvertBuiltinToLayout(layoutParent, expression);
       } else {
         assert(false);
-        NAry::AddChild(
-            layoutParent,
-            SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-                '?'));
+        PushCodePoint(layoutParent, '?');
         break;
       }
   }

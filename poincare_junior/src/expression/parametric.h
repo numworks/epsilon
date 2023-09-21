@@ -17,8 +17,8 @@ class Parametric {
   static bool Explicit(Tree* t);
 
   static uint8_t FunctionIndex(const Tree* t) {
-    return (t->type() == BlockType::Derivative) ? k_derivativeFunctionIndex
-                                                : k_sumFunctionIndex;
+    return (t->type() == BlockType::Derivative) ? k_derivandIndex
+                                                : k_integrandIndex;
   }
 
   static bool ExpandOneSum(Tree* t);
@@ -29,9 +29,9 @@ class Parametric {
 
   static constexpr uint8_t k_lowerBoundIndex = 1;
   static constexpr uint8_t k_upperBoundIndex = 2;
-  static constexpr uint8_t k_sumFunctionIndex = 3;
+  static constexpr uint8_t k_integrandIndex = 3;
 
-  static constexpr uint8_t k_derivativeFunctionIndex = 2;
+  static constexpr uint8_t k_derivandIndex = 2;
 };
 
 }  // namespace PoincareJ

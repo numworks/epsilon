@@ -27,11 +27,11 @@ jobs:
         run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
       # Not using matrix strategy to avoid multiplying setups and uploads.
       - name: Build n0110
-        run: make MODEL=n0110 epsilon.onboarding$BETA$.dfu epsilon.onboarding$BETA$.allow3rdparty.dfu
+        run: make MODEL=n0110 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0115
-        run: make MODEL=n0115 epsilon.onboarding$BETA$.dfu epsilon.onboarding$BETA$.allow3rdparty.dfu
+        run: make MODEL=n0115 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0120
-        run: make MODEL=n0120 epsilon.onboarding$BETA$.dfu epsilon.onboarding$BETA$.allow3rdparty.dfu
+        run: make MODEL=n0120 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Upload
         uses: actions/upload-artifact@v3
         with:

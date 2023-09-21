@@ -74,18 +74,17 @@ inline Poincare::ReductionContext ReductionContextForParameters(
   return reductionContext;
 }
 
+inline Poincare::ApproximationContext ApproximationContextForParameters(
+    const Poincare::Expression e, Poincare::Context* context) {
+  Poincare::ApproximationContext approximationContext(context);
+  approximationContext.updateComplexFormat(true, e);
+  return approximationContext;
+}
+
 template <class T>
-inline Poincare::Expression Approximate(
-    const Poincare::Expression e, Poincare::Context* context,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool updateComplexFormat = true) {
-  Poincare::ApproximationContext approximationContext(
-      context, preferences->complexFormat(), preferences->angleUnit());
-  Poincare::ApproximationContext updatedApproximationContext =
-      approximationContext;
-  updatedApproximationContext.updateComplexFormat(updateComplexFormat, e);
-  return e.approximate<T>(updatedApproximationContext);
+inline Poincare::Expression Approximate(const Poincare::Expression e,
+                                        Poincare::Context* context) {
+  return e.approximate<T>(ApproximationContextForParameters(e, context));
 }
 
 template <class T>
@@ -104,17 +103,9 @@ inline Poincare::Expression ApproximateKeepingUnits(
 
 template <class T>
 inline T ApproximateToScalar(const Poincare::Expression e,
-                             Poincare::Context* context,
-                             Poincare::Preferences* preferences =
-                                 Poincare::Preferences::sharedPreferences,
-                             bool updateComplexFormatAndAngleUnit = true) {
-  Poincare::ApproximationContext approximationContext(
-      context, preferences->complexFormat(), preferences->angleUnit());
-  Poincare::ApproximationContext updatedApproximationContext =
-      approximationContext;
-  updatedApproximationContext.updateComplexFormat(
-      updateComplexFormatAndAngleUnit, e);
-  return e.approximateToScalar<T>(updatedApproximationContext);
+                             Poincare::Context* context) {
+  return e.approximateToScalar<T>(
+      ApproximationContextForParameters(e, context));
 }
 
 template <class T>

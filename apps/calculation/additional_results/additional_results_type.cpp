@@ -107,7 +107,7 @@ bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
   Expression unit;
   Expression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &clone, globalContext, ReductionTarget::User, &unit,
+      &clone, &unit, globalContext, ReductionTarget::User,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       UnitConversion::None);
   double value =
@@ -122,8 +122,7 @@ bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
      * which will make the unit list controller crash.  */
     unit = Expression();
     clone = exactOutput.clone();
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(&clone, globalContext,
-                                                 ReductionTarget::User, &unit);
+    PoincareHelpers::CloneAndReduceAndRemoveUnit(&clone, &unit, globalContext);
     return !unit.isUninitialized();
   }
   return false;

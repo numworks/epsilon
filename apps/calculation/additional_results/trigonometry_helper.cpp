@@ -43,8 +43,7 @@ Expression ExtractExactAngleFromDirectTrigo(const Expression input,
   Expression exactAngle = directTrigoFunction.childAtIndex(0);
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
   Expression unit;
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, context,
-                                               ReductionTarget::User, &unit);
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, &unit, context);
   if (!unit.isUninitialized()) {
     if (!unit.isPureAngleUnit()) {
       return Expression();

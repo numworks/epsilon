@@ -117,17 +117,28 @@ inline Poincare::Expression ApproximateKeepingUnits(
 
 inline void CloneAndSimplify(
     Poincare::Expression* e, Poincare::Context* context,
+    Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool updateComplexFormat = true, bool* reductionFailure = nullptr) {
+    bool* reductionFailure = nullptr) {
+  *e = e->cloneAndSimplify(
+      ReductionContextForParameters(*e, context, complexFormat, target,
+                                    symbolicComputation, unitConversion, false),
+      reductionFailure);
+}
+
+inline void CloneAndSimplify(
+    Poincare::Expression* e, Poincare::Context* context,
+    Poincare::ReductionTarget target,
+    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
+    bool* reductionFailure = nullptr) {
   *e = e->cloneAndSimplify(
       ReductionContextForParameters(
           *e, context,
           Poincare::Preferences::sharedPreferences->complexFormat(), target,
-          symbolicComputation, unitConversion, updateComplexFormat),
+          symbolicComputation, unitConversion, true),
       reductionFailure);
 }
 

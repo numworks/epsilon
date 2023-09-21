@@ -361,8 +361,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         &result, &abscissaContext, Poincare::ReductionTarget::User,
         Poincare::SymbolicComputation::
             ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        Poincare::UnitConversion::Default,
-        Poincare::Preferences::sharedPreferences, true, &simplificationFailure);
+        Poincare::UnitConversion::Default, &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
     Expression approximation =

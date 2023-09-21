@@ -109,20 +109,11 @@ inline T ApproximateToScalar(const Poincare::Expression e,
 }
 
 template <class T>
-inline T ApproximateWithValueForSymbol(
-    const Poincare::Expression e, const char* symbol, T x,
-    Poincare::Context* context,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool updateComplexFormatAndAngleUnit = true) {
-  Poincare::ApproximationContext approximationContext(
-      context, preferences->complexFormat(), preferences->angleUnit());
-  Poincare::ApproximationContext updatedApproximationContext =
-      approximationContext;
-  updatedApproximationContext.updateComplexFormat(
-      updateComplexFormatAndAngleUnit, e);
-  return e.approximateWithValueForSymbol<T>(symbol, x,
-                                            updatedApproximationContext);
+inline T ApproximateWithValueForSymbol(const Poincare::Expression e,
+                                       const char* symbol, T x,
+                                       Poincare::Context* context) {
+  return e.approximateWithValueForSymbol<T>(
+      symbol, x, ApproximationContextForParameters(e, context));
 }
 
 // This method automatically updates complex format and angle unit

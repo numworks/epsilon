@@ -257,10 +257,9 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx,
     }
   }
   // Update angle unit and complex format
-  Preferences preferences =
-      Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
-  return PoincareHelpers::ApproximateWithValueForSymbol(
-      e, k_unknownName, x, sqctx, &preferences, false);
+  ApproximationContext approximationContext(sqctx, complexFormat(sqctx));
+  return e.approximateWithValueForSymbol(k_unknownName, x,
+                                         approximationContext);
 }
 
 Expression Sequence::sumBetweenBounds(double start, double end,

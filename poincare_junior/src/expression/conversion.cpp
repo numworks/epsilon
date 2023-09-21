@@ -331,6 +331,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       PushPoincareExpression(exp.childAtIndex(3));
       PushPoincareExpression(exp.childAtIndex(0));
       return;
+    case OT::Comparison:
+      // TODO: Handle comparisons better
+      assert(Poincare::ComparisonNode::IsBinaryEquality(exp));
     case OT::Addition:
     case OT::Multiplication:
     case OT::Subtraction:
@@ -345,6 +348,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
           SharedEditionPool->push<BlockType::Multiplication>(
               exp.numberOfChildren());
           break;
+        case OT::Comparison:
         case OT::Subtraction:
           SharedEditionPool->pushBlock(BlockType::Subtraction);
           break;

@@ -9,6 +9,9 @@ class Equation : public Shared::ExpressionModelHandle {
  public:
   Equation(Ion::Storage::Record record = Record())
       : ExpressionModelHandle(record) {}
+  Poincare::Expression expressionModelClone() const {
+    return m_model.expressionClone(this);
+  }
   Poincare::Expression standardForm(
       Poincare::Context* context, bool replaceFunctionsButNotSymbols,
       Poincare::ReductionTarget reductionTarget) const {

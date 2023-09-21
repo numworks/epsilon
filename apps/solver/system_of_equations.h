@@ -5,6 +5,7 @@
 #include <poincare/context_with_parent.h>
 #include <poincare/range.h>
 #include <poincare/symbol_abstract.h>
+#include <poincare_junior/src/expression/solver.h>
 
 #include "equation.h"
 #include "equation_store.h"
@@ -32,15 +33,7 @@ class SystemOfEquations {
     GeneralMonovariable,
   };
 
-  enum class Error : uint8_t {
-    NoError = 0,
-    EquationUndefined,
-    EquationNonreal,
-    TooManyVariables,
-    NonLinearSystem,
-    RequireApproximateSolution,
-    DisabledInExamMode,
-  };
+  using Error = PoincareJ::Solver::Error;
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
@@ -55,8 +48,12 @@ class SystemOfEquations {
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
   const char* variable(size_t index) const {
+    // Variable is now displayed in the equation solution
+    return "0=";
+#if 0
     assert(index < m_numberOfSolvingVariables && m_variables[index][0] != '\0');
     return m_variables[index];
+#endif
   }
   size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
   const char* userVariable(size_t index) const {
@@ -92,8 +89,11 @@ class SystemOfEquations {
   void tidy(Poincare::TreeNode* treePoolCursor = nullptr);
 
  private:
+#if 0
   constexpr static char k_parameterPrefix = 't';
+#endif
 
+#if 0
   class ContextWithoutT : public Poincare::ContextWithParent {
    public:
     using Poincare::ContextWithParent::ContextWithParent;
@@ -115,15 +115,18 @@ class SystemOfEquations {
                         Poincare::Expression* simplifiedEquations);
   uint32_t tagParametersUsedAsVariables() const;
   void tagVariableIfParameter(const char* name, uint32_t* tags) const;
+#endif
 
   enum class SolutionType : uint8_t {
     Exact,
     Approximate,
     Formal,
   };
+#if 0
   Error registerSolution(Poincare::Expression e, Poincare::Context* context,
                          SolutionType type);
   void registerSolution(double f);
+#endif
 
   Solution m_solutions[k_maxNumberOfSolutions];
   size_t m_numberOfSolvingVariables;
@@ -132,12 +135,16 @@ class SystemOfEquations {
   EquationStore* m_store;
   int m_degree;
   Poincare::Range1D<double> m_approximateSolvingRange;
+#if 0
   char m_variables[Poincare::Expression::k_maxNumberOfVariables]
                   [Poincare::SymbolAbstractNode::k_maxNameSize];
+#endif
   char m_userVariables[Poincare::Expression::k_maxNumberOfVariables]
                       [Poincare::SymbolAbstractNode::k_maxNameSize];
   Type m_type;
+#if 0
   Poincare::Preferences::ComplexFormat m_complexFormat;
+#endif
   bool m_overrideUserVariables;
   bool m_hasMoreSolutions;
   bool m_autoApproximateSolvingRange;

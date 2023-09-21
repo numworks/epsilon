@@ -2,8 +2,10 @@
 
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/polynomial.h>
+#include <poincare_junior/src/expression/set.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/storage_context.h>
@@ -14,7 +16,7 @@ namespace PoincareJ {
 Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
                          Error* error) {
   context->overrideUserVariables = false;
-  Tree* result = PrivateExactSolve(equationsSet, *context, error);
+  Tree* result = PrivateExactSolve(equationsSet, context, error);
   if (*error == Error::RequireApproximateSolution ||
       (*error == Error::NoError && result->numberOfChildren() > 0)) {
     return result;
@@ -23,7 +25,7 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
 
   Error secondError = Error::NoError;
   context->overrideUserVariables = true;
-  result = PrivateExactSolve(equationsSet, *context, &secondError);
+  result = PrivateExactSolve(equationsSet, context, &secondError);
   if (*error != Error::NoError || secondError == Error::NoError ||
       secondError == Error::RequireApproximateSolution) {
     *error = secondError;
@@ -43,8 +45,22 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
                                 Error* error) {
   Tree* simplifiedEquationSet = equationsSet->clone();
   if (!context->overrideUserVariables) {
+    // Collect replaced user variables in context.
+    EditionReference userVariables =
+        Variables::GetUserSymbols(simplifiedEquationSet);
     // Replace user variables before SimplifyAndFindVariables
     StorageContext::DeepReplaceIdentifiersWithTrees(simplifiedEquationSet);
+    // Find replaced variables using set difference
+    userVariables = Set::Difference(
+        userVariables, Variables::GetUserSymbols(simplifiedEquationSet));
+    // Update context
+    context->numberOfUserVariables = userVariables->numberOfChildren();
+    Tree* userVariable = userVariables->firstChild();
+    for (int i = 0; i < context->numberOfUserVariables; i++) {
+      Symbol::GetName(userVariable, context->userVariables[i++], 10);
+      userVariable->removeTree();
+    }
+    userVariables->removeNode();
   }
   Tree* variables =
       SimplifyAndFindVariables(simplifiedEquationSet, *context, error);
@@ -61,7 +77,10 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
       assert(result.isUninitialized());
       result = SolvePolynomial(simplifiedEquationSet, numberOfVariables,
                                *context, error);
-      // TODO: Handle GeneralMonovariable solving.
+      if (*error == Error::RequireApproximateSolution) {
+        // TODO: Handle GeneralMonovariable solving.
+        assert(result.isUninitialized());
+      }
     }
   }
   if (!result.isUninitialized()) {

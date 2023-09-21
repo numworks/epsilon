@@ -11,17 +11,22 @@ namespace PoincareJ {
 class Solver {
  public:
   struct Context {
-    bool overrideUserVariables;  // If true, defined userVariables are ignored.
-    bool exactResults;
+    // If true, defined userVariables are ignored.
+    bool overrideUserVariables = false;
+    bool exactResults = true;
+    // Context used for apps/solver compatibility
+    int numberOfUserVariables = 0;
+    char userVariables[6][10];
   };
 
-  enum class Error {
+  enum class Error : uint8_t {
     NoError = 0,
     EquationUndefined = 1,
     EquationNonreal = 2,
     TooManyVariables = 3,
     NonLinearSystem = 4,
     RequireApproximateSolution = 5,
+    DisabledInExamMode,  // TODO rebased from poincare
   };
 
   // Return list of exact solutions.

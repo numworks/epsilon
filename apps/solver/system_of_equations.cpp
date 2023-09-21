@@ -9,6 +9,9 @@
 #include <poincare/print_int.h>
 #include <poincare/symbol.h>
 #include <poincare/zoom.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include "app.h"
 #include "poincare/empty_context.h"
@@ -18,6 +21,59 @@ using namespace Shared;
 
 namespace Solver {
 
+SystemOfEquations::Error SystemOfEquations::exactSolve(
+    Poincare::Context *context) {
+  PoincareJ::Solver::Context pcjContext;
+  Error error = Error::NoError;
+
+  // Copy equations on the EditionPool
+  PoincareJ::Tree *equations =
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::SystemList>(0);
+  int nEquations = m_store->numberOfDefinedModels();
+  for (int i = 0; i < nEquations; i++) {
+    ExpiringPointer<Equation> equation =
+        m_store->modelForRecord(m_store->definedRecordAtIndex(i));
+    Poincare::Expression equationExpression = equation->expressionModelClone();
+    PoincareJ::NAry::AddChild(
+        equations,
+        PoincareJ::Expression::FromPoincareExpression(equationExpression));
+  }
+
+  PoincareJ::Tree *result =
+      PoincareJ::Solver::ExactSolve(equations, &pcjContext, &error);
+
+  if (error == Error::NoError) {
+    assert(result);
+    // Update member variables for LinearSystem
+    m_type = Type::LinearSystem;
+    m_degree = 1;
+    m_hasMoreSolutions = false;
+    m_numberOfSolutions = result->numberOfChildren();
+    m_numberOfSolvingVariables = m_numberOfSolutions;
+    m_overrideUserVariables = pcjContext.overrideUserVariables;
+    m_numberOfUserVariables = pcjContext.numberOfUserVariables;
+    // Copy user variables
+    memcpy(m_userVariables, pcjContext.userVariables, sizeof(char[6][10]));
+    // Copy solutions
+    for (int i = 0; const PoincareJ::Tree *solution : result->children()) {
+      Poincare::Expression exact =
+          PoincareJ::Expression::ToPoincareExpression(solution);
+      Poincare::Layout exactLayout =
+          PoincareHelpers::CreateLayout(exact, context);
+      m_solutions[i++] = Solution(exactLayout, Poincare::Layout(), NAN, true);
+    }
+  }
+#if 0
+  else if (error == Error::RequireApproximateSolution) {
+    m_type = Type::GeneralMonovariable;
+    m_approximateResolutionMinimum = -k_defaultApproximateSearchRange;
+    m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
+  }
+#endif
+  return error;
+}
+
+#if 0
 const Poincare::Expression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const Poincare::SymbolAbstract &symbol, bool clone,
@@ -50,6 +106,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   }
   return secondError;
 }
+#endif
 
 template <typename T>
 static Poincare::Coordinate2D<T> evaluator(T t, const void *model,
@@ -76,6 +133,9 @@ void SystemOfEquations::setApproximateSolvingRange(
 
 void SystemOfEquations::autoComputeApproximateSolvingRange(
     Poincare::Context *context) {
+  // TODO: Handle approximate solve
+  assert(false);
+#if 0
   Poincare::Expression equationStandardForm =
       equationStandardFormForApproximateSolve(context);
   constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
@@ -115,9 +175,13 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(
   m_approximateSolvingRange =
       Poincare::Range1D<double>(static_cast<double>(finalRange.min()),
                                 static_cast<double>(finalRange.max()));
+#endif
 }
 
 void SystemOfEquations::approximateSolve(Poincare::Context *context) {
+  // TODO: Handle approximate solve
+  assert(false);
+#if 0
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfSolvingVariables == 1);
 
@@ -150,6 +214,7 @@ void SystemOfEquations::approximateSolve(Poincare::Context *context) {
       registerSolution(root);
     }
   }
+#endif
 }
 
 void SystemOfEquations::tidy(Poincare::TreeNode *treePoolCursor) {
@@ -162,6 +227,7 @@ void SystemOfEquations::tidy(Poincare::TreeNode *treePoolCursor) {
   }
 }
 
+#if 0
 Poincare::Expression SystemOfEquations::equationStandardFormForApproximateSolve(
     Poincare::Context *context) {
   return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
@@ -722,5 +788,6 @@ void SystemOfEquations::tagVariableIfParameter(const char *variable,
     OMG::BitHelper::setBitAtIndex(*tags, index, true);
   }
 }
+#endif
 
 }  // namespace Solver

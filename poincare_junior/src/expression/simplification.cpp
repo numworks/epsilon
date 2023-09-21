@@ -328,7 +328,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   if (Number::IsZero(n)) {
     if (Variables::HasVariables(v)) {
       return PatternMatching::MatchAndReplace(u, KPow(KA, 0_e),
-                                              KDep(1_e, KSet(KA)));
+                                              KDep(1_e, KSet(KPow(KA, -1_e))));
     } else {
       // TODO use sign to check if it may be null
       u->cloneTreeOverTree(1_e);
@@ -810,7 +810,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   Variables::ProjectToId(ref, variables);
   changed = DeepSystematicReduce(ref) || changed;
   changed = DeepApplyMatrixOperators(ref) || changed;
-  // TODO: Bubble up Matrices, complexes, units, lists and dependencies.
+  // TODO: Bubble up Matrices, complexes, units, lists.
   changed = AdvancedReduction(ref, ref) || changed;
   assert(!DeepSystematicReduce(ref));
   assert(!DeepApplyMatrixOperators(ref));

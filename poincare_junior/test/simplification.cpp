@@ -300,12 +300,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
-  simplifies_to("a*a^(-1)", "dep(1,a)");
+  simplifies_to("a*a^(-1)", "dep(1,a^(-1))");
   simplifies_to("a*a^(1+1)", "a^(3)");
-  simplifies_to("a*a^(-1)", "dep(1,a)",
+  simplifies_to("a*a^(-1)", "dep(1,a^(-1))",
                 {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("2*a^1*(2a)^(-1)", "dep(1,a)");
+  simplifies_to("2*a^1*(2a)^(-1)", "dep(1,a^(-1))");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
   // Complexes
@@ -447,7 +447,7 @@ QUIZ_CASE(pcj_dependencies) {
   QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
 
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->clone();
-  const Tree* r3 = KDep(3_e, KSet("a"_e));
+  const Tree* r3 = KDep(3_e, KSet(KPow("a"_e, -1_e)));
   Simplification::Simplify(e3);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 }

@@ -62,12 +62,14 @@ inline int Serialize(
 
 inline Poincare::ReductionContext ReductionContextForParameters(
     const Poincare::Expression e, Poincare::Context* context,
+    Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation,
-    Poincare::UnitConversion unitConversion, Poincare::Preferences* preferences,
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
     bool updateComplexFormat) {
   Poincare::ReductionContext reductionContext(
-      context, preferences->complexFormat(), preferences->angleUnit(),
+      context, complexFormat,
+      Poincare::Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
       symbolicComputation, unitConversion);
   reductionContext.updateComplexFormat(updateComplexFormat, e);
@@ -109,22 +111,8 @@ inline Poincare::Expression ApproximateKeepingUnits(
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   return e.approximateKeepingUnits<T>(ReductionContextForParameters(
-      e, context, target, symbolicComputation, unitConversion,
-      Poincare::Preferences::sharedPreferences, true));
-}
-
-// This method automatically updates complex format and angle unit
-template <class T>
-inline T ParseAndSimplifyAndApproximateToScalar(
-    const char* text, Poincare::Context* context,
-    Poincare::SymbolicComputation symbolicComputation =
-        k_replaceWithDefinitionOrUndefined,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences) {
-  return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
-      text, context, preferences->complexFormat(), preferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-      symbolicComputation);
+      e, context, Poincare::Preferences::sharedPreferences->complexFormat(),
+      target, symbolicComputation, unitConversion, true));
 }
 
 inline void CloneAndSimplify(
@@ -135,11 +123,12 @@ inline void CloneAndSimplify(
     Poincare::Preferences* preferences =
         Poincare::Preferences::sharedPreferences,
     bool updateComplexFormat = true, bool* reductionFailure = nullptr) {
-  *e =
-      e->cloneAndSimplify(ReductionContextForParameters(
-                              *e, context, target, symbolicComputation,
-                              unitConversion, preferences, updateComplexFormat),
-                          reductionFailure);
+  *e = e->cloneAndSimplify(
+      ReductionContextForParameters(
+          *e, context,
+          Poincare::Preferences::sharedPreferences->complexFormat(), target,
+          symbolicComputation, unitConversion, updateComplexFormat),
+      reductionFailure);
 }
 
 inline void CloneAndSimplifyAndApproximate(
@@ -164,11 +153,9 @@ inline void CloneAndReduce(
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  *e = e->cloneAndReduce(Poincare::ReductionContext(
-      context, complexFormat,
-      Poincare::Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
-      symbolicComputation, unitConversion));
+  *e = e->cloneAndReduce(ReductionContextForParameters(
+      *e, context, complexFormat, target, symbolicComputation, unitConversion,
+      false));
 }
 
 inline void CloneAndApproximateKeepingSymbols(
@@ -177,11 +164,9 @@ inline void CloneAndApproximateKeepingSymbols(
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  *e = e->cloneAndApproximateKeepingSymbols(Poincare::ReductionContext(
-      context, complexFormat,
-      Poincare::Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
-      symbolicComputation, unitConversion));
+  *e = e->cloneAndApproximateKeepingSymbols(ReductionContextForParameters(
+      *e, context, complexFormat, target, symbolicComputation, unitConversion,
+      false));
 }
 
 inline void CloneAndReduceAndRemoveUnit(
@@ -192,8 +177,9 @@ inline void CloneAndReduceAndRemoveUnit(
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   *e = e->cloneAndReduceAndRemoveUnit(
       ReductionContextForParameters(
-          *e, context, target, symbolicComputation, unitConversion,
-          Poincare::Preferences::sharedPreferences, true),
+          *e, context,
+          Poincare::Preferences::sharedPreferences->complexFormat(), target,
+          symbolicComputation, unitConversion, true),
       unit);
 }
 
@@ -209,6 +195,20 @@ inline void ParseAndSimplifyAndApproximate(
   Poincare::Expression::ParseAndSimplifyAndApproximate(
       text, parsedExpression, simplifiedExpression, approximateExpression,
       context, preferences->complexFormat(), preferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
+      symbolicComputation);
+}
+
+// This method automatically updates complex format and angle unit
+template <class T>
+inline T ParseAndSimplifyAndApproximateToScalar(
+    const char* text, Poincare::Context* context,
+    Poincare::SymbolicComputation symbolicComputation =
+        k_replaceWithDefinitionOrUndefined,
+    Poincare::Preferences* preferences =
+        Poincare::Preferences::sharedPreferences) {
+  return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
+      text, context, preferences->complexFormat(), preferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       symbolicComputation);
 }

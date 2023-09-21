@@ -90,20 +90,14 @@ void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
 }
 
 void Expression::ConvertInfixOperatorToLayout(EditionReference layoutParent,
-                                              Tree *expression) {
+                                              Tree *expression, CodePoint op) {
   BlockType type = expression->type();
-  assert(type == BlockType::Addition || type == BlockType::Multiplication ||
-         type == BlockType::Subtraction);
-  CodePoint codepoint = (type == BlockType::Addition)         ? '+'
-                        : (type == BlockType::Multiplication) ? '*'
-                                                              : '-';
   int childNumber = expression->numberOfChildren();
   for (int i = 0; i < childNumber; i++) {
     if (i > 0) {
       NAry::AddChild(
           layoutParent,
-          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-              codepoint));
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(op));
     }
     // 2*(x+y) or x-(y+z)
     bool allowParentheses = (type == BlockType::Multiplication) ||
@@ -197,9 +191,13 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
         layoutParent = newParent;
       }
       // continue
-    case BlockType::Multiplication:
-      ConvertInfixOperatorToLayout(layoutParent, expression);
+    case BlockType::Multiplication: {
+      CodePoint codepoint = (type == BlockType::Addition)         ? '+'
+                            : (type == BlockType::Multiplication) ? '*'
+                                                                  : '-';
+      ConvertInfixOperatorToLayout(layoutParent, expression, codepoint);
       break;
+    }
     case BlockType::Power:
     case BlockType::PowerMatrix:
     case BlockType::Division:
@@ -272,11 +270,14 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       ConvertTextToLayout(layoutParent, buffer);
       break;
     }
-    case BlockType::UserFunction:
-    case BlockType::UserSequence:
     case BlockType::Set:
-      // TODO
-      ConvertExpressionToLayout(layoutParent, expression->nextNode());
+      NAry::AddChild(
+          layoutParent,
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('{'));
+      ConvertInfixOperatorToLayout(layoutParent, expression, ',');
+      NAry::AddChild(
+          layoutParent,
+          SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('}'));
       break;
     case BlockType::List:
     case BlockType::Polynomial:

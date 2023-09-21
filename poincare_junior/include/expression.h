@@ -35,7 +35,7 @@ class Expression final : public Reference {
                                             IntegerHandler handler,
                                             int decimalOffset = 0);
   static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
-                                           Tree* expression);
+                                           Tree* expression, CodePoint op);
   static void ConvertMatrixToLayout(EditionReference layoutParent,
                                     Tree* expression);
   static void ConvertUnitToLayout(EditionReference layoutParent,

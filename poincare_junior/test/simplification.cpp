@@ -300,12 +300,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
-  simplifies_to("a*a^(-1)", "dep(1,a^(-1))");
+  simplifies_to("a*a^(-1)", "dep(1,{a^(-1)})");
   simplifies_to("a*a^(1+1)", "a^(3)");
-  simplifies_to("a*a^(-1)", "dep(1,a^(-1))",
+  simplifies_to("a*a^(-1)", "dep(1,{a^(-1)})",
                 {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("2*a^1*(2a)^(-1)", "dep(1,a^(-1))");
+  simplifies_to("2*a^1*(2a)^(-1)", "dep(1,{a^(-1)})");
+  simplifies_to("cos(π*a*a^(-1))^(b*b^(-2)*b)", "dep(-1,{a^(-1),b^(-1)})");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
   // Complexes

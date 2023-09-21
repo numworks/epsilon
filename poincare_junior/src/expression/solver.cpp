@@ -39,28 +39,28 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
   return result;
 }
 
-Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context context,
+Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
                                 Error* error) {
   Tree* simplifiedEquationSet = equationsSet->clone();
-  if (!context.overrideUserVariables) {
+  if (!context->overrideUserVariables) {
     // Replace user variables before SimplifyAndFindVariables
     StorageContext::DeepReplaceIdentifiersWithTrees(simplifiedEquationSet);
   }
   Tree* variables =
-      SimplifyAndFindVariables(simplifiedEquationSet, context, error);
+      SimplifyAndFindVariables(simplifiedEquationSet, *context, error);
   uint8_t numberOfVariables = variables->numberOfChildren();
   SwapTrees(&simplifiedEquationSet, &variables);
   Variables::ProjectToId(simplifiedEquationSet, variables);
   EditionReference result;
   if (*error == Error::NoError) {
     result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
-                               context, error);
+                               *context, error);
     if (*error == Error::NonLinearSystem &&
         variables->numberOfChildren() <= 1 &&
         equationsSet->numberOfChildren() <= 1) {
       assert(result.isUninitialized());
       result = SolvePolynomial(simplifiedEquationSet, numberOfVariables,
-                               context, error);
+                               *context, error);
       // TODO: Handle GeneralMonovariable solving.
     }
   }

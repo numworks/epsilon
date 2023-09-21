@@ -30,7 +30,7 @@ class Solver {
 
  private:
   // Return list of exact solutions.
-  static Tree* PrivateExactSolve(const Tree* equationsSet, Context context,
+  static Tree* PrivateExactSolve(const Tree* equationsSet, Context* context,
                                  Error* error);
   // Return variables, simplifies equations.
   static Tree* SimplifyAndFindVariables(Tree* equationsSet, Context context,

@@ -12,7 +12,8 @@ namespace PoincareJ {
 class Parametric {
  public:
   static bool SimplifySumOrProduct(Tree* t);
-  static bool ExpandSumOrProduct(Tree* t);
+  static bool ExpandSum(Tree* t);
+  static bool ExpandProduct(Tree* t);
   static bool ContractSumOrProduct(Tree* t);
   static bool Explicit(Tree* t);
 
@@ -20,9 +21,6 @@ class Parametric {
     return (t->type() == BlockType::Derivative) ? k_derivandIndex
                                                 : k_integrandIndex;
   }
-
-  static bool ExpandOneSum(Tree* t);
-  static bool ExpandOneProduct(Tree* t);
 
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;

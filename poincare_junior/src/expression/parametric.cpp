@@ -30,51 +30,17 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   return false;
 }
 
-bool Parametric::ExpandSumOrProduct(Tree* expr) {
-  if (!expr->type().isOfType({BlockType::Sum, BlockType::Product})) {
+bool Parametric::ExpandSum(Tree* expr) {
+  if (expr->type() != BlockType::Sum) {
     return false;
   }
-  bool isSum = expr->type() == BlockType::Sum;
-  BlockType associatedOperation =
-      isSum ? BlockType::Addition : BlockType::Multiplication;
-  bool changed = isSum ? ExpandOneSum(expr) : ExpandOneProduct(expr);
-  // TODO well-known forms
-  if (changed && expr->type() == associatedOperation) {
-    // Expand should be shallow but is responsible to apply on its new children
-    bool childChanged = false;
-    for (Tree* child : expr->children()) {
-      if (child->type() ==
-          (isSum ? BlockType::Multiplication : BlockType::Power)) {
-        bool grandChildChanged = false;
-        for (Tree* grandChild : child->children()) {
-          grandChildChanged =
-              ExpandSumOrProduct(grandChild) || grandChildChanged;
-        }
-        if (grandChildChanged) {
-          Simplification::ShallowSystematicReduce(child);
-          childChanged = true;
-        }
-      } else {
-        childChanged = ExpandSumOrProduct(child) || childChanged;
-      }
-    }
-    if (childChanged) {
-      Simplification::ShallowSystematicReduce(expr);
-    }
-  }
-  return changed;
-}
-
-bool Parametric::ExpandOneSum(Tree* expr) {
-  assert(expr->type() == BlockType::Sum);
-  // TODO Split the child in a part that depends on k ?
   return
       // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
       Simplification::DistributeOverNAry(
           expr, BlockType::Sum, BlockType::Addition, BlockType::Addition,
           [](Tree* expr) -> bool {
             return Simplification::ShallowSystematicReduce(expr) +
-                   ExpandSumOrProduct(expr);
+                   ExpandSum(expr);
           },
           k_integrandIndex) ||
       PatternMatching::MatchReplaceAndSimplify(
@@ -113,10 +79,13 @@ bool Parametric::ExpandOneSum(Tree* expr) {
 #endif
       // sum(x_k, k, 0, n) = x_0 + ... + x_n
       Explicit(expr);
+  // TODO Split the child in a part that depends on k ?
 }
 
-bool Parametric::ExpandOneProduct(Tree* expr) {
-  assert(expr->type() == BlockType::Product);
+bool Parametric::ExpandProduct(Tree* expr) {
+  if (expr->type() != BlockType::Product) {
+    return false;
+  }
   return
       // split product
       PatternMatching::MatchReplaceAndSimplify(

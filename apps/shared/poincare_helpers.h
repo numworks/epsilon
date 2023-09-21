@@ -130,20 +130,6 @@ inline T ParseAndSimplifyAndApproximateToScalar(
       symbolicComputation);
 }
 
-// This method automatically updates complex format and angle unit
-inline Poincare::Expression ParseAndSimplify(
-    const char* text, Poincare::Context* context,
-    Poincare::SymbolicComputation symbolicComputation =
-        k_replaceWithDefinitionOrUndefined,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool* reductionFailure = nullptr) {
-  return Poincare::Expression::ParseAndSimplify(
-      text, context, preferences->complexFormat(), preferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-      symbolicComputation, k_defaultUnitConversion, reductionFailure);
-}
-
 inline void CloneAndSimplify(
     Poincare::Expression* e, Poincare::Context* context,
     Poincare::ReductionTarget target,

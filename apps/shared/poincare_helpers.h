@@ -176,15 +176,15 @@ inline void CloneAndReduce(
 
 inline void CloneAndApproximateKeepingSymbols(
     Poincare::Expression* e, Poincare::Context* context,
+    Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences,
-    bool updateComplexFormat = true) {
-  *e = e->cloneAndApproximateKeepingSymbols(ReductionContextForParameters(
-      *e, context, target, symbolicComputation, unitConversion, preferences,
-      updateComplexFormat));
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+  *e = e->cloneAndApproximateKeepingSymbols(Poincare::ReductionContext(
+      context, complexFormat,
+      Poincare::Preferences::sharedPreferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
+      symbolicComputation, unitConversion));
 }
 
 inline void CloneAndReduceAndRemoveUnit(

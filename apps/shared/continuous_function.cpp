@@ -598,12 +598,10 @@ Poincare::Expression ContinuousFunction::Model::expressionApproximated(
     const Ion::Storage::Record *record, Poincare::Context *context) const {
   if (m_expressionApproximated.isUninitialized()) {
     Expression e = expressionReduced(record, context);
-    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
-        complexFormat(record, context));
     PoincareHelpers::CloneAndApproximateKeepingSymbols(
-        &e, context, ReductionTarget::SystemForApproximation,
-        SymbolicComputation::DoNotReplaceAnySymbol,
-        PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+        &e, context, complexFormat(record, context),
+        ReductionTarget::SystemForApproximation,
+        SymbolicComputation::DoNotReplaceAnySymbol);
     m_expressionApproximated = e;
   }
   return m_expressionApproximated;

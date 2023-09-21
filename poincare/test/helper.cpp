@@ -147,12 +147,8 @@ void assert_parsed_expression_simplify_to(
       [](Expression e, ReductionContext reductionContext) {
         Expression simplifiedExpression;
         if (reductionContext.target() == User) {
-          e.cloneAndSimplifyAndApproximate(
-              &simplifiedExpression, nullptr, reductionContext.context(),
-              reductionContext.complexFormat(), reductionContext.angleUnit(),
-              reductionContext.unitFormat(),
-              reductionContext.symbolicComputation(),
-              reductionContext.unitConversion());
+          e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr,
+                                           reductionContext);
         } else {
           simplifiedExpression = e.cloneAndSimplify(reductionContext);
         }
@@ -187,12 +183,10 @@ void assert_expression_approximates_keeping_symbols_to(
       DefaultUnitConversion,
       [](Expression e, ReductionContext reductionContext) {
         Expression simplifiedExpression;
-        e.cloneAndSimplifyAndApproximate(
-            &simplifiedExpression, nullptr, reductionContext.context(),
-            reductionContext.complexFormat(), reductionContext.angleUnit(),
-            reductionContext.unitFormat(),
-            reductionContext.symbolicComputation(),
-            reductionContext.unitConversion(), true);
+        ReductionContext reductionContextClone = reductionContext;
+        reductionContextClone.setTarget(User);
+        e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr,
+                                         reductionContextClone, true);
         return simplifiedExpression;
       },
       numberOfSignificantDigits);

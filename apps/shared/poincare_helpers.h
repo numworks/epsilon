@@ -192,12 +192,13 @@ inline void CloneAndSimplifyAndApproximate(
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  e.cloneAndSimplifyAndApproximate(
-      simplifiedExpression, approximatedExpression, context,
-      ComplexFormatForPreferences(complexFormat, true, e, context),
+  Poincare::ReductionContext reductionContext(
+      context, ComplexFormatForPreferences(complexFormat, true, e, context),
       Poincare::Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-      symbolicComputation, unitConversion);
+      Poincare::ReductionTarget::User, symbolicComputation, unitConversion);
+  e.cloneAndSimplifyAndApproximate(simplifiedExpression, approximatedExpression,
+                                   reductionContext);
 }
 
 inline void CloneAndReduce(

@@ -1162,9 +1162,11 @@ void Expression::ParseAndSimplifyAndApproximate(
     *approximateExpression = Undefined::Builder();
     return;
   }
-  exp.cloneAndSimplifyAndApproximate(
-      simplifiedExpression, approximateExpression, context, complexFormat,
-      angleUnit, unitFormat, symbolicComputation, unitConversion);
+  ReductionContext reductionContext = ReductionContext(
+      context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
+      symbolicComputation, unitConversion);
+  exp.cloneAndSimplifyAndApproximate(simplifiedExpression,
+                                     approximateExpression, reductionContext);
   assert(!simplifiedExpression->isUninitialized() &&
          (!approximateExpression || !approximateExpression->isUninitialized()));
 }
@@ -1313,9 +1315,7 @@ void Expression::SimplifyAndApproximateChildren(
 
 void Expression::cloneAndSimplifyAndApproximate(
     Expression *simplifiedExpression, Expression *approximateExpression,
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation, UnitConversion unitConversion,
+    const ReductionContext &reductionContext,
     bool approximateKeepingSymbols) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
@@ -1323,13 +1323,11 @@ void Expression::cloneAndSimplifyAndApproximate(
   s_reductionEncounteredUndistributedList = false;
 
   // Step 1: we reduce the expression
-  ReductionContext userReductionContext = ReductionContext(
-      context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
-      symbolicComputation, unitConversion);
-  ReductionContext reductionContext = userReductionContext;
+  assert(reductionContext.target() == ReductionTarget::User);
+  ReductionContext reductionContextClone = reductionContext;
   bool reduceFailure = false;
   Expression e = cloneAndDeepReduceWithSystemCheckpoint(
-      &reductionContext, &reduceFailure, approximateKeepingSymbols);
+      &reductionContextClone, &reduceFailure, approximateKeepingSymbols);
 
   if (reduceFailure ||
       (type() == ExpressionNode::Type::Store &&
@@ -1338,7 +1336,7 @@ void Expression::cloneAndSimplifyAndApproximate(
     *simplifiedExpression = e;
     if (approximateExpression) {
       *approximateExpression = simplifiedExpression->approximate<double>(
-          ApproximationContext(userReductionContext));
+          ApproximationContext(reductionContext));
     }
     return;
   }
@@ -1348,12 +1346,12 @@ void Expression::cloneAndSimplifyAndApproximate(
    * children to beautify them with the right complex format. */
   if (e.isOfType({ExpressionNode::Type::Matrix, ExpressionNode::Type::List})) {
     SimplifyAndApproximateChildren(e, simplifiedExpression,
-                                   approximateExpression, userReductionContext);
+                                   approximateExpression, reductionContext);
   } else {
     /* Case 2: the reduced expression is scalar or too complex to respect the
      * complex format. */
     e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression,
-                                   userReductionContext);
+                                   reductionContext);
   }
 }
 

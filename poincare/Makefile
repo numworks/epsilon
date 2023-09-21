@@ -90,6 +90,7 @@ poincare_src += $(addprefix poincare/src/,\
   complex.cpp \
   complex_argument.cpp \
   complex_cartesian.cpp \
+  computation_context.cpp \
   conic.cpp \
   conjugate.cpp \
   constant.cpp \

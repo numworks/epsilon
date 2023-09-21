@@ -48,6 +48,8 @@ class ComputationContext {
     m_angleUnit = angleUnit;
   }
 
+  void updateComplexFormat(bool updateComplexFormat, const Expression e);
+
  private:
   Context* m_context;
   Preferences::ComplexFormat m_complexFormat;

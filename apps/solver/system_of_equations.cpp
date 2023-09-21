@@ -473,9 +473,11 @@ static void simplifyAndApproximateSolution(
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation) {
-  e.cloneAndSimplifyAndApproximate(
-      exact, approximate, context, complexFormat, angleUnit, unitFormat,
-      symbolicComputation, UnitConversion::Default, approximateDuringReduction);
+  ReductionContext reductionContext = ReductionContext(
+      context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
+      symbolicComputation, UnitConversion::Default);
+  e.cloneAndSimplifyAndApproximate(exact, approximate, reductionContext,
+                                   approximateDuringReduction);
   if (exact->type() == ExpressionNode::Type::Dependency) {
     /* e has been reduced under ReductionTarget::SystemForAnalysis in
      * Equation::Model::standardForm and has gone through Matrix::rank,

@@ -440,11 +440,7 @@ class Expression : public TreeHandle {
       UnitConversion unitConversion = UnitConversion::Default);
   void cloneAndSimplifyAndApproximate(
       Expression* simplifiedExpression, Expression* approximateExpression,
-      Context* context, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      UnitConversion unitConversion = UnitConversion::Default,
+      const ReductionContext& reductionContext,
       bool approximateKeepingSymbols = false) const;
   Expression cloneAndReduce(ReductionContext reductionContext) const;
   /* TODO: deepReduceWithSystemCheckpoint should be private but we need to make

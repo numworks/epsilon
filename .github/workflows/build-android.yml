@@ -25,18 +25,18 @@ jobs:
         run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=android epsilon.apk
       - name: Optimize ()
         # Optimize twice since first try will fail.
-        run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 ${{ OUTPUT_PATH }}/epsilon.apk ${{ OUTPUT_PATH }}/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 ${{ OUTPUT_PATH }}/epsilon_temp.apk ${{ OUTPUT_PATH }}/epsilon_optimized.apk
+        run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon.apk $OUTPUT_PATH/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon_optimized.apk
         # Delete temporary files.
-        run: rm ${{ OUTPUT_PATH }}/epsilon_temp.apk ${{ OUTPUT_PATH }}/epsilon.apk
+        run: rm $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon.apk
       - name: Upload apk
         uses: actions/upload-artifact@v3
         with:
           name: unsigned-epsilon-android.apk
-          path: ${{ OUTPUT_PATH }}/epsilon_optimized.apk
+          path: $OUTPUT_PATH/epsilon_optimized.apk
           retention-days: 7
       - name: Upload debug symbols
         uses: actions/upload-artifact@v3
         with:
           name: android-debug-symbols.zip
-          path: ${{ OUTPUT_PATH }}/app/outputs/native-debug-symbols/release/native-debug-symbols.zip
+          path: $OUTPUT_PATH/app/outputs/native-debug-symbols/release/native-debug-symbols.zip
           retention-days: 7

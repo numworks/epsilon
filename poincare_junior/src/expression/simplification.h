@@ -95,6 +95,14 @@ class Simplification {
   static bool SimplifyImaginaryPart(Tree *t);
   EDITION_REF_WRAP(SimplifyImaginaryPart);
 
+  typedef bool (*Operation)(Tree *node);
+  /* Replace target(..., naryTarget(A, B, ...), ...)
+   * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
+  static bool DistributeOverNAry(Tree *node, BlockType target,
+                                 BlockType naryTarget, BlockType naryOutput,
+                                 Operation operation = ShallowSystematicReduce,
+                                 int childIndex = 0);
+
  private:
   static bool SimplifySwitch(Tree *u);
   EDITION_REF_WRAP(SimplifySwitch);
@@ -123,13 +131,6 @@ class Simplification {
   typedef bool (*ShallowOperation)(Tree *node, void *context);
   static bool ApplyShallowInDepth(Tree *node, ShallowOperation shallowOperation,
                                   void *context = nullptr);
-  typedef bool (*Operation)(Tree *node);
-  /* Replace target(..., naryTarget(A, B, ...), ...)
-   * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
-  static bool DistributeOverNAry(Tree *node, BlockType target,
-                                 BlockType naryTarget, BlockType naryOutput,
-                                 Operation operation = ShallowSystematicReduce,
-                                 int childIndex = 0);
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);

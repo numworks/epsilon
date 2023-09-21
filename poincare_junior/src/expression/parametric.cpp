@@ -70,6 +70,13 @@ bool Parametric::ExpandOneSum(Tree* expr) {
   // TODO Split the child in a part that depends on k ?
   return
       // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
+      Simplification::DistributeOverNAry(
+          expr, BlockType::Sum, BlockType::Addition, BlockType::Addition,
+          [](Tree* expr) -> bool {
+            return Simplification::ShallowSystematicReduce(expr) +
+                   ExpandSumOrProduct(expr);
+          },
+          k_integrandIndex) ||
       PatternMatching::MatchReplaceAndSimplify(
           expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
           KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||

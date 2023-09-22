@@ -138,13 +138,18 @@ def create_diff_gif(list_images_1, list_images_2, gif_destination_folder):
       sys.exit(1)
    print("Generating all diff images")
    diff_image = os.path.join(diff_folder, "diff.png")
+   images_to_remove = []
    for i in range(n):
-      images_are_identical(list_images_1[i], list_images_2[i], diff_image)
+      identical = images_are_identical(list_images_1[i], list_images_2[i], diff_image)
       concatenated_image = os.path.join(diff_folder, "img-{:04d}.png".format(i))
       concatenate_images([list_images_1[i], list_images_2[i], diff_image], concatenated_image)
+      if (identical):
+         images_to_remove.append(concatenated_image)
    os.remove(diff_image)
    print("All done")
    list_diff_images = list_images_in_folder(diff_folder)
    assert len(list_diff_images) == n
    create_gif(list_diff_images, gif_destination_folder, "diff")
-   shutil.rmtree(diff_folder)
+   for image in images_to_remove:
+      os.remove(image)
+

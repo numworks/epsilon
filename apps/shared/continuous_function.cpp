@@ -180,9 +180,7 @@ bool ContinuousFunction::isNamed() const {
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context *context) const {
   Expression equation = expressionReduced(context);
-  ApproximationContext approximationContext(
-      context, complexFormat(context),
-      Poincare::Preferences::sharedPreferences->angleUnit());
+  ApproximationContext approximationContext(context, complexFormat(context));
   return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2,
                                                         approximationContext);
 }
@@ -206,9 +204,7 @@ void ContinuousFunction::getLineParameters(double *slope, double *intercept,
     *slope = NAN;
     *intercept = NAN;
   } else {
-    ApproximationContext approximationContext(
-        context, complexFormat(context),
-        Poincare::Preferences::sharedPreferences->angleUnit());
+    ApproximationContext approximationContext(context, complexFormat(context));
     *intercept =
         coefficients[0].approximateToScalar<double>(approximationContext);
     if (d == 0) {
@@ -436,8 +432,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    ApproximationContext approximationContext(
-        context, preferences.complexFormat(), preferences.angleUnit());
+    ApproximationContext approximationContext(context,
+                                              preferences.complexFormat());
     return static_cast<Point &>(point).approximate2D<T>(approximationContext);
   }
 
@@ -501,8 +497,7 @@ Expression ContinuousFunction::Model::expressionReduced(
         m_expression =
             static_cast<List &>(m_expression)
                 .approximateAndRemoveUndefAndSort<double>(
-                    ApproximationContext(context, preferences.complexFormat(),
-                                         preferences.angleUnit()));
+                    ApproximationContext(context, preferences.complexFormat()));
       } else {
         assert(m_expression.type() == ExpressionNode::Type::Point);
         m_expression =

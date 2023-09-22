@@ -55,10 +55,6 @@ class Preferences final {
   Preferences();
   static OMG::GlobalBox<Preferences> sharedPreferences;
 
-  static Preferences ClonePreferencesWithNewComplexFormat(
-      ComplexFormat complexFormat,
-      Preferences* preferences = sharedPreferences);
-
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Expression& e, Context* context);
 

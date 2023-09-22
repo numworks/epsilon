@@ -22,13 +22,6 @@ Preferences::Preferences()
       m_numberOfSignificantDigits(
           Preferences::DefaultNumberOfPrintedSignificantDigits) {}
 
-Preferences Preferences::ClonePreferencesWithNewComplexFormat(
-    ComplexFormat complexFormat, Preferences* preferences) {
-  Preferences result = *preferences;
-  result.setComplexFormat(complexFormat);
-  return result;
-}
-
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Expression& exp, Context* context) {
   if ((complexFormat == ComplexFormat::Real) && exp.hasComplexI(context)) {

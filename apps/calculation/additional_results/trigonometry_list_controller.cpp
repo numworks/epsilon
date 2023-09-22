@@ -22,11 +22,10 @@ void TrigonometryListController::computeAdditionalResults(
          (!m_directTrigonometry &&
           AdditionalResultsType::HasInverseTrigo(input, exactOutput)));
 
-  Preferences* preferences = Preferences::sharedPreferences;
-  Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
+  Preferences::AngleUnit userAngleUnit =
+      Preferences::sharedPreferences->angleUnit();
   Context* context = App::app()->localContext();
-  ComputationContext computationContext(context, preferences->complexFormat(),
-                                        userAngleUnit);
+  ComputationContext computationContext(context);
 
   size_t index = 0;
 

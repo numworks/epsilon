@@ -26,12 +26,8 @@ void VectorListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context *context = App::app()->localContext();
-  ComputationContext computationContext(
-      context,
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Poincare::Preferences::sharedPreferences->complexFormat(),
-          exactOutput, context),
-      Preferences::sharedPreferences->angleUnit());
+  ComputationContext computationContext(context);
+  computationContext.updateComplexFormat(true, exactOutput);
 
   setShowIllustration(false);
   size_t index = 0;

@@ -4,6 +4,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
 #include <poincare/print.h>
+#include <poincare/test/helper.h>
 #include <poincare/tree_pool.h>
 #include <poincare_junior/include/poincare.h>
 #include <poincare_junior/test/helper.h>
@@ -59,7 +60,9 @@ static inline void ion_main_inner(const char *testFilter) {
     int initialPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
     reset_pools();
+    quiz_reset_failure_ratio();
     c();
+    quiz_print_failure_ratio();
     int currentPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == currentPoolSize);
     i++;

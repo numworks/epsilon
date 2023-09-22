@@ -61,7 +61,7 @@ void quiz_assert_print_if_failure(bool test, const char *information) {
     quiz_print("TEST FAILURE WHILE TESTING:");
     quiz_print(information);
   }
-  // quiz_assert(test);
+  quiz_assert(test);
 }
 
 void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
@@ -78,8 +78,33 @@ void build_failure_infos(char *returnedInformationsBuffer, size_t bufferSize,
                          const char *expression, const char *result,
                          const char *expectedResult) {
   Print::UnsafeCustomPrintf(returnedInformationsBuffer, bufferSize,
-                            " %s\n processed to\n %s\n instead of\n %s",
+                            "FAILURE: %s processed to %s instead of %s",
                             expression, result, expectedResult);
+}
+
+static int k_crash;
+static int k_bad;
+static int k_total;
+
+void quiz_reset_failure_ratio() {
+  k_crash = 0;
+  k_bad = 0;
+  k_total = 0;
+}
+
+void quiz_print_failure_ratio() {
+  if (!k_total) {
+    return;
+  }
+  constexpr int bufferSize = 100;
+  char buffer[bufferSize];
+  int success = k_total - k_bad - k_crash;
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, "  %i ok   %i bad   %i crash  / %i", success, k_bad,
+      k_crash, k_total,
+      // 100. * static_cast<float>(success) / static_cast<float>(k_total),
+      Preferences::PrintFloatMode::Decimal, 5);
+  quiz_print(buffer);
 }
 
 void assert_parsed_expression_process_to(
@@ -88,10 +113,12 @@ void assert_parsed_expression_process_to(
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     UnitConversion unitConversion, ProcessExpression process,
     int numberOfSignificantDigits) {
+  k_total++;
   Shared::GlobalContext globalContext;
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  bool test;
+  bool bad = false;
+  bool crash = false;
   PoincareJ::ExceptionCheckpoint cp;
   if (ExceptionRun(cp)) {
     Tree *e = parse_expression(expression, &globalContext, false);
@@ -101,16 +128,24 @@ void assert_parsed_expression_process_to(
     Tree *l = PoincareJ::Expression::EditionPoolExpressionToLayout(m);
     *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
     l->removeTree();
-    test = strcmp(buffer, result) == 0;
+    bad = strcmp(buffer, result) != 0;
   } else {
-    buffer[0] = 0;
-    test = false;
+    crash = true;
   }
+  k_bad += bad;
+  k_crash += crash;
+
   char information[bufferSize] = "";
-  if (!test) {
-    build_failure_infos(information, bufferSize, expression, buffer, result);
+  int i = Poincare::Print::UnsafeCustomPrintf(
+      information, bufferSize, "%s\t%s\t%s",
+      crash ? "CRASH" : (bad ? "BAD" : "OK"), expression, result);
+  if (bad) {
+    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
+                                        buffer);
   }
-  quiz_assert_print_if_failure(test, information);
+#ifndef PLATFORM_DEVICE
+  std::cerr << information << '\n';
+#endif
 }
 
 PoincareJ::Tree *parse_expression(const char *expression, Context *context,

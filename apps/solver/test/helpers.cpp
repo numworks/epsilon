@@ -134,7 +134,7 @@ static void compareSolutions(SystemOfEquations *system,
         Expression::Parse(expectedValue, &solverContext, false);
     quiz_assert(!expectedExpression.isUninitialized());
 
-    Layout obtainedLayout = system->solution(i)->exactLayout();
+    Poincare::Layout obtainedLayout = system->solution(i)->exactLayout();
     if (obtainedLayout.isUninitialized()) {
       obtainedLayout = system->solution(i)->approximateLayout();
     }

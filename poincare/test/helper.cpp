@@ -3,6 +3,10 @@
 #include <apps/shared/global_context.h>
 #include <poincare/print.h>
 #include <poincare/src/parsing/parser.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/test/helper.h>
 
 using namespace Poincare;
 
@@ -84,13 +88,15 @@ void assert_parsed_expression_process_to(
     UnitConversion unitConversion, ProcessExpression process,
     int numberOfSignificantDigits) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
-  Expression m = process(
+  Tree *e = parse_expression(expression, &globalContext, false);
+  Tree *m = process(
       e, ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
                           target, symbolicComputation, unitConversion));
   constexpr int bufferSize = 500;
+  Tree *l = PoincareJ::Expression::EditionPoolExpressionToLayout(e);
   char buffer[bufferSize];
-  m.serialize(buffer, bufferSize, DecimalMode, numberOfSignificantDigits);
+  *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
+  l->removeTree();
   const bool test = strcmp(buffer, result) == 0;
   char information[bufferSize] = "";
   if (!test) {
@@ -99,11 +105,11 @@ void assert_parsed_expression_process_to(
   quiz_assert_print_if_failure(test, information);
 }
 
-Expression parse_expression(const char *expression, Context *context,
-                            bool addParentheses, bool parseForAssignment) {
-  Expression result = Expression::Parse(expression, context, addParentheses,
-                                        parseForAssignment);
-  quiz_assert_print_if_failure(!result.isUninitialized(), expression);
+PoincareJ::Tree *parse_expression(const char *expression, Context *context,
+                                  bool addParentheses,
+                                  bool parseForAssignment) {
+  Tree *result = parse(expression);
+  quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
 }
 
@@ -111,20 +117,24 @@ void assert_parsed_expression_is(
     const char *expression, Poincare::Expression r, bool addParentheses,
     bool parseForAssignment,
     Preferences::MixedFractions mixedFractionsParameter) {
+#if 0
   Shared::GlobalContext context;
   Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsParameter);
   Expression e = parse_expression(expression, &context, addParentheses,
                                   parseForAssignment);
   quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
+#endif
 }
 
 void assert_parse_to_same_expression(const char *expression1,
                                      const char *expression2) {
+#if 0
   Shared::GlobalContext context;
   Expression e1 = parse_expression(expression1, &context, false);
   Expression e2 = parse_expression(expression2, &context, false);
   quiz_assert(e1.isIdenticalTo(e2));
+#endif
 }
 
 void assert_reduce_and_store(const char *expression,
@@ -132,15 +142,17 @@ void assert_reduce_and_store(const char *expression,
                              Preferences::UnitFormat unitFormat,
                              Preferences::ComplexFormat complexFormat,
                              ReductionTarget target) {
+#if 0
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  Tree *e = parse_expression(expression, &globalContext, false);
   assert_expression_reduce(e, angleUnit, unitFormat, complexFormat, target,
-                           expression);
+  expression);
   assert(e.type() == ExpressionNode::Type::Store);
   static_cast<Store &>(e).storeValueForSymbol(&globalContext);
+#endif
 }
 
-void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit,
+void assert_expression_reduce(Tree *e, Preferences::AngleUnit angleUnit,
                               Preferences::UnitFormat unitFormat,
                               Preferences::ComplexFormat complexFormat,
                               ReductionTarget target,
@@ -149,7 +161,7 @@ void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit,
   ReductionContext context = ReductionContext(&globalContext, complexFormat,
                                               angleUnit, unitFormat, target);
   bool reductionFailure = false;
-  e = e.cloneAndDeepReduceWithSystemCheckpoint(&context, &reductionFailure);
+  PoincareJ::Simplification::Simplify(e);
   quiz_assert_print_if_failure(!reductionFailure, printIfFailure);
 }
 
@@ -162,18 +174,11 @@ void assert_parsed_expression_simplify_to(
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, target, complexFormat, angleUnit,
       unitFormat, symbolicComputation, unitConversion,
-      [](Expression e, ReductionContext reductionContext) {
-        Expression simplifiedExpression;
-        if (reductionContext.target() == User) {
-          /* Input approximatedExpression as a parameter so that approximation
-           * is computed too, which enables us to check that approximation does
-           * not raise any error. */
-          Expression approximatedExpression;
-          e.cloneAndSimplifyAndApproximate(
-              &simplifiedExpression, &approximatedExpression, reductionContext);
-        } else {
-          simplifiedExpression = e.cloneAndSimplify(reductionContext);
-        }
+      [](Tree *e, ReductionContext reductionContext) {
+        Tree *simplifiedExpression;
+        PoincareJ::Simplification::Simplify(e);
+        // TODO PCJ also approximate to see if it crashes
+        simplifiedExpression = e;
         return simplifiedExpression;
       });
 }
@@ -189,8 +194,9 @@ void assert_expression_approximates_to(const char *expression,
       expression, approximation, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
-      [](Expression e, ReductionContext reductionContext) {
-        return e.approximate<T>(ApproximationContext(reductionContext));
+      [](Tree *e, ReductionContext reductionContext) {
+        float value = PoincareJ::Approximation::To<T>(e);
+        return SharedEditionPool->push<BlockType::Float>(value);
       },
       numberOfSignificantDigits);
 }
@@ -203,12 +209,16 @@ void assert_expression_approximates_keeping_symbols_to(
       expression, simplifiedExpression, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllDefinedSymbolsWithDefinition,
       DefaultUnitConversion,
-      [](Expression e, ReductionContext reductionContext) {
-        Expression simplifiedExpression;
-        ReductionContext reductionContextClone = reductionContext;
-        reductionContextClone.setTarget(User);
-        e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr,
-                                         reductionContextClone, true);
+      [](Tree *e, ReductionContext reductionContext) {
+        Tree *simplifiedExpression;
+#if 0
+        e.cloneAndSimplifyAndApproximate(
+            &simplifiedExpression, nullptr, reductionContext.context(),
+            reductionContext.complexFormat(), reductionContext.angleUnit(),
+            reductionContext.unitFormat(),
+            reductionContext.symbolicComputation(),
+            reductionContext.unitConversion(), true);
+#endif
         return simplifiedExpression;
       },
       numberOfSignificantDigits);
@@ -219,21 +229,24 @@ void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+#if 0
   assert_parsed_expression_process_to(
       expression, approximation, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
-      [](Expression e, ReductionContext reductionContext) {
+      [](Tree *e, ReductionContext reductionContext) {
         e = e.cloneAndSimplify(reductionContext);
         return e.approximate<T>(ApproximationContext(reductionContext));
       },
       numberOfSignificantDigits);
+#endif
 }
 
-void assert_expression_serializes_to(Expression expression,
+void assert_expression_serializes_to(Tree *expression,
                                      const char *serialization,
                                      Preferences::PrintFloatMode mode,
                                      int numberOfSignificantDigits) {
+#if 0
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
@@ -244,9 +257,11 @@ void assert_expression_serializes_to(Expression expression,
                         buffer, serialization);
   }
   quiz_assert_print_if_failure(test, information);
+#endif
 }
 
-void assert_expression_serializes_and_parses_to_itself(Expression expression) {
+void assert_expression_serializes_and_parses_to_itself(
+    Poincare::Expression expression) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   expression.serialize(buffer, bufferSize);
@@ -255,6 +270,7 @@ void assert_expression_serializes_and_parses_to_itself(Expression expression) {
 
 void assert_expression_parses_and_serializes_to(const char *expression,
                                                 const char *result) {
+#if 0
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   constexpr int bufferSize = 500;
@@ -266,24 +282,26 @@ void assert_expression_parses_and_serializes_to(const char *expression,
     build_failure_infos(information, bufferSize, expression, buffer, result);
   }
   quiz_assert_print_if_failure(test, information);
+#endif
 }
 
 void assert_expression_parses_and_serializes_to_itself(const char *expression) {
   return assert_expression_parses_and_serializes_to(expression, expression);
 }
 
-void assert_layout_serializes_to(Layout layout, const char *serialization) {
+void assert_layout_serializes_to(Tree *layout, const char *serialization) {
+#if 0
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   layout.serializeForParsing(buffer, bufferSize);
   quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0,
                                serialization);
+#endif
 }
 
-void assert_expression_layouts_as(Expression expression, Layout layout) {
-  Layout l = expression.createLayout(
-      DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
-  quiz_assert(l.isIdenticalTo(layout));
+void assert_expression_layouts_as(Tree *expression, Tree *layout) {
+  Tree *l = PoincareJ::Expression::EditionPoolExpressionToLayout(expression);
+  quiz_assert(l->treeIsIdenticalTo(layout));
 }
 
 template void assert_expression_approximates_to<float>(

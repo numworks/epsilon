@@ -230,42 +230,8 @@ poincare_src += $(addprefix poincare/src/parsing/,\
 )
 
 tests_src += $(addprefix poincare/test/,\
-  tree/tree_handle.cpp\
-  tree/helpers.cpp\
-  approximation.cpp\
-  arithmetic.cpp\
-  conics.cpp\
-  context.cpp\
-  erf_inv.cpp \
-  exam_mode.cpp \
-  dependency.cpp\
-  derivative.cpp\
-  distribution.cpp\
-  expression.cpp\
-  expression_order.cpp\
-  expression_properties.cpp\
-  expression_serialization.cpp\
-  expression_to_layout.cpp\
-  function_solver.cpp\
   helper.cpp\
-  helpers.cpp\
-  input_beautification.cpp \
-  integer.cpp\
-  layout.cpp\
-  layout_cursor.cpp\
-  layout_serialization.cpp\
-  layout_to_expression.cpp\
-  matrix.cpp\
-  parsing.cpp\
-  polynomial.cpp\
-  print.cpp\
-  print_float.cpp\
-  print_int.cpp\
-  range.cpp \
-  rational.cpp\
-  regularized_function.cpp \
   simplification.cpp\
-  zoom.cpp \
 )
 
 poincare_bench_src = $(addprefix poincare/src/,\

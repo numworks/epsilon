@@ -5,6 +5,7 @@
 #include <poincare/float.h>
 #include <poincare/helpers.h>
 #include <poincare/print_float.h>
+#include <poincare_junior/test/helper.h>
 #include <quiz.h>
 
 #include <algorithm>
@@ -71,8 +72,8 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
 void quiz_assert_print_if_failure(bool test, const char* information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
-typedef Poincare::Expression (*ProcessExpression)(
-    Poincare::Expression, Poincare::ReductionContext reductionContext);
+typedef PoincareJ::Tree* (*ProcessExpression)(
+    PoincareJ::Tree*, Poincare::ReductionContext reductionContext);
 
 void assert_parsed_expression_process_to(
     const char* expression, const char* result,
@@ -87,10 +88,11 @@ void assert_parsed_expression_process_to(
 
 // Parsing
 
-Poincare::Expression parse_expression(const char* expression,
-                                      Poincare::Context* context,
-                                      bool addParentheses,
-                                      bool parseForAssignment = false);
+PoincareJ::Tree* parse_expression(const char* expression,
+                                  Poincare::Context* context,
+                                  bool addParentheses,
+                                  bool parseForAssignment = false);
+
 void assert_parsed_expression_is(
     const char* expression, Poincare::Expression r, bool addParentheses = false,
     bool parseForAssignment = false,
@@ -187,7 +189,7 @@ void assert_expression_simplifies_approximates_to(
 // Expression serializing
 
 void assert_expression_serializes_to(
-    Poincare::Expression expression, const char* serialization,
+    PoincareJ::Tree* expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7);
 
@@ -199,12 +201,12 @@ void assert_expression_parses_and_serializes_to_itself(const char* expression);
 
 // Layout serializing
 
-void assert_layout_serializes_to(Poincare::Layout layout,
+void assert_layout_serializes_to(PoincareJ::Tree* layout,
                                  const char* serialization);
 
 // Expression layouting
 
-void assert_expression_layouts_as(Poincare::Expression expression,
-                                  Poincare::Layout layout);
+void assert_expression_layouts_as(PoincareJ::Tree* expression,
+                                  PoincareJ::Tree* layout);
 
 #endif

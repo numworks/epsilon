@@ -7,8 +7,7 @@ on:
        default: 'false'
 
 env:
-  # Temporarily use -j1 to investigate build failures.
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j1' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
   BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta == 'true'] }}
 
 jobs:
@@ -28,14 +27,17 @@ jobs:
         run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
       # Not using matrix strategy to avoid multiplying setups and uploads.
       - name: Build n0110
-        run: make MODEL=n0110 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make MODEL=n0110 epsilon.onboarding$BETA.dfu
+      - run: make MODEL=n0110 epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0115
-        run: make MODEL=n0115 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make MODEL=n0115 epsilon.onboarding$BETA.dfu
+      - run: make MODEL=n0115 epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0120
-        run: make MODEL=n0120 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make MODEL=n0120 epsilon.onboarding$BETA.dfu
+      - run: make MODEL=n0120 epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: unsigned-device-builds.zip
+          name: unsigned-device-builds
           path: output/release/device/*/epsilon/*.dfu
           retention-days: 7

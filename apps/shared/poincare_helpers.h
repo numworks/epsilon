@@ -199,30 +199,22 @@ inline void CloneAndReduceAndRemoveUnit(
 inline void ParseAndSimplifyAndApproximate(
     const char* text, Poincare::Expression* parsedExpression,
     Poincare::Expression* simplifiedExpression,
-    Poincare::Expression* approximateExpression, Poincare::Context* context,
-    Poincare::SymbolicComputation symbolicComputation =
-        k_replaceWithDefinitionOrUndefined,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences) {
+    Poincare::Expression* approximateExpression, Poincare::Context* context) {
   Poincare::Expression::ParseAndSimplifyAndApproximate(
       text, parsedExpression, simplifiedExpression, approximateExpression,
-      context, preferences->complexFormat(), preferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-      symbolicComputation);
+      context, Poincare::Preferences::sharedPreferences->complexFormat(),
+      Poincare::Preferences::sharedPreferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat());
 }
 
 // This method automatically updates complex format and angle unit
 template <class T>
-inline T ParseAndSimplifyAndApproximateToScalar(
-    const char* text, Poincare::Context* context,
-    Poincare::SymbolicComputation symbolicComputation =
-        k_replaceWithDefinitionOrUndefined,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences) {
+inline T ParseAndSimplifyAndApproximateToScalar(const char* text,
+                                                Poincare::Context* context) {
   return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
-      text, context, preferences->complexFormat(), preferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-      symbolicComputation);
+      text, context, Poincare::Preferences::sharedPreferences->complexFormat(),
+      Poincare::Preferences::sharedPreferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat());
 }
 
 template <typename T>

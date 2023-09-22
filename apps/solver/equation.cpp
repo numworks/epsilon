@@ -59,17 +59,12 @@ Expression Equation::Model::standardForm(
                  contextToUse)) {
     returnedExpression = Undefined::Builder();
   } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
-    Preferences *preferences = Preferences::sharedPreferences;
     returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0),
                                               simplifiedInput.childAtIndex(1));
-    returnedExpression = returnedExpression.cloneAndReduce(ReductionContext(
-        contextToUse,
-        Preferences::UpdatedComplexFormatWithExpressionInput(
-            preferences->complexFormat(), expressionInputWithoutFunctions,
-            contextToUse),
-        preferences->angleUnit(),
-        GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-        reductionTarget));
+    ReductionContext reductionContext =
+        PoincareHelpers::ReductionContextForParameters(
+            expressionInputWithoutFunctions, contextToUse, reductionTarget);
+    returnedExpression = returnedExpression.cloneAndReduce(reductionContext);
   } else {
     assert(simplifiedInput.isOfType(
         {ExpressionNode::Type::Boolean, ExpressionNode::Type::List}));

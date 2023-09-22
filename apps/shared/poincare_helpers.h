@@ -64,7 +64,7 @@ inline Poincare::ReductionContext ReductionContextForParameters(
     Poincare::Context* context,
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation,
+    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   return Poincare::ReductionContext(
       context, complexFormat,
@@ -76,7 +76,7 @@ inline Poincare::ReductionContext ReductionContextForParameters(
 inline Poincare::ReductionContext ReductionContextForParameters(
     const Poincare::Expression e, Poincare::Context* context,
     Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation,
+    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   Poincare::ReductionContext reductionContext(
       context, Poincare::Preferences::sharedPreferences->complexFormat(),

@@ -92,14 +92,10 @@ void UnitListController::computeAdditionalResults(
   assert(!units.isUninitialized());
   double value =
       Shared::PoincareHelpers::ApproximateToScalar<double>(copy, context);
-  ReductionContext reductionContext(
-      context,
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::sharedPreferences->complexFormat(), exactClone, context),
-      Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-      ReductionTarget::User,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  ReductionContext reductionContext =
+      Shared::PoincareHelpers::ReductionContextForParameters(
+          exactClone, context, ReductionTarget::User,
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   int numberOfExpressions = Unit::SetAdditionalExpressions(
       units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
       exactClone);

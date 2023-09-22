@@ -39,14 +39,6 @@ def print_error(stderr, exit = True):
       if exit:
          sys.exit(1)
 
-def generate_screenshot(state_file, executable, screenshot):
-   print("Generating screenshot of", state_file)
-   p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --take-screenshot " + screenshot, shell=True, stdout=DEVNULL, stderr=PIPE)
-   print_error(p.stderr)
-   if not os.path.isfile(screenshot):
-      print("Error: couldn't take screenshot")
-      sys.exit(1)
-
 def generate_all_screenshots(state_file, executable, folder, exit_if_error = True):
    print("Generating all screenshots of", state_file)
    clean_or_create_folder(folder)

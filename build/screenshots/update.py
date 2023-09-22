@@ -28,11 +28,6 @@ def main():
       print("Error:", scenario_folder, "should contain 1 .nws, 1 .png and 1 .txt")
       sys.exit(1)
 
-   # Update screenshot
-   print("Replacing", reference_image)
-   os.remove(reference_image)
-   helper.generate_screenshot(state_file, args.executable, reference_image)
-
    # Update crc32
    print("Rewriting", crc_file)
    helper.compute_and_store_crc32(state_file, args.executable, crc_file)

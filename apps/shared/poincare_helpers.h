@@ -61,18 +61,29 @@ inline int Serialize(
 }
 
 inline Poincare::ReductionContext ReductionContextForParameters(
-    const Poincare::Expression e, Poincare::Context* context,
+    Poincare::Context* context,
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    bool updateComplexFormat) {
-  Poincare::ReductionContext reductionContext(
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+  return Poincare::ReductionContext(
       context, complexFormat,
       Poincare::Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
       symbolicComputation, unitConversion);
-  reductionContext.updateComplexFormat(updateComplexFormat, e);
+}
+
+inline Poincare::ReductionContext ReductionContextForParameters(
+    const Poincare::Expression e, Poincare::Context* context,
+    Poincare::ReductionTarget target,
+    Poincare::SymbolicComputation symbolicComputation,
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+  Poincare::ReductionContext reductionContext(
+      context, Poincare::Preferences::sharedPreferences->complexFormat(),
+      Poincare::Preferences::sharedPreferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
+      symbolicComputation, unitConversion);
+  reductionContext.updateComplexFormat(true, e);
   return reductionContext;
 }
 
@@ -111,8 +122,7 @@ inline Poincare::Expression ApproximateKeepingUnits(
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   return e.approximateKeepingUnits<T>(ReductionContextForParameters(
-      e, context, Poincare::Preferences::sharedPreferences->complexFormat(),
-      target, symbolicComputation, unitConversion, true));
+      e, context, target, symbolicComputation, unitConversion));
 }
 
 inline void CloneAndSimplify(
@@ -123,8 +133,8 @@ inline void CloneAndSimplify(
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
     bool* reductionFailure = nullptr) {
   *e = e->cloneAndSimplify(
-      ReductionContextForParameters(*e, context, complexFormat, target,
-                                    symbolicComputation, unitConversion, false),
+      ReductionContextForParameters(context, complexFormat, target,
+                                    symbolicComputation, unitConversion),
       reductionFailure);
 }
 
@@ -135,10 +145,8 @@ inline void CloneAndSimplify(
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
     bool* reductionFailure = nullptr) {
   *e = e->cloneAndSimplify(
-      ReductionContextForParameters(
-          *e, context,
-          Poincare::Preferences::sharedPreferences->complexFormat(), target,
-          symbolicComputation, unitConversion, true),
+      ReductionContextForParameters(*e, context, target, symbolicComputation,
+                                    unitConversion),
       reductionFailure);
 }
 
@@ -165,8 +173,7 @@ inline void CloneAndReduce(
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   *e = e->cloneAndReduce(ReductionContextForParameters(
-      *e, context, complexFormat, target, symbolicComputation, unitConversion,
-      false));
+      context, complexFormat, target, symbolicComputation, unitConversion));
 }
 
 inline void CloneAndApproximateKeepingSymbols(
@@ -176,8 +183,7 @@ inline void CloneAndApproximateKeepingSymbols(
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   *e = e->cloneAndApproximateKeepingSymbols(ReductionContextForParameters(
-      *e, context, complexFormat, target, symbolicComputation, unitConversion,
-      false));
+      context, complexFormat, target, symbolicComputation, unitConversion));
 }
 
 inline void CloneAndReduceAndRemoveUnit(
@@ -187,10 +193,8 @@ inline void CloneAndReduceAndRemoveUnit(
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
   *e = e->cloneAndReduceAndRemoveUnit(
-      ReductionContextForParameters(
-          *e, context,
-          Poincare::Preferences::sharedPreferences->complexFormat(), target,
-          symbolicComputation, unitConversion, true),
+      ReductionContextForParameters(*e, context, target, symbolicComputation,
+                                    unitConversion),
       unit);
 }
 

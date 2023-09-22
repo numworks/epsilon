@@ -79,14 +79,14 @@ void TrigonometryListController::computeAdditionalResults(
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
       if (PoincareHelpers::ApproximateToScalar<double>(
-              Sine::Builder(exactAngle), context, preferences) < 0) {
+              Sine::Builder(exactAngle), context) < 0) {
         approximateAngle =
             Subtraction::Builder(period.clone(), approximateAngle);
       }
     }
     assert(!approximateAngle.isUninitialized());
-    approximateAngle = PoincareHelpers::Approximate<double>(
-        approximateAngle, context, preferences);
+    approximateAngle =
+        PoincareHelpers::Approximate<double>(approximateAngle, context);
     exactAngle = approximateAngle;
     m_isStrictlyEqual[index] = false;
   } else {

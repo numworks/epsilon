@@ -27,6 +27,6 @@ jobs:
       - name: Upload epsilon.zip and htmlpack.zip
         uses: actions/upload-artifact@v3
         with:
-          name: epsilon-web.zip
+          name: epsilon-web
           path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/web/*.zip
           retention-days: 7

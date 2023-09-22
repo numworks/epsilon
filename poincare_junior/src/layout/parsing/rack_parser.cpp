@@ -906,6 +906,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
    * but not same number of parameters.
    * This is currently only useful for "sum" which can be sum({1,2,3}) or
    * sum(1/k, k, 1, n) */
+  assert(!leftHandSide.isUninitialized());
   int numberOfParameters = leftHandSide->numberOfChildren();
 #if 0
   if ((**functionHelper).minNumberOfChildren() >= 0) {

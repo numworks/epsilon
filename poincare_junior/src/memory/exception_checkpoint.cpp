@@ -1,5 +1,7 @@
 #include "exception_checkpoint.h"
 
+#include <stdlib.h>
+
 namespace PoincareJ {
 
 ExceptionCheckpoint* ExceptionCheckpoint::s_topmostExceptionCheckpoint;
@@ -24,9 +26,15 @@ void ExceptionCheckpoint::rollback() {
 }
 
 void ExceptionCheckpoint::Raise() {
-  assert(s_topmostExceptionCheckpoint != nullptr);
+  if (s_topmostExceptionCheckpoint == nullptr) {
+    abort();
+  }
   s_topmostExceptionCheckpoint->rollback();
-  assert(false);
+  abort();
 }
 
 }  // namespace PoincareJ
+
+extern "C" {
+void ExceptionCheckpointRaise() { PoincareJ::ExceptionCheckpoint::Raise(); }
+}

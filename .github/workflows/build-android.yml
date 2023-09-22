@@ -15,8 +15,6 @@ jobs:
   build:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - name: Download SDK Manager
-        run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup

@@ -177,7 +177,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       // continue
     case BlockType::Multiplication: {
       CodePoint codepoint = (type == BlockType::Addition)         ? '+'
-                            : (type == BlockType::Multiplication) ? '*'
+                            : (type == BlockType::Multiplication) ? u'×'
                                                                   : '-';
       ConvertInfixOperatorToLayout(layoutParent, expression, codepoint);
       break;

@@ -62,6 +62,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           PoincareHelpers::CreateLayout(exact, context);
       m_solutions[i++] = Solution(exactLayout, Poincare::Layout(), NAN, true);
     }
+    result->removeTree();
   }
 #if 0
   else if (error == Error::RequireApproximateSolution) {
@@ -70,6 +71,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
   }
 #endif
+  equations->removeTree();
   return error;
 }
 

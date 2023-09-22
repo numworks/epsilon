@@ -11,6 +11,8 @@
 #include <poincare/symbol.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/memory/storage_context.h>
 
 #include <algorithm>
 
@@ -410,8 +412,8 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
       const char *symbol =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
       Poincare::Layout layout = PoincareHelpers::CreateLayout(
-          App::app()->localContext()->expressionForSymbolAbstract(
-              Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
+          PoincareJ::Expression::ToPoincareExpression(
+              PoincareJ::StorageContext::TreeForIdentifier(symbol)),
           App::app()->localContext());
       static_cast<ScrollableTwoLayoutsCell *>(cell)->setLayouts(
           Poincare::Layout(), layout);
@@ -461,9 +463,10 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   const char *symbol =
       system->userVariable(row - rowOfUserVariablesMessage - 1);
   Poincare::Layout layout = PoincareHelpers::CreateLayout(
-      App::app()->localContext()->expressionForSymbolAbstract(
-          Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
+      PoincareJ::Expression::ToPoincareExpression(
+          PoincareJ::StorageContext::TreeForIdentifier(symbol)),
       App::app()->localContext());
+  assert(!layout.isUninitialized());
   return layout.layoutSize(k_solutionsFont).height() +
          2 * Metric::CommonSmallMargin;
 }

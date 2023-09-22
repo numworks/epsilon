@@ -218,19 +218,11 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
       &expression, this, ReductionTarget::User,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   /* "approximateKeepingUnits" is called because the expression might contain
-   * units, and juste calling "approximate" would return undef
-   */
-  Poincare::Preferences *preferences = Poincare::Preferences::sharedPreferences;
-  Poincare::Preferences::ComplexFormat complexFormat =
-      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          preferences->complexFormat(), expression, this);
-  Expression approximation =
-      expression.approximateKeepingUnits<double>(Poincare::ReductionContext(
-          this, complexFormat, preferences->angleUnit(),
-          GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-          ReductionTarget::User,
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-          Poincare::UnitConversion::Default));
+   * units, and juste calling "approximate" would return undef*/
+
+  Expression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
+      expression, this, ReductionTarget::User,
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // Do not store exact derivative, etc.
   if (storeApproximation ||
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(

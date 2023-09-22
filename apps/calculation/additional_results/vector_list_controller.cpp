@@ -27,7 +27,7 @@ void VectorListController::computeAdditionalResults(
 
   Context *context = App::app()->localContext();
   ComputationContext computationContext(context);
-  computationContext.updateComplexFormat(true, exactOutput);
+  computationContext.updateComplexFormat(exactOutput);
 
   setShowIllustration(false);
   size_t index = 0;

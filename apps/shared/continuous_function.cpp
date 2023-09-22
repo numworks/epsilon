@@ -478,18 +478,19 @@ Expression ContinuousFunction::Model::expressionReduced(
       m_expression = Undefined::Builder();
       return m_expression;
     }
-    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
-        complexFormat(record, context));
+    Preferences::ComplexFormat complexFormat =
+        this->complexFormat(record, context);
+    Preferences::AngleUnit angleUnit =
+        Preferences::sharedPreferences->angleUnit();
     if (thisProperties.isScatterPlot()) {
       /* Scatter plots do not depend on any variable, so they can be
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
       if (m_expression.type() == ExpressionNode::Type::List) {
-        m_expression =
-            static_cast<List &>(m_expression)
-                .approximateAndRemoveUndefAndSort<double>(
-                    ApproximationContext(context, preferences.complexFormat()));
+        m_expression = static_cast<List &>(m_expression)
+                           .approximateAndRemoveUndefAndSort<double>(
+                               ApproximationContext(context, complexFormat));
       } else {
         assert(m_expression.type() == ExpressionNode::Type::Point);
         m_expression =
@@ -522,14 +523,13 @@ Expression ContinuousFunction::Model::expressionReduced(
       int degree = m_expression.getPolynomialReducedCoefficients(
           willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                        : k_unknownName,
-          coefficients, context, preferences.complexFormat(),
-          preferences.angleUnit(),
+          coefficients, context, complexFormat, angleUnit,
           ContinuousFunctionProperties::k_defaultUnitFormat,
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, true);
       assert(!willBeAlongX || degree == yDegree);
-      ReductionContext reductionContext(
-          context, preferences.complexFormat(), preferences.angleUnit(),
-          Preferences::UnitFormat::Metric, ReductionTarget::SystemForAnalysis);
+      ReductionContext reductionContext(context, complexFormat, angleUnit,
+                                        Preferences::UnitFormat::Metric,
+                                        ReductionTarget::SystemForAnalysis);
       if (degree == 1) {
         Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0],
                                           &m_expression, reductionContext,
@@ -581,7 +581,7 @@ Expression ContinuousFunction::Model::expressionReduced(
       Expression resultForApproximation = expressionEquation(record, context);
       if (!resultForApproximation.isUninitialized()) {
         PoincareHelpers::CloneAndReduce(
-            &resultForApproximation, context, preferences.complexFormat(),
+            &resultForApproximation, context, complexFormat,
             ReductionTarget::SystemForApproximation,
             SymbolicComputation::DoNotReplaceAnySymbol);
         if (resultForApproximation.numberOfDescendants(true) <
@@ -617,11 +617,10 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
   Expression result =
       expressionEquation(record, context, &computedEquationType,
                          &computedFunctionSymbol, &isCartesianEquation);
-  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
-      complexFormat(record, context));
+  Preferences::ComplexFormat complexFormat =
+      this->complexFormat(record, context);
   if (!result.isUndefined()) {
-    PoincareHelpers::CloneAndReduce(&result, context,
-                                    preferences.complexFormat(),
+    PoincareHelpers::CloneAndReduce(&result, context, complexFormat,
                                     ReductionTarget::SystemForAnalysis,
                                     // Symbols have already been replaced.
                                     SymbolicComputation::DoNotReplaceAnySymbol);
@@ -629,9 +628,8 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
     m_properties.update(result, originalEquation(record, UCodePointUnknown),
-                        context, preferences.complexFormat(),
-                        computedEquationType, computedFunctionSymbol,
-                        isCartesianEquation);
+                        context, complexFormat, computedEquationType,
+                        computedFunctionSymbol, isCartesianEquation);
   }
   return result;
 }

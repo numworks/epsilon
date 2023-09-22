@@ -3,12 +3,9 @@
 
 namespace Poincare {
 
-void ComputationContext::updateComplexFormat(bool updateComplexFormat,
-                                             const Expression e) {
-  if (updateComplexFormat) {
-    m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-        m_complexFormat, e, m_context);
-  }
+void ComputationContext::updateComplexFormat(const Expression e) {
+  m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
+      m_complexFormat, e, m_context);
 }
 
 }  // namespace Poincare

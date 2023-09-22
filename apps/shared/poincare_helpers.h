@@ -83,14 +83,14 @@ inline Poincare::ReductionContext ReductionContextForParameters(
       Poincare::Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
       symbolicComputation, unitConversion);
-  reductionContext.updateComplexFormat(true, e);
+  reductionContext.updateComplexFormat(e);
   return reductionContext;
 }
 
 inline Poincare::ApproximationContext ApproximationContextForParameters(
     const Poincare::Expression e, Poincare::Context* context) {
   Poincare::ApproximationContext approximationContext(context);
-  approximationContext.updateComplexFormat(true, e);
+  approximationContext.updateComplexFormat(e);
   return approximationContext;
 }
 
@@ -161,7 +161,7 @@ inline void CloneAndSimplifyAndApproximate(
       Poincare::Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       Poincare::ReductionTarget::User, symbolicComputation, unitConversion);
-  reductionContext.updateComplexFormat(true, e);
+  reductionContext.updateComplexFormat(e);
   e.cloneAndSimplifyAndApproximate(simplifiedExpression, approximatedExpression,
                                    reductionContext);
 }

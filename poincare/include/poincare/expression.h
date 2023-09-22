@@ -436,7 +436,7 @@ class Expression : public TreeHandle {
       Context* context, Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
       SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       UnitConversion unitConversion = UnitConversion::Default);
   void cloneAndSimplifyAndApproximate(
       Expression* simplifiedExpression, Expression* approximateExpression,
@@ -496,7 +496,7 @@ class Expression : public TreeHandle {
       Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
       SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   template <typename U>
   Expression approximate(
       const ApproximationContext& approximationContext) const;

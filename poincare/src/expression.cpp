@@ -1132,13 +1132,11 @@ Expression Expression::ParseAndSimplify(
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      complexFormat, exp, context);
-  exp = exp.cloneAndSimplify(
-      ReductionContext(context, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::User, symbolicComputation,
-                       unitConversion),
-      reductionFailure);
+  ReductionContext reductionContext(context, complexFormat, angleUnit,
+                                    unitFormat, ReductionTarget::User,
+                                    symbolicComputation, unitConversion);
+  reductionContext.updateComplexFormat(exp);
+  exp = exp.cloneAndSimplify(reductionContext, reductionFailure);
   assert(!exp.isUninitialized());
   return exp;
 }
@@ -1152,8 +1150,6 @@ void Expression::ParseAndSimplifyAndApproximate(
   assert(parsedExpression && simplifiedExpression);
   Expression exp = Parse(text, context, false);
   *parsedExpression = exp;
-  complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      complexFormat, exp, context);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -1162,6 +1158,7 @@ void Expression::ParseAndSimplifyAndApproximate(
   ReductionContext reductionContext = ReductionContext(
       context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
       symbolicComputation, unitConversion);
+  reductionContext.updateComplexFormat(exp);
   exp.cloneAndSimplifyAndApproximate(simplifiedExpression,
                                      approximateExpression, reductionContext);
   assert(!simplifiedExpression->isUninitialized() &&
@@ -1603,11 +1600,10 @@ U Expression::ParseAndSimplifyAndApproximateToScalar(
     SymbolicComputation symbolicComputation) {
   Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit,
                                     unitFormat, symbolicComputation);
-  complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      complexFormat, exp, context);
   assert(!exp.isUninitialized());
-  return exp.approximateToScalar<U>(
-      ApproximationContext(context, complexFormat, angleUnit));
+  ApproximationContext approximationContext(context, complexFormat, angleUnit);
+  approximationContext.updateComplexFormat(exp);
+  return exp.approximateToScalar<U>(approximationContext);
 }
 
 template <typename U>

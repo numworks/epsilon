@@ -27,10 +27,6 @@ def main():
    new_state_file_path = os.path.join(new_dir, "scenario.nws")
    shutil.copy(args.state_file, new_state_file_path)
 
-   # Generate the corresponding screenshot
-   screenshot = os.path.join(new_dir, "screenshot.png")
-   helper.generate_screenshot(new_state_file_path, args.executable, screenshot)
-
    # Compute the corresponding crc32
    crc_file = os.path.join(new_dir, "crc32.txt")
    helper.compute_and_store_crc32(new_state_file_path, args.executable, crc_file)

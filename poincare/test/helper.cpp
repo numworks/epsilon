@@ -107,8 +107,17 @@ void quiz_print_failure_ratio() {
   quiz_print(buffer);
 }
 
+static void copy_without_system_chars(char *buffer, const char *input) {
+  while (char c = *input++) {
+    if (c == 0x14) continue;
+    c = (c == 0x12) ? '(' : (c == 0x13) ? ')' : c;
+    *buffer++ = c;
+  }
+  *buffer = 0;
+}
+
 void assert_parsed_expression_process_to(
-    const char *expression, const char *result, ReductionTarget target,
+    const char *expression, const char *oldResult, ReductionTarget target,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     UnitConversion unitConversion, ProcessExpression process,
@@ -117,6 +126,8 @@ void assert_parsed_expression_process_to(
   Shared::GlobalContext globalContext;
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
+  char result[bufferSize];
+  copy_without_system_chars(result, oldResult);
   bool bad = false;
   bool crash = false;
   PoincareJ::ExceptionCheckpoint cp;

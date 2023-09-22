@@ -20,10 +20,12 @@ def main():
    scenario_folder = helper.folder(args.name)
    if not os.path.isdir(scenario_folder):
       print("Error:", args.name, "is not a folder in the test screenshots dataset")
+      sys.exit(1)
    state_file = helper.get_file_with_extension(scenario_folder, ".nws")
    reference_image =  helper.get_file_with_extension(scenario_folder, ".png")
    crc_file = helper.get_file_with_extension(scenario_folder, ".txt")
    if state_file == '' or reference_image == '' or crc_file == '':
+      print("Error:", scenario_folder, "should contain 1 .nws, 1 .png and 1 .txt")
       sys.exit(1)
 
    # Update screenshot

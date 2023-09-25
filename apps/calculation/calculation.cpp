@@ -58,7 +58,9 @@ const char *Calculation::approximateOutputText(
 }
 
 Expression Calculation::input() {
-  return Expression::Parse(m_inputText, nullptr);
+  Expression e = Expression::Parse(m_inputText, nullptr);
+  assert(!e.isUninitialized());
+  return e;
 }
 
 Expression Calculation::exactOutput() {
@@ -66,7 +68,9 @@ Expression Calculation::exactOutput() {
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
-  return Expression::Parse(exactOutputText(), nullptr);
+  Expression e = Expression::Parse(exactOutputText(), nullptr);
+  assert(!e.isUninitialized());
+  return e;
 }
 
 Expression Calculation::approximateOutput(
@@ -102,8 +106,10 @@ Expression Calculation::approximateOutput(
    *
    */
   // clang-format on
-  return Expression::Parse(approximateOutputText(numberOfSignificantDigits),
-                           nullptr);
+  Expression e = Expression::Parse(
+      approximateOutputText(numberOfSignificantDigits), nullptr);
+  assert(!e.isUninitialized());
+  return e;
 }
 
 Layout Calculation::createInputLayout() {

@@ -16,8 +16,8 @@ def main():
    output_folder = 'compare_crc_output_' + datetime.today().strftime('%d-%m-%Y_%Hh%M')
    os.mkdir(output_folder)
 
-   # Compare crc32
-   print("Comparing crc32")
+   # Collect data from dataset
+   print("\nCollecting data")
    print("==============================")
    fails = 0
    count = 0
@@ -28,7 +28,7 @@ def main():
       if not os.path.isdir(scenario_folder):
          continue
 
-      print("Getting data from", scenario_folder)
+      print("Collecting data from", scenario_folder)
 
       # Get state file
       state_file = helper.get_file_with_extension(scenario_folder, '.nws')
@@ -43,6 +43,8 @@ def main():
       processes.append((scenario_name, helper.compute_crc32_process(state_file, args.executable)))
 
    # Compute crc32 (in parallel)
+   print("\nComputing crc32")
+   print("==============================")
    computed_crc32_list = []
    for scenario_name, p in processes:
       print("Computing crc32 of", scenario_name)
@@ -51,8 +53,9 @@ def main():
       computed_crc32_list.append((scenario_name, helper.find_crc32_in_log(p.stdout)))
 
    # Compare with ref
+   print("\nComparing crc32")
+   print("==============================")
    for scenario_name, computed_crc32 in computed_crc32_list:
-      print("Comparing crc32 of", scenario_name)
       scenario_folder = helper.folder(scenario_name)
       assert os.path.isdir(scenario_folder)
       state_file = helper.get_file_with_extension(scenario_folder, '.nws')
@@ -72,10 +75,10 @@ def main():
       # Print report
       count = count + 1
       if success:
-         print(bold(scenario_folder + '\t' + green("OK")))
+         print("Comparing crc32 of", scenario_name, bold(green("OK")))
       else:
          fails = fails + 1
-         print(bold(scenario_folder + '\t' + red("FAILED")))
+         print("Comparing crc32 of", scenario_name, bold(red("FAILED")))
 
       # Take screenshot at each step
       if not success:

@@ -22,13 +22,14 @@ using KCodePointL = KTree<BlockType::CodePointLayout,
                           CodePointLayout::SubCodePointLayoutAtIndex(cp, 3)>;
 
 template <String S,
-          typename IS = decltype(std::make_index_sequence<S.size() - 1>())>
+          typename IS =
+              decltype(std::make_index_sequence<S.codePointSize() - 1>())>
 struct _RackLayoutHelper;
 
 template <String S, std::size_t... I>
 struct _RackLayoutHelper<S, std::index_sequence<I...>>
-    : Concat<KTree<BlockType::RackLayout, sizeof...(I)>, KCodePointL<S[I]>...> {
-};
+    : Concat<KTree<BlockType::RackLayout, sizeof...(I)>,
+             KCodePointL<S.codePointAt(I)>...> {};
 
 template <String S>
 consteval auto operator"" _l() {

@@ -210,6 +210,31 @@ struct String {
   constexpr String(char const (&arr)[N])
       : String(arr, std::make_integer_sequence<std::size_t, N>()) {}
   constexpr const char& operator[](std::size_t i) const { return m_data[i]; }
+  consteval size_t codePointSize() const {
+    size_t n = 0;
+    for (char c : m_data) {
+      if (!(c & 0b10000000) || ((c & 0b11100000) == 0b11000000)) {
+        n++;
+      }
+    }
+    return n;
+  }
+  consteval char16_t codePointAt(std::size_t i) const {
+    size_t k = 0;
+    while (i--) {
+      char c = m_data[k];
+      if (!(c & 0b10000000)) {
+        k++;
+      } else {
+        assert((c & 0b11100000) == 0b11000000);
+        k += 2;
+      }
+    }
+    if (!(m_data[k] & 0b10000000)) {
+      return m_data[k];
+    }
+    return (m_data[k] & 0b00011111) << 6 | (m_data[k + 1] & 0b00111111);
+  }
 };
 
 template <Placeholder::Tag T, Placeholder::Filter F>

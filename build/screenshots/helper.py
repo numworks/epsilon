@@ -80,7 +80,6 @@ def find_crc32_in_log(log_file):
       print("Error: couldn't find crc32 in log")
       sys.exit(1)
    return crc_line.split()[-1]
-   return
 
 def compute_crc32(state_file, executable, log_file):
    print("Computing crc32 of", state_file)

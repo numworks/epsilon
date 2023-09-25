@@ -70,12 +70,8 @@ def generate_all_screenshots_and_create_gif(state_file, executable, folder, exit
 def find_crc32_in_log(log_file):
    with open(log_file) as f:
       lines = f.readlines()
-   # Assertion mode: crc32 line is the only line
+   assert len(lines) == 1
    crc_line = lines[0]
-   if len(lines) > 1:
-      # Debug mode: crc32 line is the before to last line
-      assert len(lines) > 3
-      crc_line = lines[-2]
    if "CRC32 of all screenshots: " not in crc_line:
       print("Error: couldn't find crc32 in log")
       sys.exit(1)
@@ -84,7 +80,7 @@ def find_crc32_in_log(log_file):
 def compute_crc32(state_file, executable, log_file):
    print("Computing crc32 of", state_file)
    with open(log_file, "w") as f:
-      p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash", shell=True, stdout=f, stderr=PIPE)
+      p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --do-not-log-events", shell=True, stdout=f, stderr=PIPE)
       print_error(p.stderr)
    return find_crc32_in_log(log_file)
 

@@ -161,6 +161,17 @@ inline void CloneAndSimplifyAndApproximate(
                                     symbolicComputation, unitConversion));
 }
 
+inline void CloneAndSimplifyAndApproximate(
+    Poincare::Expression e, Poincare::Expression* simplifiedExpression,
+    Poincare::Expression* approximatedExpression, Poincare::Context* context,
+    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
+    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+  e.cloneAndSimplifyAndApproximate(
+      simplifiedExpression, approximatedExpression,
+      ReductionContextForParameters(e, context, Poincare::ReductionTarget::User,
+                                    symbolicComputation, unitConversion));
+}
+
 inline void CloneAndReduce(
     Poincare::Expression* e, Poincare::Context* context,
     Poincare::Preferences::ComplexFormat complexFormat,
@@ -193,28 +204,6 @@ inline void CloneAndReduceAndRemoveUnit(
       unit);
 }
 
-// This method automatically updates complex format and angle unit
-inline void ParseAndSimplifyAndApproximate(
-    const char* text, Poincare::Expression* parsedExpression,
-    Poincare::Expression* simplifiedExpression,
-    Poincare::Expression* approximateExpression, Poincare::Context* context) {
-  Poincare::Expression::ParseAndSimplifyAndApproximate(
-      text, parsedExpression, simplifiedExpression, approximateExpression,
-      context, Poincare::Preferences::sharedPreferences->complexFormat(),
-      Poincare::Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat());
-}
-
-// This method automatically updates complex format and angle unit
-template <class T>
-inline T ParseAndSimplifyAndApproximateToScalar(const char* text,
-                                                Poincare::Context* context) {
-  return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
-      text, context, Poincare::Preferences::sharedPreferences->complexFormat(),
-      Poincare::Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat());
-}
-
 template <typename T>
 inline Poincare::Solver<T> Solver(T xMin, T xMax, const char* unknown = nullptr,
                                   Poincare::Context* context = nullptr) {
@@ -239,7 +228,8 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   // Silence compiler warnings for assert
   (void)numberOfChar;
   // Extract displayed value
-  return ParseAndSimplifyAndApproximateToScalar<T>(buffer, context);
+  return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
+      buffer, context);
 }
 
 }  // namespace PoincareHelpers

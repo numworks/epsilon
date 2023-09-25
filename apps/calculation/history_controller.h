@@ -48,7 +48,7 @@ class HistoryController : public Escher::ViewController,
   bool calculationAtIndexToggles(int index);
   void handleOK();
 
-  constexpr static int k_maxNumberOfDisplayedRows = 5;
+  constexpr static int k_maxNumberOfDisplayedRows = 6;
 
   CalculationSelectableListView m_selectableListView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];

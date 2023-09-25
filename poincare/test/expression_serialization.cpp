@@ -285,4 +285,9 @@ QUIZ_CASE(poincare_serialization_percent) {
                                                         Rational::Builder(20)),
                                Opposite::Builder(Rational::Builder(30))),
       "100↗20%↘30%");
+  assert_expression_serialize_to(
+      Power::Builder(Constant::PiBuilder(),
+                     PercentAddition::Builder(Rational::Builder(100),
+                                              Rational::Builder(20))),
+      "π^\u0012100↗20%\u0013");
 }

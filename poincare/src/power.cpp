@@ -315,7 +315,8 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(
   }
   return static_cast<const ExpressionNode *>(child)->isOfType(
       {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication,
-       Type::Division, Type::Addition, Type::MixedFraction});
+       Type::Division, Type::Addition, Type::MixedFraction,
+       Type::PercentAddition});
 }
 
 int PowerNode::serialize(char *buffer, int bufferSize,

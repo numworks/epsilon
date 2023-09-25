@@ -68,8 +68,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     // Strict rationals are the only childless trees that can be reduced.
     return Rational::MakeIrreducible(u);
   }
-  bool changed = false;
-  changed |= SimplifySwitch(u);
+  bool changed = SimplifySwitch(u);
   if (Dependency::ShallowBubbleUpDependencies(u)) {
     ShallowSystematicReduce(u->nextNode());
     changed = true;

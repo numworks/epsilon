@@ -16,13 +16,12 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   for (Tree* child : expr->children()) {
     if (child->type() == BlockType::Dependency) {
       // Move dependency list at the end
-      end->moveTreeBeforeNode(child->childAtIndex(1));
+      MoveTreeBeforeNode(end, child->childAtIndex(1));
       numberOfSets++;
       // Remove Dependency block in child
       child->removeNode();
     }
   }
-  end = expr->nextTree();
   if (numberOfSets > 0) {
     while (numberOfSets > 1) {
       end = Set::Union(end, end->nextTree());

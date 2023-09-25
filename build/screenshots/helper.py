@@ -67,14 +67,19 @@ def generate_all_screenshots_and_create_gif(state_file, executable, folder, exit
    create_gif(list_images, folder)
    return list_images
 
+def compute_crc32_process(state_file, executable):
+   return Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --do-not-log-events", shell=True, stdout=PIPE, stderr=DEVNULL)
+
 def find_crc32_in_log(stdout):
    output = stdout.read().decode()
-   assert len(output.splitlines()) == 1 and "CRC32 of all screenshots: " in output
+   if len(output.splitlines()) != 1 or "CRC32 of all screenshots: " not in output:
+      print(bold("Error:"), "couldn't find crc32 in log. The scenario may have failed an assert or raised a segfault.")
+      return ""
    return output.split()[-1]
 
 def compute_crc32(state_file, executable):
    print("Computing crc32 of", state_file)
-   p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --do-not-log-events", shell=True, stdout=PIPE, stderr=PIPE)
+   p = compute_crc32_process(state_file, executable)
    print_error(p.stderr)
    return find_crc32_in_log(p.stdout)
 

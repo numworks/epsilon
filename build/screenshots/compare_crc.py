@@ -22,6 +22,7 @@ def main():
    fails = 0
    count = 0
 
+   processes = []
    for scenario_name in sorted(os.listdir(helper.dataset())):
       scenario_folder = helper.folder(scenario_name)
       if not os.path.isdir(scenario_folder):
@@ -38,14 +39,32 @@ def main():
       reference_crc32_file = helper.get_file_with_extension(scenario_folder, '.txt')
       if reference_crc32_file == '':
          continue
+
+      processes.append((scenario_name, helper.compute_crc32_process(state_file, args.executable)))
+
+   # Compute crc32 (in parallel)
+   computed_crc32_list = []
+   for scenario_name, p in processes:
+      print("Computing crc32 of", scenario_name)
+      p.wait()
+      #helper.print_error(p.stderr)
+      computed_crc32_list.append((scenario_name, helper.find_crc32_in_log(p.stdout)))
+
+   # Compare with ref
+   for scenario_name, computed_crc32 in computed_crc32_list:
+      print("Comparing crc32 of", scenario_name)
+      scenario_folder = helper.folder(scenario_name)
+      assert os.path.isdir(scenario_folder)
+      state_file = helper.get_file_with_extension(scenario_folder, '.nws')
+      assert state_file != ''
+      reference_crc32_file = helper.get_file_with_extension(scenario_folder, '.txt')
+      assert reference_crc32_file != ''
+
       with open(reference_crc32_file) as f:
          reference_crc32 = f.read().splitlines()
       # There can be several lines if crc32 differs between computer architectures
       # TODO: fix inconsistent approximation accross platforms to only have one crc32
       assert len(reference_crc32) == 1 or len(reference_crc32) == 2
-
-      # Compute new crc32
-      computed_crc32 = helper.compute_crc32(state_file, args.executable)
 
       # Compare crc32
       success = computed_crc32 in reference_crc32

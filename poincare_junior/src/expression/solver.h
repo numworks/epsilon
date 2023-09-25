@@ -19,7 +19,7 @@ class Solver {
     char userVariables[6][10];
   };
 
-  enum class Error : uint8_t {
+  enum class Error {
     NoError = 0,
     EquationUndefined = 1,
     EquationNonreal = 2,

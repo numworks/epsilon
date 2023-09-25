@@ -67,29 +67,23 @@ def generate_all_screenshots_and_create_gif(state_file, executable, folder, exit
    create_gif(list_images, folder)
    return list_images
 
-def find_crc32_in_log(log_file):
-   with open(log_file) as f:
-      lines = f.readlines()
-   assert len(lines) == 1
-   crc_line = lines[0]
-   if "CRC32 of all screenshots: " not in crc_line:
-      print("Error: couldn't find crc32 in log")
-      sys.exit(1)
-   return crc_line.split()[-1]
+def find_crc32_in_log(stdout):
+   output = stdout.read().decode()
+   assert len(output.splitlines()) == 1 and "CRC32 of all screenshots: " in output
+   return output.split()[-1]
 
-def compute_crc32(state_file, executable, log_file):
+def compute_crc32(state_file, executable):
    print("Computing crc32 of", state_file)
-   with open(log_file, "w") as f:
-      p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --do-not-log-events", shell=True, stdout=f, stderr=PIPE)
-      print_error(p.stderr)
-   return find_crc32_in_log(log_file)
+   p = Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --do-not-log-events", shell=True, stdout=PIPE, stderr=PIPE)
+   print_error(p.stderr)
+   return find_crc32_in_log(p.stdout)
 
 def store_crc32(crc32, crc_file):
    with open(crc_file, "w") as f:
       f.write(crc32)
 
 def compute_and_store_crc32(state_file, executable, crc_file):
-   crc32 = compute_crc32(state_file, executable, crc_file)
+   crc32 = compute_crc32(state_file, executable)
    store_crc32(crc32, crc_file)
 
 def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):

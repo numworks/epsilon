@@ -64,15 +64,17 @@ bool RunLoop::step() {
 #endif
 
 #if ESCHER_LOG_EVENTS_NAME
-    const char* name = event.name();
-    if (name != nullptr) {
-      Ion::Console::writeLine("Event: ", false);
-      if (event == Ion::Events::ExternalText && event.text() != nullptr) {
-        Ion::Console::writeLine(name, false);
-        Ion::Console::writeLine(": ", false);
-        Ion::Console::writeLine(event.text());
-      } else {
-        Ion::Console::writeLine(name);
+    if (Ion::Console::logEvents()) {
+      const char* name = event.name();
+      if (name != nullptr) {
+        Ion::Console::writeLine("Event: ", false);
+        if (event == Ion::Events::ExternalText && event.text() != nullptr) {
+          Ion::Console::writeLine(name, false);
+          Ion::Console::writeLine(": ", false);
+          Ion::Console::writeLine(event.text());
+        } else {
+          Ion::Console::writeLine(name);
+        }
       }
     }
 #endif

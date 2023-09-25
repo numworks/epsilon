@@ -205,6 +205,12 @@ int main(int argc, char *argv[]) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(nullptr, true,
                                                               true);
   }
+
+  bool doNotLogEvents = args.popFlag("--do-not-log-events");
+  if (doNotLogEvents) {
+    Ion::Console::setLogEvents(false);
+  }
+
 #if !defined(_WIN32)
   signal(SIGUSR1, Ion::Simulator::Actions::handleUSR1Sig);
 #endif

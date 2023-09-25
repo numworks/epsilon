@@ -21,7 +21,6 @@ def main():
    print("==============================")
    fails = 0
    count = 0
-   log_file = os.path.join(output_folder, "log.txt")
 
    for scenario_name in sorted(os.listdir(helper.dataset())):
       scenario_folder = helper.folder(scenario_name)
@@ -46,7 +45,7 @@ def main():
       assert len(reference_crc32) == 1 or len(reference_crc32) == 2
 
       # Compute new crc32
-      computed_crc32 = helper.compute_crc32(state_file, args.executable, log_file)
+      computed_crc32 = helper.compute_crc32(state_file, args.executable)
 
       # Compare crc32
       success = computed_crc32 in reference_crc32
@@ -91,8 +90,6 @@ def main():
    # Clean up
    if fails == 0:
       shutil.rmtree(output_folder)
-   else:
-      os.remove(log_file)
 
    sys.exit(fails)
 

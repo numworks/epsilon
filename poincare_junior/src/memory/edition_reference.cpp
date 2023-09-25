@@ -51,23 +51,26 @@ void CloneTreeAtNode(EditionReference& target, const Tree* treeToClone) {
   target = previousTarget;
 }
 
-void MoveNodeAtNode(EditionReference& target, Tree* nodeToMove) {
+void MoveAt(EditionReference& target, Tree* source, bool tree, bool before) {
   Tree* previousTarget = target;
-  if (nodeToMove->block() < previousTarget->block()) {
+  if (source->block() < previousTarget->block()) {
     previousTarget =
-        Tree::FromBlocks(previousTarget->block() - nodeToMove->nodeSize());
+        Tree::FromBlocks(previousTarget->block() -
+                         (tree ? source->treeSize() : source->nodeSize()));
   }
-  target->moveNodeAtNode(nodeToMove);
-  target = previousTarget;
-}
-
-void MoveTreeAtNode(EditionReference& target, Tree* treeToMove) {
-  Tree* previousTarget = target;
-  if (treeToMove->block() < previousTarget->block()) {
-    previousTarget =
-        Tree::FromBlocks(previousTarget->block() - treeToMove->treeSize());
+  if (tree) {
+    if (before) {
+      target->moveTreeBeforeNode(source);
+    } else {
+      target->moveTreeAtNode(source);
+    }
+  } else {
+    if (before) {
+      target->moveNodeBeforeNode(source);
+    } else {
+      target->moveNodeAtNode(source);
+    }
   }
-  target->moveTreeAtNode(treeToMove);
   target = previousTarget;
 }
 

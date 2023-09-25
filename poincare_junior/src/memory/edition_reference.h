@@ -99,8 +99,23 @@ void SwapTrees(EditionReference& u, EditionReference& v);
 void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone);
 void CloneTreeAtNode(EditionReference& target, const Tree* treeToClone);
 
-void MoveNodeAtNode(EditionReference& target, Tree* nodeToMove);
-void MoveTreeAtNode(EditionReference& target, Tree* treeToMove);
+void MoveAt(EditionReference& target, Tree* toMove, bool tree, bool before);
+
+inline void MoveNodeAtNode(EditionReference& target, Tree* nodeToMove) {
+  MoveAt(target, nodeToMove, false, false);
+}
+
+inline void MoveTreeAtNode(EditionReference& target, Tree* treeToMove) {
+  MoveAt(target, treeToMove, true, false);
+}
+
+inline void MoveNodeBeforeNode(EditionReference& target, Tree* nodeToMove) {
+  MoveAt(target, nodeToMove, false, true);
+}
+
+inline void MoveTreeBeforeNode(EditionReference& target, Tree* treeToMove) {
+  MoveAt(target, treeToMove, true, true);
+}
 
 inline void MoveNodeOverTree(EditionReference& u, Tree* n) {
   u = u->moveNodeOverTree(n);

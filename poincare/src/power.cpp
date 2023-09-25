@@ -298,25 +298,24 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(
     const TreeNode *child) const {
+  const ExpressionNode *childE = static_cast<const ExpressionNode *>(child);
   if (childAtIndex(0)->type() == Type::ConstantMaths &&
       static_cast<const ConstantNode *>(childAtIndex(0))->isExponentialE() &&
-      indexOfChild(child) == 1) {
-    return static_cast<const ExpressionNode *>(child)->type() !=
-           Type::Parenthesis;
+      indexOfChild(childE) == 1) {
+    return childE->type() != Type::Parenthesis;
   }
-  if (static_cast<const ExpressionNode *>(child)->isNumber() &&
-      Number(static_cast<const NumberNode *>(child)).isPositive() ==
+  if (childE->isNumber() &&
+      Number(static_cast<const NumberNode *>(childE)).isPositive() ==
           TrinaryBoolean::False) {
     return true;
   }
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational &&
-      !static_cast<const RationalNode *>(child)->isInteger()) {
+  if (childE->type() == Type::Rational &&
+      !static_cast<const RationalNode *>(childE)->isInteger()) {
     return true;
   }
-  return static_cast<const ExpressionNode *>(child)->isOfType(
-      {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication,
-       Type::Division, Type::Addition, Type::MixedFraction,
-       Type::PercentAddition});
+  return childE->isOfType({Type::Power, Type::Subtraction, Type::Opposite,
+                           Type::Multiplication, Type::Division, Type::Addition,
+                           Type::MixedFraction, Type::PercentAddition});
 }
 
 int PowerNode::serialize(char *buffer, int bufferSize,

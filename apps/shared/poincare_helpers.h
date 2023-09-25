@@ -78,11 +78,9 @@ inline Poincare::ReductionContext ReductionContextForParameters(
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
     Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  Poincare::ReductionContext reductionContext(
+  Poincare::ReductionContext reductionContext = ReductionContextForParameters(
       context, Poincare::Preferences::sharedPreferences->complexFormat(),
-      Poincare::Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
-      symbolicComputation, unitConversion);
+      target, symbolicComputation, unitConversion);
   reductionContext.updateComplexFormat(e);
   return reductionContext;
 }

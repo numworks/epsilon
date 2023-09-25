@@ -148,55 +148,54 @@ def check_duplicates(messages, data, locales):
             sys.stderr.write("Warning: Redundant localized message \"" + name + "\"\n")
         all_names.add(concatenated)
 
-def discard_messages_in_file(fileName, messages):
-  f = open(fileName, 'r')
-  file = f.read()
-  currentNMessages = len(messages)
-  j = 0
-  while j < currentNMessages:
-    if "Message::" + messages[j] in file:
-      # Message foud in file
-      messages.pop(j)
-      currentNMessages -= 1
-    else:
-      j += 1
-  f.close()
+def discard_messages_in_file(filePath, messages):
+  with open(filePath, 'r') as f:
+    file = f.read()
+    # Iterate backwards to prevent the loop of breaking when removing messages
+    for i in range(len(messages) - 1, -1, -1):
+      message = messages[i]
+      if "Message::" + message in file:
+        # Message found in file
+        messages.pop(i)
 
 def discard_messages_in_dir(dirName, messages):
   # Exploring a directory
-  direc = os.listdir(dirName)
-  for fname in direc:
-    fullFileName = dirName + os.sep + fname
-    if os.path.isfile(fullFileName) and (fname.endswith(".h") or fname.endswith(".cpp")) :
-      discard_messages_in_file(fullFileName, messages)
-    elif os.path.isdir(fullFileName) :
-      discard_messages_in_dir(fullFileName, messages)
+  directory = os.listdir(dirName)
+  for fileName in directory:
+    filePath = dirName + os.sep + fileName
+    if os.path.isfile(filePath) and (fileName.endswith(".h") or fileName.endswith(".cpp")) :
+      discard_messages_in_file(filePath, messages)
+    elif os.path.isdir(filePath) :
+      discard_messages_in_dir(filePath, messages)
 
 def check_unused(i18n_header, i18n_implementation):
   with open(i18n_header) as f:
     messages = f.read().splitlines()
-    nLines = len(messages)
     start = -1
     end = -1
-    for i in range(nLines):
-      if messages[i].startswith("enum class Message"):
-        start = i + 1
-      if start >= 0 and end < 0 and messages[i].startswith("};"):
+    for i in range(len(messages)):
+      if "enum class Message" in messages[i]:
+        start = i + 2 # Skip DEFAULT
+      elif start >= 0 and "}" in messages[i]:
         end = i
-    messages = messages[start + 1:end] # Skip DEFAULT
-    nLines = len(messages)
-    for k in range(nLines):
-      messages[k] = messages[k].strip()
-      messages[k] = messages[k].strip(',')
+        break
+    messages = messages[start:end]
+    for k in range(len(messages)):
+      messages[k] = messages[k].strip().strip(',')
 
-    # Remove messages that are used in i18n.h and i18n.cpp enums and methods
+    # Remove messages that are used in apps and escher
+    # (poincare and kandinsky shouldn't have any message)
+    for folder in ["apps", "escher"]:
+      discard_messages_in_dir(folder, messages)
+
+    # Also remove the ones in i18n.h and i18n.cpp enums and methods
     # (namely CountryXX, LanguageXX and LocalizedMessageMarker)
-    discard_messages_in_file(i18n_header, messages)
+    filesToCheck = [i18n_header]
     if (len(i18n_implementation) != 0):
-      discard_messages_in_file(i18n_implementation, messages)
+      filesToCheck.append(i18n_implementation)
+    for file in filesToCheck:
+      discard_messages_in_file(file, messages)
 
-    discard_messages_in_dir("apps", messages)
-    discard_messages_in_dir("escher", messages)
     if (len(messages) > 0):
       print(" >>> WARNING: Unused i18n messages :" + str(messages))
 

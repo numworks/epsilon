@@ -185,10 +185,7 @@ void set(const char *variable, const char *value) {
 
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
-  Expression e = Expression::ParseAndSimplify(
-      buffer, &solverContext, Preferences::sharedPreferences->complexFormat(),
-      Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat());
+  Expression e = Expression::ParseAndSimplify(buffer, &solverContext);
   static_cast<Store &>(e).storeValueForSymbol(&globalContext);
 }
 

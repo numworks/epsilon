@@ -174,7 +174,7 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 
 template <typename T>
 T MathTextFieldDelegate::ParseInputtedFloatValue(const char *text) {
-  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(
+  return Expression::ParseAndSimplifyAndApproximateToScalar<T>(
       text, App::app()->localContext());
 }
 

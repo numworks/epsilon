@@ -1,3 +1,4 @@
+#include <apps/shared/poincare_helpers.h>
 #include <float.h>
 #include <ion.h>
 #include <ion/unicode/utf8_helper.h>
@@ -1123,20 +1124,17 @@ int Expression::serialize(char *buffer, int bufferSize,
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(
-    const char *text, Context *context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
-    UnitConversion unitConversion, bool *reductionFailure) {
+Expression Expression::ParseAndSimplify(const char *text, Context *context,
+                                        SymbolicComputation symbolicComputation,
+                                        UnitConversion unitConversion,
+                                        bool *reductionFailure) {
   Expression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  ReductionContext reductionContext(context, complexFormat, angleUnit,
-                                    unitFormat, ReductionTarget::User,
-                                    symbolicComputation, unitConversion);
-  reductionContext.updateComplexFormat(exp);
-  exp = exp.cloneAndSimplify(reductionContext, reductionFailure);
+  Shared::PoincareHelpers::CloneAndSimplify(
+      &exp, context, ReductionTarget::User, symbolicComputation, unitConversion,
+      reductionFailure);
   assert(!exp.isUninitialized());
   return exp;
 }
@@ -1144,9 +1142,8 @@ Expression Expression::ParseAndSimplify(
 void Expression::ParseAndSimplifyAndApproximate(
     const char *text, Expression *parsedExpression,
     Expression *simplifiedExpression, Expression *approximateExpression,
-    Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation, UnitConversion unitConversion) {
+    Context *context, SymbolicComputation symbolicComputation,
+    UnitConversion unitConversion) {
   assert(parsedExpression && simplifiedExpression);
   Expression exp = Parse(text, context, false);
   *parsedExpression = exp;
@@ -1155,12 +1152,9 @@ void Expression::ParseAndSimplifyAndApproximate(
     *approximateExpression = Undefined::Builder();
     return;
   }
-  ReductionContext reductionContext = ReductionContext(
-      context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
+  Shared::PoincareHelpers::CloneAndSimplifyAndApproximate(
+      exp, simplifiedExpression, approximateExpression, context,
       symbolicComputation, unitConversion);
-  reductionContext.updateComplexFormat(exp);
-  exp.cloneAndSimplifyAndApproximate(simplifiedExpression,
-                                     approximateExpression, reductionContext);
   assert(!simplifiedExpression->isUninitialized() &&
          (!approximateExpression || !approximateExpression->isUninitialized()));
 }
@@ -1595,15 +1589,10 @@ U Expression::approximateToScalar(
 template <typename U>
 U Expression::ParseAndSimplifyAndApproximateToScalar(
     const char *text, Context *context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation) {
-  Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit,
-                                    unitFormat, symbolicComputation);
+  Expression exp = ParseAndSimplify(text, context, symbolicComputation);
   assert(!exp.isUninitialized());
-  ApproximationContext approximationContext(context, complexFormat, angleUnit);
-  approximationContext.updateComplexFormat(exp);
-  return exp.approximateToScalar<U>(approximationContext);
+  return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
 }
 
 template <typename U>
@@ -1935,13 +1924,9 @@ template double Expression::approximateToScalar(
 
 template float Expression::ParseAndSimplifyAndApproximateToScalar<float>(
     const char *text, Context *context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation);
 template double Expression::ParseAndSimplifyAndApproximateToScalar<double>(
     const char *text, Context *context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation);
 
 template Evaluation<float> Expression::approximateToEvaluation(

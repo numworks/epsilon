@@ -148,7 +148,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       char *const inputText = endOfCalculations() + sizeof(Calculation);
 
       // Parse and compute the expression
-      PoincareHelpers::ParseAndSimplifyAndApproximate(
+      Expression::ParseAndSimplifyAndApproximate(
           inputText, &inputExpression, &exactOutputExpression,
           &approximateOutputExpression, context);
 

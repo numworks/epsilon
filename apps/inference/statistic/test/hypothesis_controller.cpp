@@ -79,7 +79,7 @@ bool HypothesisController::textFieldDidReceiveEvent(
 bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
-      Shared::PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<double>(
+      Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<double>(
           textField->draftTextBuffer(),
           AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check

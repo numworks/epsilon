@@ -421,8 +421,6 @@ class Expression : public TreeHandle {
    *   r*e^(i*th) reduced and approximated.) */
   static Expression ParseAndSimplify(
       const char* text, Context* context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       UnitConversion unitConversion = UnitConversion::Default,
@@ -433,8 +431,7 @@ class Expression : public TreeHandle {
   static void ParseAndSimplifyAndApproximate(
       const char* text, Expression* parsedExpression,
       Expression* simplifiedExpression, Expression* approximateExpression,
-      Context* context, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+      Context* context,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       UnitConversion unitConversion = UnitConversion::Default);
@@ -493,8 +490,6 @@ class Expression : public TreeHandle {
   template <typename U>
   static U ParseAndSimplifyAndApproximateToScalar(
       const char* text, Context* context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   template <typename U>

@@ -228,36 +228,36 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
-  simplifies_to("(2*3(2^2)) + 2*2", "28");
+  simplifies_to("(2×3(2^2)) + 2×2", "28");
   simplifies_to("36/8", "9/2");
   simplifies_to("2+36/8+2", "17/2");
-  simplifies_to("a+a", "2*a");
+  simplifies_to("a+a", "2×a");
   simplifies_to("b+a", "a+b");
-  simplifies_to("(a*a)*a", "a^(3)");
-  simplifies_to("a*(a*a)", "a^(3)");
-  simplifies_to("(a*b)^2", "a^(2)*b^(2)");
-  simplifies_to("(a*b*c)^2", "a^(2)*b^(2)*c^(2)");
+  simplifies_to("(a×a)×a", "a^(3)");
+  simplifies_to("a×(a×a)", "a^(3)");
+  simplifies_to("(a×b)^2", "a^(2)×b^(2)");
+  simplifies_to("(a×b×c)^2", "a^(2)×b^(2)×c^(2)");
   simplifies_to("(x^3)^2", "x^(6)");
-  simplifies_to("a*a*a", "a^(3)");
-  simplifies_to("a*a*a*b", "b*a^(3)");
-  simplifies_to("a*2a*b*a*b*4", "8*a^(3)*b^(2)");
-  simplifies_to("1*1*1*1", "1");
-  simplifies_to("2a+3b+4a", "6*a+3*b");
-  simplifies_to("-6*b-4*a*b-2*b+3*a*b-4*b+2*a*b+3*b+6*a*b", "-9*b+7*a*b");
+  simplifies_to("a×a×a", "a^(3)");
+  simplifies_to("a×a×a×b", "b×a^(3)");
+  simplifies_to("a×2a×b×a×b×4", "8×a^(3)×b^(2)");
+  simplifies_to("1×1×1×1", "1");
+  simplifies_to("2a+3b+4a", "6×a+3×b");
+  simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "-9×b+7×a×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
-  simplifies_to("(a+b)*(d+f)*g-a*d*g-a*f*g", "b*d*g+b*f*g");
-  simplifies_to("(e^(x))^2", "e^(2*x)");
+  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×d×g+b×f×g");
+  simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "x");
-  simplifies_to("e^(ln(x+x))", "2*x");
+  simplifies_to("e^(ln(x+x))", "2×x");
   simplifies_to("diff(x, x, 2)", "1");
-  simplifies_to("diff(a*x, x, 1)", "a");
+  simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
-  simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))*y^(-1)");
-  // simplifies_to("diff(((x^4)*ln(x)*e^(3x)), x, y)",
-  // "e^(3*y)*y^(3)+4*e^(3*y)*ln(y)*y^(3)+3*e^(3*y)*ln(y)*y^(4)");
-  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8*y");
-  simplifies_to("abs(abs(abs((-3)*x)))", "3*abs(x)");
+  simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))×y^(-1)");
+  // simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
+  // "e^(3×y)×y^(3)+4×e^(3×y)×ln(y)×y^(3)+3×e^(3×y)×ln(y)×y^(4)");
+  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
+  simplifies_to("abs(abs(abs((-3)×x)))", "3×abs(x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
@@ -274,18 +274,18 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7*π/12)", "1/2*2^(-1/2)+-1/2*2^(-1/2)*√(3)");
-  simplifies_to("cos(13*π/12)", "-1/2*2^(-1/2)+-1/2*2^(-1/2)*√(3)");
-  simplifies_to("sin(π/3)", "1/2*√(3)");
-  simplifies_to("cos(π*2/3)", "-1/2");
-  simplifies_to("cos(π*15/4)", "2^(-1/2)");
-  simplifies_to("2*sin(2y)*sin(y)", "cos(y)-cos(3*y)");
-  simplifies_to("2*sin(2y)*cos(y)", "sin(y)+sin(3*y)");
-  simplifies_to("2*cos(2y)*sin(y)", "-1*sin(y)+sin(3*y)");
-  simplifies_to("2*cos(2y)*cos(y)", "cos(y)+cos(3*y)");
+  simplifies_to("cos(7×π/12)", "1/2×2^(-1/2)+-1/2×2^(-1/2)×√(3)");
+  simplifies_to("cos(13×π/12)", "-1/2×2^(-1/2)+-1/2×2^(-1/2)×√(3)");
+  simplifies_to("sin(π/3)", "1/2×√(3)");
+  simplifies_to("cos(π×2/3)", "-1/2");
+  simplifies_to("cos(π×15/4)", "2^(-1/2)");
+  simplifies_to("2×sin(2y)×sin(y)", "cos(y)-cos(3×y)");
+  simplifies_to("2×sin(2y)×cos(y)", "sin(y)+sin(3×y)");
+  simplifies_to("2×cos(2y)×sin(y)", "-1×sin(y)+sin(3×y)");
+  simplifies_to("2×cos(2y)×cos(y)", "cos(y)+cos(3×y)");
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
-  simplifies_to("sin(17*π/12)^2+cos(5*π/12)^2", "1",
+  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
                 {.m_complexFormat = ComplexFormat::Cartesian});
   // Matrices
   simplifies_to("[[1+2]]", "[[3]]");
@@ -304,69 +304,69 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("trace(identity(3))", "3");
   simplifies_to("2+[[3]]", "undef");
   simplifies_to("[[2]]+[[3]]", "[[5]]");
-  simplifies_to("2*[[3]]", "[[6]]");
-  simplifies_to("[[1,2][3,4]]*[[2,3][4,5]]", "[[10,13][22,29]]");
+  simplifies_to("2×[[3]]", "[[6]]");
+  simplifies_to("[[1,2][3,4]]×[[2,3][4,5]]", "[[10,13][22,29]]");
   simplifies_to("norm([[1,2,3]])", "√(14)");
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
-  simplifies_to("a*a^(-1)", "dep(1,{a^(-1)})");
-  simplifies_to("a*a^(1+1)", "a^(3)");
-  simplifies_to("a*a^(-1)", "dep(1,{a^(-1)})",
+  simplifies_to("a×a^(-1)", "dep(1,{a^(-1)})");
+  simplifies_to("a×a^(1+1)", "a^(3)");
+  simplifies_to("a×a^(-1)", "dep(1,{a^(-1)})",
                 {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("a*a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("2*a^1*(2a)^(-1)", "dep(1,{a^(-1)})");
-  simplifies_to("cos(π*a*a^(-1))^(b*b^(-2)*b)", "dep(-1,{a^(-1),b^(-1)})");
+  simplifies_to("a×a^(1+1)", "a^(3)", {.m_complexFormat = ComplexFormat::Real});
+  simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^(-1)})");
+  simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{a^(-1),b^(-1)})");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
   // Complexes
-  simplifies_to("2*i*i", "-2");
-  simplifies_to("1+i*(1+i*(1+i))", "0");
-  simplifies_to("(1+i)*(3+2i)", "1+5*i");
+  simplifies_to("2×i×i", "-2");
+  simplifies_to("1+i×(1+i×(1+i))", "0");
+  simplifies_to("(1+i)×(3+2i)", "1+5×i");
   simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("re(2+i*π)", "2");
-  simplifies_to("im(2+i*π)", "π");
-  simplifies_to("conj(2+i*π)", "2-π*i");
+  simplifies_to("re(2+i×π)", "2");
+  simplifies_to("im(2+i×π)", "π");
+  simplifies_to("conj(2+i×π)", "2-π×i");
   simplifies_to("re(conj(x))-re(x)", "0");
   simplifies_to("conj(conj(x))", "x");
   simplifies_to("re(x+im(y))", "im(y)+re(x)");
-  simplifies_to("re(x)+i*im(x)", "x");
-  simplifies_to("re(x+i*y)", "-1*im(y)+re(x)");
-  simplifies_to("im(x+i*y)", "im(x)+re(y)");
-  simplifies_to("conj(x+i*y)", "-1*im(y)+re(x)-(im(x)+re(y))*i");
-  simplifies_to("im(re(x)+i*im(x))", "im(x)");
-  simplifies_to("re(re(x)+i*im(x))", "re(x)");
-  simplifies_to("abs(x+i*y)",
-                "√(-2*im(y)*re(x)+2*im(x)*re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
+  simplifies_to("re(x)+i×im(x)", "x");
+  simplifies_to("re(x+i×y)", "-1×im(y)+re(x)");
+  simplifies_to("im(x+i×y)", "im(x)+re(y)");
+  simplifies_to("conj(x+i×y)", "-1×im(y)+re(x)-(im(x)+re(y))×i");
+  simplifies_to("im(re(x)+i×im(x))", "im(x)");
+  simplifies_to("re(re(x)+i×im(x))", "re(x)");
+  simplifies_to("abs(x+i×y)",
+                "√(-2×im(y)×re(x)+2×im(x)×re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
                 "re(y)^(2))");
   // Parametrics
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(1-m+n)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
   simplifies_to("sum(k^2, k, 2, 5)", "54");
-  simplifies_to("2*sum(k, k, 0, n)+n", "2n + n^2");
-  simplifies_to("2*sum(k, k, 3, n)+n", "-6+2*n+n^(2)");
+  simplifies_to("2×sum(k, k, 0, n)+n", "2n + n^2");
+  simplifies_to("2×sum(k, k, 3, n)+n", "-6+2×n+n^(2)");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
-  // simplifies_to("sum(k+1, k, n, n+2)", "6+3*n");
+  // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");
   // simplifies_to("sum(k+1, k, n-2, n)", "1");  // FIXME
-  // simplifies_to("product(k*π, k, 1, 12)", "479001600*π^(12)");
+  // simplifies_to("product(k×π, k, 1, 12)", "479001600×π^(12)");
 
   // TODO SimplifyAddition on matrices
-  // simplifies_to("sum([[k][n]], k, 1, 4)", "[[10],[4*n]]");
+  // simplifies_to("sum([[k][n]], k, 1, 4)", "[[10],[4×n]]");
 
   // Not working yet
   // simplifies_to("1/x", "1/x");
   // simplifies_to("abs(x^2)", "x^2");
 
   // simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");
-  // simplifies_to("1/x + 1/y - (x+y)/(x*y)", "0");
+  // simplifies_to("1/x + 1/y - (x+y)/(x×y)", "0");
   // simplifies_to("(x^(2) - 1) / (x - 1)", "x+1");
-  // simplifies_to("1 / (1/a + c/(a*b)) + (a*b*c+a*c^2)/(b+c)^2", "a");
+  // simplifies_to("1 / (1/a + c/(a×b)) + (a×b×c+a×c^2)/(b+c)^2", "a");
 
-  // simplifies_to("sin(x)^3+cos(x+π/6)^3-sin(x+π/3)^3+sin(3*x)*3/4", "0");
-  // simplifies_to("sin(x)+sin(y)-2*sin(x/2 + y/2)*cos(x/2 - y/2)", "0");
+  // simplifies_to("sin(x)^3+cos(x+π/6)^3-sin(x+π/3)^3+sin(3×x)×3/4", "0");
+  // simplifies_to("sin(x)+sin(y)-2×sin(x/2 + y/2)×cos(x/2 - y/2)", "0");
   // simplifies_to("(√(10)-√(2))×√(5-√(5))-4×√(5-2×√(5))", "0");
 
   // simplifies_to("1/(1 - (1/(1 - (1/(1-x)))))", "x");
@@ -375,7 +375,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   // "1/2");
 
   // simplifies_to("((abs(x)^(1/2))^(1/2))^8", "abs(x)^(2)");
-  // simplifies_to("((x*y)^(1/2)*z^2)^2", "x*y*z^(4)");
+  // simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^(4)");
   // simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   // simplifies_to("1-cos(x)^2", "sin(x)^2");
 }
@@ -394,7 +394,7 @@ QUIZ_CASE(pcj_power_simplification) {
   //   * |x|^y if p is even
   simplifies_to("(-123)^(4/5)", "123^(4/5)");
   //   * -|x|^y if p is odd
-  simplifies_to("(-123)^(5/7)", "-1*123^(5/7)");
+  simplifies_to("(-123)^(5/7)", "-1×123^(5/7)");
 
   simplifies_to("√(x)^2", "√(x)^(2)", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
@@ -420,43 +420,43 @@ QUIZ_CASE(pcj_float_simplification) {
 }
 
 QUIZ_CASE(pcj_unit_simplification) {
-  simplifies_to("12_m", "12*_m");
-  simplifies_to("1_s", "1*_s");
+  simplifies_to("12_m", "12×_m");
+  simplifies_to("1_s", "1×_s");
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+x", "undef");
-  simplifies_to("1_m+1_km", "1001*_m");
-  simplifies_to("1_mm+1_km", "1000.001*_m");
-  simplifies_to("2_month*7_dm", "3681720*_s*_m");
-  simplifies_to("2*_m/_m", "2");
-  simplifies_to("1234_g", "1.234*_kg");
+  simplifies_to("1_m+1_km", "1001×_m");
+  simplifies_to("1_mm+1_km", "1000.001×_m");
+  simplifies_to("2_month×7_dm", "3681720×_s×_m");
+  simplifies_to("2×_m/_m", "2");
+  simplifies_to("1234_g", "1.234×_kg");
   simplifies_to("cos(0_rad)", "1");
 
-  simplifies_to("4_°C", "4*_°C");
+  simplifies_to("4_°C", "4×_°C");
   // Note: this used to be undef in previous Poincare.
-  simplifies_to("((4-2)_°C)*2", "4*_°C");
-  simplifies_to("((4-2)_°F)*2", "4*_°F");
-  simplifies_to("8_°C/2", "4*_°C");
+  simplifies_to("((4-2)_°C)×2", "4×_°C");
+  simplifies_to("((4-2)_°F)×2", "4×_°F");
+  simplifies_to("8_°C/2", "4×_°C");
 
-  simplifies_to("2_K+2_K", "4*_K");
-  simplifies_to("2_K*2_K", "4*_K^(2)");
-  simplifies_to("1/_K", "1*_K^(-1)");
-  simplifies_to("(2_K)^2", "4*_K^(2)");
+  simplifies_to("2_K+2_K", "4×_K");
+  simplifies_to("2_K×2_K", "4×_K^(2)");
+  simplifies_to("1/_K", "1×_K^(-1)");
+  simplifies_to("(2_K)^2", "4×_K^(2)");
 
   simplifies_to("2_°C-1_°C", "undef");
   simplifies_to("2_°C+2_K", "undef");
   simplifies_to("2_K+2_°C", "undef");
-  simplifies_to("2_K*2_°C", "undef");
+  simplifies_to("2_K×2_°C", "undef");
   simplifies_to("1/_°C", "undef");
   simplifies_to("(1_°C)^2", "undef");
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
-  simplifies_to("π*_rad*_°", "1/180*π^(2)*_rad^(2)");
+  simplifies_to("π×_rad×_°", "1/180×π^(2)×_rad^(2)");
 
   // TODO: Handle BestRepresentative
   //   simplifies_to("1_m+1_km", "1.001km");
 
   // TODO: Decide on implicit '_' parsing
-  //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k*m" / "m+km" );
+  //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );
   //   simplifies_to("1m+1s", "undef" / "m+s");
   //   simplifies_to("1m+x", "m+x" / "undef");
 }

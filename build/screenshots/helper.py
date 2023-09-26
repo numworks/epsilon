@@ -68,7 +68,7 @@ def generate_all_screenshots_and_create_gif(state_file, executable, folder, exit
    return list_images
 
 def compute_crc32_process(state_file, executable):
-   return Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --do-not-log-events", shell=True, stdout=PIPE, stderr=DEVNULL)
+   return Popen("./" + executable + " --headless --load-state-file " + state_file + " --compute-hash --hide-events", shell=True, stdout=PIPE, stderr=DEVNULL)
 
 def find_crc32_in_log(stdout):
    output = stdout.read().decode()

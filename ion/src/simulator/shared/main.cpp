@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
                                                               true);
   }
 
-  bool doNotLogEvents = args.popFlag("--do-not-log-events");
+  bool doNotLogEvents = args.popFlag("--hide-events");
   if (doNotLogEvents) {
     Ion::Console::setLogEvents(false);
   }

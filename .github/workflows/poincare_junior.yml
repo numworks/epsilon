@@ -4,24 +4,6 @@ env:
   MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }} ${{ (github.job == 'device') && 'EMBED_EXTRA_DATA=1' }}
 
 jobs:
-  device:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
-    strategy:
-      matrix:
-        model: [n0110]
-    steps:
-      - uses: numworks/setup-arm-toolchain@latest
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT || github.token }}
-          submodules: ${{ secrets.PAT != null }}
-      - run: build/setup.sh
-      - name: Check for epsilon-core
-        id: epsilon-core
-        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
-        continue-on-error: true
-      - name: Build userlands
-        run: make MODEL=${{ matrix.model }} userland.A.elf
   linux:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:

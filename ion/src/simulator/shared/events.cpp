@@ -87,14 +87,14 @@ Event getEvent(int *timeout) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
 #if ESCHER_LOG_EVENTS_NAME
-      if (Ion::Console::logEvents()) {
+      if (Ion::Events::LogEvents()) {
         Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
       }
 #endif
     } else {
       nextEvent = sSourceJournal->popEvent();
 #if ESCHER_LOG_EVENTS_NAME
-      if (Ion::Console::logEvents()) {
+      if (Ion::Events::LogEvents()) {
         Ion::Console::writeLine("(From state file) ", false);
       }
 #endif

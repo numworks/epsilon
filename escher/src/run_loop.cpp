@@ -64,7 +64,7 @@ bool RunLoop::step() {
 #endif
 
 #if ESCHER_LOG_EVENTS_NAME
-    if (Ion::Console::logEvents()) {
+    if (Ion::Events::LogEvents()) {
       const char* name = event.name();
       if (name != nullptr) {
         Ion::Console::writeLine("Event: ", false);

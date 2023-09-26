@@ -47,12 +47,12 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   if (!context->overrideUserVariables) {
     // Collect replaced user variables in context.
     EditionReference userVariables =
-        Variables::GetUserSymbols(simplifiedEquationSet);
+        PolynomialParser::GetVariables(simplifiedEquationSet);
     // Replace user variables before SimplifyAndFindVariables
     StorageContext::DeepReplaceIdentifiersWithTrees(simplifiedEquationSet);
     // Find replaced variables using set difference
     userVariables = Set::Difference(
-        userVariables, Variables::GetUserSymbols(simplifiedEquationSet));
+        userVariables, PolynomialParser::GetVariables(simplifiedEquationSet));
     // Update context
     context->numberOfUserVariables = userVariables->numberOfChildren();
     Tree* userVariable = userVariables->firstChild();

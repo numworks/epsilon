@@ -9,7 +9,26 @@ jobs:
     steps:
       - uses: numworks/setup-llvm@latest
       - uses: actions/checkout@v3
+      - name: Fetch target branch and PR branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Find most recent ancestor of PR and target branch
+        id: common_ancestor
+        run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
+      - name: Checkout to most recent ancestor
+        uses: actions/checkout@v3
+        with:
+          ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
       - run: build/setup.sh --only-simulator
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
+      - run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage 2> ancestor.csv 
+      - name: Find head of PR
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
+      - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
         # TODO this LD_LIBRARY_PATH is quite dirty
-      - run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage
+      - run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage 2> head.csv 
+      - run: python3 poincare_junior/test/compare.py ancestor.csv head.csv

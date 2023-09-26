@@ -241,5 +241,15 @@ const char* const s_nameForEvent[255] = {
 
 #endif
 
+#if ESCHER_LOG_EVENTS_NAME
+
+static bool s_logEvents = true;
+
+bool LogEvents() { return s_logEvents; }
+
+bool SetLogEvents(bool logEvents) { return s_logEvents = logEvents; }
+
+#endif
+
 }  // namespace Events
 }  // namespace Ion

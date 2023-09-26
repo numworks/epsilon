@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ion.h>
+#include <ion/keyboard/layout_events.h>
 #include <ion/src/shared/init.h>
 
 #include <algorithm>
@@ -206,10 +207,12 @@ int main(int argc, char *argv[]) {
                                                               true);
   }
 
+#if ESCHER_LOG_EVENTS_NAME
   bool doNotLogEvents = args.popFlag("--hide-events");
   if (doNotLogEvents) {
-    Ion::Console::setLogEvents(false);
+    Ion::Events::SetLogEvents(false);
   }
+#endif
 
 #if !defined(_WIN32)
   signal(SIGUSR1, Ion::Simulator::Actions::handleUSR1Sig);

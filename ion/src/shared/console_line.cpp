@@ -3,8 +3,6 @@
 namespace Ion {
 namespace Console {
 
-static bool s_logEvents = true;
-
 char readChar();
 void writeChar(char c);
 void startReception();
@@ -38,10 +36,6 @@ void readLine(char* line, int maxLineLength) {
     cursor++;
   }
 }
-
-bool logEvents() { return s_logEvents; }
-
-bool setLogEvents(bool doNotLogEvents) { return s_logEvents = doNotLogEvents; }
 
 }  // namespace Console
 }  // namespace Ion

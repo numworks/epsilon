@@ -15,9 +15,6 @@ bool transmissionDone();
 void writeLine(const char* line, bool appendCRLF = true);
 void readLine(char* line, int maxLineLength);
 
-bool logEvents();
-bool setLogEvents(bool doNotLogEvents);
-
 }  // namespace Console
 }  // namespace Ion
 

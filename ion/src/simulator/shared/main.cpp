@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <ion.h>
+#if ESCHER_LOG_EVENTS_NAME
 #include <ion/keyboard/layout_events.h>
+#endif
 #include <ion/src/shared/init.h>
 
 #include <algorithm>

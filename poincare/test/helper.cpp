@@ -154,9 +154,7 @@ void assert_parsed_expression_process_to(
     Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
                                         buffer);
   }
-#ifndef PLATFORM_DEVICE
-  std::cerr << information << '\n';
-#endif
+  quiz_print(information);
 }
 
 PoincareJ::Tree *parse_expression(const char *expression, Context *context,

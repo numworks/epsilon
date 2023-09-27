@@ -134,14 +134,19 @@ Expression ListNode::shallowReduce(const ReductionContext& reductionContext) {
 
 template <typename T>
 Evaluation<T> ListNode::templatedApproximate(
-    const ApproximationContext& approximationContext, bool keepUndef) const {
+    const ApproximationContext& approximationContext) const {
+  bool filterUndefAndSort =
+      approximationContext.shouldFilterUndefAndSortLists();
   ListComplex<T> list = ListComplex<T>::Builder();
   for (ExpressionNode* c : children()) {
     Evaluation<T> eval = c->approximate(T(), approximationContext);
-    if (keepUndef || !eval.isUndefined()) {
+    if (!filterUndefAndSort || !eval.isUndefined()) {
       int n = list.numberOfChildren();
       list.addChildAtIndexInPlace(eval, n, n);
     }
+  }
+  if (filterUndefAndSort) {
+    list.sort();
   }
   return std::move(list);
 }
@@ -212,21 +217,6 @@ bool List::isListOfPoints(Context* context) const {
   return true;
 }
 
-template <typename T>
-Expression List::approximateAndRemoveUndefAndSort(
-    const ApproximationContext& approximationContext) const {
-  if (isUninitialized()) {
-    return Undefined::Builder();
-  }
-  Evaluation<T> eval =
-      node()->templatedApproximate<T>(approximationContext, false);
-  if (eval.type() != EvaluationNode<T>::Type::ListComplex) {
-    return Undefined::Builder();
-  }
-  static_cast<ListComplex<T>&>(eval).sort();
-  return eval.complexToExpression(approximationContext.complexFormat());
-}
-
 template Evaluation<float> ListNode::templatedApproximate(
     const ApproximationContext& approximationContext) const;
 template Evaluation<double> ListNode::templatedApproximate(
@@ -247,8 +237,4 @@ template Evaluation<float> ListNode::productOfElements<float>(
 template Evaluation<double> ListNode::productOfElements<double>(
     const ApproximationContext& approximationContext);
 
-template Expression List::approximateAndRemoveUndefAndSort<float>(
-    const ApproximationContext& approximationContext) const;
-template Expression List::approximateAndRemoveUndefAndSort<double>(
-    const ApproximationContext& approximationContext) const;
 }  // namespace Poincare

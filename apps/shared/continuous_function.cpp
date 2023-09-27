@@ -487,15 +487,9 @@ Expression ContinuousFunction::Model::expressionReduced(
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
-      if (m_expression.type() == ExpressionNode::Type::List) {
-        m_expression = static_cast<List &>(m_expression)
-                           .approximateAndRemoveUndefAndSort<double>(
-                               ApproximationContext(context, complexFormat));
-      } else {
-        assert(m_expression.type() == ExpressionNode::Type::Point);
-        m_expression =
-            PoincareHelpers::Approximate<double>(m_expression, context);
-      }
+      ApproximationContext approximationContext(context, complexFormat,
+                                                angleUnit, false, true);
+      m_expression = m_expression.approximate<double>(approximationContext);
     } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
                !thisProperties.isScatterPlot() &&
                (record->fullName() == nullptr ||

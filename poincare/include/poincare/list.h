@@ -60,12 +60,7 @@ class ListNode : public ExpressionNode {
  private:
   template <typename T>
   Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const {
-    return templatedApproximate<T>(approximationContext, true);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext, bool keepUndef) const;
+      const ApproximationContext& approximationContext) const;
 
   /* See comment on NAryExpressionNode */
   uint16_t m_numberOfChildren;

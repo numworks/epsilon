@@ -8,7 +8,6 @@ jobs:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-llvm@latest
-      - uses: actions/checkout@v3
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:
@@ -37,4 +36,29 @@ jobs:
       - name: Run head
         run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage 2> >(tee head.csv)
       - name: Compare logs
-        run: python3 poincare_junior/test/compare.py ancestor.csv head.csv
+        id: compare_logs
+        run: python3 poincare_junior/test/compare.py ancestor.csv head.csv | tee delta
+      - name: Add comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            var fs = require('fs');
+            var delta = fs.readFileSync('./delta').toString();
+            var summary = delta.split('\n').at(-2);
+            if (delta) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: "<details><summary>" + summary + "</summary><pre>" + delta + "</pre></details>",
+              });
+            }
+      - name: Upload logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: test_results.zip
+          path: |
+            ancestor.csv
+            head.csv
+          retention-days: 7

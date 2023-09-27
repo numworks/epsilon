@@ -28,12 +28,14 @@ void removeTreeIfInitialized(EditionReference tree) {
 }
 
 EditionReference RackParser::parse() {
+#if 0
   size_t endPosition = m_tokenizer.endPosition();
-  // size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
-  // m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
-  // if (rightwardsArrowPosition != endPosition) {
-  // return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
-  // }
+  size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
+      m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
+  if (rightwardsArrowPosition != endPosition) {
+    return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
+  }
+#endif
   /* To check if no other trees are leaked into EditionPool, use the end of pool
    * instead of number of trees since the SharedEditionPool may be incomplete,
    * which can happen while parsing a division's denominator. */
@@ -873,8 +875,9 @@ void RackParser::parseReservedFunction(EditionReference &leftHandSide,
 
 void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
                                               const Builtin *builtin) {
+#if 0
   const Aliases *aliasesList = builtin->aliases();
-  /*if (aliasesList.contains("log") &&
+  if (aliasesList.contains("log") &&
       popTokenIfType(Token::Type::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log\x14{2\x14}(8)")
     EditionReference base = parseUntil(Token::Type::RightSystemBrace);
@@ -892,22 +895,27 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     }
     return;
   }
-  */
+#endif
 
-  // Parse cos^n(x)
+// Parse cos^n(x)
+#if 0
   Token::Type endDelimiterOfPower;
   bool hasCaret = false;
   bool powerFunction = false;
+#endif
   if (popTokenIfType(Token::Type::Caret)) {
+#if 0
     hasCaret = true;
     endDelimiterOfPower = Token::Type::RightParenthesis;
+#endif
     if (!popTokenIfType(Token::Type::LeftParenthesis)) {
       m_status = Status::Error;  // Exponent should be parenthesed
       return;
     }
   }
   EditionReference base;
-  /*if (hasCaret) {
+#if 0
+  if (hasCaret) {
     base = parseUntil(endDelimiterOfPower);
     if (m_status != Status::Progress) {
       return;
@@ -935,28 +943,31 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
       m_status = Status::Error;
       return;
     }
-  }*/
+  }
 
-  // if (m_parsingContext.context() &&
-  // ParsingHelper::IsParameteredExpression(*functionHelper)) {
-  // We must make sure that the parameter is parsed as a single variable.
-  // const char *parameterText;
-  // size_t parameterLength;
-  // if (ParameteredExpression::ParameterText(
-  // m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
-  // &parameterLength)) {
-  // Context *oldContext = m_parsingContext.context();
-  // VariableContext parameterContext(
-  // Symbol::Builder(parameterText, parameterLength), oldContext);
-  // m_parsingContext.setContext(&parameterContext);
-  // leftHandSide = parseFunctionParameters();
-  // m_parsingContext.setContext(oldContext);
-  // } else {
-  // leftHandSide = parseFunctionParameters();
-  // }
-  // } else {
+  if (m_parsingContext.context() &&
+      ParsingHelper::IsParameteredExpression(*functionHelper)) {
+    //  We must make sure that the parameter is parsed as a single variable.
+    const char *parameterText;
+    size_t parameterLength;
+    if (ParameteredExpression::ParameterText(
+            m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
+            &parameterLength)) {
+      Context *oldContext = m_parsingContext.context();
+      VariableContext parameterContext(
+          Symbol::Builder(parameterText, parameterLength), oldContext);
+      m_parsingContext.setContext(&parameterContext);
+      leftHandSide = parseFunctionParameters();
+      m_parsingContext.setContext(oldContext);
+    } else {
+      leftHandSide = parseFunctionParameters();
+    }
+  } else {
+    leftHandSide = parseFunctionParameters();
+  }
+#else
   leftHandSide = parseFunctionParameters();
-  // }
+#endif
 
   if (m_status != Status::Progress) {
     return;
@@ -966,16 +977,18 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
    * This is currently only useful for "sum" which can be sum({1,2,3}) or
    * sum(1/k, k, 1, n) */
   int numberOfParameters = leftHandSide->numberOfChildren();
-  // if ((**functionHelper).minNumberOfChildren() >= 0) {
-  // while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
-  // functionHelper++;
-  // if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
-  // !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
-  // m_status = Status::Error;  // Too many parameters provided.
-  // return;
-  // }
-  // }
-  // }
+#if 0
+  if ((**functionHelper).minNumberOfChildren() >= 0) {
+    while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
+      functionHelper++;
+      if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
+          !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
+        m_status = Status::Error;  // Too many parameters provided.
+        return;
+      }
+    }
+  }
+#endif
 
   if (numberOfParameters == 1 && builtin->blockType() == BlockType::Logarithm) {
     builtin = Builtin::GetReservedFunction(BlockType::Log);
@@ -1013,12 +1026,16 @@ void RackParser::parseSequence(EditionReference &leftHandSide, const char *name,
   // ? Token::Type::LeftSystemBrace
   // : Token::Type::LeftParenthesis));
   popToken();  // Pop the left delimiter
-  EditionReference rank = parseUntil(rightDelimiter);
+#if 0
+  EditionReference rank =
+#endif
+  parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {
     return;
   } else if (!popTokenIfType(rightDelimiter)) {
     m_status = Status::Error;  // Right delimiter missing
   } else {
+    assert(false);  // Not implemented
     // leftHandSide = Sequence::Builder(name, 1, rank);
   }
 }

@@ -77,7 +77,9 @@ Token Tokenizer::popNumber() {
   size_t integralPartText = m_decoder.position();
   size_t integralPartLength = popDigits();
 
+#if 0
   size_t fractionalPartText = m_decoder.position();
+#endif
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
@@ -109,7 +111,9 @@ Token Tokenizer::popNumber() {
   }
 
   if (canPopCodePoint('.')) {
+#if 0
     fractionalPartText = m_decoder.position();
+#endif
     fractionalPartLength = popDigits();
   } else {
     assert(integralPartLength > 0);
@@ -121,9 +125,14 @@ Token Tokenizer::popNumber() {
 
   size_t exponentPartText = m_decoder.position();
   size_t exponentPartLength = 0;
+#if 0
   bool exponentIsNegative = false;
+#endif
   if (canPopCodePoint('E')) {  // UCodePointLatinLetterSmallCapitalE)) {
-    exponentIsNegative = canPopCodePoint('-');
+#if 0
+    exponentIsNegative =
+#endif
+    canPopCodePoint('-');
     exponentPartText = m_decoder.position();
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
@@ -132,9 +141,12 @@ Token Tokenizer::popNumber() {
   }
 
   Token result(Token::Type::Number);
-  // result.setExpression(Number::ParseNumber(integralPartText,
-  // integralPartLength, fractionalPartText, fractionalPartLength,
-  // exponentIsNegative, exponentPartText, exponentPartLength));
+#if 0
+  result.setExpression(Number::ParseNumber(
+      integralPartText, integralPartLength, fractionalPartText,
+      fractionalPartLength, exponentIsNegative, exponentPartText,
+      exponentPartLength));
+#endif
   result.setRange(m_decoder.layoutAt(integralPartText),
                   exponentPartText - integralPartText + exponentPartLength);
   return result;
@@ -190,17 +202,19 @@ Token Tokenizer::popToken() {
   }
 
   if (IsIdentifierMaterial(c)) {
-    // if (m_parsingContext->parsingMethod() ==
-    // ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
-    /* If currently popping an implicit addition, we have already
-     * checked that any identifier is a unit. */
-    // Token result(Token::Type::Unit);
-    // result.setRange(m_decoder.layoutAt(start),
-    // UTF8Decoder::CharSizeOfCodePoint(c) +
-    // popWhile(IsNonDigitalIdentifierMaterial));
-    // assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
-    // return result;
-    // }
+#if 0
+    if (m_parsingContext->parsingMethod() ==
+        ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+      /* If currently popping an implicit addition, we have already checked that
+       * any identifier is a unit. */
+      Token result(Token::Type::Unit);
+      result.setRange(m_decoder.layoutAt(start),
+                      UTF8Decoder::CharSizeOfCodePoint(c) +
+                          popWhile(IsNonDigitalIdentifierMaterial));
+      assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
+      return result;
+    }
+#endif
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
     assert(m_numberOfStoredIdentifiers ==
@@ -224,26 +238,28 @@ Token Tokenizer::popToken() {
     return Token(typeForCodePoint[c - '('], m_decoder.layoutAt(start));
   }
 
-  // ComparisonNode::OperatorType comparisonOperatorType;
-  // size_t comparisonOperatorLength;
-  // if (ComparisonNode::IsComparisonOperatorString(start,
-  // m_decoder.stringEnd(), &comparisonOperatorType, &comparisonOperatorLength))
-  // {
-  /* Change precedence of equal when assigning a function.
-   * This ensures that "f(x) = x and 1" is parsed as
-   * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
-  // Token result(
-  // comparisonOperatorType == ComparisonNode::OperatorType::Equal &&
-  // m_parsingContext->parsingMethod() ==
-  // ParsingContext::ParsingMethod::Assignment ? Token::Type::AssignmentEqual :
-  // Token::Type::ComparisonOperator
-  // );
-  // result.setRange(m_decoder.layoutAt(start), comparisonOperatorLength);
-  /* Set decoder after comparison operator in case not all codepoints
-   * were popped. */
-  // m_decoder.setPosition(start + comparisonOperatorLength);
-  // return result;
-  // }
+#if 0
+  ComparisonNode::OperatorType comparisonOperatorType;
+  size_t comparisonOperatorLength;
+  if (ComparisonNode::IsComparisonOperatorString(start, m_decoder.stringEnd(),
+                                                 &comparisonOperatorType,
+                                                 &comparisonOperatorLength)) {
+    /* Change precedence of equal when assigning a function.
+     * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
+     * not "(f(x) = x) and 1" */
+    Token result(comparisonOperatorType ==
+                             ComparisonNode::OperatorType::Equal &&
+                         m_parsingContext->parsingMethod() ==
+                             ParsingContext::ParsingMethod::Assignment
+                     ? Token::Type::AssignmentEqual
+                     : Token::Type::ComparisonOperator);
+    result.setRange(m_decoder.layoutAt(start), comparisonOperatorLength);
+    /* Set decoder after comparison operator in case not all codepoints were
+     * popped. */
+    m_decoder.setPosition(start + comparisonOperatorLength);
+    return result;
+  }
+#endif
 
   if (c == 0) {
     return Token(Token::Type::EndOfStream);
@@ -379,11 +395,13 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     *length = identifierLength;
     return true;
   }
-  // if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
-  // *returnType = Token::Type::SpecialIdentifier;
-  // *length = identifierLength;
-  // return true;
-  // }
+#if 0
+  if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
+    *returnType = Token::Type::SpecialIdentifier;
+    *length = identifierLength;
+    return true;
+  }
+#endif
   return false;
 }
 
@@ -397,24 +415,31 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
       OMG::CodePointSearch(&insideQuotes, '"') == lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }
-  // if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
-  // return Token::Type::SpecialIdentifier;
-  // }
+#if 0
+  if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
+    return Token::Type::SpecialIdentifier;
+  }
+#endif
   if (*length == 1 && (m_decoder.codePointAt(string) == 'e' ||
                        m_decoder.codePointAt(string) == 'i')) {
     return Token::Type::Constant;
   }
-  // if (Constant::IsConstant(string, *length)) {
-  // return Token::Type::Constant;
-  // }
+#if 0
+  if (Constant::IsConstant(string, *length)) {
+    return Token::Type::Constant;
+  }
+#endif
+
   RackLayoutDecoder subString(m_decoder.mainLayout(), string, string + *length);
   if (BuiltinsAliases::k_thetaAliases.contains(&subString)) {
     return Token::Type::CustomIdentifier;
   }
+#if 0
   Token::Type logicalOperatorType;
-  // if (ParsingHelper::IsLogicalOperator(string, *length,
-  // &logicalOperatorType)) { return logicalOperatorType;
-  // }
+  if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
+    return logicalOperatorType;
+  }
+#endif
   if (m_decoder.codePointAt(string) == '_') {
     if (Unit::CanParse(&subString, nullptr, nullptr)) {
       return Token::Type::Unit;
@@ -422,48 +447,56 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
     // Only constants and units can be prefixed with a '_'
     return Token::Type::Undefined;
   }
-  // if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string,
-  // *length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
-  /* Special case for "min".
-   * min() = minimum(), min = minute.
-   * We handle this now so that min is never understood as a CustomIdentifier
-   * (3->min is not allowed, just like 3->cos) */
-  // return *(string + *length) == '(' ? Token::Type::ReservedFunction :
-  // Token::Type::Unit;
-  // }
+#if 0
+  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
+          string, *length,
+          ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
+    /* Special case for "min". min() = minimum(), min = minute.
+     * We handle this now so that min is never understood as a CustomIdentifier
+     * (3->min is not allowed, just like 3->cos) */
+    return *(string + *length) == '(' ? Token::Type::ReservedFunction
+                                      : Token::Type::Unit;
+  }
+#endif
   if (Builtin::HasReservedFunction(&subString)) {
     return Token::Type::ReservedFunction;
   }
-  /* When parsing for unit conversion, the identifier "m" should always
-   * be understood as the unit and not the variable. */
-  // if (m_parsingContext->parsingMethod() ==
-  // ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string,
-  // *length, nullptr, nullptr)) { return Token::Type::Unit;
-  // }
-  bool hasUnitOnlyCodePoint =
-      false;  // UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string +
-              // *length) || UTF8Helper::HasCodePoint(string, '\'', string +
-              // *length) || UTF8Helper::HasCodePoint(string, '"', string +
-              // *length);
-  // if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
-  // && (m_parsingContext->parsingMethod() ==
-  // ParsingContext::ParsingMethod::Assignment
-  // || m_parsingContext->context() == nullptr
-  // || m_parsingContext->context()->expressionTypeForIdentifier(string,
-  // *length) != Context::SymbolAbstractType::None)) {
-  // return Token::Type::CustomIdentifier;
-  // }
+/* When parsing for unit conversion, the identifier "m" should always
+ * be understood as the unit and not the variable. */
+#if 0
+  if (m_parsingContext->parsingMethod() ==
+          ParsingContext::ParsingMethod::UnitConversion &&
+      Unit::CanParse(string, *length, nullptr, nullptr)) {
+    return Token::Type::Unit;
+  }
+#endif
+
+  bool hasUnitOnlyCodePoint = false;
+#if 0
+      UTF8Helper::HasCodePoint(string, UCodePointDegreeSign,
+                               string + *length) ||
+      UTF8Helper::HasCodePoint(string, '\'', string + *length) ||
+      UTF8Helper::HasCodePoint(string, '"', string + *length);
+  if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
+      && (m_parsingContext->parsingMethod() ==
+              ParsingContext::ParsingMethod::Assignment ||
+          m_parsingContext->context() == nullptr ||
+          m_parsingContext->context()->expressionTypeForIdentifier(
+              string, *length) != Context::SymbolAbstractType::None)) {
+    return Token::Type::CustomIdentifier;
+  }
   /* If not unit conversion and "m" has been or is being assigned by the user
    * it's understood as a variable before being understood as a unit.
    * That's why the following condition is checked after the previous one. */
-  // if (m_parsingContext->parsingMethod() !=
-  // ParsingContext::ParsingMethod::UnitConversion
-  // && m_parsingContext->context()
-  // && m_parsingContext->context()->canRemoveUnderscoreToUnits()
-  // && Unit::CanParse(string, *length, nullptr, nullptr)) {
-  // return Token::Type::Unit;
-  // }
-  // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
+  if (m_parsingContext->parsingMethod() !=
+          ParsingContext::ParsingMethod::UnitConversion &&
+      m_parsingContext->context() &&
+      m_parsingContext->context()->canRemoveUnderscoreToUnits() &&
+      Unit::CanParse(string, *length, nullptr, nullptr)) {
+    return Token::Type::Unit;
+  }
+// "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
+#endif
   Token::Type type;
   if (stringIsASpecialIdentifierOrALogFollowedByNumbers(
           m_decoder.mainLayout(), string, length, &type)) {
@@ -487,7 +520,9 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   bool isImplicitAddition = false;
   bool nextLayoutIsCodePoint = true;
   size_t length = 0;
-  // const Unit::Representative * storedUnitRepresentative = nullptr;
+#if 0
+  const Unit::Representative * storedUnitRepresentative = nullptr;
+#endif
   while (true) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...
@@ -506,8 +541,10 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfNumber;
+#if 0
     size_t currentStringStart =
         m_decoder.position() - UTF8Decoder::CharSizeOfCodePoint(c);
+#endif
     size_t lengthOfPotentialUnit = 0;
     while (nextLayoutIsCodePoint && IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);
@@ -525,24 +562,29 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfPotentialUnit;
-    // const Unit::Representative * unitRepresentative;
-    // const Unit::Prefix * unitPrefix;
-    // if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit,
-    // &unitRepresentative, &unitPrefix)) { Second element is not a unit: the
-    // string is not an implicit addition isImplicitAddition = false; break;
-    // }
-    // if (storedUnitRepresentative != nullptr) {
-    // Warning: The order of AllowImplicitAddition arguments matter
-    // if (Unit::AllowImplicitAddition(unitRepresentative,
-    // storedUnitRepresentative)) { There is at least 2 units allowing for
-    // implicit addition isImplicitAddition = true;
-    // } else {
-    // Implicit addition not allowed between this unit and the previous one
-    // isImplicitAddition = false;
-    // break;
-    // }
-    // }
-    // storedUnitRepresentative = unitRepresentative;
+#if 0
+    const Unit::Representative* unitRepresentative;
+    const Unit::Prefix* unitPrefix;
+    if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit,
+                        &unitRepresentative, &unitPrefix)) {
+      // Second element is not a unit : the string is not an implicit addition
+      isImplicitAddition = false;
+      break;
+    }
+    if (storedUnitRepresentative != nullptr) {
+      // Warning: The order of AllowImplicitAddition arguments matter
+      if (Unit::AllowImplicitAddition(unitRepresentative,
+                                      storedUnitRepresentative)) {
+        // There is at least 2 units allowing for implicit addition
+        isImplicitAddition = true;
+      } else {
+        // Implicit addition not allowed between this unit and the previous one
+        isImplicitAddition = false;
+        break;
+      }
+    }
+    storedUnitRepresentative = unitRepresentative;
+#endif
   }
   if (nextLayoutIsCodePoint) {
     m_decoder.previousCodePoint();

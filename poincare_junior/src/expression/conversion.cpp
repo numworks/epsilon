@@ -33,7 +33,7 @@ void PushPoincareExpressionViaParse(Poincare::Expression exp) {
   char buffer[bufferSize];
   exp.serialize(buffer, bufferSize);
   EditionReference inputLayout = Layout::EditionPoolTextToLayout(buffer);
-  EditionReference expression = RackParser(inputLayout).parse();
+  RackParser(inputLayout).parse();
   inputLayout->removeTree();
   return;
 }
@@ -130,6 +130,9 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
             ToPoincareExpression(exp->childAtIndex(1)),
             ToPoincareExpression(exp->childAtIndex(2)));
       }
+      default:
+        // TODO: Handle missing BlockTypes
+        assert(false);
     }
   }
 
@@ -363,6 +366,8 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
               static_cast<Poincare::Matrix &>(exp).numberOfRows(),
               static_cast<Poincare::Matrix &>(exp).numberOfColumns());
           break;
+        default:
+          assert(false);
       }
       for (int i = 0; i < exp.numberOfChildren(); i++) {
         PushPoincareExpression(exp.childAtIndex(i));

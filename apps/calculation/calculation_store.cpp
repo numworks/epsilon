@@ -16,6 +16,8 @@ using namespace Shared;
 
 namespace Calculation {
 
+#if 0
+// Deactivated with PCJ
 static Expression enhancePushedExpression(Expression expression) {
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
@@ -28,6 +30,7 @@ static Expression enhancePushedExpression(Expression expression) {
   }
   return expression;
 }
+#endif
 
 // Public
 
@@ -143,11 +146,18 @@ ExpiringPointer<Calculation> CalculationStore::push(
       if (cursor == k_pushError) {
         return errorPushUndefined();
       }
+#if 0
       /* Recompute the location of the input text in case a calculation was
        * deleted. */
       char *const inputText = endOfCalculations() + sizeof(Calculation);
+#endif
 
       // Parse and compute the expression
+#if 0
+      PoincareHelpers::ParseAndSimplifyAndApproximate(
+          inputText, &inputExpression, &exactOutputExpression,
+          &approximateOutputExpression, context);
+#else
       PoincareJ::Tree *tree =
           PoincareJ::Expression::FromPoincareExpression(inputExpression);
       PoincareJ::Simplification::Simplify(tree);
@@ -156,6 +166,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       tree->removeTree();
       exactOutputExpression = exactOutputExpression.addMissingParentheses();
       approximateOutputExpression = Poincare::Float<double>::Builder(approx);
+#endif
 
       // Post-processing of store expression
 #if 0

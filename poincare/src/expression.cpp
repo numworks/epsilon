@@ -1458,8 +1458,9 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
                              SymbolicComputation::DoNotReplaceAnySymbol)) {
       return Undefined::Builder();
     }
+  } else {
+    e = e.deepRemoveUselessDependencies(*reductionContext);
   }
-  e = e.deepRemoveUselessDependencies(*reductionContext);
   assert(!e.isUninitialized());
   return e;
 }

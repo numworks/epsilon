@@ -117,7 +117,10 @@ bool LayoutField::handleDivision() {
           // 1D: NumeratorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
           handled = Escher::LayoutField::handleEvent(Ion::Events::Space);
-          assert(handled);
+          if (!handled) {
+            // Not enough space
+            return false;
+          }
           event = Ion::Events::Left;
         } else {
           // 2D: NumeratorOfEmptyFraction -> DenominatorOfEmptyFraction

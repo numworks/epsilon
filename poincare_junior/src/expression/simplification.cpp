@@ -925,6 +925,8 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
          PatternMatching::MatchAndReplace(ref, KTrig(KA, 0_e), KCos(KA)) ||
          // trig(A, 1) -> sin(A)
          PatternMatching::MatchAndReplace(ref, KTrig(KA, 1_e), KSin(KA)) ||
+         // exp(1) -> e
+         PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
          // exp(A) -> e^A
          PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
          // ln(A) * ln(B)^(-1) -> log(A, B)

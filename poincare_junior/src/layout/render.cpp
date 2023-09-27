@@ -25,6 +25,7 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
     case BlockType::CodePointLayout:
       return CodePointLayout::Size(node, root, font);
     default:
+      // Not implemented
       assert(false);
   };
   return KDSizeZero;
@@ -56,6 +57,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
       return VerticalOffsetLayout::PositionOfChild(node, childIndex, root,
                                                    font);
     default:
+      // Not implemented
       assert(false);
       return KDPointZero;
   };
@@ -76,6 +78,7 @@ KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
     case BlockType::CodePointLayout:
       return CodePointLayout::Baseline(node, root, font);
     default:
+      // Not implemented
       assert(false);
       return static_cast<KDCoordinate>(0);
   };

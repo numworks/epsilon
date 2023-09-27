@@ -41,8 +41,6 @@ T Approximation::To(const Tree* node) {
       return Approximation::MapAndReduce(node, FloatLog<T>);
     case BlockType::Trig:
       return Approximation::MapAndReduce(node, FloatTrig<T>);
-    case BlockType::TrigDiff:
-      return Approximation::MapAndReduce(node, FloatTrigDiff<T>);
     case BlockType::SquareRoot:
       return std::sqrt(Approximation::To<T>(node->nextNode()));
     case BlockType::Exponential:

@@ -1270,6 +1270,7 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
   // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
   if (ExpandTrigonometric(newTrig1)) {
     if (!ExpandTrigonometric(newTrig3)) {
+      // If newTrig1 expanded, newTrig3 should expand too
       assert(false);
     }
   } else {
@@ -1340,6 +1341,7 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
     if (ContractTrigonometric(newMult1)) {
       // - Trig(B+D, E+C))*F
       if (!ContractTrigonometric(newMult2)) {
+        // If newMult1 contracted, newMult2 should contract too
         assert(false);
       }
     }

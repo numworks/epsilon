@@ -263,6 +263,7 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
         }
         ConvertBuiltinToLayout(layoutParent, expression);
       } else {
+        // TODO: Handle missing BlockTypes
         assert(false);
         PushCodePoint(layoutParent, '?');
         break;

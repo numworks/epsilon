@@ -20,6 +20,7 @@ EditionReference Parser::Parse(const Tree* node) {
     case BlockType::ParenthesisLayout:
       return ParenthesisLayout::Parse(node);
     default:
+      // Not implemented
       assert(false);
   }
 }

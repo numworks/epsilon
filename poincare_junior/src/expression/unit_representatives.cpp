@@ -113,6 +113,8 @@ const Volume Volume::quart = {"qt", KMult(32._e, 0.0000295735295625_e), None,
 const Volume Volume::gallon = {"gal", KMult(128._e, 0.0000295735295625_e), None,
                                None};
 
+const Speed Speed::none = {nullptr, 1_e, None, None};
+
 #if 0
 int Time::setAdditionalExpressions(
     double value, Expression* dest, int availableLength,

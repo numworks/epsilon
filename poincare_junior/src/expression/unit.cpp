@@ -192,7 +192,7 @@ const UnitRepresentative* const* UnitRepresentative::DefaultRepresentatives() {
           CatalyticActivity::representatives[0],
           Surface::representatives[0],
           Volume::representatives[0],
-          // &defaultSpeedRepresentative,
+          Speed::representatives[0],
       };
   return defaultRepresentatives;
 }

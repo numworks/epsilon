@@ -439,6 +439,13 @@ class Speed : public Helper<Speed> {
  public:
   constexpr static DimensionVector Dimension{.time = -1, .distance = 1};
 
+  const static Speed none;
+  constexpr static const Speed* representatives[] = {&none};
+
+  const UnitRepresentative* representativesOfSameDimension() const override {
+    return nullptr;
+  };
+
 #if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,

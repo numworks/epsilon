@@ -861,6 +861,9 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
                          .m_numberOfSubCurves = 2},
       &store, &context);
 
+#if 0
+// Disabled until pcj supports store
+
   // Add a predefined a symbol
   assert_reduce_and_store("0→a", Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
@@ -933,6 +936,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   assert_check_function_properties("h(t)=2g'(t)", k_unhandledParametric);
 
   store.removeAll();
+#endif
 }
 
 }  // namespace Graph

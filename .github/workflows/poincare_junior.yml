@@ -37,7 +37,7 @@ jobs:
         run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage 2> >(tee head.csv)
       - name: Compare logs
         id: compare_logs
-        run: python3 poincare_junior/test/compare.py --markdown ancestor.csv head.csv | tee comment.md
+        run: python3 poincare_junior/test/compare.py --markdown ancestor.csv head.csv > comment.md
       - name: Add comment
         uses: actions/github-script@v6
         with:
@@ -53,6 +53,8 @@ jobs:
                 body: "### Poincare tests\n\n" + comment
               });
             }
+      - name: Check for failures
+        run: grep --invert-match --silent broken comment.md
       - name: Upload logs
         uses: actions/upload-artifact@v3
         with:

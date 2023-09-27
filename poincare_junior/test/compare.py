@@ -10,14 +10,14 @@ def main():
    args = parser.parse_args()
 
    if not args.before.exists() or not args.after.exists():
-      print("File not found")
+      print("File not found", file=sys.stderr)
       sys.exit(1)
 
    before = args.before.read_text().split('\n')
    after = args.after.read_text().split('\n')
 
    if len(before) != len(after):
-      print("The two CSVs must be created with the same test suite, please rebase the target branch")
+      print("The two CSVs must be created with the same test suite, please rebase the target branch", file=sys.stderr)
       sys.exit(1)
 
    fixed, broken, changed = [], [], []
@@ -49,9 +49,6 @@ def main():
          print(item)
       if args.markdown:
          print(f"</pre></details>")
-
-   if broken:
-      sys.exit(1)
 
 if __name__ == "__main__":
    main()

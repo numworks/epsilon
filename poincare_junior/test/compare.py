@@ -4,6 +4,7 @@ import argparse, collections, pathlib, sys
 parser = argparse.ArgumentParser(description='Compare CSV test results to measure improvement and detect regressions')
 parser.add_argument('before', metavar='before.csv', type=pathlib.Path)
 parser.add_argument('after', metavar='after.csv', type=pathlib.Path)
+parser.add_argument('--markdown', action='store_true', help="format output with Markdown")
 
 def main():
    args = parser.parse_args()
@@ -19,7 +20,7 @@ def main():
       print("The two CSVs must be created with the same test suite, please rebase the target branch")
       sys.exit(1)
 
-   fixed, broken, changed = 0, 0, 0
+   fixed, broken, changed = [], [], []
    for old, new in zip(before, after):
        if not old : continue
        old_result, *old_args = old.split('\t')
@@ -27,24 +28,28 @@ def main():
        assert(old_args[0] == new_args[0])
        if old_result != new_result:
            if new_result == 'OK':
-              fixed += 1
+              fixed.append(new_args[0])
            elif old_result == 'CRASH':
-              changed += 1
+              changed.append(f"{new_args[0]}\n  no longer crashes")
            else:
-              broken += 1
               if new_result == 'CRASH':
-                 print(new_args[0], "now crashes")
+                 broken.append(f"{new_args[0]}\n  now crashes")
               else:
-                 print(new_args[0], "fails")
-                 print("  with     ", new_args[1])
-                 print("  expected ", new_args[2])
+                 changed.append(f"{new_args[0]}\n  returns     {new_args[1]}\n  expected  {new_args[2]}")
        elif old_result == 'BAD' and old_args[2] != new_args[2]:
-          print(new_args[0], "changed")
-          print("  from ", old_args[2])
-          print("  to   ", new_args[2])
-          changed += 1
+          changed.append(f"{new_args[0]}\n  from {old_args[2]}\n  to   {new_args[2]}")
 
-   print(f"{broken=} {fixed=} {changed=}")
+   for items, name in (fixed, 'fixed'), (changed, 'changed'), (broken, 'broken'):
+      if not items: continue
+      if args.markdown:
+         print(f"<details><summary>{len(items)} {name}</summary><pre>")
+      else:
+         print("="*8, len(items), name, "="*8)
+      for item in items:
+         print(item)
+      if args.markdown:
+         print(f"</pre></details>")
+
    if broken:
       sys.exit(1)
 

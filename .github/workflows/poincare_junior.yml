@@ -37,21 +37,20 @@ jobs:
         run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage 2> >(tee head.csv)
       - name: Compare logs
         id: compare_logs
-        run: python3 poincare_junior/test/compare.py ancestor.csv head.csv | tee delta
+        run: python3 poincare_junior/test/compare.py --markdown ancestor.csv head.csv | tee comment.md
       - name: Add comment
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             var fs = require('fs');
-            var delta = fs.readFileSync('./delta').toString();
-            var summary = delta.split('\n').at(-2);
-            if (delta) {
+            var comment = fs.readFileSync('./comment.md').toString().trim();
+            if (comment) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: "<details><summary>" + summary + "</summary><pre>" + delta + "</pre></details>",
+                body: "### Poincare tests\n\n" + comment
               });
             }
       - name: Upload logs

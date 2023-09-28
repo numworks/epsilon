@@ -15,7 +15,7 @@ class Layout final : public Reference {
 
  public:
   constexpr static bool IsHorizontal(const Tree* node) {
-    return node->type() == BlockType::RackLayout;
+    return node->layoutType() == LayoutType::Rack;
   }
   constexpr static bool IsEmpty(const Tree* node) {
     return IsHorizontal(node) && node->numberOfChildren() == 0;

@@ -376,7 +376,8 @@ void RackParser::isThereImplicitOperator() {
    * handle implicit multiplication. */
   m_pendingImplicitOperator =
       ((m_nextToken.is(Token::Type::Layout) &&
-        m_nextToken.firstLayout()->type() != BlockType::VerticalOffsetLayout) ||
+        m_nextToken.firstLayout()->layoutType() !=
+            LayoutType::VerticalOffset) ||
        m_nextToken.is(Token::Type::Number) ||
        m_nextToken.is(Token::Type::Constant) ||
        m_nextToken.is(Token::Type::Unit) ||
@@ -1338,11 +1339,10 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // }
   assert(m_currentToken.length() == 1);
   const Tree *layout = m_currentToken.firstLayout();
-  assert(layout->type().isLayout());
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */
-  switch (layout->type()) {
-    case BlockType::VerticalOffsetLayout: {
+  switch (layout->layoutType()) {
+    case LayoutType::VerticalOffset: {
       if (leftHandSide.isUninitialized()) {
         m_status = Status::Error;
         return;

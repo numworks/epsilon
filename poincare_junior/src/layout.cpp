@@ -21,7 +21,7 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
                                         const Tree *parentheses) {
   CodePoint codePoint = decoder->nextCodePoint();
   assert(parent && parent->isNAry());
-  assert(!parentheses || parentheses->type() == BlockType::ParenthesisLayout);
+  assert(!parentheses || parentheses->layoutType() == LayoutType::Parenthesis);
   while (codePoint != UCodePointNull) {
     Tree *child;
     switch (codePoint) {
@@ -56,21 +56,21 @@ char *append(const char *text, char *buffer, char *end) {
 }
 
 char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
-  switch (layout->type()) {
-    case BlockType::CodePointLayout: {
+  switch (layout->layoutType()) {
+    case LayoutType::CodePoint: {
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
       char codepointBuffer[bufferSize];
       CodePointLayout::GetName(layout, codepointBuffer, bufferSize);
       buffer = append(codepointBuffer, buffer, end);
       break;
     }
-    case BlockType::ParenthesisLayout: {
+    case LayoutType::Parenthesis: {
       buffer = append("(", buffer, end);
       buffer = Serialize(layout->childAtIndex(0), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }
-    case BlockType::RackLayout: {
+    case LayoutType::Rack: {
       for (const Tree *child : layout->children()) {
         buffer = Serialize(child, buffer, end);
         if (buffer == end) {
@@ -79,13 +79,13 @@ char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
       }
       break;
     }
-    case BlockType::FractionLayout: {
+    case LayoutType::Fraction: {
       buffer = Serialize(layout->childAtIndex(0), buffer, end);
       buffer = append("/", buffer, end);
       buffer = Serialize(layout->childAtIndex(1), buffer, end);
       break;
     }
-    case BlockType::VerticalOffsetLayout: {
+    case LayoutType::VerticalOffset: {
       buffer = append("^(", buffer, end);
       buffer = Serialize(layout->childAtIndex(0), buffer, end);
       buffer = append(")", buffer, end);

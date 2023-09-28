@@ -11,16 +11,15 @@
 namespace PoincareJ {
 
 EditionReference Parser::Parse(const Tree* node) {
-  assert(node->type().isLayout());
-  switch (node->type()) {
-    case BlockType::FractionLayout:
+  switch (node->layoutType()) {
+    case LayoutType::Fraction:
       return FractionLayout::Parse(node);
-    case BlockType::RackLayout:
+    case LayoutType::Rack:
       return RackLayout::Parse(node);
-    case BlockType::ParenthesisLayout:
+    case LayoutType::Parenthesis:
       return ParenthesisLayout::Parse(node);
-    default:
-      // Not implemented
+    case LayoutType::VerticalOffset:
+    case LayoutType::CodePoint:
       assert(false);
   }
 }

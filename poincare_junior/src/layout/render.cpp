@@ -12,23 +12,18 @@
 namespace PoincareJ {
 
 KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
-  assert(node->type().isLayout());
-  switch (node->type()) {
-    case BlockType::RackLayout:
+  switch (node->layoutType()) {
+    case LayoutType::RackLayout:
       return RackLayout::Size(node, root, font);
-    case BlockType::FractionLayout:
+    case LayoutType::FractionLayout:
       return FractionLayout::Size(node, root, font);
-    case BlockType::ParenthesisLayout:
+    case LayoutType::ParenthesisLayout:
       return ParenthesisLayout::Size(node, root, font);
-    case BlockType::VerticalOffsetLayout:
+    case LayoutType::VerticalOffsetLayout:
       return VerticalOffsetLayout::Size(node, root, font);
-    case BlockType::CodePointLayout:
+    case LayoutType::CodePointLayout:
       return CodePointLayout::Size(node, root, font);
-    default:
-      // Not implemented
-      assert(false);
   };
-  return KDSizeZero;
 }
 
 KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
@@ -45,42 +40,34 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
 
 KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
                                 const Tree* root, KDFont::Size font) {
-  assert(node->type().isLayout());
-  switch (node->type()) {
-    case BlockType::RackLayout:
+  switch (node->layoutType()) {
+    case LayoutType::RackLayout:
       return RackLayout::PositionOfChild(node, childIndex, root, font);
-    case BlockType::FractionLayout:
+    case LayoutType::FractionLayout:
       return FractionLayout::PositionOfChild(node, childIndex, root, font);
-    case BlockType::ParenthesisLayout:
+    case LayoutType::ParenthesisLayout:
       return ParenthesisLayout::PositionOfChild(node, childIndex, root, font);
-    case BlockType::VerticalOffsetLayout:
+    case LayoutType::VerticalOffsetLayout:
       return VerticalOffsetLayout::PositionOfChild(node, childIndex, root,
                                                    font);
-    default:
-      // Not implemented
+    case LayoutType::CodePointLayout:
       assert(false);
-      return KDPointZero;
   };
 }
 
 KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
                               KDFont::Size font) {
-  assert(node->type().isLayout());
-  switch (node->type()) {
-    case BlockType::RackLayout:
+  switch (node->layoutType()) {
+    case LayoutType::RackLayout:
       return RackLayout::Baseline(node, root, font);
-    case BlockType::FractionLayout:
+    case LayoutType::FractionLayout:
       return FractionLayout::Baseline(node, root, font);
-    case BlockType::ParenthesisLayout:
+    case LayoutType::ParenthesisLayout:
       return ParenthesisLayout::Baseline(node, root, font);
-    case BlockType::VerticalOffsetLayout:
+    case LayoutType::VerticalOffsetLayout:
       return VerticalOffsetLayout::Baseline(node, root, font);
-    case BlockType::CodePointLayout:
+    case LayoutType::CodePointLayout:
       return CodePointLayout::Baseline(node, root, font);
-    default:
-      // Not implemented
-      assert(false);
-      return static_cast<KDCoordinate>(0);
   };
 }
 
@@ -115,21 +102,20 @@ void Render::PrivateDraw(const Tree* node, const Tree* root, KDContext* ctx,
 void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                         KDPoint p, KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
-  assert(node->type().isLayout());
-  switch (node->type()) {
-    case BlockType::FractionLayout:
+  switch (node->layoutType()) {
+    case LayoutType::FractionLayout:
       return FractionLayout::RenderNode(node, root, ctx, p, font,
                                         expressionColor, backgroundColor);
-    case BlockType::ParenthesisLayout:
+    case LayoutType::ParenthesisLayout:
       return ParenthesisLayout::RenderNode(node, root, ctx, p, font,
                                            expressionColor, backgroundColor);
-    case BlockType::CodePointLayout:
+    case LayoutType::CodePointLayout:
       return CodePointLayout::RenderNode(node, root, ctx, p, font,
                                          expressionColor, backgroundColor);
-    case BlockType::RackLayout:
+    case LayoutType::RackLayout:
       return RackLayout::RenderNode(node, root, ctx, p, font, expressionColor,
                                     backgroundColor);
-    default:;
+    case LayoutType::VerticalOffsetLayout:;
   };
 }
 

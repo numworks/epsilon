@@ -543,7 +543,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   // Handle backspace
   if (event == Ion::Events::Backspace && isEditing()) {
     if (contentView()->selectionIsEmpty()) {
-      return removePreviousGlyph();
+      return (*textDidChange = removePreviousGlyph());
     }
     deleteSelection();
     *textDidChange = true;

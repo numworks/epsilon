@@ -25,7 +25,7 @@ extern "C" {
   int calculator=4; // -1 means OS not checked, 0 unknown, 1 cg50 or 90, 2 emu 50 or 90, 3 other
 
   int main() {
-    sdk_init();
+    sdk_init(); //this calls the lcd init functions from behind the scenes
     Ion::Simulator::Main::init();
     ion_main(0, NULL);
     Ion::Simulator::Main::quit();
@@ -61,35 +61,6 @@ void refresh() {
 
 void quit() {
   Ion::Simulator::Display::quit();
-}
-
-void runPowerOffSafe(void (*powerOffSafeFunction)(), bool prepareVRAM) {
-  // somewhat OFF by setting LCD to 0
-  unsigned NSPIRE_CONTRAST_ADDR=is_cx2?0x90130014:0x900f0020;
-  unsigned oldval=*(volatile unsigned *)NSPIRE_CONTRAST_ADDR,oldval2;
-  if (is_cx2){
-    oldval2=*(volatile unsigned *) (NSPIRE_CONTRAST_ADDR+4);
-    *(volatile unsigned *) (NSPIRE_CONTRAST_ADDR+4)=0xffff;
-  }
-  *(volatile unsigned *)NSPIRE_CONTRAST_ADDR=is_cx2?0xffff:0x100;
-  static volatile uint32_t *lcd_controller = (volatile uint32_t*) 0xC0000000;
-  lcd_controller[6] &= ~(0b1 << 11);
-  loopsleep(20);
-  lcd_controller[6] &= ~ 0b1; 
-  unsigned NSPIRE_RTC_ADDR=0x90090000;
-  unsigned offtime=* (volatile unsigned *) NSPIRE_RTC_ADDR;
-  for (int n=0;!on_key_pressed();++n){
-    loopsleep(100);
-    idle();
-  }
-  lcd_controller[6] |= 0b1;
-  loopsleep(20);
-  lcd_controller[6]|= 0b1 << 11;
-  if (is_cx2)
-    *(volatile unsigned *)(NSPIRE_CONTRAST_ADDR+4)=oldval2;
-  *(volatile unsigned *)NSPIRE_CONTRAST_ADDR=oldval;
-  sync_screen();
-
 }
 
 }

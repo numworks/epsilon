@@ -617,7 +617,7 @@ void statusline(int mode){
 #include "k_defs.h"
 
 void sdk_init(void){
-  lcd_init(lcd_type()); // clrscr();
+  lcd_init(lcd_type());
 }
 
 void sdk_end(void){
@@ -993,6 +993,7 @@ int nspire_shift=0;
 int nspire_ctrl=0;
 int nspire_select=false;
 void statusline(int mode){
+  return; //this is broken for our purposes and it honestly doesn't matter enough to fix.
   char *msg=0;
   if (nspire_ctrl){
     if (nspire_shift)

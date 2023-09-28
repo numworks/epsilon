@@ -261,6 +261,9 @@ State scan() {
       return state;
     }
   }
+  if (isKeyPressed(KEY_NSPIRE_TENX)){
+      exit(0);
+  }
   return state;
 }
 

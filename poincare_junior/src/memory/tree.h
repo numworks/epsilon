@@ -64,14 +64,14 @@ class Tree {
 
   // Get the i-th value block (after the type block)
   constexpr uint8_t nodeValue(uint8_t index) const {
-    assert(index + 1 < nodeSize());
+    assert(index + 1 < static_cast<uint8_t>(nodeSize()));
     return static_cast<uint8_t>(m_block[index + 1]);
   }
-  void setNodeValue(int index, uint8_t value) {
-    assert(index + 1 < nodeSize());
+  void setNodeValue(uint8_t index, uint8_t value) {
+    assert(index + 1 < static_cast<uint8_t>(nodeSize()));
     m_block[index + 1] = Block(value);
   }
-  ValueBlock* nodeValueBlock(int index) {
+  ValueBlock* nodeValueBlock(uint8_t index) {
     return static_cast<ValueBlock*>(&m_block[index + 1]);
   }
 

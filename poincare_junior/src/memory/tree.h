@@ -129,6 +129,10 @@ class Tree {
   bool hasAncestor(const Tree* node, bool includeSelf) const;
 
   constexpr TypeBlock type() const { return *typeBlock(); }
+  constexpr LayoutType layoutType() const {
+    assert(type().isLayout());
+    return static_cast<LayoutType>(static_cast<BlockType>(type().type()));
+  }
   constexpr size_t nodeSize() const { return typeBlock()->nodeSize(); }
   constexpr int numberOfChildren() const {
     return typeBlock()->numberOfChildren();

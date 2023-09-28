@@ -27,6 +27,14 @@ enum class BlockType : uint8_t {
 #undef ALIAS
 };
 
+enum class LayoutType : uint8_t {
+#define TYPE(F) F = static_cast<uint8_t>(BlockType::F),
+#define ALIAS(F)
+#include <poincare_junior/src/layout/block_types.h>
+#undef TYPE
+#undef ALIAS
+};
+
 // TODO:
 // - if the number of BlockType > 256, add a special tag that prefixes the least
 //   used tags

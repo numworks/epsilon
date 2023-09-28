@@ -33,6 +33,11 @@ void micropython_port_vm_hook_refresh_print() {
 }
 
 bool micropython_port_interruptible_msleep(int32_t delay) {
+  // Check if the user entered a bad delay (negative)
+  if (delay < 0) {
+    return false;
+  }
+
   assert(delay >= 0);
   /* We don't use millis because the systick drifts when changing the HCLK
    * frequency. */

@@ -1,8 +1,8 @@
-TYPE(RackLayout)
-TYPE(FractionLayout)
-TYPE(ParenthesisLayout)
-TYPE(VerticalOffsetLayout)
-TYPE(CodePointLayout)
+TYPE(Rack)
+TYPE(Fraction)
+TYPE(Parenthesis)
+TYPE(VerticalOffset)
+TYPE(CodePoint)
 
 ALIAS(FirstLayout = RackLayout)
 ALIAS(LastLayout = CodePointLayout)

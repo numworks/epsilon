@@ -13,15 +13,15 @@ namespace PoincareJ {
 
 KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
   switch (node->layoutType()) {
-    case LayoutType::RackLayout:
+    case LayoutType::Rack:
       return RackLayout::Size(node, root, font);
-    case LayoutType::FractionLayout:
+    case LayoutType::Fraction:
       return FractionLayout::Size(node, root, font);
-    case LayoutType::ParenthesisLayout:
+    case LayoutType::Parenthesis:
       return ParenthesisLayout::Size(node, root, font);
-    case LayoutType::VerticalOffsetLayout:
+    case LayoutType::VerticalOffset:
       return VerticalOffsetLayout::Size(node, root, font);
-    case LayoutType::CodePointLayout:
+    case LayoutType::CodePoint:
       return CodePointLayout::Size(node, root, font);
   };
 }
@@ -41,16 +41,16 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
 KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
                                 const Tree* root, KDFont::Size font) {
   switch (node->layoutType()) {
-    case LayoutType::RackLayout:
+    case LayoutType::Rack:
       return RackLayout::PositionOfChild(node, childIndex, root, font);
-    case LayoutType::FractionLayout:
+    case LayoutType::Fraction:
       return FractionLayout::PositionOfChild(node, childIndex, root, font);
-    case LayoutType::ParenthesisLayout:
+    case LayoutType::Parenthesis:
       return ParenthesisLayout::PositionOfChild(node, childIndex, root, font);
-    case LayoutType::VerticalOffsetLayout:
+    case LayoutType::VerticalOffset:
       return VerticalOffsetLayout::PositionOfChild(node, childIndex, root,
                                                    font);
-    case LayoutType::CodePointLayout:
+    case LayoutType::CodePoint:
       assert(false);
   };
 }
@@ -58,15 +58,15 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
 KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
                               KDFont::Size font) {
   switch (node->layoutType()) {
-    case LayoutType::RackLayout:
+    case LayoutType::Rack:
       return RackLayout::Baseline(node, root, font);
-    case LayoutType::FractionLayout:
+    case LayoutType::Fraction:
       return FractionLayout::Baseline(node, root, font);
-    case LayoutType::ParenthesisLayout:
+    case LayoutType::Parenthesis:
       return ParenthesisLayout::Baseline(node, root, font);
-    case LayoutType::VerticalOffsetLayout:
+    case LayoutType::VerticalOffset:
       return VerticalOffsetLayout::Baseline(node, root, font);
-    case LayoutType::CodePointLayout:
+    case LayoutType::CodePoint:
       return CodePointLayout::Baseline(node, root, font);
   };
 }
@@ -103,19 +103,19 @@ void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                         KDPoint p, KDFont::Size font, KDColor expressionColor,
                         KDColor backgroundColor) {
   switch (node->layoutType()) {
-    case LayoutType::FractionLayout:
+    case LayoutType::Fraction:
       return FractionLayout::RenderNode(node, root, ctx, p, font,
                                         expressionColor, backgroundColor);
-    case LayoutType::ParenthesisLayout:
+    case LayoutType::Parenthesis:
       return ParenthesisLayout::RenderNode(node, root, ctx, p, font,
                                            expressionColor, backgroundColor);
-    case LayoutType::CodePointLayout:
+    case LayoutType::CodePoint:
       return CodePointLayout::RenderNode(node, root, ctx, p, font,
                                          expressionColor, backgroundColor);
-    case LayoutType::RackLayout:
+    case LayoutType::Rack:
       return RackLayout::RenderNode(node, root, ctx, p, font, expressionColor,
                                     backgroundColor);
-    case LayoutType::VerticalOffsetLayout:;
+    case LayoutType::VerticalOffset:;
   };
 }
 

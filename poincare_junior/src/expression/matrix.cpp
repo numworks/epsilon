@@ -117,7 +117,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   uint8_t cols = NumberOfColumns(v);
   Tree* result = SharedEditionPool->push<BlockType::Matrix>(rows, cols);
   /* The complexity of the naive multiplication is n^3 by itself but if we do
-   * not take care, indexing the children with childAtIndex will add an n^2
+   * not take care, indexing the children with child will add an n^2
    * factor. To avoid this, we keep track of each row of v. */
   const Tree* rowsV[internal];
   {

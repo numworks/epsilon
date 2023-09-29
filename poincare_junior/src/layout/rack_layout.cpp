@@ -32,7 +32,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    const Tree* childi = node->childAtIndex(i);
+    const Tree* childi = node->child(i);
     KDSize childSize = Render::Size(childi, root, font);
     totalWidth += childSize.width();
     KDCoordinate childBaseline = Render::Baseline(childi, root, font);
@@ -54,8 +54,7 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    result =
-        std::max(result, Render::Baseline(node->childAtIndex(i), root, font));
+    result = std::max(result, Render::Baseline(node->child(i), root, font));
   }
   return result;
 }

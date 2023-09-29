@@ -38,9 +38,9 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type0 == BlockType::Power) {
-      if (Compare(node0->childAtIndex(0), node1) == 0) {
+      if (Compare(node0->child(0), node1) == 0) {
         // 1/x < x < x^2
-        return Compare(node0->childAtIndex(1), 1_e);
+        return Compare(node0->child(1), 1_e);
       }
       // x < y^2
       return 1;
@@ -175,8 +175,8 @@ int PrivateCompareChildrenBackwards(const Tree* node0, const Tree* node1) {
     return 0;
   }
   return CompareNextTreePairOrItself(
-      node0->childAtIndex(numberOfChildren0 - numberOfComparisons),
-      node1->childAtIndex(numberOfChildren1 - numberOfComparisons),
+      node0->child(numberOfChildren0 - numberOfComparisons),
+      node1->child(numberOfChildren1 - numberOfComparisons),
       numberOfComparisons);
 }
 
@@ -203,7 +203,7 @@ int Comparison::CompareLastChild(const Tree* node0, const Tree* node1) {
   int m = node0->numberOfChildren();
   // Otherwise, node0 should be sanitized beforehand.
   assert(m > 0);
-  int comparisonWithChild = Compare(node0->childAtIndex(m - 1), node1);
+  int comparisonWithChild = Compare(node0->child(m - 1), node1);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;
   }

@@ -93,8 +93,7 @@ bool Builtin::Promote(Tree *parameterList, TypeBlock type) {
       Tree::FromBlocks(SharedEditionPool->pushBlock(type)));
   if (type.isParametric()) {
     // Move sub-expression at the end
-    parameterList->nextTree()->moveTreeBeforeNode(
-        parameterList->childAtIndex(0));
+    parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
   }
   return true;
 }

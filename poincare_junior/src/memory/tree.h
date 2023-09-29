@@ -120,9 +120,9 @@ class Tree {
                                 &dummyPosition);
   }
   int numberOfDescendants(bool includeSelf) const;
-  const Tree* childAtIndex(int index) const;
-  Tree* childAtIndex(int index) {
-    return Utils::DeconstifyPtr(&Tree::childAtIndex, this, index);
+  const Tree* child(int index) const;
+  Tree* child(int index) {
+    return Utils::DeconstifyPtr(&Tree::child, this, index);
   }
   int indexOfChild(const Tree* child) const;
   bool hasChild(const Tree* child) const;

@@ -78,7 +78,7 @@ Sign GetSign(const Tree* t) {
     }
     case BlockType::Power: {
       Sign base = GetSign(t->firstChild());
-      Sign exp = GetSign(t->childAtIndex(1));
+      Sign exp = GetSign(t->child(1));
       return {
           .canBeNull = base.canBeNull,
           .canBePositive = true,

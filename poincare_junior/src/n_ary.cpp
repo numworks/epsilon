@@ -9,9 +9,8 @@ namespace PoincareJ {
 
 void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
   assert(nary->isNAry());
-  Tree* insertionPoint = index == nary->numberOfChildren()
-                             ? nary->nextTree()
-                             : nary->childAtIndex(index);
+  Tree* insertionPoint =
+      index == nary->numberOfChildren() ? nary->nextTree() : nary->child(index);
   SetNumberOfChildren(nary, nary->numberOfChildren() + 1);
   insertionPoint->moveTreeBeforeNode(child);
 }
@@ -31,7 +30,7 @@ void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* childNode, int index) {
 
 Tree* NAry::DetachChildAtIndex(Tree* nary, int index) {
   assert(nary->isNAry());
-  EditionReference child = nary->childAtIndex(index);
+  EditionReference child = nary->child(index);
   child->detachTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;
@@ -39,7 +38,7 @@ Tree* NAry::DetachChildAtIndex(Tree* nary, int index) {
 
 void NAry::RemoveChildAtIndex(Tree* nary, int index) {
   assert(nary->isNAry());
-  nary->childAtIndex(index)->removeTree();
+  nary->child(index)->removeTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
 }
 

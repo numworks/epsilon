@@ -12,7 +12,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
   // Reference is expected to have been reduced beforehand.
   assert(node->type() == BlockType::Derivative);
   // Diff(Derivand, Symbol, SymbolValue)
-  const Tree *symbol = node->childAtIndex(0);
+  const Tree *symbol = node->child(0);
   const Tree *symbolValue = symbol->nextTree();
   const Tree *derivand = symbolValue->nextTree();
   Tree *result = Derivate(derivand, symbolValue);
@@ -103,7 +103,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
     case BlockType::Ln: {
       // Di(ln(x)) = 1/x
       Tree *power = SharedEditionPool->push<BlockType::Power>();
-      CloneReplacingSymbol(derivand->childAtIndex(0), symbolValue);
+      CloneReplacingSymbol(derivand->child(0), symbolValue);
       SharedEditionPool->push<BlockType::MinusOne>();
       Simplification::SimplifyPower(power);
       return;
@@ -123,12 +123,12 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
   Tree *multiplication;
   if (derivand->type() == BlockType::Power) {
     multiplication = SharedEditionPool->push<BlockType::Multiplication>(2);
-    SharedEditionPool->clone(derivand->childAtIndex(1));
+    SharedEditionPool->clone(derivand->child(1));
   }
   Tree *newNode = SharedEditionPool->clone(derivand, false);
-  CloneReplacingSymbol(derivand->childAtIndex(0), symbolValue);
+  CloneReplacingSymbol(derivand->child(0), symbolValue);
   Tree *addition = SharedEditionPool->push<BlockType::Addition>(2);
-  SharedEditionPool->clone(derivand->childAtIndex(1));
+  SharedEditionPool->clone(derivand->child(1));
   SharedEditionPool->push<BlockType::MinusOne>();
   Simplification::ShallowSystematicReduce(addition);
   Simplification::ShallowSystematicReduce(newNode);

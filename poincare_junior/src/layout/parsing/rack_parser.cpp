@@ -101,7 +101,7 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
   // ExpressionNode::Type::Symbol  // RightHandSide must be symbol or
   // function.
   // || (rightHandSide.type() == ExpressionNode::Type::Function &&
-  // rightHandSide.childAtIndex(0).type() ==
+  // rightHandSide.child(0).type() ==
   // ExpressionNode::Type::Symbol))) {
   // restorePreviousParsingPosition(startingPosition);
   // m_status = Status::Progress;
@@ -115,7 +115,7 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
   /* If assigning a function, set the function parameter in the context
    * for parsing leftHandSide.
    * This is to ensure that 3g->f(g) is correctly parsed */
-  // EditionReference functionParameter = rightHandSide.childAtIndex(0);
+  // EditionReference functionParameter = rightHandSide.child(0);
   // assignmentContext = VariableContext(
   // static_cast<Symbol &>(functionParameter), m_parsingContext.context());
   // m_parsingContext.setContext(&assignmentContext);
@@ -512,14 +512,14 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
     // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-    // rightHandSide.childAtIndex(0).type() !=
+    // rightHandSide.child(0).type() !=
     // ExpressionNode::Type::PercentSimple) {
     /* The condition checks if the percent does not contain a percent because
      * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
     // leftHandSide = PercentAddition::Builder(
     // leftHandSide, plus
-    // ? rightHandSide.childAtIndex(0)
-    // : Opposite::Builder(rightHandSide.childAtIndex(0)));
+    // ? rightHandSide.child(0)
+    // : Opposite::Builder(rightHandSide.child(0)));
     // return;
     // }
     assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
@@ -553,12 +553,12 @@ void RackParser::privateParseEastArrow(EditionReference &leftHandSide,
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
     // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-    // rightHandSide.childAtIndex(0).type() !=
+    // rightHandSide.child(0).type() !=
     // ExpressionNode::Type::PercentSimple) {
     // leftHandSide = PercentAddition::Builder(
     // leftHandSide, north
-    // ? rightHandSide.childAtIndex(0)
-    // : Opposite::Builder(rightHandSide.childAtIndex(0)));
+    // ? rightHandSide.child(0)
+    // : Opposite::Builder(rightHandSide.child(0)));
     // return;
     // }
     removeTreeIfInitialized(rightHandSide);
@@ -891,7 +891,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
       } else if (parameter.numberOfChildren() != 1) {
         m_status = Status::Error;  // Unexpected number of many parameters.
       } else {
-        leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), base);
+        leftHandSide = Logarithm::Builder(parameter.child(0), base);
       }
     }
     return;
@@ -1137,10 +1137,10 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 /* If you change how list accesses are parsed, change it also in parseList
  * or factorize it. */
 // result =
-// ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1),
+// ListSlice::Builder(parameter.child(0), parameter.child(1),
 // Symbol::Builder(name, length));
 // } else if (numberOfParameters == 1) {
-// parameter = parameter.childAtIndex(0);
+// parameter = parameter.child(0);
 // if (parameter.type() == ExpressionNode::Type::Symbol &&
 // strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
 // length) == 0) {
@@ -1318,10 +1318,10 @@ void RackParser::parseList(EditionReference &leftHandSide,
     }
     int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
-      // leftHandSide = ListSlice::Builder(parameter.childAtIndex(0),
-      // parameter.childAtIndex(1), leftHandSide);
+      // leftHandSide = ListSlice::Builder(parameter.child(0),
+      // parameter.child(1), leftHandSide);
     } else if (numberOfParameters == 1) {
-      parameter = parameter->childAtIndex(0);
+      parameter = parameter->child(0);
       // leftHandSide = ListElement::Builder(parameter, leftHandSide);
     } else {
       m_status = Status::Error;
@@ -1347,7 +1347,7 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
         m_status = Status::Error;
         return;
       }
-      EditionReference rightHandSide = Parser::Parse(layout->childAtIndex(0));
+      EditionReference rightHandSide = Parser::Parse(layout->child(0));
       if (rightHandSide.isUninitialized()) {
         m_status = Status::Error;
         return;
@@ -1396,8 +1396,8 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
     m_waitingSlashForMixedFraction = false;
     if (!rightHandSide.isUninitialized() &&
         rightHandSide->type() == BlockType::Division &&
-        IsIntegerBaseTenOrEmptyExpression(rightHandSide->childAtIndex(0)) &&
-        IsIntegerBaseTenOrEmptyExpression(rightHandSide->childAtIndex(1))) {
+        IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
+        IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction
       // leftHandSide = MixedFraction::Builder(
       // leftHandSide, static_cast<Division &>(rightHandSide));

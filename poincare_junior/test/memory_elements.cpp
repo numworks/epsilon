@@ -604,55 +604,49 @@ QUIZ_CASE(pcj_node) {
   assert_trees_are_equal(n1->nextTree(), e2);
   quiz_assert(n1->numberOfDescendants(false) == 8);
   quiz_assert(n1->numberOfDescendants(true) == 9);
-  assert_trees_are_equal(n1->childAtIndex(0), n1->nextNode());
-  assert_trees_are_equal(n1->childAtIndex(1),
+  assert_trees_are_equal(n1->child(0), n1->nextNode());
+  assert_trees_are_equal(n1->child(1),
                          n1->nextNode()->nextNode()->nextNode()->nextNode());
-  quiz_assert(n1->indexOfChild(n1->childAtIndex(1)) == 1);
+  quiz_assert(n1->indexOfChild(n1->child(1)) == 1);
   quiz_assert(!n1->hasChild(e2));
-  quiz_assert(n1->hasChild(n1->childAtIndex(2)));
+  quiz_assert(n1->hasChild(n1->child(2)));
 
-  quiz_assert(n1->childAtIndex(2)->hasAncestor(n1, true));
-  quiz_assert(n1->childAtIndex(2)->hasAncestor(n1, false));
+  quiz_assert(n1->child(2)->hasAncestor(n1, true));
+  quiz_assert(n1->child(2)->hasAncestor(n1, false));
   quiz_assert(n1->hasAncestor(n1, true));
   quiz_assert(!n1->hasAncestor(n1, false));
-  quiz_assert(!n1->hasAncestor(n1->childAtIndex(2), true));
-  quiz_assert(!n1->hasAncestor(n1->childAtIndex(2), false));
+  quiz_assert(!n1->hasAncestor(n1->child(2), true));
+  quiz_assert(!n1->hasAncestor(n1->child(2), false));
   quiz_assert(!n2->hasAncestor(n1, true));
   quiz_assert(!n2->hasAncestor(n1, false));
   quiz_assert(!n1->hasAncestor(n2, true));
   quiz_assert(!n1->hasAncestor(n2, false));
 
   quiz_assert(n1->commonAncestor(n1, n1) == n1);
-  quiz_assert(n1->commonAncestor(n1, n1->childAtIndex(0)->childAtIndex(1)) ==
-              n1);
-  quiz_assert(n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(1), n1) ==
-              n1);
-  quiz_assert(n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(1),
-                                 n1->childAtIndex(2)) == n1);
-  quiz_assert(n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(0),
-                                 n1->childAtIndex(0)->childAtIndex(1)) ==
-              n1->childAtIndex(0));
-  quiz_assert(n1->commonAncestor(n1->childAtIndex(3)->childAtIndex(0),
-                                 n1->childAtIndex(3)->childAtIndex(1)) ==
-              n1->childAtIndex(3));
-  quiz_assert(!n1->commonAncestor(n1->childAtIndex(0)->childAtIndex(0), n2));
-  quiz_assert(!n1->commonAncestor(n2, n2->childAtIndex(0)));
-  quiz_assert(!n2->commonAncestor(n1->childAtIndex(0)->childAtIndex(0),
-                                  n2->childAtIndex(0)));
+  quiz_assert(n1->commonAncestor(n1, n1->child(0)->child(1)) == n1);
+  quiz_assert(n1->commonAncestor(n1->child(0)->child(1), n1) == n1);
+  quiz_assert(n1->commonAncestor(n1->child(0)->child(1), n1->child(2)) == n1);
+  quiz_assert(n1->commonAncestor(n1->child(0)->child(0),
+                                 n1->child(0)->child(1)) == n1->child(0));
+  quiz_assert(n1->commonAncestor(n1->child(3)->child(0),
+                                 n1->child(3)->child(1)) == n1->child(3));
+  quiz_assert(!n1->commonAncestor(n1->child(0)->child(0), n2));
+  quiz_assert(!n1->commonAncestor(n2, n2->child(0)));
+  quiz_assert(!n2->commonAncestor(n1->child(0)->child(0), n2->child(0)));
 
   int position;
   quiz_assert(!n1->parentOfDescendant(n1, &position));
   quiz_assert(!n1->parentOfDescendant(n2, &position));
   quiz_assert(!n2->parentOfDescendant(n1, &position));
-  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(0), &position) == n1);
+  quiz_assert(n1->parentOfDescendant(n1->child(0), &position) == n1);
   quiz_assert(position == 0);
-  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(1), &position) == n1);
+  quiz_assert(n1->parentOfDescendant(n1->child(1), &position) == n1);
   quiz_assert(position == 1);
-  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(3)->childAtIndex(0),
-                                     &position) == n1->childAtIndex(3));
+  quiz_assert(n1->parentOfDescendant(n1->child(3)->child(0), &position) ==
+              n1->child(3));
   quiz_assert(position == 0);
-  quiz_assert(n1->parentOfDescendant(n1->childAtIndex(0)->childAtIndex(1),
-                                     &position) == n1->childAtIndex(0));
+  quiz_assert(n1->parentOfDescendant(n1->child(0)->child(1), &position) ==
+              n1->child(0));
   quiz_assert(position == 1);
 }
 

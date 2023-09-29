@@ -60,7 +60,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
   const Tree* factor;
   if (baseUnits->type() == BlockType::Multiplication) {
     numberOfFactors = baseUnits->numberOfChildren();
-    factor = baseUnits->childAtIndex(0);
+    factor = baseUnits->child(0);
   } else {
     numberOfFactors = 1;
     factor = baseUnits;
@@ -69,7 +69,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
     // Get the unit's exponent
     int8_t exponent = 1;
     if (factor->type() == BlockType::Power) {
-      const Tree* exp = factor->childAtIndex(1);
+      const Tree* exp = factor->child(1);
       assert(exp->type().isRational());
       // Using the closest integer to the exponent.
       float exponentFloat = Approximation::To<float>(exp);
@@ -91,7 +91,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
          * overflow. In any way, shallowBeautify will conserve homogeneity. */
         exponent = 0;
       }
-      factor = factor->childAtIndex(0);
+      factor = factor->child(0);
     }
     // Fill the vector with the unit's exponent
     assert(factor->type() == BlockType::Unit);
@@ -100,7 +100,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
     if (++factorIndex >= numberOfFactors) {
       break;
     }
-    factor = baseUnits->childAtIndex(factorIndex);
+    factor = baseUnits->child(factorIndex);
   } while (true);
   return vector;
 }
@@ -524,15 +524,15 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
   double exponent = 1.f;
   Expression factor = unit;
   if (factor.type() == ExpressionNode::Type::Power) {
-    Expression childExponent = factor.childAtIndex(1);
-    assert(factor.childAtIndex(0).type() == ExpressionNode::Type::Unit);
-    assert(factor.childAtIndex(1).type() == ExpressionNode::Type::Rational);
+    Expression childExponent = factor.child(1);
+    assert(factor.child(0).type() == ExpressionNode::Type::Unit);
+    assert(factor.child(1).type() == ExpressionNode::Type::Rational);
     exponent =
         static_cast<Rational&>(childExponent)
             .approximateToScalar<double>(reductionContext.context(),
                                          reductionContext.complexFormat(),
                                          reductionContext.angleUnit());
-    factor = factor.childAtIndex(0);
+    factor = factor.child(0);
   }
   assert(factor.type() == ExpressionNode::Type::Unit);
   if (exponent == 0.f) {
@@ -552,7 +552,7 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(
   Expression factor;
   if (units.type() == ExpressionNode::Type::Multiplication) {
     numberOfFactors = units.numberOfChildren();
-    factor = units.childAtIndex(0);
+    factor = units.child(0);
   } else {
     numberOfFactors = 1;
     factor = units;
@@ -561,7 +561,7 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(
                                                         reductionContext, true);
   for (int i = 1; i < numberOfFactors; i++) {
     chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-        units.childAtIndex(i), value, reductionContext, false);
+        units.child(i), value, reductionContext, false);
   }
 }
 

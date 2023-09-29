@@ -28,8 +28,8 @@ class RackLayoutDecoder : public UnicodeDecoder {
   const Tree* nextLayout() { return layoutAt(m_position++); }
   bool nextLayoutIsCodePoint() {
     return m_position == m_end ||
-           (m_position < m_end && m_layout->childAtIndex(m_position)->type() ==
-                                      BlockType::CodePointLayout);
+           (m_position < m_end &&
+            m_layout->child(m_position)->type() == BlockType::CodePointLayout);
   }
   CodePoint nextCodePoint() { return codePointAt(m_position++); }
   CodePoint previousCodePoint() { return codePointAt(--m_position); }
@@ -43,15 +43,15 @@ class RackLayoutDecoder : public UnicodeDecoder {
   }
   const Tree* layoutAt(size_t index) {
     assert(0 <= index && index < m_end);
-    return m_layout->childAtIndex(index);
+    return m_layout->child(index);
   }
   CodePoint codePointAt(size_t index) const {
     if (index == m_end) {
       return UCodePointNull;
     }
     assert(0 <= index && index < m_end);
-    assert(m_layout->childAtIndex(index)->type() == BlockType::CodePointLayout);
-    return CodePointLayout::GetCodePoint(m_layout->childAtIndex(index));
+    assert(m_layout->child(index)->type() == BlockType::CodePointLayout);
+    return CodePointLayout::GetCodePoint(m_layout->child(index));
   }
 
  private:
@@ -62,8 +62,7 @@ class RackLayoutRange {
   RackLayoutRange(const Tree* start, const Tree* end)
       : m_start(start), m_end(end) {}
   RackLayoutRange(const Tree* rack, size_t startIndex, size_t endIndex)
-      : m_start(rack->childAtIndex(startIndex)),
-        m_end(rack->childAtIndex(endIndex)) {}
+      : m_start(rack->child(startIndex)), m_end(rack->child(endIndex)) {}
 
  private:
   const Tree* m_start;

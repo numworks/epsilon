@@ -35,7 +35,7 @@ uint8_t Variables::ToId(const Tree* variables, const char* name,
 }
 
 const Tree* Variables::ToSymbol(const Tree* variables, uint8_t id) {
-  return variables->childAtIndex(id);
+  return variables->child(id);
 }
 
 Tree* Variables::GetUserSymbols(const Tree* expr) {
@@ -56,7 +56,7 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
       Tree* subSet = Set::PushEmpty();
       GetUserSymbols(child, subSet);
       Tree* boundSymbols = Set::PushEmpty();
-      Set::Add(boundSymbols, expr->childAtIndex(Parametric::k_variableIndex));
+      Set::Add(boundSymbols, expr->child(Parametric::k_variableIndex));
       subSet = Set::Difference(subSet, boundSymbols);
       set = Set::Union(set, subSet);
     } else {
@@ -109,7 +109,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
-      Tree* newSymbol = expr->childAtIndex(Parametric::k_variableIndex);
+      Tree* newSymbol = expr->child(Parametric::k_variableIndex);
       // No need to continue if symbol is hidden by a local definition
       if (!newSymbol->treeIsIdenticalTo(symbol)) {
         changed = ReplaceSymbol(child, symbol, id + 1) || changed;
@@ -136,7 +136,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
-      ReplaceSymbol(child, expr->childAtIndex(Parametric::k_variableIndex), 0);
+      ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0);
       ProjectToId(child, variables, depth + 1);
     } else {
       ProjectToId(child, variables, depth);
@@ -157,8 +157,7 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
       // beautify variable introduced by this scope
       // TODO check that name is available here or make new name
-      Variables::Replace(child, 0,
-                         expr->childAtIndex(Parametric::k_variableIndex));
+      Variables::Replace(child, 0, expr->child(Parametric::k_variableIndex));
       // beautify outer variables
       BeautifyToName(child, variables, depth + 1);
       continue;

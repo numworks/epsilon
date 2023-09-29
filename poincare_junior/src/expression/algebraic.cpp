@@ -25,7 +25,7 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
   }
   BlockType type = expression->type();
   if (type == BlockType::Power) {
-    Rationalize(expression->childAtIndex(0));
+    Rationalize(expression->child(0));
     return expression;  // TODO return basicReduction
   }
   if (type == BlockType::Multiplication) {
@@ -95,7 +95,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
   }
   BlockType type = expression->type();
   if (type == BlockType::Power) {
-    EditionReference exponent = expression->childAtIndex(1);
+    EditionReference exponent = expression->child(1);
     bool negativeRationalExponent =
         exponent->type().isRational() &&
         Rational::Sign(exponent).isStrictlyNegative();

@@ -13,7 +13,7 @@ const Tree* VerticalOffsetLayout::BaseLayout(const Tree* node,
   if (index == 0) {
     return nullptr;
   }
-  return parent->childAtIndex(index - 1);
+  return parent->child(index - 1);
 }
 
 }  // namespace PoincareJ

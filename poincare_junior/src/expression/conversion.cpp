@@ -43,7 +43,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
   BlockType type = exp->type();
 
   if (Builtin::IsBuiltin(type)) {
-    Poincare::Expression child = ToPoincareExpression(exp->childAtIndex(0));
+    Poincare::Expression child = ToPoincareExpression(exp->child(0));
     switch (type) {
       case BlockType::SquareRoot:
         return Poincare::SquareRoot::Builder(child);
@@ -65,13 +65,13 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::Logarithm::Builder(child);
       case BlockType::Logarithm:
         return Poincare::Logarithm::Builder(
-            child, ToPoincareExpression(exp->childAtIndex(1)));
+            child, ToPoincareExpression(exp->child(1)));
       case BlockType::Cross:
         return Poincare::VectorCross::Builder(
-            child, ToPoincareExpression(exp->childAtIndex(1)));
+            child, ToPoincareExpression(exp->child(1)));
       case BlockType::Dot:
         return Poincare::VectorDot::Builder(
-            child, ToPoincareExpression(exp->childAtIndex(1)));
+            child, ToPoincareExpression(exp->child(1)));
       case BlockType::Det:
         return Poincare::Determinant::Builder(child);
       case BlockType::Dim:
@@ -104,20 +104,19 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Derivative::Builder(
-            ToPoincareExpression(exp->childAtIndex(2)),
+            ToPoincareExpression(exp->child(2)),
             static_cast<Poincare::Symbol &>(symbol),
-            ToPoincareExpression(exp->childAtIndex(1)));
+            ToPoincareExpression(exp->child(1)));
       }
       case BlockType::Sum: {
         Poincare::Expression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
-        return Poincare::Sum::Builder(
-            ToPoincareExpression(exp->childAtIndex(3)),
-            static_cast<Poincare::Symbol &>(symbol),
-            ToPoincareExpression(exp->childAtIndex(1)),
-            ToPoincareExpression(exp->childAtIndex(2)));
+        return Poincare::Sum::Builder(ToPoincareExpression(exp->child(3)),
+                                      static_cast<Poincare::Symbol &>(symbol),
+                                      ToPoincareExpression(exp->child(1)),
+                                      ToPoincareExpression(exp->child(2)));
       }
       case BlockType::Product: {
         Poincare::Expression symbol = child;
@@ -125,10 +124,10 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Product::Builder(
-            ToPoincareExpression(exp->childAtIndex(3)),
+            ToPoincareExpression(exp->child(3)),
             static_cast<Poincare::Symbol &>(symbol),
-            ToPoincareExpression(exp->childAtIndex(1)),
-            ToPoincareExpression(exp->childAtIndex(2)));
+            ToPoincareExpression(exp->child(1)),
+            ToPoincareExpression(exp->child(2)));
       }
       default:
         // TODO: Handle missing BlockTypes
@@ -165,8 +164,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     case BlockType::Power:
     case BlockType::PowerMatrix:
     case BlockType::Division: {
-      Poincare::Expression child0 = ToPoincareExpression(exp->childAtIndex(0));
-      Poincare::Expression child1 = ToPoincareExpression(exp->childAtIndex(1));
+      Poincare::Expression child0 = ToPoincareExpression(exp->child(0));
+      Poincare::Expression child1 = ToPoincareExpression(exp->child(1));
       Poincare::Expression result;
       if (type == BlockType::Subtraction) {
         result = Poincare::Subtraction::Builder(child0, child1);
@@ -194,7 +193,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       return ToPoincareExpressionViaParse(exp);
     case BlockType::Ln:
       return Poincare::NaperianLogarithm::Builder(
-          ToPoincareExpression(exp->childAtIndex(0)));
+          ToPoincareExpression(exp->child(0)));
     case BlockType::UserSymbol: {
       char buffer[20];
       Symbol::GetName(exp, buffer, std::size(buffer));
@@ -213,8 +212,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       return Poincare::Undefined::Builder();
     }
     case BlockType::Factorial:
-      return Poincare::Factorial::Builder(
-          ToPoincareExpression(exp->childAtIndex(0)));
+      return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:

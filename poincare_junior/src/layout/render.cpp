@@ -32,8 +32,8 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
       return RackLayout::Size(node, root, font);
     }
     case LayoutType::Fraction: {
-      KDSize numeratorSize = Size(node->childAtIndex(0), root, font);
-      KDSize denominatorSize = Size(node->childAtIndex(1), root, font);
+      KDSize numeratorSize = Size(node->child(0), root, font);
+      KDSize denominatorSize = Size(node->child(1), root, font);
       KDCoordinate width =
           std::max(numeratorSize.width(), denominatorSize.width()) +
           2 * (k_fractionHorizontalOverflow + k_fractionHorizontalMargin);
@@ -43,13 +43,13 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
       return KDSize(width, height);
     }
     case LayoutType::Parenthesis: {
-      KDSize childSize = Size(node->childAtIndex(0), root, font);
+      KDSize childSize = Size(node->child(0), root, font);
       return childSize + KDSize(2 * ParenthesisHorizontalPadding(font),
                                 2 * k_parenthesisVerticalPadding);
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
-      KDSize indexSize = Size(node->childAtIndex(0), root, font);
+      KDSize indexSize = Size(node->child(0), root, font);
       const Tree* base = VerticalOffsetLayout::BaseLayout(node, root);
       KDCoordinate baseHeight =
           base ? Size(base, root, font).height() : KDFont::GlyphHeight(font);
@@ -101,14 +101,12 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
       return KDPoint(x, y);
     }
     case LayoutType::Fraction: {
-      KDCoordinate x =
-          (Size(node, root, font).width() -
-           Size(node->childAtIndex(childIndex), root, font).width()) /
-          2;
+      KDCoordinate x = (Size(node, root, font).width() -
+                        Size(node->child(childIndex), root, font).width()) /
+                       2;
       KDCoordinate y =
           (childIndex == k_denominatorIndex)
-              ? Size(node->childAtIndex(k_numeratorIndex), root, font)
-                        .height() +
+              ? Size(node->child(k_numeratorIndex), root, font).height() +
                     2 * k_fractionLineMargin + k_fractionLineHeight
               : 0;
       return KDPoint(x, y);
@@ -133,11 +131,11 @@ KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
       return RackLayout::Baseline(node, root, font);
     }
     case LayoutType::Fraction: {
-      return Size(node->childAtIndex(k_numeratorIndex), root, font).height() +
+      return Size(node->child(k_numeratorIndex), root, font).height() +
              k_fractionLineMargin + k_fractionLineHeight;
     }
     case LayoutType::Parenthesis: {
-      return Baseline(node->childAtIndex(0), root, font) +
+      return Baseline(node->child(0), root, font) +
              k_parenthesisVerticalPadding;
     }
     case LayoutType::VerticalOffset: {
@@ -145,8 +143,7 @@ KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
       const Tree* base = VerticalOffsetLayout::BaseLayout(node, root);
       KDCoordinate baseBaseline =
           base ? Baseline(base, root, font) : KDFont::GlyphHeight(font) / 2;
-      KDCoordinate indexHeight =
-          Size(node->childAtIndex(0), root, font).height();
+      KDCoordinate indexHeight = Size(node->child(0), root, font).height();
       return indexHeight - k_verticalOffsetIndiceHeight + baseBaseline;
     }
     case LayoutType::CodePoint: {
@@ -189,8 +186,7 @@ void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
   switch (node->layoutType()) {
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
-          p.y() +
-          Size(node->childAtIndex(k_numeratorIndex), root, font).height() +
+          p.y() + Size(node->child(k_numeratorIndex), root, font).height() +
           k_fractionLineMargin;
       ctx->fillRect(KDRect(p.x() + k_fractionHorizontalMargin, fractionLineY,
                            Size(node, root, font).width() -

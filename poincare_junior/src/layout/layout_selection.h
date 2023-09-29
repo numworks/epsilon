@@ -52,8 +52,8 @@ class LayoutSelection {
     const Block* b = n->block();
     return !isEmpty() &&
            (Layout::IsHorizontal(m_node)
-                ? (b >= m_node->childAtIndex(leftPosition())->block() &&
-                   b <= m_node->childAtIndex(rightPosition() - 1)->block())
+                ? (b >= m_node->child(leftPosition())->block() &&
+                   b <= m_node->child(rightPosition() - 1)->block())
                 : (b >= m_node->block() && b < m_node->nextTree()->block()));
   }
 

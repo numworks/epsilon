@@ -22,11 +22,11 @@ struct Matrix {
   }
   static Tree* Child(Tree* matrix, uint8_t row, uint8_t col) {
     assert(col < NumberOfColumns(matrix));
-    return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);
+    return matrix->child(row * NumberOfColumns(matrix) + col);
   }
   static const Tree* Child(const Tree* matrix, uint8_t row, uint8_t col) {
     assert(col < NumberOfColumns(matrix));
-    return matrix->childAtIndex(row * NumberOfColumns(matrix) + col);
+    return matrix->child(row * NumberOfColumns(matrix) + col);
   }
   static Tree* Zero(MatrixDimension d);
   static Tree* Identity(const Tree* n);

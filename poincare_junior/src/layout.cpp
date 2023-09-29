@@ -66,7 +66,7 @@ char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
     }
     case LayoutType::Parenthesis: {
       buffer = append("(", buffer, end);
-      buffer = Serialize(layout->childAtIndex(0), buffer, end);
+      buffer = Serialize(layout->child(0), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }
@@ -80,14 +80,14 @@ char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
       break;
     }
     case LayoutType::Fraction: {
-      buffer = Serialize(layout->childAtIndex(0), buffer, end);
+      buffer = Serialize(layout->child(0), buffer, end);
       buffer = append("/", buffer, end);
-      buffer = Serialize(layout->childAtIndex(1), buffer, end);
+      buffer = Serialize(layout->child(1), buffer, end);
       break;
     }
     case LayoutType::VerticalOffset: {
       buffer = append("^(", buffer, end);
-      buffer = Serialize(layout->childAtIndex(0), buffer, end);
+      buffer = Serialize(layout->child(0), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }

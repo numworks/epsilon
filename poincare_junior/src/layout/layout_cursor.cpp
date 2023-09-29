@@ -152,7 +152,7 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
 static Layout LeftOrRightmostLayout(Layout l,
                                     OMG::HorizontalDirection direction) {
   return l.isHorizontal()
-             ? (l.childAtIndex(direction.isLeft() ? 0
+             ? (l.child(direction.isLeft() ? 0
                                                   : l.numberOfChildren() - 1))
              : l;
 }
@@ -174,7 +174,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
   int dummy = 0;
   // TODO : Use Iterator
   while (leftParenthesisIndex > 0 &&
-         Render::IsCollapsable(rack.childAtIndex(leftParenthesisIndex),
+         Render::IsCollapsable(rack.child(leftParenthesisIndex),
                                           &dummy, OMG::Direction::Left())) {
     leftParenthesisIndex--;
   }
@@ -304,8 +304,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
       int leftParenthesisIndex =
           ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
               cursorNode(), cursorNode()->indexOfChild(rightL) - 1);
-      setCursorNode(
-          cursorNode()->childAtIndex(leftParenthesisIndex)->childAtIndex(0));
+      setCursorNode(cursorNode()->child(leftParenthesisIndex)->child(0));
       m_position = cursorNode()->numberOfChildren();
     }
   }
@@ -323,7 +322,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     if (!childToPoint.isUninitialized() &&
         AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
             childToPoint.type())) {
-      childToPoint = childToPoint.childAtIndex(0);
+      childToPoint = childToPoint.child(0);
     }
   }
 #endif
@@ -353,7 +352,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
         (forceRight || forceLeft) ? LayoutNode::k_outsideIndex
                                   : layout.indexOfChildToPointToWhenInserting();
     if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
-      childToPoint = layout.childAtIndex(indexOfChildToPointTo);
+      childToPoint = layout.child(indexOfChildToPointTo);
     }
   }
 
@@ -484,7 +483,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
               HorizontalLayout::Builder(),
               VerticalOffsetLayoutNode::VerticalPosition::Subscript);
           currentSubscriptDepth++;
-          Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
+          Layout horizontalChildOfSubscript = newChild.child(0);
           assert(horizontalChildOfSubscript.isEmpty());
           currentLayout =
               static_cast<HorizontalLayout &>(horizontalChildOfSubscript);
@@ -658,7 +657,7 @@ bool LayoutCursor::didExitPosition() {
      * stay valid when the grid will be re-entered. */
     GridLayoutNode *parentGrid =
         static_cast<GridLayoutNode *>(m_layout.parent().node());
-    setLayout(Layout(parentGrid->childAtIndex(parentGrid->closestNonGrayIndex(
+    setLayout(Layout(parentGrid->child(parentGrid->closestNonGrayIndex(
                   parentGrid->indexOfChild(m_layout.node())))),
               OMG::Direction::Right());
   }
@@ -676,7 +675,7 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   const Tree *parent =
       rootNode()->parentOfDescendant(cursorNode(), &indexInParent);
   return parent && parent->type() == BlockType::FractionLayout &&
-         indexInParent == 0 && parent->childAtIndex(1)->numberOfChildren() == 0;
+         indexInParent == 0 && parent->child(1)->numberOfChildren() == 0;
 }
 
 int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
@@ -713,7 +712,7 @@ Tree *LayoutCursor::leftLayout() const {
   if (cursorNode()->numberOfChildren() == 0 || m_position == 0) {
     return nullptr;
   }
-  return cursorNode()->childAtIndex(m_position - 1);
+  return cursorNode()->child(m_position - 1);
 }
 
 Tree *LayoutCursor::rightLayout() const {
@@ -725,7 +724,7 @@ Tree *LayoutCursor::rightLayout() const {
       m_position == cursorNode()->numberOfChildren()) {
     return nullptr;
   }
-  return cursorNode()->childAtIndex(m_position);
+  return cursorNode()->child(m_position);
 }
 
 const Tree *LayoutCursor::layoutToFit(KDFont::Size font) const {
@@ -838,7 +837,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
      * / -10                                       / -10
      *
      * */
-    setCursorNode(nextLayout->childAtIndex(newIndex));
+    setCursorNode(nextLayout->child(newIndex));
     m_position = direction.isRight() ? leftMostPosition() : rightmostPosition();
     return true;
   }
@@ -924,7 +923,7 @@ static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font,
   }
   int nChildren = l.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
-    ScoreCursorInDescendants(p, l.childAtIndex(i), font, result);
+    ScoreCursorInDescendants(p, l.child(i), font, result);
   }
 }
 
@@ -955,7 +954,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
           assert(!Layout::IsHorizontal(nextLayout));
-          setCursorNode(nextLayout->childAtIndex(nextIndex));
+          setCursorNode(nextLayout->child(nextIndex));
           m_position =
               positionRelativeToNextLayout == Render::PositionInLayout::Left
                   ? leftMostPosition()
@@ -993,7 +992,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
         assert(!p.isHorizontal());
         // We assume the new cursor is the same whatever the font
         LayoutCursor newCursor = ClosestCursorInDescendantsOfLayout(
-            *this, p.childAtIndex(nextIndex), KDFont::Size::Large);
+            *this, p.child(nextIndex), KDFont::Size::Large);
         m_layout = newCursor.layout();
         m_position = newCursor.position();
       }
@@ -1105,8 +1104,8 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     assert(deletionAppliedToParent);
     Layout fraction = m_layout.parent();
     assert(fraction.type() == LayoutNode::Type::FractionLayout &&
-           fraction.childAtIndex(1) == m_layout);
-    Layout numerator = fraction.childAtIndex(0);
+           fraction.child(1) == m_layout);
+    Layout numerator = fraction.child(0);
     if (!numerator.isHorizontal()) {
       HorizontalLayout hLayout = HorizontalLayout::Builder();
       numerator.replaceWithInPlace(hLayout);
@@ -1158,7 +1157,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
       newIndex = gridNode->indexAtRowColumn(
           currentRow - 1, gridNode->rightmostNonGrayColumnIndex());
     }
-    m_layout = m_layout.parent().childAtIndex(newIndex);
+    m_layout = m_layout.parent().child(newIndex);
     m_position = rightmostPosition();
     return;
   }
@@ -1181,7 +1180,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
       gridNode->deleteColumnAtIndex(currentColumn);
     }
     int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
-    *this = LayoutCursor(Layout(gridNode).childAtIndex(newChildIndex));
+    *this = LayoutCursor(Layout(gridNode).child(newChildIndex));
     didEnterCurrentPosition();
     return;
   }
@@ -1216,7 +1215,7 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   if (changed) {
     int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
     assert(parentGrid.numberOfChildren() > newChildIndex);
-    *this = LayoutCursor(parentGrid.childAtIndex(newChildIndex));
+    *this = LayoutCursor(parentGrid.child(newChildIndex));
     didEnterCurrentPosition();
   }
 }
@@ -1243,7 +1242,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
    *
    * Here l = √(), and absorbingChildIndex = 0 (the inside of the sqrt)
    * */
-  Layout absorbingChild = l.childAtIndex(absorbingChildIndex);
+  Layout absorbingChild = l.child(absorbingChildIndex);
   if (absorbingChild.isUninitialized() || !absorbingChild.isEmpty()) {
     return;
   }
@@ -1268,7 +1267,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
       break;
     }
     int siblingIndex = idxInParent + step;
-    sibling = horizontalParent.childAtIndex(siblingIndex);
+    sibling = horizontalParent.child(siblingIndex);
     if (!sibling.isCollapsable(&numberOfOpenParenthesis, direction)) {
       break;
     }

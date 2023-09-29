@@ -16,7 +16,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   for (Tree* child : expr->children()) {
     if (child->type() == BlockType::Dependency) {
       // Move dependency list at the end
-      MoveTreeBeforeNode(end, child->childAtIndex(1));
+      MoveTreeBeforeNode(end, child->child(1));
       numberOfSets++;
       // Remove Dependency block in child
       child->removeNode();

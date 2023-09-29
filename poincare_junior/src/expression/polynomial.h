@@ -43,7 +43,7 @@ class Polynomial final {
   }
   static Tree* LeadingCoefficient(Tree* polynomial) {
     assert(NumberOfTerms(polynomial) > 0);
-    return polynomial->childAtIndex(1);
+    return polynomial->child(1);
   }
   static uint8_t NumberOfTerms(const Tree* polynomial) {
     assert(polynomial->type() == BlockType::Polynomial);
@@ -51,7 +51,7 @@ class Polynomial final {
   }
   static const Tree* Variable(const Tree* polynomial) {
     assert(polynomial->type() == BlockType::Polynomial);
-    return polynomial->childAtIndex(0);
+    return polynomial->child(0);
   }
 
   // Setters

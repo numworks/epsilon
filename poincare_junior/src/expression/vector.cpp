@@ -50,13 +50,13 @@ Tree* Vector::Cross(const Tree* u, const Tree* v) {
     int j2 = (j + 2) % 3;
     Tree* difference = KAdd.node<2>->cloneNode();
     Tree* a1b2 = KMult.node<2>->cloneNode();
-    u->childAtIndex(j1)->clone();
-    v->childAtIndex(j2)->clone();
+    u->child(j1)->clone();
+    v->child(j2)->clone();
     Simplification::ShallowSystematicReduce(a1b2);
     Tree* a2b1 = KMult.node<3>->cloneNode();
     (-1_e)->clone();
-    u->childAtIndex(j2)->clone();
-    v->childAtIndex(j1)->clone();
+    u->child(j2)->clone();
+    v->child(j1)->clone();
     Simplification::ShallowSystematicReduce(a2b1);
     Simplification::ShallowSystematicReduce(difference);
   }

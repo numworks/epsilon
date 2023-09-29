@@ -61,7 +61,7 @@ void Polynomial::AddMonomial(EditionReference polynomial,
     if (exponent < exponentOfChildI) {
       continue;
     } else if (exponent == exponentOfChildI) {
-      EditionReference previousChild = polynomial->childAtIndex(i);
+      EditionReference previousChild = polynomial->child(i);
       EditionReference currentCoefficient = previousChild->nextTree();
       EditionReference addition =
           Polynomial::Addition(currentCoefficient, coefficient);
@@ -170,7 +170,7 @@ void Polynomial::MultiplicationMonomial(
     SetExponentAtIndex(polynomial, i,
                        ExponentAtIndex(polynomial, i) + exponent);
     // * coefficient
-    EditionReference previousChild = polynomial->childAtIndex(i);
+    EditionReference previousChild = polynomial->child(i);
     EditionReference currentCoefficient = previousChild->nextTree();
     // Avoid one cloning for last term
     EditionReference coeffClone =
@@ -262,7 +262,7 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
 EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   uint8_t nbOfTerms = NumberOfTerms(polynomial);
   size_t i = 0;
-  EditionReference coefficient = polynomial->childAtIndex(1);
+  EditionReference coefficient = polynomial->child(1);
   while (i < nbOfTerms) {
     EditionReference nextCoefficient = coefficient->nextTree();
     if (Number::IsZero(coefficient)) {
@@ -278,7 +278,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
     return EditionReference(polynomial->cloneTreeOverTree(0_e));
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
-    EditionReference result = polynomial->childAtIndex(1);
+    EditionReference result = polynomial->child(1);
     polynomial->moveTreeOverTree(result);
     return result;
   }
@@ -522,7 +522,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree*
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at basicReduction
         EditionReference multCopy = EditionReference::Clone(expression);
-        multCopy.childAtIndex(std::get<int>(indexedNode)).moveTreeOverTree(childCoefficient);
+        multCopy.child(std::get<int>(indexedNode)).moveTreeOverTree(childCoefficient);
         return std::make_pair(multCopy, childExponent);
       }
       childCoefficient.removeTree();

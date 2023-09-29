@@ -12,7 +12,7 @@ namespace PoincareJ {
 
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
   bool isSum = expr->type() == BlockType::Sum;
-  Tree* lowerBound = expr->childAtIndex(k_lowerBoundIndex);
+  Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
   if (!Variables::HasVariable(child, k_localVariableId)) {
@@ -50,7 +50,7 @@ bool Parametric::ExpandSum(Tree* expr) {
        * may introduced undefs with sum(1/k,k,1,2) for instance. */
       // sum(e,k,a,b) = sum(e,k,0,b) - sum(e,k,0,a-1)
       // TODO what if a < 0 ?
-      (expr->childAtIndex(k_lowerBoundIndex)->type() != BlockType::Zero &&
+      (expr->child(k_lowerBoundIndex)->type() != BlockType::Zero &&
        PatternMatching::MatchReplaceAndSimplify(
            expr, KSum(KA, KB, KC, KD),
            KAdd(KSum(KA, 0_e, KC, KD),
@@ -109,7 +109,7 @@ bool Parametric::ContractSumOrProduct(Tree* expr) {
 bool Parametric::Explicit(Tree* expr) {
   assert(expr->type() == BlockType::Sum || expr->type() == BlockType::Product);
   bool isSum = expr->type() == BlockType::Sum;
-  const Tree* lowerBound = expr->childAtIndex(k_lowerBoundIndex);
+  const Tree* lowerBound = expr->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* child = upperBound->nextTree();
   Tree* boundsDifference = PatternMatching::CreateAndSimplify(

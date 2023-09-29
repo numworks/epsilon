@@ -258,8 +258,8 @@ void Expression::ConvertExpressionToLayout(EditionReference layoutParent,
       if (Builtin::IsBuiltin(type)) {
         if (type.isParametric()) {
           // Move sub-expression first
-          expression->childAtIndex(0)->moveTreeBeforeNode(
-              expression->childAtIndex(expression->numberOfChildren() - 1));
+          expression->child(0)->moveTreeBeforeNode(
+              expression->child(expression->numberOfChildren() - 1));
         }
         ConvertBuiltinToLayout(layoutParent, expression);
       } else {

@@ -117,8 +117,8 @@ QUIZ_CASE(pcj_edition_reference) {
                        {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
   // Replacements from nodes living in the EditionPool
-  EditionReference subRef0(ref2->childAtIndex(0)->childAtIndex(1));
-  EditionReference subRef1(ref2->childAtIndex(0));
+  EditionReference subRef0(ref2->child(0)->child(1));
+  EditionReference subRef1(ref2->child(0));
   ref2 = ref2->moveTreeOverTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
   ref1->moveNodeOverNode(ref0);  // Before
@@ -138,7 +138,7 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_pool_contains(SharedEditionPool, {k_expr0, k_subExpr1, 9_e});
 
   // Detach
-  subRef0 = EditionReference(ref0->childAtIndex(0));
+  subRef0 = EditionReference(ref0->child(0));
   subRef0->cloneTreeBeforeNode(13_e);
   subRef0->detachTree();
   assert_pool_contains(SharedEditionPool, {KMult(13_e, 3_e, 4_e), k_subExpr1,
@@ -148,8 +148,8 @@ QUIZ_CASE(pcj_edition_reference) {
 QUIZ_CASE(pcj_edition_reference_reallocation) {
   CachePool::sharedCachePool()->reset();
   EditionReference reference0(KAdd(1_e, 1_e));
-  EditionReference referenceSub0(reference0->childAtIndex(0));
-  EditionReference referenceSub1(reference0->childAtIndex(1));
+  EditionReference referenceSub0(reference0->child(0));
+  EditionReference referenceSub1(reference0->child(1));
   for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 5; i++) {
     EditionReference reference1(1_e);
   }

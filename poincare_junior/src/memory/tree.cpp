@@ -47,7 +47,7 @@ void Tree::log(std::ostream& stream, bool recursive, bool verbose,
         tagIsClosed = true;
       }
       child->log(stream, recursive, verbose, indentation + 1,
-                 comparison ? comparison->childAtIndex(index) : comparison);
+                 comparison ? comparison->child(index) : comparison);
     }
   }
   if (tagIsClosed) {
@@ -279,7 +279,7 @@ int Tree::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
-const Tree* Tree::childAtIndex(int i) const {
+const Tree* Tree::child(int i) const {
   assert(i < numberOfChildren());
   const Tree* child = nextNode();
   for (; i > 0; i--) {

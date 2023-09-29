@@ -96,7 +96,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         // Powers of non-Kelvin temperature unit are forbidden
         return false;
       }
-      const Tree* index = t->childAtIndex(1);
+      const Tree* index = t->child(1);
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
       return index->type().isRational() || index->type() == BlockType::Decimal;
     }
@@ -119,7 +119,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return childDim[0].isSquareMatrix();
     case BlockType::Identity:
       // TODO check for unknowns and display error message if not integral
-      return childDim[0].isScalar() && t->childAtIndex(0)->type().isInteger();
+      return childDim[0].isScalar() && t->child(0)->type().isInteger();
     case BlockType::Norm:
       return childDim[0].isVector();
     case BlockType::Dot:
@@ -188,13 +188,13 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case BlockType::Sum:
     case BlockType::Product:
-      return GetDimension(t->childAtIndex(Parametric::k_integrandIndex));
+      return GetDimension(t->child(Parametric::k_integrandIndex));
     case BlockType::PowerMatrix:
     case BlockType::PowerReal:
     case BlockType::Power: {
       Dimension dim = GetDimension(t->nextNode());
       if (dim.isUnit()) {
-        float index = Approximation::To<float>(t->childAtIndex(1));
+        float index = Approximation::To<float>(t->child(1));
         // TODO: Handle/forbid index > int8_t
         assert(!std::isnan(index) &&
                std::fabs(index) < static_cast<float>(INT8_MAX));
@@ -223,7 +223,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case BlockType::Identity: {
-      int n = Approximation::To<float>(t->childAtIndex(0));
+      int n = Approximation::To<float>(t->child(0));
       return Matrix(n, n);
     }
     case BlockType::Unit:

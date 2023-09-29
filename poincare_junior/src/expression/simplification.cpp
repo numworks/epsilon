@@ -222,7 +222,7 @@ bool Simplification::SimplifyTrigDiff(Tree* u) {
    */
   // Simplify children as trigonometry second elements.
   bool isOpposed = false;
-  Tree* x = u->childAtIndex(0);
+  Tree* x = u->child(0);
   SimplifyTrigSecondElement(x, &isOpposed);
   Tree* y = x->nextTree();
   SimplifyTrigSecondElement(y, &isOpposed);
@@ -241,7 +241,7 @@ bool Simplification::SimplifyTrigDiff(Tree* u) {
 bool Simplification::SimplifyTrig(Tree* u) {
   assert(u->type() == BlockType::Trig);
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
-  Tree* secondArgument = u->childAtIndex(1);
+  Tree* secondArgument = u->child(1);
   bool isOpposed = false;
   bool changed = SimplifyTrigSecondElement(secondArgument, &isOpposed);
   assert(Number::IsZero(secondArgument) || Number::IsOne(secondArgument));
@@ -265,7 +265,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
       (firstArgument->type() == BlockType::Multiplication &&
        firstArgument->numberOfChildren() == 2 &&
        IsRational(firstArgument->nextNode()) &&
-       firstArgument->childAtIndex(1)->treeIsIdenticalTo(π_e))) {
+       firstArgument->child(1)->treeIsIdenticalTo(π_e))) {
     const Tree* piFactor = firstArgument->type() == BlockType::Multiplication
                                ? firstArgument->nextNode()
                                : (Number::IsZero(firstArgument) ? 0_e : 1_e);
@@ -297,14 +297,14 @@ bool Simplification::SimplifyTrig(Tree* u) {
 
 bool Simplification::SimplifyPower(Tree* u) {
   assert(u->type() == BlockType::Power);
-  Tree* v = u->childAtIndex(0);
+  Tree* v = u->child(0);
   // 1^x -> 1
   if (Number::IsOne(v)) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
   // u^n
-  EditionReference n = u->childAtIndex(1);
+  EditionReference n = u->child(1);
   // After systematic reduction, a power can only have integer index.
   if (!n->type().isInteger()) {
     // TODO: Handle 0^x with x > 0 before to avoid ln(0)
@@ -369,7 +369,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   // (w^p)^n -> w^(p*n)
   if (v->type() == BlockType::Power) {
-    EditionReference p = v->childAtIndex(1);
+    EditionReference p = v->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
     v->removeNode();
@@ -399,11 +399,11 @@ bool Simplification::SimplifyPower(Tree* u) {
 }
 
 const Tree* Base(const Tree* u) {
-  return u->type() == BlockType::Power ? u->childAtIndex(0) : u;
+  return u->type() == BlockType::Power ? u->child(0) : u;
 }
 
 const Tree* Exponent(const Tree* u) {
-  return u->type() == BlockType::Power ? u->childAtIndex(1) : 1_e;
+  return u->type() == BlockType::Power ? u->child(1) : 1_e;
 }
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
@@ -422,8 +422,8 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    *   * |x|^y if p is even
    *   * -|x|^y if p is odd
    */
-  Tree* x = u->childAtIndex(0);
-  Tree* y = u->childAtIndex(1);
+  Tree* x = u->child(0);
+  Tree* y = u->child(1);
   bool xIsNumber = IsNumber(x);
   bool xIsPositiveNumber = xIsNumber && Number::Sign(x).isPositive();
   bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
@@ -598,17 +598,17 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
     return TermsAreEqual(v, u);
   }
   if (v->type() != BlockType::Multiplication) {
-    return u->numberOfChildren() == 2 && IsConstant(u->childAtIndex(0)) &&
-           u->childAtIndex(1)->treeIsIdenticalTo(v);
+    return u->numberOfChildren() == 2 && IsConstant(u->child(0)) &&
+           u->child(1)->treeIsIdenticalTo(v);
   }
-  bool hasConstU = IsConstant(u->childAtIndex(0));
-  bool hasConstV = IsConstant(v->childAtIndex(0));
+  bool hasConstU = IsConstant(u->child(0));
+  bool hasConstV = IsConstant(v->child(0));
   int n = u->numberOfChildren() - hasConstU;
   if (n != v->numberOfChildren() - hasConstV) {
     return false;
   }
-  const Tree* childU = u->childAtIndex(hasConstU);
-  const Tree* childV = v->childAtIndex(hasConstV);
+  const Tree* childU = u->child(hasConstU);
+  const Tree* childV = v->child(hasConstV);
   for (int i = 0; i < n; i++) {
     if (!childU->treeIsIdenticalTo(childV)) {
       return false;
@@ -622,8 +622,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
   Tree* c = u->clone();
-  if (u->type() == BlockType::Multiplication &&
-      IsConstant(u->childAtIndex(0))) {
+  if (u->type() == BlockType::Multiplication && IsConstant(u->child(0))) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfUnary(c);
   }
@@ -632,9 +631,8 @@ Tree* PushTerm(const Tree* u) {
 
 // The constant of 2ab is 2
 const Tree* Constant(const Tree* u) {
-  if (u->type() == BlockType::Multiplication &&
-      IsConstant(u->childAtIndex(0))) {
-    return u->childAtIndex(0);
+  if (u->type() == BlockType::Multiplication && IsConstant(u->child(0))) {
+    return u->child(0);
   }
   return 1_e;
 }
@@ -721,7 +719,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
 
 bool Simplification::SimplifyComplex(Tree* tree) {
   assert(tree->type() == BlockType::Complex);
-  Tree* imag = tree->childAtIndex(1);
+  Tree* imag = tree->child(1);
   if (Number::IsZero(imag)) {
     // (A+0*i) -> A
     imag->removeTree();
@@ -745,7 +743,7 @@ bool Simplification::SimplifyComplex(Tree* tree) {
 
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->type() == BlockType::ComplexArgument);
-  Tree* child = tree->childAtIndex(0);
+  Tree* child = tree->child(0);
   if (child->type().isNumber()) {
     Sign::Sign sign = Number::Sign(child);
     tree->cloneTreeOverTree(sign.isZero()               ? KUndef
@@ -759,7 +757,7 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
 
 bool Simplification::SimplifyRealPart(Tree* tree) {
   assert(tree->type() == BlockType::RealPart);
-  Tree* child = tree->childAtIndex(0);
+  Tree* child = tree->child(0);
   if (child->type() == BlockType::Complex || Complex::IsReal(child)) {
     assert(Complex::IsSanitized(child));
     // re(x+i*y) = x if x and y are reals
@@ -775,7 +773,7 @@ bool Simplification::SimplifyRealPart(Tree* tree) {
 
 bool Simplification::SimplifyImaginaryPart(Tree* tree) {
   assert(tree->type() == BlockType::ImaginaryPart);
-  Tree* child = tree->childAtIndex(0);
+  Tree* child = tree->child(0);
   if (child->type() == BlockType::Complex || Complex::IsReal(child)) {
     assert(Complex::IsSanitized(child));
     // im(x+i*y) = y if x and y are reals
@@ -879,7 +877,7 @@ bool Simplification::ShallowBeautify(Tree* ref, void* context) {
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
   if (ref->type() == BlockType::Trig &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
-    Tree* child = ref->childAtIndex(0);
+    Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
         KMult(KA, KB, KPow(π_e, -1_e)),
         {.KA = child,
@@ -974,7 +972,7 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
   if (ref->type().isOfType(
           {BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
-    Tree* child = ref->childAtIndex(0);
+    Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::Create(
         KMult(KA, π_e, KPow(KB, -1_e)),
         {.KA = child,
@@ -1137,7 +1135,7 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
   }
   int numberOfChildren = ref->numberOfChildren();
   assert(childIndex < numberOfChildren);
-  EditionReference children = ref->childAtIndex(childIndex);
+  EditionReference children = ref->child(childIndex);
   if (children->type() != naryTarget) {
     return false;
   }
@@ -1157,8 +1155,8 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
   for (int i = 0; i < numberOfGrandChildren; i++) {
     EditionReference clone = ref->clone();
     // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
-    /* Since it is constant, use a childIndexOffset to avoid childAtIndex calls:
-     * clone.childAtIndex(childIndex)=Tree(clone.block()+childIndexOffset) */
+    /* Since it is constant, use a childIndexOffset to avoid child calls:
+     * clone.child(childIndex)=Tree(clone.block()+childIndexOffset) */
     EditionReference(clone->block() + childIndexOffset)
         ->moveTreeOverTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
@@ -1279,7 +1277,7 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
   }
   /* Shallow reduce new trees. This step must be performed after sub-expansions
    * since SimplifyMultiplication may invalidate newTrig1 and newTrig3. */
-  SimplifyAddition(newTrig4->childAtIndex(1));
+  SimplifyAddition(newTrig4->child(1));
   SimplifyTrig(newTrig2);
   SimplifyTrig(newTrig4);
   SimplifyMultiplication(newMult1);
@@ -1327,10 +1325,10 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
   EditionReference newTrig1AddMult = newTrig1Add->nextNode();
   SimplifyMultiplication(newTrig1AddMult);
   SimplifyAddition(newTrig1Add);
-  SimplifyTrigDiff(newTrig1->childAtIndex(1));
+  SimplifyTrigDiff(newTrig1->child(1));
   SimplifyTrig(newTrig1);
-  SimplifyAddition(newTrig2->childAtIndex(0));
-  SimplifyAddition(newTrig2->childAtIndex(1));
+  SimplifyAddition(newTrig2->child(0));
+  SimplifyAddition(newTrig2->child(1));
   SimplifyTrig(newTrig2);
 
   if (!fIsEmpty) {
@@ -1413,7 +1411,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   if (tree->numberOfChildren() < 1) {
     return false;
   }
-  Tree* child = tree->childAtIndex(0);
+  Tree* child = tree->child(0);
   if (tree->type() == BlockType::Identity) {
     tree->moveTreeOverTree(Matrix::Identity(child));
     return true;

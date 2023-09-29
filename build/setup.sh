@@ -21,12 +21,15 @@ install_binary_deps() {
   case $OSTYPE in
     linux*)
       install_linux_binary_deps
+      install_python_deps
       ;;
     darwin*)
       install_macos_binary_deps
+      install_python_deps
       ;;
     msys)
       install_windows_binary_deps
+      install_windows_python_deps
       ;;
     *)
       echo "Unknown operating system $OSTYPE" >&2
@@ -42,6 +45,16 @@ install_python_deps() {
     pyelftools \
     pypng \
     stringcase
+}
+
+install_windows_python_deps() {
+  python3 -m venv .venv
+  source .venv/Scripts/activate  # Activate the virtual environment
+  pip install wheel  # Ensure you have wheel installed
+  pip install lz4 --platform win_amd64  # Specify the platform name
+  pip install pyelftools --platform win_amd64  # Specify the platform name
+  pip install pypng --platform win_amd64  # Specify the platform name
+  pip install stringcase --platform win_amd64  # Specify the platform name
 }
 
 install_macos_binary_deps() {
@@ -119,5 +132,4 @@ init_git_pre_push_hook() {
 }
 
 install_binary_deps
-install_python_deps
 init_git_pre_push_hook

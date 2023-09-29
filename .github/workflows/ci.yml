@@ -11,6 +11,19 @@ env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 
 jobs:
+  linux:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - uses: numworks/setup-llvm@latest
+      - uses: actions/checkout@v3
+      - run: build/setup.sh --only-simulator
+      - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
+      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
+      - uses: actions/upload-artifact@v3
+        if: ${{ (github.repository != 'numworks/epsilon-internal') }}
+        with:
+          name: epsilon-linux.bin
+          path: output/release/simulator/linux/epsilon.bin
   windows:
     runs-on: windows-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal') }}

@@ -32,8 +32,8 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
       return RackLayout::Size(node, root, font);
     }
     case LayoutType::Fraction: {
-      KDSize numeratorSize = Render::Size(node->childAtIndex(0), root, font);
-      KDSize denominatorSize = Render::Size(node->childAtIndex(1), root, font);
+      KDSize numeratorSize = Size(node->childAtIndex(0), root, font);
+      KDSize denominatorSize = Size(node->childAtIndex(1), root, font);
       KDCoordinate width =
           std::max(numeratorSize.width(), denominatorSize.width()) +
           2 * (k_fractionHorizontalOverflow + k_fractionHorizontalMargin);
@@ -43,16 +43,16 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
       return KDSize(width, height);
     }
     case LayoutType::Parenthesis: {
-      KDSize childSize = Render::Size(node->childAtIndex(0), root, font);
+      KDSize childSize = Size(node->childAtIndex(0), root, font);
       return childSize + KDSize(2 * ParenthesisHorizontalPadding(font),
                                 2 * k_parenthesisVerticalPadding);
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
-      KDSize indexSize = Render::Size(node->childAtIndex(0), root, font);
+      KDSize indexSize = Size(node->childAtIndex(0), root, font);
       const Tree* base = VerticalOffsetLayout::BaseLayout(node, root);
-      KDCoordinate baseHeight = base ? Render::Size(base, root, font).height()
-                                     : KDFont::GlyphHeight(font);
+      KDCoordinate baseHeight =
+          base ? Size(base, root, font).height() : KDFont::GlyphHeight(font);
 
       return KDSize(
           indexSize.width(),
@@ -91,23 +91,23 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
       KDCoordinate childBaseline = 0;
       for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
         if (index == childIndex) {
-          childBaseline = Render::Baseline(child, root, font);
+          childBaseline = Baseline(child, root, font);
           break;
         }
-        KDSize childSize = Render::Size(child, root, font);
+        KDSize childSize = Size(child, root, font);
         x += childSize.width();
       }
-      KDCoordinate y = Render::Baseline(node, root, font) - childBaseline;
+      KDCoordinate y = Baseline(node, root, font) - childBaseline;
       return KDPoint(x, y);
     }
     case LayoutType::Fraction: {
       KDCoordinate x =
-          (Render::Size(node, root, font).width() -
-           Render::Size(node->childAtIndex(childIndex), root, font).width()) /
+          (Size(node, root, font).width() -
+           Size(node->childAtIndex(childIndex), root, font).width()) /
           2;
       KDCoordinate y =
           (childIndex == k_denominatorIndex)
-              ? Render::Size(node->childAtIndex(k_numeratorIndex), root, font)
+              ? Size(node->childAtIndex(k_numeratorIndex), root, font)
                         .height() +
                     2 * k_fractionLineMargin + k_fractionLineHeight
               : 0;
@@ -133,21 +133,20 @@ KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
       return RackLayout::Baseline(node, root, font);
     }
     case LayoutType::Fraction: {
-      return Render::Size(node->childAtIndex(k_numeratorIndex), root, font)
-                 .height() +
+      return Size(node->childAtIndex(k_numeratorIndex), root, font).height() +
              k_fractionLineMargin + k_fractionLineHeight;
     }
     case LayoutType::Parenthesis: {
-      return Render::Baseline(node->childAtIndex(0), root, font) +
+      return Baseline(node->childAtIndex(0), root, font) +
              k_parenthesisVerticalPadding;
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       const Tree* base = VerticalOffsetLayout::BaseLayout(node, root);
-      KDCoordinate baseBaseline = base ? Render::Baseline(base, root, font)
-                                       : KDFont::GlyphHeight(font) / 2;
+      KDCoordinate baseBaseline =
+          base ? Baseline(base, root, font) : KDFont::GlyphHeight(font) / 2;
       KDCoordinate indexHeight =
-          Render::Size(node->childAtIndex(0), root, font).height();
+          Size(node->childAtIndex(0), root, font).height();
       return indexHeight - k_verticalOffsetIndiceHeight + baseBaseline;
     }
     case LayoutType::CodePoint: {
@@ -191,11 +190,10 @@ void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
           p.y() +
-          Render::Size(node->childAtIndex(k_numeratorIndex), root, font)
-              .height() +
+          Size(node->childAtIndex(k_numeratorIndex), root, font).height() +
           k_fractionLineMargin;
       ctx->fillRect(KDRect(p.x() + k_fractionHorizontalMargin, fractionLineY,
-                           Render::Size(node, root, font).width() -
+                           Size(node, root, font).width() -
                                2 * k_fractionHorizontalMargin,
                            k_fractionLineHeight),
                     expressionColor);

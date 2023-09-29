@@ -12,15 +12,15 @@ EditionReference Parser::Parse(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Fraction: {
       EditionReference ref = SharedEditionPool->push<BlockType::Division>();
-      Parser::Parse(node->childAtIndex(k_numeratorIndex));
-      Parser::Parse(node->childAtIndex(k_denominatorIndex));
+      Parse(node->childAtIndex(k_numeratorIndex));
+      Parse(node->childAtIndex(k_denominatorIndex));
       return ref;
     }
     case LayoutType::Rack: {
       return RackParser(node).parse();
     }
     case LayoutType::Parenthesis: {
-      return Parser::Parse(node->childAtIndex(0));
+      return Parse(node->childAtIndex(0));
     }
     case LayoutType::VerticalOffset:
     case LayoutType::CodePoint:

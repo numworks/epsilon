@@ -23,9 +23,7 @@ uint8_t *WorkingBuffer::allocate(size_t size) {
    * Integer with k_maxNumberOfDigits. */
   assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
   if (size > m_remainingSize) {
-    // TODO: set the error type to be "Integer computation requires to much
-    // space"/"edition pool overflowed"
-    ExceptionCheckpoint::Raise();
+    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
     return nullptr;
   }
   uint8_t *allocatedMemory = m_start;
@@ -345,8 +343,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler &a,
       sum.setDigit<native_uint_t>(result, i);
     } else {
       if (result != 0) {
-        // TODO: set the error type to be "Integer computation overflowed"
-        ExceptionCheckpoint::Raise();
+        ExceptionCheckpoint::Raise(ExceptionType::IntegerOverflow);
         return IntegerHandler();
       }
     }
@@ -400,8 +397,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
         mult.setDigit<native_uint_t>(l[0], i + j);
       } else {
         if (l[0] != 0) {
-          // TODO: set the error type to be "Integer computation overflowed"
-          ExceptionCheckpoint::Raise();
+          ExceptionCheckpoint::Raise(ExceptionType::IntegerOverflow);
           return IntegerHandler();
         }
       }
@@ -417,7 +413,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
     } else {
       if (carry != 0) {
         // TODO: set the error type to be "Integer computation overflowed"
-        ExceptionCheckpoint::Raise();
+        ExceptionCheckpoint::Raise(ExceptionType::IntegerOverflow);
         return IntegerHandler();
       }
     }

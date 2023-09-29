@@ -233,28 +233,32 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
 
 bool EditionPool::execute(ActionWithContext action, void *context,
                           const void *data, int maxSize, Relax relax) {
-  ExceptionCheckpoint checkpoint;
-start_execute:
-  if (ExceptionRun(checkpoint)) {
-    assert(numberOfTrees() == 0);
-    action(context, data);
-    // Prevent edition action from leaking: an action create at most one tree
-    assert(numberOfTrees() <= 1);
-  } else {
-    /* TODO: assert that we don't delete last called treeForIdentifier otherwise
-     * can't copyTreeFromAddress if in cache... */
-    int size = fullSize();
-    /* Free blocks and try again. If no more blocks can be freed, try relaxing
-     * the context and try again. Otherwise, return false. */
-    if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
-                                std::min(size, maxSize - size))) &&
-        !relax(context)) {
-      return false;
+  while (true) {
+    ExceptionRunAndStoreExceptionTypeInVariableNamed(type);
+    switch (type) {
+      case ExceptionType::None:
+        assert(numberOfTrees() == 0);
+        action(context, data);
+        /* Prevent edition action from leaking: an action create at most one
+         * tree. */
+        assert(numberOfTrees() <= 1);
+        return true;
+      default: {
+        /* TODO: assert that we don't delete last called treeForIdentifier
+         * otherwise can't copyTreeFromAddress if in cache... */
+        int size = fullSize();
+        // Free blocks and try again.
+        if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
+                                    std::min(size, maxSize - size))) &&
+            !relax(context)) {
+          /* TODO: If no more blocks can be freed, try relaxing the context and
+           * try again. Otherwise, raise again. */
+          return false;
+        }
+        break;
+      }
     }
-    goto start_execute;
   }
-  // Action has been successfully executed
-  return true;
 }
 
 template <BlockType blockType, typename... Types>
@@ -277,7 +281,7 @@ Tree *EditionPool::push(Types... args) {
 
 bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
-    ExceptionCheckpoint::Raise();
+    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
     return false;
   }
   return true;

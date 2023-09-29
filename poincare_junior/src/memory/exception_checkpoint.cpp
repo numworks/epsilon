@@ -6,35 +6,34 @@ namespace PoincareJ {
 
 ExceptionCheckpoint* ExceptionCheckpoint::s_topmostExceptionCheckpoint;
 
-ExceptionCheckpoint::ExceptionCheckpoint()
-    : m_parent(s_topmostExceptionCheckpoint) {}
-
 ExceptionCheckpoint::~ExceptionCheckpoint() {
+  assert(s_topmostExceptionCheckpoint == this ||
+         s_topmostExceptionCheckpoint == m_parent);
   s_topmostExceptionCheckpoint = m_parent;
 }
 
-bool ExceptionCheckpoint::setActive(bool interruption) {
-  if (!interruption) {
-    s_topmostExceptionCheckpoint = this;
-  }
-  return !interruption;
-}
-
-void ExceptionCheckpoint::rollback() {
+void ExceptionCheckpoint::rollback(ExceptionType type) {
+  assert(type != ExceptionType::None);
+  // Next Raise will be handled by parent.
+  s_topmostExceptionCheckpoint = m_parent;
   Checkpoint::rollback();
-  longjmp(m_jumpBuffer, 1);
+  longjmp(m_jumpBuffer, static_cast<int>(type));
 }
 
-void ExceptionCheckpoint::Raise() {
+void ExceptionCheckpoint::Raise(ExceptionType type) {
+  assert(type != ExceptionType::None);
+  // Can't raise if there are no active ExceptionCheckpoints.
   if (s_topmostExceptionCheckpoint == nullptr) {
     abort();
   }
-  s_topmostExceptionCheckpoint->rollback();
+  s_topmostExceptionCheckpoint->rollback(type);
   abort();
 }
 
 }  // namespace PoincareJ
 
 extern "C" {
-void ExceptionCheckpointRaise() { PoincareJ::ExceptionCheckpoint::Raise(); }
+void ExceptionCheckpointRaise() {
+  PoincareJ::ExceptionCheckpoint::Raise(PoincareJ::ExceptionType::Other);
+}
 }

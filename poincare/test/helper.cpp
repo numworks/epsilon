@@ -131,18 +131,24 @@ void assert_parsed_expression_process_to(
   copy_without_system_chars(result, oldResult);
   bool bad = false;
   bool crash = false;
-  PoincareJ::ExceptionCheckpoint cp;
-  if (ExceptionRun(cp)) {
-    Tree *e = parse_expression(expression, &globalContext, false);
-    Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
-                                          angleUnit, unitFormat, target,
-                                          symbolicComputation, unitConversion));
-    Tree *l = PoincareJ::Layoutter::LayoutExpression(m);
-    *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
-    l->removeTree();
-    bad = strcmp(buffer, result) != 0;
-  } else {
-    crash = true;
+  {
+    ExceptionRunAndStoreExceptionTypeInVariableNamed(type);
+    switch (type) {
+      case PoincareJ::ExceptionType::None: {
+        Tree *e = parse_expression(expression, &globalContext, false);
+        Tree *m =
+            process(e, ReductionContext(&globalContext, complexFormat,
+                                        angleUnit, unitFormat, target,
+                                        symbolicComputation, unitConversion));
+        Tree *l = PoincareJ::Layoutter::LayoutExpression(m);
+        *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
+        l->removeTree();
+        bad = strcmp(buffer, result) != 0;
+        break;
+      }
+      default:
+        crash = true;
+    }
   }
   k_bad += bad;
   k_crash += crash;

@@ -49,7 +49,7 @@ install_python_deps() {
 
 install_windows_python_deps() {
   python3 -m venv .venv
-  .venv/bin/pip3 install lz4
+  .venv/bin/pip3 install lz4 --verbose
 }
 
 install_macos_binary_deps() {

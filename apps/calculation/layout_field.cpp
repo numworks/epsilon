@@ -115,12 +115,12 @@ bool LayoutField::handleDivision() {
       case DivisionCycleStep::NumeratorOfEmptyFraction:
         if (editionIn1D) {
           // 1D: NumeratorOfEmptyFraction -> MixedFraction
-          m_currentStep = DivisionCycleStep::MixedFraction;
           handled = Escher::LayoutField::handleEvent(Ion::Events::Space);
           if (!handled) {
             // Not enough space
             return false;
           }
+          m_currentStep = DivisionCycleStep::MixedFraction;
           event = Ion::Events::Left;
         } else {
           // 2D: NumeratorOfEmptyFraction -> DenominatorOfEmptyFraction

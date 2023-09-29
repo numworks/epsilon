@@ -1,7 +1,6 @@
 #include "rack_layout.h"
 
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -16,26 +15,6 @@ KDSize RackLayout::Size(const Tree* node, const Tree* root, KDFont::Size font) {
 KDCoordinate RackLayout::Baseline(const Tree* node, const Tree* root,
                                   KDFont::Size font) {
   return BaselineBetweenIndexes(node, 0, node->numberOfChildren(), root, font);
-}
-
-KDPoint RackLayout::PositionOfChild(const Tree* node, int childIndex,
-                                    const Tree* root, KDFont::Size font) {
-  KDCoordinate x = 0;
-  KDCoordinate childBaseline = 0;
-  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    if (index == childIndex) {
-      childBaseline = Render::Baseline(child, root, font);
-      break;
-    }
-    KDSize childSize = Render::Size(child, root, font);
-    x += childSize.width();
-  }
-  KDCoordinate y = Render::Baseline(node, root, font) - childBaseline;
-  return KDPoint(x, y);
-}
-
-EditionReference RackLayout::Parse(const Tree* node) {
-  return RackParser(node).parse();
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,

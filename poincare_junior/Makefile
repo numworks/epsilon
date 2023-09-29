@@ -40,9 +40,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression.cpp \
   layout/code_point_layout.cpp \
   layout/empty_rectangle.cpp \
-  layout/fraction_layout.cpp \
   layout/layout_cursor.cpp \
-  layout/parenthesis_layout.cpp \
   layout/parser.cpp \
   layout/parsing/rack_parser.cpp \
   layout/parsing/tokenizer.cpp \

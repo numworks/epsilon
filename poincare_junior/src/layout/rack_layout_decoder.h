@@ -58,6 +58,18 @@ class RackLayoutDecoder : public UnicodeDecoder {
   const Tree* m_layout;
 };
 
+class RackLayoutRange {
+  RackLayoutRange(const Tree* start, const Tree* end)
+      : m_start(start), m_end(end) {}
+  RackLayoutRange(const Tree* rack, size_t startIndex, size_t endIndex)
+      : m_start(rack->childAtIndex(startIndex)),
+        m_end(rack->childAtIndex(endIndex)) {}
+
+ private:
+  const Tree* m_start;
+  const Tree* m_end;
+};
+
 }  // namespace PoincareJ
 
 #endif

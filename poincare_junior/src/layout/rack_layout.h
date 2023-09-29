@@ -11,9 +11,6 @@ class RackLayout {
   static KDSize Size(const Tree* node, const Tree* root, KDFont::Size font);
   static KDCoordinate Baseline(const Tree* node, const Tree* root,
                                KDFont::Size font);
-  static KDPoint PositionOfChild(const Tree* node, int childIndex,
-                                 const Tree* root, KDFont::Size font);
-  static EditionReference Parse(const Tree* node);
   static KDSize SizeBetweenIndexes(const Tree* node, int leftPosition,
                                    int rightPosition, const Tree* root,
                                    KDFont::Size font);

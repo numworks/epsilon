@@ -5,7 +5,6 @@
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include "code_point_layout.h"
-#include "indexes.h"
 #include "rack_layout.h"
 #include "vertical_offset_layout.h"
 
@@ -104,11 +103,10 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex,
       KDCoordinate x = (Size(node, root, font).width() -
                         Size(node->child(childIndex), root, font).width()) /
                        2;
-      KDCoordinate y =
-          (childIndex == k_denominatorIndex)
-              ? Size(node->child(k_numeratorIndex), root, font).height() +
-                    2 * k_fractionLineMargin + k_fractionLineHeight
-              : 0;
+      KDCoordinate y = (childIndex == 1)
+                           ? Size(node->child(0), root, font).height() +
+                                 2 * k_fractionLineMargin + k_fractionLineHeight
+                           : 0;
       return KDPoint(x, y);
     }
     case LayoutType::Parenthesis: {
@@ -131,8 +129,8 @@ KDCoordinate Render::Baseline(const Tree* node, const Tree* root,
       return RackLayout::Baseline(node, root, font);
     }
     case LayoutType::Fraction: {
-      return Size(node->child(k_numeratorIndex), root, font).height() +
-             k_fractionLineMargin + k_fractionLineHeight;
+      return Size(node->child(0), root, font).height() + k_fractionLineMargin +
+             k_fractionLineHeight;
     }
     case LayoutType::Parenthesis: {
       return Baseline(node->child(0), root, font) +
@@ -185,9 +183,9 @@ void Render::RenderNode(const Tree* node, const Tree* root, KDContext* ctx,
                         KDColor backgroundColor) {
   switch (node->layoutType()) {
     case LayoutType::Fraction: {
-      KDCoordinate fractionLineY =
-          p.y() + Size(node->child(k_numeratorIndex), root, font).height() +
-          k_fractionLineMargin;
+      KDCoordinate fractionLineY = p.y() +
+                                   Size(node->child(0), root, font).height() +
+                                   k_fractionLineMargin;
       ctx->fillRect(KDRect(p.x() + k_fractionHorizontalMargin, fractionLineY,
                            Size(node, root, font).width() -
                                2 * k_fractionHorizontalMargin,

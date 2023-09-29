@@ -4,16 +4,14 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 
-#include "indexes.h"
-
 namespace PoincareJ {
 
 EditionReference Parser::Parse(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Fraction: {
       EditionReference ref = SharedEditionPool->push<BlockType::Division>();
-      Parse(node->child(k_numeratorIndex));
-      Parse(node->child(k_denominatorIndex));
+      Parse(node->child(0));
+      Parse(node->child(0));
       return ref;
     }
     case LayoutType::Rack: {

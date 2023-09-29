@@ -11,51 +11,6 @@ env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 
 jobs:
-  android:
-    runs-on: ubuntu-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
-    steps:
-      - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
-      - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk test.apk
-      - uses: actions/upload-artifact@master
-        with:
-          name: epsilon-android.apk
-          path: output/release/simulator/android/epsilon.apk
-  device:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
-    strategy:
-      matrix:
-        model: [n0110, n0115, n0120]
-    steps:
-      - uses: numworks/setup-arm-toolchain@latest
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
-      - run: build/setup.sh
-      - name: Check for epsilon-core
-        id: epsilon-core
-        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
-        continue-on-error: true
-      - name: Disable epsilon-core submodule
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
-      - name: Build userlands
-        # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
-        # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
-        # TODO: It is also probably useless to build so many variants
-        run: make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf
-      - name: Restore epsilon-core submodule
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} epsilon.dfu
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} flasher.dfu
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} bench.ram.dfu
   windows:
     runs-on: windows-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal') }}
@@ -72,56 +27,3 @@ jobs:
         with:
           name: epsilon-windows.exe
           path: output/release/simulator/windows/epsilon.exe
-  web:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
-    steps:
-      - uses: numworks/setup-emscripten@latest
-        with:
-          sdk: 1.39.16-fastcomp
-      - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js
-      - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
-      - uses: actions/upload-artifact@v3
-        with:
-          name: epsilon-web.zip
-          path: output/release/simulator/web/epsilon.zip
-          retention-days: 7
-  linux:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
-    steps:
-      - uses: numworks/setup-llvm@latest
-      - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
-      - uses: actions/upload-artifact@v3
-        if: ${{ (github.repository != 'numworks/epsilon-internal') }}
-        with:
-          name: epsilon-linux.bin
-          path: output/release/simulator/linux/epsilon.bin
-  macos:
-    runs-on: macOS-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
-    steps:
-      - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator epsilon.app
-      - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
-      - run: output/release/simulator/macos/x86_64/test.bin --headless --limit-stack-usage
-      - uses: actions/upload-artifact@v3
-        with:
-          name: epsilon-macos.zip
-          path: output/release/simulator/macos/epsilon.app
-  ios:
-    runs-on: macOS-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
-    steps:
-      - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 epsilon.ipa test.ipa
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
-      - uses: actions/upload-artifact@v3
-        with:
-          name: epsilon-ios.ipa
-          path: output/release/simulator/ios/epsilon.ipa

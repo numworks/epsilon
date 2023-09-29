@@ -24,7 +24,7 @@ class EditionPool final : public Pool {
 
   typedef bool (*Relax)(void *context);
   constexpr static Relax k_defaultRelax = [](void *context) { return false; };
-  bool executeAndDump(ActionWithContext action, void *context, const void *data,
+  void executeAndDump(ActionWithContext action, void *context, const void *data,
                       void *address, int maxSize, Relax relax = k_defaultRelax);
   uint16_t executeAndCache(ActionWithContext action, void *context,
                            const void *data, Relax relax = k_defaultRelax);
@@ -73,7 +73,7 @@ class EditionPool final : public Pool {
   constexpr static int k_maxNumberOfReferences = 1024;
 
  private:
-  bool execute(ActionWithContext action, void *context, const void *data,
+  void execute(ActionWithContext action, void *context, const void *data,
                int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);

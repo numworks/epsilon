@@ -246,7 +246,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     int m_cursorOffset;
     Context* m_context;
   };
-  bool execute(Action action, Context* context = nullptr,
+  void execute(Action action, Context* context = nullptr,
                const void* data = nullptr);
   void setCursorNode(Tree* node) override {
     m_cursorNode = node;

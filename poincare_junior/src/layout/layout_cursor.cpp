@@ -1329,11 +1329,11 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
       Tree::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset()));
 }
 
-bool LayoutBufferCursor::execute(Action action, Context *context,
+void LayoutBufferCursor::execute(Action action, Context *context,
                                  const void *data) {
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
-  return SharedEditionPool->executeAndDump(
+  SharedEditionPool->executeAndDump(
       [](void *context, const void *data) {
         ExecutionContext *executionContext =
             static_cast<ExecutionContext *>(context);

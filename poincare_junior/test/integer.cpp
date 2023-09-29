@@ -1,5 +1,6 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -321,9 +322,18 @@ QUIZ_CASE(pcj_integer_gcd) {
 
 static void assert_might_overflow(ActionWithContext action, bool overflow) {
   CachePool* cachePool = CachePool::sharedCachePool();
-  const Tree* tree = cachePool->nodeForIdentifier(
-      SharedEditionPool->executeAndCache(action, nullptr, nullptr));
-  quiz_assert((tree == nullptr) == overflow);
+  {
+    ExceptionRunAndStoreExceptionTypeInVariableNamed(type);
+    switch (type) {
+      case ExceptionType::None:
+        cachePool->nodeForIdentifier(
+            SharedEditionPool->executeAndCache(action, nullptr, nullptr));
+        quiz_assert(!overflow);
+        return;
+      default:
+        quiz_assert(overflow && type == ExceptionType::IntegerOverflow);
+    }
+  }
 }
 
 static void assert_did_overflow(ActionWithContext action) {

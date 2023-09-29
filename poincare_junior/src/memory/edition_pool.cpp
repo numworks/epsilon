@@ -86,23 +86,18 @@ void EditionPool::flush() {
 #endif
 }
 
-bool EditionPool::executeAndDump(ActionWithContext action, void *context,
+void EditionPool::executeAndDump(ActionWithContext action, void *context,
                                  const void *data, void *address, int maxSize,
                                  Relax relax) {
-  if (!execute(action, context, data, maxSize, relax)) {
-    return false;
-  }
+  execute(action, context, data, maxSize, relax);
   assert(Tree::FromBlocks(firstBlock())->treeSize() <= maxSize);
   Tree::FromBlocks(firstBlock())->copyTreeTo(address);
   flush();
-  return true;
 }
 
 uint16_t EditionPool::executeAndCache(ActionWithContext action, void *context,
                                       const void *data, Relax relax) {
   execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
-  /* If execute failed, storeEditedTree will handle an empty EditionPool and
-   * return a ReferenceTable::NoNodeIdentifier. */
   return CachePool::sharedCachePool()->storeEditedTree();
 }
 
@@ -231,7 +226,7 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
   return Tree::FromBlocks(copiedTree);
 }
 
-bool EditionPool::execute(ActionWithContext action, void *context,
+void EditionPool::execute(ActionWithContext action, void *context,
                           const void *data, int maxSize, Relax relax) {
   while (true) {
     ExceptionRunAndStoreExceptionTypeInVariableNamed(type);
@@ -242,8 +237,8 @@ bool EditionPool::execute(ActionWithContext action, void *context,
         /* Prevent edition action from leaking: an action create at most one
          * tree. */
         assert(numberOfTrees() <= 1);
-        return true;
-      default: {
+        return;
+      case ExceptionType::PoolIsFull: {
         /* TODO: assert that we don't delete last called treeForIdentifier
          * otherwise can't copyTreeFromAddress if in cache... */
         int size = fullSize();
@@ -251,12 +246,15 @@ bool EditionPool::execute(ActionWithContext action, void *context,
         if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
                                     std::min(size, maxSize - size))) &&
             !relax(context)) {
-          /* TODO: If no more blocks can be freed, try relaxing the context and
+          /* TODO: If no more blocks can be freed, try relaxing the context
+          and
            * try again. Otherwise, raise again. */
-          return false;
+          ExceptionCheckpoint::Raise(type);
         }
         break;
       }
+      default:
+        ExceptionCheckpoint::Raise(type);
     }
   }
 }

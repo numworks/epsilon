@@ -27,7 +27,7 @@ void removeTreeIfInitialized(EditionReference tree) {
   }
 }
 
-EditionReference RackParser::parse() {
+Tree *RackParser::parse() {
 #if 0
   size_t endPosition = m_tokenizer.endPosition();
   size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
@@ -49,10 +49,10 @@ EditionReference RackParser::parse() {
     return result;
   }
   removeTreeIfInitialized(result);
-  return EditionReference();
+  return nullptr;
 }
 
-EditionReference RackParser::parseExpressionWithRightwardsArrow(
+Tree *RackParser::parseExpressionWithRightwardsArrow(
     size_t rightwardsArrowPosition) {
   /* If the string contains an arrow, try to parse as unit conversion first.
    * We have to do this here because the parsing of the leftSide and the one
@@ -134,7 +134,7 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
   return result;
 }
 
-EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
+Tree *RackParser::initializeFirstTokenAndParseUntilEnd() {
   m_nextToken = m_tokenizer.popToken();
   EditionReference result;
   if (m_parsingContext.parsingMethod() ==
@@ -150,8 +150,8 @@ EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
 }
 // Private
 
-EditionReference RackParser::parseUntil(Token::Type stoppingType,
-                                        EditionReference leftHandSide) {
+Tree *RackParser::parseUntil(Token::Type stoppingType,
+                             EditionReference leftHandSide) {
   typedef void (RackParser::*TokenParser)(EditionReference & leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
@@ -1124,7 +1124,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // leftHandSide = result;
 // }
 
-EditionReference RackParser::parseFunctionParameters() {
+Tree *RackParser::parseFunctionParameters() {
   bool parenthesisIsLayout =
       m_nextToken.is(Token::Type::Layout) &&
       m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout;
@@ -1181,7 +1181,7 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
   isThereImplicitOperator();
 }
 
-EditionReference RackParser::parseVector() {
+Tree *RackParser::parseVector() {
   if (!popTokenIfType(Token::Type::LeftBracket)) {
     m_status = Status::Error;  // Left bracket missing.
     return EditionReference();
@@ -1194,7 +1194,7 @@ EditionReference RackParser::parseVector() {
   return commaSeparatedList;
 }
 
-EditionReference RackParser::parseCommaSeparatedList(bool isFirstToken) {
+Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
   // First rack's layout cannot be a comma separated list.
   if (!isFirstToken && m_nextToken.is(Token::Type::Layout) &&
       m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout) {
@@ -1209,7 +1209,7 @@ EditionReference RackParser::parseCommaSeparatedList(bool isFirstToken) {
   EditionReference list = SharedEditionPool->push<BlockType::SystemList>(0);
   int length = 0;
   do {
-    if (!parseUntil(Token::Type::Comma).isUninitialized()) {
+    if (parseUntil(Token::Type::Comma)) {
       length++;
       NAry::SetNumberOfChildren(list, length);
     }

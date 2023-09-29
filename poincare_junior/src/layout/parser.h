@@ -8,7 +8,7 @@ namespace PoincareJ {
 
 class Parser final {
  public:
-  static EditionReference Parse(const Tree* node);
+  static Tree* Parse(const Tree* node);
 };
 
 }  // namespace PoincareJ

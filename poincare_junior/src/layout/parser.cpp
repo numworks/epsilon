@@ -6,7 +6,7 @@
 
 namespace PoincareJ {
 
-EditionReference Parser::Parse(const Tree* node) {
+Tree* Parser::Parse(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Fraction: {
       EditionReference ref = SharedEditionPool->push<BlockType::Division>();

@@ -6,7 +6,7 @@
 
 using namespace PoincareJ;
 
-static EditionReference CreateInteger(const char* digits) {
+static Tree* CreateInteger(const char* digits) {
   size_t length = strlen(digits);
   OMG::Base base = OMG::Base::Decimal;
   size_t prefixLength = strlen("0b");

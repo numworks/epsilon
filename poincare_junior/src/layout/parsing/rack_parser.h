@@ -40,16 +40,14 @@ class RackParser {
         m_waitingSlashForMixedFraction(false),
         m_root(node) {}
 
-  EditionReference parse();
+  Tree* parse();
   Status getStatus() const { return m_status; }
 
  private:
-  EditionReference parseUntil(
-      Token::Type stoppingType,
-      EditionReference leftHandSide = EditionReference());
-  EditionReference parseExpressionWithRightwardsArrow(
-      size_t rightwardsArrowPosition);
-  EditionReference initializeFirstTokenAndParseUntilEnd();
+  Tree* parseUntil(Token::Type stoppingType,
+                   EditionReference leftHandSide = EditionReference());
+  Tree* parseExpressionWithRightwardsArrow(size_t rightwardsArrowPosition);
+  Tree* initializeFirstTokenAndParseUntilEnd();
 
   // Methods on Tokens
   void popToken();
@@ -152,9 +150,9 @@ class RackParser {
   bool parseBinaryOperator(const EditionReference& leftHandSide,
                            EditionReference& rightHandSide,
                            Token::Type stoppingType);
-  EditionReference parseVector();
-  EditionReference parseFunctionParameters();
-  EditionReference parseCommaSeparatedList(bool isFirstToken = false);
+  Tree* parseVector();
+  Tree* parseFunctionParameters();
+  Tree* parseCommaSeparatedList(bool isFirstToken = false);
   void privateParseTimes(EditionReference& leftHandSide,
                          Token::Type stoppingType);
   void privateParseReservedFunction(EditionReference& leftHandSide,

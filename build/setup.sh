@@ -49,12 +49,7 @@ install_python_deps() {
 
 install_windows_python_deps() {
   python3 -m venv .venv
-  source .venv/Scripts/activate  # Activate the virtual environment
-  pip install wheel  # Ensure you have wheel installed
-  pip install lz4 --platform win_amd64  # Specify the platform name
-  pip install pyelftools --platform win_amd64  # Specify the platform name
-  pip install pypng --platform win_amd64  # Specify the platform name
-  pip install stringcase --platform win_amd64  # Specify the platform name
+  .venv/bin/pip3 install lz4
 }
 
 install_macos_binary_deps() {

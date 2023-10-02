@@ -65,6 +65,8 @@ TYPE(Sine)
 TYPE(Cosine)
 TYPE(Tangent)
 
+TYPE(Infinite)
+
 // 3 - Other expressions in Alphabetic order
 
 TYPE(Abs)

@@ -11,6 +11,11 @@ namespace PoincareJ {
 
 // Constructors
 
+constexpr auto KUndef = KTree<BlockType::Undefined>();
+constexpr auto KHalf = KTree<BlockType::Half>();
+constexpr auto KNonreal = KTree<BlockType::Nonreal>();
+constexpr auto KInf = KTree<BlockType::Infinite>();
+
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();
 constexpr auto KSin = KUnary<BlockType::Sine>();
@@ -183,11 +188,6 @@ KTree(IntegerLitteral<V>)
     -> KTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0),
              Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2),
              Bit::getByteAtIndex(-V, 3)>;
-
-// TODO new node_constructor
-constexpr KTree KUndef = KTree<BlockType::Undefined>();
-constexpr KTree KNonreal = KTree<BlockType::Nonreal>();
-constexpr KTree KHalf = KTree<BlockType::Half>();
 
 constexpr KTree π_e =
     KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();

@@ -163,11 +163,12 @@ void SolutionsController::viewWillAppear() {
   } else if (system->type() ==
                  SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {
-    // There are no real solutions
     if (system->degree() == 2) {
-      assert(Preferences::sharedPreferences->complexFormat() ==
-             Preferences::ComplexFormat::Real);
+      /* For quadratic polynoms, if only delta is displayed, it means that the
+       * solutions are not real. */
       m_contentView.setWarningMessage(I18n::Message::PolynomeHasNoRealSolution);
+      /* TODO: Incorrect message! Sometimes we just can't compute the solutions
+       * because it overflows (ex: try to solve x^2sin(10^-900)=0). */
     } else {
       // TODO : Message could be updated. The user did not input any interval.
       m_contentView.setWarningMessage(I18n::Message::NoSolutionInterval);

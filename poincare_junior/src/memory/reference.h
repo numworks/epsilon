@@ -43,8 +43,10 @@ class Reference {
   // These Initializers must push one tree on the EditionPool
   typedef void (*Initializer)();
   typedef void (*InitializerFromString)(const char *);
+  typedef void (*InitializerFromData)(const void *);
   Reference(Initializer initializer);
   Reference(InitializerFromString initializer, const char *string);
+  Reference(InitializerFromData initializer, const void *data, size_t dataSize);
 
   // This initializer can edit the given EditionPool node inplace
   typedef void (*InitializerFromTreeInplace)(Tree *);

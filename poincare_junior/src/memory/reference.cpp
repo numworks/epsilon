@@ -84,6 +84,21 @@ Reference::Reference(InitializerFromString initializer, const char *string)
       ) {
 }
 
+Reference::Reference(InitializerFromData initializer, const void *data,
+                     size_t dataSize)
+    : Reference(
+          [](void *initializer, const void *data) {
+            return (reinterpret_cast<InitializerFromData>(initializer))(
+                static_cast<const char *>(data));
+          },
+          reinterpret_cast<void *>(initializer), data
+#if ASSERTIONS
+          ,
+          dataSize
+#endif
+      ) {
+}
+
 Reference::Reference(InitializerFromTreeInplace initializer, const Tree *tree)
     : Reference(
           [](void *initializer, const void *data) {

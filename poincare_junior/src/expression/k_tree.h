@@ -38,8 +38,8 @@ constexpr auto KPow = KBinary<BlockType::Power>();
 constexpr auto KPowReal = KBinary<BlockType::PowerReal>();
 constexpr auto KPowMatrix = KBinary<BlockType::PowerMatrix>();
 constexpr auto KDep = KBinary<BlockType::Dependency>();
-constexpr auto KDiff = KTrinary<BlockType::Derivative>();
 
+constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
 constexpr auto KProduct = KFixedArity<4, BlockType::Product>();
 constexpr auto KIntegral = KFixedArity<4, BlockType::Integral>();

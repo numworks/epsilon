@@ -127,25 +127,6 @@ struct KBinary : public KTree<Tag> {
   }
 };
 
-template <Block Tag>
-struct KTrinary : public KTree<Tag> {
-  template <Block... B1, Block... B2, Block... B3>
-  consteval auto operator()(KTree<B1...>, KTree<B2...>, KTree<B3...>) const {
-    return KTree<Tag, B1..., B2..., B3...>();
-  }
-
-  template <TreeCompatibleConcept A, TreeCompatibleConcept B,
-            TreeCompatibleConcept C>
-  consteval auto operator()(A a, B b, C c) const {
-    return KTrinary<Tag>()(KTree(a), KTree(b), KTree(c));
-  }
-
-  consteval const Tree* operator()(const Tree* a, const Tree* b,
-                                   const Tree* c) const {
-    return KTree<>();
-  }
-};
-
 template <class... Args>
 concept HasATreeConcept = (false || ... ||
                            std::is_same<const Tree*, Args>::value);

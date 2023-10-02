@@ -35,15 +35,19 @@ Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
       Tree::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
-float Expression::approximate() const {
-  float res;
+template <typename T>
+T Expression::approximate() const {
+  T res;
   send(
       [](const Tree *tree, void *res) {
-        float *result = static_cast<float *>(res);
-        *result = Approximation::To<float>(tree);
+        T *result = static_cast<T *>(res);
+        *result = Approximation::To<T>(tree);
       },
       &res);
   return res;
 }
+
+template float Expression::approximate<float>() const;
+template double Expression::approximate<double>() const;
 
 }  // namespace PoincareJ

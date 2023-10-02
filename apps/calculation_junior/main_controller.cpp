@@ -39,7 +39,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         PoincareJ::Expression::CreateSimplifyReduction(m_buffer.blocks());
     m_view.reductionLayoutView()->setLayout(m_reducedExpression.toLayout());
     // Approximate reduced expression
-    float approximation = m_reducedExpression.approximate();
+    float approximation = m_reducedExpression.approximate<float>();
     constexpr int bufferSize = 220;
     char buffer[bufferSize];
     Shared::PoincareHelpers::ConvertFloatToText<float>(

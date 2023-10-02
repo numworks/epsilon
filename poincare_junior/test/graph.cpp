@@ -22,7 +22,9 @@ Graph::Graph(const char* text) {
   m_function = PoincareJ::Expression::Parse(m_functionText);
 }
 
-float Graph::approximateAtAbscissa() const { return m_function.approximate(); }
+float Graph::approximateAtAbscissa() const {
+  return m_function.approximate<float>();
+}
 
 QUIZ_CASE(pcj_graph) {
   Graph graph("(1-2)/8/4");

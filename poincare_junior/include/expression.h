@@ -18,7 +18,8 @@ class Expression final : public Reference {
   static Expression Parse(const char* text);
   static Expression Parse(const Layout* layout);
   static Expression CreateSimplifyReduction(void* treeAddress);
-  float approximate() const;
+  template <typename T>
+  T approximate() const;
 
   static Poincare::Expression ToPoincareExpression(const Tree* exp);
   static Tree* FromPoincareExpression(Poincare::Expression exp);

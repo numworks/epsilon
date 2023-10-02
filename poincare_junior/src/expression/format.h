@@ -11,24 +11,19 @@ class Format {
   static Tree* FormatExpression(Tree* expression);
 
  private:
-  static void ConvertTextToLayout(EditionReference layoutParent,
-                                  const char* text);
-  static void ConvertBuiltinToLayout(EditionReference layoutParent,
-                                     Tree* expression);
-  static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
-                                            IntegerHandler handler,
-                                            int decimalOffset = 0);
-  static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
-                                           Tree* expression, CodePoint op);
-  static void ConvertMatrixToLayout(EditionReference layoutParent,
+  static void FormatText(EditionReference layoutParent, const char* text);
+  static void FormatBuiltin(EditionReference layoutParent, Tree* expression);
+  static void FormatIntegerHandler(EditionReference layoutParent,
+                                   IntegerHandler handler,
+                                   int decimalOffset = 0);
+  static void FormatInfixOperator(EditionReference layoutParent,
+                                  Tree* expression, CodePoint op);
+  static void FormatMatrix(EditionReference layoutParent, Tree* expression);
+  static void FormatUnit(EditionReference layoutParent, Tree* expression);
+  static void FormatPowerOrDivision(EditionReference layoutParent,
                                     Tree* expression);
-  static void ConvertUnitToLayout(EditionReference layoutParent,
-                                  Tree* expression);
-  static void ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
-                                             Tree* expression);
-  static void ConvertExpressionToLayout(EditionReference layoutParent,
-                                        Tree* expression,
-                                        bool allowParentheses = true);
+  static void FormatExpression(EditionReference layoutParent, Tree* expression,
+                               bool allowParentheses = true);
 };
 }  // namespace PoincareJ
 

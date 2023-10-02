@@ -15,6 +15,18 @@ size_t Pool::numberOfTrees() const {
   return result;
 }
 
+bool Pool::isRootNode(const Tree* node) const {
+  const Block* currentBlock = firstBlock();
+  const Block* targetBlock = node->block();
+  if (targetBlock >= lastBlock()) {
+    return false;
+  }
+  while (currentBlock < targetBlock) {
+    currentBlock = Tree::FromBlocks(currentBlock)->nextTree()->block();
+  }
+  return currentBlock == targetBlock;
+}
+
 // Reference Table
 
 uint16_t Pool::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {

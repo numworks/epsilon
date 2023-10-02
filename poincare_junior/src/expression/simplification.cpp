@@ -14,6 +14,7 @@
 #include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/expression/vector.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/placeholder.h>
@@ -812,31 +813,59 @@ bool ShouldApproximateOnSimplify(Dimension dimension) {
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
-  if (!Dimension::DeepCheckDimensions(ref)) {
-    ref->cloneTreeOverTree(KUndef);
-    return true;
+  /* If SimplifyLastTree assert fails, handle ref not being the last tree by
+   * copying it at the end, simplifying it and the move it over original tree.
+   */
+  return SimplifyLastTree(ref, projectionContext);
+}
+
+bool Simplification::SimplifyLastTree(Tree* ref,
+                                      ProjectionContext projectionContext) {
+  // ref must be the last tree on EditionPool
+  assert(SharedEditionPool->lastBlock() == ref->nextTree()->block());
+  ExceptionTry {
+    if (!Dimension::DeepCheckDimensions(ref)) {
+      // TODO: Raise appropriate exception in DeepCheckDimensions.
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    projectionContext.m_dimension = Dimension::GetDimension(ref);
+    if (ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
+      projectionContext.m_strategy = Strategy::ApproximateToFloat;
+    }
+    bool changed = false;
+    // TODO: Instead of bubbling it up, Raise in case of Undef or Nonreal.
+    changed =
+        Projection::DeepSystemProjection(ref, projectionContext) || changed;
+    Tree* variables = Variables::GetUserSymbols(ref);
+    SwapTrees(&ref, &variables);
+    Variables::ProjectToId(ref, variables);
+    changed = DeepSystematicReduce(ref) || changed;
+    changed = DeepApplyMatrixOperators(ref) || changed;
+    // TODO: Bubble up Matrices, complexes, units, lists.
+    changed = AdvancedReduction(ref, ref) || changed;
+    assert(!DeepSystematicReduce(ref));
+    assert(!DeepApplyMatrixOperators(ref));
+    changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
+    Variables::BeautifyToName(ref, variables);
+    variables->removeTree();
+    return changed;
   }
-  projectionContext.m_dimension = Dimension::GetDimension(ref);
-  if (ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
-    projectionContext.m_strategy = Strategy::ApproximateToFloat;
+  ExceptionCatch(type) {
+    switch (type) {
+      case ExceptionType::Nonreal:
+      case ExceptionType::ZeroPowerZero:
+      case ExceptionType::ZeroDivision:
+      case ExceptionType::Unhandled:
+        SharedEditionPool->flushFromNode(ref);
+        (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
+        return true;
+      case ExceptionType::PoolIsFull:
+        /* TODO: If simplification fails, try with a simpler projection
+         * context. */
+      default:
+        ExceptionCheckpoint::Raise(type);
+    }
   }
-  bool changed = false;
-  /* TODO: If simplification fails, come back to this step with a simpler
-   * projection context. */
-  changed = Projection::DeepSystemProjection(ref, projectionContext) || changed;
-  Tree* variables = Variables::GetUserSymbols(ref);
-  SwapTrees(&ref, &variables);
-  Variables::ProjectToId(ref, variables);
-  changed = DeepSystematicReduce(ref) || changed;
-  changed = DeepApplyMatrixOperators(ref) || changed;
-  // TODO: Bubble up Matrices, complexes, units, lists.
-  changed = AdvancedReduction(ref, ref) || changed;
-  assert(!DeepSystematicReduce(ref));
-  assert(!DeepApplyMatrixOperators(ref));
-  changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
-  Variables::BeautifyToName(ref, variables);
-  variables->removeTree();
-  return changed;
 }
 
 bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {

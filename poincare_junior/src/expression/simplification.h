@@ -85,6 +85,8 @@ class Simplification {
                                  int childIndex = 0);
 
  private:
+  static bool SimplifyLastTree(Tree *node,
+                               ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);
   EDITION_REF_WRAP(SimplifySwitch);
   static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);

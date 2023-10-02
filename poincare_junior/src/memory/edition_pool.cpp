@@ -97,6 +97,23 @@ void EditionPool::flush() {
 #endif
 }
 
+void EditionPool::flushFromNode(Tree *node) {
+  assert(isRootNode(node));
+  Block *block = node->block();
+  m_size = block - m_firstBlock;
+  m_referenceTable.updateNodes(
+      [](uint16_t *offset, Block *block, const Block *destination,
+         const Block *source, int size) {
+        if (destination <= block) {
+          *offset = ReferenceTable::InvalidatedOffset;
+        }
+      },
+      block, nullptr, 0);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "FlushFromNode", block);
+#endif
+}
+
 void EditionPool::executeAndDump(ActionWithContext action, void *context,
                                  const void *data, void *address, int maxSize,
                                  Relax relax) {

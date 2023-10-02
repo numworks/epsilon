@@ -259,20 +259,20 @@ void SumGraphController::LegendView::setEditableZone(double d) {
   m_editableZone.setText(buffer);
 }
 
+static Layout emptyValueLayout() {
+  Layout layout = HorizontalLayout::Builder();
+  static_cast<HorizontalLayout &>(layout).setEmptyVisibility(
+      EmptyRectangle::State::Hidden);
+  return layout;
+}
+
 static Layout valueLayout(double value, int bufferSize,
                           int numberOfSignificantDigits,
                           Preferences::PrintFloatMode displayMode) {
-  Layout layout;
-  if (std::isnan(value)) {
-    layout = HorizontalLayout::Builder();
-    static_cast<HorizontalLayout &>(layout).setEmptyVisibility(
-        EmptyRectangle::State::Hidden);
-  } else {
-    char buffer[bufferSize];
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-        value, buffer, bufferSize, numberOfSignificantDigits, displayMode);
-    layout = LayoutHelper::String(buffer, strlen(buffer));
-  }
+  char buffer[bufferSize];
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+      value, buffer, bufferSize, numberOfSignificantDigits, displayMode);
+  Layout layout = LayoutHelper::String(buffer, strlen(buffer));
   return layout;
 }
 
@@ -292,8 +292,10 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   assert(!std::isnan(end) || step != Step::Result);
   Layout startLayout = valueLayout(start, k_valuesBufferSize, k_valuesPrecision,
                                    k_valuesDisplayMode);
-  Layout endLayout = valueLayout(end, k_valuesBufferSize, k_valuesPrecision,
-                                 k_valuesDisplayMode);
+  Layout endLayout = step == Step::FirstParameter
+                         ? emptyValueLayout()
+                         : valueLayout(end, k_valuesBufferSize,
+                                       k_valuesPrecision, k_valuesDisplayMode);
   Layout sumLayout = CondensedSumLayout::Builder(
       CodePointLayout::Builder(sumSymbol), startLayout, endLayout);
   if (step == Step::Result) {

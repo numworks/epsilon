@@ -174,7 +174,8 @@ int Matrix::rank(Context *context, bool forceCanonization) {
     }
   }
 
-  if (!canonizationSuccess) {
+  if (!canonizationSuccess ||
+      m.recursivelyMatches(Expression::IsUndefined, context)) {
     return -1;
   }
 

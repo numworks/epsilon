@@ -11,7 +11,7 @@
 #ifndef _ExceptionCheckpointRaise_DECL_
 #define _ExceptionCheckpointRaise_DECL_
 extern "C" {
-void ExceptionCheckpointRaise();
+void ExceptionCheckpointRaise() __attribute__((__noreturn__));
 }
 #endif
 

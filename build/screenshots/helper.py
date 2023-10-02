@@ -80,7 +80,6 @@ def find_crc32_in_log(stdout):
 def compute_crc32(state_file, executable):
    print("Computing crc32 of", state_file)
    p = compute_crc32_process(state_file, executable)
-   print_error(p.stderr)
    return find_crc32_in_log(p.stdout)
 
 def store_crc32(crc32, crc_file):

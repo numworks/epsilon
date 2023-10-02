@@ -431,7 +431,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   if (m_degree == 2) {
     numberOfSolutions = Poincare::Polynomial::QuadraticPolynomialRoots(
         coefficients[2], coefficients[1], coefficients[0], x, x + 1, &delta,
-        reductionContext);
+        reductionContext, &solutionsAreApproximate);
   } else {
     assert(m_degree == 3);
     numberOfSolutions = Poincare::Polynomial::CubicPolynomialRoots(

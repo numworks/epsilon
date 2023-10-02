@@ -33,10 +33,12 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
                                          Expression c, Expression *root1,
                                          Expression *root2, Expression *delta,
                                          ReductionContext reductionContext,
-                                         bool approximateSolutions,
+                                         bool *approximateSolutions,
                                          bool beautifyRoots) {
   assert(root1 && root2 && delta);
   assert(!(a.isUninitialized() || b.isUninitialized() || c.isUninitialized()));
+
+  bool approximate = approximateSolutions ? *approximateSolutions : false;
 
   Context *context = reductionContext.context();
   ApproximationContext approximationContext(reductionContext);
@@ -82,14 +84,19 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
         Multiplication::Builder(Rational::Builder(2), a.clone()));
   }
 
-  if (!approximateSolutions) {
+  if (!approximate) {
     *root1 = root1->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
     *root2 = root2->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
     if (root1->type() == ExpressionNode::Type::Undefined ||
         (!multipleRoot && root2->type() == ExpressionNode::Type::Undefined)) {
       // Simplification has been interrupted, recompute approximated roots.
+      approximate = true;
+      if (approximateSolutions) {
+        *approximateSolutions = true;
+      }
       return QuadraticPolynomialRoots(a, b, c, root1, root2, delta,
-                                      reductionContext, true, beautifyRoots);
+                                      reductionContext, &approximate,
+                                      beautifyRoots);
     }
   } else {
     *root1 = root1->approximate<double>(approximationContext);
@@ -299,7 +306,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
                   .cloneAndSimplify(reductionContext);
     Expression delta2;
     QuadraticPolynomialRoots(a.clone(), beta, gamma, root2, root3, &delta2,
-                             reductionContext, false, beautifyRoots);
+                             reductionContext, nullptr, beautifyRoots);
     assert(!root2->isUninitialized() && !root3->isUninitialized());
   } else if (root1->isUninitialized()) {
     /* We did not manage to find any simple root : we resort to using Cardano's

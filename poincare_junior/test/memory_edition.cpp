@@ -12,42 +12,42 @@ QUIZ_CASE(pcj_edition_pool) {
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Tree* handingNode = k_expression;
   Tree* editedNode = pool->clone(handingNode);
-  assert(pool->size() == handingNode->treeSize());
-  assert(pool->numberOfTrees() == 1);
+  quiz_assert(pool->size() == handingNode->treeSize());
+  quiz_assert(pool->numberOfTrees() == 1);
 
   // References
-  assert(pool->nodeForIdentifier(pool->referenceNode(editedNode)) ==
-         editedNode);
+  quiz_assert(pool->nodeForIdentifier(pool->referenceNode(editedNode)) ==
+              editedNode);
 
   pool->flush();
-  assert(pool->size() == 0);
+  quiz_assert(pool->size() == 0);
 
   pool->push(BlockType::Zero);
   pool->push(BlockType::One);
-  assert(*pool->firstBlock() == BlockType::Zero &&
-         *(pool->lastBlock() - 1) == BlockType::One && pool->size() == 2);
+  quiz_assert(*pool->firstBlock() == BlockType::Zero &&
+              *(pool->lastBlock() - 1) == BlockType::One && pool->size() == 2);
   pool->popBlock();
-  assert(*(pool->lastBlock() - 1) == BlockType::Zero && pool->size() == 1);
+  quiz_assert(*(pool->lastBlock() - 1) == BlockType::Zero && pool->size() == 1);
   pool->replaceBlock(pool->firstBlock(), BlockType::Two);
-  assert(*pool->blockAtIndex(0) == BlockType::Two);
+  quiz_assert(*pool->blockAtIndex(0) == BlockType::Two);
   pool->insertBlock(pool->firstBlock(), BlockType::One);
-  assert(*pool->firstBlock() == BlockType::One && pool->size() == 2);
+  quiz_assert(*pool->firstBlock() == BlockType::One && pool->size() == 2);
   pool->insertBlocks(pool->blockAtIndex(2), pool->blockAtIndex(0), 2);
-  assert(*(pool->blockAtIndex(2)) == BlockType::One &&
-         *(pool->blockAtIndex(3)) == BlockType::Two && pool->size() == 4);
+  quiz_assert(*(pool->blockAtIndex(2)) == BlockType::One &&
+              *(pool->blockAtIndex(3)) == BlockType::Two && pool->size() == 4);
   pool->removeBlocks(pool->firstBlock(), 3);
-  assert(*(pool->firstBlock()) == BlockType::Two && pool->size() == 1);
+  quiz_assert(*(pool->firstBlock()) == BlockType::Two && pool->size() == 1);
   pool->push(BlockType::Zero);
   pool->push(BlockType::One);
   pool->push(BlockType::Half);
   //[ 2 0 1 1/2 ]--> [ 2 1 1/2 0 ]
   pool->moveBlocks(pool->firstBlock() + 1, pool->blockAtIndex(2), 2);
-  assert(*(pool->blockAtIndex(0)) == BlockType::Two &&
-         *(pool->blockAtIndex(1)) == BlockType::One &&
-         *(pool->blockAtIndex(2)) == BlockType::Half &&
-         *(pool->blockAtIndex(3)) == BlockType::Zero && pool->size() == 4);
-  assert(pool->contains(pool->blockAtIndex(2)));
-  assert(!pool->contains(pool->blockAtIndex(5)));
+  quiz_assert(*(pool->blockAtIndex(0)) == BlockType::Two &&
+              *(pool->blockAtIndex(1)) == BlockType::One &&
+              *(pool->blockAtIndex(2)) == BlockType::Half &&
+              *(pool->blockAtIndex(3)) == BlockType::Zero && pool->size() == 4);
+  quiz_assert(pool->contains(pool->blockAtIndex(2)));
+  quiz_assert(!pool->contains(pool->blockAtIndex(5)));
 }
 
 QUIZ_CASE(pcj_edition_reference) {
@@ -60,15 +60,15 @@ QUIZ_CASE(pcj_edition_reference) {
   // Operator ==
   EditionReference ref0;
   EditionReference ref1;
-  assert(ref0 == ref1);
-  assert(ref0.isUninitialized());
+  quiz_assert(ref0 == ref1);
+  quiz_assert(ref0.isUninitialized());
   ref0 = EditionReference(k_expr0);
-  assert(!ref0.isUninitialized());
-  assert(ref0 != ref1);
+  quiz_assert(!ref0.isUninitialized());
+  quiz_assert(ref0 != ref1);
   ref1 = EditionReference(ref0);
-  assert(ref0 == ref1);
+  quiz_assert(ref0 == ref1);
   ref1 = EditionReference(k_expr1);
-  assert(ref0 != ref1);
+  quiz_assert(ref0 != ref1);
 
   // Constructors
   ref0->clone();
@@ -155,7 +155,7 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
   /* The reference table is now full but we can reference a new node of another
    * one is out-dated. */
   reference0->removeTree();
-  assert(referenceSub0.isUninitialized());
+  quiz_assert(referenceSub0.isUninitialized());
   EditionReference reference2(2_e);
 }
 

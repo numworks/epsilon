@@ -9,14 +9,7 @@
 #include "../equation_store.h"
 #include "../system_of_equations.h"
 
-#define bring_in(prefix, value) static const prefix value = prefix::value;
-
-bring_in(::Solver::SystemOfEquations::Error, EquationUndefined);
-bring_in(::Solver::SystemOfEquations::Error, EquationNonreal);
-bring_in(::Solver::SystemOfEquations::Error, NoError);
-bring_in(::Solver::SystemOfEquations::Error, NonLinearSystem);
-bring_in(::Solver::SystemOfEquations::Error, RequireApproximateSolution);
-bring_in(::Solver::SystemOfEquations::Error, TooManyVariables);
+using enum PoincareJ::Solver::Error;
 
 // Custom assertions
 

@@ -412,6 +412,26 @@ void Matrix::ArrayRowCanonize(T *array, int numberOfRows, int numberOfColumns,
   int h = 0;  // row pivot
   int k = 0;  // column pivot
 
+  bool undef = false;
+  for (int row = 0; row < numberOfRows; row++) {
+    for (int col = 0; col < numberOfColumns; col++) {
+      if (std::isnan(std::abs(array[row * numberOfColumns + col]))) {
+        undef = true;
+        break;
+      }
+    }
+  }
+  if (undef) {
+    for (int row = 0; row < numberOfRows; row++) {
+      for (int col = 0; col < numberOfColumns; col++) {
+        array[row * numberOfColumns + col] *= static_cast<T>(NAN);
+        if (determinant) {
+          *determinant *= static_cast<T>(NAN);
+        }
+      }
+    }
+  }
+
   while (h < numberOfRows && k < numberOfColumns) {
     // Find the biggest pivot (in absolute value). See comment on rowCanonize.
     int iPivot_temp = h;

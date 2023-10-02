@@ -91,4 +91,9 @@ void StoreParameterController::viewWillAppear() {
   Shared::StoreParameterController::viewWillAppear();
 }
 
+I18n::Message StoreParameterController::sortMessage() {
+  return m_store->relativeColumn(m_column) == 1 ? I18n::Message::SortSizes
+                                                : I18n::Message::SortValues;
+}
+
 }  // namespace Statistics

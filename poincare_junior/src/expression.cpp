@@ -26,6 +26,11 @@ Expression Expression::Parse(const Layout *layout) {
       layout);
 }
 
+Expression Expression::Simplify(const Expression *input) {
+  return Expression([](Tree *input) { Simplification::Simplify(input); },
+                    input);
+}
+
 Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
   return Expression(
       [](Tree *tree) {
@@ -45,6 +50,27 @@ T Expression::approximate() const {
       },
       &res);
   return res;
+}
+
+Poincare::Expression Expression::toPoincareExpression() const {
+  Poincare::Expression res;
+  send(
+      [](const Tree *tree, void *res) {
+        Poincare::Expression *result = static_cast<Poincare::Expression *>(res);
+        *result = ToPoincareExpression(tree);
+      },
+      &res);
+  return res;
+}
+
+Expression Expression::FromPoincareExpression(const Poincare::Expression *exp) {
+  return Expression(
+      [](const void *data) {
+        const Poincare::Expression *expression =
+            static_cast<const Poincare::Expression *>(data);
+        PoincareJ::Expression::FromPoincareExpression(*expression);
+      },
+      exp, sizeof(Poincare::Expression));
 }
 
 template float Expression::approximate<float>() const;

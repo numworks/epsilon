@@ -17,10 +17,15 @@ class Expression final : public Reference {
   // TODO : Delete this method and adapt tests ?
   static Expression Parse(const char* text);
   static Expression Parse(const Layout* layout);
-  static Expression CreateSimplifyReduction(void* treeAddress);
+  static Expression Simplify(const Expression* input);
+  static Expression FromPoincareExpression(const Poincare::Expression* exp);
+
   template <typename T>
   T approximate() const;
+  Poincare::Expression toPoincareExpression() const;
 
+  // TODO: Hide/Remove this
+  static Expression CreateSimplifyReduction(void* treeAddress);
   static Poincare::Expression ToPoincareExpression(const Tree* exp);
   static Tree* FromPoincareExpression(Poincare::Expression exp);
 

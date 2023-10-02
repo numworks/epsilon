@@ -8,8 +8,6 @@
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/simplification.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -158,12 +156,12 @@ ExpiringPointer<Calculation> CalculationStore::push(
           inputText, &inputExpression, &exactOutputExpression,
           &approximateOutputExpression, context);
 #else
-      PoincareJ::Tree *tree =
-          PoincareJ::Expression::FromPoincareExpression(inputExpression);
-      PoincareJ::Simplification::Simplify(tree);
-      double approx = PoincareJ::Approximation::To<double>(tree);
-      exactOutputExpression = PoincareJ::Expression::ToPoincareExpression(tree);
-      tree->removeTree();
+      PoincareJ::Expression pcjInput =
+          PoincareJ::Expression::FromPoincareExpression(&inputExpression);
+      PoincareJ::Expression pcjExact =
+          PoincareJ::Expression::Simplify(&pcjInput);
+      double approx = pcjExact.approximate<double>();
+      exactOutputExpression = pcjExact.toPoincareExpression();
       exactOutputExpression = exactOutputExpression.addMissingParentheses();
       approximateOutputExpression = Poincare::Float<double>::Builder(approx);
 #endif

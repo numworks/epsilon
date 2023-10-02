@@ -16,7 +16,7 @@ class Polynomial {
                                       Expression* root1, Expression* root2,
                                       Expression* delta,
                                       ReductionContext reductionContext,
-                                      bool approximateSolutions = false,
+                                      bool* approximateSolutions = nullptr,
                                       bool beautifyRoots = true);
 
   static int CubicPolynomialRoots(Expression a, Expression b, Expression c,

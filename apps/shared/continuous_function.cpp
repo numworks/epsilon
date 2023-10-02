@@ -548,7 +548,7 @@ Expression ContinuousFunction::Model::expressionReduced(
         Expression root1, root2, delta;
         int solutions = Polynomial::QuadraticPolynomialRoots(
             coefficients[2], coefficients[1], coefficients[0], &root1, &root2,
-            &delta, reductionContext, false, false);
+            &delta, reductionContext, nullptr, false);
         if (solutions <= 1) {
           m_expression = root1;
         } else {

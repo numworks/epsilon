@@ -334,6 +334,7 @@ static void assert_might_overflow(ActionWithContext action, bool overflow) {
       ExceptionCheckpoint::Raise(type);
     }
   }
+  SharedEditionPool->flush();
 }
 
 static void assert_did_overflow(ActionWithContext action) {

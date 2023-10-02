@@ -1,9 +1,8 @@
 #ifndef POINCARE_MEMORY_EXCEPTION_CHECKPOINT_H
 #define POINCARE_MEMORY_EXCEPTION_CHECKPOINT_H
 
+#include <assert.h>
 #include <setjmp.h>
-
-#include "checkpoint.h"
 
 // Usage:
 // ExceptionTry {
@@ -52,7 +51,7 @@ enum class ExceptionType : int {
   Other,          // Used internally for Unit tests.
 };
 
-class ExceptionCheckpoint final : public Checkpoint {
+class ExceptionCheckpoint final {
  public:
   static void Raise(ExceptionType type) __attribute__((__noreturn__));
   static ExceptionType GetTypeAndClear();

@@ -18,7 +18,6 @@ ExceptionCheckpoint::~ExceptionCheckpoint() {
 void ExceptionCheckpoint::rollback() {
   // Next Raise will be handled by parent.
   s_topmostExceptionCheckpoint = m_parent;
-  Checkpoint::rollback();
   longjmp(m_jumpBuffer, 1);
 }
 

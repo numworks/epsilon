@@ -249,6 +249,7 @@ void EditionPool::execute(ActionWithContext action, void *context,
       if (type != ExceptionType::PoolIsFull) {
         ExceptionCheckpoint::Raise(type);
       }
+      SharedEditionPool->flush();
       if (!relax(context)) {
         /* Relax the context and try again or re-raise. */
         ExceptionCheckpoint::Raise(type);

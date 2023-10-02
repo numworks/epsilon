@@ -3,8 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/reference.h>
 
 namespace PoincareJ {
@@ -22,29 +20,10 @@ class Expression final : public Reference {
   Layout toLayout() const;
   float approximate() const;
 
-  static EditionReference EditionPoolExpressionToLayout(Tree* expression);
   static Poincare::Expression ToPoincareExpression(const Tree* exp);
   static Tree* FromPoincareExpression(Poincare::Expression exp);
 
  private:
-  static void ConvertTextToLayout(EditionReference layoutParent,
-                                  const char* text);
-  static void ConvertBuiltinToLayout(EditionReference layoutParent,
-                                     Tree* expression);
-  static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
-                                            IntegerHandler handler,
-                                            int decimalOffset = 0);
-  static void ConvertInfixOperatorToLayout(EditionReference layoutParent,
-                                           Tree* expression, CodePoint op);
-  static void ConvertMatrixToLayout(EditionReference layoutParent,
-                                    Tree* expression);
-  static void ConvertUnitToLayout(EditionReference layoutParent,
-                                  Tree* expression);
-  static void ConvertPowerOrDivisionToLayout(EditionReference layoutParent,
-                                             Tree* expression);
-  static void ConvertExpressionToLayout(EditionReference layoutParent,
-                                        Tree* expression,
-                                        bool allowParentheses = true);
   static void PushPoincareExpression(Poincare::Expression exp);
 };
 

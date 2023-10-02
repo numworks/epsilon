@@ -3,6 +3,7 @@
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
+#include <poincare_junior/src/expression/format.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/rational.h>
@@ -19,8 +20,7 @@
 namespace PoincareJ {
 
 Poincare::Expression ToPoincareExpressionViaParse(const Tree *exp) {
-  EditionReference outputLayout =
-      Expression::EditionPoolExpressionToLayout(exp->clone());
+  EditionReference outputLayout = Format::FormatExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;

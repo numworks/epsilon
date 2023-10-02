@@ -90,7 +90,7 @@ bool AreaBetweenCurvesParameterController::handleEvent(
     m_areaGraphController->setSecondRecord(secondRecord);
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
-        true);
+        false);
     stack->push(m_areaGraphController);
     return true;
   }

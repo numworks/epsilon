@@ -33,10 +33,7 @@ Expression Expression::Simplify(const Expression *input) {
 
 Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
   return Expression(
-      [](Tree *tree) {
-        EditionReference reference(tree);
-        Simplification::Simplify(reference);
-      },
+      [](Tree *tree) { Simplification::Simplify(tree); },
       Tree::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }
 

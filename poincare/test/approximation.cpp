@@ -498,6 +498,8 @@ QUIZ_CASE(poincare_approximation_function) {
                                            Cartesian, 6);
   assert_expression_approximates_to<double>("det([[1,23,3][4,5,6][7,8,9]])",
                                             "126");
+  assert_expression_approximates_to<double>("det([[1,undef][4,6]])",
+                                            Undefined::Name());
 
   // FIXME: the determinant computation is not precised enough to be displayed
   // with 7 significant digits
@@ -743,6 +745,8 @@ QUIZ_CASE(poincare_approximation_function) {
                                            "[[1,1.1,1][0,1,-0.5][0,0,1]]");
   assert_expression_approximates_to<float>("rref([[0,2,-1][5,6,7][10,11,10]])",
                                            "[[1,0,0][0,1,0][0,0,1]]");
+  assert_expression_approximates_to<float>("ref([[0,-1][undef,10]])",
+                                           "[[undef,undef][undef,undef]]");
 
   assert_expression_approximates_to<float>("cross([[1][2][3]],[[4][7][8]])",
                                            "[[-5][4][-1]]");

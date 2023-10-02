@@ -23,23 +23,18 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    // Reset reduction layout before altering m_buffer
     m_view.reductionLayoutView()->setLayout(PoincareJ::Layout());
-    /* Create temporary Layout and expression to dump into m_buffer.blocks().
-     * TODO : CreateSimplifyReduction from expressions. */
-    PoincareJ::Layout tempLayout = m_view.layoutField()->layout();
-    PoincareJ::Expression tempExpression =
-        PoincareJ::Expression::Parse(&tempLayout);
-    if (tempExpression.isUninitialized()) {
+    PoincareJ::Layout inputLayout = m_view.layoutField()->layout();
+    PoincareJ::Expression inputExpression =
+        PoincareJ::Expression::Parse(&inputLayout);
+    if (inputExpression.isUninitialized()) {
       return false;
     }
-    tempExpression.dumpAt(m_buffer.blocks());
-    // The reduced expression has to live somewhere so layout can be initialized
-    m_reducedExpression =
-        PoincareJ::Expression::CreateSimplifyReduction(m_buffer.blocks());
-    m_view.reductionLayoutView()->setLayout(m_reducedExpression.toLayout());
+    PoincareJ::Expression reducedExpression =
+        PoincareJ::Expression::Simplify(&inputExpression);
+    m_view.reductionLayoutView()->setLayout(reducedExpression.toLayout());
     // Approximate reduced expression
-    float approximation = m_reducedExpression.approximate<float>();
+    float approximation = reducedExpression.approximate<float>();
     constexpr int bufferSize = 220;
     char buffer[bufferSize];
     Shared::PoincareHelpers::ConvertFloatToText<float>(
@@ -58,7 +53,6 @@ MainController::ContentView::ContentView(
     Escher::Responder* parentResponder,
     ExpressionFieldDelegateApp* expressionFieldDelegateApp)
     : View(),
-      m_buffer(""),
       m_layoutField(parentResponder, expressionFieldDelegateApp),
       m_reductionLayoutView(),
       m_approximationView(

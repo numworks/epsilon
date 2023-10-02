@@ -41,19 +41,11 @@ class MainController : public Escher::ViewController {
       return &m_approximationView;
     }
 
-    constexpr static int k_bufferSize = 220;
-    char m_buffer[k_bufferSize];
     LayoutField m_layoutField;
     ExpressionView m_reductionLayoutView;
     Escher::BufferTextView m_approximationView;
   };
   ContentView m_view;
-
-  // Used by m_reducedExpression initializer
-  constexpr static int k_bufferSize = 128;
-  PoincareJ::BlockBuffer<k_bufferSize> m_buffer;
-  // Used by m_reductionLayoutView::m_layout initializer
-  PoincareJ::Expression m_reducedExpression;
 };
 
 }  // namespace CalculationJunior

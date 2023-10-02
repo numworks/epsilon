@@ -33,9 +33,6 @@ Expression MatrixComplexNode<T>::complexToExpression(
     if (c->type() == EvaluationNode<T>::Type::Complex) {
       childExpression = c->complexToExpression(complexFormat);
     }
-    if (childExpression.isUndefined()) {
-      return Undefined::Builder();
-    }
     matrix.addChildAtIndexInPlace(childExpression, i, i);
     i++;
   }

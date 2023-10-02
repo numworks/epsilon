@@ -177,6 +177,9 @@ uint16_t Reference::id() const {
   assert(isCacheReference());
   const Tree *tree = CachePool::SharedCachePool->nodeForIdentifier(m_id);
   if (!tree) {
+    /* TODO: executeAndCache handle Relax operations which are not used in
+     * References. This could be a Reference property like the initializer and
+     * be passed here, which could be useful for simplification strategies. */
     m_id = SharedEditionPool->executeAndCache(m_initializer, m_subInitializer,
                                               m_data.data());
   }

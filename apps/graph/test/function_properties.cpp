@@ -833,11 +833,13 @@ QUIZ_CASE(graph_function_properties) {
 }
 
 QUIZ_CASE(graph_function_properties_with_predefined_variables) {
+#if 0
   constexpr static FunctionProperties k_horizontalLineProperties =
       FunctionProperties{
           .m_caption = I18n::Message::HorizontalLineType,
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::HorizontalLine};
+#endif
 
   constexpr static FunctionProperties k_lineProperties = FunctionProperties{
       .m_caption = I18n::Message::LineType,

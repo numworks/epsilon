@@ -30,7 +30,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
        event == Ion::Events::UpperT) &&
       m_messageTreeModel->label() == I18n::Message::About &&
-      selectedRow() == Row(k_hardwareTestCell) &&
+      selectedRow() == hardwareTestRow() &&
       !Poincare::Preferences::sharedPreferences->examMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();
@@ -103,6 +103,12 @@ void AboutController::viewWillAppear() {
     m_cells[Row(CellType::FCCID)].setVisible(false);
   }
   GenericSubController::viewWillAppear();
+}
+
+int AboutController::hardwareTestRow() const {
+  return m_cells[Row(CellType::FCCID)].isVisible()
+             ? Row(CellType::FCCID)
+             : Row(CellType::SerialNumber);
 }
 
 }  // namespace Settings

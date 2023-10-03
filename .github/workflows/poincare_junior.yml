@@ -54,7 +54,7 @@ jobs:
               });
             }
       - name: Check for failures
-        run: grep --invert-match --silent broken comment.md
+        run: "! grep --silent broken comment.md"
       - name: Upload logs
         uses: actions/upload-artifact@v3
         with:

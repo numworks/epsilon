@@ -30,20 +30,20 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
        event == Ion::Events::UpperT) &&
       m_messageTreeModel->label() == I18n::Message::About &&
-      selectedRow() == k_hardwareTestCellIndex &&
+      selectedRow() == Row(k_hardwareTestCell) &&
       !Poincare::Preferences::sharedPreferences->examMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (selectedRow() == k_versionCellIndex) {
+    if (selectedRow() == Row(CellType::Version)) {
       /* When pressing OK on the version cell, the display cycles between
        * Epsilon version number, the commit hash for this build of Epsilon, the
        * PCB revision number, the flags used at compilation and the bootloader
        * running on the device. */
       assert(m_selectableListView.selectedCell() ==
-             m_cells + k_versionCellIndex);
+             m_cells + Row(CellType::Version));
 
       using TextGetter = const char *(*)();
       constexpr TextGetter k_textGettersCycle[] = {
@@ -51,10 +51,11 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
           &Ion::compilationFlags, &Ion::runningBootloader};
       constexpr int k_nGetters = std::size(k_textGettersCycle);
 
-      const char *previousText = m_cells[k_versionCellIndex].subLabel()->text();
+      const char *previousText =
+          m_cells[Row(CellType::Version)].subLabel()->text();
       for (int i = 0; i < k_nGetters; i++) {
         if (strcmp(previousText, k_textGettersCycle[i]()) == 0) {
-          m_cells[k_versionCellIndex].subLabel()->setText(
+          m_cells[Row(CellType::Version)].subLabel()->setText(
               k_textGettersCycle[(i + 1) % k_nGetters]());
           // Reload frame with new text length
           m_selectableListView.reloadSelectedCell(true);
@@ -64,7 +65,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       assert(false);  // Text not found in cycle
     }
 #if TERMS_OF_USE
-    if (selectedRow() == k_termsOfUseCellIndex) {
+    if (selectedRow() == Row(CellType::TermOfUse)) {
       Ion::Events::openURL(I18n::translate(I18n::Message::TermsOfUseLink));
       return true;
     }

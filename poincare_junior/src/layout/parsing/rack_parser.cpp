@@ -157,7 +157,7 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,       // Token::Type::EndOfStream
       &RackParser::parseRightwardsArrow,  // Token::Type::RightwardsArrow
-      &RackParser::parseAssigmentEqual,   // Token::Type::AssignmentEqual
+      &RackParser::parseAssignmentEqual,  // Token::Type::AssignmentEqual
       &RackParser::parseUnexpected,       // Token::Type::RightBracket
       &RackParser::parseUnexpected,       // Token::Type::RightParenthesis
       &RackParser::parseUnexpected,       // Token::Type::RightBrace
@@ -595,8 +595,8 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
   // }
 }
 
-void RackParser::parseAssigmentEqual(EditionReference &leftHandSide,
-                                     Token::Type stoppingType) {
+void RackParser::parseAssignmentEqual(EditionReference &leftHandSide,
+                                      Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Comparison operator must have a left operand
     return;

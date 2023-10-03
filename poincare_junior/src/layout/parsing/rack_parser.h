@@ -97,8 +97,8 @@ class RackParser {
                   Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(EditionReference& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  void parseAssigmentEqual(EditionReference& leftHandSide,
-                           Token::Type stoppingType = (Token::Type)0);
+  void parseAssignmentEqual(EditionReference& leftHandSide,
+                            Token::Type stoppingType = (Token::Type)0);
   void parseLogicalOperatorNot(EditionReference& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
   // void parseAndOperator(EditionReference& leftHandSide,

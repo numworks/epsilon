@@ -59,7 +59,7 @@ QUIZ_CASE(pcj_cache_pool) {
   assert_pools_tree_sizes_are(1, 1);
   {
     EditionReference ref(SharedEditionPool->firstBlock());
-    cachePool->freeBlocks(1, false);
+    cachePool->freeBlocks(1);
     assert_trees_are_equal(ref, bigTree);
   }
   assert_pools_tree_sizes_are(0, 1);
@@ -80,11 +80,7 @@ QUIZ_CASE(pcj_cache_pool) {
 
 const Tree *lastCachePoolTree() {
   CachePool *cachePool = CachePool::SharedCachePool;
-  Tree *lastTree = Tree::FromBlocks(cachePool->firstBlock());
-  for (size_t i = 1; i < cachePool->numberOfTrees(); i++) {
-    lastTree = lastTree->nextTree();
-  }
-  return lastTree;
+  return Tree::FromBlocks(cachePool->firstBlock());
 }
 
 QUIZ_CASE(pcj_cache_pool_limits) {
@@ -153,7 +149,7 @@ QUIZ_CASE(pcj_cache_references) {
             SharedEditionPool->push<BlockType::Addition>(2));
       },
       &reference1);
-  assert_check_cache_reference(reference2, {5_e, KAdd(5_e, 6_e)});
+  assert_check_cache_reference(reference2, {KAdd(5_e, 6_e), 5_e});
 
   Reference reference3(
       [](const char *string) {

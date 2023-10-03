@@ -20,7 +20,7 @@ class EditionPool final : public Pool {
         m_numberOfBlocks(numberOfBlocks),
         m_size(size) {}
 
-  void reinit(Block *firstBlock, size_t size);
+  void setSize(size_t size);
 
   uint16_t referenceNode(Tree *node);
   void flush();
@@ -84,7 +84,7 @@ class EditionPool final : public Pool {
   void execute(ActionWithContext action, void *context, const void *data,
                int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
-  bool checkForEnoughSpace(size_t numberOfRequiredBlock);
+  void checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_MEMORY_TREE_LOG
   const char *name() override { return "Edition"; }
 #endif

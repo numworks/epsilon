@@ -24,7 +24,7 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {
     m_length++;
   }
   nodeOffsetArray()[index] = static_cast<uint16_t>(
-      static_cast<Block*>(node->block()) - m_pool->firstBlock());
+      static_cast<Block*>(node->block()) - m_pool->referenceBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
   assert(m_pool->contains(node->block()) ||
          node->block() == m_pool->lastBlock());
@@ -41,8 +41,7 @@ Tree* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (offset == InvalidatedOffset) {
     return nullptr;
   }
-  assert(offset <= m_pool->size());
-  return Tree::FromBlocks(m_pool->firstBlock() + offset);
+  return Tree::FromBlocks(m_pool->referenceBlock() + offset);
 }
 
 bool Pool::ReferenceTable::reset() {

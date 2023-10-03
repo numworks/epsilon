@@ -54,7 +54,7 @@ enum class ExceptionType : int {
 
 class ExceptionCheckpoint final : public Checkpoint {
  public:
-  static void Raise(ExceptionType type);
+  static void Raise(ExceptionType type) __attribute__((__noreturn__));
   static ExceptionType GetTypeAndClear();
 
   ExceptionCheckpoint() : m_parent(s_topmostExceptionCheckpoint) {

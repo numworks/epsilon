@@ -20,9 +20,7 @@ Tree *CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
 }
 
 uint16_t CachePool::ReferenceTable::storeNode(Tree *node) {
-  if (isFull()) {
-    removeFirstReferences(1, &node);
-  }
+  assert(!isFull());
   uint16_t indexOfNode = Pool::ReferenceTable::storeNodeAtIndex(node, m_length);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Cache, "Add", node->block(), node->treeSize());
@@ -45,11 +43,11 @@ bool CachePool::ReferenceTable::freeOldestBlocks(
   if (numberOfFreedBlocks < numberOfRequiredFreeBlocks) {
     return false;
   }
-  removeFirstReferences(newFirstIndex);
+  removeLastReferences(newFirstIndex);
   return true;
 }
 
-uint16_t CachePool::ReferenceTable::lastOffset() const {
+uint16_t CachePool::ReferenceTable::firstOffset() const {
   assert(!isEmpty());
   return m_nodeOffsetForIdentifier[m_length - 1];
 }
@@ -59,27 +57,23 @@ bool CachePool::ReferenceTable::reset() {
   return Pool::ReferenceTable::reset();
 }
 
-void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
-                                                      Tree **nodeToUpdate) {
+void CachePool::ReferenceTable::removeLastReferences(uint16_t newFirstIndex) {
   // Compute before corrupting the reference table
   size_t cachePoolSize = m_pool->size();
-  uint16_t numberOfFreedBlocks = newFirstIndex == m_length
-                                     ? cachePoolSize
-                                     : m_nodeOffsetForIdentifier[newFirstIndex];
+  uint16_t numberOfFreedBlocks =
+      newFirstIndex == m_length
+          ? cachePoolSize
+          : k_maxNumberOfBlocks - m_nodeOffsetForIdentifier[newFirstIndex - 1];
   memmove(&m_nodeOffsetForIdentifier[0],
           &m_nodeOffsetForIdentifier[newFirstIndex],
           sizeof(uint16_t) * (m_length - newFirstIndex));
   m_length -= newFirstIndex;
   m_startIdentifier += newFirstIndex;
   for (int i = 0; i < m_length; i++) {
-    m_nodeOffsetForIdentifier[i] -= numberOfFreedBlocks;
+    m_nodeOffsetForIdentifier[i] += numberOfFreedBlocks;
   }
-  if (nodeToUpdate) {
-    *nodeToUpdate =
-        Tree::FromBlocks((*nodeToUpdate)->block() - numberOfFreedBlocks);
-  }
-  static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
-                                              cachePoolSize);
+  static_cast<CachePool *>(m_pool)->translate(
+      numberOfFreedBlocks, m_pool->lastBlock() - cachePoolSize);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Cache, "Remove", m_pool->firstBlock(), numberOfFreedBlocks);
 #endif
@@ -93,27 +87,32 @@ uint16_t CachePool::storeEditedTree() {
   if (SharedEditionPool->size() == 0) {
     return ReferenceTable::NoNodeIdentifier;
   }
-  uint16_t id = m_referenceTable.storeNode(Tree::FromBlocks(lastBlock()));
+  if (m_referenceTable.isFull()) {
+    m_referenceTable.removeLastReferences(1);
+  }
+  Tree *tree = Tree::FromBlocks(m_blocks);
+  size_t len = tree->treeSize();
+  Tree *dest = Tree::FromBlocks(firstBlock() - len);
+  // Calling EditionPool move would edit EditionReferences
+  memmove(dest, tree, len);
+  uint16_t id = m_referenceTable.storeNode(dest);
   assert(id != ReferenceTable::NoNodeIdentifier);
-  resetEditionPool();
   SharedEditionPool->flush();
+  resizeEditionPool();
   return id;
 }
 
-bool CachePool::freeBlocks(int numberOfBlocks, bool flushEditionPool) {
+bool CachePool::freeBlocks(int numberOfBlocks) {
   if (numberOfBlocks > k_maxNumberOfBlocks ||
       !m_referenceTable.freeOldestBlocks(numberOfBlocks)) {
     return false;
-  }
-  if (flushEditionPool) {
-    SharedEditionPool->flush();
   }
   return true;
 }
 
 void CachePool::reset() {
   m_referenceTable.reset();
-  SharedEditionPool->reinit(lastBlock(), k_maxNumberOfBlocks);
+  SharedEditionPool->setSize(k_maxNumberOfBlocks);
   SharedEditionPool->flush();
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Cache, "Flush");
@@ -126,15 +125,13 @@ CachePool::CachePool() : m_referenceTable(this) {
       k_maxNumberOfBlocks);
 }
 
-void CachePool::resetEditionPool() {
-  SharedEditionPool->reinit(lastBlock(), k_maxNumberOfBlocks - size());
+void CachePool::resizeEditionPool() {
+  SharedEditionPool->setSize(k_maxNumberOfBlocks - size());
 }
 
-void CachePool::translate(uint16_t offset, size_t cachePoolSize) {
-  Block *newFirst = m_blocks + offset;
-  memmove(m_blocks, newFirst,
-          (cachePoolSize + SharedEditionPool->size()) * sizeof(TypeBlock));
-  resetEditionPool();
+void CachePool::translate(uint16_t offset, Block *start) {
+  memmove(start + offset, start, lastBlock() - start - offset);
+  resizeEditionPool();
 }
 
 }  // namespace PoincareJ

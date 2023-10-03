@@ -20,22 +20,25 @@ class CachePool final : public Pool {
 
   uint16_t storeEditedTree();
 
-  bool freeBlocks(int numberOfBlocks, bool flushEditionPool = true);
+  bool freeBlocks(int numberOfBlocks);
   /* reset should be used when all CacheReference have been destroyed to ensure
    * that they won't point to reallocated nodes */
   void reset();
 
   using Pool::firstBlock;
-  const Block *firstBlock() const override { return m_blocks; }
+  const Block *firstBlock() const override {
+    return m_referenceTable.isEmpty()
+               ? lastBlock()
+               : Tree::FromBlocks(m_blocks + m_referenceTable.firstOffset())
+                     ->block();
+  }
   using Pool::lastBlock;
   // If CachePool is empty, first and last blocks are the same one
   const Block *lastBlock() const override {
-    return m_referenceTable.isEmpty()
-               ? m_blocks
-               : Tree::FromBlocks(m_blocks + m_referenceTable.lastOffset())
-                     ->nextTree()
-                     ->block();
+    return m_blocks + k_maxNumberOfBlocks;
   }
+
+  Block *referenceBlock() override { return m_blocks; }
 
   // Broader implementation of Pool::contains, checking unused pool as well
   bool mayContain(const Block *block) const {
@@ -47,8 +50,8 @@ class CachePool final : public Pool {
 
  private:
   CachePool();
-  void translate(uint16_t offset, size_t cachePoolSize);
-  void resetEditionPool();
+  void translate(uint16_t offset, Block *start);
+  void resizeEditionPool();
 #if POINCARE_MEMORY_TREE_LOG
   const char *name() override { return "Cache"; }
 #endif
@@ -77,8 +80,9 @@ class CachePool final : public Pool {
     uint16_t storeNode(Tree *node) override;
     // Returns a boolean indicating if we can free numberOfRequiredFreeBlocks
     bool freeOldestBlocks(int numberOfRequiredFreeBlocks);
-    uint16_t lastOffset() const;
+    uint16_t firstOffset() const;
     bool reset() override;
+    void removeLastReferences(uint16_t newFirstIndex);
 
    private:
     size_t maxNumberOfReferences() const override {
@@ -109,8 +113,6 @@ class CachePool final : public Pool {
       }
       return id - m_startIdentifier;
     }
-    void removeFirstReferences(uint16_t newFirstIndex,
-                               Tree **nodeToUpdate = nullptr);
     uint16_t m_nodeOffsetForIdentifier[CachePool::k_maxNumberOfReferences];
     uint16_t m_startIdentifier;
   };

@@ -37,6 +37,9 @@ class Pool {
   size_t size() const { return lastBlock() - firstBlock(); }
   size_t numberOfTrees() const;
 
+  // Offset in the ReferenceTable are relative to the referenceBlock
+  virtual Block *referenceBlock() { return firstBlock(); };
+
 #if POINCARE_MEMORY_TREE_LOG
   enum class LogFormat { Flat, Tree };
 #endif

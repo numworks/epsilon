@@ -80,8 +80,8 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
 
 OMG::GlobalBox<EditionPool> EditionPool::SharedEditionPool;
 
-void EditionPool::reinit(Block *firstBlock, size_t size) {
-  m_firstBlock = firstBlock;
+void EditionPool::setSize(size_t size) {
+  assert(m_numberOfBlocks <= size);
   m_size = size;
 }
 
@@ -134,9 +134,7 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   if (destination == source || numberOfBlocks == 0) {
     return true;
   }
-  if (!checkForEnoughSpace(numberOfBlocks)) {
-    return false;
-  }
+  checkForEnoughSpace(numberOfBlocks);
   size_t insertionSize = numberOfBlocks * sizeof(Block);
   if (at && destination == lastBlock()) {
     m_numberOfBlocks += numberOfBlocks;
@@ -251,15 +249,8 @@ void EditionPool::execute(ActionWithContext action, void *context,
       if (type != ExceptionType::PoolIsFull) {
         ExceptionCheckpoint::Raise(type);
       }
-      /* TODO: assert that we don't delete last called treeForIdentifier
-       * otherwise can't copyTreeFromAddress if in cache... */
-      int size = fullSize();
-      // Free blocks and try again.
-      if ((size >= maxSize || !CachePool::SharedCachePool->freeBlocks(
-                                  std::min(size, maxSize - size))) &&
-          !relax(context)) {
-        /* TODO: If no more blocks can be freed, try relaxing the context and
-         * try again. Otherwise, raise again. */
+      if (!relax(context)) {
+        /* Relax the context and try again or re-raise. */
         ExceptionCheckpoint::Raise(type);
       }
     }
@@ -284,12 +275,17 @@ Tree *EditionPool::push(Types... args) {
   return Tree::FromBlocks(newNode);
 }
 
-bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
+void EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
-    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
-    return false;
+    // Ask the cache to free some space
+    /* TODO: assert that we don't delete last called treeForIdentifier otherwise
+     * can't copyTreeFromAddress if in cache... */
+    if (!CachePool::SharedCachePool->freeBlocks(
+            m_numberOfBlocks + numberOfRequiredBlock - m_size)) {
+      ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+    }
   }
-  return true;
+  assert(m_numberOfBlocks + numberOfRequiredBlock <= m_size);
 }
 
 template Tree *EditionPool::push<BlockType::Addition, int>(int);

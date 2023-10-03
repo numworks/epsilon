@@ -118,13 +118,8 @@ Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
 
 Expression SimplificationHelper::shallowReduceBanningUnits(Expression e) {
   // Generically, an Expression does not accept any Unit in its children.
-  const int childrenCount = e.numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    Expression unit;
-    Expression childI = e.childAtIndex(i).removeUnit(&unit);
-    if (childI.isUndefined() || !unit.isUninitialized()) {
-      return e.replaceWithUndefinedInPlace();
-    }
+  if (e.hasUnit()) {
+    return e.replaceWithUndefinedInPlace();
   }
   return Expression();
 }

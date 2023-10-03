@@ -1,8 +1,8 @@
 #include "builtin.h"
 
+#include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/k_tree.h>
-
-#include "poincare_junior/src/memory/edition_pool.h"
+#include <poincare_junior/src/memory/type_block.h>
 
 namespace PoincareJ {
 
@@ -43,6 +43,17 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Dependency, "dep"},
 };
 
+constexpr static Aliases s_customIdentifiers[] = {
+    BuiltinsAliases::k_thetaAliases,
+};
+
+constexpr static Builtin s_specialIdentifiers[] = {
+    {BlockType::Undefined, "undef"},
+    {BlockType::Nonreal, "nonreal"},
+};
+
+Tree *Builtin::pushNode() const { return SharedEditionPool->push(first); }
+
 bool Builtin::IsBuiltin(BlockType type) {
   for (auto &[block, aliases] : s_builtins) {
     if (block == type) {
@@ -70,6 +81,24 @@ bool Builtin::HasReservedFunction(UnicodeDecoder *name) {
   return false;
 }
 
+bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
+  for (Aliases aliases : s_customIdentifiers) {
+    if (aliases.contains(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Builtin::HasSpecialIdentifier(UnicodeDecoder *name) {
+  for (auto [block, aliases] : s_specialIdentifiers) {
+    if (aliases.contains(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
   for (const Builtin &builtin : s_builtins) {
     if (builtin.second.contains(name)) {
@@ -88,9 +117,18 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
   assert(false);
 }
 
-bool Builtin::Promote(Tree *parameterList, TypeBlock type) {
-  parameterList->moveNodeOverNode(SharedEditionPool->push(type));
-  if (type.isParametric()) {
+const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
+  for (const Builtin &builtin : s_specialIdentifiers) {
+    if (builtin.second.contains(name)) {
+      return &builtin;
+    }
+  }
+  assert(false);
+}
+
+bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
+  parameterList->moveNodeOverNode(builtin->pushNode());
+  if (TypeBlock(builtin->blockType()).isParametric()) {
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
   }

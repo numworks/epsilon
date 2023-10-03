@@ -940,7 +940,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     return;
   }
 
-  Builtin::Promote(leftHandSide, builtin->blockType());
+  Builtin::Promote(leftHandSide, builtin);
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args
     return;
@@ -974,10 +974,11 @@ void RackParser::parseSequence(EditionReference &leftHandSide, const char *name,
 void RackParser::parseSpecialIdentifier(EditionReference &leftHandSide,
                                         Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  // leftHandSide = ParsingHelper::GetIdentifierBuilder(m_currentToken.text(),
-  // m_currentToken.length())();
+  RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
+  const Builtin *builtin = Builtin::GetSpecialIdentifier(&decoder);
+  leftHandSide = builtin->pushNode();
+  assert(leftHandSide->numberOfChildren() == 0);
   isThereImplicitOperator();
-  return;
 }
 
 void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,

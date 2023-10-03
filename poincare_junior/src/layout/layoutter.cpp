@@ -229,6 +229,9 @@ void Layoutter::LayoutExpression(EditionReference &layoutParent,
       assert(Symbol::Length(expression) == 1);
       PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));
       break;
+    case BlockType::Nonreal:
+      LayoutText(layoutParent, "nonreal");
+      break;
     case BlockType::Undefined:
       LayoutText(layoutParent, "undef");
       break;

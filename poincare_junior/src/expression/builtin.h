@@ -12,20 +12,24 @@ class Builtin : public std::pair<BlockType, Aliases> {
   using pair::pair;
   const BlockType blockType() const { return first; }
   const Aliases* aliases() const { return &second; }
+  Tree* pushNode() const;
   static bool IsBuiltin(BlockType type);
   static Aliases Name(BlockType type);
   static Aliases Name(const Tree* node) { return Name(node->type()); }
   static bool HasReservedFunction(UnicodeDecoder* name);
+  static bool HasCustomIdentifier(UnicodeDecoder* name);
+  static bool HasSpecialIdentifier(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(BlockType type);
+  static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
   static uint8_t MinNumberOfParameters(BlockType type) {
     return TypeBlock::NumberOfChildren(type);
   }
   static uint8_t MaxNumberOfParameters(BlockType type) {
     return MinNumberOfParameters(type);
   }
-  static bool Promote(Tree* parameterList, TypeBlock type);
-  EDITION_REF_WRAP_1(Promote, TypeBlock);
+  static bool Promote(Tree* parameterList, const Builtin* builtin);
+  EDITION_REF_WRAP_1(Promote, const Builtin*);
 };
 
 namespace BuiltinsAliases {

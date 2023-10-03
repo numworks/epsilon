@@ -395,13 +395,6 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     *length = identifierLength;
     return true;
   }
-#if 0
-  if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
-    *returnType = Token::Type::SpecialIdentifier;
-    *length = identifierLength;
-    return true;
-  }
-#endif
   return false;
 }
 
@@ -431,8 +424,11 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
 #endif
 
   RackLayoutDecoder subString(m_decoder.mainLayout(), string, string + *length);
-  if (BuiltinsAliases::k_thetaAliases.contains(&subString)) {
+  if (Builtin::HasCustomIdentifier(&subString)) {
     return Token::Type::CustomIdentifier;
+  }
+  if (Builtin::HasSpecialIdentifier(&subString)) {
+    return Token::Type::SpecialIdentifier;
   }
 #if 0
   Token::Type logicalOperatorType;

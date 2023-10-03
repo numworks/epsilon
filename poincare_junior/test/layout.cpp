@@ -1,9 +1,9 @@
 #include <kandinsky/ion_context.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/format.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/layout/k_tree.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
 
 #include "helper.h"
@@ -28,9 +28,9 @@ QUIZ_CASE(pcj_layout_creation) {
 }
 
 QUIZ_CASE(pcj_expression_to_layout) {
-  assert_trees_are_equal(
-      Format::FormatExpression(EditionReference(KPow(KAdd("x"_e, "y"_e), 2_e))),
-      KRackL(KParenthesisL("x+y"_l), KVertOffL("2"_l)));
+  assert_trees_are_equal(Layoutter::LayoutExpression(
+                             EditionReference(KPow(KAdd("x"_e, "y"_e), 2_e))),
+                         KRackL(KParenthesisL("x+y"_l), KVertOffL("2"_l)));
 }
 
 QUIZ_CASE(pcj_layout_render) {

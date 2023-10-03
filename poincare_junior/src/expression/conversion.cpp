@@ -3,12 +3,12 @@
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
-#include <poincare_junior/src/expression/format.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/symbol.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
@@ -20,7 +20,7 @@
 namespace PoincareJ {
 
 Poincare::Expression ToPoincareExpressionViaParse(const Tree *exp) {
-  EditionReference outputLayout = Format::FormatExpression(exp->clone());
+  EditionReference outputLayout = Layoutter::LayoutExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;

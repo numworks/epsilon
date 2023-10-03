@@ -1,7 +1,7 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/format.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 
@@ -36,7 +36,7 @@ Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
 }
 
 Layout Expression::toLayout() const {
-  return Layout([](Tree *node) { Format::FormatExpression(node); }, this);
+  return Layout([](Tree *node) { Layoutter::LayoutExpression(node); }, this);
 }
 
 float Expression::approximate() const {

@@ -1,8 +1,8 @@
 #include <poincare_junior/src/expression/dependency.h>
-#include <poincare_junior/src/expression/format.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/layout/layoutter.h>
 
 #include "helper.h"
 
@@ -201,7 +201,7 @@ void simplifies_to(const char* input, const char* output,
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
     EditionReference outputLayout =
-        Format::FormatExpression(expression->clone());
+        Layoutter::LayoutExpression(expression->clone());
     quiz_assert(!outputLayout.isUninitialized());
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];

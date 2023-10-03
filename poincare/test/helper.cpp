@@ -5,8 +5,8 @@
 #include <poincare/src/parsing/parser.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/format.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/test/helper.h>
 
@@ -137,7 +137,7 @@ void assert_parsed_expression_process_to(
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
                                           symbolicComputation, unitConversion));
-    Tree *l = PoincareJ::Format::FormatExpression(m);
+    Tree *l = PoincareJ::Layoutter::LayoutExpression(m);
     *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
     l->removeTree();
     bad = strcmp(buffer, result) != 0;
@@ -351,7 +351,7 @@ void assert_layout_serializes_to(Tree *layout, const char *serialization) {
 }
 
 void assert_expression_layouts_as(Tree *expression, Tree *layout) {
-  Tree *l = PoincareJ::Format::FormatExpression(expression);
+  Tree *l = PoincareJ::Layoutter::LayoutExpression(expression);
   quiz_assert(l->treeIsIdenticalTo(layout));
 }
 

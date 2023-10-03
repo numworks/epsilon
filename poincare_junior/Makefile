@@ -20,7 +20,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/dependency.cpp \
   expression/derivation.cpp \
   expression/dimension.cpp \
-  expression/format.cpp \
   expression/integer.cpp \
   expression/matrix.cpp \
   expression/metric.cpp \
@@ -42,6 +41,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/code_point_layout.cpp \
   layout/empty_rectangle.cpp \
   layout/layout_cursor.cpp \
+  layout/layoutter.cpp \
   layout/parser.cpp \
   layout/parsing/rack_parser.cpp \
   layout/parsing/tokenizer.cpp \

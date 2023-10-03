@@ -817,8 +817,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
                                       ProjectionContext projectionContext) {
   // ref must be the last tree on EditionPool
   assert(SharedEditionPool->lastBlock() == ref->nextTree()->block());
-  // Keep track of initial ref, since variables and ref are swapped.
-  Tree* initialRef = ref;
+  // Keep track of initial ref block
+  Block* initialBlock = ref->block();
   ExceptionTry {
     if (!Dimension::DeepCheckDimensions(ref)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
@@ -852,7 +852,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       case ExceptionType::ZeroDivision:
       case ExceptionType::UnhandledDimension:
       case ExceptionType::Unhandled:
-        SharedEditionPool->flushFromNode(initialRef);
+        SharedEditionPool->flushFromBlock(initialBlock);
         (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
         return true;
       case ExceptionType::PoolIsFull:

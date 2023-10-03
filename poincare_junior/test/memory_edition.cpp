@@ -14,15 +14,15 @@ QUIZ_CASE(pcj_edition_pool) {
   Tree* editedNode = pool->clone(handingNode);
   quiz_assert(pool->size() == handingNode->treeSize());
   quiz_assert(pool->numberOfTrees() == 1);
-  quiz_assert(pool->isRootNode(editedNode));
-  quiz_assert(!pool->isRootNode(editedNode->child(1)));
+  quiz_assert(pool->isRootBlock(editedNode->block()));
+  quiz_assert(!pool->isRootBlock(editedNode->child(1)->block()));
 
   // References
   quiz_assert(pool->nodeForIdentifier(pool->referenceNode(editedNode)) ==
               editedNode);
 
   editedNode = pool->clone(handingNode);
-  quiz_assert(pool->isRootNode(editedNode));
+  quiz_assert(pool->isRootBlock(editedNode->block()));
   pool->flush();
   quiz_assert(pool->size() == 0);
 

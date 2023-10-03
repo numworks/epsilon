@@ -25,7 +25,7 @@ class EditionPool final : public Pool {
 
   uint16_t referenceNode(Tree *node);
   void flush();
-  void flushFromNode(Tree *node);
+  void flushFromBlock(Block *node);
   void resetRefs() { m_referenceTable.reset(); }
   void deleteIdentifier(uint16_t id) { m_referenceTable.deleteIdentifier(id); }
   void updateIdentifier(uint16_t id, Tree *newNode) {

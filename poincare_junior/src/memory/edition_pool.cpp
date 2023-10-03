@@ -97,9 +97,8 @@ void EditionPool::flush() {
 #endif
 }
 
-void EditionPool::flushFromNode(Tree *node) {
-  assert(isRootNode(node));
-  Block *block = node->block();
+void EditionPool::flushFromBlock(Block *block) {
+  assert(isRootBlock(block));
   m_size = block - m_firstBlock;
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *block, const Block *destination,
@@ -110,7 +109,7 @@ void EditionPool::flushFromNode(Tree *node) {
       },
       block, nullptr, 0);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "FlushFromNode", block);
+  Log(LoggerType::Edition, "flushFromBlock", block);
 #endif
 }
 

@@ -36,8 +36,8 @@ class Pool {
   }
   size_t size() const { return lastBlock() - firstBlock(); }
   size_t numberOfTrees() const;
-  // Return true if node is the root node of one of the pool's trees.
-  bool isRootNode(const Tree *node) const;
+  // Return true if block is the root node of one of the pool's trees.
+  bool isRootBlock(const Block *block) const;
 
   // Offset in the ReferenceTable are relative to the referenceBlock
   virtual Block *referenceBlock() { return firstBlock(); };

@@ -15,16 +15,15 @@ size_t Pool::numberOfTrees() const {
   return result;
 }
 
-bool Pool::isRootNode(const Tree* node) const {
+bool Pool::isRootBlock(const Block* block) const {
   const Block* currentBlock = firstBlock();
-  const Block* targetBlock = node->block();
-  if (targetBlock >= lastBlock()) {
+  if (block >= lastBlock()) {
     return false;
   }
-  while (currentBlock < targetBlock) {
+  while (currentBlock < block) {
     currentBlock = Tree::FromBlocks(currentBlock)->nextTree()->block();
   }
-  return currentBlock == targetBlock;
+  return currentBlock == block;
 }
 
 // Reference Table

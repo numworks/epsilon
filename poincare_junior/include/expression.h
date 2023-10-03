@@ -2,10 +2,11 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/memory/reference.h>
 
 namespace PoincareJ {
+
+class Layout;
 
 class Expression final : public Reference {
  public:
@@ -17,7 +18,6 @@ class Expression final : public Reference {
   static Expression Parse(const char* text);
   static Expression Parse(const Layout* layout);
   static Expression CreateSimplifyReduction(void* treeAddress);
-  Layout toLayout() const;
   float approximate() const;
 
   static Poincare::Expression ToPoincareExpression(const Tree* exp);

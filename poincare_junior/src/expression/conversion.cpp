@@ -1,5 +1,6 @@
 #include <poincare_expressions.h>
 #include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>

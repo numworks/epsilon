@@ -3,6 +3,7 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
@@ -100,6 +101,10 @@ char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
 Layout Layout::Parse(const char *textInput) {
   return Layout([](const char *text) { EditionPoolTextToLayout(text); },
                 textInput);
+}
+
+Layout Layout::FromExpression(const Expression *expr) {
+  return Layout([](Tree *node) { Layoutter::LayoutExpression(node); }, expr);
 }
 
 void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,

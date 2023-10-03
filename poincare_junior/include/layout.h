@@ -10,6 +10,8 @@
 
 namespace PoincareJ {
 
+class Expression;
+
 class Layout final : public Reference {
   friend class Expression;
 
@@ -33,6 +35,8 @@ class Layout final : public Reference {
   bool isEmpty() const;
 
   static char* Serialize(const Tree* layout, char* buffer, char* end);
+  static Layout FromExpression(const Expression* expr);
+
   static Tree* EditionPoolTextToLayout(const char* text);
 
  private:

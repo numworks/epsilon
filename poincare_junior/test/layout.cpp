@@ -15,11 +15,11 @@ QUIZ_CASE(pcj_layout_creation) {
   Layout l1 = Layout::Parse("1+2×3");
   // text -> Expression -> Layout
   Expression e1 = Expression::Parse("1+2×3");
-  Layout l2 = e1.toLayout();
+  Layout l2 = Layout::FromExpression(&e1);
   assert(l2.treeIsIdenticalTo(l1));
   // expression node -> Expression -> Layout
   Expression e2 = Expression(KAdd(1_e, KMult(2_e, 3_e)));
-  Layout l3 = e2.toLayout();
+  Layout l3 = Layout::FromExpression(&e2);
   // layout Tree -> Layout
   assert(l3.treeIsIdenticalTo(l1));
   // constexpr tree -> Layout

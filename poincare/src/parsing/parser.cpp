@@ -594,7 +594,7 @@ void Parser::parseRightwardsArrow(Expression &leftHandSide,
    * - Without context, leftHandSide could contain unit inside symbols. */
   bool leftHandSideCanBeUnitConvert =
       rightHandSide.isPureAngleUnit() ||
-      leftHandSide.hasUnit(false, true, m_parsingContext.context()) ||
+      leftHandSide.hasUnit(false, nullptr, true, m_parsingContext.context()) ||
       (!m_parsingContext.context() &&
        leftHandSide.deepIsSymbolic(nullptr,
                                    SymbolicComputation::DoNotReplaceAnySymbol));

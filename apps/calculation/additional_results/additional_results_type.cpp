@@ -25,7 +25,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput)) {
     return AdditionalResultsType{.complex = true};
   }
-  if (approximateOutput.hasUnit(true)) {
+  bool hasAngleUnit;
+  if (approximateOutput.hasUnit(true, &hasAngleUnit)) {
     assert(exactOutput.hasUnit(true));
     return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
@@ -43,7 +44,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
   }
   AdditionalResultsType type = {};
-  if (approximateOutput.hasUnit()) {
+  if (hasAngleUnit) {
     assert(exactOutput.hasUnit());
     return type;
   }

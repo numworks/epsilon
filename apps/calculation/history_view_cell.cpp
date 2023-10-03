@@ -134,18 +134,10 @@ void HistoryViewCell::cellDidSelectSubview(
     reloadOutputSelection(previousType);
   }
 
-  // Update m_calculationExpanded
-  m_calculationExpanded =
-      (type == HistoryViewCellDataSource::SubviewType::Output &&
-       m_calculationDisplayOutput ==
-           Calculation::DisplayOutput::ExactAndApproximateToggle);
   /* The selected subview has changed. The displayed outputs might have changed.
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
-  m_scrollableOutputView.setDisplayCenter(
-      m_calculationDisplayOutput ==
-          Calculation::DisplayOutput::ExactAndApproximate ||
-      m_calculationExpanded);
+  updateExpanded(type == HistoryViewCellDataSource::SubviewType::Output);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -445,13 +437,14 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
 }
 
 bool HistoryViewCell::updateExpanded(bool expanded) {
-  if (m_calculationExpanded == expanded) {
-    return false;
-  }
-  // Change expanded if needed
-  m_calculationExpanded =
+  assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
+  bool calculationExpanded =
       expanded && m_calculationDisplayOutput ==
                       Calculation::DisplayOutput::ExactAndApproximateToggle;
+  if (m_calculationExpanded == calculationExpanded) {
+    return false;
+  }
+  m_calculationExpanded = calculationExpanded;
   m_scrollableOutputView.setDisplayCenter(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||

@@ -25,9 +25,11 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput)) {
     return AdditionalResultsType{.complex = true};
   }
-  if (exactOutput.hasUnit(true)) {
+  if (approximateOutput.hasUnit(true)) {
+    assert(exactOutput.hasUnit(true));
     return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
+  assert(!exactOutput.hasUnit(true));
   if (HasDirectTrigo(input, exactOutput)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
@@ -41,6 +43,11 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
   }
   AdditionalResultsType type = {};
+  if (approximateOutput.hasUnit()) {
+    assert(exactOutput.hasUnit());
+    return type;
+  }
+  assert(!exactOutput.hasUnit());
   if (HasFunction(input, approximateOutput)) {
     type.function = true;
   }
@@ -151,7 +158,7 @@ bool AdditionalResultsType::HasVector(const Expression exactOutput) {
 
 bool AdditionalResultsType::HasMatrix(const Expression approximateOutput) {
   assert(!approximateOutput.isUninitialized());
-  assert(!approximateOutput.hasUnit());
+  assert(!approximateOutput.hasUnit(true));
   return approximateOutput.type() == ExpressionNode::Type::Matrix &&
          !approximateOutput.recursivelyMatches(Expression::IsUndefined);
 }
@@ -187,8 +194,8 @@ bool AdditionalResultsType::HasFunction(const Expression input,
 
 bool AdditionalResultsType::HasScientificNotation(
     const Expression approximateOutput) {
+  assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit());
-  assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
@@ -200,7 +207,7 @@ bool AdditionalResultsType::HasScientificNotation(
 
 bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
   assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit(true));
+  assert(!exactOutput.hasUnit());
   constexpr const char *k_maximalIntegerWithAdditionalResults =
       "10000000000000000";
   return exactOutput.isBasedIntegerCappedBy(
@@ -210,7 +217,7 @@ bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
 bool AdditionalResultsType::HasRational(const Expression exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
   assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit(true));
+  assert(!exactOutput.hasUnit());
   return exactOutput.isDivisionOfIntegers() ||
          (exactOutput.type() == ExpressionNode::Type::Opposite &&
           exactOutput.childAtIndex(0).isDivisionOfIntegers());

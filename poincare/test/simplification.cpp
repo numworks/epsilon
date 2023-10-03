@@ -740,6 +740,9 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("cross(_s,[[1][2][3]])",
                                        Undefined::Name());
   assert_parsed_expression_simplify_to("det(_s)", Undefined::Name());
+  assert_parsed_expression_simplify_to("det([[_s]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("det([[cos(3gon)]])",
+                                       "cos(\U000000123×π\U00000013/200)");
   assert_parsed_expression_simplify_to("diff(_s,x,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("diff(0,x,_s)", Undefined::Name());
   assert_parsed_expression_simplify_to("dim(_s)", Undefined::Name());
@@ -795,6 +798,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("quo(1,_s)", Undefined::Name());
   assert_parsed_expression_simplify_to("re(_s)", Undefined::Name());
   assert_parsed_expression_simplify_to("ref(_s)", Undefined::Name());
+  assert_parsed_expression_simplify_to("ref([[_s]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("ref([[cos(3gon)]])", "[[1]]");
   assert_parsed_expression_simplify_to("rem(_s,1)", Undefined::Name());
   assert_parsed_expression_simplify_to("rem(1,_s)", Undefined::Name());
   assert_parsed_expression_simplify_to("round(1,_s)", Undefined::Name());

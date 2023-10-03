@@ -15,6 +15,8 @@ namespace TrigonometryHelper {
 Expression ExtractExactAngleFromDirectTrigo(const Expression input,
                                             const Expression exactOutput,
                                             Context* context) {
+  assert(!input.hasUnit(true));
+  assert(!exactOutput.hasUnit(true));
   /* Trigonometry additional results are displayed if either input or output is
    * a direct function. Indeed, we want to capture both cases:
    * - > input: cos(60)
@@ -42,6 +44,7 @@ Expression ExtractExactAngleFromDirectTrigo(const Expression input,
          !directTrigoFunction.isUndefined());
   Expression exactAngle = directTrigoFunction.childAtIndex(0);
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
+  assert(!exactAngle.hasUnit(true));
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, &unit, context);
   if (!unit.isUninitialized()) {

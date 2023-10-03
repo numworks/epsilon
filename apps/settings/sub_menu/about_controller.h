@@ -31,10 +31,10 @@ class AboutController : public GenericSubController {
 
   constexpr static int k_totalNumberOfCell =
       static_cast<int>(CellType::NumberOfCells);
-  constexpr static CellType k_hardwareTestCell = CellType::FCCID;
   constexpr static int Row(CellType type) { return static_cast<int>(type); }
 
  private:
+  int hardwareTestRow() const;
   Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>>
       m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;

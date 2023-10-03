@@ -114,24 +114,16 @@ void HistoryViewCell::reloadScroll() {
 
 void HistoryViewCell::reloadOutputSelection(
     HistoryViewCellDataSource::SubviewType previousType) {
+  assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
   /* Select the right output according to the calculation display output. This
    * will reload the scroll to display the selected output. */
-  if (m_calculationDisplayOutput ==
-      Calculation::DisplayOutput::ExactAndApproximate) {
-    m_scrollableOutputView.setSelectedSubviewPosition(
-        previousType == HistoryViewCellDataSource::SubviewType::Ellipsis
-            ? ScrollableTwoLayoutsView::SubviewPosition::Right
-            : ScrollableTwoLayoutsView::SubviewPosition::Center);
-  } else {
-    assert(
-        (m_calculationDisplayOutput ==
-         Calculation::DisplayOutput::ApproximateOnly) ||
-        (m_calculationDisplayOutput ==
-         Calculation::DisplayOutput::ExactAndApproximateToggle) ||
-        (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly));
-    m_scrollableOutputView.setSelectedSubviewPosition(
-        ScrollableTwoLayoutsView::SubviewPosition::Right);
-  }
+  bool selectExactOutput =
+      m_calculationDisplayOutput ==
+          Calculation::DisplayOutput::ExactAndApproximate &&
+      previousType != HistoryViewCellDataSource::SubviewType::Ellipsis;
+  m_scrollableOutputView.setSelectedSubviewPosition(
+      selectExactOutput ? ScrollableTwoLayoutsView::SubviewPosition::Center
+                        : ScrollableTwoLayoutsView::SubviewPosition::Right);
 }
 
 void HistoryViewCell::cellDidSelectSubview(
@@ -382,9 +374,8 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
       m_calculationExpanded);
   m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
                                     approximateOutputLayout);
-  bool isEqual =
-      calculation->equalSign(context) == Calculation::EqualSign::Equal;
-  m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(isEqual);
+  m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
+      calculation->equalSign(context) == Calculation::EqualSign::Equal);
 
   /* The displayed input and outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */

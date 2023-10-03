@@ -43,10 +43,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
                   NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
-    if (IsUndef(child)) {
-      u->cloneTreeOverTree(KUndef);
-      return true;
-    }
+    assert(!IsUndef(child));
   }
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
@@ -175,8 +172,7 @@ bool Simplification::SimplifyLn(Tree* u) {
     u->cloneTreeOverTree(0_e);
     return true;
   } else if (Number::IsZero(child)) {
-    u->cloneTreeOverTree(KUndef);
-    return true;
+    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
   return false;
 }
@@ -337,8 +333,7 @@ bool Simplification::SimplifyPower(Tree* u) {
       u->cloneTreeOverTree(0_e);
       return true;
     }
-    u->cloneTreeOverTree(KUndef);
-    return true;
+    ExceptionCheckpoint::Raise(ExceptionType::ZeroPowerZero);
   }
   if (IsRational(v)) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
@@ -470,9 +465,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   assert(xIsNegativeNumber || pIsEven);
 
   if (xIsNegativeNumber && qIsEven) {
-    // TODO: Return Nonreal
-    u->cloneTreeOverTree(KUndef);
-    return true;
+    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
 
   // We can fallback to |x|^y
@@ -766,9 +759,10 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   Tree* child = tree->child(0);
   if (child->type().isNumber()) {
     Sign::Sign sign = Number::Sign(child);
-    tree->cloneTreeOverTree(sign.isZero()               ? KUndef
-                            : sign.isStrictlyPositive() ? 0_e
-                                                        : π_e);
+    if (sign.isZero()) {
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    tree->cloneTreeOverTree(sign.isStrictlyPositive() ? 0_e : π_e);
     return true;
   }
   // TODO: Implement for complexes
@@ -823,6 +817,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
                                       ProjectionContext projectionContext) {
   // ref must be the last tree on EditionPool
   assert(SharedEditionPool->lastBlock() == ref->nextTree()->block());
+  // Keep track of initial ref, since variables and ref are swapped.
+  Tree* initialRef = ref;
   ExceptionTry {
     if (!Dimension::DeepCheckDimensions(ref)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
@@ -833,7 +829,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       projectionContext.m_strategy = Strategy::ApproximateToFloat;
     }
     bool changed = false;
-    // TODO: Instead of bubbling it up, Raise in case of Undef or Nonreal.
     changed =
         Projection::DeepSystemProjection(ref, projectionContext) || changed;
     Tree* variables = Variables::GetUserSymbols(ref);
@@ -857,7 +852,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       case ExceptionType::ZeroDivision:
       case ExceptionType::UnhandledDimension:
       case ExceptionType::Unhandled:
-        SharedEditionPool->flushFromNode(ref);
+        SharedEditionPool->flushFromNode(initialRef);
         (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
         return true;
       case ExceptionType::PoolIsFull:

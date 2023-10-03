@@ -1,6 +1,7 @@
 #include "matrix.h"
 
 #include <float.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -22,7 +23,7 @@ Tree* Matrix::Zero(MatrixDimension d) {
 Tree* Matrix::Identity(const Tree* n) {
   assert(n->type().isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {
-    return KUndef->clone();
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   uint8_t nb = *Integer::Handler(n).digits();
   Tree* result = SharedEditionPool->push<BlockType::Matrix>(nb, nb);
@@ -326,8 +327,7 @@ Tree* Matrix::Inverse(const Tree* m) {
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     if (!Number::IsOne(Child(matrixAI, i, i))) {
-      matrixAI->removeTree();
-      return KUndef->clone();
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }
   }
   // Remove A from (A|I)

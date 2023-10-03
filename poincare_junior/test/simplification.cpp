@@ -195,7 +195,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2×sin(2y)×cos(y)", "sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×sin(y)", "-sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)", "cos(y)+cos(3×y)");
-  simplifies_to("ln(0)", "undef");
+  simplifies_to("ln(0)", "nonreal");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
                 {.m_complexFormat = ComplexFormat::Cartesian});
@@ -313,7 +313,7 @@ QUIZ_CASE(pcj_power_simplification) {
   //   * PowerReal(x,y) if x is of unknown sign and p odd
   simplifies_to("x^(1/3)", "x^(1/3)");
   //   * Unreal if q is even and x negative
-  simplifies_to("(-1)^(1/2)", "undef");
+  simplifies_to("(-1)^(1/2)", "nonreal");
   //   * |x|^y if p is even
   simplifies_to("(-123)^(4/5)", "123^(4/5)");
   //   * -|x|^y if p is odd

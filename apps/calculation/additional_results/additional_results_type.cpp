@@ -25,12 +25,13 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput)) {
     return AdditionalResultsType{.complex = true};
   }
-  bool hasAngleUnit;
-  if (approximateOutput.hasUnit(true, &hasAngleUnit)) {
-    assert(exactOutput.hasUnit(true));
+  bool exactHasAngleUnit, approximateHasAngleUnit;
+  bool exactHasUnit = exactOutput.hasUnit(true, &exactHasAngleUnit);
+  bool approximateHasUnit = exactOutput.hasUnit(true, &approximateHasAngleUnit);
+  assert(exactHasUnit == approximateHasUnit);
+  if (exactHasUnit) {
     return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
-  assert(!exactOutput.hasUnit(true));
   if (HasDirectTrigo(input, exactOutput)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
@@ -44,11 +45,9 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
   }
   AdditionalResultsType type = {};
-  if (hasAngleUnit) {
-    assert(exactOutput.hasUnit());
+  if (exactHasAngleUnit || approximateHasAngleUnit) {
     return type;
   }
-  assert(!exactOutput.hasUnit());
   if (HasFunction(input, approximateOutput)) {
     type.function = true;
   }

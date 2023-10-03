@@ -826,6 +826,8 @@ QUIZ_CASE(calculation_additional_results) {
       "e^(2+3)", {.scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("2i", {.complex = true},
                                            &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("gon", {}, &globalContext, &store);
+
   Preferences::sharedPreferences->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {}, &globalContext,

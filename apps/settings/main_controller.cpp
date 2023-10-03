@@ -31,6 +31,7 @@ constexpr MessageTree s_modelTestModeMenu[2] = {
     MessageTree(I18n::Message::PressToTest)};
 constexpr MessageTree
     s_modelAboutChildren[AboutController::k_totalNumberOfCell] = {
+        MessageTree(I18n::Message::Name),
         MessageTree(I18n::Message::SoftwareVersion),
         MessageTree(I18n::Message::SerialNumber),
         MessageTree(I18n::Message::FccId),

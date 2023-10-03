@@ -94,6 +94,7 @@ KDCoordinate AboutController::nonMemoizedRowHeight(int row) {
 
 void AboutController::viewWillAppear() {
   const char *messages[k_totalNumberOfCell] = {
+    deviceName(),
     Ion::epsilonVersion(),
     Ion::serialNumber(),
     Ion::fccId(),
@@ -103,6 +104,9 @@ void AboutController::viewWillAppear() {
   };
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].subLabel()->setText(messages[i]);
+  }
+  if (strlen(deviceName()) == 0) {
+    m_cells[Row(CellType::DeviceName)].setVisible(false);
   }
   if (strncmp(Ion::fccId(), "NA", 3) == 0) {
     m_cells[Row(CellType::FCCID)].setVisible(false);

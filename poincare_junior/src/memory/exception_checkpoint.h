@@ -45,10 +45,11 @@ enum class ExceptionType : int {
   // Undefined result in given context
   Nonreal,  // sqrt(-1), ln(-2), asin(2)
   // Undefined result
-  ZeroPowerZero,  // 0^0 -> Should be ZeroDivision ?
-  ZeroDivision,   // 1/0, tan(nπ/2)
-  Unhandled,      // inf - inf, 0 * inf, unimplemented
-  Other,          // Used internally for Unit tests.
+  ZeroPowerZero,       // 0^0 -> Should be ZeroDivision ?
+  ZeroDivision,        // 1/0, tan(nπ/2)
+  UnhandledDimension,  // [[1,2]] + [[1],[2]]
+  Unhandled,           // inf - inf, 0 * inf, unimplemented
+  Other,               // Used internally for Unit tests.
 };
 
 class ExceptionCheckpoint final {

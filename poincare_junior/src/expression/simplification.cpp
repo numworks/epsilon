@@ -826,7 +826,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
   ExceptionTry {
     if (!Dimension::DeepCheckDimensions(ref)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
     }
     projectionContext.m_dimension = Dimension::GetDimension(ref);
     if (ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
@@ -855,6 +855,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       case ExceptionType::Nonreal:
       case ExceptionType::ZeroPowerZero:
       case ExceptionType::ZeroDivision:
+      case ExceptionType::UnhandledDimension:
       case ExceptionType::Unhandled:
         SharedEditionPool->flushFromNode(ref);
         (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();

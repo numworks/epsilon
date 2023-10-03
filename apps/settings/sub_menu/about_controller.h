@@ -20,11 +20,12 @@ class AboutController : public GenericSubController {
   void viewWillAppear() override;
 
   enum class CellType : uint8_t {
-    Version = 0,
-    SerialNumber = 1,
-    FCCID = 2,
+    DeviceName = 0,
+    Version = 1,
+    SerialNumber = 2,
+    FCCID = 3,
 #if TERMS_OF_USE
-    TermsOfUse = 3,
+    TermsOfUse = 4,
 #endif
     NumberOfCells
   };
@@ -34,6 +35,7 @@ class AboutController : public GenericSubController {
   constexpr static int Row(CellType type) { return static_cast<int>(type); }
 
  private:
+  const char* deviceName() const { return "temporary"; }
   Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>>
       m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;

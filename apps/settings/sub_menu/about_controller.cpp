@@ -82,7 +82,9 @@ HighlightCell *AboutController::reusableCell(int index, int type) {
 }
 
 KDCoordinate AboutController::nonMemoizedRowHeight(int row) {
-  return m_cells[row].minimalSizeForOptimalDisplay().height();
+  return m_cells[row].isVisible()
+             ? m_cells[row].minimalSizeForOptimalDisplay().height()
+             : 0;
 }
 
 void AboutController::viewWillAppear() {
@@ -96,6 +98,9 @@ void AboutController::viewWillAppear() {
   };
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].subLabel()->setText(messages[i]);
+  }
+  if (strncmp(Ion::fccId(), "NA", 3) == 0) {
+    m_cells[Row(CellType::FCCID)].setVisible(false);
   }
   GenericSubController::viewWillAppear();
 }

@@ -16,21 +16,7 @@ extern uint8_t _external_apps_flash_end;
 namespace Ion {
 namespace ExternalApps {
 
-/* The ExternalApp start with its info layout as:
- * - 4 bytes: a magic code 0xBABECODE
- * - 4 bytes: the API level of the AppInfo layout
- * - 4 bytes: the address of the app name
- * - 4 bytes: the size of the compressed icon
- * - 4 bytes: the address of the compressed icon data
- * - 4 bytes: the address of the entry point
- * - 4 bytes: the size of the external app including the AppInfo header
- * - 4 bytes: the same magic code 0xBABECODE
- */
-
 constexpr static uint32_t k_magic = 0xDEC0BEBA;
-constexpr static int k_numberOfAppInfoElements = 8;
-constexpr static uint32_t k_minAppSize =
-    sizeof(uint32_t) * k_numberOfAppInfoElements;
 
 bool appAtAddress(uint8_t *address) {
   return *reinterpret_cast<uint32_t *>(address) == k_magic;
@@ -45,24 +31,24 @@ bool addressWithinExternalAppsSection(const uint8_t *address) {
          address < &_external_apps_flash_end;
 }
 
-uint8_t *App::addressAtIndexInAppInfo(int index) const {
-  assert(index < k_numberOfAppInfoElements);
-  uint8_t *address =
-      m_startAddress +
-      *reinterpret_cast<uint32_t *>(m_startAddress + index * sizeof(uint32_t));
-  // Check that address is in authorized memory
-  if (!addressWithinExternalAppsSection(address)) {
-    return nullptr;
-  }
-  return address;
+uint32_t App::appInfo(AppInfo info) const {
+  return *reinterpret_cast<uint32_t *>(
+      m_startAddress + static_cast<uint8_t>(info) * sizeof(uint32_t));
 }
 
-const uint32_t App::APILevel() const {
-  return *reinterpret_cast<const uint32_t *>(m_startAddress + sizeof(uint32_t));
+uint8_t *App::appInfoToAdress(AppInfo info) const {
+  assert(info == AppInfo::NameAdress || info == AppInfo::IconAdress ||
+         info == AppInfo::EntryPointAdress);
+  uint8_t *address = m_startAddress + appInfo(info);
+  // Check that address is in authorized memory
+  return addressWithinExternalAppsSection(address) ? address : nullptr;
 }
+
+const uint32_t App::APILevel() const { return appInfo(AppInfo::APILevel); }
 
 const char *App::name() const {
-  const char *n = reinterpret_cast<const char *>(addressAtIndexInAppInfo(2));
+  const char *n =
+      reinterpret_cast<const char *>(appInfoToAdress(AppInfo::NameAdress));
   if (n == nullptr) {
     return nullptr;
   }
@@ -78,8 +64,7 @@ const char *App::name() const {
 }
 
 uint32_t App::iconSize() const {
-  uint32_t size =
-      *reinterpret_cast<uint32_t *>(m_startAddress + 3 * sizeof(uint32_t));
+  uint32_t size = appInfo(AppInfo::IconSize);
   const uint8_t *data = iconData();
   if (data == nullptr || !addressWithinExternalAppsSection(data + size - 1)) {
     return 0;
@@ -89,7 +74,8 @@ uint32_t App::iconSize() const {
 
 const uint8_t *App::iconData() const {
   // TODO: Add check on decompression?
-  return reinterpret_cast<const uint8_t *>(addressAtIndexInAppInfo(4));
+  return reinterpret_cast<const uint8_t *>(
+      appInfoToAdress(AppInfo::IconAdress));
 }
 
 void *App::entryPoint() const {
@@ -103,7 +89,8 @@ void *App::entryPoint() const {
    * instructions.
    */
   return reinterpret_cast<void *>(
-      reinterpret_cast<uint32_t>(addressAtIndexInAppInfo(5)) | 0x1);
+      reinterpret_cast<uint32_t>(appInfoToAdress(AppInfo::EntryPointAdress)) |
+      0x1);
 }
 
 void App::eraseMagicCode() {
@@ -131,7 +118,7 @@ AppIterator &AppIterator::operator++() {
   // Find the next address aligned on external apps sector size
   m_currentAddress = nextSectorAlignedAddress(m_currentAddress);
   if (m_currentAddress < &_external_apps_flash_start ||
-      m_currentAddress + k_minAppSize > &_external_apps_flash_end ||
+      m_currentAddress + App::k_minAppSize > &_external_apps_flash_end ||
       !appAtAddress(m_currentAddress)) {
     m_currentAddress = nullptr;
   }

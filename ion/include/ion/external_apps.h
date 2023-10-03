@@ -16,8 +16,34 @@ class App {
   void* entryPoint() const;
   void eraseMagicCode();
 
+  /* The ExternalApp start with its info layout as:
+   * - 4 bytes: a magic code 0xBABECODE
+   * - 4 bytes: the API level of the AppInfo layout
+   * - 4 bytes: the address of the app name
+   * - 4 bytes: the size of the compressed icon
+   * - 4 bytes: the address of the compressed icon data
+   * - 4 bytes: the address of the entry point
+   * - 4 bytes: the size of the external app including the AppInfo header
+   * - 4 bytes: the same magic code 0xBABECODE
+   */
+  enum class AppInfo : uint8_t {
+    MagicStart = 0,
+    APILevel = 1,
+    NameAdress = 2,
+    IconSize = 3,
+    IconAdress = 4,
+    EntryPointAdress = 5,
+    AppSize = 6,
+    MagicEnd = 7
+  };
+  constexpr static uint8_t k_numberOfAppInfoElements =
+      static_cast<uint8_t>(App::AppInfo::MagicEnd) + 1;
+  constexpr static uint32_t k_minAppSize =
+      sizeof(uint32_t) * k_numberOfAppInfoElements;
+
  private:
-  uint8_t* addressAtIndexInAppInfo(int index) const;
+  uint32_t appInfo(AppInfo info) const;
+  uint8_t* appInfoToAdress(AppInfo info) const;
   uint8_t* m_startAddress;
 };
 

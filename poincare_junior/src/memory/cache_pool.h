@@ -8,6 +8,15 @@
 
 namespace PoincareJ {
 
+/* m_blocks content:
+ *
+ *  <---- EditionPool ----> <------------------- CachePool ------------------>
+ * +-----------------------+-------------------------+---+--------------------+
+ * | draft trees           | most recent cached tree | … | oldest cached tree |
+ * +-----------------------+-------------------------+---+--------------------+
+ *                         ^ nodeOffset[m_length-1]      ^ nodeOffset[0]
+ */
+
 class CachePool final : public Pool {
   friend class OMG::GlobalBox<CachePool>;
   friend class Reference;

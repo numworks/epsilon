@@ -28,8 +28,9 @@ namespace ExternalApps {
  */
 
 constexpr static uint32_t k_magic = 0xDEC0BEBA;
-constexpr int k_numberOfAppInfoElements = 8;
-constexpr uint32_t k_minAppSize = sizeof(uint32_t) * k_numberOfAppInfoElements;
+constexpr static int k_numberOfAppInfoElements = 8;
+constexpr static uint32_t k_minAppSize =
+    sizeof(uint32_t) * k_numberOfAppInfoElements;
 
 bool appAtAddress(uint8_t *address) {
   return *reinterpret_cast<uint32_t *>(address) == k_magic;

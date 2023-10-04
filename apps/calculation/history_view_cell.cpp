@@ -310,11 +310,10 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
     exactOutputLayout =
         calculation->createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
-      if (canChangeDisplayOutput &&
-          calculation->displayOutput(context) !=
-              ::Calculation::Calculation::DisplayOutput::ExactOnly) {
+      if (canChangeDisplayOutput && calculation->displayOutput(context) !=
+                                        Calculation::DisplayOutput::ExactOnly) {
         calculation->forceDisplayOutput(
-            ::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+            Calculation::DisplayOutput::ApproximateOnly);
       } else {
         /* We should only display the exact result, but we cannot create it
          * -> raise an exception. */
@@ -328,18 +327,18 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
          + 2 * KDFont::GlyphWidth(m_scrollableOutputView.font()));
     if (canChangeDisplayOutput &&
         calculation->displayOutput(context) ==
-            ::Calculation::Calculation::DisplayOutput::ExactAndApproximate &&
+            Calculation::DisplayOutput::ExactAndApproximate &&
         exactOutputLayout.layoutSize(m_scrollableOutputView.font()).width() >
             maxVisibleWidth) {
       calculation->forceDisplayOutput(
-          ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
+          Calculation::DisplayOutput::ExactAndApproximateToggle);
     }
   }
 
   // Create the approximate output layout
   Layout approximateOutputLayout;
   if (calculation->displayOutput(context) ==
-      ::Calculation::Calculation::DisplayOutput::ExactOnly) {
+      Calculation::DisplayOutput::ExactOnly) {
     approximateOutputLayout = exactOutputLayout;
   } else {
     bool couldNotCreateApproximateLayout = false;
@@ -348,12 +347,12 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
     if (couldNotCreateApproximateLayout) {
       if (canChangeDisplayOutput &&
           calculation->displayOutput(context) !=
-              ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
+              Calculation::DisplayOutput::ApproximateOnly) {
         /* Set the display output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, and retry to create the approximate layout
          */
         calculation->forceDisplayOutput(
-            ::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+            Calculation::DisplayOutput::ApproximateOnly);
         exactOutputLayout = Layout();
         couldNotCreateApproximateLayout = false;
         approximateOutputLayout = calculation->createApproximateOutputLayout(
@@ -460,9 +459,8 @@ bool HistoryViewCell::updateExpanded(bool expanded) {
   }
   // Change expanded if needed
   m_calculationExpanded =
-      expanded &&
-      m_calculationDisplayOutput ==
-          ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle;
+      expanded && m_calculationDisplayOutput ==
+                      Calculation::DisplayOutput::ExactAndApproximateToggle;
   m_scrollableOutputView.setDisplayCenter(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||

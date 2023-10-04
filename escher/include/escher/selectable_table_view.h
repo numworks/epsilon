@@ -88,8 +88,9 @@ class SelectableTableView : public TableView, public Responder {
                                             false);
   }
   int firstOrLastSelectableColumnOrRow(bool first, bool searchForRow);
-  KDPoint actualOffset() const {
-    return m_delegate ? m_delegate->actualOffset(this) : contentOffset();
+  KDPoint offsetToRestoreAfterReload() const {
+    return m_delegate ? m_delegate->offsetToRestoreAfterReload(this)
+                      : contentOffset();
   }
 };
 

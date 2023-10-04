@@ -138,7 +138,8 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-KDPoint HistoryController::actualOffset(const SelectableTableView *t) const {
+KDPoint HistoryController::offsetToRestoreAfterReload(
+    const SelectableTableView *t) const {
   assert(t == &m_selectableListView);
   KDCoordinate delta = 0;
   int selectedRow = m_selectableListView.selectedRow();

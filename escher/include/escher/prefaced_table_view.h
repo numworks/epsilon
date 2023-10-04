@@ -38,7 +38,8 @@ class PrefacedTableView : public View,
   void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
-  KDPoint actualOffset(const SelectableTableView* t) const override {
+  KDPoint offsetToRestoreAfterReload(
+      const SelectableTableView* t) const override {
     return m_virtualOffset;
   }
 

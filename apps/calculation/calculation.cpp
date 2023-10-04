@@ -209,6 +209,63 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   return m_displayOutput;
 }
 
+void Calculation::createOutputLayouts(Layout *exactOutput,
+                                      Layout *approximateOutput,
+                                      Context *context,
+                                      bool canChangeDisplayOutput,
+                                      KDCoordinate maxVisibleWidth,
+                                      KDFont::Size font) {
+  assert(exactOutput && approximateOutput);
+
+  // Create the exact output layout
+  *exactOutput = Layout();
+  if (DisplaysExact(displayOutput(context))) {
+    bool couldNotCreateExactLayout = false;
+    *exactOutput = createExactOutputLayout(&couldNotCreateExactLayout);
+    if (couldNotCreateExactLayout) {
+      if (canChangeDisplayOutput &&
+          displayOutput(context) != DisplayOutput::ExactOnly) {
+        forceDisplayOutput(DisplayOutput::ApproximateOnly);
+      } else {
+        /* We should only display the exact result, but we cannot create it
+         * -> raise an exception. */
+        ExceptionCheckpoint::Raise();
+      }
+    }
+    if (canChangeDisplayOutput &&
+        displayOutput(context) == DisplayOutput::ExactAndApproximate &&
+        exactOutput->layoutSize(font).width() > maxVisibleWidth) {
+      forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
+    }
+  }
+
+  // Create the approximate output layout
+  if (displayOutput(context) == DisplayOutput::ExactOnly) {
+    *approximateOutput = *exactOutput;
+  } else {
+    bool couldNotCreateApproximateLayout = false;
+    *approximateOutput =
+        createApproximateOutputLayout(&couldNotCreateApproximateLayout);
+    if (couldNotCreateApproximateLayout) {
+      if (canChangeDisplayOutput &&
+          displayOutput(context) != DisplayOutput::ApproximateOnly) {
+        /* Set display the output to ApproximateOnly, make room in the pool by
+         * erasing the exact layout, retry to create the approximate layout. */
+        forceDisplayOutput(DisplayOutput::ApproximateOnly);
+        *exactOutput = Layout();
+        couldNotCreateApproximateLayout = false;
+        *approximateOutput =
+            createApproximateOutputLayout(&couldNotCreateApproximateLayout);
+        if (couldNotCreateApproximateLayout) {
+          ExceptionCheckpoint::Raise();
+        }
+      } else {
+        ExceptionCheckpoint::Raise();
+      }
+    }
+  }
+}
+
 Calculation::EqualSign Calculation::equalSign(Context *context) {
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {

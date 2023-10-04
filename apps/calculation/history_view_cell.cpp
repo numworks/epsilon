@@ -285,69 +285,16 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
   /* All expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
+  Layout exactOutputLayout, approximateOutputLayout;
+  KDFont::Size font = m_scrollableOutputView.font();
+  KDCoordinate maxVisibleWidth =
+      Ion::Display::Width -
+      (m_scrollableOutputView.margins()->width() +
+       2 * KDFont::GlyphWidth(font));  // > arrow and = sign
+  calculation->createOutputLayouts(&exactOutputLayout, &approximateOutputLayout,
+                                   context, canChangeDisplayOutput,
+                                   maxVisibleWidth, font);
 
-  // Create the exact output layout
-  Layout exactOutputLayout = Layout();
-  if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
-    bool couldNotCreateExactLayout = false;
-    exactOutputLayout =
-        calculation->createExactOutputLayout(&couldNotCreateExactLayout);
-    if (couldNotCreateExactLayout) {
-      if (canChangeDisplayOutput && calculation->displayOutput(context) !=
-                                        Calculation::DisplayOutput::ExactOnly) {
-        calculation->forceDisplayOutput(
-            Calculation::DisplayOutput::ApproximateOnly);
-      } else {
-        /* We should only display the exact result, but we cannot create it
-         * -> raise an exception. */
-        ExceptionCheckpoint::Raise();
-      }
-    }
-    KDCoordinate maxVisibleWidth =
-        Ion::Display::Width -
-        (m_scrollableOutputView.margins()->width()
-         // > arrow and = sign
-         + 2 * KDFont::GlyphWidth(m_scrollableOutputView.font()));
-    if (canChangeDisplayOutput &&
-        calculation->displayOutput(context) ==
-            Calculation::DisplayOutput::ExactAndApproximate &&
-        exactOutputLayout.layoutSize(m_scrollableOutputView.font()).width() >
-            maxVisibleWidth) {
-      calculation->forceDisplayOutput(
-          Calculation::DisplayOutput::ExactAndApproximateToggle);
-    }
-  }
-
-  // Create the approximate output layout
-  Layout approximateOutputLayout;
-  if (calculation->displayOutput(context) ==
-      Calculation::DisplayOutput::ExactOnly) {
-    approximateOutputLayout = exactOutputLayout;
-  } else {
-    bool couldNotCreateApproximateLayout = false;
-    approximateOutputLayout = calculation->createApproximateOutputLayout(
-        &couldNotCreateApproximateLayout);
-    if (couldNotCreateApproximateLayout) {
-      if (canChangeDisplayOutput &&
-          calculation->displayOutput(context) !=
-              Calculation::DisplayOutput::ApproximateOnly) {
-        /* Set the display output to ApproximateOnly, make room in the pool by
-         * erasing the exact layout, and retry to create the approximate layout
-         */
-        calculation->forceDisplayOutput(
-            Calculation::DisplayOutput::ApproximateOnly);
-        exactOutputLayout = Layout();
-        couldNotCreateApproximateLayout = false;
-        approximateOutputLayout = calculation->createApproximateOutputLayout(
-            &couldNotCreateApproximateLayout);
-        if (couldNotCreateApproximateLayout) {
-          ExceptionCheckpoint::Raise();
-        }
-      } else {
-        ExceptionCheckpoint::Raise();
-      }
-    }
-  }
   m_calculationDisplayOutput = calculation->displayOutput(context);
   // Call this once m_calculationDisplayOutput is computed
   updateExpanded(expanded);

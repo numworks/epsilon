@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-KDPoint SelectableTableViewDelegate::actualOffset(
+KDPoint SelectableTableViewDelegate::offsetToRestoreAfterReload(
     const SelectableTableView* t) const {
   return t->contentOffset();
 }

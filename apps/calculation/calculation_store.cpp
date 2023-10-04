@@ -252,24 +252,19 @@ ExpiringPointer<Calculation> CalculationStore::push(
   return ExpiringPointer(newCalculation);
 }
 
-void CalculationStore::recomputeHeightsIfPreferencesHaveChanged(
-    Poincare::Preferences *preferences, HeightComputer heightComputer) {
+bool CalculationStore::preferencesHaveChanged() {
   // Track settings that might invalidate HistoryCells heights
+  Preferences *preferences = Preferences::sharedPreferences;
   if (m_inUsePreferences.combinatoricSymbols() ==
           preferences->combinatoricSymbols() &&
       m_inUsePreferences.numberOfSignificantDigits() ==
           preferences->numberOfSignificantDigits() &&
       m_inUsePreferences.logarithmBasePosition() ==
           preferences->logarithmBasePosition()) {
-    return;
+    return false;
   }
   m_inUsePreferences = *preferences;
-  for (int i = 0; i < numberOfCalculations(); i++) {
-    /* The void context is used since there is no reasons for the
-     * heightComputer to resolve symbols */
-    SetCalculationHeights(calculationAtIndex(i).pointer(), heightComputer,
-                          nullptr);
-  }
+  return true;
 }
 
 // Private

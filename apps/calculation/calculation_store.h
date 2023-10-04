@@ -37,6 +37,13 @@ class CalculationStore {
  public:
   using HeightComputer = KDCoordinate (*)(Calculation *, Poincare::Context *,
                                           bool);
+  static void SetCalculationHeights(Calculation *calculation,
+                                    HeightComputer heightComputer,
+                                    Poincare::Context *context) {
+    KDCoordinate unexpandedHeight = heightComputer(calculation, context, false);
+    KDCoordinate expandedHeight = heightComputer(calculation, context, true);
+    calculation->setHeights(unexpandedHeight, expandedHeight);
+  }
 
   CalculationStore(char *buffer, size_t bufferSize);
 
@@ -57,19 +64,10 @@ class CalculationStore {
     privateDeleteCalculationAtIndex(index, endOfCalculations());
   }
   void deleteAll() { m_numberOfCalculations = 0; }
-  void recomputeHeightsIfPreferencesHaveChanged(
-      Poincare::Preferences *preferences, HeightComputer heightComputer);
+  bool preferencesHaveChanged();
 
  private:
   static constexpr char *k_pushError = nullptr;
-
-  static void SetCalculationHeights(Calculation *calculation,
-                                    HeightComputer heightComputer,
-                                    Poincare::Context *context) {
-    KDCoordinate unexpandedHeight = heightComputer(calculation, context, false);
-    KDCoordinate expandedHeight = heightComputer(calculation, context, true);
-    calculation->setHeights(unexpandedHeight, expandedHeight);
-  }
 
   char *pointerArea() const {
     return m_buffer + m_bufferSize -

@@ -21,6 +21,8 @@ class EditionPool final : public Pool {
 
   uint16_t referenceNode(Tree *node);
   void flush();
+  void resetRefs() { m_referenceTable.reset(); }
+  void deleteIdentifier(uint16_t id) { m_referenceTable.deleteIdentifier(id); }
 
   typedef bool (*Relax)(void *context);
   constexpr static Relax k_defaultRelax = [](void *context) { return false; };
@@ -70,7 +72,7 @@ class EditionPool final : public Pool {
     return !contains(other->block()) || other < modified;
   }
 
-  constexpr static int k_maxNumberOfReferences = 1024;
+  constexpr static int k_maxNumberOfReferences = 64;
 
  private:
   void execute(ActionWithContext action, void *context, const void *data,
@@ -94,6 +96,7 @@ class EditionPool final : public Pool {
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
     Tree *nodeForIdentifier(uint16_t id) const override;
     uint16_t storeNode(Tree *node) override;
+    void deleteIdentifier(uint16_t id);
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,
                                        const Block *, int);
     void updateNodes(AlterSelectedBlock function,
@@ -101,6 +104,10 @@ class EditionPool final : public Pool {
                      const Block *contextSelection2, int contextAlteration);
 
    private:
+    /* Special offset in the nodeOffsetArray when the EditionReference that
+     * owned it has been deleted. */
+    constexpr static uint16_t DeletedOffset = 0xFFFE;
+
     size_t maxNumberOfReferences() const override {
       return EditionPool::k_maxNumberOfReferences;
     }

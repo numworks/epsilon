@@ -19,6 +19,36 @@ class EditionReference {
   EditionReference(Block* blocks)
       : EditionReference(Tree::FromBlocks(blocks)) {}
 
+  // Copies create a new ref with a new id
+  EditionReference(const EditionReference& other)
+      : EditionReference(static_cast<Tree*>(other)) {}
+
+  EditionReference& operator=(const EditionReference& other) {
+    SharedEditionPool->deleteIdentifier(m_identifier);
+    *this = EditionReference(static_cast<Tree*>(other));
+    return *this;
+  }
+
+  // Moves steal the id
+  EditionReference(EditionReference&& other) {
+    m_identifier = other.m_identifier;
+    other.m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+  }
+
+  EditionReference& operator=(EditionReference&& other) {
+    if (m_identifier != other.m_identifier) {
+      SharedEditionPool->deleteIdentifier(m_identifier);
+      m_identifier = other.m_identifier;
+      other.m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+    }
+    return *this;
+  }
+
+  ~EditionReference() {
+    SharedEditionPool->deleteIdentifier(m_identifier);
+    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+  }
+
 #if POINCARE_MEMORY_TREE_LOG
   __attribute__((__used__)) void log() const;
 #endif
@@ -37,9 +67,6 @@ class EditionReference {
   }
 
   bool isUninitialized() const { return tree() == nullptr; }
-  void uninitialize() {
-    m_identifier = EditionPool::ReferenceTable::UninitializedOffset;
-  }
 
   uint16_t identifier() const { return m_identifier; }
 

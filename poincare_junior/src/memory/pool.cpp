@@ -38,7 +38,7 @@ Tree* Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   assert(id < m_length);
   uint16_t offset =
       const_cast<Pool::ReferenceTable*>(this)->nodeOffsetArray()[id];
-  if (offset == NoNodeIdentifier) {
+  if (offset == InvalidatedOffset) {
     return nullptr;
   }
   assert(offset <= m_pool->size());

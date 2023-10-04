@@ -43,9 +43,12 @@ class Pool {
  protected:
   class ReferenceTable {
    public:
+    /* Special m_identifier when the reference does not point to a Tree yet. */
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
-    constexpr static uint16_t UninitializedOffset = 0xFFFF;
     constexpr static uint16_t NumberOfSpecialIdentifier = 1;
+    /* Special offset in the nodeOffsetArray when the pointed Tree has been
+     * removed or replaced. */
+    constexpr static uint16_t InvalidatedOffset = 0xFFFF;
     ReferenceTable(Pool *pool) : m_length(0), m_pool(pool) {}
     bool isFull() { return numberOfStoredNodes() == maxNumberOfReferences(); }
     bool isEmpty() const { return numberOfStoredNodes() == 0; }

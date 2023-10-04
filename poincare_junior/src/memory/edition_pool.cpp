@@ -37,6 +37,22 @@ Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
+void EditionPool::ReferenceTable::deleteIdentifier(uint16_t id) {
+  if (id == EditionPool::ReferenceTable::NoNodeIdentifier) {
+    return;
+  }
+  assert(id < m_length);
+  if (id == m_length - 1) {
+    do {
+      m_length--;
+    } while (m_length > 0 &&
+             m_nodeOffsetForIdentifier[m_length - 1] == DeletedOffset);
+  } else {
+    // Mark the offset with a special tag until we can reduce length
+    m_nodeOffsetForIdentifier[id] = DeletedOffset;
+  }
+}
+
 uint16_t EditionPool::ReferenceTable::storeNode(Tree *node) {
   if (isFull()) {
     Tree *n;
@@ -58,7 +74,8 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
                                               int contextAlteration) {
   Block *first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
-    if (m_nodeOffsetForIdentifier[i] == UninitializedOffset) {
+    if (m_nodeOffsetForIdentifier[i] == InvalidatedOffset ||
+        m_nodeOffsetForIdentifier[i] == DeletedOffset) {
       continue;
     }
     function(&m_nodeOffsetForIdentifier[i],
@@ -112,7 +129,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
       [](uint16_t *offset, Block *block, const Block *destination,
          const Block *source, int size) {
         if (block >= destination && block < destination + size) {
-          *offset = ReferenceTable::UninitializedOffset;
+          *offset = ReferenceTable::InvalidatedOffset;
         }
       },
       destination, nullptr, numberOfBlocks);
@@ -166,7 +183,7 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
         if (block >= address + size) {
           *offset -= size;
         } else if (block >= address) {
-          *offset = ReferenceTable::UninitializedOffset;
+          *offset = ReferenceTable::InvalidatedOffset;
         }
       },
       address, nullptr, numberOfBlocks);

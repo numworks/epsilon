@@ -14,11 +14,9 @@ class Set {
   static bool Includes(const Tree* set, const Tree* expression);
   static void Add(Tree* set, const Tree* expression);
   static Tree* Pop(Tree* set);
-  static EditionReference Union(EditionReference set0, EditionReference set1);
-  static EditionReference Intersection(EditionReference set0,
-                                       EditionReference set1);
-  static EditionReference Difference(EditionReference set0,
-                                     EditionReference set1);
+  static Tree* Union(Tree* set0, Tree* set1);
+  static Tree* Intersection(Tree* set0, Tree* set1);
+  static Tree* Difference(Tree* set0, Tree* set1);
 };
 
 }  // namespace PoincareJ

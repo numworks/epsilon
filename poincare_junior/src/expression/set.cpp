@@ -45,10 +45,11 @@ Tree* Set::Pop(Tree* set) {
   return set->nextNode()->detachTree();
 }
 
-static EditionReference MergeSets(EditionReference set0, EditionReference set1,
-                                  bool removeChildrenOnlyInSet0,
-                                  bool pilferSet1Children,
-                                  bool removeCommonChildrenInSet0) {
+static Tree* MergeSets(EditionReference set0, EditionReference set1,
+                       bool removeChildrenOnlyInSet0, bool pilferSet1Children,
+                       bool removeCommonChildrenInSet0) {
+  // EditionReference set0 = set0Tree;
+  // EditionReference set1 = set1Tree;
   size_t numberOfChildren0 = set0->numberOfChildren();
   size_t numberOfChildren1 = set1->numberOfChildren();
   size_t numberOfChildren0ToScan = numberOfChildren0;
@@ -105,16 +106,15 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1,
   return set0;
 }
 
-EditionReference Set::Union(EditionReference set0, EditionReference set1) {
+Tree* Set::Union(Tree* set0, Tree* set1) {
   return MergeSets(set0, set1, false, true, false);
 }
 
-EditionReference Set::Intersection(EditionReference set0,
-                                   EditionReference set1) {
+Tree* Set::Intersection(Tree* set0, Tree* set1) {
   return MergeSets(set0, set1, true, false, false);
 }
 
-EditionReference Set::Difference(EditionReference set0, EditionReference set1) {
+Tree* Set::Difference(Tree* set0, Tree* set1) {
   return MergeSets(set0, set1, false, false, true);
 }
 

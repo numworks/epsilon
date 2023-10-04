@@ -138,6 +138,19 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
+KDPoint HistoryController::actualOffset(const SelectableTableView *t) const {
+  assert(t == &m_selectableListView);
+  KDCoordinate delta = 0;
+  int selectedRow = m_selectableListView.selectedRow();
+  if (0 <= selectedRow &&
+      selectedRow < m_calculationStore->numberOfCalculations()) {
+    Shared::ExpiringPointer<Calculation> calculation =
+        calculationAtIndex(selectedRow);
+    delta = calculation->height(true) - calculation->height(false);
+  }
+  return m_selectableListView.contentOffset().translatedBy(KDPoint(delta, 0));
+}
+
 int HistoryController::numberOfRows() const {
   return m_calculationStore->numberOfCalculations();
 };

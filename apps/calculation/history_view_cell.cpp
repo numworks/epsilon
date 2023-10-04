@@ -269,9 +269,8 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
       Ion::crc32Byte((const uint8_t *)calculation,
                      ((char *)calculation->next()) - ((char *)calculation));
   if (newCalculationCRC == m_calculationCRC32) {
-    if (updateExpanded(expanded)) {
-      reloadScroll();
-    }
+    updateExpanded(expanded);
+    reloadScroll();
     return;
   }
 
@@ -360,10 +359,6 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
           Calculation::DisplayOutput::ExactAndApproximate ||
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximateToggle);
-  m_scrollableOutputView.setDisplayCenter(
-      m_calculationDisplayOutput ==
-          Calculation::DisplayOutput::ExactAndApproximate ||
-      m_calculationExpanded);
   m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
                                     approximateOutputLayout);
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
@@ -436,20 +431,16 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-bool HistoryViewCell::updateExpanded(bool expanded) {
+void HistoryViewCell::updateExpanded(bool expanded) {
   assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
   bool calculationExpanded =
       expanded && m_calculationDisplayOutput ==
                       Calculation::DisplayOutput::ExactAndApproximateToggle;
-  if (m_calculationExpanded == calculationExpanded) {
-    return false;
-  }
   m_calculationExpanded = calculationExpanded;
   m_scrollableOutputView.setDisplayCenter(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
       m_calculationExpanded);
-  return true;
 }
 
 }  // namespace Calculation

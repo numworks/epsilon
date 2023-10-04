@@ -74,6 +74,7 @@ class EditExpressionController : public Escher::ViewController,
   void reloadView();
   void clearWorkingBuffer() { m_workingBuffer[0] = 0; }
   void memoizeInput();
+  bool pushCalculation(const char* text, Poincare::Context* context);
 
   char m_workingBuffer[k_layoutBufferMaxSize];
   HistoryController* m_historyController;

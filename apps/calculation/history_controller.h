@@ -35,6 +35,7 @@ class HistoryController : public Escher::ViewController,
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* list, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
+  KDPoint actualOffset(const Escher::SelectableTableView* t) const override;
   void recomputeHistoryCellHeightsIfNeeded() {
     m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(
         Poincare::Preferences::sharedPreferences, HistoryViewCell::Height);

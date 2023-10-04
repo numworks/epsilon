@@ -194,8 +194,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   FunctionCell tempCell;
-  fillCellForRow(&tempCell, row);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
 KDCoordinate ListController::editableRowHeight() {

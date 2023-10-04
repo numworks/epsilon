@@ -23,6 +23,7 @@ class CalculationStore;
 
 class Calculation {
   friend CalculationStore;
+  using HeightComputer = void (*)(Calculation*, Poincare::Context*);
 
  public:
   constexpr static int k_numberOfExpressions = 4;
@@ -79,6 +80,9 @@ class Calculation {
 
   // Heights
   KDCoordinate height(bool expanded);
+  void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
+  void computeHeights(HeightComputer heightComputer,
+                      Poincare::Context* context);
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context* context);
@@ -99,8 +103,6 @@ class Calculation {
   static bool DisplaysExact(DisplayOutput d) {
     return d != DisplayOutput::ApproximateOnly;
   }
-
-  void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   /* Buffers holding text expressions have to be longer than the text written

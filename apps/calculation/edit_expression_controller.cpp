@@ -135,7 +135,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
       if (!isAcceptableText(m_workingBuffer)) {
         App::app()->displayWarning(I18n::Message::SyntaxError);
       } else if (m_calculationStore
-                     ->push(m_workingBuffer, context, HistoryViewCell::Height)
+                     ->push(m_workingBuffer, context,
+                            HistoryViewCell::ComputeCalculationHeights)
                      .pointer()) {
         m_historyController->reload();
       }
@@ -150,7 +151,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layout.isUninitialized());
   layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);
   if (m_calculationStore
-          ->push(m_workingBuffer, context, HistoryViewCell::Height)
+          ->push(m_workingBuffer, context,
+                 HistoryViewCell::ComputeCalculationHeights)
           .pointer()) {
     m_historyController->reload();
     layoutField->clearAndSetEditing(true);

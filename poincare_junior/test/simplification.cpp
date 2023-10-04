@@ -221,7 +221,6 @@ void simplifies_to(const char* input, const char* output,
   expression->removeTree();
   expected->removeTree();
   assert(SharedEditionPool->numberOfTrees() == 0);
-  SharedEditionPool->flush();
 }
 
 QUIZ_CASE(pcj_basic_simplification) {

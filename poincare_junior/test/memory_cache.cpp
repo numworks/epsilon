@@ -57,9 +57,11 @@ QUIZ_CASE(pcj_cache_pool) {
   assert_pools_tree_sizes_are(1, 0);
   bigTree->clone();
   assert_pools_tree_sizes_are(1, 1);
-  EditionReference ref(SharedEditionPool->firstBlock());
-  cachePool->freeBlocks(1, false);
-  assert_trees_are_equal(ref, bigTree);
+  {
+    EditionReference ref(SharedEditionPool->firstBlock());
+    cachePool->freeBlocks(1, false);
+    assert_trees_are_equal(ref, bigTree);
+  }
   assert_pools_tree_sizes_are(0, 1);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(1, 0);

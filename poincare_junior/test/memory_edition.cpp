@@ -163,7 +163,6 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
 QUIZ_CASE(pcj_tree_comments) {
   EditionReference u, v;
   auto setup = [&]() {
-    SharedEditionPool->flush();
     u = "aaaa"_e->clone();
     "bb"_e->clone();
     v = "ccc"_e->clone();
@@ -184,5 +183,4 @@ QUIZ_CASE(pcj_tree_comments) {
   u->moveTreeOverNode(v);
   QUIZ_ASSERT(v->nextNode()->treeIsIdenticalTo("bb"_e) && u.isUninitialized() &&
               v->treeIsIdenticalTo("ccc"_e));
-  SharedEditionPool->flush();
 }

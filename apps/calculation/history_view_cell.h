@@ -73,6 +73,12 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
 
  private:
   constexpr static KDCoordinate k_resultWidth = 80;
+
+  KDSize minimalSizeForOptimalDisplay() const override {
+    // Not used: we use calculation height memoization
+    assert(false);
+    return KDSizeZero;
+  }
   // This method needs m_calculationDisplayOutput to already be computed
   void updateExpanded(bool expanded);
   void updateSubviewsBackgroundAfterChangingState() override;

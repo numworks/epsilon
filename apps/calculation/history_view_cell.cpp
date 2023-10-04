@@ -295,12 +295,13 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
                                    context, canChangeDisplayOutput,
                                    maxVisibleWidth, font);
 
+  /* Update m_calculationDisplayOutput. Must be done after createOutputLayouts
+   * because calculation->displayOutput can change. */
   m_calculationDisplayOutput = calculation->displayOutput(context);
-  // Call this once m_calculationDisplayOutput is computed
-  updateExpanded(expanded);
 
-  /* We must set which subviews are displayed before setLayouts to mark the
-   * right rectangle as dirty */
+  /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
+   * has been updated. We must set which subviews are displayed before
+   * setLayouts to mark the right rectangle as dirty. */
   m_scrollableOutputView.setDisplayableCenter(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
@@ -310,6 +311,7 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
                                     approximateOutputLayout);
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
       calculation->equalSign(context) == Calculation::EqualSign::Equal);
+  updateExpanded(expanded);
 
   /* The displayed input and outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */

@@ -126,7 +126,8 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
   } else if (selectedRow() == -1) {
     setSelectedSubviewType(SubviewType::None, false, previousSelectedRow);
   } else {
-    HistoryViewCell *selectedCell = (HistoryViewCell *)(list->selectedCell());
+    HistoryViewCell *selectedCell =
+        static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
     SubviewType nextSelectedSubviewType = m_selectedSubviewType;
     if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedRow < selectedRow()

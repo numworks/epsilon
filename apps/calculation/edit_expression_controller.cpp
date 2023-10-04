@@ -134,11 +134,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
        */
       if (!isAcceptableText(m_workingBuffer)) {
         App::app()->displayWarning(I18n::Message::SyntaxError);
-      } else if (m_calculationStore
-                     ->push(m_workingBuffer, context,
-                            HistoryViewCell::ComputeCalculationHeights)
-                     .pointer()) {
-        m_historyController->reload();
+      } else {
+        pushCalculation(m_workingBuffer, context);
       }
     }
     return false;
@@ -150,11 +147,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   Layout layout = layoutField->layout();
   assert(!layout.isUninitialized());
   layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);
-  if (m_calculationStore
-          ->push(m_workingBuffer, context,
-                 HistoryViewCell::ComputeCalculationHeights)
-          .pointer()) {
-    m_historyController->reload();
+  if (pushCalculation(m_workingBuffer, context)) {
     layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
@@ -198,6 +191,17 @@ bool EditExpressionController::isAcceptableExpression(
 void EditExpressionController::reloadView() {
   m_contentView.reload();
   m_historyController->reload();
+}
+
+bool EditExpressionController::pushCalculation(const char *text,
+                                               Poincare::Context *context) {
+  if (m_calculationStore
+          ->push(text, context, HistoryViewCell::ComputeCalculationHeights)
+          .pointer()) {
+    m_historyController->reload();
+    return true;
+  }
+  return false;
 }
 
 }  // namespace Calculation

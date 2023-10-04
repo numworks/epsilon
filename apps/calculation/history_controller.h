@@ -43,9 +43,9 @@ class HistoryController : public Escher::ViewController,
  private:
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  int storeIndex(int i) { return numberOfRows() - i - 1; }
-  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
-  bool calculationAtIndexToggles(int index);
+  int storeIndex(int i) const { return numberOfRows() - i - 1; }
+  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i) const;
+  bool calculationAtIndexToggles(int index) const;
   void handleOK();
 
   constexpr static int k_maxNumberOfDisplayedRows = 6;

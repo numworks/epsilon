@@ -109,7 +109,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 }
 
 Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
-    int i) {
+    int i) const {
   return m_calculationStore->calculationAtIndex(storeIndex(i));
 }
 
@@ -174,7 +174,7 @@ KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {
   return calculation->height(expanded);
 }
 
-bool HistoryController::calculationAtIndexToggles(int index) {
+bool HistoryController::calculationAtIndexToggles(int index) const {
   Context *context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() &&
          calculationAtIndex(index)->displayOutput(context) ==

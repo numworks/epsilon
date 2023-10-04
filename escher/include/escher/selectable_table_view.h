@@ -27,8 +27,8 @@ class SelectableTableView : public TableView, public Responder {
   void setDelegate(SelectableTableViewDelegate* delegate) {
     m_delegate = delegate;
   }
-  int selectedRow() { return m_selectionDataSource->selectedRow(); }
-  int selectedColumn() { return m_selectionDataSource->selectedColumn(); }
+  int selectedRow() const { return m_selectionDataSource->selectedRow(); }
+  int selectedColumn() const { return m_selectionDataSource->selectedColumn(); }
   void selectRow(int j) { m_selectionDataSource->selectRow(j); }
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
   void selectFirstRow() {

@@ -270,6 +270,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.E1", "50");
+  simplifies_to("(2+π)*ln(2)", "2×ln(2)+π×ln(2)");
+
   // Trigonometry identities
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");

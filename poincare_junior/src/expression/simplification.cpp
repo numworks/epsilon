@@ -598,11 +598,11 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
     return TermsAreEqual(v, u);
   }
   if (v->type() != BlockType::Multiplication) {
-    return u->numberOfChildren() == 2 && IsConstant(u->child(0)) &&
+    return u->numberOfChildren() == 2 && IsRational(u->child(0)) &&
            u->child(1)->treeIsIdenticalTo(v);
   }
-  bool hasConstU = IsConstant(u->child(0));
-  bool hasConstV = IsConstant(v->child(0));
+  bool hasConstU = IsRational(u->child(0));
+  bool hasConstV = IsRational(v->child(0));
   int n = u->numberOfChildren() - hasConstU;
   if (n != v->numberOfChildren() - hasConstV) {
     return false;
@@ -622,7 +622,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
   Tree* c = u->clone();
-  if (u->type() == BlockType::Multiplication && IsConstant(u->child(0))) {
+  if (u->type() == BlockType::Multiplication && IsRational(u->child(0))) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfUnary(c);
   }
@@ -631,7 +631,7 @@ Tree* PushTerm(const Tree* u) {
 
 // The constant of 2ab is 2
 const Tree* Constant(const Tree* u) {
-  if (u->type() == BlockType::Multiplication && IsConstant(u->child(0))) {
+  if (u->type() == BlockType::Multiplication && IsRational(u->child(0))) {
     return u->child(0);
   }
   return 1_e;
@@ -1167,7 +1167,6 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
   // f(0,E) ... *(f(A,E), f(B,E), f(C,E))
   ref = ref->moveTreeOverTree(output);
   // *(f(A,E), f(B,E), f(C,E))
-  // TODO: SimplifyAddition or SimplifyMultiplication
   ShallowSystematicReduce(ref);
   return true;
 }

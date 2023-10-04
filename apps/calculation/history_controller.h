@@ -37,10 +37,7 @@ class HistoryController : public Escher::ViewController,
       KDPoint previousOffset, bool withinTemporarySelection = false) override;
   KDPoint offsetToRestoreAfterReload(
       const Escher::SelectableTableView* t) const override;
-  void recomputeHistoryCellHeightsIfNeeded() {
-    m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(
-        Poincare::Preferences::sharedPreferences, HistoryViewCell::Height);
-  }
+  void recomputeHistoryCellHeightsIfNeeded();
 
  private:
   KDCoordinate nonMemoizedRowHeight(int row) override;

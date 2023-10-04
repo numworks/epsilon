@@ -152,6 +152,18 @@ KDPoint HistoryController::offsetToRestoreAfterReload(
   return m_selectableListView.contentOffset().translatedBy(KDPoint(delta, 0));
 }
 
+void HistoryController::recomputeHistoryCellHeightsIfNeeded() {
+  if (!m_calculationStore->preferencesHaveChanged()) {
+    return;
+  }
+  for (int i = 0; i < numberOfRows(); i++) {
+    /* The void context is used since there is no reasons for the
+     * heightComputer to resolve symbols */
+    CalculationStore::SetCalculationHeights(calculationAtIndex(i).pointer(),
+                                            HistoryViewCell::Height, nullptr);
+  }
+}
+
 int HistoryController::numberOfRows() const {
   return m_calculationStore->numberOfCalculations();
 };

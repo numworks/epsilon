@@ -24,13 +24,17 @@ AboutController::AboutController(Responder *parentResponder)
               this),
           I18n::Message::HardwareTestLaunch) {}
 
+static bool isHardwareTestRow(int row) {
+  return row == AboutController::Row(AboutController::CellType::FCCID) || row == AboutController::Row(AboutController::CellType::SerialNumber);
+}
+
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
        event == Ion::Events::UpperT) &&
       m_messageTreeModel->label() == I18n::Message::About &&
-      selectedRow() == hardwareTestRow() &&
+      isHardwareTestRow(selectedRow()) &&
       !Poincare::Preferences::sharedPreferences->examMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();
@@ -103,12 +107,6 @@ void AboutController::viewWillAppear() {
     m_cells[Row(CellType::FCCID)].setVisible(false);
   }
   GenericSubController::viewWillAppear();
-}
-
-int AboutController::hardwareTestRow() const {
-  return m_cells[Row(CellType::FCCID)].isVisible()
-             ? Row(CellType::FCCID)
-             : Row(CellType::SerialNumber);
 }
 
 }  // namespace Settings

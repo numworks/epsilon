@@ -159,8 +159,8 @@ void HistoryController::recomputeHistoryCellHeightsIfNeeded() {
   for (int i = 0; i < numberOfRows(); i++) {
     /* The void context is used since there is no reasons for the
      * heightComputer to resolve symbols */
-    CalculationStore::SetCalculationHeights(calculationAtIndex(i).pointer(),
-                                            HistoryViewCell::Height, nullptr);
+    calculationAtIndex(i).pointer()->computeHeights(
+        HistoryViewCell::ComputeCalculationHeights, nullptr);
   }
 }
 

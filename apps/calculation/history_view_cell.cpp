@@ -17,22 +17,14 @@ namespace Calculation {
 
 /* HistoryViewCell */
 
-KDCoordinate HistoryViewCell::Height(Calculation *calculation, Context *context,
-                                     bool expanded) {
+void HistoryViewCell::ComputeCalculationHeights(Calculation *calculation,
+                                                Context *context) {
   HistoryViewCell cell(nullptr);
-  cell.setCalculation(calculation, expanded, context, true);
-  KDRect ellipsisFrame = KDRectZero;
-  KDRect inputFrame = KDRectZero;
-  KDRect outputFrame = KDRectZero;
-  cell.computeSubviewFrames(Ion::Display::Width, k_maxCellHeight,
-                            &ellipsisFrame, &inputFrame, &outputFrame);
-  KDCoordinate result =
-      k_margin + inputFrame.unionedWith(outputFrame).height() + k_margin;
-  if (result < 0 || result > k_maxCellHeight) {
-    // if result < 0, result overflowed KDCOORDINATE_MAX
-    return k_maxCellHeight;
-  }
-  return result;
+  cell.setCalculation(calculation, false, context, true);
+  KDCoordinate unExpandedHeight = cell.minimalHeightForOptimalDisplay();
+  cell.updateExpanded(true);
+  KDCoordinate expandedHeight = cell.minimalHeightForOptimalDisplay();
+  calculation->setHeights(unExpandedHeight, expandedHeight);
 }
 
 HistoryViewCell::HistoryViewCell(Responder *parentResponder)
@@ -201,8 +193,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
                                            KDRect *ellipsisFrame,
                                            KDRect *inputFrame,
                                            KDRect *outputFrame) {
-  assert(ellipsisFrame != nullptr && inputFrame != nullptr &&
-         outputFrame != nullptr);
+  assert(ellipsisFrame && inputFrame && outputFrame);
 
   if (isDisplayingEllipsis()) {
     *ellipsisFrame = KDRect(frameWidth - Metric::EllipsisCellWidth, 0,
@@ -328,6 +319,21 @@ void HistoryViewCell::didBecomeFirstResponder() {
              HistoryViewCellDataSource::SubviewType::Output) {
     App::app()->setFirstResponder(&m_scrollableOutputView);
   }
+}
+
+KDCoordinate HistoryViewCell::minimalHeightForOptimalDisplay() {
+  KDRect ellipsisFrame = KDRectZero;
+  KDRect inputFrame = KDRectZero;
+  KDRect outputFrame = KDRectZero;
+  computeSubviewFrames(Ion::Display::Width, k_maxCellHeight, &ellipsisFrame,
+                       &inputFrame, &outputFrame);
+  KDCoordinate result =
+      k_margin + inputFrame.unionedWith(outputFrame).height() + k_margin;
+  if (result < 0 || result > k_maxCellHeight) {
+    // if result < 0, result overflowed KDCOORDINATE_MAX
+    return k_maxCellHeight;
+  }
+  return result;
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {

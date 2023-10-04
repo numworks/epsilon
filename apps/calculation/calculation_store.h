@@ -35,15 +35,7 @@ a = pointerArea()
 
 class CalculationStore {
  public:
-  using HeightComputer = KDCoordinate (*)(Calculation *, Poincare::Context *,
-                                          bool);
-  static void SetCalculationHeights(Calculation *calculation,
-                                    HeightComputer heightComputer,
-                                    Poincare::Context *context) {
-    KDCoordinate unexpandedHeight = heightComputer(calculation, context, false);
-    KDCoordinate expandedHeight = heightComputer(calculation, context, true);
-    calculation->setHeights(unexpandedHeight, expandedHeight);
-  }
+  using HeightComputer = void (*)(Calculation *, Poincare::Context *);
 
   CalculationStore(char *buffer, size_t bufferSize);
 

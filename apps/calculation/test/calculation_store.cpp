@@ -33,10 +33,7 @@ void assert_store_is(CalculationStore *store, const char **result) {
   }
 }
 
-KDCoordinate dummyHeight(::Calculation::Calculation *c, Context *context,
-                         bool expanded) {
-  return 0;
-}
+void dummyHeight(::Calculation::Calculation *c, Context *context) {}
 
 QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;

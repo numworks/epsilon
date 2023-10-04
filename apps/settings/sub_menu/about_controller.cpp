@@ -25,7 +25,8 @@ AboutController::AboutController(Responder *parentResponder)
           I18n::Message::HardwareTestLaunch) {}
 
 static bool isHardwareTestRow(int row) {
-  return row == AboutController::Row(AboutController::CellType::FCCID) || row == AboutController::Row(AboutController::CellType::SerialNumber);
+  return row == AboutController::Row(AboutController::CellType::FCCID) ||
+         row == AboutController::Row(AboutController::CellType::SerialNumber);
 }
 
 bool AboutController::handleEvent(Ion::Events::Event event) {

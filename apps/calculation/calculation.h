@@ -36,10 +36,6 @@ class Calculation {
     ExactAndApproximateToggle
   };
 
-  static bool DisplaysExact(DisplayOutput d) {
-    return d != DisplayOutput::ApproximateOnly;
-  }
-
   /* It is not really the minimal size, but it clears enough space for most
    * calculations instead of clearing less space, then fail to serialize, clear
    * more space, fail to serialize, clear more space, etc., until reaching
@@ -86,7 +82,11 @@ class Calculation {
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context* context);
-  void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
+  void createOutputLayouts(Poincare::Layout* exactOutput,
+                           Poincare::Layout* approximateOutput,
+                           Poincare::Context* context,
+                           bool canChangeDisplayOutput,
+                           KDCoordinate maxVisibleWidth, KDFont::Size font);
   EqualSign equalSign(Poincare::Context* context);
 
   void fillExpressionsForAdditionalResults(
@@ -96,8 +96,12 @@ class Calculation {
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
+  static bool DisplaysExact(DisplayOutput d) {
+    return d != DisplayOutput::ApproximateOnly;
+  }
 
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
+  void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::MaxBufferSize()) because when we

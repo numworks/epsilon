@@ -237,11 +237,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * calculation. */
   assert(cursor < pointerArea() - sizeof(Calculation *));
   pointerArray()[-1] = cursor;
-
-  // Compute the calculation heights
   Calculation *newCalculation =
       reinterpret_cast<Calculation *>(endOfCalculations());
-  newCalculation->computeHeights(heightComputer, context);
 
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state
@@ -306,9 +303,6 @@ ExpiringPointer<Calculation> CalculationStore::errorPushUndefined(
          cursor <= m_buffer + m_bufferSize - sizeof(Calculation *));
   *(pointerArray() - 1) = cursor;
   Calculation *ptr = reinterpret_cast<Calculation *>(m_buffer);
-  /* The void context is used since there is no reasons for the
-   * heightComputer to resolve symbols */
-  ptr->computeHeights(heightComputer, nullptr);
   m_numberOfCalculations = 1;
   return ExpiringPointer<Calculation>(ptr);
 }

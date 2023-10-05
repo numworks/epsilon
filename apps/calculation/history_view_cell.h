@@ -57,6 +57,9 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void setCalculation(Calculation* calculation, bool expanded,
                       Poincare::Context* context,
                       bool canChangeDisplayOutput = false);
+  void setNewCalculation(Calculation* calculation, bool expanded,
+                         Poincare::Context* context,
+                         bool canChangeDisplayOutput = false);
   int numberOfSubviews() const override { return 2 + isDisplayingEllipsis(); }
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

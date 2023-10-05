@@ -20,7 +20,7 @@ namespace Calculation {
 void HistoryViewCell::ComputeCalculationHeights(Calculation *calculation,
                                                 Context *context) {
   HistoryViewCell cell(nullptr);
-  cell.setCalculation(calculation, false, context, true);
+  cell.setNewCalculation(calculation, false, context, true);
   KDCoordinate unExpandedHeight = cell.minimalHeightForOptimalDisplay();
   cell.updateExpanded(true);
   KDCoordinate expandedHeight = cell.minimalHeightForOptimalDisplay();
@@ -270,6 +270,19 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
+
+  setNewCalculation(calculation, expanded, context, canChangeDisplayOutput);
+
+  /* The displayed input and outputs have changed. We need to re-layout the cell
+   * and re-initialize the scroll. */
+  layoutSubviews();
+  reloadScroll();
+}
+
+void HistoryViewCell::setNewCalculation(Calculation *calculation, bool expanded,
+                                        Poincare::Context *context,
+                                        bool canChangeDisplayOutput) {
+  // Memoization
   m_additionalResultsType = calculation->additionalResultsType();
   m_inputView.setLayout(calculation->createInputLayout());
 
@@ -303,11 +316,6 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
       calculation->equalSign(context) == Calculation::EqualSign::Equal);
   updateExpanded(expanded);
-
-  /* The displayed input and outputs have changed. We need to re-layout the cell
-   * and re-initialize the scroll. */
-  layoutSubviews();
-  reloadScroll();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {

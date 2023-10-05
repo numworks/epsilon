@@ -1,4 +1,3 @@
-#include <ion/include/ion/persisting_bytes.h>
 #include <poincare/exam_mode.h>
 #include <quiz.h>
 

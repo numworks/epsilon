@@ -26,7 +26,7 @@ static void updateLed(Configuration config) {
 }
 
 Configuration get() {
-  Configuration config(PersistingBytes::read());
+  Configuration config(ExamBytes::read());
   if (config.isUninitialized() ||
       (Authentication::clearanceLevel() !=
            Authentication::ClearanceLevel::NumWorks &&
@@ -45,7 +45,7 @@ Configuration get() {
 
 void set(Configuration config) {
   assert(!config.isUninitialized());
-  PersistingBytes::write(config.raw());
+  ExamBytes::write(config.raw());
   if (config.isActive() && Authentication::clearanceLevel() !=
                                Authentication::ClearanceLevel::NumWorks) {
     /* The device will reset on official firmware, and pick up the

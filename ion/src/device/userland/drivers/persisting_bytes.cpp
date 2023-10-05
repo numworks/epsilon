@@ -1,14 +1,15 @@
+#include <drivers/persisting_bytes.h>
 #include <drivers/svcall.h>
-#include <ion/persisting_bytes.h>
 
 namespace Ion {
 namespace PersistingBytes {
 
-void SVC_ATTRIBUTES write(PersistingBytesInt value){
-    SVC_RETURNING_VOID(SVC_PERSISTING_BYTES_WRITE)}
+uint8_t* SVC_ATTRIBUTES bufferStart() {
+  SVC_RETURNING_R0(SVC_PERSISTING_BYTES_BUFFER_START, uint8_t*);
+}
 
-PersistingBytesInt SVC_ATTRIBUTES read() {
-  SVC_RETURNING_R0(SVC_PERSISTING_BYTES_READ, PersistingBytesInt)
+uint8_t* SVC_ATTRIBUTES bufferEnd() {
+  SVC_RETURNING_R0(SVC_PERSISTING_BYTES_BUFFER_END, uint8_t*);
 }
 
 }  // namespace PersistingBytes

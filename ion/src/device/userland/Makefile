@@ -29,6 +29,7 @@ ion_device_userland_svc_src += $(addprefix ion/src/device/userland/drivers/, \
   crc32.cpp \
   display.cpp \
   events.cpp \
+  exam_bytes.cpp \
   fcc_id.cpp \
   flash_write_with_interruptions.cpp \
   init.cpp \

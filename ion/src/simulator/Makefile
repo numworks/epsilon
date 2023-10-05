@@ -23,11 +23,11 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   display.cpp \
   events.cpp \
   events_platform.cpp \
+  exam_bytes.cpp \
   framebuffer.cpp \
   init.cpp \
   keyboard.cpp \
   main.cpp \
-  persisting_bytes.cpp \
   random.cpp \
   timing.cpp \
   window.cpp \

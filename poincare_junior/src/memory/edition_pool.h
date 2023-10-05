@@ -120,7 +120,7 @@ class EditionPool final : public Pool {
 };
 
 // Global alias
-extern EditionPool *const SharedEditionPool;
+extern EditionPool *const volatile SharedEditionPool;
 
 }  // namespace PoincareJ
 

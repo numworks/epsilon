@@ -16,6 +16,10 @@ void ExceptionCheckpointRaise() __attribute__((__noreturn__));
 #endif
 
 #undef assert
+#if ASSERTIONS
 #define assert(e) \
   (__builtin_expect(!(e), 0) ? ExceptionCheckpointRaise() : (void)0)
+#else
+#define assert(e) ((void)0)
+#endif
 #endif

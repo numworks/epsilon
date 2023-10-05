@@ -14,8 +14,12 @@ namespace PoincareJ {
 
 // ReferenceTable
 
-EditionPool *const SharedEditionPool =
+#if PLATFORM_DEVICE
+EditionPool *const volatile SharedEditionPool = nullptr;
+#else
+EditionPool *const volatile SharedEditionPool =
     CachePool::sharedCachePool()->editionPool();
+#endif
 
 void EditionPool::InitSharedEditionPool() {
   // TODO is this a defined behavior ?

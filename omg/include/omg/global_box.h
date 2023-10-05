@@ -15,9 +15,6 @@ namespace OMG {
 template <typename T>
 class alignas(T) GlobalBox {
  public:
-#if ASSERTIONS
-  GlobalBox() : m_isInitialized(false) {}
-#endif
   template <typename... Args>
   void init(Args... args) {
 #if ASSERTIONS

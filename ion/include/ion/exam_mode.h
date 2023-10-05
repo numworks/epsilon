@@ -1,13 +1,13 @@
 #ifndef ION_EXAM_MODE_H
 #define ION_EXAM_MODE_H
 
-#include <ion/persisting_bytes.h>
+#include <ion/exam_bytes.h>
 #include <kandinsky/color.h>
 
 namespace Ion {
 namespace ExamMode {
 
-using Int = PersistingBytes::PersistingBytesInt;
+using Int = ExamBytes::Int;
 
 enum class Ruleset : Int {
   Off = 0,

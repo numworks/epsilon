@@ -1,6 +1,7 @@
 #ifndef OMG_GLOBAL_BOX_H
 #define OMG_GLOBAL_BOX_H
 
+#include <assert.h>
 #include <stdint.h>
 
 #include <new>

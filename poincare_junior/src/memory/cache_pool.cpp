@@ -87,19 +87,16 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
 
 // CachePool
 
-CachePool *CachePool::sharedCachePool() {
-  static CachePool s_cache;
-  return &s_cache;
-}
+OMG::GlobalBox<CachePool> CachePool::SharedCachePool;
 
 uint16_t CachePool::storeEditedTree() {
-  if (m_editionPool.size() == 0) {
+  if (SharedEditionPool->size() == 0) {
     return ReferenceTable::NoNodeIdentifier;
   }
   uint16_t id = m_referenceTable.storeNode(Tree::FromBlocks(lastBlock()));
   assert(id != ReferenceTable::NoNodeIdentifier);
   resetEditionPool();
-  m_editionPool.flush();
+  SharedEditionPool->flush();
   return id;
 }
 
@@ -109,33 +106,34 @@ bool CachePool::freeBlocks(int numberOfBlocks, bool flushEditionPool) {
     return false;
   }
   if (flushEditionPool) {
-    m_editionPool.flush();
+    SharedEditionPool->flush();
   }
   return true;
 }
 
 void CachePool::reset() {
   m_referenceTable.reset();
-  m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks);
-  m_editionPool.flush();
+  SharedEditionPool->reinit(lastBlock(), k_maxNumberOfBlocks);
+  SharedEditionPool->flush();
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Cache, "Flush");
 #endif
 }
 
-CachePool::CachePool()
-    : m_referenceTable(this),
-      m_editionPool(static_cast<TypeBlock *>(static_cast<Block *>(m_blocks)),
-                    k_maxNumberOfBlocks) {}
+CachePool::CachePool() : m_referenceTable(this) {
+  EditionPool::SharedEditionPool.init(
+      static_cast<TypeBlock *>(static_cast<Block *>(m_blocks)),
+      k_maxNumberOfBlocks);
+}
 
 void CachePool::resetEditionPool() {
-  m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - size());
+  SharedEditionPool->reinit(lastBlock(), k_maxNumberOfBlocks - size());
 }
 
 void CachePool::translate(uint16_t offset, size_t cachePoolSize) {
   Block *newFirst = m_blocks + offset;
   memmove(m_blocks, newFirst,
-          (cachePoolSize + m_editionPool.size()) * sizeof(TypeBlock));
+          (cachePoolSize + SharedEditionPool->size()) * sizeof(TypeBlock));
   resetEditionPool();
 }
 

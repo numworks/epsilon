@@ -1,23 +1,26 @@
 #ifndef POINCARE_MEMORY_CACHE_POOL_H
 #define POINCARE_MEMORY_CACHE_POOL_H
 
+#include <omg/global_box.h>
+
 #include "edition_pool.h"
 #include "reference.h"
 
 namespace PoincareJ {
 
 class CachePool final : public Pool {
+  friend class OMG::GlobalBox<CachePool>;
   friend class Reference;
   /* The CachePool respects the following assertions:
    * - the referenced addresses are physically linear on the pool,
    * - the pool can be fragmented.
    **/
  public:
-  static CachePool *sharedCachePool();
+  static OMG::GlobalBox<CachePool> SharedCachePool;
+  static CachePool *sharedCachePool() { return SharedCachePool; }
 
   uint16_t storeEditedTree();
 
-  EditionPool *editionPool() { return &m_editionPool; }
   bool freeBlocks(int numberOfBlocks, bool flushEditionPool = true);
   /* reset should be used when all CacheReference have been destroyed to ensure
    * that they won't point to reallocated nodes */
@@ -117,7 +120,6 @@ class CachePool final : public Pool {
   }
 
   ReferenceTable m_referenceTable;
-  EditionPool m_editionPool;
   Block m_blocks[k_maxNumberOfBlocks];
 };
 

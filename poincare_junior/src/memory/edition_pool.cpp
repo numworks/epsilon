@@ -14,19 +14,6 @@ namespace PoincareJ {
 
 // ReferenceTable
 
-#if PLATFORM_DEVICE
-EditionPool *const volatile SharedEditionPool = nullptr;
-#else
-EditionPool *const volatile SharedEditionPool =
-    CachePool::sharedCachePool()->editionPool();
-#endif
-
-void EditionPool::InitSharedEditionPool() {
-  // TODO is this a defined behavior ?
-  EditionPool **pool = const_cast<EditionPool **>(&SharedEditionPool);
-  *pool = CachePool::sharedCachePool()->editionPool();
-}
-
 Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   Tree *n = Pool::ReferenceTable::nodeForIdentifier(id);
   if (!m_pool->contains(n->block()) && n->block() != m_pool->lastBlock()) {
@@ -89,7 +76,9 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
   }
 }
 
-// EditionTable
+// EditionPool
+
+OMG::GlobalBox<EditionPool> EditionPool::SharedEditionPool;
 
 void EditionPool::reinit(Block *firstBlock, size_t size) {
   m_firstBlock = firstBlock;

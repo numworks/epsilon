@@ -1,6 +1,8 @@
 #ifndef POINCARE_MEMORY_EDITION_POOL_H
 #define POINCARE_MEMORY_EDITION_POOL_H
 
+#include <omg/global_box.h>
+
 #include "pool.h"
 #include "reference.h"
 
@@ -10,7 +12,8 @@ class EditionPool final : public Pool {
   friend class EditionReference;
 
  public:
-  static void InitSharedEditionPool();
+  static OMG::GlobalBox<EditionPool> SharedEditionPool;
+
   EditionPool(Block *firstBlock, size_t size, int numberOfBlocks = 0)
       : m_referenceTable(this),
         m_firstBlock(firstBlock),
@@ -130,8 +133,7 @@ class EditionPool final : public Pool {
   size_t m_size;
 };
 
-// Global alias
-extern EditionPool *const volatile SharedEditionPool;
+#define SharedEditionPool EditionPool::SharedEditionPool
 
 }  // namespace PoincareJ
 

@@ -3,10 +3,6 @@
 #include <shared/drivers/kernel_header.h>
 #include <shared/drivers/userland_header.h>
 
-extern "C" {
-extern char _persisting_bytes_buffer_start;
-}
-
 namespace Ion {
 namespace Device {
 namespace Board {

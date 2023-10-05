@@ -101,8 +101,7 @@ Expression CalculationStore::ansExpression(Context *context) const {
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(
-    const char *text, Poincare::Context *context,
-    HeightComputer heightComputer) {
+    const char *text, Poincare::Context *context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -141,7 +140,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       cursor =
           pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
       if (cursor == k_pushError) {
-        return errorPushUndefined(heightComputer);
+        return errorPushUndefined();
       }
       /* Recompute the location of the input text in case a calculation was
        * deleted. */
@@ -227,7 +226,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     if (nextCursor == k_pushError) {
       nextCursor = pushUndefined(cursor);
       if (nextCursor == k_pushError) {
-        return errorPushUndefined(heightComputer);
+        return errorPushUndefined();
       }
     }
     cursor = nextCursor;
@@ -295,8 +294,7 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
   return deletedSize;
 }
 
-ExpiringPointer<Calculation> CalculationStore::errorPushUndefined(
-    HeightComputer heightComputer) {
+ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
   assert(numberOfCalculations() == 0);
   char *cursor = pushUndefined(m_buffer);
   assert(m_buffer < cursor &&

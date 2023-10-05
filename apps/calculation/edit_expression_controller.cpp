@@ -195,9 +195,13 @@ void EditExpressionController::reloadView() {
 
 bool EditExpressionController::pushCalculation(const char *text,
                                                Poincare::Context *context) {
-  if (m_calculationStore
+  Calculation *calculation =
+      m_calculationStore
           ->push(text, context, HistoryViewCell::ComputeCalculationHeights)
-          .pointer()) {
+          .pointer();
+  if (calculation) {
+    calculation->computeHeights(HistoryViewCell::ComputeCalculationHeights,
+                                context);
     m_historyController->reload();
     return true;
   }

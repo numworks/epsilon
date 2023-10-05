@@ -261,16 +261,17 @@ void assert_expression_approximates_keeping_symbols_to(
       angleUnit, unitFormat, ReplaceAllDefinedSymbolsWithDefinition,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) {
-        Tree *simplifiedExpression;
 #if 0
+        Tree *simplifiedExpression;
         e.cloneAndSimplifyAndApproximate(
             &simplifiedExpression, nullptr, reductionContext.context(),
             reductionContext.complexFormat(), reductionContext.angleUnit(),
             reductionContext.unitFormat(),
             reductionContext.symbolicComputation(),
             reductionContext.unitConversion(), true);
-#endif
         return simplifiedExpression;
+#endif
+        return e;
       },
       numberOfSignificantDigits);
 }

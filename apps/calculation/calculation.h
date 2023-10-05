@@ -23,7 +23,6 @@ class CalculationStore;
 
 class Calculation {
   friend CalculationStore;
-  using HeightComputer = void (*)(Calculation*, Poincare::Context*);
 
  public:
   constexpr static int k_numberOfExpressions = 4;
@@ -81,8 +80,6 @@ class Calculation {
   // Heights
   KDCoordinate height(bool expanded);
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
-  void computeHeights(HeightComputer heightComputer,
-                      Poincare::Context* context);
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context* context);

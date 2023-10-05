@@ -200,8 +200,7 @@ bool EditExpressionController::pushCalculation(const char *text,
           ->push(text, context, HistoryViewCell::ComputeCalculationHeights)
           .pointer();
   if (calculation) {
-    calculation->computeHeights(HistoryViewCell::ComputeCalculationHeights,
-                                context);
+    HistoryViewCell::ComputeCalculationHeights(calculation, context);
     m_historyController->reload();
     return true;
   }

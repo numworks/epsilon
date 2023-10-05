@@ -158,11 +158,6 @@ KDCoordinate Calculation::height(bool expanded) {
   return h;
 }
 
-void Calculation::computeHeights(HeightComputer heightComputer,
-                                 Context *context) {
-  heightComputer(this, context);
-}
-
 void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
   m_height = height;
   m_expandedHeight = expandedHeight;

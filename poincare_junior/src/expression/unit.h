@@ -138,7 +138,7 @@ class UnitRepresentative {
   static uint8_t ToId(const UnitRepresentative* representative);
   static const UnitRepresentative* FromId(uint8_t id);
 
-  static const UnitRepresentative* const* DefaultRepresentatives();
+  static const UnitRepresentative* const* const* DefaultRepresentatives();
 #if 0
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
@@ -157,7 +157,8 @@ class UnitRepresentative {
   virtual int numberOfRepresentatives() const = 0;
   /* representativesOfSameDimension returns a pointer to the array containing
    * all representatives for this's dimension. */
-  virtual const UnitRepresentative* representativesOfSameDimension() const = 0;
+  virtual const UnitRepresentative* const* representativesOfSameDimension()
+      const = 0;
   virtual const UnitPrefix* basePrefix() const {
     return UnitPrefix::EmptyPrefix();
   }

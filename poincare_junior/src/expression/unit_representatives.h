@@ -14,15 +14,20 @@ class Helper : public UnitRepresentative {
   int numberOfRepresentatives() const override {
     return std::size(R::representatives);
   };
-  const UnitRepresentative* representativesOfSameDimension() const override {
-    return R::representatives[0];
+  const UnitRepresentative* const* representativesOfSameDimension()
+      const override {
+    return representativesList();
+  };
+  constexpr static const UnitRepresentative* const* representativesList() {
+    return reinterpret_cast<const UnitRepresentative* const*>(
+        R::representatives);
   };
   const DimensionVector dimensionVector() const override {
     return R::Dimension;
   }
   bool isBaseUnit() const override {
     if constexpr (R::Dimension.isSI()) {
-      return this == representativesOfSameDimension();
+      return this == representativesOfSameDimension()[0];
     } else {
       return false;
     }
@@ -442,7 +447,8 @@ class Speed : public Helper<Speed> {
   const static Speed none;
   constexpr static const Speed* representatives[] = {&none};
 
-  const UnitRepresentative* representativesOfSameDimension() const override {
+  const UnitRepresentative* const* representativesOfSameDimension()
+      const override {
     return nullptr;
   };
 

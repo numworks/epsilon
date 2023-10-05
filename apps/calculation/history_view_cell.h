@@ -84,7 +84,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
     return KDSizeZero;
   }
   // This method needs m_calculationDisplayOutput to already be computed
-  void updateExpanded(bool expanded);
+  bool updateExpanded(bool expanded);
   void updateSubviewsBackgroundAfterChangingState() override;
   void computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate frameHeight,
                             KDRect* ellipsisFrame, KDRect* inputFrame,

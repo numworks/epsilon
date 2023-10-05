@@ -35,8 +35,6 @@ a = pointerArea()
 
 class CalculationStore {
  public:
-  using HeightComputer = void (*)(Calculation *, Poincare::Context *);
-
   CalculationStore(char *buffer, size_t bufferSize);
 
   /* A Calculation does not count toward the number while it is being built and
@@ -50,8 +48,7 @@ class CalculationStore {
   }
 
   Shared::ExpiringPointer<Calculation> push(const char *text,
-                                            Poincare::Context *context,
-                                            HeightComputer heightComputer);
+                                            Poincare::Context *context);
   void deleteCalculationAtIndex(int index) {
     privateDeleteCalculationAtIndex(index, endOfCalculations());
   }
@@ -82,8 +79,7 @@ class CalculationStore {
     return privateDeleteCalculationAtIndex(numberOfCalculations() - 1,
                                            endOfTemporaryData);
   }
-  Shared::ExpiringPointer<Calculation> errorPushUndefined(
-      HeightComputer heightComputer);
+  Shared::ExpiringPointer<Calculation> errorPushUndefined();
 
   /* Push helper methods return a pointer to the end of the pushed content, or
    * k_pushError if the content was not pushed. */

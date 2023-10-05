@@ -33,8 +33,6 @@ void assert_store_is(CalculationStore *store, const char **result) {
   }
 }
 
-void dummyHeight(::Calculation::Calculation *c, Context *context) {}
-
 QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
@@ -42,7 +40,7 @@ QUIZ_CASE(calculation_store) {
   const char *result[] = {"9", "8", "7", "6", "5", "4", "3", "2", "1", "0"};
   for (int i = 0; i < 10; i++) {
     char text[2] = {(char)(i + '0'), 0};
-    store.push(text, &globalContext, dummyHeight);
+    store.push(text, &globalContext);
     quiz_assert(store.numberOfCalculations() == i + 1);
   }
   assert_store_is(&store, result);
@@ -75,7 +73,7 @@ QUIZ_CASE(calculation_store) {
     text[calculationSize - 1] = '\0';
 
     while (store.remainingBufferSize() > minimalSize) {
-      store.push(text, &globalContext, dummyHeight);
+      store.push(text, &globalContext);
     }
     int numberOfCalculations1 = store.numberOfCalculations();
     /* The buffer is now too full to push a new calculation.
@@ -83,7 +81,7 @@ QUIZ_CASE(calculation_store) {
      * distinguish it from previously pushed ones. */
     text[0] = '9';
     Shared::ExpiringPointer<::Calculation::Calculation> pushedCalculation =
-        store.push(text, &globalContext, dummyHeight);
+        store.push(text, &globalContext);
     // Assert pushed text is correct
     quiz_assert(strcmp(store.calculationAtIndex(0)->inputText(), text) == 0);
     quiz_assert(strcmp(pushedCalculation->inputText(), text) == 0);
@@ -107,12 +105,12 @@ QUIZ_CASE(calculation_store) {
 
     // Push big calculations until approaching the limit
     while (store.remainingBufferSize() > 2 * minimalSize) {
-      store.push(text, &globalContext, dummyHeight);
+      store.push(text, &globalContext);
     }
     /* Push small calculations so that remainingBufferSize remain bigger, but
      * gets closer to minimalSize */
     while (store.remainingBufferSize() > minimalSize + minimalSize / 2) {
-      store.push("1", &globalContext, dummyHeight);
+      store.push("1", &globalContext);
     }
     assert(store.remainingBufferSize() > minimalSize);
     int numberOfCalculations1 = store.numberOfCalculations();
@@ -121,7 +119,7 @@ QUIZ_CASE(calculation_store) {
      * distinguish it from previously pushed ones. */
     text[0] = '9';
     Shared::ExpiringPointer<::Calculation::Calculation> pushedCalculation =
-        store.push(text, &globalContext, dummyHeight);
+        store.push(text, &globalContext);
     quiz_assert(strcmp(store.calculationAtIndex(0)->inputText(), text) == 0);
     quiz_assert(strcmp(pushedCalculation->inputText(), text) == 0);
     int numberOfCalculations2 = store.numberOfCalculations();
@@ -135,8 +133,8 @@ QUIZ_CASE(calculation_store) {
 
 void assertAnsIs(const char *input, const char *expectedAnsInputText,
                  Context *context, CalculationStore *store) {
-  store->push(input, context, dummyHeight);
-  store->push("Ans", context, dummyHeight);
+  store->push(input, context);
+  store->push("Ans", context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert(strcmp(lastCalculation->inputText(), expectedAnsInputText) == 0);
@@ -153,15 +151,15 @@ QUIZ_CASE(calculation_ans) {
       Preferences::ComplexFormat::Real);
   Preferences::sharedPreferences->setExamMode(ExamMode(ExamMode::Ruleset::Off));
 
-  store.push("1+3/4", &globalContext, dummyHeight);
-  store.push("ans+2/3", &globalContext, dummyHeight);
+  store.push("1+3/4", &globalContext);
+  store.push("ans+2/3", &globalContext);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) ==
               DisplayOutput::ExactAndApproximate);
   quiz_assert(strcmp(lastCalculation->exactOutputText(), "29/12") == 0);
 
-  store.push("ans+0.22", &globalContext, dummyHeight);
+  store.push("ans+0.22", &globalContext);
   lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) ==
               DisplayOutput::ExactAndApproximateToggle);
@@ -203,7 +201,7 @@ void assertCalculationIs(const char *input, DisplayOutput display,
                          const char *displayedApproximateOutput,
                          const char *storedApproximateOutput, Context *context,
                          CalculationStore *store) {
-  store->push(input, context, dummyHeight);
+  store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(context) == display);
@@ -410,7 +408,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 void assertMainCalculationOutputIs(const char *input, const char *output,
                                    Context *context, CalculationStore *store) {
   // For the next test, we only need to checkout input and output text.
-  store->push(input, context, dummyHeight);
+  store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   switch (lastCalculation->displayOutput(context)) {
@@ -752,7 +750,7 @@ bool operator==(const AdditionalResultsType &a,
 void assertCalculationAdditionalResultTypeHas(
     const char *input, const AdditionalResultsType additionalResultsType,
     Context *context, CalculationStore *store) {
-  store->push(input, context, dummyHeight);
+  store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert_print_if_failure(

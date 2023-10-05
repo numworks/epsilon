@@ -22,8 +22,9 @@ void HistoryViewCell::ComputeCalculationHeights(Calculation *calculation,
   HistoryViewCell cell(nullptr);
   cell.setNewCalculation(calculation, false, context, true);
   KDCoordinate unExpandedHeight = cell.minimalHeightForOptimalDisplay();
-  cell.updateExpanded(true);
-  KDCoordinate expandedHeight = cell.minimalHeightForOptimalDisplay();
+  KDCoordinate expandedHeight = cell.updateExpanded(true)
+                                    ? cell.minimalHeightForOptimalDisplay()
+                                    : unExpandedHeight;
   calculation->setHeights(unExpandedHeight, expandedHeight);
 }
 
@@ -394,16 +395,18 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void HistoryViewCell::updateExpanded(bool expanded) {
+bool HistoryViewCell::updateExpanded(bool expanded) {
   assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
   bool calculationExpanded =
       expanded && m_calculationDisplayOutput ==
                       Calculation::DisplayOutput::ExactAndApproximateToggle;
+  bool didChange = m_calculationExpanded != calculationExpanded;
   m_calculationExpanded = calculationExpanded;
   m_scrollableOutputView.setDisplayCenter(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
       m_calculationExpanded);
+  return didChange;
 }
 
 }  // namespace Calculation

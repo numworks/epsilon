@@ -33,7 +33,7 @@ inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
 using FunctionSize = size_t (Pool::*)() const;
 inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
                                    FunctionSize functionSize) {
-  CachePool* cachePool = CachePool::sharedCachePool();
+  CachePool* cachePool = CachePool::SharedCachePool;
   Pool* pools[] = {cachePool, SharedEditionPool};
   size_t theoreticalSizes[] = {cachePoolSize, editionPoolSize};
   for (size_t i = 0; i < sizeof(theoreticalSizes) / sizeof(size_t); i++) {
@@ -65,7 +65,7 @@ inline void assert_pools_tree_sizes_are(size_t cachePoolSize,
 
 inline void reset_pools() {
   SharedEditionPool->flush();
-  CachePool::sharedCachePool()->reset();
+  CachePool::SharedCachePool->reset();
 }
 
 inline void assert_pool_contains(Pool* pool,

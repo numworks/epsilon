@@ -8,8 +8,7 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_block) {
-  CachePool* cachePool = CachePool::sharedCachePool();
-  cachePool->reset();
+  CachePool::SharedCachePool->reset();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
   Block* firstBlock = SharedEditionPool->pushBlock(ZeroBlock);
@@ -583,8 +582,7 @@ QUIZ_CASE(pcj_node_iterator) {
 }
 
 QUIZ_CASE(pcj_node) {
-  CachePool* cachePool = CachePool::sharedCachePool();
-  cachePool->reset();
+  CachePool::SharedCachePool->reset();
 
   // operator==
   const Tree* node0 = 42_e;

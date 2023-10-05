@@ -174,7 +174,7 @@ const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(type() != BlockType::TreeBorder);
 #endif
-  assert(m_block + nodeSize() != CachePool::sharedCachePool()->firstBlock());
+  assert(m_block + nodeSize() != CachePool::SharedCachePool->firstBlock());
   assert(m_block != SharedEditionPool->lastBlock());
 #if !PLATFORM_DEVICE
   if (SharedEditionPool->firstBlock() <= m_block &&

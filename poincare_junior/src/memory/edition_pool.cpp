@@ -109,7 +109,7 @@ void EditionPool::executeAndDump(ActionWithContext action, void *context,
 uint16_t EditionPool::executeAndCache(ActionWithContext action, void *context,
                                       const void *data, Relax relax) {
   execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
-  return CachePool::sharedCachePool()->storeEditedTree();
+  return CachePool::SharedCachePool->storeEditedTree();
 }
 
 void EditionPool::replaceBlock(Block *previousBlock, Block newBlock) {
@@ -255,7 +255,7 @@ void EditionPool::execute(ActionWithContext action, void *context,
        * otherwise can't copyTreeFromAddress if in cache... */
       int size = fullSize();
       // Free blocks and try again.
-      if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
+      if ((size >= maxSize || !CachePool::SharedCachePool->freeBlocks(
                                   std::min(size, maxSize - size))) &&
           !relax(context)) {
         /* TODO: If no more blocks can be freed, try relaxing the context and

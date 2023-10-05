@@ -321,7 +321,7 @@ QUIZ_CASE(pcj_integer_gcd) {
 }
 
 static void assert_might_overflow(ActionWithContext action, bool overflow) {
-  CachePool* cachePool = CachePool::sharedCachePool();
+  CachePool* cachePool = CachePool::SharedCachePool;
   ExceptionTry {
     cachePool->nodeForIdentifier(
         SharedEditionPool->executeAndCache(action, nullptr, nullptr));

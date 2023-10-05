@@ -17,7 +17,6 @@ class CachePool final : public Pool {
    **/
  public:
   static OMG::GlobalBox<CachePool> SharedCachePool;
-  static CachePool *sharedCachePool() { return SharedCachePool; }
 
   uint16_t storeEditedTree();
 

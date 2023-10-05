@@ -30,7 +30,7 @@ void execute_push_tree_and_modify() {
 }
 
 QUIZ_CASE(pcj_cache_pool) {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   size_t treeSize = bigTree->treeSize();
   cachePool->reset();
 
@@ -79,7 +79,7 @@ QUIZ_CASE(pcj_cache_pool) {
 }
 
 const Tree *lastCachePoolTree() {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   Tree *lastTree = Tree::FromBlocks(cachePool->firstBlock());
   for (size_t i = 1; i < cachePool->numberOfTrees(); i++) {
     lastTree = lastTree->nextTree();
@@ -88,7 +88,7 @@ const Tree *lastCachePoolTree() {
 }
 
 QUIZ_CASE(pcj_cache_pool_limits) {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   cachePool->reset();
   size_t treeSize = bigTree->treeSize();
 
@@ -125,7 +125,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
 
 void assert_check_cache_reference(
     Reference reference, std::initializer_list<const Tree *> cacheTrees) {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   cachePool->reset();
   assert_pools_tree_sizes_are(0, 0);
   reference.send([](const Tree *tree, void *result) {}, nullptr);
@@ -166,7 +166,7 @@ QUIZ_CASE(pcj_cache_references) {
 void check_reference_invalidation_and_reconstruction(Reference reference,
                                                      uint16_t identifier,
                                                      const Tree *node) {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   // reference has been invalidated
   quiz_assert(!cachePool->nodeForIdentifier(identifier));
   // reference is regenerated on demand
@@ -176,7 +176,7 @@ void check_reference_invalidation_and_reconstruction(Reference reference,
 
 void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,
                                         const Tree *tree) {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   cachePool->reset();
   Reference firstReference([]() {
     SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(28));
@@ -211,7 +211,7 @@ QUIZ_CASE(pcj_cache_reference_invalidation) {
 }
 
 QUIZ_CASE(pcj_cache_reference_shared_data) {
-  CachePool *cachePool = CachePool::sharedCachePool();
+  CachePool *cachePool = CachePool::SharedCachePool;
   cachePool->reset();
   Expression e = Expression::Parse("-1+2*3");
   assert(e.id() != 1);

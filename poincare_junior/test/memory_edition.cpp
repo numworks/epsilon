@@ -6,8 +6,7 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_edition_pool) {
-  CachePool* cachePool = CachePool::sharedCachePool();
-  cachePool->reset();
+  CachePool::SharedCachePool->reset();
   EditionPool* pool = SharedEditionPool;
 
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
@@ -52,7 +51,7 @@ QUIZ_CASE(pcj_edition_pool) {
 }
 
 QUIZ_CASE(pcj_edition_reference) {
-  CachePool::sharedCachePool()->reset();
+  CachePool::SharedCachePool->reset();
 
   constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   constexpr KTree k_subExpr1 = 6_e;
@@ -146,7 +145,7 @@ QUIZ_CASE(pcj_edition_reference) {
 }
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {
-  CachePool::sharedCachePool()->reset();
+  CachePool::SharedCachePool->reset();
   EditionReference reference0(KAdd(1_e, 1_e));
   EditionReference referenceSub0(reference0->child(0));
   EditionReference referenceSub1(reference0->child(1));
@@ -161,7 +160,7 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
 }
 
 QUIZ_CASE(pcj_edition_reference_destructor) {
-  CachePool::sharedCachePool()->reset();
+  CachePool::SharedCachePool->reset();
   {
     EditionReference ref0(0_e);
     QUIZ_ASSERT(ref0.identifier() == 0);

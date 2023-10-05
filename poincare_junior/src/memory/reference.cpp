@@ -25,7 +25,7 @@ SharedPointer::SharedPointer(const void *data
   m_checksum = checksum(data, dataSize);
 #endif
   // Reference data cannot live in the CachePool
-  assert(!CachePool::sharedCachePool()->mayContain(
+  assert(!CachePool::SharedCachePool->mayContain(
       static_cast<const TypeBlock *>(m_data)));
 }
 
@@ -160,7 +160,7 @@ void Reference::log() {
 
 uint16_t Reference::id() const {
   assert(isCacheReference());
-  const Tree *tree = CachePool::sharedCachePool()->nodeForIdentifier(m_id);
+  const Tree *tree = CachePool::SharedCachePool->nodeForIdentifier(m_id);
   if (!tree) {
     m_id = SharedEditionPool->executeAndCache(m_initializer, m_subInitializer,
                                               m_data.data());
@@ -171,7 +171,7 @@ uint16_t Reference::id() const {
 const Tree *Reference::getTree() const {
   assert(hasInitializers());
   return isCacheReference()
-             ? CachePool::sharedCachePool()->nodeForIdentifier(id())
+             ? CachePool::SharedCachePool->nodeForIdentifier(id())
              : Tree::FromBlocks(
                    reinterpret_cast<const TypeBlock *>(m_data.data()));
 }

@@ -95,10 +95,9 @@ void IllustratedExpressionsListController::setLineAtIndex(
     const ComputationContext& computationContext) {
   m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
       formula, computationContext.context());
-  Layout exact = getLayoutFromExpression(expression, computationContext);
-  Layout approximated = getLayoutFromExpression(
-      expression.approximate<double>(ApproximationContext(computationContext)),
-      computationContext);
+  Layout approximated;
+  Layout exact =
+      getLayoutFromExpression(expression, computationContext, &approximated);
   /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
    * String("-1") */
   m_exactLayouts[index] = exact;

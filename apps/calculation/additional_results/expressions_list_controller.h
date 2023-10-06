@@ -50,7 +50,8 @@ class ExpressionsListController
   constexpr static int k_maxNumberOfRows = 5;
   Poincare::Layout getLayoutFromExpression(
       Poincare::Expression e,
-      const Poincare::ComputationContext& computationContext);
+      const Poincare::ComputationContext& computationContext,
+      Poincare::Layout* approximatedLayout = nullptr);
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];

@@ -3,6 +3,7 @@
 
 using namespace Poincare;
 using namespace Escher;
+using namespace Shared;
 
 namespace Calculation {
 
@@ -144,23 +145,24 @@ int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
 }
 
 Layout ExpressionsListController::getLayoutFromExpression(
-    Expression e, const ComputationContext& computationContext) {
+    Expression e, const ComputationContext& computationContext,
+    Layout* approximate) {
   assert(!e.isUninitialized());
-  // Simplify or approximate expression
-  Expression approximateExpression;
-  Expression simplifiedExpression;
-  Shared::PoincareHelpers::CloneAndSimplifyAndApproximate(
-      e, &simplifiedExpression, &approximateExpression,
-      computationContext.context(), computationContext.complexFormat(),
+  Expression approximateExpression, exactExpression;
+  PoincareHelpers::CloneAndSimplifyAndApproximate(
+      e, &exactExpression, &approximateExpression, computationContext.context(),
+      computationContext.complexFormat(),
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  // simplify might have been interrupted, in which case we use approximate
-  if (simplifiedExpression.isUninitialized()) {
-    assert(!approximateExpression.isUninitialized());
-    return Shared::PoincareHelpers::CreateLayout(approximateExpression,
-                                                 computationContext.context());
+  assert(!approximateExpression.isUninitialized());
+  Layout approximateLayout = PoincareHelpers::CreateLayout(
+      approximateExpression, computationContext.context());
+  if (approximate) {
+    *approximate = approximateLayout;
   }
-  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression,
-                                               computationContext.context());
+  return exactExpression.isUninitialized()
+             ? approximateLayout
+             : PoincareHelpers::CreateLayout(exactExpression,
+                                             computationContext.context());
 }
 
 }  // namespace Calculation

@@ -23,20 +23,22 @@ Expression ExtractExactAngleFromDirectTrigo(const Expression input,
    *   > output: 1/2
    * - > input: 2cos(2) - cos(2)
    *   > output: cos(2)
-   * However if the result is complex, it is treated as a complex result. */
+   * However if the result is complex, it is treated as a complex result.
+   * When both inputs and outputs are direct trigo functions, we take the input
+   * because the angle might not be the same modulo 2π. */
   Preferences* preferences = Preferences::sharedPreferences;
   assert(!exactOutput.isScalarComplex(preferences));
   Expression directTrigoFunction;
-  if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
-    directTrigoFunction = exactOutput;
-  } else if (Trigonometry::isDirectTrigonometryFunction(input) &&
-             !input.deepIsSymbolic(
-                 context, SymbolicComputation::DoNotReplaceAnySymbol)) {
+  if (Trigonometry::isDirectTrigonometryFunction(input) &&
+      !input.deepIsSymbolic(context,
+                            SymbolicComputation::DoNotReplaceAnySymbol)) {
     /* Do not display trigonometric additional informations, in case the symbol
      * value is later modified/deleted in the storage and can't be retrieved.
      * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become
      * inconsistent. And if x is deleted, it crashes. */
     directTrigoFunction = input;
+  } else if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
+    directTrigoFunction = exactOutput;
   } else {
     return Expression();
   }

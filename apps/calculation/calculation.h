@@ -7,6 +7,10 @@
 #include <poincare/context.h>
 #include <poincare/expression.h>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace Calculation {
 
 class CalculationStore;
@@ -108,8 +112,17 @@ class Calculation {
    */
   DisplayOutput m_displayOutput;
   EqualSign m_equalSign;
+#if __EMSCRIPTEN__
+  // See comment about emscripten alignment in Function::RecordDataBuffer
+  static_assert(
+      sizeof(emscripten_align1_short) == sizeof(KDCoordinate),
+      "emscripten_align1_short should have the same size as KDCoordinate");
+  emscripten_align1_short m_height;
+  emscripten_align1_short m_expandedHeight;
+#else
   KDCoordinate m_height;
   KDCoordinate m_expandedHeight;
+#endif
   char m_inputText[0];  // MUST be the last member variable
 };
 

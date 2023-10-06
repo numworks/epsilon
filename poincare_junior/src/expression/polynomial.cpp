@@ -24,6 +24,9 @@ Tree* Polynomial::PushEmpty(const Tree* variable) {
 
 Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
                                const Tree* coefficient) {
+  if (exponent == 0) {
+    return static_cast<const Tree*>(1_e)->clone();
+  }
   Tree* pol = PushEmpty(variable);
   return AddMonomial(pol, std::make_pair(coefficient->clone(), exponent));
 }

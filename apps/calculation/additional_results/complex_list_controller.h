@@ -20,9 +20,8 @@ class ComplexListController : public IllustratedExpressionsListController {
  private:
   constexpr static CodePoint k_symbol = 'z';
   IllustrationCell* illustrationCell() override { return &m_complexGraphCell; }
-  I18n::Message messageAtIndex(int index) override {
-    return I18n::Message::Default;
-  };
+  I18n::Message messageAtIndex(int index) override;
+  Poincare::Preferences::ComplexFormat complexFormToDisplay() const;
   ComplexGraphCell m_complexGraphCell;
   ComplexModel m_model;
 };

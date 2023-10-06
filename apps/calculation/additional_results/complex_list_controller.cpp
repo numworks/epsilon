@@ -21,6 +21,10 @@ namespace Calculation {
 void ComplexListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
+  /* TODO:
+   * - save values of re(z), im(z) during setLineAtIndex to directly use them in
+   * setComplex ?
+   * - do the same for abs(z) and arg(z) for exponential form ? */
   assert(AdditionalResultsType::HasComplex(approximateOutput));
   ComputationContext computationContext(
       App::app()->localContext(), Preferences::ComplexFormat::Cartesian,
@@ -31,6 +35,9 @@ void ComplexListController::computeAdditionalResults(
   Expression e = exactOutput.clone();
   Expression z = Symbol::Builder(k_symbol);
   size_t index = 0;
+  computationContext.setComplextFormat(complexFormToDisplay());
+  setLineAtIndex(index++, z, e, computationContext);
+  computationContext.setComplextFormat(Preferences::ComplexFormat::Cartesian);
   setLineAtIndex(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e),
                  computationContext);
   setLineAtIndex(index++, ComplexArgument::Builder(z),
@@ -54,6 +61,21 @@ void ComplexListController::computeAdditionalResults(
   m_model.setComplex(floatZ);
   setShowIllustration(std::isfinite(floatZ.real()) &&
                       std::isfinite(floatZ.imag()));
+}
+
+I18n::Message ComplexListController::messageAtIndex(int index) {
+  return index == 0
+             ? complexFormToDisplay() == Preferences::ComplexFormat::Cartesian
+                   ? I18n::Message::CartesianForm
+                   : I18n::Message::ExponentialForm
+             : I18n::Message::Default;
+};
+
+Preferences::ComplexFormat ComplexListController::complexFormToDisplay() const {
+  return Preferences::sharedPreferences->complexFormat() ==
+                 Preferences::ComplexFormat::Polar
+             ? Preferences::ComplexFormat::Cartesian
+             : Preferences::ComplexFormat::Polar;
 }
 
 }  // namespace Calculation

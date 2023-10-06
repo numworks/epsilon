@@ -58,13 +58,29 @@ uint8_t* sectorStart(Entry entry) {
 }
 
 void initEntry(Entry entry) {
-  // Init entry to 0
-  uint16_t eSize = entrySize(entry);
-  uint8_t* sStart = sectorStart(entry);
-  constexpr uint8_t k_zero = 0;
-  for (int i = 0; i < eSize; i++) {
-    Device::Flash::WriteMemoryWithInterruptions(sStart + i, &k_zero, 1, true);
+  constexpr ExamBytes::Int k_defaultExamBytes = 0;
+  constexpr const char* k_defaultDeviceName = "";
+
+  // Init entry to default value
+  const uint8_t* entryDefaultValue = nullptr;
+  size_t entryDefaultValueSize = 0;
+  switch (entry) {
+    case Entry::ExamBytes: {
+      entryDefaultValue = reinterpret_cast<const uint8_t*>(&k_defaultExamBytes);
+      entryDefaultValueSize = sizeof(ExamBytes::Int);
+      break;
+    }
+    default: {
+      assert(entry == Entry::DeviceName);
+      entryDefaultValue = reinterpret_cast<const uint8_t*>(k_defaultDeviceName);
+      entryDefaultValueSize = strlen(k_defaultDeviceName) + 1;
+      break;
+    }
   }
+  assert(entryDefaultValue && entryDefaultValueSize > 0 &&
+         entryDefaultValueSize <= entrySize(entry));
+  Device::Flash::WriteMemoryWithInterruptions(
+      sectorStart(entry), entryDefaultValue, entryDefaultValueSize, true);
 }
 
 /* Example of writing persisting bytes in the ExamBytes sector (using a
@@ -168,7 +184,7 @@ uint8_t* read(Entry entry) {
   /* When reaching this point, it indicates that the entire sector is filled
    * with 1s. This occurs when the value is read for the first time  after
    * flashing the device, and it hasn't been initialized during the flashing
-   * procedure. The entry needs to be initialized with 0s.
+   * procedure. The entry needs to be initialized.
    * */
   initEntry(entry);
   return sStart;

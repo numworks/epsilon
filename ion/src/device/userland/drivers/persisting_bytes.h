@@ -16,6 +16,8 @@ namespace PersistingBytes {
  * |    PersistingBytes Sector (64 kB)     |
  * | ExamBytes (63 kB) | DeviceName (1 kB) |
  *
+ * WARNING: UserlandHeader relies on DeviceName being at the end.
+ *
  * Entries:
  *  - ExamBytes:
  *    > entrySize = 2 bytes (sizeof(ExamBytes::Int))

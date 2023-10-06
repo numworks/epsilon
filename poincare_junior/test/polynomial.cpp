@@ -66,17 +66,15 @@ QUIZ_CASE(pcj_polynomial_operations) {
   /* Inverse(A) = -x^2 - 3*x*y - y - 1 */
   Tree* inv = polA->clone();
   Polynomial::Inverse(inv);
-  assert_trees_are_equal(
-      inv, EditionReference(KPol(Exponents<2, 1, 0>(), "x"_e, -1_e,
-                                 KPol(Exponents<1>(), "y"_e, -3_e),
-                                 KPol(Exponents<1, 0>(), "y"_e, -1_e, -1_e))));
+  assert_trees_are_equal(inv, KPol(Exponents<2, 1, 0>(), "x"_e, -1_e,
+                                   KPol(Exponents<1>(), "y"_e, -3_e),
+                                   KPol(Exponents<1, 0>(), "y"_e, -1_e, -1_e)));
 
   /* Normalize(C) = 2x^3 - 7*x*y - 23*/
   Tree* norm = polC->clone();
   Polynomial::Normalize(norm);
-  assert_trees_are_equal(
-      norm, EditionReference(KPol(Exponents<3, 1, 0>(), "x"_e, 2_e,
-                                  KPol(Exponents<1>(), "y"_e, -7_e), -23_e)));
+  assert_trees_are_equal(norm, KPol(Exponents<3, 1, 0>(), "x"_e, 2_e,
+                                    KPol(Exponents<1>(), "y"_e, -7_e), -23_e));
 
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(
@@ -87,11 +85,10 @@ QUIZ_CASE(pcj_polynomial_operations) {
   SharedEditionPool->flush();
 
   /* B + A = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
-  assert_trees_are_equal(
-      Polynomial::Addition(polB->clone(), polA->clone()),
-      EditionReference(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
-                            KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
-                            KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
+  assert_trees_are_equal(Polynomial::Addition(polB->clone(), polA->clone()),
+                         KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
+                              KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
+                              KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e)));
   SharedEditionPool->flush();
 
   // TODO: test A-B and B-A!
@@ -102,12 +99,12 @@ QUIZ_CASE(pcj_polynomial_operations) {
   assert_trees_are_equal(
       Polynomial::Multiplication(EditionReference(polA->clone()),
                                  EditionReference(polB->clone())),
-      EditionReference(KPol(Exponents<5, 4, 3, 2, 1, 0>(), "x"_e, 1_e,
-                            KPol(Exponents<1>(), "y"_e, 3_e),
-                            KPol(Exponents<2, 1, 0>(), "y"_e, 2_e, 8_e, 1_e),
-                            KPol(Exponents<3, 2, 0>(), "y"_e, 6_e, 21_e, 23_e),
-                            KPol(Exponents<3, 2, 1>(), "y"_e, 2_e, 9_e, 76_e),
-                            KPol(Exponents<1, 0>(), "y"_e, 23_e, 23_e))));
+      KPol(Exponents<5, 4, 3, 2, 1, 0>(), "x"_e, 1_e,
+           KPol(Exponents<1>(), "y"_e, 3_e),
+           KPol(Exponents<2, 1, 0>(), "y"_e, 2_e, 8_e, 1_e),
+           KPol(Exponents<3, 2, 0>(), "y"_e, 6_e, 21_e, 23_e),
+           KPol(Exponents<3, 2, 1>(), "y"_e, 2_e, 9_e, 76_e),
+           KPol(Exponents<1, 0>(), "y"_e, 23_e, 23_e)));
   SharedEditionPool->flush();
 
   /* Test variable order:

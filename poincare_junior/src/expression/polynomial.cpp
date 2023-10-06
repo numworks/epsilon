@@ -25,7 +25,7 @@ Tree* Polynomial::PushEmpty(const Tree* variable) {
 Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
                                const Tree* coefficient) {
   if (exponent == 0) {
-    return static_cast<const Tree*>(1_e)->clone();
+    return (1_e)->clone();
   }
   Tree* pol = PushEmpty(variable);
   return AddMonomial(pol, std::make_pair(coefficient->clone(), exponent));
@@ -111,8 +111,7 @@ Tree* Polynomial::Multiplication(Tree* polA, Tree* polB) {
 }
 
 Tree* Polynomial::Subtraction(Tree* polA, Tree* polB) {
-  return Addition(
-      polA, Multiplication(polB, static_cast<const Tree*>(-1_e)->clone()));
+  return Addition(polA, Multiplication(polB, (-1_e)->clone()));
 }
 
 Tree* Polynomial::Operation(Tree* polA, Tree* polB, BlockType blockType,
@@ -153,7 +152,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, BlockType blockType,
     size_t i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(b);
     variableB->removeTree();
-    EditionReference result(static_cast<const Tree*>(0_e)->clone());
+    EditionReference result((0_e)->clone());
     assert(i < nbOfTermsB);
     while (i < nbOfTermsB) {
       EditionReference nextCoefficientB = coefficientB->nextTree();
@@ -216,8 +215,8 @@ std::pair<Tree*, Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
     assert(polA->type().isInteger() && polB->type().isInteger());
     std::pair<Tree*, Tree*> nodePair = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
-    EditionReference quotient = EditionReference(nodePair.first);
-    EditionReference remainder = EditionReference(nodePair.second);
+    EditionReference quotient = nodePair.first;
+    EditionReference remainder = nodePair.second;
     polB->removeTree();
     if (Number::IsZero(remainder)) {
       a->removeTree();

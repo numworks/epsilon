@@ -156,13 +156,19 @@ Layout ExpressionsListController::getLayoutFromExpression(
   assert(!approximateExpression.isUninitialized());
   Layout approximateLayout = PoincareHelpers::CreateLayout(
       approximateExpression, computationContext.context());
+  Layout exactLayout = exactExpression.isUninitialized()
+                           ? approximateLayout
+                           : PoincareHelpers::CreateLayout(
+                                 exactExpression, computationContext.context());
+  /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
+   * String("-1") */
+  approximateLayout = exactLayout.isIdenticalTo(approximateLayout, true)
+                          ? Layout()
+                          : approximateLayout;
   if (approximate) {
     *approximate = approximateLayout;
   }
-  return exactExpression.isUninitialized()
-             ? approximateLayout
-             : PoincareHelpers::CreateLayout(exactExpression,
-                                             computationContext.context());
+  return exactLayout;
 }
 
 }  // namespace Calculation

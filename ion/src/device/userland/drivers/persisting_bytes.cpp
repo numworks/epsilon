@@ -5,15 +5,20 @@
 #include <shared/drivers/flash_write_with_interruptions.h>
 #include <string.h>
 
+extern "C" {
+extern char _persisting_bytes_buffer_start;
+extern char _persisting_bytes_buffer_end;
+}
+
 namespace Ion {
 namespace PersistingBytes {
 
-uint8_t* SVC_ATTRIBUTES BufferStart() {
-  SVC_RETURNING_R0(SVC_PERSISTING_BYTES_BUFFER_START, uint8_t*);
+uint8_t* BufferStart() {
+  return reinterpret_cast<uint8_t*>(&_persisting_bytes_buffer_start);
 }
 
-uint8_t* SVC_ATTRIBUTES BufferEnd() {
-  SVC_RETURNING_R0(SVC_PERSISTING_BYTES_BUFFER_END, uint8_t*);
+uint8_t* BufferEnd() {
+  return reinterpret_cast<uint8_t*>(&_persisting_bytes_buffer_end);
 }
 
 uint16_t entrySize(Entry entry) {

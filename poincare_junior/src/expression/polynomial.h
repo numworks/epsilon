@@ -62,15 +62,12 @@ class Polynomial final {
   static void RemoveExponentAtIndex(Tree* polynomial, int index);
 
   // Operations
-  static void AddMonomial(EditionReference polynomial,
-                          std::pair<EditionReference, uint8_t> monomial);
+  static Tree* AddMonomial(Tree* polynomial,
+                           std::pair<Tree*, uint8_t> monomial);
   // Operations consume both polynomials
-  static EditionReference Addition(EditionReference polA,
-                                   EditionReference polB);
-  static EditionReference Multiplication(EditionReference polA,
-                                         EditionReference polB);
-  static EditionReference Subtraction(EditionReference polA,
-                                      EditionReference polB);
+  static Tree* Addition(Tree* polA, Tree* polB);
+  static Tree* Multiplication(Tree* polA, Tree* polB);
+  static Tree* Subtraction(Tree* polA, Tree* polB);
   /* Pseudo-division
    * NB: the order of variables affects the result of the pseudo division.
    * A = Q*B + R with either deg(R) < deg(Q) or lc(R) is not a divisor of lc(B)
@@ -79,44 +76,39 @@ class Polynomial final {
    * representation A = B*Q.
    * Ex: x^2y^2+x = xy * (xy+1) + x-xy if we consider the variable x first
    * variable and  x^2y^2+x = (xy-1)*(xy+1) + x+1 if y is the first variable. */
-  static std::pair<EditionReference, EditionReference> PseudoDivision(
-      EditionReference polA, EditionReference polB);
+  static std::pair<Tree*, Tree*> PseudoDivision(Tree* polA, Tree* polB);
 
   // In-place transformations
-  static void Inverse(Tree *pol);
-  static void Normalize(Tree *pol);
+  static void Inverse(Tree* pol);
+  static void Normalize(Tree* pol);
 
  private:
   // Discard null term and potentially discard the polynomial structure
-  static EditionReference Sanitize(EditionReference pol);
-  typedef void (*OperationMonomial)(
-      EditionReference polynomial,
-      std::pair<EditionReference, uint8_t> monomial);
-  typedef EditionReference (*OperationReduce)(
-      EditionReference result, EditionReference polynomial,
-      std::pair<EditionReference, uint8_t> monomial, bool isLastTerm);
-  static EditionReference Operation(EditionReference polA,
-                                    EditionReference polB, BlockType type,
-                                    OperationMonomial operationMonomial,
-                                    OperationReduce operationMonomialAndReduce);
-  static void MultiplicationMonomial(
-      EditionReference pol, std::pair<EditionReference, uint8_t> monomial);
+  static Tree* Sanitize(Tree* pol);
+  typedef Tree* (*OperationMonomial)(Tree* polynomial,
+                                     std::pair<Tree*, uint8_t> monomial);
+  typedef Tree* (*OperationReduce)(Tree* result, Tree* polynomial,
+                                   std::pair<Tree*, uint8_t> monomial,
+                                   bool isLastTerm);
+  static Tree* Operation(Tree* polA, Tree* polB, BlockType type,
+                         OperationMonomial operationMonomial,
+                         OperationReduce operationMonomialAndReduce);
+  static Tree* MultiplicationMonomial(Tree* pol,
+                                      std::pair<Tree*, uint8_t> monomial);
 };
 
 class PolynomialParser final {
  public:
   static bool ContainsVariable(const Tree* tree);
   static Tree* GetVariables(const Tree* expression);
-  static EditionReference RecursivelyParse(EditionReference expression,
-                                           EditionReference variables,
-                                           size_t variableIndex = 0);
-  static EditionReference Parse(EditionReference expression,
-                                const Tree* variable);
+  static Tree* RecursivelyParse(Tree* expression, const Tree* variables,
+                                size_t variableIndex = 0);
+  static Tree* Parse(Tree* expression, const Tree* variable);
 
  private:
   static void AddVariable(Tree* set, const Tree* variable);
-  static std::pair<EditionReference, uint8_t> ParseMonomial(
-      EditionReference expression, const Tree* variable);
+  static std::pair<Tree*, uint8_t> ParseMonomial(Tree* expression,
+                                                 const Tree* variable);
 #if 0
   Tree* PolynomialInterpretation
   Tree* RationalInterpretation --> list of 2 polynomial

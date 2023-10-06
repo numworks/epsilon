@@ -9,11 +9,10 @@ void assert_polynomial_is_parsed(const Tree* node,
                                  const Tree* expectedVariables,
                                  const Tree* expectedPolynomial) {
   SharedEditionPool->flush();
-  EditionReference variables = PolynomialParser::GetVariables(node);
+  Tree* variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
-  EditionReference ref(node->clone());
-  EditionReference polynomial =
-      PolynomialParser::RecursivelyParse(ref, variables);
+  Tree* clone = node->clone();
+  Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);
   assert_trees_are_equal(polynomial, expectedPolynomial);
 }
 

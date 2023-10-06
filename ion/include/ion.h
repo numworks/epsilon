@@ -7,6 +7,7 @@
 #include <ion/circuit_breaker.h>
 #include <ion/clipboard.h>
 #include <ion/console.h>
+#include <ion/device_name.h>
 #include <ion/display.h>
 #include <ion/events.h>
 #include <ion/exam_bytes.h>

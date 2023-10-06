@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <assert.h>
+#include <ion/device_name.h>
 #include <ion/src/shared/events.h>
 
 #include <cmath>
@@ -112,6 +113,10 @@ void AboutController::viewWillAppear() {
     m_cells[Row(CellType::FCCID)].setVisible(false);
   }
   GenericSubController::viewWillAppear();
+}
+
+const char *AboutController::deviceName() const {
+  return Ion::DeviceName::read();
 }
 
 }  // namespace Settings

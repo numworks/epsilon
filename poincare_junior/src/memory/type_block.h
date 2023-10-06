@@ -8,8 +8,7 @@
 namespace PoincareJ {
 
 /* The items to include in the enum are wrapped with a macro and split in
- * different files to tidy them and be able to use them in different ways (in
- * Tree::log for instance). */
+ * different files to tidy them and be able to use them in different ways. */
 
 enum class BlockType : uint8_t {
 // Add all the types to the enum
@@ -51,6 +50,17 @@ class TypeBlock : public Block {
   bool operator==(const TypeBlock &other) const = default;
   constexpr bool operator==(BlockType t) const { return type() == t; }
   constexpr operator BlockType() const { return type(); }
+
+#if POINCARE_MEMORY_TREE_LOG
+  // Add an array of names for the BlockTypes
+  static constexpr const char *names[] = {
+#define TYPE(F) #F,
+#define RANGE(NAME, FIRST, LAST)
+#include <poincare_junior/src/memory/block_types.h>
+#undef RANGE
+#undef TYPE
+  };
+#endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
 #define TYPE(F)

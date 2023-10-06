@@ -30,7 +30,7 @@ enum class BlockType : uint8_t {
 enum class LayoutType : uint8_t {
 #define TYPE(F) F = static_cast<uint8_t>(BlockType::F##Layout),
 #define RANGE(NAME, FIRST, LAST)
-#include <poincare_junior/src/layout/block_types.h>
+#include <poincare_junior/src/layout/types.h>
 #undef RANGE
 #undef TYPE
 };

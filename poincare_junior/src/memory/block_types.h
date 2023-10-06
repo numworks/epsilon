@@ -3,13 +3,13 @@
 // 1 - Expressions
 
 #define SCOPED_TYPE(F) F
-#include <poincare_junior/src/expression/block_types.h>
+#include <poincare_junior/src/expression/types.h>
 #undef SCOPED_TYPE
 
 // 2 - Layouts
 
 #define SCOPED_TYPE(F) F##Layout
-#include <poincare_junior/src/layout/block_types.h>
+#include <poincare_junior/src/layout/types.h>
 #undef SCOPED_TYPE
 
 // 3 - Shared types

@@ -14,25 +14,25 @@ namespace PoincareJ {
 enum class BlockType : uint8_t {
 // Add all the types to the enum
 #define TYPE(F) SCOPED_TYPE(F),
-#define ALIAS(F)
+#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/memory/block_types.h>
+#undef RANGE
 #undef TYPE
-#undef ALIAS
 
 // Add all the aliases after the types (for them not to increment the tags)
 #define TYPE(F)
-#define ALIAS(F) F,
+#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/memory/block_types.h>
+#undef RANGE
 #undef TYPE
-#undef ALIAS
 };
 
 enum class LayoutType : uint8_t {
 #define TYPE(F) F = static_cast<uint8_t>(BlockType::F##Layout),
-#define ALIAS(F)
+#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/layout/block_types.h>
+#undef RANGE
 #undef TYPE
-#undef ALIAS
 };
 
 // TODO:
@@ -45,10 +45,6 @@ class TypeBlock : public Block {
   constexpr TypeBlock(BlockType content = BlockType::Zero)
       : Block(static_cast<uint8_t>(content)) {
     assert(m_content < static_cast<uint8_t>(BlockType::NumberOfTypes));
-    // assert that number are always sorted before other types
-    assert(isNumber() ||
-           m_content >=
-               static_cast<uint8_t>(BlockType::NumberOfNumbersExpression));
   }
   constexpr BlockType type() const { return static_cast<BlockType>(m_content); }
 
@@ -56,22 +52,18 @@ class TypeBlock : public Block {
   constexpr bool operator==(BlockType t) const { return type() == t; }
   constexpr operator BlockType() const { return type(); }
 
-  constexpr bool isExpression() const {
-    return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions);
-  }
-  constexpr bool isAlgebraic() const {
-    return isNumber() ||
-           isOfType({BlockType::Addition, BlockType::Multiplication,
-                     BlockType::Power});
-  }
-  constexpr bool isParametric() const {
-    return isOfType({BlockType::Sum, BlockType::Product, BlockType::Derivative,
-                     BlockType::Integral});
-  }
-  constexpr bool isLayout() const {
-    return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) &&
-           m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts);
-  }
+  // Add methods like IsNumber(type) and .isNumber to test range membership
+#define TYPE(F)
+#define RANGE(NAME, FIRST, LAST)                                \
+  static constexpr bool Is##NAME(BlockType type) {              \
+    static_assert(BlockType::FIRST < BlockType::LAST);          \
+    return BlockType::FIRST <= type && type <= BlockType::LAST; \
+  }                                                             \
+                                                                \
+  constexpr bool is##NAME() const { return Is##NAME(type()); }
+#include <poincare_junior/src/memory/block_types.h>
+#undef RANGE
+#undef TYPE
 
   constexpr static bool IsOfType(BlockType thisType,
                                  std::initializer_list<BlockType> types) {
@@ -101,25 +93,7 @@ class TypeBlock : public Block {
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
-  constexpr bool isInteger() const {
-    return isOfType({BlockType::Zero, BlockType::One, BlockType::Two,
-                     BlockType::MinusOne, BlockType::IntegerShort,
-                     BlockType::IntegerPosBig, BlockType::IntegerNegBig});
-  }
-  constexpr bool isRational() const {
-    return isOfType({BlockType::Half, BlockType::RationalShort,
-                     BlockType::RationalPosBig, BlockType::RationalNegBig}) ||
-           isInteger();
-  }
   // TODO: Handle complex numbers
-  constexpr bool isNumber() const {
-    return type() == BlockType::Float || isRational() ||
-           type() == BlockType::Constant;
-  }
-  constexpr bool isUserNamed() const {
-    return isOfType({BlockType::UserFunction, BlockType::UserSequence,
-                     BlockType::UserSymbol});
-  }
 
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     // NOTE: Make sure new BlockTypes are handled here.
@@ -257,10 +231,7 @@ class TypeBlock : public Block {
     return NumberOfChildren(thisType);
   }
 
-  bool isScalarOnly() const {
-    return !(BlockType::FirstMatrix <= type() &&
-             type() <= BlockType::LastMatrix);
-  }
+  bool isScalarOnly() const { return !isMatricial(); }
 };
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));

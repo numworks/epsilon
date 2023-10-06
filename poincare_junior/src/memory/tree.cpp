@@ -63,13 +63,13 @@ void Tree::log(std::ostream& stream, bool recursive, bool verbose,
 void Tree::logName(std::ostream& stream) const {
   constexpr const char* names[] = {
 #define TYPE(F) #F,
-#define ALIAS(F)
+#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/memory/block_types.h>
+#undef RANGE
 #undef TYPE
-#undef ALIAS
   };
   static_assert(sizeof(names) / sizeof(const char*) ==
-                static_cast<uint8_t>(BlockType::NumberOfTypes));
+                static_cast<uint8_t>(BlockType::NumberOfTypes) + 1);
   stream << names[static_cast<uint8_t>(*m_block)];
 }
 

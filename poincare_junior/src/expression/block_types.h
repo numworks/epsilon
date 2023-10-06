@@ -1,11 +1,12 @@
 // 1 - Numbers
 
-/* - Zero Z (same for One, Two, Half, MinusOne, TreeBorder)
+// 1.1 - Integers
+
+/* - Zero Z (same for One, Two, Half, MinusOne)
  * | Z TAG | */
 TYPE(Zero)
 TYPE(One)
 TYPE(Two)
-TYPE(Half)
 TYPE(MinusOne)
 
 /* - IntegerShort IS
@@ -17,6 +18,12 @@ TYPE(IntegerShort)
 TYPE(IntegerPosBig)
 TYPE(IntegerNegBig)
 
+RANGE(Integer, Zero, IntegerNegBig)
+
+// 1.2 - Rationals
+
+TYPE(Half)
+
 /* - RationShort RS
  * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | */
 TYPE(RationalShort)
@@ -27,11 +34,19 @@ TYPE(RationalShort)
 TYPE(RationalPosBig)
 TYPE(RationalNegBig)
 
+RANGE(Rational, Zero, RationalNegBig)
+
+// 1.3 - Other numbers
+
 /* - Float F (same for CodePointLayout)
  * | F TAG | VALUE (4 bytes) | */
 TYPE(Float)
 
-ALIAS(NumberOfNumbersExpression = Float + 1)
+/* - Constant C
+ * | C TAG | TYPE | */
+TYPE(Constant)
+
+RANGE(Number, Zero, Constant)
 
 // 2 - Order dependant expressions
 
@@ -44,18 +59,19 @@ TYPE(Multiplication)
 TYPE(Power)
 
 TYPE(Addition)
+
+RANGE(Algebraic, Zero, Addition)
+
 TYPE(Factorial)
 TYPE(Division)
-
-/* - Constant C
- * | C TAG | TYPE | */
-TYPE(Constant)
 
 /* - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
 TYPE(UserSymbol)
 TYPE(UserFunction)
 TYPE(UserSequence)
+
+RANGE(UserNamed, UserSymbol, UserSequence)
 
 /* - Variable V
  * | V TAG | ID | */
@@ -107,6 +123,8 @@ TYPE(Product)
 TYPE(Derivative)
 TYPE(Integral)
 
+RANGE(Parametric, Sum, Integral)
+
 // 5 - Matrix and vector builtins
 
 TYPE(Dot)
@@ -127,8 +145,7 @@ TYPE(PowerMatrix)
  * Children are ordered the row-major way */
 TYPE(Matrix)
 
-ALIAS(FirstMatrix = Dot)
-ALIAS(LastMatrix = Matrix)
+RANGE(Matricial, Dot, Matrix)
 
 // 6 - Order dependant expressions
 /* - Unit U
@@ -140,10 +157,9 @@ TYPE(Set)
 TYPE(Nonreal)
 TYPE(Undefined)
 
-ALIAS(NumberOfExpressions = Undefined + 1)
+RANGE(Expression, Zero, Undefined)
 
 /* TODO:
- * - Are Zero, One etc useful?
  * - Short integers could be coded on n-bytes (with n static) instead of 1-byte.
  * Choosing n = 4 and aligning the node could be useful?
  * - aligning all nodes on 4 bytes might speed up every computation

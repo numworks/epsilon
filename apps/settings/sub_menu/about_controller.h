@@ -35,10 +35,7 @@ class AboutController : public GenericSubController {
   constexpr static int Row(CellType type) { return static_cast<int>(type); }
 
  private:
-  const char* deviceName() const {
-    // TODO: Limit name to 39 chars
-    return "123456789012345678901234567890123456789";
-  }
+  const char* deviceName() const;
   Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>>
       m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;

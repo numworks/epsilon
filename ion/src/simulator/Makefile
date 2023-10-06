@@ -20,6 +20,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   console.cpp \
   compilation_flags.cpp \
   crc32.cpp \
+  device_name.cpp \
   display.cpp \
   events.cpp \
   events_platform.cpp \

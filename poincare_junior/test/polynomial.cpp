@@ -86,6 +86,16 @@ QUIZ_CASE(pcj_polynomial_operations) {
                             KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
   SharedEditionPool->flush();
 
+  /* B + A = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
+  assert_trees_are_equal(
+      Polynomial::Addition(polB->clone(), polA->clone()),
+      EditionReference(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
+                            KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
+                            KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
+  SharedEditionPool->flush();
+
+  // TODO: test A-B and B-A!
+
   /* A * B = x^5 + 3yx^4 + (2y^2+8y+1)*x^3 + (6y^3+21y^2+23)x^2 +
   (2y^3+9y^2+
    * 76y)x + 23y + 23 */

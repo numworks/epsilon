@@ -75,14 +75,9 @@ class TypeBlock : public Block {
     return IsOfType(type(), types);
   }
 
-  static constexpr std::initializer_list<BlockType> k_nAryBlockTypes = {
-      BlockType::Addition,  BlockType::Multiplication, BlockType::RackLayout,
-      BlockType::Set,       BlockType::List,           BlockType::Polynomial,
-      BlockType::SystemList};
-
   // Their next metaBlock contains the numberOfChildren
-  constexpr static bool IsNAry(BlockType thisType) {
-    return IsOfType(thisType, k_nAryBlockTypes);
+  constexpr static bool IsNAry(BlockType type) {
+    return NumberOfChildren(type) == NAryNumberOfChildrenTag;
   }
   constexpr bool isNAry() const { return IsNAry(type()); }
   // NAry with a single metaBlock
@@ -158,10 +153,22 @@ class TypeBlock : public Block {
     }
   }
 
+  constexpr static int NAryNumberOfChildrenTag = -1;
+  constexpr static int MatrixNumberOfChildrenTag = -2;
+
   constexpr static int NumberOfChildren(BlockType type) {
-    assert(type != BlockType::Matrix && !IsNAry(type));
     // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
+      case BlockType::Addition:
+      case BlockType::Multiplication:
+      case BlockType::RackLayout:
+      case BlockType::Set:
+      case BlockType::List:
+      case BlockType::Polynomial:
+      case BlockType::SystemList:
+        return NAryNumberOfChildrenTag;
+      case BlockType::Matrix:
+        return MatrixNumberOfChildrenTag;
       case BlockType::Sum:
       case BlockType::Product:
       case BlockType::Integral:
@@ -217,14 +224,15 @@ class TypeBlock : public Block {
   }
 
   constexpr int numberOfChildren() const {
-    if (isNAry()) {
+    int n = NumberOfChildren(type());
+    if (n >= 0) {
+      return n;
+    } else if (n == NAryNumberOfChildrenTag) {
       return static_cast<uint8_t>(*next());
-    }
-    BlockType thisType = type();
-    if (thisType == BlockType::Matrix) {
+    } else {
+      assert(n == MatrixNumberOfChildrenTag);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
     }
-    return NumberOfChildren(thisType);
   }
 
   bool isScalarOnly() const { return !isMatricial(); }

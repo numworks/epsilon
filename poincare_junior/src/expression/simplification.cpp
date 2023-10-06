@@ -287,7 +287,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
   }
 
   if (isOpposed) {
-    u->moveTreeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
+    u->moveTreeAtNode((-1_e)->clone());
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
     SimplifyMultiplication(u);
     changed = true;
@@ -355,13 +355,13 @@ bool Simplification::SimplifyPower(Tree* u) {
     // u could be any tree from this point forward
     if (rem > 1) {
       // -u
-      u->moveTreeAtNode(SharedEditionPool->push<BlockType::MinusOne>());
+      u->moveTreeAtNode((-1_e)->clone());
       u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
       SimplifyMultiplication(u);
     }
     if (rem % 2 == 1) {
       // u is a pure imaginary
-      u->moveTreeAtNode(SharedEditionPool->push<BlockType::Zero>());
+      u->moveTreeAtNode((0_e)->clone());
       u->moveNodeAtNode(SharedEditionPool->push<BlockType::Complex>());
       assert(!SimplifyComplex(u));
     }

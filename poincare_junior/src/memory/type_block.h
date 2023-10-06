@@ -10,34 +10,22 @@ namespace PoincareJ {
 /* The items to include in the enum are wrapped with a macro and split in
  * different files to tidy them and be able to use them in different ways. */
 
+/* The RANGE macro does nothing yet */
+#define RANGE(NAME, FIRST, LAST)
+
 enum class BlockType : uint8_t {
 // Add all the types to the enum
 #define TYPE(F) SCOPED_TYPE(F),
-#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/memory/block_types.h>
-#undef RANGE
-#undef TYPE
-
-// Add all the aliases after the types (for them not to increment the tags)
-#define TYPE(F)
-#define RANGE(NAME, FIRST, LAST)
-#include <poincare_junior/src/memory/block_types.h>
-#undef RANGE
 #undef TYPE
 };
 
 enum class LayoutType : uint8_t {
+// Members of LayoutType have the same values as their BlockType counterpart
 #define TYPE(F) F = static_cast<uint8_t>(BlockType::F##Layout),
-#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/layout/types.h>
-#undef RANGE
 #undef TYPE
 };
-
-// TODO:
-// - if the number of BlockType > 256, add a special tag that prefixes the least
-//   used tags
-// - Optimization: some Integer should have their special tags? 0, 1, 2, 10?
 
 class TypeBlock : public Block {
  public:
@@ -55,15 +43,14 @@ class TypeBlock : public Block {
   // Add an array of names for the BlockTypes
   static constexpr const char *names[] = {
 #define TYPE(F) #F,
-#define RANGE(NAME, FIRST, LAST)
 #include <poincare_junior/src/memory/block_types.h>
-#undef RANGE
 #undef TYPE
   };
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
 #define TYPE(F)
+#undef RANGE
 #define RANGE(NAME, FIRST, LAST)                                \
   static constexpr bool Is##NAME(BlockType type) {              \
     static_assert(BlockType::FIRST < BlockType::LAST);          \
@@ -72,7 +59,6 @@ class TypeBlock : public Block {
                                                                 \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 #include <poincare_junior/src/memory/block_types.h>
-#undef RANGE
 #undef TYPE
 
   constexpr static bool IsOfType(BlockType thisType,
@@ -112,6 +98,12 @@ class TypeBlock : public Block {
         return 1 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:
         return 1 + sizeof(CodePoint) / sizeof(uint8_t);
+      case BlockType::RationalShort:
+      case BlockType::RationalPosBig:
+      case BlockType::RationalNegBig:
+      case BlockType::Matrix:
+      case BlockType::Unit:
+        return 3;
       case BlockType::Addition:
       case BlockType::Multiplication:
       case BlockType::Constant:
@@ -130,12 +122,6 @@ class TypeBlock : public Block {
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig:
         return 2;
-      case BlockType::RationalShort:
-      case BlockType::RationalPosBig:
-      case BlockType::RationalNegBig:
-      case BlockType::Matrix:
-      case BlockType::Unit:
-        return 3;
       default:
         return 1;
     };
@@ -243,6 +229,8 @@ class TypeBlock : public Block {
 
   bool isScalarOnly() const { return !isMatricial(); }
 };
+
+#undef RANGE
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 

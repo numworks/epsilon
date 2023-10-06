@@ -300,9 +300,9 @@ ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
   assert(m_buffer < cursor &&
          cursor <= m_buffer + m_bufferSize - sizeof(Calculation *));
   *(pointerArray() - 1) = cursor;
-  Calculation *ptr = reinterpret_cast<Calculation *>(m_buffer);
+  Calculation *calculation = reinterpret_cast<Calculation *>(m_buffer);
   m_numberOfCalculations = 1;
-  return ExpiringPointer<Calculation>(ptr);
+  return ExpiringPointer(calculation);
 }
 
 char *CalculationStore::pushEmptyCalculation(char *location) {

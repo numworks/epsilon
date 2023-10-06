@@ -110,19 +110,19 @@ def customized_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
   for i in [0,1]:
     kernel_elf_file = kernel_elf_files[i]
     userland_elf_file = userland_elf_files[i]
-    persisting_bytes_block = {'sections': loadable_sections(kernel_elf_file, "", "persisting_bytes_buffer")}
-    kernel_block = {'sections': [s for s in loadable_sections(kernel_elf_file) if s not in persisting_bytes_block['sections']]}
-    userland_block = {'sections': [s for s in loadable_sections(userland_elf_file)]}
-    blocks = {'persisting_bytes': persisting_bytes_block, 'kernel': kernel_block, 'userland': userland_block}
+    kernel_block = {'sections': [s for s in loadable_sections(kernel_elf_file)]}
+    persisting_bytes_block = {'sections': loadable_sections(userland_elf_file, "", "persisting_bytes_buffer")}
+    userland_block = {'sections': [s for s in loadable_sections(userland_elf_file) if s not in persisting_bytes_block['sections']]}
+    blocks = {'kernel': kernel_block, 'userland': userland_block, 'persisting_bytes': persisting_bytes_block}
     block_names = blocks.keys();
     for name in block_names:
       block = blocks[name]
       # Error if one block is empty
       if not block['sections']:
-        sys.stderr.write("Error: the block " + block['name'] + " has no loadable section\n")
+        sys.stderr.write("Error: the block " + block[name] + " has no loadable section\n")
         sys.exit(-1)
       # Fill the address field of each block
-      elf_file = userland_elf_file if name == "userland" else kernel_elf_file
+      elf_file = kernel_elf_file if name == 'kernel' else userland_elf_file
       blocks[name]['bin_file'] = bin_file_for_path(elf_file, name)
       subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in block['sections']] for item in sublist]+[elf_file, blocks[name]['bin_file']])
       blocks[name]['address'] = min([s['lma'] for s in block['sections']])

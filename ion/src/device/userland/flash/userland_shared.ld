@@ -1,7 +1,9 @@
 USERLAND_ORIGIN = EPSILON_OFFSET + UserlandVirtualOrigin;
+PERSISTING_BYTES_ORIGIN = EPSILON_OFFSET + PersistingBytesVirtualOrigin;
 
 MEMORY {
   FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = UserlandLength
+  PERSITING_BYTES (rx) : ORIGIN = PERSISTING_BYTES_ORIGIN, LENGTH = PersistingBytesLength
   SRAM (rw) : ORIGIN = UserlandSRAMOrigin, LENGTH = UserlandSRAMLength
 }
 
@@ -70,6 +72,16 @@ SECTIONS {
     . = (ORIGIN(FLASH_USERLAND) + LENGTH(FLASH_USERLAND));
     _external_apps_flash_end = .;
   } >FLASH_USERLAND
+
+  .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
+    _persisting_bytes_buffer_start = .;
+    FILL(0xFF);
+    /* FILL instruction requires at least one element in the section
+     * Write 0xFF to keep the sector empty. */
+    BYTE(0xFF)
+    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
+    _persisting_bytes_buffer_end = .;
+  } >PERSITING_BYTES
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

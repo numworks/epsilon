@@ -102,8 +102,7 @@ Tree* Polynomial::Multiplication(Tree* polA, Tree* polB) {
       [](Tree* result, Tree* polynomial, std::pair<Tree*, uint8_t> monomial,
          bool isLastTerm) {
         EditionReference resultRef(result);
-        Tree* polynomialClone =
-            isLastTerm ? polynomial : SharedEditionPool->clone(polynomial);
+        Tree* polynomialClone = isLastTerm ? polynomial : polynomial->clone();
         Tree* multiplication =
             MultiplicationMonomial(polynomialClone, monomial);
         return Addition(resultRef, multiplication);
@@ -185,9 +184,8 @@ Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
     EditionReference previousChild = polynomialReference->child(i);
     Tree* currentCoefficient = previousChild->nextTree();
     // Avoid one cloning for last term
-    Tree* coeffClone = i == nbOfTerms - 1
-                           ? static_cast<Tree*>(coefficient)
-                           : SharedEditionPool->clone(coefficient);
+    Tree* coeffClone = i == nbOfTerms - 1 ? static_cast<Tree*>(coefficient)
+                                          : coefficient->clone();
     Tree* multiplication =
         Polynomial::Multiplication(currentCoefficient, coeffClone);
     previousChild->nextTree()->moveTreeBeforeNode(multiplication);
@@ -244,8 +242,7 @@ std::pair<Tree*, Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   EditionReference currentQuotient(0_e);
   while (degreeA >= degreeB) {
     std::pair<Tree*, Tree*> refPair =
-        PseudoDivision(SharedEditionPool->clone(leadingCoeffA),
-                       SharedEditionPool->clone(leadingCoeffB));
+        PseudoDivision(leadingCoeffA->clone(), leadingCoeffB->clone());
     EditionReference quotient = refPair.first;
     EditionReference remainder = refPair.second;
     bool stopCondition = !Number::IsZero(remainder);
@@ -254,16 +251,15 @@ std::pair<Tree*, Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
       quotient->removeTree();
       break;
     }
-    EditionReference xPowerDegAMinusDegB = Polynomial::PushMonomial(
-        SharedEditionPool->clone(x), degreeA - degreeB);
+    EditionReference xPowerDegAMinusDegB =
+        Polynomial::PushMonomial(x->clone(), degreeA - degreeB);
     currentQuotient = Polynomial::Addition(
         currentQuotient, Polynomial::Multiplication(
-                             SharedEditionPool->clone(quotient),
-                             SharedEditionPool->clone(xPowerDegAMinusDegB)));
+                             quotient->clone(), xPowerDegAMinusDegB->clone()));
     a = Polynomial::Subtraction(
         a, Polynomial::Multiplication(
-               quotient, Polynomial::Multiplication(SharedEditionPool->clone(b),
-                                                    xPowerDegAMinusDegB)));
+               quotient,
+               Polynomial::Multiplication(b->clone(), xPowerDegAMinusDegB)));
     extractDegreeAndLeadingCoefficient(a, x, &degreeA, &leadingCoeffA);
   }
   b->removeTree();
@@ -451,7 +447,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   if (expression->type() == BlockType::Multiplication) {
     for (auto [child, index] : NodeIterator::Children<Editable>(expression)) {
       auto [childCoefficient, childExponent] =
-          ParseMonomial(SharedEditionPool->clone(child), variable);
+          ParseMonomial(child->clone(), variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at
         // basicReduction
@@ -506,9 +502,8 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
 EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   BlockType type = expression.type();
   if (expression.type() == BlockType::Addition) {
-    EditionPool * SharedEditionPool = SharedEditionPool;
     if (Comparison::AreEqual(expression, variable)) {
-      return exponent == 1 ? SharedEditionPool->push<BlockType::One>() : SharedEditionPool->push<BlockType::Zero>();
+      return exponent == 1 ? 1_e : 0_e;
     }
     EditionReference addition = SharedEditionPool->push<BlockType::Addition>(0);
     for (const Tree* child : expression->children()) {
@@ -526,13 +521,12 @@ EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* var
     return exprCoefficient;
   }
   exprCoefficient.removeTree();
-  return SharedEditionPool->push<BlockType::Zero>();
+  return 0_e;
 }
 
 std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
-  EditionPool * SharedEditionPool = SharedEditionPool;
   if (Comparison::AreEqual(expression, variable)) {
-    return std::make_pair(SharedEditionPool->push<BlockType::One>(), 1);
+    return std::make_pair((1_e)->clone(), 1);
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
@@ -540,7 +534,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree*
     Tree* exponent = base.nextTree();
     if (Comparison::AreEqual(exponent, variable) && Integer::IsUint8(exponent)) {
       assert(Integer::Uint8(exponent) > 1);
-      return std::make_pair(SharedEditionPool->push<BlockType::One>(), Integer::Uint8(exponent));
+      return std::make_pair((1_e)->clone(), Integer::Uint8(exponent));
     }
   }
   if (type == BlockType::Multiplication) {

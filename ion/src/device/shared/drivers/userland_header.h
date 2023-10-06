@@ -20,7 +20,9 @@ class UserlandHeader {
         info->m_externalAppsFlashStart == nullptr ||
         info->m_externalAppsFlashEnd == nullptr ||
         info->m_externalAppsRAMStart == nullptr ||
-        info->m_externalAppsRAMEnd == nullptr || info->m_header != Magic ||
+        info->m_externalAppsRAMEnd == nullptr ||
+        info->m_deviceNameFlashStart == nullptr ||
+        info->m_deviceNameFlashEnd == nullptr || info->m_header != Magic ||
         info->m_footer != Magic) {
       return false;
     }
@@ -51,6 +53,8 @@ class UserlandHeader {
   void *m_externalAppsFlashEnd;
   void *m_externalAppsRAMStart;
   void *m_externalAppsRAMEnd;
+  void *m_deviceNameFlashStart;
+  void *m_deviceNameFlashEnd;
   uint32_t m_footer;
 };
 

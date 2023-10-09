@@ -89,6 +89,13 @@ MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
   return &s_defaultMathLayoutFieldDelegate;
 }
 
+bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
+    LayoutField *layoutField, Ion::Events::Event event) {
+  return LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)
+             ? true
+             : handleEventForField(layoutField, event);
+}
+
 bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
     Escher::LayoutField *layoutField) {
   if (layoutField->isEmpty()) {
@@ -148,6 +155,13 @@ bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
 MathTextFieldDelegate *MathTextFieldDelegate::Default() {
   static MathTextFieldDelegate s_defaultMathTextFieldDelegate;
   return &s_defaultMathTextFieldDelegate;
+}
+
+bool MathTextFieldDelegate::textFieldDidReceiveEvent(
+    AbstractTextField *textField, Ion::Events::Event event) {
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event)
+             ? true
+             : handleEventForField(textField, event);
 }
 
 bool MathTextFieldDelegate::textFieldDidFinishEditing(

@@ -145,36 +145,25 @@ class ApproximationContext : public ComputationContext {
   ApproximationContext(Context* context,
                        Preferences::ComplexFormat complexFormat,
                        Preferences::AngleUnit angleUnit,
-                       bool withinReduce = false,
-                       bool shouldFilterUndefAndSortLists = false)
+                       bool withinReduce = false)
       : ComputationContext(context, complexFormat, angleUnit),
-        m_withinReduce(withinReduce),
-        m_shouldFilterUndefAndSortLists(shouldFilterUndefAndSortLists) {}
+        m_withinReduce(withinReduce) {}
   ApproximationContext(const ComputationContext& computationContext,
-                       bool withinReduce = false,
-                       bool shouldFilterUndefAndSortLists = false)
+                       bool withinReduce = false)
       : ApproximationContext(computationContext.context(),
                              computationContext.complexFormat(),
-                             computationContext.angleUnit(), withinReduce,
-                             shouldFilterUndefAndSortLists) {}
-  ApproximationContext(Context* context, bool withinReduce = false,
-                       bool shouldFilterUndefAndSortLists = false)
-      : ComputationContext(context),
-        m_withinReduce(withinReduce),
-        m_shouldFilterUndefAndSortLists(shouldFilterUndefAndSortLists) {}
+                             computationContext.angleUnit(), withinReduce) {}
+  ApproximationContext(Context* context, bool withinReduce = false)
+      : ComputationContext(context), m_withinReduce(withinReduce) {}
   ApproximationContext(Context* context,
                        Preferences::ComplexFormat complexFormat)
       : ApproximationContext(context, complexFormat,
                              Preferences::sharedPreferences->angleUnit()) {}
 
   bool withinReduce() const { return m_withinReduce; }
-  bool shouldFilterUndefAndSortLists() const {
-    return m_shouldFilterUndefAndSortLists;
-  }
 
  private:
   bool m_withinReduce;
-  bool m_shouldFilterUndefAndSortLists;
 };
 
 }  // namespace Poincare

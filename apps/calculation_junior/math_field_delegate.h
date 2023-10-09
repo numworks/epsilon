@@ -1,7 +1,7 @@
-#ifndef CALCULATION_JUNIOR_EXPRESSION_FIELD_DELEGATE_APP_H
-#define CALCULATION_JUNIOR_EXPRESSION_FIELD_DELEGATE_APP_H
+#ifndef CALCULATION_JUNIOR_MATH_FIELD_DELEGATE_H
+#define CALCULATION_JUNIOR_MATH_FIELD_DELEGATE_H
 
-#include <apps/shared/text_field_delegate_app.h>
+#include <apps/shared/math_field_delegate.h>
 #include <poincare/store.h>
 
 #include "layout_field.h"
@@ -9,15 +9,13 @@
 
 namespace CalculationJunior {
 
-class ExpressionFieldDelegateApp : public Shared::TextFieldDelegateApp,
-                                   public LayoutFieldDelegate {
+class MathFieldDelegate : public Shared::AbstractMathFieldDelegate,
+                          public LayoutFieldDelegate {
   friend class StoreMenuController;
   friend class MathVariableBoxController;
 
  public:
-  virtual ~ExpressionFieldDelegateApp() = default;
-  bool layoutFieldShouldFinishEditing(LayoutField* layoutField,
-                                      Ion::Events::Event event) override;
+  virtual ~MathFieldDelegate() = default;
   bool layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                   Ion::Events::Event event) override;
 #if 0
@@ -25,10 +23,8 @@ class ExpressionFieldDelegateApp : public Shared::TextFieldDelegateApp,
   void storeValue(const char* text = "") override;
 #endif
 
- protected:
-  ExpressionFieldDelegateApp(Snapshot* snapshot,
-                             Escher::ViewController* rootViewController);
 #if 0
+ protected:
   bool handleEvent(Ion::Events::Event event) override;
   bool isStoreMenuOpen() const;
 

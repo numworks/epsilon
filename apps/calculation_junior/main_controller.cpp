@@ -11,14 +11,11 @@
 
 using namespace CalculationJunior;
 
-MainController::MainController(
-    Escher::StackViewController* parentResponder,
-    ExpressionFieldDelegateApp* expressionFieldDelegateApp)
-    : Escher::ViewController(parentResponder),
-      m_view(this, expressionFieldDelegateApp) {}
+MainController::MainController(Escher::StackViewController* parentResponder)
+    : Escher::ViewController(parentResponder), m_view(this) {}
 
 void MainController::didBecomeFirstResponder() {
-  Escher::Container::activeApp()->setFirstResponder(m_view.layoutField());
+  App::app()->setFirstResponder(m_view.layoutField());
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
@@ -32,7 +29,9 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     }
     PoincareJ::Expression reducedExpression =
         PoincareJ::Expression::Simplify(&inputExpression);
-    m_view.reductionLayoutView()->setLayout(reducedExpression.toLayout());
+    PoincareJ::Layout layout =
+        PoincareJ::Layout::FromExpression(&reducedExpression);
+    m_view.reductionLayoutView()->setLayout(layout);
     // Approximate reduced expression
     float approximation = reducedExpression.approximate<float>();
     constexpr int bufferSize = 220;
@@ -49,11 +48,9 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 
 // ContentView
 
-MainController::ContentView::ContentView(
-    Escher::Responder* parentResponder,
-    ExpressionFieldDelegateApp* expressionFieldDelegateApp)
+MainController::ContentView::ContentView(Escher::Responder* parentResponder)
     : View(),
-      m_layoutField(parentResponder, expressionFieldDelegateApp),
+      m_layoutField(parentResponder),
       m_reductionLayoutView(),
       m_approximationView(
           KDGlyph::Format{.horizontalAlignment = KDGlyph::k_alignRight}) {}

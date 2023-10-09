@@ -1,4 +1,4 @@
-#include "expression_field_delegate_app.h"
+#include "math_field_delegate.h"
 
 #include <apps/i18n.h>
 #include <escher/layout_field.h>
@@ -8,18 +8,8 @@ using namespace PoincareJ;
 
 namespace CalculationJunior {
 
-ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(
-    Snapshot* snapshot, ViewController* rootViewController)
-    : TextFieldDelegateApp(snapshot, rootViewController),
-      LayoutFieldDelegate() {}
-
-bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(
-    LayoutField* layoutField, Ion::Events::Event event) {
-  return isFinishingEvent(event);
-}
-
-bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
-    LayoutField* layoutField, Ion::Events::Event event) {
+bool MathFieldDelegate::layoutFieldDidReceiveEvent(LayoutField* layoutField,
+                                                   Ion::Events::Event event) {
 #if 0
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (layoutField->isEmpty()) {
@@ -71,23 +61,23 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
       return true;
     }
   }
-#endif
   if (fieldDidReceiveEvent(layoutField, layoutField, event)) {
     return true;
   }
+#endif
   return false;
 }
 
 #if 0
-bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
-  /* Override TextFieldDelegateApp because most ExpressionFieldDelegateApp
+bool MathFieldDelegate::isAcceptableExpression(const Expression exp) {
+  /* Override TextFieldDelegateApp because most MathFieldDelegate
    * accept comparison operatoras. They should also be serializeable. */
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
          TextFieldDelegateApp::ExpressionCanBeSerialized(
              exp, false, Poincare::Expression(), localContext());
 }
 
-bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
+bool MathFieldDelegate::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
     storeValue();
     return true;
@@ -95,7 +85,7 @@ bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   return TextFieldDelegateApp::handleEvent(event);
 }
 
-void ExpressionFieldDelegateApp::storeValue(const char* text) {
+void MathFieldDelegate::storeValue(const char* text) {
   if (m_modalViewController.isDisplayingModal()) {
     return;
   }
@@ -103,7 +93,7 @@ void ExpressionFieldDelegateApp::storeValue(const char* text) {
   m_storeMenuController.open();
 }
 
-bool ExpressionFieldDelegateApp::isStoreMenuOpen() const {
+bool MathFieldDelegate::isStoreMenuOpen() const {
   return m_modalViewController.currentModalViewController() ==
          &m_storeMenuController;
 }

@@ -3,13 +3,12 @@
 
 #include <apps/shared/shared_app.h>
 
-#include "expression_field_delegate_app.h"
 #include "layout_field.h"
 #include "main_controller.h"
 
 namespace CalculationJunior {
 
-class App : public ExpressionFieldDelegateApp {
+class App : public Shared::SharedApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -22,14 +21,6 @@ class App : public ExpressionFieldDelegateApp {
     App* unpack(Escher::Container* container) override;
     const Descriptor* descriptor() const override;
   };
-  bool layoutFieldDidHandleEvent(LayoutField* layoutField, bool returnValue,
-                                 bool layoutDidChange) override {
-    return layoutDidChange || returnValue;
-  }
-  bool layoutFieldShouldFinishEditing(LayoutField* layoutField,
-                                      Ion::Events::Event event) override {
-    return false;
-  }
 
  private:
   App(Snapshot* snapshot);

@@ -17,33 +17,20 @@
 
 namespace CalculationJunior {
 
-class LayoutField
-    : public Escher::WithBlinkingTextCursor<
-          Escher::ScrollableView<Escher::ScrollView::NoDecorator>>,
-      public Escher::ScrollViewDataSource,
-      public Escher::EditableField {
+class LayoutField : public Escher::EditableField {
   friend class ExpressionField;
 
  public:
   LayoutField(Escher::Responder* parentResponder,
-              Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
               LayoutFieldDelegate* delegate = nullptr,
               KDGlyph::Format format = {})
-      : Escher::WithBlinkingTextCursor<
-            Escher::ScrollableView<Escher::ScrollView::NoDecorator>>(
-            parentResponder, &m_contentView, this),
-        Escher::EditableField(inputEventHandlerDelegate),
+      : Escher::EditableField(parentResponder, &m_contentView),
         m_contentView(format),
         m_delegate(delegate) {}
-  void setDelegates(
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      LayoutFieldDelegate* delegate) {
-    m_inputEventHandlerDelegate = inputEventHandlerDelegate;
-    m_delegate = delegate;
-  }
+  void setDelegates(LayoutFieldDelegate* delegate) { m_delegate = delegate; }
   PoincareJ::Context* context() const;
-  bool isEditing() const override { return m_contentView.isEditing(); }
-  void setEditing(bool isEditing) override;
+  bool isEditing() const { return m_contentView.isEditing(); }
+  void setEditing(bool isEditing);
   void clearLayout();
   void scrollToCursor() {
     scrollToBaselinedRect(
@@ -81,7 +68,7 @@ class LayoutField
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
   // TODO: factorize with Escher::TextField (see TODO of EditableField)
-  bool shouldFinishEditing(Ion::Events::Event event) override;
+  bool shouldFinishEditing(Ion::Events::Event event);
 
   PoincareJ::LayoutBufferCursor* cursor() { return m_contentView.cursor(); }
   const ExpressionViewWithCursor* expressionView() const {
@@ -107,11 +94,11 @@ class LayoutField
   void insertLayoutAtCursor(const PoincareJ::Tree* layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
-  Escher::TextCursorView* textCursorView() override {
-    return m_contentView.textCursorView();
+  Escher::TextCursorView::CursorFieldView* cursorCursorFieldView() override {
+    return &m_contentView;
   }
 
-  class ContentView : public Escher::View {
+  class ContentView : public Escher::TextCursorView::CursorFieldView {
    public:
     ContentView(KDGlyph::Format format);
     bool isEditing() const { return m_isEditing; }
@@ -122,7 +109,9 @@ class LayoutField
     }
     void setCursor(PoincareJ::LayoutBufferCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    KDRect cursorRect() { return relativeChildFrame(&m_cursorView); }
+    KDRect cursorRect() const override {
+      return relativeChildFrame(&m_cursorView);
+    }
     PoincareJ::LayoutBufferCursor* cursor() { return &m_cursor; }
     const ExpressionViewWithCursor* expressionView() const {
       return &m_expressionView;

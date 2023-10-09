@@ -19,7 +19,6 @@ namespace CalculationJunior {
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
     : m_cursor(m_layoutBuffer.blocks(), nullptr),
       m_expressionView(&m_cursor, format),
-      m_cursorView(this),
       m_isEditing(false) {
   clearLayout();
 }
@@ -63,7 +62,7 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
   LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {
-      Container::activeApp()->storeValue();
+      // Container::activeApp()->storeValue();
     }
     return;
   }
@@ -91,8 +90,8 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
   if (Layout::IsHorizontal(selection.layout())) {
     size_t offset = 0;
     for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
-      offset = Layout::Serialize(selection.layout()->childAtIndex(i),
-                                 buffer + offset, buffer + bufferSize) -
+      offset = Layout::Serialize(selection.layout()->child(i), buffer + offset,
+                                 buffer + bufferSize) -
                buffer;
     }
   } else {
@@ -103,7 +102,7 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
     return;
   }
   if (intoStoreMenu) {
-    Container::activeApp()->storeValue(buffer);
+    // Container::activeApp()->storeValue(buffer);
   } else {
     Clipboard::SharedClipboard()->store(buffer);
   }
@@ -132,7 +131,7 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
         &m_cursorView, KDRect(cursorTopLeftPosition, KDSizeZero), force);
     return;
   }
-  m_cursorView.willMove();
+  // m_cursorView.willMove();
   expressionView()->setChildFrame(
       &m_cursorView,
       KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
@@ -150,7 +149,7 @@ void LayoutField::setEditing(bool isEditing) {
 void LayoutField::clearLayout() {
   m_contentView
       .clearLayout();  // Replace the layout with an empty horizontal layout
-  reloadScroll();      // Put the scroll to offset 0
+  resetScroll();       // Put the scroll to offset 0
 }
 
 void LayoutField::setLayout(PoincareJ::Layout newLayout) {
@@ -450,6 +449,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
+#if 0
   if (handleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
@@ -457,6 +457,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     *shouldUpdateCursor = false;
     return true;
   }
+#endif
   if (isEditing() && m_delegate &&
       m_delegate->layoutFieldShouldFinishEditing(
           this, event)) {  // TODO use class method?

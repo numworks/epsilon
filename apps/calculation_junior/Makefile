@@ -5,8 +5,8 @@ app_calculation_junior_src = $(addprefix apps/calculation_junior/,\
   app.cpp \
   main_controller.cpp \
   expression_view.cpp \
-  expression_field_delegate_app.cpp \
   layout_field.cpp \
+  math_field_delegate.cpp \
 )
 
 apps_src += $(app_calculation_junior_src)

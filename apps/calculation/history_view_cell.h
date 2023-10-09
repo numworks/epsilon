@@ -100,7 +100,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Escher::ScrollableTwoLayoutsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource* m_dataSource;
-  bool m_calculationExpanded;
+  Poincare::TrinaryBoolean m_calculationExpanded;
   bool m_calculationSingleLine;
 };
 

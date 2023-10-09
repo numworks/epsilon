@@ -144,6 +144,9 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   /* Simplification
    * WARNING: These two methods alter their arguments */
   static Expression PowerRationalRational(
+      const Expression base, const Expression index,
+      const ReductionContext& reductionContext);
+  static Expression IntermediatePowerRationalRational(
       Rational base, Rational index, const ReductionContext& reductionContext);
   static Expression PowerIntegerRational(
       Integer base, Rational index, const ReductionContext& reductionContext);

@@ -959,6 +959,8 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("e^(i×π/3)", "1/2+√(3)/2×i");
   assert_parsed_expression_simplify_to("(-1)^2", "1");
   assert_parsed_expression_simplify_to("(-1)^3", "-1");
+  assert_parsed_expression_simplify_to("(-1)^2006", "(-1)^2006");
+  assert_parsed_expression_simplify_to("(-1)^2007", "(-1)^2007");
   assert_parsed_expression_simplify_to("(-1)^(1/2)", "i");
   assert_parsed_expression_simplify_to("(-1)^(-1/2)", "-i");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×i");
@@ -1030,6 +1032,8 @@ QUIZ_CASE(poincare_simplification_power) {
   // assert this does not crash
   assert_parsed_expression_simplify_to(
       "90000000005^(x+0.5)", "90000000005^\u0012\u00122×x+1\u0013/2\u0013");
+  assert_parsed_expression_simplify_to("(-123456789012345)^3",
+                                       "(-123456789012345)^3");
 }
 
 QUIZ_CASE(poincare_simplification_factorial) {

@@ -614,9 +614,10 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
   /* TODO: this method should not exist, we should only have
    * privateHandleEventWithText and always call handleEvent. */
   if (privateHandleEventWithText(eventText, indentation,
-                                 forceCursorRightOfText) &&
-      m_delegate) {
-    m_delegate->textFieldDidHandleEvent(this);
+                                 forceCursorRightOfText)) {
+    if (m_delegate) {
+      m_delegate->textFieldDidHandleEvent(this);
+    }
     return true;
   }
   return false;

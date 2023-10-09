@@ -15,7 +15,7 @@
 
 namespace PoincareJ {
 
-Tree *Layoutter::LayoutExpression(Tree *expression) {
+Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode) {
   assert(expression->type().isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
@@ -23,7 +23,9 @@ Tree *Layoutter::LayoutExpression(Tree *expression) {
   EditionReference layoutParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
   // No parentheses on root layout.
-  LayoutExpression(layoutParent, expression, false);
+  Layoutter layoutter;
+  layoutter.m_linearMode = linearMode;
+  layoutter.LayoutExpression(layoutParent, expression, false);
   return layoutParent;
 }
 
@@ -140,6 +142,12 @@ void Layoutter::LayoutPowerOrDivision(EditionReference &layoutParent,
   expression = expression->nextNode();
   EditionReference createdLayout;
   // No parentheses in Fraction roots and Power index.
+  if (m_linearMode) {
+    LayoutExpression(layoutParent, expression, true);
+    PushCodePoint(layoutParent, type == BlockType::Division ? '/' : '^');
+    LayoutExpression(layoutParent, expression, true);
+    return;
+  }
   if (type == BlockType::Division) {
     createdLayout = SharedEditionPool->push(BlockType::FractionLayout);
     EditionReference rack = SharedEditionPool->push<BlockType::RackLayout>(0);

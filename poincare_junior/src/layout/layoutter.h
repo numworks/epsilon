@@ -8,22 +8,22 @@ namespace PoincareJ {
 
 class Layoutter {
  public:
-  static Tree* LayoutExpression(Tree* expression);
+  static Tree* LayoutExpression(Tree* expression, bool linearMode = false);
 
  private:
-  static void LayoutText(EditionReference& layoutParent, const char* text);
-  static void LayoutBuiltin(EditionReference& layoutParent, Tree* expression);
-  static void LayoutIntegerHandler(EditionReference& layoutParent,
-                                   IntegerHandler handler,
-                                   int decimalOffset = 0);
-  static void LayoutInfixOperator(EditionReference& layoutParent,
-                                  Tree* expression, CodePoint op);
-  static void LayoutMatrix(EditionReference& layoutParent, Tree* expression);
-  static void LayoutUnit(EditionReference& layoutParent, Tree* expression);
-  static void LayoutPowerOrDivision(EditionReference& layoutParent,
-                                    Tree* expression);
-  static void LayoutExpression(EditionReference& layoutParent, Tree* expression,
-                               bool allowParentheses = true);
+  void LayoutText(EditionReference& layoutParent, const char* text);
+  void LayoutBuiltin(EditionReference& layoutParent, Tree* expression);
+  void LayoutIntegerHandler(EditionReference& layoutParent,
+                            IntegerHandler handler, int decimalOffset = 0);
+  void LayoutInfixOperator(EditionReference& layoutParent, Tree* expression,
+                           CodePoint op);
+  void LayoutMatrix(EditionReference& layoutParent, Tree* expression);
+  void LayoutUnit(EditionReference& layoutParent, Tree* expression);
+  void LayoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);
+  void LayoutExpression(EditionReference& layoutParent, Tree* expression,
+                        bool allowParentheses = true);
+
+  bool m_linearMode;
 };
 }  // namespace PoincareJ
 

@@ -36,9 +36,9 @@ uint32_t App::appInfo(AppInfo info) const {
       m_startAddress + static_cast<uint8_t>(info) * sizeof(uint32_t));
 }
 
-uint8_t *App::appInfoToAdress(AppInfo info) const {
-  assert(info == AppInfo::NameAdress || info == AppInfo::IconAdress ||
-         info == AppInfo::EntryPointAdress);
+uint8_t *App::appInfoToAddress(AppInfo info) const {
+  assert(info == AppInfo::NameAddress || info == AppInfo::IconAddress ||
+         info == AppInfo::EntryPointAddress);
   uint8_t *address = m_startAddress + appInfo(info);
   // Check that address is in authorized memory
   return addressWithinExternalAppsSection(address) ? address : nullptr;
@@ -48,7 +48,7 @@ const uint32_t App::APILevel() const { return appInfo(AppInfo::APILevel); }
 
 const char *App::name() const {
   const char *n =
-      reinterpret_cast<const char *>(appInfoToAdress(AppInfo::NameAdress));
+      reinterpret_cast<const char *>(appInfoToAddress(AppInfo::NameAddress));
   if (n == nullptr) {
     return nullptr;
   }
@@ -75,7 +75,7 @@ uint32_t App::iconSize() const {
 const uint8_t *App::iconData() const {
   // TODO: Add check on decompression?
   return reinterpret_cast<const uint8_t *>(
-      appInfoToAdress(AppInfo::IconAdress));
+      appInfoToAddress(AppInfo::IconAddress));
 }
 
 void *App::entryPoint() const {
@@ -89,7 +89,7 @@ void *App::entryPoint() const {
    * instructions.
    */
   return reinterpret_cast<void *>(
-      reinterpret_cast<uint32_t>(appInfoToAdress(AppInfo::EntryPointAdress)) |
+      reinterpret_cast<uint32_t>(appInfoToAddress(AppInfo::EntryPointAddress)) |
       0x1);
 }
 

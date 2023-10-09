@@ -29,10 +29,10 @@ class App {
   enum class AppInfo : uint8_t {
     MagicStart = 0,
     APILevel = 1,
-    NameAdress = 2,
+    NameAddress = 2,
     IconSize = 3,
-    IconAdress = 4,
-    EntryPointAdress = 5,
+    IconAddress = 4,
+    EntryPointAddress = 5,
     AppSize = 6,
     MagicEnd = 7
   };
@@ -43,7 +43,7 @@ class App {
 
  private:
   uint32_t appInfo(AppInfo info) const;
-  uint8_t* appInfoToAdress(AppInfo info) const;
+  uint8_t* appInfoToAddress(AppInfo info) const;
   uint8_t* m_startAddress;
 };
 

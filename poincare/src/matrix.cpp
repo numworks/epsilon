@@ -428,10 +428,10 @@ void Matrix::ArrayRowCanonize(T *array, int numberOfRows, int numberOfColumns,
     for (int row = 0; row < numberOfRows; row++) {
       for (int col = 0; col < numberOfColumns; col++) {
         array[row * numberOfColumns + col] = static_cast<T>(NAN);
-        if (determinant) {
-          *determinant = static_cast<T>(NAN);
-        }
       }
+    }
+    if (determinant) {
+      *determinant = static_cast<T>(NAN);
     }
   }
 

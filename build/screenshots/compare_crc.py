@@ -88,7 +88,7 @@ def main():
          os.mkdir(output_scenario_folder)
 
          # Generate all screenshots and create a gif
-         print_underlined("Executable altered scenario")
+         print_underlined("Tested executable")
          computed_folder = os.path.join(output_scenario_folder, "computed")
          list_computed_images = helper.generate_all_screenshots_and_create_gif(state_file, args.executable, computed_folder)
          helper.store_crc32(computed_crc32, os.path.join(computed_folder, "crc32.txt"))

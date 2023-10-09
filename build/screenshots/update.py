@@ -24,7 +24,7 @@ def main():
    state_file = helper.get_file_with_extension(scenario_folder, ".nws")
    crc_file = helper.get_file_with_extension(scenario_folder, ".txt")
    if state_file == '' or crc_file == '':
-      print("Error:", scenario_folder, "should contain 1 .nws and 1 .txt")
+      print("Error:", scenario_folder, "should contain one .nws and one .txt")
       sys.exit(1)
 
    # Update crc32

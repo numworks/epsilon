@@ -11,18 +11,18 @@ QUIZ_CASE(pcj_block) {
   CachePool::SharedCachePool->reset();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
-  Block* firstBlock = SharedEditionPool->push(ZeroBlock)->block();
-  SharedEditionPool->push(OneBlock);
-  SharedEditionPool->push(TwoBlock);
+  Block* firstBlock = SharedEditionPool->push(BlockType::Zero)->block();
+  SharedEditionPool->push(BlockType::One);
+  SharedEditionPool->push(BlockType::Two);
   SharedEditionPool->push(ValueBlock(4));
   SharedEditionPool->push(ValueBlock(-4));
-  SharedEditionPool->push(ZeroBlock);
+  SharedEditionPool->push(BlockType::Zero);
   assert_pools_block_sizes_are(0, 6);
 
   // Block navigation
   quiz_assert(*firstBlock->nextNth(5) == *firstBlock);
   quiz_assert(*firstBlock->next() != *firstBlock);
-  quiz_assert(*firstBlock->next() == OneBlock);
+  quiz_assert(*firstBlock->next() == BlockType::One);
   quiz_assert(static_cast<uint8_t>(*firstBlock->nextNth(3)) == 4);
   quiz_assert(static_cast<int8_t>(*firstBlock->nextNth(4)) == -4);
 }
@@ -463,24 +463,25 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(
       2.0_e, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0),
               ValueBlock(0), ValueBlock(64)});
-  assert_tree_equals_blocks(-1_e, {MinusOneBlock});
-  assert_tree_equals_blocks(1_e, {OneBlock});
+  assert_tree_equals_blocks(-1_e, {BlockType::MinusOne});
+  assert_tree_equals_blocks(1_e, {BlockType::One});
+  assert_tree_equals_blocks(KAdd(1_e, 2_e),
+                            {TypeBlock(BlockType::Addition), ValueBlock(2),
+                             BlockType::One, BlockType::Two});
   assert_tree_equals_blocks(
-      KAdd(1_e, 2_e),
-      {TypeBlock(BlockType::Addition), ValueBlock(2), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(KMult(1_e, 2_e, -1_e),
-                            {TypeBlock(BlockType::Multiplication),
-                             ValueBlock(3), OneBlock, TwoBlock, MinusOneBlock});
+      KMult(1_e, 2_e, -1_e),
+      {TypeBlock(BlockType::Multiplication), ValueBlock(3), BlockType::One,
+       BlockType::Two, BlockType::MinusOne});
   assert_tree_equals_blocks(
-      KSet(1_e), {TypeBlock(BlockType::Set), ValueBlock(1), OneBlock});
-  assert_tree_equals_blocks(KPow(1_e, 2_e),
-                            {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
+      KSet(1_e), {TypeBlock(BlockType::Set), ValueBlock(1), BlockType::One});
+  assert_tree_equals_blocks(KPow(1_e, 2_e), {TypeBlock(BlockType::Power),
+                                             BlockType::One, BlockType::Two});
   assert_tree_equals_blocks(KSqrt(2_e),
-                            {TypeBlock(BlockType::SquareRoot), TwoBlock});
-  assert_tree_equals_blocks(
-      KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(
-      KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
+                            {TypeBlock(BlockType::SquareRoot), BlockType::Two});
+  assert_tree_equals_blocks(KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction),
+                                             BlockType::One, BlockType::Two});
+  assert_tree_equals_blocks(KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction),
+                                             BlockType::One, BlockType::Two});
   assert_tree_equals_blocks(
       "var"_e, {TypeBlock(BlockType::UserSymbol), ValueBlock(3),
                 ValueBlock('v'), ValueBlock('a'), ValueBlock('r')});

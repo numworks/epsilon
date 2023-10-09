@@ -342,7 +342,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
     }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
       initializedPlaceHolders++;
-      treeNext->cloneTreeBeforeNode(Tree::FromBlocks(&ZeroBlock));
+      treeNext->cloneTreeBeforeNode(0_e);
     }
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);

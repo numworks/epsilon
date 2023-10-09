@@ -247,22 +247,13 @@ class TypeBlock : public Block {
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 
-constexpr TypeBlock ZeroBlock = TypeBlock(BlockType::Zero);
-constexpr TypeBlock OneBlock = TypeBlock(BlockType::One);
-constexpr TypeBlock TwoBlock = TypeBlock(BlockType::Two);
-constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
-constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
-#if ASSERTIONS
-constexpr TypeBlock TreeBorderBlock = TypeBlock(BlockType::TreeBorder);
-#endif
-
 // Add a TreeBorder blocks at the end to assert we don't navigate out of it.
 template <int size>
 class BlockBuffer {
  public:
   constexpr BlockBuffer() {
 #if ASSERTIONS
-    m_blocks[size] = TreeBorderBlock;
+    m_blocks[size] = BlockType::TreeBorder;
 #endif
   }
   constexpr TypeBlock *blocks() {

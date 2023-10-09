@@ -27,6 +27,10 @@ Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
   if (exponent == 0) {
     return (1_e)->clone();
   }
+  if (!coefficient) {
+    // Writing 1_e directly in the declaration does not work with clang
+    coefficient = 1_e;
+  }
   Tree* pol = PushEmpty(variable);
   return AddMonomial(pol, std::make_pair(coefficient->clone(), exponent));
 }

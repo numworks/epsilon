@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/edition_reference.h>
 
+#include "k_tree.h"
+
 namespace PoincareJ {
 
 class Polynomial final {
@@ -32,9 +34,8 @@ class Polynomial final {
 
  public:
   static Tree* PushEmpty(const Tree* variable);
-  static Tree* PushMonomial(
-      const Tree* variable, uint8_t exponent,
-      const Tree* coefficient = Tree::FromBlocks(&OneBlock));
+  static Tree* PushMonomial(const Tree* variable, uint8_t exponent,
+                            const Tree* coefficient = nullptr);
 
   // Getters
   static uint8_t ExponentAtIndex(const Tree* polynomial, int index);

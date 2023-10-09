@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <poincare_junior/src/expression/comparison.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
@@ -86,8 +87,7 @@ bool NAry::SquashIfEmpty(Tree* nary) {
   // Return the neutral element
   BlockType type = nary->type();
   assert(type == BlockType::Addition || type == BlockType::Multiplication);
-  nary->cloneTreeOverTree(
-      Tree::FromBlocks(type == BlockType::Addition ? &ZeroBlock : &OneBlock));
+  nary->cloneTreeOverTree(type == BlockType::Addition ? 0_e : 1_e);
   return true;
 }
 

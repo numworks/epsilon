@@ -22,30 +22,30 @@ QUIZ_CASE(pcj_edition_pool) {
   pool->flush();
   assert(pool->size() == 0);
 
-  pool->push(ZeroBlock);
-  pool->push(OneBlock);
-  assert(*pool->firstBlock() == ZeroBlock &&
-         *(pool->lastBlock() - 1) == OneBlock && pool->size() == 2);
+  pool->push(BlockType::Zero);
+  pool->push(BlockType::One);
+  assert(*pool->firstBlock() == BlockType::Zero &&
+         *(pool->lastBlock() - 1) == BlockType::One && pool->size() == 2);
   pool->popBlock();
-  assert(*(pool->lastBlock() - 1) == ZeroBlock && pool->size() == 1);
-  pool->replaceBlock(pool->firstBlock(), TwoBlock);
-  assert(*pool->blockAtIndex(0) == TwoBlock);
-  pool->insertBlock(pool->firstBlock(), OneBlock);
-  assert(*pool->firstBlock() == OneBlock && pool->size() == 2);
+  assert(*(pool->lastBlock() - 1) == BlockType::Zero && pool->size() == 1);
+  pool->replaceBlock(pool->firstBlock(), BlockType::Two);
+  assert(*pool->blockAtIndex(0) == BlockType::Two);
+  pool->insertBlock(pool->firstBlock(), BlockType::One);
+  assert(*pool->firstBlock() == BlockType::One && pool->size() == 2);
   pool->insertBlocks(pool->blockAtIndex(2), pool->blockAtIndex(0), 2);
-  assert(*(pool->blockAtIndex(2)) == OneBlock &&
-         *(pool->blockAtIndex(3)) == TwoBlock && pool->size() == 4);
+  assert(*(pool->blockAtIndex(2)) == BlockType::One &&
+         *(pool->blockAtIndex(3)) == BlockType::Two && pool->size() == 4);
   pool->removeBlocks(pool->firstBlock(), 3);
-  assert(*(pool->firstBlock()) == TwoBlock && pool->size() == 1);
-  pool->push(ZeroBlock);
-  pool->push(OneBlock);
-  pool->push(HalfBlock);
+  assert(*(pool->firstBlock()) == BlockType::Two && pool->size() == 1);
+  pool->push(BlockType::Zero);
+  pool->push(BlockType::One);
+  pool->push(BlockType::Half);
   //[ 2 0 1 1/2 ]--> [ 2 1 1/2 0 ]
   pool->moveBlocks(pool->firstBlock() + 1, pool->blockAtIndex(2), 2);
-  assert(*(pool->blockAtIndex(0)) == TwoBlock &&
-         *(pool->blockAtIndex(1)) == OneBlock &&
-         *(pool->blockAtIndex(2)) == HalfBlock &&
-         *(pool->blockAtIndex(3)) == ZeroBlock && pool->size() == 4);
+  assert(*(pool->blockAtIndex(0)) == BlockType::Two &&
+         *(pool->blockAtIndex(1)) == BlockType::One &&
+         *(pool->blockAtIndex(2)) == BlockType::Half &&
+         *(pool->blockAtIndex(3)) == BlockType::Zero && pool->size() == 4);
   assert(pool->contains(pool->blockAtIndex(2)));
   assert(!pool->contains(pool->blockAtIndex(5)));
 }

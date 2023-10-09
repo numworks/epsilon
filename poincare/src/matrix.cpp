@@ -414,6 +414,9 @@ void Matrix::ArrayRowCanonize(T *array, int numberOfRows, int numberOfColumns,
 
   bool undef = false;
   for (int row = 0; row < numberOfRows; row++) {
+    if (undef) {
+      break;
+    }
     for (int col = 0; col < numberOfColumns; col++) {
       if (std::isnan(std::abs(array[row * numberOfColumns + col]))) {
         undef = true;

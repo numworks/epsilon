@@ -159,6 +159,8 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   static Expression ReduceLogarithmLinearCombination(
       const ReductionContext& reductionContext, Expression linearCombination,
       const Expression baseOfLogarithmToReduce);
+  static Expression MinusOnePowerRational(
+      Rational index, const ReductionContext& reductionContext);
   bool isLogarithmOfSameBase(Expression e) const;
   bool isNthRootOfUnity() const;
 

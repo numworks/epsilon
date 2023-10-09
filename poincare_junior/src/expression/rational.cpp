@@ -110,9 +110,9 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
     return SharedEditionPool->push<BlockType::RationalShort>(
         static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
-  Tree* node = Tree::FromBlocks(SharedEditionPool->push(
-      numeratorSign == NonStrictSign::Negative ? BlockType::RationalNegBig
-                                               : BlockType::RationalPosBig));
+  Tree* node = SharedEditionPool->push(numeratorSign == NonStrictSign::Negative
+                                           ? BlockType::RationalNegBig
+                                           : BlockType::RationalPosBig);
   SharedEditionPool->push(ValueBlock(numerator.numberOfDigits()));
   SharedEditionPool->push(ValueBlock(denominator.numberOfDigits()));
   numerator.pushDigitsOnEditionPool();

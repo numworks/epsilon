@@ -132,7 +132,7 @@ Tree *IntegerHandler::pushOnEditionPool() const {
   TypeBlock typeBlock(sign() == NonStrictSign::Negative
                           ? BlockType::IntegerNegBig
                           : BlockType::IntegerPosBig);
-  Tree *node = Tree::FromBlocks(SharedEditionPool->push(typeBlock));
+  Tree *node = SharedEditionPool->push(typeBlock);
   SharedEditionPool->push(m_numberOfDigits);
   pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION

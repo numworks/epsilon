@@ -41,8 +41,9 @@ class EditionPool final : public Pool {
   void replaceBlock(Block *previousBlock, Block newBlock);
   void replaceBlocks(Block *destination, const Block *newBlocks,
                      size_t numberOfBlocks);
-  Block *push(Block block) {
-    return insertBlock(lastBlock(), block, true) ? lastBlock() - 1 : nullptr;
+  Tree *push(Block block) {
+    insertBlock(lastBlock(), block, true);
+    return Tree::FromBlocks(lastBlock() - 1);
   }
   bool insertBlock(Block *destination, Block block, bool at = false) {
     return insertBlocks(destination, &block, 1, at);

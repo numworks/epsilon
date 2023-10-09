@@ -11,7 +11,7 @@ QUIZ_CASE(pcj_block) {
   CachePool::SharedCachePool->reset();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
-  Block* firstBlock = SharedEditionPool->push(ZeroBlock);
+  Block* firstBlock = SharedEditionPool->push(ZeroBlock)->block();
   SharedEditionPool->push(OneBlock);
   SharedEditionPool->push(TwoBlock);
   SharedEditionPool->push(ValueBlock(4));

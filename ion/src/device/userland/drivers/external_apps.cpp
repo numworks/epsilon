@@ -32,8 +32,8 @@ bool addressWithinExternalAppsSection(const uint8_t *address) {
 }
 
 uint32_t App::appInfo(AppInfo info) const {
-  return *reinterpret_cast<uint32_t *>(
-      m_startAddress + static_cast<uint8_t>(info) * sizeof(uint32_t));
+  return reinterpret_cast<uint32_t *>(
+      m_startAddress)[static_cast<uint8_t>(info)];
 }
 
 uint8_t *App::appInfoToAddress(AppInfo info) const {

@@ -220,7 +220,7 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   Block *copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
-                    size * sizeof(Block))) {
+                    size * sizeof(Block), true)) {
     return nullptr;
   }
 #if POINCARE_POOL_VISUALIZATION

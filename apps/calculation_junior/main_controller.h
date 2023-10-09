@@ -7,8 +7,8 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 
-#include "expression_view.h"
 #include "layout_field.h"
+#include "layout_view.h"
 
 namespace CalculationJunior {
 
@@ -35,13 +35,13 @@ class MainController : public Escher::ViewController {
     void layoutSubviews(bool force = false) override;
 
     LayoutField* layoutField() { return &m_layoutField; }
-    ExpressionView* reductionLayoutView() { return &m_reductionLayoutView; }
+    LayoutView* reductionLayoutView() { return &m_reductionLayoutView; }
     ApproximationBuffer* approximationTextView() {
       return &m_approximationView;
     }
 
     LayoutField m_layoutField;
-    ExpressionView m_reductionLayoutView;
+    LayoutView m_reductionLayoutView;
     ApproximationBuffer m_approximationView;
   };
   ContentView m_view;

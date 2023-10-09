@@ -18,7 +18,7 @@ namespace CalculationJunior {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
     : m_cursor(m_layoutBuffer.blocks(), nullptr),
-      m_expressionView(&m_cursor, format),
+      m_layoutView(&m_cursor, format),
       m_isEditing(false) {
   clearLayout();
 }
@@ -54,7 +54,7 @@ void LayoutField::ContentView::clearLayout() {
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
+  KDSize evSize = m_layoutView.minimalSizeForOptimalDisplay();
   return KDSize(evSize.width() + LayoutCursor::k_cursorWidth, evSize.height());
 }
 
@@ -110,17 +110,17 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
 
 View *LayoutField::ContentView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  View *m_views[] = {&m_expressionView, &m_cursorView};
+  View *m_views[] = {&m_layoutView, &m_cursorView};
   return m_views[index];
 }
 
 void LayoutField::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_expressionView, bounds(), force);
+  setChildFrame(&m_layoutView, bounds(), force);
   layoutCursorSubview(force);
 }
 
 void LayoutField::ContentView::layoutCursorSubview(bool force) {
-  KDPoint cursorTopLeftPosition = m_expressionView.drawingOrigin().translatedBy(
+  KDPoint cursorTopLeftPosition = m_layoutView.drawingOrigin().translatedBy(
       m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
     /* We keep track of the cursor's position to prevent the input field from

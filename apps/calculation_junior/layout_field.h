@@ -10,16 +10,14 @@
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/render.h>
 
-#include "expression_view.h"
 #include "layout_field_delegate.h"
+#include "layout_view.h"
 
 // See TODO in EditableField
 
 namespace CalculationJunior {
 
 class LayoutField : public Escher::EditableField {
-  friend class ExpressionField;
-
  public:
   LayoutField(Escher::Responder* parentResponder,
               LayoutFieldDelegate* delegate = nullptr,
@@ -71,12 +69,10 @@ class LayoutField : public Escher::EditableField {
   bool shouldFinishEditing(Ion::Events::Event event);
 
   PoincareJ::LayoutBufferCursor* cursor() { return m_contentView.cursor(); }
-  const ExpressionViewWithCursor* expressionView() const {
+  const LayoutViewWithCursor* layoutView() const {
     return m_contentView.expressionView();
   }
-  ExpressionViewWithCursor* expressionView() {
-    return m_contentView.expressionView();
-  }
+  LayoutViewWithCursor* layoutView() { return m_contentView.expressionView(); }
 
  protected:
   bool linearMode() const {
@@ -104,25 +100,21 @@ class LayoutField : public Escher::EditableField {
     bool isEditing() const { return m_isEditing; }
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);
-    void setBackgroundColor(KDColor c) {
-      m_expressionView.setBackgroundColor(c);
-    }
+    void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
     void setCursor(PoincareJ::LayoutBufferCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
     KDRect cursorRect() const override {
       return relativeChildFrame(&m_cursorView);
     }
     PoincareJ::LayoutBufferCursor* cursor() { return &m_cursor; }
-    const ExpressionViewWithCursor* expressionView() const {
-      return &m_expressionView;
-    }
-    ExpressionViewWithCursor* expressionView() { return &m_expressionView; }
+    const LayoutViewWithCursor* expressionView() const { return &m_layoutView; }
+    LayoutViewWithCursor* expressionView() { return &m_layoutView; }
     void clearLayout();
     // View
     KDSize minimalSizeForOptimalDisplay() const override;
     // Selection
     void copySelection(bool intoStoreMenu);
-    KDFont::Size font() const { return m_expressionView.font(); }
+    KDFont::Size font() const { return m_layoutView.font(); }
     Escher::TextCursorView* textCursorView() { return &m_cursorView; }
     PoincareJ::Tree* node() {
       return PoincareJ::Tree::FromBlocks(m_layoutBuffer.blocks());
@@ -138,7 +130,7 @@ class LayoutField : public Escher::EditableField {
     PoincareJ::BlockBuffer<PoincareJ::LayoutCursor::k_layoutBufferSize>
         m_layoutBuffer;
     PoincareJ::LayoutBufferCursor m_cursor;
-    ExpressionViewWithCursor m_expressionView;
+    LayoutViewWithCursor m_layoutView;
     Escher::TextCursorView m_cursorView;
     bool m_isEditing;
   };

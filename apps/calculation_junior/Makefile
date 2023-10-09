@@ -4,7 +4,7 @@ app_headers += apps/calculation_junior/app.h
 app_calculation_junior_src = $(addprefix apps/calculation_junior/,\
   app.cpp \
   main_controller.cpp \
-  expression_view.cpp \
+  layout_view.cpp \
   layout_field.cpp \
   math_field_delegate.cpp \
 )

@@ -1,5 +1,5 @@
-#ifndef CALCULATION_JUNIOR_EXPRESSION_VIEW_H
-#define CALCULATION_JUNIOR_EXPRESSION_VIEW_H
+#ifndef CALCULATION_JUNIOR_LAYOUT_VIEW_H
+#define CALCULATION_JUNIOR_LAYOUT_VIEW_H
 
 #include <escher/glyphs_view.h>
 #include <kandinsky/color.h>
@@ -7,13 +7,11 @@
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layout_selection.h>
 
-// TODO : Rename this class LayoutView
-
 namespace CalculationJunior {
 
-class AbstractExpressionView : public Escher::GlyphsView {
+class AbstractLayoutView : public Escher::GlyphsView {
  public:
-  AbstractExpressionView(KDGlyph::Format format = {})
+  AbstractLayoutView(KDGlyph::Format format = {})
       : Escher::GlyphsView(format), m_horizontalMargin(0) {}
 
   virtual PoincareJ::Layout getLayout() const = 0;
@@ -38,7 +36,7 @@ class AbstractExpressionView : public Escher::GlyphsView {
   KDCoordinate m_horizontalMargin;
 };
 
-class ExpressionView : public AbstractExpressionView {
+class LayoutView : public AbstractLayoutView {
  public:
   PoincareJ::Layout getLayout() const override { return m_layout; }
 
@@ -50,11 +48,11 @@ class ExpressionView : public AbstractExpressionView {
   mutable PoincareJ::Layout m_layout;
 };
 
-class ExpressionViewWithCursor : public AbstractExpressionView {
+class LayoutViewWithCursor : public AbstractLayoutView {
  public:
-  ExpressionViewWithCursor(PoincareJ::LayoutBufferCursor* cursor,
-                           KDGlyph::Format format = {})
-      : AbstractExpressionView(format), m_cursor(cursor) {
+  LayoutViewWithCursor(PoincareJ::LayoutBufferCursor* cursor,
+                       KDGlyph::Format format = {})
+      : AbstractLayoutView(format), m_cursor(cursor) {
     assert(cursor);
   }
 

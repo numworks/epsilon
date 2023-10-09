@@ -157,7 +157,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
         readIndex++;
 
         /* If cursor is inside the added cloned layout, set its layout inside
-         * the clone by keeping the same adress offset as in the original. */
+         * the clone by keeping the same address offset as in the original. */
         if (cursorLayout && cursorLayout->node() >= readChild.node() &&
             cursorLayout->node() < readChild.node()->nextSibling()) {
           int cursorOffset = reinterpret_cast<char *>(cursorLayout->node()) -

@@ -39,7 +39,7 @@ void assert_inserted_layout_points_to(Layout layoutToInsert,
       c.layout().node() - (insertingHorizontalLayout
                                ? static_cast<LayoutNode *>(h.node())
                                : h.childAtIndex(0).node());
-  /* Check if the cursor layout is at the same adress offset and is identical
+  /* Check if the cursor layout is at the same address offset and is identical
    * to the expected layout. */
   quiz_assert(addressOffsetAfterInsertion == addressOffsetBeforeInsertion &&
               expectedLayoutAfterInsertion.isIdenticalTo(c.layout()));

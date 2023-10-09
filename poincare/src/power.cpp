@@ -1449,28 +1449,9 @@ Expression Power::IntermediatePowerRationalRational(
   /* Handle this case right now to always reduce to Nonreal if needed. */
   if (base.isNegative()) {
     Multiplication res = Multiplication::Builder();
-    /* Compute -1^(a/b) */
-    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      /* On real numbers (-1)^(a/b) =
-       * - 1 if a is even
-       * - -1 if a and b are odd
-       * - has no real solution otherwise */
-      if (!index.unsignedIntegerNumerator().isEven()) {
-        if (index.integerDenominator().isEven()) {
-          return Nonreal::Builder();
-        } else {
-          res.addChildAtIndexInPlace(Rational::Builder(-1), 0,
-                                     res.numberOfChildren());
-        }
-      }
-    } else {
-      // On complex numbers, we pick the first root (-1)^(a/b) = e^(i*pi*a/b)
-      Rational indexClone = index.clone().convert<Rational>();
-      Expression exp = CreateComplexExponent(indexClone, reductionContext);
-      res.addChildAtIndexInPlace(exp, res.numberOfChildren(),
-                                 res.numberOfChildren());
-      exp.shallowReduce(reductionContext);
-    }
+    Expression exp = MinusOnePowerRational(index, reductionContext);
+    res.addChildAtIndexInPlace(exp, res.numberOfChildren(),
+                               res.numberOfChildren());
     base.setSign(true);
     Expression res2 =
         IntermediatePowerRationalRational(base, index, reductionContext);
@@ -1701,6 +1682,28 @@ Expression Power::ReduceLogarithmLinearCombination(
     }
   }
   return linearCombination;
+}
+
+Expression Power::MinusOnePowerRational(
+    Rational index, const ReductionContext &reductionContext) {
+  /* Compute -1^(a/b) */
+  if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+    /* On real numbers (-1)^(a/b) =
+     * - 1 if a is even
+     * - -1 if a and b are odd
+     * - has no real solution otherwise */
+    if (index.unsignedIntegerNumerator().isEven()) {
+      return Rational::Builder(1);
+    } else if (!index.integerDenominator().isEven()) {
+      return Rational::Builder(-1);
+    } else {
+      return Nonreal::Builder();
+    }
+  }
+  // On complex numbers, we pick the first root (-1)^(a/b) = e^(i*pi*a/b)
+  Rational indexClone = index.clone().convert<Rational>();
+  Expression exp = CreateComplexExponent(indexClone, reductionContext);
+  return exp.shallowReduce(reductionContext);
 }
 
 bool Power::isNthRootOfUnity() const {

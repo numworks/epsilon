@@ -822,9 +822,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
   if (baseType == ExpressionNode::Type::Rational &&
       indexType == ExpressionNode::Type::Addition &&
       index.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    /* Clone base and index since PowerRationalRational could alter base and/or
-     * index, and make this corrupted when escaping because reduction failed. */
-    Rational rationalIndex = index.childAtIndex(0).clone().convert<Rational>();
+    Rational rationalIndex = index.childAtIndex(0).convert<Rational>();
     if (rationalIndex.unsignedIntegerNumerator().isOne() &&
         !rationalIndex.isInteger()) {
       /* Escape here to avoid infinite loops with the multiplication.
@@ -836,9 +834,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
        *   this rule in that case */
       return *this;
     }
-    Rational rationalBase = base.clone().convert<Rational>();
     Expression p1 =
-        PowerRationalRational(rationalBase, rationalIndex, reductionContext);
+        PowerRationalRational(base, rationalIndex, reductionContext);
     if (p1.isUninitialized()) {
       return *this;
     }
@@ -910,9 +907,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     /* Step 9.1
      * Handle the simple case of r^s, whith r and s rational. */
     if (baseType == ExpressionNode::Type::Rational) {
-      Rational rationalBase = static_cast<Rational &>(base);
       Expression e =
-          PowerRationalRational(rationalBase, rationalIndex, reductionContext);
+          PowerRationalRational(base, rationalIndex, reductionContext);
       if (e.isUninitialized()) {
         return *this;
       }
@@ -1438,6 +1434,19 @@ Expression Power::denominator(const ReductionContext &reductionContext) const {
 }
 
 Expression Power::PowerRationalRational(
+    const Expression base, const Expression index,
+    const ReductionContext &reductionContext) {
+  assert(base.type() == ExpressionNode::Type::Rational &&
+         index.type() == ExpressionNode::Type::Rational);
+  /* Clone base and index since this method could alter base and/or
+   * index, and make this corrupted when escaping because reduction failed. */
+  Rational rationalBase = base.clone().convert<Rational>();
+  Rational rationalIndex = index.clone().convert<Rational>();
+  return IntermediatePowerRationalRational(rationalBase, rationalIndex,
+                                           reductionContext);
+}
+
+Expression Power::IntermediatePowerRationalRational(
     Rational base, Rational index, const ReductionContext &reductionContext) {
   assert(!base.numeratorOrDenominatorIsInfinity() &&
          !index.numeratorOrDenominatorIsInfinity());
@@ -1467,7 +1476,8 @@ Expression Power::PowerRationalRational(
       exp.shallowReduce(reductionContext);
     }
     base.setSign(true);
-    Expression res2 = PowerRationalRational(base, index, reductionContext);
+    Expression res2 =
+        IntermediatePowerRationalRational(base, index, reductionContext);
     if (res2.isUninitialized()) {
       return Expression();
     } else {
@@ -1496,7 +1506,7 @@ Expression Power::PowerRationalRational(
       return std::move(base);
     }
     index.setSign(true);
-    return PowerRationalRational(base, index, reductionContext);
+    return IntermediatePowerRationalRational(base, index, reductionContext);
   }
   assert(!index.isNegative());
   /* We are handling an expression of the form (p/q)^(a/b), with a and b

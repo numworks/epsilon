@@ -36,7 +36,7 @@ HistoryViewCell::HistoryViewCell(Responder *parentResponder)
       m_inputView(this, k_inputViewHorizontalMargin,
                   k_inputOutputViewsVerticalMargin),
       m_scrollableOutputView(this),
-      m_calculationExpanded(false),
+      m_calculationExpanded(TrinaryBoolean::Unknown),
       m_calculationSingleLine(false) {}
 
 void HistoryViewCell::setEven(bool even) {
@@ -261,8 +261,9 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
       Ion::crc32Byte((const uint8_t *)calculation,
                      ((char *)calculation->next()) - ((char *)calculation));
   if (newCalculationCRC == m_calculationCRC32) {
-    updateExpanded(expanded);
-    reloadScroll();
+    if (updateExpanded(expanded)) {
+      reloadScroll();
+    }
     return;
   }
 
@@ -397,16 +398,18 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
 
 bool HistoryViewCell::updateExpanded(bool expanded) {
   assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
-  bool calculationExpanded =
-      expanded && m_calculationDisplayOutput ==
-                      Calculation::DisplayOutput::ExactAndApproximateToggle;
-  bool didChange = m_calculationExpanded != calculationExpanded;
-  m_calculationExpanded = calculationExpanded;
-  m_scrollableOutputView.setDisplayCenter(
+  TrinaryBoolean calculationExpanded = BinaryToTrinaryBool(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
-      m_calculationExpanded);
-  return didChange;
+      (expanded && m_calculationDisplayOutput ==
+                       Calculation::DisplayOutput::ExactAndApproximateToggle));
+  if (m_calculationExpanded == calculationExpanded) {
+    return false;
+  }
+  m_calculationExpanded = calculationExpanded;
+  m_scrollableOutputView.setDisplayCenter(
+      TrinaryToBinaryBool(m_calculationExpanded));
+  return true;
 }
 
 }  // namespace Calculation

@@ -957,6 +957,8 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("2^(6+π+x)", "64×2^\u0012x+π\u0013");
   assert_parsed_expression_simplify_to("i^(2/3)", "1/2+√(3)/2×i");
   assert_parsed_expression_simplify_to("e^(i×π/3)", "1/2+√(3)/2×i");
+  assert_parsed_expression_simplify_to("(-1)^2", "1");
+  assert_parsed_expression_simplify_to("(-1)^3", "-1");
   assert_parsed_expression_simplify_to("(-1)^(1/2)", "i");
   assert_parsed_expression_simplify_to("(-1)^(-1/2)", "-i");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×i");

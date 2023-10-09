@@ -89,16 +89,15 @@ const char *AbstractTextField::ContentView::text() const {
 
 void AbstractTextField::ContentView::setText(const char *text) {
   size_t textRealLength = strlen(text);
-  size_t maxBufferSize = m_textBufferSize;
   char *buffer = const_cast<char *>(this->text());
-  if (textRealLength > maxBufferSize - 1) {
+  if (textRealLength > m_textBufferSize - 1) {
     /* The text was too long to be copied
      * TODO Maybe add a warning for the user? */
     buffer[0] = 0;
     return;
   }
   // Copy the text
-  strlcpy(buffer, text, maxBufferSize);
+  strlcpy(buffer, text, m_textBufferSize);
   /* Replace System parentheses (used to keep layout tree structure) by normal
    * parentheses */
   Poincare::SerializationHelper::
@@ -145,11 +144,10 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
 
   char *buffer = const_cast<char *>(this->text());
   size_t editedLength = textLength();
-  size_t bufferSize = textBufferSize();
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
-  if (editedLength + textLength >= bufferSize || textLength == 0) {
+  if (editedLength + textLength >= m_textBufferSize || textLength == 0) {
     return false;
   }
 
@@ -158,8 +156,9 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
 
   /* Caution: One byte will be overridden by the null-terminating char of
    * strlcpy */
-  size_t copySize = std::min(
-      textLength + 1, static_cast<size_t>((buffer + bufferSize) - location));
+  size_t copySize =
+      std::min(textLength + 1,
+               static_cast<size_t>((buffer + m_textBufferSize) - location));
   char *overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);
@@ -254,7 +253,7 @@ size_t AbstractTextField::ContentView::deleteSelection() {
   size_t removedLength = selectionRight() - selectionLeft();
   char *buffer = const_cast<char *>(text());
   strlcpy(const_cast<char *>(selectionLeft()), selectionRight(),
-          textBufferSize() - (selectionLeft() - buffer));
+          m_textBufferSize - (selectionLeft() - buffer));
   // We cannot call resetSelection() because m_selectionEnd is invalid.
   m_selectionStart = nullptr;
   return removedLength;

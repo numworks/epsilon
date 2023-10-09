@@ -90,7 +90,7 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
 
 bool Builtin::Promote(Tree *parameterList, TypeBlock type) {
   parameterList->moveNodeOverNode(
-      Tree::FromBlocks(SharedEditionPool->pushBlock(type)));
+      Tree::FromBlocks(SharedEditionPool->push(type)));
   if (type.isParametric()) {
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));

@@ -22,8 +22,8 @@ QUIZ_CASE(pcj_edition_pool) {
   pool->flush();
   assert(pool->size() == 0);
 
-  pool->pushBlock(ZeroBlock);
-  pool->pushBlock(OneBlock);
+  pool->push(ZeroBlock);
+  pool->push(OneBlock);
   assert(*pool->firstBlock() == ZeroBlock &&
          *(pool->lastBlock() - 1) == OneBlock && pool->size() == 2);
   pool->popBlock();
@@ -37,9 +37,9 @@ QUIZ_CASE(pcj_edition_pool) {
          *(pool->blockAtIndex(3)) == TwoBlock && pool->size() == 4);
   pool->removeBlocks(pool->firstBlock(), 3);
   assert(*(pool->firstBlock()) == TwoBlock && pool->size() == 1);
-  pool->pushBlock(ZeroBlock);
-  pool->pushBlock(OneBlock);
-  pool->pushBlock(HalfBlock);
+  pool->push(ZeroBlock);
+  pool->push(OneBlock);
+  pool->push(HalfBlock);
   //[ 2 0 1 1/2 ]--> [ 2 1 1/2 0 ]
   pool->moveBlocks(pool->firstBlock() + 1, pool->blockAtIndex(2), 2);
   assert(*(pool->blockAtIndex(0)) == TwoBlock &&

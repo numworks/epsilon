@@ -11,12 +11,12 @@ QUIZ_CASE(pcj_block) {
   CachePool::SharedCachePool->reset();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
-  Block* firstBlock = SharedEditionPool->pushBlock(ZeroBlock);
-  SharedEditionPool->pushBlock(OneBlock);
-  SharedEditionPool->pushBlock(TwoBlock);
-  SharedEditionPool->pushBlock(ValueBlock(4));
-  SharedEditionPool->pushBlock(ValueBlock(-4));
-  SharedEditionPool->pushBlock(ZeroBlock);
+  Block* firstBlock = SharedEditionPool->push(ZeroBlock);
+  SharedEditionPool->push(OneBlock);
+  SharedEditionPool->push(TwoBlock);
+  SharedEditionPool->push(ValueBlock(4));
+  SharedEditionPool->push(ValueBlock(-4));
+  SharedEditionPool->push(ZeroBlock);
   assert_pools_block_sizes_are(0, 6);
 
   // Block navigation

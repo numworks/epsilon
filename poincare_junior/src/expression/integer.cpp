@@ -132,8 +132,8 @@ Tree *IntegerHandler::pushOnEditionPool() const {
   TypeBlock typeBlock(sign() == NonStrictSign::Negative
                           ? BlockType::IntegerNegBig
                           : BlockType::IntegerPosBig);
-  Tree *node = Tree::FromBlocks(SharedEditionPool->pushBlock(typeBlock));
-  SharedEditionPool->pushBlock(m_numberOfDigits);
+  Tree *node = Tree::FromBlocks(SharedEditionPool->push(typeBlock));
+  SharedEditionPool->push(m_numberOfDigits);
   pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "PushInteger", node->block(), node->treeSize());
@@ -144,7 +144,7 @@ Tree *IntegerHandler::pushOnEditionPool() const {
 void IntegerHandler::pushDigitsOnEditionPool() const {
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
-    SharedEditionPool->pushBlock(ValueBlock(digit(i)));
+    SharedEditionPool->push(ValueBlock(digit(i)));
   }
 }
 

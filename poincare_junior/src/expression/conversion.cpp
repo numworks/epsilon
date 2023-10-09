@@ -232,104 +232,104 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Parenthesis:
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::AbsoluteValue:
-      SharedEditionPool->pushBlock(BlockType::Abs);
+      SharedEditionPool->push(BlockType::Abs);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Opposite:
       SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->pushBlock(BlockType::MinusOne);
+      SharedEditionPool->push(BlockType::MinusOne);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::SquareRoot:
-      SharedEditionPool->pushBlock(BlockType::SquareRoot);
+      SharedEditionPool->push(BlockType::SquareRoot);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Cosine:
-      SharedEditionPool->pushBlock(BlockType::Cosine);
+      SharedEditionPool->push(BlockType::Cosine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Sine:
-      SharedEditionPool->pushBlock(BlockType::Sine);
+      SharedEditionPool->push(BlockType::Sine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Tangent:
-      SharedEditionPool->pushBlock(BlockType::Tangent);
+      SharedEditionPool->push(BlockType::Tangent);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcCosine:
-      SharedEditionPool->pushBlock(BlockType::ArcCosine);
+      SharedEditionPool->push(BlockType::ArcCosine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcSine:
-      SharedEditionPool->pushBlock(BlockType::ArcSine);
+      SharedEditionPool->push(BlockType::ArcSine);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcTangent:
-      SharedEditionPool->pushBlock(BlockType::ArcTangent);
+      SharedEditionPool->push(BlockType::ArcTangent);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::NaperianLogarithm:
-      SharedEditionPool->pushBlock(BlockType::Ln);
+      SharedEditionPool->push(BlockType::Ln);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Dimension:
-      SharedEditionPool->pushBlock(BlockType::Dim);
+      SharedEditionPool->push(BlockType::Dim);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Determinant:
-      SharedEditionPool->pushBlock(BlockType::Det);
+      SharedEditionPool->push(BlockType::Det);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::MatrixIdentity:
-      SharedEditionPool->pushBlock(BlockType::Identity);
+      SharedEditionPool->push(BlockType::Identity);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::MatrixInverse:
-      SharedEditionPool->pushBlock(BlockType::Inverse);
+      SharedEditionPool->push(BlockType::Inverse);
       return PushPoincareExpression(exp.childAtIndex(0));
     // case OT::: // FIXME Norm is AbsoluteValue
-    // SharedEditionPool->pushBlock(BlockType::Norm);
+    // SharedEditionPool->push(BlockType::Norm);
     // return PushPoincareExpression(exp.childAtIndex(0));
     case OT::MatrixTrace:
-      SharedEditionPool->pushBlock(BlockType::Trace);
+      SharedEditionPool->push(BlockType::Trace);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::MatrixTranspose:
-      SharedEditionPool->pushBlock(BlockType::Transpose);
+      SharedEditionPool->push(BlockType::Transpose);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::MatrixRowEchelonForm:
-      SharedEditionPool->pushBlock(BlockType::Ref);
+      SharedEditionPool->push(BlockType::Ref);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::MatrixReducedRowEchelonForm:
-      SharedEditionPool->pushBlock(BlockType::Rref);
+      SharedEditionPool->push(BlockType::Rref);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::VectorCross:
-      SharedEditionPool->pushBlock(BlockType::Cross);
+      SharedEditionPool->push(BlockType::Cross);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::VectorDot:
-      SharedEditionPool->pushBlock(BlockType::Dot);
+      SharedEditionPool->push(BlockType::Dot);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::ComplexArgument:
-      SharedEditionPool->pushBlock(BlockType::ComplexArgument);
+      SharedEditionPool->push(BlockType::ComplexArgument);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Conjugate:
-      SharedEditionPool->pushBlock(BlockType::Conjugate);
+      SharedEditionPool->push(BlockType::Conjugate);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ImaginaryPart:
-      SharedEditionPool->pushBlock(BlockType::ImaginaryPart);
+      SharedEditionPool->push(BlockType::ImaginaryPart);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::RealPart:
-      SharedEditionPool->pushBlock(BlockType::RealPart);
+      SharedEditionPool->push(BlockType::RealPart);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
-        SharedEditionPool->pushBlock(BlockType::Logarithm);
+        SharedEditionPool->push(BlockType::Logarithm);
         PushPoincareExpression(exp.childAtIndex(0));
         PushPoincareExpression(exp.childAtIndex(1));
       } else {
         assert(exp.numberOfChildren() == 1);
-        SharedEditionPool->pushBlock(BlockType::Log);
+        SharedEditionPool->push(BlockType::Log);
         PushPoincareExpression(exp.childAtIndex(0));
       }
       return;
     case OT::Derivative:
-      SharedEditionPool->pushBlock(BlockType::Derivative);
+      SharedEditionPool->push(BlockType::Derivative);
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
       PushPoincareExpression(exp.childAtIndex(0));
       return;
     case OT::Sum:
     case OT::Product:
-      SharedEditionPool->pushBlock(exp.type() == OT::Sum ? BlockType::Sum
-                                                         : BlockType::Product);
+      SharedEditionPool->push(exp.type() == OT::Sum ? BlockType::Sum
+                                                    : BlockType::Product);
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
       PushPoincareExpression(exp.childAtIndex(3));
@@ -354,13 +354,13 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
           break;
         case OT::Comparison:
         case OT::Subtraction:
-          SharedEditionPool->pushBlock(BlockType::Subtraction);
+          SharedEditionPool->push(BlockType::Subtraction);
           break;
         case OT::Division:
-          SharedEditionPool->pushBlock(BlockType::Division);
+          SharedEditionPool->push(BlockType::Division);
           break;
         case OT::Power:
-          SharedEditionPool->pushBlock(BlockType::Power);
+          SharedEditionPool->push(BlockType::Power);
           break;
         case OT::Matrix:
           SharedEditionPool->push<BlockType::Matrix>(
@@ -375,7 +375,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       }
       return;
     case OT::Nonreal:
-      SharedEditionPool->pushBlock(BlockType::Nonreal);
+      SharedEditionPool->push(BlockType::Nonreal);
       return;
     case OT::Rational:
     case OT::BasedInteger:
@@ -398,12 +398,12 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       } else if (c.isComplexI()) {
         SharedEditionPool->push<BlockType::Constant>(u'i');
       } else {
-        SharedEditionPool->pushBlock(BlockType::Undefined);
+        SharedEditionPool->push(BlockType::Undefined);
       }
       return;
     }
     default:
-      SharedEditionPool->pushBlock(BlockType::Undefined);
+      SharedEditionPool->push(BlockType::Undefined);
   }
 }
 

@@ -267,7 +267,7 @@ Tree *EditionPool::push(Types... args) {
     Block block;
     endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(
         &block, i++, args...);
-    pushBlock(block);
+    push(block);
   } while (!endOfNode);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Push", newNode, i);

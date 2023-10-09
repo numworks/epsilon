@@ -137,6 +137,7 @@ class TextArea : public TextInput {
     bool removeStartOfLine();
     size_t removeText(const char* start, const char* end);
     size_t deleteSelection() override;
+    size_t textBufferSize() const override { return TextArea::k_maxLineChars; }
 
    protected:
     KDRect glyphFrameAtPosition(const char* text,
@@ -151,8 +152,8 @@ class TextArea : public TextInput {
  private:
   void selectUpDown(OMG::VerticalDirection direction, int step);
   // Due to rect size limitation, the editor cannot display more than 1800 lines
-  constexpr static int k_maxLines = 999;
-  constexpr static int k_maxLineChars = 3000;
+  constexpr static size_t k_maxLines = 999;
+  constexpr static size_t k_maxLineChars = 3000;
 };
 
 }  // namespace Escher

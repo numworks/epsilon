@@ -96,7 +96,7 @@ class AbstractTextField : public TextInput {
     void setText(const char *text);
     void setEditing(bool isEditing);
     void reinitTextBuffer();
-    size_t textBufferSize() const { return m_textBufferSize; }
+    size_t textBufferSize() const override { return m_textBufferSize; }
     void willModifyTextBuffer();
     void didModifyTextBuffer();
 

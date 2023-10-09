@@ -291,29 +291,11 @@ void EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
 template Tree *EditionPool::push<BlockType::Addition, int>(int);
 template Tree *EditionPool::push<BlockType::Multiplication, int>(int);
 template Tree *EditionPool::push<BlockType::Constant, char16_t>(char16_t);
-template Tree *EditionPool::push<BlockType::Power>();
-template Tree *EditionPool::push<BlockType::Abs>();
-template Tree *EditionPool::push<BlockType::Factorial>();
-template Tree *EditionPool::push<BlockType::Complex>();
-template Tree *EditionPool::push<BlockType::SquareRoot>();
-template Tree *EditionPool::push<BlockType::Subtraction>();
-template Tree *EditionPool::push<BlockType::Division>();
-template Tree *EditionPool::push<BlockType::Exponential>();
-template Tree *EditionPool::push<BlockType::Ln>();
-template Tree *EditionPool::push<BlockType::RealPart>();
-template Tree *EditionPool::push<BlockType::ImaginaryPart>();
-template Tree *EditionPool::push<BlockType::ComplexArgument>();
-template Tree *EditionPool::push<BlockType::Conjugate>();
 template Tree *EditionPool::push<BlockType::IntegerShort>(int8_t);
 template Tree *EditionPool::push<BlockType::IntegerPosBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::Float, float>(float);
 template Tree *EditionPool::push<BlockType::Decimal, uint8_t>(uint8_t);
-template Tree *EditionPool::push<BlockType::MinusOne>();
-template Tree *EditionPool::push<BlockType::Half>();
-template Tree *EditionPool::push<BlockType::Zero>();
-template Tree *EditionPool::push<BlockType::One>();
-template Tree *EditionPool::push<BlockType::Two>();
 template Tree *EditionPool::push<BlockType::RationalShort>(int8_t, uint8_t);
 template Tree *EditionPool::push<BlockType::Unit, uint8_t, uint8_t>(uint8_t,
                                                                     uint8_t);
@@ -326,12 +308,8 @@ template Tree *EditionPool::push<BlockType::Polynomial, int>(int);
 template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);
 template Tree *EditionPool::push<BlockType::Variable>(uint8_t);
-template Tree *EditionPool::push<BlockType::Derivative>();
 template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::SystemList, int>(int);
-template Tree *EditionPool::push<BlockType::FractionLayout>();
-template Tree *EditionPool::push<BlockType::ParenthesisLayout>();
-template Tree *EditionPool::push<BlockType::VerticalOffsetLayout>();
 template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(
     CodePoint);
 

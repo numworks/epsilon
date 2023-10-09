@@ -17,9 +17,9 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
     EditionReference fraction(
         SharedEditionPool->push<BlockType::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();
-    SharedEditionPool->push<BlockType::Power>();
+    SharedEditionPool->push(BlockType::Power);
     Rational::Denominator(expression).pushOnEditionPool();
-    SharedEditionPool->push<BlockType::MinusOne>();
+    SharedEditionPool->push(BlockType::MinusOne);
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
@@ -76,7 +76,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
       SharedEditionPool->push<BlockType::Multiplication>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  EditionReference power(SharedEditionPool->push<BlockType::Power>());
+  EditionReference power(SharedEditionPool->push(BlockType::Power));
   power->moveTreeAfterNode(commonDenominator);
   commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power

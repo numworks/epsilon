@@ -32,7 +32,7 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
       case '(': {
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
-        child = SharedEditionPool->push<BlockType::ParenthesisLayout>();
+        child = SharedEditionPool->push(BlockType::ParenthesisLayout);
         EditionPoolTextToLayoutRec(decoder, KRackL()->clone(), child);
         break;
       }

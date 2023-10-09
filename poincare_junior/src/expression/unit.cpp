@@ -119,11 +119,11 @@ Tree* DimensionVector::toBaseUnits() const {
       continue;
     }
     if (exponent != 1) {
-      SharedEditionPool->push<BlockType::Power>();
+      SharedEditionPool->push(BlockType::Power);
     }
     if (prefix != UnitPrefix::EmptyPrefix()) {
       SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->push<BlockType::Power>();
+      SharedEditionPool->push(BlockType::Power);
       Integer::Push(10);
       Integer::Push(-prefix->exponent());
     }
@@ -877,7 +877,7 @@ void Unit::chooseBestRepresentativeAndPrefix(
 void Unit::RemoveUnit(Tree* unit) {
   Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
   GetRepresentative(unit)->ratioExpressionReduced()->clone();
-  SharedEditionPool->push<BlockType::Power>();
+  SharedEditionPool->push(BlockType::Power);
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
   unit->moveTreeOverTree(result);

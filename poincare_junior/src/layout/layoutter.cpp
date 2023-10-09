@@ -54,7 +54,7 @@ void Layoutter::LayoutBuiltin(EditionReference &layoutParent,
   assert(Builtin::IsBuiltin(expression->type()));
   LayoutText(layoutParent, Builtin::Name(expression->type()).mainAlias());
   EditionReference parenthesis =
-      SharedEditionPool->push<BlockType::ParenthesisLayout>();
+      SharedEditionPool->push(BlockType::ParenthesisLayout);
   EditionReference newParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
@@ -141,13 +141,13 @@ void Layoutter::LayoutPowerOrDivision(EditionReference &layoutParent,
   EditionReference createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (type == BlockType::Division) {
-    createdLayout = SharedEditionPool->push<BlockType::FractionLayout>();
+    createdLayout = SharedEditionPool->push(BlockType::FractionLayout);
     EditionReference rack = SharedEditionPool->push<BlockType::RackLayout>(0);
     LayoutExpression(rack, expression, false);
   } else {
     assert(type == BlockType::Power || type == BlockType::PowerMatrix);
     LayoutExpression(layoutParent, expression);
-    createdLayout = SharedEditionPool->push<BlockType::VerticalOffsetLayout>();
+    createdLayout = SharedEditionPool->push(BlockType::VerticalOffsetLayout);
   }
   EditionReference rack = SharedEditionPool->push<BlockType::RackLayout>(0);
   LayoutExpression(rack, expression, false);
@@ -170,7 +170,7 @@ void Layoutter::LayoutExpression(EditionReference &layoutParent,
       EditionReference targetParent = layoutParent;
       if (allowParentheses) {
         EditionReference parenthesis =
-            SharedEditionPool->push<BlockType::ParenthesisLayout>();
+            SharedEditionPool->push(BlockType::ParenthesisLayout);
         EditionReference newParent =
             SharedEditionPool->push<BlockType::RackLayout>(0);
         NAry::AddChild(layoutParent, parenthesis);
@@ -202,7 +202,7 @@ void Layoutter::LayoutExpression(EditionReference &layoutParent,
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
       EditionReference createdLayout =
-          SharedEditionPool->push<BlockType::FractionLayout>();
+          SharedEditionPool->push(BlockType::FractionLayout);
       EditionReference numerator =
           SharedEditionPool->push<BlockType::RackLayout>(0);
       LayoutIntegerHandler(numerator, Rational::Numerator(expression));

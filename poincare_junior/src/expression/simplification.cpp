@@ -362,7 +362,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     if (rem % 2 == 1) {
       // u is a pure imaginary
       u->moveTreeAtNode((0_e)->clone());
-      u->moveNodeAtNode(SharedEditionPool->push<BlockType::Complex>());
+      u->moveNodeAtNode(SharedEditionPool->push(BlockType::Complex));
       assert(!SimplifyComplex(u));
     }
     return true;
@@ -382,7 +382,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->type() == BlockType::Multiplication) {
     for (Tree* w : v->children()) {
-      EditionReference m = SharedEditionPool->push<BlockType::Power>();
+      EditionReference m = SharedEditionPool->push(BlockType::Power);
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);

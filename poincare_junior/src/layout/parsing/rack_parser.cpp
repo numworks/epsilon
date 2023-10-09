@@ -391,7 +391,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     if (smallE != end) {
       // Decimal * 10^exponent
       Tree *mult = SharedEditionPool->push<BlockType::Multiplication>(1);
-      SharedEditionPool->push<BlockType::Power>();
+      SharedEditionPool->push(BlockType::Power);
       (10_e)->clone();
       Integer::Push(exponent, base);
       leftHandSide->moveTreeAtNode(mult);

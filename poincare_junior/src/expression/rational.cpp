@@ -103,7 +103,7 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
     return numerator.pushOnEditionPool();
   }
   if (numerator.isOne() && denominator.isTwo()) {
-    return SharedEditionPool->push<BlockType::Half>();
+    return SharedEditionPool->push(BlockType::Half);
   }
   if (numerator.isSignedType<int8_t>() &&
       denominator.isUnsignedType<uint8_t>()) {

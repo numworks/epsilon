@@ -114,16 +114,16 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
 
 Tree *IntegerHandler::pushOnEditionPool() const {
   if (isZero()) {
-    return SharedEditionPool->push<BlockType::Zero>();
+    return SharedEditionPool->push(BlockType::Zero);
   }
   if (isOne()) {
-    return SharedEditionPool->push<BlockType::One>();
+    return SharedEditionPool->push(BlockType::One);
   }
   if (isTwo()) {
-    return SharedEditionPool->push<BlockType::Two>();
+    return SharedEditionPool->push(BlockType::Two);
   }
   if (isMinusOne()) {
-    return SharedEditionPool->push<BlockType::MinusOne>();
+    return SharedEditionPool->push(BlockType::MinusOne);
   }
   if (isSignedType<int8_t>()) {
     return SharedEditionPool->push<BlockType::IntegerShort>(

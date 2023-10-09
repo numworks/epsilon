@@ -86,15 +86,15 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
     case BlockType::Complex:
       // TODO: Should we actually handle this ?
       if (index == 1) {
-        SharedEditionPool->push<BlockType::Complex>();
-        SharedEditionPool->push<BlockType::Zero>();
-        SharedEditionPool->push<BlockType::One>();
+        SharedEditionPool->push(BlockType::Complex);
+        SharedEditionPool->push(BlockType::Zero);
+        SharedEditionPool->push(BlockType::One);
         return;
       }
       // Fall through Addition
     case BlockType::Addition:
       // Di(x0 + x1 + ... + xi + ...) = 1
-      SharedEditionPool->push<BlockType::One>();
+      SharedEditionPool->push(BlockType::One);
       return;
     case BlockType::Exponential:
       // Di(exp(x)) = exp(x)
@@ -102,9 +102,9 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
       return;
     case BlockType::Ln: {
       // Di(ln(x)) = 1/x
-      Tree *power = SharedEditionPool->push<BlockType::Power>();
+      Tree *power = SharedEditionPool->push(BlockType::Power);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
-      SharedEditionPool->push<BlockType::MinusOne>();
+      SharedEditionPool->push(BlockType::MinusOne);
       Simplification::SimplifyPower(power);
       return;
     }
@@ -117,7 +117,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
          derivand->type() == BlockType::Power);
   // Second parameter cannot depend on symbol.
   if (index == 1) {
-    SharedEditionPool->push<BlockType::Zero>();
+    SharedEditionPool->push(BlockType::Zero);
     return;
   }
   Tree *multiplication;
@@ -129,7 +129,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
   CloneReplacingSymbol(derivand->child(0), symbolValue);
   Tree *addition = SharedEditionPool->push<BlockType::Addition>(2);
   SharedEditionPool->clone(derivand->child(1));
-  SharedEditionPool->push<BlockType::MinusOne>();
+  SharedEditionPool->push(BlockType::MinusOne);
   Simplification::ShallowSystematicReduce(addition);
   Simplification::ShallowSystematicReduce(newNode);
   if (derivand->type() == BlockType::Power) {

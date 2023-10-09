@@ -487,12 +487,20 @@ Expression ContinuousFunction::Model::expressionReduced(
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
-      if (m_expression.type() == ExpressionNode::Type::List) {
-        m_expression = static_cast<List &>(m_expression)
-                           .approximateAndRemoveUndefAndSort<double>(
-                               ApproximationContext(context, complexFormat));
+      if (m_expression.type() == ExpressionNode::Type::List ||
+          (m_expression.type() == ExpressionNode::Type::Dependency &&
+           m_expression.childAtIndex(0).type() == ExpressionNode::Type::List)) {
+        Expression list = m_expression.type() == ExpressionNode::Type::List
+                              ? m_expression
+                              : m_expression.childAtIndex(0);
+        m_expression =
+            static_cast<List &>(list).approximateAndRemoveUndefAndSort<double>(
+                ApproximationContext(context, complexFormat));
       } else {
-        assert(m_expression.type() == ExpressionNode::Type::Point);
+        assert(m_expression.type() == ExpressionNode::Type::Point ||
+               (m_expression.type() == ExpressionNode::Type::Dependency &&
+                m_expression.childAtIndex(0).type() ==
+                    ExpressionNode::Type::Point));
         m_expression =
             PoincareHelpers::Approximate<double>(m_expression, context);
       }

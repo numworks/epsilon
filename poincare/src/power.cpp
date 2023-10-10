@@ -1438,11 +1438,11 @@ Expression Power::PowerRationalRational(
    * index, and make this corrupted when escaping because reduction failed. */
   Rational rationalBase = base.clone().convert<Rational>();
   Rational rationalIndex = index.clone().convert<Rational>();
-  return IntermediatePowerRationalRational(rationalBase, rationalIndex,
-                                           reductionContext);
+  return UnsafePowerRationalRational(rationalBase, rationalIndex,
+                                     reductionContext);
 }
 
-Expression Power::IntermediatePowerRationalRational(
+Expression Power::UnsafePowerRationalRational(
     Rational base, Rational index, const ReductionContext &reductionContext) {
   assert(!base.numeratorOrDenominatorIsInfinity() &&
          !index.numeratorOrDenominatorIsInfinity());
@@ -1454,7 +1454,7 @@ Expression Power::IntermediatePowerRationalRational(
                                res.numberOfChildren());
     base.setSign(true);
     Expression res2 =
-        IntermediatePowerRationalRational(base, index, reductionContext);
+        UnsafePowerRationalRational(base, index, reductionContext);
     if (res2.isUninitialized()) {
       return Expression();
     } else {
@@ -1483,7 +1483,7 @@ Expression Power::IntermediatePowerRationalRational(
       return std::move(base);
     }
     index.setSign(true);
-    return IntermediatePowerRationalRational(base, index, reductionContext);
+    return UnsafePowerRationalRational(base, index, reductionContext);
   }
   assert(!index.isNegative());
   /* We are handling an expression of the form (p/q)^(a/b), with a and b

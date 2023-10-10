@@ -959,8 +959,10 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("e^(i×π/3)", "1/2+√(3)/2×i");
   assert_parsed_expression_simplify_to("(-1)^2", "1");
   assert_parsed_expression_simplify_to("(-1)^3", "-1");
-  assert_parsed_expression_simplify_to("(-1)^2006", "(-1)^2006");
-  assert_parsed_expression_simplify_to("(-1)^2007", "(-1)^2007");
+  assert_parsed_expression_simplify_to("(-1)^2006", "1");
+  assert_parsed_expression_simplify_to("(-1)^2007", "-1");
+  assert_parsed_expression_simplify_to("(-2)^2006", "(-2)^2006");
+  assert_parsed_expression_simplify_to("(-2)^2007", "(-2)^2007");
   assert_parsed_expression_simplify_to("(-1)^(1/2)", "i");
   assert_parsed_expression_simplify_to("(-1)^(-1/2)", "-i");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×i");

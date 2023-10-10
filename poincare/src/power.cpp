@@ -834,8 +834,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
        *   this rule in that case */
       return *this;
     }
-    Expression p1 =
-        PowerRationalRational(base, rationalIndex, reductionContext);
+    Expression p1 = PowerRationalRational(base.convert<Rational>(),
+                                          rationalIndex, reductionContext);
     if (p1.isUninitialized()) {
       return *this;
     }
@@ -907,8 +907,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     /* Step 9.1
      * Handle the simple case of r^s, whith r and s rational. */
     if (baseType == ExpressionNode::Type::Rational) {
-      Expression e =
-          PowerRationalRational(base, rationalIndex, reductionContext);
+      Expression e = PowerRationalRational(base.convert<Rational>(),
+                                           rationalIndex, reductionContext);
       if (e.isUninitialized()) {
         return *this;
       }
@@ -1434,10 +1434,8 @@ Expression Power::denominator(const ReductionContext &reductionContext) const {
 }
 
 Expression Power::PowerRationalRational(
-    const Expression base, const Expression index,
+    const Rational base, const Rational index,
     const ReductionContext &reductionContext) {
-  assert(base.type() == ExpressionNode::Type::Rational &&
-         index.type() == ExpressionNode::Type::Rational);
   /* Clone base and index since this method could alter base and/or
    * index, and make this corrupted when escaping because reduction failed. */
   Rational rationalBase = base.clone().convert<Rational>();

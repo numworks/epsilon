@@ -78,7 +78,7 @@ QUIZ_CASE(pcj_cache_pool) {
   assert_pools_tree_sizes_are(1, 0);
 }
 
-const Tree *lastCachePoolTree() {
+const Tree *lastInsertedTree() {
   CachePool *cachePool = CachePool::SharedCachePool;
   return Tree::FromBlocks(cachePool->firstBlock());
 }
@@ -103,7 +103,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   // 2. Edit another tree triggering a cache invalidation
   execute_push_tree_and_modify();
   assert(cachePool->numberOfTrees() <= maxNumberOfTreesInCache);
-  assert_trees_are_equal(lastCachePoolTree(), modifiedBigTree);
+  assert_trees_are_equal(lastInsertedTree(), modifiedBigTree);
 
   /* test overflowing the cache identifier */
   cachePool->reset();
@@ -167,7 +167,7 @@ void check_reference_invalidation_and_reconstruction(Reference reference,
   quiz_assert(!cachePool->nodeForIdentifier(identifier));
   // reference is regenerated on demand
   reference.send([](const Tree *tree, void *result) {}, nullptr);
-  assert_trees_are_equal(lastCachePoolTree(), node);
+  assert_trees_are_equal(lastInsertedTree(), node);
 }
 
 void fill_cache_and_assert_invalidation(int maxNumberOfTreesInCache,

@@ -8,13 +8,11 @@
 
 namespace PoincareJ {
 
-/* m_blocks content:
- *
- *  <---- EditionPool ----> <------------------- CachePool ------------------>
+/*  <---- EditionPool ----> <------------------- CachePool ------------------>
  * +-----------------------+-------------------------+---+--------------------+
  * | draft trees           | most recent cached tree | … | oldest cached tree |
  * +-----------------------+-------------------------+---+--------------------+
- *                         ^ nodeOffset[m_length-1]      ^ nodeOffset[0]
+ * ^ m_blocks              ^ nodeOffset[m_length-1]      ^ nodeOffset[0]
  */
 
 class CachePool final : public Pool {
@@ -38,8 +36,7 @@ class CachePool final : public Pool {
   const Block *firstBlock() const override {
     return m_referenceTable.isEmpty()
                ? lastBlock()
-               : Tree::FromBlocks(m_blocks + m_referenceTable.firstOffset())
-                     ->block();
+               : m_blocks + m_referenceTable.firstOffset();
   }
   using Pool::lastBlock;
   // If CachePool is empty, first and last blocks are the same one

@@ -47,7 +47,8 @@ def generate_all_screenshots(state_file, executable, folder, exit_if_error = Tru
    list_images = list_images_in_folder(folder)
    if len(list_images) == 0:
       print("Error: no screenshots taken")
-      sys.exit(1)
+      if exit_if_error:
+         sys.exit(1)
    print("All done, screenshots taken in", folder)
    return list_images
 

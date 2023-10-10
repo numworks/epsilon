@@ -6,24 +6,26 @@ namespace Device {
 namespace USB {
 namespace Config {
 
-/* TODO:
- * The userland section of the running slot is said to be writable when it is
- * not. However, the limitation between the userland and the external apps is
- * 'complex' to generate. It has to be done for the descriptors to be fully
- * accurate.
- * So far, we just drop the running kernel from the flashable sectors to ensure
- * the upgrade process not to try to upgrade the running kernel + userland.
- * Indeed, they belong to the same binary, so dropping the kernel also
- * eliminates the userland. It's a dirty hack! */
+/* When on Slot X, the starting address is offset by 0x00020000
+ *  - The first 0x00010000 bytes are excluded to prevent overwriting the kernel
+ *    of the current slot.
+ *  - The second 0x00010000 bytes are excluded to prevent overwriting the
+ *    userland of the current slot.
+ *    > For the userland, only the first section is made unwritable, which
+ *      prevents the whole userland of being overwritten while ensuring that
+ *      the external apps section can still be overwritten. The external apps
+ *      section is aligned on 64k, so it's guaranteed to start at least at
+ *      offset 0x00020000.
+ */
 
 constexpr static const char* InterfaceFlashStringDescriptorAuthenticatedSlotA =
-    "@Flash/0x90010000/63*064Kg,64*064Kg";
+    "@Flash/0x90020000/62*064Kg,64*064Kg";
 constexpr static const char* InterfaceFlashStringDescriptorAuthenticatedSlotB =
-    "@Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg/0x90410000/63*064Kg";
+    "@Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg/0x90420000/62*064Kg";
 constexpr static const char* InterfaceFlashStringDescriptorThirdPartySlotA =
-    "@Flash/0x90010000/63*064Kg";
+    "@Flash/0x90020000/62*064Kg";
 constexpr static const char* InterfaceFlashStringDescriptorThirdPartySlotB =
-    "@Flash/0x90410000/63*064Kg";
+    "@Flash/0x90420000/62*064Kg";
 constexpr static const char* InterfaceSRAMStringDescriptor =
     "@SRAM/0x20000000/01*252Ke";
 

@@ -1448,6 +1448,8 @@ Expression Power::UnsafePowerRationalRational(
   if (base.isNegative()) {
     Expression exp = MinusOnePowerRational(index, reductionContext);
     if (base.isMinusOne()) {
+      /* TODO: Generalize to (-a)^big -> (-1)^big * a^big with (-1)^big reduced?
+       * What about in complex mode ? We might not want e^iπ * a^big. */
       return exp;
     }
     Multiplication res = Multiplication::Builder();

@@ -96,18 +96,6 @@ def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
    mae = p.stderr.read().decode().split(" ")[0]
    return mae == "0"
 
-def print_report(fails, count):
-   if count == 0:
-      print("No state file found")
-      return
-   print("==============================")
-   print(count, "scenari tested")
-   if fails > 0:
-      print(fails, "failed")
-   else:
-      print("All good!")
-   print("")
-
 def concatenate_images(list_images, output):
    from PIL import Image
    import numpy as np

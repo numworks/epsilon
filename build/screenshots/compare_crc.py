@@ -20,6 +20,7 @@ def main():
    print("\nCollecting data")
    print("==============================")
    processes = []
+   ignored = 0
    for scenario_name in sorted(os.listdir(helper.dataset())):
       scenario_folder = helper.folder(scenario_name)
       if not os.path.isdir(scenario_folder):
@@ -29,6 +30,7 @@ def main():
       state_file = helper.get_file_with_extension(scenario_folder, '.nws')
       reference_crc32_file = helper.get_file_with_extension(scenario_folder, '.txt')
       if state_file == '' or reference_crc32_file == '':
+         ignored = ignored + 1
          continue
 
       processes.append((scenario_name, helper.compute_crc32_process(state_file, args.executable)))
@@ -100,7 +102,15 @@ def main():
          print("--------")
 
    # Print report
-   helper.print_report(fails, count)
+   print("==============================")
+   if ignored > 0:
+      print(ignored, "folders ignored")
+   print(count, "scenari tested")
+   if fails > 0:
+      print(fails, "failed")
+   else:
+      print("All good!")
+   print("")
 
    # Clean up
    if fails == 0:

@@ -601,14 +601,14 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
     return u->numberOfChildren() == 2 && IsRational(u->child(0)) &&
            u->child(1)->treeIsIdenticalTo(v);
   }
-  bool hasConstU = IsRational(u->child(0));
-  bool hasConstV = IsRational(v->child(0));
-  int n = u->numberOfChildren() - hasConstU;
-  if (n != v->numberOfChildren() - hasConstV) {
+  bool uHasRational = IsRational(u->child(0));
+  bool vHasRational = IsRational(v->child(0));
+  int n = u->numberOfChildren() - uHasRational;
+  if (n != v->numberOfChildren() - vHasRational) {
     return false;
   }
-  const Tree* childU = u->child(hasConstU);
-  const Tree* childV = v->child(hasConstV);
+  const Tree* childU = u->child(uHasRational);
+  const Tree* childV = v->child(vHasRational);
   for (int i = 0; i < n; i++) {
     if (!childU->treeIsIdenticalTo(childV)) {
       return false;

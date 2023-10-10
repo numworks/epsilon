@@ -48,8 +48,6 @@ Tree* Set::Pop(Tree* set) {
 static Tree* MergeSets(EditionReference set0, EditionReference set1,
                        bool removeChildrenOnlyInSet0, bool pilferSet1Children,
                        bool removeCommonChildrenInSet0) {
-  // EditionReference set0 = set0Tree;
-  // EditionReference set1 = set1Tree;
   size_t numberOfChildren0 = set0->numberOfChildren();
   size_t numberOfChildren1 = set1->numberOfChildren();
   size_t numberOfChildren0ToScan = numberOfChildren0;

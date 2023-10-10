@@ -1446,8 +1446,11 @@ Expression Power::UnsafePowerRationalRational(
          !index.numeratorOrDenominatorIsInfinity());
   /* Handle this case right now to always reduce to Nonreal if needed. */
   if (base.isNegative()) {
-    Multiplication res = Multiplication::Builder();
     Expression exp = MinusOnePowerRational(index, reductionContext);
+    if (base.isMinusOne()) {
+      return exp;
+    }
+    Multiplication res = Multiplication::Builder();
     res.addChildAtIndexInPlace(exp, res.numberOfChildren(),
                                res.numberOfChildren());
     base.setSign(true);

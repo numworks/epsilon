@@ -138,7 +138,7 @@ void assert_parsed_expression_process_to(
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
                                           symbolicComputation, unitConversion));
-    Tree *l = PoincareJ::Layoutter::LayoutExpression(m);
+    Tree *l = PoincareJ::Layoutter::LayoutExpression(m, true);
     *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
     l->removeTree();
     bad = strcmp(buffer, result) != 0;

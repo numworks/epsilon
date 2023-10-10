@@ -1687,7 +1687,7 @@ Expression Power::ReduceLogarithmLinearCombination(
 }
 
 Expression Power::MinusOnePowerRational(
-    Rational index, const ReductionContext &reductionContext) {
+    const Rational index, const ReductionContext &reductionContext) {
   /* Compute -1^(a/b) */
   if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
     /* On real numbers (-1)^(a/b) =

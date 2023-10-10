@@ -3,7 +3,7 @@ import helper
 import args_types
 from print_format import print_bold
 
-parser = argparse.ArgumentParser(description='This script updates the screenshot and the crc32 of a state file in the test screenshots dataset.')
+parser = argparse.ArgumentParser(description='This script updates the crc32 of a scenario in the test screenshots dataset.')
 parser.add_argument('executable', metavar='EXE', type=args_types.existing_file, help='epsilon executable')
 parser.add_argument('name', metavar='NAME', help='name of scenario folder in the test screenshots dataset')
 
@@ -12,7 +12,7 @@ def main():
    args = parser.parse_args()
 
    # Print warning
-   print_bold("Your are updating screenshots and crc32 for this scenario.")
+   print_bold("Your are updating the crc32 of a scenario.")
    print_bold("Please make sure before launching this script that you checked screenshots AT EACH STEP and with THE SAME executable.")
    print_bold("If you have a doubt, run take_for_each_step.py with the same executable.")
    print("-------")

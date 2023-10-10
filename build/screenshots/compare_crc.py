@@ -19,9 +19,6 @@ def main():
    # Collect data from dataset
    print("\nCollecting data")
    print("==============================")
-   fails = 0
-   count = 0
-
    processes = []
    for scenario_name in sorted(os.listdir(helper.dataset())):
       scenario_folder = helper.folder(scenario_name)
@@ -29,15 +26,9 @@ def main():
          continue
 
       print("Collecting data from", scenario_folder)
-
-      # Get state file
       state_file = helper.get_file_with_extension(scenario_folder, '.nws')
-      if state_file == '':
-         continue
-
-      # Get reference crc32
       reference_crc32_file = helper.get_file_with_extension(scenario_folder, '.txt')
-      if reference_crc32_file == '':
+      if state_file == '' or reference_crc32_file == '':
          continue
 
       processes.append((scenario_name, helper.compute_crc32_process(state_file, args.executable)))
@@ -55,6 +46,8 @@ def main():
    # Compare with ref
    print("\nComparing crc32")
    print("==============================")
+   fails = 0
+   count = 0
    for scenario_name, computed_crc32 in computed_crc32_list:
       scenario_folder = helper.folder(scenario_name)
       assert os.path.isdir(scenario_folder)

@@ -71,7 +71,7 @@ class Zoom {
                      Preferences::AngleUnit angleUnit, bool vertical = false);
   /* This function will only touch the Y axis. */
   void fitMagnitude(Function2DWithContext<float> f, const void *model,
-                    bool vertical = false);
+                    bool xRangeIsForced, bool vertical = false);
   void fitBounds(Function2DWithContext<float> f, const void *model,
                  bool vertical = false);
 

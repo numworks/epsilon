@@ -229,32 +229,28 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
 void EditionPool::execute(ActionWithContext action, void *context,
                           const void *data, int maxSize, Relax relax) {
   while (true) {
-    ExceptionRunAndStoreExceptionTypeInVariableNamed(type);
-    switch (type) {
-      case ExceptionType::None:
-        assert(numberOfTrees() == 0);
-        action(context, data);
-        /* Prevent edition action from leaking: an action create at most one
-         * tree. */
-        assert(numberOfTrees() <= 1);
-        return;
-      case ExceptionType::PoolIsFull: {
-        /* TODO: assert that we don't delete last called treeForIdentifier
-         * otherwise can't copyTreeFromAddress if in cache... */
-        int size = fullSize();
-        // Free blocks and try again.
-        if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
-                                    std::min(size, maxSize - size))) &&
-            !relax(context)) {
-          /* TODO: If no more blocks can be freed, try relaxing the context
-          and
-           * try again. Otherwise, raise again. */
-          ExceptionCheckpoint::Raise(type);
-        }
-        break;
-      }
-      default:
+    ExceptionTry {
+      assert(numberOfTrees() == 0);
+      action(context, data);
+      // Prevent edition action from leaking: an action create at most one tree.
+      assert(numberOfTrees() <= 1);
+      return;
+    }
+    ExceptionCatch(type) {
+      if (type != ExceptionType::PoolIsFull) {
         ExceptionCheckpoint::Raise(type);
+      }
+      /* TODO: assert that we don't delete last called treeForIdentifier
+       * otherwise can't copyTreeFromAddress if in cache... */
+      int size = fullSize();
+      // Free blocks and try again.
+      if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
+                                  std::min(size, maxSize - size))) &&
+          !relax(context)) {
+        /* TODO: If no more blocks can be freed, try relaxing the context and
+         * try again. Otherwise, raise again. */
+        ExceptionCheckpoint::Raise(type);
+      }
     }
   }
 }

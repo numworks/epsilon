@@ -322,16 +322,16 @@ QUIZ_CASE(pcj_integer_gcd) {
 
 static void assert_might_overflow(ActionWithContext action, bool overflow) {
   CachePool* cachePool = CachePool::sharedCachePool();
-  {
-    ExceptionRunAndStoreExceptionTypeInVariableNamed(type);
-    switch (type) {
-      case ExceptionType::None:
-        cachePool->nodeForIdentifier(
-            SharedEditionPool->executeAndCache(action, nullptr, nullptr));
-        quiz_assert(!overflow);
-        return;
-      default:
-        quiz_assert(overflow && type == ExceptionType::IntegerOverflow);
+  ExceptionTry {
+    cachePool->nodeForIdentifier(
+        SharedEditionPool->executeAndCache(action, nullptr, nullptr));
+    quiz_assert(!overflow);
+  }
+  ExceptionCatch(type) {
+    if (type == ExceptionType::IntegerOverflow) {
+      quiz_assert(overflow);
+    } else {
+      ExceptionCheckpoint::Raise(type);
     }
   }
 }

@@ -34,11 +34,11 @@ class ExplicitFloatParameterController
   Escher::StackViewController *stackController() {
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
-  virtual float parameterAtIndex(int index) = 0;
+  virtual double parameterAtIndex(int index) = 0;
   virtual void fillParameterCellAtRow(int row);
 
  private:
-  virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
   virtual Escher::TextField *textFieldOfCellAtRow(int row) = 0;
   void setParameterCellValue(int row);
 };

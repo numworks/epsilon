@@ -92,15 +92,15 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   }
 }
 
-float CurveParameterController::parameterAtIndex(int index) {
+double CurveParameterController::parameterAtIndex(int index) {
   Poincare::Context *ctx = App::app()->localContext();
   if (isDerivative(index)) {
     assert(function()->canDisplayDerivative());
     return function()->approximateDerivative(m_cursor->x(), ctx);
   }
-  float t = m_cursor->t();
-  float x = m_cursor->x();
-  float y = m_cursor->y();
+  double t = m_cursor->t();
+  double x = m_cursor->x();
+  double y = m_cursor->y();
   if (function()->properties().isScatterPlot() &&
       (t != std::round(t) ||
        t >= function()->iterateScatterPlot(ctx).length())) {
@@ -108,7 +108,7 @@ float CurveParameterController::parameterAtIndex(int index) {
      * when accessed through the Calculate button, which is not super useful,
      * but there is no real alternative barring some UX changes. */
     t = 0.f;
-    Poincare::Coordinate2D<float> xy =
+    Poincare::Coordinate2D<double> xy =
         function()->evaluateXYAtParameter(t, ctx);
     x = xy.x();
     y = xy.y();

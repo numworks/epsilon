@@ -266,9 +266,11 @@ void Zoom::fitConditions(PiecewiseOperator p,
 }
 
 void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
-                        bool vertical) {
+                        bool xRangeIsForced, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
-   * order of magnitude of the function, to crop the Y axis. */
+   * order of magnitude of the function, to crop the Y axis. If X range is
+   * forced, we don't want to crop the Y axis: we want to see the value of f at
+   * each point of X range. */
   constexpr float aboutZero = Solver<float>::k_minimalAbsoluteStep;
   Range1D sample;
   float nSum = 0.f, pSum = 0.f;
@@ -284,6 +286,9 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
     float x = xRange.min() + i * step;
     float y = (f(x, model, m_context).*ordinate)();
     sample.extend(y, m_maxFloat);
+    if (xRangeIsForced) {
+      continue;
+    }
     float yAbs = std::fabs(y);
     if (!(yAbs > aboutZero)) {  // Negated to account for NANs
       continue;
@@ -297,13 +302,20 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
       pPop++;
     }
   }
+
   Range1D *magnitudeRange =
       vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
-  float yMax = pPop > 0 ? std::min(sample.max(), std::exp(pSum / pPop + 1.f))
-                        : sample.max();
+  float yMax = sample.max();
+  if (pPop > 0) {
+    assert(!xRangeIsForced);
+    yMax = std::min(yMax, std::exp(pSum / pPop + 1.f));
+  }
   magnitudeRange->extend(yMax, m_maxFloat);
-  float yMin = nPop > 0 ? std::max(sample.min(), -std::exp(nSum / nPop + 1.f))
-                        : sample.min();
+  float yMin = sample.min();
+  if (nPop > 0) {
+    assert(!xRangeIsForced);
+    yMin = std::max(yMin, -std::exp(nSum / nPop + 1.f));
+  }
   magnitudeRange->extend(yMin, m_maxFloat);
 }
 

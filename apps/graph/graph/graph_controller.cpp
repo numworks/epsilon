@@ -262,9 +262,11 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
         continue;
       }
       bool alongY = f->isAlongY();
-      zoom.fitMagnitude(evaluator, f.operator->(), alongY);
+      bool xRangeIsForced = !computeX;
+      zoom.fitMagnitude(evaluator, f.operator->(), xRangeIsForced, alongY);
       if (f->numberOfSubCurves() > 1) {
-        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->(), alongY);
+        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->(), xRangeIsForced,
+                          alongY);
       }
     }
   }

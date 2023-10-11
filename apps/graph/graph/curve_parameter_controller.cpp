@@ -15,7 +15,8 @@ namespace Graph {
 
 CurveParameterController::CurveParameterController(
     InteractiveCurveViewRange *graphRange, BannerView *bannerView,
-    CurveViewCursor *cursor, GraphView *graphView)
+    CurveViewCursor *cursor, GraphView *graphView,
+    GraphController *graphController)
     : ExplicitFloatParameterController(parentResponder()),
       m_abscissaCell(&m_selectableListView, this),
       m_imageCell(&m_selectableListView, this),
@@ -25,7 +26,8 @@ CurveParameterController::CurveParameterController(
       m_preimageGraphController(nullptr, graphView, bannerView, graphRange,
                                 cursor),
       m_calculationParameterController(this, graphView, bannerView, graphRange,
-                                       cursor) {
+                                       cursor),
+      m_graphController(graphController) {
   m_calculationCell.label()->setMessage(I18n::Message::Find);
   m_optionsCell.label()->setMessage(I18n::Message::Options);
   m_derivativeNumberCell.setEditable(false);
@@ -107,7 +109,7 @@ double CurveParameterController::parameterAtIndex(int index) {
     /* FIXME This will display the first point of a multi-point scatter plot
      * when accessed through the Calculate button, which is not super useful,
      * but there is no real alternative barring some UX changes. */
-    t = 0.f;
+    t = 0.;
     Poincare::Coordinate2D<double> xy =
         function()->evaluateXYAtParameter(t, ctx);
     x = xy.x();
@@ -130,12 +132,9 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
       Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
       pixelWidth, false);
 
-  Poincare::Coordinate2D<double> xy =
-      function()->evaluateXYAtParameter(f, App::app()->localContext());
-  m_cursor->moveTo(f, xy.x(), xy.y());
   m_graphRange->setZoomAuto(false);
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
+  m_graphController->moveCursorAndCenterIfNeeded(f);
+
   return true;
 }
 

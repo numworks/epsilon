@@ -27,7 +27,7 @@ GraphController::GraphController(
       m_view(interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
       m_graphRange(interactiveRange),
       m_curveParameterController(interactiveRange, &m_bannerView, m_cursor,
-                                 &m_view),
+                                 &m_view, this),
       m_functionSelectionController(this) {
   m_graphRange->setDelegate(this);
 }

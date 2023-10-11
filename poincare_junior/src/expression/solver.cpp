@@ -109,7 +109,7 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
       *error = Error::EquationUndefined;
       break;
     }
-    Simplification::DeepSystemProjection(equation);
+    Projection::DeepSystemProjection(equation);
     Simplification::DeepSystematicReduce(equation);
     Simplification::AdvancedReduction(equation, equation);
   }

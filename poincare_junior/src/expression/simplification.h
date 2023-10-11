@@ -7,15 +7,9 @@
 
 #include "context.h"
 #include "parametric.h"
+#include "projection.h"
 
 namespace PoincareJ {
-
-struct ProjectionContext {
-  ComplexFormat m_complexFormat = ComplexFormat::Real;
-  AngleUnit m_angleUnit = AngleUnit::Radian;
-  Strategy m_strategy = Strategy::Default;
-  Dimension m_dimension = Dimension();
-};
 
 class Simplification {
  public:
@@ -49,14 +43,6 @@ class Simplification {
                             std::size(k_algebraicExpandOperations));
   }
   EDITION_REF_WRAP_1D(ShallowAlgebraicExpand, void *, nullptr);
-
-  static bool DeepSystemProjection(Tree *reference,
-                                   ProjectionContext projectionContext = {});
-  EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
-
-  static bool ShallowSystemProjection(Tree *reference,
-                                      void *projectionContext = nullptr);
-  EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
 
   static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);

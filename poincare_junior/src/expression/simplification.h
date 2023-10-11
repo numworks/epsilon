@@ -127,10 +127,6 @@ class Simplification {
   static bool SimplifySortedMultiplication(Tree *multiplication);
   static void ConvertPowerRealToPower(Tree *u);
 
-  // Apply Shallow operation in a Top Down manner.
-  typedef bool (*ShallowOperation)(Tree *node, void *context);
-  static bool ApplyShallowInDepth(Tree *node, ShallowOperation shallowOperation,
-                                  void *context = nullptr);
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);

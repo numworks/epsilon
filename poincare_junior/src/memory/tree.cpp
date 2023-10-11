@@ -302,6 +302,16 @@ bool Tree::hasAncestor(const Tree* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
+bool Tree::ApplyShallowInDepth(Tree* ref, ShallowOperation shallowOperation,
+                               void* context) {
+  bool changed = false;
+  for (Tree* node : ref->selfAndDescendants()) {
+    changed = shallowOperation(node, context) || changed;
+    assert(!shallowOperation(node, context));
+  }
+  return changed;
+}
+
 Tree* Tree::clone() const { return SharedEditionPool->clone(this); }
 Tree* Tree::cloneNode() const { return SharedEditionPool->clone(this, false); }
 

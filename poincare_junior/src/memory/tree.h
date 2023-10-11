@@ -139,6 +139,11 @@ class Tree {
   }
   constexpr bool isNAry() const { return typeBlock()->isNAry(); }
 
+  // Apply Shallow operation in a Top Down manner.
+  typedef bool (*ShallowOperation)(Tree* node, void* context);
+  static bool ApplyShallowInDepth(Tree* node, ShallowOperation shallowOperation,
+                                  void* context = nullptr);
+
   Tree* clone() const;
   Tree* cloneNode() const;
 

@@ -866,7 +866,7 @@ bool Simplification::DeepBeautify(Tree* node,
     baseUnits->removeTree();
     changed = true;
   }
-  return ApplyShallowInDepth(node, ShallowBeautify, &projectionContext) ||
+  return Tree::ApplyShallowInDepth(node, ShallowBeautify, &projectionContext) ||
          changed;
 }
 
@@ -939,8 +939,8 @@ bool Simplification::DeepSystemProjection(Tree* ref,
   bool changed =
       (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
       Approximation::ApproximateAndReplaceEveryScalar(ref);
-  return ApplyShallowInDepth(ref, ShallowSystemProjection,
-                             &projectionContext) ||
+  return Tree::ApplyShallowInDepth(ref, ShallowSystemProjection,
+                                   &projectionContext) ||
          changed;
 }
 
@@ -1031,17 +1031,6 @@ bool Simplification::ShallowSystemProjection(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
                                        KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
       changed;
-}
-
-bool Simplification::ApplyShallowInDepth(Tree* ref,
-                                         ShallowOperation shallowOperation,
-                                         void* context) {
-  bool changed = false;
-  for (Tree* node : ref->selfAndDescendants()) {
-    changed = shallowOperation(node, context) || changed;
-    assert(!shallowOperation(node, context));
-  }
-  return changed;
 }
 
 bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,

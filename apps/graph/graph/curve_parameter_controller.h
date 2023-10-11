@@ -38,8 +38,8 @@ class CurveParameterController
     return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
 
-  float parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override {
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override {
     return confirmParameterAtIndex(parameterIndex, f);
   }
   void setRecord(Ion::Storage::Record record) override;

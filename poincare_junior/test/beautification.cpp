@@ -8,9 +8,9 @@ QUIZ_CASE(pcj_simplification_beautify) {
                              KMult(-1_e, 2_e, KExp(KMult(KLn(5_e), "y"_e))),
                              KMult(KLn(2_e), KPow(KLn(4_e), -1_e))));
   Beautification::DeepBeautify(ref1);
-  assert_trees_are_equal(ref1, KAdd(KSub(KAdd(KCos(3_e), KSin("x"_e)),
-                                         KMult(2_e, KPow(5_e, "y"_e))),
-                                    KLogarithm(2_e, 4_e)));
+  assert_trees_are_equal(
+      ref1, KAdd(KMult(-1_e, 2_e, KPow(5_e, "y"_e)), KCos(3_e), KSin("x"_e),
+                 KLogarithm(2_e, 4_e)));
 
   EditionReference ref2(KTrig(π_e, 1_e));
   Beautification::DeepBeautify(ref2, {.m_angleUnit = AngleUnit::Gradian});

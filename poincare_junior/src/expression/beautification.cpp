@@ -1,10 +1,58 @@
 #include "beautification.h"
 
 #include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare_junior/src/n_ary.h>
 
+#include "approximation.h"
 #include "simplification.h"
 
 namespace PoincareJ {
+
+float Beautification::DegreeForSortingAddition(const Tree* expr,
+                                               bool symbolsOnly) {
+  switch (expr->type()) {
+    case BlockType::Multiplication: {
+      /* If we consider the symbol degree, the degree of a multiplication is
+       * the sum of the degrees of its terms :
+       * 3*(x^2)*y -> deg = 0+2+1 = 3.
+       *
+       * If we consider the degree of any term, we choose that the degree of a
+       * multiplication is the degree of the most-right term :
+       * 4*sqrt(2) -> deg = 0.5.
+       *
+       * This is to ensure that deg(5) > deg(5*sqrt(3)) and deg(x^4) >
+       * deg(x*y^3)
+       * */
+      if (symbolsOnly) {
+        float degree = 0.;
+        for (const Tree* c : expr->children()) {
+          degree += DegreeForSortingAddition(c, symbolsOnly);
+        }
+        return degree;
+      }
+      assert(expr->numberOfChildren() > 0);
+      return DegreeForSortingAddition(expr->lastChild(), symbolsOnly);
+    }
+    case BlockType::Power: {
+      double baseDegree = DegreeForSortingAddition(expr->child(0), symbolsOnly);
+      if (baseDegree == 0.) {
+        /* We escape here so that even if the exponent is not a number,
+         * the degree is still computed to 0.
+         * It is useful for 2^ln(3) for example, which has a symbol degree
+         * of 0 even if the exponent is not a number.*/
+        return 0.;
+      }
+      if (expr->child(1)->type().isNumber()) {
+        return Approximation::To<float>(expr->child(1)) * baseDegree;
+      }
+      return NAN;
+    }
+    case BlockType::Variable:
+      return 1.;
+    default:
+      return symbolsOnly ? 0. : 1.;
+  }
+}
 
 bool Beautification::DeepBeautify(Tree* node,
                                   ProjectionContext projectionContext) {
@@ -44,6 +92,9 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
         KMult(KA, KB, KPow(π_e, -1_e)),
         {.KA = child,
          .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+  }
+  if (ref->type() == BlockType::Addition) {
+    NAry::Sort(ref, Comparison::Order::AdditionBeautification);
   }
 
   // PowerReal(A,B) -> A^B

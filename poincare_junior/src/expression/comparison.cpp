@@ -3,6 +3,7 @@
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include "approximation.h"
+#include "beautification.h"
 #include "constant.h"
 #include "dimension.h"
 #include "k_tree.h"
@@ -14,6 +15,25 @@
 namespace PoincareJ {
 
 int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
+  if (order == Order::AdditionBeautification) {
+    /* Repeat twice, once for symbol degree, once for any degree */
+    for (bool sortBySymbolDegree : {true, false}) {
+      float n0Degree =
+          Beautification::DegreeForSortingAddition(node0, sortBySymbolDegree);
+      float n1Degree =
+          Beautification::DegreeForSortingAddition(node1, sortBySymbolDegree);
+      if (!std::isnan(n1Degree) &&
+          (std::isnan(n0Degree) || n0Degree > n1Degree)) {
+        return -1;
+      }
+      if (!std::isnan(n0Degree) &&
+          (std::isnan(n1Degree) || n1Degree > n0Degree)) {
+        return 1;
+      }
+    }
+    // If they have same degree, sort children in decreasing order of base.
+    order = Order::User;
+  }
   if (order == Order::PreserveMatrices) {
     if (Dimension::GetDimension(node0).isMatrix() &&
         Dimension::GetDimension(node1).isMatrix()) {

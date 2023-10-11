@@ -127,6 +127,7 @@ class Tree {
   int indexOfChild(const Tree* child) const;
   bool hasChild(const Tree* child) const;
   bool hasAncestor(const Tree* node, bool includeSelf) const;
+  const Tree* lastChild() const { return child(numberOfChildren() - 1); }
 
   constexpr TypeBlock type() const { return *typeBlock(); }
   constexpr LayoutType layoutType() const {

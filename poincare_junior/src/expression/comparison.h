@@ -9,7 +9,7 @@ class Comparison {
  public:
   /* System optimizes the reduction of expressions while User is for display.
    * TODO: Fine tune and take advantage of System Order during reduction. */
-  enum class Order { System, User, PreserveMatrices };
+  enum class Order { System, User, PreserveMatrices, AdditionBeautification };
   /* Compare returns:
    *  1 if block0 > block1
    * -1 if block0 < block1

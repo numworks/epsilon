@@ -9,6 +9,8 @@ namespace PoincareJ {
 
 class Beautification {
  public:
+  static float DegreeForSortingAddition(const Tree *expr, bool symbolsOnly);
+
   static bool ShallowBeautify(Tree *node, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
   static bool DeepBeautify(Tree *node,

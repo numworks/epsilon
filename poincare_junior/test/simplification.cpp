@@ -152,7 +152,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a×2a×b×a×b×4", "8×a^(3)×b^(2)");
   simplifies_to("1×1×1×1", "1");
   simplifies_to("2a+3b+4a", "6×a+3×b");
-  simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "-9×b+7×a×b");
+  simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "7×a×b+-9×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
   simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×d×g+b×f×g");
   simplifies_to("(e^(x))^2", "e^(2×x)");
@@ -248,15 +248,15 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("im(re(x)+i×im(x))", "im(x)");
   simplifies_to("re(re(x)+i×im(x))", "re(x)");
   simplifies_to("abs(x+i×y)",
-                "√(-2×im(y)×re(x)+2×im(x)×re(y)+im(x)^(2)+im(y)^(2)+re(x)^(2)+"
-                "re(y)^(2))");
+                "√(im(x)^(2)+im(y)^(2)+re(x)^(2)+re(y)^(2)+-2×im(y)×re(x)+2×im("
+                "x)×re(y))");
   // Parametrics
   simplifies_to("sum(n, k, 1, n)", "n^2");
-  simplifies_to("product(p, k, m, n)", "p^(1-m+n)");
+  simplifies_to("product(p, k, m, n)", "p^(-1×m+n+1)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
   simplifies_to("sum(k^2, k, 2, 5)", "54");
-  simplifies_to("2×sum(k, k, 0, n)+n", "2n + n^2");
-  simplifies_to("2×sum(k, k, 3, n)+n", "-6+2×n+n^(2)");
+  simplifies_to("2×sum(k, k, 0, n)+n", "n^2 + 2n");
+  simplifies_to("2×sum(k, k, 3, n)+n", "n^(2)+2×n+-6");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
@@ -325,7 +325,7 @@ QUIZ_CASE(pcj_float_simplification) {
   simplifies_to("2.3", "2.3", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π", "4.141593",
                 {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("1+π+x", "4.141593+x",
+  simplifies_to("1+π+x", "x+4.141593",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
 }

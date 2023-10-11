@@ -489,8 +489,9 @@ Range2D Zoom::sanitize2DHelper(Range2D range) const {
 }
 
 Range2D Zoom::prettyRange(bool forceNormalization) const {
-  assert(!forceNormalization || !m_forcedRange.x()->isValid() ||
-         !m_forcedRange.y()->isValid());
+  bool xRangeIsForced = m_forcedRange.x()->isValid();
+  bool yRangeIsForced = m_forcedRange.y()->isValid();
+  assert(!forceNormalization || !xRangeIsForced || !yRangeIsForced);
 
   Range2D saneRange = m_interestingRange;
   saneRange.extend(
@@ -516,7 +517,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
    * - the normalized Y range makes up for at least 15% of the Y range. This is
    *   to prevent that, by shrinking Y, the X axis becomes too long for the
    *   remaining visible part of the curve.
-   * - a normalized Y range can fit the interesting Y range. We only count the
+   * - the normalized Y range can fit the interesting Y range. We only count the
    *   interesting Y range for this part as discarding the part that comes from
    *   the magnitude is not an issue.*/
 
@@ -529,9 +530,9 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
       yLength * k_minimalYNormalizedCoverage <= yLengthNormalized &&
       m_interestingRange.y()->length() <= yLengthNormalized;
 
-  bool normalizeX = !m_forcedRange.x()->isValid() &&
+  bool normalizeX = !xRangeIsForced &&
                     (forceNormalization || xLengthCompatibleWithNormalization);
-  bool normalizeY = !m_forcedRange.y()->isValid() &&
+  bool normalizeY = !yRangeIsForced &&
                     (forceNormalization || yLengthCompatibleWithNormalization);
   if (normalizeX && normalizeY) {
     /* Both axes are good candidates for normalization, pick the one that does

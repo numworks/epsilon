@@ -5,6 +5,7 @@
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
+#include "beautification.h"
 #include "context.h"
 #include "parametric.h"
 #include "projection.h"
@@ -20,12 +21,6 @@ class Simplification {
   static bool ShallowAdvancedReduction(Tree *node, const Tree *root,
                                        bool change);
   EDITION_REF_WRAP_2(ShallowAdvancedReduction, const Tree *, bool);
-
-  static bool ShallowBeautify(Tree *node, void *context = nullptr);
-  EDITION_REF_WRAP_1D(ShallowBeautify, void *, nullptr);
-  static bool DeepBeautify(Tree *node,
-                           ProjectionContext projectionContext = {});
-  EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   static bool ShallowContract(Tree *e, void *context = nullptr) {

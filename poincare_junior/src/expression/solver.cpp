@@ -258,7 +258,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
   Simplification::AdvancedReduction(solution, solution);
-  Simplification::DeepBeautify(solution);
+  Beautification::DeepBeautify(solution);
   return Error::NoError;
 }
 

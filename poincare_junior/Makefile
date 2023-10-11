@@ -12,6 +12,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.cpp \
   expression/aliases.cpp \
   expression/approximation.cpp \
+  expression/beautification.cpp \
   expression/builtin.cpp \
   expression/comparison.cpp \
   expression/complex.cpp \
@@ -65,6 +66,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 
 tests_src += $(addprefix poincare_junior/test/,\
   approximation.cpp \
+  beautification.cpp \
   calculation.cpp \
   comparison.cpp \
   dimension.cpp \

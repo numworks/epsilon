@@ -76,7 +76,8 @@ bool Beautification::DeepBeautify(Tree* node,
     baseUnits->removeTree();
     changed = true;
   }
-  return Tree::ApplyShallowInDepth(node, ShallowBeautify, &projectionContext) ||
+  return Tree::ApplyShallowInDepth(node, ShallowBeautify, &projectionContext,
+                                   false) ||
          changed;
 }
 

@@ -143,7 +143,7 @@ class Tree {
   // Apply Shallow operation in a Top Down manner.
   typedef bool (*ShallowOperation)(Tree* node, void* context);
   static bool ApplyShallowInDepth(Tree* node, ShallowOperation shallowOperation,
-                                  void* context = nullptr);
+                                  void* context = nullptr, bool check = true);
 
   Tree* clone() const;
   Tree* cloneNode() const;

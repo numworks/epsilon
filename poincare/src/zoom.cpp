@@ -519,7 +519,9 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
    *   remaining visible part of the curve.
    * - the normalized Y range can fit the interesting Y range. We only count the
    *   interesting Y range for this part as discarding the part that comes from
-   *   the magnitude is not an issue.*/
+   *   the magnitude is not an issue.
+   * - the normalized Y range can fit the magnitude Y range if X range is forced
+   *   (otherwise it will crop some values). */
 
   bool xLengthCompatibleWithNormalization =
       xLengthNormalized * k_minimalXCoverage <= xLength &&
@@ -528,7 +530,8 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   bool yLengthCompatibleWithNormalization =
       yLengthNormalized * k_minimalYCoverage <= yLength &&
       yLength * k_minimalYNormalizedCoverage <= yLengthNormalized &&
-      m_interestingRange.y()->length() <= yLengthNormalized;
+      m_interestingRange.y()->length() <= yLengthNormalized &&
+      (m_magnitudeRange.y()->length() <= yLengthNormalized || !xRangeIsForced);
 
   bool normalizeX = !xRangeIsForced &&
                     (forceNormalization || xLengthCompatibleWithNormalization);

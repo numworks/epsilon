@@ -146,6 +146,10 @@ class Zoom {
   Range2D sanitizedRange() const {
     return sanitize2DHelper(m_interestingRange);
   }
+  bool xLengthCompatibleWithNormalization(float xLength,
+                                          float xLengthNormalized) const;
+  bool yLengthCompatibleWithNormalization(float yLength,
+                                          float yLengthNormalized) const;
   Range2D prettyRange(bool forceNormalization) const;
   void fitWithSolver(
       bool *leftInterrupted, bool *rightInterrupted,

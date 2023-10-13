@@ -21,6 +21,19 @@ EditionReference::EditionReference(Tree* node) {
   m_identifier = SharedEditionPool->referenceNode(node);
 }
 
+EditionReference& EditionReference::operator=(Tree* tree) {
+  if (!tree) {
+    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+  } else {
+    if (m_identifier != EditionPool::ReferenceTable::NoNodeIdentifier) {
+      SharedEditionPool->updateIdentifier(m_identifier, tree);
+    } else {
+      m_identifier = SharedEditionPool->referenceNode(tree);
+    }
+  }
+  return *this;
+}
+
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
   std::cout << "id: " << m_identifier << "\n";

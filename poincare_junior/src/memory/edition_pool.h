@@ -23,6 +23,9 @@ class EditionPool final : public Pool {
   void flush();
   void resetRefs() { m_referenceTable.reset(); }
   void deleteIdentifier(uint16_t id) { m_referenceTable.deleteIdentifier(id); }
+  void updateIdentifier(uint16_t id, Tree *newNode) {
+    m_referenceTable.updateIdentifier(id, newNode);
+  }
 
   typedef bool (*Relax)(void *context);
   constexpr static Relax k_defaultRelax = [](void *context) { return false; };
@@ -96,6 +99,7 @@ class EditionPool final : public Pool {
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
     Tree *nodeForIdentifier(uint16_t id) const override;
     uint16_t storeNode(Tree *node) override;
+    void updateIdentifier(uint16_t id, Tree *newNode);
     void deleteIdentifier(uint16_t id);
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,
                                        const Block *, int);

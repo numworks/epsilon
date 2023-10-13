@@ -29,6 +29,8 @@ class EditionReference {
     return *this;
   }
 
+  EditionReference& operator=(Tree* tree);
+
   // Moves steal the id
   EditionReference(EditionReference&& other) {
     m_identifier = other.m_identifier;

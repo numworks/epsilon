@@ -6,26 +6,23 @@
 #include "checkpoint.h"
 
 // Usage:
-#if 0
-  ExceptionTry {
-    /* Warning: Variable initialized before the checkpoint and modified here
-     *          cannot be trusted after an exception has been raised. */
-    // Default computations.
-    ExceptionCheckpoint::Raise(ExceptionType::NonReal);
-    if (true) {
-      // Raising here will be handled in the following ExceptionCatch.
-      ExceptionCheckpoint::Raise(ExceptionType::NonReal);
-    }
-  }
-  ExceptionCatch(type) {
-    // Raising here will be handled by parent ExceptionCatch.
-    if (type != ExceptionType::NonReal) {
-      // Unhandled exceptions should be raised to parent.
-      ExceptionCheckpoint::Raise(type);
-    }
-    // Handle exceptions.
-  }
-#endif
+// ExceptionTry {
+//   /* Warning: Variable initialized before the checkpoint and modified here
+//    *          cannot be trusted after an exception has been raised. */
+//   // Default computations.
+//   if (something_goes_wrong) {
+//     // Raising here will be handled in the following ExceptionCatch.
+//     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+//   }
+// }
+// ExceptionCatch(type) {
+//   // Raising here will be handled by parent ExceptionCatch.
+//   if (type != ExceptionType::Nonreal) {
+//     // Unhandled exceptions should be raised to parent.
+//     ExceptionCheckpoint::Raise(type);
+//   }
+//   // Handle exceptions.
+// }
 
 #define ExceptionTry                \
   {                                 \
@@ -47,7 +44,7 @@ enum class ExceptionType : int {
   PoolIsFull,
   IntegerOverflow,
   // Undefined result in given context
-  NonReal,  // sqrt(-1), ln(-2), asin(2)
+  Nonreal,  // sqrt(-1), ln(-2), asin(2)
   // Undefined result
   ZeroPowerZero,  // 0^0 -> Should be ZeroDivision ?
   ZeroDivision,   // 1/0, tan(nπ/2)

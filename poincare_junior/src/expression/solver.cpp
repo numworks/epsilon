@@ -250,7 +250,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
    * - Implement equations. Here a x=2 solution will register as x-2.
    * - Handle exact results being forbidden.
    * - Pass more context.
-   * - Handle NonReal and Undefined solutions.
+   * - Handle Nonreal and Undefined solutions.
    * - Handle approximate display.
    */
   solution->moveTreeBeforeNode(

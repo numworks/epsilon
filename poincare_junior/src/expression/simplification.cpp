@@ -418,7 +418,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    * - PowerReal(x,y) if y is not a rational
    * - Looking at y's reduced rational form p/q :
    *   * PowerReal(x,y) if x is of unknown sign and p odd
-   *   * NonReal if q is even and x negative
+   *   * Nonreal if q is even and x negative
    *   * |x|^y if p is even
    *   * -|x|^y if p is odd
    */
@@ -450,7 +450,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   assert(xIsNegativeNumber || pIsEven);
 
   if (xIsNegativeNumber && qIsEven) {
-    // TODO: Return NonReal
+    // TODO: Return Nonreal
     u->cloneTreeOverTree(KUndef);
     return true;
   }

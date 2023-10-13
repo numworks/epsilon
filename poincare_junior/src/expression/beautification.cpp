@@ -4,6 +4,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
+#include "rational.h"
 #include "simplification.h"
 
 namespace PoincareJ {
@@ -54,6 +55,73 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
   }
 }
 
+Tree* FirstFactor(Tree* expr) {
+  if (expr->type() == BlockType::Multiplication) {
+    return expr->child(0);
+  }
+  return expr;
+}
+
+bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
+  // The expression is a negative number
+  Tree* factor = FirstFactor(expr);
+  if (factor->type().isRational() && Rational::Sign(factor).isNegative()) {
+    Rational::SetSign(factor, NonStrictSign::Positive);
+    // Do we need to squash the mult if factor was -1 ?
+    return true;
+  }
+  return false;
+}
+
+void Beautification::SplitMultiplication(const Tree* expr,
+                                         EditionReference& numerator,
+                                         EditionReference& denominator) {
+  numerator = SharedEditionPool->push<BlockType::Multiplication>(0);
+  denominator = SharedEditionPool->push<BlockType::Multiplication>(0);
+  const int numberOfFactors = expr->numberOfChildren();
+  for (int i = 0; i < numberOfFactors; i++) {
+    const Tree* factor = expr->child(i);
+    TypeBlock factorType = factor->type();
+    Tree* factorsNumerator = nullptr;
+    Tree* factorsDenominator = nullptr;
+    if (factorType.isRational()) {
+      if (factorType == BlockType::One) {
+        // Special case: add a unary numeral factor if r = 1
+        factorsNumerator = factor->clone();
+      } else {
+        IntegerHandler rNum = Rational::Numerator(factor);
+        if (!rNum.isOne()) {
+          factorsNumerator = rNum.pushOnEditionPool();
+        }
+        IntegerHandler rDen = Rational::Denominator(factor);
+        if (!rDen.isOne()) {
+          factorsDenominator = rDen.pushOnEditionPool();
+        }
+      }
+    } else if (factorType == BlockType::Power) {
+      Tree* pow = factor->clone();
+      if (MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
+        if (pow->child(1)->type() == BlockType::One) {
+          pow->moveTreeOverTree(pow->child(0));
+        }
+        factorsDenominator = pow;
+      } else {
+        factorsNumerator = pow;
+      }
+    } else {
+      factorsNumerator = factor->clone();
+    }
+    if (factorsDenominator) {
+      NAry::AddChild(denominator, factorsDenominator);
+    }
+    if (factorsNumerator) {
+      NAry::AddChild(numerator, factorsNumerator);
+    }
+  }
+  NAry::SquashIfEmpty(numerator) || NAry::SquashIfUnary(numerator);
+  NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
+}
+
 bool Beautification::DeepBeautify(Tree* node,
                                   ProjectionContext projectionContext) {
   // Simplification might have unlocked more approximations. Try again.
@@ -96,6 +164,19 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   }
   if (ref->type() == BlockType::Addition) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
+  }
+  if (ref->type() == BlockType::Multiplication) {
+    EditionReference num;
+    EditionReference den;
+    SplitMultiplication(ref, num, den);
+    if (den->type() != BlockType::One) {
+      num->cloneNodeAtNode(KDiv);
+      ref->moveTreeOverTree(num);
+      return true;
+    } else {
+      num->removeTree();
+      den->removeTree();
+    }
   }
 
   // PowerReal(A,B) -> A^B

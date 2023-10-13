@@ -109,43 +109,28 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     PatternMatching::MatchAndReplace(ref, KPow(KA, KHalf), KSqrt(KA));
     return true;
   }
-  bool changed = false;
-  // A + B? + (-1)*C + D?-> ((A + B) - C) + D
-  // Applied as much as necessary while preserving the order.
-  while (PatternMatching::MatchAndReplace(
-      ref, KAdd(KA, KTB, KMult(-1_e, KTC), KTD),
-      KAdd(KSub(KAdd(KA, KTB), KMult(KTC)), KTD))) {
-    changed = true;
-  }
-  return changed ||
-         // Complex(0,1) -> i
-         PatternMatching::MatchAndReplace(ref, KComplex(0_e, 1_e), i_e) ||
-         // Complex(0,A) -> A*i
-         PatternMatching::MatchAndReplace(ref, KComplex(0_e, KA),
-                                          KMult(KA, i_e)) ||
-         // Complex(A,1) -> A+i
-         PatternMatching::MatchAndReplace(ref, KComplex(KA, 1_e),
-                                          KAdd(KA, i_e)) ||
-         // Complex(A,-1) -> A-i
-         PatternMatching::MatchAndReplace(ref, KComplex(KA, -1_e),
-                                          KSub(KA, i_e)) ||
-         // Complex(A,-B) -> A-B*i
-         PatternMatching::MatchAndReplace(ref, KComplex(KA, KMult(-1_e, KTB)),
-                                          KSub(KA, KMult(KTB, i_e))) ||
-         // Complex(A,B) -> A+B*i
-         PatternMatching::MatchAndReplace(ref, KComplex(KA, KB),
-                                          KAdd(KA, KMult(KB, i_e))) ||
-         // trig(A, 0) -> cos(A)
-         PatternMatching::MatchAndReplace(ref, KTrig(KA, 0_e), KCos(KA)) ||
-         // trig(A, 1) -> sin(A)
-         PatternMatching::MatchAndReplace(ref, KTrig(KA, 1_e), KSin(KA)) ||
-         // exp(1) -> e
-         PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
-         // exp(A) -> e^A
-         PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
-         // ln(A) * ln(B)^(-1) -> log(A, B)
-         PatternMatching::MatchAndReplace(
-             ref, KMult(KLn(KA), KPow(KLn(KB), -1_e)), KLogarithm(KA, KB));
+  return
+      // Complex(0,1) -> i
+      PatternMatching::MatchAndReplace(ref, KComplex(0_e, 1_e), i_e) ||
+      // Complex(0,A) -> A*i
+      PatternMatching::MatchAndReplace(ref, KComplex(0_e, KA),
+                                       KMult(KA, i_e)) ||
+      // Complex(A,1) -> A+i
+      PatternMatching::MatchAndReplace(ref, KComplex(KA, 1_e), KAdd(KA, i_e)) ||
+      // Complex(A,B) -> A+B*i
+      PatternMatching::MatchAndReplace(ref, KComplex(KA, KB),
+                                       KAdd(KA, KMult(KB, i_e))) ||
+      // trig(A, 0) -> cos(A)
+      PatternMatching::MatchAndReplace(ref, KTrig(KA, 0_e), KCos(KA)) ||
+      // trig(A, 1) -> sin(A)
+      PatternMatching::MatchAndReplace(ref, KTrig(KA, 1_e), KSin(KA)) ||
+      // exp(1) -> e
+      PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
+      // exp(A) -> e^A
+      PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
+      // ln(A) * ln(B)^(-1) -> log(A, B)
+      PatternMatching::MatchAndReplace(ref, KMult(KLn(KA), KPow(KLn(KB), -1_e)),
+                                       KLogarithm(KA, KB));
 }
 
 }  // namespace PoincareJ

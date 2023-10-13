@@ -127,16 +127,44 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
   value->removeTree();
 }
 
+bool WillStartWithMinus(const Tree *expr) {
+  switch (expr->type()) {
+    case BlockType::MinusOne:
+    case BlockType::IntegerNegBig:
+    case BlockType::RationalNegBig:
+      return true;
+    case BlockType::IntegerShort:
+    case BlockType::RationalShort: {
+      return Rational::Sign(expr).isNegative();
+      case BlockType::Multiplication:
+        return WillStartWithMinus(expr->child(0));
+      default:
+        return false;
+    }
+  }
+}
+
 void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
                                     Tree *expression, CodePoint op) {
   BlockType type = expression->type();
   int childNumber = expression->numberOfChildren();
-  for (int i = 0; i < childNumber; i++) {
-    if (i > 0) {
+  for (int childIndex = 0; childIndex < childNumber; childIndex++) {
+    if (op == u'×' && childIndex == 0) {
+      Tree *child = expression->nextNode();
+      if (child->type() == BlockType::MinusOne) {
+        assert(childNumber > 1);
+        PushCodePoint(layoutParent, '-');
+        child->removeTree();
+        childIndex--;
+        childNumber--;
+        continue;
+      }
+    }
+    Tree *child = expression->nextNode();
+    if (childIndex > 0 && !(op == '+' && WillStartWithMinus(child))) {
       PushCodePoint(layoutParent, op);
     }
-    layoutExpression(layoutParent, expression->nextNode(),
-                     OperatorPriority(type));
+    layoutExpression(layoutParent, child, OperatorPriority(type));
   }
 }
 

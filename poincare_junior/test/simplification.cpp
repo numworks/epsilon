@@ -152,7 +152,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("a×2a×b×a×b×4", "8×a^(3)×b^(2)");
   simplifies_to("1×1×1×1", "1");
   simplifies_to("2a+3b+4a", "6×a+3×b");
-  simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "7×a×b+-9×b");
+  simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "7×a×b-9×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
   simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×d×g+b×f×g");
   simplifies_to("(e^(x))^2", "e^(2×x)");
@@ -185,14 +185,14 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7×π/12)", "1/2×2^(-1/2)+-1/2×2^(-1/2)×√(3)");
-  simplifies_to("cos(13×π/12)", "-1/2×2^(-1/2)+-1/2×2^(-1/2)×√(3)");
+  simplifies_to("cos(7×π/12)", "1/2×2^(-1/2)-1/2×2^(-1/2)×√(3)");
+  simplifies_to("cos(13×π/12)", "-1/2×2^(-1/2)-1/2×2^(-1/2)×√(3)");
   simplifies_to("sin(π/3)", "1/2×√(3)");
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "2^(-1/2)");
   simplifies_to("2×sin(2y)×sin(y)", "cos(y)-cos(3×y)");
   simplifies_to("2×sin(2y)×cos(y)", "sin(y)+sin(3×y)");
-  simplifies_to("2×cos(2y)×sin(y)", "-1×sin(y)+sin(3×y)");
+  simplifies_to("2×cos(2y)×sin(y)", "-sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)", "cos(y)+cos(3×y)");
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
@@ -242,21 +242,21 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("conj(conj(x))", "x");
   simplifies_to("re(x+im(y))", "im(y)+re(x)");
   simplifies_to("re(x)+i×im(x)", "x");
-  simplifies_to("re(x+i×y)", "-1×im(y)+re(x)");
+  simplifies_to("re(x+i×y)", "-im(y)+re(x)");
   simplifies_to("im(x+i×y)", "im(x)+re(y)");
-  simplifies_to("conj(x+i×y)", "-1×im(y)+re(x)-(im(x)+re(y))×i");
+  simplifies_to("conj(x+i×y)", "-im(y)+re(x)-(im(x)+re(y))×i");
   simplifies_to("im(re(x)+i×im(x))", "im(x)");
   simplifies_to("re(re(x)+i×im(x))", "re(x)");
   simplifies_to("abs(x+i×y)",
-                "√(im(x)^(2)+im(y)^(2)+re(x)^(2)+re(y)^(2)+-2×im(y)×re(x)+2×im("
+                "√(im(x)^(2)+im(y)^(2)+re(x)^(2)+re(y)^(2)-2×im(y)×re(x)+2×im("
                 "x)×re(y))");
   // Parametrics
   simplifies_to("sum(n, k, 1, n)", "n^2");
-  simplifies_to("product(p, k, m, n)", "p^(-1×m+n+1)");
+  simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
   simplifies_to("sum(k^2, k, 2, 5)", "54");
   simplifies_to("2×sum(k, k, 0, n)+n", "n^2 + 2n");
-  simplifies_to("2×sum(k, k, 3, n)+n", "n^(2)+2×n+-6");
+  simplifies_to("2×sum(k, k, 3, n)+n", "n^(2)+2×n-6");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
@@ -305,7 +305,7 @@ QUIZ_CASE(pcj_power_simplification) {
   //   * |x|^y if p is even
   simplifies_to("(-123)^(4/5)", "123^(4/5)");
   //   * -|x|^y if p is odd
-  simplifies_to("(-123)^(5/7)", "-1×123^(5/7)");
+  simplifies_to("(-123)^(5/7)", "-123^(5/7)");
 
   simplifies_to("√(x)^2", "√(x)^(2)", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power

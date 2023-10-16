@@ -162,8 +162,7 @@ class UnitRepresentative {
   }
   virtual bool isBaseUnit() const = 0;
   virtual const UnitRepresentative* standardRepresentative(
-      double value,
-      double exponent /*, const ReductionContext& reductionContext*/,
+      double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const {
     return defaultFindBestRepresentative(value, exponent,
                                          representativesOfSameDimension(),
@@ -305,10 +304,10 @@ class Unit {
   static bool CanParse(UnicodeDecoder* name,
                        const UnitRepresentative** representative,
                        const UnitPrefix** prefix);
+  static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,
+                                                        double* value,
+                                                        UnitFormat unitFormat);
 #if 0
-  static void ChooseBestRepresentativeAndPrefixForValue(
-      const Tree* units, double* value,
-      const ReductionContext& reductionContext);
   static bool ShouldDisplayAdditionalOutputs(double value, const Tree* unit,
                                              UnitFormat unitFormat);
   static int SetAdditionalExpressions(const Tree* units, double value,
@@ -336,20 +335,22 @@ class Unit {
     return GetRepresentative(unit)->isBaseUnit() &&
            GetPrefix(unit) == GetRepresentative(unit)->basePrefix();
   }
-  void chooseBestRepresentativeAndPrefix(
-      double* value, double exponent, const ReductionContext& reductionContext,
-      bool optimizePrefix);
 #endif
+  static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
+                                                double exponent,
+                                                UnitFormat unitFormat,
+                                                bool optimizePrefix);
 
   // Replace with SI ratio only.
   static void RemoveUnit(Tree* unit);
   // Push Unit
   static Tree* Push(const UnitRepresentative* unitRepresentative,
                     const UnitPrefix* unitPrefix);
-  // UnitRepresentative getter
   static const UnitRepresentative* GetRepresentative(const Tree* unit);
-  // UnitPrefix getter
+  static void SetRepresentative(Tree* unit,
+                                const UnitRepresentative* representative);
   static const UnitPrefix* GetPrefix(const Tree* unit);
+  static void SetPrefix(Tree* unit, const UnitPrefix* prefix);
 };
 
 }  // namespace PoincareJ

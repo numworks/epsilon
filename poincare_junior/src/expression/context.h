@@ -10,6 +10,7 @@ namespace PoincareJ {
 enum class ComplexFormat { Real, Cartesian, Polar };
 enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
 enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
+enum class UnitFormat : bool { Metric = 0, Imperial = 1 };
 
 }  // namespace PoincareJ
 

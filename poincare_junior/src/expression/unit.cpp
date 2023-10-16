@@ -518,24 +518,18 @@ bool Unit::CanParse(UnicodeDecoder* name,
   return false;
 }
 
-#if 0
-static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-    Expression unit, double* value, const ReductionContext& reductionContext,
-    bool optimizePrefix) {
+static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+    Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix) {
   double exponent = 1.f;
-  Expression factor = unit;
-  if (factor.type() == ExpressionNode::Type::Power) {
-    Expression childExponent = factor.child(1);
-    assert(factor.child(0).type() == ExpressionNode::Type::Unit);
-    assert(factor.child(1).type() == ExpressionNode::Type::Rational);
-    exponent =
-        static_cast<Rational&>(childExponent)
-            .approximateToScalar<double>(reductionContext.context(),
-                                         reductionContext.complexFormat(),
-                                         reductionContext.angleUnit());
-    factor = factor.child(0);
+  Tree* factor = unit;
+  if (factor->type() == BlockType::Power) {
+    Tree* childExponent = factor->child(1);
+    assert(factor->child(0)->type() == BlockType::Unit);
+    assert(factor->child(1)->type().isRational());
+    exponent = Approximation::To<double>(childExponent);
+    factor = factor->child(0);
   }
-  assert(factor.type() == ExpressionNode::Type::Unit);
+  assert(factor->type() == BlockType::Unit);
   if (exponent == 0.f) {
     /* Finding the best representative for a unit with exponent 0 doesn't
      * really make sense, and should only happen with a weak ReductionTarget
@@ -543,29 +537,30 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
      * unit unchanged as it will approximate to undef anyway. */
     return;
   }
-  static_cast<Unit&>(factor).chooseBestRepresentativeAndPrefix(
-      value, exponent, reductionContext, optimizePrefix);
+  Unit::ChooseBestRepresentativeAndPrefix(factor, value, exponent, unitFormat,
+                                          optimizePrefix);
 }
 
-void Unit::ChooseBestRepresentativeAndPrefixForValue(
-    Expression units, double* value, const ReductionContext& reductionContext) {
+void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
+                                                     UnitFormat unitFormat) {
   int numberOfFactors;
-  Expression factor;
-  if (units.type() == ExpressionNode::Type::Multiplication) {
-    numberOfFactors = units.numberOfChildren();
-    factor = units.child(0);
+  Tree* factor;
+  if (units->type() == BlockType::Multiplication) {
+    numberOfFactors = units->numberOfChildren();
+    factor = units->child(0);
   } else {
     numberOfFactors = 1;
     factor = units;
   }
-  chooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
-                                                        reductionContext, true);
+  ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
+                                                        unitFormat, true);
   for (int i = 1; i < numberOfFactors; i++) {
-    chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-        units.child(i), value, reductionContext, false);
+    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+        units->child(i), value, unitFormat, false);
   }
 }
 
+#if 0
 bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
                                           Preferences::UnitFormat unitFormat) {
   if (unit.isUninitialized() || !std::isfinite(value)) {
@@ -817,60 +812,60 @@ Expression Unit::removeUnit(Expression* unit) {
   replaceWithInPlace(one);
   return one;
 }
+#endif
 
-void Unit::chooseBestRepresentativeAndPrefix(
-    double* value, double exponent, const ReductionContext& reductionContext,
-    bool optimizePrefix) {
+void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
+                                             double exponent,
+                                             UnitFormat unitFormat,
+                                             bool optimizePrefix) {
   assert(exponent != 0.f);
 
   if ((std::isinf(*value) ||
-       (*value == 0.0 &&
-        node()->representative()->dimensionVector() !=
-            TemperatureRepresentative::Dimension))) {
+       (*value == 0.0 && GetRepresentative(unit)->dimensionVector() !=
+                             Representatives::Temperature::Dimension))) {
     /* Use the base unit to represent an infinite or null value, as all units
      * are equivalent.
      * This is not true for temperatures (0 K != 0°C != 0°F). */
-    node()->setRepresentative(
-        node()->representative()->representativesOfSameDimension());
-    node()->setPrefix(node()->representative()->basePrefix());
+    SetRepresentative(
+        unit, GetRepresentative(unit)->representativesOfSameDimension()[0]);
+    SetPrefix(unit, GetRepresentative(unit)->basePrefix());
     return;
   }
   // Convert value to base units
   double baseValue =
       *value *
       std::pow(
-          node()->representative()->ratio() *
+          GetRepresentative(unit)->ratio() *
               std::pow(10.,
-                       node()->prefix()->exponent() -
-                           node()->representative()->basePrefix()->exponent()),
+                       GetPrefix(unit)->exponent() -
+                           GetRepresentative(unit)->basePrefix()->exponent()),
           exponent);
-  const UnitPrefix* bestPrefix = (optimizePrefix) ? UnitPrefix::EmptyPrefix() : nullptr;
+  const UnitPrefix* bestPrefix =
+      (optimizePrefix) ? UnitPrefix::EmptyPrefix() : nullptr;
   const UnitRepresentative* bestRepresentative =
-      node()->representative()->standardRepresentative(
-          baseValue, exponent, reductionContext, &bestPrefix);
+      GetRepresentative(unit)->standardRepresentative(baseValue, exponent,
+                                                      unitFormat, &bestPrefix);
   if (!optimizePrefix) {
     bestPrefix = bestRepresentative->basePrefix();
   }
 
-  if (bestRepresentative != node()->representative()) {
+  if (bestRepresentative != GetRepresentative(unit)) {
     *value =
         *value *
         std::pow(
-            node()->representative()->ratio() / bestRepresentative->ratio() *
-                std::pow(
-                    10.,
-                    bestRepresentative->basePrefix()->exponent() -
-                        node()->representative()->basePrefix()->exponent()),
+            GetRepresentative(unit)->ratio() / bestRepresentative->ratio() *
+                std::pow(10.,
+                         bestRepresentative->basePrefix()->exponent() -
+                             GetRepresentative(unit)->basePrefix()->exponent()),
             exponent);
-    node()->setRepresentative(bestRepresentative);
+    SetRepresentative(unit, bestRepresentative);
   }
-  if (bestPrefix != node()->prefix()) {
-    *value = *value * std::pow(10., exponent * (node()->prefix()->exponent() -
+  if (bestPrefix != GetPrefix(unit)) {
+    *value = *value * std::pow(10., exponent * (GetPrefix(unit)->exponent() -
                                                 bestPrefix->exponent()));
-    node()->setPrefix(bestPrefix);
+    SetPrefix(unit, bestPrefix);
   }
 }
-#endif
 
 void Unit::RemoveUnit(Tree* unit) {
   Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
@@ -889,13 +884,20 @@ Tree* Unit::Push(const UnitRepresentative* unitRepresentative,
 }
 
 const UnitRepresentative* Unit::GetRepresentative(const Tree* unit) {
-  return UnitRepresentative::FromId(
-      static_cast<uint8_t>(*unit->block()->next()));
+  return UnitRepresentative::FromId(unit->nodeValue(0));
 }
 
 const UnitPrefix* Unit::GetPrefix(const Tree* unit) {
-  return UnitPrefix::FromId(
-      static_cast<uint8_t>(*unit->block()->next()->next()));
+  return UnitPrefix::FromId(unit->nodeValue(1));
+}
+
+void Unit::SetRepresentative(Tree* unit,
+                             const UnitRepresentative* representative) {
+  unit->setNodeValue(0, UnitRepresentative::ToId(representative));
+}
+
+void Unit::SetPrefix(Tree* unit, const UnitPrefix* prefix) {
+  unit->setNodeValue(1, UnitPrefix::ToId(prefix));
 }
 
 }  // namespace PoincareJ

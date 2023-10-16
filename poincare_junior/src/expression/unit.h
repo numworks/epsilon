@@ -139,10 +139,8 @@ class UnitRepresentative {
   static const UnitRepresentative* FromId(uint8_t id);
 
   static const UnitRepresentative* const* const* DefaultRepresentatives();
-#if 0
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
-#endif
   // TODO it may be marked consteval with Clang but not with GCC
   template <TreeCompatibleConcept T>
   constexpr UnitRepresentative(Aliases rootSymbol, T ratioExpression,
@@ -163,14 +161,15 @@ class UnitRepresentative {
     return UnitPrefix::EmptyPrefix();
   }
   virtual bool isBaseUnit() const = 0;
-#if 0
   virtual const UnitRepresentative* standardRepresentative(
-      double value, double exponent, const ReductionContext& reductionContext,
+      double value,
+      double exponent /*, const ReductionContext& reductionContext*/,
       const UnitPrefix** prefix) const {
     return defaultFindBestRepresentative(value, exponent,
                                          representativesOfSameDimension(),
                                          numberOfRepresentatives(), prefix);
   }
+#if 0
     /* hasSpecialAdditionalExpressions return true if the unit has special
      * forms suchas as splits (for time and imperial units) or common
      * conversions (such as speed and energy). */
@@ -186,11 +185,9 @@ class UnitRepresentative {
 #endif
 
   Aliases rootSymbols() const { return m_rootSymbols; }
-#if 0
   double ratio() const {
     return Approximation::To<double>(ratioExpressionReduced());
   }
-#endif
   bool isInputPrefixable() const {
     return m_inputPrefixable != Prefixable::None;
   }
@@ -206,19 +203,16 @@ class UnitRepresentative {
   bool canParse(const char* symbol, size_t length,
                 const UnitPrefix** prefix) const;
   bool canPrefix(const UnitPrefix* prefix, bool input) const;
-#if 0
   const UnitPrefix* findBestPrefix(double value, double exponent) const;
-#endif
   const Tree* ratioExpressionReduced() const {
     return Tree::FromBlocks(m_ratioExpression);
   }
 
  protected:
-#if 0
   const UnitRepresentative* defaultFindBestRepresentative(
-      double value, double exponent, const UnitRepresentative* representatives,
-      int length, const UnitPrefix** prefix) const;
-#endif
+      double value, double exponent,
+      const UnitRepresentative* const* representatives, int length,
+      const UnitPrefix** prefix) const;
 
   Aliases m_rootSymbols;
   /* m_ratioExpression is the expression of the factor used to convert a unit

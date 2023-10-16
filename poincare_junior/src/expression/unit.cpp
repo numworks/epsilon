@@ -1,9 +1,9 @@
 // #include <assert.h>
 // #include <limits.h>
-// #include <omg/round.h>
+#include <omg/round.h>
 // #include <poincare/addition.h>
 // #include <poincare/division.h>
-// #include <poincare/float.h>
+#include <poincare/float.h>
 // #include <poincare/layout_helper.h>
 // #include <poincare/multiplication.h>
 // #include <poincare/power.h>
@@ -14,13 +14,12 @@
 // #include <algorithm>
 // #include <array>
 // #include <utility>
-#include "unit.h"
-
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
 #include "poincare_junior/src/expression/unit_representatives.h"
 #include "simplification.h"
+#include "unit.h"
 
 namespace PoincareJ {
 
@@ -231,14 +230,13 @@ const UnitRepresentative* UnitRepresentative::FromId(uint8_t id) {
   return UnitRepresentative::DefaultRepresentatives()[0][0];
 }
 
-#if 0
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
     DimensionVector vector) {
   for (int i = 0; i < k_numberOfDimensions; i++) {
-    const UnitRepresentative* representative =
+    const UnitRepresentative* const* representative =
         UnitRepresentative::DefaultRepresentatives()[i];
-    if (vector == representative->dimensionVector()) {
-      return representative;
+    if (vector == (*representative)->dimensionVector()) {
+      return *representative;
     }
   }
   return nullptr;
@@ -250,7 +248,7 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
   order = OMG::LaxToZero(order);
   otherOrder = OMG::LaxToZero(otherOrder);
   if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <=
-          3.0f + Float<float>::EpsilonLax() &&
+          3.0f + Poincare::Float<float>::EpsilonLax() &&
       order * otherOrder < 0.0f) {
     /* If the two values are close, and their sign are opposed, the positive
      * order is preferred */
@@ -261,8 +259,9 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
 }
 
 const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
-    double value, double exponent, const UnitRepresentative* representatives,
-    int length, const UnitPrefix** prefix) const {
+    double value, double exponent,
+    const UnitRepresentative* const* representatives, int length,
+    const UnitPrefix** prefix) const {
   assert(length >= 1);
   /* Return this if every other representative gives an accuracy of 0 or Inf.
    * This can happen when searching for an Imperial representative for 1m^20000
@@ -270,20 +269,20 @@ const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
   const UnitRepresentative* result = this;
   double accuracy = 0.;
   const UnitPrefix* currentPrefix = UnitPrefix::EmptyPrefix();
-  const UnitRepresentative* currentRepresentative = representatives;
+  const UnitRepresentative* const* currentRepresentative = representatives;
   while (currentRepresentative < representatives + length) {
-    double currentAccuracy =
-        std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
+    double currentAccuracy = std::fabs(
+        value / std::pow((*currentRepresentative)->ratio(), exponent));
     if (*prefix) {
       currentPrefix =
-          currentRepresentative->findBestPrefix(currentAccuracy, exponent);
+          (*currentRepresentative)->findBestPrefix(currentAccuracy, exponent);
     }
     if (compareMagnitudeOrders(
             std::log10(currentAccuracy) - currentPrefix->exponent() * exponent,
             std::log10(accuracy) -
                 ((!*prefix) ? 0 : (*prefix)->exponent() * exponent))) {
       accuracy = currentAccuracy;
-      result = currentRepresentative;
+      result = *currentRepresentative;
       *prefix = currentPrefix;
     }
     currentRepresentative++;
@@ -294,6 +293,7 @@ const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
   return result;
 }
 
+#if 0
 int UnitRepresentative::serialize(char* buffer, int bufferSize,
                               const UnitPrefix* prefix) const {
   int length = 0;
@@ -392,13 +392,12 @@ bool UnitRepresentative::canPrefix(const UnitPrefix* prefix, bool input) const {
   return false;
 }
 
-#if 0
 const UnitPrefix* UnitRepresentative::findBestPrefix(double value,
-                                             double exponent) const {
+                                                     double exponent) const {
   if (!isOutputPrefixable()) {
     return UnitPrefix::EmptyPrefix();
   }
-  if (value < Float<double>::EpsilonLax()) {
+  if (value < Poincare::Float<double>::EpsilonLax()) {
     return basePrefix();
   }
   const UnitPrefix* res = basePrefix();
@@ -418,7 +417,6 @@ const UnitPrefix* UnitRepresentative::findBestPrefix(double value,
   }
   return res;
 }
-#endif
 
 #if 0
 // UnitNode

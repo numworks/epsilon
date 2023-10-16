@@ -34,6 +34,11 @@ App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {
   };
   assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
   assert(index >= 0 && index < k_numberOfCommonApps);
+  // To avoid crashes, we return the home app snapshot if the index is out of
+  // bounds. (no crash in release mode, but an assert in debug mode)
+  if (index >= k_numberOfCommonApps) {
+    return snapshots[0];
+  }
   return snapshots[index];
 }
 

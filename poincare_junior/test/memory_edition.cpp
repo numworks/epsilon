@@ -160,6 +160,31 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
   EditionReference reference2(2_e);
 }
 
+QUIZ_CASE(pcj_edition_reference_destructor) {
+  CachePool::sharedCachePool()->reset();
+  {
+    EditionReference ref0(0_e);
+    QUIZ_ASSERT(ref0.identifier() == 0);
+    EditionReference ref1(1_e);
+    QUIZ_ASSERT(ref1.identifier() == 1);
+  }
+  {
+    // The first ones have been deleted
+    EditionReference ref0(2_e);
+    QUIZ_ASSERT(ref0.identifier() == 0);
+    // Copy
+    EditionReference ref1 = ref0;
+    QUIZ_ASSERT(ref1.identifier() == 1);
+    // Move
+    EditionReference stolenRef0 = std::move(ref0);
+    QUIZ_ASSERT(stolenRef0.identifier() == 0);
+    // ref0 has been invalidated by the move
+    QUIZ_ASSERT(static_cast<Tree*>(ref0) == nullptr);
+  }
+  // Destruction of the references does not destruct trees
+  QUIZ_ASSERT(SharedEditionPool->numberOfTrees() == 3);
+}
+
 QUIZ_CASE(pcj_tree_comments) {
   EditionReference u, v;
   auto setup = [&]() {

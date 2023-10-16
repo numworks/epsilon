@@ -110,7 +110,7 @@ bool CachePool::freeBlocks(int numberOfBlocks) {
 
 void CachePool::reset() {
   m_referenceTable.reset();
-  SharedEditionPool->setSize(k_maxNumberOfBlocks);
+  SharedEditionPool->setMaximumSize(k_maxNumberOfBlocks);
   SharedEditionPool->flush();
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Cache, "Flush");
@@ -124,7 +124,7 @@ CachePool::CachePool() : m_referenceTable(this) {
 }
 
 void CachePool::resizeEditionPool() {
-  SharedEditionPool->setSize(k_maxNumberOfBlocks - size());
+  SharedEditionPool->setMaximumSize(k_maxNumberOfBlocks - size());
 }
 
 void CachePool::translate(uint16_t offset, Block *start) {

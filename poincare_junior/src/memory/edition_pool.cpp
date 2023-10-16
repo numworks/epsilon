@@ -80,9 +80,9 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
 
 OMG::GlobalBox<EditionPool> EditionPool::SharedEditionPool;
 
-void EditionPool::setSize(size_t size) {
-  assert(m_numberOfBlocks <= size);
-  m_size = size;
+void EditionPool::setMaximumSize(size_t size) {
+  assert(m_size <= size);
+  m_maximumSize = size;
 }
 
 uint16_t EditionPool::referenceNode(Tree *node) {
@@ -90,7 +90,7 @@ uint16_t EditionPool::referenceNode(Tree *node) {
 }
 
 void EditionPool::flush() {
-  m_numberOfBlocks = 0;
+  m_size = 0;
   m_referenceTable.reset();
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Flush");
@@ -137,7 +137,7 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   checkForEnoughSpace(numberOfBlocks);
   size_t insertionSize = numberOfBlocks * sizeof(Block);
   if (at && destination == lastBlock()) {
-    m_numberOfBlocks += numberOfBlocks;
+    m_size += numberOfBlocks;
     memcpy(destination, source, insertionSize);
     return true;
   }
@@ -148,7 +148,7 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
     source += insertionSize;
   }
 
-  m_numberOfBlocks += numberOfBlocks;
+  m_size += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *block, const Block *destination,
@@ -165,8 +165,8 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
   // If this assert triggers, add an escape case
   assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
-  assert(m_numberOfBlocks >= numberOfBlocks);
-  m_numberOfBlocks -= numberOfBlocks;
+  assert(m_size >= numberOfBlocks);
+  m_size -= numberOfBlocks;
   memmove(address, address + deletionSize,
           static_cast<Block *>(lastBlock()) - address);
   m_referenceTable.updateNodes(
@@ -276,16 +276,16 @@ Tree *EditionPool::push(Types... args) {
 }
 
 void EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
-  if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
+  if (m_size + numberOfRequiredBlock > m_maximumSize) {
     // Ask the cache to free some space
     /* TODO: assert that we don't delete last called treeForIdentifier otherwise
      * can't copyTreeFromAddress if in cache... */
-    if (!CachePool::SharedCachePool->freeBlocks(
-            m_numberOfBlocks + numberOfRequiredBlock - m_size)) {
+    if (!CachePool::SharedCachePool->freeBlocks(m_size + numberOfRequiredBlock -
+                                                m_maximumSize)) {
       ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
     }
   }
-  assert(m_numberOfBlocks + numberOfRequiredBlock <= m_size);
+  assert(m_size + numberOfRequiredBlock <= m_maximumSize);
 }
 
 template Tree *EditionPool::push<BlockType::Addition, int>(int);

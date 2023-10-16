@@ -14,13 +14,14 @@ class EditionPool final : public Pool {
  public:
   static OMG::GlobalBox<EditionPool> SharedEditionPool;
 
-  EditionPool(Block *firstBlock, size_t size, int numberOfBlocks = 0)
+  EditionPool(Block *firstBlock, size_t size)
       : m_referenceTable(this),
         m_firstBlock(firstBlock),
-        m_numberOfBlocks(numberOfBlocks),
-        m_size(size) {}
+        m_size(0),
+        m_maximumSize(size) {}
 
-  void setSize(size_t size);
+  size_t maximumSize() const { return m_maximumSize; }
+  void setMaximumSize(size_t size);
 
   uint16_t referenceNode(Tree *node);
   void flush();
@@ -65,13 +66,8 @@ class EditionPool final : public Pool {
   const Block *firstBlock() const override { return m_firstBlock; }
   using Pool::lastBlock;
   // If EditionPool is empty, first and last blocks are the same one
-  const Block *lastBlock() const override {
-    return m_firstBlock + m_numberOfBlocks;
-  }
-  size_t fullSize() const { return m_size; }
-  void setNumberOfBlocks(int numberOfBlocks) {
-    m_numberOfBlocks = numberOfBlocks;
-  }
+  const Block *lastBlock() const override { return m_firstBlock + m_size; }
+  void setNumberOfBlocks(int numberOfBlocks) { m_size = numberOfBlocks; }
 
   // Will changing the modified tree alter the other tree ?
   bool isAfter(const Tree *other, Tree *modified) {
@@ -129,8 +125,8 @@ class EditionPool final : public Pool {
    * them in m_referenceTable and implement a destructor on EditionReference. */
   ReferenceTable m_referenceTable;
   Block *m_firstBlock;
-  int m_numberOfBlocks;
   size_t m_size;
+  size_t m_maximumSize;
 };
 
 #define SharedEditionPool EditionPool::SharedEditionPool

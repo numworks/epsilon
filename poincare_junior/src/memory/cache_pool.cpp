@@ -84,9 +84,7 @@ void CachePool::ReferenceTable::removeLastReferences(uint16_t newFirstIndex) {
 OMG::GlobalBox<CachePool> CachePool::SharedCachePool;
 
 uint16_t CachePool::storeEditedTree() {
-  if (SharedEditionPool->size() == 0) {
-    return ReferenceTable::NoNodeIdentifier;
-  }
+  assert(SharedEditionPool->numberOfTrees() == 1);
   if (m_referenceTable.isFull()) {
     m_referenceTable.removeLastReferences(1);
   }

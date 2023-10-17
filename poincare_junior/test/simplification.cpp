@@ -368,7 +368,7 @@ QUIZ_CASE(pcj_unit_simplification) {
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km");
-  simplifies_to("1E-9_s", "1×_ns");
+  simplifies_to("1ᴇ-9_s", "1×_ns");
 
   // TODO: Decide on implicit '_' parsing
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );

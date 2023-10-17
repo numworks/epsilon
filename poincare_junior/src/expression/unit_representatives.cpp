@@ -238,11 +238,6 @@ int Angle::setAdditionalExpressionsWithExactValue(
 }
 #endif
 
-const UnitPrefix* Mass::basePrefix() const {
-  return  // isBaseUnit() ? UnitPrefix::Prefixes() + Unit::k_kiloPrefixIndex
-      UnitPrefix::EmptyPrefix();
-}
-
 #if 0
 const UnitRepresentative* Mass::standardRepresentative(
     double value, double exponent, const ReductionContext& reductionContext,

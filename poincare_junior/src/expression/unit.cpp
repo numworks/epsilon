@@ -113,7 +113,6 @@ Tree* DimensionVector::toBaseUnits() const {
     const UnitRepresentative* representative =
         *UnitRepresentative::DefaultRepresentatives()[i];
     assert(representative);
-    const UnitPrefix* prefix = representative->basePrefix();
     int8_t exponent = coefficientAtIndex(i);
     if (exponent == 0) {
       continue;
@@ -121,13 +120,7 @@ Tree* DimensionVector::toBaseUnits() const {
     if (exponent != 1) {
       SharedEditionPool->push(BlockType::Power);
     }
-    if (prefix != UnitPrefix::EmptyPrefix()) {
-      SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->push(BlockType::Power);
-      Integer::Push(10);
-      Integer::Push(-prefix->exponent());
-    }
-    Unit::Push(representative, prefix);
+    Unit::Push(representative);
     if (exponent != 1) {
       Integer::Push(exponent);
     }
@@ -313,8 +306,8 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
       break;
     }
     // Build and add the best derived unit
-    Tree* derivedUnit = Unit::Push(bestDim->representativesOfSameDimension()[0],
-                                   bestDim->basePrefix());
+    Tree* derivedUnit =
+        Unit::Push(bestDim->representativesOfSameDimension()[0]);
 
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
@@ -389,7 +382,7 @@ const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
     currentRepresentative++;
   }
   if (!*prefix) {
-    *prefix = result->basePrefix();
+    *prefix = UnitPrefix::EmptyPrefix();
   }
   return result;
 }
@@ -499,18 +492,16 @@ const UnitPrefix* UnitRepresentative::findBestPrefix(double value,
     return UnitPrefix::EmptyPrefix();
   }
   if (value < Poincare::Float<double>::EpsilonLax()) {
-    return basePrefix();
+    return UnitPrefix::EmptyPrefix();
   }
-  const UnitPrefix* res = basePrefix();
+  const UnitPrefix* res = UnitPrefix::EmptyPrefix();
   const float magnitude = std::log10(std::fabs(value));
   float bestOrder = magnitude;
   for (int i = 0; i < UnitPrefix::k_numberOfPrefixes; i++) {
     if (!canPrefix(UnitPrefix::Prefixes() + i, false)) {
       continue;
     }
-    float order = magnitude - (UnitPrefix::Prefixes()[i].exponent() -
-                               basePrefix()->exponent()) *
-                                  exponent;
+    float order = magnitude - UnitPrefix::Prefixes()[i].exponent() * exponent;
     if (compareMagnitudeOrders(order, bestOrder)) {
       bestOrder = order;
       res = UnitPrefix::Prefixes() + i;
@@ -931,36 +922,27 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
      * This is not true for temperatures (0 K != 0°C != 0°F). */
     SetRepresentative(
         unit, GetRepresentative(unit)->representativesOfSameDimension()[0]);
-    SetPrefix(unit, GetRepresentative(unit)->basePrefix());
+    SetPrefix(unit, UnitPrefix::EmptyPrefix());
     return;
   }
   // Convert value to base units
   double baseValue =
-      *value *
-      std::pow(
-          GetRepresentative(unit)->ratio() *
-              std::pow(10.,
-                       GetPrefix(unit)->exponent() -
-                           GetRepresentative(unit)->basePrefix()->exponent()),
-          exponent);
+      *value * std::pow(GetRepresentative(unit)->ratio() *
+                            std::pow(10., GetPrefix(unit)->exponent()),
+                        exponent);
   const UnitPrefix* bestPrefix =
       (optimizePrefix) ? UnitPrefix::EmptyPrefix() : nullptr;
   const UnitRepresentative* bestRepresentative =
       GetRepresentative(unit)->standardRepresentative(baseValue, exponent,
                                                       unitFormat, &bestPrefix);
   if (!optimizePrefix) {
-    bestPrefix = bestRepresentative->basePrefix();
+    bestPrefix = UnitPrefix::EmptyPrefix();
   }
 
   if (bestRepresentative != GetRepresentative(unit)) {
-    *value =
-        *value *
-        std::pow(
-            GetRepresentative(unit)->ratio() / bestRepresentative->ratio() *
-                std::pow(10.,
-                         bestRepresentative->basePrefix()->exponent() -
-                             GetRepresentative(unit)->basePrefix()->exponent()),
-            exponent);
+    *value = *value * std::pow(GetRepresentative(unit)->ratio() /
+                                   bestRepresentative->ratio(),
+                               exponent);
     SetRepresentative(unit, bestRepresentative);
   }
   if (bestPrefix != GetPrefix(unit)) {

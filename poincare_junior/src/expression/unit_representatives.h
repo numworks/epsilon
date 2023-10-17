@@ -139,8 +139,6 @@ class Mass : public Helper<Mass> {
   constexpr static const Mass* representatives[] = {
       &kilogram, &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
 
-  const UnitPrefix* basePrefix() const override;
-
 #if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, const ReductionContext& reductionContext,

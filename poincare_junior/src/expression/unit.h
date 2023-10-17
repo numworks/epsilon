@@ -157,9 +157,6 @@ class UnitRepresentative {
    * all representatives for this's dimension. */
   virtual const UnitRepresentative* const* representativesOfSameDimension()
       const = 0;
-  virtual const UnitPrefix* basePrefix() const {
-    return UnitPrefix::EmptyPrefix();
-  }
   virtual bool isBaseUnit() const = 0;
   virtual const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
@@ -333,7 +330,7 @@ class Unit {
 
   static bool IsBaseUnit(const Tree* unit) {
     return GetRepresentative(unit)->isBaseUnit() &&
-           GetPrefix(unit) == GetRepresentative(unit)->basePrefix();
+           GetPrefix(unit) == UnitPrefix::EmptyPrefix();
   }
 #endif
   static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
@@ -345,7 +342,7 @@ class Unit {
   static void RemoveUnit(Tree* unit);
   // Push Unit
   static Tree* Push(const UnitRepresentative* unitRepresentative,
-                    const UnitPrefix* unitPrefix);
+                    const UnitPrefix* unitPrefixx = UnitPrefix::EmptyPrefix());
   static const UnitRepresentative* GetRepresentative(const Tree* unit);
   static void SetRepresentative(Tree* unit,
                                 const UnitRepresentative* representative);

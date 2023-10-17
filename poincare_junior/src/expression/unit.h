@@ -353,6 +353,8 @@ class Unit {
   static void SetPrefix(Tree* unit, const UnitPrefix* prefix);
 };
 
+Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents);
+
 }  // namespace PoincareJ
 
 #endif

@@ -157,7 +157,12 @@ bool Beautification::DeepBeautify(Tree* node,
       baseUnits = Unit::Push(projectionContext.m_dimension.unit.representative,
                              UnitPrefix::EmptyPrefix());
     } else {
-      baseUnits = projectionContext.m_dimension.unit.vector.toBaseUnits();
+      DimensionVector dimension = projectionContext.m_dimension.unit.vector;
+      baseUnits = SharedEditionPool->push<BlockType::Multiplication>(2);
+      ChooseBestDerivedUnits(dimension);
+      dimension.toBaseUnits();
+      Simplification::DeepSystematicReduce(baseUnits);
+      // FIXME
       Simplification::DeepSystematicReduce(baseUnits);
     }
     node->moveTreeOverTree(PatternMatching::CreateAndSimplify(

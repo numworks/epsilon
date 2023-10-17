@@ -133,8 +133,8 @@ Tree* DimensionVector::toBaseUnits() const {
     }
     NAry::SetNumberOfChildren(result, ++numberOfChildren);
   }
-  assert(numberOfChildren > 0);
-  NAry::SquashIfUnary(result);
+  // assert(numberOfChildren > 0);
+  NAry::SquashIfUnary(result) || NAry::SquashIfEmpty(result);
   return result;
 }
 
@@ -269,7 +269,7 @@ static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
   return isSimpler;
 }
 
-Tree* ChooseBestDerivedUnits(DimensionVector unitsExponents) {
+Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
   /* Step 2a: Recognize derived units
    * - Look up in the table of derived units, the one which itself or its
    * inverse simplifies 'units' the most.
@@ -313,8 +313,10 @@ Tree* ChooseBestDerivedUnits(DimensionVector unitsExponents) {
       break;
     }
     // Build and add the best derived unit
-    Tree* derivedUnit = Unit::Push(bestDim->representativesOfSameDimension()[0],
-                                   bestDim->basePrefix());
+    Tree* derivedUnit = SharedEditionPool->push<BlockType::Multiplication>(2);
+    bestDim->ratioExpressionReduced()->clone();
+    Unit::Push(bestDim->representativesOfSameDimension()[0],
+               bestDim->basePrefix());
 
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
@@ -327,14 +329,22 @@ Tree* ChooseBestDerivedUnits(DimensionVector unitsExponents) {
     unitsExponents = bestRemainderExponents;
     unitsSupportSize = bestRemainderSupportSize;
   }
+  NAry::SquashIfEmpty(unitsAccu);
   return unitsAccu;
+}
+
 #if 0
+bool SimplifyUnitProduct(Tree* units) {
+  Tree* unitsAccu =
+      ChooseBestDerivedUnits(DimensionVector::FromBaseUnits(units));
   // Apply simplifications
   if (unitsAccu->numberOfChildren() > 0) {
     Tree* newUnits;
     // Divide by derived units, separate units and generated values
-    units = Division::Builder(units, unitsAccu.clone())
-      .cloneAndReduceAndRemoveUnit(reductionContext, &newUnits);
+    PatternMatching::MatchAndReplace(units, KA, KMult(KA, KPow(KB, -1_e)),
+                                     {.KB = unitsAccu});
+    // units = Division::Builder(units, unitsAccu.clone())
+    // .cloneAndReduceAndRemoveUnit(reductionContext, &newUnits);
     // Assemble final value
     Tree* m = Multiplication::Builder(units);
     self.replaceWithInPlace(m);
@@ -348,8 +358,8 @@ Tree* ChooseBestDerivedUnits(DimensionVector unitsExponents) {
       static_cast<Multiplication&>(units).mergeSameTypeChildrenInPlace();
     }
   }
-#endif
 }
+#endif
 
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
     DimensionVector vector) {

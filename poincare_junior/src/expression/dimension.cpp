@@ -98,7 +98,12 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       const Tree* index = t->child(1);
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
-      return index->type().isRational() || index->type() == BlockType::Decimal;
+      return index->type().isRational() ||
+             index->type() == BlockType::Decimal ||
+             (index->type() == BlockType::Multiplication &&
+              index->numberOfChildren() == 2 &&
+              index->child(0)->type() == BlockType::MinusOne &&
+              index->child(1)->type().isRational());
     }
     case BlockType::Sum:
     case BlockType::Product:

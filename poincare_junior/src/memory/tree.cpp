@@ -108,6 +108,11 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
     return;
   }
+  if (type() == BlockType::Unit) {
+    stream << " representativeId=" << static_cast<int>(nodeValue(0));
+    stream << " prefixId=" << static_cast<int>(nodeValue(1));
+    return;
+  }
 }
 
 void Tree::logBlocks(std::ostream& stream, bool recursive,

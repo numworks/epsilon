@@ -14,6 +14,7 @@
 // #include <algorithm>
 // #include <array>
 // #include <utility>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
@@ -230,22 +231,25 @@ const UnitRepresentative* UnitRepresentative::FromId(uint8_t id) {
   return UnitRepresentative::DefaultRepresentatives()[0][0];
 }
 
-static bool CanSimplifyUnitProduct(
-    const UnitNode::DimensionVector& unitsExponents, size_t& unitsSupportSize,
-    const UnitNode::DimensionVector* entryUnitExponents, int entryUnitExponent,
-    int8_t& bestUnitExponent, UnitNode::DimensionVector& bestRemainderExponents,
-    size_t& bestRemainderSupportSize) {
+static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
+                                   size_t& unitsSupportSize,
+                                   const DimensionVector* entryUnitExponents,
+                                   int entryUnitExponent,
+                                   int8_t& bestUnitExponent,
+                                   DimensionVector& bestRemainderExponents,
+                                   size_t& bestRemainderSupportSize) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' int array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  UnitNode::DimensionVector simplifiedExponents;
+  DimensionVector simplifiedExponents;
 
-  for (size_t i = 0; i < UnitNode::k_numberOfBaseUnits; i++) {
+  for (size_t i = 0; i < DimensionVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
     simplifiedExponents.setCoefficientAtIndex(
-        i, unitsExponents.coefficientAtIndex(i) -
-               entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
+        unitsExponents.coefficientAtIndex(i) -
+            entryUnitExponent * entryUnitExponents->coefficientAtIndex(i),
+        i);
   }
   size_t simplifiedSupportSize = simplifiedExponents.supportSize();
   /* Note: A metric is considered simpler if the support size (number of
@@ -265,7 +269,7 @@ static bool CanSimplifyUnitProduct(
   return isSimpler;
 }
 
-void ChooseBestDerivedUnits(DimensionVector unitsExponents) {
+Tree* ChooseBestDerivedUnits(DimensionVector unitsExponents) {
   /* Step 2a: Recognize derived units
    * - Look up in the table of derived units, the one which itself or its
    * inverse simplifies 'units' the most.
@@ -273,25 +277,22 @@ void ChooseBestDerivedUnits(DimensionVector unitsExponents) {
    * or its inverse in 'unitsAccu'.
    * - Repeat those steps until no more simplification is possible.
    */
-  Multiplication unitsAccu = Multiplication::Builder();
+  Tree* unitsAccu = KMult()->clone();
   /* If exponents are not integers, FromBaseUnits will return a null
    * vector, preventing any attempt at simplification. This protects us
    * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
-  UnitNode::DimensionVector unitsExponents =
-      UnitNode::DimensionVector::FromBaseUnits(units);
   size_t unitsSupportSize = unitsExponents.supportSize();
-  UnitNode::DimensionVector bestRemainderExponents;
+  DimensionVector bestRemainderExponents;
   size_t bestRemainderSupportSize;
   while (unitsSupportSize > 1) {
-    const UnitNode::Representative* bestDim = nullptr;
+    const UnitRepresentative* bestDim = nullptr;
     int8_t bestUnitExponent = 0;
     // Look up in the table of derived units.
-    for (int i = UnitNode::k_numberOfBaseUnits;
-         i < UnitNode::Representative::k_numberOfDimensions - 1; i++) {
-      const UnitNode::Representative* dim =
-          UnitNode::Representative::DefaultRepresentatives()[i];
-      const UnitNode::DimensionVector entryUnitExponents =
-          dim->dimensionVector();
+    for (int i = DimensionVector::k_numberOfBaseUnits;
+         i < UnitRepresentative::k_numberOfDimensions - 1; i++) {
+      const UnitRepresentative* dim =
+          UnitRepresentative::DefaultRepresentatives()[i][0];
+      const DimensionVector entryUnitExponents = dim->dimensionVector();
       // A simplification is tried by either multiplying or dividing
       if (CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
                                  &entryUnitExponents, 1, bestUnitExponent,
@@ -312,28 +313,30 @@ void ChooseBestDerivedUnits(DimensionVector unitsExponents) {
       break;
     }
     // Build and add the best derived unit
-    Expression derivedUnit = Unit::Builder(
-        bestDim->representativesOfSameDimension(), bestDim->basePrefix());
+    Tree* derivedUnit = Unit::Push(bestDim->representativesOfSameDimension()[0],
+                                   bestDim->basePrefix());
 
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
-      derivedUnit = Power::Builder(derivedUnit, Rational::Builder(-1));
+      PatternMatching::MatchAndReplace(derivedUnit, KA, KPow(KA, -1_e));
     }
 
-    const int position = unitsAccu.numberOfChildren();
-    unitsAccu.addChildAtIndexInPlace(derivedUnit, position, position);
+    const int position = unitsAccu->numberOfChildren();
+    NAry::AddChildAtIndex(unitsAccu, derivedUnit, position);
     // Update remainder units and their exponents for next simplifications
     unitsExponents = bestRemainderExponents;
     unitsSupportSize = bestRemainderSupportSize;
   }
+  return unitsAccu;
+#if 0
   // Apply simplifications
-  if (unitsAccu.numberOfChildren() > 0) {
-    Expression newUnits;
+  if (unitsAccu->numberOfChildren() > 0) {
+    Tree* newUnits;
     // Divide by derived units, separate units and generated values
     units = Division::Builder(units, unitsAccu.clone())
-                .cloneAndReduceAndRemoveUnit(reductionContext, &newUnits);
+      .cloneAndReduceAndRemoveUnit(reductionContext, &newUnits);
     // Assemble final value
-    Multiplication m = Multiplication::Builder(units);
+    Tree* m = Multiplication::Builder(units);
     self.replaceWithInPlace(m);
     m.addChildAtIndexInPlace(self, 0, 1);
     self = m;
@@ -345,6 +348,7 @@ void ChooseBestDerivedUnits(DimensionVector unitsExponents) {
       static_cast<Multiplication&>(units).mergeSameTypeChildrenInPlace();
     }
   }
+#endif
 }
 
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(

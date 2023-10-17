@@ -149,6 +149,9 @@ bool Beautification::DeepBeautify(Tree* node,
   bool changed =
       (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
       Approximation::ApproximateAndReplaceEveryScalar(node);
+  changed = Tree::ApplyShallowInDepth(node, ShallowBeautify, &projectionContext,
+                                      false) ||
+            changed;
   if (projectionContext.m_dimension.isUnit()) {
     assert(!projectionContext.m_dimension.unit.vector.isEmpty());
     EditionReference baseUnits;
@@ -170,9 +173,7 @@ bool Beautification::DeepBeautify(Tree* node,
     baseUnits->removeTree();
     changed = true;
   }
-  return Tree::ApplyShallowInDepth(node, ShallowBeautify, &projectionContext,
-                                   false) ||
-         changed;
+  return changed;
 }
 
 // Reverse most system projections to display better expressions

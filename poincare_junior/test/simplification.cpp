@@ -365,7 +365,7 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("(1_°C)^2", "undef");
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
-  simplifies_to("π×_rad×_°", "π^(2)×_rad^(2)/180");
+  simplifies_to("π×_rad×_°", "π^(2)/180×_rad^(2)");
 
   // TODO: Handle BestRepresentative
   //   simplifies_to("1_m+1_km", "1.001km");

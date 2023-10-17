@@ -143,34 +143,42 @@ void Beautification::SplitMultiplication(const Tree* expr,
   NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
 }
 
-bool Beautification::DeepBeautify(Tree* node,
+bool Beautification::DeepBeautify(Tree* expr,
                                   ProjectionContext projectionContext) {
   // Simplification might have unlocked more approximations. Try again.
   bool changed =
       (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
-      Approximation::ApproximateAndReplaceEveryScalar(node);
-  changed = Tree::ApplyShallowInDepth(node, ShallowBeautify, &projectionContext,
+      Approximation::ApproximateAndReplaceEveryScalar(expr);
+  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify, &projectionContext,
                                       false) ||
             changed;
+  DimensionVector dimension = projectionContext.m_dimension.unit.vector;
   if (projectionContext.m_dimension.isUnit()) {
-    assert(!projectionContext.m_dimension.unit.vector.isEmpty());
-    EditionReference baseUnits;
+    assert(!dimension.isEmpty());
+    EditionReference units;
     if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
-      assert(projectionContext.m_dimension.unit.vector.supportSize() == 1);
-      baseUnits = Unit::Push(projectionContext.m_dimension.unit.representative,
-                             UnitPrefix::EmptyPrefix());
+      assert(dimension.supportSize() == 1);
+      units = Unit::Push(projectionContext.m_dimension.unit.representative,
+                         UnitPrefix::EmptyPrefix());
+    } else if (projectionContext.m_dimension.isAngleUnit()) {
+      units = dimension.toBaseUnits();
     } else {
-      DimensionVector dimension = projectionContext.m_dimension.unit.vector;
-      baseUnits = SharedEditionPool->push<BlockType::Multiplication>(2);
+      double value = Approximation::To<double>(expr);
+      units = SharedEditionPool->push<BlockType::Multiplication>(2);
       ChooseBestDerivedUnits(dimension);
       dimension.toBaseUnits();
-      Simplification::DeepSystematicReduce(baseUnits);
+      Simplification::DeepSystematicReduce(units);
       // FIXME
-      Simplification::DeepSystematicReduce(baseUnits);
+      Simplification::DeepSystematicReduce(units);
+      Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
+                                                      UnitFormat::Metric);
+      Tree* approximated =
+          SharedEditionPool->push<BlockType::Float>(static_cast<float>(value));
+      expr->moveTreeOverTree(approximated);
     }
-    node->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KMult(KA, KB), {.KA = node, .KB = baseUnits}));
-    baseUnits->removeTree();
+    expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KMult(KA, KB), {.KA = expr, .KB = units}));
+    units->removeTree();
     changed = true;
   }
   return changed;

@@ -270,7 +270,7 @@ static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
 }
 
 Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
-  /* Step 2a: Recognize derived units
+  /* Recognize derived units
    * - Look up in the table of derived units, the one which itself or its
    * inverse simplifies 'units' the most.
    * - If an entry is found, simplify 'units' and add the corresponding unit
@@ -313,10 +313,8 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
       break;
     }
     // Build and add the best derived unit
-    Tree* derivedUnit = SharedEditionPool->push<BlockType::Multiplication>(2);
-    bestDim->ratioExpressionReduced()->clone();
-    Unit::Push(bestDim->representativesOfSameDimension()[0],
-               bestDim->basePrefix());
+    Tree* derivedUnit = Unit::Push(bestDim->representativesOfSameDimension()[0],
+                                   bestDim->basePrefix());
 
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
@@ -332,34 +330,6 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
   NAry::SquashIfEmpty(unitsAccu);
   return unitsAccu;
 }
-
-#if 0
-bool SimplifyUnitProduct(Tree* units) {
-  Tree* unitsAccu =
-      ChooseBestDerivedUnits(DimensionVector::FromBaseUnits(units));
-  // Apply simplifications
-  if (unitsAccu->numberOfChildren() > 0) {
-    Tree* newUnits;
-    // Divide by derived units, separate units and generated values
-    PatternMatching::MatchAndReplace(units, KA, KMult(KA, KPow(KB, -1_e)),
-                                     {.KB = unitsAccu});
-    // units = Division::Builder(units, unitsAccu.clone())
-    // .cloneAndReduceAndRemoveUnit(reductionContext, &newUnits);
-    // Assemble final value
-    Tree* m = Multiplication::Builder(units);
-    self.replaceWithInPlace(m);
-    m.addChildAtIndexInPlace(self, 0, 1);
-    self = m;
-    // Update units with derived and base units
-    if (newUnits.isUninitialized()) {
-      units = unitsAccu;
-    } else {
-      units = Multiplication::Builder(unitsAccu, newUnits);
-      static_cast<Multiplication&>(units).mergeSameTypeChildrenInPlace();
-    }
-  }
-}
-#endif
 
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
     DimensionVector vector) {
@@ -660,7 +630,9 @@ static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     exponent = Approximation::To<double>(childExponent);
     factor = factor->child(0);
   }
-  assert(factor->type() == BlockType::Unit);
+  if (factor->type() != BlockType::Unit) {
+    return;
+  }
   if (exponent == 0.f) {
     /* Finding the best representative for a unit with exponent 0 doesn't
      * really make sense, and should only happen with a weak ReductionTarget

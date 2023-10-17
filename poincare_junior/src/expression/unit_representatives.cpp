@@ -36,7 +36,8 @@ const Angle Angle::arcMinute = {"'", KDiv(π_e, 10800_e), None, None};
 const Angle Angle::degree = {"°", KDiv(π_e, 180_e), None, None};
 const Angle Angle::gradian = {"gon", KDiv(π_e, 200_e), None, None};
 
-const Mass Mass::gram = {"g", 1._e, All, NegativeAndKilo};
+const Mass Mass::kilogram = {"kg", 1_e, None, None};
+const Mass Mass::gram = {"g", 0.001_e, All, Negative};
 const Mass Mass::ton = {"t", 1000._e, PositiveLongScale, PositiveLongScale};
 const Mass Mass::dalton = {"Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All,
                            All};
@@ -238,8 +239,8 @@ int Angle::setAdditionalExpressionsWithExactValue(
 #endif
 
 const UnitPrefix* Mass::basePrefix() const {
-  return isBaseUnit() ? UnitPrefix::Prefixes() + Unit::k_kiloPrefixIndex
-                      : UnitPrefix::EmptyPrefix();
+  return  // isBaseUnit() ? UnitPrefix::Prefixes() + Unit::k_kiloPrefixIndex
+      UnitPrefix::EmptyPrefix();
 }
 
 #if 0

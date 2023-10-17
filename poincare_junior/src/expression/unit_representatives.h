@@ -128,6 +128,7 @@ class Mass : public Helper<Mass> {
  public:
   constexpr static DimensionVector Dimension{.mass = 1};
 
+  const static Mass kilogram;
   const static Mass gram;
   const static Mass ton;
   const static Mass ounce;
@@ -136,7 +137,7 @@ class Mass : public Helper<Mass> {
   const static Mass longTon;
   const static Mass dalton;
   constexpr static const Mass* representatives[] = {
-      &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
+      &kilogram, &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
 
   const UnitPrefix* basePrefix() const override;
 

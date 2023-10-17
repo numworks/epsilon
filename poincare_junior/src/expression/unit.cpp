@@ -230,6 +230,176 @@ const UnitRepresentative* UnitRepresentative::FromId(uint8_t id) {
   return UnitRepresentative::DefaultRepresentatives()[0][0];
 }
 
+static bool CanSimplifyUnitProduct(
+    const UnitNode::DimensionVector& unitsExponents, size_t& unitsSupportSize,
+    const UnitNode::DimensionVector* entryUnitExponents, int entryUnitExponent,
+    int8_t& bestUnitExponent, UnitNode::DimensionVector& bestRemainderExponents,
+    size_t& bestRemainderSupportSize) {
+  /* This function tries to simplify a Unit product (given as the
+   * 'unitsExponents' int array), by applying a given operation. If the
+   * result of the operation is simpler, 'bestUnit' and
+   * 'bestRemainder' are updated accordingly. */
+  UnitNode::DimensionVector simplifiedExponents;
+
+#if 0
+  /* In the current algorithm, simplification is attempted using derived units
+   * with no exponents. Some good simplifications might be missed:
+   *    For instance with _A^2*_s^2, a first attempt will be to simplify to
+   *    _C_A_s which has a bigger supportSize and will not be kept, the output
+   *    will stay _A^2*_s^2.
+   * With the commented code, this issue is solved by trying to simplify with
+   * the highest exponent possible, so that, in this example, _A^2*_s^2 can be
+   * simplified to _C^2.
+   * An optimization might be possible using algorithms minimizing the sum of
+   * absolute difference of array elements */
+  int n = 0;
+  int best_norm;
+  // TODO define a norm function summing all base units exponents
+  int norm_temp = unitsExponents.norm();
+  /* To extend this algorithm to square root simplifications, rational exponents
+   * can be handled, and a 1/2 step can be used (but it should be asserted that
+   * no square root simplification is performed if all exponents are integers.*/
+  int step = 1;
+  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+    // Set simplifiedExponents to unitsExponents
+    simplifiedExponents.setCoefficientAtIndex(i, unitsExponents.coefficientAtIndex(i));
+  }
+  do {
+    best_norm = norm_temp;
+    n+= step;
+    for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+      // Simplify unitsExponents with base units from derived unit
+      simplifiedExponents.setCoefficientAtIndex(i, simplifiedExponents.coefficientAtIndex(i) - entryUnitExponent * step * entryUnitExponents->coefficientAtIndex(i));
+    }
+    int simplifiedNorm = simplifiedExponents.norm();
+    // Temp norm is derived norm (n) + simplified norm
+    norm_temp = n + simplifiedNorm;
+  } while (norm_temp < best_norm);
+  // Undo last step as it did not reduce the norm
+  n -= step;
+#endif
+
+  for (size_t i = 0; i < UnitNode::k_numberOfBaseUnits; i++) {
+#if 0
+    // Undo last step as it did not reduce the norm
+    simplifiedExponents.setCoefficientAtIndex(i, simplifiedExponents.coefficientAtIndex(i) + entryUnitExponent * step * entryUnitExponents->coefficientAtIndex(i));
+#else
+    // Simplify unitsExponents with base units from derived unit
+    simplifiedExponents.setCoefficientAtIndex(
+        i, unitsExponents.coefficientAtIndex(i) -
+               entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
+#endif
+  }
+  size_t simplifiedSupportSize = simplifiedExponents.supportSize();
+  /* Note: A metric is considered simpler if the support size (number of
+   * symbols) is reduced. A norm taking coefficients into account is possible.
+   * One could use the sum of all coefficients to favor _C_s from _A_s^2.
+   * However, replacing _m_s^-2 with _N_kg^-1 should be avoided. */
+  bool isSimpler = (1 + simplifiedSupportSize < unitsSupportSize);
+
+  if (isSimpler) {
+#if 0
+    bestUnitExponent = entryUnitExponent * n * step;
+#else
+    bestUnitExponent = entryUnitExponent;
+#endif
+    bestRemainderExponents = simplifiedExponents;
+    bestRemainderSupportSize = simplifiedSupportSize;
+    /* unitsSupportSize is updated and will be taken into
+     * account in next iterations of CanSimplifyUnitProduct. */
+    unitsSupportSize = 1 + simplifiedSupportSize;
+  }
+  return isSimpler;
+}
+
+void ChooseBestDerivedUnits(DimensionVector unitsExponents) {
+  /* Step 2a: Recognize derived units
+   * - Look up in the table of derived units, the one which itself or its
+   * inverse simplifies 'units' the most.
+   * - If an entry is found, simplify 'units' and add the corresponding unit
+   * or its inverse in 'unitsAccu'.
+   * - Repeat those steps until no more simplification is possible.
+   */
+  Multiplication unitsAccu = Multiplication::Builder();
+  /* If exponents are not integers, FromBaseUnits will return a null
+   * vector, preventing any attempt at simplification. This protects us
+   * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
+  UnitNode::DimensionVector unitsExponents =
+      UnitNode::DimensionVector::FromBaseUnits(units);
+  size_t unitsSupportSize = unitsExponents.supportSize();
+  UnitNode::DimensionVector bestRemainderExponents;
+  size_t bestRemainderSupportSize;
+  while (unitsSupportSize > 1) {
+    const UnitNode::Representative* bestDim = nullptr;
+    int8_t bestUnitExponent = 0;
+    // Look up in the table of derived units.
+    for (int i = UnitNode::k_numberOfBaseUnits;
+         i < UnitNode::Representative::k_numberOfDimensions - 1; i++) {
+      const UnitNode::Representative* dim =
+          UnitNode::Representative::DefaultRepresentatives()[i];
+      const UnitNode::DimensionVector entryUnitExponents =
+          dim->dimensionVector();
+      // A simplification is tried by either multiplying or dividing
+      if (CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
+                                 &entryUnitExponents, 1, bestUnitExponent,
+                                 bestRemainderExponents,
+                                 bestRemainderSupportSize) ||
+          CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
+                                 &entryUnitExponents, -1, bestUnitExponent,
+                                 bestRemainderExponents,
+                                 bestRemainderSupportSize)) {
+        /* If successful, unitsSupportSize, bestUnitExponent,
+         * bestRemainderExponents and bestRemainderSupportSize have been
+         * updated*/
+        bestDim = dim;
+      }
+    }
+    if (bestDim == nullptr) {
+      // No simplification could be performed
+      break;
+    }
+    // Build and add the best derived unit
+    Expression derivedUnit = Unit::Builder(
+        bestDim->representativesOfSameDimension(), bestDim->basePrefix());
+
+#if 0
+        if (bestUnitExponent != 1) {
+          derivedUnit = Power::Builder(derivedUnit, Rational::Builder(bestUnitExponent));
+        }
+#else
+    assert(bestUnitExponent == 1 || bestUnitExponent == -1);
+    if (bestUnitExponent == -1) {
+      derivedUnit = Power::Builder(derivedUnit, Rational::Builder(-1));
+    }
+#endif
+
+    const int position = unitsAccu.numberOfChildren();
+    unitsAccu.addChildAtIndexInPlace(derivedUnit, position, position);
+    // Update remainder units and their exponents for next simplifications
+    unitsExponents = bestRemainderExponents;
+    unitsSupportSize = bestRemainderSupportSize;
+  }
+  // Apply simplifications
+  if (unitsAccu.numberOfChildren() > 0) {
+    Expression newUnits;
+    // Divide by derived units, separate units and generated values
+    units = Division::Builder(units, unitsAccu.clone())
+                .cloneAndReduceAndRemoveUnit(reductionContext, &newUnits);
+    // Assemble final value
+    Multiplication m = Multiplication::Builder(units);
+    self.replaceWithInPlace(m);
+    m.addChildAtIndexInPlace(self, 0, 1);
+    self = m;
+    // Update units with derived and base units
+    if (newUnits.isUninitialized()) {
+      units = unitsAccu;
+    } else {
+      units = Multiplication::Builder(unitsAccu, newUnits);
+      static_cast<Multiplication&>(units).mergeSameTypeChildrenInPlace();
+    }
+  }
+}
+
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
     DimensionVector vector) {
   for (int i = 0; i < k_numberOfDimensions; i++) {

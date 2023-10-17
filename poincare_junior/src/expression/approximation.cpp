@@ -81,6 +81,11 @@ T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
 }
 
 bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
+  if (tree->type() == BlockType::Power &&
+      tree->child(0)->type() == BlockType::Unit) {
+    // Is this a dirty hack ?
+    return false;
+  }
   if (tree->type() == BlockType::Float) {
     return false;
   }

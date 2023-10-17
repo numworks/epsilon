@@ -134,6 +134,7 @@ void simplifies_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_basic_simplification) {
+  simplifies_to("1ᴇ10", "10000000000");
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
@@ -172,13 +173,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("0.0001234", "617/5000000");
   simplifies_to("98765000", "98765000");
   simplifies_to("012345.67890", "123456789/10000");
-  simplifies_to("012345.67890E5", "1234567890");
-  simplifies_to("012345.67890E-3", "123456789/10000000");
+  simplifies_to("012345.67890ᴇ5", "1234567890");
+  simplifies_to("012345.67890ᴇ-3", "123456789/10000000");
   simplifies_to("123456789012345678901234567890",
                 "123456789012345678901234567890");
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
-  simplifies_to("5.E1", "50");
+  simplifies_to("5.ᴇ1", "50");
   simplifies_to("(2+π)*ln(2)", "2×ln(2)+π×ln(2)");
 
   // Trigonometry identities

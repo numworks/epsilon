@@ -362,8 +362,8 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
        * point, except when there is no point */
       decoder.setPosition(start);
     }
-    size_t smallE = OMG::CodePointSearch(
-        &decoder, 'E');  // UCodePointLatinLetterSmallCapitalE);
+    size_t smallE =
+        OMG::CodePointSearch(&decoder, UCodePointLatinLetterSmallCapitalE);
 
     RackLayoutDecoder integerDigits(rack, start,
                                     std::min(smallE, decimalPoint));

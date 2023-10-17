@@ -128,7 +128,7 @@ Token Tokenizer::popNumber() {
 #if 0
   bool exponentIsNegative = false;
 #endif
-  if (canPopCodePoint('E')) {  // UCodePointLatinLetterSmallCapitalE)) {
+  if (canPopCodePoint(UCodePointLatinLetterSmallCapitalE)) {
 #if 0
     exponentIsNegative =
 #endif

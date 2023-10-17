@@ -10,44 +10,53 @@ namespace Representatives {
 // Helper class to add overrides using the static member "representatives"
 template <class R>
 class Helper : public UnitRepresentative {
+ protected:
+  using Self = R;
+  using UnitRepresentative::UnitRepresentative;
+
+  /* Base class for the list of static representatives, their members should all
+   * be subclasses of UnitRepresentative */
+  struct Representatives {
+    operator const UnitRepresentative*() const {
+      return reinterpret_cast<const UnitRepresentative*>(this);
+    }
+  };
+
  public:
   int numberOfRepresentatives() const override {
-    return std::size(R::representatives);
+    constexpr size_t size = sizeof(R::representatives) / sizeof(R);
+    return size;
   };
-  const UnitRepresentative* const* representativesOfSameDimension()
-      const override {
-    return representativesList();
-  };
-  constexpr static const UnitRepresentative* const* representativesList() {
-    return reinterpret_cast<const UnitRepresentative* const*>(
-        R::representatives);
+  const UnitRepresentative* representativesOfSameDimension() const override {
+    return reinterpret_cast<const UnitRepresentative*>(&R::representatives);
   };
   const DimensionVector dimensionVector() const override {
     return R::Dimension;
   }
   bool isBaseUnit() const override {
     if constexpr (R::Dimension.isSI()) {
-      return this == representativesOfSameDimension()[0];
+      return this == representativesOfSameDimension();
     } else {
       return false;
     }
   }
-  using UnitRepresentative::UnitRepresentative;
 };
 
 class Time : public Helper<Time> {
  public:
   constexpr static DimensionVector Dimension{.time = 1};
 
-  const static Time second;
-  const static Time minute;
-  const static Time hour;
-  const static Time day;
-  const static Time week;
-  const static Time month;
-  const static Time year;
-  constexpr static const Time* representatives[] = {
-      &second, &minute, &hour, &day, &week, &month, &year};
+  // The template is required since Time is still incomplete here
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R second;
+    R minute;
+    R hour;
+    R day;
+    R week;
+    R month;
+    R year;
+  };
 
 #if 0
     bool hasSpecialAdditionalExpressions(double value,
@@ -58,24 +67,26 @@ class Time : public Helper<Time> {
         double value, Expression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 #endif
+
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Distance : public Helper<Distance> {
  public:
   constexpr static DimensionVector Dimension{.distance = 1};
 
-  const static Distance meter;
-  const static Distance inch;
-  const static Distance foot;
-  const static Distance yard;
-  const static Distance mile;
-  const static Distance astronomicalUnit;
-  const static Distance lightYear;
-  const static Distance parsec;
-  constexpr static const Distance* representatives[] = {
-      &meter,     &inch,  &foot, &yard, &mile, &astronomicalUnit,
-      &lightYear, &parsec};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R meter;
+    R astronomicalUnit;
+    R lightYear;
+    R parsec;
+    R inch;
+    R foot;
+    R yard;
+    R mile;
+  };
 
 #if 0
   const UnitRepresentative* standardRepresentative(
@@ -91,19 +102,21 @@ class Distance : public Helper<Distance> {
 #endif
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Angle : public Helper<Angle> {
  public:
   constexpr static DimensionVector Dimension{.angle = 1};
 
-  const static Angle radian;
-  const static Angle arcSecond;
-  const static Angle arcMinute;
-  const static Angle degree;
-  const static Angle gradian;
-  constexpr static const Angle* representatives[] = {
-      &radian, &arcSecond, &arcMinute, &degree, &gradian};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R radian;
+    R arcSecond;
+    R arcMinute;
+    R degree;
+    R gradian;
+  };
 
 #if 0
   // Returns a beautified expression
@@ -122,22 +135,24 @@ class Angle : public Helper<Angle> {
 #endif
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Mass : public Helper<Mass> {
  public:
   constexpr static DimensionVector Dimension{.mass = 1};
 
-  const static Mass kilogram;
-  const static Mass gram;
-  const static Mass ton;
-  const static Mass ounce;
-  const static Mass pound;
-  const static Mass shortTon;
-  const static Mass longTon;
-  const static Mass dalton;
-  constexpr static const Mass* representatives[] = {
-      &kilogram, &gram, &ton, &ounce, &pound, &shortTon, &longTon, &dalton};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R kilogram;
+    R gram;
+    R ton;
+    R ounce;
+    R pound;
+    R shortTon;
+    R longTon;
+    R dalton;
+  };
 
 #if 0
   const UnitRepresentative* standardRepresentative(
@@ -153,27 +168,32 @@ class Mass : public Helper<Mass> {
 #endif
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Current : public Helper<Current> {
  public:
   constexpr static DimensionVector Dimension{.current = 1};
 
-  const static Current ampere;
-  constexpr static const Current* representatives[] = {&ampere};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R ampere;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Temperature : public Helper<Temperature> {
  public:
   constexpr static DimensionVector Dimension{.temperature = 1};
 
-  const static Temperature kelvin;
-  const static Temperature celsius;
-  const static Temperature fahrenheit;
-  constexpr static const Temperature* representatives[] = {&kelvin, &celsius,
-                                                           &fahrenheit};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R kelvin;
+    R celsius;
+    R fahrenheit;
+  };
 
 #if 0
   static double ConvertTemperatures(double value,
@@ -193,6 +213,7 @@ class Temperature : public Helper<Temperature> {
         const ReductionContext& reductionContext) const override;
 #endif
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 
  private:
   constexpr static double k_celsiusOrigin = 273.15;
@@ -203,30 +224,39 @@ class AmountOfSubstance : public Helper<AmountOfSubstance> {
  public:
   constexpr static DimensionVector Dimension{.amountOfSubstance = 1};
 
-  const static AmountOfSubstance mole;
-  constexpr static const AmountOfSubstance* representatives[] = {&mole};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R mole;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class LuminousIntensity : public Helper<LuminousIntensity> {
  public:
   constexpr static DimensionVector Dimension{.luminousIntensity = 1};
 
-  const static LuminousIntensity candela;
-  constexpr static const LuminousIntensity* representatives[] = {&candela};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R candela;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Frequency : public Helper<Frequency> {
  public:
   constexpr static DimensionVector Dimension{.time = -1};
 
-  const static Frequency hertz;
-  constexpr static const Frequency* representatives[] = {&hertz};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R hertz;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Force : public Helper<Force> {
@@ -234,10 +264,13 @@ class Force : public Helper<Force> {
   constexpr static DimensionVector Dimension{
       .time = -2, .distance = 1, .mass = 1};
 
-  const static Force newton;
-  constexpr static const Force* representatives[] = {&newton};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R newton;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Pressure : public Helper<Pressure> {
@@ -245,13 +278,15 @@ class Pressure : public Helper<Pressure> {
   constexpr static DimensionVector Dimension{
       .time = -2, .distance = -1, .mass = 1};
 
-  const static Pressure pascal;
-  const static Pressure bar;
-  const static Pressure atmosphere;
-  constexpr static const Pressure* representatives[] = {&pascal, &bar,
-                                                        &atmosphere};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R pascal;
+    R bar;
+    R atmosphere;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Energy : public Helper<Energy> {
@@ -259,9 +294,11 @@ class Energy : public Helper<Energy> {
   constexpr static DimensionVector Dimension{
       .time = -2, .distance = 2, .mass = 1};
 
-  const static Energy joule;
-  const static Energy electronVolt;
-  constexpr static const Energy* representatives[] = {&joule, &electronVolt};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R joule;
+    R electronVolt;
+  };
 
 #if 0
     bool hasSpecialAdditionalExpressions(double value,
@@ -274,6 +311,7 @@ class Energy : public Helper<Energy> {
 #endif
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Power : public Helper<Power> {
@@ -281,21 +319,27 @@ class Power : public Helper<Power> {
   constexpr static DimensionVector Dimension{
       .time = -3, .distance = 2, .mass = 1};
 
-  const static Power watt;
-  const static Power horsePower;
-  constexpr static const Power* representatives[] = {&watt, &horsePower};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R watt;
+    R horsePower;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class ElectricCharge : public Helper<ElectricCharge> {
  public:
   constexpr static DimensionVector Dimension{.time = 1, .current = 1};
 
-  const static ElectricCharge coulomb;
-  constexpr static const ElectricCharge* representatives[] = {&coulomb};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R coulomb;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class ElectricPotential : public Helper<ElectricPotential> {
@@ -303,10 +347,13 @@ class ElectricPotential : public Helper<ElectricPotential> {
   constexpr static DimensionVector Dimension{
       .time = -3, .distance = 2, .mass = 1, .current = -1};
 
-  const static ElectricPotential volt;
-  constexpr static const ElectricPotential* representatives[] = {&volt};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R volt;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class ElectricCapacitance : public Helper<ElectricCapacitance> {
@@ -314,10 +361,13 @@ class ElectricCapacitance : public Helper<ElectricCapacitance> {
   constexpr static DimensionVector Dimension{
       .time = 4, .distance = -2, .mass = -1, .current = 2};
 
-  const static ElectricCapacitance farad;
-  constexpr static const ElectricCapacitance* representatives[] = {&farad};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R farad;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class ElectricResistance : public Helper<ElectricResistance> {
@@ -325,10 +375,13 @@ class ElectricResistance : public Helper<ElectricResistance> {
   constexpr static DimensionVector Dimension{
       .time = -3, .distance = 2, .mass = 1, .current = -2};
 
-  const static ElectricResistance ohm;
-  constexpr static const ElectricResistance* representatives[] = {&ohm};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R ohm;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class ElectricConductance : public Helper<ElectricConductance> {
@@ -336,10 +389,13 @@ class ElectricConductance : public Helper<ElectricConductance> {
   constexpr static DimensionVector Dimension{
       .time = 3, .distance = -2, .mass = -1, .current = 2};
 
-  const static ElectricConductance siemens;
-  constexpr static const ElectricConductance* representatives[] = {&siemens};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R siemens;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class MagneticFlux : public Helper<MagneticFlux> {
@@ -347,10 +403,13 @@ class MagneticFlux : public Helper<MagneticFlux> {
   constexpr static DimensionVector Dimension{
       .time = -2, .distance = 2, .mass = 1, .current = -1};
 
-  const static MagneticFlux weber;
-  constexpr static const MagneticFlux* representatives[] = {&weber};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R weber;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class MagneticField : public Helper<MagneticField> {
@@ -358,10 +417,13 @@ class MagneticField : public Helper<MagneticField> {
   constexpr static DimensionVector Dimension{
       .time = -2, .mass = 1, .current = -1};
 
-  const static MagneticField tesla;
-  constexpr static const MagneticField* representatives[] = {&tesla};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R tesla;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Inductance : public Helper<Inductance> {
@@ -369,10 +431,13 @@ class Inductance : public Helper<Inductance> {
   constexpr static DimensionVector Dimension{
       .time = -2, .distance = 2, .mass = 1, .current = -2};
 
-  const static Inductance henry;
-  constexpr static const Inductance* representatives[] = {&henry};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R henry;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class CatalyticActivity : public Helper<CatalyticActivity> {
@@ -380,19 +445,24 @@ class CatalyticActivity : public Helper<CatalyticActivity> {
   constexpr static DimensionVector Dimension{.time = -1,
                                              .amountOfSubstance = 1};
 
-  const static CatalyticActivity katal;
-  constexpr static const CatalyticActivity* representatives[] = {&katal};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R katal;
+  };
 
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Surface : public Helper<Surface> {
  public:
   constexpr static DimensionVector Dimension{.distance = 2};
 
-  const static Surface hectare;
-  const static Surface acre;
-  constexpr static const Surface* representatives[] = {&hectare, &acre};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R hectare;
+    R acre;
+  };
 
 #if 0
   const UnitRepresentative* standardRepresentative(
@@ -407,22 +477,24 @@ class Surface : public Helper<Surface> {
         const ReductionContext& reductionContext) const override;
 #endif
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Volume : public Helper<Volume> {
  public:
   constexpr static DimensionVector Dimension{.distance = 3};
 
-  const static Volume liter;
-  const static Volume cup;
-  const static Volume pint;
-  const static Volume quart;
-  const static Volume gallon;
-  const static Volume teaSpoon;
-  const static Volume tableSpoon;
-  const static Volume fluidOnce;
-  constexpr static const Volume* representatives[] = {
-      &liter, &cup, &pint, &quart, &gallon, &teaSpoon, &tableSpoon, &fluidOnce};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R liter;
+    R cup;
+    R pint;
+    R quart;
+    R gallon;
+    R teaSpoon;
+    R tableSpoon;
+    R fluidOnce;
+  };
 
 #if 0
   const UnitRepresentative* standardRepresentative(
@@ -437,17 +509,19 @@ class Volume : public Helper<Volume> {
         const ReductionContext& reductionContext) const override;
 #endif
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 class Speed : public Helper<Speed> {
  public:
   constexpr static DimensionVector Dimension{.time = -1, .distance = 1};
 
-  const static Speed none;
-  constexpr static const Speed* representatives[] = {&none};
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R none;
+  };
 
-  const UnitRepresentative* const* representativesOfSameDimension()
-      const override {
+  const UnitRepresentative* representativesOfSameDimension() const override {
     return nullptr;
   };
 
@@ -466,6 +540,7 @@ class Speed : public Helper<Speed> {
         const ReductionContext& reductionContext) const override;
 #endif
   using Helper::Helper;
+  const static Representatives<const Self> representatives;
 };
 
 // Implicit addition
@@ -478,20 +553,23 @@ struct RepresentativesList {
 // These must be sorted in order, from smallest to biggest
 constexpr const UnitRepresentative*
     k_timeRepresentativesAllowingImplicitAddition[] = {
-        &Time::second, &Time::minute, &Time::hour,
-        &Time::day,    &Time::month,  &Time::year};
+        &Time::representatives.second, &Time::representatives.minute,
+        &Time::representatives.hour,   &Time::representatives.day,
+        &Time::representatives.month,  &Time::representatives.year};
 
 constexpr static const UnitRepresentative*
     k_distanceRepresentativesAllowingImplicitAddition[] = {
-        &Distance::inch, &Distance::foot, &Distance::yard, &Distance::mile};
+        &Distance::representatives.inch, &Distance::representatives.foot,
+        &Distance::representatives.yard, &Distance::representatives.mile};
 
 constexpr static const UnitRepresentative*
-    k_massRepresentativesAllowingImplicitAddition[] = {&Mass::ounce,
-                                                       &Mass::pound};
+    k_massRepresentativesAllowingImplicitAddition[] = {
+        &Mass::representatives.ounce, &Mass::representatives.pound};
 
 constexpr static const UnitRepresentative*
     k_angleRepresentativesAllowingImplicitAddition[] = {
-        &Angle::arcSecond, &Angle::arcMinute, &Angle::degree};
+        &Angle::representatives.arcSecond, &Angle::representatives.arcMinute,
+        &Angle::representatives.degree};
 
 constexpr static RepresentativesList
     k_representativesAllowingImplicitAddition[] = {
@@ -508,11 +586,13 @@ constexpr static int k_representativesAllowingImplicitAdditionLength =
 
 constexpr static const UnitRepresentative*
     k_representativesWithoutLeftMargin[] = {
-        &Angle::arcSecond,     &Angle::arcMinute,        &Angle::degree,
-        &Temperature::celsius, &Temperature::fahrenheit,
+        &Angle::representatives.arcSecond,
+        &Angle::representatives.arcMinute,
+        &Angle::representatives.degree,
+        &Temperature::representatives.celsius,
+        &Temperature::representatives.fahrenheit,
 };
 
 }  // namespace Representatives
 }  // namespace PoincareJ
-
 #endif

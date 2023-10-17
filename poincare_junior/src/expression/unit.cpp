@@ -111,7 +111,7 @@ Tree* DimensionVector::toBaseUnits() const {
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     // We require the base units to be the first seven in DefaultRepresentatives
     const UnitRepresentative* representative =
-        *UnitRepresentative::DefaultRepresentatives()[i];
+        UnitRepresentative::DefaultRepresentatives()[i];
     assert(representative);
     int8_t exponent = coefficientAtIndex(i);
     if (exponent == 0) {
@@ -154,56 +154,50 @@ void DimensionVector::setCoefficientAtIndex(int8_t coefficient, uint8_t i) {
 }
 
 // UnitRepresentative
-const UnitRepresentative* const* const*
-UnitRepresentative::DefaultRepresentatives() {
+const UnitRepresentative* const* UnitRepresentative::DefaultRepresentatives() {
   using namespace Representatives;
-  // constexpr static Representatives::Speed defaultSpeedRepresentative =
-  // Representatives::Speed::Speed(nullptr, nullptr, Prefixable::None,
-  // Prefixable::None);
-  static const UnitRepresentative* const*
+  static const UnitRepresentative*
       defaultRepresentatives[k_numberOfDimensions] = {
-          Time::representativesList(),
-          Distance::representativesList(),
-          Angle::representativesList(),
-          Mass::representativesList(),
-          Current::representativesList(),
-          Temperature::representativesList(),
-          AmountOfSubstance::representativesList(),
-          LuminousIntensity::representativesList(),
-          Frequency::representativesList(),
-          Force::representativesList(),
-          Pressure::representativesList(),
-          Energy::representativesList(),
-          Power::representativesList(),
-          ElectricCharge::representativesList(),
-          ElectricPotential::representativesList(),
-          ElectricCapacitance::representativesList(),
-          ElectricResistance::representativesList(),
-          ElectricConductance::representativesList(),
-          MagneticFlux::representativesList(),
-          MagneticField::representativesList(),
-          Inductance::representativesList(),
-          CatalyticActivity::representativesList(),
-          Surface::representativesList(),
-          Volume::representativesList(),
-          Speed::representativesList(),
+          Time::representatives,
+          Distance::representatives,
+          Angle::representatives,
+          Mass::representatives,
+          Current::representatives,
+          Temperature::representatives,
+          AmountOfSubstance::representatives,
+          LuminousIntensity::representatives,
+          Frequency::representatives,
+          Force::representatives,
+          Pressure::representatives,
+          Energy::representatives,
+          Power::representatives,
+          ElectricCharge::representatives,
+          ElectricPotential::representatives,
+          ElectricCapacitance::representatives,
+          ElectricResistance::representatives,
+          ElectricConductance::representatives,
+          MagneticFlux::representatives,
+          MagneticField::representatives,
+          Inductance::representatives,
+          CatalyticActivity::representatives,
+          Surface::representatives,
+          Volume::representatives,
+          Speed::representatives,
       };
   return defaultRepresentatives;
 }
 
 uint8_t UnitRepresentative::ToId(const UnitRepresentative* representative) {
   uint8_t id = 0;
-  const UnitRepresentative* const* list =
+  const UnitRepresentative* list =
       representative->representativesOfSameDimension();
   for (int i = 0; i < k_numberOfDimensions; i++) {
     if (list == DefaultRepresentatives()[i]) {
-      for (int j = 0; j < list[0]->numberOfRepresentatives(); j++) {
-        if (list[j] == representative) {
-          return id + j;
-        }
-      }
+      size_t representativeOffset = (representative - list);
+      assert(representativeOffset < list->numberOfRepresentatives());
+      return id + representativeOffset;
     } else {
-      id += (*DefaultRepresentatives()[i])->numberOfRepresentatives();
+      id += DefaultRepresentatives()[i]->numberOfRepresentatives();
     }
   }
   assert(false);
@@ -212,16 +206,16 @@ uint8_t UnitRepresentative::ToId(const UnitRepresentative* representative) {
 
 const UnitRepresentative* UnitRepresentative::FromId(uint8_t id) {
   for (int i = 0; i < k_numberOfDimensions; i++) {
-    const UnitRepresentative* const* list =
+    const UnitRepresentative* list =
         UnitRepresentative::DefaultRepresentatives()[i];
-    int listSize = list[0]->numberOfRepresentatives();
+    int listSize = list->numberOfRepresentatives();
     if (id < listSize) {
-      return list[id];
+      return list + id;
     }
     id -= listSize;
   }
   assert(false);
-  return UnitRepresentative::DefaultRepresentatives()[0][0];
+  return UnitRepresentative::DefaultRepresentatives()[0];
 }
 
 static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
@@ -284,7 +278,7 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
     for (int i = DimensionVector::k_numberOfBaseUnits;
          i < UnitRepresentative::k_numberOfDimensions - 1; i++) {
       const UnitRepresentative* dim =
-          UnitRepresentative::DefaultRepresentatives()[i][0];
+          UnitRepresentative::DefaultRepresentatives()[i];
       const DimensionVector entryUnitExponents = dim->dimensionVector();
       // A simplification is tried by either multiplying or dividing
       if (CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
@@ -306,8 +300,7 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
       break;
     }
     // Build and add the best derived unit
-    Tree* derivedUnit =
-        Unit::Push(bestDim->representativesOfSameDimension()[0]);
+    Tree* derivedUnit = Unit::Push(bestDim->representativesOfSameDimension());
 
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
@@ -327,10 +320,10 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
 const UnitRepresentative* UnitRepresentative::RepresentativeForDimension(
     DimensionVector vector) {
   for (int i = 0; i < k_numberOfDimensions; i++) {
-    const UnitRepresentative* const* representative =
+    const UnitRepresentative* representative =
         UnitRepresentative::DefaultRepresentatives()[i];
-    if (vector == (*representative)->dimensionVector()) {
-      return *representative;
+    if (vector == representative->dimensionVector()) {
+      return representative;
     }
   }
   return nullptr;
@@ -353,9 +346,8 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
 }
 
 const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
-    double value, double exponent,
-    const UnitRepresentative* const* representatives, int length,
-    const UnitPrefix** prefix) const {
+    double value, double exponent, const UnitRepresentative* representatives,
+    int length, const UnitPrefix** prefix) const {
   assert(length >= 1);
   /* Return this if every other representative gives an accuracy of 0 or Inf.
    * This can happen when searching for an Imperial representative for 1m^20000
@@ -363,20 +355,20 @@ const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
   const UnitRepresentative* result = this;
   double accuracy = 0.;
   const UnitPrefix* currentPrefix = UnitPrefix::EmptyPrefix();
-  const UnitRepresentative* const* currentRepresentative = representatives;
+  const UnitRepresentative* currentRepresentative = representatives;
   while (currentRepresentative < representatives + length) {
-    double currentAccuracy = std::fabs(
-        value / std::pow((*currentRepresentative)->ratio(), exponent));
+    double currentAccuracy =
+        std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
     if (*prefix) {
       currentPrefix =
-          (*currentRepresentative)->findBestPrefix(currentAccuracy, exponent);
+          currentRepresentative->findBestPrefix(currentAccuracy, exponent);
     }
     if (compareMagnitudeOrders(
             std::log10(currentAccuracy) - currentPrefix->exponent() * exponent,
             std::log10(accuracy) -
                 ((!*prefix) ? 0 : (*prefix)->exponent() * exponent))) {
       accuracy = currentAccuracy;
-      result = *currentRepresentative;
+      result = currentRepresentative;
       *prefix = currentPrefix;
     }
     currentRepresentative++;
@@ -408,21 +400,21 @@ bool UnitRepresentative::canParseWithEquivalents(
     const char* symbol, size_t length,
     const UnitRepresentative** representative,
     const UnitPrefix** prefix) const {
-  const UnitRepresentative* const* candidate = representativesOfSameDimension();
+  const UnitRepresentative* candidate = representativesOfSameDimension();
   if (!candidate) {
     return false;
   }
   for (int i = 0; i < numberOfRepresentatives(); i++) {
-    Aliases rootSymbolAliasesList = candidate[i]->rootSymbols();
+    Aliases rootSymbolAliasesList = (candidate + i)->rootSymbols();
     for (const char* rootSymbolAlias : rootSymbolAliasesList) {
       size_t rootSymbolLength = strlen(rootSymbolAlias);
       int potentialPrefixLength = length - rootSymbolLength;
       if (potentialPrefixLength >= 0 &&
           strncmp(rootSymbolAlias, symbol + potentialPrefixLength,
                   rootSymbolLength) == 0 &&
-          candidate[i]->canParse(symbol, potentialPrefixLength, prefix)) {
+          candidate[i].canParse(symbol, potentialPrefixLength, prefix)) {
         if (representative) {
-          *representative = candidate[i];
+          *representative = (candidate + i);
         }
         return true;
       }
@@ -601,7 +593,7 @@ bool Unit::CanParse(UnicodeDecoder* name,
   size_t offset = (symbol[0] == '_') ? 1 : 0;
   assert(length > offset && symbol[offset] != '_');
   for (int i = 0; i < UnitRepresentative::k_numberOfDimensions; i++) {
-    if (UnitRepresentative::DefaultRepresentatives()[i][0]
+    if (UnitRepresentative::DefaultRepresentatives()[i]
             ->canParseWithEquivalents(symbol + offset, length - offset,
                                       representative, prefix)) {
       return true;
@@ -921,7 +913,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
      * are equivalent.
      * This is not true for temperatures (0 K != 0°C != 0°F). */
     SetRepresentative(
-        unit, GetRepresentative(unit)->representativesOfSameDimension()[0]);
+        unit, GetRepresentative(unit)->representativesOfSameDimension());
     SetPrefix(unit, UnitPrefix::EmptyPrefix());
     return;
   }

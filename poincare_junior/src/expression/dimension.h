@@ -68,8 +68,10 @@ struct Dimension {
   }
   static bool IsNonKelvinTemperatureRepresentative(
       const UnitRepresentative* representative) {
-    return representative == &Representatives::Temperature::celsius ||
-           representative == &Representatives::Temperature::fahrenheit;
+    return representative ==
+               &Representatives::Temperature::representatives.celsius ||
+           representative ==
+               &Representatives::Temperature::representatives.fahrenheit;
   }
 
   static Dimension GetDimension(const Tree* t);

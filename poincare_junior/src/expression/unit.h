@@ -138,25 +138,15 @@ class UnitRepresentative {
   static uint8_t ToId(const UnitRepresentative* representative);
   static const UnitRepresentative* FromId(uint8_t id);
 
-  static const UnitRepresentative* const* const* DefaultRepresentatives();
+  static const UnitRepresentative* const* DefaultRepresentatives();
   static const UnitRepresentative* RepresentativeForDimension(
       DimensionVector vector);
-  // TODO it may be marked consteval with Clang but not with GCC
-  template <TreeCompatibleConcept T>
-  constexpr UnitRepresentative(Aliases rootSymbol, T ratioExpression,
-                               Prefixable inputPrefixable,
-                               Prefixable outputPrefixable)
-      : m_rootSymbols(rootSymbol),
-        m_ratioExpression(static_cast<const Block*>(KTree(ratioExpression))),
-        m_inputPrefixable(inputPrefixable),
-        m_outputPrefixable(outputPrefixable) {}
 
   virtual const DimensionVector dimensionVector() const = 0;
   virtual int numberOfRepresentatives() const = 0;
   /* representativesOfSameDimension returns a pointer to the array containing
    * all representatives for this's dimension. */
-  virtual const UnitRepresentative* const* representativesOfSameDimension()
-      const = 0;
+  virtual const UnitRepresentative* representativesOfSameDimension() const = 0;
   virtual bool isBaseUnit() const = 0;
   virtual const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
@@ -205,10 +195,19 @@ class UnitRepresentative {
   }
 
  protected:
+  // TODO it may be marked consteval with Clang but not with GCC
+  template <TreeCompatibleConcept T>
+  constexpr UnitRepresentative(Aliases rootSymbol, T ratioExpression,
+                               Prefixable inputPrefixable,
+                               Prefixable outputPrefixable)
+      : m_rootSymbols(rootSymbol),
+        m_ratioExpression(static_cast<const Block*>(KTree(ratioExpression))),
+        m_inputPrefixable(inputPrefixable),
+        m_outputPrefixable(outputPrefixable) {}
+
   const UnitRepresentative* defaultFindBestRepresentative(
-      double value, double exponent,
-      const UnitRepresentative* const* representatives, int length,
-      const UnitPrefix** prefix) const;
+      double value, double exponent, const UnitRepresentative* representatives,
+      int length, const UnitPrefix** prefix) const;
 
   Aliases m_rootSymbols;
   /* m_ratioExpression is the expression of the factor used to convert a unit

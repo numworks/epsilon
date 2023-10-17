@@ -8,113 +8,129 @@ namespace Representatives {
 
 using enum UnitRepresentative::Prefixable;
 
-const Time Time::second = {"s", 1._e, All, NegativeLongScale};
-const Time Time::minute = {"min", 60._e, None, None};
-const Time Time::hour = {"h", 3600._e, None, None};
-const Time Time::day = {"day", 86400._e, None, None};
-const Time Time::week = {"week", 604800._e, None, None};
-const Time Time::month = {"month", 2629800._e, None, None};
-const Time Time::year = {"year", 31557600._e, None, None};
+const Time::Representatives<const Time> Time::representatives = {
+    .second = {"s", 1._e, All, NegativeLongScale},
+    .minute = {"min", 60._e, None, None},
+    .hour = {"h", 3600._e, None, None},
+    .day = {"day", 86400._e, None, None},
+    .week = {"week", 604800._e, None, None},
+    .month = {"month", 2629800._e, None, None},
+    .year = {"year", 31557600._e, None, None}};
 
-const Distance Distance::meter = {"m", 1._e, All, NegativeAndKilo};
-const Distance Distance::astronomicalUnit = {"au", 149597870700._e, None, None};
-const Distance Distance::lightYear = {"ly", KMult(299792458._e, 31557600._e),
-                                      None, None};
-const Distance Distance::parsec = {
-    "pc", KMult(180._e, KDiv(3600._e, π_e), 149587870700._e), None, None};
-
-const Distance Distance::inch = {"in", 0.0254_e, None, None};
-const Distance Distance::foot = {"ft", KMult(12._e, 0.0254_e), None, None};
-const Distance Distance::yard = {"yd", KMult(36._e, 0.0254_e), None, None};
-const Distance Distance::mile = {"mi", KMult(63360._e, 0.0254_e), None, None};
+const Distance::Representatives<const Distance> Distance::representatives = {
+    .meter = {"m", 1._e, All, NegativeAndKilo},
+    .astronomicalUnit = {"au", 149597870700._e, None, None},
+    .lightYear = {"ly", KMult(299792458._e, 31557600._e), None, None},
+    .parsec = {"pc", KMult(180._e, KDiv(3600._e, π_e), 149587870700._e), None,
+               None},
+    .inch = {"in", 0.0254_e, None, None},
+    .foot = {"ft", KMult(12._e, 0.0254_e), None, None},
+    .yard = {"yd", KMult(36._e, 0.0254_e), None, None},
+    .mile = {"mi", KMult(63360._e, 0.0254_e), None, None}};
 
 /* Only AngleRepresentative have non-float ratio expression because exact
  * result are expected. */
-const Angle Angle::radian = {"rad", 1_e, None, None};
-const Angle Angle::arcSecond = {"\"", KDiv(π_e, 648000_e), None, None};
-const Angle Angle::arcMinute = {"'", KDiv(π_e, 10800_e), None, None};
-const Angle Angle::degree = {"°", KDiv(π_e, 180_e), None, None};
-const Angle Angle::gradian = {"gon", KDiv(π_e, 200_e), None, None};
+const Angle::Representatives<const Angle> Angle::representatives = {
+    .radian = {"rad", 1_e, None, None},
+    .arcSecond = {"\"", KDiv(π_e, 648000_e), None, None},
+    .arcMinute = {"'", KDiv(π_e, 10800_e), None, None},
+    .degree = {"°", KDiv(π_e, 180_e), None, None},
+    .gradian = {"gon", KDiv(π_e, 200_e), None, None}};
 
-const Mass Mass::kilogram = {"kg", 1_e, None, None};
-const Mass Mass::gram = {"g", 0.001_e, All, Negative};
-const Mass Mass::ton = {"t", 1000._e, PositiveLongScale, PositiveLongScale};
-const Mass Mass::dalton = {"Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All,
-                           All};
-const Mass Mass::ounce = {"oz", 0.028349523125_e, None, None};
-const Mass Mass::pound = {"lb", KMult(16._e, 0.028349523125_e), None, None};
-const Mass Mass::shortTon = {"shtn", KMult(2000._e, 16._e, 0.028349523125_e),
-                             None, None};
-const Mass Mass::longTon = {"lgtn", KMult(2240._e, 16._e, 0.028349523125_e),
-                            None, None};
+const Mass::Representatives<const Mass> Mass::representatives = {
+    // kg is a dedicated non-prefixable unit to be used in SI
+    .kilogram = {"kg", 1_e, None, None},
+    .gram = {"g", 0.001_e, All, Negative},
+    .ton = {"t", 1000._e, PositiveLongScale, PositiveLongScale},
+    .ounce = {"oz", 0.028349523125_e, None, None},
+    .pound = {"lb", KMult(16._e, 0.028349523125_e), None, None},
+    .shortTon = {"shtn", KMult(2000._e, 16._e, 0.028349523125_e), None, None},
+    .longTon = {"lgtn", KMult(2240._e, 16._e, 0.028349523125_e), None, None},
+    .dalton = {"Da", KDiv(KPow(10._e, -26._e), 6.02214076_e), All, All}};
 
-const Current Current::ampere = {"A", 1._e, All, LongScale};
+const Current::Representatives<const Current> Current::representatives = {
+    .ampere = {"A", 1._e, All, LongScale}};
 
 // Ratios are 1.0 because temperatures conversion are an exception.
-const Temperature Temperature::kelvin = {"K", 1._e, All, None};
-const Temperature Temperature::celsius = {"°C", 1._e, None, None};
-const Temperature Temperature::fahrenheit = {"°F", 1._e, None, None};
+const Temperature::Representatives<const Temperature>
+    Temperature::representatives = {.kelvin = {"K", 1._e, All, None},
+                                    .celsius = {"°C", 1._e, None, None},
+                                    .fahrenheit = {"°F", 1._e, None, None}};
 
-const AmountOfSubstance AmountOfSubstance::mole = {"mol", 1._e, All, LongScale};
+const AmountOfSubstance::Representatives<const AmountOfSubstance>
+    AmountOfSubstance::representatives = {
+        .mole = {"mol", 1._e, All, LongScale}};
 
-const LuminousIntensity LuminousIntensity::candela = {"cd", 1._e, All,
-                                                      LongScale};
+const LuminousIntensity::Representatives<const LuminousIntensity>
+    LuminousIntensity::representatives = {
+        .candela = {"cd", 1._e, All, LongScale}};
 
-const Frequency Frequency::hertz = {"Hz", 1._e, All, LongScale};
+const Frequency::Representatives<const Frequency> Frequency::representatives = {
+    .hertz = {"Hz", 1._e, All, LongScale}};
 
-const Force Force::newton = {"N", 1._e, All, LongScale};
+const Force::Representatives<const Force> Force::representatives = {
+    .newton = {"N", 1._e, All, LongScale}};
 
-const Pressure Pressure::pascal = {"Pa", 1._e, All, LongScale};
-const Pressure Pressure::bar = {"bar", 100000._e, All, LongScale};
-const Pressure Pressure::atmosphere = {"atm", 101325._e, None, None};
+const Pressure::Representatives<const Pressure> Pressure::representatives = {
+    .pascal = {"Pa", 1._e, All, LongScale},
+    .bar = {"bar", 100000._e, All, LongScale},
+    .atmosphere = {"atm", 101325._e, None, None}};
 
-const Energy Energy::joule = {"J", 1._e, All, LongScale};
-const Energy Energy::electronVolt = {
-    "eV", KMult(1.602176634_e, KPow(10._e, -19_e)), All, LongScale};
+const Energy::Representatives<const Energy> Energy::representatives = {
+    .joule = {"J", 1._e, All, LongScale},
+    .electronVolt = {"eV", KMult(1.602176634_e, KPow(10._e, -19_e)), All,
+                     LongScale}};
 
-const Power Power::watt = {"W", 1._e, All, LongScale};
-const Power Power::horsePower = {"hp", 745.699872_e, None, None};
+const Power::Representatives<const Power> Power::representatives = {
+    .watt = {"W", 1._e, All, LongScale},
+    .horsePower = {"hp", 745.699872_e, None, None}};
 
-const ElectricCharge ElectricCharge::coulomb = {"C", 1._e, All, LongScale};
+const ElectricCharge::Representatives<const ElectricCharge>
+    ElectricCharge::representatives = {.coulomb = {"C", 1._e, All, LongScale}};
 
-const ElectricPotential ElectricPotential::volt = {"V", 1._e, All, LongScale};
+const ElectricPotential::Representatives<const ElectricPotential>
+    ElectricPotential::representatives = {.volt = {"V", 1._e, All, LongScale}};
 
-const ElectricCapacitance ElectricCapacitance::farad = {"F", 1._e, All,
-                                                        LongScale};
+const ElectricCapacitance::Representatives<const ElectricCapacitance>
+    ElectricCapacitance::representatives = {
+        .farad = {"F", 1._e, All, LongScale}};
 
-const ElectricResistance ElectricResistance::ohm = {"Ω", 1._e, All, LongScale};
+const ElectricResistance::Representatives<const ElectricResistance>
+    ElectricResistance::representatives = {.ohm = {"Ω", 1._e, All, LongScale}};
 
-const ElectricConductance ElectricConductance::siemens = {"S", 1._e, All,
-                                                          LongScale};
+const ElectricConductance::Representatives<const ElectricConductance>
+    ElectricConductance::representatives = {
+        .siemens = {"S", 1._e, All, LongScale}};
 
-const MagneticFlux MagneticFlux::weber = {"Wb", 1._e, All, LongScale};
+const MagneticFlux::Representatives<const MagneticFlux>
+    MagneticFlux::representatives = {.weber = {"Wb", 1._e, All, LongScale}};
 
-const MagneticField MagneticField::tesla = {"T", 1._e, All, LongScale};
+const MagneticField::Representatives<const MagneticField>
+    MagneticField::representatives = {.tesla = {"T", 1._e, All, LongScale}};
 
-const Inductance Inductance::henry = {"H", 1._e, All, LongScale};
+const Inductance::Representatives<const Inductance>
+    Inductance::representatives = {.henry = {"H", 1._e, All, LongScale}};
 
-const CatalyticActivity CatalyticActivity::katal = {"kat", 1._e, All,
-                                                    LongScale};
+const CatalyticActivity::Representatives<const CatalyticActivity>
+    CatalyticActivity::representatives = {
+        .katal = {"kat", 1._e, All, LongScale}};
 
-const Surface Surface::hectare = {"ha", 10000._e, None, None};
-const Surface Surface::acre = {"acre", 4046.8564224_e, None, None};
+const Surface::Representatives<const Surface> Surface::representatives = {
+    .hectare = {"ha", 10000._e, None, None},
+    .acre = {"acre", 4046.8564224_e, None, None}};
 
-const Volume Volume::liter = {BuiltinsAliases::k_litersAliases, 0.001_e, All,
-                              Negative};
-const Volume Volume::teaSpoon = {"tsp", 0.00000492892159375_e, None, None};
-const Volume Volume::tableSpoon = {"tbsp", KMult(3._e, 0.00000492892159375_e),
-                                   None, None};
-const Volume Volume::fluidOnce = {"floz", 0.0000295735295625_e, None, None};
-const Volume Volume::cup = {"cup", KMult(8._e, 0.0000295735295625_e), None,
-                            None};
-const Volume Volume::pint = {"pt", KMult(16._e, 0.0000295735295625_e), None,
-                             None};
-const Volume Volume::quart = {"qt", KMult(32._e, 0.0000295735295625_e), None,
-                              None};
-const Volume Volume::gallon = {"gal", KMult(128._e, 0.0000295735295625_e), None,
-                               None};
+const Volume::Representatives<const Volume> Volume::representatives = {
+    .liter = {BuiltinsAliases::k_litersAliases, 0.001_e, All, Negative},
+    .cup = {"cup", KMult(8._e, 0.0000295735295625_e), None, None},
+    .pint = {"pt", KMult(16._e, 0.0000295735295625_e), None, None},
+    .quart = {"qt", KMult(32._e, 0.0000295735295625_e), None, None},
+    .gallon = {"gal", KMult(128._e, 0.0000295735295625_e), None, None},
+    .teaSpoon = {"tsp", 0.00000492892159375_e, None, None},
+    .tableSpoon = {"tbsp", KMult(3._e, 0.00000492892159375_e), None, None},
+    .fluidOnce = {"floz", 0.0000295735295625_e, None, None}};
 
-const Speed Speed::none = {nullptr, 1_e, None, None};
+const Speed::Representatives<const Speed> Speed::representatives = {
+    .none = {nullptr, 1_e, None, None}};
 
 #if 0
 int Time::setAdditionalExpressions(

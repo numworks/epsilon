@@ -241,54 +241,11 @@ static bool CanSimplifyUnitProduct(
    * 'bestRemainder' are updated accordingly. */
   UnitNode::DimensionVector simplifiedExponents;
 
-#if 0
-  /* In the current algorithm, simplification is attempted using derived units
-   * with no exponents. Some good simplifications might be missed:
-   *    For instance with _A^2*_s^2, a first attempt will be to simplify to
-   *    _C_A_s which has a bigger supportSize and will not be kept, the output
-   *    will stay _A^2*_s^2.
-   * With the commented code, this issue is solved by trying to simplify with
-   * the highest exponent possible, so that, in this example, _A^2*_s^2 can be
-   * simplified to _C^2.
-   * An optimization might be possible using algorithms minimizing the sum of
-   * absolute difference of array elements */
-  int n = 0;
-  int best_norm;
-  // TODO define a norm function summing all base units exponents
-  int norm_temp = unitsExponents.norm();
-  /* To extend this algorithm to square root simplifications, rational exponents
-   * can be handled, and a 1/2 step can be used (but it should be asserted that
-   * no square root simplification is performed if all exponents are integers.*/
-  int step = 1;
-  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-    // Set simplifiedExponents to unitsExponents
-    simplifiedExponents.setCoefficientAtIndex(i, unitsExponents.coefficientAtIndex(i));
-  }
-  do {
-    best_norm = norm_temp;
-    n+= step;
-    for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-      // Simplify unitsExponents with base units from derived unit
-      simplifiedExponents.setCoefficientAtIndex(i, simplifiedExponents.coefficientAtIndex(i) - entryUnitExponent * step * entryUnitExponents->coefficientAtIndex(i));
-    }
-    int simplifiedNorm = simplifiedExponents.norm();
-    // Temp norm is derived norm (n) + simplified norm
-    norm_temp = n + simplifiedNorm;
-  } while (norm_temp < best_norm);
-  // Undo last step as it did not reduce the norm
-  n -= step;
-#endif
-
   for (size_t i = 0; i < UnitNode::k_numberOfBaseUnits; i++) {
-#if 0
-    // Undo last step as it did not reduce the norm
-    simplifiedExponents.setCoefficientAtIndex(i, simplifiedExponents.coefficientAtIndex(i) + entryUnitExponent * step * entryUnitExponents->coefficientAtIndex(i));
-#else
     // Simplify unitsExponents with base units from derived unit
     simplifiedExponents.setCoefficientAtIndex(
         i, unitsExponents.coefficientAtIndex(i) -
                entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
-#endif
   }
   size_t simplifiedSupportSize = simplifiedExponents.supportSize();
   /* Note: A metric is considered simpler if the support size (number of
@@ -298,11 +255,7 @@ static bool CanSimplifyUnitProduct(
   bool isSimpler = (1 + simplifiedSupportSize < unitsSupportSize);
 
   if (isSimpler) {
-#if 0
-    bestUnitExponent = entryUnitExponent * n * step;
-#else
     bestUnitExponent = entryUnitExponent;
-#endif
     bestRemainderExponents = simplifiedExponents;
     bestRemainderSupportSize = simplifiedSupportSize;
     /* unitsSupportSize is updated and will be taken into
@@ -362,16 +315,10 @@ void ChooseBestDerivedUnits(DimensionVector unitsExponents) {
     Expression derivedUnit = Unit::Builder(
         bestDim->representativesOfSameDimension(), bestDim->basePrefix());
 
-#if 0
-        if (bestUnitExponent != 1) {
-          derivedUnit = Power::Builder(derivedUnit, Rational::Builder(bestUnitExponent));
-        }
-#else
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
       derivedUnit = Power::Builder(derivedUnit, Rational::Builder(-1));
     }
-#endif
 
     const int position = unitsAccu.numberOfChildren();
     unitsAccu.addChildAtIndexInPlace(derivedUnit, position, position);

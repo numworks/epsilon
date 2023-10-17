@@ -37,7 +37,7 @@ def main():
               else:
                  changed.append(f"{new_args[0]}\n  returns     {new_args[1]}\n  expected  {new_args[2]}")
        elif old_result == 'BAD' and old_args[2] != new_args[2]:
-          changed.append(f"{new_args[0]}\n  from {old_args[2]}\n  to   {new_args[2]}")
+          changed.append(f"{new_args[0]}\n  from      {old_args[2]}\n  to        {new_args[2]}\n  expected  {new_args[1]}")
 
    for items, name in (fixed, 'fixed'), (changed, 'changed'), (broken, 'broken'):
       if not items: continue

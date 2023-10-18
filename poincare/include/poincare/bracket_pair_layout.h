@@ -18,41 +18,42 @@ class BracketPairLayoutNode : public LayoutNode {
       int childIndex) const override;
 
  protected:
-  // Minimal height at which the children dictates bracket height
-  constexpr static KDCoordinate k_minimalChildHeight =
-      Escher::Metric::MinimalBracketAndParenthesisChildHeight;
+  static KDCoordinate realVerticalMargin(KDCoordinate childHeight,
+                                         KDCoordinate verticalMargin) {
+    // If the child height is bellow the threshold, make it bigger so that
+    // The bracket pair maintains the right height
 
-  static bool ChildHeightDictatesHeight(KDCoordinate childHeight) {
-    return childHeight >= k_minimalChildHeight;
+    // Minimal height at which the children dictates bracket height
+    constexpr KDCoordinate k_minimalChildHeight =
+        Escher::Metric::MinimalBracketAndParenthesisChildHeight;
+
+    if (childHeight < k_minimalChildHeight)
+      verticalMargin += (k_minimalChildHeight - childHeight) / 2;
+
+    return verticalMargin;
   }
+
   static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight,
                                              KDCoordinate verticalMargin) {
-    return (ChildHeightDictatesHeight(childHeight) ? childHeight
-                                                   : k_minimalChildHeight) +
-           verticalMargin * 2;
+    return childHeight + 2 * realVerticalMargin(childHeight, verticalMargin);
   }
+
   static KDCoordinate BaselineGivenChildHeightAndBaseline(
       KDCoordinate childHeight, KDCoordinate childBaseline,
       KDCoordinate verticalMargin) {
-    return childBaseline + verticalMargin +
-           (ChildHeightDictatesHeight(childHeight)
-                ? 0
-                : (k_minimalChildHeight - childHeight) / 2);
+    return childBaseline + realVerticalMargin(childHeight, verticalMargin);
   }
   static KDPoint ChildOffset(KDCoordinate verticalMargin,
-                             KDCoordinate bracketWidth) {
-    return KDPoint(bracketWidth, verticalMargin);
+                             KDCoordinate bracketWidth,
+                             KDCoordinate childHeight) {
+    return KDPoint(bracketWidth,
+                   realVerticalMargin(childHeight, verticalMargin));
   }
   static KDPoint PositionGivenChildHeightAndBaseline(
       bool left, KDCoordinate bracketWidth, KDSize childSize,
       KDCoordinate childBaseline, KDCoordinate verticalMargin) {
-    return KDPoint(
-        left ? -bracketWidth : childSize.width(),
-        ChildHeightDictatesHeight(childSize.height())
-            ? -verticalMargin
-            : childBaseline -
-                  HeightGivenChildHeight(childSize.height(), verticalMargin) /
-                      2);
+    return KDPoint(left ? -bracketWidth : childSize.width(),
+                   -realVerticalMargin(childSize.height(), verticalMargin));
   }
   static KDCoordinate OptimalChildHeightGivenLayoutHeight(
       KDCoordinate layoutHeight, KDCoordinate verticalMargin) {

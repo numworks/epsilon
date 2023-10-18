@@ -18,15 +18,17 @@ KDSize BracketPairLayoutNode::computeSize(KDFont::Size font) {
 }
 
 KDCoordinate BracketPairLayoutNode::computeBaseline(KDFont::Size font) {
+  KDCoordinate childHeight = childLayout()->layoutSize(font).height();
   return BaselineGivenChildHeightAndBaseline(
-      childLayout()->layoutSize(font).height(), childLayout()->baseline(font),
-      verticalMargin());
+      childHeight, childLayout()->baseline(font), verticalMargin());
 }
 
 KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode* child,
                                                KDFont::Size font) {
   assert(childLayout() == child);
-  return ChildOffset(verticalMargin(), bracketWidth());
+  KDCoordinate childHeight = childLayout()->layoutSize(font).height();
+
+  return ChildOffset(verticalMargin(), bracketWidth(), childHeight);
 }
 
 void BracketPairLayoutNode::render(KDContext* ctx, KDPoint p,

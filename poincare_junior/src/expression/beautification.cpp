@@ -55,16 +55,30 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
   }
 }
 
-Tree* FirstFactor(Tree* expr) {
+Tree* Factor(Tree* expr, int index) {
   if (expr->type() == BlockType::Multiplication) {
-    return expr->child(0);
+    return expr->child(index);
   }
   return expr;
 }
 
+const Tree* Factor(const Tree* expr, int index) {
+  if (expr->type() == BlockType::Multiplication) {
+    return expr->child(index);
+  }
+  return expr;
+}
+
+int NumberOfFactors(const Tree* expr) {
+  if (expr->type() == BlockType::Multiplication) {
+    return expr->numberOfChildren();
+  }
+  return 1;
+}
+
 bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   // The expression is a negative number
-  Tree* factor = FirstFactor(expr);
+  Tree* factor = Factor(expr, 0);
   if (factor->type().isRational() && Rational::Sign(factor).isNegative()) {
     Rational::SetSign(factor, NonStrictSign::Positive);
     // Do we need to squash the mult if factor was -1 ?
@@ -78,9 +92,9 @@ void Beautification::SplitMultiplication(const Tree* expr,
                                          EditionReference& denominator) {
   numerator = SharedEditionPool->push<BlockType::Multiplication>(0);
   denominator = SharedEditionPool->push<BlockType::Multiplication>(0);
-  const int numberOfFactors = expr->numberOfChildren();
+  const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
-    const Tree* factor = expr->child(i);
+    const Tree* factor = Factor(expr, i);
     TypeBlock factorType = factor->type();
     Tree* factorsNumerator = nullptr;
     Tree* factorsDenominator = nullptr;
@@ -165,7 +179,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   if (ref->type() == BlockType::Addition) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
   }
-  if (ref->type() == BlockType::Multiplication) {
+  if (ref->type() == BlockType::Multiplication ||
+      ref->type() == BlockType::Power) {
     EditionReference num;
     EditionReference den;
     SplitMultiplication(ref, num, den);

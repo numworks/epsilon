@@ -14,16 +14,16 @@ class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
                                   KDColor expressionColor,
                                   KDColor backgroundColor) {
     RenderWithParameters(left, childHeight, ctx, p, expressionColor,
-                         backgroundColor, k_verticalMargin, k_bracketWidth,
+                         backgroundColor, k_minVerticalMargin, k_bracketWidth,
                          k_renderTopBar, k_renderBottomBar, k_renderDoubleBar);
   }
   static KDSize SizeGivenChildSize(KDSize childSize) {
     return KDSize(2 * k_bracketWidth + childSize.width(),
-                  HeightGivenChildHeight(childSize.height(), k_verticalMargin));
+                  Height(childSize.height(), k_minVerticalMargin));
   }
   static KDPoint ChildOffset(KDCoordinate childHeight) {
-    return BracketPairLayoutNode::ChildOffset(k_verticalMargin, k_bracketWidth,
-                                              childHeight);
+    return BracketPairLayoutNode::ChildOffset(k_minVerticalMargin,
+                                              k_bracketWidth, childHeight);
   }
 
  protected:
@@ -31,7 +31,7 @@ class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
   constexpr static KDCoordinate k_externalWidthMargin = 2;
   constexpr static KDCoordinate k_bracketWidth =
       k_internalWidthMargin + k_lineThickness + k_externalWidthMargin;
-  constexpr static KDCoordinate k_verticalMargin = 1;
+  constexpr static KDCoordinate k_minVerticalMargin = 1;
   constexpr static KDCoordinate k_doubleBarMargin = 2;
   constexpr static bool k_renderTopBar = true;
   constexpr static bool k_renderBottomBar = true;
@@ -41,18 +41,20 @@ class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
                                    KDContext* ctx, KDPoint p,
                                    KDColor expressionColor,
                                    KDColor backgroundColor,
-                                   KDCoordinate verticalMargin,
+                                   KDCoordinate minVerticalMargin,
                                    KDCoordinate bracketWidth, bool renderTopBar,
                                    bool renderBottomBar, bool renderDoubleBar);
 
   // BracketPairLayoutNode
   KDCoordinate bracketWidth() const override { return k_bracketWidth; }
-  KDCoordinate verticalMargin() const override { return k_verticalMargin; }
+  KDCoordinate minVerticalMargin() const override {
+    return k_minVerticalMargin;
+  }
   void renderOneBracket(bool left, KDContext* ctx, KDPoint p,
                         KDGlyph::Style style) override {
     RenderWithParameters(left, childLayout()->layoutSize(style.font).height(),
                          ctx, p, style.glyphColor, style.backgroundColor,
-                         verticalMargin(), bracketWidth(), renderTopBar(),
+                         minVerticalMargin(), bracketWidth(), renderTopBar(),
                          renderBottomBar(), renderDoubleBar());
   }
 

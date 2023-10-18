@@ -54,15 +54,15 @@ void ParenthesisLayoutNode::RenderWithChildHeight(bool left,
                                                   KDColor expressionColor,
                                                   KDColor backgroundColor) {
   KDColor parenthesisWorkingBuffer[k_curveHeight * k_curveWidth];
-  KDCoordinate parenthesisHeight = HeightGivenChildHeight(childHeight);
+  KDCoordinate parenthesisHeight = Height(childHeight);
 
-  KDRect frame(k_widthMargin, k_verticalMargin, k_curveWidth, k_curveHeight);
+  KDRect frame(k_widthMargin, k_minVerticalMargin, k_curveWidth, k_curveHeight);
   ctx->blendRectWithMask(frame.translatedBy(p), expressionColor,
                          (const uint8_t *)(left ? topLeftCurve : topRightCurve),
                          parenthesisWorkingBuffer);
 
   frame = KDRect(k_widthMargin,
-                 parenthesisHeight - k_curveHeight - k_verticalMargin,
+                 parenthesisHeight - k_curveHeight - k_minVerticalMargin,
                  k_curveWidth, k_curveHeight);
   ctx->blendRectWithMask(
       frame.translatedBy(p), expressionColor,
@@ -72,11 +72,11 @@ void ParenthesisLayoutNode::RenderWithChildHeight(bool left,
   KDCoordinate barX =
       k_widthMargin + (left ? 0 : k_curveWidth - k_lineThickness);
   KDCoordinate barHeight =
-      parenthesisHeight - 2 * (k_curveHeight + k_verticalMargin);
-  ctx->fillRect(
-      KDRect(barX, k_curveHeight + k_verticalMargin, k_lineThickness, barHeight)
-          .translatedBy(p),
-      expressionColor);
+      parenthesisHeight - 2 * (k_curveHeight + k_minVerticalMargin);
+  ctx->fillRect(KDRect(barX, k_curveHeight + k_minVerticalMargin,
+                       k_lineThickness, barHeight)
+                    .translatedBy(p),
+                expressionColor);
 }
 
 }  // namespace Poincare

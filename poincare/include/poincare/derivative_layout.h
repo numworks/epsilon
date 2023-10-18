@@ -45,9 +45,13 @@ class DerivativeLayoutNode : public LayoutNode {
   LayoutNode* variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode* abscissaLayout() { return childAtIndex(k_abscissaLayoutIndex); }
 
+  KDCoordinate parenthesisBaseline(KDFont::Size font);
+
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override;
+  KDPoint positionOfLeftParenthesis(KDFont::Size font);
+  KDPoint positionOfRightParenthesis(KDFont::Size font);
 
   virtual KDCoordinate orderHeightOffset(KDFont::Size font) = 0;
   virtual KDCoordinate orderWidth(KDFont::Size font) = 0;

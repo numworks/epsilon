@@ -214,7 +214,7 @@ int GridLayoutNode::closestNonGrayIndex(int index) const {
 KDSize GridLayoutNode::computeSize(KDFont::Size font) { return gridSize(font); }
 
 KDCoordinate GridLayoutNode::computeBaseline(KDFont::Size font) {
-  return (height(font) + 1) / 2;
+  return (gridHeight(font) + 1) / 2;
 }
 
 KDPoint GridLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
@@ -270,7 +270,7 @@ KDCoordinate GridLayoutNode::rowHeight(int row, KDFont::Size font) const {
   return aboveBaseline + underBaseline;
 }
 
-KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
+KDCoordinate GridLayoutNode::gridHeight(KDFont::Size font) const {
   KDCoordinate totalHeight = 0;
   for (int row = 0; row < m_numberOfRows; row++) {
     totalHeight += rowHeight(row, font);
@@ -298,7 +298,7 @@ KDCoordinate GridLayoutNode::columnWidth(int column, KDFont::Size font) const {
   return columnWidth;
 }
 
-KDCoordinate GridLayoutNode::width(KDFont::Size font) const {
+KDCoordinate GridLayoutNode::gridWidth(KDFont::Size font) const {
   KDCoordinate totalWidth = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j, font);

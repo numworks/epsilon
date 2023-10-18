@@ -26,8 +26,9 @@ class GridLayoutNode : public Array, public LayoutNode {
 
   // Grid layout
   KDSize gridSize(KDFont::Size font) const {
-    return KDSize(width(font), height(font));
+    return KDSize(gridWidth(font), gridHeight(font));
   }
+
   void willFillEmptyChildAtIndex(int childIndex);
   int removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex);
   virtual void startEditing() = 0;
@@ -117,9 +118,9 @@ class GridLayoutNode : public Array, public LayoutNode {
   }
   KDCoordinate rowBaseline(int row, KDFont::Size font);
   KDCoordinate rowHeight(int row, KDFont::Size font) const;
-  KDCoordinate height(KDFont::Size font) const;
+  KDCoordinate gridHeight(KDFont::Size font) const;
   KDCoordinate columnWidth(int column, KDFont::Size font) const;
-  KDCoordinate width(KDFont::Size font) const;
+  KDCoordinate gridWidth(KDFont::Size font) const;
 
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;

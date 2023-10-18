@@ -37,7 +37,7 @@ class AbsoluteValueLayoutNode final : public SquareBracketPairLayoutNode {
   KDCoordinate bracketWidth() const override {
     return k_lineThickness + k_innerWidthMargin + k_externalWidthMargin;
   }
-  KDCoordinate verticalMargin() const override { return 0; }
+  KDCoordinate minVerticalMargin() const override { return 0; }
   bool renderTopBar() const override { return false; }
   bool renderBottomBar() const override { return false; }
 };

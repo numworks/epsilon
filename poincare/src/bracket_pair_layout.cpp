@@ -12,15 +12,14 @@ BracketPairLayoutNode::deletionMethodForCursorLeftOfChild(
 KDSize BracketPairLayoutNode::computeSize(KDFont::Size font) {
   KDSize childSize = childLayout()->layoutSize(font);
   KDCoordinate width = 2 * bracketWidth() + childSize.width();
-  KDCoordinate height =
-      HeightGivenChildHeight(childSize.height(), verticalMargin());
+  KDCoordinate height = Height(childSize.height(), minVerticalMargin());
   return KDSize(width, height);
 }
 
 KDCoordinate BracketPairLayoutNode::computeBaseline(KDFont::Size font) {
   KDCoordinate childHeight = childLayout()->layoutSize(font).height();
-  return BaselineGivenChildHeightAndBaseline(
-      childHeight, childLayout()->baseline(font), verticalMargin());
+  KDCoordinate childBaseLine = childLayout()->baseline(font);
+  return Baseline(childHeight, childBaseLine, minVerticalMargin());
 }
 
 KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode* child,
@@ -28,7 +27,7 @@ KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode* child,
   assert(childLayout() == child);
   KDCoordinate childHeight = childLayout()->layoutSize(font).height();
 
-  return ChildOffset(verticalMargin(), bracketWidth(), childHeight);
+  return ChildOffset(minVerticalMargin(), bracketWidth(), childHeight);
 }
 
 void BracketPairLayoutNode::render(KDContext* ctx, KDPoint p,

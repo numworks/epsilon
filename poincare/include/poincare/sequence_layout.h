@@ -3,6 +3,7 @@
 
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/parenthesis_layout.h>
 
 namespace Poincare {
 
@@ -94,6 +95,9 @@ class SequenceLayoutNode : public LayoutNode {
  private:
   KDCoordinate completeLowerBoundX(KDFont::Size font);
   KDCoordinate subscriptBaseline(KDFont::Size font);
+
+  KDPoint leftParenthesisPosition(KDFont::Size font);
+  KDPoint rightParenthesisPosition(KDFont::Size font, KDSize argumentSize);
 };
 
 }  // namespace Poincare

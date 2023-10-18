@@ -145,7 +145,7 @@ TYPE(PowerMatrix)
  * Children are ordered the row-major way */
 TYPE(Matrix)
 
-RANGE(Matricial, Dot, Matrix)
+RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 
 // 6 - Order dependant expressions
 /* - Unit U

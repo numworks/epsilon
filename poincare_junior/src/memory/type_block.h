@@ -235,7 +235,7 @@ class TypeBlock : public Block {
     }
   }
 
-  bool isScalarOnly() const { return !isMatricial(); }
+  bool isScalarOnly() const { return !isAMatrixOrContainsMatricesAsChildren(); }
 };
 
 #undef RANGE

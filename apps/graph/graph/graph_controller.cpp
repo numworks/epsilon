@@ -553,17 +553,6 @@ void GraphController::jumpToLeftRightCurve(double t,
   return;
 }
 
-void GraphController::moveCursorAndCenterIfNeeded(double t) {
-  FunctionGraphController::moveCursorAndCenterIfNeeded(t);
-  if (snapToInterestAndUpdateCursor(
-          m_cursor,
-          std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)),
-          std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)),
-          m_selectedSubCurveIndex)) {
-    reloadBannerView();
-  }
-}
-
 void GraphController::reloadBannerViewForCursorOnFunction(
     CurveViewCursor *cursor, Ion::Storage::Record record,
     FunctionStore *functionStore, Poincare::Context *context,

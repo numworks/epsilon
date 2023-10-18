@@ -118,7 +118,6 @@ class GraphController : public Shared::FunctionGraphController,
   bool moveCursorVertically(OMG::VerticalDirection direction) override;
 
   // InteractiveCurveViewController
-  void moveCursorAndCenterIfNeeded(double t) override;
   FunctionSelectionController *curveSelectionController() const override {
     return const_cast<FunctionSelectionController *>(
         &m_functionSelectionController);

@@ -64,7 +64,7 @@ class InteractiveCurveViewController
   Escher::Responder* responderWhenEmpty() override;
 
   virtual void openMenuForCurveAtIndex(int curveIndex) = 0;
-  virtual void moveCursorAndCenterIfNeeded(double t);
+  void moveCursorAndCenterIfNeeded(double t);
   RangeParameterController* rangeParameterController();
   ViewController* zoomParameterController();
 

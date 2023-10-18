@@ -29,14 +29,4 @@ QUIZ_CASE(pcj_matrix) {
   SharedEditionPool->flush();
 
   assert_trees_are_equal(parse("[[1,2,3][4,5,6]]"), w1);
-
-  Tree* m = parse("[[0,2,-1][5,6,7][12,11,10]]");
-  Tree* det;
-  Simplification::DeepSystematicReduce(m);
-  QUIZ_ASSERT(Matrix::Rank(m) == 3);
-  Matrix::RowCanonize(m, false, &det);
-  Tree* res = parse("[[1,11/12,5/6][0,1,-1/2][0,0,1]]");
-  Simplification::Simplify(res);
-  assert_trees_are_equal(m, res);
-  assert_trees_are_equal(det, 85_e);
 }

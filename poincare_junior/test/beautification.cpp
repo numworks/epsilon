@@ -38,6 +38,6 @@ QUIZ_CASE(pcj_beautification) {
   EditionReference ref5(
       KAdd(KMult(-1_e, "w"_e), "x"_e, KMult(-1_e, "y"_e), KMult(-1_e, "z"_e)));
   Beautification::DeepBeautify(ref5);
-  assert_trees_are_equal(ref5, KAdd(KMult(-1_e, "w"_e), "x"_e,
-                                    KMult(-1_e, "y"_e), KMult(-1_e, "z"_e)));
+  assert_trees_are_equal(
+      ref5, KAdd(KOpposite("w"_e), "x"_e, KOpposite("y"_e), KOpposite("z"_e)));
 }

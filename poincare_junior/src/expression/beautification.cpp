@@ -79,9 +79,15 @@ int NumberOfFactors(const Tree* expr) {
 bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   // The expression is a negative number
   Tree* factor = Factor(expr, 0);
-  if (factor->type().isRational() && Rational::Sign(factor).isNegative()) {
+  if (factor->type() == BlockType::MinusOne &&
+      expr->type() == BlockType::Multiplication) {
+    NAry::RemoveChildAtIndex(expr, 0);
+    NAry::SquashIfUnary(expr);
+    return true;
+  }
+  if (factor->type().isRational() &&
+      Rational::Sign(factor).isStrictlyNegative()) {
     Rational::SetSign(factor, NonStrictSign::Positive);
-    // Do we need to squash the mult if factor was -1 ?
     return true;
   }
   return false;
@@ -178,6 +184,10 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   }
   if (ref->type() == BlockType::Addition) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
+  }
+  if (MakePositiveAnyNegativeNumeralFactor(ref)) {
+    ref->cloneNodeAtNode(KOpposite);
+    return true;
   }
   if (ref->type() == BlockType::Multiplication ||
       ref->type() == BlockType::Power) {

@@ -225,6 +225,7 @@ class TypeBlock : public Block {
       case BlockType::Identity:
       case BlockType::Inverse:
       case BlockType::Norm:
+      case BlockType::Opposite:
       case BlockType::Ref:
       case BlockType::Rref:
       case BlockType::Trace:

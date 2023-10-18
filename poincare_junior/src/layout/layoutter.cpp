@@ -33,6 +33,8 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 2;
     case BlockType::Multiplication:
       return 3;
+    case BlockType::Opposite:
+    // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
     case BlockType::Subtraction:
       return 4;
     case BlockType::Addition:
@@ -127,23 +129,6 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
   value->removeTree();
 }
 
-bool WillStartWithMinus(const Tree *expr) {
-  switch (expr->type()) {
-    case BlockType::MinusOne:
-    case BlockType::IntegerNegBig:
-    case BlockType::RationalNegBig:
-      return true;
-    case BlockType::IntegerShort:
-    case BlockType::RationalShort: {
-      return Rational::Sign(expr).isNegative();
-      case BlockType::Multiplication:
-        return WillStartWithMinus(expr->child(0));
-      default:
-        return false;
-    }
-  }
-}
-
 void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
                                     Tree *expression, CodePoint op) {
   BlockType type = expression->type();
@@ -161,7 +146,8 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
       }
     }
     Tree *child = expression->nextNode();
-    if (childIndex > 0 && !(op == '+' && WillStartWithMinus(child))) {
+    if (childIndex > 0 &&
+        !(op == '+' && child->type() == BlockType::Opposite)) {
       PushCodePoint(layoutParent, op);
     }
     layoutExpression(layoutParent, child, OperatorPriority(type));
@@ -257,6 +243,11 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Subtraction:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(BlockType::Addition));
+      PushCodePoint(layoutParent, '-');
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      break;
+    case BlockType::Opposite:
       PushCodePoint(layoutParent, '-');
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

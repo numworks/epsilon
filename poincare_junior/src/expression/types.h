@@ -62,9 +62,6 @@ TYPE(Addition)
 
 RANGE(Algebraic, Zero, Addition)
 
-TYPE(Factorial)
-TYPE(Division)
-
 /* - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
 TYPE(UserSymbol)
@@ -93,11 +90,14 @@ TYPE(Complex)
 TYPE(ComplexArgument)
 TYPE(Conjugate)
 TYPE(Decimal)
+TYPE(Division)
 TYPE(Exponential)
+TYPE(Factorial)
 TYPE(ImaginaryPart)
 TYPE(Ln)
 TYPE(Log)
 TYPE(Logarithm)
+TYPE(Opposite)
 
 /* - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms

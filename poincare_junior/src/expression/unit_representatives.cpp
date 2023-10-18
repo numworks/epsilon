@@ -133,9 +133,9 @@ const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
 
 #if 0
-int Time::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Time::setAdditionalExpressions(double value, Expression* dest,
+                                   int availableLength,
+                                   UnitFormat unitFormat) const {
   assert(availableLength >= 1);
   /* Use all representatives but week */
   const Unit splitUnits[] = {
@@ -152,9 +152,9 @@ int Time::setAdditionalExpressions(
 }
 
 const UnitRepresentative* Distance::standardRepresentative(
-    double value, double exponent, const ReductionContext& reductionContext,
+    double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
-  return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric)
+  return (unitFormat == UnitFormat::Metric)
              ?
              /* Exclude imperial units from the search. */
              defaultFindBestRepresentative(
@@ -167,11 +167,11 @@ const UnitRepresentative* Distance::standardRepresentative(
                  numberOfRepresentatives() - 1, prefix);
 }
 
-int Distance::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Distance::setAdditionalExpressions(double value, Expression* dest,
+                                       int availableLength,
+                                       UnitFormat unitFormat) const {
   assert(availableLength >= 1);
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+  if (unitFormat == UnitFormat::Metric) {
     return 0;
   }
   const Unit splitUnits[] = {
@@ -199,7 +199,7 @@ const UnitRepresentative* Angle::DefaultRepresentativeForAngleUnit(
 }
 
 const UnitRepresentative* Angle::standardRepresentative(
-    double value, double exponent, const ReductionContext& reductionContext,
+    double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
     return defaultFindBestRepresentative(value, exponent, &arcSecond, 3,
@@ -209,7 +209,7 @@ const UnitRepresentative* Angle::standardRepresentative(
 }
 
 Expression Angle::convertInto(Expression value, const UnitRepresentative* other,
-                              const ReductionContext& reductionContext) const {
+                              UnitFormat unitFormat) const {
   assert(dimensionVector() == other->dimensionVector());
   Expression unit = Unit::Builder(other, UnitPrefix::EmptyPrefix());
   Expression inRadians =
@@ -223,9 +223,11 @@ Expression Angle::convertInto(Expression value, const UnitRepresentative* other,
   return Multiplication::Builder(inOther, unit);
 }
 
-int Angle::setAdditionalExpressionsWithExactValue(
-    Expression exactValue, double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
+                                                  double value,
+                                                  Expression* dest,
+                                                  int availableLength,
+                                                  UnitFormat unitFormat) const {
   assert(availableLength >= 2);
   int numberOfResults = 0;
   // Conversion to degrees should be added to all units not degree related
@@ -256,26 +258,26 @@ int Angle::setAdditionalExpressionsWithExactValue(
 
 #if 0
 const UnitRepresentative* Mass::standardRepresentative(
-    double value, double exponent, const ReductionContext& reductionContext,
+    double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Imperial) {
+  if (unitFormat == UnitFormat::Imperial) {
     return defaultFindBestRepresentative(value, exponent, &ounce,
                                          Unit::k_shortTonRepresentativeIndex -
                                              Unit::k_ounceRepresentativeIndex +
                                              1,
                                          prefix);
   }
-  assert(reductionContext.unitFormat() == Preferences::UnitFormat::Metric);
+  assert(unitFormat == UnitFormat::Metric);
   bool useTon = exponent == 1. && value >= (&ton)->ratio();
   return defaultFindBestRepresentative(value, exponent, useTon ? &ton : &gram,
                                        1, prefix);
 }
 
-int Mass::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Mass::setAdditionalExpressions(double value, Expression* dest,
+                                   int availableLength,
+                                   UnitFormat unitFormat) const {
   assert(availableLength >= 1);
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+  if (unitFormat == UnitFormat::Metric) {
     return 0;
   }
   const Unit splitUnits[] = {
@@ -308,18 +310,13 @@ double Temperature::ConvertTemperatures(double value,
          targetOrigin;
 }
 
-int Temperature::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Temperature::setAdditionalExpressions(double value, Expression* dest,
+                                          int availableLength,
+                                          UnitFormat unitFormat) const {
   assert(availableLength >= 2);
   const UnitRepresentative* targets[] = {
-      reductionContext.unitFormat() == Preferences::UnitFormat::Metric
-          ? &celsius
-          : &fahrenheit,
-      reductionContext.unitFormat() == Preferences::UnitFormat::Metric
-          ? &fahrenheit
-          : &celsius,
-      kelvin};
+      unitFormat == UnitFormat::Metric ? &celsius : &fahrenheit,
+      unitFormat == UnitFormat::Metric ? &fahrenheit : &celsius, kelvin};
   int numberOfExpressionsSet = 0;
   constexpr int numberOfTargets = std::size(targets);
   for (int i = 0; i < numberOfTargets; i++) {
@@ -335,9 +332,9 @@ int Temperature::setAdditionalExpressions(
   return numberOfExpressionsSet;
 }
 
-int Energy::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Energy::setAdditionalExpressions(double value, Expression* dest,
+                                     int availableLength,
+                                     UnitFormat unitFormat) const {
   assert(availableLength >= 2);
   int index = 0;
   /* 1. Convert into Joules
@@ -367,21 +364,19 @@ int Energy::setAdditionalExpressions(
 }
 
 const UnitRepresentative* Surface::standardRepresentative(
-    double value, double exponent, const ReductionContext& reductionContext,
+    double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
   *prefix = UnitPrefix::EmptyPrefix();
-  return reductionContext.unitFormat() == Preferences::UnitFormat::Metric
-             ? &hectare
-             : &acre
+  return unitFormat == UnitFormat::Metric ? &hectare : &acre
 }
 
-int Surface::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Surface::setAdditionalExpressions(double value, Expression* dest,
+                                      int availableLength,
+                                      UnitFormat unitFormat) const {
   assert(availableLength >= 2);
   Expression* destMetric;
   Expression* destImperial = nullptr;
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+  if (unitFormat == UnitFormat::Metric) {
     destMetric = dest;
   } else {
     destImperial = dest;
@@ -402,9 +397,9 @@ int Surface::setAdditionalExpressions(
 }
 
 const UnitRepresentative* Volume::standardRepresentative(
-    double value, double exponent, const ReductionContext& reductionContext,
+    double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+  if (unitFormat == UnitFormat::Metric) {
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return representativesOfSameDimension();
   }
@@ -413,13 +408,13 @@ const UnitRepresentative* Volume::standardRepresentative(
                                        numberOfRepresentatives() - 1, prefix);
 }
 
-int Volume::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Volume::setAdditionalExpressions(double value, Expression* dest,
+                                     int availableLength,
+                                     UnitFormat unitFormat) const {
   assert(availableLength >= 2);
   Expression* destMetric;
   Expression* destImperial = nullptr;
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+  if (unitFormat == UnitFormat::Metric) {
     destMetric = dest;
   } else {
     destImperial = dest;
@@ -447,13 +442,13 @@ int Volume::setAdditionalExpressions(
   return 2;
 }
 
-int Speed::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+int Speed::setAdditionalExpressions(double value, Expression* dest,
+                                    int availableLength,
+                                    UnitFormat unitFormat) const {
   assert(availableLength >= 2);
   Expression* destMetric;
   Expression* destImperial = nullptr;
-  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+  if (unitFormat == UnitFormat::Metric) {
     destMetric = dest;
   } else {
     destImperial = dest;

@@ -21,8 +21,9 @@ class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
     return KDSize(2 * k_bracketWidth + childSize.width(),
                   HeightGivenChildHeight(childSize.height(), k_verticalMargin));
   }
-  static KDPoint ChildOffset() {
-    return BracketPairLayoutNode::ChildOffset(k_verticalMargin, k_bracketWidth);
+  static KDPoint ChildOffset(KDCoordinate childHeight) {
+    return BracketPairLayoutNode::ChildOffset(k_verticalMargin, k_bracketWidth,
+                                              childHeight);
   }
 
  protected:

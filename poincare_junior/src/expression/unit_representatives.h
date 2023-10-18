@@ -13,6 +13,8 @@ class Helper : public UnitRepresentative {
  protected:
   using Self = R;
   using UnitRepresentative::UnitRepresentative;
+  constexpr static size_t NumberOfRepresentatives =
+      sizeof(R::representatives) / sizeof(R);
 
   /* Base class for the list of static representatives, their members should all
    * be subclasses of UnitRepresentative */
@@ -20,12 +22,15 @@ class Helper : public UnitRepresentative {
     operator const UnitRepresentative*() const {
       return reinterpret_cast<const UnitRepresentative*>(this);
     }
+    const UnitRepresentative* end() const {
+      return reinterpret_cast<const UnitRepresentative*>(this) +
+             NumberOfRepresentatives;
+    }
   };
 
  public:
   int numberOfRepresentatives() const override {
-    constexpr size_t size = sizeof(R::representatives) / sizeof(R);
-    return size;
+    return NumberOfRepresentatives;
   };
   const UnitRepresentative* representativesOfSameDimension() const override {
     return reinterpret_cast<const UnitRepresentative*>(&R::representatives);
@@ -59,13 +64,13 @@ class Time : public Helper<Time> {
   };
 
 #if 0
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return ratio() * value >= representativesOfSameDimension()[1].ratio();
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        const ReductionContext& reductionContext) const override;
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return ratio() * value >= representativesOfSameDimension()[1].ratio();
+  }
+  int setAdditionalExpressions(
+      double value, Expression* dest, int availableLength,
+      const ReductionContext& reductionContext) const override;
 #endif
 
   using Helper::Helper;
@@ -88,17 +93,17 @@ class Distance : public Helper<Distance> {
     R mile;
   };
 
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override;
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return unitFormat == UnitFormat::Imperial;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+#if 0
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return unitFormat == UnitFormat::Imperial;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
 
   using Helper::Helper;
@@ -125,13 +130,14 @@ class Angle : public Helper<Angle> {
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override;
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return true;
-    }
-    int setAdditionalExpressionsWithExactValue(
-        Expression exactValue, double value, Expression* dest,
-        int availableLength, UnitFormat unitFormat) const;
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return true;
+  }
+  int setAdditionalExpressionsWithExactValue(Expression exactValue,
+                                             double value, Expression* dest,
+                                             int availableLength,
+                                             UnitFormat unitFormat) const;
 #endif
 
   using Helper::Helper;
@@ -154,17 +160,17 @@ class Mass : public Helper<Mass> {
     R dalton;
   };
 
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override;
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return unitFormat == UnitFormat::Imperial;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+#if 0
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return unitFormat == UnitFormat::Imperial;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
 
   using Helper::Helper;
@@ -199,18 +205,20 @@ class Temperature : public Helper<Temperature> {
   static double ConvertTemperatures(double value,
                                     const UnitRepresentative* source,
                                     const UnitRepresentative* target);
+#endif
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override {
     return this;
   }
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return true;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+#if 0
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return true;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
   using Helper::Helper;
   const static Representatives<const Self> representatives;
@@ -301,13 +309,13 @@ class Energy : public Helper<Energy> {
   };
 
 #if 0
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return true;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return true;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
 
   using Helper::Helper;
@@ -464,17 +472,17 @@ class Surface : public Helper<Surface> {
     R acre;
   };
 
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override;
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return true;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+#if 0
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return true;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
   using Helper::Helper;
   const static Representatives<const Self> representatives;
@@ -496,17 +504,17 @@ class Volume : public Helper<Volume> {
     R fluidOnce;
   };
 
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override;
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return true;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+#if 0
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return true;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
   using Helper::Helper;
   const static Representatives<const Self> representatives;
@@ -525,19 +533,19 @@ class Speed : public Helper<Speed> {
     return nullptr;
   };
 
-#if 0
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const override {
     return nullptr;
   }
-    bool hasSpecialAdditionalExpressions(double value,
-                                         UnitFormat unitFormat) const override {
-      return true;
-    }
-    int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        UnitFormat unitFormat) const override;
+#if 0
+  bool hasSpecialAdditionalExpressions(double value,
+                                       UnitFormat unitFormat) const override {
+    return true;
+  }
+  int setAdditionalExpressions(double value, Expression* dest,
+                               int availableLength,
+                               UnitFormat unitFormat) const override;
 #endif
   using Helper::Helper;
   const static Representatives<const Self> representatives;

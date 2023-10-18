@@ -150,23 +150,25 @@ int Time::setAdditionalExpressions(double value, Expression* dest,
                              reductionContext);
   return 1;
 }
+#endif
 
 const UnitRepresentative* Distance::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
-  return (unitFormat == UnitFormat::Metric)
+  return unitFormat == UnitFormat::Metric
              ?
              /* Exclude imperial units from the search. */
-             defaultFindBestRepresentative(
-                 value, exponent, representativesOfSameDimension(),
-                 Unit::k_inchRepresentativeIndex, prefix)
+             defaultFindBestRepresentative(value, exponent,
+                                           &representatives.meter,
+                                           &representatives.inch, prefix)
              :
-             /* Exclude m form the search. */
-             defaultFindBestRepresentative(
-                 value, exponent, representativesOfSameDimension() + 1,
-                 numberOfRepresentatives() - 1, prefix);
+             /* Exclude meters from the search. */
+             defaultFindBestRepresentative(value, exponent,
+                                           &representatives.meter + 1,
+                                           representatives.end(), prefix);
 }
 
+#if 0
 int Distance::setAdditionalExpressions(double value, Expression* dest,
                                        int availableLength,
                                        UnitFormat unitFormat) const {
@@ -256,23 +258,25 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
 }
 #endif
 
-#if 0
 const UnitRepresentative* Mass::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
   if (unitFormat == UnitFormat::Imperial) {
-    return defaultFindBestRepresentative(value, exponent, &ounce,
-                                         Unit::k_shortTonRepresentativeIndex -
-                                             Unit::k_ounceRepresentativeIndex +
-                                             1,
-                                         prefix);
+    // With shortTon but not longTon
+    return defaultFindBestRepresentative(value, exponent,
+                                         &representatives.ounce,
+                                         &representatives.longTon, prefix);
   }
   assert(unitFormat == UnitFormat::Metric);
-  bool useTon = exponent == 1. && value >= (&ton)->ratio();
-  return defaultFindBestRepresentative(value, exponent, useTon ? &ton : &gram,
-                                       1, prefix);
+  if (exponent == 1. && value >= representatives.ton.ratio()) {
+    return defaultFindBestRepresentative(value, exponent, &representatives.ton,
+                                         &representatives.ton + 1, prefix);
+  }
+  return defaultFindBestRepresentative(
+      value, exponent, &representatives.kilogram, &representatives.ton, prefix);
 }
 
+#if 0
 int Mass::setAdditionalExpressions(double value, Expression* dest,
                                    int availableLength,
                                    UnitFormat unitFormat) const {
@@ -362,14 +366,17 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
       Unit::Builder(&electronVolt, eVPrefix));
   return index;
 }
+#endif
 
 const UnitRepresentative* Surface::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
   *prefix = UnitPrefix::EmptyPrefix();
-  return unitFormat == UnitFormat::Metric ? &hectare : &acre
+  return unitFormat == UnitFormat::Metric ? &representatives.hectare
+                                          : &representatives.acre;
 }
 
+#if 0
 int Surface::setAdditionalExpressions(double value, Expression* dest,
                                       int availableLength,
                                       UnitFormat unitFormat) const {
@@ -395,19 +402,20 @@ int Surface::setAdditionalExpressions(double value, Expression* dest,
                               Unit::Builder(&acre, UnitPrefix::EmptyPrefix()));
   return 2;
 }
+#endif
 
 const UnitRepresentative* Volume::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const UnitPrefix** prefix) const {
   if (unitFormat == UnitFormat::Metric) {
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
-    return representativesOfSameDimension();
+    return &representatives.liter;
   }
-  return defaultFindBestRepresentative(value, exponent,
-                                       representativesOfSameDimension() + 1,
-                                       numberOfRepresentatives() - 1, prefix);
+  return defaultFindBestRepresentative(value, exponent, &representatives.cup,
+                                       representatives.end(), prefix);
 }
 
+#if 0
 int Volume::setAdditionalExpressions(double value, Expression* dest,
                                      int availableLength,
                                      UnitFormat unitFormat) const {

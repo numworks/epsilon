@@ -151,9 +151,9 @@ class UnitRepresentative {
   virtual const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const UnitPrefix** prefix) const {
-    return defaultFindBestRepresentative(value, exponent,
-                                         representativesOfSameDimension(),
-                                         numberOfRepresentatives(), prefix);
+    return defaultFindBestRepresentative(
+        value, exponent, representativesOfSameDimension(),
+        representativesOfSameDimension() + numberOfRepresentatives(), prefix);
   }
 #if 0
     /* hasSpecialAdditionalExpressions return true if the unit has special
@@ -206,8 +206,8 @@ class UnitRepresentative {
         m_outputPrefixable(outputPrefixable) {}
 
   const UnitRepresentative* defaultFindBestRepresentative(
-      double value, double exponent, const UnitRepresentative* representatives,
-      int length, const UnitPrefix** prefix) const;
+      double value, double exponent, const UnitRepresentative* begin,
+      const UnitRepresentative* end, const UnitPrefix** prefix) const;
 
   Aliases m_rootSymbols;
   /* m_ratioExpression is the expression of the factor used to convert a unit

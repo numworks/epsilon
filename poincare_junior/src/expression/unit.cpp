@@ -333,17 +333,17 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
 }
 
 const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
-    double value, double exponent, const UnitRepresentative* representatives,
-    int length, const UnitPrefix** prefix) const {
-  assert(length >= 1);
+    double value, double exponent, const UnitRepresentative* begin,
+    const UnitRepresentative* end, const UnitPrefix** prefix) const {
+  assert(begin < end);
   /* Return this if every other representative gives an accuracy of 0 or Inf.
    * This can happen when searching for an Imperial representative for 1m^20000
    * for example. */
   const UnitRepresentative* result = this;
   double accuracy = 0.;
   const UnitPrefix* currentPrefix = UnitPrefix::EmptyPrefix();
-  const UnitRepresentative* currentRepresentative = representatives;
-  while (currentRepresentative < representatives + length) {
+  const UnitRepresentative* currentRepresentative = begin;
+  while (currentRepresentative < end) {
     double currentAccuracy =
         std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
     if (*prefix) {

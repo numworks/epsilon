@@ -1,26 +1,13 @@
-// #include <assert.h>
-// #include <limits.h>
-#include <omg/round.h>
-// #include <poincare/addition.h>
-// #include <poincare/division.h>
-#include <poincare/float.h>
-// #include <poincare/layout_helper.h>
-// #include <poincare/multiplication.h>
-// #include <poincare/power.h>
-// #include <poincare/rational.h>
-// #include <poincare/undefined.h>
-// #include <poincare/unit.h>
+#include "unit.h"
 
-// #include <algorithm>
-// #include <array>
-// #include <utility>
+#include <omg/round.h>
+#include <poincare/float.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
 #include "poincare_junior/src/expression/unit_representatives.h"
 #include "simplification.h"
-#include "unit.h"
 
 namespace PoincareJ {
 

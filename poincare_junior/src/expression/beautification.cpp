@@ -143,6 +143,39 @@ void Beautification::SplitMultiplication(const Tree* expr,
   NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
 }
 
+bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
+  DimensionVector dimension = projectionContext.m_dimension.unit.vector;
+  if (!projectionContext.m_dimension.isUnit()) {
+    return false;
+  }
+  assert(!dimension.isEmpty());
+  EditionReference units;
+  if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
+    assert(dimension.supportSize() == 1);
+    units = Unit::Push(projectionContext.m_dimension.unit.representative,
+                       UnitPrefix::EmptyPrefix());
+  } else if (projectionContext.m_dimension.isAngleUnit()) {
+    units = dimension.toBaseUnits();
+  } else {
+    double value = Approximation::To<double>(expr);
+    units = SharedEditionPool->push<BlockType::Multiplication>(2);
+    ChooseBestDerivedUnits(dimension);
+    dimension.toBaseUnits();
+    Simplification::DeepSystematicReduce(units);
+    // FIXME
+    Simplification::DeepSystematicReduce(units);
+    Unit::ChooseBestRepresentativeAndPrefixForValue(
+        units, &value, projectionContext.m_unitFormat);
+    Tree* approximated =
+        SharedEditionPool->push<BlockType::Float>(static_cast<float>(value));
+    expr->moveTreeOverTree(approximated);
+  }
+  expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      KMult(KA, KB), {.KA = expr, .KB = units}));
+  units->removeTree();
+  return true;
+}
+
 bool Beautification::DeepBeautify(Tree* expr,
                                   ProjectionContext projectionContext) {
   // Simplification might have unlocked more approximations. Try again.
@@ -152,35 +185,7 @@ bool Beautification::DeepBeautify(Tree* expr,
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify, &projectionContext,
                                       false) ||
             changed;
-  DimensionVector dimension = projectionContext.m_dimension.unit.vector;
-  if (projectionContext.m_dimension.isUnit()) {
-    assert(!dimension.isEmpty());
-    EditionReference units;
-    if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
-      assert(dimension.supportSize() == 1);
-      units = Unit::Push(projectionContext.m_dimension.unit.representative,
-                         UnitPrefix::EmptyPrefix());
-    } else if (projectionContext.m_dimension.isAngleUnit()) {
-      units = dimension.toBaseUnits();
-    } else {
-      double value = Approximation::To<double>(expr);
-      units = SharedEditionPool->push<BlockType::Multiplication>(2);
-      ChooseBestDerivedUnits(dimension);
-      dimension.toBaseUnits();
-      Simplification::DeepSystematicReduce(units);
-      // FIXME
-      Simplification::DeepSystematicReduce(units);
-      Unit::ChooseBestRepresentativeAndPrefixForValue(
-          units, &value, projectionContext.m_unitFormat);
-      Tree* approximated =
-          SharedEditionPool->push<BlockType::Float>(static_cast<float>(value));
-      expr->moveTreeOverTree(approximated);
-    }
-    expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KMult(KA, KB), {.KA = expr, .KB = units}));
-    units->removeTree();
-    changed = true;
-  }
+  changed = AddUnits(expr, projectionContext) || changed;
   return changed;
 }
 

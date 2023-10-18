@@ -12,6 +12,7 @@ class Beautification {
   static float DegreeForSortingAddition(const Tree* expr, bool symbolsOnly);
   static void SplitMultiplication(const Tree* expr, EditionReference& numerator,
                                   EditionReference& denominator);
+  static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
 
   static bool ShallowBeautify(Tree* node, void* context = nullptr);
   EDITION_REF_WRAP_1D(ShallowBeautify, void*, nullptr);

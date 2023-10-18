@@ -49,9 +49,9 @@ class BracketPairLayoutNode : public LayoutNode {
     return KDPoint(bracketWidth,
                    realVerticalMargin(childHeight, verticalMargin));
   }
-  static KDPoint PositionGivenChildHeightAndBaseline(
-      bool left, KDCoordinate bracketWidth, KDSize childSize,
-      KDCoordinate childBaseline, KDCoordinate verticalMargin) {
+  static KDPoint PositionGivenChildHeight(bool left, KDCoordinate bracketWidth,
+                                          KDSize childSize,
+                                          KDCoordinate verticalMargin) {
     return KDPoint(left ? -bracketWidth : childSize.width(),
                    -realVerticalMargin(childSize.height(), verticalMargin));
   }

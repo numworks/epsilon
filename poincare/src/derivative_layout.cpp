@@ -342,19 +342,16 @@ void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p,
   // ...(f)...
   KDSize derivandSize = derivandLayout()->layoutSize(style.font);
   KDPoint derivandPosition = positionOfChild(derivandLayout(), style.font);
-  KDCoordinate derivandBaseline = derivandLayout()->baseline(style.font);
 
   KDPoint leftParenthesisPosition =
-      ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(
-          true, derivandSize, derivandBaseline)
+      ParenthesisLayoutNode::PositionGivenChildHeight(true, derivandSize)
           .translatedBy(derivandPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
       true, derivandSize.height(), ctx, leftParenthesisPosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);
 
   KDPoint rightParenthesisPosition =
-      ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(
-          false, derivandSize, derivandBaseline)
+      ParenthesisLayoutNode::PositionGivenChildHeight(false, derivandSize)
           .translatedBy(derivandPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
       false, derivandSize.height(), ctx,

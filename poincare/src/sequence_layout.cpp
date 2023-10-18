@@ -230,15 +230,12 @@ void SequenceLayoutNode::render(KDContext *ctx, KDPoint p,
   // Render the parentheses
   KDSize argumentSize = argumentLayout()->layoutSize(font);
   KDPoint argumentPosition = positionOfChild(argumentLayout(), font);
-  KDCoordinate argumentBaseline = argumentLayout()->baseline(font);
 
   KDPoint leftParenthesisPosition =
-      ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(
-          true, argumentSize, argumentBaseline)
+      ParenthesisLayoutNode::PositionGivenChildHeight(true, argumentSize)
           .translatedBy(argumentPosition);
   KDPoint rightParenthesisPosition =
-      ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(
-          false, argumentSize, argumentBaseline)
+      ParenthesisLayoutNode::PositionGivenChildHeight(false, argumentSize)
           .translatedBy(argumentPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
       true, argumentSize.height(), ctx, leftParenthesisPosition.translatedBy(p),

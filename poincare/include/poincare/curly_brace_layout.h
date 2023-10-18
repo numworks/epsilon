@@ -30,10 +30,9 @@ class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
     return BracketPairLayoutNode::BaselineGivenChildHeightAndBaseline(
         childHeight, childBaseline, k_verticalMargin);
   }
-  static KDPoint PositionGivenChildHeightAndBaseline(
-      bool left, KDSize childSize, KDCoordinate childBaseline) {
-    return BracketPairLayoutNode::PositionGivenChildHeightAndBaseline(
-        left, k_curlyBraceWidth, childSize, childBaseline, k_verticalMargin);
+  static KDPoint PositionGivenChildHeight(bool left, KDSize childSize) {
+    return BracketPairLayoutNode::PositionGivenChildHeight(
+        left, k_curlyBraceWidth, childSize, k_verticalMargin);
   }
 
   // LayoutNode

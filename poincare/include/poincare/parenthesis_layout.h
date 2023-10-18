@@ -28,10 +28,9 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
     return BracketPairLayoutNode::BaselineGivenChildHeightAndBaseline(
         childHeight, childBaseline, k_verticalMargin);
   }
-  static KDPoint PositionGivenChildHeightAndBaseline(
-      bool left, KDSize childSize, KDCoordinate childBaseline) {
-    return BracketPairLayoutNode::PositionGivenChildHeightAndBaseline(
-        left, k_parenthesisWidth, childSize, childBaseline, k_verticalMargin);
+  static KDPoint PositionGivenChildHeight(bool left, KDSize childSize) {
+    return BracketPairLayoutNode::PositionGivenChildHeight(
+        left, k_parenthesisWidth, childSize, k_verticalMargin);
   }
 
   // LayoutNode

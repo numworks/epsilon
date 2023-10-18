@@ -110,19 +110,16 @@ void ListSequenceLayoutNode::render(KDContext* ctx, KDPoint p,
   // Draw {  }
   KDSize functionSize = functionLayout()->layoutSize(font);
   KDPoint functionPosition = positionOfChild(functionLayout(), font);
-  KDCoordinate functionBaseline = functionLayout()->baseline(font);
 
   KDPoint leftBracePosition =
-      CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(
-          true, functionSize, functionBaseline)
+      CurlyBraceLayoutNode::PositionGivenChildHeight(true, functionSize)
           .translatedBy(functionPosition);
   CurlyBraceLayoutNode::RenderWithChildHeight(
       true, functionSize.height(), ctx, leftBracePosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);
 
   KDPoint rightBracePosition =
-      CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(
-          false, functionSize, functionBaseline)
+      CurlyBraceLayoutNode::PositionGivenChildHeight(false, functionSize)
           .translatedBy(functionPosition);
   CurlyBraceLayoutNode::RenderWithChildHeight(
       false, functionSize.height(), ctx, rightBracePosition.translatedBy(p),

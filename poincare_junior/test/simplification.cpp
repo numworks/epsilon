@@ -374,6 +374,9 @@ QUIZ_CASE(pcj_unit_simplification) {
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );
   //   simplifies_to("1m+1s", "undef" / "m+s");
   //   simplifies_to("1m+x", "m+x" / "undef");
+
+  // UnitFormat
+  simplifies_to("1609.344_m", "1×_mi", {.m_unitFormat = UnitFormat::Imperial});
 }
 
 QUIZ_CASE(pcj_dependencies) {

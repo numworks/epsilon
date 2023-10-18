@@ -170,8 +170,8 @@ bool Beautification::DeepBeautify(Tree* expr,
       Simplification::DeepSystematicReduce(units);
       // FIXME
       Simplification::DeepSystematicReduce(units);
-      Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
-                                                      UnitFormat::Metric);
+      Unit::ChooseBestRepresentativeAndPrefixForValue(
+          units, &value, projectionContext.m_unitFormat);
       Tree* approximated =
           SharedEditionPool->push<BlockType::Float>(static_cast<float>(value));
       expr->moveTreeOverTree(approximated);

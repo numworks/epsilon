@@ -233,7 +233,9 @@ void assert_parsed_expression_simplify_to(
       expression, simplifiedExpression, target, complexFormat, angleUnit,
       unitFormat, symbolicComputation, unitConversion,
       [](Tree *e, ReductionContext reductionContext) {
-        PoincareJ::Simplification::Simplify(e);
+        PoincareJ::Simplification::Simplify(
+            e, {.m_unitFormat = static_cast<PoincareJ::UnitFormat>(
+                    static_cast<uint8_t>(reductionContext.unitFormat()))});
         // TODO PCJ also approximate to see if it crashes
         return e;
       });

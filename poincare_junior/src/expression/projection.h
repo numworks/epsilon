@@ -13,6 +13,7 @@ struct ProjectionContext {
   AngleUnit m_angleUnit = AngleUnit::Radian;
   Strategy m_strategy = Strategy::Default;
   Dimension m_dimension = Dimension();
+  UnitFormat m_unitFormat = UnitFormat::Metric;
 };
 
 class Projection {

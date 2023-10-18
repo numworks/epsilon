@@ -18,27 +18,37 @@ DetailsListController::DetailsListController(
                           k_messageFormat) {}
 
 bool DetailsListController::handleEvent(Ion::Events::Event e) {
-  if (e == Ion::Events::Plus || e == Ion::Events::Minus) {
-    int step = e == Ion::Events::Plus ? 1 : -1;
-    ElementsViewDataSource *dataSource = App::app()->elementsViewDataSource();
-    /* Add an extra ElementsDataBase::k_numberOfElements to work around the %
-     * operator not behvaing correctly with negative integers. */
-    AtomicNumber newZ = (dataSource->selectedElement() + step +
-                         ElementsDataBase::k_numberOfElements - 1) %
-                            ElementsDataBase::k_numberOfElements +
-                        1;
-    dataSource->setSelectedElement(newZ);
-    /* Pop and push back to update the title. */
-    KDPoint offset = m_selectableListView.contentOffset();
-    int row = m_selectableListView.selectedRow();
-    StackViewController *stack = stackViewController();
-    stack->pop();
-    stack->push(this);
-    m_selectableListView.setContentOffset(offset);
-    m_selectableListView.selectCell(row);
-    return true;
+  /* Navigate through elements, sorted by their atomic number.
+   * Press the minus or left key to reach lighter element, plus or right to
+   * reach a heavier one. */
+
+  // -1: left. 1: right
+  int step;
+  if (e == Ion::Events::Minus || e == Ion::Events::Left) {
+    step = -1;
+  } else if (e == Ion::Events::Plus || e == Ion::Events::Right) {
+    step = 1;
+  } else {
+    return false;
   }
-  return false;
+
+  ElementsViewDataSource *dataSource = App::app()->elementsViewDataSource();
+  /* Add an extra ElementsDataBase::k_numberOfElements to work around the %
+   * operator not behvaing correctly with negative integers. */
+  AtomicNumber newZ = (dataSource->selectedElement() + step +
+                       ElementsDataBase::k_numberOfElements - 1) %
+                          ElementsDataBase::k_numberOfElements +
+                      1;
+  dataSource->setSelectedElement(newZ);
+  /* Pop and push back to update the title. */
+  KDPoint offset = m_selectableListView.contentOffset();
+  int row = m_selectableListView.selectedRow();
+  StackViewController *stack = stackViewController();
+  stack->pop();
+  stack->push(this);
+  m_selectableListView.setContentOffset(offset);
+  m_selectableListView.selectCell(row);
+  return true;
 }
 
 const char *DetailsListController::title() {

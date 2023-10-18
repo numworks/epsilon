@@ -88,7 +88,7 @@ KDSize SequenceLayoutNode::computeSize(KDFont::Size font) {
   KDSize argumentSize = argumentLayout()->layoutSize(font);
   KDSize argumentSizeWithParentheses = KDSize(
       argumentSize.width() + 2 * ParenthesisLayoutNode::k_parenthesisWidth,
-      ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
+      ParenthesisLayoutNode::Height(argumentSize.height()));
   KDSize result = KDSize(
       std::max({SymbolWidth(font), totalLowerBoundSize.width(),
                 upperBoundSize.width()}) +
@@ -132,10 +132,7 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
     y = baseline(font) - (SymbolHeight(font) + 1) / 2 -
         UpperBoundVerticalMargin(font) - upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = std::max({SymbolWidth(font),
-                  lowerBoundSizeWithVariableEquals(font).width(),
-                  upperBoundSize.width()}) +
-        ArgumentHorizontalMargin(font) +
+    x = leftParenthesisPosition(font).x() +
         ParenthesisLayoutNode::k_parenthesisWidth;
     y = baseline(font) - argumentLayout()->baseline(font);
   } else {
@@ -229,21 +226,35 @@ void SequenceLayoutNode::render(KDContext *ctx, KDPoint p,
 
   // Render the parentheses
   KDSize argumentSize = argumentLayout()->layoutSize(font);
-  KDPoint argumentPosition = positionOfChild(argumentLayout(), font);
-
-  KDPoint leftParenthesisPosition =
-      ParenthesisLayoutNode::PositionGivenChildHeight(true, argumentSize)
-          .translatedBy(argumentPosition);
-  KDPoint rightParenthesisPosition =
-      ParenthesisLayoutNode::PositionGivenChildHeight(false, argumentSize)
-          .translatedBy(argumentPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
-      true, argumentSize.height(), ctx, leftParenthesisPosition.translatedBy(p),
-      style.glyphColor, style.backgroundColor);
+      true, argumentSize.height(), ctx,
+      leftParenthesisPosition(font).translatedBy(p), style.glyphColor,
+      style.backgroundColor);
   ParenthesisLayoutNode::RenderWithChildHeight(
       false, argumentSize.height(), ctx,
-      rightParenthesisPosition.translatedBy(p), style.glyphColor,
+      rightParenthesisPosition(font).translatedBy(p), style.glyphColor,
       style.backgroundColor);
+}
+
+KDPoint SequenceLayoutNode::leftParenthesisPosition(KDFont::Size font) {
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
+  KDSize argumentSize = argumentLayout()->layoutSize(font);
+  KDCoordinate argumentBaseline = argumentLayout()->baseline(font);
+  KDCoordinate lowerboundWidth = lowerBoundSizeWithVariableEquals(font).width();
+
+  KDCoordinate x =
+      std::max({SymbolWidth(font), lowerboundWidth, upperBoundSize.width()}) +
+      ArgumentHorizontalMargin(font);
+  KDCoordinate y =
+      baseline(font) -
+      ParenthesisLayoutNode::Baseline(argumentSize.height(), argumentBaseline);
+  return {x, y};
+}
+
+KDPoint SequenceLayoutNode::rightParenthesisPosition(KDFont::Size font,
+                                                     KDSize argumentSize) {
+  return leftParenthesisPosition(font).translatedBy(KDPoint(
+      ParenthesisLayoutNode::k_parenthesisWidth + argumentSize.width(), 0));
 }
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX(KDFont::Size font) {

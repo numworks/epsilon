@@ -11,7 +11,7 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
   constexpr static KDCoordinate k_widthMargin = 1;
   constexpr static KDCoordinate k_curveWidth = 5;
   constexpr static KDCoordinate k_curveHeight = 7;
-  constexpr static KDCoordinate k_verticalMargin = 2;
+  constexpr static KDCoordinate k_minVerticalMargin = 2;
   constexpr static KDCoordinate k_parenthesisWidth =
       2 * k_widthMargin + k_curveWidth;
 
@@ -19,18 +19,13 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
                                     KDContext* ctx, KDPoint p,
                                     KDColor expressionColor,
                                     KDColor backgroundColor);
-  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-    return BracketPairLayoutNode::HeightGivenChildHeight(childHeight,
-                                                         k_verticalMargin);
+  static KDCoordinate Height(KDCoordinate childHeight) {
+    return BracketPairLayoutNode::Height(childHeight, k_minVerticalMargin);
   }
-  static KDCoordinate BaselineGivenChildHeightAndBaseline(
-      KDCoordinate childHeight, KDCoordinate childBaseline) {
-    return BracketPairLayoutNode::BaselineGivenChildHeightAndBaseline(
-        childHeight, childBaseline, k_verticalMargin);
-  }
-  static KDPoint PositionGivenChildHeight(bool left, KDSize childSize) {
-    return BracketPairLayoutNode::PositionGivenChildHeight(
-        left, k_parenthesisWidth, childSize, k_verticalMargin);
+  static KDCoordinate Baseline(KDCoordinate childHeight,
+                               KDCoordinate childBaseline) {
+    return BracketPairLayoutNode::Baseline(childHeight, childBaseline,
+                                           k_minVerticalMargin);
   }
 
   // LayoutNode
@@ -52,7 +47,9 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
  private:
   // BracketPairLayoutNode
   KDCoordinate bracketWidth() const override { return k_parenthesisWidth; }
-  KDCoordinate verticalMargin() const override { return k_verticalMargin; }
+  KDCoordinate minVerticalMargin() const override {
+    return k_minVerticalMargin;
+  }
   void renderOneBracket(bool left, KDContext* ctx, KDPoint p,
                         KDGlyph::Style style) override {
     RenderWithChildHeight(left, childLayout()->layoutSize(style.font).height(),

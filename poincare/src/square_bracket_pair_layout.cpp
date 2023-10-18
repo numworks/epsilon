@@ -12,8 +12,8 @@ namespace Poincare {
 void SquareBracketPairLayoutNode::RenderWithParameters(
     bool left, KDCoordinate childHeight, KDContext* ctx, KDPoint p,
     KDColor expressionColor, KDColor backgroundColor,
-    KDCoordinate verticalMargin, KDCoordinate bracketWidth, bool renderTopBar,
-    bool renderBottomBar, bool renderDoubleBar) {
+    KDCoordinate minVerticalMargin, KDCoordinate bracketWidth,
+    bool renderTopBar, bool renderBottomBar, bool renderDoubleBar) {
   KDCoordinate horizontalBarX =
       p.x() + (left ? k_externalWidthMargin : k_lineThickness);
   KDCoordinate horizontalBarLength =
@@ -22,8 +22,7 @@ void SquareBracketPairLayoutNode::RenderWithParameters(
       left ? horizontalBarX
            : p.x() + bracketWidth - k_lineThickness - k_externalWidthMargin;
   KDCoordinate verticalBarY = p.y();
-  KDCoordinate verticalBarLength =
-      HeightGivenChildHeight(childHeight, verticalMargin);
+  KDCoordinate verticalBarLength = Height(childHeight, minVerticalMargin);
 
   if (renderTopBar) {
     ctx->fillRect(KDRect(horizontalBarX, verticalBarY, horizontalBarLength,

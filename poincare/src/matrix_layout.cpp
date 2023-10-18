@@ -110,7 +110,7 @@ KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
   assert(indexOfChild(l) >= 0);
   return GridLayoutNode::positionOfChild(l, font).translatedBy(
-      SquareBracketPairLayoutNode::ChildOffset(gridSize(font).height()));
+      SquareBracketPairLayoutNode::ChildOffset(gridHeight(font)));
 }
 
 KDCoordinate MatrixLayoutNode::computeBaseline(KDFont::Size font) {
@@ -123,9 +123,7 @@ void MatrixLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
   SquareBracketPairLayoutNode::RenderWithChildSize(
       true, s.height(), ctx, p, style.glyphColor, style.backgroundColor);
   KDCoordinate rightOffset =
-      SquareBracketPairLayoutNode::ChildOffset(gridSize(style.font).height())
-          .x() +
-      s.width();
+      SquareBracketPairLayoutNode::ChildOffset(s.height()).x() + s.width();
   SquareBracketPairLayoutNode::RenderWithChildSize(
       false, s.height(), ctx, p.translatedBy(KDPoint(rightOffset, 0)),
       style.glyphColor, style.backgroundColor);

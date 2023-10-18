@@ -61,7 +61,7 @@ KDSize PiecewiseOperatorLayoutNode::computeSize(KDFont::Size font) {
   // Add a right margin of size k_curlyBraceWidth
   KDSize sizeWithBrace = KDSize(
       sizeWithoutBrace.width() + 2 * CurlyBraceLayoutNode::k_curlyBraceWidth,
-      CurlyBraceLayoutNode::HeightGivenChildHeight(sizeWithoutBrace.height()));
+      CurlyBraceLayoutNode::Height(sizeWithoutBrace.height()));
   return sizeWithBrace;
 }
 

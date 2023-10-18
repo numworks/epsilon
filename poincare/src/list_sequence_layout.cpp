@@ -86,7 +86,7 @@ KDPoint ListSequenceLayoutNode::positionOfVariable(KDFont::Size font) {
 
 KDCoordinate ListSequenceLayoutNode::variableSlotBaseline(KDFont::Size font) {
   return std::max(
-      {static_cast<int>(CurlyBraceLayoutNode::HeightGivenChildHeight(
+      {static_cast<int>(CurlyBraceLayoutNode::Height(
                             functionLayout()->layoutSize(font).height()) +
                         k_variableBaselineOffset),
        static_cast<int>(upperBoundLayout()->baseline(font)),
@@ -94,7 +94,7 @@ KDCoordinate ListSequenceLayoutNode::variableSlotBaseline(KDFont::Size font) {
 }
 
 KDCoordinate ListSequenceLayoutNode::computeBaseline(KDFont::Size font) {
-  return CurlyBraceLayoutNode::BaselineGivenChildHeightAndBaseline(
+  return CurlyBraceLayoutNode::Baseline(
       functionLayout()->layoutSize(font).height(),
       functionLayout()->baseline(font));
 }
@@ -109,18 +109,20 @@ void ListSequenceLayoutNode::render(KDContext* ctx, KDPoint p,
   KDFont::Size font = style.font;
   // Draw {  }
   KDSize functionSize = functionLayout()->layoutSize(font);
-  KDPoint functionPosition = positionOfChild(functionLayout(), font);
+  KDCoordinate functionBaseline = functionLayout()->baseline(font);
 
-  KDPoint leftBracePosition =
-      CurlyBraceLayoutNode::PositionGivenChildHeight(true, functionSize)
-          .translatedBy(functionPosition);
+  KDCoordinate braceY =
+      baseline(font) -
+      CurlyBraceLayoutNode::Baseline(functionSize.height(), functionBaseline);
+
+  KDPoint leftBracePosition = KDPoint(0, braceY);
   CurlyBraceLayoutNode::RenderWithChildHeight(
       true, functionSize.height(), ctx, leftBracePosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);
 
-  KDPoint rightBracePosition =
-      CurlyBraceLayoutNode::PositionGivenChildHeight(false, functionSize)
-          .translatedBy(functionPosition);
+  KDPoint rightBracePosition = KDPoint(
+      CurlyBraceLayoutNode::k_curlyBraceWidth + functionSize.width(), braceY);
+
   CurlyBraceLayoutNode::RenderWithChildHeight(
       false, functionSize.height(), ctx, rightBracePosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);

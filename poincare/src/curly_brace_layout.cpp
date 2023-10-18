@@ -86,7 +86,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left,
     bottomCurve = &bottomRightCurve[0][0];
     centerPiece = &rightCenter[0][0];
   }
-  KDCoordinate height = HeightGivenChildHeight(childHeight);
+  KDCoordinate height = Height(childHeight);
   assert(height > 2 * k_curveHeight + k_centerHeight);
   KDCoordinate bothBarsHeight = height - 2 * k_curveHeight - k_centerHeight;
   KDCoordinate topBarHeight = bothBarsHeight / 2;

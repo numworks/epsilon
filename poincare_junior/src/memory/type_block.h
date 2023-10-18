@@ -16,7 +16,7 @@ namespace PoincareJ {
 enum class BlockType : uint8_t {
 // Add all the types to the enum
 #define TYPE(F) SCOPED_TYPE(F),
-#include <poincare_junior/src/memory/block_types.h>
+#include <poincare_junior/src/memory/types.h>
 #undef TYPE
 };
 
@@ -43,7 +43,7 @@ class TypeBlock : public Block {
   // Add an array of names for the BlockTypes
   static constexpr const char *names[] = {
 #define TYPE(F) #F,
-#include <poincare_junior/src/memory/block_types.h>
+#include <poincare_junior/src/memory/types.h>
 #undef TYPE
   };
 #endif
@@ -58,7 +58,7 @@ class TypeBlock : public Block {
   }                                                             \
                                                                 \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
-#include <poincare_junior/src/memory/block_types.h>
+#include <poincare_junior/src/memory/types.h>
 #undef TYPE
 
   constexpr static bool IsOfType(BlockType thisType,

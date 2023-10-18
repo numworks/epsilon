@@ -75,16 +75,17 @@ class TypeBlock : public Block {
     return IsOfType(type(), types);
   }
 
+  bool isScalarOnly() const { return !isAMatrixOrContainsMatricesAsChildren(); }
+
   // Their next metaBlock contains the numberOfChildren
   constexpr static bool IsNAry(BlockType type) {
-    return NumberOfChildren(type) == NAryNumberOfChildrenTag;
+    return NumberOfChildrenOrTag(type) == NAryNumberOfChildrenTag;
   }
   constexpr bool isNAry() const { return IsNAry(type()); }
   // NAry with a single metaBlock
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
-  // TODO: Handle complex numbers
 
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     // NOTE: Make sure new BlockTypes are handled here.
@@ -153,10 +154,28 @@ class TypeBlock : public Block {
     }
   }
 
+  constexpr int numberOfChildren() const {
+    int n = NumberOfChildrenOrTag(type());
+    if (n >= 0) {
+      return n;
+    } else if (n == NAryNumberOfChildrenTag) {
+      return static_cast<uint8_t>(*next());
+    } else {
+      assert(n == MatrixNumberOfChildrenTag);
+      return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
+    }
+  }
+
+  constexpr static int NumberOfChildren(BlockType type) {
+    assert(type != BlockType::Matrix && !IsNAry(type));
+    return NumberOfChildrenOrTag(type);
+  }
+
+ private:
   constexpr static int NAryNumberOfChildrenTag = -1;
   constexpr static int MatrixNumberOfChildrenTag = -2;
 
-  constexpr static int NumberOfChildren(BlockType type) {
+  constexpr static int NumberOfChildrenOrTag(BlockType type) {
     // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
       case BlockType::Addition:
@@ -222,20 +241,6 @@ class TypeBlock : public Block {
         return 0;
     }
   }
-
-  constexpr int numberOfChildren() const {
-    int n = NumberOfChildren(type());
-    if (n >= 0) {
-      return n;
-    } else if (n == NAryNumberOfChildrenTag) {
-      return static_cast<uint8_t>(*next());
-    } else {
-      assert(n == MatrixNumberOfChildrenTag);
-      return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
-    }
-  }
-
-  bool isScalarOnly() const { return !isAMatrixOrContainsMatricesAsChildren(); }
 };
 
 #undef RANGE

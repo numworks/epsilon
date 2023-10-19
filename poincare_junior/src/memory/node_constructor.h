@@ -121,7 +121,7 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Float>(
 template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Double>(
-    Block* block, size_t blockIndex, float value) {
+    Block* block, size_t blockIndex, double value) {
   static_assert(sizeof(double) / sizeof(uint8_t) == 8);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::Double, Float::SubFloatAtIndex(value, 0),

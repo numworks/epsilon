@@ -13,7 +13,10 @@ class Float {
   constexpr static uint8_t SubFloatAtIndex(float value, int index) {
     return Bit::getByteAtIndex(std::bit_cast<uint32_t>(value), index);
   }
-  static float To(const Tree *tree) {
+  constexpr static uint8_t SubFloatAtIndex(double value, int index) {
+    return Bit::getByteAtIndex(std::bit_cast<uint64_t>(value), index);
+  }
+  static float FloatTo(const Tree *tree) {
     /* uint32_t can be fetched unaligned but not floats so we need this
      * intermediary step. volatile is used to prevent the compiler from
      * optimizing the uint32_t away but is too much : moving the value in an
@@ -21,6 +24,15 @@ class Float {
     volatile uint32_t value =
         *reinterpret_cast<const uint32_t *>(tree->block()->next());
     return std::bit_cast<float>(value);
+  }
+  static double DoubleTo(const Tree *tree) {
+    volatile uint64_t value =
+        *reinterpret_cast<const uint64_t *>(tree->block()->next());
+    return std::bit_cast<double>(value);
+  }
+  static double To(const Tree *tree) {
+    assert(tree->type().isOfType({BlockType::Float, BlockType::Double}));
+    return tree->type() == BlockType::Float ? FloatTo(tree) : DoubleTo(tree);
   }
 };
 

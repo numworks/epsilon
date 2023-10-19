@@ -253,8 +253,8 @@ void assert_expression_approximates_to(const char *expression,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) {
-        float value = PoincareJ::Approximation::To<T>(e);
-        return SharedEditionPool->push<BlockType::Float>(value);
+        T value = PoincareJ::Approximation::To<T>(e);
+        return SharedEditionPool->push<FloatType<T>::type>(value);
       },
       numberOfSignificantDigits);
 }

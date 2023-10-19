@@ -31,8 +31,9 @@ Sign::Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
     case BlockType::Constant:
       return Sign::Positive;
+    case BlockType::Double:
     case BlockType::Float: {
-      float value = Float::To(node);
+      double value = Float::To(node);
       // Floats are not considered integer since they may have been rounded
       return {value == 0, value > 0, value < 0, false};
     }

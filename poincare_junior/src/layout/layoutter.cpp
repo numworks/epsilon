@@ -297,6 +297,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Unit:
       layoutUnit(layoutParent, expression);
       break;
+    case BlockType::Double:
     case BlockType::Float: {
       char buffer[20];
       Poincare::PrintFloat::ConvertFloatToText(

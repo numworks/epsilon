@@ -274,6 +274,20 @@ class BlockBuffer {
 #endif
 };
 
+// Helper from T  = float|double to corresponding BlockType
+template <class T>
+struct FloatType;
+
+template <>
+struct FloatType<float> {
+  static constexpr BlockType type = BlockType::Float;
+};
+
+template <>
+struct FloatType<double> {
+  static constexpr BlockType type = BlockType::Double;
+};
+
 }  // namespace PoincareJ
 
 #endif

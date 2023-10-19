@@ -12,8 +12,8 @@ void assert_comparison_equals(const Tree* node0, const Tree* node1,
 }
 
 QUIZ_CASE(pcj_expression_comparison) {
-  assert_comparison_equals(10.0_e, 2.0_e, 1);
-  assert_comparison_equals(1.0_e, 2.0_e, -1);
+  assert_comparison_equals(10.0_fe, 2.0_fe, 1);
+  assert_comparison_equals(1.0_fe, 2.0_fe, -1);
   assert_comparison_equals(KAdd(2_e, π_e), π_e, 1);
   // TODO: complete
   SharedEditionPool->flush();

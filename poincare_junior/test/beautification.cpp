@@ -28,9 +28,9 @@ QUIZ_CASE(pcj_beautification) {
   Beautification::DeepBeautify(ref3);
   assert_trees_are_equal(ref3, KSqrt("y"_e));
 
-  EditionReference ref4(KExp(KMult(2.5_e, KLn("y"_e))));
+  EditionReference ref4(KExp(KMult(2.5_fe, KLn("y"_e))));
   Beautification::DeepBeautify(ref4);
-  assert_trees_are_equal(ref4, KPow("y"_e, 2.5_e));
+  assert_trees_are_equal(ref4, KPow("y"_e, 2.5_fe));
 
   EditionReference ref5(
       KAdd(KMult(-1_e, "w"_e), "x"_e, KMult(-1_e, "y"_e), KMult(-1_e, "z"_e)));

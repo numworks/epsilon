@@ -22,8 +22,8 @@ QUIZ_CASE(pcj_k_tree) {
 
   (void)KPol(Exponents<1>(), "x"_e, 2_e);
 
-  quiz_assert(Approximation::To<float>(0.125_e) == 0.125);
-  quiz_assert(Approximation::To<float>(-2.5_e) == -2.5);
+  quiz_assert(Approximation::To<float>(0.125_fe) == 0.125);
+  quiz_assert(Approximation::To<float>(-2.5_fe) == -2.5);
 }
 
 QUIZ_CASE(pcj_k_tree_integer) {

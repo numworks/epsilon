@@ -38,14 +38,14 @@ QUIZ_CASE(pcj_simplification_projection) {
                                     .m_strategy = Strategy::NumbersToFloat});
   assert_trees_are_equal(
       ref,
-      KAdd(KTrig(KAdd(2065.0_e, KMult(-1.0_e, 2065.0_e)), 0.0_e), KExp("x"_e)));
+      KAdd(KTrig(KAdd(2065_fe, KMult(-1_fe, 2065_fe)), 0_fe), KExp("x"_e)));
 
   CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(2_e, "x"_e),
                               KPow(KLn(e_e), KDiv(1_e, 10_e))));
   Projection::DeepSystemProjection(
       ref, {.m_complexFormat = ComplexFormat::Cartesian,
             .m_strategy = Strategy::ApproximateToFloat});
-  assert_trees_are_equal(ref, KAdd(1.0_e, KPow(2.0_e, "x"_e), 1.0_e));
+  assert_trees_are_equal(ref, KAdd(1_fe, KPow(2_fe, "x"_e), 1_fe));
 
   CloneTreeOverTree(ref, KCos(100_e));
   Projection::DeepSystemProjection(ref, {.m_angleUnit = AngleUnit::Degree});

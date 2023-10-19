@@ -286,7 +286,8 @@ template <char... C>
 consteval auto operator"" _e() {
   constexpr const char value[] = {C..., '\0'};
   if constexpr (HasDecimalPoint(value, sizeof...(C) + 1)) {
-    return FloatLitteralOperator<float, uint32_t, C...>();
+    assert(false);
+    // TODO decimals
   } else {
     return IntegerLitteral<IntegerValue(value, sizeof...(C) + 1)>();
   }

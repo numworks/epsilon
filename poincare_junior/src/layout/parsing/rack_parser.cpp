@@ -32,7 +32,6 @@ Tree *RackParser::parse() {
   Block *endOfPool = SharedEditionPool->lastBlock();
   ExceptionTry {
     Tree *result = initializeFirstTokenAndParseUntilEnd();
-    assert(m_status == Status::Success);
     // Only 1 tree has been created.
     assert(result->nextTree()->block() == SharedEditionPool->lastBlock());
     return result;
@@ -86,7 +85,6 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
 
   // // Failed to parse as unit conversion
   // restorePreviousParsingPosition(startingPosition);
-  // m_status = Status::Progress;
 
   // Step 2. Parse as assignment, starting with rightHandSide.
   // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
@@ -103,7 +101,6 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
   // rightHandSide.child(0).type() ==
   // ExpressionNode::Type::Symbol))) {
   // restorePreviousParsingPosition(startingPosition);
-  // m_status = Status::Progress;
   // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
   // EmptyContext tempContext = EmptyContext();
   // This is instantiated outside the condition so that the pointer is not
@@ -122,7 +119,6 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
   // Parse leftHandSide
   // m_nextToken = m_tokenizer.popToken();
   // EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-  // m_status = Status::Success;
   // result = Store::Builder(leftHandSide,
   // static_cast<SymbolAbstract &>(rightHandSide));
   // return result;
@@ -138,9 +134,6 @@ Tree *RackParser::initializeFirstTokenAndParseUntilEnd() {
     result = parseCommaSeparatedList(true);
   } else {
     result = parseUntil(Token::Type::EndOfStream);
-  }
-  if (m_status == Status::Progress) {
-    m_status = Status::Success;
   }
   return result;
 }
@@ -240,9 +233,7 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
     popToken();
     (this->*(tokenParsers[static_cast<int>(m_currentToken.type())]))(
         leftHandSide, stoppingType);
-    assert(m_status != Status::Success);
-  } while (m_status == Status::Progress &&
-           nextTokenHasPrecedenceOver(stoppingType));
+  } while (nextTokenHasPrecedenceOver(stoppingType));
   return leftHandSide;
 }
 
@@ -427,7 +418,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized()) {
     // +2 = 2, -2 = -2
     leftHandSide = parseUntil(std::max(stoppingType, Token::Type::Minus));
-    if (m_status == Status::Progress && !plus) {
+    if (!plus) {
       // TODO Opposite instead of multiplication by -1
       CloneTreeAtNode(leftHandSide, -1_e);
       CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
@@ -686,9 +677,6 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
 // }
 // EditionReference rightHandSide =
 // parseUntil(std::max(stoppingType, newStoppingType));
-// if (m_status != Status::Progress) {
-// return;
-// }
 // if (rightHandSide.isUninitialized()) {
 // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // }
@@ -791,14 +779,12 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
       popTokenIfType(Token::Type::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log\x14{2\x14}(8)")
     EditionReference base = parseUntil(Token::Type::RightSystemBrace);
-    if (m_status != Status::Progress) {
-    } else if (!popTokenIfType(Token::Type::RightSystemBrace)) {
+    if (!popTokenIfType(Token::Type::RightSystemBrace)) {
       // Right brace missing.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
       EditionReference parameter = parseFunctionParameters();
-      if (m_status != Status::Progress) {
-      } else if (parameter.numberOfChildren() != 1) {
+      if (parameter.numberOfChildren() != 1) {
         // Unexpected number of many parameters.
         ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       } else {
@@ -829,9 +815,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
 #if 0
   if (hasCaret) {
     base = parseUntil(endDelimiterOfPower);
-    if (m_status != Status::Progress) {
-      return;
-    } else if (!popTokenIfType(endDelimiterOfPower)) {
+    if (!popTokenIfType(endDelimiterOfPower)) {
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else if (base.isMinusOne()) {
       // Detect cos^-1(x) --> arccos(x)
@@ -1037,9 +1021,6 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
  * - a function call
  * - an access to a list element   */
 // EditionReference parameter = parseCommaSeparatedList();
-// if (m_status != Status::Progress) {
-// return;
-// }
 // assert(!parameter.isUninitialized());
 
 // int numberOfParameters = parameter.numberOfChildren();
@@ -1118,8 +1099,7 @@ Tree *RackParser::parseFunctionParameters() {
     return EditionReference();  // List::Builder();
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
-  if (m_status == Status::Progress && !parenthesisIsLayout &&
-      !popTokenIfType(Token::Type::RightParenthesis)) {
+  if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1138,9 +1118,6 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
       SharedEditionPool->push<BlockType::Matrix>(numberOfRows, numberOfColumns);
   while (!popTokenIfType(Token::Type::RightBracket)) {
     EditionReference row = parseVector();
-    if (m_status != Status::Progress) {
-      return;
-    }
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {
       // Incorrect matrix.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1169,8 +1146,7 @@ Tree *RackParser::parseVector() {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
-  if (m_status == Status::Progress &&
-      !popTokenIfType(Token::Type::RightBracket)) {
+  if (!popTokenIfType(Token::Type::RightBracket)) {
     // Right bracket missing.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1196,7 +1172,7 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
       length++;
       NAry::SetNumberOfChildren(list, length);
     }
-  } while (m_status == Status::Progress && popTokenIfType(Token::Type::Comma));
+  } while (popTokenIfType(Token::Type::Comma));
   return list;
 }
 
@@ -1208,10 +1184,6 @@ void RackParser::parseList(EditionReference &leftHandSide,
   }
   if (!popTokenIfType(Token::Type::RightBrace)) {
     leftHandSide = parseCommaSeparatedList();
-    if (m_status != Status::Progress) {
-      // There has been an error during the parsing of the comma separated list
-      return;
-    }
     if (!popTokenIfType(Token::Type::RightBrace)) {
       // Right brace missing.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1221,9 +1193,6 @@ void RackParser::parseList(EditionReference &leftHandSide,
   }
   if (popTokenIfType(Token::Type::LeftParenthesis)) {
     EditionReference parameter = parseCommaSeparatedList();
-    if (m_status != Status::Progress) {
-      return;
-    }
     if (!popTokenIfType(Token::Type::RightParenthesis)) {
       // Right parenthesis missing.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);

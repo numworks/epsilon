@@ -32,7 +32,6 @@ class RackParser {
              ParsingContext::ParsingMethod parsingMethod =
                  ParsingContext::ParsingMethod::Classic)
       : m_parsingContext(/*context,*/ parsingMethod),
-        m_status(Status::Progress),
         m_tokenizer(node, &m_parsingContext, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
@@ -41,7 +40,6 @@ class RackParser {
         m_root(node) {}
 
   Tree* parse();
-  Status getStatus() const { return m_status; }
 
  private:
   Tree* parseUntil(Token::Type stoppingType,
@@ -173,10 +171,6 @@ class RackParser {
       Token storedNextToken = Token(Token::Type::Undefined));
   // Data members
   ParsingContext m_parsingContext;
-  Status m_status;
-  /* m_status is initialized to Status::Progress,
-   * is changed to Status::Error if the Parser encounters an error,
-   * and is otherwise changed Status::Success. */
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;

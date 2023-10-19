@@ -58,7 +58,9 @@ class Approximation final {
     return ((b == -1.0 || b == 2.0) ? -1.0 : 1.0) *
            (((static_cast<int>(b) + 2) % 2 == 0) ? std::cos(a) : std::sin(a));
   }
-  static bool ApproximateAndReplaceEveryScalar(Tree* tree);
+  static bool ApproximateAndReplaceEveryScalar(Tree* tree) {
+    return ApproximateAndReplaceEveryScalarT<double>(tree);
+  }
   EDITION_REF_WRAP(ApproximateAndReplaceEveryScalar)
 
  private:
@@ -66,6 +68,8 @@ class Approximation final {
   using Reductor = T (*)(T, T);
   template <typename T>
   static T MapAndReduce(const Tree* node, Reductor<T> reductor);
+  template <typename T>
+  static bool ApproximateAndReplaceEveryScalarT(Tree* tree);
 };
 
 }  // namespace PoincareJ

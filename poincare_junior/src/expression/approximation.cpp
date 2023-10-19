@@ -101,10 +101,12 @@ bool interruptApproximation(TypeBlock type, int childIndex,
   return false;
 }
 
-bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
+template <typename T>
+bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
-  if (tree->type().isOfType({BlockType::Float, BlockType::UserSymbol,
-                             BlockType::Variable, BlockType::Unit})) {
+  if (tree->type() == FloatType<T>::type ||
+      tree->type().isOfType(
+          {BlockType::UserSymbol, BlockType::Variable, BlockType::Unit})) {
     return false;
   }
   bool changed = false;
@@ -114,19 +116,24 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
     if (interruptApproximation(tree->type(), childIndex++, child->type())) {
       break;
     }
-    changed = ApproximateAndReplaceEveryScalar(child) || changed;
-    approximateNode = approximateNode && child->type() == BlockType::Float;
+    changed = ApproximateAndReplaceEveryScalarT<T>(child) || changed;
+    approximateNode = approximateNode && child->type() == FloatType<T>::type;
   }
   if (!approximateNode) {
     // TODO: Partially approximate additions and multiplication anyway
     return changed;
   }
-  tree->moveTreeOverTree(SharedEditionPool->push<BlockType::Float>(
-      Approximation::To<float>(tree)));
+  tree->moveTreeOverTree(
+      SharedEditionPool->push<FloatType<T>::type>(Approximation::To<T>(tree)));
   return true;
 }
 
-}  // namespace PoincareJ
+template float Approximation::To<float>(const PoincareJ::Tree*);
+template double Approximation::To<double>(const PoincareJ::Tree*);
 
-template float PoincareJ::Approximation::To<float>(const PoincareJ::Tree*);
-template double PoincareJ::Approximation::To<double>(const PoincareJ::Tree*);
+template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(
+    Tree* tree);
+template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(
+    Tree* tree);
+
+}  // namespace PoincareJ

@@ -7,6 +7,10 @@
 namespace PoincareJ {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
+  if (i->type() == BlockType::Double || j->type() == BlockType::Double) {
+    return SharedEditionPool->push<BlockType::Double>(
+        Approximation::To<double>(i) + Approximation::To<double>(j));
+  }
   if (i->type() == BlockType::Float || j->type() == BlockType::Float) {
     return SharedEditionPool->push<BlockType::Float>(
         Approximation::To<float>(i) + Approximation::To<float>(j));
@@ -17,6 +21,10 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
   return result;
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
+  if (i->type() == BlockType::Double || j->type() == BlockType::Double) {
+    return SharedEditionPool->push<BlockType::Double>(
+        Approximation::To<double>(i) * Approximation::To<double>(j));
+  }
   if (i->type() == BlockType::Float || j->type() == BlockType::Float) {
     return SharedEditionPool->push<BlockType::Float>(
         Approximation::To<float>(i) * Approximation::To<float>(j));
@@ -49,9 +57,10 @@ bool Number::IsSanitized(const Tree* n) {
                            BlockType::IntegerPosBig,
                            BlockType::IntegerNegBig})) {
     assert(!n->type().isNumber() ||
-           n->type().isOfType({BlockType::Float, BlockType::Constant,
-                               BlockType::Half, BlockType::Zero, BlockType::One,
-                               BlockType::Two, BlockType::MinusOne}));
+           n->type().isOfType({BlockType::Float, BlockType::Double,
+                               BlockType::Constant, BlockType::Half,
+                               BlockType::Zero, BlockType::One, BlockType::Two,
+                               BlockType::MinusOne}));
     // Non numbers or optimal BlockType numbers
     return true;
   }

@@ -165,7 +165,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
     Tree* approximated =
-        SharedEditionPool->push<BlockType::Float>(static_cast<float>(value));
+        SharedEditionPool->push<BlockType::Double>(static_cast<double>(value));
     expr->moveTreeOverTree(approximated);
   }
   expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(

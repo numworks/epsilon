@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <setjmp.h>
 
+#include "block.h"
+
 // Usage:
 // ExceptionTry {
 //   /* Warning: Variable initialized before the checkpoint and modified here
@@ -23,11 +25,13 @@
 //   // Handle exceptions.
 // }
 
-#define ExceptionTry                \
-  {                                 \
-    ExceptionCheckpoint checkpoint; \
-    checkpoint.setActive();         \
+#define ExceptionTryAboveBlock(topmostBlock)      \
+  {                                               \
+    ExceptionCheckpoint checkpoint(topmostBlock); \
+    checkpoint.setActive();                       \
     if (setjmp(*(checkpoint.jumpBuffer())) == 0)
+
+#define ExceptionTry ExceptionTryAboveBlock(SharedEditionPool->lastBlock())
 
 #define ExceptionCatch(typeVarName)                                   \
   }                                                                   \
@@ -59,9 +63,7 @@ class ExceptionCheckpoint final {
   static void Raise(ExceptionType type) __attribute__((__noreturn__));
   static ExceptionType GetTypeAndClear();
 
-  ExceptionCheckpoint() : m_parent(s_topmostExceptionCheckpoint) {
-    assert(s_exceptionType == ExceptionType::None);
-  }
+  ExceptionCheckpoint(Block* topmostBlock);
   ~ExceptionCheckpoint();
 
   void setActive() { s_topmostExceptionCheckpoint = this; }
@@ -75,6 +77,9 @@ class ExceptionCheckpoint final {
 
   jmp_buf m_jumpBuffer;
   ExceptionCheckpoint* m_parent;
+  /* TODO: Assert no operation are performed on the Edition pool on blocks below
+   * s_topmostExceptionCheckpoint->m_topmostBlock. */
+  Block* m_topmostBlock;
 };
 
 }  // namespace PoincareJ

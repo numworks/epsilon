@@ -98,7 +98,7 @@ void EditionPool::flush() {
 }
 
 void EditionPool::flushFromBlock(Block *block) {
-  assert(isRootBlock(block));
+  assert(isRootBlock(block, true));
   m_size = block - m_firstBlock;
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *block, const Block *destination,

@@ -2,10 +2,17 @@
 
 #include <stdlib.h>
 
+#include "edition_pool.h"
+
 namespace PoincareJ {
 
 ExceptionCheckpoint* ExceptionCheckpoint::s_topmostExceptionCheckpoint;
 ExceptionType ExceptionCheckpoint::s_exceptionType = ExceptionType::None;
+
+ExceptionCheckpoint::ExceptionCheckpoint(Block* topmostBlock)
+    : m_parent(s_topmostExceptionCheckpoint), m_topmostBlock(topmostBlock) {
+  assert(s_exceptionType == ExceptionType::None);
+}
 
 ExceptionCheckpoint::~ExceptionCheckpoint() {
   assert((s_topmostExceptionCheckpoint == this &&
@@ -18,6 +25,9 @@ ExceptionCheckpoint::~ExceptionCheckpoint() {
 void ExceptionCheckpoint::rollback() {
   // Next Raise will be handled by parent.
   s_topmostExceptionCheckpoint = m_parent;
+  /* Flush everything changed on the SharedEditionPool because it may be
+   * corrupted. */
+  SharedEditionPool->flushFromBlock(m_topmostBlock);
   longjmp(m_jumpBuffer, 1);
 }
 

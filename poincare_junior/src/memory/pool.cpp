@@ -15,10 +15,10 @@ size_t Pool::numberOfTrees() const {
   return result;
 }
 
-bool Pool::isRootBlock(const Block* block) const {
+bool Pool::isRootBlock(const Block* block, bool allowLast) const {
   const Block* currentBlock = firstBlock();
   if (block >= lastBlock()) {
-    return false;
+    return allowLast && block == lastBlock();
   }
   while (currentBlock < block) {
     currentBlock = Tree::FromBlocks(currentBlock)->nextTree()->block();

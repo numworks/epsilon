@@ -23,7 +23,6 @@
 namespace PoincareJ {
 
 Tree *RackParser::parse() {
-  Block *endOfPool = SharedEditionPool->lastBlock();
   ExceptionTry {
     Tree *result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.
@@ -34,7 +33,6 @@ Tree *RackParser::parse() {
     if (type != ExceptionType::ParseFail) {
       ExceptionCheckpoint::Raise(type);
     }
-    SharedEditionPool->flushFromBlock(endOfPool);
     return nullptr;
   }
 }

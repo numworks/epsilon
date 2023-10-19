@@ -38,9 +38,13 @@ RANGE(Rational, Zero, RationalNegBig)
 
 // 1.3 - Other numbers
 
-/* - Float F (same for CodePointLayout)
+/* - Float F
  * | F TAG | VALUE (4 bytes) | */
 TYPE(Float)
+
+/* - Double D
+ * | D TAG | VALUE (8 bytes) | */
+TYPE(Double)
 
 /* - Constant C
  * | C TAG | TYPE | */

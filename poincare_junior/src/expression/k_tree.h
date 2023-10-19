@@ -270,6 +270,14 @@ KTree(FloatLitteral<uint32_t, V>)
              Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
              Bit::getByteAtIndex(V, 3)>;
 
+template <uint64_t V>
+KTree(FloatLitteral<uint64_t, V>)
+    -> KTree<BlockType::Double, Bit::getByteAtIndex(V, 0),
+             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
+             Bit::getByteAtIndex(V, 3), Bit::getByteAtIndex(V, 4),
+             Bit::getByteAtIndex(V, 5), Bit::getByteAtIndex(V, 6),
+             Bit::getByteAtIndex(V, 7)>;
+
 template <class Float, class Int, char... C>
 consteval auto FloatLitteralOperator() {
   constexpr const char value[] = {C..., '\0'};
@@ -280,6 +288,11 @@ consteval auto FloatLitteralOperator() {
 template <char... C>
 consteval auto operator"" _fe() {
   return FloatLitteralOperator<float, uint32_t, C...>();
+}
+
+template <char... C>
+consteval auto operator"" _de() {
+  return FloatLitteralOperator<double, uint64_t, C...>();
 }
 
 template <char... C>

@@ -90,6 +90,8 @@ class TypeBlock : public Block {
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
+      case BlockType::Double:
+        return 1 + sizeof(double) / sizeof(uint8_t);
       case BlockType::Float:
         return 1 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:

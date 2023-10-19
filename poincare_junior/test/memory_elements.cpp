@@ -463,6 +463,10 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(
       2.0_fe, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0),
                ValueBlock(0), ValueBlock(64)});
+  assert_tree_equals_blocks(
+      2.0_de, {TypeBlock(BlockType::Double), ValueBlock(0), ValueBlock(0),
+               ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(0),
+               ValueBlock(0), ValueBlock(64)});
   assert_tree_equals_blocks(-1_e, {BlockType::MinusOne});
   assert_tree_equals_blocks(1_e, {BlockType::One});
   assert_tree_equals_blocks(KAdd(1_e, 2_e),

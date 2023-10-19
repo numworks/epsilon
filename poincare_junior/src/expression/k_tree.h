@@ -111,7 +111,7 @@ static consteval auto KPol(Exp exponents, CTS... args) {
 /* Immediates are used to represent numerical constants of the code (like 2_e)
  * temporarily before they are cast to Trees, this allows writing -2_e. */
 
-template <int V>
+template <int64_t V>
 class IntegerLitteral : public AbstractTreeCompatible {
  public:
   // Once a deduction guide has chosen the KTree for the litteral, build it
@@ -138,57 +138,62 @@ KTree(IntegerLitteral<0>)->KTree<BlockType::Zero>;
 KTree(IntegerLitteral<1>)->KTree<BlockType::One>;
 KTree(IntegerLitteral<2>)->KTree<BlockType::Two>;
 
-template <int V>
+template <int64_t V>
   requires(V >= INT8_MIN && V <= INT8_MAX)
 KTree(IntegerLitteral<V>) -> KTree<BlockType::IntegerShort, V>;
 
-template <int V>
-  requires(V > INT8_MAX && Integer::NumberOfDigits(V) == 1)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerPosBig, 1, Bit::getByteAtIndex(V, 0)>;
+/* This macro generated code adds deduction guides to construct an IntegerBig
+ * with N blocks when V needs N bytes to be represented, for N from 1 to 8 and
+ * for negative and positive integers.
+ *
+ * A single guide looks like this:
+ *
+ *  template <int64_t V>
+ *  requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N)
+ *      KTree(IntegerLitteral<V>)
+ *  ->KTree<BlockType::IntegerPosBig, N, Bit::getByteAtIndex(V, 0),
+ *                                       ...
+ *                                       Bit::getByteAtIndex(V, N-1)>;
+ */
 
-template <int V>
-  requires(V > 0 && Integer::NumberOfDigits(V) == 2)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0),
-             Bit::getByteAtIndex(V, 1)>;
+#define SPECIALIZATIONS                               \
+  GUIDE(1, B(0));                                     \
+  GUIDE(2, B(0), B(1));                               \
+  GUIDE(3, B(0), B(1), B(2));                         \
+  GUIDE(4, B(0), B(1), B(2), B(3));                   \
+  GUIDE(5, B(0), B(1), B(2), B(3), B(4));             \
+  GUIDE(6, B(0), B(1), B(2), B(3), B(4), B(5));       \
+  GUIDE(7, B(0), B(1), B(2), B(3), B(4), B(5), B(6)); \
+  GUIDE(8, B(0), B(1), B(2), B(3), B(4), B(5), B(6), B(7));
 
-template <int V>
-  requires(V > 0 && Integer::NumberOfDigits(V) == 3)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0),
-             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2)>;
+// IntegerPosBig
+#define GUIDE(N, ...)                                         \
+  template <int64_t V>                                        \
+    requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N) \
+  KTree(IntegerLitteral<V>)                                   \
+      -> KTree<BlockType::IntegerPosBig, N, __VA_ARGS__>;
 
-template <int V>
-  requires(V > 0 && Integer::NumberOfDigits(V) == 4)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0),
-             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-             Bit::getByteAtIndex(V, 3)>;
+#define B(I) Bit::getByteAtIndex(V, I)
 
-template <int V>
-  requires(V < INT8_MIN && Integer::NumberOfDigits(-V) == 1)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerNegBig, 1, Bit::getByteAtIndex(-V, 0)>;
+SPECIALIZATIONS;
 
-template <int V>
-  requires(V < 0 && Integer::NumberOfDigits(-V) == 2)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0),
-             Bit::getByteAtIndex(-V, 1)>;
+#undef B
+#undef GUIDE
 
-template <int V>
-  requires(V < 0 && Integer::NumberOfDigits(-V) == 3)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0),
-             Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2)>;
+// IntegerNegBig
+#define GUIDE(N, ...)                                          \
+  template <int64_t V>                                         \
+    requires(V < INT8_MIN && Integer::NumberOfDigits(-V) == N) \
+  KTree(IntegerLitteral<V>)                                    \
+      -> KTree<BlockType::IntegerNegBig, N, __VA_ARGS__>;
 
-template <int V>
-  requires(V < 0 && Integer::NumberOfDigits(-V) == 4)
-KTree(IntegerLitteral<V>)
-    -> KTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0),
-             Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2),
-             Bit::getByteAtIndex(-V, 3)>;
+#define B(I) Bit::getByteAtIndex(-V, I)
+
+SPECIALIZATIONS;
+
+#undef B
+#undef GUIDE
+#undef SPECIALIZATIONS
 
 constexpr KTree π_e =
     KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();

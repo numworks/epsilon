@@ -12,26 +12,26 @@
 namespace PoincareJ {
 namespace Units {
 
-// UnitPrefix
-const UnitPrefix* UnitPrefix::Prefixes() { return Unit::k_prefixes; }
+// Prefix
+const Prefix* Prefix::Prefixes() { return Unit::k_prefixes; }
 
-const UnitPrefix* UnitPrefix::EmptyPrefix() {
+const Prefix* Prefix::EmptyPrefix() {
   return Prefixes() + Unit::k_emptyPrefixIndex;
 }
 
-uint8_t UnitPrefix::ToId(const UnitPrefix* prefix) {
+uint8_t Prefix::ToId(const Prefix* prefix) {
   uint8_t id = (prefix - Prefixes());
   assert(FromId(id) == prefix);
   return id;
 }
 
-const UnitPrefix* UnitPrefix::FromId(uint8_t id) {
+const Prefix* Prefix::FromId(uint8_t id) {
   assert(id < k_numberOfPrefixes);
   return Prefixes() + id;
 }
 
 #if 0
-int UnitPrefix::serialize(char* buffer, int bufferSize) const {
+int Prefix::serialize(char* buffer, int bufferSize) const {
   assert(bufferSize >= 0);
   return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
 }
@@ -334,14 +334,14 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
 
 const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
     double value, double exponent, const UnitRepresentative* begin,
-    const UnitRepresentative* end, const UnitPrefix** prefix) const {
+    const UnitRepresentative* end, const Prefix** prefix) const {
   assert(begin < end);
   /* Return this if every other representative gives an accuracy of 0 or Inf.
    * This can happen when searching for an Imperial representative for 1m^20000
    * for example. */
   const UnitRepresentative* result = this;
   double accuracy = 0.;
-  const UnitPrefix* currentPrefix = UnitPrefix::EmptyPrefix();
+  const Prefix* currentPrefix = Prefix::EmptyPrefix();
   const UnitRepresentative* currentRepresentative = begin;
   while (currentRepresentative < end) {
     double currentAccuracy =
@@ -361,14 +361,14 @@ const UnitRepresentative* UnitRepresentative::defaultFindBestRepresentative(
     currentRepresentative++;
   }
   if (!*prefix) {
-    *prefix = UnitPrefix::EmptyPrefix();
+    *prefix = Prefix::EmptyPrefix();
   }
   return result;
 }
 
 #if 0
 int UnitRepresentative::serialize(char* buffer, int bufferSize,
-                              const UnitPrefix* prefix) const {
+                              const Prefix* prefix) const {
   int length = 0;
   length += prefix->serialize(buffer, bufferSize);
   assert(length == 0 || isInputPrefixable());
@@ -385,8 +385,7 @@ int UnitRepresentative::serialize(char* buffer, int bufferSize,
 
 bool UnitRepresentative::canParseWithEquivalents(
     const char* symbol, size_t length,
-    const UnitRepresentative** representative,
-    const UnitPrefix** prefix) const {
+    const UnitRepresentative** representative, const Prefix** prefix) const {
   const UnitRepresentative* candidate = representativesOfSameDimension();
   if (!candidate) {
     return false;
@@ -411,15 +410,15 @@ bool UnitRepresentative::canParseWithEquivalents(
 }
 
 bool UnitRepresentative::canParse(const char* symbol, size_t length,
-                                  const UnitPrefix** prefix) const {
+                                  const Prefix** prefix) const {
   if (!isInputPrefixable()) {
     if (prefix) {
-      *prefix = UnitPrefix::EmptyPrefix();
+      *prefix = Prefix::EmptyPrefix();
     }
     return length == 0;
   }
-  for (size_t i = 0; i < UnitPrefix::k_numberOfPrefixes; i++) {
-    const UnitPrefix* pre = UnitPrefix::Prefixes() + i;
+  for (size_t i = 0; i < Prefix::k_numberOfPrefixes; i++) {
+    const Prefix* pre = Prefix::Prefixes() + i;
     const char* prefixSymbol = pre->symbol();
     if (strlen(prefixSymbol) == length && canPrefix(pre, true) &&
         strncmp(symbol, prefixSymbol, length) == 0) {
@@ -432,7 +431,7 @@ bool UnitRepresentative::canParse(const char* symbol, size_t length,
   return false;
 }
 
-bool UnitRepresentative::canPrefix(const UnitPrefix* prefix, bool input) const {
+bool UnitRepresentative::canPrefix(const Prefix* prefix, bool input) const {
   Prefixable prefixable = (input) ? m_inputPrefixable : m_outputPrefixable;
   if (prefix->exponent() == 0) {
     return true;
@@ -465,25 +464,25 @@ bool UnitRepresentative::canPrefix(const UnitPrefix* prefix, bool input) const {
   return false;
 }
 
-const UnitPrefix* UnitRepresentative::findBestPrefix(double value,
-                                                     double exponent) const {
+const Prefix* UnitRepresentative::findBestPrefix(double value,
+                                                 double exponent) const {
   if (!isOutputPrefixable()) {
-    return UnitPrefix::EmptyPrefix();
+    return Prefix::EmptyPrefix();
   }
   if (value < Poincare::Float<double>::EpsilonLax()) {
-    return UnitPrefix::EmptyPrefix();
+    return Prefix::EmptyPrefix();
   }
-  const UnitPrefix* res = UnitPrefix::EmptyPrefix();
+  const Prefix* res = Prefix::EmptyPrefix();
   const float magnitude = std::log10(std::fabs(value));
   float bestOrder = magnitude;
-  for (int i = 0; i < UnitPrefix::k_numberOfPrefixes; i++) {
-    if (!canPrefix(UnitPrefix::Prefixes() + i, false)) {
+  for (int i = 0; i < Prefix::k_numberOfPrefixes; i++) {
+    if (!canPrefix(Prefix::Prefixes() + i, false)) {
       continue;
     }
-    float order = magnitude - UnitPrefix::Prefixes()[i].exponent() * exponent;
+    float order = magnitude - Prefix::Prefixes()[i].exponent() * exponent;
     if (compareMagnitudeOrders(order, bestOrder)) {
       bestOrder = order;
-      res = UnitPrefix::Prefixes() + i;
+      res = Prefix::Prefixes() + i;
     }
   }
   return res;
@@ -568,7 +567,7 @@ Evaluation<T> templatedApproximate(
 // Unit
 bool Unit::CanParse(UnicodeDecoder* name,
                     const UnitRepresentative** representative,
-                    const UnitPrefix** prefix) {
+                    const Prefix** prefix) {
   if (name->nextCodePoint() != '_') {
     name->previousCodePoint();
   }
@@ -707,7 +706,7 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
 
   Addition res = Addition::Builder();
   for (int i = length - 1; i >= 0; i--) {
-    assert(units[i].node()->prefix() == UnitPrefix::EmptyPrefix());
+    assert(units[i].node()->prefix() == Prefix::EmptyPrefix());
     double factor =
         std::round(units[i].node()->representative()->ratio() / baseRatio);
     double share = remain / factor;
@@ -740,7 +739,7 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
 Expression Unit::ConvertTemperatureUnits(
     Expression e, Unit unit, const ReductionContext& reductionContext) {
   const UnitRepresentative* targetRepr = unit.representative();
-  const UnitPrefix* targetPrefix = unit.node()->prefix();
+  const Prefix* targetPrefix = unit.node()->prefix();
   assert(unit.representative()->dimensionVector() ==
          TemperatureRepresentative::Dimension);
 
@@ -757,7 +756,7 @@ Expression Unit::ConvertTemperatureUnits(
     return Undefined::Builder();
   }
 
-  const UnitPrefix* startPrefix = static_cast<Unit&>(startUnit).node()->prefix();
+  const Prefix* startPrefix = static_cast<Unit&>(startUnit).node()->prefix();
   double value = e.approximateToScalar<double>(reductionContext.context(),
                                                reductionContext.complexFormat(),
                                                reductionContext.angleUnit());
@@ -851,11 +850,11 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
 
   UnitNode* unitNode = node();
   const UnitRepresentative* representative = unitNode->representative();
-  const UnitPrefix* prefix = unitNode->prefix();
+  const Prefix* prefix = unitNode->prefix();
 
   Expression result = representative->toBaseUnits(reductionContext)
                           .deepReduce(reductionContext);
-  if (prefix != UnitPrefix::EmptyPrefix()) {
+  if (prefix != Prefix::EmptyPrefix()) {
     Expression prefixFactor = Power::Builder(
         Rational::Builder(10), Rational::Builder(prefix->exponent()));
     prefixFactor = prefixFactor.shallowReduce(reductionContext);
@@ -900,7 +899,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
      * This is not true for temperatures (0 K != 0°C != 0°F). */
     SetRepresentative(
         unit, GetRepresentative(unit)->representativesOfSameDimension());
-    SetPrefix(unit, UnitPrefix::EmptyPrefix());
+    SetPrefix(unit, Prefix::EmptyPrefix());
     return;
   }
   // Convert value to base units
@@ -908,13 +907,12 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
       *value * std::pow(GetRepresentative(unit)->ratio() *
                             std::pow(10., GetPrefix(unit)->exponent()),
                         exponent);
-  const UnitPrefix* bestPrefix =
-      (optimizePrefix) ? UnitPrefix::EmptyPrefix() : nullptr;
+  const Prefix* bestPrefix = (optimizePrefix) ? Prefix::EmptyPrefix() : nullptr;
   const UnitRepresentative* bestRepresentative =
       GetRepresentative(unit)->standardRepresentative(baseValue, exponent,
                                                       unitFormat, &bestPrefix);
   if (!optimizePrefix) {
-    bestPrefix = UnitPrefix::EmptyPrefix();
+    bestPrefix = Prefix::EmptyPrefix();
   }
 
   if (bestRepresentative != GetRepresentative(unit)) {
@@ -940,9 +938,9 @@ void Unit::RemoveUnit(Tree* unit) {
 }
 
 Tree* Unit::Push(const UnitRepresentative* unitRepresentative,
-                 const UnitPrefix* unitPrefix) {
+                 const Prefix* unitPrefix) {
   uint8_t repId = UnitRepresentative::ToId(unitRepresentative);
-  uint8_t preId = UnitPrefix::ToId(unitPrefix);
+  uint8_t preId = Prefix::ToId(unitPrefix);
   return SharedEditionPool->push<BlockType::Unit>(repId, preId);
 }
 
@@ -950,8 +948,8 @@ const UnitRepresentative* Unit::GetRepresentative(const Tree* unit) {
   return UnitRepresentative::FromId(unit->nodeValue(0));
 }
 
-const UnitPrefix* Unit::GetPrefix(const Tree* unit) {
-  return UnitPrefix::FromId(unit->nodeValue(1));
+const Prefix* Unit::GetPrefix(const Tree* unit) {
+  return Prefix::FromId(unit->nodeValue(1));
 }
 
 void Unit::SetRepresentative(Tree* unit,
@@ -959,8 +957,8 @@ void Unit::SetRepresentative(Tree* unit,
   unit->setNodeValue(0, UnitRepresentative::ToId(representative));
 }
 
-void Unit::SetPrefix(Tree* unit, const UnitPrefix* prefix) {
-  unit->setNodeValue(1, UnitPrefix::ToId(prefix));
+void Unit::SetPrefix(Tree* unit, const Prefix* prefix) {
+  unit->setNodeValue(1, Prefix::ToId(prefix));
 }
 
 }  // namespace Units

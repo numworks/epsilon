@@ -138,12 +138,12 @@ int Time::setAdditionalExpressions(double value, Expression* dest,
   assert(availableLength >= 1);
   /* Use all representatives but week */
   const Unit splitUnits[] = {
-      Unit::Builder(&second, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&minute, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&hour, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&day, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&month, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&year, UnitPrefix::EmptyPrefix()),
+      Unit::Builder(&second, Prefix::EmptyPrefix()),
+      Unit::Builder(&minute, Prefix::EmptyPrefix()),
+      Unit::Builder(&hour, Prefix::EmptyPrefix()),
+      Unit::Builder(&day, Prefix::EmptyPrefix()),
+      Unit::Builder(&month, Prefix::EmptyPrefix()),
+      Unit::Builder(&year, Prefix::EmptyPrefix()),
   };
   dest[0] = Unit::BuildSplit(value, splitUnits, numberOfRepresentatives() - 1,
                              reductionContext);
@@ -153,7 +153,7 @@ int Time::setAdditionalExpressions(double value, Expression* dest,
 
 const UnitRepresentative* Distance::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
-    const UnitPrefix** prefix) const {
+    const Prefix** prefix) const {
   return unitFormat == UnitFormat::Metric
              ?
              /* Exclude imperial units from the search. */
@@ -176,10 +176,10 @@ int Distance::setAdditionalExpressions(double value, Expression* dest,
     return 0;
   }
   const Unit splitUnits[] = {
-      Unit::Builder(&inch, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&foot, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&yard, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&mile, UnitPrefix::EmptyPrefix()),
+      Unit::Builder(&inch, Prefix::EmptyPrefix()),
+      Unit::Builder(&foot, Prefix::EmptyPrefix()),
+      Unit::Builder(&yard, Prefix::EmptyPrefix()),
+      Unit::Builder(&mile, Prefix::EmptyPrefix()),
   };
   dest[0] = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
                              reductionContext);
@@ -201,7 +201,7 @@ const UnitRepresentative* Angle::DefaultRepresentativeForAngleUnit(
 
 const UnitRepresentative* Angle::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
-    const UnitPrefix** prefix) const {
+    const Prefix** prefix) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
     return defaultFindBestRepresentative(value, exponent, &arcSecond, 3,
                                          prefix);
@@ -212,7 +212,7 @@ const UnitRepresentative* Angle::standardRepresentative(
 Expression Angle::convertInto(Expression value, const UnitRepresentative* other,
                               UnitFormat unitFormat) const {
   assert(dimensionVector() == other->dimensionVector());
-  Expression unit = Unit::Builder(other, UnitPrefix::EmptyPrefix());
+  Expression unit = Unit::Builder(other, Prefix::EmptyPrefix());
   Expression inRadians =
       Multiplication::Builder(value, ratioExpressionReduced(reductionContext))
           .shallowReduce(reductionContext);
@@ -239,9 +239,9 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
   }
   // Degrees related units should show their decomposition in DMS
   const Unit splitUnits[] = {
-      Unit::Builder(&arcSecond, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&arcMinute, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&degree, UnitPrefix::EmptyPrefix()),
+      Unit::Builder(&arcSecond, Prefix::EmptyPrefix()),
+      Unit::Builder(&arcMinute, Prefix::EmptyPrefix()),
+      Unit::Builder(&degree, Prefix::EmptyPrefix()),
   };
   Expression split = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
                                       reductionContext);
@@ -259,7 +259,7 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
 
 const UnitRepresentative* Mass::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
-    const UnitPrefix** prefix) const {
+    const Prefix** prefix) const {
   if (unitFormat == UnitFormat::Imperial) {
     // With shortTon but not longTon
     return defaultFindBestRepresentative(value, exponent,
@@ -284,9 +284,9 @@ int Mass::setAdditionalExpressions(double value, Expression* dest,
     return 0;
   }
   const Unit splitUnits[] = {
-      Unit::Builder(&ounce, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&pound, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&shortTon, UnitPrefix::EmptyPrefix()),
+      Unit::Builder(&ounce, Prefix::EmptyPrefix()),
+      Unit::Builder(&pound, Prefix::EmptyPrefix()),
+      Unit::Builder(&shortTon, Prefix::EmptyPrefix()),
   };
   dest[0] = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
                              reductionContext);
@@ -329,7 +329,7 @@ int Temperature::setAdditionalExpressions(double value, Expression* dest,
     dest[numberOfExpressionsSet++] = Multiplication::Builder(
         Float<double>::Builder(
             Temperature::ConvertTemperatures(value, this, targets[i])),
-        Unit::Builder(targets[i], UnitPrefix::EmptyPrefix()));
+        Unit::Builder(targets[i], Prefix::EmptyPrefix()));
   }
   assert(numberOfExpressionsSet == 2);
   return numberOfExpressionsSet;
@@ -342,7 +342,7 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
   int index = 0;
   /* 1. Convert into Joules
    * As J is just a shorthand for _kg_m^2_s^-2, the value is used as is. */
-  const UnitPrefix* joulePrefix = joule->findBestPrefix(value, 1.);
+  const Prefix* joulePrefix = joule->findBestPrefix(value, 1.);
   dest[index++] = Multiplication::Builder(
       Float<double>::Builder(value * std::pow(10., -joulePrefix->exponent())),
       Unit::Builder(&joule, joulePrefix));
@@ -350,15 +350,15 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
    * As value is expressed in SI units (ie _kg_m^2_s^-2), the ratio is that of
    * hours to seconds. */
   double adjustedValue = value / hour.ratio() / watt.ratio();
-  const UnitPrefix* wattPrefix = watt->findBestPrefix(adjustedValue, 1.);
+  const Prefix* wattPrefix = watt->findBestPrefix(adjustedValue, 1.);
   dest[index++] = Multiplication::Builder(
       Float<double>::Builder(adjustedValue *
                              std::pow(10., -wattPrefix->exponent())),
       Multiplication::Builder(Unit::Builder(&watt, wattPrefix),
-                              Unit::Builder(&hour, UnitPrefix::EmptyPrefix())));
+                              Unit::Builder(&hour, Prefix::EmptyPrefix())));
   /* 3. Convert into eV */
   adjustedValue = value / electronVolt.ratio();
-  const UnitPrefix* eVPrefix = electronVolt.findBestPrefix(adjustedValue, 1.);
+  const Prefix* eVPrefix = electronVolt.findBestPrefix(adjustedValue, 1.);
   dest[index++] = Multiplication::Builder(
       Float<double>::Builder(adjustedValue *
                              std::pow(10., -eVPrefix->exponent())),
@@ -369,8 +369,8 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
 
 const UnitRepresentative* Surface::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
-    const UnitPrefix** prefix) const {
-  *prefix = UnitPrefix::EmptyPrefix();
+    const Prefix** prefix) const {
+  *prefix = Prefix::EmptyPrefix();
   return unitFormat == UnitFormat::Metric ? &representatives.hectare
                                           : &representatives.acre;
 }
@@ -391,21 +391,21 @@ int Surface::setAdditionalExpressions(double value, Expression* dest,
   // 1. Convert to hectares
   *destMetric = Multiplication::Builder(
       Float<double>::Builder(value / hectare.ratio()),
-      Unit::Builder(&hectare, UnitPrefix::EmptyPrefix()));
+      Unit::Builder(&hectare, Prefix::EmptyPrefix()));
   // 2. Convert to acres
   if (!destImperial) {
     return 1;
   }
   *destImperial =
       Multiplication::Builder(Float<double>::Builder(value / acre.ratio()),
-                              Unit::Builder(&acre, UnitPrefix::EmptyPrefix()));
+                              Unit::Builder(&acre, Prefix::EmptyPrefix()));
   return 2;
 }
 #endif
 
 const UnitRepresentative* Volume::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
-    const UnitPrefix** prefix) const {
+    const Prefix** prefix) const {
   if (unitFormat == UnitFormat::Metric) {
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return &representatives.liter;
@@ -429,7 +429,7 @@ int Volume::setAdditionalExpressions(double value, Expression* dest,
   }
   // 1. Convert to liters
   double adjustedValue = value / liter.ratio();
-  const UnitPrefix* literPrefix = liter.findBestPrefix(adjustedValue, 1.);
+  const Prefix* literPrefix = liter.findBestPrefix(adjustedValue, 1.);
   *destMetric = Multiplication::Builder(
       Float<double>::Builder(adjustedValue *
                              pow(10., -literPrefix->exponent())),
@@ -439,10 +439,10 @@ int Volume::setAdditionalExpressions(double value, Expression* dest,
     return 1;
   }
   const Unit splitUnits[] = {
-      Unit::Builder(&cup, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&pint, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&quart, UnitPrefix::EmptyPrefix()),
-      Unit::Builder(&gallon, UnitPrefix::EmptyPrefix()),
+      Unit::Builder(&cup, Prefix::EmptyPrefix()),
+      Unit::Builder(&pint, Prefix::EmptyPrefix()),
+      Unit::Builder(&quart, Prefix::EmptyPrefix()),
+      Unit::Builder(&gallon, Prefix::EmptyPrefix()),
   };
   *destImperial = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
                                    reductionContext);
@@ -466,8 +466,8 @@ int Speed::setAdditionalExpressions(double value, Expression* dest,
       Float<double>::Builder(value / 1000. * Time::hour.ratio()),
       Multiplication::Builder(
           Unit::Builder(&Distance::meter,
-                        UnitPrefix::Prefixes() + Unit::k_kiloPrefixIndex),
-          Power::Builder(Unit::Builder(&Time::hour, UnitPrefix::EmptyPrefix()),
+                        Prefix::Prefixes() + Unit::k_kiloPrefixIndex),
+          Power::Builder(Unit::Builder(&Time::hour, Prefix::EmptyPrefix()),
                          Rational::Builder(-1))));
   // 2. Convert to mph
   if (!destImperial) {
@@ -477,8 +477,8 @@ int Speed::setAdditionalExpressions(double value, Expression* dest,
       Float<double>::Builder(value / Distance::mile.ratio() *
                              Time::hour.ratio()),
       Multiplication::Builder(
-          Unit::Builder(&Distance::mile, UnitPrefix::EmptyPrefix()),
-          Power::Builder(Unit::Builder(hour, UnitPrefix::EmptyPrefix()),
+          Unit::Builder(&Distance::mile, Prefix::EmptyPrefix()),
+          Power::Builder(Unit::Builder(hour, Prefix::EmptyPrefix()),
                          Rational::Builder(-1))));
   return 2;
 }

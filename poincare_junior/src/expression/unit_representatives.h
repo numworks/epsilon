@@ -94,7 +94,7 @@ class Distance : public Helper<Distance> {
 
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override;
+      const Prefix** prefix) const override;
 #if 0
   bool hasSpecialAdditionalExpressions(double value,
                                        UnitFormat unitFormat) const override {
@@ -128,7 +128,7 @@ class Angle : public Helper<Angle> {
                     UnitFormat unitFormat) const;
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override;
+      const Prefix** prefix) const override;
   bool hasSpecialAdditionalExpressions(double value,
                                        UnitFormat unitFormat) const override {
     return true;
@@ -161,7 +161,7 @@ class Mass : public Helper<Mass> {
 
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override;
+      const Prefix** prefix) const override;
 #if 0
   bool hasSpecialAdditionalExpressions(double value,
                                        UnitFormat unitFormat) const override {
@@ -207,7 +207,7 @@ class Temperature : public Helper<Temperature> {
 #endif
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override {
+      const Prefix** prefix) const override {
     return this;
   }
 #if 0
@@ -473,7 +473,7 @@ class Surface : public Helper<Surface> {
 
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override;
+      const Prefix** prefix) const override;
 #if 0
   bool hasSpecialAdditionalExpressions(double value,
                                        UnitFormat unitFormat) const override {
@@ -505,7 +505,7 @@ class Volume : public Helper<Volume> {
 
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override;
+      const Prefix** prefix) const override;
 #if 0
   bool hasSpecialAdditionalExpressions(double value,
                                        UnitFormat unitFormat) const override {
@@ -534,7 +534,7 @@ class Speed : public Helper<Speed> {
 
   const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const override {
+      const Prefix** prefix) const override {
     return nullptr;
   }
 #if 0

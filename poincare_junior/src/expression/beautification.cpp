@@ -153,7 +153,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
     assert(dimension.supportSize() == 1);
     units = Units::Unit::Push(projectionContext.m_dimension.unit.representative,
-                              Units::UnitPrefix::EmptyPrefix());
+                              Units::Prefix::EmptyPrefix());
   } else if (projectionContext.m_dimension.isAngleUnit()) {
     units = dimension.toBaseUnits();
   } else {

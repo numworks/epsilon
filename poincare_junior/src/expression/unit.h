@@ -22,19 +22,19 @@ namespace Units {
  *    dimensions
  *  - informations on how the representative should be prefixed.
  *
- * Given an representative and a UnitPrefix allowed for that representative, one
+ * Given an representative and a Prefix allowed for that representative, one
  * may get a symbol and an expression tree. */
 
-class UnitPrefix {
+class Prefix {
   friend class Unit;
 
  public:
   constexpr static int k_numberOfPrefixes = 13;
-  static const UnitPrefix* Prefixes();
-  static const UnitPrefix* EmptyPrefix();
+  static const Prefix* Prefixes();
+  static const Prefix* EmptyPrefix();
   // Assigning an id to each accessible prefixes
-  static uint8_t ToId(const UnitPrefix* representative);
-  static const UnitPrefix* FromId(uint8_t id);
+  static uint8_t ToId(const Prefix* representative);
+  static const Prefix* FromId(uint8_t id);
 
   const char* symbol() const { return m_symbol; }
   int8_t exponent() const { return m_exponent; }
@@ -43,7 +43,7 @@ class UnitPrefix {
 #endif
 
  private:
-  constexpr UnitPrefix(const char* symbol, int8_t exponent)
+  constexpr Prefix(const char* symbol, int8_t exponent)
       : m_symbol(symbol), m_exponent(exponent) {}
 
   const char* m_symbol;
@@ -151,7 +151,7 @@ class UnitRepresentative {
   virtual bool isBaseUnit() const = 0;
   virtual const UnitRepresentative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const UnitPrefix** prefix) const {
+      const Prefix** prefix) const {
     return defaultFindBestRepresentative(
         value, exponent, representativesOfSameDimension(),
         representativesOfSameDimension() + numberOfRepresentatives(), prefix);
@@ -182,15 +182,14 @@ class UnitRepresentative {
     return m_outputPrefixable != Prefixable::None;
   }
 #if 0
-  int serialize(char* buffer, int bufferSize, const UnitPrefix* prefix) const;
+  int serialize(char* buffer, int bufferSize, const Prefix* prefix) const;
 #endif
   bool canParseWithEquivalents(const char* symbol, size_t length,
                                const UnitRepresentative** representative,
-                               const UnitPrefix** prefix) const;
-  bool canParse(const char* symbol, size_t length,
-                const UnitPrefix** prefix) const;
-  bool canPrefix(const UnitPrefix* prefix, bool input) const;
-  const UnitPrefix* findBestPrefix(double value, double exponent) const;
+                               const Prefix** prefix) const;
+  bool canParse(const char* symbol, size_t length, const Prefix** prefix) const;
+  bool canPrefix(const Prefix* prefix, bool input) const;
+  const Prefix* findBestPrefix(double value, double exponent) const;
   const Tree* ratioExpressionReduced() const {
     return Tree::FromBlocks(m_ratioExpression);
   }
@@ -208,7 +207,7 @@ class UnitRepresentative {
 
   const UnitRepresentative* defaultFindBestRepresentative(
       double value, double exponent, const UnitRepresentative* begin,
-      const UnitRepresentative* end, const UnitPrefix** prefix) const;
+      const UnitRepresentative* end, const Prefix** prefix) const;
 
   Aliases m_rootSymbols;
   /* m_ratioExpression is the expression of the factor used to convert a unit
@@ -276,31 +275,29 @@ class Unit {
   /* Prefixes and Representatives defined below must be defined only once and
    * all units must be constructed from their pointers. This way we can easily
    * check if two Unit objects are equal by comparing pointers. This saves us
-   * from overloading the == operator on UnitPrefix and UnitRepresentative and
+   * from overloading the == operator on Prefix and UnitRepresentative and
    * saves time at execution. As such, their constructor are private and can
    * only be accessed by their friend class Unit. */
-  constexpr static const UnitPrefix k_prefixes[UnitPrefix::k_numberOfPrefixes] =
-      {
-          UnitPrefix("p", -12), UnitPrefix("n", -9), UnitPrefix("μ", -6),
-          UnitPrefix("m", -3),  UnitPrefix("c", -2), UnitPrefix("d", -1),
-          UnitPrefix("", 0),    UnitPrefix("da", 1), UnitPrefix("h", 2),
-          UnitPrefix("k", 3),   UnitPrefix("M", 6),  UnitPrefix("G", 9),
-          UnitPrefix("T", 12),
+  constexpr static const Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
+      Prefix("p", -12), Prefix("n", -9), Prefix("μ", -6), Prefix("m", -3),
+      Prefix("c", -2),  Prefix("d", -1), Prefix("", 0),   Prefix("da", 1),
+      Prefix("h", 2),   Prefix("k", 3),  Prefix("M", 6),  Prefix("G", 9),
+      Prefix("T", 12),
   };
 
   /* Define access points to some prefixes. */
   constexpr static int k_emptyPrefixIndex = 6;
   static_assert(k_prefixes[k_emptyPrefixIndex].m_exponent == 0,
-                "Index for the Empty UnitPrefix is incorrect.");
+                "Index for the Empty Prefix is incorrect.");
   constexpr static int k_kiloPrefixIndex = 9;
   static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3,
-                "Index for the Kilo UnitPrefix is incorrect.");
+                "Index for the Kilo Prefix is incorrect.");
 
   using Prefixable = UnitRepresentative::Prefixable;
 
   static bool CanParse(UnicodeDecoder* name,
                        const UnitRepresentative** representative,
-                       const UnitPrefix** prefix);
+                       const Prefix** prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,
                                                         double* value,
                                                         UnitFormat unitFormat);
@@ -330,7 +327,7 @@ class Unit {
 
   static bool IsBaseUnit(const Tree* unit) {
     return GetRepresentative(unit)->isBaseUnit() &&
-           GetPrefix(unit) == UnitPrefix::EmptyPrefix();
+           GetPrefix(unit) == Prefix::EmptyPrefix();
   }
 #endif
   static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
@@ -342,12 +339,12 @@ class Unit {
   static void RemoveUnit(Tree* unit);
   // Push Unit
   static Tree* Push(const UnitRepresentative* unitRepresentative,
-                    const UnitPrefix* unitPrefixx = UnitPrefix::EmptyPrefix());
+                    const Prefix* unitPrefixx = Prefix::EmptyPrefix());
   static const UnitRepresentative* GetRepresentative(const Tree* unit);
   static void SetRepresentative(Tree* unit,
                                 const UnitRepresentative* representative);
-  static const UnitPrefix* GetPrefix(const Tree* unit);
-  static void SetPrefix(Tree* unit, const UnitPrefix* prefix);
+  static const Prefix* GetPrefix(const Tree* unit);
+  static void SetPrefix(Tree* unit, const Prefix* prefix);
 };
 
 Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents);

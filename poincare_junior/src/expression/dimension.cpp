@@ -8,8 +8,8 @@
 namespace PoincareJ {
 
 Dimension Dimension::Unit(const Tree* unit) {
-  return Unit(DimensionVector::FromBaseUnits(unit),
-              Unit::GetRepresentative(unit));
+  return Unit(Units::DimensionVector::FromBaseUnits(unit),
+              Units::Unit::GetRepresentative(unit));
 }
 
 bool Dimension::DeepCheckDimensions(const Tree* t) {
@@ -56,7 +56,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
        * builtins. */
       assert(t->numberOfChildren() > 0);
       uint8_t cols = 0;
-      DimensionVector unitVector = DimensionVector::Empty();
+      Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       for (int i = 0; i < t->numberOfChildren(); i++) {
         bool secondDivisionChild = (i == 1 && t->type() == BlockType::Division);
         Dimension next = childDim[i];
@@ -168,8 +168,8 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Multiplication: {
       uint8_t rows = 0;
       uint8_t cols = 0;
-      const UnitRepresentative* representative = nullptr;
-      DimensionVector unitVector = DimensionVector::Empty();
+      const Units::UnitRepresentative* representative = nullptr;
+      Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {
         Dimension dim = GetDimension(child);
@@ -203,7 +203,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
         // TODO: Handle/forbid index > int8_t
         assert(!std::isnan(index) &&
                std::fabs(index) < static_cast<float>(INT8_MAX));
-        DimensionVector unitVector = DimensionVector::Empty();
+        Units::DimensionVector unitVector = Units::DimensionVector::Empty();
         unitVector.addAllCoefficients(dim.unit.vector,
                                       static_cast<int8_t>(index));
         return Unit(unitVector, dim.unit.representative);

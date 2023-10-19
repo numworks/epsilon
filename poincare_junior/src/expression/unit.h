@@ -11,6 +11,7 @@
 #include "k_tree.h"
 
 namespace PoincareJ {
+namespace Units {
 
 /* The units having the same physical dimension are grouped together.
  * Each such group has a standard representative with a standard prefix.
@@ -351,6 +352,7 @@ class Unit {
 
 Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents);
 
+}  // namespace Units
 }  // namespace PoincareJ
 
 #endif

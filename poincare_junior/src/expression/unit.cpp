@@ -10,6 +10,7 @@
 #include "simplification.h"
 
 namespace PoincareJ {
+namespace Units {
 
 // UnitPrefix
 const UnitPrefix* UnitPrefix::Prefixes() { return Unit::k_prefixes; }
@@ -142,7 +143,6 @@ void DimensionVector::setCoefficientAtIndex(int8_t coefficient, uint8_t i) {
 
 // UnitRepresentative
 const UnitRepresentative* const* UnitRepresentative::DefaultRepresentatives() {
-  using namespace Representatives;
   static const UnitRepresentative*
       defaultRepresentatives[k_numberOfDimensions] = {
           Time::representatives,
@@ -774,7 +774,6 @@ Expression Unit::ConvertTemperatureUnits(
 bool Unit::AllowImplicitAddition(
     const UnitRepresentative* smallestRepresentative,
     const UnitRepresentative* biggestRepresentative) {
-  using namespace Representatives;
   if (smallestRepresentative == biggestRepresentative) {
     return false;
   }
@@ -895,7 +894,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
 
   if ((std::isinf(*value) ||
        (*value == 0.0 && GetRepresentative(unit)->dimensionVector() !=
-                             Representatives::Temperature::Dimension))) {
+                             Temperature::Dimension))) {
     /* Use the base unit to represent an infinite or null value, as all units
      * are equivalent.
      * This is not true for temperatures (0 K != 0°C != 0°F). */
@@ -964,4 +963,5 @@ void Unit::SetPrefix(Tree* unit, const UnitPrefix* prefix) {
   unit->setNodeValue(1, UnitPrefix::ToId(prefix));
 }
 
+}  // namespace Units
 }  // namespace PoincareJ

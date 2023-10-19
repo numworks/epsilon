@@ -144,7 +144,7 @@ void Beautification::SplitMultiplication(const Tree* expr,
 }
 
 bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
-  DimensionVector dimension = projectionContext.m_dimension.unit.vector;
+  Units::DimensionVector dimension = projectionContext.m_dimension.unit.vector;
   if (!projectionContext.m_dimension.isUnit()) {
     return false;
   }
@@ -152,8 +152,8 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   EditionReference units;
   if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
     assert(dimension.supportSize() == 1);
-    units = Unit::Push(projectionContext.m_dimension.unit.representative,
-                       UnitPrefix::EmptyPrefix());
+    units = Units::Unit::Push(projectionContext.m_dimension.unit.representative,
+                              Units::UnitPrefix::EmptyPrefix());
   } else if (projectionContext.m_dimension.isAngleUnit()) {
     units = dimension.toBaseUnits();
   } else {
@@ -164,7 +164,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     Simplification::DeepSystematicReduce(units);
     // FIXME
     Simplification::DeepSystematicReduce(units);
-    Unit::ChooseBestRepresentativeAndPrefixForValue(
+    Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
     Tree* approximated =
         SharedEditionPool->push<BlockType::Float>(static_cast<float>(value));

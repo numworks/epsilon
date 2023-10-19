@@ -437,7 +437,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
   }
 #endif
   if (m_decoder.codePointAt(string) == '_') {
-    if (Unit::CanParse(&subString, nullptr, nullptr)) {
+    if (Units::Unit::CanParse(&subString, nullptr, nullptr)) {
       return Token::Type::Unit;
     }
     // Only constants and units can be prefixed with a '_'

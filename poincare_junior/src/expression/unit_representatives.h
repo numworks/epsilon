@@ -4,8 +4,7 @@
 #include "unit.h"
 
 namespace PoincareJ {
-
-namespace Representatives {
+namespace Units {
 
 // Helper class to add overrides using the static member "representatives"
 template <class R>
@@ -601,6 +600,6 @@ constexpr static const UnitRepresentative*
         &Temperature::representatives.fahrenheit,
 };
 
-}  // namespace Representatives
+}  // namespace Units
 }  // namespace PoincareJ
 #endif

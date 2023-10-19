@@ -781,14 +781,14 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
 void RackParser::parseUnit(EditionReference &leftHandSide,
                            Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const UnitRepresentative *unitRepresentative = nullptr;
-  const UnitPrefix *unitPrefix = nullptr;
+  const Units::UnitRepresentative *unitRepresentative = nullptr;
+  const Units::UnitPrefix *unitPrefix = nullptr;
   RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
-  if (!Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
+  if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
     m_status = Status::Error;  // Unit does not exist
     return;
   }
-  leftHandSide = Unit::Push(unitRepresentative, unitPrefix);
+  leftHandSide = Units::Unit::Push(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
 }
 

@@ -26,7 +26,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   bool changed = false;
   if (ref->type() == BlockType::Unit) {
-    Unit::RemoveUnit(ref);
+    Units::Unit::RemoveUnit(ref);
     changed = true;
   }
 

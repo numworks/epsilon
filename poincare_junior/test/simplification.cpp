@@ -327,9 +327,9 @@ QUIZ_CASE(pcj_variables) {
 QUIZ_CASE(pcj_float_simplification) {
   simplifies_to("2", "2", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("2.3", "2.3", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("1+π", "4.141593",
+  simplifies_to("1+π", "4.1415926535898",
                 {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("1+π+x", "x+4.141593",
+  simplifies_to("1+π+x", "x+4.1415926535898",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
 }

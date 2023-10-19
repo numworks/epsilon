@@ -303,7 +303,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       Poincare::PrintFloat::ConvertFloatToText(
           Float::To(expression), buffer, std::size(buffer),
           Poincare::PrintFloat::k_maxFloatGlyphLength,
-          Poincare::PrintFloat::SignificantDecimalDigits<float>(),
+          type == BlockType::Float
+              ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
+              : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
           Poincare::Preferences::PrintFloatMode::Decimal);
       layoutText(layoutParent, buffer);
       break;

@@ -93,6 +93,9 @@ TYPE(ArcTangent)
 TYPE(Complex)
 TYPE(ComplexArgument)
 TYPE(Conjugate)
+
+/* - Decimal DC
+ * | DC TAG | NUMBER DIGITS AFTER ZERO | */
 TYPE(Decimal)
 TYPE(Division)
 TYPE(Exponential)

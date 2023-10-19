@@ -469,6 +469,12 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
       π_e, {TypeBlock(BlockType::Constant),
             ValueBlock(static_cast<uint8_t>(Constant::Type::Pi))});
   assert_tree_equals_blocks(
+      0.045_e, {TypeBlock(BlockType::Decimal), ValueBlock(3),
+                TypeBlock(BlockType::IntegerShort), ValueBlock(45)});
+  assert_tree_equals_blocks(
+      1.23_e, {TypeBlock(BlockType::Decimal), ValueBlock(2),
+               TypeBlock(BlockType::IntegerShort), ValueBlock(123)});
+  assert_tree_equals_blocks(
       2.0_fe, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0),
                ValueBlock(0), ValueBlock(64)});
   assert_tree_equals_blocks(

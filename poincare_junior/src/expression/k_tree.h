@@ -116,7 +116,7 @@ class IntegerLitteral : public AbstractTreeCompatible {
  public:
   // Once a deduction guide has chosen the KTree for the litteral, build it
   template <Block... B>
-  consteval operator KTree<B...>() {
+  consteval operator KTree<B...>() const {
     return KTree<B...>();
   }
 
@@ -200,9 +200,13 @@ constexpr KTree i_e =
     KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::I)>();
 
 // TODO: move in OMG?
+/* Read decimal number in str as an int, ignoring decimal point "1.2" => 12 */
 constexpr static uint64_t IntegerValue(const char* str, size_t size) {
   uint64_t value = 0;
   for (size_t i = 0; i < size - 1; i++) {
+    if (str[i] == '.') {
+      continue;
+    }
     uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
     // No overflow
     assert(value <= (UINT64_MAX - digit) / 10);
@@ -211,13 +215,14 @@ constexpr static uint64_t IntegerValue(const char* str, size_t size) {
   return value;
 }
 
-constexpr bool HasDecimalPoint(const char* str, size_t size) {
+/* Find decimal point in str or return size */
+constexpr static size_t DecimalPointIndex(const char* str, size_t size) {
   for (size_t i = 0; i < size - 1; i++) {
     if (str[i] == '.') {
-      return true;
+      return i;
     }
   }
-  return false;
+  return size;
 }
 
 template <class Float>
@@ -298,11 +303,16 @@ consteval auto operator"" _de() {
 template <char... C>
 consteval auto operator"" _e() {
   constexpr const char value[] = {C..., '\0'};
-  if constexpr (HasDecimalPoint(value, sizeof...(C) + 1)) {
-    assert(false);
-    // TODO decimals
+  constexpr size_t size = sizeof...(C) + 1;
+  constexpr size_t decimalPointIndex = DecimalPointIndex(value, size);
+  constexpr auto digits = IntegerLitteral<IntegerValue(value, size)>();
+  if constexpr (decimalPointIndex < size) {
+    return Concat<KTree<BlockType::Decimal,
+                        /* -1 for the . and -1 for the \0 */
+                        size - 2 - decimalPointIndex>,
+                  decltype(KTree(digits))>();
   } else {
-    return IntegerLitteral<IntegerValue(value, sizeof...(C) + 1)>();
+    return digits;
   }
 }
 

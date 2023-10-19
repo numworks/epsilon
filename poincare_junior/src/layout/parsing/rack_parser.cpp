@@ -22,12 +22,6 @@
 
 namespace PoincareJ {
 
-void removeTreeIfInitialized(EditionReference tree) {
-  if (!tree.isUninitialized()) {
-    tree->removeTree();
-  }
-}
-
 Tree *RackParser::parse() {
   Block *endOfPool = SharedEditionPool->lastBlock();
   ExceptionTry {
@@ -426,31 +420,28 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     return;
   }
   EditionReference rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
-    // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-    // rightHandSide.child(0).type() !=
-    // ExpressionNode::Type::PercentSimple) {
-    /* The condition checks if the percent does not contain a percent because
-     * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
-    // leftHandSide = PercentAddition::Builder(
-    // leftHandSide, plus
-    // ? rightHandSide.child(0)
-    // : Opposite::Builder(rightHandSide.child(0)));
-    // return;
-    // }
-    assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
-    if (!plus) {
-      CloneNodeAtNode(leftHandSide, KTree<BlockType::Subtraction>());
-      return;
-    }
-    if (leftHandSide->type() == BlockType::Addition) {
-      NAry::SetNumberOfChildren(leftHandSide,
-                                leftHandSide->numberOfChildren() + 1);
-    } else {
-      CloneNodeAtNode(leftHandSide, KTree<BlockType::Addition, 2>());
-    }
+  parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus);
+  // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
+  // rightHandSide.child(0).type() !=
+  // ExpressionNode::Type::PercentSimple) {
+  /* The condition checks if the percent does not contain a percent because
+   * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
+  // leftHandSide = PercentAddition::Builder(
+  // leftHandSide, plus
+  // ? rightHandSide.child(0)
+  // : Opposite::Builder(rightHandSide.child(0)));
+  // return;
+  // }
+  assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
+  if (!plus) {
+    CloneNodeAtNode(leftHandSide, KTree<BlockType::Subtraction>());
+    return;
+  }
+  if (leftHandSide->type() == BlockType::Addition) {
+    NAry::SetNumberOfChildren(leftHandSide,
+                              leftHandSide->numberOfChildren() + 1);
   } else {
-    removeTreeIfInitialized(rightHandSide);
+    CloneNodeAtNode(leftHandSide, KTree<BlockType::Addition, 2>());
   }
 }
 
@@ -466,21 +457,17 @@ void RackParser::parseSouthEastArrow(EditionReference &leftHandSide,
 
 void RackParser::privateParseEastArrow(EditionReference &leftHandSide,
                                        bool north, Token::Type stoppingType) {
+#if 0
   EditionReference rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
-    // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-    // rightHandSide.child(0).type() !=
-    // ExpressionNode::Type::PercentSimple) {
-    // leftHandSide = PercentAddition::Builder(
-    // leftHandSide, north
-    // ? rightHandSide.child(0)
-    // : Opposite::Builder(rightHandSide.child(0)));
-    // return;
-    // }
-    removeTreeIfInitialized(rightHandSide);
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus);
+  if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
+      rightHandSide.child(0).type() != ExpressionNode::Type::PercentSimple) {
+    leftHandSide = PercentAddition::Builder(
+        leftHandSide, north ? rightHandSide.child(0)
+                            : Opposite::Builder(rightHandSide.child(0)));
   }
-  removeTreeIfInitialized(rightHandSide);
+#endif
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 }
 
 void RackParser::parseTimes(EditionReference &leftHandSide,
@@ -514,25 +501,19 @@ void RackParser::parseImplicitAdditionBetweenUnits(
 void RackParser::parseSlash(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
-    CloneNodeAtNode(leftHandSide, KTree<BlockType::Division>());
-  } else {
-    removeTreeIfInitialized(rightHandSide);
-  }
+  parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash);
+  CloneNodeAtNode(leftHandSide, KTree<BlockType::Division>());
 }
 
 void RackParser::privateParseTimes(EditionReference &leftHandSide,
                                    Token::Type stoppingType) {
   EditionReference rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
-    if (leftHandSide->type() == BlockType::Multiplication) {
-      NAry::SetNumberOfChildren(leftHandSide,
-                                leftHandSide->numberOfChildren() + 1);
-    } else {
-      CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
-    }
+  parseBinaryOperator(leftHandSide, rightHandSide, stoppingType);
+  if (leftHandSide->type() == BlockType::Multiplication) {
+    NAry::SetNumberOfChildren(leftHandSide,
+                              leftHandSide->numberOfChildren() + 1);
   } else {
-    removeTreeIfInitialized(rightHandSide);
+    CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
   }
 }
 
@@ -545,12 +526,8 @@ static void turnIntoBinaryNode(const Tree *node, EditionReference &leftHandSide,
 void RackParser::parseCaret(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide,
-                          Token::Type::ImplicitTimes)) {
-    turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
-  } else {
-    removeTreeIfInitialized(rightHandSide);
-  }
+  parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::ImplicitTimes);
+  turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
 }
 
 void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
@@ -568,8 +545,8 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
   // assert(check);
   // assert(m_currentToken.length() == operatorLength);
   // (void)check;
-  // if (parseBinaryOperator(leftHandSide, rightHandSide,
-  // Token::Type::ComparisonOperator)) {
+  // parseBinaryOperator(leftHandSide, rightHandSide,
+  // Token::Type::ComparisonOperator);
   // if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
   // Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
   // leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
@@ -577,22 +554,20 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
   // leftHandSide =
   // Comparison::Builder(leftHandSide, operatorType, rightHandSide);
   // }
-  // }
 }
 
 void RackParser::parseAssignmentEqual(EditionReference &leftHandSide,
                                       Token::Type stoppingType) {
-  if (leftHandSide.isUninitialized()) {
-    // Comparison operator must have a left operand
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+#if 0
   EditionReference rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide,
-                          Token::Type::AssignmentEqual)) {
-    // leftHandSide = Comparison::Builder(
-    // leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
-  }
-  removeTreeIfInitialized(rightHandSide);
+  parseBinaryOperator(leftHandSide, rightHandSide,
+                      Token::Type::AssignmentEqual);
+  leftHandSide = Comparison::Builder(
+      leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
+#else
+  // FIXME
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
@@ -621,18 +596,20 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
   }
 
   EditionReference rightHandSide = parseUntil(stoppingType);
-  removeTreeIfInitialized(rightHandSide);
-
-  // if (!m_nextToken.is(Token::Type::EndOfStream) ||
-  // rightHandSide.isUninitialized() ||
-  // !rightHandSide.isCombinationOfUnits() ||
-  // (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
-  // UnitConvert expect a unit on the right and an expression with units
-  // * on the left
-  // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-  // }
-  // leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
-  return;
+#if 0
+  if (!m_nextToken.is(Token::Type::EndOfStream) ||
+      rightHandSide.isUninitialized() ||
+      !rightHandSide.isCombinationOfUnits() ||
+      (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
+    // UnitConvert expect a unit on the right and an expression with units on
+    // the left
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
+#else
+  // FIXME
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
@@ -644,11 +621,12 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
   // Parse until Not so that not A and B = (not A) and B
   EditionReference rightHandSide =
       parseUntil(std::max(stoppingType, Token::Type::Not));
-  removeTreeIfInitialized(rightHandSide);
-  if (rightHandSide.isUninitialized()) {
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-  // leftHandSide = LogicalOperatorNot::Builder(rightHandSide);
+#if 0
+leftHandSide = LogicalOperatorNot::Builder(rightHandSide);
+#else
+  // FIXME
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 // void Parser::parseBinaryLogicalOperator(
@@ -684,19 +662,18 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
 // BinaryLogicalOperator::Builder(leftHandSide, rightHandSide, operatorType);
 // }
 
-bool RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
+void RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
                                      EditionReference &rightHandSide,
                                      Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
+    /* TODO : If this assert never crashed, parseBinaryOperator could be
+     * replaced with parseUntil. */
+    assert(false);
     // Left-hand side missing.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   rightHandSide = parseUntil(stoppingType);
-  if (rightHandSide.isUninitialized()) {
-    // FIXME
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-  return true;
+  assert(!rightHandSide.isUninitialized());
 }
 
 void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
@@ -1121,9 +1098,6 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {
       // Incorrect matrix.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-      removeTreeIfInitialized(row);
-      matrix->removeTree();
-      return;
     }
     numberOfColumns = row->numberOfChildren();
     Matrix::SetNumberOfColumns(matrix, numberOfColumns);
@@ -1241,7 +1215,8 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
 
 bool IsIntegerBaseTenOrEmptyExpression(EditionReference e) {
   return false;  //(e.type() == ExpressionNode::Type::BasedInteger &&
-                 // static_cast<BasedInteger &>(e).base() == OMG::Base::Decimal)
+                 // static_cast<BasedInteger &>(e).base() ==
+                 // OMG::Base::Decimal)
                  // ||
                  // e.type() == ExpressionNode::Type::EmptyExpression;
 }
@@ -1275,13 +1250,15 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
         rightHandSide->type() == BlockType::Division &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
+#if 0
       // The following expression looks like "int/int" -> it's a mixedFraction
-      // leftHandSide = MixedFraction::Builder(
-      // leftHandSide, static_cast<Division &>(rightHandSide));
-      removeTreeIfInitialized(rightHandSide);
+      leftHandSide = MixedFraction::Builder(
+          leftHandSide, static_cast<Division &>(rightHandSide));
       return true;
-    } else {
-      removeTreeIfInitialized(rightHandSide);
+#else
+      // FIXME
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
     }
   }
   restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,

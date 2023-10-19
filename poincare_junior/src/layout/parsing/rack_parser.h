@@ -145,7 +145,7 @@ class RackParser {
   // void parseBinaryLogicalOperator(
   // BinaryLogicalOperatorNode::OperatorType operatorType,
   // EditionReference& leftHandSide, Token::Type stoppingType);
-  bool parseBinaryOperator(const EditionReference& leftHandSide,
+  void parseBinaryOperator(const EditionReference& leftHandSide,
                            EditionReference& rightHandSide,
                            Token::Type stoppingType);
   Tree* parseVector();

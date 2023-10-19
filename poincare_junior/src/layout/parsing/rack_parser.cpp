@@ -10,6 +10,7 @@
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
@@ -28,28 +29,21 @@ void removeTreeIfInitialized(EditionReference tree) {
 }
 
 Tree *RackParser::parse() {
-#if 0
-  size_t endPosition = m_tokenizer.endPosition();
-  size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
-      m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
-  if (rightwardsArrowPosition != endPosition) {
-    return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
-  }
-#endif
-  /* To check if no other trees are leaked into EditionPool, use the end of pool
-   * instead of number of trees since the SharedEditionPool may be incomplete,
-   * which can happen while parsing a division's denominator. */
-  const Block *endOfPool = SharedEditionPool->lastBlock();
-  EditionReference result = initializeFirstTokenAndParseUntilEnd();
-  assert(SharedEditionPool->lastBlock() ==
-         (result.isUninitialized() ? endOfPool : result->nextTree()->block()));
-  assert(result.isUninitialized() || endOfPool == result->block());
-  (void)endOfPool;
-  if (m_status == Status::Success) {
+  Block *endOfPool = SharedEditionPool->lastBlock();
+  ExceptionTry {
+    Tree *result = initializeFirstTokenAndParseUntilEnd();
+    assert(m_status == Status::Success);
+    // Only 1 tree has been created.
+    assert(result->nextTree()->block() == SharedEditionPool->lastBlock());
     return result;
   }
-  removeTreeIfInitialized(result);
-  return nullptr;
+  ExceptionCatch(type) {
+    if (type != ExceptionType::ParseFail) {
+      ExceptionCheckpoint::Raise(type);
+    }
+    SharedEditionPool->flushFromBlock(endOfPool);
+    return nullptr;
+  }
 }
 
 Tree *RackParser::parseExpressionWithRightwardsArrow(
@@ -81,13 +75,18 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
       ParsingContext::ParsingMethod::Classic /*UnitConversion*/);
   size_t startingPosition;
   rememberCurrentParsingPosition(&startingPosition);
-  EditionReference result = initializeFirstTokenAndParseUntilEnd();
-  if (m_status == Status::Success) {
-    return result;
-  }
-  // Failed to parse as unit conversion
-  restorePreviousParsingPosition(startingPosition);
-  m_status = Status::Progress;
+  // ExceptionTry {
+  return initializeFirstTokenAndParseUntilEnd();
+  // }
+  // ExceptionCatch(type) {
+  //   if (type != ExceptionType::ParseFail) {
+  //     ExceptionCheckpoint::Raise(type);
+  //   }
+  // }
+
+  // // Failed to parse as unit conversion
+  // restorePreviousParsingPosition(startingPosition);
+  // m_status = Status::Progress;
 
   // Step 2. Parse as assignment, starting with rightHandSide.
   // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
@@ -123,15 +122,12 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
   // Parse leftHandSide
   // m_nextToken = m_tokenizer.popToken();
   // EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-  // if (m_status != Status::Error) {
   // m_status = Status::Success;
   // result = Store::Builder(leftHandSide,
   // static_cast<SymbolAbstract &>(rightHandSide));
   // return result;
   // }
-  // }
-  m_status = Status::Error;
-  return result;
+  // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 }
 
 Tree *RackParser::initializeFirstTokenAndParseUntilEnd() {
@@ -244,6 +240,7 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
     popToken();
     (this->*(tokenParsers[static_cast<int>(m_currentToken.type())]))(
         leftHandSide, stoppingType);
+    assert(m_status != Status::Success);
   } while (m_status == Status::Progress &&
            nextTokenHasPrecedenceOver(stoppingType));
   return leftHandSide;
@@ -258,7 +255,7 @@ void RackParser::popToken() {
     if (m_currentToken.is(Token::Type::EndOfStream)) {
       /* Avoid reading out of buffer (calling popToken would read the character
        * after EndOfStream) */
-      m_status = Status::Error;  // EditionReference misses a rightHandSide
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
       m_nextToken = m_tokenizer.popToken();
     }
@@ -329,14 +326,14 @@ Token::Type RackParser::implicitOperatorType() {
 
 void RackParser::parseUnexpected(EditionReference &leftHandSide,
                                  Token::Type stoppingType) {
-  m_status = Status::Error;  // Unexpected Token
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 }
 
 void RackParser::parseNumber(EditionReference &leftHandSide,
                              Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return;
+    // FIXME
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   /* TODO: RackLayoutDecoder could be implemented without mainLayout, start,
            m_root and parentOfDescendant() call wouldn't be needed. */
@@ -410,8 +407,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
           (m_nextToken.is(Token::Type::CustomIdentifier) ||
            m_nextToken.is(Token::Type::SpecialIdentifier) ||
            m_nextToken.is(Token::Type::ReservedFunction)))) {
-    m_status = Status::Error;
-    return;
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   isThereImplicitOperator();
 }
@@ -491,8 +487,7 @@ void RackParser::privateParseEastArrow(EditionReference &leftHandSide,
     // return;
     // }
     removeTreeIfInitialized(rightHandSide);
-    m_status = Status::Error;
-    return;
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   removeTreeIfInitialized(rightHandSide);
 }
@@ -520,8 +515,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(
   // ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
   // leftHandSide = p.parse();
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;
-    return;
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   isThereImplicitOperator();
 }
@@ -571,8 +565,8 @@ void RackParser::parseCaret(EditionReference &leftHandSide,
 void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
                                          Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Comparison operator must have a left operand
-    return;
+    // Comparison operator must have a left operand
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // EditionReference rightHandSide;
   // ComparisonNode::OperatorType operatorType;
@@ -598,8 +592,8 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
 void RackParser::parseAssignmentEqual(EditionReference &leftHandSide,
                                       Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Comparison operator must have a left operand
-    return;
+    // Comparison operator must have a left operand
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide,
@@ -631,16 +625,12 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized() ||
       m_parsingContext.parsingMethod() !=
           ParsingContext::ParsingMethod::UnitConversion) {
-    m_status =
-        Status::Error;  // Left-hand side missing or not in a unit conversion
-    return;
+    // Left-hand side missing or not in a unit conversion
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
   EditionReference rightHandSide = parseUntil(stoppingType);
   removeTreeIfInitialized(rightHandSide);
-  if (m_status != Status::Progress) {
-    return;
-  }
 
   // if (!m_nextToken.is(Token::Type::EndOfStream) ||
   // rightHandSide.isUninitialized() ||
@@ -648,8 +638,7 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
   // (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
   // UnitConvert expect a unit on the right and an expression with units
   // * on the left
-  // m_status = Status::Error;
-  // return;
+  // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   // }
   // leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
   return;
@@ -658,19 +647,15 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
 void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
                                          Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Left-hand side should be empty
-    return;
+    // Left-hand side should be empty
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // Parse until Not so that not A and B = (not A) and B
   EditionReference rightHandSide =
       parseUntil(std::max(stoppingType, Token::Type::Not));
   removeTreeIfInitialized(rightHandSide);
-  if (m_status != Status::Progress) {
-    return;
-  }
   if (rightHandSide.isUninitialized()) {
-    m_status = Status::Error;
-    return;
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // leftHandSide = LogicalOperatorNot::Builder(rightHandSide);
 }
@@ -679,8 +664,8 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
 // BinaryLogicalOperatorNode::OperatorType operatorType,
 // EditionReference &leftHandSide, Token::Type stoppingType) {
 // if (leftHandSide.isUninitialized()) {
-// m_status = Status::Error;  // Left-hand side missing.
-// return;
+// // Left-hand side missing.
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // }
 /* And and Nand have same precedence
  * Or, Nor and Xor have same precedence */
@@ -705,8 +690,7 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
 // return;
 // }
 // if (rightHandSide.isUninitialized()) {
-// m_status = Status::Error;
-// return;
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // }
 // leftHandSide =
 // BinaryLogicalOperator::Builder(leftHandSide, rightHandSide, operatorType);
@@ -716,16 +700,13 @@ bool RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
                                      EditionReference &rightHandSide,
                                      Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Left-hand side missing.
-    return false;
+    // Left-hand side missing.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   rightHandSide = parseUntil(stoppingType);
-  if (m_status != Status::Progress) {
-    return false;
-  }
   if (rightHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return false;
+    // FIXME
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   return true;
 }
@@ -733,17 +714,14 @@ bool RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
 void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
                                       Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return;
+    // FIXME
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   Token::Type endToken = Token::Type::RightParenthesis;
   leftHandSide = parseUntil(endToken);
-  if (m_status != Status::Progress) {
-    return;
-  }
   if (!popTokenIfType(endToken)) {
-    m_status = Status::Error;  // Right parenthesis missing.
-    return;
+    // Right parenthesis missing.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // leftHandSide = Parenthesis::Builder(leftHandSide);
   isThereImplicitOperator();
@@ -752,7 +730,8 @@ void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
 void RackParser::parseBang(EditionReference &leftHandSide,
                            Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Left-hand side missing
+    // Left-hand side missing
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
     CloneNodeAtNode(leftHandSide, KTree<BlockType::Factorial>());
   }
@@ -762,8 +741,8 @@ void RackParser::parseBang(EditionReference &leftHandSide,
 void RackParser::parsePercent(EditionReference &leftHandSide,
                               Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Left-hand side missing
-    return;
+    // Left-hand side missing
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // leftHandSide = PercentSimple::Builder(leftHandSide);
   isThereImplicitOperator();
@@ -787,8 +766,8 @@ void RackParser::parseUnit(EditionReference &leftHandSide,
   const Units::Prefix *unitPrefix = nullptr;
   RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
   if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
-    m_status = Status::Error;  // Unit does not exist
-    return;
+    // Unit does not exist
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   leftHandSide = Units::Unit::Push(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
@@ -814,12 +793,14 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     EditionReference base = parseUntil(Token::Type::RightSystemBrace);
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(Token::Type::RightSystemBrace)) {
-      m_status = Status::Error;  // Right brace missing.
+      // Right brace missing.
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
       EditionReference parameter = parseFunctionParameters();
       if (m_status != Status::Progress) {
       } else if (parameter.numberOfChildren() != 1) {
-        m_status = Status::Error;  // Unexpected number of many parameters.
+        // Unexpected number of many parameters.
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       } else {
         leftHandSide = Logarithm::Builder(parameter.child(0), base);
       }
@@ -840,8 +821,8 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     endDelimiterOfPower = Token::Type::RightParenthesis;
 #endif
     if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-      m_status = Status::Error;  // Exponent should be parenthesed
-      return;
+      // Exponent should be parenthesed
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   }
   EditionReference base;
@@ -851,28 +832,28 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     if (m_status != Status::Progress) {
       return;
     } else if (!popTokenIfType(endDelimiterOfPower)) {
-      m_status = Status::Error;
-      return;
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else if (base.isMinusOne()) {
       // Detect cos^-1(x) --> arccos(x)
       const char *mainAlias = aliasesList.mainAlias();
       functionHelper =
           ParsingHelper::GetInverseFunction(mainAlias, strlen(mainAlias));
       if (!functionHelper) {
-        m_status = Status::Error;  // This function has no inverse
-        return;
+        // This function has no inverse
+        ExceptionCheckpoint::Raise(
+            ExceptionType::ParseFail);
       }
       aliasesList = (**functionHelper).aliasesList();
     } else if (base.isInteger()) {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
       if (!ParsingHelper::IsPowerableFunction(*functionHelper)) {
-        m_status = Status::Error;  // This function can't be powered
-        return;
+         // This function can't be powered
+        ExceptionCheckpoint::Raise(
+            ExceptionType::ParseFail);
       }
       powerFunction = true;
     } else {
-      m_status = Status::Error;
-      return;
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   }
 
@@ -900,9 +881,6 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   leftHandSide = parseFunctionParameters();
 #endif
 
-  if (m_status != Status::Progress) {
-    return;
-  }
   /* The following lines are there because some functions have the same name
    * but not same number of parameters.
    * This is currently only useful for "sum" which can be sum({1,2,3}) or
@@ -915,8 +893,8 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
       functionHelper++;
       if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
           !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
-        m_status = Status::Error;  // Too many parameters provided.
-        return;
+        // Too many parameters provided.
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       }
     }
   }
@@ -932,20 +910,21 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
 
   if (numberOfParameters <
       Builtin::MinNumberOfParameters(builtin->blockType())) {
-    m_status = Status::Error;  // Too few parameters provided.
+    // Too few parameters provided.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     return;
   }
 
   if (numberOfParameters >
       Builtin::MaxNumberOfParameters(builtin->blockType())) {
-    m_status = Status::Error;  // Too many parameters provided.
-    return;
+    // Too many parameters provided.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
   Builtin::Promote(leftHandSide, builtin);
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // Incorrect parameter type or too few args
-    return;
+    // Incorrect parameter type or too few args
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // if (powerFunction) {
   // leftHandSide = Power::Builder(leftHandSide, base);
@@ -963,10 +942,9 @@ void RackParser::parseSequence(EditionReference &leftHandSide, const char *name,
   EditionReference rank =
 #endif
   parseUntil(rightDelimiter);
-  if (m_status != Status::Progress) {
-    return;
-  } else if (!popTokenIfType(rightDelimiter)) {
-    m_status = Status::Error;  // Right delimiter missing
+  if (!popTokenIfType(rightDelimiter)) {
+    // Right delimiter missing
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
     assert(false);  // Not implemented
     // leftHandSide = Sequence::Builder(name, 1, rank);
@@ -1003,8 +981,8 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // const char *name, size_t length,
 // Token::Type stoppingType) {
 // if (length >= SymbolAbstract::k_maxNameSize) {
-// m_status = Status::Error;  // Identifier name too long.
-// return;
+// // Identifier name too long.
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // }
 // bool poppedParenthesisIsSystem = false;
 
@@ -1037,8 +1015,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // m_nextToken.type() != Token::Type::LeftParenthesis) {
 /* If the identifier is a sequence but not followed by braces, it can
  * also be followed by parenthesis. If not, it's a syntax error. */
-// m_status = Status::Error;
-// return;
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // }
 // parseSequence(leftHandSide, name,
 // m_nextToken.type() == Token::Type::LeftSystemBrace
@@ -1078,16 +1055,15 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // if (parameter.type() == ExpressionNode::Type::Symbol &&
 // strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
 // length) == 0) {
-// m_status =
-// Status::Error;  // Function and variable must have distinct names.
-// return;
+// // Function and variable must have distinct names.
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // } else if (idType == Context::SymbolAbstractType::List) {
 // result = ListElement::Builder(parameter, Symbol::Builder(name, length));
 // } else {
 // result = Function::Builder(name, length, parameter);
 // }
 // } else {
-// m_status = Status::Error;
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // return;
 // }
 
@@ -1095,7 +1071,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
 // : Token::Type::RightParenthesis;
 // if (!popTokenIfType(correspondingRightParenthesis)) {
-// m_status = Status::Error;
+// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 // return;
 // }
 // if (m_parsingContext.parsingMethod() ==
@@ -1135,8 +1111,7 @@ Tree *RackParser::parseFunctionParameters() {
       m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout;
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
-    m_status = Status::Error;
-    return EditionReference();
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   if (!parenthesisIsLayout && popTokenIfType(Token::Type::RightParenthesis)) {
     // The function has no parameter.
@@ -1146,7 +1121,7 @@ Tree *RackParser::parseFunctionParameters() {
   if (m_status == Status::Progress && !parenthesisIsLayout &&
       !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
-    m_status = Status::Error;
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   return commaSeparatedList;
 }
@@ -1154,8 +1129,8 @@ Tree *RackParser::parseFunctionParameters() {
 void RackParser::parseMatrix(EditionReference &leftHandSide,
                              Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return;
+    // FIXME
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   uint8_t numberOfRows = 0;
   uint8_t numberOfColumns = 0;
@@ -1167,7 +1142,8 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
       return;
     }
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {
-      m_status = Status::Error;  // Incorrect matrix.
+      // Incorrect matrix.
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       removeTreeIfInitialized(row);
       matrix->removeTree();
       return;
@@ -1178,7 +1154,8 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
     row->removeNode();
   }
   if (numberOfRows == 0 || numberOfColumns == 0) {
-    m_status = Status::Error;  // Empty matrix
+    // Empty matrix
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     matrix->removeTree();
   } else {
     leftHandSide = matrix;
@@ -1188,13 +1165,14 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
 
 Tree *RackParser::parseVector() {
   if (!popTokenIfType(Token::Type::LeftBracket)) {
-    m_status = Status::Error;  // Left bracket missing.
-    return EditionReference();
+    // Left bracket missing.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
   if (m_status == Status::Progress &&
       !popTokenIfType(Token::Type::RightBracket)) {
-    m_status = Status::Error;  // Right bracket missing.
+    // Right bracket missing.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   return commaSeparatedList;
 }
@@ -1225,8 +1203,8 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
 void RackParser::parseList(EditionReference &leftHandSide,
                            Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return;
+    // FIXME
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   if (!popTokenIfType(Token::Type::RightBrace)) {
     leftHandSide = parseCommaSeparatedList();
@@ -1235,8 +1213,8 @@ void RackParser::parseList(EditionReference &leftHandSide,
       return;
     }
     if (!popTokenIfType(Token::Type::RightBrace)) {
-      m_status = Status::Error;  // Right brace missing.
-      return;
+      // Right brace missing.
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   } else {
     // leftHandSide = List::Builder();
@@ -1247,8 +1225,8 @@ void RackParser::parseList(EditionReference &leftHandSide,
       return;
     }
     if (!popTokenIfType(Token::Type::RightParenthesis)) {
-      m_status = Status::Error;  // Right parenthesis missing.
-      return;
+      // Right parenthesis missing.
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
     int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
@@ -1258,8 +1236,7 @@ void RackParser::parseList(EditionReference &leftHandSide,
       parameter = parameter->child(0);
       // leftHandSide = ListElement::Builder(parameter, leftHandSide);
     } else {
-      m_status = Status::Error;
-      return;
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   }
   isThereImplicitOperator();
@@ -1268,8 +1245,7 @@ void RackParser::parseList(EditionReference &leftHandSide,
 void RackParser::parseLayout(EditionReference &leftHandSide,
                              Token::Type stoppingType) {
   // if (!leftHandSide.isUninitialized()) {
-  // m_status = Status::Error;
-  // return;
+  // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   // }
   assert(m_currentToken.length() == 1);
   const Tree *layout = m_currentToken.firstLayout();
@@ -1278,13 +1254,11 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   switch (layout->layoutType()) {
     case LayoutType::VerticalOffset: {
       if (leftHandSide.isUninitialized()) {
-        m_status = Status::Error;
-        return;
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       }
       EditionReference rightHandSide = Parser::Parse(layout->child(0));
       if (rightHandSide.isUninitialized()) {
-        m_status = Status::Error;
-        return;
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       }
       turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide,
                          rightHandSide);

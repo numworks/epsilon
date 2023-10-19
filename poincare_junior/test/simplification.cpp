@@ -366,6 +366,8 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("tan(2_rad^2)", "undef");
   simplifies_to("π×_rad×_°", "π^(2)/180×_rad^(2)");
 
+  simplifies_to("sum(_s,x,0,1)", "2×_s");
+
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km");
   simplifies_to("1ᴇ-9_s", "1×_ns");

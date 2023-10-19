@@ -168,7 +168,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Multiplication: {
       uint8_t rows = 0;
       uint8_t cols = 0;
-      const Units::UnitRepresentative* representative = nullptr;
+      const Units::Representative* representative = nullptr;
       Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {

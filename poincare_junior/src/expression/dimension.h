@@ -15,7 +15,7 @@ struct MatrixDimension {
 struct UnitDimension {
   Units::DimensionVector vector;
   // Only one representative is needed for now.
-  const Units::UnitRepresentative* representative;
+  const Units::Representative* representative;
 };
 
 struct Dimension {
@@ -34,7 +34,7 @@ struct Dimension {
     return Dimension({.rows = rows, .cols = cols});
   }
   static Dimension Unit(Units::DimensionVector vector,
-                        const Units::UnitRepresentative* representative) {
+                        const Units::Representative* representative) {
     return Dimension({.vector = vector, .representative = representative});
   }
   static Dimension Unit(const Tree* unit);
@@ -67,7 +67,7 @@ struct Dimension {
            IsNonKelvinTemperatureRepresentative(unit.representative);
   }
   static bool IsNonKelvinTemperatureRepresentative(
-      const Units::UnitRepresentative* representative) {
+      const Units::Representative* representative) {
     return representative == &Units::Temperature::representatives.celsius ||
            representative == &Units::Temperature::representatives.fahrenheit;
   }

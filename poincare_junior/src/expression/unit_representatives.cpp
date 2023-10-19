@@ -5,7 +5,7 @@
 namespace PoincareJ {
 namespace Units {
 
-using enum UnitRepresentative::Prefixable;
+using enum Representative::Prefixable;
 
 const Time::Representatives<const Time> Time::representatives = {
     .second = {"s", 1._e, All, NegativeLongScale},
@@ -151,7 +151,7 @@ int Time::setAdditionalExpressions(double value, Expression* dest,
 }
 #endif
 
-const UnitRepresentative* Distance::standardRepresentative(
+const Representative* Distance::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
   return unitFormat == UnitFormat::Metric
@@ -186,7 +186,7 @@ int Distance::setAdditionalExpressions(double value, Expression* dest,
   return 1;
 }
 
-const UnitRepresentative* Angle::DefaultRepresentativeForAngleUnit(
+const Representative* Angle::DefaultRepresentativeForAngleUnit(
     AngleUnit angleUnit) {
   switch (angleUnit) {
     case AngleUnit::Degree:
@@ -199,7 +199,7 @@ const UnitRepresentative* Angle::DefaultRepresentativeForAngleUnit(
   }
 }
 
-const UnitRepresentative* Angle::standardRepresentative(
+const Representative* Angle::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
@@ -209,7 +209,7 @@ const UnitRepresentative* Angle::standardRepresentative(
   return DefaultRepresentativeForAngleUnit(reductionContext.angleUnit());
 }
 
-Expression Angle::convertInto(Expression value, const UnitRepresentative* other,
+Expression Angle::convertInto(Expression value, const Representative* other,
                               UnitFormat unitFormat) const {
   assert(dimensionVector() == other->dimensionVector());
   Expression unit = Unit::Builder(other, Prefix::EmptyPrefix());
@@ -257,7 +257,7 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
 }
 #endif
 
-const UnitRepresentative* Mass::standardRepresentative(
+const Representative* Mass::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
   if (unitFormat == UnitFormat::Imperial) {
@@ -294,8 +294,8 @@ int Mass::setAdditionalExpressions(double value, Expression* dest,
 }
 
 double Temperature::ConvertTemperatures(double value,
-                                        const UnitRepresentative* source,
-                                        const UnitRepresentative* target) {
+                                        const Representative* source,
+                                        const Representative* target) {
   assert(source->dimensionVector() == Temperature::Default().dimensionVector());
   assert(target->dimensionVector() == Temperature::Default().dimensionVector());
   if (source == target) {
@@ -317,7 +317,7 @@ int Temperature::setAdditionalExpressions(double value, Expression* dest,
                                           int availableLength,
                                           UnitFormat unitFormat) const {
   assert(availableLength >= 2);
-  const UnitRepresentative* targets[] = {
+  const Representative* targets[] = {
       unitFormat == UnitFormat::Metric ? &celsius : &fahrenheit,
       unitFormat == UnitFormat::Metric ? &fahrenheit : &celsius, kelvin};
   int numberOfExpressionsSet = 0;
@@ -367,7 +367,7 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
 }
 #endif
 
-const UnitRepresentative* Surface::standardRepresentative(
+const Representative* Surface::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
   *prefix = Prefix::EmptyPrefix();
@@ -403,7 +403,7 @@ int Surface::setAdditionalExpressions(double value, Expression* dest,
 }
 #endif
 
-const UnitRepresentative* Volume::standardRepresentative(
+const Representative* Volume::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
   if (unitFormat == UnitFormat::Metric) {

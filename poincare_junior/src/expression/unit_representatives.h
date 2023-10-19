@@ -8,21 +8,21 @@ namespace Units {
 
 // Helper class to add overrides using the static member "representatives"
 template <class R>
-class Helper : public UnitRepresentative {
+class Helper : public Representative {
  protected:
   using Self = R;
-  using UnitRepresentative::UnitRepresentative;
+  using Representative::Representative;
   constexpr static size_t NumberOfRepresentatives =
       sizeof(R::representatives) / sizeof(R);
 
   /* Base class for the list of static representatives, their members should all
-   * be subclasses of UnitRepresentative */
+   * be subclasses of Representative */
   struct Representatives {
-    operator const UnitRepresentative*() const {
-      return reinterpret_cast<const UnitRepresentative*>(this);
+    operator const Representative*() const {
+      return reinterpret_cast<const Representative*>(this);
     }
-    const UnitRepresentative* end() const {
-      return reinterpret_cast<const UnitRepresentative*>(this) +
+    const Representative* end() const {
+      return reinterpret_cast<const Representative*>(this) +
              NumberOfRepresentatives;
     }
   };
@@ -31,8 +31,8 @@ class Helper : public UnitRepresentative {
   int numberOfRepresentatives() const override {
     return NumberOfRepresentatives;
   };
-  const UnitRepresentative* representativesOfSameDimension() const override {
-    return reinterpret_cast<const UnitRepresentative*>(&R::representatives);
+  const Representative* representativesOfSameDimension() const override {
+    return reinterpret_cast<const Representative*>(&R::representatives);
   };
   const DimensionVector dimensionVector() const override {
     return R::Dimension;
@@ -92,7 +92,7 @@ class Distance : public Helper<Distance> {
     R mile;
   };
 
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
 #if 0
@@ -124,9 +124,9 @@ class Angle : public Helper<Angle> {
 
 #if 0
   // Returns a beautified expression
-  Tree* convertInto(Tree* value, const UnitRepresentative* other,
+  Tree* convertInto(Tree* value, const Representative* other,
                     UnitFormat unitFormat) const;
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
   bool hasSpecialAdditionalExpressions(double value,
@@ -159,7 +159,7 @@ class Mass : public Helper<Mass> {
     R dalton;
   };
 
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
 #if 0
@@ -202,10 +202,10 @@ class Temperature : public Helper<Temperature> {
 
 #if 0
   static double ConvertTemperatures(double value,
-                                    const UnitRepresentative* source,
-                                    const UnitRepresentative* target);
+                                    const Representative* source,
+                                    const Representative* target);
 #endif
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override {
     return this;
@@ -471,7 +471,7 @@ class Surface : public Helper<Surface> {
     R acre;
   };
 
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
 #if 0
@@ -503,7 +503,7 @@ class Volume : public Helper<Volume> {
     R fluidOnce;
   };
 
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
 #if 0
@@ -528,11 +528,11 @@ class Speed : public Helper<Speed> {
     R none;
   };
 
-  const UnitRepresentative* representativesOfSameDimension() const override {
+  const Representative* representativesOfSameDimension() const override {
     return nullptr;
   };
 
-  const UnitRepresentative* standardRepresentative(
+  const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override {
     return nullptr;
@@ -553,27 +553,27 @@ class Speed : public Helper<Speed> {
 // Implicit addition
 
 struct RepresentativesList {
-  const UnitRepresentative* const* representativesList;
+  const Representative* const* representativesList;
   int length;
 };
 
 // These must be sorted in order, from smallest to biggest
-constexpr const UnitRepresentative*
+constexpr const Representative*
     k_timeRepresentativesAllowingImplicitAddition[] = {
         &Time::representatives.second, &Time::representatives.minute,
         &Time::representatives.hour,   &Time::representatives.day,
         &Time::representatives.month,  &Time::representatives.year};
 
-constexpr static const UnitRepresentative*
+constexpr static const Representative*
     k_distanceRepresentativesAllowingImplicitAddition[] = {
         &Distance::representatives.inch, &Distance::representatives.foot,
         &Distance::representatives.yard, &Distance::representatives.mile};
 
-constexpr static const UnitRepresentative*
+constexpr static const Representative*
     k_massRepresentativesAllowingImplicitAddition[] = {
         &Mass::representatives.ounce, &Mass::representatives.pound};
 
-constexpr static const UnitRepresentative*
+constexpr static const Representative*
     k_angleRepresentativesAllowingImplicitAddition[] = {
         &Angle::representatives.arcSecond, &Angle::representatives.arcMinute,
         &Angle::representatives.degree};
@@ -591,13 +591,12 @@ constexpr static RepresentativesList
 constexpr static int k_representativesAllowingImplicitAdditionLength =
     std::size(k_representativesAllowingImplicitAddition);
 
-constexpr static const UnitRepresentative*
-    k_representativesWithoutLeftMargin[] = {
-        &Angle::representatives.arcSecond,
-        &Angle::representatives.arcMinute,
-        &Angle::representatives.degree,
-        &Temperature::representatives.celsius,
-        &Temperature::representatives.fahrenheit,
+constexpr static const Representative* k_representativesWithoutLeftMargin[] = {
+    &Angle::representatives.arcSecond,
+    &Angle::representatives.arcMinute,
+    &Angle::representatives.degree,
+    &Temperature::representatives.celsius,
+    &Temperature::representatives.fahrenheit,
 };
 
 }  // namespace Units

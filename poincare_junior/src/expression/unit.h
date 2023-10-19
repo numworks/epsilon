@@ -117,13 +117,13 @@ static_assert(sizeof(DimensionVector) ==
               sizeof(uint8_t) * DimensionVector::k_numberOfBaseUnits);
 static_assert(DimensionVector::Empty().isEmpty());
 
-class UnitRepresentative {
+class Representative {
   friend class Unit;
 
  public:
   // Operators
-  bool operator==(const UnitRepresentative&) const = default;
-  bool operator!=(const UnitRepresentative&) const = default;
+  bool operator==(const Representative&) const = default;
+  bool operator!=(const Representative&) const = default;
   enum class Prefixable {
     None,
     PositiveLongScale,
@@ -136,20 +136,20 @@ class UnitRepresentative {
   };
   constexpr static int k_numberOfDimensions = 25;
   // Assigning an id to each accessible representatives
-  static uint8_t ToId(const UnitRepresentative* representative);
-  static const UnitRepresentative* FromId(uint8_t id);
+  static uint8_t ToId(const Representative* representative);
+  static const Representative* FromId(uint8_t id);
 
-  static const UnitRepresentative* const* DefaultRepresentatives();
-  static const UnitRepresentative* RepresentativeForDimension(
+  static const Representative* const* DefaultRepresentatives();
+  static const Representative* RepresentativeForDimension(
       DimensionVector vector);
 
   virtual const DimensionVector dimensionVector() const = 0;
   virtual int numberOfRepresentatives() const = 0;
   /* representativesOfSameDimension returns a pointer to the array containing
    * all representatives for this's dimension. */
-  virtual const UnitRepresentative* representativesOfSameDimension() const = 0;
+  virtual const Representative* representativesOfSameDimension() const = 0;
   virtual bool isBaseUnit() const = 0;
-  virtual const UnitRepresentative* standardRepresentative(
+  virtual const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const {
     return defaultFindBestRepresentative(
@@ -185,7 +185,7 @@ class UnitRepresentative {
   int serialize(char* buffer, int bufferSize, const Prefix* prefix) const;
 #endif
   bool canParseWithEquivalents(const char* symbol, size_t length,
-                               const UnitRepresentative** representative,
+                               const Representative** representative,
                                const Prefix** prefix) const;
   bool canParse(const char* symbol, size_t length, const Prefix** prefix) const;
   bool canPrefix(const Prefix* prefix, bool input) const;
@@ -197,17 +197,17 @@ class UnitRepresentative {
  protected:
   // TODO it may be marked consteval with Clang but not with GCC
   template <TreeCompatibleConcept T>
-  constexpr UnitRepresentative(Aliases rootSymbol, T ratioExpression,
-                               Prefixable inputPrefixable,
-                               Prefixable outputPrefixable)
+  constexpr Representative(Aliases rootSymbol, T ratioExpression,
+                           Prefixable inputPrefixable,
+                           Prefixable outputPrefixable)
       : m_rootSymbols(rootSymbol),
         m_ratioExpression(static_cast<const Block*>(KTree(ratioExpression))),
         m_inputPrefixable(inputPrefixable),
         m_outputPrefixable(outputPrefixable) {}
 
-  const UnitRepresentative* defaultFindBestRepresentative(
-      double value, double exponent, const UnitRepresentative* begin,
-      const UnitRepresentative* end, const Prefix** prefix) const;
+  const Representative* defaultFindBestRepresentative(
+      double value, double exponent, const Representative* begin,
+      const Representative* end, const Prefix** prefix) const;
 
   Aliases m_rootSymbols;
   /* m_ratioExpression is the expression of the factor used to convert a unit
@@ -275,7 +275,7 @@ class Unit {
   /* Prefixes and Representatives defined below must be defined only once and
    * all units must be constructed from their pointers. This way we can easily
    * check if two Unit objects are equal by comparing pointers. This saves us
-   * from overloading the == operator on Prefix and UnitRepresentative and
+   * from overloading the == operator on Prefix and Representative and
    * saves time at execution. As such, their constructor are private and can
    * only be accessed by their friend class Unit. */
   constexpr static const Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
@@ -293,10 +293,10 @@ class Unit {
   static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3,
                 "Index for the Kilo Prefix is incorrect.");
 
-  using Prefixable = UnitRepresentative::Prefixable;
+  using Prefixable = Representative::Prefixable;
 
   static bool CanParse(UnicodeDecoder* name,
-                       const UnitRepresentative** representative,
+                       const Representative** representative,
                        const Prefix** prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,
                                                         double* value,
@@ -315,8 +315,8 @@ class Unit {
 #endif
 
   static bool AllowImplicitAddition(
-      const UnitRepresentative* smallestRepresentative,
-      const UnitRepresentative* biggestRepresentative);
+      const Representative* smallestRepresentative,
+      const Representative* biggestRepresentative);
 
 #if 0
   static bool ForceMarginLeftOfUnit(const Unit& unit);
@@ -338,11 +338,11 @@ class Unit {
   // Replace with SI ratio only.
   static void RemoveUnit(Tree* unit);
   // Push Unit
-  static Tree* Push(const UnitRepresentative* unitRepresentative,
+  static Tree* Push(const Representative* unitRepresentative,
                     const Prefix* unitPrefixx = Prefix::EmptyPrefix());
-  static const UnitRepresentative* GetRepresentative(const Tree* unit);
+  static const Representative* GetRepresentative(const Tree* unit);
   static void SetRepresentative(Tree* unit,
-                                const UnitRepresentative* representative);
+                                const Representative* representative);
   static const Prefix* GetPrefix(const Tree* unit);
   static void SetPrefix(Tree* unit, const Prefix* prefix);
 };

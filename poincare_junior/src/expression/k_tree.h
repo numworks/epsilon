@@ -220,8 +220,9 @@ constexpr bool HasDecimalPoint(const char* str, size_t size) {
   return false;
 }
 
-constexpr static float FloatValue(const char* str, size_t size) {
-  float value = 0;
+template <class Float>
+constexpr static Float FloatValue(const char* str, size_t size) {
+  Float value = 0;
   bool fractionalPart = false;
   float base = 1;
   for (size_t i = 0; i < size - 1; i++) {
@@ -236,7 +237,7 @@ constexpr static float FloatValue(const char* str, size_t size) {
       value = 10 * value + digit;
     } else {
       // TODO use a better algo precision-wise
-      base *= 10.f;
+      base *= 10;
       value += digit / base;
     }
   }
@@ -244,8 +245,8 @@ constexpr static float FloatValue(const char* str, size_t size) {
 }
 
 /* A template <float V> would be cool but support for this is poor yet so we
- * have to store the bit representation of the float. */
-template <uint32_t V>
+ * have to store the bit representation of the float as an Int. */
+template <class Int, Int V>
 class FloatLitteral : public AbstractTreeCompatible {
  public:
   template <Block... B>
@@ -253,25 +254,39 @@ class FloatLitteral : public AbstractTreeCompatible {
     return KTree<B...>();
   }
 
-  constexpr operator const Tree*() const { return KTree(FloatLitteral<V>()); }
-  const Tree* operator->() const { return KTree(FloatLitteral<V>()); }
+  constexpr operator const Tree*() const {
+    return KTree(FloatLitteral<Int, V>());
+  }
+  const Tree* operator->() const { return KTree(FloatLitteral<Int, V>()); }
 
   // Since we are using the representation we have to manually flip the sign bit
-  consteval auto operator-() { return FloatLitteral<V ^ (1 << 31)>(); }
+  static constexpr Int SignBitMask = Int(1) << (sizeof(Int) * 8 - 1);
+  consteval auto operator-() { return FloatLitteral<Int, V ^ SignBitMask>(); }
 };
 
 template <uint32_t V>
-KTree(FloatLitteral<V>)
+KTree(FloatLitteral<uint32_t, V>)
     -> KTree<BlockType::Float, Bit::getByteAtIndex(V, 0),
              Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
              Bit::getByteAtIndex(V, 3)>;
+
+template <class Float, class Int, char... C>
+consteval auto FloatLitteralOperator() {
+  constexpr const char value[] = {C..., '\0'};
+  return FloatLitteral<Int, std::bit_cast<Int>(
+                                FloatValue<Float>(value, sizeof...(C) + 1))>();
+}
+
+template <char... C>
+consteval auto operator"" _fe() {
+  return FloatLitteralOperator<float, uint32_t, C...>();
+}
 
 template <char... C>
 consteval auto operator"" _e() {
   constexpr const char value[] = {C..., '\0'};
   if constexpr (HasDecimalPoint(value, sizeof...(C) + 1)) {
-    return FloatLitteral<std::bit_cast<uint32_t>(
-        FloatValue(value, sizeof...(C) + 1))>();
+    return FloatLitteralOperator<float, uint32_t, C...>();
   } else {
     return IntegerLitteral<IntegerValue(value, sizeof...(C) + 1)>();
   }

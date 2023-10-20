@@ -266,11 +266,9 @@ void Zoom::fitConditions(PiecewiseOperator p,
 }
 
 void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
-                        bool xRangeIsForced, bool vertical) {
+                        bool cropOutliers, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
-   * order of magnitude of the function, to crop the Y axis. If X range is
-   * forced, we don't want to crop the Y axis: we want to see the value of f at
-   * each point of X range. */
+   * order of magnitude of the function, to crop the Y axis. */
   constexpr float aboutZero = Solver<float>::k_minimalAbsoluteStep;
   Range1D sample;
   float nSum = 0.f, pSum = 0.f;
@@ -286,7 +284,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
     float x = xRange.min() + i * step;
     float y = (f(x, model, m_context).*ordinate)();
     sample.extend(y, m_maxFloat);
-    if (xRangeIsForced) {
+    if (!cropOutliers) {
       continue;
     }
     float yAbs = std::fabs(y);
@@ -307,13 +305,13 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
       vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   float yMax = sample.max();
   if (pPop > 0) {
-    assert(!xRangeIsForced);
+    assert(cropOutliers);
     yMax = std::min(yMax, std::exp(pSum / pPop + 1.f));
   }
   magnitudeRange->extend(yMax, m_maxFloat);
   float yMin = sample.min();
   if (nPop > 0) {
-    assert(!xRangeIsForced);
+    assert(cropOutliers);
     yMin = std::max(yMin, -std::exp(nSum / nPop + 1.f));
   }
   magnitudeRange->extend(yMin, m_maxFloat);

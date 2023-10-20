@@ -26,7 +26,8 @@ Tree *RackParser::parse() {
   ExceptionTry {
     Tree *result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.
-    assert(result->nextTree()->block() == SharedEditionPool->lastBlock());
+    assert(result &&
+           result->nextTree()->block() == SharedEditionPool->lastBlock());
     return result;
   }
   ExceptionCatch(type) {

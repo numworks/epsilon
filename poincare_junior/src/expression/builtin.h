@@ -13,7 +13,7 @@ class Builtin : public std::pair<BlockType, Aliases> {
   const BlockType blockType() const { return first; }
   const Aliases* aliases() const { return &second; }
   Tree* pushNode() const { return SharedEditionPool->push(first); }
-  static bool IsBuiltin(BlockType type) {
+  static bool IsReservedFunction(BlockType type) {
     return GetReservedFunction(type) != nullptr;
   }
   static Aliases ReservedFunctionName(BlockType type) {

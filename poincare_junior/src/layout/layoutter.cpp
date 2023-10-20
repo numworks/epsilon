@@ -87,7 +87,7 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
 
 void Layoutter::layoutBuiltin(EditionReference &layoutParent,
                               Tree *expression) {
-  assert(Builtin::IsBuiltin(expression->type()));
+  assert(Builtin::IsReservedFunction(expression->type()));
   layoutText(layoutParent,
              Builtin::ReservedFunctionName(expression->type()).mainAlias());
   EditionReference parenthesis =
@@ -313,7 +313,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::List:
     case BlockType::Polynomial:
     default:
-      if (Builtin::IsBuiltin(type)) {
+      if (Builtin::IsReservedFunction(type)) {
         if (type.isParametric()) {
           // Move sub-expression first
           expression->child(0)->moveTreeBeforeNode(

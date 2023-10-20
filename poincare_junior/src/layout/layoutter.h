@@ -11,6 +11,7 @@ class Layoutter {
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false);
 
  private:
+  Layoutter(bool linearMode) : m_linearMode(linearMode) {}
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
   void layoutIntegerHandler(EditionReference& layoutParent,
@@ -21,11 +22,7 @@ class Layoutter {
   void layoutUnit(EditionReference& layoutParent, Tree* expression);
   void layoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);
   void layoutExpression(EditionReference& layoutParent, Tree* expression,
-                        int parentPriority = k_maxPriority);
-  static int OperatorPriority(TypeBlock type);
-
-  constexpr static int k_commaPriority = 7;
-  constexpr static int k_maxPriority = 10;
+                        int parentPriority);
   bool m_linearMode;
 };
 }  // namespace PoincareJ

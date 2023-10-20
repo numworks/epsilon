@@ -15,7 +15,7 @@
 
 namespace PoincareJ {
 
-int Layoutter::OperatorPriority(TypeBlock type) {
+static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
     case BlockType::Factorial:
       return 0;
@@ -30,11 +30,19 @@ int Layoutter::OperatorPriority(TypeBlock type) {
     case BlockType::Addition:
       return 5;
     case BlockType::Set:
-      return k_commaPriority;
+      return 9;
+    case BlockType::RackLayout:
+      return 10;
     default:
       assert(false);
   }
 }
+
+// Commas have no associated block but behave like an operator
+static constexpr int k_commaPriority = OperatorPriority(BlockType::Set);
+
+// MaxPriority is to be used when there is no parent that could cause confusion
+static constexpr int k_maxPriority = OperatorPriority(BlockType::RackLayout);
 
 Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode) {
   assert(expression->type().isExpression());
@@ -43,9 +51,7 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode) {
    * layoutParent's root. */
   EditionReference layoutParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
-  // No parentheses on root layout.
-  Layoutter layoutter;
-  layoutter.m_linearMode = linearMode;
+  Layoutter layoutter(linearMode);
   layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
   return layoutParent;
 }
@@ -85,7 +91,6 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
     if (j != 0) {
       PushCodePoint(newParent, ',');
     }
-    // No parentheses within builtin parameters
     layoutExpression(newParent, expression->nextNode(), k_commaPriority);
   }
 }
@@ -191,8 +196,6 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
 // Remove expression while converting it to a layout in layoutParent
 void Layoutter::layoutExpression(EditionReference &layoutParent,
                                  Tree *expression, int parentPriority) {
-  /* TODO: LayoutExpression is a very temporary implementation and must
-   *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
   TypeBlock type = expression->type();
 

@@ -144,7 +144,7 @@ int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
                                           App::app()->localContext());
 }
 
-Layout ExpressionsListController::getLayoutFromExpression(
+Layout ExpressionsListController::getExactLayoutFromExpression(
     Expression e, const ComputationContext& computationContext,
     Layout* approximate) {
   assert(!e.isUninitialized());

@@ -103,13 +103,13 @@ void TrigonometryListController::computeAdditionalResults(
 
   Expression radians = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_radianRepresentativeIndex);
-  m_exactLayouts[index] = getLayoutFromExpression(
+  m_exactLayouts[index] = getExactLayoutFromExpression(
       UnitConvert::Builder(exactAngleWithUnit.clone(), radians),
       computationContext);
 
   Expression degrees = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_degreeRepresentativeIndex);
-  m_approximatedLayouts[index] = getLayoutFromExpression(
+  m_approximatedLayouts[index] = getExactLayoutFromExpression(
       UnitConvert::Builder(exactAngleWithUnit.clone(), degrees),
       computationContext);
 

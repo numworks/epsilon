@@ -96,8 +96,8 @@ void IllustratedExpressionsListController::setLineAtIndex(
   m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
       formula, computationContext.context());
   Layout approximated;
-  m_exactLayouts[index] =
-      getLayoutFromExpression(expression, computationContext, &approximated);
+  m_exactLayouts[index] = getExactLayoutFromExpression(
+      expression, computationContext, &approximated);
   m_approximatedLayouts[index] = approximated;
 };
 

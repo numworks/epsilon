@@ -51,7 +51,7 @@ class DerivativeLayoutNode : public LayoutNode {
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override;
   KDPoint positionOfLeftParenthesis(KDFont::Size font);
-  KDPoint positionOfRightParenthesis(KDFont::Size font);
+  KDPoint positionOfRightParenthesis(KDFont::Size font, KDSize derivandSize);
 
   virtual KDCoordinate orderHeightOffset(KDFont::Size font) = 0;
   virtual KDCoordinate orderWidth(KDFont::Size font) = 0;

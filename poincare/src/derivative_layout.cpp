@@ -241,11 +241,10 @@ KDPoint DerivativeLayoutNode::positionOfLeftParenthesis(KDFont::Size font) {
                  baseline(font) - parenthesisBaseline(font));
 }
 
-KDPoint DerivativeLayoutNode::positionOfRightParenthesis(KDFont::Size font) {
-  KDCoordinate derivandWidth = derivandLayout()->layoutSize(font).width();
-
-  return positionOfLeftParenthesis(font).translatedBy(
-      KDPoint(ParenthesisLayoutNode::k_parenthesisWidth + derivandWidth, 0));
+KDPoint DerivativeLayoutNode::positionOfRightParenthesis(KDFont::Size font,
+                                                         KDSize derivandSize) {
+  return positionOfLeftParenthesis(font).translatedBy(KDPoint(
+      ParenthesisLayoutNode::k_parenthesisWidth + derivandSize.width(), 0));
 }
 
 KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode* child,
@@ -263,12 +262,13 @@ KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode* child,
   }
   assert(child == abscissaLayout());
 
-  return KDPoint(positionOfRightParenthesis(font).x() +
-                     ParenthesisLayoutNode::k_parenthesisWidth +
-                     2 * k_barHorizontalMargin + k_barWidth +
-                     variableLayout()->layoutSize(font).width() +
-                     KDFont::Font(font)->stringSize("=").width(),
-                 abscissaBaseline(font) - abscissaLayout()->baseline(font));
+  return KDPoint(
+      positionOfRightParenthesis(font, derivandLayout()->layoutSize(font)).x() +
+          ParenthesisLayoutNode::k_parenthesisWidth +
+          2 * k_barHorizontalMargin + k_barWidth +
+          variableLayout()->layoutSize(font).width() +
+          KDFont::Font(font)->stringSize("=").width(),
+      abscissaBaseline(font) - abscissaLayout()->baseline(font));
 }
 
 KDPoint DerivativeLayoutNode::positionOfVariableInFractionSlot(
@@ -367,7 +367,8 @@ void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p,
       true, derivandSize.height(), ctx, leftParenthesisPosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);
 
-  KDPoint rightParenthesisPosition = positionOfRightParenthesis(style.font);
+  KDPoint rightParenthesisPosition =
+      positionOfRightParenthesis(style.font, derivandSize);
 
   ParenthesisLayoutNode::RenderWithChildHeight(
       false, derivandSize.height(), ctx,

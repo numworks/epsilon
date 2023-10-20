@@ -50,6 +50,7 @@ constexpr static Aliases s_customIdentifiers[] = {
 constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::Undefined, "undef"},
     {BlockType::Nonreal, "nonreal"},
+    {BlockType::Infinity, BuiltinsAliases::k_infinityAliases},
 };
 
 bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {

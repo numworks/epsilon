@@ -14,7 +14,7 @@ namespace PoincareJ {
 constexpr auto KUndef = KTree<BlockType::Undefined>();
 constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
-constexpr auto KInf = KTree<BlockType::Infinite>();
+constexpr auto KInf = KTree<BlockType::Infinity>();
 
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();

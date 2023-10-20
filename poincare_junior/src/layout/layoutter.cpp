@@ -285,9 +285,11 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       assert(Symbol::Length(expression) == 1);
       PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));
       break;
+    case BlockType::Infinity:
     case BlockType::Nonreal:
     case BlockType::Undefined:
-      layoutText(layoutParent, Builtin::SpecialIdentifierName(type));
+      layoutText(layoutParent,
+                 Builtin::SpecialIdentifierName(type).mainAlias());
       break;
     case BlockType::Matrix:
       layoutMatrix(layoutParent, expression);

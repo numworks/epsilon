@@ -212,6 +212,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       }
       return Poincare::Undefined::Builder();
     }
+    case BlockType::Infinity:
+      return Poincare::Infinity::Builder(false);
     case BlockType::Factorial:
       return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
     case BlockType::Nonreal:
@@ -401,6 +403,13 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
         SharedEditionPool->push(BlockType::Undefined);
       }
       return;
+    }
+    case OT::Infinity: {
+      if (exp.isPositive(nullptr) == Poincare::TrinaryBoolean::False) {
+        SharedEditionPool->push<BlockType::Multiplication>(2);
+        SharedEditionPool->push(BlockType::MinusOne);
+      }
+      SharedEditionPool->push(BlockType::Infinity);
     }
     default:
       SharedEditionPool->push(BlockType::Undefined);

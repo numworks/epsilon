@@ -78,7 +78,7 @@ TYPE(Sine)
 TYPE(Cosine)
 TYPE(Tangent)
 
-TYPE(Infinite)
+TYPE(Infinity)
 
 // 3 - Other expressions in Alphabetic order
 

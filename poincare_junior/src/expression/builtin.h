@@ -12,15 +12,29 @@ class Builtin : public std::pair<BlockType, Aliases> {
   using pair::pair;
   const BlockType blockType() const { return first; }
   const Aliases* aliases() const { return &second; }
-  Tree* pushNode() const;
-  static bool IsBuiltin(BlockType type);
-  static Aliases ReservedFunctionName(BlockType type);
-  static bool HasReservedFunction(UnicodeDecoder* name);
+  Tree* pushNode() const { return SharedEditionPool->push(first); }
+  static bool IsBuiltin(BlockType type) {
+    return GetReservedFunction(type) != nullptr;
+  }
+  static Aliases ReservedFunctionName(BlockType type) {
+    assert(GetReservedFunction(type));
+    return GetReservedFunction(type)->second;
+  }
+  static Aliases SpecialIdentifierName(BlockType type) {
+    assert(GetSpecialIdentifier(type));
+    return GetSpecialIdentifier(type)->second;
+  }
+  static bool HasReservedFunction(UnicodeDecoder* name) {
+    return GetReservedFunction(name) != nullptr;
+  }
+  static bool HasSpecialIdentifier(UnicodeDecoder* name) {
+    return GetSpecialIdentifier(name) != nullptr;
+  }
   static bool HasCustomIdentifier(UnicodeDecoder* name);
-  static bool HasSpecialIdentifier(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(BlockType type);
   static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
+  static const Builtin* GetSpecialIdentifier(BlockType type);
   static uint8_t MinNumberOfParameters(BlockType type) {
     return TypeBlock::NumberOfChildren(type);
   }

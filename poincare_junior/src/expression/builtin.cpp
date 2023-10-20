@@ -52,41 +52,8 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::Nonreal, "nonreal"},
 };
 
-Tree *Builtin::pushNode() const { return SharedEditionPool->push(first); }
-
-bool Builtin::IsBuiltin(BlockType type) {
-  for (auto &[block, aliases] : s_builtins) {
-    if (block == type) {
-      return true;
-    }
-  }
-  return false;
-}
-
-Aliases Builtin::ReservedFunctionName(BlockType type) {
-  return GetReservedFunction(type)->second;
-}
-
-bool Builtin::HasReservedFunction(UnicodeDecoder *name) {
-  for (auto [block, aliases] : s_builtins) {
-    if (aliases.contains(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
   for (Aliases aliases : s_customIdentifiers) {
-    if (aliases.contains(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool Builtin::HasSpecialIdentifier(UnicodeDecoder *name) {
-  for (auto [block, aliases] : s_specialIdentifiers) {
     if (aliases.contains(name)) {
       return true;
     }
@@ -100,7 +67,7 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
       return &builtin;
     }
   }
-  assert(false);
+  return nullptr;
 }
 
 const Builtin *Builtin::GetReservedFunction(BlockType type) {
@@ -109,7 +76,7 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
       return &builtin;
     }
   }
-  assert(false);
+  return nullptr;
 }
 
 const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
@@ -118,7 +85,16 @@ const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
       return &builtin;
     }
   }
-  assert(false);
+  return nullptr;
+}
+
+const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
+  for (const Builtin &builtin : s_specialIdentifiers) {
+    if (builtin.first == type) {
+      return &builtin;
+    }
+  }
+  return nullptr;
 }
 
 bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {

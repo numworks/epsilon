@@ -797,6 +797,7 @@ void RackParser::parseReservedFunction(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
   const Builtin *builtin = Builtin::GetReservedFunction(&decoder);
+  assert(builtin);
   privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();
 }
@@ -925,6 +926,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
              builtin->blockType() == BlockType::Log) {
     builtin = Builtin::GetReservedFunction(BlockType::Logarithm);
   }
+  assert(builtin);
 
   if (numberOfParameters <
       Builtin::MinNumberOfParameters(builtin->blockType())) {
@@ -974,6 +976,7 @@ void RackParser::parseSpecialIdentifier(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
   const Builtin *builtin = Builtin::GetSpecialIdentifier(&decoder);
+  assert(builtin);
   leftHandSide = builtin->pushNode();
   assert(leftHandSide->numberOfChildren() == 0);
   isThereImplicitOperator();

@@ -286,10 +286,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));
       break;
     case BlockType::Nonreal:
-      layoutText(layoutParent, "nonreal");
-      break;
     case BlockType::Undefined:
-      layoutText(layoutParent, "undef");
+      layoutText(layoutParent, Builtin::SpecialIdentifierName(type));
       break;
     case BlockType::Matrix:
       layoutMatrix(layoutParent, expression);

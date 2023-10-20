@@ -13,7 +13,15 @@
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "k_tree.h"
+
 namespace PoincareJ {
+
+// A single token will never need parentheses
+static constexpr int k_tokenPriority = -1;
+
+// MaxPriority is to be used when there is no parent that could cause confusion
+static constexpr int k_maxPriority = 10;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
@@ -34,15 +42,12 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case BlockType::RackLayout:
       return 10;
     default:
-      assert(false);
+      return k_tokenPriority;
   }
 }
 
 // Commas have no associated block but behave like an operator
 static constexpr int k_commaPriority = OperatorPriority(BlockType::Set);
-
-// MaxPriority is to be used when there is no parent that could cause confusion
-static constexpr int k_maxPriority = OperatorPriority(BlockType::RackLayout);
 
 Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode) {
   assert(expression->type().isExpression());
@@ -194,55 +199,45 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
 }
 
 // Remove expression while converting it to a layout in layoutParent
-void Layoutter::layoutExpression(EditionReference &layoutParent,
+void Layoutter::layoutExpression(EditionReference &layoutParentRef,
                                  Tree *expression, int parentPriority) {
-  assert(Layout::IsHorizontal(layoutParent));
+  assert(Layout::IsHorizontal(layoutParentRef));
   TypeBlock type = expression->type();
+
+  EditionReference layoutParent;
+
+  // Add Parentheses if necessary
+  if (parentPriority < OperatorPriority(type)) {
+    EditionReference parenthesis = KParenthesisL(KRackL())->clone();
+    NAry::AddChild(layoutParentRef, parenthesis);
+    layoutParent = parenthesis->child(0);
+  } else {
+    layoutParent = layoutParentRef;
+  }
 
   switch (type) {
     case BlockType::Addition:
-    case BlockType::Subtraction:
     case BlockType::Multiplication:
+      layoutInfixOperator(layoutParent, expression,
+                          (type == BlockType::Addition) ? '+' : u'×');
+      break;
     case BlockType::Power:
     case BlockType::PowerMatrix:
     case BlockType::Division:
-    case BlockType::Factorial: {
-      EditionReference targetParent = layoutParent;
-      // Add Parentheses when necessary
-      if (parentPriority < OperatorPriority(type)) {
-        EditionReference parenthesis =
-            SharedEditionPool->push(BlockType::ParenthesisLayout);
-        targetParent = SharedEditionPool->push<BlockType::RackLayout>(0);
-        NAry::AddChild(layoutParent, parenthesis);
-      }
-      switch (type) {
-        case BlockType::Addition:
-        case BlockType::Multiplication:
-          layoutInfixOperator(targetParent, expression,
-                              (type == BlockType::Addition) ? '+' : u'×');
-          break;
-        case BlockType::Power:
-        case BlockType::PowerMatrix:
-        case BlockType::Division:
-          layoutPowerOrDivision(targetParent, expression);
-          break;
-        case BlockType::Subtraction:
-          layoutExpression(targetParent, expression->nextNode(),
-                           OperatorPriority(BlockType::Addition));
-          PushCodePoint(targetParent, '-');
-          layoutExpression(targetParent, expression->nextNode(),
-                           OperatorPriority(type));
-          break;
-        case BlockType::Factorial:
-          layoutExpression(targetParent, expression->nextNode(),
-                           OperatorPriority(type));
-          PushCodePoint(targetParent, '!');
-          break;
-        default:
-          assert(false);
-      }
+      layoutPowerOrDivision(layoutParent, expression);
       break;
-    }
+    case BlockType::Subtraction:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(BlockType::Addition));
+      PushCodePoint(layoutParent, '-');
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      break;
+    case BlockType::Factorial:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      PushCodePoint(layoutParent, '!');
+      break;
     case BlockType::Zero:
     case BlockType::MinusOne:
     case BlockType::One:

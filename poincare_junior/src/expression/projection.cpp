@@ -52,6 +52,11 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
          .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
   }
 
+  // inf -> Float(inf) to prevent inf-inf from being 0
+  if (ref->type() == BlockType::Infinity) {
+    return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
+  }
+
   // Sqrt(A) -> A^0.5
   changed = PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
   if (ref->type() == BlockType::Power) {

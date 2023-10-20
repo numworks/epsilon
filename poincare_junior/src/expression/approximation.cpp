@@ -1,5 +1,6 @@
 #include "approximation.h"
 
+#include <math.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include <bit>
@@ -60,6 +61,8 @@ T Approximation::To(const Tree* node) {
     case BlockType::Decimal:
       return Approximation::To<T>(node->nextNode()) *
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
+    case BlockType::Infinity:
+      return INFINITY;
     default:
       // TODO: Implement more BlockTypes
       return NAN;
@@ -94,12 +97,18 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
   for (Tree* child : tree->children()) {
     changed = ApproximateAndReplaceEveryScalar(child) || changed;
     approximateNode = approximateNode && child->type() == BlockType::Float;
+    if (tree->type() == BlockType::Trig) {
+      // Do not approximate second term of Trig in case it isn't replaced.
+      break;
+    }
   }
   if (!approximateNode) {
     // TODO: Partially approximate additions and multiplication anyway
     return changed;
   }
   float approx = Approximation::To<float>(tree);
+  /* TODO: Distinguish nan approximation because of unknown variables (x) and
+   * because of legitimate approximations (cos(inf), inf-inf) */
   if (std::isnan(approx)) {
     return changed;
   }

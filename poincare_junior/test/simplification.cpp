@@ -396,3 +396,18 @@ QUIZ_CASE(pcj_dependencies) {
   Simplification::Simplify(e3);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 }
+
+QUIZ_CASE(pcj_infinity) {
+  simplifies_to("∞", "∞");
+  simplifies_to("-∞+1", "-∞");
+  simplifies_to("∞*(-π)", "-∞");
+  simplifies_to("x-∞", "x+-∞");
+  simplifies_to("1/∞", "0");
+  simplifies_to("2^-∞", "0");
+  simplifies_to("0^∞", "0");
+  simplifies_to("e^-∞", "0");
+  simplifies_to("∞-∞", "undef");
+  // FIXME: These cases should be undef
+  simplifies_to("cos(∞)", "cos(∞)");
+  simplifies_to("∞^0", "1");
+}

@@ -390,7 +390,8 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     return false;
   }
   RackLayoutDecoder subString(layout, string, string + identifierLength);
-  if (Builtin::Name(BlockType::Logarithm).contains(&subString)) {
+  if (Builtin::ReservedFunctionName(BlockType::Logarithm)
+          .contains(&subString)) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
     return true;

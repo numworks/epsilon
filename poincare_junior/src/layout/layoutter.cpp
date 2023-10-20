@@ -88,7 +88,8 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
 void Layoutter::layoutBuiltin(EditionReference &layoutParent,
                               Tree *expression) {
   assert(Builtin::IsBuiltin(expression->type()));
-  layoutText(layoutParent, Builtin::Name(expression->type()).mainAlias());
+  layoutText(layoutParent,
+             Builtin::ReservedFunctionName(expression->type()).mainAlias());
   EditionReference parenthesis =
       SharedEditionPool->push(BlockType::ParenthesisLayout);
   EditionReference newParent =

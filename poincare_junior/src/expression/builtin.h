@@ -14,8 +14,7 @@ class Builtin : public std::pair<BlockType, Aliases> {
   const Aliases* aliases() const { return &second; }
   Tree* pushNode() const;
   static bool IsBuiltin(BlockType type);
-  static Aliases Name(BlockType type);
-  static Aliases Name(const Tree* node) { return Name(node->type()); }
+  static Aliases ReservedFunctionName(BlockType type);
   static bool HasReservedFunction(UnicodeDecoder* name);
   static bool HasCustomIdentifier(UnicodeDecoder* name);
   static bool HasSpecialIdentifier(UnicodeDecoder* name);

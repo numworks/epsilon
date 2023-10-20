@@ -63,13 +63,8 @@ bool Builtin::IsBuiltin(BlockType type) {
   return false;
 }
 
-Aliases Builtin::Name(BlockType type) {
-  for (auto &[block, aliases] : s_builtins) {
-    if (block == type) {
-      return aliases;
-    }
-  }
-  assert(false);
+Aliases Builtin::ReservedFunctionName(BlockType type) {
+  return GetReservedFunction(type)->second;
 }
 
 bool Builtin::HasReservedFunction(UnicodeDecoder *name) {

@@ -59,14 +59,14 @@ void MatrixListController::computeAdditionalResults(
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     m_indexMessageMap[index] = messageIndex++;
     m_layouts[index++] =
-        getLayoutFromExpression(determinant, computationContext);
+        getExactLayoutFromExpression(determinant, computationContext);
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinant.isUndefined() &&
         determinant.isNull(context) != TrinaryBoolean::True) {
       // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_indexMessageMap[index] = messageIndex++;
-      m_layouts[index++] = getLayoutFromExpression(
+      m_layouts[index++] = getExactLayoutFromExpression(
           MatrixInverse::Builder(matrix), computationContext);
     }
   }
@@ -75,17 +75,17 @@ void MatrixListController::computeAdditionalResults(
   Expression rowEchelonForm = MatrixRowEchelonForm::Builder(matrix);
   m_indexMessageMap[index] = messageIndex++;
   m_layouts[index++] =
-      getLayoutFromExpression(rowEchelonForm, computationContext);
+      getExactLayoutFromExpression(rowEchelonForm, computationContext);
   /* 4. Matrix reduced row echelon form
    *    it can be computed from row echelon form to save computation time.*/
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] = getLayoutFromExpression(
+  m_layouts[index++] = getExactLayoutFromExpression(
       MatrixReducedRowEchelonForm::Builder(rowEchelonForm), computationContext);
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] = getLayoutFromExpression(MatrixTrace::Builder(matrix),
-                                                 computationContext);
+    m_layouts[index++] = getExactLayoutFromExpression(
+        MatrixTrace::Builder(matrix), computationContext);
   }
 }
 

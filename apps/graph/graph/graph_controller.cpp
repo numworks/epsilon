@@ -262,10 +262,12 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
         continue;
       }
       bool alongY = f->isAlongY();
-      bool xRangeIsForced = !computeX;
-      zoom.fitMagnitude(evaluator, f.operator->(), xRangeIsForced, alongY);
+      /* If X range is forced (computeX is false), we don't want to crop the Y
+       * axis: we want to see the value of f at each point of X range. */
+      bool cropOutliers = computeX;
+      zoom.fitMagnitude(evaluator, f.operator->(), cropOutliers, alongY);
       if (f->numberOfSubCurves() > 1) {
-        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->(), xRangeIsForced,
+        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->(), cropOutliers,
                           alongY);
       }
     }

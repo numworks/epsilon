@@ -432,7 +432,9 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // +2 = 2, -2 = -2
     leftHandSide = parseUntil(std::max(stoppingType, Token::Type::Minus));
     if (m_status == Status::Progress && !plus) {
-      CloneNodeAtNode(leftHandSide, KOpposite);
+      // TODO Opposite instead of multiplication by -1
+      CloneTreeAtNode(leftHandSide, -1_e);
+      CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
     }
     return;
   }

@@ -98,6 +98,10 @@ class SequenceLayoutNode : public LayoutNode {
 
   KDPoint leftParenthesisPosition(KDFont::Size font);
   KDPoint rightParenthesisPosition(KDFont::Size font, KDSize argumentSize);
+
+  KDCoordinate upperBoundWidth(KDFont::Size font) {
+    return upperBoundLayout()->layoutSize(font).width();
+  }
 };
 
 }  // namespace Poincare

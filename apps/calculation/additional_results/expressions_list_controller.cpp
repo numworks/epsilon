@@ -160,13 +160,12 @@ Layout ExpressionsListController::getExactLayoutFromExpression(
                            ? approximateLayout
                            : PoincareHelpers::CreateLayout(
                                  exactExpression, computationContext.context());
-  /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
-   * String("-1") */
-  approximateLayout = exactLayout.isIdenticalTo(approximateLayout, true)
-                          ? Layout()
-                          : approximateLayout;
   if (approximate) {
-    *approximate = approximateLayout;
+    /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
+     * String("-1") */
+    *approximate = exactLayout.isIdenticalTo(approximateLayout, true)
+                       ? Layout()
+                       : approximateLayout;
   }
   return exactLayout;
 }

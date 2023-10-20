@@ -11,18 +11,18 @@ class Layoutter {
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false);
 
  private:
-  void LayoutText(EditionReference& layoutParent, const char* text);
-  void LayoutBuiltin(EditionReference& layoutParent, Tree* expression);
-  void LayoutIntegerHandler(EditionReference& layoutParent,
+  void layoutText(EditionReference& layoutParent, const char* text);
+  void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
+  void layoutIntegerHandler(EditionReference& layoutParent,
                             IntegerHandler handler, int decimalOffset = 0);
-  void LayoutInfixOperator(EditionReference& layoutParent, Tree* expression,
+  void layoutInfixOperator(EditionReference& layoutParent, Tree* expression,
                            CodePoint op);
-  void LayoutMatrix(EditionReference& layoutParent, Tree* expression);
-  void LayoutUnit(EditionReference& layoutParent, Tree* expression);
-  void LayoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);
-  void LayoutExpression(EditionReference& layoutParent, Tree* expression,
+  void layoutMatrix(EditionReference& layoutParent, Tree* expression);
+  void layoutUnit(EditionReference& layoutParent, Tree* expression);
+  void layoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);
+  void layoutExpression(EditionReference& layoutParent, Tree* expression,
                         int parentPriority = k_maxPriority);
-  int OperatorPriority(TypeBlock type);
+  static int OperatorPriority(TypeBlock type);
 
   constexpr static int k_commaPriority = 7;
   constexpr static int k_maxPriority = 10;

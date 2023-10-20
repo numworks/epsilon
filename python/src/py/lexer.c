@@ -505,14 +505,15 @@ STATIC void parse_string_literal(mp_lexer_t *lex, bool is_raw, bool is_fstring) 
     vstr_cut_tail_bytes(&lex->vstr, n_closing);
 }
 
+/* Warning: this is a NumWorks change to MicroPython 1.17 */
+// This function returns whether it has crossed a newline or not.
+// It therefore always return true if stop_at_newline is true
 STATIC bool skip_whitespace(mp_lexer_t *lex, bool stop_at_newline) {
-    bool had_physical_newline = false;
     while (!is_end(lex)) {
         if (is_physical_newline(lex)) {
             if (stop_at_newline && lex->nested_bracket_level == 0) {
-                break;
+                return true;
             }
-            had_physical_newline = true;
             next_char(lex);
         } else if (is_whitespace(lex)) {
             next_char(lex);
@@ -521,18 +522,17 @@ STATIC bool skip_whitespace(mp_lexer_t *lex, bool stop_at_newline) {
             while (!is_end(lex) && !is_physical_newline(lex)) {
                 next_char(lex);
             }
-            // had_physical_newline will be set on next loop
+            // will return true on next loop
         } else if (is_char_and(lex, '\\', '\n')) {
-            // line-continuation, so don't set had_physical_newline
+            // line-continuation, so don't return true
             next_char(lex);
             next_char(lex);
         } else {
             break;
         }
     }
-    return had_physical_newline;
+    return false;
 }
-
 void mp_lexer_to_next(mp_lexer_t *lex) {
     #if MICROPY_PY_FSTRINGS
     if (lex->fstring_args.len && lex->fstring_args_idx == 0) {
@@ -555,7 +555,11 @@ void mp_lexer_to_next(mp_lexer_t *lex) {
     vstr_reset(&lex->vstr);
 
     // skip white space and comments
-    bool had_physical_newline = skip_whitespace(lex, false);
+    // set the newline tokens at the line and column of the preceding line:
+    // only advance on the pointer until a new line is crossed, save the
+    // line and column, and then readvance it
+/* Warning: this is a NumWorks change to MicroPython 1.17 */
+    bool had_physical_newline = skip_whitespace(lex, true);
 
     // set token source information
     lex->tok_line = lex->line;
@@ -569,7 +573,13 @@ void mp_lexer_to_next(mp_lexer_t *lex) {
         lex->tok_kind = MP_TOKEN_INDENT;
         lex->emit_dent -= 1;
 
-    } else if (had_physical_newline && lex->nested_bracket_level == 0) {
+    } else if (had_physical_newline) {
+        /* Warning: this is a NumWorks change to MicroPython 1.17 */
+        // The cursor is at the end of the previous line, pointing to a
+        // physical newline. Skip any remaining whitespace, comments, and
+        // newlines.
+        skip_whitespace(lex, false);
+
         lex->tok_kind = MP_TOKEN_NEWLINE;
 
         size_t num_spaces = lex->column - 1;
@@ -839,9 +849,11 @@ mp_lexer_t *mp_lexer_new(qstr src_name, mp_reader_t reader) {
     // preload first token
     mp_lexer_to_next(lex);
 
-    // Check that the first token is in the first column.  If it's not then we
-    // convert the token kind to INDENT so that the parser gives a syntax error.
-    if (lex->tok_column != 1) {
+    /* Warning: this is a NumWorks change to MicroPython 1.17 */
+    // Check that the first token is in the first column unless it is a
+    // newline. Otherwise we convert the token kind to INDENT so that
+    // the parser gives a syntax error.
+    if (lex->tok_column != 1 && lex->tok_kind != MP_TOKEN_NEWLINE) {
         lex->tok_kind = MP_TOKEN_INDENT;
     }
 

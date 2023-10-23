@@ -32,7 +32,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
       }
     }
     // If they have same degree, sort children in decreasing order of base.
-    order = Order::User;
+    order = Order::Beautification;
   }
   if (order == Order::PreserveMatrices) {
     if (Dimension::GetDimension(node0).isMatrix() &&
@@ -42,7 +42,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
       }
       return node0 < node1 ? -1 : 1;
     }
-    order = Order::User;
+    order = Order::System;
   }
   TypeBlock type0 = node0->type();
   TypeBlock type1 = node1->type();
@@ -58,11 +58,18 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type0 == BlockType::Power) {
+      if (order == Order::Beautification) {
+        return -Compare(node0, node1, Order::System);
+      }
       if (Compare(node0->child(0), node1) == 0) {
         // 1/x < x < x^2
         return Compare(node0->child(1), 1_e);
       }
       // x < y^2
+      return 1;
+    }
+    if (type0 == BlockType::Constant &&
+        Constant::Type(node0) == Constant::Type::I) {
       return 1;
     }
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
@@ -136,9 +143,6 @@ int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
 }
 
 int Comparison::CompareConstants(const Tree* node0, const Tree* node1) {
-  // Only e and π should be compared.
-  assert(static_cast<uint8_t>(Constant::Type(node0)) <= 1);
-  assert(static_cast<uint8_t>(Constant::Type(node1)) <= 1);
   return static_cast<uint8_t>(Constant::Type(node0)) -
          static_cast<uint8_t>(Constant::Type(node1));
 }

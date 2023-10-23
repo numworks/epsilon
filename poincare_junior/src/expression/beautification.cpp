@@ -243,6 +243,12 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     }
   }
 
+  if (ref->type().isOfType(
+          {BlockType::Multiplication, BlockType::GCD, BlockType::LCM}) &&
+      NAry::Sort(ref, Comparison::Order::Beautification)) {
+    return true;
+  }
+
   // PowerReal(A,B) -> A^B
   // PowerMatrix(A,B) -> A^B
   // exp(A? * ln(B) * C?) -> B^(A*C)

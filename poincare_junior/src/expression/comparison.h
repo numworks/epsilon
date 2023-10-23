@@ -7,9 +7,14 @@ namespace PoincareJ {
 
 class Comparison {
  public:
-  /* System optimizes the reduction of expressions while User is for display.
+  /* System optimizes the reduction while Beautification is for display.
    * TODO: Fine tune and take advantage of System Order during reduction. */
-  enum class Order { System, User, PreserveMatrices, AdditionBeautification };
+  enum class Order {
+    System,
+    Beautification,
+    PreserveMatrices,
+    AdditionBeautification
+  };
   /* Compare returns:
    *  1 if block0 > block1
    * -1 if block0 < block1

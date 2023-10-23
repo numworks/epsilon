@@ -20,7 +20,7 @@ namespace Poincare {
 
 class TrigonometryCheatTable {
  public:
-  constexpr static int k_numberOfEntries = 37;
+  constexpr static int k_numberOfEntries = 38;
   enum class Type {
     AngleInRadians = 0,
     Cosine = 1,

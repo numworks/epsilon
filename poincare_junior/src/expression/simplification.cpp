@@ -39,21 +39,17 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = (u->type() == BlockType::Multiplication ||
                    u->type() == BlockType::Addition) &&
                   NAry::Flatten(u);
-  bool hasFloatChild = false;
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     if (IsUndef(child)) {
       u->cloneTreeOverTree(KUndef);
       return true;
     }
-    hasFloatChild = hasFloatChild || (child->type() == BlockType::Float);
   }
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
 #endif
-  bool shallowModified =
-      (hasFloatChild && Approximation::ApproximateAndReplaceEveryScalar(u)) ||
-      ShallowSystematicReduce(u);
+  bool shallowModified = ShallowSystematicReduce(u);
 #if ASSERTIONS
   assert(shallowModified != u->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();
@@ -68,7 +64,20 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     // Strict rationals are the only childless trees that can be reduced.
     return Rational::MakeIrreducible(u);
   }
-  bool changed = SimplifySwitch(u);
+  bool changed = false;
+  /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
+   * with KA a Float and KB a UserVariable. We need to
+   * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
+  for (Tree* child : u->children()) {
+    if (child->type() == BlockType::Float) {
+      changed = Approximation::ApproximateAndReplaceEveryScalar(u);
+      if (changed && u->type() == BlockType::Float) {
+        return true;
+      }
+      break;
+    }
+  }
+  changed |= SimplifySwitch(u);
   if (Dependency::ShallowBubbleUpDependencies(u)) {
     ShallowSystematicReduce(u->nextNode());
     changed = true;

@@ -83,36 +83,43 @@ T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
   return res;
 }
 
-bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
-  if (tree->type() == BlockType::Power &&
-      tree->child(0)->type() == BlockType::Unit) {
-    // Is this a dirty hack ?
-    return false;
+bool interruptApproximation(TypeBlock type, int childIndex,
+                            TypeBlock childType) {
+  switch (type) {
+    case BlockType::Trig:
+      // Do not approximate second term of Trig in case it isn't replaced.
+      return (childIndex == 1);
+    case BlockType::Power:
+      // Note: After projection, Power's second term should always be integer.
+      return (childIndex == 1 && childType.isInteger());
+    case BlockType::Identity:
+      return true;
   }
-  if (tree->type() == BlockType::Float) {
+  return false;
+}
+
+bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
+  // These types are either already approximated or impossible to approximate.
+  if (tree->type().isOfType({BlockType::Float, BlockType::UserSymbol,
+                             BlockType::Variable, BlockType::Unit})) {
     return false;
   }
   bool changed = false;
   bool approximateNode = true;
+  int childIndex = 0;
   for (Tree* child : tree->children()) {
-    changed = ApproximateAndReplaceEveryScalar(child) || changed;
-    approximateNode = approximateNode && child->type() == BlockType::Float;
-    if (tree->type() == BlockType::Trig) {
-      // Do not approximate second term of Trig in case it isn't replaced.
+    if (interruptApproximation(tree->type(), childIndex++, child->type())) {
       break;
     }
+    changed = ApproximateAndReplaceEveryScalar(child) || changed;
+    approximateNode = approximateNode && child->type() == BlockType::Float;
   }
   if (!approximateNode) {
     // TODO: Partially approximate additions and multiplication anyway
     return changed;
   }
-  float approx = Approximation::To<float>(tree);
-  /* TODO: Distinguish nan approximation because of unknown variables (x) and
-   * because of legitimate approximations (cos(inf), inf-inf) */
-  if (std::isnan(approx)) {
-    return changed;
-  }
-  tree->moveTreeOverTree(SharedEditionPool->push<BlockType::Float>(approx));
+  tree->moveTreeOverTree(SharedEditionPool->push<BlockType::Float>(
+      Approximation::To<float>(tree)));
   return true;
 }
 

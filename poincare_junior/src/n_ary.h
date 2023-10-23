@@ -20,10 +20,10 @@ class NAry {
   static bool SquashIfEmpty(Tree* nary);
   static bool Sanitize(Tree* nary);
   static bool Sort(Tree* nary,
-                   Comparison::Order order = Comparison::Order::User);
+                   Comparison::Order order = Comparison::Order::System);
   static void SortedInsertChild(
       Tree* nary, Tree* child,
-      Comparison::Order order = Comparison::Order::User);
+      Comparison::Order order = Comparison::Order::System);
   EDITION_REF_WRAP(Flatten);
   EDITION_REF_WRAP(SquashIfEmpty);
   EDITION_REF_WRAP(SquashIfUnary);

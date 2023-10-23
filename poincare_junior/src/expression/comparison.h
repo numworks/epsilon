@@ -16,7 +16,7 @@ class Comparison {
    *  0 if block0 == block1
    */
   static int Compare(const Tree* node0, const Tree* node1,
-                     Order order = Order::User);
+                     Order order = Order::System);
   static bool AreEqual(const Tree* node0, const Tree* node1);
   static bool ContainsSubtree(const Tree* tree, const Tree* subtree);
 

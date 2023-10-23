@@ -70,7 +70,8 @@ Expression TrigonometryCheatTable::simplify(
       (isIndirectType && exp.type() != ExpressionNode::Type::Rational &&
        exp.type() != ExpressionNode::Type::Multiplication &&
        exp.type() != ExpressionNode::Type::Power &&
-       exp.type() != ExpressionNode::Type::Addition)) {
+       exp.type() != ExpressionNode::Type::Addition &&
+       exp.type() != ExpressionNode::Type::Infinity)) {
     return Expression();
   }
 
@@ -79,13 +80,14 @@ Expression TrigonometryCheatTable::simplify(
       exp.node()
           ->approximate(float(), ApproximationContext(reductionContext, true))
           .toScalar();
-  if (std::isnan(eValue) || std::isinf(eValue)) {
+  if (std::isnan(eValue)) {
     return Expression();
   }
   for (int i = 0; i < k_numberOfEntries; i++) {
     float inputValue = floatForTypeAtIndex(inputType, i);
     if (std::isnan(inputValue) ||
-        std::fabs(inputValue - eValue) > Float<float>::EpsilonLax()) {
+        (inputValue != eValue &&  // inputValue == eValue in case of +/-inf
+         std::fabs(inputValue - eValue) > Float<float>::EpsilonLax())) {
       continue;
     }
     /* e's approximation matches a table entry, check that both expressions are
@@ -95,6 +97,7 @@ Expression TrigonometryCheatTable::simplify(
     if (input.isIdenticalTo(exp)) {
       Expression result =
           expressionForTypeAtIndex(outputType, i, false, reductionContext);
+
       if (isIndirectType) {
         /* We only shallow reduce and not deep reduce since:
          * - radianToAngleUnit creates a multiplication of reduced children
@@ -102,6 +105,15 @@ Expression TrigonometryCheatTable::simplify(
          * for expressions like sin(sin(sin(sin(...)))) */
         result =
             result.radianToAngleUnit(angleUnit).shallowReduce(reductionContext);
+
+      } else if (!result.isUninitialized() &&
+                 result.type() == ExpressionNode::Type::Infinity) {
+        /* drop direct lookups for assymptotic values:
+         *  tan(pi/2) = inf
+         *  tan(pi/2) = -inf
+         * These entries are important to compute arctan(inf)
+         * and arctan(-inf) */
+        return Expression();
       }
       return result;
     }
@@ -193,7 +205,9 @@ const TrigonometryCheatTable* TrigonometryCheatTable::Table() {
           Row::Pair("6^(1/2)*4^(-1)+2^(1/2)*4^(-1)", 0.9659258262890683f),
           Row::Pair("3^(1/2)+2", 3.7320508075688776f)),
       Row(Row::Pair("π*2^(-1)", 1.5707963267948966f), Row::Pair("0", 0.0f),
-          Row::Pair("1", 1.0f), Row::Pair(Undefined::Name())),
+          Row::Pair("1", 1.0f), Row::Pair("∞", INFINITY)),
+      Row(Row::Pair("-π*2^(-1)", 1.5707963267948966f), Row::Pair("0", 0.0f),
+          Row::Pair("1", 1.0f), Row::Pair("-∞", -INFINITY)),
       Row(Row::Pair("π*7*12^(-1)", 1.832595714594046f),
           Row::Pair("-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)", -0.25881904510252063f),
           Row::Pair(""), Row::Pair("")),

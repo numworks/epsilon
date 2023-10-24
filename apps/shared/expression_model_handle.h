@@ -30,7 +30,6 @@ class ExpressionModelHandle : public Ion::Storage::Record {
    * empty and not defined. We thus have to keep both methods. */
   virtual bool isDefined() const;
   virtual bool isEmpty() const;
-  virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
   /* tidyDownstreamPoolFrom tidy the model if its members are located downstream
    * in Poincare pool of the node given as arguments. */
   virtual void tidyDownstreamPoolFrom(

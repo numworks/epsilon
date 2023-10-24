@@ -9,7 +9,6 @@ class Equation : public Shared::ExpressionModelHandle {
  public:
   Equation(Ion::Storage::Record record = Record())
       : ExpressionModelHandle(record) {}
-  bool shouldBeClearedBeforeRemove() override { return false; }
   Poincare::Expression standardForm(
       Poincare::Context* context, bool replaceFunctionsButNotSymbols,
       Poincare::ReductionTarget reductionTarget) const {

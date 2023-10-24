@@ -7,6 +7,8 @@
 
 namespace PoincareJ {
 
+// TODO: Reorganize this class to avoid the duplication of many methods.
+
 class Builtin : public std::pair<BlockType, Aliases> {
  public:
   using pair::pair;

@@ -276,7 +276,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));
       break;
     case BlockType::Nonreal:
-      LayoutText(layoutParent, "nonreal");
+      layoutText(layoutParent, "nonreal");
       break;
     case BlockType::Undefined:
       layoutText(layoutParent, "undef");

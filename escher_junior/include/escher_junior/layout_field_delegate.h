@@ -1,11 +1,11 @@
-#ifndef CALCULATION_JUNIOR_LAYOUT_FIELD_DELEGATE_H
-#define CALCULATION_JUNIOR_LAYOUT_FIELD_DELEGATE_H
+#ifndef ESCHER_JUNIOR_LAYOUT_FIELD_DELEGATE_H
+#define ESCHER_JUNIOR_LAYOUT_FIELD_DELEGATE_H
 
 #include <escher/context_provider.h>
 #include <ion/events.h>
 #include <poincare_junior/include/layout.h>
 
-namespace CalculationJunior {
+namespace EscherJ {
 
 class LayoutField;
 
@@ -31,6 +31,6 @@ class LayoutFieldDelegate : public Escher::ContextProvider {
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
 };
 
-}  // namespace CalculationJunior
+}  // namespace EscherJ
 
 #endif

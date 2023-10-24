@@ -1,5 +1,5 @@
-#ifndef CALCULATION_JUNIOR_LAYOUT_VIEW_H
-#define CALCULATION_JUNIOR_LAYOUT_VIEW_H
+#ifndef ESCHER_JUNIOR_LAYOUT_VIEW_H
+#define ESCHER_JUNIOR_LAYOUT_VIEW_H
 
 #include <escher/glyphs_view.h>
 #include <kandinsky/color.h>
@@ -7,7 +7,7 @@
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layout_selection.h>
 
-namespace CalculationJunior {
+namespace EscherJ {
 
 class AbstractLayoutView : public Escher::GlyphsView {
  public:
@@ -70,6 +70,6 @@ class LayoutViewWithCursor : public AbstractLayoutView {
   PoincareJ::LayoutBufferCursor* m_cursor;
 };
 
-}  // namespace CalculationJunior
+}  // namespace EscherJ
 
 #endif

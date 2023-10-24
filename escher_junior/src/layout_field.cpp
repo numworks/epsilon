@@ -1,8 +1,7 @@
-#include "layout_field.h"
-
 #include <assert.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
+#include <escher_junior/layout_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare_junior/include/expression.h>
@@ -14,7 +13,7 @@
 using namespace PoincareJ;
 using namespace Escher;
 
-namespace CalculationJunior {
+namespace EscherJ {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
     : m_cursor(m_layoutBuffer.blocks(), nullptr),
@@ -591,4 +590,4 @@ void LayoutField::insertLayoutAtCursor(const PoincareJ::Tree *layout,
   scrollToCursor();
 }
 
-}  // namespace CalculationJunior
+}  // namespace EscherJ

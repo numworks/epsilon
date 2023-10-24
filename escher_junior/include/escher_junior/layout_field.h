@@ -1,5 +1,5 @@
-#ifndef CALCULATION_JUNIOR_LAYOUT_FIELD_H
-#define CALCULATION_JUNIOR_LAYOUT_FIELD_H
+#ifndef ESCHER_JUNIOR_LAYOUT_FIELD_H
+#define ESCHER_JUNIOR_LAYOUT_FIELD_H
 
 #include <escher/editable_field.h>
 #include <escher/scrollable_view.h>
@@ -15,7 +15,7 @@
 
 // See TODO in EditableField
 
-namespace CalculationJunior {
+namespace EscherJ {
 
 class LayoutField : public Escher::EditableField {
  public:
@@ -138,6 +138,6 @@ class LayoutField : public Escher::EditableField {
   LayoutFieldDelegate* m_delegate;
 };
 
-}  // namespace CalculationJunior
+}  // namespace EscherJ
 
 #endif

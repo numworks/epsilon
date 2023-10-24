@@ -2,8 +2,8 @@
 #define CALCULATION_JUNIOR_APP_H
 
 #include <apps/shared/shared_app.h>
+#include <escher_junior/layout_field.h>
 
-#include "layout_field.h"
 #include "main_controller.h"
 
 namespace CalculationJunior {

@@ -122,6 +122,7 @@ include poincare/Makefile
 include poincare_junior/Makefile
 include python/Makefile
 include escher/Makefile
+include escher_junior/Makefile
 include omg/Makefile
 include eadk/Makefile
 # Executable Makefiles

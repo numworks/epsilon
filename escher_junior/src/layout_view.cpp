@@ -1,10 +1,10 @@
-#include "layout_view.h"
+#include <escher_junior/layout_view.h>
 
 #include <algorithm>
 
 using namespace PoincareJ;
 
-namespace CalculationJunior {
+namespace EscherJ {
 
 bool AbstractLayoutView::setLayout(Layout layoutR) {
   if (!getLayout().treeIsIdenticalTo(layoutR)) {
@@ -44,4 +44,4 @@ void AbstractLayoutView::drawRect(KDContext* ctx, KDRect rect) const {
   }
 }
 
-}  // namespace CalculationJunior
+}  // namespace EscherJ

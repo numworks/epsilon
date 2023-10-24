@@ -4,11 +4,10 @@
 #include <escher/buffer_text_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
+#include <escher_junior/layout_field.h>
+#include <escher_junior/layout_view.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-
-#include "layout_field.h"
-#include "layout_view.h"
 
 namespace CalculationJunior {
 
@@ -34,14 +33,16 @@ class MainController : public Escher::ViewController {
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
 
-    LayoutField* layoutField() { return &m_layoutField; }
-    LayoutView* reductionLayoutView() { return &m_reductionLayoutView; }
+    EscherJ::LayoutField* layoutField() { return &m_layoutField; }
+    EscherJ::LayoutView* reductionLayoutView() {
+      return &m_reductionLayoutView;
+    }
     ApproximationBuffer* approximationTextView() {
       return &m_approximationView;
     }
 
-    LayoutField m_layoutField;
-    LayoutView m_reductionLayoutView;
+    EscherJ::LayoutField m_layoutField;
+    EscherJ::LayoutView m_reductionLayoutView;
     ApproximationBuffer m_approximationView;
   };
   ContentView m_view;

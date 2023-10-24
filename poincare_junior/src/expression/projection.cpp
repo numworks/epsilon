@@ -54,6 +54,11 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   // inf -> Float(inf) to prevent inf-inf from being 0
   if (ref->type() == BlockType::Infinity) {
+    /* TODO: Raise to try projecting again with ApproximateToFloat strategy.
+     *       Do not handle float contamination unless this is the strategy.
+     *       Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove Raise.*/
+    projectionContext->m_strategy = Strategy::ApproximateToFloat;
+    // ∞ -> Float(∞)
     return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
   }
 

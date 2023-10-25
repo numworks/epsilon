@@ -134,17 +134,6 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
   BlockType type = expression->type();
   int childNumber = expression->numberOfChildren();
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
-    if (op == u'×' && childIndex == 0) {
-      Tree *child = expression->nextNode();
-      if (child->type() == BlockType::MinusOne) {
-        assert(childNumber > 1);
-        PushCodePoint(layoutParent, '-');
-        child->removeTree();
-        childIndex--;
-        childNumber--;
-        continue;
-      }
-    }
     Tree *child = expression->nextNode();
     if (childIndex > 0 &&
         !(op == '+' && child->type() == BlockType::Opposite)) {

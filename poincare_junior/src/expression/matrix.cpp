@@ -364,7 +364,7 @@ Tree* Matrix::Power(const Tree* m, int p) {
     return Multiplication(m, m);
   }
   // Quick exponentiation
-  Tree* result = Matrix::Power(m, p / 2);
+  Tree* result = Power(m, p / 2);
   result->moveTreeOverTree(Multiplication(result, result));
   if (p % 2 == 1) {
     result->moveTreeOverTree(Multiplication(m, result));

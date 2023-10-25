@@ -412,6 +412,7 @@ QUIZ_CASE(pcj_infinity) {
   simplifies_to("∞-∞", "undef");
   simplifies_to("cos(∞)", "undef");
   // FIXME: These cases should be undef
+  simplifies_to("1^∞", "1");
   simplifies_to("∞^0", "1");
   simplifies_to("log(inf,-3)", "undef");
 }

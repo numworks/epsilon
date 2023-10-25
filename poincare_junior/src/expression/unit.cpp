@@ -123,11 +123,11 @@ void DimensionVector::addAllCoefficients(const DimensionVector other,
                                          int8_t factor) {
   for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
     setCoefficientAtIndex(
-        coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor, i);
+        i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
   }
 }
 
-void DimensionVector::setCoefficientAtIndex(int8_t coefficient, uint8_t i) {
+void DimensionVector::setCoefficientAtIndex(uint8_t i, int8_t coefficient) {
   assert(i < k_numberOfBaseUnits);
   int8_t* coefficientsAddresses[] = {&time,
                                      &distance,
@@ -218,9 +218,8 @@ static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
   for (size_t i = 0; i < DimensionVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
     simplifiedExponents.setCoefficientAtIndex(
-        unitsExponents.coefficientAtIndex(i) -
-            entryUnitExponent * entryUnitExponents->coefficientAtIndex(i),
-        i);
+        i, unitsExponents.coefficientAtIndex(i) -
+               entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
   }
   size_t simplifiedSupportSize = simplifiedExponents.supportSize();
   /* Note: A metric is considered simpler if the support size (number of

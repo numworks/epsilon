@@ -85,10 +85,10 @@ struct DimensionVector {
   Tree* toBaseUnits() const;
 
   void addAllCoefficients(const DimensionVector other, int8_t factor);
-  void setCoefficientAtIndex(int8_t coefficient, uint8_t i);
-  void setCoefficientAtIndex(int coefficient, uint8_t i) {
+  void setCoefficientAtIndex(uint8_t i, int8_t coefficient);
+  void setCoefficientAtIndex(uint8_t i, int coefficient) {
     assert(coefficient <= INT8_MAX && coefficient >= INT8_MIN);
-    setCoefficientAtIndex(static_cast<int8_t>(coefficient), i);
+    setCoefficientAtIndex(i, static_cast<int8_t>(coefficient));
   }
   constexpr int8_t coefficientAtIndex(uint8_t i) const {
     assert(i < k_numberOfBaseUnits);

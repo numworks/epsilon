@@ -162,8 +162,6 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
     Simplification::DeepSystematicReduce(units);
-    // FIXME
-    Simplification::DeepSystematicReduce(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
     Tree* approximated =

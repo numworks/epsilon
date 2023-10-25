@@ -89,6 +89,7 @@ bool interruptApproximation(TypeBlock type, int childIndex,
     case BlockType::Trig:
       // Do not approximate second term of Trig in case it isn't replaced.
       return (childIndex == 1);
+    case BlockType::PowerMatrix:
     case BlockType::Power:
       // Note: After projection, Power's second term should always be integer.
       return (childIndex == 1 && childType.isInteger());

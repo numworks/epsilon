@@ -1269,12 +1269,12 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   if (tree->type() == BlockType::PowerMatrix) {
     Tree* index = child->nextTree();
-    if (!index->type().isInteger() && index->type() != BlockType::Float) {
+    if (!Integer::Is<int>(index)) {
+      // TODO: Raise to rely on approximation.
       return false;
     }
-    int p = index->type().isInteger() ? Integer::Handler(index).to<float>()
-                                      : Float::To(index);
-    tree->moveTreeOverTree(Matrix::Power(child, p));
+    tree->moveTreeOverTree(
+        Matrix::Power(child, Integer::Handler(index).to<int>()));
     return true;
   }
   if (tree->numberOfChildren() == 2) {

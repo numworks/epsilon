@@ -148,7 +148,8 @@ void IntegerHandler::pushDigitsOnEditionPool() const {
 }
 
 template <typename T>
-T IntegerHandler::to() {
+T IntegerHandler::to() const {
+  assert(is<T>());
   /* TODO: use the previous Integer::approximate implementation which stops when
    * the mantissa is complete */
   T approximation = 0.0f;
@@ -161,6 +162,31 @@ T IntegerHandler::to() {
   }
   approximation += static_cast<T>(digit(0));
   return static_cast<int8_t>(m_sign) * approximation;
+}
+
+template <>
+bool IntegerHandler::is<float>() const {
+  return true;
+}
+
+template <>
+bool IntegerHandler::is<double>() const {
+  return true;
+}
+
+template <>
+bool IntegerHandler::is<uint8_t>() const {
+  return isUnsignedType<uint8_t>();
+}
+
+template <>
+bool IntegerHandler::is<int8_t>() const {
+  return isSignedType<int8_t>();
+}
+
+template <>
+bool IntegerHandler::is<int>() const {
+  return isSignedType<int>();
 }
 
 /* Getters */
@@ -720,7 +746,8 @@ void Integer::SetSign(Tree *tree, NonStrictSign sign) {
 
 }  // namespace PoincareJ
 
-template float PoincareJ::IntegerHandler::to<float>();
-template double PoincareJ::IntegerHandler::to<double>();
-template bool PoincareJ::IntegerHandler::isSignedType<int8_t>() const;
-template bool PoincareJ::IntegerHandler::isUnsignedType<uint8_t>() const;
+template float PoincareJ::IntegerHandler::to<float>() const;
+template double PoincareJ::IntegerHandler::to<double>() const;
+template uint8_t PoincareJ::IntegerHandler::to<uint8_t>() const;
+template int8_t PoincareJ::IntegerHandler::to<int8_t>() const;
+template int PoincareJ::IntegerHandler::to<int>() const;

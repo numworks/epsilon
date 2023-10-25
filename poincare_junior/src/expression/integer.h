@@ -126,7 +126,9 @@ class IntegerHandler final {
   Tree *pushOnEditionPool() const;
   void pushDigitsOnEditionPool() const;
   template <typename T>
-  T to();
+  T to() const;
+  template <typename T>
+  bool is() const;
 
   // Arithmetic
   static int Compare(const IntegerHandler &a, const IntegerHandler &b);
@@ -243,8 +245,12 @@ class Integer {
     return IntegerHandler(value).pushOnEditionPool();
   }
   static IntegerHandler Handler(const Tree *expression);
-  static bool IsUint8(const Tree *expression);
-  static uint8_t Uint8(const Tree *expression);
+  static bool IsUint8(const Tree *expression);   // TODO : Remove
+  static uint8_t Uint8(const Tree *expression);  // TODO : Remove
+  template <typename T>
+  static bool Is(const Tree *expression) {
+    return expression->type().isInteger() && Handler(expression).is<T>();
+  }
 
   constexpr static uint8_t NumberOfDigits(uint64_t value) {
     uint8_t numberOfDigits = 0;

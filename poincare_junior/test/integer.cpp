@@ -384,3 +384,19 @@ QUIZ_CASE(pcj_integer_overflows) {
     b->removeTree();
   });
 }
+
+static void assert_integer_cast(IntegerHandler integer, int64_t value,
+                                bool isUInt8, bool isInt8, bool isInt) {
+  quiz_assert(isUInt8 == integer.is<uint8_t>());
+  quiz_assert(isInt8 == integer.is<int8_t>());
+  quiz_assert(isInt == integer.is<int>());
+  quiz_assert(!isUInt8 || value == integer.to<uint8_t>());
+  quiz_assert(!isInt8 || value == integer.to<int8_t>());
+  quiz_assert(!isInt || value == integer.to<int>());
+}
+
+QUIZ_CASE(pcj_integer_cast) {
+  assert_integer_cast(Integer::Handler(123_e), 123, true, true, true);
+  assert_integer_cast(Integer::Handler(-123_e), -123, false, true, true);
+  assert_integer_cast(Integer::Handler(300_e), 300, false, false, true);
+}

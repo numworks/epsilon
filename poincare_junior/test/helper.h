@@ -27,7 +27,12 @@ inline void assert_node_equals_blocks(const Tree* node,
 
 inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
   quiz_assert((tree0 == nullptr) == (tree1 == nullptr));
-  quiz_assert(Comparison::AreEqual(tree0, tree1));
+  if (!Comparison::AreEqual(tree0, tree1)) {
+#if POINCARE_MEMORY_TREE_LOG
+    tree0->logDiffWith(tree1);
+#endif
+    quiz_assert(false);
+  }
 }
 
 using FunctionSize = size_t (Pool::*)() const;

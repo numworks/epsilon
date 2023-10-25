@@ -98,6 +98,7 @@ void Beautification::SplitMultiplication(const Tree* expr,
                                          EditionReference& denominator) {
   numerator = SharedEditionPool->push<BlockType::Multiplication>(0);
   denominator = SharedEditionPool->push<BlockType::Multiplication>(0);
+  // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
     const Tree* factor = Factor(expr, i);

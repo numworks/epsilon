@@ -75,6 +75,13 @@ Expression Determinant::shallowReduce(ReductionContext reductionContext) {
       assert(!result.isUninitialized());
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
+    } else if (reductionContext.target() ==
+               Poincare::ReductionTarget::SystemForApproximation) {
+      /* ReductionTarget::SystemForApproximation requires an exact value, which
+       * couldn't be computed by Matrix::determinant due to the lacked of
+       * computational resources. */
+
+      return replaceWithUndefinedInPlace();
     }
   }
   return *this;

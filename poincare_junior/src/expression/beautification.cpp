@@ -185,10 +185,19 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   if (ref->type() == BlockType::Addition) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
   }
+
+  // Turn negative factors into opposites
   if (MakePositiveAnyNegativeNumeralFactor(ref)) {
     ref->cloneNodeAtNode(KOpposite);
     return true;
   }
+
+  // ln(A) * ln(B)^(-1) -> log(A, B)
+  bool changed = PatternMatching::MatchAndReplace(
+      ref, KMult(KTA, KLn(KB), KPow(KLn(KC), -1_e), KTD),
+      KMult(KTA, KLogarithm(KB, KC), KTD));
+
+  // Turn multiplications with negative powers into divisions
   if (ref->type() == BlockType::Multiplication ||
       ref->type() == BlockType::Power) {
     EditionReference num;
@@ -233,10 +242,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       // exp(1) -> e
       PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
       // exp(A) -> e^A
-      PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
-      // ln(A) * ln(B)^(-1) -> log(A, B)
-      PatternMatching::MatchAndReplace(ref, KMult(KLn(KA), KPow(KLn(KB), -1_e)),
-                                       KLogarithm(KA, KB));
+      PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) || changed;
 }
 
 }  // namespace PoincareJ

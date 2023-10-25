@@ -159,7 +159,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   } else {
     double value = Approximation::To<double>(expr);
     units = SharedEditionPool->push<BlockType::Multiplication>(2);
-    ChooseBestDerivedUnits(dimension);
+    ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
     Simplification::DeepSystematicReduce(units);
     // FIXME

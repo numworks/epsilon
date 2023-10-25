@@ -202,7 +202,7 @@ const Representative* Representative::FromId(uint8_t id) {
   return Representative::DefaultRepresentatives()[0];
 }
 
-static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
+static bool CanSimplifyUnitProduct(const DimensionVector* unitsExponents,
                                    size_t& unitsSupportSize,
                                    const DimensionVector* entryUnitExponents,
                                    int entryUnitExponent,
@@ -218,7 +218,7 @@ static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
   for (size_t i = 0; i < DimensionVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
     simplifiedExponents.setCoefficientAtIndex(
-        i, unitsExponents.coefficientAtIndex(i) -
+        i, unitsExponents->coefficientAtIndex(i) -
                entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
   }
   size_t simplifiedSupportSize = simplifiedExponents.supportSize();
@@ -239,7 +239,7 @@ static bool CanSimplifyUnitProduct(const DimensionVector& unitsExponents,
   return isSimpler;
 }
 
-Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
+Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents) {
   /* Recognize derived units
    * - Look up in the table of derived units, the one which itself or its
    * inverse simplifies 'units' the most.
@@ -251,7 +251,7 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
   /* If exponents are not integers, FromBaseUnits will return a null
    * vector, preventing any attempt at simplification. This protects us
    * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
-  size_t unitsSupportSize = unitsExponents.supportSize();
+  size_t unitsSupportSize = unitsExponents->supportSize();
   DimensionVector bestRemainderExponents;
   size_t bestRemainderSupportSize;
   while (unitsSupportSize > 1) {
@@ -292,7 +292,7 @@ Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents) {
     const int position = unitsAccu->numberOfChildren();
     NAry::AddChildAtIndex(unitsAccu, derivedUnit, position);
     // Update remainder units and their exponents for next simplifications
-    unitsExponents = bestRemainderExponents;
+    *unitsExponents = bestRemainderExponents;
     unitsSupportSize = bestRemainderSupportSize;
   }
   NAry::SquashIfEmpty(unitsAccu);

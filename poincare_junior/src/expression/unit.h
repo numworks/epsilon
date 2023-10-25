@@ -347,7 +347,7 @@ class Unit {
   static void SetPrefix(Tree* unit, const Prefix* prefix);
 };
 
-Tree* ChooseBestDerivedUnits(DimensionVector& unitsExponents);
+Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents);
 
 }  // namespace Units
 }  // namespace PoincareJ

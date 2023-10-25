@@ -728,16 +728,6 @@ IntegerHandler Integer::Handler(const Tree *expression) {
   return Rational::Numerator(expression);
 }
 
-bool Integer::IsUint8(const Tree *expression) {
-  return expression->type().isInteger() &&
-         Integer::Handler(expression).isUnsignedType<uint8_t>();
-}
-
-uint8_t Integer::Uint8(const Tree *expression) {
-  assert(IsUint8(expression));
-  return static_cast<uint8_t>(Integer::Handler(expression));
-}
-
 void Integer::SetSign(Tree *tree, NonStrictSign sign) {
   IntegerHandler h = Handler(tree);
   h.setSign(sign);

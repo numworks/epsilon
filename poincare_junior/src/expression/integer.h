@@ -245,8 +245,6 @@ class Integer {
     return IntegerHandler(value).pushOnEditionPool();
   }
   static IntegerHandler Handler(const Tree *expression);
-  static bool IsUint8(const Tree *expression);   // TODO : Remove
-  static uint8_t Uint8(const Tree *expression);  // TODO : Remove
   template <typename T>
   static bool Is(const Tree *expression) {
     return expression->type().isInteger() && Handler(expression).is<T>();

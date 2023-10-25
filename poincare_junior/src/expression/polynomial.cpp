@@ -356,8 +356,9 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
     const Tree* base = expression->nextNode();
     const Tree* exponent = base->nextTree();
     assert(exponent->type().isInteger());
-    assert(!Integer::IsUint8(exponent) || Integer::Uint8(exponent) > 1);
-    AddVariable(variables, Integer::IsUint8(exponent) ? base : expression);
+    assert(!Integer::Is<uint8_t>(exponent) ||
+           Integer::Handler(exponent).to<uint8_t>() > 1);
+    AddVariable(variables, Integer::Is<uint8_t>(exponent) ? base : expression);
   } else if (type == BlockType::Addition || type == BlockType::Multiplication ||
              type == BlockType::Complex) {
     for (const Tree* child : expression->children()) {
@@ -442,8 +443,8 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   PatternMatching::Context ctx = PatternMatching::Context({.KA = variable});
   if (PatternMatching::Match(KPow(KA, KB), expression, &ctx)) {
     const Tree* exponent = ctx.getNode(KB);
-    if (Integer::IsUint8(exponent)) {
-      uint8_t exp = Integer::Uint8(exponent);
+    if (Integer::Is<uint8_t>(exponent)) {
+      uint8_t exp = Integer::Handler(exponent).to<uint8_t>();
       assert(exp > 1);
       return std::make_pair(expression->cloneTreeOverTree(1_e), exp);
     }
@@ -484,8 +485,8 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
   if (type == BlockType::Power) {
     Tree* base = expression.nextNode();
     Tree* exponent = base.nextTree();
-    if (Integer::IsUint8(exponent) && Compare::AreEqual(base, variable)) {
-      return Integer::Uint8(exponent);
+    if (Integer::Is<uint8_t>(exponent) && Compare::AreEqual(base, variable)) {
+      return Integer::Handler(exponent).to<uint8_t>();
     }
   }
   uint8_t degree = 0;
@@ -536,9 +537,9 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree*
   if (type == BlockType::Power) {
     Tree* base = expression.nextNode();
     Tree* exponent = base.nextTree();
-    if (Comparison::AreEqual(exponent, variable) && Integer::IsUint8(exponent)) {
-      assert(Integer::Uint8(exponent) > 1);
-      return std::make_pair((1_e)->clone(), Integer::Uint8(exponent));
+    if (Comparison::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {
+      assert(Integer::Handler(exponent).to<uint8_t>() > 1);
+      return std::make_pair((1_e)->clone(), Integer::Handler(exponent).to<uint8_t>());
     }
   }
   if (type == BlockType::Multiplication) {

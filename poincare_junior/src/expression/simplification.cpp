@@ -285,7 +285,8 @@ bool Simplification::SimplifyTrig(Tree* u) {
       // Trig is 2pi periodic, n can be retrieved as a uint8_t.
       multipleTree->moveTreeOverTree(IntegerHandler::Remainder(
           Integer::Handler(multipleTree), IntegerHandler(24)));
-      uint8_t n = Integer::Uint8(multipleTree);
+      assert(Integer::Is<uint8_t>(multipleTree));
+      uint8_t n = Integer::Handler(multipleTree).to<uint8_t>();
       multipleTree->removeTree();
       u->cloneTreeOverTree(Trigonometry::ExactFormula(n, isSin, &isOpposed));
       DeepSystematicReduce(u);
@@ -355,7 +356,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     // (0 + A*i)^n -> ±(A^n) or (0±(A^n)*i)
     Tree* remainder =
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
-    int rem = Integer::Uint8(remainder);
+    int rem = Integer::Handler(remainder).to<uint8_t>();
     remainder->removeTree();
     v->nextNode()->removeTree();
     v->removeNode();

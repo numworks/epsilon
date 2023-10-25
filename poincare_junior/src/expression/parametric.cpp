@@ -115,11 +115,11 @@ bool Parametric::Explicit(Tree* expr) {
   Tree* boundsDifference = PatternMatching::CreateAndSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
   // TODO larger type than uint8
-  if (!Integer::IsUint8(boundsDifference)) {
+  if (!Integer::Is<uint8_t>(boundsDifference)) {
     boundsDifference->removeTree();
     return false;
   }
-  uint8_t numberOfTerms = Integer::Uint8(boundsDifference) + 1;
+  uint8_t numberOfTerms = Integer::Handler(boundsDifference).to<uint8_t>() + 1;
   boundsDifference->removeTree();
   Tree* result;
   if (isSum) {

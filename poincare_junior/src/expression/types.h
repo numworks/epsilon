@@ -46,6 +46,8 @@ TYPE(SingleFloat)
  * | D TAG | VALUE (8 bytes) | */
 TYPE(DoubleFloat)
 
+RANGE(Float, SingleFloat, DoubleFloat)
+
 /* - Constant C
  * | C TAG | TYPE | */
 TYPE(Constant)

@@ -31,8 +31,7 @@ class Float {
     return std::bit_cast<double>(value);
   }
   static double To(const Tree *tree) {
-    assert(tree->type().isOfType(
-        {BlockType::SingleFloat, BlockType::DoubleFloat}));
+    assert(tree->type().isFloat());
     return tree->type() == BlockType::SingleFloat ? FloatTo(tree)
                                                   : DoubleTo(tree);
   }

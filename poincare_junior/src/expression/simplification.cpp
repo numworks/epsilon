@@ -69,11 +69,9 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
    * with KA a Float and KB a UserVariable. We need to
    * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
   for (Tree* child : u->children()) {
-    if (child->type() == BlockType::SingleFloat ||
-        child->type() == BlockType::DoubleFloat) {
+    if (child->type().isFloat()) {
       changed = Approximation::ApproximateAndReplaceEveryScalar(u);
-      if (changed && (u->type() == BlockType::SingleFloat ||
-                      u->type() == BlockType::DoubleFloat)) {
+      if (changed && u->type().isFloat()) {
         return true;
       }
       break;

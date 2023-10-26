@@ -60,9 +60,8 @@ bool Number::IsSanitized(const Tree* n) {
                            BlockType::RationalNegBig, BlockType::IntegerShort,
                            BlockType::IntegerPosBig,
                            BlockType::IntegerNegBig})) {
-    assert(!n->type().isNumber() ||
-           n->type().isOfType({BlockType::SingleFloat, BlockType::DoubleFloat,
-                               BlockType::Constant, BlockType::Half,
+    assert(!n->type().isNumber() || n->type().isFloat() ||
+           n->type().isOfType({BlockType::Constant, BlockType::Half,
                                BlockType::Zero, BlockType::One, BlockType::Two,
                                BlockType::MinusOne}));
     // Non numbers or optimal BlockType numbers

@@ -262,6 +262,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2×sum(k, k, 0, n)+n", "n^2 + 2n");
   simplifies_to("2×sum(k, k, 3, n)+n", "n^(2)+2×n-6");
 
+  // Arithmetic
+  simplifies_to("quo(23,5)", "4");
+  simplifies_to("rem(23,5)", "3");
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
   // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");

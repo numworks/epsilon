@@ -11,6 +11,7 @@ poincare_junior_src += $(omgpj_src)
 poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.cpp \
   expression/aliases.cpp \
+  expression/arithmetic.cpp \
   expression/approximation.cpp \
   expression/beautification.cpp \
   expression/builtin.cpp \

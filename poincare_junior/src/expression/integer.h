@@ -197,7 +197,7 @@ class IntegerHandler final {
   // necessary
   void sanitize();
   static size_t NumberOfDigits(native_uint_t value) {
-    return Arithmetic::CeilDivision<size_t>(
+    return ::Arithmetic::CeilDivision<size_t>(
         OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
         OMG::BitHelper::k_numberOfBitsInByte);
   }

@@ -19,6 +19,7 @@
 #include <poincare_junior/src/memory/placeholder.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "arithmetic.h"
 #include "derivation.h"
 #include "number.h"
 #include "poincare_junior/src/expression/dependency.h"
@@ -118,6 +119,10 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::Sum:
     case BlockType::Product:
       return Parametric::SimplifySumOrProduct(u);
+    case BlockType::Quotient:
+      return Arithmetic::SimplifyQuotient(u);
+    case BlockType::Remainder:
+      return Arithmetic::SimplifyRemainder(u);
     default:
       return false;
   }

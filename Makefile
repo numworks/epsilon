@@ -31,6 +31,19 @@ info:
 	@echo "POINCARE_TREE_LOG" = $(POINCARE_TREE_LOG)
 	@echo "POINCARE_TESTS_PRINT_EXPRESSIONS" = $(POINCARE_TESTS_PRINT_EXPRESSIONS)
 
+.PHONY: versions
+versions:
+	@echo "CXX:" $(CXX)
+	$(Q) $(CXX) --version
+	@echo ""
+	@echo "LD:" $(LD)
+	$(Q) $(LD) --version
+	@echo ""
+	@echo "LDFLAGS:" $(LDFLAGS)
+	@echo ""
+	@echo "PYTHON:" $(PYTHON)
+	$(Q) $(PYTHON) --version
+
 .PHONY: help
 help:
 	@echo "Device targets"
@@ -67,6 +80,9 @@ help:
 	@echo ""
 	@echo "Visualize the coverage of the unary tests or the screenshot tests"
 	@echo "  make PLATFORM=simulator ARCH=arm64 coverage"
+	@echo ""
+	@echo "Show the version of the tools used"
+	@echo "  make PLATFORM=simulator ARCH=arm64 versions"
 
 # Since we're building out-of-tree, we need to make sure the output directories
 # are created, otherwise the receipes will fail (e.g. gcc will fail to create

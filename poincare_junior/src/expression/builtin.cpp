@@ -41,6 +41,11 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::ImaginaryPart, "im"},
     {BlockType::Conjugate, "conj"},
     {BlockType::Dependency, "dep"},
+    {BlockType::GCD, "gcd"},
+    {BlockType::LCM, "lcm"},
+    {BlockType::Quotient, "quo"},
+    {BlockType::Remainder, "rem"},
+    {BlockType::Factor, "factor"},
 };
 
 constexpr static Aliases s_customIdentifiers[] = {

@@ -202,6 +202,10 @@ class TypeBlock : public Block {
       case BlockType::Subtraction:
       case BlockType::Complex:
       case BlockType::Division:
+      case BlockType::GCD:
+      case BlockType::LCM:
+      case BlockType::Quotient:
+      case BlockType::Remainder:
       case BlockType::FractionLayout:
       case BlockType::Trig:
       case BlockType::TrigDiff:
@@ -222,6 +226,7 @@ class TypeBlock : public Block {
       case BlockType::Ln:
       case BlockType::Exponential:
       case BlockType::Factorial:
+      case BlockType::Factor:
       case BlockType::Det:
       case BlockType::Dim:
       case BlockType::Identity:

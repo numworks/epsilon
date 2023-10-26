@@ -104,6 +104,12 @@ const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
 }
 
 bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
+  if (builtin->blockType() == BlockType::GCD ||
+      builtin->blockType() == BlockType::LCM) {
+    // GCD and LCM are n-ary, skip moveNodeOverNode to keep the nb of children
+    *parameterList->block() = builtin->blockType();
+    return true;
+  }
   parameterList->moveNodeOverNode(builtin->pushNode());
   if (TypeBlock(builtin->blockType()).isParametric()) {
     // Move sub-expression at the end

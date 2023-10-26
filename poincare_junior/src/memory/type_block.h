@@ -110,6 +110,8 @@ class TypeBlock : public Block {
       case BlockType::RackLayout:
       case BlockType::SystemList:
       case BlockType::Polynomial:
+      case BlockType::GCD:
+      case BlockType::LCM:
       case BlockType::UserSymbol:
       case BlockType::UserFunction:
       case BlockType::UserSequence:
@@ -187,6 +189,8 @@ class TypeBlock : public Block {
       case BlockType::List:
       case BlockType::Polynomial:
       case BlockType::SystemList:
+      case BlockType::GCD:
+      case BlockType::LCM:
         return NAryNumberOfChildrenTag;
       case BlockType::Matrix:
         return MatrixNumberOfChildrenTag;
@@ -202,8 +206,6 @@ class TypeBlock : public Block {
       case BlockType::Subtraction:
       case BlockType::Complex:
       case BlockType::Division:
-      case BlockType::GCD:
-      case BlockType::LCM:
       case BlockType::Quotient:
       case BlockType::Remainder:
       case BlockType::FractionLayout:

@@ -1,6 +1,7 @@
 #include "arithmetic.h"
 
 #include <poincare_junior/src/memory/exception_checkpoint.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include "rational.h"
 
@@ -28,16 +29,27 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
 }
 
 bool Arithmetic::SimplifyGCD(Tree* expr) {
-  const Tree* a = expr->firstChild();
-  const Tree* b = a->nextTree();
-  if (!a->type().isInteger() || !b->type().isInteger()) {
-    if (a->type().isRational() || b->type().isRational()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  bool changed = NAry::Flatten(expr);
+  // TODO test type on the fly to reduce gcd(2,4,x) into gcd(2,x)
+  for (const Tree* child : expr->children()) {
+    if (!child->type().isInteger()) {
+      if (child->type().isRational()) {
+        ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      }
+      return changed;
     }
-    return false;
   }
-  expr->moveTreeOverTree(
-      IntegerHandler::GCD(Integer::Handler(a), Integer::Handler(b)));
+  Tree* first = expr->firstChild();
+  Tree* next = first->nextTree();
+  int n = expr->numberOfChildren();
+  while (n-- > 1) {
+    // TODO keep a handler on first out of the loop
+    first->moveTreeOverTree(
+        IntegerHandler::GCD(Integer::Handler(first), Integer::Handler(next)));
+    next = first->nextTree();
+    next->removeTree();
+  }
+  expr->removeNode();
   return true;
 }
 

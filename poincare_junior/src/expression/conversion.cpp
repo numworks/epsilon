@@ -188,8 +188,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
-    case BlockType::Float:
-    case BlockType::Double:
+    case BlockType::SingleFloat:
+    case BlockType::DoubleFloat:
     case BlockType::Decimal:
     case BlockType::Unit:
       return ToPoincareExpressionViaParse(exp);

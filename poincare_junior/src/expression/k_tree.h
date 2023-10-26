@@ -276,13 +276,13 @@ class FloatLitteral : public AbstractTreeCompatible {
 
 template <uint32_t V>
 KTree(FloatLitteral<uint32_t, V>)
-    -> KTree<BlockType::Float, Bit::getByteAtIndex(V, 0),
+    -> KTree<BlockType::SingleFloat, Bit::getByteAtIndex(V, 0),
              Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
              Bit::getByteAtIndex(V, 3)>;
 
 template <uint64_t V>
 KTree(FloatLitteral<uint64_t, V>)
-    -> KTree<BlockType::Double, Bit::getByteAtIndex(V, 0),
+    -> KTree<BlockType::DoubleFloat, Bit::getByteAtIndex(V, 0),
              Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
              Bit::getByteAtIndex(V, 3), Bit::getByteAtIndex(V, 4),
              Bit::getByteAtIndex(V, 5), Bit::getByteAtIndex(V, 6),

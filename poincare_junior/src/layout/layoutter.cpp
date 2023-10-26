@@ -297,13 +297,13 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Unit:
       layoutUnit(layoutParent, expression);
       break;
-    case BlockType::Double:
-    case BlockType::Float: {
+    case BlockType::DoubleFloat:
+    case BlockType::SingleFloat: {
       char buffer[20];
       Poincare::PrintFloat::ConvertFloatToText(
           Float::To(expression), buffer, std::size(buffer),
           Poincare::PrintFloat::k_maxFloatGlyphLength,
-          type == BlockType::Float
+          type == BlockType::SingleFloat
               ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
               : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
           Poincare::Preferences::PrintFloatMode::Decimal);

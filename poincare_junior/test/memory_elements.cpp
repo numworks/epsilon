@@ -128,14 +128,15 @@ QUIZ_CASE(pcj_type_block) {
                                          .rational = true,
                                          .number = true,
                                          .userNamed = false}),
-      std::make_pair(BlockType::Float, TypeBlockProperties{.nAry = false,
-                                                           .expression = true,
-                                                           .layout = false,
-                                                           .integer = false,
-                                                           .rational = false,
-                                                           .number = true,
-                                                           .userNamed = false}),
-      std::make_pair(BlockType::Double,
+      std::make_pair(BlockType::SingleFloat,
+                     TypeBlockProperties{.nAry = false,
+                                         .expression = true,
+                                         .layout = false,
+                                         .integer = false,
+                                         .rational = false,
+                                         .number = true,
+                                         .userNamed = false}),
+      std::make_pair(BlockType::DoubleFloat,
                      TypeBlockProperties{.nAry = false,
                                          .expression = true,
                                          .layout = false,
@@ -475,10 +476,10 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
       1.23_e, {TypeBlock(BlockType::Decimal), ValueBlock(2),
                TypeBlock(BlockType::IntegerShort), ValueBlock(123)});
   assert_tree_equals_blocks(
-      2.0_fe, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0),
+      2.0_fe, {TypeBlock(BlockType::SingleFloat), ValueBlock(0), ValueBlock(0),
                ValueBlock(0), ValueBlock(64)});
   assert_tree_equals_blocks(
-      2.0_de, {TypeBlock(BlockType::Double), ValueBlock(0), ValueBlock(0),
+      2.0_de, {TypeBlock(BlockType::DoubleFloat), ValueBlock(0), ValueBlock(0),
                ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(0),
                ValueBlock(0), ValueBlock(64)});
   assert_tree_equals_blocks(-1_e, {BlockType::MinusOne});

@@ -40,11 +40,11 @@ RANGE(Rational, Zero, RationalNegBig)
 
 /* - Float F
  * | F TAG | VALUE (4 bytes) | */
-TYPE(Float)
+TYPE(SingleFloat)
 
 /* - Double D
  * | D TAG | VALUE (8 bytes) | */
-TYPE(Double)
+TYPE(DoubleFloat)
 
 /* - Constant C
  * | C TAG | TYPE | */

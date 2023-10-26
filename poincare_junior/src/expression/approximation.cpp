@@ -24,9 +24,9 @@ T Approximation::To(const Tree* node) {
   switch (node->type()) {
     case BlockType::Constant:
       return Constant::To<T>(Constant::Type(node));
-    case BlockType::Float:
+    case BlockType::SingleFloat:
       return Float::FloatTo(node);
-    case BlockType::Double:
+    case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
     case BlockType::Addition:
       return Approximation::MapAndReduce(node, FloatAddition<T>);

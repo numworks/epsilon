@@ -44,8 +44,9 @@ class NodeConstructor final {
                                                              size_t blockIndex,
                                                              Types... args) {
     static_assert(
-        blockType != BlockType::Constant && blockType != BlockType::Float &&
-            blockType != BlockType::Double &&
+        blockType != BlockType::Constant &&
+            blockType != BlockType::SingleFloat &&
+            blockType != BlockType::DoubleFloat &&
             blockType != BlockType::UserSymbol &&
             blockType != BlockType::IntegerPosBig &&
             blockType != BlockType::IntegerNegBig,
@@ -109,26 +110,26 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Float>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::SingleFloat>(
     Block* block, size_t blockIndex, float value) {
   static_assert(sizeof(float) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::Float, Float::SubFloatAtIndex(value, 0),
-      Float::SubFloatAtIndex(value, 1), Float::SubFloatAtIndex(value, 2),
-      Float::SubFloatAtIndex(value, 3));
+      block, blockIndex, BlockType::SingleFloat,
+      Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1),
+      Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3));
 }
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Double>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::DoubleFloat>(
     Block* block, size_t blockIndex, double value) {
   static_assert(sizeof(double) / sizeof(uint8_t) == 8);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::Double, Float::SubFloatAtIndex(value, 0),
-      Float::SubFloatAtIndex(value, 1), Float::SubFloatAtIndex(value, 2),
-      Float::SubFloatAtIndex(value, 3), Float::SubFloatAtIndex(value, 4),
-      Float::SubFloatAtIndex(value, 5), Float::SubFloatAtIndex(value, 6),
-      Float::SubFloatAtIndex(value, 7));
+      block, blockIndex, BlockType::DoubleFloat,
+      Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1),
+      Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3),
+      Float::SubFloatAtIndex(value, 4), Float::SubFloatAtIndex(value, 5),
+      Float::SubFloatAtIndex(value, 6), Float::SubFloatAtIndex(value, 7));
 }
 
 template <>

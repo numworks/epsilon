@@ -7,12 +7,14 @@
 namespace PoincareJ {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
-  if (i->type() == BlockType::Double || j->type() == BlockType::Double) {
-    return SharedEditionPool->push<BlockType::Double>(
+  if (i->type() == BlockType::DoubleFloat ||
+      j->type() == BlockType::DoubleFloat) {
+    return SharedEditionPool->push<BlockType::DoubleFloat>(
         Approximation::To<double>(i) + Approximation::To<double>(j));
   }
-  if (i->type() == BlockType::Float || j->type() == BlockType::Float) {
-    return SharedEditionPool->push<BlockType::Float>(
+  if (i->type() == BlockType::SingleFloat ||
+      j->type() == BlockType::SingleFloat) {
+    return SharedEditionPool->push<BlockType::SingleFloat>(
         Approximation::To<float>(i) + Approximation::To<float>(j));
   }
   assert(i->type() != BlockType::Constant && j->type() != BlockType::Constant);
@@ -21,12 +23,14 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
   return result;
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
-  if (i->type() == BlockType::Double || j->type() == BlockType::Double) {
-    return SharedEditionPool->push<BlockType::Double>(
+  if (i->type() == BlockType::DoubleFloat ||
+      j->type() == BlockType::DoubleFloat) {
+    return SharedEditionPool->push<BlockType::DoubleFloat>(
         Approximation::To<double>(i) * Approximation::To<double>(j));
   }
-  if (i->type() == BlockType::Float || j->type() == BlockType::Float) {
-    return SharedEditionPool->push<BlockType::Float>(
+  if (i->type() == BlockType::SingleFloat ||
+      j->type() == BlockType::SingleFloat) {
+    return SharedEditionPool->push<BlockType::SingleFloat>(
         Approximation::To<float>(i) * Approximation::To<float>(j));
   }
   assert(i->type() != BlockType::Constant && j->type() != BlockType::Constant);
@@ -39,8 +43,8 @@ Sign::Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
     case BlockType::Constant:
       return Sign::Positive;
-    case BlockType::Double:
-    case BlockType::Float: {
+    case BlockType::DoubleFloat:
+    case BlockType::SingleFloat: {
       double value = Float::To(node);
       // Floats are not considered integer since they may have been rounded
       return {value == 0, value > 0, value < 0, false};
@@ -57,7 +61,7 @@ bool Number::IsSanitized(const Tree* n) {
                            BlockType::IntegerPosBig,
                            BlockType::IntegerNegBig})) {
     assert(!n->type().isNumber() ||
-           n->type().isOfType({BlockType::Float, BlockType::Double,
+           n->type().isOfType({BlockType::SingleFloat, BlockType::DoubleFloat,
                                BlockType::Constant, BlockType::Half,
                                BlockType::Zero, BlockType::One, BlockType::Two,
                                BlockType::MinusOne}));

@@ -90,9 +90,9 @@ class TypeBlock : public Block {
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
-      case BlockType::Double:
+      case BlockType::DoubleFloat:
         return 1 + sizeof(double) / sizeof(uint8_t);
-      case BlockType::Float:
+      case BlockType::SingleFloat:
         return 1 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:
         return 1 + sizeof(CodePoint) / sizeof(uint8_t);
@@ -280,12 +280,12 @@ struct FloatType;
 
 template <>
 struct FloatType<float> {
-  static constexpr BlockType type = BlockType::Float;
+  static constexpr BlockType type = BlockType::SingleFloat;
 };
 
 template <>
 struct FloatType<double> {
-  static constexpr BlockType type = BlockType::Double;
+  static constexpr BlockType type = BlockType::DoubleFloat;
 };
 
 }  // namespace PoincareJ

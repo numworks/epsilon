@@ -1,5 +1,7 @@
 #include "main_controller.h"
 
+#include <escher/clipboard.h>
+
 #include "app.h"
 #include "table_layout.h"
 
@@ -74,6 +76,23 @@ bool MainController::handleEvent(Ion::Events::Event e) {
     return true;
   }
 
+  /*
+    constexpr int bufferSize = Escher::TextField::MaxBufferSize();
+    char buffer[bufferSize];
+    dataSource->field()->getLayout(z).serializeForParsing(buffer, bufferSize);
+
+    if (e == Ion::Events::Copy && dataSource->field()->hasDouble(z)) {
+      // copy the serialized layout to the clipboard.
+
+      Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
+      return true;
+    } else if ((e == Ion::Events::Var || e == Ion::Events::Sto) &&
+               dataSource->field()->hasDouble(z)) {
+      App::app()->storeValue(buffer);
+      return true;
+    }
+  */
+
   AtomicNumber newZ = z;
   if (e == Ion::Events::Up) {
     newZ = TableLayout::NextElement(z, TableLayout::Direction::DecreasingRow);
@@ -104,8 +123,8 @@ bool MainController::textFieldDidReceiveEvent(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   // Sto event needs to be handled here before AbstractTextField handles it.
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-    /* ElementsView only redraws its background when appearing to avoid blinking
-     * It needs to be redrawn after the store menu */
+    /* ElementsView only redraws its background when appearing to avoid
+     * blinking It needs to be redrawn after the store menu */
     m_view.elementsView()->dirtyBackground();
   }
   if (textField->isEditing()) {
@@ -127,6 +146,25 @@ bool MainController::textFieldDidReceiveEvent(
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* OK should not start the edition */
     return handleEvent(event);
+  }
+
+  // Handle Copy.
+
+  ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
+  AtomicNumber z = dataSource->selectedElement();
+  if (z == ElementsDataBase::k_noElement) {
+    return false;
+  }
+
+  if (dataSource->field()->hasDouble(z)) {
+    constexpr int bufferSize = Escher::TextField::MaxBufferSize();
+    char buffer[bufferSize];
+    dataSource->field()->getLayout(z).serializeForParsing(buffer, bufferSize);
+
+    if (event == Ion::Events::Copy) {
+      Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
+      return true;
+    }
   }
   return false;
 }

@@ -27,4 +27,18 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   return true;
 }
 
+bool Arithmetic::SimplifyGCD(Tree* expr) {
+  const Tree* a = expr->firstChild();
+  const Tree* b = a->nextTree();
+  if (!a->type().isInteger() || !b->type().isInteger()) {
+    if (a->type().isRational() || b->type().isRational()) {
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    return false;
+  }
+  expr->moveTreeOverTree(
+      IntegerHandler::GCD(Integer::Handler(a), Integer::Handler(b)));
+  return true;
+}
+
 }  // namespace PoincareJ

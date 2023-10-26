@@ -265,6 +265,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   // Arithmetic
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");
+  simplifies_to("gcd(14,21)", "7");
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
   // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");

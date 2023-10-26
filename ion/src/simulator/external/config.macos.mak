@@ -14,7 +14,6 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   hidapi/SDL_hidapi.c \
   locale/macosx/SDL_syslocale.m \
   joystick/darwin/SDL_iokitjoystick.c \
-  joystick/iphoneos/SDL_mfijoystick.m \
   loadso/dlopen/SDL_sysloadso.c \
   main/dummy/SDL_dummy_main.c \
   misc/macosx/SDL_sysurl.m \
@@ -52,5 +51,3 @@ LDFLAGS += -framework CoreFoundation
 LDFLAGS += -framework Carbon
 LDFLAGS += -framework ForceFeedback
 LDFLAGS += -framework AudioToolbox
-LDFLAGS += -framework GameController
-LDFLAGS += -framework CoreHaptics

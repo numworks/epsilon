@@ -1,4 +1,4 @@
-SFLAGS += -Iion/src/simulator/external/sdl/include
+SFLAGS += -Iion/src/simulator/external/ -Iion/src/simulator/external/sdl/include
 
 sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   SDL.c \

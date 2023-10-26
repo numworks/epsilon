@@ -741,3 +741,7 @@ template double PoincareJ::IntegerHandler::to<double>() const;
 template uint8_t PoincareJ::IntegerHandler::to<uint8_t>() const;
 template int8_t PoincareJ::IntegerHandler::to<int8_t>() const;
 template int PoincareJ::IntegerHandler::to<int>() const;
+
+template bool PoincareJ::IntegerHandler::isUnsignedType<uint8_t>() const;
+template bool PoincareJ::IntegerHandler::isSignedType<int8_t>() const;
+template bool PoincareJ::IntegerHandler::isSignedType<int>() const;

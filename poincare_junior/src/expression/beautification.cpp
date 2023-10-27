@@ -144,6 +144,21 @@ void Beautification::SplitMultiplication(const Tree* expr,
   NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
 }
 
+bool Beautification::BeautifyIntoDivision(Tree* expr) {
+  EditionReference num;
+  EditionReference den;
+  SplitMultiplication(expr, num, den);
+  if (den->type() != BlockType::One) {
+    num->cloneNodeAtNode(KDiv);
+    expr->moveTreeOverTree(num);
+    return true;
+  } else {
+    num->removeTree();
+    den->removeTree();
+  }
+  return false;
+}
+
 bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   Units::DimensionVector dimension = projectionContext.m_dimension.unit.vector;
   if (!projectionContext.m_dimension.isUnit()) {
@@ -223,16 +238,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   // Turn multiplications with negative powers into divisions
   if (ref->type() == BlockType::Multiplication ||
       ref->type() == BlockType::Power) {
-    EditionReference num;
-    EditionReference den;
-    SplitMultiplication(ref, num, den);
-    if (den->type() != BlockType::One) {
-      num->cloneNodeAtNode(KDiv);
-      ref->moveTreeOverTree(num);
+    if (BeautifyIntoDivision(ref)) {
       return true;
-    } else {
-      num->removeTree();
-      den->removeTree();
     }
   }
 

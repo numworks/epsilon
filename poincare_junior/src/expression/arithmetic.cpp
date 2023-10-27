@@ -252,11 +252,14 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
   if (!child->type().isRational()) {
     return false;
   }
-  Tree* result;
+  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  if (Rational::Sign(child).isNegative()) {
+    KOpposite->cloneNode();
+  }
   if (child->type().isInteger()) {
-    result = PushPrimeFactorization(Integer::Handler(child));
+    PushPrimeFactorization(Integer::Handler(child));
   } else {
-    result = KDiv->cloneNode();
+    KDiv->cloneNode();
     PushPrimeFactorization(Rational::Numerator(child));
     PushPrimeFactorization(Rational::Denominator(child));
   }

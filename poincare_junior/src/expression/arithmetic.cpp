@@ -53,6 +53,19 @@ bool Arithmetic::SimplifyFloorOrCeiling(Tree* expr) {
   return true;
 }
 
+bool Arithmetic::SimplifyFracPart(Tree* expr) {
+  Tree* child = expr->firstChild();
+  if (!child->type().isRational()) {
+    return false;
+  }
+  IntegerHandler denom = Rational::Denominator(child);
+  Tree* rem = IntegerHandler::Remainder(Rational::Numerator(child), denom);
+  EditionReference result = Rational::Push(Integer::Handler(rem), denom);
+  rem->removeTree();
+  expr->moveTreeOverTree(result);
+  return true;
+}
+
 bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
   Tree* first = expr->firstChild();

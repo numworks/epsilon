@@ -9,13 +9,9 @@ namespace PoincareJ {
 
 class Arithmetic {
  public:
-  static bool SimplifyQuotient(Tree* expr) {
-    return SimplifyQuotientOrRemainder(expr);
-  }
-  static bool SimplifyRemainder(Tree* expr) {
-    return SimplifyQuotientOrRemainder(expr);
-  }
+  static bool SimplifyQuotientOrRemainder(Tree* expr);
   static bool SimplifyFloorOrCeiling(Tree* expr);
+  static bool SimplifyFracPart(Tree* expr);
 
   static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
   static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }
@@ -31,7 +27,6 @@ class Arithmetic {
   };
 
   static bool SimplifyGCDOrLCM(Tree* expr, bool isGCD);
-  static bool SimplifyQuotientOrRemainder(Tree* expr);
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
   static Tree* PushPrimeFactorization(IntegerHandler m);
 };

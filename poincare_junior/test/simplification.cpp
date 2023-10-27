@@ -274,6 +274,7 @@ QUIZ_CASE(pcj_basic_simplification) {
 
   simplifies_to("sign(-2)", "-1");
   simplifies_to("ceil(8/3)", "3");
+  simplifies_to("frac(8/3)", "2/3");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

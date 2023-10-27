@@ -208,6 +208,7 @@ class TypeBlock : public Block {
       case BlockType::Division:
       case BlockType::Quotient:
       case BlockType::Remainder:
+      case BlockType::Round:
       case BlockType::FractionLayout:
       case BlockType::Trig:
       case BlockType::TrigDiff:
@@ -224,11 +225,15 @@ class TypeBlock : public Block {
       case BlockType::ArcCosine:
       case BlockType::ArcSine:
       case BlockType::ArcTangent:
+      case BlockType::Ceiling:
       case BlockType::Log:
       case BlockType::Ln:
       case BlockType::Exponential:
       case BlockType::Factorial:
       case BlockType::Factor:
+      case BlockType::Floor:
+      case BlockType::FracPart:
+      case BlockType::Sign:
       case BlockType::Det:
       case BlockType::Dim:
       case BlockType::Identity:

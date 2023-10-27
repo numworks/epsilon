@@ -46,6 +46,11 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Quotient, "quo"},
     {BlockType::Remainder, "rem"},
     {BlockType::Factor, "factor"},
+    {BlockType::Ceiling, "ceil"},
+    {BlockType::Floor, "floor"},
+    {BlockType::FracPart, "frac"},
+    {BlockType::Round, "round"},
+    {BlockType::Sign, "sign"},
 };
 
 constexpr static Aliases s_customIdentifiers[] = {

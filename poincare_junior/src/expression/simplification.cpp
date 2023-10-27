@@ -125,6 +125,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyQuotient(u);
     case BlockType::Remainder:
       return Arithmetic::SimplifyRemainder(u);
+    case BlockType::Sign:
+      return SimplifySign(u);
     default:
       return false;
   }
@@ -799,6 +801,23 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
          Simplification::DistributeOverNAry(
              tree, BlockType::ImaginaryPart, BlockType::Addition,
              BlockType::Addition, SimplifyImaginaryPart);
+}
+
+bool Simplification::SimplifySign(Tree* expr) {
+  assert(expr->type() == BlockType::Sign);
+  Sign::Sign sign = Sign::GetSign(expr->firstChild());
+  const Tree* result;
+  if (sign.isZero()) {
+    result = 0_e;
+  } else if (sign.isStrictlyPositive()) {
+    result = 1_e;
+  } else if (sign.isStrictlyNegative()) {
+    result = -1_e;
+  } else {
+    return false;
+  }
+  expr->cloneTreeOverTree(result);
+  return true;
 }
 
 bool ShouldApproximateOnSimplify(Dimension dimension) {

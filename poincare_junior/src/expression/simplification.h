@@ -75,6 +75,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyRealPart);
   static bool SimplifyImaginaryPart(Tree *t);
   EDITION_REF_WRAP(SimplifyImaginaryPart);
+  static bool SimplifySign(Tree *t);
+  EDITION_REF_WRAP(SimplifySign);
 
   typedef bool (*Operation)(Tree *node);
   /* Replace target(..., naryTarget(A, B, ...), ...)

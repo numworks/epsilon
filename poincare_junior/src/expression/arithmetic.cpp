@@ -168,6 +168,7 @@ static constexpr uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
 
 Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   WorkingBuffer workingBuffer;
+  uint8_t* const localStart = workingBuffer.localStart();
   FactorizedInteger result;
   if (IntegerHandler::Ucmp(m, IntegerHandler(1)) <= 0) {
     return result;
@@ -208,6 +209,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
         k < k_numberOfPrimeFactors ? k_primeFactors[k] : testedPrimeFactor + 2;
     result.factors[t] = testedPrimeFactor;
     result.coefficients[t] = 0;
+    workingBuffer.garbageCollect({&m}, localStart);
   } while (stopCondition && testedPrimeFactor < k_biggestPrimeFactor &&
            t < FactorizedInteger::k_maxNumberOfFactors);
   if (t == FactorizedInteger::k_maxNumberOfFactors) {

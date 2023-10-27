@@ -144,6 +144,7 @@ class IntegerHandler final {
   static Tree *Power(const IntegerHandler &i, const IntegerHandler &j);
   static Tree *Factorial(const IntegerHandler &i);
   static Tree *GCD(const IntegerHandler &a, const IntegerHandler &b);
+  static Tree *LCM(const IntegerHandler &a, const IntegerHandler &b);
 
   constexpr static uint8_t k_maxNumberOfDigits = 128;
   constexpr static uint8_t k_maxNumberOfNativeDigits =
@@ -187,6 +188,8 @@ class IntegerHandler final {
   static std::pair<IntegerHandler, IntegerHandler> Udiv(
       const IntegerHandler &a, const IntegerHandler &b,
       WorkingBuffer *workingBuffer);
+  static IntegerHandler GCD(const IntegerHandler &a, const IntegerHandler &b,
+                            WorkingBuffer *workingBuffer);
   IntegerHandler multiplyByPowerOf2(uint8_t pow,
                                     WorkingBuffer *workingBuffer) const;
   IntegerHandler divideByPowerOf2(uint8_t pow,

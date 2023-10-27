@@ -581,29 +581,58 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
   return std::pair<IntegerHandler, IntegerHandler>(Q, remainder);
 }
 
-Tree *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
+IntegerHandler IntegerHandler::GCD(const IntegerHandler &a,
+                                   const IntegerHandler &b,
+                                   WorkingBuffer *workingBuffer) {
   // TODO Knuth modified like in upy to avoid divisions
-  WorkingBuffer workingBuffer;
   IntegerHandler i = a;
   i.setSign(NonStrictSign::Positive);
   IntegerHandler j = b;
   j.setSign(NonStrictSign::Positive);
   if (Compare(i, j) == 0) {
-    return i.pushOnEditionPool();
+    return i;
   }
   do {
     if (i.isZero()) {
-      return j.pushOnEditionPool();
+      return j;
     }
     if (j.isZero()) {
-      return i.pushOnEditionPool();
+      return i;
     }
     if (Compare(i, j) > 0) {
-      i = Udiv(i, j, &workingBuffer).second;
+      i = Udiv(i, j, workingBuffer).second;
     } else {
-      j = Udiv(j, i, &workingBuffer).second;
+      j = Udiv(j, i, workingBuffer).second;
     }
   } while (true);
+}
+
+Tree *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
+  WorkingBuffer workingBuffer;
+  return GCD(a, b, &workingBuffer).pushOnEditionPool();
+}
+
+Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
+  WorkingBuffer workingBuffer;
+  IntegerHandler i = a;
+  if (i.isZero()) {
+    return i.pushOnEditionPool();
+  }
+  i.setSign(NonStrictSign::Positive);
+  IntegerHandler j = b;
+  if (j.isZero()) {
+    return j.pushOnEditionPool();
+  }
+  j.setSign(NonStrictSign::Positive);
+  if (Compare(i, j) == 0) {
+    return i.pushOnEditionPool();
+  }
+  /* Using LCM(i,j) = i*(j/GCD(i,j)). Knowing that GCD(i, j) divides j, and that
+   * GCD(i,j) = 0 if and only if i == j == 0, which would have been escaped
+   * before. Division is performed before multiplication to be more efficient.*/
+  return Mult(i, Udiv(j, GCD(i, j, &workingBuffer), &workingBuffer).first,
+              &workingBuffer)
+      .pushOnEditionPool();
 }
 
 IntegerHandler IntegerHandler::multiplyByPowerOf2(

@@ -121,6 +121,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Parametric::SimplifySumOrProduct(u);
     case BlockType::GCD:
       return Arithmetic::SimplifyGCD(u);
+    case BlockType::LCM:
+      return Arithmetic::SimplifyLCM(u);
     case BlockType::Quotient:
       return Arithmetic::SimplifyQuotient(u);
     case BlockType::Remainder:

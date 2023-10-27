@@ -1,8 +1,9 @@
 #include "builtin.h"
 
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/edition_pool.h>
-#include <poincare_junior/src/memory/k_tree.h>
 #include <poincare_junior/src/memory/type_block.h>
+#include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
 
@@ -109,6 +110,10 @@ const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
 }
 
 bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
+  if (builtin->blockType() == BlockType::Round &&
+      parameterList->numberOfChildren() == 1) {
+    NAry::AddChild(parameterList, (0_e)->clone());
+  }
   if (builtin->blockType() == BlockType::GCD ||
       builtin->blockType() == BlockType::LCM) {
     // GCD and LCM are n-ary, skip moveNodeOverNode to keep the nb of children

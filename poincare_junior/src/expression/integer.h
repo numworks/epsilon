@@ -76,15 +76,15 @@ class IntegerHandler final {
  public:
   IntegerHandler(const uint8_t *digits = nullptr, uint8_t numberOfDigits = 0,
                  NonStrictSign sign = NonStrictSign::Positive)
-      : m_sign(sign),
-        m_digitAccessor(digits, numberOfDigits),
+      : m_digitAccessor(digits, numberOfDigits),
+        m_sign(sign),
         m_numberOfDigits(numberOfDigits) {}
   IntegerHandler(native_int_t value)
       : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive
                                               : NonStrictSign::Negative) {}
   IntegerHandler(native_uint_t value, NonStrictSign sign)
-      : m_sign(sign),
-        m_digitAccessor(value),
+      : m_digitAccessor(value),
+        m_sign(sign),
         m_numberOfDigits(NumberOfDigits(value)) {}
 
   static IntegerHandler Parse(UnicodeDecoder &decoder, OMG::Base base);
@@ -222,7 +222,6 @@ class IntegerHandler final {
     assert(usesImmediateDigit());
     return m_digitAccessor.m_digit;
   }
-  NonStrictSign m_sign;
   union Digits {
     Digits(native_uint_t digit = 0) : m_digit(digit) {}
     Digits(const uint8_t *digits, uint8_t numberOfDigits);
@@ -231,6 +230,7 @@ class IntegerHandler final {
     native_uint_t m_digit;
   };
   Digits m_digitAccessor;
+  NonStrictSign m_sign;
   uint8_t m_numberOfDigits;
 };
 

@@ -4,6 +4,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
+#include "arithmetic.h"
 #include "rational.h"
 #include "simplification.h"
 
@@ -202,6 +203,10 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   }
   if (ref->type() == BlockType::Addition) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
+  } else if (ref->type() == BlockType::Factor) {
+    if (Arithmetic::BeautifyFactor(ref)) {
+      return true;
+    }
   }
 
   // Turn negative factors into opposites

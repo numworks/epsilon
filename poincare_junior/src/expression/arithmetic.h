@@ -18,7 +18,7 @@ class Arithmetic {
   static bool SimplifyGCD(Tree* expr);
   static bool SimplifyLCM(Tree* expr);
 
-  static bool SimplifyFactor(Tree* expr);
+  static bool BeautifyFactor(Tree* expr);
 
  private:
   struct FactorizedInteger {

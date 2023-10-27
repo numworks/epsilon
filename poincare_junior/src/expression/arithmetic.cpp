@@ -228,7 +228,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   return result;
 }
 
-bool Arithmetic::SimplifyFactor(Tree* expr) {
+bool Arithmetic::BeautifyFactor(Tree* expr) {
   Tree* child = expr->nextNode();
   if (!child->type().isRational()) {
     return false;
@@ -251,8 +251,7 @@ bool Arithmetic::SimplifyFactor(Tree* expr) {
     }
   }
   NAry::SetNumberOfChildren(mult, result.numberOfFactors);
-  // We replace the child to keep the factor node to protect the mult
-  child->moveTreeOverTree(mult);
+  expr->moveTreeOverTree(mult);
   return true;
 }
 

@@ -272,6 +272,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("factor(42*3)", "2×3^(2)×7");
   simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
 
+  simplifies_to("sign(-2)", "-1");
+  simplifies_to("ceil(8/3)", "3");
+
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
   // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");

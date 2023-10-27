@@ -127,6 +127,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyRemainder(u);
     case BlockType::Sign:
       return SimplifySign(u);
+    case BlockType::Floor:
+    case BlockType::Ceiling:
+      return Arithmetic::SimplifyFloorOrCeiling(u);
     default:
       return false;
   }

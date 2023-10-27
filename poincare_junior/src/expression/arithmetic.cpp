@@ -8,6 +8,9 @@
 
 namespace PoincareJ {
 
+/* TODO everything in this file is defined on rationals only, this could be
+ * checked earlier. */
+
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
   bool isQuotient = expr->type() == BlockType::Quotient;
@@ -26,6 +29,27 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   IntegerHandler d = Integer::Handler(denom);
   expr->moveTreeOverTree(isQuotient ? IntegerHandler::Quotient(n, d)
                                     : IntegerHandler::Remainder(n, d));
+  return true;
+}
+
+bool Arithmetic::SimplifyFloorOrCeiling(Tree* expr) {
+  bool floor = expr->type() == BlockType::Floor;
+  Tree* child = expr->firstChild();
+  if (!child->type().isRational()) {
+    return false;
+  }
+  std::pair div = IntegerHandler::Division(Rational::Numerator(child),
+                                           Rational::Denominator(child));
+  bool addOne = !floor || div.second->type() != BlockType::Zero;
+  div.second->removeTree();
+  if (addOne) {
+    EditionReference result = IntegerHandler::Addition(
+        Integer::Handler(div.first), IntegerHandler(1));
+    div.first->removeTree();
+    expr->moveTreeOverTree(result);
+  } else {
+    expr->moveTreeOverTree(div.first);
+  }
   return true;
 }
 

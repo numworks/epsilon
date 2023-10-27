@@ -15,6 +15,8 @@ class Arithmetic {
   static bool SimplifyRemainder(Tree* expr) {
     return SimplifyQuotientOrRemainder(expr);
   }
+  static bool SimplifyFloorOrCeiling(Tree* expr);
+
   static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
   static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }
 

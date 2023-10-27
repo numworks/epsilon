@@ -30,6 +30,7 @@ class Arithmetic {
 
   static bool SimplifyQuotientOrRemainder(Tree* expr);
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
+  static Tree* PushPrimeFactorization(IntegerHandler m);
 };
 
 }  // namespace PoincareJ

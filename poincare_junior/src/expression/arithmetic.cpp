@@ -230,17 +230,8 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   return result;
 }
 
-bool Arithmetic::BeautifyFactor(Tree* expr) {
-  Tree* child = expr->nextNode();
-  if (!child->type().isRational()) {
-    return false;
-  }
-  if (!child->type().isInteger()) {
-    // TODO
-    return false;
-  }
-  IntegerHandler n = Integer::Handler(child);
-  FactorizedInteger result = PrimeFactorization(n);
+Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
+  FactorizedInteger result = PrimeFactorization(m);
   assert(result.numberOfFactors);  // TODO #85
   Tree* mult = KMult()->clone();
   for (int i = 0; i < result.numberOfFactors; i++) {
@@ -253,7 +244,23 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
     }
   }
   NAry::SetNumberOfChildren(mult, result.numberOfFactors);
-  expr->moveTreeOverTree(mult);
+  return mult;
+}
+
+bool Arithmetic::BeautifyFactor(Tree* expr) {
+  Tree* child = expr->nextNode();
+  if (!child->type().isRational()) {
+    return false;
+  }
+  Tree* result;
+  if (child->type().isInteger()) {
+    result = PushPrimeFactorization(Integer::Handler(child));
+  } else {
+    result = KDiv->cloneNode();
+    PushPrimeFactorization(Rational::Numerator(child));
+    PushPrimeFactorization(Rational::Denominator(child));
+  }
+  expr->moveTreeOverTree(result);
   return true;
 }
 

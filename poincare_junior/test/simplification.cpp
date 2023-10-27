@@ -134,7 +134,6 @@ void simplifies_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_basic_simplification) {
-  simplifies_to("1ᴇ10", "10000000000");
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
@@ -164,8 +163,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
   simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))/y");
-  // simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-  // "e^(3×y)×y^(3)+4×e^(3×y)×ln(y)×y^(3)+3×e^(3×y)×ln(y)×y^(4)");
+  simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
+                "3×y^(4)×e^(3×y)×ln(y)+e^(3×y)×y^(3)+4×y^(3)×e^(3×y)×ln(y)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("abs(abs(abs((-3)×x)))", "3×abs(x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
@@ -177,6 +176,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("012345.67890ᴇ-3", "123456789/10000000");
   simplifies_to("123456789012345678901234567890",
                 "123456789012345678901234567890");
+  simplifies_to("1ᴇ10", "10000000000");
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.ᴇ1", "50");
@@ -225,6 +225,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
+  simplifies_to("1/a", "1/a");
   simplifies_to("a×a^(-1)", "dep(1,{1/a})");
   simplifies_to("a×a^(1+1)", "a^(3)");
   simplifies_to("a×a^(-1)", "dep(1,{1/a})",
@@ -280,7 +281,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   // simplifies_to("sum([[k][n]], k, 1, 4)", "[[10],[4×n]]");
 
   // Not working yet
-  // simplifies_to("1/x", "1/x");
   // simplifies_to("abs(x^2)", "x^2");
 
   // simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");

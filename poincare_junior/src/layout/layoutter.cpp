@@ -177,15 +177,8 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
   EditionReference createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
-    if (type == BlockType::Division) {
-      layoutExpression(layoutParent, expression,
-                       OperatorPriority(BlockType::Multiplication));
-      PushCodePoint(layoutParent, '/');
-    } else {
-      layoutExpression(layoutParent, expression,
-                       OperatorPriority(BlockType::Power));
-      PushCodePoint(layoutParent, '^');
-    }
+    layoutExpression(layoutParent, expression, OperatorPriority(type));
+    PushCodePoint(layoutParent, type == BlockType::Division ? '/' : '^');
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     return;
   }

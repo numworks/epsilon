@@ -127,6 +127,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyQuotient(u);
     case BlockType::Remainder:
       return Arithmetic::SimplifyRemainder(u);
+    case BlockType::Factor:
+      return Arithmetic::SimplifyFactor(u);
     default:
       return false;
   }

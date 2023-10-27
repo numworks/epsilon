@@ -71,6 +71,7 @@ class IntegerHandler final {
    * pointer. */
 
   friend class WorkingBuffer;
+  friend class Arithmetic;
 
  public:
   IntegerHandler(const uint8_t *digits = nullptr, uint8_t numberOfDigits = 0,

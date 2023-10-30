@@ -11,7 +11,6 @@ PrefacedTableView::PrefacedTableView(
       m_rowPrefaceDataSource(prefaceRow, cellsDataSource),
       m_rowPrefaceView(&m_rowPrefaceDataSource, &m_rowPrefaceDataSource),
       m_mainTableView(mainTableView),
-      m_marginDelegate(nullptr),
       m_prefacedDelegate(prefacedTableViewDelegate),
       m_mainTableViewTopMargin(0),
       m_mainTableDelegate(delegate),

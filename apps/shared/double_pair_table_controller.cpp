@@ -13,7 +13,6 @@ DoublePairTableController::DoublePairTableController(
   m_prefacedTwiceTableView.setCellOverlap(0, 0);
   m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
   m_prefacedTwiceTableView.setMargins(k_margins);
-  m_prefacedTwiceTableView.setMarginDelegate(this);
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
   }
@@ -50,28 +49,6 @@ void DoublePairTableController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
-}
-
-KDCoordinate DoublePairTableController::columnPrefaceRightMargin() {
-  KDCoordinate actualOffset =
-      offset().x() +
-      (m_prefacedTwiceTableView.columnPrefaceView()->bounds().isEmpty()
-           ? m_prefacedTwiceTableView.columnPrefaceView()
-                 ->minimalSizeForOptimalDisplay()
-                 .width()
-           : 0);
-
-  for (int i = 0; i < numberOfColumns(); i++) {
-    constexpr KDCoordinate maxMargin = Metric::TableSeparatorThickness;
-    KDCoordinate delta = actualOffset - cumulatedWidthBeforeColumn(i);
-    if (delta < 0) {
-      return maxMargin;
-    } else if (delta <= maxMargin) {
-      return delta;
-    }
-  }
-  assert(false);
-  return 0;
 }
 
 HighlightCell* DoublePairTableController::reusableCell(int index, int type) {

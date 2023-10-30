@@ -38,6 +38,10 @@ class PrefacedTwiceTableView : public PrefacedTableView {
 
     int numberOfColumns() const override { return 1; }
     KDCoordinate separatorBeforeColumn(int column) override { return 0; }
+    KDCoordinate separatorAfterPrefaceColumn() {
+      assert(m_prefaceColumn >= 0);
+      return m_mainDataSource->separatorBeforeColumn(m_prefaceColumn + 1);
+    }
 
    private:
     HighlightCell* reusableCell(int index, int type) override;

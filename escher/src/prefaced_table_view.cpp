@@ -111,10 +111,23 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                   force);
   }
 
+  // Adjust scroll of main table with new frame.
   if (m_mainTableView->selectedRow() >= 0) {
-    /* Scroll to update the content offset with the new frame. */
+    // We must see entirely the cell we are selecting.
     m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(),
                                   m_mainTableView->selectedRow());
+  }
+  if (!hideRowPreface) {
+    // We must hide entirely the preface row in main table
+    KDCoordinate rowPrefaceVisibleHeightInMainTable =
+        m_rowPrefaceDataSource.cumulatedHeightAfterPrefaceRow() -
+        (m_mainTableView->contentOffset().y() -
+         m_mainTableView->margins()->top());
+    if (rowPrefaceVisibleHeightInMainTable > 0) {
+      m_mainTableView->setContentOffset(
+          m_mainTableView->contentOffset().translatedBy(
+              KDPoint(0, rowPrefaceVisibleHeightInMainTable)));
+    }
   }
 
   // Row preface
@@ -236,6 +249,17 @@ PrefacedTableView::RowPrefaceDataSource::cumulatedHeightBeforePrefaceRow()
   KDCoordinate result =
       m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow) +
       m_mainDataSource->separatorBeforeRow(m_prefaceRow);
+  m_mainDataSource->lockSizeMemoization(false);
+  return result;
+}
+
+KDCoordinate
+PrefacedTableView::RowPrefaceDataSource::cumulatedHeightAfterPrefaceRow()
+    const {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockSizeMemoization(true);
+  KDCoordinate result =
+      m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow + 1);
   m_mainDataSource->lockSizeMemoization(false);
   return result;
 }

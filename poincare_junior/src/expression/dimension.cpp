@@ -132,7 +132,13 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Cross:
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
+    case BlockType::Round:
+      return (childDim[0].isScalar() || childDim[0].isUnit()) &&
+             childDim[1].isScalar();
     case BlockType::Abs:
+    case BlockType::Floor:
+    case BlockType::Ceiling:
+    case BlockType::Sign:
     // case BlockType::SquareRoot: TODO: Handle _m^(1/2)
     case BlockType::UserFunction:
       unitsAllowed = true;
@@ -211,6 +217,9 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case BlockType::Abs:
     case BlockType::SquareRoot:
+    case BlockType::Floor:
+    case BlockType::Ceiling:
+    case BlockType::Round:
     case BlockType::UserFunction:
     case BlockType::Addition:
     case BlockType::Subtraction:

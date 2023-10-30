@@ -124,9 +124,8 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
         (m_mainTableView->contentOffset().y() -
          m_mainTableView->margins()->top());
     if (rowPrefaceVisibleHeightInMainTable > 0) {
-      m_mainTableView->setContentOffset(
-          m_mainTableView->contentOffset().translatedBy(
-              KDPoint(0, rowPrefaceVisibleHeightInMainTable)));
+      m_mainTableView->translateContentOffsetBy(
+          KDPoint(0, rowPrefaceVisibleHeightInMainTable));
     }
   }
 

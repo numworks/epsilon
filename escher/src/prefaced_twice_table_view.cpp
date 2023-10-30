@@ -169,6 +169,7 @@ PrefacedTwiceTableView::horizontalScrollToAddToHidePrefacesInMainTable(
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
     cumulatedWidthBeforePrefaceColumn() const {
   // Do not alter main dataSource memoization
+  assert(m_prefaceColumn >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn) +
@@ -180,6 +181,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
     cumulatedWidthAfterPrefaceColumn() const {
   // Do not alter main dataSource memoization
+  assert(m_prefaceColumn >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn + 1);
@@ -205,6 +207,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
     nonMemoizedCumulatedWidthBeforeColumn(int column) {
   // Do not alter main dataSource memoization
   assert(column == 0 || column == 1);
+  assert(m_prefaceColumn >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       column == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn, false) : 0;
@@ -215,6 +218,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
 int PrefacedTwiceTableView::ColumnPrefaceDataSource::
     nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
+  assert(m_prefaceColumn >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   int result =
       offsetX < m_mainDataSource->columnWidth(m_prefaceColumn, false) ? 0 : 1;

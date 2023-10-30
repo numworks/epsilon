@@ -247,6 +247,7 @@ KDCoordinate
 PrefacedTableView::RowPrefaceDataSource::cumulatedHeightBeforePrefaceRow()
     const {
   // Do not alter main dataSource memoization
+  assert(m_prefaceRow >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow) +
@@ -259,6 +260,7 @@ KDCoordinate
 PrefacedTableView::RowPrefaceDataSource::cumulatedHeightAfterPrefaceRow()
     const {
   // Do not alter main dataSource memoization
+  assert(m_prefaceRow >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow + 1);
@@ -271,6 +273,7 @@ PrefacedTableView::RowPrefaceDataSource::nonMemoizedCumulatedHeightBeforeRow(
     int row) {
   // Do not alter main dataSource memoization
   assert(row == 0 || row == 1);
+  assert(m_prefaceRow >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
       row == 1 ? m_mainDataSource->rowHeight(m_prefaceRow, false) : 0;
@@ -281,6 +284,7 @@ PrefacedTableView::RowPrefaceDataSource::nonMemoizedCumulatedHeightBeforeRow(
 int PrefacedTableView::RowPrefaceDataSource::nonMemoizedRowAfterCumulatedHeight(
     KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
+  assert(m_prefaceRow >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   int result =
       offsetY < m_mainDataSource->rowHeight(m_prefaceRow, false) ? 0 : 1;

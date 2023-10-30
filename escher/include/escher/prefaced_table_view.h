@@ -136,6 +136,7 @@ class PrefacedTableView : public View,
 
     int rowInMainDataSource(int j) override {
       assert(j == 0 || j == 1);
+      assert(m_prefaceRow >= 0);
       return m_prefaceRow + j;
     }
 

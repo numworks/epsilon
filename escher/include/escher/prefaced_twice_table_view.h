@@ -46,6 +46,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
 
     int columnInMainDataSource(int i) override {
       assert(i == 0 || i == 1);
+      assert(m_prefaceColumn >= 0);
       return m_prefaceColumn + i;
     }
 

@@ -65,6 +65,26 @@ T Approximation::To(const Tree* node) {
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Infinity:
       return INFINITY;
+    case BlockType::Sign: {
+      T c = To<T>(node->nextNode());
+      // TODO why no epsilon in Poincare ?
+      return c == 0 ? 0 : c < 0 ? -1 : 1;
+    }
+    case BlockType::Floor:
+      // TODO low deviation
+      return std::floor(To<T>(node->nextNode()));
+    case BlockType::Ceiling:
+      // TODO low deviation
+      return std::ceil(To<T>(node->nextNode()));
+    case BlockType::FracPart: {
+      T child = To<T>(node->nextNode());
+      return child - std::floor(child);
+    }
+    case BlockType::Round: {
+      // TODO digits is integer
+      T err = std::pow(10, std::round(To<T>(node->child(1))));
+      return std::round(To<T>(node->nextNode()) * err) / err;
+    }
     default:
       // TODO: Implement more BlockTypes
       return NAN;

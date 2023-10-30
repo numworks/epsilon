@@ -254,7 +254,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   if (!previousRecord.hasExtension(Ion::Storage::funcExtension)) {
     // The previous record was not a function. Create a new model.
     ContinuousFunction newModel =
-        ContinuousFunction::NewModel(&error, symbol.name());
+        continuousFunctionStore->newModel(symbol.name(), &error);
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }

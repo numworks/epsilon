@@ -93,7 +93,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   bool hideRowPreface =
       m_mainTableView->selectedRow() == -1 || rowPrefaceIsTooLarge ||
       (m_mainTableView->invisibleHeight() <=
-       m_rowPrefaceDataSource.cumulatedHeightBeforePrefaceRow());
+       m_rowPrefaceDataSource.cumulatedHeightAtPrefaceRow(false));
 
   // Main table
   if (hideRowPreface) {
@@ -163,7 +163,7 @@ KDCoordinate PrefacedTableView::verticalScrollToAddToHidePrefacesInMainTable(
   return hideRowPreface
              ? 0
              : std::max(
-                   0, m_rowPrefaceDataSource.cumulatedHeightAfterPrefaceRow() -
+                   0, m_rowPrefaceDataSource.cumulatedHeightAtPrefaceRow(true) -
                           m_mainTableView->invisibleHeight());
 }
 
@@ -241,27 +241,14 @@ int PrefacedTableView::IntermediaryDataSource::
 }
 
 KDCoordinate
-PrefacedTableView::RowPrefaceDataSource::cumulatedHeightBeforePrefaceRow()
-    const {
+PrefacedTableView::RowPrefaceDataSource::cumulatedHeightAtPrefaceRow(
+    bool after) const {
   // Do not alter main dataSource memoization
   assert(m_prefaceRow >= 0);
+  int row = m_prefaceRow + after;
   m_mainDataSource->lockSizeMemoization(true);
-  KDCoordinate result =
-      m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow) +
-      m_mainDataSource->separatorBeforeRow(m_prefaceRow);
-  m_mainDataSource->lockSizeMemoization(false);
-  return result;
-}
-
-KDCoordinate
-PrefacedTableView::RowPrefaceDataSource::cumulatedHeightAfterPrefaceRow()
-    const {
-  // Do not alter main dataSource memoization
-  assert(m_prefaceRow >= 0);
-  m_mainDataSource->lockSizeMemoization(true);
-  KDCoordinate result =
-      m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow + 1) +
-      m_mainDataSource->separatorBeforeRow(m_prefaceRow + 1);
+  KDCoordinate result = m_mainDataSource->cumulatedHeightBeforeRow(row) +
+                        m_mainDataSource->separatorBeforeRow(row);
   m_mainDataSource->lockSizeMemoization(false);
   return result;
 }

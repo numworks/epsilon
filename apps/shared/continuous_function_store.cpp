@@ -37,8 +37,31 @@ using ErrorStatus = Ion::Storage::Record::ErrorStatus;
 
 ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
                                                      ErrorStatus* error) {
-  static int idx = 0;
-  KDColor nextColor = Escher::Palette::nextDataColor(&idx);
+  /* Choose the next color following the rule:
+   * - no other function is the same color among the last
+   * size(Palette::DataColor) - 1 ones in the list */
+  using namespace Escher;
+  constexpr int PaletteSize = std::size(Palette::DataColor);
+
+  int functionsCount = numberOfModels();
+
+  // Find the first color in the palette that is different
+
+  KDColor nextColor;
+
+  for (KDColor color : Palette::DataColor) {
+    bool isCandidate = true;
+    for (int i = 0; i < std::min(functionsCount, PaletteSize - 1); i++) {
+      if (colorForRecord(recordAtIndex(i)) == color) {
+        isCandidate = false;
+        break;
+      }
+    }
+    if (isCandidate) {
+      nextColor = color;
+      break;
+    }
+  }
 
   return ContinuousFunction::NewModel(error, name, nextColor);
 }

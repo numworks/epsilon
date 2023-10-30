@@ -25,8 +25,7 @@ CategoricalController::CategoricalController(Responder *parent,
 
 void CategoricalController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
-    categoricalTableCell()->selectableTableView()->setContentOffset(
-        KDPointZero);
+    categoricalTableCell()->selectableTableView()->resetScroll();
   }
   SelectableListViewController<ListViewDataSource>::didBecomeFirstResponder();
 }

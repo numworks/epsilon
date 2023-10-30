@@ -13,16 +13,19 @@ namespace PoincareJ {
 /* The RANGE macro does nothing yet */
 #define RANGE(NAME, FIRST, LAST)
 
+#define NARY NAryNumberOfChildrenTag
+#define NARY2D NAry2DNumberOfChildrenTag
+
 enum class BlockType : uint8_t {
 // Add all the types to the enum
-#define TYPE(F) SCOPED_TYPE(F),
+#define TYPE(F, N) SCOPED_TYPE(F),
 #include <poincare_junior/src/memory/types.h>
 #undef TYPE
 };
 
 enum class LayoutType : uint8_t {
 // Members of LayoutType have the same values as their BlockType counterpart
-#define TYPE(F) F = static_cast<uint8_t>(BlockType::F##Layout),
+#define TYPE(F, N) F = static_cast<uint8_t>(BlockType::F##Layout),
 #include <poincare_junior/src/layout/types.h>
 #undef TYPE
 };
@@ -42,14 +45,14 @@ class TypeBlock : public Block {
 #if POINCARE_MEMORY_TREE_LOG
   // Add an array of names for the BlockTypes
   static constexpr const char *names[] = {
-#define TYPE(F) #F,
+#define TYPE(F, N) #F,
 #include <poincare_junior/src/memory/types.h>
 #undef TYPE
   };
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define TYPE(F)
+#define TYPE(F, N)
 #undef RANGE
 #define RANGE(NAME, FIRST, LAST)                                \
   static constexpr bool Is##NAME(BlockType type) {              \
@@ -59,6 +62,8 @@ class TypeBlock : public Block {
                                                                 \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 #include <poincare_junior/src/memory/types.h>
+#undef RANGE
+#define RANGE(NAME, FIRST, LAST)
 #undef TYPE
 
   constexpr static bool IsOfType(BlockType thisType,
@@ -165,7 +170,7 @@ class TypeBlock : public Block {
     } else if (n == NAryNumberOfChildrenTag) {
       return static_cast<uint8_t>(*next());
     } else {
-      assert(n == MatrixNumberOfChildrenTag);
+      assert(n == NAry2DNumberOfChildrenTag);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
     }
   }
@@ -177,87 +182,21 @@ class TypeBlock : public Block {
 
  private:
   constexpr static int NAryNumberOfChildrenTag = -1;
-  constexpr static int MatrixNumberOfChildrenTag = -2;
+  constexpr static int NAry2DNumberOfChildrenTag = -2;
 
   constexpr static int NumberOfChildrenOrTag(BlockType type) {
-    // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-      case BlockType::RackLayout:
-      case BlockType::Set:
-      case BlockType::List:
-      case BlockType::Polynomial:
-      case BlockType::SystemList:
-      case BlockType::GCD:
-      case BlockType::LCM:
-        return NAryNumberOfChildrenTag;
-      case BlockType::Matrix:
-        return MatrixNumberOfChildrenTag;
-      case BlockType::Sum:
-      case BlockType::Product:
-      case BlockType::Integral:
-        return 4;
-      case BlockType::Derivative:
-        return 3;
-      case BlockType::Power:
-      case BlockType::PowerReal:
-      case BlockType::PowerMatrix:
-      case BlockType::Subtraction:
-      case BlockType::Complex:
-      case BlockType::Division:
-      case BlockType::Quotient:
-      case BlockType::Remainder:
-      case BlockType::Round:
-      case BlockType::FractionLayout:
-      case BlockType::Trig:
-      case BlockType::TrigDiff:
-      case BlockType::Logarithm:
-      case BlockType::Cross:
-      case BlockType::Dot:
-      case BlockType::Dependency:
-        return 2;
-      case BlockType::Abs:
-      case BlockType::Decimal:
-      case BlockType::Cosine:
-      case BlockType::Sine:
-      case BlockType::Tangent:
-      case BlockType::ArcCosine:
-      case BlockType::ArcSine:
-      case BlockType::ArcTangent:
-      case BlockType::Ceiling:
-      case BlockType::Log:
-      case BlockType::Ln:
-      case BlockType::Exponential:
-      case BlockType::Factorial:
-      case BlockType::Factor:
-      case BlockType::Floor:
-      case BlockType::FracPart:
-      case BlockType::Sign:
-      case BlockType::Det:
-      case BlockType::Dim:
-      case BlockType::Identity:
-      case BlockType::Inverse:
-      case BlockType::Norm:
-      case BlockType::Opposite:
-      case BlockType::Ref:
-      case BlockType::Rref:
-      case BlockType::Trace:
-      case BlockType::Transpose:
-      case BlockType::ComplexArgument:
-      case BlockType::Conjugate:
-      case BlockType::ImaginaryPart:
-      case BlockType::RealPart:
-      case BlockType::ParenthesisLayout:
-      case BlockType::SquareRoot:
-      case BlockType::VerticalOffsetLayout:
-        return 1;
-      default:
-        return 0;
+#define TYPE(F, N)                \
+  case BlockType::SCOPED_TYPE(F): \
+    return N;
+#include <poincare_junior/src/memory/types.h>
+#undef TYPE
     }
   }
 };
 
+#undef NARY
+#undef NARY2D
 #undef RANGE
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));

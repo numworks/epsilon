@@ -1,7 +1,7 @@
-TYPE(Rack)
-TYPE(Fraction)
-TYPE(Parenthesis)
-TYPE(VerticalOffset)
-TYPE(CodePoint)
+TYPE(Rack, NARY)
+TYPE(Fraction, 2)
+TYPE(Parenthesis, 1)
+TYPE(VerticalOffset, 1)
+TYPE(CodePoint, 0)
 
 RANGE(Layout, RackLayout, CodePointLayout)

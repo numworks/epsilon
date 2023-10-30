@@ -15,10 +15,10 @@
 // 3 - Shared types
 
 #define SCOPED_TYPE(F) F
-TYPE(Placeholder)
-TYPE(SystemList)
+TYPE(Placeholder, 0)
+TYPE(SystemList, NARY)
 #if ASSERTIONS
-TYPE(TreeBorder)
+TYPE(TreeBorder, 0)
 #endif
-TYPE(NumberOfTypes)
+TYPE(NumberOfTypes, 0)
 #undef SCOPED_TYPE

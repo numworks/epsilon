@@ -92,8 +92,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
       rowPrefaceHeight > m_prefacedDelegate->maxRowPrefaceHeight();
   bool hideRowPreface =
       m_mainTableView->selectedRow() == -1 || rowPrefaceIsTooLarge ||
-      (m_mainTableView->contentOffset().y() -
-           m_mainTableView->margins()->top() <=
+      (m_mainTableView->invisibleHeight() <=
        m_rowPrefaceDataSource.cumulatedHeightBeforePrefaceRow());
 
   // Main table
@@ -121,8 +120,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     // We must hide entirely the preface row in main table
     KDCoordinate rowPrefaceVisibleHeightInMainTable =
         m_rowPrefaceDataSource.cumulatedHeightAfterPrefaceRow() -
-        (m_mainTableView->contentOffset().y() -
-         m_mainTableView->margins()->top());
+        m_mainTableView->invisibleHeight();
     if (rowPrefaceVisibleHeightInMainTable > 0) {
       m_mainTableView->translateContentOffsetBy(
           KDPoint(0, rowPrefaceVisibleHeightInMainTable));

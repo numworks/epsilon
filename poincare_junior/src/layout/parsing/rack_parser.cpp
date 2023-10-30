@@ -873,6 +873,9 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   } else if (numberOfParameters == 2 &&
              builtin->blockType() == BlockType::Log) {
     builtin = Builtin::GetReservedFunction(BlockType::Logarithm);
+  } else if (numberOfParameters == 1 &&
+             builtin->blockType() == BlockType::Sum) {
+    builtin = Builtin::GetReservedFunction(BlockType::ListSum);
   }
   assert(builtin);
 

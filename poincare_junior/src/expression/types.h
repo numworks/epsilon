@@ -166,12 +166,27 @@ NODE(Matrix, NARY2D)
 
 RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 
-// 6 - Order dependant expressions
+// 6 - Lists
+
+NODE(List, NARY)
+NODE(ListSequence, 3)
+NODE(ListAccess, 2)
+NODE(Mean, 1)
+NODE(StdDev, 1)
+NODE(Median, 1)
+NODE(Variance, 1)
+NODE(SampleStdDev, 1)
+NODE(Minimum, 1)
+NODE(Maximum, 1)
+NODE(ListSort, 1)
+NODE(ListSum, 1)
+NODE(ListProduct, 1)
+
+// 7 - Order dependant expressions
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
 NODE(Unit, 0, 2)
 NODE(Dependency, 2)
-NODE(List, NARY)
 NODE(Set, NARY)
 NODE(Nonreal)
 NODE(Undefined)

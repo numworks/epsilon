@@ -52,6 +52,17 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::FracPart, "frac"},
     {BlockType::Round, "round"},
     {BlockType::Sign, "sign"},
+    {BlockType::ListSequence, "sequence"},
+    {BlockType::Mean, "mean"},
+    {BlockType::StdDev, "stddev"},
+    {BlockType::Median, "med"},
+    {BlockType::Variance, "var"},
+    {BlockType::SampleStdDev, "samplestddev"},
+    {BlockType::Minimum, "min"},
+    {BlockType::Maximum, "max"},
+    {BlockType::ListSum, "sum"},
+    {BlockType::ListProduct, "prod"},
+    {BlockType::ListSort, "sort"},
 };
 
 constexpr static Aliases s_customIdentifiers[] = {

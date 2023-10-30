@@ -805,6 +805,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas(
       "[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", {.matrix = true},
       &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[mi0]]", {}, &globalContext,
+                                           &store);
   assertCalculationAdditionalResultTypeHas("345nV", {.unit = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("223m^3", {.unit = true},

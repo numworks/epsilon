@@ -72,11 +72,13 @@ bool AdditionalResultsType::ForbidAdditionalResults(
    * cases. */
   if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
       input.isUninitialized() || exactOutput.isUninitialized() ||
-      approximateOutput.isUninitialized() || approximateOutput.isUndefined() ||
+      approximateOutput.isUninitialized() ||
       input.type() == ExpressionNode::Type::Store ||
       exactOutput.type() == ExpressionNode::Type::List ||
       approximateOutput.type() == ExpressionNode::Type::List ||
-      approximateOutput.recursivelyMatches(Expression::IsInfinity, nullptr)) {
+      approximateOutput.recursivelyMatches([](const Expression e) {
+        return e.isUndefined() || e.type() == ExpressionNode::Type::Infinity;
+      })) {
     return true;
   }
   assert(!input.isUndefined() && !exactOutput.isUndefined());

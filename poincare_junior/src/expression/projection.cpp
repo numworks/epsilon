@@ -1,6 +1,7 @@
 #include "projection.h"
 
 #include <poincare_junior/src/expression/decimal.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 
 namespace PoincareJ {
@@ -25,6 +26,9 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       static_cast<ProjectionContext*>(context);
 
   bool changed = false;
+  if (ref->type() == BlockType::Undefined) {
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  }
   if (ref->type() == BlockType::Unit) {
     Units::Unit::RemoveUnit(ref);
     changed = true;

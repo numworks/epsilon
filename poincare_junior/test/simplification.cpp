@@ -181,6 +181,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.", "5");
   simplifies_to("5.ᴇ1", "50");
   simplifies_to("(2+π)*ln(2)", "2×ln(2)+π×ln(2)");
+  simplifies_to("undef", "undef");
 
   // Trigonometry identities
   simplifies_to("cos(0)", "1");

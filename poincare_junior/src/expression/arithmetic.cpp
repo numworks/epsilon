@@ -1,6 +1,7 @@
 #include "arithmetic.h"
 
 #include <poincare_junior/src/memory/exception_checkpoint.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "k_tree.h"
@@ -63,6 +64,36 @@ bool Arithmetic::SimplifyFracPart(Tree* expr) {
   EditionReference result = Rational::Push(Integer::Handler(rem), denom);
   rem->removeTree();
   expr->moveTreeOverTree(result);
+  return true;
+}
+
+bool Arithmetic::SimplifyRound(Tree* expr) {
+  Tree* value = expr->firstChild();
+  Tree* digits = value->nextTree();
+  if (!value->type().isRational()) {
+    return false;
+  }
+  if (!digits->type().isInteger()) {
+    // Round second argument must be integral
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  }
+  Tree* mult = PatternMatching::CreateAndSimplify(KMult(KA, KPow(10_e, KB)),
+                                                  {.KA = value, .KB = digits});
+  auto [rounding, remainder] = IntegerHandler::Division(
+      Rational::Numerator(mult), Rational::Denominator(mult));
+  remainder->moveTreeOverTree(
+      Rational::Push(Integer::Handler(remainder), Rational::Denominator(mult)));
+  bool addOne = Comparison::Compare(remainder, KHalf) >= 0;
+  remainder->removeTree();
+  if (addOne) {
+    rounding->moveTreeOverTree(
+        IntegerHandler::Addition(Integer::Handler(rounding), 1));
+  }
+  PatternMatching::CreateAndSimplify(KMult(KA, KPow(KPow(10_e, -1_e), KB)),
+                                     {.KA = rounding, .KB = digits});
+  rounding->removeTree();
+  mult->removeTree();
+  expr->moveTreeOverTree(mult);
   return true;
 }
 

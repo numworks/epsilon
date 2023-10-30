@@ -131,6 +131,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyFloorOrCeiling(u);
     case BlockType::FracPart:
       return Arithmetic::SimplifyFracPart(u);
+    case BlockType::Round:
+      return Arithmetic::SimplifyRound(u);
     default:
       return false;
   }

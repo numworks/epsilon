@@ -41,7 +41,7 @@ bool AbstractScrollableView::handleEvent(Ion::Events::Event event) {
     }
   }
   if (translation != KDPointZero) {
-    setContentOffset(contentOffset().translatedBy(translation));
+    translateContentOffsetBy(translation);
     return true;
   }
   return false;

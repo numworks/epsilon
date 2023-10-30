@@ -129,9 +129,8 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
         (m_mainTableView->contentOffset().x() -
          m_mainTableView->margins()->left());
     if (columnPrefaceVisibleWidthInMainTable > 0) {
-      m_mainTableView->setContentOffset(
-          m_mainTableView->contentOffset().translatedBy(
-              KDPoint(columnPrefaceVisibleWidthInMainTable, 0)));
+      m_mainTableView->translateContentOffsetBy(
+          KDPoint(columnPrefaceVisibleWidthInMainTable, 0));
     }
 
     // Column preface

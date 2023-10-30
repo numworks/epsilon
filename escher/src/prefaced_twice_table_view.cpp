@@ -108,10 +108,9 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     // Intersection preface
     setChildFrame(&m_prefaceIntersectionView, KDRectZero, force);
   } else {
-    m_columnPrefaceView.margins()->setRight(
-        m_marginDelegate ? m_marginDelegate->columnPrefaceRightMargin() : 0);
     KDCoordinate columnPrefaceWidth =
-        m_columnPrefaceView.minimalSizeForOptimalDisplay().width();
+        m_columnPrefaceView.minimalSizeForOptimalDisplay().width() +
+        m_columnPrefaceDataSource.separatorAfterPrefaceColumn();
 
     // Main table and row preface
     m_mainTableView->margins()->setLeft(0);
@@ -150,7 +149,7 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     assert(m_prefaceIntersectionView.margins()->vertical() ==
            m_rowPrefaceView.margins()->vertical());
     assert(rowPrefaceHeight == 0 ||
-           m_prefaceIntersectionView.minimalSizeForOptimalDisplay() ==
+           m_prefaceIntersectionView.bounds().size() ==
                KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
 }
@@ -184,7 +183,8 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
   assert(m_prefaceColumn >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
-      m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn + 1);
+      m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn + 1) +
+      m_mainDataSource->separatorBeforeColumn(m_prefaceColumn + 1);
   m_mainDataSource->lockSizeMemoization(false);
   return result;
 }

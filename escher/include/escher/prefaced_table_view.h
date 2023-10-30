@@ -51,14 +51,6 @@ class PrefacedTableView : public View,
     m_prefacedDelegate = delegate;
   }
 
-  class MarginDelegate {
-   public:
-    virtual KDCoordinate columnPrefaceRightMargin() = 0;
-  };
-
-  void setMarginDelegate(MarginDelegate* delegate) {
-    m_marginDelegate = delegate;
-  }
   virtual void resetDataSourceSizeMemoization() {
     m_rowPrefaceDataSource.resetSizeMemoization();
   }
@@ -157,7 +149,6 @@ class PrefacedTableView : public View,
   TableView m_rowPrefaceView;
   ScrollView::BarDecorator m_barDecorator;
   SelectableTableView* m_mainTableView;
-  MarginDelegate* m_marginDelegate;
   PrefacedTableViewDelegate* m_prefacedDelegate;
   KDCoordinate m_mainTableViewTopMargin;
 

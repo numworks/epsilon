@@ -20,8 +20,7 @@ class DoublePairTableController
       public Escher::RegularHeightTableViewDataSource,
       public Escher::ButtonRowDelegate,
       public Escher::AlternateEmptyViewDelegate,
-      public Escher::SelectableTableViewDelegate,
-      public Escher::PrefacedTableView::MarginDelegate {
+      public Escher::SelectableTableViewDelegate {
  public:
   DoublePairTableController(Escher::Responder *parentResponder,
                             Escher::ButtonRowController *header);
@@ -40,9 +39,6 @@ class DoublePairTableController
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-
-  // PrefacedTableView::MarginDelegate
-  KDCoordinate columnPrefaceRightMargin() override;
 
   // RegularHeightTableViewDataSource
   bool canSelectCellAtLocation(int column, int row) override {

@@ -78,6 +78,8 @@ class PrefacedTwiceTableView : public PrefacedTableView {
     return KDPoint(m_mainTableViewLeftMargin, m_mainTableViewTopMargin)
         .translatedBy((-m_mainTableView->constMargins()).topLeftPoint());
   }
+  KDCoordinate horizontalScrollToAddToHidePrefacesInMainTable(
+      bool hideColumnPreface) const override;
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
   TableView m_columnPrefaceView;

@@ -170,6 +170,12 @@ class PrefacedTableView : public View,
     return KDPoint(
         0, m_mainTableViewTopMargin - m_mainTableView->margins()->top());
   }
+  KDCoordinate verticalScrollToAddToHidePrefacesInMainTable(
+      bool hideRowPreface) const;
+  virtual KDCoordinate horizontalScrollToAddToHidePrefacesInMainTable(
+      bool hideColumnPreface) const {
+    return 0;
+  }
 
   SelectableTableViewDelegate* m_mainTableDelegate;
   KDPoint m_virtualOffset;

@@ -122,15 +122,6 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                bounds().height()),
         force);
 
-    // Hide column preface in main table view if necessary
-    KDCoordinate columnPrefaceVisibleWidthInMainTable =
-        m_columnPrefaceDataSource.cumulatedWidthAfterPrefaceColumn() -
-        m_mainTableView->invisibleWidth();
-    if (columnPrefaceVisibleWidthInMainTable > 0) {
-      m_mainTableView->translateContentOffsetBy(
-          KDPoint(columnPrefaceVisibleWidthInMainTable, 0));
-    }
-
     // Column preface
     KDCoordinate rowPrefaceHeight = m_rowPrefaceView.bounds().height();
     m_columnPrefaceView.margins()->setTop(m_mainTableView->margins()->top());
@@ -163,6 +154,17 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
            m_prefaceIntersectionView.minimalSizeForOptimalDisplay() ==
                KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
+}
+
+KDCoordinate
+PrefacedTwiceTableView::horizontalScrollToAddToHidePrefacesInMainTable(
+    bool hideColumnPreface) const {
+  return hideColumnPreface
+             ? 0
+             : std::max(m_columnPrefaceDataSource
+                                .cumulatedWidthAfterPrefaceColumn() -
+                            (m_mainTableView->invisibleWidth()),
+                        0);
 }
 
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::

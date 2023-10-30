@@ -116,16 +116,12 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(),
                                   m_mainTableView->selectedRow());
   }
-  if (!hideRowPreface) {
-    // We must hide entirely the preface row in main table
-    KDCoordinate rowPrefaceVisibleHeightInMainTable =
-        m_rowPrefaceDataSource.cumulatedHeightAfterPrefaceRow() -
-        m_mainTableView->invisibleHeight();
-    if (rowPrefaceVisibleHeightInMainTable > 0) {
-      m_mainTableView->translateContentOffsetBy(
-          KDPoint(0, rowPrefaceVisibleHeightInMainTable));
-    }
-  }
+  // Hide the preface row and column in main table if necessary
+  bool hideColumnPreface =
+      m_mainTableView->bounds().width() == bounds().width();
+  m_mainTableView->translateContentOffsetBy(
+      KDPoint(horizontalScrollToAddToHidePrefacesInMainTable(hideColumnPreface),
+              verticalScrollToAddToHidePrefacesInMainTable(hideRowPreface)));
 
   // Row preface
   if (hideRowPreface) {
@@ -163,6 +159,15 @@ void PrefacedTableView::updateVirtualOffset() {
                         .relativeTo(relativeChildOrigin(m_mainTableView))
                         .translatedBy(marginToAddForVirtualOffset());
   assert(m_virtualOffset.x() >= 0 && m_virtualOffset.y() >= 0);
+}
+
+KDCoordinate PrefacedTableView::verticalScrollToAddToHidePrefacesInMainTable(
+    bool hideRowPreface) const {
+  return hideRowPreface
+             ? 0
+             : std::max(
+                   0, m_rowPrefaceDataSource.cumulatedHeightAfterPrefaceRow() -
+                          m_mainTableView->invisibleHeight());
 }
 
 HighlightCell* PrefacedTableView::IntermediaryDataSource::reusableCell(

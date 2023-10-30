@@ -32,8 +32,8 @@ namespace Shared {
 /* ContinuousFunction - Public */
 
 ContinuousFunction ContinuousFunction::NewModel(
-    Ion::Storage::Record::ErrorStatus *error, const char *baseName) {
-  static int s_colorIndex = 0;
+    Ion::Storage::Record::ErrorStatus *error, const char *baseName,
+    KDColor color) {
   assert(baseName != nullptr);
   // Create the record
   /* WARNING: We create an empty record with the baseName and extension right
@@ -46,7 +46,7 @@ ContinuousFunction ContinuousFunction::NewModel(
    * calling the method "createRecordWithExtension". */
   Ion::Storage::Record record =
       Ion::Storage::Record(baseName, Ion::Storage::funcExtension);
-  RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
+  RecordDataBuffer data(color);
   *error =
       Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
           baseName, Ion::Storage::funcExtension, &data, sizeof(data));

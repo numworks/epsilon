@@ -68,6 +68,9 @@ class ContinuousFunctionStore : public FunctionStore {
                ? m_cachesContainer->cacheAtIndex(i)
                : nullptr;
   }
+
+  ContinuousFunction newModel(const char *name,
+                              Ion::Storage::Record::ErrorStatus *error);
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }
 

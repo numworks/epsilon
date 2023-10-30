@@ -33,7 +33,7 @@ class ContinuousFunction : public Function {
 
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus *error,
-                                     const char *baseName = nullptr);
+                                     const char *baseName, KDColor color);
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record());
 

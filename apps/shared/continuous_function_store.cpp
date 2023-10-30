@@ -33,6 +33,16 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
   return m_memoizedNumberOfActiveFunctions;
 }
 
+using ErrorStatus = Ion::Storage::Record::ErrorStatus;
+
+ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
+                                                     ErrorStatus* error) {
+  static int idx = 0;
+  KDColor nextColor = Escher::Palette::nextDataColor(&idx);
+
+  return ContinuousFunction::NewModel(error, name, nextColor);
+}
+
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   char name[ContinuousFunction::k_maxDefaultNameSize];
   const char* const extensions[1] = {modelExtension()};
@@ -41,7 +51,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
       name, 1, ContinuousFunction::k_maxDefaultNameSize, extensions, 1, 99);
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::RecordDoesNotExist;
-  ContinuousFunction newModel = ContinuousFunction::NewModel(&error, name);
+
+  newModel(name, &error);
   return error;
 }
 

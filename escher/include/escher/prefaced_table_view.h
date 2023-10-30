@@ -117,8 +117,7 @@ class PrefacedTableView : public View,
           m_prefaceRow(prefaceRow),
           m_rowHeigthManager(this) {}
 
-    KDCoordinate cumulatedHeightBeforePrefaceRow() const;
-    KDCoordinate cumulatedHeightAfterPrefaceRow() const;
+    KDCoordinate cumulatedHeightAtPrefaceRow(bool after) const;
     int numberOfRows() const override { return 1; }
     KDCoordinate separatorBeforeRow(int row) override { return 0; }
     KDCoordinate separatorAfterPrefaceRow() {

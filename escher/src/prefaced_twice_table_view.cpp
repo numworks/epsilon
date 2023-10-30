@@ -95,7 +95,7 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   bool hideColumnPreface =
       m_mainTableView->selectedRow() == -1 ||
       (m_mainTableView->invisibleWidth() <=
-       m_columnPrefaceDataSource.cumulatedWidthBeforePrefaceColumn());
+       m_columnPrefaceDataSource.cumulatedWidthAtPrefaceColumn(false));
   if (hideColumnPreface) {
     // Main table and row preface
     m_mainTableView->margins()->setLeft(m_mainTableViewLeftMargin);
@@ -159,32 +159,21 @@ PrefacedTwiceTableView::horizontalScrollToAddToHidePrefacesInMainTable(
     bool hideColumnPreface) const {
   return hideColumnPreface
              ? 0
-             : std::max(m_columnPrefaceDataSource
-                                .cumulatedWidthAfterPrefaceColumn() -
-                            (m_mainTableView->invisibleWidth()),
+             : std::max(m_columnPrefaceDataSource.cumulatedWidthAtPrefaceColumn(
+                            true) -
+                            m_mainTableView->invisibleWidth(),
                         0);
 }
 
-KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
-    cumulatedWidthBeforePrefaceColumn() const {
+KDCoordinate
+PrefacedTwiceTableView::ColumnPrefaceDataSource::cumulatedWidthAtPrefaceColumn(
+    bool after) const {
   // Do not alter main dataSource memoization
   assert(m_prefaceColumn >= 0);
+  int column = m_prefaceColumn + after;
   m_mainDataSource->lockSizeMemoization(true);
-  KDCoordinate result =
-      m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn) +
-      m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
-  m_mainDataSource->lockSizeMemoization(false);
-  return result;
-}
-
-KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
-    cumulatedWidthAfterPrefaceColumn() const {
-  // Do not alter main dataSource memoization
-  assert(m_prefaceColumn >= 0);
-  m_mainDataSource->lockSizeMemoization(true);
-  KDCoordinate result =
-      m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn + 1) +
-      m_mainDataSource->separatorBeforeColumn(m_prefaceColumn + 1);
+  KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeColumn(column) +
+                        m_mainDataSource->separatorBeforeColumn(column);
   m_mainDataSource->lockSizeMemoization(false);
   return result;
 }

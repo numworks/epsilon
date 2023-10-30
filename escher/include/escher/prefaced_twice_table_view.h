@@ -33,8 +33,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
           m_prefaceColumn(prefaceColumn) {}
 
     void setPrefaceColumn(int column) { m_prefaceColumn = column; }
-    KDCoordinate cumulatedWidthBeforePrefaceColumn() const;
-    KDCoordinate cumulatedWidthAfterPrefaceColumn() const;
+    KDCoordinate cumulatedWidthAtPrefaceColumn(bool after) const;
 
     int numberOfColumns() const override { return 1; }
     KDCoordinate separatorBeforeColumn(int column) override { return 0; }

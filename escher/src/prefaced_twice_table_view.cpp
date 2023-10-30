@@ -95,8 +95,7 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   bool hideColumnPreface =
       m_mainTableView->selectedRow() == -1 ||
       m_columnPrefaceDataSource.prefaceColumn() == -1 ||
-      (m_mainTableView->contentOffset().x() -
-           m_mainTableView->margins()->left() <=
+      (m_mainTableView->invisibleWidth() <=
        m_columnPrefaceDataSource.cumulatedWidthBeforePrefaceColumn());
   if (hideColumnPreface) {
     // Main table and row preface
@@ -126,8 +125,7 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     // Hide column preface in main table view if necessary
     KDCoordinate columnPrefaceVisibleWidthInMainTable =
         m_columnPrefaceDataSource.cumulatedWidthAfterPrefaceColumn() -
-        (m_mainTableView->contentOffset().x() -
-         m_mainTableView->margins()->left());
+        m_mainTableView->invisibleWidth();
     if (columnPrefaceVisibleWidthInMainTable > 0) {
       m_mainTableView->translateContentOffsetBy(
           KDPoint(columnPrefaceVisibleWidthInMainTable, 0));

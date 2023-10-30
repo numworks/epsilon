@@ -50,6 +50,13 @@ class TableView : public ScrollView {
 
   void resetSizeMemoization() { dataSource()->resetSizeMemoization(); }
 
+  KDCoordinate invisibleHeight() {
+    return std::max(contentOffset().y() - margins()->top(), 0);
+  }
+  KDCoordinate invisibleWidth() {
+    return std::max(contentOffset().x() - margins()->left(), 0);
+  }
+
  protected:
 #if ESCHER_VIEW_LOGGING
   const char *className() const override { return "TableView"; }
@@ -84,12 +91,10 @@ class TableView : public ScrollView {
     HighlightCell *cellAtLocation(int row, int col);
     TableViewDataSource *dataSource() { return m_dataSource; }
     KDCoordinate invisibleHeight() const {
-      return std::max(
-          m_tableView->contentOffset().y() - m_tableView->margins()->top(), 0);
+      return m_tableView->invisibleHeight();
     }
     KDCoordinate invisibleWidth() const {
-      return std::max(
-          m_tableView->contentOffset().x() - m_tableView->margins()->left(), 0);
+      return m_tableView->invisibleWidth();
     }
     int rowsScrollingOffset() const;
     int columnsScrollingOffset() const;

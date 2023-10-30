@@ -15,8 +15,7 @@ namespace Escher {
 class PrefacedTableViewDelegate {
  public:
   virtual KDCoordinate maxRowPrefaceHeight() const = 0;
-  virtual int
-  columnToFreeze() = 0;  // Returns -1 if there is no column to freeze
+  virtual int columnToFreeze() = 0;
 };
 
 class PrefacedTableView : public View,

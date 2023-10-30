@@ -148,7 +148,7 @@ bool MainController::textFieldDidReceiveEvent(
     return handleEvent(event);
   }
 
-  // Handle Copy.
+  // Handle Copy / store / varbox.
 
   ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
@@ -163,6 +163,9 @@ bool MainController::textFieldDidReceiveEvent(
 
     if (event == Ion::Events::Copy) {
       Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
+      return true;
+    } else if ((event == Ion::Events::Var || event == Ion::Events::Sto)) {
+      App::app()->storeValue(buffer);
       return true;
     }
   }

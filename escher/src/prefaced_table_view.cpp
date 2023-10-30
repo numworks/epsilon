@@ -85,7 +85,8 @@ View* PrefacedTableView::subviewAtIndex(int index) {
 
 void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   KDCoordinate rowPrefaceHeight =
-      m_rowPrefaceView.minimalSizeForOptimalDisplay().height();
+      m_rowPrefaceView.minimalSizeForOptimalDisplay().height() +
+      m_rowPrefaceDataSource.separatorAfterPrefaceRow();
   bool rowPrefaceIsTooLarge =
       m_prefacedDelegate &&
       rowPrefaceHeight > m_prefacedDelegate->maxRowPrefaceHeight();
@@ -99,9 +100,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_mainTableView->margins()->setTop(m_mainTableViewTopMargin);
     setChildFrame(m_mainTableView, rect, force);
   } else {
-    /* WARNING: If we need a separator below the preface row, we should set a
-     * bottom margin for rowPrefaceView here (follow the implementation used for
-     * column preface) */
     m_mainTableView->margins()->setTop(0);
     setChildFrame(m_mainTableView,
                   KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),
@@ -262,7 +260,8 @@ PrefacedTableView::RowPrefaceDataSource::cumulatedHeightAfterPrefaceRow()
   assert(m_prefaceRow >= 0);
   m_mainDataSource->lockSizeMemoization(true);
   KDCoordinate result =
-      m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow + 1);
+      m_mainDataSource->cumulatedHeightBeforeRow(m_prefaceRow + 1) +
+      m_mainDataSource->separatorBeforeRow(m_prefaceRow + 1);
   m_mainDataSource->lockSizeMemoization(false);
   return result;
 }

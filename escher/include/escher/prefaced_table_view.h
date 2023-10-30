@@ -121,6 +121,10 @@ class PrefacedTableView : public View,
     KDCoordinate cumulatedHeightAfterPrefaceRow() const;
     int numberOfRows() const override { return 1; }
     KDCoordinate separatorBeforeRow(int row) override { return 0; }
+    KDCoordinate separatorAfterPrefaceRow() {
+      assert(m_prefaceRow >= 0);
+      return m_mainDataSource->separatorBeforeRow(m_prefaceRow + 1);
+    }
 
    private:
     KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;

@@ -819,7 +819,6 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   SwapTrees(&ref, &variables);
   Variables::ProjectToId(ref, variables);
   changed = DeepSystematicReduce(ref) || changed;
-  changed = DeepSystematicReduce(ref) || changed;
   changed = DeepApplyMatrixOperators(ref) || changed;
   // TODO: Bubble up Matrices, complexes, units, lists.
   changed = AdvancedReduction(ref, ref) || changed;

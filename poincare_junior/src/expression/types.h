@@ -4,35 +4,35 @@
 
 /* - Zero Z (same for One, Two, Half, MinusOne)
  * | Z TAG | */
-TYPE(Zero, 0)
-TYPE(One, 0)
-TYPE(Two, 0)
-TYPE(MinusOne, 0)
+NODE(Zero, 0)
+NODE(One, 0)
+NODE(Two, 0)
+NODE(MinusOne, 0)
 
 /* - IntegerShort IS
  * | IS TAG | SIGNED DIGIT0 | */
-TYPE(IntegerShort, 0)
+NODE(IntegerShort, 0)
 
 /* - Integer(Pos/Neg)Big IB: most significant digit last
  * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | */
-TYPE(IntegerPosBig, 0)
-TYPE(IntegerNegBig, 0)
+NODE(IntegerPosBig, 0)
+NODE(IntegerNegBig, 0)
 
 RANGE(Integer, Zero, IntegerNegBig)
 
 // 1.2 - Rationals
 
-TYPE(Half, 0)
+NODE(Half, 0)
 
 /* - RationShort RS
  * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | */
-TYPE(RationalShort, 0)
+NODE(RationalShort, 0)
 
 /* - Rational(Pos/Neg)Big RB
  * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
  * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | */
-TYPE(RationalPosBig, 0)
-TYPE(RationalNegBig, 0)
+NODE(RationalPosBig, 0)
+NODE(RationalNegBig, 0)
 
 RANGE(Rational, Zero, RationalNegBig)
 
@@ -40,17 +40,17 @@ RANGE(Rational, Zero, RationalNegBig)
 
 /* - Float F
  * | F TAG | VALUE (4 bytes) | */
-TYPE(SingleFloat, 0)
+NODE(SingleFloat, 0)
 
 /* - Double D
  * | D TAG | VALUE (8 bytes) | */
-TYPE(DoubleFloat, 0)
+NODE(DoubleFloat, 0)
 
 RANGE(Float, SingleFloat, DoubleFloat)
 
 /* - Constant C
- * | C TAG | TYPE | */
-TYPE(Constant, 0)
+ * | C TAG | NODE | */
+NODE(Constant, 0)
 
 RANGE(Number, Zero, Constant)
 
@@ -58,61 +58,61 @@ RANGE(Number, Zero, Constant)
 
 /* - Multiplication M (same for Addition, Set, List, RackLayout)
  * | M TAG | NUMBER OF CHILDREN | */
-TYPE(Multiplication, NARY)
+NODE(Multiplication, NARY)
 
 /* - Power P (same for Factorial, Subtraction, Division, FractionLayout,
  * ParenthesisLayout, VerticalOffsetLayout) | P TAG | */
-TYPE(Power, 2)
+NODE(Power, 2)
 
-TYPE(Addition, NARY)
+NODE(Addition, NARY)
 
 RANGE(Algebraic, Zero, Addition)
 
 /* - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
-TYPE(UserSymbol, 0)
-TYPE(UserFunction, 0)
-TYPE(UserSequence, 0)
+NODE(UserSymbol, 0)
+NODE(UserFunction, 0)
+NODE(UserSequence, 0)
 
 RANGE(UserNamed, UserSymbol, UserSequence)
 
 /* - Variable V
  * | V TAG | ID | */
-TYPE(Variable, 0)
+NODE(Variable, 0)
 
-TYPE(Sine, 1)
-TYPE(Cosine, 1)
-TYPE(Tangent, 1)
+NODE(Sine, 1)
+NODE(Cosine, 1)
+NODE(Tangent, 1)
 
-TYPE(Infinity, 0)
+NODE(Infinity, 0)
 
 // 3 - Other expressions in Alphabetic order
 
-TYPE(Abs, 1)
-TYPE(ArcCosine, 1)
-TYPE(ArcSine, 1)
-TYPE(ArcTangent, 1)
-TYPE(Ceiling, 1)
-TYPE(Complex, 2)
-TYPE(ComplexArgument, 1)
-TYPE(Conjugate, 1)
+NODE(Abs, 1)
+NODE(ArcCosine, 1)
+NODE(ArcSine, 1)
+NODE(ArcTangent, 1)
+NODE(Ceiling, 1)
+NODE(Complex, 2)
+NODE(ComplexArgument, 1)
+NODE(Conjugate, 1)
 
 /* - Decimal DC
  * | DC TAG | NUMBER DIGITS AFTER ZERO | */
-TYPE(Decimal, 1)
-TYPE(Division, 2)
-TYPE(Exponential, 1)
-TYPE(Factorial, 1)
-TYPE(Factor, 1)
-TYPE(Floor, 1)
-TYPE(FracPart, 1)
-TYPE(GCD, NARY)
-TYPE(ImaginaryPart, 1)
-TYPE(LCM, NARY)
-TYPE(Ln, 1)
-TYPE(Log, 1)
-TYPE(Logarithm, 2)
-TYPE(Opposite, 1)
+NODE(Decimal, 1)
+NODE(Division, 2)
+NODE(Exponential, 1)
+NODE(Factorial, 1)
+NODE(Factor, 1)
+NODE(Floor, 1)
+NODE(FracPart, 1)
+NODE(GCD, NARY)
+NODE(ImaginaryPart, 1)
+NODE(LCM, NARY)
+NODE(Ln, 1)
+NODE(Log, 1)
+NODE(Logarithm, 2)
+NODE(Opposite, 1)
 
 /* - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms
@@ -122,59 +122,59 @@ TYPE(Opposite, 1)
  *  - the first child describes the variable x
  *  - the n following children describe the coefficients.
  *  Polynomials can be recursive (have polynomials children) */
-TYPE(Polynomial, NARY)
+NODE(Polynomial, NARY)
 
-TYPE(PowerReal, 2)
-TYPE(Quotient, 2)
-TYPE(RealPart, 1)
-TYPE(Remainder, 2)
-TYPE(Round, 2)
-TYPE(Sign, 1)
-TYPE(SquareRoot, 1)
-TYPE(Subtraction, 2)
-TYPE(Trig, 2)
-TYPE(TrigDiff, 2)
+NODE(PowerReal, 2)
+NODE(Quotient, 2)
+NODE(RealPart, 1)
+NODE(Remainder, 2)
+NODE(Round, 2)
+NODE(Sign, 1)
+NODE(SquareRoot, 1)
+NODE(Subtraction, 2)
+NODE(Trig, 2)
+NODE(TrigDiff, 2)
 
 // 4 - Parametric types
 
-TYPE(Sum, 4)
-TYPE(Product, 4)
-TYPE(Derivative, 3)
-TYPE(Integral, 4)
+NODE(Sum, 4)
+NODE(Product, 4)
+NODE(Derivative, 3)
+NODE(Integral, 4)
 
 RANGE(Parametric, Sum, Integral)
 
 // 5 - Matrix and vector builtins
 
-TYPE(Dot, 2)
-TYPE(Norm, 1)
-TYPE(Trace, 1)
-TYPE(Cross, 2)
-TYPE(Det, 1)
-TYPE(Dim, 1)
-TYPE(Identity, 1)
-TYPE(Inverse, 1)
-TYPE(Ref, 1)
-TYPE(Rref, 1)
-TYPE(Transpose, 1)
-TYPE(PowerMatrix, 2)
+NODE(Dot, 2)
+NODE(Norm, 1)
+NODE(Trace, 1)
+NODE(Cross, 2)
+NODE(Det, 1)
+NODE(Dim, 1)
+NODE(Identity, 1)
+NODE(Inverse, 1)
+NODE(Ref, 1)
+NODE(Rref, 1)
+NODE(Transpose, 1)
+NODE(PowerMatrix, 2)
 
 /* - Matrix M
  * | M TAG | NUMBER OF ROWS | NUMBER OF COLUMNS |
  * Children are ordered the row-major way */
-TYPE(Matrix, NARY2D)
+NODE(Matrix, NARY2D)
 
 RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 
 // 6 - Order dependant expressions
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
-TYPE(Unit, 0)
-TYPE(Dependency, 2)
-TYPE(List, NARY)
-TYPE(Set, NARY)
-TYPE(Nonreal, 0)
-TYPE(Undefined, 0)
+NODE(Unit, 0)
+NODE(Dependency, 2)
+NODE(List, NARY)
+NODE(Set, NARY)
+NODE(Nonreal, 0)
+NODE(Undefined, 0)
 
 RANGE(Expression, Zero, Undefined)
 

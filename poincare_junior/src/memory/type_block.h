@@ -18,16 +18,16 @@ namespace PoincareJ {
 
 enum class BlockType : uint8_t {
 // Add all the types to the enum
-#define TYPE(F, N) SCOPED_TYPE(F),
+#define NODE(F, N) SCOPED_NODE(F),
 #include <poincare_junior/src/memory/types.h>
-#undef TYPE
+#undef NODE
 };
 
 enum class LayoutType : uint8_t {
 // Members of LayoutType have the same values as their BlockType counterpart
-#define TYPE(F, N) F = static_cast<uint8_t>(BlockType::F##Layout),
+#define NODE(F, N) F = static_cast<uint8_t>(BlockType::F##Layout),
 #include <poincare_junior/src/layout/types.h>
-#undef TYPE
+#undef NODE
 };
 
 class TypeBlock : public Block {
@@ -45,14 +45,14 @@ class TypeBlock : public Block {
 #if POINCARE_MEMORY_TREE_LOG
   // Add an array of names for the BlockTypes
   static constexpr const char *names[] = {
-#define TYPE(F, N) #F,
+#define NODE(F, N) #F,
 #include <poincare_junior/src/memory/types.h>
-#undef TYPE
+#undef NODE
   };
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define TYPE(F, N)
+#define NODE(F, N)
 #undef RANGE
 #define RANGE(NAME, FIRST, LAST)                                \
   static constexpr bool Is##NAME(BlockType type) {              \
@@ -64,7 +64,7 @@ class TypeBlock : public Block {
 #include <poincare_junior/src/memory/types.h>
 #undef RANGE
 #define RANGE(NAME, FIRST, LAST)
-#undef TYPE
+#undef NODE
 
   constexpr static bool IsOfType(BlockType thisType,
                                  std::initializer_list<BlockType> types) {
@@ -186,11 +186,13 @@ class TypeBlock : public Block {
 
   constexpr static int NumberOfChildrenOrTag(BlockType type) {
     switch (type) {
-#define TYPE(F, N)                \
-  case BlockType::SCOPED_TYPE(F): \
+#define NODE(F, N)                \
+  case BlockType::SCOPED_NODE(F): \
     return N;
 #include <poincare_junior/src/memory/types.h>
-#undef TYPE
+#undef NODE
+      default:
+        return 0;
     }
   }
 };

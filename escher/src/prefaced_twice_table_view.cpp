@@ -94,7 +94,6 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   }
   bool hideColumnPreface =
       m_mainTableView->selectedRow() == -1 ||
-      m_columnPrefaceDataSource.prefaceColumn() == -1 ||
       (m_mainTableView->invisibleWidth() <=
        m_columnPrefaceDataSource.cumulatedWidthBeforePrefaceColumn());
   if (hideColumnPreface) {

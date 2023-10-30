@@ -32,7 +32,6 @@ class PrefacedTwiceTableView : public PrefacedTableView {
         : IntermediaryDataSource(mainDataSource),
           m_prefaceColumn(prefaceColumn) {}
 
-    int prefaceColumn() const { return m_prefaceColumn; }
     void setPrefaceColumn(int column) { m_prefaceColumn = column; }
     KDCoordinate cumulatedWidthBeforePrefaceColumn() const;
     KDCoordinate cumulatedWidthAfterPrefaceColumn() const;

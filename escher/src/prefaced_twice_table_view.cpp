@@ -123,6 +123,17 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                bounds().height()),
         force);
 
+    // Hide column preface in main table view if necessary
+    KDCoordinate columnPrefaceVisibleWidthInMainTable =
+        m_columnPrefaceDataSource.cumulatedWidthAfterPrefaceColumn() -
+        (m_mainTableView->contentOffset().x() -
+         m_mainTableView->margins()->left());
+    if (columnPrefaceVisibleWidthInMainTable > 0) {
+      m_mainTableView->setContentOffset(
+          m_mainTableView->contentOffset().translatedBy(
+              KDPoint(columnPrefaceVisibleWidthInMainTable, 0)));
+    }
+
     // Column preface
     KDCoordinate rowPrefaceHeight = m_rowPrefaceView.bounds().height();
     m_columnPrefaceView.margins()->setTop(m_mainTableView->margins()->top());
@@ -164,6 +175,16 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
   KDCoordinate result =
       m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn) +
       m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
+  m_mainDataSource->lockSizeMemoization(false);
+  return result;
+}
+
+KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
+    cumulatedWidthAfterPrefaceColumn() const {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockSizeMemoization(true);
+  KDCoordinate result =
+      m_mainDataSource->cumulatedWidthBeforeColumn(m_prefaceColumn + 1);
   m_mainDataSource->lockSizeMemoization(false);
   return result;
 }

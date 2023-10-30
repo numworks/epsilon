@@ -53,6 +53,7 @@ enum class ExceptionType : int {
   ZeroDivision,        // 1/0, tan(nπ/2)
   UnhandledDimension,  // [[1,2]] + [[1],[2]]
   Unhandled,           // inf - inf, 0 * inf, unimplemented
+  BadType,             // non-integers in gcd,lcm,...
   // Misc
   ParseFail,  // Used by parser, TODO : Use more distinct errors.
   Other,      // Used internally for Unit tests.

@@ -868,6 +868,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
   }
   ExceptionCatch(type) {
     switch (type) {
+      case ExceptionType::BadType:
       case ExceptionType::Nonreal:
       case ExceptionType::ZeroPowerZero:
       case ExceptionType::ZeroDivision:

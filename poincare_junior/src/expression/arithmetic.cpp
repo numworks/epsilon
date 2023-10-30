@@ -19,7 +19,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   const Tree* denom = num->nextTree();
   if (!num->type().isInteger() || !denom->type().isInteger()) {
     if (num->type().isRational() || denom->type().isRational()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      ExceptionCheckpoint::Raise(ExceptionType::BadType);
     }
     return false;
   }
@@ -75,7 +75,7 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
   }
   if (!digits->type().isInteger()) {
     // Round second argument must be integral
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    ExceptionCheckpoint::Raise(ExceptionType::BadType);
   }
   Tree* mult = PatternMatching::CreateAndSimplify(KMult(KA, KPow(10_e, KB)),
                                                   {.KA = value, .KB = digits});
@@ -104,7 +104,7 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   while (expr->numberOfChildren() > 1) {
     if (!next->type().isInteger()) {
       if (next->type().isRational()) {
-        ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+        ExceptionCheckpoint::Raise(ExceptionType::BadType);
       }
       return changed;
     }
@@ -259,7 +259,8 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   } while (stopCondition && testedPrimeFactor < k_biggestPrimeFactor &&
            t < FactorizedInteger::k_maxNumberOfFactors);
   if (t == FactorizedInteger::k_maxNumberOfFactors) {
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);  // tooManyFactors
+    // tooManyFactors
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   if (IntegerHandler::Ucmp(
           m, IntegerHandler::Mult(IntegerHandler(k_biggestPrimeFactor),
@@ -268,7 +269,8 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     /* Special case 2: We do not want to break i in prime factor because it
      * take too much time: the prime factor that should be tested is above
      * k_biggestPrimeFactor. */
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);  // factorTooLarge
+    // factorTooLarge
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   result.factors[t] = m.to<float>();  // TODO use uint16 when rebased
   result.coefficients[t]++;

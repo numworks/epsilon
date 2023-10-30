@@ -110,6 +110,23 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
              (!t->isProduct() ||
               childDim[Parametric::k_integrandIndex].isScalar() ||
               childDim[Parametric::k_integrandIndex].isSquareMatrix());
+
+    // Lists
+    case BlockType::Mean:
+    case BlockType::StdDev:
+    case BlockType::Median:
+    case BlockType::Variance:
+    case BlockType::SampleStdDev:
+    case BlockType::Minimum:
+    case BlockType::Maximum:
+    case BlockType::ListSum:
+    case BlockType::ListProduct:
+    case BlockType::ListSort:
+      return childDim[0].isList();
+    case BlockType::ListAccess:
+      return childDim[0].isList() && childDim[1].isScalar();
+
+    // Matrices
     case BlockType::Dim:
     case BlockType::Ref:
     case BlockType::Rref:
@@ -129,6 +146,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Cross:
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
+
     case BlockType::Round:
       return (childDim[0].isScalar() || childDim[0].isUnit()) &&
              childDim[1].isScalar();
@@ -147,6 +165,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     default:
       assert(t->isScalarOnly());
     case BlockType::Matrix:
+    case BlockType::List:
       if (hasNonKelvinChild ||
           (hasUnitChild && !(unitsAllowed || angleUnitsAllowed))) {
         // Early escape. By default, non-Kelvin temperature unit are forbidden.
@@ -224,6 +243,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Inverse:
     case BlockType::Ref:
     case BlockType::Rref:
+    case BlockType::ListSort:
       return GetDimension(t->nextNode());
     case BlockType::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
@@ -237,6 +257,10 @@ Dimension Dimension::GetDimension(const Tree* t) {
       int n = Approximation::To<float>(t->child(0));
       return Matrix(n, n);
     }
+    case BlockType::List:
+      return List(t->numberOfChildren());
+    case BlockType::ListSequence:
+      return List(Approximation::To<float>(t->child(2)));
     case BlockType::Unit:
       return Dimension::Unit(t);
     case BlockType::ArcCosine:

@@ -13,6 +13,10 @@ namespace PoincareJ {
 /* The RANGE macro does nothing yet */
 #define RANGE(NAME, FIRST, LAST)
 
+/* CUSTOM_NODE declares nodes containing S metablocks in their header to store
+ * special data */
+#define CUSTOM_NODE(F, N, S) NODE(F, N)
+
 #define NARY NAryNumberOfChildrenTag
 #define NARY2D NAry2DNumberOfChildrenTag
 
@@ -92,44 +96,31 @@ class TypeBlock : public Block {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
 
+ private:
+  constexpr static int NAryNumberOfChildrenTag = -1;
+  constexpr static int NAry2DNumberOfChildrenTag = -2;
+
+  consteval static size_t DefaultNumberOfMetaBlocks(int N) {
+    return N == NAry2DNumberOfChildrenTag ? 3
+           : N == NAryNumberOfChildrenTag ? 2
+                                          : 1;
+  }
+
+ public:
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
-    // NOTE: Make sure new BlockTypes are handled here.
     switch (type) {
-      case BlockType::DoubleFloat:
-        return 1 + sizeof(double) / sizeof(uint8_t);
-      case BlockType::SingleFloat:
-        return 1 + sizeof(float) / sizeof(uint8_t);
-      case BlockType::CodePointLayout:
-        return 1 + sizeof(CodePoint) / sizeof(uint8_t);
-      case BlockType::RationalShort:
-      case BlockType::RationalPosBig:
-      case BlockType::RationalNegBig:
-      case BlockType::Matrix:
-      case BlockType::Unit:
-        return 3;
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-      case BlockType::Constant:
-      case BlockType::Set:
-      case BlockType::List:
-      case BlockType::RackLayout:
-      case BlockType::SystemList:
-      case BlockType::Polynomial:
-      case BlockType::GCD:
-      case BlockType::LCM:
-      case BlockType::UserSymbol:
-      case BlockType::UserFunction:
-      case BlockType::UserSequence:
-      case BlockType::Variable:
-      case BlockType::Decimal:
-      case BlockType::IntegerShort:
-      case BlockType::Placeholder:
-      case BlockType::IntegerPosBig:
-      case BlockType::IntegerNegBig:
-        return 2;
+#undef CUSTOM_NODE
+#define NODE(F, N) CUSTOM_NODE(F, N, 0)
+#define CUSTOM_NODE(F, N, S)      \
+  case BlockType::SCOPED_NODE(F): \
+    return DefaultNumberOfMetaBlocks(N) + S;
+#include <poincare_junior/src/memory/types.h>
+#undef NODE
+#undef CUSTOM_NODE
+#define CUSTOM_NODE(F, N, S) NODE(F, N)
       default:
         return 1;
-    };
+    }
   }
 
   constexpr size_t nodeSize() const {
@@ -176,14 +167,12 @@ class TypeBlock : public Block {
   }
 
   constexpr static int NumberOfChildren(BlockType type) {
-    assert(type != BlockType::Matrix && !IsNAry(type));
+    assert(NumberOfChildrenOrTag(type) != NAryNumberOfChildrenTag &&
+           NumberOfChildrenOrTag(type) != NAry2DNumberOfChildrenTag);
     return NumberOfChildrenOrTag(type);
   }
 
  private:
-  constexpr static int NAryNumberOfChildrenTag = -1;
-  constexpr static int NAry2DNumberOfChildrenTag = -2;
-
   constexpr static int NumberOfChildrenOrTag(BlockType type) {
     switch (type) {
 #define NODE(F, N)                \
@@ -200,6 +189,7 @@ class TypeBlock : public Block {
 #undef NARY
 #undef NARY2D
 #undef RANGE
+#undef CUSTOM_NODE
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 

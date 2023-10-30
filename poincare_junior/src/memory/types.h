@@ -15,10 +15,14 @@
 // 3 - Shared types
 
 #define SCOPED_NODE(F) F
-NODE(Placeholder, 0)
+
+/* - Placeholder P
+ * | P TAG | ID | */
+CUSTOM_NODE(Placeholder, 0, 1)
 NODE(SystemList, NARY)
 #if ASSERTIONS
 NODE(TreeBorder, 0)
 #endif
 NODE(NumberOfTypes, 0)
+
 #undef SCOPED_NODE

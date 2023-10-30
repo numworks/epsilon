@@ -29,39 +29,39 @@ T Approximation::To(const Tree* node) {
     case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
     case BlockType::Addition:
-      return Approximation::MapAndReduce(node, FloatAddition<T>);
+      return MapAndReduce(node, FloatAddition<T>);
     case BlockType::Multiplication:
-      return Approximation::MapAndReduce(node, FloatMultiplication<T>);
+      return MapAndReduce(node, FloatMultiplication<T>);
     case BlockType::Division:
-      return Approximation::MapAndReduce(node, FloatDivision<T>);
+      return MapAndReduce(node, FloatDivision<T>);
     case BlockType::Subtraction:
-      return Approximation::MapAndReduce(node, FloatSubtraction<T>);
+      return MapAndReduce(node, FloatSubtraction<T>);
     case BlockType::PowerReal:
-      return Approximation::MapAndReduce(node, FloatPowerReal<T>);
+      return MapAndReduce(node, FloatPowerReal<T>);
     case BlockType::Power:
-      return Approximation::MapAndReduce(node, FloatPower<T>);
+      return MapAndReduce(node, FloatPower<T>);
     case BlockType::Logarithm:
-      return Approximation::MapAndReduce(node, FloatLog<T>);
+      return MapAndReduce(node, FloatLog<T>);
     case BlockType::Trig:
-      return Approximation::MapAndReduce(node, FloatTrig<T>);
+      return MapAndReduce(node, FloatTrig<T>);
     case BlockType::SquareRoot:
-      return std::sqrt(Approximation::To<T>(node->nextNode()));
+      return std::sqrt(To<T>(node->nextNode()));
     case BlockType::Exponential:
-      return std::exp(Approximation::To<T>(node->nextNode()));
+      return std::exp(To<T>(node->nextNode()));
     case BlockType::Log:
-      return std::log10(Approximation::To<T>(node->nextNode()));
+      return std::log10(To<T>(node->nextNode()));
     case BlockType::Ln:
-      return std::log(Approximation::To<T>(node->nextNode()));
+      return std::log(To<T>(node->nextNode()));
     case BlockType::Abs:
-      return std::fabs(Approximation::To<T>(node->nextNode()));
+      return std::fabs(To<T>(node->nextNode()));
     case BlockType::Cosine:
-      return std::cos(Approximation::To<T>(node->nextNode()));
+      return std::cos(To<T>(node->nextNode()));
     case BlockType::Sine:
-      return std::sin(Approximation::To<T>(node->nextNode()));
+      return std::sin(To<T>(node->nextNode()));
     case BlockType::Tangent:
-      return std::tan(Approximation::To<T>(node->nextNode()));
+      return std::tan(To<T>(node->nextNode()));
     case BlockType::Decimal:
-      return Approximation::To<T>(node->nextNode()) *
+      return To<T>(node->nextNode()) *
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Infinity:
       return INFINITY;
@@ -75,7 +75,7 @@ template <typename T>
 T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
   T res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    T app = Approximation::To<T>(child);
+    T app = To<T>(child);
     if (index == 0) {
       res = app;
     } else {
@@ -124,7 +124,7 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
     return changed;
   }
   tree->moveTreeOverTree(
-      SharedEditionPool->push<FloatType<T>::type>(Approximation::To<T>(tree)));
+      SharedEditionPool->push<FloatType<T>::type>(To<T>(tree)));
   return true;
 }
 

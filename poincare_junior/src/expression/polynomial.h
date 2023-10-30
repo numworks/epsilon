@@ -10,8 +10,8 @@ namespace PoincareJ {
 class Polynomial final {
   /* We opt for the recursive representation.
    * - Node:
-   *   | P TAG | number of terms | highest exponant | second highest exponant |
-   * ... | number of terms | P TAG |
+   *  | P TAG | number of terms | highest exponant | 2nd highest exponant | ...
+   *
    * - Children: the first child is the variable, the others are the
    * coefficients corresponding at each exponant.
    *
@@ -26,9 +26,9 @@ class Polynomial final {
    *   m = number of terms
    *   ei(xi) are uint8_t
    *   a0 are int32_t
-   *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ... | a | n *
-   * m | P TAG | This node has n children: the first n children describe the
-   * variables, the next m children describe the coefficients.
+   *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ...
+   *  This node has n children: the first n children describe the variables,
+   *  the next m children describe the coefficients.
    */
   friend class PolynomialParser;
 

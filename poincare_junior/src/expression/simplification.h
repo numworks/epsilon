@@ -8,6 +8,7 @@
 #include "arithmetic.h"
 #include "beautification.h"
 #include "context.h"
+#include "float.h"
 #include "parametric.h"
 #include "projection.h"
 

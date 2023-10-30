@@ -37,6 +37,20 @@ class Float {
   }
 };
 
+// Helper from T  = float|double to corresponding BlockType
+template <class T>
+struct FloatType;
+
+template <>
+struct FloatType<float> {
+  static constexpr BlockType type = BlockType::SingleFloat;
+};
+
+template <>
+struct FloatType<double> {
+  static constexpr BlockType type = BlockType::DoubleFloat;
+};
+
 }  // namespace PoincareJ
 
 #endif

@@ -36,7 +36,7 @@ enum class LayoutType : uint8_t {
 
 class TypeBlock : public Block {
  public:
-  constexpr TypeBlock(BlockType content = BlockType::Zero)
+  constexpr TypeBlock(BlockType content)
       : Block(static_cast<uint8_t>(content)) {
     assert(m_content < static_cast<uint8_t>(BlockType::NumberOfTypes));
   }
@@ -215,20 +215,6 @@ class BlockBuffer {
 #else
   Block m_blocks[size];
 #endif
-};
-
-// Helper from T  = float|double to corresponding BlockType
-template <class T>
-struct FloatType;
-
-template <>
-struct FloatType<float> {
-  static constexpr BlockType type = BlockType::SingleFloat;
-};
-
-template <>
-struct FloatType<double> {
-  static constexpr BlockType type = BlockType::DoubleFloat;
 };
 
 }  // namespace PoincareJ

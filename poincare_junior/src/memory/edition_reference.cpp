@@ -24,12 +24,9 @@ EditionReference::EditionReference(Tree* node) {
 EditionReference& EditionReference::operator=(Tree* tree) {
   if (!tree) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
-  } else {
-    if (m_identifier != EditionPool::ReferenceTable::NoNodeIdentifier) {
-      SharedEditionPool->updateIdentifier(m_identifier, tree);
-    } else {
-      m_identifier = SharedEditionPool->referenceNode(tree);
-    }
+  } else if (m_identifier == EditionPool::ReferenceTable::NoNodeIdentifier ||
+             !SharedEditionPool->updateIdentifier(m_identifier, tree)) {
+    m_identifier = SharedEditionPool->referenceNode(tree);
   }
   return *this;
 }

@@ -25,11 +25,11 @@ class EditionPool final : public Pool {
 
   uint16_t referenceNode(Tree *node);
   void flush();
-  void flushFromBlock(Block *node);
+  void flushFromBlock(const Block *node);
   void resetRefs() { m_referenceTable.reset(); }
   void deleteIdentifier(uint16_t id) { m_referenceTable.deleteIdentifier(id); }
-  void updateIdentifier(uint16_t id, Tree *newNode) {
-    m_referenceTable.updateIdentifier(id, newNode);
+  bool updateIdentifier(uint16_t id, Tree *newNode) {
+    return m_referenceTable.updateIdentifier(id, newNode);
   }
 
   typedef bool (*Relax)(void *context);
@@ -100,13 +100,14 @@ class EditionPool final : public Pool {
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
     Tree *nodeForIdentifier(uint16_t id) const override;
     uint16_t storeNode(Tree *node) override;
-    void updateIdentifier(uint16_t id, Tree *newNode);
+    bool updateIdentifier(uint16_t id, Tree *newNode);
     void deleteIdentifier(uint16_t id);
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,
                                        const Block *, int);
     void updateNodes(AlterSelectedBlock function,
                      const Block *contextSelection1,
                      const Block *contextSelection2, int contextAlteration);
+    void deleteIdentifiersAfterBlock(const Block *block);
 
    private:
     /* Special offset in the nodeOffsetArray when the EditionReference that

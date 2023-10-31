@@ -24,9 +24,12 @@ Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
-void EditionPool::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
-  assert(id < m_length);
+bool EditionPool::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
+  if (id > m_length) {
+    return false;
+  }
   storeNodeAtIndex(newNode, id);
+  return true;
 }
 
 void EditionPool::ReferenceTable::deleteIdentifier(uint16_t id) {
@@ -76,6 +79,19 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
   }
 }
 
+void EditionPool::ReferenceTable::deleteIdentifiersAfterBlock(
+    const Block *block) {
+  Block *first = static_cast<Block *>(m_pool->firstBlock());
+  assert(block >= first && block <= first + UINT16_MAX);
+  uint16_t maxOffset = block - first;
+  for (int i = 0; i < m_length; i++) {
+    if (m_nodeOffsetForIdentifier[i] != DeletedOffset &&
+        m_nodeOffsetForIdentifier[i] >= maxOffset) {
+      deleteIdentifier(i);
+    }
+  }
+}
+
 // EditionPool
 
 OMG::GlobalBox<EditionPool> EditionPool::SharedEditionPool;
@@ -97,17 +113,10 @@ void EditionPool::flush() {
 #endif
 }
 
-void EditionPool::flushFromBlock(Block *block) {
+void EditionPool::flushFromBlock(const Block *block) {
   assert(isRootBlock(block, true));
   m_size = block - m_firstBlock;
-  m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *block, const Block *destination,
-         const Block *source, int size) {
-        if (destination <= block) {
-          *offset = ReferenceTable::InvalidatedOffset;
-        }
-      },
-      block, nullptr, 0);
+  m_referenceTable.deleteIdentifiersAfterBlock(block);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "flushFromBlock", block);
 #endif

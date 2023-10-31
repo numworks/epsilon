@@ -30,6 +30,7 @@ bool Pool::isRootBlock(const Block* block, bool allowLast) const {
 
 uint16_t Pool::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {
   if (index >= m_length) {
+    assert(index == m_length);
     assert(!isFull());
     // Increment first to make firstBlock != nullptr
     m_length++;

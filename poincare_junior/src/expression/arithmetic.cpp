@@ -29,7 +29,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   return true;
 }
 
-bool Arithmetic::SimplifyGCD(Tree* expr) {
+bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr);
   // TODO test type on the fly to reduce gcd(2,4,x) into gcd(2,x)
   for (const Tree* child : expr->children()) {
@@ -45,32 +45,11 @@ bool Arithmetic::SimplifyGCD(Tree* expr) {
   int n = expr->numberOfChildren();
   while (n-- > 1) {
     // TODO keep a handler on first out of the loop
-    first->moveTreeOverTree(
-        IntegerHandler::GCD(Integer::Handler(first), Integer::Handler(next)));
-    next = first->nextTree();
-    next->removeTree();
-  }
-  expr->removeNode();
-  return true;
-}
-
-bool Arithmetic::SimplifyLCM(Tree* expr) {
-  bool changed = NAry::Flatten(expr);
-  // TODO test type on the fly
-  for (const Tree* child : expr->children()) {
-    if (!child->type().isInteger()) {
-      if (child->type().isRational()) {
-        ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
-      }
-      return changed;
-    }
-  }
-  Tree* first = expr->firstChild();
-  Tree* next = first->nextTree();
-  int n = expr->numberOfChildren();
-  while (n-- > 1) {
-    first->moveTreeOverTree(
-        IntegerHandler::LCM(Integer::Handler(first), Integer::Handler(next)));
+    Tree* merged = isGCD ? IntegerHandler::GCD(Integer::Handler(first),
+                                               Integer::Handler(next))
+                         : IntegerHandler::LCM(Integer::Handler(first),
+                                               Integer::Handler(next));
+    first->moveTreeOverTree(merged);
     next = first->nextTree();
     next->removeTree();
   }

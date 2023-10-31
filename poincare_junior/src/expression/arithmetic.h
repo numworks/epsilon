@@ -15,8 +15,8 @@ class Arithmetic {
   static bool SimplifyRemainder(Tree* expr) {
     return SimplifyQuotientOrRemainder(expr);
   }
-  static bool SimplifyGCD(Tree* expr);
-  static bool SimplifyLCM(Tree* expr);
+  static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
+  static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }
 
   static bool BeautifyFactor(Tree* expr);
 
@@ -28,6 +28,7 @@ class Arithmetic {
     uint8_t numberOfFactors = 0;
   };
 
+  static bool SimplifyGCDOrLCM(Tree* expr, bool isGCD);
   static bool SimplifyQuotientOrRemainder(Tree* expr);
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
   static Tree* PushPrimeFactorization(IntegerHandler m);

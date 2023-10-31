@@ -123,7 +123,8 @@ void Beautification::SplitMultiplication(const Tree* expr,
       }
     } else if (factorType == BlockType::Power) {
       Tree* pow = factor->clone();
-      if (MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
+      if (pow->child(0)->type() != BlockType::Unit &&
+          MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
         if (pow->child(1)->type() == BlockType::One) {
           pow->moveTreeOverTree(pow->child(0));
         }
@@ -185,8 +186,9 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
         static_cast<double>(value));
     expr->moveTreeOverTree(approximated);
   }
-  expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-      KMult(KA, KB), {.KA = expr, .KB = units}));
+  Beautification::DeepBeautify(units);
+  expr->moveTreeOverTree(
+      PatternMatching::Create(KMult(KA, KB), {.KA = expr, .KB = units}));
   units->removeTree();
   return true;
 }

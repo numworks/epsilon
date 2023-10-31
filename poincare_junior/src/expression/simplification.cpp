@@ -127,12 +127,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::Sign:
       return SimplifySign(u);
     case BlockType::Floor:
-    case BlockType::Ceiling:
-      return Arithmetic::SimplifyFloorOrCeiling(u);
-    case BlockType::FracPart:
-      return Arithmetic::SimplifyFracPart(u);
-    case BlockType::Round:
-      return Arithmetic::SimplifyRound(u);
+      return Arithmetic::SimplifyFloor(u);
     default:
       return false;
   }

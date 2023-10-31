@@ -33,6 +33,9 @@ constexpr auto KIm = KUnary<BlockType::ImaginaryPart>();
 constexpr auto KArg = KUnary<BlockType::ComplexArgument>();
 constexpr auto KConj = KUnary<BlockType::Conjugate>();
 constexpr auto KOpposite = KUnary<BlockType::Opposite>();
+constexpr auto KFloor = KUnary<BlockType::Floor>();
+constexpr auto KCeil = KUnary<BlockType::Ceiling>();
+constexpr auto KFrac = KUnary<BlockType::FracPart>();
 
 constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();
@@ -44,6 +47,7 @@ constexpr auto KPow = KBinary<BlockType::Power>();
 constexpr auto KPowReal = KBinary<BlockType::PowerReal>();
 constexpr auto KPowMatrix = KBinary<BlockType::PowerMatrix>();
 constexpr auto KDep = KBinary<BlockType::Dependency>();
+constexpr auto KRound = KBinary<BlockType::Round>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();

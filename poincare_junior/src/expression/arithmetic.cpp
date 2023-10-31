@@ -33,67 +33,15 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   return true;
 }
 
-bool Arithmetic::SimplifyFloorOrCeiling(Tree* expr) {
-  bool floor = expr->type() == BlockType::Floor;
+bool Arithmetic::SimplifyFloor(Tree* expr) {
   Tree* child = expr->firstChild();
   if (!child->type().isRational()) {
     return false;
   }
   DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
                                                 Rational::Denominator(child));
-  bool addOne = !floor || div.remainder->type() != BlockType::Zero;
   div.remainder->removeTree();
-  if (addOne) {
-    EditionReference result = IntegerHandler::Addition(
-        Integer::Handler(div.quotient), IntegerHandler(1));
-    div.quotient->removeTree();
-    expr->moveTreeOverTree(result);
-  } else {
-    expr->moveTreeOverTree(div.quotient);
-  }
-  return true;
-}
-
-bool Arithmetic::SimplifyFracPart(Tree* expr) {
-  Tree* child = expr->firstChild();
-  if (!child->type().isRational()) {
-    return false;
-  }
-  IntegerHandler denom = Rational::Denominator(child);
-  Tree* rem = IntegerHandler::Remainder(Rational::Numerator(child), denom);
-  EditionReference result = Rational::Push(Integer::Handler(rem), denom);
-  rem->removeTree();
-  expr->moveTreeOverTree(result);
-  return true;
-}
-
-bool Arithmetic::SimplifyRound(Tree* expr) {
-  Tree* value = expr->firstChild();
-  Tree* digits = value->nextTree();
-  if (!value->type().isRational()) {
-    return false;
-  }
-  if (!digits->type().isInteger()) {
-    // Round second argument must be integral
-    ExceptionCheckpoint::Raise(ExceptionType::BadType);
-  }
-  Tree* mult = PatternMatching::CreateAndSimplify(KMult(KA, KPow(10_e, KB)),
-                                                  {.KA = value, .KB = digits});
-  DivisionResult div = IntegerHandler::Division(Rational::Numerator(mult),
-                                                Rational::Denominator(mult));
-  div.remainder->moveTreeOverTree(Rational::Push(
-      Integer::Handler(div.remainder), Rational::Denominator(mult)));
-  bool addOne = Comparison::Compare(div.remainder, KHalf) >= 0;
-  div.remainder->removeTree();
-  if (addOne) {
-    div.quotient->moveTreeOverTree(
-        IntegerHandler::Addition(Integer::Handler(div.quotient), 1));
-  }
-  PatternMatching::CreateAndSimplify(KMult(KA, KPow(KPow(10_e, -1_e), KB)),
-                                     {.KA = div.quotient, .KB = digits});
-  div.quotient->removeTree();
-  mult->removeTree();
-  expr->moveTreeOverTree(mult);
+  expr->moveTreeOverTree(div.quotient);
   return true;
 }
 

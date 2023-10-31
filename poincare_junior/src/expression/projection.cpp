@@ -117,6 +117,17 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       // log(A, B) -> ln(A) * ln(B)^(-1)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
                                        KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
+      // ceil(A)  -> -floor(-A)
+      PatternMatching::MatchAndReplace(ref, KCeil(KA),
+                                       KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
+      // frac(A) -> A - floor(A)
+      PatternMatching::MatchAndReplace(ref, KFrac(KA),
+                                       KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
+      // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
+      PatternMatching::MatchAndReplace(
+          ref, KRound(KA, KB),
+          KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
+                KPow(10_e, KMult(-1_e, KB)))) ||
       changed;
 }
 

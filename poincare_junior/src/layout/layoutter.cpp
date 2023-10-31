@@ -116,12 +116,12 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
    * temporarily stored and updated on the EditionPool. */
   EditionReference value = handler.pushOnEditionPool();
   do {
-    std::pair<PoincareJ::Tree *, PoincareJ::Tree *> result =
+    DivisionResult result =
         IntegerHandler::Division(Integer::Handler(value), IntegerHandler(10));
-    uint8_t digit = Integer::Handler(result.second);
-    assert(result.second > result.first);
-    result.second->removeTree();
-    MoveTreeOverTree(value, result.first);
+    uint8_t digit = Integer::Handler(result.remainder);
+    assert(result.remainder > result.quotient);
+    result.remainder->removeTree();
+    MoveTreeOverTree(value, result.quotient);
     InsertCodePointAt(layoutParent, '0' + digit, firstInsertedIndex);
     if (--decimalOffset == 0) {
       InsertCodePointAt(layoutParent, '.', firstInsertedIndex);

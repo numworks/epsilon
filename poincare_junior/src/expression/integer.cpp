@@ -446,7 +446,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
   return mult;
 }
 
-std::pair<Tree *, Tree *> IntegerHandler::Division(
+DivisionResult<Tree *> IntegerHandler::Division(
     const IntegerHandler &numerator, const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
@@ -465,7 +465,7 @@ std::pair<Tree *, Tree *> IntegerHandler::Division(
          quotient.digits() < remainder.digits());
   Tree *q = quotient.pushOnEditionPool();
   Tree *r = remainder.pushOnEditionPool();
-  return std::make_pair(q, r);
+  return {.quotient = q, .remainder = r};
 }
 
 Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,
@@ -485,7 +485,7 @@ Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
                                 const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;
   IntegerHandler remainder =
-      Udiv(numerator, denominator, &workingBuffer).second;
+      Udiv(numerator, denominator, &workingBuffer).remainder;
   if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
     remainder = Usum(denominator, remainder, true,
                      &workingBuffer);  // |denominator|-remainder
@@ -493,7 +493,7 @@ Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
   return remainder.pushOnEditionPool();
 }
 
-std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
+DivisionResult<IntegerHandler> IntegerHandler::Udiv(
     const IntegerHandler &numerator, const IntegerHandler &denominator,
     WorkingBuffer *workingBuffer) {
   uint8_t *const localStart = workingBuffer->localStart();
@@ -502,7 +502,7 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
   // TODO: implement Svoboda algorithm or divide and conquer methods
   assert(!denominator.isZero());
   if (Ucmp(numerator, denominator) < 0) {
-    return std::make_pair(IntegerHandler(static_cast<int8_t>(0)), numerator);
+    return {.quotient = static_cast<int8_t>(0), .remainder = numerator};
   }
   /* Let's call beta = 1 << 16 */
   /* Normalize numerator & denominator:
@@ -579,7 +579,7 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(
     remainder = newRemainder;
   }
   Q.sanitize();
-  return std::pair<IntegerHandler, IntegerHandler>(Q, remainder);
+  return {.quotient = Q, .remainder = remainder};
 }
 
 IntegerHandler IntegerHandler::GCD(const IntegerHandler &a,
@@ -601,9 +601,9 @@ IntegerHandler IntegerHandler::GCD(const IntegerHandler &a,
       return i;
     }
     if (Compare(i, j) > 0) {
-      i = Udiv(i, j, workingBuffer).second;
+      i = Udiv(i, j, workingBuffer).remainder;
     } else {
-      j = Udiv(j, i, workingBuffer).second;
+      j = Udiv(j, i, workingBuffer).remainder;
     }
   } while (true);
 }
@@ -628,7 +628,7 @@ Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
   /* Using LCM(i,j) = i*(j/GCD(i,j)). Knowing that GCD(i, j) divides j, and that
    * GCD(i,j) = 0 if and only if i == j == 0, which would have been escaped
    * before. Division is performed before multiplication to be more efficient.*/
-  return Mult(i, Udiv(j, GCD(i, j, &workingBuffer), &workingBuffer).first,
+  return Mult(i, Udiv(j, GCD(i, j, &workingBuffer), &workingBuffer).quotient,
               &workingBuffer)
       .pushOnEditionPool();
 }

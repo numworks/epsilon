@@ -39,17 +39,17 @@ bool Arithmetic::SimplifyFloorOrCeiling(Tree* expr) {
   if (!child->type().isRational()) {
     return false;
   }
-  std::pair div = IntegerHandler::Division(Rational::Numerator(child),
-                                           Rational::Denominator(child));
-  bool addOne = !floor || div.second->type() != BlockType::Zero;
-  div.second->removeTree();
+  DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
+                                                Rational::Denominator(child));
+  bool addOne = !floor || div.remainder->type() != BlockType::Zero;
+  div.remainder->removeTree();
   if (addOne) {
     EditionReference result = IntegerHandler::Addition(
-        Integer::Handler(div.first), IntegerHandler(1));
-    div.first->removeTree();
+        Integer::Handler(div.quotient), IntegerHandler(1));
+    div.quotient->removeTree();
     expr->moveTreeOverTree(result);
   } else {
-    expr->moveTreeOverTree(div.first);
+    expr->moveTreeOverTree(div.quotient);
   }
   return true;
 }
@@ -79,19 +79,19 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
   }
   Tree* mult = PatternMatching::CreateAndSimplify(KMult(KA, KPow(10_e, KB)),
                                                   {.KA = value, .KB = digits});
-  auto [rounding, remainder] = IntegerHandler::Division(
-      Rational::Numerator(mult), Rational::Denominator(mult));
-  remainder->moveTreeOverTree(
-      Rational::Push(Integer::Handler(remainder), Rational::Denominator(mult)));
-  bool addOne = Comparison::Compare(remainder, KHalf) >= 0;
-  remainder->removeTree();
+  DivisionResult div = IntegerHandler::Division(Rational::Numerator(mult),
+                                                Rational::Denominator(mult));
+  div.remainder->moveTreeOverTree(Rational::Push(
+      Integer::Handler(div.remainder), Rational::Denominator(mult)));
+  bool addOne = Comparison::Compare(div.remainder, KHalf) >= 0;
+  div.remainder->removeTree();
   if (addOne) {
-    rounding->moveTreeOverTree(
-        IntegerHandler::Addition(Integer::Handler(rounding), 1));
+    div.quotient->moveTreeOverTree(
+        IntegerHandler::Addition(Integer::Handler(div.quotient), 1));
   }
   PatternMatching::CreateAndSimplify(KMult(KA, KPow(KPow(10_e, -1_e), KB)),
-                                     {.KA = rounding, .KB = digits});
-  rounding->removeTree();
+                                     {.KA = div.quotient, .KB = digits});
+  div.quotient->removeTree();
   mult->removeTree();
   expr->moveTreeOverTree(mult);
   return true;
@@ -232,12 +232,12 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
         IntegerHandler::Ucmp(
             m, IntegerHandler::Mult(testedPrimeFactor, testedPrimeFactor,
                                     &workingBuffer)) > 0;
-    auto [quotient, remainder] =
+    DivisionResult<IntegerHandler> div =
         IntegerHandler::Udiv(m, testedPrimeFactor, &workingBuffer);
-    if (remainder.isZero()) {
+    if (div.remainder.isZero()) {
       assert(result.coefficients[t] < UINT8_MAX);
       result.coefficients[t]++;
-      m = quotient;
+      m = div.quotient;
       if (m.isOne()) {
         result.numberOfFactors = t + 1;
         return result;

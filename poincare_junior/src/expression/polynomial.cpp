@@ -210,27 +210,27 @@ static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
   }
 }
 
-std::pair<Tree*, Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
+DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   EditionReference a(polA);
   if (polA->type() != BlockType::Polynomial &&
       polB->type() != BlockType::Polynomial) {
     assert(polA->type().isInteger() && polB->type().isInteger());
-    std::pair<Tree*, Tree*> nodePair = IntegerHandler::Division(
+    DivisionResult<Tree*> divisionResult = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
-    EditionReference quotient = nodePair.first;
-    EditionReference remainder = nodePair.second;
+    EditionReference quotient = divisionResult.quotient;
+    EditionReference remainder = divisionResult.remainder;
     polB->removeTree();
     if (Number::IsZero(remainder)) {
       a->removeTree();
-      return std::make_pair(quotient, remainder);
+      return {quotient, remainder};
     }
     quotient->removeTree();
     remainder->removeTree();
-    return std::make_pair((0_e)->clone(), a);
+    return {.quotient = (0_e)->clone(), .remainder = a};
   }
   if (polA->type() != BlockType::Polynomial) {
     polB->removeTree();
-    return std::make_pair((0_e)->clone(), a);
+    return {.quotient = (0_e)->clone(), .remainder = a};
   }
   const Tree* var = Variable(a);
   if (polB->type() == BlockType::Polynomial &&
@@ -245,10 +245,10 @@ std::pair<Tree*, Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   extractDegreeAndLeadingCoefficient(b, x, &degreeB, &leadingCoeffB);
   EditionReference currentQuotient(0_e);
   while (degreeA >= degreeB) {
-    std::pair<Tree*, Tree*> refPair =
+    DivisionResult result =
         PseudoDivision(leadingCoeffA->clone(), leadingCoeffB->clone());
-    EditionReference quotient = refPair.first;
-    EditionReference remainder = refPair.second;
+    EditionReference quotient = result.quotient;
+    EditionReference remainder = result.remainder;
     bool stopCondition = !Number::IsZero(remainder);
     remainder->removeTree();
     if (stopCondition) {
@@ -268,7 +268,7 @@ std::pair<Tree*, Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   }
   b->removeTree();
   x->removeTree();
-  return std::make_pair(currentQuotient, a);
+  return {.quotient = currentQuotient, .remainder = a};
 }
 
 void Polynomial::Inverse(Tree* pol) {

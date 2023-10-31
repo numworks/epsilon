@@ -64,6 +64,12 @@ class WorkingBuffer {
   size_t m_remainingSize;
 };
 
+template <class T>
+struct DivisionResult {
+  T quotient;
+  T remainder;
+};
+
 class IntegerHandler final {
   /* IntegerHandler don't own their digits but a pointer to the EditionPool
    * where the digits are stored. For optimization purpose, if the whole number
@@ -136,8 +142,8 @@ class IntegerHandler final {
   static Tree *Addition(const IntegerHandler &a, const IntegerHandler &b);
   static Tree *Subtraction(const IntegerHandler &a, const IntegerHandler &b);
   static Tree *Multiplication(const IntegerHandler &a, const IntegerHandler &b);
-  static std::pair<Tree *, Tree *> Division(const IntegerHandler &numerator,
-                                            const IntegerHandler &denominator);
+  static DivisionResult<Tree *> Division(const IntegerHandler &numerator,
+                                         const IntegerHandler &denominator);
   static Tree *Quotient(const IntegerHandler &numerator,
                         const IntegerHandler &denominator);
   static Tree *Remainder(const IntegerHandler &numerator,
@@ -186,9 +192,9 @@ class IntegerHandler final {
   static IntegerHandler Mult(const IntegerHandler &a, const IntegerHandler &b,
                              WorkingBuffer *workingBuffer,
                              bool oneDigitOverflow = false);
-  static std::pair<IntegerHandler, IntegerHandler> Udiv(
-      const IntegerHandler &a, const IntegerHandler &b,
-      WorkingBuffer *workingBuffer);
+  static DivisionResult<IntegerHandler> Udiv(const IntegerHandler &a,
+                                             const IntegerHandler &b,
+                                             WorkingBuffer *workingBuffer);
   static IntegerHandler GCD(const IntegerHandler &a, const IntegerHandler &b,
                             WorkingBuffer *workingBuffer);
   IntegerHandler multiplyByPowerOf2(uint8_t pow,

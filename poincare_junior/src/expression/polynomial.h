@@ -77,7 +77,7 @@ class Polynomial final {
    * representation A = B*Q.
    * Ex: x^2y^2+x = xy * (xy+1) + x-xy if we consider the variable x first
    * variable and  x^2y^2+x = (xy-1)*(xy+1) + x+1 if y is the first variable. */
-  static std::pair<Tree*, Tree*> PseudoDivision(Tree* polA, Tree* polB);
+  static DivisionResult<Tree*> PseudoDivision(Tree* polA, Tree* polB);
 
   // In-place transformations
   static void Inverse(Tree* pol);

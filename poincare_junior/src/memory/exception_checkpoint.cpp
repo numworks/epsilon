@@ -9,8 +9,8 @@ namespace PoincareJ {
 ExceptionCheckpoint* ExceptionCheckpoint::s_topmostExceptionCheckpoint;
 ExceptionType ExceptionCheckpoint::s_exceptionType = ExceptionType::None;
 
-ExceptionCheckpoint::ExceptionCheckpoint(Block* topmostBlock)
-    : m_parent(s_topmostExceptionCheckpoint), m_topmostBlock(topmostBlock) {
+ExceptionCheckpoint::ExceptionCheckpoint(Block* rightmostBlock)
+    : m_parent(s_topmostExceptionCheckpoint), m_rightmostBlock(rightmostBlock) {
   assert(s_exceptionType == ExceptionType::None);
 }
 
@@ -27,7 +27,7 @@ void ExceptionCheckpoint::rollback() {
   s_topmostExceptionCheckpoint = m_parent;
   /* Flush everything changed on the SharedEditionPool because it may be
    * corrupted. */
-  SharedEditionPool->flushFromBlock(m_topmostBlock);
+  SharedEditionPool->flushFromBlock(m_rightmostBlock);
   longjmp(m_jumpBuffer, 1);
 }
 

@@ -25,13 +25,13 @@
 //   // Handle exceptions.
 // }
 
-#define ExceptionTryAboveBlock(topmostBlock)      \
-  {                                               \
-    ExceptionCheckpoint checkpoint(topmostBlock); \
-    checkpoint.setActive();                       \
+#define ExceptionTryAfterBlock(rightmostBlock)      \
+  {                                                 \
+    ExceptionCheckpoint checkpoint(rightmostBlock); \
+    checkpoint.setActive();                         \
     if (setjmp(*(checkpoint.jumpBuffer())) == 0)
 
-#define ExceptionTry ExceptionTryAboveBlock(SharedEditionPool->lastBlock())
+#define ExceptionTry ExceptionTryAfterBlock(SharedEditionPool->lastBlock())
 
 #define ExceptionCatch(typeVarName)                                   \
   }                                                                   \
@@ -63,7 +63,7 @@ class ExceptionCheckpoint final {
   static void Raise(ExceptionType type) __attribute__((__noreturn__));
   static ExceptionType GetTypeAndClear();
 
-  ExceptionCheckpoint(Block* topmostBlock);
+  ExceptionCheckpoint(Block* rightmostBlock);
   ~ExceptionCheckpoint();
 
   void setActive() { s_topmostExceptionCheckpoint = this; }
@@ -78,8 +78,8 @@ class ExceptionCheckpoint final {
   jmp_buf m_jumpBuffer;
   ExceptionCheckpoint* m_parent;
   /* TODO: Assert no operation are performed on the Edition pool on blocks below
-   * s_topmostExceptionCheckpoint->m_topmostBlock. */
-  Block* m_topmostBlock;
+   * s_topmostExceptionCheckpoint->m_rightmostBlock. */
+  Block* m_rightmostBlock;
 };
 
 }  // namespace PoincareJ

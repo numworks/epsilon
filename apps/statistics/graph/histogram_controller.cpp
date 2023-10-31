@@ -182,13 +182,24 @@ void HistogramController::preinitXRangeParameters(double *xMin, double *xMax) {
 void HistogramController::initRangeParameters() {
   assert(activeSeriesMethod()(m_store, selectedSeries()));
   double barWidth = m_store->barWidth();
-  double xMin;
-  preinitXRangeParameters(&xMin);
-  double xMax = m_histogramRange.xMax() + barWidth;
-  /* if a bar is represented by less than one pixel, we cap xMax */
-  if ((xMax - xMin) / barWidth > k_maxNumberOfBarsPerWindow) {
-    xMax = xMin + k_maxNumberOfBarsPerWindow * barWidth;
-  }
+  double xStart = m_store->firstDrawnBarAbscissa();
+  double minValue, maxValue;
+  preinitXRangeParameters(&minValue, &maxValue);
+
+  /* The range of bar at index barIndex is :
+   * [xStart + barWidth * barIndex ; xStart + barWidth * (barIndex + 1)] */
+
+  double barIndexMin = std::floor((minValue - xStart) / barWidth + FLT_EPSILON);
+  double barIndexMax = std::floor((maxValue - xStart) / barWidth + FLT_EPSILON);
+
+  // barIndexMax is the right end of the last bar
+  barIndexMax += 1.;
+
+  /* If a bar is represented by less than one pixel, we cap xMax */
+  barIndexMax = std::min(barIndexMax, barIndexMin + k_maxNumberOfBarsPerWindow);
+
+  double xMin = xStart + barWidth * barIndexMin;
+  double xMax = xStart + barWidth * barIndexMax;
 
   // TODO: Set the histogram range to double.
   float min = std::clamp(static_cast<float>(xMin), -Range1D<float>::k_maxFloat,

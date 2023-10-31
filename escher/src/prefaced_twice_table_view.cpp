@@ -99,7 +99,6 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   if (hideColumnPreface) {
     // Main table and row preface
     m_mainTableView->margins()->setLeft(m_mainTableViewLeftMargin);
-    m_rowPrefaceView.margins()->setLeft(m_mainTableViewLeftMargin);
     PrefacedTableView::layoutSubviewsInRect(bounds(), force);
 
     // Column preface
@@ -114,7 +113,6 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
 
     // Main table and row preface
     m_mainTableView->margins()->setLeft(0);
-    m_rowPrefaceView.margins()->setLeft(0);
     PrefacedTableView::layoutSubviewsInRect(
         KDRect(columnPrefaceWidth, 0, bounds().width() - columnPrefaceWidth,
                bounds().height()),

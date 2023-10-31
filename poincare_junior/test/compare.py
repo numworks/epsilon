@@ -35,7 +35,7 @@ def main():
               if new_result == 'CRASH':
                  broken.append(f"{new_args[0]}\n  now crashes")
               else:
-                 changed.append(f"{new_args[0]}\n  returns     {new_args[1]}\n  expected  {new_args[2]}")
+                 changed.append(f"{new_args[0]}\n  returns   {new_args[2]}\n  expected  {new_args[1]}")
        elif old_result == 'BAD' and old_args[2] != new_args[2]:
           changed.append(f"{new_args[0]}\n  from      {old_args[2]}\n  to        {new_args[2]}\n  expected  {new_args[1]}")
 

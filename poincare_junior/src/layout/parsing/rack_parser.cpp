@@ -23,6 +23,14 @@
 namespace PoincareJ {
 
 Tree *RackParser::parse() {
+#if 0
+  size_t endPosition = m_tokenizer.endPosition();
+  size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
+      m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
+  if (rightwardsArrowPosition != endPosition) {
+    return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
+  }
+#endif
   ExceptionTry {
     Tree *result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.

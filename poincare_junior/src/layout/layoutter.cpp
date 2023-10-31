@@ -247,22 +247,16 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Two:
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
-    case BlockType::IntegerNegBig:
+      assert(!Rational::Sign(expression).isStrictlyNegative());
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
+    case BlockType::IntegerNegBig:
     case BlockType::Half:
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-      EditionReference createdLayout =
-          SharedEditionPool->push(BlockType::FractionLayout);
-      EditionReference numerator =
-          SharedEditionPool->push<BlockType::RackLayout>(0);
-      layoutIntegerHandler(numerator, Rational::Numerator(expression));
-      EditionReference denominator =
-          SharedEditionPool->push<BlockType::RackLayout>(0);
-      layoutIntegerHandler(denominator, Rational::Denominator(expression));
-      NAry::AddChild(layoutParent, createdLayout);
+      // Expression should be beautifyied before layoutting
+      assert(false);
       break;
     }
     case BlockType::Decimal:

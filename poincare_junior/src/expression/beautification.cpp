@@ -5,6 +5,7 @@
 
 #include "approximation.h"
 #include "arithmetic.h"
+#include "number.h"
 #include "rational.h"
 #include "simplification.h"
 
@@ -104,8 +105,8 @@ void Beautification::SplitMultiplication(const Tree* expr,
   for (int i = 0; i < numberOfFactors; i++) {
     const Tree* factor = Factor(expr, i);
     TypeBlock factorType = factor->type();
-    Tree* factorsNumerator = nullptr;
-    Tree* factorsDenominator = nullptr;
+    EditionReference factorsNumerator;
+    EditionReference factorsDenominator;
     if (factorType.isRational()) {
       if (factorType == BlockType::One) {
         // Special case: add a unary numeral factor if r = 1
@@ -237,7 +238,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
 
   // Turn multiplications with negative powers into divisions
   if (ref->type() == BlockType::Multiplication ||
-      ref->type() == BlockType::Power) {
+      ref->type() == BlockType::Power || Number::IsStrictRational(ref)) {
     if (BeautifyIntoDivision(ref)) {
       return true;
     }

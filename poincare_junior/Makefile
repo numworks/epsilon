@@ -2,7 +2,6 @@ PLATFORM ?= simulator
 DEBUG ?= 1
 DEVELOPMENT ?= 1
 ARCH = arm64
-ASSERTIONS = 1
 
 include poincare_junior/omgpj/Makefile
 

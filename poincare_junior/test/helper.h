@@ -121,9 +121,11 @@ inline void assertionsWarn() {
       refId = r.identifier() - refId;                                       \
       r->removeNode();                                                      \
     }                                                                       \
+    if (refId != 0) {                                                       \
+      std::cout << "WARNING ! " << refId << " references have leaked.\n";   \
+    }                                                                       \
     std::cout << "Metrics [" << #F << "]\n"                                 \
-              << "  references:    " << std::right << std::setw(6) << refId \
-              << "\n  nextNode:      " << std::right << std::setw(6)        \
+              << "  nextNode:      " << std::right << std::setw(6)          \
               << Tree::nextNodeCount << "\n  nextNodeInPool:" << std::right \
               << std::setw(6) << Tree::nextNodeInPoolCount                  \
               << "\n  microseconds:  " << std::right << std::setw(6)        \

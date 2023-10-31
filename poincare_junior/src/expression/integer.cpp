@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <new>
 
+#include "k_tree.h"
 #include "rational.h"
 
 namespace PoincareJ {
@@ -614,15 +615,12 @@ Tree *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
 
 Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
-  IntegerHandler i = a;
-  if (i.isZero()) {
-    return i.pushOnEditionPool();
+  if (a.isZero() || b.isZero()) {
+    return (0_e)->clone();
   }
+  IntegerHandler i = a;
   i.setSign(NonStrictSign::Positive);
   IntegerHandler j = b;
-  if (j.isZero()) {
-    return j.pushOnEditionPool();
-  }
   j.setSign(NonStrictSign::Positive);
   if (Compare(i, j) == 0) {
     return i.pushOnEditionPool();

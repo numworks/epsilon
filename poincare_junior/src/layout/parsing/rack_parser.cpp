@@ -1171,7 +1171,7 @@ void RackParser::parseList(EditionReference &leftHandSide,
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   } else {
-    // leftHandSide = List::Builder();
+    leftHandSide = SharedEditionPool->push(BlockType::List);
   }
   if (popTokenIfType(Token::Type::LeftParenthesis)) {
     EditionReference parameter = parseCommaSeparatedList();

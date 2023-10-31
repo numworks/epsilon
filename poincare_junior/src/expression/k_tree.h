@@ -56,6 +56,7 @@ constexpr auto KIntegral = KFixedArity<4, BlockType::Integral>();
 
 constexpr auto KAdd = KNAry<BlockType::Addition>();
 constexpr auto KMult = KNAry<BlockType::Multiplication>();
+constexpr auto KList = KNAry<BlockType::List>();
 constexpr auto KSet = KNAry<BlockType::Set>();
 constexpr auto KSystemList = KNAry<BlockType::SystemList>();
 

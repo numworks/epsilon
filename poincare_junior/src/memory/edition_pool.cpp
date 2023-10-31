@@ -24,12 +24,9 @@ Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
-bool EditionPool::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
-  if (id > m_length) {
-    return false;
-  }
+void EditionPool::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
+  assert(id < m_length);
   storeNodeAtIndex(newNode, id);
-  return true;
 }
 
 void EditionPool::ReferenceTable::deleteIdentifier(uint16_t id) {

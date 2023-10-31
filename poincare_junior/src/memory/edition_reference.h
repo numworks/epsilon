@@ -55,6 +55,9 @@ class EditionReference {
   __attribute__((__used__)) void log() const;
 #endif
 
+  // Make if (ref) do the same thing as if (treePtr)
+  explicit operator bool() const { return tree() != nullptr; }
+
   operator Tree*() const { return tree(); }
   Tree* operator->() { return tree(); }
 

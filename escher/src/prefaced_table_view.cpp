@@ -103,16 +103,13 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
        m_rowPrefaceDataSource.cumulatedHeightAtPrefaceRow(false));
 
   // Main table
-  if (hideRowPreface) {
-    m_mainTableView->margins()->setTop(m_mainTableViewTopMargin);
-    setChildFrame(m_mainTableView, rect, force);
-  } else {
-    m_mainTableView->margins()->setTop(0);
-    setChildFrame(m_mainTableView,
-                  KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),
-                         rect.height() - rowPrefaceHeight),
-                  force);
-  }
+  m_mainTableView->margins()->setTop(hideRowPreface ? m_mainTableViewTopMargin
+                                                    : 0);
+  KDCoordinate prefaceHeight = hideRowPreface ? 0 : rowPrefaceHeight;
+  setChildFrame(m_mainTableView,
+                KDRect(rect.x(), rect.y() + prefaceHeight, rect.width(),
+                       rect.height() - prefaceHeight),
+                force);
 
   // Adjust scroll of main table with new frame.
   if (m_mainTableView->selectedRow() >= 0) {
@@ -128,19 +125,14 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
               verticalScrollToAddToHidePrefacesInMainTable(hideRowPreface)));
 
   // Row preface
-  if (hideRowPreface) {
-    setChildFrame(&m_rowPrefaceView, KDRectZero, force);
-  } else {
-    m_rowPrefaceView.margins()->setLeft(m_mainTableView->margins()->left());
-    m_rowPrefaceView.setContentOffset(
-        KDPoint(m_mainTableView->contentOffset().x(), 0));
-    setChildFrame(&m_rowPrefaceView,
-                  KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight),
-                  force);
-    assert(m_rowPrefaceView.margins()->horizontal() ==
-           m_mainTableView->margins()->horizontal());
-    assert(m_rowPrefaceView.margins()->vertical() == KDVerticalMargins());
-  }
+  m_rowPrefaceView.margins()->setLeft(m_mainTableView->margins()->left());
+  m_rowPrefaceView.setContentOffset(
+      KDPoint(m_mainTableView->contentOffset().x(), 0));
+  setChildFrame(&m_rowPrefaceView,
+                KDRect(rect.x(), rect.y(), rect.width(), prefaceHeight), force);
+  assert(m_rowPrefaceView.margins()->horizontal() ==
+         m_mainTableView->margins()->horizontal());
+  assert(m_rowPrefaceView.margins()->vertical() == KDVerticalMargins());
 }
 
 void PrefacedTableView::layoutScrollbars(bool force) {

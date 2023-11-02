@@ -1,8 +1,6 @@
 #ifndef ESCHER_PREFACED_TABLE_VIEW_H
 #define ESCHER_PREFACED_TABLE_VIEW_H
 
-#include <escher/container.h>
-#include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
 
 /* This class is used to add a "preface" to a selectable table : one of its

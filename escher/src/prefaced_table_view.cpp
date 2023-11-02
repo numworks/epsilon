@@ -139,7 +139,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                   force);
     assert(m_rowPrefaceView.margins()->horizontal() ==
            m_mainTableView->margins()->horizontal());
-    assert(m_rowPrefaceView.margins()->top() == 0);
+    assert(m_rowPrefaceView.margins()->vertical() == KDVerticalMargins());
   }
 }
 

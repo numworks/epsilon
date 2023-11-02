@@ -127,7 +127,8 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                   KDRect(0, rowPrefaceHeight, columnPrefaceWidth,
                          bounds().height() - rowPrefaceHeight),
                   force);
-    assert(m_columnPrefaceView.margins()->left() == 0);
+    assert(m_columnPrefaceView.margins()->horizontal() ==
+           KDHorizontalMargins());
     assert(m_columnPrefaceView.margins()->vertical() ==
            m_mainTableView->margins()->vertical());
 

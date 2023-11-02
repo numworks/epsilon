@@ -18,11 +18,11 @@
 
 /* - Placeholder P
  * | P TAG | ID | */
-CUSTOM_NODE(Placeholder, 0, 1)
+NODE(Placeholder, 0, 1)
 NODE(SystemList, NARY)
 #if ASSERTIONS
-NODE(TreeBorder, 0)
+NODE(TreeBorder)
 #endif
-NODE(NumberOfTypes, 0)
+NODE(NumberOfTypes)
 
 #undef SCOPED_NODE

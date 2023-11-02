@@ -4,35 +4,35 @@
 
 /* - Zero Z (same for One, Two, Half, MinusOne)
  * | Z TAG | */
-NODE(Zero, 0)
-NODE(One, 0)
-NODE(Two, 0)
-NODE(MinusOne, 0)
+NODE(Zero)
+NODE(One)
+NODE(Two)
+NODE(MinusOne)
 
 /* - IntegerShort IS
  * | IS TAG | SIGNED DIGIT0 | */
-CUSTOM_NODE(IntegerShort, 0, 1)
+NODE(IntegerShort, 0, 1)
 
 /* - Integer(Pos/Neg)Big IB: most significant digit last
  * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | */
-CUSTOM_NODE(IntegerPosBig, 0, 1)
-CUSTOM_NODE(IntegerNegBig, 0, 1)
+NODE(IntegerPosBig, 0, 1)
+NODE(IntegerNegBig, 0, 1)
 
 RANGE(Integer, Zero, IntegerNegBig)
 
 // 1.2 - Rationals
 
-NODE(Half, 0)
+NODE(Half)
 
 /* - RationShort RS
  * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | */
-CUSTOM_NODE(RationalShort, 0, 2)
+NODE(RationalShort, 0, 2)
 
 /* - Rational(Pos/Neg)Big RB
  * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
  * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | */
-CUSTOM_NODE(RationalPosBig, 0, 2)
-CUSTOM_NODE(RationalNegBig, 0, 2)
+NODE(RationalPosBig, 0, 2)
+NODE(RationalNegBig, 0, 2)
 
 RANGE(Rational, Zero, RationalNegBig)
 
@@ -40,17 +40,17 @@ RANGE(Rational, Zero, RationalNegBig)
 
 /* - Float F
  * | F TAG | VALUE (4 bytes) | */
-CUSTOM_NODE(SingleFloat, 0, sizeof(float))
+NODE(SingleFloat, 0, sizeof(float))
 
 /* - Double D
  * | D TAG | VALUE (8 bytes) | */
-CUSTOM_NODE(DoubleFloat, 0, sizeof(double))
+NODE(DoubleFloat, 0, sizeof(double))
 
 RANGE(Float, SingleFloat, DoubleFloat)
 
 /* - Constant C
  * | C TAG | NODE | */
-CUSTOM_NODE(Constant, 0, 1)
+NODE(Constant, 0, 1)
 
 RANGE(Number, Zero, Constant)
 
@@ -70,21 +70,21 @@ RANGE(Algebraic, Zero, Addition)
 
 /* - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
-CUSTOM_NODE(UserSymbol, 0, 1)
-CUSTOM_NODE(UserFunction, 0, 1)
-CUSTOM_NODE(UserSequence, 0, 1)
+NODE(UserSymbol, 0, 1)
+NODE(UserFunction, 0, 1)
+NODE(UserSequence, 0, 1)
 
 RANGE(UserNamed, UserSymbol, UserSequence)
 
 /* - Variable V
  * | V TAG | ID | */
-CUSTOM_NODE(Variable, 0, 1)
+NODE(Variable, 0, 1)
 
 NODE(Sine, 1)
 NODE(Cosine, 1)
 NODE(Tangent, 1)
 
-NODE(Infinity, 0)
+NODE(Infinity)
 
 // 3 - Other expressions in Alphabetic order
 
@@ -99,7 +99,7 @@ NODE(Conjugate, 1)
 
 /* - Decimal DC
  * | DC TAG | NUMBER DIGITS AFTER ZERO | */
-CUSTOM_NODE(Decimal, 1, 1)
+NODE(Decimal, 1, 1)
 NODE(Division, 2)
 NODE(Exponential, 1)
 NODE(Factorial, 1)
@@ -122,7 +122,7 @@ NODE(Opposite, 1)
  *  - the first child describes the variable x
  *  - the n following children describe the coefficients.
  *  Polynomials can be recursive (have polynomials children) */
-CUSTOM_NODE(Polynomial, NARY, 0)
+NODE(Polynomial, NARY)
 
 NODE(PowerReal, 2)
 NODE(Quotient, 2)
@@ -169,12 +169,12 @@ RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 // 6 - Order dependant expressions
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
-CUSTOM_NODE(Unit, 0, 2)
+NODE(Unit, 0, 2)
 NODE(Dependency, 2)
 NODE(List, NARY)
 NODE(Set, NARY)
-NODE(Nonreal, 0)
-NODE(Undefined, 0)
+NODE(Nonreal)
+NODE(Undefined)
 
 RANGE(Expression, Zero, Undefined)
 

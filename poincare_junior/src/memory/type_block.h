@@ -10,28 +10,38 @@ namespace PoincareJ {
 /* The items to include in the enum are wrapped with a macro and split in
  * different files to tidy them and be able to use them in different ways. */
 
-/* The RANGE macro does nothing yet */
-#define RANGE(NAME, FIRST, LAST)
+/* The macro NODE(name, nbChildren=0, nbAdditionalHeaderBlocks=0) declares nodes
+ * with arity nbChildren (can be NARY) and some optional extra blocks in the
+ * header to store special data. */
 
-/* CUSTOM_NODE declares nodes containing S metablocks in their header to store
- * special data */
-#define CUSTOM_NODE(F, N, S) NODE(F, N)
+/* The macro RANGE(name, start, end) creates a named group of previously
+ * declared nodes. */
 
 #define NARY NAryNumberOfChildrenTag
 #define NARY2D NAry2DNumberOfChildrenTag
 
+// Boilerplate to alias NODE(F) as NODE3(F, 0, 0), NODE3 is the varying macro
+#define GET4TH(A, B, C, D, ...) D
+#define NODE1(F) NODE3(F, 0, 0)
+#define NODE2(F, N) NODE3(F, N, 0)
+#define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
+
 enum class BlockType : uint8_t {
 // Add all the types to the enum
-#define NODE(F, N) SCOPED_NODE(F),
+#define RANGE(...)
+#define NODE3(F, N, S) SCOPED_NODE(F),
 #include <poincare_junior/src/memory/types.h>
-#undef NODE
+#undef NODE3
+#undef RANGE
 };
 
 enum class LayoutType : uint8_t {
 // Members of LayoutType have the same values as their BlockType counterpart
-#define NODE(F, N) F = static_cast<uint8_t>(BlockType::F##Layout),
+#define RANGE(...)
+#define NODE3(F, N, S) F = static_cast<uint8_t>(BlockType::F##Layout),
 #include <poincare_junior/src/layout/types.h>
-#undef NODE
+#undef NODE3
+#undef RANGE
 };
 
 class TypeBlock : public Block {
@@ -49,15 +59,15 @@ class TypeBlock : public Block {
 #if POINCARE_MEMORY_TREE_LOG
   // Add an array of names for the BlockTypes
   static constexpr const char *names[] = {
-#define NODE(F, N) #F,
+#define RANGE(...)
+#define NODE3(F, N, S) #F,
 #include <poincare_junior/src/memory/types.h>
-#undef NODE
+#undef NODE3
+#undef RANGE
   };
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define NODE(F, N)
-#undef RANGE
 #define RANGE(NAME, FIRST, LAST)                                \
   static constexpr bool Is##NAME(BlockType type) {              \
     static_assert(BlockType::FIRST < BlockType::LAST);          \
@@ -65,10 +75,10 @@ class TypeBlock : public Block {
   }                                                             \
                                                                 \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
+#define NODE3(...)
 #include <poincare_junior/src/memory/types.h>
+#undef NODE3
 #undef RANGE
-#define RANGE(NAME, FIRST, LAST)
-#undef NODE
 
   constexpr static bool IsOfType(BlockType thisType,
                                  std::initializer_list<BlockType> types) {
@@ -109,19 +119,17 @@ class TypeBlock : public Block {
  public:
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     switch (type) {
-#undef CUSTOM_NODE
-#define NODE(F, N) CUSTOM_NODE(F, N, 0)
-#define CUSTOM_NODE(F, N, S)      \
+#define RANGE(...)
+#define NODE3(F, N, S)            \
   case BlockType::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + S;
 #include <poincare_junior/src/memory/types.h>
-#undef NODE
-#undef CUSTOM_NODE
-#define CUSTOM_NODE(F, N, S) NODE(F, N)
       default:
         return 1;
     }
   }
+#undef NODE3
+#undef RANGE
 
   constexpr size_t nodeSize() const {
     BlockType t = type();
@@ -175,11 +183,13 @@ class TypeBlock : public Block {
  private:
   constexpr static int NumberOfChildrenOrTag(BlockType type) {
     switch (type) {
-#define NODE(F, N)                \
+#define RANGE(...)
+#define NODE3(F, N, S)            \
   case BlockType::SCOPED_NODE(F): \
     return N;
 #include <poincare_junior/src/memory/types.h>
-#undef NODE
+#undef NODE3
+#undef RANGE
       default:
         return 0;
     }
@@ -188,8 +198,10 @@ class TypeBlock : public Block {
 
 #undef NARY
 #undef NARY2D
-#undef RANGE
-#undef CUSTOM_NODE
+#undef GET4TH
+#undef NODE1
+#undef NODE2
+#undef NODE
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 

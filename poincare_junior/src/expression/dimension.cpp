@@ -12,6 +12,44 @@ Dimension Dimension::Unit(const Tree* unit) {
               Units::Unit::GetRepresentative(unit));
 }
 
+int Dimension::GetListLength(const Tree* t) {
+  switch (t->type()) {
+    case BlockType::Mean:
+    case BlockType::StdDev:
+    case BlockType::Median:
+    case BlockType::Variance:
+    case BlockType::SampleStdDev:
+    case BlockType::Minimum:
+    case BlockType::Maximum:
+    case BlockType::ListSum:
+    case BlockType::ListProduct:
+      assert(GetListLength(t->child(0)));
+      return 0;
+    case BlockType::ListAccess:
+      assert(GetListLength(t->child(0)) && GetListLength(t->child(1)) == 1);
+      return 0;
+    case BlockType::ListSort:
+      assert(GetListLength(t->child(0)));
+      return GetListLength(t->child(0));
+    case BlockType::SystemList:
+      // all children should be scalars
+      return t->numberOfChildren();
+    case BlockType::ListSequence:
+      return Approximation::To<float>(t->child(2));
+    default: {
+      int current = 0;
+      for (const Tree* child : t->children()) {
+        int childListDim = GetListLength(child);
+        if (childListDim) {
+          assert(!current || current == childListDim);
+          current = childListDim;
+        }
+      }
+      return current;
+    }
+  }
+}
+
 bool Dimension::DeepCheckDimensions(const Tree* t) {
   Dimension childDim[t->numberOfChildren()];
   bool hasUnitChild = false;
@@ -111,21 +149,6 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
               childDim[Parametric::k_integrandIndex].isScalar() ||
               childDim[Parametric::k_integrandIndex].isSquareMatrix());
 
-    // Lists
-    case BlockType::Mean:
-    case BlockType::StdDev:
-    case BlockType::Median:
-    case BlockType::Variance:
-    case BlockType::SampleStdDev:
-    case BlockType::Minimum:
-    case BlockType::Maximum:
-    case BlockType::ListSum:
-    case BlockType::ListProduct:
-    case BlockType::ListSort:
-      return childDim[0].isList();
-    case BlockType::ListAccess:
-      return childDim[0].isList() && childDim[1].isScalar();
-
     // Matrices
     case BlockType::Dim:
     case BlockType::Ref:
@@ -165,7 +188,6 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     default:
       assert(t->isScalarOnly());
     case BlockType::Matrix:
-    case BlockType::List:
       if (hasNonKelvinChild ||
           (hasUnitChild && !(unitsAllowed || angleUnitsAllowed))) {
         // Early escape. By default, non-Kelvin temperature unit are forbidden.
@@ -243,7 +265,6 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Inverse:
     case BlockType::Ref:
     case BlockType::Rref:
-    case BlockType::ListSort:
       return GetDimension(t->nextNode());
     case BlockType::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
@@ -257,10 +278,6 @@ Dimension Dimension::GetDimension(const Tree* t) {
       int n = Approximation::To<float>(t->child(0));
       return Matrix(n, n);
     }
-    case BlockType::List:
-      return List(t->numberOfChildren());
-    case BlockType::ListSequence:
-      return List(Approximation::To<float>(t->child(2)));
     case BlockType::Unit:
       return Dimension::Unit(t);
     case BlockType::ArcCosine:

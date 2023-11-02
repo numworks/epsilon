@@ -12,6 +12,13 @@ bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0)) {
   return result;
 }
 
+bool len(const char* input, int n) {
+  Tree* expression = TextToTree(input);
+  bool result = Dimension::GetListLength(expression) == n;
+  expression->removeTree();
+  return result;
+}
+
 QUIZ_CASE(pcj_dimension) {
   auto Scalar = Dimension::Scalar();
   auto Matrix = Dimension::Matrix;
@@ -31,6 +38,13 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("cross([[1,2,3]],[[1,2,3]])", Matrix(1, 3)));
   QUIZ_ASSERT(dim("transpose([[1,2]])*[[1,2,3]]", Matrix(2, 3)));
   QUIZ_ASSERT(dim("sum([[k,2]], k, 1, n)", Matrix(1, 2)));
+
+  QUIZ_ASSERT(len("1", 0));
+  QUIZ_ASSERT(len("{1,2}", 2));
+  QUIZ_ASSERT(len("2*cos({1,2})+3", 2));
+  QUIZ_ASSERT(len("sequence(2*k+1,k,4)", 4));
+  QUIZ_ASSERT(len("2+mean({1,2})", 0));
+  QUIZ_ASSERT(len("sort({1,2})", 2));
 
   QUIZ_ASSERT(SharedEditionPool->numberOfTrees() == 0);
 }

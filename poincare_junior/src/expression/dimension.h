@@ -81,6 +81,7 @@ struct Dimension {
   }
 
   static Dimension GetDimension(const Tree* t);
+  static int GetListLength(const Tree* t);
   static bool DeepCheckDimensions(const Tree* t);
 
   Type type;

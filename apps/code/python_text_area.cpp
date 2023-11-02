@@ -537,6 +537,15 @@ bool PythonTextArea::handleEventWithText(const char *text, bool indentation,
   return result;
 }
 
+void PythonTextArea::removeAutocompletionText() {
+  assert(m_contentView.isAutocompleting());
+  assert(m_contentView.autocompletionEnd() != nullptr);
+  const char *autocompleteStart = m_contentView.cursorLocation();
+  const char *autocompleteEnd = m_contentView.autocompletionEnd();
+  assert(autocompleteEnd != nullptr && autocompleteEnd > autocompleteStart);
+  m_contentView.removeText(autocompleteStart, autocompleteEnd);
+}
+
 void PythonTextArea::prepareVariableBoxBeforeOpening() {
   if (m_contentView.isAutocompleting()) {
     /* Remove the autocompletion text so that opening the Varbox does not
@@ -575,15 +584,6 @@ void PythonTextArea::removeAutocompletion() {
   assert(m_contentView.isAutocompleting());
   removeAutocompletionText();
   m_contentView.setAutocompleting(false);
-}
-
-void PythonTextArea::removeAutocompletionText() {
-  assert(m_contentView.isAutocompleting());
-  assert(m_contentView.autocompletionEnd() != nullptr);
-  const char *autocompleteStart = m_contentView.cursorLocation();
-  const char *autocompleteEnd = m_contentView.autocompletionEnd();
-  assert(autocompleteEnd != nullptr && autocompleteEnd > autocompleteStart);
-  m_contentView.removeText(autocompleteStart, autocompleteEnd);
 }
 
 void PythonTextArea::addAutocompletion(int index) {

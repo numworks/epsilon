@@ -53,8 +53,6 @@ class PrefacedTableView : public View,
 
  protected:
   virtual void layoutSubviewsInRect(KDRect rect, bool force);
-  void layoutScrollbars(bool force);
-  void updateVirtualOffset();
   virtual void resetContentOffset();
 
   RowPrefaceDataSource m_rowPrefaceDataSource;
@@ -79,6 +77,8 @@ class PrefacedTableView : public View,
       bool hideColumnPreface) const {
     return 0;
   }
+  void updateVirtualOffset();
+  void layoutScrollbars(bool force);
 
   SelectableTableViewDelegate* m_mainTableDelegate;
   KDPoint m_virtualOffset;

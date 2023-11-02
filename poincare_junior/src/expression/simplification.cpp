@@ -809,6 +809,26 @@ bool ShouldApproximateOnSimplify(Dimension dimension) {
   return (dimension.isUnit() && !dimension.isAngleUnit());
 }
 
+static bool ProjectToNthListElement(Tree* expr, int n) {
+  switch (expr->type()) {
+    case BlockType::SystemList:
+      assert(n < expr->numberOfChildren());
+      expr->moveTreeOverTree(expr->child(n));
+      return true;
+    case BlockType::ListSort:
+      assert(false);  // TODO
+    default:
+      if (expr->type().isListToScalar()) {
+        return false;
+      }
+      bool changed = false;
+      for (Tree* child : expr->children()) {
+        changed = ProjectToNthListElement(child, n) || changed;
+      }
+      return changed;
+  }
+}
+
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   /* TODO: If following assert cannot be satisfied, copy ref at the end, call
    * SimplifyLastTree on copy and replace results. */
@@ -833,13 +853,35 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     Tree* variables = Variables::GetUserSymbols(ref);
     SwapTrees(&ref, &variables);
     Variables::ProjectToId(ref, variables);
-    changed = DeepSystematicReduce(ref) || changed;
-    changed = DeepApplyMatrixOperators(ref) || changed;
-    // TODO: Bubble up Matrices, complexes, units, lists.
-    changed = AdvancedReduction(ref, ref) || changed;
-    assert(!DeepSystematicReduce(ref));
-    assert(!DeepApplyMatrixOperators(ref));
-    assert(!AdvancedReduction(ref, ref));
+    int listLength = Dimension::GetListLength(ref);
+    bool isList = listLength != 0;
+    Tree* list;
+    if (isList) {
+      list = KList()->clone();
+      NAry::SetNumberOfChildren(list, listLength);
+    } else {
+      listLength = 1;
+    }
+    for (int i = 0; i < listLength; i++) {
+      Tree* e = isList ? ref->clone() : ref;
+      if (isList) {
+        // changed value intentionally ignored
+        ProjectToNthListElement(e, i);
+      }
+      changed = DeepSystematicReduce(e) || changed;
+      changed = DeepApplyMatrixOperators(e) || changed;
+      // TODO: Bubble up Matrices, complexes, units, lists.
+      changed = AdvancedReduction(e, e) || changed;
+      assert(!DeepSystematicReduce(e));
+      assert(!DeepApplyMatrixOperators(e));
+    }
+    if (isList) {
+      if (changed) {
+        ref->moveTreeOverTree(list);
+      } else {
+        list->removeTree();
+      }
+    }
     changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
     Variables::BeautifyToName(ref, variables);
     variables->removeTree();

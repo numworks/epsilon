@@ -40,6 +40,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case BlockType::Addition:
       return 5;
     case BlockType::Set:
+    case BlockType::List:
       return 9;
     case BlockType::RackLayout:
       return 10;
@@ -310,12 +311,13 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutText(layoutParent, buffer);
       break;
     }
+    // TODO make list and set different
+    case BlockType::List:
     case BlockType::Set:
       PushCodePoint(layoutParent, '{');
       layoutInfixOperator(layoutParent, expression, ',');
       PushCodePoint(layoutParent, '}');
       break;
-    case BlockType::List:
     case BlockType::Polynomial:
     default:
       if (Builtin::IsReservedFunction(type)) {

@@ -170,6 +170,8 @@ RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 
 NODE(List, NARY)
 NODE(ListSequence, 3)
+NODE(ListSort, 1)
+
 NODE(ListAccess, 2)
 NODE(Mean, 1)
 NODE(StdDev, 1)
@@ -178,9 +180,10 @@ NODE(Variance, 1)
 NODE(SampleStdDev, 1)
 NODE(Minimum, 1)
 NODE(Maximum, 1)
-NODE(ListSort, 1)
 NODE(ListSum, 1)
 NODE(ListProduct, 1)
+
+RANGE(ListToScalar, ListAccess, ListProduct)
 
 // 7 - Order dependant expressions
 /* - Unit U

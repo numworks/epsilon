@@ -281,6 +281,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("floor(x)+frac(x)", "x");
 
+  // Lists
+  simplifies_to("{1,2}+3", "{4,5}");
+  simplifies_to("{1,2}*{3,4}", "{3,8}");
+
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
   // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");

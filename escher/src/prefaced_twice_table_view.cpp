@@ -139,16 +139,11 @@ void PrefacedTwiceTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_prefaceIntersectionView.margins()->setBottom(
         m_rowPrefaceView.margins()->bottom());
     setChildFrame(&m_prefaceIntersectionView,
-                  KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0,
-                         rowPrefaceHeight),
-                  force);
+                  KDRect(0, 0, columnPrefaceWidth, rowPrefaceHeight), force);
     assert(m_prefaceIntersectionView.margins()->horizontal() ==
            m_columnPrefaceView.margins()->horizontal());
     assert(m_prefaceIntersectionView.margins()->vertical() ==
            m_rowPrefaceView.margins()->vertical());
-    assert(rowPrefaceHeight == 0 ||
-           m_prefaceIntersectionView.bounds().size() ==
-               KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
 }
 

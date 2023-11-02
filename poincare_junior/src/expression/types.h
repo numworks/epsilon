@@ -141,8 +141,9 @@ NODE(Sum, 4)
 NODE(Product, 4)
 NODE(Derivative, 3)
 NODE(Integral, 4)
+NODE(ListSequence, 3)
 
-RANGE(Parametric, Sum, Integral)
+RANGE(Parametric, Sum, ListSequence)
 
 // 5 - Matrix and vector builtins
 
@@ -169,7 +170,6 @@ RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 // 6 - Lists
 
 NODE(List, NARY)
-NODE(ListSequence, 3)
 NODE(ListSort, 1)
 
 NODE(ListAccess, 2)

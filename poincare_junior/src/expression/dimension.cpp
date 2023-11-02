@@ -35,7 +35,7 @@ int Dimension::GetListLength(const Tree* t) {
       // all children should be scalars
       return t->numberOfChildren();
     case BlockType::ListSequence:
-      return Approximation::To<float>(t->child(2));
+      return Approximation::To<float>(t->child(1));
     default: {
       int current = 0;
       for (const Tree* child : t->children()) {

@@ -284,6 +284,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   // Lists
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
+  simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

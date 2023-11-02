@@ -10,6 +10,20 @@
 
 namespace PoincareJ {
 
+uint8_t Parametric::FunctionIndex(const Tree* t) {
+  switch (t->type()) {
+    case BlockType::Derivative:
+    case BlockType::ListSequence:
+      return 2;
+    case BlockType::Integral:
+    case BlockType::Sum:
+    case BlockType::Product:
+      return k_integrandIndex;
+    default:
+      assert(false);
+  }
+}
+
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
   bool isSum = expr->isSum();
   Tree* lowerBound = expr->child(k_lowerBoundIndex);

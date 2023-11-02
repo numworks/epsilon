@@ -815,6 +815,16 @@ static bool ProjectToNthListElement(Tree* expr, int n) {
       assert(n < expr->numberOfChildren());
       expr->moveTreeOverTree(expr->child(n));
       return true;
+    case BlockType::ListSequence: {
+      EditionReference value = Integer::Push(n + 1);
+      Variables::Replace(expr->child(2), 0, value);
+      value->removeTree();
+      // sequence(k, max, f(k)) -> f(k)
+      expr->removeNode();
+      expr->removeTree();
+      expr->removeTree();
+      return true;
+    }
     case BlockType::ListSort:
       assert(false);  // TODO
     default:
@@ -866,7 +876,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       Tree* e = isList ? ref->clone() : ref;
       if (isList) {
         // changed value intentionally ignored
-        ProjectToNthListElement(e, i);
+        changed = ProjectToNthListElement(e, i);
       }
       changed = DeepSystematicReduce(e) || changed;
       changed = DeepApplyMatrixOperators(e) || changed;

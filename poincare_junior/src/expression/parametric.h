@@ -17,9 +17,7 @@ class Parametric {
   static bool ContractSumOrProduct(Tree* t);
   static bool Explicit(Tree* t);
 
-  static uint8_t FunctionIndex(const Tree* t) {
-    return (t->isDerivative()) ? k_derivandIndex : k_integrandIndex;
-  }
+  static uint8_t FunctionIndex(const Tree* t);
 
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;

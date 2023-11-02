@@ -48,14 +48,14 @@ void EditorController::willExitApp() { cleanStorageEmptySpace(); }
 bool EditorController::handleEvent(Ion::Events::Event event) {
   // TODO: this should be done in textAreaDidFinishEditing maybe??
   if (event == Ion::Events::OK || event == Ion::Events::Back ||
-      event == Ion::Events::Home || event == Ion::Events::USBEnumeration) {
+      event == Ion::Events::USBEnumeration) {
     /* Exit the edition on USB enumeration, because the storage needs to be in a
      * "clean" state (with all records packed at the beginning of the storage)
      */
     assert(!m_editorView.isAutocompleting());
     cleanStorageEmptySpace();
     stackController()->pop();
-    return event != Ion::Events::Home && event != Ion::Events::USBEnumeration;
+    return event != Ion::Events::USBEnumeration;
   }
   return false;
 }

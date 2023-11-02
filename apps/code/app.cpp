@@ -83,20 +83,24 @@ App::App(Snapshot *snapshot)
   Clipboard::sharedClipboard()->enterPython();
 }
 
+void App::quitInputRunLoop() {
+  /* We need to return true here because we want to actually exit from the
+   * input run loop, which requires ending a dispatchEvent cycle. */
+  m_consoleController.terminateInputLoop();
+  m_modalViewController.dismissPotentialModal();
+  Ion::USB::clearEnumerationInterrupt();
+}
+
 App::~App() {
+  quitInputRunLoop();
   deinitPython();
   Clipboard::sharedClipboard()->exitPython();
 }
 
 bool App::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::USBEnumeration || event == Ion::Events::Home ||
-       event == Ion::Events::Termination) &&
+  if (event == Ion::Events::USBEnumeration &&
       m_consoleController.inputRunLoopActive()) {
-    /* We need to return true here because we want to actually exit from the
-     * input run loop, which requires ending a dispatchEvent cycle. */
-    m_consoleController.terminateInputLoop();
-    m_modalViewController.dismissPotentialModal();
-    Ion::USB::clearEnumerationInterrupt();
+    quitInputRunLoop();
     return true;
   }
   return false;

@@ -12,6 +12,10 @@ class Arithmetic {
   static bool SimplifyQuotientOrRemainder(Tree* expr);
   static bool SimplifyFloor(Tree* expr);
 
+  // Turn ceil, frac and round into floor
+  static bool ExpandDecimals(Tree* expr);
+  static bool ContractDecimals(Tree* expr);
+
   static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
   static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }
 

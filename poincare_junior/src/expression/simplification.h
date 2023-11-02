@@ -5,6 +5,7 @@
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
+#include "arithmetic.h"
 #include "beautification.h"
 #include "context.h"
 #include "parametric.h"
@@ -155,11 +156,13 @@ class Simplification {
   static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
 
-  static bool ExpandDecimals(Tree *node);
-  EDITION_REF_WRAP(ExpandDecimals);
-
   constexpr static Operation k_contractOperations[] = {
-      ContractLn, ContractAbs, ContractExpMult, ContractTrigonometric};
+      ContractLn,
+      ContractAbs,
+      ContractExpMult,
+      ContractTrigonometric,
+      Arithmetic::ContractDecimals,
+  };
   constexpr static Operation k_expandOperations[] = {
       ExpandAbs,
       ExpandLn,
@@ -167,7 +170,7 @@ class Simplification {
       ExpandTrigonometric,
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
-      ExpandDecimals,
+      Arithmetic::ExpandDecimals,
   };
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};

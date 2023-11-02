@@ -45,6 +45,31 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
   return true;
 }
 
+bool Arithmetic::ExpandDecimals(Tree* expr) {
+  return
+      // ceil(A)  -> -floor(-A)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KCeil(KA), KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
+      // frac(A) -> A - floor(A)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KFrac(KA), KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
+      // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KRound(KA, KB),
+          KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
+                KPow(10_e, KMult(-1_e, KB))));
+}
+
+bool Arithmetic::ContractDecimals(Tree* expr) {
+  return
+      // -floor(-A) -> ceil(A)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KMult(-1_e, KFloor(KMult(-1_e, KA))), KCeil(KA)) ||
+      // A - floor(A) -> frac(A)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KAdd(KA, KMult(-1_e, KFloor(KA))), KFrac(KA));
+}
+
 bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
   Tree* first = expr->firstChild();

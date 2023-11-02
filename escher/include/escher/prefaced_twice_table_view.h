@@ -25,53 +25,6 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   }
 
  private:
-  class ColumnPrefaceDataSource : public IntermediaryDataSource {
-   public:
-    ColumnPrefaceDataSource(int prefaceColumn,
-                            TableViewDataSource* mainDataSource)
-        : IntermediaryDataSource(mainDataSource),
-          m_prefaceColumn(prefaceColumn) {}
-
-    void setPrefaceColumn(int column) { m_prefaceColumn = column; }
-    KDCoordinate cumulatedWidthAtPrefaceColumn(bool after) const;
-
-    int numberOfColumns() const override { return 1; }
-    KDCoordinate separatorBeforeColumn(int column) override { return 0; }
-    KDCoordinate separatorAfterPrefaceColumn() {
-      assert(m_prefaceColumn >= 0);
-      return m_mainDataSource->separatorBeforeColumn(m_prefaceColumn + 1);
-    }
-
-   private:
-    HighlightCell* reusableCell(int index, int type) override;
-    KDCoordinate nonMemoizedCumulatedWidthBeforeColumn(int column) override;
-    int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
-
-    int columnInMainDataSource(int i) const override {
-      assert(i == 0 || i == 1);
-      assert(m_prefaceColumn >= 0);
-      return m_prefaceColumn + i;
-    }
-
-    int m_prefaceColumn;
-  };
-
-  class IntersectionPrefaceDataSource : public RowPrefaceDataSource {
-   public:
-    /* The implementation of this class (1 row and 1 column) is a hack to avoid
-     * the diamond problem. Indeed, IntersectionPrefaceDataSource should inherit
-     * from RowPrefaceDataSource (1 row) and ColumnPrefaceDataSource (1 column).
-     * The hack we chose is to inherit from RowPrefaceDataSource and take a
-     * ColumnPrefaceDataSource as m_mainDataSource. WARNING : we choose to
-     * inherit from RowPrefaceDataSource because we don't need (current use in
-     * Epsilon) to setPrefaceRow while with ColumnPrefaceDataSource we need to
-     * setPrefaceColumn. Here, intersection will take directly the first cell of
-     * ColumnPrefaceDataSource, with the right prefaceColumn. */
-    IntersectionPrefaceDataSource(int prefaceRow,
-                                  ColumnPrefaceDataSource* columnDataSource)
-        : RowPrefaceDataSource(prefaceRow, columnDataSource) {}
-  };
-
   // View
   int numberOfSubviews() const override { return 6; }
   View* subviewAtIndex(int index) override;

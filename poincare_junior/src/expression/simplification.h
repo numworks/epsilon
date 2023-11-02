@@ -155,14 +155,20 @@ class Simplification {
   static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
 
+  static bool ExpandDecimals(Tree *node);
+  EDITION_REF_WRAP(ExpandDecimals);
+
   constexpr static Operation k_contractOperations[] = {
       ContractLn, ContractAbs, ContractExpMult, ContractTrigonometric};
-  constexpr static Operation k_expandOperations[] = {ExpandAbs,
-                                                     ExpandLn,
-                                                     ExpandExp,
-                                                     ExpandTrigonometric,
-                                                     Parametric::ExpandSum,
-                                                     Parametric::ExpandProduct};
+  constexpr static Operation k_expandOperations[] = {
+      ExpandAbs,
+      ExpandLn,
+      ExpandExp,
+      ExpandTrigonometric,
+      Parametric::ExpandSum,
+      Parametric::ExpandProduct,
+      ExpandDecimals,
+  };
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};
 };

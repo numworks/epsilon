@@ -278,6 +278,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("round(1/3,2)", "33/100");
   simplifies_to("round(3.3_m)", "3×_m");
 
+  // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
+  simplifies_to("ceil(-x)", "-floor(x)");
+  simplifies_to("floor(x)+frac(x)", "x");
+
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
   // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");

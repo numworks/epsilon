@@ -1268,6 +1268,21 @@ bool Simplification::ExpandPower(Tree* ref) {
   return true;
 }
 
+bool Simplification::ExpandDecimals(Tree* expr) {
+  return
+      // ceil(A)  -> -floor(-A)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KCeil(KA), KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
+      // frac(A) -> A - floor(A)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KFrac(KA), KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
+      // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KRound(KA, KB),
+          KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
+                KPow(10_e, KMult(-1_e, KB))));
+}
+
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   if (tree->numberOfChildren() < 1) {
     return false;

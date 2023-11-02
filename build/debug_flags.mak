@@ -1,9 +1,3 @@
-ifeq ($(DEBUG),1)
-ifeq ($(ASSERTIONS),0)
-$(error ASSERTIONS cannot be equal to 0 when DEBUG=1)
-endif
-endif
-
 # Define the DEBUG and ASSERTIONS flags. This can't be done in defaults.mak
 # since ASSERTIONS could have been altered by targets.mak or toolchain.mak,
 # after defaults.mak was applied.

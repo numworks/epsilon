@@ -41,6 +41,9 @@ class PythonTextArea : public Escher::TextArea {
       const char** autocompletionLocationEnd = nullptr) const;
   bool isAutocompleting() const { return m_contentView.isAutocompleting(); }
 
+  // Just removes the suggested text, not the autocompletion mode
+  void removeAutocompletionText();
+
  protected:
   class ContentView : public Escher::TextArea::ContentView {
    public:
@@ -76,8 +79,6 @@ class PythonTextArea : public Escher::TextArea {
  private:
   void prepareVariableBoxBeforeOpening();
   void removeAutocompletion();
-  // Just removes the suggested text, not the autocompletion mode
-  void removeAutocompletionText();
   void addAutocompletion(int index = 0);
   // Assumes the var box is already loaded
   bool addAutocompletionTextAtIndex(int nextIndex,

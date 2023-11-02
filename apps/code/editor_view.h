@@ -14,6 +14,7 @@ class EditorView : public Escher::Responder,
   EditorView(Escher::Responder* parentResponder, App* pythonDelegate);
   bool isAutocompleting() const;
   void resetSelection();
+  void removeAutocompletionText();
   const char* text() const { return m_textArea.text(); }
   void setText(char* textBuffer, size_t textBufferSize) {
     m_textArea.setText(textBuffer, textBufferSize);

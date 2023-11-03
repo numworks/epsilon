@@ -70,6 +70,26 @@ Tree* List::Fold(const Tree* list, BlockType type) {
   return result;
 }
 
+Tree* List::Variance(const Tree* list, BlockType type) {
+  // var(L) = mean(L^2) - mean(L)^2
+  KTree variance =
+      KAdd(KMean(KPow(KA, 2_e)), KMult(-1_e, KPow(KMean(KA), 2_e)));
+  // sqrt(var)
+  KTree stdDev = KPow(variance, KHalf);
+  // stdDev * sqrt(1 + 1 / (n - 1))
+  KTree sampleStdDev =
+      KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KB, -1_e), -1_e))), KHalf);
+  if (type == BlockType::SampleStdDev) {
+    Tree* n = Integer::Push(Dimension::GetListLength(list));
+    PatternMatching::CreateAndSimplify(sampleStdDev, {.KA = list, .KB = n});
+    n->removeTree();
+    return n;
+  } else {
+    return PatternMatching::CreateAndSimplify(
+        type == BlockType::Variance ? variance : stdDev, {.KA = list});
+  }
+}
+
 Tree* List::Mean(const Tree* list) {
   Tree* result = KMult.node<2>->cloneNode();
   Fold(list, BlockType::ListSum);
@@ -89,14 +109,10 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case BlockType::Mean:
       e->moveTreeOverTree(List::Mean(e->child(0)));
       return true;
-    case BlockType::Variance: {
-      /* var(L) = mean(L^2) - mean(L)^2 */
-      Tree* variance = PatternMatching::CreateAndSimplify(
-          KAdd(KMean(KPow(KA, 2_e)), KMult(-1_e, KPow(KMean(KA), 2_e))),
-          {.KA = e->child(0)});
-      if (variance->type().isRational()) {
-        e->moveTreeOverTree(variance);
-      }
+    case BlockType::Variance:
+    case BlockType::StdDev:
+    case BlockType::SampleStdDev: {
+      e->moveTreeOverTree(List::Variance(e->child(0), e->type()));
       return true;
     }
     default:

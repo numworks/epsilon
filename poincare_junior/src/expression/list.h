@@ -17,6 +17,8 @@ struct List {
 
   static Tree* Fold(const Tree* list, BlockType type);
   static Tree* Mean(const Tree* list);
+  // Variance and related functions : stdDev, sampleStdDev
+  static Tree* Variance(const Tree* list, BlockType type);
 
   static bool ShallowApplyListOperators(Tree* expr);
 };

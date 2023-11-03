@@ -182,6 +182,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.ᴇ1", "50");
   simplifies_to("(2+π)*ln(2)", "2×ln(2)+π×ln(2)");
   simplifies_to("undef", "undef");
+  simplifies_to("1+ln(x)+ln(y)", "1+ln(x×y)");
 
   // Trigonometry identities
   simplifies_to("cos(0)", "1");
@@ -253,9 +254,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("conj(x+i×y)", "-im(y)+re(x)-(im(x)+re(y))×i");
   simplifies_to("im(re(x)+i×im(x))", "im(x)");
   simplifies_to("re(re(x)+i×im(x))", "re(x)");
-  simplifies_to("abs(x+i×y)",
-                "√(im(x)^(2)+im(y)^(2)+re(x)^(2)+re(y)^(2)-2×im(y)×re(x)+2×im("
-                "x)×re(y))");
+  simplifies_to("abs(x+i×y)", "√((-im(y)+re(x))^(2)+(im(x)+re(y))^(2))");
   // Parametrics
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");

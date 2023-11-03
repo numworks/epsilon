@@ -358,7 +358,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
   } else if (type == BlockType::Addition || type == BlockType::Multiplication ||
              type == BlockType::Complex) {
     for (const Tree* child : expression->children()) {
-      if (child->isAddition() && type != BlockType::Complex &&
+      if (child->isAddition() && type != BlockType::Addition &&
           type != BlockType::Complex) {
         AddVariable(variables, child);
       } else {

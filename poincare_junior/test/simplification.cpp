@@ -287,6 +287,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");
   simplifies_to("mean({1,3*x,2})", "x+1");
   simplifies_to("sum({1,3*x,2})", "3*x+3");
+  simplifies_to("min({1,-4/7,2,-2})", "-2");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

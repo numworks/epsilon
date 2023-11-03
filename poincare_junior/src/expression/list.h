@@ -15,7 +15,7 @@ struct List {
    * 2+{3,4}->2+3 */
   static bool ProjectToNthElement(Tree* expr, int n);
 
-  static Tree* Sum(const Tree* list);
+  static Tree* Fold(const Tree* list, BlockType type);
   static Tree* Mean(const Tree* list);
 
   static bool ShallowApplyListOperators(Tree* expr);

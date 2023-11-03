@@ -121,10 +121,10 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifySign(u);
     case BlockType::Floor:
       return Arithmetic::SimplifyFloor(u);
-    case BlockType::Mean:
-    case BlockType::ListSum:
-      return List::ShallowApplyListOperators(u);
     default:
+      if (u->type().isListToScalar()) {
+        return List::ShallowApplyListOperators(u);
+      }
       return false;
   }
 }

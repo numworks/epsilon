@@ -40,21 +40,37 @@ bool List::ProjectToNthElement(Tree* expr, int n) {
   }
 }
 
-Tree* List::Sum(const Tree* list) {
-  Tree* result = (0_e)->clone();
+Tree* List::Fold(const Tree* list, BlockType type) {
+  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   for (int i = 0; i < Size(list); i++) {
     Tree* element = list->clone();
     ProjectToNthElement(element, i);
     Simplification::DeepSystematicReduce(element);
-    result->cloneNodeBeforeNode(KAdd.node<2>);
-    Simplification::ShallowSystematicReduce(result);
+    if (i == 0) {
+      continue;
+    }
+    if (type == BlockType::ListSum || type == BlockType::ListProduct) {
+      const Tree* node =
+          type == BlockType::ListSum ? KAdd.node<2> : KMult.node<2>;
+      result->cloneNodeBeforeNode(node);
+      Simplification::ShallowSystematicReduce(result);
+    } else {
+      assert(type == BlockType::Minimum || type == BlockType::Maximum);
+      // TODO we need a natural order not a comparison
+      if (Comparison::Compare(element, result) ==
+          ((type == BlockType::Maximum) ? 1 : -1)) {
+        result->removeTree();
+      } else {
+        element->removeTree();
+      }
+    }
   }
   return result;
 }
 
 Tree* List::Mean(const Tree* list) {
   Tree* result = KMult.node<2>->cloneNode();
-  Sum(list);
+  Fold(list, BlockType::ListSum);
   Rational::Push(1, Size(list));
   Simplification::ShallowSystematicReduce(result);
   return result;
@@ -66,7 +82,10 @@ bool List::ShallowApplyListOperators(Tree* e) {
       e->moveTreeOverTree(List::Mean(e->child(0)));
       return true;
     case BlockType::ListSum:
-      e->moveTreeOverTree(List::Sum(e->child(0)));
+    case BlockType::ListProduct:
+    case BlockType::Minimum:
+    case BlockType::Maximum:
+      e->moveTreeOverTree(List::Fold(e->child(0), e->type()));
       return true;
     default:
       return false;

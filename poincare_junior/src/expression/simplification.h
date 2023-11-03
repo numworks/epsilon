@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_SIMPLIFICATION_H
 
 #include <omgpj/enums.h>
+#include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -172,6 +173,7 @@ class Simplification {
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
       Arithmetic::ExpandDecimals,
+      Arithmetic::ExpandLnOnRational,
   };
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};

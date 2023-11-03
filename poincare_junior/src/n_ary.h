@@ -18,6 +18,9 @@ class NAry {
   static bool Flatten(Tree* nary);
   static bool SquashIfUnary(Tree* nary);
   static bool SquashIfEmpty(Tree* nary);
+  static bool SquashIfPossible(Tree* nary) {
+    return SquashIfEmpty(nary) || SquashIfUnary(nary);
+  }
   static bool Sanitize(Tree* nary);
   static bool Sort(Tree* nary,
                    Comparison::Order order = Comparison::Order::System);
@@ -25,6 +28,7 @@ class NAry {
       Tree* nary, Tree* child,
       Comparison::Order order = Comparison::Order::System);
   EDITION_REF_WRAP(Flatten);
+  EDITION_REF_WRAP(SquashIfPossible);
   EDITION_REF_WRAP(SquashIfEmpty);
   EDITION_REF_WRAP(SquashIfUnary);
   EDITION_REF_WRAP(Sanitize);

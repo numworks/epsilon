@@ -93,10 +93,7 @@ bool NAry::SquashIfEmpty(Tree* nary) {
 
 bool NAry::Sanitize(Tree* nary) {
   bool flattened = Flatten(nary);
-  if (nary->numberOfChildren() == 0) {
-    return SquashIfEmpty(nary) || flattened;
-  }
-  return SquashIfUnary(nary) || flattened;
+  return SquashIfPossible(nary) || flattened;
 }
 
 bool NAry::Sort(Tree* nary, Comparison::Order order) {

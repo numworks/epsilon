@@ -223,7 +223,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("[[2]]+[[3]]", "[[5]]");
   simplifies_to("2×[[3]]", "[[6]]");
   simplifies_to("[[1,2][3,4]]×[[2,3][4,5]]", "[[10,13][22,29]]");
-  simplifies_to("norm([[1,2,3]])", "√(14)");
+  simplifies_to("norm([[2,3,6]])", "7");
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
@@ -331,7 +331,7 @@ QUIZ_CASE(pcj_basic_simplification) {
 QUIZ_CASE(pcj_power_simplification) {
   // Real powers
   // - x^y if x is complex or positive
-  simplifies_to("123^(1/3)", "123^(1/3)");
+  simplifies_to("41^(1/3)", "41^(1/3)");
   // - PowerReal(x,y) y is not a rational
   simplifies_to("x^(e^(3))", "x^(e^(3))");
   // - Looking at y's reduced rational form p/q :
@@ -340,13 +340,20 @@ QUIZ_CASE(pcj_power_simplification) {
   //   * Unreal if q is even and x negative
   simplifies_to("(-1)^(1/2)", "nonreal");
   //   * |x|^y if p is even
-  simplifies_to("(-123)^(4/5)", "123^(4/5)");
+  simplifies_to("(-41)^(4/5)", "41^(4/5)");
   //   * -|x|^y if p is odd
-  simplifies_to("(-123)^(5/7)", "-123^(5/7)");
+  simplifies_to("(-41)^(5/7)", "-41^(5/7)");
 
   simplifies_to("√(x)^2", "√(x)^(2)", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
   simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
+
+  // Power expand
+  simplifies_to("√(12)", "2√(3)");
+  simplifies_to("e^(ln(2)+π)", "2e^π");
+  // TODO : improve with metric :
+  simplifies_to("123^(1/3)", "3^(1/3)×41^(1/3)");
+  simplifies_to("√(14)", "√(2)*√(7)");
 }
 
 QUIZ_CASE(pcj_variables) {

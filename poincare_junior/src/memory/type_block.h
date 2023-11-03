@@ -54,6 +54,8 @@ class TypeBlock : public Block {
 
   bool operator==(const TypeBlock &other) const = default;
   constexpr bool operator==(BlockType t) const { return type() == t; }
+  bool operator!=(const TypeBlock &other) const = default;
+  constexpr bool operator!=(BlockType t) const { return type() != t; }
   constexpr operator BlockType() const { return type(); }
 
 #if POINCARE_MEMORY_TREE_LOG

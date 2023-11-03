@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/tree.h>
 
+#include "simplification.h"
+
 namespace PoincareJ {
 
 struct List {
@@ -13,7 +15,8 @@ struct List {
 
   /* Replace lists by their nth element in descendants, for instance,
    * 2+{3,4}->2+3 */
-  static bool ProjectToNthElement(Tree* expr, int n);
+  static bool ProjectToNthElement(Tree* expr, int n,
+                                  Simplification::Operation reduce);
 
   static Tree* Fold(const Tree* list, BlockType type);
   static Tree* Mean(const Tree* list);

@@ -5,12 +5,12 @@
 
 #include "k_tree.h"
 #include "rational.h"
-#include "simplification.h"
 #include "variables.h"
 
 namespace PoincareJ {
 
-bool List::ProjectToNthElement(Tree* expr, int n) {
+bool List::ProjectToNthElement(Tree* expr, int n,
+                               Simplification::Operation reduce) {
   switch (expr->type()) {
     case BlockType::SystemList:
       assert(n < expr->numberOfChildren());
@@ -34,7 +34,10 @@ bool List::ProjectToNthElement(Tree* expr, int n) {
       }
       bool changed = false;
       for (Tree* child : expr->children()) {
-        changed = ProjectToNthElement(child, n) || changed;
+        changed = ProjectToNthElement(child, n, reduce) || changed;
+      }
+      if (changed) {
+        reduce(expr);
       }
       return changed;
   }
@@ -46,8 +49,7 @@ Tree* List::Fold(const Tree* list, BlockType type) {
   size_t size = Dimension::GetListLength(list);
   for (int i = 0; i < size; i++) {
     Tree* element = list->clone();
-    ProjectToNthElement(element, i);
-    Simplification::DeepSystematicReduce(element);
+    ProjectToNthElement(element, i, Simplification::ShallowSystematicReduce);
     if (i == 0) {
       continue;
     }

@@ -42,7 +42,9 @@ bool List::ProjectToNthElement(Tree* expr, int n) {
 
 Tree* List::Fold(const Tree* list, BlockType type) {
   Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
-  for (int i = 0; i < Size(list); i++) {
+  // TODO compute GetListLength less often
+  size_t size = Dimension::GetListLength(list);
+  for (int i = 0; i < size; i++) {
     Tree* element = list->clone();
     ProjectToNthElement(element, i);
     Simplification::DeepSystematicReduce(element);
@@ -71,22 +73,32 @@ Tree* List::Fold(const Tree* list, BlockType type) {
 Tree* List::Mean(const Tree* list) {
   Tree* result = KMult.node<2>->cloneNode();
   Fold(list, BlockType::ListSum);
-  Rational::Push(1, Size(list));
+  Rational::Push(1, Dimension::GetListLength(list));
   Simplification::ShallowSystematicReduce(result);
   return result;
 }
 
 bool List::ShallowApplyListOperators(Tree* e) {
   switch (e->type()) {
-    case BlockType::Mean:
-      e->moveTreeOverTree(List::Mean(e->child(0)));
-      return true;
     case BlockType::ListSum:
     case BlockType::ListProduct:
     case BlockType::Minimum:
     case BlockType::Maximum:
       e->moveTreeOverTree(List::Fold(e->child(0), e->type()));
       return true;
+    case BlockType::Mean:
+      e->moveTreeOverTree(List::Mean(e->child(0)));
+      return true;
+    case BlockType::Variance: {
+      /* var(L) = mean(L^2) - mean(L)^2 */
+      Tree* variance = PatternMatching::CreateAndSimplify(
+          KAdd(KMean(KPow(KA, 2_e)), KMult(-1_e, KPow(KMean(KA), 2_e))),
+          {.KA = e->child(0)});
+      if (variance->type().isRational()) {
+        e->moveTreeOverTree(variance);
+      }
+      return true;
+    }
     default:
       return false;
   }

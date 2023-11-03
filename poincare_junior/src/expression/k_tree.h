@@ -36,6 +36,7 @@ constexpr auto KOpposite = KUnary<BlockType::Opposite>();
 constexpr auto KFloor = KUnary<BlockType::Floor>();
 constexpr auto KCeil = KUnary<BlockType::Ceiling>();
 constexpr auto KFrac = KUnary<BlockType::FracPart>();
+constexpr auto KMean = KUnary<BlockType::Mean>();
 
 constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();

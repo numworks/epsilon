@@ -183,6 +183,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(2+π)*ln(2)", "2×ln(2)+π×ln(2)");
   simplifies_to("undef", "undef");
   simplifies_to("1+ln(x)+ln(y)", "1+ln(x×y)");
+  simplifies_to("ln(x)-ln(1/x)", "2×ln(x)");
+  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1+ln(1/x)");
+  simplifies_to("1-ln(x)", "1+ln(1/x)");
 
   // Trigonometry identities
   simplifies_to("cos(0)", "1");

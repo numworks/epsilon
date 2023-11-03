@@ -1068,10 +1068,22 @@ bool Simplification::ExpandAbs(Tree* ref) {
  */
 
 bool Simplification::ContractLn(Tree* ref) {
-  // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
-      KAdd(KTA, KLn(KMult(KB, KC)), KTD));
+  /* Contracting -ln(x) as ln(1/x) can help contracting even more ln in
+   * addition. However, -ln(x) might be preferred if nothing can be contracted.
+   * TODO : MatchAndReplace all possibilities instead:
+   * - A? + ln(B) - ln(C) + D?
+   * - A? - ln(B) + ln(C) + D?
+   * - A? - ln(B) - ln(C) + D?
+   */
+  return
+      // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
+          KAdd(KTA, KLn(KMult(KB, KC)), KTD)) ||
+      // A? - ln(B) + C? = A + ln(1/B) + C
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KMult(-1_e, KLn(KB)), KTC),
+          KAdd(KTA, KLn(KPow(KB, -1_e)), KTC));
 }
 
 bool Simplification::ExpandLn(Tree* ref) {

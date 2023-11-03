@@ -840,6 +840,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     changed = AdvancedReduction(ref, ref) || changed;
     assert(!DeepSystematicReduce(ref));
     assert(!DeepApplyMatrixOperators(ref));
+    assert(!AdvancedReduction(ref, ref));
     changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
     Variables::BeautifyToName(ref, variables);
     variables->removeTree();
@@ -877,20 +878,18 @@ bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
   if (changed) {
     ShallowSystematicReduce(ref);
   }
-  return ShallowAdvancedReduction(ref, root, changed) || changed;
+  return ShallowAdvancedReduction(ref, root) || changed;
 }
 
-bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
-                                              bool changed) {
+bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root) {
   assert(!DeepSystematicReduce(ref));
-  return (ref->isAlgebraic()
-              ? AdvanceReduceOnAlgebraic(ref, root, changed)
-              : AdvanceReduceOnTranscendental(ref, root, changed));
+  return (ref->isAlgebraic() ? AdvanceReduceOnAlgebraic(ref, root)
+                             : AdvanceReduceOnTranscendental(ref, root));
 }
 
-bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
-                                                   bool changed) {
-  if (ReduceInverseFunction(ref) || changed) {
+bool Simplification::AdvanceReduceOnTranscendental(Tree* ref,
+                                                   const Tree* root) {
+  if (ReduceInverseFunction(ref)) {
     return true;
   }
   const Metric metric(ref, root);
@@ -901,7 +900,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
        * Transcendental tree can expand but stay transcendental:
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
       bool reducedAlgebraic =
-          ref->isAlgebraic() && AdvanceReduceOnAlgebraic(ref, root, true);
+          ref->isAlgebraic() && AdvanceReduceOnAlgebraic(ref, root);
       // If algebraic got advanced reduced, metric must have been improved.
       assert(!reducedAlgebraic || metric.hasImproved());
       clone->removeTree();
@@ -915,8 +914,7 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
   return false;
 }
 
-bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root,
-                                              bool changed) {
+bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root) {
   assert(!DeepSystematicReduce(ref));
   const Metric metric(ref, root);
   EditionReference clone(ref->clone());

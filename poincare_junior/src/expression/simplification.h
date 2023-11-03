@@ -20,9 +20,8 @@ class Simplification {
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
   static bool AdvancedReduction(Tree *node, const Tree *root);
   EDITION_REF_WRAP_1(AdvancedReduction, const Tree *);
-  static bool ShallowAdvancedReduction(Tree *node, const Tree *root,
-                                       bool change);
-  EDITION_REF_WRAP_2(ShallowAdvancedReduction, const Tree *, bool);
+  static bool ShallowAdvancedReduction(Tree *node, const Tree *root);
+  EDITION_REF_WRAP_1(ShallowAdvancedReduction, const Tree *);
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
   static bool ShallowContract(Tree *e, void *context = nullptr) {
@@ -118,12 +117,10 @@ class Simplification {
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
 
-  static bool AdvanceReduceOnTranscendental(Tree *node, const Tree *root,
-                                            bool change);
-  EDITION_REF_WRAP_2(AdvanceReduceOnTranscendental, const Tree *, bool);
-  static bool AdvanceReduceOnAlgebraic(Tree *node, const Tree *root,
-                                       bool change);
-  EDITION_REF_WRAP_2(AdvanceReduceOnAlgebraic, const Tree *, bool);
+  static bool AdvanceReduceOnTranscendental(Tree *node, const Tree *root);
+  EDITION_REF_WRAP_1(AdvanceReduceOnTranscendental, const Tree *);
+  static bool AdvanceReduceOnAlgebraic(Tree *node, const Tree *root);
+  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, const Tree *);
   static bool ReduceInverseFunction(Tree *node);
   EDITION_REF_WRAP(ReduceInverseFunction);
   static bool ExpandTranscendentalOnRational(Tree *node);

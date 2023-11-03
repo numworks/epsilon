@@ -21,6 +21,7 @@
 
 #include "arithmetic.h"
 #include "derivation.h"
+#include "list.h"
 #include "number.h"
 #include "poincare_junior/src/expression/dependency.h"
 #include "poincare_junior/src/expression/variables.h"
@@ -120,6 +121,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifySign(u);
     case BlockType::Floor:
       return Arithmetic::SimplifyFloor(u);
+    case BlockType::Mean:
+    case BlockType::ListSum:
+      return List::ShallowApplyListOperators(u);
     default:
       return false;
   }
@@ -809,36 +813,6 @@ bool ShouldApproximateOnSimplify(Dimension dimension) {
   return (dimension.isUnit() && !dimension.isAngleUnit());
 }
 
-static bool ProjectToNthListElement(Tree* expr, int n) {
-  switch (expr->type()) {
-    case BlockType::SystemList:
-      assert(n < expr->numberOfChildren());
-      expr->moveTreeOverTree(expr->child(n));
-      return true;
-    case BlockType::ListSequence: {
-      EditionReference value = Integer::Push(n + 1);
-      Variables::Replace(expr->child(2), 0, value);
-      value->removeTree();
-      // sequence(k, max, f(k)) -> f(k)
-      expr->removeNode();
-      expr->removeTree();
-      expr->removeTree();
-      return true;
-    }
-    case BlockType::ListSort:
-      assert(false);  // TODO
-    default:
-      if (expr->type().isListToScalar()) {
-        return false;
-      }
-      bool changed = false;
-      for (Tree* child : expr->children()) {
-        changed = ProjectToNthListElement(child, n) || changed;
-      }
-      return changed;
-  }
-}
-
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
   /* TODO: If following assert cannot be satisfied, copy ref at the end, call
    * SimplifyLastTree on copy and replace results. */
@@ -876,7 +850,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       Tree* e = isList ? ref->clone() : ref;
       if (isList) {
         // changed value intentionally ignored
-        changed = ProjectToNthListElement(e, i);
+        changed = List::ProjectToNthElement(e, i);
       }
       changed = DeepSystematicReduce(e) || changed;
       changed = DeepApplyMatrixOperators(e) || changed;

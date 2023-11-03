@@ -25,6 +25,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/derivation.cpp \
   expression/dimension.cpp \
   expression/integer.cpp \
+  expression/list.cpp \
   expression/matrix.cpp \
   expression/metric.cpp \
   expression/number.cpp \

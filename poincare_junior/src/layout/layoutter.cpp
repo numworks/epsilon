@@ -88,8 +88,14 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
 void Layoutter::layoutBuiltin(EditionReference &layoutParent,
                               Tree *expression) {
   assert(Builtin::IsReservedFunction(expression->type()));
-  layoutText(layoutParent,
-             Builtin::ReservedFunctionName(expression->type()).mainAlias());
+  layoutFunctionNamed(
+      layoutParent, expression,
+      Builtin::ReservedFunctionName(expression->type()).mainAlias());
+}
+
+void Layoutter::layoutFunctionNamed(EditionReference &layoutParent,
+                                    Tree *expression, const char *name) {
+  layoutText(layoutParent, name);
   EditionReference parenthesis =
       SharedEditionPool->push(BlockType::ParenthesisLayout);
   EditionReference newParent =
@@ -246,7 +252,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Two:
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
+#ifndef POINCARE_MEMORY_TREE_LOG
       assert(!Rational::Sign(expression).isStrictlyNegative());
+#endif
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
     case BlockType::IntegerNegBig:
@@ -254,8 +262,14 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
+#if POINCARE_MEMORY_TREE_LOG
+      layoutIntegerHandler(layoutParent, Rational::Numerator(expression));
+      PushCodePoint(layoutParent, '/');
+      layoutIntegerHandler(layoutParent, Rational::Denominator(expression));
+#else
       // Expression should be beautifyied before layoutting
       assert(false);
+#endif
       break;
     }
     case BlockType::Decimal:
@@ -312,9 +326,15 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
         }
         layoutBuiltin(layoutParent, expression);
       } else {
+#if POINCARE_MEMORY_TREE_LOG
+        layoutFunctionNamed(
+            layoutParent, expression,
+            TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
+#else
         // TODO: Handle missing BlockTypes
         assert(false);
         PushCodePoint(layoutParent, '?');
+#endif
         break;
       }
   }

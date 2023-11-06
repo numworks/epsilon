@@ -60,6 +60,10 @@ class Tree : public TypeBlock {
   __attribute__((__used__)) void logBlocks() const { logBlocks(std::cout); }
   void logBlocks(std::ostream& stream, bool recursive = true,
                  int indentation = 0) const;
+  __attribute__((__used__)) void logSerialize() const {
+    logSerialize(std::cout);
+  }
+  void logSerialize(std::ostream& stream) const;
 #endif
 
   // Get the i-th value block (after the type block)

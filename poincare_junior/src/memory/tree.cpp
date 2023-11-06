@@ -12,7 +12,9 @@
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/constant.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #endif
 
 namespace PoincareJ {
@@ -113,6 +115,16 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " prefixId=" << static_cast<int>(nodeValue(1));
     return;
   }
+}
+
+void Tree::logSerialize(std::ostream& stream) const {
+  EditionReference outputLayout = Layoutter::LayoutExpression(clone());
+  assert(!outputLayout.isUninitialized());
+  constexpr size_t bufferSize = 256;
+  char buffer[bufferSize];
+  *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+  outputLayout->removeTree();
+  stream << buffer << "\n";
 }
 
 void Tree::logBlocks(std::ostream& stream, bool recursive,

@@ -27,7 +27,8 @@ bool List::ProjectToNthElement(Tree* expr, int n,
       return true;
     }
     case BlockType::ListSort:
-      assert(false);  // TODO
+    case BlockType::Median:
+      assert(false);  // Must have been remove by simplification
     default:
       if (expr->type().isListToScalar()) {
         return false;
@@ -130,6 +131,31 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case BlockType::StdDev:
     case BlockType::SampleStdDev: {
       e->moveTreeOverTree(List::Variance(e->child(0), e->type()));
+      return true;
+    }
+    case BlockType::ListSort:
+    case BlockType::Median: {
+      Tree* list = e->child(0);
+      BubbleUp(list, Simplification::ShallowSystematicReduce);
+      NAry::Sort(list);
+      if (e->isMedian()) {
+        int n = list->numberOfChildren();
+        if (n % 2) {
+          e->moveTreeOverTree(list->child(n / 2));
+        } else {
+          e->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+              KMult(KHalf, KAdd(KA, KB)),
+              {.KA = list->child(n / 2 - 1), .KB = list->child(n / 2)}));
+        }
+      } else {
+        e->removeNode();
+      }
+      return true;
+    }
+    case BlockType::ListAccess: {
+      BubbleUp(e->child(0), Simplification::ShallowSystematicReduce);
+      int n = Integer::Handler(e->child(1)).to<uint8_t>();
+      e->moveTreeOverTree(e->child(0)->child(n));
       return true;
     }
     default:

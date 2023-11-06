@@ -121,6 +121,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifySign(u);
     case BlockType::Floor:
       return Arithmetic::SimplifyFloor(u);
+    case BlockType::ListSort:
+    case BlockType::Median:
+      return List::ShallowApplyListOperators(u);
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);

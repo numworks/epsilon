@@ -37,7 +37,7 @@ Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
 
 Tree* Polynomial::LeadingIntegerCoefficient(Tree* polynomial) {
   Tree* result = polynomial;
-  while (result->type() == BlockType::Polynomial) {
+  while (result->isPolynomial()) {
     result = LeadingCoefficient(result);
   }
   return result;
@@ -120,8 +120,8 @@ Tree* Polynomial::Subtraction(Tree* polA, Tree* polB) {
 Tree* Polynomial::Operation(Tree* polA, Tree* polB, BlockType blockType,
                             OperationMonomial operationMonomial,
                             OperationReduce operationMonomialAndReduce) {
-  if (polA->type() != BlockType::Polynomial) {
-    if (polB->type() != BlockType::Polynomial) {
+  if (!polA->isPolynomial()) {
+    if (!polB->isPolynomial()) {
       EditionReference op =
           blockType == BlockType::Addition
               ? SharedEditionPool->push<BlockType::Addition>(2)
@@ -137,13 +137,11 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, BlockType blockType,
                      operationMonomialAndReduce);
   }
   const Tree* x = Variable(polA);
-  if (polB->type() == BlockType::Polynomial &&
-      Comparison::Compare(x, Variable(polB)) > 0) {
+  if (polB->isPolynomial() && Comparison::Compare(x, Variable(polB)) > 0) {
     return Operation(polB, polA, blockType, operationMonomial,
                      operationMonomialAndReduce);
   }
-  if (polB->type() != BlockType::Polynomial ||
-      !Comparison::AreEqual(x, Variable(polB))) {
+  if (!polB->isPolynomial() || !Comparison::AreEqual(x, Variable(polB))) {
     polA =
         operationMonomial(polA, std::make_pair(polB, static_cast<uint8_t>(0)));
   } else {
@@ -200,7 +198,7 @@ Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
 static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
                                                uint8_t* degree,
                                                EditionReference* coefficient) {
-  if (pol->type() == BlockType::Polynomial &&
+  if (pol->isPolynomial() &&
       Comparison::AreEqual(x, Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
     *coefficient = Polynomial::LeadingCoefficient(pol);
@@ -212,8 +210,7 @@ static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
 
 DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   EditionReference a(polA);
-  if (polA->type() != BlockType::Polynomial &&
-      polB->type() != BlockType::Polynomial) {
+  if (!polA->isPolynomial() && !polB->isPolynomial()) {
     assert(polA->isInteger() && polB->isInteger());
     DivisionResult<Tree*> divisionResult = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
@@ -228,13 +225,12 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
     remainder->removeTree();
     return {.quotient = (0_e)->clone(), .remainder = a};
   }
-  if (polA->type() != BlockType::Polynomial) {
+  if (!polA->isPolynomial()) {
     polB->removeTree();
     return {.quotient = (0_e)->clone(), .remainder = a};
   }
   const Tree* var = Variable(a);
-  if (polB->type() == BlockType::Polynomial &&
-      Comparison::Compare(var, Variable(polB)) >= 0) {
+  if (polB->isPolynomial() && Comparison::Compare(var, Variable(polB)) >= 0) {
     var = Variable(polB);
   }
   EditionReference b(polB);
@@ -272,7 +268,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
 }
 
 void Polynomial::Inverse(Tree* pol) {
-  if (pol->type() != BlockType::Polynomial) {
+  if (!pol->isPolynomial()) {
     Integer::SetSign(pol, Integer::Sign(pol) == NonStrictSign::Positive
                               ? NonStrictSign::Negative
                               : NonStrictSign::Positive);
@@ -362,7 +358,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
   } else if (type == BlockType::Addition || type == BlockType::Multiplication ||
              type == BlockType::Complex) {
     for (const Tree* child : expression->children()) {
-      if (child->type() == BlockType::Addition && type != BlockType::Complex &&
+      if (child->isAddition() && type != BlockType::Complex &&
           type != BlockType::Complex) {
         AddVariable(variables, child);
       } else {
@@ -449,7 +445,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
       return std::make_pair(expression->cloneTreeOverTree(1_e), exp);
     }
   }
-  if (expression->type() == BlockType::Multiplication) {
+  if (expression->isMultiplication()) {
     for (auto [child, index] : NodeIterator::Children<Editable>(expression)) {
       auto [childCoefficient, childExponent] =
           ParseMonomial(child->clone(), variable);
@@ -472,7 +468,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
 
 #if 0
 bool IsInSetOrIsEqual(const Tree* expression, const Tree* variables) {
-  return variables.type() == BlockType::Set ?
+  return variables.isSet() ?
     Set::Includes(variables, expression) :
     Compare::AreEqual(variables, expression);
 }
@@ -506,7 +502,7 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
 
 EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   BlockType type = expression.type();
-  if (expression.type() == BlockType::Addition) {
+  if (expression.isAddition()) {
     if (Comparison::AreEqual(expression, variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }

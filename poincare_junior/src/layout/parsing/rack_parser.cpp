@@ -444,7 +444,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     CloneNodeAtNode(leftHandSide, KTree<BlockType::Subtraction>());
     return;
   }
-  if (leftHandSide->type() == BlockType::Addition) {
+  if (leftHandSide->isAddition()) {
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {
@@ -516,7 +516,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
                                    Token::Type stoppingType) {
   EditionReference rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, stoppingType);
-  if (leftHandSide->type() == BlockType::Multiplication) {
+  if (leftHandSide->isMultiplication()) {
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {
@@ -935,7 +935,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   const Tree *node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
-  assert(node->type() == BlockType::CodePointLayout && length == 1);  // TODO
+  assert(node->isCodePointLayout() && length == 1);  // TODO
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
   char buffer[bufferSize];
   CodePointLayout::GetName(node, buffer, bufferSize);
@@ -1071,9 +1071,8 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 // }
 
 Tree *RackParser::parseFunctionParameters() {
-  bool parenthesisIsLayout =
-      m_nextToken.is(Token::Type::Layout) &&
-      m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout;
+  bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&
+                             m_nextToken.firstLayout()->isParenthesisLayout();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1137,9 +1136,8 @@ Tree *RackParser::parseVector() {
 Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
   // First rack's layout cannot be a comma separated list.
   if (!isFirstToken && m_nextToken.is(Token::Type::Layout) &&
-      m_nextToken.firstLayout()->type() == BlockType::ParenthesisLayout) {
-    assert(m_nextToken.firstLayout()->nextNode()->type() ==
-           BlockType::RackLayout);
+      m_nextToken.firstLayout()->isParenthesisLayout()) {
+    assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
     RackParser subParser(m_nextToken.firstLayout()->nextNode(), 0,
                          ParsingContext::ParsingMethod::CommaSeparatedList);
@@ -1253,8 +1251,7 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
     m_waitingSlashForMixedFraction = true;
     EditionReference rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
-    if (!rightHandSide.isUninitialized() &&
-        rightHandSide->type() == BlockType::Division &&
+    if (!rightHandSide.isUninitialized() && rightHandSide->isDivision() &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
 #if 0

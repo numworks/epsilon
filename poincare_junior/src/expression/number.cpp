@@ -7,33 +7,29 @@
 namespace PoincareJ {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
-  if (i->type() == BlockType::DoubleFloat ||
-      j->type() == BlockType::DoubleFloat) {
+  if (i->isDoubleFloat() || j->isDoubleFloat()) {
     return SharedEditionPool->push<BlockType::DoubleFloat>(
         Approximation::To<double>(i) + Approximation::To<double>(j));
   }
-  if (i->type() == BlockType::SingleFloat ||
-      j->type() == BlockType::SingleFloat) {
+  if (i->isSingleFloat() || j->isSingleFloat()) {
     return SharedEditionPool->push<BlockType::SingleFloat>(
         Approximation::To<float>(i) + Approximation::To<float>(j));
   }
-  assert(i->type() != BlockType::Constant && j->type() != BlockType::Constant);
+  assert(!i->isConstant() && !j->isConstant());
   Tree* result = Rational::Addition(i, j);
   Rational::MakeIrreducible(result);
   return result;
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
-  if (i->type() == BlockType::DoubleFloat ||
-      j->type() == BlockType::DoubleFloat) {
+  if (i->isDoubleFloat() || j->isDoubleFloat()) {
     return SharedEditionPool->push<BlockType::DoubleFloat>(
         Approximation::To<double>(i) * Approximation::To<double>(j));
   }
-  if (i->type() == BlockType::SingleFloat ||
-      j->type() == BlockType::SingleFloat) {
+  if (i->isSingleFloat() || j->isSingleFloat()) {
     return SharedEditionPool->push<BlockType::SingleFloat>(
         Approximation::To<float>(i) * Approximation::To<float>(j));
   }
-  assert(i->type() != BlockType::Constant && j->type() != BlockType::Constant);
+  assert(!i->isConstant() && !j->isConstant());
   Tree* result = Rational::Multiplication(i, j);
   Rational::MakeIrreducible(result);
   return result;

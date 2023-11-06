@@ -67,7 +67,7 @@ void Tree::logName(std::ostream& stream) const {
 void Tree::logAttributes(std::ostream& stream) const {
   if (type().isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
-    if (type() == BlockType::Polynomial) {
+    if (isPolynomial()) {
       for (int i = 0; i < Polynomial::NumberOfTerms(this); i++) {
         stream << " exponent" << i << "=\""
                << static_cast<int>(nodeValue(1 + i)) << "\"";
@@ -75,40 +75,40 @@ void Tree::logAttributes(std::ostream& stream) const {
     }
     return;
   }
-  if (type() == BlockType::Matrix) {
+  if (isMatrix()) {
     stream << " numberOfRows=\"" << static_cast<int>(Matrix::NumberOfRows(this))
            << "\"";
     stream << " numberOfColumns=\""
            << static_cast<int>(Matrix::NumberOfColumns(this)) << "\"";
   }
-  if (type() == BlockType::Constant) {
+  if (isConstant()) {
     char buffer[4];
     size_t size = UTF8Decoder::CodePointToChars(
         Constant::ToCodePoint(Constant::Type(this)), buffer, 4);
     buffer[size] = 0;
     stream << " type=\"" << buffer << "\"";
   }
-  if (type().isNumber()) {
+  if (isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;
   }
-  if (type().isUserNamed() || type() == BlockType::CodePointLayout) {
+  if (isUserNamed() || isCodePointLayout()) {
     char buffer[64];
-    (type().isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
+    (isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
         this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
     return;
   }
-  if (type() == BlockType::Variable) {
+  if (isVariable()) {
     stream << " id=" << static_cast<int>(Variables::Id(this));
     return;
   }
-  if (type() == BlockType::Placeholder) {
+  if (isPlaceholder()) {
     stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(this));
     stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
     return;
   }
-  if (type() == BlockType::Unit) {
+  if (isUnit()) {
     stream << " representativeId=" << static_cast<int>(nodeValue(0));
     stream << " prefixId=" << static_cast<int>(nodeValue(1));
     return;
@@ -169,7 +169,7 @@ uint32_t Tree::nextNodeInPoolCount = 0;
 
 const Tree* Tree::nextNode() const {
 #if ASSERTIONS
-  assert(type() != BlockType::TreeBorder);
+  assert(!isTreeBorder());
 #endif
   assert(this + nodeSize() != CachePool::SharedCachePool->firstBlock());
   assert(this != SharedEditionPool->lastBlock());

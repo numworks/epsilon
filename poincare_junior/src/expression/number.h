@@ -16,23 +16,23 @@ class Number {
    */
   static bool IsZero(const Tree* t) {
     assert(IsSanitized(t));
-    return t->type() == BlockType::Zero;
+    return t->isZero();
   }
   static bool IsOne(const Tree* t) {
     assert(IsSanitized(t));
-    return t->type() == BlockType::One;
+    return t->isOne();
   }
   static bool IsMinusOne(const Tree* t) {
     assert(IsSanitized(t));
-    return t->type() == BlockType::MinusOne;
+    return t->isMinusOne();
   }
   static bool IsTwo(const Tree* t) {
     assert(IsSanitized(t));
-    return t->type() == BlockType::Two;
+    return t->isTwo();
   }
   static bool IsHalf(const Tree* t) {
     assert(IsSanitized(t));
-    return t->type() == BlockType::Half;
+    return t->isHalf();
   }
   static bool IsStrictRational(const Tree* t) {
     assert(IsSanitized(t));

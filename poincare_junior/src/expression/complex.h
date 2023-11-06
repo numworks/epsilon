@@ -12,11 +12,11 @@ struct Complex {
  public:
   // Return first child if tree is a Complex, tree otherwise. May not be real.
   static const Tree* UnSanitizedRealPart(const Tree* tree) {
-    return tree->type() == BlockType::Complex ? tree->nextNode() : tree;
+    return tree->isComplex() ? tree->nextNode() : tree;
   }
   // Return second child if tree is a Complex, 0 otherwise. May not be real.
   static const Tree* UnSanitizedImagPart(const Tree* tree) {
-    return tree->type() == BlockType::Complex ? tree->child(1) : 0_e;
+    return tree->isComplex() ? tree->child(1) : 0_e;
   }
   // Return true if tree is real and false if unknown or complex
   static bool IsReal(const Tree* tree);

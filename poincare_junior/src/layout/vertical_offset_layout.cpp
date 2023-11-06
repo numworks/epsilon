@@ -6,7 +6,7 @@ const Tree* VerticalOffsetLayout::BaseLayout(const Tree* node,
                                              const Tree* root) {
   int index;
   const Tree* parent = root->parentOfDescendant(node, &index);
-  if (parent->type() != BlockType::RackLayout) {
+  if (!parent->isRackLayout()) {
     return nullptr;
   }
   assert(IsSuffixSuperscript(node));

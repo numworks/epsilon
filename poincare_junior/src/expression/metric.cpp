@@ -34,11 +34,10 @@ bool Metric::hasImproved() const {
 const Tree* Metric::AlgebraicRoot(const Tree* tree, const Tree* root) {
   const Tree* parent = root->parentOfDescendant(tree);
   if (parent) {
-    if (parent->type() == BlockType::Addition ||
-        parent->type() == BlockType::Complex) {
+    if (parent->isAddition() || parent->isComplex()) {
       return parent;
     }
-    if (parent->type() == BlockType::Multiplication) {
+    if (parent->isMultiplication()) {
       return AlgebraicRoot(parent, root);
     }
   }

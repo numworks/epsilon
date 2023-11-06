@@ -285,10 +285,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
-  if (Layout::IsHorizontal(cursorNode()) &&
-      ref->type() == BlockType::VerticalOffsetLayout &&
+  if (Layout::IsHorizontal(cursorNode()) && ref->isVerticalOffsetLayout() &&
       VerticalOffsetLayout::IsSuffixSuperscript(ref)) {
-    if (leftL && leftL->type() == BlockType::VerticalOffsetLayout &&
+    if (leftL && leftL->isVerticalOffsetLayout() &&
         VerticalOffsetLayout::IsSuffixSuperscript(leftL)) {
       // Insert ^c left of a^b -> turn a^b into (a^b)
       int leftParenthesisIndex =
@@ -297,7 +296,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
       m_position = leftParenthesisIndex + 1;
     }
 
-    if (rightL && rightL->type() == BlockType::VerticalOffsetLayout &&
+    if (rightL && rightL->isVerticalOffsetLayout() &&
         VerticalOffsetLayout::IsSuffixSuperscript(rightL) &&
         cursorNode()->indexOfChild(rightL) > 0) {
       // Insert ^b right of a in a^c -> turn a^c into (a)^c
@@ -674,8 +673,8 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   int indexInParent;
   const Tree *parent =
       rootNode()->parentOfDescendant(cursorNode(), &indexInParent);
-  return parent && parent->type() == BlockType::FractionLayout &&
-         indexInParent == 0 && parent->child(1)->numberOfChildren() == 0;
+  return parent && parent->isFractionLayout() && indexInParent == 0 &&
+         parent->child(1)->numberOfChildren() == 0;
 }
 
 int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {

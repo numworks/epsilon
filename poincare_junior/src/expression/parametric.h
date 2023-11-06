@@ -18,8 +18,7 @@ class Parametric {
   static bool Explicit(Tree* t);
 
   static uint8_t FunctionIndex(const Tree* t) {
-    return (t->type() == BlockType::Derivative) ? k_derivandIndex
-                                                : k_integrandIndex;
+    return (t->isDerivative()) ? k_derivandIndex : k_integrandIndex;
   }
 
   static constexpr uint8_t k_localVariableId = 0;

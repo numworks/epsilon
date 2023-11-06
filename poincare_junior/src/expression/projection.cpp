@@ -26,10 +26,10 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       static_cast<ProjectionContext*>(context);
 
   bool changed = false;
-  if (ref->type() == BlockType::Undefined) {
+  if (ref->isUndefined()) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
-  if (ref->type() == BlockType::Unit) {
+  if (ref->isUnit()) {
     Units::Unit::RemoveUnit(ref);
     changed = true;
   }
@@ -39,7 +39,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
     return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
   }
 
-  if (ref->type() == BlockType::Decimal) {
+  if (ref->isDecimal()) {
     Decimal::Project(ref);
     return true;
   }
@@ -56,7 +56,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
   }
 
   // inf -> Float(inf) to prevent inf-inf from being 0
-  if (ref->type() == BlockType::Infinity) {
+  if (ref->isInfinity()) {
     /* TODO: Raise to try projecting again with ApproximateToFloat strategy.
      *       Do not handle float contamination unless this is the strategy.
      *       Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove Raise.*/
@@ -67,7 +67,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   // Sqrt(A) -> A^0.5
   changed = PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
-  if (ref->type() == BlockType::Power) {
+  if (ref->isPower()) {
     if (PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
     } else if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
       ref->cloneNodeOverNode(KPowMatrix);

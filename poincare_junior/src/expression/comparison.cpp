@@ -116,11 +116,10 @@ bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
 
 int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   assert(node0->type() <= node1->type());
-  if (node1->type() == BlockType::Constant) {
-    return node0->type() == BlockType::Constant ? CompareConstants(node0, node1)
-                                                : -1;
+  if (node1->isConstant()) {
+    return node0->isConstant() ? CompareConstants(node0, node1) : -1;
   }
-  assert(node0->type() != BlockType::Constant);
+  assert(!node0->isConstant());
   if (node0->isRational() && node1->isRational()) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);

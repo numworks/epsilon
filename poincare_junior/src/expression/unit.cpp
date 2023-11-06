@@ -46,7 +46,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
   int numberOfFactors;
   int factorIndex = 0;
   const Tree* factor;
-  if (baseUnits->type() == BlockType::Multiplication) {
+  if (baseUnits->isMultiplication()) {
     numberOfFactors = baseUnits->numberOfChildren();
     factor = baseUnits->child(0);
   } else {
@@ -56,7 +56,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
   do {
     // Get the unit's exponent
     int8_t exponent = 1;
-    if (factor->type() == BlockType::Power) {
+    if (factor->isPower()) {
       const Tree* exp = factor->child(1);
       assert(exp->isRational());
       // Using the closest integer to the exponent.
@@ -82,7 +82,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
       factor = factor->child(0);
     }
     // Fill the vector with the unit's exponent
-    assert(factor->type() == BlockType::Unit);
+    assert(factor->isUnit());
     vector.addAllCoefficients(
         Unit::GetRepresentative(factor)->dimensionVector(), exponent);
     if (++factorIndex >= numberOfFactors) {
@@ -585,14 +585,14 @@ static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix) {
   double exponent = 1.f;
   Tree* factor = unit;
-  if (factor->type() == BlockType::Power) {
+  if (factor->isPower()) {
     Tree* childExponent = factor->child(1);
-    assert(factor->child(0)->type() == BlockType::Unit);
+    assert(factor->child(0)->isUnit());
     assert(factor->child(1)->isRational());
     exponent = Approximation::To<double>(childExponent);
     factor = factor->child(0);
   }
-  if (factor->type() != BlockType::Unit) {
+  if (!factor->isUnit()) {
     return;
   }
   if (exponent == 0.f) {
@@ -610,7 +610,7 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
                                                      UnitFormat unitFormat) {
   int numberOfFactors;
   Tree* factor;
-  if (units->type() == BlockType::Multiplication) {
+  if (units->isMultiplication()) {
     numberOfFactors = units->numberOfChildren();
     factor = units->child(0);
   } else {

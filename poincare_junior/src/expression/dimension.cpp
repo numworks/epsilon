@@ -58,7 +58,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       uint8_t cols = 0;
       Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       for (int i = 0; i < t->numberOfChildren(); i++) {
-        bool secondDivisionChild = (i == 1 && t->type() == BlockType::Division);
+        bool secondDivisionChild = (i == 1 && t->isDivision());
         Dimension next = childDim[i];
         if (next.isMatrix()) {
           // Matrix size must match. Forbid Matrices on denominator
@@ -98,18 +98,16 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       const Tree* index = t->child(1);
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
-      return index->isRational() || index->type() == BlockType::Decimal ||
-             (index->type() == BlockType::Multiplication &&
-              index->numberOfChildren() == 2 &&
-              index->child(0)->type() == BlockType::MinusOne &&
-              index->child(1)->isRational());
+      return index->isRational() || index->isDecimal() ||
+             (index->isMultiplication() && index->numberOfChildren() == 2 &&
+              index->child(0)->isMinusOne() && index->child(1)->isRational());
     }
     case BlockType::Sum:
     case BlockType::Product:
       return childDim[Parametric::k_variableIndex].isScalar() &&
              childDim[Parametric::k_lowerBoundIndex].isScalar() &&
              childDim[Parametric::k_upperBoundIndex].isScalar() &&
-             (t->type() != BlockType::Product ||
+             (!t->isProduct() ||
               childDim[Parametric::k_integrandIndex].isScalar() ||
               childDim[Parametric::k_integrandIndex].isSquareMatrix());
     case BlockType::Dim:
@@ -188,7 +186,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
                                         secondDivisionChild ? -1 : 1);
           representative = dim.unit.representative;
         }
-        secondDivisionChild = (t->type() == BlockType::Division);
+        secondDivisionChild = (t->isDivision());
       }
       // If other than a non-kelvin temperature, representative doesn't matter.
       return rows > 0

@@ -19,7 +19,7 @@ class RackLayoutDecoder : public UnicodeDecoder {
       : UnicodeDecoder(initialPosition,
                        layoutEnd ? layoutEnd : layout->numberOfChildren()),
         m_layout(layout) {
-    assert(layout->type() == BlockType::RackLayout);
+    assert(layout->isRackLayout());
     if (m_position > m_end) {
       m_position = m_end;
     }
@@ -29,7 +29,7 @@ class RackLayoutDecoder : public UnicodeDecoder {
   bool nextLayoutIsCodePoint() {
     return m_position == m_end ||
            (m_position < m_end &&
-            m_layout->child(m_position)->type() == BlockType::CodePointLayout);
+            m_layout->child(m_position)->isCodePointLayout());
   }
   CodePoint nextCodePoint() { return codePointAt(m_position++); }
   CodePoint previousCodePoint() { return codePointAt(--m_position); }
@@ -50,7 +50,7 @@ class RackLayoutDecoder : public UnicodeDecoder {
       return UCodePointNull;
     }
     assert(0 <= index && index < m_end);
-    assert(m_layout->child(index)->type() == BlockType::CodePointLayout);
+    assert(m_layout->child(index)->isCodePointLayout());
     return CodePointLayout::GetCodePoint(m_layout->child(index));
   }
 

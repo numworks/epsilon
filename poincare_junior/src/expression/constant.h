@@ -11,7 +11,7 @@ class Constant final {
  public:
   enum class Type : uint8_t { Pi = 0, E = 1, I = 2, Undefined = 3 };
   static enum Type Type(const Tree* node) {
-    assert(node->type() == BlockType::Constant);
+    assert(node->isConstant());
     return static_cast<enum Type>(node->nodeValue(0));
   }
   constexpr static enum Type Type(char16_t name) {

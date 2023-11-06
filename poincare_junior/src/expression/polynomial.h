@@ -48,11 +48,11 @@ class Polynomial final {
   }
   static Tree* LeadingIntegerCoefficient(Tree* polynomial);
   static uint8_t NumberOfTerms(const Tree* polynomial) {
-    assert(polynomial->type() == BlockType::Polynomial);
+    assert(polynomial->isPolynomial());
     return polynomial->numberOfChildren() - 1;
   }
   static const Tree* Variable(const Tree* polynomial) {
-    assert(polynomial->type() == BlockType::Polynomial);
+    assert(polynomial->isPolynomial());
     return polynomial->child(0);
   }
 

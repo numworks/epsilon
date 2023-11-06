@@ -58,21 +58,21 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
 }
 
 Tree* Factor(Tree* expr, int index) {
-  if (expr->type() == BlockType::Multiplication) {
+  if (expr->isMultiplication()) {
     return expr->child(index);
   }
   return expr;
 }
 
 const Tree* Factor(const Tree* expr, int index) {
-  if (expr->type() == BlockType::Multiplication) {
+  if (expr->isMultiplication()) {
     return expr->child(index);
   }
   return expr;
 }
 
 int NumberOfFactors(const Tree* expr) {
-  if (expr->type() == BlockType::Multiplication) {
+  if (expr->isMultiplication()) {
     return expr->numberOfChildren();
   }
   return 1;
@@ -81,8 +81,7 @@ int NumberOfFactors(const Tree* expr) {
 bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   // The expression is a negative number
   Tree* factor = Factor(expr, 0);
-  if (factor->type() == BlockType::MinusOne &&
-      expr->type() == BlockType::Multiplication) {
+  if (factor->isMinusOne() && expr->isMultiplication()) {
     NAry::RemoveChildAtIndex(expr, 0);
     NAry::SquashIfUnary(expr);
     return true;
@@ -103,11 +102,10 @@ void Beautification::SplitMultiplication(const Tree* expr,
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
     const Tree* factor = Factor(expr, i);
-    TypeBlock factorType = factor->type();
     EditionReference factorsNumerator;
     EditionReference factorsDenominator;
-    if (factorType.isRational()) {
-      if (factorType == BlockType::One) {
+    if (factor->isRational()) {
+      if (factor->isOne()) {
         // Special case: add a unary numeral factor if r = 1
         factorsNumerator = factor->clone();
       } else {
@@ -120,11 +118,11 @@ void Beautification::SplitMultiplication(const Tree* expr,
           factorsDenominator = rDen.pushOnEditionPool();
         }
       }
-    } else if (factorType == BlockType::Power) {
+    } else if (factor->isPower()) {
       Tree* pow = factor->clone();
-      if (pow->child(0)->type() != BlockType::Unit &&
+      if (!pow->child(0)->isUnit() &&
           MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
-        if (pow->child(1)->type() == BlockType::One) {
+        if (pow->child(1)->isOne()) {
           pow->moveTreeOverTree(pow->child(0));
         }
         factorsDenominator = pow;
@@ -149,7 +147,7 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   EditionReference num;
   EditionReference den;
   SplitMultiplication(expr, num, den);
-  if (den->type() != BlockType::One) {
+  if (!den->isOne()) {
     num->cloneNodeAtNode(KDiv);
     expr->moveTreeOverTree(num);
     return true;
@@ -210,17 +208,16 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->type() == BlockType::Trig &&
-      angleUnit != PoincareJ::AngleUnit::Radian) {
+  if (ref->isTrig() && angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
         KMult(KA, KB, KPow(π_e, -1_e)),
         {.KA = child,
          .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
   }
-  if (ref->type() == BlockType::Addition) {
+  if (ref->isAddition()) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
-  } else if (ref->type() == BlockType::Factor) {
+  } else if (ref->isFactor()) {
     if (Arithmetic::BeautifyFactor(ref)) {
       return true;
     }
@@ -238,8 +235,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       KMult(KTA, KLogarithm(KB, KC), KTD));
 
   // Turn multiplications with negative powers into divisions
-  if (ref->type() == BlockType::Multiplication ||
-      ref->type() == BlockType::Power || Number::IsStrictRational(ref)) {
+  if (ref->isMultiplication() || ref->isPower() ||
+      Number::IsStrictRational(ref)) {
     if (BeautifyIntoDivision(ref)) {
       return true;
     }

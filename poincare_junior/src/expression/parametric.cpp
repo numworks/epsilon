@@ -11,7 +11,7 @@
 namespace PoincareJ {
 
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
-  bool isSum = expr->type() == BlockType::Sum;
+  bool isSum = expr->isSum();
   Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
@@ -31,7 +31,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
 }
 
 bool Parametric::ExpandSum(Tree* expr) {
-  if (expr->type() != BlockType::Sum) {
+  if (!expr->isSum()) {
     return false;
   }
   return
@@ -50,7 +50,7 @@ bool Parametric::ExpandSum(Tree* expr) {
        * may introduced undefs with sum(1/k,k,1,2) for instance. */
       // sum(e,k,a,b) = sum(e,k,0,b) - sum(e,k,0,a-1)
       // TODO what if a < 0 ?
-      (expr->child(k_lowerBoundIndex)->type() != BlockType::Zero &&
+      (!expr->child(k_lowerBoundIndex)->isZero() &&
        PatternMatching::MatchReplaceAndSimplify(
            expr, KSum(KA, KB, KC, KD),
            KAdd(KSum(KA, 0_e, KC, KD),
@@ -83,7 +83,7 @@ bool Parametric::ExpandSum(Tree* expr) {
 }
 
 bool Parametric::ExpandProduct(Tree* expr) {
-  if (expr->type() != BlockType::Product) {
+  if (!expr->isProduct()) {
     return false;
   }
   return
@@ -107,8 +107,8 @@ bool Parametric::ContractSumOrProduct(Tree* expr) {
 }
 
 bool Parametric::Explicit(Tree* expr) {
-  assert(expr->type() == BlockType::Sum || expr->type() == BlockType::Product);
-  bool isSum = expr->type() == BlockType::Sum;
+  assert(expr->isSum() || expr->isProduct());
+  bool isSum = expr->isSum();
   const Tree* lowerBound = expr->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* child = upperBound->nextTree();

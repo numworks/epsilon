@@ -18,7 +18,7 @@ Variables::Variable::Variable(uint8_t id) {
 }
 
 uint8_t Variables::Id(const Tree* variable) {
-  assert(variable->type() == BlockType::Variable);
+  assert(variable->isVariable());
   return variable->nodeValue(0);
 }
 
@@ -46,7 +46,7 @@ Tree* Variables::GetUserSymbols(const Tree* expr) {
 }
 
 void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
-  if (expr->type() == BlockType::UserSymbol) {
+  if (expr->isUserSymbol()) {
     return Set::Add(set, expr);
   }
   bool isParametric = expr->isParametric();
@@ -67,12 +67,12 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
 }
 
 bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value) {
-  assert(variable->type() == BlockType::Variable);
+  assert(variable->isVariable());
   return Replace(expr, Id(variable), value);
 }
 
 bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
-  if (expr->type() == BlockType::Variable) {
+  if (expr->isVariable()) {
     if (Id(expr) == id) {
       expr->cloneTreeOverTree(value);
       return true;
@@ -97,8 +97,7 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
 }
 
 bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
-  if (expr->type() == BlockType::UserSymbol &&
-      expr->treeIsIdenticalTo(symbol)) {
+  if (expr->isUserSymbol() && expr->treeIsIdenticalTo(symbol)) {
     Tree* var =
         SharedEditionPool->push<BlockType::Variable>(static_cast<uint8_t>(id));
     expr->moveTreeOverTree(var);
@@ -124,7 +123,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
 
 void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
   assert(SharedEditionPool->isAfter(variables, expr));
-  if (expr->type() == BlockType::UserSymbol) {
+  if (expr->isUserSymbol()) {
     Tree* var =
         SharedEditionPool->push<BlockType::Variable>(static_cast<uint8_t>(
             ToId(variables, Symbol::NonNullTerminatedName(expr),
@@ -148,7 +147,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
 void Variables::BeautifyToName(Tree* expr, const Tree* variables,
                                uint8_t depth) {
   assert(SharedEditionPool->isAfter(variables, expr));
-  if (expr->type() == BlockType::Variable) {
+  if (expr->isVariable()) {
     assert(depth <= Id(expr));
     expr->cloneTreeOverTree(Variables::ToSymbol(variables, Id(expr) - depth));
   }
@@ -168,7 +167,7 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
 
 bool Variables::HasVariables(const Tree* expr) {
   for (const Tree* child : expr->selfAndDescendants()) {
-    if (child->type() == BlockType::Variable) {
+    if (child->isVariable()) {
       return true;
     }
   }
@@ -177,12 +176,12 @@ bool Variables::HasVariables(const Tree* expr) {
 
 bool Variables::HasVariable(const Tree* expr, const Tree* variable) {
   // TODO variable must have the same scope as expr
-  assert(variable->type() == BlockType::Variable);
+  assert(variable->isVariable());
   return HasVariable(expr, Id(variable));
 }
 
 bool Variables::HasVariable(const Tree* expr, int id) {
-  if (expr->type() == BlockType::Variable) {
+  if (expr->isVariable()) {
     return Id(expr) == id;
   }
   bool isParametric = expr->isParametric();
@@ -198,7 +197,7 @@ bool Variables::HasVariable(const Tree* expr, int id) {
 
 void Variables::EnterScope(Tree* expr) {
   for (Tree* child : expr->selfAndDescendants()) {
-    if (child->type() == BlockType::Variable) {
+    if (child->isVariable()) {
       uint8_t id = Id(child);
       assert(id < 255);
       child->setNodeValue(0, id + 1);
@@ -208,7 +207,7 @@ void Variables::EnterScope(Tree* expr) {
 
 void Variables::LeaveScope(Tree* expr) {
   for (Tree* child : expr->selfAndDescendants()) {
-    if (child->type() == BlockType::Variable) {
+    if (child->isVariable()) {
       uint8_t id = Id(child);
       assert(id > 0);
       child->setNodeValue(0, id - 1);

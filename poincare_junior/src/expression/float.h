@@ -32,8 +32,7 @@ class Float {
   }
   static double To(const Tree *tree) {
     assert(tree->isFloat());
-    return tree->type() == BlockType::SingleFloat ? FloatTo(tree)
-                                                  : DoubleTo(tree);
+    return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
   }
 };
 

@@ -70,14 +70,19 @@ class TypeBlock : public Block {
   // Add methods like IsNumber(type) and .isNumber to test range membership
 #define RANGE(NAME, FIRST, LAST)                                \
   static constexpr bool Is##NAME(BlockType type) {              \
-    static_assert(BlockType::FIRST < BlockType::LAST);          \
+    static_assert(BlockType::FIRST <= BlockType::LAST);         \
     return BlockType::FIRST <= type && type <= BlockType::LAST; \
   }                                                             \
                                                                 \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
-#define NODE3(...)
+
+#define RANGE1(N) RANGE(N, N, N)
+
+#define NODE3(F, N, S) RANGE1(SCOPED_NODE(F))
+
 #include <poincare_junior/src/memory/types.h>
 #undef NODE3
+#undef RANGE1
 #undef RANGE
 
   constexpr static bool IsOfType(BlockType thisType,

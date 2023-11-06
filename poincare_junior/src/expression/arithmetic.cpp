@@ -14,7 +14,7 @@ namespace PoincareJ {
 
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
-  bool isQuotient = expr->type() == BlockType::Quotient;
+  bool isQuotient = expr->isQuotient();
   const Tree* num = expr->firstChild();
   const Tree* denom = num->nextTree();
   if (!num->isInteger() || !denom->isInteger()) {
@@ -23,7 +23,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
     }
     return false;
   }
-  if (denom->type() == BlockType::Zero) {
+  if (denom->isZero()) {
     ExceptionCheckpoint::Raise(ExceptionType::ZeroDivision);
   }
   IntegerHandler n = Integer::Handler(num);

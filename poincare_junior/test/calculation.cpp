@@ -39,7 +39,7 @@ QUIZ_CASE(pcj_calculation) { Calculation calculation("(1-2)/3/4"); }
 QUIZ_CASE(pcj_calculation_type_block_buffer) {
   Calculation calculation("(1-2)/3/4");
   const Tree* input = Tree::FromBlocks(calculation.input());
-  quiz_assert(input->type() == BlockType::Division);
+  quiz_assert(input->isDivision());
 }
 
 // Check SharedPointer

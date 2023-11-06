@@ -199,7 +199,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     Tree* polynomial = PolynomialParser::Parse(tree, Variables::Variable(i));
-    if (polynomial->type() != BlockType::Polynomial) {
+    if (!polynomial->isPolynomial()) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
       NAry::AddChild(result, SharedEditionPool->push(BlockType::Zero));

@@ -33,14 +33,13 @@ bool IsInteger(const Tree* u) { return u->isInteger(); }
 bool IsNumber(const Tree* u) { return u->isNumber(); }
 bool IsRational(const Tree* u) { return u->isRational(); }
 bool IsConstant(const Tree* u) { return IsNumber(u); }
-bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
+bool IsUndef(const Tree* u) { return u->isUndefined(); }
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
    * here could save multiple ShallowSystematicReduce and flatten calls. */
-  bool modified = (u->type() == BlockType::Multiplication ||
-                   u->type() == BlockType::Addition) &&
-                  NAry::Flatten(u);
+  bool modified =
+      (u->isMultiplication() || u->isAddition()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     assert(!IsUndef(child));
@@ -135,7 +134,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
 
 bool Simplification::SimplifyExp(Tree* u) {
   Tree* child = u->nextNode();
-  if (child->type() == BlockType::Ln) {
+  if (child->isLn()) {
     // exp(ln(x)) -> x
     u->removeNode();
     u->removeNode();
@@ -158,7 +157,7 @@ bool Simplification::SimplifyExp(Tree* u) {
 
 bool Simplification::SimplifyLn(Tree* u) {
   Tree* child = u->nextNode();
-  if (child->type() == BlockType::Exponential) {
+  if (child->isExponential()) {
     // ln(exp(x)) -> x
     u->removeNode();
     u->removeNode();
@@ -181,15 +180,15 @@ bool Simplification::SimplifyLn(Tree* u) {
 }
 
 bool Simplification::SimplifyAbs(Tree* u) {
-  assert(u->type() == BlockType::Abs);
+  assert(u->isAbs());
   Tree* child = u->nextNode();
   bool changed = false;
-  if (child->type() == BlockType::Abs) {
+  if (child->isAbs()) {
     // ||x|| -> |x|
     child->removeNode();
     changed = true;
   }
-  if (child->type() == BlockType::Complex) {
+  if (child->isComplex()) {
     assert(Complex::IsSanitized(child));
     // |x+iy| = √(x^2+y^2) if x and y are reals
     return PatternMatching::MatchReplaceAndSimplify(
@@ -230,7 +229,7 @@ bool Simplification::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
 }
 
 bool Simplification::SimplifyTrigDiff(Tree* u) {
-  assert(u->type() == BlockType::TrigDiff);
+  assert(u->isTrigDiff());
   /* TrigDiff is used to factorize Trigonometric contraction. It determines the
    * first term of these equations :
    * 2*sin(x)*sin(y) = cos(x-y) - cos(x+y)  -> TrigDiff(1,1) = 0
@@ -257,7 +256,7 @@ bool Simplification::SimplifyTrigDiff(Tree* u) {
 }
 
 bool Simplification::SimplifyTrig(Tree* u) {
-  assert(u->type() == BlockType::Trig);
+  assert(u->isTrig());
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
   Tree* secondArgument = u->child(1);
   bool isOpposed = false;
@@ -273,18 +272,18 @@ bool Simplification::SimplifyTrig(Tree* u) {
       isOpposed = !isOpposed;
     }
     // Multiplication could have been squashed.
-    if (firstArgument->type() == BlockType::Multiplication) {
+    if (firstArgument->isMultiplication()) {
       SimplifyMultiplication(firstArgument);
     }
   }
 
   // Replace Trig((n/12)*pi,*) with exact value.
   if (firstArgument->treeIsIdenticalTo(π_e) || Number::IsZero(firstArgument) ||
-      (firstArgument->type() == BlockType::Multiplication &&
+      (firstArgument->isMultiplication() &&
        firstArgument->numberOfChildren() == 2 &&
        IsRational(firstArgument->nextNode()) &&
        firstArgument->child(1)->treeIsIdenticalTo(π_e))) {
-    const Tree* piFactor = firstArgument->type() == BlockType::Multiplication
+    const Tree* piFactor = firstArgument->isMultiplication()
                                ? firstArgument->nextNode()
                                : (Number::IsZero(firstArgument) ? 0_e : 1_e);
     // Compute n such that firstArgument = (n/12)*pi
@@ -315,7 +314,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
 }
 
 bool Simplification::SimplifyPower(Tree* u) {
-  assert(u->type() == BlockType::Power);
+  assert(u->isPower());
   Tree* v = u->child(0);
   // 1^x -> 1
   if (Number::IsOne(v)) {
@@ -360,7 +359,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     u->moveTreeOverTree(v);
     return true;
   }
-  if (v->type() == BlockType::Complex && Number::IsZero(v->nextNode())) {
+  if (v->isComplex() && Number::IsZero(v->nextNode())) {
     // (0 + A*i)^n -> ±(A^n) or (0±(A^n)*i)
     Tree* remainder =
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
@@ -386,7 +385,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // (w^p)^n -> w^(p*n)
-  if (v->type() == BlockType::Power) {
+  if (v->isPower()) {
     EditionReference p = v->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
@@ -398,7 +397,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
-  if (v->type() == BlockType::Multiplication) {
+  if (v->isMultiplication()) {
     for (Tree* w : v->children()) {
       EditionReference m = SharedEditionPool->push(BlockType::Power);
       w->clone();
@@ -416,13 +415,9 @@ bool Simplification::SimplifyPower(Tree* u) {
                                                   KExp(KMult(KA, KB)));
 }
 
-const Tree* Base(const Tree* u) {
-  return u->type() == BlockType::Power ? u->child(0) : u;
-}
+const Tree* Base(const Tree* u) { return u->isPower() ? u->child(0) : u; }
 
-const Tree* Exponent(const Tree* u) {
-  return u->type() == BlockType::Power ? u->child(1) : 1_e;
-}
+const Tree* Exponent(const Tree* u) { return u->isPower() ? u->child(1) : 1_e; }
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
   u->cloneNodeOverNode(KPow);
@@ -430,7 +425,7 @@ void Simplification::ConvertPowerRealToPower(Tree* u) {
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {
-  assert(u->type() == BlockType::PowerReal);
+  assert(u->isPowerReal());
   /* Return :
    * - x^y if x is complex or positive or y is integer
    * - PowerReal(x,y) if y is not a rational
@@ -445,7 +440,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   bool xIsNumber = IsNumber(x);
   bool xIsPositiveNumber = xIsNumber && Number::Sign(x).isPositive();
   bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
-  if (xIsPositiveNumber || x->type() == BlockType::Complex || IsInteger(y)) {
+  if (xIsPositiveNumber || x->isComplex() || IsInteger(y)) {
     // TODO : Handle sign and complex status not only on numbers
     ConvertPowerRealToPower(u);
     return true;
@@ -489,8 +484,7 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
   if (IsNumber(child) && IsNumber(next) &&
-      !((child->type() == BlockType::Constant) ||
-        next->type() == BlockType::Constant)) {
+      !((child->isConstant()) || next->isConstant())) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
@@ -498,9 +492,8 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     merge = PatternMatching::CreateAndSimplify(
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
-    assert(merge->type() != BlockType::Multiplication);
-  } else if (child->type() == BlockType::Complex ||
-             next->type() == BlockType::Complex) {
+    assert(!merge->isMultiplication());
+  } else if (child->isComplex() || next->isComplex()) {
     // (A+B*i)*(C+D*i) -> ((AC-BD)+(AD+BC)*i)
     merge = PatternMatching::CreateAndSimplify(
         KComplex(KAdd(KMult(KA, KC), KMult(-1_e, KB, KD)),
@@ -594,26 +587,25 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
 }
 
 bool Simplification::SimplifyMultiplication(Tree* u) {
-  assert(u->type() == BlockType::Multiplication);
+  assert(u->isMultiplication());
   bool changed = NAry::Flatten(u);
   if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
     return true;
   }
   changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
   changed = SimplifySortedMultiplication(u) || changed;
-  assert(!changed || u->type() != BlockType::Multiplication ||
-         !SimplifyMultiplication(u));
+  assert(!changed || !u->isMultiplication() || !SimplifyMultiplication(u));
   return changed;
 }
 
 bool TermsAreEqual(const Tree* u, const Tree* v) {
-  if (u->type() != BlockType::Multiplication) {
-    if (v->type() != BlockType::Multiplication) {
+  if (!u->isMultiplication()) {
+    if (!v->isMultiplication()) {
       return u->treeIsIdenticalTo(v);
     }
     return TermsAreEqual(v, u);
   }
-  if (v->type() != BlockType::Multiplication) {
+  if (!v->isMultiplication()) {
     return u->numberOfChildren() == 2 && IsRational(u->child(0)) &&
            u->child(1)->treeIsIdenticalTo(v);
   }
@@ -638,7 +630,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
   Tree* c = u->clone();
-  if (u->type() == BlockType::Multiplication && IsRational(u->child(0))) {
+  if (u->isMultiplication() && IsRational(u->child(0))) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfUnary(c);
   }
@@ -647,7 +639,7 @@ Tree* PushTerm(const Tree* u) {
 
 // The constant of 2ab is 2
 const Tree* Constant(const Tree* u) {
-  if (u->type() == BlockType::Multiplication && IsRational(u->child(0))) {
+  if (u->isMultiplication() && IsRational(u->child(0))) {
     return u->child(0);
   }
   return 1_e;
@@ -657,8 +649,7 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
   if (IsNumber(child) && IsNumber(next) &&
-      !((child->type() == BlockType::Constant) ||
-        next->type() == BlockType::Constant)) {
+      !((child->isConstant()) || next->isConstant())) {
     // Merge numbers
     merge = Number::Addition(child, next);
   } else if (TermsAreEqual(child, next)) {
@@ -669,9 +660,8 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
         {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();
     merge = term;
-    assert(merge->type() != BlockType::Addition);
-  } else if (child->type() == BlockType::Complex ||
-             next->type() == BlockType::Complex) {
+    assert(!merge->isAddition());
+  } else if (child->isComplex() || next->isComplex()) {
     // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
     merge = PatternMatching::CreateAndSimplify(
         KComplex(KAdd(KA, KC), KAdd(KB, KD)),
@@ -690,7 +680,7 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
 }
 
 bool Simplification::SimplifyAddition(Tree* u) {
-  assert(u->type() == BlockType::Addition);
+  assert(u->isAddition());
   bool modified = NAry::Flatten(u);
   if (NAry::SquashIfUnary(u)) {
     return true;
@@ -707,7 +697,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
     }
     Tree* next = child->nextTree();
     if (i + 1 < n && MergeAdditionChildWithNext(child, next)) {
-      assert(child->type() != BlockType::Addition);
+      assert(!child->isAddition());
       n--;
     } else {
       child = next;
@@ -734,7 +724,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
 }
 
 bool Simplification::SimplifyComplex(Tree* tree) {
-  assert(tree->type() == BlockType::Complex);
+  assert(tree->isComplex());
   Tree* imag = tree->child(1);
   if (Number::IsZero(imag)) {
     // (A+0*i) -> A
@@ -758,7 +748,7 @@ bool Simplification::SimplifyComplex(Tree* tree) {
 }
 
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
-  assert(tree->type() == BlockType::ComplexArgument);
+  assert(tree->isComplexArgument());
   Tree* child = tree->child(0);
   if (child->isNumber()) {
     Sign::Sign sign = Number::Sign(child);
@@ -773,39 +763,39 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
 }
 
 bool Simplification::SimplifyRealPart(Tree* tree) {
-  assert(tree->type() == BlockType::RealPart);
+  assert(tree->isRealPart());
   Tree* child = tree->child(0);
-  if (child->type() == BlockType::Complex || Complex::IsReal(child)) {
+  if (child->isComplex() || Complex::IsReal(child)) {
     assert(Complex::IsSanitized(child));
     // re(x+i*y) = x if x and y are reals
     tree->cloneTreeOverTree(Complex::UnSanitizedRealPart(child));
     return true;
   }
   // re(x+y) = re(x)+re(z)
-  return (child->type() == BlockType::Addition) &&
+  return (child->isAddition()) &&
          Simplification::DistributeOverNAry(
              tree, BlockType::RealPart, BlockType::Addition,
              BlockType::Addition, SimplifyRealPart);
 }
 
 bool Simplification::SimplifyImaginaryPart(Tree* tree) {
-  assert(tree->type() == BlockType::ImaginaryPart);
+  assert(tree->isImaginaryPart());
   Tree* child = tree->child(0);
-  if (child->type() == BlockType::Complex || Complex::IsReal(child)) {
+  if (child->isComplex() || Complex::IsReal(child)) {
     assert(Complex::IsSanitized(child));
     // im(x+i*y) = y if x and y are reals
     tree->cloneTreeOverTree(Complex::UnSanitizedImagPart(child));
     return true;
   }
   // im(x+y) = im(x)+im(z)
-  return (child->type() == BlockType::Addition) &&
+  return (child->isAddition()) &&
          Simplification::DistributeOverNAry(
              tree, BlockType::ImaginaryPart, BlockType::Addition,
              BlockType::Addition, SimplifyImaginaryPart);
 }
 
 bool Simplification::SimplifySign(Tree* expr) {
-  assert(expr->type() == BlockType::Sign);
+  assert(expr->isSign());
   Sign::Sign sign = Sign::GetSign(expr->firstChild());
   const Tree* result;
   if (sign.isZero()) {
@@ -882,7 +872,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
 
 bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
   assert(!DeepSystematicReduce(ref));
-  if (ref->type() == BlockType::Matrix) {
+  if (ref->isMatrix()) {
     // Escape matrices because no nested advanced reduction is expected.
     return false;
   }
@@ -1124,7 +1114,7 @@ bool Simplification::ExpandTrigonometric(Tree* ref) {
   EditionReference newTrig3(newMult2->nextNode());
   EditionReference newTrig4(newTrig3->nextTree());
   // Addition is expected to have been squashed if unary.
-  assert(newTrig1->nextNode()->type() != BlockType::Addition ||
+  assert(!newTrig1->nextNode()->isAddition() ||
          newTrig1->nextNode()->numberOfChildren() > 1);
   // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
   if (ExpandTrigonometric(newTrig1)) {
@@ -1175,7 +1165,7 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
   EditionReference newMult1(newAdd->nextNode());
   EditionReference newMult2(newMult1->nextTree());
   // If F is empty, Multiplications have been squashed
-  bool fIsEmpty = newMult1->type() != BlockType::Multiplication;
+  bool fIsEmpty = !newMult1->isMultiplication();
   EditionReference newTrig1 =
       fIsEmpty ? newMult1 : EditionReference(newMult1->nextNode());
   EditionReference newTrig2 =
@@ -1212,13 +1202,13 @@ bool Simplification::ContractTrigonometric(Tree* ref) {
 
 bool Simplification::ExpandMult(Tree* ref) {
   // A?*(B?+C)*D? = A*B*D + A*C*D
-  if (ref->type() != BlockType::Multiplication) {
+  if (!ref->isMultiplication()) {
     return false;
   }
   // Find the NAry in children
   int childIndex = 0;
   for (Tree* child : ref->children()) {
-    if (child->type() == BlockType::Addition) {
+    if (child->isAddition()) {
       return DistributeOverNAry(ref, BlockType::Multiplication,
                                 BlockType::Addition, BlockType::Addition,
                                 ExpandMultSubOperation, childIndex);
@@ -1255,7 +1245,7 @@ bool Simplification::ExpandPower(Tree* ref) {
   EditionReference newMult(newPow1->nextTree());
   EditionReference newPow2(newMult->nextTree());
   // Addition is expected to have been squashed if unary.
-  assert(newPow1->nextNode()->type() != BlockType::Addition ||
+  assert(!newPow1->nextNode()->isAddition() ||
          newPow1->nextNode()->numberOfChildren() > 1);
   if (ExpandPower(newPow1)) {
     ExpandMult(newPow1->nextTree());
@@ -1273,16 +1263,16 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     return false;
   }
   Tree* child = tree->child(0);
-  if (tree->type() == BlockType::Identity) {
+  if (tree->isIdentity()) {
     tree->moveTreeOverTree(Matrix::Identity(child));
     return true;
   }
-  if (tree->type() == BlockType::Multiplication) {
+  if (tree->isMultiplication()) {
     int numberOfMatrices = tree->numberOfChildren();
     // Find first matrix
     const Tree* firstMatrix = nullptr;
     for (const Tree* child : tree->children()) {
-      if (child->type() == BlockType::Matrix) {
+      if (child->isMatrix()) {
         firstMatrix = child;
         break;
       }
@@ -1305,10 +1295,10 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     tree->moveTreeOverTree(result);
     return true;
   }
-  if (child->type() != BlockType::Matrix) {
+  if (!child->isMatrix()) {
     return false;
   }
-  if (tree->type() == BlockType::Addition) {
+  if (tree->isAddition()) {
     int n = tree->numberOfChildren() - 1;
     Tree* result = child->clone();
     while (n--) {
@@ -1318,7 +1308,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
     tree->moveTreeOverTree(result);
     return true;
   }
-  if (tree->type() == BlockType::PowerMatrix) {
+  if (tree->isPowerMatrix()) {
     Tree* index = child->nextTree();
     if (!Integer::Is<int>(index)) {
       // TODO: Raise to rely on approximation.
@@ -1330,7 +1320,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   }
   if (tree->numberOfChildren() == 2) {
     Tree* child2 = child->nextTree();
-    if (child2->type() != BlockType::Matrix) {
+    if (!child2->isMatrix()) {
       return false;
     }
     switch (tree->type()) {

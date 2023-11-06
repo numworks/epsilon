@@ -23,19 +23,18 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
-  BlockType type = expression->type();
-  if (type == BlockType::Power) {
+  if (expression->isPower()) {
     Rationalize(expression->child(0));
     return expression;  // TODO return basicReduction
   }
-  if (type == BlockType::Multiplication) {
+  if (expression->isMultiplication()) {
     for (std::pair<EditionReference, int> indexedNode :
          NodeIterator::Children<Editable>(expression)) {
       Rationalize(std::get<EditionReference>(indexedNode));
     }
     return expression;  // TODO return basicReduction
   }
-  if (type == BlockType::Addition) {
+  if (expression->isAddition()) {
     // Factorize on common denominator a/b + c/d
     return RationalizeAddition(expression);
   }
@@ -43,7 +42,7 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
 }
 
 EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
-  assert(expression->type() == BlockType::Addition);
+  assert(expression->isAddition());
   EditionReference commonDenominator(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<EditionReference, int> indexedNode :
@@ -93,8 +92,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
     expression->moveNodeOverNode(result);
     return result;
   }
-  BlockType type = expression->type();
-  if (type == BlockType::Power) {
+  if (expression->isPower()) {
     EditionReference exponent = expression->child(1);
     bool negativeRationalExponent =
         exponent->isRational() && Rational::Sign(exponent).isStrictlyNegative();
@@ -107,7 +105,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
     Simplification::DeepSystematicReduce(expression);
     return expression;
   }
-  if (type == BlockType::Multiplication) {
+  if (expression->isMultiplication()) {
     for (std::pair<EditionReference, int> indexedNode :
          NodeIterator::Children<Editable>(expression)) {
       EditionReference child = std::get<EditionReference>(indexedNode);

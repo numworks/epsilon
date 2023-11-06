@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 bool StorageContext::DeepReplaceIdentifiersWithTrees(Tree* tree) {
   bool changed = false;
-  if (tree->type() == BlockType::UserSymbol) {
+  if (tree->isUserSymbol()) {
     const Tree* replacement = TreeForIdentifier(
         Symbol::NonNullTerminatedName(tree), Symbol::Length(tree));
     if (replacement) {

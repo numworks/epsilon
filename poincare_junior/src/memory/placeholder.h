@@ -47,7 +47,7 @@ class Placeholder {
     return tag | (filter << k_bitsForTag);
   }
   constexpr static uint8_t NodeToValue(const Tree* placeholder) {
-    assert(placeholder->type() == BlockType::Placeholder);
+    assert(placeholder->isPlaceholder());
     return placeholder->nodeValue(0);
   }
   constexpr static Tag ValueToTag(uint8_t value) {

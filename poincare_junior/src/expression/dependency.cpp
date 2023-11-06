@@ -8,13 +8,13 @@
 namespace PoincareJ {
 
 bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
-  if (expr->type() == BlockType::Dependency) {
+  if (expr->isDependency()) {
     return false;
   }
   EditionReference end = expr->nextTree();
   int numberOfSets = 0;
   for (Tree* child : expr->children()) {
-    if (child->type() == BlockType::Dependency) {
+    if (child->isDependency()) {
       // Move dependency list at the end
       MoveTreeBeforeNode(end, child->child(1));
       numberOfSets++;

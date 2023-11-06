@@ -10,7 +10,7 @@ namespace PoincareJ {
 
 bool Derivation::ShallowSimplify(Tree *node) {
   // Reference is expected to have been reduced beforehand.
-  assert(node->type() == BlockType::Derivative);
+  assert(node->isDerivative());
   // Diff(Derivand, Symbol, SymbolValue)
   const Tree *symbol = node->child(0);
   const Tree *symbolValue = symbol->nextTree();
@@ -112,15 +112,14 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
   }
   // Di(x^n) = n*x^(n-1)
   // Di(Trig(x, n)) = Trig(x, n-1)
-  assert(derivand->type() == BlockType::Trig ||
-         derivand->type() == BlockType::Power);
+  assert(derivand->isTrig() || derivand->isPower());
   // Second parameter cannot depend on symbol.
   if (index == 1) {
     SharedEditionPool->push(BlockType::Zero);
     return;
   }
   Tree *multiplication;
-  if (derivand->type() == BlockType::Power) {
+  if (derivand->isPower()) {
     multiplication = SharedEditionPool->push<BlockType::Multiplication>(2);
     SharedEditionPool->clone(derivand->child(1));
   }
@@ -131,7 +130,7 @@ void Derivation::ShallowPartialDerivate(const Tree *derivand,
   SharedEditionPool->push(BlockType::MinusOne);
   Simplification::ShallowSystematicReduce(addition);
   Simplification::ShallowSystematicReduce(newNode);
-  if (derivand->type() == BlockType::Power) {
+  if (derivand->isPower()) {
     Simplification::ShallowSystematicReduce(multiplication);
   }
   return;

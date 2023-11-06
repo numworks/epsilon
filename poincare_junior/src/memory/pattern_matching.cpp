@@ -125,7 +125,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
      * can only be empty tree placeholders. */
     onlyEmptyPlaceholders = matchContext.reachedLimit(source, false, true);
 
-    if (pattern->type() == BlockType::Placeholder) {
+    if (pattern->isPlaceholder()) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
       const Tree* tagNode = context->getNode(tag);
       if (tagNode) {
@@ -204,7 +204,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
   // Skip NAry structure node because it has already been inserted.
   const Tree* node = withinNAry ? structure->nextNode() : structure;
   while (node->block() < lastStructureBlock) {
-    if (node->type() != BlockType::Placeholder) {
+    if (!node->isPlaceholder()) {
       int numberOfChildren = node->numberOfChildren();
       if (node->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
@@ -217,7 +217,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           Simplification::ShallowSystematicReduce(insertedNode);
         } else {
           // TODO proper fix
-          if (insertedNode->type() != BlockType::Set) {
+          if (!insertedNode->isSet()) {
             NAry::Sanitize(insertedNode);
           }
         }
@@ -308,7 +308,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
 
   Context ctx;
   // Escape case for full matches like A -> cos(A)
-  if (pattern->type() == BlockType::Placeholder) {
+  if (pattern->isPlaceholder()) {
     ctx.setNode(Placeholder::NodeToTag(pattern), node, 1, false);
     node->moveTreeOverTree(Create(structure, ctx));
     return true;

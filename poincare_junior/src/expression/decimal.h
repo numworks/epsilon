@@ -14,7 +14,7 @@ class Decimal final {
 
  private:
   static inline void assertValidDecimal(const Tree* tree) {
-    assert(tree->type() == BlockType::Decimal);
+    assert(tree->isDecimal());
     assert(tree->nextNode()->isInteger());
   }
 };

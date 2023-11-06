@@ -31,10 +31,9 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue) {
   if (numberOfChildren == 0) {
     return (0_e)->clone();
   }
-  if (!derivand->type().isOfType({BlockType::Multiplication,
-                                  BlockType::Addition, BlockType::Complex,
-                                  BlockType::Exponential, BlockType::Power,
-                                  BlockType::Trig, BlockType::Ln})) {
+  if (!derivand->isOfType({BlockType::Multiplication, BlockType::Addition,
+                           BlockType::Complex, BlockType::Exponential,
+                           BlockType::Power, BlockType::Trig, BlockType::Ln})) {
     // This derivation is not handled
     return nullptr;
   }

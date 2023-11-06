@@ -11,7 +11,7 @@ class Layout;
 class Expression final : public Reference {
  public:
   Expression(const Tree* tree) : Reference(tree) {
-    assert(tree->type().isExpression());
+    assert(tree->isExpression());
   }
   using Reference::Reference;
   // TODO : Delete this method and adapt tests ?

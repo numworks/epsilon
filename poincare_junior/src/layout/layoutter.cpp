@@ -52,7 +52,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
 static constexpr int k_commaPriority = OperatorPriority(BlockType::Set);
 
 Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode) {
-  assert(expression->type().isExpression());
+  assert(expression->isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
    * layoutParent's root. */

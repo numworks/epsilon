@@ -16,8 +16,8 @@ namespace PoincareJ {
 
 template <typename T>
 T Approximation::To(const Tree* node) {
-  assert(node->type().isExpression());
-  if (node->type().isRational()) {
+  assert(node->isExpression());
+  if (node->isRational()) {
     return Rational::Numerator(node).to<T>() /
            Rational::Denominator(node).to<T>();
   }
@@ -125,7 +125,7 @@ template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
   if (tree->type() == FloatType<T>::type ||
-      tree->type().isOfType(
+      tree->isOfType(
           {BlockType::UserSymbol, BlockType::Variable, BlockType::Unit})) {
     return false;
   }

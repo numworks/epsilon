@@ -58,7 +58,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
     int8_t exponent = 1;
     if (factor->type() == BlockType::Power) {
       const Tree* exp = factor->child(1);
-      assert(exp->type().isRational());
+      assert(exp->isRational());
       // Using the closest integer to the exponent.
       float exponentFloat = Approximation::To<float>(exp);
       if (exponentFloat != std::round(exponentFloat)) {
@@ -588,7 +588,7 @@ static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
   if (factor->type() == BlockType::Power) {
     Tree* childExponent = factor->child(1);
     assert(factor->child(0)->type() == BlockType::Unit);
-    assert(factor->child(1)->type().isRational());
+    assert(factor->child(1)->isRational());
     exponent = Approximation::To<double>(childExponent);
     factor = factor->child(0);
   }

@@ -49,7 +49,7 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
   if (expr->type() == BlockType::UserSymbol) {
     return Set::Add(set, expr);
   }
-  bool isParametric = expr->type().isParametric();
+  bool isParametric = expr->isParametric();
   for (int i = 0; const Tree* child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
@@ -83,7 +83,7 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
     }
     return false;
   }
-  bool isParametric = expr->type().isParametric();
+  bool isParametric = expr->isParametric();
   bool changed = false;
   for (int i = 0; Tree * child : expr->children()) {
     int updatedId =
@@ -104,7 +104,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
     expr->moveTreeOverTree(var);
     return true;
   }
-  bool isParametric = expr->type().isParametric();
+  bool isParametric = expr->isParametric();
   bool changed = false;
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
@@ -132,7 +132,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
             depth));
     expr->moveTreeOverTree(var);
   }
-  bool isParametric = expr->type().isParametric();
+  bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
@@ -152,7 +152,7 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
     assert(depth <= Id(expr));
     expr->cloneTreeOverTree(Variables::ToSymbol(variables, Id(expr) - depth));
   }
-  bool isParametric = expr->type().isParametric();
+  bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
       // beautify variable introduced by this scope
@@ -185,7 +185,7 @@ bool Variables::HasVariable(const Tree* expr, int id) {
   if (expr->type() == BlockType::Variable) {
     return Id(expr) == id;
   }
-  bool isParametric = expr->type().isParametric();
+  bool isParametric = expr->isParametric();
   for (int i = 0; const Tree* child : expr->children()) {
     int updatedId =
         id + (isParametric && i++ == Parametric::FunctionIndex(expr));

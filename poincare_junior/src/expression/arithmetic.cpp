@@ -17,8 +17,8 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   bool isQuotient = expr->type() == BlockType::Quotient;
   const Tree* num = expr->firstChild();
   const Tree* denom = num->nextTree();
-  if (!num->type().isInteger() || !denom->type().isInteger()) {
-    if (num->type().isRational() || denom->type().isRational()) {
+  if (!num->isInteger() || !denom->isInteger()) {
+    if (num->isRational() || denom->isRational()) {
       ExceptionCheckpoint::Raise(ExceptionType::BadType);
     }
     return false;
@@ -35,7 +35,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
 
 bool Arithmetic::SimplifyFloor(Tree* expr) {
   Tree* child = expr->firstChild();
-  if (!child->type().isRational()) {
+  if (!child->isRational()) {
     return false;
   }
   DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
@@ -75,8 +75,8 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   Tree* first = expr->firstChild();
   Tree* next = first;
   while (expr->numberOfChildren() > 1) {
-    if (!next->type().isInteger()) {
-      if (next->type().isRational()) {
+    if (!next->isInteger()) {
+      if (next->isRational()) {
         ExceptionCheckpoint::Raise(ExceptionType::BadType);
       }
       return changed;
@@ -270,14 +270,14 @@ Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
 
 bool Arithmetic::BeautifyFactor(Tree* expr) {
   Tree* child = expr->nextNode();
-  if (!child->type().isRational()) {
+  if (!child->isRational()) {
     return false;
   }
   Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   if (Rational::Sign(child).isNegative()) {
     KOpposite->cloneNode();
   }
-  if (child->type().isInteger()) {
+  if (child->isInteger()) {
     PushPrimeFactorization(Integer::Handler(child));
   } else {
     KDiv->cloneNode();

@@ -45,7 +45,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
          * of 0 even if the exponent is not a number.*/
         return 0.;
       }
-      if (expr->child(1)->type().isNumber()) {
+      if (expr->child(1)->isNumber()) {
         return Approximation::To<float>(expr->child(1)) * baseDegree;
       }
       return NAN;
@@ -87,8 +87,7 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
     NAry::SquashIfUnary(expr);
     return true;
   }
-  if (factor->type().isRational() &&
-      Rational::Sign(factor).isStrictlyNegative()) {
+  if (factor->isRational() && Rational::Sign(factor).isStrictlyNegative()) {
     Rational::SetSign(factor, NonStrictSign::Positive);
     return true;
   }
@@ -246,7 +245,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     }
   }
 
-  if (ref->type().isOfType(
+  if (ref->isOfType(
           {BlockType::Multiplication, BlockType::GCD, BlockType::LCM}) &&
       NAry::Sort(ref, Comparison::Order::Beautification)) {
     return true;

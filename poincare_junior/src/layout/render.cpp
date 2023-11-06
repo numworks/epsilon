@@ -72,7 +72,7 @@ KDSize Render::Size(const Tree* node, const Tree* root, KDFont::Size font) {
 
 KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root,
                                KDFont::Size font) {
-  assert(node->type().isLayout());
+  assert(node->isLayout());
   if (node == root) {
     return KDPointZero;
   }
@@ -159,7 +159,7 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
 void Render::PrivateDraw(const Tree* node, const Tree* root, KDContext* ctx,
                          KDPoint p, KDFont::Size font, KDColor expressionColor,
                          KDColor backgroundColor) {
-  assert(node->type().isLayout());
+  assert(node->isLayout());
   KDSize size = Size(node, root, font);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||

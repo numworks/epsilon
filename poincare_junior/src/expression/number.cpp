@@ -50,20 +50,18 @@ Sign::Sign Number::Sign(const Tree* node) {
       return {value == 0, value > 0, value < 0, false};
     }
     default:
-      assert(node->type().isRational());
+      assert(node->isRational());
       return Rational::Sign(node);
   }
 }
 
 bool Number::IsSanitized(const Tree* n) {
-  if (!n->type().isOfType({BlockType::RationalShort, BlockType::RationalPosBig,
-                           BlockType::RationalNegBig, BlockType::IntegerShort,
-                           BlockType::IntegerPosBig,
-                           BlockType::IntegerNegBig})) {
-    assert(!n->type().isNumber() || n->type().isFloat() ||
-           n->type().isOfType({BlockType::Constant, BlockType::Half,
-                               BlockType::Zero, BlockType::One, BlockType::Two,
-                               BlockType::MinusOne}));
+  if (!n->isOfType({BlockType::RationalShort, BlockType::RationalPosBig,
+                    BlockType::RationalNegBig, BlockType::IntegerShort,
+                    BlockType::IntegerPosBig, BlockType::IntegerNegBig})) {
+    assert(!n->isNumber() || n->isFloat() ||
+           n->isOfType({BlockType::Constant, BlockType::Half, BlockType::Zero,
+                        BlockType::One, BlockType::Two, BlockType::MinusOne}));
     // Non numbers or optimal BlockType numbers
     return true;
   }

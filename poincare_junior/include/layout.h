@@ -23,9 +23,7 @@ class Layout final : public Reference {
     return IsHorizontal(node) && node->numberOfChildren() == 0;
   }
 
-  Layout(const Tree* tree) : Reference(tree) {
-    assert(tree->type().isLayout());
-  }
+  Layout(const Tree* tree) : Reference(tree) { assert(tree->isLayout()); }
   using Reference::Reference;
   static Layout Parse(const char* text);
   void draw(KDContext* ctx, KDPoint p, KDFont::Size font,

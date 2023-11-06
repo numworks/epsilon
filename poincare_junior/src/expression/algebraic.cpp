@@ -86,7 +86,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
 
 EditionReference Algebraic::NormalFormator(EditionReference expression,
                                            bool numerator) {
-  if (expression->type().isRational()) {
+  if (expression->isRational()) {
     IntegerHandler ator = numerator ? Rational::Numerator(expression)
                                     : Rational::Denominator(expression);
     EditionReference result = ator.pushOnEditionPool();
@@ -97,8 +97,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
   if (type == BlockType::Power) {
     EditionReference exponent = expression->child(1);
     bool negativeRationalExponent =
-        exponent->type().isRational() &&
-        Rational::Sign(exponent).isStrictlyNegative();
+        exponent->isRational() && Rational::Sign(exponent).isStrictlyNegative();
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }

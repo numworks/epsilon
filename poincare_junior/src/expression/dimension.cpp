@@ -98,12 +98,11 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       const Tree* index = t->child(1);
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
-      return index->type().isRational() ||
-             index->type() == BlockType::Decimal ||
+      return index->isRational() || index->type() == BlockType::Decimal ||
              (index->type() == BlockType::Multiplication &&
               index->numberOfChildren() == 2 &&
               index->child(0)->type() == BlockType::MinusOne &&
-              index->child(1)->type().isRational());
+              index->child(1)->isRational());
     }
     case BlockType::Sum:
     case BlockType::Product:
@@ -124,7 +123,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return childDim[0].isSquareMatrix();
     case BlockType::Identity:
       // TODO check for unknowns and display error message if not integral
-      return childDim[0].isScalar() && t->child(0)->type().isInteger();
+      return childDim[0].isScalar() && t->child(0)->isInteger();
     case BlockType::Norm:
       return childDim[0].isVector();
     case BlockType::Dot:
@@ -148,7 +147,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Trig:
       angleUnitsAllowed = true;
     default:
-      assert(t->type().isScalarOnly());
+      assert(t->isScalarOnly());
     case BlockType::Matrix:
       if (hasNonKelvinChild ||
           (hasUnitChild && !(unitsAllowed || angleUnitsAllowed))) {

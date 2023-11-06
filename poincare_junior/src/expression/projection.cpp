@@ -35,7 +35,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
   }
 
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
-      ref->type().isNumber()) {
+      ref->isNumber()) {
     return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
   }
 
@@ -46,8 +46,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->type().isOfType(
-          {BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
+  if (ref->isOfType({BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::Create(

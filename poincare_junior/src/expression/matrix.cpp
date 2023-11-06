@@ -21,7 +21,7 @@ Tree* Matrix::Zero(MatrixDimension d) {
 }
 
 Tree* Matrix::Identity(const Tree* n) {
-  assert(n->type().isNumber());
+  assert(n->isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }

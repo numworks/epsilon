@@ -257,7 +257,7 @@ class Integer {
   static IntegerHandler Handler(const Tree *expression);
   template <typename T>
   static bool Is(const Tree *expression) {
-    return expression->type().isInteger() && Handler(expression).is<T>();
+    return expression->isInteger() && Handler(expression).is<T>();
   }
 
   constexpr static uint8_t NumberOfDigits(uint64_t value) {

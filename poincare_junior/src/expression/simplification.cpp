@@ -29,9 +29,9 @@
 
 namespace PoincareJ {
 
-bool IsInteger(const Tree* u) { return u->type().isInteger(); }
-bool IsNumber(const Tree* u) { return u->type().isNumber(); }
-bool IsRational(const Tree* u) { return u->type().isRational(); }
+bool IsInteger(const Tree* u) { return u->isInteger(); }
+bool IsNumber(const Tree* u) { return u->isNumber(); }
+bool IsRational(const Tree* u) { return u->isRational(); }
 bool IsConstant(const Tree* u) { return IsNumber(u); }
 bool IsUndef(const Tree* u) { return u->type() == BlockType::Undefined; }
 
@@ -68,9 +68,9 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
    * with KA a Float and KB a UserVariable. We need to
    * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
   for (Tree* child : u->children()) {
-    if (child->type().isFloat()) {
+    if (child->isFloat()) {
       changed = Approximation::ApproximateAndReplaceEveryScalar(u);
-      if (changed && u->type().isFloat()) {
+      if (changed && u->isFloat()) {
         return true;
       }
       break;
@@ -325,7 +325,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // u^n
   EditionReference n = u->child(1);
   // After systematic reduction, a power can only have integer index.
-  if (!n->type().isInteger()) {
+  if (!n->isInteger()) {
     // TODO: Handle 0^x with x > 0 before to avoid ln(0)
     return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
                                                     KExp(KMult(KLn(KA), KB)));
@@ -760,7 +760,7 @@ bool Simplification::SimplifyComplex(Tree* tree) {
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->type() == BlockType::ComplexArgument);
   Tree* child = tree->child(0);
-  if (child->type().isNumber()) {
+  if (child->isNumber()) {
     Sign::Sign sign = Number::Sign(child);
     if (sign.isZero()) {
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
@@ -899,7 +899,7 @@ bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
 bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root,
                                               bool changed) {
   assert(!DeepSystematicReduce(ref));
-  return (ref->type().isAlgebraic()
+  return (ref->isAlgebraic()
               ? AdvanceReduceOnAlgebraic(ref, root, changed)
               : AdvanceReduceOnTranscendental(ref, root, changed));
 }
@@ -916,8 +916,8 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref, const Tree* root,
       /* AdvanceReduce further the expression only if it is algebraic.
        * Transcendental tree can expand but stay transcendental:
        * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      bool reducedAlgebraic = ref->type().isAlgebraic() &&
-                              AdvanceReduceOnAlgebraic(ref, root, true);
+      bool reducedAlgebraic =
+          ref->isAlgebraic() && AdvanceReduceOnAlgebraic(ref, root, true);
       // If algebraic got advanced reduced, metric must have been improved.
       assert(!reducedAlgebraic || metric.hasImproved());
       clone->removeTree();

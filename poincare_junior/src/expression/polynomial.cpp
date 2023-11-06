@@ -214,7 +214,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   EditionReference a(polA);
   if (polA->type() != BlockType::Polynomial &&
       polB->type() != BlockType::Polynomial) {
-    assert(polA->type().isInteger() && polB->type().isInteger());
+    assert(polA->isInteger() && polB->isInteger());
     DivisionResult<Tree*> divisionResult = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
     EditionReference quotient = divisionResult.quotient;
@@ -325,9 +325,9 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
 bool PolynomialParser::ContainsVariable(const Tree* tree) {
   int numberOfChildren = tree->numberOfChildren();
   if (numberOfChildren == 0) {
-    return tree->type().isOfType(
-        {BlockType::UserFunction, BlockType::UserSequence,
-         BlockType::UserSymbol, BlockType::Constant, BlockType::Variable});
+    return tree->isOfType({BlockType::UserFunction, BlockType::UserSequence,
+                           BlockType::UserSymbol, BlockType::Constant,
+                           BlockType::Variable});
   }
   const Tree* child = tree->nextNode();
   for (int i = 0; i < numberOfChildren; i++) {
@@ -347,7 +347,7 @@ void PolynomialParser::AddVariable(Tree* set, const Tree* variable) {
 
 Tree* PolynomialParser::GetVariables(const Tree* expression) {
   Tree* variables = SharedEditionPool->push<BlockType::Set>(0);
-  if (expression->type().isInteger()) {  // TODO: generic belongToField?
+  if (expression->isInteger()) {  // TODO: generic belongToField?
     return variables;
   }
   BlockType type = expression->type();
@@ -355,7 +355,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
   if (type == BlockType::Power) {
     const Tree* base = expression->nextNode();
     const Tree* exponent = base->nextTree();
-    assert(exponent->type().isInteger());
+    assert(exponent->isInteger());
     assert(!Integer::Is<uint8_t>(exponent) ||
            Integer::Handler(exponent).to<uint8_t>() > 1);
     AddVariable(variables, Integer::Is<uint8_t>(exponent) ? base : expression);

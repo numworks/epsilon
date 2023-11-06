@@ -15,7 +15,7 @@ namespace PoincareJ {
  * TODO: Maybe use dimension analysis ? Handle other obvious types ?
  */
 bool Complex::IsReal(const Tree* tree) {
-  if (tree->type().isOfType({
+  if (tree->isOfType({
           BlockType::Addition, BlockType::Multiplication,
           BlockType::Exponential, BlockType::Power,
           // TODO: Handle Ln so that reduced abs(z) is always real.
@@ -37,19 +37,18 @@ bool Complex::IsReal(const Tree* tree) {
     }
     if (tree->type() == BlockType::Power) {
       const Tree* index = tree->child(1);
-      assert(index->type().isNumber());
+      assert(index->isNumber());
       return Number::Sign(index).isStrictlyPositive();
     }
     return true;
   }
-  return tree->type().isNumber() ||
-         tree->type().isOfType({
-             BlockType::ImaginaryPart, BlockType::RealPart,
-             // BlockType::Abs,
-             // BlockType::ComplexArgument, BlockType::Dim,
-             // BlockType::Factorial, BlockType::Identity,
-             // BlockType::Norm, BlockType::TrigDiff
-         });
+  return tree->isNumber() || tree->isOfType({
+                                 BlockType::ImaginaryPart, BlockType::RealPart,
+                                 // BlockType::Abs,
+                                 // BlockType::ComplexArgument, BlockType::Dim,
+                                 // BlockType::Factorial, BlockType::Identity,
+                                 // BlockType::Norm, BlockType::TrigDiff
+                             });
 }
 
 }  // namespace PoincareJ

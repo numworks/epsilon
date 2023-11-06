@@ -52,7 +52,7 @@ Sign Add(Sign s1, Sign s2) {
 
 Sign GetSign(const Tree* t) {
   assert(Dimension::GetDimension(t).isScalar());
-  if (t->type().isNumber()) {
+  if (t->isNumber()) {
     return Number::Sign(t);
   }
   switch (t->type()) {

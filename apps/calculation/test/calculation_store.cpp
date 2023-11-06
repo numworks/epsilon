@@ -824,6 +824,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("2i", {.complex = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("gon", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &globalContext,
+                                           &store);
 
   Preferences::sharedPreferences->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);

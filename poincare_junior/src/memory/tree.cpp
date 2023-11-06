@@ -36,7 +36,7 @@ void Tree::log(std::ostream& stream, bool recursive, bool verbose,
   logName(stream);
   if (verbose) {
     stream << " size=\"" << nodeSize() << "\"";
-    stream << " address=\"" << m_block << "\"";
+    stream << " address=\"" << this << "\"";
   }
   logAttributes(stream);
   bool tagIsClosed = false;
@@ -61,7 +61,7 @@ void Tree::log(std::ostream& stream, bool recursive, bool verbose,
 }
 
 void Tree::logName(std::ostream& stream) const {
-  stream << TypeBlock::names[static_cast<uint8_t>(*m_block)];
+  stream << TypeBlock::names[m_content];
 }
 
 void Tree::logAttributes(std::ostream& stream) const {
@@ -124,8 +124,9 @@ void Tree::logBlocks(std::ostream& stream, bool recursive,
   logName(stream);
   stream << "]";
   int size = nodeSize();
-  for (int i = 1; i < size; i++) {
-    stream << "[" << static_cast<int>(static_cast<uint8_t>(m_block[i])) << "]";
+  for (int i = 0; i < size - 1; i++) {
+    stream << "[" << static_cast<int>(static_cast<uint8_t>(m_valueBlocks[i]))
+           << "]";
   }
   stream << "\n";
   if (recursive) {
@@ -139,7 +140,7 @@ void Tree::logBlocks(std::ostream& stream, bool recursive,
 #endif
 
 void Tree::copyTreeTo(void* address) const {
-  memcpy(address, m_block, treeSize());
+  memcpy(address, this, treeSize());
 }
 
 /* When navigating between nodes, assert that no undefined node is reached.
@@ -170,16 +171,16 @@ const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(type() != BlockType::TreeBorder);
 #endif
-  assert(m_block + nodeSize() != CachePool::SharedCachePool->firstBlock());
-  assert(m_block != SharedEditionPool->lastBlock());
+  assert(this + nodeSize() != CachePool::SharedCachePool->firstBlock());
+  assert(this != SharedEditionPool->lastBlock());
 #if !PLATFORM_DEVICE
-  if (SharedEditionPool->firstBlock() <= m_block &&
-      m_block <= SharedEditionPool->lastBlock()) {
+  if (SharedEditionPool->firstBlock() <= this &&
+      this <= SharedEditionPool->lastBlock()) {
     nextNodeInPoolCount++;
   }
   nextNodeCount++;
 #endif
-  return Tree::FromBlocks(m_block + nodeSize());
+  return Tree::FromBlocks(this + nodeSize());
 }
 
 const Tree* Tree::commonAncestor(const Tree* child1, const Tree* child2) const {

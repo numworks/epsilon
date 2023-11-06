@@ -22,7 +22,7 @@ namespace PoincareJ {
  * [COSINE]
  */
 
-class Tree {
+class Tree : public TypeBlock {
  public:
 #if !PLATFORM_DEVICE
   static uint32_t nextNodeCount;
@@ -65,18 +65,16 @@ class Tree {
   // Get the i-th value block (after the type block)
   constexpr uint8_t nodeValue(uint8_t index) const {
     assert(index + 1 < static_cast<uint8_t>(nodeSize()));
-    return static_cast<uint8_t>(m_block[index + 1]);
+    return static_cast<uint8_t>(m_valueBlocks[index]);
   }
   void setNodeValue(uint8_t index, uint8_t value) {
     assert(index + 1 < static_cast<uint8_t>(nodeSize()));
-    m_block[index + 1] = Block(value);
+    m_valueBlocks[index] = value;
   }
-  ValueBlock* nodeValueBlock(uint8_t index) {
-    return static_cast<ValueBlock*>(&m_block[index + 1]);
-  }
+  ValueBlock* nodeValueBlock(uint8_t index) { return &m_valueBlocks[index]; }
 
-  constexpr const Block* block() const { return m_block; }
-  constexpr Block* block() { return m_block; }
+  constexpr const Block* block() const { return this; }
+  constexpr Block* block() { return this; }
   void copyTreeTo(void* address) const;
 
   // Tree Navigation
@@ -129,16 +127,11 @@ class Tree {
   bool hasAncestor(const Tree* node, bool includeSelf) const;
   const Tree* lastChild() const { return child(numberOfChildren() - 1); }
 
-  constexpr TypeBlock type() const { return *typeBlock(); }
+  constexpr TypeBlock type() const { return *this; }
   constexpr LayoutType layoutType() const {
     assert(type().isLayout());
     return static_cast<LayoutType>(static_cast<BlockType>(type().type()));
   }
-  constexpr size_t nodeSize() const { return typeBlock()->nodeSize(); }
-  constexpr int numberOfChildren() const {
-    return typeBlock()->numberOfChildren();
-  }
-  constexpr bool isNAry() const { return typeBlock()->isNAry(); }
 
   // Apply Shallow operation in a Top Down manner.
   typedef bool (*ShallowOperation)(Tree* node, void* context);
@@ -297,13 +290,18 @@ class Tree {
   Tree* detach(bool isTree);
   void remove(bool isTree);
 
-  constexpr const TypeBlock* typeBlock() const {
-    return static_cast<const TypeBlock*>(static_cast<const Block*>(m_block));
-  }
+  // Forbid tree == BlockType::Addition
+  using TypeBlock::operator==, TypeBlock::operator!=,
+      TypeBlock::operator PoincareJ::BlockType;
 
+  // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member
-  Block m_block[0];
+  ValueBlock m_valueBlocks[0];
 };
+
+/* Even if Trees can be larger than one block, it's pratical if their C++ sizes
+ * match to be able to write Tree * ptr = tree + treeSize() and so on. */
+static_assert(sizeof(Tree) == sizeof(Block));
 
 void SwapTrees(Tree* u, Tree* v);
 

@@ -117,8 +117,9 @@ bool interruptApproximation(TypeBlock type, int childIndex,
       return (childIndex == 1 && childType.isInteger());
     case BlockType::Identity:
       return true;
+    default:
+      return false;
   }
-  return false;
 }
 
 template <typename T>

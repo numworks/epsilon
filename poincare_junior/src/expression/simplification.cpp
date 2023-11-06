@@ -840,25 +840,12 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
     changed = AdvancedReduction(ref, ref) || changed;
-    int listLength = Dimension::GetListLength(ref);
-    if (listLength) {
-      Tree* list = KList()->clone();
-      NAry::SetNumberOfChildren(list, listLength);
-      for (int i = 0; i < listLength; i++) {
-        Tree* e = ref->clone();
-        changed = List::ProjectToNthElement(e, i, [](Tree* e) {
-          bool changed = ShallowSystematicReduce(e);
-          return ShallowAdvancedReduction(e, e, changed) || changed;
-        });
-        assert(!DeepSystematicReduce(e));
-        assert(!DeepApplyMatrixOperators(e));
-      }
-      if (changed) {
-        ref->moveTreeOverTree(list);
-      } else {
-        list->removeTree();
-      }
-    }
+    changed = List::BubbleUp(ref,
+                             [](Tree* e) -> bool {
+                               return ShallowSystematicReduce(e) +
+                                      ShallowAdvancedReduction(e, e);
+                             }) ||
+              changed;
     changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
     Variables::BeautifyToName(ref, variables);
     variables->removeTree();

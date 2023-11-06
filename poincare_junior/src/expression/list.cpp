@@ -10,7 +10,7 @@
 namespace PoincareJ {
 
 bool List::ProjectToNthElement(Tree* expr, int n,
-                               Simplification::Operation reduce) {
+                               Simplification::Operation reduction) {
   switch (expr->type()) {
     case BlockType::SystemList:
       assert(n < expr->numberOfChildren());
@@ -34,10 +34,10 @@ bool List::ProjectToNthElement(Tree* expr, int n,
       }
       bool changed = false;
       for (Tree* child : expr->children()) {
-        changed = ProjectToNthElement(child, n, reduce) || changed;
+        changed = ProjectToNthElement(child, n, reduction) || changed;
       }
       if (changed) {
-        reduce(expr);
+        reduction(expr);
       }
       return changed;
   }
@@ -98,6 +98,21 @@ Tree* List::Mean(const Tree* list) {
   Rational::Push(1, Dimension::GetListLength(list));
   Simplification::ShallowSystematicReduce(result);
   return result;
+}
+
+bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
+  int length = Dimension::GetListLength(expr);
+  if (length == 0 || expr->isList()) {
+    return false;
+  }
+  Tree* list = KList()->clone();
+  NAry::SetNumberOfChildren(list, length);
+  for (int i = 0; i < length; i++) {
+    Tree* element = expr->clone();
+    List::ProjectToNthElement(element, i, reduction);
+  }
+  expr->moveTreeOverTree(list);
+  return true;
 }
 
 bool List::ShallowApplyListOperators(Tree* e) {

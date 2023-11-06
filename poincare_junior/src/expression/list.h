@@ -16,7 +16,8 @@ struct List {
   /* Replace lists by their nth element in descendants, for instance,
    * 2+{3,4}->2+3 */
   static bool ProjectToNthElement(Tree* expr, int n,
-                                  Simplification::Operation reduce);
+                                  Simplification::Operation reduction);
+  static bool BubbleUp(Tree* expr, Simplification::Operation reduction);
 
   static Tree* Fold(const Tree* list, BlockType type);
   static Tree* Mean(const Tree* list);

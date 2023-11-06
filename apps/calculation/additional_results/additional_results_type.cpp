@@ -25,11 +25,12 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput)) {
     return AdditionalResultsType{.complex = true};
   }
-  bool exactHasAngleUnit, approximateHasAngleUnit;
+  bool inputHasAngleUnit, exactHasAngleUnit, approximateHasAngleUnit;
+  bool inputHasUnit = input.hasUnit(true, &inputHasAngleUnit);
   bool exactHasUnit = exactOutput.hasUnit(true, &exactHasAngleUnit);
   bool approximateHasUnit = exactOutput.hasUnit(true, &approximateHasAngleUnit);
   assert(exactHasUnit == approximateHasUnit);
-  if (exactHasUnit) {
+  if (inputHasUnit || exactHasUnit) {
     return AdditionalResultsType{.unit = HasUnit(exactOutput)};
   }
   if (HasDirectTrigo(input, exactOutput)) {
@@ -45,7 +46,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
   }
   AdditionalResultsType type = {};
-  if (exactHasAngleUnit || approximateHasAngleUnit) {
+  if (inputHasAngleUnit || exactHasAngleUnit || approximateHasAngleUnit) {
+    // Forbig remaining units (angle units)
     return type;
   }
   if (HasFunction(input, approximateOutput)) {
@@ -112,7 +114,6 @@ bool AdditionalResultsType::HasInverseTrigo(const Expression input,
 }
 
 bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
-  assert(exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression unit;
@@ -187,6 +188,7 @@ bool AdditionalResultsType::HasFunction(const Expression input,
                                         const Expression approximateOutput) {
   // We want a single numerical value and to avoid showing the identity function
   assert(!input.isUninitialized());
+  assert(!input.hasUnit());
   assert(!approximateOutput.isUndefined());
   assert(!approximateOutput.hasUnit());
   assert(approximateOutput.type() != ExpressionNode::Type::Matrix);

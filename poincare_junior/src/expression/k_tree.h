@@ -60,7 +60,6 @@ constexpr auto KAdd = KNAry<BlockType::Addition>();
 constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KList = KNAry<BlockType::List>();
 constexpr auto KSet = KNAry<BlockType::Set>();
-constexpr auto KSystemList = KNAry<BlockType::SystemList>();
 
 template <uint8_t Id>
 constexpr auto KVar = KTree<BlockType::Variable, Id>();

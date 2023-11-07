@@ -10,6 +10,7 @@
 #include <poincare/symbol.h>
 #include <poincare/zoom.h>
 #include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -27,8 +28,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   Error error = Error::NoError;
 
   // Copy equations on the EditionPool
-  PoincareJ::Tree *equations =
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::SystemList>(0);
+  PoincareJ::Tree *equations = PoincareJ::List::PushEmpty();
   int nEquations = m_store->numberOfDefinedModels();
   for (int i = 0; i < nEquations; i++) {
     ExpiringPointer<Equation> equation =

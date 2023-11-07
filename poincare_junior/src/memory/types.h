@@ -19,7 +19,6 @@
 /* - Placeholder P
  * | P TAG | ID | */
 NODE(Placeholder, 0, 1)
-NODE(SystemList, NARY)
 #if ASSERTIONS
 NODE(TreeBorder)
 #endif

@@ -333,7 +333,7 @@ template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);
 template Tree *EditionPool::push<BlockType::Variable>(uint8_t);
 template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
-template Tree *EditionPool::push<BlockType::SystemList, int>(int);
+template Tree *EditionPool::push<BlockType::List, int>(int);
 template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(
     CodePoint);
 

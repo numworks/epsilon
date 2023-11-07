@@ -31,7 +31,7 @@ int Dimension::GetListLength(const Tree* t) {
     case BlockType::ListSort:
       assert(GetListLength(t->child(0)));
       return GetListLength(t->child(0));
-    case BlockType::SystemList:
+    case BlockType::List:
       // all children should be scalars
       return t->numberOfChildren();
     case BlockType::ListSequence:

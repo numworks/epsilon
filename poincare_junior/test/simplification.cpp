@@ -293,6 +293,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("med(π*{4,2,1,3})", "5×π/2");
   simplifies_to("dim(1+sequence(k,k,3))", "3");
   simplifies_to("mean({1,2}, {2,1})", "4/3");
+  simplifies_to("dim({{1,2}})", "undef");
+  simplifies_to("{2*[[1]]}", "undef");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

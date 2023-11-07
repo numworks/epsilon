@@ -9,10 +9,12 @@
 
 namespace PoincareJ {
 
+Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
+
 bool List::ProjectToNthElement(Tree* expr, int n,
                                Simplification::Operation reduction) {
   switch (expr->type()) {
-    case BlockType::SystemList:
+    case BlockType::List:
       assert(n < expr->numberOfChildren());
       expr->moveTreeOverTree(expr->child(n));
       return true;

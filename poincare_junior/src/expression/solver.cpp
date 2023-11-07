@@ -194,7 +194,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
 Tree* Solver::GetLinearCoefficients(const Tree* equation,
                                     uint8_t numberOfVariables,
                                     Context context) {
-  EditionReference result = SharedEditionPool->push<BlockType::SystemList>(0);
+  EditionReference result = SharedEditionPool->push<BlockType::List>(0);
   EditionReference tree = equation->clone();
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.

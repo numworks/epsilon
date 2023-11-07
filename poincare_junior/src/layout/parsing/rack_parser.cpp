@@ -6,6 +6,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/parser.h>
@@ -1140,7 +1141,7 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
     popToken();
     return subParser.parse();
   }
-  EditionReference list = SharedEditionPool->push<BlockType::SystemList>(0);
+  EditionReference list = List::PushEmpty();
   int length = 0;
   do {
     if (parseUntil(Token::Type::Comma)) {

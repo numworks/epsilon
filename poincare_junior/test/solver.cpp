@@ -10,7 +10,7 @@ using namespace PoincareJ;
 bool check_solutions(std::initializer_list<const char*> inputs,
                      std::initializer_list<const char*> outputs,
                      Solver::Error expectedError = Solver::Error::NoError) {
-  Tree* equationSet = SharedEditionPool->push<BlockType::SystemList>(0);
+  Tree* equationSet = SharedEditionPool->push<BlockType::List>(0);
   for (const char* equation : inputs) {
     NAry::AddChild(equationSet, TextToTree(equation));
   }

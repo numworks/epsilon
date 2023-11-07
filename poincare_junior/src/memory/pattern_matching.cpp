@@ -363,7 +363,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
 
   // Detach placeholder matches at the end of the EditionPool in a system list
   EditionReference placeholderMatches(
-      SharedEditionPool->push<BlockType::SystemList>(initializedPlaceHolders));
+      SharedEditionPool->push<BlockType::List>(initializedPlaceHolders));
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
 

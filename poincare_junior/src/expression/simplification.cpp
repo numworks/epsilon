@@ -124,6 +124,11 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::ListSort:
     case BlockType::Median:
       return List::ShallowApplyListOperators(u);
+    case BlockType::Dim:
+      if (Dimension::GetDimension(u->child(0)).isMatrix()) {
+        return false;
+      }
+      return List::ShallowApplyListOperators(u);
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);
@@ -1349,6 +1354,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
       tree->moveTreeOverTree(Matrix::Transpose(child));
       return true;
     case BlockType::Dim: {
+      // Child cannot be a list at this point
       Tree* dim = SharedEditionPool->push<BlockType::Matrix>(1, 2);
       Integer::Push(Matrix::NumberOfRows(child));
       Integer::Push(Matrix::NumberOfColumns(child));

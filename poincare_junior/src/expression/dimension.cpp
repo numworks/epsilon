@@ -151,6 +151,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 
     // Matrices
     case BlockType::Dim:
+      return childDim[0].isMatrix() ||
+             (childDim[0].isScalar() && GetListLength(t->child(0)));
     case BlockType::Ref:
     case BlockType::Rref:
     case BlockType::Transpose:
@@ -269,7 +271,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
     case BlockType::Dim:
-      return Matrix(1, 2);
+      return GetDimension(t->nextNode()).isMatrix() ? Matrix(1, 2) : Scalar();
     case BlockType::Transpose: {
       Dimension dim = GetDimension(t->nextNode());
       return Matrix(dim.matrix.cols, dim.matrix.rows);

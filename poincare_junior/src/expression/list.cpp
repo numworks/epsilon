@@ -158,6 +158,9 @@ bool List::ShallowApplyListOperators(Tree* e) {
       e->moveTreeOverTree(e->child(0)->child(n));
       return true;
     }
+    case BlockType::Dim:
+      e->moveTreeOverTree(Integer::Push(Dimension::GetListLength(e->child(0))));
+      return true;
     default:
       return false;
   }

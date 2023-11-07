@@ -981,7 +981,9 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
   assert(childIndex < numberOfChildren);
   EditionReference children = ref->child(childIndex);
   if (children->type() != naryTarget) {
-    return false;
+    // Apply operation anyway, as if it was in a squashed NAry
+    // f(A,E) -> f'(A,E)
+    return operation(ref);
   }
   int numberOfGrandChildren = children->numberOfChildren();
   size_t childIndexOffset = children->block() - ref->block();
@@ -1005,12 +1007,13 @@ bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
         ->moveTreeOverTree(grandChild);
     // f(0,E) ... +(,B,C) ... *(f(A,E),,)
     operation(clone);
+    // f(0,E) ... +(,B,C) ... *(f'(A,E),,)
   }
-  // f(0,E) ... +(,,) ... *(f(A,E), f(B,E), f(C,E))
+  // f(0,E) ... +(,,) ... *(f'(A,E), f'(B,E), f'(C,E))
   children->removeNode();
-  // f(0,E) ... *(f(A,E), f(B,E), f(C,E))
+  // f(0,E) ... *(f'(A,E), f'(B,E), f'(C,E))
   ref = ref->moveTreeOverTree(output);
-  // *(f(A,E), f(B,E), f(C,E))
+  // *(f'(A,E), f'(B,E), f'(C,E)) ...
   ShallowSystematicReduce(ref);
   return true;
 }

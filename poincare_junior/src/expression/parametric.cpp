@@ -31,21 +31,19 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
 }
 
 bool Parametric::ExpandSum(Tree* expr) {
-  if (!expr->isSum()) {
-    return false;
-  }
+  // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
+  return Simplification::DistributeOverNAry(
+      expr, BlockType::Sum, BlockType::Addition, BlockType::Addition,
+      [](Tree* expr) -> bool {
+        return SimplifySumOrProduct(expr) || ExpandSingleSum(expr);
+      },
+      k_integrandIndex);
+}
+
+// Expand sum with a derivand
+bool Parametric::ExpandSingleSum(Tree* expr) {
+  assert(expr->isSum());
   return
-      // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
-      Simplification::DistributeOverNAry(
-          expr, BlockType::Sum, BlockType::Addition, BlockType::Addition,
-          [](Tree* expr) -> bool {
-            return Simplification::ShallowSystematicReduce(expr) +
-                   ExpandSum(expr);
-          },
-          k_integrandIndex) ||
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
-          KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
 #if 0 /* This first rule is powerful and simplifies the next two rules but it \
        * may introduced undefs with sum(1/k,k,1,2) for instance. */
       // sum(e,k,a,b) = sum(e,k,0,b) - sum(e,k,0,a-1)

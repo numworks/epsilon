@@ -17,18 +17,14 @@ class Float {
     return Bit::getByteAtIndex(std::bit_cast<uint64_t>(value), index);
   }
   static float FloatTo(const Tree *tree) {
-    /* uint32_t can be fetched unaligned but not floats so we need this
-     * intermediary step. volatile is used to prevent the compiler from
-     * optimizing the uint32_t away but is too much : moving the value in an
-     * integer register is sufficient we don't need to force it into memory. */
-    volatile uint32_t value =
-        *reinterpret_cast<const uint32_t *>(tree->block()->next());
-    return std::bit_cast<float>(value);
+    float value;
+    memcpy(&value, tree->block()->next(), sizeof(float));
+    return value;
   }
   static double DoubleTo(const Tree *tree) {
-    volatile uint64_t value =
-        *reinterpret_cast<const uint64_t *>(tree->block()->next());
-    return std::bit_cast<double>(value);
+    double value;
+    memcpy(&value, tree->block()->next(), sizeof(double));
+    return value;
   }
   static double To(const Tree *tree) {
     assert(tree->isFloat());

@@ -233,14 +233,16 @@ T IntegerHandler::digit(int i) const {
       return newDigit;
     }
   }
-  return (
-      reinterpret_cast<T *>(const_cast<IntegerHandler *>(this)->digits()))[i];
+  T value;
+  memcpy(&value, const_cast<IntegerHandler *>(this)->digits() + i * sizeof(T),
+         sizeof(T));
+  return value;
 }
 
 template <typename T>
 void IntegerHandler::setDigit(T digit, int i) {
   assert(usesImmediateDigit() || i < numberOfDigits<T>());
-  reinterpret_cast<T *>(digits())[i] = digit;
+  memcpy(digits() + i * sizeof(T), &digit, sizeof(T));
 }
 
 /* Properties */
@@ -740,8 +742,8 @@ void IntegerHandler::sanitize() {
   }
   if (m_numberOfDigits == sizeof(native_uint_t)) {
     // Convert to immediate digit
-    m_digitAccessor.m_digit =
-        *(reinterpret_cast<const native_uint_t *>(m_digitAccessor.m_digits));
+    memcpy(&m_digitAccessor.m_digit, m_digitAccessor.m_digits,
+           sizeof(native_uint_t));
     m_numberOfDigits = NumberOfDigits(m_digitAccessor.m_digit);
   }
 }

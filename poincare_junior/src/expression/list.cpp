@@ -73,32 +73,42 @@ Tree* List::Fold(const Tree* list, BlockType type) {
   return result;
 }
 
-Tree* List::Variance(const Tree* list, BlockType type) {
+Tree* List::Variance(const Tree* list, const Tree* coefficients,
+                     BlockType type) {
   // var(L) = mean(L^2) - mean(L)^2
   KTree variance =
-      KAdd(KMean(KPow(KA, 2_e)), KMult(-1_e, KPow(KMean(KA), 2_e)));
+      KAdd(KMean(KPow(KA, 2_e), KB), KMult(-1_e, KPow(KMean(KA, KB), 2_e)));
   // sqrt(var)
   KTree stdDev = KPow(variance, KHalf);
   // stdDev * sqrt(1 + 1 / (n - 1))
   KTree sampleStdDev =
-      KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KB, -1_e), -1_e))), KHalf);
+      KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), KHalf);
   if (type == BlockType::SampleStdDev) {
-    Tree* n = Integer::Push(Dimension::GetListLength(list));
-    PatternMatching::CreateAndSimplify(sampleStdDev, {.KA = list, .KB = n});
+    Tree* n = coefficients->isOne()
+                  ? Integer::Push(Dimension::GetListLength(list))
+                  : Fold(coefficients, BlockType::ListSum);
+    PatternMatching::CreateAndSimplify(
+        sampleStdDev, {.KA = list, .KB = coefficients, .KC = n});
     n->removeTree();
     return n;
   } else {
     return PatternMatching::CreateAndSimplify(
-        type == BlockType::Variance ? variance : stdDev, {.KA = list});
+        type == BlockType::Variance ? variance : stdDev,
+        {.KA = list, .KB = coefficients});
   }
 }
 
-Tree* List::Mean(const Tree* list) {
-  Tree* result = KMult.node<2>->cloneNode();
-  Fold(list, BlockType::ListSum);
-  Rational::Push(1, Dimension::GetListLength(list));
-  Simplification::ShallowSystematicReduce(result);
-  return result;
+Tree* List::Mean(const Tree* list, const Tree* coefficients) {
+  if (coefficients->isOne()) {
+    Tree* result = KMult.node<2>->cloneNode();
+    Fold(list, BlockType::ListSum);
+    Rational::Push(1, Dimension::GetListLength(list));
+    Simplification::ShallowSystematicReduce(result);
+    return result;
+  }
+  return PatternMatching::CreateAndSimplify(
+      KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)),
+      {.KA = list, .KB = coefficients});
 }
 
 bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
@@ -125,12 +135,12 @@ bool List::ShallowApplyListOperators(Tree* e) {
       e->moveTreeOverTree(List::Fold(e->child(0), e->type()));
       return true;
     case BlockType::Mean:
-      e->moveTreeOverTree(List::Mean(e->child(0)));
+      e->moveTreeOverTree(List::Mean(e->child(0), e->child(1)));
       return true;
     case BlockType::Variance:
     case BlockType::StdDev:
     case BlockType::SampleStdDev: {
-      e->moveTreeOverTree(List::Variance(e->child(0), e->type()));
+      e->moveTreeOverTree(List::Variance(e->child(0), e->child(1), e->type()));
       return true;
     }
     case BlockType::ListSort:
@@ -139,6 +149,11 @@ bool List::ShallowApplyListOperators(Tree* e) {
       BubbleUp(list, Simplification::ShallowSystematicReduce);
       NAry::Sort(list);
       if (e->isMedian()) {
+        if (!e->child(1)->isOne()) {
+          // TODO : not implemeted yet
+          // Median with coefficients needs statistics_dataset
+          assert(false);
+        }
         int n = list->numberOfChildren();
         if (n % 2) {
           e->moveTreeOverTree(list->child(n / 2));

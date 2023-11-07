@@ -37,24 +37,7 @@ class Builtin : public std::pair<BlockType, Aliases> {
   static const Builtin* GetReservedFunction(BlockType type);
   static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
   static const Builtin* GetSpecialIdentifier(BlockType type);
-  static uint8_t MinNumberOfParameters(BlockType type) {
-    if (type == BlockType::Round) {
-      return 1;
-    }
-    if (type == BlockType::GCD || type == BlockType::LCM) {
-      return 2;
-    }
-    return TypeBlock::NumberOfChildren(type);
-  }
-  static uint8_t MaxNumberOfParameters(BlockType type) {
-    if (type == BlockType::Round) {
-      return 2;
-    }
-    if (type == BlockType::GCD || type == BlockType::LCM) {
-      return UINT8_MAX;
-    }
-    return MinNumberOfParameters(type);
-  }
+  static bool CheckNumberOfParameters(BlockType type, int n);
   static bool Promote(Tree* parameterList, const Builtin* builtin);
   EDITION_REF_WRAP_1(Promote, const Builtin*);
 };

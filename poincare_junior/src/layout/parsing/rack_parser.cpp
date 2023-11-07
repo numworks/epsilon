@@ -879,16 +879,9 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   }
   assert(builtin);
 
-  if (numberOfParameters <
-      Builtin::MinNumberOfParameters(builtin->blockType())) {
-    // Too few parameters provided.
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    return;
-  }
-
-  if (numberOfParameters >
-      Builtin::MaxNumberOfParameters(builtin->blockType())) {
-    // Too many parameters provided.
+  if (!Builtin::CheckNumberOfParameters(builtin->blockType(),
+                                        numberOfParameters)) {
+    // Too few or too many parameters provided.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
 

@@ -120,23 +120,45 @@ const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
   return nullptr;
 }
 
-bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
-  if (builtin->blockType() == BlockType::Round &&
-      parameterList->numberOfChildren() == 1) {
-    NAry::AddChild(parameterList, (0_e)->clone());
+bool Builtin::CheckNumberOfParameters(BlockType type, int n) {
+  switch (type) {
+    case BlockType::Round:
+    case BlockType::Mean:
+    case BlockType::Variance:
+    case BlockType::StdDev:
+    case BlockType::SampleStdDev:
+    case BlockType::Median:
+      return 1 <= n && n <= 2;
+    case BlockType::GCD:
+    case BlockType::LCM:
+      return 2 <= n && n <= UINT8_MAX;
+    default:
+      return n == TypeBlock::NumberOfChildren(type);
   }
-  if (builtin->blockType() == BlockType::GCD ||
-      builtin->blockType() == BlockType::LCM) {
+}
+
+bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
+  TypeBlock type = builtin->blockType();
+  if (type == BlockType::GCD || type == BlockType::LCM) {
     // GCD and LCM are n-ary, skip moveNodeOverNode to keep the nb of children
-    *parameterList->block() = builtin->blockType();
+    *parameterList->block() = type;
     return true;
   }
+  if (parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
+    // Add default parameters
+    if (type == BlockType::Round) {
+      NAry::AddChild(parameterList, (0_e)->clone());
+    }
+    if (type.isOfType({BlockType::Mean, BlockType::Variance, BlockType::StdDev,
+                       BlockType::SampleStdDev, BlockType::Median})) {
+      NAry::AddChild(parameterList, (1_e)->clone());
+    }
+  }
   parameterList->moveNodeOverNode(builtin->pushNode());
-  if (TypeBlock(builtin->blockType()).isParametric()) {
+  if (TypeBlock(type).isParametric()) {
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
   }
   return true;
 }
-
 }  // namespace PoincareJ

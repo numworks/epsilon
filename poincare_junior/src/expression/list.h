@@ -20,9 +20,10 @@ struct List {
   static bool BubbleUp(Tree* expr, Simplification::Operation reduction);
 
   static Tree* Fold(const Tree* list, BlockType type);
-  static Tree* Mean(const Tree* list);
+  static Tree* Mean(const Tree* list, const Tree* coefficients);
   // Variance and related functions : stdDev, sampleStdDev
-  static Tree* Variance(const Tree* list, BlockType type);
+  static Tree* Variance(const Tree* list, const Tree* coefficients,
+                        BlockType type);
 
   static bool ShallowApplyListOperators(Tree* expr);
 };

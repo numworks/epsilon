@@ -1068,28 +1068,34 @@ bool Simplification::ExpandAbs(Tree* ref) {
  */
 
 bool Simplification::ContractLn(Tree* ref) {
-  /* Contracting -ln(x) as ln(1/x) can help contracting even more ln in
-   * addition. However, -ln(x) might be preferred if nothing can be contracted.
-   * TODO : MatchAndReplace all possibilities instead:
-   * - A? + ln(B) - ln(C) + D?
-   * - A? - ln(B) + ln(C) + D?
-   * - A? - ln(B) - ln(C) + D?
-   */
-  return
-      // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
-      PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
-          KAdd(KTA, KLn(KMult(KB, KC)), KTD)) ||
-      // A? - ln(B) + C? = A + ln(1/B) + C
-      PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KTA, KMult(-1_e, KLn(KB)), KTC),
-          KAdd(KTA, KLn(KPow(KB, -1_e)), KTC));
+  // A? + B*ln(C) + D? = A + ln(C^B) + D if B integer and C not rational.
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(KAdd(KTA, KMult(KB, KLn(KC)), KTD), ref, &ctx) &&
+      ctx.getNode(KB)->isInteger()) {
+    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KTA, KLn(KPow(KC, KB)), KTD), ctx));
+    return true;
+  }
+  // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
+      KAdd(KTA, KLn(KMult(KB, KC)), KTD));
 }
 
 bool Simplification::ExpandLn(Tree* ref) {
   // ln(A*B*...) = ln(A) + ln(B) + ...
   return DistributeOverNAry(ref, BlockType::Ln, BlockType::Multiplication,
-                            BlockType::Addition, SimplifyLn);
+                            BlockType::Addition, ExpandSingleChildLn);
+}
+
+bool Simplification::ExpandSingleChildLn(Tree* ref) {
+  return
+      // ln(A/B) = ln(a) - ln(b)
+      Arithmetic::ExpandLnOnRational(ref) ||
+      // ln(A^B) = B*ln(A)
+      PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
+                                               KMult(KB, KLn(KA))) ||
+      SimplifyLn(ref);
 }
 
 bool Simplification::ExpandExp(Tree* ref) {

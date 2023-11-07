@@ -831,7 +831,8 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
 bool Simplification::SimplifyLastTree(Tree* ref,
                                       ProjectionContext projectionContext) {
   ExceptionTryAfterBlock(ref->block()) {
-    if (!Dimension::DeepCheckDimensions(ref)) {
+    if (!Dimension::DeepCheckDimensions(ref) ||
+        !Dimension::DeepCheckListLength(ref)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
       ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
     }

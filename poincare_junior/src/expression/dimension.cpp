@@ -12,6 +12,51 @@ Dimension Dimension::Unit(const Tree* unit) {
               Units::Unit::GetRepresentative(unit));
 }
 
+bool Dimension::DeepCheckListLength(const Tree* t) {
+  // TODO complexity should be linear
+  int childLength[t->numberOfChildren()];
+  for (int i = 0; const Tree* child : t->children()) {
+    if (!DeepCheckListLength(child)) {
+      return false;
+    }
+    childLength[i] = GetListLength(child);
+    i++;
+  }
+  if (t->isListToScalar() && childLength[0] == 0) {
+    // ListToScalar operators expect a list as first argument
+    return false;
+  }
+  if (t->isSampleStdDev() && childLength[0] < 2) {
+    // SampleStdDev needs a list of length >= 2
+    return false;
+  }
+  if (t->isList()) {
+    for (int i = 0; i < t->numberOfChildren(); i++) {
+      if (childLength[i++] > 0) {
+        // List of lists are forbidden
+        return false;
+      }
+    }
+    return true;
+  }
+  int thisLength = 0;
+  for (int i = 0; i < t->numberOfChildren(); i++) {
+    if (childLength[i] == 0) {
+      continue;
+    }
+    if (thisLength > 0 && childLength[i] != thisLength) {
+      // Children lists should have the same dimension
+      return false;
+    }
+    thisLength = childLength[i];
+  }
+  if (thisLength > 0 && GetDimension(t).isMatrix()) {
+    // List of matrices are forbidden
+    return false;
+  }
+  return true;
+}
+
 int Dimension::GetListLength(const Tree* t) {
   switch (t->type()) {
     case BlockType::Mean:
@@ -37,15 +82,14 @@ int Dimension::GetListLength(const Tree* t) {
     case BlockType::ListSequence:
       return Approximation::To<float>(t->child(1));
     default: {
-      int current = 0;
+      // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {
         int childListDim = GetListLength(child);
         if (childListDim) {
-          assert(!current || current == childListDim);
-          current = childListDim;
+          return childListDim;
         }
       }
-      return current;
+      return 0;
     }
   }
 }
@@ -152,7 +196,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     // Matrices
     case BlockType::Dim:
       return childDim[0].isMatrix() ||
-             (childDim[0].isScalar() && GetListLength(t->child(0)));
+             (childDim[0].isScalar() && GetListLength(t->child(0)) > 0);
     case BlockType::Ref:
     case BlockType::Rref:
     case BlockType::Transpose:

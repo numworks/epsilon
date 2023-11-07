@@ -12,10 +12,6 @@ struct MatrixDimension {
   uint8_t cols;
 };
 
-struct ListDimension {
-  uint8_t size;
-};
-
 struct UnitDimension {
   Units::DimensionVector vector;
   // Only one representative is needed for now.
@@ -26,17 +22,14 @@ struct Dimension {
   enum class Type {
     Scalar,
     Matrix,
-    List,
     Unit,
   };
 
   Dimension() : type(Type::Scalar){};
   Dimension(MatrixDimension iMatrix) : type(Type::Matrix), matrix(iMatrix){};
-  Dimension(ListDimension iList) : type(Type::List), list(iList){};
   Dimension(UnitDimension iUnit) : type(Type::Unit), unit(iUnit){};
 
   static Dimension Scalar() { return Dimension(); }
-  static Dimension List(uint8_t size) { return Dimension({.size = size}); }
   static Dimension Matrix(uint8_t rows, uint8_t cols) {
     return Dimension({.rows = rows, .cols = cols});
   }
@@ -56,7 +49,6 @@ struct Dimension {
 
   bool isScalar() const { return type == Type::Scalar; }
   bool isMatrix() const { return type == Type::Matrix; }
-  bool isList() const { return type == Type::List; }
   bool isUnit() const { return type == Type::Unit; }
   bool isSquareMatrix() const {
     return isMatrix() && matrix.rows == matrix.cols;
@@ -80,14 +72,14 @@ struct Dimension {
            representative == &Units::Temperature::representatives.fahrenheit;
   }
 
-  static Dimension GetDimension(const Tree* t);
   static int GetListLength(const Tree* t);
+  static bool DeepCheckListLength(const Tree* t);
+  static Dimension GetDimension(const Tree* t);
   static bool DeepCheckDimensions(const Tree* t);
 
   Type type;
   union {
     MatrixDimension matrix;
-    ListDimension list;
     UnitDimension unit;
   };
 };

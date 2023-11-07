@@ -29,12 +29,6 @@
 
 namespace PoincareJ {
 
-bool IsInteger(const Tree* u) { return u->isInteger(); }
-bool IsNumber(const Tree* u) { return u->isNumber(); }
-bool IsRational(const Tree* u) { return u->isRational(); }
-bool IsConstant(const Tree* u) { return IsNumber(u); }
-bool IsUndef(const Tree* u) { return u->isUndefined(); }
-
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
    * here could save multiple ShallowSystematicReduce and flatten calls. */
@@ -42,7 +36,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
       (u->isMultiplication() || u->isAddition()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
-    assert(!IsUndef(child));
+    assert(!child->isUndefined());
   }
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
@@ -147,7 +141,7 @@ bool Simplification::SimplifyExp(Tree* u) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
-      IsInteger(ctx.getNode(KA))) {
+      ctx.getNode(KA)->isInteger()) {
     // exp(n*ln(x)) -> x^n with n an integer
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;
@@ -163,7 +157,7 @@ bool Simplification::SimplifyLn(Tree* u) {
     u->removeNode();
     return true;
   }
-  if (!IsInteger(child)) {
+  if (!child->isInteger()) {
     return false;
   }
   if (Number::IsMinusOne(child)) {
@@ -196,7 +190,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
                KExp(KMult(KHalf, KLn(KAdd(KPow(KA, 2_e), KPow(KB, 2_e)))))) ||
            changed;
   }
-  if (!IsNumber(child)) {
+  if (!child->isNumber()) {
     return changed;
   }
   if (Number::Sign(child).isPositive()) {
@@ -213,7 +207,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
 
 bool Simplification::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   // Trig second element is always expected to be a reduced integer.
-  assert(IsInteger(u) && !DeepSystematicReduce(u));
+  assert(u->isInteger() && !DeepSystematicReduce(u));
   IntegerHandler i = Integer::Handler(u);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));
   if (Comparison::Compare(remainder, 2_e) >= 0) {
@@ -281,7 +275,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
   if (firstArgument->treeIsIdenticalTo(π_e) || Number::IsZero(firstArgument) ||
       (firstArgument->isMultiplication() &&
        firstArgument->numberOfChildren() == 2 &&
-       IsRational(firstArgument->nextNode()) &&
+       firstArgument->nextNode()->isRational() &&
        firstArgument->child(1)->treeIsIdenticalTo(π_e))) {
     const Tree* piFactor = firstArgument->isMultiplication()
                                ? firstArgument->nextNode()
@@ -289,7 +283,7 @@ bool Simplification::SimplifyTrig(Tree* u) {
     // Compute n such that firstArgument = (n/12)*pi
     Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
     Rational::MakeIrreducible(multipleTree);
-    if (IsInteger(multipleTree)) {
+    if (multipleTree->isInteger()) {
       // Trig is 2pi periodic, n can be retrieved as a uint8_t.
       multipleTree->moveTreeOverTree(IntegerHandler::Remainder(
           Integer::Handler(multipleTree), IntegerHandler(24)));
@@ -337,12 +331,12 @@ bool Simplification::SimplifyPower(Tree* u) {
     }
     ExceptionCheckpoint::Raise(ExceptionType::ZeroPowerZero);
   }
-  if (IsRational(v)) {
+  if (v->isRational()) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
     Rational::MakeIrreducible(u);
     return true;
   }
-  assert(IsInteger(n));
+  assert(n->isInteger());
   // v^0 -> 1
   if (Number::IsZero(n)) {
     if (Variables::HasVariables(v)) {
@@ -437,16 +431,16 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    */
   Tree* x = u->child(0);
   Tree* y = u->child(1);
-  bool xIsNumber = IsNumber(x);
+  bool xIsNumber = x->isNumber();
   bool xIsPositiveNumber = xIsNumber && Number::Sign(x).isPositive();
   bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
-  if (xIsPositiveNumber || x->isComplex() || IsInteger(y)) {
+  if (xIsPositiveNumber || x->isComplex() || y->isInteger()) {
     // TODO : Handle sign and complex status not only on numbers
     ConvertPowerRealToPower(u);
     return true;
   }
 
-  if (!IsRational(y)) {
+  if (!y->isRational()) {
     // We don't know enough to simplify further.
     return false;
   }
@@ -483,7 +477,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
-  if (IsNumber(child) && IsNumber(next) &&
+  if (child->isNumber() && next->isNumber() &&
       !((child->isConstant()) || next->isConstant())) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
@@ -606,11 +600,11 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
     return TermsAreEqual(v, u);
   }
   if (!v->isMultiplication()) {
-    return u->numberOfChildren() == 2 && IsRational(u->child(0)) &&
+    return u->numberOfChildren() == 2 && u->child(0)->isRational() &&
            u->child(1)->treeIsIdenticalTo(v);
   }
-  bool uHasRational = IsRational(u->child(0));
-  bool vHasRational = IsRational(v->child(0));
+  bool uHasRational = u->child(0)->isRational();
+  bool vHasRational = v->child(0)->isRational();
   int n = u->numberOfChildren() - uHasRational;
   if (n != v->numberOfChildren() - vHasRational) {
     return false;
@@ -630,7 +624,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
   Tree* c = u->clone();
-  if (u->isMultiplication() && IsRational(u->child(0))) {
+  if (u->isMultiplication() && u->child(0)->isRational()) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfUnary(c);
   }
@@ -639,7 +633,7 @@ Tree* PushTerm(const Tree* u) {
 
 // The constant of 2ab is 2
 const Tree* Constant(const Tree* u) {
-  if (u->isMultiplication() && IsRational(u->child(0))) {
+  if (u->isMultiplication() && u->child(0)->isRational()) {
     return u->child(0);
   }
   return 1_e;
@@ -648,7 +642,7 @@ const Tree* Constant(const Tree* u) {
 bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
-  if (IsNumber(child) && IsNumber(next) &&
+  if (child->isNumber() && next->isNumber() &&
       !((child->isConstant()) || next->isConstant())) {
     // Merge numbers
     merge = Number::Addition(child, next);

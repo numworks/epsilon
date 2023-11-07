@@ -72,6 +72,9 @@ class Tree : public TypeBlock {
     m_valueBlocks[index] = value;
   }
   ValueBlock* nodeValueBlock(uint8_t index) { return &m_valueBlocks[index]; }
+  const ValueBlock* nodeValueBlock(uint8_t index) const {
+    return &m_valueBlocks[index];
+  }
 
   constexpr const Block* block() const { return this; }
   constexpr Block* block() { return this; }

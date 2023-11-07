@@ -5,9 +5,7 @@
 namespace PoincareJ {
 
 CodePoint CodePointLayout::GetCodePoint(const Tree* node) {
-  uint32_t value;
-  memcpy(&value, node->block()->next(), sizeof(uint32_t));
-  return CodePoint(value);
+  return CodePoint(node->nodeValueBlock(0)->get<uint32_t>());
 }
 
 void CodePointLayout::GetName(const Tree* node, char* buffer,

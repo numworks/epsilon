@@ -17,14 +17,10 @@ class Float {
     return Bit::getByteAtIndex(std::bit_cast<uint64_t>(value), index);
   }
   static float FloatTo(const Tree *tree) {
-    float value;
-    memcpy(&value, tree->block()->next(), sizeof(float));
-    return value;
+    return tree->nodeValueBlock(0)->get<float>();
   }
   static double DoubleTo(const Tree *tree) {
-    double value;
-    memcpy(&value, tree->block()->next(), sizeof(double));
-    return value;
+    return tree->nodeValueBlock(0)->get<double>();
   }
   static double To(const Tree *tree) {
     assert(tree->isFloat());

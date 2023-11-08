@@ -8,16 +8,45 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <stdlib.h>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace PoincareJ {
 
 /* TODO:I'm not sure using uint32_t over uint8_t is worth the trouble.
  * The set of operations of test/integer.cpp was only 14% slower when
  * native_uint_t = uint8_t. */
 
+// Must be used aligned
 typedef uint16_t half_native_uint_t;
 typedef uint32_t native_uint_t;
 typedef int32_t native_int_t;
 typedef uint64_t double_native_uint_t;
+
+// Can be used unaligned
+template <typename T>
+struct Unaligned;
+
+#if __EMSCRIPTEN__
+template <>
+struct Unaligned<half_native_uint_t> {
+  using type = emscripten_align1_short;
+};
+template <>
+struct Unaligned<native_uint_t> {
+  using type = emscripten_align1_int;
+};
+#else
+template <>
+struct Unaligned<half_native_uint_t> {
+  using type = uint16_t;
+};
+template <>
+struct Unaligned<native_uint_t> {
+  using type = uint32_t;
+};
+#endif
 
 static_assert(sizeof(native_uint_t) == 2 * sizeof(half_native_uint_t),
               "native_int_t should be twice the size of half_native_uint_t");

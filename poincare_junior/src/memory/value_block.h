@@ -11,10 +11,12 @@ class ValueBlock : public Block {
   constexpr ValueBlock(uint8_t value) : Block(value) {}
 
   template <typename T>
+  T get() const;
+
+  template <typename T>
+    requires(sizeof(T) == 1)
   T get() const {
-    T value;
-    memcpy(&value, this, sizeof(T));
-    return value;
+    return *reinterpret_cast<T*>(this);
   }
 };
 

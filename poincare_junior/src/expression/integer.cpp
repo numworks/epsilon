@@ -233,16 +233,14 @@ T IntegerHandler::digit(int i) const {
       return newDigit;
     }
   }
-  T value;
-  memcpy(&value, const_cast<IntegerHandler *>(this)->digits() + i * sizeof(T),
-         sizeof(T));
-  return value;
+  return (reinterpret_cast<typename Unaligned<T>::type *>(
+      const_cast<IntegerHandler *>(this)->digits()))[i];
 }
 
 template <typename T>
 void IntegerHandler::setDigit(T digit, int i) {
   assert(usesImmediateDigit() || i < numberOfDigits<T>());
-  memcpy(digits() + i * sizeof(T), &digit, sizeof(T));
+  reinterpret_cast<typename Unaligned<T>::type *>(digits())[i] = digit;
 }
 
 /* Properties */
@@ -742,8 +740,9 @@ void IntegerHandler::sanitize() {
   }
   if (m_numberOfDigits == sizeof(native_uint_t)) {
     // Convert to immediate digit
-    memcpy(&m_digitAccessor.m_digit, m_digitAccessor.m_digits,
-           sizeof(native_uint_t));
+    m_digitAccessor.m_digit =
+        *(reinterpret_cast<const Unaligned<native_uint_t>::type *>(
+            m_digitAccessor.m_digits));
     m_numberOfDigits = NumberOfDigits(m_digitAccessor.m_digit);
   }
 }

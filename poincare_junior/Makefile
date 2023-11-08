@@ -63,6 +63,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   memory/reference.cpp \
   memory/storage_context.cpp \
   memory/tree.cpp \
+  memory/value_block.cpp \
   n_ary.cpp \
   poincare.cpp \
 )

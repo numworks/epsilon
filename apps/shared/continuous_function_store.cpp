@@ -2,6 +2,8 @@
 
 #include <ion.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 bool ContinuousFunctionStore::displaysNonCartesianFunctions(
@@ -40,8 +42,7 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
   /* Choose the next color following the rule:
    * - no other function is the same color among the last
    * size(Palette::DataColor) - 1 ones in the list */
-  using namespace Escher;
-  constexpr int PaletteSize = std::size(Palette::DataColor);
+  constexpr int paletteSize = std::size(Palette::DataColor);
 
   int functionsCount = numberOfModels();
 
@@ -51,7 +52,9 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
 
   for (KDColor color : Palette::DataColor) {
     bool isCandidate = true;
-    for (int i = 0; i < std::min(functionsCount, PaletteSize - 1); i++) {
+
+    for (int i = std::max(0, functionsCount - (paletteSize - 1));
+         i < functionsCount; i++) {
       if (colorForRecord(recordAtIndex(i)) == color) {
         isCandidate = false;
         break;

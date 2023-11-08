@@ -68,9 +68,9 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
            i < m_memoizedIndexOffset + memoizedLinesCount();
   }
 
+#if 0
   void updateMemoizationForIndex(int index, KDCoordinate previousSize,
                                  KDCoordinate newSize = k_undefinedSize);
-#if 0
   void deleteIndexFromMemoization(int index, KDCoordinate previousSize);
 #endif
 

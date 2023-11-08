@@ -31,20 +31,21 @@ int IllustratedExpressionsListController::numberOfRows() const {
 }
 
 int IllustratedExpressionsListController::reusableCellCount(int type) {
-  assert(type == k_illustrationCellType || type == k_expressionCellType);
   if (type == k_illustrationCellType) {
     return 1;
   }
+  assert(type == k_expressionCellType);
   return k_maxNumberOfRows;
 }
 
 HighlightCell* IllustratedExpressionsListController::reusableCell(int index,
                                                                   int type) {
-  assert(type == k_illustrationCellType || type == k_expressionCellType);
-  assert(index >= 0);
   if (type == k_illustrationCellType) {
+    assert(index == 0);
     return illustrationCell();
   }
+  assert(type == k_expressionCellType);
+  assert(0 <= index && index < k_maxNumberOfRows);
   return &m_cells[index];
 }
 
@@ -53,6 +54,7 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
   if (typeAtRow(row) == k_illustrationCellType) {
     return illustrationCell()->isVisible() ? illustrationHeight() : 0;
   }
+  assert(typeAtRow(row) == k_expressionCellType);
   AdditionalResultCell tempCell;
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }

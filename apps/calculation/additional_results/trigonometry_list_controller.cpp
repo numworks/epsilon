@@ -168,7 +168,7 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
 void TrigonometryListController::fillCellForRow(Escher::HighlightCell* cell,
                                                 int row) {
   if (typeAtRow(row) == k_expressionCellType) {
-    int expressionIndex = row - showIllustration();
+    int expressionIndex = row - 1;
     assert(0 <= expressionIndex && expressionIndex < k_numberOfExpressionRows);
     static_cast<AdditionalResultCell*>(cell)
         ->label()

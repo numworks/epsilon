@@ -24,21 +24,21 @@ class Simplification {
   EDITION_REF_WRAP_1(ShallowAdvancedReduction, const Tree *);
 
   // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool ShallowContract(Tree *e, void *context = nullptr) {
+  static bool ShallowContract(Tree *e) {
     return TryAllOperations(e, k_contractOperations,
                             std::size(k_contractOperations));
   }
-  EDITION_REF_WRAP_1D(ShallowContract, void *, nullptr);
-  static bool ShallowExpand(Tree *e, void *context = nullptr) {
+  EDITION_REF_WRAP(ShallowContract);
+  static bool ShallowExpand(Tree *e) {
     return TryAllOperations(e, k_expandOperations,
                             std::size(k_expandOperations));
   }
-  EDITION_REF_WRAP_1D(ShallowExpand, void *, nullptr);
-  static bool ShallowAlgebraicExpand(Tree *e, void *context = nullptr) {
+  EDITION_REF_WRAP(ShallowExpand);
+  static bool ShallowAlgebraicExpand(Tree *e) {
     return TryAllOperations(e, k_algebraicExpandOperations,
                             std::size(k_algebraicExpandOperations));
   }
-  EDITION_REF_WRAP_1D(ShallowAlgebraicExpand, void *, nullptr);
+  EDITION_REF_WRAP(ShallowAlgebraicExpand);
 
   static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);

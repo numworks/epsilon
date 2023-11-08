@@ -76,23 +76,6 @@ bool MainController::handleEvent(Ion::Events::Event e) {
     return true;
   }
 
-  /*
-    constexpr int bufferSize = Escher::TextField::MaxBufferSize();
-    char buffer[bufferSize];
-    dataSource->field()->getLayout(z).serializeForParsing(buffer, bufferSize);
-
-    if (e == Ion::Events::Copy && dataSource->field()->hasDouble(z)) {
-      // copy the serialized layout to the clipboard.
-
-      Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
-      return true;
-    } else if ((e == Ion::Events::Var || e == Ion::Events::Sto) &&
-               dataSource->field()->hasDouble(z)) {
-      App::app()->storeValue(buffer);
-      return true;
-    }
-  */
-
   AtomicNumber newZ = z;
   if (e == Ion::Events::Up) {
     newZ = TableLayout::NextElement(z, TableLayout::Direction::DecreasingRow);

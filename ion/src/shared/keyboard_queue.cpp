@@ -13,7 +13,6 @@ Queue* Queue::sharedQueue() {
 
 void Queue::flush(bool forStalling) {
   reset();
-  Keyboard::resetMemoizedState();
   if (!forStalling) {
     /* If stalling, keep previous keyboard state to ensure that the shift key
      * is still seen as down after the stall. Also keep the preemptive state in

@@ -15,7 +15,6 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   void computeAdditionalResults(
       const Poincare::Expression input, const Poincare::Expression exactOutput,
       const Poincare::Expression approximateOutput) override;
-  KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
   void setTrigonometryType(bool directTrigonometry) {
@@ -32,6 +31,8 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   I18n::Message messageAtIndex(int index) override;
   IllustrationCell* illustrationCell() override { return &m_graphCell; }
   void updateIsStrictlyEqualAtIndex(int index, Poincare::Context* context);
+  KDCoordinate illustrationHeight() override { return k_illustrationHeight; }
+
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;
   bool m_isStrictlyEqual[k_numberOfExpressionRows];

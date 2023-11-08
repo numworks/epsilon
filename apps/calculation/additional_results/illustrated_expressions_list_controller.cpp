@@ -51,7 +51,7 @@ HighlightCell* IllustratedExpressionsListController::reusableCell(int index,
 KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
     int row) {
   if (typeAtRow(row) == k_illustrationCellType) {
-    return k_illustrationHeight;
+    return illustrationHeight();
   }
   AdditionalResultCell tempCell;
   return protectedNonMemoizedRowHeight(&tempCell, row);

@@ -64,6 +64,7 @@ class IllustratedExpressionsListController
  private:
   int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
                   int index) override;
+  virtual KDCoordinate illustrationHeight() { return k_illustrationHeight; }
   // Cells
   virtual IllustrationCell* illustrationCell() = 0;
   bool m_showIllustration;

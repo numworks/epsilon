@@ -178,13 +178,6 @@ void TrigonometryListController::fillCellForRow(Escher::HighlightCell* cell,
   return IllustratedExpressionsListController::fillCellForRow(cell, row);
 }
 
-KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int row) {
-  if (typeAtRow(row) == k_illustrationCellType) {
-    return k_illustrationHeight;
-  }
-  return IllustratedExpressionsListController::nonMemoizedRowHeight(row);
-}
-
 I18n::Message TrigonometryListController::messageAtIndex(int index) {
   if (index == 0) {
     return I18n::Message::AngleInZeroTwoPi;

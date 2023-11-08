@@ -26,6 +26,7 @@ bool EditorView::isAutocompleting() const {
 }
 
 void EditorView::resetSelection() { m_textArea.resetSelection(); }
+
 void EditorView::removeAutocompletionText() {
   if (m_textArea.isAutocompleting()) {
     m_textArea.removeAutocompletionText();

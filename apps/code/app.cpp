@@ -84,11 +84,11 @@ App::App(Snapshot *snapshot)
 }
 
 void App::quitInputRunLoop() {
-  /* We need to return true here because we want to actually exit from the
-   * input run loop, which requires ending a dispatchEvent cycle. */
-  m_consoleController.terminateInputLoop();
-  m_modalViewController.dismissPotentialModal();
-  Ion::USB::clearEnumerationInterrupt();
+  if (m_consoleController.inputRunLoopActive()) {
+    m_consoleController.terminateInputLoop();
+    m_modalViewController.dismissPotentialModal();
+    Ion::USB::clearEnumerationInterrupt();
+  }
 }
 
 App::~App() {
@@ -98,9 +98,11 @@ App::~App() {
 }
 
 bool App::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::USBEnumeration &&
-      m_consoleController.inputRunLoopActive()) {
+  if (event == Ion::Events::USBEnumeration) {
     quitInputRunLoop();
+
+    /* We need to return true here because we want to actually exit from the
+     * input run loop, which requires ending a dispatchEvent cycle. */
     return true;
   }
   return false;

@@ -17,7 +17,7 @@ using namespace Escher;
 namespace Calculation {
 
 void IllustratedExpressionsListController::didBecomeFirstResponder() {
-  selectRow(showIllustration());
+  selectRow(1);
   ExpressionsListController::didBecomeFirstResponder();
 }
 
@@ -27,7 +27,7 @@ void IllustratedExpressionsListController::viewWillAppear() {
 }
 
 int IllustratedExpressionsListController::numberOfRows() const {
-  return ChainedExpressionsListController::numberOfRows() + showIllustration();
+  return ChainedExpressionsListController::numberOfRows() + 1;
 }
 
 int IllustratedExpressionsListController::reusableCellCount(int type) {
@@ -51,7 +51,7 @@ HighlightCell* IllustratedExpressionsListController::reusableCell(int index,
 KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(
     int row) {
   if (typeAtRow(row) == k_illustrationCellType) {
-    return illustrationHeight();
+    return illustrationCell()->isVisible() ? illustrationHeight() : 0;
   }
   AdditionalResultCell tempCell;
   return protectedNonMemoizedRowHeight(&tempCell, row);
@@ -63,8 +63,7 @@ void IllustratedExpressionsListController::fillCellForRow(HighlightCell* cell,
     return;
   }
   assert(typeAtRow(row) == k_expressionCellType);
-  ChainedExpressionsListController::fillCellForRow(cell,
-                                                   row - showIllustration());
+  ChainedExpressionsListController::fillCellForRow(cell, row - 1);
 }
 
 void IllustratedExpressionsListController::
@@ -73,21 +72,26 @@ void IllustratedExpressionsListController::
                                            KDPoint previousOffset,
                                            bool withinTemporarySelection) {
   assert(l == m_listController.selectableListView());
-  if (!withinTemporarySelection && l->selectedRow() == 1 &&
-      showIllustration()) {
+  if (!withinTemporarySelection && l->selectedRow() == 1) {
     /* Illustration cell is not selectable so when we select row 1, scroll to
      * the top to display the illustration. */
     l->scrollToCell(0);
   }
 }
 
+void IllustratedExpressionsListController::setShowIllustration(
+    bool showIllustration) {
+  illustrationCell()->setVisible(showIllustration);
+  resetSizeMemoization();
+}
+
 int IllustratedExpressionsListController::textAtIndex(char* buffer,
                                                       size_t bufferSize,
                                                       HighlightCell* cell,
                                                       int index) {
-  assert(index >= showIllustration());
-  return ChainedExpressionsListController::textAtIndex(
-      buffer, bufferSize, cell, index - showIllustration());
+  assert(index >= 1);
+  return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, cell,
+                                                       index - 1);
 }
 
 void IllustratedExpressionsListController::setLineAtIndex(

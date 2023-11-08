@@ -31,8 +31,7 @@ class IllustratedExpressionsListController
   Escher::HighlightCell* reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   int typeAtRow(int row) const override {
-    return row == 0 && showIllustration() ? k_illustrationCellType
-                                          : k_expressionCellType;
+    return row == 0 ? k_illustrationCellType : k_expressionCellType;
   }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   bool canSelectCellAtRow(int row) override {
@@ -52,10 +51,7 @@ class IllustratedExpressionsListController
  protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_expressionCellType = 1;
-  bool showIllustration() const { return m_showIllustration; }
-  void setShowIllustration(bool showIllustration) {
-    m_showIllustration = showIllustration;
-  }
+  void setShowIllustration(bool showIllustration);
   /* Helper to add a line in the format func(arg) = exact ~ approx */
   void setLineAtIndex(int index, Poincare::Expression formula,
                       Poincare::Expression expression,
@@ -65,9 +61,7 @@ class IllustratedExpressionsListController
   int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
                   int index) override;
   virtual KDCoordinate illustrationHeight() { return k_illustrationHeight; }
-  // Cells
   virtual IllustrationCell* illustrationCell() = 0;
-  bool m_showIllustration;
 };
 
 }  // namespace Calculation

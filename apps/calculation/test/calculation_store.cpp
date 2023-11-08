@@ -800,6 +800,10 @@ QUIZ_CASE(calculation_additional_results) {
       &store);
   assertCalculationAdditionalResultTypeHas("tan(π/2)", {}, &globalContext,
                                            &store);
+  assertCalculationAdditionalResultTypeHas(
+      "atan(∞)", {.directTrigonometry = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(
+      "atan(-∞)", {.directTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1]]", {.vector = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1,1]]", {.vector = true},

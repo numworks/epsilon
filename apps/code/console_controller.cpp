@@ -210,7 +210,9 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     return true;
   }
 #if EPSILON_GETOPT
-  if (m_locked && (event == Ion::Events::USBEnumeration)) {
+
+  if (m_locked && (event == Ion::Events::USBEnumeration ||
+                   event == Ion::Events::Home || event == Ion::Events::Back)) {
     if (m_inputRunLoopActive) {
       terminateInputLoop();
     }

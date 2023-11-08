@@ -108,11 +108,10 @@ Expression TrigonometryCheatTable::simplify(
 
       } else if (!result.isUninitialized() &&
                  result.type() == ExpressionNode::Type::Infinity) {
-        /* drop direct lookups for assymptotic values:
-         *  tan(pi/2) = inf
-         *  tan(pi/2) = -inf
-         * These entries are important to compute arctan(inf)
-         * and arctan(-inf) */
+        /* We don't want to return inf for direct trigonometric functions.
+         * For instance, we want tan(pi/2) = undef. However we have the entries
+         * in the table to be able to compute, for instance: arctan(inf) = pi/2
+         */
         return Expression();
       }
       return result;

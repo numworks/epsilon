@@ -8,6 +8,10 @@
 extern "C" {
 extern char _persisting_bytes_buffer_start;
 extern char _persisting_bytes_buffer_end;
+extern char _device_name_sector_start;
+extern char _device_name_sector_end;
+extern char _exam_bytes_sector_start;
+extern char _exam_bytes_sector_end;
 }
 
 namespace Ion {
@@ -21,62 +25,32 @@ uint8_t* BufferEnd() {
   return reinterpret_cast<uint8_t*>(&_persisting_bytes_buffer_end);
 }
 
-uint16_t entrySize(Entry entry) {
-  assert(entry != Entry::NumberOfEntries);
-  uint16_t size = k_entriesEntrySize[static_cast<uint8_t>(entry)];
-  assert(size <= sectorSize(entry) && size > 0);
-  return size;
-}
-
-uint16_t sectorSize(Entry entry) {
-  uint16_t size = 0;
-  switch (entry) {
-    case Entry::ExamBytes:
-      size = BufferEnd() - BufferStart() - sectorSize(Entry::DeviceName);
-      break;
-    default:
-      assert(entry == Entry::DeviceName);
-      size = entrySize(Entry::DeviceName);
-  }
-  assert(size <= BufferEnd() - BufferStart() && size > 0);
-  return size;
-}
-
 uint8_t* sectorStart(Entry entry) {
-  uint8_t* start = nullptr;
   switch (entry) {
-    case Entry::ExamBytes:
-      start = BufferStart();
-      break;
+    case Entry::DeviceName:
+      return reinterpret_cast<uint8_t*>(&_device_name_sector_start);
     default:
-      assert(entry == Entry::DeviceName);
-      start = BufferEnd() - sectorSize(Entry::DeviceName);
+      assert(entry == Entry::ExamBytes);
+      return reinterpret_cast<uint8_t*>(&_exam_bytes_sector_start);
   }
-  assert(start && start >= BufferStart() &&
-         start + sectorSize(entry) <= BufferEnd());
-  return start;
+}
+
+uint8_t* sectorEnd(Entry entry) {
+  switch (entry) {
+    case Entry::DeviceName:
+      return reinterpret_cast<uint8_t*>(&_device_name_sector_end);
+    default:
+      assert(entry == Entry::ExamBytes);
+      return reinterpret_cast<uint8_t*>(&_exam_bytes_sector_end);
+  }
 }
 
 void initEntry(Entry entry) {
-  constexpr ExamBytes::Int k_defaultExamBytes = 0;
-  constexpr const char* k_defaultDeviceName = "";
-
   // Init entry to default value
-  const uint8_t* entryDefaultValue = nullptr;
-  size_t entryDefaultValueSize = 0;
-  switch (entry) {
-    case Entry::ExamBytes: {
-      entryDefaultValue = reinterpret_cast<const uint8_t*>(&k_defaultExamBytes);
-      entryDefaultValueSize = sizeof(ExamBytes::Int);
-      break;
-    }
-    default: {
-      assert(entry == Entry::DeviceName);
-      entryDefaultValue = reinterpret_cast<const uint8_t*>(k_defaultDeviceName);
-      entryDefaultValueSize = strlen(k_defaultDeviceName) + 1;
-      break;
-    }
-  }
+  const uint8_t* entryDefaultValue = reinterpret_cast<const uint8_t*>(
+      k_entriesProperties[static_cast<int>(entry)].defaultValue);
+  uint16_t entryDefaultValueSize =
+      k_entriesProperties[static_cast<int>(entry)].defaultValueSize;
   assert(entryDefaultValue && entryDefaultValueSize > 0 &&
          entryDefaultValueSize <= entrySize(entry));
   Device::Flash::WriteMemoryWithInterruptions(
@@ -86,13 +60,13 @@ void initEntry(Entry entry) {
 constexpr static uint16_t sumOfEntrySizes() {
   uint16_t result = 0;
   for (uint8_t i = 0; i < k_numberOfEntries; i++) {
-    result += k_entriesEntrySize[i];
+    result += entrySize(static_cast<Entry>(i));
   }
   return result;
 }
 
 /* Example of writing persisting bytes in the ExamBytes sector (using a
- * sectorSize of 6 bytes):
+ * sector size of 6 bytes):
  *
  * - Blank memory
  *   > |11111111|11111111|11111111|11111111|11111111|11111111|
@@ -108,14 +82,13 @@ constexpr static uint16_t sumOfEntrySizes() {
  *   > |00000000|01111110|11110000|10000001|11111111|11111111|
  *                       ^--current value--^
  */
-
 void write(uint8_t* data, uint16_t size, Entry entry) {
   uint16_t eSize = entrySize(entry);
   assert(data && size <= eSize);
 
   uint8_t* sStart = sectorStart(entry);
-  uint16_t sSize = sectorSize(entry);
-  uint8_t* sEnd = sStart + sSize;
+  uint8_t* sEnd = sectorEnd(entry);
+  assert(eSize <= sEnd - sStart);
 
   uint8_t* writingAddress = read(entry);
   /* If writing the value does not require to change 0s into 1s, we can
@@ -180,9 +153,9 @@ void write(uint8_t* data, uint16_t size, Entry entry) {
 
 uint8_t* read(Entry entry) {
   uint8_t* sStart = sectorStart(entry);
-  uint16_t sSize = sectorSize(entry);
-  uint8_t* sEnd = sStart + sSize;
+  uint8_t* sEnd = sectorEnd(entry);
   uint16_t eSize = entrySize(entry);
+  assert(eSize <= sEnd - sStart);
 
   // Scan backwards by groups of eSize bytes to reach first non 0xFFF..FF value
   uint8_t* significantBytesStart = sEnd - eSize;
@@ -196,7 +169,7 @@ uint8_t* read(Entry entry) {
   }
 
   /* When reaching this point, it indicates that the entire sector is filled
-   * with 1s. This occurs when the value is read for the first time  after
+   * with 1s. This occurs when the value is read for the first time after
    * flashing the device, and it hasn't been initialized during the flashing
    * procedure. The entry needs to be initialized.
    * */

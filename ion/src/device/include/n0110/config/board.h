@@ -73,6 +73,7 @@ constexpr uint32_t SlotBOrigin = ExternalFlashOrigin + SlotBOffset;
 
 constexpr uint32_t PersistingBytesLength = StandardExternalFlashSectorLength;
 constexpr uint32_t PersistingBytesVirtualOrigin = ExternalFlashOrigin + ExternalFlashLength / 2 - PersistingBytesLength;
+constexpr uint32_t DeviceNameSectorLength = 1024;
 
 constexpr uint32_t KernelLength = StandardExternalFlashSectorLength;
 constexpr uint32_t KernelVirtualOrigin = ExternalFlashOrigin;

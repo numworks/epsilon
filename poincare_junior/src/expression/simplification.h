@@ -3,6 +3,7 @@
 
 #include <omgpj/enums.h>
 #include <poincare_junior/src/expression/dimension.h>
+#include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
 #include "arithmetic.h"
@@ -88,6 +89,8 @@ class Simplification {
                                  int childIndex = 0);
 
  private:
+  static bool ApplyIfMetricImproved(Tree *ref, const Tree *root,
+                                    Operation operation, const Metric metric);
   static bool SimplifyLastTree(Tree *node,
                                ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);

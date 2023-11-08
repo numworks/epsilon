@@ -8,7 +8,6 @@
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/trigonometry.h>
@@ -865,6 +864,24 @@ bool Simplification::SimplifyLastTree(Tree* ref,
   }
 }
 
+bool Simplification::ApplyIfMetricImproved(Tree* ref, const Tree* root,
+                                           Operation operation,
+                                           const Metric metric) {
+  EditionReference clone(ref->clone());
+  if (operation(ref)) {
+    if (metric.hasImproved()) {
+      clone->removeTree();
+      return true;
+    }
+    // Restore ref
+    ref->moveTreeOverTree(clone);
+    return false;
+  }
+  // ref hasn't changed.
+  clone->removeTree();
+  return false;
+}
+
 bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
   assert(!DeepSystematicReduce(ref));
   if (ref->isMatrix()) {
@@ -893,23 +910,15 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref,
     return true;
   }
   const Metric metric(ref, root);
-  EditionReference clone(ref->clone());
-  if (ShallowExpand(ref)) {
-    if (metric.hasImproved()) {
-      /* AdvanceReduce further the expression only if it is algebraic.
-       * Transcendental tree can expand but stay transcendental:
-       * |(-1)*x| -> |(-1)|*|x| -> |x| */
-      bool reducedAlgebraic =
-          ref->isAlgebraic() && AdvanceReduceOnAlgebraic(ref, root);
+  if (ApplyIfMetricImproved(ref, root, ShallowExpand, metric)) {
+    /* AdvanceReduce further the expression only if it is algebraic.
+     * Transcendental tree can expand but stay transcendental:
+     * |(-1)*x| -> |(-1)|*|x| -> |x| */
+    if (ref->isAlgebraic() && AdvanceReduceOnAlgebraic(ref, root)) {
       // If algebraic got advanced reduced, metric must have been improved.
-      assert(!reducedAlgebraic || metric.hasImproved());
-      clone->removeTree();
-      return true;
+      assert(metric.hasImproved());
     }
-    // Restore ref
-    ref->moveTreeOverTree(clone);
-  } else {
-    clone->removeTree();
+    return true;
   }
   return false;
 }
@@ -917,26 +926,9 @@ bool Simplification::AdvanceReduceOnTranscendental(Tree* ref,
 bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root) {
   assert(!DeepSystematicReduce(ref));
   const Metric metric(ref, root);
-  EditionReference clone(ref->clone());
-  if (ShallowContract(ref)) {
-    if (metric.hasImproved()) {
-      clone->removeTree();
-      return true;
-    }
-    // Restore ref
-    ref->cloneTreeOverTree(clone);
-  }
-  if (PolynomialInterpretation(ref)) {
-    if (metric.hasImproved()) {
-      clone->removeTree();
-      return true;
-    }
-    // Restore ref
-    ref->moveTreeOverTree(clone);
-  } else {
-    clone->removeTree();
-  }
-  return false;
+  // TODO: One clone of ref could be optimized out here.
+  return ApplyIfMetricImproved(ref, root, ShallowContract, metric) ||
+         ApplyIfMetricImproved(ref, root, PolynomialInterpretation, metric);
 }
 
 bool Simplification::ReduceInverseFunction(Tree* e) {

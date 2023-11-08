@@ -3,7 +3,7 @@
 /* include_next is a GCC extension directive to include the next header with
  * that name in the search path to access the system one. */
 #include_next "assert.h"
-
+#if ASSERTIONCHECKPOINT
 #ifdef __cplusplus
 
 /* assert.h generally have only macros and no header guards (to be able to have
@@ -21,5 +21,6 @@ void ExceptionCheckpointRaise() __attribute__((__noreturn__));
   (__builtin_expect(!(e), 0) ? ExceptionCheckpointRaise() : (void)0)
 #else
 #define assert(e) ((void)0)
+#endif
 #endif
 #endif

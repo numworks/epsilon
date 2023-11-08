@@ -68,19 +68,6 @@ void IllustratedExpressionsListController::fillCellForRow(HighlightCell* cell,
   ChainedExpressionsListController::fillCellForRow(cell, row - 1);
 }
 
-void IllustratedExpressionsListController::
-    listViewDidChangeSelectionAndDidScroll(SelectableListView* l,
-                                           int previousSelectedRow,
-                                           KDPoint previousOffset,
-                                           bool withinTemporarySelection) {
-  assert(l == m_listController.selectableListView());
-  if (!withinTemporarySelection && l->selectedRow() == 1) {
-    /* Illustration cell is not selectable so when we select row 1, scroll to
-     * the top to display the illustration. */
-    l->scrollToCell(0);
-  }
-}
-
 void IllustratedExpressionsListController::setShowIllustration(
     bool showIllustration) {
   illustrationCell()->setVisible(showIllustration);
@@ -91,7 +78,11 @@ int IllustratedExpressionsListController::textAtIndex(char* buffer,
                                                       size_t bufferSize,
                                                       HighlightCell* cell,
                                                       int index) {
-  assert(index >= 1);
+  if (index == 0) {
+    // Illustration cell does not have a text
+    buffer[0] = 0;
+    return 0;
+  }
   return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, cell,
                                                        index - 1);
 }

@@ -30,7 +30,7 @@ bool List::ProjectToNthElement(Tree* expr, int n,
     }
     case BlockType::ListSort:
     case BlockType::Median:
-      assert(false);  // Must have been remove by simplification
+      assert(false);  // Must have been removed by simplification
     default:
       if (expr->type().isListToScalar()) {
         return false;
@@ -46,7 +46,7 @@ bool List::ProjectToNthElement(Tree* expr, int n,
   }
 }
 
-Tree* List::Fold(const Tree* list, BlockType type) {
+Tree* List::Fold(const Tree* list, TypeBlock type) {
   Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   // TODO compute GetListLength less often
   size_t size = Dimension::GetListLength(list);
@@ -56,16 +56,15 @@ Tree* List::Fold(const Tree* list, BlockType type) {
     if (i == 0) {
       continue;
     }
-    if (type == BlockType::ListSum || type == BlockType::ListProduct) {
-      const Tree* node =
-          type == BlockType::ListSum ? KAdd.node<2> : KMult.node<2>;
+    if (type.isListSum() || type.isListProduct()) {
+      const Tree* node = type.isListSum() ? KAdd.node<2> : KMult.node<2>;
       result->cloneNodeBeforeNode(node);
       Simplification::ShallowSystematicReduce(result);
     } else {
-      assert(type == BlockType::Minimum || type == BlockType::Maximum);
+      assert(type.isMinimum() || type.isMaximum());
       // TODO we need a natural order not a comparison
       if (Comparison::Compare(element, result) ==
-          ((type == BlockType::Maximum) ? 1 : -1)) {
+          ((type.isMaximum()) ? 1 : -1)) {
         result->removeTree();
       } else {
         element->removeTree();
@@ -76,7 +75,7 @@ Tree* List::Fold(const Tree* list, BlockType type) {
 }
 
 Tree* List::Variance(const Tree* list, const Tree* coefficients,
-                     BlockType type) {
+                     TypeBlock type) {
   // var(L) = mean(L^2) - mean(L)^2
   KTree variance =
       KAdd(KMean(KPow(KA, 2_e), KB), KMult(-1_e, KPow(KMean(KA, KB), 2_e)));
@@ -85,7 +84,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   // stdDev * sqrt(1 + 1 / (n - 1))
   KTree sampleStdDev =
       KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), KHalf);
-  if (type == BlockType::SampleStdDev) {
+  if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::GetListLength(list))
                   : Fold(coefficients, BlockType::ListSum);
@@ -94,6 +93,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
     n->removeTree();
     return n;
   } else {
+    assert(type.isVariance() || type.isStdDev());
     return PatternMatching::CreateAndSimplify(
         type == BlockType::Variance ? variance : stdDev,
         {.KA = list, .KB = coefficients});

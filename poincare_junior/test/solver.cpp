@@ -1,3 +1,4 @@
+#include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/solver.h>
 #include <poincare_junior/src/memory/edition_pool.h>
@@ -10,7 +11,7 @@ using namespace PoincareJ;
 bool check_solutions(std::initializer_list<const char*> inputs,
                      std::initializer_list<const char*> outputs,
                      Solver::Error expectedError = Solver::Error::NoError) {
-  Tree* equationSet = SharedEditionPool->push<BlockType::List>(0);
+  Tree* equationSet = PoincareJ::List::PushEmpty();
   for (const char* equation : inputs) {
     NAry::AddChild(equationSet, TextToTree(equation));
   }

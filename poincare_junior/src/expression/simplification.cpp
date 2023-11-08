@@ -849,6 +849,9 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
     changed = AdvancedReduction(ref, ref) || changed;
+    assert(!DeepSystematicReduce(ref));
+    assert(!DeepApplyMatrixOperators(ref));
+    assert(!AdvancedReduction(ref, ref));
     changed = List::BubbleUp(ref,
                              [](Tree* e) -> bool {
                                return ShallowSystematicReduce(e) +
@@ -1355,7 +1358,7 @@ bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
       tree->moveTreeOverTree(Matrix::Transpose(child));
       return true;
     case BlockType::Dim: {
-      // Child cannot be a list at this point
+      assert(child->isMatrix());
       Tree* dim = SharedEditionPool->push<BlockType::Matrix>(1, 2);
       Integer::Push(Matrix::NumberOfRows(child));
       Integer::Push(Matrix::NumberOfColumns(child));

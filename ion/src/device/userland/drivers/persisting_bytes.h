@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_USERLAND_DRIVERS_PERSISTING_BYTES_H
 #define ION_DEVICE_USERLAND_DRIVERS_PERSISTING_BYTES_H
 
+#include <assert.h>
 #include <ion/exam_bytes.h>
 #include <stdint.h>
 
@@ -14,37 +15,47 @@ namespace PersistingBytes {
  *
  * The layout of sectors is as follows:
  * |    PersistingBytes Sector (64 kB)     |
- * | ExamBytes (63 kB) | DeviceName (1 kB) |
- *
- * WARNING: UserlandHeader relies on DeviceName being at the end.
+ * | DeviceName (1 kB) | ExamBytes (63 kB) |
  *
  * Entries:
+ *  - DeviceName:
+ *    > entry size = 1024 bytes
+ *    > sector size = 1024 bytes
+ *      NOTE: The name is only written during device flashing, so it doesn't
+ *            need more space for new values.
+ *
  *  - ExamBytes:
- *    > entrySize = 2 bytes (sizeof(ExamBytes::Int))
- *    > sectorSize = 63 kB
+ *    > entry size = 2 bytes (sizeof(ExamBytes::Int))
+ *    > sector size = 63 kB
  *      NOTE: The sectorSize is larger than required and can be divided into
  *            smaller sectors if additional entries need to be stored.
  *
- *  - DeviceName:
- *    > entrySize = 1024 bytes
- *    > sectorSize = 1024 bytes
- *      NOTE: The name is only written during device flashing, so it doesn't
- *            need more space for new values.
  */
 
-enum class Entry : uint8_t {
-  ExamBytes = 0,
-  DeviceName = 1,
-  NumberOfEntries = 2
-};
+/* When adding a new Entry, just add an element to k_entriesProperties and edit
+ * the sectorStart and sectorEnd methods in .cpp*/
+enum class Entry : uint8_t { DeviceName = 0, ExamBytes, NumberOfEntries };
 
 constexpr uint8_t k_numberOfEntries =
     static_cast<uint8_t>(Entry::NumberOfEntries);
 
-constexpr uint16_t k_entriesEntrySize[k_numberOfEntries] = {
-    sizeof(ExamBytes::Int), 1024};
+constexpr struct {
+  uint16_t size;              // Max size of one entry
+  const void* defaultValue;   // Value the entry takes when sector is init
+  uint16_t defaultValueSize;  // Size of the default value
+} k_entriesProperties[k_numberOfEntries] = {
+    /* DeviceName */
+    {.size = 1024, .defaultValue = "", .defaultValueSize = 1},
+    /* ExamBytes */
+    {.size = sizeof(ExamBytes::Int),
+     .defaultValue = &ExamBytes::k_defaultValue,
+     .defaultValueSize = sizeof(ExamBytes::Int)},
+};
 
-uint16_t entrySize(Entry entry);
+constexpr uint16_t entrySize(Entry entry) {
+  assert(entry != Entry::NumberOfEntries);
+  return k_entriesProperties[static_cast<uint8_t>(entry)].size;
+}
 
 void write(uint8_t* data, uint16_t size, Entry entry);
 uint8_t* read(Entry entry);

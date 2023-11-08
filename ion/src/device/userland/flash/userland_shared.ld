@@ -3,7 +3,7 @@ PERSISTING_BYTES_ORIGIN = EPSILON_OFFSET + PersistingBytesVirtualOrigin;
 
 MEMORY {
   FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = UserlandLength
-  PERSITING_BYTES (rx) : ORIGIN = PERSISTING_BYTES_ORIGIN, LENGTH = PersistingBytesLength
+  PERSISTING_BYTES (rx) : ORIGIN = PERSISTING_BYTES_ORIGIN, LENGTH = PersistingBytesLength
   SRAM (rw) : ORIGIN = UserlandSRAMOrigin, LENGTH = UserlandSRAMLength
 }
 
@@ -73,15 +73,20 @@ SECTIONS {
     _external_apps_flash_end = .;
   } >FLASH_USERLAND
 
-  .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
+  .persisting_bytes_buffer ORIGIN(PERSISTING_BYTES) : {
     _persisting_bytes_buffer_start = .;
     FILL(0xFF);
     /* FILL instruction requires at least one element in the section
      * Write 0xFF to keep the sector empty. */
     BYTE(0xFF)
-    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
+    . = ORIGIN(PERSISTING_BYTES) + LENGTH(PERSISTING_BYTES);
     _persisting_bytes_buffer_end = .;
-  } >PERSITING_BYTES
+    /* Define the persisting bytes sectors. */
+    _device_name_sector_start = _persisting_bytes_buffer_start;
+    _device_name_sector_end = _device_name_sector_start + DeviceNameSectorLength;
+    _exam_bytes_sector_start = _device_name_sector_end;
+    _exam_bytes_sector_end = _persisting_bytes_buffer_end;
+  } >PERSISTING_BYTES
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

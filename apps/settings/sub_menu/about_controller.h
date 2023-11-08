@@ -21,11 +21,11 @@ class AboutController : public GenericSubController {
 
   enum class CellType : uint8_t {
     DeviceName = 0,
-    Version = 1,
-    SerialNumber = 2,
-    FCCID = 3,
+    Version,
+    SerialNumber,
+    FCCID,
 #if TERMS_OF_USE
-    TermsOfUse = 4,
+    TermsOfUse,
 #endif
     NumberOfCells
   };

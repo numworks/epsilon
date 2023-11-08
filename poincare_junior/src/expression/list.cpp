@@ -170,9 +170,10 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case BlockType::ListAccess: {
-      BubbleUp(e->child(0), Simplification::ShallowSystematicReduce);
-      int n = Integer::Handler(e->child(1)).to<uint8_t>();
-      e->moveTreeOverTree(e->child(0)->child(n));
+      ProjectToNthElement(e->child(0),
+                          Integer::Handler(e->child(1)).to<uint8_t>(),
+                          Simplification::ShallowSystematicReduce);
+      e->moveTreeOverTree(e->child(0));
       return true;
     }
     case BlockType::Dim:

@@ -158,6 +158,7 @@ void MemoizedTableSize1DManager::resetSizeMemoization(bool force) {
   }
 }
 
+#if 0
 void MemoizedTableSize1DManager::updateMemoizationForIndex(
     int index, KDCoordinate previousSize, KDCoordinate newSize) {
   if (newSize == k_undefinedSize) {
@@ -178,7 +179,6 @@ void MemoizedTableSize1DManager::updateMemoizationForIndex(
   memoizedSizes()[getMemoizedIndex(index)] = newSize;
 }
 
-#if 0
 void MemoizedTableSize1DManager::deleteIndexFromMemoization(
     int index, KDCoordinate previousSize) {
   m_memoizedTotalSize -= previousSize;

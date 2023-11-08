@@ -83,6 +83,14 @@ void initEntry(Entry entry) {
       sectorStart(entry), entryDefaultValue, entryDefaultValueSize, true);
 }
 
+constexpr static uint16_t sumOfEntrySizes() {
+  uint16_t result = 0;
+  for (uint8_t i = 0; i < k_numberOfEntries; i++) {
+    result += k_entriesEntrySize[i];
+  }
+  return result;
+}
+
 /* Example of writing persisting bytes in the ExamBytes sector (using a
  * sectorSize of 6 bytes):
  *
@@ -131,33 +139,39 @@ void write(uint8_t* data, uint16_t size, Entry entry) {
            Device::Flash::SectorAtAddress(
                reinterpret_cast<uint32_t>(BufferEnd() - 1)));
 
-    /* Store values of other entries
-     * TODO: These arrays initializations not very clean. */
-    uint8_t
-        deviceName[k_entriesEntrySize[static_cast<uint8_t>(Entry::DeviceName)]];
-    uint8_t
-        examBytes[k_entriesEntrySize[static_cast<uint8_t>(Entry::ExamBytes)]];
-    uint8_t* savedValues[k_numberOfEntries] = {examBytes, deviceName};
-
+    /* Store values of other entries */
+    uint8_t savedValues[sumOfEntrySizes()];
+    uint16_t savedValueOffset = 0;
     for (uint8_t s = 0; s < k_numberOfEntries; s++) {
       Entry currentEntry = static_cast<Entry>(s);
-      if (currentEntry != entry) {
-        memcpy(savedValues[s], read(currentEntry), entrySize(currentEntry));
+      if (currentEntry == entry) {
+        continue;
       }
+      uint16_t currentEntrySize = entrySize(currentEntry);
+      memcpy(savedValues + savedValueOffset, read(currentEntry),
+             currentEntrySize);
+      savedValueOffset += currentEntrySize;
+      assert(savedValueOffset <= sumOfEntrySizes());
     }
     /* Erase persisting bytes. */
     Device::Flash::EraseSectorWithInterruptions(persistingBytesSectorIndex,
                                                 true);
 
     /* Rewrite values of other entries. */
+    savedValueOffset = 0;
     for (uint8_t s = 0; s < k_numberOfEntries; s++) {
       Entry currentEntry = static_cast<Entry>(s);
-      if (currentEntry != entry) {
-        Device::Flash::WriteMemoryWithInterruptions(
-            sectorStart(currentEntry), savedValues[s], entrySize(currentEntry),
-            true);
+      if (currentEntry == entry) {
+        continue;
       }
+      uint16_t currentEntrySize = entrySize(currentEntry);
+      Device::Flash::WriteMemoryWithInterruptions(
+          sectorStart(currentEntry), savedValues + savedValueOffset,
+          currentEntrySize, true);
+      savedValueOffset += currentEntrySize;
+      assert(savedValueOffset <= sumOfEntrySizes());
     }
+
     writingAddress = sStart;
   }
   /* Write the new value. */

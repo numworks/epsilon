@@ -5,6 +5,8 @@
 #include <shared/drivers/flash_write_with_interruptions.h>
 #include <string.h>
 
+#include <algorithm>
+
 extern "C" {
 extern char _persisting_bytes_buffer_start;
 extern char _persisting_bytes_buffer_end;
@@ -45,6 +47,14 @@ uint8_t* sectorEnd(Entry entry) {
   }
 }
 
+constexpr static uint16_t maxEntrySize() {
+  uint16_t result = 0;
+  for (uint8_t i = 0; i < k_numberOfEntries; i++) {
+    result = std::max(result, entrySize(static_cast<Entry>(i)));
+  }
+  return result;
+}
+
 void initEntry(Entry entry) {
   // Init entry to default value
   const uint8_t* entryDefaultValue = reinterpret_cast<const uint8_t*>(
@@ -53,8 +63,14 @@ void initEntry(Entry entry) {
       k_entriesProperties[static_cast<int>(entry)].defaultValueSize;
   assert(entryDefaultValue && entryDefaultValueSize > 0 &&
          entryDefaultValueSize <= entrySize(entry));
-  Device::Flash::WriteMemoryWithInterruptions(
-      sectorStart(entry), entryDefaultValue, entryDefaultValueSize, true);
+
+  /* Copy the defaultValue in a buffer to avoid reading and writing external
+   * flash at the same time (which would crash). */
+  uint8_t initBuffer[maxEntrySize()];
+  memcpy(initBuffer, entryDefaultValue, entryDefaultValueSize);
+
+  Device::Flash::WriteMemoryWithInterruptions(sectorStart(entry), initBuffer,
+                                              entryDefaultValueSize, true);
 }
 
 constexpr static uint16_t sumOfEntrySizes() {

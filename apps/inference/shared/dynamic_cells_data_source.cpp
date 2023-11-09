@@ -98,6 +98,9 @@ template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableInnerCells>;
 template class DynamicCellsDataSource<
     InferenceEvenOddEditableCell, k_homogeneityTableNumberOfReusableInnerCells>;
+template class DynamicCellsDataSource<
+    InferenceEvenOddBufferCell,
+    k_goodnessContributionsTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                       k_doubleColumnTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<

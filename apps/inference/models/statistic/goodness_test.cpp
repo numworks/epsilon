@@ -34,13 +34,7 @@ void GoodnessTest::setGraphTitle(char* buffer, size_t bufferSize) const {
 
 void GoodnessTest::setResultTitle(char* buffer, size_t bufferSize,
                                   bool resultIsTopPage) const {
-  Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "df=%*.*ed %s=%*.*ed", degreeOfFreedom(),
-      Poincare::Preferences::PrintFloatMode::Decimal,
-      Poincare::Preferences::ShortNumberOfSignificantDigits,
-      I18n::translate(I18n::Message::GreekAlpha), threshold(),
-      Poincare::Preferences::PrintFloatMode::Decimal,
-      Poincare::Preferences::ShortNumberOfSignificantDigits);
+  strcpy(buffer, I18n::translate(I18n::Message::CalculatedValues));
 }
 
 void GoodnessTest::compute() {
@@ -106,6 +100,15 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
     return false;
   }
   return Chi2Test::authorizedParameterAtIndex(p, i);
+}
+
+double GoodnessTest::parameterAtPosition(int row, int column) const {
+  if (column == 2) {
+    // Contribution column
+    return computeContribution(row);
+  }
+
+  return Chi2Test::parameterAtPosition(row, column);
 }
 
 int GoodnessTest::numberOfValuePairs() const {

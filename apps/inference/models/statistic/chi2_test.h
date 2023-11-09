@@ -37,6 +37,8 @@ class Chi2Test : public Test, public Table {
 
   bool authorizedParameterAtIndex(double p, int i) const override;
 
+  virtual int numberOfValuePairs() const = 0;
+
  protected:
   using Test::parameterAtIndex;  // Hidden
 
@@ -50,7 +52,7 @@ class Chi2Test : public Test, public Table {
   // Chi2 specific
   virtual double expectedValue(int index) const = 0;
   virtual double observedValue(int index) const = 0;
-  virtual int numberOfValuePairs() const = 0;
+  double computeContribution(int index) const;
   double computeChi2();
 
  private:

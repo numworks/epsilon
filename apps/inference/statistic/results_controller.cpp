@@ -10,10 +10,11 @@ using namespace Escher;
 namespace Inference {
 
 ResultsController::ResultsController(
-    StackViewController *parent, Statistic *statistic,
+    Responder *parent, Statistic *statistic,
     TestGraphController *testGraphController,
-    IntervalGraphController *intervalGraphController)
-    : ListWithTopAndBottomController(parent, &m_title),
+    IntervalGraphController *intervalGraphController, bool enableHeadline)
+    : ListWithTopAndBottomController(parent,
+                                     enableHeadline ? &m_title : nullptr),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
       m_title(I18n::Message::CalculatedValues, k_messageFormat),
       m_statistic(statistic),

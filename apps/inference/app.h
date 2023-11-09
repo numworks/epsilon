@@ -14,6 +14,7 @@
 #include "statistic/chi_square_and_slope/input_goodness_controller.h"
 #include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
 #include "statistic/chi_square_and_slope/input_slope_controller.h"
+#include "statistic/chi_square_and_slope/results_goodness_controller.h"
 #include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
 #include "statistic/input_controller.h"
 #include "statistic/interval/interval_graph_controller.h"
@@ -47,8 +48,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
     Statistic *statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
-        *pageQueue() {
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks> *
+    pageQueue() {
       return &m_pageQueue;
     }
 
@@ -112,6 +113,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
+  ResultsGoodnessTabController m_GoodnessResultsController;
   InputGoodnessController m_inputGoodnessController;
   InputSlopeController m_inputSlopeController;
   ResultsController m_resultsController;

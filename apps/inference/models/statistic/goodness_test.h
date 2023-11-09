@@ -27,10 +27,14 @@ class GoodnessTest final : public Chi2Test {
   int numberOfResults() const override { return 2; }
   void compute() override;
 
-  // Chi2Test
+  // Table
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
   int maxNumberOfRows() const override { return k_maxNumberOfRows; };
+
+  // Chi2Test
+  // Returns the contribution for column = 2
+  double parameterAtPosition(int row, int column) const override;
 
   // GoodnessTest
   int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
@@ -43,6 +47,9 @@ class GoodnessTest final : public Chi2Test {
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
 
   constexpr static int k_maxNumberOfColumns = 2;
+
+  // Chi2Test
+  int numberOfValuePairs() const override;
 
  private:
   // Largest number of rows such that HomogeneityTest still takes more space.
@@ -59,7 +66,6 @@ class GoodnessTest final : public Chi2Test {
   // Chi2Test
   double expectedValue(int index) const override;
   double observedValue(int index) const override;
-  int numberOfValuePairs() const override;
 
   double* parametersArray() override { return m_input; }
   void setExpectedValue(int index, double value);

@@ -16,9 +16,10 @@
 namespace Inference {
 
 /* Common controller between InputHomogeneityController,
- * InputGoodnessController and ResultsHomogeneityTabController.
- * A CategoricalController is a table whose first cell is also a table of class
- * CategoricalTableCell. */
+ * ResultsHomogeneityTabController, InputGoodnessController,
+ * ResultsGoodnessController.
+ * A CategoricalController is a table whose first cell
+ * is also a table of class CategoricalTableCell. */
 
 class CategoricalController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,

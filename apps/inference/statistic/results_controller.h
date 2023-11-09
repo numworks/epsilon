@@ -23,9 +23,10 @@ class ResultsController
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
-  ResultsController(Escher::StackViewController* parent, Statistic* statistic,
+  ResultsController(Escher::Responder* parent, Statistic* statistic,
                     TestGraphController* testGraphController,
-                    IntervalGraphController* intervalGraphController);
+                    IntervalGraphController* intervalGraphController,
+                    bool enableHeadline = true);
 
   static bool ButtonAction(ResultsController* controller, void* s);
 

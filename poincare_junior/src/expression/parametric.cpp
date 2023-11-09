@@ -90,7 +90,10 @@ bool Parametric::ContractSumOrProduct(Tree* expr) {
   // identical children where leftUpperBound + 1 = rightLowerBound
   // product from/to factorial
   // expand and contract distribution with exp/log
-  return false;
+  return PatternMatching::MatchReplaceAndSimplify(
+      expr,
+      KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
+      KProduct(KA, KAdd(KF, 1_e), KC, KD));
 }
 
 bool Parametric::Explicit(Tree* expr) {

@@ -16,12 +16,18 @@ class Arithmetic {
     uint8_t numberOfFactors = 0;
   };
 
+  static bool SimplifyFactorial(Tree* expr);
+  static bool ExpandFactorial(Tree* expr);
   static bool SimplifyQuotientOrRemainder(Tree* expr);
   static bool SimplifyFloor(Tree* expr);
 
   // Turn ceil, frac and round into floor
   static bool ExpandDecimals(Tree* expr);
   static bool ContractDecimals(Tree* expr);
+
+  // Turn binomial and permute into factorials
+  static bool ExpandBinomialOrPermute(Tree* expr);
+  static bool SimplifyBinomialOrPermute(Tree* expr);
 
   static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
   static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }

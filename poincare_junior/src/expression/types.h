@@ -92,6 +92,7 @@ NODE(Abs, 1)
 NODE(ArcCosine, 1)
 NODE(ArcSine, 1)
 NODE(ArcTangent, 1)
+NODE(Binomial, 2)
 NODE(Ceiling, 1)
 NODE(Complex, 2)
 NODE(ComplexArgument, 1)
@@ -113,6 +114,7 @@ NODE(Ln, 1)
 NODE(Log, 1)
 NODE(Logarithm, 2)
 NODE(Opposite, 1)
+NODE(Permute, 2)
 
 /* - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms

@@ -63,6 +63,8 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::ListSum, "sum"},
     {BlockType::ListProduct, "prod"},
     {BlockType::ListSort, "sort"},
+    {BlockType::Binomial, "binomial"},
+    {BlockType::Permute, "permute"},
 };
 
 constexpr static Aliases s_customIdentifiers[] = {

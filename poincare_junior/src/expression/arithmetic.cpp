@@ -97,6 +97,49 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   return true;
 }
 
+bool Arithmetic::SimplifyFactorial(Tree* expr) {
+  Tree* n = expr->child(0);
+  if (!n->isRational()) {
+    // TODO if n is a known irrational return false
+    return false;
+  }
+  if (!n->isInteger() || Rational::Sign(n).isStrictlyNegative()) {
+    ExceptionCheckpoint::Raise(ExceptionType::BadType);
+  }
+  return ExpandFactorial(expr);
+}
+
+bool Arithmetic::ExpandFactorial(Tree* expr) {
+  return PatternMatching::MatchReplaceAndSimplify(
+      expr, KFact(KA), KProduct("k"_e, 1_e, KA, KVar<0>));
+}
+
+bool Arithmetic::SimplifyBinomialOrPermute(Tree* expr) {
+  Tree* k = expr->child(0);
+  Tree* n = k->nextTree();
+  if ((n->isRational() && !n->isInteger()) ||
+      (k->isRational() && !k->isInteger())) {
+    ExceptionCheckpoint::Raise(ExceptionType::BadType);
+  }
+  if (n->isRational() && k->isRational()) {
+    return ExpandBinomialOrPermute(expr);
+  }
+  return false;
+}
+
+bool Arithmetic::ExpandBinomialOrPermute(Tree* expr) {
+  return
+      // binomial(N, K)  -> n!/(k!(n-k)!)
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KBinomial(KA, KB),
+          KMult(KFact(KA), KPow(KFact(KB), -1_e),
+                KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e))) ||
+      // permute(N, K)  -> n!/(n-k)!
+      PatternMatching::MatchReplaceAndSimplify(
+          expr, KPermute(KA, KB),
+          KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
+}
+
 static constexpr size_t k_biggestPrimeFactor = 10000;
 static constexpr size_t k_numberOfPrimeFactors = 1000;
 static constexpr uint16_t k_primeFactors[k_numberOfPrimeFactors] = {

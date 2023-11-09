@@ -158,6 +158,7 @@ class Simplification {
       ContractAbs,
       ContractExpMult,
       ContractTrigonometric,
+      Parametric::ContractSumOrProduct,
       Arithmetic::ContractDecimals,
   };
   constexpr static Operation k_expandOperations[] = {
@@ -168,6 +169,7 @@ class Simplification {
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
       Arithmetic::ExpandDecimals,
+      Arithmetic::ExpandBinomialOrPermute,
   };
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};

@@ -284,6 +284,11 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("floor(x)+frac(x)", "x");
 
+  simplifies_to("4!", "24");
+  simplifies_to("permute(4,2)", "12");
+  simplifies_to("binomial(4,2)", "6");
+  // simplifies_to("(n+1)!/n!", "n+1");
+
   // Lists
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");

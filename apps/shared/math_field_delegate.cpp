@@ -137,10 +137,7 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
     return true;
   }
   e = Expression::Parse(buffer, layoutField->context());
-  if (!isAcceptableExpression(e)) {
-    return true;
-  }
-  return false;
+  return !isAcceptableExpression(e);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(

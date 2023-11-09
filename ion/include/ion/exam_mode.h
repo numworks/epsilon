@@ -20,6 +20,7 @@ enum class Ruleset : Int {
   STAAR,
   Pennsylvania,
   SouthCarolina,
+  NorthCarolina,
   NumberOfRulesets,
 };
 

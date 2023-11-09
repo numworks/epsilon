@@ -58,6 +58,7 @@ int ExamModeController::numberOfRows() const {
     case ExamMode::Ruleset::STAAR:
     case ExamMode::Ruleset::Pennsylvania:
     case ExamMode::Ruleset::SouthCarolina:
+    case ExamMode::Ruleset::NorthCarolina:
       // Reactivation button
       return 1;
     default:
@@ -73,8 +74,8 @@ int ExamModeController::numberOfRows() const {
     case CountryPreferences::AvailableExamModes::EnglishOnly:
       return 1;
     case CountryPreferences::AvailableExamModes::AmericanAll:
-      // STAAR, Pennsylvania, SouthCarolina and IB
-      return 4;
+      // STAAR, Pennsylvania, SouthCarolina, NorthCarolina and IB
+      return 5;
     default:
       assert(availableExamModes == CountryPreferences::AvailableExamModes::All);
   }
@@ -143,7 +144,8 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
           ExamMode::Ruleset::Standard,      ExamMode::Ruleset::Dutch,
           ExamMode::Ruleset::Portuguese,    ExamMode::Ruleset::English,
           ExamMode::Ruleset::STAAR,         ExamMode::Ruleset::Pennsylvania,
-          ExamMode::Ruleset::SouthCarolina, ExamMode::Ruleset::IBTest};
+          ExamMode::Ruleset::SouthCarolina, ExamMode::Ruleset::NorthCarolina,
+          ExamMode::Ruleset::IBTest};
       static_assert(std::size(modes) == k_maxNumberOfCells,
                     "modes must contain each available exam mode");
       assert(index < std::size(modes));
@@ -187,6 +189,9 @@ I18n::Message ExamModeController::examModeActivationMessage(
       // SouthCarolina
       I18n::Message::ActivateSouthCarolinaExamMode,
       I18n::Message::ReactivateSouthCarolinaExamMode,
+      // NorthCarolina
+      I18n::Message::ActivateNorthCarolinaExamMode,
+      I18n::Message::ReactivateNorthCarolinaExamMode,
   };
   static_assert(std::size(messages) == numberOfModes * messagesPerMode,
                 "messages size is invalid");

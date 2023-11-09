@@ -113,8 +113,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
   m_inUsePreferences = *Preferences::sharedPreferences;
   char *cursor = endOfCalculations();
-  Expression inputExpression, exactOutputExpression,
-      approximateOutputExpression, storeExpression;
+  Expression exactOutputExpression, approximateOutputExpression,
+      storeExpression;
 
   {
     CircuitBreakerCheckpoint checkpoint(
@@ -135,7 +135,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       assert(cursor != k_pushError);
 
       // Push the input
-      inputExpression = Expression::Parse(text, &ansContext);
+      Expression inputExpression = Expression::Parse(text, &ansContext);
       inputExpression = enhancePushedExpression(inputExpression, &ansContext);
       cursor =
           pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);

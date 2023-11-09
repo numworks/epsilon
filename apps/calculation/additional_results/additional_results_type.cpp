@@ -31,7 +31,9 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   bool approximateHasUnit = exactOutput.hasUnit(true, &approximateHasAngleUnit);
   assert(exactHasUnit == approximateHasUnit);
   if (inputHasUnit || exactHasUnit) {
-    return AdditionalResultsType{.unit = HasUnit(exactOutput)};
+    /* We display units additional results based on exact output. If input has
+     * units but not output (ex: L/(L/3)), we don't display any results. */
+    return AdditionalResultsType{.unit = exactHasUnit && HasUnit(exactOutput)};
   }
   if (HasDirectTrigo(input, exactOutput)) {
     return AdditionalResultsType{.directTrigonometry = true};
@@ -114,6 +116,7 @@ bool AdditionalResultsType::HasInverseTrigo(const Expression input,
 }
 
 bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
+  assert(exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression unit;

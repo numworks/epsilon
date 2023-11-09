@@ -147,11 +147,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
       char *const inputText = endOfCalculations() + sizeof(Calculation);
 
       // Parse and compute the expression
-      Expression::ParseAndSimplifyAndApproximate(
-          inputText, &inputExpression, &exactOutputExpression,
-          &approximateOutputExpression, context);
-      assert(!inputExpression.isUninitialized() &&
-             !exactOutputExpression.isUninitialized() &&
+      inputExpression = Expression::Parse(inputText, context, false);
+      assert(!inputExpression.isUninitialized());
+      PoincareHelpers::CloneAndSimplifyAndApproximate(
+          inputExpression, &exactOutputExpression, &approximateOutputExpression,
+          context,
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
 
       // Post-processing of store expression

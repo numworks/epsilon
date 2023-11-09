@@ -427,14 +427,6 @@ class Expression : public TreeHandle {
       bool* reductionFailure = nullptr);
   Expression cloneAndSimplify(ReductionContext reductionContext,
                               bool* reductionFailure = nullptr);
-
-  static void ParseAndSimplifyAndApproximate(
-      const char* text, Expression* parsedExpression,
-      Expression* simplifiedExpression, Expression* approximateExpression,
-      Context* context,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      UnitConversion unitConversion = UnitConversion::Default);
   void cloneAndSimplifyAndApproximate(
       Expression* simplifiedExpression, Expression* approximateExpression,
       const ReductionContext& reductionContext,

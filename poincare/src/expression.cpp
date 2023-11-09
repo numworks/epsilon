@@ -1152,26 +1152,6 @@ Expression Expression::ParseAndSimplify(const char *text, Context *context,
   return exp;
 }
 
-void Expression::ParseAndSimplifyAndApproximate(
-    const char *text, Expression *parsedExpression,
-    Expression *simplifiedExpression, Expression *approximateExpression,
-    Context *context, SymbolicComputation symbolicComputation,
-    UnitConversion unitConversion) {
-  assert(parsedExpression && simplifiedExpression);
-  Expression exp = Parse(text, context, false);
-  *parsedExpression = exp;
-  if (exp.isUninitialized()) {
-    *simplifiedExpression = Undefined::Builder();
-    *approximateExpression = Undefined::Builder();
-    return;
-  }
-  Shared::PoincareHelpers::CloneAndSimplifyAndApproximate(
-      exp, simplifiedExpression, approximateExpression, context,
-      symbolicComputation, unitConversion);
-  assert(!simplifiedExpression->isUninitialized() &&
-         (!approximateExpression || !approximateExpression->isUninitialized()));
-}
-
 Expression Expression::cloneAndSimplify(ReductionContext reductionContext,
                                         bool *reductionFailure) {
   bool reduceFailure = false;

@@ -74,6 +74,9 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       // SouthCarolina
       I18n::Message::ActiveTxPaScIbExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
+      // NorthCarolina
+      I18n::Message::ActiveTxPaScIbExamModeMessage,
+      I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
   };
   static_assert(std::size(messages) == numberOfModes * messagesPerMode,
                 "messages size is invalid");

@@ -52,7 +52,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
   // Exam mode permissions
   bool forbidSolverApp() const {
     return flags().forbidEquationSolver || ruleset() == Ruleset::Pennsylvania ||
-           ruleset() == Ruleset::SouthCarolina;
+           ruleset() == Ruleset::SouthCarolina ||
+           ruleset() == Ruleset::NorthCarolina;
   }
   bool forbidElementsApp() const {
     return flags().forbidElementsApp || ruleset() == Ruleset::Dutch ||
@@ -63,7 +64,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
   bool forbidGraphDetails() const {
     return flags().forbidGraphDetails || ruleset() == Ruleset::IBTest ||
            ruleset() == Ruleset::Pennsylvania || ruleset() == Ruleset::STAAR ||
-           ruleset() == Ruleset::SouthCarolina;
+           ruleset() == Ruleset::SouthCarolina ||
+           ruleset() == Ruleset::NorthCarolina;
   }
   bool forbidInequalityGraphing() const {
     return flags().forbidInequalityGraphing || ruleset() == Ruleset::STAAR;
@@ -88,7 +90,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
   bool forbidExactResults() const {
     return flags().forbidExactResults || ruleset() == Ruleset::Dutch ||
            ruleset() == Ruleset::Pennsylvania ||
-           ruleset() == Ruleset::SouthCarolina;
+           ruleset() == Ruleset::SouthCarolina ||
+           ruleset() == Ruleset::NorthCarolina;
   }
   bool forbidSimultaneousEquationSolver() const {
     return ruleset() == Ruleset::STAAR;

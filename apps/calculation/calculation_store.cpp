@@ -150,6 +150,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
       Expression::ParseAndSimplifyAndApproximate(
           inputText, &inputExpression, &exactOutputExpression,
           &approximateOutputExpression, context);
+      assert(!inputExpression.isUninitialized() &&
+             !exactOutputExpression.isUninitialized() &&
+             !approximateOutputExpression.isUninitialized());
 
       // Post-processing of store expression
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);

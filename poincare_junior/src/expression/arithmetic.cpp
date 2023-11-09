@@ -12,15 +12,34 @@ namespace PoincareJ {
 /* TODO everything in this file is defined on rationals only, this could be
  * checked earlier. */
 
+// Return true if it is true, false if it is unknown and raise if it is false
+bool EnsureIsInteger(const Tree* expr) {
+  // TODO if expr is a known irrational return false
+  if (!expr->isRational()) {
+    return false;
+  }
+  if (!expr->isInteger()) {
+    ExceptionCheckpoint::Raise(ExceptionType::BadType);
+  }
+  return true;
+}
+
+bool EnsureIsPositiveInteger(const Tree* expr) {
+  if (!EnsureIsInteger(expr)) {
+    return false;
+  }
+  if (Rational::Sign(expr).isStrictlyNegative()) {
+    ExceptionCheckpoint::Raise(ExceptionType::BadType);
+  }
+  return true;
+}
+
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
   bool isQuotient = expr->isQuotient();
   const Tree* num = expr->firstChild();
   const Tree* denom = num->nextTree();
-  if (!num->isInteger() || !denom->isInteger()) {
-    if (num->isRational() || denom->isRational()) {
-      ExceptionCheckpoint::Raise(ExceptionType::BadType);
-    }
+  if (!EnsureIsInteger(num) + !EnsureIsInteger(denom)) {
     return false;
   }
   if (denom->isZero()) {
@@ -75,10 +94,7 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   Tree* first = expr->firstChild();
   Tree* next = first;
   while (expr->numberOfChildren() > 1) {
-    if (!next->isInteger()) {
-      if (next->isRational()) {
-        ExceptionCheckpoint::Raise(ExceptionType::BadType);
-      }
+    if (!EnsureIsInteger(next)) {
       return changed;
     }
     if (first != next) {

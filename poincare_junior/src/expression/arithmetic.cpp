@@ -177,22 +177,29 @@ bool Arithmetic::SimplifyBinomial(Tree* expr) {
     }
     Tree* kMinusN =
         IntegerHandler::Subtraction(Integer::Handler(k), Integer::Handler(n));
-    bool comparison = Comparison::Compare(kMinusN, k_maxNValue) > 0;
-    kMinusN->removeTree();
-    if (comparison) {
+    if (Comparison::Compare(kMinusN, k_maxNValue) > 0) {
+      kMinusN->removeTree();
       return false;
     }
-  }
-  if (Comparison::Compare(n, k_maxNValue) > 0) {
-    return false;
+    kMinusN->removeTree();
+  } else {
+    if (Comparison::Compare(n, k_maxNValue) > 0) {
+      return false;
+    }
+    Tree* nMinusK =
+        IntegerHandler::Subtraction(Integer::Handler(n), Integer::Handler(k));
+    if (Comparison::Compare(nMinusK, k) < 0) {
+      k->moveTreeOverTree(nMinusK);
+    } else {
+      nMinusK->removeTree();
+    }
   }
   /* As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
    * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
    */
   PatternMatching::MatchReplaceAndSimplify(
       expr, KBinomial(KA, KB),
-      KProduct("j"_e, 0_e,
-               KAdd(-1_e, KMin(KList(KB, KAdd(KA, KMult(-1_e, KB))))),
+      KProduct("j"_e, 0_e, KAdd(KB, -1_e),
                KMult(KAdd(KA, KMult(-1_e, KVar<0>)),
                      KPow(KAdd(KB, KMult(-1_e, KVar<0>)), -1_e))));
   Parametric::Explicit(expr);
@@ -201,6 +208,8 @@ bool Arithmetic::SimplifyBinomial(Tree* expr) {
 
 bool Arithmetic::ExpandBinomial(Tree* expr) {
   // binomial(n, k) -> n!/(k!(n-k)!)
+  // TODO generalized binomial formula with unknowns ?
+  return false;
   return PatternMatching::MatchReplaceAndSimplify(
       expr, KBinomial(KA, KB),
       KMult(KFact(KA), KPow(KFact(KB), -1_e),

@@ -5,6 +5,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "k_tree.h"
+#include "parametric.h"
 #include "rational.h"
 
 namespace PoincareJ {
@@ -114,15 +115,7 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
 }
 
 bool Arithmetic::SimplifyFactorial(Tree* expr) {
-  Tree* n = expr->child(0);
-  if (!n->isRational()) {
-    // TODO if n is a known irrational return false
-    return false;
-  }
-  if (!n->isInteger() || Rational::Sign(n).isStrictlyNegative()) {
-    ExceptionCheckpoint::Raise(ExceptionType::BadType);
-  }
-  return ExpandFactorial(expr);
+  return EnsureIsPositiveInteger(expr->child(0)) && ExpandFactorial(expr);
 }
 
 bool Arithmetic::ExpandFactorial(Tree* expr) {
@@ -130,30 +123,88 @@ bool Arithmetic::ExpandFactorial(Tree* expr) {
       expr, KFact(KA), KProduct("k"_e, 1_e, KA, KVar<0>));
 }
 
-bool Arithmetic::SimplifyBinomialOrPermute(Tree* expr) {
-  Tree* k = expr->child(0);
-  Tree* n = k->nextTree();
-  if ((n->isRational() && !n->isInteger()) ||
-      (k->isRational() && !k->isInteger())) {
-    ExceptionCheckpoint::Raise(ExceptionType::BadType);
+bool Arithmetic::SimplifyPermute(Tree* expr) {
+  Tree* n = expr->child(0);
+  Tree* k = n->nextTree();
+  if (!EnsureIsPositiveInteger(n) + !EnsureIsPositiveInteger(k)) {
+    return false;
   }
-  if (n->isRational() && k->isRational()) {
-    return ExpandBinomialOrPermute(expr);
+  // TODO Rational::Compare
+  if (Comparison::Compare(n, k) < 0) {
+    return expr->cloneTreeOverTree(0_e);
   }
-  return false;
+  const Tree* k_maxNValue = 100_e;
+  if (Comparison::Compare(n, k_maxNValue) > 0) {
+    /* If n is too big, we do not reduce to avoid too long computation.
+     * The permute coefficient will be evaluate approximatively later. */
+    return false;
+  }
+  return ExpandPermute(expr);
 }
 
-bool Arithmetic::ExpandBinomialOrPermute(Tree* expr) {
-  return
-      // binomial(N, K)  -> n!/(k!(n-k)!)
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KBinomial(KA, KB),
-          KMult(KFact(KA), KPow(KFact(KB), -1_e),
-                KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e))) ||
-      // permute(N, K)  -> n!/(n-k)!
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KPermute(KA, KB),
-          KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
+bool Arithmetic::ExpandPermute(Tree* expr) {
+  // permute(n, k) -> n!/(n-k)!
+  return PatternMatching::MatchReplaceAndSimplify(
+      expr, KPermute(KA, KB),
+      KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
+}
+
+bool Arithmetic::SimplifyBinomial(Tree* expr) {
+  Tree* n = expr->child(0);
+  Tree* k = n->nextTree();
+  if (!EnsureIsInteger(k) || !n->isRational()) {
+    return false;
+  }
+  if (k->isZero()) {
+    expr->cloneTreeOverTree(1_e);
+    return true;
+  }
+  if (Rational::Sign(k).isStrictlyNegative()) {
+    expr->cloneTreeOverTree(0_e);
+    return true;
+  }
+  if (!n->isInteger()) {
+    // Generalized binomial coefficient
+    return false;
+  }
+  const Tree* k_maxNValue = 300_e;
+  if (Comparison::Compare(n, k) < 0) {
+    // Generalized binomial coefficient (n < k)
+    if (!Rational::Sign(n).isStrictlyNegative()) {
+      // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
+      expr->cloneTreeOverTree(0_e);
+      return true;
+    }
+    Tree* kMinusN =
+        IntegerHandler::Subtraction(Integer::Handler(k), Integer::Handler(n));
+    bool comparison = Comparison::Compare(kMinusN, k_maxNValue) > 0;
+    kMinusN->removeTree();
+    if (comparison) {
+      return false;
+    }
+  }
+  if (Comparison::Compare(n, k_maxNValue) > 0) {
+    return false;
+  }
+  /* As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
+   * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
+   */
+  PatternMatching::MatchReplaceAndSimplify(
+      expr, KBinomial(KA, KB),
+      KProduct("j"_e, 0_e,
+               KAdd(-1_e, KMin(KList(KB, KAdd(KA, KMult(-1_e, KB))))),
+               KMult(KAdd(KA, KMult(-1_e, KVar<0>)),
+                     KPow(KAdd(KB, KMult(-1_e, KVar<0>)), -1_e))));
+  Parametric::Explicit(expr);
+  return true;
+}
+
+bool Arithmetic::ExpandBinomial(Tree* expr) {
+  // binomial(n, k) -> n!/(k!(n-k)!)
+  return PatternMatching::MatchReplaceAndSimplify(
+      expr, KBinomial(KA, KB),
+      KMult(KFact(KA), KPow(KFact(KB), -1_e),
+            KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
 
 static constexpr size_t k_biggestPrimeFactor = 10000;

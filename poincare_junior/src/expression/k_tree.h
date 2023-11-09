@@ -37,6 +37,8 @@ constexpr auto KFloor = KUnary<BlockType::Floor>();
 constexpr auto KCeil = KUnary<BlockType::Ceiling>();
 constexpr auto KFrac = KUnary<BlockType::FracPart>();
 constexpr auto KListSum = KUnary<BlockType::ListSum>();
+constexpr auto KMin = KUnary<BlockType::Minimum>();
+constexpr auto KMax = KUnary<BlockType::Maximum>();
 
 constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();

@@ -26,8 +26,10 @@ class Arithmetic {
   static bool ContractDecimals(Tree* expr);
 
   // Turn binomial and permute into factorials
-  static bool ExpandBinomialOrPermute(Tree* expr);
-  static bool SimplifyBinomialOrPermute(Tree* expr);
+  static bool SimplifyPermute(Tree* expr);
+  static bool ExpandPermute(Tree* expr);
+  static bool SimplifyBinomial(Tree* expr);
+  static bool ExpandBinomial(Tree* expr);
 
   static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
   static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }

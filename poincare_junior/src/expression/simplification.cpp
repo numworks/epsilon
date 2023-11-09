@@ -117,8 +117,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::Factorial:
       return Arithmetic::SimplifyFactorial(u);
     case BlockType::Binomial:
+      return Arithmetic::SimplifyBinomial(u);
     case BlockType::Permute:
-      return Arithmetic::SimplifyBinomialOrPermute(u);
+      return Arithmetic::SimplifyPermute(u);
     case BlockType::Sign:
       return SimplifySign(u);
     case BlockType::Floor:

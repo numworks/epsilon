@@ -88,13 +88,13 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
 void Layoutter::layoutBuiltin(EditionReference &layoutParent,
                               Tree *expression) {
   assert(Builtin::IsReservedFunction(expression->type()));
-  layoutFunctionNamed(
+  layoutFunctionCall(
       layoutParent, expression,
       Builtin::ReservedFunctionName(expression->type()).mainAlias());
 }
 
-void Layoutter::layoutFunctionNamed(EditionReference &layoutParent,
-                                    Tree *expression, const char *name) {
+void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
+                                   Tree *expression, const char *name) {
   layoutText(layoutParent, name);
   EditionReference parenthesis =
       SharedEditionPool->push(BlockType::ParenthesisLayout);
@@ -327,7 +327,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
         layoutBuiltin(layoutParent, expression);
       } else {
 #if POINCARE_MEMORY_TREE_LOG
-        layoutFunctionNamed(
+        layoutFunctionCall(
             layoutParent, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
 #else

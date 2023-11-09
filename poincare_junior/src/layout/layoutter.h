@@ -14,8 +14,8 @@ class Layoutter {
   Layoutter(bool linearMode) : m_linearMode(linearMode) {}
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
-  void layoutFunctionNamed(EditionReference& layoutParent, Tree* expression,
-                           const char* name);
+  void layoutFunctionCall(EditionReference& layoutParent, Tree* expression,
+                          const char* name);
   void layoutIntegerHandler(EditionReference& layoutParent,
                             IntegerHandler handler, int decimalOffset = 0);
   void layoutInfixOperator(EditionReference& layoutParent, Tree* expression,

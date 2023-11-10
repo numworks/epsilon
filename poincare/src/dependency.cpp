@@ -86,13 +86,6 @@ void Dependency::deepReduceChildren(const ReductionContext &reductionContext) {
 }
 
 Expression Dependency::shallowReduce(ReductionContext reductionContext) {
-  /* Undefined and dependencies are bubbled-up from list of dependencies.
-   * We do this here because we do not want to do this in List::shallowReduce
-   * since most of lists do not want to bubble up their undef and dependencies.
-   * (because {undef} != undef) */
-  SimplificationHelper::defaultShallowReduce(dependenciesList(),
-                                             &reductionContext);
-
   Expression e =
       SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!e.isUninitialized()) {

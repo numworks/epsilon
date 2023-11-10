@@ -107,6 +107,14 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
        * Sin and cos terms will be replaced afterwards. */
       PatternMatching::MatchAndReplace(ref, KTan(KA),
                                        KMult(KSin(KA), KPow(KCos(KA), -1_e))) ||
+      // acos(A) -> atrig(A, 0)
+      PatternMatching::MatchAndReplace(ref, KACos(KA), KATrig(KA, 0_e)) ||
+      // asin(A) -> atrig(A, 1)
+      PatternMatching::MatchAndReplace(ref, KASin(KA), KATrig(KA, 1_e)) ||
+      // atan(A) -> asin(A/Sqrt(1+a^2)) - TODO: Do this in AdvancedReduction
+      PatternMatching::MatchAndReplace(
+          ref, KATan(KA),
+          KATrig(KDiv(KA, KSqrt(KAdd(1_e, KPow(KA, 2_e)))), 1_e)) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)

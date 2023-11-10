@@ -58,6 +58,11 @@ class Approximation final {
     assert(b == 0.0 || b == 1.0);
     return (b == 0.0) ? std::cos(a) : std::sin(a);
   }
+  template <typename T>
+  static T FloatATrig(T a, T b) {
+    assert(b == 0.0 || b == 1.0);
+    return (b == 0.0) ? std::acos(a) : std::asin(a);
+  }
   static bool ApproximateAndReplaceEveryScalar(Tree* tree) {
     return ApproximateAndReplaceEveryScalarT<double>(tree);
   }

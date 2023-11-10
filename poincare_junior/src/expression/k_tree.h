@@ -40,6 +40,7 @@ constexpr auto KListSum = KUnary<BlockType::ListSum>();
 constexpr auto KMin = KUnary<BlockType::Minimum>();
 constexpr auto KMax = KUnary<BlockType::Maximum>();
 
+constexpr auto KATrig = KBinary<BlockType::ATrig>();
 constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();
 constexpr auto KTrig = KBinary<BlockType::Trig>();

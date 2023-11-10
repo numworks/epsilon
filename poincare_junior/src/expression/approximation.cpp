@@ -44,6 +44,8 @@ T Approximation::To(const Tree* node) {
       return MapAndReduce(node, FloatLog<T>);
     case BlockType::Trig:
       return MapAndReduce(node, FloatTrig<T>);
+    case BlockType::ATrig:
+      return MapAndReduce(node, FloatATrig<T>);
     case BlockType::ArcCosine:
       return std::acos(To<T>(node->nextNode()));
     case BlockType::ArcSine:

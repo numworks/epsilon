@@ -12,6 +12,10 @@ namespace PoincareJ {
 class Render final {
  public:
   static KDSize Size(const Tree* node);
+
+  static KDCoordinate Height(const Tree* node) { return Size(node).height(); }
+  static KDCoordinate Width(const Tree* node) { return Size(node).width(); }
+
   static KDPoint AbsoluteOrigin(const Tree* node, const Tree* root);
   static KDPoint PositionOfChild(const Tree* node, int childIndex);
   static KDCoordinate Baseline(const Tree* node);

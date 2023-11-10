@@ -94,7 +94,8 @@ void RangeParameterController::viewWillAppear() {
   } else {
     /* If the table has not been deselected, it means we come from the
      * SingleRangeController. */
-    int row = m_singleInteractiveCurveViewRangeController.editXRange() ? 1 : 2;
+    int row =
+        m_singleInteractiveCurveViewRangeController.axis() == Axis::X ? 1 : 2;
     selectRow(row);
   }
   m_selectableListView.reloadData();
@@ -126,8 +127,8 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   }
   if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
       static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
-    m_singleInteractiveCurveViewRangeController.setEditXRange(cell ==
-                                                              &m_xRangeCell);
+    m_singleInteractiveCurveViewRangeController.setAxis(
+        cell == &m_xRangeCell ? Axis::X : Axis::Y);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }

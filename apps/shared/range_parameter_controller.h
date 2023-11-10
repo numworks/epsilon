@@ -21,6 +21,8 @@ using RangeCell =
 class RangeParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
+  using Axis = SingleInteractiveCurveViewRangeController::Axis;
+
   RangeParameterController(
       Escher::Responder *parentResponder,
       InteractiveCurveViewRange *interactiveCurveViewRange);

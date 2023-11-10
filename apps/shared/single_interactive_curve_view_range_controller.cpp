@@ -14,15 +14,15 @@ SingleInteractiveCurveViewRangeController::
     : SingleRangeController(parentResponder, confirmPopUpController),
       m_range(interactiveRange) {}
 
-void SingleInteractiveCurveViewRangeController::setEditXRange(bool editXRange) {
-  m_editXRange = editXRange;
+void SingleInteractiveCurveViewRangeController::setAxis(Axis axis) {
+  m_axis = axis;
   extractParameters();
 }
 
 bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
   /* m_secondaryRangeParam is ignored here because it is only relevant when main
    * parameters (xAuto) are different. */
-  if (m_editXRange) {
+  if (m_axis == Axis::X) {
     return m_autoParam != (m_range->xAuto()) ||
            m_rangeParam.min() != (m_range->xMin()) ||
            m_rangeParam.max() != (m_range->xMax());
@@ -33,7 +33,7 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
-  if (m_editXRange) {
+  if (m_axis == Axis::X) {
     m_autoParam = m_range->xAuto();
     m_rangeParam = Range1D::ValidRangeBetween(m_range->xMin(), m_range->xMax());
   } else {
@@ -46,23 +46,24 @@ void SingleInteractiveCurveViewRangeController::extractParameters() {
 
 void SingleInteractiveCurveViewRangeController::setAutoRange() {
   assert(m_autoParam);
-  if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {
+  if (m_axis == Axis::X ? m_range->xAuto() : m_range->yAuto()) {
     // Parameters are already computed in m_range
     extractParameters();
   } else {
     /* Create and update a temporary InteractiveCurveViewRange to recompute
      * parameters. */
     Shared::InteractiveCurveViewRange tempRange(*m_range);
-    if (m_editXRange) {
+    if (m_axis == Axis::X) {
       tempRange.setXAuto(m_autoParam);
     } else {
       tempRange.setYAuto(m_autoParam);
     }
     tempRange.computeRanges();
-    float min = m_editXRange ? tempRange.xMin() : tempRange.yMin();
-    float max = m_editXRange ? tempRange.xMax() : tempRange.yMax();
+
+    float min = m_axis == Axis::X ? tempRange.xMin() : tempRange.yMin();
+    float max = m_axis == Axis::X ? tempRange.xMax() : tempRange.yMax();
     m_rangeParam = Range1D::ValidRangeBetween(min, max);
-    if (m_editXRange) {
+    if (m_axis == Axis::X) {
       /* The y range has been updated too and must be stored for
        * confirmParameters. */
       m_secondaryRangeParam =
@@ -76,7 +77,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
     return;
   }
   // Deactivate auto status before updating values.
-  if (m_editXRange) {
+  if (m_axis == Axis::X) {
     m_range->setXAuto(false);
     m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
     m_range->setXAuto(m_autoParam);

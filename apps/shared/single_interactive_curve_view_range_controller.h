@@ -9,18 +9,20 @@ namespace Shared {
 
 class SingleInteractiveCurveViewRangeController : public SingleRangeController {
  public:
+  using Axis = InteractiveCurveViewRange::Axis;
+
   SingleInteractiveCurveViewRangeController(
       Escher::Responder* parentResponder,
       InteractiveCurveViewRange* interactiveCurveViewRange,
       MessagePopUpController* confirmPopUpController);
 
   const char* title() override {
-    return I18n::translate(m_editXRange ? I18n::Message::ValuesOfX
-                                        : I18n::Message::ValuesOfY);
+    return I18n::translate(m_axis == Axis::X ? I18n::Message::ValuesOfX
+                                             : I18n::Message::ValuesOfY);
   }
 
-  bool editXRange() const { return m_editXRange; }
-  void setEditXRange(bool editXRange);
+  Axis axis() const { return m_axis; }
+  void setAxis(Axis axis);
 
  private:
   I18n::Message parameterMessage(int index) const override {
@@ -36,7 +38,8 @@ class SingleInteractiveCurveViewRangeController : public SingleRangeController {
   InteractiveCurveViewRange* m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
   Poincare::Range1D m_secondaryRangeParam;
-  bool m_editXRange;
+
+  Axis m_axis;
 };
 
 }  // namespace Shared

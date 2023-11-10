@@ -53,13 +53,13 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
 }
 
 void InteractiveCurveViewRange::setXRange(float min, float max) {
-  assert(!xAuto() || m_delegate == nullptr);
+  assert(!isAuto(Axis::X) || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXRange(min, max, k_maxFloat);
   computeRanges();
 }
 
 void InteractiveCurveViewRange::setYRange(float min, float max) {
-  assert(!yAuto() || m_delegate == nullptr);
+  assert(!isAuto(Axis::Y) || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYRange(min, max, k_maxFloat);
   setZoomNormalize(isOrthonormal());
 }
@@ -158,8 +158,8 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 void InteractiveCurveViewRange::normalize() {
   /* If one axis is set manually and the other is in auto mode, prioritize
    * changing the auto one. */
-  bool canChangeX = m_xAuto || !m_yAuto;
-  bool canChangeY = m_yAuto || !m_xAuto;
+  bool canChangeX = m_auto.x || !m_auto.y;
+  bool canChangeY = m_auto.y || !m_auto.x;
   setZoomAuto(false);
   protectedNormalize(canChangeX, canChangeY, !canChangeX || !canChangeY);
 }
@@ -307,8 +307,8 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
 
 void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
   bool oldAuto = zoomAuto();
-  m_xAuto = xAuto;
-  m_yAuto = yAuto;
+  m_auto.x = xAuto;
+  m_auto.y = yAuto;
   if (m_delegate && (oldAuto != zoomAuto())) {
     m_delegate->updateZoomButtons();
   }

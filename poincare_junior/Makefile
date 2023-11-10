@@ -47,6 +47,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/vector.cpp \
   expression.cpp \
   layout/code_point_layout.cpp \
+  layout/cursor_motion.cpp \
   layout/empty_rectangle.cpp \
   layout/layout_cursor.cpp \
   layout/layoutter.cpp \

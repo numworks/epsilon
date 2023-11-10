@@ -565,8 +565,8 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
 #endif
   const Tree *leftL = leftLayout();
   if (leftL) {
-    Render::DeletionMethod deletionMethod =
-        Render::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
+    CursorMotion::DeletionMethod deletionMethod =
+        CursorMotion::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
     privateDelete(deletionMethod, false);
   } else {
     assert(m_position == leftMostPosition());
@@ -575,8 +575,8 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
     if (!p) {
       return;
     }
-    Render::DeletionMethod deletionMethod =
-        Render::DeletionMethodForCursorLeftOfChild(p, index);
+    CursorMotion::DeletionMethod deletionMethod =
+        CursorMotion::DeletionMethodForCursorLeftOfChild(p, index);
     privateDelete(deletionMethod, true);
   }
 #if 0
@@ -814,7 +814,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    * but select all of it. */
   int newIndex = isSelecting()
                      ? k_outsideIndex
-                     : Render::IndexAfterHorizontalCursorMove(
+                     : CursorMotion::IndexAfterHorizontalCursorMove(
                            nextLayout, direction, currentIndexInNextLayout,
                            shouldRedrawLayout);
   assert(newIndex != k_cantMoveIndex);
@@ -942,27 +942,27 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * */
   if (!isSelecting()) {
     Tree *nextLayout = rightLayout();
-    Render::PositionInLayout positionRelativeToNextLayout =
-        Render::PositionInLayout::Left;
+    CursorMotion::PositionInLayout positionRelativeToNextLayout =
+        CursorMotion::PositionInLayout::Left;
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {
       if (nextLayout) {
-        int nextIndex = Render::IndexAfterVerticalCursorMove(
+        int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
             nextLayout, direction, k_outsideIndex, positionRelativeToNextLayout,
             shouldRedrawLayout);
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
           assert(!Layout::IsHorizontal(nextLayout));
           setCursorNode(nextLayout->child(nextIndex));
-          m_position =
-              positionRelativeToNextLayout == Render::PositionInLayout::Left
-                  ? leftMostPosition()
-                  : rightmostPosition();
+          m_position = positionRelativeToNextLayout ==
+                               CursorMotion::PositionInLayout::Left
+                           ? leftMostPosition()
+                           : rightmostPosition();
           return true;
         }
       }
       nextLayout = leftLayout();
-      positionRelativeToNextLayout = Render::PositionInLayout::Right;
+      positionRelativeToNextLayout = CursorMotion::PositionInLayout::Right;
     }
   }
 
@@ -1048,7 +1048,7 @@ void LayoutCursor::invalidateSizesAndPositions() {
 #endif
 
 void LayoutBufferCursor::EditionPoolCursor::privateDelete(
-    Render::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
+    CursorMotion::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
          m_cursorReference->block() != rootNode()->block());
 #if 0
@@ -1184,7 +1184,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     return;
   }
 #endif
-  assert(deletionMethod == Render::DeletionMethod::DeleteLayout);
+  assert(deletionMethod == CursorMotion::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
     setLayout(rootNode()->parentOfDescendant(m_cursorReference),
               OMG::Direction::Right());

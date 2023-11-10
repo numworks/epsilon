@@ -9,6 +9,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/tree.h>
 
+#include "cursor_motion.h"
 #include "layout_selection.h"
 
 namespace PoincareJ {
@@ -224,7 +225,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     };
     void insertText(Context* context, const void* insertTextContext);
 
-    void privateDelete(Render::DeletionMethod deletionMethod,
+    void privateDelete(CursorMotion::DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
     void setCursorNode(Tree* node) override {
       m_cursorReference = EditionReference(node);

@@ -2070,9 +2070,9 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
       "sort({(8,1),(5,0),(5,-3),(1,0),(5,9)})",
       "{(1,0),(5,-3),(5,0),(5,9),(8,1)}");
   assert_expression_approximates_to<double>("sort({(8,1),(5,i),(5,-3)})",
-                                            "{(8,1),undef,(5,-3)}");
+                                            "{(8,1),(5,undef),(5,-3)}");
   assert_expression_approximates_to<double>("sort({(undef,1),(6,1),(5,-3)})",
-                                            "{undef,(6,1),(5,-3)}");
+                                            "{(undef,1),(6,1),(5,-3)}");
   assert_expression_approximates_to<double>(
       "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
       "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
@@ -2198,7 +2198,7 @@ QUIZ_CASE(poincare_approximation_piecewise_operator) {
 
 QUIZ_CASE(poincare_approximation_point) {
   assert_expression_approximates_to<float>("(1,2)", "(1,2)");
-  assert_expression_approximates_to<float>("(1/0,2)", Undefined::Name());
+  assert_expression_approximates_to<float>("(1/0,2)", "(undef,2)");
   assert_expression_approximates_to<float>("(1,2)+3", Undefined::Name());
   assert_expression_approximates_to<float>("abs((1.23,4.56))",
                                            Undefined::Name());
@@ -2206,7 +2206,7 @@ QUIZ_CASE(poincare_approximation_point) {
                                            "{(3,7),(11,15)}");
 
   assert_expression_approximates_to<double>("(1,2)", "(1,2)");
-  assert_expression_approximates_to<double>("(1/0,2)", Undefined::Name());
+  assert_expression_approximates_to<double>("(1/0,2)", "(undef,2)");
   assert_expression_approximates_to<double>("(1,2)+3", Undefined::Name());
   assert_expression_approximates_to<double>("abs((1.23,4.56))",
                                             Undefined::Name());

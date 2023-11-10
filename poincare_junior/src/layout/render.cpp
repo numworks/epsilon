@@ -20,7 +20,8 @@ KDSize Render::Size(const Tree* node) {
       KDSize coefficientsSize =
           KDSize(std::max(Width(node->child(0)), Width(node->child(1))),
                  Binomial::KNHeight(node, font));
-      KDCoordinate width = coefficientsSize.width() + 2 * Parenthesis::Width;
+      KDCoordinate width =
+          coefficientsSize.width() + 2 * Parenthesis::ParenthesisWidth;
       return KDSize(width, coefficientsSize.height());
     }
     case LayoutType::Conjugate: {
@@ -87,6 +88,7 @@ KDSize Render::Size(const Tree* node) {
                             denominatorSize.height();
       return KDSize(width, height);
     }
+    case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
@@ -97,11 +99,6 @@ KDSize Render::Size(const Tree* node) {
       KDCoordinate height = Pair::HeightGivenChildHeight(
           childSize.height(), Pair::VerticalMargin(node));
       return KDSize(width, height);
-    }
-    case LayoutType::Parenthesis: {
-      KDSize childSize = Size(node->child(0));
-      return childSize + KDSize(2 * Parenthesis::HorizontalPadding(font),
-                                2 * Parenthesis::VerticalPadding);
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
@@ -145,7 +142,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       KDCoordinate horizontalCenter =
-          Parenthesis::Width +
+          Parenthesis::ParenthesisWidth +
           std::max(Width(node->child(0)), Width(node->child(1))) / 2;
       if (childIndex == 0) {
         return KDPoint(horizontalCenter - Width(node->child(0)) / 2, 0);
@@ -223,6 +220,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
                            : 0;
       return KDPoint(x, y);
     }
+    case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
@@ -230,10 +228,6 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     case LayoutType::VectorNorm: {
       return Pair::ChildOffset(Pair::VerticalMargin(node),
                                Pair::BracketWidth(node));
-    }
-    case LayoutType::Parenthesis: {
-      return KDPoint(Parenthesis::HorizontalPadding(font),
-                     Parenthesis::VerticalPadding);
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
@@ -281,6 +275,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Fraction:
       return Height(node->child(0)) + Fraction::LineMargin +
              Fraction::LineHeight;
+    case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
@@ -290,8 +285,6 @@ KDCoordinate Render::Baseline(const Tree* node) {
           Height(node->child(0)), Baseline(node->child(0)),
           Pair::VerticalMargin(node));
     }
-    case LayoutType::Parenthesis:
-      return Baseline(node->child(0)) + Parenthesis::VerticalPadding;
     case LayoutType::VerticalOffset:
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       assert(false);
@@ -479,7 +472,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       KDCoordinate childHeight = Binomial::KNHeight(node, font);
       KDCoordinate rightParenthesisPointX =
           std::max(Width(node->child(0)), Width(node->child(1))) +
-          Parenthesis::Width;
+          Parenthesis::ParenthesisWidth;
       RenderParenthesisWithChildHeight(true, childHeight, ctx, p,
                                        expressionColor, backgroundColor);
       RenderParenthesisWithChildHeight(
@@ -599,6 +592,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                     expressionColor);
       return;
     }
+    case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
@@ -613,6 +607,10 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           RenderCurlyBraceWithChildHeight(left, Height(node->child(0)), ctx,
                                           point, expressionColor,
                                           backgroundColor);
+        } else if (node->layoutType() == LayoutType::Parenthesis) {
+          RenderParenthesisWithChildHeight(left, Height(node->child(0)), ctx,
+                                           point, expressionColor,
+                                           backgroundColor);
         } else {
           RenderSquareBracketPair(left, Height(node->child(0)), ctx, point,
                                   expressionColor, backgroundColor,
@@ -623,22 +621,6 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                   node->layoutType() == LayoutType::VectorNorm);
         }
       }
-      return;
-    }
-    case LayoutType::Parenthesis: {
-      KDSize size = Size(node);
-      KDCoordinate y =
-          p.y() + Baseline(node) - (KDFont::GlyphSize(font).height()) / 2;
-      KDCoordinate x = p.x();
-      ctx->drawString("(", KDPoint(x, y),
-                      KDGlyph::Style{.glyphColor = expressionColor,
-                                     .backgroundColor = backgroundColor,
-                                     .font = font});
-      x += size.width() - Parenthesis::HorizontalPadding(font);
-      ctx->drawString(")", KDPoint(x, y),
-                      KDGlyph::Style{.glyphColor = expressionColor,
-                                     .backgroundColor = backgroundColor,
-                                     .font = font});
       return;
     }
     case LayoutType::CodePoint: {

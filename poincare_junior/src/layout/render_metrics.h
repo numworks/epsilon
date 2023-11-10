@@ -133,8 +133,29 @@ static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDSize childSize,
   return Pair::PositionGivenChildHeightAndBaseline(
       left, CurlyBraceWidth, childSize, childBaseline, VerticalMargin);
 }
-
 }  // namespace CurlyBrace
+
+namespace Parenthesis {
+constexpr static KDCoordinate WidthMargin = 1;
+constexpr static KDCoordinate CurveWidth = 5;
+constexpr static KDCoordinate CurveHeight = 7;
+constexpr static KDCoordinate VerticalMargin = 2;
+constexpr static KDCoordinate ParenthesisWidth = 2 * WidthMargin + CurveWidth;
+
+static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
+  return Pair::HeightGivenChildHeight(childHeight, VerticalMargin);
+}
+static KDCoordinate BaselineGivenChildHeightAndBaseline(
+    KDCoordinate childHeight, KDCoordinate childBaseline) {
+  return Pair::BaselineGivenChildHeightAndBaseline(childHeight, childBaseline,
+                                                   VerticalMargin);
+}
+static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDSize childSize,
+                                                   KDCoordinate childBaseline) {
+  return Pair::PositionGivenChildHeightAndBaseline(
+      left, ParenthesisWidth, childSize, childBaseline, VerticalMargin);
+}
+}  // namespace Parenthesis
 
 namespace Pair {
 static KDCoordinate BracketWidth(const Tree* node) {
@@ -148,6 +169,8 @@ static KDCoordinate BracketWidth(const Tree* node) {
       return VectorNorm::BracketWidth;
     case LayoutType::CurlyBrace:
       return CurlyBrace::CurlyBraceWidth;
+    case LayoutType::Parenthesis:
+      return Parenthesis::ParenthesisWidth;
     default:
       assert(false);
   }
@@ -164,26 +187,14 @@ static KDCoordinate VerticalMargin(const Tree* node) {
       return VectorNorm::VerticalMargin;
     case LayoutType::CurlyBrace:
       return CurlyBrace::VerticalMargin;
+    case LayoutType::Parenthesis:
+      return Parenthesis::VerticalMargin;
     default:
       assert(false);
   }
 }
 
 }  // namespace Pair
-
-namespace Parenthesis {
-constexpr static KDCoordinate WidthMargin = 1;
-constexpr static KDCoordinate CurveWidth = 5;
-constexpr static KDCoordinate CurveHeight = 7;
-constexpr static KDCoordinate VerticalMargin = 2;
-constexpr static KDCoordinate Width = 2 * WidthMargin + CurveWidth;
-
-constexpr static KDCoordinate VerticalPadding = 2;
-
-constexpr static KDCoordinate HorizontalPadding(KDFont::Size font) {
-  return KDFont::GlyphSize(font).width();
-}
-}  // namespace Parenthesis
 
 namespace Binomial {
 static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {

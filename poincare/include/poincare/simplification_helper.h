@@ -34,6 +34,8 @@ class SimplificationHelper {
 
   enum class PointReduction : bool { UndefinedOnPoint = 0, DefinedOnPoint };
 
+  enum class UndefReduction : bool { BubbleUpUndef = 0, DoNotBubbleUpUndef };
+
   static void defaultDeepReduceChildren(
       Expression e, const ReductionContext& reductionContext);
   // DeepBeautify children and add parentheses if needed.
@@ -54,7 +56,8 @@ class SimplificationHelper {
       UnitReduction unitParameter = UnitReduction::KeepUnits,
       MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix,
       ListReduction listParameter = ListReduction::DoNotDistributeOverLists,
-      PointReduction pointParameter = PointReduction::UndefinedOnPoint);
+      PointReduction pointParameter = PointReduction::UndefinedOnPoint,
+      UndefReduction undefParameter = UndefReduction::BubbleUpUndef);
 
   // This will shallowReduce the resulting expression.
   static Expression bubbleUpDependencies(

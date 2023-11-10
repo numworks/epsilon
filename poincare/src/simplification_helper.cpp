@@ -42,9 +42,12 @@ Expression SimplificationHelper::defaultShallowReduce(
     Expression e, ReductionContext* reductionContext,
     BooleanReduction booleanParameter, UnitReduction unitParameter,
     MatrixReduction matrixParameter, ListReduction listParameter,
-    PointReduction pointParameter) {
+    PointReduction pointParameter, UndefReduction undefParameter) {
+  Expression res;
   // Step 1: Shallow reduce undefined
-  Expression res = shallowReduceUndefined(e);
+  if (undefParameter == UndefReduction::BubbleUpUndef) {
+    res = shallowReduceUndefined(e);
+  }
   if (!res.isUninitialized()) {
     return res;
   }

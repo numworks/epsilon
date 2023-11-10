@@ -10,18 +10,26 @@
 
 namespace PoincareJ {
 
-constexpr static KDCoordinate k_fractionLineMargin = 2;
-constexpr static KDCoordinate k_fractionLineHeight = 1;
-constexpr static KDCoordinate k_fractionHorizontalOverflow =
+namespace Fraction {
+constexpr static KDCoordinate LineMargin = 2;
+constexpr static KDCoordinate LineHeight = 1;
+constexpr static KDCoordinate HorizontalOverflow =
     Escher::Metric::FractionAndConjugateHorizontalOverflow;
-constexpr static KDCoordinate k_fractionHorizontalMargin =
+constexpr static KDCoordinate HorizontalMargin =
     Escher::Metric::FractionAndConjugateHorizontalMargin;
-constexpr static KDCoordinate k_codePointMiddleDotWidth = 5;
-constexpr static KDCoordinate k_parenthesisVerticalPadding = 2;
+}  // namespace Fraction
 
-constexpr static KDCoordinate k_verticalOffsetIndiceHeight = 10;
+namespace CodePoint {
+constexpr static KDCoordinate MiddleDotWidth = 5;
+}
 
-constexpr static KDCoordinate k_gridEntryMargin = 6;
+namespace VerticalOffset {
+constexpr static KDCoordinate IndiceHeight = 10;
+}
+
+namespace Grid {
+constexpr static KDCoordinate EntryMargin = 6;
+}
 
 namespace Pair {
 constexpr static KDCoordinate LineThickness = 1;
@@ -73,16 +81,20 @@ constexpr static KDCoordinate CurveWidth = 5;
 constexpr static KDCoordinate CurveHeight = 7;
 constexpr static KDCoordinate VerticalMargin = 2;
 constexpr static KDCoordinate Width = 2 * WidthMargin + CurveWidth;
-}  // namespace Parenthesis
 
-constexpr static KDCoordinate ParenthesisHorizontalPadding(KDFont::Size font) {
+constexpr static KDCoordinate VerticalPadding = 2;
+
+constexpr static KDCoordinate HorizontalPadding(KDFont::Size font) {
   return KDFont::GlyphSize(font).width();
 }
+}  // namespace Parenthesis
 
-static KDCoordinate BinomialKNHeight(const Tree* node, KDFont::Size font) {
-  return Render::Height(node->child(0)) + k_gridEntryMargin +
+namespace Binomial {
+static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
+  return Render::Height(node->child(0)) + Grid::EntryMargin +
          Render::Height(node->child(1));
 }
+}  // namespace Binomial
 
 namespace Conjugate {
 constexpr static KDCoordinate OverlineWidth = 1;
@@ -96,7 +108,7 @@ KDSize Render::Size(const Tree* node) {
     case LayoutType::Binomial: {
       KDSize coefficientsSize =
           KDSize(std::max(Width(node->child(0)), Width(node->child(1))),
-                 BinomialKNHeight(node, font));
+                 Binomial::KNHeight(node, font));
       KDCoordinate width = coefficientsSize.width() + 2 * Parenthesis::Width;
       return KDSize(width, coefficientsSize.height());
     }
@@ -120,16 +132,16 @@ KDSize Render::Size(const Tree* node) {
       KDSize denominatorSize = Size(node->child(1));
       KDCoordinate width =
           std::max(numeratorSize.width(), denominatorSize.width()) +
-          2 * (k_fractionHorizontalOverflow + k_fractionHorizontalMargin);
-      KDCoordinate height = numeratorSize.height() + k_fractionLineMargin +
-                            k_fractionLineHeight + k_fractionLineMargin +
+          2 * (Fraction::HorizontalOverflow + Fraction::HorizontalMargin);
+      KDCoordinate height = numeratorSize.height() + Fraction::LineMargin +
+                            Fraction::LineHeight + Fraction::LineMargin +
                             denominatorSize.height();
       return KDSize(width, height);
     }
     case LayoutType::Parenthesis: {
       KDSize childSize = Size(node->child(0));
-      return childSize + KDSize(2 * ParenthesisHorizontalPadding(font),
-                                2 * k_parenthesisVerticalPadding);
+      return childSize + KDSize(2 * Parenthesis::HorizontalPadding(font),
+                                2 * Parenthesis::VerticalPadding);
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
@@ -142,7 +154,7 @@ KDSize Render::Size(const Tree* node) {
 
       return KDSize(
           indexSize.width(),
-          baseHeight - k_verticalOffsetIndiceHeight + indexSize.height());
+          baseHeight - VerticalOffset::IndiceHeight + indexSize.height());
 #endif
     }
     case LayoutType::CodePoint: {
@@ -151,7 +163,7 @@ KDSize Render::Size(const Tree* node) {
       // Handle the case of the middle dot which is thinner than the other
       // glyphs
       if (CodePointLayout::GetCodePoint(node) == UCodePointMiddleDot) {
-        width = k_codePointMiddleDotWidth;
+        width = CodePoint::MiddleDotWidth;
       }
       return KDSize(width, glyph.height());
     }
@@ -179,7 +191,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
         return KDPoint(horizontalCenter - Width(node->child(0)) / 2, 0);
       }
       return KDPoint(horizontalCenter - Width(node->child(1)) / 2,
-                     BinomialKNHeight(node, font) - Height(node->child(1)));
+                     Binomial::KNHeight(node, font) - Height(node->child(1)));
     }
     case LayoutType::Conjugate: {
       return KDPoint(
@@ -205,14 +217,14 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       KDCoordinate x =
           (Width(node) - Size(node->child(childIndex)).width()) / 2;
       KDCoordinate y = (childIndex == 1)
-                           ? Height(node->child(0)) + 2 * k_fractionLineMargin +
-                                 k_fractionLineHeight
+                           ? Height(node->child(0)) + 2 * Fraction::LineMargin +
+                                 Fraction::LineHeight
                            : 0;
       return KDPoint(x, y);
     }
     case LayoutType::Parenthesis: {
-      return KDPoint(ParenthesisHorizontalPadding(font),
-                     k_parenthesisVerticalPadding);
+      return KDPoint(Parenthesis::HorizontalPadding(font),
+                     Parenthesis::VerticalPadding);
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
@@ -226,19 +238,19 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
 KDCoordinate Render::Baseline(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Binomial:
-      return (BinomialKNHeight(node, font) + 1) / 2;
+      return (Binomial::KNHeight(node, font) + 1) / 2;
     case LayoutType::Conjugate:
       return Baseline(node->child(0)) + Conjugate::OverlineWidth +
              Conjugate::OverlineVerticalMargin;
-      return (BinomialKNHeight(node, font) + 1) / 2;
+      return (Binomial::KNHeight(node, font) + 1) / 2;
     case LayoutType::Rack:
       return RackLayout::Baseline(node);
 
     case LayoutType::Fraction:
-      return Height(node->child(0)) + k_fractionLineMargin +
-             k_fractionLineHeight;
+      return Height(node->child(0)) + Fraction::LineMargin +
+             Fraction::LineHeight;
     case LayoutType::Parenthesis:
-      return Baseline(node->child(0)) + k_parenthesisVerticalPadding;
+      return Baseline(node->child(0)) + Parenthesis::VerticalPadding;
     case LayoutType::VerticalOffset:
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       assert(false);
@@ -247,7 +259,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
       KDCoordinate baseBaseline =
           base ? Baseline(base) : KDFont::GlyphHeight(font) / 2;
       KDCoordinate indexHeight = Height(node->child(0));
-      return indexHeight - k_verticalOffsetIndiceHeight + baseBaseline;
+      return indexHeight - VerticalOffset::IndiceHeight + baseBaseline;
 #endif
     case LayoutType::CodePoint:
       return KDFont::GlyphHeight(font) / 2;
@@ -343,7 +355,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                         KDColor expressionColor, KDColor backgroundColor) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
-      KDCoordinate childHeight = BinomialKNHeight(node, font);
+      KDCoordinate childHeight = Binomial::KNHeight(node, font);
       KDCoordinate rightParenthesisPointX =
           std::max(Width(node->child(0)), Width(node->child(1))) +
           Parenthesis::Width;
@@ -367,10 +379,10 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
     }
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
-          p.y() + Size(node->child(0)).height() + k_fractionLineMargin;
-      ctx->fillRect(KDRect(p.x() + k_fractionHorizontalMargin, fractionLineY,
-                           Width(node) - 2 * k_fractionHorizontalMargin,
-                           k_fractionLineHeight),
+          p.y() + Size(node->child(0)).height() + Fraction::LineMargin;
+      ctx->fillRect(KDRect(p.x() + Fraction::HorizontalMargin, fractionLineY,
+                           Width(node) - 2 * Fraction::HorizontalMargin,
+                           Fraction::LineHeight),
                     expressionColor);
       return;
     }
@@ -383,7 +395,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                       KDGlyph::Style{.glyphColor = expressionColor,
                                      .backgroundColor = backgroundColor,
                                      .font = font});
-      x += size.width() - ParenthesisHorizontalPadding(font);
+      x += size.width() - Parenthesis::HorizontalPadding(font);
       ctx->drawString(")", KDPoint(x, y),
                       KDGlyph::Style{.glyphColor = expressionColor,
                                      .backgroundColor = backgroundColor,
@@ -391,11 +403,11 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::CodePoint: {
-      CodePoint codePoint = CodePointLayout::GetCodePoint(node);
+      ::CodePoint codePoint = CodePointLayout::GetCodePoint(node);
       // Handle the case of the middle dot which has to be drawn by hand since
       // it is thinner than the other glyphs.
       if (codePoint == UCodePointMiddleDot) {
-        int width = k_codePointMiddleDotWidth;
+        int width = CodePoint::MiddleDotWidth;
         int height = KDFont::GlyphHeight(font);
         ctx->fillRect(
             KDRect(p.translatedBy(KDPoint(width / 2, height / 2 - 1)), 1, 1),
@@ -404,7 +416,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       // General case
       constexpr int bufferSize =
-          sizeof(CodePoint) / sizeof(char) + 1;  // Null-terminating char
+          sizeof(::CodePoint) / sizeof(char) + 1;  // Null-terminating char
       char buffer[bufferSize];
       CodePointLayout::GetName(node, buffer, bufferSize);
       ctx->drawString(buffer, p,

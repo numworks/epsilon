@@ -101,6 +101,22 @@ constexpr static KDCoordinate OverlineWidth = 1;
 constexpr static KDCoordinate OverlineVerticalMargin = 1;
 }  // namespace Conjugate
 
+namespace NthRoot {
+constexpr static KDCoordinate HeightMargin = 2;
+constexpr static KDCoordinate WidthMargin = 2;
+constexpr static KDCoordinate RadixLineThickness = 1;
+
+constexpr static KDCoordinate LeftRadixHeight = 9;
+constexpr static KDCoordinate LeftRadixWidth = 5;
+
+KDSize AdjustedIndexSize(const Tree* node, KDFont::Size font) {
+  return node->isSquareRootLayout()
+             ? KDSize(LeftRadixWidth, 0)
+             : KDSize(std::max(LeftRadixWidth, Render::Width(node->child(1))),
+                      Render::Height(node->child(1)));
+}
+}  // namespace NthRoot
+
 KDFont::Size Render::font = KDFont::Size::Large;
 
 KDSize Render::Size(const Tree* node) {
@@ -123,6 +139,16 @@ KDSize Render::Size(const Tree* node) {
       KDCoordinate newHeight = childSize.height() + Conjugate::OverlineWidth +
                                Conjugate::OverlineVerticalMargin;
       return KDSize(newWidth, newHeight);
+    }
+    case LayoutType::SquareRoot:
+    case LayoutType::NthRoot: {
+      KDSize radicandSize = Size(node->child(0));
+      KDSize indexSize = NthRoot::AdjustedIndexSize(node, font);
+      KDSize newSize = KDSize(
+          indexSize.width() + 3 * NthRoot::WidthMargin +
+              NthRoot::RadixLineThickness + radicandSize.width(),
+          Baseline(node) + radicandSize.height() - Baseline(node->child(0)));
+      return newSize;
     }
     case LayoutType::Rack: {
       return RackLayout::Size(node);
@@ -199,6 +225,17 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
               Escher::Metric::FractionAndConjugateHorizontalOverflow,
           Conjugate::OverlineWidth + Conjugate::OverlineVerticalMargin);
     }
+    case LayoutType::SquareRoot:
+    case LayoutType::NthRoot: {
+      KDSize indexSize = NthRoot::AdjustedIndexSize(node, font);
+      if (childIndex == 0) {
+        return KDPoint(indexSize.width() + 2 * NthRoot::WidthMargin +
+                           NthRoot::RadixLineThickness,
+                       Baseline(node) - Baseline(node->child(0)));
+      } else {
+        return KDPoint(0, Baseline(node) - indexSize.height());
+      }
+    }
     case LayoutType::Rack: {
       KDCoordinate x = 0;
       KDCoordinate childBaseline = 0;
@@ -243,6 +280,13 @@ KDCoordinate Render::Baseline(const Tree* node) {
       return Baseline(node->child(0)) + Conjugate::OverlineWidth +
              Conjugate::OverlineVerticalMargin;
       return (Binomial::KNHeight(node, font) + 1) / 2;
+    case LayoutType::SquareRoot:
+    case LayoutType::NthRoot: {
+      return std::max<KDCoordinate>(
+          Baseline(node->child(0)) + NthRoot::RadixLineThickness +
+              NthRoot::HeightMargin,
+          NthRoot::AdjustedIndexSize(node, font).height());
+    }
     case LayoutType::Rack:
       return RackLayout::Baseline(node);
 
@@ -320,6 +364,15 @@ constexpr static uint8_t bottomRightCurve[CurveHeight][CurveWidth] = {
     {0x66, 0xF9, 0xFF, 0xFF, 0xFF}};
 }  // namespace Parenthesis
 
+namespace NthRoot {
+const uint8_t radixPixel[LeftRadixHeight][LeftRadixWidth] = {
+    {0x51, 0xCC, 0xFF, 0xFF, 0xFF}, {0x96, 0x37, 0xFD, 0xFF, 0xFF},
+    {0xFC, 0x34, 0x9A, 0xFF, 0xFF}, {0xFF, 0xC8, 0x15, 0xEC, 0xFF},
+    {0xFF, 0xFF, 0x65, 0x66, 0xFF}, {0xFF, 0xFF, 0xEC, 0x15, 0xC9},
+    {0xFF, 0xFF, 0xFF, 0x99, 0x34}, {0xFF, 0xFF, 0xFF, 0xFD, 0x36},
+    {0xFF, 0xFF, 0xFF, 0xFF, 0xCB}};
+}
+
 void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
                                       KDContext* ctx, KDPoint p,
                                       KDColor expressionColor,
@@ -377,6 +430,53 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           expressionColor);
       return;
     }
+    case LayoutType::SquareRoot:
+    case LayoutType::NthRoot: {
+      using namespace NthRoot;
+      KDSize radicandSize = Size(node->child(0));
+      KDSize indexSize = AdjustedIndexSize(node, font);
+      KDColor workingBuffer[LeftRadixWidth * LeftRadixHeight];
+      KDRect leftRadixFrame(
+          p.x() + indexSize.width() + WidthMargin - LeftRadixWidth,
+          p.y() + Baseline(node) + radicandSize.height() -
+              Baseline(node->child(0)) - LeftRadixHeight,
+          LeftRadixWidth, LeftRadixHeight);
+      ctx->blendRectWithMask(leftRadixFrame, expressionColor,
+                             (const uint8_t*)radixPixel,
+                             (KDColor*)workingBuffer);
+      // If the indice is higher than the root.
+      if (indexSize.height() >
+          Baseline(node->child(0)) + RadixLineThickness + HeightMargin) {
+        // Vertical radix bar
+        ctx->fillRect(
+            KDRect(p.x() + indexSize.width() + WidthMargin,
+                   p.y() + indexSize.height() - Baseline(node->child(0)) -
+                       RadixLineThickness - HeightMargin,
+                   RadixLineThickness,
+                   radicandSize.height() + HeightMargin + RadixLineThickness),
+            expressionColor);
+        // Horizontal radix bar
+        ctx->fillRect(
+            KDRect(p.x() + indexSize.width() + WidthMargin,
+                   p.y() + indexSize.height() - Baseline(node->child(0)) -
+                       RadixLineThickness - HeightMargin,
+                   radicandSize.width() + 2 * WidthMargin + 1,
+                   RadixLineThickness),
+            expressionColor);
+      } else {
+        ctx->fillRect(
+            KDRect(p.x() + indexSize.width() + WidthMargin, p.y(),
+                   RadixLineThickness,
+                   radicandSize.height() + HeightMargin + RadixLineThickness),
+            expressionColor);
+        ctx->fillRect(
+            KDRect(p.x() + indexSize.width() + WidthMargin, p.y(),
+                   radicandSize.width() + 2 * WidthMargin, RadixLineThickness),
+            expressionColor);
+      }
+      return;
+    }
+
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
           p.y() + Size(node->child(0)).height() + Fraction::LineMargin;

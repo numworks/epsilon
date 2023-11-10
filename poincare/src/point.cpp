@@ -39,7 +39,9 @@ Expression Point::shallowReduce(ReductionContext reductionContext) {
       SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
       SimplificationHelper::UnitReduction::BanUnits,
       SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-      SimplificationHelper::ListReduction::DistributeOverLists);
+      SimplificationHelper::ListReduction::DistributeOverLists,
+      SimplificationHelper::PointReduction::UndefinedOnPoint,
+      SimplificationHelper::UndefReduction::DoNotBubbleUpUndef);
   if (!e.isUninitialized()) {
     return e;
   }

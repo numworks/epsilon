@@ -2651,7 +2651,7 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sort({(8,1),(5,i),(5,-3)})",
                                        "sort({(8,1),(5,i),(5,-3)})");
   assert_parsed_expression_simplify_to("sort({(undef,1),(6,1),(5,-3)})",
-                                       "{undef,(6,1),(5,-3)}");
+                                       "{(undef,1),(6,1),(5,-3)}");
   assert_parsed_expression_simplify_to(
       "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
       "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
@@ -2982,7 +2982,7 @@ QUIZ_CASE(poincare_simplification_integral) {
 
 QUIZ_CASE(poincare_simplification_point) {
   assert_parsed_expression_simplify_to("(1,2)", "(1,2)");
-  assert_parsed_expression_simplify_to("(1/0,2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("(1/0,2)", "(undef,2)");
   assert_parsed_expression_simplify_to("(1,2)+3", Undefined::Name());
   assert_parsed_expression_simplify_to("abs((1.23,4.56))", Undefined::Name());
   assert_parsed_expression_simplify_to("{(1+2,3+4),(5+6,7+8)}",

@@ -21,8 +21,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_memoizedAutoRange(Poincare::Range1D(), Poincare::Range1D()),
         m_checksumOfMemoizedAutoRange(0),
         m_offscreenYAxis(0.f),
-        m_xAuto(true),
-        m_yAuto(true),
+        m_auto{true, true},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -34,12 +33,14 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   void setDelegate(InteractiveCurveViewRangeDelegate* delegate);
 
-  bool zoomAuto() const { return m_xAuto && m_yAuto; }
+  bool zoomAuto() const { return m_auto.x && m_auto.y; }
   void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
-  bool xAuto() const { return m_xAuto; }
-  void setXAuto(bool v) { privateSetZoomAuto(v, m_yAuto); }
-  bool yAuto() const { return m_yAuto; }
-  void setYAuto(bool v) { privateSetZoomAuto(m_xAuto, v); }
+  bool isAuto(Axis axis) const { return m_auto(axis); }
+  void setAuto(Axis axis, bool v) {
+    BoolPair newAuto = m_auto;
+    newAuto(axis) = v;
+    privateSetZoomAuto(newAuto.x, newAuto.y);
+  }
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
   float roundLimit(float y, float range, bool isMin);
@@ -58,7 +59,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
-  void computeRanges() { privateComputeRanges(m_xAuto, m_yAuto); }
+  void computeRanges() { privateComputeRanges(m_auto.x, m_auto.y); }
   void normalize();
   void centerAxisAround(Axis axis, float position);
   bool panToMakePointVisible(float x, float y, float topMarginRatio,
@@ -106,8 +107,13 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   Poincare::Range2D m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;
   float m_offscreenYAxis;
-  bool m_xAuto;
-  bool m_yAuto;
+
+  struct BoolPair {
+    bool x, y;
+    bool& operator()(Axis axis) { return axis == Axis::X ? x : y; }
+    bool operator()(Axis axis) const { return axis == Axis::X ? x : y; }
+  };
+  BoolPair m_auto;
   bool m_zoomNormalize;
 };
 

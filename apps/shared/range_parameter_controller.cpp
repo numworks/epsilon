@@ -50,17 +50,18 @@ void RangeParameterController::fillRangeCells() {
       2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
   char buffer[bufferSize];
   for (int i = 0; i < 2; ++i) {
-    bool isAuto = i == 0 ? m_tempInteractiveRange.xAuto()
-                         : m_tempInteractiveRange.yAuto();
+    Axis axis = i == 0 ? Axis::X : Axis::Y;
+    bool isAuto = m_tempInteractiveRange.isAuto(axis);
+
     if (isAuto) {
       strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting),
               bufferSize);
     } else {
-      float min = i == 0 ? m_tempInteractiveRange.xMin()
-                         : m_tempInteractiveRange.yMin();
-      float max = i == 0 ? m_tempInteractiveRange.xMax()
-                         : m_tempInteractiveRange.yMax();
-      size_t numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      float min = (axis == Axis::X) ? m_tempInteractiveRange.xMin()
+                                    : m_tempInteractiveRange.yMin();
+      float max = (axis == Axis::X) ? m_tempInteractiveRange.xMax()
+                                    : m_tempInteractiveRange.yMax();
+      int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
       numberOfChars += SerializationHelper::CodePoint(
@@ -74,7 +75,7 @@ void RangeParameterController::fillRangeCells() {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = 0;
     }
-    RangeCell *cell = i == 0 ? &m_xRangeCell : &m_yRangeCell;
+    RangeCell *cell = (axis == Axis::X) ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
 }
@@ -111,8 +112,10 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back &&
       (m_interactiveRange->rangeChecksum() !=
            m_tempInteractiveRange.rangeChecksum() ||
-       m_interactiveRange->xAuto() != m_tempInteractiveRange.xAuto() ||
-       m_interactiveRange->yAuto() != m_tempInteractiveRange.yAuto())) {
+       m_interactiveRange->isAuto(Axis::X) !=
+           m_tempInteractiveRange.isAuto(Axis::X) ||
+       m_interactiveRange->isAuto(Axis::Y) !=
+           m_tempInteractiveRange.isAuto(Axis::Y))) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
     return true;

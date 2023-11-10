@@ -115,6 +115,136 @@ KDSize AdjustedIndexSize(const Tree* node, KDFont::Size font) {
 }
 }  // namespace NthRoot
 
+namespace Integral {
+constexpr static int DifferentialIndex = 0;
+constexpr static int LowerBoundIndex = 1;
+constexpr static int UpperBoundIndex = 2;
+constexpr static int IntegrandIndex = 3;
+// clang-format off
+/*
+ * Window configuration explained :
+ * Vertical margins and offsets
+ * +-----------------------------------------------------------------+
+ * |                                                |                |
+ * |                                        k_boundVerticalMargin    |
+ * |                                                |                |
+ * |                                       +------------------+      |
+ * |                                       | upperBoundHeight |      |
+ * |                                       +------------------+      |
+ * |             +++       |                        |                |
+ * |            +++   k_symbolHeight     k_integrandVerticalMargin   |
+ * |           +++         |                        |                |
+ * |                                                                 |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||         centralArgumentHeight                     |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |                                                                 |
+ * |           +++         |                      |                  |
+ * |          +++    k_symbolHeight     k_integrandVerticalMargin    |
+ * |         +++           |                      |                  |
+ * |                                     +------------------+        |
+ * |                                     | lowerBoundHeight |        |
+ * |                                     +------------------+        |
+ * |                                              |                  |
+ * |                                      k_boundVerticalMargin      |
+ * |                                              |                  |
+ * +-----------------------------------------------------------------+
+ *
+ * Horizontal margins and offsets
+ * +-------------------------------------------------------------------------------------------------------+
+ * |                                                                                                       |                                                                                                |
+ * |           |             |                       |+---------------+|                           |       |
+ * |           |k_symbolWidth|k_boundHorizontalMargin||upperBoundWidth||k_integrandHorizontalMargin|       |
+ * |           |             |                       |+---------------+|                           |       |
+ * |                      ***                                                                              |
+ * |                    ***                                                                                |
+ * |                  ***                                                                          |       |
+ * |                ***                                                                                    |
+ * |              ***                                                                                      |
+ * |            ***                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                        |
+ * |            |||                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                 x dx   |
+ * |            |||                                                                                        |
+ * |            |||                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                        |
+ * |            |||                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                        |
+ * |            ***                                                                                |       |
+ * |          ***                                                                                          |
+ * |        ***                                                                                            |
+ * |      ***                                                                                      |       |
+ * |    ***                                                                                                |
+ * |  ***                                                                                                  |
+ * | |             |         |                       |+---------------+|                           |       |
+ * | |k_symbolWidth|    a    |k_boundHorizontalMargin||lowerBoundWidth||k_integrandHorizontalMargin|       |
+ * | |             |         |                       |+---------------+|                           |       |
+ * |                                                                                                       |
+ * +-------------------------------------------------------------------------------------------------------+
+ * ||| = k_lineThickness
+ * a = k_symbolWidth - k_lineThickness
+ */
+// clang-format on
+constexpr static KDCoordinate SymbolHeight = 9;
+constexpr static KDCoordinate SymbolWidth = 4;
+constexpr static KDCoordinate BoundVerticalMargin = 4;
+constexpr static KDCoordinate BoundHorizontalMargin = 3;
+constexpr static KDCoordinate DifferentialHorizontalMargin = 3;
+constexpr static KDCoordinate IntegrandHorizontalMargin = 2;
+constexpr static KDCoordinate IntegrandVerticalMargin = 3;
+constexpr static KDCoordinate LineThickness = 1;
+
+enum class BoundPosition : uint8_t { UpperBound, LowerBound };
+enum class NestedPosition : uint8_t { Previous, Next };
+
+/* Return pointer to the first or the last integral from left to right
+ * (considering multiple integrals in a row). */
+const Tree* mostNestedIntegral(const Tree* node, NestedPosition position) {
+  // TODO
+  return node;
+}
+
+KDCoordinate boundMaxHeight(const Tree* node, BoundPosition position,
+                            KDFont::Size font) {
+  // TODO
+  return Render::Height(node->child(position == BoundPosition::LowerBound
+                                        ? LowerBoundIndex
+                                        : UpperBoundIndex));
+}
+
+KDCoordinate centralArgumentHeight(const Tree* node, KDFont::Size font) {
+  /* When integrals are in a row, the last one is the tallest. We take its
+   * central argument height to define the one of the others integrals */
+  const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
+  if (node == last) {
+    KDCoordinate integrandHeight = Render::Height(node->child(IntegrandIndex));
+    KDCoordinate integrandBaseline =
+        Render::Baseline(node->child(IntegrandIndex));
+    KDCoordinate differentialHeight =
+        Render::Height(node->child(DifferentialIndex));
+    KDCoordinate differentialBaseline =
+        Render::Baseline(node->child(DifferentialIndex));
+    return std::max(integrandBaseline, differentialBaseline) +
+           std::max(integrandHeight - integrandBaseline,
+                    differentialHeight - differentialBaseline);
+  } else {
+    return centralArgumentHeight(last, font);
+  }
+}
+
+}  // namespace Integral
+
 }  // namespace PoincareJ
 
 #endif

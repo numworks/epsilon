@@ -45,6 +45,34 @@ KDSize Render::Size(const Tree* node) {
           Baseline(node) + radicandSize.height() - Baseline(node->child(0)));
       return newSize;
     }
+    case LayoutType::Integral: {
+      using namespace Integral;
+      KDSize dSize = KDFont::Font(font)->stringSize("d");
+      KDSize integrandSize = Size(node->child(3));
+      KDSize differentialSize = Size(node->child(0));
+      KDSize lowerBoundSize = Size(node->child(1));
+      KDSize upperBoundSize = Size(node->child(2));
+      KDCoordinate width =
+          SymbolWidth + LineThickness + BoundHorizontalMargin +
+          std::max(lowerBoundSize.width(), upperBoundSize.width()) +
+          IntegrandHorizontalMargin + integrandSize.width() +
+          DifferentialHorizontalMargin + dSize.width() +
+          DifferentialHorizontalMargin + differentialSize.width();
+      const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
+      KDCoordinate height;
+      if (node == last) {
+        height = BoundVerticalMargin +
+                 boundMaxHeight(node, BoundPosition::UpperBound, font) +
+                 IntegrandVerticalMargin + centralArgumentHeight(node, font) +
+                 IntegrandVerticalMargin +
+                 boundMaxHeight(node, BoundPosition::LowerBound, font) +
+                 BoundVerticalMargin;
+      } else {
+        height = Height(last);
+      }
+      return KDSize(width, height);
+    }
+
     case LayoutType::Rack: {
       return RackLayout::Size(node);
     }
@@ -131,6 +159,36 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
         return KDPoint(0, Baseline(node) - indexSize.height());
       }
     }
+    case LayoutType::Integral: {
+      using namespace Integral;
+      KDSize lowerBoundSize = Size(node->child(LowerBoundIndex));
+      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDCoordinate x = 0;
+      KDCoordinate y = 0;
+      KDCoordinate boundOffset =
+          2 * SymbolWidth - LineThickness + BoundHorizontalMargin;
+      if (childIndex == LowerBoundIndex) {
+        x = boundOffset;
+        y = Height(node) - BoundVerticalMargin -
+            boundMaxHeight(node, BoundPosition::LowerBound, font);
+      } else if (childIndex == UpperBoundIndex) {
+        x = boundOffset;
+        y = BoundVerticalMargin +
+            boundMaxHeight(node, BoundPosition::UpperBound, font) -
+            upperBoundSize.height();
+      } else if (childIndex == IntegrandIndex) {
+        x = boundOffset +
+            std::max(lowerBoundSize.width(), upperBoundSize.width()) +
+            IntegrandHorizontalMargin;
+        y = Baseline(node) - Baseline(node->child(IntegrandIndex));
+      } else {
+        assert(childIndex == DifferentialIndex);
+        x = Width(node) - Width(node->child(DifferentialIndex));
+        y = Baseline(node) - Baseline(node->child(DifferentialIndex));
+      }
+      return KDPoint(x, y);
+    }
+
     case LayoutType::Rack: {
       KDCoordinate x = 0;
       KDCoordinate childBaseline = 0;
@@ -182,6 +240,22 @@ KDCoordinate Render::Baseline(const Tree* node) {
               NthRoot::HeightMargin,
           NthRoot::AdjustedIndexSize(node, font).height());
     }
+    case LayoutType::Integral: {
+      using namespace Integral;
+      const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
+      if (node == last) {
+        return BoundVerticalMargin +
+               boundMaxHeight(node, BoundPosition::UpperBound, font) +
+               IntegrandVerticalMargin +
+               std::max(Baseline(node->child(3)), Baseline(node->child(0)));
+      } else {
+        /* If integrals are in a row, they must have the same baseline. Since
+         * the last integral has the lowest, we take this one for all the others
+         */
+        return Baseline(last);
+      }
+    }
+
     case LayoutType::Rack:
       return RackLayout::Baseline(node);
 
@@ -333,6 +407,51 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                    radicandSize.width() + 2 * WidthMargin, RadixLineThickness),
             expressionColor);
       }
+      return;
+    }
+    case LayoutType::Integral: {
+      using namespace Integral;
+      const Tree* integrand = node->child(IntegrandIndex);
+      KDSize integrandSize = Size(integrand);
+      KDCoordinate centralArgHeight = centralArgumentHeight(node, font);
+      KDColor workingBuffer[SymbolWidth * SymbolHeight];
+
+      // Render the integral symbol
+      KDCoordinate offsetX = p.x() + SymbolWidth;
+      KDCoordinate offsetY =
+          p.y() + BoundVerticalMargin +
+          boundMaxHeight(node, BoundPosition::UpperBound, font) +
+          IntegrandVerticalMargin - SymbolHeight;
+
+      // Upper part
+      KDRect topSymbolFrame(offsetX, offsetY, SymbolWidth, SymbolHeight);
+      ctx->blendRectWithMask(topSymbolFrame, expressionColor,
+                             (const uint8_t*)topSymbolPixel,
+                             (KDColor*)workingBuffer);
+
+      // Central bar
+      offsetY = offsetY + SymbolHeight;
+      ctx->fillRect(KDRect(offsetX, offsetY, LineThickness, centralArgHeight),
+                    expressionColor);
+
+      // Lower part
+      offsetX = offsetX - SymbolWidth + LineThickness;
+      offsetY = offsetY + centralArgHeight;
+      KDRect bottomSymbolFrame(offsetX, offsetY, SymbolWidth, SymbolHeight);
+      ctx->blendRectWithMask(bottomSymbolFrame, expressionColor,
+                             (const uint8_t*)bottomSymbolPixel,
+                             (KDColor*)workingBuffer);
+
+      // Render "d"
+      KDPoint dPosition =
+          p.translatedBy(PositionOfChild(node, IntegrandIndex))
+              .translatedBy(
+                  KDPoint(integrandSize.width() + DifferentialHorizontalMargin,
+                          Baseline(integrand) - KDFont::GlyphHeight(font) / 2));
+      ctx->drawString("d", dPosition,
+                      {.glyphColor = expressionColor,
+                       .backgroundColor = backgroundColor,
+                       .font = font});
       return;
     }
 

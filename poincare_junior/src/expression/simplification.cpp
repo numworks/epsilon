@@ -1063,12 +1063,11 @@ bool Simplification::ExpandAbs(Tree* ref) {
 }
 
 /* TODO:
- * - ContractLn and ExpandLn doesn't handle powers properly
  * - Many Contract methods could be factorized similarly to DistributeOverNAry
  */
 
 bool Simplification::ContractLn(Tree* ref) {
-  // A? + B*ln(C) + D? = A + ln(C^B) + D if B integer and C not rational.
+  // A? + B*ln(C) + D? = A + ln(C^B) + D if B is an integer.
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KAdd(KTA, KMult(KB, KLn(KC)), KTD), ref, &ctx) &&
       ctx.getNode(KB)->isInteger()) {
@@ -1090,7 +1089,7 @@ bool Simplification::ExpandLn(Tree* ref) {
 
 bool Simplification::ExpandSingleChildLn(Tree* ref) {
   return
-      // ln(A/B) = ln(a) - ln(b)
+      // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
       Arithmetic::ExpandLnOnRational(ref) ||
       // ln(A^B) = B*ln(A)
       PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),

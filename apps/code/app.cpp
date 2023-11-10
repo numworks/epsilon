@@ -83,12 +83,14 @@ App::App(Snapshot *snapshot)
   Clipboard::sharedClipboard()->enterPython();
 }
 
-void App::quitInputRunLoop() {
+bool App::quitInputRunLoop() {
   if (m_consoleController.inputRunLoopActive()) {
     m_consoleController.terminateInputLoop();
     m_modalViewController.dismissPotentialModal();
     Ion::USB::clearEnumerationInterrupt();
+    return true;
   }
+  return false;
 }
 
 App::~App() {
@@ -98,12 +100,18 @@ App::~App() {
 }
 
 bool App::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::USBEnumeration) {
-    quitInputRunLoop();
-
-    /* We need to return true here because we want to actually exit from the
-     * input run loop, which requires ending a dispatchEvent cycle. */
-    return true;
+  if (event == Ion::Events::USBEnumeration
+#if !PLATFORM_DEVICE
+      /* On the simulator, pressing Home does not interrupt the execution,
+       * so we must quit the run loop. */
+      || event == Ion::Events::Home
+#endif
+  ) {
+    if (quitInputRunLoop()) {
+      /* We need to return true here because we want to actually exit from the
+       * input run loop, which requires ending a dispatchEvent cycle. */
+      return true;
+    }
   }
   return false;
 }

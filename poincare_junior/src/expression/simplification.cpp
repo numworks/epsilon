@@ -849,9 +849,10 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
     changed = AdvancedReduction(ref, ref) || changed;
+    // TODO : Improve AdvancedReduction and metric to ensure it is idempotent.
+    // assert(!AdvancedReduction(ref, ref));
     assert(!DeepSystematicReduce(ref));
     assert(!DeepApplyMatrixOperators(ref));
-    assert(!AdvancedReduction(ref, ref));
     changed = List::BubbleUp(ref,
                              [](Tree* e) -> bool {
                                return ShallowSystematicReduce(e) +

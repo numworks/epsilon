@@ -6,116 +6,11 @@
 
 #include "code_point_layout.h"
 #include "rack_layout.h"
+#include "render_masks.h"
+#include "render_metrics.h"
 #include "vertical_offset_layout.h"
 
 namespace PoincareJ {
-
-namespace Fraction {
-constexpr static KDCoordinate LineMargin = 2;
-constexpr static KDCoordinate LineHeight = 1;
-constexpr static KDCoordinate HorizontalOverflow =
-    Escher::Metric::FractionAndConjugateHorizontalOverflow;
-constexpr static KDCoordinate HorizontalMargin =
-    Escher::Metric::FractionAndConjugateHorizontalMargin;
-}  // namespace Fraction
-
-namespace CodePoint {
-constexpr static KDCoordinate MiddleDotWidth = 5;
-}
-
-namespace VerticalOffset {
-constexpr static KDCoordinate IndiceHeight = 10;
-}
-
-namespace Grid {
-constexpr static KDCoordinate EntryMargin = 6;
-}
-
-namespace Pair {
-constexpr static KDCoordinate LineThickness = 1;
-
-constexpr static KDCoordinate MinimalChildHeight =
-    Escher::Metric::MinimalBracketAndParenthesisChildHeight;
-
-static bool ChildHeightDictatesHeight(KDCoordinate childHeight) {
-  return childHeight >= MinimalChildHeight;
-}
-static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight,
-                                           KDCoordinate verticalMargin) {
-  return (ChildHeightDictatesHeight(childHeight) ? childHeight
-                                                 : MinimalChildHeight) +
-         verticalMargin * 2;
-}
-static KDCoordinate BaselineGivenChildHeightAndBaseline(
-    KDCoordinate childHeight, KDCoordinate childBaseline,
-    KDCoordinate verticalMargin) {
-  return childBaseline + verticalMargin +
-         (ChildHeightDictatesHeight(childHeight)
-              ? 0
-              : (MinimalChildHeight - childHeight) / 2);
-}
-static KDPoint ChildOffset(KDCoordinate verticalMargin,
-                           KDCoordinate bracketWidth) {
-  return KDPoint(bracketWidth, verticalMargin);
-}
-static KDPoint PositionGivenChildHeightAndBaseline(
-    bool left, KDCoordinate bracketWidth, KDSize childSize,
-    KDCoordinate childBaseline, KDCoordinate verticalMargin) {
-  return KDPoint(
-      left ? -bracketWidth : childSize.width(),
-      ChildHeightDictatesHeight(childSize.height())
-          ? -verticalMargin
-          : childBaseline -
-                HeightGivenChildHeight(childSize.height(), verticalMargin) / 2);
-}
-static KDCoordinate OptimalChildHeightGivenLayoutHeight(
-    KDCoordinate layoutHeight, KDCoordinate verticalMargin) {
-  return layoutHeight - verticalMargin * 2;
-}
-
-}  // namespace Pair
-
-namespace Parenthesis {
-constexpr static KDCoordinate WidthMargin = 1;
-constexpr static KDCoordinate CurveWidth = 5;
-constexpr static KDCoordinate CurveHeight = 7;
-constexpr static KDCoordinate VerticalMargin = 2;
-constexpr static KDCoordinate Width = 2 * WidthMargin + CurveWidth;
-
-constexpr static KDCoordinate VerticalPadding = 2;
-
-constexpr static KDCoordinate HorizontalPadding(KDFont::Size font) {
-  return KDFont::GlyphSize(font).width();
-}
-}  // namespace Parenthesis
-
-namespace Binomial {
-static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
-  return Render::Height(node->child(0)) + Grid::EntryMargin +
-         Render::Height(node->child(1));
-}
-}  // namespace Binomial
-
-namespace Conjugate {
-constexpr static KDCoordinate OverlineWidth = 1;
-constexpr static KDCoordinate OverlineVerticalMargin = 1;
-}  // namespace Conjugate
-
-namespace NthRoot {
-constexpr static KDCoordinate HeightMargin = 2;
-constexpr static KDCoordinate WidthMargin = 2;
-constexpr static KDCoordinate RadixLineThickness = 1;
-
-constexpr static KDCoordinate LeftRadixHeight = 9;
-constexpr static KDCoordinate LeftRadixWidth = 5;
-
-KDSize AdjustedIndexSize(const Tree* node, KDFont::Size font) {
-  return node->isSquareRootLayout()
-             ? KDSize(LeftRadixWidth, 0)
-             : KDSize(std::max(LeftRadixWidth, Render::Width(node->child(1))),
-                      Render::Height(node->child(1)));
-}
-}  // namespace NthRoot
 
 KDFont::Size Render::font = KDFont::Size::Large;
 
@@ -335,42 +230,6 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
                 expressionColor, backgroundColor);
   }
-}
-
-namespace Parenthesis {
-constexpr static uint8_t topLeftCurve[CurveHeight][CurveWidth] = {
-    {0xFF, 0xFF, 0xFF, 0xF9, 0x66}, {0xFF, 0xFF, 0xEB, 0x40, 0x9A},
-    {0xFF, 0xF2, 0x40, 0xBF, 0xFF}, {0xFF, 0x49, 0xB6, 0xFF, 0xFF},
-    {0xA9, 0x5A, 0xFF, 0xFF, 0xFF}, {0x45, 0xBE, 0xFF, 0xFF, 0xFF},
-    {0x11, 0xEE, 0xFF, 0xFF, 0xFF}};
-
-// TODO : factorize this
-constexpr static uint8_t bottomLeftCurve[CurveHeight][CurveWidth] = {
-    {0x11, 0xEE, 0xFF, 0xFF, 0xFF}, {0x45, 0xBE, 0xFF, 0xFF, 0xFF},
-    {0xA9, 0x5A, 0xFF, 0xFF, 0xFF}, {0xFF, 0x49, 0xB6, 0xFF, 0xFF},
-    {0xFF, 0xF2, 0x40, 0xBF, 0xFF}, {0xFF, 0xFF, 0xEB, 0x40, 0x9A},
-    {0xFF, 0xFF, 0xFF, 0xF9, 0x66}};
-
-constexpr static uint8_t topRightCurve[CurveHeight][CurveWidth] = {
-    {0x66, 0xF9, 0xFF, 0xFF, 0xFF}, {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
-    {0xFF, 0xBF, 0x40, 0xF2, 0xFF}, {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
-    {0xFF, 0xFF, 0xFF, 0x5A, 0xA9}, {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
-    {0xFF, 0xFF, 0xFF, 0xEE, 0x11}};
-
-constexpr static uint8_t bottomRightCurve[CurveHeight][CurveWidth] = {
-    {0xFF, 0xFF, 0xFF, 0xEE, 0x11}, {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
-    {0xFF, 0xFF, 0xFF, 0x5A, 0xA9}, {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
-    {0xFF, 0xBF, 0x40, 0xF2, 0xFF}, {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
-    {0x66, 0xF9, 0xFF, 0xFF, 0xFF}};
-}  // namespace Parenthesis
-
-namespace NthRoot {
-const uint8_t radixPixel[LeftRadixHeight][LeftRadixWidth] = {
-    {0x51, 0xCC, 0xFF, 0xFF, 0xFF}, {0x96, 0x37, 0xFD, 0xFF, 0xFF},
-    {0xFC, 0x34, 0x9A, 0xFF, 0xFF}, {0xFF, 0xC8, 0x15, 0xEC, 0xFF},
-    {0xFF, 0xFF, 0x65, 0x66, 0xFF}, {0xFF, 0xFF, 0xEC, 0x15, 0xC9},
-    {0xFF, 0xFF, 0xFF, 0x99, 0x34}, {0xFF, 0xFF, 0xFF, 0xFD, 0x36},
-    {0xFF, 0xFF, 0xFF, 0xFF, 0xCB}};
 }
 
 void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,

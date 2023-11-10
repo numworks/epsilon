@@ -34,17 +34,17 @@ void LayoutCursor::safeSetPosition(int position) {
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
   LayoutSelection currentSelection = selection();
   if (currentSelection.isEmpty()) {
-    return Render::Size(layoutToFit(font), rootNode(), font).height();
+    return Render::Size(layoutToFit(font), font).height();
   }
 
   if (Layout::IsHorizontal(cursorNode())) {
     return RackLayout::SizeBetweenIndexes(
                cursorNode(), currentSelection.leftPosition(),
-               currentSelection.rightPosition(), rootNode(), font)
+               currentSelection.rightPosition(), font)
         .height();
   }
 
-  return Render::Size(cursorNode(), rootNode(), font).height();
+  return Render::Size(cursorNode(), font).height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
@@ -53,21 +53,20 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   if (!currentSelection.isEmpty() && Layout::IsHorizontal(cursorNode())) {
     cursorBaseline = RackLayout::BaselineBetweenIndexes(
         cursorNode(), currentSelection.leftPosition(),
-        currentSelection.rightPosition(), rootNode(), font);
+        currentSelection.rightPosition(), font);
   } else {
-    cursorBaseline = Render::Baseline(layoutToFit(font), rootNode(), font);
+    cursorBaseline = Render::Baseline(layoutToFit(font), font);
   }
   KDCoordinate cursorYOriginInLayout =
-      Render::Baseline(cursorNode(), rootNode(), font) - cursorBaseline;
+      Render::Baseline(cursorNode(), font) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
   if (Layout::IsHorizontal(cursorNode())) {
-    cursorXOffset = RackLayout::SizeBetweenIndexes(cursorNode(), 0, m_position,
-                                                   rootNode(), font)
-                        .width();
+    cursorXOffset =
+        RackLayout::SizeBetweenIndexes(cursorNode(), 0, m_position, font)
+            .width();
   } else {
-    cursorXOffset = m_position == 1
-                        ? Render::Size(cursorNode(), rootNode(), font).width()
-                        : 0;
+    cursorXOffset =
+        m_position == 1 ? Render::Size(cursorNode(), font).width() : 0;
   }
   return Render::AbsoluteOrigin(cursorNode(), rootNode(), font)
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
@@ -733,9 +732,8 @@ const Tree *LayoutCursor::layoutToFit(KDFont::Size font) const {
   if (!leftL && !rightL) {
     return cursorNode();
   }
-  return !leftL ||
-                 (rightL && Render::Size(leftL, rootNode(), font).height() <
-                                Render::Size(rightL, rootNode(), font).height())
+  return !leftL || (rightL && Render::Size(leftL, font).height() <
+                                  Render::Size(rightL, font).height())
              ? rightL
              : leftL;
 }

@@ -131,7 +131,7 @@ KDSize Layout::size(KDFont::Size font) const {
         void **contextArray = static_cast<void **>(context);
         KDFont::Size font = *static_cast<KDFont::Size *>(contextArray[0]);
         KDSize *result = static_cast<KDSize *>(contextArray[1]);
-        *result = Render::Size(tree, tree, font);
+        *result = Render::Size(tree, font);
       },
       &context);
   return result;

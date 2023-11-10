@@ -108,19 +108,13 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
   Tree* firstArgument = u->nextNode();
-  if (PatternMatching::MatchAndReplace(firstArgument, KMult(KTA, -1_e, KTB),
-                                       KMult(KTA, KTB))) {
+  if (PatternMatching::MatchReplaceAndSimplify(
+          firstArgument, KMult(KTA, -1_e, KTB), KMult(KTA, KTB))) {
     changed = true;
     if (isSin) {
       isOpposed = !isOpposed;
     }
-    // Multiplication could have been squashed.
-    if (firstArgument->isMultiplication()) {
-      Simplification::SimplifyMultiplication(firstArgument);
-    }
   }
-
-  // Replace Trig((n/12)*pi,*) with exact value.
   if (firstArgument->treeIsIdenticalTo(π_e) || firstArgument->isZero() ||
       (firstArgument->isMultiplication() &&
        firstArgument->numberOfChildren() == 2 &&

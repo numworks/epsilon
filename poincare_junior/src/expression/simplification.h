@@ -6,6 +6,7 @@
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/logarithm.h>
 #include <poincare_junior/src/expression/metric.h>
+#include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
 #include "arithmetic.h"
@@ -55,10 +56,6 @@ class Simplification {
 
   static bool SimplifyAbs(Tree *u);
   EDITION_REF_WRAP(SimplifyAbs);
-  static bool SimplifyTrig(Tree *u);
-  EDITION_REF_WRAP(SimplifyTrig);
-  static bool SimplifyTrigDiff(Tree *u);
-  EDITION_REF_WRAP(SimplifyTrigDiff);
   static bool SimplifyAddition(Tree *u);
   EDITION_REF_WRAP(SimplifyAddition);
   static bool SimplifyMultiplication(Tree *u);
@@ -95,8 +92,6 @@ class Simplification {
                                ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);
   EDITION_REF_WRAP(SimplifySwitch);
-  static bool SimplifyTrigSecondElement(Tree *u, bool *isOpposed);
-  EDITION_REF_WRAP_1(SimplifyTrigSecondElement, bool *);
   /* The following methods should not be called with EditionReferences.
    * TODO : ensure it cannot. */
   // Return true if child has been merged with next sibling.
@@ -139,10 +134,6 @@ class Simplification {
   EDITION_REF_WRAP(ContractExpMult);
   static bool ExpandExp(Tree *node);
   EDITION_REF_WRAP(ExpandExp);
-  static bool ContractTrigonometric(Tree *node);
-  EDITION_REF_WRAP(ContractTrigonometric);
-  static bool ExpandTrigonometric(Tree *node);
-  EDITION_REF_WRAP(ExpandTrigonometric);
   static bool ExpandMult(Tree *node);
   static bool ExpandMultSubOperation(Tree *node) {
     return SimplifyMultiplication(node) + ExpandMult(node);
@@ -157,7 +148,7 @@ class Simplification {
       Logarithm::ContractLn,
       ContractAbs,
       ContractExpMult,
-      ContractTrigonometric,
+      Trigonometry::ContractTrigonometric,
       Parametric::ContractProduct,
       Arithmetic::ContractDecimals,
   };
@@ -165,7 +156,7 @@ class Simplification {
       ExpandAbs,
       Logarithm::ExpandLn,
       ExpandExp,
-      ExpandTrigonometric,
+      Trigonometry::ExpandTrigonometric,
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
       Arithmetic::ExpandDecimals,

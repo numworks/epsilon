@@ -618,6 +618,24 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
+    // === Points ===
+
+    assert_check_function_properties(
+        "(0,1)",
+        FunctionProperties{
+            .m_caption = I18n::Message::PointType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::NoSymbol,
+            .m_curveParameterType =
+                ContinuousFunctionProperties::CurveParameterType::ScatterPlot});
+
+    assert_check_function_properties(
+        "{(0,1)}",
+        FunctionProperties{
+            .m_caption = I18n::Message::ListOfPointsType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::NoSymbol,
+            .m_curveParameterType =
+                ContinuousFunctionProperties::CurveParameterType::ScatterPlot});
+
     // === Error status ===
 
     assert_check_function_properties(

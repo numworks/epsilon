@@ -37,6 +37,7 @@ class SystemOfEquations {
     TooManyVariables = 3,
     NonLinearSystem = 4,
     RequireApproximateSolution = 5,
+    DisabledInExamMode = 6,
   };
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}

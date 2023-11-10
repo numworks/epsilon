@@ -141,8 +141,14 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
   m_userVariables[0][0] = '\0';
   m_complexFormat = Preferences::sharedPreferences->complexFormat();
 
+  bool forbidSimultaneousEquation = Preferences::sharedPreferences->examMode()
+                                        .forbidSimultaneousEquationSolver();
+
   EquationStore *store = m_store;
   int nEquations = store->numberOfDefinedModels();
+  if (forbidSimultaneousEquation && nEquations > 1) {
+    return Error::DisabledInExamMode;
+  }
   for (int i = 0; i < nEquations; i++) {
     ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
@@ -197,6 +203,10 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
       return Error::TooManyVariables;
     }
     m_numberOfResolutionVariables = nbResolutionVariables;
+  }
+
+  if (forbidSimultaneousEquation && m_numberOfResolutionVariables > 1) {
+    return Error::DisabledInExamMode;
   }
   return Error::NoError;
 }

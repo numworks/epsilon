@@ -21,6 +21,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Standard:
       quiz_assert(!mode.forbidSolverApp());
@@ -37,6 +38,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Dutch:
       quiz_assert(!mode.forbidSolverApp());
@@ -53,6 +55,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(mode.forbidUnits());
       quiz_assert(mode.forbidAdditionalResults());
       quiz_assert(mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::IBTest:
       quiz_assert(!mode.forbidSolverApp());
@@ -69,6 +72,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(mode.forbidUnits());
       quiz_assert(mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Portuguese:
       quiz_assert(!mode.forbidSolverApp());
@@ -85,6 +89,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::English:
       quiz_assert(!mode.forbidSolverApp());
@@ -101,6 +106,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::STAAR:
       quiz_assert(!mode.forbidSolverApp());
@@ -117,6 +123,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Pennsylvania:
       quiz_assert(mode.forbidSolverApp());
@@ -133,6 +140,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::SouthCarolina:
       quiz_assert(mode.forbidSolverApp());
@@ -149,6 +157,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(mode.forbidExactResults());
+      quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     default:
       quiz_assert(ruleset == ExamMode::Ruleset::PressToTest);

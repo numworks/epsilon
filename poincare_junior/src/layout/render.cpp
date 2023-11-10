@@ -84,6 +84,11 @@ static KDCoordinate BinomialKNHeight(const Tree* node, KDFont::Size font) {
          Render::Height(node->child(1));
 }
 
+namespace Conjugate {
+constexpr static KDCoordinate OverlineWidth = 1;
+constexpr static KDCoordinate OverlineVerticalMargin = 1;
+}  // namespace Conjugate
+
 KDFont::Size Render::font = KDFont::Size::Large;
 
 KDSize Render::Size(const Tree* node) {
@@ -94,6 +99,18 @@ KDSize Render::Size(const Tree* node) {
                  BinomialKNHeight(node, font));
       KDCoordinate width = coefficientsSize.width() + 2 * Parenthesis::Width;
       return KDSize(width, coefficientsSize.height());
+    }
+    case LayoutType::Conjugate: {
+      KDSize childSize = Size(node->child(0));
+      KDCoordinate newWidth =
+          Escher::Metric::FractionAndConjugateHorizontalMargin +
+          Escher::Metric::FractionAndConjugateHorizontalOverflow +
+          childSize.width() +
+          Escher::Metric::FractionAndConjugateHorizontalOverflow +
+          Escher::Metric::FractionAndConjugateHorizontalMargin;
+      KDCoordinate newHeight = childSize.height() + Conjugate::OverlineWidth +
+                               Conjugate::OverlineVerticalMargin;
+      return KDSize(newWidth, newHeight);
     }
     case LayoutType::Rack: {
       return RackLayout::Size(node);
@@ -164,6 +181,12 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       return KDPoint(horizontalCenter - Width(node->child(1)) / 2,
                      BinomialKNHeight(node, font) - Height(node->child(1)));
     }
+    case LayoutType::Conjugate: {
+      return KDPoint(
+          Escher::Metric::FractionAndConjugateHorizontalMargin +
+              Escher::Metric::FractionAndConjugateHorizontalOverflow,
+          Conjugate::OverlineWidth + Conjugate::OverlineVerticalMargin);
+    }
     case LayoutType::Rack: {
       KDCoordinate x = 0;
       KDCoordinate childBaseline = 0;
@@ -203,6 +226,10 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
 KDCoordinate Render::Baseline(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Binomial:
+      return (BinomialKNHeight(node, font) + 1) / 2;
+    case LayoutType::Conjugate:
+      return Baseline(node->child(0)) + Conjugate::OverlineWidth +
+             Conjugate::OverlineVerticalMargin;
       return (BinomialKNHeight(node, font) + 1) / 2;
     case LayoutType::Rack:
       return RackLayout::Baseline(node);
@@ -326,6 +353,16 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           false, childHeight, ctx,
           p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor,
           backgroundColor);
+      return;
+    }
+    case LayoutType::Conjugate: {
+      ctx->fillRect(
+          KDRect(p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
+                 p.y(),
+                 Width(node->child(0)) +
+                     2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
+                 Conjugate::OverlineWidth),
+          expressionColor);
       return;
     }
     case LayoutType::Fraction: {

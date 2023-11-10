@@ -26,7 +26,6 @@ NODE(PtBinomial, 2)
 NODE(PtPermute, 2)
 
 // TODO replace by subscript ?
-NODE(Sequence, 2)
 NODE(ListSequence, 3)
 
 NODE(Matrix, NARY2D)

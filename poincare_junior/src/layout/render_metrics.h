@@ -224,6 +224,66 @@ KDSize AdjustedIndexSize(const Tree* node, KDFont::Size font) {
 }
 }  // namespace NthRoot
 
+namespace Parametric {
+constexpr static KDCoordinate SymbolHeight(KDFont::Size font) {
+  return font == KDFont::Size::Large ? 29 : 21;
+}
+constexpr static KDCoordinate SymbolWidth(KDFont::Size font) {
+  return font == KDFont::Size::Large ? 22 : 16;
+}
+
+constexpr static int VariableIndex = 0;
+constexpr static int LowerBoundIndex = 1;
+constexpr static int UpperBoundIndex = 2;
+constexpr static int ArgumentIndex = 3;
+
+constexpr static KDCoordinate UpperBoundVerticalMargin(KDFont::Size font) {
+  return font == KDFont::Size::Large ? 2 : 0;
+}
+constexpr static KDCoordinate LowerBoundVerticalMargin(KDFont::Size font) {
+  return font == KDFont::Size::Large ? 2 : 1;
+}
+
+constexpr static KDCoordinate ArgumentHorizontalMargin(KDFont::Size font) {
+  return font == KDFont::Size::Large ? 2 : 0;
+}
+constexpr static const char* EqualSign = "=";
+constexpr static KDCoordinate LineThickness = 1;
+
+KDCoordinate subscriptBaseline(const Tree* node, KDFont::Size font) {
+  return std::max<KDCoordinate>(
+      std::max(Render::Baseline(node->child(VariableIndex)),
+               Render::Baseline(node->child(LowerBoundIndex))),
+      KDFont::Font(font)->stringSize(EqualSign).height() / 2);
+}
+
+KDSize lowerBoundSizeWithVariableEquals(const Tree* node, KDFont::Size font) {
+  KDSize variableSize = Render::Size(node->child(VariableIndex));
+  KDSize lowerBoundSize = Render::Size(node->child(LowerBoundIndex));
+  KDSize equalSize = KDFont::Font(font)->stringSize(EqualSign);
+  return KDSize(
+      variableSize.width() + equalSize.width() + lowerBoundSize.width(),
+      subscriptBaseline(node, font) +
+          std::max({variableSize.height() -
+                        Render::Baseline(node->child(VariableIndex)),
+                    lowerBoundSize.height() -
+                        Render::Baseline(node->child(LowerBoundIndex)),
+                    equalSize.height() / 2}));
+}
+
+KDCoordinate completeLowerBoundX(const Tree* node, KDFont::Size font) {
+  KDSize upperBoundSize = Render::Size(node->child(UpperBoundIndex));
+  return std::max({0,
+                   (SymbolWidth(font) -
+                    lowerBoundSizeWithVariableEquals(node, font).width()) /
+                       2,
+                   (upperBoundSize.width() -
+                    lowerBoundSizeWithVariableEquals(node, font).width()) /
+                       2});
+}
+
+}  // namespace Parametric
+
 namespace Integral {
 constexpr static int DifferentialIndex = 0;
 constexpr static int LowerBoundIndex = 1;

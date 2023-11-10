@@ -73,6 +73,27 @@ KDSize Render::Size(const Tree* node) {
       }
       return KDSize(width, height);
     }
+    case LayoutType::Product:
+    case LayoutType::Sum: {
+      using namespace Parametric;
+      KDSize totalLowerBoundSize = lowerBoundSizeWithVariableEquals(node, font);
+      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDSize argumentSize = Size(node->child(ArgumentIndex));
+      KDSize argumentSizeWithParentheses =
+          KDSize(argumentSize.width() + 2 * Parenthesis::ParenthesisWidth,
+                 Parenthesis::HeightGivenChildHeight(argumentSize.height()));
+      KDSize result = KDSize(
+          std::max({SymbolWidth(font), totalLowerBoundSize.width(),
+                    upperBoundSize.width()}) +
+              ArgumentHorizontalMargin(font) +
+              argumentSizeWithParentheses.width(),
+          Baseline(node) +
+              std::max(SymbolHeight(font) / 2 + LowerBoundVerticalMargin(font) +
+                           totalLowerBoundSize.height(),
+                       argumentSizeWithParentheses.height() -
+                           Baseline(node->child(ArgumentIndex))));
+      return result;
+    }
 
     case LayoutType::Rack: {
       return RackLayout::Size(node);
@@ -196,6 +217,41 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       }
       return KDPoint(x, y);
     }
+    case LayoutType::Product:
+    case LayoutType::Sum: {
+      using namespace Parametric;
+      KDSize variableSize = Size(node->child(VariableIndex));
+      KDSize equalSize = KDFont::Font(font)->stringSize(EqualSign);
+      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDCoordinate x = 0;
+      KDCoordinate y = 0;
+      if (childIndex == VariableIndex) {
+        x = completeLowerBoundX(node, font);
+        y = Baseline(node) + SymbolHeight(font) / 2 +
+            LowerBoundVerticalMargin(font) + subscriptBaseline(node, font) -
+            Baseline(node->child(VariableIndex));
+      } else if (childIndex == LowerBoundIndex) {
+        x = completeLowerBoundX(node, font) + equalSize.width() +
+            variableSize.width();
+        y = Baseline(node) + SymbolHeight(font) / 2 +
+            LowerBoundVerticalMargin(font) + subscriptBaseline(node, font) -
+            Baseline(node->child(LowerBoundIndex));
+      } else if (childIndex == UpperBoundIndex) {
+        x = std::max({0, (SymbolWidth(font) - upperBoundSize.width()) / 2,
+                      (lowerBoundSizeWithVariableEquals(node, font).width() -
+                       upperBoundSize.width()) /
+                          2});
+        y = Baseline(node) - (SymbolHeight(font) + 1) / 2 -
+            UpperBoundVerticalMargin(font) - upperBoundSize.height();
+      } else {
+        x = std::max({SymbolWidth(font),
+                      lowerBoundSizeWithVariableEquals(node, font).width(),
+                      upperBoundSize.width()}) +
+            ArgumentHorizontalMargin(font) + Parenthesis::ParenthesisWidth;
+        y = Baseline(node) - Baseline(node->child(ArgumentIndex));
+      }
+      return KDPoint(x, y);
+    }
 
     case LayoutType::Rack: {
       KDCoordinate x = 0;
@@ -267,6 +323,14 @@ KDCoordinate Render::Baseline(const Tree* node) {
          */
         return Baseline(last);
       }
+    }
+    case LayoutType::Product:
+    case LayoutType::Sum: {
+      using namespace Parametric;
+      return std::max<KDCoordinate>(Height(node->child(UpperBoundIndex)) +
+                                        UpperBoundVerticalMargin(font) +
+                                        (SymbolHeight(font) + 1) / 2,
+                                    Baseline(node->child(ArgumentIndex)));
     }
 
     case LayoutType::Rack:
@@ -467,6 +531,9 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
 
 void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                         KDColor expressionColor, KDColor backgroundColor) {
+  KDGlyph::Style style{.glyphColor = expressionColor,
+                       .backgroundColor = backgroundColor,
+                       .font = font};
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       KDCoordinate childHeight = Binomial::KNHeight(node, font);
@@ -623,6 +690,92 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       return;
     }
+    case LayoutType::Product: {
+      using namespace Parametric;
+
+      KDFont::Size font = style.font;
+      // Compute sizes.
+      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDSize lowerBoundNEqualsSize =
+          lowerBoundSizeWithVariableEquals(node, font);
+
+      // Render the Product symbol.
+      ctx->fillRect(
+          KDRect(
+              p.x() + std::max(
+                          {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
+                           (lowerBoundNEqualsSize.width() - SymbolWidth(font)) /
+                               2}),
+              p.y() + std::max(upperBoundSize.height() +
+                                   UpperBoundVerticalMargin(font),
+                               Baseline(node->child(ArgumentIndex)) -
+                                   (SymbolHeight(font) + 1) / 2),
+              LineThickness, SymbolHeight(font)),
+          style.glyphColor);
+      ctx->fillRect(
+          KDRect(
+              p.x() + std::max(
+                          {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
+                           (lowerBoundNEqualsSize.width() - SymbolWidth(font)) /
+                               2}),
+              p.y() + std::max(upperBoundSize.height() +
+                                   UpperBoundVerticalMargin(font),
+                               Baseline(node->child(ArgumentIndex)) -
+                                   (SymbolHeight(font) + 1) / 2),
+              SymbolWidth(font), LineThickness),
+          style.glyphColor);
+      ctx->fillRect(
+          KDRect(p.x() +
+                     std::max(
+                         {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
+                          (lowerBoundNEqualsSize.width() - SymbolWidth(font)) /
+                              2}) +
+                     SymbolWidth(font),
+                 p.y() + std::max(upperBoundSize.height() +
+                                      UpperBoundVerticalMargin(font),
+                                  Baseline(node->child(ArgumentIndex)) -
+                                      (SymbolHeight(font) + 1) / 2),
+                 LineThickness, SymbolHeight(font)),
+          style.glyphColor);
+
+      goto Parametric;
+    }
+    case LayoutType::Sum:
+    Parametric : {
+      using namespace Parametric;
+      KDFont::Size font = style.font;
+      // Render the "="
+      KDSize variableSize = Size(node->child(VariableIndex));
+      KDPoint equalPosition =
+          PositionOfChild(node, VariableIndex)
+              .translatedBy(KDPoint(
+                  variableSize.width(),
+                  Baseline(node->child(VariableIndex)) -
+                      KDFont::Font(font)->stringSize(EqualSign).height() / 2));
+      ctx->drawString(EqualSign, equalPosition.translatedBy(p), style);
+
+      // Render the parentheses
+      KDSize argumentSize = Size(node->child(ArgumentIndex));
+      KDPoint argumentPosition = PositionOfChild(node, ArgumentIndex);
+      KDCoordinate argumentBaseline = Baseline(node->child(ArgumentIndex));
+
+      KDPoint leftParenthesisPosition =
+          Parenthesis::PositionGivenChildHeightAndBaseline(true, argumentSize,
+                                                           argumentBaseline)
+              .translatedBy(argumentPosition);
+      KDPoint rightParenthesisPosition =
+          Parenthesis::PositionGivenChildHeightAndBaseline(false, argumentSize,
+                                                           argumentBaseline)
+              .translatedBy(argumentPosition);
+      RenderParenthesisWithChildHeight(true, argumentSize.height(), ctx,
+                                       leftParenthesisPosition.translatedBy(p),
+                                       style.glyphColor, style.backgroundColor);
+      RenderParenthesisWithChildHeight(false, argumentSize.height(), ctx,
+                                       rightParenthesisPosition.translatedBy(p),
+                                       style.glyphColor, style.backgroundColor);
+      return;
+    }
+
     case LayoutType::CodePoint: {
       ::CodePoint codePoint = CodePointLayout::GetCodePoint(node);
       // Handle the case of the middle dot which has to be drawn by hand since
@@ -640,10 +793,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           sizeof(::CodePoint) / sizeof(char) + 1;  // Null-terminating char
       char buffer[bufferSize];
       CodePointLayout::GetName(node, buffer, bufferSize);
-      ctx->drawString(buffer, p,
-                      KDGlyph::Style{.glyphColor = expressionColor,
-                                     .backgroundColor = backgroundColor,
-                                     .font = font});
+      ctx->drawString(buffer, p, style);
       return;
     }
     case LayoutType::Rack: {

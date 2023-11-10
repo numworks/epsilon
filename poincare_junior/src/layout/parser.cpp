@@ -58,7 +58,6 @@ Tree* Parser::Parse(const Tree* node) {
     case LayoutType::String:
     case LayoutType::CurlyBrace:
     case LayoutType::CondensedSum:
-    case LayoutType::Sequence:
     case LayoutType::Piecewise:
       assert(false);
     default: {

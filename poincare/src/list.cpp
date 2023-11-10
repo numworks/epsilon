@@ -157,28 +157,29 @@ Expression List::Ones(int length) {
 }
 
 Expression List::shallowReduce(ReductionContext reductionContext) {
-  // A list can't contain a matrix or a list
-  if (node()->hasMatrixOrListChild(reductionContext.context())) {
-    Expression myParent = parent();
-    bool isDependenciesList =
-        !myParent.isUninitialized() &&
-        myParent.type() == ExpressionNode::Type::Dependency &&
-        myParent.indexOfChild(*this) == Dependency::k_indexOfDependenciesList;
-    // If it's a list of dependencies, it can contain matrices and lists.
-    if (!isDependenciesList) {
+  Expression myParent = parent();
+  bool isDependenciesList =
+      !myParent.isUninitialized() &&
+      myParent.type() == ExpressionNode::Type::Dependency &&
+      myParent.indexOfChild(*this) == Dependency::k_indexOfDependenciesList;
+
+  Expression e;
+  if (isDependenciesList) {
+    e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
+  } else {
+    /* We bypass the reduction to undef in case of undef children, as {undef}
+     * and undef are different objects. */
+    // A list can't contain a matrix or a list
+    if (node()->hasMatrixOrListChild(reductionContext.context())) {
       return replaceWithUndefinedInPlace();
     }
+    // Bubble up dependencies of children
+    e = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   }
 
-  // Bubble up dependencies of children
-  Expression e =
-      SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }
-
-  /* We bypass the reduction to undef in case of undef children, as {undef} and
-   * undef are different objects. */
   return *this;
 }
 

@@ -90,6 +90,9 @@ class ExamMode : public Ion::ExamMode::Configuration {
            ruleset() == Ruleset::Pennsylvania ||
            ruleset() == Ruleset::SouthCarolina;
   }
+  bool forbidSimultaneousEquationSolver() const {
+    return ruleset() == Ruleset::STAAR;
+  }
 
  private:
   union PressToTestUnion {

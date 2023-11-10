@@ -193,6 +193,10 @@ void ListController::resolveEquations() {
       case SystemOfEquations::Error::NonLinearSystem:
         App::app()->displayWarning(I18n::Message::NonLinearSystem);
         return;
+      case SystemOfEquations::Error::DisabledInExamMode:
+        App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1,
+                                   I18n::Message::DisabledFeatureInTestMode2);
+        return;
       default: {
         assert(e == SystemOfEquations::Error::NoError ||
                e == SystemOfEquations::Error::RequireApproximateSolution);

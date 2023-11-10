@@ -163,20 +163,26 @@ Expression List::shallowReduce(ReductionContext reductionContext) {
       myParent.type() == ExpressionNode::Type::Dependency &&
       myParent.indexOfChild(*this) == Dependency::k_indexOfDependenciesList;
 
-  Expression e;
-  if (isDependenciesList) {
-    e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
-  } else {
-    /* We bypass the reduction to undef in case of undef children, as {undef}
-     * and undef are different objects. */
-    // A list can't contain a matrix or a list
-    if (node()->hasMatrixOrListChild(reductionContext.context())) {
-      return replaceWithUndefinedInPlace();
-    }
-    // Bubble up dependencies of children
-    e = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+  // A list can't contain a matrix or a list
+  if (!isDependenciesList &&
+      node()->hasMatrixOrListChild(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
 
+  /* We do not reduce a list to undef when a child is undef because undef and
+   * {undef} are different objects. */
+  SimplificationHelper::UndefReduction undefReduction =
+      isDependenciesList
+          ? SimplificationHelper::UndefReduction::BubbleUpUndef
+          : SimplificationHelper::UndefReduction::DoNotBubbleUpUndef;
+
+  Expression e = SimplificationHelper::defaultShallowReduce(
+      *this, &reductionContext,
+      SimplificationHelper::BooleanReduction::DefinedOnBooleans,
+      SimplificationHelper::UnitReduction::KeepUnits,
+      SimplificationHelper::MatrixReduction::DefinedOnMatrix,
+      SimplificationHelper::ListReduction::DoNotDistributeOverLists,
+      SimplificationHelper::PointReduction::DefinedOnPoint, undefReduction);
   if (!e.isUninitialized()) {
     return e;
   }

@@ -1,6 +1,7 @@
 #include "render.h"
 
 #include <escher/metric.h>
+#include <kandinsky/dot.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include "code_point_layout.h"
@@ -21,6 +22,50 @@ constexpr static KDCoordinate k_parenthesisVerticalPadding = 2;
 constexpr static KDCoordinate k_verticalOffsetIndiceHeight = 10;
 
 constexpr static KDCoordinate k_gridEntryMargin = 6;
+
+namespace Pair {
+constexpr static KDCoordinate LineThickness = 1;
+
+constexpr static KDCoordinate MinimalChildHeight =
+    Escher::Metric::MinimalBracketAndParenthesisChildHeight;
+
+static bool ChildHeightDictatesHeight(KDCoordinate childHeight) {
+  return childHeight >= MinimalChildHeight;
+}
+static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight,
+                                           KDCoordinate verticalMargin) {
+  return (ChildHeightDictatesHeight(childHeight) ? childHeight
+                                                 : MinimalChildHeight) +
+         verticalMargin * 2;
+}
+static KDCoordinate BaselineGivenChildHeightAndBaseline(
+    KDCoordinate childHeight, KDCoordinate childBaseline,
+    KDCoordinate verticalMargin) {
+  return childBaseline + verticalMargin +
+         (ChildHeightDictatesHeight(childHeight)
+              ? 0
+              : (MinimalChildHeight - childHeight) / 2);
+}
+static KDPoint ChildOffset(KDCoordinate verticalMargin,
+                           KDCoordinate bracketWidth) {
+  return KDPoint(bracketWidth, verticalMargin);
+}
+static KDPoint PositionGivenChildHeightAndBaseline(
+    bool left, KDCoordinate bracketWidth, KDSize childSize,
+    KDCoordinate childBaseline, KDCoordinate verticalMargin) {
+  return KDPoint(
+      left ? -bracketWidth : childSize.width(),
+      ChildHeightDictatesHeight(childSize.height())
+          ? -verticalMargin
+          : childBaseline -
+                HeightGivenChildHeight(childSize.height(), verticalMargin) / 2);
+}
+static KDCoordinate OptimalChildHeightGivenLayoutHeight(
+    KDCoordinate layoutHeight, KDCoordinate verticalMargin) {
+  return layoutHeight - verticalMargin * 2;
+}
+
+}  // namespace Pair
 
 namespace Parenthesis {
 constexpr static KDCoordinate WidthMargin = 1;
@@ -209,6 +254,64 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
   }
 }
 
+namespace Parenthesis {
+constexpr static uint8_t topLeftCurve[CurveHeight][CurveWidth] = {
+    {0xFF, 0xFF, 0xFF, 0xF9, 0x66}, {0xFF, 0xFF, 0xEB, 0x40, 0x9A},
+    {0xFF, 0xF2, 0x40, 0xBF, 0xFF}, {0xFF, 0x49, 0xB6, 0xFF, 0xFF},
+    {0xA9, 0x5A, 0xFF, 0xFF, 0xFF}, {0x45, 0xBE, 0xFF, 0xFF, 0xFF},
+    {0x11, 0xEE, 0xFF, 0xFF, 0xFF}};
+
+// TODO : factorize this
+constexpr static uint8_t bottomLeftCurve[CurveHeight][CurveWidth] = {
+    {0x11, 0xEE, 0xFF, 0xFF, 0xFF}, {0x45, 0xBE, 0xFF, 0xFF, 0xFF},
+    {0xA9, 0x5A, 0xFF, 0xFF, 0xFF}, {0xFF, 0x49, 0xB6, 0xFF, 0xFF},
+    {0xFF, 0xF2, 0x40, 0xBF, 0xFF}, {0xFF, 0xFF, 0xEB, 0x40, 0x9A},
+    {0xFF, 0xFF, 0xFF, 0xF9, 0x66}};
+
+constexpr static uint8_t topRightCurve[CurveHeight][CurveWidth] = {
+    {0x66, 0xF9, 0xFF, 0xFF, 0xFF}, {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
+    {0xFF, 0xBF, 0x40, 0xF2, 0xFF}, {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
+    {0xFF, 0xFF, 0xFF, 0x5A, 0xA9}, {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
+    {0xFF, 0xFF, 0xFF, 0xEE, 0x11}};
+
+constexpr static uint8_t bottomRightCurve[CurveHeight][CurveWidth] = {
+    {0xFF, 0xFF, 0xFF, 0xEE, 0x11}, {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
+    {0xFF, 0xFF, 0xFF, 0x5A, 0xA9}, {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
+    {0xFF, 0xBF, 0x40, 0xF2, 0xFF}, {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
+    {0x66, 0xF9, 0xFF, 0xFF, 0xFF}};
+}  // namespace Parenthesis
+
+void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
+                                      KDContext* ctx, KDPoint p,
+                                      KDColor expressionColor,
+                                      KDColor backgroundColor) {
+  using namespace Parenthesis;
+  KDColor parenthesisWorkingBuffer[CurveHeight * CurveWidth];
+  KDCoordinate parenthesisHeight =
+      Pair::HeightGivenChildHeight(childHeight, VerticalMargin);
+
+  KDRect frame(WidthMargin, VerticalMargin, CurveWidth, CurveHeight);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor,
+                         (const uint8_t*)(left ? topLeftCurve : topRightCurve),
+                         parenthesisWorkingBuffer);
+
+  frame = KDRect(WidthMargin, parenthesisHeight - CurveHeight - VerticalMargin,
+                 CurveWidth, CurveHeight);
+  ctx->blendRectWithMask(
+      frame.translatedBy(p), expressionColor,
+      (const uint8_t*)(left ? bottomLeftCurve : bottomRightCurve),
+      parenthesisWorkingBuffer);
+
+  KDCoordinate barX =
+      WidthMargin + (left ? 0 : CurveWidth - Pair::LineThickness);
+  KDCoordinate barHeight =
+      parenthesisHeight - 2 * (CurveHeight + VerticalMargin);
+  ctx->fillRect(
+      KDRect(barX, CurveHeight + VerticalMargin, Pair::LineThickness, barHeight)
+          .translatedBy(p),
+      expressionColor);
+}
+
 void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                         KDColor expressionColor, KDColor backgroundColor) {
   switch (node->layoutType()) {
@@ -217,14 +320,12 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       KDCoordinate rightParenthesisPointX =
           std::max(Width(node->child(0)), Width(node->child(1))) +
           Parenthesis::Width;
-#if 0
-      ParenthesisLayoutNode::RenderWithChildHeight(
-          true, childHeight, ctx, p, expressionColor, backgroundColor);
-      ParenthesisLayoutNode::RenderWithChildHeight(
+      RenderParenthesisWithChildHeight(true, childHeight, ctx, p,
+                                       expressionColor, backgroundColor);
+      RenderParenthesisWithChildHeight(
           false, childHeight, ctx,
           p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor,
           backgroundColor);
-#endif
       return;
     }
     case LayoutType::Fraction: {

@@ -20,14 +20,36 @@ constexpr static KDCoordinate k_parenthesisVerticalPadding = 2;
 
 constexpr static KDCoordinate k_verticalOffsetIndiceHeight = 10;
 
+constexpr static KDCoordinate k_gridEntryMargin = 6;
+
+namespace Parenthesis {
+constexpr static KDCoordinate WidthMargin = 1;
+constexpr static KDCoordinate CurveWidth = 5;
+constexpr static KDCoordinate CurveHeight = 7;
+constexpr static KDCoordinate VerticalMargin = 2;
+constexpr static KDCoordinate Width = 2 * WidthMargin + CurveWidth;
+}  // namespace Parenthesis
+
 constexpr static KDCoordinate ParenthesisHorizontalPadding(KDFont::Size font) {
   return KDFont::GlyphSize(font).width();
+}
+
+static KDCoordinate BinomialKNHeight(const Tree* node, KDFont::Size font) {
+  return Render::Height(node->child(0)) + k_gridEntryMargin +
+         Render::Height(node->child(1));
 }
 
 KDFont::Size Render::font = KDFont::Size::Large;
 
 KDSize Render::Size(const Tree* node) {
   switch (node->layoutType()) {
+    case LayoutType::Binomial: {
+      KDSize coefficientsSize =
+          KDSize(std::max(Width(node->child(0)), Width(node->child(1))),
+                 BinomialKNHeight(node, font));
+      KDCoordinate width = coefficientsSize.width() + 2 * Parenthesis::Width;
+      return KDSize(width, coefficientsSize.height());
+    }
     case LayoutType::Rack: {
       return RackLayout::Size(node);
     }
@@ -87,6 +109,16 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
 
 KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
   switch (node->layoutType()) {
+    case LayoutType::Binomial: {
+      KDCoordinate horizontalCenter =
+          Parenthesis::Width +
+          std::max(Width(node->child(0)), Width(node->child(1))) / 2;
+      if (childIndex == 0) {
+        return KDPoint(horizontalCenter - Width(node->child(0)) / 2, 0);
+      }
+      return KDPoint(horizontalCenter - Width(node->child(1)) / 2,
+                     BinomialKNHeight(node, font) - Height(node->child(1)));
+    }
     case LayoutType::Rack: {
       KDCoordinate x = 0;
       KDCoordinate childBaseline = 0;
@@ -125,6 +157,8 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
 
 KDCoordinate Render::Baseline(const Tree* node) {
   switch (node->layoutType()) {
+    case LayoutType::Binomial:
+      return (BinomialKNHeight(node, font) + 1) / 2;
     case LayoutType::Rack:
       return RackLayout::Baseline(node);
 
@@ -178,6 +212,21 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
 void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                         KDColor expressionColor, KDColor backgroundColor) {
   switch (node->layoutType()) {
+    case LayoutType::Binomial: {
+      KDCoordinate childHeight = BinomialKNHeight(node, font);
+      KDCoordinate rightParenthesisPointX =
+          std::max(Width(node->child(0)), Width(node->child(1))) +
+          Parenthesis::Width;
+#if 0
+      ParenthesisLayoutNode::RenderWithChildHeight(
+          true, childHeight, ctx, p, expressionColor, backgroundColor);
+      ParenthesisLayoutNode::RenderWithChildHeight(
+          false, childHeight, ctx,
+          p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor,
+          backgroundColor);
+#endif
+      return;
+    }
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
           p.y() + Size(node->child(0)).height() + k_fractionLineMargin;

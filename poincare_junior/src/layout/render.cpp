@@ -87,6 +87,7 @@ KDSize Render::Size(const Tree* node) {
                             denominatorSize.height();
       return KDSize(width, height);
     }
+    case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
     case LayoutType::Ceiling:
@@ -222,6 +223,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
                            : 0;
       return KDPoint(x, y);
     }
+    case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
     case LayoutType::Ceiling:
@@ -279,6 +281,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Fraction:
       return Height(node->child(0)) + Fraction::LineMargin +
              Fraction::LineHeight;
+    case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
     case LayoutType::Ceiling:
@@ -402,6 +405,71 @@ void RenderSquareBracketPair(bool left, KDCoordinate childHeight,
         KDRect(verticalBarX, verticalBarY, LineThickness, verticalBarLength),
         expressionColor);
   }
+}
+
+void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
+                                     KDContext* ctx, KDPoint p,
+                                     KDColor expressionColor,
+                                     KDColor backgroundColor) {
+  using namespace CurlyBrace;
+  // Compute margins and dimensions for each part
+  KDColor workingBuffer[CurveHeight * CurveWidth];
+  assert(CurveHeight * CurveWidth >= CenterHeight * CenterWidth);
+  constexpr KDCoordinate curveHorizontalOffset = CenterWidth - LineThickness;
+  constexpr KDCoordinate centerHorizontalOffset = CurveWidth - LineThickness;
+  KDCoordinate curveLeftOffset, barLeftOffset, centerLeftOffset;
+  const uint8_t *topCurve, *bottomCurve, *centerPiece;
+  if (left) {
+    curveLeftOffset = curveHorizontalOffset;
+    barLeftOffset = curveHorizontalOffset;
+    centerLeftOffset = 0;
+    topCurve = &topLeftCurve[0][0];
+    bottomCurve = &bottomLeftCurve[0][0];
+    centerPiece = &leftCenter[0][0];
+  } else {
+    curveLeftOffset = 0;
+    barLeftOffset = centerHorizontalOffset;
+    centerLeftOffset = centerHorizontalOffset;
+    topCurve = &topRightCurve[0][0];
+    bottomCurve = &bottomRightCurve[0][0];
+    centerPiece = &rightCenter[0][0];
+  }
+  KDCoordinate height = HeightGivenChildHeight(childHeight);
+  assert(height > 2 * CurveHeight + CenterHeight);
+  KDCoordinate bothBarsHeight = height - 2 * CurveHeight - CenterHeight;
+  KDCoordinate topBarHeight = bothBarsHeight / 2;
+  KDCoordinate bottomBarHeight = (bothBarsHeight + 1) / 2;
+  assert(topBarHeight == bottomBarHeight ||
+         topBarHeight + 1 == bottomBarHeight);
+
+  // Top curve
+  KDCoordinate dy = 0;
+  KDRect frame(WidthMargin + curveLeftOffset, dy, CurveWidth, CurveHeight);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, topCurve,
+                         workingBuffer);
+
+  // Top bar
+  dy += CurveHeight;
+  frame = KDRect(WidthMargin + barLeftOffset, dy, LineThickness, topBarHeight);
+  ctx->fillRect(frame.translatedBy(p), expressionColor);
+
+  // Center piece
+  dy += topBarHeight;
+  frame = KDRect(WidthMargin + centerLeftOffset, dy, CenterWidth, CenterHeight);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, centerPiece,
+                         workingBuffer);
+
+  // Bottom bar
+  dy += CenterHeight;
+  frame =
+      KDRect(WidthMargin + barLeftOffset, dy, LineThickness, bottomBarHeight);
+  ctx->fillRect(frame.translatedBy(p), expressionColor);
+
+  // Bottom curve
+  dy += bottomBarHeight;
+  frame = KDRect(WidthMargin + curveLeftOffset, dy, CurveWidth, CurveHeight);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, bottomCurve,
+                         workingBuffer);
 }
 
 void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
@@ -531,6 +599,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                     expressionColor);
       return;
     }
+    case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
     case LayoutType::Ceiling:
@@ -538,13 +607,21 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       KDCoordinate rightBracketOffset =
           Pair::BracketWidth(node) + Width(node->child(0));
       for (bool left : {true, false}) {
-        RenderSquareBracketPair(
-            left, Height(node->child(0)), ctx,
-            left ? p : p.translatedBy(KDPoint(rightBracketOffset, 0)),
-            expressionColor, backgroundColor, Pair::VerticalMargin(node),
-            Pair::BracketWidth(node), node->layoutType() == LayoutType::Ceiling,
-            node->layoutType() == LayoutType::Floor,
-            node->layoutType() == LayoutType::VectorNorm);
+        KDPoint point =
+            left ? p : p.translatedBy(KDPoint(rightBracketOffset, 0));
+        if (node->layoutType() == LayoutType::CurlyBrace) {
+          RenderCurlyBraceWithChildHeight(left, Height(node->child(0)), ctx,
+                                          point, expressionColor,
+                                          backgroundColor);
+        } else {
+          RenderSquareBracketPair(left, Height(node->child(0)), ctx, point,
+                                  expressionColor, backgroundColor,
+                                  Pair::VerticalMargin(node),
+                                  Pair::BracketWidth(node),
+                                  node->layoutType() == LayoutType::Ceiling,
+                                  node->layoutType() == LayoutType::Floor,
+                                  node->layoutType() == LayoutType::VectorNorm);
+        }
       }
       return;
     }

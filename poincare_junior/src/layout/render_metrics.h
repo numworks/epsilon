@@ -109,6 +109,33 @@ constexpr static KDCoordinate BracketWidth =
 constexpr static KDCoordinate VerticalMargin = 0;
 }  // namespace VectorNorm
 
+namespace CurlyBrace {
+using Pair::LineThickness;
+constexpr static KDCoordinate CurveHeight = 6;
+constexpr static KDCoordinate CurveWidth = 5;
+constexpr static KDCoordinate CenterHeight = 3;
+constexpr static KDCoordinate CenterWidth = 3;
+constexpr static KDCoordinate WidthMargin = 1;
+constexpr static KDCoordinate VerticalMargin = 1;
+constexpr static KDCoordinate CurlyBraceWidth =
+    2 * WidthMargin + CenterWidth + CurveWidth - LineThickness;
+
+static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
+  return Pair::HeightGivenChildHeight(childHeight, VerticalMargin);
+}
+static KDCoordinate BaselineGivenChildHeightAndBaseline(
+    KDCoordinate childHeight, KDCoordinate childBaseline) {
+  return Pair::BaselineGivenChildHeightAndBaseline(childHeight, childBaseline,
+                                                   VerticalMargin);
+}
+static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDSize childSize,
+                                                   KDCoordinate childBaseline) {
+  return Pair::PositionGivenChildHeightAndBaseline(
+      left, CurlyBraceWidth, childSize, childBaseline, VerticalMargin);
+}
+
+}  // namespace CurlyBrace
+
 namespace Pair {
 static KDCoordinate BracketWidth(const Tree* node) {
   switch (node->layoutType()) {
@@ -119,6 +146,8 @@ static KDCoordinate BracketWidth(const Tree* node) {
       return AbsoluteValue::BracketWidth;
     case LayoutType::VectorNorm:
       return VectorNorm::BracketWidth;
+    case LayoutType::CurlyBrace:
+      return CurlyBrace::CurlyBraceWidth;
     default:
       assert(false);
   }
@@ -133,6 +162,8 @@ static KDCoordinate VerticalMargin(const Tree* node) {
       return AbsoluteValue::VerticalMargin;
     case LayoutType::VectorNorm:
       return VectorNorm::VerticalMargin;
+    case LayoutType::CurlyBrace:
+      return CurlyBrace::VerticalMargin;
     default:
       assert(false);
   }

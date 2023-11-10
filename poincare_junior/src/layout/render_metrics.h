@@ -73,6 +73,73 @@ static KDCoordinate OptimalChildHeightGivenLayoutHeight(
 
 }  // namespace Pair
 
+namespace SquareBracketPair {
+using Pair::LineThickness;
+constexpr static KDCoordinate InternalWidthMargin = 5;
+constexpr static KDCoordinate ExternalWidthMargin = 2;
+constexpr static KDCoordinate BracketWidth =
+    InternalWidthMargin + LineThickness + ExternalWidthMargin;
+constexpr static KDCoordinate VerticalMargin = 1;
+constexpr static KDCoordinate DoubleBarMargin = 2;
+
+static KDSize SizeGivenChildSize(KDSize childSize) {
+  return KDSize(
+      2 * BracketWidth + childSize.width(),
+      Pair::HeightGivenChildHeight(childSize.height(), VerticalMargin));
+}
+static KDPoint ChildOffset() {
+  return Pair::ChildOffset(VerticalMargin, BracketWidth);
+}
+
+}  // namespace SquareBracketPair
+
+namespace AbsoluteValue {
+constexpr static KDCoordinate InnerWidthMargin = 2;
+constexpr static KDCoordinate BracketWidth =
+    Pair::LineThickness + InnerWidthMargin +
+    SquareBracketPair::ExternalWidthMargin;
+constexpr static KDCoordinate VerticalMargin = 0;
+}  // namespace AbsoluteValue
+
+namespace VectorNorm {
+constexpr static KDCoordinate InnerWidthMargin = 2;
+constexpr static KDCoordinate BracketWidth =
+    2 * Pair::LineThickness + SquareBracketPair::DoubleBarMargin +
+    InnerWidthMargin + SquareBracketPair::ExternalWidthMargin;
+constexpr static KDCoordinate VerticalMargin = 0;
+}  // namespace VectorNorm
+
+namespace Pair {
+static KDCoordinate BracketWidth(const Tree* node) {
+  switch (node->layoutType()) {
+    case LayoutType::Ceiling:
+    case LayoutType::Floor:
+      return SquareBracketPair::BracketWidth;
+    case LayoutType::AbsoluteValue:
+      return AbsoluteValue::BracketWidth;
+    case LayoutType::VectorNorm:
+      return VectorNorm::BracketWidth;
+    default:
+      assert(false);
+  }
+}
+
+static KDCoordinate VerticalMargin(const Tree* node) {
+  switch (node->layoutType()) {
+    case LayoutType::Ceiling:
+    case LayoutType::Floor:
+      return SquareBracketPair::VerticalMargin;
+    case LayoutType::AbsoluteValue:
+      return AbsoluteValue::VerticalMargin;
+    case LayoutType::VectorNorm:
+      return VectorNorm::VerticalMargin;
+    default:
+      assert(false);
+  }
+}
+
+}  // namespace Pair
+
 namespace Parenthesis {
 constexpr static KDCoordinate WidthMargin = 1;
 constexpr static KDCoordinate CurveWidth = 5;

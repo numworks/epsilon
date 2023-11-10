@@ -87,6 +87,16 @@ KDSize Render::Size(const Tree* node) {
                             denominatorSize.height();
       return KDSize(width, height);
     }
+    case LayoutType::AbsoluteValue:
+    case LayoutType::Floor:
+    case LayoutType::Ceiling:
+    case LayoutType::VectorNorm: {
+      KDSize childSize = Size(node->child(0));
+      KDCoordinate width = 2 * Pair::BracketWidth(node) + childSize.width();
+      KDCoordinate height = Pair::HeightGivenChildHeight(
+          childSize.height(), Pair::VerticalMargin(node));
+      return KDSize(width, height);
+    }
     case LayoutType::Parenthesis: {
       KDSize childSize = Size(node->child(0));
       return childSize + KDSize(2 * Parenthesis::HorizontalPadding(font),
@@ -212,6 +222,13 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
                            : 0;
       return KDPoint(x, y);
     }
+    case LayoutType::AbsoluteValue:
+    case LayoutType::Floor:
+    case LayoutType::Ceiling:
+    case LayoutType::VectorNorm: {
+      return Pair::ChildOffset(Pair::VerticalMargin(node),
+                               Pair::BracketWidth(node));
+    }
     case LayoutType::Parenthesis: {
       return KDPoint(Parenthesis::HorizontalPadding(font),
                      Parenthesis::VerticalPadding);
@@ -262,6 +279,14 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Fraction:
       return Height(node->child(0)) + Fraction::LineMargin +
              Fraction::LineHeight;
+    case LayoutType::AbsoluteValue:
+    case LayoutType::Floor:
+    case LayoutType::Ceiling:
+    case LayoutType::VectorNorm: {
+      return Pair::BaselineGivenChildHeightAndBaseline(
+          Height(node->child(0)), Baseline(node->child(0)),
+          Pair::VerticalMargin(node));
+    }
     case LayoutType::Parenthesis:
       return Baseline(node->child(0)) + Parenthesis::VerticalPadding;
     case LayoutType::VerticalOffset:
@@ -335,6 +360,48 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
       KDRect(barX, CurveHeight + VerticalMargin, Pair::LineThickness, barHeight)
           .translatedBy(p),
       expressionColor);
+}
+
+void RenderSquareBracketPair(bool left, KDCoordinate childHeight,
+                             KDContext* ctx, KDPoint p, KDColor expressionColor,
+                             KDColor backgroundColor,
+                             KDCoordinate verticalMargin,
+                             KDCoordinate bracketWidth, bool renderTopBar,
+                             bool renderBottomBar, bool renderDoubleBar) {
+  using namespace SquareBracketPair;
+  KDCoordinate horizontalBarX =
+      p.x() + (left ? ExternalWidthMargin : LineThickness);
+  KDCoordinate horizontalBarLength =
+      bracketWidth - ExternalWidthMargin - LineThickness;
+  KDCoordinate verticalBarX =
+      left ? horizontalBarX
+           : p.x() + bracketWidth - LineThickness - ExternalWidthMargin;
+  KDCoordinate verticalBarY = p.y();
+  KDCoordinate verticalBarLength =
+      Pair::HeightGivenChildHeight(childHeight, verticalMargin);
+
+  if (renderTopBar) {
+    ctx->fillRect(KDRect(horizontalBarX, verticalBarY, horizontalBarLength,
+                         LineThickness),
+                  expressionColor);
+  }
+  if (renderBottomBar) {
+    ctx->fillRect(
+        KDRect(horizontalBarX, verticalBarY + verticalBarLength - LineThickness,
+               horizontalBarLength, LineThickness),
+        expressionColor);
+  }
+
+  ctx->fillRect(
+      KDRect(verticalBarX, verticalBarY, LineThickness, verticalBarLength),
+      expressionColor);
+
+  if (renderDoubleBar) {
+    verticalBarX += (left ? 1 : -1) * (LineThickness + DoubleBarMargin);
+    ctx->fillRect(
+        KDRect(verticalBarX, verticalBarY, LineThickness, verticalBarLength),
+        expressionColor);
+  }
 }
 
 void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
@@ -462,6 +529,23 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                            Width(node) - 2 * Fraction::HorizontalMargin,
                            Fraction::LineHeight),
                     expressionColor);
+      return;
+    }
+    case LayoutType::AbsoluteValue:
+    case LayoutType::Floor:
+    case LayoutType::Ceiling:
+    case LayoutType::VectorNorm: {
+      KDCoordinate rightBracketOffset =
+          Pair::BracketWidth(node) + Width(node->child(0));
+      for (bool left : {true, false}) {
+        RenderSquareBracketPair(
+            left, Height(node->child(0)), ctx,
+            left ? p : p.translatedBy(KDPoint(rightBracketOffset, 0)),
+            expressionColor, backgroundColor, Pair::VerticalMargin(node),
+            Pair::BracketWidth(node), node->layoutType() == LayoutType::Ceiling,
+            node->layoutType() == LayoutType::Floor,
+            node->layoutType() == LayoutType::VectorNorm);
+      }
       return;
     }
     case LayoutType::Parenthesis: {

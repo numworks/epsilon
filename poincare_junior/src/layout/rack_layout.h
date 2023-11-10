@@ -8,16 +8,14 @@ namespace PoincareJ {
 
 class RackLayout {
  public:
-  static KDSize Size(const Tree* node, KDFont::Size font);
-  static KDCoordinate Baseline(const Tree* node, KDFont::Size font);
+  static KDSize Size(const Tree* node);
+  static KDCoordinate Baseline(const Tree* node);
   static KDSize SizeBetweenIndexes(const Tree* node, int leftPosition,
-                                   int rightPosition, KDFont::Size font);
+                                   int rightPosition);
   static KDCoordinate BaselineBetweenIndexes(const Tree* node, int leftPosition,
-                                             int rightPosition,
-                                             KDFont::Size font);
+                                             int rightPosition);
   static bool ShouldDrawEmptyRectangle(const Tree* node);
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
-                         KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
 
@@ -34,6 +32,8 @@ class RackLayout {
  private:
   static EditionReference RackParent(EditionReference reference, int* index,
                                      const Tree* root);
+
+  static KDFont::Size font;
 };
 
 }  // namespace PoincareJ

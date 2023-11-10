@@ -11,25 +11,23 @@ namespace PoincareJ {
 
 class Render final {
  public:
-  static KDSize Size(const Tree* node, KDFont::Size font);
-  static KDPoint AbsoluteOrigin(const Tree* node, const Tree* root,
-                                KDFont::Size font);
-  static KDPoint PositionOfChild(const Tree* node, int childIndex,
-                                 KDFont::Size font);
-  static KDCoordinate Baseline(const Tree* node, KDFont::Size font);
+  static KDSize Size(const Tree* node);
+  static KDPoint AbsoluteOrigin(const Tree* node, const Tree* root);
+  static KDPoint PositionOfChild(const Tree* node, int childIndex);
+  static KDCoordinate Baseline(const Tree* node);
   static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite);
 
  private:
   static void PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
-                          KDFont::Size font,
                           KDColor expressionColor = KDColorBlack,
                           KDColor backgroundColor = KDColorWhite);
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
-                         KDFont::Size font,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
+
+  static KDFont::Size font;
 };
 
 }  // namespace PoincareJ

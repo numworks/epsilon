@@ -8,16 +8,18 @@
 
 namespace PoincareJ {
 
-KDSize RackLayout::Size(const Tree* node, KDFont::Size font) {
-  return SizeBetweenIndexes(node, 0, node->numberOfChildren(), font);
+KDFont::Size RackLayout::font = KDFont::Size::Large;
+
+KDSize RackLayout::Size(const Tree* node) {
+  return SizeBetweenIndexes(node, 0, node->numberOfChildren());
 }
 
-KDCoordinate RackLayout::Baseline(const Tree* node, KDFont::Size font) {
-  return BaselineBetweenIndexes(node, 0, node->numberOfChildren(), font);
+KDCoordinate RackLayout::Baseline(const Tree* node) {
+  return BaselineBetweenIndexes(node, 0, node->numberOfChildren());
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
-                                      int rightIndex, KDFont::Size font) {
+                                      int rightIndex) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
   if (node->numberOfChildren() == 0) {
@@ -31,9 +33,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
     const Tree* childi = node->child(i);
-    KDSize childSize = Render::Size(childi, font);
+    KDSize childSize = Render::Size(childi);
     totalWidth += childSize.width();
-    KDCoordinate childBaseline = Render::Baseline(childi, font);
+    KDCoordinate childBaseline = Render::Baseline(childi);
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, childSize.height() - childBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);
@@ -42,8 +44,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
 }
 
 KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
-                                                int rightIndex,
-                                                KDFont::Size font) {
+                                                int rightIndex) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
   if (node->numberOfChildren() == 0) {
@@ -51,7 +52,7 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    result = std::max(result, Render::Baseline(node->child(i), font));
+    result = std::max(result, Render::Baseline(node->child(i)));
   }
   return result;
 }
@@ -62,8 +63,7 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
 }
 
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
-                            KDFont::Size font, KDColor expressionColor,
-                            KDColor backgroundColor) {
+                            KDColor expressionColor, KDColor backgroundColor) {
   if (ShouldDrawEmptyRectangle(node)) {
     EmptyRectangle::DrawEmptyRectangle(ctx, p, font,
                                        EmptyRectangle::Color::Yellow);

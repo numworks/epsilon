@@ -33,8 +33,8 @@ class LayoutField : public Escher::EditableField {
   void scrollToCursor() {
     scrollToBaselinedRect(
         m_contentView.cursorRect(),
-        PoincareJ::Render::Baseline(m_contentView.cursor()->cursorNode(),
-                                    m_contentView.font()));
+        PoincareJ::Render::Baseline(m_contentView.cursor()->cursorNode()
+                                    /*, m_contentView.font()*/));
   }
   bool isEmpty() const { return layout().isEmpty(); }
   PoincareJ::Layout layout() const {

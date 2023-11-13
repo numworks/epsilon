@@ -2,6 +2,7 @@
 
 #include <float.h>
 #include <poincare/print.h>
+#include <string.h>
 
 #include "homogeneity_test.h"
 
@@ -34,7 +35,7 @@ void GoodnessTest::setGraphTitle(char* buffer, size_t bufferSize) const {
 
 void GoodnessTest::setResultTitle(char* buffer, size_t bufferSize,
                                   bool resultIsTopPage) const {
-  strcpy(buffer, I18n::translate(I18n::Message::CalculatedValues));
+  strlcpy(buffer, I18n::translate(I18n::Message::CalculatedValues), bufferSize);
 }
 
 void GoodnessTest::compute() {

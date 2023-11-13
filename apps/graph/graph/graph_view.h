@@ -4,6 +4,7 @@
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_graph_view.h>
+#include <apps/shared/plot_view_axes.h>
 
 #include "interest_view.h"
 
@@ -68,9 +69,12 @@ class GraphView : public Shared::FunctionGraphView,
 
   KDRect boundsWithoutBanner() const;
 
+  void drawAxesAndGrid(KDContext *ctx, KDRect rect) const override;
+
   InterestView m_interestView;
   mutable int m_areaIndex;
   mutable int m_nextPointOfInterestIndex;
+
   Poincare::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;
   bool m_tangentDisplay;

@@ -607,4 +607,21 @@ KDRect GraphView::boundsWithoutBanner() const {
                 bounds().height() - m_banner->bounds().height());
 }
 
+void GraphView::drawAxesAndGrid(KDContext *ctx, KDRect rect) const {
+  using WithPolarGrid = PlotPolicy::WithPolarGrid;
+  using WithGrid = PlotPolicy::WithGrid;
+  using HAxis = PlotPolicy::HorizontalLabeledAxis;
+  using VAxis = PlotPolicy::VerticalLabeledAxis;
+
+  InteractiveCurveViewRange *viewRange =
+      static_cast<InteractiveCurveViewRange *>(range());
+
+  if (viewRange->gridType() == InteractiveCurveViewRange::GridType::Polar) {
+    Axes<WithPolarGrid, HAxis, VAxis>::drawGrid(this, ctx, rect);
+  } else {
+    Axes<WithGrid, HAxis, VAxis>::drawGrid(this, ctx, rect);
+  }
+  drawAxes(this, ctx, rect);
+}
+
 }  // namespace Graph

@@ -208,7 +208,7 @@ class PlotView : public AbstractPlotView,
   KDRect cursorFrame() override final { return CCursor::cursorFrame(this); }
 
  private:
-  void drawAxesAndGrid(KDContext *ctx, KDRect rect) const override final {
+  void drawAxesAndGrid(KDContext *ctx, KDRect rect) const override {
     CAxes::drawAxesAndGrid(this, ctx, rect);
   }
   void reloadAxes() override final { CAxes::reloadAxes(this); }

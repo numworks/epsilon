@@ -325,4 +325,12 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
   return true;
 }
 
+bool Trigonometry::ExpandATrigonometric(Tree* ref) {
+  // atrig(x,i) = π/2 - atrig(x,1-i)
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KATrig(KA, KB),
+      KAdd(KMult(π_e, KHalf),
+           KMult(-1_e, KATrig(KA, KAdd(1_e, KMult(-1_e, KB))))));
+}
+
 }  // namespace PoincareJ

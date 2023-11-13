@@ -421,6 +421,40 @@ KDCoordinate centralArgumentHeight(const Tree* node, KDFont::Size font) {
 
 }  // namespace Integral
 
+namespace PtCombinatorics {
+constexpr static KDCoordinate Margin = 3;
+constexpr static KDCoordinate SymbolHeight = 16;
+constexpr static KDCoordinate SymbolBaseline = 11;
+constexpr static KDCoordinate SymbolWidth = 12;
+constexpr static KDCoordinate SymbolWidthWithMargins = SymbolWidth + 2 * Margin;
+
+constexpr static int nIndex = 0;
+constexpr static int kIndex = 1;
+
+KDCoordinate AboveSymbol(const Tree* node, KDFont::Size font) {
+  return std::max<KDCoordinate>(
+      Render::Baseline(node->child(nIndex)),
+      Render::Baseline(node->child(kIndex)) - SymbolHeight);
+}
+
+KDCoordinate TotalHeight(const Tree* node, KDFont::Size font) {
+  KDCoordinate underSymbol = std::max<KDCoordinate>(
+      Render::Height(node->child(kIndex)) -
+          Render::Baseline(node->child(kIndex)),
+      Render::Height(node->child(nIndex)) -
+          Render::Baseline(node->child(nIndex)) - SymbolHeight);
+  return AboveSymbol(node, font) + SymbolHeight + underSymbol;
+}
+}  // namespace PtCombinatorics
+
+namespace PtBinomial {
+constexpr static KDCoordinate BarHeight = 6;
+}
+
+namespace PtPermute {
+using PtCombinatorics::SymbolHeight, PtCombinatorics::SymbolWidth;
+}
+
 }  // namespace PoincareJ
 
 #endif

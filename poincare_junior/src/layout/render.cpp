@@ -145,6 +145,14 @@ KDSize Render::Size(const Tree* node) {
       }
       return KDSize(width, glyph.height());
     }
+    case LayoutType::PtBinomial:
+    case LayoutType::PtPermute: {
+      using namespace PtCombinatorics;
+      KDCoordinate width = Render::Width(node->child(nIndex)) +
+                           SymbolWidthWithMargins +
+                           Render::Width(node->child(kIndex));
+      return KDSize(width, TotalHeight(node, font));
+    }
   };
 }
 
@@ -291,6 +299,17 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     }
     case LayoutType::CodePoint:
       assert(false);
+    case LayoutType::PtBinomial:
+    case LayoutType::PtPermute: {
+      using namespace PtCombinatorics;
+      if (childIndex == nIndex) {
+        return KDPoint(0,
+                       AboveSymbol(node, font) - Baseline(node->child(nIndex)));
+      }
+      return KDPoint(Width(node->child(nIndex)) + SymbolWidthWithMargins,
+                     AboveSymbol(node, font) + SymbolHeight -
+                         Baseline(node->child(kIndex)));
+    }
   };
 }
 
@@ -361,6 +380,10 @@ KDCoordinate Render::Baseline(const Tree* node) {
 #endif
     case LayoutType::CodePoint:
       return KDFont::GlyphHeight(font) / 2;
+    case LayoutType::PtBinomial:
+    case LayoutType::PtPermute:
+      return std::max(0, PtCombinatorics::AboveSymbol(node, font) +
+                             PtCombinatorics::SymbolBaseline);
   };
 }
 
@@ -793,6 +816,51 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                     backgroundColor);
     }
     case LayoutType::VerticalOffset: {
+    }
+    case LayoutType::PtBinomial:
+    case LayoutType::PtPermute: {
+      using namespace PtCombinatorics;
+      KDCoordinate combinationSymbolX = Width(node->child(nIndex));
+      KDCoordinate combinationSymbolY = AboveSymbol(node, style.font);
+      KDPoint base =
+          p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
+
+      // Margin around the letter is left to the letter renderer
+      if (node->isPtBinomialLayout()) {
+        // Big A
+        /* Given that the A shape is closer to the subscript than the
+         * superscript, we make the right margin one pixel larger to use the
+         * space evenly */
+        KDCoordinate leftMargin = Margin - 1;
+        KDPoint bottom(base.x() + leftMargin, base.y() + SymbolHeight);
+        KDPoint slashTop(bottom.x() + SymbolWidth / 2, base.y());
+        KDPoint slashBottom = bottom;
+        ctx->drawAntialiasedLine(slashTop, slashBottom, expressionColor,
+                                 backgroundColor);
+        KDPoint antiSlashTop(bottom.x() + SymbolWidth / 2 + 1, base.y());
+        KDPoint antiSlashBottom(bottom.x() + SymbolWidth, bottom.y());
+        ctx->drawAntialiasedLine(antiSlashTop, antiSlashBottom, expressionColor,
+                                 backgroundColor);
+        KDCoordinate mBar = 2;
+        KDCoordinate yBar = base.y() + SymbolHeight - PtBinomial::BarHeight;
+        ctx->drawLine(KDPoint(bottom.x() + mBar, yBar),
+                      KDPoint(bottom.x() + SymbolWidth - mBar, yBar),
+                      expressionColor);
+      } else {
+        // Big C
+        KDColor workingBuffer[SymbolWidth * SymbolHeight];
+        KDRect symbolUpperFrame(base.x() + Margin, base.y(), SymbolWidth,
+                                SymbolHeight / 2);
+        ctx->fillRectWithMask(symbolUpperFrame, expressionColor,
+                              backgroundColor, PtPermute::symbolUpperHalf,
+                              workingBuffer);
+        KDRect symbolLowerFrame(base.x() + Margin, base.y() + SymbolHeight / 2,
+                                SymbolWidth, SymbolHeight / 2);
+        ctx->fillRectWithMask(symbolLowerFrame, expressionColor,
+                              backgroundColor, PtPermute::symbolUpperHalf,
+                              workingBuffer, false, true);
+      }
+      return;
     }
   };
 }

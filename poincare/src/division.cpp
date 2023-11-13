@@ -60,7 +60,7 @@ bool DivisionNode::childNeedsSystemParenthesesAtSerialization(
   return static_cast<const ExpressionNode *>(child)->isOfType(
       {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division,
        Type::Addition, Type::PercentSimple, Type::PercentAddition,
-       Type::MixedFraction});
+       Type::MixedFraction, Type::Comparison});
 }
 
 int DivisionNode::serialize(char *buffer, int bufferSize,

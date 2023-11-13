@@ -13,7 +13,7 @@ namespace Shared {
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
-  enum class GridType { Cartesian, Polar, NoGrid };
+  enum class GridType { Cartesian, Polar };
 
   InteractiveCurveViewRange(
       InteractiveCurveViewRangeDelegate* delegate = nullptr)

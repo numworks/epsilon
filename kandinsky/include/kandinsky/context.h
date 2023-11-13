@@ -37,7 +37,8 @@ class KDContext {
   void fillRectWithPixels(KDRect rect, const KDColor* pixels,
                           KDColor* workingBuffer);
   void fillRectWithMask(KDRect rect, KDColor color, KDColor background,
-                        const uint8_t* mask, KDColor* workingBuffer);
+                        const uint8_t* mask, KDColor* workingBuffer,
+                        bool horizontalFlip = false, bool verticalFlip = false);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t* mask,
                          KDColor* workingBuffer);
   void strokeRect(KDRect rect, KDColor color);

@@ -98,6 +98,21 @@ bool Trigonometry::SimplifyTrigDiff(Tree* u) {
   return true;
 }
 
+// If u is of the form π*n, return n.
+const Tree* getPiFactor(const Tree* u) {
+  if (u->treeIsIdenticalTo(π_e)) {
+    return 1_e;
+  }
+  if (u->isZero()) {
+    return 0_e;
+  }
+  if (u->isMultiplication() && u->numberOfChildren() == 2 &&
+      u->nextNode()->isRational() && u->child(1)->treeIsIdenticalTo(π_e)) {
+    return u->nextNode();
+  }
+  return nullptr;
+}
+
 bool Trigonometry::SimplifyTrig(Tree* u) {
   assert(u->isTrig());
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
@@ -115,15 +130,9 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
       isOpposed = !isOpposed;
     }
   }
-  if (firstArgument->treeIsIdenticalTo(π_e) || firstArgument->isZero() ||
-      (firstArgument->isMultiplication() &&
-       firstArgument->numberOfChildren() == 2 &&
-       firstArgument->nextNode()->isRational() &&
-       firstArgument->child(1)->treeIsIdenticalTo(π_e))) {
-    const Tree* piFactor = firstArgument->isMultiplication()
-                               ? firstArgument->nextNode()
-                               : (firstArgument->isZero() ? 0_e : 1_e);
-    // Compute n such that firstArgument = (n/12)*pi
+  const Tree* piFactor = getPiFactor(firstArgument);
+  if (piFactor) {
+    // Find n to match Trig((n/12)*π, ...) with exact value.
     Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
     Rational::MakeIrreducible(multipleTree);
     if (multipleTree->isInteger()) {
@@ -139,8 +148,14 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
     } else {
       multipleTree->removeTree();
     }
+  } else if (PatternMatching::MatchAndReplace(u, KTrig(KATrig(KA, KB), KB),
+                                              KA) ||
+             PatternMatching::MatchReplaceAndSimplify(
+                 u, KTrig(KATrig(KA, KB), KC),
+                 KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), KHalf))) {
+    // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=sqrt(1-x^2)
+    changed = true;
   }
-
   if (isOpposed) {
     u->moveTreeAtNode((-1_e)->clone());
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));

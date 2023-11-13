@@ -31,16 +31,18 @@ RangeParameterController::RangeParameterController(
           },
           this)),
       m_singleInteractiveCurveViewRangeController(
-          parentResponder, &m_tempInteractiveRange, &m_confirmPopUpController) {
+          parentResponder, &m_tempInteractiveRange, &m_confirmPopUpController),
+      m_gridSelectionController(parentResponder, &m_tempInteractiveRange) {
   m_normalizeCell.label()->setMessage(I18n::Message::MakeOrthonormal);
   m_xRangeCell.label()->setMessage(I18n::Message::ValuesOfX);
   m_yRangeCell.label()->setMessage(I18n::Message::ValuesOfY);
+  m_gridTypeCell.label()->setMessage(I18n::Message::GridType);
 }
 
 HighlightCell *RangeParameterController::cell(int row) {
   assert(row < numberOfRows());
   HighlightCell *cells[] = {&m_normalizeCell, &m_xRangeCell, &m_yRangeCell,
-                            &m_okButton};
+                            &m_gridTypeCell, &m_okButton};
   return cells[row];
 }
 
@@ -134,6 +136,10 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
         cell == &m_xRangeCell ? Axis::X : Axis::Y);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
+  } else if (cell == &m_gridTypeCell &&
+             static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
+    stackController()->push(&m_gridSelectionController);
+    return true;
   }
   return false;
 }
@@ -154,6 +160,29 @@ void RangeParameterController::buttonAction() {
   *m_interactiveRange = m_tempInteractiveRange;
 
   stackController()->pop();
+}
+
+// RangeParameterController::GridSelectionController
+void RangeParameterController::GridSelectionController::viewWillAppear() {
+  cells[0].label()->setMessage(I18n::Message::Cartesian);
+  cells[1].label()->setMessage(I18n::Message::Polar);
+  selectRow(m_viewRange->gridType() == GridType::Cartesian ? 0 : 1);
+}
+
+void RangeParameterController::GridSelectionController::viewDidDisappear() {
+  m_viewRange->setGridType(selectedRow() == 0 ? GridType::Cartesian
+                                              : GridType::Polar);
+}
+
+bool RangeParameterController::GridSelectionController::handleEvent(
+    Ion::Events::Event event) {
+  if (event == Ion::Events::Back || event == Ion::Events::Left ||
+      event == Ion::Events::OK || event == Ion::Events::EXE) {
+    // Exit the sub-menu.
+    stackController()->pop();
+    return true;
+  }
+  return false;
 }
 
 }  // namespace Shared

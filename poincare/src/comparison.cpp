@@ -261,7 +261,8 @@ Evaluation<T> ComparisonNode::templatedApproximate(
        * so the fact that it's strictly greater or not is not important. */
       leftChildIsGreater = BinaryToTrinaryBool(scalarDifference > 0.0);
       chidlrenAreEqual =
-          BinaryToTrinaryBool(std::fabs(scalarDifference) <= epsilon);
+          BinaryToTrinaryBool(std::isfinite(scalarDifference) &&
+                              std::fabs(scalarDifference) <= epsilon);
     }
     TrinaryBoolean truthValue = TruthValueOfOperator(
         m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);

@@ -211,6 +211,14 @@ int ComparisonNode::serialize(char* buffer, int bufferSize,
   return numberOfChar;
 }
 
+bool ComparisonNode::childNeedsSystemParenthesesAtSerialization(
+    const TreeNode* child) const {
+  int i = indexOfChild(child);
+  Expression e = Comparison(this).childAtIndex(i);
+  // Factorials can mess up with equal signs
+  return e.recursivelyMatches(Expression::IsFactorial, nullptr);
+}
+
 Evaluation<float> ComparisonNode::approximate(
     SinglePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<float>(approximationContext);

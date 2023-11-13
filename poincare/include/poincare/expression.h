@@ -285,6 +285,9 @@ class Expression : public TreeHandle {
   static bool IsSequence(const Expression e) {
     return e.type() == ExpressionNode::Type::Sequence;
   }
+  static bool IsFactorial(const Expression e) {
+    return e.type() == ExpressionNode::Type::Factorial;
+  }
 
   typedef bool (*PatternTest)(const Expression& e, Context* context,
                               const char* symbol);

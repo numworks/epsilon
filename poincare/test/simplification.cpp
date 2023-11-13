@@ -2879,6 +2879,11 @@ QUIZ_CASE(poincare_simplification_comparison_operators) {
   assert_parsed_expression_simplify_to("3=3+3<4", "False");
   assert_parsed_expression_simplify_to("(3=3)+(3<4)", Undefined::Name());
   assert_parsed_expression_simplify_to("ln(3=5)", Undefined::Name());
+
+  assert_parsed_expression_simplify_to("4000!4=9",
+                                       "\U000000124×4000!\U00000013=9");
+  assert_parsed_expression_simplify_to("4000!4!=9",
+                                       "\U000000124×4000!\U00000013≠9");
 }
 
 typedef bool (*BoolCompare)(bool a, bool b);

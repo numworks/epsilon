@@ -231,6 +231,7 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
        previousSubviewType == SubviewType::Output) &&
       (calculationAtIndexToggles(selectedRow()) ||
        calculationAtIndexToggles(previousSelectedRow))) {
+    m_selectableListView.resetMemoizedColumnAndRowOffsets();
     m_selectableListView.reloadData(false);
   }
 

@@ -49,6 +49,9 @@ class TableView : public ScrollView {
   BarDecorator *decorator() override { return &m_decorator; }
 
   void resetSizeMemoization() { dataSource()->resetSizeMemoization(); }
+  void resetMemoizedColumnAndRowOffsets() {
+    m_contentView.resetMemoizedColumnAndRowOffsets();
+  }
 
   KDCoordinate invisibleHeight() {
     return std::max(contentOffset().y() - margins()->top(), 0);

@@ -32,12 +32,12 @@ class SystemOfEquations {
 
   enum class Error : uint8_t {
     NoError = 0,
-    EquationUndefined = 1,
-    EquationNonreal = 2,
-    TooManyVariables = 3,
-    NonLinearSystem = 4,
-    RequireApproximateSolution = 5,
-    DisabledInExamMode = 6,
+    EquationUndefined,
+    EquationNonreal,
+    TooManyVariables,
+    NonLinearSystem,
+    RequireApproximateSolution,
+    DisabledInExamMode,
   };
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}

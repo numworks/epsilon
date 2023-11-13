@@ -65,7 +65,7 @@ bool PlotController::reloadBannerView() {
   Poincare::Preferences::PrintFloatMode displayMode =
       Poincare::Preferences::sharedPreferences->displayMode();
   constexpr static int k_bufferSize =
-      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+      Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth + 1;
   char buffer[k_bufferSize] = "";
 
   // Display series name

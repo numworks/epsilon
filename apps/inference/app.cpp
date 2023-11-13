@@ -33,12 +33,12 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_inputHomogeneityController(
           &m_stackViewController, &m_homogeneityResultsController,
           static_cast<HomogeneityTest *>(snapshot->statistic())),
-      m_GoodnessResultsController(
+      m_goodnessResultsController(
           &m_stackViewController, &m_testGraphController,
           &m_intervalGraphController,
           static_cast<GoodnessTest *>(snapshot->statistic())),
       m_inputGoodnessController(
-          &m_stackViewController, &m_GoodnessResultsController,
+          &m_stackViewController, &m_goodnessResultsController,
           static_cast<GoodnessTest *>(snapshot->statistic())),
       m_inputSlopeController(&m_stackViewController, &m_resultsController,
                              snapshot->statistic(), parentContext),

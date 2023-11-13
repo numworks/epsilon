@@ -113,7 +113,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
-  ResultsGoodnessTabController m_GoodnessResultsController;
+  ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;
   InputSlopeController m_inputSlopeController;
   ResultsController m_resultsController;

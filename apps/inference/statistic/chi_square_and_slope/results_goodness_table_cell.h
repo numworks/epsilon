@@ -7,7 +7,7 @@
 namespace Inference {
 
 /* This is the controller for the table in the Contributions tab in
- * the GOF Test results. It contains 3 rows: Expected ; Observed ;
+ * the GOF Test results. It contains 3 columns: Expected ; Observed ;
  * Contributions. */
 class ResultGoodnessContributionsTable
     : public CategoricalTableCell,
@@ -59,6 +59,8 @@ class ResultGoodnessContributionsTable
   static constexpr I18n::Message k_titles[] = {I18n::Message::Observed,
                                                I18n::Message::Expected,
                                                I18n::Message::Contributions};
+
+  static constexpr KDCoordinate k_columnsWidth[] = {90, 90, 110};
 
   GoodnessTest *m_statistic;
   CategoricalController *m_parentController;

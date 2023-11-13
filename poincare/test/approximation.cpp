@@ -2179,6 +2179,11 @@ QUIZ_CASE(poincare_approximation_booleans) {
   assert_expression_approximates_to<float>("True + 3", Undefined::Name());
 }
 
+QUIZ_CASE(poincare_approximation_comparison_operators) {
+  assert_expression_approximates_to<float>("4000!4=9", "False");
+  assert_expression_approximates_to<float>("4000!4!=9", "True");
+}
+
 QUIZ_CASE(poincare_approximation_piecewise_operator) {
   assert_expression_approximates_to<float>("piecewise(3,1<0,2)", "2");
   assert_expression_approximates_to<float>("piecewise(3,1>0,2)", "3");

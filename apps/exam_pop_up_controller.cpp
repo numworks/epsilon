@@ -54,7 +54,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveDutchExamModeMessage,
       I18n::Message::ActiveDutchExamModeWithResetMessage,
       // IBTest
-      I18n::Message::ActiveTxPaScIbExamModeMessage,
+      I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
       // PressToTest
       I18n::Message::ActivePressToTestModeMessage,
@@ -66,16 +66,16 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveEnglishExamModeMessage,
       I18n::Message::ActiveEnglishExamModeWithResetMessage,
       // STAAR
-      I18n::Message::ActiveTxPaScIbExamModeMessage,
+      I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
       // Pennsylvania
-      I18n::Message::ActiveTxPaScIbExamModeMessage,
+      I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
       // SouthCarolina
-      I18n::Message::ActiveTxPaScIbExamModeMessage,
+      I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
       // NorthCarolina
-      I18n::Message::ActiveTxPaScIbExamModeMessage,
+      I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
   };
   static_assert(std::size(messages) == numberOfModes * messagesPerMode,

@@ -690,126 +690,58 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       return;
     }
-    case LayoutType::Product: {
-      using namespace Parametric;
-
-      KDFont::Size font = style.font;
-      // Compute sizes.
-      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
-      KDSize lowerBoundNEqualsSize =
-          lowerBoundSizeWithVariableEquals(node, font);
-
-      // Render the Product symbol.
-      ctx->fillRect(
-          KDRect(
-              p.x() + std::max(
-                          {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
-                           (lowerBoundNEqualsSize.width() - SymbolWidth(font)) /
-                               2}),
-              p.y() + std::max(upperBoundSize.height() +
-                                   UpperBoundVerticalMargin(font),
-                               Baseline(node->child(ArgumentIndex)) -
-                                   (SymbolHeight(font) + 1) / 2),
-              LineThickness, SymbolHeight(font)),
-          style.glyphColor);
-      ctx->fillRect(
-          KDRect(
-              p.x() + std::max(
-                          {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
-                           (lowerBoundNEqualsSize.width() - SymbolWidth(font)) /
-                               2}),
-              p.y() + std::max(upperBoundSize.height() +
-                                   UpperBoundVerticalMargin(font),
-                               Baseline(node->child(ArgumentIndex)) -
-                                   (SymbolHeight(font) + 1) / 2),
-              SymbolWidth(font), LineThickness),
-          style.glyphColor);
-      ctx->fillRect(
-          KDRect(p.x() +
-                     std::max(
-                         {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
-                          (lowerBoundNEqualsSize.width() - SymbolWidth(font)) /
-                              2}) +
-                     SymbolWidth(font),
-                 p.y() + std::max(upperBoundSize.height() +
-                                      UpperBoundVerticalMargin(font),
-                                  Baseline(node->child(ArgumentIndex)) -
-                                      (SymbolHeight(font) + 1) / 2),
-                 LineThickness, SymbolHeight(font)),
-          style.glyphColor);
-
-      goto Parametric;
-    }
+    case LayoutType::Product:
     case LayoutType::Sum: {
       using namespace Parametric;
-      KDFont::Size font = style.font;
-      // Creates half size sigma symbol from one branch
-      uint8_t symbolPixel[SymbolHeight(font) * SymbolWidth(font)];
-      int whiteOffset;
-
-      /* Taking care of the first line which is a black straight line at the
-       * exception of the first pixel. */
-      symbolPixel[0] = 0x30;
-      for (int j = 0; j < SymbolWidth(font); j++) {
-        symbolPixel[j] = 0x00;
-      }
-
-      static_assert(SymbolHeight(KDFont::Size::Large) % 2 != 0 &&
-                        SymbolHeight(KDFont::Size::Small) % 2 != 0,
-                    "sum_layout : SymbolHeight is even");
-      for (int i = 1; i < (SymbolHeight(font) + 1) / 2; i++) {
-        // Adding the white offset
-        whiteOffset = (i - 1) / 2;
-        for (int j = 0; j < whiteOffset; j++) {
-          symbolPixel[i * SymbolWidth(font) + j] = 0xFF;
-        }
-
-        // Adding the actual pixels of the branch
-        for (int j = 0; j < Sum::SignificantPixelWidth; j++) {
-          symbolPixel[i * SymbolWidth(font) + whiteOffset + j] =
-              Sum::symbolPixelOneBranchLargeFont
-                  [(i - 1) * Sum::SignificantPixelWidth + j];
-        }
-
-        // Filling the gap with white
-        for (int j = whiteOffset + Sum::SignificantPixelWidth;
-             j < SymbolWidth(font); j++) {
-          symbolPixel[i * SymbolWidth(font) + j] = 0xFF;
-        }
-      }
-
-      // Create real size sigma symbol by flipping the previous array
-      for (int i = SymbolHeight(font) / 2 + 1; i < SymbolHeight(font); i++) {
-        for (int j = 0; j < SymbolWidth(font); j++) {
-          symbolPixel[i * SymbolWidth(font) + j] =
-              symbolPixel[(SymbolHeight(font) - i - 1) * SymbolWidth(font) + j];
-        }
-      }
-
       // Compute sizes.
       KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
       KDSize lowerBoundNEqualsSize =
           lowerBoundSizeWithVariableEquals(node, font);
-
-      // Render the Sum symbol.
-      KDColor workingBuffer[SymbolWidth(font) * SymbolHeight(font)];
-      KDRect symbolFrame(
+      KDCoordinate left =
           p.x() +
-              std::max(
-                  {0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
-                   (lowerBoundNEqualsSize.width() - SymbolWidth(font)) / 2}),
-          p.y() +
-              std::max(upperBoundSize.height() + UpperBoundVerticalMargin(font),
-                       Baseline(node->child(ArgumentIndex)) -
-                           (SymbolHeight(font) + 1) / 2),
-          SymbolWidth(font), SymbolHeight(font));
-      ctx->blendRectWithMask(symbolFrame, style.glyphColor,
-                             (const uint8_t*)symbolPixel,
-                             (KDColor*)workingBuffer);
-    }
-    Parametric : {
-      using namespace Parametric;
-      KDFont::Size font = style.font;
+          std::max({0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
+                    (lowerBoundNEqualsSize.width() - SymbolWidth(font)) / 2});
+      KDCoordinate top = p.y() + std::max(upperBoundSize.height() +
+                                              UpperBoundVerticalMargin(font),
+                                          Baseline(node->child(ArgumentIndex)) -
+                                              (SymbolHeight(font) + 1) / 2);
+
+      // Draw top bar
+      ctx->fillRect(KDRect(left, top, SymbolWidth(font), LineThickness),
+                    style.glyphColor);
+
+      if (node->layoutType() == LayoutType::Product) {
+        // Draw vertical bars
+        ctx->fillRect(KDRect(left, top, LineThickness, SymbolHeight(font)),
+                      style.glyphColor);
+        ctx->fillRect(KDRect(left + SymbolWidth(font), top, LineThickness,
+                             SymbolHeight(font)),
+                      style.glyphColor);
+      } else {
+        // Draw bottom bar
+        ctx->fillRect(KDRect(left, top + SymbolHeight(font) - 1,
+                             SymbolWidth(font), LineThickness),
+                      style.glyphColor);
+
+        KDCoordinate symbolHeight = SymbolHeight(font) - 2;
+        uint8_t symbolPixel[symbolHeight][SymbolWidth(font)];
+        memset(symbolPixel, 0xFF, sizeof(symbolPixel));
+
+        for (int i = 0; i <= symbolHeight / 2; i++) {
+          for (int j = 0; j < Sum::SignificantPixelWidth; j++) {
+            // Add an offset of i / 2 to match how data are stored
+            symbolPixel[symbolHeight - 1 - i][i / 2 + j] =
+                symbolPixel[i][i / 2 + j] =
+                    Sum::symbolPixelOneBranchLargeFont[i][j];
+          }
+        }
+
+        KDColor workingBuffer[SymbolWidth(font) * symbolHeight];
+        KDRect symbolFrame(left, top + 1, SymbolWidth(font), symbolHeight);
+        ctx->blendRectWithMask(symbolFrame, style.glyphColor,
+                               (const uint8_t*)symbolPixel,
+                               (KDColor*)workingBuffer);
+      }
       // Render the "="
       KDSize variableSize = Size(node->child(VariableIndex));
       KDPoint equalPosition =

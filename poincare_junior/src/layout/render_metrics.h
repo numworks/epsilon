@@ -285,8 +285,11 @@ KDCoordinate completeLowerBoundX(const Tree* node, KDFont::Size font) {
 }  // namespace Parametric
 
 namespace Sum {
-constexpr static int SignificantPixelWidth = 6;
-}
+constexpr static int SignificantPixelWidth = 4;
+static_assert(Parametric::SymbolHeight(KDFont::Size::Large) % 2 != 0 &&
+                  Parametric::SymbolHeight(KDFont::Size::Small) % 2 != 0,
+              "sum_layout : SymbolHeight is even");
+}  // namespace Sum
 
 namespace Integral {
 constexpr static int DifferentialIndex = 0;

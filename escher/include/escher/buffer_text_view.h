@@ -51,8 +51,7 @@ template <KDFont::Size Font, int NumberOfLines>
 using MultipleLinesBufferTextView = BufferTextView<
     NumberOfLines*(Ion::Display::Width / KDFont::GlyphWidth(Font)) + 1>;
 /* TODO: NumberOfLines * (Ion::Display::Width / KDFont::GlyphWidth(Font)) is a
- * size in terms of glyphs, which is completely different from the size in terms
- * of chars. */
+ * size in terms of glyphs which is different from the size in terms of chars */
 
 template <KDFont::Size Font = KDFont::Size::Small>
 using OneLineBufferTextView = MultipleLinesBufferTextView<Font, 1>;

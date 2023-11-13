@@ -13,6 +13,7 @@ namespace Shared {
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
+  enum class GridType { Cartesian, Polar, NoGrid };
 
   InteractiveCurveViewRange(
       InteractiveCurveViewRangeDelegate* delegate = nullptr)
@@ -70,6 +71,9 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
                                  float bottomMarginRatio,
                                  float leftMarginRatio);
 
+  GridType gridType() const { return m_gridType; }
+  void setGridType(GridType grid) { m_gridType = grid; }
+
  protected:
   constexpr static float k_maxRatioPositionRange = 1E5f;
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
@@ -107,6 +111,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   Poincare::Range2D m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;
   float m_offscreenYAxis;
+
+  GridType m_gridType;
 
   struct BoolPair {
     bool x, y;

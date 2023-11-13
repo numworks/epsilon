@@ -116,8 +116,9 @@ T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
 bool interruptApproximation(TypeBlock type, int childIndex,
                             TypeBlock childType) {
   switch (type) {
+    case BlockType::ATrig:
     case BlockType::Trig:
-      // Do not approximate second term of Trig in case it isn't replaced.
+      // Do not approximate second term in case tree isn't replaced.
       return (childIndex == 1);
     case BlockType::PowerMatrix:
     case BlockType::Power:

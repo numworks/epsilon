@@ -182,6 +182,42 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   return changed;
 }
 
+bool Trigonometry::SimplifyATrig(Tree* u) {
+  assert(u->isATrig());
+  PatternMatching::Context ctx;
+  if (!PatternMatching::Match(KATrig(KTrig(KA, KB), KB), u, &ctx)) {
+    // TODO: Add exact values.
+    return false;
+  }
+  const Tree* piFactor = getPiFactor(ctx.getNode(KA));
+  if (!piFactor) {
+    return false;
+  }
+  // atrig(trig(π*piFactor, i), i)
+  bool isSin = Number::IsOne(ctx.getNode(KB));
+  // Compute k = ⌊piFactor⌋ for acos, ⌊piFactor + π/2⌋ for asin.
+  // acos(cos(π*r)) = π*(y-k) if k even, π*(k-y+1) otherwise.
+  // asin(sin(π*r)) = π*(y-k) if k even, π*(k-y) otherwise.
+  Tree* res = PatternMatching::CreateAndSimplify(
+      isSin ? KFloor(KAdd(KA, KHalf)) : KFloor(KA), {.KA = piFactor});
+  assert(res->isInteger());
+  bool kIsEven = Integer::Handler(res).isEven();
+  res->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
+  if (!kIsEven) {
+    res->moveTreeOverTree(
+        PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = res}));
+    if (!isSin) {
+      res->moveTreeOverTree(
+          PatternMatching::CreateAndSimplify(KAdd(1_e, KA), {.KA = res}));
+    }
+  }
+  res->moveTreeOverTree(
+      PatternMatching::CreateAndSimplify(KMult(π_e, KA), {.KA = res}));
+  u->moveTreeOverTree(res);
+  return true;
+}
+
 /* TODO : Find an easier solution for nested expand/contract smart shallow
  * simplification. */
 

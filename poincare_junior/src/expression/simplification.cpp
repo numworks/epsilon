@@ -89,6 +89,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Trigonometry::SimplifyTrigDiff(u);
     case BlockType::Trig:
       return Trigonometry::SimplifyTrig(u);
+    case BlockType::ATrig:
+      return Trigonometry::SimplifyATrig(u);
     case BlockType::Derivative:
       return Derivation::ShallowSimplify(u);
     case BlockType::Ln:

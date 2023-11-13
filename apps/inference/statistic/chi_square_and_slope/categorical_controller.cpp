@@ -30,10 +30,6 @@ void CategoricalController::didBecomeFirstResponder() {
   SelectableListViewController<ListViewDataSource>::didBecomeFirstResponder();
 }
 
-bool CategoricalController::handleEvent(Ion::Events::Event event) {
-  return popFromStackViewControllerOnLeftEvent(event);
-}
-
 bool CategoricalController::ButtonAction(CategoricalController *controller,
                                          void *s) {
   controller->stackOpenPage(controller->m_nextController);
@@ -189,6 +185,10 @@ bool InputCategoricalController::ButtonAction(
   }
   controller->m_statistic->compute();
   return CategoricalController::ButtonAction(controller, s);
+}
+
+bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 void InputCategoricalController::viewWillAppear() {

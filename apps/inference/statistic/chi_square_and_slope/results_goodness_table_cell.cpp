@@ -43,10 +43,7 @@ void ResultGoodnessContributionsTable::fillCellForLocation(
 
 KDCoordinate ResultGoodnessContributionsTable::nonMemoizedColumnWidth(
     int column) {
-  if (column == 2) {
-    return 110;
-  }
-  return 90;
+  return k_columnsWidth[column];
 }
 
 }  // namespace Inference

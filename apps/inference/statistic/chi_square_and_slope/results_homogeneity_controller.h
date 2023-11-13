@@ -91,8 +91,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
    public:
     using SingleModeController::SingleModeController;
     const char *title() override {
-      return I18n::translate(
-          I18n::Message::Contributions);
+      return I18n::translate(I18n::Message::Contributions);
     }
     void viewWillAppear() override {
       switchToTableWithMode(ResultsHomogeneityTableCell::Mode::Contribution);

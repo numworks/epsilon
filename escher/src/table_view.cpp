@@ -36,7 +36,7 @@ void TableView::layoutSubviews(bool force) {
   /* Reset memoization in case scrolling offset or frame changed.
    * This is done here and not in ContentView::layoutSubviews because if the
    * content view frame is empty, subviews won't be relayouted. */
-  m_contentView.resetMemoizedColumnAndRowOffsets();
+  resetMemoizedColumnAndRowOffsets();
   ScrollView::layoutSubviews(force);
 }
 
@@ -178,6 +178,9 @@ int TableView::ContentView::rowsScrollingOffset() const {
   if (m_rowsScrollingOffset < 0) {
     m_rowsScrollingOffset =
         m_dataSource->rowAfterCumulatedHeight(invisibleHeight());
+  } else {
+    assert(m_rowsScrollingOffset ==
+           m_dataSource->rowAfterCumulatedHeight(invisibleHeight()));
   }
   return m_rowsScrollingOffset;
 }
@@ -186,6 +189,9 @@ int TableView::ContentView::columnsScrollingOffset() const {
   if (m_columnsScrollingOffset < 0) {
     m_columnsScrollingOffset =
         m_dataSource->columnAfterCumulatedWidth(invisibleWidth());
+  } else {
+    assert(m_columnsScrollingOffset ==
+           m_dataSource->columnAfterCumulatedWidth(invisibleWidth()));
   }
   return m_columnsScrollingOffset;
 }

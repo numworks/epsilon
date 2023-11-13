@@ -26,7 +26,7 @@ void CalculationSelectableListView::scrollToBottom() {
 }
 
 void CalculationSelectableListView::didChangeSelectionAndDidScroll() {
-  ScrollView::layoutSubviews();
+  TableView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() <
       bounds().height()) {
     // Avoid empty space at the end of the table

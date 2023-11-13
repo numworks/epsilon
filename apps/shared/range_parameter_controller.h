@@ -29,7 +29,7 @@ class RangeParameterController
 
   const char *title() override { return I18n::translate(I18n::Message::Axis); }
 
-  int numberOfRows() const override { return 4; }
+  int numberOfRows() const override { return 5; }
   Escher::HighlightCell *cell(int row) override;
   KDCoordinate separatorBeforeRow(int row) override;
 
@@ -47,6 +47,41 @@ class RangeParameterController
   void buttonAction();
   void fillRangeCells();
 
+  class GridSelectionController : public Escher::SelectableListViewController<
+                                      Escher::SimpleListViewDataSource>,
+                                  public Escher::SelectableListViewDelegate {
+   public:
+    using GridType = InteractiveCurveViewRange::GridType;
+    GridSelectionController(
+        Escher::Responder *parentResponder,
+        InteractiveCurveViewRange *interactiveCurveViewRange)
+        : Escher::SelectableListViewController<
+              Escher::SimpleListViewDataSource>(parentResponder, this),
+          m_viewRange(interactiveCurveViewRange) {}
+
+    void viewWillAppear() override;
+    void viewDidDisappear() override;
+
+    bool handleEvent(Ion::Events::Event event) override;
+    Escher::StackViewController *stackController() {
+      return static_cast<Escher::StackViewController *>(parentResponder());
+    }
+
+    const char *title() override {
+      return I18n::translate(I18n::Message::GridType);
+    }
+
+    int numberOfRows() const override { return 2; }
+    int reusableCellCount() const override { return 2; }
+    Escher::HighlightCell *reusableCell(int index) override {
+      return &cells[index];
+    }
+
+   private:
+    Escher::MenuCell<Escher::MessageTextView> cells[2];
+    InteractiveCurveViewRange *m_viewRange;
+  };
+
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
@@ -54,10 +89,13 @@ class RangeParameterController
       m_normalizeCell;
   RangeCell m_xRangeCell;
   RangeCell m_yRangeCell;
+  RangeCell m_gridTypeCell;
   Escher::ButtonCell m_okButton;
   Shared::MessagePopUpController m_confirmPopUpController;
   SingleInteractiveCurveViewRangeController
       m_singleInteractiveCurveViewRangeController;
+
+  GridSelectionController m_gridSelectionController;
 };
 
 }  // namespace Shared

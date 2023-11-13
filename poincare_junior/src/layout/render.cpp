@@ -401,16 +401,15 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
       Pair::HeightGivenChildHeight(childHeight, VerticalMargin);
 
   KDRect frame(WidthMargin, VerticalMargin, CurveWidth, CurveHeight);
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor,
-                         (const uint8_t*)(left ? topLeftCurve : topRightCurve),
-                         parenthesisWorkingBuffer);
+  ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
+                        (const uint8_t*)topLeftCurve, parenthesisWorkingBuffer,
+                        !left, false);
 
   frame = KDRect(WidthMargin, parenthesisHeight - CurveHeight - VerticalMargin,
                  CurveWidth, CurveHeight);
-  ctx->blendRectWithMask(
-      frame.translatedBy(p), expressionColor,
-      (const uint8_t*)(left ? bottomLeftCurve : bottomRightCurve),
-      parenthesisWorkingBuffer);
+  ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
+                        (const uint8_t*)topLeftCurve, parenthesisWorkingBuffer,
+                        !left, true);
 
   KDCoordinate barX =
       WidthMargin + (left ? 0 : CurveWidth - Pair::LineThickness);
@@ -475,21 +474,14 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
   constexpr KDCoordinate curveHorizontalOffset = CenterWidth - LineThickness;
   constexpr KDCoordinate centerHorizontalOffset = CurveWidth - LineThickness;
   KDCoordinate curveLeftOffset, barLeftOffset, centerLeftOffset;
-  const uint8_t *topCurve, *bottomCurve, *centerPiece;
   if (left) {
     curveLeftOffset = curveHorizontalOffset;
     barLeftOffset = curveHorizontalOffset;
     centerLeftOffset = 0;
-    topCurve = &topLeftCurve[0][0];
-    bottomCurve = &bottomLeftCurve[0][0];
-    centerPiece = &leftCenter[0][0];
   } else {
     curveLeftOffset = 0;
     barLeftOffset = centerHorizontalOffset;
     centerLeftOffset = centerHorizontalOffset;
-    topCurve = &topRightCurve[0][0];
-    bottomCurve = &bottomRightCurve[0][0];
-    centerPiece = &rightCenter[0][0];
   }
   KDCoordinate height = HeightGivenChildHeight(childHeight);
   assert(height > 2 * CurveHeight + CenterHeight);
@@ -502,8 +494,9 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
   // Top curve
   KDCoordinate dy = 0;
   KDRect frame(WidthMargin + curveLeftOffset, dy, CurveWidth, CurveHeight);
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, topCurve,
-                         workingBuffer);
+  ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
+                        (const uint8_t*)topLeftCurve, workingBuffer, !left,
+                        false);
 
   // Top bar
   dy += CurveHeight;
@@ -513,8 +506,8 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
   // Center piece
   dy += topBarHeight;
   frame = KDRect(WidthMargin + centerLeftOffset, dy, CenterWidth, CenterHeight);
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, centerPiece,
-                         workingBuffer);
+  ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
+                        (const uint8_t*)leftCenter, workingBuffer, !left);
 
   // Bottom bar
   dy += CenterHeight;
@@ -525,8 +518,9 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
   // Bottom curve
   dy += bottomBarHeight;
   frame = KDRect(WidthMargin + curveLeftOffset, dy, CurveWidth, CurveHeight);
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, bottomCurve,
-                         workingBuffer);
+  ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
+                        (const uint8_t*)topLeftCurve, workingBuffer, !left,
+                        true);
 }
 
 void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
@@ -620,9 +614,9 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
 
       // Upper part
       KDRect topSymbolFrame(offsetX, offsetY, SymbolWidth, SymbolHeight);
-      ctx->blendRectWithMask(topSymbolFrame, expressionColor,
-                             (const uint8_t*)topSymbolPixel,
-                             (KDColor*)workingBuffer);
+      ctx->fillRectWithMask(topSymbolFrame, expressionColor, backgroundColor,
+                            (const uint8_t*)topSymbolPixel,
+                            (KDColor*)workingBuffer, false, false);
 
       // Central bar
       offsetY = offsetY + SymbolHeight;
@@ -633,9 +627,9 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       offsetX = offsetX - SymbolWidth + LineThickness;
       offsetY = offsetY + centralArgHeight;
       KDRect bottomSymbolFrame(offsetX, offsetY, SymbolWidth, SymbolHeight);
-      ctx->blendRectWithMask(bottomSymbolFrame, expressionColor,
-                             (const uint8_t*)bottomSymbolPixel,
-                             (KDColor*)workingBuffer);
+      ctx->fillRectWithMask(bottomSymbolFrame, expressionColor, backgroundColor,
+                            (const uint8_t*)topSymbolPixel,
+                            (KDColor*)workingBuffer, true, true);
 
       // Render "d"
       KDPoint dPosition =

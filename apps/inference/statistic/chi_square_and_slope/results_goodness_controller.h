@@ -59,9 +59,6 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
       return static_cast<Escher::TabViewController *>(parentResponder());
     }
 
-    // Responder
-    bool handleEvent(Ion::Events::Event event) override { return false; };
-
     // Escher::ViewController
     const char *title() override {
       return I18n::translate(I18n::Message::Contributions);

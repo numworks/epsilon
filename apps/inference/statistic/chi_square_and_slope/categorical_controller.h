@@ -34,7 +34,6 @@ class CategoricalController
 
   // Responder
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
 
   // ScrollViewDelegate
   void scrollViewDidChangeOffset(
@@ -86,6 +85,9 @@ class InputCategoricalController : public CategoricalController,
   void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   static bool ButtonAction(InputCategoricalController* controller, void* s);
+
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
   void viewWillAppear() override;

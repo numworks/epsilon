@@ -284,6 +284,10 @@ KDCoordinate completeLowerBoundX(const Tree* node, KDFont::Size font) {
 
 }  // namespace Parametric
 
+namespace Sum {
+constexpr static int SignificantPixelWidth = 6;
+}
+
 namespace Integral {
 constexpr static int DifferentialIndex = 0;
 constexpr static int LowerBoundIndex = 1;

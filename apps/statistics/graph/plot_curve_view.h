@@ -25,7 +25,7 @@ class LabeledAxisWithOptionalPercent
   PlotController* m_plotController;
 };
 
-typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithGrid,
+typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithCartesianGrid,
                                  Shared::PlotPolicy::HorizontalLabeledAxis,
                                  LabeledAxisWithOptionalPercent>
     PlotViewAxes;

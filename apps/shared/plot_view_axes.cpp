@@ -10,19 +10,20 @@ using namespace Poincare;
 namespace Shared {
 namespace PlotPolicy {
 
-// WithGrid
+// WithCartesianGrid
 
-void WithGrid::drawGrid(const AbstractPlotView* plotView, KDContext* ctx,
-                        KDRect rect) {
+void WithCartesianGrid::drawGrid(const AbstractPlotView* plotView,
+                                 KDContext* ctx, KDRect rect) {
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, false);
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, false);
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, true);
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, true);
 }
 
-void WithGrid::drawGridLines(const AbstractPlotView* plotView, KDContext* ctx,
-                             KDRect rect, AbstractPlotView::Axis parallel,
-                             bool boldGrid) {
+void WithCartesianGrid::drawGridLines(const AbstractPlotView* plotView,
+                                      KDContext* ctx, KDRect rect,
+                                      AbstractPlotView::Axis parallel,
+                                      bool boldGrid) {
   KDColor color = boldGrid ? k_boldColor : k_lightColor;
   bool oddIndexes = !boldGrid;
   assert(plotView);

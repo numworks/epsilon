@@ -21,7 +21,7 @@ class OptionalAxes {
   virtual PlotStore* plotStore() const = 0;
 
  private:
-  Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithGrid,
+  Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithCartesianGrid,
                            Shared::PlotPolicy::NoAxis,
                            Shared::PlotPolicy::NoAxis>
       m_grid;

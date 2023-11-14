@@ -32,6 +32,11 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
   }
 }
 
+void TableView::resetSizeAndOffsetMemoization() {
+  dataSource()->resetSizeMemoization();
+  resetMemoizedColumnAndRowOffsets();
+}
+
 void TableView::layoutSubviews(bool force) {
   /* Reset memoization in case scrolling offset or frame changed.
    * This is done here and not in ContentView::layoutSubviews because if the

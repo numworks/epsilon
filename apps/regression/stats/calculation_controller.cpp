@@ -26,7 +26,7 @@ CalculationController::CalculationController(Responder *parentResponder,
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
   }
-  resetSizeMemoization();
+  m_selectableTableView.resetSizeAndOffsetMemoization();
 }
 
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(

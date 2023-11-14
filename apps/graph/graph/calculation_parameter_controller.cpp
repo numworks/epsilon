@@ -56,7 +56,7 @@ void CalculationParameterController::viewWillAppear() {
   m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
   if (intersectionWasVisible != m_intersectionCell.isVisible() ||
       areaWasVisible != m_areaCell.isVisible()) {
-    resetSizeMemoization();
+    m_selectableListView.resetSizeAndOffsetMemoization();
   }
   if (m_areaCell.isVisible()) {
     fillAreaCell();
@@ -167,7 +167,7 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   selectRow(0);
   m_intersectionCell.setVisible(ShouldDisplayIntersection());
   m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
 }
 
 bool CalculationParameterController::ShouldDisplayIntersection() {

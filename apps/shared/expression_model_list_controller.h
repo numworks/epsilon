@@ -66,7 +66,9 @@ class ExpressionModelListController
   virtual void addModel();
   /* TODO: This should only update cells that changed instead of reloading the
    * whole memoization, which is time-consuming. */
-  virtual void didChangeModelsList() { resetSizeMemoization(); }
+  virtual void didChangeModelsList() {
+    selectableListView()->resetSizeAndOffsetMemoization();
+  }
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) const { return j; }
 

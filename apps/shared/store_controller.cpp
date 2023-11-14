@@ -123,7 +123,8 @@ KDCoordinate StoreController::separatorBeforeColumn(int column) {
 }
 
 void StoreController::viewWillAppear() {
-  resetSizeMemoization();  // In case the number of columns changed
+  // Reset size memoization in case the number of columns changed
+  m_selectableTableView.resetSizeAndOffsetMemoization();
   EditableCellTableViewController::viewWillAppear();
 }
 

@@ -109,7 +109,7 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
 }
 
 void Dropdown::DropdownPopupController::open() {
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
     m_popupViews[row].setPopping(true);

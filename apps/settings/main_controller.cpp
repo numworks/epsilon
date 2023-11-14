@@ -120,7 +120,8 @@ void MainController::pushModel(const Escher::MessageTree *messageTreeModel) {
     static_cast<GenericSubController *>(selectedSubController)
         ->setMessageTreeModel(messageTreeModel);
     static_cast<GenericSubController *>(selectedSubController)
-        ->resetSizeMemoization();
+        ->selectableListView()
+        ->resetSizeAndOffsetMemoization();
   }
   stackController()->push(selectedSubController);
 }
@@ -264,7 +265,7 @@ KDCoordinate MainController::separatorBeforeRow(int row) {
 
 void MainController::viewWillAppear() {
   ViewController::viewWillAppear();
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
 }
 

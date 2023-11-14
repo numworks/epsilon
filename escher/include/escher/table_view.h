@@ -48,7 +48,7 @@ class TableView : public ScrollView {
   void hideScrollBars() { m_decorator.setVisibility(false); }
   BarDecorator *decorator() override { return &m_decorator; }
 
-  void resetSizeMemoization() { dataSource()->resetSizeMemoization(); }
+  void resetSizeAndOffsetMemoization();
   void resetMemoizedColumnAndRowOffsets() {
     m_contentView.resetMemoizedColumnAndRowOffsets();
   }

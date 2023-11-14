@@ -122,7 +122,7 @@ void SingleRangeController::setAutoStatus(bool autoParam) {
   m_autoParam = autoParam;
   if (m_autoParam) {
     setAutoRange();
-    resetSizeMemoization();
+    m_selectableListView.resetSizeAndOffsetMemoization();
     m_selectableListView.reloadData();
   } else {
     m_selectableListView.reloadCell(0);

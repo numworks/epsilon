@@ -54,7 +54,7 @@ void TestController::stackOpenPage(ViewController *nextPage) {
 }
 
 void TestController::didBecomeFirstResponder() {
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
   ExplicitSelectableListViewController::didBecomeFirstResponder();
 }

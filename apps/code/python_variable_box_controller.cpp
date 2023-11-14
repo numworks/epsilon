@@ -307,7 +307,7 @@ void PythonVariableBoxController::loadVariablesImportedFromScripts() {
 
 void PythonVariableBoxController::empty() {
   m_shortenResultCharCount = 0;
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   ScriptStore::ClearVariableBoxFetchInformation();
   for (uint8_t i = 0; i < k_maxOrigins; ++i) {
     m_rowsPerOrigins[i] = 0;

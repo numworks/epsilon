@@ -27,7 +27,7 @@ CalculationController::CalculationController(Responder *parentResponder,
                                                  KDGlyph::k_alignCenter);
     m_calculationModeSymbolCells[i].setFont(KDFont::Size::Small);
   }
-  resetSizeMemoization();
+  m_selectableTableView.resetSizeAndOffsetMemoization();
 }
 
 // TableViewDataSource

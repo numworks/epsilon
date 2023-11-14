@@ -51,9 +51,7 @@ class PrefacedTableView : public View,
     m_prefacedDelegate = delegate;
   }
 
-  virtual void resetDataSourceSizeMemoization() {
-    m_rowPrefaceDataSource.resetSizeMemoization();
-  }
+  virtual void resetSizeAndOffsetMemoization();
 
  protected:
   class IntermediaryDataSource : public TableViewDataSource,

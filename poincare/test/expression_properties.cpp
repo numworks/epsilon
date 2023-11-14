@@ -1104,6 +1104,8 @@ QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
       });
 
   assert_is_linear_pattern_of_sin_or_cos("5*cos(3x+2)", false, 5.0, 3.0, 2.0);
+  assert_is_linear_pattern_of_sin_or_cos("5*cos(3x+2)+π*cos(3x+2)", false,
+                                         8.1415926535897931, 3.0, 2.0);
   assert_is_linear_pattern_of_sin_or_cos("1-cos(3x+2)/5", true, -0.2, 3.0, 2.0);
   assert_is_linear_pattern_of_sin_or_cos("sin(x)", true, 1.0, 1.0,
                                          -1.0 * M_PI_2);

@@ -59,7 +59,7 @@ class Trigonometry final {
    * Expression::isLinearCombinationOfFunction */
   static bool DetectLinearPatternOfCosOrSin(
       const Expression& e, ReductionContext reductionContext,
-      const char* symbol, bool acceptAddition,
+      const char* symbol, bool acceptConstantTerm,
       double* coefficientBeforeCos = nullptr,
       double* coefficientBeforeSymbol = nullptr, double* angle = nullptr);
 

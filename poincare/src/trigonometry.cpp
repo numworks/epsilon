@@ -688,19 +688,59 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(
 
 bool Trigonometry::DetectLinearPatternOfCosOrSin(
     const Expression& e, ReductionContext reductionContext, const char* symbol,
-    bool acceptAddition, double* coefficientBeforeCos,
+    bool acceptConstantTerm, double* coefficientBeforeCos,
     double* coefficientBeforeSymbol, double* angle) {
-  ApproximationContext approximationContext(reductionContext);
+  double placeHolder1, placeHolder2, placeHolder3;
+  if (!coefficientBeforeCos) {
+    coefficientBeforeCos = &placeHolder1;
+  }
+  *coefficientBeforeCos = 0.0;
+  if (!coefficientBeforeSymbol) {
+    coefficientBeforeSymbol = &placeHolder2;
+  }
+  if (!angle) {
+    angle = &placeHolder3;
+  }
 
-  if (e.type() == ExpressionNode::Type::Multiplication ||
-      (acceptAddition && e.type() == ExpressionNode::Type::Addition)) {
-    /* Check if expression is a*b*cos(theta+constant) or if
-     * expression is a*cos(theta+b)+constant */
-    int nChildren = e.numberOfChildren();
+  ApproximationContext approximationContext(reductionContext);
+  int nChildren = e.numberOfChildren();
+  if (e.type() == ExpressionNode::Type::Addition) {
+    /* Check if expression is B*cos(A*theta+D)+C*cos(A*theta+D)
+     * If acceptConstantTerm, accept same expression + K */
+    bool cosFound = false;
     for (int i = 0; i < nChildren; i++) {
       Expression child = e.childAtIndex(i);
-      if (!DetectLinearPatternOfCosOrSin(child, reductionContext, symbol,
-                                         acceptAddition, coefficientBeforeCos,
+      double tempCoeffBeforeCos, tempCoeffBeforeSymbol, tempAngle;
+
+      if (!DetectLinearPatternOfCosOrSin(
+              child, reductionContext, symbol, acceptConstantTerm,
+              &tempCoeffBeforeCos, &tempCoeffBeforeSymbol, &tempAngle)) {
+        if (acceptConstantTerm &&
+            child.polynomialDegree(reductionContext.context(), symbol) == 0) {
+          continue;
+        }
+        return false;
+      }
+
+      if (cosFound) {
+        if (tempCoeffBeforeSymbol != *coefficientBeforeSymbol ||
+            tempAngle != *angle) {
+          return false;
+        }
+      } else {
+        cosFound = true;
+        *coefficientBeforeSymbol = tempCoeffBeforeSymbol;
+        *angle = tempAngle;
+      }
+      *coefficientBeforeCos += tempCoeffBeforeCos;
+    }
+    return cosFound;
+  } else if (e.type() == ExpressionNode::Type::Multiplication) {
+    // Check if expression is B*cos(A*theta+constant)
+    for (int i = 0; i < nChildren; i++) {
+      Expression child = e.childAtIndex(i);
+      if (!DetectLinearPatternOfCosOrSin(child, reductionContext, symbol, false,
+                                         coefficientBeforeCos,
                                          coefficientBeforeSymbol, angle)) {
         continue;
       }
@@ -714,19 +754,14 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
           0) {
         return false;
       }
-      if (coefficientBeforeCos &&
-          e.type() == ExpressionNode::Type::Multiplication) {
-        *coefficientBeforeCos *=
-            eWithoutCos.approximateToScalar<double>(approximationContext);
-      }
+      *coefficientBeforeCos *=
+          eWithoutCos.approximateToScalar<double>(approximationContext);
       return true;
     }
     return false;
   }
 
-  if (coefficientBeforeCos) {
-    *coefficientBeforeCos = 1.0;
-  }
+  *coefficientBeforeCos = 1.0;
 
   // Check is expression is cos(theta+constant)
   if (e.type() != ExpressionNode::Type::Sine &&
@@ -750,18 +785,14 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
     return false;
   }
 
-  if (angle) {
-    *angle = coefficients[0].approximateToScalar<double>(approximationContext);
-    if (e.type() == ExpressionNode::Type::Sine) {
-      *angle -= M_PI_2;
-    }
-    *angle = std::fmod(*angle, 2 * M_PI);
+  *angle = coefficients[0].approximateToScalar<double>(approximationContext);
+  if (e.type() == ExpressionNode::Type::Sine) {
+    *angle -= M_PI_2;
   }
+  *angle = std::fmod(*angle, 2 * M_PI);
 
-  if (coefficientBeforeSymbol) {
-    *coefficientBeforeSymbol =
-        coefficients[1].approximateToScalar<double>(approximationContext);
-  }
+  *coefficientBeforeSymbol =
+      coefficients[1].approximateToScalar<double>(approximationContext);
   return true;
 }
 

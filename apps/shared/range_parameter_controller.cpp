@@ -130,8 +130,9 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
         cell == &m_xRangeCell ? Axis::X : Axis::Y);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
-  } else if (cell == &m_gridTypeCell &&
-             static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
+  }
+  if (cell == &m_gridTypeCell &&
+      static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
     stackController()->push(&m_gridSelectionController);
     return true;
   }

@@ -9,6 +9,9 @@
 namespace PoincareJ {
 
 namespace Fraction {
+constexpr static int NumeratorIndex = 0;
+constexpr static int DenominatorIndex = 1;
+
 constexpr static KDCoordinate LineMargin = 2;
 constexpr static KDCoordinate LineHeight = 1;
 constexpr static KDCoordinate HorizontalOverflow =
@@ -198,6 +201,9 @@ constexpr static KDCoordinate OverlineVerticalMargin = 1;
 }  // namespace Conjugate
 
 namespace NthRoot {
+constexpr static int RadicandIndex = 0;
+constexpr static int IndexIndex = 1;
+
 constexpr static KDCoordinate HeightMargin = 2;
 constexpr static KDCoordinate WidthMargin = 2;
 constexpr static KDCoordinate RadixLineThickness = 1;
@@ -665,9 +671,12 @@ KDSize size(const Tree* node, KDFont::Size font) {
 }  // namespace Grid
 
 namespace Binomial {
+constexpr static int nIndex = 0;
+constexpr static int kIndex = 1;
+
 static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
-  return Render::Height(node->child(0)) + Grid::EntryMargin +
-         Render::Height(node->child(1));
+  return Render::Height(node->child(nIndex)) + Grid::EntryMargin +
+         Render::Height(node->child(kIndex));
 }
 }  // namespace Binomial
 

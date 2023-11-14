@@ -48,8 +48,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
     Statistic *statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks> *
-    pageQueue() {
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
+        *pageQueue() {
       return &m_pageQueue;
     }
 

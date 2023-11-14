@@ -165,7 +165,8 @@ KDSize Render::Size(const Tree* node) {
           baseHeight - VerticalOffset::IndiceHeight + indexSize.height());
 #endif
     }
-    case LayoutType::CodePoint: {
+    case LayoutType::CodePoint:
+    case LayoutType::CombinedCodePoints: {
       KDSize glyph = KDFont::GlyphSize(font);
       KDCoordinate width = glyph.width();
       // Handle the case of the middle dot which is thinner than the other
@@ -374,6 +375,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       return KDPointZero;
     }
     case LayoutType::CodePoint:
+    case LayoutType::CombinedCodePoints:
       assert(false);
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute: {
@@ -495,6 +497,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
       return indexHeight - VerticalOffset::IndiceHeight + baseBaseline;
 #endif
     case LayoutType::CodePoint:
+    case LayoutType::CombinedCodePoints:
       return KDFont::GlyphHeight(font) / 2;
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute:
@@ -984,7 +987,8 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
 
-    case LayoutType::CodePoint: {
+    case LayoutType::CodePoint:
+    case LayoutType::CombinedCodePoints: {
       ::CodePoint codePoint = CodePointLayout::GetCodePoint(node);
       // Handle the case of the middle dot which has to be drawn by hand since
       // it is thinner than the other glyphs.
@@ -998,7 +1002,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       // General case
       constexpr int bufferSize =
-          sizeof(::CodePoint) / sizeof(char) + 1;  // Null-terminating char
+          2 * sizeof(::CodePoint) + 1;  // Null-terminating char
       char buffer[bufferSize];
       CodePointLayout::GetName(node, buffer, bufferSize);
       ctx->drawString(buffer, p, style);

@@ -357,5 +357,7 @@ template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::List, int>(int);
 template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(
     CodePoint);
+template Tree *EditionPool::push<BlockType::CombinedCodePointsLayout, CodePoint,
+                                 CodePoint>(CodePoint, CodePoint);
 
 }  // namespace PoincareJ

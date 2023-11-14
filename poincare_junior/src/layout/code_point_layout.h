@@ -14,6 +14,7 @@ class CodePointLayout {
     return Bit::getByteAtIndex(value, index);
   }
   static CodePoint GetCodePoint(const Tree* node);
+  static CodePoint GetCombinedCodePoint(const Tree* node);
   static void GetName(const Tree* node, char* buffer, size_t bufferSize);
 };
 

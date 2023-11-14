@@ -55,9 +55,7 @@ Tree* Parser::Parse(const Tree* node) {
     case LayoutType::VerticalOffset:
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:
-    case LayoutType::String:
     case LayoutType::CurlyBrace:
-    case LayoutType::CondensedSum:
     case LayoutType::Piecewise:
     case LayoutType::NthDerivative:
       assert(false);

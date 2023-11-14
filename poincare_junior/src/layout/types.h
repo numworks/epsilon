@@ -3,8 +3,8 @@ NODE(Fraction, 2)
 NODE(VerticalOffset, 1)
 
 NODE(CodePoint, 0, sizeof(CodePoint))
-NODE(CombinedCodePoints)
-NODE(String)
+NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
+// NODE(String)
 
 NODE(AbsoluteValue, 1)
 NODE(Ceiling, 1)
@@ -15,7 +15,7 @@ NODE(VectorNorm, 1)
 
 RANGE(Pair, AbsoluteValueLayout, VectorNormLayout)
 
-NODE(CondensedSum, 2)
+// NODE(CondensedSum, 2)
 NODE(Derivative, 3)
 NODE(NthDerivative, 4)
 NODE(Integral, 4)

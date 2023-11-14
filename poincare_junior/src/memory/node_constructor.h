@@ -146,6 +146,23 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 }
 
 template <>
+constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
+    BlockType::CombinedCodePointsLayout>(Block* block, size_t blockIndex,
+                                         CodePoint first, CodePoint second) {
+  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
+  return CreateBlockAtIndexForNthBlocksNode(
+      block, blockIndex, BlockType::CodePointLayout,
+      CodePointLayout::SubCodePointLayoutAtIndex(first, 0),
+      CodePointLayout::SubCodePointLayoutAtIndex(first, 1),
+      CodePointLayout::SubCodePointLayoutAtIndex(first, 2),
+      CodePointLayout::SubCodePointLayoutAtIndex(first, 3),
+      CodePointLayout::SubCodePointLayoutAtIndex(second, 0),
+      CodePointLayout::SubCodePointLayoutAtIndex(second, 1),
+      CodePointLayout::SubCodePointLayoutAtIndex(second, 2),
+      CodePointLayout::SubCodePointLayoutAtIndex(second, 3));
+}
+
+template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(
     Block* block, size_t blockIndex, uint64_t value) {

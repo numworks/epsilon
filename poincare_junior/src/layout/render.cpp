@@ -165,6 +165,15 @@ KDSize Render::Size(const Tree* node) {
           baseHeight - VerticalOffset::IndiceHeight + indexSize.height());
 #endif
     }
+    case LayoutType::ListSequence: {
+      using namespace ListSequence;
+      KDPoint upperBoundPosition = PositionOfChild(node, UpperBoundIndex);
+      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      return KDSize(upperBoundPosition.x() + upperBoundSize.width(),
+                    std::max(upperBoundPosition.y() + upperBoundSize.height(),
+                             positionOfVariable(node, font).y() +
+                                 Height(node->child(VariableIndex))));
+    }
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints: {
       KDSize glyph = KDFont::GlyphSize(font);
@@ -370,6 +379,21 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       return Pair::ChildOffset(Pair::VerticalMargin(node),
                                Pair::BracketWidth(node));
     }
+    case LayoutType::ListSequence: {
+      using namespace ListSequence;
+      if (childIndex == VariableIndex) {
+        return positionOfVariable(node, font);
+      }
+      if (childIndex == FunctionIndex) {
+        return KDPoint(CurlyBrace::CurlyBraceWidth,
+                       Baseline(node) - Baseline(node->child(FunctionIndex)));
+      }
+      return KDPoint(positionOfVariable(node, font).x() +
+                         Width(node->child(VariableIndex)) +
+                         KDFont::Font(font)->stringSize("≤").width(),
+                     variableSlotBaseline(node, font) -
+                         Baseline(node->child(UpperBoundIndex)));
+    }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       return KDPointZero;
@@ -485,6 +509,12 @@ KDCoordinate Render::Baseline(const Tree* node) {
       return Pair::BaselineGivenChildHeightAndBaseline(
           Height(node->child(0)), Baseline(node->child(0)),
           Pair::VerticalMargin(node));
+    }
+    case LayoutType::ListSequence: {
+      using namespace ListSequence;
+      return CurlyBrace::BaselineGivenChildHeightAndBaseline(
+          Height(node->child(FunctionIndex)),
+          Baseline(node->child(FunctionIndex)));
     }
     case LayoutType::VerticalOffset:
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
@@ -901,6 +931,38 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                   node->layoutType() == LayoutType::VectorNorm);
         }
       }
+      return;
+    }
+    case LayoutType::ListSequence: {
+      using namespace ListSequence;
+      KDFont::Size font = style.font;
+      // Draw {  }
+      KDSize functionSize = Size(node->child(FunctionIndex));
+      KDPoint functionPosition = PositionOfChild(node, FunctionIndex);
+      KDCoordinate functionBaseline = Baseline(node->child(FunctionIndex));
+
+      KDPoint leftBracePosition =
+          CurlyBrace::PositionGivenChildHeightAndBaseline(true, functionSize,
+                                                          functionBaseline)
+              .translatedBy(functionPosition);
+      RenderCurlyBraceWithChildHeight(true, functionSize.height(), ctx,
+                                      leftBracePosition.translatedBy(p),
+                                      style.glyphColor, style.backgroundColor);
+
+      KDPoint rightBracePosition =
+          CurlyBrace::PositionGivenChildHeightAndBaseline(false, functionSize,
+                                                          functionBaseline)
+              .translatedBy(functionPosition);
+      RenderCurlyBraceWithChildHeight(false, functionSize.height(), ctx,
+                                      rightBracePosition.translatedBy(p),
+                                      style.glyphColor, style.backgroundColor);
+
+      // Draw k≤...
+      KDPoint inferiorEqualPosition = KDPoint(
+          positionOfVariable(node, font).x() +
+              Width(node->child(VariableIndex)),
+          variableSlotBaseline(node, font) - KDFont::GlyphHeight(font) / 2);
+      ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), style);
       return;
     }
     case LayoutType::Product:

@@ -671,6 +671,35 @@ static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
 }
 }  // namespace Binomial
 
+namespace ListSequence {
+constexpr static int FunctionIndex = 0;
+constexpr static int VariableIndex = 1;
+constexpr static int UpperBoundIndex = 2;
+constexpr static KDCoordinate VariableHorizontalMargin = 1;
+constexpr static KDCoordinate VariableBaselineOffset = 2;
+
+KDCoordinate variableSlotBaseline(const Tree* node, KDFont::Size font) {
+  return std::max(
+      {KDCoordinate(CurlyBrace::HeightGivenChildHeight(
+                        Render::Height(node->child(FunctionIndex))) +
+                    VariableBaselineOffset),
+       Render::Baseline(node->child(UpperBoundIndex)),
+       Render::Baseline(node->child(VariableIndex))});
+}
+
+KDCoordinate bracesWidth(const Tree* node, KDFont::Size font) {
+  return 2 * CurlyBrace::CurlyBraceWidth +
+         Render::Width(node->child(FunctionIndex));
+}
+
+KDPoint positionOfVariable(const Tree* node, KDFont::Size font) {
+  return KDPoint(VariableHorizontalMargin + bracesWidth(node, font),
+                 variableSlotBaseline(node, font) -
+                     Render::Baseline(node->child(VariableIndex)));
+}
+
+}  // namespace ListSequence
+
 }  // namespace PoincareJ
 
 #endif

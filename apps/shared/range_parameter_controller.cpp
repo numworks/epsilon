@@ -94,12 +94,6 @@ void RangeParameterController::viewWillAppear() {
   fillRangeCells();
   if (selectedRow() == -1) {
     selectRow(0);
-  } else {
-    /* If the table has not been deselected, it means we come from the
-     * SingleRangeController. */
-    int row =
-        m_singleInteractiveCurveViewRangeController.axis() == Axis::X ? 1 : 2;
-    selectRow(row);
   }
   m_selectableListView.reloadData();
 }
@@ -163,9 +157,18 @@ void RangeParameterController::buttonAction() {
 }
 
 // RangeParameterController::GridSelectionController
-void RangeParameterController::GridSelectionController::viewWillAppear() {
+
+RangeParameterController::GridSelectionController::GridSelectionController(
+    Escher::Responder *parentResponder,
+    InteractiveCurveViewRange *interactiveCurveViewRange)
+    : Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(
+          parentResponder, this),
+      m_viewRange(interactiveCurveViewRange) {
   cells[0].label()->setMessage(I18n::Message::Cartesian);
   cells[1].label()->setMessage(I18n::Message::Polar);
+}
+
+void RangeParameterController::GridSelectionController::viewWillAppear() {
   selectRow(m_viewRange->gridType() == GridType::Cartesian ? 0 : 1);
 }
 

@@ -22,9 +22,7 @@ class CursorMotion {
     AutocompletedBracketPairMakeTemporary
   };
   static DeletionMethod DeletionMethodForCursorLeftOfChild(const Tree* node,
-                                                           int index) {
-    return DeletionMethod::DeleteLayout;
-  }
+                                                           int index);
   static int IndexAfterHorizontalCursorMove(const Tree* node,
                                             OMG::HorizontalDirection direction,
                                             int currentIndex,

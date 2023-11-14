@@ -492,25 +492,28 @@ PolarConic::PolarConic(const Expression& e, Context* context,
 
   // Remove the cos term of the denominator
   int nChildren = denominator.numberOfChildren();
-  for (int i = nChildren - 1; i >= 0; i--) {  // The cos is often at the end
+  // Go backwards to prevent corrupting the loop when removing children
+  for (int i = nChildren - 1; i >= 0; i--) {
     if (denominator.childAtIndex(i).polynomialDegree(context, theta) != 0) {
       static_cast<Addition&>(denominator).removeChildAtIndexInPlace(i);
-      break;
     }
   }
+
   // All theta terms should have been removed
   assert(denominator.polynomialDegree(context, theta) == 0);
   ApproximationContext approximationContext(reductionContext);
   coefficientBeforeCos /=
       denominator.approximateToScalar<double>(approximationContext);
-
   double absValueCoefficient = std::fabs(coefficientBeforeCos);
   if (absValueCoefficient < 1.0) {
     m_shape = Shape::Ellipse;
   } else if (absValueCoefficient > 1.0) {
     m_shape = Shape::Hyperbola;
-  } else {
+  } else if (absValueCoefficient == 1.0) {
     m_shape = Shape::Parabola;
+  } else {
+    assert(std::isnan(absValueCoefficient));
+    m_shape = Shape::Undefined;
   }
 }
 

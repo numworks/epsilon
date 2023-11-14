@@ -185,37 +185,78 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
 bool Trigonometry::SimplifyATrig(Tree* u) {
   assert(u->isATrig());
   PatternMatching::Context ctx;
-  if (!PatternMatching::Match(KATrig(KTrig(KA, KB), KB), u, &ctx)) {
-    // TODO: Add exact values.
-    return false;
-  }
-  const Tree* piFactor = getPiFactor(ctx.getNode(KA));
-  if (!piFactor) {
-    return false;
-  }
-  // atrig(trig(π*piFactor, i), i)
-  bool isSin = Number::IsOne(ctx.getNode(KB));
-  // Compute k = ⌊piFactor⌋ for acos, ⌊piFactor + π/2⌋ for asin.
-  // acos(cos(π*r)) = π*(y-k) if k even, π*(k-y+1) otherwise.
-  // asin(sin(π*r)) = π*(y-k) if k even, π*(k-y) otherwise.
-  Tree* res = PatternMatching::CreateAndSimplify(
-      isSin ? KFloor(KAdd(KA, KHalf)) : KFloor(KA), {.KA = piFactor});
-  assert(res->isInteger());
-  bool kIsEven = Integer::Handler(res).isEven();
-  res->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-      KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
-  if (!kIsEven) {
-    res->moveTreeOverTree(
-        PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = res}));
-    if (!isSin) {
-      res->moveTreeOverTree(
-          PatternMatching::CreateAndSimplify(KAdd(1_e, KA), {.KA = res}));
+  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KB), u, &ctx)) {
+    const Tree* piFactor = getPiFactor(ctx.getNode(KA));
+    if (!piFactor) {
+      return false;
     }
+    // atrig(trig(π*piFactor, i), i)
+    bool isSin = ctx.getNode(KB)->isOne();
+    // Compute k = ⌊piFactor⌋ for acos, ⌊piFactor + π/2⌋ for asin.
+    // acos(cos(π*r)) = π*(y-k) if k even, π*(k-y+1) otherwise.
+    // asin(sin(π*r)) = π*(y-k) if k even, π*(k-y) otherwise.
+    Tree* res = PatternMatching::CreateAndSimplify(
+        isSin ? KFloor(KAdd(KA, KHalf)) : KFloor(KA), {.KA = piFactor});
+    assert(res->isInteger());
+    bool kIsEven = Integer::Handler(res).isEven();
+    res->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
+    if (!kIsEven) {
+      res->moveTreeOverTree(
+          PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = res}));
+      if (!isSin) {
+        res->moveTreeOverTree(
+            PatternMatching::CreateAndSimplify(KAdd(1_e, KA), {.KA = res}));
+      }
+    }
+    res->moveTreeOverTree(
+        PatternMatching::CreateAndSimplify(KMult(π_e, KA), {.KA = res}));
+    u->moveTreeOverTree(res);
+    return true;
   }
-  res->moveTreeOverTree(
-      PatternMatching::CreateAndSimplify(KMult(π_e, KA), {.KA = res}));
-  u->moveTreeOverTree(res);
-  return true;
+  bool isAsin = u->child(1)->isOne();
+  const Tree* arg = u->nextNode();
+  if (arg->isZero()) {
+    u->cloneTreeOverTree(isAsin ? 0_e : KMult(KHalf, π_e));
+    return true;
+  }
+  bool argIsOpposed = Sign::GetSign(arg).isStrictlyNegative();
+  bool changed = argIsOpposed;
+  if (argIsOpposed) {
+    u->nextNode()->moveTreeOverTree(
+        PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = arg}));
+  }
+  if (arg->isOne()) {
+    u->cloneTreeOverTree(isAsin ? KMult(KHalf, π_e) : 0_e);
+    changed = true;
+  } else if (arg->isHalf()) {
+    u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
+    changed = true;
+  } else if (arg->isMultiplication()) {
+    // TODO : Find a better implementation for these special cases.
+    changed =
+        // acos(√2/2) = asin(√2/2) = π/4
+        PatternMatching::MatchReplaceAndSimplify(
+            u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(2_e)))), KA),
+            KMult(π_e, KPow(4_e, -1_e))) ||
+        // acos(√3/2) = π/6
+        PatternMatching::MatchReplaceAndSimplify(
+            u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 0_e),
+            KMult(π_e, KPow(6_e, -1_e))) ||
+        // asin(√3/2) = π/3
+        PatternMatching::MatchReplaceAndSimplify(
+            u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 1_e),
+            KMult(π_e, KPow(3_e, -1_e)))
+        // TODO: Add (√6-√2)/4, (√6+√2)/4 and their opposites.
+        ;
+  }
+  if (changed && argIsOpposed) {
+    // asin(-x) = -asin(x) and acos(-x) = π - acos(x)
+    PatternMatching::MatchReplaceAndSimplify(
+        u, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));
+  }
+  return changed;
 }
 
 /* TODO : Find an easier solution for nested expand/contract smart shallow

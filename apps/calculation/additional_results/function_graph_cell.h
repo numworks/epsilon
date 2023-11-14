@@ -49,7 +49,7 @@ typedef FunctionAxis<
     Shared::PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>
     FunctionVerticalLabeledAxis;
 
-typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithGrid,
+typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithCartesianGrid,
                                  FunctionHorizontalLabeledAxis,
                                  FunctionVerticalLabeledAxis>
     FunctionTwoLabeledAxes;

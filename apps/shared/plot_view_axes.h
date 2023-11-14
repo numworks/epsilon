@@ -49,7 +49,7 @@ class NoGrid {
   static void drawGrid(const AbstractPlotView *, KDContext *, KDRect) {}
 };
 
-class WithGrid {
+class WithCartesianGrid {
  protected:
   static void drawGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect);
@@ -191,7 +191,7 @@ typedef LabeledAxis<AbstractLabeledAxis::k_maxNumberOfYLabels>
 
 typedef Axes<NoGrid, NoAxis, NoAxis> NoAxes;
 typedef Axes<NoGrid, HorizontalLabeledAxis, NoAxis> LabeledXAxis;
-typedef Axes<WithGrid, HorizontalLabeledAxis, VerticalLabeledAxis>
+typedef Axes<WithCartesianGrid, HorizontalLabeledAxis, VerticalLabeledAxis>
     TwoLabeledAxes;
 
 }  // namespace PlotPolicy

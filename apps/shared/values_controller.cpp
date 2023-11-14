@@ -348,8 +348,7 @@ void ValuesController::resetLayoutMemoization() {
     assert(titleCell);
     titleCell->setLayout(Layout());
   }
-  resetSizeMemoization();  // reset sizes memoization
-  m_prefacedTwiceTableView.resetDataSourceSizeMemoization();
+  m_prefacedTwiceTableView.resetSizeAndOffsetMemoization();
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }
@@ -481,7 +480,7 @@ void ValuesController::rowWasDeleted(int row, int column) {
 void ValuesController::clearSelectedColumn() {
   intervalAtColumn(selectedColumn())->clear();
   selectCellAtLocation(selectedColumn(), 1);
-  resetSizeMemoization();
+  m_selectableTableView.resetSizeAndOffsetMemoization();
 }
 
 int ValuesController::fillColumnName(int column, char *buffer) {

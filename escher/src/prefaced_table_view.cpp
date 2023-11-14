@@ -45,6 +45,13 @@ void PrefacedTableView::setCellOverlap(KDCoordinate horizontal,
   m_rowPrefaceView.setVerticalCellOverlap(vertical);
 }
 
+void PrefacedTableView::resetSizeAndOffsetMemoization() {
+  // Main table
+  m_mainTableView->resetSizeAndOffsetMemoization();
+  // Row preface
+  m_rowPrefaceView.resetSizeAndOffsetMemoization();
+}
+
 void PrefacedTableView::resetContentOffset() {
   /* Since cells are shared between the table and its prefaces and since
    * TableView::layoutSubview first initSize on all cells before computing the

@@ -76,6 +76,7 @@ class ListWithTopAndBottomController : public SelectableViewController,
                                  View* bottomView = nullptr);
 
   View* view() override { return &m_selectableListView; }
+  SelectableListView* selectableListView() { return &m_selectableListView; }
   void resetSizeMemoization() override {
     return m_outerDataSource.resetSizeMemoization();
   }

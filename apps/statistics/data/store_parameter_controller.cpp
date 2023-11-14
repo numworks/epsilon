@@ -21,7 +21,7 @@ StoreParameterController::StoreParameterController(
 
 void StoreParameterController::initializeColumnParameters() {
   // Number of cells and cells size may change when switching between columns
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   Shared::StoreParameterController::initializeColumnParameters();
   int relativeColumn = m_store->relativeColumn(m_column);
   m_isCumulatedFrequencyColumnSelected = relativeColumn == 2;

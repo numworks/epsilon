@@ -50,13 +50,13 @@ void PrefacedTwiceTableView::setCellOverlap(KDCoordinate horizontal,
   m_prefaceIntersectionView.setVerticalCellOverlap(vertical);
 }
 
-void PrefacedTwiceTableView::resetDataSourceSizeMemoization() {
-  // Intersection preface
-  m_prefaceIntersectionDataSource.resetSizeMemoization();
-  // Column preface
-  m_columnPrefaceDataSource.resetSizeMemoization();
+void PrefacedTwiceTableView::resetSizeAndOffsetMemoization() {
   // Main table and row preface
-  PrefacedTableView::resetDataSourceSizeMemoization();
+  PrefacedTableView::resetSizeAndOffsetMemoization();
+  // Column preface
+  m_columnPrefaceView.resetSizeAndOffsetMemoization();
+  // Intersection preface
+  m_prefaceIntersectionView.resetSizeAndOffsetMemoization();
 }
 
 View* PrefacedTwiceTableView::subviewAtIndex(int index) {

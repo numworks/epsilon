@@ -147,7 +147,7 @@ void HypothesisController::loadHypothesisParam() {
   m_h0.textField()->setText(buffer);
   m_operatorDataSource.updateMessages();
   m_haDropdown.reloadCell();
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
 }
 

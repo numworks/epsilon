@@ -63,7 +63,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
 void ScriptParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   updateAutoImportSwitch();
-  resetSizeMemoization();
+  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
   m_selectableListView.selectCell(0);
 }

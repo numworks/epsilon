@@ -18,7 +18,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
   TableView* columnPrefaceView() { return &m_columnPrefaceView; }
-  void resetDataSourceSizeMemoization() override;
+  void resetSizeAndOffsetMemoization() override;
   KDCoordinate minVisibleContentWidth() const {
     return bounds().width() - std::max(m_mainTableViewLeftMargin,
                                        m_mainTableView->margins()->right());

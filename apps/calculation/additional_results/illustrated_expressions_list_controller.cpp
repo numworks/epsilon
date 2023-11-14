@@ -71,7 +71,7 @@ void IllustratedExpressionsListController::fillCellForRow(HighlightCell* cell,
 void IllustratedExpressionsListController::setShowIllustration(
     bool showIllustration) {
   illustrationCell()->setVisible(showIllustration);
-  resetSizeMemoization();
+  m_listController.selectableListView()->resetSizeAndOffsetMemoization();
 }
 
 int IllustratedExpressionsListController::textAtIndex(char* buffer,

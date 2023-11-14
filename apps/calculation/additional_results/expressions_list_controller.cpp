@@ -58,7 +58,7 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
 
 void ExpressionsListController::didBecomeFirstResponder() {
   selectRow(0);
-  resetSizeMemoization();
+  m_listController.selectableListView()->resetSizeAndOffsetMemoization();
   App::app()->setFirstResponder(&m_listController);
   // Additional outputs should have at least one row to display
   assert(numberOfRows() > 0);
@@ -71,7 +71,7 @@ void ExpressionsListController::viewDidDisappear() {
 
 void ExpressionsListController::tidy() {
   // Reset layout and cell memoization to avoid taking extra space in the pool
-  resetSizeMemoization();
+  m_listController.selectableListView()->resetSizeAndOffsetMemoization();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_cells[i].label()->resetLayouts();
     /* By reseting m_layouts, numberOfRow will go down to 0, and the highlighted

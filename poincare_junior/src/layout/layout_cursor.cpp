@@ -562,7 +562,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
 #endif
   const Tree *leftL = leftLayout();
   if (leftL) {
-    CursorMotion::DeletionMethod deletionMethod =
+    DeletionMethod deletionMethod =
         CursorMotion::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
     privateDelete(deletionMethod, false);
   } else {
@@ -572,7 +572,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
     if (!p) {
       return;
     }
-    CursorMotion::DeletionMethod deletionMethod =
+    DeletionMethod deletionMethod =
         CursorMotion::DeletionMethodForCursorLeftOfChild(p, index);
     privateDelete(deletionMethod, true);
   }
@@ -1043,40 +1043,46 @@ void LayoutCursor::invalidateSizesAndPositions() {
 // TODO: Nothing is memoized for now, maybe implement something ?
 #endif
 
+void TurnToRack(Tree *l) {
+  if (l->isRackLayout()) {
+    l->cloneTreeAtNode(KRackL());
+  }
+}
+
 void LayoutBufferCursor::EditionPoolCursor::privateDelete(
-    CursorMotion::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
+    DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
          m_cursorReference->block() != rootNode()->block());
-#if 0
-  if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
+
+  if (deletionMethod == DeletionMethod::MoveLeft) {
     bool dummy = false;
     move(OMG::Direction::Left(), false, &dummy);
     return;
   }
+  EditionReference m_layout = m_cursorReference;
+  EditionReference parent = rootNode()->parentOfDescendant(m_layout);
 
-  if (deletionMethod == LayoutNode::DeletionMethod::DeleteParent) {
+  if (deletionMethod == DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
-    Layout p = m_layout.parent();
-    assert(!p.isUninitialized() && !p.isHorizontal());
-    Layout parentOfP = p.parent();
-    if (parentOfP.isUninitialized() || !parentOfP.isHorizontal()) {
+    Tree *p = parent;
+    assert(p && !p->isRackLayout());
+    Tree *parentOfP = rootNode()->parentOfDescendant(parent);
+    if (!parentOfP || !parentOfP->isRackLayout()) {
       assert(m_position == 0);
-      p.replaceWithInPlace(m_layout);
+      p->moveTreeOverTree(m_layout);
     } else {
-      m_position = parentOfP.indexOfChild(p);
-      static_cast<HorizontalLayout &>(parentOfP).removeChildAtIndexInPlace(
-          m_position);
-      static_cast<HorizontalLayout &>(parentOfP).addOrMergeChildAtIndex(
-          m_layout, m_position);
-      m_layout = parentOfP;
+      // m_position = parentOfP->indexOfChild(p);
+      p->moveTreeOverTree(m_layout);
+      // NAry::RemoveChildAtIndex(parentOfP, m_position);
+      // NAry::AddOrMergeChildAtIndex(parentOfP, m_layout, m_position);
+      m_cursorReference = parentOfP;
     }
     return;
   }
-
-  if (deletionMethod ==
-      LayoutNode::DeletionMethod::AutocompletedBracketPairMakeTemporary) {
+#if 0
+  if (deletionMethod == DeletionMethod::AutocompletedBracketPairMakeTemporary) {
     if (deletionAppliedToParent) {  // Inside bracket
-      Layout parent = m_layout.parent();
+      Tree* parent = parent;
       assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
           parent.type()));
       static_cast<AutocompletedBracketPairLayoutNode *>(parent.node())
@@ -1092,86 +1098,81 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     balanceAutocompletedBracketsAndKeepAValidCursor();
     return;
   }
-
-  if (deletionMethod ==
-      LayoutNode::DeletionMethod::FractionDenominatorDeletion) {
+#endif
+#if 0
+  if (deletionMethod == DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
-    Layout fraction = m_layout.parent();
-    assert(fraction.type() == LayoutNode::Type::FractionLayout &&
-           fraction.child(1) == m_layout);
-    Layout numerator = fraction.child(0);
-    if (!numerator.isHorizontal()) {
-      HorizontalLayout hLayout = HorizontalLayout::Builder();
-      numerator.replaceWithInPlace(hLayout);
-      hLayout.addOrMergeChildAtIndex(numerator, 0);
-      numerator = hLayout;
-    }
-    assert(numerator.isHorizontal());
-    m_position = numerator.numberOfChildren();
-    static_cast<HorizontalLayout &>(numerator).addOrMergeChildAtIndex(
-        m_layout, numerator.numberOfChildren());
-    Layout parentOfFraction = fraction.parent();
-    if (parentOfFraction.isUninitialized() ||
-        !parentOfFraction.isHorizontal()) {
+    Tree *fraction = parent;
+    assert(fraction->isFractionLayout() && fraction->child(1) == m_layout);
+    Tree *numerator = fraction->child(0);
+    TurnToRack(numerator);
+    m_position = numerator->numberOfChildren();
+
+    int n = numerator->numberOfChildren();
+    RackLayout::AddOrMergeLayoutAtIndex(numerator, m_layout, n, rootNode());
+    static_cast<HorizontalTree *&>(numerator).addOrMergeChildAtIndex(
+        m_layout, numerator->numberOfChildren());
+    Tree *parentOfFraction = rootNode()->parentOfDescendant(fraction);
+    if (!parentOfFraction || !parentOfFraction->isRackLayout()) {
       assert(m_position == 0);
-      fraction.replaceWithInPlace(numerator);
+      fraction->moveTreeOverTree(numerator);
       m_layout = numerator;
     } else {
-      int indexOfFraction = parentOfFraction.indexOfChild(fraction);
+      int indexOfFraction = parentOfFraction->indexOfChild(fraction);
       m_position += indexOfFraction;
-      static_cast<HorizontalLayout &>(parentOfFraction)
+      RackLayout::RemoveLayoutAtIndex(parentOfFraction, indexOfFraction,
+                                      rootNode());
+      static_cast<HorizontalTree *&>(parentOfFraction)
           .removeChildAtIndexInPlace(indexOfFraction);
-      static_cast<HorizontalLayout &>(parentOfFraction)
+      static_cast<HorizontalTree *&>(parentOfFraction)
           .addOrMergeChildAtIndex(numerator, indexOfFraction);
       m_layout = parentOfFraction;
     }
     return;
   }
-
-  if (deletionMethod ==
-          LayoutNode::DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper ||
-      deletionMethod == LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow) {
+#endif
+#if 0
+  if (deletionMethod == DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper ||
+      deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow) {
     assert(deletionAppliedToParent);
     int newIndex = -1;
     if (deletionMethod ==
         LayoutNode::DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper) {
-      assert(m_layout.parent().type() ==
+      assert(parent().type() ==
                  LayoutNode::Type::BinomialCoefficientLayout ||
-             m_layout.parent().type() == LayoutNode::Type::Point2DLayout);
+             parent().type() == LayoutNode::Type::Point2DLayout);
       newIndex = TwoRowsLayoutNode::k_upperLayoutIndex;
     } else {
-      assert(deletionMethod ==
-             LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow);
-      assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+      assert(deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow);
+      assert(GridLayoutNode::IsGridLayoutType(parent.type()));
       GridLayoutNode *gridNode =
-          static_cast<GridLayoutNode *>(m_layout.parent().node());
-      int currentIndex = m_layout.parent().indexOfChild(m_layout);
+          static_cast<GridLayoutNode *>(parent.node());
+      int currentIndex = parent.indexOfChild(m_layout);
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
       assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
       newIndex = gridNode->indexAtRowColumn(
           currentRow - 1, gridNode->rightmostNonGrayColumnIndex());
     }
-    m_layout = m_layout.parent().child(newIndex);
+    m_layout = parent.child(newIndex);
     m_position = rightmostPosition();
     return;
   }
 
-  if (deletionMethod == LayoutNode::DeletionMethod::GridLayoutDeleteColumn ||
-      deletionMethod == LayoutNode::DeletionMethod::GridLayoutDeleteRow ||
-      deletionMethod ==
-          LayoutNode::DeletionMethod::GridLayoutDeleteColumnAndRow) {
+  if (deletionMethod == DeletionMethod::GridLayoutDeleteColumn ||
+      deletionMethod == DeletionMethod::GridLayoutDeleteRow ||
+      deletionMethod == DeletionMethod::GridLayoutDeleteColumnAndRow) {
     assert(deletionAppliedToParent);
-    assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+    assert(GridLayoutNode::IsGridLayoutType(parent.type()));
     GridLayoutNode *gridNode =
-        static_cast<GridLayoutNode *>(m_layout.parent().node());
-    int currentIndex = m_layout.parent().indexOfChild(m_layout);
+        static_cast<GridLayoutNode *>(parent.node());
+    int currentIndex = parent.indexOfChild(m_layout);
     int currentRow = gridNode->rowAtChildIndex(currentIndex);
     int currentColumn = gridNode->columnAtChildIndex(currentIndex);
-    if (deletionMethod != LayoutNode::DeletionMethod::GridLayoutDeleteColumn) {
+    if (deletionMethod != DeletionMethod::GridLayoutDeleteColumn) {
       gridNode->deleteRowAtIndex(currentRow);
     }
-    if (deletionMethod != LayoutNode::DeletionMethod::GridLayoutDeleteRow) {
+    if (deletionMethod != DeletionMethod::GridLayoutDeleteRow) {
       gridNode->deleteColumnAtIndex(currentColumn);
     }
     int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
@@ -1179,8 +1180,8 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     didEnterCurrentPosition();
     return;
   }
+  assert(deletionMethod == DeletionMethod::DeleteLayout);
 #endif
-  assert(deletionMethod == CursorMotion::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
     setLayout(rootNode()->parentOfDescendant(m_cursorReference),
               OMG::Direction::Right());

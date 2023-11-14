@@ -6,21 +6,22 @@
 
 namespace PoincareJ {
 
+enum class DeletionMethod {
+  DeleteLayout,
+  DeleteParent,
+  MoveLeft,
+  FractionDenominatorDeletion,
+  BinomialCoefficientMoveFromKtoN,
+  GridLayoutMoveToUpperRow,
+  GridLayoutDeleteColumnAndRow,
+  GridLayoutDeleteColumn,
+  GridLayoutDeleteRow,
+  AutocompletedBracketPairMakeTemporary
+};
+
 class CursorMotion {
  public:
   // TODO: Finish these methods implementation.
-  enum class DeletionMethod {
-    DeleteLayout,
-    DeleteParent,
-    MoveLeft,
-    FractionDenominatorDeletion,
-    BinomialCoefficientMoveFromKtoN,
-    GridLayoutMoveToUpperRow,
-    GridLayoutDeleteColumnAndRow,
-    GridLayoutDeleteColumn,
-    GridLayoutDeleteRow,
-    AutocompletedBracketPairMakeTemporary
-  };
   static DeletionMethod DeletionMethodForCursorLeftOfChild(const Tree* node,
                                                            int index);
   static int IndexAfterHorizontalCursorMove(const Tree* node,

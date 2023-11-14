@@ -41,15 +41,13 @@ static bool IsEmpty(const Tree* layout) {
   return layout->isRackLayout() && layout->numberOfChildren() == 0;
 }
 
-static CursorMotion::DeletionMethod
-StandardDeletionMethodForLayoutContainingArgument(int childIndex,
-                                                  int argumentIndex) {
-  return childIndex == argumentIndex
-             ? CursorMotion::DeletionMethod::DeleteParent
-             : CursorMotion::DeletionMethod::MoveLeft;
+static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(
+    int childIndex, int argumentIndex) {
+  return childIndex == argumentIndex ? DeletionMethod::DeleteParent
+                                     : DeletionMethod::MoveLeft;
 }
 
-CursorMotion::DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
+DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     const Tree* node, int childIndex) {
   switch (node->layoutType()) {
     case LayoutType::Binomial:

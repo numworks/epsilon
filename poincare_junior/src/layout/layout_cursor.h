@@ -225,7 +225,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     };
     void insertText(Context* context, const void* insertTextContext);
 
-    void privateDelete(CursorMotion::DeletionMethod deletionMethod,
+    void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
     void setCursorNode(Tree* node) override {
       m_cursorReference = EditionReference(node);

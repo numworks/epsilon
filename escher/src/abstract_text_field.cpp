@@ -466,15 +466,16 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
     return true;
   }
 
-  // Handle back
-  if (event == Ion::Events::Back && isEditing()) {
+  // Handle edition abort
+  if ((event == Ion::Events::Back || event == Ion::Events::Home) &&
+      isEditing()) {
     setEditing(false);
     if (m_delegate) {
       m_delegate->textFieldDidAbortEditing(this);
     }
     resetScroll();
     *textDidChange = previousTextLength != strlen(text());
-    return true;
+    return event == Ion::Events::Back;
   }
 
   // Handle backspace

@@ -287,6 +287,15 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
    * because we are sure of not modifying any pre-existing node in the pool. We
    * are sure there cannot be a Store in the exactOutput. */
   ExceptionCheckpoint ecp;
+  Calculation::EqualSign result;
+  /* Temporarly set the complex format and angle unit to the ones used to
+   * compute the output. */
+  Preferences::ComplexFormat currentComplexFormat =
+      Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit currentAngleUnit =
+      Preferences::sharedPreferences->angleUnit();
+  Preferences::sharedPreferences->setComplexFormat(m_complexFormat);
+  Preferences::sharedPreferences->setAngleUnit(m_angleUnit);
   if (ExceptionRun(ecp)) {
     Expression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
@@ -307,12 +316,15 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal
                       : EqualSign::Approximation;
-    return m_equalSign;
+    result = m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool
      * later to compute it. */
-    return EqualSign::Approximation;
+    result = EqualSign::Approximation;
   }
+  Preferences::sharedPreferences->setComplexFormat(currentComplexFormat);
+  Preferences::sharedPreferences->setAngleUnit(currentAngleUnit);
+  return result;
 }
 
 void Calculation::fillExpressionsForAdditionalResults(
@@ -330,7 +342,21 @@ void Calculation::fillExpressionsForAdditionalResults(
 AdditionalResultsType Calculation::additionalResultsType() {
   Expression i, a, e;
   fillExpressionsForAdditionalResults(&i, &e, &a);
-  return AdditionalResultsType::AdditionalResultsForExpressions(i, e, a);
+  /* Temporarly set the complex format and angle unit to the ones used to
+   * compute the output. */
+  Preferences::ComplexFormat currentComplexFormat =
+      Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit currentAngleUnit =
+      Preferences::sharedPreferences->angleUnit();
+  Preferences::sharedPreferences->setComplexFormat(m_complexFormat);
+  Preferences::sharedPreferences->setAngleUnit(m_angleUnit);
+
+  AdditionalResultsType result =
+      AdditionalResultsType::AdditionalResultsForExpressions(i, e, a);
+
+  Preferences::sharedPreferences->setComplexFormat(currentComplexFormat);
+  Preferences::sharedPreferences->setAngleUnit(currentAngleUnit);
+  return result;
 }
 
 }  // namespace Calculation

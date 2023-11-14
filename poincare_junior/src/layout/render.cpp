@@ -183,6 +183,8 @@ KDSize Render::Size(const Tree* node) {
                            Render::Width(node->child(kIndex));
       return KDSize(width, TotalHeight(node, font));
     }
+    case LayoutType::Matrix:
+      return SquareBracketPair::SizeGivenChildSize(Grid::size(node, font));
   };
 }
 
@@ -368,6 +370,29 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
                      AboveSymbol(node, font) + SymbolHeight -
                          Baseline(node->child(kIndex)));
     }
+    case LayoutType::Matrix: {
+      using namespace Grid;
+      int row = rowAtChildIndex(node, childIndex);
+      int column = columnAtChildIndex(node, childIndex);
+      KDCoordinate x = 0;
+      for (int j = 0; j < column; j++) {
+        x += columnWidth(node, j, font);
+      }
+      x += (columnWidth(node, column, font) - Width(node->child(childIndex))) /
+               2 +
+           column * horizontalGridEntryMargin(node, font);
+      KDCoordinate y = 0;
+      for (int i = 0; i < row; i++) {
+        y += rowHeight(node, i, font);
+      }
+      y += rowBaseline(node, row, font) - Baseline(node->child(childIndex)) +
+           row * verticalGridEntryMargin(node, font);
+
+      KDPoint p(x, y);
+      if (node->isMatrixLayout()) {
+        return p.translatedBy(SquareBracketPair::ChildOffset());
+      }
+    }
   };
 }
 
@@ -455,6 +480,8 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::PtPermute:
       return std::max(0, PtCombinatorics::AboveSymbol(node, font) +
                              PtCombinatorics::SymbolBaseline);
+    case LayoutType::Matrix:
+      return (Grid::height(node, font) + 1) / 2 + Pair::LineThickness;
   };
 }
 
@@ -515,12 +542,13 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
       expressionColor);
 }
 
-void RenderSquareBracketPair(bool left, KDCoordinate childHeight,
-                             KDContext* ctx, KDPoint p, KDColor expressionColor,
-                             KDColor backgroundColor,
-                             KDCoordinate verticalMargin,
-                             KDCoordinate bracketWidth, bool renderTopBar,
-                             bool renderBottomBar, bool renderDoubleBar) {
+void RenderSquareBracketPair(
+    bool left, KDCoordinate childHeight, KDContext* ctx, KDPoint p,
+    KDColor expressionColor, KDColor backgroundColor,
+    KDCoordinate verticalMargin = SquareBracketPair::VerticalMargin,
+    KDCoordinate bracketWidth = SquareBracketPair::BracketWidth,
+    bool renderTopBar = true, bool renderBottomBar = true,
+    bool renderDoubleBar = false) {
   using namespace SquareBracketPair;
   KDCoordinate horizontalBarX =
       p.x() + (left ? ExternalWidthMargin : LineThickness);
@@ -1003,6 +1031,17 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                               backgroundColor, PtPermute::symbolUpperHalf,
                               workingBuffer, false, true);
       }
+      return;
+    }
+    case LayoutType::Matrix: {
+      KDSize s = Grid::size(node, font);
+      RenderSquareBracketPair(true, s.height(), ctx, p, style.glyphColor,
+                              style.backgroundColor);
+      KDCoordinate rightOffset =
+          SquareBracketPair::ChildOffset().x() + s.width();
+      RenderSquareBracketPair(false, s.height(), ctx,
+                              p.translatedBy(KDPoint(rightOffset, 0)),
+                              style.glyphColor, style.backgroundColor);
       return;
     }
   };

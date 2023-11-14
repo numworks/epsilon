@@ -54,10 +54,7 @@ class RangeParameterController
     using GridType = InteractiveCurveViewRange::GridType;
     GridSelectionController(
         Escher::Responder *parentResponder,
-        InteractiveCurveViewRange *interactiveCurveViewRange)
-        : Escher::SelectableListViewController<
-              Escher::SimpleListViewDataSource>(parentResponder, this),
-          m_viewRange(interactiveCurveViewRange) {}
+        InteractiveCurveViewRange *interactiveCurveViewRange);
 
     void viewWillAppear() override;
     void viewDidDisappear() override;

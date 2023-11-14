@@ -403,16 +403,13 @@ MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(
 template <typename T>
 Evaluation<T> PowerNode::templatedApproximate(
     const ApproximationContext &approximationContext) const {
+  Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "nonreal". */
   if (approximationContext.complexFormat() ==
-      Preferences::ComplexFormat::Real) {
-    Evaluation<T> base =
-        childAtIndex(0)->approximate(T(), approximationContext);
-    if (base.type() != EvaluationNode<T>::Type::Complex) {
-      goto defaultApproximation;
-    }
+          Preferences::ComplexFormat::Real &&
+      base.type() == EvaluationNode<T>::Type::Complex) {
     std::complex<T> c = base.complexAtIndex(0);
     T p = NAN;
     T q = NAN;
@@ -453,8 +450,10 @@ Evaluation<T> PowerNode::templatedApproximate(
     }
   }
 defaultApproximation:
-  return ApproximationHelper::MapReduce<T>(this, approximationContext,
-                                           Compute<T>);
+  Evaluation<T> result =
+      Compute<T>(base, childAtIndex(1)->approximate(T(), approximationContext),
+                 approximationContext.complexFormat());
+  return result.isUndefined() ? Complex<T>::Undefined() : result;
 }
 
 // Power

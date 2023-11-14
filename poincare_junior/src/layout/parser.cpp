@@ -59,6 +59,7 @@ Tree* Parser::Parse(const Tree* node) {
     case LayoutType::CurlyBrace:
     case LayoutType::CondensedSum:
     case LayoutType::Piecewise:
+    case LayoutType::NthDerivative:
       assert(false);
     default: {
       // The layout children map one-to-one to the expression

@@ -14,6 +14,8 @@ namespace PoincareJ {
 
 KDFont::Size Render::font = KDFont::Size::Large;
 
+constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
+
 KDSize Render::Size(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
@@ -45,6 +47,34 @@ KDSize Render::Size(const Tree* node) {
               NthRoot::RadixLineThickness + radicandSize.width(),
           Baseline(node) + radicandSize.height() - Baseline(node->child(0)));
       return newSize;
+    }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      using namespace Derivative;
+      /* The derivative layout could overflow KDCoordinate if the variable or
+       * the order layouts are too large. Since they are duplicated, if there
+       * are nested derivative layouts, the size can be very large while the
+       * layout doesn't overflow the pool. This limit is to prevent this from
+       * happening. */
+      constexpr static KDCoordinate k_maxVariableAndOrderSize =
+          KDCOORDINATE_MAX / 4;
+      KDSize variableSize = Size(node->child(VariableIndex));
+      KDSize orderSize =
+          KDSize(orderWidth(node, font), orderHeightOffset(node, font));
+      if (variableSize.height() >= k_maxVariableAndOrderSize ||
+          variableSize.width() >= k_maxVariableAndOrderSize ||
+          orderSize.height() >= k_maxVariableAndOrderSize ||
+          orderSize.width() >= k_maxVariableAndOrderSize) {
+        return KDSize(k_maxLayoutSize, k_maxLayoutSize);
+      }
+
+      KDPoint abscissaPosition = PositionOfChild(node, AbscissaIndex);
+      KDSize abscissaSize = Size(node->child(AbscissaIndex));
+      return KDSize(
+          abscissaPosition.x() + abscissaSize.width(),
+          std::max(abscissaPosition.y() + abscissaSize.height(),
+                   positionOfVariableInAssignmentSlot(node, font).y() +
+                       variableSize.height()));
     }
     case LayoutType::Integral: {
       using namespace Integral;
@@ -196,6 +226,34 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
         return KDPoint(0, Baseline(node) - indexSize.height());
       }
     }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      using namespace Derivative;
+      if (childIndex == VariableIndex) {
+        return true /* TODO : m_variableSlot == VariableSlot::Fraction */
+                   ? positionOfVariableInFractionSlot(node, font)
+                   : positionOfVariableInAssignmentSlot(node, font);
+      }
+      if (childIndex == DerivandIndex) {
+        KDCoordinate leftParenthesisPosX =
+            positionOfLeftParenthesis(node, font).x();
+        return KDPoint(leftParenthesisPosX + Parenthesis::ParenthesisWidth,
+                       Baseline(node) - Baseline(node->child(DerivandIndex)));
+      }
+      if (childIndex == OrderIndex) {
+        return true /* TODO : m_orderSlot == OrderSlot::Denominator */
+                   ? positionOfOrderInDenominator(node, font)
+                   : positionOfOrderInNumerator(node, font);
+      }
+      return KDPoint(
+          positionOfRightParenthesis(node, font,
+                                     Size(node->child(DerivandIndex)))
+                  .x() +
+              Parenthesis::ParenthesisWidth + 2 * BarHorizontalMargin +
+              BarWidth + Width(node->child(VariableIndex)) +
+              KDFont::Font(font)->stringSize("=").width(),
+          abscissaBaseline(node, font) - Baseline(node->child(AbscissaIndex)));
+    }
     case LayoutType::Integral: {
       using namespace Integral;
       KDSize lowerBoundSize = Size(node->child(LowerBoundIndex));
@@ -327,6 +385,19 @@ KDCoordinate Render::Baseline(const Tree* node) {
           Baseline(node->child(0)) + NthRoot::RadixLineThickness +
               NthRoot::HeightMargin,
           NthRoot::AdjustedIndexSize(node, font).height());
+    }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      using namespace Derivative;
+      /* The total baseline is the maximum of the baselines of the children.
+       * The two candidates are the fraction: d/dx, and the parenthesis pair
+       * which surrounds the derivand. */
+      KDCoordinate fraction = orderHeightOffset(node, font) +
+                              KDFont::Font(font)->stringSize(dString).height() +
+                              Fraction::LineMargin + Fraction::LineHeight;
+
+      KDCoordinate parenthesis = parenthesisBaseline(node, font);
+      return std::max(parenthesis, fraction);
     }
     case LayoutType::Integral: {
       using namespace Integral;
@@ -621,6 +692,78 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       return;
     }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      using namespace Derivative;
+
+      // d/dx...
+      ctx->drawString(dString,
+                      positionOfDInNumerator(node, style.font).translatedBy(p),
+                      style);
+      ctx->drawString(
+          dString, positionOfDInDenominator(node, style.font).translatedBy(p),
+          style);
+
+      KDRect horizontalBar =
+          KDRect(Escher::Metric::FractionAndConjugateHorizontalMargin,
+                 Baseline(node) - Fraction::LineHeight,
+                 fractionBarWidth(node, style.font), Fraction::LineHeight);
+      ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
+
+      // ...(f)...
+      KDSize derivandSize = Size(node->child(DerivandIndex));
+
+      KDPoint leftParenthesisPosition =
+          positionOfLeftParenthesis(node, style.font);
+      RenderParenthesisWithChildHeight(true, derivandSize.height(), ctx,
+                                       leftParenthesisPosition.translatedBy(p),
+                                       style.glyphColor, style.backgroundColor);
+
+      KDPoint rightParenthesisPosition =
+          positionOfRightParenthesis(node, style.font, derivandSize);
+
+      RenderParenthesisWithChildHeight(false, derivandSize.height(), ctx,
+                                       rightParenthesisPosition.translatedBy(p),
+                                       style.glyphColor, style.backgroundColor);
+
+      // ...|x=
+      KDSize variableSize = Size(node->child(VariableIndex));
+      KDRect verticalBar(
+          rightParenthesisPosition.x() + Parenthesis::ParenthesisWidth +
+              BarHorizontalMargin,
+          0, BarWidth,
+          abscissaBaseline(node, style.font) -
+              Baseline(node->child(VariableIndex)) + variableSize.height());
+      ctx->fillRect(verticalBar.translatedBy(p), style.glyphColor);
+
+      KDPoint variableAssignmentPosition =
+          positionOfVariableInAssignmentSlot(node, style.font);
+      KDPoint equalPosition = variableAssignmentPosition.translatedBy(
+          KDPoint(variableSize.width(),
+                  Baseline(node->child(VariableIndex)) -
+                      KDFont::Font(style.font)->stringSize("=").height() / 2));
+      ctx->drawString("=", equalPosition.translatedBy(p), style);
+
+      // Draw the copy of x
+      KDPoint copyPosition =
+          true /* TODO m_variableSlot == VariableSlot::Fraction */
+              ? variableAssignmentPosition
+              : positionOfVariableInFractionSlot(node, style.font);
+      Draw(node->child(VariableIndex), ctx, copyPosition.translatedBy(p), font,
+           expressionColor, backgroundColor);
+
+      if (node->isNthDerivativeLayout()) {
+        // Draw the copy of the order
+        KDPoint copyPosition =
+            true /* TODO m_orderSlot == OrderSlot::Denominator */
+                ? positionOfOrderInNumerator(node, style.font)
+                : positionOfOrderInDenominator(node, style.font);
+        Draw(node->child(OrderIndex), ctx, copyPosition.translatedBy(p), font,
+             expressionColor, backgroundColor);
+      }
+      return;
+    }
+
     case LayoutType::Integral: {
       using namespace Integral;
       const Tree* integrand = node->child(IntegrandIndex);

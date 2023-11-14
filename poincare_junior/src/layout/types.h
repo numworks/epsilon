@@ -17,6 +17,7 @@ RANGE(Pair, AbsoluteValueLayout, VectorNormLayout)
 
 NODE(CondensedSum, 2)
 NODE(Derivative, 3)
+NODE(NthDerivative, 4)
 NODE(Integral, 4)
 NODE(Product, 4)
 NODE(Sum, 4)

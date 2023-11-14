@@ -291,6 +291,128 @@ static_assert(Parametric::SymbolHeight(KDFont::Size::Large) % 2 != 0 &&
               "sum_layout : SymbolHeight is even");
 }  // namespace Sum
 
+namespace Derivative {
+constexpr static int VariableIndex = 0;
+constexpr static int AbscissaIndex = 1;
+constexpr static int DerivandIndex = 2;
+constexpr static int OrderIndex = 3;
+
+constexpr static KDCoordinate DxHorizontalMargin = 2;
+constexpr static KDCoordinate BarHorizontalMargin = 2;
+constexpr static KDCoordinate BarWidth = 1;
+enum class VariableSlot : bool { Fraction, Assignment };
+
+constexpr static const char* dString = "d";
+
+KDCoordinate orderHeightOffset(const Tree* node, KDFont::Size font) {
+  if (node->isDerivativeLayout()) {
+    return 0;
+  }
+  return Render::Height(node->child(OrderIndex)) - VerticalOffset::IndiceHeight;
+}
+KDCoordinate orderWidth(const Tree* node, KDFont::Size font) {
+  if (node->isDerivativeLayout()) {
+    return 0;
+  }
+  return Render::Width(node->child(OrderIndex));
+}
+
+KDPoint positionOfDInNumerator(const Tree* node, KDFont::Size font) {
+  return KDPoint(
+      (Render::Width(node->child(VariableIndex)) + DxHorizontalMargin) / 2 +
+          Escher::Metric::FractionAndConjugateHorizontalMargin +
+          Escher::Metric::FractionAndConjugateHorizontalOverflow,
+      Render::Baseline(node) -
+          KDFont::Font(font)->stringSize(dString).height() -
+          Fraction::LineMargin - Fraction::LineHeight);
+}
+
+KDPoint positionOfDInDenominator(const Tree* node, KDFont::Size font) {
+  return KDPoint(Escher::Metric::FractionAndConjugateHorizontalMargin +
+                     Escher::Metric::FractionAndConjugateHorizontalOverflow,
+                 Render::Baseline(node) + Fraction::LineMargin +
+                     orderHeightOffset(node, font) +
+                     Render::Height(node->child(VariableIndex)) -
+                     KDFont::Font(font)->stringSize(dString).height());
+}
+
+KDPoint positionOfVariableInFractionSlot(const Tree* node, KDFont::Size font) {
+  KDPoint positionOfD = positionOfDInDenominator(node, font);
+  return KDPoint(
+      positionOfD.x() + KDFont::Font(font)->stringSize(dString).width() +
+          DxHorizontalMargin,
+      positionOfD.y() + KDFont::Font(font)->stringSize(dString).height() -
+          Render::Height(node->child(VariableIndex)));
+}
+
+KDCoordinate fractionBarWidth(const Tree* node, KDFont::Size font) {
+  return 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow +
+         KDFont::Font(font)->stringSize(dString).width() + DxHorizontalMargin +
+         Render::Width(node->child(VariableIndex)) + orderWidth(node, font);
+}
+
+KDCoordinate parenthesesWidth(const Tree* node, KDFont::Size font) {
+  return 2 * Parenthesis::ParenthesisWidth +
+         Render::Width(node->child(DerivandIndex));
+}
+
+KDCoordinate abscissaBaseline(const Tree* node, KDFont::Size font) {
+  KDCoordinate variableHeight = Render::Height(node->child(VariableIndex));
+  KDCoordinate dfdxBottom = std::max(
+      positionOfVariableInFractionSlot(node, font).y() + variableHeight,
+      Render::Baseline(node) + Render::Height(node->child(DerivandIndex)) -
+          Render::Baseline(node->child(DerivandIndex)));
+  return dfdxBottom - variableHeight +
+         Render::Baseline(node->child(VariableIndex));
+}
+
+KDPoint positionOfVariableInAssignmentSlot(const Tree* node,
+                                           KDFont::Size font) {
+  return KDPoint(2 * (Escher::Metric::FractionAndConjugateHorizontalMargin +
+                      BarHorizontalMargin) +
+                     fractionBarWidth(node, font) +
+                     parenthesesWidth(node, font) + BarWidth,
+                 abscissaBaseline(node, font) -
+                     Render::Baseline(node->child(VariableIndex)));
+}
+
+KDCoordinate parenthesisBaseline(const Tree* node, KDFont::Size font) {
+  return Parenthesis::BaselineGivenChildHeightAndBaseline(
+      Render::Height(node->child(DerivandIndex)),
+      Render::Baseline(node->child(DerivandIndex)));
+}
+
+KDPoint positionOfLeftParenthesis(const Tree* node, KDFont::Size font) {
+  return KDPoint(positionOfVariableInFractionSlot(node, font).x() +
+                     Render::Width(node->child(VariableIndex)) +
+                     orderWidth(node, font) +
+                     Escher::Metric::FractionAndConjugateHorizontalMargin +
+                     Escher::Metric::FractionAndConjugateHorizontalOverflow,
+                 Render::Baseline(node) - parenthesisBaseline(node, font));
+}
+
+KDPoint positionOfRightParenthesis(const Tree* node, KDFont::Size font,
+                                   KDSize derivandSize) {
+  return positionOfLeftParenthesis(node, font)
+      .translatedBy(
+          KDPoint(Parenthesis::ParenthesisWidth + derivandSize.width(), 0));
+}
+
+KDPoint positionOfOrderInNumerator(const Tree* node, KDFont::Size font) {
+  KDPoint positionOfD = positionOfDInNumerator(node, font);
+  return KDPoint(
+      positionOfD.x() + KDFont::Font(font)->stringSize(dString).width(),
+      positionOfD.y() - orderHeightOffset(node, font));
+}
+
+KDPoint positionOfOrderInDenominator(const Tree* node, KDFont::Size font) {
+  KDPoint positionOfX = positionOfVariableInFractionSlot(node, font);
+  return KDPoint(positionOfX.x() + Render::Width(node->child(VariableIndex)),
+                 positionOfX.y() - orderHeightOffset(node, font));
+}
+
+}  // namespace Derivative
+
 namespace Integral {
 constexpr static int DifferentialIndex = 0;
 constexpr static int LowerBoundIndex = 1;

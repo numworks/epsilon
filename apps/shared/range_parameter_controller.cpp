@@ -80,6 +80,14 @@ void RangeParameterController::fillRangeCells() {
     RangeCell *cell = (axis == Axis::X) ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
+
+  I18n::Message gridTypeCellSubMessage =
+      m_tempInteractiveRange.gridType() ==
+              GridSelectionController::GridType::Cartesian
+          ? I18n::Message::Cartesian
+          : I18n::Message::Polar;
+
+  m_gridTypeCell.subLabel()->setText(I18n::translate(gridTypeCellSubMessage));
 }
 
 KDCoordinate RangeParameterController::separatorBeforeRow(int row) {

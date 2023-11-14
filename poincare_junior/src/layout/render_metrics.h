@@ -4,14 +4,12 @@
 #include <escher/metric.h>
 #include <kandinsky/coordinate.h>
 
+#include "indices.h"
 #include "render.h"
 
 namespace PoincareJ {
 
 namespace Fraction {
-constexpr static int NumeratorIndex = 0;
-constexpr static int DenominatorIndex = 1;
-
 constexpr static KDCoordinate LineMargin = 2;
 constexpr static KDCoordinate LineHeight = 1;
 constexpr static KDCoordinate HorizontalOverflow =
@@ -201,9 +199,6 @@ constexpr static KDCoordinate OverlineVerticalMargin = 1;
 }  // namespace Conjugate
 
 namespace NthRoot {
-constexpr static int RadicandIndex = 0;
-constexpr static int IndexIndex = 1;
-
 constexpr static KDCoordinate HeightMargin = 2;
 constexpr static KDCoordinate WidthMargin = 2;
 constexpr static KDCoordinate RadixLineThickness = 1;
@@ -226,11 +221,6 @@ constexpr static KDCoordinate SymbolHeight(KDFont::Size font) {
 constexpr static KDCoordinate SymbolWidth(KDFont::Size font) {
   return font == KDFont::Size::Large ? 22 : 16;
 }
-
-constexpr static int VariableIndex = 0;
-constexpr static int LowerBoundIndex = 1;
-constexpr static int UpperBoundIndex = 2;
-constexpr static int ArgumentIndex = 3;
 
 constexpr static KDCoordinate UpperBoundVerticalMargin(KDFont::Size font) {
   return font == KDFont::Size::Large ? 2 : 0;
@@ -287,15 +277,9 @@ static_assert(Parametric::SymbolHeight(KDFont::Size::Large) % 2 != 0 &&
 }  // namespace Sum
 
 namespace Derivative {
-constexpr static int VariableIndex = 0;
-constexpr static int AbscissaIndex = 1;
-constexpr static int DerivandIndex = 2;
-constexpr static int OrderIndex = 3;
-
 constexpr static KDCoordinate DxHorizontalMargin = 2;
 constexpr static KDCoordinate BarHorizontalMargin = 2;
 constexpr static KDCoordinate BarWidth = 1;
-enum class VariableSlot : bool { Fraction, Assignment };
 
 constexpr static const char* dString = "d";
 
@@ -409,10 +393,6 @@ KDPoint positionOfOrderInDenominator(const Tree* node, KDFont::Size font) {
 }  // namespace Derivative
 
 namespace Integral {
-constexpr static int DifferentialIndex = 0;
-constexpr static int LowerBoundIndex = 1;
-constexpr static int UpperBoundIndex = 2;
-constexpr static int IntegrandIndex = 3;
 // clang-format off
 /*
  * Window configuration explained :
@@ -545,9 +525,6 @@ constexpr static KDCoordinate SymbolBaseline = 11;
 constexpr static KDCoordinate SymbolWidth = 12;
 constexpr static KDCoordinate SymbolWidthWithMargins = SymbolWidth + 2 * Margin;
 
-constexpr static int nIndex = 0;
-constexpr static int kIndex = 1;
-
 KDCoordinate AboveSymbol(const Tree* node, KDFont::Size font) {
   return std::max<KDCoordinate>(
       Render::Baseline(node->child(nIndex)),
@@ -671,9 +648,6 @@ KDSize size(const Tree* node, KDFont::Size font) {
 }  // namespace Grid
 
 namespace Binomial {
-constexpr static int nIndex = 0;
-constexpr static int kIndex = 1;
-
 static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
   return Render::Height(node->child(nIndex)) + Grid::EntryMargin +
          Render::Height(node->child(kIndex));
@@ -681,9 +655,6 @@ static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
 }  // namespace Binomial
 
 namespace ListSequence {
-constexpr static int FunctionIndex = 0;
-constexpr static int VariableIndex = 1;
-constexpr static int UpperBoundIndex = 2;
 constexpr static KDCoordinate VariableHorizontalMargin = 1;
 constexpr static KDCoordinate VariableBaselineOffset = 2;
 

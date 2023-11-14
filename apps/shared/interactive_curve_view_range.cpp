@@ -53,13 +53,13 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
 }
 
 void InteractiveCurveViewRange::setXRange(float min, float max) {
-  assert(!isAuto(Axis::X) || m_delegate == nullptr);
+  assert(!m_auto.x || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXRange(min, max, k_maxFloat);
   computeRanges();
 }
 
 void InteractiveCurveViewRange::setYRange(float min, float max) {
-  assert(!isAuto(Axis::Y) || m_delegate == nullptr);
+  assert(!m_auto.y || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYRange(min, max, k_maxFloat);
   setZoomNormalize(isOrthonormal());
 }

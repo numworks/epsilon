@@ -194,7 +194,7 @@ void ListController::resolveEquations() {
         App::app()->displayWarning(I18n::Message::NonLinearSystem);
         return;
       case SystemOfEquations::Error::DisabledInExamMode:
-        App::app()->displayWarning(I18n::Message::DisabledFeatureInExamMode1,
+        App::app()->displayWarning(I18n::Message::DisabledFeature1,
                                    I18n::Message::DisabledFeatureInExamMode2);
         return;
       default: {

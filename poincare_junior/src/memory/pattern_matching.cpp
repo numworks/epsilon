@@ -308,7 +308,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   // Escape case for full matches like A -> cos(A)
   if (pattern->isPlaceholder()) {
     ctx.setNode(Placeholder::NodeToTag(pattern), node, 1, false);
-    node->moveTreeOverTree(Create(structure, ctx));
+    node->moveTreeOverTree(Create(structure, ctx, simplify));
     return true;
   }
 

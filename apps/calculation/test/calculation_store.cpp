@@ -55,7 +55,7 @@ QUIZ_CASE(calculation_store) {
   store.deleteAll();
   /* Checking if the store handles correctly the delete of older calculations
    * when full. */
-  constexpr int minimalSize = ::Calculation::Calculation::k_minimalSize +
+  constexpr int minimalSize = ::Calculation::k_calculationMinimalSize +
                               sizeof(::Calculation::Calculation *);
   constexpr const char *pattern = "123456789+";
   constexpr int patternSize = 10;

@@ -300,11 +300,27 @@ void HistoryController::handleOK() {
 
   assert(m_selectedSubviewType == SubviewType::Ellipsis);
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
+  ExpiringPointer<Calculation> selectedCalculation =
+      calculationAtIndex(selectedRow());
   Expression i, a, e;
-  calculationAtIndex(selectedRow())
-      ->fillExpressionsForAdditionalResults(&i, &e, &a);
+  selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
+
+  /* Temporarly set the complex format and angle unit to the ones used to
+   * compute the output. */
+  Preferences::ComplexFormat currentComplexFormat =
+      Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit currentAngleUnit =
+      Preferences::sharedPreferences->angleUnit();
+  Preferences::sharedPreferences->setComplexFormat(
+      selectedCalculation->complexFormat());
+  Preferences::sharedPreferences->setAngleUnit(
+      selectedCalculation->angleUnit());
+
   m_additionalResultsController.openAdditionalResults(
       selectedCell->additionalResultsType(), i, e, a);
+
+  Preferences::sharedPreferences->setComplexFormat(currentComplexFormat);
+  Preferences::sharedPreferences->setAngleUnit(currentAngleUnit);
 }
 
 }  // namespace Calculation

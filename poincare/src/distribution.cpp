@@ -120,9 +120,9 @@ double Distribution::
     /* We would like to put this as an assertion, but sometimes we do get
      * false result: we replace them with inf to make the problem obvious to
      * the student.
-     * TODO this assert is used to hunt a case where that happens. If it
-     * doesn't, then we can remove this block of code*/
-    assert(false);
+     * EXAMPLE: Fisher law, d1=2, d2=2.2*10^-16, try to find P(X<=a) = 0.25
+     *
+     * TODO: Find a better way to display that no solution could be found. */
     return p > 0.5 ? INFINITY : -INFINITY;
   }
   return result.x();

@@ -1159,7 +1159,7 @@ void RackParser::parseList(EditionReference &leftHandSide,
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   if (!popTokenIfType(Token::Type::RightBrace)) {
-    leftHandSide = parseCommaSeparatedList();
+    leftHandSide = parseCommaSeparatedList(true);
     if (!popTokenIfType(Token::Type::RightBrace)) {
       // Right brace missing.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);

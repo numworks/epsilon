@@ -150,7 +150,7 @@ class IntegerHandler final {
             m_sign == NonStrictSign::Positive);
   };
   bool isZero() const;
-  bool isEven() const { return ((digit(0) & 1) == 0); }
+  bool isEven() const { return isZero() || ((digit(0) & 1) == 0); }
 
   template <typename T>
   bool isSignedType() const;

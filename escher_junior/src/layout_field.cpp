@@ -52,6 +52,13 @@ void LayoutField::ContentView::clearLayout() {
   m_cursor.setLayout(node(), OMG::Direction::Left());
 }
 
+void LayoutField::didBecomeFirstResponder() {
+  // m_inputViewMemoizedHeight = inputViewHeight();
+  TextCursorView::WithBlinkingCursor<
+      ScrollableView<ScrollView::NoDecorator>>::didBecomeFirstResponder();
+  scrollToCursor();
+}
+
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize evSize = m_layoutView.minimalSizeForOptimalDisplay();
   return KDSize(evSize.width() + LayoutCursor::k_cursorWidth, evSize.height());
@@ -108,9 +115,10 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
 }
 
 View *LayoutField::ContentView::subviewAtIndex(int index) {
-  assert(0 <= index && index < numberOfSubviews());
-  View *m_views[] = {&m_layoutView, &m_cursorView};
-  return m_views[index];
+  if (index == 0) {
+    return &m_layoutView;
+  }
+  return TextCursorView::CursorFieldView::subviewAtIndex(index);
 }
 
 void LayoutField::ContentView::layoutSubviews(bool force) {
@@ -118,7 +126,7 @@ void LayoutField::ContentView::layoutSubviews(bool force) {
   layoutCursorSubview(force);
 }
 
-void LayoutField::ContentView::layoutCursorSubview(bool force) {
+KDRect LayoutField::ContentView::cursorRect() const {
   KDPoint cursorTopLeftPosition = m_layoutView.drawingOrigin().translatedBy(
       m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
@@ -126,16 +134,10 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
      * scrolling to the beginning when switching to the history. This way,
      * when calling scrollToCursor after layoutCursorSubview, we don't lose
      * sight of the cursor. */
-    expressionView()->setChildFrame(
-        &m_cursorView, KDRect(cursorTopLeftPosition, KDSizeZero), force);
-    return;
+    return KDRect(cursorTopLeftPosition, KDSizeZero);
   }
-  // m_cursorView.willMove();
-  expressionView()->setChildFrame(
-      &m_cursorView,
-      KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
-             m_cursor.cursorHeight(font())),
-      force);
+  return KDRect(cursorTopLeftPosition, TextCursorView::k_width,
+                m_cursor.cursorHeight(font()));
 }
 
 void LayoutField::setEditing(bool isEditing) {

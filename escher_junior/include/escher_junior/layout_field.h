@@ -66,6 +66,7 @@ class LayoutField : public Escher::EditableField {
   bool handleStoreEvent() override;
   // TODO: factorize with Escher::TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event);
+  void didBecomeFirstResponder() override;
 
   PoincareJ::LayoutBufferCursor* cursor() { return m_contentView.cursor(); }
   const LayoutViewWithCursor* layoutView() const {
@@ -102,9 +103,8 @@ class LayoutField : public Escher::EditableField {
     void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
     void setCursor(PoincareJ::LayoutBufferCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    KDRect cursorRect() const override {
-      return relativeChildFrame(&m_cursorView);
-    }
+    KDRect cursorRect() const override;
+
     PoincareJ::LayoutBufferCursor* cursor() { return &m_cursor; }
     const LayoutViewWithCursor* expressionView() const { return &m_layoutView; }
     LayoutViewWithCursor* expressionView() { return &m_layoutView; }
@@ -114,7 +114,6 @@ class LayoutField : public Escher::EditableField {
     // Selection
     void copySelection(bool intoStoreMenu);
     KDFont::Size font() const { return m_layoutView.font(); }
-    Escher::TextCursorView* textCursorView() { return &m_cursorView; }
     PoincareJ::Tree* node() {
       return PoincareJ::Tree::FromBlocks(m_layoutBuffer.blocks());
     }
@@ -123,14 +122,12 @@ class LayoutField : public Escher::EditableField {
     int numberOfSubviews() const override { return 2; }
     Escher::View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    void layoutCursorSubview(bool force);
 
     // Buffer where layout being edited is stored. TODO : refine size
     PoincareJ::BlockBuffer<PoincareJ::LayoutCursor::k_layoutBufferSize>
         m_layoutBuffer;
     PoincareJ::LayoutBufferCursor m_cursor;
     LayoutViewWithCursor m_layoutView;
-    Escher::TextCursorView m_cursorView;
     bool m_isEditing;
   };
   ContentView m_contentView;

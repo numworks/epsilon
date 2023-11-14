@@ -153,17 +153,8 @@ KDSize Render::Size(const Tree* node) {
     }
     case LayoutType::VerticalOffset: {
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
-      assert(false);
-#if 0
-      KDSize indexSize = Size(node->child(0));
-      const Tree* base = VerticalOffsetLayout::BaseLayout(node);
-      KDCoordinate baseHeight =
-          base ? Height(base) : KDFont::GlyphHeight(font);
-
-      return KDSize(
-          indexSize.width(),
-          baseHeight - VerticalOffset::IndiceHeight + indexSize.height());
-#endif
+      // VerticalOffset have no size per-se, they are handled by their parent
+      return Size(node->child(0));
     }
     case LayoutType::ListSequence: {
       using namespace ListSequence;
@@ -349,16 +340,14 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
 
     case LayoutType::Rack: {
       KDCoordinate x = 0;
-      KDCoordinate childBaseline = 0;
       for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
         if (index == childIndex) {
-          childBaseline = Baseline(child);
           break;
         }
-        KDSize childSize = Size(child);
-        x += childSize.width();
+        x += Width(child);
       }
-      KDCoordinate y = Baseline(node) - childBaseline;
+      KDCoordinate y =
+          Baseline(node) - RackLayout::ChildBaseline(node, childIndex);
       return KDPoint(x, y);
     }
     case LayoutType::Fraction: {
@@ -518,14 +507,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
     }
     case LayoutType::VerticalOffset:
       assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
-      assert(false);
-#if 0
-      const Tree* base = VerticalOffsetLayout::BaseLayout(node);
-      KDCoordinate baseBaseline =
-          base ? Baseline(base) : KDFont::GlyphHeight(font) / 2;
-      KDCoordinate indexHeight = Height(node->child(0));
-      return indexHeight - VerticalOffset::IndiceHeight + baseBaseline;
-#endif
+      return 0;
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:
       return KDFont::GlyphHeight(font) / 2;
@@ -1074,8 +1056,8 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return RackLayout::RenderNode(node, ctx, p, expressionColor,
                                     backgroundColor);
     }
-    case LayoutType::VerticalOffset: {
-    }
+    case LayoutType::VerticalOffset:
+      return;
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute: {
       using namespace PtCombinatorics;

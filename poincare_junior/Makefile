@@ -56,7 +56,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/parsing/tokenizer.cpp \
   layout/rack_layout.cpp \
   layout/render.cpp \
-  layout/vertical_offset_layout.cpp \
   layout.cpp \
   memory/cache_pool.cpp \
   memory/edition_pool.cpp \

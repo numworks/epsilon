@@ -6,6 +6,10 @@
 
 #include "empty_rectangle.h"
 
+namespace VerticalOffset {
+constexpr static KDCoordinate IndiceHeight = 10;
+}
+
 namespace PoincareJ {
 
 KDFont::Size RackLayout::font = KDFont::Size::Large;
@@ -16,6 +20,16 @@ KDSize RackLayout::Size(const Tree* node) {
 
 KDCoordinate RackLayout::Baseline(const Tree* node) {
   return BaselineBetweenIndexes(node, 0, node->numberOfChildren());
+}
+
+KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
+  const Tree* childI = node->child(i);
+  if (!childI->isVerticalOffsetLayout()) {
+    return Render::Baseline(childI);
+  }
+  KDCoordinate baseBaseline = i > 0 ? Render::Baseline(node->child(i - 1))
+                                    : KDFont::GlyphHeight(font) / 2;
+  return baseBaseline + Render::Height(childI) - VerticalOffset::IndiceHeight;
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
@@ -32,10 +46,16 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    const Tree* childi = node->child(i);
-    KDSize childSize = Render::Size(childi);
+    const Tree* childI = node->child(i);
+    KDSize childSize = Render::Size(childI);
+    if (childI->isVerticalOffsetLayout()) {
+      KDCoordinate baseHeight = i > 0 ? Render::Height(node->child(i - 1))
+                                      : KDFont::GlyphHeight(font);
+      childSize =
+          childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
+    }
     totalWidth += childSize.width();
-    KDCoordinate childBaseline = Render::Baseline(childi);
+    KDCoordinate childBaseline = ChildBaseline(node, i);
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, childSize.height() - childBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);
@@ -52,7 +72,8 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    result = std::max(result, Render::Baseline(node->child(i)));
+    // TODO vertical
+    result = std::max(result, ChildBaseline(node, i));
   }
   return result;
 }

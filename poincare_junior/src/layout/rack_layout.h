@@ -10,6 +10,7 @@ class RackLayout {
  public:
   static KDSize Size(const Tree* node);
   static KDCoordinate Baseline(const Tree* node);
+  static KDCoordinate ChildBaseline(const Tree* node, int i);
   static KDSize SizeBetweenIndexes(const Tree* node, int leftPosition,
                                    int rightPosition);
   static KDCoordinate BaselineBetweenIndexes(const Tree* node, int leftPosition,

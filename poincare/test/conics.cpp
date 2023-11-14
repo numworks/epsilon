@@ -5,8 +5,10 @@
 #include "helper.h"
 
 using namespace Poincare;
+using Shape = Conic::Shape;
+using CoordinateType = Conic::CoordinateType;
 
-CartesianConic getConicFromExpression(
+CartesianConic buildCartesianConic(
     const char* expression,
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
@@ -14,9 +16,44 @@ CartesianConic getConicFromExpression(
   return CartesianConic(e, &globalContext, complexFormat);
 }
 
-void quiz_assert_undefined(const char* expression) {
-  CartesianConic conic = getConicFromExpression(expression);
-  quiz_assert(conic.conicType().shape == Conic::Shape::Undefined);
+PolarConic buildPolarConic(
+    const char* expression,
+    Preferences::ComplexFormat complexFormat = Cartesian) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  return PolarConic(e, &globalContext, complexFormat);
+}
+
+ParametricConic buildParametricConic(
+    const char* expression,
+    Preferences::ComplexFormat complexFormat = Cartesian) {
+  Shared::GlobalContext globalContext;
+  // Prevent t from being interpreted as ton
+  Poincare::VariableContext tContext("t", &globalContext);
+  tContext.setApproximationForVariable<float>(0.f);
+  Expression e = parse_expression(expression, &tContext, false);
+  return ParametricConic(e, &globalContext, complexFormat);
+}
+
+void quiz_assert_shape(const char* expression, CoordinateType type,
+                       Shape expectedShape) {
+  Shape observedShape = Shape::Unknown;
+  switch (type) {
+    case CoordinateType::Cartesian:
+      observedShape = buildCartesianConic(expression).conicType().shape;
+      break;
+    case CoordinateType::Polar:
+      observedShape = buildPolarConic(expression).conicType().shape;
+      break;
+    case CoordinateType::Parametric:
+      observedShape = buildParametricConic(expression).conicType().shape;
+      break;
+  }
+  quiz_assert(expectedShape == observedShape);
+}
+
+void quiz_assert_undefined_cartesian(const char* expression) {
+  quiz_assert_shape(expression, CoordinateType::Cartesian, Shape::Undefined);
 }
 
 void quiz_assert_conic_parameter_is(double observed, double expected) {
@@ -26,7 +63,7 @@ void quiz_assert_conic_parameter_is(double observed, double expected) {
 
 void quiz_assert_circle(const char* expression, double radius, double cx = 0.0,
                         double cy = 0.0) {
-  CartesianConic conic = getConicFromExpression(expression);
+  CartesianConic conic = buildCartesianConic(expression);
   quiz_assert(conic.conicType().shape == Conic::Shape::Circle);
   double x, y;
   conic.getCenter(&x, &y);
@@ -40,7 +77,7 @@ void quiz_assert_ellipse(const char* expression, double eccentricity,
                          double linearEccentricity, double semiMajorAxis,
                          double semiMinorAxis, double cx = 0.0,
                          double cy = 0.0) {
-  CartesianConic conic = getConicFromExpression(expression);
+  CartesianConic conic = buildCartesianConic(expression);
   quiz_assert(conic.conicType().shape == Conic::Shape::Ellipse);
   double x, y;
   conic.getCenter(&x, &y);
@@ -57,7 +94,7 @@ void quiz_assert_hyperbola(const char* expression, double eccentricity,
                            double linearEccentricity, double semiMajorAxis,
                            double semiMinorAxis, double cx = 0.0,
                            double cy = 0.0) {
-  CartesianConic conic = getConicFromExpression(expression);
+  CartesianConic conic = buildCartesianConic(expression);
   quiz_assert(conic.conicType().shape == Conic::Shape::Hyperbola);
   double x, y;
   conic.getCenter(&x, &y);
@@ -72,7 +109,7 @@ void quiz_assert_hyperbola(const char* expression, double eccentricity,
 
 void quiz_assert_parabola(const char* expression, double parameter,
                           double sx = 0.0, double sy = 0.0) {
-  CartesianConic conic = getConicFromExpression(expression);
+  CartesianConic conic = buildCartesianConic(expression);
   quiz_assert(conic.conicType().shape == Conic::Shape::Parabola);
   double x, y;
   conic.getSummit(&x, &y);
@@ -82,35 +119,35 @@ void quiz_assert_parabola(const char* expression, double parameter,
   quiz_assert_conic_parameter_is(conic.getParameter(), parameter);
 }
 
-QUIZ_CASE(poincare_conics_canonic) {
+QUIZ_CASE(poincare_conics_cartesian_canonic) {
   quiz_assert_circle("y^2+x^2-1", 1.0);
   quiz_assert_ellipse("4*y^2+x^2-1", 0.866025, 0.866025, 1.0, 0.5);
   quiz_assert_hyperbola("y^2-x^2-1", 1.41421, 1.41421, 1.0, 1.0);
   quiz_assert_parabola("y^2-4x", 2.0);
 }
 
-QUIZ_CASE(poincare_conics_invalid) {
-  quiz_assert_undefined("3*y");
-  quiz_assert_undefined("3*y+x");
-  quiz_assert_undefined("y+x+1");
-  quiz_assert_undefined("y^2+y+1");
-  quiz_assert_undefined("y^2+x^2-ln(x)");
-  quiz_assert_undefined("y^3+y^2+x^2");
-  quiz_assert_undefined("x*y^2+x^2");
-  quiz_assert_undefined("y^2+x^2+1");
-  quiz_assert_undefined("y^2+x^2+x*y+x+y+1");
-  quiz_assert_undefined("y^2+1");
-  quiz_assert_undefined("y^2-x^2");
-  quiz_assert_undefined("y^2+x^2");
-  quiz_assert_undefined("(y-x-1)(y-x+1)");
-  quiz_assert_undefined("y*(y-x)");
+QUIZ_CASE(poincare_conics_cartesian_invalid) {
+  quiz_assert_undefined_cartesian("3*y");
+  quiz_assert_undefined_cartesian("3*y+x");
+  quiz_assert_undefined_cartesian("y+x+1");
+  quiz_assert_undefined_cartesian("y^2+y+1");
+  quiz_assert_undefined_cartesian("y^2+x^2-ln(x)");
+  quiz_assert_undefined_cartesian("y^3+y^2+x^2");
+  quiz_assert_undefined_cartesian("x*y^2+x^2");
+  quiz_assert_undefined_cartesian("y^2+x^2+1");
+  quiz_assert_undefined_cartesian("y^2+x^2+x*y+x+y+1");
+  quiz_assert_undefined_cartesian("y^2+1");
+  quiz_assert_undefined_cartesian("y^2-x^2");
+  quiz_assert_undefined_cartesian("y^2+x^2");
+  quiz_assert_undefined_cartesian("(y-x-1)(y-x+1)");
+  quiz_assert_undefined_cartesian("y*(y-x)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a").destroy();
-  quiz_assert_undefined("y^2-x^2+a");
-  quiz_assert_undefined("x^2+y^2+x*y+x+y-5*10^70");
-  quiz_assert_undefined("x^2+y^2+2*x*y+x+y");
+  quiz_assert_undefined_cartesian("y^2-x^2+a");
+  quiz_assert_undefined_cartesian("x^2+y^2+x*y+x+y-5*10^70");
+  quiz_assert_undefined_cartesian("x^2+y^2+2*x*y+x+y");
 }
 
-QUIZ_CASE(poincare_conics_general) {
+QUIZ_CASE(poincare_conics_cartesian_general) {
   quiz_assert_circle("x^2+y^2-x+y", 0.707107, 0.5, -0.5);  // 1/sqrt(2)
   quiz_assert_ellipse("x^2+y^2+x*y+x+y", 0.816497, 0.816497 * 0.816497,
                       0.816497, 0.471405, -0.333333, -0.333333);
@@ -143,7 +180,7 @@ QUIZ_CASE(poincare_conics_general) {
 void quiz_assert_same_circle(const char* canonicForm,
                              const char* offCenteredForm, double cx,
                              double cy) {
-  CartesianConic conic = getConicFromExpression(canonicForm);
+  CartesianConic conic = buildCartesianConic(canonicForm);
   quiz_assert(conic.conicType().shape == Conic::Shape::Circle);
   quiz_assert_circle(offCenteredForm, conic.getRadius(), cx, cy);
 }
@@ -151,7 +188,7 @@ void quiz_assert_same_circle(const char* canonicForm,
 void quiz_assert_same_ellipse(const char* canonicForm,
                               const char* offCenteredForm, double cx,
                               double cy) {
-  CartesianConic conic = getConicFromExpression(canonicForm);
+  CartesianConic conic = buildCartesianConic(canonicForm);
   quiz_assert(conic.conicType().shape == Conic::Shape::Ellipse);
   quiz_assert_ellipse(offCenteredForm, conic.getEccentricity(),
                       conic.getLinearEccentricity(), conic.getSemiMajorAxis(),
@@ -161,7 +198,7 @@ void quiz_assert_same_ellipse(const char* canonicForm,
 void quiz_assert_same_hyperbola(const char* canonicForm,
                                 const char* offCenteredForm, double cx,
                                 double cy) {
-  CartesianConic conic = getConicFromExpression(canonicForm);
+  CartesianConic conic = buildCartesianConic(canonicForm);
   quiz_assert(conic.conicType().shape == Conic::Shape::Hyperbola);
   quiz_assert_hyperbola(offCenteredForm, conic.getEccentricity(),
                         conic.getLinearEccentricity(), conic.getSemiMajorAxis(),
@@ -171,12 +208,12 @@ void quiz_assert_same_hyperbola(const char* canonicForm,
 void quiz_assert_same_parabola(const char* canonicForm,
                                const char* offCenteredForm, double cx,
                                double cy) {
-  CartesianConic conic = getConicFromExpression(canonicForm);
+  CartesianConic conic = buildCartesianConic(canonicForm);
   quiz_assert(conic.conicType().shape == Conic::Shape::Parabola);
   quiz_assert_parabola(offCenteredForm, conic.getParameter(), cx, cy);
 }
 
-QUIZ_CASE(poincare_conics_reduction) {
+QUIZ_CASE(poincare_conics_cartesian_reduction) {
   /* Check that off-centered (and rotated) conics have the same properties as
    * their canonic counter-parts. */
   const char* canonicForm;
@@ -201,4 +238,61 @@ QUIZ_CASE(poincare_conics_reduction) {
       "((cos(40)*(x-4)+sin(40)*(y+4))^2 - "
       "π*(-sin(40)*(x-4)+cos(40)*(y+4)))*root(2,3)";
   quiz_assert_same_parabola(canonicForm, offCenteredForm, 4.0, -4.0);
+}
+
+void quiz_assert_polar_shape(const char* expression, Shape expectedShape) {
+  quiz_assert_shape(expression, CoordinateType::Polar, expectedShape);
+}
+
+QUIZ_CASE(poincare_conics_polar_shape) {
+  quiz_assert_polar_shape("3+π", Shape::Circle);
+  quiz_assert_polar_shape("θ", Shape::Undefined);
+  quiz_assert_polar_shape("ln(θ)", Shape::Undefined);
+
+  quiz_assert_polar_shape("-5cos(θ)", Shape::Circle);
+  quiz_assert_polar_shape("4.1cos(θ+2)", Shape::Circle);
+  quiz_assert_polar_shape("cos(3θ)", Shape::Undefined);
+  /* Not implemented:
+   * quiz_assert_polar_shape("-5cos(θ) + 2sin(θ)", Shape::Circle);
+   * quiz_assert_polar_shape("(π+2)cos(θ)", Shape::Circle);
+   * quiz_assert_polar_shape("3/(7-(π+3)cos(θ))", Shape::Ellipse);
+   */
+
+  quiz_assert_polar_shape("3/(1-cos(2θ))", Shape::Undefined);
+  quiz_assert_polar_shape("3/(7-6cos(θ))", Shape::Ellipse);
+  quiz_assert_polar_shape("3/(1-cos(θ))", Shape::Parabola);
+  quiz_assert_polar_shape("3/(1+12.2cos(θ))", Shape::Hyperbola);
+}
+
+void quiz_assert_parametric_shape(const char* expression, Shape expectedShape) {
+  quiz_assert_shape(expression, CoordinateType::Parametric, expectedShape);
+}
+
+QUIZ_CASE(poincare_conics_parametric_shape) {
+  quiz_assert_parametric_shape("[[t] [t]]", Shape::Undefined);
+  quiz_assert_parametric_shape("[[cos(t)] [t]]", Shape::Undefined);
+  quiz_assert_parametric_shape("[[4t^2-2t+3] [-t+1]]", Shape::Parabola);
+  quiz_assert_parametric_shape("[[0.2ln(t)] [-8ln(t)^2]]", Shape::Parabola);
+  /* Not implemented:
+   * quiz_assert_parametric_shape("[[0.2ln(t)] [-(π+2)ln(t)^2]]",
+   Shape::Parabola);
+   * quiz_assert_parametric_shape("[[0.2ln(t)+3] [-(π+2)ln(t)^2+5]]",
+                                  Shape::Parabola); */
+
+  quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(-t+3)+0.1]]",
+                               Shape::Circle);
+  quiz_assert_parametric_shape("[[2sin(-t+3)+π] [2cos(-t+3)+0.1]]",
+                               Shape::Circle);
+  quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(-t+2)+0.1]]",
+                               Shape::Ellipse);
+  quiz_assert_parametric_shape("[[3cos(-t+3)+π] [2sin(-t+2)+0.1]]",
+                               Shape::Ellipse);
+  /* Not implemented:
+  quiz_assert_parametric_shape("[[(2+π)cos(-t+3)+π] [(2+π)sin(-t+2)+0.1]]",
+                               Shape::Ellipse); */
+  quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(5t+2)+0.1]]",
+                               Shape::Undefined);
+  /* Not implemented:
+   * quiz_assert_parametric_shape("[A*sec(B*t+C)+D , G*tan(B*t+E)+F]",
+                                  Shape::Hyperbola); */
 }

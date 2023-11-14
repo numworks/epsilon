@@ -497,5 +497,13 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
       "asin({-(√(6)+√(2))/4, -(√(6)-√(2))/4, (√(6)-√(2))/4, (√(6)+√(2))/4})",
       "{-5π/12,-π/12,π/12,5π/12}");
 
+  // Other angle units :
+  simplifies_to("cos({acos(x), asin(x), atan(x)})",
+                "{x,√(-x^(2)+1),√(-x^(2)/√(x^(2)+1)^(2)+1)}",
+                {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
+                "{-90,-60,-45,-30,0,30,45,60,90}",
+                {.m_angleUnit = AngleUnit::Degree});
+
 #endif
 }

@@ -208,6 +208,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
+  assert(angleUnit == PoincareJ::AngleUnit::Radian || !ref->isATrig());
   if (ref->isTrig() && angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::CreateAndSimplify(

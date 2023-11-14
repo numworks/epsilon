@@ -46,6 +46,12 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
+  if (ref->isOfType(
+          {BlockType::ArcSine, BlockType::ArcCosine, BlockType::ArcTangent}) &&
+      angleUnit != PoincareJ::AngleUnit::Radian) {
+    // TODO: Handle inverse trigonometric angle conversions.
+    return changed;
+  }
   if (ref->isOfType({BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);

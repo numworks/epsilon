@@ -252,14 +252,14 @@ QUIZ_CASE(poincare_conics_polar_shape) {
   quiz_assert_polar_shape("-5cos(θ)", Shape::Circle);
   quiz_assert_polar_shape("4.1cos(θ+2)", Shape::Circle);
   quiz_assert_polar_shape("cos(3θ)", Shape::Undefined);
+  quiz_assert_polar_shape("(π+2)cos(θ)", Shape::Circle);
   /* Not implemented:
    * quiz_assert_polar_shape("-5cos(θ) + 2sin(θ)", Shape::Circle);
-   * quiz_assert_polar_shape("(π+2)cos(θ)", Shape::Circle);
-   * quiz_assert_polar_shape("3/(7-(π+3)cos(θ))", Shape::Ellipse);
    */
 
   quiz_assert_polar_shape("3/(1-cos(2θ))", Shape::Undefined);
   quiz_assert_polar_shape("3/(7-6cos(θ))", Shape::Ellipse);
+  quiz_assert_polar_shape("3/(7-(π+3)cos(θ))", Shape::Ellipse);
   quiz_assert_polar_shape("3/(1-cos(θ))", Shape::Parabola);
   quiz_assert_polar_shape("3/(1+12.2cos(θ))", Shape::Hyperbola);
 }
@@ -277,7 +277,7 @@ QUIZ_CASE(poincare_conics_parametric_shape) {
    * quiz_assert_parametric_shape("[[0.2ln(t)] [-(π+2)ln(t)^2]]",
    Shape::Parabola);
    * quiz_assert_parametric_shape("[[0.2ln(t)+3] [-(π+2)ln(t)^2+5]]",
-                                  Shape::Parabola); */
+detect) Shape::Parabola); */
 
   quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(-t+3)+0.1]]",
                                Shape::Circle);
@@ -287,9 +287,8 @@ QUIZ_CASE(poincare_conics_parametric_shape) {
                                Shape::Ellipse);
   quiz_assert_parametric_shape("[[3cos(-t+3)+π] [2sin(-t+2)+0.1]]",
                                Shape::Ellipse);
-  /* Not implemented:
   quiz_assert_parametric_shape("[[(2+π)cos(-t+3)+π] [(2+π)sin(-t+2)+0.1]]",
-                               Shape::Ellipse); */
+                               Shape::Ellipse);
   quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(5t+2)+0.1]]",
                                Shape::Undefined);
   /* Not implemented:

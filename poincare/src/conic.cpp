@@ -445,7 +445,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
   }
 
   /* Detect the pattern r = cos/sin(theta)
-   * TODO: Detect r=cos(theta)+2sin(theta), and r=(π+1)cos(theta) */
+   * TODO: Detect r=cos(theta)+2sin(theta) */
   double coefBeforeTheta;
   if (Trigonometry::DetectLinearPatternOfCosOrSin(
           reducedExpression, reductionContext, theta, false, nullptr,

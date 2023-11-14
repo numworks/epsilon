@@ -247,11 +247,12 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         // asin(√3/2) = π/3
         PatternMatching::MatchReplaceAndSimplify(
             u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 1_e),
-            KMult(π_e, KPow(3_e, -1_e)))
+            KMult(π_e, KPow(3_e, -1_e))) ||
         // TODO: Add (√6-√2)/4, (√6+√2)/4 and their opposites.
-        ;
+        changed;
   }
-  if (changed && argIsOpposed) {
+  if (argIsOpposed) {
+    assert(changed);
     // asin(-x) = -asin(x) and acos(-x) = π - acos(x)
     PatternMatching::MatchReplaceAndSimplify(
         u, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));

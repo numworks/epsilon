@@ -61,6 +61,7 @@ class LayoutCursor {
   virtual Tree* cursorNode() const = 0;
   void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
+  void setPosition(int position) { m_position = position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
   LayoutSelection selection() const {
     return isSelecting()

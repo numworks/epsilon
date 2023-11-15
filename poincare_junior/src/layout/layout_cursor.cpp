@@ -683,10 +683,9 @@ void LayoutCursor::beautifyLeft(Context *context) {
 /* Private */
 
 void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
-  int indexInParent;
-  assert(l->isRackLayout());
-  Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
-  if (!Layout::IsHorizontal(l) && parent && Layout::IsHorizontal(parent)) {
+  if (!l->isRackLayout()) {
+    int indexInParent;
+    Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
     setCursorNode(parent);
     m_position = indexInParent + (sideOfLayout.isRight());
     return;
@@ -880,41 +879,35 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
   return moved;
 }
 
-#if 0
-static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font,
-                                     LayoutCursor *result) {
+static void ScoreCursorInDescendants(KDPoint p, Tree *rack, KDFont::Size font,
+                                     LayoutBufferCursor *result) {
   KDCoordinate currentDistance =
       p.squareDistanceTo(result->middleLeftPoint(font));
-  /* Put a cursor left and right of l.
-   * If l.parent is an HorizontalLayout, just put it left since the right
-   * of one child is the left of another one, except if l is the last child.
-   * */
-  Layout parent = l.parent();
-  bool checkOnlyLeft = !parent.isUninitialized() && parent.isHorizontal() &&
-                       parent.indexOfChild(l) < parent.numberOfChildren() - 1;
-  int numberOfDirectionsToCheck = 1 + !checkOnlyLeft;
-  for (int i = 0; i < numberOfDirectionsToCheck; i++) {
-    LayoutCursor tempCursor = LayoutCursor(
-        l, i == 0 ? OMG::Direction::Left() : OMG::Direction::Right());
-    if (currentDistance >
-        p.squareDistanceTo(tempCursor.middleLeftPoint(font))) {
+  LayoutBufferCursor tempCursor(result->layoutBuffer(), rack);
+  for (int i = 0; i <= rack->numberOfChildren(); i++) {
+    tempCursor.setPosition(i);
+    KDCoordinate distance =
+        p.squareDistanceTo(tempCursor.middleLeftPoint(font));
+    if (currentDistance > distance) {
       *result = tempCursor;
+      currentDistance = distance;
     }
   }
-  int nChildren = l.numberOfChildren();
-  for (int i = 0; i < nChildren; i++) {
-    ScoreCursorInDescendants(p, l.child(i), result);
+  for (Tree *l : rack->children()) {
+    for (Tree *r : l->children()) {
+      ScoreCursorInDescendants(p, r, font, result);
+    }
   }
 }
 
-static LayoutCursor ClosestCursorInDescendantsOfLayout(
-    LayoutCursor currentCursor, Layout l, KDFont::Size font) {
-  LayoutCursor result = LayoutCursor(l, OMG::Direction::Left());
-  ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), l,
+static LayoutBufferCursor ClosestCursorInDescendantsOfRack(
+    LayoutBufferCursor currentCursor, Tree *rack, KDFont::Size font) {
+  LayoutBufferCursor result = LayoutBufferCursor(currentCursor.layoutBuffer(),
+                                                 rack, OMG::Direction::Left());
+  ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), rack, font,
                            &result);
   return result;
 }
-#endif
 
 bool LayoutCursor::verticalMoveWithoutSelection(
     OMG::VerticalDirection direction, bool *shouldRedrawLayout) {
@@ -947,37 +940,37 @@ bool LayoutCursor::verticalMoveWithoutSelection(
 
   /* Step 2:
    * Ask ancestor if cursor can move vertically. */
-  Tree *currentChild = cursorNode();
+  Tree *currentRack = cursorNode();
   int childIndex;
-  Tree *p = rootNode()->parentOfDescendant(currentChild, &childIndex);
+  Tree *parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
   PositionInLayout currentPosition =
       m_position == leftMostPosition()
           ? PositionInLayout::Left
           : (m_position == rightmostPosition() ? PositionInLayout::Right
                                                : PositionInLayout::Middle);
-  while (p) {
+  while (parentLayout) {
     int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
-        p, direction, childIndex, currentPosition, shouldRedrawLayout);
+        parentLayout, direction, childIndex, currentPosition,
+        shouldRedrawLayout);
     if (nextIndex != k_cantMoveIndex) {
       if (nextIndex == k_outsideIndex) {
         assert(currentPosition != PositionInLayout::Middle);
-        setLayout(p, currentPosition == PositionInLayout::Left
-                         ? OMG::Direction::Left()
-                         : OMG::Direction::Right());
+        setLayout(parentLayout, currentPosition == PositionInLayout::Left
+                                    ? OMG::Direction::Left()
+                                    : OMG::Direction::Right());
       } else {
-        assert(!p->isRackLayout());
+        assert(!parentLayout->isRackLayout());
         // We assume the new cursor is the same whatever the font
-#if 0
-        LayoutBufferCursor newCursor = ClosestCursorInDescendantsOfLayout(
-            *this, p->child(nextIndex), KDFont::Size::Large);
+        LayoutBufferCursor newCursor = ClosestCursorInDescendantsOfRack(
+            *static_cast<LayoutBufferCursor *>(this),
+            parentLayout->child(nextIndex), KDFont::Size::Large);
         setCursorNode(newCursor.cursorNode());
         m_position = newCursor.position();
-#endif
       }
       return true;
     }
-    currentChild = p;
-    p = rootNode()->parentOfDescendant(p, &childIndex);
+    currentRack = rootNode()->parentOfDescendant(parentLayout);
+    parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
     currentPosition = PositionInLayout::Middle;
   }
   return false;

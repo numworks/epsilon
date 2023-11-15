@@ -176,6 +176,192 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
   }
 }
 
+int CursorMotion::IndexAfterVerticalCursorMove(
+    const Tree* node, OMG::VerticalDirection direction, int currentIndex,
+    PositionInLayout positionAtCurrentIndex, bool* shouldRedraw) {
+  switch (node->layoutType()) {
+    case LayoutType::Binomial: {
+      using namespace Binomial;
+      if (currentIndex == kIndex && direction.isUp()) {
+        return nIndex;
+      }
+      if (currentIndex == nIndex && direction.isDown()) {
+        return kIndex;
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::Fraction:
+      switch (currentIndex) {
+        using namespace Fraction;
+        case k_outsideIndex:
+          return direction.isUp() ? NumeratorIndex : DenominatorIndex;
+        case NumeratorIndex:
+          return direction.isUp() ? k_cantMoveIndex : DenominatorIndex;
+        default:
+          assert(currentIndex == DenominatorIndex);
+          return direction.isUp() ? NumeratorIndex : k_cantMoveIndex;
+      }
+    case LayoutType::Matrix:
+    case LayoutType::Piecewise: {
+      using namespace Grid;
+      if (currentIndex == k_outsideIndex) {
+        return k_cantMoveIndex;
+      }
+      if (direction.isUp() && currentIndex >= NumberOfColumns(node)) {
+        return currentIndex - NumberOfColumns(node);
+      }
+      if (direction.isDown() &&
+          currentIndex < node->numberOfChildren() - NumberOfColumns(node)) {
+        return currentIndex + NumberOfColumns(node);
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      using namespace Derivative;
+      if (node->isDerivative()) {
+        if (direction.isDown() && currentIndex == DerivandIndex &&
+            positionAtCurrentIndex == PositionInLayout::Left) {
+          // setVariableSlot(VariableSlot::Fraction, shouldRedraw);
+          return VariableIndex;
+        }
+        if (direction.isUp() && currentIndex == VariableIndex && true
+            /*m_variableSlot == VariableSlot::Fraction*/) {
+          return DerivandIndex;
+        }
+      } else {
+        if (direction.isUp() && currentIndex == VariableIndex && true
+            /*m_variableSlot == VariableSlot::Fraction*/) {
+          // setOrderSlot(positionAtCurrentIndex == PositionInLayout::Right
+          // ? OrderSlot::Denominator
+          // : OrderSlot::Numerator,
+          // shouldRedraw);
+          return OrderIndex;
+        }
+        if (direction.isUp() &&
+            ((currentIndex == DerivandIndex &&
+              positionAtCurrentIndex == PositionInLayout::Left) ||
+             (currentIndex == OrderIndex && true
+              /*m_orderSlot == OrderSlot::Denominator*/))) {
+          // setOrderSlot(OrderSlot::Numerator, shouldRedrawLayout);
+          return OrderIndex;
+        }
+        if (direction.isDown() &&
+            ((currentIndex == DerivandIndex &&
+              positionAtCurrentIndex == PositionInLayout::Left) ||
+             (currentIndex == OrderIndex && false
+              /*m_orderSlot == OrderSlot::Numerator*/))) {
+          // setOrderSlot(OrderSlot::Denominator, shouldRedraw);
+          return OrderIndex;
+        }
+        if (direction.isDown() && currentIndex == OrderIndex &&
+            true
+            /*m_orderSlot == OrderSlot::Denominator*/
+            && positionAtCurrentIndex == PositionInLayout::Left) {
+          // setVariableSlot(VariableSlot::Fraction, shouldRedraw);
+          return VariableIndex;
+        }
+      }
+      if (direction.isUp() && currentIndex == VariableIndex && false
+          /*m_variableSlot == VariableSlot::Assignment*/) {
+        return DerivandIndex;
+      }
+      if (direction.isDown() && currentIndex == DerivandIndex &&
+          positionAtCurrentIndex == PositionInLayout::Right) {
+        return AbscissaIndex;
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::Integral: {
+      using namespace Integral;
+      if (currentIndex == IntegrandIndex &&
+          positionAtCurrentIndex == PositionInLayout::Left) {
+        return direction.isUp() ? UpperBoundIndex : LowerBoundIndex;
+      }
+      if (currentIndex == UpperBoundIndex && direction.isDown()) {
+        return LowerBoundIndex;
+      }
+      if (currentIndex == LowerBoundIndex && direction.isUp()) {
+        return UpperBoundIndex;
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::PtBinomial:
+    case LayoutType::PtPermute: {
+      using namespace PtCombinatorics;
+      if (direction.isUp() &&
+          (currentIndex == kIndex ||
+           (currentIndex == k_outsideIndex &&
+            positionAtCurrentIndex == PositionInLayout::Left))) {
+        return nIndex;
+      }
+      if (direction.isDown() &&
+          (currentIndex == nIndex ||
+           (currentIndex == k_outsideIndex &&
+            positionAtCurrentIndex == PositionInLayout::Right))) {
+        return kIndex;
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::NthRoot: {
+      using namespace NthRoot;
+      if (direction.isUp() &&
+          positionAtCurrentIndex == PositionInLayout::Left &&
+          (currentIndex == k_outsideIndex || currentIndex == RadicandIndex)) {
+        return IndexIndex;
+      }
+      if (direction.isDown() && currentIndex == IndexIndex &&
+          positionAtCurrentIndex != PositionInLayout::Middle) {
+        return positionAtCurrentIndex == PositionInLayout::Right
+                   ? RadicandIndex
+                   : k_outsideIndex;
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::Product:
+    case LayoutType::Sum: {
+      using namespace Parametric;
+      if (direction.isUp() &&
+          ((currentIndex == VariableIndex || currentIndex == LowerBoundIndex) ||
+           (positionAtCurrentIndex == PositionInLayout::Left &&
+            (currentIndex == k_outsideIndex ||
+             currentIndex == ArgumentIndex)))) {
+        return UpperBoundIndex;
+      }
+      if (direction.isDown() &&
+          ((currentIndex == UpperBoundIndex) ||
+           (positionAtCurrentIndex == PositionInLayout::Left &&
+            (currentIndex == k_outsideIndex ||
+             currentIndex == ArgumentIndex)))) {
+        return LowerBoundIndex;
+      }
+      return k_cantMoveIndex;
+    }
+    case LayoutType::VerticalOffset: {
+      if (currentIndex == k_outsideIndex &&
+          ((direction.isUp() && true
+            /*m_verticalPosition == VerticalPosition::Superscript*/) ||
+           (direction.isDown() && false
+            /*m_verticalPosition == VerticalPosition::Subscript*/))) {
+        return 0;
+      }
+      if (currentIndex == 0 &&
+          ((direction.isDown() && true
+            /*m_verticalPosition == VerticalPosition::Superscript*/) ||
+           (direction.isUp() && false
+            /*m_verticalPosition == VerticalPosition::Subscript*/)) &&
+          positionAtCurrentIndex != PositionInLayout::Middle) {
+        return k_outsideIndex;
+      }
+      return k_cantMoveIndex;
+    }
+  }
+  assert(currentIndex < node->numberOfChildren());
+  assert(currentIndex != k_outsideIndex ||
+         positionAtCurrentIndex != PositionInLayout::Middle);
+  return k_cantMoveIndex;
+}
+
 static bool IsEmpty(const Tree* layout) {
   return layout->isRackLayout() && layout->numberOfChildren() == 0;
 }

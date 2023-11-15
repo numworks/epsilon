@@ -31,9 +31,7 @@ class CursorMotion {
   enum class PositionInLayout : uint8_t { Left, Middle, Right };
   static int IndexAfterVerticalCursorMove(
       const Tree* node, OMG::VerticalDirection direction, int currentIndex,
-      PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout) {
-    return k_cantMoveIndex;
-  }
+      PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout);
 
  private:
   constexpr static int k_outsideIndex = -1;

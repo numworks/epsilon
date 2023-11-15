@@ -65,6 +65,8 @@ class DataViewController : public Escher::ViewController,
   Store* m_store;
 
  private:
+  virtual void reinitBannerTexts() {}
+
   Escher::TabViewController* m_tabController;
 };
 

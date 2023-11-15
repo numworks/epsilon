@@ -37,6 +37,13 @@ consteval auto operator"" _l() {
   return _RackLayoutHelper<S>();
 }
 
+// Unfortunately template operator'' does not exist, we must use strings instead
+template <String S>
+  requires(S.codePointSize() == 2)
+consteval auto operator"" _cl() {
+  return KCodePointL<S.codePointAt(0)>();
+}
+
 }  // namespace PoincareJ
 
 #endif

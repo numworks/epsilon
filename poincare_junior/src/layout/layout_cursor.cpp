@@ -376,13 +376,11 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 }
 
 void LayoutBufferCursor::addEmptyExponentialLayout(Context *context) {
-  // TODO : Avoid the RackLayout inside a RackLayout ?
-  insertLayout(KRackL("e"_l, KVertOffL(""_l)), context, false, false);
+  insertLayout(KRackL("e"_cl, KVertOffL(""_l)), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyTenPowerLayout(Context *context) {
-  // TODO : Avoid the RackLayout inside a RackLayout ?
-  insertLayout(KRackL("10"_l, KVertOffL(""_l)), context, false, false);
+  insertLayout(KRackL("1"_cl, "0"_cl, KVertOffL(""_l)), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {

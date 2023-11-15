@@ -940,8 +940,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * */
   if (!isSelecting()) {
     Tree *nextLayout = rightLayout();
-    CursorMotion::PositionInLayout positionRelativeToNextLayout =
-        CursorMotion::PositionInLayout::Left;
+    PositionInLayout positionRelativeToNextLayout = PositionInLayout::Left;
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {
       if (nextLayout) {
@@ -952,54 +951,52 @@ bool LayoutCursor::verticalMoveWithoutSelection(
           assert(nextIndex != k_outsideIndex);
           assert(!Layout::IsHorizontal(nextLayout));
           setCursorNode(nextLayout->child(nextIndex));
-          m_position = positionRelativeToNextLayout ==
-                               CursorMotion::PositionInLayout::Left
+          m_position = positionRelativeToNextLayout == PositionInLayout::Left
                            ? leftMostPosition()
                            : rightmostPosition();
           return true;
         }
       }
       nextLayout = leftLayout();
-      positionRelativeToNextLayout = CursorMotion::PositionInLayout::Right;
+      positionRelativeToNextLayout = PositionInLayout::Right;
     }
   }
 
-#if 0
   /* Step 2:
    * Ask ancestor if cursor can move vertically. */
-  Layout p = m_layout.parent();
-  Layout currentChild = m_layout;
-  LayoutNode::PositionInLayout currentPosition =
+  Tree *currentChild = cursorNode();
+  int childIndex;
+  Tree *p = rootNode()->parentOfDescendant(currentChild, &childIndex);
+  PositionInLayout currentPosition =
       m_position == leftMostPosition()
-          ? LayoutNode::PositionInLayout::Left
-          : (m_position == rightmostPosition()
-                 ? LayoutNode::PositionInLayout::Right
-                 : LayoutNode::PositionInLayout::Middle);
-  while (!p.isUninitialized()) {
-    int childIndex = p.indexOfChild(currentChild);
-    int nextIndex = p.indexAfterVerticalCursorMove(
-        direction, childIndex, currentPosition, shouldRedrawLayout);
-    if (nextIndex != LayoutNode::k_cantMoveIndex) {
-      if (nextIndex == LayoutNode::k_outsideIndex) {
-        assert(currentPosition != LayoutNode::PositionInLayout::Middle);
-        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left
+          ? PositionInLayout::Left
+          : (m_position == rightmostPosition() ? PositionInLayout::Right
+                                               : PositionInLayout::Middle);
+  while (p) {
+    int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
+        p, direction, childIndex, currentPosition, shouldRedrawLayout);
+    if (nextIndex != k_cantMoveIndex) {
+      if (nextIndex == k_outsideIndex) {
+        assert(currentPosition != PositionInLayout::Middle);
+        setLayout(p, currentPosition == PositionInLayout::Left
                          ? OMG::Direction::Left()
                          : OMG::Direction::Right());
       } else {
-        assert(!p.isHorizontal());
+        assert(!p->isRackLayout());
         // We assume the new cursor is the same whatever the font
-        LayoutCursor newCursor = ClosestCursorInDescendantsOfLayout(
-            *this, p.child(nextIndex), KDFont::Size::Large);
-        m_layout = newCursor.layout();
+#if 0
+        LayoutBufferCursor newCursor = ClosestCursorInDescendantsOfLayout(
+            *this, p->child(nextIndex), KDFont::Size::Large);
+        setCursorNode(newCursor.cursorNode());
         m_position = newCursor.position();
+#endif
       }
       return true;
     }
     currentChild = p;
-    p = p.parent();
-    currentPosition = LayoutNode::PositionInLayout::Middle;
+    p = rootNode()->parentOfDescendant(p, &childIndex);
+    currentPosition = PositionInLayout::Middle;
   }
-#endif
   return false;
 }
 

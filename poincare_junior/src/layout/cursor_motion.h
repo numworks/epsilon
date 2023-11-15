@@ -19,6 +19,8 @@ enum class DeletionMethod {
   AutocompletedBracketPairMakeTemporary
 };
 
+enum class PositionInLayout : uint8_t { Left, Middle, Right };
+
 class CursorMotion {
  public:
   // TODO: Finish these methods implementation.
@@ -28,7 +30,6 @@ class CursorMotion {
                                             OMG::HorizontalDirection direction,
                                             int currentIndex,
                                             bool* shouldRedrawLayout);
-  enum class PositionInLayout : uint8_t { Left, Middle, Right };
   static int IndexAfterVerticalCursorMove(
       const Tree* node, OMG::VerticalDirection direction, int currentIndex,
       PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout);

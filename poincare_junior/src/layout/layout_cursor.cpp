@@ -199,9 +199,13 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   bool forceRight = insertLayoutContext->m_forceRight;
   bool forceLeft = insertLayoutContext->m_forceLeft;
 
+  const Tree *tree = insertLayoutContext->m_tree;
+  Tree *copy = SharedEditionPool->contains(tree)
+                   ? const_cast<Tree *>(insertLayoutContext->m_tree)
+                   : tree->clone();
   // We need to keep track of the node which must live in the edition pool
   // TODO: do we need ConstReferences on const Nodes in the pool ?
-  EditionReference ref(const_cast<Tree *>(insertLayoutContext->m_tree));
+  EditionReference ref(copy);
 
   assert(!isUninitialized() && isValid());
   if (Layout::IsEmpty(ref)) {

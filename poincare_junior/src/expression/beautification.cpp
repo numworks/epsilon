@@ -246,10 +246,14 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     return true;
   }
 
-  // ln(A) * ln(B)^(-1) -> log(A, B)
+  // ln(A)      * ln(B)^(-1) -> log(A, B)
+  // ln(A)^(-1) * ln(B)      -> log(B, A)
   changed = PatternMatching::MatchAndReplace(
-      ref, KMult(KTA, KLn(KB), KPow(KLn(KC), -1_e), KTD),
-      KMult(KTA, KLogarithm(KB, KC), KTD));
+                ref, KMult(KTA, KLn(KB), KPow(KLn(KC), -1_e), KTD),
+                KMult(KTA, KLogarithm(KB, KC), KTD)) ||
+            PatternMatching::MatchAndReplace(
+                ref, KMult(KTA, KPow(KLn(KB), -1_e), KLn(KC), KTD),
+                KMult(KTA, KLogarithm(KC, KB), KTD));
 
   // Turn multiplications with negative powers into divisions
   if (ref->isMultiplication() || ref->isPower() ||

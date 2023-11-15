@@ -1,5 +1,6 @@
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -43,11 +44,9 @@ int BracketPairLayoutNode::serializeWithSymbol(
     char symbolOpen, char symbolClose, char* buffer, int bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  int length = 0;
-  buffer[length++] = symbolOpen;
-  if (length >= bufferSize) {
-    buffer[bufferSize - 1] = '\0';
-    return bufferSize;
+  int length = SerializationHelper::CodePoint(buffer, bufferSize, symbolOpen);
+  if (length >= bufferSize - 1) {
+    return bufferSize - 1;
   }
   length +=
       childLayout()->serialize(buffer + length, bufferSize - length,
@@ -56,13 +55,9 @@ int BracketPairLayoutNode::serializeWithSymbol(
     buffer[bufferSize - 1] = '\0';
     return bufferSize;
   }
-  buffer[length++] = symbolClose;
-  if (length >= bufferSize) {
-    buffer[bufferSize - 1] = '\0';
-    return bufferSize;
-  }
-  buffer[length] = '\0';
-  return length;
+  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
+                                           symbolClose);
+  return std::min(length, bufferSize - 1);
 }
 
 }  // namespace Poincare

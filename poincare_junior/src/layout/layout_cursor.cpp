@@ -593,16 +593,8 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
   }
   int selectionLeftBound = selec.leftPosition();
   int selectionRightBound = selec.rightPosition();
-  if (Layout::IsHorizontal(m_cursorReference)) {
-    for (int i = selectionLeftBound; i < selectionRightBound; i++) {
-      NAry::RemoveChildAtIndex(m_cursorReference, selectionLeftBound);
-    }
-  } else {
-    assert(m_cursorReference->block() == rootNode()->block() ||
-           !Layout::IsHorizontal(
-               rootNode()->parentOfDescendant(m_cursorReference)));
-    MoveTreeOverTree(m_cursorReference,
-                     SharedEditionPool->push<BlockType::RackLayout>(0));
+  for (int i = selectionLeftBound; i < selectionRightBound; i++) {
+    NAry::RemoveChildAtIndex(m_cursorReference, selectionLeftBound);
   }
   m_position = selectionLeftBound;
   stopSelecting();
@@ -692,6 +684,7 @@ void LayoutCursor::beautifyLeft(Context *context) {
 
 void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
   int indexInParent;
+  assert(l->isRackLayout());
   Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
   if (!Layout::IsHorizontal(l) && parent && Layout::IsHorizontal(parent)) {
     setCursorNode(parent);
@@ -704,22 +697,12 @@ void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
 
 Tree *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
-  if (!Layout::IsHorizontal(cursorNode())) {
-    return m_position == 1 ? cursorNode() : nullptr;
-  }
-  if (cursorNode()->numberOfChildren() == 0 || m_position == 0) {
-    return nullptr;
-  }
-  return cursorNode()->child(m_position - 1);
+  return m_position == 0 ? nullptr : cursorNode()->child(m_position - 1);
 }
 
 Tree *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
-  if (!Layout::IsHorizontal(cursorNode())) {
-    return m_position == 0 ? cursorNode() : nullptr;
-  }
-  if (cursorNode()->numberOfChildren() == 0 ||
-      m_position == cursorNode()->numberOfChildren()) {
+  if (m_position == cursorNode()->numberOfChildren()) {
     return nullptr;
   }
   return cursorNode()->child(m_position);

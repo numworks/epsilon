@@ -16,23 +16,14 @@ namespace PoincareJ {
 
 /* The LayoutCursor has two main attributes: m_layout and m_position
  *
- * If m_layout is an HorizontalLayout, the cursor is left of the child at
- * index m_position. If m_position == layout.numberOfChildren(), the cursor
- * is on the right of the HorizontalLayout.
+ * m_layout is an HorizontalLayout, the cursor is left of the child at index
+ * m_position. If m_position == layout.numberOfChildren(), the cursor is on the
+ * right of the HorizontalLayout.
+ *
  * Ex: l = HorizontalLayout("01234")
  *     -> m_position == 0 -> "|01234"
  *     -> m_position == 2 -> "01|234"
  *     -> m_position == 5 -> "01234|"
- *
- * If the layout is not an HorizontalLayout, and its parent is not horizontal
- * either, the cursor is either left or right of the layout.
- * m_position should only be 0 or 1.
- * Ex: l = CodePoint("A")
- *     -> m_position == 0 -> "|A"
- *     -> m_position == 1 -> "A|"
- *
- * WARNING: If a layout has an HorizontalLayout as parent, the cursor must have
- * m_layout = ParentHorizontalLayout.
  *
  * Ex: l = HorizontalLayout("01234") and the cursor is at "012|34"
  * It CAN'T be m_layout = "3" and m_position = 0.
@@ -228,6 +219,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
     void setCursorNode(Tree* node) override {
+      assert(node->isRackLayout());
       m_cursorReference = EditionReference(node);
       assert(cursorNodeOffset() >= 0 &&
              cursorNodeOffset() < k_layoutBufferSize);
@@ -250,6 +242,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   void execute(Action action, Context* context = nullptr,
                const void* data = nullptr);
   void setCursorNode(Tree* node) override {
+    assert(node->isRackLayout());
     m_cursorNode = node;
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
   }

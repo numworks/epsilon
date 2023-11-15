@@ -10,6 +10,7 @@ namespace PoincareJ {
 constexpr auto KRackL = KNAry<BlockType::RackLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KVertOffL = KUnary<BlockType::VerticalOffsetLayout>();
+constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout>();
 
 // Templating over uint32_t and not CodePoint to keep m_code private in

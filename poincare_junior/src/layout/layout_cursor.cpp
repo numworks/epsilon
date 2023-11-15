@@ -392,7 +392,7 @@ void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {
 }
 
 void LayoutBufferCursor::addEmptySquareRootLayout(Context *context) {
-  insertLayout("sqrt()"_l, context, false, false);
+  insertLayout(KSqrtL(""_l), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyPowerLayout(Context *context) {

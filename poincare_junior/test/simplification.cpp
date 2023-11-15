@@ -486,6 +486,8 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
                 "{√(-x^(2)+1)/x,x×(-x^(2)+1)^(-1/2),"
                 "x×(-x^(2)/√(x^(2)+1)^(2)+1)^(-1/2)/√(x^(2)+1)}");
+
+  simplifies_to("acos(cos(x))", "acos(cos(x))");
   simplifies_to("acos({cos(-21*π/5), sin(-21*π/5)})/π", "{1/5,7/10}");
   simplifies_to("asin({cos(-21*π/5), sin(-21*π/5)})/π", "{3/10,-1/5}");
   simplifies_to("acos({cos(π*17/5), sin(π*17/5)})/π", "{3/5,9/10}");
@@ -495,6 +497,20 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
+
+  // Other angle units :
+  simplifies_to("cos({acos(x), asin(x), atan(x)})",
+                "{x,√(-x^(2)+1),√(-x^(2)/√(x^(2)+1)^(2)+1)}",
+                {.m_angleUnit = AngleUnit::Degree});
+  // TODO : Output should be acos(cos(x))
+  simplifies_to("acos(cos(x))", "90-180×π×arcsin(cos(x))/180/π",
+                {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("acos({cos(680), sin(680)})/200", "{3/5,9/10}",
+                {.m_angleUnit = AngleUnit::Gradian});
+  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
+                "{-90,-60,-45,-30,0,30,45,60,90}",
+                {.m_angleUnit = AngleUnit::Degree});
+
 #if 0
   // TODO
   simplifies_to(
@@ -503,14 +519,5 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to(
       "asin({-(√(6)+√(2))/4, -(√(6)-√(2))/4, (√(6)-√(2))/4, (√(6)+√(2))/4})",
       "{-5π/12,-π/12,π/12,5π/12}");
-
-  // Other angle units :
-  simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^(2)+1),√(-x^(2)/√(x^(2)+1)^(2)+1)}",
-                {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
-                "{-90,-60,-45,-30,0,30,45,60,90}",
-                {.m_angleUnit = AngleUnit::Degree});
-
 #endif
 }

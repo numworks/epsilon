@@ -46,12 +46,6 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->isOfType(
-          {BlockType::ArcSine, BlockType::ArcCosine, BlockType::ArcTangent}) &&
-      angleUnit != PoincareJ::AngleUnit::Radian) {
-    // TODO: Handle inverse trigonometric angle conversions.
-    return changed;
-  }
   if (ref->isOfType({BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
@@ -59,6 +53,27 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
         KMult(KA, π_e, KPow(KB, -1_e)),
         {.KA = child,
          .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+    changed = true;
+  } else if (ref->isOfType({BlockType::ArcSine, BlockType::ArcCosine,
+                            BlockType::ArcTangent})) {
+    /* Project inverse trigonometric functions here to avoid infinite projection
+     * to radian loop. */
+    // acos(A) -> atrig(A, 0)
+    PatternMatching::MatchAndReplace(ref, KACos(KA), KATrig(KA, 0_e)) ||
+        // asin(A) -> atrig(A, 1)
+        PatternMatching::MatchAndReplace(ref, KASin(KA), KATrig(KA, 1_e)) ||
+        // atan(A) -> asin(A/Sqrt(1+a^2)) - TODO: Do this in AdvancedReduction
+        PatternMatching::MatchAndReplace(
+            ref, KATan(KA),
+            KATrig(KDiv(KA, KSqrt(KAdd(1_e, KPow(KA, 2_e)))), 1_e));
+    if (angleUnit != PoincareJ::AngleUnit::Radian) {
+      // arccos_degree(x) = arccos_radians(x) * 180/π
+      ref->moveTreeOverTree(PatternMatching::Create(
+          KMult(KA, KB, KPow(π_e, -1_e)),
+          {.KA = ref,
+           .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+    }
+    return true;
   }
 
   // inf -> Float(inf) to prevent inf-inf from being 0
@@ -113,14 +128,6 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
        * Sin and cos terms will be replaced afterwards. */
       PatternMatching::MatchAndReplace(ref, KTan(KA),
                                        KMult(KSin(KA), KPow(KCos(KA), -1_e))) ||
-      // acos(A) -> atrig(A, 0)
-      PatternMatching::MatchAndReplace(ref, KACos(KA), KATrig(KA, 0_e)) ||
-      // asin(A) -> atrig(A, 1)
-      PatternMatching::MatchAndReplace(ref, KASin(KA), KATrig(KA, 1_e)) ||
-      // atan(A) -> asin(A/Sqrt(1+a^2)) - TODO: Do this in AdvancedReduction
-      PatternMatching::MatchAndReplace(
-          ref, KATan(KA),
-          KATrig(KDiv(KA, KSqrt(KAdd(1_e, KPow(KA, 2_e)))), 1_e)) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)

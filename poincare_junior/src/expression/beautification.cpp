@@ -205,16 +205,32 @@ bool Beautification::DeepBeautify(Tree* expr,
 
 // Reverse most system projections to display better expressions
 bool Beautification::ShallowBeautify(Tree* ref, void* context) {
+  bool changed = false;
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  assert(angleUnit == PoincareJ::AngleUnit::Radian || !ref->isATrig());
   if (ref->isTrig() && angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
         KMult(KA, KB, KPow(π_e, -1_e)),
         {.KA = child,
          .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+    changed = true;
+  } else if (ref->isATrig()) {
+    /* Beautify inverse trigonometric functions here to avoid infinite
+     * projection to radian loop. */
+    // atrig(A, 0) -> acos(A)
+    PatternMatching::MatchAndReplace(ref, KATrig(KA, 0_e), KACos(KA)) ||
+        // atrig(A, 1) -> asin(A)
+        PatternMatching::MatchAndReplace(ref, KATrig(KA, 1_e), KASin(KA));
+    if (angleUnit != PoincareJ::AngleUnit::Radian) {
+      // TODO: ref->parent should be ShallowSimplified.
+      ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+          KMult(KA, π_e, KPow(KB, -1_e)),
+          {.KA = ref,
+           .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+    }
+    changed = true;
   }
   if (ref->isAddition()) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
@@ -231,7 +247,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   }
 
   // ln(A) * ln(B)^(-1) -> log(A, B)
-  bool changed = PatternMatching::MatchAndReplace(
+  changed = PatternMatching::MatchAndReplace(
       ref, KMult(KTA, KLn(KB), KPow(KLn(KC), -1_e), KTD),
       KMult(KTA, KLogarithm(KB, KC), KTD));
 
@@ -275,10 +291,6 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KTrig(KA, 0_e), KCos(KA)) ||
       // trig(A, 1) -> sin(A)
       PatternMatching::MatchAndReplace(ref, KTrig(KA, 1_e), KSin(KA)) ||
-      // atrig(A, 0) -> acos(A)
-      PatternMatching::MatchAndReplace(ref, KATrig(KA, 0_e), KACos(KA)) ||
-      // atrig(A, 1) -> asin(A)
-      PatternMatching::MatchAndReplace(ref, KATrig(KA, 1_e), KASin(KA)) ||
       // exp(1) -> e
       PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
       // exp(A) -> e^A

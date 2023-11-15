@@ -941,8 +941,8 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
                 ExpressionNode::Type::Integral,
                 ExpressionNode::Type::LeastCommonMultiple,
                 ExpressionNode::Type::PermuteCoefficient,
-                ExpressionNode::Type::Randint, ExpressionNode::Type::Random,
-                ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction,
+                ExpressionNode::Type::Random, ExpressionNode::Type::Round,
+                ExpressionNode::Type::SignFunction,
                 ExpressionNode::Type::Unit})) {
     return true;
   }
@@ -961,6 +961,11 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
   if (IsNAry(*this)) {
     return convert<NAryExpression>().allChildrenAreReal(context,
                                                         canContainMatrices);
+  }
+
+  if (type() == ExpressionNode::Type::Randint) {
+    return childAtIndex(0).isReal(context, canContainMatrices) &&
+           childAtIndex(1).isReal(context, canContainMatrices);
   }
 
   if (type() == ExpressionNode::Type::ConstantMaths) {

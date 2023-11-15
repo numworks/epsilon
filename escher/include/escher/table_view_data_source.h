@@ -14,6 +14,8 @@ class TableViewDataSource {
   friend class MemoizedRowHeightManager;
   template <int N>
   friend class MemoizedColumnWidthManager;
+  friend class TableView;
+  friend class ListWithTopAndBottomController;
 
  public:
   // TODO: Factorize ovelap and separator
@@ -42,7 +44,6 @@ class TableViewDataSource {
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int column, int row) = 0;
 
-  virtual void resetSizeMemoization();
   void lockSizeMemoization(bool state);
 
  protected:
@@ -85,6 +86,7 @@ class TableViewDataSource {
    * Use a MemoizedTableSize1DManager if the sizes are variable. */
   virtual TableSize1DManager* columnWidthManager() { return nullptr; }
   virtual TableSize1DManager* rowHeightManager() { return nullptr; }
+  virtual void resetSizeMemoization();
 };
 
 }  // namespace Escher

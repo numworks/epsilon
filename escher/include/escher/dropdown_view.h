@@ -84,7 +84,6 @@ class Dropdown : public PopupItemView, public Responder {
     }
     KDCoordinate defaultColumnWidth() override;
     HighlightCell* cell(int row) override { return &m_popupViews[row]; }
-    void resetSizeMemoization() override;
 
     HighlightCell* innerCellAtRow(int row);
     void init();
@@ -92,6 +91,7 @@ class Dropdown : public PopupItemView, public Responder {
     void close();
 
    private:
+    void resetSizeMemoization() override;
     constexpr static int k_maxNumberOfPopupItems = 4;
     ExplicitListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];

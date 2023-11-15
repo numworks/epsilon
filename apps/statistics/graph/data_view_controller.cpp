@@ -40,6 +40,7 @@ void DataViewController::setSelectedIndex(int selectedIndex) {
 void DataViewController::viewWillAppear() {
   ViewController::viewWillAppear();
   sanitizeSeriesIndex();
+  reinitBannerTexts();
   dataView()->setDisplayBanner(true);
   dataView()->selectViewForSeries(selectedSeries());
   highlightSelection();

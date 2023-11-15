@@ -90,16 +90,15 @@ bool Parametric::ExpandSum(Tree* expr) {
 }
 
 bool Parametric::ExpandProduct(Tree* expr) {
-  if (!expr->isProduct()) {
-    return false;
-  }
-  return
-      // split product
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
-          KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KMult(KTE)))) ||
-      Explicit(expr);
-  ;
+  // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
+  // prod(x_k, k, 0, n) = x_0 * ... * x_n
+  return Simplification::DistributeOverNAry(
+      expr, BlockType::Product, BlockType::Multiplication,
+      BlockType::Multiplication,
+      [](Tree* expr) -> bool {
+        return SimplifySumOrProduct(expr) || Explicit(expr);
+      },
+      k_integrandIndex);
 }
 
 // TODO try swapping sigmas

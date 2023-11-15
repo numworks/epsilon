@@ -27,9 +27,6 @@ class Parametric {
   static constexpr uint8_t k_integrandIndex = 3;
 
   static constexpr uint8_t k_derivandIndex = 2;
-
- private:
-  static bool ExpandSingleSum(Tree* t);
 };
 
 }  // namespace PoincareJ

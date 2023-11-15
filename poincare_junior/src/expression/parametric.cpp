@@ -41,23 +41,8 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   }
   // TODO upperBound < lowerBound -> 0
   // TODO distribute multiplicative constant
-  return false;
-}
-
-bool Parametric::ExpandSum(Tree* expr) {
-  // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
-  return Simplification::DistributeOverNAry(
-      expr, BlockType::Sum, BlockType::Addition, BlockType::Addition,
-      [](Tree* expr) -> bool {
-        return SimplifySumOrProduct(expr) || ExpandSingleSum(expr);
-      },
-      k_integrandIndex);
-}
-
-// Expand sum with a derivand
-bool Parametric::ExpandSingleSum(Tree* expr) {
-  assert(expr->isSum());
-  return
+  if (isSum) {
+    return
 #if 0 /* This first rule is powerful and simplifies the next two rules but it \
        * may introduced undefs with sum(1/k,k,1,2) for instance. */
       // sum(e,k,a,b) = sum(e,k,0,b) - sum(e,k,0,a-1)
@@ -73,25 +58,35 @@ bool Parametric::ExpandSingleSum(Tree* expr) {
       // sum(k^2,k,0,n) = n(n+1)(2n+1)/6
       PatternMatching::MatchReplaceAndSimplify(
           expr, KSum(KA, 0_e, KC, KPow(KVar<0>, 2_e)),
-          KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e),
-                KPow(6_e, -1_e))) ||
+          KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)
+                KPow(6_e, -1_e)));
 #else
-      // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KVar<0>),
-          KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
-                            KMult(-1_e, KB, KAdd(-1_e, KB))))) ||
-      // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KPow(KVar<0>, 2_e)),
-          KMult(KPow(6_e, -1_e),
-                KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
-                     KMult(-1_e, KAdd(-1_e, KB), KB,
-                           KAdd(KMult(2_e, KB), -1_e))))) ||
+        // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
+        PatternMatching::MatchReplaceAndSimplify(
+            expr, KSum(KA, KB, KC, KVar<0>),
+            KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
+                              KMult(-1_e, KB, KAdd(-1_e, KB))))) ||
+        // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
+        PatternMatching::MatchReplaceAndSimplify(
+            expr, KSum(KA, KB, KC, KPow(KVar<0>, 2_e)),
+            KMult(KPow(6_e, -1_e),
+                  KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
+                       KMult(-1_e, KAdd(-1_e, KB), KB,
+                             KAdd(KMult(2_e, KB), -1_e)))));
 #endif
-      // sum(x_k, k, 0, n) = x_0 + ... + x_n
-      Explicit(expr);
-  // TODO Split the child in a part that depends on k ?
+  }
+  return false;
+}
+
+bool Parametric::ExpandSum(Tree* expr) {
+  // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
+  // sum(x_k, k, 0, n) = x_0 + ... + x_n
+  return Simplification::DistributeOverNAry(
+      expr, BlockType::Sum, BlockType::Addition, BlockType::Addition,
+      [](Tree* expr) -> bool {
+        return SimplifySumOrProduct(expr) || Explicit(expr);
+      },
+      k_integrandIndex);
 }
 
 bool Parametric::ExpandProduct(Tree* expr) {

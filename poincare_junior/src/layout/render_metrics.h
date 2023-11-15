@@ -560,19 +560,6 @@ KDCoordinate verticalGridEntryMargin(const Tree* node, KDFont::Size font) {
   return EntryMargin;
 }
 
-uint8_t NumberOfRows(const Tree* grid) { return grid->nodeValue(0); }
-uint8_t NumberOfColumns(const Tree* grid) { return grid->nodeValue(1); }
-
-int rowAtChildIndex(const Tree* node, int index) {
-  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
-  return index / NumberOfColumns(node);
-}
-
-int columnAtChildIndex(const Tree* node, int index) {
-  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
-  return index % NumberOfColumns(node);
-}
-
 KDCoordinate rowBaseline(const Tree* node, int row, KDFont::Size font) {
   KDCoordinate rowBaseline = 0;
   int column = 0;

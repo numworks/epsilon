@@ -1,6 +1,8 @@
 #ifndef POINCARE_JUNIOR_LAYOUT_INDICES_H
 #define POINCARE_JUNIOR_LAYOUT_INDICES_H
 
+#include <poincare_junior/src/memory/tree.h>
+
 namespace PoincareJ {
 
 namespace Fraction {
@@ -51,6 +53,42 @@ constexpr static int FunctionIndex = 0;
 constexpr static int VariableIndex = 1;
 constexpr static int UpperBoundIndex = 2;
 }  // namespace ListSequence
+
+namespace Grid {
+inline uint8_t NumberOfRows(const Tree* grid) { return grid->nodeValue(0); }
+inline uint8_t NumberOfColumns(const Tree* grid) { return grid->nodeValue(1); }
+
+inline int rowAtChildIndex(const Tree* node, int index) {
+  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
+  return index / NumberOfColumns(node);
+}
+
+inline int columnAtChildIndex(const Tree* node, int index) {
+  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
+  return index % NumberOfColumns(node);
+}
+
+inline bool childIsLeftOfGrid(const Tree* node, int index) {
+  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
+  return columnAtChildIndex(node, index) == 0;
+}
+
+inline bool childIsRightOfGrid(const Tree* node, int index) {
+  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
+  return columnAtChildIndex(node, index) == NumberOfColumns(node) - 1;
+}
+
+inline bool childIsTopOfGrid(const Tree* node, int index) {
+  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
+  return rowAtChildIndex(node, index) == 0;
+}
+
+inline bool childIsBottomOfGrid(const Tree* node, int index) {
+  assert(index >= 0 && index < NumberOfRows(node) * NumberOfColumns(node));
+  return rowAtChildIndex(node, index) == NumberOfRows(node) - 1;
+}
+
+}  // namespace Grid
 
 }  // namespace PoincareJ
 

@@ -10,31 +10,170 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     const Tree* node, OMG::HorizontalDirection direction, int currentIndex,
     bool* shouldRedraw) {
   int nChildren = node->numberOfChildren();
-  if (nChildren == 0) {
-    assert(currentIndex == k_outsideIndex);
-    return k_outsideIndex;
+  switch (node->layoutType()) {
+    case LayoutType::Binomial:
+    case LayoutType::Fraction:
+      static_assert(Fraction::NumeratorIndex == Binomial::nIndex);
+      if (currentIndex == k_outsideIndex) {
+        return direction.isRight() ? Fraction::NumeratorIndex
+                                   : Fraction::DenominatorIndex;
+      }
+      return k_outsideIndex;
+    case LayoutType::Matrix:
+    case LayoutType::Piecewise: {
+      if (currentIndex == k_outsideIndex) {
+        return direction.isLeft() ? nChildren - 1 : 0;
+      }
+      if ((direction.isLeft() && Grid::childIsLeftOfGrid(node, currentIndex)) ||
+          (direction.isRight() &&
+           Grid::childIsRightOfGrid(node, currentIndex))) {
+        return k_outsideIndex;
+      }
+      int step = direction.isLeft() ? -1 : 1;
+      return currentIndex + step;
+    }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      using namespace Derivative;
+      if (node->layoutType() == LayoutType::Derivative) {
+        if (currentIndex == DerivandIndex) {
+          // setVariableSlot(direction.isRight() ? VariableSlot::Assignment
+          // : VariableSlot::Fraction,
+          // shouldRedraw);
+          return VariableIndex;
+        }
+        if (currentIndex == VariableIndex /* &&
+                                             m_variableSlot == VariableSlot::Fraction */) {
+          return direction.isRight() ? DerivandIndex : k_outsideIndex;
+        }
+      } else {
+        if (currentIndex == DerivandIndex) {
+          if (direction.isRight()) {
+            // setVariableSlot(VariableSlot::Assignment, shouldRedraw);
+            return VariableIndex;
+          }
+          // setOrderSlot(OrderSlot::Denominator, shouldRedraw);
+          return OrderIndex;
+        }
+        if (currentIndex == VariableIndex /*&&
+                                            m_variableSlot == VariableSlot::Fraction*/) {
+          if (direction.isRight()) {
+            // setOrderSlot(OrderSlot::Denominator, shouldRedraw);
+            return OrderIndex;
+          }
+          return k_outsideIndex;
+        }
+        if (currentIndex == OrderIndex) {
+          if (true /* m_orderSlot == OrderSlot::Denominator */) {
+            if (direction.isLeft()) {
+              // setVariableSlot(VariableSlot::Fraction, shouldRedraw);
+              return VariableIndex;
+            }
+            return DerivandIndex;
+          }
+          // assert(m_orderSlot == OrderSlot::Numerator);
+          return direction.isRight() ? DerivandIndex : k_outsideIndex;
+        }
+      }
+      if (currentIndex == k_outsideIndex && direction.isRight()) {
+        // setVariableSlot(VariableSlot::Fraction, shouldRedrawLayout);
+        return VariableIndex;
+      }
+      if (currentIndex == AbscissaIndex && direction.isLeft()) {
+        // setVariableSlot(VariableSlot::Assignment, shouldRedrawLayout);
+        return VariableIndex;
+      }
+      switch (currentIndex) {
+        case k_outsideIndex:
+          assert(direction.isLeft());
+          return AbscissaIndex;
+        case AbscissaIndex:
+          assert(direction.isRight());
+          return k_outsideIndex;
+        default: {
+          // assert(currentIndex == VariableIndex &&
+          // m_variableSlot == VariableSlot::Assignment);
+          return direction.isRight() ? AbscissaIndex : DerivandIndex;
+        }
+      }
+    }
+    case LayoutType::Integral:
+      switch (currentIndex) {
+        using namespace Integral;
+        case k_outsideIndex:
+          return direction.isRight() ? UpperBoundIndex : DifferentialIndex;
+        case UpperBoundIndex:
+        case LowerBoundIndex:
+          return direction.isRight() ? IntegrandIndex : k_outsideIndex;
+        case IntegrandIndex:
+          return direction.isRight() ? DifferentialIndex : LowerBoundIndex;
+        case DifferentialIndex:
+          return direction.isRight() ? k_outsideIndex : IntegrandIndex;
+      }
+    case LayoutType::PtBinomial:
+    case LayoutType::PtPermute:
+      switch (currentIndex) {
+        using namespace PtCombinatorics;
+        case k_outsideIndex:
+          return direction.isRight() ? nIndex : kIndex;
+        case nIndex:
+          return direction.isRight() ? kIndex : k_outsideIndex;
+        default:
+          assert(currentIndex == kIndex);
+          return direction.isRight() ? k_outsideIndex : nIndex;
+      }
+    case LayoutType::ListSequence:
+      switch (currentIndex) {
+        using namespace ListSequence;
+        case k_outsideIndex:
+          return direction.isRight() ? FunctionIndex : UpperBoundIndex;
+        case FunctionIndex:
+          return direction.isRight() ? VariableIndex : k_outsideIndex;
+        case VariableIndex:
+          return direction.isRight() ? UpperBoundIndex : FunctionIndex;
+        default:
+          assert(currentIndex == UpperBoundIndex);
+          return direction.isRight() ? k_outsideIndex : VariableIndex;
+      }
+    case LayoutType::NthRoot:
+      switch (currentIndex) {
+        using namespace NthRoot;
+        case k_outsideIndex:
+          return direction.isRight() ? IndexIndex : RadicandIndex;
+        case IndexIndex:
+          return direction.isRight() ? RadicandIndex : k_outsideIndex;
+        default:
+          assert(currentIndex == RadicandIndex);
+          return direction.isRight() ? k_outsideIndex : IndexIndex;
+      }
+    case LayoutType::Product:
+    case LayoutType::Sum:
+      switch (currentIndex) {
+        using namespace Parametric;
+        case k_outsideIndex:
+          return direction.isRight() ? UpperBoundIndex : ArgumentIndex;
+        case UpperBoundIndex:
+          return direction.isRight() ? ArgumentIndex : k_outsideIndex;
+        case VariableIndex:
+          return direction.isRight() ? LowerBoundIndex : k_outsideIndex;
+        case LowerBoundIndex:
+          return direction.isRight() ? ArgumentIndex : VariableIndex;
+        default:
+          assert(currentIndex == ArgumentIndex);
+          return direction.isRight() ? k_outsideIndex : LowerBoundIndex;
+      }
+    default:
+      if (nChildren == 0) {
+        assert(currentIndex == k_outsideIndex);
+        return k_outsideIndex;
+      }
+      if (nChildren == 1) {
+        assert(currentIndex == k_outsideIndex || currentIndex == 0);
+        return currentIndex == k_outsideIndex ? 0 : k_outsideIndex;
+      }
+      assert(false);
+      return k_cantMoveIndex;
   }
-  if (Layout::IsHorizontal(node)) {
-    nChildren += 1;
-  }
-  if (nChildren == 1) {
-    assert(currentIndex == k_outsideIndex || currentIndex == 0);
-    return currentIndex == k_outsideIndex ? 0 : k_outsideIndex;
-  }
-#if 0
-  assert(false);
-  return k_cantMoveIndex;
-#else
-  // TODO Implement other layout's logic instead of this dummy generalization
-  currentIndex += (direction.isRight() ? 1 : -1);
-  if (currentIndex == nChildren) {
-    return k_outsideIndex;
-  }
-  if (currentIndex == k_outsideIndex - 1) {
-    return nChildren - 1;
-  }
-  return currentIndex;
-#endif
 }
 
 static bool IsEmpty(const Tree* layout) {

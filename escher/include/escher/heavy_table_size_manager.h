@@ -55,7 +55,7 @@ class AbstractHeavyTableSizeManager {
       return m_tableSizeManager->sizeAtIndexIsMemoized(i, dimension());
     }
 
-    void resetSizeMemoization(bool force = true) override {
+    void resetSizeMemoization(bool force) override {
       m_tableSizeManager->resetAllSizes();
     }
 

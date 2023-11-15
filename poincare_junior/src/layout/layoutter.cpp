@@ -133,7 +133,7 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
     if (--decimalOffset == 0) {
       InsertCodePointAt(layoutParent, '.', firstInsertedIndex);
     }
-  } while (!Number::IsZero(value) && decimalOffset <= 0);
+  } while (!value->isZero() && decimalOffset <= 0);
   value->removeTree();
 }
 

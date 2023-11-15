@@ -145,7 +145,7 @@ bool Simplification::SimplifyExp(Tree* u) {
     u->removeNode();
     return true;
   }
-  if (Number::IsZero(child)) {
+  if (child->isZero()) {
     // exp(0) = 1
     u->cloneTreeOverTree(1_e);
     return true;
@@ -171,14 +171,14 @@ bool Simplification::SimplifyLn(Tree* u) {
   if (!child->isInteger()) {
     return false;
   }
-  if (Number::IsMinusOne(child)) {
+  if (child->isMinusOne()) {
     // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
     u->cloneTreeOverTree(KComplex(0_e, π_e));
     return true;
-  } else if (Number::IsOne(child)) {
+  } else if (child->isOne()) {
     u->cloneTreeOverTree(0_e);
     return true;
-  } else if (Number::IsZero(child)) {
+  } else if (child->isZero()) {
     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
   return false;
@@ -229,7 +229,7 @@ bool Simplification::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   bool changed = Comparison::Compare(remainder, u) != 0;
   u->moveTreeOverTree(remainder);
   // Simplified second element should have only two possible values.
-  assert(Number::IsZero(u) || Number::IsOne(u));
+  assert(u->isZero() || u->isOne());
   return changed;
 }
 
@@ -251,7 +251,7 @@ bool Simplification::SimplifyTrigDiff(Tree* u) {
   // Find TrigDiff value depending on children types (sin or cos)
   bool isDifferent = x->type() != y->type();
   // Account for sign difference between TrigDiff(1,0) and TrigDiff(0,1)
-  if (isDifferent && Number::IsZero(x)) {
+  if (isDifferent && x->isZero()) {
     isOpposed = !isOpposed;
   }
   // Replace TrigDiff with result
@@ -266,8 +266,8 @@ bool Simplification::SimplifyTrig(Tree* u) {
   Tree* secondArgument = u->child(1);
   bool isOpposed = false;
   bool changed = SimplifyTrigSecondElement(secondArgument, &isOpposed);
-  assert(Number::IsZero(secondArgument) || Number::IsOne(secondArgument));
-  bool isSin = Number::IsOne(secondArgument);
+  assert(secondArgument->isZero() || secondArgument->isOne());
+  bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
   Tree* firstArgument = u->nextNode();
   if (PatternMatching::MatchAndReplace(firstArgument, KMult(KTA, -1_e, KTB),
@@ -283,14 +283,14 @@ bool Simplification::SimplifyTrig(Tree* u) {
   }
 
   // Replace Trig((n/12)*pi,*) with exact value.
-  if (firstArgument->treeIsIdenticalTo(π_e) || Number::IsZero(firstArgument) ||
+  if (firstArgument->treeIsIdenticalTo(π_e) || firstArgument->isZero() ||
       (firstArgument->isMultiplication() &&
        firstArgument->numberOfChildren() == 2 &&
        firstArgument->nextNode()->isRational() &&
        firstArgument->child(1)->treeIsIdenticalTo(π_e))) {
     const Tree* piFactor = firstArgument->isMultiplication()
                                ? firstArgument->nextNode()
-                               : (Number::IsZero(firstArgument) ? 0_e : 1_e);
+                               : (firstArgument->isZero() ? 0_e : 1_e);
     // Compute n such that firstArgument = (n/12)*pi
     Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
     Rational::MakeIrreducible(multipleTree);
@@ -322,7 +322,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   assert(u->isPower());
   Tree* v = u->child(0);
   // 1^x -> 1
-  if (Number::IsOne(v)) {
+  if (v->isOne()) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
@@ -335,8 +335,8 @@ bool Simplification::SimplifyPower(Tree* u) {
                                                     KExp(KMult(KLn(KA), KB)));
   }
   // 0^n -> 0
-  if (Number::IsZero(v)) {
-    if (!Number::IsZero(n) && Rational::Sign(n).isStrictlyPositive()) {
+  if (v->isZero()) {
+    if (!n->isZero() && Rational::Sign(n).isStrictlyPositive()) {
       u->cloneTreeOverTree(0_e);
       return true;
     }
@@ -349,7 +349,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   assert(n->isInteger());
   // v^0 -> 1
-  if (Number::IsZero(n)) {
+  if (n->isZero()) {
     if (Variables::HasVariables(v)) {
       return PatternMatching::MatchAndReplace(u, KPow(KA, 0_e),
                                               KDep(1_e, KSet(KPow(KA, -1_e))));
@@ -360,11 +360,11 @@ bool Simplification::SimplifyPower(Tree* u) {
     }
   }
   // v^1 -> v
-  if (Number::IsOne(n)) {
+  if (n->isOne()) {
     u->moveTreeOverTree(v);
     return true;
   }
-  if (v->isComplex() && Number::IsZero(v->nextNode())) {
+  if (v->isComplex() && v->nextNode()->isZero()) {
     // (0 + A*i)^n -> ±(A^n) or (0±(A^n)*i)
     Tree* remainder =
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
@@ -522,11 +522,11 @@ bool Simplification::MergeMultiplicationChildrenFrom(Tree* child, int index,
                                                      bool* zero) {
   bool changed = false;
   while (index < *numberOfSiblings) {
-    if (Number::IsZero(child)) {
+    if (child->isZero()) {
       *zero = true;
       return false;
     }
-    if (Number::IsOne(child)) {
+    if (child->isOne()) {
       child->removeTree();
     } else if (!(index + 1 < *numberOfSiblings &&
                  MergeMultiplicationChildWithNext(child))) {
@@ -695,7 +695,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
   int i = 0;
   Tree* child = u->nextNode();
   while (i < n) {
-    if (Number::IsZero(child)) {
+    if (child->isZero()) {
       child->removeTree();
       n--;
       continue;
@@ -731,7 +731,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
 bool Simplification::SimplifyComplex(Tree* tree) {
   assert(tree->isComplex());
   Tree* imag = tree->child(1);
-  if (Number::IsZero(imag)) {
+  if (imag->isZero()) {
     // (A+0*i) -> A
     imag->removeTree();
     tree->removeNode();

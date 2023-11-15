@@ -217,7 +217,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
     EditionReference quotient = divisionResult.quotient;
     EditionReference remainder = divisionResult.remainder;
     polB->removeTree();
-    if (Number::IsZero(remainder)) {
+    if (remainder->isZero()) {
       a->removeTree();
       return {quotient, remainder};
     }
@@ -245,7 +245,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
         PseudoDivision(leadingCoeffA->clone(), leadingCoeffB->clone());
     EditionReference quotient = result.quotient;
     EditionReference remainder = result.remainder;
-    bool stopCondition = !Number::IsZero(remainder);
+    bool stopCondition = !remainder->isZero();
     remainder->removeTree();
     if (stopCondition) {
       quotient->removeTree();
@@ -292,7 +292,7 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
   EditionReference coefficient = polynomial->child(1);
   while (i < nbOfTerms) {
     EditionReference nextCoefficient = coefficient->nextTree();
-    if (Number::IsZero(coefficient)) {
+    if (coefficient->isZero()) {
       coefficient->removeTree();
       NAry::SetNumberOfChildren(polynomial, polynomial->numberOfChildren() - 1);
       RemoveExponentAtIndex(polynomial, i);
@@ -496,7 +496,7 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
       }
     }
   }
-  assert(!Number::IsZero(expression));
+  assert(!expression->isZero());
   return degree;
 }
 

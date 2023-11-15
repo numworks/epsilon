@@ -189,7 +189,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
       // TODO use Abs node when there are complexes
       float pivot = abs(Approximation::To<float>(pivotChild));
       // Handle very low pivots
-      if (pivot == 0.0f && !Number::IsZero(pivotChild)) {
+      if (pivot == 0.0f && !pivotChild->isZero()) {
         pivot = FLT_MIN;
       }
 
@@ -209,7 +209,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
-    if (Number::IsZero(Child(matrix, iPivot, k))) {
+    if (Child(matrix, iPivot, k)->isZero()) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {
@@ -293,7 +293,7 @@ int Matrix::RankOfCanonized(const Tree* m) {
   while (i >= 0) {
     int j = NumberOfColumns(m) - 1;
     // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
-    while (j >= i && Number::IsZero(Child(m, i, j))) {
+    while (j >= i && Child(m, i, j)->isZero()) {
       j--;
     }
     if (j <= i - 1) {
@@ -326,7 +326,7 @@ Tree* Matrix::Inverse(const Tree* m) {
   RowCanonize(matrixAI);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
-    if (!Number::IsOne(Child(matrixAI, i, i))) {
+    if (!Child(matrixAI, i, i)->isOne()) {
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }
   }

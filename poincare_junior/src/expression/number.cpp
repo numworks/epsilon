@@ -51,22 +51,4 @@ Sign::Sign Number::Sign(const Tree* node) {
   }
 }
 
-bool Number::IsSanitized(const Tree* n) {
-  if (!n->isOfType({BlockType::RationalShort, BlockType::RationalPosBig,
-                    BlockType::RationalNegBig, BlockType::IntegerShort,
-                    BlockType::IntegerPosBig, BlockType::IntegerNegBig})) {
-    assert(!n->isNumber() || n->isFloat() ||
-           n->isOfType({BlockType::Constant, BlockType::Half, BlockType::Zero,
-                        BlockType::One, BlockType::Two, BlockType::MinusOne}));
-    // Non numbers or optimal BlockType numbers
-    return true;
-  }
-  // Re-push the optimized tree on the EditionPool, and compare with original.
-  Tree* temp = Rational::Push(Rational::Numerator(n), Rational::Denominator(n));
-  Rational::MakeIrreducible(temp);
-  bool result = n->treeIsIdenticalTo(temp);
-  temp->removeTree();
-  return result;
-}
-
 }  // namespace PoincareJ

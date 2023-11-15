@@ -107,8 +107,10 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   }
   if (numerator.isSignedType<int8_t>() &&
       denominator.isUnsignedType<uint8_t>()) {
-    return SharedEditionPool->push<BlockType::RationalShort>(
-        static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
+    Tree* node = SharedEditionPool->push(BlockType::RationalShort);
+    SharedEditionPool->push(ValueBlock(static_cast<int8_t>(numerator)));
+    SharedEditionPool->push(ValueBlock(static_cast<uint8_t>(denominator)));
+    return node;
   }
   Tree* node = SharedEditionPool->push(numeratorSign == NonStrictSign::Negative
                                            ? BlockType::RationalNegBig
@@ -158,7 +160,7 @@ Tree* Rational::Multiplication(const Tree* i, const Tree* j) {
 }
 
 Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
-  assert(!(Number::IsZero(i) && Sign(j).isNegative()));
+  assert(!(i->isZero() && Sign(j).isNegative()));
   IntegerHandler absJ = Integer::Handler(j);
   absJ.setSign(NonStrictSign::Positive);
   Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
@@ -177,7 +179,7 @@ bool Rational::MakeIrreducible(Tree* i) {
     return false;
   }
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
-  if (Number::IsOne(gcd)) {
+  if (gcd->isOne()) {
     gcd->removeTree();
     return false;
   }

@@ -53,8 +53,8 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
-  assert(!Number::IsZero(commonDenominator));
-  if (Number::IsOne(commonDenominator)) {
+  assert(!commonDenominator->isZero());
+  if (commonDenominator->isOne()) {
     return expression;
   }
   /* Step 2: Turn the expression into the numerator. We start with this being

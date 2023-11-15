@@ -9,33 +9,7 @@ namespace PoincareJ {
 
 class Number {
  public:
-  /* If one of these asserts cannot be maintained, either numbers should be
-   * sanitized on systematicReduce or these method should handle sub-optimal
-   * numbers (such as zero stored on a IntegerPosBig. More generally, many
-   * features such as pattern matching depends on unique number representation.
-   */
-  static bool IsZero(const Tree* t) {
-    assert(IsSanitized(t));
-    return t->isZero();
-  }
-  static bool IsOne(const Tree* t) {
-    assert(IsSanitized(t));
-    return t->isOne();
-  }
-  static bool IsMinusOne(const Tree* t) {
-    assert(IsSanitized(t));
-    return t->isMinusOne();
-  }
-  static bool IsTwo(const Tree* t) {
-    assert(IsSanitized(t));
-    return t->isTwo();
-  }
-  static bool IsHalf(const Tree* t) {
-    assert(IsSanitized(t));
-    return t->isHalf();
-  }
   static bool IsStrictRational(const Tree* t) {
-    assert(IsSanitized(t));
     return t->isOfType({BlockType::Half, BlockType::RationalShort,
                         BlockType::RationalNegBig, BlockType::RationalPosBig});
   }
@@ -43,8 +17,6 @@ class Number {
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);
   static Sign::Sign Sign(const Tree* node);
-  // Return false if tree is a number and isn't the unique best representation.
-  static bool IsSanitized(const Tree* n);
 };
 
 }  // namespace PoincareJ

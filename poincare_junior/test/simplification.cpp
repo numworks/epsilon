@@ -90,15 +90,16 @@ QUIZ_CASE(pcj_simplification_algebraic_expansion) {
   // (A + B)^2 = (A^2 + 2*A*B + B^2)
   EditionReference ref3(KPow(KAdd(KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)), 2_e));
   quiz_assert(Simplification::ShallowAlgebraicExpand(ref3));
-  assert_trees_are_equal(
-      ref3, KAdd(KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
-                 KPow(KTrig("x"_e, 0_e), 2_e), KPow(KTrig("x"_e, 1_e), 2_e)));
+  assert_trees_are_equal(ref3,
+                         KAdd(KPow(KTrig("x"_e, 0_e), 2_e),
+                              KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
+                              KPow(KTrig("x"_e, 1_e), 2_e)));
   // (A + B + C)^2 = (A^2 + 2*A*B + B^2 + 2*A*C + 2*B*C + C^2)
   EditionReference ref4(KPow(KAdd("x"_e, "y"_e, "z"_e), 2_e));
   quiz_assert(Simplification::ShallowAlgebraicExpand(ref4));
   assert_trees_are_equal(
-      ref4, KAdd(KMult(2_e, "x"_e, "y"_e), KMult(2_e, "x"_e, "z"_e),
-                 KMult(2_e, "y"_e, "z"_e), KPow("x"_e, 2_e), KPow("y"_e, 2_e),
+      ref4, KAdd(KPow("x"_e, 2_e), KMult(2_e, "x"_e, "y"_e), KPow("y"_e, 2_e),
+                 KMult(2_e, "x"_e, "z"_e), KMult(2_e, "y"_e, "z"_e),
                  KPow("z"_e, 2_e)));
 }
 
@@ -186,6 +187,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ln(x)-ln(1/x)", "2×ln(x)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1+ln(1/x)");
   simplifies_to("1-ln(x)", "1+ln(1/x)");
+
+  // Sort order
+  simplifies_to("π*floor(π)/π", "floor(π)");
+  simplifies_to("π+floor(π)-π", "floor(π)");
+  simplifies_to("π*(-π)/π", "-π");
+  simplifies_to("π+1/π-π", "1/π");
 
   // Trigonometry identities
   simplifies_to("cos(0)", "1");

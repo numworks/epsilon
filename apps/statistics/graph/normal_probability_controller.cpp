@@ -36,7 +36,7 @@ bool NormalProbabilityController::drawSeriesZScoreLine(int series, float *x,
 void NormalProbabilityController::reloadValueInBanner(
     Poincare::Preferences::PrintFloatMode displayMode, int precision) {
   constexpr static int k_bufferSize =
-      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+      Shared::BannerView::BannerBufferTextView::MaxTextSize();
   char buffer[k_bufferSize] = "";
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
                                 I18n::translate(I18n::Message::StatisticsValue),

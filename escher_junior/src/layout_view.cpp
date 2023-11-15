@@ -40,7 +40,7 @@ void AbstractLayoutView::drawRect(KDContext* ctx, KDRect rect) const {
     // TODO : Implement Selection here (use selection())
     getLayout().draw(ctx, drawingOrigin(), m_glyphFormat.style.font,
                      m_glyphFormat.style.glyphColor,
-                     m_glyphFormat.style.backgroundColor);
+                     m_glyphFormat.style.backgroundColor, selection());
   }
 }
 

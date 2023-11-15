@@ -5,6 +5,7 @@
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
+#include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/reference.h>
 
@@ -28,7 +29,8 @@ class Layout final : public Reference {
   static Layout Parse(const char* text);
   void draw(KDContext* ctx, KDPoint p, KDFont::Size font,
             KDColor expressionColor = KDColorBlack,
-            KDColor backgroundColor = KDColorWhite) const;
+            KDColor backgroundColor = KDColorWhite,
+            LayoutSelection selection = {}) const;
   KDSize size(KDFont::Size font) const;
   bool isEmpty() const;
 

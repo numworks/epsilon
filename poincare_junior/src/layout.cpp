@@ -3,6 +3,7 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
+#include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/node_iterator.h>
@@ -108,8 +109,10 @@ Layout Layout::FromExpression(const Expression *expr) {
 }
 
 void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor) const {
-  void *context[5] = {ctx, &p, &font, &expressionColor, &backgroundColor};
+                  KDColor expressionColor, KDColor backgroundColor,
+                  LayoutSelection selection) const {
+  void *context[] = {ctx,       &p, &font, &expressionColor, &backgroundColor,
+                     &selection};
   send(
       [](const Tree *tree, void *context) {
         void **contextArray = static_cast<void **>(context);
@@ -118,7 +121,10 @@ void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
         KDFont::Size font = *static_cast<KDFont::Size *>(contextArray[2]);
         KDColor expressionColor = *static_cast<KDColor *>(contextArray[3]);
         KDColor backgroundColor = *static_cast<KDColor *>(contextArray[4]);
-        Render::Draw(tree, ctx, p, font, expressionColor, backgroundColor);
+        LayoutSelection selection =
+            *static_cast<LayoutSelection *>(contextArray[5]);
+        Render::Draw(tree, ctx, p, font, expressionColor, backgroundColor,
+                     selection);
       },
       &context);
 }

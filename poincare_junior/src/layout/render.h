@@ -5,6 +5,7 @@
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
+#include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
@@ -21,15 +22,15 @@ class Render final {
   static KDCoordinate Baseline(const Tree* node);
   static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
-                   KDColor backgroundColor = KDColorWhite);
+                   KDColor backgroundColor = KDColorWhite,
+                   LayoutSelection selection = {});
 
  private:
   static void PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
-                          KDColor expressionColor = KDColorBlack,
-                          KDColor backgroundColor = KDColorWhite);
+                          KDColor expressionColor, KDColor backgroundColor,
+                          LayoutSelection selection);
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
-                         KDColor expressionColor = KDColorBlack,
-                         KDColor backgroundColor = KDColorWhite);
+                         KDColor expressionColor, KDColor backgroundColor);
 
   static KDFont::Size font;
 };

@@ -1,10 +1,12 @@
 #include "render.h"
 
 #include <escher/metric.h>
+#include <escher/palette.h>
 #include <kandinsky/dot.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include "code_point_layout.h"
+#include "layout_selection.h"
 #include "rack_layout.h"
 #include "render_masks.h"
 #include "render_metrics.h"
@@ -524,14 +526,26 @@ KDCoordinate Render::Baseline(const Tree* node) {
 
 void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
                   KDFont::Size font, KDColor expressionColor,
-                  KDColor backgroundColor) {
+                  KDColor backgroundColor, LayoutSelection selection) {
   Render::font = font;
-  PrivateDraw(node, ctx, p, expressionColor, backgroundColor);
+  PrivateDraw(node, ctx, p, expressionColor, backgroundColor, selection);
 }
 
 void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
-                         KDColor expressionColor, KDColor backgroundColor) {
+                         KDColor expressionColor, KDColor backgroundColor,
+                         LayoutSelection selection) {
   assert(node->isLayout());
+  KDColor selectionColor = Escher::Palette::Select;
+  if (selection.layout() == node) {
+    KDSize size = RackLayout::SizeBetweenIndexes(node, selection.leftPosition(),
+                                                 selection.rightPosition());
+    KDCoordinate subBase = RackLayout::BaselineBetweenIndexes(
+        node, selection.leftPosition(), selection.rightPosition());
+    KDCoordinate base = RackLayout::Baseline(node);
+    KDPoint start(Render::PositionOfChild(node, selection.leftPosition()).x(),
+                  base - subBase);
+    ctx->fillRect(KDRect(p.translatedBy(start), size), selectionColor);
+  }
   KDSize size = Size(node);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
@@ -539,13 +553,18 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     // Layout size overflows KDCoordinate
     return;
   }
-  /* Redraw the background for each Tree* (used with selection which isn't
-   * implemented yet) */
-  ctx->fillRect(KDRect(p, size), backgroundColor);
+  KDColor childBackground = backgroundColor;
   RenderNode(node, ctx, p, expressionColor, backgroundColor);
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
+    if (selection.layout() == node) {
+      if (index == selection.leftPosition()) {
+        childBackground = selectionColor;
+      } else if (index == selection.rightPosition()) {
+        childBackground = backgroundColor;
+      }
+    }
     PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
-                expressionColor, backgroundColor);
+                expressionColor, childBackground, selection);
   }
 }
 

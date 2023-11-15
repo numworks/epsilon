@@ -7,27 +7,19 @@ namespace PoincareJ {
 
 class LayoutSelection {
  public:
-  /* If the layout is horizontal, the selection is between the children at
+  /* The layout is a rack and the selection is between the children at
    * startPosition and endPosition - 1.
    * Ex: l = HorizontalLayout("0123456789")
    *     -> LayoutSelection(l, 2, 5) = "234"
    *     -> LayoutSelection(l, 0, 5) = "01234"
    *     -> LayoutSelection(l, 2, 10) = "23456789"
    *
-   * If the layout is not horizontal, the selection is either empty or selects
-   * only this layout. The start and endPosition should only be 0 or 1.
-   * Ex: l = CodePoint("A")
-   *     -> LayoutSelection(l, 0, 1) = "A"
-   *     -> LayoutSelection(l, 0, 0) = ""
    * */
   LayoutSelection(const Tree* n, int startPosition, int endPosition)
       : m_node(n), m_startPosition(startPosition), m_endPosition(endPosition) {
-    assert(!n ||
-           (Layout::IsHorizontal(n) && 0 <= startPosition &&
-            startPosition <= n->numberOfChildren() && 0 <= endPosition &&
-            endPosition <= n->numberOfChildren()) ||
-           (startPosition >= 0 && startPosition <= 1 && endPosition >= 0 &&
-            endPosition <= 1));
+    assert(!n || (n->isRackLayout() && 0 <= startPosition &&
+                  startPosition <= n->numberOfChildren() && 0 <= endPosition &&
+                  endPosition <= n->numberOfChildren()));
   }
 
   LayoutSelection() : LayoutSelection(nullptr, 0, 0) {}
@@ -50,11 +42,8 @@ class LayoutSelection {
 
   bool containsNode(const Tree* n) const {
     const Block* b = n->block();
-    return !isEmpty() &&
-           (Layout::IsHorizontal(m_node)
-                ? (b >= m_node->child(leftPosition())->block() &&
-                   b <= m_node->child(rightPosition() - 1)->block())
-                : (b >= m_node->block() && b < m_node->nextTree()->block()));
+    return !isEmpty() && b >= m_node->child(leftPosition())->block() &&
+           b <= m_node->child(rightPosition() - 1)->block();
   }
 
  private:

@@ -3,6 +3,7 @@ from datetime import datetime
 import helper
 import args_types
 from print_format import bold, red, green, print_underlined
+from concurrent.futures import ThreadPoolExecutor
 
 parser = argparse.ArgumentParser(
     description="This script compares the crc32 of the test screenshots dataset with crc32 generated from a given epsilon executable."
@@ -21,6 +22,16 @@ parser.add_argument(
 )
 
 
+def run_test(scenario_name, state_file, executable, computed_crc32_list):
+    try:
+        p = helper.compute_crc32_process(state_file, executable)
+        p.wait()
+        print("Computing crc32 of", scenario_name)
+        computed_crc32_list.append((scenario_name, helper.find_crc32_in_log(p.stdout)))
+    except:  # Handle Interrupt exceptions
+        sys.exit(1)
+
+
 def main():
     # Parse args
     args = parser.parse_args()
@@ -34,31 +45,30 @@ def main():
     print("==============================")
     processes = []
     ignored = 0
-    for scenario_name in sorted(os.listdir(helper.dataset())):
-        scenario_folder = helper.folder(scenario_name)
-        if not os.path.isdir(scenario_folder):
-            continue
-
-        print("Collecting data from", scenario_folder)
-        state_file = helper.get_file_with_extension(scenario_folder, ".nws")
-        reference_crc32_file = helper.get_file_with_extension(scenario_folder, ".txt")
-        if state_file == "" or reference_crc32_file == "":
-            ignored = ignored + 1
-            continue
-
-        processes.append(
-            (scenario_name, helper.compute_crc32_process(state_file, args.executable))
-        )
-
-    # Compute crc32 (in parallel)
-    print("\nComputing crc32")
-    print("==============================")
     computed_crc32_list = []
-    for scenario_name, p in processes:
-        print("Computing crc32 of", scenario_name)
-        p.wait()
-        # helper.print_error(p.stderr)
-        computed_crc32_list.append((scenario_name, helper.find_crc32_in_log(p.stdout)))
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        for scenario_name in sorted(os.listdir(helper.dataset())):
+            scenario_folder = helper.folder(scenario_name)
+            if not os.path.isdir(scenario_folder):
+                continue
+
+            print("Collecting data from", scenario_folder)
+            state_file = helper.get_file_with_extension(scenario_folder, ".nws")
+            reference_crc32_file = helper.get_file_with_extension(
+                scenario_folder, ".txt"
+            )
+            if state_file == "" or reference_crc32_file == "":
+                ignored = ignored + 1
+                continue
+
+            pool.submit(
+                run_test,
+                scenario_name,
+                state_file,
+                args.executable,
+                computed_crc32_list,
+            )
 
     # Compare with ref
     print("\nComparing crc32")

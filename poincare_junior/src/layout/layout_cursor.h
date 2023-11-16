@@ -52,7 +52,7 @@ class LayoutCursor {
   // Definition
   bool isUninitialized() const { return cursorNode() == nullptr; }
   bool isValid() const {
-    return (isUninitialized() || (m_position >= leftMostPosition() &&
+    return (isUninitialized() || (m_position >= leftmostPosition() &&
                                   m_position <= rightmostPosition()));
   }
 
@@ -115,7 +115,7 @@ class LayoutCursor {
   Tree* rightLayout() const;
   const Tree* layoutToFit(KDFont::Size font) const;
 
-  int leftMostPosition() const { return 0; }
+  int leftmostPosition() const { return 0; }
   int rightmostPosition() const { return cursorNode()->numberOfChildren(); }
   bool horizontalMove(OMG::HorizontalDirection direction,
                       bool* shouldRedrawLayout);

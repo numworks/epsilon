@@ -563,7 +563,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
         CursorMotion::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
     privateDelete(deletionMethod, false);
   } else {
-    assert(m_position == leftMostPosition());
+    assert(m_position == leftmostPosition());
     int index;
     const Tree *p = rootNode()->parentOfDescendant(cursorNode(), &index);
     if (!p) {
@@ -686,7 +686,7 @@ void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
     return;
   }
   setCursorNode(l);
-  m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
+  m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
 Tree *LayoutCursor::leftLayout() const {
@@ -811,7 +811,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
      *
      * */
     setCursorNode(nextLayout->child(newIndex));
-    m_position = direction.isRight() ? leftMostPosition() : rightmostPosition();
+    m_position = direction.isRight() ? leftmostPosition() : rightmostPosition();
     return true;
   }
 
@@ -922,7 +922,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
           assert(!nextLayout->isRackLayout());
           setCursorNode(nextLayout->child(nextIndex));
           m_position = positionRelativeToNextLayout == PositionInLayout::Left
-                           ? leftMostPosition()
+                           ? leftmostPosition()
                            : rightmostPosition();
           return true;
         }
@@ -938,7 +938,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   int childIndex;
   Tree *parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
   PositionInLayout currentPosition =
-      m_position == leftMostPosition()
+      m_position == leftmostPosition()
           ? PositionInLayout::Left
           : (m_position == rightmostPosition() ? PositionInLayout::Right
                                                : PositionInLayout::Middle);

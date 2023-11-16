@@ -1,10 +1,15 @@
 CXXFORMAT := clang-format
 CXXFORMATARGS ?= -i --Werror --verbose
 GITDIFFARGS := --name-only --diff-filter=d
+PYFORMAT := ./.venv/bin/black
 
 .PHONY: format
 format: BASE ?= HEAD
-format: FILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.cpp$$|\.h$$|libaxx/include)")
+format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.cpp$$|\.h$$|libaxx/include)")
+format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.py$$)")
 format:
-# Use xargs to elegantly handle the case FILES=""
-	$(Q) echo $(FILES) | xargs $(CXXFORMAT) $(CXXFORMATARGS)
+# Use xargs to elegantly handle the case CXXFILES=""
+	$(Q) echo "=== Formatting .cpp and .h files ==="
+	$(Q) echo $(CXXFILES) | xargs $(CXXFORMAT) $(CXXFORMATARGS)
+	$(Q) echo "=== Formatting .py files"
+	$(Q) echo $(PYFILES) | xargs $(PYFORMAT)

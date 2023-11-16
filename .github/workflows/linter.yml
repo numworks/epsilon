@@ -25,9 +25,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           submodules: false
 
-      # TODO Only install clang-format
-      - name: Install dependencies
-        uses: numworks/setup-llvm@latest
+      # TODO Only install clang-format and black
+      - name: Setup
+        run: build/setup.sh
 
       - name: Lint files changed by PR
         run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror"

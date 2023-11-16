@@ -40,7 +40,8 @@ install_python_deps() {
     lz4 \
     pyelftools \
     pypng \
-    stringcase
+    stringcase \
+    black
 }
 
 install_macos_binary_deps() {

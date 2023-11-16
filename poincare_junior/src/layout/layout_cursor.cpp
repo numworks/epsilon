@@ -1023,19 +1023,12 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
 
   if (deletionMethod == DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
-    Tree *p = parent;
-    assert(p && !p->isRackLayout());
-    Tree *parentOfP = rootNode()->parentOfDescendant(parent);
-    if (!parentOfP || !parentOfP->isRackLayout()) {
-      assert(m_position == 0);
-      p->moveTreeOverTree(m_layout);
-    } else {
-      // m_position = parentOfP->indexOfChild(p);
-      p->moveTreeOverTree(m_layout);
-      // NAry::RemoveChildAtIndex(parentOfP, m_position);
-      // NAry::AddOrMergeChildAtIndex(parentOfP, m_layout, m_position);
-      m_cursorReference = parentOfP;
-    }
+    assert(parent && !parent->isRackLayout());
+    Tree *parentRack = rootNode()->parentOfDescendant(parent, &m_position);
+    Tree *detached = NAry::DetachChildAtIndex(parentRack, m_position);
+    detached->moveTreeOverTree(m_layout);
+    NAry::AddOrMergeChildAtIndex(parentRack, detached, m_position);
+    m_cursorReference = parentRack;
     return;
   }
 #if 0

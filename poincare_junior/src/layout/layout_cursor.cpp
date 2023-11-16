@@ -2,6 +2,7 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -1066,33 +1067,30 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     m_cursorReference = parentOfFraction;
     return;
   }
-#if 0
-  if (deletionMethod == DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper ||
+  if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN ||
       deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow) {
     assert(deletionAppliedToParent);
     int newIndex = -1;
-    if (deletionMethod ==
-        LayoutNode::DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper) {
-      assert(parent().type() ==
-                 LayoutNode::Type::BinomialCoefficientLayout ||
-             parent().type() == LayoutNode::Type::Point2DLayout);
-      newIndex = TwoRowsLayoutNode::k_upperLayoutIndex;
+    if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+      // It is useful at all ?
+      assert(parent->isBinomialLayout());
+      newIndex = Binomial::nIndex;
     } else {
+#if 0
       assert(deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow);
-      assert(GridLayoutNode::IsGridLayoutType(parent.type()));
-      GridLayoutNode *gridNode =
-          static_cast<GridLayoutNode *>(parent.node());
-      int currentIndex = parent.indexOfChild(m_layout);
-      int currentRow = gridNode->rowAtChildIndex(currentIndex);
-      assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
-      newIndex = gridNode->indexAtRowColumn(
-          currentRow - 1, gridNode->rightmostNonGrayColumnIndex());
+      assert(parent->isGridLayout());
+      int currentIndex = parent->indexOfChild(m_layout);
+      int currentRow = Grid::rowAtChildIndex(parent, currentIndex);
+      assert(currentRow > 0 && Grid::NumberOfColumns(parent) >= 2);
+      newIndex = Grid::indexAtRowColumn(
+          parent, currentRow - 1, Grid::rightmostNonGrayColumnIndex(parent));
+#endif
     }
-    m_layout = parent.child(newIndex);
+    m_cursorReference = parent->child(newIndex);
     m_position = rightmostPosition();
     return;
   }
-
+#if 0
   if (deletionMethod == DeletionMethod::GridLayoutDeleteColumn ||
       deletionMethod == DeletionMethod::GridLayoutDeleteRow ||
       deletionMethod == DeletionMethod::GridLayoutDeleteColumnAndRow) {

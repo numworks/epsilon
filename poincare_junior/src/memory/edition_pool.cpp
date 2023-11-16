@@ -268,10 +268,10 @@ void EditionPool::execute(ActionWithContext action, void *context,
       return;
     }
     ExceptionCatch(type) {
+      assert(numberOfTrees() == 0);
       if (type != ExceptionType::PoolIsFull) {
         ExceptionCheckpoint::Raise(type);
       }
-      SharedEditionPool->flush();
       if (!relax(context)) {
         /* Relax the context and try again or re-raise. */
         ExceptionCheckpoint::Raise(type);

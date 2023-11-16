@@ -84,8 +84,8 @@ void RangeParameterController::fillRangeCells() {
   I18n::Message gridTypeCellSubMessage =
       m_tempInteractiveRange.gridType() ==
               GridSelectionController::GridType::Cartesian
-          ? I18n::Message::Cartesian
-          : I18n::Message::Polar;
+          ? I18n::Message::CartesianGrid
+          : I18n::Message::PolarGrid;
 
   m_gridTypeCell.subLabel()->setText(I18n::translate(gridTypeCellSubMessage));
 }
@@ -173,8 +173,8 @@ RangeParameterController::GridSelectionController::GridSelectionController(
     : Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(
           parentResponder, this),
       m_viewRange(interactiveCurveViewRange) {
-  cells[0].label()->setMessage(I18n::Message::Cartesian);
-  cells[1].label()->setMessage(I18n::Message::Polar);
+  cells[0].label()->setMessage(I18n::Message::CartesianGrid);
+  cells[1].label()->setMessage(I18n::Message::PolarGrid);
 }
 
 void RangeParameterController::GridSelectionController::viewWillAppear() {

@@ -114,4 +114,10 @@ void CalculationSelectableListView::scrollToSubviewOfTypeOfCellAtRow(
   App::app()->setFirstResponder(cell, true);
 }
 
+void CalculationSelectableListView::didEnterResponderChain(
+    Responder *previousFirstResponder) {
+  resetSizeAndOffsetMemoization();
+  SelectableTableView::didEnterResponderChain(previousFirstResponder);
+}
+
 }  // namespace Calculation

@@ -9,20 +9,25 @@ import io
 import os
 
 parser = argparse.ArgumentParser(description="Process some asset files.")
-parser.add_argument('assets', metavar='asset', type=str, nargs='+', help='The list of assets to include')
-parser.add_argument('-o', help='The file to generate')
+parser.add_argument(
+    "assets", metavar="asset", type=str, nargs="+", help="The list of assets to include"
+)
+parser.add_argument("-o", help="The file to generate")
 args = parser.parse_args()
+
 
 def asset_basename_symbol(asset):
     return os.path.splitext(asset)[0].replace("-", "_")
+
 
 def print_asset(f, asset):
     asset_basename = asset_basename_symbol(asset)
     f.write(".global _ion_simulator_" + asset_basename + "_start\n")
     f.write(".global _ion_simulator_" + asset_basename + "_end\n")
     f.write("_ion_simulator_" + asset_basename + "_start:\n")
-    f.write("    .incbin \"ion/src/simulator/assets/" + asset + "\"\n")
+    f.write('    .incbin "ion/src/simulator/assets/' + asset + '"\n')
     f.write("_ion_simulator_" + asset_basename + "_end:\n\n")
+
 
 def print_assembly(files, path):
     f = open(path, "w")
@@ -30,14 +35,25 @@ def print_assembly(files, path):
         print_asset(f, asset)
     f.close()
 
+
 def print_declaration(f, asset):
     asset_basename = asset_basename_symbol(asset)
     f.write("extern unsigned char _ion_simulator_" + asset_basename + "_start;\n")
     f.write("extern unsigned char _ion_simulator_" + asset_basename + "_end;\n")
 
+
 def print_mapping(f, asset):
     asset_basename = asset_basename_symbol(asset)
-    f.write('ResourceMap("' + asset + '", &_ion_simulator_' + asset_basename +'_start, &_ion_simulator_' + asset_basename + '_end),\n')
+    f.write(
+        'ResourceMap("'
+        + asset
+        + '", &_ion_simulator_'
+        + asset_basename
+        + "_start, &_ion_simulator_"
+        + asset_basename
+        + "_end),\n"
+    )
+
 
 def print_header(files, path):
     f = open(path, "w")
@@ -50,7 +66,9 @@ def print_header(files, path):
 
     f.write("\nclass ResourceMap {\n")
     f.write("public:\n")
-    f.write("  constexpr ResourceMap(const char * identifier, unsigned char * start, unsigned char * end) : m_identifier(identifier), m_start(start), m_end(end) {}\n")
+    f.write(
+        "  constexpr ResourceMap(const char * identifier, unsigned char * start, unsigned char * end) : m_identifier(identifier), m_start(start), m_end(end) {}\n"
+    )
     f.write("  const char * identifier() const { return m_identifier; }\n")
     f.write("  unsigned char * start() const { return m_start; }\n")
     f.write("  unsigned char * end() const { return m_end; }\n")
@@ -67,7 +85,8 @@ def print_header(files, path):
     f.write("#endif\n")
     f.close()
 
-if (args.o.endswith(".s")):
+
+if args.o.endswith(".s"):
     print_assembly(args.assets, args.o)
-if (args.o.endswith(".h")):
+if args.o.endswith(".h"):
     print_header(args.assets, args.o)

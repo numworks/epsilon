@@ -20,34 +20,37 @@ import lz4.frame
 
 
 parser = argparse.ArgumentParser(description="Process some i18n files.")
-parser.add_argument('--header', help='the .h file to generate')
-parser.add_argument('--implementation', help='the .cpp file to generate')
-parser.add_argument('--locales', nargs='+', help='locale to actually generate')
-parser.add_argument('--countries', nargs='+', help='countries to actually generate')
-parser.add_argument('--codepoints', help='the code_points.h file')
-parser.add_argument('--countrypreferences', help='the country_preferences.csv file')
-parser.add_argument('--languagepreferences', help='the language_preferences.csv file')
-parser.add_argument('--files', nargs='+', help='an i18n file')
-parser.add_argument('--compress', action='store_true', help='if the texts should be compressed')\
-
+parser.add_argument("--header", help="the .h file to generate")
+parser.add_argument("--implementation", help="the .cpp file to generate")
+parser.add_argument("--locales", nargs="+", help="locale to actually generate")
+parser.add_argument("--countries", nargs="+", help="countries to actually generate")
+parser.add_argument("--codepoints", help="the code_points.h file")
+parser.add_argument("--countrypreferences", help="the country_preferences.csv file")
+parser.add_argument("--languagepreferences", help="the language_preferences.csv file")
+parser.add_argument("--files", nargs="+", help="an i18n file")
+parser.add_argument(
+    "--compress", action="store_true", help="if the texts should be compressed"
+)
 args = parser.parse_args()
 
 message_length_limit_for_type = {
-    "toolbox" : 35, # Toolbox maximal available space with small font
-    "default" : 45  # Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small)
+    "toolbox": 35,  # Toolbox maximal available space with small font
+    "default": 45,  # Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small)
 }
 
 # When building with less locales, redundant messages are not checked for
 default_number_of_locales = 7
 
+
 def has_glyph(glyph):
     return glyph in codepoints
 
+
 def source_definition(i18n_string):
     s = unicodedata.normalize("NFKD", i18n_string)
-    result = u""
-    if not(args.compress):
-        result += u"\""
+    result = ""
+    if not (args.compress):
+        result += '"'
     i = 0
     length = len(s)
     checkForCombining = False
@@ -58,146 +61,184 @@ def source_definition(i18n_string):
             # (for the non-extended set)
             copyCodePoint = (ord(s[i]) < 0x300) or (ord(s[i]) > 0x36F)
             checkForCombining = False
-        if args.compress and s[i] == '\\' and i+1 < length:
+        if args.compress and s[i] == "\\" and i + 1 < length:
             # When compressing, we need to use combined chars so that the
             # correct chars will be uncompressed.
-            combinedChar = ''
-            if s[i+1] == '\\':
+            combinedChar = ""
+            if s[i + 1] == "\\":
                 # Combine "\\" into '\'
-                combinedChar = '\\'
-            elif s[i+1] == 'n':
+                combinedChar = "\\"
+            elif s[i + 1] == "n":
                 # Combine "\n" into '\n'
-                combinedChar = '\n'
-            elif s[i+1] == '"':
+                combinedChar = "\n"
+            elif s[i + 1] == '"':
                 # Combine "\"" into '"'
                 combinedChar = '"'
-            elif (i+3 < length) and s[i+1] == 'x' and s[i+2] == '1' and s[i+3] == '1':
+            elif (
+                (i + 3 < length)
+                and s[i + 1] == "x"
+                and s[i + 2] == "1"
+                and s[i + 3] == "1"
+            ):
                 # Combine "\x11" into '\x11'
-                combinedChar = '\x11'
-                i+=2
-            else :
-                sys.stderr.write(" \\" + str(s[i+1]) + " is not handled with compression. Exiting !\n")
+                combinedChar = "\x11"
+                i += 2
+            else:
+                sys.stderr.write(
+                    " \\"
+                    + str(s[i + 1])
+                    + " is not handled with compression. Exiting !\n"
+                )
                 sys.exit(-1)
-            if combinedChar != '':
+            if combinedChar != "":
                 result = result + combinedChar
-                i+=2
+                i += 2
                 continue
         if copyCodePoint:
             # Remove the uppercase characters with combining chars
             checkForCombining = s[i].isupper()
             result = result + s[i]
         if not has_glyph(s[i]):
-            sys.stderr.write(s[i] + " (" + str(hex(ord(s[i]))) + ") is not a character present in " + args.codepoints + " . Exiting !\n")
+            sys.stderr.write(
+                s[i]
+                + " ("
+                + str(hex(ord(s[i])))
+                + ") is not a character present in "
+                + args.codepoints
+                + " . Exiting !\n"
+            )
             sys.exit(-1)
-        i = i+1
-    if not(args.compress):
-        result += u"\""
+        i = i + 1
+    if not (args.compress):
+        result += '"'
     return result.encode("utf-8")
+
 
 def is_commented_line(line):
     match_comment = re.match(r"^#(.*)$", line)
     return match_comment
 
+
 def split_line(line):
     match = re.match(r"^(\w+)\s*=\s*\"(.*)\"$", line)
     if not match:
-        sys.stderr.write("Error: Invalid line \"" + line + "\"\n")
+        sys.stderr.write('Error: Invalid line "' + line + '"\n')
         sys.exit(-1)
     return (match.group(1), source_definition(match.group(2)))
+
 
 def locale_from_filename(filename):
     return re.match(r".*\.([a-z]+)\.i18n", filename).group(1)
 
+
 def type_from_filename(filename):
     return re.match(r".*\/([a-z_]+)\.[a-z]+\.i18n", filename).group(1)
 
+
 def message_exceeds_length_limit(definition, type):
-    if not(type in message_length_limit_for_type):
+    if not (type in message_length_limit_for_type):
         type = "default"
     length_limit = message_length_limit_for_type[type]
     # Handle multi-line messages
     if args.compress:
-        iterator = re.split(r"\n", definition.decode('utf-8'))
+        iterator = re.split(r"\n", definition.decode("utf-8"))
     else:
-        iterator = re.split(r"\\n", definition.decode('utf-8')[1:-1])
+        iterator = re.split(r"\\n", definition.decode("utf-8")[1:-1])
     for definition_line in iterator:
         # Ignore combining characters
-        if (len([c for c in definition_line if not unicodedata.combining(c)]) > length_limit):
+        if (
+            len([c for c in definition_line if not unicodedata.combining(c)])
+            > length_limit
+        ):
             return True
     return False
+
 
 def check_redundancy(messages, data, locales):
     redundant_names = set()
     for name in messages:
         redundancy = True
         for i in range(1, len(locales)):
-            redundancy = redundancy and data[locales[i]][name] == data[locales[i-1]][name]
+            redundancy = (
+                redundancy and data[locales[i]][name] == data[locales[i - 1]][name]
+            )
         if redundancy:
             redundant_names.add(name)
-    if (len(redundant_names) > 0):
-        sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
+    if len(redundant_names) > 0:
+        sys.stderr.write(
+            "Some localized messages are redundant and can be made universal :\n\t"
+            + "\n\t".join(sorted(redundant_names))
+            + "\n"
+        )
         sys.exit(-1)
+
 
 def check_duplicates(messages, data, locales):
     all_names = set()
     for name in messages:
-        concatenated=""
+        concatenated = ""
         for i in range(0, len(locales)):
             concatenated = str(concatenated) + "§" + str(data[locales[i]][name])
-        if (concatenated in all_names):
-            sys.stderr.write("Warning: Redundant localized message \"" + name + "\"\n")
+        if concatenated in all_names:
+            sys.stderr.write('Warning: Redundant localized message "' + name + '"\n')
         all_names.add(concatenated)
 
+
 def discard_messages_in_file(filePath, messages):
-  with open(filePath, 'r') as f:
-    file = f.read()
-    # Iterate backwards to prevent the loop of breaking when removing messages
-    for i in range(len(messages) - 1, -1, -1):
-      message = messages[i]
-      if "Message::" + message in file:
-        # Message found in file
-        messages.pop(i)
+    with open(filePath, "r") as f:
+        file = f.read()
+        # Iterate backwards to prevent the loop of breaking when removing messages
+        for i in range(len(messages) - 1, -1, -1):
+            message = messages[i]
+            if "Message::" + message in file:
+                # Message found in file
+                messages.pop(i)
+
 
 def discard_messages_in_dir(dirName, messages):
-  # Exploring a directory
-  directory = os.listdir(dirName)
-  for fileName in directory:
-    filePath = dirName + os.sep + fileName
-    if os.path.isfile(filePath) and (fileName.endswith(".h") or fileName.endswith(".cpp")) :
-      discard_messages_in_file(filePath, messages)
-    elif os.path.isdir(filePath) :
-      discard_messages_in_dir(filePath, messages)
+    # Exploring a directory
+    directory = os.listdir(dirName)
+    for fileName in directory:
+        filePath = dirName + os.sep + fileName
+        if os.path.isfile(filePath) and (
+            fileName.endswith(".h") or fileName.endswith(".cpp")
+        ):
+            discard_messages_in_file(filePath, messages)
+        elif os.path.isdir(filePath):
+            discard_messages_in_dir(filePath, messages)
+
 
 def check_unused(i18n_header, i18n_implementation):
-  with open(i18n_header) as f:
-    messages = f.read().splitlines()
-    start = -1
-    end = -1
-    for i in range(len(messages)):
-      if "enum class Message" in messages[i]:
-        start = i + 2 # Skip DEFAULT
-      elif start >= 0 and "}" in messages[i]:
-        end = i
-        break
-    messages = messages[start:end]
-    for k in range(len(messages)):
-      messages[k] = messages[k].strip().strip(',')
+    with open(i18n_header) as f:
+        messages = f.read().splitlines()
+        start = -1
+        end = -1
+        for i in range(len(messages)):
+            if "enum class Message" in messages[i]:
+                start = i + 2  # Skip DEFAULT
+            elif start >= 0 and "}" in messages[i]:
+                end = i
+                break
+        messages = messages[start:end]
+        for k in range(len(messages)):
+            messages[k] = messages[k].strip().strip(",")
 
-    # Remove messages that are used in apps and escher
-    # (poincare and kandinsky shouldn't have any message)
-    for folder in ["apps", "escher"]:
-      discard_messages_in_dir(folder, messages)
+        # Remove messages that are used in apps and escher
+        # (poincare and kandinsky shouldn't have any message)
+        for folder in ["apps", "escher"]:
+            discard_messages_in_dir(folder, messages)
 
-    # Also remove the ones in i18n.h and i18n.cpp enums and methods
-    # (namely CountryXX, LanguageXX and LocalizedMessageMarker)
-    filesToCheck = [i18n_header]
-    if (len(i18n_implementation) != 0):
-      filesToCheck.append(i18n_implementation)
-    for file in filesToCheck:
-      discard_messages_in_file(file, messages)
+        # Also remove the ones in i18n.h and i18n.cpp enums and methods
+        # (namely CountryXX, LanguageXX and LocalizedMessageMarker)
+        filesToCheck = [i18n_header]
+        if len(i18n_implementation) != 0:
+            filesToCheck.append(i18n_implementation)
+        for file in filesToCheck:
+            discard_messages_in_file(file, messages)
 
-    if (len(messages) > 0):
-      print(" >>> WARNING: Unused i18n messages :" + str(messages))
+        if len(messages) > 0:
+            print(" >>> WARNING: Unused i18n messages :" + str(messages))
+
 
 def parse_files(files):
     data = {}
@@ -208,45 +249,79 @@ def parse_files(files):
         type = type_from_filename(path)
         if locale not in data:
             data[locale] = {}
-        with io.open(path, "r", encoding='utf-8') as file:
+        with io.open(path, "r", encoding="utf-8") as file:
             for line in file:
                 if is_commented_line(line):
                     continue
-                name,definition = split_line(line)
+                name, definition = split_line(line)
                 if name in data[locale]:
-                    sys.stderr.write("Error: Redefinition of message \"" + name + "\" in locale " + locale + "\n")
+                    sys.stderr.write(
+                        'Error: Redefinition of message "'
+                        + name
+                        + '" in locale '
+                        + locale
+                        + "\n"
+                    )
                     sys.exit(-1)
                 if locale == "universal":
                     if name in messages:
-                        sys.stderr.write("Error: Redefinition of message \"" + name + "\" as universal\n")
+                        sys.stderr.write(
+                            'Error: Redefinition of message "'
+                            + name
+                            + '" as universal\n'
+                        )
                         sys.exit(-1)
                     universal_messages.add(name)
                     if definition in data[locale].values():
-                        sys.stderr.write("Warning: Redundant universal message \"" + name + "\"\n")
+                        sys.stderr.write(
+                            'Warning: Redundant universal message "' + name + '"\n'
+                        )
                 else:
                     if name in universal_messages:
-                        sys.stderr.write("Error: Redefinition of universal message \"" + name + "\" in locale " + locale + "\n")
+                        sys.stderr.write(
+                            'Error: Redefinition of universal message "'
+                            + name
+                            + '" in locale '
+                            + locale
+                            + "\n"
+                        )
                         sys.exit(-1)
                     messages.add(name)
-                if message_exceeds_length_limit(definition, type) and name != "TermsOfUseLink":
-                    sys.stderr.write("Error: Message exceeds length limits for " + type + " : " + definition.decode('utf-8') + " (" + name + ")\n")
+                if (
+                    message_exceeds_length_limit(definition, type)
+                    and name != "TermsOfUseLink"
+                ):
+                    sys.stderr.write(
+                        "Error: Message exceeds length limits for "
+                        + type
+                        + " : "
+                        + definition.decode("utf-8")
+                        + " ("
+                        + name
+                        + ")\n"
+                    )
                     sys.exit(-1)
                 data[locale][name] = definition
-    if (len(args.locales) >= default_number_of_locales):
+    if len(args.locales) >= default_number_of_locales:
         check_redundancy(messages, data, args.locales)
         check_duplicates(messages, data, args.locales)
-    return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
+    return {
+        "messages": sorted(messages),
+        "universal_messages": sorted(universal_messages),
+        "data": data,
+    }
+
 
 def parse_codepoints(file):
     codepoints = []
-    with io.open(file, "r", encoding='utf-8') as file:
+    with io.open(file, "r", encoding="utf-8") as file:
         IsCodePoint = False
         for line in file:
             if "};" in line:
                 IsCodePoint = False
             if IsCodePoint:
-                start = line.find('0x')
-                stop = line.find(',')
+                start = line.find("0x")
+                stop = line.find(",")
                 if not (start == -1 or stop == -1):
                     hexstring = line[start:stop]
                     value = int(hexstring, 16)
@@ -256,24 +331,31 @@ def parse_codepoints(file):
                 IsCodePoint = True
     return codepoints
 
+
 codepoints = parse_codepoints(args.codepoints)
+
 
 def parse_csv_with_header(file):
     res = []
-    with io.open(file, 'r', encoding='utf-8') as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=',')
+    with io.open(file, "r", encoding="utf-8") as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=",")
         for row in csvreader:
             res.append(row)
     return (res[0], res[1:])
+
 
 def parse_country_preferences(file):
     countryPreferences = {}
     header, records = parse_csv_with_header(file)
     for record in records:
-        countryPreferences[record[0]] = [header[i] + "::" + record[i] for i in range(1, len(record))]
+        countryPreferences[record[0]] = [
+            header[i] + "::" + record[i] for i in range(1, len(record))
+        ]
     return countryPreferences
 
+
 countryPreferences = parse_country_preferences(args.countrypreferences)
+
 
 def parse_language_preferences(file):
     languagePreferences = {}
@@ -282,20 +364,31 @@ def parse_language_preferences(file):
         languagePreferences[record[0]] = (header[1], record[1])
     return languagePreferences
 
+
 languagePreferences = parse_language_preferences(args.languagepreferences)
 
-def print_block_from_list(target, header, data, beautify=lambda arg: arg, prefix="  ", footer="};\n\n", elementPerLine=1):
+
+def print_block_from_list(
+    target,
+    header,
+    data,
+    beautify=lambda arg: arg,
+    prefix="  ",
+    footer="};\n\n",
+    elementPerLine=1,
+):
     target.write(header)
     lineIndex = 0
     for i in range(len(data)):
-        if (i%elementPerLine == 0):
+        if i % elementPerLine == 0:
             target.write(prefix)
         target.write(beautify(data[i]) + ",")
-        if ((i+1)%elementPerLine == 0):
+        if (i + 1) % elementPerLine == 0:
             target.write("\n")
         else:
             target.write(" ")
     target.write(footer)
+
 
 def print_header(data, path, locales, countries):
     f = open(path, "w")
@@ -309,51 +402,57 @@ def print_header(data, path, locales, countries):
     f.write("constexpr static int NumberOfCountries = %d;\n\n" % len(countries))
 
     # Messages enumeration
-    print_block_from_list(f,
-            "enum class Message : uint16_t {\n",
-            ["Default = 0"] + data["universal_messages"],
-            footer="\n")
+    print_block_from_list(
+        f,
+        "enum class Message : uint16_t {\n",
+        ["Default = 0"] + data["universal_messages"],
+        footer="\n",
+    )
 
-    if not(args.compress):
+    if not (args.compress):
         f.write("  LocalizedMessageMarker,\n")
 
-    print_block_from_list(f,
-            "\n",
-            data["messages"])
+    print_block_from_list(f, "\n", data["messages"])
 
     # Languages enumeration
-    print_block_from_list(f,
-            "enum class Language : uint8_t {\n",
-            locales,
-            lambda arg: arg.upper())
+    print_block_from_list(
+        f, "enum class Language : uint8_t {\n", locales, lambda arg: arg.upper()
+    )
 
     # Language names
-    print_block_from_list(f,
-            "constexpr const Message LanguageNames[NumberOfLanguages] = {\n",
-            locales,
-            lambda arg: arg.upper(),
-            "  Message::Language")
+    print_block_from_list(
+        f,
+        "constexpr const Message LanguageNames[NumberOfLanguages] = {\n",
+        locales,
+        lambda arg: arg.upper(),
+        "  Message::Language",
+    )
 
     # Countries enumeration
-    print_block_from_list(f,
-            "enum class Country : uint8_t {\n",
-            countries,
-            lambda arg: arg.upper())
+    print_block_from_list(
+        f, "enum class Country : uint8_t {\n", countries, lambda arg: arg.upper()
+    )
     defaultCountry = countries[-1]
 
     # Country names
-    print_block_from_list(f,
-            "constexpr const Message CountryNames[NumberOfCountries] = {\n",
-            countries,
-            lambda arg: arg.upper(),
-            "  Message::Country")
+    print_block_from_list(
+        f,
+        "constexpr const Message CountryNames[NumberOfCountries] = {\n",
+        countries,
+        lambda arg: arg.upper(),
+        "  Message::Country",
+    )
 
     # Language preferences
-    f.write("constexpr static Country DefaultCountryForLanguage[NumberOfLanguages] = {\n")
+    f.write(
+        "constexpr static Country DefaultCountryForLanguage[NumberOfLanguages] = {\n"
+    )
     for language in locales:
-        key = language if (language in languagePreferences) else '??'
+        key = language if (language in languagePreferences) else "??"
         header, country = languagePreferences[key]
-        line = "  " + header + "::" + (country if country in countries else defaultCountry)
+        line = (
+            "  " + header + "::" + (country if country in countries else defaultCountry)
+        )
         f.write(line + ",\n")
     f.write("};\n\n")
 
@@ -368,18 +467,19 @@ def print_header(data, path, locales, countries):
     f.write("};\n\n")
 
     # Language ISO639-1 codes
-    f.write("constexpr const char * LanguageISO6391Codes[NumberOfLanguages] = {\n");
+    f.write("constexpr const char * LanguageISO6391Codes[NumberOfLanguages] = {\n")
     for locale in locales:
-        f.write("  \"" + locale + "\",\n")
+        f.write('  "' + locale + '",\n')
     f.write("};\n\n")
 
     f.write("}\n\n")
     f.write("#endif\n")
     f.close()
 
+
 def print_implementation(data, path, locales):
     f = open(path, "w")
-    f.write("#include \"i18n.h\"\n")
+    f.write('#include "i18n.h"\n')
     f.write("#include <apps/global_preferences.h>\n")
     f.write("#include <assert.h>\n\n")
     f.write("namespace I18n {\n\n")
@@ -390,39 +490,50 @@ def print_implementation(data, path, locales):
     # Write the universal messages
     for message in data["universal_messages"]:
         f.write("constexpr static char universal" + message + "[] = ")
-        f = open(path, "ab") # Re-open the file as binary to output raw UTF-8 bytes
+        f = open(path, "ab")  # Re-open the file as binary to output raw UTF-8 bytes
         f.write(data["data"]["universal"][message])
-        f = open(path, "a") # Re-open the file as text
+        f = open(path, "a")  # Re-open the file as text
         f.write(";\n")
     f.write("\n")
-    print_block_from_list(f,
-            "constexpr static const char * universalMessages[%d] = {\n  universalDefault,\n" % (len(data["universal_messages"])+1),
-            data["universal_messages"],
-            prefix="  universal")
+    print_block_from_list(
+        f,
+        "constexpr static const char * universalMessages[%d] = {\n  universalDefault,\n"
+        % (len(data["universal_messages"]) + 1),
+        data["universal_messages"],
+        prefix="  universal",
+    )
 
     # Write the localized messages
     for message in data["messages"]:
         for locale in locales:
             if not locale in data["data"]:
-                sys.stderr.write("Error: Undefined locale \"" + locale + "\"\n")
+                sys.stderr.write('Error: Undefined locale "' + locale + '"\n')
                 sys.exit(-1)
             if not message in data["data"][locale]:
-                sys.stderr.write("Error: Undefined key \"" + message + "\" for locale \"" + locale + "\"\n")
+                sys.stderr.write(
+                    'Error: Undefined key "'
+                    + message
+                    + '" for locale "'
+                    + locale
+                    + '"\n'
+                )
                 sys.exit(-1)
             f.write("constexpr static char " + locale + message + "[] = ")
-            f = open(path, "ab") # Re-open the file as binary to output raw UTF-8 bytes
+            f = open(path, "ab")  # Re-open the file as binary to output raw UTF-8 bytes
             f.write(data["data"][locale][message])
-            f = open(path, "a") # Re-open the file as text
+            f = open(path, "a")  # Re-open the file as text
             f.write(";\n")
     f.write("\n")
-    f.write("constexpr static const char * messages[%d][%d] = {\n" % (len(data["messages"]), len(locales)))
+    f.write(
+        "constexpr static const char * messages[%d][%d] = {\n"
+        % (len(data["messages"]), len(locales))
+    )
     for message in data["messages"]:
         f.write("  {")
         for locale in locales:
             f.write(locale + message + ", ")
         f.write("},\n")
     f.write("};\n\n")
-
 
     # Write the translate method
     code = """
@@ -444,36 +555,47 @@ const char * translate(Message m) {
     f.write(code)
     f.close()
 
+
 def print_compressed_implementation(data, path, locales):
     f = open(path, "w")
-    f.write("#include \"i18n.h\"\n")
+    f.write('#include "i18n.h"\n')
     f.write("#include <apps/global_preferences.h>\n")
     f.write("#include <assert.h>\n\n")
     f.write("namespace I18n {\n\n")
 
     # Messages count
-    f.write("constexpr static size_t universalMessagesCount = " + str(len(data["universal_messages"]) + 1) + ";\n")
-    f.write("constexpr static size_t localizedMessagesCount = " + str(len(data["messages"])) + ";\n")
-    f.write("constexpr static size_t totalMessagesCount = universalMessagesCount + localizedMessagesCount;\n\n")
+    f.write(
+        "constexpr static size_t universalMessagesCount = "
+        + str(len(data["universal_messages"]) + 1)
+        + ";\n"
+    )
+    f.write(
+        "constexpr static size_t localizedMessagesCount = "
+        + str(len(data["messages"]))
+        + ";\n"
+    )
+    f.write(
+        "constexpr static size_t totalMessagesCount = universalMessagesCount + localizedMessagesCount;\n\n"
+    )
 
     # Concatenate texts by locale (+ universal), keep track of message positions
     messagePosition = [0]
-    concatenatedData={"universal" : b''}
+    concatenatedData = {"universal": b""}
     for locale in locales:
         if not locale in data["data"]:
-            sys.stderr.write("Error: Undefined locale \"" + locale + "\"\n")
+            sys.stderr.write('Error: Undefined locale "' + locale + '"\n')
             sys.exit(-1)
-        concatenatedData[locale] = b''
+        concatenatedData[locale] = b""
 
     # Add universalDefault message
     messagePosition.append(1 + messagePosition[-1])
-    concatenatedData["universal"] += b'\x00'
+    concatenatedData["universal"] += b"\x00"
 
     # Concatenate the universal messages
     for message in data["universal_messages"]:
-        messageSize = len(data["data"]["universal"][message])+1
+        messageSize = len(data["data"]["universal"][message]) + 1
         messagePosition.append(messageSize + messagePosition[-1])
-        concatenatedData["universal"] += data["data"]["universal"][message] + b'\x00'
+        concatenatedData["universal"] += data["data"]["universal"][message] + b"\x00"
 
     # Concatenate the localized messages
     for message in data["messages"]:
@@ -481,16 +603,22 @@ def print_compressed_implementation(data, path, locales):
         # Compute max message size
         for locale in locales:
             if not message in data["data"][locale]:
-                sys.stderr.write("Error: Undefined key \"" + message + "\" for locale \"" + locale + "\"\n")
+                sys.stderr.write(
+                    'Error: Undefined key "'
+                    + message
+                    + '" for locale "'
+                    + locale
+                    + '"\n'
+                )
                 sys.exit(-1)
-            messageSize = len(data["data"][locale][message])+1
+            messageSize = len(data["data"][locale][message]) + 1
             maxMessageSize = max(maxMessageSize, messageSize)
-            concatenatedData[locale] += data["data"][locale][message] + b'\x00'
+            concatenatedData[locale] += data["data"][locale][message] + b"\x00"
         # Fill remaining space with empty chars. This allow having the same
         # concatenatedData size for all locales
         for locale in locales:
-            messageSize = len(data["data"][locale][message])+1
-            concatenatedData[locale] += b'\x00' * (maxMessageSize - messageSize)
+            messageSize = len(data["data"][locale][message]) + 1
+            concatenatedData[locale] += b"\x00" * (maxMessageSize - messageSize)
         messagePosition.append(maxMessageSize + messagePosition[-1])
     f.write("\n")
 
@@ -498,50 +626,101 @@ def print_compressed_implementation(data, path, locales):
     TotalUncompressedSize = messagePosition.pop()
 
     # Message position within the uncompressed text buffer
-    print_block_from_list(f,
+    print_block_from_list(
+        f,
         "constexpr static const size_t messagePosition[totalMessagesCount] = {\n",
-        messagePosition, lambda arg: str(arg), prefix="  ", elementPerLine=254)
+        messagePosition,
+        lambda arg: str(arg),
+        prefix="  ",
+        elementPerLine=254,
+    )
 
     # Uncompressed sizes data
     localizedUncompressedSize = 0
     for locale in locales:
         uncompressedSize = len(concatenatedData[locale])
         # assert all language take the same space uncompressed
-        if (localizedUncompressedSize != 0 and uncompressedSize != localizedUncompressedSize):
-            sys.stderr.write("Error: Language uncompressed size differs : \"" + locale + "\"\n")
+        if (
+            localizedUncompressedSize != 0
+            and uncompressedSize != localizedUncompressedSize
+        ):
+            sys.stderr.write(
+                'Error: Language uncompressed size differs : "' + locale + '"\n'
+            )
             sys.exit(-1)
         localizedUncompressedSize = uncompressedSize
     universalUncompressedSize = len(concatenatedData["universal"])
-    if (universalUncompressedSize + localizedUncompressedSize != TotalUncompressedSize):
-        sys.stderr.write("Error: Total uncompressed size differs : " + str(universalUncompressedSize + localizedUncompressedSize) + " instead of " + str(TotalUncompressedSize) + "\n")
+    if universalUncompressedSize + localizedUncompressedSize != TotalUncompressedSize:
+        sys.stderr.write(
+            "Error: Total uncompressed size differs : "
+            + str(universalUncompressedSize + localizedUncompressedSize)
+            + " instead of "
+            + str(TotalUncompressedSize)
+            + "\n"
+        )
         sys.exit(-1)
-    f.write("constexpr static size_t universalUncompressedSize = " + str(universalUncompressedSize) + ";\n")
-    f.write("constexpr static size_t localizedUncompressedSize = " + str(localizedUncompressedSize) + ";\n")
+    f.write(
+        "constexpr static size_t universalUncompressedSize = "
+        + str(universalUncompressedSize)
+        + ";\n"
+    )
+    f.write(
+        "constexpr static size_t localizedUncompressedSize = "
+        + str(localizedUncompressedSize)
+        + ";\n"
+    )
     f.write("// Big buffer where current language messages are stored.\n")
-    f.write("static char uncompressedText[universalUncompressedSize + localizedUncompressedSize] = \"\";\n")
+    f.write(
+        'static char uncompressedText[universalUncompressedSize + localizedUncompressedSize] = "";\n'
+    )
     f.write("\n")
 
     # Compressed data
     for locale in ["universal"] + locales:
         # Compress concatenatedData
-        compressedData = lz4.frame.compress(concatenatedData[locale], compression_level=12)
+        compressedData = lz4.frame.compress(
+            concatenatedData[locale], compression_level=12
+        )
         # Trim unused headers and footers
-        compressedData = compressedData[4+15:-4]
+        compressedData = compressedData[4 + 15 : -4]
         # Compressed data size
-        f.write("constexpr static size_t " + locale + "CompressedSize = " + str(len(compressedData)) + ";\n")
+        f.write(
+            "constexpr static size_t "
+            + locale
+            + "CompressedSize = "
+            + str(len(compressedData))
+            + ";\n"
+        )
         # Compressed bytes
-        print_block_from_list(f,
-            "const uint8_t " + locale + "Compressed[" + locale + "CompressedSize] = {\n",
-            compressedData, lambda arg: "0x{:02x}".format(arg), prefix="  ", elementPerLine=254)
+        print_block_from_list(
+            f,
+            "const uint8_t "
+            + locale
+            + "Compressed["
+            + locale
+            + "CompressedSize] = {\n",
+            compressedData,
+            lambda arg: "0x{:02x}".format(arg),
+            prefix="  ",
+            elementPerLine=254,
+        )
 
     # Arrange locale specific compressed data information in an array
-    print_block_from_list(f,
+    print_block_from_list(
+        f,
         "constexpr static const size_t localizedCompressedSizes[] = {\n",
-        locales, lambda arg: arg + "CompressedSize", prefix="  ")
+        locales,
+        lambda arg: arg + "CompressedSize",
+        prefix="  ",
+    )
 
-    print_block_from_list(f,
+    print_block_from_list(
+        f,
         "constexpr static const uint8_t * localizedCompressed[] = {\n",
-        locales, lambda arg: arg + "Compressed", prefix="  ")
+        locales,
+        lambda arg: arg + "Compressed",
+        prefix="  ",
+    )
 
     # Write the translate method
     code = """
@@ -578,6 +757,7 @@ const char * translate(Message m) {
     f.write(code)
     f.close()
 
+
 data = parse_files(args.files)
 if args.header:
     print_header(data, args.header, args.locales, args.countries)
@@ -587,4 +767,4 @@ if args.implementation:
     else:
         print_implementation(data, args.implementation, args.locales)
 if args.header:
-  check_unused(args.header, args.implementation if args.implementation else "")
+    check_unused(args.header, args.implementation if args.implementation else "")

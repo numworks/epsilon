@@ -32,7 +32,7 @@
 
 import sys
 
-__all__ = ['AutoFinalizedObject']
+__all__ = ["AutoFinalizedObject"]
 
 
 class _AutoFinalizedObjectBase(object):
@@ -68,7 +68,7 @@ class _AutoFinalizedObjectBase(object):
 
         Returns: None
         """
-        if not self._finalize_called: # race-free?
+        if not self._finalize_called:  # race-free?
             self._finalize_called = True
             self._finalize_object()
 
@@ -105,9 +105,7 @@ if sys.hexversion >= 0x3040000:
             # else object disappeared
             obj._do_finalize_object()
 
-
     class AutoFinalizedObject(_AutoFinalizedObjectBase):
-
         def __new__(cls, *args, **kwargs):
             """Creates a new object instance and adds the private finalizer
             attributes to it.
@@ -131,9 +129,7 @@ if sys.hexversion >= 0x3040000:
             #
             # Note 3: the _finalize_called attribute is (probably) useless
             #         for this class
-            instance = super(AutoFinalizedObject, cls).__new__(
-                cls, *args, **kwargs
-            )
+            instance = super(AutoFinalizedObject, cls).__new__(cls, *args, **kwargs)
 
             instance._finalizer = weakref.finalize(
                 instance, _do_finalize_object_ref, weakref.ref(instance)
@@ -145,13 +141,11 @@ if sys.hexversion >= 0x3040000:
             """Finalizes the object if not already done."""
             self._finalizer()
 
-
 else:
     # python < 3.4: keep the old behavior (rely on __del__),
     #                but don't call _finalize_object() more than once
 
     class AutoFinalizedObject(_AutoFinalizedObjectBase):
-
         def finalize(self):
             """Finalizes the object if not already done."""
             self._do_finalize_object()

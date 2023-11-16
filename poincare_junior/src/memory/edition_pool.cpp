@@ -122,6 +122,7 @@ void EditionPool::flushFromBlock(const Block *block) {
 void EditionPool::executeAndDump(ActionWithContext action, void *context,
                                  const void *data, void *address, int maxSize,
                                  Relax relax) {
+  assert(numberOfTrees() == 0);
   execute(action, context, data, maxSize, relax);
   assert(Tree::FromBlocks(firstBlock())->treeSize() <= maxSize);
   Tree::FromBlocks(firstBlock())->copyTreeTo(address);
@@ -130,6 +131,7 @@ void EditionPool::executeAndDump(ActionWithContext action, void *context,
 
 uint16_t EditionPool::executeAndCache(ActionWithContext action, void *context,
                                       const void *data, Relax relax) {
+  assert(numberOfTrees() == 0);
   execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
   return CachePool::SharedCachePool->storeEditedTree();
 }
@@ -259,17 +261,21 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
 
 void EditionPool::execute(ActionWithContext action, void *context,
                           const void *data, int maxSize, Relax relax) {
+#if ASSERTIONS
+  size_t treesNumber = numberOfTrees();
+#endif
   while (true) {
     ExceptionTry {
-      assert(numberOfTrees() == 0);
+      assert(numberOfTrees() == treesNumber);
       action(context, data);
       // Prevent edition action from leaking: an action create at most one tree.
-      assert(numberOfTrees() <= 1);
+      assert(numberOfTrees() <= treesNumber + 1);
       return;
     }
     ExceptionCatch(type) {
-      assert(numberOfTrees() == 0);
-      if (type != ExceptionType::PoolIsFull) {
+      assert(numberOfTrees() == treesNumber);
+      if (type != ExceptionType::PoolIsFull &&
+          type != ExceptionType::IntegerOverflow) {
         ExceptionCheckpoint::Raise(type);
       }
       if (!relax(context)) {

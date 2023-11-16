@@ -8,9 +8,12 @@ namespace PoincareJ {
 class NAry {
  public:
   static void AddChild(Tree* nary, Tree* child) {
-    return AddChildAtIndex(nary, child, nary->numberOfChildren());
+    AddChildAtIndex(nary, child, nary->numberOfChildren());
   }
   static void AddChildAtIndex(Tree* nary, Tree* child, int index);
+  static void AddOrMergeChild(Tree* nary, Tree* child) {
+    AddOrMergeChildAtIndex(nary, child, nary->numberOfChildren());
+  }
   static void AddOrMergeChildAtIndex(Tree* nary, Tree* child, int index);
   static Tree* DetachChildAtIndex(Tree* nary, int index);
   static void RemoveChildAtIndex(Tree* nary, int index);

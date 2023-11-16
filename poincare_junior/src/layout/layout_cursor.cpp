@@ -1002,12 +1002,6 @@ void LayoutCursor::invalidateSizesAndPositions() {
 // TODO: Nothing is memoized for now, maybe implement something ?
 #endif
 
-void TurnToRack(Tree *l) {
-  if (l->isRackLayout()) {
-    l->cloneTreeAtNode(KRackL());
-  }
-}
-
 void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
@@ -1051,39 +1045,27 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     return;
   }
 #endif
-#if 0
   if (deletionMethod == DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
     Tree *fraction = parent;
     assert(fraction->isFractionLayout() && fraction->child(1) == m_layout);
     Tree *numerator = fraction->child(0);
-    TurnToRack(numerator);
     m_position = numerator->numberOfChildren();
-
-    int n = numerator->numberOfChildren();
-    RackLayout::AddOrMergeLayoutAtIndex(numerator, m_layout, n, rootNode());
-    static_cast<HorizontalTree *&>(numerator).addOrMergeChildAtIndex(
-        m_layout, numerator->numberOfChildren());
-    Tree *parentOfFraction = rootNode()->parentOfDescendant(fraction);
-    if (!parentOfFraction || !parentOfFraction->isRackLayout()) {
-      assert(m_position == 0);
-      fraction->moveTreeOverTree(numerator);
-      m_layout = numerator;
-    } else {
-      int indexOfFraction = parentOfFraction->indexOfChild(fraction);
-      m_position += indexOfFraction;
-      RackLayout::RemoveLayoutAtIndex(parentOfFraction, indexOfFraction,
-                                      rootNode());
-      static_cast<HorizontalTree *&>(parentOfFraction)
-          .removeChildAtIndexInPlace(indexOfFraction);
-      static_cast<HorizontalTree *&>(parentOfFraction)
-          .addOrMergeChildAtIndex(numerator, indexOfFraction);
-      m_layout = parentOfFraction;
-    }
+    int indexOfFraction;
+    Tree *parentOfFraction =
+        rootNode()->parentOfDescendant(fraction, &indexOfFraction);
+    m_position += indexOfFraction;
+    Tree *detached =
+        NAry::DetachChildAtIndex(parentOfFraction, indexOfFraction);
+    // Remove Fraction Node
+    detached->removeNode();
+    // Merge denominator into numerato
+    NAry::AddOrMergeChild(detached, m_layout);
+    NAry::AddOrMergeChildAtIndex(parentOfFraction, detached, indexOfFraction);
+    m_cursorReference = parentOfFraction;
     return;
   }
-#endif
 #if 0
   if (deletionMethod == DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper ||
       deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow) {

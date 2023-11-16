@@ -136,6 +136,14 @@ uint16_t EditionPool::executeAndCache(ActionWithContext action, void *context,
   return CachePool::SharedCachePool->storeEditedTree();
 }
 
+void EditionPool::executeAndReplaceTree(ActionWithContext action, void *context,
+                                        Tree *data, Relax relax) {
+  Block *previousLastBlock = lastBlock();
+  execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
+  assert(previousLastBlock != lastBlock());
+  data->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
+}
+
 void EditionPool::replaceBlock(Block *previousBlock, Block newBlock) {
   replaceBlocks(previousBlock, &newBlock, 1);
 }

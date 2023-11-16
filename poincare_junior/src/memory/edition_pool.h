@@ -38,6 +38,8 @@ class EditionPool final : public Pool {
                       void *address, int maxSize, Relax relax = k_defaultRelax);
   uint16_t executeAndCache(ActionWithContext action, void *context,
                            const void *data, Relax relax = k_defaultRelax);
+  void executeAndReplaceTree(ActionWithContext action, void *context,
+                             Tree *data, Relax relax = k_defaultRelax);
 
   void replaceBlock(Block *previousBlock, Block newBlock);
   void replaceBlocks(Block *destination, const Block *newBlocks,

@@ -699,15 +699,36 @@ bool ShouldApproximateOnSimplify(Dimension dimension) {
   return (dimension.isUnit() && !dimension.isAngleUnit());
 }
 
+bool RelaxProjectionContext(void* context) {
+  ProjectionContext* projectionContext =
+      static_cast<ProjectionContext*>(context);
+  if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
+    // Nothing more can be done.
+    return false;
+  }
+  projectionContext->m_strategy =
+      (projectionContext->m_strategy == Strategy::NumbersToFloat)
+          ? Strategy::ApproximateToFloat
+          : Strategy::NumbersToFloat;
+  return true;
+}
+
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
-  /* TODO: If following assert cannot be satisfied, copy ref at the end, call
-   * SimplifyLastTree on copy and replace results. */
-  assert(SharedEditionPool->lastBlock() == ref->nextTree()->block());
-  return SimplifyLastTree(ref, projectionContext);
+  // Clone the tree, and use an adaptive strategy to handle pool overflow.
+  SharedEditionPool->executeAndReplaceTree(
+      [](void* context, const void* data) {
+        SimplifyLastTree(static_cast<const Tree*>(data)->clone(),
+                         *static_cast<ProjectionContext*>(context));
+      },
+      &projectionContext, ref, RelaxProjectionContext);
+  /* TODO: Due to projection/beautification cycles, SimplifyLastTree will most
+   *       likely return true everytime anyway. */
+  return true;
 }
 
 bool Simplification::SimplifyLastTree(Tree* ref,
                                       ProjectionContext projectionContext) {
+  assert(SharedEditionPool->lastBlock() == ref->nextTree()->block());
   ExceptionTryAfterBlock(ref->block()) {
     if (!Dimension::DeepCheckDimensions(ref) ||
         !Dimension::DeepCheckListLength(ref)) {

@@ -93,15 +93,11 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
     layoutToParse.serializeForParsing(buffer, bufferSize);
   }
 #else
-  if (Layout::IsHorizontal(selection.layout())) {
-    size_t offset = 0;
-    for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
-      offset = Layout::Serialize(selection.layout()->child(i), buffer + offset,
-                                 buffer + bufferSize) -
-               buffer;
-    }
-  } else {
-    Layout::Serialize(selection.layout(), buffer, buffer + bufferSize);
+  size_t offset = 0;
+  for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
+    offset = Layout::Serialize(selection.layout()->child(i), buffer + offset,
+                               buffer + bufferSize) -
+             buffer;
   }
 #endif
   if (buffer[0] == 0) {

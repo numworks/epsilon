@@ -205,7 +205,7 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
 // Remove expression while converting it to a layout in layoutParent
 void Layoutter::layoutExpression(EditionReference &layoutParentRef,
                                  Tree *expression, int parentPriority) {
-  assert(Layout::IsHorizontal(layoutParentRef));
+  assert(layoutParentRef->isRackLayout());
   TypeBlock type = expression->type();
 
   EditionReference layoutParent;

@@ -92,7 +92,7 @@ void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
 }
 
 int RackLayout::NumberOfLayouts(const Tree* node) {
-  return Layout::IsHorizontal(node) ? node->numberOfChildren() : 1;
+  return node->isRackLayout() ? node->numberOfChildren() : 1;
 }
 
 EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference,
@@ -116,14 +116,14 @@ EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference,
 // Return the nearest NAry
 EditionReference RackLayout::RackParent(EditionReference reference, int* index,
                                         const Tree* root) {
-  if (Layout::IsHorizontal(reference)) {
+  if (reference->isRackLayout()) {
     return reference;
   }
   assert(*index <= 1);
   // Find or make a RackLayout parent
   int refIndex;
   EditionReference parent = root->parentOfDescendant(reference, &refIndex);
-  if (parent.isUninitialized() || !Layout::IsHorizontal(parent)) {
+  if (parent.isUninitialized() || !parent->isRackLayout()) {
     parent = SharedEditionPool->push<BlockType::RackLayout>(1);
     reference->moveNodeBeforeNode(parent);
   } else {

@@ -36,21 +36,16 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
   if (currentSelection.isEmpty()) {
     return Render::Size(layoutToFit(font)).height();
   }
-
-  if (Layout::IsHorizontal(cursorNode())) {
-    return RackLayout::SizeBetweenIndexes(cursorNode(),
-                                          currentSelection.leftPosition(),
-                                          currentSelection.rightPosition())
-        .height();
-  }
-
-  return Render::Size(cursorNode()).height();
+  return RackLayout::SizeBetweenIndexes(cursorNode(),
+                                        currentSelection.leftPosition(),
+                                        currentSelection.rightPosition())
+      .height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
-  if (!currentSelection.isEmpty() && Layout::IsHorizontal(cursorNode())) {
+  if (!currentSelection.isEmpty()) {
     cursorBaseline = RackLayout::BaselineBetweenIndexes(
         cursorNode(), currentSelection.leftPosition(),
         currentSelection.rightPosition());
@@ -60,12 +55,8 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorYOriginInLayout =
       Render::Baseline(cursorNode()) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
-  if (Layout::IsHorizontal(cursorNode())) {
-    cursorXOffset =
-        RackLayout::SizeBetweenIndexes(cursorNode(), 0, m_position).width();
-  } else {
-    cursorXOffset = m_position == 1 ? Render::Size(cursorNode()).width() : 0;
-  }
+  cursorXOffset =
+      RackLayout::SizeBetweenIndexes(cursorNode(), 0, m_position).width();
   return Render::AbsoluteOrigin(cursorNode(), rootNode())
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
@@ -206,6 +197,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   // We need to keep track of the node which must live in the edition pool
   // TODO: do we need ConstReferences on const Nodes in the pool ?
   EditionReference ref(copy);
+  if (!copy->isRackLayout()) {
+    copy->cloneNodeAtNode(KRackL.node<1>);
+  }
 
   assert(!isUninitialized() && isValid());
   if (Layout::IsEmpty(ref)) {
@@ -286,7 +280,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
-  if (Layout::IsHorizontal(cursorNode()) && ref->isVerticalOffsetLayout() &&
+  if (ref->isVerticalOffsetLayout() &&
       VerticalOffsetLayout::IsSuffixSuperscript(ref)) {
     if (leftL && leftL->isVerticalOffsetLayout() &&
         VerticalOffsetLayout::IsSuffixSuperscript(leftL)) {
@@ -332,11 +326,12 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
-  assert(Layout::IsHorizontal(cursorNode()) || cursorNode() == rootNode() ||
-         !Layout::IsHorizontal(rootNode()->parentOfDescendant(cursorNode())));
+  assert(cursorNode()->isRackLayout() &&
+         (cursorNode() == rootNode() ||
+          !rootNode()->parentOfDescendant(cursorNode())->isRackLayout()));
   setCursorNode(RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), ref,
                                                     &m_position, rootNode()));
-  assert(Layout::IsHorizontal(cursorNode()));
+  assert(cursorNode()->isRackLayout());
 
   if (!forceLeft) {
     // Move cursor right of inserted children
@@ -787,8 +782,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
       return false;
     }
   }
-  assert(nextLayout);
-  assert(!Layout::IsHorizontal(nextLayout));
+  assert(nextLayout && !nextLayout->isRackLayout());
 
   /* If the cursor is selecting, it should not enter a new layout
    * but select all of it. */
@@ -844,7 +838,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
   int nextLayoutIndex;
   Tree *parent = rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
   const Tree *previousLayout = cursorNode();
-  if (parent && Layout::IsHorizontal(parent)) {
+  if (parent) {
     setCursorNode(parent);
     m_position = nextLayoutIndex + (direction.isRight());
   } else {
@@ -925,7 +919,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
             shouldRedrawLayout);
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
-          assert(!Layout::IsHorizontal(nextLayout));
+          assert(!nextLayout->isRackLayout());
           setCursorNode(nextLayout->child(nextIndex));
           m_position = positionRelativeToNextLayout == PositionInLayout::Left
                            ? leftMostPosition()
@@ -1161,10 +1155,9 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     setLayout(rootNode()->parentOfDescendant(m_cursorReference),
               OMG::Direction::Right());
   }
-  assert(
-      !Layout::IsHorizontal(m_cursorReference) ||
-      m_cursorReference->block() == rootNode()->block() ||
-      !Layout::IsHorizontal(rootNode()->parentOfDescendant(m_cursorReference)));
+  assert(m_cursorReference->isRackLayout() &&
+         (m_cursorReference == rootNode() ||
+          !rootNode()->parentOfDescendant(m_cursorReference)->isRackLayout()));
   assert(m_position != 0);
   m_position--;
   setCursorNode(RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position,

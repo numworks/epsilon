@@ -17,11 +17,9 @@ class Layout final : public Reference {
   friend class Expression;
 
  public:
-  constexpr static bool IsHorizontal(const Tree* node) {
-    return node->layoutType() == LayoutType::Rack;
-  }
   constexpr static bool IsEmpty(const Tree* node) {
-    return IsHorizontal(node) && node->numberOfChildren() == 0;
+    assert(node->isRackLayout());
+    return node->numberOfChildren() == 0;
   }
 
   Layout(const Tree* tree) : Reference(tree) { assert(tree->isLayout()); }

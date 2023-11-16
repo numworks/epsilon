@@ -116,10 +116,7 @@ class LayoutCursor {
   const Tree* layoutToFit(KDFont::Size font) const;
 
   int leftMostPosition() const { return 0; }
-  int rightmostPosition() const {
-    return Layout::IsHorizontal(cursorNode()) ? cursorNode()->numberOfChildren()
-                                              : 1;
-  }
+  int rightmostPosition() const { return cursorNode()->numberOfChildren(); }
   bool horizontalMove(OMG::HorizontalDirection direction,
                       bool* shouldRedrawLayout);
   bool verticalMove(OMG::VerticalDirection direction, bool* shouldRedrawLayout);

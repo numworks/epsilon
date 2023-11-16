@@ -33,25 +33,30 @@ void LayoutCursor::safeSetPosition(int position) {
 
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
   LayoutSelection currentSelection = selection();
+  int left, right;
   if (currentSelection.isEmpty()) {
-    return Render::Size(layoutToFit(font)).height();
+    left = std::max(leftmostPosition(), m_position - 1);
+    right = std::min(rightmostPosition(), m_position + 1);
+  } else {
+    left = currentSelection.leftPosition();
+    right = currentSelection.rightPosition();
   }
-  return RackLayout::SizeBetweenIndexes(cursorNode(),
-                                        currentSelection.leftPosition(),
-                                        currentSelection.rightPosition())
-      .height();
+  return RackLayout::SizeBetweenIndexes(cursorNode(), left, right).height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
-  if (!currentSelection.isEmpty()) {
-    cursorBaseline = RackLayout::BaselineBetweenIndexes(
-        cursorNode(), currentSelection.leftPosition(),
-        currentSelection.rightPosition());
+  int left, right;
+  if (currentSelection.isEmpty()) {
+    left = std::max(leftmostPosition(), m_position - 1);
+    right = std::min(rightmostPosition(), m_position + 1);
   } else {
-    cursorBaseline = Render::Baseline(layoutToFit(font));
+    left = currentSelection.leftPosition();
+    right = currentSelection.rightPosition();
   }
+  cursorBaseline =
+      RackLayout::BaselineBetweenIndexes(cursorNode(), left, right);
   KDCoordinate cursorYOriginInLayout =
       Render::Baseline(cursorNode()) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
@@ -698,19 +703,6 @@ Tree *LayoutCursor::rightLayout() const {
     return nullptr;
   }
   return cursorNode()->child(m_position);
-}
-
-const Tree *LayoutCursor::layoutToFit(KDFont::Size font) const {
-  assert(!isUninitialized());
-  const Tree *leftL = leftLayout();
-  const Tree *rightL = rightLayout();
-  if (!leftL && !rightL) {
-    return cursorNode();
-  }
-  return !leftL || (rightL && Render::Size(leftL).height() <
-                                  Render::Size(rightL).height())
-             ? rightL
-             : leftL;
 }
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,

@@ -113,7 +113,6 @@ class LayoutCursor {
 
   Tree* leftLayout() const;
   Tree* rightLayout() const;
-  const Tree* layoutToFit(KDFont::Size font) const;
 
   int leftmostPosition() const { return 0; }
   int rightmostPosition() const { return cursorNode()->numberOfChildren(); }

@@ -32,6 +32,8 @@ constexpr static KDCoordinate LineThickness = 1;
 constexpr static KDCoordinate MinimalChildHeight =
     Escher::Metric::MinimalBracketAndParenthesisChildHeight;
 
+constexpr static uint8_t TemporaryBlendAlpha = 0x60;
+
 static bool ChildHeightDictatesHeight(KDCoordinate childHeight) {
   return childHeight >= MinimalChildHeight;
 }

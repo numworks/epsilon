@@ -16,7 +16,13 @@ class ValueBlock : public Block {
   template <typename T>
     requires(sizeof(T) == 1)
   T get() const {
-    return *reinterpret_cast<T*>(this);
+    return *reinterpret_cast<const T*>(this);
+  }
+
+  template <typename T>
+    requires(sizeof(T) == 1)
+  void set(T value) {
+    *reinterpret_cast<T*>(this) = value;
   }
 };
 

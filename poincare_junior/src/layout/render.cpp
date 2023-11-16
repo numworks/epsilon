@@ -5,6 +5,7 @@
 #include <kandinsky/dot.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
+#include "autocompleted_pair.h"
 #include "code_point_layout.h"
 #include "layout_selection.h"
 #include "rack_layout.h"
@@ -914,14 +915,19 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       for (bool left : {true, false}) {
         KDPoint point =
             left ? p : p.translatedBy(KDPoint(rightBracketOffset, 0));
-        if (node->layoutType() == LayoutType::CurlyBrace) {
-          RenderCurlyBraceWithChildHeight(left, Height(node->child(0)), ctx,
-                                          point, expressionColor,
-                                          backgroundColor);
-        } else if (node->layoutType() == LayoutType::Parenthesis) {
-          RenderParenthesisWithChildHeight(left, Height(node->child(0)), ctx,
-                                           point, expressionColor,
-                                           backgroundColor);
+        if (node->isAutocompletedPair()) {
+          KDColor color = AutocompletedPair::IsTemporary(
+                              node, left ? Side::Left : Side::Right)
+                              ? KDColor::Blend(expressionColor, backgroundColor,
+                                               Pair::TemporaryBlendAlpha)
+                              : expressionColor;
+          if (node->isCurlyBraceLayout()) {
+            RenderCurlyBraceWithChildHeight(left, Height(node->child(0)), ctx,
+                                            point, color, backgroundColor);
+          } else {
+            RenderParenthesisWithChildHeight(left, Height(node->child(0)), ctx,
+                                             point, color, backgroundColor);
+          }
         } else {
           RenderSquareBracketPair(left, Height(node->child(0)), ctx, point,
                                   expressionColor, backgroundColor,

@@ -264,12 +264,17 @@ void EditionPool::execute(ActionWithContext action, void *context,
 #if ASSERTIONS
   size_t treesNumber = numberOfTrees();
 #endif
+  size_t previousSize = size();
   while (true) {
     ExceptionTry {
       assert(numberOfTrees() == treesNumber);
       action(context, data);
       // Prevent edition action from leaking: an action create at most one tree.
       assert(numberOfTrees() <= treesNumber + 1);
+      // If the result tree exceeds the expected size, act as if pool is full.
+      if (size() - previousSize > maxSize) {
+        ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+      }
       return;
     }
     ExceptionCatch(type) {

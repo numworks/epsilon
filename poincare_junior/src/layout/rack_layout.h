@@ -20,20 +20,7 @@ class RackLayout {
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
 
-  /* RackLayout Simplifications: These methods can be called on any Tree*
-   * targetted by a LayoutCursor. A RackLayout will be inserted if necessary.
-   */
-  static int NumberOfLayouts(const Tree* node);
-  static EditionReference AddOrMergeLayoutAtIndex(EditionReference reference,
-                                                  EditionReference child,
-                                                  int* index, const Tree* root);
-  static EditionReference RemoveLayoutAtIndex(EditionReference reference,
-                                              int* index, const Tree* root);
-
  private:
-  static EditionReference RackParent(EditionReference reference, int* index,
-                                     const Tree* root);
-
   static KDFont::Size font;
 };
 

@@ -322,15 +322,14 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 #endif
 
   // - Step 7 - Insert layout
-  int numberOfInsertedChildren = RackLayout::NumberOfLayouts(ref);
+  int numberOfInsertedChildren = ref->numberOfChildren();
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
   assert(cursorNode()->isRackLayout() &&
          (cursorNode() == rootNode() ||
           !rootNode()->parentOfDescendant(cursorNode())->isRackLayout()));
-  setCursorNode(RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), ref,
-                                                    &m_position, rootNode()));
+  NAry::AddOrMergeChildAtIndex(cursorNode(), ref, m_position);
   assert(cursorNode()->isRackLayout());
 
   if (!forceLeft) {
@@ -531,9 +530,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
         SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
             codePoint);
 #endif
-    int dummy = currentLayout->numberOfChildren();
-    currentLayout = RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild,
-                                                        &dummy, rootNode());
+    NAry::AddOrMergeChildAtIndex(currentLayout, newChild,
+                                 currentLayout->numberOfChildren());
     codePoint = nextCodePoint;
   }
   assert(currentSubscriptDepth == 0);
@@ -1160,8 +1158,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
           !rootNode()->parentOfDescendant(m_cursorReference)->isRackLayout()));
   assert(m_position != 0);
   m_position--;
-  setCursorNode(RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position,
-                                                rootNode()));
+  NAry::RemoveChildAtIndex(m_cursorReference, m_position);
 }
 
 #if 0

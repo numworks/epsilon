@@ -42,6 +42,10 @@ class SimplificationHelper {
   static void deepBeautifyChildren(Expression e,
                                    const ReductionContext& reductionContext);
 
+  /* This method applies the default reduction that almost all nodes need:
+   * - It bubbles up dependencies
+   * - Depending on its parameters, it applies different default reductions
+   *   on expressions containing Undef, Boolean, Unit, Matrix, List and Point */
   static Expression defaultShallowReduce(
       Expression e, ReductionContext* reductionContext,
       BooleanReduction booleanParameter = BooleanReduction::DefinedOnBooleans,

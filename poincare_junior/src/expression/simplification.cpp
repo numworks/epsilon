@@ -7,6 +7,7 @@
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/logarithm.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/rational.h>
@@ -1091,7 +1092,7 @@ bool Simplification::ExpandLn(Tree* ref) {
 bool Simplification::ExpandSingleChildLn(Tree* ref) {
   return
       // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
-      Arithmetic::ExpandLnOnRational(ref) ||
+      Logarithm::ExpandLnOnRational(ref) ||
       // ln(A^B) = B*ln(A)
       PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
                                                KMult(KB, KLn(KA))) ||

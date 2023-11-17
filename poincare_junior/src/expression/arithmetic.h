@@ -9,6 +9,13 @@ namespace PoincareJ {
 
 class Arithmetic {
  public:
+  struct FactorizedInteger {
+    constexpr static int k_maxNumberOfFactors = 32;
+    uint16_t factors[k_maxNumberOfFactors];
+    uint8_t coefficients[k_maxNumberOfFactors];
+    uint8_t numberOfFactors = 0;
+  };
+
   static bool SimplifyQuotientOrRemainder(Tree* expr);
   static bool SimplifyFloor(Tree* expr);
 
@@ -21,22 +28,11 @@ class Arithmetic {
 
   static bool BeautifyFactor(Tree* expr);
 
-  // ln(12/5)->2*ln(2)+ln(3)-ln(5)
-  static bool ExpandLnOnRational(Tree* expr);
+  static FactorizedInteger PrimeFactorization(IntegerHandler m);
 
  private:
-  struct FactorizedInteger {
-    constexpr static int k_maxNumberOfFactors = 32;
-    uint16_t factors[k_maxNumberOfFactors];
-    uint8_t coefficients[k_maxNumberOfFactors];
-    uint8_t numberOfFactors = 0;
-  };
-
   static bool SimplifyGCDOrLCM(Tree* expr, bool isGCD);
-  static FactorizedInteger PrimeFactorization(IntegerHandler m);
   static Tree* PushPrimeFactorization(IntegerHandler m);
-  // ln(12)->2*ln(2)+ln(3), return nullptr if m is prime and escapeIfPrime true.
-  static Tree* ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime);
 };
 
 }  // namespace PoincareJ

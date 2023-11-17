@@ -1,0 +1,21 @@
+#ifndef POINCARE_EXPRESSION_LOGARITHM_H
+#define POINCARE_EXPRESSION_LOGARITHM_H
+
+#include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/memory/edition_reference.h>
+
+namespace PoincareJ {
+
+class Logarithm final {
+ public:
+  // ln(12/5)->2*ln(2)+ln(3)-ln(5)
+  static bool ExpandLnOnRational(Tree* expr);
+
+ private:
+  // ln(12)->2*ln(2)+ln(3), return nullptr if m is prime and escapeIfPrime true.
+  static Tree* ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime);
+};
+
+}  // namespace PoincareJ
+
+#endif

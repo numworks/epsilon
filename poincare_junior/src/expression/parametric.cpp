@@ -43,24 +43,6 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   // TODO distribute multiplicative constant
   if (isSum) {
     return
-#if 0 /* This first rule is powerful and simplifies the next two rules but it \
-       * may introduced undefs with sum(1/k,k,1,2) for instance. */
-      // sum(e,k,a,b) = sum(e,k,0,b) - sum(e,k,0,a-1)
-      // TODO what if a < 0 ?
-      (!expr->child(k_lowerBoundIndex)->isZero() &&
-       PatternMatching::MatchReplaceAndSimplify(
-           expr, KSum(KA, KB, KC, KD),
-           KAdd(KSum(KA, 0_e, KC, KD),
-                KMult(-1_e, KSum(KA, 0_e, KAdd(KB, -1_e), KD))))) ||
-      // sum(k,k,0,n) = n(n+1)/2
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, 0_e, KC, KVar<0>), KMult(KHalf, KC, KAdd(1_e, KC))) ||
-      // sum(k^2,k,0,n) = n(n+1)(2n+1)/6
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, 0_e, KC, KPow(KVar<0>, 2_e)),
-          KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)
-                KPow(6_e, -1_e)));
-#else
         // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
         PatternMatching::MatchReplaceAndSimplify(
             expr, KSum(KA, KB, KC, KVar<0>),
@@ -73,7 +55,6 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
                   KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
                        KMult(-1_e, KAdd(-1_e, KB), KB,
                              KAdd(KMult(2_e, KB), -1_e)))));
-#endif
   }
   return false;
 }

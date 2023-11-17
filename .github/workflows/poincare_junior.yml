@@ -3,6 +3,10 @@ on: [pull_request]
 env:
   MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }} ${{ (github.job == 'device') && 'EMBED_EXTRA_DATA=1' }}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   linux:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}

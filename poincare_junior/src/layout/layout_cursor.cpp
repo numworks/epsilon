@@ -143,23 +143,12 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
   return l.isEmpty() && !parent.isUninitialized() &&
          GridLayoutNode::IsGridLayoutType(parent.type());
 }
-
-static Layout LeftOrRightmostLayout(Layout l,
-                                    OMG::HorizontalDirection direction) {
-  return l.isHorizontal()
-             ? (l.child(direction.isLeft() ? 0
-                                                  : l.numberOfChildren() - 1))
-             : l;
-}
-
-static bool IsTemporaryAutocompletedBracketPair(
-    Layout l, AutocompletedBracketPairLayoutNode::Side tempSide) {
-  return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-             l.type()) &&
-         static_cast<AutocompletedBracketPairLayoutNode *>(l.node())
-             ->isTemporary(tempSide);
-}
 #endif
+
+static bool IsTemporaryAutocompletedBracketPair(const Tree *l, Side tempSide) {
+  return l->isAutocompletedPair() &&
+         AutocompletedPair::IsTemporary(l, tempSide);
+}
 
 // Return leftParenthesisIndex
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
@@ -259,30 +248,19 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * Later at Step 9, balanceAutocompletedBrackets will make it so:
    * "(1+(3+4)][)|" -> "(1+3(3+4))|"
    * */
-  const Tree *leftL = leftLayout();
-  const Tree *rightL = rightLayout();
-#if 0
-  if (!leftL.isUninitialized() &&
-      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          leftL.type())) {
-    static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())
-        ->makeChildrenPermanent(
-            AutocompletedBracketPairLayoutNode::Side::Right,
-            !IsTemporaryAutocompletedBracketPair(
-                LeftOrRightmostLayout(layout, OMG::Direction::Left()),
-                AutocompletedBracketPairLayoutNode::Side::Left));
+  Tree *leftL = leftLayout();
+  Tree *rightL = rightLayout();
+  if (leftL && leftL->isAutocompletedPair()) {
+    AutocompletedPair::MakeChildrenPermanent(
+        leftL, Side::Right,
+        !IsTemporaryAutocompletedBracketPair(ref->child(0), Side::Left));
   }
-  if (!rightL.isUninitialized() &&
-      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          rightL.type())) {
-    static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())
-        ->makeChildrenPermanent(
-            AutocompletedBracketPairLayoutNode::Side::Left,
-            !IsTemporaryAutocompletedBracketPair(
-                LeftOrRightmostLayout(layout, OMG::Direction::Right()),
-                AutocompletedBracketPairLayoutNode::Side::Right));
+  if (rightL && rightL->isAutocompletedPair()) {
+    AutocompletedPair::MakeChildrenPermanent(
+        rightL, Side::Left,
+        !IsTemporaryAutocompletedBracketPair(
+            ref->child(ref->numberOfChildren() - 1), Side::Right));
   }
-#endif
 
   /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,

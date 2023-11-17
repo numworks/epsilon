@@ -2,6 +2,7 @@
 
 #include <poincare_junior/include/layout.h>
 
+#include "autocompleted_pair.h"
 #include "indices.h"
 
 namespace PoincareJ {
@@ -388,8 +389,15 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
       return childIndex == Fraction::DenominatorIndex
                  ? DeletionMethod::FractionDenominatorDeletion
                  : DeletionMethod::MoveLeft;
-    case LayoutType::Parenthesis:  // TODO temporary brackets
+    case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
+      if ((childIndex == k_outsideIndex &&
+           AutocompletedPair::IsTemporary(node, Side::Right)) ||
+          (childIndex == 0 &&
+           AutocompletedPair::IsTemporary(node, Side::Left))) {
+        return DeletionMethod::MoveLeft;
+      }
+      return DeletionMethod::AutocompletedBracketPairMakeTemporary;
     case LayoutType::AbsoluteValue:
     case LayoutType::Floor:
     case LayoutType::Ceiling:

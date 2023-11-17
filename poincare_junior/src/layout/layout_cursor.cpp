@@ -1015,26 +1015,19 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     m_cursorReference = parentRack;
     return;
   }
-#if 0
   if (deletionMethod == DeletionMethod::AutocompletedBracketPairMakeTemporary) {
     if (deletionAppliedToParent) {  // Inside bracket
-      Tree* parent = parent;
-      assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          parent.type()));
-      static_cast<AutocompletedBracketPairLayoutNode *>(parent.node())
-          ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+      assert(parent->isAutocompletedPair());
+      AutocompletedPair::SetTemporary(parent, Side::Left, true);
     } else {  // Right of bracket
-      assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          leftLayout().type()));
-      static_cast<AutocompletedBracketPairLayoutNode *>(leftLayout().node())
-          ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+      assert(leftLayout()->isAutocompletedPair());
+      AutocompletedPair::SetTemporary(leftLayout(), Side::Right, true);
     }
     bool dummy = false;
     move(OMG::Direction::Left(), false, &dummy);
     balanceAutocompletedBracketsAndKeepAValidCursor();
     return;
   }
-#endif
   if (deletionMethod == DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);

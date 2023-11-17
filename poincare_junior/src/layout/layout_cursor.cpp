@@ -1198,7 +1198,8 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
 }
 #endif
 
-void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
+void LayoutBufferCursor::EditionPoolCursor::
+    balanceAutocompletedBracketsAndKeepAValidCursor() {
   /* Find the top horizontal layout for balancing brackets.
    *
    * This might go again through already balanced brackets but it's safer
@@ -1222,7 +1223,7 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
   assert(currentLayout->isRackLayout());
   EditionReference ref = cursorNode();
   AutocompletedPair::BalanceBrackets(currentLayout, ref, &m_position);
-  setCursorNode(ref);
+  m_cursorReference = static_cast<Tree *>(ref);
 }
 
 void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {

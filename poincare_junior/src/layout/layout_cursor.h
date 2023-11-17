@@ -135,8 +135,6 @@ class LayoutCursor {
                                            int absorbingChildIndex);
 #endif
 
-  void balanceAutocompletedBracketsAndKeepAValidCursor();
-
   // Cursor's horizontal position
   int m_position;
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
@@ -212,6 +210,7 @@ class LayoutBufferCursor final : public LayoutCursor {
       bool m_forceRight, m_forceLeft, m_linearMode;
     };
     void insertText(Context* context, const void* insertTextContext);
+    void balanceAutocompletedBracketsAndKeepAValidCursor();
 
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
@@ -239,7 +238,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   void execute(Action action, Context* context = nullptr,
                const void* data = nullptr);
   void setCursorNode(Tree* node) override {
-    assert(node->isRackLayout());
+    // Don't use node here is it invalid during execute
     m_cursorNode = node;
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
   }

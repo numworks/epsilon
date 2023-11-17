@@ -15,7 +15,7 @@ namespace PoincareJ {
 
 // Return true if it is true, false if it is unknown and raise if it is false
 bool EnsureIsInteger(const Tree* expr) {
-  // TODO if expr is a known irrational return false
+  // TODO if expr is a known irrational raise BadType
   if (!expr->isRational()) {
     return false;
   }
@@ -197,6 +197,7 @@ bool Arithmetic::SimplifyBinomial(Tree* expr) {
   /* As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
    * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
    */
+  // binomial(n, k) -> prod((n - j) / (k - j), j, 0, k - 1)
   PatternMatching::MatchReplaceAndSimplify(
       expr, KBinomial(KA, KB),
       KProduct("j"_e, 0_e, KAdd(KB, -1_e),

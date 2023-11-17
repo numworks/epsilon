@@ -4,6 +4,7 @@
 #include <omgpj/enums.h>
 #include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/dimension.h>
+#include <poincare_junior/src/expression/logarithm.h>
 #include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
@@ -66,8 +67,6 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyPower);
   static bool SimplifyPowerReal(Tree *u);
   EDITION_REF_WRAP(SimplifyPowerReal);
-  static bool SimplifyLn(Tree *u);
-  EDITION_REF_WRAP(SimplifyLn);
   static bool SimplifyExp(Tree *u);
   EDITION_REF_WRAP(SimplifyExp);
   static bool SimplifyComplex(Tree *t);
@@ -136,12 +135,6 @@ class Simplification {
   EDITION_REF_WRAP(ContractAbs);
   static bool ExpandAbs(Tree *node);
   EDITION_REF_WRAP(ExpandAbs);
-  static bool ContractLn(Tree *node);
-  EDITION_REF_WRAP(ContractLn);
-  static bool ExpandLn(Tree *node);
-  EDITION_REF_WRAP(ExpandLn);
-  static bool ExpandSingleChildLn(Tree *node);
-  EDITION_REF_WRAP(ExpandSingleChildLn);
   static bool ContractExpMult(Tree *node);
   EDITION_REF_WRAP(ContractExpMult);
   static bool ExpandExp(Tree *node);
@@ -161,7 +154,7 @@ class Simplification {
   EDITION_REF_WRAP(ExpandPower);
 
   constexpr static Operation k_contractOperations[] = {
-      ContractLn,
+      Logarithm::ContractLn,
       ContractAbs,
       ContractExpMult,
       ContractTrigonometric,
@@ -169,7 +162,7 @@ class Simplification {
   };
   constexpr static Operation k_expandOperations[] = {
       ExpandAbs,
-      ExpandLn,
+      Logarithm::ExpandLn,
       ExpandExp,
       ExpandTrigonometric,
       Parametric::ExpandSum,

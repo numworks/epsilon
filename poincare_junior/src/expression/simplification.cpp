@@ -1,32 +1,28 @@
 #include "simplification.h"
 
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/complex.h>
 #include <poincare_junior/src/expression/decimal.h>
+#include <poincare_junior/src/expression/dependency.h>
+#include <poincare_junior/src/expression/derivation.h>
 #include <poincare_junior/src/expression/dimension.h>
-#include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/logarithm.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/expression/unit.h>
+#include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/expression/vector.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
-#include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/placeholder.h>
 #include <poincare_junior/src/n_ary.h>
-
-#include "arithmetic.h"
-#include "derivation.h"
-#include "list.h"
-#include "number.h"
-#include "poincare_junior/src/expression/dependency.h"
-#include "poincare_junior/src/expression/variables.h"
-#include "poincare_junior/src/memory/type_block.h"
 
 namespace PoincareJ {
 
@@ -97,7 +93,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::Derivative:
       return Derivation::ShallowSimplify(u);
     case BlockType::Ln:
-      return SimplifyLn(u);
+      return Logarithm::SimplifyLn(u);
     case BlockType::Exponential:
       return SimplifyExp(u);
     case BlockType::Complex:
@@ -157,30 +153,6 @@ bool Simplification::SimplifyExp(Tree* u) {
     // exp(n*ln(x)) -> x^n with n an integer
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;
-  }
-  return false;
-}
-
-bool Simplification::SimplifyLn(Tree* u) {
-  Tree* child = u->nextNode();
-  if (child->isExponential()) {
-    // ln(exp(x)) -> x
-    u->removeNode();
-    u->removeNode();
-    return true;
-  }
-  if (!child->isInteger()) {
-    return false;
-  }
-  if (child->isMinusOne()) {
-    // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
-    u->cloneTreeOverTree(KComplex(0_e, π_e));
-    return true;
-  } else if (child->isOne()) {
-    u->cloneTreeOverTree(0_e);
-    return true;
-  } else if (child->isZero()) {
-    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
   return false;
 }
@@ -1067,37 +1039,6 @@ bool Simplification::ExpandAbs(Tree* ref) {
 /* TODO:
  * - Many Contract methods could be factorized similarly to DistributeOverNAry
  */
-
-bool Simplification::ContractLn(Tree* ref) {
-  // A? + B*ln(C) + D? = A + ln(C^B) + D if B is an integer.
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(KAdd(KTA, KMult(KB, KLn(KC)), KTD), ref, &ctx) &&
-      ctx.getNode(KB)->isInteger()) {
-    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KAdd(KTA, KLn(KPow(KC, KB)), KTD), ctx));
-    return true;
-  }
-  // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
-      KAdd(KTA, KLn(KMult(KB, KC)), KTD));
-}
-
-bool Simplification::ExpandLn(Tree* ref) {
-  // ln(A*B*...) = ln(A) + ln(B) + ...
-  return DistributeOverNAry(ref, BlockType::Ln, BlockType::Multiplication,
-                            BlockType::Addition, ExpandSingleChildLn);
-}
-
-bool Simplification::ExpandSingleChildLn(Tree* ref) {
-  return
-      // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
-      Logarithm::ExpandLnOnRational(ref) ||
-      // ln(A^B) = B*ln(A)
-      PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
-                                               KMult(KB, KLn(KA))) ||
-      SimplifyLn(ref);
-}
 
 bool Simplification::ExpandExp(Tree* ref) {
   return

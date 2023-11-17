@@ -2,12 +2,70 @@
 
 #include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
+
+bool Logarithm::SimplifyLn(Tree* u) {
+  Tree* child = u->nextNode();
+  if (child->isExponential()) {
+    // ln(exp(x)) -> x
+    u->removeNode();
+    u->removeNode();
+    return true;
+  }
+  if (!child->isInteger()) {
+    return false;
+  }
+  if (child->isMinusOne()) {
+    // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
+    u->cloneTreeOverTree(KComplex(0_e, π_e));
+    return true;
+  } else if (child->isOne()) {
+    u->cloneTreeOverTree(0_e);
+    return true;
+  } else if (child->isZero()) {
+    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+  }
+  return false;
+}
+
+bool Logarithm::ContractLn(Tree* ref) {
+  // A? + B*ln(C) + D? = A + ln(C^B) + D if B is an integer.
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(KAdd(KTA, KMult(KB, KLn(KC)), KTD), ref, &ctx) &&
+      ctx.getNode(KB)->isInteger()) {
+    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KTA, KLn(KPow(KC, KB)), KTD), ctx));
+    return true;
+  }
+  // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
+      KAdd(KTA, KLn(KMult(KB, KC)), KTD));
+}
+
+bool Logarithm::ExpandLn(Tree* ref) {
+  // ln(A*B*...) = ln(A) + ln(B) + ...
+  return Simplification::DistributeOverNAry(
+      ref, BlockType::Ln, BlockType::Multiplication, BlockType::Addition,
+      ExpandSingleChildLn);
+}
+
+bool Logarithm::ExpandSingleChildLn(Tree* ref) {
+  return
+      // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
+      ExpandLnOnRational(ref) ||
+      // ln(A^B) = B*ln(A)
+      PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
+                                               KMult(KB, KLn(KA))) ||
+      SimplifyLn(ref);
+}
 
 bool Logarithm::ExpandLnOnRational(Tree* e) {
   if (!e->isLn() || !e->child(0)->isRational()) {

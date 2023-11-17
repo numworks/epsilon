@@ -137,7 +137,7 @@ class TextArea : public TextInput {
     bool removeStartOfLine();
     size_t removeText(const char* start, const char* end);
     size_t deleteSelection() override;
-    size_t textBufferSize() const override { return TextArea::k_maxLineChars; }
+    size_t textBufferSize() const override { return m_text.bufferSize(); }
 
    protected:
     KDRect glyphFrameAtPosition(const char* text,

@@ -16,6 +16,9 @@ include build/toolchain.$(TOOLCHAIN).mak
 include build/variants.mak
 include build/helpers.mk
 
+# Expand $(SFLAGS) once to avoid calling ($shell ...) once per file.
+SFLAGS:=$(SFLAGS)
+
 .PHONY: info
 info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"

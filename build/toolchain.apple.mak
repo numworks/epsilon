@@ -16,9 +16,9 @@ else
 $(error Unrecognized APPLE_PLATFORM)
 endif
 
-IOS_PLATFORM_VERSION = $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-version)
-IOS_PLATFORM_BUILD = $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-build-version)
-IOS_BUILD_MACHINE_OS_BUILD = $(shell sw_vers -buildVersion)
+IOS_PLATFORM_VERSION := $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-version)
+IOS_PLATFORM_BUILD := $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-build-version)
+IOS_BUILD_MACHINE_OS_BUILD := $(shell sw_vers -buildVersion)
 # FIXME: Make the following variables actually automatic
 IOS_XCODE_VERSION = "1010"
 IOS_XCODE_BUILD = "10B61"
@@ -26,12 +26,12 @@ IOS_COMPILER = "com.apple.compilers.llvm.clang.1_0"
 
 ifdef ARCH
 
-CC = $(shell xcrun --sdk $(APPLE_SDK) --find clang)
-CXX = $(shell xcrun --sdk $(APPLE_SDK) --find clang++)
-LD = $(shell xcrun --sdk $(APPLE_SDK) --find clang++)
+CC := $(shell xcrun --sdk $(APPLE_SDK) --find clang)
+CXX := $(shell xcrun --sdk $(APPLE_SDK) --find clang++)
+LD := $(shell xcrun --sdk $(APPLE_SDK) --find clang++)
 
-SYSROOT = $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-path)
-export SDKROOT = $(shell xcrun --show-sdk-path)
+SYSROOT := $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-path)
+export SDKROOT := $(shell xcrun --show-sdk-path)
 
 SFLAGS += -arch $(ARCH)
 SFLAGS += -isysroot $(SYSROOT)

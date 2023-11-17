@@ -1,6 +1,6 @@
 HOSTCC = gcc
 HOSTCXX = g++
-PYTHON = $(if $(shell $(call folder_check,.venv)),python3,.venv/bin/python3)
+PYTHON := $(if $(shell $(call folder_check,.venv)),python3,.venv/bin/python3)
 
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
 SFLAGS += -DEPSILON_TELEMETRY=$(EPSILON_TELEMETRY)
@@ -11,8 +11,8 @@ SFLAGS += -DHWTEST_ALL_KEYS=$(HWTEST_ALL_KEYS)
 SFLAGS += -DVALGRIND=$(VALGRIND)
 
 # Language-specific flags
-CFLAGS = -std=c11
-CXXFLAGS = -std=c++17 -fno-exceptions -fno-rtti -fno-threadsafe-statics
+CFLAGS := -std=c11
+CXXFLAGS := -std=c++17 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)

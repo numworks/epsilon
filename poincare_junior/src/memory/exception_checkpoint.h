@@ -46,6 +46,7 @@ enum class ExceptionType : int {
   // Memory exceptions
   PoolIsFull,
   IntegerOverflow,
+  RelaxContext,
   // Undefined result in given context
   Nonreal,  // sqrt(-1), ln(-2), asin(2)
   // Undefined result

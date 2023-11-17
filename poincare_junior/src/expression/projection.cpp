@@ -35,7 +35,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
   }
 
   if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
-      ref->isNumber()) {
+      (ref->isNumber() || ref->isInfinity())) {
     return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
   }
 
@@ -74,12 +74,10 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   // inf -> Float(inf) to prevent inf-inf from being 0
   if (ref->isInfinity()) {
-    /* TODO: Raise to try projecting again with ApproximateToFloat strategy.
-     *       Do not handle float contamination unless this is the strategy.
-     *       Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove Raise.*/
-    projectionContext->m_strategy = Strategy::ApproximateToFloat;
-    // ∞ -> Float(∞)
-    return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
+    /* TODO: Infinity is only handled as float. Raise to try again with float
+     * numbers, preventing from having to handle float contamination.
+     * Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove this Raise.*/
+    ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
   }
 
   // Sqrt(A) -> A^0.5

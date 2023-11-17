@@ -736,8 +736,9 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
     }
     projectionContext.m_dimension = Dimension::GetDimension(ref);
-    if (ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
-      projectionContext.m_strategy = Strategy::ApproximateToFloat;
+    if (projectionContext.m_strategy != Strategy::ApproximateToFloat &&
+        ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
+      ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
     }
     bool changed = false;
     changed =
@@ -777,9 +778,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       case ExceptionType::Unhandled:
         (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
         return true;
-      case ExceptionType::PoolIsFull:
-        /* TODO: If simplification fails, try with a simpler projection
-         * context. */
       default:
         ExceptionCheckpoint::Raise(type);
     }

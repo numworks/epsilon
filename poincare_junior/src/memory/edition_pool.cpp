@@ -279,21 +279,23 @@ void EditionPool::execute(ActionWithContext action, void *context,
       action(context, data);
       // Prevent edition action from leaking: an action create at most one tree.
       assert(numberOfTrees() <= treesNumber + 1);
-      // If the result tree exceeds the expected size, act as if pool is full.
+      // Ensure the result tree doesn't exceeds the expected size.
       if (size() - previousSize > maxSize) {
-        ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+        ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
       }
       return;
     }
     ExceptionCatch(type) {
       assert(numberOfTrees() == treesNumber);
-      if (type != ExceptionType::PoolIsFull &&
-          type != ExceptionType::IntegerOverflow) {
-        ExceptionCheckpoint::Raise(type);
-      }
-      if (!relax(context)) {
-        /* Relax the context and try again or re-raise. */
-        ExceptionCheckpoint::Raise(type);
+      switch (type) {
+        case ExceptionType::PoolIsFull:
+        case ExceptionType::IntegerOverflow:
+        case ExceptionType::RelaxContext:
+          if (relax(context)) {
+            continue;
+          }
+        default:
+          ExceptionCheckpoint::Raise(type);
       }
     }
   }

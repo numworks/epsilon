@@ -5,6 +5,10 @@
 
 #include "plot_view.h"
 
+namespace Graph {
+class GraphView;
+}
+
 namespace Shared {
 namespace PlotPolicy {
 
@@ -63,6 +67,8 @@ class WithCartesianGrid {
 };
 
 class WithPolarGrid {
+  friend class Graph::GraphView;
+
  protected:
   static void drawGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect);

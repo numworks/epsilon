@@ -1,101 +1,93 @@
-#include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/curly_brace_layout.h>
-#include <poincare/layout.h>
-#include <poincare/parenthesis_layout.h>
+#include "autocompleted_pair.h"
 
-namespace Poincare {
+#include <poincare_junior/src/n_ary.h>
 
-bool AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(
-    CodePoint c, Type *type, Side *side) {
-  if (c != '(' && c != UCodePointLeftSystemParenthesis && c != ')' &&
-      c != UCodePointRightSystemParenthesis && c != '}' && c != '{') {
+#include "k_tree.h"
+
+namespace PoincareJ {
+
+bool AutocompletedPair::IsAutoCompletedBracketPairCodePoint(CodePoint c,
+                                                            TypeBlock *type,
+                                                            Side *side) {
+  if (c != '(' && c != ')' && c != '}' && c != '{') {
     return false;
   }
   assert(type && side);
-  *type =
-      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesisLayout;
-  *side = (c == '(' || c == UCodePointLeftSystemParenthesis || c == '{')
-              ? Side::Left
-              : Side::Right;
+  *type = (c == '{' || c == '}') ? BlockType::CurlyBraceLayout
+                                 : BlockType::ParenthesisLayout;
+  *side = (c == '(' || c == '{') ? Side::Left : Side::Right;
   return true;
 }
 
-Layout AutocompletedBracketPairLayoutNode::BuildFromBracketType(
-    LayoutNode::Type type) {
-  assert(
-      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
-  if (type == LayoutNode::Type::ParenthesisLayout) {
-    return ParenthesisLayout::Builder();
-  }
-  assert(type == LayoutNode::Type::CurlyBraceLayout);
-  return CurlyBraceLayout::Builder();
+Tree *AutocompletedPair::BuildFromBracketType(TypeBlock type) {
+  assert(type.isAutocompletedPair());
+  Tree *result = SharedEditionPool->push(type);
+  // TODO proper node constructor
+  SharedEditionPool->push(0);
+  KRackL()->clone();
+  return result;
 }
 
-static HorizontalLayout horizontalParent(Layout l) {
-  Layout p = l.parent();
-  assert(!p.isUninitialized() && p.isHorizontal());
-  return static_cast<HorizontalLayout &>(p);
+static Tree *horizontalParent(Tree *l, Tree *root) {
+  Tree *p = l->parent(root);
+  assert(p && p->isRackLayout());
+  return p;
 }
 
-static HorizontalLayout horizontalChild(Layout l) {
-  Layout c = l.childAtIndex(0);
-  assert(!c.isUninitialized() && c.isHorizontal());
-  return static_cast<HorizontalLayout &>(c);
+static Tree *horizontalChild(Tree *l) {
+  Tree *c = l->child(0);
+  assert(c && c->isRackLayout());
+  return c;
 }
 
 /* This function counts the number of parent brackets until it reaches a bracket
  * of another type or the top layout. */
-static int bracketNestingLevel(HorizontalLayout h, LayoutNode::Type type) {
-  assert(
-      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
-  Layout parent = h.parent();
+static int bracketNestingLevel(Tree *rack, TypeBlock type, Tree *root) {
+  assert(type.isAutocompletedPair());
+  Tree *parent = rack->parent(root);
   int result = 0;
-  while (!parent.isUninitialized() && parent.type() == type) {
-    AutocompletedBracketPairLayoutNode *parentNode =
-        static_cast<AutocompletedBracketPairLayoutNode *>(parent.node());
+  while (parent && parent->type() == type) {
     // If both sides are temp, the bracket will be removed so it is ignored
-    result += !parentNode->isTemporary(
-                  AutocompletedBracketPairLayoutNode::Side::Left) ||
-              !parentNode->isTemporary(
-                  AutocompletedBracketPairLayoutNode::Side::Right);
-    Layout p = parent.parent();
-    if (p.isUninitialized()) {
-      break;
-    }
-    parent = p.parent();
+    result += !AutocompletedPair::IsTemporary(parent, Side::Left) ||
+              !AutocompletedPair::IsTemporary(parent, Side::Right);
+    parent = parent->parent(root);
+    parent = parent->parent(root);
   }
   return result;
 }
 
-void AutocompletedBracketPairLayoutNode::BalanceBrackets(
-    HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
-    int *cursorPosition) {
-  PrivateBalanceBrackets(Type::ParenthesisLayout, hLayout, cursorLayout,
-                         cursorPosition);
-  PrivateBalanceBrackets(Type::CurlyBraceLayout, hLayout, cursorLayout,
-                         cursorPosition);
+void AutocompletedPair::BalanceBrackets(Tree *hLayout,
+                                        EditionReference &cursorLayout,
+                                        int *cursorPosition) {
+  PrivateBalanceBrackets(BlockType::ParenthesisLayout, hLayout, cursorLayout,
+                         cursorPosition, hLayout);
+  PrivateBalanceBrackets(BlockType::CurlyBraceLayout, hLayout, cursorLayout,
+                         cursorPosition, hLayout);
 }
 
-void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
-    Type type, HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
-    int *cursorPosition) {
-  assert(IsAutoCompletedBracketPairType(type));
+void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *hLayout,
+                                               EditionReference &cursorLayout,
+                                               int *cursorPosition,
+                                               Tree *root) {
+  assert(type.isAutocompletedPair());
 
-  /* TODO: Layout::recursivelyMatched should take a context and the type should
+  /* TODO: Tree*::recursivelyMatched should take a context and the type should
    * be put in it, instead of creating 2 different functions. */
-  assert(type == Type::ParenthesisLayout || type == Type::CurlyBraceLayout);
-  if ((type == Type::ParenthesisLayout &&
+  assert(type == BlockType::ParenthesisLayout ||
+         type == BlockType::CurlyBraceLayout);
+#if 0
+  if ((type == TypeBlock::ParenthesisLayout &&
        hLayout
-           .recursivelyMatches([](const Layout l) {
-             return l.type() == Type::ParenthesisLayout
+           .recursivelyMatches([](const Tree* l) {
+             return l.type() == BlockType::ParenthesisLayout
                         ? TrinaryBoolean::True
                         : TrinaryBoolean::Unknown;
            })
            .isUninitialized()) ||
-      (type == Type::CurlyBraceLayout &&
+      (type == TypeBlock::CurlyBraceLayout &&
        hLayout
-           .recursivelyMatches([](const Layout l) {
-             return l.type() == Type::CurlyBraceLayout
+           .recursivelyMatches([](const Tree* l) {
+             return l.type() == BlockType::CurlyBraceLayout
                         ? TrinaryBoolean::True
                         : TrinaryBoolean::Unknown;
            })
@@ -103,6 +95,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     // Escape function if there is nothing to balance
     return;
   }
+#endif
 
   /* Read hLayout from left to right, and create a copy of it with balanced
    * brackets.
@@ -121,17 +114,17 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
    *  - Each time any other layout is encountered, just copy it.
    *
    * */
-  HorizontalLayout readLayout = hLayout;
+  Tree *readLayout = hLayout;
   int readIndex = 0;
-  HorizontalLayout result = HorizontalLayout::Builder();
-  HorizontalLayout writtenLayout = result;
+  EditionReference result = KRackL()->clone();
+  Tree *writtenLayout = result;
 
   assert((cursorLayout == nullptr) == (cursorPosition == nullptr));
   /* This is used to retrieve a proper cursor position after balancing. (see
    * comment after the while loop) */
   int cursorNestingLevel = -1;
   if (cursorLayout && *cursorPosition == 0) {
-    cursorNestingLevel = bracketNestingLevel(*cursorLayout, type);
+    cursorNestingLevel = bracketNestingLevel(cursorLayout, type, root);
   }
 
   while (true) {
@@ -139,48 +132,44 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
      * Since everything is cloned into the result, the cursor position will be
      * lost, so when the corresponding layout is being read, set the cursor
      * position in the written layout. */
-    if (cursorLayout && readLayout == *cursorLayout &&
+    if (cursorLayout && readLayout == static_cast<Tree *>(cursorLayout) &&
         readIndex == *cursorPosition) {
-      *cursorLayout = writtenLayout;
-      *cursorPosition = writtenLayout.numberOfChildren();
+      cursorLayout = writtenLayout;
+      *cursorPosition = writtenLayout->numberOfChildren();
     }
 
-    if (readIndex < readLayout.numberOfChildren()) {
+    if (readIndex < readLayout->numberOfChildren()) {
       /* -- Step 1 -- The reading arrived at a layout that is not a bracket:
        * juste add it to the written layout and continue reading. */
-      Layout readChild = readLayout.childAtIndex(readIndex);
-      if (readChild.type() != type) {
-        assert(!readChild.isHorizontal());
-        Layout readClone = readChild.clone();
-        writtenLayout.addOrMergeChildAtIndex(readClone,
-                                             writtenLayout.numberOfChildren());
+      Tree *readChild = readLayout->child(readIndex);
+      if (readChild->type() != type) {
+        assert(!readChild->isRackLayout());
+        Tree *readClone = readChild->clone();
+        NAry::AddOrMergeChild(writtenLayout, readClone);
         readIndex++;
 
         /* If cursor is inside the added cloned layout, set its layout inside
          * the clone by keeping the same adress offset as in the original. */
-        if (cursorLayout && cursorLayout->node() >= readChild.node() &&
-            cursorLayout->node() < readChild.node()->nextSibling()) {
-          int cursorOffset = reinterpret_cast<char *>(cursorLayout->node()) -
-                             reinterpret_cast<char *>(readChild.node());
-          Layout l = Layout(reinterpret_cast<LayoutNode *>(
-              reinterpret_cast<char *>(readClone.node()) + cursorOffset));
-          assert(l.isHorizontal());
-          *cursorLayout = static_cast<HorizontalLayout &>(l);
+        if (cursorLayout && cursorLayout >= readChild &&
+            cursorLayout < readChild->nextTree()) {
+          int cursorOffset = cursorLayout - readChild;
+          Tree *l = readClone + cursorOffset;
+          assert(l->isRackLayout());
+          cursorLayout = l;
         }
 
         /* If the inserted child is a bracket pair of another type, balance
          * inside of it. */
-        if (IsAutoCompletedBracketPairType(readClone.type())) {
-          HorizontalLayout h = horizontalChild(readClone);
-          PrivateBalanceBrackets(type, h, cursorLayout, cursorPosition);
+        if (readClone->isAutocompletedPair()) {
+          Tree *h = horizontalChild(readClone);
+          PrivateBalanceBrackets(type, h, cursorLayout, cursorPosition, root);
         }
 
         continue;
       }
 
       // -- Step 2 -- The reading arrived left of a bracket:
-      AutocompletedBracketPairLayoutNode *bracketNode =
-          static_cast<AutocompletedBracketPairLayoutNode *>(readChild.node());
+      Tree *bracketNode = readChild;
 
       /* - Step 2.1 - Read
        * The reading enters the brackets and continues inside it.
@@ -211,19 +200,17 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
        *      the current reading becomes      : "A+(|B+C]"
        *      and the current result is        : "A+(|]"
        * */
-      if (!bracketNode->isTemporary(Side::Left)) {
-        Layout newBracket = BuildFromBracketType(type);
-        static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
-            ->setTemporary(Side::Right, true);
-        writtenLayout.addOrMergeChildAtIndex(newBracket,
-                                             writtenLayout.numberOfChildren());
+      if (!IsTemporary(bracketNode, Side::Left)) {
+        Tree *newBracket = BuildFromBracketType(type);
+        SetTemporary(newBracket, Side::Right, true);
+        NAry::AddOrMergeChild(writtenLayout, newBracket);
         writtenLayout = horizontalChild(newBracket);
       }
       continue;
     }
 
     // The index is at the end of the current readLayout
-    assert(readIndex == readLayout.numberOfChildren());
+    assert(readIndex == readLayout->numberOfChildren());
 
     /* -- Step 3 -- The reading arrived at the end of the original hLayout:
      * The balancing is complete. */
@@ -237,16 +224,14 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
      * already been escaped, so here, readLayout is always the child of a
      * bracket.
      * */
-    Layout readBracket = readLayout.parent();
-    assert(readBracket.type() == type);
-    AutocompletedBracketPairLayoutNode *readBracketNode =
-        static_cast<AutocompletedBracketPairLayoutNode *>(readBracket.node());
+    Tree *readBracket = readLayout->parent(root);
+    assert(readBracket->type() == type);
 
     /* - Step 4.1. - Read
      * The reading goes out of the bracket and continues in its parent.
      * */
-    readLayout = horizontalParent(readBracket);
-    readIndex = readLayout.indexOfChild(readBracket) + 1;
+    readLayout = horizontalParent(readBracket, root);
+    readIndex = readLayout->indexOfChild(readBracket) + 1;
 
     /* - Step 4.2 - Write
      * Check the temporary status of the RIGHT side of the bracket to know
@@ -283,36 +268,32 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
      *        the current reading becomes      : "A+[B)|+C"
      *        and the current result is        : "[A+B)|"
      * */
-    if (readBracketNode->isTemporary(Side::Right)) {
+    if (IsTemporary(readBracket, Side::Right)) {
       continue;
     }
 
-    Layout writtenBracket = writtenLayout.parent();
-    if (!writtenBracket.isUninitialized()) {
+    Tree *writtenBracket = writtenLayout->parent(root);
+    if (writtenBracket) {
       /* The current written layout is in a bracket of the same type:
        * Close the bracket and continue writing in its parent. */
-      assert(writtenBracket.type() == type);
-      AutocompletedBracketPairLayoutNode *writtenBracketNode =
-          static_cast<AutocompletedBracketPairLayoutNode *>(
-              writtenBracket.node());
-      assert(writtenBracketNode->isTemporary(Side::Right));
-      writtenBracketNode->setTemporary(Side::Right, false);
-      writtenLayout = horizontalParent(writtenBracket);
+      assert(writtenBracket->type() == type);
+      assert(IsTemporary(writtenBracket, Side::Right));
+      SetTemporary(writtenBracket, Side::Right, false);
+      writtenLayout = horizontalParent(writtenBracket, root);
       continue;
     }
 
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
-    Layout newBracket = BuildFromBracketType(type);
-    static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
-        ->setTemporary(Side::Left, true);
-    HorizontalLayout newWrittenLayout = HorizontalLayout::Builder(newBracket);
+    Tree *newBracket = BuildFromBracketType(type);
+    SetTemporary(newBracket, Side::Left, true);
+    Tree *newWrittenLayout = KRackL()->clone();
     if (writtenLayout == result) {
       result = newWrittenLayout;
     } else {
-      writtenLayout.replaceWithInPlace(newWrittenLayout);
+      writtenLayout->moveTreeOverTree(newWrittenLayout);
     }
-    newBracket.replaceChildAtIndexInPlace(0, writtenLayout);
+    newBracket->child(0)->moveTreeOverTree(writtenLayout);
     writtenLayout = newWrittenLayout;
   }
 
@@ -332,13 +313,13 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
    * The code is a bit dirty though, I just could not find an easy way to fix
    * all these cases. */
   if (cursorNestingLevel >= 0 && *cursorPosition == 0) {
-    int newCursorNestingLevel = bracketNestingLevel(*cursorLayout, type);
+    int newCursorNestingLevel = bracketNestingLevel(cursorLayout, type, root);
     while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
-      Layout p = cursorLayout->parent();
-      assert(!p.isUninitialized() && p.type() == type);
-      HorizontalLayout h = horizontalParent(p);
-      *cursorPosition = h.indexOfChild(p);
-      *cursorLayout = h;
+      Tree *p = cursorLayout->parent(root);
+      assert(p && p->type() == type);
+      Tree *h = horizontalParent(p, root);
+      *cursorPosition = h->indexOfChild(p);
+      cursorLayout = h;
       newCursorNestingLevel--;
     }
   }
@@ -346,60 +327,37 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
   /* Now that the result is ready to replace hLayout, replaceWithInPlace
    * cannot be used since hLayout might not have a parent.
    * So hLayout is first emptied and then merged with result.  */
-  while (hLayout.numberOfChildren() > 0) {
-    hLayout.removeChildAtIndexInPlace(0);
+  while (hLayout->numberOfChildren() > 0) {
+    NAry::RemoveChildAtIndex(hLayout, 0);
   }
-  if (cursorLayout && *cursorLayout == result) {
-    *cursorLayout = hLayout;
+  if (cursorLayout && cursorLayout == result) {
+    cursorLayout = hLayout;
   }
-  hLayout.addOrMergeChildAtIndex(result, 0);
+  NAry::AddOrMergeChildAtIndex(hLayout, result, 0);
 }
 
-void AutocompletedBracketPairLayoutNode::setTemporary(Side side,
-                                                      bool temporary) {
-  if (side == Side::Left) {
-    m_leftIsTemporary = temporary;
-    return;
-  }
-  assert(side == Side::Right);
-  m_rightIsTemporary = temporary;
-}
-
-void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(
-    Side side, bool includeThis) {
+void AutocompletedPair::MakeChildrenPermanent(Tree *node, Side side,
+                                              bool includeThis) {
   /* Recursively make all bracket children permanent on that side.
    * e.g. (((1]]|] -> "+" -> (((1))+|] */
-  if (!isTemporary(side)) {
+  if (!IsTemporary(node, side)) {
     return;
   }
-  Layout child = childOnSide(side);
-  if (type() == child.type()) {
-    AutocompletedBracketPairLayoutNode *bracket =
-        static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
-    bracket->makeChildrenPermanent(side, true);
+  Tree *child = ChildOnSide(node, side);
+  if (node->type() == child->type()) {
+    MakeChildrenPermanent(child, side, true);
   }
   if (includeThis) {
-    setTemporary(side, false);
+    SetTemporary(node, side, false);
   }
 }
 
-LayoutNode *AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
-  LayoutNode *child = childLayout();
-  if (child->isHorizontal() && child->numberOfChildren() > 0) {
-    return child->childAtIndex(
-        side == Side::Left ? 0 : child->numberOfChildren() - 1);
+Tree *AutocompletedPair::ChildOnSide(Tree *node, Side side) {
+  Tree *child = node->child(0);
+  if (child->isRackLayout() && child->numberOfChildren() > 0) {
+    return child->child(side == Side::Left ? 0 : child->numberOfChildren() - 1);
   }
   return child;
 }
 
-LayoutNode::DeletionMethod
-AutocompletedBracketPairLayoutNode::deletionMethodForCursorLeftOfChild(
-    int childIndex) const {
-  if ((childIndex == k_outsideIndex && isTemporary(Side::Right)) ||
-      (childIndex == 0 && isTemporary(Side::Left))) {
-    return DeletionMethod::MoveLeft;
-  }
-  return DeletionMethod::AutocompletedBracketPairMakeTemporary;
-}
-
-}  // namespace Poincare
+}  // namespace PoincareJ

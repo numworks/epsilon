@@ -2,6 +2,7 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/autocompleted_pair.h>
 #include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
@@ -361,10 +362,10 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     *this = LayoutCursor(childToPoint, OMG::Direction::Left());
     didEnterCurrentPosition(previousCursor);
   }
-
+#endif
   // - Step 10 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
-
+#if 0
   // - Step 11 - Beautify after insertion if needed
   if (beautificationMethod.beautifyAfterInserting) {
     InputBeautification::BeautifyLeftOfCursorAfterInsertion(this, context);
@@ -506,36 +507,24 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
         continue;
       }
     }
-
+#endif
     // - Step 1.2 - Handle code points and brackets
-    Layout newChild;
-    LayoutNode::Type bracketType;
-    AutocompletedBracketPairLayoutNode::Side bracketSide;
-    if (!linearMode &&
-        AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(
-            codePoint, &bracketType, &bracketSide)) {
+    Tree *newChild;
+    TypeBlock bracketType(BlockType{});
+    Side bracketSide;
+    if (!linearMode && AutocompletedPair::IsAutoCompletedBracketPairCodePoint(
+                           codePoint, &bracketType, &bracketSide)) {
       // Brackets will be balanced later in insertLayout
-      newChild =
-          AutocompletedBracketPairLayoutNode::BuildFromBracketType(bracketType);
-      static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())
-          ->setTemporary(
-              AutocompletedBracketPairLayoutNode::OtherSide(bracketSide), true);
+      newChild = AutocompletedPair::BuildFromBracketType(bracketType);
+      AutocompletedPair::SetTemporary(newChild, OtherSide(bracketSide), true);
     } else if (nextCodePoint.isCombining()) {
-      newChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint);
+      newChild = SharedEditionPool->push<BlockType::CombinedCodePointsLayout>(
+          codePoint, nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {
-      if (codePoint == UCodePointLeftSystemParenthesis ||
-          codePoint == UCodePointRightSystemParenthesis) {
-        assert(linearMode);  // Handled earlier if not in linear
-        codePoint = codePoint == UCodePointLeftSystemParenthesis ? '(' : ')';
-      }
-      newChild = CodePointLayout::Builder(codePoint);
+      newChild = SharedEditionPool->push<BlockType::CodePointLayout>(codePoint);
     }
-#else
-    EditionReference newChild =
-        SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-            codePoint);
-#endif
+
     NAry::AddOrMergeChildAtIndex(currentLayout, newChild,
                                  currentLayout->numberOfChildren());
     codePoint = nextCodePoint;
@@ -1207,11 +1196,9 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
     }
   }
 }
+#endif
 
 void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
-  if (!m_layout.isHorizontal()) {
-    return;
-  }
   /* Find the top horizontal layout for balancing brackets.
    *
    * This might go again through already balanced brackets but it's safer
@@ -1224,29 +1211,19 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
    * it's useless to take the parent horizontal layout of the fraction, since
    * brackets outside of the fraction won't impact the ones inside the fraction
    * */
-  Layout currentLayout = m_layout;
-  Layout currentParent = currentLayout.parent();
-  while (!currentParent.isUninitialized() &&
-         (currentParent.isHorizontal() ||
-          AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-              currentParent.type()))) {
+  Tree *currentLayout = cursorNode();
+  Tree *currentParent = currentLayout->parent(rootNode());
+  while (currentParent && (currentParent->isRackLayout() ||
+                           currentParent->isAutocompletedPair())) {
     currentLayout = currentParent;
-    currentParent = currentLayout.parent();
+    currentParent = currentLayout->parent(rootNode());
   }
   // If the top bracket does not have an horizontal parent, create one
-  if (!currentLayout.isHorizontal()) {
-    assert(!currentParent.isUninitialized());
-    int indexOfLayout = currentParent.indexOfChild(currentLayout);
-    currentLayout = HorizontalLayout::Builder(currentLayout);
-    currentParent.replaceChildAtIndexInPlace(indexOfLayout, currentLayout);
-  }
-  HorizontalLayout topHorizontalLayout =
-      static_cast<HorizontalLayout &>(currentLayout);
-  AutocompletedBracketPairLayoutNode::BalanceBrackets(
-      topHorizontalLayout, static_cast<HorizontalLayout *>(&m_layout),
-      &m_position);
+  assert(currentLayout->isRackLayout());
+  EditionReference ref = cursorNode();
+  AutocompletedPair::BalanceBrackets(currentLayout, ref, &m_position);
+  setCursorNode(ref);
 }
-#endif
 
 void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   m_position = cursor.m_position;

@@ -109,6 +109,10 @@ class Tree : public TypeBlock {
     // Children may be const but they belong to root which is non-const anyway
     return Utils::DeconstifyPtr(&Tree::commonAncestor, this, child1, child2);
   }
+  const Tree* parent(const Tree* root) const {
+    return root->parentOfDescendant(this);
+  }
+  Tree* parent(Tree* root) { return root->parentOfDescendant(this); }
   const Tree* parentOfDescendant(const Tree* descendant, int* position) const;
   Tree* parentOfDescendant(Tree* descendant, int* position) const {
     return const_cast<Tree*>(

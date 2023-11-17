@@ -17,6 +17,7 @@
 #include <poincare_junior/src/expression/random.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/layout/autocompleted_pair.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/memory/placeholder.h>
@@ -122,6 +123,13 @@ void Tree::logAttributes(std::ostream& stream) const {
   if (isUnit()) {
     stream << " representativeId=" << static_cast<int>(nodeValue(0));
     stream << " prefixId=" << static_cast<int>(nodeValue(1));
+    return;
+  }
+  if (isAutocompletedPair()) {
+    stream << " leftIsTemporary="
+           << AutocompletedPair::IsTemporary(this, Side::Left);
+    stream << " rightIsTemporary="
+           << AutocompletedPair::IsTemporary(this, Side::Right);
     return;
   }
 }

@@ -133,9 +133,9 @@ class LayoutCursor {
   void collapseSiblingsOfLayoutOnDirection(Layout l,
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
+#endif
 
   void balanceAutocompletedBracketsAndKeepAValidCursor();
-#endif
 
   // Cursor's horizontal position
   int m_position;

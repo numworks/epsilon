@@ -2,6 +2,7 @@
 
 #include <poincare_junior/src/memory/pattern_matching.h>
 
+#include "comparison.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "matrix.h"
@@ -83,17 +84,24 @@ bool Parametric::ExpandProduct(Tree* expr) {
 }
 
 // TODO try swapping sigmas
+// different children equal bounds
+// identical children where leftUpperBound + 1 = rightLowerBound
+// product from/to factorial
+// expand and contract distribution with exp/log
 
-bool Parametric::ContractSumOrProduct(Tree* expr) {
-  // TODO summation variables must be normalized to use pattern matching
-  // different children equal bounds
-  // identical children where leftUpperBound + 1 = rightLowerBound
-  // product from/to factorial
-  // expand and contract distribution with exp/log
-  return PatternMatching::MatchReplaceAndSimplify(
-      expr,
-      KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
-      KProduct(KA, KAdd(KF, 1_e), KC, KD));
+bool Parametric::ContractProduct(Tree* expr) {
+  // Prod(u(k), k, a, b) / Prod(u(k), k, a, c) -> Prod(u(k), k, c+1, b) if c < b
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(
+          expr,
+          KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
+          &ctx) &&
+      Comparison::Compare(ctx.getNode(KF), ctx.getNode(KC)) < 0) {
+    expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx));
+    return true;
+  }
+  return false;
 }
 
 bool Parametric::Explicit(Tree* expr) {

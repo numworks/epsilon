@@ -14,7 +14,7 @@ class Parametric {
   static bool SimplifySumOrProduct(Tree* t);
   static bool ExpandSum(Tree* t);
   static bool ExpandProduct(Tree* t);
-  static bool ContractSumOrProduct(Tree* t);
+  static bool ContractProduct(Tree* t);
   static bool Explicit(Tree* t);
 
   static uint8_t FunctionIndex(const Tree* t);

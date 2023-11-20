@@ -19,6 +19,7 @@ LayoutField::ContentView::ContentView(KDGlyph::Format format)
     : m_cursor(m_layoutBuffer.blocks(), nullptr),
       m_layoutView(&m_cursor, format),
       m_isEditing(false) {
+  RackLayout::layoutCursor = &m_cursor;
   clearLayout();
 }
 

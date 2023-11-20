@@ -5,6 +5,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "empty_rectangle.h"
+#include "layout_cursor.h"
 
 namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
@@ -13,6 +14,7 @@ constexpr static KDCoordinate IndiceHeight = 10;
 namespace PoincareJ {
 
 KDFont::Size RackLayout::font = KDFont::Size::Large;
+LayoutCursor* RackLayout::layoutCursor = nullptr;
 
 KDSize RackLayout::Size(const Tree* node) {
   return SizeBetweenIndexes(node, 0, node->numberOfChildren());
@@ -80,7 +82,7 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
   // TODO : complete this method
-  return node->numberOfChildren() == 0;
+  return node != layoutCursor->cursorNode() && node->numberOfChildren() == 0;
 }
 
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,

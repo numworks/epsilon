@@ -6,6 +6,8 @@
 
 namespace PoincareJ {
 
+class LayoutCursor;
+
 class RackLayout {
  public:
   static bool IsEmpty(const Tree* node) {
@@ -23,6 +25,8 @@ class RackLayout {
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                          KDColor expressionColor = KDColorBlack,
                          KDColor backgroundColor = KDColorWhite);
+
+  static LayoutCursor* layoutCursor;
 
  private:
   static KDFont::Size font;

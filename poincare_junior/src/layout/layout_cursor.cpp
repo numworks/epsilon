@@ -89,14 +89,17 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   LayoutCursor cloneCursor = *this;
 #endif
   bool moved = false;
+  bool wasEmpty = RackLayout::IsEmpty(cursorNode());
   if (direction.isVertical()) {
     moved = verticalMove(direction, shouldRedrawLayout);
   } else {
     moved = horizontalMove(direction, shouldRedrawLayout);
   }
+  bool isEmpty = RackLayout::IsEmpty(cursorNode());
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
-    *shouldRedrawLayout = selecting || *shouldRedrawLayout;
+    *shouldRedrawLayout =
+        selecting || wasEmpty || isEmpty || *shouldRedrawLayout;
 #if 0
     if (cloneCursor.layout() != m_layout) {
       // Beautify the layout that was just left

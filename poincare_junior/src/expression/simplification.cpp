@@ -808,7 +808,7 @@ bool Simplification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
     *simplifyParent = false;  // Skip simplifyParent
     if (angleUnit != PoincareJ::AngleUnit::Radian) {
       Tree* child = tree->child(0);
-      child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      child->moveTreeOverTree(PatternMatching::CreateAndSimplifyAdvanced(
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       // Also Advanced reduce in case a multiplication expansion is better.
       ShallowAdvancedReduction(child, tree);

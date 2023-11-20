@@ -187,6 +187,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ln(x)-ln(1/x)", "2×ln(x)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1+ln(1/x)");
   simplifies_to("1-ln(x)", "1+ln(1/x)");
+  // TODO : Simplify to 1/√(1+x^2).
+  simplifies_to("√(-x^(2)/√(x^(2)+1)^(2)+1)", "√(-x^(2)/√(x^(2)+1)^(2)+1)");
+  // TODO : Simplify to x/√(-x^(2)+1)
+  simplifies_to("x×(-x^(2)+1)^(-1/2)", "x×(-x^(2)+1)^(-1/2)");
+  // TODO : Simplify to x
+  simplifies_to("x×(-x^(2)/√(x^(2)+1)^(2)+1)^(-1/2)/√(x^(2)+1)",
+                "x×(-x^(2)/√(x^(2)+1)^(2)+1)^(-1/2)/√(x^(2)+1)");
 
   // Sort order
   simplifies_to("π*floor(π)/π", "floor(π)");
@@ -494,16 +501,12 @@ QUIZ_CASE(pcj_infinity) {
 }
 
 QUIZ_CASE(pcj_inverse_trigonometry) {
-  // TODO : Simplify √(-x^(2)/√(x^(2)+1)^(2)+1 to 1/√(1+x^2).
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^(2)+1),√(-x^(2)/√(x^(2)+1)^(2)+1)}");
+                "{x,√(-x^(2)+1),cos(arctan(x))}");
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
-                "{√(-x^(2)+1),x,x/√(x^(2)+1)}");
-  /* TODO : Simplify x×(-x^(2)+1)^(-1/2) to x/√(-x^(2)+1)
-   * And x×(-x^(2)/√(x^(2)+1)^(2)+1)^(-1/2)/√(x^(2)+1) to x. */
+                "{√(-x^(2)+1),x,sin(arctan(x))}");
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^(2)+1)/x,x×(-x^(2)+1)^(-1/2),"
-                "x×(-x^(2)/√(x^(2)+1)^(2)+1)^(-1/2)/√(x^(2)+1)}");
+                "{tan(arccos(x)),tan(arcsin(x)),tan(arctan(x))}");
 
   simplifies_to("acos(cos(x))", "acos(cos(x))");
   simplifies_to("acos({cos(-21*π/5), sin(-21*π/5)})/π", "{1/5,7/10}");
@@ -518,7 +521,7 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
 
   // Other angle units :
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^(2)+1),√(-x^(2)/√(x^(2)+1)^(2)+1)}",
+                "{x,√(-x^(2)+1),√(-(x/√(x^(2)+1))^(2)+1)}",
                 {.m_angleUnit = AngleUnit::Degree});
   // TODO : Output should be acos(cos(x))
   simplifies_to("acos(cos(x))", "90-arcsin(cos(x))",

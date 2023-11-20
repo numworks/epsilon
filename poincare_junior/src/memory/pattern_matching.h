@@ -92,38 +92,49 @@ class PatternMatching {
 
   static bool Match(const Tree* pattern, const Tree* source, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),
-                      bool simplify = false) {
-    return CreateTree(structure, context, nullptr, simplify);
+                      bool simplify = false, bool advanced = false) {
+    return CreateTree(structure, context, nullptr, simplify, advanced);
   }
   static Tree* CreateAndSimplify(const Tree* structure, const Context context) {
-    return CreateTree(structure, context, nullptr, true);
+    return CreateTree(structure, context, nullptr, true, false);
   }
   static Tree* Create(const Tree* structure, const ContextTrees& context,
-                      bool simplify = false) {
-    return Create(structure, Context(context), simplify);
+                      bool simplify = false, bool advanced = false) {
+    return Create(structure, Context(context), simplify, advanced);
   }
   static Tree* CreateAndSimplify(const Tree* structure,
                                  const ContextTrees& context) {
-    return Create(structure, Context(context), true);
+    return Create(structure, Context(context), true, false);
+  }
+  static Tree* CreateAndSimplifyAdvanced(const Tree* structure,
+                                         const ContextTrees& context) {
+    return Create(structure, Context(context), true, true);
   }
   static Tree* MatchAndCreate(const Tree* source, const Tree* pattern,
                               const Tree* structure);
   // Return true if reference has been replaced
   static bool MatchAndReplace(Tree* node, const Tree* pattern,
                               const Tree* structure) {
-    return PrivateMatchAndReplace(node, pattern, structure, false);
+    return PrivateMatchAndReplace(node, pattern, structure, false, false);
   }
   EDITION_REF_WRAP_2(MatchAndReplace, const Tree*, const Tree*);
   // Return true if reference has been replaced
   static bool MatchReplaceAndSimplify(Tree* node, const Tree* pattern,
                                       const Tree* structure) {
-    return PrivateMatchAndReplace(node, pattern, structure, true);
+    return PrivateMatchAndReplace(node, pattern, structure, true, false);
   }
   EDITION_REF_WRAP_2(MatchReplaceAndSimplify, const Tree*, const Tree*);
+  // Return true if reference has been replaced
+  static bool MatchReplaceAndSimplifyAdvanced(Tree* node, const Tree* pattern,
+                                              const Tree* structure) {
+    return PrivateMatchAndReplace(node, pattern, structure, true, true);
+  }
+  EDITION_REF_WRAP_2(MatchReplaceAndSimplifyAdvanced, const Tree*, const Tree*);
 
  private:
   static bool PrivateMatchAndReplace(Tree* node, const Tree* pattern,
-                                     const Tree* structure, bool simplify);
+                                     const Tree* structure, bool simplify,
+                                     bool advanced);
 
   /* During Match, MatchContext allow keeping track of matched Nary sizes.
    * It keeps track of both source and pattern.
@@ -171,7 +182,7 @@ class PatternMatching {
                          Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in EditionPool
   static Tree* CreateTree(const Tree* structure, const Context context,
-                          Tree* insertedNAry, bool simplify);
+                          Tree* insertedNAry, bool simplify, bool advanced);
 };
 
 // Aliases for convenience

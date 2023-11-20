@@ -60,10 +60,8 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
     PatternMatching::MatchAndReplace(ref, KACos(KA), KATrig(KA, 0_e)) ||
         // asin(A) -> atrig(A, 1)
         PatternMatching::MatchAndReplace(ref, KASin(KA), KATrig(KA, 1_e)) ||
-        // atan(A) -> asin(A/Sqrt(1+a^2)) - TODO: Do this in AdvancedReduction
-        PatternMatching::MatchAndReplace(
-            ref, KATan(KA),
-            KATrig(KDiv(KA, KSqrt(KAdd(1_e, KPow(KA, 2_e)))), 1_e));
+        // atan(A) -> atanRad(A)
+        PatternMatching::MatchAndReplace(ref, KATan(KA), KATanRad(KA));
     if (angleUnit != PoincareJ::AngleUnit::Radian) {
       // arccos_degree(x) = arccos_radians(x) * 180/π
       ref->moveTreeOverTree(PatternMatching::Create(
@@ -122,13 +120,8 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KCos(KA), KTrig(KA, 0_e)) ||
       // sin(A) -> trig(A, 1)
       PatternMatching::MatchAndReplace(ref, KSin(KA), KTrig(KA, 1_e)) ||
-      /* tan(A) -> sin(A) * cos(A)^(-1)
-       * Project sin and cos now since angle has been handled already.*/
-      /* TODO: Tangent will duplicate its yet to be projected children,
-       * replacing it after everything else may be an optimization.
-       * Sin and cos terms will be replaced afterwards. */
-      PatternMatching::MatchAndReplace(
-          ref, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
+      // tan(A) -> tanRad(A, 1)
+      PatternMatching::MatchAndReplace(ref, KTan(KA), KTanRad(KA)) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)
@@ -139,6 +132,18 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
                                        KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
       changed;
+}
+
+bool Projection::Expand(Tree* tree) {
+  return
+      // tan(A) -> sin(A) * cos(A)^(-1)
+      PatternMatching::MatchReplaceAndSimplifyAdvanced(
+          tree, KTanRad(KA),
+          KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
+      // atan(A) -> asin(A/Sqrt(1+a^2))
+      PatternMatching::MatchReplaceAndSimplifyAdvanced(
+          tree, KATanRad(KA),
+          KATrig(KDiv(KA, KSqrt(KAdd(1_e, KPow(KA, 2_e)))), 1_e));
 }
 
 }  // namespace PoincareJ

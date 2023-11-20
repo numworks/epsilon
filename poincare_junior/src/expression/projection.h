@@ -25,6 +25,10 @@ class Projection {
   static bool ShallowSystemProjection(Tree *reference,
                                       void *projectionContext = nullptr);
   EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
+
+  /* Some projections are performed during advanced reduction instead so the
+   * metric can cancel it if unecessary. */
+  static bool Expand(Tree *tree);
 };
 
 }  // namespace PoincareJ

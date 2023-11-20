@@ -4,33 +4,20 @@
 #include "helper.h"
 
 QUIZ_CASE(pcj_projection) {
-  EditionReference ref(KCos(KSin(KTan(
+  EditionReference ref(KCos(KSin(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
-           3_e)))));
+           3_e))));
   Projection::DeepSystemProjection(
       ref, {.m_complexFormat = ComplexFormat::Cartesian});
   assert_trees_are_equal(
       ref,
-      KTrig(
-          KTrig(
-              KMult(
-                  KTrig(
-                      KPow(KPow(KExp(KLn(KMult(
-                                    KLn(KMult(KLn(π_e), KPow(KLn(10_e), -1_e))),
-                                    KPow(KLn(2_e), -1_e)))),
-                                π_e),
-                           3_e),
-                      1_e),
-                  KPow(KTrig(KPow(KPow(KExp(KLn(KMult(
-                                           KLn(KMult(KLn(π_e),
-                                                     KPow(KLn(10_e), -1_e))),
-                                           KPow(KLn(2_e), -1_e)))),
-                                       π_e),
-                                  3_e),
-                             0_e),
-                       -1_e)),
-              1_e),
-          0_e));
+      KTrig(KTrig(KPow(KPow(KExp(KLn(KMult(
+                                KLn(KMult(KLn(π_e), KPow(KLn(10_e), -1_e))),
+                                KPow(KLn(2_e), -1_e)))),
+                            π_e),
+                       3_e),
+                  1_e),
+            0_e));
 
   CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
   Projection::DeepSystemProjection(ref,

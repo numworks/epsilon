@@ -164,6 +164,7 @@ class Simplification {
       Parametric::ExpandProduct,
       Arithmetic::ExpandBinomial,
       Arithmetic::ExpandPermute,
+      Projection::Expand,
   };
   constexpr static Operation k_algebraicExpandOperations[] = {
       ExpandPower, ExpandPowerComplex, ExpandMult};

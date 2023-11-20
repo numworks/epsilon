@@ -305,7 +305,7 @@ void HistoryController::handleOK() {
   Expression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
 
-  /* Temporarly set the complex format and angle unit to the ones used to
+  /* Temporarily set the complex format and angle unit to the ones used to
    * compute the output. */
   Preferences::ComplexFormat currentComplexFormat =
       Preferences::sharedPreferences->complexFormat();

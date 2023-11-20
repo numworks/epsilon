@@ -4,6 +4,7 @@
 
 #include "autocompleted_pair.h"
 #include "indices.h"
+#include "code_point_layout.h"
 
 namespace PoincareJ {
 
@@ -471,6 +472,85 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
              childIndex < node->numberOfChildren());
       return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout
                                           : DeletionMethod::MoveLeft;
+  }
+}
+
+bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
+                                 int* numberOfOpenParenthesis,
+                                 OMG::HorizontalDirection direction) {
+  switch (node->layoutType()) {
+    case LayoutType::Rack:
+      return node->numberOfChildren() > 0;
+    case LayoutType::Fraction: {
+      if (*numberOfOpenParenthesis > 0) {
+        return true;
+      }
+
+      /* We do not want to absorb a fraction if something else is already being
+       * absorbed. This way, the user can write a product of fractions without
+       * typing the × sign. */
+      int indexOfThis;
+      const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+      assert(parent->numberOfChildren() > 1);
+      int indexInParent = parent->indexOfChild(node);
+      int indexOfAbsorbingSibling =
+          indexInParent + (direction.isLeft() ? 1 : -1);
+      assert(indexOfAbsorbingSibling >= 0 &&
+             indexOfAbsorbingSibling < parent->numberOfChildren());
+      const Tree* absorbingSibling = parent->child(indexOfAbsorbingSibling);
+      if (absorbingSibling->numberOfChildren() > 0) {
+        absorbingSibling = absorbingSibling->child(
+            CollapsingAbsorbingChildIndex(node, direction));
+      }
+      return absorbingSibling->isRackLayout() &&
+             Layout::IsEmpty(absorbingSibling);
+    }
+    case LayoutType::CodePoint: {
+      CodePoint codePoint = CodePointLayout::GetCodePoint(node);
+      if (*numberOfOpenParenthesis <= 0) {
+        if (codePoint == '+' || codePoint == UCodePointRightwardsArrow ||
+            codePoint.isEquationOperator() || codePoint == ',') {
+          return false;
+        }
+        if (codePoint == '-') {
+          /* If the expression is like 3ᴇ-200, we want '-' to be collapsable.
+           * Otherwise, '-' is not collapsable. */
+          int indexOfThis;
+          const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+          if (indexOfThis > 0) {
+            const Tree* leftBrother = parent->child(indexOfThis - 1);
+            if (leftBrother->isCodePointLayout() &&
+                CodePointLayout::GetCodePoint(leftBrother) ==
+                    UCodePointLatinLetterSmallCapitalE) {
+              return true;
+            }
+          }
+          return false;
+        }
+        bool isMultiplication = codePoint == '*' ||
+                                codePoint == UCodePointMultiplicationSign ||
+                                codePoint == UCodePointMiddleDot;
+        if (isMultiplication) {
+          /* We want '*' to be collapsable only if the following brother is not
+           * a fraction, so that the user can write intuitively "1/2 * 3/4". */
+          int indexOfThis;
+          const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+          const Tree* brother;
+          if (indexOfThis > 0 && direction.isLeft()) {
+            brother = parent->child(indexOfThis - 1);
+          } else if (indexOfThis < parent->numberOfChildren() - 1 &&
+                     direction.isRight()) {
+            brother = parent->child(indexOfThis + 1);
+          } else {
+            return true;
+          }
+          return !brother->isFractionLayout();
+        }
+      }
+      return true;
+    }
+    default:
+      return true;
   }
 }
 

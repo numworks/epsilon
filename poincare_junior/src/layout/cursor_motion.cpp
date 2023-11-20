@@ -5,6 +5,7 @@
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
 #include "indices.h"
+#include "rack_layout.h"
 
 namespace PoincareJ {
 
@@ -362,6 +363,42 @@ int CursorMotion::IndexAfterVerticalCursorMove(
   assert(currentIndex != k_outsideIndex ||
          positionAtCurrentIndex != PositionInLayout::Middle);
   return k_cantMoveIndex;
+}
+
+int CursorMotion::IndexToPointToWhenInserting(const Tree* node) {
+  switch (node->layoutType()) {
+    case LayoutType::Product:
+    case LayoutType::Sum:
+      return Parametric::LowerBoundIndex;
+    case LayoutType::Integral:
+      return Integral::LowerBoundIndex;
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative:
+      return Derivative::DerivandIndex;
+    case LayoutType::ListSequence:
+      return ListSequence::FunctionIndex;
+    case LayoutType::Fraction:
+      return RackLayout::IsEmpty(node->child(Fraction::NumeratorIndex))
+                 ? Fraction::NumeratorIndex
+                 : Fraction::DenominatorIndex;
+    default:
+      return node->numberOfChildren() > 0 ? 0 : k_outsideIndex;
+  }
+}
+
+Tree* CursorMotion::DeepChildToPointToWhenInserting(Tree* node) {
+  for (Tree* d : node->descendants()) {
+    if (d->isRackLayout() && RackLayout::IsEmpty(d)) {
+      return d;
+    }
+    if (d->isAutocompletedPair() &&
+        AutocompletedPair::IsTemporary(d, Side::Left)) {
+      /* If the inserted bracket is temp on the left, do not put cursor
+       * inside it so that the cursor is put right when inserting ")". */
+      return node;
+    }
+  }
+  return node;
 }
 
 static bool IsEmpty(const Tree* layout) {

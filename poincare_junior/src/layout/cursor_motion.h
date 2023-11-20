@@ -34,6 +34,9 @@ class CursorMotion {
       const Tree* node, OMG::VerticalDirection direction, int currentIndex,
       PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout);
 
+  static int IndexToPointToWhenInserting(const Tree* node);
+  static Tree* DeepChildToPointToWhenInserting(Tree* node);
+
   static bool IsCollapsable(const Tree* node, const Tree* root,
                             OMG::HorizontalDirection direction);
 

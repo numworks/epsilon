@@ -283,23 +283,18 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     }
   }
 
-#if 0
   // - Step 6 - Find position to point to if layout will me merged
   EditionPoolCursor previousCursor = *this;
-  Tree* childToPoint;
-  bool layoutToInsertIsHorizontal = layout.isHorizontal();
-  if (layoutToInsertIsHorizontal) {
+  EditionReference childToPoint;
+  if (ref->numberOfChildren() != 1) {
     childToPoint = (forceRight || forceLeft)
-                       ? Layout()
-                       : static_cast<HorizontalLayout &>(layout)
-                             .deepChildToPointToWhenInserting();
-    if (!childToPoint.isUninitialized() &&
-        AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-            childToPoint.type())) {
-      childToPoint = childToPoint.child(0);
-    }
+                       ? nullptr
+                       : CursorMotion::DeepChildToPointToWhenInserting(ref);
+    // if (!childToPoint.isUninitialized() &&
+    // childToPoint->isAutocompletedPair()) {
+    // childToPoint = childToPoint->child(0);
+    // }
   }
-#endif
 
   // - Step 7 - Insert layout
   int numberOfInsertedChildren = ref->numberOfChildren();
@@ -324,24 +319,23 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   if (numberOfInsertedChildren == 1) {
     // ref is undef
     collapseSiblingsOfLayout(toCollapse);
-#if 0
     int indexOfChildToPointTo =
         (forceRight || forceLeft)
             ? k_outsideIndex
-            : toCollapse.indexOfChildToPointToWhenInserting();
+            : CursorMotion::IndexToPointToWhenInserting(toCollapse);
     if (indexOfChildToPointTo != k_outsideIndex) {
       childToPoint = toCollapse->child(indexOfChildToPointTo);
     }
+  }
+
+  // - Step 9 - Point to required position
+  if (!childToPoint.isUninitialized()) {
+    setLayout(childToPoint, OMG::Direction::Left());
+#if 0
+    didEnterCurrentPosition(previousCursor);
 #endif
   }
 
-#if 0
-  // - Step 9 - Point to required position
-  if (!childToPoint.isUninitialized()) {
-    *this = LayoutCursor(childToPoint, OMG::Direction::Left());
-    didEnterCurrentPosition(previousCursor);
-  }
-#endif
   // - Step 10 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
 #if 0

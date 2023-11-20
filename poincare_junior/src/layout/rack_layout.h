@@ -8,6 +8,10 @@ namespace PoincareJ {
 
 class RackLayout {
  public:
+  static bool IsEmpty(const Tree* node) {
+    assert(node->isRackLayout());
+    return node->numberOfChildren() == 0;
+  }
   static KDSize Size(const Tree* node);
   static KDCoordinate Baseline(const Tree* node);
   static KDCoordinate ChildBaseline(const Tree* node, int i);

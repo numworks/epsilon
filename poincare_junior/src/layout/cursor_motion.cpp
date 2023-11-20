@@ -3,8 +3,8 @@
 #include <poincare_junior/include/layout.h>
 
 #include "autocompleted_pair.h"
-#include "indices.h"
 #include "code_point_layout.h"
+#include "indices.h"
 
 namespace PoincareJ {
 
@@ -473,6 +473,22 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
       return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout
                                           : DeletionMethod::MoveLeft;
   }
+}
+
+bool CursorMotion::ShouldCollapseSiblingsOnDirection(
+    const Tree* node, OMG::HorizontalDirection direction) {
+  if (direction.isLeft()) {
+    return node->isFractionLayout();
+  } else {
+    return node->isConjugateLayout() || node->isFractionLayout() ||
+           node->isSquareRootLayout() || node->isNthRootLayout() ||
+           node->isSquareBracketPair();
+  }
+}
+
+int CursorMotion::CollapsingAbsorbingChildIndex(
+    const Tree* node, OMG::HorizontalDirection direction) {
+  return direction.isRight() && node->isFractionLayout() ? 1 : 0;
 }
 
 bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,

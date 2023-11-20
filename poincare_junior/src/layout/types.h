@@ -13,6 +13,7 @@ NODE(VectorNorm, 1)
 NODE(Parenthesis, 1, 1)
 NODE(CurlyBrace, 1, 1)
 
+RANGE(SquareBracketPair, AbsoluteValueLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
 RANGE(Pair, AbsoluteValueLayout, CurlyBraceLayout)
 

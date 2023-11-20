@@ -128,12 +128,12 @@ class LayoutCursor {
       EmptyRectangle::State state);
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
   void invalidateSizesAndPositions();
+#endif
 
-  void collapseSiblingsOfLayout(Layout l);
-  void collapseSiblingsOfLayoutOnDirection(Layout l,
+  void collapseSiblingsOfLayout(Tree* l);
+  void collapseSiblingsOfLayoutOnDirection(Tree* l,
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
-#endif
 
   // Cursor's horizontal position
   int m_position;

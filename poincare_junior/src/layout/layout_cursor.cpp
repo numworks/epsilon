@@ -304,6 +304,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 
   // - Step 7 - Insert layout
   int numberOfInsertedChildren = ref->numberOfChildren();
+  EditionReference toCollapse =
+      numberOfInsertedChildren == 1 ? ref->child(0) : nullptr;
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
@@ -320,17 +322,21 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 
   /* - Step 8 - Collapse siblings and find position to point to if layout was
    * not merged */
+  if (numberOfInsertedChildren == 1) {
+    // ref is undef
+    collapseSiblingsOfLayout(toCollapse);
 #if 0
-  if (!layoutToInsertIsHorizontal) {
-    collapseSiblingsOfLayout(layout);
     int indexOfChildToPointTo =
-        (forceRight || forceLeft) ? LayoutNode::k_outsideIndex
-                                  : layout.indexOfChildToPointToWhenInserting();
-    if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
-      childToPoint = layout.child(indexOfChildToPointTo);
+        (forceRight || forceLeft)
+            ? k_outsideIndex
+            : toCollapse.indexOfChildToPointToWhenInserting();
+    if (indexOfChildToPointTo != k_outsideIndex) {
+      childToPoint = toCollapse->child(indexOfChildToPointTo);
     }
+#endif
   }
 
+#if 0
   // - Step 9 - Point to required position
   if (!childToPoint.isUninitialized()) {
     *this = LayoutCursor(childToPoint, OMG::Direction::Left());
@@ -1101,20 +1107,22 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
     didEnterCurrentPosition();
   }
 }
+#endif
 
-void LayoutCursor::collapseSiblingsOfLayout(Layout l) {
-  if (l.shouldCollapseSiblingsOnRight()) {
-    collapseSiblingsOfLayoutOnDirection(l, OMG::Direction::Right(),
-                                        l.rightCollapsingAbsorbingChildIndex());
-  }
-  if (l.shouldCollapseSiblingsOnLeft()) {
-    collapseSiblingsOfLayoutOnDirection(l, OMG::Direction::Left(),
-                                        l.leftCollapsingAbsorbingChildIndex());
+void LayoutCursor::collapseSiblingsOfLayout(Tree *l) {
+  using namespace OMG;
+  for (HorizontalDirection dir : {Direction::Right(), Direction::Left()}) {
+    if (CursorMotion::ShouldCollapseSiblingsOnDirection(l, dir)) {
+      collapseSiblingsOfLayoutOnDirection(
+          l, dir, CursorMotion::CollapsingAbsorbingChildIndex(l, dir));
+    }
   }
 }
 
 void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
-    Layout l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
+    Tree *l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
+  Tree *rack = cursorNode();
+  assert(rack->indexOfChild(l) != -1);
   /* This method absorbs the siblings of a layout when it's inserted.
    *
    * Example:
@@ -1124,46 +1132,38 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
    *
    * Here l = √(), and absorbingChildIndex = 0 (the inside of the sqrt)
    * */
-  Layout absorbingChild = l.child(absorbingChildIndex);
-  if (absorbingChild.isUninitialized() || !absorbingChild.isEmpty()) {
+  EditionReference absorbingRack = l->child(absorbingChildIndex);
+  if (!RackLayout::IsEmpty(absorbingRack)) {
     return;
   }
-  Layout p = l.parent();
-  if (p.isUninitialized() || !p.isHorizontal()) {
-    return;
-  }
-  int idxInParent = p.indexOfChild(l);
-  int numberOfSiblings = p.numberOfChildren();
+  int indexInParent = rack->indexOfChild(l);
+  int numberOfSiblings = rack->numberOfChildren();
   int numberOfOpenParenthesis = 0;
 
-  assert(absorbingChild.isHorizontal());  // Empty is always horizontal
-  HorizontalLayout horizontalAbsorbingChild =
-      static_cast<HorizontalLayout &>(absorbingChild);
-  HorizontalLayout horizontalParent = static_cast<HorizontalLayout &>(p);
-  Layout sibling;
+  Tree *sibling;
   int step = direction.isRight() ? 1 : -1;
   /* Loop through the siblings and add them into l until an uncollapsable
    * layout is encountered. */
   while (true) {
-    if (idxInParent == (direction.isRight() ? numberOfSiblings - 1 : 0)) {
+    if (indexInParent == (direction.isRight() ? numberOfSiblings - 1 : 0)) {
       break;
     }
-    int siblingIndex = idxInParent + step;
-    sibling = horizontalParent.child(siblingIndex);
-    if (!sibling.isCollapsable(&numberOfOpenParenthesis, direction)) {
+    int siblingIndex = indexInParent + step;
+    sibling = rack->child(siblingIndex);
+    if (!CursorMotion::IsCollapsable(sibling, rack, &numberOfOpenParenthesis,
+                                     direction)) {
       break;
     }
-    horizontalParent.removeChildAtIndexInPlace(siblingIndex);
-    int newIndex = direction.isRight() ? absorbingChild.numberOfChildren() : 0;
-    assert(!sibling.isHorizontal());
-    horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex);
+    sibling = NAry::DetachChildAtIndex(rack, siblingIndex);
+    int newIndex = direction.isRight() ? absorbingRack->numberOfChildren() : 0;
+    assert(!sibling->isRackLayout());
+    NAry::AddChildAtIndex(absorbingRack, sibling, newIndex);
     numberOfSiblings--;
     if (direction.isLeft()) {
-      idxInParent--;
+      indexInParent--;
     }
   }
 }
-#endif
 
 void LayoutBufferCursor::EditionPoolCursor::
     balanceAutocompletedBracketsAndKeepAValidCursor() {

@@ -38,10 +38,10 @@ class CursorMotion {
                             int* numberOfOpenParenthesis,
                             OMG::HorizontalDirection direction);
 
+  static bool ShouldCollapseSiblingsOnDirection(
+      const Tree* node, OMG::HorizontalDirection direction);
   static int CollapsingAbsorbingChildIndex(const Tree* node,
-                                           OMG::HorizontalDirection direction) {
-    return direction.isRight() && node->isFractionLayout() ? 1 : 0;
-  }
+                                           OMG::HorizontalDirection direction);
 
  private:
   constexpr static int k_outsideIndex = -1;

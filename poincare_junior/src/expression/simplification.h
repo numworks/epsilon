@@ -162,7 +162,6 @@ class Simplification {
       Trigonometry::ExpandATrigonometric,
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
-      Arithmetic::ExpandDecimals,
       Arithmetic::ExpandBinomial,
       Arithmetic::ExpandPermute,
   };

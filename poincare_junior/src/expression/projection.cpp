@@ -97,6 +97,12 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
   /* In following replacements, ref node isn't supposed to be replaced with a
    * node needing further projection. */
   return
+      // ceil(A)  -> -floor(-A)
+      PatternMatching::MatchAndReplace(ref, KCeil(KA),
+                                       KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
+      // frac(A) -> A - floor(A)
+      PatternMatching::MatchAndReplace(ref, KFrac(KA),
+                                       KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
       // e -> exp(1)
       PatternMatching::MatchAndReplace(ref, e_e, KExp(1_e)) ||
       // conj(A) -> re(A)-i*re(A)

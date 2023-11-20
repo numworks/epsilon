@@ -65,19 +65,16 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
   return true;
 }
 
-bool Arithmetic::ExpandDecimals(Tree* expr) {
-  return
-      // ceil(A)  -> -floor(-A)
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KCeil(KA), KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
-      // frac(A) -> A - floor(A)
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KFrac(KA), KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
-      // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KRound(KA, KB),
-          KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
-                KPow(10_e, KMult(-1_e, KB))));
+bool Arithmetic::SimplifyRound(Tree* expr) {
+  Tree* child = expr->firstChild();
+  if (!child->isRational() || !child->nextTree()->isInteger()) {
+    return false;
+  }
+  // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
+  return PatternMatching::MatchReplaceAndSimplify(
+      expr, KRound(KA, KB),
+      KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
+            KPow(10_e, KMult(-1_e, KB))));
 }
 
 bool Arithmetic::ContractDecimals(Tree* expr) {

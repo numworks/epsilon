@@ -265,7 +265,16 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       // exp(1) -> e
       PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
       // exp(A) -> e^A
-      PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) || changed;
+      PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
+      // -floor(-A) -> ceil(A)
+      PatternMatching::MatchAndReplace(
+          ref, KMult(-1_e, KTA, KFloor(KMult(-1_e, KB)), KTC),
+          KMult(KTA, KCeil(KB), KTC)) ||
+      // A - floor(A) -> frac(A)
+      PatternMatching::MatchAndReplace(
+          ref, KAdd(KTA, KB, KTC, KMult(-1_e, KFloor(KB), KTD)),
+          KAdd(KTA, KTC, KFrac(KA), KTD)) ||
+      changed;
 }
 
 }  // namespace PoincareJ

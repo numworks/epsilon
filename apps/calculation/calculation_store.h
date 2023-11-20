@@ -1,6 +1,7 @@
 #ifndef CALCULATION_CALCULATION_STORE_H
 #define CALCULATION_CALCULATION_STORE_H
 
+#include <apps/constant.h>
 #include <apps/shared/expiring_pointer.h>
 #include <poincare/preferences.h>
 #include <stddef.h>
@@ -54,6 +55,14 @@ class CalculationStore {
   }
   void deleteAll() { m_numberOfCalculations = 0; }
   bool preferencesHaveChanged();
+
+  /* It is not really the minimal size, but it clears enough space for most
+   * calculations instead of clearing less space, then fail to serialize, clear
+   * more space, fail to serialize, clear more space, etc., until reaching
+   * sufficient free space. */
+  static constexpr size_t k_calculationMinimalSize =
+      sizeof(Calculation) + Calculation::k_numberOfExpressions *
+                                ::Constant::MaxSerializedExpressionSize;
 
  private:
   static constexpr char *k_pushError = nullptr;

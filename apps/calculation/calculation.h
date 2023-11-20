@@ -2,7 +2,6 @@
 #define CALCULATION_CALCULATION_H
 
 #include <apps/calculation/additional_results/additional_results_type.h>
-#include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
@@ -131,14 +130,6 @@ class Calculation {
 #endif
   char m_inputText[0];  // MUST be the last member variable
 };
-
-/* It is not really the minimal size, but it clears enough space for most
- * calculations instead of clearing less space, then fail to serialize, clear
- * more space, fail to serialize, clear more space, etc., until reaching
- * sufficient free space. */
-constexpr size_t k_calculationMinimalSize =
-    sizeof(Calculation) +
-    Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize;
 
 }  // namespace Calculation
 

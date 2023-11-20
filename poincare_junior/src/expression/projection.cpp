@@ -116,12 +116,13 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KCos(KA), KTrig(KA, 0_e)) ||
       // sin(A) -> trig(A, 1)
       PatternMatching::MatchAndReplace(ref, KSin(KA), KTrig(KA, 1_e)) ||
-      // tan(A) -> sin(A) * cos(A)^(-1)
+      /* tan(A) -> sin(A) * cos(A)^(-1)
+       * Project sin and cos now since angle has been handled already.*/
       /* TODO: Tangent will duplicate its yet to be projected children,
        * replacing it after everything else may be an optimization.
        * Sin and cos terms will be replaced afterwards. */
-      PatternMatching::MatchAndReplace(ref, KTan(KA),
-                                       KMult(KSin(KA), KPow(KCos(KA), -1_e))) ||
+      PatternMatching::MatchAndReplace(
+          ref, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)

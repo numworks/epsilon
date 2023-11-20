@@ -79,11 +79,6 @@ RANGE(UserNamed, UserSymbol, UserSequence)
 /* - Variable V
  * | V TAG | ID | */
 NODE(Variable, 0, 1)
-
-NODE(Sine, 1)
-NODE(Cosine, 1)
-NODE(Tangent, 1)
-
 NODE(Infinity)
 
 // 3 - Other expressions in Alphabetic order
@@ -92,12 +87,14 @@ NODE(Abs, 1)
 NODE(ArcCosine, 1)
 NODE(ArcSine, 1)
 NODE(ArcTangent, 1)
+NODE(ArcTangentRad, 1)
 NODE(ATrig, 2)
 NODE(Binomial, 2)
 NODE(Ceiling, 1)
 NODE(Complex, 2)
 NODE(ComplexArgument, 1)
 NODE(Conjugate, 1)
+NODE(Cosine, 1)
 
 /* - Decimal DC
  * | DC TAG | NUMBER DIGITS AFTER ZERO | */
@@ -142,8 +139,11 @@ NODE(RealPart, 1)
 NODE(Remainder, 2)
 NODE(Round, 2)
 NODE(Sign, 1)
+NODE(Sine, 1)
 NODE(SquareRoot, 1)
 NODE(Subtraction, 2)
+NODE(Tangent, 1)
+NODE(TangentRad, 1)
 NODE(Trig, 2)
 NODE(TrigDiff, 2)
 

@@ -211,6 +211,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
                 {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
   // Matrices
   simplifies_to("[[1+2]]", "[[3]]");
   simplifies_to("trace([[1,2][3,4]])", "5");
@@ -519,14 +521,21 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
                 "{x,√(-x^(2)+1),√(-x^(2)/√(x^(2)+1)^(2)+1)}",
                 {.m_angleUnit = AngleUnit::Degree});
   // TODO : Output should be acos(cos(x))
-  simplifies_to("acos(cos(x))", "90-180×π×arcsin(cos(x))/180/π",
+  simplifies_to("acos(cos(x))", "90-arcsin(cos(x))",
                 {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos({cos(680), sin(680)})/200", "{3/5,9/10}",
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-90,-60,-45,-30,0,30,45,60,90}",
                 {.m_angleUnit = AngleUnit::Degree});
-
+  simplifies_to("cos(1+π*asin(x))", "cos(1+90×π-π×arccos(x))",
+                {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("cos(1+asin(x))", "cos(91-arccos(x))",
+                {.m_angleUnit = AngleUnit::Degree});
+  // TODO: Improve output with better advanced reduction.
+  simplifies_to("(y*π+z/180)*asin(x)",
+                "180×(π×y+z/180)×(π/2-π×arccos(x)/180)/π",
+                {.m_angleUnit = AngleUnit::Degree});
 #if 0
   // TODO
   simplifies_to(

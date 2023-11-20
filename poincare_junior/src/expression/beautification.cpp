@@ -193,36 +193,14 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
 
 bool Beautification::DeepBeautify(Tree* expr,
                                   ProjectionContext projectionContext) {
-  bool changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify,
-                                           &projectionContext, false);
+  bool changed =
+      Tree::ApplyShallowInDepth(expr, ShallowBeautify, nullptr, false);
   return AddUnits(expr, projectionContext) || changed;
 }
 
 // Reverse most system projections to display better expressions
 bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   bool changed = false;
-  ProjectionContext* projectionContext =
-      static_cast<ProjectionContext*>(context);
-  PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->isTrig() && angleUnit != PoincareJ::AngleUnit::Radian) {
-    Tree* child = ref->child(0);
-    child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
-    changed = true;
-  } else if (ref->isATrig()) {
-    /* Beautify inverse trigonometric functions here to avoid infinite
-     * projection to radian loop. */
-    // atrig(A, 0) -> acos(A)
-    PatternMatching::MatchAndReplace(ref, KATrig(KA, 0_e), KACos(KA)) ||
-        // atrig(A, 1) -> asin(A)
-        PatternMatching::MatchAndReplace(ref, KATrig(KA, 1_e), KASin(KA));
-    if (angleUnit != PoincareJ::AngleUnit::Radian) {
-      // TODO: ref->parent should be ShallowSimplified.
-      ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-          KMult(KA, KB), {.KA = ref, .KB = Angle::ToRad(angleUnit)}));
-    }
-    changed = true;
-  }
   if (ref->isAddition()) {
     NAry::Sort(ref, Comparison::Order::AdditionBeautification);
   } else if (ref->isFactor()) {
@@ -284,10 +262,6 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       // Complex(A,B) -> A+B*i
       PatternMatching::MatchAndReplace(ref, KComplex(KA, KB),
                                        KAdd(KA, KMult(KB, i_e))) ||
-      // trig(A, 0) -> cos(A)
-      PatternMatching::MatchAndReplace(ref, KTrig(KA, 0_e), KCos(KA)) ||
-      // trig(A, 1) -> sin(A)
-      PatternMatching::MatchAndReplace(ref, KTrig(KA, 1_e), KSin(KA)) ||
       // exp(1) -> e
       PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
       // exp(A) -> e^A

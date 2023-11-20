@@ -12,17 +12,13 @@ QUIZ_CASE(pcj_beautification) {
   Beautification::DeepBeautify(ref30);
   assert_trees_are_equal(ref30, KMult(3_e, KPow("x"_e, 2_e)));
 
-  EditionReference ref1(KAdd(KTrig(3_e, 0_e), KTrig("x"_e, 1_e),
+  EditionReference ref1(KAdd(KCos(3_e), KSin("x"_e),
                              KMult(-1_e, 2_e, KExp(KMult(KLn(5_e), "y"_e))),
                              KMult(KLn(2_e), KPow(KLn(4_e), -1_e))));
   Beautification::DeepBeautify(ref1);
   assert_trees_are_equal(
-      ref1, KAdd(KOpposite(KMult(2_e, KPow(5_e, "y"_e))), KCos(3_e),
+      ref1, KAdd(KCos(3_e), KOpposite(KMult(2_e, KPow(5_e, "y"_e))),
                  KSin("x"_e), KDiv(KLn(2_e), KLn(4_e))));
-
-  EditionReference ref2(KTrig(π_e, 1_e));
-  Beautification::DeepBeautify(ref2, {.m_angleUnit = AngleUnit::Gradian});
-  assert_trees_are_equal(ref2, KSin(200_e));
 
   EditionReference ref3(KExp(KMult(KHalf, KLn("y"_e))));
   Beautification::DeepBeautify(ref3);

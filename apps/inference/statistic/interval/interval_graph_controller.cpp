@@ -71,7 +71,7 @@ void IntervalGraphController::setResultTitleForCurrentValues(
 void IntervalGraphController::selectAdjacentInterval(bool goUp) {
   m_selectedIntervalIndex += goUp ? -1 : 1;
   double currentThreshold = m_interval->threshold();
-  /* Temporarly change the threshold to compute the values displayed in
+  /* Temporarily change the threshold to compute the values displayed in
    * conclusionView, in titles and in the clipboard */
   m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(
       currentThreshold, m_selectedIntervalIndex));

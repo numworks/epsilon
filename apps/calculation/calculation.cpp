@@ -288,7 +288,7 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
    * are sure there cannot be a Store in the exactOutput. */
   ExceptionCheckpoint ecp;
   Calculation::EqualSign result;
-  /* Temporarly set the complex format and angle unit to the ones used to
+  /* Temporarily set the complex format and angle unit to the ones used to
    * compute the output. */
   Preferences::ComplexFormat currentComplexFormat =
       Preferences::sharedPreferences->complexFormat();
@@ -342,7 +342,7 @@ void Calculation::fillExpressionsForAdditionalResults(
 AdditionalResultsType Calculation::additionalResultsType() {
   Expression i, a, e;
   fillExpressionsForAdditionalResults(&i, &e, &a);
-  /* Temporarly set the complex format and angle unit to the ones used to
+  /* Temporarily set the complex format and angle unit to the ones used to
    * compute the output. */
   Preferences::ComplexFormat currentComplexFormat =
       Preferences::sharedPreferences->complexFormat();

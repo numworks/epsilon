@@ -40,6 +40,7 @@ void HistoryController::reload() {
     m_calculationHistory[i].resetMemoization();
   }
 
+  m_selectableListView.resetMemoizedColumnAndRowOffsets();
   m_selectableListView.reloadData();
   /* TODO
    * Replace the following by selectCellAtLocation in order to avoid laying out

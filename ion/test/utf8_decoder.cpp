@@ -65,6 +65,10 @@ QUIZ_CASE(ion_utf8_decode_forward) {
   assert_decodes_to("\xCC\x81", 0x301);
 }
 
+QUIZ_CASE(ion_utf8_decode_invalid_code_point) {
+  assert_decodes_to("\xf8", UCodePointReplacement);
+}
+
 QUIZ_CASE(ion_utf8_decode_backwards) {
   const char* a = "abcde";
   assert_previous_code_point_is_to(a, a + 1, *a);

@@ -50,7 +50,6 @@ size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
 static inline int leading_ones(uint8_t value) {
   for (int i = 0; i < 8; i++) {
     if (!(value & 0x80)) {
-      assert(i <= 4);
       return i;
     }
     value = value << 1;
@@ -58,6 +57,8 @@ static inline int leading_ones(uint8_t value) {
   assert(false);
   return 0;
 }
+
+static bool isValidChar(uint8_t value) { return leading_ones(value) <= 4; }
 
 static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
   return (value & ((1 << bits) - 1));
@@ -70,6 +71,12 @@ CodePoint UTF8Decoder::nextCodePoint() {
   if (stringEnd() != nullptr && stringPosition() == stringEnd()) {
     returnCodePointNull = true;
   }
+
+  if (!isValidChar(*stringPosition())) {
+    nextByte();
+    return UCodePointReplacement;
+  }
+
   int leadingOnes = leading_ones(*stringPosition());
   uint32_t result = last_k_bits(nextByte(), 8 - leadingOnes - 1);
   for (int i = 0; i < leadingOnes - 1; i++) {
@@ -103,6 +110,10 @@ CodePoint UTF8Decoder::previousCodePoint() {
     i++;
     previousByte();
     leadingOnes = leading_ones(*stringPosition());
+
+    if (!isValidChar(*stringPosition())) {
+      return UCodePointReplacement;
+    }
   }
 
   assert(i <= 3);

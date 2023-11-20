@@ -115,7 +115,7 @@ class Calculation {
   EqualSign m_equalSign;
   /* Memoize the parameters used for computing the outputs in case they change
    * later in the shared preferences and we need to compute additional
-   * results.*/
+   * results. */
   Poincare::Preferences::ComplexFormat m_complexFormat;
   Poincare::Preferences::AngleUnit m_angleUnit;
 #if __EMSCRIPTEN__

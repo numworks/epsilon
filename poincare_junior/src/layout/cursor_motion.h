@@ -35,7 +35,6 @@ class CursorMotion {
       PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout);
 
   static bool IsCollapsable(const Tree* node, const Tree* root,
-                            int* numberOfOpenParenthesis,
                             OMG::HorizontalDirection direction);
 
   static bool ShouldCollapseSiblingsOnDirection(

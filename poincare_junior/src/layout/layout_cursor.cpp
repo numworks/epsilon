@@ -154,11 +154,10 @@ static bool IsTemporaryAutocompletedBracketPair(const Tree *l, Side tempSide) {
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
     EditionReference rack, int index) {
   int leftParenthesisIndex = index;
-  int dummy = 0;
   // TODO : Use Iterator
   while (leftParenthesisIndex > 0 &&
          CursorMotion::IsCollapsable(rack->child(leftParenthesisIndex), rack,
-                                     &dummy, OMG::Direction::Left())) {
+                                     OMG::Direction::Left())) {
     leftParenthesisIndex--;
   }
   EditionReference parenthesis =
@@ -1138,7 +1137,6 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
   }
   int indexInParent = rack->indexOfChild(l);
   int numberOfSiblings = rack->numberOfChildren();
-  int numberOfOpenParenthesis = 0;
 
   Tree *sibling;
   int step = direction.isRight() ? 1 : -1;
@@ -1150,8 +1148,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
     }
     int siblingIndex = indexInParent + step;
     sibling = rack->child(siblingIndex);
-    if (!CursorMotion::IsCollapsable(sibling, rack, &numberOfOpenParenthesis,
-                                     direction)) {
+    if (!CursorMotion::IsCollapsable(sibling, rack, direction)) {
       break;
     }
     sibling = NAry::DetachChildAtIndex(rack, siblingIndex);

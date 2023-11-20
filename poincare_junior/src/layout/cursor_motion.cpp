@@ -492,16 +492,11 @@ int CursorMotion::CollapsingAbsorbingChildIndex(
 }
 
 bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
-                                 int* numberOfOpenParenthesis,
                                  OMG::HorizontalDirection direction) {
   switch (node->layoutType()) {
     case LayoutType::Rack:
       return node->numberOfChildren() > 0;
     case LayoutType::Fraction: {
-      if (*numberOfOpenParenthesis > 0) {
-        return true;
-      }
-
       /* We do not want to absorb a fraction if something else is already being
        * absorbed. This way, the user can write a product of fractions without
        * typing the × sign. */
@@ -523,45 +518,43 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
     }
     case LayoutType::CodePoint: {
       CodePoint codePoint = CodePointLayout::GetCodePoint(node);
-      if (*numberOfOpenParenthesis <= 0) {
-        if (codePoint == '+' || codePoint == UCodePointRightwardsArrow ||
-            codePoint.isEquationOperator() || codePoint == ',') {
-          return false;
-        }
-        if (codePoint == '-') {
-          /* If the expression is like 3ᴇ-200, we want '-' to be collapsable.
-           * Otherwise, '-' is not collapsable. */
-          int indexOfThis;
-          const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
-          if (indexOfThis > 0) {
-            const Tree* leftBrother = parent->child(indexOfThis - 1);
-            if (leftBrother->isCodePointLayout() &&
-                CodePointLayout::GetCodePoint(leftBrother) ==
-                    UCodePointLatinLetterSmallCapitalE) {
-              return true;
-            }
-          }
-          return false;
-        }
-        bool isMultiplication = codePoint == '*' ||
-                                codePoint == UCodePointMultiplicationSign ||
-                                codePoint == UCodePointMiddleDot;
-        if (isMultiplication) {
-          /* We want '*' to be collapsable only if the following brother is not
-           * a fraction, so that the user can write intuitively "1/2 * 3/4". */
-          int indexOfThis;
-          const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
-          const Tree* brother;
-          if (indexOfThis > 0 && direction.isLeft()) {
-            brother = parent->child(indexOfThis - 1);
-          } else if (indexOfThis < parent->numberOfChildren() - 1 &&
-                     direction.isRight()) {
-            brother = parent->child(indexOfThis + 1);
-          } else {
+      if (codePoint == '+' || codePoint == UCodePointRightwardsArrow ||
+          codePoint.isEquationOperator() || codePoint == ',') {
+        return false;
+      }
+      if (codePoint == '-') {
+        /* If the expression is like 3ᴇ-200, we want '-' to be collapsable.
+         * Otherwise, '-' is not collapsable. */
+        int indexOfThis;
+        const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+        if (indexOfThis > 0) {
+          const Tree* leftBrother = parent->child(indexOfThis - 1);
+          if (leftBrother->isCodePointLayout() &&
+              CodePointLayout::GetCodePoint(leftBrother) ==
+                  UCodePointLatinLetterSmallCapitalE) {
             return true;
           }
-          return !brother->isFractionLayout();
         }
+        return false;
+      }
+      bool isMultiplication = codePoint == '*' ||
+                              codePoint == UCodePointMultiplicationSign ||
+                              codePoint == UCodePointMiddleDot;
+      if (isMultiplication) {
+        /* We want '*' to be collapsable only if the following brother is not
+         * a fraction, so that the user can write intuitively "1/2 * 3/4". */
+        int indexOfThis;
+        const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+        const Tree* brother;
+        if (indexOfThis > 0 && direction.isLeft()) {
+          brother = parent->child(indexOfThis - 1);
+        } else if (indexOfThis < parent->numberOfChildren() - 1 &&
+                   direction.isRight()) {
+          brother = parent->child(indexOfThis + 1);
+        } else {
+          return true;
+        }
+        return !brother->isFractionLayout();
       }
       return true;
     }

@@ -52,15 +52,12 @@ class LayoutCursor {
 
   // Definition
   bool isUninitialized() const { return cursorNode() == nullptr; }
-  bool isValid() const {
-    return (isUninitialized() || (m_position >= leftmostPosition() &&
-                                  m_position <= rightmostPosition()));
-  }
 
   // Getters and setters
   virtual Tree* rootNode() const = 0;
   virtual Tree* cursorNode() const = 0;
   void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
+  void setGridPosition(Tree* grid, int index, OMG::HorizontalDirection side);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
@@ -214,7 +211,6 @@ class LayoutBufferCursor final : public LayoutCursor {
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
     void setCursorNode(Tree* node) override {
-      assert(node->isRackLayout());
       m_cursorReference = EditionReference(node);
       assert(cursorNodeOffset() >= 0 &&
              cursorNodeOffset() < k_layoutBufferSize);

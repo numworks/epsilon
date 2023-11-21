@@ -16,24 +16,19 @@ const Tree* Grid::childAt(uint8_t col, uint8_t row) const {
   return child(row * (cols - 1) + col);
 }
 
-void Grid::willFillEmptyChildAtIndex(int childIndex) {
-  assert(RackLayout::IsEmpty(child(childIndex)));
+Tree* Grid::willFillEmptyChildAtIndex(int childIndex) {
   assert(isEditing());
   bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
   bool isRightOfGrid = childIsRightOfGrid(childIndex);
+  int column = columnAtChildIndex(childIndex);
+  int row = rowAtChildIndex(childIndex);
   if (isRightOfGrid && !numberOfColumnsIsFixed()) {
-    // assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
-    // ->emptyColor() == EmptyRectangle::Color::Gray);
-    // colorGrayEmptyLayoutsInYellowInColumnOrRow(true, numberOfColumns() - 1);
-    addEmptyColumn(EmptyRectangle::Color::Gray);
+    addEmptyColumn();
   }
   if (isBottomOfGrid && !numberOfRowsIsFixed()) {
-    // assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
-    // ->emptyColor() == EmptyRectangle::Color::Gray ||
-    // isRightOfGrid);  // The empty color already changed if isRightOfGrid
-    // colorGrayEmptyLayoutsInYellowInColumnOrRow(false, numberOfRows() - 1);
-    addEmptyRow(EmptyRectangle::Color::Gray);
+    addEmptyRow();
   }
+  return childAt(column, row);
 }
 
 int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
@@ -119,12 +114,18 @@ bool Grid::childIsInLastNonGrayRow(int index) const {
   return rowAtChildIndex(index) == numberOfRows() - 1 - isEditing();
 }
 
-int Grid::rowAtChildIndex(int index) const {
+int Grid::rowAtChildIndex(int index) const { return index / numberOfColumns(); }
+
+int Grid::columnAtChildIndex(int index) const {
+  return index % numberOfColumns();
+}
+
+int Grid::rowAtChildRealIndex(int index) const {
   assert(index >= 0 && index < numberOfChildren());
   return index / numberOfRealColumns();
 }
 
-int Grid::columnAtChildIndex(int index) const {
+int Grid::columnAtChildRealIndex(int index) const {
   assert(index >= 0 && index < numberOfChildren());
   return index % numberOfRealColumns();
 }
@@ -203,25 +204,10 @@ KDCoordinate Grid::width(KDFont::Size font) const {
   return totalWidth;
 }
 
-KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
-  KDCoordinate x = 0;
-  for (int j = 0; j < column; j++) {
-    x += columnWidth(j, font);
-  }
-  x += (columnWidth(column, font) - Render::Width(childAt(column, row))) / 2 +
-       column * horizontalGridEntryMargin(font);
-  KDCoordinate y = 0;
-  for (int i = 0; i < row; i++) {
-    y += rowHeight(i, font);
-  }
-  y += rowBaseline(row, font) - Render::Baseline(childAt(column, row)) +
-       row * verticalGridEntryMargin(font);
-  return KDPoint(x, y);
-}
-
 bool Grid::isColumnOrRowEmpty(bool column, int index) const {
-  assert(index >= 0 && index < (column ? numberOfColumns() : numberOfRows()));
-  int number = column ? numberOfRows() : numberOfColumns();
+  assert(index >= 0 &&
+         index < (column ? numberOfRealColumns() : numberOfRealRows()));
+  int number = column ? numberOfRealRows() : numberOfRealColumns();
   for (int i = 0; i < number; i++) {
     if (!RackLayout::IsEmpty(column ? childAt(index, i) : childAt(i, index))) {
       return false;
@@ -230,22 +216,25 @@ bool Grid::isColumnOrRowEmpty(bool column, int index) const {
   return true;
 }
 
-void Grid::addEmptyRowOrColumn(bool column, EmptyRectangle::Color color) {
-  /* addChildAtIndexInPlace messes with the number of rows to keep it consistent
-   * with the number of children */
-  int previousNumberOfChildren = numberOfChildren();
-  int previousNumberOfLines = column ? numberOfColumns() : numberOfRows();
-  int otherNumberOfLines = column ? numberOfRows() : numberOfColumns();
-  for (int i = 0; i < otherNumberOfLines; i++) {
-    Tree* h = KRackL()->clone();
-    int index = column ? (i + 1) * (previousNumberOfLines + 1) - 1
-                       : previousNumberOfChildren;
-    child(index)->moveTreeBeforeNode(h);
+void Grid::addEmptyRow() {
+  Tree* last = nextTree();
+  setNumberOfRows(numberOfRealRows() + 1);
+  for (int i = 0; i < numberOfRealColumns(); i++) {
+    last->cloneTreeBeforeNode(KRackL());
   }
-  if (column) {
-    setNumberOfColumns(previousNumberOfLines + 1);
-  } else {
-    setNumberOfRows(previousNumberOfLines + 1);
+}
+
+void Grid::addEmptyColumn() {
+  int oldNumberOfColumns = numberOfRealColumns();
+  setNumberOfColumns(oldNumberOfColumns + 1);
+  Tree* tree = this;
+  for (int i = 0; i < numberOfRealRows(); i++) {
+    // Skip grid (i == 0) or empty rack
+    tree = tree->nextNode();
+    for (int j = 0; j < oldNumberOfColumns; j++) {
+      tree = tree->nextTree();
+    };
+    tree->cloneTreeBeforeNode(KRackL());
   }
 }
 

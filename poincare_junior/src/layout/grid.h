@@ -31,15 +31,27 @@ class Grid : public Tree {
   void setNumberOfColumns(uint8_t columns) { setNodeValue(1, columns); }
 
   // Without the virtual editing gray children
+  uint8_t numberOfRealRows() const { return nodeValue(0); }
   uint8_t numberOfRealColumns() const { return nodeValue(1); }
 
   const Tree* childAt(uint8_t col, uint8_t row) const;
+  Tree* childAt(uint8_t col, uint8_t row) {
+    return const_cast<Tree*>(const_cast<const Grid*>(this)->childAt(col, row));
+  }
 
-  void willFillEmptyChildAtIndex(int childIndex);
+  /* Vocabulary : index counts virtual children, realIndex does not */
+  bool isFake(uint8_t index) {
+    assert(isEditing());
+    return childIsRightOfGrid(index) || childIsBottomOfGrid(index);
+  }
+
+  Tree* willFillEmptyChildAtIndex(int childIndex);
   int removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex);
 
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
+  int rowAtChildRealIndex(int realIndex) const;
+  int columnAtChildRealIndex(int realIndex) const;
   int indexAtRowColumn(int row, int column) const;
   int rightmostNonGrayColumn() const {
     return numberOfColumns() - 1 - (isEditing() && !numberOfColumnsIsFixed());
@@ -81,14 +93,8 @@ class Grid : public Tree {
     return isColumnOrRowEmpty(true, index);
   }
   bool isRowEmpty(int index) const { return isColumnOrRowEmpty(false, index); }
-  void addEmptyColumn(EmptyRectangle::Color color) {
-    assert(!numberOfColumnsIsFixed());
-    return addEmptyRowOrColumn(true, color);
-  }
-  void addEmptyRow(EmptyRectangle::Color color) {
-    assert(!numberOfRowsIsFixed());
-    return addEmptyRowOrColumn(false, color);
-  }
+  void addEmptyColumn();
+  void addEmptyRow();
   bool childIsRightOfGrid(int index) const;
   bool childIsLeftOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
@@ -98,7 +104,7 @@ class Grid : public Tree {
 
  private:
   bool isColumnOrRowEmpty(bool column, int index) const;
-  void addEmptyRowOrColumn(bool column, EmptyRectangle::Color color);
+  void addEmptyRowOrColumn(bool column);
   void colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex);
 };
 

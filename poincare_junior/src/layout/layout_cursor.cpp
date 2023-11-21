@@ -3,6 +3,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/autocompleted_pair.h>
+#include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
@@ -34,6 +35,9 @@ void LayoutCursor::safeSetPosition(int position) {
 #endif
 
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
+  if (cursorNode()->isGridLayout()) {
+    return EmptyRectangle::RectangleSize(font).height();
+  }
   LayoutSelection currentSelection = selection();
   int left, right;
   if (currentSelection.isEmpty()) {
@@ -47,6 +51,13 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
+  if (cursorNode()->isGridLayout()) {
+    Grid *grid = Grid::From(cursorNode());
+    return Render::AbsoluteOrigin(cursorNode(), rootNode())
+        .translatedBy(
+            grid->positionOfChildAt(grid->columnAtChildIndex(m_position),
+                                    grid->rowAtChildIndex(m_position), font));
+  }
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
   int left, right;
@@ -89,13 +100,15 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   LayoutCursor cloneCursor = *this;
 #endif
   bool moved = false;
-  bool wasEmpty = RackLayout::IsEmpty(cursorNode());
+  bool wasEmpty =
+      cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
   if (direction.isVertical()) {
     moved = verticalMove(direction);
   } else {
     moved = horizontalMove(direction);
   }
-  bool isEmpty = RackLayout::IsEmpty(cursorNode());
+  bool isEmpty =
+      cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
     *shouldRedrawLayout =
@@ -195,7 +208,6 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     copy->cloneNodeAtNode(KRackL.node<1>);
   }
 
-  assert(!isUninitialized() && isValid());
   if (Layout::IsEmpty(ref)) {
     return;
   }
@@ -211,16 +223,17 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
     InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
   }
+#endif
 
   /* - Step 3 - Add empty row to grid layout if needed
    * When an empty child at the bottom or right of the grid is filled,
    * an empty row/column is added below/on the right.
    */
-  if (IsEmptyChildOfGridLayout(m_layout)) {
-    static_cast<GridLayoutNode *>(m_layout.parent().node())
-        ->willFillEmptyChildAtIndex(m_layout.parent().indexOfChild(m_layout));
+  if (cursorNode()->isGridLayout()) {
+    setCursorNode(
+        Grid::From(m_cursorReference)->willFillEmptyChildAtIndex(m_position));
+    m_position = 0;
   }
-#endif
 
   /* - Step 4 - Close brackets on the left/right
    *
@@ -656,6 +669,18 @@ void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
   m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
+void LayoutCursor::setGridPosition(Tree *node, int index,
+                                   OMG::HorizontalDirection side) {
+  Grid *grid = Grid::From(node);
+  if (!grid->isFake(index)) {
+    index -= grid->rowAtChildIndex(index);
+    setLayout(grid->child(index), side);
+  } else {
+    setCursorNode(grid);
+    m_position = index;
+  }
+}
+
 Tree *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   return m_position == 0 ? nullptr : cursorNode()->child(m_position - 1);
@@ -695,10 +720,15 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
    * jumps over it.
    * */
   int currentIndexInNextLayout = k_outsideIndex;
-  if (direction.isRight()) {
-    nextLayout = rightLayout();
+  if (cursorNode()->isGridLayout()) {
+    nextLayout = cursorNode();
+    currentIndexInNextLayout = m_position;
   } else {
-    nextLayout = leftLayout();
+    if (direction.isRight()) {
+      nextLayout = rightLayout();
+    } else {
+      nextLayout = leftLayout();
+    }
   }
 
   if (!nextLayout) {
@@ -734,6 +764,10 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
     if (!nextLayout) {
       return false;
     }
+    if (nextLayout->isGridLayout()) {
+      currentIndexInNextLayout +=
+          Grid::From(nextLayout)->rowAtChildRealIndex(currentIndexInNextLayout);
+    }
   }
   assert(nextLayout && !nextLayout->isRackLayout());
 
@@ -746,6 +780,11 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
   assert(newIndex != k_cantMoveIndex);
 
   if (newIndex != k_outsideIndex) {
+    if (nextLayout->isGridLayout()) {
+      setGridPosition(nextLayout, newIndex, direction);
+      return true;
+    }
+
     /* Enter the next layout child
      *
      *       4                                        §4
@@ -789,14 +828,10 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
    * */
   int nextLayoutIndex;
   Tree *parent = rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
+  assert(!parent->isGridLayout());
   const Tree *previousLayout = cursorNode();
-  if (parent) {
-    setCursorNode(parent);
-    m_position = nextLayoutIndex + (direction.isRight());
-  } else {
-    setCursorNode(nextLayout);
-    m_position = direction.isRight();
-  }
+  setCursorNode(parent);
+  m_position = nextLayoutIndex + (direction.isRight());
 
   if (isSelecting() && cursorNode() != previousLayout) {
     /* If the cursor went into the parent, start the selection before
@@ -859,7 +894,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   /* Step 1:
    * Try to enter right or left layout if it can be entered through up/down
    * */
-  if (!isSelecting()) {
+  if (!isSelecting() && !cursorNode()->isGridLayout()) {
     Tree *nextLayout = rightLayout();
     PositionInLayout positionRelativeToNextLayout = PositionInLayout::Left;
     // Repeat for right and left
@@ -885,15 +920,26 @@ bool LayoutCursor::verticalMoveWithoutSelection(
 
   /* Step 2:
    * Ask ancestor if cursor can move vertically. */
-  Tree *currentRack = cursorNode();
+  Tree *currentRack;
   int childIndex;
-  Tree *parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
+  Tree *parentLayout;
+  if (cursorNode()->isGridLayout()) {
+    currentRack = nullptr;
+    parentLayout = cursorNode();
+    childIndex = m_position;
+  } else {
+    currentRack = cursorNode();
+    parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
+  }
   PositionInLayout currentPosition =
       m_position == leftmostPosition()
           ? PositionInLayout::Left
           : (m_position == rightmostPosition() ? PositionInLayout::Right
                                                : PositionInLayout::Middle);
   while (parentLayout) {
+    if (currentRack && parentLayout->isGridLayout()) {
+      childIndex += Grid::From(parentLayout)->rowAtChildRealIndex(childIndex);
+    }
     int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
         parentLayout, direction, childIndex, currentPosition);
     if (nextIndex != k_cantMoveIndex) {
@@ -904,6 +950,15 @@ bool LayoutCursor::verticalMoveWithoutSelection(
                                     : OMG::Direction::Right());
       } else {
         assert(!parentLayout->isRackLayout());
+        if (parentLayout->isGridLayout()) {
+          if (Grid::From(parentLayout)->isFake(nextIndex)) {
+            // No need to look for the closest place inside the empty
+            setGridPosition(parentLayout, nextIndex,
+                            OMG::HorizontalDirection::Left());
+            return true;
+          }
+          nextIndex -= Grid::From(parentLayout)->rowAtChildIndex(nextIndex);
+        }
         // We assume the new cursor is the same whatever the font
         LayoutBufferCursor newCursor = ClosestCursorInDescendantsOfRack(
             *static_cast<LayoutBufferCursor *>(this),
@@ -1165,7 +1220,8 @@ void LayoutBufferCursor::EditionPoolCursor::
    * a bracket.
    * Ex: When balancing the brackets inside the numerator of a fraction,
    * it's useless to take the parent horizontal layout of the fraction, since
-   * brackets outside of the fraction won't impact the ones inside the fraction
+   * brackets outside of the fraction won't impact the ones inside the
+   * fraction
    * */
   Tree *currentLayout = cursorNode();
   Tree *currentParent = currentLayout->parent(rootNode());
@@ -1215,8 +1271,9 @@ void LayoutBufferCursor::execute(Action action, Context *context,
       },
       &executionContext, data, m_layoutBuffer, k_layoutBufferSize,
       [](void *context) {
-        // Default implementation illustrating how the context could be relaxed
-        // ExecutionContext * executionContext = static_cast<ExecutionContext
+        // Default implementation illustrating how the context could be
+        // relaxed ExecutionContext * executionContext =
+        // static_cast<ExecutionContext
         // *>(context); Context * context = executionContext->m_context;
         return false;
       });

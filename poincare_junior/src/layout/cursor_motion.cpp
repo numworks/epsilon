@@ -10,7 +10,7 @@
 namespace PoincareJ {
 
 int CursorMotion::IndexAfterHorizontalCursorMove(
-    const Tree* node, OMG::HorizontalDirection direction, int currentIndex,
+    Tree* node, OMG::HorizontalDirection direction, int currentIndex,
     bool* shouldRedraw) {
   int nChildren = node->numberOfChildren();
   switch (node->layoutType()) {
@@ -40,50 +40,49 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       using namespace Derivative;
       if (node->layoutType() == LayoutType::Derivative) {
         if (currentIndex == DerivandIndex) {
-          // setVariableSlot(direction.isRight() ? VariableSlot::Assignment
-          // : VariableSlot::Fraction,
-          // shouldRedraw);
+          SetVariableSlot(node, direction.isRight() ? VariableSlot::Assignment
+                                                    : VariableSlot::Fraction);
           return VariableIndex;
         }
-        if (currentIndex == VariableIndex /* &&
-                                             m_variableSlot == VariableSlot::Fraction */) {
+        if (currentIndex == VariableIndex &&
+            GetVariableSlot(node) == VariableSlot::Fraction) {
           return direction.isRight() ? DerivandIndex : k_outsideIndex;
         }
       } else {
         if (currentIndex == DerivandIndex) {
           if (direction.isRight()) {
-            // setVariableSlot(VariableSlot::Assignment, shouldRedraw);
+            SetVariableSlot(node, VariableSlot::Assignment);
             return VariableIndex;
           }
-          // setOrderSlot(OrderSlot::Denominator, shouldRedraw);
+          SetOrderSlot(node, OrderSlot::Denominator);
           return OrderIndex;
         }
-        if (currentIndex == VariableIndex /*&&
-                                            m_variableSlot == VariableSlot::Fraction*/) {
+        if (currentIndex == VariableIndex &&
+            GetVariableSlot(node) == VariableSlot::Fraction) {
           if (direction.isRight()) {
-            // setOrderSlot(OrderSlot::Denominator, shouldRedraw);
+            SetOrderSlot(node, OrderSlot::Denominator);
             return OrderIndex;
           }
           return k_outsideIndex;
         }
         if (currentIndex == OrderIndex) {
-          if (true /* m_orderSlot == OrderSlot::Denominator */) {
+          if (GetOrderSlot(node) == OrderSlot::Denominator) {
             if (direction.isLeft()) {
-              // setVariableSlot(VariableSlot::Fraction, shouldRedraw);
+              SetVariableSlot(node, VariableSlot::Fraction);
               return VariableIndex;
             }
             return DerivandIndex;
           }
-          // assert(m_orderSlot == OrderSlot::Numerator);
+          assert(GetOrderSlot(node) == OrderSlot::Numerator);
           return direction.isRight() ? DerivandIndex : k_outsideIndex;
         }
       }
       if (currentIndex == k_outsideIndex && direction.isRight()) {
-        // setVariableSlot(VariableSlot::Fraction, shouldRedrawLayout);
+        SetVariableSlot(node, VariableSlot::Fraction);
         return VariableIndex;
       }
       if (currentIndex == AbscissaIndex && direction.isLeft()) {
-        // setVariableSlot(VariableSlot::Assignment, shouldRedrawLayout);
+        SetVariableSlot(node, VariableSlot::Assignment);
         return VariableIndex;
       }
       switch (currentIndex) {
@@ -94,8 +93,8 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
           assert(direction.isRight());
           return k_outsideIndex;
         default: {
-          // assert(currentIndex == VariableIndex &&
-          // m_variableSlot == VariableSlot::Assignment);
+          assert(currentIndex == VariableIndex &&
+                 GetVariableSlot(node) == VariableSlot::Assignment);
           return direction.isRight() ? AbscissaIndex : DerivandIndex;
         }
       }
@@ -180,7 +179,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
 }
 
 int CursorMotion::IndexAfterVerticalCursorMove(
-    const Tree* node, OMG::VerticalDirection direction, int currentIndex,
+    Tree* node, OMG::VerticalDirection direction, int currentIndex,
     PositionInLayout positionAtCurrentIndex, bool* shouldRedraw) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
@@ -222,51 +221,49 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
-      if (node->isDerivative()) {
+      if (node->layoutType() == LayoutType::Derivative) {
         if (direction.isDown() && currentIndex == DerivandIndex &&
             positionAtCurrentIndex == PositionInLayout::Left) {
-          // setVariableSlot(VariableSlot::Fraction, shouldRedraw);
+          SetVariableSlot(node, VariableSlot::Fraction);
           return VariableIndex;
         }
-        if (direction.isUp() && currentIndex == VariableIndex && true
-            /*m_variableSlot == VariableSlot::Fraction*/) {
+        if (direction.isUp() && currentIndex == VariableIndex &&
+            GetVariableSlot(node) == VariableSlot::Fraction) {
           return DerivandIndex;
         }
       } else {
-        if (direction.isUp() && currentIndex == VariableIndex && true
-            /*m_variableSlot == VariableSlot::Fraction*/) {
-          // setOrderSlot(positionAtCurrentIndex == PositionInLayout::Right
-          // ? OrderSlot::Denominator
-          // : OrderSlot::Numerator,
-          // shouldRedraw);
+        if (direction.isUp() && currentIndex == VariableIndex &&
+            GetVariableSlot(node) == VariableSlot::Fraction) {
+          SetOrderSlot(node, positionAtCurrentIndex == PositionInLayout::Right
+                                 ? OrderSlot::Denominator
+                                 : OrderSlot::Numerator);
           return OrderIndex;
         }
         if (direction.isUp() &&
             ((currentIndex == DerivandIndex &&
               positionAtCurrentIndex == PositionInLayout::Left) ||
-             (currentIndex == OrderIndex && true
-              /*m_orderSlot == OrderSlot::Denominator*/))) {
-          // setOrderSlot(OrderSlot::Numerator, shouldRedrawLayout);
+             (currentIndex == OrderIndex &&
+              GetOrderSlot(node) == OrderSlot::Denominator))) {
+          SetOrderSlot(node, OrderSlot::Numerator);
           return OrderIndex;
         }
         if (direction.isDown() &&
             ((currentIndex == DerivandIndex &&
               positionAtCurrentIndex == PositionInLayout::Left) ||
-             (currentIndex == OrderIndex && false
-              /*m_orderSlot == OrderSlot::Numerator*/))) {
-          // setOrderSlot(OrderSlot::Denominator, shouldRedraw);
+             (currentIndex == OrderIndex &&
+              GetOrderSlot(node) == OrderSlot::Numerator))) {
+          SetOrderSlot(node, OrderSlot::Denominator);
           return OrderIndex;
         }
         if (direction.isDown() && currentIndex == OrderIndex &&
-            true
-            /*m_orderSlot == OrderSlot::Denominator*/
-            && positionAtCurrentIndex == PositionInLayout::Left) {
-          // setVariableSlot(VariableSlot::Fraction, shouldRedraw);
+            GetOrderSlot(node) == OrderSlot::Denominator &&
+            positionAtCurrentIndex == PositionInLayout::Left) {
+          SetVariableSlot(node, VariableSlot::Fraction);
           return VariableIndex;
         }
       }
-      if (direction.isUp() && currentIndex == VariableIndex && false
-          /*m_variableSlot == VariableSlot::Assignment*/) {
+      if (direction.isUp() && currentIndex == VariableIndex &&
+          GetVariableSlot(node) == VariableSlot::Assignment) {
         return DerivandIndex;
       }
       if (direction.isDown() && currentIndex == DerivandIndex &&
@@ -358,11 +355,12 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       }
       return k_cantMoveIndex;
     }
+    default:
+      assert(currentIndex < node->numberOfChildren());
+      assert(currentIndex != k_outsideIndex ||
+             positionAtCurrentIndex != PositionInLayout::Middle);
+      return k_cantMoveIndex;
   }
-  assert(currentIndex < node->numberOfChildren());
-  assert(currentIndex != k_outsideIndex ||
-         positionAtCurrentIndex != PositionInLayout::Middle);
-  return k_cantMoveIndex;
 }
 
 int CursorMotion::IndexToPointToWhenInserting(const Tree* node) {

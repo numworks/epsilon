@@ -26,12 +26,12 @@ class CursorMotion {
   // TODO: Finish these methods implementation.
   static DeletionMethod DeletionMethodForCursorLeftOfChild(const Tree* node,
                                                            int index);
-  static int IndexAfterHorizontalCursorMove(const Tree* node,
+  static int IndexAfterHorizontalCursorMove(Tree* node,
                                             OMG::HorizontalDirection direction,
                                             int currentIndex,
                                             bool* shouldRedrawLayout);
   static int IndexAfterVerticalCursorMove(
-      const Tree* node, OMG::VerticalDirection direction, int currentIndex,
+      Tree* node, OMG::VerticalDirection direction, int currentIndex,
       PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout);
 
   static int IndexToPointToWhenInserting(const Tree* node);

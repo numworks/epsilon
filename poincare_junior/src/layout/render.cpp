@@ -252,7 +252,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     case LayoutType::NthDerivative: {
       using namespace Derivative;
       if (childIndex == VariableIndex) {
-        return true /* TODO : m_variableSlot == VariableSlot::Fraction */
+        return GetVariableSlot(node) == VariableSlot::Fraction
                    ? positionOfVariableInFractionSlot(node, font)
                    : positionOfVariableInAssignmentSlot(node, font);
       }
@@ -263,7 +263,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
                        Baseline(node) - Baseline(node->child(DerivandIndex)));
       }
       if (childIndex == OrderIndex) {
-        return true /* TODO : m_orderSlot == OrderSlot::Denominator */
+        return GetOrderSlot(node) == OrderSlot::Denominator
                    ? positionOfOrderInDenominator(node, font)
                    : positionOfOrderInNumerator(node, font);
       }
@@ -831,7 +831,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
 
       // Draw the copy of x
       KDPoint copyPosition =
-          true /* TODO m_variableSlot == VariableSlot::Fraction */
+          GetVariableSlot(node) == VariableSlot::Fraction
               ? variableAssignmentPosition
               : positionOfVariableInFractionSlot(node, style.font);
       Draw(node->child(VariableIndex), ctx, copyPosition.translatedBy(p), font,
@@ -840,7 +840,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       if (node->isNthDerivativeLayout()) {
         // Draw the copy of the order
         KDPoint copyPosition =
-            true /* TODO m_orderSlot == OrderSlot::Denominator */
+            GetOrderSlot(node) == OrderSlot::Denominator
                 ? positionOfOrderInNumerator(node, style.font)
                 : positionOfOrderInDenominator(node, style.font);
         Draw(node->child(OrderIndex), ctx, copyPosition.translatedBy(p), font,

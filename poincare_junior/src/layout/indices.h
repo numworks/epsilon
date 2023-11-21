@@ -29,6 +29,29 @@ constexpr static int DerivandIndex = 2;
 constexpr static int OrderIndex = 3;
 
 enum class VariableSlot : bool { Fraction, Assignment };
+// Denominator is first for 0 in the mask in Derivative to work out of the box
+enum class OrderSlot : bool { Denominator, Numerator };
+
+constexpr static uint8_t VariableSlotMask = 1 << 0;
+constexpr static uint8_t OrderSlotMask = 1 << 1;
+
+inline VariableSlot GetVariableSlot(const Tree* node) {
+  return static_cast<VariableSlot>(node->nodeValue(0) & VariableSlotMask);
+}
+
+inline void SetVariableSlot(Tree* node, VariableSlot slot) {
+  return node->setNodeValue(0, (node->nodeValue(0) & ~VariableSlotMask) |
+                                   VariableSlotMask * static_cast<bool>(slot));
+}
+
+inline OrderSlot GetOrderSlot(const Tree* node) {
+  return static_cast<OrderSlot>(node->nodeValue(0) & OrderSlotMask);
+}
+
+inline void SetOrderSlot(Tree* node, OrderSlot slot) {
+  return node->setNodeValue(0, (node->nodeValue(0) & ~OrderSlotMask) |
+                                   OrderSlotMask * static_cast<bool>(slot));
+}
 }  // namespace Derivative
 
 namespace Integral {

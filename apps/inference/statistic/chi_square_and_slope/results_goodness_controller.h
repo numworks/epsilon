@@ -46,6 +46,7 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
                             Escher::ViewController *nextController,
                             GoodnessTest *statistic);
     // ViewController
+    void initView() override;
     void viewWillAppear() override;
     void stackOpenPage(ViewController *nextPage) override {
       tabController()->stackOpenPage(nextPage);

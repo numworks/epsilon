@@ -17,6 +17,7 @@ class ResultsHomogeneityController : public CategoricalController {
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
+  void initView() override;
   void viewWillAppear() override;
   void stackOpenPage(ViewController *nextPage) override {
     tabController()->stackOpenPage(nextPage);

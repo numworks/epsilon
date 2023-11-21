@@ -31,6 +31,11 @@ ResultsGoodnessTabController::ContributionsController::ContributionsController(
                                 &CategoricalController::ButtonAction, this)),
       m_table(&m_selectableListView, this, statistic) {}
 
+void ResultsGoodnessTabController::ContributionsController::initView() {
+  m_table.createCells();
+  CategoricalController::initView();
+}
+
 void ResultsGoodnessTabController::ContributionsController::viewWillAppear() {
   m_table.selectableTableView()->selectRow(-1);
   m_table.selectableTableView()->resetScroll();

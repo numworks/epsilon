@@ -45,6 +45,7 @@ class ResultsHomogeneityTableCell
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
+  void createCells() override;
 
  private:
   // HomogeneityTableViewDataSource
@@ -66,7 +67,6 @@ class ResultsHomogeneityTableCell
   CategoricalController* categoricalController() override;
 
   // DynamicCellsDataSource
-  void createCells() override;
   void destroyCells() override;
 
   HomogeneityTest* m_statistic;

@@ -89,6 +89,11 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
   return ViewController::TitlesDisplay::DisplayLastTitle;
 }
 
+void InputController::initView() {
+  createCells();
+  FloatParameterController::initView();
+}
+
 void InputController::viewWillAppear() {
   m_significanceCell.label()->setMessage(m_statistic->thresholdName());
   m_significanceCell.subLabel()->setMessage(

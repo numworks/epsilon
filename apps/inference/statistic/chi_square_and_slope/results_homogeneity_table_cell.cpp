@@ -92,10 +92,6 @@ void ResultsHomogeneityTableCell::createCells() {
                            k_homogeneityTableNumberOfReusableInnerCells>::
         createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
                               sizeof(InferenceEvenOddBufferCell));
-    DynamicCellsDataSource<
-        InferenceEvenOddBufferCell,
-        k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()
-        ->reloadData(false);
   }
 }
 

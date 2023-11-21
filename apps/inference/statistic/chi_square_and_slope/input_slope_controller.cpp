@@ -35,9 +35,8 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
   return InputCategoricalController::handleEvent(event);
 }
 
-void InputSlopeController::initView() {
+void InputSlopeController::createDynamicCells() {
   m_slopeTableCell.createCells();
-  InputCategoricalController::initView();
 }
 
 void InputSlopeController::viewWillAppear() {

@@ -31,9 +31,9 @@ ResultsGoodnessTabController::ContributionsController::ContributionsController(
                                 &CategoricalController::ButtonAction, this)),
       m_table(&m_selectableListView, this, statistic) {}
 
-void ResultsGoodnessTabController::ContributionsController::initView() {
+void ResultsGoodnessTabController::ContributionsController::
+    createDynamicCells() {
   m_table.createCells();
-  CategoricalController::initView();
 }
 
 void ResultsGoodnessTabController::ContributionsController::viewWillAppear() {

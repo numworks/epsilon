@@ -17,7 +17,6 @@ class InputHomogeneityController : public InputCategoricalController {
   const char* title() override {
     return I18n::translate(I18n::Message::InputHomogeneityControllerTitle);
   }
-  void initView() override;
 
  private:
   int indexOfSignificanceCell() const override {
@@ -26,6 +25,7 @@ class InputHomogeneityController : public InputCategoricalController {
   InputCategoricalTableCell* categoricalTableCell() override {
     return &m_inputHomogeneityTable;
   }
+  void createDynamicCells() override;
 
   InputHomogeneityTableCell m_inputHomogeneityTable;
 };

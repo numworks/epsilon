@@ -24,9 +24,8 @@ ResultsHomogeneityController::ResultsHomogeneityController(
                                 &CategoricalController::ButtonAction, this)),
       m_resultsHomogeneityTable(&m_selectableListView, statistic, this) {}
 
-void ResultsHomogeneityController::initView() {
+void ResultsHomogeneityController::createDynamicCells() {
   m_resultsHomogeneityTable.createCells();
-  CategoricalController::initView();
 }
 
 void ResultsHomogeneityController::viewWillAppear() {

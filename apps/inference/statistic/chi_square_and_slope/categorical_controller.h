@@ -51,6 +51,8 @@ class CategoricalController
     return row == indexOfNextCell() ? k_defaultRowSeparator : 0;
   }
 
+  void initView() override;
+
  protected:
   constexpr static int k_marginVertical = 5;
   constexpr static int k_indexOfTableCell = 0;
@@ -62,6 +64,9 @@ class CategoricalController
 
   Escher::ViewController* m_nextController;
   Escher::ButtonCell m_next;
+
+ private:
+  virtual void createDynamicCells() = 0;
 };
 
 /* Common Controller between InputHomogeneityController and

@@ -17,7 +17,6 @@ class ResultsHomogeneityController : public CategoricalController {
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
-  void initView() override;
   void viewWillAppear() override;
   void stackOpenPage(ViewController *nextPage) override {
     tabController()->stackOpenPage(nextPage);
@@ -36,6 +35,7 @@ class ResultsHomogeneityController : public CategoricalController {
   CategoricalTableCell *categoricalTableCell() override {
     return &m_resultsHomogeneityTable;
   }
+  void createDynamicCells() override;
   ResultsHomogeneityTableCell m_resultsHomogeneityTable;
 };
 

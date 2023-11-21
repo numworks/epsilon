@@ -28,11 +28,10 @@ class CursorMotion {
                                                            int index);
   static int IndexAfterHorizontalCursorMove(Tree* node,
                                             OMG::HorizontalDirection direction,
-                                            int currentIndex,
-                                            bool* shouldRedrawLayout);
+                                            int currentIndex);
   static int IndexAfterVerticalCursorMove(
       Tree* node, OMG::VerticalDirection direction, int currentIndex,
-      PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout);
+      PositionInLayout positionAtCurrentIndex);
 
   static int IndexToPointToWhenInserting(const Tree* node);
   static Tree* DeepChildToPointToWhenInserting(Tree* node);

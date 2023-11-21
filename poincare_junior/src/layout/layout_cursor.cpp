@@ -91,9 +91,9 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   bool moved = false;
   bool wasEmpty = RackLayout::IsEmpty(cursorNode());
   if (direction.isVertical()) {
-    moved = verticalMove(direction, shouldRedrawLayout);
+    moved = verticalMove(direction);
   } else {
-    moved = horizontalMove(direction, shouldRedrawLayout);
+    moved = horizontalMove(direction);
   }
   bool isEmpty = RackLayout::IsEmpty(cursorNode());
   assert(!*shouldRedrawLayout || moved);
@@ -671,8 +671,7 @@ Tree *LayoutCursor::rightLayout() const {
   return cursorNode()->child(m_position);
 }
 
-bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
-                                  bool *shouldRedrawLayout) {
+bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
   Tree *nextLayout = nullptr;
   /* Search the nextLayout on the left/right to ask it where
    * the cursor should go when entering from outside.
@@ -745,8 +744,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
   int newIndex = isSelecting()
                      ? k_outsideIndex
                      : CursorMotion::IndexAfterHorizontalCursorMove(
-                           nextLayout, direction, currentIndexInNextLayout,
-                           shouldRedrawLayout);
+                           nextLayout, direction, currentIndexInNextLayout);
   assert(newIndex != k_cantMoveIndex);
 
   if (newIndex != k_outsideIndex) {
@@ -811,10 +809,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
   return true;
 }
 
-bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
-                                bool *shouldRedrawLayout) {
+bool LayoutCursor::verticalMove(OMG::VerticalDirection direction) {
   Tree *previousLayout = cursorNode();
-  bool moved = verticalMoveWithoutSelection(direction, shouldRedrawLayout);
+  bool moved = verticalMoveWithoutSelection(direction);
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorNode()) {
@@ -860,7 +857,7 @@ static LayoutBufferCursor ClosestCursorInDescendantsOfRack(
 }
 
 bool LayoutCursor::verticalMoveWithoutSelection(
-    OMG::VerticalDirection direction, bool *shouldRedrawLayout) {
+    OMG::VerticalDirection direction) {
   /* Step 1:
    * Try to enter right or left layout if it can be entered through up/down
    * */
@@ -871,8 +868,8 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     for (int i = 0; i < 2; i++) {
       if (nextLayout) {
         int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
-            nextLayout, direction, k_outsideIndex, positionRelativeToNextLayout,
-            shouldRedrawLayout);
+            nextLayout, direction, k_outsideIndex,
+            positionRelativeToNextLayout);
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
           assert(!nextLayout->isRackLayout());
@@ -900,8 +897,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
                                                : PositionInLayout::Middle);
   while (parentLayout) {
     int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
-        parentLayout, direction, childIndex, currentPosition,
-        shouldRedrawLayout);
+        parentLayout, direction, childIndex, currentPosition);
     if (nextIndex != k_cantMoveIndex) {
       if (nextIndex == k_outsideIndex) {
         assert(currentPosition != PositionInLayout::Middle);

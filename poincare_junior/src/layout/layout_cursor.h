@@ -117,11 +117,9 @@ class LayoutCursor {
 
   int leftmostPosition() const { return 0; }
   int rightmostPosition() const { return cursorNode()->numberOfChildren(); }
-  bool horizontalMove(OMG::HorizontalDirection direction,
-                      bool* shouldRedrawLayout);
-  bool verticalMove(OMG::VerticalDirection direction, bool* shouldRedrawLayout);
-  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction,
-                                    bool* shouldRedrawLayout);
+  bool horizontalMove(OMG::HorizontalDirection direction);
+  bool verticalMove(OMG::VerticalDirection direction);
+  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction);
 
   void privateStartSelecting() { m_startOfSelection = m_position; }
 #if 0

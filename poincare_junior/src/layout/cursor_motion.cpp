@@ -10,8 +10,7 @@
 namespace PoincareJ {
 
 int CursorMotion::IndexAfterHorizontalCursorMove(
-    Tree* node, OMG::HorizontalDirection direction, int currentIndex,
-    bool* shouldRedraw) {
+    Tree* node, OMG::HorizontalDirection direction, int currentIndex) {
   int nChildren = node->numberOfChildren();
   switch (node->layoutType()) {
     case LayoutType::Binomial:
@@ -180,7 +179,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
 
 int CursorMotion::IndexAfterVerticalCursorMove(
     Tree* node, OMG::VerticalDirection direction, int currentIndex,
-    PositionInLayout positionAtCurrentIndex, bool* shouldRedraw) {
+    PositionInLayout positionAtCurrentIndex) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       using namespace Binomial;

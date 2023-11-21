@@ -412,21 +412,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       const Grid* grid = Grid::From(node);
       int row = grid->rowAtChildIndex(childIndex);
       int column = grid->columnAtChildIndex(childIndex);
-      KDCoordinate x = 0;
-      for (int j = 0; j < column; j++) {
-        x += grid->columnWidth(j, font);
-      }
-      x += (grid->columnWidth(column, font) - Width(node->child(childIndex))) /
-               2 +
-           column * grid->horizontalGridEntryMargin(font);
-      KDCoordinate y = 0;
-      for (int i = 0; i < row; i++) {
-        y += grid->rowHeight(i, font);
-      }
-      y += grid->rowBaseline(row, font) - Baseline(node->child(childIndex)) +
-           row * grid->verticalGridEntryMargin(font);
-
-      KDPoint p(x, y);
+      KDPoint p = grid->positionOfChildAt(column, row, font);
       if (node->isMatrixLayout()) {
         return p.translatedBy(SquareBracketPair::ChildOffset());
       }
@@ -1132,14 +1118,32 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::Matrix: {
-      KDSize s = Grid::From(node)->size(font);
-      RenderSquareBracketPair(true, s.height(), ctx, p, style.glyphColor,
-                              style.backgroundColor);
+      const Grid* grid = Grid::From(node);
+      RenderSquareBracketPair(true, grid->height(font), ctx, p,
+                              style.glyphColor, style.backgroundColor);
       KDCoordinate rightOffset =
-          SquareBracketPair::ChildOffset().x() + s.width();
-      RenderSquareBracketPair(false, s.height(), ctx,
+          SquareBracketPair::ChildOffset().x() + grid->width(font);
+      RenderSquareBracketPair(false, grid->height(font), ctx,
                               p.translatedBy(KDPoint(rightOffset, 0)),
                               style.glyphColor, style.backgroundColor);
+      p = p.translatedBy(SquareBracketPair::ChildOffset());
+      if (grid->isEditing()) {
+        // Draw gray squares
+        for (int i = 0; i < grid->numberOfRows(); i++) {
+          KDPoint pChild =
+              grid->positionOfChildAt(i, grid->numberOfColumns() - 1, font)
+                  .translatedBy(p);
+          EmptyRectangle::DrawEmptyRectangle(ctx, pChild, font,
+                                             EmptyRectangle::Color::Gray);
+        }
+        for (int i = 0; i < grid->numberOfRealColumns(); i++) {
+          KDPoint pChild =
+              grid->positionOfChildAt(grid->numberOfRows() - 1, i, font)
+                  .translatedBy(p);
+          EmptyRectangle::DrawEmptyRectangle(ctx, pChild, font,
+                                             EmptyRectangle::Color::Gray);
+        }
+      }
       return;
     }
     case LayoutType::Piecewise: {

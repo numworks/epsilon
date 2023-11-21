@@ -361,9 +361,7 @@ void LayoutBufferCursor::addEmptyTenPowerLayout(Context *context) {
 }
 
 void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {
-#if 0
-  insertLayout(MatrixLayout::EmptyMatrixBuilder());
-#endif
+  insertLayout(KEmptyMatrixL, context, false, false);
 }
 
 void LayoutBufferCursor::addEmptySquareRootLayout(Context *context) {

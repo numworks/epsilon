@@ -5,6 +5,17 @@
 
 namespace PoincareJ {
 
+const Tree* Grid::childAt(uint8_t col, uint8_t row) const {
+  uint8_t cols = numberOfColumns();
+  if (!isEditing()) {
+    return child(row * cols + col);
+  }
+  if (col == cols - 1 || row == numberOfRows() - 1) {
+    return KRackL();
+  }
+  return child(row * (cols - 1) + col);
+}
+
 void Grid::willFillEmptyChildAtIndex(int childIndex) {
   assert(RackLayout::IsEmpty(child(childIndex)));
   assert(isEditing());
@@ -13,14 +24,14 @@ void Grid::willFillEmptyChildAtIndex(int childIndex) {
   if (isRightOfGrid && !numberOfColumnsIsFixed()) {
     // assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
     // ->emptyColor() == EmptyRectangle::Color::Gray);
-    colorGrayEmptyLayoutsInYellowInColumnOrRow(true, numberOfColumns() - 1);
+    // colorGrayEmptyLayoutsInYellowInColumnOrRow(true, numberOfColumns() - 1);
     addEmptyColumn(EmptyRectangle::Color::Gray);
   }
   if (isBottomOfGrid && !numberOfRowsIsFixed()) {
     // assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
     // ->emptyColor() == EmptyRectangle::Color::Gray ||
     // isRightOfGrid);  // The empty color already changed if isRightOfGrid
-    colorGrayEmptyLayoutsInYellowInColumnOrRow(false, numberOfRows() - 1);
+    // colorGrayEmptyLayoutsInYellowInColumnOrRow(false, numberOfRows() - 1);
     addEmptyRow(EmptyRectangle::Color::Gray);
   }
 }
@@ -109,13 +120,13 @@ bool Grid::childIsInLastNonGrayRow(int index) const {
 }
 
 int Grid::rowAtChildIndex(int index) const {
-  assert(index >= 0 && index < numberOfRows() * numberOfColumns());
-  return (int)(index / numberOfColumns());
+  assert(index >= 0 && index < numberOfChildren());
+  return index / numberOfRealColumns();
 }
 
 int Grid::columnAtChildIndex(int index) const {
-  assert(index >= 0 && index < numberOfRows() * numberOfColumns());
-  return index - numberOfColumns() * rowAtChildIndex(index);
+  assert(index >= 0 && index < numberOfChildren());
+  return index % numberOfRealColumns();
 }
 
 int Grid::indexAtRowColumn(int row, int column) const {
@@ -142,12 +153,8 @@ int Grid::closestNonGrayIndex(int index) const {
 KDCoordinate Grid::rowBaseline(int row, KDFont::Size font) const {
   assert(numberOfColumns() > 0);
   KDCoordinate rowBaseline = 0;
-  int column = 0;
-  const Tree* l = child(row * numberOfColumns());
-  while (column < numberOfColumns()) {
-    rowBaseline = std::max(rowBaseline, Render::Baseline(l));
-    column++;
-    l = l->nextTree();
+  for (int column = 0; column < numberOfColumns(); column++) {
+    rowBaseline = std::max(rowBaseline, Render::Baseline(childAt(column, row)));
   }
   return rowBaseline;
 }
@@ -155,15 +162,12 @@ KDCoordinate Grid::rowBaseline(int row, KDFont::Size font) const {
 KDCoordinate Grid::rowHeight(int row, KDFont::Size font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
-  int column = 0;
-  const Tree* l = child(row * numberOfColumns());
-  while (column < numberOfColumns()) {
+  for (int column = 0; column < numberOfColumns(); column++) {
+    const Tree* l = childAt(column, row);
     KDCoordinate b = Render::Baseline(l);
     underBaseline =
         std::max<KDCoordinate>(underBaseline, Render::Height(l) - b);
     aboveBaseline = std::max(aboveBaseline, b);
-    column++;
-    l = l->nextTree();
   }
   return aboveBaseline + underBaseline;
 }
@@ -180,17 +184,10 @@ KDCoordinate Grid::height(KDFont::Size font) const {
 }
 
 KDCoordinate Grid::columnWidth(int column, KDFont::Size font) const {
+  // TODO what is the complexity of this ?
   KDCoordinate columnWidth = 0;
-  int childIndex = column;
-  int lastIndex = (numberOfRows() - 1) * numberOfColumns() + column;
-  for (const Tree* l : children()) {
-    if (childIndex % numberOfColumns() == column) {
-      columnWidth = std::max(columnWidth, Render::Width(l));
-      if (childIndex >= lastIndex) {
-        break;
-      }
-    }
-    childIndex++;
+  for (int row = 0; row < numberOfRows(); row++) {
+    columnWidth = std::max(columnWidth, Render::Width(childAt(column, row)));
   }
   return columnWidth;
 }
@@ -206,18 +203,29 @@ KDCoordinate Grid::width(KDFont::Size font) const {
   return totalWidth;
 }
 
+KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
+  KDCoordinate x = 0;
+  for (int j = 0; j < column; j++) {
+    x += columnWidth(j, font);
+  }
+  x += (columnWidth(column, font) - Render::Width(childAt(column, row))) / 2 +
+       column * horizontalGridEntryMargin(font);
+  KDCoordinate y = 0;
+  for (int i = 0; i < row; i++) {
+    y += rowHeight(i, font);
+  }
+  y += rowBaseline(row, font) - Render::Baseline(childAt(column, row)) +
+       row * verticalGridEntryMargin(font);
+  return KDPoint(x, y);
+}
+
 bool Grid::isColumnOrRowEmpty(bool column, int index) const {
   assert(index >= 0 && index < (column ? numberOfColumns() : numberOfRows()));
-  for (int i = 0; const Tree* l : children()) {
-    if ((column && i > index + (numberOfRows() - 1) * numberOfColumns()) ||
-        (!column && i >= (index + 1) * numberOfColumns())) {
-      break;
-    }
-    if ((!column || i % numberOfColumns() == index) &&
-        !RackLayout::IsEmpty(l)) {
+  int number = column ? numberOfRows() : numberOfColumns();
+  for (int i = 0; i < number; i++) {
+    if (!RackLayout::IsEmpty(column ? childAt(index, i) : childAt(i, index))) {
       return false;
     }
-    i++;
   }
   return true;
 }
@@ -230,9 +238,6 @@ void Grid::addEmptyRowOrColumn(bool column, EmptyRectangle::Color color) {
   int otherNumberOfLines = column ? numberOfRows() : numberOfColumns();
   for (int i = 0; i < otherNumberOfLines; i++) {
     Tree* h = KRackL()->clone();
-#if 0
-    h.setEmptyColor(color);
-#endif
     int index = column ? (i + 1) * (previousNumberOfLines + 1) - 1
                        : previousNumberOfChildren;
     child(index)->moveTreeBeforeNode(h);
@@ -242,32 +247,6 @@ void Grid::addEmptyRowOrColumn(bool column, EmptyRectangle::Color color) {
   } else {
     setNumberOfRows(previousNumberOfLines + 1);
   }
-}
-
-void Grid::colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column,
-                                                      int lineIndex) {
-#if 0
-  int childIndex = lineIndex * (column ? 1 : numberOfColumns());
-  int startIndex = childIndex;
-  int maxIndex =
-      column ? (numberOfRows() - 1 - static_cast<int>(!numberOfRowsIsFixed())) *
-                       numberOfColumns() +
-                   lineIndex
-             : lineIndex * numberOfColumns() + numberOfColumns() - 1 -
-                   static_cast<int>(!numberOfColumnsIsFixed());
-  for (LayoutNode *lastLayoutOfLine : childrenFromIndex(startIndex)) {
-    if (childIndex > maxIndex) {
-      break;
-    }
-    if ((!column || childIndex % numberOfColumns() == lineIndex) &&
-        lastLayoutOfLine->isEmpty()) {
-      assert(lastLayoutOfLine->isHorizontal());
-      static_cast<HorizontalLayoutNode *>(lastLayoutOfLine)
-          ->setEmptyColor(EmptyRectangle::Color::Yellow);
-    }
-    childIndex++;
-  }
-#endif
 }
 
 }  // namespace PoincareJ

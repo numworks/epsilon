@@ -464,29 +464,31 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
           childIndex, Parametric::ArgumentIndex);
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
-#if 0
-      using namespace Grid;
+      const Grid* grid = Grid::From(node);
       if (childIndex == k_outsideIndex) {
         return DeletionMethod::MoveLeft;
       }
 
-      assert(isEditing());
-      int row = rowAtChildIndex(node, childIndex);
-      int column = columnAtChildIndex(node, childIndex);
+      assert(grid->isEditing());
+      int row = grid->rowAtChildIndex(childIndex);
+      int column = grid->columnAtChildIndex(childIndex);
       if (row == 0 && column == 0 &&
-          NumberOfColumns(node) == k_minimalNumberOfRowsAndColumnsWhileEditing &&
-          NumberOfRows(node) == k_minimalNumberOfRowsAndColumnsWhileEditing) {
+          grid->numberOfColumns() ==
+              Grid::k_minimalNumberOfRowsAndColumnsWhileEditing &&
+          grid->numberOfRows() ==
+              Grid::k_minimalNumberOfRowsAndColumnsWhileEditing) {
         /* If the top left child is filled and the cursor is left of it, delete
          * the grid and keep the child. */
         return DeletionMethod::DeleteParent;
       }
 
-      bool deleteWholeRow = !numberOfRowsIsFixed() &&
-                            childIsLeftOfGrid(childIndex) &&
-                            !childIsBottomOfGrid(childIndex) && isRowEmpty(row);
-      bool deleteWholeColumn =
-          !numberOfColumnsIsFixed() && childIsTopOfGrid(childIndex) &&
-          !childIsRightOfGrid(childIndex) && isColumnEmpty(column);
+      bool deleteWholeRow =
+          !grid->numberOfRowsIsFixed() && grid->childIsLeftOfGrid(childIndex) &&
+          !grid->childIsBottomOfGrid(childIndex) && grid->isRowEmpty(row);
+      bool deleteWholeColumn = !grid->numberOfColumnsIsFixed() &&
+                               grid->childIsTopOfGrid(childIndex) &&
+                               !grid->childIsRightOfGrid(childIndex) &&
+                               grid->isColumnEmpty(column);
       if (deleteWholeRow || deleteWholeColumn) {
         /* Pressing backspace at the top of an empty column or a the left of an
          * empty row deletes the whole column/row. */
@@ -496,10 +498,9 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
                                      : DeletionMethod::GridLayoutDeleteColumn);
       }
 
-      if (childIsLeftOfGrid(childIndex) && row != 0) {
+      if (grid->childIsLeftOfGrid(childIndex) && row != 0) {
         return DeletionMethod::GridLayoutMoveToUpperRow;
       }
-#endif
       return DeletionMethod::MoveLeft;
     }
     default:

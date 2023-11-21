@@ -5,6 +5,7 @@
 
 #include "empty_rectangle.h"
 #include "indices.h"
+#include "k_tree.h"
 
 namespace PoincareJ {
 
@@ -22,10 +23,17 @@ class Grid : public Tree {
     return static_cast<Grid*>(node);
   }
 
-  uint8_t numberOfRows() const { return nodeValue(0); }
-  uint8_t numberOfColumns() const { return nodeValue(1); }
+  /* When a grid is edited, it displays some fake additional children with gray
+   * squares to enable adding more rows/columns. */
+  uint8_t numberOfRows() const { return nodeValue(0) + isEditing(); }
+  uint8_t numberOfColumns() const { return nodeValue(1) + isEditing(); }
   void setNumberOfRows(uint8_t rows) { setNodeValue(0, rows); }
   void setNumberOfColumns(uint8_t columns) { setNodeValue(1, columns); }
+
+  // Without the virtual editing gray children
+  uint8_t numberOfRealColumns() const { return nodeValue(1); }
+
+  const Tree* childAt(uint8_t col, uint8_t row) const;
 
   void willFillEmptyChildAtIndex(int childIndex);
   int removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex);
@@ -62,11 +70,12 @@ class Grid : public Tree {
   KDSize size(KDFont::Size font) const {
     return KDSize(width(font), height(font));
   }
+  KDPoint positionOfChildAt(int column, int row, KDFont::Size font) const;
 
   constexpr static int k_minimalNumberOfRowsAndColumnsWhileEditing = 2;
 
   // Row and columns
-  virtual bool isEditing() const { return false; }
+  bool isEditing() const { return true; }  // TODO
 
   bool isColumnEmpty(int index) const {
     return isColumnOrRowEmpty(true, index);

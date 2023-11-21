@@ -534,6 +534,12 @@ Expression ContinuousFunction::Model::expressionReduced(
           coefficients, context, complexFormat, angleUnit,
           ContinuousFunctionProperties::k_defaultUnitFormat,
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, true);
+
+      if (degree == -1) {
+        /* The reduction failed, so the expression is not reduced and
+         * getPolynomialReducedCoefficients returned -1. */
+        return m_expression;
+      }
       assert(!willBeAlongX || degree == yDegree);
       ReductionContext reductionContext(context, complexFormat, angleUnit,
                                         Preferences::UnitFormat::Metric,

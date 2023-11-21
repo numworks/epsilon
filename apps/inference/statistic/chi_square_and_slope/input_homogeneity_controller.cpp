@@ -10,9 +10,8 @@ InputHomogeneityController::InputHomogeneityController(
     : InputCategoricalController(parent, resultsController, statistic),
       m_inputHomogeneityTable(&m_selectableListView, statistic, this) {}
 
-void InputHomogeneityController::initView() {
+void InputHomogeneityController::createDynamicCells() {
   m_inputHomogeneityTable.createCells();
-  InputCategoricalController::initView();
 }
 
 }  // namespace Inference

@@ -123,6 +123,11 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
   return m_next.minimalSizeForOptimalDisplay().height();
 }
 
+void CategoricalController::initView() {
+  createDynamicCells();
+  SelectableListViewController::initView();
+}
+
 InputCategoricalController::InputCategoricalController(
     StackViewController *parent, ViewController *nextController,
     Statistic *statistic)

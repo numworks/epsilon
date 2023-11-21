@@ -28,7 +28,6 @@ class InputSlopeController : public InputCategoricalController {
                ? ViewController::TitlesDisplay::DisplayLastTitle
                : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  void initView() override;
   void viewWillAppear() override;
 
  private:
@@ -47,6 +46,7 @@ class InputSlopeController : public InputCategoricalController {
   InputCategoricalTableCell *categoricalTableCell() override {
     return &m_slopeTableCell;
   }
+  void createDynamicCells() override;
   int indexOfSignificanceCell() const override {
     return k_indexOfTableCell + 1;
   }

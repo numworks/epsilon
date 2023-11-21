@@ -68,13 +68,6 @@ void InputHomogeneityTableCell::createCells() {
                            k_homogeneityTableNumberOfReusableInnerCells>::
         createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
                               sizeof(InferenceEvenOddBufferCell));
-    /* We could equivalently use
-     * DynamicCellsDataSource<InferenceEvenOddEditableCell,
-     * k_homogeneityTableNumberOfReusableInnerCells>::m_delegate */
-    DynamicCellsDataSource<
-        InferenceEvenOddBufferCell,
-        k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()
-        ->reloadData(false);
   }
 }
 

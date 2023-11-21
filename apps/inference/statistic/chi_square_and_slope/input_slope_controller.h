@@ -28,6 +28,7 @@ class InputSlopeController : public InputCategoricalController {
                ? ViewController::TitlesDisplay::DisplayLastTitle
                : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
+  void initView() override;
   void viewWillAppear() override;
 
  private:

@@ -41,6 +41,7 @@ class InputHomogeneityTableCell
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
+  void createCells() override;
 
  private:
   // ClearColumnHelper
@@ -60,7 +61,6 @@ class InputHomogeneityTableCell
   CategoricalController* categoricalController() override;
 
   // DynamicCellsDataSource
-  void createCells() override;
   void destroyCells() override;
   InputHomogeneityController* m_inputHomogeneityController;
 };

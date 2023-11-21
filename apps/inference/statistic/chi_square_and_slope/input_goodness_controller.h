@@ -22,6 +22,7 @@ class InputGoodnessController : public InputCategoricalController {
   const char* title() override {
     return I18n::translate(I18n::Message::InputGoodnessControllerTitle);
   }
+  void initView() override;
 
   // ListViewDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;

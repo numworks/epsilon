@@ -54,6 +54,11 @@ const char *ResultsController::title() {
   return m_titleBuffer;
 }
 
+void ResultsController::initView() {
+  createCells();
+  ListWithTopAndBottomController::initView();
+}
+
 bool ResultsController::ButtonAction(ResultsController *controller, void *s) {
   if (!controller->m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);

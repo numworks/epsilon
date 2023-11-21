@@ -36,13 +36,13 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
       : m_cells(nullptr), m_delegate(delegate) {}
   ~DynamicCellsDataSource();
   Escher::HighlightCell* cell(int i);
+  virtual void createCells();
   void destroyCells() override;
   Escher::SelectableTableView* dynamicCellsTableView() override {
     return m_delegate->tableView();
   }
 
  protected:
-  virtual void createCells();
   void createCellsWithOffset(size_t offset);
   T* m_cells;
   DynamicCellsDataSourceDelegate<T>* m_delegate;

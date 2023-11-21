@@ -24,6 +24,11 @@ ResultsHomogeneityController::ResultsHomogeneityController(
                                 &CategoricalController::ButtonAction, this)),
       m_resultsHomogeneityTable(&m_selectableListView, statistic, this) {}
 
+void ResultsHomogeneityController::initView() {
+  m_resultsHomogeneityTable.createCells();
+  CategoricalController::initView();
+}
+
 void ResultsHomogeneityController::viewWillAppear() {
   m_resultsHomogeneityTable.selectableTableView()->selectRow(-1);
   m_resultsHomogeneityTable.selectableTableView()->resetScroll();

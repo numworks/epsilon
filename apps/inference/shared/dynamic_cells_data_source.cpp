@@ -19,7 +19,6 @@ template <typename T, int N>
 void DynamicCellsDataSource<T, N>::createCells() {
   if (m_cells == nullptr) {
     createCellsWithOffset(0);
-    m_delegate->tableView()->reloadData(false);
   }
 }
 
@@ -65,7 +64,7 @@ void DynamicCellsDataSource<T, N>::destroyCells() {
 
 template <typename T, int N>
 Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
-  createCells();
+  assert(m_cells);
   return &m_cells[i];
 }
 

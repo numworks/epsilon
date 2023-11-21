@@ -23,6 +23,11 @@ void InputGoodnessController::viewWillAppear() {
   InputCategoricalController::viewWillAppear();
 }
 
+void InputGoodnessController::initView() {
+  m_goodnessTableCell.createCells();
+  InputCategoricalController::initView();
+}
+
 HighlightCell *InputGoodnessController::reusableCell(int index, int type) {
   if (type == k_indexOfDegreeOfFreedom) {
     return &m_degreeOfFreedomCell;

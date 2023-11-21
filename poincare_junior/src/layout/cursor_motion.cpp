@@ -4,6 +4,7 @@
 
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
+#include "grid.h"
 #include "indices.h"
 #include "rack_layout.h"
 
@@ -23,12 +24,12 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       return k_outsideIndex;
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
+      const Grid* grid = Grid::From(node);
       if (currentIndex == k_outsideIndex) {
         return direction.isLeft() ? nChildren - 1 : 0;
       }
-      if ((direction.isLeft() && Grid::childIsLeftOfGrid(node, currentIndex)) ||
-          (direction.isRight() &&
-           Grid::childIsRightOfGrid(node, currentIndex))) {
+      if ((direction.isLeft() && grid->childIsLeftOfGrid(currentIndex)) ||
+          (direction.isRight() && grid->childIsRightOfGrid(currentIndex))) {
         return k_outsideIndex;
       }
       int step = direction.isLeft() ? -1 : 1;
@@ -204,16 +205,16 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       }
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
-      using namespace Grid;
+      const Grid* grid = Grid::From(node);
       if (currentIndex == k_outsideIndex) {
         return k_cantMoveIndex;
       }
-      if (direction.isUp() && currentIndex >= NumberOfColumns(node)) {
-        return currentIndex - NumberOfColumns(node);
+      if (direction.isUp() && currentIndex >= grid->numberOfColumns()) {
+        return currentIndex - grid->numberOfColumns();
       }
       if (direction.isDown() &&
-          currentIndex < node->numberOfChildren() - NumberOfColumns(node)) {
-        return currentIndex + NumberOfColumns(node);
+          currentIndex < node->numberOfChildren() - grid->numberOfColumns()) {
+        return currentIndex + grid->numberOfColumns();
       }
       return k_cantMoveIndex;
     }

@@ -7,6 +7,7 @@
 
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
+#include "grid.h"
 #include "layout_selection.h"
 #include "rack_layout.h"
 #include "render_masks.h"
@@ -188,9 +189,10 @@ KDSize Render::Size(const Tree* node) {
       return KDSize(width, TotalHeight(node, font));
     }
     case LayoutType::Matrix:
-      return SquareBracketPair::SizeGivenChildSize(Grid::size(node, font));
+      return SquareBracketPair::SizeGivenChildSize(
+          Grid::From(node)->size(font));
     case LayoutType::Piecewise: {
-      KDSize sizeWithoutBrace = Grid::size(node, font);
+      KDSize sizeWithoutBrace = Grid::From(node)->size(font);
 #if 0
       if (numberOfChildren() == 2 && !isEditing() &&
           node->child(1)->isEmpty()) {
@@ -407,22 +409,22 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
 
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
-      using namespace Grid;
-      int row = rowAtChildIndex(node, childIndex);
-      int column = columnAtChildIndex(node, childIndex);
+      const Grid* grid = Grid::From(node);
+      int row = grid->rowAtChildIndex(childIndex);
+      int column = grid->columnAtChildIndex(childIndex);
       KDCoordinate x = 0;
       for (int j = 0; j < column; j++) {
-        x += columnWidth(node, j, font);
+        x += grid->columnWidth(j, font);
       }
-      x += (columnWidth(node, column, font) - Width(node->child(childIndex))) /
+      x += (grid->columnWidth(column, font) - Width(node->child(childIndex))) /
                2 +
-           column * horizontalGridEntryMargin(node, font);
+           column * grid->horizontalGridEntryMargin(font);
       KDCoordinate y = 0;
       for (int i = 0; i < row; i++) {
-        y += rowHeight(node, i, font);
+        y += grid->rowHeight(i, font);
       }
-      y += rowBaseline(node, row, font) - Baseline(node->child(childIndex)) +
-           row * verticalGridEntryMargin(node, font);
+      y += grid->rowBaseline(row, font) - Baseline(node->child(childIndex)) +
+           row * grid->verticalGridEntryMargin(font);
 
       KDPoint p(x, y);
       if (node->isMatrixLayout()) {
@@ -521,7 +523,8 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Piecewise:
     case LayoutType::Matrix:
       assert(Pair::LineThickness == CurlyBrace::LineThickness);
-      return (Grid::height(node, font) + 1) / 2 + Pair::LineThickness;
+      KDCoordinate height = Grid::From(node)->height(font);
+      return (height + 1) / 2 + Pair::LineThickness;
   };
 }
 
@@ -1129,7 +1132,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::Matrix: {
-      KDSize s = Grid::size(node, font);
+      KDSize s = Grid::From(node)->size(font);
       RenderSquareBracketPair(true, s.height(), ctx, p, style.glyphColor,
                               style.backgroundColor);
       KDCoordinate rightOffset =
@@ -1140,8 +1143,8 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::Piecewise: {
-      using namespace Grid;
-      assert(NumberOfColumns(node) == 2);
+      const Grid* grid = Grid::From(node);
+      assert(grid->numberOfColumns() == 2);
       bool cursorIsInsideOperator = false /* TODO isEditing() */;
 
       /* Set the right color for the condition if empty.
@@ -1152,7 +1155,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
        * condition which could have been previously set to gray here and should
        * be set to yellow. */
       int lastRealRow =
-          NumberOfRows(node) - 1 - static_cast<int>(cursorIsInsideOperator);
+          grid->numberOfRows() - 1 - static_cast<int>(cursorIsInsideOperator);
       const Tree* lastRealCondition = node->child(lastRealRow * 2 + 1);
 #if 0
       if (lastRealCondition->isEmpty()) {
@@ -1169,15 +1172,14 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
 #endif
       // Draw the grid and the {
-      RenderCurlyBraceWithChildHeight(true, Grid::height(node, style.font), ctx,
-                                      p, style.glyphColor,
-                                      style.backgroundColor);
+      RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
+                                      style.glyphColor, style.backgroundColor);
 
       // Draw the commas
       KDCoordinate commaAbscissa = CurlyBrace::CurlyBraceWidth +
-                                   columnWidth(node, 0, style.font) +
-                                   EntryMargin;
-      for (int i = 0; i < NumberOfRows(node); i++) {
+                                   grid->columnWidth(0, style.font) +
+                                   GridEntryMargin;
+      for (int i = 0; i < grid->numberOfRows(); i++) {
         const Tree* leftChild = node->child(i * 2);
         const Tree* rightChild = node->child(1 + i * 2);
 #if 0

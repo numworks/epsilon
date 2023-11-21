@@ -551,94 +551,11 @@ namespace PtPermute {
 using PtCombinatorics::SymbolHeight, PtCombinatorics::SymbolWidth;
 }
 
-namespace Grid {
-constexpr static KDCoordinate EntryMargin = 6;
-
-KDCoordinate horizontalGridEntryMargin(const Tree* node, KDFont::Size font) {
-  return node->isPiecewiseLayout() ? 2 * EntryMargin + KDFont::GlyphWidth(font)
-                                   : EntryMargin;
-}
-KDCoordinate verticalGridEntryMargin(const Tree* node, KDFont::Size font) {
-  return EntryMargin;
-}
-
-KDCoordinate rowBaseline(const Tree* node, int row, KDFont::Size font) {
-  KDCoordinate rowBaseline = 0;
-  int column = 0;
-  const Tree* l = node->child(row * NumberOfColumns(node));
-  while (column < NumberOfColumns(node)) {
-    rowBaseline = std::max(rowBaseline, Render::Baseline(l));
-    column++;
-    l = l->nextTree();
-  }
-  return rowBaseline;
-}
-
-KDCoordinate rowHeight(const Tree* node, int row, KDFont::Size font) {
-  KDCoordinate underBaseline = 0;
-  KDCoordinate aboveBaseline = 0;
-  int column = 0;
-  const Tree* l = node->child(row * NumberOfColumns(node));
-  while (column < NumberOfColumns(node)) {
-    KDCoordinate b = Render::Baseline(l);
-    underBaseline =
-        std::max<KDCoordinate>(underBaseline, Render::Height(l) - b);
-    aboveBaseline = std::max(aboveBaseline, b);
-    column++;
-    l = l->nextTree();
-  }
-  return aboveBaseline + underBaseline;
-}
-
-KDCoordinate height(const Tree* node, KDFont::Size font) {
-  KDCoordinate totalHeight = 0;
-  for (int row = 0; row < NumberOfRows(node); row++) {
-    totalHeight += rowHeight(node, row, font);
-  }
-  totalHeight +=
-      NumberOfRows(node) > 0
-          ? (NumberOfRows(node) - 1) * verticalGridEntryMargin(node, font)
-          : 0;
-  return totalHeight;
-}
-
-KDCoordinate columnWidth(const Tree* node, int column, KDFont::Size font) {
-  KDCoordinate columnWidth = 0;
-  int childIndex = 0;
-  int lastIndex = (NumberOfRows(node) - 1) * NumberOfColumns(node) + column;
-  for (const Tree* l : node->children()) {
-    if (childIndex % NumberOfColumns(node) == column) {
-      columnWidth = std::max(columnWidth, Render::Width(l));
-      if (childIndex >= lastIndex) {
-        break;
-      }
-    }
-    childIndex++;
-  }
-  return columnWidth;
-}
-
-KDCoordinate width(const Tree* node, KDFont::Size font) {
-  KDCoordinate totalWidth = 0;
-  for (int j = 0; j < NumberOfColumns(node); j++) {
-    totalWidth += columnWidth(node, j, font);
-  }
-  totalWidth +=
-      NumberOfColumns(node) > 0
-          ? (NumberOfColumns(node) - 1) * horizontalGridEntryMargin(node, font)
-          : 0;
-  return totalWidth;
-}
-
-KDSize size(const Tree* node, KDFont::Size font) {
-  return KDSize(width(node, font), height(node, font));
-}
-
-}  // namespace Grid
+constexpr static KDCoordinate GridEntryMargin = 6;
 
 namespace Binomial {
 static KDCoordinate KNHeight(const Tree* node, KDFont::Size font) {
-  return Render::Height(node->child(nIndex)) + Grid::EntryMargin +
+  return Render::Height(node->child(nIndex)) + GridEntryMargin +
          Render::Height(node->child(kIndex));
 }
 }  // namespace Binomial

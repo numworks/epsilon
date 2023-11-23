@@ -93,7 +93,7 @@ public:
         &m_webUSBPlatformDescriptor),
     m_languageStringDescriptor(),
     m_manufacturerStringDescriptor("NumWorks"),
-    m_productStringDescriptor("Upsilon Calculator"),
+    m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),
     m_interfaceStringDescriptor(stringDescriptor()),
     //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"),

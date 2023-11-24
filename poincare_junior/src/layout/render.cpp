@@ -8,6 +8,7 @@
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
 #include "grid.h"
+#include "layout_cursor.h"
 #include "layout_selection.h"
 #include "rack_layout.h"
 #include "render_masks.h"
@@ -1143,8 +1144,16 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                               p.translatedBy(KDPoint(rightOffset, 0)),
                               style.glyphColor, style.backgroundColor);
       if (grid->isEditing()) {
+        int indexToSkip = -1;
+        if (RackLayout::layoutCursor->cursorNode() == node) {
+          indexToSkip = RackLayout::layoutCursor->position();
+        }
         // Draw gray squares
         for (int i = 0; i < grid->numberOfRows(); i++) {
+          if (grid->indexAtRowColumn(i, grid->numberOfColumns() - 1) ==
+              indexToSkip) {
+            continue;
+          }
           KDPoint pChild =
               grid->positionOfChildAt(grid->numberOfColumns() - 1, i, font)
                   .translatedBy(p);
@@ -1152,6 +1161,10 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                              EmptyRectangle::Color::Gray);
         }
         for (int i = 0; i < grid->numberOfRealColumns(); i++) {
+          if (grid->indexAtRowColumn(grid->numberOfRows() - 1, i) ==
+              indexToSkip) {
+            continue;
+          }
           KDPoint pChild =
               grid->positionOfChildAt(i, grid->numberOfRows() - 1, font)
                   .translatedBy(p);

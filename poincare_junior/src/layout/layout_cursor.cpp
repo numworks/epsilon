@@ -56,7 +56,9 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
     return Render::AbsoluteOrigin(cursorNode(), rootNode())
         .translatedBy(
             grid->positionOfChildAt(grid->columnAtChildIndex(m_position),
-                                    grid->rowAtChildIndex(m_position), font));
+                                    grid->rowAtChildIndex(m_position), font))
+        .translatedBy(
+            KDPoint(EmptyRectangle::RectangleSize(font).width() / 2, 0));
   }
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();

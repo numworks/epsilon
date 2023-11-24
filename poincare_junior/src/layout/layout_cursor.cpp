@@ -716,8 +716,9 @@ Tree *LayoutCursor::parentLayout(int *index) const {
 void LayoutCursor::setCursorNode(Tree *node, int childIndex,
                                  OMG::HorizontalDirection side) {
   if (node->isGridLayout()) {
+    // setCursorNode before calling isFake, it will be set again if not fake
+    setCursorNode(node);
     if (Grid::From(node)->isFake(childIndex)) {
-      setCursorNode(node);
       m_position = childIndex;
       return;
     }

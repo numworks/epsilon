@@ -87,7 +87,7 @@ class Grid : public Tree {
   constexpr static int k_minimalNumberOfRowsAndColumnsWhileEditing = 2;
 
   // Row and columns
-  bool isEditing() const { return true; }  // TODO
+  bool isEditing() const;
 
   bool isColumnEmpty(int index) const {
     return isColumnOrRowEmpty(true, index);

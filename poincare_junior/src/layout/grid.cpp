@@ -1,9 +1,19 @@
 #include "grid.h"
 
 #include "k_tree.h"
+#include "layout_cursor.h"
 #include "rack_layout.h"
 
 namespace PoincareJ {
+
+bool Grid::isEditing() const {
+  if (SharedEditionPool->contains(this)) {
+    return true;
+  }
+  // TODO isEditing is called a lot, is nextTree too expensive ?
+  Tree* cursorNode = RackLayout::layoutCursor->cursorNode();
+  return this <= cursorNode && cursorNode < nextTree();
+}
 
 const Tree* Grid::childAt(uint8_t col, uint8_t row) const {
   uint8_t cols = numberOfColumns();

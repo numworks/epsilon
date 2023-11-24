@@ -153,10 +153,9 @@ class TextArea : public TextInput {
   void selectUpDown(OMG::VerticalDirection direction, int step);
 
   /* KDCoordinates are 16 bits wide. It limits the number of lines
-   * along with the lenght of lines:
+   * along with the length of lines:
    * k_maxLines < (2^15-1 - padding) / glyphHeight(big font) = 1800
    * k_maxLineChars < (2^15-1 - padding) / glyphWidth(big font) = 3200
-   *
    * We have chosen arbitrary values that respect this constraint. */
   constexpr static size_t k_maxLines = 999;
   constexpr static size_t k_maxLineChars = 3000;

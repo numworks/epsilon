@@ -92,6 +92,11 @@ static_assert(k_inputControllerNumberOfReusableCells ==
                   InputController::k_numberOfReusableCells,
               "k_inputControllerNumberOfReusableCells should be updated with "
               "InputController::k_numberOfReusableCells");
+static_assert(k_goodnessContributionsTableNumberOfReusableCells ==
+              Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
+                  Escher::Metric::SmallEditableCellHeight,
+                  Escher::Metric::TabHeight) *
+                  3);
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableHeaderCells>;
 template class DynamicCellsDataSource<

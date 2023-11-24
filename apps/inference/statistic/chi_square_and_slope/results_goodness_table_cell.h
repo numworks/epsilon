@@ -55,6 +55,8 @@ class ResultGoodnessContributionsTable
   int numberOfColumns() const override { return 3; }
   int typeAtLocation(int column, int row) override { return 0; }
 
+  static constexpr int ContributionColumnIndex = 2;
+
  private:
   static constexpr I18n::Message k_titles[] = {I18n::Message::Observed,
                                                I18n::Message::Expected,

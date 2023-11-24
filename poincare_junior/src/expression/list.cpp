@@ -121,8 +121,7 @@ bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
   if (length == 0 || expr->isList()) {
     return false;
   }
-  Tree* list = KList()->clone();
-  NAry::SetNumberOfChildren(list, length);
+  Tree* list = List::PushEmpty();
   for (int i = 0; i < length; i++) {
     Tree* element = expr->clone();
     if (!ProjectToNthElement(element, i, reduction)) {
@@ -132,6 +131,7 @@ bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
       return false;
     }
   }
+  NAry::SetNumberOfChildren(list, length);
   expr->moveTreeOverTree(list);
   return true;
 }

@@ -311,6 +311,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dim({{1,2}})", "undef");
   simplifies_to("{2*[[1]]}", "undef");
   simplifies_to("{(1)/2, 1}", "{1/2, 1}");
+  // TODO : Handle them with {.m_strategy = Strategy::ApproximateToFloat}
+  simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
+  simplifies_to("random()", "random()");
+  simplifies_to("randint(1,10)", "randint(1,10)");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

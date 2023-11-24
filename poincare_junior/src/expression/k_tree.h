@@ -15,6 +15,7 @@ constexpr auto KUndef = KTree<BlockType::Undefined>();
 constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
 constexpr auto KInf = KTree<BlockType::Infinity>();
+constexpr auto KRandom = KTree<BlockType::Random>();
 
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();
@@ -51,11 +52,13 @@ constexpr auto KPow = KBinary<BlockType::Power>();
 constexpr auto KPowReal = KBinary<BlockType::PowerReal>();
 constexpr auto KPowMatrix = KBinary<BlockType::PowerMatrix>();
 constexpr auto KDep = KBinary<BlockType::Dependency>();
+constexpr auto KRandint = KBinary<BlockType::RandInt>();
 constexpr auto KRound = KBinary<BlockType::Round>();
 constexpr auto KMean = KBinary<BlockType::Mean>();
 constexpr auto KBinomial = KBinary<BlockType::Binomial>();
 constexpr auto KPermute = KBinary<BlockType::Permute>();
 
+constexpr auto KRandintnorep = KFixedArity<3, BlockType::RandIntNoRep>();
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
 constexpr auto KProduct = KFixedArity<4, BlockType::Product>();

@@ -28,6 +28,8 @@ bool List::ProjectToNthElement(Tree* expr, int n,
       expr->removeTree();
       return true;
     }
+    case BlockType::RandIntNoRep:
+      return false;  // Should be projected on approximation.
     case BlockType::ListSort:
     case BlockType::Median:
       assert(false);  // Must have been removed by simplification

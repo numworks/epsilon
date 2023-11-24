@@ -81,6 +81,8 @@ int Dimension::GetListLength(const Tree* t) {
       return t->numberOfChildren();
     case BlockType::ListSequence:
       return Approximation::To<float>(t->child(1));
+    case BlockType::RandIntNoRep:
+      return Approximation::To<float>(t->child(2));
     default: {
       // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {

@@ -65,6 +65,9 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::ListSort, "sort"},
     {BlockType::Binomial, "binomial"},
     {BlockType::Permute, "permute"},
+    {BlockType::Random, "random"},
+    {BlockType::RandInt, "randint"},
+    {BlockType::RandIntNoRep, "randintnorep"},
 };
 
 constexpr static Aliases s_customIdentifiers[] = {

@@ -129,6 +129,13 @@ NODE(Polynomial, NARY)
 
 NODE(PowerReal, 2)
 NODE(Quotient, 2)
+
+NODE(Random, 0)
+NODE(RandInt, 2)
+NODE(RandIntNoRep, 3)
+
+RANGE(RandomNode, Random, RandIntNoRep)
+
 NODE(RealPart, 1)
 NODE(Remainder, 2)
 NODE(Round, 2)

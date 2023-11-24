@@ -34,6 +34,7 @@ void ResultGoodnessContributionsTable::fillCellForLocation(
 
   if (row == 0) {
     myCell->setText(I18n::translate(k_titles[column]));
+    myCell->setEven(true);
   } else {
     fillValueCellForLocation(myCell, myCell, column, row - 1, m_statistic);
   }

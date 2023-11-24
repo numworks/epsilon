@@ -32,7 +32,6 @@ Tree* Grid::willFillEmptyChildAtIndex(int childIndex) {
 }
 
 int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
-  assert(RackLayout::IsEmpty(child(childIndex)));
   assert(isEditing());
   int row = rowAtChildIndex(childIndex);
   int column = columnAtChildIndex(childIndex);

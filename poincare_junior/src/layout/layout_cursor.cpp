@@ -552,8 +552,8 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
         CursorMotion::DeletionMethodForCursorLeftOfChild(p, index);
     privateDelete(deletionMethod, true);
   }
-#if 0
   removeEmptyRowOrColumnOfGridParentIfNeeded();
+#if 0
   didEnterCurrentPosition(previousCursor), invalidateSizesAndPositions();
 #endif
 }
@@ -572,8 +572,8 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
   }
   m_position = selectionLeftBound;
   stopSelecting();
-#if 0
   removeEmptyRowOrColumnOfGridParentIfNeeded();
+#if 0
   didEnterCurrentPosition();
   invalidateSizesAndPositions();
 #endif
@@ -1133,26 +1133,20 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
   NAry::RemoveChildAtIndex(m_cursorReference, m_position);
 }
 
-#if 0
 void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
-  if (!IsEmptyChildOfGridLayout(m_layout)) {
+  if (!cursorNode()->isRackLayout() || !RackLayout::IsEmpty(cursorNode())) {
     return;
   }
-  Layout parentGrid = m_layout.parent();
-  GridLayoutNode *gridNode = static_cast<GridLayoutNode *>(parentGrid.node());
-  int currentChildIndex = parentGrid.indexOfChild(m_layout);
-  int currentRow = gridNode->rowAtChildIndex(currentChildIndex);
-  int currentColumn = gridNode->columnAtChildIndex(currentChildIndex);
-  bool changed =
-      gridNode->removeEmptyRowOrColumnAtChildIndexIfNeeded(currentChildIndex);
-  if (changed) {
-    int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
-    assert(parentGrid.numberOfChildren() > newChildIndex);
-    *this = LayoutCursor(parentGrid.child(newChildIndex));
-    didEnterCurrentPosition();
+  int currentChildIndex;
+  Tree *parent = parentLayout(&currentChildIndex);
+  if (!parent || !parent->isGridLayout()) {
+    return;
   }
+  Grid *grid = Grid::From(parent);
+  int newChildIndex =
+      grid->removeTrailingEmptyRowOrColumnAtChildIndex(currentChildIndex);
+  setGridPosition(grid, newChildIndex, OMG::HorizontalDirection::Left());
 }
-#endif
 
 void LayoutCursor::collapseSiblingsOfLayout(Tree *l) {
   using namespace OMG;

@@ -124,9 +124,9 @@ class LayoutCursor {
 #if 0
   bool setEmptyRectangleVisibilityAtCurrentPosition(
       EmptyRectangle::State state);
-  void removeEmptyRowOrColumnOfGridParentIfNeeded();
   void invalidateSizesAndPositions();
 #endif
+  void removeEmptyRowOrColumnOfGridParentIfNeeded();
 
   void collapseSiblingsOfLayout(Tree* l);
   void collapseSiblingsOfLayoutOnDirection(Tree* l,

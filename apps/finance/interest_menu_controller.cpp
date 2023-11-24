@@ -21,7 +21,6 @@ void InterestMenuController::viewWillAppear() {
     m_cells[i].subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
-  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData(false);
   ViewController::viewWillAppear();
 }

@@ -61,7 +61,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(
   if (previousNumberOfElementsInColumn < numberOfElementsInColumn(column)) {
     // Reload the whole table, if a value was appended.
     updateSizeMemoizationForRow(row + 1);
-    selectableTableView()->reloadData();
+    selectableTableView()->reloadData(true, false);
   } else {
     assert(previousNumberOfElementsInColumn ==
            numberOfElementsInColumn(column));

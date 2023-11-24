@@ -47,7 +47,7 @@ void MenuController::stackOpenPage(Escher::ViewController *nextPage) {
 
 void MenuController::didBecomeFirstResponder() {
   m_delegate->selectSubApp(-1);
-  m_selectableListView.reloadData(true);
+  m_selectableListView.reloadData();
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {

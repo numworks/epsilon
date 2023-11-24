@@ -52,8 +52,6 @@ int ListController::reusableCellCount(int type) {
 /* ViewController */
 
 void ListController::viewWillAppear() {
-  // A function could have been deleted from the option menu of the Graph tab.
-  selectableListView()->resetSizeAndOffsetMemoization();
   Shared::FunctionListController::viewWillAppear();
   /* FunctionListcontroller::didEnterResponderChain might not be called,
    * (if the list tab is displayed but not selected using Back-Back)
@@ -218,13 +216,13 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Left) {
         // Leave parameter column
         m_parameterColumnSelected = false;
-        selectableListView()->reloadData();
+        selectableListView()->reloadData(true, false);
         return true;
       }
     } else if (event == Ion::Events::Right) {
       // Enter parameter column
       m_parameterColumnSelected = true;
-      selectableListView()->reloadData();
+      selectableListView()->reloadData(true, false);
       return true;
     }
   }

@@ -68,7 +68,6 @@ void GraphOptionsController::viewWillAppear() {
   m_residualPlotCell.setVisible(displayResidualPlotCell());
   // m_regressionEquationCell may have changed size
   m_regressionEquationCell.label()->resetScroll();
-  m_selectableListView.resetSizeAndOffsetMemoization();
 
   int series = m_graphController->selectedSeriesIndex();
   Regression::Model *model = m_store->modelForSeries(series);

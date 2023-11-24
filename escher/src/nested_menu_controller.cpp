@@ -86,8 +86,6 @@ NestedMenuController::NestedMenuController(Responder* parentResponder,
 }
 
 void NestedMenuController::viewWillAppear() {
-  // Reset memoization first, so that the right cells are manipulated
-  m_selectableListView.resetSizeAndOffsetMemoization();
   StackViewController::viewWillAppear();
   m_selectableListView.reloadData();
 

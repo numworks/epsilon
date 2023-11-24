@@ -92,7 +92,6 @@ void RangeParameterController::viewWillAppear() {
     int row = m_singleInteractiveCurveViewRangeController.editXRange() ? 1 : 2;
     selectRow(row);
   }
-  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
 }
 

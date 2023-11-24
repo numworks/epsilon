@@ -36,7 +36,7 @@ Escher::Responder* GraphTypeController::responderWhenEmpty() {
 void GraphTypeController::didBecomeFirstResponder() {
   selectRow(
       GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
-  m_selectableListView.reloadData(true);
+  m_selectableListView.reloadData();
 }
 
 bool GraphTypeController::handleEvent(Ion::Events::Event event) {

@@ -54,15 +54,14 @@ void CalculationParameterController::viewWillAppear() {
   bool areaWasVisible = m_areaCell.isVisible();
   m_intersectionCell.setVisible(ShouldDisplayIntersection());
   m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
-  if (intersectionWasVisible != m_intersectionCell.isVisible() ||
-      areaWasVisible != m_areaCell.isVisible()) {
-    m_selectableListView.resetSizeAndOffsetMemoization();
-  }
+  bool resetSizeMemoization =
+      intersectionWasVisible != m_intersectionCell.isVisible() ||
+      areaWasVisible != m_areaCell.isVisible();
   if (m_areaCell.isVisible()) {
     fillAreaCell();
   }
   ViewController::viewWillAppear();
-  m_selectableListView.reloadData();
+  m_selectableListView.reloadData(true, resetSizeMemoization);
 }
 
 template <class T>

@@ -86,7 +86,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     intervalAtColumn(column)->deleteElementAtIndex(row - k_numberOfTitleRows);
     // Reload memoization
     rowWasDeleted(row, column);
-    selectableTableView()->reloadData();
+    selectableTableView()->reloadData(true, false);
     return true;
   }
   if (selectedRow() == -1) {
@@ -348,7 +348,6 @@ void ValuesController::resetLayoutMemoization() {
     assert(titleCell);
     titleCell->setLayout(Layout());
   }
-  m_prefacedTwiceTableView.resetSizeAndOffsetMemoization();
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }

@@ -195,7 +195,6 @@ const char *LocalizationController::title() {
 void LocalizationController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetSelection();
-  selectableListView()->resetSizeAndOffsetMemoization();
   selectableListView()->reloadData();
 }
 

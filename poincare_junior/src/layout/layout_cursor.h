@@ -105,12 +105,14 @@ class LayoutCursor {
 
  protected:
   virtual void setCursorNode(Tree* node) = 0;
+  void setCursorNode(Tree* node, int childIndex, OMG::HorizontalDirection side);
   int cursorNodeOffset() const {
     return cursorNode()->block() - rootNode()->block();
   }
 
   Tree* leftLayout() const;
   Tree* rightLayout() const;
+  Tree* parentLayout(int* index) const;
 
   int leftmostPosition() const { return 0; }
   int rightmostPosition() const { return cursorNode()->numberOfChildren(); }

@@ -683,15 +683,46 @@ void LayoutCursor::setGridPosition(Tree *node, int index,
 
 Tree *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
+  if (cursorNode()->isGridLayout()) {
+    return nullptr;
+  }
   return m_position == 0 ? nullptr : cursorNode()->child(m_position - 1);
 }
 
 Tree *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
+  if (cursorNode()->isGridLayout()) {
+    return nullptr;
+  }
   if (m_position == cursorNode()->numberOfChildren()) {
     return nullptr;
   }
   return cursorNode()->child(m_position);
+}
+
+Tree *LayoutCursor::parentLayout(int *index) const {
+  if (cursorNode()->isGridLayout()) {
+    *index = m_position;
+    return cursorNode();
+  }
+  Tree *parent = rootNode()->parentOfDescendant(cursorNode(), index);
+  if (parent && parent->isGridLayout()) {
+    *index += Grid::From(parent)->rowAtChildRealIndex(*index);
+  }
+  return parent;
+}
+
+void LayoutCursor::setCursorNode(Tree *node, int childIndex,
+                                 OMG::HorizontalDirection side) {
+  if (node->isGridLayout()) {
+    if (Grid::From(node)->isFake(childIndex)) {
+      setCursorNode(node);
+      m_position = childIndex;
+      return;
+    }
+    childIndex -= Grid::From(node)->rowAtChildIndex(childIndex);
+  }
+  setLayout(node->child(childIndex), side);
 }
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
@@ -720,15 +751,10 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
    * jumps over it.
    * */
   int currentIndexInNextLayout = k_outsideIndex;
-  if (cursorNode()->isGridLayout()) {
-    nextLayout = cursorNode();
-    currentIndexInNextLayout = m_position;
+  if (direction.isRight()) {
+    nextLayout = rightLayout();
   } else {
-    if (direction.isRight()) {
-      nextLayout = rightLayout();
-    } else {
-      nextLayout = leftLayout();
-    }
+    nextLayout = leftLayout();
   }
 
   if (!nextLayout) {
@@ -759,14 +785,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
      * ask its parent what it should do when leaving its only child from
      * from the right (leave the square root).
      * */
-    nextLayout =
-        rootNode()->parentOfDescendant(cursorNode(), &currentIndexInNextLayout);
+    nextLayout = parentLayout(&currentIndexInNextLayout);
     if (!nextLayout) {
       return false;
-    }
-    if (nextLayout->isGridLayout()) {
-      currentIndexInNextLayout +=
-          Grid::From(nextLayout)->rowAtChildRealIndex(currentIndexInNextLayout);
     }
   }
   assert(nextLayout && !nextLayout->isRackLayout());
@@ -780,11 +801,6 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
   assert(newIndex != k_cantMoveIndex);
 
   if (newIndex != k_outsideIndex) {
-    if (nextLayout->isGridLayout()) {
-      setGridPosition(nextLayout, newIndex, direction);
-      return true;
-    }
-
     /* Enter the next layout child
      *
      *       4                                        §4
@@ -801,8 +817,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
      * / -10                                       / -10
      *
      * */
-    setCursorNode(nextLayout->child(newIndex));
-    m_position = direction.isRight() ? leftmostPosition() : rightmostPosition();
+    setCursorNode(
+        nextLayout, newIndex,
+        direction.isLeft() ? OMG::Direction::Right() : OMG::Direction::Left());
     return true;
   }
 
@@ -894,7 +911,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   /* Step 1:
    * Try to enter right or left layout if it can be entered through up/down
    * */
-  if (!isSelecting() && !cursorNode()->isGridLayout()) {
+  if (!isSelecting()) {
     Tree *nextLayout = rightLayout();
     PositionInLayout positionRelativeToNextLayout = PositionInLayout::Left;
     // Repeat for right and left
@@ -920,26 +937,14 @@ bool LayoutCursor::verticalMoveWithoutSelection(
 
   /* Step 2:
    * Ask ancestor if cursor can move vertically. */
-  Tree *currentRack;
   int childIndex;
-  Tree *parentLayout;
-  if (cursorNode()->isGridLayout()) {
-    currentRack = nullptr;
-    parentLayout = cursorNode();
-    childIndex = m_position;
-  } else {
-    currentRack = cursorNode();
-    parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
-  }
+  Tree *parentLayout = this->parentLayout(&childIndex);
   PositionInLayout currentPosition =
       m_position == leftmostPosition()
           ? PositionInLayout::Left
           : (m_position == rightmostPosition() ? PositionInLayout::Right
                                                : PositionInLayout::Middle);
   while (parentLayout) {
-    if (currentRack && parentLayout->isGridLayout()) {
-      childIndex += Grid::From(parentLayout)->rowAtChildRealIndex(childIndex);
-    }
     int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
         parentLayout, direction, childIndex, currentPosition);
     if (nextIndex != k_cantMoveIndex) {
@@ -968,8 +973,11 @@ bool LayoutCursor::verticalMoveWithoutSelection(
       }
       return true;
     }
-    currentRack = rootNode()->parentOfDescendant(parentLayout);
-    parentLayout = rootNode()->parentOfDescendant(currentRack, &childIndex);
+    Tree *rack = rootNode()->parentOfDescendant(parentLayout);
+    parentLayout = rootNode()->parentOfDescendant(rack, &childIndex);
+    if (parentLayout && parentLayout->isGridLayout()) {
+      childIndex += Grid::From(parentLayout)->rowAtChildRealIndex(childIndex);
+    }
     currentPosition = PositionInLayout::Middle;
   }
   return false;

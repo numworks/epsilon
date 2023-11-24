@@ -52,7 +52,10 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
   size_t size = Dimension::GetListLength(list);
   for (int i = 0; i < size; i++) {
     Tree* element = list->clone();
-    ProjectToNthElement(element, i, Simplification::ShallowSystematicReduce);
+    if (!ProjectToNthElement(element, i,
+                             Simplification::ShallowSystematicReduce)) {
+      assert(false);
+    }
     if (i == 0) {
       continue;
     }
@@ -122,7 +125,12 @@ bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
   NAry::SetNumberOfChildren(list, length);
   for (int i = 0; i < length; i++) {
     Tree* element = expr->clone();
-    List::ProjectToNthElement(element, i, reduction);
+    if (!ProjectToNthElement(element, i, reduction)) {
+      assert(i == 0);
+      element->removeTree();
+      list->removeTree();
+      return false;
+    }
   }
   expr->moveTreeOverTree(list);
   return true;
@@ -134,15 +142,15 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case BlockType::ListProduct:
     case BlockType::Minimum:
     case BlockType::Maximum:
-      e->moveTreeOverTree(List::Fold(e->child(0), e->type()));
+      e->moveTreeOverTree(Fold(e->child(0), e->type()));
       return true;
     case BlockType::Mean:
-      e->moveTreeOverTree(List::Mean(e->child(0), e->child(1)));
+      e->moveTreeOverTree(Mean(e->child(0), e->child(1)));
       return true;
     case BlockType::Variance:
     case BlockType::StdDev:
     case BlockType::SampleStdDev: {
-      e->moveTreeOverTree(List::Variance(e->child(0), e->child(1), e->type()));
+      e->moveTreeOverTree(Variance(e->child(0), e->child(1), e->type()));
       return true;
     }
     case BlockType::ListSort:
@@ -170,9 +178,11 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case BlockType::ListAccess: {
-      ProjectToNthElement(e->child(0),
-                          Integer::Handler(e->child(1)).to<uint8_t>(),
-                          Simplification::ShallowSystematicReduce);
+      if (!ProjectToNthElement(e->child(0),
+                               Integer::Handler(e->child(1)).to<uint8_t>(),
+                               Simplification::ShallowSystematicReduce)) {
+        return false;
+      }
       e->moveTreeOverTree(e->child(0));
       return true;
     }

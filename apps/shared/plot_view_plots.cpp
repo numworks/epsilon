@@ -428,7 +428,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
     double xCenter = m_fillBars ? x + 0.5f * m_barsWidth : x;
     // WARNING/TODO: Dangerous cast from double to float
     double y = m_curve(xCenter, m_model, m_context);
-    if (std::isnan(y) || y == 0.f) {
+    if (!std::isfinite(y) || y == 0.f) {
       continue;
     }
     assert(y > 0.f); /* TODO This method is not ready to display histogram with

@@ -31,7 +31,6 @@ void ExamModeController::didEnterResponderChain(
   /* When a pop-up is dismissed, the exam mode status might have changed. We
    * reload the selection as the number of rows might have also changed. We
    * force to reload the entire data because they might have changed. */
-  m_selectableListView.resetSizeAndOffsetMemoization();
   selectRow(initialSelectedRow());
   m_contentView.reload();
   // We add a message when the mode exam is on

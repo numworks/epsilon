@@ -30,6 +30,7 @@ void SelectableViewWithMessages::setMessage(I18n::Message message) {
 }
 
 void SelectableViewWithMessages::reload() {
+  m_selectableTableView->resetSizeAndOffsetMemoization();
   m_selectableTableView->reloadData(false);
   layoutSubviews();
 }

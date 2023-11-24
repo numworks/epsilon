@@ -34,6 +34,7 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
         child = SharedEditionPool->push(BlockType::ParenthesisLayout);
+        SharedEditionPool->push(0);
         EditionPoolTextToLayoutRec(decoder, KRackL()->clone(), child);
         break;
       }

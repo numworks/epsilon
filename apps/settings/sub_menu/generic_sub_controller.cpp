@@ -33,7 +33,6 @@ void GenericSubController::viewWillAppear() {
   /* A unique SubController is used for all sub pages of settings. We have to
    * reload its data when it is displayed as it could switch from displaying
    * "Angle unit" data to "Complex format" data for instance. */
-  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
 }
 

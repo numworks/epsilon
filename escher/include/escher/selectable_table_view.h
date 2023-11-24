@@ -45,7 +45,7 @@ class SelectableTableView : public TableView, public Responder {
   bool handleEvent(Ion::Events::Event event) override;
   void unhighlightSelectedCell();
   void deselectTable(bool withinTemporarySelection = false);
-  void reloadData(bool setFirstResponder = true);
+  void reloadData(bool setFirstResponder = true, bool resetMemoization = true);
 
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder* previousFirstResponder) override;

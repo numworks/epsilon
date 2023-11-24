@@ -28,8 +28,7 @@ TypeController::TypeController(StackViewController *parent,
 }
 
 void TypeController::didBecomeFirstResponder() {
-  m_selectableListView.resetSizeAndOffsetMemoization();
-  m_selectableListView.reloadData(true);
+  m_selectableListView.reloadData();
 }
 
 bool TypeController::handleEvent(Ion::Events::Event event) {

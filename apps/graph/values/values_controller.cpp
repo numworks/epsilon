@@ -235,7 +235,7 @@ int ValuesController::fillColumnName(int column, char *buffer) {
 void ValuesController::reloadEditedCell(int column, int row) {
   if (m_exactValuesAreActivated) {
     // Sizes might have changed
-    selectableTableView()->reloadData();
+    selectableTableView()->reloadData(true, false);
     return;
   }
   Shared::ValuesController::reloadEditedCell(column, row);
@@ -449,7 +449,6 @@ bool ValuesController::exactValuesButtonAction() {
 
   if (m_exactValuesAreActivated) {
     activateExactValues(false);
-    resetLayoutMemoization();
     m_selectableTableView.reloadData();
     return true;
   }
@@ -463,7 +462,6 @@ bool ValuesController::exactValuesButtonAction() {
       return true;
     } else {
       activateExactValues(false);
-      resetLayoutMemoization();
       m_selectableTableView.reloadData();
       return false;
     }

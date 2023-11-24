@@ -33,7 +33,6 @@ void ListParameterController::viewWillAppear() {
   } else {
     selectRow(selectedRow());
   }
-  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
 }
 

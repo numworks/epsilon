@@ -235,7 +235,11 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   }
 }
 
-void SelectableTableView::reloadData(bool setFirstResponder) {
+void SelectableTableView::reloadData(bool setFirstResponder,
+                                     bool resetMemoization) {
+  if (resetMemoization) {
+    resetSizeAndOffsetMemoization();
+  }
   int col = selectedColumn();
   int row = selectedRow();
   KDPoint offset = offsetToRestoreAfterReload();

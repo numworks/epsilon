@@ -140,12 +140,12 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right && m_parameterColumnSelected) {
     // Leave parameter column
     m_parameterColumnSelected = false;
-    selectableListView()->reloadData();
+    selectableListView()->reloadData(true, false);
     return true;
   } else if (event == Ion::Events::Left && !m_parameterColumnSelected) {
     // Enter parameter column
     m_parameterColumnSelected = true;
-    selectableListView()->reloadData();
+    selectableListView()->reloadData(true, false);
     return true;
   }
   if (selectedRow() < 0) {

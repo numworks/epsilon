@@ -265,7 +265,6 @@ KDCoordinate MainController::separatorBeforeRow(int row) {
 
 void MainController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_selectableListView.resetSizeAndOffsetMemoization();
   m_selectableListView.reloadData();
 }
 

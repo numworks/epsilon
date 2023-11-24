@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SET_H
 #define POINCARE_EXPRESSION_SET_H
 
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
 

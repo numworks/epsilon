@@ -1076,7 +1076,7 @@ Tree *RackParser::parseFunctionParameters() {
   }
   if (!parenthesisIsLayout && popTokenIfType(Token::Type::RightParenthesis)) {
     // The function has no parameter.
-    return EditionReference();  // List::Builder();
+    return List::PushEmpty();
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
@@ -1142,6 +1142,9 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
     return subParser.parse();
   }
   EditionReference list = List::PushEmpty();
+  if (m_nextToken.is(Token::Type::EndOfStream)) {
+    return list;
+  }
   int length = 0;
   do {
     if (parseUntil(Token::Type::Comma)) {

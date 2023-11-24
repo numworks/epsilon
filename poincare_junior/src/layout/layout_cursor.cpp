@@ -543,9 +543,8 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
         CursorMotion::DeletionMethodForCursorLeftOfChild(leftL, k_outsideIndex);
     privateDelete(deletionMethod, false);
   } else {
-    assert(m_position == leftmostPosition());
     int index;
-    const Tree *p = rootNode()->parentOfDescendant(cursorNode(), &index);
+    const Tree *p = parentLayout(&index);
     if (!p) {
       return;
     }
@@ -1082,53 +1081,46 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     m_cursorReference = parentOfFraction;
     return;
   }
-  if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN ||
-      deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow) {
+  if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+    // It is useful at all ?
     assert(deletionAppliedToParent);
-    int newIndex = -1;
-    if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN) {
-      // It is useful at all ?
-      assert(parent->isBinomialLayout());
-      newIndex = Binomial::nIndex;
-    } else {
-#if 0
-      assert(deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow);
-      assert(parent->isGridLayout());
-      int currentIndex = parent->indexOfChild(m_layout);
-      int currentRow = Grid::rowAtChildIndex(parent, currentIndex);
-      assert(currentRow > 0 && Grid::NumberOfColumns(parent) >= 2);
-      newIndex = Grid::indexAtRowColumn(
-          parent, currentRow - 1, Grid::rightmostNonGrayColumnIndex(parent));
-#endif
-    }
+    assert(parent->isBinomialLayout());
+    int newIndex = Binomial::nIndex;
     m_cursorReference = parent->child(newIndex);
     m_position = rightmostPosition();
     return;
   }
-#if 0
+  if (deletionMethod == DeletionMethod::GridLayoutMoveToUpperRow) {
+    assert(deletionAppliedToParent);
+    int currentIndex;
+    Grid *grid = Grid::From(parentLayout(&currentIndex));
+    int currentRow = grid->rowAtChildIndex(currentIndex);
+    assert(currentRow > 0 && grid->numberOfColumns() >= 2);
+    int newIndex =
+        grid->indexAtRowColumn(currentRow - 1, grid->numberOfRealColumns() - 1);
+    setGridPosition(grid, newIndex, OMG::HorizontalDirection::Right());
+    return;
+  }
   if (deletionMethod == DeletionMethod::GridLayoutDeleteColumn ||
       deletionMethod == DeletionMethod::GridLayoutDeleteRow ||
       deletionMethod == DeletionMethod::GridLayoutDeleteColumnAndRow) {
     assert(deletionAppliedToParent);
-    assert(GridLayoutNode::IsGridLayoutType(parent.type()));
-    GridLayoutNode *gridNode =
-        static_cast<GridLayoutNode *>(parent.node());
-    int currentIndex = parent.indexOfChild(m_layout);
-    int currentRow = gridNode->rowAtChildIndex(currentIndex);
-    int currentColumn = gridNode->columnAtChildIndex(currentIndex);
+    int currentIndex;
+    Grid *grid = Grid::From(parentLayout(&currentIndex));
+    int currentRow = grid->rowAtChildIndex(currentIndex);
+    int currentColumn = grid->columnAtChildIndex(currentIndex);
     if (deletionMethod != DeletionMethod::GridLayoutDeleteColumn) {
-      gridNode->deleteRowAtIndex(currentRow);
+      grid->deleteRowAtIndex(currentRow);
     }
     if (deletionMethod != DeletionMethod::GridLayoutDeleteRow) {
-      gridNode->deleteColumnAtIndex(currentColumn);
+      grid->deleteColumnAtIndex(currentColumn);
     }
-    int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
-    *this = LayoutCursor(Layout(gridNode).child(newChildIndex));
-    didEnterCurrentPosition();
+    int newChildIndex = grid->indexAtRowColumn(currentRow, currentColumn);
+    setGridPosition(grid, newChildIndex, OMG::HorizontalDirection::Left());
+    // didEnterCurrentPosition();
     return;
   }
   assert(deletionMethod == DeletionMethod::DeleteLayout);
-#endif
   if (deletionAppliedToParent) {
     setLayout(rootNode()->parentOfDescendant(m_cursorReference),
               OMG::Direction::Right());

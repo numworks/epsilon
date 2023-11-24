@@ -60,11 +60,11 @@ int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
 // Protected
 void Grid::deleteRowAtIndex(int index) {
   assert(!numberOfRowsIsFixed());
-  assert(index >= 0 && index < numberOfRows());
+  assert(index >= 0 && index < numberOfRealRows());
   /* removeChildAtIndexInPlace messes with the number of rows to keep it
    * consistent with the number of children */
-  int nbColumns = numberOfColumns();
-  int nbRows = numberOfRows();
+  int nbColumns = numberOfRealColumns();
+  int nbRows = numberOfRealRows();
   for (int i = 0; i < nbColumns; i++) {
     child(index * nbColumns)->removeTree();
   }
@@ -73,11 +73,11 @@ void Grid::deleteRowAtIndex(int index) {
 
 void Grid::deleteColumnAtIndex(int index) {
   assert(!numberOfColumnsIsFixed());
-  assert(index >= 0 && index < numberOfColumns());
+  assert(index >= 0 && index < numberOfRealColumns());
   /* removeChildAtIndexInPlace messes with the number of rows to keep it
    * consistent with the number of children */
-  int nbColumns = numberOfColumns();
-  int nbRows = numberOfRows();
+  int nbColumns = numberOfRealColumns();
+  int nbRows = numberOfRealRows();
   for (int i = (nbRows - 1) * nbColumns + index; i > -1; i -= nbColumns) {
     child(i)->removeTree();
   }

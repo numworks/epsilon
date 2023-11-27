@@ -80,6 +80,18 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::Infinity, BuiltinsAliases::k_infinityAliases},
 };
 
+Tree *Builtin::pushNode() const {
+  Tree *result = SharedEditionPool->push(first);
+  if (TypeBlock(first).isRandomNode()) {
+    // Add random seeds
+    assert(result->nodeSize() == 2);
+    SharedEditionPool->push(BlockType::Zero);
+  } else {
+    assert(result->nodeSize() == 1);
+  }
+  return result;
+}
+
 bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
   for (Aliases aliases : s_customIdentifiers) {
     if (aliases.contains(name)) {

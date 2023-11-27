@@ -130,9 +130,11 @@ NODE(Polynomial, NARY)
 NODE(PowerReal, 2)
 NODE(Quotient, 2)
 
-NODE(Random, 0)
-NODE(RandInt, 2)
-NODE(RandIntNoRep, 3)
+/* - RandomNode RN
+ * | RN TAG | LOCAL RANDOM SEED | */
+NODE(Random, 0, 1)
+NODE(RandInt, 2, 1)
+NODE(RandIntNoRep, 3, 1)
 
 RANGE(RandomNode, Random, RandIntNoRep)
 

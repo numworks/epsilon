@@ -199,6 +199,7 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
   int deletionSize = numberOfBlocks * sizeof(Block);
   assert(m_size >= numberOfBlocks);
   m_size -= numberOfBlocks;
+  assert(static_cast<Block *>(lastBlock()) >= address);
   memmove(address, address + deletionSize,
           static_cast<Block *>(lastBlock()) - address);
   m_referenceTable.updateNodes(

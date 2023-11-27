@@ -1,20 +1,25 @@
-#include <poincare_junior/include/poincare.h>
-#include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/polynomial.h>
-#include <poincare_junior/src/expression/symbol.h>
-#include <poincare_junior/src/expression/variables.h>
-#include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/memory/cache_pool.h>
-#include <poincare_junior/src/memory/placeholder.h>
 
 #include "node_iterator.h"
+
+#if POINCARE_POOL_VISUALIZATION
+#include <poincare_junior/include/poincare.h>
+#endif
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/include/poincare.h>
+#include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/constant.h>
+#include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/polynomial.h>
+#include <poincare_junior/src/expression/random.h>
+#include <poincare_junior/src/expression/symbol.h>
+#include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/memory/placeholder.h>
 #endif
 
 namespace PoincareJ {
@@ -108,6 +113,10 @@ void Tree::logAttributes(std::ostream& stream) const {
   if (isPlaceholder()) {
     stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(this));
     stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
+    return;
+  }
+  if (isRandomNode()) {
+    stream << " seed=" << static_cast<int>(Random::GetSeed(this));
     return;
   }
   if (isUnit()) {

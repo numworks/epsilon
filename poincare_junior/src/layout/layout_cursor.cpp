@@ -86,6 +86,16 @@ KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) const {
   return KDPoint(origin.x(), origin.y() + cursorHeight(font) / 2);
 }
 
+static const Tree *mostNestedGridParent(const Tree *node, const Tree *root) {
+  while (node != root) {
+    if (node->isGridLayout()) {
+      return node;
+    }
+    node = node->parent(root);
+  }
+  return nullptr;
+}
+
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
                         bool *shouldRedrawLayout, Context *context) {
@@ -104,17 +114,21 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   bool moved = false;
   bool wasEmpty =
       cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
+  const Tree *oldGridParent = mostNestedGridParent(cursorNode(), rootNode());
+  // Perform the actual move
   if (direction.isVertical()) {
     moved = verticalMove(direction);
   } else {
     moved = horizontalMove(direction);
   }
-  bool isEmpty =
-      cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
+    bool isEmpty =
+        cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
     *shouldRedrawLayout =
-        selecting || wasEmpty || isEmpty || *shouldRedrawLayout;
+        selecting || wasEmpty || isEmpty || *shouldRedrawLayout ||
+        // Redraw to show/hide the empty gray squares of the parent grid
+        mostNestedGridParent(cursorNode(), rootNode()) != oldGridParent;
 #if 0
     if (cloneCursor.layout() != m_layout) {
       // Beautify the layout that was just left

@@ -41,8 +41,8 @@ class TemplatedExpressionInputBar : public AbstractExpressionInputBar {
     layoutField()->setMargins(k_margins);
   }
 
-  const LayoutField* layoutField() const override { return &m_field; }
-  LayoutField* layoutField() override { return &m_field; }
+  const T* layoutField() const override { return &m_field; }
+  T* layoutField() override { return &m_field; }
 
  private:
   T m_field;

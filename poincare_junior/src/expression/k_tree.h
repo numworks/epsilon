@@ -121,6 +121,31 @@ static consteval auto KPol(Exp exponents, CTS... args) {
 /* Immediates are used to represent numerical constants of the code (like 2_e)
  * temporarily before they are cast to Trees, this allows writing -2_e. */
 
+template <int64_t N, int64_t D>
+class RationalLitteral : public AbstractTreeCompatible {
+ public:
+  // Once a deduction guide has chosen the KTree for the litteral, build it
+  template <Block... B>
+  consteval operator KTree<B...>() const {
+    return KTree<B...>();
+  }
+
+  constexpr operator const Tree*() const {
+    return KTree(RationalLitteral<N, D>());
+  }
+  const Tree* operator->() const { return KTree(RationalLitteral<N, D>()); }
+
+  consteval auto operator-() { return RationalLitteral<-N, D>(); }
+};
+
+// Deduction guides to create the smallest Tree that can represent the Immediate
+
+KTree(RationalLitteral<1, 2>)->KTree<BlockType::Half>;
+
+template <int64_t N, int64_t D>
+  requires(N >= INT8_MIN && N <= INT8_MAX && D >= 1 && D <= INT8_MAX)
+KTree(RationalLitteral<N, D>) -> KTree<BlockType::RationalShort, N, D>;
+
 template <int64_t V>
 class IntegerLitteral : public AbstractTreeCompatible {
  public:
@@ -134,6 +159,11 @@ class IntegerLitteral : public AbstractTreeCompatible {
   const Tree* operator->() const { return KTree(IntegerLitteral<V>()); }
 
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
+  template <int64_t D>
+    requires(D > 0)
+  consteval auto operator/(IntegerLitteral<D> other) {
+    return RationalLitteral<V, D>();
+  }
   // Note : we could decide to implement constant propagation operators here
 };
 

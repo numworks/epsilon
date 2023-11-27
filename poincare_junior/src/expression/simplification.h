@@ -152,7 +152,6 @@ class Simplification {
       ContractExpMult,
       Trigonometry::ContractTrigonometric,
       Parametric::ContractProduct,
-      Arithmetic::ContractDecimals,
   };
   constexpr static Operation k_expandOperations[] = {
       ExpandAbs,

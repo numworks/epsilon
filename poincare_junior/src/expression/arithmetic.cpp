@@ -77,16 +77,6 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
             KPow(10_e, KMult(-1_e, KB))));
 }
 
-bool Arithmetic::ContractDecimals(Tree* expr) {
-  return
-      // -floor(-A) -> ceil(A)
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KMult(-1_e, KFloor(KMult(-1_e, KA))), KCeil(KA)) ||
-      // A - floor(A) -> frac(A)
-      PatternMatching::MatchReplaceAndSimplify(
-          expr, KAdd(KA, KMult(-1_e, KFloor(KA))), KFrac(KA));
-}
-
 bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
   Tree* first = expr->firstChild();

@@ -22,8 +22,6 @@ class Arithmetic {
   static bool SimplifyFloor(Tree* expr);
   static bool SimplifyRound(Tree* expr);
 
-  static bool ContractDecimals(Tree* expr);
-
   // Turn binomial and permute into factorials
   static bool SimplifyPermute(Tree* expr);
   static bool ExpandPermute(Tree* expr);

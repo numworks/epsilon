@@ -21,7 +21,7 @@ void LayoutCursor::safeSetLayout(Layout layout,
                                  OMG::HorizontalDirection sideOfLayout) {
   LayoutCursor previousCursor = *this;
   setLayout(layout, sideOfLayout);
-  didEnterCurrentPosition(previousCursor);
+  // Invalidate memoized info ?
 }
 
 void LayoutCursor::safeSetPosition(int position) {
@@ -30,7 +30,7 @@ void LayoutCursor::safeSetPosition(int position) {
   assert(!isSelecting());
   LayoutCursor previousCursor = *this;
   m_position = position;
-  didEnterCurrentPosition(previousCursor);
+  // Invalidate memoized info ?
 }
 #endif
 
@@ -139,9 +139,6 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
               &rightmostPositionOfPreviousLayout, context) ||
           *shouldRedrawLayout;
     }
-    // Ensure that didEnterCurrentPosition is always called by being left of ||
-    *shouldRedrawLayout =
-        didEnterCurrentPosition(cloneCursor) || *shouldRedrawLayout;
 #endif
   }
 
@@ -168,14 +165,6 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
   }
   return true;
 }
-
-#if 0
-static bool IsEmptyChildOfGridLayout(Layout l) {
-  Layout parent = l.parent();
-  return l.isEmpty() && !parent.isUninitialized() &&
-         GridLayoutNode::IsGridLayoutType(parent.type());
-}
-#endif
 
 static bool IsTemporaryAutocompletedBracketPair(const Tree *l, Side tempSide) {
   return l->isAutocompletedPair() &&
@@ -364,9 +353,6 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   // - Step 9 - Point to required position
   if (!childToPoint.isUninitialized()) {
     setLayout(childToPoint, OMG::Direction::Left());
-#if 0
-    didEnterCurrentPosition(previousCursor);
-#endif
   }
 
   // - Step 10 - Balance brackets
@@ -551,9 +537,6 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
     return deleteAndResetSelection(context, nullptr);
   }
 
-#if 0
-  LayoutCursor previousCursor = *this;
-#endif
   const Tree *leftL = leftLayout();
   if (leftL) {
     DeletionMethod deletionMethod =
@@ -570,9 +553,6 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
     privateDelete(deletionMethod, true);
   }
   removeEmptyRowOrColumnOfGridParentIfNeeded();
-#if 0
-  didEnterCurrentPosition(previousCursor), invalidateSizesAndPositions();
-#endif
 }
 
 void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
@@ -590,64 +570,8 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
   m_position = selectionLeftBound;
   stopSelecting();
   removeEmptyRowOrColumnOfGridParentIfNeeded();
-#if 0
-  didEnterCurrentPosition();
-  invalidateSizesAndPositions();
-#endif
 }
 
-#if 0
-bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
-  bool changed = false;
-  if (!previousPosition.isUninitialized() && previousPosition.isValid()) {
-    /* Order matters: First show the empty rectangle at position, because when
-     * leaving a piecewise operator layout, empty rectangles can be set back
-     * to Hidden. */
-    changed = previousPosition.setEmptyRectangleVisibilityAtCurrentPosition(
-                  EmptyRectangle::State::Visible) ||
-              changed;
-    changed = previousPosition.layout().deleteGraySquaresBeforeLeavingGrid(
-                  m_layout) ||
-              changed;
-    if (changed) {
-      previousPosition.invalidateSizesAndPositions();
-    }
-  }
-  if (isUninitialized()) {
-    return changed;
-  }
-  assert(isValid());
-  /* Order matters: First enter the grid, because when entering a piecewise
-   * operator layout, empty rectangles can be set back to Visible. */
-  changed =
-      m_layout.createGraySquaresAfterEnteringGrid(previousPosition.layout()) ||
-      changed;
-  changed = setEmptyRectangleVisibilityAtCurrentPosition(
-                EmptyRectangle::State::Hidden) ||
-            changed;
-  if (changed) {
-    invalidateSizesAndPositions();
-  }
-  return changed;
-}
-
-bool LayoutCursor::didExitPosition() {
-  if (IsEmptyChildOfGridLayout(m_layout)) {
-    /* When exiting a grid, the gray columns and rows will disappear, so
-     * before leaving the grid, set the cursor position to a layout that will
-     * stay valid when the grid will be re-entered. */
-    GridLayoutNode *parentGrid =
-        static_cast<GridLayoutNode *>(m_layout.parent().node());
-    setLayout(Layout(parentGrid->child(parentGrid->closestNonGrayIndex(
-                  parentGrid->indexOfChild(m_layout.node())))),
-              OMG::Direction::Right());
-  }
-  LayoutCursor lc;
-  return lc.didEnterCurrentPosition(*this);
-}
-#endif
-
-#if 0
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   if (cursorNode()->numberOfChildren() != 0) {
     return false;
@@ -659,6 +583,7 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
          parent->child(1)->numberOfChildren() == 0;
 }
 
+#if 0
 int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
   return l.isHorizontal() ? l.numberOfChildren() : 1;
 }
@@ -1135,7 +1060,6 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     }
     int newChildIndex = grid->indexAtRowColumn(currentRow, currentColumn);
     setGridPosition(grid, newChildIndex, OMG::HorizontalDirection::Left());
-    // didEnterCurrentPosition();
     return;
   }
   assert(deletionMethod == DeletionMethod::DeleteLayout);

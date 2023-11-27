@@ -73,15 +73,19 @@ void ScrollView::scrollToContentPoint(KDPoint p) {
   if (visibleRect.bottom() < p.y()) {
     offsetY = p.y() - visibleRect.bottom();
   }
-  KDPoint newOffset = contentOffset().translatedBy(KDPoint(offsetX, offsetY));
 
+  KDPoint newOffset = contentOffset().translatedBy(KDPoint(offsetX, offsetY));
+  setClippedContentOffset(newOffset);
+}
+
+void ScrollView::setClippedContentOffset(KDPoint offset) {
   // Handle cases when the size of the view has decreased.
   setContentOffset(KDPoint(
-      std::min(newOffset.x(),
+      std::min(offset.x(),
                std::max<KDCoordinate>(
                    minimalSizeForOptimalDisplay().width() - bounds().width(),
                    KDCoordinate(0))),
-      std::min(newOffset.y(),
+      std::min(offset.y(),
                std::max<KDCoordinate>(
                    minimalSizeForOptimalDisplay().height() - bounds().height(),
                    KDCoordinate(0)))));

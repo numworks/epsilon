@@ -101,6 +101,8 @@ class ScrollView : public View {
     setContentOffset(contentOffset().translatedBy(translation));
   }
 
+  // TODO: replace setContentOffset by setClippedContentOffset ?
+  void setClippedContentOffset(KDPoint offset);
   void scrollToContentPoint(KDPoint point);
   // Minimal scrolling to make this rect visible
   void scrollToContentRect(KDRect rect);

@@ -9,7 +9,25 @@ using namespace Poincare;
 
 namespace Calculation {
 
+void LayoutField::updateCursorBeforeInsertion() {
+  if (m_insertionLayout.isUninitialized()) {
+    return;
+  }
+  assert(m_insertionLayout.isEmpty());
+  cursor()->safeSetLayout(m_insertionLayout, OMG::Direction::Left());
+}
+
 bool LayoutField::handleEvent(Ion::Events::Event event) {
+  /* If the user tries to go back in history to insert a layout in the field,
+   * we want to remember where is the last encountered empty layout so that
+   * the insertion in done here. */
+  if (event == Ion::Events::Up) {
+    if (cursor()->layout().isEmpty()) {
+      m_insertionLayout = cursor()->layout();
+    }
+  } else if (event.isKeyPress()) {
+    m_insertionLayout = Layout();
+  }
   if (event != Ion::Events::Division && event.isKeyPress()) {
     m_divisionCycleWithAns = TrinaryBoolean::Unknown;
   }

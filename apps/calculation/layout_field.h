@@ -14,6 +14,8 @@ class LayoutField : public Escher::LayoutField {
         m_currentStep(DivisionCycleStep::Start),
         m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 
+  void updateCursorBeforeInsertion();
+
  protected:
   bool handleEvent(Ion::Events::Event event) override;
 
@@ -29,6 +31,7 @@ class LayoutField : public Escher::LayoutField {
   bool fieldContainsSingleMinusSymbol() const;
   bool handleDivision();
 
+  Poincare::Layout m_insertionLayout;
   DivisionCycleStep m_currentStep;
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };

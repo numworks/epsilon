@@ -107,8 +107,8 @@ const Tree* getPiFactor(const Tree* u) {
     return 0_e;
   }
   if (u->isMultiplication() && u->numberOfChildren() == 2 &&
-      u->nextNode()->isRational() && u->child(1)->treeIsIdenticalTo(π_e)) {
-    return u->nextNode();
+      u->child(0)->isRational() && u->child(1)->treeIsIdenticalTo(π_e)) {
+    return u->child(0);
   }
   return nullptr;
 }
@@ -122,7 +122,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
-  Tree* firstArgument = u->nextNode();
+  Tree* firstArgument = u->child(0);
   if (PatternMatching::MatchReplaceAndSimplify(
           firstArgument, KMult(KTA, -1_e, KTB), KMult(KTA, KTB))) {
     changed = true;
@@ -215,7 +215,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
     return true;
   }
   bool isAsin = u->child(1)->isOne();
-  const Tree* arg = u->nextNode();
+  const Tree* arg = u->child(0);
   if (arg->isZero()) {
     u->cloneTreeOverTree(isAsin ? 0_e : KMult(KHalf, π_e));
     return true;
@@ -223,7 +223,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   bool argIsOpposed = Sign::GetSign(arg).isStrictlyNegative();
   bool changed = argIsOpposed;
   if (argIsOpposed) {
-    u->nextNode()->moveTreeOverTree(
+    u->child(0)->moveTreeOverTree(
         PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = arg}));
   }
   if (arg->isOne()) {
@@ -274,15 +274,15 @@ bool Trigonometry::ExpandTrigonometric(Tree* ref) {
                KMult(KTrig(KAdd(KTA), 1_e), KTrig(KB, KAdd(KC, -1_e)))))) {
     return false;
   }
-  EditionReference newMult1(ref->nextNode());
-  EditionReference newTrig1(newMult1->nextNode());
+  EditionReference newMult1(ref->child(0));
+  EditionReference newTrig1(newMult1->child(0));
   EditionReference newTrig2(newTrig1->nextTree());
   EditionReference newMult2(newMult1->nextTree());
-  EditionReference newTrig3(newMult2->nextNode());
+  EditionReference newTrig3(newMult2->child(0));
   EditionReference newTrig4(newTrig3->nextTree());
   // Addition is expected to have been squashed if unary.
-  assert(!newTrig1->nextNode()->isAddition() ||
-         newTrig1->nextNode()->numberOfChildren() > 1);
+  assert(!newTrig1->child(0)->isAddition() ||
+         newTrig1->child(0)->numberOfChildren() > 1);
   // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
   if (ExpandTrigonometric(newTrig1)) {
     if (!ExpandTrigonometric(newTrig3)) {
@@ -328,19 +328,19 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
     return false;
   }
   // TODO : Find the replaced nodes and ShallowSystematicReduce smartly
-  EditionReference newAdd(ref->nextNode());
-  EditionReference newMult1(newAdd->nextNode());
+  EditionReference newAdd(ref->child(0));
+  EditionReference newMult1(newAdd->child(0));
   EditionReference newMult2(newMult1->nextTree());
   // If F is empty, Multiplications have been squashed
   bool fIsEmpty = !newMult1->isMultiplication();
   EditionReference newTrig1 =
-      fIsEmpty ? newMult1 : EditionReference(newMult1->nextNode());
+      fIsEmpty ? newMult1 : EditionReference(newMult1->child(0));
   EditionReference newTrig2 =
-      fIsEmpty ? newMult2 : EditionReference(newMult2->nextNode());
+      fIsEmpty ? newMult2 : EditionReference(newMult2->child(0));
 
   // Shallow reduce new trees
-  EditionReference newTrig1Add = newTrig1->nextNode();
-  EditionReference newTrig1AddMult = newTrig1Add->nextNode();
+  EditionReference newTrig1Add = newTrig1->child(0);
+  EditionReference newTrig1AddMult = newTrig1Add->child(0);
   Simplification::SimplifyMultiplication(newTrig1AddMult);
   Simplification::SimplifyAddition(newTrig1Add);
   SimplifyTrigDiff(newTrig1->child(1));

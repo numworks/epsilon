@@ -246,6 +246,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     return true;
   }
 
+#if 0
   // ln(A)      * ln(B)^(-1) -> log(A, B)
   // ln(A)^(-1) * ln(B)      -> log(B, A)
   changed = PatternMatching::MatchAndReplace(
@@ -254,6 +255,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
             PatternMatching::MatchAndReplace(
                 ref, KMult(KTA, KPow(KLn(KB), -1_e), KLn(KC), KTD),
                 KMult(KTA, KLogarithm(KC, KB), KTD));
+#endif
 
   // Turn multiplications with negative powers into divisions
   if (ref->isMultiplication() || ref->isPower() ||

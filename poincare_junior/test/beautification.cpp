@@ -18,7 +18,7 @@ QUIZ_CASE(pcj_beautification) {
   Beautification::DeepBeautify(ref1);
   assert_trees_are_equal(
       ref1, KAdd(KOpposite(KMult(2_e, KPow(5_e, "y"_e))), KCos(3_e),
-                 KSin("x"_e), KLogarithm(2_e, 4_e)));
+                 KSin("x"_e), KDiv(KLn(2_e), KLn(4_e))));
 
   EditionReference ref2(KTrig(π_e, 1_e));
   Beautification::DeepBeautify(ref2, {.m_angleUnit = AngleUnit::Gradian});

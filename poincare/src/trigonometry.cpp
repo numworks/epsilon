@@ -694,7 +694,6 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
   if (!coefficientBeforeCos) {
     coefficientBeforeCos = &placeHolder1;
   }
-  *coefficientBeforeCos = 0.0;
   if (!coefficientBeforeSymbol) {
     coefficientBeforeSymbol = &placeHolder2;
   }
@@ -705,6 +704,8 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
   ApproximationContext approximationContext(reductionContext);
   int nChildren = e.numberOfChildren();
   if (e.type() == ExpressionNode::Type::Addition) {
+    // Initialize coefficient
+    *coefficientBeforeCos = 0.0;
     /* Check if expression is B*cos(A*theta+D)+C*cos(A*theta+D)
      * If acceptConstantTerm, accept same expression + K */
     bool cosFound = false;

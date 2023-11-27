@@ -89,19 +89,18 @@ const char *AbstractTextField::ContentView::text() const {
 
 void AbstractTextField::ContentView::setText(const char *text) {
   size_t textRealLength = strlen(text);
-  char *buffer = const_cast<char *>(this->text());
   if (textRealLength > m_textBufferSize - 1) {
     /* The text was too long to be copied
      * TODO Maybe add a warning for the user? */
-    buffer[0] = 0;
+    m_textBuffer[0] = 0;
     return;
   }
   // Copy the text
-  strlcpy(buffer, text, m_textBufferSize);
+  strlcpy(m_textBuffer, text, m_textBufferSize);
   /* Replace System parentheses (used to keep layout tree structure) by normal
    * parentheses */
   Poincare::SerializationHelper::
-      ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
+      ReplaceSystemParenthesesAndBracesByUserParentheses(m_textBuffer);
   markWholeFrameAsDirty();
 }
 

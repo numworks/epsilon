@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
+class XYBannerView : public BannerView, public EditableFieldBannerViewDelegate {
  public:
   XYBannerView(Escher::Responder* parentResponder,
                Escher::TextFieldDelegate* textFieldDelegate)

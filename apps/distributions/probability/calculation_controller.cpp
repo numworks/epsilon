@@ -106,6 +106,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 
 void CalculationController::viewWillAppear() {
   m_dropdown.selectRow(static_cast<int>(m_calculation->type()));
+  updateCells();
   ViewController::viewWillAppear();
   selectCellAtLocation(1, 0);
 }
@@ -145,36 +146,6 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
       return &m_dropdown;
     default:
       return &m_calculationCells[type - 1];
-  }
-}
-
-void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
-                                                int row) {
-  if (column > 0) {
-    CalculationCell *myCell = static_cast<CalculationCell *>(cell);
-    myCell->messageTextView()->setMessage(
-        m_calculation->legendForParameterAtIndex(column - 1));
-    bool calculationCellIsEditable = true;
-    if (((!m_distribution->isSymmetrical() ||
-          !m_distribution->isContinuous()) &&
-         column == 3) ||
-        (m_calculation->type() == Calculation::Type::Discrete && column == 2)) {
-      calculationCellIsEditable = false;
-    }
-    myCell->setEditable(calculationCellIsEditable);
-    TextField *field = myCell->editableTextCell()->textField();
-    if (field->isEditing()) {
-      return;
-    }
-    constexpr int bufferSize = Constants::k_largeBufferSize;
-    char buffer[bufferSize];
-    /* FIXME: It has not been decided yet if we should use the prefered mode
-     * instead of always using scientific mode */
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-        m_calculation->parameterAtIndex(column - 1), buffer, bufferSize,
-        Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
-        Poincare::Preferences::PrintFloatMode::Decimal);
-    field->setText(buffer);
   }
 }
 
@@ -238,6 +209,7 @@ bool CalculationController::textFieldDidFinishEditing(
     }
   }
   m_calculation->setParameterAtIndex(floatBody, selectedColumn() - 1);
+  updateCellsValues();
   if (event == Ion::Events::Right || event == Ion::Events::Left) {
     m_selectableTableView.handleEvent(event);
   }
@@ -275,6 +247,39 @@ void CalculationController::setCalculationAccordingToIndex(
     int index, bool forceReinitialisation) {
   Calculation::Initialize(m_calculation, static_cast<Calculation::Type>(index),
                           m_distribution, forceReinitialisation);
+  updateCells();
+}
+
+void CalculationController::updateCells() {
+  int numberOfColumns = m_calculation->numberOfParameters();
+  for (int i = 0; i < numberOfColumns; i++) {
+    // Update messages
+    m_calculationCells[i].messageTextView()->setMessage(
+        m_calculation->legendForParameterAtIndex(i));
+    // Update editability
+    bool notEditable =
+        ((!m_distribution->isSymmetrical() ||
+          !m_distribution->isContinuous()) &&
+         i == 2) ||
+        (m_calculation->type() == Calculation::Type::Discrete && i == 1);
+    m_calculationCells[i].setEditable(!notEditable);
+  }
+  updateCellsValues();
+}
+
+void CalculationController::updateCellsValues() {
+  int numberOfColumns = m_calculation->numberOfParameters();
+  for (int i = 0; i < numberOfColumns; i++) {
+    constexpr int bufferSize = Constants::k_largeBufferSize;
+    char buffer[bufferSize];
+    /* FIXME: It has not been decided yet if we should use the prefered mode
+     * instead of always using scientific mode */
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+        m_calculation->parameterAtIndex(i), buffer, bufferSize,
+        Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
+        Poincare::Preferences::PrintFloatMode::Decimal);
+    m_calculationCells[i].editableTextCell()->textField()->setText(buffer);
+  }
 }
 
 void CalculationController::onDropdownSelected(int selectedRow) {

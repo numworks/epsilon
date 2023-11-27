@@ -48,8 +48,6 @@ class CalculationController : public Escher::ViewController,
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
   int typeAtLocation(int column, int row) override { return column; }
-  void fillCellForLocation(Escher::HighlightCell* cell, int column,
-                           int row) override;
 
   /* TextField delegate */
   void textFieldDidHandleEvent(Escher::AbstractTextField* textField) override;
@@ -79,6 +77,9 @@ class CalculationController : public Escher::ViewController,
   void updateTitle();
   void setCalculationAccordingToIndex(int index,
                                       bool forceReinitialisation = false);
+  void updateCells();
+  void updateCellsValues();
+
   class ContentView : public Escher::View {
    public:
     ContentView(Escher::SelectableTableView* selectableTableView,

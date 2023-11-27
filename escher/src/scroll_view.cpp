@@ -73,9 +73,7 @@ void ScrollView::scrollToContentPoint(KDPoint p) {
   if (visibleRect.bottom() < p.y()) {
     offsetY = p.y() - visibleRect.bottom();
   }
-  if (offsetX != 0 || offsetY != 0) {
-    translateContentOffsetBy(KDPoint(offsetX, offsetY));
-  }
+  translateContentOffsetBy(KDPoint(offsetX, offsetY));
 
   // Handle cases when the size of the view has decreased.
   setContentOffset(KDPoint(

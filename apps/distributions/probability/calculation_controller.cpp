@@ -206,8 +206,9 @@ bool CalculationController::textFieldDidFinishEditing(
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
+  Calculation::Type calculationType = m_calculation->type();
   int resultColumn =
-      m_calculation->type() == Calculation::Type::FiniteIntegral ? 3 : 2;
+      calculationType == Calculation::Type::FiniteIntegral ? 3 : 2;
   if (selectedColumn() == resultColumn) {
     if (floatBody < 0.0) {
       floatBody = 0.0;
@@ -219,18 +220,18 @@ bool CalculationController::textFieldDidFinishEditing(
              floatBody != std::round(floatBody)) {
     assert(selectedColumn() == 1 ||
            (selectedColumn() == 2 &&
-            m_calculation->type() == Calculation::Type::FiniteIntegral));
-    Calculation::Type calculationType = m_calculation->type();
+            calculationType == Calculation::Type::FiniteIntegral));
+
     if (calculationType == Calculation::Type::Discrete) {
       floatBody = std::round(floatBody);
     } else if (calculationType == Calculation::Type::LeftIntegral ||
-               (m_calculation->type() == Calculation::Type::FiniteIntegral &&
+               (calculationType == Calculation::Type::FiniteIntegral &&
                 selectedColumn() == 2)) {
       // X <= floatBody is equivalent to X <= floor(floatBody) when discrete
       floatBody = std::floor(floatBody);
     } else {
       assert(calculationType == Calculation::Type::RightIntegral ||
-             (m_calculation->type() == Calculation::Type::FiniteIntegral &&
+             (calculationType == Calculation::Type::FiniteIntegral &&
               selectedColumn() == 1));
       // X >= floatBody is equivalent to X >= ceil(floatBody) when discrete
       floatBody = std::ceil(floatBody);

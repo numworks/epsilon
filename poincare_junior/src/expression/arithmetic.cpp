@@ -67,7 +67,7 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
 
 bool Arithmetic::SimplifyRound(Tree* expr) {
   Tree* child = expr->firstChild();
-  if (!child->isRational() || !child->nextTree()->isInteger()) {
+  if (!EnsureIsInteger(child->nextTree()) || !child->isRational()) {
     return false;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B

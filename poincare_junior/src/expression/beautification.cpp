@@ -272,8 +272,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
           KMult(KTA, KCeil(KB), KTC)) ||
       // A - floor(A) -> frac(A)
       PatternMatching::MatchAndReplace(
-          ref, KAdd(KTA, KB, KTC, KMult(-1_e, KFloor(KB), KTD)),
-          KAdd(KTA, KTC, KFrac(KA), KTD)) ||
+          ref, KAdd(KTA, KB, KTC, KMult(-1_e, KFloor(KB)), KTD),
+          KAdd(KTA, KTC, KFrac(KB), KTD)) ||
       changed;
 }
 

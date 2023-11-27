@@ -245,7 +245,7 @@ void SelectableTableView::reloadData(bool setFirstResponder,
   KDPoint offset = offsetToRestoreAfterReload();
   deselectTable(true);
   layoutSubviews();
-  setContentOffset(offset);
+  setClippedContentOffset(offset);
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 

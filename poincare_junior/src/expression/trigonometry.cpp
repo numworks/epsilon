@@ -132,6 +132,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   }
   const Tree* piFactor = getPiFactor(firstArgument);
   if (piFactor) {
+    // TODO: Also handle (n/10)*π and (n/8)*π
     // Find n to match Trig((n/12)*π, ...) with exact value.
     Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
     Rational::MakeIrreducible(multipleTree);
@@ -234,6 +235,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
     changed = true;
   } else if (arg->isMultiplication()) {
+    // TODO: Also handle (n/10)*π and (n/8)*π
     // TODO : Find a better implementation for these special cases.
     changed =
         // acos(√2/2) = asin(√2/2) = π/4

@@ -33,6 +33,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/parametric.cpp \
   expression/polynomial.cpp \
   expression/projection.cpp \
+  expression/random.cpp \
   expression/rational.cpp \
   expression/set.cpp \
   expression/sign.cpp \

@@ -8,6 +8,7 @@
 #include "constant.h"
 #include "decimal.h"
 #include "float.h"
+#include "random.h"
 #include "rational.h"
 
 namespace PoincareJ {
@@ -20,6 +21,14 @@ T Approximation::To(const Tree* node) {
   if (node->isRational()) {
     return Rational::Numerator(node).to<T>() /
            Rational::Denominator(node).to<T>();
+  }
+  if (node->isRandomNode()) {
+    // Seeded random node should have been handled at the root level.
+    /* TODO : Random::ApproximateTreeNodes<T> should have been called beforehand
+     * somehow. An other solution could be passing an EditionReference to the
+     * approximated seeded random nodes along approximation. */
+    assert(Random::GetSeed(node) == 0);
+    Random::ApproximateIgnoringSeed<T>(node);
   }
   switch (node->type()) {
     case BlockType::Constant:
@@ -97,6 +106,11 @@ T Approximation::To(const Tree* node) {
       // TODO: Implement more BlockTypes
       return NAN;
   };
+}
+
+bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
+  bool result = Random::ApproximateTreeNodes<double>(tree);
+  return ApproximateAndReplaceEveryScalarT<double>(tree) || result;
 }
 
 template <typename T>

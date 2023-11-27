@@ -14,6 +14,7 @@
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/expression/parametric.h>
+#include <poincare_junior/src/expression/random.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/expression/variables.h>
@@ -740,6 +741,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
     }
     bool changed = false;
+    // Seed random nodes before anything is merged/duplicated.
+    changed = Random::SeedTreeNodes(ref);
     changed =
         Projection::DeepSystemProjection(ref, projectionContext) || changed;
     Tree* variables = Variables::GetUserSymbols(ref);

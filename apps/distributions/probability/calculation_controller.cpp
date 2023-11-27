@@ -154,14 +154,14 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
     CalculationCell *myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(
         m_calculation->legendForParameterAtIndex(column - 1));
-    bool calculationCellIsResponder = true;
+    bool calculationCellIsEditable = true;
     if (((!m_distribution->isSymmetrical() ||
           !m_distribution->isContinuous()) &&
          column == 3) ||
         (m_calculation->type() == Calculation::Type::Discrete && column == 2)) {
-      calculationCellIsResponder = false;
+      calculationCellIsEditable = false;
     }
-    myCell->setResponder(calculationCellIsResponder);
+    myCell->setEditable(calculationCellIsEditable);
     TextField *field = myCell->editableTextCell()->textField();
     if (field->isEditing()) {
       return;

@@ -13,7 +13,7 @@ class CalculationCell : public Escher::HighlightCell {
   CalculationCell(Escher::Responder* parentResponder = nullptr,
                   Escher::TextFieldDelegate* textFieldDelegate = nullptr);
   Escher::Responder* responder() override;
-  void setResponder(bool shouldbeResponder);
+  void setEditable(bool editable) { m_isEditable = editable; }
   void setHighlighted(bool highlight) override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -30,7 +30,7 @@ class CalculationCell : public Escher::HighlightCell {
   KDCoordinate calculationCellWidth() const;
   Escher::MessageTextView m_text;
   Escher::EditableTextCell<> m_calculation;
-  bool m_isResponder;
+  bool m_isEditable;
 };
 
 }  // namespace Distributions

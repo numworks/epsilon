@@ -30,6 +30,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
+  // TODO: Also skip if there are random nodes.
   if (!Variables::HasVariable(child, k_localVariableId)) {
     // TODO : add ceil around bounds
     constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
@@ -134,6 +135,7 @@ bool Parametric::Explicit(Tree* expr) {
     Simplification::ShallowSystematicReduce(value);
     // Clone the child and replace k with its value
     Tree* clone = child->clone();
+    // TODO: Also distinguish random nodes seeds.
     Variables::Replace(clone, k_localVariableId, value);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);

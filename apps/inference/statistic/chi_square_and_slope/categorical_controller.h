@@ -32,9 +32,6 @@ class CategoricalController
 
   static bool ButtonAction(CategoricalController* controller, void* s);
 
-  // Responder
-  void didBecomeFirstResponder() override;
-
   // ScrollViewDelegate
   void scrollViewDidChangeOffset(
       ScrollViewDataSource* scrollViewDataSource) override;

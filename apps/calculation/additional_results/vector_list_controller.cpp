@@ -46,8 +46,9 @@ void VectorListController::computeAdditionalResults(
     return;
   }
   Expression normalized = Division::Builder(exactClone, norm);
-  PoincareHelpers::CloneAndSimplify(&normalized, context, k_target,
-                                    k_symbolicComputation);
+  PoincareHelpers::CloneAndSimplify(
+      &normalized, context,
+      {.target = k_target, .symbolicComputation = k_symbolicComputation});
   if (normalized.type() != ExpressionNode::Type::Matrix) {
     // The reduction might have failed
     return;

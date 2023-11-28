@@ -55,8 +55,10 @@ void MatrixListController::computeAdditionalResults(
      * not be reduced to a rational, but will be null in theory. */
     Expression determinant = Determinant::Builder(matrix);
     PoincareHelpers::CloneAndSimplify(
-        &determinant, context, ReductionTarget::SystemForApproximation,
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+        &determinant, context,
+        {.target = ReductionTarget::SystemForApproximation,
+         .symbolicComputation =
+             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
     m_indexMessageMap[index] = messageIndex++;
     m_layouts[index++] =
         getExactLayoutFromExpression(determinant, computationContext);

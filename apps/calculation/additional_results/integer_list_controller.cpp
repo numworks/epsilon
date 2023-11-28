@@ -37,8 +37,7 @@ void IntegerListController::computeAdditionalResults(
   }
   // Computing factorExpression
   Expression factor = Factor::Builder(exactOutput.clone());
-  PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext(),
-                                    ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext());
   if (!factor.isUndefined() && !factor.isIdenticalTo(Rational::Builder(1)) &&
       !factor.isIdenticalTo(Rational::Builder(0))) {
     m_layouts[k_indexOfFactorExpression] =

@@ -126,8 +126,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
     return false;
   }
   Expression reducedExp = input;
-  PoincareHelpers::CloneAndSimplify(&reducedExp, context,
-                                    ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&reducedExp, context);
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;

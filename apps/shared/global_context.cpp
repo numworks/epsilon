@@ -189,8 +189,8 @@ const Expression GlobalContext::expressionForSequence(
   Sequence seq(r);
   Expression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
-  PoincareHelpers::CloneAndSimplify(&rank, ctx,
-                                    ReductionTarget::SystemForApproximation);
+  PoincareHelpers::CloneAndSimplify(
+      &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
     Rational n = static_cast<Rational &>(rank);
@@ -214,15 +214,15 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   bool storeApproximation =
       ExpressionDisplayPermissions::NeverDisplayReductionOfInput(expression,
                                                                  this);
-  PoincareHelpers::CloneAndSimplify(
-      &expression, this, ReductionTarget::User,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  PoincareHelpers::ReductionParameters params = {
+      .symbolicComputation =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+  PoincareHelpers::CloneAndSimplify(&expression, this, params);
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and juste calling "approximate" would return undef*/
 
   Expression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
-      expression, this, ReductionTarget::User,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      expression, this, params);
   // Do not store exact derivative, etc.
   if (storeApproximation ||
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(

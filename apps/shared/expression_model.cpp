@@ -105,10 +105,10 @@ Expression ExpressionModel::expressionReduced(
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
       PoincareHelpers::CloneAndSimplify(
-          &m_expression, context, complexFormat(record, context),
-          ReductionTarget::SystemForApproximation,
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-          PoincareHelpers::k_defaultUnitConversion);
+          &m_expression, context,
+          {.complexFormat = complexFormat(record, context),
+           .updateComplexFormatWithExpression = false,
+           .target = ReductionTarget::SystemForApproximation});
     }
   }
   return m_expression;

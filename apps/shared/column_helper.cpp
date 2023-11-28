@@ -187,8 +187,10 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
       &storeContext);
 
   PoincareHelpers::CloneAndSimplify(
-      &formula, &storeContext, ReductionTarget::SystemForApproximation,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      &formula, &storeContext,
+      {.target = ReductionTarget::SystemForApproximation,
+       .symbolicComputation =
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
 
   if (formula.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;

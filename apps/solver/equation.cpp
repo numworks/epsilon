@@ -46,7 +46,7 @@ Expression Equation::Model::standardForm(
   // Reduce the expression
   Expression simplifiedInput = expressionInputWithoutFunctions;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
-                                    reductionTarget);
+                                    {.target = reductionTarget});
 
   if (simplifiedInput.type() == ExpressionNode::Type::Nonreal) {
     returnedExpression = Nonreal::Builder();
@@ -63,7 +63,8 @@ Expression Equation::Model::standardForm(
                                               simplifiedInput.childAtIndex(1));
     ReductionContext reductionContext =
         PoincareHelpers::ReductionContextForParameters(
-            expressionInputWithoutFunctions, contextToUse, reductionTarget);
+            expressionInputWithoutFunctions, contextToUse,
+            {.target = reductionTarget});
     returnedExpression = returnedExpression.cloneAndReduce(reductionContext);
   } else {
     assert(simplifiedInput.isOfType(

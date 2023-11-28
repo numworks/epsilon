@@ -122,9 +122,7 @@ bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
   Expression unit;
   Expression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &clone, &unit, globalContext, ReductionTarget::User,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      UnitConversion::None);
+      &clone, &unit, globalContext, {.unitConversion = UnitConversion::None});
   double value =
       PoincareHelpers::ApproximateToScalar<double>(clone, globalContext);
   if (!unit.isUninitialized() &&

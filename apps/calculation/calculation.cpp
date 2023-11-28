@@ -308,8 +308,9 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
        * fully reduced so we need to reduce it again prior to computing equal
        * sign */
       PoincareHelpers::CloneAndSimplify(
-          &exactOutputExpression, context, ReductionTarget::User,
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+          &exactOutputExpression, context,
+          {.symbolicComputation = SymbolicComputation::
+               ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
     m_equalSign = Expression::ExactAndApproximateExpressionsAreEqual(
                       exactOutputExpression,

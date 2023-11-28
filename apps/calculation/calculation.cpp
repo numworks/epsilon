@@ -288,14 +288,6 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
    * are sure there cannot be a Store in the exactOutput. */
   ExceptionCheckpoint ecp;
   Calculation::EqualSign result;
-  /* Temporarily set the complex format and angle unit to the ones used to
-   * compute the output. */
-  Preferences::ComplexFormat currentComplexFormat =
-      Preferences::sharedPreferences->complexFormat();
-  Preferences::AngleUnit currentAngleUnit =
-      Preferences::sharedPreferences->angleUnit();
-  Preferences::sharedPreferences->setComplexFormat(m_complexFormat);
-  Preferences::sharedPreferences->setAngleUnit(m_angleUnit);
   if (ExceptionRun(ecp)) {
     Expression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
@@ -309,7 +301,9 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
        * sign */
       PoincareHelpers::CloneAndSimplify(
           &exactOutputExpression, context,
-          {.symbolicComputation = SymbolicComputation::
+          {.complexFormat = m_complexFormat,
+           .angleUnit = m_angleUnit,
+           .symbolicComputation = SymbolicComputation::
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
     m_equalSign = Expression::ExactAndApproximateExpressionsAreEqual(
@@ -317,15 +311,12 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal
                       : EqualSign::Approximation;
-    result = m_equalSign;
+    return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool
      * later to compute it. */
-    result = EqualSign::Approximation;
+    return EqualSign::Approximation;
   }
-  Preferences::sharedPreferences->setComplexFormat(currentComplexFormat);
-  Preferences::sharedPreferences->setAngleUnit(currentAngleUnit);
-  return result;
 }
 
 void Calculation::fillExpressionsForAdditionalResults(

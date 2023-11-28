@@ -257,13 +257,4 @@ Layout HorizontalLayout::squashUnaryHierarchyInPlace() {
   return *this;
 }
 
-void HorizontalLayout::serializeChildren(int firstIndex, int lastIndex,
-                                         char *buffer, int bufferSize) {
-  static_cast<HorizontalLayoutNode *>(node())->serializeChildrenBetweenIndexes(
-      buffer, bufferSize,
-      Poincare::Preferences::sharedPreferences->displayMode(),
-      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
-      true, firstIndex, lastIndex);
-}
-
 }  // namespace Poincare

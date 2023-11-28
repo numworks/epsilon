@@ -72,6 +72,7 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return std::log(To<T>(node->nextNode(), context));
     case BlockType::Abs:
       return std::fabs(To<T>(node->nextNode(), context));
+    // TODO: Handle AngleUnits in context as well.
     case BlockType::Cosine:
       return std::cos(To<T>(node->nextNode(), context));
     case BlockType::Sine:

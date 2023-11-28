@@ -149,6 +149,11 @@ const char *SolutionsController::title() {
   return I18n::translate(I18n::Message::Solution);
 }
 
+void SolutionsController::initView() {
+  ViewController::initView();
+  m_contentView.selectableTableView()->resetSizeAndOffsetMemoization();
+}
+
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = true;

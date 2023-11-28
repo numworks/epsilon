@@ -10,6 +10,9 @@ bool Grid::isEditing() const {
   if (SharedEditionPool->contains(this)) {
     return true;
   }
+  if (!RackLayout::layoutCursor) {
+    return false;
+  }
   // TODO isEditing is called a lot, is nextTree too expensive ?
   Tree* cursorNode = RackLayout::layoutCursor->cursorNode();
   return this <= cursorNode && cursorNode < nextTree();

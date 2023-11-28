@@ -6,6 +6,10 @@
 
 namespace Poincare {
 
+Layout JuniorLayoutNode::makeEditable() {
+  return PoincareJ::Layout::ToPoincareLayout(tree());
+}
+
 JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   size_t size = tree->treeSize();
   void* bufferNode =

@@ -362,5 +362,7 @@ template Tree *EditionPool::push<BlockType::CombinedCodePointsLayout, CodePoint,
                                  CodePoint>(CodePoint, CodePoint);
 template Tree *EditionPool::push<BlockType::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
+template Tree *EditionPool::push<BlockType::MatrixLayout, uint8_t, uint8_t>(
+    uint8_t, uint8_t);
 
 }  // namespace PoincareJ

@@ -11,6 +11,8 @@
 namespace Poincare {
 
 class JuniorLayoutNode final : public LayoutNode {
+  friend class JuniorLayout;
+
  public:
   JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize) {
     memcpy(m_blocks, tree, treeSize);
@@ -41,6 +43,7 @@ class JuniorLayoutNode final : public LayoutNode {
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override {
     assert(false);
   }
+  Layout makeEditable() override;
 
  private:
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override {
@@ -59,6 +62,15 @@ class JuniorLayout final
  public:
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   static JuniorLayout Juniorize(Layout l);
+  const PoincareJ::Tree* tree() const {
+    return const_cast<JuniorLayout*>(this)->node()->tree();
+  }
+
+ private:
+  using Layout::node;
+  JuniorLayoutNode* node() {
+    return static_cast<JuniorLayoutNode*>(Layout::node());
+  }
 };
 
 }  // namespace Poincare

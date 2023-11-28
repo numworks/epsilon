@@ -95,6 +95,9 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
   // TODO: complete this method
+  if (!RackLayout::layoutCursor) {
+    return false;
+  }
   return node != layoutCursor->cursorNode() && node->numberOfChildren() == 0;
 }
 

@@ -69,7 +69,7 @@ struct ApproximationParameters {
 
 inline Poincare::ApproximationContext ApproximationContextForParameters(
     const Poincare::Expression e, Poincare::Context* context,
-    ApproximationParameters approximationParameters) {
+    const ApproximationParameters& approximationParameters) {
   Poincare::ApproximationContext approximationContext(
       context, approximationParameters.complexFormat,
       approximationParameters.angleUnit);
@@ -82,7 +82,7 @@ inline Poincare::ApproximationContext ApproximationContextForParameters(
 template <class T>
 inline Poincare::Expression Approximate(
     const Poincare::Expression e, Poincare::Context* context,
-    ApproximationParameters approximationParameters = {}) {
+    const ApproximationParameters& approximationParameters = {}) {
   return e.approximate<T>(
       ApproximationContextForParameters(e, context, approximationParameters));
 }
@@ -90,7 +90,7 @@ inline Poincare::Expression Approximate(
 template <class T>
 inline T ApproximateToScalar(
     const Poincare::Expression e, Poincare::Context* context,
-    ApproximationParameters approximationParameters = {}) {
+    const ApproximationParameters& approximationParameters = {}) {
   return e.approximateToScalar<T>(
       ApproximationContextForParameters(e, context, approximationParameters));
 }
@@ -99,7 +99,7 @@ template <class T>
 inline T ApproximateWithValueForSymbol(
     const Poincare::Expression e, const char* symbol, T x,
     Poincare::Context* context,
-    ApproximationParameters approximationParameters = {}) {
+    const ApproximationParameters& approximationParameters = {}) {
   return e.approximateWithValueForSymbol<T>(
       symbol, x,
       ApproximationContextForParameters(e, context, approximationParameters));
@@ -122,7 +122,7 @@ struct ReductionParameters {
 
 inline Poincare::ReductionContext ReductionContextForParameters(
     const Poincare::Expression e, Poincare::Context* context,
-    ReductionParameters reductionParameters) {
+    const ReductionParameters& reductionParameters) {
   Poincare::ReductionContext reductionContext(
       context, reductionParameters.complexFormat, reductionParameters.angleUnit,
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
@@ -137,15 +137,15 @@ inline Poincare::ReductionContext ReductionContextForParameters(
 template <class T>
 inline Poincare::Expression ApproximateKeepingUnits(
     const Poincare::Expression e, Poincare::Context* context,
-    ReductionParameters reductionParameters = {}) {
+    const ReductionParameters& reductionParameters = {}) {
   return e.approximateKeepingUnits<T>(
       ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndSimplify(Poincare::Expression* e,
-                             Poincare::Context* context,
-                             ReductionParameters reductionParameters = {},
-                             bool* reductionFailure = nullptr) {
+inline void CloneAndSimplify(
+    Poincare::Expression* e, Poincare::Context* context,
+    const ReductionParameters& reductionParameters = {},
+    bool* reductionFailure = nullptr) {
   *e = e->cloneAndSimplify(
       ReductionContextForParameters(*e, context, reductionParameters),
       reductionFailure);
@@ -154,28 +154,30 @@ inline void CloneAndSimplify(Poincare::Expression* e,
 inline void CloneAndSimplifyAndApproximate(
     Poincare::Expression e, Poincare::Expression* simplifiedExpression,
     Poincare::Expression* approximatedExpression, Poincare::Context* context,
-    ReductionParameters reductionParameters = {}) {
+    const ReductionParameters& reductionParameters = {}) {
   e.cloneAndSimplifyAndApproximate(
       simplifiedExpression, approximatedExpression,
       ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndReduce(Poincare::Expression* e, Poincare::Context* context,
-                           ReductionParameters reductionParameters = {}) {
+inline void CloneAndReduce(
+    Poincare::Expression* e, Poincare::Context* context,
+    const ReductionParameters& reductionParameters = {}) {
   *e = e->cloneAndReduce(
       ReductionContextForParameters(*e, context, reductionParameters));
 }
 
 inline void CloneAndApproximateKeepingSymbols(
     Poincare::Expression* e, Poincare::Context* context,
-    ReductionParameters reductionParameters = {}) {
+    const ReductionParameters& reductionParameters = {}) {
   *e = e->cloneAndApproximateKeepingSymbols(
       ReductionContextForParameters(*e, context, reductionParameters));
 }
 
 inline void CloneAndReduceAndRemoveUnit(
     Poincare::Expression* e, Poincare::Expression* unit,
-    Poincare::Context* context, ReductionParameters reductionParameters = {}) {
+    Poincare::Context* context,
+    const ReductionParameters& reductionParameters = {}) {
   *e = e->cloneAndReduceAndRemoveUnit(
       ReductionContextForParameters(*e, context, reductionParameters), unit);
 }

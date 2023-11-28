@@ -18,9 +18,9 @@ void InputGoodnessController::updateDegreeOfFreedomCell() {
                          m_degreeOfFreedomCell.textField(), true, true);
 }
 
-void InputGoodnessController::didBecomeFirstResponder() {
+void InputGoodnessController::viewWillAppear() {
   updateDegreeOfFreedomCell();
-  InputCategoricalController::didBecomeFirstResponder();
+  InputCategoricalController::viewWillAppear();
 }
 
 HighlightCell *InputGoodnessController::reusableCell(int index, int type) {

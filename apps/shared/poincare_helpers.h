@@ -11,10 +11,7 @@ namespace Shared {
 
 namespace PoincareHelpers {
 
-constexpr static Poincare::SymbolicComputation k_replaceWithDefinition =
-    Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-constexpr static Poincare::UnitConversion k_defaultUnitConversion =
-    Poincare::UnitConversion::Default;
+// ===== Layout =====
 
 inline Poincare::Layout CreateLayout(
     const Poincare::Expression e, Poincare::Context* context,
@@ -24,6 +21,8 @@ inline Poincare::Layout CreateLayout(
         Poincare::Preferences::sharedPreferences->numberOfSignificantDigits()) {
   return e.createLayout(displayMode, numberOfSignificantDigits, context);
 }
+
+// ===== Serialization =====
 
 template <class T>
 inline int ConvertFloatToText(T d, char* buffer, int bufferSize,
@@ -58,30 +57,7 @@ inline int Serialize(
                      numberOfSignificantDigits);
 }
 
-inline Poincare::ReductionContext ReductionContextForParameters(
-    Poincare::Context* context,
-    Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  return Poincare::ReductionContext(
-      context, complexFormat,
-      Poincare::Preferences::sharedPreferences->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
-      symbolicComputation, unitConversion);
-}
-
-inline Poincare::ReductionContext ReductionContextForParameters(
-    const Poincare::Expression e, Poincare::Context* context,
-    Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  Poincare::ReductionContext reductionContext = ReductionContextForParameters(
-      context, Poincare::Preferences::sharedPreferences->complexFormat(),
-      target, symbolicComputation, unitConversion);
-  reductionContext.updateComplexFormat(e);
-  return reductionContext;
-}
+// ===== Approximation =====
 
 inline Poincare::ApproximationContext ApproximationContextForParameters(
     const Poincare::Expression e, Poincare::Context* context) {
@@ -111,96 +87,82 @@ inline T ApproximateWithValueForSymbol(const Poincare::Expression e,
       symbol, x, ApproximationContextForParameters(e, context));
 }
 
+// ===== Reduction =====
+
+struct ReductionParameters {
+  Poincare::Preferences::ComplexFormat complexFormat =
+      Poincare::Preferences::sharedPreferences->complexFormat();
+  Poincare::Preferences::AngleUnit angleUnit =
+      Poincare::Preferences::sharedPreferences->angleUnit();
+  bool updateComplexFormatWithExpression = true;
+
+  Poincare::ReductionTarget target = Poincare::ReductionTarget::User;
+  Poincare::SymbolicComputation symbolicComputation =
+      Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+  Poincare::UnitConversion unitConversion = Poincare::UnitConversion::Default;
+};
+
+inline Poincare::ReductionContext ReductionContextForParameters(
+    const Poincare::Expression e, Poincare::Context* context,
+    ReductionParameters reductionParameters) {
+  Poincare::ReductionContext reductionContext(
+      context, reductionParameters.complexFormat, reductionParameters.angleUnit,
+      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
+      reductionParameters.target, reductionParameters.symbolicComputation,
+      reductionParameters.unitConversion);
+  if (reductionParameters.updateComplexFormatWithExpression) {
+    reductionContext.updateComplexFormat(e);
+  }
+  return reductionContext;
+}
+
 template <class T>
 inline Poincare::Expression ApproximateKeepingUnits(
     const Poincare::Expression e, Poincare::Context* context,
-    Poincare::ReductionTarget target = Poincare::ReductionTarget::User,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  return e.approximateKeepingUnits<T>(ReductionContextForParameters(
-      e, context, target, symbolicComputation, unitConversion));
+    ReductionParameters reductionParameters = {}) {
+  return e.approximateKeepingUnits<T>(
+      ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndSimplify(
-    Poincare::Expression* e, Poincare::Context* context,
-    Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    bool* reductionFailure = nullptr) {
+inline void CloneAndSimplify(Poincare::Expression* e,
+                             Poincare::Context* context,
+                             ReductionParameters reductionParameters = {},
+                             bool* reductionFailure = nullptr) {
   *e = e->cloneAndSimplify(
-      ReductionContextForParameters(context, complexFormat, target,
-                                    symbolicComputation, unitConversion),
-      reductionFailure);
-}
-
-inline void CloneAndSimplify(
-    Poincare::Expression* e, Poincare::Context* context,
-    Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
-    bool* reductionFailure = nullptr) {
-  *e = e->cloneAndSimplify(
-      ReductionContextForParameters(*e, context, target, symbolicComputation,
-                                    unitConversion),
+      ReductionContextForParameters(*e, context, reductionParameters),
       reductionFailure);
 }
 
 inline void CloneAndSimplifyAndApproximate(
     Poincare::Expression e, Poincare::Expression* simplifiedExpression,
     Poincare::Expression* approximatedExpression, Poincare::Context* context,
-    Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+    ReductionParameters reductionParameters = {}) {
   e.cloneAndSimplifyAndApproximate(
       simplifiedExpression, approximatedExpression,
-      ReductionContextForParameters(context, complexFormat,
-                                    Poincare::ReductionTarget::User,
-                                    symbolicComputation, unitConversion));
+      ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndSimplifyAndApproximate(
-    Poincare::Expression e, Poincare::Expression* simplifiedExpression,
-    Poincare::Expression* approximatedExpression, Poincare::Context* context,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  e.cloneAndSimplifyAndApproximate(
-      simplifiedExpression, approximatedExpression,
-      ReductionContextForParameters(e, context, Poincare::ReductionTarget::User,
-                                    symbolicComputation, unitConversion));
-}
-
-inline void CloneAndReduce(
-    Poincare::Expression* e, Poincare::Context* context,
-    Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  *e = e->cloneAndReduce(ReductionContextForParameters(
-      context, complexFormat, target, symbolicComputation, unitConversion));
+inline void CloneAndReduce(Poincare::Expression* e, Poincare::Context* context,
+                           ReductionParameters reductionParameters = {}) {
+  *e = e->cloneAndReduce(
+      ReductionContextForParameters(*e, context, reductionParameters));
 }
 
 inline void CloneAndApproximateKeepingSymbols(
     Poincare::Expression* e, Poincare::Context* context,
-    Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
-  *e = e->cloneAndApproximateKeepingSymbols(ReductionContextForParameters(
-      context, complexFormat, target, symbolicComputation, unitConversion));
+    ReductionParameters reductionParameters = {}) {
+  *e = e->cloneAndApproximateKeepingSymbols(
+      ReductionContextForParameters(*e, context, reductionParameters));
 }
 
 inline void CloneAndReduceAndRemoveUnit(
     Poincare::Expression* e, Poincare::Expression* unit,
-    Poincare::Context* context,
-    Poincare::ReductionTarget target = Poincare::ReductionTarget::User,
-    Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
-    Poincare::UnitConversion unitConversion = k_defaultUnitConversion) {
+    Poincare::Context* context, ReductionParameters reductionParameters = {}) {
   *e = e->cloneAndReduceAndRemoveUnit(
-      ReductionContextForParameters(*e, context, target, symbolicComputation,
-                                    unitConversion),
-      unit);
+      ReductionContextForParameters(*e, context, reductionParameters), unit);
 }
+
+// ===== Misc =====
 
 template <typename T>
 inline Poincare::Solver<T> Solver(T xMin, T xMax, const char* unknown = nullptr,

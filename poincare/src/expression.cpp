@@ -1156,8 +1156,11 @@ Expression Expression::ParseAndSimplify(const char *text, Context *context,
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
+  // TODO: Shared shouldn't be called in Poincare !
   Shared::PoincareHelpers::CloneAndSimplify(
-      &exp, context, ReductionTarget::User, symbolicComputation, unitConversion,
+      &exp, context,
+      {.symbolicComputation = symbolicComputation,
+       .unitConversion = unitConversion},
       reductionFailure);
   assert(!exp.isUninitialized());
   return exp;

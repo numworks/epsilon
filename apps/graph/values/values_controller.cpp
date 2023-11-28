@@ -358,9 +358,11 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
                         strlen(Shared::Function::k_unknownName)));
     bool simplificationFailure = false;
     PoincareHelpers::CloneAndSimplify(
-        &result, &abscissaContext, ReductionTarget::User,
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        UnitConversion::Default, &simplificationFailure);
+        &result, &abscissaContext,
+        {.symbolicComputation =
+             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+         .unitConversion = UnitConversion::Default},
+        &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
     Expression approximation =

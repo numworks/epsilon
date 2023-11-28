@@ -37,8 +37,9 @@ void FunctionListController::computeAdditionalResults(
   inputClone.replaceNumericalValuesWithSymbol(variable);
 
   Expression simplifiedExpression = inputClone;
-  PoincareHelpers::CloneAndSimplify(&simplifiedExpression, context,
-                                    ReductionTarget::SystemForApproximation);
+  PoincareHelpers::CloneAndSimplify(
+      &simplifiedExpression, context,
+      {.target = ReductionTarget::SystemForApproximation});
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

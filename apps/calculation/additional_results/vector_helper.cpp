@@ -22,8 +22,9 @@ Expression BuildVectorNorm(const Expression exactOutput, Context *context) {
   }
   Expression norm = VectorNorm::Builder(exactOutput);
   PoincareHelpers::CloneAndSimplify(
-      &norm, context, VectorListController::k_target,
-      VectorListController::k_symbolicComputation);
+      &norm, context,
+      {.target = VectorListController::k_target,
+       .symbolicComputation = VectorListController::k_symbolicComputation});
   return norm.isUninitialized() || norm.isUndefined() ? Expression() : norm;
 }
 

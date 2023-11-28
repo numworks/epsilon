@@ -151,8 +151,10 @@ Layout ExpressionsListController::getExactLayoutFromExpression(
   Expression approximateExpression, exactExpression;
   PoincareHelpers::CloneAndSimplifyAndApproximate(
       e, &exactExpression, &approximateExpression, computationContext.context(),
-      computationContext.complexFormat(),
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      {.complexFormat = computationContext.complexFormat(),
+       .angleUnit = computationContext.angleUnit(),
+       .symbolicComputation =
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
   assert(!approximateExpression.isUninitialized());
   Layout approximateLayout = PoincareHelpers::CreateLayout(
       approximateExpression, computationContext.context());

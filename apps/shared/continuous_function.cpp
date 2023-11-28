@@ -595,9 +595,12 @@ Expression ContinuousFunction::Model::expressionReduced(
       Expression resultForApproximation = expressionEquation(record, context);
       if (!resultForApproximation.isUninitialized()) {
         PoincareHelpers::CloneAndReduce(
-            &resultForApproximation, context, complexFormat,
-            ReductionTarget::SystemForApproximation,
-            SymbolicComputation::DoNotReplaceAnySymbol);
+            &resultForApproximation, context,
+            {.complexFormat = complexFormat,
+             .updateComplexFormatWithExpression = false,
+             .target = ReductionTarget::SystemForApproximation,
+             .symbolicComputation =
+                 SymbolicComputation::DoNotReplaceAnySymbol});
         if (resultForApproximation.numberOfDescendants(true) <
             m_expression.numberOfDescendants(true)) {
           m_expression = resultForApproximation;
@@ -613,9 +616,11 @@ Poincare::Expression ContinuousFunction::Model::expressionApproximated(
   if (m_expressionApproximated.isUninitialized()) {
     Expression e = expressionReduced(record, context);
     PoincareHelpers::CloneAndApproximateKeepingSymbols(
-        &e, context, complexFormat(record, context),
-        ReductionTarget::SystemForApproximation,
-        SymbolicComputation::DoNotReplaceAnySymbol);
+        &e, context,
+        {.complexFormat = complexFormat(record, context),
+         .updateComplexFormatWithExpression = false,
+         .target = ReductionTarget::SystemForApproximation,
+         .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
     m_expressionApproximated = e;
   }
   return m_expressionApproximated;
@@ -634,10 +639,13 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
   if (!result.isUndefined()) {
-    PoincareHelpers::CloneAndReduce(&result, context, complexFormat,
-                                    ReductionTarget::SystemForAnalysis,
-                                    // Symbols have already been replaced.
-                                    SymbolicComputation::DoNotReplaceAnySymbol);
+    PoincareHelpers::CloneAndReduce(
+        &result, context,
+        {.complexFormat = complexFormat,
+         .updateComplexFormatWithExpression = false,
+         .target = ReductionTarget::SystemForAnalysis,
+         // Symbols have already been replaced.
+         .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
   }
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
@@ -812,10 +820,10 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
        * at the cost of possible inaccurate evaluations (such as
        * diff(abs(x),x,0) not being undefined). */
       PoincareHelpers::CloneAndSimplify(
-          &m_expressionDerivate, context, complexFormat(record, context),
-          ReductionTarget::SystemForApproximation,
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-          PoincareHelpers::k_defaultUnitConversion);
+          &m_expressionDerivate, context,
+          {.complexFormat = complexFormat(record, context),
+           .updateComplexFormatWithExpression = false,
+           .target = ReductionTarget::SystemForApproximation});
     }
   }
   return m_expressionDerivate;

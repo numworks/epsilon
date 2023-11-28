@@ -94,8 +94,9 @@ void UnitListController::computeAdditionalResults(
       Shared::PoincareHelpers::ApproximateToScalar<double>(copy, context);
   ReductionContext reductionContext =
       Shared::PoincareHelpers::ReductionContextForParameters(
-          exactClone, context, ReductionTarget::User,
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+          exactClone, context,
+          {.symbolicComputation = SymbolicComputation::
+               ReplaceAllSymbolsWithDefinitionsOrUndefined});
   int numberOfExpressions = Unit::SetAdditionalExpressions(
       units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
       exactClone);
@@ -116,9 +117,10 @@ void UnitListController::computeAdditionalResults(
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
     expressions[numberOfExpressions] = exactClone;
     Shared::PoincareHelpers::CloneAndSimplify(
-        &expressions[numberOfExpressions], context, ReductionTarget::User,
-        Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-        Poincare::UnitConversion::InternationalSystem);
+        &expressions[numberOfExpressions], context,
+        {.symbolicComputation = Poincare::SymbolicComputation::
+             ReplaceAllDefinedSymbolsWithDefinition,
+         .unitConversion = Poincare::UnitConversion::InternationalSystem});
     siExpression =
         expressions[numberOfExpressions];  // Remember for later (part II)
     numberOfExpressions++;
@@ -131,9 +133,10 @@ void UnitListController::computeAdditionalResults(
   /* Make exactClone comparable to expressions (turn BasedInteger into
    * Rational for instance) */
   Shared::PoincareHelpers::CloneAndSimplify(
-      &reduceExpression, context, ReductionTarget::User,
-      Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      Poincare::UnitConversion::None);
+      &reduceExpression, context,
+      {.symbolicComputation = Poincare::SymbolicComputation::
+           ReplaceAllDefinedSymbolsWithDefinition,
+       .unitConversion = Poincare::UnitConversion::None});
   int currentExpressionIndex = 0;
   while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;
@@ -202,9 +205,10 @@ void UnitListController::computeAdditionalResults(
   assert(siExpression.hasUnit());
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &siExpression, &unit, context, ReductionTarget::User,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      UnitConversion::None);
+      &siExpression, &unit, context,
+      {.symbolicComputation =
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+       .unitConversion = UnitConversion::None});
   m_SIValue =
       PoincareHelpers::ApproximateToScalar<double>(siExpression, context);
   //   2. Set upper and lower reference values

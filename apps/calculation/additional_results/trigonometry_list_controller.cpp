@@ -56,8 +56,7 @@ void TrigonometryListController::computeAdditionalResults(
   simplifiedAngle = Multiplication::Builder(
       FracPart::Builder(Division::Builder(exactAngle, period.clone())),
       period.clone());
-  PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
-                                    ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context);
 
   /* Approximate the angle if:
    * - The reduction failed

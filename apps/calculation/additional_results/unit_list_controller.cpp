@@ -93,8 +93,9 @@ void UnitListController::computeAdditionalResults(
       &copy, &units, context,
       {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   assert(!units.isUninitialized());
-  double value =
-      Shared::PoincareHelpers::ApproximateToScalar<double>(copy, context);
+  double value = Shared::PoincareHelpers::ApproximateToScalar<double>(
+      copy, context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   ReductionContext reductionContext =
       Shared::PoincareHelpers::ReductionContextForParameters(
           exactClone, context,
@@ -216,8 +217,9 @@ void UnitListController::computeAdditionalResults(
        .symbolicComputation =
            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
        .unitConversion = UnitConversion::None});
-  m_SIValue =
-      PoincareHelpers::ApproximateToScalar<double>(siExpression, context);
+  m_SIValue = PoincareHelpers::ApproximateToScalar<double>(
+      siExpression, context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   //   2. Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);

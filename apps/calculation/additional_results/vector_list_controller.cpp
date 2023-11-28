@@ -41,8 +41,9 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++, Expression(), norm, computationContext);
 
   // 2. Normalized vector
-  Expression approximatedNorm =
-      PoincareHelpers::Approximate<double>(norm, context);
+  Expression approximatedNorm = PoincareHelpers::Approximate<double>(
+      norm, context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   if (approximatedNorm.isNull(context) != TrinaryBoolean::False ||
       Expression::IsInfinity(approximatedNorm)) {
     return;
@@ -75,8 +76,9 @@ void VectorListController::computeAdditionalResults(
         Trigonometry::AnglePeriodInAngleUnit(computationContext.angleUnit()),
         angle);
   }
-  float angleApproximation =
-      PoincareHelpers::ApproximateToScalar<float>(angle, context);
+  float angleApproximation = PoincareHelpers::ApproximateToScalar<float>(
+      angle, context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   if (!std::isfinite(angleApproximation)) {
     return;
   }
@@ -86,9 +88,11 @@ void VectorListController::computeAdditionalResults(
 
   // 4. Illustration
   float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      vector.childAtIndex(0), context);
+      vector.childAtIndex(0), context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      vector.childAtIndex(1), context);
+      vector.childAtIndex(1), context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {

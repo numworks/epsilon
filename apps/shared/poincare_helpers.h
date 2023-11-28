@@ -18,10 +18,11 @@ constexpr static Poincare::UnitConversion k_defaultUnitConversion =
 
 inline Poincare::Layout CreateLayout(
     const Poincare::Expression e, Poincare::Context* context,
-    Poincare::Preferences* preferences =
-        Poincare::Preferences::sharedPreferences) {
-  return e.createLayout(preferences->displayMode(),
-                        preferences->numberOfSignificantDigits(), context);
+    Poincare::Preferences::PrintFloatMode displayMode =
+        Poincare::Preferences::sharedPreferences->displayMode(),
+    uint8_t numberOfSignificantDigits =
+        Poincare::Preferences::sharedPreferences->numberOfSignificantDigits()) {
+  return e.createLayout(displayMode, numberOfSignificantDigits, context);
 }
 
 template <class T>

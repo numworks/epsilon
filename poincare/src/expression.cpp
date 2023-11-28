@@ -966,8 +966,8 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
   if (type() == ExpressionNode::Type::Randint) {
     /* Randint evaluates to either a real integer or a list (not real), based
      * on the type of its inputs. */
-    return childAtIndex(0).isReal(context, canContainMatrices) &&
-           childAtIndex(1).isReal(context, canContainMatrices);
+    return static_cast<const Randint *>(this)->isReal(context,
+                                                      canContainMatrices);
   }
 
   if (type() == ExpressionNode::Type::ConstantMaths) {

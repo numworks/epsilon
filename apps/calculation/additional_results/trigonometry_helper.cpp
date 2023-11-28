@@ -65,8 +65,9 @@ Expression ExtractExactAngleFromDirectTrigo(
                                            preferences->angleUnit()));
   }
   // The angle must be real.
-  if (!std::isfinite(
-          PoincareHelpers::ApproximateToScalar<double>(exactAngle, context))) {
+  if (!std::isfinite(PoincareHelpers::ApproximateToScalar<double>(
+          exactAngle, context,
+          {.complexFormat = complexFormat, .angleUnit = angleUnit}))) {
     return Expression();
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());

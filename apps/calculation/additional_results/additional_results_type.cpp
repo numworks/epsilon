@@ -134,8 +134,9 @@ bool AdditionalResultsType::HasUnit(
       {.complexFormat = complexFormat,
        .angleUnit = angleUnit,
        .unitConversion = UnitConversion::None});
-  double value =
-      PoincareHelpers::ApproximateToScalar<double>(clone, globalContext);
+  double value = PoincareHelpers::ApproximateToScalar<double>(
+      clone, globalContext,
+      {.complexFormat = complexFormat, .angleUnit = angleUnit});
   if (!unit.isUninitialized() &&
       (Unit::ShouldDisplayAdditionalOutputs(
            value, unit,

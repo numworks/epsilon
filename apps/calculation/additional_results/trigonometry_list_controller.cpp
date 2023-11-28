@@ -78,14 +78,17 @@ void TrigonometryListController::computeAdditionalResults(
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
       if (PoincareHelpers::ApproximateToScalar<double>(
-              Sine::Builder(exactAngle), context) < 0) {
+              Sine::Builder(exactAngle), context,
+              {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit}) <
+          0) {
         approximateAngle =
             Subtraction::Builder(period.clone(), approximateAngle);
       }
     }
     assert(!approximateAngle.isUninitialized());
-    approximateAngle =
-        PoincareHelpers::Approximate<double>(approximateAngle, context);
+    approximateAngle = PoincareHelpers::Approximate<double>(
+        approximateAngle, context,
+        {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
     exactAngle = approximateAngle;
     m_isStrictlyEqual[index] = false;
   } else {
@@ -131,7 +134,7 @@ void TrigonometryListController::computeAdditionalResults(
    * double is castable in float. */
   float angle = static_cast<float>(PoincareHelpers::ApproximateToScalar<double>(
       approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
-      context));
+      context, {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit}));
   // Convert angle to radians
   if (m_angleUnit != Preferences::AngleUnit::Radian) {
     angle = angle * M_PI / Trigonometry::PiInAngleUnit(m_angleUnit);

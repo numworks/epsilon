@@ -1600,6 +1600,7 @@ U Expression::ParseAndSimplifyAndApproximateToScalar(
     SymbolicComputation symbolicComputation) {
   Expression exp = ParseAndSimplify(text, context, symbolicComputation);
   assert(!exp.isUninitialized());
+  // TODO: Shared shouldn't be called in Poincare !
   return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
 }
 

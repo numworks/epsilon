@@ -59,32 +59,50 @@ inline int Serialize(
 
 // ===== Approximation =====
 
+struct ApproximationParameters {
+  Poincare::Preferences::ComplexFormat complexFormat =
+      Poincare::Preferences::sharedPreferences->complexFormat();
+  Poincare::Preferences::AngleUnit angleUnit =
+      Poincare::Preferences::sharedPreferences->angleUnit();
+  bool updateComplexFormatWithExpression = true;
+};
+
 inline Poincare::ApproximationContext ApproximationContextForParameters(
-    const Poincare::Expression e, Poincare::Context* context) {
-  Poincare::ApproximationContext approximationContext(context);
-  approximationContext.updateComplexFormat(e);
+    const Poincare::Expression e, Poincare::Context* context,
+    ApproximationParameters approximationParameters) {
+  Poincare::ApproximationContext approximationContext(
+      context, approximationParameters.complexFormat,
+      approximationParameters.angleUnit);
+  if (approximationParameters.updateComplexFormatWithExpression) {
+    approximationContext.updateComplexFormat(e);
+  }
   return approximationContext;
 }
 
 template <class T>
-inline Poincare::Expression Approximate(const Poincare::Expression e,
-                                        Poincare::Context* context) {
-  return e.approximate<T>(ApproximationContextForParameters(e, context));
+inline Poincare::Expression Approximate(
+    const Poincare::Expression e, Poincare::Context* context,
+    ApproximationParameters approximationParameters = {}) {
+  return e.approximate<T>(
+      ApproximationContextForParameters(e, context, approximationParameters));
 }
 
 template <class T>
-inline T ApproximateToScalar(const Poincare::Expression e,
-                             Poincare::Context* context) {
+inline T ApproximateToScalar(
+    const Poincare::Expression e, Poincare::Context* context,
+    ApproximationParameters approximationParameters = {}) {
   return e.approximateToScalar<T>(
-      ApproximationContextForParameters(e, context));
+      ApproximationContextForParameters(e, context, approximationParameters));
 }
 
 template <class T>
-inline T ApproximateWithValueForSymbol(const Poincare::Expression e,
-                                       const char* symbol, T x,
-                                       Poincare::Context* context) {
+inline T ApproximateWithValueForSymbol(
+    const Poincare::Expression e, const char* symbol, T x,
+    Poincare::Context* context,
+    ApproximationParameters approximationParameters = {}) {
   return e.approximateWithValueForSymbol<T>(
-      symbol, x, ApproximationContextForParameters(e, context));
+      symbol, x,
+      ApproximationContextForParameters(e, context, approximationParameters));
 }
 
 // ===== Reduction =====

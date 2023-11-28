@@ -501,8 +501,9 @@ Expression ContinuousFunction::Model::expressionReduced(
                (m_expression.type() == ExpressionNode::Type::Dependency &&
                 m_expression.childAtIndex(0).type() ==
                     ExpressionNode::Type::Point));
-        m_expression =
-            PoincareHelpers::Approximate<double>(m_expression, context);
+        m_expression = PoincareHelpers::Approximate<double>(
+            m_expression, context,
+            {.complexFormat = complexFormat, .angleUnit = angleUnit});
       }
     } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
                !thisProperties.isScatterPlot() &&

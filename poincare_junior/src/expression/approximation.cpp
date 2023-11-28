@@ -110,11 +110,6 @@ T Approximation::To(const Tree* node) {
   };
 }
 
-bool Approximation::ApproximateAndReplaceEveryScalar(Tree* tree) {
-  bool result = Random::ApproximateTreeNodes<double>(tree);
-  return ApproximateAndReplaceEveryScalarT<double>(tree) || result;
-}
-
 template <typename T>
 T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor) {
   T res;
@@ -150,7 +145,7 @@ bool interruptApproximation(TypeBlock type, int childIndex,
 template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
-  if (tree->type() == FloatType<T>::type ||
+  if (tree->type() == FloatType<T>::type || tree->isRandomNode() ||
       tree->isOfType(
           {BlockType::UserSymbol, BlockType::Variable, BlockType::Unit})) {
     return false;

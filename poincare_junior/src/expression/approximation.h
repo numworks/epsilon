@@ -63,7 +63,9 @@ class Approximation final {
     assert(b == 0.0 || b == 1.0);
     return (b == 0.0) ? std::acos(a) : std::asin(a);
   }
-  static bool ApproximateAndReplaceEveryScalar(Tree* tree);
+  static bool ApproximateAndReplaceEveryScalar(Tree* tree) {
+    return ApproximateAndReplaceEveryScalarT<double>(tree);
+  }
   EDITION_REF_WRAP(ApproximateAndReplaceEveryScalar)
 
  private:

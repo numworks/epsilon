@@ -11,9 +11,6 @@ namespace Shared {
 
 namespace PoincareHelpers {
 
-constexpr static Poincare::SymbolicComputation
-    k_replaceWithDefinitionOrUndefined = Poincare::SymbolicComputation::
-        ReplaceAllSymbolsWithDefinitionsOrUndefined;
 constexpr static Poincare::SymbolicComputation k_replaceWithDefinition =
     Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
 constexpr static Poincare::UnitConversion k_defaultUnitConversion =

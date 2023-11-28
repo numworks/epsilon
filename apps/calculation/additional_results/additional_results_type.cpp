@@ -18,7 +18,9 @@ namespace Calculation {
 
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const Expression approximateOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{};
   }
@@ -33,15 +35,16 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (inputHasUnit || exactHasUnit) {
     /* We display units additional results based on exact output. If input has
      * units but not output (ex: L/(L/3)), we don't display any results. */
-    return AdditionalResultsType{.unit = exactHasUnit && HasUnit(exactOutput)};
+    return AdditionalResultsType{
+        .unit = exactHasUnit && HasUnit(exactOutput, complexFormat, angleUnit)};
   }
-  if (HasDirectTrigo(input, exactOutput)) {
+  if (HasDirectTrigo(input, exactOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
   if (HasInverseTrigo(input, exactOutput)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
-  if (HasVector(exactOutput)) {
+  if (HasVector(exactOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.vector = true};
   }
   if (approximateOutput.deepIsMatrix()) {
@@ -96,13 +99,15 @@ bool AdditionalResultsType::HasComplex(const Expression approximateOutput) {
   return approximateOutput.isScalarComplex();
 }
 
-bool AdditionalResultsType::HasDirectTrigo(const Expression input,
-                                           const Expression exactOutput) {
+bool AdditionalResultsType::HasDirectTrigo(
+    const Expression input, const Expression exactOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   assert(!exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-      input, exactOutput, globalContext);
+      input, exactOutput, globalContext, complexFormat, angleUnit);
   return !exactAngle.isUninitialized();
 }
 
@@ -115,14 +120,20 @@ bool AdditionalResultsType::HasInverseTrigo(const Expression input,
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
 }
 
-bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
+bool AdditionalResultsType::HasUnit(
+    const Expression exactOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   assert(exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression unit;
   Expression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &clone, &unit, globalContext, {.unitConversion = UnitConversion::None});
+      &clone, &unit, globalContext,
+      {.complexFormat = complexFormat,
+       .angleUnit = angleUnit,
+       .unitConversion = UnitConversion::None});
   double value =
       PoincareHelpers::ApproximateToScalar<double>(clone, globalContext);
   if (!unit.isUninitialized() &&
@@ -135,17 +146,22 @@ bool AdditionalResultsType::HasUnit(const Expression exactOutput) {
      * which will make the unit list controller crash.  */
     unit = Expression();
     clone = exactOutput.clone();
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(&clone, &unit, globalContext);
+    PoincareHelpers::CloneAndReduceAndRemoveUnit(
+        &clone, &unit, globalContext,
+        {.complexFormat = complexFormat, .angleUnit = angleUnit});
     return !unit.isUninitialized();
   }
   return false;
 }
 
-bool AdditionalResultsType::HasVector(const Expression exactOutput) {
+bool AdditionalResultsType::HasVector(
+    const Expression exactOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression norm =
-      VectorHelper::BuildVectorNorm(exactOutput.clone(), globalContext);
+  Expression norm = VectorHelper::BuildVectorNorm(
+      exactOutput.clone(), globalContext, complexFormat, angleUnit);
   if (norm.isUninitialized()) {
     return false;
   }

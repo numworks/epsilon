@@ -25,19 +25,28 @@ struct AdditionalResultsType {
 
   static AdditionalResultsType AdditionalResultsForExpressions(
       const Poincare::Expression input, const Poincare::Expression exactOutput,
-      const Poincare::Expression approximateOutput);
+      const Poincare::Expression approximateOutput,
+      const Poincare::Preferences::ComplexFormat complexFormat,
+      const Poincare::Preferences::AngleUnit angleUnit);
 
   static bool ForbidAdditionalResults(
       const Poincare::Expression input, const Poincare::Expression exactOutput,
       const Poincare::Expression approximateOutput);
 
   static bool HasComplex(const Poincare::Expression approximateOutput);
-  static bool HasDirectTrigo(const Poincare::Expression input,
-                             const Poincare::Expression exactOutput);
+  static bool HasDirectTrigo(
+      const Poincare::Expression input, const Poincare::Expression exactOutput,
+      const Poincare::Preferences::ComplexFormat complexFormat,
+      const Poincare::Preferences::AngleUnit angleUnit);
   static bool HasInverseTrigo(const Poincare::Expression input,
                               const Poincare::Expression exactOutput);
-  static bool HasUnit(const Poincare::Expression exactOutput);
-  static bool HasVector(const Poincare::Expression exactOutput);
+  static bool HasUnit(const Poincare::Expression exactOutput,
+                      const Poincare::Preferences::ComplexFormat complexFormat,
+                      const Poincare::Preferences::AngleUnit angleUnit);
+  static bool HasVector(
+      const Poincare::Expression exactOutput,
+      const Poincare::Preferences::ComplexFormat complexFormat,
+      const Poincare::Preferences::AngleUnit angleUnit);
   static bool HasMatrix(const Poincare::Expression approximateOutput);
   static bool HasFunction(const Poincare::Expression input,
                           const Poincare::Expression approximateOutput);

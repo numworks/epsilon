@@ -11,7 +11,9 @@ namespace Calculation {
 
 void AdditionalResultsController::openAdditionalResults(
     AdditionalResultsType type, const Expression input,
-    const Expression exactOutput, const Expression approximateOutput) {
+    const Expression exactOutput, const Expression approximateOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   // Head controller
   /* TODO: Refactor to avoid writing an if for each parent * child. */
   ExpressionsListController *mainController = nullptr;
@@ -41,7 +43,8 @@ void AdditionalResultsController::openAdditionalResults(
   } else if (type.scientificNotation) {
     mainController = &m_scientificNotationListController;
   }
-  computeResults(&mainController, input, exactOutput, approximateOutput);
+  computeResults(&mainController, input, exactOutput, approximateOutput,
+                 complexFormat, angleUnit);
 
   // Tail controller
   ExpressionsListController *tailController = nullptr;
@@ -50,7 +53,8 @@ void AdditionalResultsController::openAdditionalResults(
   } else if (type.rational) {
     tailController = &m_rationalController;
   }
-  computeResults(&tailController, input, exactOutput, approximateOutput);
+  computeResults(&tailController, input, exactOutput, approximateOutput,
+                 complexFormat, angleUnit);
 
   if (tailController) {
     if (mainController) {
@@ -72,7 +76,9 @@ void AdditionalResultsController::openAdditionalResults(
 void AdditionalResultsController::computeResults(
     ExpressionsListController **expressionsListController,
     const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const Expression approximateOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   if (*expressionsListController == nullptr) {
     return;
   }
@@ -82,6 +88,8 @@ void AdditionalResultsController::computeResults(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     (*expressionsListController)->tidy();
+    (*expressionsListController)
+        ->setComplexFormatAndAngleUnit(complexFormat, angleUnit);
     (*expressionsListController)
         ->computeAdditionalResults(input, exactOutput, approximateOutput);
   } else {

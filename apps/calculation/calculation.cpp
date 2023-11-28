@@ -334,21 +334,8 @@ void Calculation::fillExpressionsForAdditionalResults(
 AdditionalResultsType Calculation::additionalResultsType() {
   Expression i, a, e;
   fillExpressionsForAdditionalResults(&i, &e, &a);
-  /* Temporarily set the complex format and angle unit to the ones used to
-   * compute the output. */
-  Preferences::ComplexFormat currentComplexFormat =
-      Preferences::sharedPreferences->complexFormat();
-  Preferences::AngleUnit currentAngleUnit =
-      Preferences::sharedPreferences->angleUnit();
-  Preferences::sharedPreferences->setComplexFormat(m_complexFormat);
-  Preferences::sharedPreferences->setAngleUnit(m_angleUnit);
-
-  AdditionalResultsType result =
-      AdditionalResultsType::AdditionalResultsForExpressions(i, e, a);
-
-  Preferences::sharedPreferences->setComplexFormat(currentComplexFormat);
-  Preferences::sharedPreferences->setAngleUnit(currentAngleUnit);
-  return result;
+  return AdditionalResultsType::AdditionalResultsForExpressions(
+      i, e, a, m_complexFormat, m_angleUnit);
 }
 
 }  // namespace Calculation

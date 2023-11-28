@@ -82,6 +82,8 @@ T Approximation::To(const Tree* node) {
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Infinity:
       return INFINITY;
+    case BlockType::Opposite:
+      return -To<T>(node->nextNode());
     case BlockType::Sign: {
       T c = To<T>(node->nextNode());
       // TODO why no epsilon in Poincare ?

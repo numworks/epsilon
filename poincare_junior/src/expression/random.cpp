@@ -1,6 +1,7 @@
 #include "random.h"
 
 #include <math.h>
+#include <poincare/random.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/n_ary.h>
@@ -58,11 +59,10 @@ template <typename T>
 T Random::Approximate(const Tree* randomTree) {
   switch (randomTree->type()) {
     case BlockType::RandInt:
-      // TODO: Copy or factorize Poincare::Integer::RandomInt<T>();
-      return static_cast<T>(GetSeed(randomTree));
+      return RandomInt<T>(Approximation::To<T>(randomTree->child(0), nullptr),
+                          Approximation::To<T>(randomTree->child(1), nullptr));
     case BlockType::Random:
-      // TODO: Copy or factorize Poincare::Random::random<T>();
-      return static_cast<T>(GetSeed(randomTree));
+      return Poincare::Random::random<T>();
     default:
       assert(randomTree->type() == BlockType::RandIntNoRep);
       // TODO: Copy or factorize
@@ -73,9 +73,34 @@ T Random::Approximate(const Tree* randomTree) {
   }
 }
 
+/* We could adapt Poincare::Integer::RandomInt<T>() here instead, but in
+ * practice this method is called on approximation only. Children may have
+ * already approximated as well.
+ * As a result, this simpler implementation is considered enough for now.
+ * Output distribution and floating point precision may be studied if such a
+ * result where to be displayed exactly. */
+template <typename T>
+T Random::RandomInt(T a, T b) {
+  if (std::isnan(a) || std::isnan(b) || a > b || std::round(a) != a ||
+      std::round(b) != b) {
+    return NAN;
+  }
+  if (a == b) {
+    return a;
+  }
+  T range = 1 + b - a;
+  // Ugly way to avoid the rare case where rand is exactly 1.
+  T rand;
+  while ((rand = Poincare::Random::random<T>()) == static_cast<T>(1.0)) {
+  }
+  return std::floor(rand * range + a);
+}
+
 template float Random::Approximate<float>(const Tree*);
 template double Random::Approximate<double>(const Tree*);
 template float Random::Approximate<float>(const Tree*, Context*);
 template double Random::Approximate<double>(const Tree*, Context*);
+template float Random::RandomInt<float>(float, float);
+template double Random::RandomInt<double>(double, double);
 
 }  // namespace PoincareJ

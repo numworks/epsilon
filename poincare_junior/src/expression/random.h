@@ -44,6 +44,8 @@ class Random {
     assert(randomTree->isRandomNode() && GetSeed(randomTree) == 0);
     randomTree->setNodeValue(0, seed);
   }
+  template <typename T>
+  static T RandomInt(T a, T b);
 };
 
 }  // namespace PoincareJ

@@ -28,6 +28,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
 
 void ResultsHomogeneityController::viewWillAppear() {
   m_resultsHomogeneityTable.selectableTableView()->selectRow(-1);
+  m_resultsHomogeneityTable.selectableTableView()->resetScroll();
   m_selectableListView.selectRow(-1);
   m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();

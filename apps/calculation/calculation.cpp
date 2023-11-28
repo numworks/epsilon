@@ -173,8 +173,10 @@ static bool ShouldOnlyDisplayExactOutput(Expression input) {
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
+#if !OLD_POINCARE
   // TODO remove this
   return DisplayOutput::ExactAndApproximate;
+#endif
   if (m_displayOutput != DisplayOutput::Unknown) {
     return m_displayOutput;
   }
@@ -269,7 +271,9 @@ void Calculation::createOutputLayouts(Layout *exactOutput,
 }
 
 Calculation::EqualSign Calculation::equalSign(Context *context) {
+#if !OLD_POINCARE
   return EqualSign::Unknown;
+#endif
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
@@ -323,7 +327,9 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
 
 void Calculation::fillExpressionsForAdditionalResults(
     Expression *input, Expression *exactOutput, Expression *approximateOutput) {
+#if !OLD_POINCARE
   return;
+#endif
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   *input = this->input();

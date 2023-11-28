@@ -14,7 +14,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-#if 0
+#if OLD_POINCARE
 // Deactivated with PCJ
 static Expression enhancePushedExpression(Expression expression) {
   /* Add an angle unit in trigonometric functions if the user could have
@@ -135,7 +135,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Push the input
       Expression inputExpression = Expression::Parse(text, &ansContext);
-#if 0
+#if OLD_POINCARE
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
 #endif
@@ -144,14 +144,14 @@ ExpiringPointer<Calculation> CalculationStore::push(
       if (cursor == k_pushError) {
         return errorPushUndefined();
       }
-#if 0
+#if OLD_POINCARE
       /* Recompute the location of the input text in case a calculation was
        * deleted. */
       char *const inputText = endOfCalculations() + sizeof(Calculation);
 #endif
 
       // Parse and compute the expression
-#if 0
+#if OLD_POINCARE
       PoincareHelpers::ParseAndSimplifyAndApproximate(
           inputText, &inputExpression, &exactOutputExpression,
           &approximateOutputExpression, context);
@@ -167,7 +167,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 #endif
 
       // Post-processing of store expression
-#if 0
+#if OLD_POINCARE
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
 #endif
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {

@@ -632,14 +632,16 @@ void mpz_deinit(mpz_t *z) {
     }
 }
 
-#if 0
-these functions are unused
-
+/* Warning: this is a NumWorks change to MicroPython 1.17 */
+/* mpz_zero was inside the following #if 0 */
 mpz_t *mpz_zero(void) {
     mpz_t *z = m_new_obj(mpz_t);
     mpz_init_zero(z);
     return z;
 }
+
+#if 0
+these functions are unused
 
 mpz_t *mpz_from_int(mp_int_t val) {
     mpz_t *z = mpz_zero();
@@ -1396,9 +1398,15 @@ void mpz_pow3_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs, const mpz_t 
    gcd(0, 0) = 0
    gcd(z, 0) = abs(z)
 */
+
+/* Warning: this is a NumWorks change to MicroPython 1.17 */
+/* mpz_gcd was inside the following #if 0, and the case where both z1 and z2
+ * have len == 0 wasn't handled. */
 mpz_t *mpz_gcd(const mpz_t *z1, const mpz_t *z2) {
     if (z1->len == 0) {
-        // TODO: handle case of z2->alloc=0
+        if (z2->len == 0) {
+          return mpz_zero();
+        }
         mpz_t *a = mpz_clone(z2);
         a->neg = 0;
         return a;
@@ -1448,8 +1456,6 @@ mpz_t *mpz_gcd(const mpz_t *z1, const mpz_t *z2) {
     }
 }
 
-/* Warning: this is a NumWorks change to MicroPython 1.17 */
-/* mpz_gcd was inside the if */
 #if 0
 this function is unused
 

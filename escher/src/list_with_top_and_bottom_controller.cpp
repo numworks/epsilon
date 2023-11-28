@@ -124,8 +124,15 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
+void ListWithTopAndBottomController::didBecomeFirstResponder() {
+  if (selectedRow() < firstCellIndex()) {
+    selectFirstCell();
+  }
+  App::app()->setFirstResponder(&m_selectableListView);
+}
+
 void ListWithTopAndBottomController::viewWillAppear() {
-  selectFirstCell();
+  selectRow(-1);
   setOffset(KDPointZero);
   m_selectableListView.reloadData(false);
   ViewController::viewWillAppear();

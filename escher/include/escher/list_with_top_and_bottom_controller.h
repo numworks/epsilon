@@ -80,7 +80,7 @@ class ListWithTopAndBottomController : public SelectableViewController,
   void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
-  void selectFirstCell() { selectRow(m_outerDataSource.hasTopView()); }
+  void selectFirstCell() { selectRow(firstCellIndex()); }
 
  protected:
   constexpr static KDGlyph::Format k_messageFormat = {
@@ -89,9 +89,7 @@ class ListWithTopAndBottomController : public SelectableViewController,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
 
-  void didBecomeFirstResponder() override {
-    App::app()->setFirstResponder(&m_selectableListView);
-  }
+  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   int innerRowFromRow(int row) const {
     assert(row >= m_outerDataSource.hasTopView());
@@ -111,6 +109,7 @@ class ListWithTopAndBottomController : public SelectableViewController,
   void resetSizeMemoization() override {
     return m_outerDataSource.resetSizeMemoization();
   }
+  int firstCellIndex() { return m_outerDataSource.hasTopView(); }
   ListWithTopAndBottomDataSource m_outerDataSource;
 };
 

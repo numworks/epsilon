@@ -118,32 +118,13 @@ static consteval auto KPol(Exp exponents, CTS... args) {
   return __Pol(exponents, KTree(args)...);
 }
 
-/* Immediates are used to represent numerical constants of the code (like 2_e)
- * temporarily before they are cast to Trees, this allows writing -2_e. */
-
-template <int64_t N, int64_t D>
-class RationalLitteral : public TreeCompatible<RationalLitteral<N, D>> {
- public:
-  consteval auto operator-() { return RationalLitteral<-N, D>(); }
-};
-
-// Deduction guides to create the smallest Tree that can represent the Immediate
-
-KTree(RationalLitteral<1, 2>)->KTree<BlockType::Half>;
-
-template <int64_t N, int64_t D>
-  requires(N >= INT8_MIN && N <= INT8_MAX && D >= 1 && D <= INT8_MAX)
-KTree(RationalLitteral<N, D>) -> KTree<BlockType::RationalShort, N, D>;
+/* Integer litterals are used to represent numerical constants of the code (like
+ * 2_e) temporarily before they are cast to Trees, to allow writing -2_e. */
 
 template <int64_t V>
 class IntegerLitteral : public TreeCompatible<IntegerLitteral<V>> {
  public:
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
-  template <int64_t D>
-    requires(D > 0)
-  consteval auto operator/(IntegerLitteral<D> other) {
-    return RationalLitteral<V, D>();
-  }
   // Note : we could decide to implement constant propagation operators here
 };
 
@@ -214,6 +195,28 @@ SPECIALIZATIONS;
 #undef B
 #undef GUIDE
 #undef SPECIALIZATIONS
+
+/* Rationals litterals are written 2_e / 3_e */
+
+template <int64_t N, int64_t D>
+class RationalLitteral : public TreeCompatible<RationalLitteral<N, D>> {
+ public:
+  consteval auto operator-() { return RationalLitteral<-N, D>(); }
+};
+
+template <int64_t N, int64_t D>
+  requires(D > 0)
+consteval auto operator/(IntegerLitteral<N> a, IntegerLitteral<D> b) {
+  return RationalLitteral<N, D>();
+}
+
+KTree(RationalLitteral<1, 2>)->KTree<BlockType::Half>;
+
+template <int64_t N, int64_t D>
+  requires(N >= INT8_MIN && N <= INT8_MAX && D > 0 && D <= UINT8_MAX)
+KTree(RationalLitteral<N, D>) -> KTree<BlockType::RationalShort, N, D>;
+
+/* Named constants */
 
 constexpr KTree π_e =
     KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();

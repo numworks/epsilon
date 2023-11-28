@@ -216,6 +216,8 @@ template <int64_t N, int64_t D>
   requires(N >= INT8_MIN && N <= INT8_MAX && D > 0 && D <= UINT8_MAX)
 KTree(RationalLitteral<N, D>) -> KTree<BlockType::RationalShort, N, D>;
 
+// TODO guides for RationalNegBig and RationalPosBig
+
 /* Named constants */
 
 constexpr KTree π_e =

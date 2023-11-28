@@ -122,19 +122,8 @@ static consteval auto KPol(Exp exponents, CTS... args) {
  * temporarily before they are cast to Trees, this allows writing -2_e. */
 
 template <int64_t N, int64_t D>
-class RationalLitteral : public AbstractTreeCompatible {
+class RationalLitteral : public TreeCompatible<RationalLitteral<N, D>> {
  public:
-  // Once a deduction guide has chosen the KTree for the litteral, build it
-  template <Block... B>
-  consteval operator KTree<B...>() const {
-    return KTree<B...>();
-  }
-
-  constexpr operator const Tree*() const {
-    return KTree(RationalLitteral<N, D>());
-  }
-  const Tree* operator->() const { return KTree(RationalLitteral<N, D>()); }
-
   consteval auto operator-() { return RationalLitteral<-N, D>(); }
 };
 
@@ -147,17 +136,8 @@ template <int64_t N, int64_t D>
 KTree(RationalLitteral<N, D>) -> KTree<BlockType::RationalShort, N, D>;
 
 template <int64_t V>
-class IntegerLitteral : public AbstractTreeCompatible {
+class IntegerLitteral : public TreeCompatible<IntegerLitteral<V>> {
  public:
-  // Once a deduction guide has chosen the KTree for the litteral, build it
-  template <Block... B>
-  consteval operator KTree<B...>() const {
-    return KTree<B...>();
-  }
-
-  constexpr operator const Tree*() const { return KTree(IntegerLitteral<V>()); }
-  const Tree* operator->() const { return KTree(IntegerLitteral<V>()); }
-
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
   template <int64_t D>
     requires(D > 0)

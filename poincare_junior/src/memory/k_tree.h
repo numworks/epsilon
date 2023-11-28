@@ -58,6 +58,21 @@ class KTree : public AbstractTree {
   const Tree* operator->() const { return operator const Tree*(); }
 };
 
+/* Inherit this class using "class A : public AbstractTreeCompatible<A>" to
+ * creates types that can be mixed with KTrees and their representation defined
+ * with deduction guides. */
+template <typename T>
+class TreeCompatible : public AbstractTreeCompatible {
+ public:
+  // Once a deduction guide has chosen the KTree for the litteral, build it
+  template <Block... B>
+  consteval operator KTree<B...>() const {
+    return KTree<B...>();
+  }
+  constexpr operator const Tree*() const { return KTree(T()); }
+  const Tree* operator->() const { return KTree(T()); }
+};
+
 /* Helper to concatenate KTrees */
 
 /* Usage:
@@ -219,16 +234,7 @@ struct String {
 };
 
 template <Placeholder::Tag T, Placeholder::Filter F>
-struct KPlaceholderFilter : public AbstractTreeCompatible {
-  template <Block... B>
-  consteval operator KTree<B...>() {
-    return KTree<B...>();
-  }
-
-  constexpr operator const Tree*() const {
-    return KTree(KPlaceholderFilter<T, F>());
-  }
-  const Tree* operator->() const { return KTree(KPlaceholderFilter<T, F>()); }
+struct KPlaceholderFilter : public TreeCompatible<KPlaceholderFilter<T, F>> {
   static constexpr Placeholder::Tag k_tag = T;
 };
 

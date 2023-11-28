@@ -28,6 +28,7 @@ class SolutionsController : public Escher::ViewController,
   // ViewController
   const char *title() override;
   Escher::View *view() override { return &m_contentView; }
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didEnterResponderChain(

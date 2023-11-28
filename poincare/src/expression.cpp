@@ -16,6 +16,7 @@
 #include <poincare/float.h>
 #include <poincare/ghost.h>
 #include <poincare/imaginary_part.h>
+#include <poincare/junior_layout.h>
 #include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -1171,6 +1172,7 @@ Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                             LayoutHasStringWithThousandSeparator(l))) {
     StripMarginFromLayout(l);
   }
+  l = JuniorLayout::Juniorize(l);
   return l;
 }
 

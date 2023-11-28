@@ -58,6 +58,7 @@ class JuniorLayout final
     : public LayoutNoChildren<JuniorLayout, JuniorLayoutNode> {
  public:
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
+  static JuniorLayout Juniorize(Layout l);
 };
 
 }  // namespace Poincare

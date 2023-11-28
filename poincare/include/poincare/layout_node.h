@@ -46,7 +46,8 @@ class LayoutNode : public TreeNode {
     StringLayout,
     SumLayout,
     VectorNormLayout,
-    VerticalOffsetLayout
+    VerticalOffsetLayout,
+    JuniorLayout
   };
 
   // Constructor

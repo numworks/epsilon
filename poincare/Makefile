@@ -16,6 +16,7 @@ poincare_src += $(addprefix poincare/src/,\
   horizontal_layout.cpp \
   input_beautification.cpp \
   integral_layout.cpp \
+  junior_layout.cpp \
   layout.cpp \
   layout_cursor.cpp \
   layout_node.cpp \

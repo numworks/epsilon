@@ -93,7 +93,7 @@ bool AdditionalResultsType::HasComplex(const Expression approximateOutput) {
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */
-  return approximateOutput.isScalarComplex(Preferences::sharedPreferences);
+  return approximateOutput.isScalarComplex();
 }
 
 bool AdditionalResultsType::HasDirectTrigo(const Expression input,
@@ -109,7 +109,7 @@ bool AdditionalResultsType::HasDirectTrigo(const Expression input,
 bool AdditionalResultsType::HasInverseTrigo(const Expression input,
                                             const Expression exactOutput) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!exactOutput.isScalarComplex(Preferences::sharedPreferences));
+  assert(!exactOutput.isScalarComplex());
   assert(!exactOutput.hasUnit(true));
   return (Trigonometry::isInverseTrigonometryFunction(input)) ||
          Trigonometry::isInverseTrigonometryFunction(exactOutput);
@@ -152,8 +152,7 @@ bool AdditionalResultsType::HasVector(const Expression exactOutput) {
   assert(!norm.isUndefined());
   int nChildren = exactOutput.numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (exactOutput.childAtIndex(i).isScalarComplex(
-            Preferences::sharedPreferences)) {
+    if (exactOutput.childAtIndex(i).isScalarComplex()) {
       return false;
     }
   }

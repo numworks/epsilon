@@ -27,7 +27,7 @@ Expression ExtractExactAngleFromDirectTrigo(const Expression input,
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
   Preferences* preferences = Preferences::sharedPreferences;
-  assert(!exactOutput.isScalarComplex(preferences));
+  assert(!exactOutput.isScalarComplex());
   Expression directTrigoFunction;
   if (Trigonometry::isDirectTrigonometryFunction(input) &&
       !input.deepIsSymbolic(context,

@@ -37,11 +37,11 @@ class SelectableListViewController : public SelectableViewController,
   View* view() override { return &m_selectableListView; }
   SelectableListView* selectableListView() { return &m_selectableListView; }
 
- protected:
   void didBecomeFirstResponder() override {
     App::app()->setFirstResponder(&m_selectableListView);
   }
 
+ protected:
   SelectableListView m_selectableListView;
 };
 

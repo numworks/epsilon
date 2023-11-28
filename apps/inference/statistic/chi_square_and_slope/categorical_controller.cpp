@@ -23,13 +23,6 @@ CategoricalController::CategoricalController(Responder *parent,
   setScrollViewDelegate(this);
 }
 
-void CategoricalController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    categoricalTableCell()->selectableTableView()->resetScroll();
-  }
-  SelectableListViewController<ListViewDataSource>::didBecomeFirstResponder();
-}
-
 bool CategoricalController::ButtonAction(CategoricalController *controller,
                                          void *s) {
   controller->stackOpenPage(controller->m_nextController);

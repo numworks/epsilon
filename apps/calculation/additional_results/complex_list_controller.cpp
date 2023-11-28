@@ -26,9 +26,9 @@ void ComplexListController::computeAdditionalResults(
    * setComplex ?
    * - do the same for abs(z) and arg(z) for exponential form ? */
   assert(AdditionalResultsType::HasComplex(approximateOutput));
-  ComputationContext computationContext(
-      App::app()->localContext(), Preferences::ComplexFormat::Cartesian,
-      Preferences::sharedPreferences->angleUnit());
+  ComputationContext computationContext(App::app()->localContext(),
+                                        Preferences::ComplexFormat::Cartesian,
+                                        m_angleUnit);
   ApproximationContext approximationContext(computationContext);
 
   // Fill Calculation Store
@@ -72,8 +72,7 @@ I18n::Message ComplexListController::messageAtIndex(int index) {
 };
 
 Preferences::ComplexFormat ComplexListController::complexFormToDisplay() const {
-  return Preferences::sharedPreferences->complexFormat() ==
-                 Preferences::ComplexFormat::Polar
+  return m_complexFormat == Preferences::ComplexFormat::Polar
              ? Preferences::ComplexFormat::Cartesian
              : Preferences::ComplexFormat::Polar;
 }

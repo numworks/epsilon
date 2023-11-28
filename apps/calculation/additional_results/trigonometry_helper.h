@@ -9,7 +9,9 @@ namespace TrigonometryHelper {
 
 Poincare::Expression ExtractExactAngleFromDirectTrigo(
     const Poincare::Expression input, const Poincare::Expression exactOutput,
-    Poincare::Context* context);
+    Poincare::Context* context,
+    const Poincare::Preferences::ComplexFormat complexFormat,
+    const Poincare::Preferences::AngleUnit angleUnit);
 
 }
 

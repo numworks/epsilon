@@ -305,22 +305,11 @@ void HistoryController::handleOK() {
   Expression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
 
-  /* Temporarily set the complex format and angle unit to the ones used to
-   * compute the output. */
-  Preferences::ComplexFormat currentComplexFormat =
-      Preferences::sharedPreferences->complexFormat();
-  Preferences::AngleUnit currentAngleUnit =
-      Preferences::sharedPreferences->angleUnit();
-  Preferences::sharedPreferences->setComplexFormat(
-      selectedCalculation->complexFormat());
-  Preferences::sharedPreferences->setAngleUnit(
-      selectedCalculation->angleUnit());
-
+  /* Reuse the same complex format and angle unit as when the calculation was
+   * computed. */
   m_additionalResultsController.openAdditionalResults(
-      selectedCell->additionalResultsType(), i, e, a);
-
-  Preferences::sharedPreferences->setComplexFormat(currentComplexFormat);
-  Preferences::sharedPreferences->setAngleUnit(currentAngleUnit);
+      selectedCell->additionalResultsType(), i, e, a,
+      selectedCalculation->complexFormat(), selectedCalculation->angleUnit());
 }
 
 }  // namespace Calculation

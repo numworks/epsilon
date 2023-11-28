@@ -18,24 +18,23 @@ void TrigonometryListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
   assert((m_directTrigonometry &&
-          AdditionalResultsType::HasDirectTrigo(input, exactOutput)) ||
+          AdditionalResultsType::HasDirectTrigo(
+              input, exactOutput, m_complexFormat, m_angleUnit)) ||
          (!m_directTrigonometry &&
           AdditionalResultsType::HasInverseTrigo(input, exactOutput)));
 
-  Preferences::AngleUnit userAngleUnit =
-      Preferences::sharedPreferences->angleUnit();
   Context* context = App::app()->localContext();
-  ComputationContext computationContext(context);
+  ComputationContext computationContext(context, m_complexFormat, m_angleUnit);
 
   size_t index = 0;
 
-  Expression period = Trigonometry::AnglePeriodInAngleUnit(userAngleUnit);
+  Expression period = Trigonometry::AnglePeriodInAngleUnit(m_angleUnit);
 
   // Find the angle
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
     exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-                     input, exactOutput, context)
+                     input, exactOutput, context, m_complexFormat, m_angleUnit)
                      .clone();
     approximateAngle = Expression();
   } else {
@@ -56,7 +55,9 @@ void TrigonometryListController::computeAdditionalResults(
   simplifiedAngle = Multiplication::Builder(
       FracPart::Builder(Division::Builder(exactAngle, period.clone())),
       period.clone());
-  PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context);
+  PoincareHelpers::CloneAndSimplify(
+      &simplifiedAngle, context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
 
   /* Approximate the angle if:
    * - The reduction failed
@@ -98,7 +99,7 @@ void TrigonometryListController::computeAdditionalResults(
       exactAngle.clone(),
       Unit::Builder(
           UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
-              userAngleUnit)));
+              m_angleUnit)));
 
   Expression radians = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_radianRepresentativeIndex);
@@ -132,8 +133,8 @@ void TrigonometryListController::computeAdditionalResults(
       approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
       context));
   // Convert angle to radians
-  if (userAngleUnit != Preferences::AngleUnit::Radian) {
-    angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);
+  if (m_angleUnit != Preferences::AngleUnit::Radian) {
+    angle = angle * M_PI / Trigonometry::PiInAngleUnit(m_angleUnit);
   }
   assert(std::isfinite(angle));
   assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());

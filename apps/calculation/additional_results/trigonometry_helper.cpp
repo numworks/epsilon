@@ -12,9 +12,10 @@ namespace Calculation {
 
 namespace TrigonometryHelper {
 
-Expression ExtractExactAngleFromDirectTrigo(const Expression input,
-                                            const Expression exactOutput,
-                                            Context* context) {
+Expression ExtractExactAngleFromDirectTrigo(
+    const Expression input, const Expression exactOutput, Context* context,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   assert(!input.hasUnit(true));
   assert(!exactOutput.hasUnit(true));
   /* Trigonometry additional results are displayed if either input or output is
@@ -48,7 +49,9 @@ Expression ExtractExactAngleFromDirectTrigo(const Expression input,
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
   assert(!exactAngle.hasUnit(true));
   Expression unit;
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(&exactAngle, &unit, context);
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &exactAngle, &unit, context,
+      {.complexFormat = complexFormat, .angleUnit = angleUnit});
   if (!unit.isUninitialized()) {
     assert(unit.isPureAngleUnit());
     assert(static_cast<Unit&>(unit).representative() ==

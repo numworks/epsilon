@@ -20,13 +20,14 @@ namespace Calculation {
 void VectorListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(AdditionalResultsType::HasVector(exactOutput));
+  assert(AdditionalResultsType::HasVector(exactOutput, m_complexFormat,
+                                          m_angleUnit));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context *context = App::app()->localContext();
-  ComputationContext computationContext(context);
+  ComputationContext computationContext(context, m_complexFormat, m_angleUnit);
   computationContext.updateComplexFormat(exactOutput);
 
   setShowIllustration(false);
@@ -34,7 +35,8 @@ void VectorListController::computeAdditionalResults(
   Expression exactClone = exactOutput.clone();
 
   // 1. Vector norm
-  Expression norm = VectorHelper::BuildVectorNorm(exactClone, context);
+  Expression norm = VectorHelper::BuildVectorNorm(exactClone, context,
+                                                  m_complexFormat, m_angleUnit);
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, Expression(), norm, computationContext);
 
@@ -48,7 +50,10 @@ void VectorListController::computeAdditionalResults(
   Expression normalized = Division::Builder(exactClone, norm);
   PoincareHelpers::CloneAndSimplify(
       &normalized, context,
-      {.target = k_target, .symbolicComputation = k_symbolicComputation});
+      {.complexFormat = m_complexFormat,
+       .angleUnit = m_angleUnit,
+       .target = k_target,
+       .symbolicComputation = k_symbolicComputation});
   if (normalized.type() != ExpressionNode::Type::Matrix) {
     // The reduction might have failed
     return;

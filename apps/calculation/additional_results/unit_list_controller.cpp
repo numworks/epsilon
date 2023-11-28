@@ -71,7 +71,8 @@ int UnitListController::numberOfRows() const {
 void UnitListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
-  assert(AdditionalResultsType::HasUnit(exactOutput));
+  assert(AdditionalResultsType::HasUnit(exactOutput, m_complexFormat,
+                                        m_angleUnit));
   Expression exactClone = exactOutput.clone();
 
   /* I. Handle expression cells
@@ -88,14 +89,18 @@ void UnitListController::computeAdditionalResults(
   Expression units;
   // Reduce to be able to recognize units
   Context *context = App::app()->localContext();
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(&copy, &units, context);
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &copy, &units, context,
+      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
   assert(!units.isUninitialized());
   double value =
       Shared::PoincareHelpers::ApproximateToScalar<double>(copy, context);
   ReductionContext reductionContext =
       Shared::PoincareHelpers::ReductionContextForParameters(
           exactClone, context,
-          {.symbolicComputation = SymbolicComputation::
+          {.complexFormat = m_complexFormat,
+           .angleUnit = m_angleUnit,
+           .symbolicComputation = SymbolicComputation::
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
   int numberOfExpressions = Unit::SetAdditionalExpressions(
       units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
@@ -118,8 +123,8 @@ void UnitListController::computeAdditionalResults(
     expressions[numberOfExpressions] = exactClone;
     Shared::PoincareHelpers::CloneAndSimplify(
         &expressions[numberOfExpressions], context,
-        {.symbolicComputation = Poincare::SymbolicComputation::
-             ReplaceAllDefinedSymbolsWithDefinition,
+        {.complexFormat = m_complexFormat,
+         .angleUnit = m_angleUnit,
          .unitConversion = Poincare::UnitConversion::InternationalSystem});
     siExpression =
         expressions[numberOfExpressions];  // Remember for later (part II)
@@ -134,8 +139,8 @@ void UnitListController::computeAdditionalResults(
    * Rational for instance) */
   Shared::PoincareHelpers::CloneAndSimplify(
       &reduceExpression, context,
-      {.symbolicComputation = Poincare::SymbolicComputation::
-           ReplaceAllDefinedSymbolsWithDefinition,
+      {.complexFormat = m_complexFormat,
+       .angleUnit = m_angleUnit,
        .unitConversion = Poincare::UnitConversion::None});
   int currentExpressionIndex = 0;
   while (currentExpressionIndex < numberOfExpressions) {
@@ -206,7 +211,9 @@ void UnitListController::computeAdditionalResults(
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &siExpression, &unit, context,
-      {.symbolicComputation =
+      {.complexFormat = m_complexFormat,
+       .angleUnit = m_angleUnit,
+       .symbolicComputation =
            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
        .unitConversion = UnitConversion::None});
   m_SIValue =

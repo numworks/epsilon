@@ -26,17 +26,16 @@ void MatrixListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context *context = App::app()->localContext();
-  Poincare::Preferences *preferences = Poincare::Preferences::sharedPreferences;
   /* Change complex format to avoid all additional expressions to be
    * "nonreal" (with [i] for instance). As additional results are computed
    * from the output, which is built taking ComplexFormat into account, there
    * are no risks of displaying additional results on an nonreal output. */
   ComputationContext computationContext(
       context,
-      preferences->complexFormat() == Preferences::ComplexFormat::Real
+      m_complexFormat == Preferences::ComplexFormat::Real
           ? Preferences::ComplexFormat::Cartesian
-          : preferences->complexFormat(),
-      preferences->angleUnit());
+          : m_complexFormat,
+      m_angleUnit);
 
   // The expression must be reduced to call methods such as determinant or trace
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
@@ -56,7 +55,9 @@ void MatrixListController::computeAdditionalResults(
     Expression determinant = Determinant::Builder(matrix);
     PoincareHelpers::CloneAndSimplify(
         &determinant, context,
-        {.target = ReductionTarget::SystemForApproximation,
+        {.complexFormat = m_complexFormat,
+         .angleUnit = m_angleUnit,
+         .target = ReductionTarget::SystemForApproximation,
          .symbolicComputation =
              SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
     m_indexMessageMap[index] = messageIndex++;

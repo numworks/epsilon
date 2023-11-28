@@ -13,7 +13,9 @@ namespace Calculation {
 
 namespace VectorHelper {
 
-Expression BuildVectorNorm(const Expression exactOutput, Context *context) {
+Expression BuildVectorNorm(const Expression exactOutput, Context *context,
+                           const Preferences::ComplexFormat complexFormat,
+                           const Preferences::AngleUnit angleUnit) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||
@@ -23,7 +25,9 @@ Expression BuildVectorNorm(const Expression exactOutput, Context *context) {
   Expression norm = VectorNorm::Builder(exactOutput);
   PoincareHelpers::CloneAndSimplify(
       &norm, context,
-      {.target = VectorListController::k_target,
+      {.complexFormat = complexFormat,
+       .angleUnit = angleUnit,
+       .target = VectorListController::k_target,
        .symbolicComputation = VectorListController::k_symbolicComputation});
   return norm.isUninitialized() || norm.isUndefined() ? Expression() : norm;
 }

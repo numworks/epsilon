@@ -27,6 +27,13 @@ class ExpressionsListController
   virtual ~ExpressionsListController() = default;
   void tidy();
 
+  void setComplexFormatAndAngleUnit(
+      Poincare::Preferences::ComplexFormat complexFormat,
+      Poincare::Preferences::AngleUnit angleUnit) {
+    m_complexFormat = complexFormat;
+    m_angleUnit = angleUnit;
+  }
+
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -77,6 +84,8 @@ class ExpressionsListController
 
   InnerListController m_listController;
   EditExpressionController* m_editExpressionController;
+  Poincare::Preferences::ComplexFormat m_complexFormat;
+  Poincare::Preferences::AngleUnit m_angleUnit;
 
  private:
   virtual I18n::Message messageAtIndex(int index) = 0;

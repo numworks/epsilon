@@ -16,7 +16,7 @@ class InputGoodnessController : public InputCategoricalController {
   void updateDegreeOfFreedomCell();
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
 
   // ViewController
   const char* title() override {

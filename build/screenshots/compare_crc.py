@@ -43,7 +43,6 @@ def main():
     # Collect data from dataset
     print("\nCollecting data")
     print("==============================")
-    processes = []
     ignored = 0
     computed_crc32_list = []
 

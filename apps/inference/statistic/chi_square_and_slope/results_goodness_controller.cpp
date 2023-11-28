@@ -35,6 +35,7 @@ ResultsGoodnessTabController::ContributionsController::ContributionsController(
 
 void ResultsGoodnessTabController::ContributionsController::viewWillAppear() {
   m_table.selectableTableView()->selectRow(-1);
+  m_table.selectableTableView()->resetScroll();
   m_selectableListView.selectRow(-1);
   m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();

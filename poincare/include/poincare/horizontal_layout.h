@@ -149,9 +149,6 @@ class HorizontalLayout final : public Layout {
 
   Layout squashUnaryHierarchyInPlace();
 
-  void serializeChildren(int firstIndex, int lastIndex, char *buffer,
-                         int bufferSize);
-
   KDSize layoutSizeBetweenIndexes(int leftIndex, int rightIndex,
                                   KDFont::Size font) const {
     return node()->layoutSizeBetweenIndexes(leftIndex, rightIndex, font);

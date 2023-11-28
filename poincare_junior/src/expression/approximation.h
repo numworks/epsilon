@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+#include "random.h"
+
 namespace PoincareJ {
 
 /* Approximation is implemented on all block types.
@@ -17,8 +19,12 @@ namespace PoincareJ {
 
 class Approximation final {
  public:
+  // Approximate an entire tree, isolated from any outer context.
   template <typename T>
-  static T To(const Tree* node);
+  static T RootTreeTo(const Tree* node);
+  // Approximate any tree. With a nullptr context, seeded random will be undef.
+  template <typename T>
+  static T To(const Tree* node, Random::Context* context);
 
   template <typename T>
   static T FloatAddition(T a, T b) {
@@ -72,7 +78,8 @@ class Approximation final {
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T>
-  static T MapAndReduce(const Tree* node, Reductor<T> reductor);
+  static T MapAndReduce(const Tree* node, Reductor<T> reductor,
+                        Random::Context* context);
   template <typename T>
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree);
 };

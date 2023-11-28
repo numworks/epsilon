@@ -9,11 +9,13 @@ namespace PoincareJ {
 Tree* Number::Addition(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
     return SharedEditionPool->push<BlockType::DoubleFloat>(
-        Approximation::To<double>(i) + Approximation::To<double>(j));
+        Approximation::To<double>(i, nullptr) +
+        Approximation::To<double>(j, nullptr));
   }
   if (i->isSingleFloat() || j->isSingleFloat()) {
     return SharedEditionPool->push<BlockType::SingleFloat>(
-        Approximation::To<float>(i) + Approximation::To<float>(j));
+        Approximation::To<float>(i, nullptr) +
+        Approximation::To<float>(j, nullptr));
   }
   assert(!i->isConstant() && !j->isConstant());
   Tree* result = Rational::Addition(i, j);
@@ -22,11 +24,13 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
     return SharedEditionPool->push<BlockType::DoubleFloat>(
-        Approximation::To<double>(i) * Approximation::To<double>(j));
+        Approximation::To<double>(i, nullptr) *
+        Approximation::To<double>(j, nullptr));
   }
   if (i->isSingleFloat() || j->isSingleFloat()) {
     return SharedEditionPool->push<BlockType::SingleFloat>(
-        Approximation::To<float>(i) * Approximation::To<float>(j));
+        Approximation::To<float>(i, nullptr) *
+        Approximation::To<float>(j, nullptr));
   }
   assert(!i->isConstant() && !j->isConstant());
   Tree* result = Rational::Multiplication(i, j);

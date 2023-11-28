@@ -80,9 +80,11 @@ int Dimension::GetListLength(const Tree* t) {
       // all children should be scalars
       return t->numberOfChildren();
     case BlockType::ListSequence:
-      return Approximation::To<float>(t->child(1));
+      // TODO: Handle undef Approximation.
+      return Approximation::To<float>(t->child(1), nullptr);
     case BlockType::RandIntNoRep:
-      return Approximation::To<float>(t->child(2));
+      // TODO: Handle undef Approximation.
+      return Approximation::To<float>(t->child(2), nullptr);
     default: {
       // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {
@@ -291,7 +293,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Power: {
       Dimension dim = GetDimension(t->nextNode());
       if (dim.isUnit()) {
-        float index = Approximation::To<float>(t->child(1));
+        float index = Approximation::To<float>(t->child(1), nullptr);
         // TODO: Handle/forbid index > int8_t
         assert(!std::isnan(index) &&
                std::fabs(index) < static_cast<float>(INT8_MAX));
@@ -323,7 +325,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case BlockType::Identity: {
-      int n = Approximation::To<float>(t->child(0));
+      int n = Approximation::To<float>(t->child(0), nullptr);
       return Matrix(n, n);
     }
     case BlockType::Unit:

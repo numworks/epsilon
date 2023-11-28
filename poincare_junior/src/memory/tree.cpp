@@ -96,7 +96,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " type=\"" << buffer << "\"";
   }
   if (isNumber()) {
-    stream << " value=\"" << Approximation::To<float>(this) << "\"";
+    stream << " value=\"" << Approximation::To<float>(this, nullptr) << "\"";
     return;
   }
   if (isUserNamed() || isCodePointLayout()) {

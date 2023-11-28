@@ -173,7 +173,7 @@ class Representative {
 
   Aliases rootSymbols() const { return m_rootSymbols; }
   double ratio() const {
-    return Approximation::To<double>(ratioExpressionReduced());
+    return Approximation::To<double>(ratioExpressionReduced(), nullptr);
   }
   bool isInputPrefixable() const {
     return m_inputPrefixable != Prefixable::None;

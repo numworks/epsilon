@@ -60,7 +60,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
       const Tree* exp = factor->child(1);
       assert(exp->isRational());
       // Using the closest integer to the exponent.
-      float exponentFloat = Approximation::To<float>(exp);
+      float exponentFloat = Approximation::To<float>(exp, nullptr);
       if (exponentFloat != std::round(exponentFloat)) {
         /* If non-integer exponents are found, we round a null vector so that
          * Multiplication::shallowBeautify will not attempt to find derived
@@ -589,7 +589,7 @@ static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* childExponent = factor->child(1);
     assert(factor->child(0)->isUnit());
     assert(factor->child(1)->isRational());
-    exponent = Approximation::To<double>(childExponent);
+    exponent = Approximation::To<double>(childExponent, nullptr);
     factor = factor->child(0);
   }
   if (!factor->isUnit()) {

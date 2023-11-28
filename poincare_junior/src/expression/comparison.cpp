@@ -125,8 +125,8 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);
   }
-  float approximation =
-      Approximation::To<float>(node0) - Approximation::To<float>(node1);
+  float approximation = Approximation::To<float>(node0, nullptr) -
+                        Approximation::To<float>(node1, nullptr);
   return approximation == 0.0f ? 0 : (approximation > 0.0f ? 1 : -1);
 }
 

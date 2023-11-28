@@ -43,7 +43,7 @@ T Expression::approximate() const {
   send(
       [](const Tree *tree, void *res) {
         T *result = static_cast<T *>(res);
-        *result = Approximation::To<T>(tree);
+        *result = Approximation::RootTreeTo<T>(tree);
       },
       &res);
   return res;

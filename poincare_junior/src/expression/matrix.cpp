@@ -187,7 +187,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
       // Using float to find the biggest pivot is sufficient.
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
       // TODO use Abs node when there are complexes
-      float pivot = abs(Approximation::To<float>(pivotChild));
+      float pivot = abs(Approximation::To<float>(pivotChild, nullptr));
       // Handle very low pivots
       if (pivot == 0.0f && !pivotChild->isZero()) {
         pivot = FLT_MIN;

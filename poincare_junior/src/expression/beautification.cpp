@@ -45,8 +45,9 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
          * of 0 even if the exponent is not a number.*/
         return 0.;
       }
-      if (expr->child(1)->isNumber()) {
-        return Approximation::To<float>(expr->child(1)) * baseDegree;
+      const Tree* index = expr->child(1);
+      if (index->isNumber()) {
+        return Approximation::To<float>(index, nullptr) * baseDegree;
       }
       return NAN;
     }
@@ -172,7 +173,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   } else if (projectionContext.m_dimension.isAngleUnit()) {
     units = dimension.toBaseUnits();
   } else {
-    double value = Approximation::To<double>(expr);
+    double value = Approximation::RootTreeTo<double>(expr);
     units = SharedEditionPool->push<BlockType::Multiplication>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();

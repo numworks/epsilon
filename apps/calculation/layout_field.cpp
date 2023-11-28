@@ -13,20 +13,23 @@ void LayoutField::updateCursorBeforeInsertion() {
   if (m_insertionLayout.isUninitialized()) {
     return;
   }
-  assert(m_insertionLayout.isEmpty());
+  assert(m_insertionPosition >= 0);
   cursor()->safeSetLayout(m_insertionLayout, OMG::Direction::Left());
+  cursor()->safeSetPosition(m_insertionPosition);
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   /* If the user tries to go back in history to insert a layout in the field,
-   * we want to remember where is the last encountered empty layout so that
-   * the insertion in done here. */
+   * we want to remember where the up sequence started so that the insertion
+   * is done here. */
   if (event == Ion::Events::Up) {
-    if (cursor()->layout().isEmpty()) {
+    if (m_insertionLayout.isUninitialized()) {
       m_insertionLayout = cursor()->layout();
+      m_insertionPosition = cursor()->position();
     }
   } else if (event.isKeyPress()) {
     m_insertionLayout = Layout();
+    m_insertionPosition = -1;
   }
   if (event != Ion::Events::Division && event.isKeyPress()) {
     m_divisionCycleWithAns = TrinaryBoolean::Unknown;

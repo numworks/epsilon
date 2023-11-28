@@ -11,6 +11,8 @@ class LayoutField : public Escher::LayoutField {
   LayoutField(Escher::Responder* parentResponder,
               Escher::LayoutFieldDelegate* layoutFieldDelegate)
       : Escher::LayoutField(parentResponder, layoutFieldDelegate),
+        m_insertionLayout(),
+        m_insertionPosition(-1),
         m_currentStep(DivisionCycleStep::Start),
         m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 
@@ -32,6 +34,7 @@ class LayoutField : public Escher::LayoutField {
   bool handleDivision();
 
   Poincare::Layout m_insertionLayout;
+  int m_insertionPosition;
   DivisionCycleStep m_currentStep;
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };

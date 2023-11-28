@@ -45,8 +45,7 @@ QUIZ_CASE(pcj_approximation) {
   assert_approximation_is(KPowReal(1_e, KDiv(1_e, 3_e)), 1.f);
   assert_approximation_is(KPowReal(-1_e, KDiv(1_e, 3_e)), NAN);
   assert_approximation_is(KPowReal(-1_e, 2_e), 1.f);
-
-  quiz_assert(std::isnan(Approximation::To<float>("x"_e)));
+  assert_approximation_is("x"_e, NAN);
 }
 
 QUIZ_CASE(pcj_approximation_replace) {

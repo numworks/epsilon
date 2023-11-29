@@ -29,8 +29,8 @@ KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
   if (!childI->isVerticalOffsetLayout()) {
     return Render::Baseline(childI);
   }
-  KDCoordinate baseBaseline = i > 0 ? Render::Baseline(node->child(i - 1))
-                                    : KDFont::GlyphHeight(font) / 2;
+  KDCoordinate baseBaseline =
+      i > 0 ? ChildBaseline(node, i - 1) : KDFont::GlyphHeight(font) / 2;
   return baseBaseline + Render::Height(childI) - VerticalOffset::IndiceHeight;
 }
 
@@ -51,8 +51,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
     const Tree* childI = node->child(i);
     KDSize childSize = Render::Size(childI);
     if (childI->isVerticalOffsetLayout()) {
-      KDCoordinate baseHeight = i > 0 ? Render::Height(node->child(i - 1))
-                                      : KDFont::GlyphHeight(font);
+      KDCoordinate baseHeight =
+          i > 0 ? SizeBetweenIndexes(node, i - 1, i).height()
+                : KDFont::GlyphHeight(font);
       childSize =
           childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
     }

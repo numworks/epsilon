@@ -6,17 +6,14 @@ Inference::Inference() : MemoizedCurveViewRange() {}
 
 void Inference::computeCurveViewRange() {
   // x range
-  Poincare::Range1D xRange(computeXMin(), computeXMax());
-  xRange.stretchIfTooSmall();
-  protectedSetX(xRange);
+  protectedSetXRange(computeXMin(), computeXMax());
 
   // y range
   Poincare::Range1D yRange(computeYMin(), computeYMax());
-  if (!yRange.isValid()) {
+  if (yRange.isNan()) {
     yRange = DefaultYRange();
   }
-  yRange.stretchIfTooSmall();
-  protectedSetY(yRange);
+  protectedSetYRange(yRange);
 }
 
 bool Inference::authorizedParameterAtIndex(double x, int index) const {

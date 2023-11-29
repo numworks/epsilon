@@ -21,11 +21,11 @@ class __attribute__((packed)) PackedRange1D final {
 
   float min() const { return m_min; }
   float max() const { return m_max; }
-  void setMin(float t, float limit = INFINITY) {
-    privateSet(t, limit, &Poincare::Range1D::setMin);
+  void setMinKeepingValid(float t, float limit = INFINITY) {
+    privateSet(t, limit, &Poincare::Range1D::setMinKeepingValid);
   }
-  void setMax(float t, float limit = INFINITY) {
-    privateSet(t, limit, &Poincare::Range1D::setMax);
+  void setMaxKeepingValid(float t, float limit = INFINITY) {
+    privateSet(t, limit, &Poincare::Range1D::setMaxKeepingValid);
   }
 
  private:

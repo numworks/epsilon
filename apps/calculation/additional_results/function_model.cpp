@@ -58,14 +58,14 @@ void FunctionModel::recomputeViewRange() {
   float widthPixelRatio = range.x()->length() / k_width;
   float heigthPixelRatio = range.y()->length() / k_height;
 
-  setXMin(range.xMin() -
-          RangeMargin(false, range.xMin(), m_abscissa, widthPixelRatio));
-  setXMax(range.xMax() +
-          RangeMargin(true, range.xMax(), m_abscissa, widthPixelRatio));
-  setYMin(range.yMin() -
-          RangeMargin(false, range.yMin(), m_ordinate, heigthPixelRatio));
-  setYMax(range.yMax() +
-          RangeMargin(true, range.yMax(), m_ordinate, heigthPixelRatio));
+  setXRange(range.xMin() -
+                RangeMargin(false, range.xMin(), m_abscissa, widthPixelRatio),
+            range.xMax() +
+                RangeMargin(true, range.xMax(), m_abscissa, widthPixelRatio));
+  setYRange(range.yMin() -
+                RangeMargin(false, range.yMin(), m_ordinate, heigthPixelRatio),
+            range.yMax() +
+                RangeMargin(true, range.yMax(), m_ordinate, heigthPixelRatio));
 }
 
 }  // namespace Calculation

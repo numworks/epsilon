@@ -51,6 +51,7 @@ class SingleRangeController : public FloatParameterController<float> {
   void setAutoStatus(bool autoParam);
   virtual void setAutoRange() = 0;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+  void setRange(float min, float max);
   virtual float limit() const = 0;
   virtual void confirmParameters() = 0;
   virtual void pop(bool onConfirmation) = 0;

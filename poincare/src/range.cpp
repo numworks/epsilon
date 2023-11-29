@@ -4,11 +4,19 @@ namespace Poincare {
 
 // Range1D
 
-Range1D Range1D::RangeBetween(float a, float b, float limit) {
+Range1D Range1D::ValidRangeBetween(float a, float b, float limit) {
   assert(!std::isnan(a) && !std::isnan(b));
-  a = std::clamp(a, -limit, limit);
-  Range1D res(a, a);
-  (res.*(b < a ? &Range1D::setMin : &Range1D::setMax))(b, limit);
+  float min = (a < b ? a : b);
+  float max = (a < b ? b : a);
+  min = std::clamp(min, -limit, limit);
+  max = std::clamp(max, -limit, limit);
+  Range1D res(min, max, limit);
+  res.stretchIfTooSmall(-1.f, limit);
+
+  assert(res.isValid());
+  assert(-limit <= res.min() && res.min() <= limit);
+  assert(-limit <= res.max() && res.max() <= limit);
+
   return res;
 }
 
@@ -52,17 +60,14 @@ void Range1D::stretchIfTooSmall(float shift, float limit) {
   assert(-limit <= m_max && m_max <= limit);
 }
 
-void Range1D::privateSet(float t, bool isMin, float limit) {
-  if (std::isnan(t)) {
-    m_min = t;
-    m_max = t;
-    return;
-  }
+void Range1D::privateSetKeepingValid(float t, bool isMin, float limit) {
+  assert(isValid());
+  assert(!std::isnan(t));
   float* bound = isMin ? &m_min : &m_max;
   float* otherBound = isMin ? &m_max : &m_min;
   assert(limit > 0.0);
   *bound = std::clamp(t, -limit, limit);
-  if (std::isnan(length()) || length() < 0) {
+  if (length() < 0) {
     *otherBound = *bound;
   }
   assert(length() >= 0);
@@ -81,8 +86,6 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
     }
   }
   assert(isValid());
-  assert(!(isEmpty() && std::isfinite(m_max)));
-  assert(std::isnan(length()) || length() >= k_minLength);
   assert(-limit <= m_min && m_min <= limit);
   assert(-limit <= m_max && m_max <= limit);
 }

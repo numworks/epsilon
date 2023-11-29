@@ -176,10 +176,8 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
                mp_obj_is_type(arg, &mp_type_list)) {
       mp_obj_t *items;
       mp_obj_get_array_fixed_n(arg, 4, &items);
-      sPlotStore->setXMin(mp_obj_get_float(items[0]));
-      sPlotStore->setXMax(mp_obj_get_float(items[1]));
-      sPlotStore->setYMin(mp_obj_get_float(items[2]));
-      sPlotStore->setYMax(mp_obj_get_float(items[3]));
+      sPlotStore->setXRange(mp_obj_get_float(items[0]), mp_obj_get_float(items[1]));
+      sPlotStore->setYRange(mp_obj_get_float(items[2]), mp_obj_get_float(items[3]));
       sPlotStore->setAxesAuto(false);
     } else {
       mp_raise_TypeError(

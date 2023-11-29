@@ -33,10 +33,9 @@ void ResidualPlotRange::calibrateXorY(bool isX, double min, double max,
         static_cast<double>(bannerHeight) / static_cast<double>(height);
     double rangeMin =
         (range.min() - range.max() * heightRatio) / (1 - heightRatio);
-    range.setMin(rangeMin);
-    protectedSetY(range);
+    protectedSetYRange(rangeMin, range.max());
   } else {
-    protectedSetX(range);
+    protectedSetXRange(range);
   }
 }
 

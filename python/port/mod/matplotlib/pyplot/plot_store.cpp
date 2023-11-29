@@ -193,10 +193,8 @@ void PlotStore::initRange() {
     }
     checkPositiveRangeAndAddMargin(&xMin, &xMax);
     checkPositiveRangeAndAddMargin(&yMin, &yMax);
-    setXMin(xMin);
-    setXMax(xMax);
-    setYMin(yMin);
-    setYMax(yMax);
+    setXRange(xMin, xMax);
+    setYRange(yMin, yMax);
   }
 }
 

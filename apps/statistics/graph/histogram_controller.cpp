@@ -176,8 +176,7 @@ void HistogramController::preinitXRangeParameters(double *xMin, double *xMax) {
   if (xMax != nullptr) {
     *xMax = maxValue;
   }
-  m_histogramRange.setHistogramXMin(minValue, false);
-  m_histogramRange.setHistogramXMax(maxValue, true);
+  m_histogramRange.setHistogramRange(minValue, maxValue);
 }
 
 void HistogramController::initRangeParameters() {
@@ -197,10 +196,9 @@ void HistogramController::initRangeParameters() {
   float max = std::clamp(static_cast<float>(xMax), -Range1D::k_maxFloat,
                          Range1D::k_maxFloat);
 
-  m_histogramRange.setHistogramXMin(
-      min - HistogramRange::k_displayLeftMarginRatio * (max - min), false);
-  m_histogramRange.setHistogramXMax(
-      max + HistogramRange::k_displayRightMarginRatio * (max - min), true);
+  m_histogramRange.setHistogramRange(
+      min - HistogramRange::k_displayLeftMarginRatio * (max - min),
+      max + HistogramRange::k_displayRightMarginRatio * (max - min));
 
   initYRangeParameters(selectedSeries());
 }
@@ -209,7 +207,7 @@ void HistogramController::initYRangeParameters(int series) {
   assert(activeSeriesMethod()(m_store, series));
   /* Height of drawn bar are relative to the maximal bar of the series, so all
    * displayed series need the same range of [0,1]. */
-  m_histogramRange.setYMax(1.0f + HistogramRange::k_displayTopMarginRatio);
+  float yMax = 1.0f + HistogramRange::k_displayTopMarginRatio;
 
   /* Compute YMin:
    *    ratioFloatPixel*(0-yMin) = bottomMargin
@@ -224,8 +222,9 @@ void HistogramController::initYRangeParameters(int series) {
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
   float viewHeight = static_cast<float>(m_view.subviewHeight());
-  m_histogramRange.setYMin(m_histogramRange.yMax() * bottomMargin /
-                           (bottomMargin - viewHeight));
+  float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
+
+  m_histogramRange.setYRange(yMin, yMax);
 }
 
 void HistogramController::initBarParameters() {
@@ -262,8 +261,8 @@ void HistogramController::initBarParameters() {
       // Bars are offsetted right to center the bars around the labels.
       xMin -= barWidth / 2.0;
       m_store->setFirstDrawnBarAbscissa(xMin);
-      m_histogramRange.setHistogramXMin(
-          m_histogramRange.xMin() - barWidth / 2.0, true);
+      m_histogramRange.setHistogramRange(
+          m_histogramRange.xMin() - barWidth / 2.0, m_histogramRange.xMax());
     }
   }
   assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <=

@@ -18,25 +18,20 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
       m_xGridUnit(k_defaultGridUnit),
       m_yGridUnit(k_defaultGridUnit) {}
 
-void MemoizedCurveViewRange::protectedSetX(Poincare::Range1D x, float limit) {
-  protectedSetXMin(x.min(), false, limit);
-  protectedSetXMax(x.max(), true, limit);
-}
-
-void MemoizedCurveViewRange::protectedSetY(Poincare::Range1D y, float limit) {
-  protectedSetYMin(y.min(), false, limit);
-  protectedSetYMax(y.max(), true, limit);
-}
-
-void MemoizedCurveViewRange::privateSet(float f, float limit, Range1D* range1D,
-                                        void (Range1D::*setter)(float, float),
-                                        bool updateGridUnit, float* gridUnit) {
-  assert(!std::isnan(f));
-  (range1D->*setter)(f, limit);
-  *gridUnit = updateGridUnit
-                  ? (gridUnit == &m_xGridUnit ? CurveViewRange::xGridUnit()
-                                              : CurveViewRange::yGridUnit())
-                  : 0.f;
+void MemoizedCurveViewRange::privateSet(float min, float max, float limit,
+                                        bool x) {
+  Range1D* range1D;
+  if (x) {
+    range1D = m_range.x();
+  } else {
+    range1D = m_range.y();
+  }
+  *range1D = Range1D::ValidRangeBetween(min, max, limit);
+  if (x) {
+    m_xGridUnit = CurveViewRange::xGridUnit();
+  } else {
+    m_yGridUnit = CurveViewRange::yGridUnit();
+  }
 }
 
 }  // namespace Shared

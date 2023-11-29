@@ -41,10 +41,9 @@ void VectorModel::recomputeViewRange() {
   float yMargin = k_marginInPixels * ratio +
                   (verticallyCapped ? 0.f : (width / k_xyRatio - height) / 2.f);
 
-  setXMin(std::min(-arcLeftMargin, x) - xMargin);
-  setXMax(std::max(arcRightMargin, x) + xMargin);
-  setYMin(std::min(0.f, y) - yMargin);
-  setYMax(std::max(arcTopMargin, y) + yMargin);
+  setXRange(std::min(-arcLeftMargin, x) - xMargin,
+            std::max(arcRightMargin, x) + xMargin);
+  setYRange(std::min(0.f, y) - yMargin, std::max(arcTopMargin, y) + yMargin);
 }
 
 }  // namespace Calculation

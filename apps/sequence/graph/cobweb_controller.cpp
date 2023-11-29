@@ -73,10 +73,8 @@ void CobwebController::setupRange() {
   }
   Range2D zoomRange = zoom.range(false, false);
   InteractiveCurveViewRange range;
-  range.setXMin(zoomRange.xMin());
-  range.setXMax(zoomRange.xMax());
-  range.setYMin(zoomRange.yMin());
-  range.setYMax(zoomRange.yMax());
+  range.setXRange(zoomRange.xMin(), zoomRange.xMax());
+  range.setYRange(zoomRange.yMin(), zoomRange.yMax());
   m_graphRange = range;
   m_graphView.reload();
 }

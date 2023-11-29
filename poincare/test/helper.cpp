@@ -107,6 +107,17 @@ Expression parse_expression(const char *expression, Context *context,
   return result;
 }
 
+void assert_parsed_expression_is(
+    const char *expression, Poincare::Expression r, bool addParentheses,
+    bool parseForAssignment,
+    Preferences::MixedFractions mixedFractionsParameter) {
+  Shared::GlobalContext context;
+  Preferences::sharedPreferences->enableMixedFractions(mixedFractionsParameter);
+  Expression e = parse_expression(expression, &context, addParentheses,
+                                  parseForAssignment);
+  quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
+}
+
 void assert_reduce_and_store(const char *expression,
                              Preferences::AngleUnit angleUnit,
                              Preferences::UnitFormat unitFormat,

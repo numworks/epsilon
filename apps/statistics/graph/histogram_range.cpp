@@ -8,16 +8,14 @@ bool HistogramRange::scrollToSelectedBarIndex(int series, int index) {
   float range =
       windowRange / (1 + k_displayLeftMarginRatio + k_displayRightMarginRatio);
   if (xMin() + k_displayLeftMarginRatio * range > startSelectedBar) {
-    // Only update the grid unit when setting xMax
-    setHistogramXMin(startSelectedBar - k_displayLeftMarginRatio * range,
-                     false);
-    setHistogramXMax(xMin() + windowRange, true);
+    float newMin = startSelectedBar - k_displayLeftMarginRatio * range;
+    setHistogramRange(newMin, newMin + windowRange);
     return true;
   }
   float endSelectedBar = m_store->endOfBarAtIndex(series, index);
   if (endSelectedBar > xMax() - k_displayRightMarginRatio * range) {
-    setHistogramXMax(endSelectedBar + k_displayRightMarginRatio * range, false);
-    setHistogramXMin(xMax() - windowRange, true);
+    float newMax = endSelectedBar + k_displayRightMarginRatio * range;
+    setHistogramRange(newMax - windowRange, newMax);
     return true;
   }
   return false;

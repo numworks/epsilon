@@ -22,9 +22,10 @@ class Range1D {
         std::pow(10.f, OMG::IEEE754<float>::exponentBase10(t) - 2.f),
         k_minLength + Float<float>::EpsilonLax());
   }
-  /* Given any two numbers, RangeBetween will return a range with bounds no
+
+  /* Given any two numbers, ValidRangeBetween will return a range with bounds no
    * more than limit, and length no less than k_minLength. */
-  static Range1D RangeBetween(float a, float b, float limit = k_maxFloat);
+  static Range1D ValidRangeBetween(float a, float b, float limit = k_maxFloat);
 
   constexpr Range1D(float min = NAN, float max = NAN, float limit = k_maxFloat)
       : m_min(std::clamp(min, -limit, limit)),
@@ -36,28 +37,35 @@ class Range1D {
     return m_min != other.m_min || m_max != other.m_max;
   }
 
-  bool isValid() const {
+  bool isNan() const {
     assert(std::isnan(m_min) == std::isnan(m_max));
-    return !std::isnan(m_min);
+    return std::isnan(m_min);
   }
+  bool isValid() const { return !isNan() && length() >= k_minLength; }
   bool isEmpty() const { return m_min == m_max; }
 
   float min() const { return m_min; }
   float max() const { return m_max; }
-  void setMin(float t, float limit = k_maxFloat) { privateSet(t, true, limit); }
-  void setMax(float t, float limit = k_maxFloat) {
-    privateSet(t, false, limit);
-  }
 
   float length() const { return m_max - m_min; }
   float center() const { return 0.5f * (m_min + m_max); }
+
+  /* These two methods will prioritize changing the other bound to keep the
+   * interval valid.  */
+  void setMinKeepingValid(float t, float limit = k_maxFloat) {
+    privateSetKeepingValid(t, true, limit);
+  }
+  void setMaxKeepingValid(float t, float limit = k_maxFloat) {
+    privateSetKeepingValid(t, false, limit);
+  }
+
   void extend(float t, float limit);
   void zoom(float ratio, float center);
   void stretchEachBoundBy(float shift, float limit = k_maxFloat);
   void stretchIfTooSmall(float shift = -1, float limit = k_maxFloat);
 
  private:
-  void privateSet(float t, bool isMin, float limit);
+  void privateSetKeepingValid(float t, bool isMin, float limit);
 
   float m_min, m_max;
 };

@@ -35,16 +35,13 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
 void SingleInteractiveCurveViewRangeController::extractParameters() {
   if (m_editXRange) {
     m_autoParam = m_range->xAuto();
-    m_rangeParam.setMin(m_range->xMin());
-    m_rangeParam.setMax(m_range->xMax());
+    m_rangeParam = Range1D::ValidRangeBetween(m_range->xMin(), m_range->xMax());
   } else {
     m_autoParam = m_range->yAuto();
-    m_rangeParam.setMin(m_range->yMin());
-    m_rangeParam.setMax(m_range->yMax());
+    m_rangeParam = Range1D::ValidRangeBetween(m_range->yMin(), m_range->yMax());
   }
   // Reset m_secondaryRangeParam
-  m_secondaryRangeParam.setMin(NAN);
-  m_secondaryRangeParam.setMax(NAN);
+  m_secondaryRangeParam = Range1D(NAN, NAN);
 }
 
 void SingleInteractiveCurveViewRangeController::setAutoRange() {
@@ -62,13 +59,14 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
       tempRange.setYAuto(m_autoParam);
     }
     tempRange.computeRanges();
-    m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
-    m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
+    float min = m_editXRange ? tempRange.xMin() : tempRange.yMin();
+    float max = m_editXRange ? tempRange.xMax() : tempRange.yMax();
+    m_rangeParam = Range1D::ValidRangeBetween(min, max);
     if (m_editXRange) {
       /* The y range has been updated too and must be stored for
        * confirmParameters. */
-      m_secondaryRangeParam.setMin(tempRange.yMin());
-      m_secondaryRangeParam.setMax(tempRange.yMax());
+      m_secondaryRangeParam =
+          Range1D::ValidRangeBetween(tempRange.yMin(), tempRange.yMax());
     }
   }
 }
@@ -80,8 +78,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
   // Deactivate auto status before updating values.
   if (m_editXRange) {
     m_range->setXAuto(false);
-    m_range->setXMin(m_rangeParam.min());
-    m_range->setXMax(m_rangeParam.max());
+    m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
     m_range->setXAuto(m_autoParam);
     if (m_autoParam && m_range->yAuto()) {
       /* yMin and yMax must also be updated. We could avoid having to store
@@ -90,14 +87,13 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
       assert(!std::isnan(m_secondaryRangeParam.min()) &&
              !std::isnan(m_secondaryRangeParam.max()));
       m_range->setYAuto(false);
-      m_range->setYMin(m_secondaryRangeParam.min());
-      m_range->setYMax(m_secondaryRangeParam.max());
+      m_range->setYRange(m_secondaryRangeParam.min(),
+                         m_secondaryRangeParam.max());
       m_range->setYAuto(true);
     }
   } else {
     m_range->setYAuto(false);
-    m_range->setYMin(m_rangeParam.min());
-    m_range->setYMax(m_rangeParam.max());
+    m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
     m_range->setYAuto(m_autoParam);
   }
   assert(!parametersAreDifferent());

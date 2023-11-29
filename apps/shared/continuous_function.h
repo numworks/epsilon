@@ -268,11 +268,11 @@ class ContinuousFunction : public Function {
     bool tAuto() const { return m_tAuto; }
     void setTMin(float tMin) {
       assert(!m_tAuto);
-      m_domain.setMin(tMin);
+      m_domain.setMinKeepingValid(tMin);
     }
     void setTMax(float tMax) {
       assert(!m_tAuto);
-      m_domain.setMax(tMax);
+      m_domain.setMaxKeepingValid(tMax);
     }
     void setTAuto(bool tAuto) { m_tAuto = tAuto; }
 

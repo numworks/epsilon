@@ -54,10 +54,10 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   Range2D pretty =
       beautify ? prettyRange(forceNormalization) : sanitizedRange();
   assert(pretty.x()->isValid() && pretty.y()->isValid());
-  result.x()->setMin(pretty.xMin(), m_maxFloat);
-  result.x()->setMax(pretty.xMax(), m_maxFloat);
-  result.y()->setMin(pretty.yMin(), m_maxFloat);
-  result.y()->setMax(pretty.yMax(), m_maxFloat);
+  *(result.x()) =
+      Range1D::ValidRangeBetween(pretty.xMin(), pretty.xMax(), m_maxFloat);
+  *(result.y()) =
+      Range1D::ValidRangeBetween(pretty.yMin(), pretty.yMax(), m_maxFloat);
 #if ASSERTIONS
   bool xRangeIsForced = m_forcedRange.x()->isValid();
   bool yRangeIsForced = m_forcedRange.y()->isValid();
@@ -70,8 +70,7 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
                              result.xMax() == m_forcedRange.xMax()));
   assert(!yRangeIsForced || (result.yMin() == m_forcedRange.yMin() &&
                              result.yMax() == m_forcedRange.yMax()));
-  assert(result.x()->isValid() && result.y()->isValid() &&
-         !result.x()->isEmpty() && !result.y()->isEmpty());
+  assert(result.x()->isValid() && result.y()->isValid());
 #endif
   return result;
 }
@@ -470,7 +469,7 @@ static Range1D sanitation1DHelper(Range1D range, Range1D forcedRange,
   if (forcedRange.isValid()) {
     return forcedRange;
   }
-  if (!range.isValid()) {
+  if (range.isNan()) {
     range = Range1D(0.f, 0.f, limit);
   }
   range.stretchIfTooSmall(defaultHalfLength, limit);
@@ -517,7 +516,7 @@ bool Zoom::yLengthCompatibleWithNormalization(float yLength,
                                            m_interestingRange.y()->length()) &&
          /* If X range is forced, the normalized Y range must fit the magnitude
             Y range, otherwise it will crop some values. */
-         (!m_forcedRange.x()->isValid() ||
+         (m_forcedRange.x()->isNan() ||
           m_magnitudeRange.y()->length() <= yLengthNormalized);
 }
 
@@ -570,9 +569,9 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
     normalLength = yLengthNormalized;
   }
 
-  float interestingCenter = interestingRange->isValid()
-                                ? interestingRange->center()
-                                : rangeToEdit->center();
+  float interestingCenter = interestingRange->isNan()
+                                ? rangeToEdit->center()
+                                : interestingRange->center();
   assert(std::isfinite(interestingCenter));
   float portionOverInterestingCenter =
       (rangeToEdit->max() - interestingCenter) / rangeToEdit->length();

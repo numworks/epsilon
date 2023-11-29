@@ -30,7 +30,7 @@ void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY,
   float xRange = xMax() - xMin();
   float xMin = interestingXMin - k_displayLeftMarginRatio * xRange;
   assert(std::isfinite(xMin));
-  protectedSetX(Range1D(xMin, xMin + xRange, k_maxFloat), k_maxFloat);
+  protectedSetXRange(xMin, xMin + xRange, k_maxFloat);
 }
 
 }  // namespace Sequence

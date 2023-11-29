@@ -177,8 +177,8 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
     xMax = FLT_MAX;
   }
   assert(std::isfinite(yMin) && std::isfinite(yMax));
-  protectedSetX(Poincare::Range1D(xMin, xMax));
-  protectedSetY(Poincare::Range1D(yMin, yMax));
+  protectedSetXRange(xMin, xMax);
+  protectedSetYRange(yMin, yMax);
   return true;
 }
 

@@ -77,12 +77,10 @@ bool DomainParameterController::parametersAreDifferent() {
 }
 
 void DomainParameterController::extractParameters() {
-  setParameterAtIndex(1, function()->tMin());
-  setParameterAtIndex(2, function()->tMax());
+  setRange(function()->tMin(), function()->tMax());
   m_autoParam = function()->tAuto();
-  /* Setting m_rangeParam tMin might affect m_rangeParam.max(), but setting tMax
-   * right after will not affect m_rangeParam.min() because Function's Range1D
-   * parameters are valid (tMax>tMin), and final tMin value is already set.
+  /* Setting m_rangeParam should affect tMin and tMax because Function's Range1D
+   * parameters are valid (tMax>tMin).
    * Same happens in confirmParameters when setting function's parameters from
    * valid m_rangeParam parameters. */
   assert(!parametersAreDifferent());
@@ -90,8 +88,7 @@ void DomainParameterController::extractParameters() {
 
 void DomainParameterController::setAutoRange() {
   assert(m_autoParam);
-  setParameterAtIndex(1, function()->autoTMin());
-  setParameterAtIndex(2, function()->autoTMax());
+  setRange(function()->autoTMin(), function()->autoTMax());
 }
 
 void DomainParameterController::confirmParameters() {

@@ -49,10 +49,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   float yGridUnit() const override;
 
   // CurveViewWindow
-  void setXMin(float f) override;
-  void setXMax(float f) override;
-  void setYMin(float f) override;
-  void setYMax(float f) override;
+  void setXRange(float min, float max) override;
+  void setYRange(float min, float max) override;
 
   float offscreenYAxis() const override { return m_offscreenYAxis; }
   void setOffscreenYAxis(float f);

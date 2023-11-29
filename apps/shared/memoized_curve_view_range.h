@@ -26,48 +26,34 @@ class MemoizedCurveViewRange : public CurveViewRange {
     assert(m_yGridUnit != 0.0f);
     return m_yGridUnit;
   }
-  virtual void setXMin(float f) { protectedSetXMin(f); }
-  virtual void setXMax(float f) { protectedSetXMax(f); }
-  virtual void setYMin(float f) { protectedSetYMin(f); }
-  virtual void setYMax(float f) { protectedSetYMax(f); }
+  virtual void setXRange(float min, float max) { protectedSetXRange(min, max); }
+  virtual void setYRange(float min, float max) { protectedSetYRange(min, max); }
 
  protected:
   Poincare::Range2D memoizedRange() const { return m_range; }
-  /* A false updateGridUnit flag prevents computing grid_unit twice, and will
-   * invalidate, so we can check if it has been properly updated later. */
-  void protectedSetXMin(float f, bool updateGridUnit = true,
-                        float limit = Poincare::Range1D::k_maxFloat) {
-    privateSet(f, limit, m_range.x(), &Poincare::Range1D::setMin,
-               updateGridUnit, &m_xGridUnit);
+
+  void protectedSetXRange(float min, float max,
+                          float limit = Poincare::Range1D::k_maxFloat) {
+    privateSet(min, max, limit, true);
   }
-  void protectedSetXMax(float f, bool updateGridUnit = true,
-                        float limit = Poincare::Range1D::k_maxFloat) {
-    privateSet(f, limit, m_range.x(), &Poincare::Range1D::setMax,
-               updateGridUnit, &m_xGridUnit);
+  void protectedSetYRange(float min, float max,
+                          float limit = Poincare::Range1D::k_maxFloat) {
+    privateSet(min, max, limit, false);
   }
-  void protectedSetYMin(float f, bool updateGridUnit = true,
-                        float limit = Poincare::Range1D::k_maxFloat) {
-    privateSet(f, limit, m_range.y(), &Poincare::Range1D::setMin,
-               updateGridUnit, &m_yGridUnit);
+
+  void protectedSetXRange(Poincare::Range1D range,
+                          float limit = Poincare::Range1D::k_maxFloat) {
+    protectedSetXRange(range.min(), range.max(), limit);
   }
-  void protectedSetYMax(float f, bool updateGridUnit = true,
-                        float limit = Poincare::Range1D::k_maxFloat) {
-    privateSet(f, limit, m_range.y(), &Poincare::Range1D::setMax,
-               updateGridUnit, &m_yGridUnit);
+  void protectedSetYRange(Poincare::Range1D range,
+                          float limit = Poincare::Range1D::k_maxFloat) {
+    protectedSetYRange(range.min(), range.max(), limit);
   }
-  /* These two methods set both min and max while updating the grid unit only
-   * once. */
-  void protectedSetX(Poincare::Range1D x,
-                     float limit = Poincare::Range1D::k_maxFloat);
-  void protectedSetY(Poincare::Range1D y,
-                     float limit = Poincare::Range1D::k_maxFloat);
 
  private:
   constexpr static float k_defaultGridUnit = 2.f;
 
-  void privateSet(float f, float limit, Poincare::Range1D* range1D,
-                  void (Poincare::Range1D::*setter)(float, float),
-                  bool updateGridUnit, float* gridUnit);
+  void privateSet(float min, float max, float limit, bool x);
 
   // Window bounds of the data
   Poincare::Range2D m_range;

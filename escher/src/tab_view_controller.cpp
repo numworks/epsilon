@@ -69,6 +69,8 @@ TabViewController::TabViewController(Responder* parentResponder,
          m_children[m_numberOfChildren] != nullptr) {
     m_numberOfChildren++;
   }
+
+  addTabs();
 }
 
 int TabViewController::activeTab() const { return m_dataSource->activeTab(); }
@@ -165,7 +167,6 @@ const char* TabViewController::tabName(uint8_t index) {
 void TabViewController::initView() {
   for (int i = 0; i < m_numberOfChildren; i++) {
     children(i)->initView();
-    m_view.m_tabView.addTab(this);
   }
 }
 
@@ -187,6 +188,12 @@ ViewController* TabViewController::activeViewController() {
   assert(m_dataSource->activeTab() >= 0 &&
          m_dataSource->activeTab() < m_numberOfChildren);
   return children(m_dataSource->activeTab());
+}
+
+void TabViewController::addTabs() {
+  for (int i = 0; i < m_numberOfChildren; i++) {
+    m_view.m_tabView.addTab(this);
+  }
 }
 
 }  // namespace Escher

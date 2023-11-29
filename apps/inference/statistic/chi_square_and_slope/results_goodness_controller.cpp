@@ -11,9 +11,7 @@ ResultsGoodnessTabController::ResultsGoodnessTabController(
                         &m_contributionsController, nullptr),
       m_resultsController(this, statistic, testGraphController,
                           intervalGraphController, false),
-      m_contributionsController(this, testGraphController, statistic) {
-  TabViewController::initView();
-}
+      m_contributionsController(this, testGraphController, statistic) {}
 
 bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {

@@ -13,9 +13,7 @@ ResultsHomogeneityTabController::ResultsHomogeneityTabController(
                         &m_contributionsController, nullptr),
       m_tableController(nextController, statistic),
       m_expectedValuesController(this, &m_tableController),
-      m_contributionsController(this, &m_tableController) {
-  TabViewController::initView();
-}
+      m_contributionsController(this, &m_tableController) {}
 
 // ResultsHomogeneityController
 

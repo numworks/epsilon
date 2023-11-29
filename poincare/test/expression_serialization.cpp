@@ -1,5 +1,6 @@
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
+#include <poincare/comparison.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/division.h>
@@ -292,4 +293,17 @@ QUIZ_CASE(poincare_serialization_percent) {
                      PercentAddition::Builder(Rational::Builder(100),
                                               Rational::Builder(20))),
       "π^\u0012100↗20%\u0013");
+}
+
+QUIZ_CASE(poincare_serialization_power) {
+  assert_expression_serializes_and_parses_to_itself(Power::Builder(
+      BasedInteger::Builder(2),
+      Comparison::Builder(BasedInteger::Builder(3),
+                          ComparisonNode::OperatorType::Equal,
+                          Subtraction::Builder(BasedInteger::Builder(4),
+                                               BasedInteger::Builder(5)))));
+  assert_expression_serializes_and_parses_to_itself(
+      Power::Builder(BasedInteger::Builder(2),
+                     PercentSimple::Builder(Power::Builder(
+                         BasedInteger::Builder(3), BasedInteger::Builder(4)))));
 }

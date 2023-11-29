@@ -59,19 +59,25 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
     return;
   }
   float* bound = isMin ? &m_min : &m_max;
+  float* otherBound = isMin ? &m_max : &m_min;
   assert(limit > 0.0);
   *bound = std::clamp(t, -limit, limit);
   if (std::isnan(length()) || length() < 0) {
-    (isMin ? m_max : m_min) = *bound;
+    *otherBound = *bound;
   }
-  assert(std::isnan(length()) || length() >= 0);
+  assert(length() >= 0);
   if (length() < k_minLength) {
-    float l = DefaultLengthAt(m_min);
-    assert(m_min - l >= -limit || m_max + l <= limit);
-    if ((isMin && m_max + l <= limit) || (!isMin && m_min - l < -limit)) {
-      m_max += l;
-    } else {
-      m_min -= l;
+    /* If the new bound is too close from the other one, set the other one to a
+     * distance DefaultLength.
+     * We don't call stretchIfTooSmall yet since we want to avoid to modify the
+     * bound that is being set.  */
+    float l = DefaultLengthAt(m_min) * (isMin ? 1 : -1);
+    *otherBound = std::clamp(*bound + l, -limit, limit);
+
+    if (length() < k_minLength) {
+      /* The bounds are still too close (the other bound is at the limit). This
+       * means the bound can't be set to t and needs to be shifted a bit. */
+      stretchIfTooSmall(-1.0f, limit);
     }
   }
   assert(isValid());

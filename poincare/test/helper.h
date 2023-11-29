@@ -91,6 +91,11 @@ Poincare::Expression parse_expression(const char* expression,
                                       Poincare::Context* context,
                                       bool addParentheses,
                                       bool parseForAssignment = false);
+void assert_parsed_expression_is(
+    const char* expression, Poincare::Expression r, bool addParentheses = false,
+    bool parseForAssignment = false,
+    Poincare::Preferences::MixedFractions mixedFractionsParameter =
+        Poincare::Preferences::MixedFractions::Enabled);
 
 // Simplification
 

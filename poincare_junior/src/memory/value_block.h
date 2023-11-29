@@ -24,6 +24,20 @@ class ValueBlock : public Block {
   void set(T value) {
     *reinterpret_cast<T*>(this) = value;
   }
+
+  bool getBit(int index) const {
+    assert(index < 8);
+    return get<uint8_t>() & (1 << index);
+  }
+
+  void setBit(int index, bool value) {
+    assert(index < 8);
+    uint8_t old = get<uint8_t>() & ~(1 << index);
+    if (value) {
+      old |= 1 << index;
+    }
+    set<uint8_t>(old);
+  }
 };
 
 static_assert(sizeof(ValueBlock) == sizeof(Block));

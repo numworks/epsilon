@@ -19,21 +19,13 @@ class AutocompletedPair {
  public:
   static bool IsTemporary(const Tree* node, Side side) {
     assert(node->isAutocompletedPair());
-    Bits bits = node->nodeValueBlock(0)->get<Bits>();
-    return side == Side::Left ? bits.m_leftIsTemporary
-                              : bits.m_rightIsTemporary;
+    return node->nodeValueBlock(0)->getBit(side == Side::Left ? 0 : 1);
   }
 
   static void SetTemporary(Tree* node, Side side, bool temporary) {
     assert(node->isAutocompletedPair());
-    Bits bits = node->nodeValueBlock(0)->get<Bits>();
-    // TODO assignemnt ternary when clang is up to date
-    if (side == Side::Left) {
-      bits.m_leftIsTemporary = temporary;
-    } else {
-      bits.m_rightIsTemporary = temporary;
-    }
-    node->nodeValueBlock(0)->set<Bits>(bits);
+    return node->nodeValueBlock(0)->setBit(side == Side::Left ? 0 : 1,
+                                           temporary);
   }
 
   static bool IsAutoCompletedBracketPairCodePoint(CodePoint c, TypeBlock* type,
@@ -51,11 +43,6 @@ class AutocompletedPair {
   static void PrivateBalanceBrackets(TypeBlock type, Tree* hLayout,
                                      EditionReference& cursorLayout,
                                      int* cursorPosition, Tree* root);
-
-  struct Bits {
-    bool m_leftIsTemporary : 1;
-    bool m_rightIsTemporary : 1;
-  };
 };  // namespace AutocompletedPair
 
 }  // namespace PoincareJ

@@ -32,25 +32,20 @@ enum class VariableSlot : bool { Fraction, Assignment };
 // Denominator is first for 0 in the mask in Derivative to work out of the box
 enum class OrderSlot : bool { Denominator, Numerator };
 
-constexpr static uint8_t VariableSlotMask = 1 << 0;
-constexpr static uint8_t OrderSlotMask = 1 << 1;
-
 inline VariableSlot GetVariableSlot(const Tree* node) {
-  return static_cast<VariableSlot>(node->nodeValue(0) & VariableSlotMask);
+  return static_cast<VariableSlot>(node->nodeValueBlock(0)->getBit(0));
 }
 
 inline void SetVariableSlot(Tree* node, VariableSlot slot) {
-  return node->setNodeValue(0, (node->nodeValue(0) & ~VariableSlotMask) |
-                                   VariableSlotMask * static_cast<bool>(slot));
+  return node->nodeValueBlock(0)->setBit(0, static_cast<bool>(slot));
 }
 
 inline OrderSlot GetOrderSlot(const Tree* node) {
-  return static_cast<OrderSlot>(node->nodeValue(0) & OrderSlotMask);
+  return static_cast<OrderSlot>(node->nodeValueBlock(0)->getBit(1));
 }
 
 inline void SetOrderSlot(Tree* node, OrderSlot slot) {
-  return node->setNodeValue(0, (node->nodeValue(0) & ~OrderSlotMask) |
-                                   OrderSlotMask * static_cast<bool>(slot));
+  return node->nodeValueBlock(0)->setBit(1, static_cast<bool>(slot));
 }
 }  // namespace Derivative
 

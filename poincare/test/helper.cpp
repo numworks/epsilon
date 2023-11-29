@@ -233,6 +233,13 @@ void assert_expression_serializes_to(Expression expression,
   quiz_assert_print_if_failure(test, information);
 }
 
+void assert_expression_serializes_and_parses_to_itself(Expression expression) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  expression.serialize(buffer, bufferSize);
+  assert_parsed_expression_is(buffer, expression);
+}
+
 void assert_layout_serializes_to(Layout layout, const char *serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];

@@ -189,6 +189,9 @@ void assert_expression_serializes_to(
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7);
 
+void assert_expression_serializes_and_parses_to_itself(
+    Poincare::Expression expression);
+
 // Layout serializing
 
 void assert_layout_serializes_to(Poincare::Layout layout,

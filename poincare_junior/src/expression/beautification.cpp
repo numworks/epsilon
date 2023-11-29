@@ -212,9 +212,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   if (ref->isTrig() && angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KMult(KA, KB, KPow(π_e, -1_e)),
-        {.KA = child,
-         .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+        KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
     changed = true;
   } else if (ref->isATrig()) {
     /* Beautify inverse trigonometric functions here to avoid infinite
@@ -226,9 +224,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     if (angleUnit != PoincareJ::AngleUnit::Radian) {
       // TODO: ref->parent should be ShallowSimplified.
       ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-          KMult(KA, π_e, KPow(KB, -1_e)),
-          {.KA = ref,
-           .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+          KMult(KA, KB), {.KA = ref, .KB = Angle::ToRad(angleUnit)}));
     }
     changed = true;
   }

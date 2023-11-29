@@ -50,9 +50,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::Create(
-        KMult(KA, π_e, KPow(KB, -1_e)),
-        {.KA = child,
-         .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+        KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
     changed = true;
   } else if (ref->isOfType({BlockType::ArcSine, BlockType::ArcCosine,
                             BlockType::ArcTangent})) {
@@ -69,9 +67,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
     if (angleUnit != PoincareJ::AngleUnit::Radian) {
       // arccos_degree(x) = arccos_radians(x) * 180/π
       ref->moveTreeOverTree(PatternMatching::Create(
-          KMult(KA, KB, KPow(π_e, -1_e)),
-          {.KA = ref,
-           .KB = (angleUnit == PoincareJ::AngleUnit::Degree ? 180_e : 200_e)}));
+          KMult(KA, KB), {.KA = ref, .KB = Angle::RadTo(angleUnit)}));
     }
     return true;
   }

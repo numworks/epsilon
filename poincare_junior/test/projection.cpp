@@ -49,8 +49,7 @@ QUIZ_CASE(pcj_projection) {
 
   CloneTreeOverTree(ref, KCos(100_e));
   Projection::DeepSystemProjection(ref, {.m_angleUnit = AngleUnit::Degree});
-  assert_trees_are_equal(ref,
-                         KTrig(KMult(100_e, π_e, KPowReal(180_e, -1_e)), 0_e));
+  assert_trees_are_equal(ref, KTrig(KMult(100_e, 1_e / 180_e, π_e), 0_e));
 
   CloneTreeOverTree(ref, KSqrt("y"_e));
   Projection::DeepSystemProjection(

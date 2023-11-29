@@ -31,14 +31,6 @@ Layout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
 int HorizontalLayoutNode::serialize(
     char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  return serializeChildrenBetweenIndexes(buffer, bufferSize, floatDisplayMode,
-                                         numberOfSignificantDigits, false);
-}
-
-int HorizontalLayoutNode::serializeChildrenBetweenIndexes(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfSignificantDigits, bool forceIndexes, int firstIndex,
-    int lastIndex) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -50,12 +42,9 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(
 
   int numberOfChar = 0;
   // Write the children, adding multiplication signs if needed
-  int index1 = forceIndexes ? firstIndex : 0;
-  int index2 = forceIndexes ? lastIndex + 1 : childrenCount;
-  assert(index1 >= 0 && index2 <= childrenCount && index1 <= index2);
-  LayoutNode *currentChild = childAtIndex(index1);
+  LayoutNode *currentChild = childAtIndex(0);
   LayoutNode *nextChild = nullptr;
-  for (int i = index1; i < index2; i++) {
+  for (int i = 0; i < childrenCount; i++) {
     // Write the child
     assert(currentChild);
     numberOfChar += currentChild->serialize(

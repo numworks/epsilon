@@ -587,6 +587,8 @@ constexpr ToolboxMessageTree catalogChildren[] = {
                              I18n::Message::PythonTab, false),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandAmpersand,
                              I18n::Message::PythonAmpersand, false),
+    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandAt,
+                             I18n::Message::PythonAt, false),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSymbolExp,
                              I18n::Message::PythonSymbolExp, false),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandVerticalBar,

@@ -64,6 +64,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
     void didBecomeFirstResponder() override {
       m_tableController->didBecomeFirstResponder();
     }
+    void initView() override { m_tableController->initView(); }
     void viewWillAppear() override { m_tableController->viewWillAppear(); }
 
    protected:

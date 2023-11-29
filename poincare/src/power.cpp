@@ -316,7 +316,7 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(
   return childE->isOfType({Type::Power, Type::Subtraction, Type::Opposite,
                            Type::Multiplication, Type::Division, Type::Addition,
                            Type::MixedFraction, Type::PercentAddition,
-                           Type::Comparison});
+                           Type::PercentSimple, Type::Comparison});
 }
 
 int PowerNode::serialize(char *buffer, int bufferSize,

@@ -282,8 +282,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
-  if (ref->isVerticalOffsetLayout() &&
-      VerticalOffsetLayout::IsSuffixSuperscript(ref)) {
+  if (ref->child(0)->isVerticalOffsetLayout() &&
+      VerticalOffsetLayout::IsSuffixSuperscript(ref->child(0))) {
     if (leftL && leftL->isVerticalOffsetLayout() &&
         VerticalOffsetLayout::IsSuffixSuperscript(leftL)) {
       // Insert ^c left of a^b -> turn a^b into (a^b)

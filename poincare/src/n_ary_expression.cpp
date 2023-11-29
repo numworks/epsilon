@@ -64,18 +64,6 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   }
 }
 
-bool NAryExpression::allChildrenAreReal(Context* context,
-                                        bool canContainMatrices) const {
-  int n = numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    Expression c = childAtIndex(i);
-    if (!c.isReal(context, canContainMatrices)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
     const ReductionContext& reductionContext) {
   int childrenNumber = numberOfChildren();

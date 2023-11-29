@@ -544,6 +544,18 @@ bool Expression::allChildrenAreUndefined() {
   return true;
 }
 
+bool Expression::allChildrenAreReal(Context *context,
+                                    bool canContainMatrices) const {
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    Expression c = childAtIndex(i);
+    if (!c.isReal(context, canContainMatrices)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool Expression::isBasedIntegerCappedBy(const char *stringInteger) const {
   return type() == ExpressionNode::Type::BasedInteger &&
          (Integer::NaturalOrder(convert<BasedInteger>().integer(),

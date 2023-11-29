@@ -52,8 +52,6 @@ class NAryExpression : public Expression {
     return node()->squashUnaryHierarchyInPlace();
   }
   void mergeSameTypeChildrenInPlace();
-  bool allChildrenAreReal(Context* context,
-                          bool canContainMatrices = true) const;
 
  protected:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order,

@@ -108,16 +108,6 @@ Evaluation<T> RandintNode::templateApproximate(
       });
 }
 
-bool Randint::isReal(Context* context, bool canContainMatrices) const {
-  if (numberOfChildren() == 1) {
-    return childAtIndex(0).isReal(context, canContainMatrices);
-  } else {
-    assert(numberOfChildren() == 2);
-    return childAtIndex(0).isReal(context, canContainMatrices) &&
-           childAtIndex(1).isReal(context, canContainMatrices);
-  }
-}
-
 Expression Randint::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(

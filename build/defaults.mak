@@ -19,7 +19,7 @@ SFLAGS += -DPOINCARE_POOL_VISUALIZATION=$(POINCARE_POOL_VISUALIZATION)
 
 # Language-specific flags
 CFLAGS := -std=c11
-CXXFLAGS := -std=c++20 -fno-exceptions -fno-rtti -fno-threadsafe-statics
+CXXFLAGS := -std=c++20 -fno-exceptions -fno-rtti -fno-threadsafe-statics -ffp-contract=off
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)

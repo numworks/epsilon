@@ -33,6 +33,10 @@ class JuniorLayoutNode final : public LayoutNode {
 #endif
 
  protected:
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
+
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override {
     return PoincareJ::Render::Size(tree());

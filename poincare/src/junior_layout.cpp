@@ -6,6 +6,14 @@
 
 namespace Poincare {
 
+size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const {
+  Layout l = PoincareJ::Layout::ToPoincareLayout(tree());
+  return l.node()->serialize(buffer, bufferSize, floatDisplayMode,
+                             numberOfSignificantDigits);
+}
+
 Layout JuniorLayoutNode::makeEditable() {
   return PoincareJ::Layout::ToPoincareLayout(tree());
 }

@@ -48,10 +48,6 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  /* TabViewController::initView() will create new tabs every time it's called,
-   * without ever destroying them. As such, we make sure to call it only once
-   * in the constructor. */
-  void initView() override {}
   KDColor tabBackgroundColor() const override {
     return Escher::Palette::GrayDark;
   }

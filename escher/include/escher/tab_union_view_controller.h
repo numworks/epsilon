@@ -114,6 +114,8 @@ class TabUnionViewController : public TabViewController {
     return m_tabs->tab()->top();
   }
   void updateUnionActiveTab() override;
+  void addTabs() override {}
+
   I18n::Message m_titles[3];
   AbstractTabUnion* m_tabs;
 };

@@ -60,6 +60,8 @@ class TabViewController : public ViewController {
 
   virtual ViewController* children(uint8_t index) { return m_children[index]; }
   virtual void updateUnionActiveTab() {}
+  virtual void addTabs();
+
   constexpr static uint8_t k_maxNumberOfChildren = 3;
   ViewController* m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;

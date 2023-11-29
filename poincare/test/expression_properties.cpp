@@ -876,7 +876,7 @@ void assert_additional_results_compute_to(
 
   quiz_assert(numberOfResults == length);
   for (int i = 0; i < length; i++) {
-    assert_expression_serialize_to(additional[i], results[i], DecimalMode);
+    assert_expression_serializes_to(additional[i], results[i], DecimalMode);
   }
 }
 

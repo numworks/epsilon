@@ -179,15 +179,15 @@ void assert_expression_simplifies_approximates_to(
 
 // Expression serializing
 
-void assert_expression_serialize_to(
+void assert_expression_serializes_to(
     Poincare::Expression expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7);
 
 // Layout serializing
 
-void assert_layout_serialize_to(Poincare::Layout layout,
-                                const char* serialization);
+void assert_layout_serializes_to(Poincare::Layout layout,
+                                 const char* serialization);
 
 // Expression layouting
 

@@ -86,20 +86,20 @@ QUIZ_CASE(poincare_expression_constant_constructor) {
 QUIZ_CASE(poincare_expression_unit_constructor) {
   Unit u =
       Unit::Builder(Unit::k_timeRepresentatives, Unit::Prefix::EmptyPrefix());
-  assert_expression_serialize_to(u, "_s");
+  assert_expression_serializes_to(u, "_s");
 
   u = Unit::Builder(Unit::k_timeRepresentatives + 2,
                     Unit::Prefix::EmptyPrefix());
-  assert_expression_serialize_to(u, "_h");
+  assert_expression_serializes_to(u, "_h");
 
   u = Unit::Builder(Unit::k_distanceRepresentatives, Unit::k_prefixes + 9);
-  assert_expression_serialize_to(u, "_km");
+  assert_expression_serializes_to(u, "_km");
 
   u = Unit::Builder(Unit::k_volumeRepresentatives, Unit::Prefix::EmptyPrefix());
-  assert_expression_serialize_to(u, "_L");
+  assert_expression_serializes_to(u, "_L");
 
   u = Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix());
-  assert_expression_serialize_to(u, "_W");
+  assert_expression_serializes_to(u, "_W");
 }
 
 static inline void assert_number_of_numerical_values(const char* expression,

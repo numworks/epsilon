@@ -101,7 +101,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     LayoutCursor cursor(layout.childAtIndex(0).childAtIndex(1),
                         OMG::Direction::Left());
     cursor.performBackspace();
-    assert_layout_serialize_to(layout, "1234");
+    assert_layout_serializes_to(layout, "1234");
     assert_cursor_is_at(cursor, layout, 2);
   }
 
@@ -117,7 +117,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1),
                         OMG::Direction::Left());
     cursor.performBackspace();
-    assert_layout_serialize_to(layout, "1+3");
+    assert_layout_serializes_to(layout, "1+3");
     assert_cursor_is_at(cursor, layout, 2);
   }
 
@@ -136,7 +136,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1),
                         OMG::Direction::Left());
     cursor.performBackspace();
-    assert_layout_serialize_to(layout, "1+^\u00122\u0013");
+    assert_layout_serializes_to(layout, "1+^\u00122\u0013");
     assert_cursor_is_at(cursor, layout, 2);
   }
 
@@ -150,7 +150,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     bool dummy;
     cursor.move(OMG::Direction::Right(), false, &dummy);
     cursor.performBackspace();
-    assert_layout_serialize_to(layout, "1");
+    assert_layout_serializes_to(layout, "1");
     assert_cursor_is_at(cursor, layout, 0);
   }
 
@@ -165,7 +165,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     LayoutCursor cursor(layout.childAtIndex(1).childAtIndex(0),
                         OMG::Direction::Left());
     cursor.performBackspace();
-    assert_layout_serialize_to(layout, "21+3");
+    assert_layout_serializes_to(layout, "21+3");
     assert_cursor_is_at(cursor, layout, 1);
   }
 }
@@ -179,7 +179,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     LayoutCursor c(l);
     c.insertText("(", nullptr);
     c.insertText(")", nullptr);
-    assert_layout_serialize_to(l, "()");
+    assert_layout_serializes_to(l, "()");
     assert_cursor_is_at(c, l, l.numberOfChildren());
     quiz_assert(c.layout() == l && c.position() == l.numberOfChildren());
   }
@@ -192,7 +192,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     LayoutCursor c(l);
     c.insertText(")", nullptr);
     c.insertText("(", nullptr);
-    assert_layout_serialize_to(l, "()()");
+    assert_layout_serializes_to(l, "()()");
     assert_cursor_is_at(c, l.childAtIndex(1).childAtIndex(0), 0);
   }
 
@@ -204,7 +204,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     LayoutCursor c(l);
     c.insertText("(", nullptr);
     c.insertText("(", nullptr);
-    assert_layout_serialize_to(l, "(())");
+    assert_layout_serializes_to(l, "(())");
     assert_cursor_is_at(
         c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
         0);
@@ -221,7 +221,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     LayoutCursor c(l);
     c.safeSetPosition(2);
     c.insertText("(", nullptr);
-    assert_layout_serialize_to(l, "12(345)");
+    assert_layout_serializes_to(l, "12(345)");
     assert_cursor_is_at(c, l.childAtIndex(2).childAtIndex(0), 0);
   }
 
@@ -237,7 +237,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     LayoutCursor c(l);
     c.safeSetPosition(1);
     c.insertText("(", nullptr);
-    assert_layout_serialize_to(l, "2(^\u00123\u0013)");
+    assert_layout_serializes_to(l, "2(^\u00123\u0013)");
     assert_cursor_is_at(c, l.childAtIndex(1).childAtIndex(0), 0);
   }
 
@@ -251,7 +251,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
              CodePointLayout::Builder('3')})));
     LayoutCursor c(l, OMG::Direction::Right());
     c.performBackspace();
-    assert_layout_serialize_to(l, "(123)");
+    assert_layout_serializes_to(l, "(123)");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0),
                         c.layout().numberOfChildren());
   }
@@ -272,7 +272,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
         l.childAtIndex(0).childAtIndex(0).childAtIndex(2).childAtIndex(0),
         OMG::Direction::Left());
     c.performBackspace();
-    assert_layout_serialize_to(l, "((1234)5)");
+    assert_layout_serializes_to(l, "((1234)5)");
     assert_cursor_is_at(
         c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
         2);
@@ -290,7 +290,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
         l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
         OMG::Direction::Left());
     c.performBackspace();
-    assert_layout_serialize_to(l, "(3)");
+    assert_layout_serializes_to(l, "(3)");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 0);
   }
   /*
@@ -305,7 +305,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
     LayoutCursor c(l.childAtIndex(0).childAtIndex(0), OMG::Direction::Right());
     c.insertText(")", nullptr);
-    assert_layout_serialize_to(l, "√\u0012(3)\u0013");
+    assert_layout_serializes_to(l, "√\u0012(3)\u0013");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 1);
   }
   /*
@@ -317,7 +317,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Left());
     c.insertLayout(CurlyBraceLayout::Builder(), nullptr);
-    assert_layout_serialize_to(l, "{}{}");
+    assert_layout_serializes_to(l, "{}{}");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 0);
   }
   /*
@@ -333,7 +333,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Right());
     c.performBackspace();
-    assert_layout_serialize_to(l, "\u0014{\u0014}");
+    assert_layout_serializes_to(l, "\u0014{\u0014}");
     assert_cursor_is_at(c, l, 1);
   }
   /*
@@ -351,7 +351,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     LayoutCursor c(l);
     c.safeSetPosition(1);
     c.performBackspace();
-    assert_layout_serialize_to(l, "(\u0014{1\u0014}23)");
+    assert_layout_serializes_to(l, "(\u0014{1\u0014}23)");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 1);
   }
   /*

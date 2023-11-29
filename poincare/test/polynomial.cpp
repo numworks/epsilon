@@ -40,9 +40,9 @@ void assert_roots_of_polynomial_are(const char* polynomial,
   int targetNumberOfRoots = (N == 1 && roots[0][0] == '\0') ? 0 : N;
   quiz_assert_print_if_failure(numberOfRoots == targetNumberOfRoots,
                                polynomial);
-  assert_expression_serialize_to(deltaExp, delta);
+  assert_expression_serializes_to(deltaExp, delta);
   for (int i = 0; i < targetNumberOfRoots; i++) {
-    assert_expression_serialize_to(rootsExp[i], roots[i]);
+    assert_expression_serializes_to(rootsExp[i], roots[i]);
   }
 }
 

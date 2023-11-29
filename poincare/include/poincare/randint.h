@@ -65,7 +65,9 @@ class Randint final : public ExpressionUpToTwoChildren<Randint, RandintNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  bool isReal(Context* context, bool canContainMatrices) const;
+  bool isReal(Context* context, bool canContainMatrices = false) const {
+    return allChildrenAreReal(context, canContainMatrices);
+  }
   Expression shallowReduce(ReductionContext reductionContext);
 };
 

@@ -72,10 +72,9 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
 void build_failure_infos(char *returnedInformationsBuffer, size_t bufferSize,
                          const char *expression, const char *result,
                          const char *expectedResult) {
-  Poincare::Print::UnsafeCustomPrintf(
-      returnedInformationsBuffer, bufferSize,
-      " %s\n processed to\n %s\n instead of\n %s", expression, result,
-      expectedResult);
+  Print::UnsafeCustomPrintf(returnedInformationsBuffer, bufferSize,
+                            " %s\n processed to\n %s\n instead of\n %s",
+                            expression, result, expectedResult);
 }
 
 void assert_parsed_expression_process_to(
@@ -100,9 +99,8 @@ void assert_parsed_expression_process_to(
   quiz_assert_print_if_failure(test, information);
 }
 
-Poincare::Expression parse_expression(const char *expression, Context *context,
-                                      bool addParentheses,
-                                      bool parseForAssignment) {
+Expression parse_expression(const char *expression, Context *context,
+                            bool addParentheses, bool parseForAssignment) {
   Expression result = Expression::Parse(expression, context, addParentheses,
                                         parseForAssignment);
   quiz_assert_print_if_failure(!result.isUninitialized(), expression);
@@ -208,7 +206,7 @@ void assert_expression_simplifies_approximates_to(
       numberOfSignificantDigits);
 }
 
-void assert_expression_serializes_to(Poincare::Expression expression,
+void assert_expression_serializes_to(Expression expression,
                                      const char *serialization,
                                      Preferences::PrintFloatMode mode,
                                      int numberOfSignificantDigits) {
@@ -224,8 +222,7 @@ void assert_expression_serializes_to(Poincare::Expression expression,
   quiz_assert_print_if_failure(test, information);
 }
 
-void assert_layout_serializes_to(Poincare::Layout layout,
-                                 const char *serialization) {
+void assert_layout_serializes_to(Layout layout, const char *serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   layout.serializeForParsing(buffer, bufferSize);
@@ -233,26 +230,21 @@ void assert_layout_serializes_to(Poincare::Layout layout,
                                serialization);
 }
 
-void assert_expression_layouts_as(Poincare::Expression expression,
-                                  Poincare::Layout layout) {
+void assert_expression_layouts_as(Expression expression, Layout layout) {
   Layout l = expression.createLayout(
       DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
   quiz_assert(l.isIdenticalTo(layout));
 }
 
 template void assert_expression_approximates_to<float>(
-    char const *, char const *, Poincare::Preferences::AngleUnit,
-    Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat,
-    int);
+    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    Preferences::ComplexFormat, int);
 template void assert_expression_approximates_to<double>(
-    char const *, char const *, Poincare::Preferences::AngleUnit,
-    Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat,
-    int);
+    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<float>(
-    char const *, char const *, Poincare::Preferences::AngleUnit,
-    Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat,
-    int);
+    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<double>(
-    char const *, char const *, Poincare::Preferences::AngleUnit,
-    Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat,
-    int);
+    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    Preferences::ComplexFormat, int);

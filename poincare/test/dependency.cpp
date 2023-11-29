@@ -32,13 +32,13 @@ void assert_expression_simplify_to_with_dependencies(
 
   quiz_assert_print_if_failure(d.type() == ExpressionNode::Type::Dependency,
                                expression);
-  assert_expression_serialize_to(d.childAtIndex(0), simplifiedExpression);
+  assert_expression_serializes_to(d.childAtIndex(0), simplifiedExpression);
   Expression m = d.childAtIndex(1);
   quiz_assert_print_if_failure(m.type() == ExpressionNode::Type::List,
                                expression);
   quiz_assert_print_if_failure(m.numberOfChildren() == N, expression);
   for (size_t i = 0; i < N; i++) {
-    assert_expression_serialize_to(m.childAtIndex(i), dependencies[i]);
+    assert_expression_serializes_to(m.childAtIndex(i), dependencies[i]);
   }
 }
 

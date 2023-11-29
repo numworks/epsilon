@@ -385,7 +385,7 @@ QUIZ_CASE(poincare_integer_serialize) {
 // Euclidian Division
 
 void assert_division_computes_to(int n, int m, const char* div) {
-  assert_expression_serialize_to(
+  assert_expression_serializes_to(
       Integer::CreateEuclideanDivision(Integer(n), Integer(m)), div);
 }
 
@@ -403,7 +403,7 @@ void assert_mixed_fraction_computes_to(int n, int m, const char* frac,
   Preferences::sharedPreferences->enableMixedFractions(
       mixedFractionsEnabled ? Preferences::MixedFractions::Enabled
                             : Preferences::MixedFractions::Disabled);
-  assert_expression_serialize_to(
+  assert_expression_serializes_to(
       Integer::CreateMixedFraction(Integer(n), Integer(m)), frac);
 }
 

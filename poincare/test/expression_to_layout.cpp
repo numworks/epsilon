@@ -87,7 +87,7 @@ void assert_expression_layouts_and_serializes_to(Expression expression,
                                                  const char* serialization) {
   Layout layout = expression.createLayout(
       DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
-  assert_layout_serialize_to(layout, serialization);
+  assert_layout_serializes_to(layout, serialization);
 }
 
 QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {

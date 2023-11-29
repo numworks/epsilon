@@ -8,7 +8,6 @@
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
-#include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -283,9 +282,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
   if (ref->child(0)->isVerticalOffsetLayout() &&
-      VerticalOffsetLayout::IsSuffixSuperscript(ref->child(0))) {
+      VerticalOffset::IsSuffixSuperscript(ref->child(0))) {
     if (leftL && leftL->isVerticalOffsetLayout() &&
-        VerticalOffsetLayout::IsSuffixSuperscript(leftL)) {
+        VerticalOffset::IsSuffixSuperscript(leftL)) {
       // Insert ^c left of a^b -> turn a^b into (a^b)
       int leftParenthesisIndex =
           ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
@@ -294,7 +293,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     }
 
     if (rightL && rightL->isVerticalOffsetLayout() &&
-        VerticalOffsetLayout::IsSuffixSuperscript(rightL) &&
+        VerticalOffset::IsSuffixSuperscript(rightL) &&
         cursorNode()->indexOfChild(rightL) > 0) {
       // Insert ^b right of a in a^c -> turn a^c into (a)^c
       int leftParenthesisIndex =

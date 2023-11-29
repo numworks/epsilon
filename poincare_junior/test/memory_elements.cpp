@@ -746,6 +746,7 @@ QUIZ_CASE(pcj_constructor) {
           ValueBlock(0),
           ValueBlock(0),
           TypeBlock(BlockType::VerticalOffsetLayout),
+          ValueBlock(0),
           TypeBlock(BlockType::RackLayout),
           ValueBlock(1),
           TypeBlock(BlockType::CodePointLayout),

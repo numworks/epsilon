@@ -5,13 +5,19 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "empty_rectangle.h"
+#include "indices.h"
 #include "layout_cursor.h"
+
+namespace PoincareJ {
 
 namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
-}
 
-namespace PoincareJ {
+inline static KDCoordinate DeltaHeight(const Tree* node) {
+  return VerticalOffset::IsSuperscript(node) ? -VerticalOffset::IndiceHeight
+                                             : VerticalOffset::IndiceHeight;
+}
+}  // namespace VerticalOffset
 
 KDFont::Size RackLayout::font = KDFont::Size::Large;
 LayoutCursor* RackLayout::layoutCursor = nullptr;
@@ -29,9 +35,14 @@ KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
   if (!childI->isVerticalOffsetLayout()) {
     return Render::Baseline(childI);
   }
+  // TODO prevent infinite loop with prefix of suffix
+  int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
   KDCoordinate baseBaseline =
-      i > 0 ? ChildBaseline(node, i - 1) : KDFont::GlyphHeight(font) / 2;
-  return baseBaseline + Render::Height(childI) - VerticalOffset::IndiceHeight;
+      (baseIndex == -1 || baseIndex == node->numberOfChildren())
+          ? KDFont::GlyphHeight(font) / 2
+          : ChildBaseline(node, baseIndex);
+  return baseBaseline + Render::Height(childI) +
+         VerticalOffset::DeltaHeight(childI);
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
@@ -51,11 +62,13 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
     const Tree* childI = node->child(i);
     KDSize childSize = Render::Size(childI);
     if (childI->isVerticalOffsetLayout()) {
+      int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
       KDCoordinate baseHeight =
-          i > 0 ? SizeBetweenIndexes(node, i - 1, i).height()
-                : KDFont::GlyphHeight(font);
-      childSize =
-          childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
+          (baseIndex == -1 || baseIndex == node->numberOfChildren())
+              ? KDFont::GlyphHeight(font)
+              : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
+      childSize = childSize +
+                  KDSize(0, baseHeight + VerticalOffset::DeltaHeight(childI));
     }
     totalWidth += childSize.width();
     KDCoordinate childBaseline = ChildBaseline(node, i);
@@ -75,7 +88,6 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    // TODO vertical
     result = std::max(result, ChildBaseline(node, i));
   }
   return result;

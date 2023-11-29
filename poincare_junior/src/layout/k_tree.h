@@ -9,7 +9,6 @@ namespace PoincareJ {
 // TODO : A RackLayout shouldn't have RackLayout children.
 constexpr auto KRackL = KNAry<BlockType::RackLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
-constexpr auto KVertOffL = KUnary<BlockType::VerticalOffsetLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 
 constexpr auto KEmptyMatrixL =
@@ -23,6 +22,16 @@ consteval auto KParenthesisL(KTree<B1...>) {
 template <TreeCompatibleConcept A>
 consteval auto KParenthesisL(A a) {
   return KParenthesisL(KTree(a));
+}
+
+template <Block... B1>
+consteval auto KVertOffL(KTree<B1...>) {
+  return KTree<BlockType::VerticalOffsetLayout, 0, B1...>();
+}
+
+template <TreeCompatibleConcept A>
+consteval auto KVertOffL(A a) {
+  return KVertOffL(KTree(a));
 }
 
 // Templating over uint32_t and not CodePoint to keep m_code private in

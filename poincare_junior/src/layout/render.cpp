@@ -13,7 +13,6 @@
 #include "rack_layout.h"
 #include "render_masks.h"
 #include "render_metrics.h"
-#include "vertical_offset_layout.h"
 
 namespace PoincareJ {
 
@@ -157,7 +156,6 @@ KDSize Render::Size(const Tree* node) {
       return KDSize(width, height);
     }
     case LayoutType::VerticalOffset: {
-      assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       // VerticalOffset have no size per-se, they are handled by their parent
       return Size(node->child(0));
     }
@@ -411,7 +409,6 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
                          Baseline(node->child(UpperBoundIndex)));
     }
     case LayoutType::VerticalOffset: {
-      assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       return KDPointZero;
     }
     case LayoutType::CodePoint:
@@ -514,7 +511,6 @@ KDCoordinate Render::Baseline(const Tree* node) {
           Baseline(node->child(FunctionIndex)));
     }
     case LayoutType::VerticalOffset:
-      assert(VerticalOffsetLayout::IsSuffixSuperscript(node));
       return 0;
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:

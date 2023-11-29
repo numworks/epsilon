@@ -1,6 +1,6 @@
 NODE(Rack, NARY)
 NODE(Fraction, 2)
-NODE(VerticalOffset, 1)
+NODE(VerticalOffset, 1, 1)
 
 NODE(CodePoint, 0, sizeof(CodePoint))
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))

@@ -192,15 +192,9 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
 
 bool Beautification::DeepBeautify(Tree* expr,
                                   ProjectionContext projectionContext) {
-  // Simplification might have unlocked more approximations. Try again.
-  bool changed =
-      (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
-      Approximation::ApproximateAndReplaceEveryScalar(expr);
-  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify, &projectionContext,
-                                      false) ||
-            changed;
-  changed = AddUnits(expr, projectionContext) || changed;
-  return changed;
+  bool changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify,
+                                           &projectionContext, false);
+  return AddUnits(expr, projectionContext) || changed;
 }
 
 // Reverse most system projections to display better expressions

@@ -737,6 +737,10 @@ bool Simplification::SimplifyLastTree(Tree* ref,
                                       ShallowAdvancedReduction(e, e);
                              }) ||
               changed;
+    if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
+      // Approximate again in case exact numbers appeared during simplification.
+      changed = Approximation::ApproximateAndReplaceEveryScalar(ref);
+    }
     changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
     Variables::BeautifyToName(ref, variables);
     variables->removeTree();

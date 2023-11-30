@@ -3,6 +3,7 @@
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -61,6 +62,10 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue) {
 
 void Derivation::ShallowPartialDerivate(const Tree *derivand,
                                         const Tree *symbolValue, int index) {
+  if (derivand->isRandomNode()) {
+    // Do not handle random nodes in derivation.
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  }
   switch (derivand->type()) {
     case BlockType::Multiplication: {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...

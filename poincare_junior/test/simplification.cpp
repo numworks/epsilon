@@ -311,6 +311,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dim({{1,2}})", "undef");
   simplifies_to("{2*[[1]]}", "undef");
   simplifies_to("{(1)/2, 1}", "{1/2, 1}");
+
+  // Random
+  simplifies_to("diff(random(), x, 2)", "undef");
   // TODO : Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("random()", "random()");

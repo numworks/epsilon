@@ -107,7 +107,7 @@ Expression PiecewiseOperator::UntypedBuilder(Expression children) {
 
 Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   {
-    // Use custom dependencies bubbling-up for piecwise.
+    // Use custom dependencies bubbling-up for piecewise.
     Expression e = bubbleUpPiecewiseDependencies(reductionContext);
     if (!e.isUninitialized()) {
       return e;
@@ -128,7 +128,7 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
     if (condition.hasBooleanValue()) {
       // Skip conditions that are not booleans. They are always false
       if (condition.type() != ExpressionNode::Type::Boolean) {
-        // The condition is undeterminated, can't reduce
+        // The condition is undetermined, can't reduce
         return *this;
       }
       if (static_cast<Boolean&>(condition).value()) {
@@ -185,7 +185,7 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
    *   x , 0 < cos(x) <= 0.5,
    *   0
    * )
-   * derivates into
+   * differentiates into
    * piecewise(
    *   1     , 0 < cos(x) < 0.5,
    *   undef , 0 <= cos(x) <= 0.5,

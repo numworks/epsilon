@@ -969,17 +969,9 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
     return !deepIsMatrix(context, canContainMatrices) && !deepIsList(context);
   }
 
-  // NAryExpresions are real if all children are real
-  if (IsNAry(*this)) {
-    return convert<NAryExpression>().allChildrenAreReal(context,
-                                                        canContainMatrices);
-  }
-
-  if (type() == ExpressionNode::Type::Randint) {
-    /* Randint evaluates to either a real integer or a list (not real), based
-     * on the type of its inputs. */
-    return static_cast<const Randint *>(this)->isReal(context,
-                                                      canContainMatrices);
+  // NAryExpresions and Randints are real if all children are real.
+  if (IsNAry(*this) || type() == ExpressionNode::Type::Randint) {
+    return allChildrenAreReal(context, canContainMatrices);
   }
 
   if (type() == ExpressionNode::Type::ConstantMaths) {

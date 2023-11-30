@@ -165,8 +165,8 @@ const char* TabViewController::tabName(uint8_t index) {
 }
 
 void TabViewController::initView() {
-  for (int i = 0; i < m_numberOfChildren; i++) {
-    children(i)->initView();
+  if (m_dataSource->activeTab() >= 0) {
+    activeViewController()->initView();
   }
 }
 
@@ -175,6 +175,7 @@ void TabViewController::viewWillAppear() {
     m_dataSource->setActiveTab(0);
   }
   updateUnionActiveTab();
+  activeViewController()->initView();
   m_view.setActiveView(activeViewController()->view());
   activeViewController()->viewWillAppear();
   m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());

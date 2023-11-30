@@ -123,7 +123,7 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
   if (i != m_dataSource->activeTab()) {
     activeVC->initView();
     m_view.setActiveView(activeVC->view());
-    children(i)->viewWillAppear();
+    activeVC->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);
   }
   if (i != m_dataSource->activeTab()) {

@@ -2971,6 +2971,10 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to(
       "piecewise(-x/x,x>0,0)",
       "\u0014dep(piecewise(-1,x>0,0),{piecewise(1/x,x>0,0)})");
+
+  assert_parsed_expression_simplify_to(
+      "piecewise(3,4>0,2,2<a)", "undef", User, Radian, MetricUnitFormat,
+      Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
 }
 
 QUIZ_CASE(poincare_simplification_integral) {

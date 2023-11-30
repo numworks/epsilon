@@ -8,6 +8,10 @@ QUIZ_CASE(solver_error) {
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
   assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
   assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
+  assert_solves_to_error("x-[[2,3]]=0", EquationUndefined);
+  assert_solves_to_error("x[[2,3]]=0", EquationUndefined);
+  assert_solves_to_no_solution("x-{2,3}=0");
+  assert_solves_to_no_solution("x{2,3}=0");
   Poincare::Preferences::sharedPreferences->setComplexFormat(
       Poincare::Preferences::ComplexFormat::Real);
   assert_solves_to_error("x-arcsin(10)=0", EquationNonreal);
@@ -59,9 +63,10 @@ QUIZ_CASE(solver_linear_system) {
   Poincare::Preferences::sharedPreferences->setComplexFormat(Cartesian);
 }
 
-QUIZ_CASE(solver_polynomial_system) {
+QUIZ_CASE(solver_polynomial_equation) {
   set_complex_format(Cartesian);
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
+  assert_solves_to("(x-2π)(x/2-pi)=0", {"x=2π", "delta=0"});
   assert_solves_to("(x-π)(x-ln(2))=0",
                    {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
   assert_solves_to("(x-√(2))(x-√(3))=0",
@@ -175,7 +180,7 @@ QUIZ_CASE(solver_complex_cartesian) {
   set_complex_format(Cartesian);
   assert_solves_to("x+i=0", "x=-i");
   assert_solves_to("x+√(-1)=0", "x=-i");
-  assert_solves_to({"x^2+x+1=0"},
+  assert_solves_to("x^2+x+1=0",
                    {"x=-1/2-((√(3))/2)i", "x=-1/2+((√(3))/2)i", "delta=-3"});
   assert_solves_to("x^2-√(-1)=0",
                    {"x=-√(2)/2-(√(2)/2)i", "x=√(2)/2+(√(2)/2)i", "delta=4i"});
@@ -219,7 +224,7 @@ QUIZ_CASE(solver_symbolic_computation) {
 
   set("a", "x");
   // a is undef
-  assert_solves_to({"a=0"}, {"a=0"});
+  assert_solves_to("a=0", {"a=0"});
 
   unset("a");
 
@@ -271,7 +276,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});
 
   set("j", "8_g");
-  assert_solves_to({"j+1=0"}, {"j=-1"});
+  assert_solves_to("j+1=0", {"j=-1"});
 
   unset("a");
   unset("b");

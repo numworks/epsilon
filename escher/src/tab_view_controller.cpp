@@ -121,10 +121,7 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);
   ViewController* activeVC = children(i);
   if (i != m_dataSource->activeTab()) {
-    activeVC->initView();
-    m_view.setActiveView(activeVC->view());
-    activeVC->viewWillAppear();
-    m_view.m_tabView.setActiveIndex(i);
+    setActiveChildren(i);
   }
   if (i != m_dataSource->activeTab()) {
     activeViewController()->viewDidDisappear();
@@ -160,6 +157,14 @@ View* TabViewController::view() { return &m_view; }
 
 uint8_t TabViewController::numberOfTabs() { return m_numberOfChildren; }
 
+void TabViewController::setActiveChildren(uint8_t i) {
+  ViewController* activeVC = children(i);
+  activeVC->initView();
+  m_view.setActiveView(activeVC->view());
+  activeVC->viewWillAppear();
+  m_view.m_tabView.setActiveIndex(i);
+}
+
 const char* TabViewController::tabName(uint8_t index) {
   return children(index)->title();
 }
@@ -175,10 +180,7 @@ void TabViewController::viewWillAppear() {
     m_dataSource->setActiveTab(0);
   }
   updateUnionActiveTab();
-  activeViewController()->initView();
-  m_view.setActiveView(activeViewController()->view());
-  activeViewController()->viewWillAppear();
-  m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());
+  setActiveChildren(m_dataSource->activeTab());
 }
 
 void TabViewController::viewDidDisappear() {

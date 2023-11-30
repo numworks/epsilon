@@ -120,8 +120,17 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
+
   int n = numberOfChildren();
   assert(n > 0);
+
+  // Bubble-up undef from conditions
+  for (int i = 1; i < n; i += 2) {
+    if (childAtIndex(i).isUndefined()) {
+      return replaceWithUndefinedInPlace();
+    }
+  }
+
   int i = 0;
   while (i + 1 < n) {
     Expression condition = childAtIndex(i + 1);

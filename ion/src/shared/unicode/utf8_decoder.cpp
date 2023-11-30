@@ -58,7 +58,10 @@ static inline int leading_ones(uint8_t value) {
   return 0;
 }
 
-static bool isValidChar(uint8_t value) { return leading_ones(value) <= 4; }
+// An UTF-8 char is invalid if it has more than 4 leading ones.
+static bool isValidChar(int value_leading_ones) {
+  return value_leading_ones <= 4;
+}
 
 static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
   return (value & ((1 << bits) - 1));
@@ -72,12 +75,13 @@ CodePoint UTF8Decoder::nextCodePoint() {
     returnCodePointNull = true;
   }
 
-  if (!isValidChar(*stringPosition())) {
+  int leadingOnes = leading_ones(*stringPosition());
+
+  if (!isValidChar(leadingOnes)) {
     nextByte();
     return UCodePointReplacement;
   }
 
-  int leadingOnes = leading_ones(*stringPosition());
   uint32_t result = last_k_bits(nextByte(), 8 - leadingOnes - 1);
   for (int i = 0; i < leadingOnes - 1; i++) {
     result <<= 6;
@@ -111,7 +115,7 @@ CodePoint UTF8Decoder::previousCodePoint() {
     previousByte();
     leadingOnes = leading_ones(*stringPosition());
 
-    if (!isValidChar(*stringPosition())) {
+    if (!isValidChar(leadingOnes)) {
       return UCodePointReplacement;
     }
   }

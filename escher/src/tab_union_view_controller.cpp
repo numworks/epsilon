@@ -39,10 +39,7 @@ void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
   ViewController* activeVC = children(i);
   if (i != m_dataSource->activeTab()) {
     m_dataSource->setActiveTab(i);
-    activeVC->initView();
-    m_view.setActiveView(activeVC->view());
-    activeVC->viewWillAppear();
-    m_view.m_tabView.setActiveIndex(i);
+    setActiveChildren(i);
   }
   /* If enter is false, we switch to the ith tab but the focus stays on the tab
    * button. It is useful when pressing Back on a non-leftmost tab. */

@@ -6,6 +6,29 @@
 
 namespace PoincareJ {
 
+/* TODO: To handle random in Sums or ListSequences :
+ * - Random nodes should have a System node equivalent, handling the seed
+ *   -> This will also prevent from layouting them, and remove some edge cases
+ *      in builtins.
+ * - SystemRandom nodes must have the seeds as a child instead of metadata.
+ *   -> This seed can be any expression (expected to be an integer)
+ *      Complex example: with r() random() and r(SEED) the seeded random:
+ *        r() + sum(r() + sum(r(),j, 0, k-1) + r(), i, 0, n-1) + r() ->
+ *         Would be seeded with
+ *        r(0) + sum(r(1+i) + sum(r(1+n+i*k+j, j, 0, k-1) +
+ *        r(1+n+n*k+i), i, 0, n) + r(1+n+n*k+n+1)
+ * - Before approximation, optimize the seeds :
+ *   -> Remove seed if there are no duplicates (and handle approximation)
+ *   -> Shift seeds to a lower unused seed is possible
+ *
+ * Some alternatives :
+ *  - Do not explicit sums/products, nor project listSequences containing random
+ *    Handle it on approximation.
+ *    -> We still need to account for seeds within the global/local context.
+ *  - Just approximate all random nodes instead of seeding them
+ *    -> We can't do that because of Grapher
+ */
+
 class Random {
   /* Random nodes have a random seed metadata.
    * Identical node and seed should approximate to the same value.

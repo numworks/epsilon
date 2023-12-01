@@ -139,27 +139,27 @@ bool MainController::textFieldDidReceiveEvent(
     return false;
   }
 
-  if (event != Ion::Events::Copy && event != Ion::Events::Cut &&
-      event != Ion::Events::Var && event != Ion::Events::Sto) {
-    return false;
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
+      event == Ion::Events::Var || event == Ion::Events::Sto) {
+    constexpr int bufferSize = Escher::TextField::MaxBufferSize();
+    char buffer[bufferSize];
+    buffer[0] = 0;
+
+    if (dataSource->field()->canBeStored(z)) {
+      dataSource->field()->getLayout(z).serializeForParsing(buffer, bufferSize);
+    }
+
+    if (event == Ion::Events::Var || event == Ion::Events::Sto) {
+      App::app()->storeValue(buffer);
+    } else if (strlen(buffer) > 0) {
+      assert(event == Ion::Events::Copy || event == Ion::Events::Cut);
+      Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
+    }
+
+    return true;
   }
 
-  constexpr int bufferSize = Escher::TextField::MaxBufferSize();
-  char buffer[bufferSize];
-  buffer[0] = 0;
-  if (dataSource->field()->hasDouble(z) &&
-      dataSource->field()->canBeStored(z)) {
-    dataSource->field()->getLayout(z).serializeForParsing(buffer, bufferSize);
-  }
-
-  if (event == Ion::Events::Var || event == Ion::Events::Sto) {
-    App::app()->storeValue(buffer);
-  } else if (strlen(buffer) > 0) {
-    assert(event == Ion::Events::Copy || event == Ion::Events::Cut);
-    Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
-  }
-
-  return true;
+  return false;
 }
 
 bool MainController::textFieldDidFinishEditing(

@@ -287,7 +287,6 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
    * because we are sure of not modifying any pre-existing node in the pool. We
    * are sure there cannot be a Store in the exactOutput. */
   ExceptionCheckpoint ecp;
-  Calculation::EqualSign result;
   if (ExceptionRun(ecp)) {
     Expression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(

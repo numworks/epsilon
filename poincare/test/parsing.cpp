@@ -1605,3 +1605,9 @@ QUIZ_CASE(poincare_parsing_points) {
           Point::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)),
           Cosine::Builder(BasedInteger::Builder(3))));
 }
+
+QUIZ_CASE(poincare_parsing_piecewise) {
+  assert_text_not_parsable("piecewise(3,1>0,2,undef)");
+  assert_text_not_parsable("piecewise(-1,undef,i)");
+  assert_text_not_parsable("piecewise(4^2,undef,6,4>2)");
+}

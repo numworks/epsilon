@@ -153,6 +153,7 @@ Layout ExpressionsListController::getExactLayoutFromExpression(
       e, &exactExpression, &approximateExpression, computationContext.context(),
       {.complexFormat = computationContext.complexFormat(),
        .angleUnit = computationContext.angleUnit(),
+       .updateComplexFormatWithExpression = false,
        .symbolicComputation =
            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
   assert(!approximateExpression.isUninitialized());

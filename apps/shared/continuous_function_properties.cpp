@@ -171,6 +171,12 @@ void ContinuousFunctionProperties::update(
   if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
     // Do not handle dependencies for now.
     analyzedExpression = reducedEquation.childAtIndex(0);
+
+    // If there is still a dependency, it means that the reduction failed.
+    if (analyzedExpression.type() == ExpressionNode::Type::Dependency) {
+      setErrorStatusAndUpdateCaption(Status::Unhandled);
+      return;
+    }
   }
 
   // Compute equation's degree regarding y.

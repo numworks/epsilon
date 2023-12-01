@@ -90,14 +90,8 @@ void DetailsListController::fillCellForRow(HighlightCell *cell, int row) {
 }
 
 bool DetailsListController::canStoreCellAtRow(int row) {
-  const DataField *dataField = DataFieldForRow(row);
-  Layout layout = DataFieldForRow(row)->getLayout(
-      App::app()->elementsViewDataSource()->selectedElement(),
-      PrintFloat::k_numberOfStoredSignificantDigits);
-  return dataField != &ElementsDataBase::ConfigurationField &&
-         dataField != &ElementsDataBase::GroupField &&
-         dataField != &ElementsDataBase::StateField &&
-         !layout.isIdenticalTo(DataField::UnknownValueLayout());
+  return DataFieldForRow(row)->canBeStored(
+      App::app()->elementsViewDataSource()->selectedElement());
 }
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int row) {

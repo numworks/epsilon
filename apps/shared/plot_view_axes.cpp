@@ -13,7 +13,7 @@ namespace PlotPolicy {
 // WithGrid
 
 void WithGrid::drawGrid(const AbstractPlotView* plotView, KDContext* ctx,
-                        KDRect rect) const {
+                        KDRect rect) {
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, false);
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, false);
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, true);
@@ -22,7 +22,7 @@ void WithGrid::drawGrid(const AbstractPlotView* plotView, KDContext* ctx,
 
 void WithGrid::drawGridLines(const AbstractPlotView* plotView, KDContext* ctx,
                              KDRect rect, AbstractPlotView::Axis parallel,
-                             bool boldGrid) const {
+                             bool boldGrid) {
   KDColor color = boldGrid ? k_boldColor : k_lightColor;
   bool oddIndexes = !boldGrid;
   assert(plotView);
@@ -49,7 +49,7 @@ void WithGrid::drawGridLines(const AbstractPlotView* plotView, KDContext* ctx,
 // WithPolarGrid
 
 void WithPolarGrid::drawPolarCircles(const AbstractPlotView* plotView,
-                                     KDContext* ctx, KDRect rect) const {
+                                     KDContext* ctx, KDRect rect) {
   float step = plotView->range()->xGridUnit();
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
    * account for conversion errors. */
@@ -78,7 +78,7 @@ void WithPolarGrid::drawPolarCircles(const AbstractPlotView* plotView,
 }
 
 void WithPolarGrid::drawGrid(const AbstractPlotView* plotView, KDContext* ctx,
-                             KDRect rect) const {
+                             KDRect rect) {
   drawPolarCircles(plotView, ctx, rect);
   // The widest label is of length 4 : '360°'
   constexpr int graduationHorizontalMargin =

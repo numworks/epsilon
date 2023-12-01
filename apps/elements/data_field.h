@@ -51,6 +51,7 @@ class DataField {
       int significantDigits = k_defaultSignificantDigits) const = 0;
   I18n::Message getMessage(AtomicNumber z) const;
   virtual ColorPair getColors(AtomicNumber z) const { return ColorPair(); }
+  virtual bool canBeStored(AtomicNumber z) const { return false; }
 
  protected:
   constexpr static int k_defaultSignificantDigits = 4;
@@ -76,6 +77,7 @@ class DoubleDataField : public DataField {
       AtomicNumber z,
       int significantDigits = k_defaultSignificantDigits) const override;
   ColorPair getColors(AtomicNumber z) const override;
+  bool canBeStored(AtomicNumber z) const override;
 
  private:
   virtual const char* rawUnit() const = 0;
@@ -106,6 +108,7 @@ class ZDataField : public DataField {
                              int significantDigits) const override {
     return Poincare::Integer(z).createLayout();
   }
+  bool canBeStored(AtomicNumber z) const override { return true; }
 };
 
 class ADataField : public DataField {
@@ -118,6 +121,7 @@ class ADataField : public DataField {
   }
   Poincare::Layout getLayout(AtomicNumber z,
                              int significantDigits) const override;
+  bool canBeStored(AtomicNumber z) const override;
 };
 
 class ConfigurationDataField : public DataField {

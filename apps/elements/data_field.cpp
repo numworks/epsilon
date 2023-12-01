@@ -88,6 +88,10 @@ uint8_t DoubleDataField::blendAlphaForContinuousParameter(
                               (ElementsDataBase::k_numberOfElements - 1.f));
 }
 
+bool DoubleDataField::canBeStored(AtomicNumber z) const {
+  return std::isfinite(getDouble(z));
+}
+
 // DoubleDataFieldWithSubscriptSymbol
 
 Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
@@ -111,7 +115,11 @@ Layout ADataField::getLayout(AtomicNumber z, int) const {
   if (a == ElementData::k_AUnknown) {
     return DataField::UnknownValueLayout();
   }
-  return Integer(ElementsDataBase::NumberOfMass(z)).createLayout();
+  return Integer(a).createLayout();
+}
+
+bool ADataField::canBeStored(AtomicNumber z) const {
+  return ElementsDataBase::NumberOfMass(z) != ElementData::k_AUnknown;
 }
 
 // ConfigurationDataField

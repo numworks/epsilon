@@ -18,11 +18,19 @@ class Axes : public CGrid {
     m_yAxis.setOtherAxis(m_xAxis.isAxis());
   }
 
-  void drawAxesAndGrid(const AbstractPlotView *plotView, KDContext *ctx,
-                       KDRect rect) const {
-    CGrid::drawGrid(plotView, ctx, rect);
+  void drawAxes(const AbstractPlotView *plotView, KDContext *ctx,
+                KDRect rect) const {
     m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
     m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
+  }
+  void drawGrid(const AbstractPlotView *plotView, KDContext *ctx,
+                KDRect rect) const {
+    CGrid::drawGrid(plotView, ctx, rect);
+  }
+  void drawAxesAndGrid(const AbstractPlotView *plotView, KDContext *ctx,
+                       KDRect rect) const {
+    drawGrid(plotView, ctx, rect);
+    drawAxes(plotView, ctx, rect);
   }
   void reloadAxes(AbstractPlotView *plotView) {
     m_xAxis.reloadAxis(plotView, AbstractPlotView::Axis::Horizontal);
@@ -49,7 +57,6 @@ class WithGrid {
  private:
   constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_lightColor = Escher::Palette::GrayWhite;
-
   void drawGridLines(const AbstractPlotView *plotView, KDContext *ctx,
                      KDRect rect, AbstractPlotView::Axis parallel,
                      bool boldGrid) const;

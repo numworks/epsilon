@@ -434,12 +434,9 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle cut
   if (event == Ion::Events::Cut) {
-    if (storeInClipboard()) {
-      if (!selectionIsEmpty()) {
-        deleteSelection();
-      } else {
-        removeWholeText();
-      }
+    if (storeInClipboard() && isEditing()) {
+      assert(!selectionIsEmpty());
+      deleteSelection();
       *textDidChange = true;
     }
     return true;

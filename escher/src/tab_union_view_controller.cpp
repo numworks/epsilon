@@ -29,15 +29,19 @@ void TabUnionViewController::initView() {
 
 void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);
+
+  bool dataSourceChangeActiveTab = i != m_dataSource->activeTab();
+
   if (i != m_dataSource->activeTab()) {
     if (!m_isSelected) {
       App::app()->setFirstResponder(nullptr);
     }
     activeViewController()->viewDidDisappear();
+    m_dataSource->setActiveTab(i);
     m_tabs->setActiveTab(i);
   }
   ViewController* activeVC = children(i);
-  if (i != m_dataSource->activeTab()) {
+  if (dataSourceChangeActiveTab) {
     m_dataSource->setActiveTab(i);
     setActiveChildren(i);
   }

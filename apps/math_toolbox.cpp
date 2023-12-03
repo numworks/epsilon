@@ -376,6 +376,13 @@ constexpr ToolboxMessageTree forceAndPressureChildren[] = {
                              unitPressureChildren),
 };
 
+constexpr ToolboxMessageTree unitEnergyCalorieChildren[] = {
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieSymbol,
+                             I18n::Message::UnitEnergyCalorie),
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieSymbol,
+                             I18n::Message::UnitEnergyCalorieKilo),
+};
+
 constexpr ToolboxMessageTree unitEnergyJouleChildren[] = {
     ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleMilliSymbol,
                              I18n::Message::UnitEnergyJouleMilli),
@@ -397,6 +404,8 @@ constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
 };
 
 constexpr ToolboxMessageTree unitEnergyChildren[] = {
+    ToolboxMessageTree::Node(I18n::Message::UnitEnergyCalorieMenu,
+                             unitEnergyCalorieChildren),
     ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu,
                              unitEnergyJouleChildren),
     ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu,

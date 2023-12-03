@@ -1173,7 +1173,7 @@ class Unit : public Expression {
                            Prefixable::LongScale),
       EnergyRepresentative("eV", "1.602176634ᴇ-19", 1.602176634e-19,
                            Prefixable::All, Prefixable::LongScale),
-      EnergyRepresentative("Ca", "4.184", 4.184,
+      EnergyRepresentative("Cal", "4.184", 4.184,
                            Prefixable::All, Prefixable::LongScale),
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;

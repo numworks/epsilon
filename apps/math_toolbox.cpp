@@ -379,7 +379,7 @@ constexpr ToolboxMessageTree forceAndPressureChildren[] = {
 constexpr ToolboxMessageTree unitEnergyCalorieChildren[] = {
     ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieSymbol,
                              I18n::Message::UnitEnergyCalorie),
-    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieSymbol,
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieKiloSymbol,
                              I18n::Message::UnitEnergyCalorieKilo),
 };
 

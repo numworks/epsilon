@@ -48,14 +48,12 @@ size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
 }
 
 static inline int leading_ones(uint8_t value) {
-  for (int i = 0; i < 8; i++) {
-    if (!(value & 0x80)) {
-      return i;
-    }
+  int i;
+  for (i = 0; (value & 0x80) != 0; i++) {
     value = value << 1;
+    assert(i <= 8);
   }
-  assert(false);
-  return 0;
+  return i;
 }
 
 // An UTF-8 char is invalid if it has more than 4 leading ones.

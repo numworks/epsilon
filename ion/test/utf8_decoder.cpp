@@ -67,6 +67,7 @@ QUIZ_CASE(ion_utf8_decode_forward) {
 
 QUIZ_CASE(ion_utf8_decode_invalid_code_point) {
   assert_decodes_to("\xf8", UCodePointReplacement);
+  assert_decodes_to("\xff", UCodePointReplacement);
 }
 
 QUIZ_CASE(ion_utf8_decode_backwards) {

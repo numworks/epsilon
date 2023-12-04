@@ -300,6 +300,8 @@ QUIZ_CASE(poincare_approximation_power) {
                                            MetricUnitFormat, Cartesian);
   assert_expression_simplifies_approximates_to<float>("3.5^2.0000001", "12.25");
   assert_expression_simplifies_approximates_to<float>("3.7^2.0000001", "13.69");
+  assert_expression_simplifies_approximates_to<double>(
+      "(13619-(185477161)^(1/2))^(-1)", Undefined::Name());
 }
 
 QUIZ_CASE(poincare_approximation_subtraction) {

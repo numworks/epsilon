@@ -22,8 +22,6 @@ class EditableFieldBannerViewDelegate {
                          .horizontalAlignment = KDGlyph::k_alignLeft}),
         m_editableView(&m_editableFieldLabel, &m_editableField) {}
 
-  void reinitTextBuffer() { m_editableField.reinitTextBuffer(); }
-
  protected:
   BannerView::BannerBufferTextView* editableFieldLabel() {
     return &m_editableFieldLabel;

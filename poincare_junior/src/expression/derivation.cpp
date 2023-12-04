@@ -28,6 +28,10 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue) {
   if (derivand->treeIsIdenticalTo(KVar<0>)) {
     return (1_e)->clone();
   }
+  if (derivand->isRandomNode()) {
+    // Do not handle random nodes in derivation.
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  }
   int numberOfChildren = derivand->numberOfChildren();
   if (numberOfChildren == 0) {
     return (0_e)->clone();
@@ -62,10 +66,6 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue) {
 
 void Derivation::ShallowPartialDerivate(const Tree *derivand,
                                         const Tree *symbolValue, int index) {
-  if (derivand->isRandomNode()) {
-    // Do not handle random nodes in derivation.
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
-  }
   switch (derivand->type()) {
     case BlockType::Multiplication: {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...

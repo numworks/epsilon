@@ -10,31 +10,13 @@ namespace PoincareJ {
 constexpr auto KRackL = KNAry<BlockType::RackLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
+constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout, 0>();
+constexpr auto KVertOffL = KUnary<BlockType::VerticalOffsetLayout, 0>();
 
 constexpr auto KEmptyMatrixL =
     KTree<BlockType::MatrixLayout, 2, 2, BlockType::RackLayout, 0,
           BlockType::RackLayout, 0, BlockType::RackLayout, 0,
           BlockType::RackLayout, 0>();
-
-template <Block... B1>
-consteval auto KParenthesisL(KTree<B1...>) {
-  return KTree<BlockType::ParenthesisLayout, 0, B1...>();
-}
-
-template <TreeCompatibleConcept A>
-consteval auto KParenthesisL(A a) {
-  return KParenthesisL(KTree(a));
-}
-
-template <Block... B1>
-consteval auto KVertOffL(KTree<B1...>) {
-  return KTree<BlockType::VerticalOffsetLayout, 0, B1...>();
-}
-
-template <TreeCompatibleConcept A>
-consteval auto KVertOffL(A a) {
-  return KVertOffL(KTree(a));
-}
 
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint

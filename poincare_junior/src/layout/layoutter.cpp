@@ -195,7 +195,7 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
   } else {
     assert(type == BlockType::Power || type == BlockType::PowerMatrix);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
-    createdLayout = SharedEditionPool->push(BlockType::VerticalOffsetLayout);
+    createdLayout = KVertOffL->cloneNode();
   }
   EditionReference rack = SharedEditionPool->push<BlockType::RackLayout>(0);
   layoutExpression(rack, expression, k_maxPriority);

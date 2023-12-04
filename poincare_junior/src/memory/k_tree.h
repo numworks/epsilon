@@ -104,16 +104,18 @@ struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 
 // Helpers
 
-template <Block Tag>
-struct KUnary : public KTree<Tag> {
+template <Block Tag, Block... ExtraValues>
+  requires(TypeBlock(BlockType(Tag.m_content)).nodeSize() ==
+           sizeof...(ExtraValues) + 1)
+struct KUnary : public KTree<Tag, ExtraValues...> {
   template <Block... B1>
   consteval auto operator()(KTree<B1...>) const {
-    return KTree<Tag, B1...>();
+    return KTree<Tag, ExtraValues..., B1...>();
   }
 
   template <TreeCompatibleConcept A>
   consteval auto operator()(A a) const {
-    return KUnary<Tag>()(KTree(a));
+    return KUnary<Tag, ExtraValues...>()(KTree(a));
   }
 
   /* The following dummy constructor is here to make the error message clearer

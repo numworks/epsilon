@@ -11,13 +11,11 @@ class LayoutField : public Escher::LayoutField {
   LayoutField(Escher::Responder* parentResponder,
               Escher::LayoutFieldDelegate* layoutFieldDelegate)
       : Escher::LayoutField(parentResponder, layoutFieldDelegate),
-        m_insertionLayout(),
-        m_insertionPosition(-1),
+        m_insertionCursor(),
         m_currentStep(DivisionCycleStep::Start),
         m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 
   void updateCursorBeforeInsertion();
-  void resetInsertionCursor() { m_insertionLayout = Poincare::Layout(); }
 
  protected:
   bool handleEvent(Ion::Events::Event event) override;
@@ -31,11 +29,11 @@ class LayoutField : public Escher::LayoutField {
     MixedFraction,               // cursor before Empty/Empty
   };
 
+  void resetInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
   bool fieldContainsSingleMinusSymbol() const;
   bool handleDivision();
 
-  Poincare::Layout m_insertionLayout;
-  int m_insertionPosition;
+  Poincare::LayoutCursor m_insertionCursor;
   DivisionCycleStep m_currentStep;
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };

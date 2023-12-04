@@ -10,12 +10,11 @@ using namespace Poincare;
 namespace Calculation {
 
 void LayoutField::updateCursorBeforeInsertion() {
-  if (m_insertionLayout.isUninitialized()) {
+  if (m_insertionCursor.isUninitialized()) {
     return;
   }
-  assert(m_insertionPosition >= 0);
-  cursor()->safeSetLayout(m_insertionLayout, OMG::Direction::Left());
-  cursor()->safeSetPosition(m_insertionPosition);
+  *cursor() = m_insertionCursor;
+  resetInsertionCursor();
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
@@ -23,9 +22,8 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
    * we want to remember where the up sequence started so that the insertion
    * is done here. */
   if (event == Ion::Events::Up) {
-    if (m_insertionLayout.isUninitialized()) {
-      m_insertionLayout = cursor()->layout();
-      m_insertionPosition = cursor()->position();
+    if (m_insertionCursor.isUninitialized()) {
+      m_insertionCursor = *cursor();
     }
   } else if (event.isKeyPress()) {
     resetInsertionCursor();

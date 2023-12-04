@@ -227,7 +227,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   void execute(Action action, Context* context = nullptr,
                const void* data = nullptr);
   void setCursorNode(Tree* node) override {
-    // Don't use node here is it invalid during execute
+    // Don't use node here as it may be invalid during execute
     m_cursorNode = node;
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
   }

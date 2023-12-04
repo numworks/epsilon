@@ -41,7 +41,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
-      if (node->layoutType() == LayoutType::Derivative) {
+      if (node->isDerivativeLayout()) {
         if (currentIndex == DerivandIndex) {
           SetVariableSlot(node, direction.isRight() ? VariableSlot::Assignment
                                                     : VariableSlot::Fraction);
@@ -223,7 +223,7 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
-      if (node->layoutType() == LayoutType::Derivative) {
+      if (node->isDerivativeLayout()) {
         if (direction.isDown() && currentIndex == DerivandIndex &&
             positionAtCurrentIndex == PositionInLayout::Left) {
           SetVariableSlot(node, VariableSlot::Fraction);

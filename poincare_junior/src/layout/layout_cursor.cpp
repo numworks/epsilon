@@ -958,14 +958,13 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
         NAry::DetachChildAtIndex(parentOfFraction, indexOfFraction);
     // Remove Fraction Node
     detached->removeNode();
-    // Merge denominator into numerato
+    // Merge denominator into numerator
     NAry::AddOrMergeChild(detached, m_layout);
     NAry::AddOrMergeChildAtIndex(parentOfFraction, detached, indexOfFraction);
     m_cursorReference = parentOfFraction;
     return;
   }
   if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN) {
-    // It is useful at all ?
     assert(deletionAppliedToParent);
     assert(parent->isBinomialLayout());
     int newIndex = Binomial::nIndex;
@@ -1088,17 +1087,17 @@ void LayoutBufferCursor::EditionPoolCursor::
     balanceAutocompletedBracketsAndKeepAValidCursor() {
   /* Find the top horizontal layout for balancing brackets.
    *
-   * This might go again through already balanced brackets but it's safer
-   * in order to ensure that all brackets are always balanced after an
-   * insertion or a deletion.
+   * This might go again through already balanced brackets but it's safer in
+   * order to ensure that all brackets are always balanced after an insertion or
+   * a deletion.
    *
    * Stop if the parent of the currentLayout is not horizontal neither
    * a bracket.
-   * Ex: When balancing the brackets inside the numerator of a fraction,
-   * it's useless to take the parent horizontal layout of the fraction, since
+   * Ex: When balancing the brackets inside the numerator of a fraction, it's
+   * useless to take the parent horizontal layout of the fraction, since
    * brackets outside of the fraction won't impact the ones inside the
-   * fraction
-   * */
+   * fraction.
+   */
   Tree *currentLayout = cursorNode();
   Tree *currentParent = currentLayout->parent(rootNode());
   while (currentParent && (currentParent->isRackLayout() ||

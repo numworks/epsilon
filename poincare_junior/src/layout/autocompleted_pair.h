@@ -32,8 +32,8 @@ class AutocompletedPair {
                                                   Side* side);
   static Tree* BuildFromBracketType(TypeBlock type);
 
-  // Deep balance the autocompleted brackets in hLayout
-  static void BalanceBrackets(Tree* hLayout, EditionReference& cursorLayout,
+  // Deep balance the autocompleted brackets in rack
+  static void BalanceBrackets(Tree* rack, EditionReference& cursorLayout,
                               int* cursorPosition);
 
   static void MakeChildrenPermanent(Tree* node, Side side, bool includeThis);

@@ -44,13 +44,13 @@ static int bracketNestingLevel(Tree *rack, TypeBlock type, Tree *root) {
   return result;
 }
 
-void AutocompletedPair::BalanceBrackets(Tree *hLayout,
+void AutocompletedPair::BalanceBrackets(Tree *rack,
                                         EditionReference &cursorLayout,
                                         int *cursorPosition) {
-  PrivateBalanceBrackets(BlockType::ParenthesisLayout, hLayout, cursorLayout,
-                         cursorPosition, hLayout);
-  PrivateBalanceBrackets(BlockType::CurlyBraceLayout, hLayout, cursorLayout,
-                         cursorPosition, hLayout);
+  PrivateBalanceBrackets(BlockType::ParenthesisLayout, rack, cursorLayout,
+                         cursorPosition, rack);
+  PrivateBalanceBrackets(BlockType::CurlyBraceLayout, rack, cursorLayout,
+                         cursorPosition, rack);
 }
 
 void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *rack,

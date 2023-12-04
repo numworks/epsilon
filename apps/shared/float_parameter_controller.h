@@ -38,7 +38,6 @@ class FloatParameterController : public Escher::ListWithTopAndBottomController,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField *textField) override;
 
  protected:
   constexpr static int k_parameterCellType = 0;

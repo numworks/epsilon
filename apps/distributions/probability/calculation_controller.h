@@ -55,7 +55,6 @@ class CalculationController : public Escher::ViewController,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   void reload();
 

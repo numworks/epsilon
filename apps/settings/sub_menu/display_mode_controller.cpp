@@ -48,7 +48,11 @@ void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
   if (typeAtRow(row) == k_significantDigitsType) {
     assert(cell == &m_editableCell);
     GenericSubController::fillCellForRow(cell, row);
-    setEditableCellValue();
+    constexpr int bufferSize = 3;
+    char buffer[bufferSize];
+    Integer(Preferences::sharedPreferences->numberOfSignificantDigits())
+        .serialize(buffer, bufferSize);
+    m_editableCell.textField()->setText(buffer);
     return;
   }
   PreferencesController::fillCellForRow(cell, row);
@@ -62,7 +66,7 @@ bool DisplayModeController::textFieldShouldFinishEditing(
 
 bool DisplayModeController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody = ParseInputFloatValue<double>(textField->text());
+  double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -83,20 +87,8 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
     m_selectableListView.handleEvent(event);
   }
+  textField->reinitDraftTextBuffer();
   return true;
-}
-
-void DisplayModeController::textFieldDidAbortEditing(
-    AbstractTextField *textField) {
-  setEditableCellValue();
-}
-
-void DisplayModeController::setEditableCellValue() {
-  constexpr int bufferSize = 3;
-  char buffer[bufferSize];
-  Integer(Preferences::sharedPreferences->numberOfSignificantDigits())
-      .serialize(buffer, bufferSize);
-  m_editableCell.textField()->setText(buffer);
 }
 
 }  // namespace Settings

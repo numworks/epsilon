@@ -161,7 +161,7 @@ void InteractiveCurveViewController::willExitResponderChain(
 
 bool InteractiveCurveViewController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody = ParseInputFloatValue<double>(textField->text());
+  double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }

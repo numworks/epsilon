@@ -9,7 +9,7 @@ namespace Shared {
 bool ParameterTextFieldDelegate::textFieldDidReceiveEvent(
     AbstractTextField* textField, Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && !textField->isEditing()) {
-    textField->reinitTextBuffer();
+    textField->reinitDraftTextBuffer();
     textField->setEditing(true);
     return true;
   }

@@ -261,7 +261,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
   constexpr static int bufferSize = Script::k_defaultScriptNameMaxSize + 1 +
                                     ScriptStore::k_scriptExtensionLength;
   char numberedDefaultName[bufferSize];
-  char *text = textField->text();
+  char *text = textField->draftText();
 
   if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
     newName = text;
@@ -280,7 +280,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
      * default name and let the user modify it. */
     if (!foundDefaultName) {
       textField->setText(numberedDefaultName);
-      textField->setCursorLocation(textField->text() + defaultNameLength);
+      textField->setCursorLocation(textField->draftText() + defaultNameLength);
     }
     newName = const_cast<const char *>(numberedDefaultName);
   }
@@ -305,6 +305,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
     App::app()->setFirstResponder(&m_selectableTableView);
     AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(
         Ion::Events::ShiftAlphaStatus());
+    textField->reinitDraftTextBuffer();
     return true;
   } else if (error == Script::ErrorStatus::NameTaken) {
     App::app()->displayWarning(I18n::Message::NameTaken);
@@ -322,7 +323,7 @@ void MenuController::textFieldDidHandleEvent(AbstractTextField *textField) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing()) {
     const char *maxPointerLocation =
-        textField->textEnd() - scriptExtensionLength;
+        textField->draftTextEnd() - scriptExtensionLength;
     if (textField->cursorLocation() > maxPointerLocation) {
       textField->setCursorLocation(maxPointerLocation);
     }

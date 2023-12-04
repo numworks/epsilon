@@ -171,20 +171,19 @@ bool MainController::textFieldDidFinishEditing(
     match = 1;
   }
   endElementSearch(match);
-  textField->reinitTextBuffer();
+  textField->reinitDraftTextBuffer();
   return true;
 }
 
 void MainController::textFieldDidAbortEditing(
     Escher::AbstractTextField* textField) {
   endElementSearch(App::app()->elementsViewDataSource()->previousElement());
-  textField->reinitTextBuffer();
 }
 
 void MainController::textFieldDidHandleEvent(
     Escher::AbstractTextField* textField) {
   if (textField->isEditing()) {
-    if (textField->textLength() == 0) {
+    if (textField->draftTextLength() == 0) {
       textField->setEditing(false);
       endElementSearch(App::app()->elementsViewDataSource()->previousElement());
     } else if (textField->cursorAtEndOfText()) {

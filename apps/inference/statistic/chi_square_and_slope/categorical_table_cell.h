@@ -80,7 +80,6 @@ class InputCategoricalTableCell
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField *textField) override;
 
   // Responder
   bool handleEvent(Ion::Events::Event e) override;

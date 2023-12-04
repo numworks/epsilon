@@ -28,15 +28,13 @@ const char *ListParameterController::title() {
 
 bool ListParameterController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  assert(textField == m_initialRankCell.textField());
   return event == Ion::Events::Down || event == Ion::Events::Up ||
          MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ListParameterController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  assert(textField == m_initialRankCell.textField());
-  double floatBody = ParseInputFloatValue<double>(textField->text());
+  double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -51,13 +49,8 @@ bool ListParameterController::textFieldDidFinishEditing(
   App::app()->localContext()->resetCache();
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.handleEvent(event);
+  textField->reinitDraftTextBuffer();
   return true;
-}
-
-void ListParameterController::textFieldDidAbortEditing(
-    AbstractTextField *textField) {
-  assert(textField == m_initialRankCell.textField());
-  setInitialRankCellValue();
 }
 
 void ListParameterController::listViewDidChangeSelectionAndDidScroll(
@@ -88,7 +81,10 @@ HighlightCell *ListParameterController::cell(int index) {
 void ListParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
-    setInitialRankCellValue();
+    char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
+    Poincare::Integer(sequence()->initialRank())
+        .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
+    m_initialRankCell.textField()->setText(buffer);
   }
   Shared::ListParameterController::viewWillAppear();
 }
@@ -105,13 +101,6 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     App::app()->localContext()->resetCache();
   }
   return Shared::ListParameterController::handleEvent(event);
-}
-
-void ListParameterController::setInitialRankCellValue() {
-  char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
-  Poincare::Integer(sequence()->initialRank())
-      .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
-  m_initialRankCell.textField()->setText(buffer);
 }
 
 }  // namespace Sequence

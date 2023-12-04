@@ -39,12 +39,13 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("transpose([[1,2]])*[[1,2,3]]", Matrix(2, 3)));
   QUIZ_ASSERT(dim("sum([[k,2]], k, 1, n)", Matrix(1, 2)));
 
-  QUIZ_ASSERT(len("1", 0));
+  QUIZ_ASSERT(len("1", -1));
   QUIZ_ASSERT(len("{1,2}", 2));
   QUIZ_ASSERT(len("2*cos({1,2})+3", 2));
   QUIZ_ASSERT(len("sequence(2*k+1,k,4)", 4));
-  QUIZ_ASSERT(len("2+mean({1,2})", 0));
+  QUIZ_ASSERT(len("2+mean({1,2})", -1));
   QUIZ_ASSERT(len("sort({1,2})", 2));
+  QUIZ_ASSERT(len("{}", 0));
 
   QUIZ_ASSERT(SharedEditionPool->numberOfTrees() == 0);
 }

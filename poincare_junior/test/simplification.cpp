@@ -311,6 +311,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("dim({{1,2}})", "undef");
   simplifies_to("{2*[[1]]}", "undef");
   simplifies_to("{(1)/2, 1}", "{1/2, 1}");
+  simplifies_to("prod({1,1,1})", "1");
+  simplifies_to("sort({})", "{}");
+  simplifies_to("prod({})", "1");
+  simplifies_to("{dim({2,4})}", "{2}");
+  simplifies_to("min({})", "undef");
+  simplifies_to("sequence(k,k,{1,2})", "undef");
 
   // Random
   simplifies_to("diff(random(), x, 2)", "undef");

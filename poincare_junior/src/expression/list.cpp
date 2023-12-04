@@ -52,6 +52,10 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
   Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   // TODO compute GetListLength less often
   size_t size = Dimension::GetListLength(list);
+  if (size == 0) {
+    assert(type.isListSum() || type.isListProduct());
+    (type.isListSum() ? 0_e : 1_e)->clone();
+  }
   for (int i = 0; i < size; i++) {
     Tree* element = list->clone();
     if (!ProjectToNthElement(element, i,
@@ -120,7 +124,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
 
 bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
   int length = Dimension::GetListLength(expr);
-  if (length == 0 || expr->isList()) {
+  if (length < 0 || expr->isList()) {
     return false;
   }
   Tree* list = List::PushEmpty();

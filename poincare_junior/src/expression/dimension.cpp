@@ -22,37 +22,57 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     childLength[i] = GetListLength(child);
     i++;
   }
-  if (t->isListToScalar() && childLength[0] == 0) {
-    // ListToScalar operators expect a list as first argument
-    return false;
-  }
-  if (t->isSampleStdDev() && childLength[0] < 2) {
-    // SampleStdDev needs a list of length >= 2
-    return false;
-  }
-  if (t->isList()) {
-    for (int i = 0; i < t->numberOfChildren(); i++) {
-      if (childLength[i++] > 0) {
-        // List of lists are forbidden
+  switch (t->type()) {
+    case BlockType::SampleStdDev:
+      // SampleStdDev needs a list of length >= 2
+      return childLength[0] >= 2 &&
+             (t->numberOfChildren() < 2 ||
+              (childLength[1] == -1 || childLength[0] == childLength[1]));
+    case BlockType::Mean:
+    case BlockType::StdDev:
+    case BlockType::Median:
+    case BlockType::Variance:
+    case BlockType::Minimum:
+    case BlockType::Maximum:
+      // At least 1 child is needed.
+      return childLength[0] >= 1 &&
+             (t->numberOfChildren() < 2 ||
+              (childLength[1] == -1 || childLength[0] == childLength[1]));
+    case BlockType::ListSum:
+    case BlockType::ListProduct:
+    case BlockType::ListSort:
+      return childLength[0] >= 0;
+    case BlockType::ListAccess:
+      // TODO: Also handle third argument dimension for slices
+      return childLength[0] >= 0 && childLength[1] == -1;
+    case BlockType::List: {
+      for (int i = 0; i < t->numberOfChildren(); i++) {
+        if (childLength[i++] >= 0) {
+          // List of lists are forbidden
+          return false;
+        }
+      }
+      return true;
+    }
+    default: {
+      assert(!t->isListToScalar());
+      int thisLength = -1;
+      for (int i = 0; i < t->numberOfChildren(); i++) {
+        if (childLength[i] == -1) {
+          continue;
+        }
+        if (thisLength >= 0 && childLength[i] != thisLength) {
+          // Children lists should have the same dimension
+          return false;
+        }
+        thisLength = childLength[i];
+      }
+      if (thisLength >= 0 && (GetDimension(t).isMatrix() ||
+                              t->isListSequence() || t->isRandIntNoRep())) {
+        // Lists are forbidden
         return false;
       }
     }
-    return true;
-  }
-  int thisLength = 0;
-  for (int i = 0; i < t->numberOfChildren(); i++) {
-    if (childLength[i] == 0) {
-      continue;
-    }
-    if (thisLength > 0 && childLength[i] != thisLength) {
-      // Children lists should have the same dimension
-      return false;
-    }
-    thisLength = childLength[i];
-  }
-  if (thisLength > 0 && GetDimension(t).isMatrix()) {
-    // List of matrices are forbidden
-    return false;
   }
   return true;
 }
@@ -68,16 +88,12 @@ int Dimension::GetListLength(const Tree* t) {
     case BlockType::Maximum:
     case BlockType::ListSum:
     case BlockType::ListProduct:
-      assert(GetListLength(t->child(0)));
-      return 0;
+    case BlockType::Dim:
     case BlockType::ListAccess:
-      assert(GetListLength(t->child(0)) && GetListLength(t->child(1)) == 1);
-      return 0;
+      return -1;
     case BlockType::ListSort:
-      assert(GetListLength(t->child(0)));
       return GetListLength(t->child(0));
     case BlockType::List:
-      // all children should be scalars
       return t->numberOfChildren();
     case BlockType::ListSequence:
       // TODO: Handle undef Approximation.
@@ -89,11 +105,11 @@ int Dimension::GetListLength(const Tree* t) {
       // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {
         int childListDim = GetListLength(child);
-        if (childListDim) {
+        if (childListDim >= 0) {
           return childListDim;
         }
       }
-      return 0;
+      return -1;
     }
   }
 }
@@ -200,7 +216,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     // Matrices
     case BlockType::Dim:
       return childDim[0].isMatrix() ||
-             (childDim[0].isScalar() && GetListLength(t->child(0)) > 0);
+             (childDim[0].isScalar() && GetListLength(t->child(0)) >= 0);
     case BlockType::Ref:
     case BlockType::Rref:
     case BlockType::Transpose:

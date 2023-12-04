@@ -32,6 +32,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   bool exactHasUnit = exactOutput.hasUnit(true, &exactHasAngleUnit);
   bool approximateHasUnit = exactOutput.hasUnit(true, &approximateHasAngleUnit);
   assert(exactHasUnit == approximateHasUnit);
+  (void)approximateHasUnit;  // Silence compiler
   if (inputHasUnit || exactHasUnit) {
     /* We display units additional results based on exact output. If input has
      * units but not output (ex: L/(L/3)), we don't display any results. */

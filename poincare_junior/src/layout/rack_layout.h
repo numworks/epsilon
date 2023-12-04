@@ -23,8 +23,7 @@ class RackLayout {
                                              int rightPosition);
   static bool ShouldDrawEmptyRectangle(const Tree* node);
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
-                         KDColor expressionColor = KDColorBlack,
-                         KDColor backgroundColor = KDColorWhite);
+                         bool isGridPlaceholder = false);
 
   static LayoutCursor* layoutCursor;
 

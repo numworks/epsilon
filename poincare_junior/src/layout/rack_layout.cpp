@@ -99,10 +99,12 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
 }
 
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
-                            KDColor expressionColor, KDColor backgroundColor) {
+                            bool isGridPlaceholder) {
   if (ShouldDrawEmptyRectangle(node)) {
     EmptyRectangle::DrawEmptyRectangle(ctx, p, font,
-                                       EmptyRectangle::Color::Yellow);
+                                       isGridPlaceholder
+                                           ? EmptyRectangle::Color::Gray
+                                           : EmptyRectangle::Color::Yellow);
   }
 }
 

@@ -566,6 +566,9 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
         childBackground = backgroundColor;
       }
     }
+    if (node->isGridLayout() && Grid::From(node)->childIsPlaceholder(index)) {
+      continue;
+    }
     PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
                 expressionColor, childBackground, selection);
   }
@@ -1080,8 +1083,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::Rack: {
-      return RackLayout::RenderNode(node, ctx, p, expressionColor,
-                                    backgroundColor);
+      return RackLayout::RenderNode(node, ctx, p);
     }
     case LayoutType::VerticalOffset:
       return;
@@ -1140,35 +1142,14 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                               p.translatedBy(KDPoint(rightOffset, 0)),
                               style.glyphColor, style.backgroundColor);
       if (grid->isEditing()) {
-        int indexToSkip = -1;
-        if (RackLayout::layoutCursor->cursorNode() == node) {
-          indexToSkip = RackLayout::layoutCursor->position();
-        }
-#if 0
         // Draw gray squares
-        for (int i = 0; i < grid->numberOfRows(); i++) {
-          if (grid->indexAtRowColumn(i, grid->numberOfColumns() - 1) ==
-              indexToSkip) {
+        for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
+          if (!Grid::From(node)->childIsPlaceholder(index)) {
             continue;
           }
-          KDPoint pChild =
-              grid->positionOfChildAt(grid->numberOfColumns() - 1, i, font)
-                  .translatedBy(p);
-          EmptyRectangle::DrawEmptyRectangle(ctx, pChild, font,
-                                             EmptyRectangle::Color::Gray);
+          RackLayout::RenderNode(
+              child, ctx, p.translatedBy(PositionOfChild(node, index)), true);
         }
-        for (int i = 0; i < grid->numberOfColumns(); i++) {
-          if (grid->indexAtRowColumn(grid->numberOfRows() - 1, i) ==
-              indexToSkip) {
-            continue;
-          }
-          KDPoint pChild =
-              grid->positionOfChildAt(i, grid->numberOfRows() - 1, font)
-                  .translatedBy(p);
-          EmptyRectangle::DrawEmptyRectangle(ctx, pChild, font,
-                                             EmptyRectangle::Color::Gray);
-        }
-#endif
       }
       return;
     }

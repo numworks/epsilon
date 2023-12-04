@@ -57,7 +57,6 @@ class LayoutCursor {
   virtual Tree* rootNode() const = 0;
   virtual Tree* cursorNode() const = 0;
   void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
-  void setGridPosition(Tree* grid, int index, OMG::HorizontalDirection side);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }

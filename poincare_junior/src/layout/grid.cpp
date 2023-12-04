@@ -16,14 +16,7 @@ bool Grid::isEditing() const {
 }
 
 const Tree* Grid::childAt(uint8_t col, uint8_t row) const {
-  uint8_t cols = numberOfColumns();
-  if (!isEditing()) {
-    return child(row * cols + col);
-  }
-  if (col == cols - 1 || row == numberOfRows() - 1) {
-    return KRackL();
-  }
-  return child(row * (cols - 1) + col);
+  return child(row * numberOfColumns() + col);
 }
 
 Tree* Grid::willFillEmptyChildAtIndex(int childIndex) {
@@ -69,11 +62,11 @@ int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
 // Protected
 void Grid::deleteRowAtIndex(int index) {
   assert(!numberOfRowsIsFixed());
-  assert(index >= 0 && index < numberOfRealRows());
+  assert(index >= 0 && index < numberOfRows());
   /* removeChildAtIndexInPlace messes with the number of rows to keep it
    * consistent with the number of children */
-  int nbColumns = numberOfRealColumns();
-  int nbRows = numberOfRealRows();
+  int nbColumns = numberOfColumns();
+  int nbRows = numberOfRows();
   for (int i = 0; i < nbColumns; i++) {
     child(index * nbColumns)->removeTree();
   }
@@ -82,11 +75,11 @@ void Grid::deleteRowAtIndex(int index) {
 
 void Grid::deleteColumnAtIndex(int index) {
   assert(!numberOfColumnsIsFixed());
-  assert(index >= 0 && index < numberOfRealColumns());
+  assert(index >= 0 && index < numberOfColumns());
   /* removeChildAtIndexInPlace messes with the number of rows to keep it
    * consistent with the number of children */
-  int nbColumns = numberOfRealColumns();
-  int nbRows = numberOfRealRows();
+  int nbColumns = numberOfColumns();
+  int nbRows = numberOfRows();
   for (int i = (nbRows - 1) * nbColumns + index; i > -1; i -= nbColumns) {
     child(i)->removeTree();
   }
@@ -115,28 +108,18 @@ bool Grid::childIsBottomOfGrid(int index) const {
 
 bool Grid::childIsInLastNonGrayColumn(int index) const {
   assert(index >= 0 && index < numberOfRows() * numberOfColumns());
-  return columnAtChildIndex(index) == numberOfColumns() - 1 - isEditing();
+  return columnAtChildIndex(index) == numberOfColumns() - 2;
 }
 
 bool Grid::childIsInLastNonGrayRow(int index) const {
   assert(index >= 0 && index < numberOfRows() * numberOfColumns());
-  return rowAtChildIndex(index) == numberOfRows() - 1 - isEditing();
+  return rowAtChildIndex(index) == numberOfRows() - 2;
 }
 
 int Grid::rowAtChildIndex(int index) const { return index / numberOfColumns(); }
 
 int Grid::columnAtChildIndex(int index) const {
   return index % numberOfColumns();
-}
-
-int Grid::rowAtChildRealIndex(int index) const {
-  assert(index >= 0 && index < numberOfChildren());
-  return index / numberOfRealColumns();
-}
-
-int Grid::columnAtChildRealIndex(int index) const {
-  assert(index >= 0 && index < numberOfChildren());
-  return index % numberOfRealColumns();
 }
 
 int Grid::indexAtRowColumn(int row, int column) const {
@@ -214,9 +197,8 @@ KDCoordinate Grid::width(KDFont::Size font) const {
 }
 
 bool Grid::isColumnOrRowEmpty(bool column, int index) const {
-  assert(index >= 0 &&
-         index < (column ? numberOfRealColumns() : numberOfRealRows()));
-  int number = column ? numberOfRealRows() : numberOfRealColumns();
+  assert(index >= 0 && index < (column ? numberOfColumns() : numberOfRows()));
+  int number = column ? numberOfRows() : numberOfColumns();
   for (int i = 0; i < number; i++) {
     if (!RackLayout::IsEmpty(column ? childAt(index, i) : childAt(i, index))) {
       return false;
@@ -227,17 +209,17 @@ bool Grid::isColumnOrRowEmpty(bool column, int index) const {
 
 void Grid::addEmptyRow() {
   Tree* last = nextTree();
-  setNumberOfRows(numberOfRealRows() + 1);
-  for (int i = 0; i < numberOfRealColumns(); i++) {
+  setNumberOfRows(numberOfRows() + 1);
+  for (int i = 0; i < numberOfColumns(); i++) {
     last->cloneTreeBeforeNode(KRackL());
   }
 }
 
 void Grid::addEmptyColumn() {
-  int oldNumberOfColumns = numberOfRealColumns();
+  int oldNumberOfColumns = numberOfColumns();
   setNumberOfColumns(oldNumberOfColumns + 1);
   Tree* tree = this;
-  for (int i = 0; i < numberOfRealRows(); i++) {
+  for (int i = 0; i < numberOfRows(); i++) {
     // Skip grid (i == 0) or empty rack
     tree = tree->nextNode();
     for (int j = 0; j < oldNumberOfColumns; j++) {

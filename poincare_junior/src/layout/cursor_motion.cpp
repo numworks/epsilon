@@ -28,7 +28,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       if (currentIndex == k_outsideIndex) {
         return direction.isLeft()
                    // last real child
-                   ? grid->numberOfColumns() * grid->numberOfRealRows() - 2
+                   ? grid->numberOfColumns() * (grid->numberOfRows() - 1) - 2
                    : 0;
       }
       if ((direction.isLeft() && grid->childIsLeftOfGrid(currentIndex)) ||

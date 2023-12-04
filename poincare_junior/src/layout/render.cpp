@@ -429,8 +429,8 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);
-      int row = grid->rowAtChildRealIndex(childIndex);
-      int column = grid->columnAtChildRealIndex(childIndex);
+      int row = grid->rowAtChildIndex(childIndex);
+      int column = grid->columnAtChildIndex(childIndex);
       return grid->positionOfChildAt(column, row, font);
     }
   };
@@ -1144,6 +1144,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
         if (RackLayout::layoutCursor->cursorNode() == node) {
           indexToSkip = RackLayout::layoutCursor->position();
         }
+#if 0
         // Draw gray squares
         for (int i = 0; i < grid->numberOfRows(); i++) {
           if (grid->indexAtRowColumn(i, grid->numberOfColumns() - 1) ==
@@ -1156,7 +1157,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           EmptyRectangle::DrawEmptyRectangle(ctx, pChild, font,
                                              EmptyRectangle::Color::Gray);
         }
-        for (int i = 0; i < grid->numberOfRealColumns(); i++) {
+        for (int i = 0; i < grid->numberOfColumns(); i++) {
           if (grid->indexAtRowColumn(grid->numberOfRows() - 1, i) ==
               indexToSkip) {
             continue;
@@ -1167,6 +1168,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           EmptyRectangle::DrawEmptyRectangle(ctx, pChild, font,
                                              EmptyRectangle::Color::Gray);
         }
+#endif
       }
       return;
     }

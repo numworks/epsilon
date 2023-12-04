@@ -34,9 +34,6 @@ void LayoutCursor::safeSetPosition(int position) {
 #endif
 
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
-  if (cursorNode()->isGridLayout()) {
-    return EmptyRectangle::RectangleSize(font).height();
-  }
   LayoutSelection currentSelection = selection();
   int left, right;
   if (currentSelection.isEmpty()) {
@@ -50,15 +47,6 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
-  if (cursorNode()->isGridLayout()) {
-    Grid *grid = Grid::From(cursorNode());
-    return Render::AbsoluteOrigin(cursorNode(), rootNode())
-        .translatedBy(
-            grid->positionOfChildAt(grid->columnAtChildIndex(m_position),
-                                    grid->rowAtChildIndex(m_position), font))
-        .translatedBy(
-            KDPoint(EmptyRectangle::RectangleSize(font).width() / 2, 0));
-  }
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
   int left, right;
@@ -111,8 +99,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   LayoutCursor cloneCursor = *this;
 #endif
   bool moved = false;
-  bool wasEmpty =
-      cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
+  bool wasEmpty = RackLayout::IsEmpty(cursorNode());
   const Tree *oldGridParent = mostNestedGridParent(cursorNode(), rootNode());
   // Perform the actual move
   if (direction.isVertical()) {
@@ -122,8 +109,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   }
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
-    bool isEmpty =
-        cursorNode()->isGridLayout() || RackLayout::IsEmpty(cursorNode());
+    bool isEmpty = RackLayout::IsEmpty(cursorNode());
     *shouldRedrawLayout =
         selecting || wasEmpty || isEmpty || *shouldRedrawLayout ||
         // Redraw to show/hide the empty gray squares of the parent grid
@@ -235,6 +221,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * an empty row/column is added below/on the right.
    */
   if (cursorNode()->isGridLayout()) {
+    // TODO
     setCursorNode(
         Grid::From(m_cursorReference)->willFillEmptyChildAtIndex(m_position));
     m_position = 0;
@@ -609,31 +596,13 @@ void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
   m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
-void LayoutCursor::setGridPosition(Tree *node, int index,
-                                   OMG::HorizontalDirection side) {
-  Grid *grid = Grid::From(node);
-  if (!grid->isFake(index)) {
-    index -= grid->rowAtChildIndex(index);
-    setLayout(grid->child(index), side);
-  } else {
-    setCursorNode(grid);
-    m_position = index;
-  }
-}
-
 Tree *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
-  if (cursorNode()->isGridLayout()) {
-    return nullptr;
-  }
   return m_position == 0 ? nullptr : cursorNode()->child(m_position - 1);
 }
 
 Tree *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
-  if (cursorNode()->isGridLayout()) {
-    return nullptr;
-  }
   if (m_position == cursorNode()->numberOfChildren()) {
     return nullptr;
   }
@@ -641,28 +610,11 @@ Tree *LayoutCursor::rightLayout() const {
 }
 
 Tree *LayoutCursor::parentLayout(int *index) const {
-  if (cursorNode()->isGridLayout()) {
-    *index = m_position;
-    return cursorNode();
-  }
-  Tree *parent = rootNode()->parentOfDescendant(cursorNode(), index);
-  if (parent && parent->isGridLayout()) {
-    *index += Grid::From(parent)->rowAtChildRealIndex(*index);
-  }
-  return parent;
+  return rootNode()->parentOfDescendant(cursorNode(), index);
 }
 
 void LayoutCursor::setCursorNode(Tree *node, int childIndex,
                                  OMG::HorizontalDirection side) {
-  if (node->isGridLayout()) {
-    // setCursorNode before calling isFake, it will be set again if not fake
-    setCursorNode(node);
-    if (Grid::From(node)->isFake(childIndex)) {
-      m_position = childIndex;
-      return;
-    }
-    childIndex -= Grid::From(node)->rowAtChildIndex(childIndex);
-  }
   setLayout(node->child(childIndex), side);
 }
 
@@ -786,7 +738,6 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
    * */
   int nextLayoutIndex;
   Tree *parent = rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
-  assert(!parent->isGridLayout());
   const Tree *previousLayout = cursorNode();
   setCursorNode(parent);
   m_position = nextLayoutIndex + (direction.isRight());
@@ -896,15 +847,6 @@ bool LayoutCursor::verticalMoveWithoutSelection(
                                     : OMG::Direction::Right());
       } else {
         assert(!parentLayout->isRackLayout());
-        if (parentLayout->isGridLayout()) {
-          if (Grid::From(parentLayout)->isFake(nextIndex)) {
-            // No need to look for the closest place inside the empty
-            setGridPosition(parentLayout, nextIndex,
-                            OMG::HorizontalDirection::Left());
-            return true;
-          }
-          nextIndex -= Grid::From(parentLayout)->rowAtChildIndex(nextIndex);
-        }
         // We assume the new cursor is the same whatever the font
         LayoutBufferCursor newCursor = ClosestCursorInDescendantsOfRack(
             *static_cast<LayoutBufferCursor *>(this),
@@ -916,9 +858,6 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     }
     Tree *rack = rootNode()->parentOfDescendant(parentLayout);
     parentLayout = rootNode()->parentOfDescendant(rack, &childIndex);
-    if (parentLayout && parentLayout->isGridLayout()) {
-      childIndex += Grid::From(parentLayout)->rowAtChildRealIndex(childIndex);
-    }
     currentPosition = PositionInLayout::Middle;
   }
   return false;
@@ -1039,8 +978,8 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     int currentRow = grid->rowAtChildIndex(currentIndex);
     assert(currentRow > 0 && grid->numberOfColumns() >= 2);
     int newIndex =
-        grid->indexAtRowColumn(currentRow - 1, grid->numberOfRealColumns() - 1);
-    setGridPosition(grid, newIndex, OMG::HorizontalDirection::Right());
+        grid->indexAtRowColumn(currentRow - 1, grid->numberOfColumns() - 2);
+    setLayout(grid->child(newIndex), OMG::HorizontalDirection::Right());
     return;
   }
   if (deletionMethod == DeletionMethod::GridLayoutDeleteColumn ||
@@ -1058,7 +997,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
       grid->deleteColumnAtIndex(currentColumn);
     }
     int newChildIndex = grid->indexAtRowColumn(currentRow, currentColumn);
-    setGridPosition(grid, newChildIndex, OMG::HorizontalDirection::Left());
+    setLayout(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
     return;
   }
   assert(deletionMethod == DeletionMethod::DeleteLayout);
@@ -1086,7 +1025,7 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   Grid *grid = Grid::From(parent);
   int newChildIndex =
       grid->removeTrailingEmptyRowOrColumnAtChildIndex(currentChildIndex);
-  setGridPosition(grid, newChildIndex, OMG::HorizontalDirection::Left());
+  setLayout(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
 }
 
 void LayoutCursor::collapseSiblingsOfLayout(Tree *l) {

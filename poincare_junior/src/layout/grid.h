@@ -23,26 +23,14 @@ class Grid : public Tree {
     return static_cast<Grid*>(node);
   }
 
-  /* When a grid is edited, it displays some fake additional children with gray
-   * squares to enable adding more rows/columns. */
-  uint8_t numberOfRows() const { return nodeValue(0) + isEditing(); }
-  uint8_t numberOfColumns() const { return nodeValue(1) + isEditing(); }
+  uint8_t numberOfRows() const { return nodeValue(0); }
+  uint8_t numberOfColumns() const { return nodeValue(1); }
   void setNumberOfRows(uint8_t rows) { setNodeValue(0, rows); }
   void setNumberOfColumns(uint8_t columns) { setNodeValue(1, columns); }
-
-  // Without the virtual editing gray children
-  uint8_t numberOfRealRows() const { return nodeValue(0); }
-  uint8_t numberOfRealColumns() const { return nodeValue(1); }
 
   const Tree* childAt(uint8_t col, uint8_t row) const;
   Tree* childAt(uint8_t col, uint8_t row) {
     return const_cast<Tree*>(const_cast<const Grid*>(this)->childAt(col, row));
-  }
-
-  /* Vocabulary : index counts virtual children, realIndex does not */
-  bool isFake(uint8_t index) {
-    assert(isEditing());
-    return childIsRightOfGrid(index) || childIsBottomOfGrid(index);
   }
 
   Tree* willFillEmptyChildAtIndex(int childIndex);
@@ -50,8 +38,6 @@ class Grid : public Tree {
 
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
-  int rowAtChildRealIndex(int realIndex) const;
-  int columnAtChildRealIndex(int realIndex) const;
   int indexAtRowColumn(int row, int column) const;
   int rightmostNonGrayColumn() const {
     return numberOfColumns() - 1 - (isEditing() && !numberOfColumnsIsFixed());

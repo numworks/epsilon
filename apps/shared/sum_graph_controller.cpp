@@ -162,11 +162,6 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
   return handleEnter();
 }
 
-void SumGraphController::textFieldDidAbortEditing(
-    AbstractTextField *textField) {
-  reloadBannerView();
-}
-
 bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
   if (m_step == Step::Result) {
     return false;
@@ -235,8 +230,10 @@ Poincare::Expression SumGraphController::createSumExpression(
 SumGraphController::LegendView::LegendView(SumGraphController *controller)
     : m_sum(k_glyphsFormat),
       m_legend(I18n::Message::Default, k_glyphsFormat),
-      m_editableZone(controller, nullptr, k_editableZoneBufferSize, controller,
-                     k_glyphsFormat) {}
+      m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
+                     controller, k_glyphsFormat) {
+  m_textBuffer[0] = 0;
+}
 
 void SumGraphController::LegendView::drawRect(KDContext *ctx,
                                               KDRect rect) const {

@@ -220,10 +220,12 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * When an empty child at the bottom or right of the grid is filled,
    * an empty row/column is added below/on the right.
    */
-  if (cursorNode()->isGridLayout()) {
+  int index;
+  if (parentLayout(&index) && parentLayout(&index)->isGridLayout() &&
+      RackLayout::IsEmpty(cursorNode())) {
     // TODO
     setCursorNode(
-        Grid::From(m_cursorReference)->willFillEmptyChildAtIndex(m_position));
+        Grid::From(parentLayout(&index))->willFillEmptyChildAtIndex(index));
     m_position = 0;
   }
 
@@ -1014,7 +1016,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
 }
 
 void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
-  if (!cursorNode()->isRackLayout() || !RackLayout::IsEmpty(cursorNode())) {
+  if (!RackLayout::IsEmpty(cursorNode())) {
     return;
   }
   int currentChildIndex;

@@ -12,7 +12,9 @@ constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 
 constexpr auto KEmptyMatrixL =
-    KTree<BlockType::MatrixLayout, 1, 1, BlockType::RackLayout, 0>();
+    KTree<BlockType::MatrixLayout, 2, 2, BlockType::RackLayout, 0,
+          BlockType::RackLayout, 0, BlockType::RackLayout, 0,
+          BlockType::RackLayout, 0>();
 
 template <Block... B1>
 consteval auto KParenthesisL(KTree<B1...>) {

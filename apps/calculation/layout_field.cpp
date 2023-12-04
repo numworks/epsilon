@@ -13,7 +13,10 @@ void LayoutField::updateCursorBeforeInsertion() {
   if (m_insertionCursor.isUninitialized()) {
     return;
   }
-  *cursor() = m_insertionCursor;
+  KDSize previousSize = minimalSizeForOptimalDisplay();
+  cursor()->safeSetLayout(m_insertionCursor.layout(), OMG::Direction::Left());
+  cursor()->safeSetPosition(m_insertionCursor.position());
+  reload(previousSize);
   resetInsertionCursor();
 }
 
@@ -24,6 +27,9 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_insertionCursor.isUninitialized()) {
       m_insertionCursor = *cursor();
+      /* Ensure insertion cursor will stay valid even when the current layout is
+       * exited */
+      m_insertionCursor.prepareForExitingPosition();
     }
   } else if (event.isKeyPress()) {
     resetInsertionCursor();

@@ -631,7 +631,7 @@ bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   return changed;
 }
 
-bool LayoutCursor::didExitPosition() {
+void LayoutCursor::prepareForExitingPosition() {
   if (IsEmptyChildOfGridLayout(m_layout)) {
     /* When exiting a grid, the gray columns and rows will disappear, so
      * before leaving the grid, set the cursor position to a layout that will
@@ -642,6 +642,10 @@ bool LayoutCursor::didExitPosition() {
                   parentGrid->indexOfChild(m_layout.node())))),
               OMG::Direction::Right());
   }
+}
+
+bool LayoutCursor::didExitPosition() {
+  prepareForExitingPosition();
   LayoutCursor lc;
   return lc.didEnterCurrentPosition(*this);
 }

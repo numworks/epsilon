@@ -184,6 +184,7 @@ void SolutionsController::viewWillAppear() {
   } else {
     requireWarning = false;
   }
+  setOffset(KDPointZero);
   m_contentView.setWarning(requireWarning);
   m_contentView.selectableTableView()->reloadData();
   selectCellAtLocation(0, 0);

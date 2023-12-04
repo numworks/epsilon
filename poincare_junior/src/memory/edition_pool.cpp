@@ -353,11 +353,13 @@ template Tree *EditionPool::push<BlockType::Polynomial, int>(int);
 template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);
 template Tree *EditionPool::push<BlockType::Variable>(uint8_t);
-template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::List, int>(int);
+template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(
     CodePoint);
 template Tree *EditionPool::push<BlockType::CombinedCodePointsLayout, CodePoint,
                                  CodePoint>(CodePoint, CodePoint);
+template Tree *EditionPool::push<BlockType::ParenthesisLayout, bool, bool>(
+    bool leftIsTemporary, bool rightIsTemporary);
 
 }  // namespace PoincareJ

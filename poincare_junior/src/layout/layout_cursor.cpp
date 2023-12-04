@@ -167,8 +167,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
     leftParenthesisIndex--;
   }
   EditionReference parenthesis =
-      SharedEditionPool->push(BlockType::ParenthesisLayout);
-  SharedEditionPool->push(0);
+      SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
   EditionReference tempRack = SharedEditionPool->push<BlockType::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {

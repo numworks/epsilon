@@ -163,6 +163,15 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 }
 
 template <>
+constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
+    BlockType::ParenthesisLayout>(Block* block, size_t blockIndex,
+                                  bool leftIsTemporary, bool rightIsTemporary) {
+  return CreateBlockAtIndexForNthBlocksNode(
+      block, blockIndex, BlockType::CodePointLayout,
+      leftIsTemporary | (0b10 && rightIsTemporary));
+}
+
+template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(
     Block* block, size_t blockIndex, uint64_t value) {

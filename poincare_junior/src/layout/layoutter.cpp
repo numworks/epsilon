@@ -98,8 +98,7 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
                                    Tree *expression, const char *name) {
   layoutText(layoutParent, name);
   EditionReference parenthesis =
-      SharedEditionPool->push(BlockType::ParenthesisLayout);
-  SharedEditionPool->push(0);
+      SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
   EditionReference newParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);

@@ -93,8 +93,12 @@ Expression Round::shallowReduce(ReductionContext reductionContext) {
     }
     Rational err = Rational::IntegerPower(ten, r2.signedIntegerNumerator());
     Rational mult = Rational::Multiplication(r1, err);
+    if (mult.numeratorOrDenominatorIsInfinity()) {
+      return *this;
+    }
     IntegerDivision d = Integer::Division(mult.signedIntegerNumerator(),
                                           mult.integerDenominator());
+    assert(!d.quotient.isOverflow());
     Integer rounding = d.quotient;
     Integer multDenominator = mult.integerDenominator();
     if (Rational::NaturalOrder(Rational::Builder(d.remainder, multDenominator),

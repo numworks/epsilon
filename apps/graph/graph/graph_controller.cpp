@@ -43,7 +43,6 @@ void GraphController::viewWillAppear() {
   m_view.setTangentDisplay(false);
   m_view.setInterest(Solver<double>::Interest::None);
   m_cursorView.resetMemoization();
-  m_bannerView.reinitTextBuffer();
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
 }

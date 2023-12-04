@@ -1161,8 +1161,9 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         } else {
           numerator = Subtraction::Builder(m1, m2);
         }
-        if (denominator.isOverflow() || factor1.isOverflow() ||
-            factor2.isOverflow() || pq1.isOverflow() || pq2.isOverflow()) {
+        if (denominator.isOverflow() || denominator.isZero() ||
+            factor1.isOverflow() || factor2.isOverflow() || pq1.isOverflow() ||
+            pq2.isOverflow()) {
           return *this;  // Escape
         }
         numerator = numerator.deepReduce(reductionContext);

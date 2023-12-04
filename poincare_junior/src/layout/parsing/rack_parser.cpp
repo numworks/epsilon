@@ -1123,6 +1123,10 @@ Tree *RackParser::parseVector() {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
+  if (!commaSeparatedList || commaSeparatedList->numberOfChildren() == 0) {
+    // Empty vectors are not handled
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
   if (!popTokenIfType(Token::Type::RightBracket)) {
     // Right bracket missing.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1168,7 +1172,7 @@ void RackParser::parseList(EditionReference &leftHandSide,
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   } else {
-    leftHandSide = SharedEditionPool->push(BlockType::List);
+    leftHandSide = List::PushEmpty();
   }
   if (popTokenIfType(Token::Type::LeftParenthesis)) {
     EditionReference parameter = parseCommaSeparatedList();

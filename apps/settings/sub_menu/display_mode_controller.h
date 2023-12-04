@@ -31,13 +31,10 @@ class DisplayModeController : public PreferencesController,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
  private:
   constexpr static int k_resultFormatType = 0;
   constexpr static int k_significantDigitsType = 1;
-  void setEditableCellValue();
-
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_editableCell;
 };
 

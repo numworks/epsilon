@@ -45,7 +45,7 @@ void TangentGraphController::didBecomeFirstResponder() {
 
 bool TangentGraphController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
-  double floatBody = ParseInputFloatValue<double>(textField->text());
+  double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -59,6 +59,7 @@ bool TangentGraphController::textFieldDidFinishEditing(
   panToMakeCursorVisible();
   reloadBannerView();
   curveView()->reload();
+  textField->reinitDraftTextBuffer();
   return true;
 }
 

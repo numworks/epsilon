@@ -164,7 +164,7 @@ bool CalculationController::textFieldShouldFinishEditing(
   return MathTextFieldDelegate::textFieldShouldFinishEditing(textField,
                                                              event) ||
          (event == Ion::Events::Right &&
-          textField->cursorLocation() == textField->textEnd() &&
+          textField->cursorLocation() == textField->draftTextEnd() &&
           selectedColumn() < m_calculation->numberOfParameters()) ||
          (event == Ion::Events::Left &&
           textField->cursorLocation() == textField->text());
@@ -173,7 +173,7 @@ bool CalculationController::textFieldShouldFinishEditing(
 bool CalculationController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   assert(selectedColumn() != 0);
-  double floatBody = ParseInputFloatValue<double>(textField->text());
+  double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
@@ -214,6 +214,7 @@ bool CalculationController::textFieldDidFinishEditing(
     m_selectableTableView.handleEvent(event);
   }
   reload();
+  textField->reinitDraftTextBuffer();
   return true;
 }
 
@@ -236,11 +237,6 @@ void CalculationController::reload() {
     m_contentView.unknownParameterValue()->setText(buffer);
   }
   m_contentView.reload();
-}
-
-void CalculationController::textFieldDidAbortEditing(
-    Escher::AbstractTextField *textField) {
-  m_selectableTableView.reloadData(false);
 }
 
 void CalculationController::setCalculationAccordingToIndex(

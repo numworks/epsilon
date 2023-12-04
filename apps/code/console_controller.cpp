@@ -296,7 +296,7 @@ void ConsoleController::listViewDidChangeSelectionAndDidScroll(
 bool ConsoleController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   assert(textField->isEditing());
-  return textField->textLength() > 0 &&
+  return textField->draftTextLength() > 0 &&
          TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
@@ -330,18 +330,17 @@ bool ConsoleController::textFieldDidFinishEditing(AbstractTextField *textField,
     m_inputRunLoopActive = false;
     return false;
   }
-  char *text = textField->text();
+  char *text = textField->draftText();
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!isDisplayingViewController()) {
     reloadData();
   }
-  textField->reinitTextBuffer();
+  textField->reinitDraftTextBuffer();
   return true;
 }
 
 void ConsoleController::textFieldDidAbortEditing(AbstractTextField *textField) {
-  textField->reinitTextBuffer();
   if (m_inputRunLoopActive) {
     m_inputRunLoopActive = false;
   } else {

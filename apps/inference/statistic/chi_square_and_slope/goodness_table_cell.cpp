@@ -29,6 +29,7 @@ bool GoodnessTableCell::textFieldDidFinishEditing(
       statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
       m_inputGoodnessController->updateDegreeOfFreedomCell();
     }
+    textField->reinitDraftTextBuffer();
     return true;
   }
   return false;

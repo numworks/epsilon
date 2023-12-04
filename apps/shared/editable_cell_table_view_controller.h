@@ -24,12 +24,10 @@ class EditableCellTableViewController : public TabTableController,
   EditableCellTableViewController(
       Responder* parentResponder,
       Escher::SelectableTableViewDelegate* delegate = nullptr);
-
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   int numberOfRows() const override;
   void fillCellForLocationWithDisplayMode(

@@ -29,7 +29,6 @@ class ListParameterController : public Shared::ListParameterController,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField *textField) override;
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView *l, int previousSelectedRow,
       KDPoint previousOffset, bool withinTemporarySelection) override;
@@ -50,7 +49,6 @@ class ListParameterController : public Shared::ListParameterController,
   Shared::Sequence *sequence() {
     return static_cast<Shared::Sequence *>(function().pointer());
   }
-  void setInitialRankCellValue();
   Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView,
                    Escher::ChevronView>
       m_typeCell;

@@ -28,8 +28,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       m_insertionPosition = cursor()->position();
     }
   } else if (event.isKeyPress()) {
-    m_insertionLayout = Layout();
-    m_insertionPosition = -1;
+    resetInsertionCursor();
   }
   if (event != Ion::Events::Division && event.isKeyPress()) {
     m_divisionCycleWithAns = TrinaryBoolean::Unknown;

@@ -61,6 +61,7 @@ void EditExpressionController::insertTextBody(const char *text) {
   App::app()->setFirstResponder(this);
   m_contentView.layoutField()->updateCursorBeforeInsertion();
   m_contentView.layoutField()->handleEventWithText(text, false, true);
+  m_contentView.layoutField()->resetInsertionCursor();
 }
 
 void EditExpressionController::didBecomeFirstResponder() {

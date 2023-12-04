@@ -133,6 +133,8 @@ bool AdditionalResultsType::HasUnit(
       &clone, &unit, globalContext,
       {.complexFormat = complexFormat,
        .angleUnit = angleUnit,
+       .symbolicComputation =
+           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
        .unitConversion = UnitConversion::None});
   double value = PoincareHelpers::ApproximateToScalar<double>(
       clone, globalContext,

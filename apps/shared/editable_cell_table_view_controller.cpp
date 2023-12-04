@@ -73,7 +73,6 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(
   } else {
     selectableTableView()->handleEvent(event);
   }
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

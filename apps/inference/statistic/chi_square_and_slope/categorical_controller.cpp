@@ -165,7 +165,6 @@ bool InputCategoricalController::textFieldDidFinishEditing(
     event = Ion::Events::Down;
   }
   m_selectableListView.handleEvent(event);
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

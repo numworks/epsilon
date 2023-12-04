@@ -186,11 +186,6 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
       textField, event);
 }
 
-void InteractiveCurveViewController::textFieldDidAbortEditing(
-    Escher::AbstractTextField *textField) {
-  reloadBannerView();
-}
-
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy =
       xyValues(selectedCurveIndex(), t, App::app()->localContext(), 0);

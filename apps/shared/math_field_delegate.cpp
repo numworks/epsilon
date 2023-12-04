@@ -168,7 +168,6 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

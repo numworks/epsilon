@@ -159,9 +159,7 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  handleEnter();
-  textField->reinitDraftTextBuffer();
-  return true;
+  return handleEnter();
 }
 
 void SumGraphController::textFieldDidAbortEditing(

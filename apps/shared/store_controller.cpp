@@ -49,7 +49,6 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField *textField,
        * it already selects the next row. */
       selectableTableView()->handleEvent(event);
     }
-    textField->reinitDraftTextBuffer();
     return true;
   }
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(

@@ -81,9 +81,6 @@ class FrequencyController : public PlotController,
   PlotBannerView *bannerView() override {
     return &m_bannerViewWithEditableField;
   }
-  void reinitBannerTexts() override {
-    m_bannerViewWithEditableField.value()->reinitTextBuffer();
-  }
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   PlotBannerViewWithEditableField m_bannerViewWithEditableField;

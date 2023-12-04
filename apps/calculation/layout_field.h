@@ -17,6 +17,7 @@ class LayoutField : public Escher::LayoutField {
         m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 
   void updateCursorBeforeInsertion();
+  void resetInsertionCursor() { m_insertionLayout = Poincare::Layout(); }
 
  protected:
   bool handleEvent(Ion::Events::Event event) override;

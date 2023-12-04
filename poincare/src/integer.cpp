@@ -443,7 +443,7 @@ Integer Integer::Factorial(const Integer &i) {
 
 Integer Integer::RandomInt(const Integer &a, const Integer &b) {
   if (NaturalOrder(a, b) > 0) {
-    return Integer::Overflow(false);
+    return Overflow(false);
   }
   Integer range = Integer::Subtraction(b, a);
   if (range.isZero()) {
@@ -500,7 +500,7 @@ Integer Integer::addition(const Integer &a, const Integer &b,
 Integer Integer::multiplication(const Integer &a, const Integer &b,
                                 bool oneDigitOverflow) {
   if (a.isOverflow() || b.isOverflow()) {
-    return Integer::Overflow(a.m_negative != b.m_negative);
+    return Overflow(a.m_negative != b.m_negative);
   }
 
   // Enable overflowing of 1 digit
@@ -527,7 +527,7 @@ Integer Integer::multiplication(const Integer &a, const Integer &b,
       } else {
         if (l[0] != 0) {
           // Overflow the largest Integer
-          return Integer::Overflow(a.m_negative != b.m_negative);
+          return Overflow(a.m_negative != b.m_negative);
         }
       }
       carry = l[1];
@@ -538,7 +538,7 @@ Integer Integer::multiplication(const Integer &a, const Integer &b,
     } else {
       if (carry != 0) {
         // Overflow the largest Integer
-        return Integer::Overflow(a.m_negative != b.m_negative);
+        return Overflow(a.m_negative != b.m_negative);
       }
     }
   }
@@ -662,10 +662,10 @@ Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
 IntegerDivision Integer::udiv(const Integer &numerator,
                               const Integer &denominator) {
   if (denominator.isOverflow()) {
-    return {.quotient = Overflow(false), .remainder = Integer::Overflow(false)};
+    return {.quotient = Overflow(false), .remainder = Overflow(false)};
   }
   if (numerator.isOverflow()) {
-    return {.quotient = Overflow(false), .remainder = Integer::Overflow(false)};
+    return {.quotient = Overflow(false), .remainder = Overflow(false)};
   }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */

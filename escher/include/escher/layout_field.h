@@ -80,6 +80,7 @@ class LayoutField : public EditableField {
   }
   bool insertText(const char* text, bool indentation = false,
                   bool forceCursorRightOfText = false);
+  void reload(KDSize previousSize);
 
  private:
   constexpr static int k_maxNumberOfLayouts = 220;
@@ -88,7 +89,6 @@ class LayoutField : public EditableField {
   static_assert(k_maxNumberOfLayouts == TextField::MaxBufferSize(),
                 "Maximal number of layouts in a layout field should be equal "
                 "to max number of char in text field");
-  void reload(KDSize previousSize);
   bool privateHandleEvent(Ion::Events::Event event, bool* shouldRedrawLayout,
                           bool* shouldUpdateCursor);
   bool eventHasText(Ion::Events::Event event, char* buffer, size_t bufferSize);

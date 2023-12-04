@@ -103,8 +103,12 @@ class LayoutCursor final {
 
   /* Set empty rectangle visibility and gray rectangle in grids. */
   bool didEnterCurrentPosition(LayoutCursor previousPosition = LayoutCursor());
+
   // Call this if the cursor is disappearing from the field
   bool didExitPosition();
+  /* This moves the cursor to a location that will stay valid after exiting the
+   * field */
+  void prepareForExitingPosition();
 
   bool isAtNumeratorOfEmptyFraction() const;
 

@@ -214,7 +214,6 @@ bool CalculationController::textFieldDidFinishEditing(
     m_selectableTableView.handleEvent(event);
   }
   reload();
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

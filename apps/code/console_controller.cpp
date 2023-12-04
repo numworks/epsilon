@@ -336,7 +336,6 @@ bool ConsoleController::textFieldDidFinishEditing(AbstractTextField *textField,
   if (!isDisplayingViewController()) {
     reloadData();
   }
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

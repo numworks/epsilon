@@ -91,7 +91,6 @@ bool HypothesisController::textFieldDidFinishEditing(
   m_test->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
   m_selectableListView.selectCell(k_indexOfHa);
-  textField->reinitDraftTextBuffer();
   return true;
 }
 

@@ -59,11 +59,6 @@ bool FrequencyController::textFieldDidFinishEditing(
   return true;
 }
 
-void FrequencyController::textFieldDidAbortEditing(
-    Escher::AbstractTextField *textField) {
-  reloadBannerView();
-}
-
 void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
                                             char *labelBuffer, int maxSize,
                                             int glyphLength,

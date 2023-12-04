@@ -408,6 +408,9 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
     if (isEditing() && m_delegate->textFieldShouldFinishEditing(this, event)) {
       setEditing(false);
       if (m_delegate->textFieldDidFinishEditing(this, event)) {
+        /* Text has been updated with draft text. We can clean the draft text
+         * for next use. */
+        reinitDraftTextBuffer();
         resetScroll();
       } else {
         setEditing(true);

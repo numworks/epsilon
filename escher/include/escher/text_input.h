@@ -69,16 +69,12 @@ class TextInput : public EditableField {
     bool resetSelection();  // returns true if the selection was indeed reset
     bool selectionIsEmpty() const;
     virtual size_t deleteSelection() = 0;
-    virtual size_t textBufferSize() const = 0;
 
     // Reload
     void reloadRectFromPosition(const char *position,
                                 bool includeFollowingLines = false);
 
-    size_t textLength() const {
-      assert(strlen(text()) < textBufferSize());
-      return strlen(text());
-    }
+    size_t textLength() const { return strlen(text()); }
     const char *textEnd() const { return text() + textLength(); }
 
    protected:

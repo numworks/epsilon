@@ -224,7 +224,10 @@ bool sharedIsDefined(uint8_t eventId) {
   }
 }
 
-void resetKeyboardState() { SharedState->resetKeyboardState(); }
+void resetKeyboardState() {
+  *SharedModifierState = ModifierState();
+  SharedState->resetKeyboardState();
+}
 
 }  // namespace Events
 }  // namespace Ion

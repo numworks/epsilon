@@ -1136,6 +1136,9 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
                 Integer::Multiplication(Integer::Power(n2, Integer(2)),
                                         Integer::Power(d1, Integer(2))),
                 Integer::Multiplication(p2, q1)));
+        if (denominator.isOverflow() || denominator.isZero()) {
+          return *this;
+        }
 
         // Compute the numerator
         Integer pq1 = Integer::Multiplication(p1, q1);
@@ -1161,8 +1164,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         } else {
           numerator = Subtraction::Builder(m1, m2);
         }
-        if (denominator.isOverflow() || denominator.isZero() ||
-            factor1.isOverflow() || factor2.isOverflow() || pq1.isOverflow() ||
+        if (factor1.isOverflow() || factor2.isOverflow() || pq1.isOverflow() ||
             pq2.isOverflow()) {
           return *this;  // Escape
         }

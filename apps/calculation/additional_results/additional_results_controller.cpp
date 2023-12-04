@@ -88,6 +88,9 @@ void AdditionalResultsController::computeResults(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     (*expressionsListController)->tidy();
+    /* TODO: The complex format will be updated multiple times during the
+     * computation of additionnal results if the expressions contain complex
+     * number. It should maybe be updated once and for all now. */
     (*expressionsListController)
         ->setComplexFormatAndAngleUnit(complexFormat, angleUnit);
     (*expressionsListController)

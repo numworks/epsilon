@@ -836,8 +836,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
        *   this rule in that case */
       return *this;
     }
-    Expression p1 = PowerRationalRational(base.convert<Rational>(),
-                                          rationalIndex, reductionContext);
+    Expression p1 = SafePowerRationalRational(base.convert<Rational>(),
+                                              rationalIndex, reductionContext);
     if (p1.isUninitialized()) {
       return *this;
     }
@@ -908,8 +908,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     /* Step 9.1
      * Handle the simple case of r^s, whith r and s rational. */
     if (baseType == ExpressionNode::Type::Rational) {
-      Expression e = PowerRationalRational(base.convert<Rational>(),
-                                           rationalIndex, reductionContext);
+      Expression e = SafePowerRationalRational(base.convert<Rational>(),
+                                               rationalIndex, reductionContext);
       if (e.isUninitialized()) {
         return *this;
       }
@@ -1433,7 +1433,7 @@ Expression Power::denominator(const ReductionContext &reductionContext) const {
   return pow;
 }
 
-Expression Power::PowerRationalRational(
+Expression Power::SafePowerRationalRational(
     const Rational base, const Rational index,
     const ReductionContext &reductionContext) {
   /* Clone base and index since this method could alter base and/or
@@ -1512,14 +1512,14 @@ Expression Power::UnsafePowerRationalRational(
   }
   d.setNegative(true);
   Rational f1 = Rational::IntegerPower(Rational::Builder(q), d);
-  Expression f2 = PowerIntegerRational(p, index, reductionContext);
+  Expression f2 = UnsafePowerIntegerRational(p, index, reductionContext);
   Expression f3 =
-      PowerIntegerRational(q, Rational::Builder(c, b), reductionContext);
+      UnsafePowerIntegerRational(q, Rational::Builder(c, b), reductionContext);
   Multiplication m = Multiplication::Builder({f1, f2, f3});
   return m.shallowReduce(reductionContext);
 }
 
-Expression Power::PowerIntegerRational(
+Expression Power::UnsafePowerIntegerRational(
     Integer base, Rational index, const ReductionContext &reductionContext) {
   assert(!index.isNegative());
   if (base.isZero()) {

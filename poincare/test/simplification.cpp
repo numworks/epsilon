@@ -1219,6 +1219,18 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
   assert_parsed_expression_simplify_to("round(4.235)", "4");
   assert_parsed_expression_simplify_to("round(0.235)", "0");
+  /* This tests that checks for overflow during its reduction. We need to input
+   * the expression as 10^30*... so that the number 3.5E303 is reduced as a
+   * Rational instead of being parsed as a Float because it's too long. */
+  assert_parsed_expression_simplify_to(
+      "round(10^30*10^30*10^30*10^10*10^10*10^30*10^30*10^30*10^30*10^30*10^30*"
+      "10^13*3,5)",
+      "round("
+      "300000000000000000000000000000000000000000000000000000000000000000000000"
+      "000000000000000000000000000000000000000000000000000000000000000000000000"
+      "000000000000000000000000000000000000000000000000000000000000000000000000"
+      "000000000000000000000000000000000000000000000000000000000000000000000000"
+      "0000000000000000,5)");
   assert_parsed_expression_simplify_to("sign(-23)", "-1");
   assert_parsed_expression_simplify_to("sign(-i)", "sign(-i)");
   assert_parsed_expression_simplify_to("sign(0)", "0");

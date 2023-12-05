@@ -19,7 +19,7 @@ typedef ::Calculation::Calculation::NumberOfSignificantDigits
 using namespace Poincare;
 using namespace Calculation;
 
-constexpr static int calculationBufferSize =
+constexpr static size_t calculationBufferSize =
     10 * (sizeof(::Calculation::Calculation) +
           ::Calculation::Calculation::k_numberOfExpressions *
               ::Constant::MaxSerializedExpressionSize +
@@ -93,7 +93,7 @@ QUIZ_CASE(calculation_store) {
 
   // Case 2 : Remaining space > minimalSize but pushed calculation doesn't fit
   {
-    constexpr int calculationSize =
+    constexpr size_t calculationSize =
         2 * minimalSize - (2 * minimalSize) % patternSize;
     assert(calculationSize % patternSize == 0);
     assert(calculationSize < store.remainingBufferSize());

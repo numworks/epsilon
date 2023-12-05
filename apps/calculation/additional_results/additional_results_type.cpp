@@ -95,9 +95,6 @@ bool AdditionalResultsType::ForbidAdditionalResults(
 }
 
 bool AdditionalResultsType::HasComplex(const Expression approximateOutput) {
-  /* Using the approximated output instead of the user input to guess the
-   * complex format makes additional results more consistent when the user has
-   * created complexes in Complex mode and then switched back to Real mode. */
   return approximateOutput.isScalarComplex();
 }
 

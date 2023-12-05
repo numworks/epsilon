@@ -428,28 +428,27 @@ Expression Trigonometry::shallowReduceInverseFunction(
                    ->approximate(double(),
                                  ApproximationContext(reductionContext, true))
                    .toScalar();
-    if (!(std::isinf(x) || std::isnan(x))) {
+    if (std::isfinite(x)) {
       /* We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for
        * asin(sin) and atan(tan) */
       double k = (e.type() == ExpressionNode::Type::ArcCosine)
                      ? std::floor(x / pi)
                      : std::floor((x + pi / 2.0f) / pi);
-      if (!std::isinf(k) && !std::isnan(k) &&
-          std::fabs(k) <= static_cast<double>(INT_MAX)) {
+      assert(std::isfinite(k));
+      if (std::fabs(k) <= static_cast<double>(INT_MAX)) {
         int kInt = static_cast<int>(k);
         Multiplication mult = Multiplication::Builder(
             Rational::Builder(-kInt),
             PiExpressionInAngleUnit(reductionContext.angleUnit()));
         result = Addition::Builder(result.clone(), mult);
         mult.shallowReduce(reductionContext);
-        if ((e.type() == ExpressionNode::Type::ArcCosine) &&
-            ((int)k % 2 == 1)) {
+        if ((e.type() == ExpressionNode::Type::ArcCosine) && (kInt % 2 == 1)) {
           Expression sub = Subtraction::Builder(
               PiExpressionInAngleUnit(reductionContext.angleUnit()), result);
           result.shallowReduce(reductionContext);
           result = sub;
         }
-        if ((e.type() == ExpressionNode::Type::ArcSine) && ((int)k % 2 == 1)) {
+        if ((e.type() == ExpressionNode::Type::ArcSine) && (kInt % 2 == 1)) {
           Expression add = result;
           result = Opposite::Builder(add);
           add.shallowReduce(reductionContext);

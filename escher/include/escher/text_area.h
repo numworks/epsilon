@@ -157,8 +157,8 @@ class TextArea : public TextInput {
    * k_maxLines < (2^15-1 - padding) / glyphHeight(big font) = 1800
    * k_maxLineChars < (2^15-1 - padding) / glyphWidth(big font) = 3200
    * We have chosen arbitrary values that respect this constraint. */
-  constexpr static size_t k_maxLines = 999;
-  constexpr static size_t k_maxLineChars = 3000;
+  constexpr static int k_maxLines = 999;
+  constexpr static int k_maxLineChars = 3000;
 
   static_assert(k_maxLines * KDFont::GlyphHeight(KDFont::Size::Large) <
                 KDCOORDINATE_MAX);

@@ -37,9 +37,7 @@ class Trigonometry final {
       Expression& e, ReductionContext reductionContext);
   static Expression ReplaceWithAdvancedFunction(Expression& e,
                                                 Expression& denominator);
-  // , Function f, bool inverse
-  static Expression table(const Expression e, ExpressionNode::Type type,
-                          const ReductionContext& reductionContext);
+
   template <typename T>
   static std::complex<T> ConvertToRadian(const std::complex<T> c,
                                          Preferences::AngleUnit angleUnit);

@@ -16,10 +16,10 @@ ListParameterController::ListParameterController(ListController *listController)
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
-      m_initialRankCell(&m_selectableListView, this),
+      m_FirstRankCell(&m_selectableListView, this),
       m_typeParameterController(this, listController, Metric::CommonMargins) {
   m_typeCell.label()->setMessage(I18n::Message::SequenceType);
-  m_initialRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
+  m_FirstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }
 
 const char *ListParameterController::title() {
@@ -49,7 +49,7 @@ bool ListParameterController::textFieldDidFinishEditing(
   App::app()->localContext()->resetCache();
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.handleEvent(event);
-  updateInitialRankCell();
+  updateFirstRankCell();
   return true;
 }
 
@@ -61,27 +61,27 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
     return;
   }
   if (previousSelectedRow == 1) {
-    assert(l->cell(previousSelectedRow) == &m_initialRankCell);
-    m_initialRankCell.textField()->setEditing(false);
+    assert(l->cell(previousSelectedRow) == &m_FirstRankCell);
+    m_FirstRankCell.textField()->setEditing(false);
     App::app()->setFirstResponder(&m_selectableListView);
   }
   if (l->selectedRow() == 1) {
-    assert(l->selectedCell() == &m_initialRankCell);
-    App::app()->setFirstResponder(&m_initialRankCell);
+    assert(l->selectedCell() == &m_FirstRankCell);
+    App::app()->setFirstResponder(&m_FirstRankCell);
   }
 }
 
 HighlightCell *ListParameterController::cell(int index) {
   assert(0 <= index && index < numberOfRows());
-  HighlightCell *const cells[] = {&m_typeCell, &m_initialRankCell,
-                                  &m_enableCell, &m_colorCell, &m_deleteCell};
+  HighlightCell *const cells[] = {&m_typeCell, &m_FirstRankCell, &m_enableCell,
+                                  &m_colorCell, &m_deleteCell};
   return cells[index];
 }
 
 void ListParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
-    updateInitialRankCell();
+    updateFirstRankCell();
   }
   Shared::ListParameterController::viewWillAppear();
 }
@@ -100,11 +100,11 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::ListParameterController::handleEvent(event);
 }
 
-void ListParameterController::updateInitialRankCell(void) {
+void ListParameterController::updateFirstRankCell(void) {
   char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
   Poincare::Integer(sequence()->initialRank())
       .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
-  m_initialRankCell.textField()->setText(buffer);
+  m_FirstRankCell.textField()->setText(buffer);
 }
 
 }  // namespace Sequence

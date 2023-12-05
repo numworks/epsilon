@@ -1452,6 +1452,13 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
                                        Degree);
   assert_parsed_expression_simplify_to("acos(cos(180+50))", "130", User,
                                        Degree);
+  assert_parsed_expression_simplify_to(
+      "arccos(cos(2345995537929342462976×π^5-36850577388590589246720×π^4+"
+      "231537533966682879807360×π^3-727391989955238208647840×π^2+"
+      "1142577399842170168717980×π-717897987691852588770249))",
+      "arccos(cos(2345995537929342462976×π^5-36850577388590589246720×π^4+"
+      "231537533966682879807360×π^3-727391989955238208647840×π^2+"
+      "1142577399842170168717980×π-717897987691852588770249))");
 
   assert_parsed_expression_simplify_to("acos(cos(4π/7))", "\u00124×π\u0013/7");
   assert_parsed_expression_simplify_to("acos(-cos(2))", "π-2");

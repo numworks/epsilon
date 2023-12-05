@@ -453,8 +453,23 @@ Expression Trigonometry::ShallowReduceInverseFunction(
           result = Opposite::Builder(add);
           add.shallowReduce(reductionContext);
         }
+        result = result.shallowReduce(reductionContext);
+        double approxResult =
+            result.node()
+                ->approximate(double(),
+                              ApproximationContext(reductionContext, true))
+                .toScalar();
+        if (approxResult > pi + Float<double>::EpsilonLax() ||
+            approxResult < -pi - Float<double>::EpsilonLax() ||
+            (e.type() != ExpressionNode::Type::ArcCosine &&
+             (approxResult > pi / 2. + Float<double>::EpsilonLax() ||
+              approxResult < -pi / 2. - Float<double>::EpsilonLax()))) {
+          /* The approximation of x and k was too imprecise and made the
+           * translation fail. Let approximation handle this. */
+          return e;
+        }
         e.replaceWithInPlace(result);
-        return result.shallowReduce(reductionContext);
+        return result;
       }
     }
   }

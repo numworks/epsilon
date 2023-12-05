@@ -45,7 +45,7 @@ int CosecantNode::serialize(char* buffer, int bufferSize,
 Expression CosecantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   Cosecant e = Cosecant(this);
-  return Trigonometry::shallowReduceAdvancedFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
 }
 
 }  // namespace Poincare

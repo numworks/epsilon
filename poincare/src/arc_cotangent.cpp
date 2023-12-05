@@ -48,7 +48,7 @@ int ArcCotangentNode::serialize(char* buffer, int bufferSize,
 Expression ArcCotangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcCotangent e = ArcCotangent(this);
-  return Trigonometry::shallowReduceInverseAdvancedFunction(e,
+  return Trigonometry::ShallowReduceInverseAdvancedFunction(e,
                                                             reductionContext);
 }
 

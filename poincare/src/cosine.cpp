@@ -44,7 +44,7 @@ int CosineNode::serialize(char* buffer, int bufferSize,
 
 Expression CosineNode::shallowReduce(const ReductionContext& reductionContext) {
   Cosine e = Cosine(this);
-  return Trigonometry::shallowReduceDirectFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
 }
 
 bool CosineNode::derivate(const ReductionContext& reductionContext,

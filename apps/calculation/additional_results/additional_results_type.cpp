@@ -115,8 +115,8 @@ bool AdditionalResultsType::HasInverseTrigo(const Expression input,
   // If the result is complex, it is treated as a complex result instead.
   assert(!exactOutput.isScalarComplex());
   assert(!exactOutput.hasUnit(true));
-  return (Trigonometry::isInverseTrigonometryFunction(input)) ||
-         Trigonometry::isInverseTrigonometryFunction(exactOutput);
+  return (Trigonometry::IsInverseTrigonometryFunction(input)) ||
+         Trigonometry::IsInverseTrigonometryFunction(exactOutput);
 }
 
 bool AdditionalResultsType::HasUnit(

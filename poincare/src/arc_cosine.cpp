@@ -38,7 +38,7 @@ int ArcCosineNode::serialize(char* buffer, int bufferSize,
 Expression ArcCosineNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcCosine e = ArcCosine(this);
-  return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcCosineNode::derivate(const ReductionContext& reductionContext,

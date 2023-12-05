@@ -390,7 +390,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   if (userReducedExpression.isLinearCombinationOfFunction(
           context,
           [](const Expression& e, Context* context, const char* symbol) {
-            return Poincare::Trigonometry::isDirectTrigonometryFunction(e) &&
+            return Poincare::Trigonometry::IsDirectTrigonometryFunction(e) &&
                    e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
           },
           Function::k_unknownName)) {

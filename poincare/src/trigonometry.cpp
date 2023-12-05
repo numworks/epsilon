@@ -85,24 +85,24 @@ Expression Trigonometry::AnglePeriodInAngleUnit(
       Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
 }
 
-bool Trigonometry::isDirectTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsDirectTrigonometryFunction(const Expression& e) {
   return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
                      ExpressionNode::Type::Tangent});
 }
 
-bool Trigonometry::isInverseTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsInverseTrigonometryFunction(const Expression& e) {
   return e.isOfType({ExpressionNode::Type::ArcCosine,
                      ExpressionNode::Type::ArcSine,
                      ExpressionNode::Type::ArcTangent});
 }
 
-bool Trigonometry::isAdvancedTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsAdvancedTrigonometryFunction(const Expression& e) {
   return e.isOfType({ExpressionNode::Type::Secant,
                      ExpressionNode::Type::Cosecant,
                      ExpressionNode::Type::Cotangent});
 }
 
-bool Trigonometry::isInverseAdvancedTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsInverseAdvancedTrigonometryFunction(const Expression& e) {
   return e.isOfType({ExpressionNode::Type::ArcSecant,
                      ExpressionNode::Type::ArcCosecant,
                      ExpressionNode::Type::ArcCotangent});
@@ -110,7 +110,7 @@ bool Trigonometry::isInverseAdvancedTrigonometryFunction(const Expression& e) {
 
 bool Trigonometry::AreInverseFunctions(const Expression& directFunction,
                                        const Expression& inverseFunction) {
-  if (!isDirectTrigonometryFunction(directFunction)) {
+  if (!IsDirectTrigonometryFunction(directFunction)) {
     return false;
   }
   ExpressionNode::Type correspondingType;
@@ -174,9 +174,9 @@ bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(
   return ExpressionIsTangentOrInverseOfTangent(e, true);
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(
+Expression Trigonometry::ShallowReduceDirectFunction(
     Expression& e, ReductionContext reductionContext) {
-  assert(isDirectTrigonometryFunction(e));
+  assert(IsDirectTrigonometryFunction(e));
 
   // Step 0.0 Map on list child if possible
   {
@@ -396,9 +396,9 @@ Expression Trigonometry::shallowReduceDirectFunction(
   return e;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(
+Expression Trigonometry::ShallowReduceInverseFunction(
     Expression& e, ReductionContext reductionContext) {
-  assert(isInverseTrigonometryFunction(e));
+  assert(IsInverseTrigonometryFunction(e));
   // Step 0. Map on list child if possible
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
@@ -516,7 +516,7 @@ Expression Trigonometry::shallowReduceInverseFunction(
    */
   Expression p = e.parent();
   bool letArcFunctionAtRoot =
-      !p.isUninitialized() && isDirectTrigonometryFunction(p);
+      !p.isUninitialized() && IsDirectTrigonometryFunction(p);
   /* Step 4. Handle opposite argument: acos(-x) = π-acos(x),
    * asin(-x) = -asin(x), atan(-x)= -atan(x) *
    */
@@ -549,11 +549,11 @@ Expression Trigonometry::shallowReduceInverseFunction(
   return e;
 }
 
-Expression Trigonometry::shallowReduceAdvancedFunction(
+Expression Trigonometry::ShallowReduceAdvancedFunction(
     Expression& e, ReductionContext reductionContext) {
   /* Since the child always ends in a direct function, angle units are left
    * untouched here */
-  assert(isAdvancedTrigonometryFunction(e));
+  assert(IsAdvancedTrigonometryFunction(e));
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e, &reductionContext,
@@ -590,9 +590,9 @@ Expression Trigonometry::shallowReduceAdvancedFunction(
   return p.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::shallowReduceInverseAdvancedFunction(
+Expression Trigonometry::ShallowReduceInverseAdvancedFunction(
     Expression& e, ReductionContext reductionContext) {
-  assert(isInverseAdvancedTrigonometryFunction(e));
+  assert(IsInverseAdvancedTrigonometryFunction(e));
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e, &reductionContext,
@@ -641,13 +641,13 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(
   return result.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::replaceWithAdvancedFunction(Expression& e,
+Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
                                                      Expression& denominator) {
   /* Replace direct trigonometric function with their advanced counterpart.
    * This function must be called within a denominator. */
   assert(e.type() == ExpressionNode::Type::Power &&
          !denominator.isUninitialized());
-  assert(isDirectTrigonometryFunction(denominator));
+  assert(IsDirectTrigonometryFunction(denominator));
   Expression result;
   switch (denominator.type()) {
     case ExpressionNode::Type::Cosine:
@@ -798,8 +798,8 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
 
 static Expression AddAngleUnitToDirectFunctionIfNeeded(
     Expression& e, Preferences::AngleUnit angleUnit) {
-  assert(Trigonometry::isDirectTrigonometryFunction(e) ||
-         Trigonometry::isAdvancedTrigonometryFunction(e));
+  assert(Trigonometry::IsDirectTrigonometryFunction(e) ||
+         Trigonometry::IsAdvancedTrigonometryFunction(e));
 
   assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
 
@@ -859,7 +859,7 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
 
 Expression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
     Expression& e, Preferences::AngleUnit angleUnit) {
-  if (isDirectTrigonometryFunction(e) || isAdvancedTrigonometryFunction(e)) {
+  if (IsDirectTrigonometryFunction(e) || IsAdvancedTrigonometryFunction(e)) {
     e = AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
     return e;
   }

@@ -425,10 +425,8 @@ Expression Trigonometry::ShallowReduceInverseFunction(
     Expression result = isArcTanOfSinCos
                             ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0)
                             : e.childAtIndex(0).childAtIndex(0);
-    double x = result.node()
-                   ->approximate(double(),
-                                 ApproximationContext(reductionContext, true))
-                   .toScalar();
+    double x = result.approximateToScalar<double>(
+        ApproximationContext(reductionContext, true));
     if (std::isfinite(x)) {
       /* We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for
        * asin(sin) and atan(tan) */
@@ -454,11 +452,8 @@ Expression Trigonometry::ShallowReduceInverseFunction(
           add.shallowReduce(reductionContext);
         }
         result = result.shallowReduce(reductionContext);
-        double approxResult =
-            result.node()
-                ->approximate(double(),
-                              ApproximationContext(reductionContext, true))
-                .toScalar();
+        double approxResult = result.approximateToScalar<double>(
+            ApproximationContext(reductionContext, true));
         if (approxResult > pi + Float<double>::EpsilonLax() ||
             approxResult < -pi - Float<double>::EpsilonLax() ||
             (!isArccos &&

@@ -80,10 +80,7 @@ HighlightCell *ListParameterController::cell(int index) {
 void ListParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
-    char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
-    Poincare::Integer(sequence()->initialRank())
-        .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
-    m_initialRankCell.textField()->setText(buffer);
+    updateInitialRankCell();
   }
   Shared::ListParameterController::viewWillAppear();
 }
@@ -100,6 +97,13 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     App::app()->localContext()->resetCache();
   }
   return Shared::ListParameterController::handleEvent(event);
+}
+
+void ListParameterController::updateInitialRankCell(void) {
+  char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
+  Poincare::Integer(sequence()->initialRank())
+      .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
+  m_initialRankCell.textField()->setText(buffer);
 }
 
 }  // namespace Sequence

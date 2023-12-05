@@ -46,6 +46,9 @@ class ListParameterController : public Shared::ListParameterController,
   int numberOfNonInheritedCells() const {
     return 2;
   }  // number of non inherited cells
+
+  void updateInitialRankCell(void);
+
   Shared::Sequence *sequence() {
     return static_cast<Shared::Sequence *>(function().pointer());
   }

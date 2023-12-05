@@ -142,14 +142,13 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  // WARNING: These two methods alter their arguments
-  static Expression PowerRationalRational(
+  static Expression SafePowerRationalRational(
       const Rational base, const Rational index,
       const ReductionContext& reductionContext);
   // WARNING: These two methods alter their arguments
   static Expression UnsafePowerRationalRational(
       Rational base, Rational index, const ReductionContext& reductionContext);
-  static Expression PowerIntegerRational(
+  static Expression UnsafePowerIntegerRational(
       Integer base, Rational index, const ReductionContext& reductionContext);
   // Returns e^(i*pi*r)
   static Expression CreateComplexExponent(

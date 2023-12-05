@@ -15,14 +15,17 @@ class Beautification {
                                   EditionReference& denominator);
   static bool BeautifyIntoDivision(Tree* expr);
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
-  static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
-                                         bool* simplifyParent);
 
   static bool ShallowBeautify(Tree* node, void* context = nullptr);
   EDITION_REF_WRAP_1D(ShallowBeautify, void*, nullptr);
   static bool DeepBeautify(Tree* node,
                            ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
+
+ private:
+  static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
+                                         bool* simplifyParent);
+  static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
 };
 
 }  // namespace PoincareJ

@@ -45,7 +45,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasInverseTrigo(input, exactOutput)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
-  if (HasVector(exactOutput, complexFormat, angleUnit)) {
+  if (HasVector(exactOutput, approximateOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.vector = true};
   }
   if (approximateOutput.deepIsMatrix()) {
@@ -159,7 +159,7 @@ bool AdditionalResultsType::HasUnit(
 }
 
 bool AdditionalResultsType::HasVector(
-    const Expression exactOutput,
+    const Expression exactOutput, const Expression approximateOutput,
     const Preferences::ComplexFormat complexFormat,
     const Preferences::AngleUnit angleUnit) {
   Context *globalContext =
@@ -170,9 +170,9 @@ bool AdditionalResultsType::HasVector(
     return false;
   }
   assert(!norm.isUndefined());
-  int nChildren = exactOutput.numberOfChildren();
+  int nChildren = approximateOutput.numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (exactOutput.childAtIndex(i).isScalarComplex()) {
+    if (approximateOutput.childAtIndex(i).isScalarComplex()) {
       return false;
     }
   }

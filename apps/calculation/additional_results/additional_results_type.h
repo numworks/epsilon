@@ -45,6 +45,7 @@ struct AdditionalResultsType {
                       const Poincare::Preferences::AngleUnit angleUnit);
   static bool HasVector(
       const Poincare::Expression exactOutput,
+      const Poincare::Expression approximateOutput,
       const Poincare::Preferences::ComplexFormat complexFormat,
       const Poincare::Preferences::AngleUnit angleUnit);
   static bool HasMatrix(const Poincare::Expression approximateOutput);

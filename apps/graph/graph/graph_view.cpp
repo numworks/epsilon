@@ -92,7 +92,6 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
                              ? rect.right() + k_externRectMargin
                              : rect.top() - k_externRectMargin;
   float tCacheMin, tStep, tCacheStep;
-  float tStepNonCartesian = NAN;
   if (f->properties().isCartesian()) {
     float rectLimit = pixelToFloat(axis, rectMin);
     /* Here, tCacheMin can depend on rect (and change as the user move)
@@ -105,8 +104,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   } else {
     tCacheMin = tmin;
     // Compute tCacheStep and tStepNonCartesian
-    ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian,
-                                                      &tCacheStep, tmax, tmin);
+    ContinuousFunctionCache::ComputeNonCartesianSteps(&tStep, &tCacheStep, tmax,
+                                                      tmin);
   }
   ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin,
                                              tCacheStep);
@@ -125,7 +124,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     return;
   }
   if (f->properties().isPolar()) {
-    drawPolar(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian,
+    drawPolar(ctx, rect, f.operator->(), tCacheMin, tmax, tStep,
               discontinuityEvaluation);
     return;
   }
@@ -134,7 +133,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     return;
   }
   assert(f->properties().isParametric() || f->properties().isInversePolar());
-  drawFunction(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian,
+  drawFunction(ctx, rect, f.operator->(), tCacheMin, tmax, tStep,
                discontinuityEvaluation);
 }
 

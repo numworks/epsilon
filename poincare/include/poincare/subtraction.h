@@ -21,7 +21,6 @@ class SubtractionNode final : public ExpressionNode {
 
   // Properties
   Type type() const override { return Type::Subtraction; }
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   bool childAtIndexNeedsUserParentheses(const Expression& child,
                                         int childIndex) const override;
   Expression removeUnit(Expression* unit) override {

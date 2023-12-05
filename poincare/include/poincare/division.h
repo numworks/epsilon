@@ -30,7 +30,6 @@ class DivisionNode final : public ExpressionNode {
                : TrinaryBoolean::Unknown;
   }
   Type type() const override { return Type::Division; }
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   Expression removeUnit(Expression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);

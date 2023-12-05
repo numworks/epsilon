@@ -26,14 +26,6 @@ TrinaryBoolean DivisionNode::isPositive(Context *context) const {
   return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
-int DivisionNode::polynomialDegree(Context *context,
-                                   const char *symbolName) const {
-  if (childAtIndex(1)->polynomialDegree(context, symbolName) != 0) {
-    return -1;
-  }
-  return childAtIndex(0)->polynomialDegree(context, symbolName);
-}
-
 Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits,
                                   Context *context) const {

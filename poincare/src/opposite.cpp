@@ -16,11 +16,6 @@
 
 namespace Poincare {
 
-int OppositeNode::polynomialDegree(Context* context,
-                                   const char* symbolName) const {
-  return childAtIndex(0)->polynomialDegree(context, symbolName);
-}
-
 template <typename T>
 Evaluation<T> OppositeNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {

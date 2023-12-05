@@ -180,7 +180,8 @@ class ExpressionNode : public TreeNode {
   }
   /*!*/ virtual Expression replaceSymbolWithExpression(
       const SymbolAbstract& symbol, const Expression& expression);
-  virtual int polynomialDegree(Context* context, const char* symbolName) const;
+  /*!*/ virtual int polynomialDegree(Context* context,
+                                     const char* symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context* context,
                                               const char* symbolName,
                                               Expression coefficients[]) const;

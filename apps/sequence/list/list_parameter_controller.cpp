@@ -16,10 +16,10 @@ ListParameterController::ListParameterController(ListController *listController)
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
-      m_FirstRankCell(&m_selectableListView, this),
+      m_firstRankCell(&m_selectableListView, this),
       m_typeParameterController(this, listController, Metric::CommonMargins) {
   m_typeCell.label()->setMessage(I18n::Message::SequenceType);
-  m_FirstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
+  m_firstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }
 
 const char *ListParameterController::title() {
@@ -61,19 +61,19 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
     return;
   }
   if (previousSelectedRow == 1) {
-    assert(l->cell(previousSelectedRow) == &m_FirstRankCell);
-    m_FirstRankCell.textField()->setEditing(false);
+    assert(l->cell(previousSelectedRow) == &m_firstRankCell);
+    m_firstRankCell.textField()->setEditing(false);
     App::app()->setFirstResponder(&m_selectableListView);
   }
   if (l->selectedRow() == 1) {
-    assert(l->selectedCell() == &m_FirstRankCell);
-    App::app()->setFirstResponder(&m_FirstRankCell);
+    assert(l->selectedCell() == &m_firstRankCell);
+    App::app()->setFirstResponder(&m_firstRankCell);
   }
 }
 
 HighlightCell *ListParameterController::cell(int index) {
   assert(0 <= index && index < numberOfRows());
-  HighlightCell *const cells[] = {&m_typeCell, &m_FirstRankCell, &m_enableCell,
+  HighlightCell *const cells[] = {&m_typeCell, &m_firstRankCell, &m_enableCell,
                                   &m_colorCell, &m_deleteCell};
   return cells[index];
 }
@@ -100,11 +100,11 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::ListParameterController::handleEvent(event);
 }
 
-void ListParameterController::updateFirstRankCell(void) {
+void ListParameterController::updateFirstRankCell() {
   char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
   Poincare::Integer(sequence()->initialRank())
       .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
-  m_FirstRankCell.textField()->setText(buffer);
+  m_firstRankCell.textField()->setText(buffer);
 }
 
 }  // namespace Sequence

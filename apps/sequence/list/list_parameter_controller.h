@@ -47,7 +47,7 @@ class ListParameterController : public Shared::ListParameterController,
     return 2;
   }  // number of non inherited cells
 
-  void updateFirstRankCell(void);
+  void updateFirstRankCell();
 
   Shared::Sequence *sequence() {
     return static_cast<Shared::Sequence *>(function().pointer());
@@ -55,7 +55,7 @@ class ListParameterController : public Shared::ListParameterController,
   Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView,
                    Escher::ChevronView>
       m_typeCell;
-  Escher::MenuCellWithEditableText<Escher::MessageTextView> m_FirstRankCell;
+  Escher::MenuCellWithEditableText<Escher::MessageTextView> m_firstRankCell;
   TypeParameterController m_typeParameterController;
 };
 

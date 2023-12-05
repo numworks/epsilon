@@ -49,7 +49,7 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
    * indentation, stop here. */
   int spacesCount = 0;
   int totalIndentationSize = 0;
-  int addedTextLength = strlen(text);
+  size_t addedTextLength = strlen(text);
   size_t previousTextLength = contentView()->getText()->textLength();
   char *insertionPosition = const_cast<char *>(cursorLocation());
   const char *textAreaBuffer = contentView()->text();

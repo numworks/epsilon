@@ -42,7 +42,9 @@ class AbstractTextField : public TextInput {
   }
 
   bool isEditing() const { return nonEditableContentView()->isEditing(); }
-  bool isEditable() { return m_delegate->textFieldIsEditable(this); }
+  bool isEditable() {
+    return m_delegate ? m_delegate->textFieldIsEditable(this) : true;
+  }
   void setDelegate(TextFieldDelegate *delegate) { m_delegate = delegate; }
   void setText(const char *text);
   char *draftText() const {

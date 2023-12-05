@@ -30,7 +30,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   bool inputHasAngleUnit, exactHasAngleUnit, approximateHasAngleUnit;
   bool inputHasUnit = input.hasUnit(true, &inputHasAngleUnit);
   bool exactHasUnit = exactOutput.hasUnit(true, &exactHasAngleUnit);
-  bool approximateHasUnit = exactOutput.hasUnit(true, &approximateHasAngleUnit);
+  bool approximateHasUnit =
+      approximateOutput.hasUnit(true, &approximateHasAngleUnit);
   assert(exactHasUnit == approximateHasUnit);
   (void)approximateHasUnit;  // Silence compiler
   if (inputHasUnit || exactHasUnit) {

@@ -2,6 +2,8 @@
 
 #include <poincare/serialization_helper.h>
 
+#include "images/cartesian_grid_icon.h"
+#include "images/polar_grid_icon.h"
 #include "poincare_helpers.h"
 
 using namespace Escher;
@@ -175,6 +177,9 @@ RangeParameterController::GridSelectionController::GridSelectionController(
       m_viewRange(interactiveCurveViewRange) {
   cells[0].label()->setMessage(I18n::Message::CartesianGrid);
   cells[1].label()->setMessage(I18n::Message::PolarGrid);
+
+  cells[0].accessory()->setImage(ImageStore::CartesianGridIcon);
+  cells[1].accessory()->setImage(ImageStore::PolarGridIcon);
 }
 
 void RangeParameterController::GridSelectionController::viewWillAppear() {

@@ -94,6 +94,9 @@ app_shared_src = $(addprefix apps/shared/,\
   vertical_cursor_view.cpp \
 )
 
+$(eval $(call depends_on_transparent_image,apps/shared/range_parameter_controller.cpp, $(addprefix apps/shared/images/, \
+  polar_grid_icon.png cartesian_grid_icon.png)))
+
 app_shared_src += $(app_shared_test_src)
 apps_src += $(app_shared_src)
 

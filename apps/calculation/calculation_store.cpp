@@ -329,12 +329,12 @@ char *CalculationStore::pushEmptyCalculation(
 char *CalculationStore::pushSerializedExpression(
     char *location, Expression e, int numberOfSignificantDigits) {
   while (true) {
-    int availableSize = spaceForNewCalculations(location);
+    size_t availableSize = spaceForNewCalculations(location);
     int length = availableSize > 0
                      ? PoincareHelpers::Serialize(e, location, availableSize,
                                                   numberOfSignificantDigits)
                      : 0;
-    if (length + 1 < availableSize) {
+    if (static_cast<size_t>(length) + 1 < availableSize) {
       assert(location[length] == '\0');
       return location + length + 1;
     }

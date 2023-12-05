@@ -44,7 +44,7 @@ class CalculationStore {
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
   Poincare::Expression ansExpression(Poincare::Context *context) const;
   size_t bufferSize() const { return m_bufferSize; }
-  int remainingBufferSize() const {
+  size_t remainingBufferSize() const {
     return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation *);
   }
 
@@ -79,7 +79,7 @@ class CalculationStore {
   }
   char *endOfCalculationAtIndex(int index) const;
   /* Account for the size of an additional pointer at the end of the buffer. */
-  int spaceForNewCalculations(char *currentEndOfCalculations) const {
+  size_t spaceForNewCalculations(char *currentEndOfCalculations) const {
     return (pointerArea() - currentEndOfCalculations) - sizeof(Calculation *);
   }
 

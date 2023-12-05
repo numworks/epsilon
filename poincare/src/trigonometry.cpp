@@ -421,6 +421,7 @@ Expression Trigonometry::ShallowReduceInverseFunction(
   bool isArcTanOfSinCos = e.type() == ExpressionNode::Type::ArcTangent &&
                           ExpressionIsEquivalentToTangent(e.childAtIndex(0));
   if (isArcTanOfSinCos || AreInverseFunctions(e.childAtIndex(0), e)) {
+    bool isArccos = e.type() == ExpressionNode::Type::ArcCosine;
     Expression result = isArcTanOfSinCos
                             ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0)
                             : e.childAtIndex(0).childAtIndex(0);
@@ -431,9 +432,8 @@ Expression Trigonometry::ShallowReduceInverseFunction(
     if (std::isfinite(x)) {
       /* We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for
        * asin(sin) and atan(tan) */
-      double k = (e.type() == ExpressionNode::Type::ArcCosine)
-                     ? std::floor(x / pi)
-                     : std::floor((x + pi / 2.0f) / pi);
+      double k =
+          isArccos ? std::floor(x / pi) : std::floor((x + pi / 2.0f) / pi);
       assert(std::isfinite(k));
       if (std::fabs(k) <= static_cast<double>(INT_MAX)) {
         int kInt = static_cast<int>(k);
@@ -442,13 +442,13 @@ Expression Trigonometry::ShallowReduceInverseFunction(
             PiExpressionInAngleUnit(reductionContext.angleUnit()));
         result = Addition::Builder(result.clone(), mult);
         mult.shallowReduce(reductionContext);
-        if ((e.type() == ExpressionNode::Type::ArcCosine) && (kInt % 2 == 1)) {
+        if (isArccos && kInt % 2 == 1) {
           Expression sub = Subtraction::Builder(
               PiExpressionInAngleUnit(reductionContext.angleUnit()), result);
           result.shallowReduce(reductionContext);
           result = sub;
         }
-        if ((e.type() == ExpressionNode::Type::ArcSine) && (kInt % 2 == 1)) {
+        if (e.type() == ExpressionNode::Type::ArcSine && kInt % 2 == 1) {
           Expression add = result;
           result = Opposite::Builder(add);
           add.shallowReduce(reductionContext);
@@ -461,7 +461,7 @@ Expression Trigonometry::ShallowReduceInverseFunction(
                 .toScalar();
         if (approxResult > pi + Float<double>::EpsilonLax() ||
             approxResult < -pi - Float<double>::EpsilonLax() ||
-            (e.type() != ExpressionNode::Type::ArcCosine &&
+            (!isArccos &&
              (approxResult > pi / 2. + Float<double>::EpsilonLax() ||
               approxResult < -pi / 2. - Float<double>::EpsilonLax()))) {
           /* The approximation of x and k was too imprecise and made the

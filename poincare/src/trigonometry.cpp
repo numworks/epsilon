@@ -454,11 +454,9 @@ Expression Trigonometry::ShallowReduceInverseFunction(
         result = result.shallowReduce(reductionContext);
         double approxResult = result.approximateToScalar<double>(
             ApproximationContext(reductionContext, true));
-        if (approxResult > pi + Float<double>::EpsilonLax() ||
-            approxResult < -pi - Float<double>::EpsilonLax() ||
-            (!isArccos &&
-             (approxResult > pi / 2. + Float<double>::EpsilonLax() ||
-              approxResult < -pi / 2. - Float<double>::EpsilonLax()))) {
+        double intervalBound =
+            (pi / (isArccos ? 1. : 2.)) + Float<double>::EpsilonLax();
+        if (approxResult > intervalBound || approxResult < -intervalBound) {
           /* The approximation of x and k was too imprecise and made the
            * translation fail. Let approximation handle this. */
           return e;

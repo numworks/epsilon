@@ -44,12 +44,13 @@ bool ListParameterController::textFieldDidFinishEditing(
     return false;
   }
   sequence()->setInitialRank(index);
+  updateFirstRankCell();
+
   App::app()->snapshot()->updateInterval();
   // Invalidate sequence context cache when changing sequence type
   App::app()->localContext()->resetCache();
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.handleEvent(event);
-  updateFirstRankCell();
   return true;
 }
 

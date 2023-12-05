@@ -99,26 +99,28 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
                                     : NonStrictSign::Negative;
   numerator.setSign(numeratorSign);
   denominator.setSign(NonStrictSign::Positive);
+  Tree* node;
   if (denominator.isOne() || numerator.isZero()) {
-    return numerator.pushOnEditionPool();
-  }
-  if (numerator.isOne() && denominator.isTwo()) {
-    return SharedEditionPool->push(BlockType::Half);
-  }
-  if (numerator.isSignedType<int8_t>() &&
-      denominator.isUnsignedType<uint8_t>()) {
-    Tree* node = SharedEditionPool->push(BlockType::RationalShort);
+    node = numerator.pushOnEditionPool();
+  } else if (numerator.isOne() && denominator.isTwo()) {
+    node = SharedEditionPool->push(BlockType::Half);
+  } else if (numerator.isSignedType<int8_t>() &&
+             denominator.isUnsignedType<uint8_t>()) {
+    node = SharedEditionPool->push(BlockType::RationalShort);
     SharedEditionPool->push(ValueBlock(static_cast<int8_t>(numerator)));
     SharedEditionPool->push(ValueBlock(static_cast<uint8_t>(denominator)));
-    return node;
+  } else {
+    node = SharedEditionPool->push(numeratorSign == NonStrictSign::Negative
+                                       ? BlockType::RationalNegBig
+                                       : BlockType::RationalPosBig);
+    SharedEditionPool->push(ValueBlock(numerator.numberOfDigits()));
+    SharedEditionPool->push(ValueBlock(denominator.numberOfDigits()));
+    numerator.pushDigitsOnEditionPool();
+    denominator.pushDigitsOnEditionPool();
   }
-  Tree* node = SharedEditionPool->push(numeratorSign == NonStrictSign::Negative
-                                           ? BlockType::RationalNegBig
-                                           : BlockType::RationalPosBig);
-  SharedEditionPool->push(ValueBlock(numerator.numberOfDigits()));
-  SharedEditionPool->push(ValueBlock(denominator.numberOfDigits()));
-  numerator.pushDigitsOnEditionPool();
-  denominator.pushDigitsOnEditionPool();
+  /* Ensure unicity among all rationals. For example, convert 6/3 to Half node.
+   * As a result there are many forbidden rational nodes. */
+  MakeIrreducible(node);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "PushRational", node->block(), node->treeSize());
 #endif

@@ -49,8 +49,9 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheckDimensions(u));
   if (u->numberOfChildren() == 0) {
-    // Strict rationals are the only childless trees that can be reduced.
-    return Rational::MakeIrreducible(u);
+    // No childless trees have a reduction pattern.
+    assert(!Rational::MakeIrreducible(u));
+    return false;
   }
   bool changed = false;
   /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
@@ -222,7 +223,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   if (v->isRational()) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
-    Rational::MakeIrreducible(u);
+    assert(!Rational::MakeIrreducible(u));
     return true;
   }
   assert(n->isInteger());

@@ -70,7 +70,7 @@ static void assert_irreducible_form(const Tree* iNumerator,
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   Tree* result = i->clone();
-  Rational::MakeIrreducible(result);
+  assert(!Rational::MakeIrreducible(result));
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
   expected->removeTree();
@@ -91,9 +91,9 @@ static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
                              const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
-  Rational::MakeIrreducible(expected);
+  assert(!Rational::MakeIrreducible(expected));
   Tree* result = operation(i, j);
-  Rational::MakeIrreducible(result);
+  assert(!Rational::MakeIrreducible(result));
   Simplification::ShallowSystematicReduce(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();

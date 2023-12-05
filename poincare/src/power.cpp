@@ -976,33 +976,50 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
      * a is a number or a is positive.
      * This is mainly to avoid infinite loop where a.setSign(positive)
      * would create the expression -1*a which would be reduced here again.*/
-    Multiplication multiplicationBase = static_cast<Multiplication &>(base);
-    for (int i = 0; i < baseChildren; i++) {
+    Multiplication mResult = Multiplication::Builder();
+    int i = 0;
+    while (base.type() == ExpressionNode::Type::Multiplication &&
+           i < baseChildren) {
+      Multiplication multiplicationBase = static_cast<Multiplication &>(base);
       Expression child = base.childAtIndex(i);
-      TrinaryBoolean childSign = child.isPositive(context);
       if (child.isMinusOne()) {
         // a can't be -1
+        i += 1;
         continue;
       }
-      if (childSign == TrinaryBoolean::True ||
-          (childSign == TrinaryBoolean::False && child.isNumber())) {
-        if (childSign == TrinaryBoolean::False) {
-          multiplicationBase.replaceChildAtIndexInPlace(i,
-                                                        Rational::Builder(-1));
-        } else {
-          multiplicationBase.removeChildAtIndexInPlace(i);
-        }
-        multiplicationBase.shallowReduce(reductionContext);
-        Power p = Power::Builder(child, index.clone());
-        child.setSign(true, reductionContext);
-        Multiplication m = Multiplication::Builder(p);
-        p.shallowReduce(reductionContext);
-        Power thisRef = *this;
-        replaceWithInPlace(m);
-        m.addChildAtIndexInPlace(thisRef, 1, 1);
-        thisRef.shallowReduce(reductionContext);
-        return m.shallowReduce(reductionContext);
+
+      TrinaryBoolean childSign = child.isPositive(context);
+      if (childSign != TrinaryBoolean::True &&
+          (childSign != TrinaryBoolean::False || !child.isNumber())) {
+        i += 1;
+        continue;
       }
+
+      if (childSign == TrinaryBoolean::False) {
+        multiplicationBase.replaceChildAtIndexInPlace(i, Rational::Builder(-1));
+      } else {
+        multiplicationBase.removeChildAtIndexInPlace(i);
+      }
+      multiplicationBase.shallowReduce(reductionContext);
+
+      Power p = Power::Builder(child, index.clone());
+      child.setSign(true, reductionContext);
+      mResult.addChildAtIndexInPlace(p, mResult.numberOfChildren(),
+                                     mResult.numberOfChildren());
+      p.shallowReduce(reductionContext);
+
+      base = childAtIndex(0);
+      i = 0;
+      baseChildren = base.numberOfChildren();
+    }
+
+    if (mResult.numberOfChildren() > 0) {
+      Power thisRef = *this;
+      replaceWithInPlace(mResult);
+      mResult.addChildAtIndexInPlace(thisRef, mResult.numberOfChildren(),
+                                     mResult.numberOfChildren());
+      thisRef.shallowReduce(reductionContext);
+      return mResult.shallowReduce(reductionContext);
     }
   }
 

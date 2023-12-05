@@ -3,6 +3,7 @@
 
 #include <poincare_junior/src/memory/edition_reference.h>
 
+#include "context.h"
 #include "projection.h"
 
 namespace PoincareJ {
@@ -14,6 +15,8 @@ class Beautification {
                                   EditionReference& denominator);
   static bool BeautifyIntoDivision(Tree* expr);
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
+  static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
+                                         bool* simplifyParent);
 
   static bool ShallowBeautify(Tree* node, void* context = nullptr);
   EDITION_REF_WRAP_1D(ShallowBeautify, void*, nullptr);

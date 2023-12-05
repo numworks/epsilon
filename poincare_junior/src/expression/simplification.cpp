@@ -767,11 +767,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       // Approximate again in case exact numbers appeared during simplification.
       changed = Approximation::ApproximateAndReplaceEveryScalar(ref);
     }
-    // Restore angle units and simplify again if needed.
-    bool temp = false;
-    changed =
-        DeepBeautifyAngleFunctions(ref, projectionContext.m_angleUnit, &temp) ||
-        changed;
     changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
     Variables::BeautifyToName(ref, variables);
     variables->removeTree();
@@ -791,48 +786,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
         ExceptionCheckpoint::Raise(type);
     }
   }
-}
-
-/* Find and beautify trigonometric system node while also converting the angles.
- * This steps needs to be performed before Beautification since simplification
- * is needed. Also, inverse trigonometric needs so simplify their parents. For
- * this reason, nodes are replaced in a bottom-up pattern. */
-bool Simplification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
-                                                bool* simplifyParent) {
-  bool modified = false;
-  for (Tree* child : tree->children()) {
-    modified |= DeepBeautifyAngleFunctions(child, angleUnit, simplifyParent);
-  }
-  // Beautify System nodes to prevent future simplifications.
-  if (tree->isTrig() || tree->isTangentRad()) {
-    *simplifyParent = false;  // Skip simplifyParent
-    if (angleUnit != PoincareJ::AngleUnit::Radian) {
-      Tree* child = tree->child(0);
-      child->moveTreeOverTree(PatternMatching::CreateAndSimplifyAdvanced(
-          KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
-      // Also Advanced reduce in case a multiplication expansion is better.
-      ShallowAdvancedReduction(child, tree);
-    }
-    PatternMatching::MatchAndReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KTrig(KA, 1_e), KSin(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KTanRad(KA), KTan(KA));
-  } else if (tree->isATrig() || tree->isArcTangentRad()) {
-    *simplifyParent = false;  // Skip simplifyParent
-    PatternMatching::MatchAndReplace(tree, KATrig(KA, 0_e), KACos(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KATrig(KA, 1_e), KASin(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KATanRad(KA), KATan(KA));
-    if (angleUnit != PoincareJ::AngleUnit::Radian) {
-      *simplifyParent = true;
-      tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-          KMult(KA, KB), {.KA = tree, .KB = Angle::ToRad(angleUnit)}));
-    }
-  } else if (*simplifyParent) {
-    assert(modified);
-    *simplifyParent = ShallowSystematicReduce(tree);
-  } else {
-    return modified;
-  }
-  return true;
 }
 
 bool Simplification::ApplyIfMetricImproved(Tree* ref, const Tree* root,

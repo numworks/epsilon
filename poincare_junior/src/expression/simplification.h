@@ -92,8 +92,6 @@ class Simplification {
                                ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);
   EDITION_REF_WRAP(SimplifySwitch);
-  static bool DeepBeautifyAngleFunctions(Tree *tree, AngleUnit angleUnit,
-                                         bool *simplifyParent);
   /* The following methods should not be called with EditionReferences.
    * TODO : ensure it cannot. */
   // Return true if child has been merged with next sibling.

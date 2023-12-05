@@ -49,7 +49,6 @@ bool ListParameterController::textFieldDidFinishEditing(
   App::app()->snapshot()->updateInterval();
   // Invalidate sequence context cache when changing sequence type
   App::app()->localContext()->resetCache();
-  m_selectableListView.reloadSelectedCell();
   m_selectableListView.handleEvent(event);
   return true;
 }

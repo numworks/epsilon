@@ -37,7 +37,7 @@ int ArcSineNode::serialize(char* buffer, int bufferSize,
 Expression ArcSineNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcSine e = ArcSine(this);
-  return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcSineNode::derivate(const ReductionContext& reductionContext,

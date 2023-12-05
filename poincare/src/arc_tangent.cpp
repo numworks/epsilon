@@ -71,7 +71,7 @@ std::complex<T> ArcTangentNode::computeOnComplex(
 Expression ArcTangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcTangent e = ArcTangent(this);
-  return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcTangentNode::derivate(const ReductionContext& reductionContext,

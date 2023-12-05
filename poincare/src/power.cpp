@@ -1245,14 +1245,14 @@ Expression Power::shallowBeautify(const ReductionContext &reductionContext) {
   Expression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
-    if (Trigonometry::isDirectTrigonometryFunction(p) &&
+    if (Trigonometry::IsDirectTrigonometryFunction(p) &&
         (p.type() != ExpressionNode::Type::Tangent ||
          !p.approximate<float>(ApproximationContext(reductionContext, true))
               .isUndefined())) {
       /* Replace this inverse with denominator's advanced equivalent.
        * except if it's 1/tan(x) and tan(x) = undef.
        * Because 1/tan(pi/2) = undef but cot(pi/2) = 0 */
-      return Trigonometry::replaceWithAdvancedFunction(*this, p);
+      return Trigonometry::ReplaceWithAdvancedFunction(*this, p);
     }
     Division d = Division::Builder(Rational::Builder(1), p);
     replaceWithInPlace(d);

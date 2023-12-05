@@ -74,7 +74,7 @@ Expression TangentNode::unaryFunctionDifferential(
 
 Expression Tangent::shallowReduce(ReductionContext reductionContext) {
   Expression newExpression =
-      Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
+      Trigonometry::ShallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine::Builder(newExpression.childAtIndex(0));

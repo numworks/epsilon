@@ -48,7 +48,7 @@ int CotangentNode::serialize(char* buffer, int bufferSize,
 Expression CotangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   Cotangent e = Cotangent(this);
-  return Trigonometry::shallowReduceAdvancedFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
 }
 
 }  // namespace Poincare

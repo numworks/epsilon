@@ -43,7 +43,7 @@ int SineNode::serialize(char* buffer, int bufferSize,
 
 Expression SineNode::shallowReduce(const ReductionContext& reductionContext) {
   Sine e = Sine(this);
-  return Trigonometry::shallowReduceDirectFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
 }
 
 bool SineNode::derivate(const ReductionContext& reductionContext, Symbol symbol,

@@ -30,7 +30,7 @@ Expression ExtractExactAngleFromDirectTrigo(
   Preferences* preferences = Preferences::sharedPreferences;
   assert(!exactOutput.isScalarComplex());
   Expression directTrigoFunction;
-  if (Trigonometry::isDirectTrigonometryFunction(input) &&
+  if (Trigonometry::IsDirectTrigonometryFunction(input) &&
       !input.deepIsSymbolic(context,
                             SymbolicComputation::DoNotReplaceAnySymbol)) {
     /* Do not display trigonometric additional informations, in case the symbol
@@ -38,7 +38,7 @@ Expression ExtractExactAngleFromDirectTrigo(
      * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become
      * inconsistent. And if x is deleted, it crashes. */
     directTrigoFunction = input;
-  } else if (Trigonometry::isDirectTrigonometryFunction(exactOutput)) {
+  } else if (Trigonometry::IsDirectTrigonometryFunction(exactOutput)) {
     directTrigoFunction = exactOutput;
   } else {
     return Expression();

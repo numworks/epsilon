@@ -44,7 +44,7 @@ int SecantNode::serialize(char* buffer, int bufferSize,
 
 Expression SecantNode::shallowReduce(const ReductionContext& reductionContext) {
   Secant e = Secant(this);
-  return Trigonometry::shallowReduceAdvancedFunction(e, reductionContext);
+  return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
 }
 
 }  // namespace Poincare

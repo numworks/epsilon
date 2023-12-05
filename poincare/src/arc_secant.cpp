@@ -44,7 +44,7 @@ int ArcSecantNode::serialize(char* buffer, int bufferSize,
 Expression ArcSecantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcSecant e = ArcSecant(this);
-  return Trigonometry::shallowReduceInverseAdvancedFunction(e,
+  return Trigonometry::ShallowReduceInverseAdvancedFunction(e,
                                                             reductionContext);
 }
 

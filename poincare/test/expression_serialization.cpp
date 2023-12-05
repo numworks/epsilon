@@ -7,6 +7,7 @@
 #include <poincare/factorial.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
+#include <poincare/logical_operator.h>
 #include <poincare/opposite.h>
 #include <poincare/percent.h>
 #include <poincare/power.h>
@@ -306,4 +307,9 @@ QUIZ_CASE(poincare_serialization_power) {
       Power::Builder(BasedInteger::Builder(2),
                      PercentSimple::Builder(Power::Builder(
                          BasedInteger::Builder(3), BasedInteger::Builder(4)))));
+  assert_expression_serializes_and_parses_to_itself(PercentSimple::Builder(
+      Power::Builder(BasedInteger::Builder(2),
+                     BinaryLogicalOperator::Builder(
+                         BasedInteger::Builder(3), BasedInteger::Builder(4),
+                         BinaryLogicalOperatorNode::OperatorType::Or))));
 }

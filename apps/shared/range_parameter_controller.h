@@ -6,6 +6,7 @@
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
+#include <escher/transparent_image_view.h>
 #include <escher/unequal_view.h>
 
 #include "interactive_curve_view_range.h"
@@ -70,11 +71,15 @@ class RangeParameterController
     int numberOfRows() const override { return 2; }
     int reusableCellCount() const override { return 2; }
     Escher::HighlightCell *reusableCell(int index) override {
+      assert(index >= 0 & index < 2);
       return &cells[index];
     }
 
    private:
-    Escher::MenuCell<Escher::MessageTextView> cells[2];
+    using MenuCell =
+        Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                         Escher::TransparentImageView>;
+    MenuCell cells[2];
     InteractiveCurveViewRange *m_viewRange;
   };
 

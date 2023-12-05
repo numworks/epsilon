@@ -837,6 +837,7 @@ int Expression::defaultGetPolynomialCoefficients(
     coefficients[0] = clone();
     return 0;
   }
+  assert(degree == -1 || degree >= k_maxNumberOfPolynomialCoefficients);
   return -1;
 }
 

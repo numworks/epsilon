@@ -5,11 +5,6 @@
 
 namespace Poincare {
 
-int ParenthesisNode::polynomialDegree(Context* context,
-                                      const char* symbolName) const {
-  return childAtIndex(0)->polynomialDegree(context, symbolName);
-}
-
 Layout ParenthesisNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {

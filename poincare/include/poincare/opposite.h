@@ -24,7 +24,6 @@ class OppositeNode final : public ExpressionNode {
     return childAtIndex(0)->isNull(context);
   }
   Type type() const override { return Type::Opposite; }
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryNot(childAtIndex(0)->isPositive(context));
   }

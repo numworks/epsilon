@@ -55,15 +55,15 @@ QUIZ_CASE(calculation_store) {
   store.deleteAll();
   /* Checking if the store handles correctly the delete of older calculations
    * when full. */
-  constexpr int minimalSize = ::CalculationStore::k_calculationMinimalSize +
-                              sizeof(::Calculation::Calculation *);
+  constexpr size_t minimalSize = ::CalculationStore::k_calculationMinimalSize +
+                                 sizeof(::Calculation::Calculation *);
   constexpr const char *pattern = "123456789+";
-  constexpr int patternSize = 10;
+  constexpr size_t patternSize = 10;
   assert(strlen(pattern) == patternSize);
 
   // Case 1 : Remaining space < minimalSize
   {
-    constexpr int calculationSize = 200;
+    constexpr size_t calculationSize = 200;
     assert(calculationSize < store.remainingBufferSize());
     assert(calculationSize % patternSize == 0);
     char text[calculationSize];

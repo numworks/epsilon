@@ -30,7 +30,7 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(
     Ion::Events::Event event) {
-  if (!event.isKeyPress()) {
+  if (!event.isKeyPress() || event == Ion::Events::OnOff) {
     return false;
   }
   if (event == Ion::Events::Back || event == Ion::Events::Home ||

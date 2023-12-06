@@ -135,7 +135,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
     // TODO: Also handle (n/10)*π and (n/8)*π
     // Find n to match Trig((n/12)*π, ...) with exact value.
     Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
-    assert(!Rational::MakeIrreducible(multipleTree));
+    assert(Rational::IsIrreducible(multipleTree));
     if (multipleTree->isInteger()) {
       // Trig is 2pi periodic, n can be retrieved as a uint8_t.
       multipleTree->moveTreeOverTree(IntegerHandler::Remainder(

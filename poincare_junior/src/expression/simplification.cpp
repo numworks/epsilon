@@ -50,7 +50,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   assert(Dimension::DeepCheckDimensions(u));
   if (u->numberOfChildren() == 0) {
     // No childless trees have a reduction pattern.
-    assert(!Rational::MakeIrreducible(u));
+    assert(Rational::IsIrreducible(u));
     return false;
   }
   bool changed = false;
@@ -223,7 +223,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   if (v->isRational()) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
-    assert(!Rational::MakeIrreducible(u));
+    assert(Rational::IsIrreducible(u));
     return true;
   }
   assert(n->isInteger());

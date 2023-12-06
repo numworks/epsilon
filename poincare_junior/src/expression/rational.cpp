@@ -88,7 +88,8 @@ IntegerHandler Rational::Denominator(const Tree* node) {
   }
 }
 
-Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
+Tree* Rational::PushIrreducible(IntegerHandler numerator,
+                                IntegerHandler denominator) {
   assert(!denominator.isZero());
   /* Settle sign beforehand so that :
    *   x/-1 is -x
@@ -118,20 +119,42 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
     numerator.pushDigitsOnEditionPool();
     denominator.pushDigitsOnEditionPool();
   }
-  /* Ensure unicity among all rationals. For example, convert 6/3 to Half node.
-   * As a result there are many forbidden rational nodes. */
-  MakeIrreducible(node);
+  assert(IsIrreducible(node));
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "PushRational", node->block(), node->treeSize());
 #endif
   return node;
 }
 
+Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
+  /* Ensure unicity among all rationals. For example, convert 6/3 to Half node.
+   * As a result there are many forbidden rational nodes. */
+  assert(!denominator.isZero());
+  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  // Push 1 temporary tree on the EditionPool.
+  IntegerHandler gcd =
+      Integer::Handler(IntegerHandler::GCD(numerator, denominator));
+  if (!gcd.isOne()) {
+    // Push 2 additional temporary trees on the EditionPool.
+    numerator = Integer::Handler(IntegerHandler::Quotient(numerator, gcd));
+    denominator = Integer::Handler(IntegerHandler::Quotient(denominator, gcd));
+  }
+  PushIrreducible(numerator, denominator);
+  if (!gcd.isOne()) {
+    // Remove 2 out of the 3 of temporary trees.
+    result->removeTree();
+    result->removeTree();
+  }
+  // Remove the only remaining temporary tree.
+  result->removeTree();
+  return result;
+}
+
 void Rational::SetSign(Tree* tree, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(tree);
   IntegerHandler denominator = Denominator(tree);
   numerator.setSign(sign);
-  tree->moveTreeOverTree(Push(numerator, denominator));
+  tree->moveTreeOverTree(PushIrreducible(numerator, denominator));
 }
 
 Tree* Rational::Addition(const Tree* i, const Tree* j) {
@@ -167,37 +190,24 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
   absJ.setSign(NonStrictSign::Positive);
   Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
   Tree* newDenominator = IntegerHandler::Power(Denominator(i), absJ);
-  EditionReference result = Sign(j).isNegative()
-                                ? Rational::Push(newDenominator, newNumerator)
-                                : Rational::Push(newNumerator, newDenominator);
+  EditionReference result =
+      Sign(j).isNegative()
+          ? Rational::PushIrreducible(newDenominator, newNumerator)
+          : Rational::PushIrreducible(newNumerator, newDenominator);
   newDenominator->removeTree();
   newNumerator->removeTree();
   return result;
 }
 
-bool Rational::MakeIrreducible(Tree* i) {
+bool Rational::IsIrreducible(const Tree* i) {
   if (!i->isOfType({BlockType::RationalShort, BlockType::RationalNegBig,
                     BlockType::RationalPosBig})) {
-    return false;
+    return true;
   }
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
-  if (gcd->isOne()) {
-    gcd->removeTree();
-    return false;
-  }
-  EditionReference numerator =
-      IntegerHandler::Quotient(Numerator(i), Integer::Handler(gcd));
-  if (IntegerHandler::Compare(Integer::Handler(gcd), Denominator(i)) == 0) {
-    i->moveTreeOverTree(numerator);
-  } else {
-    EditionReference denominator =
-        IntegerHandler::Quotient(Denominator(i), Integer::Handler(gcd));
-    i->moveTreeOverTree(Rational::Push(numerator, denominator));
-    denominator->removeTree();
-    numerator->removeTree();
-  }
+  bool result = gcd->isOne();
   gcd->removeTree();
-  return true;
+  return result;
 }
 
 }  // namespace PoincareJ

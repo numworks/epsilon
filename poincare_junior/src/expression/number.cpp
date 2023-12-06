@@ -17,7 +17,7 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
   }
   assert(!i->isConstant() && !j->isConstant());
   Tree* result = Rational::Addition(i, j);
-  assert(!Rational::MakeIrreducible(result));
+  assert(Rational::IsIrreducible(result));
   return result;
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
@@ -31,7 +31,7 @@ Tree* Number::Multiplication(const Tree* i, const Tree* j) {
   }
   assert(!i->isConstant() && !j->isConstant());
   Tree* result = Rational::Multiplication(i, j);
-  assert(!Rational::MakeIrreducible(result));
+  assert(Rational::IsIrreducible(result));
   return result;
 }
 

@@ -25,7 +25,8 @@ void ComplexListController::computeAdditionalResults(
    * - save values of re(z), im(z) during setLineAtIndex to directly use them in
    * setComplex ?
    * - do the same for abs(z) and arg(z) for exponential form ? */
-  assert(AdditionalResultsType::HasComplex(approximateOutput));
+  assert(AdditionalResultsType::HasComplex(approximateOutput, m_complexFormat,
+                                           m_angleUnit));
   ComputationContext computationContext(App::app()->localContext(),
                                         Preferences::ComplexFormat::Cartesian,
                                         m_angleUnit);

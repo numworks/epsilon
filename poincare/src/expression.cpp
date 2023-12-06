@@ -611,8 +611,9 @@ bool Expression::hasDefinedComplexApproximation(
   return true;
 }
 
-bool Expression::isScalarComplex() const {
-  ApproximationContext approximationContext(nullptr);
+bool Expression::isScalarComplex(Preferences::ComplexFormat complexFormat,
+                                 Preferences::AngleUnit angleUnit) const {
+  ApproximationContext approximationContext(nullptr, complexFormat, angleUnit);
   approximationContext.updateComplexFormat(*this);
   if (hasDefinedComplexApproximation<double>(approximationContext)) {
     assert(!hasUnit());

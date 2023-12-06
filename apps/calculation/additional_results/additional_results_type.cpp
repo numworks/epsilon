@@ -24,7 +24,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{};
   }
-  if (HasComplex(approximateOutput)) {
+  if (HasComplex(approximateOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.complex = true};
   }
   bool inputHasAngleUnit, exactHasAngleUnit, approximateHasAngleUnit;
@@ -43,7 +43,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasDirectTrigo(input, exactOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
-  if (HasInverseTrigo(input, exactOutput)) {
+  if (HasInverseTrigo(input, exactOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
   if (HasVector(exactOutput, approximateOutput, complexFormat, angleUnit)) {
@@ -94,8 +94,11 @@ bool AdditionalResultsType::ForbidAdditionalResults(
   return false;
 }
 
-bool AdditionalResultsType::HasComplex(const Expression approximateOutput) {
-  return approximateOutput.isScalarComplex();
+bool AdditionalResultsType::HasComplex(
+    const Expression approximateOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
+  return approximateOutput.isScalarComplex(complexFormat, angleUnit);
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
@@ -110,10 +113,12 @@ bool AdditionalResultsType::HasDirectTrigo(
   return !exactAngle.isUninitialized();
 }
 
-bool AdditionalResultsType::HasInverseTrigo(const Expression input,
-                                            const Expression exactOutput) {
+bool AdditionalResultsType::HasInverseTrigo(
+    const Expression input, const Expression exactOutput,
+    const Preferences::ComplexFormat complexFormat,
+    const Preferences::AngleUnit angleUnit) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!exactOutput.isScalarComplex());
+  assert(!exactOutput.isScalarComplex(complexFormat, angleUnit));
   assert(!exactOutput.hasUnit(true));
   return (Trigonometry::IsInverseTrigonometryFunction(input)) ||
          Trigonometry::IsInverseTrigonometryFunction(exactOutput);
@@ -170,7 +175,8 @@ bool AdditionalResultsType::HasVector(
   assert(!norm.isUndefined());
   int nChildren = approximateOutput.numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (approximateOutput.childAtIndex(i).isScalarComplex()) {
+    if (approximateOutput.childAtIndex(i).isScalarComplex(complexFormat,
+                                                          angleUnit)) {
       return false;
     }
   }

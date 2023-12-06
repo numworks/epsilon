@@ -21,7 +21,8 @@ void TrigonometryListController::computeAdditionalResults(
           AdditionalResultsType::HasDirectTrigo(
               input, exactOutput, m_complexFormat, m_angleUnit)) ||
          (!m_directTrigonometry &&
-          AdditionalResultsType::HasInverseTrigo(input, exactOutput)));
+          AdditionalResultsType::HasInverseTrigo(
+              input, exactOutput, m_complexFormat, m_angleUnit)));
 
   Context* context = App::app()->localContext();
   ComputationContext computationContext(context, m_complexFormat, m_angleUnit);

@@ -28,8 +28,7 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
   void layoutSubviews(bool force = false) override;
 };
 
-template <int NumberOfSignificantDigits =
-              Poincare::Preferences::VeryLargeNumberOfSignificantDigits>
+template <int NumberOfSignificantDigits>
 class EvenOddEditableTextCell : public AbstractEvenOddEditableTextCell {
  public:
   EvenOddEditableTextCell(Responder* parentResponder = nullptr,

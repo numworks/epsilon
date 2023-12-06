@@ -464,6 +464,7 @@ bool ValuesController::exactValuesButtonAction() {
       return true;
     } else {
       activateExactValues(false);
+      resetLayoutMemoization();
       m_selectableTableView.reloadData();
       return false;
     }

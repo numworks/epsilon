@@ -109,7 +109,8 @@ class StoreController : public EditableCellTableViewController,
   DoublePairStore* store() override { return m_store; }
 
   BufferFunctionTitleCell m_titleCells[k_maxNumberOfDisplayableColumns];
-  Escher::EvenOddEditableTextCell<>
+  Escher::EvenOddEditableTextCell<
+      Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision>
       m_editableCells[k_maxNumberOfDisplayableCells];
 
   Escher::MemoizedColumnWidthManager<6> m_widthManager;

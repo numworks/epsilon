@@ -98,16 +98,16 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
   }
   // The cell is editable
   if (cellAtLocationIsEditable(column, row)) {
-    const int bufferSize =
-        PrintFloat::charSizeForFloatsWithPrecision(numberOfSignificantDigits);
-    char buffer[bufferSize];
+    constexpr int k_bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+        PrintFloat::k_numberOfStoredSignificantDigits);
+    char buffer[k_bufferSize];
     // Special case 1: last row and NaN
     if (row == numberOfElementsInColumn(column) + 1 ||
         std::isnan(dataAtLocation(column, row))) {
       buffer[0] = 0;
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-          dataAtLocation(column, row), buffer, bufferSize,
+          dataAtLocation(column, row), buffer, k_bufferSize,
           numberOfSignificantDigits, floatDisplayMode);
     }
     static_cast<AbstractEvenOddEditableTextCell *>(cell)

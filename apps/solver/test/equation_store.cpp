@@ -313,4 +313,8 @@ QUIZ_CASE(solver_symbolic_computation) {
   assert_solves_to_error("cos(πx)+cos(a)=0", RequireApproximateSolution);
   // Value of a was not ignored, which would have resulted in a NonLinearSystem
   unset("a");
+
+  set("c", "arcsin(10)cb=0");
+  assert_solves_to_error("arcsin(10)cb=0", NonLinearSystem);
+  unset("c");
 }

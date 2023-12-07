@@ -11,7 +11,7 @@ namespace Distributions {
 
 bool NormalDistribution::authorizedParameterAtIndex(double x, int index) const {
   return TwoParametersDistribution::authorizedParameterAtIndex(x, index) &&
-         (index == 0 ||
+         (index == 0 || std::isnan(x) ||
           (x > DBL_MIN && std::fabs(m_parameters[0] / x) <= k_maxRatioMuSigma));
 }
 

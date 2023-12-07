@@ -12,11 +12,6 @@ QUIZ_CASE(solver_error) {
   assert_solves_to_error("x[[2,3]]=0", EquationUndefined);
   assert_solves_to_no_solution("x-{2,3}=0");
   assert_solves_to_no_solution("x{2,3}=0");
-  Poincare::Preferences::sharedPreferences->setComplexFormat(
-      Poincare::Preferences::ComplexFormat::Real);
-  assert_solves_to_error("x-arcsin(10)=0", EquationNonreal);
-  Poincare::Preferences::sharedPreferences->setComplexFormat(
-      Poincare::Preferences::ComplexFormat::Cartesian);
 }
 
 QUIZ_CASE(solver_linear_system) {
@@ -57,10 +52,6 @@ QUIZ_CASE(solver_linear_system) {
 
   assert_solves_to("√(x)^(2)=-1", {"x=-1"});
   assert_solves_to("sin(asin(x))=2", {"x=2"});
-  Poincare::Preferences::sharedPreferences->setComplexFormat(Real);
-  assert_solves_to_no_solution("√(x)^(2)=-1");
-  assert_solves_to_no_solution("sin(asin(x))=2");
-  Poincare::Preferences::sharedPreferences->setComplexFormat(Cartesian);
 }
 
 QUIZ_CASE(solver_polynomial_equation) {
@@ -159,6 +150,9 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to("x^2+x+π=0", {"delta=-4π+1"});
   assert_solves_to_error("x^2-√(-1)=0", EquationNonreal);
   assert_solves_to_error("x+√(-1)×√(-1)=0", EquationNonreal);
+  assert_solves_to_error("x-arcsin(10)=0", EquationNonreal);
+  assert_solves_to_no_solution("√(x)^(2)=-1");
+  assert_solves_to_no_solution("sin(asin(x))=2");
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");
   // With a predefined variable that should be ignored
   set("h", "3");

@@ -99,7 +99,7 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
   // The cell is editable
   if (cellAtLocationIsEditable(column, row)) {
     constexpr int k_bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        PrintFloat::k_numberOfStoredSignificantDigits);
+        PrintFloat::k_maxNumberOfSignificantDigits);
     char buffer[k_bufferSize];
     // Special case 1: last row and NaN
     if (row == numberOfElementsInColumn(column) + 1 ||

@@ -8,7 +8,7 @@ using namespace Poincare;
 void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
   Expression e = parse_expression(expression, nullptr, true);
   Layout el = e.createLayout(
-      DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
+      DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
 }
 
@@ -86,7 +86,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
 void assert_expression_layouts_and_serializes_to(Expression expression,
                                                  const char* serialization) {
   Layout layout = expression.createLayout(
-      DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
+      DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   assert_layout_serializes_to(layout, serialization);
 }
 
@@ -372,7 +372,7 @@ void assert_parsed_expression_layout_serialize_to_self(
     const char* expressionLayout) {
   Expression e = parse_expression(expressionLayout, nullptr, true);
   Layout el = e.createLayout(
-      DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
+      DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   el.serializeForParsing(buffer, bufferSize);

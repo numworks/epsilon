@@ -118,7 +118,7 @@ Layout Calculation::createInputLayout() {
     Expression e = input();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
-                            PrintFloat::k_numberOfStoredSignificantDigits,
+                            PrintFloat::k_maxNumberOfSignificantDigits,
                             App::app()->localContext());
     }
   }
@@ -131,7 +131,7 @@ Layout Calculation::createExactOutputLayout(bool *couldNotCreateExactLayout) {
     Expression e = exactOutput();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
-                            PrintFloat::k_numberOfStoredSignificantDigits,
+                            PrintFloat::k_maxNumberOfSignificantDigits,
                             App::app()->localContext());
     }
   }

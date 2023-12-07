@@ -346,7 +346,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
   // The text is parsable, we create its layout an insert it.
   Layout resultLayout = resultExpression.createLayout(
       Poincare::Preferences::sharedPreferences->displayMode(),
-      Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
+      Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? App::app()->localContext() : nullptr, true);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {

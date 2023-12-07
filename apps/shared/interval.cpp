@@ -89,7 +89,7 @@ void Interval::computeElements() {
    * doubles. For example, with start=-0.2 and step=0.2, 6th element is
    * 1.0000000000000002 although 1.0 was expected. */
   constexpr int precision =
-      Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
+      Poincare::PrintFloat::k_maxNumberOfSignificantDigits;
   static_assert(precision == 14, "ratioThreshold value should be updated");
   // Save some calls to std::pow(10.0, -precision)
   constexpr double ratioThreshold = 10e-14;

@@ -1257,8 +1257,8 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
     return Multiplication::Builder(Number::FloatNumber(basedValue), units[0]);
   }
   double err =
-      std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits -
-                         1 - std::ceil(log10(std::fabs(basedValue))));
+      std::pow(10.0, Poincare::PrintFloat::k_maxNumberOfSignificantDigits - 1 -
+                         std::ceil(log10(std::fabs(basedValue))));
   double remain = std::round(basedValue * err) / err;
 
   Addition res = Addition::Builder();

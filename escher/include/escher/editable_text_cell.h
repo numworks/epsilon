@@ -30,7 +30,7 @@ class AbstractEditableTextCell : public HighlightCell, public Responder {
 };
 
 template <int NumberOfSignificantDigits =
-              Poincare::PrintFloat::k_numberOfStoredSignificantDigits>
+              Poincare::PrintFloat::k_maxNumberOfSignificantDigits>
 class EditableTextCell : public AbstractEditableTextCell {
  public:
   EditableTextCell(Responder* parentResponder = nullptr,

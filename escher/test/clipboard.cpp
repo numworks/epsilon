@@ -20,7 +20,7 @@ void assert_stored_text_is_parseable(Layout layout) {
   Expression e = Expression::Parse(clipboard->storedText(), nullptr, false);
   Layout result =
       e.createLayout(Preferences::sharedPreferences->displayMode(),
-                     PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
+                     PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   quiz_assert(layout.isIdenticalTo(result));
 }
 

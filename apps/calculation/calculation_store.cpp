@@ -108,9 +108,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * result. If we do so, don't forget to force the Calculation sign to be
    * approximative to avoid long computation to determine it.
    */
-  constexpr int maxNumberOfDigits =
-      PrintFloat::k_numberOfStoredSignificantDigits;
-
   m_inUsePreferences = *Preferences::sharedPreferences;
   char *cursor = endOfCalculations();
   Expression exactOutputExpression, approximateOutputExpression,
@@ -139,8 +136,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       // Push the input
       Expression inputExpression = Expression::Parse(text, &ansContext);
       inputExpression = enhancePushedExpression(inputExpression, &ansContext);
-      cursor =
-          pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
+      cursor = pushSerializedExpression(
+          cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (cursor == k_pushError) {
         return errorPushUndefined();
       }
@@ -228,7 +225,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     Expression e = i == 0 ? exactOutputExpression : approximateOutputExpression;
     int digits = i == Calculation::k_numberOfExpressions - 2
                      ? m_inUsePreferences.numberOfSignificantDigits()
-                     : maxNumberOfDigits;
+                     : PrintFloat::k_maxNumberOfSignificantDigits;
 
     char *nextCursor = pushSerializedExpression(cursor, e, digits);
     if (nextCursor == k_pushError) {

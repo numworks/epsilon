@@ -97,7 +97,7 @@ class DecimalNode final : public NumberNode {
  private:
   // Worst case is -1.2345678901234ᴇ-1000 (the small capital E is two chars)
   constexpr static int k_maxBufferSize =
-      PrintFloat::k_numberOfStoredSignificantDigits + 1 + 1 + 2 + 1 + 4 + 1;
+      PrintFloat::k_maxNumberOfSignificantDigits + 1 + 1 + 2 + 1 + 4 + 1;
 
   int convertToText(char* buffer, int bufferSize,
                     Preferences::PrintFloatMode mode,

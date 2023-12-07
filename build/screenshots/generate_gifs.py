@@ -15,7 +15,7 @@ parser.add_argument(
     "-f",
     "--filter",
     default = "",
-    help="regex to filter scenarios on their name",
+    help="run only scenarios with a name starting with filter argument",
 )
 
 def main():

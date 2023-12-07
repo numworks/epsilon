@@ -37,7 +37,7 @@ def main():
 
     # Create output folder
     output_folder = "compare_crc_output"
-    os.mkdir(output_folder)
+    helper.clean_or_create_folder(output_folder)
 
     # Collect data from dataset
     print("\nCollecting data")

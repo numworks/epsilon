@@ -23,7 +23,7 @@ def main():
 
     # Create output folder
     output_folder = "generate_gifs_output"
-    os.mkdir(output_folder)
+    helper.clean_or_create_folder(output_folder)
 
     regex = helper.dataset() + "/"  + args.filter + "*"
     print("Generating gifs of all scenarios matching " + regex)

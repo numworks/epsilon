@@ -823,7 +823,12 @@ QUIZ_CASE(calculation_additional_results) {
       "e^(2+3)", {.scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("2i", {.complex = true},
                                            &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("gon", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("1+cos(2_rad)", {}, &globalContext,
+                                           &store);
+  assertCalculationAdditionalResultTypeHas("30°+2_rad", {.unit = true},
+                                           &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("gon", {.unit = true},
+                                           &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &globalContext,
                                            &store);
 

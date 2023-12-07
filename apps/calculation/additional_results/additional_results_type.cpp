@@ -54,8 +54,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   }
   AdditionalResultsType type = {};
   if (inputHasAngleUnit || exactHasAngleUnit || approximateHasAngleUnit) {
-    // Forbig remaining units (angle units)
-    return type;
+    return AdditionalResultsType{
+        .unit = HasUnit(exactOutput, complexFormat, angleUnit)};
   }
   if (HasFunction(input, approximateOutput)) {
     type.function = true;
@@ -128,7 +128,7 @@ bool AdditionalResultsType::HasUnit(
     const Expression exactOutput,
     const Preferences::ComplexFormat complexFormat,
     const Preferences::AngleUnit angleUnit) {
-  assert(exactOutput.hasUnit(true));
+  assert(exactOutput.hasUnit());
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression unit;

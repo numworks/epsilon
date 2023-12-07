@@ -1,5 +1,4 @@
 import sys, os, shutil, argparse
-from datetime import datetime
 import helper
 import args_types
 from print_format import bold, red, green, print_underlined
@@ -37,7 +36,7 @@ def main():
     args = parser.parse_args()
 
     # Create output folder
-    output_folder = "compare_crc_output_" + datetime.today().strftime("%d-%m-%Y_%Hh%M")
+    output_folder = "compare_crc_output"
     os.mkdir(output_folder)
 
     # Collect data from dataset

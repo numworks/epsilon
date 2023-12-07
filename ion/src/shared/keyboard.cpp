@@ -17,6 +17,8 @@ State popState() {
 
 State sState(0);
 
+State lastState() { return sState; }
+
 void resetMemoizedState() { sState = 0; }
 
 void pushState(State state) {

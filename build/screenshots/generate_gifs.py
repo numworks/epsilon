@@ -14,6 +14,7 @@ parser.add_argument(
 parser.add_argument(
     "-f",
     "--filter",
+    default = "",
     help="regex to filter scenarios on their name",
 )
 

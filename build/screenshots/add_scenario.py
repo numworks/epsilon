@@ -3,7 +3,7 @@ import helper
 import args_types
 
 parser = argparse.ArgumentParser(
-    description="This script adds a scenario to the test screenshots dataset. It takes a state file, generates its screenshot, computes its crc32 and place them in a subfolder of the screenshots dataset."
+    description="This script adds a scenario to the test screenshots dataset. It takes a state file, computes its crc32 and place them in a subfolder of the screenshots dataset."
 )
 parser.add_argument(
     "executable",

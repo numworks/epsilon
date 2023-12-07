@@ -13,7 +13,7 @@ namespace Poincare {
 class PrintFloat {
  public:
   constexpr static int k_floatNumberOfSignificantDigits = 7;
-  constexpr static int k_numberOfStoredSignificantDigits = 14;
+  constexpr static int k_maxNumberOfSignificantDigits = 14;
   // ᴇ is 3 bytes long
   constexpr static int k_specialECodePointByteLength = 3;
   /* We here define the glyph length and the buffer size to write the longest
@@ -22,18 +22,18 @@ class PrintFloat {
    * has the form -1.99999999999999ᴇ-308 (2+15+3+1+3 char) (the decimal mode is
    * always shorter. */
   constexpr static int k_maxFloatGlyphLength =
-      2                                    // '-' and '.'
-      + k_numberOfStoredSignificantDigits  // mantissa
-      + 1                                  // ᴇ
-      + 1                                  // exponant '-'
-      + 3;                                 // exponant
+      2                                 // '-' and '.'
+      + k_maxNumberOfSignificantDigits  // mantissa
+      + 1                               // ᴇ
+      + 1                               // exponant '-'
+      + 3;                              // exponant
   constexpr static int k_maxFloatCharSize =
-      2                                    // '-' and '.'
-      + k_numberOfStoredSignificantDigits  // mantissa
-      + k_specialECodePointByteLength      // ᴇ
-      + 1                                  // exponant '-'
-      + 3                                  // exponant
-      + 1;                                 // null-terminated
+      2                                 // '-' and '.'
+      + k_maxNumberOfSignificantDigits  // mantissa
+      + k_specialECodePointByteLength   // ᴇ
+      + 1                               // exponant '-'
+      + 3                               // exponant
+      + 1;                              // null-terminated
 
   constexpr static int glyphLengthForFloatWithPrecision(
       int numberOfSignificantDigits) {
@@ -71,7 +71,7 @@ class PrintFloat {
                                         Preferences::PrintFloatMode mode);
   template <class T>
   constexpr static int SignificantDecimalDigits() {
-    return sizeof(T) == sizeof(double) ? k_numberOfStoredSignificantDigits
+    return sizeof(T) == sizeof(double) ? k_maxNumberOfSignificantDigits
                                        : k_floatNumberOfSignificantDigits;
   }
   template <class T>

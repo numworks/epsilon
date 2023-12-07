@@ -57,7 +57,7 @@ template <KDFont::Size Font = KDFont::Size::Small>
 using OneLineBufferTextView = MultipleLinesBufferTextView<Font, 1>;
 
 template <int numberOfSignificantDigits =
-              Poincare::PrintFloat::k_numberOfStoredSignificantDigits>
+              Poincare::PrintFloat::k_maxNumberOfSignificantDigits>
 using FloatBufferTextView =
     BufferTextView<Poincare::PrintFloat::charSizeForFloatsWithPrecision(
         numberOfSignificantDigits)>;

@@ -250,7 +250,7 @@ void assert_layout_serializes_to(Layout layout, const char *serialization) {
 
 void assert_expression_layouts_as(Expression expression, Layout layout) {
   Layout l = expression.createLayout(
-      DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
+      DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   quiz_assert(l.isIdenticalTo(layout));
 }
 

@@ -412,7 +412,7 @@ class Expression : public TreeHandle {
                 Preferences::PrintFloatMode floatDisplayMode =
                     Preferences::PrintFloatMode::Decimal,
                 int numberOfSignificantDigits =
-                    PrintFloat::k_numberOfStoredSignificantDigits) const;
+                    PrintFloat::k_maxNumberOfSignificantDigits) const;
 
   /* Simplification */
   /* Simplification routines are divided in 2 groups:

@@ -159,7 +159,7 @@ int Integer::serialize(char *buffer, int bufferSize, OMG::Base base) const {
     return PrintFloat::ConvertFloatToText<float>(
                m_negative ? -INFINITY : INFINITY, buffer, bufferSize,
                PrintFloat::k_maxFloatGlyphLength,
-               PrintFloat::k_numberOfStoredSignificantDigits,
+               PrintFloat::k_maxNumberOfSignificantDigits,
                Preferences::PrintFloatMode::Decimal)
         .CharLength;
   }
@@ -196,7 +196,7 @@ int Integer::serializeInDecimal(char *buffer, int bufferSize) const {
     if (length >= bufferSize - 1) {
       return PrintFloat::ConvertFloatToText<float>(
                  NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength,
-                 PrintFloat::k_numberOfStoredSignificantDigits,
+                 PrintFloat::k_maxNumberOfSignificantDigits,
                  Preferences::PrintFloatMode::Decimal)
           .CharLength;
     }

@@ -110,7 +110,7 @@ class ValuesController : public Shared::ValuesController,
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell<
-      Poincare::PrintFloat::k_numberOfStoredSignificantDigits>
+      Poincare::PrintFloat::k_maxNumberOfSignificantDigits>
       m_abscissaCells[k_maxNumberOfDisplayableRows];
 
   IntervalParameterController m_intervalParameterController;

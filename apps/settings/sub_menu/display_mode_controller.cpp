@@ -78,8 +78,8 @@ bool DisplayModeController::textFieldDidFinishEditing(
       floatBody < 3.0) {
     floatBody = 3.0;
   }
-  if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
-    floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
+  if (floatBody > PrintFloat::k_maxNumberOfSignificantDigits) {
+    floatBody = PrintFloat::k_maxNumberOfSignificantDigits;
   }
   Preferences::sharedPreferences->setNumberOfSignificantDigits(
       (char)std::round(floatBody));

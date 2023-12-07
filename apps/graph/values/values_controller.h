@@ -183,7 +183,7 @@ class ValuesController : public Shared::ValuesController,
   Escher::EvenOddMessageTextCell
       m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Escher::EvenOddEditableTextCell<
-      Poincare::PrintFloat::k_numberOfStoredSignificantDigits>
+      Poincare::PrintFloat::k_maxNumberOfSignificantDigits>
       m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   FunctionParameterController *m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

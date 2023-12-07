@@ -15,7 +15,7 @@ class FunctionBannerDelegate {
    * function, f(t)=(...;...) */
   constexpr static size_t k_textBufferSize =
       8 + 2 * Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-                  Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+                  Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
   /* GetValueDisplayedOnBanner returns the value of t as displayed in the
    * banner, unless the difference from t exceeds deltaThreshold. If so,
    * return t. For instance, when a function is plotted between 1.000001 and

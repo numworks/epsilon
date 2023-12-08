@@ -9,6 +9,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(modturtle_setheading_obj, modturtle_setheading)
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_circle_obj, 1, 2, modturtle_circle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_speed_obj, 0, 1, modturtle_speed);
 
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_distance_obj, 1, 2, modturtle_distance);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_position_obj, modturtle_position);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_heading_obj, modturtle_heading);
 
@@ -50,6 +51,7 @@ STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_circle), (mp_obj_t)&modturtle_circle_obj },
   { MP_ROM_QSTR(MP_QSTR_speed), (mp_obj_t)&modturtle_speed_obj },
 
+  { MP_ROM_QSTR(MP_QSTR_distance), (mp_obj_t)&modturtle_distance_obj },
   { MP_ROM_QSTR(MP_QSTR_position), (mp_obj_t)&modturtle_position_obj },
   { MP_ROM_QSTR(MP_QSTR_pos), (mp_obj_t)&modturtle_position_obj },
   { MP_ROM_QSTR(MP_QSTR_heading), (mp_obj_t)&modturtle_heading_obj },

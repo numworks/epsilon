@@ -11,6 +11,7 @@
 #include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/symbol.h>
+#include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "k_tree.h"
@@ -318,6 +319,24 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutInfixOperator(layoutParent, expression, ',');
       PushCodePoint(layoutParent, '}');
       break;
+#if POINCARE_MEMORY_TREE_LOG
+    case BlockType::Exponential:
+      layoutFunctionCall(layoutParent, expression, "exp");
+      break;
+    case BlockType::Variable: {
+      uint8_t offset = Variables::Id(expression);
+      char name = 'a' + offset;
+      // Skip e and i
+      if (name >= 'e') {
+        name++;
+      }
+      if (name >= 'i') {
+        name++;
+      }
+      PushCodePoint(layoutParent, name);
+      break;
+    }
+#endif
     case BlockType::Polynomial:
     default:
       if (Builtin::IsReservedFunction(type)) {

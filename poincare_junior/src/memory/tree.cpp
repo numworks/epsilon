@@ -137,7 +137,7 @@ void Tree::logAttributes(std::ostream& stream) const {
 void Tree::logSerialize(std::ostream& stream) const {
   EditionReference outputLayout = Layoutter::LayoutExpression(clone());
   assert(!outputLayout.isUninitialized());
-  constexpr size_t bufferSize = 256;
+  constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];
   *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();

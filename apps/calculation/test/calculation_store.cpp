@@ -856,18 +856,15 @@ QUIZ_CASE(calculation_additional_results) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
   Preferences::sharedPreferences->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
-  assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
-                                           &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
-                                           &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("-10", {}, &globalContext, &store);
-
-  Preferences::sharedPreferences->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
                                            &globalContext, &store);
 
   Preferences::sharedPreferences->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
+  assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
+                                           &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
+                                           &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("-10", {}, &globalContext, &store);
 }

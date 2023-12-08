@@ -58,8 +58,9 @@ inline void assert_solves_to(const char *equation,
 
 // Helpers
 
-void set_complex_format(Poincare::Preferences::ComplexFormat format);
-void reset_complex_format();
+void setComplexFormatAndAngleUnit(
+    Poincare::Preferences::ComplexFormat complexFormat,
+    Poincare::Preferences::AngleUnit angleUnit);
 
 void set(const char *variable, const char *value);
 void unset(const char *variable);

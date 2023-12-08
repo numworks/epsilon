@@ -163,13 +163,10 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
       });
 }
 
-void set_complex_format(Preferences::ComplexFormat format) {
-  Preferences::sharedPreferences->setComplexFormat(format);
-}
-void reset_complex_format() {
-  Preferences defaultPreferences;
-  Preferences::sharedPreferences->setComplexFormat(
-      defaultPreferences.complexFormat());
+void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
+                                  Preferences::AngleUnit angleUnit) {
+  Preferences::sharedPreferences->setComplexFormat(complexFormat);
+  Preferences::sharedPreferences->setAngleUnit(angleUnit);
 }
 
 void set(const char *variable, const char *value) {

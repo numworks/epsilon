@@ -156,6 +156,8 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to_no_solution("√(x)^(2)=-1");
   assert_solves_to_no_solution("sin(asin(x))=2");
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");
+  assert_solves_to_error("x√(cot(4π/5))=0", EquationUndefined);
+  assert_solves_to_error({"x√(cot(4π/5))=0", "0=0"}, EquationUndefined);
   // With a predefined variable that should be ignored
   set("h", "3");
   assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"});

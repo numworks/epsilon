@@ -67,7 +67,7 @@ QUIZ_CASE(calculation_store) {
     assert(calculationSize < store.remainingBufferSize());
     assert(calculationSize % patternSize == 0);
     char text[calculationSize];
-    for (int i = 0; i < calculationSize; i += patternSize) {
+    for (size_t i = 0; i < calculationSize; i += patternSize) {
       memcpy(text + i, pattern, patternSize);
     }
     text[calculationSize - 1] = '\0';
@@ -98,7 +98,7 @@ QUIZ_CASE(calculation_store) {
     assert(calculationSize % patternSize == 0);
     assert(calculationSize < store.remainingBufferSize());
     char text[calculationSize];
-    for (int i = 0; i < calculationSize; i += patternSize) {
+    for (size_t i = 0; i < calculationSize; i += patternSize) {
       memcpy(text + i, pattern, patternSize);
     }
     text[calculationSize - 1] = '\0';
@@ -127,8 +127,7 @@ QUIZ_CASE(calculation_store) {
     quiz_assert(numberOfCalculations1 >= numberOfCalculations2);
   }
   store.deleteAll();
-  quiz_assert(store.remainingBufferSize() ==
-              static_cast<int>(store.bufferSize()));
+  quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }
 
 void assertAnsIs(const char *input, const char *expectedAnsInputText,

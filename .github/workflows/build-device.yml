@@ -33,8 +33,8 @@ jobs:
         run: make MODEL=n0115 epsilon.onboarding$BETA.dfu
       - run: make MODEL=n0115 epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0120
-        run: make MODEL=n0120 epsilon.onboarding$BETA.dfu
-      - run: make MODEL=n0120 epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.dfu
+      - run: make MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Upload
         uses: actions/upload-artifact@v3
         with:

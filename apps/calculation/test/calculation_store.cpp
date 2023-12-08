@@ -833,6 +833,13 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("gon", {.unit = true},
                                            &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(
+      "3°/(4π_rad)", {.scientificNotation = true, .rational = true},
+      &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(
+      "3°/(4_rad)", {.scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("180°/(π_rad)", {.integer = true},
+                                           &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &globalContext,
                                            &store);
 

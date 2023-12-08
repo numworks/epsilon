@@ -52,12 +52,12 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (approximateOutput.deepIsMatrix()) {
     return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
   }
-  AdditionalResultsType type = {};
   if (exactHasAngleUnit || approximateHasAngleUnit) {
     return AdditionalResultsType{
         .unit = exactHasAngleUnit &&
                 HasUnit(exactOutput, complexFormat, angleUnit)};
   }
+  AdditionalResultsType type = {};
   if (!inputHasAngleUnit && HasFunction(input, approximateOutput)) {
     type.function = true;
   }

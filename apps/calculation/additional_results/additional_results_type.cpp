@@ -53,12 +53,12 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
   }
   AdditionalResultsType type = {};
-  if (inputHasAngleUnit || exactHasAngleUnit || approximateHasAngleUnit) {
+  if (exactHasAngleUnit || approximateHasAngleUnit) {
     return AdditionalResultsType{
         .unit = exactHasAngleUnit &&
                 HasUnit(exactOutput, complexFormat, angleUnit)};
   }
-  if (HasFunction(input, approximateOutput)) {
+  if (!inputHasAngleUnit && HasFunction(input, approximateOutput)) {
     type.function = true;
   }
   if (HasScientificNotation(approximateOutput)) {

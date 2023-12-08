@@ -825,6 +825,8 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("1+cos(2_rad)", {}, &globalContext,
                                            &store);
+  assertCalculationAdditionalResultTypeHas("-sin(\")", {}, &globalContext,
+                                           &store);
   assertCalculationAdditionalResultTypeHas("30°+2_rad", {.unit = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("gon", {.unit = true},

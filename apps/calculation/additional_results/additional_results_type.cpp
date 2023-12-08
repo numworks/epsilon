@@ -55,7 +55,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   AdditionalResultsType type = {};
   if (inputHasAngleUnit || exactHasAngleUnit || approximateHasAngleUnit) {
     return AdditionalResultsType{
-        .unit = HasUnit(exactOutput, complexFormat, angleUnit)};
+        .unit = exactHasAngleUnit &&
+                HasUnit(exactOutput, complexFormat, angleUnit)};
   }
   if (HasFunction(input, approximateOutput)) {
     type.function = true;

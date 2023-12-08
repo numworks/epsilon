@@ -97,14 +97,20 @@ mp_obj_t modturtle_speed(size_t n_args, const mp_obj_t *args) {
 }
 
 mp_obj_t modturtle_distance(size_t n_args, const mp_obj_t *args) {
-  if(n_args == 0){
-    mp_raise_TypeError("pencolor() takes 1 or 2 arguments");
-    return mp_const_none;
+  mp_float_t x = 0;
+  mp_float_t y = 0;
+
+  if (n_args == 1) {
+    mp_obj_t *mp_coords;
+    mp_obj_get_array_fixed_n(args[0], 2, &mp_coords);
+    x = mp_obj_get_float(mp_coords[0]);
+    y = mp_obj_get_float(mp_coords[1]);
+  } else {
+    x = mp_obj_get_float(args[0]);
+    y = mp_obj_get_float(args[1]);
   }
-  mp_obj_t mp_pos[2];
-  mp_pos[0] = mp_obj_new_float(sqrt(25));
-  mp_pos[1] = mp_obj_new_float(sTurtle.y());
-  return mp_obj_new_tuple(2, mp_pos);
+  float distance = sqrt(pow(x - sTurtle.x(), 2) + pow(y - sTurtle.y(), 2));
+  return mp_obj_new_float(distance);
 }
 
 mp_obj_t modturtle_position() {

@@ -4,13 +4,6 @@
 
 namespace Shared {
 
-void AbstractRoundCursorView::setIsRing(bool isRing) {
-  if (isRing != m_isRing) {
-    m_isRing = isRing;
-    markWholeFrameAsDirty();
-  }
-}
-
 void AbstractRoundCursorView::drawCursor(KDContext* ctx, KDRect rect) const {
   KDColor cursorWorkingBuffer[k_maxSize * k_maxSize];
   /* The bounding rect may be larger than the mask to be stamped. We thus need
@@ -23,6 +16,13 @@ void AbstractRoundCursorView::drawCursor(KDContext* ctx, KDRect rect) const {
                                      r.width() - diff, r.height() - diff);
   const uint8_t* mask = m_isRing ? Dots::LargeRingMask : Dots::LargeDotMask;
   ctx->blendRectWithMask(dotRect, color(), mask, cursorWorkingBuffer);
+}
+
+void ToggleableRingRoundCursorView::setIsRing(bool isRing) {
+  if (isRing != m_isRing) {
+    m_isRing = isRing;
+    markWholeFrameAsDirty();
+  }
 }
 
 }  // namespace Shared

@@ -8,11 +8,11 @@ namespace Shared {
 
 class AbstractRoundCursorView : public MemoizedCursorView {
  public:
-  AbstractRoundCursorView() : MemoizedCursorView() {}
+  AbstractRoundCursorView(bool isRing)
+      : MemoizedCursorView(), m_isRing(isRing) {}
 
  protected:
   bool m_isRing;
-  void setIsRing(bool isRing);
   constexpr static size_t k_maxSize =
       std::max(Dots::LargeDotDiameter, Dots::LargeRingDiameter);
 
@@ -26,7 +26,7 @@ class AbstractRoundCursorView : public MemoizedCursorView {
 
 class RoundCursorView : public AbstractRoundCursorView {
  public:
-  RoundCursorView() : AbstractRoundCursorView() { setIsRing(false); }
+  RoundCursorView() : AbstractRoundCursorView(false) {}
 
  private:
   KDCoordinate size() const override { return Dots::LargeDotDiameter; }
@@ -34,7 +34,7 @@ class RoundCursorView : public AbstractRoundCursorView {
 
 class RingCursorView : public AbstractRoundCursorView {
  public:
-  RingCursorView() : AbstractRoundCursorView() { setIsRing(true); }
+  RingCursorView() : AbstractRoundCursorView(true) {}
 
  private:
   KDCoordinate size() const override { return Dots::LargeRingDiameter; }
@@ -42,7 +42,8 @@ class RingCursorView : public AbstractRoundCursorView {
 
 class ToggleableRingRoundCursorView : public AbstractRoundCursorView {
  public:
-  using AbstractRoundCursorView::setIsRing;
+  ToggleableRingRoundCursorView() : AbstractRoundCursorView(false) {}
+  void setIsRing(bool isRing);
 
  private:
   KDCoordinate size() const override { return k_maxSize; }

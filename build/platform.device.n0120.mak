@@ -1,4 +1,4 @@
-PCB_LATEST = 418 # PCB version 4.18
+PCB_LATEST = 419 # PCB version 4.19
 SIGNATURE_INDEX = 1
 TOOLCHAIN ?= arm-gcc-m7h
 

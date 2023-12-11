@@ -18,6 +18,10 @@ ion_src += $(addprefix ion/src/simulator/linux/, \
 SFLAGS += $(shell pkg-config libpng libjpeg --cflags)
 LDFLAGS += $(shell pkg-config libpng libjpeg --libs)
 
+ifeq ($(VALGRIND),1)
+SFLAGS += $(shell pkg-config valgrind --cflags)
+endif
+
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/haptics_enabled.cpp \
   dummy/keyboard_callback.cpp \

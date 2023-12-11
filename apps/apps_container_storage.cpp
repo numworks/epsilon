@@ -14,6 +14,10 @@
 #error Missing snapshot count
 #endif
 
+#if VALGRIND
+#include "memcheck.h"
+#endif
+
 // Take the Home app into account
 constexpr int k_numberOfCommonApps = 1 + APPS_CONTAINER_SNAPSHOT_COUNT;
 
@@ -61,6 +65,9 @@ void* AppsContainerStorage::currentAppBuffer() {
       __attribute__((section(".bss.$app_buffer")));
 #else
       ;
+#endif
+#if VALGRIND
+  VALGRIND_MAKE_MEM_UNDEFINED(&s_apps, sizeof(s_apps));
 #endif
   return &s_apps;
 }

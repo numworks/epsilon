@@ -12,7 +12,7 @@ namespace PoincareJ {
 class Placeholder {
  public:
   // Using plain enum for tag to simplify PatternMatching Context usage.
-  enum Tag : uint8_t { A = 0, B, C, D, E, F, G, NumberOfTags };
+  enum Tag : uint8_t { A = 0, B, C, D, E, F, G, H, NumberOfTags };
 
   enum class Filter : uint8_t {
     // Match any tree

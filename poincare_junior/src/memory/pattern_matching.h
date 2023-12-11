@@ -22,6 +22,7 @@ class PatternMatching {
     const Tree* KE = nullptr;
     const Tree* KF = nullptr;
     const Tree* KG = nullptr;
+    const Tree* KH = nullptr;
   };
 
   class Context {
@@ -193,6 +194,7 @@ constexpr auto KD = KPlaceholder<Placeholder::Tag::D>();
 constexpr auto KE = KPlaceholder<Placeholder::Tag::E>();
 constexpr auto KF = KPlaceholder<Placeholder::Tag::F>();
 constexpr auto KG = KPlaceholder<Placeholder::Tag::G>();
+constexpr auto KH = KPlaceholder<Placeholder::Tag::H>();
 
 constexpr auto KTA = KAnyTreesPlaceholder<Placeholder::Tag::A>();
 constexpr auto KTB = KAnyTreesPlaceholder<Placeholder::Tag::B>();
@@ -201,6 +203,7 @@ constexpr auto KTD = KAnyTreesPlaceholder<Placeholder::Tag::D>();
 constexpr auto KTE = KAnyTreesPlaceholder<Placeholder::Tag::E>();
 constexpr auto KTF = KAnyTreesPlaceholder<Placeholder::Tag::F>();
 constexpr auto KTG = KAnyTreesPlaceholder<Placeholder::Tag::G>();
+constexpr auto KTH = KAnyTreesPlaceholder<Placeholder::Tag::H>();
 
 }  // namespace PoincareJ
 

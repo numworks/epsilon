@@ -134,11 +134,14 @@ class Simplification {
   EDITION_REF_WRAP(ContractExpMult);
   static bool ExpandExp(Tree *node);
   EDITION_REF_WRAP(ExpandExp);
+  static bool ContractMult(Tree *node);
+  EDITION_REF_WRAP(ContractMult);
   static bool ExpandMult(Tree *node);
+  EDITION_REF_WRAP(ExpandMult);
   static bool ExpandMultSubOperation(Tree *node) {
     return SimplifyMultiplication(node) + ExpandMult(node);
   }
-  EDITION_REF_WRAP(ExpandMult);
+  EDITION_REF_WRAP(ExpandMultSubOperation);
   static bool ExpandPowerComplex(Tree *node);
   EDITION_REF_WRAP(ExpandPowerComplex);
   static bool ExpandPower(Tree *node);
@@ -150,6 +153,7 @@ class Simplification {
       ContractExpMult,
       Trigonometry::ContractTrigonometric,
       Parametric::ContractProduct,
+      ContractMult,
   };
   constexpr static Operation k_expandOperations[] = {
       ExpandAbs,

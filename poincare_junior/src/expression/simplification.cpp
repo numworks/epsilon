@@ -1008,6 +1008,13 @@ bool Simplification::ExpandMult(Tree* ref) {
   return false;
 }
 
+bool Simplification::ContractMult(Tree* ref) {
+  // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KAdd(KTA, KMult(KTB, KC, KTD), KTE, KMult(KTF, KC, KTG), KTH),
+      KAdd(KTA, KMult(KC, KAdd(KMult(KTB, KTD), KMult(KTF, KTG))), KTE, KTH));
+}
+
 bool Simplification::ExpandPowerComplex(Tree* ref) {
   // (A + B*i)^2 = (A^2 -2*B^2 + 2*A*B*i)
   return PatternMatching::MatchReplaceAndSimplify(

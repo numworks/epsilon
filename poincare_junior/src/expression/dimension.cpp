@@ -31,11 +31,13 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     case BlockType::StdDev:
     case BlockType::Median:
     case BlockType::Variance:
-    case BlockType::Minimum:
-    case BlockType::Maximum:
       // At least 1 child is needed.
       return childLength[0] >= 1 &&
              (childLength[1] == -1 || childLength[0] == childLength[1]);
+    case BlockType::Minimum:
+    case BlockType::Maximum:
+      // At least 1 child is needed.
+      return childLength[0] >= 1;
     case BlockType::ListSum:
     case BlockType::ListProduct:
     case BlockType::ListSort:

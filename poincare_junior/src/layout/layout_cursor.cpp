@@ -220,11 +220,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * an empty row/column is added below/on the right.
    */
   int index;
-  if (parentLayout(&index) && parentLayout(&index)->isGridLayout() &&
-      RackLayout::IsEmpty(cursorNode())) {
-    // TODO
-    setCursorNode(
-        Grid::From(parentLayout(&index))->willFillEmptyChildAtIndex(index));
+  Tree *parent = parentLayout(&index);
+  if (parent && parent->isGridLayout() && RackLayout::IsEmpty(cursorNode())) {
+    setCursorNode(Grid::From(parent)->willFillEmptyChildAtIndex(index));
     m_position = 0;
   }
 

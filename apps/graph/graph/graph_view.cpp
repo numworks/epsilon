@@ -15,7 +15,10 @@ GraphView::GraphView(InteractiveCurveViewRange *graphRange,
                      MemoizedCursorView *cursorView)
     : FunctionGraphView(graphRange, cursor, bannerView, cursorView),
       m_interestView(this),
+      m_areaIndex(0),
       m_nextPointOfInterestIndex(0),
+      m_interest(Solver<double>::Interest::None),
+      m_computePointsOfInterest(false),
       m_tangentDisplay(false) {}
 
 void GraphView::reload(bool resetInterrupted, bool force) {

@@ -68,8 +68,8 @@ class GraphView : public Shared::FunctionGraphView,
 
   KDRect boundsWithoutBanner() const;
 
-  mutable int m_areaIndex;
   InterestView m_interestView;
+  mutable int m_areaIndex;
   mutable int m_nextPointOfInterestIndex;
   Poincare::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;

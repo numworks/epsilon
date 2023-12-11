@@ -23,6 +23,8 @@ SumGraphController::SumGraphController(Responder *parentResponder,
                                        CurveViewCursor *cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_step(Step::FirstParameter),
+      m_startSum(NAN),
+      m_result(NAN),
       m_graphRange(range),
       m_graphView(graphView),
       m_legendView(this) {}

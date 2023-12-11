@@ -59,6 +59,8 @@ HistogramView::HistogramView(Store *store, int series,
   // HistogramPlotPolicy
   m_store = store;
   m_series = series;
+  m_highlightedBarStart = NAN;
+  m_highlightedBarEnd = NAN;
 }
 
 void HistogramView::reload(bool resetInterruption, bool force) {

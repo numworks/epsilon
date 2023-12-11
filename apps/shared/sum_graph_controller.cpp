@@ -265,12 +265,12 @@ static Layout emptyValueLayout() {
   return layout;
 }
 
-static Layout valueLayout(double value, int bufferSize,
-                          int numberOfSignificantDigits,
+static Layout valueLayout(double value, int numberOfSignificantDigits,
                           Preferences::PrintFloatMode displayMode) {
-  char buffer[bufferSize];
+  constexpr static int k_bufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
+  char buffer[k_bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-      value, buffer, bufferSize, numberOfSignificantDigits, displayMode);
+      value, buffer, k_bufferSize, numberOfSignificantDigits, displayMode);
   Layout layout = LayoutHelper::String(buffer, strlen(buffer));
   return layout;
 }
@@ -289,21 +289,21 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
                                                   CodePoint sumSymbol) {
   assert(!std::isnan(start) || step == Step::FirstParameter);
   assert(!std::isnan(end) || step != Step::Result);
-  Layout startLayout = valueLayout(start, k_valuesBufferSize, k_valuesPrecision,
-                                   k_valuesDisplayMode);
-  Layout endLayout = step == Step::FirstParameter
-                         ? emptyValueLayout()
-                         : valueLayout(end, k_valuesBufferSize,
-                                       k_valuesPrecision, k_valuesDisplayMode);
+  Layout startLayout =
+      valueLayout(start, k_valuesPrecision, k_valuesDisplayMode);
+  Layout endLayout =
+      step == Step::FirstParameter
+          ? emptyValueLayout()
+          : valueLayout(end, k_valuesPrecision, k_valuesDisplayMode);
   Layout sumLayout = CondensedSumLayout::Builder(
       CodePointLayout::Builder(sumSymbol), startLayout, endLayout);
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = LayoutHelper::String(" = ", 3);
     Preferences *preferences = Preferences::sharedPreferences;
-    Layout resultLayout = valueLayout(result, k_editableZoneBufferSize,
-                                      preferences->numberOfSignificantDigits(),
-                                      preferences->displayMode());
+    Layout resultLayout =
+        valueLayout(result, preferences->numberOfSignificantDigits(),
+                    preferences->displayMode());
     if (functionLayout.isUninitialized() ||
         (sumLayout.layoutSize(k_font).width() +
              functionLayout.layoutSize(k_font).width() +

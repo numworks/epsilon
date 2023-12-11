@@ -9,6 +9,7 @@ namespace Escher {
 
 class SwitchView final : public ToggleableView, public CellWidget {
  public:
+  using ToggleableView::ToggleableView;
   /* k_switchHeight and k_switchWidth are the dimensions of the switch
    * (including the outline of the switch). */
   constexpr static KDCoordinate k_onOffSize = 12;

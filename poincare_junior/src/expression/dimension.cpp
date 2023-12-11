@@ -26,8 +26,7 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     case BlockType::SampleStdDev:
       // SampleStdDev needs a list of length >= 2
       return childLength[0] >= 2 &&
-             (t->numberOfChildren() < 2 ||
-              (childLength[1] == -1 || childLength[0] == childLength[1]));
+             (childLength[1] == -1 || childLength[0] == childLength[1]);
     case BlockType::Mean:
     case BlockType::StdDev:
     case BlockType::Median:
@@ -36,8 +35,7 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     case BlockType::Maximum:
       // At least 1 child is needed.
       return childLength[0] >= 1 &&
-             (t->numberOfChildren() < 2 ||
-              (childLength[1] == -1 || childLength[0] == childLength[1]));
+             (childLength[1] == -1 || childLength[0] == childLength[1]);
     case BlockType::ListSum:
     case BlockType::ListProduct:
     case BlockType::ListSort:

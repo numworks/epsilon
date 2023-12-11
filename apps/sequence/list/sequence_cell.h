@@ -11,7 +11,9 @@ namespace Sequence {
 class AbstractSequenceCell : public Escher::EvenOddCell {
  public:
   AbstractSequenceCell()
-      : EvenOddCell(), m_expressionBackground(KDColorWhite) {}
+      : EvenOddCell(),
+        m_expressionBackground(KDColorWhite),
+        m_parameterSelected(false) {}
   void setParameterSelected(bool selected);
   virtual Escher::HighlightCell* mainCell() = 0;
   const Escher::HighlightCell* mainCell() const {

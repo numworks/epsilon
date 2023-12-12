@@ -26,3 +26,9 @@ $(eval $(call rule_for, \
 
 $(BUILD_DIR)/apps/home/apps_layout.cpp: $(BUILD_DIR)/apps/home/apps_layout.h
 apps_src += $(BUILD_DIR)/apps/home/apps_layout.cpp
+
+# This kind of dependency between a .cpp and a .h is usually created by the
+# compiler for recompilations to take header changes into account.
+# However we have to specify it explicitely here because we need the header to
+# be generated before the .cpp even on the first build.
+$(call object_for, apps/home/controller.cpp): $(BUILD_DIR)/apps/home/apps_layout.h

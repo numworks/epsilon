@@ -1,8 +1,24 @@
 name: Continuous Integration
+
 on:
   push:
     branches: [ master, 'version-*' ]
   pull_request:
+
+  workflow_dispatch:
+    inputs:
+      android:
+       type: boolean
+       default: 'true'
+      windows:
+       type: boolean
+       default: 'true'
+      macos:
+       type: boolean
+       default: 'true'
+      ios:
+       type: boolean
+       default: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +30,7 @@ env:
 jobs:
   android:
     runs-on: ubuntu-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.android == 'true') }}
     steps:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v3
@@ -59,7 +75,7 @@ jobs:
         run: make MODEL=${{ matrix.model }} bench.ram.dfu
   windows:
     runs-on: windows-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.windows == 'true') }}
     defaults:
        run:
          shell: msys2 {0}
@@ -103,7 +119,7 @@ jobs:
           path: output/release/simulator/linux/epsilon.bin
   macos:
     runs-on: macOS-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.macos == 'true') }}
     steps:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
@@ -116,7 +132,7 @@ jobs:
           path: output/release/simulator/macos/epsilon.app
   ios:
     runs-on: macOS-latest
-    if: ${{ (github.repository != 'numworks/epsilon-internal') }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.ios == 'true') }}
     steps:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator

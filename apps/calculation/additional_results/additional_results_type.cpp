@@ -27,6 +27,10 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.complex = true};
   }
+  if (exactOutput.isScalarComplex(complexFormat, angleUnit)) {
+    // Cf comment in HasComplex
+    return AdditionalResultsType{};
+  }
   bool inputHasAngleUnit, exactHasAngleUnit, approximateHasAngleUnit;
   bool inputHasUnit = input.hasUnit(true, &inputHasAngleUnit);
   bool exactHasUnit = exactOutput.hasUnit(true, &exactHasAngleUnit);
@@ -99,6 +103,20 @@ bool AdditionalResultsType::HasComplex(
     const Expression approximateOutput,
     const Preferences::ComplexFormat complexFormat,
     const Preferences::AngleUnit angleUnit) {
+  /* We have to edge cases:
+   * 1) exact output assessed to scalar complex but not approximate output
+   * ex:
+   *    In polar format, for input -10 the exact output is 10e^(iπ) and the
+   *    approximate output is 10e^(3.14π). Due to rounding errors, the imaginary
+   *    part of the approximate output is not zero so it is considered as scalar
+   *    complex, while the exact output is not.
+   * 2) approximate output assessed to scalar complex but not exact output
+   * ex:
+   *    For input i^(2×e^(7i^(2×e^322))), the exact output approximates to a
+   *    complex with very small norm but PrintFloat::ConvertFloatToTextPrivate
+   *    rounds it to 0 so the approximation output is 0i. Thus, the imaginary
+   *    part of the approximate output is zero so it is not considered as scalar
+   *    complex, while the exact output is. */
   return approximateOutput.isScalarComplex(complexFormat, angleUnit);
 }
 

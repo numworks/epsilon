@@ -9,7 +9,9 @@ CXX = $(MINGW_TOOLCHAIN_PREFIX)g++
 LD = $(MINGW_TOOLCHAIN_PREFIX)g++
 WINDRES = $(MINGW_TOOLCHAIN_PREFIX)windres
 
-SFLAGS += -D_USE_MATH_DEFINES
+# Static asserts in exam_mode.h assume gcc-like bitfields. If you need more
+# granularity, remove the flag and add attribute gcc_struct where needed.
+SFLAGS += -D_USE_MATH_DEFINES -mno-ms-bitfields
 LDFLAGS += -static
 
 # mingw doesn't support -rdynamic

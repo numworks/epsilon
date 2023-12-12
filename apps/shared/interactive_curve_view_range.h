@@ -22,7 +22,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_memoizedAutoRange(Poincare::Range1D(), Poincare::Range1D()),
         m_checksumOfMemoizedAutoRange(0),
         m_offscreenYAxis(0.f),
-        m_auto{true, true},
+        m_isAuto{true, true},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -34,11 +34,11 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   void setDelegate(InteractiveCurveViewRangeDelegate* delegate);
 
-  bool zoomAuto() const { return m_auto.x && m_auto.y; }
+  bool zoomAuto() const { return m_isAuto.x && m_isAuto.y; }
   void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
-  bool isAuto(Axis axis) const { return m_auto(axis); }
+  bool isAuto(Axis axis) const { return m_isAuto(axis); }
   void setAuto(Axis axis, bool v) {
-    BoolPair newAuto = m_auto;
+    BoolPair newAuto = m_isAuto;
     newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
   }
@@ -60,7 +60,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
-  void computeRanges() { privateComputeRanges(m_auto.x, m_auto.y); }
+  void computeRanges() { privateComputeRanges(m_isAuto.x, m_isAuto.y); }
   void normalize();
   void centerAxisAround(Axis axis, float position);
   bool panToMakePointVisible(float x, float y, float topMarginRatio,
@@ -119,7 +119,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     bool operator()(Axis axis) const { return axis == Axis::X ? x : y; }
     void set(Axis axis, bool value) { (axis == Axis::X ? x : y) = value; }
   };
-  BoolPair m_auto;
+  BoolPair m_isAuto;
   bool m_zoomNormalize;
 };
 

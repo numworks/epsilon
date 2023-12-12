@@ -1,9 +1,14 @@
 #include <SDL.h>
 #include <assert.h>
+
+// clang-format off
+// windows.h contains macros and is assumed to be included before GDI+
+#include <windows.h>
 #include <gdiplus.h>
+// clang-format on
+
 #include <ion/src/simulator/windows/images.h>
 #include <olectl.h>
-#include <windows.h>
 
 #include <array>
 

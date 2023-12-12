@@ -10,7 +10,7 @@
 
 namespace Shared {
 
-uint32_t CurveViewRange::rangeChecksum() {
+uint32_t CurveViewRange::rangeChecksum() const {
   float data[7] = {xMin(),      xMax(),      yMin(),          yMax(),
                    xGridUnit(), yGridUnit(), offscreenYAxis()};
   size_t dataLengthInBytes = sizeof(data);

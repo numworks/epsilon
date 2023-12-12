@@ -9,7 +9,7 @@ namespace Shared {
 class CurveViewRange {
  public:
   enum class Axis { X, Y };
-  uint32_t rangeChecksum();
+  uint32_t rangeChecksum() const;
 
   virtual float xMin() const = 0;
   virtual float xMax() const = 0;

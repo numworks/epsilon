@@ -71,7 +71,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       assert(false);  // Text not found in cycle
     }
 #if TERMS_OF_USE
-    if (selectedRow() == Row(CellType::TermOfUse)) {
+    if (selectedRow() == Row(CellType::TermsOfUse)) {
       Ion::Events::openURL(I18n::translate(I18n::Message::TermsOfUseLink));
       return true;
     }

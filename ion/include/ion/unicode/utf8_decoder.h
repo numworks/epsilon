@@ -86,6 +86,12 @@ class UTF8Decoder : public UnicodeDecoder {
                                                     size_t bufferSize);
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
 
+  /* Check whether 'end' points to the last byte of a code point in a string.
+   * 'begin' prevents the function from accessing any memory outside
+   * the string. This function expects the input string to consistent with the
+   * UTF-8 standard: only containing codepoint characters (leading ones <= 4).*/
+  static bool IsTheEndOfACodePoint(const char* end, const char* begin);
+
  private:
   char nextByte() { return m_string[m_position++]; }
   char previousByte() { return m_string[--m_position]; }

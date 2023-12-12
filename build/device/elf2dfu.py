@@ -103,10 +103,10 @@ def print_sections(sections):
         )
 
 
-def print_block(block, address, dataSize):
-    print("Block name: " + block["name"])
+def print_block(sections, address, dataSize):
+    print("--- Block ---")
     print("\tSections:")
-    print_sections(block["sections"])
+    print_sections(sections)
     print("\tData size: " + str(dataSize) + " (" + str(hex(dataSize)) + ")")
     print("\tAddress: " + str(hex(address)))
     print("\n")
@@ -124,11 +124,6 @@ def elf2target_single_block(elf_file, verbose):
         ["arm-none-eabi-objcopy", "-O", "binary", elf_file, bin_file_for_path(elf_file)]
     )
     address = min([section["lma"] for section in single_block["sections"]])
-    # We turn ITCM flash addresses to equivalent AXIM flash addresses because
-    # ITCM address cannot be written and are physically equivalent to AXIM flash
-    # addresses.
-    if address >= 0x00200000 and address < 0x00210000:
-        address = address - 0x00200000 + 0x08000000
 
     data = open(bin_file_for_path(elf_file), "rb").read()
     target = {"address": address, "data": data}
@@ -138,107 +133,73 @@ def elf2target_single_block(elf_file, verbose):
     return target
 
 
-def standard_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
+def add_sections_to_targets(targets, sections, elf_file, verbose):
+    # Find the section address
+    address = min([s["lma"] for s in sections])
+    # We turn ITCM flash addresses to equivalent AXIM flash addresses because
+    # ITCM address cannot be written and are physically equivalent to AXIM flash
+    # addresses.
+    if address >= 0x00200000 and address < 0x00210000:
+        address = address - 0x00200000 + 0x08000000
+
+    # Extract the section datas
+    bin_file = bin_file_for_path(elf_file)
+    subprocess.call(
+        ["arm-none-eabi-objcopy", "-O", "binary"]
+        + [
+            item
+            for sublist in [["-j", s["name"]] for s in sections]
+            for item in sublist
+        ]
+        + [elf_file, bin_file]
+    )
+    data = open(bin_file, "rb").read()
+
+    # Append to targets
+    targets.append({"address": address, "data": data})
+    if verbose:
+        print_block(
+            sections,
+            address,
+            len(data),
+        )
+    subprocess.call(["rm", bin_file])
+
+
+PERSISTING_BYTES_SECTION_NAME = "persisting_bytes_buffer"
+
+
+def elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
     targets = []
     for elf_file in elf_files:
-        targets.append(elf2target_single_block(elf_file, verbose))
-    generate_dfu_file([targets], usb_vid_pid, dfu_file)
-
-
-def customized_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
-    bootloader_elf_file = [f for f in elf_files if "bootloader" in f]
-    kernel_elf_files = [f for f in elf_files if "kernel" in f]
-    userland_elf_files = [f for f in elf_files if "userland" in f]
-    if len(bootloader_elf_file) > 1:
-        sys.stderr.write("Extra bootloader elf file")
-        sys.exit(-1)
-    if len(kernel_elf_files) != 2:
-        sys.stderr.write("Missing or extra kernel elf file")
-        sys.exit(-1)
-    if len(userland_elf_files) != 2:
-        sys.stderr.write("Missing or extra userland elf file")
-        sys.exit(-1)
-
-    targets = []
-
-    # Bootloader
-    if len(bootloader_elf_file) > 0:
-        targets.append(elf2target_single_block(bootloader_elf_file[0], verbose))
-
-    for i in [0, 1]:
-        kernel_elf_file = kernel_elf_files[i]
-        userland_elf_file = userland_elf_files[i]
-        kernel_block = {"sections": [s for s in loadable_sections(kernel_elf_file)]}
-        persisting_bytes_block = {
-            "sections": loadable_sections(
-                userland_elf_file, "", "persisting_bytes_buffer"
+        sections = loadable_sections(elf_file)
+        if len(sections) == 0:
+            sys.stderr.write(
+                "Error: the elf file " + elf_file + " has no loadable section\n"
             )
-        }
-        userland_block = {
-            "sections": [
-                s
-                for s in loadable_sections(userland_elf_file)
-                if s not in persisting_bytes_block["sections"]
-            ]
-        }
-        blocks = {
-            "kernel": kernel_block,
-            "userland": userland_block,
-            "persisting_bytes": persisting_bytes_block,
-        }
-        block_names = blocks.keys()
-        for name in block_names:
-            block = blocks[name]
-            # Error if one block is empty
-            if not block["sections"]:
-                sys.stderr.write(
-                    "Error: the block " + block[name] + " has no loadable section\n"
-                )
-                sys.exit(-1)
-            # Fill the address field of each block
-            elf_file = kernel_elf_file if name == "kernel" else userland_elf_file
-            blocks[name]["bin_file"] = bin_file_for_path(elf_file, name)
-            subprocess.call(
-                ["arm-none-eabi-objcopy", "-O", "binary"]
-                + [
-                    item
-                    for sublist in [["-j", s["name"]] for s in block["sections"]]
-                    for item in sublist
-                ]
-                + [elf_file, blocks[name]["bin_file"]]
+            sys.exit(-1)
+
+        # Handle the fact that the userland.elf also contains the persisting_bytes section
+        if sum(1 for s in sections if PERSISTING_BYTES_SECTION_NAME in s["name"]) > 0:
+            persisting_bytes_sections = loadable_sections(
+                elf_file, "", PERSISTING_BYTES_SECTION_NAME
             )
-            blocks[name]["address"] = min([s["lma"] for s in block["sections"]])
+            add_sections_to_targets(
+                targets, persisting_bytes_sections, elf_file, verbose
+            )
+            sections = [s for s in sections if s not in persisting_bytes_sections]
+        if len(sections) > 0:
+            add_sections_to_targets(targets, sections, elf_file, verbose)
 
-        for name in block_names:
-            block = blocks[name]
-            data = open(blocks[name]["bin_file"], "rb").read()
-            targets.append({"address": block["address"], "data": data})
-            if verbose:
-                print_block(
-                    block,
-                    block["address"],
-                    len(data),
-                )
-
-        for name in block_names:
-            block = blocks[name]
-            subprocess.call(["rm", blocks[name]["bin_file"]])
-
-    generate_dfu_file([targets], usb_vid_pid, dfu_file)
+    # Sort targets by increasing address
+    sorted_targets = sorted(targets, key=lambda t: t["address"])
+    generate_dfu_file([sorted_targets], usb_vid_pid, dfu_file)
 
 
 parser = argparse.ArgumentParser(description="Convert an ELF file to DfuSe.")
 parser.add_argument("-i", metavar="ELF_FILE", help="Input ELF file", nargs="+")
 parser.add_argument("-o", metavar="DFU_FILE", help="Output DfuSe file")
-parser.add_argument(
-    "--custom",
-    action="store_true",
-    help="Combine bootloader, kernel and userland elf files into one special signed dfu file",
-)
 parser.add_argument("-v", "--verbose", action="store_true", help="Show verbose output")
 
 args = parser.parse_args()
-if args.custom:
-    customized_elf2dfu(args.i, "0x0483:0xa291", args.o, args.verbose)
-else:
-    standard_elf2dfu(args.i, "0x0483:0xa291", args.o, args.verbose)
+elf2dfu(args.i, "0x0483:0xa291", args.o, args.verbose)

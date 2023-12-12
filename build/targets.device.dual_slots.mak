@@ -13,10 +13,8 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 # - find the right subfolder 'bootloader', 'kernel' or 'userland'
 # - be able to rely on the usual rule for dfu
 # - avoid requiring a standalone Makefile
-#epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
+#epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer
 #$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer
-
-$(dfu_targets): DFUFLAGS += --custom
 
 $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	$(if $(NO_BOOTLOADER),,$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf)

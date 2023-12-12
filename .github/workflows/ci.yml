@@ -35,7 +35,8 @@ jobs:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk test.apk
+      - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
+      - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
@@ -136,7 +137,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 epsilon.ipa test.ipa
+      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 epsilon.ipa
+      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 test.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@v3
         with:

@@ -39,7 +39,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   bool isAuto(Axis axis) const { return m_auto(axis); }
   void setAuto(Axis axis, bool v) {
     BoolPair newAuto = m_auto;
-    newAuto(axis) = v;
+    newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
   }
   bool zoomNormalize() const { return m_zoomNormalize; }
@@ -116,8 +116,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   struct BoolPair {
     bool x, y;
-    bool& operator()(Axis axis) { return axis == Axis::X ? x : y; }
     bool operator()(Axis axis) const { return axis == Axis::X ? x : y; }
+    void set(Axis axis, bool value) { (axis == Axis::X ? x : y) = value; }
   };
   BoolPair m_auto;
   bool m_zoomNormalize;

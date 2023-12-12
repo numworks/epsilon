@@ -105,3 +105,16 @@ QUIZ_CASE(ion_utf8_decoder_code_point) {
   assert_code_point_decode_to_chars(c, "", 1);
   assert_code_point_decode_to_chars(c, "", 0);
 }
+
+QUIZ_CASE(ion_utf8_decoder_is_the_end_of_a_code_point) {
+  const char* abcd = "abcd";
+  quiz_assert(UTF8Decoder::IsTheEndOfACodePoint(abcd + 3, abcd));
+  quiz_assert(UTF8Decoder::IsTheEndOfACodePoint(abcd + 3, abcd + 3));
+  quiz_assert(!UTF8Decoder::IsTheEndOfACodePoint(abcd + 3, abcd + 4));
+
+  const char* arrow = "→";
+  quiz_assert(UTF8Decoder::IsTheEndOfACodePoint(arrow + 2, arrow));
+  quiz_assert(!UTF8Decoder::IsTheEndOfACodePoint(arrow + 1, arrow));
+  quiz_assert(!UTF8Decoder::IsTheEndOfACodePoint(arrow, arrow));
+  quiz_assert(!UTF8Decoder::IsTheEndOfACodePoint(arrow + 2, arrow + 1));
+}

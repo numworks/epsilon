@@ -169,3 +169,23 @@ size_t UTF8Decoder::CodePointToCharsWithNullTermination(CodePoint c,
 bool UTF8Decoder::IsInTheMiddleOfACodePoint(uint8_t value) {
   return value >= 0b10000000 && value < 0b11000000;
 }
+
+bool UTF8Decoder::IsTheEndOfACodePoint(const char* end, const char* begin) {
+  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(end);
+
+  for (int i = 0; ptr >= reinterpret_cast<const uint8_t*>(begin); i++, ptr--) {
+    int ones = leading_ones(*ptr);
+    assert(isValidChar(ones));
+
+    switch (ones) {
+      case 1:
+        break;
+      case 0:
+        return i == 0;
+      default:
+        return ones == i + 1;
+    }
+  }
+
+  return false;
+}

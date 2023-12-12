@@ -1542,6 +1542,10 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to(
       "atan(cos(x)/sin(x))",
       "\u0014dep(\u0012π×sign(tan(x))-2×arctan(tan(x))\u0013/2,{csc(x)})");
+  assert_parsed_expression_simplify_to("atan(cos(π/7)/sin(π/7))",
+                                       "\U000000125×π\U00000013/14");
+  assert_parsed_expression_simplify_to("atan(cos(4)/sin(4))",
+                                       "\U000000123×π-8\U00000013/2");
 
   // cos(asin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "√(-x^2+1)", User,

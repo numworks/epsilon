@@ -112,7 +112,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   uint64_t m_checksumOfMemoizedAutoRange;
   float m_offscreenYAxis;
 
-  GridType m_gridType;
+  GridType m_gridType = GridType::Cartesian;
 
   struct BoolPair {
     bool x, y;

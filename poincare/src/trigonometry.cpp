@@ -467,30 +467,16 @@ Expression Trigonometry::ShallowReduceInverseFunction(
     }
   }
 
-  /* Step 2. Look for an expression of type atan(1/x) or atan(cos/sin), return
-   * sign(x)*π/2-atan(x) */
-  bool isArcTanOfCosSin =
-      e.type() == ExpressionNode::Type::ArcTangent &&
-      ExpressionIsEquivalentToInverseOfTangent(e.childAtIndex(0));
-  if (isArcTanOfCosSin ||
-      (e.type() == ExpressionNode::Type::ArcTangent &&
-       e.childAtIndex(0).type() == ExpressionNode::Type::Power &&
-       e.childAtIndex(0).childAtIndex(1).isMinusOne())) {
-    Expression x;
-    if (isArcTanOfCosSin) {
-      /* (cos(x)/sin(x))^-1 is turned to dep(tan(x),{1/sin(x)} so we don't
-       * need to add a dependency. */
-      x = Power::Builder(Undefined::Builder(), Rational::Builder(-1));
-      x.replaceChildAtIndexInPlace(0, e.childAtIndex(0));
-      x = x.shallowReduce(reductionContext);
-    } else {
-      // This equality is not true if x = 0. We thus add a dependency in 1/x
-      Dependency dep =
-          Dependency::Builder(Undefined::Builder(), List::Builder());
-      dep.addDependency(e.childAtIndex(0).clone());
-      dep.replaceChildAtIndexInPlace(0, e.childAtIndex(0).childAtIndex(0));
-      x = dep.shallowReduce(reductionContext);
-    }
+  // Step 2. Reduce atan(1/x) in sign(x)*π/2-atan(x)
+  if (e.type() == ExpressionNode::Type::ArcTangent &&
+      e.childAtIndex(0).type() == ExpressionNode::Type::Power &&
+      e.childAtIndex(0).childAtIndex(1).isMinusOne()) {
+    // We add a dependency in 1/x
+    Dependency dep = Dependency::Builder(Undefined::Builder(), List::Builder());
+    dep.addDependency(e.childAtIndex(0).clone());
+    dep.replaceChildAtIndexInPlace(0, e.childAtIndex(0).childAtIndex(0));
+    Expression x = dep.shallowReduce(reductionContext);
+
     Expression sign = SignFunction::Builder(x.clone());
     Multiplication m0 = Multiplication::Builder(
         Rational::Builder(1, 2), sign, PiExpressionInAngleUnit(angleUnit));

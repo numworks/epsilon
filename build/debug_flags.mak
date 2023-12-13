@@ -6,7 +6,7 @@ SFLAGS += -DDEBUG=$(DEBUG)
 SFLAGS += -DASSERTIONS=$(ASSERTIONS)
 
 ifeq ($(PLATFORM),device)
-LDFLAGS += -Wl,--defsym ASSERTIONS=$(ASSERTIONS)
+LDFLAGS += -Wl,--defsym,ASSERTIONS=$(ASSERTIONS)
 endif
 
 # This is for libc and micropython. Prefer using ASSERTIONS for epsilon

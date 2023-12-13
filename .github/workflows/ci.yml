@@ -82,6 +82,21 @@ jobs:
          shell: msys2 {0}
     steps:
       - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            git
+            make
+            mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-imagemagick
+            mingw-w64-x86_64-libjpeg-turbo
+            mingw-w64-x86_64-libpng
+            mingw-w64-x86_64-librsvg
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-python3
+            mingw-w64-x86_64-python3-lz4
+            mingw-w64-x86_64-python3-pip
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe test.exe

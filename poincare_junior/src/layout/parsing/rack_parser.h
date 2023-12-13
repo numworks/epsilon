@@ -99,31 +99,31 @@ class RackParser {
                             Token::Type stoppingType = (Token::Type)0);
   void parseLogicalOperatorNot(EditionReference& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  // void parseAndOperator(EditionReference& leftHandSide,
-  // Token::Type stoppingType = (Token::Type)0) {
-  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And,
-  // leftHandSide, stoppingType);
-  // }
-  // void parseNandOperator(EditionReference& leftHandSide,
-  // Token::Type stoppingType = (Token::Type)0) {
-  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand,
-  // leftHandSide, stoppingType);
-  // }
-  // void parseOrOperator(EditionReference& leftHandSide,
-  // Token::Type stoppingType = (Token::Type)0) {
-  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Or,
-  // leftHandSide, stoppingType);
-  // }
-  // void parseXorOperator(EditionReference& leftHandSide,
-  // Token::Type stoppingType = (Token::Type)0) {
-  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Xor,
-  // leftHandSide, stoppingType);
-  // }
-  // void parseNorOperator(EditionReference& leftHandSide,
-  // Token::Type stoppingType = (Token::Type)0) {
-  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nor,
-  // leftHandSide, stoppingType);
-  // }
+  void parseAndOperator(EditionReference& leftHandSide,
+                        Token::Type stoppingType = (Token::Type)0) {
+    parseBinaryLogicalOperator(BlockType::LogicalAnd, leftHandSide,
+                               stoppingType);
+  }
+  void parseNandOperator(EditionReference& leftHandSide,
+                         Token::Type stoppingType = (Token::Type)0) {
+    parseBinaryLogicalOperator(BlockType::LogicalNand, leftHandSide,
+                               stoppingType);
+  }
+  void parseOrOperator(EditionReference& leftHandSide,
+                       Token::Type stoppingType = (Token::Type)0) {
+    parseBinaryLogicalOperator(BlockType::LogicalOr, leftHandSide,
+                               stoppingType);
+  }
+  void parseXorOperator(EditionReference& leftHandSide,
+                        Token::Type stoppingType = (Token::Type)0) {
+    parseBinaryLogicalOperator(BlockType::LogicalXor, leftHandSide,
+                               stoppingType);
+  }
+  void parseNorOperator(EditionReference& leftHandSide,
+                        Token::Type stoppingType = (Token::Type)0) {
+    parseBinaryLogicalOperator(BlockType::LogicalNor, leftHandSide,
+                               stoppingType);
+  }
 
   void parseRightwardsArrow(EditionReference& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
@@ -145,9 +145,9 @@ class RackParser {
   bool mergeIntoPercentAdditionIfNeeded(EditionReference& leftHandSide,
                                         EditionReference& rightHandSide,
                                         bool plus);
-  // void parseBinaryLogicalOperator(
-  // BinaryLogicalOperatorNode::OperatorType operatorType,
-  // EditionReference& leftHandSide, Token::Type stoppingType);
+  void parseBinaryLogicalOperator(BlockType operatorType,
+                                  EditionReference& leftHandSide,
+                                  Token::Type stoppingType);
   void parseBinaryOperator(const EditionReference& leftHandSide,
                            EditionReference& rightHandSide,
                            Token::Type stoppingType);

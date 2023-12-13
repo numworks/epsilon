@@ -20,6 +20,8 @@ constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
 constexpr auto KInf = KTree<BlockType::Infinity>();
 constexpr auto i_e = KTree<BlockType::ComplexI>();
+constexpr auto KFalse = KTree<BlockType::Boolean, false>();
+constexpr auto KTrue = KTree<BlockType::Boolean, true>();
 
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();

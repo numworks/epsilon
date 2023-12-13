@@ -213,7 +213,22 @@ NODE(ListProduct, 1)
 
 RANGE(ListToScalar, ListAccess, ListProduct)
 
-// 7 - Order dependant expressions
+// 7 - Booleans
+
+/* - Boolean B
+ * | B TAG | BOOL VALUE | */
+NODE(Boolean, 0, 1)
+
+NODE(LogicalNot, 1)
+NODE(LogicalAnd, 2)
+NODE(LogicalOr, 2)
+NODE(LogicalXor, 2)
+NODE(LogicalNor, 2)
+NODE(LogicalNand, 2)
+
+RANGE(LogicalOperator, LogicalNot, LogicalNand)
+
+// 8 - Order dependant expressions
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
 NODE(Unit, 0, 2)

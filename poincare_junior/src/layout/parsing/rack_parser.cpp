@@ -145,18 +145,18 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
   typedef void (RackParser::*TokenParser)(EditionReference & leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
-      &RackParser::parseUnexpected,       // Token::Type::EndOfStream
-      &RackParser::parseRightwardsArrow,  // Token::Type::RightwardsArrow
-      &RackParser::parseAssignmentEqual,  // Token::Type::AssignmentEqual
-      &RackParser::parseUnexpected,       // Token::Type::RightBracket
-      &RackParser::parseUnexpected,       // Token::Type::RightParenthesis
-      &RackParser::parseUnexpected,       // Token::Type::RightBrace
-      &RackParser::parseUnexpected,       // Token::Type::Comma
-      nullptr,  //&Parser::parseNorOperator,         // Token::Type::Nor
-      nullptr,  //&Parser::parseXorOperator,         // Token::Type::Xor
-      nullptr,  //&Parser::parseOrOperator,          // Token::Type::Or
-      nullptr,  //&Parser::parseNandOperator,        // Token::Type::Nand
-      nullptr,  //&Parser::parseAndOperator,         // Token::Type::And
+      &RackParser::parseUnexpected,          // Token::Type::EndOfStream
+      &RackParser::parseRightwardsArrow,     // Token::Type::RightwardsArrow
+      &RackParser::parseAssignmentEqual,     // Token::Type::AssignmentEqual
+      &RackParser::parseUnexpected,          // Token::Type::RightBracket
+      &RackParser::parseUnexpected,          // Token::Type::RightParenthesis
+      &RackParser::parseUnexpected,          // Token::Type::RightBrace
+      &RackParser::parseUnexpected,          // Token::Type::Comma
+      &RackParser::parseNorOperator,         // Token::Type::Nor
+      &RackParser::parseXorOperator,         // Token::Type::Xor
+      &RackParser::parseOrOperator,          // Token::Type::Or
+      &RackParser::parseNandOperator,        // Token::Type::Nand
+      &RackParser::parseAndOperator,         // Token::Type::And
       &RackParser::parseLogicalOperatorNot,  // Token::Type::Not
       &RackParser::parseComparisonOperator,  // Token::Type::ComparisonOperator
       &RackParser::parseNorthEastArrow,      // Token::Type::NorthEastArrow
@@ -195,13 +195,11 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
   assert_order(Token::Type::RightParenthesis, parseUnexpected);
   assert_order(Token::Type::RightBrace, parseUnexpected);
   assert_order(Token::Type::Comma, parseUnexpected);
-#if 0
   assert_order(Token::Type::Nor, parseNorOperator);
   assert_order(Token::Type::Xor, parseXorOperator);
   assert_order(Token::Type::Or, parseOrOperator);
   assert_order(Token::Type::Nand, parseNandOperator);
   assert_order(Token::Type::And, parseAndOperator);
-#endif
   assert_order(Token::Type::Not, parseLogicalOperatorNot);
   assert_order(Token::Type::ComparisonOperator, parseComparisonOperator);
   assert_order(Token::Type::NorthEastArrow, parseNorthEastArrow);
@@ -639,38 +637,38 @@ leftHandSide = LogicalOperatorNot::Builder(rightHandSide);
 #endif
 }
 
-// void Parser::parseBinaryLogicalOperator(
-// BinaryLogicalOperatorNode::OperatorType operatorType,
-// EditionReference &leftHandSide, Token::Type stoppingType) {
-// if (leftHandSide.isUninitialized()) {
-// // Left-hand side missing.
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// }
-/* And and Nand have same precedence
- * Or, Nor and Xor have same precedence */
-// Token::Type newStoppingType;
-// if (operatorType == BinaryLogicalOperatorNode::OperatorType::And ||
-// operatorType == BinaryLogicalOperatorNode::OperatorType::Nand) {
-// static_assert(Token::Type::Nand < Token::Type::And,
-// "Wrong And/Nand precedence.");
-// newStoppingType = Token::Type::And;
-// } else {
-// assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Or ||
-// operatorType == BinaryLogicalOperatorNode::OperatorType::Nor ||
-// operatorType == BinaryLogicalOperatorNode::OperatorType::Xor);
-// static_assert(Token::Type::Nor < Token::Type::Or &&
-// Token::Type::Xor < Token::Type::Or,
-// "Wrong Or/Nor/Xor precedence.");
-// newStoppingType = Token::Type::Or;
-// }
-// EditionReference rightHandSide =
-// parseUntil(std::max(stoppingType, newStoppingType));
-// if (rightHandSide.isUninitialized()) {
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// }
-// leftHandSide =
-// BinaryLogicalOperator::Builder(leftHandSide, rightHandSide, operatorType);
-// }
+void RackParser::parseBinaryLogicalOperator(BlockType operatorType,
+                                            EditionReference &leftHandSide,
+                                            Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    // Left-hand side missing.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  /* And and Nand have same precedence
+   * Or, Nor and Xor have same precedence */
+  Token::Type newStoppingType;
+  if (operatorType == BlockType::LogicalAnd ||
+      operatorType == BlockType::LogicalNand) {
+    static_assert(Token::Type::Nand < Token::Type::And,
+                  "Wrong And/Nand precedence.");
+    newStoppingType = Token::Type::And;
+  } else {
+    assert(operatorType == BlockType::LogicalOr ||
+           operatorType == BlockType::LogicalNor ||
+           operatorType == BlockType::LogicalXor);
+    static_assert(Token::Type::Nor < Token::Type::Or &&
+                      Token::Type::Xor < Token::Type::Or,
+                  "Wrong Or/Nor/Xor precedence.");
+    newStoppingType = Token::Type::Or;
+  }
+  EditionReference rightHandSide =
+      parseUntil(std::max(stoppingType, newStoppingType));
+  if (rightHandSide.isUninitialized()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  Tree *node = SharedEditionPool->push(operatorType);
+  leftHandSide->moveNodeAtNode(node);
+}
 
 void RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
                                      EditionReference &rightHandSide,

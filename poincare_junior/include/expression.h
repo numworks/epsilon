@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/expression.h>
+#include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/memory/reference.h>
 
 namespace PoincareJ {
@@ -21,8 +22,12 @@ class Expression final : public Reference {
   static Expression FromPoincareExpression(const Poincare::Expression* exp);
 
   template <typename T>
-  T approximate() const;
-  Poincare::Expression toPoincareExpression() const;
+  T approximate() const {
+    return Approximation::RootTreeTo<T>(getTree());
+  }
+  Poincare::Expression toPoincareExpression() const {
+    return ToPoincareExpression(getTree());
+  }
 
   // TODO: Hide/Remove this
   static Expression CreateSimplifyReduction(void* treeAddress);

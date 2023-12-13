@@ -55,8 +55,8 @@ class Reference {
   typedef void (*FunctionOnConstTree)(const Tree *tree, void *context);
   void send(FunctionOnConstTree functionOnTree, void *context) const;
 
-  void dumpAt(void *address) const;
-  size_t treeSize() const;
+  void dumpAt(void *address) const { getTree()->copyTreeTo(address); }
+  size_t treeSize() const { return getTree()->treeSize(); }
   bool treeIsIdenticalTo(const Reference &other) const {
     // TODO: second getTree() can delete first tree.
     return (isUninitialized() == other.isUninitialized()) &&
@@ -71,6 +71,11 @@ class Reference {
   bool isUninitialized() const { return !hasInitializers() || !getTree(); }
   uint16_t id() const;  // TODO: make private (public for tests)
 
+ protected:
+  /* Warning : This tree is unstable and shouldn't be stored anywhere for later
+   * use. */
+  const Tree *getTree() const;
+
  private:
   Reference(ActionWithContext initializer, void *subInitializer,
             const void *data
@@ -84,7 +89,6 @@ class Reference {
   bool hasInitializers() const {
     return isCacheReference() || m_data.data() != nullptr;
   }
-  const Tree *getTree() const;
 
   ActionWithContext m_initializer;
   void *m_subInitializer;

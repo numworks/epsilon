@@ -120,17 +120,11 @@ Reference::Reference(InitializerFromTreeInplace initializer,
           [](void *initializer, const void *data) {
             const Reference *treeReference =
                 static_cast<const Reference *>(data);
-            return treeReference->send(
-                [](const Tree *tree, void *context) {
-                  /* Copy the cache Tree* into the EditionPool for inplace
-                   * editing. We couldn't use tree in the initializer since it
-                   * may be erased if the SharedEditionPool needs space and
-                   * flushes the CachePool. */
-                  Tree *editedTree = SharedEditionPool->clone(tree);
-                  return (reinterpret_cast<InitializerFromTreeInplace>(
-                      context))(editedTree);
-                },
-                initializer);
+            /* Copy the cached Tree* into the EditionPool for inplace editing.
+             * We couldn't use tree in the initializer since it may be erased if
+             * the SharedEditionPool needs space and flushes the CachePool. */
+            return reinterpret_cast<InitializerFromTreeInplace>(initializer)(
+                treeReference->getTree()->clone());
           },
           reinterpret_cast<void *>(initializer),
           treeReference
@@ -150,26 +144,10 @@ void Reference::send(FunctionOnConstTree function, void *context) const {
   return function(getTree(), context);
 }
 
-void Reference::dumpAt(void *address) const {
-  send([](const Tree *tree, void *buffer) { tree->copyTreeTo(buffer); },
-       address);
-}
-
-size_t Reference::treeSize() const {
-  size_t result;
-  send(
-      [](const Tree *tree, void *result) {
-        size_t *res = static_cast<size_t *>(result);
-        *res = tree->treeSize();
-      },
-      &result);
-  return result;
-}
-
 #if POINCARE_MEMORY_TREE_LOG
 void Reference::log() {
   std::cout << "id: " << m_id;
-  send([](const Tree *tree, void *result) { tree->log(std::cout); }, nullptr);
+  getTree()->log(std::cout);
 }
 #endif
 

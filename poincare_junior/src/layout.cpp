@@ -5,7 +5,6 @@
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 #include <string.h>
@@ -107,52 +106,6 @@ Layout Layout::Parse(const char *textInput) {
 
 Layout Layout::FromExpression(const Expression *expr) {
   return Layout([](Tree *node) { Layoutter::LayoutExpression(node); }, expr);
-}
-
-void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor,
-                  LayoutSelection selection) const {
-  void *context[] = {ctx,       &p, &font, &expressionColor, &backgroundColor,
-                     &selection};
-  send(
-      [](const Tree *tree, void *context) {
-        void **contextArray = static_cast<void **>(context);
-        KDContext *ctx = static_cast<KDContext *>(contextArray[0]);
-        KDPoint p = *static_cast<KDPoint *>(contextArray[1]);
-        KDFont::Size font = *static_cast<KDFont::Size *>(contextArray[2]);
-        KDColor expressionColor = *static_cast<KDColor *>(contextArray[3]);
-        KDColor backgroundColor = *static_cast<KDColor *>(contextArray[4]);
-        LayoutSelection selection =
-            *static_cast<LayoutSelection *>(contextArray[5]);
-        Render::Draw(tree, ctx, p, font, expressionColor, backgroundColor,
-                     selection);
-      },
-      &context);
-}
-
-KDSize Layout::size(KDFont::Size font) const {
-  KDSize result = KDSizeZero;
-  void *context[2] = {&font, &result};
-  send(
-      [](const Tree *tree, void *context) {
-        void **contextArray = static_cast<void **>(context);
-        KDFont::Size font = *static_cast<KDFont::Size *>(contextArray[0]);
-        KDSize *result = static_cast<KDSize *>(contextArray[1]);
-        *result = Render::Size(tree);
-      },
-      &context);
-  return result;
-}
-
-bool Layout::isEmpty() const {
-  bool result = false;
-  send(
-      [](const Tree *tree, void *context) {
-        bool *result = static_cast<bool *>(context);
-        *result = IsEmpty(tree);
-      },
-      &result);
-  return result;
 }
 
 }  // namespace PoincareJ

@@ -97,7 +97,10 @@ class Calculation {
   void fillExpressionsForAdditionalResults(
       Poincare::Expression* input, Poincare::Expression* exactOutput,
       Poincare::Expression* approximateOutput);
-  AdditionalResultsType additionalResultsType();
+  void computeAdditionalResultsType();
+  AdditionalResultsType additionalResultsType() {
+    return m_additionalResultsType;
+  }
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
@@ -117,6 +120,7 @@ class Calculation {
    * results. */
   Poincare::Preferences::ComplexFormat m_complexFormat;
   Poincare::Preferences::AngleUnit m_angleUnit;
+  AdditionalResultsType m_additionalResultsType;
 #if __EMSCRIPTEN__
   // See comment about emscripten alignment in Function::RecordDataBuffer
   static_assert(

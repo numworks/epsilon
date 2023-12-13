@@ -198,6 +198,7 @@ bool EditExpressionController::pushCalculation(const char *text,
                                                Poincare::Context *context) {
   Calculation *calculation = m_calculationStore->push(text, context).pointer();
   if (calculation) {
+    calculation->computeAdditionalResultsType();
     HistoryViewCell::ComputeCalculationHeights(calculation, context);
     m_historyController->reload();
     return true;

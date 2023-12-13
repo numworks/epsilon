@@ -101,7 +101,6 @@ install_windows_binary_deps() {
     mingw-w64-x86_64-freetype \
     mingw-w64-x86_64-gcc \
     mingw-w64-x86_64-imagemagick \
-    mingw-w64-x86_64-inkscape \
     mingw-w64-x86_64-libjpeg-turbo \
     mingw-w64-x86_64-libpng \
     mingw-w64-x86_64-librsvg \

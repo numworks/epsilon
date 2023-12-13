@@ -34,11 +34,11 @@ ifndef ARCH
 
 $(BUILD_DIR)/app/res/mipmap/ic_launcher.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
-	$(Q) convert -background "#FFB734" $< $@
+	$(Q) convert -background "#FFB734" MSVG:$< $@
 
 $(BUILD_DIR)/app/res/mipmap-v26/ic_launcher_foreground.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
-	$(Q) convert -background none $< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
+	$(Q) convert -background none MSVG:$< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
 
 $(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 	$(call rule_label,COPY)

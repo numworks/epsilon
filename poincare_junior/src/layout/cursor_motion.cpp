@@ -16,10 +16,10 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
   switch (node->layoutType()) {
     case LayoutType::Binomial:
     case LayoutType::Fraction:
-      static_assert(Fraction::NumeratorIndex == Binomial::nIndex);
+      static_assert(Fraction::k_numeratorIndex == Binomial::k_nIndex);
       if (currentIndex == k_outsideIndex) {
-        return direction.isRight() ? Fraction::NumeratorIndex
-                                   : Fraction::DenominatorIndex;
+        return direction.isRight() ? Fraction::k_numeratorIndex
+                                   : Fraction::k_denominatorIndex;
       }
       return k_outsideIndex;
     case LayoutType::Matrix:
@@ -42,63 +42,63 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::NthDerivative: {
       using namespace Derivative;
       if (node->isDerivativeLayout()) {
-        if (currentIndex == DerivandIndex) {
+        if (currentIndex == k_derivandIndex) {
           SetVariableSlot(node, direction.isRight() ? VariableSlot::Assignment
                                                     : VariableSlot::Fraction);
-          return VariableIndex;
+          return k_variableIndex;
         }
-        if (currentIndex == VariableIndex &&
+        if (currentIndex == k_variableIndex &&
             GetVariableSlot(node) == VariableSlot::Fraction) {
-          return direction.isRight() ? DerivandIndex : k_outsideIndex;
+          return direction.isRight() ? k_derivandIndex : k_outsideIndex;
         }
       } else {
-        if (currentIndex == DerivandIndex) {
+        if (currentIndex == k_derivandIndex) {
           if (direction.isRight()) {
             SetVariableSlot(node, VariableSlot::Assignment);
-            return VariableIndex;
+            return k_variableIndex;
           }
           SetOrderSlot(node, OrderSlot::Denominator);
-          return OrderIndex;
+          return k_orderIndex;
         }
-        if (currentIndex == VariableIndex &&
+        if (currentIndex == k_variableIndex &&
             GetVariableSlot(node) == VariableSlot::Fraction) {
           if (direction.isRight()) {
             SetOrderSlot(node, OrderSlot::Denominator);
-            return OrderIndex;
+            return k_orderIndex;
           }
           return k_outsideIndex;
         }
-        if (currentIndex == OrderIndex) {
+        if (currentIndex == k_orderIndex) {
           if (GetOrderSlot(node) == OrderSlot::Denominator) {
             if (direction.isLeft()) {
               SetVariableSlot(node, VariableSlot::Fraction);
-              return VariableIndex;
+              return k_variableIndex;
             }
-            return DerivandIndex;
+            return k_derivandIndex;
           }
           assert(GetOrderSlot(node) == OrderSlot::Numerator);
-          return direction.isRight() ? DerivandIndex : k_outsideIndex;
+          return direction.isRight() ? k_derivandIndex : k_outsideIndex;
         }
       }
       if (currentIndex == k_outsideIndex && direction.isRight()) {
         SetVariableSlot(node, VariableSlot::Fraction);
-        return VariableIndex;
+        return k_variableIndex;
       }
-      if (currentIndex == AbscissaIndex && direction.isLeft()) {
+      if (currentIndex == k_abscissaIndex && direction.isLeft()) {
         SetVariableSlot(node, VariableSlot::Assignment);
-        return VariableIndex;
+        return k_variableIndex;
       }
       switch (currentIndex) {
         case k_outsideIndex:
           assert(direction.isLeft());
-          return AbscissaIndex;
-        case AbscissaIndex:
+          return k_abscissaIndex;
+        case k_abscissaIndex:
           assert(direction.isRight());
           return k_outsideIndex;
         default: {
-          assert(currentIndex == VariableIndex &&
+          assert(currentIndex == k_variableIndex &&
                  GetVariableSlot(node) == VariableSlot::Assignment);
-          return direction.isRight() ? AbscissaIndex : DerivandIndex;
+          return direction.isRight() ? k_abscissaIndex : k_derivandIndex;
         }
       }
     }
@@ -106,66 +106,66 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       switch (currentIndex) {
         using namespace Integral;
         case k_outsideIndex:
-          return direction.isRight() ? UpperBoundIndex : DifferentialIndex;
-        case UpperBoundIndex:
-        case LowerBoundIndex:
-          return direction.isRight() ? IntegrandIndex : k_outsideIndex;
-        case IntegrandIndex:
-          return direction.isRight() ? DifferentialIndex : LowerBoundIndex;
-        case DifferentialIndex:
-          return direction.isRight() ? k_outsideIndex : IntegrandIndex;
+          return direction.isRight() ? k_upperBoundIndex : k_differentialIndex;
+        case k_upperBoundIndex:
+        case k_lowerBoundIndex:
+          return direction.isRight() ? k_integrandIndex : k_outsideIndex;
+        case k_integrandIndex:
+          return direction.isRight() ? k_differentialIndex : k_lowerBoundIndex;
+        case k_differentialIndex:
+          return direction.isRight() ? k_outsideIndex : k_integrandIndex;
       }
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute:
       switch (currentIndex) {
         using namespace PtCombinatorics;
         case k_outsideIndex:
-          return direction.isRight() ? nIndex : kIndex;
-        case nIndex:
-          return direction.isRight() ? kIndex : k_outsideIndex;
+          return direction.isRight() ? k_nIndex : k_kIndex;
+        case k_nIndex:
+          return direction.isRight() ? k_kIndex : k_outsideIndex;
         default:
-          assert(currentIndex == kIndex);
-          return direction.isRight() ? k_outsideIndex : nIndex;
+          assert(currentIndex == k_kIndex);
+          return direction.isRight() ? k_outsideIndex : k_nIndex;
       }
     case LayoutType::ListSequence:
       switch (currentIndex) {
         using namespace ListSequence;
         case k_outsideIndex:
-          return direction.isRight() ? FunctionIndex : UpperBoundIndex;
-        case FunctionIndex:
-          return direction.isRight() ? VariableIndex : k_outsideIndex;
-        case VariableIndex:
-          return direction.isRight() ? UpperBoundIndex : FunctionIndex;
+          return direction.isRight() ? k_functionIndex : k_upperBoundIndex;
+        case k_functionIndex:
+          return direction.isRight() ? k_variableIndex : k_outsideIndex;
+        case k_variableIndex:
+          return direction.isRight() ? k_upperBoundIndex : k_functionIndex;
         default:
-          assert(currentIndex == UpperBoundIndex);
-          return direction.isRight() ? k_outsideIndex : VariableIndex;
+          assert(currentIndex == k_upperBoundIndex);
+          return direction.isRight() ? k_outsideIndex : k_variableIndex;
       }
     case LayoutType::NthRoot:
       switch (currentIndex) {
         using namespace NthRoot;
         case k_outsideIndex:
-          return direction.isRight() ? IndexIndex : RadicandIndex;
-        case IndexIndex:
-          return direction.isRight() ? RadicandIndex : k_outsideIndex;
+          return direction.isRight() ? k_indexIndex : k_radicandIndex;
+        case k_indexIndex:
+          return direction.isRight() ? k_radicandIndex : k_outsideIndex;
         default:
-          assert(currentIndex == RadicandIndex);
-          return direction.isRight() ? k_outsideIndex : IndexIndex;
+          assert(currentIndex == k_radicandIndex);
+          return direction.isRight() ? k_outsideIndex : k_indexIndex;
       }
     case LayoutType::Product:
     case LayoutType::Sum:
       switch (currentIndex) {
         using namespace Parametric;
         case k_outsideIndex:
-          return direction.isRight() ? UpperBoundIndex : ArgumentIndex;
-        case UpperBoundIndex:
-          return direction.isRight() ? ArgumentIndex : k_outsideIndex;
-        case VariableIndex:
-          return direction.isRight() ? LowerBoundIndex : k_outsideIndex;
-        case LowerBoundIndex:
-          return direction.isRight() ? ArgumentIndex : VariableIndex;
+          return direction.isRight() ? k_upperBoundIndex : k_argumentIndex;
+        case k_upperBoundIndex:
+          return direction.isRight() ? k_argumentIndex : k_outsideIndex;
+        case k_variableIndex:
+          return direction.isRight() ? k_lowerBoundIndex : k_outsideIndex;
+        case k_lowerBoundIndex:
+          return direction.isRight() ? k_argumentIndex : k_variableIndex;
         default:
-          assert(currentIndex == ArgumentIndex);
-          return direction.isRight() ? k_outsideIndex : LowerBoundIndex;
+          assert(currentIndex == k_argumentIndex);
+          return direction.isRight() ? k_outsideIndex : k_lowerBoundIndex;
       }
     default:
       if (nChildren == 0) {
@@ -187,11 +187,11 @@ int CursorMotion::IndexAfterVerticalCursorMove(
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       using namespace Binomial;
-      if (currentIndex == kIndex && direction.isUp()) {
-        return nIndex;
+      if (currentIndex == k_kIndex && direction.isUp()) {
+        return k_nIndex;
       }
-      if (currentIndex == nIndex && direction.isDown()) {
-        return kIndex;
+      if (currentIndex == k_nIndex && direction.isDown()) {
+        return k_kIndex;
       }
       return k_cantMoveIndex;
     }
@@ -199,12 +199,12 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       switch (currentIndex) {
         using namespace Fraction;
         case k_outsideIndex:
-          return direction.isUp() ? NumeratorIndex : DenominatorIndex;
-        case NumeratorIndex:
-          return direction.isUp() ? k_cantMoveIndex : DenominatorIndex;
+          return direction.isUp() ? k_numeratorIndex : k_denominatorIndex;
+        case k_numeratorIndex:
+          return direction.isUp() ? k_cantMoveIndex : k_denominatorIndex;
         default:
-          assert(currentIndex == DenominatorIndex);
-          return direction.isUp() ? NumeratorIndex : k_cantMoveIndex;
+          assert(currentIndex == k_denominatorIndex);
+          return direction.isUp() ? k_numeratorIndex : k_cantMoveIndex;
       }
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
@@ -224,67 +224,67 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::NthDerivative: {
       using namespace Derivative;
       if (node->isDerivativeLayout()) {
-        if (direction.isDown() && currentIndex == DerivandIndex &&
+        if (direction.isDown() && currentIndex == k_derivandIndex &&
             positionAtCurrentIndex == PositionInLayout::Left) {
           SetVariableSlot(node, VariableSlot::Fraction);
-          return VariableIndex;
+          return k_variableIndex;
         }
-        if (direction.isUp() && currentIndex == VariableIndex &&
+        if (direction.isUp() && currentIndex == k_variableIndex &&
             GetVariableSlot(node) == VariableSlot::Fraction) {
-          return DerivandIndex;
+          return k_derivandIndex;
         }
       } else {
-        if (direction.isUp() && currentIndex == VariableIndex &&
+        if (direction.isUp() && currentIndex == k_variableIndex &&
             GetVariableSlot(node) == VariableSlot::Fraction) {
           SetOrderSlot(node, positionAtCurrentIndex == PositionInLayout::Right
                                  ? OrderSlot::Denominator
                                  : OrderSlot::Numerator);
-          return OrderIndex;
+          return k_orderIndex;
         }
         if (direction.isUp() &&
-            ((currentIndex == DerivandIndex &&
+            ((currentIndex == k_derivandIndex &&
               positionAtCurrentIndex == PositionInLayout::Left) ||
-             (currentIndex == OrderIndex &&
+             (currentIndex == k_orderIndex &&
               GetOrderSlot(node) == OrderSlot::Denominator))) {
           SetOrderSlot(node, OrderSlot::Numerator);
-          return OrderIndex;
+          return k_orderIndex;
         }
         if (direction.isDown() &&
-            ((currentIndex == DerivandIndex &&
+            ((currentIndex == k_derivandIndex &&
               positionAtCurrentIndex == PositionInLayout::Left) ||
-             (currentIndex == OrderIndex &&
+             (currentIndex == k_orderIndex &&
               GetOrderSlot(node) == OrderSlot::Numerator))) {
           SetOrderSlot(node, OrderSlot::Denominator);
-          return OrderIndex;
+          return k_orderIndex;
         }
-        if (direction.isDown() && currentIndex == OrderIndex &&
+        if (direction.isDown() && currentIndex == k_orderIndex &&
             GetOrderSlot(node) == OrderSlot::Denominator &&
             positionAtCurrentIndex == PositionInLayout::Left) {
           SetVariableSlot(node, VariableSlot::Fraction);
-          return VariableIndex;
+          return k_variableIndex;
         }
       }
-      if (direction.isUp() && currentIndex == VariableIndex &&
+      if (direction.isUp() && currentIndex == k_variableIndex &&
           GetVariableSlot(node) == VariableSlot::Assignment) {
-        return DerivandIndex;
+        return k_derivandIndex;
       }
-      if (direction.isDown() && currentIndex == DerivandIndex &&
+      if (direction.isDown() && currentIndex == k_derivandIndex &&
           positionAtCurrentIndex == PositionInLayout::Right) {
-        return AbscissaIndex;
+        return k_abscissaIndex;
       }
       return k_cantMoveIndex;
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      if (currentIndex == IntegrandIndex &&
+      if (currentIndex == k_integrandIndex &&
           positionAtCurrentIndex == PositionInLayout::Left) {
-        return direction.isUp() ? UpperBoundIndex : LowerBoundIndex;
+        return direction.isUp() ? k_upperBoundIndex : k_lowerBoundIndex;
       }
-      if (currentIndex == UpperBoundIndex && direction.isDown()) {
-        return LowerBoundIndex;
+      if (currentIndex == k_upperBoundIndex && direction.isDown()) {
+        return k_lowerBoundIndex;
       }
-      if (currentIndex == LowerBoundIndex && direction.isUp()) {
-        return UpperBoundIndex;
+      if (currentIndex == k_lowerBoundIndex && direction.isUp()) {
+        return k_upperBoundIndex;
       }
       return k_cantMoveIndex;
     }
@@ -292,16 +292,16 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::PtPermute: {
       using namespace PtCombinatorics;
       if (direction.isUp() &&
-          (currentIndex == kIndex ||
+          (currentIndex == k_kIndex ||
            (currentIndex == k_outsideIndex &&
             positionAtCurrentIndex == PositionInLayout::Left))) {
-        return nIndex;
+        return k_nIndex;
       }
       if (direction.isDown() &&
-          (currentIndex == nIndex ||
+          (currentIndex == k_nIndex ||
            (currentIndex == k_outsideIndex &&
             positionAtCurrentIndex == PositionInLayout::Right))) {
-        return kIndex;
+        return k_kIndex;
       }
       return k_cantMoveIndex;
     }
@@ -309,13 +309,13 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       using namespace NthRoot;
       if (direction.isUp() &&
           positionAtCurrentIndex == PositionInLayout::Left &&
-          (currentIndex == k_outsideIndex || currentIndex == RadicandIndex)) {
-        return IndexIndex;
+          (currentIndex == k_outsideIndex || currentIndex == k_radicandIndex)) {
+        return k_indexIndex;
       }
-      if (direction.isDown() && currentIndex == IndexIndex &&
+      if (direction.isDown() && currentIndex == k_indexIndex &&
           positionAtCurrentIndex != PositionInLayout::Middle) {
         return positionAtCurrentIndex == PositionInLayout::Right
-                   ? RadicandIndex
+                   ? k_radicandIndex
                    : k_outsideIndex;
       }
       return k_cantMoveIndex;
@@ -324,18 +324,19 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::Sum: {
       using namespace Parametric;
       if (direction.isUp() &&
-          ((currentIndex == VariableIndex || currentIndex == LowerBoundIndex) ||
+          ((currentIndex == k_variableIndex ||
+            currentIndex == k_lowerBoundIndex) ||
            (positionAtCurrentIndex == PositionInLayout::Left &&
             (currentIndex == k_outsideIndex ||
-             currentIndex == ArgumentIndex)))) {
-        return UpperBoundIndex;
+             currentIndex == k_argumentIndex)))) {
+        return k_upperBoundIndex;
       }
       if (direction.isDown() &&
-          ((currentIndex == UpperBoundIndex) ||
+          ((currentIndex == k_upperBoundIndex) ||
            (positionAtCurrentIndex == PositionInLayout::Left &&
             (currentIndex == k_outsideIndex ||
-             currentIndex == ArgumentIndex)))) {
-        return LowerBoundIndex;
+             currentIndex == k_argumentIndex)))) {
+        return k_lowerBoundIndex;
       }
       return k_cantMoveIndex;
     }
@@ -369,18 +370,18 @@ int CursorMotion::IndexToPointToWhenInserting(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Product:
     case LayoutType::Sum:
-      return Parametric::LowerBoundIndex;
+      return Parametric::k_lowerBoundIndex;
     case LayoutType::Integral:
-      return Integral::LowerBoundIndex;
+      return Integral::k_lowerBoundIndex;
     case LayoutType::Derivative:
     case LayoutType::NthDerivative:
-      return Derivative::DerivandIndex;
+      return Derivative::k_derivandIndex;
     case LayoutType::ListSequence:
-      return ListSequence::FunctionIndex;
+      return ListSequence::k_functionIndex;
     case LayoutType::Fraction:
-      return RackLayout::IsEmpty(node->child(Fraction::NumeratorIndex))
-                 ? Fraction::NumeratorIndex
-                 : Fraction::DenominatorIndex;
+      return RackLayout::IsEmpty(node->child(Fraction::k_numeratorIndex))
+                 ? Fraction::k_numeratorIndex
+                 : Fraction::k_denominatorIndex;
     default:
       return node->numberOfChildren() > 0 ? 0 : k_outsideIndex;
   }
@@ -416,15 +417,15 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
   switch (node->layoutType()) {
     case LayoutType::Binomial:
       using namespace Binomial;
-      if (childIndex == nIndex && IsEmpty(node->child(kIndex))) {
+      if (childIndex == k_nIndex && IsEmpty(node->child(k_kIndex))) {
         return DeletionMethod::DeleteParent;
       }
-      if (childIndex == kIndex) {
+      if (childIndex == k_kIndex) {
         return DeletionMethod::BinomialCoefficientMoveFromKtoN;
       }
       return DeletionMethod::MoveLeft;
     case LayoutType::Fraction:
-      return childIndex == Fraction::DenominatorIndex
+      return childIndex == Fraction::k_denominatorIndex
                  ? DeletionMethod::FractionDenominatorDeletion
                  : DeletionMethod::MoveLeft;
     case LayoutType::Parenthesis:
@@ -445,17 +446,17 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     case LayoutType::Derivative:
     case LayoutType::NthDerivative:
       return StandardDeletionMethodForLayoutContainingArgument(
-          childIndex, Derivative::DerivandIndex);
+          childIndex, Derivative::k_derivandIndex);
     case LayoutType::Integral:
       return StandardDeletionMethodForLayoutContainingArgument(
-          childIndex, Integral::IntegrandIndex);
+          childIndex, Integral::k_integrandIndex);
     case LayoutType::ListSequence:
       return StandardDeletionMethodForLayoutContainingArgument(
-          childIndex, ListSequence::FunctionIndex);
+          childIndex, ListSequence::k_functionIndex);
     case LayoutType::SquareRoot:
     case LayoutType::NthRoot:
       return StandardDeletionMethodForLayoutContainingArgument(
-          childIndex, NthRoot::RadicandIndex);
+          childIndex, NthRoot::k_radicandIndex);
     case LayoutType::VerticalOffset:
       return childIndex == 0 && IsEmpty(node->child(0))
                  ? DeletionMethod::DeleteLayout
@@ -463,7 +464,7 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     case LayoutType::Product:
     case LayoutType::Sum:
       return StandardDeletionMethodForLayoutContainingArgument(
-          childIndex, Parametric::ArgumentIndex);
+          childIndex, Parametric::k_argumentIndex);
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);

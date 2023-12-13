@@ -27,7 +27,7 @@ KDSize Render::Size(const Tree* node) {
           KDSize(std::max(Width(node->child(0)), Width(node->child(1))),
                  Binomial::KNHeight(node, font));
       KDCoordinate width =
-          coefficientsSize.width() + 2 * Parenthesis::ParenthesisWidth;
+          coefficientsSize.width() + 2 * Parenthesis::k_parenthesisWidth;
       return KDSize(width, coefficientsSize.height());
     }
     case LayoutType::Conjugate: {
@@ -38,8 +38,8 @@ KDSize Render::Size(const Tree* node) {
           childSize.width() +
           Escher::Metric::FractionAndConjugateHorizontalOverflow +
           Escher::Metric::FractionAndConjugateHorizontalMargin;
-      KDCoordinate newHeight = childSize.height() + Conjugate::OverlineWidth +
-                               Conjugate::OverlineVerticalMargin;
+      KDCoordinate newHeight = childSize.height() + Conjugate::k_overlineWidth +
+                               Conjugate::k_overlineVerticalMargin;
       return KDSize(newWidth, newHeight);
     }
     case LayoutType::SquareRoot:
@@ -47,8 +47,8 @@ KDSize Render::Size(const Tree* node) {
       KDSize radicandSize = Size(node->child(0));
       KDSize indexSize = NthRoot::AdjustedIndexSize(node, font);
       KDSize newSize = KDSize(
-          indexSize.width() + 3 * NthRoot::WidthMargin +
-              NthRoot::RadixLineThickness + radicandSize.width(),
+          indexSize.width() + 3 * NthRoot::k_widthMargin +
+              NthRoot::k_radixLineThickness + radicandSize.width(),
           Baseline(node) + radicandSize.height() - Baseline(node->child(0)));
       return newSize;
     }
@@ -62,7 +62,7 @@ KDSize Render::Size(const Tree* node) {
        * happening. */
       constexpr static KDCoordinate k_maxVariableAndOrderSize =
           KDCOORDINATE_MAX / 4;
-      KDSize variableSize = Size(node->child(VariableIndex));
+      KDSize variableSize = Size(node->child(k_variableIndex));
       KDSize orderSize =
           KDSize(orderWidth(node, font), orderHeightOffset(node, font));
       if (variableSize.height() >= k_maxVariableAndOrderSize ||
@@ -72,8 +72,8 @@ KDSize Render::Size(const Tree* node) {
         return KDSize(k_maxLayoutSize, k_maxLayoutSize);
       }
 
-      KDPoint abscissaPosition = PositionOfChild(node, AbscissaIndex);
-      KDSize abscissaSize = Size(node->child(AbscissaIndex));
+      KDPoint abscissaPosition = PositionOfChild(node, k_abscissaIndex);
+      KDSize abscissaSize = Size(node->child(k_abscissaIndex));
       return KDSize(
           abscissaPosition.x() + abscissaSize.width(),
           std::max(abscissaPosition.y() + abscissaSize.height(),
@@ -88,20 +88,20 @@ KDSize Render::Size(const Tree* node) {
       KDSize lowerBoundSize = Size(node->child(1));
       KDSize upperBoundSize = Size(node->child(2));
       KDCoordinate width =
-          SymbolWidth + LineThickness + BoundHorizontalMargin +
+          k_symbolWidth + k_lineThickness + k_boundHorizontalMargin +
           std::max(lowerBoundSize.width(), upperBoundSize.width()) +
-          IntegrandHorizontalMargin + integrandSize.width() +
-          DifferentialHorizontalMargin + dSize.width() +
-          DifferentialHorizontalMargin + differentialSize.width();
+          k_integrandHorizontalMargin + integrandSize.width() +
+          k_differentialHorizontalMargin + dSize.width() +
+          k_differentialHorizontalMargin + differentialSize.width();
       const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
       KDCoordinate height;
       if (node == last) {
-        height = BoundVerticalMargin +
+        height = k_boundVerticalMargin +
                  boundMaxHeight(node, BoundPosition::UpperBound, font) +
-                 IntegrandVerticalMargin + centralArgumentHeight(node, font) +
-                 IntegrandVerticalMargin +
+                 k_integrandVerticalMargin + centralArgumentHeight(node, font) +
+                 k_integrandVerticalMargin +
                  boundMaxHeight(node, BoundPosition::LowerBound, font) +
-                 BoundVerticalMargin;
+                 k_boundVerticalMargin;
       } else {
         height = Height(last);
       }
@@ -111,10 +111,10 @@ KDSize Render::Size(const Tree* node) {
     case LayoutType::Sum: {
       using namespace Parametric;
       KDSize totalLowerBoundSize = lowerBoundSizeWithVariableEquals(node, font);
-      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
-      KDSize argumentSize = Size(node->child(ArgumentIndex));
+      KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
+      KDSize argumentSize = Size(node->child(k_argumentIndex));
       KDSize argumentSizeWithParentheses =
-          KDSize(argumentSize.width() + 2 * Parenthesis::ParenthesisWidth,
+          KDSize(argumentSize.width() + 2 * Parenthesis::k_parenthesisWidth,
                  Parenthesis::HeightGivenChildHeight(argumentSize.height()));
       KDSize result = KDSize(
           std::max({SymbolWidth(font), totalLowerBoundSize.width(),
@@ -125,7 +125,7 @@ KDSize Render::Size(const Tree* node) {
               std::max(SymbolHeight(font) / 2 + LowerBoundVerticalMargin(font) +
                            totalLowerBoundSize.height(),
                        argumentSizeWithParentheses.height() -
-                           Baseline(node->child(ArgumentIndex))));
+                           Baseline(node->child(k_argumentIndex))));
       return result;
     }
 
@@ -137,9 +137,9 @@ KDSize Render::Size(const Tree* node) {
       KDSize denominatorSize = Size(node->child(1));
       KDCoordinate width =
           std::max(numeratorSize.width(), denominatorSize.width()) +
-          2 * (Fraction::HorizontalOverflow + Fraction::HorizontalMargin);
-      KDCoordinate height = numeratorSize.height() + Fraction::LineMargin +
-                            Fraction::LineHeight + Fraction::LineMargin +
+          2 * (Fraction::k_horizontalOverflow + Fraction::k_horizontalMargin);
+      KDCoordinate height = numeratorSize.height() + Fraction::k_lineMargin +
+                            Fraction::k_lineHeight + Fraction::k_lineMargin +
                             denominatorSize.height();
       return KDSize(width, height);
     }
@@ -161,12 +161,12 @@ KDSize Render::Size(const Tree* node) {
     }
     case LayoutType::ListSequence: {
       using namespace ListSequence;
-      KDPoint upperBoundPosition = PositionOfChild(node, UpperBoundIndex);
-      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDPoint upperBoundPosition = PositionOfChild(node, k_upperBoundIndex);
+      KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
       return KDSize(upperBoundPosition.x() + upperBoundSize.width(),
                     std::max(upperBoundPosition.y() + upperBoundSize.height(),
                              positionOfVariable(node, font).y() +
-                                 Height(node->child(VariableIndex))));
+                                 Height(node->child(k_variableIndex))));
     }
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints: {
@@ -175,16 +175,16 @@ KDSize Render::Size(const Tree* node) {
       // Handle the case of the middle dot which is thinner than the other
       // glyphs
       if (CodePointLayout::GetCodePoint(node) == UCodePointMiddleDot) {
-        width = CodePoint::MiddleDotWidth;
+        width = CodePoint::k_middleDotWidth;
       }
       return KDSize(width, glyph.height());
     }
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute: {
       using namespace PtCombinatorics;
-      KDCoordinate width = Render::Width(node->child(nIndex)) +
-                           SymbolWidthWithMargins +
-                           Render::Width(node->child(kIndex));
+      KDCoordinate width = Render::Width(node->child(k_nIndex)) +
+                           k_symbolWidthWithMargins +
+                           Render::Width(node->child(k_kIndex));
       return KDSize(width, TotalHeight(node, font));
     }
     case LayoutType::Matrix:
@@ -202,7 +202,7 @@ KDSize Render::Size(const Tree* node) {
 #endif
       // Add a right margin of size k_curlyBraceWidth
       KDSize sizeWithBrace =
-          KDSize(sizeWithoutBrace.width() + 2 * CurlyBrace::CurlyBraceWidth,
+          KDSize(sizeWithoutBrace.width() + 2 * CurlyBrace::k_curlyBraceWidth,
                  CurlyBrace::HeightGivenChildHeight(sizeWithoutBrace.height()));
       return sizeWithBrace;
     }
@@ -238,14 +238,14 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
     return p.translatedBy(SquareBracketPair::ChildOffset());
   }
   return p.translatedBy(
-      KDPoint(CurlyBrace::CurlyBraceWidth, CurlyBrace::LineThickness));
+      KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness));
 }
 
 KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       KDCoordinate horizontalCenter =
-          Parenthesis::ParenthesisWidth +
+          Parenthesis::k_parenthesisWidth +
           std::max(Width(node->child(0)), Width(node->child(1))) / 2;
       if (childIndex == 0) {
         return KDPoint(horizontalCenter - Width(node->child(0)) / 2, 0);
@@ -257,14 +257,14 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       return KDPoint(
           Escher::Metric::FractionAndConjugateHorizontalMargin +
               Escher::Metric::FractionAndConjugateHorizontalOverflow,
-          Conjugate::OverlineWidth + Conjugate::OverlineVerticalMargin);
+          Conjugate::k_overlineWidth + Conjugate::k_overlineVerticalMargin);
     }
     case LayoutType::SquareRoot:
     case LayoutType::NthRoot: {
       KDSize indexSize = NthRoot::AdjustedIndexSize(node, font);
       if (childIndex == 0) {
-        return KDPoint(indexSize.width() + 2 * NthRoot::WidthMargin +
-                           NthRoot::RadixLineThickness,
+        return KDPoint(indexSize.width() + 2 * NthRoot::k_widthMargin +
+                           NthRoot::k_radixLineThickness,
                        Baseline(node) - Baseline(node->child(0)));
       } else {
         return KDPoint(0, Baseline(node) - indexSize.height());
@@ -273,80 +273,81 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
-      if (childIndex == VariableIndex) {
+      if (childIndex == k_variableIndex) {
         return GetVariableSlot(node) == VariableSlot::Fraction
                    ? positionOfVariableInFractionSlot(node, font)
                    : positionOfVariableInAssignmentSlot(node, font);
       }
-      if (childIndex == DerivandIndex) {
+      if (childIndex == k_derivandIndex) {
         KDCoordinate leftParenthesisPosX =
             positionOfLeftParenthesis(node, font).x();
-        return KDPoint(leftParenthesisPosX + Parenthesis::ParenthesisWidth,
-                       Baseline(node) - Baseline(node->child(DerivandIndex)));
+        return KDPoint(leftParenthesisPosX + Parenthesis::k_parenthesisWidth,
+                       Baseline(node) - Baseline(node->child(k_derivandIndex)));
       }
-      if (childIndex == OrderIndex) {
+      if (childIndex == k_orderIndex) {
         return GetOrderSlot(node) == OrderSlot::Denominator
                    ? positionOfOrderInDenominator(node, font)
                    : positionOfOrderInNumerator(node, font);
       }
-      return KDPoint(
-          positionOfRightParenthesis(node, font,
-                                     Size(node->child(DerivandIndex)))
-                  .x() +
-              Parenthesis::ParenthesisWidth + 2 * BarHorizontalMargin +
-              BarWidth + Width(node->child(VariableIndex)) +
-              KDFont::Font(font)->stringSize("=").width(),
-          abscissaBaseline(node, font) - Baseline(node->child(AbscissaIndex)));
+      return KDPoint(positionOfRightParenthesis(
+                         node, font, Size(node->child(k_derivandIndex)))
+                             .x() +
+                         Parenthesis::k_parenthesisWidth +
+                         2 * k_barHorizontalMargin + k_barWidth +
+                         Width(node->child(k_variableIndex)) +
+                         KDFont::Font(font)->stringSize("=").width(),
+                     abscissaBaseline(node, font) -
+                         Baseline(node->child(k_abscissaIndex)));
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      KDSize lowerBoundSize = Size(node->child(LowerBoundIndex));
-      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDSize lowerBoundSize = Size(node->child(k_lowerBoundIndex));
+      KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
       KDCoordinate x = 0;
       KDCoordinate y = 0;
       KDCoordinate boundOffset =
-          2 * SymbolWidth - LineThickness + BoundHorizontalMargin;
-      if (childIndex == LowerBoundIndex) {
+          2 * k_symbolWidth - k_lineThickness + k_boundHorizontalMargin;
+      if (childIndex == k_lowerBoundIndex) {
         x = boundOffset;
-        y = Height(node) - BoundVerticalMargin -
+        y = Height(node) - k_boundVerticalMargin -
             boundMaxHeight(node, BoundPosition::LowerBound, font);
-      } else if (childIndex == UpperBoundIndex) {
+      } else if (childIndex == k_upperBoundIndex) {
         x = boundOffset;
-        y = BoundVerticalMargin +
+        y = k_boundVerticalMargin +
             boundMaxHeight(node, BoundPosition::UpperBound, font) -
             upperBoundSize.height();
-      } else if (childIndex == IntegrandIndex) {
+      } else if (childIndex == k_integrandIndex) {
         x = boundOffset +
             std::max(lowerBoundSize.width(), upperBoundSize.width()) +
-            IntegrandHorizontalMargin;
-        y = Baseline(node) - Baseline(node->child(IntegrandIndex));
+            k_integrandHorizontalMargin;
+        y = Baseline(node) - Baseline(node->child(k_integrandIndex));
       } else {
-        assert(childIndex == DifferentialIndex);
-        x = Width(node) - Width(node->child(DifferentialIndex));
-        y = Baseline(node) - Baseline(node->child(DifferentialIndex));
+        assert(childIndex == k_differentialIndex);
+        x = Width(node) - Width(node->child(k_differentialIndex));
+        y = Baseline(node) - Baseline(node->child(k_differentialIndex));
       }
       return KDPoint(x, y);
     }
     case LayoutType::Product:
     case LayoutType::Sum: {
       using namespace Parametric;
-      KDSize variableSize = Size(node->child(VariableIndex));
-      KDSize equalSize = KDFont::Font(font)->stringSize(EqualSign);
-      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDSize variableSize = Size(node->child(k_variableIndex));
+      KDSize equalSize = KDFont::Font(font)->stringSize(k_equalSign);
+      KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
       KDCoordinate x = 0;
       KDCoordinate y = 0;
-      if (childIndex == VariableIndex) {
+      if (childIndex == k_variableIndex) {
         x = completeLowerBoundX(node, font);
         y = Baseline(node) + SymbolHeight(font) / 2 +
             LowerBoundVerticalMargin(font) + subscriptBaseline(node, font) -
-            Baseline(node->child(VariableIndex));
-      } else if (childIndex == LowerBoundIndex) {
+            Baseline(node->child(k_variableIndex));
+      } else if (childIndex == k_lowerBoundIndex) {
         x = completeLowerBoundX(node, font) + equalSize.width() +
             variableSize.width();
         y = Baseline(node) + SymbolHeight(font) / 2 +
             LowerBoundVerticalMargin(font) + subscriptBaseline(node, font) -
-            Baseline(node->child(LowerBoundIndex));
-      } else if (childIndex == UpperBoundIndex) {
+            Baseline(node->child(k_lowerBoundIndex));
+      } else if (childIndex == k_upperBoundIndex) {
         x = std::max({0, (SymbolWidth(font) - upperBoundSize.width()) / 2,
                       (lowerBoundSizeWithVariableEquals(node, font).width() -
                        upperBoundSize.width()) /
@@ -357,8 +358,8 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
         x = std::max({SymbolWidth(font),
                       lowerBoundSizeWithVariableEquals(node, font).width(),
                       upperBoundSize.width()}) +
-            ArgumentHorizontalMargin(font) + Parenthesis::ParenthesisWidth;
-        y = Baseline(node) - Baseline(node->child(ArgumentIndex));
+            ArgumentHorizontalMargin(font) + Parenthesis::k_parenthesisWidth;
+        y = Baseline(node) - Baseline(node->child(k_argumentIndex));
       }
       return KDPoint(x, y);
     }
@@ -378,10 +379,10 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     case LayoutType::Fraction: {
       KDCoordinate x =
           (Width(node) - Size(node->child(childIndex)).width()) / 2;
-      KDCoordinate y = (childIndex == 1)
-                           ? Height(node->child(0)) + 2 * Fraction::LineMargin +
-                                 Fraction::LineHeight
-                           : 0;
+      KDCoordinate y = (childIndex == 1) ? Height(node->child(0)) +
+                                               2 * Fraction::k_lineMargin +
+                                               Fraction::k_lineHeight
+                                         : 0;
       return KDPoint(x, y);
     }
     case LayoutType::Parenthesis:
@@ -395,18 +396,18 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     }
     case LayoutType::ListSequence: {
       using namespace ListSequence;
-      if (childIndex == VariableIndex) {
+      if (childIndex == k_variableIndex) {
         return positionOfVariable(node, font);
       }
-      if (childIndex == FunctionIndex) {
-        return KDPoint(CurlyBrace::CurlyBraceWidth,
-                       Baseline(node) - Baseline(node->child(FunctionIndex)));
+      if (childIndex == k_functionIndex) {
+        return KDPoint(CurlyBrace::k_curlyBraceWidth,
+                       Baseline(node) - Baseline(node->child(k_functionIndex)));
       }
       return KDPoint(positionOfVariable(node, font).x() +
-                         Width(node->child(VariableIndex)) +
+                         Width(node->child(k_variableIndex)) +
                          KDFont::Font(font)->stringSize("≤").width(),
                      variableSlotBaseline(node, font) -
-                         Baseline(node->child(UpperBoundIndex)));
+                         Baseline(node->child(k_upperBoundIndex)));
     }
     case LayoutType::VerticalOffset: {
       return KDPointZero;
@@ -417,13 +418,13 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute: {
       using namespace PtCombinatorics;
-      if (childIndex == nIndex) {
-        return KDPoint(0,
-                       AboveSymbol(node, font) - Baseline(node->child(nIndex)));
+      if (childIndex == k_nIndex) {
+        return KDPoint(
+            0, AboveSymbol(node, font) - Baseline(node->child(k_nIndex)));
       }
-      return KDPoint(Width(node->child(nIndex)) + SymbolWidthWithMargins,
-                     AboveSymbol(node, font) + SymbolHeight -
-                         Baseline(node->child(kIndex)));
+      return KDPoint(Width(node->child(k_nIndex)) + k_symbolWidthWithMargins,
+                     AboveSymbol(node, font) + k_symbolHeight -
+                         Baseline(node->child(k_kIndex)));
     }
 
     case LayoutType::Matrix:
@@ -441,14 +442,14 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Binomial:
       return (Binomial::KNHeight(node, font) + 1) / 2;
     case LayoutType::Conjugate:
-      return Baseline(node->child(0)) + Conjugate::OverlineWidth +
-             Conjugate::OverlineVerticalMargin;
+      return Baseline(node->child(0)) + Conjugate::k_overlineWidth +
+             Conjugate::k_overlineVerticalMargin;
       return (Binomial::KNHeight(node, font) + 1) / 2;
     case LayoutType::SquareRoot:
     case LayoutType::NthRoot: {
       return std::max<KDCoordinate>(
-          Baseline(node->child(0)) + NthRoot::RadixLineThickness +
-              NthRoot::HeightMargin,
+          Baseline(node->child(0)) + NthRoot::k_radixLineThickness +
+              NthRoot::k_heightMargin,
           NthRoot::AdjustedIndexSize(node, font).height());
     }
     case LayoutType::Derivative:
@@ -457,9 +458,10 @@ KDCoordinate Render::Baseline(const Tree* node) {
       /* The total baseline is the maximum of the baselines of the children.
        * The two candidates are the fraction: d/dx, and the parenthesis pair
        * which surrounds the derivand. */
-      KDCoordinate fraction = orderHeightOffset(node, font) +
-                              KDFont::Font(font)->stringSize(dString).height() +
-                              Fraction::LineMargin + Fraction::LineHeight;
+      KDCoordinate fraction =
+          orderHeightOffset(node, font) +
+          KDFont::Font(font)->stringSize(k_dString).height() +
+          Fraction::k_lineMargin + Fraction::k_lineHeight;
 
       KDCoordinate parenthesis = parenthesisBaseline(node, font);
       return std::max(parenthesis, fraction);
@@ -468,9 +470,9 @@ KDCoordinate Render::Baseline(const Tree* node) {
       using namespace Integral;
       const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
       if (node == last) {
-        return BoundVerticalMargin +
+        return k_boundVerticalMargin +
                boundMaxHeight(node, BoundPosition::UpperBound, font) +
-               IntegrandVerticalMargin +
+               k_integrandVerticalMargin +
                std::max(Baseline(node->child(3)), Baseline(node->child(0)));
       } else {
         /* If integrals are in a row, they must have the same baseline. Since
@@ -482,18 +484,18 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Product:
     case LayoutType::Sum: {
       using namespace Parametric;
-      return std::max<KDCoordinate>(Height(node->child(UpperBoundIndex)) +
+      return std::max<KDCoordinate>(Height(node->child(k_upperBoundIndex)) +
                                         UpperBoundVerticalMargin(font) +
                                         (SymbolHeight(font) + 1) / 2,
-                                    Baseline(node->child(ArgumentIndex)));
+                                    Baseline(node->child(k_argumentIndex)));
     }
 
     case LayoutType::Rack:
       return RackLayout::Baseline(node);
 
     case LayoutType::Fraction:
-      return Height(node->child(0)) + Fraction::LineMargin +
-             Fraction::LineHeight;
+      return Height(node->child(0)) + Fraction::k_lineMargin +
+             Fraction::k_lineHeight;
     case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
     case LayoutType::AbsoluteValue:
@@ -507,8 +509,8 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::ListSequence: {
       using namespace ListSequence;
       return CurlyBrace::BaselineGivenChildHeightAndBaseline(
-          Height(node->child(FunctionIndex)),
-          Baseline(node->child(FunctionIndex)));
+          Height(node->child(k_functionIndex)),
+          Baseline(node->child(k_functionIndex)));
     }
     case LayoutType::VerticalOffset:
       return 0;
@@ -518,12 +520,12 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute:
       return std::max(0, PtCombinatorics::AboveSymbol(node, font) +
-                             PtCombinatorics::SymbolBaseline);
+                             PtCombinatorics::k_symbolBaseline);
     case LayoutType::Piecewise:
     case LayoutType::Matrix:
-      assert(Pair::LineThickness == CurlyBrace::LineThickness);
+      assert(Pair::k_lineThickness == CurlyBrace::k_lineThickness);
       KDCoordinate height = Grid::From(node)->height(font);
-      return (height + 1) / 2 + Pair::LineThickness;
+      return (height + 1) / 2 + Pair::k_lineThickness;
   };
 }
 
@@ -579,70 +581,71 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
                                       KDColor expressionColor,
                                       KDColor backgroundColor) {
   using namespace Parenthesis;
-  KDColor parenthesisWorkingBuffer[CurveHeight * CurveWidth];
+  KDColor parenthesisWorkingBuffer[k_curveHeight * k_curveWidth];
   KDCoordinate parenthesisHeight =
-      Pair::HeightGivenChildHeight(childHeight, VerticalMargin);
+      Pair::HeightGivenChildHeight(childHeight, k_verticalMargin);
 
-  KDRect frame(WidthMargin, VerticalMargin, CurveWidth, CurveHeight);
+  KDRect frame(k_widthMargin, k_verticalMargin, k_curveWidth, k_curveHeight);
   ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
                         (const uint8_t*)topLeftCurve, parenthesisWorkingBuffer,
                         !left, false);
 
-  frame = KDRect(WidthMargin, parenthesisHeight - CurveHeight - VerticalMargin,
-                 CurveWidth, CurveHeight);
+  frame = KDRect(k_widthMargin,
+                 parenthesisHeight - k_curveHeight - k_verticalMargin,
+                 k_curveWidth, k_curveHeight);
   ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
                         (const uint8_t*)topLeftCurve, parenthesisWorkingBuffer,
                         !left, true);
 
   KDCoordinate barX =
-      WidthMargin + (left ? 0 : CurveWidth - Pair::LineThickness);
+      k_widthMargin + (left ? 0 : k_curveWidth - Pair::k_lineThickness);
   KDCoordinate barHeight =
-      parenthesisHeight - 2 * (CurveHeight + VerticalMargin);
-  ctx->fillRect(
-      KDRect(barX, CurveHeight + VerticalMargin, Pair::LineThickness, barHeight)
-          .translatedBy(p),
-      expressionColor);
+      parenthesisHeight - 2 * (k_curveHeight + k_verticalMargin);
+  ctx->fillRect(KDRect(barX, k_curveHeight + k_verticalMargin,
+                       Pair::k_lineThickness, barHeight)
+                    .translatedBy(p),
+                expressionColor);
 }
 
 void RenderSquareBracketPair(
     bool left, KDCoordinate childHeight, KDContext* ctx, KDPoint p,
     KDColor expressionColor, KDColor backgroundColor,
-    KDCoordinate verticalMargin = SquareBracketPair::VerticalMargin,
-    KDCoordinate bracketWidth = SquareBracketPair::BracketWidth,
+    KDCoordinate verticalMargin = SquareBracketPair::k_verticalMargin,
+    KDCoordinate bracketWidth = SquareBracketPair::k_bracketWidth,
     bool renderTopBar = true, bool renderBottomBar = true,
     bool renderDoubleBar = false) {
   using namespace SquareBracketPair;
   KDCoordinate horizontalBarX =
-      p.x() + (left ? ExternalWidthMargin : LineThickness);
+      p.x() + (left ? k_externalWidthMargin : k_lineThickness);
   KDCoordinate horizontalBarLength =
-      bracketWidth - ExternalWidthMargin - LineThickness;
+      bracketWidth - k_externalWidthMargin - k_lineThickness;
   KDCoordinate verticalBarX =
       left ? horizontalBarX
-           : p.x() + bracketWidth - LineThickness - ExternalWidthMargin;
+           : p.x() + bracketWidth - k_lineThickness - k_externalWidthMargin;
   KDCoordinate verticalBarY = p.y();
   KDCoordinate verticalBarLength =
       Pair::HeightGivenChildHeight(childHeight, verticalMargin);
 
   if (renderTopBar) {
     ctx->fillRect(KDRect(horizontalBarX, verticalBarY, horizontalBarLength,
-                         LineThickness),
+                         k_lineThickness),
                   expressionColor);
   }
   if (renderBottomBar) {
-    ctx->fillRect(
-        KDRect(horizontalBarX, verticalBarY + verticalBarLength - LineThickness,
-               horizontalBarLength, LineThickness),
-        expressionColor);
+    ctx->fillRect(KDRect(horizontalBarX,
+                         verticalBarY + verticalBarLength - k_lineThickness,
+                         horizontalBarLength, k_lineThickness),
+                  expressionColor);
   }
 
   ctx->fillRect(
-      KDRect(verticalBarX, verticalBarY, LineThickness, verticalBarLength),
+      KDRect(verticalBarX, verticalBarY, k_lineThickness, verticalBarLength),
       expressionColor);
 
   if (renderDoubleBar) {
-    verticalBarX += (left ? 1 : -1) * (LineThickness + DoubleBarMargin);
+    verticalBarX += (left ? 1 : -1) * (k_lineThickness + k_doubleBarMargin);
     ctx->fillRect(
-        KDRect(verticalBarX, verticalBarY, LineThickness, verticalBarLength),
+        KDRect(verticalBarX, verticalBarY, k_lineThickness, verticalBarLength),
         expressionColor);
   }
 }
@@ -653,10 +656,12 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
                                      KDColor backgroundColor) {
   using namespace CurlyBrace;
   // Compute margins and dimensions for each part
-  KDColor workingBuffer[CurveHeight * CurveWidth];
-  assert(CurveHeight * CurveWidth >= CenterHeight * CenterWidth);
-  constexpr KDCoordinate curveHorizontalOffset = CenterWidth - LineThickness;
-  constexpr KDCoordinate centerHorizontalOffset = CurveWidth - LineThickness;
+  KDColor workingBuffer[k_curveHeight * k_curveWidth];
+  assert(k_curveHeight * k_curveWidth >= k_centerHeight * k_centerWidth);
+  constexpr KDCoordinate curveHorizontalOffset =
+      k_centerWidth - k_lineThickness;
+  constexpr KDCoordinate centerHorizontalOffset =
+      k_curveWidth - k_lineThickness;
   KDCoordinate curveLeftOffset, barLeftOffset, centerLeftOffset;
   if (left) {
     curveLeftOffset = curveHorizontalOffset;
@@ -668,8 +673,8 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
     centerLeftOffset = centerHorizontalOffset;
   }
   KDCoordinate height = HeightGivenChildHeight(childHeight);
-  assert(height > 2 * CurveHeight + CenterHeight);
-  KDCoordinate bothBarsHeight = height - 2 * CurveHeight - CenterHeight;
+  assert(height > 2 * k_curveHeight + k_centerHeight);
+  KDCoordinate bothBarsHeight = height - 2 * k_curveHeight - k_centerHeight;
   KDCoordinate topBarHeight = bothBarsHeight / 2;
   KDCoordinate bottomBarHeight = (bothBarsHeight + 1) / 2;
   assert(topBarHeight == bottomBarHeight ||
@@ -677,31 +682,35 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
 
   // Top curve
   KDCoordinate dy = 0;
-  KDRect frame(WidthMargin + curveLeftOffset, dy, CurveWidth, CurveHeight);
+  KDRect frame(k_widthMargin + curveLeftOffset, dy, k_curveWidth,
+               k_curveHeight);
   ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
                         (const uint8_t*)topLeftCurve, workingBuffer, !left,
                         false);
 
   // Top bar
-  dy += CurveHeight;
-  frame = KDRect(WidthMargin + barLeftOffset, dy, LineThickness, topBarHeight);
+  dy += k_curveHeight;
+  frame =
+      KDRect(k_widthMargin + barLeftOffset, dy, k_lineThickness, topBarHeight);
   ctx->fillRect(frame.translatedBy(p), expressionColor);
 
   // Center piece
   dy += topBarHeight;
-  frame = KDRect(WidthMargin + centerLeftOffset, dy, CenterWidth, CenterHeight);
+  frame = KDRect(k_widthMargin + centerLeftOffset, dy, k_centerWidth,
+                 k_centerHeight);
   ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
                         (const uint8_t*)leftCenter, workingBuffer, !left);
 
   // Bottom bar
-  dy += CenterHeight;
-  frame =
-      KDRect(WidthMargin + barLeftOffset, dy, LineThickness, bottomBarHeight);
+  dy += k_centerHeight;
+  frame = KDRect(k_widthMargin + barLeftOffset, dy, k_lineThickness,
+                 bottomBarHeight);
   ctx->fillRect(frame.translatedBy(p), expressionColor);
 
   // Bottom curve
   dy += bottomBarHeight;
-  frame = KDRect(WidthMargin + curveLeftOffset, dy, CurveWidth, CurveHeight);
+  frame =
+      KDRect(k_widthMargin + curveLeftOffset, dy, k_curveWidth, k_curveHeight);
   ctx->fillRectWithMask(frame.translatedBy(p), expressionColor, backgroundColor,
                         (const uint8_t*)topLeftCurve, workingBuffer, !left,
                         true);
@@ -717,7 +726,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       KDCoordinate childHeight = Binomial::KNHeight(node, font);
       KDCoordinate rightParenthesisPointX =
           std::max(Width(node->child(0)), Width(node->child(1))) +
-          Parenthesis::ParenthesisWidth;
+          Parenthesis::k_parenthesisWidth;
       RenderParenthesisWithChildHeight(true, childHeight, ctx, p,
                                        expressionColor, backgroundColor);
       RenderParenthesisWithChildHeight(
@@ -732,7 +741,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                  p.y(),
                  Width(node->child(0)) +
                      2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
-                 Conjugate::OverlineWidth),
+                 Conjugate::k_overlineWidth),
           expressionColor);
       return;
     }
@@ -741,44 +750,45 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       using namespace NthRoot;
       KDSize radicandSize = Size(node->child(0));
       KDSize indexSize = AdjustedIndexSize(node, font);
-      KDColor workingBuffer[LeftRadixWidth * LeftRadixHeight];
+      KDColor workingBuffer[k_leftRadixWidth * k_leftRadixHeight];
       KDRect leftRadixFrame(
-          p.x() + indexSize.width() + WidthMargin - LeftRadixWidth,
+          p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
           p.y() + Baseline(node) + radicandSize.height() -
-              Baseline(node->child(0)) - LeftRadixHeight,
-          LeftRadixWidth, LeftRadixHeight);
+              Baseline(node->child(0)) - k_leftRadixHeight,
+          k_leftRadixWidth, k_leftRadixHeight);
       ctx->blendRectWithMask(leftRadixFrame, expressionColor,
                              (const uint8_t*)radixPixel,
                              (KDColor*)workingBuffer);
       // If the indice is higher than the root.
       if (indexSize.height() >
-          Baseline(node->child(0)) + RadixLineThickness + HeightMargin) {
+          Baseline(node->child(0)) + k_radixLineThickness + k_heightMargin) {
         // Vertical radix bar
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + WidthMargin,
-                   p.y() + indexSize.height() - Baseline(node->child(0)) -
-                       RadixLineThickness - HeightMargin,
-                   RadixLineThickness,
-                   radicandSize.height() + HeightMargin + RadixLineThickness),
+            KDRect(
+                p.x() + indexSize.width() + k_widthMargin,
+                p.y() + indexSize.height() - Baseline(node->child(0)) -
+                    k_radixLineThickness - k_heightMargin,
+                k_radixLineThickness,
+                radicandSize.height() + k_heightMargin + k_radixLineThickness),
             expressionColor);
         // Horizontal radix bar
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + WidthMargin,
+            KDRect(p.x() + indexSize.width() + k_widthMargin,
                    p.y() + indexSize.height() - Baseline(node->child(0)) -
-                       RadixLineThickness - HeightMargin,
-                   radicandSize.width() + 2 * WidthMargin + 1,
-                   RadixLineThickness),
+                       k_radixLineThickness - k_heightMargin,
+                   radicandSize.width() + 2 * k_widthMargin + 1,
+                   k_radixLineThickness),
             expressionColor);
       } else {
-        ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + WidthMargin, p.y(),
-                   RadixLineThickness,
-                   radicandSize.height() + HeightMargin + RadixLineThickness),
-            expressionColor);
-        ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + WidthMargin, p.y(),
-                   radicandSize.width() + 2 * WidthMargin, RadixLineThickness),
-            expressionColor);
+        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin, p.y(),
+                             k_radixLineThickness,
+                             radicandSize.height() + k_heightMargin +
+                                 k_radixLineThickness),
+                      expressionColor);
+        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin, p.y(),
+                             radicandSize.width() + 2 * k_widthMargin,
+                             k_radixLineThickness),
+                      expressionColor);
       }
       return;
     }
@@ -787,21 +797,21 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       using namespace Derivative;
 
       // d/dx...
-      ctx->drawString(dString,
+      ctx->drawString(k_dString,
                       positionOfDInNumerator(node, style.font).translatedBy(p),
                       style);
       ctx->drawString(
-          dString, positionOfDInDenominator(node, style.font).translatedBy(p),
+          k_dString, positionOfDInDenominator(node, style.font).translatedBy(p),
           style);
 
       KDRect horizontalBar =
           KDRect(Escher::Metric::FractionAndConjugateHorizontalMargin,
-                 Baseline(node) - Fraction::LineHeight,
-                 fractionBarWidth(node, style.font), Fraction::LineHeight);
+                 Baseline(node) - Fraction::k_lineHeight,
+                 fractionBarWidth(node, style.font), Fraction::k_lineHeight);
       ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
 
       // ...(f)...
-      KDSize derivandSize = Size(node->child(DerivandIndex));
+      KDSize derivandSize = Size(node->child(k_derivandIndex));
 
       KDPoint leftParenthesisPosition =
           positionOfLeftParenthesis(node, style.font);
@@ -817,20 +827,20 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                        style.glyphColor, style.backgroundColor);
 
       // ...|x=
-      KDSize variableSize = Size(node->child(VariableIndex));
+      KDSize variableSize = Size(node->child(k_variableIndex));
       KDRect verticalBar(
-          rightParenthesisPosition.x() + Parenthesis::ParenthesisWidth +
-              BarHorizontalMargin,
-          0, BarWidth,
+          rightParenthesisPosition.x() + Parenthesis::k_parenthesisWidth +
+              k_barHorizontalMargin,
+          0, k_barWidth,
           abscissaBaseline(node, style.font) -
-              Baseline(node->child(VariableIndex)) + variableSize.height());
+              Baseline(node->child(k_variableIndex)) + variableSize.height());
       ctx->fillRect(verticalBar.translatedBy(p), style.glyphColor);
 
       KDPoint variableAssignmentPosition =
           positionOfVariableInAssignmentSlot(node, style.font);
       KDPoint equalPosition = variableAssignmentPosition.translatedBy(
           KDPoint(variableSize.width(),
-                  Baseline(node->child(VariableIndex)) -
+                  Baseline(node->child(k_variableIndex)) -
                       KDFont::Font(style.font)->stringSize("=").height() / 2));
       ctx->drawString("=", equalPosition.translatedBy(p), style);
 
@@ -839,8 +849,8 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           GetVariableSlot(node) == VariableSlot::Fraction
               ? variableAssignmentPosition
               : positionOfVariableInFractionSlot(node, style.font);
-      Draw(node->child(VariableIndex), ctx, copyPosition.translatedBy(p), font,
-           expressionColor, backgroundColor);
+      Draw(node->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
+           font, expressionColor, backgroundColor);
 
       if (node->isNthDerivativeLayout()) {
         // Draw the copy of the order
@@ -848,7 +858,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
             GetOrderSlot(node) == OrderSlot::Denominator
                 ? positionOfOrderInNumerator(node, style.font)
                 : positionOfOrderInDenominator(node, style.font);
-        Draw(node->child(OrderIndex), ctx, copyPosition.translatedBy(p), font,
+        Draw(node->child(k_orderIndex), ctx, copyPosition.translatedBy(p), font,
              expressionColor, backgroundColor);
       }
       return;
@@ -856,43 +866,43 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
 
     case LayoutType::Integral: {
       using namespace Integral;
-      const Tree* integrand = node->child(IntegrandIndex);
+      const Tree* integrand = node->child(k_integrandIndex);
       KDSize integrandSize = Size(integrand);
       KDCoordinate centralArgHeight = centralArgumentHeight(node, font);
-      KDColor workingBuffer[SymbolWidth * SymbolHeight];
+      KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
 
       // Render the integral symbol
-      KDCoordinate offsetX = p.x() + SymbolWidth;
+      KDCoordinate offsetX = p.x() + k_symbolWidth;
       KDCoordinate offsetY =
-          p.y() + BoundVerticalMargin +
+          p.y() + k_boundVerticalMargin +
           boundMaxHeight(node, BoundPosition::UpperBound, font) +
-          IntegrandVerticalMargin - SymbolHeight;
+          k_integrandVerticalMargin - k_symbolHeight;
 
       // Upper part
-      KDRect topSymbolFrame(offsetX, offsetY, SymbolWidth, SymbolHeight);
+      KDRect topSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
       ctx->fillRectWithMask(topSymbolFrame, expressionColor, backgroundColor,
                             (const uint8_t*)topSymbolPixel,
                             (KDColor*)workingBuffer, false, false);
 
       // Central bar
-      offsetY = offsetY + SymbolHeight;
-      ctx->fillRect(KDRect(offsetX, offsetY, LineThickness, centralArgHeight),
+      offsetY = offsetY + k_symbolHeight;
+      ctx->fillRect(KDRect(offsetX, offsetY, k_lineThickness, centralArgHeight),
                     expressionColor);
 
       // Lower part
-      offsetX = offsetX - SymbolWidth + LineThickness;
+      offsetX = offsetX - k_symbolWidth + k_lineThickness;
       offsetY = offsetY + centralArgHeight;
-      KDRect bottomSymbolFrame(offsetX, offsetY, SymbolWidth, SymbolHeight);
+      KDRect bottomSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
       ctx->fillRectWithMask(bottomSymbolFrame, expressionColor, backgroundColor,
                             (const uint8_t*)topSymbolPixel,
                             (KDColor*)workingBuffer, true, true);
 
       // Render "d"
       KDPoint dPosition =
-          p.translatedBy(PositionOfChild(node, IntegrandIndex))
-              .translatedBy(
-                  KDPoint(integrandSize.width() + DifferentialHorizontalMargin,
-                          Baseline(integrand) - KDFont::GlyphHeight(font) / 2));
+          p.translatedBy(PositionOfChild(node, k_integrandIndex))
+              .translatedBy(KDPoint(
+                  integrandSize.width() + k_differentialHorizontalMargin,
+                  Baseline(integrand) - KDFont::GlyphHeight(font) / 2));
       ctx->drawString("d", dPosition,
                       {.glyphColor = expressionColor,
                        .backgroundColor = backgroundColor,
@@ -902,10 +912,10 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
 
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
-          p.y() + Size(node->child(0)).height() + Fraction::LineMargin;
-      ctx->fillRect(KDRect(p.x() + Fraction::HorizontalMargin, fractionLineY,
-                           Width(node) - 2 * Fraction::HorizontalMargin,
-                           Fraction::LineHeight),
+          p.y() + Size(node->child(0)).height() + Fraction::k_lineMargin;
+      ctx->fillRect(KDRect(p.x() + Fraction::k_horizontalMargin, fractionLineY,
+                           Width(node) - 2 * Fraction::k_horizontalMargin,
+                           Fraction::k_lineHeight),
                     expressionColor);
       return;
     }
@@ -924,7 +934,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           KDColor color = AutocompletedPair::IsTemporary(
                               node, left ? Side::Left : Side::Right)
                               ? KDColor::Blend(expressionColor, backgroundColor,
-                                               Pair::TemporaryBlendAlpha)
+                                               Pair::k_temporaryBlendAlpha)
                               : expressionColor;
           if (node->isCurlyBraceLayout()) {
             RenderCurlyBraceWithChildHeight(left, Height(node->child(0)), ctx,
@@ -949,9 +959,9 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       using namespace ListSequence;
       KDFont::Size font = style.font;
       // Draw {  }
-      KDSize functionSize = Size(node->child(FunctionIndex));
-      KDPoint functionPosition = PositionOfChild(node, FunctionIndex);
-      KDCoordinate functionBaseline = Baseline(node->child(FunctionIndex));
+      KDSize functionSize = Size(node->child(k_functionIndex));
+      KDPoint functionPosition = PositionOfChild(node, k_functionIndex);
+      KDCoordinate functionBaseline = Baseline(node->child(k_functionIndex));
 
       KDPoint leftBracePosition =
           CurlyBrace::PositionGivenChildHeightAndBaseline(true, functionSize,
@@ -972,7 +982,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       // Draw k≤...
       KDPoint inferiorEqualPosition = KDPoint(
           positionOfVariable(node, font).x() +
-              Width(node->child(VariableIndex)),
+              Width(node->child(k_variableIndex)),
           variableSlotBaseline(node, font) - KDFont::GlyphHeight(font) / 2);
       ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), style);
       return;
@@ -981,33 +991,34 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
     case LayoutType::Sum: {
       using namespace Parametric;
       // Compute sizes.
-      KDSize upperBoundSize = Size(node->child(UpperBoundIndex));
+      KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
       KDSize lowerBoundNEqualsSize =
           lowerBoundSizeWithVariableEquals(node, font);
       KDCoordinate left =
           p.x() +
           std::max({0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
                     (lowerBoundNEqualsSize.width() - SymbolWidth(font)) / 2});
-      KDCoordinate top = p.y() + std::max(upperBoundSize.height() +
-                                              UpperBoundVerticalMargin(font),
-                                          Baseline(node->child(ArgumentIndex)) -
-                                              (SymbolHeight(font) + 1) / 2);
+      KDCoordinate top =
+          p.y() +
+          std::max(upperBoundSize.height() + UpperBoundVerticalMargin(font),
+                   Baseline(node->child(k_argumentIndex)) -
+                       (SymbolHeight(font) + 1) / 2);
 
       // Draw top bar
-      ctx->fillRect(KDRect(left, top, SymbolWidth(font), LineThickness),
+      ctx->fillRect(KDRect(left, top, SymbolWidth(font), k_lineThickness),
                     style.glyphColor);
 
       if (node->layoutType() == LayoutType::Product) {
         // Draw vertical bars
-        ctx->fillRect(KDRect(left, top, LineThickness, SymbolHeight(font)),
+        ctx->fillRect(KDRect(left, top, k_lineThickness, SymbolHeight(font)),
                       style.glyphColor);
-        ctx->fillRect(KDRect(left + SymbolWidth(font), top, LineThickness,
+        ctx->fillRect(KDRect(left + SymbolWidth(font), top, k_lineThickness,
                              SymbolHeight(font)),
                       style.glyphColor);
       } else {
         // Draw bottom bar
         ctx->fillRect(KDRect(left, top + SymbolHeight(font) - 1,
-                             SymbolWidth(font), LineThickness),
+                             SymbolWidth(font), k_lineThickness),
                       style.glyphColor);
 
         KDCoordinate symbolHeight = SymbolHeight(font) - 2;
@@ -1015,7 +1026,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
         memset(symbolPixel, 0xFF, sizeof(symbolPixel));
 
         for (int i = 0; i <= symbolHeight / 2; i++) {
-          for (int j = 0; j < Sum::SignificantPixelWidth; j++) {
+          for (int j = 0; j < Sum::k_significantPixelWidth; j++) {
             // Add an offset of i / 2 to match how data are stored
             symbolPixel[symbolHeight - 1 - i][i / 2 + j] =
                 symbolPixel[i][i / 2 + j] =
@@ -1030,19 +1041,20 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                (KDColor*)workingBuffer);
       }
       // Render the "="
-      KDSize variableSize = Size(node->child(VariableIndex));
+      KDSize variableSize = Size(node->child(k_variableIndex));
       KDPoint equalPosition =
-          PositionOfChild(node, VariableIndex)
+          PositionOfChild(node, k_variableIndex)
               .translatedBy(KDPoint(
                   variableSize.width(),
-                  Baseline(node->child(VariableIndex)) -
-                      KDFont::Font(font)->stringSize(EqualSign).height() / 2));
-      ctx->drawString(EqualSign, equalPosition.translatedBy(p), style);
+                  Baseline(node->child(k_variableIndex)) -
+                      KDFont::Font(font)->stringSize(k_equalSign).height() /
+                          2));
+      ctx->drawString(k_equalSign, equalPosition.translatedBy(p), style);
 
       // Render the parentheses
-      KDSize argumentSize = Size(node->child(ArgumentIndex));
-      KDPoint argumentPosition = PositionOfChild(node, ArgumentIndex);
-      KDCoordinate argumentBaseline = Baseline(node->child(ArgumentIndex));
+      KDSize argumentSize = Size(node->child(k_argumentIndex));
+      KDPoint argumentPosition = PositionOfChild(node, k_argumentIndex);
+      KDCoordinate argumentBaseline = Baseline(node->child(k_argumentIndex));
 
       KDPoint leftParenthesisPosition =
           Parenthesis::PositionGivenChildHeightAndBaseline(true, argumentSize,
@@ -1067,7 +1079,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       // Handle the case of the middle dot which has to be drawn by hand since
       // it is thinner than the other glyphs.
       if (codePoint == UCodePointMiddleDot) {
-        int width = CodePoint::MiddleDotWidth;
+        int width = CodePoint::k_middleDotWidth;
         int height = KDFont::GlyphHeight(font);
         ctx->fillRect(
             KDRect(p.translatedBy(KDPoint(width / 2, height / 2 - 1)), 1, 1),
@@ -1090,7 +1102,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute: {
       using namespace PtCombinatorics;
-      KDCoordinate combinationSymbolX = Width(node->child(nIndex));
+      KDCoordinate combinationSymbolX = Width(node->child(k_nIndex));
       KDCoordinate combinationSymbolY = AboveSymbol(node, style.font);
       KDPoint base =
           p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
@@ -1101,31 +1113,32 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
         /* Given that the A shape is closer to the subscript than the
          * superscript, we make the right margin one pixel larger to use the
          * space evenly */
-        KDCoordinate leftMargin = Margin - 1;
-        KDPoint bottom(base.x() + leftMargin, base.y() + SymbolHeight);
-        KDPoint slashTop(bottom.x() + SymbolWidth / 2, base.y());
+        KDCoordinate leftMargin = k_margin - 1;
+        KDPoint bottom(base.x() + leftMargin, base.y() + k_symbolHeight);
+        KDPoint slashTop(bottom.x() + k_symbolWidth / 2, base.y());
         KDPoint slashBottom = bottom;
         ctx->drawAntialiasedLine(slashTop, slashBottom, expressionColor,
                                  backgroundColor);
-        KDPoint antiSlashTop(bottom.x() + SymbolWidth / 2 + 1, base.y());
-        KDPoint antiSlashBottom(bottom.x() + SymbolWidth, bottom.y());
+        KDPoint antiSlashTop(bottom.x() + k_symbolWidth / 2 + 1, base.y());
+        KDPoint antiSlashBottom(bottom.x() + k_symbolWidth, bottom.y());
         ctx->drawAntialiasedLine(antiSlashTop, antiSlashBottom, expressionColor,
                                  backgroundColor);
         KDCoordinate mBar = 2;
-        KDCoordinate yBar = base.y() + SymbolHeight - PtBinomial::BarHeight;
+        KDCoordinate yBar = base.y() + k_symbolHeight - PtBinomial::k_barHeight;
         ctx->drawLine(KDPoint(bottom.x() + mBar, yBar),
-                      KDPoint(bottom.x() + SymbolWidth - mBar, yBar),
+                      KDPoint(bottom.x() + k_symbolWidth - mBar, yBar),
                       expressionColor);
       } else {
         // Big C
-        KDColor workingBuffer[SymbolWidth * SymbolHeight];
-        KDRect symbolUpperFrame(base.x() + Margin, base.y(), SymbolWidth,
-                                SymbolHeight / 2);
+        KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
+        KDRect symbolUpperFrame(base.x() + k_margin, base.y(), k_symbolWidth,
+                                k_symbolHeight / 2);
         ctx->fillRectWithMask(symbolUpperFrame, expressionColor,
                               backgroundColor, PtPermute::symbolUpperHalf,
                               workingBuffer);
-        KDRect symbolLowerFrame(base.x() + Margin, base.y() + SymbolHeight / 2,
-                                SymbolWidth, SymbolHeight / 2);
+        KDRect symbolLowerFrame(base.x() + k_margin,
+                                base.y() + k_symbolHeight / 2, k_symbolWidth,
+                                k_symbolHeight / 2);
         ctx->fillRectWithMask(symbolLowerFrame, expressionColor,
                               backgroundColor, PtPermute::symbolUpperHalf,
                               workingBuffer, false, true);
@@ -1188,9 +1201,9 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                       style.glyphColor, style.backgroundColor);
 
       // Draw the commas
-      KDCoordinate commaAbscissa = CurlyBrace::CurlyBraceWidth +
+      KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
                                    grid->columnWidth(0, style.font) +
-                                   GridEntryMargin;
+                                   k_gridEntryMargin;
       for (int i = 0; i < grid->numberOfRows(); i++) {
         const Tree* leftChild = node->child(i * 2);
         const Tree* rightChild = node->child(1 + i * 2);

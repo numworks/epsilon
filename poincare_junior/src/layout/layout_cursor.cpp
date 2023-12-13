@@ -964,7 +964,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
   if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN) {
     assert(deletionAppliedToParent);
     assert(parent->isBinomialLayout());
-    int newIndex = Binomial::nIndex;
+    int newIndex = Binomial::k_nIndex;
     m_cursorReference = parent->child(newIndex);
     m_position = rightmostPosition();
     return;

@@ -6,27 +6,27 @@
 namespace PoincareJ {
 
 namespace Fraction {
-constexpr static int NumeratorIndex = 0;
-constexpr static int DenominatorIndex = 1;
+constexpr static int k_numeratorIndex = 0;
+constexpr static int k_denominatorIndex = 1;
 }  // namespace Fraction
 
 namespace NthRoot {
-constexpr static int RadicandIndex = 0;
-constexpr static int IndexIndex = 1;
+constexpr static int k_radicandIndex = 0;
+constexpr static int k_indexIndex = 1;
 }  // namespace NthRoot
 
 namespace Parametric {
-constexpr static int VariableIndex = 0;
-constexpr static int LowerBoundIndex = 1;
-constexpr static int UpperBoundIndex = 2;
-constexpr static int ArgumentIndex = 3;
+constexpr static int k_variableIndex = 0;
+constexpr static int k_lowerBoundIndex = 1;
+constexpr static int k_upperBoundIndex = 2;
+constexpr static int k_argumentIndex = 3;
 }  // namespace Parametric
 
 namespace Derivative {
-constexpr static int VariableIndex = 0;
-constexpr static int AbscissaIndex = 1;
-constexpr static int DerivandIndex = 2;
-constexpr static int OrderIndex = 3;
+constexpr static int k_variableIndex = 0;
+constexpr static int k_abscissaIndex = 1;
+constexpr static int k_derivandIndex = 2;
+constexpr static int k_orderIndex = 3;
 
 enum class VariableSlot : bool { Fraction, Assignment };
 // Denominator is first for 0 in the mask in Derivative to work out of the box
@@ -77,26 +77,26 @@ inline bool IsSuffixSuperscript(const Tree* node) {
 }  // namespace VerticalOffset
 
 namespace Integral {
-constexpr static int DifferentialIndex = 0;
-constexpr static int LowerBoundIndex = 1;
-constexpr static int UpperBoundIndex = 2;
-constexpr static int IntegrandIndex = 3;
+constexpr static int k_differentialIndex = 0;
+constexpr static int k_lowerBoundIndex = 1;
+constexpr static int k_upperBoundIndex = 2;
+constexpr static int k_integrandIndex = 3;
 }  // namespace Integral
 
 namespace PtCombinatorics {
-constexpr static int nIndex = 0;
-constexpr static int kIndex = 1;
+constexpr static int k_nIndex = 0;
+constexpr static int k_kIndex = 1;
 }  // namespace PtCombinatorics
 
 namespace Binomial {
-constexpr static int nIndex = 0;
-constexpr static int kIndex = 1;
+constexpr static int k_nIndex = 0;
+constexpr static int k_kIndex = 1;
 }  // namespace Binomial
 
 namespace ListSequence {
-constexpr static int FunctionIndex = 0;
-constexpr static int VariableIndex = 1;
-constexpr static int UpperBoundIndex = 2;
+constexpr static int k_functionIndex = 0;
+constexpr static int k_variableIndex = 1;
+constexpr static int k_upperBoundIndex = 2;
 }  // namespace ListSequence
 
 }  // namespace PoincareJ

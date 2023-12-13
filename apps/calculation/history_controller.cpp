@@ -301,7 +301,7 @@ void HistoryController::handleOK() {
   assert(m_selectedSubviewType == SubviewType::Ellipsis);
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
   ExpiringPointer<Calculation> selectedCalculation =
-      calculationAtIndex(selectedRow());
+      calculationAtIndex(focusRow);
   Expression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
 

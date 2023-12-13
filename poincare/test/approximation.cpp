@@ -1111,6 +1111,20 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("tan(i-4)", "-0.0628991+0.0157688×i",
                                            Gradian, MetricUnitFormat, Cartesian,
                                            6);
+  // tan(π/2)
+  assert_expression_approximates_to<double>("tan(π/2)", Undefined::Name(),
+                                            Radian);
+  assert_expression_approximates_to<double>("sin(π/2)/cos(π/2)",
+                                            Undefined::Name(), Radian);
+  assert_expression_approximates_to<double>("1/cot(π/2)", Undefined::Name(),
+                                            Radian);
+  // tan(almost π/2)
+  assert_expression_approximates_to<double>("tan(1.57079632)",
+                                            Undefined::Name(), Radian);
+  assert_expression_approximates_to<double>("sin(1.57079632)/cos(1.57079632)",
+                                            "147169276.57047", Radian);
+  assert_expression_approximates_to<double>("1/cot(1.57079632)",
+                                            "147169276.57047", Radian);
   // Advanced function : cot
   assert_expression_approximates_to<double>("cot(2)", "-0.45765755436029",
                                             Radian);
@@ -1120,11 +1134,18 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("cot(i-4)", "-0.253182-0.928133×i",
                                            Radian, MetricUnitFormat, Cartesian,
                                            6);
-  // Other
-  assert_expression_approximates_to<double>("tan(π/2)", Undefined::Name(),
-                                            Radian);
+  // cot(π/2)
   assert_expression_approximates_to<double>("1/tan(π/2)", Undefined::Name(),
                                             Radian);
+  assert_expression_approximates_to<double>("cos(π/2)/sin(π/2)", "0", Radian);
+  assert_expression_approximates_to<double>("cot(π/2)", "0", Radian);
+  // cot(almost π/2)
+  assert_expression_approximates_to<double>("1/tan(1.57079632)",
+                                            Undefined::Name(), Radian);
+  assert_expression_approximates_to<double>("cos(1.57079632)/sin(1.57079632)",
+                                            "6.7948964845335ᴇ-9", Radian);
+  assert_expression_approximates_to<double>("cot(1.57079632)",
+                                            "6.7948964845335ᴇ-9", Radian);
 
   /* acos: [-1,1]    -> R
    *       ]-inf,-1[ -> π+R×i (odd imaginary)

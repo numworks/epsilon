@@ -73,17 +73,6 @@ void Endpoint0::setupOut() {
   OTG.DOEPTSIZ0()->set(doeptsiz0);
 }
 
-void Endpoint0::setOutNAK(bool nak) {
-  m_forceNAK = nak;
-  /* We need to keep track of the NAK state of the endpoint to use the value
-   * after a setupOut in poll() of device.cpp. */
-  if (nak) {
-    OTG.DOEPCTL0()->setSNAK(true);
-  } else {
-    OTG.DOEPCTL0()->setCNAK(true);
-  }
-}
-
 void Endpoint0::enableOut() { OTG.DOEPCTL0()->setEPENA(true); }
 
 void Endpoint0::reset() {
@@ -92,7 +81,7 @@ void Endpoint0::reset() {
 }
 
 void Endpoint0::readAndDispatchSetupPacket() {
-  setOutNAK(true);
+  OTG.DOEPCTL0()->setSNAK(true);
 
   // Read the 8-bytes Setup packet
   if (readPacket(m_largeBuffer, sizeof(SetupPacket)) != sizeof(SetupPacket)) {
@@ -124,7 +113,7 @@ void Endpoint0::processINpacket() {
     case State::LastDataIn:
       m_state = State::StatusOut;
       // Prepare to receive the OUT Data[] transaction.
-      setOutNAK(false);
+      OTG.DOEPCTL0()->setCNAK(true);
       break;
     case State::StatusIn: {
       m_state = State::Idle;
@@ -262,7 +251,7 @@ void Endpoint0::sendSomeData() {
 void Endpoint0::clearForOutTransactions(uint16_t wLength) {
   m_transferBufferLength = 0;
   m_state = (wLength > k_maxPacketSize) ? State::DataOut : State::LastDataOut;
-  setOutNAK(false);
+  OTG.DOEPCTL0()->setCNAK(true);
 }
 
 int Endpoint0::receiveSomeData() {

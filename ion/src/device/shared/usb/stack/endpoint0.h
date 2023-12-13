@@ -26,8 +26,7 @@ class Endpoint0 {
   constexpr static uint16_t MaxTransferSize = 2048;
 
   constexpr Endpoint0(RequestRecipient* device, RequestRecipient* interface)
-      : m_forceNAK(false),
-        m_bufferOffset(0),
+      : m_bufferOffset(0),
         m_transferBufferLength(0),
         m_receivedPacketSize(0),
         m_zeroLengthPacketNeeded(false),
@@ -36,10 +35,8 @@ class Endpoint0 {
         m_largeBuffer{0} {}
   void setup();
   void setupOut();
-  void setOutNAK(bool nak);
   void enableOut();
   void reset();
-  bool NAKForced() const { return m_forceNAK; }
   void readAndDispatchSetupPacket();
   void processINpacket();
   void processOUTpacket();
@@ -58,7 +55,6 @@ class Endpoint0 {
   uint16_t readPacket(void* buffer, uint16_t length);
   uint16_t writePacket(const void* buffer, uint16_t length);
 
-  bool m_forceNAK;
   // When sending large data stored in the buffer, the offset keeps tracks of
   // which data packet should be sent next.
   int m_bufferOffset;

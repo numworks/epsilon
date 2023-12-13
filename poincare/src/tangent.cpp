@@ -40,15 +40,14 @@ std::complex<T> TangentNode::computeOnComplex(
     Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::tan(angleInput);
-  /* tan should be undefined at (2n+1)*pi/2 for any integer n.
+  /* tan should be undefined at π/2 modulo π.
    * std::tan is not reliable at these values because it is diverging and any
-   * approximation errors on pi could easily yield a finite result.
+   * approximation errors on π could easily yield a finite result.
    * At these values, cos yields 0, but is also greatly affected by
-   * approximation error and could yield a non-null value : cos(pi/2+e) ~= -e
+   * approximation error and could yield a non-null value : cos(π/2+ε) ~= -ε
    * On the other hand, sin, which should yield either 1 or -1 around these
-   * values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2.
-   * We therefore use sin to identify values at which tan should be undefined.
-   */
+   * values is much more resilient : sin(π/2+ε) ~= 1 - (ε^2)/2.
+   * We therefore use sin to identify values at which tan should be undef. */
   std::complex<T> sin = std::sin(angleInput);
   if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
     res = complexNAN<T>();

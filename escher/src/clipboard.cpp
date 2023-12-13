@@ -18,12 +18,13 @@ void Clipboard::store(const char* storedText, int length) {
     length = std::min(maxSize - 1, static_cast<int>(strlen(storedText)));
     /* length can't be greater than strlen(storedText) to prevent any out of
      * array bound access. */
-    while (UTF8Decoder::IsInTheMiddleOfACodePoint(storedText[length])) {
+    while (length > 0 && !UTF8Decoder::IsTheEndOfACodePoint(
+                             &storedText[length - 1], storedText)) {
       length--;
     }
   }
-  assert(length >= 0 &&
-         !UTF8Decoder::IsInTheMiddleOfACodePoint(storedText[length]));
+  assert(length >= 0 && UTF8Decoder::IsTheEndOfACodePoint(
+                            &storedText[length - 1], storedText));
   strlcpy(m_textBuffer, storedText, length + 1);
   Ion::Clipboard::write(m_textBuffer);
 }

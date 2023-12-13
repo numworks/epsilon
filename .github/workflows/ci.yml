@@ -99,8 +99,9 @@ jobs:
             mingw-w64-x86_64-python3-pip
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe test.exe
-      - run: cmd /c output\release\simulator\windows\test.exe --headless --limit-stack-usage
+      - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe
+      - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
+      - run: ./output/release/simulator/windows/test.exe --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-windows.exe

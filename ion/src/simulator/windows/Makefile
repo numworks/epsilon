@@ -30,7 +30,7 @@ $(call object_for,ion/src/simulator/windows/resources.rc): $(addprefix $(BUILD_D
 
 $(addprefix $(BUILD_DIR)/,logo.ico): ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
-	$(Q) convert -background "#FFB734" -resize 256x256 $< $@
+	$(Q) convert -background "#FFB734" -resize 256x256 MSVG:$< $@
 
 # Linker flags
 LDFLAGS += -lgdiplus -lcomdlg32

@@ -103,11 +103,11 @@ bool AdditionalResultsType::HasComplex(
     const Expression approximateOutput,
     const Preferences::ComplexFormat complexFormat,
     const Preferences::AngleUnit angleUnit) {
-  /* We have to edge cases:
+  /* We have 2 edge cases:
    * 1) exact output assessed to scalar complex but not approximate output
    * ex:
    *    In polar format, for input -10 the exact output is 10e^(iπ) and the
-   *    approximate output is 10e^(3.14π). Due to rounding errors, the imaginary
+   *    approximate output is 10e^(3.14i). Due to rounding errors, the imaginary
    *    part of the approximate output is not zero so it is considered as scalar
    *    complex, while the exact output is not.
    * 2) approximate output assessed to scalar complex but not exact output
@@ -116,7 +116,9 @@ bool AdditionalResultsType::HasComplex(
    *    complex with very small norm but PrintFloat::ConvertFloatToTextPrivate
    *    rounds it to 0 so the approximation output is 0i. Thus, the imaginary
    *    part of the approximate output is zero so it is not considered as scalar
-   *    complex, while the exact output is. */
+   *    complex, while the exact output is.
+   * We chosed to handle the 2nd case and not to display any additional results
+   * in the 1st case. */
   return approximateOutput.isScalarComplex(complexFormat, angleUnit);
 }
 

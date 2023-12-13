@@ -1112,7 +1112,9 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Gradian, MetricUnitFormat, Cartesian,
                                            6);
   // tan(π/2)
-  assert_expression_approximates_to<double>("tan(π/2)", Undefined::Name(),
+  // due to approximation errors of π, tan(π/2) is not undef but the calculator
+  // will give undef as exact output thanks to trigonometry cheat table
+  assert_expression_approximates_to<double>("tan(π/2)", "1.6331239353195ᴇ16",
                                             Radian);
   assert_expression_approximates_to<double>("sin(π/2)/cos(π/2)",
                                             Undefined::Name(), Radian);
@@ -1120,7 +1122,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                             Radian);
   // tan(almost π/2)
   assert_expression_approximates_to<double>("tan(1.57079632)",
-                                            Undefined::Name(), Radian);
+                                            "147169276.57047", Radian);
   assert_expression_approximates_to<double>("sin(1.57079632)/cos(1.57079632)",
                                             "147169276.57047", Radian);
   assert_expression_approximates_to<double>("1/cot(1.57079632)",
@@ -1135,13 +1137,16 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Radian, MetricUnitFormat, Cartesian,
                                            6);
   // cot(π/2)
-  assert_expression_approximates_to<double>("1/tan(π/2)", Undefined::Name(),
+  // due to approximation errors of π, 1/tan(π/2) is not undef but the
+  // calculator will give undef as exact output thanks to trigonometry cheat
+  // table
+  assert_expression_approximates_to<double>("1/tan(π/2)", "6.1232339957368ᴇ-17",
                                             Radian);
   assert_expression_approximates_to<double>("cos(π/2)/sin(π/2)", "0", Radian);
   assert_expression_approximates_to<double>("cot(π/2)", "0", Radian);
   // cot(almost π/2)
   assert_expression_approximates_to<double>("1/tan(1.57079632)",
-                                            Undefined::Name(), Radian);
+                                            "6.7948964845335ᴇ-9", Radian);
   assert_expression_approximates_to<double>("cos(1.57079632)/sin(1.57079632)",
                                             "6.7948964845335ᴇ-9", Radian);
   assert_expression_approximates_to<double>("cot(1.57079632)",

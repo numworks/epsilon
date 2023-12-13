@@ -186,7 +186,7 @@ bool SlideStringByNumberOfChar(char *text, int slidingSize,
   if (slidingSize > 0) {
     memmove(text + slidingSize, text, textLen + 1);
   } else if (slidingSize < 0) {
-    memmove(text, text - slidingSize, textLen + 1);
+    memmove(text, text - slidingSize, textLen + slidingSize + 1);
   }
   // In case slidingSize = 0, there is nothing to do
   return true;

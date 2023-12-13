@@ -29,8 +29,6 @@ class SharedPointer {
 #endif
 };
 
-class TypeTreeBlock;
-
 typedef void (*ActionWithContext)(void *context, const void *data);
 
 class Reference {

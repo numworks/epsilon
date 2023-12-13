@@ -308,7 +308,7 @@ void HistoryController::handleOK() {
   /* Reuse the same complex format and angle unit as when the calculation was
    * computed. */
   m_additionalResultsController.openAdditionalResults(
-      selectedCell->additionalResultsType(), i, e, a,
+      selectedCalculation->additionalResultsType(), i, e, a,
       selectedCalculation->complexFormat(), selectedCalculation->angleUnit());
 }
 

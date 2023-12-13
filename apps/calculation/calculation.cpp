@@ -331,11 +331,12 @@ void Calculation::fillExpressionsForAdditionalResults(
                      : *approximateOutput;
 }
 
-AdditionalResultsType Calculation::additionalResultsType() {
+void Calculation::computeAdditionalResultsType() {
   Expression i, a, e;
   fillExpressionsForAdditionalResults(&i, &e, &a);
-  return AdditionalResultsType::AdditionalResultsForExpressions(
-      i, e, a, m_complexFormat, m_angleUnit);
+  m_additionalResultsType =
+      AdditionalResultsType::AdditionalResultsForExpressions(
+          i, e, a, m_complexFormat, m_angleUnit);
 }
 
 }  // namespace Calculation

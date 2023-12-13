@@ -752,6 +752,7 @@ void assertCalculationAdditionalResultTypeHas(
   store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
+  lastCalculation->computeAdditionalResultsType();
   quiz_assert_print_if_failure(
       lastCalculation->additionalResultsType() == additionalResultsType, input);
   store->deleteAll();

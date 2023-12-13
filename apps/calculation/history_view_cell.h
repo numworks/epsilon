@@ -69,10 +69,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
     return &m_scrollableOutputView;
   }
   Escher::ScrollableLayoutView* inputView() { return &m_inputView; }
-  AdditionalResultsType additionalResultsType() const {
-    return m_additionalResultsType;
-  }
-  bool hasEllipsis() const { return m_additionalResultsType.isNotEmpty(); }
+  bool hasEllipsis() const { return m_hasEllipsis; }
   KDCoordinate minimalHeightForOptimalDisplay();
 
  private:
@@ -95,7 +92,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   bool isDisplayingEllipsis() const { return isHighlighted() && hasEllipsis(); }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
-  AdditionalResultsType m_additionalResultsType;
+  bool m_hasEllipsis;
   Escher::ScrollableLayoutView m_inputView;
   Escher::ScrollableTwoLayoutsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;

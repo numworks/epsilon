@@ -32,7 +32,7 @@ HistoryViewCell::HistoryViewCell(Responder *parentResponder)
     : Responder(parentResponder),
       m_calculationCRC32(0),
       m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
-      m_additionalResultsType({}),
+      m_hasEllipsis(false),
       m_inputView(this, k_inputViewHorizontalMargin,
                   k_inputOutputViewsVerticalMargin),
       m_scrollableOutputView(this),
@@ -285,7 +285,7 @@ void HistoryViewCell::setNewCalculation(Calculation *calculation, bool expanded,
                                         Poincare::Context *context,
                                         bool canChangeDisplayOutput) {
   // Memoization
-  m_additionalResultsType = calculation->additionalResultsType();
+  m_hasEllipsis = calculation->additionalResultsType().isNotEmpty();
   m_inputView.setLayout(calculation->createInputLayout());
 
   /* All expressions have to be updated at the same time. Otherwise,

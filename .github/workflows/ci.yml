@@ -144,7 +144,7 @@ jobs:
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
       - run: output/release/simulator/macos/x86_64/test.bin --headless --limit-stack-usage
-      - run: make PLATFORM=simulator epsilon.app
+      - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.app
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-macos.zip

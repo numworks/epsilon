@@ -84,22 +84,8 @@ jobs:
       - uses: msys2/setup-msys2@v2
         with:
           update: true
-          install: >-
-            git
-            make
-            mingw-w64-x86_64-freetype
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-imagemagick
-            mingw-w64-x86_64-libjpeg-turbo
-            mingw-w64-x86_64-libpng
-            mingw-w64-x86_64-librsvg
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-python3
-            mingw-w64-x86_64-python3-lz4
-            mingw-w64-x86_64-python3-pip
-            mingw-w64-x86_64-arm-none-eabi-gcc
       - uses: actions/checkout@v3
-      - run: build/setup.sh --only-simulator
+      - run: build/setup.sh
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe
       - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
       - run: ./output/release/simulator/windows/test.exe --headless --limit-stack-usage

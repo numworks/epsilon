@@ -136,10 +136,7 @@ void TrigonometryListController::computeAdditionalResults(
   float angle = static_cast<float>(PoincareHelpers::ApproximateToScalar<double>(
       approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
       context, {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit}));
-  // Convert angle to radians
-  if (m_angleUnit != Preferences::AngleUnit::Radian) {
-    angle = angle * M_PI / Trigonometry::PiInAngleUnit(m_angleUnit);
-  }
+  angle = Trigonometry::ConvertAngleToRadian(angle, m_angleUnit);
   assert(std::isfinite(angle));
   assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
   m_model.setAngle(angle);

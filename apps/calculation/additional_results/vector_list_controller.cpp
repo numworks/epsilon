@@ -99,6 +99,8 @@ void VectorListController::computeAdditionalResults(
     return;
   }
   m_model.setVector(xApproximation, yApproximation);
+  angleApproximation =
+      Trigonometry::ConvertAngleToRadian(angleApproximation, m_angleUnit);
   m_model.setAngle(angleApproximation);
   setShowIllustration(true);
 }

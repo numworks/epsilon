@@ -79,6 +79,13 @@ double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   }
 }
 
+double Trigonometry::ConvertAngleToRadian(double angle,
+                                          Preferences::AngleUnit angleUnit) {
+  return angleUnit != Preferences::AngleUnit::Radian
+             ? angle * M_PI / Trigonometry::PiInAngleUnit(angleUnit)
+             : angle;
+}
+
 Expression Trigonometry::AnglePeriodInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   return Multiplication::Builder(

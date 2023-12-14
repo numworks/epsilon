@@ -18,6 +18,7 @@ class Device : public RequestRecipient {
       : RequestRecipient(&m_ep0),
         m_ep0(this, interface),
         m_resetOnDisconnect(false) {}
+  void flushFIFOs();
   void poll();
   bool isSoftDisconnected() const;
   void detach();

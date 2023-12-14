@@ -137,8 +137,6 @@ void TrigonometryListController::computeAdditionalResults(
       approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
       context, {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit}));
   angle = Trigonometry::ConvertAngleToRadian(angle, m_angleUnit);
-  assert(std::isfinite(angle));
-  assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
   m_model.setAngle(angle);
   setShowIllustration(true);
 }

@@ -130,7 +130,9 @@ class GraphController : public Shared::FunctionGraphController,
       bool cappedNumberOfSignificantDigits = false) override;
 
   bool defaultRangeIsNormalized() const {
-    return functionStore()->displaysFunctionsToNormalize();
+    return functionStore()->displaysFunctionsToNormalize() ||
+           m_graphRange->gridType() ==
+               Shared::InteractiveCurveViewRange::GridType::Polar;
   }
   void interestingFunctionRange(
       Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin,

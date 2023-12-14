@@ -274,6 +274,13 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(
   return move;
 }
 
+void InteractiveCurveViewRange::setGridType(GridType grid) {
+  m_gridType = grid;
+
+  // Dirty the memoized auto range, as it may depend on the grid type.
+  m_checksumOfMemoizedAutoRange = 0;
+}
+
 void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
                                                    bool canChangeY,
                                                    bool canShrink) {

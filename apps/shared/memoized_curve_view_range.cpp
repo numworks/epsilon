@@ -20,12 +20,7 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
 
 void MemoizedCurveViewRange::privateSet(float min, float max, float limit,
                                         bool x) {
-  Range1D* range1D;
-  if (x) {
-    range1D = m_range.x();
-  } else {
-    range1D = m_range.y();
-  }
+  Range1D* range1D = x ? m_range.x() : m_range.y();
   *range1D = Range1D::ValidRangeBetween(min, max, limit);
   if (x) {
     m_xGridUnit = CurveViewRange::xGridUnit();

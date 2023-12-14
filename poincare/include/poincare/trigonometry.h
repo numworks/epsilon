@@ -15,6 +15,8 @@ class Trigonometry final {
   static Expression AnglePeriodInAngleUnit(Preferences::AngleUnit angleUnit);
   static Expression PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit);
   static double PiInAngleUnit(Preferences::AngleUnit angleUnit);
+  static double ConvertAngleToRadian(double angle,
+                                     Preferences::AngleUnit angleUnit);
   static bool IsDirectTrigonometryFunction(const Expression& e);
   static bool IsInverseTrigonometryFunction(const Expression& e);
   static bool IsAdvancedTrigonometryFunction(const Expression& e);

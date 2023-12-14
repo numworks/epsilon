@@ -72,7 +72,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
                                  float leftMarginRatio);
 
   GridType gridType() const { return m_gridType; }
-  void setGridType(GridType grid) { m_gridType = grid; }
+  void setGridType(GridType grid);
 
  protected:
   constexpr static float k_maxRatioPositionRange = 1E5f;

@@ -6,8 +6,6 @@
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
 #include <poincare_junior/src/layout/layout_selection.h>
-#include <poincare_junior/src/layout/render.h>
-#include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/reference.h>
 
 namespace PoincareJ {
@@ -29,11 +27,8 @@ class Layout final : public Reference {
   void draw(KDContext* ctx, KDPoint p, KDFont::Size font,
             KDColor expressionColor = KDColorBlack,
             KDColor backgroundColor = KDColorWhite,
-            LayoutSelection selection = {}) const {
-    Render::Draw(getTree(), ctx, p, font, expressionColor, backgroundColor,
-                 selection);
-  }
-  KDSize size(KDFont::Size font) const { return Render::Size(getTree()); }
+            LayoutSelection selection = {}) const;
+  KDSize size(KDFont::Size font) const;
   bool isEmpty() const { return IsEmpty(getTree()); }
 
   static char* Serialize(const Tree* layout, char* buffer, char* end);

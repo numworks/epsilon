@@ -1,5 +1,6 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
@@ -36,6 +37,11 @@ Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
       Tree::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
+template <typename T>
+T Expression::approximate() const {
+  return Approximation::RootTreeTo<T>(getTree());
+}
+
 Expression Expression::FromPoincareExpression(const Poincare::Expression *exp) {
   return Expression(
       [](const void *data) {
@@ -45,5 +51,8 @@ Expression Expression::FromPoincareExpression(const Poincare::Expression *exp) {
       },
       exp, sizeof(Poincare::Expression));
 }
+
+template float Expression::approximate<float>() const;
+template double Expression::approximate<double>() const;
 
 }  // namespace PoincareJ

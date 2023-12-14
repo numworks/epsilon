@@ -5,6 +5,7 @@
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 #include <string.h>
@@ -107,5 +108,14 @@ Layout Layout::Parse(const char *textInput) {
 Layout Layout::FromExpression(const Expression *expr) {
   return Layout([](Tree *node) { Layoutter::LayoutExpression(node); }, expr);
 }
+
+void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
+                  KDColor expressionColor, KDColor backgroundColor,
+                  LayoutSelection selection) const {
+  Render::Draw(getTree(), ctx, p, font, expressionColor, backgroundColor,
+               selection);
+}
+
+KDSize Layout::size(KDFont::Size font) const { return Render::Size(getTree()); }
 
 }  // namespace PoincareJ

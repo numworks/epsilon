@@ -14,7 +14,8 @@ void Calculator::PollAndReset() {
   char serialNumber[Ion::k_serialNumberLength + 1];
   SerialNumber::copy(serialNumber);
   Calculator c(serialNumber, USB::stringDescriptor());
-
+  // Ensure FIFOs are clean before starting polling.
+  c.flushFIFOs();
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() &&
          !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
     c.poll();

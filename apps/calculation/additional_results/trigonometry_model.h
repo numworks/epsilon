@@ -32,7 +32,12 @@ class TrigonometryModel : public Shared::CurveViewRange {
   float yMax() const override { return yCenter() + yRange() / 2.f; }
 
   float angle() const { return m_angle; }
-  void setAngle(float f) { m_angle = f; }
+  void setAngle(float angle) {
+    assert(std::isfinite(angle));
+    assert(0 <= angle &&
+           angle < 2 * M_PI + Poincare::Float<float>::EpsilonLax());
+    m_angle = angle;
+  }
 
  private:
   constexpr static float k_targetRatio = 4.f / 260.f;  // see above

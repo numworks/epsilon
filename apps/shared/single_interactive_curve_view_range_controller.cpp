@@ -41,7 +41,7 @@ void SingleInteractiveCurveViewRangeController::extractParameters() {
     m_rangeParam = Range1D::ValidRangeBetween(m_range->yMin(), m_range->yMax());
   }
   // Reset m_secondaryRangeParam
-  m_secondaryRangeParam = Range1D(NAN, NAN);
+  m_secondaryRangeParam = Range1D();
 }
 
 void SingleInteractiveCurveViewRangeController::setAutoRange() {

@@ -185,7 +185,7 @@ def check_duplicates(messages, data, locales):
 
 
 def discard_messages_in_file(filePath, messages):
-    with open(filePath, "r", encoding='utf-8') as f:
+    with open(filePath, "r", encoding="utf-8") as f:
         file = f.read()
         # Iterate backwards to prevent the loop of breaking when removing messages
         for i in range(len(messages) - 1, -1, -1):
@@ -209,7 +209,7 @@ def discard_messages_in_dir(dirName, messages):
 
 
 def check_unused(i18n_header, i18n_implementation):
-    with open(i18n_header, encoding='utf-8') as f:
+    with open(i18n_header, encoding="utf-8") as f:
         messages = f.read().splitlines()
         start = -1
         end = -1

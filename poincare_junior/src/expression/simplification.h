@@ -20,6 +20,76 @@ namespace PoincareJ {
 
 class Simplification {
  public:
+  /* New advanced reduction */
+
+  // Ordered list of CRC encountered during advanced reduction.
+  class CrcCollection {
+   public:
+    CrcCollection() : m_length(0) {}
+    // Return false if CRC was already explored
+    bool add(uint32_t crc);
+    // Max Expand/Contract combination possibilities
+    static constexpr size_t k_size = 1024;
+    uint32_t collection[k_size];
+    size_t m_length;
+  };
+  enum class Direction : uint8_t {
+    NextNode = 0,
+    Contract = 1,
+    Expand = 2,
+  };
+  static constexpr uint8_t k_numberOfDirection =
+      static_cast<uint8_t>(Direction::Expand) + 1;
+  // Path in exploration of a tree's advanced reduction.
+  class Path {
+   public:
+    Path() : m_length(0) {}
+    Direction pop() {
+      assert(m_length > 0);
+      return m_stack[--m_length];
+    }
+    void append(Direction direction);
+    Direction previousDirection() const {
+      return m_length > 0 ? direction(m_length - 1) : Direction::NextNode;
+    }
+    Direction direction(size_t index) const {
+      assert(index < m_length);
+      return m_stack[index];
+    }
+    size_t length() const { return m_length; }
+    // Path max length
+    static constexpr size_t k_size = 1024;
+    /* TODO : This structure isn't optimized.
+     * [NextNode, NextNode, NextNode,Contract, NextNode, Expand, Expand]
+     * could be stored as
+     * [NextNode,Contract, NextNode, Expand] and [3,1,1,2] or
+     * [3, 0, 1, UINT8_MAX, UINT8_MAX] (0 is Contract, UINT8_MAX Expand). */
+    Direction m_stack[k_size];
+    size_t m_length;
+  };
+  // Recursive new advanced reduction
+  static void NewAdvancedReductionRec(Tree *u, Tree *root, const Tree *original,
+                                      Path *path, Path *bestPath,
+                                      int *bestMetric,
+                                      CrcCollection *crcCollection);
+  // Return true if tree has changed. path is expected to be valid.
+  static bool ApplyPath(Tree *u, const Path *path);
+  // Return true if direction was applied.
+  static bool ApplyDirection(Tree **u, Tree *root, Direction direction,
+                             bool *rootChanged);
+  // Return true if can apply direction.
+  static bool CanApplyDirection(const Tree *u, const Tree *root,
+                                Direction direction);
+  // ShallowAlgebraicExpand(u) + ShallowExpand(u). TODO : Merge both.
+  static bool NewShallowExpand(Tree *u);
+  static bool NewAdvancedReduction(Tree *u);
+  // Metric of given tree. The smaller is the better.
+  static float GetMetric(const Tree *u) { return u->treeSize(); }
+  // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
+  static bool UpwardSystematicReduction(Tree *root, const Tree *tree);
+
+  /* End of new advanced reduction */
+
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
   static bool AdvancedReduction(Tree *node, const Tree *root);

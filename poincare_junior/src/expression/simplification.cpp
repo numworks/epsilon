@@ -1,5 +1,6 @@
 #include "simplification.h"
 
+#include <ion.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/comparison.h>
@@ -25,6 +26,140 @@
 #include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
+
+bool Simplification::NewShallowExpand(Tree* u) {
+  return u->isAlgebraic() ? ShallowAlgebraicExpand(u) : ShallowExpand(u);
+}
+
+bool Simplification::CrcCollection::add(uint32_t crc) {
+  assert(m_length < k_size);
+  for (size_t i = 0; i < m_length; i++) {
+    uint32_t crc_i = collection[i];
+    if (crc_i < crc) {
+      continue;
+    }
+    if (crc_i == crc) {
+      return false;
+    }
+    // Insert CRC32
+    memmove(collection + i + 1, collection + i,
+            sizeof(uint32_t) * (m_length - i));
+    m_length++;
+    collection[i] = crc;
+    return true;
+  }
+  collection[m_length++] = crc;
+  return true;
+}
+
+void Simplification::Path::append(Direction direction) {
+  assert(m_length < k_size);
+  m_stack[m_length] = direction;
+  m_length += 1;
+}
+
+bool Simplification::CanApplyDirection(const Tree* u, const Tree* root,
+                                       Direction direction) {
+  // TODO: Optimize this check
+  return direction != Direction::NextNode ||
+         u->nextNode()->hasAncestor(root, false);
+}
+
+bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
+                                    bool* rootChanged) {
+  if (direction == Direction::NextNode) {
+    *u = (*u)->nextNode();
+    return true;
+  }
+  assert(direction == Direction::Contract || direction == Direction::Expand);
+  if (!((direction == Direction::Contract) ? ShallowContract(*u)
+                                           : NewShallowExpand(*u))) {
+    return false;
+  }
+  // Apply a deep systematic reduction starting from (*u)
+  UpwardSystematicReduction(root, *u);
+  // Move back to root so we only move down trees.
+  *u = root;
+  *rootChanged = true;
+  return true;
+}
+
+bool Simplification::ApplyPath(Tree* u, const Path* path) {
+  Tree* root = u;
+  bool rootChanged = false;
+  for (size_t i = 0; i < path->length(); i++) {
+    bool didApply = ApplyDirection(&u, root, path->direction(i), &rootChanged);
+    assert(didApply);
+  }
+  return rootChanged;
+}
+
+void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
+                                             const Tree* original, Path* path,
+                                             Path* bestPath, int* bestMetric,
+                                             CrcCollection* crcCollection) {
+  bool isLeaf = true;
+  for (uint8_t i = 0; i < k_numberOfDirection; i++) {
+    Direction dir = static_cast<Direction>(i);
+    Tree* target = u;
+    // Apply direction if effective:
+    bool rootChanged = false;
+    if (!CanApplyDirection(target, root, dir) ||
+        !ApplyDirection(&target, root, dir, &rootChanged)) {
+      continue;
+    }
+    // If unexplored or unchanged, recursively advanced reduce.
+    if (!rootChanged ||
+        crcCollection->add(Ion::crc32Byte(
+            reinterpret_cast<const uint8_t*>(root), root->treeSize()))) {
+      path->append(dir);
+      isLeaf = false;
+      NewAdvancedReductionRec(target, root, original, path, bestPath,
+                              bestMetric, crcCollection);
+      path->pop();
+    }
+    // Undo changes on root.
+    if (rootChanged) {
+      root->cloneTreeOverTree(original);
+      ApplyPath(root, path);
+    }
+  }
+  if (isLeaf) {
+    // All directions are impossible, we are at a leaf. Compare metrics.
+    int metric = GetMetric(root);
+    if (metric < *bestMetric) {
+      *bestMetric = metric;
+      *bestPath = *path;
+    }
+  }
+}
+
+bool Simplification::NewAdvancedReduction(Tree* u) {
+  int bestMetric = GetMetric(u);
+  Path bestPath;
+  Path currentPath;
+  CrcCollection crcCollection;
+  Tree* editedExpression = u->clone();
+  NewAdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
+                          &bestPath, &bestMetric, &crcCollection);
+  editedExpression->removeTree();
+  return ApplyPath(u, &bestPath);
+}
+
+bool Simplification::UpwardSystematicReduction(Tree* root, const Tree* tree) {
+  if (root == tree) {
+    assert(!DeepSystematicReduce(root));
+    return true;
+  }
+  assert(root < tree);
+  for (Tree* child : root->children()) {
+    if (UpwardSystematicReduction(child, tree)) {
+      ShallowSystematicReduce(root);
+      return true;
+    }
+  }
+  return false;
+}
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening

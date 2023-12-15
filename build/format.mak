@@ -2,6 +2,7 @@ CXXFORMAT := clang-format
 CXXFORMATARGS ?= -i --Werror --verbose
 GITDIFFARGS := --name-only --diff-filter=d
 PYFORMAT := ./.venv/bin/black
+PYFORMATARGS ?=
 
 .PHONY: format
 format: BASE ?= HEAD
@@ -12,4 +13,4 @@ format:
 	$(Q) echo "=== Formatting .cpp and .h files ==="
 	$(Q) echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
 	$(Q) echo "=== Formatting .py files"
-	$(Q) echo $(PYFILES) | xargs -r $(PYFORMAT)
+	$(Q) echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)

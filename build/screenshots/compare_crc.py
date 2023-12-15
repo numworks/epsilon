@@ -23,7 +23,7 @@ parser.add_argument(
     "-f",
     "--filter",
     default="",
-    help="run only scenarios with a name starting with filter argument",
+    help="Specify a regular expression to filter scenari by name.",
 )
 
 

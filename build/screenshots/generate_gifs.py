@@ -14,9 +14,10 @@ parser.add_argument(
 parser.add_argument(
     "-f",
     "--filter",
-    default = "",
+    default="",
     help="run only scenarios with a name starting with filter argument",
 )
+
 
 def main():
     # Parse args
@@ -26,13 +27,12 @@ def main():
     output_folder = "generate_gifs_output"
     helper.clean_or_create_folder(output_folder)
 
-    regex = helper.dataset() + "/"  + args.filter + "*"
+    regex = helper.dataset() + "/" + args.filter + "*"
     print("Generating gifs of all scenarios matching " + regex)
     print("------------------------------")
 
     count = 0
     for scenario_folder in sorted(glob.glob(regex)):
-
         if not os.path.isdir(scenario_folder):
             continue
 
@@ -48,7 +48,10 @@ def main():
         )
 
         # Move gif out of subfolder
-        shutil.move(os.path.join(output_scenario_folder, "scenario.gif"), os.path.join(output_folder, scenario_name + ".gif"))
+        shutil.move(
+            os.path.join(output_scenario_folder, "scenario.gif"),
+            os.path.join(output_folder, scenario_name + ".gif"),
+        )
 
         # Remove subfolder
         shutil.rmtree(output_scenario_folder)

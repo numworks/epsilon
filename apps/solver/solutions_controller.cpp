@@ -106,11 +106,22 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
   }
 }
 
-SolutionsController::SolutionsController(Responder *parentResponder)
+SolutionsController::SolutionsController(Responder *parentResponder,
+                                         ButtonRowController *header)
     : ViewController(parentResponder),
+      ButtonRowDelegate(header, nullptr),
       m_deltaCell({.style = {.font = k_deltaFont},
                    .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_contentView(this) {
+      m_contentView(this),
+      m_searchIntervalCell(
+          this, I18n::Message::SearchInverval,
+          Invocation::Builder<SolutionsController>(
+              [](SolutionsController *controller, void *sender) -> bool {
+                App::app()->openIntervalController();
+                return true;
+              },
+              this)),
+      m_approximateSolutions(false) {
   const char *delta =
       GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();
   size_t lenDelta = strlen(delta);
@@ -205,6 +216,27 @@ void SolutionsController::didEnterResponderChain(
   for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].reinitSelection();
   }
+}
+
+bool SolutionsController::handleEvent(Ion::Events::Event event) {
+  if (!m_approximateSolutions) {
+    return false;
+  }
+  SystemOfEquations *system = App::app()->system();
+  if (event == Ion::Events::Down && system->numberOfSolutions() &&
+      selectedRow() == -1) {
+    header()->setSelectedButton(-1);
+    m_contentView.selectableTableView()->selectCellAtLocation(0, 0);
+    App::app()->setFirstResponder(m_contentView.selectableTableView());
+    return true;
+  }
+  if (event == Ion::Events::Up) {
+    m_contentView.selectableTableView()->deselectTable();
+    header()->setSelectedButton(0);
+    selectRow(-1);
+    return true;
+  }
+  return false;
 }
 
 /* TableViewDataSource */

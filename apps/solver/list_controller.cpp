@@ -203,7 +203,8 @@ void ListController::resolveEquations() {
         App::app()->system()->approximateSolve(App::app()->localContext());
       default: {
         assert(e == Error::NoError || e == Error::RequireApproximateSolution);
-        stackController()->push(App::app()->solutionsController());
+        App::app()->openSolutionsController(e ==
+                                            Error::RequireApproximateSolution);
       }
     }
   } else {

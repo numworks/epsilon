@@ -35,9 +35,26 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   equationStore()->storageDidChangeForRecord(record);
 }
 
+void App::openSolutionsController(bool approximateSolve) {
+  m_solutionsController.setApproximateSolutions(approximateSolve);
+  if (!approximateSolve) {
+    m_stackViewController.push(&m_solutionsController);
+    return;
+  }
+  // stackViewController.push clears parentResponder, it must be reset.
+  m_solutionsController.setParentResponder(&m_solutionHeader);
+  m_stackViewController.push(&m_solutionHeader);
+}
+
+void App::openIntervalController() {
+  m_stackViewController.push(&m_intervalController);
+}
+
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_stackViewController),
-      m_solutionsController(nullptr),
+      m_solutionsController(&m_stackViewController, &m_solutionHeader),
+      m_solutionHeader(&m_stackViewController, &m_solutionsController,
+                       &m_solutionsController),
       m_intervalController(nullptr),
       m_listController(&m_listFooter, &m_equationStore, &m_listFooter),
       m_listFooter(&m_stackViewController, &m_listController, &m_listController,

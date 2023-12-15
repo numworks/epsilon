@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_controller.h>
+#include <escher/button_row_controller.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/scrollable_two_layouts_cell.h>
@@ -21,9 +22,11 @@ namespace Solver {
 
 class SolutionsController : public Escher::ViewController,
                             public Escher::SelectableTableViewDataSource,
-                            public Escher::TableViewDataSource {
+                            public Escher::TableViewDataSource,
+                            public Escher::ButtonRowDelegate {
  public:
-  SolutionsController(Escher::Responder *parentResponder);
+  SolutionsController(Escher::Responder *parentResponder,
+                      Escher::ButtonRowController *header);
 
   // ViewController
   const char *title() override;
@@ -33,7 +36,22 @@ class SolutionsController : public Escher::ViewController,
   void viewDidDisappear() override;
   void didEnterResponderChain(
       Escher::Responder *previousFirstResponder) override;
+  bool handleEvent(Ion::Events::Event event) override;
+
   TELEMETRY_ID("Solutions");
+
+  // ButtonRowDelegate
+  int numberOfButtons(
+      Escher::ButtonRowController::Position position) const override {
+    return 1;
+  }
+  Escher::AbstractButtonCell *buttonAtIndex(
+      int index,
+      Escher::ButtonRowController::Position position) const override {
+    assert(index == 0);
+    assert(m_approximateSolutions);
+    return const_cast<Escher::AbstractButtonCell *>(&m_searchIntervalCell);
+  }
 
   // TableViewDataSource
   int numberOfRows() const override;
@@ -53,6 +71,10 @@ class SolutionsController : public Escher::ViewController,
 
   // Responder
   void didBecomeFirstResponder() override;
+
+  void setApproximateSolutions(bool approximate) {
+    m_approximateSolutions = approximate;
+  }
 
  private:
   // TableViewDataSource
@@ -211,6 +233,8 @@ class SolutionsController : public Escher::ViewController,
   MessageCell m_messageCells[k_numberOfMessageCells];
   Escher::SolidColorCell m_emptyCell[k_numberOfEmptyCells];
   ContentView m_contentView;
+  Escher::AbstractButtonCell m_searchIntervalCell;
+  bool m_approximateSolutions;
 };
 
 }  // namespace Solver

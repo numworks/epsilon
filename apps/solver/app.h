@@ -43,8 +43,9 @@ class App : public Shared::MathApp {
 
   EquationStore *equationStore() { return &m_equationStore; }
   SystemOfEquations *system() { return &m_system; }
-  Escher::ViewController *intervalController() { return &m_intervalController; }
-  SolutionsController *solutionsController() { return &m_solutionsController; }
+
+  void openSolutionsController(bool approximateSolve);
+  void openIntervalController();
 
   void storageDidChangeForRecord(Ion::Storage::Record record) override;
   void prepareForIntrusiveStorageChange() override;
@@ -57,6 +58,7 @@ class App : public Shared::MathApp {
   EquationStore m_equationStore;
   // Controllers
   SolutionsController m_solutionsController;
+  Escher::ButtonRowController m_solutionHeader;
   IntervalController m_intervalController;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;

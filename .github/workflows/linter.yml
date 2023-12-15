@@ -29,5 +29,8 @@ jobs:
       - name: Setup
         run: build/setup.sh --only-simulator
 
+      - name: Get a recent clang-format version
+        uses: numworks/setup-llvm@latest
+
       - name: Lint files changed by PR
         run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror" PYFORMATARGS="--check"

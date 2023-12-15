@@ -27,6 +27,31 @@
 
 namespace PoincareJ {
 
+#define LOG_NEW_ADVANCED_REDUCTION 1
+
+#if LOG_NEW_ADVANCED_REDUCTION
+constexpr uint8_t k_verbose_level = 3;
+size_t s_indent = 0;
+
+void LogIndent() {
+  for (size_t i = 0; i < s_indent; i++) {
+    std::cout << "  ";
+  }
+}
+
+const char* DirectionName(Simplification::Direction dir) {
+  switch (dir) {
+    case Simplification::Direction::NextNode:
+      return "Next";
+    case Simplification::Direction::Contract:
+      return "Contract";
+    case Simplification::Direction::Expand:
+      return "Expand";
+  }
+}
+
+#endif
+
 bool Simplification::NewShallowExpand(Tree* u) {
   return u->isAlgebraic() ? ShallowAlgebraicExpand(u) : ShallowExpand(u);
 }
@@ -98,25 +123,71 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
                                              const Tree* original, Path* path,
                                              Path* bestPath, int* bestMetric,
                                              CrcCollection* crcCollection) {
+#if LOG_NEW_ADVANCED_REDUCTION
+  if (4 <= k_verbose_level) {
+    LogIndent();
+    std::cout << "NewAdvancedReductionRec on subtree: ";
+    u->logSerialize();
+  }
+#endif
   bool isLeaf = true;
   for (uint8_t i = 0; i < k_numberOfDirection; i++) {
     Direction dir = static_cast<Direction>(i);
     Tree* target = u;
     // Apply direction if effective:
     bool rootChanged = false;
-    if (!CanApplyDirection(target, root, dir) ||
-        !ApplyDirection(&target, root, dir, &rootChanged)) {
+    if (!CanApplyDirection(target, root, dir)) {
+#if LOG_NEW_ADVANCED_REDUCTION
+      if (3 <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Can't apply " << DirectionName(dir) << ".\n";
+      }
+#endif
+      continue;
+    }
+    if (!ApplyDirection(&target, root, dir, &rootChanged)) {
+#if LOG_NEW_ADVANCED_REDUCTION
+      if (3 <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Tried, but could not apply " << DirectionName(dir)
+                  << ".\n";
+      }
+#endif
       continue;
     }
     // If unexplored or unchanged, recursively advanced reduce.
     if (!rootChanged ||
         crcCollection->add(Ion::crc32Byte(
             reinterpret_cast<const uint8_t*>(root), root->treeSize()))) {
+#if LOG_NEW_ADVANCED_REDUCTION
+      if (((dir == Direction::NextNode) ? 3 : 2) <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Apply " << DirectionName(dir) << ": ";
+        if (rootChanged) {
+          root->logSerialize();
+        } else {
+          std::cout << "\n";
+        }
+        s_indent++;
+      }
+#endif
       path->append(dir);
       isLeaf = false;
       NewAdvancedReductionRec(target, root, original, path, bestPath,
                               bestMetric, crcCollection);
       path->pop();
+#if LOG_NEW_ADVANCED_REDUCTION
+      if (((dir == Direction::NextNode) ? 3 : 2) <= k_verbose_level) {
+        assert(s_indent > 0);
+        s_indent--;
+      }
+    } else {
+      if (3 <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Already applied " << DirectionName(dir) << ": ";
+        root->logSerialize();
+      }
+#endif
     }
     // Undo changes on root.
     if (rootChanged) {
@@ -127,6 +198,18 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
   if (isLeaf) {
     // All directions are impossible, we are at a leaf. Compare metrics.
     int metric = GetMetric(root);
+#if LOG_NEW_ADVANCED_REDUCTION
+    if (1 <= k_verbose_level) {
+      LogIndent();
+      std::cout << "Leaf reached (" << metric << " VS " << *bestMetric << ")";
+      if (k_verbose_level != 2) {
+        std::cout << ": ";
+        root->logSerialize();
+      } else {
+        std::cout << "\n";
+      }
+    }
+#endif
     if (metric < *bestMetric) {
       *bestMetric = metric;
       *bestPath = *path;
@@ -140,10 +223,26 @@ bool Simplification::NewAdvancedReduction(Tree* u) {
   Path currentPath;
   CrcCollection crcCollection;
   Tree* editedExpression = u->clone();
+#if LOG_NEW_ADVANCED_REDUCTION
+  if (1 <= k_verbose_level) {
+    std::cout << "\nNewAdvancedReduction\nInitial tree (" << bestMetric
+              << ") is : ";
+    u->logSerialize();
+    s_indent = 1;
+  }
+#endif
   NewAdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
                           &bestPath, &bestMetric, &crcCollection);
   editedExpression->removeTree();
-  return ApplyPath(u, &bestPath);
+  bool result = ApplyPath(u, &bestPath);
+#if LOG_NEW_ADVANCED_REDUCTION
+  if (1 <= k_verbose_level) {
+    s_indent = 0;
+    std::cout << "Final result (" << bestMetric << ") is : ";
+    u->logSerialize();
+  }
+#endif
+  return result;
 }
 
 bool Simplification::UpwardSystematicReduction(Tree* root, const Tree* tree) {

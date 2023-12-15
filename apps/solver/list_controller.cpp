@@ -180,30 +180,29 @@ void ListController::resolveEquations() {
   Poincare::CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    SystemOfEquations::Error e =
-        App::app()->system()->exactSolve(App::app()->localContext());
+    using Error = SystemOfEquations::Error;
+    Error e = App::app()->system()->exactSolve(App::app()->localContext());
     switch (e) {
-      case SystemOfEquations::Error::EquationUndefined:
+      case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
         return;
-      case SystemOfEquations::Error::EquationNonreal:
+      case Error::EquationNonreal:
         App::app()->displayWarning(I18n::Message::NonrealEquation);
         return;
-      case SystemOfEquations::Error::TooManyVariables:
+      case Error::TooManyVariables:
         App::app()->displayWarning(I18n::Message::TooManyVariables);
         return;
-      case SystemOfEquations::Error::NonLinearSystem:
+      case Error::NonLinearSystem:
         App::app()->displayWarning(I18n::Message::NonLinearSystem);
         return;
-      case SystemOfEquations::Error::DisabledInExamMode:
+      case Error::DisabledInExamMode:
         App::app()->displayWarning(I18n::Message::DisabledFeatureInExamMode);
         return;
-      case SystemOfEquations::Error::RequireApproximateSolution:
+      case Error::RequireApproximateSolution:
         App::app()->system()->resetApproximateResolutionRange();
         App::app()->system()->approximateSolve(App::app()->localContext());
       default: {
-        assert(e == SystemOfEquations::Error::NoError ||
-               e == SystemOfEquations::Error::RequireApproximateSolution);
+        assert(e == Error::NoError || e == Error::RequireApproximateSolution);
         stackController()->push(App::app()->solutionsController());
       }
     }

@@ -1,4 +1,4 @@
-import sys, os, shutil, argparse
+import sys, os, shutil, argparse, re
 import helper
 import args_types
 from print_format import bold, red, green, print_underlined
@@ -18,6 +18,12 @@ parser.add_argument(
     "--ref",
     type=args_types.existing_file,
     help="epsilon reference executable, only used for failed scenari to generate screenshots at each step",
+)
+parser.add_argument(
+    "-f",
+    "--filter",
+    default="",
+    help="run only scenarios with a name starting with filter argument",
 )
 
 
@@ -47,6 +53,9 @@ def main():
 
     with ThreadPoolExecutor(max_workers=8) as pool:
         for scenario_name in sorted(os.listdir(helper.dataset())):
+            if not re.match(args.filter, scenario_name):
+                continue
+
             scenario_folder = helper.folder(scenario_name)
             if not os.path.isdir(scenario_folder):
                 continue

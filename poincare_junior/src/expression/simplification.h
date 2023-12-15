@@ -49,9 +49,6 @@ class Simplification {
       return m_stack[--m_length];
     }
     void append(Direction direction);
-    Direction previousDirection() const {
-      return m_length > 0 ? direction(m_length - 1) : Direction::NextNode;
-    }
     Direction direction(size_t index) const {
       assert(index < m_length);
       return m_stack[index];

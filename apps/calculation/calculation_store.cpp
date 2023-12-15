@@ -152,9 +152,15 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Parse and compute the expression
 #if OLD_POINCARE
-      PoincareHelpers::ParseAndSimplifyAndApproximate(
-          inputText, &inputExpression, &exactOutputExpression,
-          &approximateOutputExpression, context);
+      inputExpression = Expression::Parse(inputText, context, false);
+      assert(!inputExpression.isUninitialized());
+      PoincareHelpers::CloneAndSimplifyAndApproximate(
+          inputExpression, &exactOutputExpression, &approximateOutputExpression,
+          context,
+          {.symbolicComputation = SymbolicComputation::
+               ReplaceAllSymbolsWithDefinitionsOrUndefined});
+      assert(!exactOutputExpression.isUninitialized() &&
+             !approximateOutputExpression.isUninitialized());
 #else
       PoincareJ::Expression pcjInput =
           PoincareJ::Expression::FromPoincareExpression(&inputExpression);

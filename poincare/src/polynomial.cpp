@@ -99,6 +99,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
                                       beautifyRoots);
     }
   } else {
+    *delta = delta->approximate<double>(approximationContext);
     *root1 = root1->approximate<double>(approximationContext);
     *root2 = root2->approximate<double>(approximationContext);
   }

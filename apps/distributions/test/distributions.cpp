@@ -131,6 +131,41 @@ QUIZ_CASE(probability_exponential_distribution) {
       &distribution, 5.f, 1.f - std::exp(-.2f * 5.f));
 }
 
+QUIZ_CASE(probability_normal_distribution) {
+  // N(0, 1)
+  Distributions::NormalDistribution distribution;
+  distribution.setParameterAtIndex(0, 0);
+  distribution.setParameterAtIndex(1, 1);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
+                              0.24197072451914337);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 0.2, 0.579259709439103);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 1.6448536269514722, 0.95);
+
+  // N(123, 10.3)
+  distribution.setParameterAtIndex(123, 0);
+  distribution.setParameterAtIndex(10.3, 1);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(103),
+                              0.005879554726599732);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
+                                                                123, 0.5);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 143, 0.9739161667561312);
+
+  // N(-1.2, 0.3)
+  distribution.setParameterAtIndex(-1.2, 0);
+  distribution.setParameterAtIndex(0.3, 1);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(-1),
+                              1.0648266850745078, 1e-6);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, -1, 0.7475074624530771);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, -2, 0.0038303805675897287);
+  assert_finite_integral_between_abscissas_is(&distribution, -1., 0,
+                                              0.2524608663050898);
+}
+
 QUIZ_CASE(probability_poisson_distribution) {
   // POISSON(1)
   Distributions::PoissonDistribution distribution;
@@ -287,41 +322,6 @@ QUIZ_CASE(probability_geometric_distribution) {
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.4);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
-}
-
-QUIZ_CASE(probability_normal_distribution) {
-  // N(0, 1)
-  Distributions::NormalDistribution distribution;
-  distribution.setParameterAtIndex(0, 0);
-  distribution.setParameterAtIndex(1, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
-                              0.24197072451914337);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 0.2, 0.579259709439103);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 1.6448536269514722, 0.95);
-
-  // N(123, 10.3)
-  distribution.setParameterAtIndex(123, 0);
-  distribution.setParameterAtIndex(10.3, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(103),
-                              0.005879554726599732);
-  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
-                                                                123, 0.5);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 143, 0.9739161667561312);
-
-  // N(-1.2, 0.3)
-  distribution.setParameterAtIndex(-1.2, 0);
-  distribution.setParameterAtIndex(0.3, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(-1),
-                              1.0648266850745078, 1e-6);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, -1, 0.7475074624530771);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, -2, 0.0038303805675897287);
-  assert_finite_integral_between_abscissas_is(&distribution, -1., 0,
-                                              0.2524608663050898);
 }
 
 QUIZ_CASE(probability_fisher_distribution) {

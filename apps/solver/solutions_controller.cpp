@@ -169,13 +169,14 @@ void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = true;
   SystemOfEquations *system = App::app()->system();
+
   if (system->numberOfSolutions() == 0) {
     // There are no solutions
     m_contentView.setWarningMessage(noSolutionMessage());
-  } else if (system->type() == SystemOfEquations::Type::GeneralMonovariable &&
-             system->hasMoreSolutions()) {
-    // There are more approximate solutions
-    m_contentView.setWarningMessage(I18n::Message::OnlyFirstSolutionsDisplayed);
+  } else if (approximateSolutions()) {
+    m_contentView.setWarningMessage(
+        system->hasMoreSolutions() ? I18n::Message::OnlyFirstSolutionsDisplayed
+                                   : I18n::Message::OtherSolutionsMayExist);
   } else if (system->type() ==
                  SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {

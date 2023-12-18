@@ -28,10 +28,11 @@ class Simplification {
     CrcCollection() : m_length(0) {}
     // Return false if CRC was already explored
     bool add(uint32_t crc);
+    bool isFull() const { return m_length >= k_size; }
 
    private:
     // Max Expand/Contract combination possibilities
-    constexpr static size_t k_size = 1024;
+    constexpr static size_t k_size = 128;
     uint32_t collection[k_size];
     size_t m_length;
   };
@@ -77,7 +78,7 @@ class Simplification {
     Path() : m_length(0) {}
     // Pop NextNode directions one at a time.
     void popBaseDirection();
-    void append(Direction direction);
+    bool append(Direction direction);
     Direction direction(size_t index) const {
       assert(index < m_length);
       return m_stack[index];
@@ -85,8 +86,8 @@ class Simplification {
     size_t length() const { return m_length; }
 
    private:
-    // Path max length
-    constexpr static size_t k_size = 1024;
+    // Path max length (~= 2 * max number of allowed Expand/Contract)
+    constexpr static size_t k_size = 64;
     Direction m_stack[k_size];
     size_t m_length;
   };

@@ -46,7 +46,10 @@ bool Simplification::NewShallowExpand(Tree* u) {
 }
 
 bool Simplification::CrcCollection::add(uint32_t crc) {
-  assert(m_length < k_size);
+  if (isFull()) {
+    // Behave as if all trees had already been tested.
+    return false;
+  }
   for (size_t i = 0; i < m_length; i++) {
     uint32_t crc_i = collection[i];
     if (crc_i < crc) {
@@ -106,12 +109,15 @@ void Simplification::Path::popBaseDirection() {
   }
 }
 
-void Simplification::Path::append(Direction direction) {
+bool Simplification::Path::append(Direction direction) {
   if (!m_stack[m_length - 1].combine(direction)) {
-    assert(m_length < k_size);
+    if (m_length >= k_size) {
+      return false;
+    }
     m_stack[m_length] = direction;
     m_length += 1;
   }
+  return true;
 }
 
 bool Simplification::CanApplyDirection(const Tree* u, const Tree* root,
@@ -183,19 +189,54 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
 #if LOG_NEW_ADVANCED_REDUCTION
       if (3 <= k_verbose_level) {
         LogIndent();
-        std::cout << "Tried, but could not apply ";
+        std::cout << "Nothing to ";
         dir.log();
         std::cout << ".\n";
       }
 #endif
       continue;
     }
-    // If unexplored or unchanged, recursively advanced reduce.
-    if (!rootChanged ||
-        crcCollection->add(Ion::crc32Byte(
-            reinterpret_cast<const uint8_t*>(root), root->treeSize()))) {
+    bool exploreFurther = !rootChanged;
+    if (!exploreFurther) {
+      /* Ensure the new tree has never been explored before and that
+       * crcCollection isn't full. */
+      uint32_t crc32 = Ion::crc32Byte(reinterpret_cast<const uint8_t*>(root),
+                                      root->treeSize());
+      exploreFurther = crcCollection->add(crc32);
+      if (!exploreFurther && crcCollection->isFull()) {
+        // Nothing more to do, escape.
 #if LOG_NEW_ADVANCED_REDUCTION
-      if (((dir.isNextNode()) ? 3 : 2) <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Full CRC collection.\n";
+        return;
+#endif
+      }
+#if LOG_NEW_ADVANCED_REDUCTION
+      if (!exploreFurther && 3 <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Already applied ";
+        dir.log();
+        std::cout << ": ";
+        root->logSerialize();
+      }
+#endif
+    }
+    if (exploreFurther) {
+      // Ensure path is not full.
+      exploreFurther = path->append(dir);
+#if LOG_NEW_ADVANCED_REDUCTION
+      if (!exploreFurther && 1 <= k_verbose_level) {
+        LogIndent();
+        std::cout << "Full path.\n";
+      }
+#endif
+    }
+    /* If unexplored or unchanged, recursively advanced reduce. If crcCollection
+     * is full or path is full, do not go further. */
+    if (exploreFurther) {
+#if LOG_NEW_ADVANCED_REDUCTION
+      bool shouldLog = ((dir.isNextNode()) ? 3 : 2) <= k_verbose_level;
+      if (shouldLog) {
         LogIndent();
         std::cout << "Apply ";
         dir.log();
@@ -208,23 +249,14 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
         s_indent++;
       }
 #endif
-      path->append(dir);
       isLeaf = false;
       NewAdvancedReductionRec(target, root, original, path, bestPath,
                               bestMetric, crcCollection);
       path->popBaseDirection();
 #if LOG_NEW_ADVANCED_REDUCTION
-      if (((dir.isNextNode()) ? 3 : 2) <= k_verbose_level) {
+      if (shouldLog) {
         assert(s_indent > 0);
         s_indent--;
-      }
-    } else {
-      if (3 <= k_verbose_level) {
-        LogIndent();
-        std::cout << "Already applied ";
-        dir.log();
-        std::cout << ": ";
-        root->logSerialize();
       }
 #endif
     }
@@ -257,6 +289,9 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
 }
 
 bool Simplification::NewAdvancedReduction(Tree* u) {
+  /* The advanced reduction is capped in depth by Path::k_size and in breadth by
+   * CrcCollection::k_size. If this limit is reached, no further possibilities
+   * will be explored. */
   int bestMetric = GetMetric(u);
   Path bestPath;
   Path currentPath;

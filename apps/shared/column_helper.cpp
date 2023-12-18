@@ -212,8 +212,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
      * same time in the pool. We might be working with huge lists right now, so
      * it's better to get out of the scope and destroy the list before storing
      * the data of the double pair store in the storage. */
-    store()->setList(static_cast<List &>(formula), *series, *column, true,
-                     true);
+    store()->setList(static_cast<Poincare::List &>(formula), *series, *column,
+                     true, true);
     return FillColumnStatus::Success;
   }
 

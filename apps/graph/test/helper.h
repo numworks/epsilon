@@ -12,7 +12,7 @@ namespace Graph {
 
 ContinuousFunction* addFunction(const char* definition,
                                 Shared::ContinuousFunctionStore* store,
-                                Context* context);
+                                Poincare::Context* context);
 
 }
 

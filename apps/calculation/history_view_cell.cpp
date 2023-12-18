@@ -398,7 +398,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
 
 bool HistoryViewCell::updateExpanded(bool expanded) {
   assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
-  TrinaryBoolean calculationExpanded = BinaryToTrinaryBool(
+  TrinaryBoolean calculationExpanded = Poincare::BinaryToTrinaryBool(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
       (expanded && m_calculationDisplayOutput ==

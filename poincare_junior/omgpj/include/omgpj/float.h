@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace Float {
+namespace OMG::Float {
 
 bool IsGreater(float xI, float xJ, bool nanIsGreatest);
 
@@ -41,6 +41,6 @@ bool RoughlyEqual(T observed, T expected, T threshold, bool acceptNAN = false,
   return RelativelyEqual<T>(observed, expected, threshold);
 }
 
-}  // namespace Float
+}  // namespace OMG::Float
 
 #endif

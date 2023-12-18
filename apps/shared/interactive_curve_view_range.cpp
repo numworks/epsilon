@@ -110,7 +110,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   Coordinate2D<float> center(std::isfinite(x) ? x : thisRange.x()->center(),
                              std::isfinite(y) ? y : thisRange.y()->center());
   thisRange.zoom(ratio, center);
-  assert(thisRange.x()->isValid() && thisRange.y()->isValid());
+  assert(!thisRange.x()->isNan() && !thisRange.y()->isNan());
   setZoomAuto(false);
   protectedSetXRange(*thisRange.x(), k_maxFloat);
   protectedSetYRange(*thisRange.y(), k_maxFloat);

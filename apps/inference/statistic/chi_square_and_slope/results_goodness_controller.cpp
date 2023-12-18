@@ -27,7 +27,7 @@ ResultsGoodnessTabController::ContributionsController::ContributionsController(
     Escher::Responder* parentResponder, Escher::ViewController* nextController,
     GoodnessTest* statistic)
     : CategoricalController(parentResponder, nextController,
-                            Invocation::Builder<CategoricalController>(
+                            Escher::Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
       m_table(&m_selectableListView, this, statistic) {}
 

@@ -1,5 +1,7 @@
 #include "input_categorical_cell.h"
 
+using namespace Escher;
+
 namespace Inference {
 
 InputCategoricalCell::InputCategoricalCell(Responder* parentResponder,

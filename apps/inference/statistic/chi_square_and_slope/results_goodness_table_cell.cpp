@@ -21,9 +21,10 @@ void ResultGoodnessContributionsTable::drawRect(KDContext *ctx,
                                                 KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
-  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
-                       bounds().width(), Metric::CellSeparatorThickness),
-                m_selectableTableView.backgroundColor());
+  ctx->fillRect(
+      KDRect(0, bounds().height() - Escher::Metric::CellSeparatorThickness,
+             bounds().width(), Escher::Metric::CellSeparatorThickness),
+      m_selectableTableView.backgroundColor());
 }
 
 void ResultGoodnessContributionsTable::fillCellForLocation(

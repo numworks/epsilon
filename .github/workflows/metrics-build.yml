@@ -1,6 +1,9 @@
 name: Build metrics
 # read-only repo token
-on: [pull_request]
+# temporarly diasbled
+#on: [pull_request]
+on: workflow_dispatch
+
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 

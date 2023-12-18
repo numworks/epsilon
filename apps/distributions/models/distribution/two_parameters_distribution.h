@@ -11,10 +11,10 @@ class TwoParametersDistribution : public Distribution {
                             double parameterValue1, double parameterValue2)
       : Distribution(type), m_parameters{parameterValue1, parameterValue2} {}
   int numberOfParameters() override { return 2; }
+  const double* constParametersArray() const override { return m_parameters; }
 
  protected:
   double* parametersArray() override { return m_parameters; }
-  const double* constParametersArray() const override { return m_parameters; }
   double m_parameters[2];
 };
 

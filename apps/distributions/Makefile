@@ -42,7 +42,8 @@ apps_src += $(app_distributions_src)
 i18n_files += $(call i18n_with_universal_for,distributions/i18n/base)
 
 tests_src += $(addprefix apps/distributions/test/,\
-  distributions.cpp \
+  distributions_results.cpp \
+  distributions_parameters.cpp \
 )
 
 # Allow #include "distributions/..."

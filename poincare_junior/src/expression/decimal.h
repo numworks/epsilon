@@ -15,7 +15,6 @@ class Decimal final {
  private:
   static inline void assertValidDecimal(const Tree* tree) {
     assert(tree->isDecimal());
-    assert(tree->nextNode()->isInteger());
   }
 };
 

@@ -19,13 +19,13 @@ QUIZ_CASE(pcj_projection) {
                   1_e),
             0_e));
 
-  CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
+  CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow("x"_e, 2_e)));
   Projection::DeepSystemProjection(ref,
                                    {.m_complexFormat = ComplexFormat::Cartesian,
                                     .m_strategy = Strategy::NumbersToFloat});
   assert_trees_are_equal(
       ref,
-      KAdd(KTrig(KAdd(2065_de, KMult(-1_de, 2065_de)), 0_de), KExp("x"_e)));
+      KAdd(KTrig(KAdd(2065_de, KMult(-1_e, 2065_de)), 0_e), KPow("x"_e, 2_e)));
 
   CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(2_e, "x"_e),
                               KPow(KLn(e_e), KDiv(1_e, 10_e))));

@@ -8,9 +8,13 @@ namespace PoincareJ {
 
 bool Projection::DeepSystemProjection(Tree* ref,
                                       ProjectionContext projectionContext) {
-  bool changed =
-      (projectionContext.m_strategy == Strategy::ApproximateToFloat) &&
-      Approximation::ApproximateAndReplaceEveryScalar(ref);
+  bool changed = false;
+  if (projectionContext.m_strategy != Strategy::Default) {
+    assert((projectionContext.m_strategy == Strategy::ApproximateToFloat ||
+            projectionContext.m_strategy == Strategy::NumbersToFloat));
+    changed = Approximation::ApproximateAndReplaceEveryScalar(
+        ref, projectionContext.m_strategy == Strategy::ApproximateToFloat);
+  }
   return Tree::ApplyShallowInDepth(ref, ShallowSystemProjection,
                                    &projectionContext) ||
          changed;
@@ -32,11 +36,6 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
   if (ref->isUnit()) {
     Units::Unit::RemoveUnit(ref);
     changed = true;
-  }
-
-  if (projectionContext->m_strategy == Strategy::NumbersToFloat &&
-      (ref->isNumber() || ref->isInfinity())) {
-    return Approximation::ApproximateAndReplaceEveryScalar(ref) || changed;
   }
 
   if (ref->isDecimal()) {

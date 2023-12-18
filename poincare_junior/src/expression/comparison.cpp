@@ -127,7 +127,18 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   }
   float approximation = Approximation::To<float>(node0, nullptr) -
                         Approximation::To<float>(node1, nullptr);
-  return approximation == 0.0f ? 0 : (approximation > 0.0f ? 1 : -1);
+  if (approximation == 0.0f) {
+    if (node0->treeIsIdenticalTo(node1)) {
+      return 0;
+    }
+    // Trees are different but float approximation is not precise enough.
+    double doubleApproximation = Approximation::To<double>(node0, nullptr) -
+                                 Approximation::To<double>(node1, nullptr);
+    assert(doubleApproximation != 0);
+    return doubleApproximation > 0.0f ? 1 : -1;
+  }
+  assert(!node0->treeIsIdenticalTo(node1));
+  return approximation > 0.0f ? 1 : -1;
 }
 
 int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
@@ -234,9 +245,10 @@ int Comparison::CompareLastChild(const Tree* node0, const Tree* node1) {
 }
 
 bool Comparison::AreEqual(const Tree* node0, const Tree* node1) {
-  // treeIsidenticalTo is faster since it uses memcmp
+  // treeIsIdenticalTo is faster since it uses memcmp
   bool areEqual = node0->treeIsIdenticalTo(node1);
-  assert((Compare(node0, node1) == 0) == areEqual);
+  // Trees could be different but compare the same due to float imprecision.
+  assert(!areEqual || Compare(node0, node1) == 0);
   return areEqual;
 }
 

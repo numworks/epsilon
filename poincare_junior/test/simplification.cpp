@@ -491,7 +491,7 @@ QUIZ_CASE(pcj_infinity) {
   simplifies_to("e^-∞", "0");
   simplifies_to("inf^x", "e^(∞×x)");
   // Inverse isn't beautified due to float contamination.
-  simplifies_to("log(inf,x)", "∞×ln(x)^(-1)");
+  simplifies_to("log(inf,x)", "∞/ln(x)");
   simplifies_to("0×∞", "undef");
   simplifies_to("∞-∞", "undef");
   simplifies_to("cos(∞)", "undef");

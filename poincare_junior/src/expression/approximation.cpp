@@ -146,7 +146,8 @@ bool interruptApproximation(TypeBlock type, int childIndex,
 }
 
 template <typename T>
-bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
+bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
+                                                      bool collapse) {
   // These types are either already approximated or impossible to approximate.
   if (tree->type() == FloatType<T>::type || tree->isRandomNode() ||
       tree->isOfType(
@@ -154,13 +155,13 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
     return false;
   }
   bool changed = false;
-  bool approximateNode = true;
+  bool approximateNode = collapse || (tree->numberOfChildren() == 0);
   int childIndex = 0;
   for (Tree* child : tree->children()) {
     if (interruptApproximation(tree->type(), childIndex++, child->type())) {
       break;
     }
-    changed = ApproximateAndReplaceEveryScalarT<T>(child) || changed;
+    changed = ApproximateAndReplaceEveryScalarT<T>(child, collapse) || changed;
     approximateNode = approximateNode && child->type() == FloatType<T>::type;
   }
   if (!approximateNode) {
@@ -178,7 +179,9 @@ template double Approximation::RootTreeTo<double>(const Tree*);
 template float Approximation::To<float>(const Tree*, Random::Context*);
 template double Approximation::To<double>(const Tree*, Random::Context*);
 
-template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*);
-template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(Tree*);
+template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
+                                                                      bool);
+template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(Tree*,
+                                                                       bool);
 
 }  // namespace PoincareJ

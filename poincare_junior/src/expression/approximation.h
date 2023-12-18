@@ -69,10 +69,12 @@ class Approximation final {
     assert(b == 0.0 || b == 1.0);
     return (b == 0.0) ? std::acos(a) : std::asin(a);
   }
-  static bool ApproximateAndReplaceEveryScalar(Tree* tree) {
-    return ApproximateAndReplaceEveryScalarT<double>(tree);
+  // If collapse is true, approximate parents if all children have approximated.
+  static bool ApproximateAndReplaceEveryScalar(Tree* tree,
+                                               bool collapse = true) {
+    return ApproximateAndReplaceEveryScalarT<double>(tree, collapse);
   }
-  EDITION_REF_WRAP(ApproximateAndReplaceEveryScalar)
+  EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar, bool, true)
 
  private:
   template <typename T>
@@ -81,7 +83,7 @@ class Approximation final {
   static T MapAndReduce(const Tree* node, Reductor<T> reductor,
                         Random::Context* context);
   template <typename T>
-  static bool ApproximateAndReplaceEveryScalarT(Tree* tree);
+  static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
 };
 
 }  // namespace PoincareJ

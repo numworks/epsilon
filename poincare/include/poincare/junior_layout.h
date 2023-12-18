@@ -46,6 +46,7 @@ class JuniorLayoutNode final : public LayoutNode {
   }
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override {
     assert(false);
+    return KDPointZero;
   }
   Layout makeEditable() override;
 

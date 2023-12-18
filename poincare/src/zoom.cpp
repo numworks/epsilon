@@ -59,8 +59,8 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   *(result.y()) =
       Range1D::ValidRangeBetween(pretty.yMin(), pretty.yMax(), m_maxFloat);
 #if ASSERTIONS
-  bool xRangeIsForced = m_forcedRange.x()->isValid();
-  bool yRangeIsForced = m_forcedRange.y()->isValid();
+  bool xRangeIsForced = !m_forcedRange.x()->isNan();
+  bool yRangeIsForced = !m_forcedRange.y()->isNan();
   assert(xRangeIsForced || (yRangeIsForced && forceNormalization) ||
          rangeIsValidZoom(*result.x(), *m_interestingRange.x(), m_maxFloat));
   assert(yRangeIsForced || (xRangeIsForced && forceNormalization) ||

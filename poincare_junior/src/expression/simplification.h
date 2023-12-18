@@ -28,39 +28,65 @@ class Simplification {
     CrcCollection() : m_length(0) {}
     // Return false if CRC was already explored
     bool add(uint32_t crc);
+
+   private:
     // Max Expand/Contract combination possibilities
-    static constexpr size_t k_size = 1024;
+    constexpr static size_t k_size = 1024;
     uint32_t collection[k_size];
     size_t m_length;
   };
-  enum class Direction : uint8_t {
-    NextNode = 0,
-    Contract = 1,
-    Expand = 2,
+
+  // Store a direction. NextNode can be applied multiple times.
+  class Direction {
+   public:
+    constexpr static uint8_t k_numberOfBaseDirections = 3;
+    // Constructor needed for Path::m_stack
+    Direction() : m_type(0) {}
+    bool isNextNode() const { return !isContract() && !isExpand(); }
+    bool isContract() const { return m_type == k_contractType; }
+    bool isExpand() const { return m_type == k_expandType; }
+#if POINCARE_MEMORY_TREE_LOG
+    void log();
+#endif
+    // Returns one of the three base direction (NextNode, Contract and Expand).
+    static Direction SingleDirectionForIndex(int index) {
+      assert(index >= 0 && index < k_numberOfBaseDirections);
+      return Direction(index == 0
+                           ? k_baseNextNodeType
+                           : (index == 1 ? k_contractType : k_expandType));
+    }
+    // If possible, combine the other direction into this one and return true.
+    bool combine(Direction other);
+    // If possible, decrement the weight of the direction and return true.
+    bool decrement();
+
+   private:
+    /* Contract and Expand use 0 and UINT8_MAX so that NextNode can be weighted
+     * between 1 and UINT8_MAX-1. */
+    constexpr static uint8_t k_contractType = 0;
+    constexpr static uint8_t k_baseNextNodeType = 1;
+    constexpr static uint8_t k_expandType = UINT8_MAX;
+    Direction(uint8_t type) : m_type(type) {}
+    uint8_t m_type;
   };
-  static constexpr uint8_t k_numberOfDirection =
-      static_cast<uint8_t>(Direction::Expand) + 1;
+  static_assert(sizeof(uint8_t) == sizeof(Direction));
+
   // Path in exploration of a tree's advanced reduction.
   class Path {
    public:
     Path() : m_length(0) {}
-    Direction pop() {
-      assert(m_length > 0);
-      return m_stack[--m_length];
-    }
+    // Pop NextNode directions one at a time.
+    void popBaseDirection();
     void append(Direction direction);
     Direction direction(size_t index) const {
       assert(index < m_length);
       return m_stack[index];
     }
     size_t length() const { return m_length; }
+
+   private:
     // Path max length
-    static constexpr size_t k_size = 1024;
-    /* TODO : This structure isn't optimized.
-     * [NextNode, NextNode, NextNode,Contract, NextNode, Expand, Expand]
-     * could be stored as
-     * [NextNode,Contract, NextNode, Expand] and [3,1,1,2] or
-     * [3, 0, 1, UINT8_MAX, UINT8_MAX] (0 is Contract, UINT8_MAX Expand). */
+    constexpr static size_t k_size = 1024;
     Direction m_stack[k_size];
     size_t m_length;
   };

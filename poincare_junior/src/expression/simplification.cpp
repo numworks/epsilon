@@ -39,17 +39,6 @@ void LogIndent() {
   }
 }
 
-const char* DirectionName(Simplification::Direction dir) {
-  switch (dir) {
-    case Simplification::Direction::NextNode:
-      return "Next";
-    case Simplification::Direction::Contract:
-      return "Contract";
-    case Simplification::Direction::Expand:
-      return "Expand";
-  }
-}
-
 #endif
 
 bool Simplification::NewShallowExpand(Tree* u) {
@@ -77,28 +66,71 @@ bool Simplification::CrcCollection::add(uint32_t crc) {
   return true;
 }
 
+#if POINCARE_MEMORY_TREE_LOG
+void Simplification::Direction::log() {
+  if (isNextNode()) {
+    std::cout << "NextNode";
+    if (m_type > 1) {
+      std::cout << " * " << m_type;
+    }
+  } else if (isContract()) {
+    std::cout << "Contract";
+  } else {
+    assert(isExpand());
+    std::cout << "Expand";
+  }
+}
+#endif
+
+bool Simplification::Direction::combine(Direction other) {
+  if (!isNextNode() || !other.isNextNode() ||
+      m_type >= k_expandType - other.m_type) {
+    return false;
+  }
+  m_type += other.m_type;
+  return true;
+}
+
+bool Simplification::Direction::decrement() {
+  if (!isNextNode() || m_type == k_baseNextNodeType) {
+    return false;
+  }
+  m_type--;
+  return true;
+}
+
+void Simplification::Path::popBaseDirection() {
+  assert(m_length > 0);
+  if (!m_stack[m_length - 1].decrement()) {
+    m_length--;
+  }
+}
+
 void Simplification::Path::append(Direction direction) {
-  assert(m_length < k_size);
-  m_stack[m_length] = direction;
-  m_length += 1;
+  if (!m_stack[m_length - 1].combine(direction)) {
+    assert(m_length < k_size);
+    m_stack[m_length] = direction;
+    m_length += 1;
+  }
 }
 
 bool Simplification::CanApplyDirection(const Tree* u, const Tree* root,
                                        Direction direction) {
   // TODO: Optimize this check
-  return direction != Direction::NextNode ||
-         u->nextNode()->hasAncestor(root, false);
+  return !direction.isNextNode() || u->nextNode()->hasAncestor(root, false);
 }
 
 bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
                                     bool* rootChanged) {
-  if (direction == Direction::NextNode) {
-    *u = (*u)->nextNode();
+  if (direction.isNextNode()) {
+    do {
+      *u = (*u)->nextNode();
+    } while (direction.decrement());
     return true;
   }
-  assert(direction == Direction::Contract || direction == Direction::Expand);
-  if (!((direction == Direction::Contract) ? ShallowContract(*u)
-                                           : NewShallowExpand(*u))) {
+  assert(direction.isContract() || direction.isExpand());
+  if (!((direction.isContract()) ? ShallowContract(*u)
+                                 : NewShallowExpand(*u))) {
     return false;
   }
   // Apply a deep systematic reduction starting from (*u)
@@ -131,8 +163,8 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
   }
 #endif
   bool isLeaf = true;
-  for (uint8_t i = 0; i < k_numberOfDirection; i++) {
-    Direction dir = static_cast<Direction>(i);
+  for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
+    Direction dir = Direction::SingleDirectionForIndex(i);
     Tree* target = u;
     // Apply direction if effective:
     bool rootChanged = false;
@@ -140,7 +172,9 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
 #if LOG_NEW_ADVANCED_REDUCTION
       if (3 <= k_verbose_level) {
         LogIndent();
-        std::cout << "Can't apply " << DirectionName(dir) << ".\n";
+        std::cout << "Can't apply ";
+        dir.log();
+        std::cout << ".\n";
       }
 #endif
       continue;
@@ -149,8 +183,9 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
 #if LOG_NEW_ADVANCED_REDUCTION
       if (3 <= k_verbose_level) {
         LogIndent();
-        std::cout << "Tried, but could not apply " << DirectionName(dir)
-                  << ".\n";
+        std::cout << "Tried, but could not apply ";
+        dir.log();
+        std::cout << ".\n";
       }
 #endif
       continue;
@@ -160,9 +195,11 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
         crcCollection->add(Ion::crc32Byte(
             reinterpret_cast<const uint8_t*>(root), root->treeSize()))) {
 #if LOG_NEW_ADVANCED_REDUCTION
-      if (((dir == Direction::NextNode) ? 3 : 2) <= k_verbose_level) {
+      if (((dir.isNextNode()) ? 3 : 2) <= k_verbose_level) {
         LogIndent();
-        std::cout << "Apply " << DirectionName(dir) << ": ";
+        std::cout << "Apply ";
+        dir.log();
+        std::cout << ": ";
         if (rootChanged) {
           root->logSerialize();
         } else {
@@ -175,16 +212,18 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
       isLeaf = false;
       NewAdvancedReductionRec(target, root, original, path, bestPath,
                               bestMetric, crcCollection);
-      path->pop();
+      path->popBaseDirection();
 #if LOG_NEW_ADVANCED_REDUCTION
-      if (((dir == Direction::NextNode) ? 3 : 2) <= k_verbose_level) {
+      if (((dir.isNextNode()) ? 3 : 2) <= k_verbose_level) {
         assert(s_indent > 0);
         s_indent--;
       }
     } else {
       if (3 <= k_verbose_level) {
         LogIndent();
-        std::cout << "Already applied " << DirectionName(dir) << ": ";
+        std::cout << "Already applied ";
+        dir.log();
+        std::cout << ": ";
         root->logSerialize();
       }
 #endif

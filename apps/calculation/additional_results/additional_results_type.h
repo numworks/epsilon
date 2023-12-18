@@ -16,11 +16,19 @@ struct AdditionalResultsType {
   bool complex : 1;
   bool function : 1;
   bool scientificNotation : 1;
+  bool empty : 1;
 
   bool isNotEmpty() const {
-    return integer || rational || directTrigonometry || inverseTrigonometry ||
-           unit || matrix || vector || complex || function ||
-           scientificNotation;
+    assert(!empty == integer || rational || directTrigonometry ||
+           inverseTrigonometry || unit || matrix || vector || complex ||
+           function || scientificNotation);
+    return !empty;
+  }
+
+  bool isUninitialized() const {
+    return !integer && !rational && !directTrigonometry &&
+           !inverseTrigonometry && !unit && !matrix && !vector && !complex &&
+           !function && !scientificNotation && !empty;
   }
 
   static AdditionalResultsType AdditionalResultsForExpressions(

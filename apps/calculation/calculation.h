@@ -97,10 +97,7 @@ class Calculation {
   void fillExpressionsForAdditionalResults(
       Poincare::Expression* input, Poincare::Expression* exactOutput,
       Poincare::Expression* approximateOutput);
-  void computeAdditionalResultsType();
-  AdditionalResultsType additionalResultsType() {
-    return m_additionalResultsType;
-  }
+  AdditionalResultsType additionalResultsType();
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;

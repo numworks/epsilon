@@ -22,14 +22,14 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const Preferences::ComplexFormat complexFormat,
     const Preferences::AngleUnit angleUnit) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
-    return AdditionalResultsType{};
+    return AdditionalResultsType{.empty = true};
   }
   if (HasComplex(approximateOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.complex = true};
   }
   if (exactOutput.isScalarComplex(complexFormat, angleUnit)) {
     // Cf comment in HasComplex
-    return AdditionalResultsType{};
+    return AdditionalResultsType{.empty = true};
   }
   bool inputHasAngleUnit, exactHasAngleUnit, approximateHasAngleUnit;
   bool inputHasUnit = input.hasUnit(true, &inputHasAngleUnit);
@@ -41,8 +41,9 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (inputHasUnit || exactHasUnit) {
     /* We display units additional results based on exact output. If input has
      * units but not output (ex: L/(L/3)), we don't display any results. */
-    return AdditionalResultsType{
-        .unit = exactHasUnit && HasUnit(exactOutput, complexFormat, angleUnit)};
+    return exactHasUnit && HasUnit(exactOutput, complexFormat, angleUnit)
+               ? AdditionalResultsType{.unit = true}
+               : AdditionalResultsType{.empty = true};
   }
   if (HasDirectTrigo(input, exactOutput, complexFormat, angleUnit)) {
     return AdditionalResultsType{.directTrigonometry = true};
@@ -54,12 +55,13 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     return AdditionalResultsType{.vector = true};
   }
   if (approximateOutput.deepIsMatrix()) {
-    return AdditionalResultsType{.matrix = HasMatrix(approximateOutput)};
+    return HasMatrix(approximateOutput) ? AdditionalResultsType{.matrix = true}
+                                        : AdditionalResultsType{.empty = true};
   }
   if (exactHasAngleUnit || approximateHasAngleUnit) {
-    return AdditionalResultsType{
-        .unit = exactHasAngleUnit &&
-                HasUnit(exactOutput, complexFormat, angleUnit)};
+    return exactHasAngleUnit && HasUnit(exactOutput, complexFormat, angleUnit)
+               ? AdditionalResultsType{.unit = true}
+               : AdditionalResultsType{.empty = true};
   }
   AdditionalResultsType type = {};
   if (!inputHasAngleUnit && HasFunction(input, approximateOutput)) {
@@ -73,6 +75,10 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   } else if (HasRational(exactOutput)) {
     type.rational = true;
   }
+  if (type.isUninitialized()) {
+    type.empty = true;
+  }
+  assert(!type.isUninitialized());
   return type;
 }
 

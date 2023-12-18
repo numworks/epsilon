@@ -64,6 +64,8 @@ class Distribution : public Shared::Inference {
 
   Calculation* calculation() { return m_calculationBuffer.calculation(); }
 
+  virtual const double* constParametersArray() const = 0;
+
  protected:
   static_assert(Poincare::Preferences::VeryLargeNumberOfSignificantDigits == 7,
                 "k_maxProbability is ill-defined compared to "
@@ -103,8 +105,6 @@ class Distribution : public Shared::Inference {
     LeftIntegralCalculation m_leftIntegralCalculation;
     RightIntegralCalculation m_rightIntegralCalculation;
   };
-
-  virtual const double* constParametersArray() const = 0;
 
   CalculationBuffer m_calculationBuffer;
   const Poincare::Distribution* m_distribution;

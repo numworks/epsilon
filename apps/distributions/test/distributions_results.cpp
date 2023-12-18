@@ -51,7 +51,7 @@ void assert_finite_integral_between_abscissas_is(
               std::fabs(r - result) / result < FLT_EPSILON);
 }
 
-QUIZ_CASE(probability_binomial_distribution) {
+QUIZ_CASE(distributions_results_binomial) {
   // B(32, 0.6)
   Distributions::BinomialDistribution distribution;
   distribution.setParameterAtIndex(32.0, 0);
@@ -95,7 +95,7 @@ QUIZ_CASE(probability_binomial_distribution) {
                                               0.398919847793223794688);
 }
 
-QUIZ_CASE(probability_uniform_distribution) {
+QUIZ_CASE(distributions_results_uniform) {
   // U(-1, 1)
   Distributions::UniformDistribution distribution;
   distribution.setParameterAtIndex(-1, 0);
@@ -118,7 +118,7 @@ QUIZ_CASE(probability_uniform_distribution) {
                                                                 17, 1);
 }
 
-QUIZ_CASE(probability_exponential_distribution) {
+QUIZ_CASE(distributions_results_exponential) {
   // EXP(1)
   Distributions::ExponentialDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
@@ -141,7 +141,7 @@ QUIZ_CASE(probability_exponential_distribution) {
       &distribution, 5.f, 1.f - std::exp(-.2f * 5.f));
 }
 
-QUIZ_CASE(probability_normal_distribution) {
+QUIZ_CASE(distributions_results_normal) {
   // N(0, 1)
   Distributions::NormalDistribution distribution;
   distribution.setParameterAtIndex(0, 0);
@@ -176,7 +176,7 @@ QUIZ_CASE(probability_normal_distribution) {
                                               0.2524608663050898);
 }
 
-QUIZ_CASE(probability_chi_squared_distribution) {
+QUIZ_CASE(distributions_results_chi_squared) {
   // Chi Squared distribution with 1 degree of freedom
   Distributions::ChiSquaredDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
@@ -231,7 +231,7 @@ QUIZ_CASE(probability_chi_squared_distribution) {
                                               0.1328633002997339414718);
 }
 
-QUIZ_CASE(probability_student_distribution) {
+QUIZ_CASE(distributions_results_student) {
   // Student distribution with 1 degree of freedom
   Distributions::StudentDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
@@ -284,7 +284,7 @@ QUIZ_CASE(probability_student_distribution) {
                                               0.002333318101494775250);
 }
 
-QUIZ_CASE(probability_geometric_distribution) {
+QUIZ_CASE(distributions_results_geometric) {
   // Geometric distribution with probability of success 0.5
   Distributions::GeometricDistribution distribution;
   distribution.setParameterAtIndex(0.5, 0);
@@ -310,7 +310,7 @@ QUIZ_CASE(probability_geometric_distribution) {
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
 }
 
-QUIZ_CASE(probability_hypergeometric_distribution) {
+QUIZ_CASE(distributions_results_hypergeometric) {
   // H(100, 60, 50)
   Distributions::HypergeometricDistribution distribution;
   distribution.setParameterAtIndex(100, 0);
@@ -352,7 +352,7 @@ QUIZ_CASE(probability_hypergeometric_distribution) {
                                               0.67319633087273711);
 }
 
-QUIZ_CASE(probability_poisson_distribution) {
+QUIZ_CASE(distributions_results_poisson) {
   // POISSON(1)
   Distributions::PoissonDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
@@ -376,7 +376,7 @@ QUIZ_CASE(probability_poisson_distribution) {
       &distribution, 16, 0.8354931476833607);
 }
 
-QUIZ_CASE(probability_fisher_distribution) {
+QUIZ_CASE(distributions_results_fisher) {
   // Fisher distribution with d1 = 1 and d2 = 1
   Distributions::FisherDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);

@@ -147,6 +147,10 @@ class LayoutBufferCursor final : public LayoutCursor {
     }
   }
 
+  bool isUninitialized() const {
+    return m_layout.isUninitialized() || LayoutCursor::isUninitialized();
+  }
+
   Poincare::JuniorLayout layoutBuffer() { return m_layout; }
   Tree* rootNode() const override { return const_cast<Tree*>(m_layout.tree()); }
   Tree* cursorNode() const override { return rootNode() + m_cursorNode; }

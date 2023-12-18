@@ -248,9 +248,7 @@ void LayoutField::removePreviousXNT() {
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
-  PoincareJ::LayoutBufferCursor previousCursor = *cursor();
-  // m_contentView.setCursor(PoincareJ::LayoutBufferCursor(
-  // m_contentView.node()->block(), m_contentView.node(), side));
+  m_contentView.cursor()->setLayout(m_contentView.cursor()->rootNode(), side);
 }
 
 void LayoutField::reload(KDSize previousSize) {

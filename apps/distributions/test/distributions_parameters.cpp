@@ -97,6 +97,8 @@ QUIZ_CASE(distributions_parameters_normal) {
   assert_parameters_are(&distribution, {1e8, 100});
   distribution.setParameterAtIndex(2, k_indexOfMu);
   assert_parameters_are(&distribution, {2, 100});
+  distribution.setParameterAtIndex(-3e9, k_indexOfMu);
+  assert_parameters_are(&distribution, {-3e9, 3000});
 }
 
 QUIZ_CASE(distributions_parameters_chi_squared) {

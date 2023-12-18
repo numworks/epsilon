@@ -19,7 +19,7 @@ void NormalDistribution::setParameterAtIndex(double f, int index) {
   setParameterAtIndexWithoutComputingCurveViewRange(f, index);
   if (index == 0 &&
       std::fabs(m_parameters[0] / m_parameters[1]) > k_maxRatioMuSigma) {
-    m_parameters[1] = m_parameters[0] / k_maxRatioMuSigma;
+    m_parameters[1] = std::fabs(m_parameters[0]) / k_maxRatioMuSigma;
   }
   computeCurveViewRange();
 }

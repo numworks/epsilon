@@ -98,7 +98,7 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
   if (!RackLayout::layoutCursor) {
     return false;
   }
-  return node != layoutCursor->cursorNode() && node->numberOfChildren() == 0;
+  return node->numberOfChildren() == 0 && node != layoutCursor->cursorNode();
 }
 
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,

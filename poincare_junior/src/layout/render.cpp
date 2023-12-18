@@ -1156,13 +1156,12 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                               style.glyphColor, style.backgroundColor);
       if (grid->isEditing()) {
         // Draw gray squares
-        for (int index = 0; index < node->numberOfChildren(); index++) {
+        for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
           if (!Grid::From(node)->childIsPlaceholder(index)) {
             continue;
           }
-          RackLayout::RenderNode(KRackL(), ctx,
-                                 p.translatedBy(PositionOfChild(node, index)),
-                                 true);
+          RackLayout::RenderNode(
+              child, ctx, p.translatedBy(PositionOfChild(node, index)), true);
         }
       }
       return;

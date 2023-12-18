@@ -53,7 +53,7 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   Range2D result;
   Range2D pretty =
       beautify ? prettyRange(forceNormalization) : sanitizedRange();
-  assert(pretty.x()->isValid() && pretty.y()->isValid());
+  assert(!pretty.x()->isNan() && !pretty.y()->isNan());
   *(result.x()) =
       Range1D::ValidRangeBetween(pretty.xMin(), pretty.xMax(), m_maxFloat);
   *(result.y()) =
@@ -466,7 +466,7 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
 
 static Range1D sanitation1DHelper(Range1D range, Range1D forcedRange,
                                   float defaultHalfLength, float limit) {
-  if (forcedRange.isValid()) {
+  if (!forcedRange.isNan()) {
     return forcedRange;
   }
   if (range.isNan()) {
@@ -521,8 +521,8 @@ bool Zoom::yLengthCompatibleWithNormalization(float yLength,
 }
 
 Range2D Zoom::prettyRange(bool forceNormalization) const {
-  bool xRangeIsForced = m_forcedRange.x()->isValid();
-  bool yRangeIsForced = m_forcedRange.y()->isValid();
+  bool xRangeIsForced = !m_forcedRange.x()->isNan();
+  bool yRangeIsForced = !m_forcedRange.y()->isNan();
   assert(!forceNormalization || !xRangeIsForced || !yRangeIsForced);
 
   Range2D saneRange = m_interestingRange;
@@ -577,11 +577,11 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
       (rangeToEdit->max() - interestingCenter) / rangeToEdit->length();
   float lengthOverCenter = portionOverInterestingCenter * normalLength;
   float lengthUnderCenter = normalLength - lengthOverCenter;
-  if (interestingRange->isValid() &&
+  if (!interestingRange->isNan() &&
       interestingCenter - lengthUnderCenter > interestingRange->min()) {
     *rangeToEdit = Range1D(interestingRange->min(),
                            interestingRange->min() + normalLength, m_maxFloat);
-  } else if (interestingRange->isValid() &&
+  } else if (!interestingRange->isNan() &&
              interestingCenter + lengthOverCenter < interestingRange->max()) {
     *rangeToEdit = Range1D(interestingRange->max() - normalLength,
                            interestingRange->max(), m_maxFloat);

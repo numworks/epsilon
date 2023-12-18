@@ -31,7 +31,7 @@ Correspondance oneToOne[] = {
     {PT::ConjugateLayout, LT::Conjugate},
     {PT::ParenthesisLayout, LT::Parenthesis, true},
     {PT::CurlyBraceLayout, LT::CurlyBrace, true},
-    {PT::VerticalOffsetLayout, LT::VerticalOffset},
+    {PT::VerticalOffsetLayout, LT::VerticalOffset, true},
     {PT::FractionLayout, LT::Fraction},
     {PT::BinomialCoefficientLayout, LT::Binomial},
     {PT::LetterCWithSubAndSuperscriptLayout, LT::PtBinomial},

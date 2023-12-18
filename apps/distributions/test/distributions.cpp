@@ -166,30 +166,6 @@ QUIZ_CASE(probability_normal_distribution) {
                                               0.2524608663050898);
 }
 
-QUIZ_CASE(probability_poisson_distribution) {
-  // POISSON(1)
-  Distributions::PoissonDistribution distribution;
-  distribution.setParameterAtIndex(1, 0);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
-                              std::exp(-1.f));
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(8),
-                              std::exp(-1.f) / 40320 /* 8! */);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 1, 0.7357588823428847);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 4, 0.9963401531726563);
-
-  // POISSON(13)
-  distribution.setParameterAtIndex(13.0, 0);
-  assert_roughly_equal<float>(
-      distribution.evaluateAtAbscissa(8),
-      std::exp(-13.f) * std::pow(13.f, 8.f) / 40320 /* 8! */, 1e-6);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 4, 0.00374018590580994);
-  assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 16, 0.8354931476833607);
-}
-
 QUIZ_CASE(probability_chi_squared_distribution) {
   // Chi Squared distribution with 1 degree of freedom
   Distributions::ChiSquaredDistribution distribution;
@@ -322,6 +298,30 @@ QUIZ_CASE(probability_geometric_distribution) {
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.4);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
+}
+
+QUIZ_CASE(probability_poisson_distribution) {
+  // POISSON(1)
+  Distributions::PoissonDistribution distribution;
+  distribution.setParameterAtIndex(1, 0);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
+                              std::exp(-1.f));
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(8),
+                              std::exp(-1.f) / 40320 /* 8! */);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 1, 0.7357588823428847);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 4, 0.9963401531726563);
+
+  // POISSON(13)
+  distribution.setParameterAtIndex(13.0, 0);
+  assert_roughly_equal<float>(
+      distribution.evaluateAtAbscissa(8),
+      std::exp(-13.f) * std::pow(13.f, 8.f) / 40320 /* 8! */, 1e-6);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 4, 0.00374018590580994);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 16, 0.8354931476833607);
 }
 
 QUIZ_CASE(probability_fisher_distribution) {

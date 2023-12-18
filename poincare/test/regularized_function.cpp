@@ -36,7 +36,7 @@ void assert_regularized_gamma_is(double s, double x, double result) {
   assert_roughly_equal(r, result, precision);
 }
 
-QUIZ_CASE(probability_regularized_gamma) {
+QUIZ_CASE(poincare_regularized_gamma) {
   assert_regularized_gamma_is(1.0, 0.0, 0.0);
   assert_regularized_gamma_is(10.0, 0.0, 0.0);
   assert_regularized_gamma_is(100.0, 0.0, 0.0);

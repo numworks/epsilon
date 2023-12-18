@@ -267,7 +267,7 @@ DistributionTestCase getChi2TestCase(int i) {
   return s_chi2Tests[i];
 }
 
-QUIZ_CASE(probability_chi2_law) {
+QUIZ_CASE(poincare_chi2_distribution) {
   for (unsigned int i = 0; i < k_numberOfChi2TestCases; i++) {
     DistributionTestCase t = getChi2TestCase(i);
     // double

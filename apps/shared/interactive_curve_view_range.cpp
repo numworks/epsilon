@@ -61,7 +61,7 @@ void InteractiveCurveViewRange::setXRange(float min, float max) {
 void InteractiveCurveViewRange::setYRange(float min, float max) {
   assert(!yAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYRange(min, max, k_maxFloat);
-  computeRanges();
+  setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::setOffscreenYAxis(float f) {

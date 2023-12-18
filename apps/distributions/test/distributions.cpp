@@ -11,24 +11,34 @@
 #include "distributions/models/distribution/exponential_distribution.h"
 #include "distributions/models/distribution/fisher_distribution.h"
 #include "distributions/models/distribution/geometric_distribution.h"
+#include "distributions/models/distribution/hypergeometric_distribution.h"
 #include "distributions/models/distribution/normal_distribution.h"
 #include "distributions/models/distribution/poisson_distribution.h"
 #include "distributions/models/distribution/student_distribution.h"
 #include "distributions/models/distribution/uniform_distribution.h"
 
-void assert_cumulative_distributive_function_direct_and_inverse_is(
+void assert_cumulative_distributive_function_direct_is(
     Distributions::Distribution* distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
   quiz_assert(std::fabs(r - result) < FLT_EPSILON ||
               std::fabs(r - result) / result < FLT_EPSILON);
+}
 
-  r = distribution->cumulativeDistributiveInverseForProbability(result);
+void assert_cumulative_distributive_function_inverse_is(
+    Distributions::Distribution* distribution, double x, double result) {
+  double r = distribution->cumulativeDistributiveInverseForProbability(result);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
   quiz_assert(std::fabs(r - x) < FLT_EPSILON ||
               std::fabs(r - x) / x < FLT_EPSILON);
+}
+
+void assert_cumulative_distributive_function_direct_and_inverse_is(
+    Distributions::Distribution* distribution, double x, double result) {
+  assert_cumulative_distributive_function_direct_is(distribution, x, result);
+  assert_cumulative_distributive_function_inverse_is(distribution, x, result);
 }
 
 void assert_finite_integral_between_abscissas_is(
@@ -298,6 +308,48 @@ QUIZ_CASE(probability_geometric_distribution) {
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.4);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
+}
+
+QUIZ_CASE(probability_hypergeometric_distribution) {
+  // H(100, 60, 50)
+  Distributions::HypergeometricDistribution distribution;
+  distribution.setParameterAtIndex(100, 0);
+  distribution.setParameterAtIndex(60, 1);
+  distribution.setParameterAtIndex(50, 2);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(30), 0.161583349);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
+                                                                50.0, 1);
+  assert_cumulative_distributive_function_direct_is(&distribution, 51.0, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 34.0, 0.96721115857291561);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 23.0, 0.0037974383856372055);
+
+  // H(10000, 10, 500)
+  distribution.setParameterAtIndex(1000, 0);
+  distribution.setParameterAtIndex(10, 1);
+  distribution.setParameterAtIndex(500, 2);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(5), 0.247332901);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
+                                                                10.0, 1);
+  assert_cumulative_distributive_function_direct_is(&distribution, 11.0, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 3.0, 0.17063834550679957);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 8.0, 0.98956388142200713);
+
+  // H(100, 60, 50)
+  distribution.setParameterAtIndex(430, 0);
+  distribution.setParameterAtIndex(109, 1);
+  distribution.setParameterAtIndex(400, 2);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(100),
+                              0.137091488);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
+                                                                109.0, 1);
+  assert_cumulative_distributive_function_direct_is(&distribution, 110.0, 1);
+  assert_cumulative_distributive_function_direct_is(&distribution, 70.0, 0.0);
+  assert_finite_integral_between_abscissas_is(&distribution, 95.0, 102.0,
+                                              0.67319633087273711);
 }
 
 QUIZ_CASE(probability_poisson_distribution) {

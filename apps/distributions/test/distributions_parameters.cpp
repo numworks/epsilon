@@ -99,6 +99,17 @@ QUIZ_CASE(distributions_parameters_normal) {
   assert_parameters_are(&distribution, {2, 100});
   distribution.setParameterAtIndex(-3e9, k_indexOfMu);
   assert_parameters_are(&distribution, {-3e9, 3000});
+
+  // μ or σ can be empty but not at the same time
+  quiz_assert(distribution.authorizedParameterAtIndex(NAN, k_indexOfMu));
+  quiz_assert(distribution.authorizedParameterAtIndex(NAN, k_indexOfSigma));
+  distribution.setParameterAtIndex(NAN, k_indexOfMu);
+  quiz_assert(distribution.authorizedParameterAtIndex(NAN, k_indexOfMu));
+  quiz_assert(!distribution.authorizedParameterAtIndex(NAN, k_indexOfSigma));
+  distribution.setParameterAtIndex(1, k_indexOfMu);
+  distribution.setParameterAtIndex(NAN, k_indexOfSigma);
+  quiz_assert(!distribution.authorizedParameterAtIndex(NAN, k_indexOfMu));
+  quiz_assert(distribution.authorizedParameterAtIndex(NAN, k_indexOfSigma));
 }
 
 QUIZ_CASE(distributions_parameters_chi_squared) {

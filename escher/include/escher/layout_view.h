@@ -4,6 +4,7 @@
 #include <escher/glyphs_view.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare_junior/src/layout/layout_cursor.h>
 
 namespace Escher {
 
@@ -40,7 +41,7 @@ class LayoutView : public GlyphsView {
    * controller which only gives a pointer to the layout view (without cloning
    * it). The named controller is then responsible for freeing the layout when
    * required. */
-  // TODO find better way to have minimalSizeForOptimalDisplay const
+  // TODO find better way to have draw const
   mutable Poincare::Layout m_layout;
 
  private:
@@ -52,17 +53,20 @@ class LayoutView : public GlyphsView {
 
 class LayoutViewWithCursor : public LayoutView {
  public:
-  LayoutViewWithCursor(Poincare::LayoutCursor* cursor,
+  LayoutViewWithCursor(PoincareJ::LayoutBufferCursor* cursor,
                        KDGlyph::Format format = {})
       : LayoutView(format), m_cursor(cursor) {
     assert(cursor);
   }
 
  private:
+  Poincare::Layout layout() const override { return m_cursor->layoutBuffer(); }
   Poincare::LayoutSelection selection() const override {
-    return m_cursor->selection();
+    return Poincare::LayoutSelection();
+    // return m_cursor->selection();
+    (void)m_cursor;
   }
-  Poincare::LayoutCursor* m_cursor;
+  PoincareJ::LayoutBufferCursor* m_cursor;
 };
 
 }  // namespace Escher

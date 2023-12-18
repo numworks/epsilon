@@ -8,6 +8,7 @@
 #include <kandinsky/point.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/layout/layout_cursor.h>
 
 namespace Escher {
 
@@ -17,7 +18,7 @@ class LayoutField : public EditableField {
               LayoutFieldDelegate* delegate = nullptr,
               KDGlyph::Format format = {});
   void setDelegate(LayoutFieldDelegate* delegate);
-  Poincare::Context* context() const;
+  PoincareJ::Context* context() const;
   bool isEditing() const { return m_contentView.isEditing(); }
   void setEditing(bool isEditing);
   void clearLayout();
@@ -53,7 +54,7 @@ class LayoutField : public EditableField {
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  Poincare::LayoutCursor* cursor() { return m_contentView.cursor(); }
+  PoincareJ::LayoutBufferCursor* cursor() { return m_contentView.cursor(); }
   const LayoutView* layoutView() const { return m_contentView.layoutView(); }
   LayoutView* layoutView() { return m_contentView.layoutView(); }
 
@@ -114,9 +115,9 @@ class LayoutField : public EditableField {
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);
     void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
-    void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
+    void setCursor(PoincareJ::LayoutBufferCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    Poincare::LayoutCursor* cursor() { return &m_cursor; }
+    PoincareJ::LayoutBufferCursor* cursor() { return &m_cursor; }
     const LayoutView* layoutView() const { return &m_layoutView; }
     LayoutView* layoutView() { return &m_layoutView; }
     void clearLayout();
@@ -128,13 +129,20 @@ class LayoutField : public EditableField {
 
     KDRect cursorRect() const override;
 
+    // PoincareJ::Tree* node() {
+    // return PoincareJ::Tree::FromBlocks(m_layoutBuffer.blocks());
+    // }
+
    private:
     int numberOfSubviews() const override {
       return 1 + TextCursorView::CursorFieldView::numberOfSubviews();
     }
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    mutable Poincare::LayoutCursor m_cursor;
+    // PoincareJ::BlockBuffer<PoincareJ::LayoutCursor::k_layoutBufferSize>
+    // m_layoutBuffer;
+    PoincareJ::LayoutBufferCursor m_cursor;
+    // mutable Poincare::LayoutCursor m_cursor;
     LayoutViewWithCursor m_layoutView;
     bool m_isEditing;
   };

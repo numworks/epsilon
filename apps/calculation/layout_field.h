@@ -29,11 +29,13 @@ class LayoutField : public Escher::LayoutField {
     MixedFraction,               // cursor before Empty/Empty
   };
 
-  void resetInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
+  void resetInsertionCursor() {
+    m_insertionCursor = PoincareJ::LayoutBufferCursor();
+  }
   bool fieldContainsSingleMinusSymbol() const;
   bool handleDivision();
 
-  Poincare::LayoutCursor m_insertionCursor;
+  PoincareJ::LayoutBufferCursor m_insertionCursor;
   DivisionCycleStep m_currentStep;
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };

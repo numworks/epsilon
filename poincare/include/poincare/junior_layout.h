@@ -51,7 +51,7 @@ class JuniorLayoutNode final : public LayoutNode {
 
  private:
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override {
-    PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
+    PoincareJ::Render::Draw(tree(), ctx, p, style.font, KDColorBlue,
                             style.backgroundColor);
   }
 

@@ -3,6 +3,7 @@
 
 #include <escher/text_field.h>
 #include <omg/directions.h>
+#include <poincare/junior_layout.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/empty_rectangle.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -137,17 +138,18 @@ class LayoutBufferCursor final : public LayoutCursor {
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
   LayoutBufferCursor(
-      Block* layoutBuffer, Tree* layout,
+      Poincare::JuniorLayout rootLayout = Poincare::JuniorLayout(),
+      Tree* layout = nullptr,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
-      : LayoutCursor(0, -1), m_layoutBuffer(layoutBuffer) {
+      : LayoutCursor(0, -1), m_layout(rootLayout) {
     if (layout) {
       setLayout(layout, sideOfLayout);
     }
   }
 
-  Block* layoutBuffer() { return m_layoutBuffer; }
-  Tree* rootNode() const override { return Tree::FromBlocks(m_layoutBuffer); }
-  Tree* cursorNode() const override { return m_cursorNode; }
+  Poincare::JuniorLayout layoutBuffer() { return m_layout; }
+  Tree* rootNode() const override { return const_cast<Tree*>(m_layout.tree()); }
+  Tree* cursorNode() const override { return rootNode() + m_cursorNode; }
 
   /* Layout insertion */
   void addEmptyMatrixLayout(Context* context);
@@ -228,14 +230,14 @@ class LayoutBufferCursor final : public LayoutCursor {
                const void* data = nullptr);
   void setCursorNode(Tree* node) override {
     // Don't use node here as it may be invalid during execute
-    m_cursorNode = node;
+    m_cursorNode = node - rootNode();
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
   }
 
   // Buffer of cursor's layout
-  Block* m_layoutBuffer;
+  Poincare::JuniorLayout m_layout;
   // Cursor's node
-  Tree* m_cursorNode;
+  int m_cursorNode;
 };
 
 }  // namespace PoincareJ

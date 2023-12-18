@@ -27,16 +27,16 @@ int LayoutView::numberOfLayouts() const {
 }
 
 KDSize LayoutView::minimalSizeForOptimalDisplay() const {
-  if (m_layout.isUninitialized()) {
+  if (layout().isUninitialized()) {
     return KDSizeZero;
   }
-  KDSize layoutSize = m_layout.layoutSize(font());
+  KDSize layoutSize = layout().layoutSize(font());
   return KDSize(layoutSize.width() + 2 * m_horizontalMargin,
                 layoutSize.height());
 }
 
 KDPoint LayoutView::drawingOrigin() const {
-  KDSize layoutSize = m_layout.layoutSize(font());
+  KDSize layoutSize = layout().layoutSize(font());
   return KDPoint(
       m_horizontalMargin +
           m_glyphFormat.horizontalAlignment *
@@ -47,8 +47,8 @@ KDPoint LayoutView::drawingOrigin() const {
 
 void LayoutView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
-  if (!m_layout.isUninitialized()) {
-    m_layout.draw(ctx, drawingOrigin(), m_glyphFormat.style, selection());
+  if (!layout().isUninitialized()) {
+    layout().draw(ctx, drawingOrigin(), m_glyphFormat.style, selection());
   }
 }
 

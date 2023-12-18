@@ -14,6 +14,7 @@ void LayoutField::updateCursorBeforeInsertion() {
     return;
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
+#if 0
   Layout insertionLayout = m_insertionCursor.layout();
   int maxPossiblePosition =
       LayoutCursor::RightmostPossibleCursorPosition(insertionLayout);
@@ -30,6 +31,7 @@ void LayoutField::updateCursorBeforeInsertion() {
    * beautification so we just set a valid position. */
   cursor()->safeSetPosition(
       std::min(maxPossiblePosition, m_insertionCursor.position()));
+#endif
   reload(previousSize);
   resetInsertionCursor();
 }
@@ -43,7 +45,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       m_insertionCursor = *cursor();
       /* Ensure insertion cursor will stay valid even when the current layout is
        * exited */
-      m_insertionCursor.prepareForExitingPosition();
+      // m_insertionCursor.prepareForExitingPosition();
     }
   } else if (event.isKeyPress()) {
     resetInsertionCursor();

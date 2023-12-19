@@ -141,11 +141,11 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     }
     return false;
   }
-  if (layoutFieldHasSyntaxError(layoutField)) {
+  Layout layout = layoutField->layout();
+  if (layoutHasSyntaxError(layout)) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
-  Layout layout = layoutField->layout();
   assert(!layout.isUninitialized());
   layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
                                    context());

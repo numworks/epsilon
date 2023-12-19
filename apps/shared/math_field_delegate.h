@@ -33,7 +33,7 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
 
-  bool layoutFieldHasSyntaxError(Escher::LayoutField* layoutField);
+  bool layoutHasSyntaxError(Poincare::Layout layout);
 };
 
 class MathTextFieldDelegate : public AbstractMathFieldDelegate,

@@ -43,10 +43,10 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp) {
+bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp,
+                                                       Context *context) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
-         ExpressionCanBeSerialized(exp, false, Expression(),
-                                   App::app()->localContext());
+         ExpressionCanBeSerialized(exp, false, Expression(), context);
 }
 
 bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
@@ -79,9 +79,10 @@ bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
   return true;
 }
 
-bool AbstractMathFieldDelegate::isAcceptableText(const char *text) {
-  Expression exp = Expression::Parse(text, App::app()->localContext());
-  return isAcceptableExpression(exp);
+bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
+                                                 Context *context) {
+  Expression exp = Expression::Parse(text, context);
+  return isAcceptableExpression(exp, context);
 }
 
 MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
@@ -96,7 +97,8 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
              : handleEventForField(layoutField, event);
 }
 
-bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout) {
+bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout,
+                                                   Poincare::Context *context) {
   if (layout.isEmpty()) {
     // Accept empty layouts
     return false;
@@ -120,7 +122,7 @@ bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout) {
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromText. */
-  Expression e = Expression::Parse(buffer, context());
+  Expression e = Expression::Parse(buffer, context);
   if (e.isUninitialized()) {
     // Unparsable expression
     return true;
@@ -135,13 +137,13 @@ bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout) {
     // Same comment as before
     return true;
   }
-  return !isAcceptableExpression(e);
+  return !isAcceptableExpression(e, context);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
-  if (layoutHasSyntaxError(layoutField->layout())) {
+  if (layoutHasSyntaxError(layoutField->layout(), context())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
@@ -163,7 +165,8 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 bool MathTextFieldDelegate::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   assert(!textField->isEditing());
-  if (textField->text()[0] != 0 && !isAcceptableText(textField->text())) {
+  if (textField->text()[0] != 0 &&
+      !isAcceptableText(textField->text(), App::app()->localContext())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }

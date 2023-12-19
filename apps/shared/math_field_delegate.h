@@ -11,8 +11,9 @@ namespace Shared {
 
 class AbstractMathFieldDelegate {
  protected:
-  virtual bool isAcceptableExpression(const Poincare::Expression expression);
-  bool isAcceptableText(const char* text);
+  virtual bool isAcceptableExpression(const Poincare::Expression expression,
+                                      Poincare::Context* context);
+  bool isAcceptableText(const char* text, Poincare::Context* context);
   static bool ExpressionCanBeSerialized(const Poincare::Expression expression,
                                         bool replaceAns,
                                         Poincare::Expression ansExpression,
@@ -33,7 +34,8 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
 
-  bool layoutHasSyntaxError(Poincare::Layout layout);
+  bool layoutHasSyntaxError(Poincare::Layout layout,
+                            Poincare::Context* context);
 };
 
 class MathTextFieldDelegate : public AbstractMathFieldDelegate,

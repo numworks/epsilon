@@ -20,7 +20,7 @@ namespace Config {
  *      In this case, the second and third sections both belong to the userland
  *      which is always at least 2 sections long.
  * Only the one or two first sections of the userland are made unwritable, which
- * prevents the whole userland of being overwritten while ensuring that the
+ * prevents the whole userland from being overwritten while ensuring that the
  * external apps section can still be overwritten. The external apps section is
  * aligned on 64k, so it's guaranteed to start at least at offset 0x00030000.
  */

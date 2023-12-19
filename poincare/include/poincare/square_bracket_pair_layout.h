@@ -2,8 +2,8 @@
 #define POINCARE_SQUARE_BRACKET_PAIR_LAYOUT_H
 
 #include <poincare/bracket_pair_layout.h>
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 

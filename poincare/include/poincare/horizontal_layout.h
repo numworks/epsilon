@@ -2,7 +2,7 @@
 #define POINCARE_HORIZONTAL_LAYOUT_NODE_H
 
 #include <poincare/empty_rectangle.h>
-#include <poincare/layout.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 

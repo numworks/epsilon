@@ -1,8 +1,8 @@
 #ifndef POINCARE_SEQUENCE_LAYOUT_NODE_H
 #define POINCARE_SEQUENCE_LAYOUT_NODE_H
 
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/old_layout.h>
 #include <poincare/parenthesis_layout.h>
 
 namespace Poincare {

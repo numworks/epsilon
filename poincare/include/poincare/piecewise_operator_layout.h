@@ -2,8 +2,8 @@
 #define POINCARE_PIECEWISE_OPERATOR_LAYOUT_NODE_H
 
 #include <poincare/grid_layout.h>
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 

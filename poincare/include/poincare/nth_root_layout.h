@@ -1,8 +1,8 @@
 #ifndef POINCARE_NTH_ROOT_LAYOUT_NODE_H
 #define POINCARE_NTH_ROOT_LAYOUT_NODE_H
 
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 

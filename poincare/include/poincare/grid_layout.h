@@ -3,8 +3,8 @@
 
 #include <poincare/array.h>
 #include <poincare/empty_rectangle.h>
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 

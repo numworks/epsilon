@@ -1,9 +1,9 @@
 #ifndef POINCARE_CONDENSED_SUM_LAYOUT_NODE_H
 #define POINCARE_CONDENSED_SUM_LAYOUT_NODE_H
 
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_helper.h>
+#include <poincare/old_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/sum.h>
 

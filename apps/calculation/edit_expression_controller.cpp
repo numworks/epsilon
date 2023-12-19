@@ -181,8 +181,7 @@ bool EditExpressionController::isAcceptableExpression(
   /* Override MathLayoutFieldDelegate because Store is acceptable, and
    * ans has an expression. */
   Expression ansExpression =
-      App::app()->snapshot()->calculationStore()->ansExpression(
-          App::app()->localContext());
+      App::app()->snapshot()->calculationStore()->ansExpression(context());
   if (!ExpressionCanBeSerialized(expression, true, ansExpression, context)) {
     return false;
   }

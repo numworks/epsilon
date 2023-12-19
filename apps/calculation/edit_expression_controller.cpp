@@ -182,10 +182,8 @@ bool EditExpressionController::isAcceptableExpression(
     return false;
   }
   // Replace ans with its value and check serialization
-  Expression ansExpression = m_calculationStore->ansExpression(context);
   Expression exp = expression.clone();
-  Symbol ansSymbol = Symbol::Ans();
-  exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  exp = m_calculationStore->replaceAnsInExpression(exp, context);
   constexpr int maxSerializationSize = Constant::MaxSerializedExpressionSize;
   char buffer[maxSerializationSize];
   int length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);

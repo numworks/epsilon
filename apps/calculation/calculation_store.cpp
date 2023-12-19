@@ -13,14 +13,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-static Expression enhancePushedExpression(Expression expression,
-                                          Context *ansContext = nullptr) {
-  // Replace Ans
-  if (ansContext) {
-    Symbol ans = Symbol::Ans();
-    expression = expression.replaceSymbolWithExpression(
-        ans, ansContext->expressionForSymbolAbstract(ans, false));
-  }
+static Expression enhancePushedExpression(Expression expression) {
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
    * Ex: If angleUnit = rad, cos(4)->cos(4rad)
@@ -99,6 +92,13 @@ Expression CalculationStore::ansExpression(Context *context) const {
   return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 
+Expression CalculationStore::replaceAnsInExpression(Expression expression,
+                                                    Context *context) const {
+  Symbol ansSymbol = Symbol::Ans();
+  Expression ansExpression = this->ansExpression(context);
+  return expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
+}
+
 ExpiringPointer<Calculation> CalculationStore::push(
     const char *text, Poincare::Context *context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
@@ -131,7 +131,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Push the input
       Expression inputExpression = Expression::Parse(text, &ansContext);
-      inputExpression = enhancePushedExpression(inputExpression, &ansContext);
+      inputExpression = replaceAnsInExpression(inputExpression, context);
+      inputExpression = enhancePushedExpression(inputExpression);
       cursor = pushSerializedExpression(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (cursor == k_pushError) {

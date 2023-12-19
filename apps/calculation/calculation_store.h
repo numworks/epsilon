@@ -44,6 +44,8 @@ class CalculationStore {
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
   Poincare::Expression ansExpression(Poincare::Context *context) const;
+  Poincare::Expression replaceAnsInExpression(Poincare::Expression expression,
+                                              Poincare::Context *context) const;
   size_t bufferSize() const { return m_bufferSize; }
   size_t remainingBufferSize() const {
     return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation *);

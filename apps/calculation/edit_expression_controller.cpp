@@ -180,15 +180,14 @@ bool EditExpressionController::isAcceptableExpression(
     const Poincare::Expression expression, Context *context) {
   /* Override MathLayoutFieldDelegate because Store is acceptable, and
    * ans has an expression. */
-  {
-    Expression ansExpression =
-        App::app()->snapshot()->calculationStore()->ansExpression(
-            App::app()->localContext());
-    if (!ExpressionCanBeSerialized(expression, true, ansExpression, context)) {
-      return false;
-    }
+  Expression ansExpression =
+      App::app()->snapshot()->calculationStore()->ansExpression(
+          App::app()->localContext());
+  if (!ExpressionCanBeSerialized(expression, true, ansExpression, context)) {
+    return false;
   }
-  return !expression.isUninitialized();
+  assert(!expression.isUninitialized());
+  return true;
 }
 
 void EditExpressionController::reloadView() {

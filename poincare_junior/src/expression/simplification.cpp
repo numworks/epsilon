@@ -27,10 +27,10 @@
 
 namespace PoincareJ {
 
-#define LOG_NEW_ADVANCED_REDUCTION 1
+#define LOG_NEW_ADVANCED_REDUCTION 0
 
 #if LOG_NEW_ADVANCED_REDUCTION
-constexpr uint8_t k_verbose_level = 3;
+constexpr uint8_t k_verbose_level = 2;
 size_t s_indent = 0;
 
 void LogIndent() {
@@ -40,10 +40,6 @@ void LogIndent() {
 }
 
 #endif
-
-bool Simplification::NewShallowExpand(Tree* u) {
-  return u->isAlgebraic() ? ShallowAlgebraicExpand(u) : ShallowExpand(u);
-}
 
 bool Simplification::CrcCollection::add(uint32_t crc) {
   if (isFull()) {
@@ -135,8 +131,7 @@ bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
     return true;
   }
   assert(direction.isContract() || direction.isExpand());
-  if (!((direction.isContract()) ? ShallowContract(*u)
-                                 : NewShallowExpand(*u))) {
+  if (!(direction.isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
   }
   // Apply a deep systematic reduction starting from (*u)
@@ -157,14 +152,14 @@ bool Simplification::ApplyPath(Tree* u, const Path* path) {
   return rootChanged;
 }
 
-void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
-                                             const Tree* original, Path* path,
-                                             Path* bestPath, int* bestMetric,
-                                             CrcCollection* crcCollection) {
+void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
+                                          const Tree* original, Path* path,
+                                          Path* bestPath, int* bestMetric,
+                                          CrcCollection* crcCollection) {
 #if LOG_NEW_ADVANCED_REDUCTION
   if (4 <= k_verbose_level) {
     LogIndent();
-    std::cout << "NewAdvancedReductionRec on subtree: ";
+    std::cout << "AdvancedReductionRec on subtree: ";
     u->logSerialize();
   }
 #endif
@@ -250,8 +245,8 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
       }
 #endif
       isLeaf = false;
-      NewAdvancedReductionRec(target, root, original, path, bestPath,
-                              bestMetric, crcCollection);
+      AdvancedReductionRec(target, root, original, path, bestPath, bestMetric,
+                           crcCollection);
       path->popBaseDirection();
 #if LOG_NEW_ADVANCED_REDUCTION
       if (shouldLog) {
@@ -288,7 +283,7 @@ void Simplification::NewAdvancedReductionRec(Tree* u, Tree* root,
   }
 }
 
-bool Simplification::NewAdvancedReduction(Tree* u) {
+bool Simplification::AdvancedReduction(Tree* u) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored. */
@@ -299,14 +294,14 @@ bool Simplification::NewAdvancedReduction(Tree* u) {
   Tree* editedExpression = u->clone();
 #if LOG_NEW_ADVANCED_REDUCTION
   if (1 <= k_verbose_level) {
-    std::cout << "\nNewAdvancedReduction\nInitial tree (" << bestMetric
+    std::cout << "\nAdvancedReduction\nInitial tree (" << bestMetric
               << ") is : ";
     u->logSerialize();
     s_indent = 1;
   }
 #endif
-  NewAdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
-                          &bestPath, &bestMetric, &crcCollection);
+  AdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
+                       &bestPath, &bestMetric, &crcCollection);
   editedExpression->removeTree();
   bool result = ApplyPath(u, &bestPath);
 #if LOG_NEW_ADVANCED_REDUCTION
@@ -1086,17 +1081,15 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     Variables::ProjectToId(ref, variables);
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
-    changed = AdvancedReduction(ref, ref) || changed;
-    // TODO : Improve AdvancedReduction and metric to ensure it is idempotent.
-    // assert(!AdvancedReduction(ref, ref));
     assert(!DeepSystematicReduce(ref));
     assert(!DeepApplyMatrixOperators(ref));
-    changed = List::BubbleUp(ref,
-                             [](Tree* e) -> bool {
-                               return ShallowSystematicReduce(e) +
-                                      ShallowAdvancedReduction(e, e);
-                             }) ||
-              changed;
+    changed =
+        List::BubbleUp(
+            ref, [](Tree* e) -> bool { return ShallowSystematicReduce(e); }) ||
+        changed;
+    changed = AdvancedReduction(ref) || changed;
+    assert(!AdvancedReduction(ref));
+
     if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
       // Approximate again in case exact numbers appeared during simplification.
       changed = Approximation::ApproximateAndReplaceEveryScalar(ref);
@@ -1120,100 +1113,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
         ExceptionCheckpoint::Raise(type);
     }
   }
-}
-
-bool Simplification::ApplyIfMetricImproved(Tree* ref, const Tree* root,
-                                           Operation operation,
-                                           const Metric metric) {
-  EditionReference clone(ref->clone());
-  if (operation(ref)) {
-    if (metric.hasImproved()) {
-      clone->removeTree();
-      return true;
-    }
-    // Restore ref
-    ref->moveTreeOverTree(clone);
-    return false;
-  }
-  // ref hasn't changed.
-  clone->removeTree();
-  return false;
-}
-
-bool Simplification::AdvancedReduction(Tree* ref, const Tree* root) {
-  assert(!DeepSystematicReduce(ref));
-  if (ref->isMatrix()) {
-    // Escape matrices because no nested advanced reduction is expected.
-    return false;
-  }
-  bool changed = false;
-  for (Tree* child : ref->children()) {
-    changed = AdvancedReduction(child, root) || changed;
-  }
-  if (changed) {
-    ShallowSystematicReduce(ref);
-  }
-  return ShallowAdvancedReduction(ref, root) || changed;
-}
-
-bool Simplification::ShallowAdvancedReduction(Tree* ref, const Tree* root) {
-  assert(!DeepSystematicReduce(ref));
-  return (ref->isAlgebraic() ? AdvanceReduceOnAlgebraic(ref, root)
-                             : AdvanceReduceOnTranscendental(ref, root));
-}
-
-bool Simplification::AdvanceReduceOnTranscendental(Tree* ref,
-                                                   const Tree* root) {
-  if (ReduceInverseFunction(ref)) {
-    return true;
-  }
-  const Metric metric(ref, root);
-  if (ApplyIfMetricImproved(ref, root, ShallowExpand, metric)) {
-    /* AdvanceReduce further the expression only if it is algebraic.
-     * Transcendental tree can expand but stay transcendental:
-     * |(-1)*x| -> |(-1)|*|x| -> |x| */
-    if (ref->isAlgebraic() && AdvanceReduceOnAlgebraic(ref, root)) {
-      // If algebraic got advanced reduced, metric must have been improved.
-      assert(metric.hasImproved());
-    }
-    return true;
-  }
-  return false;
-}
-
-bool Simplification::AdvanceReduceOnAlgebraic(Tree* ref, const Tree* root) {
-  assert(!DeepSystematicReduce(ref));
-  const Metric metric(ref, root);
-  // TODO: One clone of ref could be optimized out here.
-  return ApplyIfMetricImproved(ref, root, ShallowContract, metric) ||
-         ApplyIfMetricImproved(ref, root, PolynomialInterpretation, metric);
-}
-
-bool Simplification::ReduceInverseFunction(Tree* e) {
-  /* TODO :Transformations such as exp(ln) were expected to be performed here
-   * but have been moved to systematicReduce because ln(2x) (in exp(ln(2x))
-   * advance reduce to ln(2)+ln(x) before ReduceInverseFunction is called on the
-   * Exponential tree. Possible solutions :
-   * - Keep inverse function reduction in systematicReduce
-   * - ln(2x) doesn't advance reduce to ln(2)+ln(x)
-   * - Call ReduceInverseFunction before (and after ?) advanceReduce on children
-   */
-  return false;
-}
-
-bool Simplification::ExpandTranscendentalOnRational(Tree* e) {
-  // ln(18/5) = 3ln(3)+ln(2)-ln(5)
-  // TODO : Implement
-  return false;
-}
-
-bool Simplification::PolynomialInterpretation(Tree* e) {
-  assert(!DeepSystematicReduce(e));
-  // Prepare the expression for Polynomial interpretation:
-  bool changed = ExpandTranscendentalOnRational(e);
-  changed = ShallowAlgebraicExpand(e) || changed;
-  // TODO : Implement PolynomialInterpretation
-  return changed;
 }
 
 bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
@@ -1289,22 +1188,52 @@ bool Simplification::TryAllOperations(Tree* e, const Operation* operations,
   return i > numberOfOperations;
 }
 
+bool Simplification::TryOneOperations(Tree* e, const Operation* operations,
+                                      int numberOfOperations) {
+  assert(!DeepSystematicReduce(e));
+  for (size_t i = 0; i < numberOfOperations; i++) {
+    if (operations[i](e)) {
+      assert(!DeepSystematicReduce(e));
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Simplification::DeepContract(Tree* e) {
+  bool changed = false;
+  for (Tree* child : e->children()) {
+    changed = DeepContract(child) || changed;
+  }
+  // TODO: Assert !DeepContract(e)
+  return ShallowContract(e, true) || changed;
+}
+
+bool Simplification::DeepExpand(Tree* e) {
+  if (Tree::ApplyShallowInDepth(
+          e, [](Tree* e, void* context) { return ShallowExpand(e, true); })) {
+    // Bottom-up systematic reduce is necessary.
+    DeepSystematicReduce(e);
+    // TODO: Find a solution so we don't have to run this twice.
+    bool temp = DeepExpand(e);
+    assert(!temp || !DeepExpand(e));
+    return true;
+  }
+  return false;
+}
+
 bool Simplification::ContractAbs(Tree* ref) {
-  // A*|B|*|C|*D = A*|BC|*D
+  // A?*|B|*|C|*D? = A*|BC|*D
   return PatternMatching::MatchReplaceAndSimplify(
       ref, KMult(KTA, KAbs(KB), KAbs(KC), KTD),
       KMult(KTA, KAbs(KMult(KB, KC)), KTD));
 }
 
 bool Simplification::ExpandAbs(Tree* ref) {
-  // |A*B*...| = |A|*|B|*...
-  return DistributeOverNAry(ref, BlockType::Abs, BlockType::Multiplication,
-                            BlockType::Multiplication, SimplifyAbs);
+  // |A*B?| = |A|*|B|
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KAbs(KMult(KA, KTB)), KMult(KAbs(KA), KAbs(KMult(KTB))));
 }
-
-/* TODO:
- * - Many Contract methods could be factorized similarly to DistributeOverNAry
- */
 
 bool Simplification::ExpandExp(Tree* ref) {
   return
@@ -1312,9 +1241,9 @@ bool Simplification::ExpandExp(Tree* ref) {
       PatternMatching::MatchReplaceAndSimplify(
           ref, KExp(KComplex(KA, KB)),
           KMult(KExp(KA), KComplex(KTrig(KB, 0_e), KTrig(KB, 1_e)))) ||
-      // exp(A+B+...) = exp(A) * exp(B) * ...
-      DistributeOverNAry(ref, BlockType::Exponential, BlockType::Addition,
-                         BlockType::Multiplication, SimplifyExp);
+      // exp(A+B?) = exp(A) * exp(B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KExp(KAdd(KA, KTB)), KMult(KExp(KA), KExp(KAdd(KTB))));
 }
 
 bool Simplification::ContractExpMult(Tree* ref) {
@@ -1325,46 +1254,17 @@ bool Simplification::ContractExpMult(Tree* ref) {
 }
 
 bool Simplification::ExpandMult(Tree* ref) {
-  // A?*(B?+C)*D? = A*B*D + A*C*D
-  if (!ref->isMultiplication()) {
-    return false;
-  }
-  // Find the NAry in children
-  int childIndex = 0;
-  for (Tree* child : ref->children()) {
-    if (child->isAddition()) {
-      return DistributeOverNAry(ref, BlockType::Multiplication,
-                                BlockType::Addition, BlockType::Addition,
-                                ExpandMultSubOperation, childIndex);
-    }
-    childIndex++;
-  }
-  return false;
+  // A?*(B+C?)*D? = A*B*D + A*C*D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KMult(KTA, KAdd(KB, KTC), KTD),
+      KAdd(KMult(KTA, KB, KTD), KMult(KTA, KAdd(KTC), KTD)));
 }
 
 bool Simplification::ContractMult(Tree* ref) {
   // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
-  PatternMatching::Context context;
-  if (!PatternMatching::Match(
-          KAdd(KTA, KMult(KTB, KC, KTD), KTE, KMult(KTF, KC, KTG), KTH), ref,
-          &context)) {
-    return false;
-  }
-  // B*D+F*G could be contracted again.
-  Tree* result = PatternMatching::CreateAndSimplify(
-      KAdd(KMult(KTB, KTD), KMult(KTF, KTG)), context);
-  ContractMult(result);
-  // C*(B*D+F*G)
-  result->moveNodeBeforeNode(
-      SharedEditionPool->push<BlockType::Multiplication>(2));
-  PatternMatching::Create(KC, context);
-  ShallowSystematicReduce(result);
-  // C*(B*D+F*G) + A + E + H
-  result->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
-  PatternMatching::Create(KAdd(KTA, KTE, KTH), context);
-  ShallowSystematicReduce(result);
-  ref->moveTreeOverTree(result);
-  return true;
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KAdd(KTA, KMult(KTB, KC, KTD), KTE, KMult(KTF, KC, KTG), KTH),
+      KAdd(KTA, KMult(KC, KAdd(KMult(KTB, KTD), KMult(KTF, KTG))), KTE, KTH));
 }
 
 bool Simplification::ExpandPowerComplex(Tree* ref) {
@@ -1379,32 +1279,9 @@ bool Simplification::ExpandPower(Tree* ref) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   // (A? + B)^2 = (A^2 + 2*A*B + B^2)
   // TODO: Implement a more general (A + B)^C expand.
-  /* This isn't factorized with DistributeOverNAry because of the necessary
-   * second term expansion. */
-  // MatchReplaceAndSimplify's cannot be used because of nested expansion.
-  if (!PatternMatching::MatchAndReplace(
-          ref, KPow(KAdd(KTA, KB), 2_e),
-          KAdd(KPow(KAdd(KTA), 2_e), KMult(2_e, KAdd(KTA), KB),
-               KPow(KB, 2_e)))) {
-    return false;
-  }
-  // TODO : Find the replaced nodes and ShallowSystematicReduce smartly
-  // A^2 and 2*A*B may be expanded again, do it recursively
-  EditionReference newPow1(ref->nextNode());
-  EditionReference newMult(newPow1->nextTree());
-  EditionReference newPow2(newMult->nextTree());
-  // Addition is expected to have been squashed if unary.
-  assert(!newPow1->nextNode()->isAddition() ||
-         newPow1->nextNode()->numberOfChildren() > 1);
-  if (ExpandPower(newPow1)) {
-    ExpandMult(newPow1->nextTree());
-  } else {
-    SimplifyPower(newPow1);
-    SimplifyMultiplication(newMult);
-  }
-  SimplifyPower(newPow2);
-  SimplifyAddition(ref);
-  return true;
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KPow(KAdd(KTA, KB), 2_e),
+      KAdd(KPow(KAdd(KTA), 2_e), KMult(2_e, KAdd(KTA), KB), KPow(KB, 2_e)));
 }
 
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {

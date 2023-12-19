@@ -215,8 +215,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         if (simplify) {
           Simplification::ShallowSystematicReduce(insertedNode);
           if (advanced) {
-            Simplification::ShallowAdvancedReduction(insertedNode,
-                                                     insertedNode);
+            // TODO: Advanced shallow reduction
           }
         } else {
           // TODO proper fix
@@ -239,7 +238,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           }
           Simplification::ShallowSystematicReduce(result);
           if (advanced) {
-            Simplification::ShallowAdvancedReduction(result, result);
+            // TODO: Advanced shallow reduction
           }
         }
       }

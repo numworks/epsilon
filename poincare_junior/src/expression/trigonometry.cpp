@@ -298,115 +298,42 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
  * simplification. */
 
 bool Trigonometry::ExpandTrigonometric(Tree* ref) {
-  /* Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
-   * ExpandTrigonometric is more complex than other expansions and cannot be
-   * factorized with DistributeOverNAry. */
-  // MatchReplaceAndSimplify's cannot be used because of nested expansion.
-  if (!PatternMatching::MatchAndReplace(
-          ref, KTrig(KAdd(KTA, KB), KC),
-          KAdd(KMult(KTrig(KAdd(KTA), 0_e), KTrig(KB, KC)),
-               KMult(KTrig(KAdd(KTA), 1_e), KTrig(KB, KAdd(KC, -1_e)))))) {
-    return false;
-  }
-  EditionReference newMult1(ref->child(0));
-  EditionReference newTrig1(newMult1->child(0));
-  EditionReference newTrig2(newTrig1->nextTree());
-  EditionReference newMult2(newMult1->nextTree());
-  EditionReference newTrig3(newMult2->child(0));
-  EditionReference newTrig4(newTrig3->nextTree());
-  // Addition is expected to have been squashed if unary.
-  assert(!newTrig1->child(0)->isAddition() ||
-         newTrig1->child(0)->numberOfChildren() > 1);
-  // Trig(A, 0) and Trig(A, 1) may be expanded again, do it recursively
-  if (ExpandTrigonometric(newTrig1)) {
-    if (!ExpandTrigonometric(newTrig3)) {
-      // If newTrig1 expanded, newTrig3 should expand too
-      assert(false);
-    }
-  } else {
-    SimplifyTrig(newTrig1);
-    SimplifyTrig(newTrig3);
-  }
-  /* Shallow reduce new trees. This step must be performed after sub-expansions
-   * since SimplifyMultiplication may invalidate newTrig1 and newTrig3. */
-  Simplification::SimplifyAddition(newTrig4->child(1));
-  SimplifyTrig(newTrig2);
-  SimplifyTrig(newTrig4);
-  Simplification::SimplifyMultiplication(newMult1);
-  Simplification::SimplifyMultiplication(newMult2);
-  Simplification::SimplifyAddition(ref);
-  return true;
+  // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KTrig(KAdd(KA, KTB), KC),
+      KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KTB), KC)),
+           KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KTB), KAdd(KC, -1_e)))));
 }
 
 bool Trigonometry::ContractTrigonometric(Tree* ref) {
-  // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
-  if (PatternMatching::MatchReplaceAndSimplify(
+  return
+      // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
+      PatternMatching::MatchReplaceAndSimplify(
           ref,
           KAdd(KTA, KPow(KTrig(KB, 0_e), 2_e), KTC, KPow(KTrig(KD, 1_e), 2_e),
                KTE),
-          KAdd(1_e, KTA, KTC, KTE))) {
-    return true;
-  }
-  /* A?*Trig(B, C)*Trig(D, E)*F?
-   * = (Trig(B-D, TrigDiff(C,E))*F + Trig(B+D, E+C))*F)*A*0.5
-   * F is duplicated in case it contains other Trig trees that could be
-   * contracted as well. ContractTrigonometric is therefore more complex than
-   * other contractions. It handles nested trees itself. */
-  // MatchReplaceAndSimplify's cannot be used because of nested contraction.
-  if (!PatternMatching::MatchAndReplace(
-          ref, KMult(KTA, KTrig(KB, KC), KTrig(KD, KE), KTF),
-          KMult(KAdd(KMult(KTrig(KAdd(KMult(-1_e, KD), KB), KTrigDiff(KC, KE)),
-                           KTF),
-                     KMult(KTrig(KAdd(KB, KD), KAdd(KE, KC)), KTF)),
-                KTA, KHalf))) {
-    return false;
-  }
-  // TODO : Find the replaced nodes and ShallowSystematicReduce smartly
-  EditionReference newAdd(ref->child(0));
-  EditionReference newMult1(newAdd->child(0));
-  EditionReference newMult2(newMult1->nextTree());
-  // If F is empty, Multiplications have been squashed
-  bool fIsEmpty = !newMult1->isMultiplication();
-  EditionReference newTrig1 =
-      fIsEmpty ? newMult1 : EditionReference(newMult1->child(0));
-  EditionReference newTrig2 =
-      fIsEmpty ? newMult2 : EditionReference(newMult2->child(0));
-
-  // Shallow reduce new trees
-  EditionReference newTrig1Add = newTrig1->child(0);
-  EditionReference newTrig1AddMult = newTrig1Add->child(0);
-  Simplification::SimplifyMultiplication(newTrig1AddMult);
-  Simplification::SimplifyAddition(newTrig1Add);
-  SimplifyTrigDiff(newTrig1->child(1));
-  SimplifyTrig(newTrig1);
-  Simplification::SimplifyAddition(newTrig2->child(0));
-  Simplification::SimplifyAddition(newTrig2->child(1));
-  SimplifyTrig(newTrig2);
-
-  if (!fIsEmpty) {
-    Simplification::SimplifyMultiplication(newMult1);
-    Simplification::SimplifyMultiplication(newMult2);
-    // Contract newly created multiplications :
-    // - Trig(B-D, TrigDiff(C,E))*F
-    if (ContractTrigonometric(newMult1)) {
-      // - Trig(B+D, E+C))*F
-      if (!ContractTrigonometric(newMult2)) {
-        // If newMult1 contracted, newMult2 should contract too
-        assert(false);
-      }
-    }
-  }
-  Simplification::SimplifyAddition(newAdd);
-  Simplification::SimplifyMultiplication(ref);
-  return true;
+          KAdd(1_e, KTA, KTC, KTE)) ||
+      // A?*Trig(B, C)*D?*Trig(E, F)*G? =
+      // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KMult(KTA, KTrig(KB, KC), KTD, KTrig(KE, KF), KTG),
+          KMult(KHalf, KTA, KTD,
+                KAdd(KTrig(KAdd(KB, KMult(-1_e, KE)), KTrigDiff(KC, KF)),
+                     KTrig(KAdd(KB, KE), KAdd(KF, KC))),
+                KTG));
 }
 
 bool Trigonometry::ExpandATrigonometric(Tree* ref) {
-  // atrig(x,i) = π/2 - atrig(x,1-i)
+  // TODO: Properly handle, make sure they cannot infinitely expand.
+  // arccos(x) = π/2 - arcsin(x)
+  // arcsin(x) = arcsin(-x)
+#if 0
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KATrig(KA, KB),
-      KAdd(KMult(π_e, KHalf),
-           KMult(-1_e, KATrig(KA, KAdd(1_e, KMult(-1_e, KB))))));
+      ref, KATrig(KA, 0_e),
+      KAdd(KMult(π_e, KHalf), KMult(-1_e, KATrig(KA, 1_e))));
+#else
+  return false;
+#endif
 }
 
 }  // namespace PoincareJ

@@ -18,6 +18,10 @@
 
 namespace PoincareJ {
 
+/* TODO : Implement PolynomialInterpretation. Prepare the expression for
+ * Polynomial interpretation (expand TranscendentalOnRationals and algebraic
+ * trees.) */
+
 class Simplification {
  public:
   /* New advanced reduction */
@@ -91,11 +95,10 @@ class Simplification {
     Direction m_stack[k_size];
     size_t m_length;
   };
-  // Recursive new advanced reduction
-  static void NewAdvancedReductionRec(Tree *u, Tree *root, const Tree *original,
-                                      Path *path, Path *bestPath,
-                                      int *bestMetric,
-                                      CrcCollection *crcCollection);
+  // Recursive advanced reduction
+  static void AdvancedReductionRec(Tree *u, Tree *root, const Tree *original,
+                                   Path *path, Path *bestPath, int *bestMetric,
+                                   CrcCollection *crcCollection);
   // Return true if tree has changed. path is expected to be valid.
   static bool ApplyPath(Tree *u, const Path *path);
   // Return true if direction was applied.
@@ -104,9 +107,7 @@ class Simplification {
   // Return true if can apply direction.
   static bool CanApplyDirection(const Tree *u, const Tree *root,
                                 Direction direction);
-  // ShallowAlgebraicExpand(u) + ShallowExpand(u). TODO : Merge both.
-  static bool NewShallowExpand(Tree *u);
-  static bool NewAdvancedReduction(Tree *u);
+  static bool AdvancedReduction(Tree *u);
   // Metric of given tree. The smaller is the better.
   static float GetMetric(const Tree *u) { return u->treeSize(); }
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
@@ -116,27 +117,25 @@ class Simplification {
 
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
-  static bool AdvancedReduction(Tree *node, const Tree *root);
-  EDITION_REF_WRAP_1(AdvancedReduction, const Tree *);
-  static bool ShallowAdvancedReduction(Tree *node, const Tree *root);
-  EDITION_REF_WRAP_1(ShallowAdvancedReduction, const Tree *);
 
-  // TODO : Ensure NAry children are sorted before and after Expand/Contract.
-  static bool ShallowContract(Tree *e) {
-    return TryAllOperations(e, k_contractOperations,
-                            std::size(k_contractOperations));
+  /* Ignoring EDITION_REF_WRAP_1 wrapper here so ternary can be used on these
+   * methods. TODO: Remove other EditionReference wrappers on private methods if
+   * they are indeed unused. */
+  static bool ShallowContract(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperations)(
+        e, k_contractOperations, std::size(k_contractOperations));
   }
-  EDITION_REF_WRAP(ShallowContract);
-  static bool ShallowExpand(Tree *e) {
-    return TryAllOperations(e, k_expandOperations,
-                            std::size(k_expandOperations));
+  static bool ShallowExpand(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperations)(
+        e, k_expandOperations, std::size(k_expandOperations));
   }
-  EDITION_REF_WRAP(ShallowExpand);
-  static bool ShallowAlgebraicExpand(Tree *e) {
-    return TryAllOperations(e, k_algebraicExpandOperations,
-                            std::size(k_algebraicExpandOperations));
-  }
-  EDITION_REF_WRAP(ShallowAlgebraicExpand);
+
+  // Bottom-up deep contract
+  static bool DeepContract(Tree *e);
+  EDITION_REF_WRAP(DeepContract);
+  // Top-Bottom deep expand
+  static bool DeepExpand(Tree *e);
+  EDITION_REF_WRAP(DeepExpand);
 
   static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);
@@ -208,17 +207,9 @@ class Simplification {
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
-
-  static bool AdvanceReduceOnTranscendental(Tree *node, const Tree *root);
-  EDITION_REF_WRAP_1(AdvanceReduceOnTranscendental, const Tree *);
-  static bool AdvanceReduceOnAlgebraic(Tree *node, const Tree *root);
-  EDITION_REF_WRAP_1(AdvanceReduceOnAlgebraic, const Tree *);
-  static bool ReduceInverseFunction(Tree *node);
-  EDITION_REF_WRAP(ReduceInverseFunction);
-  static bool ExpandTranscendentalOnRational(Tree *node);
-  EDITION_REF_WRAP(ExpandTranscendentalOnRational);
-  static bool PolynomialInterpretation(Tree *node);
-  EDITION_REF_WRAP(PolynomialInterpretation);
+  // Try all Operations until one of them succeed.
+  static bool TryOneOperations(Tree *node, const Operation *operations,
+                               int numberOfOperations);
 
   static bool ContractAbs(Tree *node);
   EDITION_REF_WRAP(ContractAbs);
@@ -260,9 +251,10 @@ class Simplification {
       Arithmetic::ExpandBinomial,
       Arithmetic::ExpandPermute,
       Projection::Expand,
+      ExpandPower,
+      ExpandPowerComplex,
+      ExpandMult,
   };
-  constexpr static Operation k_algebraicExpandOperations[] = {
-      ExpandPower, ExpandPowerComplex, ExpandMult};
 };
 
 }  // namespace PoincareJ

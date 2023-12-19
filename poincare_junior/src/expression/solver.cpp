@@ -111,7 +111,7 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
     }
     Projection::DeepSystemProjection(equation);
     Simplification::DeepSystematicReduce(equation);
-    Simplification::AdvancedReduction(equation, equation);
+    Simplification::AdvancedReduction(equation);
   }
   SwapTrees(&variables, &equationsSet);
   return variables;
@@ -257,7 +257,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
       SharedEditionPool->push<BlockType::Variable>(variableId));
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
-  Simplification::AdvancedReduction(solution, solution);
+  Simplification::AdvancedReduction(solution);
   Beautification::DeepBeautify(solution);
   return Error::NoError;
 }

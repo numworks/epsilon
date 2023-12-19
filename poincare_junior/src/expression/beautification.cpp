@@ -227,8 +227,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
       Tree* child = tree->child(0);
       child->moveTreeOverTree(PatternMatching::CreateAndSimplifyAdvanced(
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
-      // Also Advanced reduce in case a multiplication expansion is better.
-      Simplification::ShallowAdvancedReduction(child, tree);
+      // TODO: Advanced reduce in case a multiplication expansion is better.
     }
     PatternMatching::MatchAndReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
         PatternMatching::MatchAndReplace(tree, KTrig(KA, 1_e), KSin(KA)) ||

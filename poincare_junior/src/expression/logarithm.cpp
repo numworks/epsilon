@@ -44,17 +44,16 @@ bool Logarithm::ContractLn(Tree* ref) {
         KAdd(KTA, KLn(KPow(KC, KB)), KTD), ctx));
     return true;
   }
-  // A? + ln(B) + ln(C) + D? = A + ln(BC) + D
+  // A? + ln(B) + C? + ln(D) + E? = A + C + ln(BD) + E
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KAdd(KTA, KLn(KB), KLn(KC), KTD),
-      KAdd(KTA, KLn(KMult(KB, KC)), KTD));
+      ref, KAdd(KTA, KLn(KB), KTC, KLn(KD), KTE),
+      KAdd(KTA, KTC, KLn(KMult(KB, KD)), KTE));
 }
 
 bool Logarithm::ExpandLn(Tree* ref) {
   // ln(A*B*...) = ln(A) + ln(B) + ...
-  return Simplification::DistributeOverNAry(
-      ref, BlockType::Ln, BlockType::Multiplication, BlockType::Addition,
-      ExpandSingleChildLn);
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KLn(KMult(KA, KTB)), KAdd(KLn(KA), KLn(KMult(KTB))));
 }
 
 bool Logarithm::ExpandSingleChildLn(Tree* ref) {

@@ -45,8 +45,7 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp,
                                                        Context *context) {
-  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
-         ExpressionCanBeSerialized(exp, false, Expression(), context);
+  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store;
 }
 
 bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(

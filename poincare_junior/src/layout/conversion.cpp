@@ -225,6 +225,10 @@ void PushPoincareLayout(Poincare::OLayout l) {
       }
       return;
     }
+    case OT::JuniorLayout: {
+      SharedEditionPool->clone(static_cast<Poincare::JuniorLayout &>(l).tree());
+      return;
+    }
     default:
       assert(false);
   }

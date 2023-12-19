@@ -219,6 +219,14 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
 bool Trigonometry::SimplifyATrig(Tree* u) {
   assert(u->isATrig());
   PatternMatching::Context ctx;
+  if (PatternMatching::Match(KATrig(KMult(KA, KTB), 1_e), u, &ctx) &&
+      ctx.getNode(KA)->isNumber() &&
+      Number::Sign(ctx.getNode(KA)).isStrictlyNegative()) {
+    // arcsin(-x) -> arcsin(x)
+    u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KMult(-1_e, KATrig(KMult(-1_e, KA, KTB), 1_e)), ctx));
+    return true;
+  }
   if (PatternMatching::Match(KATrig(KTrig(KA, KB), KB), u, &ctx)) {
     const Tree* piFactor = getPiFactor(ctx.getNode(KA));
     if (!piFactor) {
@@ -324,16 +332,11 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
 }
 
 bool Trigonometry::ExpandATrigonometric(Tree* ref) {
-  // TODO: Properly handle, make sure they cannot infinitely expand.
+  // Only expand in one way to avoid infinite expansion.
   // arccos(x) = π/2 - arcsin(x)
-  // arcsin(x) = arcsin(-x)
-#if 0
   return PatternMatching::MatchReplaceAndSimplify(
       ref, KATrig(KA, 0_e),
       KAdd(KMult(π_e, KHalf), KMult(-1_e, KATrig(KA, 1_e))));
-#else
-  return false;
-#endif
 }
 
 }  // namespace PoincareJ

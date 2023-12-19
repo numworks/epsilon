@@ -5,14 +5,11 @@
 
 #include "../app.h"
 
-using namespace Poincare;
-using namespace Shared;
-
 namespace Graph {
 
-ContinuousFunction* addFunction(const char* definition,
-                                Shared::ContinuousFunctionStore* store,
-                                Poincare::Context* context);
+Shared::ContinuousFunction* addFunction(const char* definition,
+                                        Shared::ContinuousFunctionStore* store,
+                                        Poincare::Context* context);
 
 }
 

@@ -2,9 +2,9 @@
 
 namespace Graph {
 
-ContinuousFunction *addFunction(const char *definition,
-                                Shared::ContinuousFunctionStore *store,
-                                Context *context) {
+Shared::ContinuousFunction *addFunction(const char *definition,
+                                        Shared::ContinuousFunctionStore *store,
+                                        Poincare::Context *context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   Shared::ContinuousFunction *f;

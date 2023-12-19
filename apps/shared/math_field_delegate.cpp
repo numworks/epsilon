@@ -81,7 +81,29 @@ bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
 
 bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
                                                  Context *context) {
+  /* Parsing
+   * Do not parse for assignment to detect if there is a syntax error, since
+   * some errors could be missed.
+   * Sometimes the field needs to be parsed for assignment but this is
+   * done later, namely by ContinuousFunction::buildExpressionFromText. */
   Expression exp = Expression::Parse(text, context);
+  if (exp.isUninitialized()) {
+    // Unparsable expression
+    return false;
+  }
+  /* Expression serialization.
+   * Resulting texts are parseable and displayable, like:
+   * - 2*a
+   * - log(x,2) */
+  constexpr int bufferSize = TextField::MaxBufferSize();
+  char buffer[bufferSize];
+  int length = exp.serialize(buffer, bufferSize,
+                             Preferences::sharedPreferences->displayMode());
+  if (length >= bufferSize - 1) {
+    /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
+     * escaped before printing utterly the expression. */
+    return false;
+  }
   return isAcceptableExpression(exp, context);
 }
 
@@ -103,9 +125,7 @@ bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout,
     // Accept empty layouts
     return false;
   }
-  /* An acceptable layout has to be parsable and serialized in a fixed-size
-   * buffer. We check all that here. */
-  /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
+  /* Simple layout serialisation. Resulting texts can be parsed but
    * not displayed, like:
    * - 2a
    * - log_{2}(x) */
@@ -117,27 +137,7 @@ bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout,
      * escaped before printing utterly the expression. */
     return true;
   }
-  /* Step 2: Parsing
-   * Do not parse for assignment to detect if there is a syntax error, since
-   * some errors could be missed.
-   * Sometimes the field needs to be parsed for assignment but this is
-   * done later, namely by ContinuousFunction::buildExpressionFromText. */
-  Expression e = Expression::Parse(buffer, context);
-  if (e.isUninitialized()) {
-    // Unparsable expression
-    return true;
-  }
-  /* Step 3: Expression serialization. Resulting texts are parseable and
-   * displayable, like:
-   * - 2*a
-   * - log(x,2) */
-  length = e.serialize(buffer, bufferSize,
-                       Preferences::sharedPreferences->displayMode());
-  if (length >= bufferSize - 1) {
-    // Same comment as before
-    return true;
-  }
-  return !isAcceptableExpression(e, context);
+  return !isAcceptableText(buffer, context);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(

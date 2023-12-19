@@ -144,7 +144,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     return false;
   }
   Layout layout = layoutField->layout();
-  if (layoutHasSyntaxError(layout, &ansContext)) {
+  if (!isAcceptableLayout(layout, &ansContext)) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }

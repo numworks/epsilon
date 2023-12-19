@@ -119,11 +119,11 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
              : handleEventForField(layoutField, event);
 }
 
-bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout,
-                                                   Poincare::Context *context) {
+bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
+                                                 Poincare::Context *context) {
   if (layout.isEmpty()) {
     // Accept empty layouts
-    return false;
+    return true;
   }
   /* Simple layout serialisation. Resulting texts can be parsed but
    * not displayed, like:
@@ -135,15 +135,15 @@ bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout,
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
-    return true;
+    return false;
   }
-  return !isAcceptableText(buffer, context);
+  return isAcceptableText(buffer, context);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
-  if (layoutHasSyntaxError(layoutField->layout(), context())) {
+  if (!isAcceptableLayout(layoutField->layout(), context())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }

@@ -34,8 +34,7 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
 
-  bool layoutHasSyntaxError(Poincare::Layout layout,
-                            Poincare::Context* context);
+  bool isAcceptableLayout(Poincare::Layout layout, Poincare::Context* context);
 };
 
 class MathTextFieldDelegate : public AbstractMathFieldDelegate,

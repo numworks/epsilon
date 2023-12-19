@@ -107,14 +107,15 @@ int FunctionModelsParameterController::DefaultName(char buffer[],
 const char* FunctionModelsParameterController::ModelWithDefaultName(
     Model model, char buffer[], size_t bufferSize) {
   const char* modelString = ModelString(model);
-  if (modelString[0] != 'f') {
+  if (modelString[0] != 'f' && modelString[0] != 'r') {
     return modelString;
   }
-  assert(modelString[1] == '(');
+  bool polar = modelString[0] == 'r';
+  size_t constantNameLength = 1 + polar;
+  assert(modelString[constantNameLength] == '(');
   /* Model starts with a named function. If that name is already taken, use
    * another one. */
-  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel, false);
-  size_t constantNameLength = 1;  // 'f', no null-terminating char
+  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel, polar);
   assert(strlen(modelString + constantNameLength) + functionNameLength <
          k_maxSizeOfNamedModel);
   strlcpy(buffer + functionNameLength, modelString + constantNameLength,

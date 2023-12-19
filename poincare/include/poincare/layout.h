@@ -191,3 +191,6 @@ using LayoutFourChildren = LayoutBuilder<T, U, 4, P>;
 }  // namespace Poincare
 
 #endif
+
+// TODO remove this hack
+#include "junior_layout.h"

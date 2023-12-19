@@ -65,20 +65,19 @@ void ListController::viewDidDisappear() {
   App::app()->defaultToolbox()->setExtraCellsDataSource(nullptr);
 }
 
-// Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
+// Fills buffer with a default function equation, such as "f(x)=", "y=" or
+// "r1(θ)="
 void ListController::fillWithDefaultFunctionEquation(char *buffer,
                                                      size_t bufferSize,
                                                      CodePoint symbol) const {
   size_t length;
-  if (symbol == ContinuousFunction::k_polarSymbol) {
-    length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                            ContinuousFunction::k_radiusSymbol);
-  } else if (symbol == ContinuousFunction::k_cartesianSymbol &&
-             FunctionModelsParameterController::EquationsPrefered()) {
+  if (symbol == ContinuousFunction::k_cartesianSymbol &&
+      FunctionModelsParameterController::EquationsPrefered()) {
     length = SerializationHelper::CodePoint(
         buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
   } else {
-    length = m_modelsParameterController.DefaultName(buffer, bufferSize);
+    length = m_modelsParameterController.DefaultName(
+        buffer, bufferSize, symbol == ContinuousFunction::k_polarSymbol);
     assert(0 < length && length < bufferSize - 1);
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '(');
@@ -135,11 +134,7 @@ bool ListController::completeEquation(LayoutField *equationField) {
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   constexpr size_t k_bufferSize =
-      SymbolAbstractNode::k_maxNameSize + sizeof("(x)≥") - 1;
-  static_assert(k_bufferSize >= sizeof("r=") &&
-                    k_bufferSize >= ContinuousFunction::k_maxDefaultNameSize +
-                                        sizeof("(x)=") - 1,
-                "k_bufferSize should fit all situations.");
+      SymbolAbstractNode::k_maxNameSize + sizeof("(θ)≥") - 1;
   char buffer[k_bufferSize];
   if (f->isNull() || f->properties().status() ==
                          ContinuousFunctionProperties::Status::Undefined) {

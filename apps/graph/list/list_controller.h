@@ -50,10 +50,8 @@ class ListController : public Shared::FunctionListController,
   Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
     return m_editableCell.expressionCell();
   }
-  void fillWithDefaultFunctionEquation(
-      char* buffer, size_t bufferSize,
-      FunctionModelsParameterController* modelsParameterController,
-      CodePoint Symbol) const;
+  void fillWithDefaultFunctionEquation(char* buffer, size_t bufferSize,
+                                       CodePoint Symbol) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
   bool layoutRepresentsParametricFunction(Poincare::Layout l) const;
   bool shouldCompleteEquation(Poincare::Expression expression) override;

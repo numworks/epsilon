@@ -45,6 +45,7 @@ class Calculation {
         m_equalSign(EqualSign::Unknown),
         m_complexFormat(complexFormat),
         m_angleUnit(angleUnit),
+        m_additionalResultsType(),
         m_height(-1),
         m_expandedHeight(-1) {
     assert(sizeof(m_inputText) == 0);

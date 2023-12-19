@@ -130,14 +130,15 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(layoutField->context() == context());
-  VariableContext ansContext = m_calculationStore->createAnsContext(context());
+  Context *context = this->context();
+  VariableContext ansContext = m_calculationStore->createAnsContext(context);
   if (layoutField->isEmpty()) {
     if (m_workingBuffer[0] == 0) {
       return false;
     }
     /* The input text store in m_workingBuffer might have been correct the
      * first time but then be too long when replacing ans in another context. */
-    if (!isAcceptableText(m_workingBuffer, context())) {
+    if (!isAcceptableText(m_workingBuffer, context)) {
       App::app()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }

@@ -127,9 +127,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
-  Context *context = App::app()->localContext();
-  assert(layoutField->context() == context);
-  assert(this->context() == context);
+  assert(layoutField->context() == context());
   if (layoutField->isEmpty()) {
     if (m_workingBuffer[0] != 0) {
       /* The input text store in m_workingBuffer might have been correct the
@@ -138,7 +136,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
       if (!isAcceptableText(m_workingBuffer)) {
         App::app()->displayWarning(I18n::Message::SyntaxError);
       } else {
-        pushCalculation(m_workingBuffer, context);
+        pushCalculation(m_workingBuffer);
       }
     }
     return false;
@@ -149,8 +147,9 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   }
   Layout layout = layoutField->layout();
   assert(!layout.isUninitialized());
-  layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);
-  if (pushCalculation(m_workingBuffer, context)) {
+  layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
+                                   context());
+  if (pushCalculation(m_workingBuffer)) {
     layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
@@ -196,8 +195,8 @@ void EditExpressionController::reloadView() {
   m_historyController->reload();
 }
 
-bool EditExpressionController::pushCalculation(const char *text,
-                                               Poincare::Context *context) {
+bool EditExpressionController::pushCalculation(const char *text) {
+  Context *context = this->context();
   Calculation *calculation = m_calculationStore->push(text, context).pointer();
   if (calculation) {
     HistoryViewCell::ComputeCalculationHeights(calculation, context);

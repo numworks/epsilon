@@ -96,10 +96,9 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
              : handleEventForField(layoutField, event);
 }
 
-bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
-    Escher::LayoutField *layoutField) {
-  if (layoutField->isEmpty()) {
-    // Accept empty fields
+bool MathLayoutFieldDelegate::layoutHasSyntaxError(Layout layout) {
+  if (layout.isEmpty()) {
+    // Accept empty layouts
     return false;
   }
   /* An acceptable layout has to be parsable and serialized in a fixed-size
@@ -110,7 +109,7 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
    * - log_{2}(x) */
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  size_t length = layoutField->layout().serializeForParsing(buffer, bufferSize);
+  size_t length = layout.serializeForParsing(buffer, bufferSize);
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
@@ -121,7 +120,6 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromText. */
-  assert(layoutField->context() == context());
   Expression e = Expression::Parse(buffer, context());
   if (e.isUninitialized()) {
     // Unparsable expression
@@ -143,7 +141,7 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
-  if (layoutFieldHasSyntaxError(layoutField)) {
+  if (layoutHasSyntaxError(layoutField->layout())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }

@@ -108,6 +108,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
     return true;
   }
   if (event == Ion::Events::Clear && layoutField->isEmpty()) {
+    clearWorkingBuffer();
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;

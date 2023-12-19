@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <ion/display.h>
 #include <poincare/preferences.h>
+#include <poincare/symbol.h>
 
 #include "app.h"
 
@@ -178,15 +179,26 @@ void EditExpressionController::layoutFieldDidChangeSize(
 
 bool EditExpressionController::isAcceptableExpression(
     const Poincare::Expression expression, Context *context) {
-  /* Override MathLayoutFieldDelegate because Store is acceptable, and
-   * ans has an expression. */
-  Expression ansExpression =
-      App::app()->snapshot()->calculationStore()->ansExpression(context());
-  if (!ExpressionCanBeSerialized(expression, true, ansExpression, context)) {
+  if (expression.isUninitialized()) {
     return false;
   }
-  assert(!expression.isUninitialized());
-  return true;
+  // Replace ans with its value and check serialization
+  Expression ansExpression =
+      App::app()->snapshot()->calculationStore()->ansExpression(context);
+  Expression exp = expression.clone();
+  Symbol ansSymbol = Symbol::Ans();
+  exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  constexpr int maxSerializationSize = Constant::MaxSerializedExpressionSize;
+  char buffer[maxSerializationSize];
+  int length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
+  /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
+   * escaped before printing utterly the expression. */
+  if (length >= maxSerializationSize - 1) {
+    return false;
+  }
+  exp = Expression::Parse(buffer, context);
+  // The ans replacement made the expression unparsable
+  return !exp.isUninitialized();
 }
 
 void EditExpressionController::reloadView() {

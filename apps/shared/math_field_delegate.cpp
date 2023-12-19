@@ -48,36 +48,6 @@ bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp,
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store;
 }
 
-bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
-    const Expression expression, bool replaceAns, Expression ansExpression,
-    Context *context) {
-  if (expression.isUninitialized()) {
-    return false;
-  }
-  Expression exp = expression;
-  if (replaceAns) {
-    exp = expression.clone();
-    Symbol ansSymbol = Symbol::Ans();
-    exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
-  }
-  constexpr size_t maxSerializationSize = Constant::MaxSerializedExpressionSize;
-  char buffer[maxSerializationSize];
-  size_t length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
-  /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
-   * escaped before printing utterly the expression. */
-  if (length >= maxSerializationSize - 1) {
-    return false;
-  }
-  if (replaceAns) {
-    exp = Expression::Parse(buffer, context);
-    if (exp.isUninitialized()) {
-      // The ans replacement made the expression unparsable
-      return false;
-    }
-  }
-  return true;
-}
-
 bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
                                                  Context *context) {
   /* Parsing

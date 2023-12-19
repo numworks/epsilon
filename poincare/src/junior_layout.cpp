@@ -42,6 +42,9 @@ JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
 }
 
 JuniorLayout JuniorLayout::Juniorize(Layout l) {
+  if (l.isUninitialized()) {
+    return static_cast<JuniorLayout&>(l);
+  }
   if (l.type() == LayoutNode::Type::JuniorLayout) {
     return static_cast<JuniorLayout&>(l);
   }

@@ -128,6 +128,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   Context *context = App::app()->localContext();
+  assert(layoutField->context() == context);
+  assert(this->context() == context);
   if (layoutField->isEmpty()) {
     if (m_workingBuffer[0] != 0) {
       /* The input text store in m_workingBuffer might have been correct the

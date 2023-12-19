@@ -56,10 +56,23 @@ class JuniorLayoutNode final : public LayoutNode {
 class JuniorLayout final
     : public LayoutNoChildren<JuniorLayout, JuniorLayoutNode> {
  public:
+  JuniorLayout() {}
+  JuniorLayout(const Layout& other) { *this = other; }
+
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   static JuniorLayout Juniorize(Layout l);
   const PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
+  }
+
+  JuniorLayout operator=(Layout&& other) {
+    *this = Juniorize(other);
+    return *this;
+  }
+
+  JuniorLayout operator=(const Layout& other) {
+    *this = Juniorize(other);
+    return *this;
   }
 
  private:

@@ -129,8 +129,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(layoutField->context() == context());
-  VariableContext ansContext =
-      App::app()->snapshot()->calculationStore()->createAnsContext(context());
+  VariableContext ansContext = m_calculationStore->createAnsContext(context());
   if (layoutField->isEmpty()) {
     if (m_workingBuffer[0] != 0) {
       /* The input text store in m_workingBuffer might have been correct the
@@ -183,8 +182,7 @@ bool EditExpressionController::isAcceptableExpression(
     return false;
   }
   // Replace ans with its value and check serialization
-  Expression ansExpression =
-      App::app()->snapshot()->calculationStore()->ansExpression(context);
+  Expression ansExpression = m_calculationStore->ansExpression(context);
   Expression exp = expression.clone();
   Symbol ansSymbol = Symbol::Ans();
   exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);

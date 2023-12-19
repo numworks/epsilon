@@ -128,6 +128,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(layoutField->context() == context());
+  VariableContext ansContext =
+      App::app()->snapshot()->calculationStore()->createAnsContext(context());
   if (layoutField->isEmpty()) {
     if (m_workingBuffer[0] != 0) {
       /* The input text store in m_workingBuffer might have been correct the
@@ -142,13 +144,13 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     return false;
   }
   Layout layout = layoutField->layout();
-  if (layoutHasSyntaxError(layout, context())) {
+  if (layoutHasSyntaxError(layout, &ansContext)) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
   assert(!layout.isUninitialized());
   layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
-                                   context());
+                                   &ansContext);
   if (pushCalculation(m_workingBuffer)) {
     layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);

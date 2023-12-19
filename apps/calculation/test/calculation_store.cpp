@@ -192,6 +192,13 @@ QUIZ_CASE(calculation_ans) {
   // Restore complex format and exam mode
   Preferences::sharedPreferences->setExamMode(previousExamMode);
   Preferences::sharedPreferences->setComplexFormat(previousComplexFormat);
+
+  store.push("_g0", &globalContext);
+  store.push("ans→m*s^-2", &globalContext);
+  lastCalculation = store.calculationAtIndex(0);
+  quiz_assert(strcmp(lastCalculation->exactOutputText(),
+                     "9.80665×_m×_s^\U00000012-2\U00000013") == 0);
+
   store.deleteAll();
 }
 

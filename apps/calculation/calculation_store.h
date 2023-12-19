@@ -4,6 +4,7 @@
 #include <apps/constant.h>
 #include <apps/shared/expiring_pointer.h>
 #include <poincare/preferences.h>
+#include <poincare/variable_context.h>
 #include <stddef.h>
 
 #include "calculation.h"
@@ -55,6 +56,8 @@ class CalculationStore {
   }
   void deleteAll() { m_numberOfCalculations = 0; }
   bool preferencesHaveChanged();
+
+  Poincare::VariableContext createAnsContext(Poincare::Context *context);
 
   /* It is not really the minimal size, but it clears enough space for most
    * calculations instead of clearing less space, then fail to serialize, clear

@@ -7,7 +7,6 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
-#include <poincare/variable_context.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -122,10 +121,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
        * Setting Ans in the context makes it available during the parsing of the
        * input, namely to know if a rightwards arrow is a unit conversion or a
        * variable assignment. */
-      Poincare::VariableContext ansContext(Symbol::k_ansAliases.mainAlias(),
-                                           context);
-      ansContext.setExpressionForSymbolAbstract(ansExpression(context),
-                                                Symbol::Ans());
+      VariableContext ansContext = createAnsContext(context);
 
       // Push a new, empty Calculation
       cursor = pushEmptyCalculation(
@@ -266,6 +262,13 @@ bool CalculationStore::preferencesHaveChanged() {
   }
   m_inUsePreferences = *preferences;
   return true;
+}
+
+VariableContext CalculationStore::createAnsContext(Context *context) {
+  VariableContext ansContext(Symbol::k_ansAliases.mainAlias(), context);
+  ansContext.setExpressionForSymbolAbstract(ansExpression(context),
+                                            Symbol::Ans());
+  return ansContext;
 }
 
 // Private

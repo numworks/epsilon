@@ -141,8 +141,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     }
     return false;
   }
-  if (!MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
-                                                            event)) {
+  if (layoutFieldHasSyntaxError(layoutField)) {
+    App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
   Layout layout = layoutField->layout();

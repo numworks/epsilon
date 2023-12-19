@@ -59,7 +59,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
    * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
   for (Tree* child : u->children()) {
     if (child->isFloat()) {
-      changed = Approximation::ApproximateAndReplaceEveryScalar(u);
+      changed = Approximation::ApproximateAndReplaceEveryScalar(u) || changed;
       if (changed && u->isFloat()) {
         return true;
       }
@@ -473,7 +473,22 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
 
 bool Simplification::SimplifyMultiplication(Tree* u) {
   assert(u->isMultiplication());
-  bool changed = NAry::Flatten(u);
+  bool changed = false;
+  if (NAry::Flatten(u)) {
+    /* We need to approximateAndReplaceEveryScalar again here so that floats
+    are
+     * properly propagated after a flatten. */
+    for (Tree* child : u->children()) {
+      if (child->isFloat()) {
+        if (Approximation::ApproximateAndReplaceEveryScalar(u) &&
+            u->isFloat()) {
+          return true;
+        }
+        break;
+      }
+    }
+    changed = true;
+  }
   if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
     return true;
   }
@@ -565,7 +580,21 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
 
 bool Simplification::SimplifyAddition(Tree* u) {
   assert(u->isAddition());
-  bool modified = NAry::Flatten(u);
+  bool modified = false;
+  if (NAry::Flatten(u)) {
+    /* We need to approximateAndReplaceEveryScalar again here so that floats are
+     * properly propagated after a flatten. */
+    for (Tree* child : u->children()) {
+      if (child->isFloat()) {
+        if (Approximation::ApproximateAndReplaceEveryScalar(u) &&
+            u->isFloat()) {
+          return true;
+        }
+        break;
+      }
+    }
+    modified = true;
+  }
   if (NAry::SquashIfUnary(u)) {
     return true;
   }

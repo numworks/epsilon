@@ -471,6 +471,12 @@ QUIZ_CASE(pcj_float_simplification) {
   simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("random()-random()", "random()+-1×random()",
                 {.m_strategy = Strategy::ApproximateToFloat});
+
+  // This was raising asserts because of float approximation on flatten.
+  Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->clone();
+  Simplification::ShallowSystematicReduce(u->child(0));
+  QUIZ_ASSERT(Simplification::ShallowSystematicReduce(u));
+  QUIZ_ASSERT(!Simplification::ShallowSystematicReduce(u));
 }
 
 QUIZ_CASE(pcj_unit_simplification) {

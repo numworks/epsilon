@@ -73,7 +73,8 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
   if (symbol == ContinuousFunction::k_polarSymbol) {
     length = SerializationHelper::CodePoint(buffer, bufferSize,
                                             ContinuousFunction::k_radiusSymbol);
-  } else if (FunctionModelsParameterController::EquationsPrefered()) {
+  } else if (symbol == ContinuousFunction::k_cartesianSymbol &&
+             FunctionModelsParameterController::EquationsPrefered()) {
     length = SerializationHelper::CodePoint(
         buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
   } else {

@@ -132,26 +132,25 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(layoutField->context() == context());
   VariableContext ansContext = m_calculationStore->createAnsContext(context());
   if (layoutField->isEmpty()) {
-    if (m_workingBuffer[0] != 0) {
-      /* The input text store in m_workingBuffer might have been correct the
-       * first time but then be too long when replacing ans in another context
-       */
-      if (!isAcceptableText(m_workingBuffer, context())) {
-        App::app()->displayWarning(I18n::Message::SyntaxError);
-      } else {
-        pushCalculation(m_workingBuffer);
-      }
+    if (m_workingBuffer[0] == 0) {
+      return false;
     }
-    return false;
+    /* The input text store in m_workingBuffer might have been correct the
+     * first time but then be too long when replacing ans in another context. */
+    if (!isAcceptableText(m_workingBuffer, context())) {
+      App::app()->displayWarning(I18n::Message::SyntaxError);
+      return false;
+    }
+  } else {
+    Layout layout = layoutField->layout();
+    if (!isAcceptableLayout(layout, &ansContext)) {
+      App::app()->displayWarning(I18n::Message::SyntaxError);
+      return false;
+    }
+    assert(!layout.isUninitialized());
+    layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
+                                     &ansContext);
   }
-  Layout layout = layoutField->layout();
-  if (!isAcceptableLayout(layout, &ansContext)) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
-    return false;
-  }
-  assert(!layout.isUninitialized());
-  layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
-                                   &ansContext);
   if (pushCalculation(m_workingBuffer)) {
     layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);

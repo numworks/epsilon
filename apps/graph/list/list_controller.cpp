@@ -66,10 +66,9 @@ void ListController::viewDidDisappear() {
 }
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
-void ListController::fillWithDefaultFunctionEquation(
-    char *buffer, size_t bufferSize,
-    FunctionModelsParameterController *modelsParameterController,
-    CodePoint symbol) const {
+void ListController::fillWithDefaultFunctionEquation(char *buffer,
+                                                     size_t bufferSize,
+                                                     CodePoint symbol) const {
   size_t length;
   if (symbol == ContinuousFunction::k_polarSymbol) {
     length = SerializationHelper::CodePoint(buffer, bufferSize,
@@ -78,7 +77,7 @@ void ListController::fillWithDefaultFunctionEquation(
     length = SerializationHelper::CodePoint(
         buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
   } else {
-    length = modelsParameterController->DefaultName(buffer, bufferSize);
+    length = m_modelsParameterController.DefaultName(buffer, bufferSize);
     assert(0 < length && length < bufferSize - 1);
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '(');
@@ -151,8 +150,7 @@ bool ListController::completeEquation(LayoutField *equationField) {
             : (layoutRepresentsParametricFunction(equationField->layout())
                    ? ContinuousFunction::k_parametricSymbol
                    : ContinuousFunction::k_cartesianSymbol);
-    fillWithDefaultFunctionEquation(buffer, k_bufferSize,
-                                    &m_modelsParameterController, symbol);
+    fillWithDefaultFunctionEquation(buffer, k_bufferSize, symbol);
   } else {
     // Insert the name, symbol and equation symbol of the existing function
     size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);

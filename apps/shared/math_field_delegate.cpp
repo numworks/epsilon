@@ -121,7 +121,8 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromText. */
-  Expression e = Expression::Parse(buffer, layoutField->context());
+  assert(layoutField->context() == context());
+  Expression e = Expression::Parse(buffer, context());
   if (e.isUninitialized()) {
     // Unparsable expression
     return true;

@@ -152,7 +152,11 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
                                      &ansContext);
   }
-  if (pushCalculation(m_workingBuffer)) {
+  Calculation *calculation =
+      m_calculationStore->push(m_workingBuffer, context).pointer();
+  if (calculation) {
+    HistoryViewCell::ComputeCalculationHeights(calculation, context);
+    m_historyController->reload();
     layoutField->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
@@ -201,17 +205,6 @@ bool EditExpressionController::isAcceptableExpression(
 void EditExpressionController::reloadView() {
   m_contentView.reload();
   m_historyController->reload();
-}
-
-bool EditExpressionController::pushCalculation(const char *text) {
-  Context *context = this->context();
-  Calculation *calculation = m_calculationStore->push(text, context).pointer();
-  if (calculation) {
-    HistoryViewCell::ComputeCalculationHeights(calculation, context);
-    m_historyController->reload();
-    return true;
-  }
-  return false;
 }
 
 }  // namespace Calculation

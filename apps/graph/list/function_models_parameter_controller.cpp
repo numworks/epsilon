@@ -72,24 +72,30 @@ void FunctionModelsParameterController::viewWillAppear() {
 }
 
 int FunctionModelsParameterController::DefaultName(char buffer[],
-                                                   size_t bufferSize) {
+                                                   size_t bufferSize,
+                                                   bool polar) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
       'f', 'g', 'h', 'p'};
   /* First default names the first of theses names f, g, h, p and then f1, f2,
    * that does not exist yet in the storage. */
-  size_t constantNameLength = 1;  // 'f', no null-terminating char
-  assert(bufferSize > constantNameLength + 1);
-  // Find the next available name
-  for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
-    buffer[0] = k_defaultLetterNames[i];
-    buffer[1] = 0;
-    if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
-      return constantNameLength;
+  if (!polar) {
+    size_t constantNameLength = 1;  // 'f', no null-terminating char
+    assert(bufferSize > constantNameLength + 1);
+    // Find the next available name
+    for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
+      buffer[0] = k_defaultLetterNames[i];
+      buffer[1] = 0;
+      if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
+        return constantNameLength;
+      }
     }
+    // f, g, h and p are already taken. Try f1, f2, ...
+    buffer[0] = k_defaultLetterNames[0];
+  } else {
+    // Try r1, r2, ...
+    buffer[0] = Shared::ContinuousFunctionProperties::k_radiusSymbol;
   }
-  // f, g, h and p are already taken. Try f1, f2, ...
-  buffer[0] = k_defaultLetterNames[0];
   buffer[1] = 0;
   assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem
@@ -107,7 +113,7 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
   assert(modelString[1] == '(');
   /* Model starts with a named function. If that name is already taken, use
    * another one. */
-  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel);
+  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel, false);
   size_t constantNameLength = 1;  // 'f', no null-terminating char
   assert(strlen(modelString + constantNameLength) + functionNameLength <
          k_maxSizeOfNamedModel);

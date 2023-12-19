@@ -1,6 +1,7 @@
 #include "n_ary.h"
 
 #include <assert.h>
+#include <omgpj/list.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/edition_reference.h>

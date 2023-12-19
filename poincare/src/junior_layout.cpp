@@ -1,10 +1,24 @@
 #include <assert.h>
 #include <poincare/junior_layout.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/render.h>
 
 #include <algorithm>
 
 namespace Poincare {
+
+KDSize JuniorLayoutNode::computeSize(KDFont::Size font) {
+  return PoincareJ::Render::Size(tree());
+}
+
+KDCoordinate JuniorLayoutNode::computeBaseline(KDFont::Size font) {
+  return PoincareJ::Render::Baseline(tree());
+}
+
+void JuniorLayoutNode::render(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
+  PoincareJ::Render::Draw(tree(), ctx, p, style.font, KDColorBlue,
+                          style.backgroundColor);
+}
 
 size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,

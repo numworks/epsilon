@@ -3,9 +3,7 @@
 
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
 #include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace Poincare {
@@ -38,12 +36,8 @@ class JuniorLayoutNode final : public LayoutNode {
                    int numberOfSignificantDigits) const override;
 
   // LayoutNode
-  KDSize computeSize(KDFont::Size font) override {
-    return PoincareJ::Render::Size(tree());
-  }
-  KDCoordinate computeBaseline(KDFont::Size font) override {
-    return PoincareJ::Render::Baseline(tree());
-  }
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override {
     assert(false);
     return KDPointZero;
@@ -51,10 +45,7 @@ class JuniorLayoutNode final : public LayoutNode {
   Layout makeEditable() override;
 
  private:
-  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override {
-    PoincareJ::Render::Draw(tree(), ctx, p, style.font, KDColorBlue,
-                            style.backgroundColor);
-  }
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   const PoincareJ::Tree* tree() const {
     return PoincareJ::Tree::FromBlocks(m_blocks);

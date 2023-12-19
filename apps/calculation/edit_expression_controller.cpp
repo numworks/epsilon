@@ -133,7 +133,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
       /* The input text store in m_workingBuffer might have been correct the
        * first time but then be too long when replacing ans in another context
        */
-      if (!isAcceptableText(m_workingBuffer)) {
+      if (!isAcceptableText(m_workingBuffer, context())) {
         App::app()->displayWarning(I18n::Message::SyntaxError);
       } else {
         pushCalculation(m_workingBuffer);
@@ -142,7 +142,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     return false;
   }
   Layout layout = layoutField->layout();
-  if (layoutHasSyntaxError(layout)) {
+  if (layoutHasSyntaxError(layout, context())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
@@ -175,15 +175,14 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    const Poincare::Expression expression) {
+    const Poincare::Expression expression, Context *context) {
   /* Override MathLayoutFieldDelegate because Store is acceptable, and
    * ans has an expression. */
   {
     Expression ansExpression =
         App::app()->snapshot()->calculationStore()->ansExpression(
             App::app()->localContext());
-    if (!ExpressionCanBeSerialized(expression, true, ansExpression,
-                                   App::app()->localContext())) {
+    if (!ExpressionCanBeSerialized(expression, true, ansExpression, context)) {
       return false;
     }
   }

@@ -195,9 +195,10 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                                    event);
 }
 
-bool ListController::isAcceptableExpression(const Expression expression) {
+bool ListController::isAcceptableExpression(const Expression expression,
+                                            Context *context) {
   // Do not accept any OperatorType.
-  return MathLayoutFieldDelegate::isAcceptableExpression(expression) &&
+  return MathLayoutFieldDelegate::isAcceptableExpression(expression, context) &&
          expression.type() != ExpressionNode::Type::Comparison;
 }
 

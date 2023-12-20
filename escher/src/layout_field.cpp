@@ -496,6 +496,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     }
     if (isEditing() &&
         m_delegate->layoutFieldShouldFinishEditing(this, event)) {
+      cursor()->beautifyLeft(context());
       setEditing(false);
       if (!m_delegate->layoutFieldDidFinishEditing(this, event)) {
         setEditing(true);

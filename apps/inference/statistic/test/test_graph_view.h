@@ -11,7 +11,7 @@ namespace Inference {
 
 class TestGraphView : public Escher::View {
  public:
-  TestGraphView(Test* test) : m_curveView(test) {}
+  TestGraphView(Test* test) : m_displayHint(false), m_curveView(test) {}
   void reload();
 
   void setDisplayHint(bool displayHint) { m_displayHint = displayHint; }

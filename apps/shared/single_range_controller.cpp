@@ -11,6 +11,7 @@ SingleRangeController::SingleRangeController(
     Responder *parentResponder,
     Shared::MessagePopUpController *confirmPopUpController)
     : FloatParameterController<float>(parentResponder),
+      m_autoParam(false),
       m_confirmPopUpController(confirmPopUpController) {
   for (int i = 0; i < k_numberOfTextCells; i++) {
     m_boundsCells[i].setParentResponder(&m_selectableListView);

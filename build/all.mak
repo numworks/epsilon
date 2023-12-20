@@ -30,10 +30,10 @@ all_release:
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0120.onboarding.dfu
 	@ $(MAKE) MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.allow3rdparty.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0120.onboarding.allow3rdparty.dfu
-	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
+	@ echo "BUILD_FIRMWARE    SIMULATOR WEB HTML"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
 	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.html
-	@ cp output/release/simulator/web/epsilon.html output/all_official/simulator.web.html
+	@ cp output/release/simulator/web/epsilon.html output/all_official/epsilon.html
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web htmlpack.zip
 	@ cp output/release/simulator/web/htmlpack.zip output/all_official/htmlpack.zip
@@ -70,10 +70,10 @@ all_beta:
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.dfu
 	@ $(MAKE) MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.allow3rdparty.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.allow3rdparty.dfu
-	@ echo "BUILD_BETA_FIRMWARE    SIMULATOR WEB ZIP"
+	@ echo "BUILD_BETA_FIRMWARE    SIMULATOR WEB HTML"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
-	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip
-	@ cp output/release/simulator/web/epsilon.zip output/all_official_beta/simulator.web.zip
+	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.html
+	@ cp output/release/simulator/web/epsilon.html output/all_official_beta/epsilon.html
 	@ echo "BUILD_BETA_FIRMWARE    SIMULATOR WEB JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web htmlpack.zip
 	@ cp output/release/simulator/web/htmlpack.zip output/all_official_beta/htmlpack.zip

@@ -883,7 +883,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
   Expression expressionToStore;
   bool isFunctionAssignment = false;
   // if c = "", we want to reinit the Expression
-  if (c && *c != 0) {
+  if (c && c[0] != 0) {
     /* Parse the expression to store as possible function assignment. */
     expressionToStore = Expression::Parse(c, context, true, true);
     if (expressionToStore.isUninitialized()) {
@@ -904,8 +904,8 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
         symbol = k_cartesianSymbol;
       } else {
-        assert((
-            functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))));
+        assert(
+            functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
         symbol = k_parametricSymbol;
       }
     }

@@ -6,7 +6,6 @@
 #include <escher/selectable_table_view.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
-#include <poincare/input_beautification.h>
 #include <poincare/symbol.h>
 
 #include <algorithm>
@@ -211,11 +210,6 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   char buffer[TextField::MaxBufferSize()];
-
-  // Beautify the current layout if needed.
-  Poincare::InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-      layoutField->cursor(), layoutField->context());
-
   layoutField->layout().serializeForParsing(buffer, TextField::MaxBufferSize());
   Poincare::Expression parsedExpression =
       Poincare::Expression::Parse(buffer, nullptr);

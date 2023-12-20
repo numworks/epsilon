@@ -14,8 +14,22 @@ void LayoutField::updateCursorBeforeInsertion() {
     return;
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  cursor()->safeSetLayout(m_insertionCursor.layout(), OMG::Direction::Left());
-  cursor()->safeSetPosition(m_insertionCursor.position());
+  Layout insertionLayout = m_insertionCursor.layout();
+  int maxPossiblePosition =
+      insertionLayout.isHorizontal() ? insertionLayout.numberOfChildren() : 1;
+  cursor()->safeSetLayout(insertionLayout, OMG::Direction::Left());
+  /* The cursor position can be greater than the max possible position if the
+   * layout was beautified when the cursor left the position.
+   * Example:
+   * - Input []
+   * - Go down
+   * - Input "pi"
+   * - Go up until being in the history
+   * - Press EXE on the last calculation result
+   * It's too complicated for now to track the new position of the cursor after
+   * beautification so we just set a valid position. */
+  cursor()->safeSetPosition(
+      std::min(maxPossiblePosition, m_insertionCursor.position()));
   reload(previousSize);
   resetInsertionCursor();
 }

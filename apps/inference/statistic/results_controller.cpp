@@ -20,6 +20,7 @@ ResultsController::ResultsController(
       m_statistic(statistic),
       m_testGraphController(testGraphController),
       m_intervalGraphController(intervalGraphController),
+      m_titleBuffer{0},
       m_next(&m_selectableListView, I18n::Message::Next,
              Invocation::Builder<ResultsController>(
                  &ResultsController::ButtonAction, this)) {}

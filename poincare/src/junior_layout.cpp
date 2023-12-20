@@ -55,45 +55,22 @@ JuniorLayout JuniorLayout::Juniorize(OLayout l) {
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                        const LayoutSelection& selection,
+                        const PoincareJ::LayoutSelection& selection,
                         KDColor selectionColor) {
   node()->draw(ctx, p, style, selection, selectionColor);
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
-  draw(ctx, p, style, LayoutSelection());
+  draw(ctx, p, style, PoincareJ::LayoutSelection());
 }
 
 // Rendering
 
 void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                            const LayoutSelection& selection,
+                            const PoincareJ::LayoutSelection& selection,
                             KDColor selectionColor) {
-  if (style.backgroundColor != selectionColor && !selection.isEmpty() &&
-      selection.containsNode(this)) {
-    style.backgroundColor = selectionColor;
-  }
-
-  assert(!SumOverflowsKDCoordinate(absoluteOriginWithMargin(style.font).x(),
-                                   p.x()));
-  assert(!SumOverflowsKDCoordinate(absoluteOriginWithMargin(style.font).y(),
-                                   p.y()));
-  KDPoint renderingAbsoluteOrigin = absoluteOrigin(style.font).translatedBy(p);
-  KDPoint renderingOriginWithMargin =
-      absoluteOriginWithMargin(style.font).translatedBy(p);
-  KDSize size = layoutSize(style.font);
-  ctx->fillRect(KDRect(renderingOriginWithMargin, size), style.backgroundColor);
-#if 0
-  if (!selection.isEmpty() && selection.layout().node() == this &&
-      isHorizontal()) {
-    KDRect selectionRectangle =
-        static_cast<HorizontalLayoutNode*>(this)->relativeSelectionRect(
-            selection.leftPosition(), selection.rightPosition(), style.font);
-    ctx->fillRect(selectionRectangle.translatedBy(renderingOriginWithMargin),
-                  selectionColor);
-  }
-#endif
-  render(ctx, renderingAbsoluteOrigin, style);
+  PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
+                          style.backgroundColor, selection);
 }
 
 }  // namespace Poincare

@@ -4,6 +4,7 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/old_layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
+#include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace Poincare {
@@ -45,7 +46,7 @@ class JuniorLayoutNode final : public LayoutNode {
   OLayout makeEditable() override;
 
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            const LayoutSelection& selection,
+            const PoincareJ::LayoutSelection& selection,
             KDColor selectionColor = KDColorRed);
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
@@ -79,7 +80,7 @@ class JuniorLayout final
 
   // Render
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            const LayoutSelection& selection,
+            const PoincareJ::LayoutSelection& selection,
             KDColor selectionColor = Escher::Palette::Select);
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 

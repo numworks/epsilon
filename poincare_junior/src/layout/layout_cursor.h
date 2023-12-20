@@ -61,6 +61,8 @@ class LayoutCursor {
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
+
+  // Warning: LayoutSelection contains a Tree* and must be used right away
   LayoutSelection selection() const {
     return isSelecting()
                ? LayoutSelection(cursorNode(), m_startOfSelection, m_position)

@@ -661,6 +661,13 @@ int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
   return l.isHorizontal() ? l.numberOfChildren() : 1;
 }
 
+void LayoutCursor::beautifyLeft(Context *context) {
+  if (InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this,
+                                                                context)) {
+    invalidateSizesAndPositions();
+  }
+}
+
 /* Private */
 
 void LayoutCursor::setLayout(Layout l, OMG::HorizontalDirection sideOfLayout) {

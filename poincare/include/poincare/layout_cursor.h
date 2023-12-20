@@ -114,6 +114,8 @@ class LayoutCursor final {
 
   static int RightmostPossibleCursorPosition(Layout l);
 
+  void beautifyLeft(Context* context);
+
  private:
   void setLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
 

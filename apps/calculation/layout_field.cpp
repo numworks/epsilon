@@ -16,7 +16,7 @@ void LayoutField::updateCursorBeforeInsertion() {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   Layout insertionLayout = m_insertionCursor.layout();
   int maxPossiblePosition =
-      insertionLayout.isHorizontal() ? insertionLayout.numberOfChildren() : 1;
+      LayoutCursor::RightmostPossibleCursorPosition(insertionLayout);
   cursor()->safeSetLayout(insertionLayout, OMG::Direction::Left());
   /* The cursor position can be greater than the max possible position if the
    * layout was beautified when the cursor left the position.

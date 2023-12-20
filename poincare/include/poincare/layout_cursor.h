@@ -112,6 +112,8 @@ class LayoutCursor final {
 
   bool isAtNumeratorOfEmptyFraction() const;
 
+  static int RightmostPossibleCursorPosition(Layout l);
+
  private:
   void setLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
 

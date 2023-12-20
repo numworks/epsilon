@@ -26,8 +26,7 @@ void LayoutCursor::safeSetLayout(Layout layout,
 
 void LayoutCursor::safeSetPosition(int position) {
   assert(position >= 0);
-  assert((m_layout.isHorizontal() && position <= m_layout.numberOfChildren()) ||
-         (!m_layout.isHorizontal() && position <= 1));
+  assert(position <= RightmostPossibleCursorPosition(m_layout));
   assert(!isSelecting());
   LayoutCursor previousCursor = *this;
   m_position = position;
@@ -656,6 +655,10 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
          m_layout.parent().type() == LayoutNode::Type::FractionLayout &&
          m_layout.parent().indexOfChild(m_layout) == 0 &&
          m_layout.parent().childAtIndex(1).numberOfChildren() == 0;
+}
+
+int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
+  return l.isHorizontal() ? l.numberOfChildren() : 1;
 }
 
 /* Private */

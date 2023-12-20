@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <omgpj.h>
+#include <poincare/junior_layout.h>
 #include <poincare_junior/include/poincare.h>
 
 #include <algorithm>
@@ -126,6 +127,17 @@ void EditionPool::executeAndDump(ActionWithContext action, void *context,
   execute(action, context, data, maxSize, relax);
   assert(Tree::FromBlocks(firstBlock())->treeSize() <= maxSize);
   Tree::FromBlocks(firstBlock())->copyTreeTo(address);
+  flush();
+}
+
+void EditionPool::executeAndStoreLayout(ActionWithContext action, void *context,
+                                        const void *data,
+                                        Poincare::JuniorLayout &layout,
+                                        Relax relax) {
+  assert(numberOfTrees() == 0);
+  execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
+  assert(Tree::FromBlocks(firstBlock())->isLayout());
+  layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
   flush();
 }
 

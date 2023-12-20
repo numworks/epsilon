@@ -6,6 +6,10 @@
 #include "pool.h"
 #include "reference.h"
 
+namespace Poincare {
+class JuniorLayout;
+}
+
 namespace PoincareJ {
 
 class EditionPool final : public Pool {
@@ -36,6 +40,9 @@ class EditionPool final : public Pool {
   constexpr static Relax k_defaultRelax = [](void *context) { return false; };
   void executeAndDump(ActionWithContext action, void *context, const void *data,
                       void *address, int maxSize, Relax relax = k_defaultRelax);
+  void executeAndStoreLayout(ActionWithContext action, void *context,
+                             const void *data, Poincare::JuniorLayout &layout,
+                             Relax relax = k_defaultRelax);
   uint16_t executeAndCache(ActionWithContext action, void *context,
                            const void *data, Relax relax = k_defaultRelax);
   void executeAndReplaceTree(ActionWithContext action, void *context,

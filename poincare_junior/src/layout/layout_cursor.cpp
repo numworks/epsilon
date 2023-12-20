@@ -1119,9 +1119,8 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
 void LayoutBufferCursor::execute(Action action, Context *context,
                                  const void *data) {
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
-  Block tmpBuffer[k_layoutBufferSize];
   // Perform Action within an execution
-  SharedEditionPool->executeAndDump(
+  SharedEditionPool->executeAndStoreLayout(
       [](void *context, const void *data) {
         ExecutionContext *executionContext =
             static_cast<ExecutionContext *>(context);
@@ -1142,7 +1141,7 @@ void LayoutBufferCursor::execute(Action action, Context *context,
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */
       },
-      &executionContext, data, tmpBuffer, k_layoutBufferSize,
+      &executionContext, data, m_layout,
       [](void *context) {
         // Default implementation illustrating how the context could be
         // relaxed ExecutionContext * executionContext =
@@ -1150,7 +1149,6 @@ void LayoutBufferCursor::execute(Action action, Context *context,
         // *>(context); Context * context = executionContext->m_context;
         return false;
       });
-  m_layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(tmpBuffer));
 }
 
 }  // namespace PoincareJ

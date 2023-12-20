@@ -15,16 +15,14 @@ IntervalParameterController::IntervalParameterController(
     : FloatParameterController<double>(parentResponder),
       m_interval(nullptr),
       m_title(I18n::Message::IntervalSet),
-      m_startMessage(I18n::Message::XStart),
-      m_endMessage(I18n::Message::XEnd),
       m_confirmPopUpController(Invocation::Builder<IntervalParameterController>(
           [](IntervalParameterController *controller, void *sender) {
             controller->stackController()->pop();
             return true;
           },
           this)) {
-  I18n::Message messages[k_totalNumberOfCell] = {m_startMessage, m_endMessage,
-                                                 I18n::Message::Step};
+  I18n::Message messages[k_totalNumberOfCell] = {
+      I18n::Message::XStart, I18n::Message::XEnd, I18n::Message::Step};
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableListView);
     m_intervalCells[i].setDelegate(this);
@@ -56,8 +54,8 @@ KDCoordinate IntervalParameterController::nonMemoizedRowHeight(int row) {
 
 void IntervalParameterController::setStartEndMessages(
     I18n::Message startMessage, I18n::Message endMessage) {
-  m_startMessage = startMessage;
-  m_endMessage = endMessage;
+  m_intervalCells[0].label()->setMessage(startMessage);
+  m_intervalCells[1].label()->setMessage(endMessage);
 }
 
 double IntervalParameterController::parameterAtIndex(int index) {

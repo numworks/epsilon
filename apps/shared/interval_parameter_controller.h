@@ -43,8 +43,6 @@ class IntervalParameterController : public FloatParameterController<double> {
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_intervalCells[k_totalNumberOfCell];
   I18n::Message m_title;
-  I18n::Message m_startMessage;
-  I18n::Message m_endMessage;
   MessagePopUpController m_confirmPopUpController;
 };
 

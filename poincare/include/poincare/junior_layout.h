@@ -29,6 +29,9 @@ class JuniorLayoutNode final : public LayoutNode {
   void logNodeName(std::ostream& stream) const override {
     stream << "JuniorLayout";
   }
+  void logAttributes(std::ostream& stream) const override {
+    tree()->log(stream);
+  }
 #endif
 
  protected:

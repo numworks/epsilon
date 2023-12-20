@@ -75,8 +75,8 @@ public:
   constexpr static const char * bootloaderVersion = "Version 1.0.8 - FREED0M.21.3";
 
   //USB NAMES
-  constexpr static const char * usbUpsilonBootloader = "Upsilon Bootloader";
-  constexpr static const char * usbUpsilonRecovery = "Upsilon Recovery";
+  constexpr static const char * usbUpsilonBootloader = "NumWorks Calculator";
+  constexpr static const char * usbUpsilonRecovery = "NumWorks Calculator";
   constexpr static const char * usbBootloaderUpdate = "Bootloader Update";
 
 };

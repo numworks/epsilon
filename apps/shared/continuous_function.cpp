@@ -679,8 +679,8 @@ Expression ContinuousFunction::Model::originalEquation(
 
 static bool isValidNamedLeftExpression(
     const Expression e, ComparisonNode::OperatorType equationType) {
-  /* Examples of valid named expression : f(x)= or f(x)< or f(t)=
-   * Examples of invalid named expression : cos(x)= or f(θ)< or f(t)<  */
+  /* Examples of valid named expression : f(x)=, f(x)<, f(θ)=, f(t)=
+   * Examples of invalid named expression : cos(x)=, f(θ)<, f(t)<  */
   if (e.type() != ExpressionNode::Type::Function ||
       equationType == ComparisonNode::OperatorType::NotEqual) {
     return false;
@@ -689,8 +689,10 @@ static bool isValidNamedLeftExpression(
   return functionSymbol.isIdenticalTo(
              Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
          (equationType == ComparisonNode::OperatorType::Equal &&
-          functionSymbol.isIdenticalTo(
-              Symbol::Builder(ContinuousFunction::k_parametricSymbol)));
+          (functionSymbol.isIdenticalTo(
+               Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
+           functionSymbol.isIdenticalTo(
+               Symbol::Builder(ContinuousFunction::k_polarSymbol))));
 }
 
 Expression ContinuousFunction::Model::expressionEquation(
@@ -751,6 +753,8 @@ Expression ContinuousFunction::Model::expressionEquation(
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
         tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::T;
+      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+        tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::Theta;
       } else {
         assert(
             functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)));
@@ -903,6 +907,8 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
       // Override the symbol so that it can be replaced in the right expression
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
         symbol = k_cartesianSymbol;
+      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+        symbol = k_polarSymbol;
       } else {
         assert(
             functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));

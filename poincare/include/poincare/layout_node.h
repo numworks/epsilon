@@ -75,9 +75,6 @@ class LayoutNode : public TreeNode {
 
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
-  void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-            const LayoutSelection &selection,
-            KDColor selectionColor = KDColorRed);
   KDPoint absoluteOrigin(KDFont::Size font) {
     return absoluteOriginWithMargin(font).translatedBy(
         KDPoint(leftMargin(), 0));
@@ -180,8 +177,9 @@ class LayoutNode : public TreeNode {
   virtual KDCoordinate computeBaseline(KDFont::Size font) = 0;
   virtual KDPoint positionOfChild(LayoutNode *child, KDFont::Size font) = 0;
 
- private:
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
+
+ private:
   virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;
   bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors,
                                            OLayout layoutToExclude);

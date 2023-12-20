@@ -28,39 +28,6 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
   return protectedIsIdenticalTo(l);
 }
 
-// Rendering
-
-void LayoutNode::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-                      const LayoutSelection &selection,
-                      KDColor selectionColor) {
-  if (style.backgroundColor != selectionColor && !selection.isEmpty() &&
-      selection.containsNode(this)) {
-    style.backgroundColor = selectionColor;
-  }
-
-  assert(!SumOverflowsKDCoordinate(absoluteOriginWithMargin(style.font).x(),
-                                   p.x()));
-  assert(!SumOverflowsKDCoordinate(absoluteOriginWithMargin(style.font).y(),
-                                   p.y()));
-  KDPoint renderingAbsoluteOrigin = absoluteOrigin(style.font).translatedBy(p);
-  KDPoint renderingOriginWithMargin =
-      absoluteOriginWithMargin(style.font).translatedBy(p);
-  KDSize size = layoutSize(style.font);
-  ctx->fillRect(KDRect(renderingOriginWithMargin, size), style.backgroundColor);
-  if (!selection.isEmpty() && selection.layout().node() == this &&
-      isHorizontal()) {
-    KDRect selectionRectangle =
-        static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(
-            selection.leftPosition(), selection.rightPosition(), style.font);
-    ctx->fillRect(selectionRectangle.translatedBy(renderingOriginWithMargin),
-                  selectionColor);
-  }
-  render(ctx, renderingAbsoluteOrigin, style);
-  for (LayoutNode *l : children()) {
-    l->draw(ctx, p, style, selection, selectionColor);
-  }
-}
-
 KDPoint LayoutNode::absoluteOriginWithMargin(KDFont::Size font) {
   LayoutNode *p = parent();
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {

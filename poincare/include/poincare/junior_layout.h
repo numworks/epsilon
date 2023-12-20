@@ -44,7 +44,9 @@ class JuniorLayoutNode final : public LayoutNode {
   }
   OLayout makeEditable() override;
 
- private:
+  void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
+            const LayoutSelection& selection,
+            KDColor selectionColor = KDColorRed);
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   const PoincareJ::Tree* tree() const {
@@ -74,6 +76,12 @@ class JuniorLayout final
     *this = Juniorize(other);
     return *this;
   }
+
+  // Render
+  void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
+            const LayoutSelection& selection,
+            KDColor selectionColor = Escher::Palette::Select);
+  void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 
  private:
   using OLayout::node;

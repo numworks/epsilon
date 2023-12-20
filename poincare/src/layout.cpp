@@ -47,15 +47,6 @@ bool Layout::isCodePointsString() const {
   return true;
 }
 
-void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-                  const LayoutSelection &selection, KDColor selectionColor) {
-  node()->draw(ctx, p, style, selection, selectionColor);
-}
-
-void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
-  draw(ctx, p, style, LayoutSelection());
-}
-
 size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
                                          Context *context) const {
   /* This method fixes the following problem:

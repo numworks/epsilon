@@ -41,10 +41,6 @@ class OLayout : public TreeHandle {
   }
 
   // Rendering
-  void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
-            const LayoutSelection &selection,
-            KDColor selectionColor = Escher::Palette::Select);
-  void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style);
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
     return node()->render(ctx, p, style);
   }

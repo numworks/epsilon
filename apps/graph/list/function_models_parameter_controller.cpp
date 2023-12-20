@@ -131,11 +131,12 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
-    Model model =
-        selectedRow() == 0 ? Model::Empty : Models()[selectedRow() - 1];
-    char buffer[k_maxSizeOfNamedModel];
-    bool success = m_listController->editSelectedRecordWithText(
-        ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel));
+    char buffer[k_maxSizeOfNamedModel] = "";
+    if (selectedRow() > 0) {
+      m_layouts[selectedRow() - 1].serializeForParsing(buffer,
+                                                       k_maxSizeOfNamedModel);
+    }
+    bool success = m_listController->editSelectedRecordWithText(buffer);
     assert(success);
     (void)success;  // Silence warnings
     App::app()->modalViewController()->dismissModal();

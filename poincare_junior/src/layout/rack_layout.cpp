@@ -12,11 +12,6 @@ namespace PoincareJ {
 
 namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
-
-inline static KDCoordinate DeltaHeight(const Tree* node) {
-  return VerticalOffset::IsSuperscript(node) ? -VerticalOffset::IndiceHeight
-                                             : VerticalOffset::IndiceHeight;
-}
 }  // namespace VerticalOffset
 
 KDFont::Size RackLayout::font = KDFont::Size::Large;
@@ -41,8 +36,26 @@ KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
       (baseIndex == -1 || baseIndex == node->numberOfChildren())
           ? KDFont::GlyphHeight(font) / 2
           : ChildBaseline(node, baseIndex);
-  return baseBaseline + Render::Height(childI) +
-         VerticalOffset::DeltaHeight(childI);
+  if (!VerticalOffset::IsSuperscript(childI)) {
+    return baseBaseline;
+  }
+  return baseBaseline + Render::Height(childI) - VerticalOffset::IndiceHeight;
+}
+
+KDCoordinate RackLayout::ChildYPosition(const Tree* node, int i) {
+  const Tree* childI = node->child(i);
+  if (!childI->isVerticalOffsetLayout() ||
+      VerticalOffset::IsSuperscript(childI)) {
+    return Baseline(node) - RackLayout::ChildBaseline(node, i);
+  }
+  int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
+
+  KDCoordinate baseHeight =
+      (baseIndex == -1 || baseIndex == node->numberOfChildren())
+          ? KDFont::GlyphHeight(font)
+          : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
+  return Baseline(node) - RackLayout::ChildBaseline(node, i) + baseHeight -
+         VerticalOffset::IndiceHeight;
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
@@ -67,9 +80,10 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
           (baseIndex == -1 || baseIndex == node->numberOfChildren())
               ? KDFont::GlyphHeight(font)
               : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
-      childSize = childSize +
-                  KDSize(0, baseHeight + VerticalOffset::DeltaHeight(childI));
+      childSize =
+          childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
     }
+    // TODO k_separationMargin
     totalWidth += childSize.width();
     KDCoordinate childBaseline = ChildBaseline(node, i);
     maxUnderBaseline = std::max<KDCoordinate>(

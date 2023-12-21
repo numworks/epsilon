@@ -372,8 +372,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
         }
         x += Width(child);
       }
-      KDCoordinate y =
-          Baseline(node) - RackLayout::ChildBaseline(node, childIndex);
+      KDCoordinate y = RackLayout::ChildYPosition(node, childIndex);
       return KDPoint(x, y);
     }
     case LayoutType::Fraction: {

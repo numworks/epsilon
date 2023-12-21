@@ -22,7 +22,6 @@ ValuesController::ValuesController(Responder *parentResponder,
                                       &m_prefacedTwiceTableView),
       ButtonRowDelegate(header, nullptr),
       m_numberOfColumns(0),
-      m_numberOfColumnsNeedUpdate(true),
       m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this),
       m_firstMemoizedColumn(INT_MAX),
       m_firstMemoizedRow(INT_MAX),
@@ -43,6 +42,11 @@ void ValuesController::setupSelectableTableViewAndCells() {
 
 // View Controller
 
+void ValuesController::initView() {
+  EditableCellTableViewController::initView();
+  updateNumberOfColumns();
+}
+
 void ValuesController::viewWillAppear() {
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
@@ -51,7 +55,6 @@ void ValuesController::viewWillAppear() {
 void ValuesController::viewDidDisappear() {
   resetLayoutMemoization();
   EditableCellTableViewController::viewDidDisappear();
-  m_numberOfColumnsNeedUpdate = true;
 }
 
 // Responder
@@ -116,13 +119,7 @@ void ValuesController::willExitResponderChain(Responder *nextFirstResponder) {
 
 // TableViewDataSource
 
-int ValuesController::numberOfColumns() const {
-  if (m_numberOfColumnsNeedUpdate) {
-    updateNumberOfColumns();
-    m_numberOfColumnsNeedUpdate = false;
-  }
-  return m_numberOfColumns;
-}
+int ValuesController::numberOfColumns() const { return m_numberOfColumns; }
 
 void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
                                            int row) {

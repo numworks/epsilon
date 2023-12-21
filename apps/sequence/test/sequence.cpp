@@ -119,6 +119,24 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results2, types, definitions, conditions1,
                              conditions2);
 
+  // u(n+1) = u(n)+u(0), u(0) = 2
+  double results2bis[SequenceStore::k_maxNumberOfSequences][10] = {
+      {2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0}, {}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "u(n)+u(0)";
+  conditions1[0] = "2";
+  check_sequences_defined_by(results2bis, types, definitions, conditions1,
+                             conditions2);
+
+  // u(n+1) = u(n)+n, u(0) = n
+  double results2ter[SequenceStore::k_maxNumberOfSequences][10] = {
+      {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "u(n)+n";
+  conditions1[0] = "n";
+  check_sequences_defined_by(results2ter, types, definitions, conditions1,
+                             conditions2);
+
   // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0
   double results3[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}, {}, {}};

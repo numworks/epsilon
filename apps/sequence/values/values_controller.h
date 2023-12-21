@@ -73,7 +73,7 @@ class ValuesController : public Shared::ValuesController,
     return recordAtColumn(i, nullptr);
   }
   Ion::Storage::Record recordAtColumn(int i, bool *isSumColumn);
-  void updateNumberOfColumns() const override;
+  void updateNumberOfColumns() override;
   Poincare::Layout *memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int column,
                                        bool forceShortVersion = false) override;

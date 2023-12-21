@@ -89,7 +89,7 @@ class ValuesController : public EditableCellTableViewController,
   virtual Ion::Storage::Record recordAtColumn(int i) = 0;
 
   // Number of columns memoization
-  virtual void updateNumberOfColumns() const = 0;
+  virtual void updateNumberOfColumns() = 0;
   mutable int m_numberOfColumns;
 
   /* Function evaluation memoization

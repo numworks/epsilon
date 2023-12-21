@@ -51,8 +51,9 @@ class CachePool final : public Pool {
     return block >= m_blocks && block < m_blocks + k_maxNumberOfBlocks;
   }
 
-  constexpr static int k_maxNumberOfBlocks = 1024;
-  constexpr static int k_maxNumberOfReferences = 128;
+  // TODO: not all pool sizes are passing the tests, investigate why
+  constexpr static int k_maxNumberOfBlocks = 1024 * 16;
+  constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
 
  private:
   CachePool();

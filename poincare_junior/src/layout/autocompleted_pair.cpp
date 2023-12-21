@@ -59,31 +59,18 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *rack,
                                                Tree *rootRack) {
   assert(type.isAutocompletedPair());
 
-  /* TODO: Tree*::recursivelyMatched should take a context and the type should
-   * be put in it, instead of creating 2 different functions. */
   assert(type == BlockType::ParenthesisLayout ||
          type == BlockType::CurlyBraceLayout);
-#if 0
-  if ((type == TypeBlock::ParenthesisLayout &&
-       hLayout
-           .recursivelyMatches([](const Tree* l) {
-             return l.type() == BlockType::ParenthesisLayout
-                        ? TrinaryBoolean::True
-                        : TrinaryBoolean::Unknown;
-           })
-           .isUninitialized()) ||
-      (type == TypeBlock::CurlyBraceLayout &&
-       hLayout
-           .recursivelyMatches([](const Tree* l) {
-             return l.type() == BlockType::CurlyBraceLayout
-                        ? TrinaryBoolean::True
-                        : TrinaryBoolean::Unknown;
-           })
-           .isUninitialized())) {
-    // Escape function if there is nothing to balance
+  bool hasDescendantToBalance = false;
+  for (const Tree *d : rack->descendants()) {
+    if (d->type() == type) {
+      hasDescendantToBalance = true;
+      break;
+    }
+  }
+  if (!hasDescendantToBalance) {
     return;
   }
-#endif
 
   /* Read hLayout from left to right, and create a copy of it with balanced
    * brackets.

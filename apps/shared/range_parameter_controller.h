@@ -34,6 +34,8 @@ class RangeParameterController
   Escher::HighlightCell *cell(int row) override;
   KDCoordinate separatorBeforeRow(int row) override;
 
+  void showGridTypeMenu(bool visible) { m_gridTypeCell.setVisible(visible); }
+
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;

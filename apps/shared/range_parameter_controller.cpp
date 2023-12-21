@@ -39,6 +39,7 @@ RangeParameterController::RangeParameterController(
   m_xRangeCell.label()->setMessage(I18n::Message::ValuesOfX);
   m_yRangeCell.label()->setMessage(I18n::Message::ValuesOfY);
   m_gridTypeCell.label()->setMessage(I18n::Message::GridType);
+  m_gridTypeCell.setVisible(false);
 }
 
 HighlightCell *RangeParameterController::cell(int row) {

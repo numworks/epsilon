@@ -40,6 +40,7 @@ Correspondance oneToOne[] = {
     {PT::NthRootLayout, LT::NthRoot},
     {PT::FirstOrderDerivativeLayout, LT::Derivative, true, true},
     {PT::HigherOrderDerivativeLayout, LT::NthDerivative, true, true},
+    {PT::CondensedSumLayout, LT::CondensedSum},
     {PT::IntegralLayout, LT::Integral, false, true},
     {PT::SumLayout, LT::Sum, false, true},
     {PT::ProductLayout, LT::Product, false, true},
@@ -83,6 +84,8 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
           return LetterAWithSubAndSuperscriptLayout::Builder(c[0], c[1]);
         case LT::NthRoot:
           return NthRootLayout::Builder(c[0], c[1]);
+        case LT::CondensedSum:
+          return CondensedSumLayout::Builder(c[0], c[1], c[2]);
         case LT::Derivative:
           return FirstOrderDerivativeLayout::Builder(c[0], c[1], c[2]);
         case LT::NthDerivative:

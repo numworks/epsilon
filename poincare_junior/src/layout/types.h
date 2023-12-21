@@ -17,7 +17,7 @@ RANGE(SquareBracketPair, AbsoluteValueLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
 RANGE(Pair, AbsoluteValueLayout, CurlyBraceLayout)
 
-// NODE(CondensedSum, 2)
+NODE(CondensedSum, 3)
 NODE(Derivative, 3, 1)
 NODE(NthDerivative, 4, 1)
 NODE(Integral, 4)

@@ -52,6 +52,20 @@ KDSize Render::Size(const Tree* node) {
           Baseline(node) + radicandSize.height() - Baseline(node->child(0)));
       return newSize;
     }
+    case LayoutType::CondensedSum: {
+      KDSize baseSize = Size(node->child(0));
+      KDSize subscriptSize = Size(node->child(1));
+      KDSize superscriptSize = Size(node->child(2));
+      KDCoordinate sizeWidth =
+          baseSize.width() +
+          std::max(subscriptSize.width(), superscriptSize.width());
+      KDCoordinate sizeHeight =
+          std::max<KDCoordinate>(baseSize.height() / 2,
+                                 subscriptSize.height()) +
+          std::max<KDCoordinate>(baseSize.height() / 2,
+                                 superscriptSize.height());
+      return KDSize(sizeWidth, sizeHeight);
+    }
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
@@ -270,6 +284,24 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
         return KDPoint(0, Baseline(node) - indexSize.height());
       }
     }
+    case LayoutType::CondensedSum: {
+      KDCoordinate x = 0;
+      KDCoordinate y = 0;
+      KDSize baseSize = Size(node->child(0));
+      KDSize superscriptSize = Size(node->child(2));
+      if (childIndex == 0) {
+        y = std::max(0, superscriptSize.height() - baseSize.height() / 2);
+      }
+      if (childIndex == 1) {
+        x = baseSize.width();
+        y = std::max<KDCoordinate>(baseSize.height() / 2,
+                                   superscriptSize.height());
+      }
+      if (childIndex == 2) {
+        x = baseSize.width();
+      }
+      return KDPoint(x, y);
+    }
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
@@ -443,7 +475,6 @@ KDCoordinate Render::Baseline(const Tree* node) {
     case LayoutType::Conjugate:
       return Baseline(node->child(0)) + Conjugate::k_overlineWidth +
              Conjugate::k_overlineVerticalMargin;
-      return (Binomial::KNHeight(node, font) + 1) / 2;
     case LayoutType::SquareRoot:
     case LayoutType::NthRoot: {
       return std::max<KDCoordinate>(
@@ -451,6 +482,9 @@ KDCoordinate Render::Baseline(const Tree* node) {
               NthRoot::k_heightMargin,
           NthRoot::AdjustedIndexSize(node, font).height());
     }
+    case LayoutType::CondensedSum:
+      return Baseline(node->child(0)) +
+             std::max(0, Height(node->child(2)) - Height(node->child(0)) / 2);
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;

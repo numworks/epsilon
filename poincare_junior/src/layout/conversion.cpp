@@ -1,6 +1,7 @@
 #include <poincare/junior_layout.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
@@ -31,7 +32,6 @@ Correspondance oneToOne[] = {
     {PT::ConjugateLayout, LT::Conjugate},
     {PT::ParenthesisLayout, LT::Parenthesis, true},
     {PT::CurlyBraceLayout, LT::CurlyBrace, true},
-    {PT::VerticalOffsetLayout, LT::VerticalOffset, true},
     {PT::FractionLayout, LT::Fraction},
     {PT::BinomialCoefficientLayout, LT::Binomial},
     {PT::LetterCWithSubAndSuperscriptLayout, LT::PtBinomial},
@@ -72,10 +72,6 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
           return ParenthesisLayout::Builder(c[0]);
         case LT::CurlyBrace:
           return CurlyBraceLayout::Builder(c[0]);
-        case LT::VerticalOffset:
-          // TODO subscript
-          return VerticalOffsetLayout::Builder(
-              c[0], VerticalOffsetLayoutNode::VerticalPosition::Superscript);
         case LT::Fraction:
           return FractionLayout::Builder(c[0], c[1]);
         case LT::Binomial:
@@ -116,6 +112,16 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
         }
         return nary;
       }
+    case LayoutType::VerticalOffset:
+      return Poincare::VerticalOffsetLayout::Builder(
+          ToPoincareLayout(l->child(0)),
+          VerticalOffset::IsSuperscript(l)
+              ? Poincare::VerticalOffsetLayoutNode::VerticalPosition::
+                    Superscript
+              : Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript,
+          VerticalOffset::IsSuffix(l)
+              ? Poincare::VerticalOffsetLayoutNode::HorizontalPosition::Suffix
+              : Poincare::VerticalOffsetLayoutNode::HorizontalPosition::Prefix);
     case LayoutType::SquareRoot:
       return Poincare::NthRootLayout::Builder(ToPoincareLayout(l->child(0)));
     case LayoutType::CodePoint:
@@ -166,7 +172,9 @@ void PushPoincareRack(Poincare::OLayout l) {
                                                          s.stringLength());
     PushPoincareRack(editable);
   } else {
-    SharedEditionPool->push<BlockType::RackLayout>(1);
+    if (l.type() != Poincare::LayoutNode::Type::JuniorLayout) {
+      SharedEditionPool->push<BlockType::RackLayout>(1);
+    }
     PushPoincareLayout(l);
   }
 }
@@ -205,6 +213,19 @@ void PushPoincareLayout(Poincare::OLayout l) {
           static_cast<Poincare::CombinedCodePointsLayout &>(l)
               .combinedCodePoint());
       return;
+    case OT::VerticalOffsetLayout: {
+      using namespace Poincare;
+      VerticalOffsetLayout v = static_cast<VerticalOffsetLayout &>(l);
+      Tree *t = KVertOffL->cloneNode();
+      VerticalOffset::SetSuffix(
+          t, v.horizontalPosition() ==
+                 VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
+      VerticalOffset::SetSuperscript(
+          t, v.verticalPosition() ==
+                 VerticalOffsetLayoutNode::VerticalPosition::Superscript);
+      PushPoincareRack(l.childAtIndex(0));
+      return;
+    }
     case OT::MatrixLayout: {
       Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
       SharedEditionPool->push<BlockType::MatrixLayout>(

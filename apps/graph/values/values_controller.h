@@ -121,7 +121,7 @@ class ValuesController : public Shared::ValuesController,
         Shared::ValuesController::functionStore());
   }
   Ion::Storage::Record recordAtColumn(int i) override;
-  void updateNumberOfColumns() const override;
+  void updateNumberOfColumns() override;
   Poincare::Layout *memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int column,
                                        bool forceShortVersion = false) override;

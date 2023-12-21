@@ -124,8 +124,9 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
   return nullptr;
 }
 
-void ValuesController::updateNumberOfColumns() const {
+void ValuesController::updateNumberOfColumns() {
   m_numberOfColumns = numberOfAbscissaColumns();
+  bool previousHasAtLeastOneSumColumn = m_hasAtLeastOneSumColumn;
   m_hasAtLeastOneSumColumn = false;
   int numberOfActiveSequences = functionStore()->numberOfActiveFunctions();
   for (int k = 0; k < numberOfActiveSequences; k++) {
@@ -135,6 +136,9 @@ void ValuesController::updateNumberOfColumns() const {
     bool displaySum = seq->displaySum();
     m_numberOfColumns += 1 + displaySum;
     m_hasAtLeastOneSumColumn |= displaySum;
+  }
+  if (previousHasAtLeastOneSumColumn != m_hasAtLeastOneSumColumn) {
+    m_prefacedTwiceTableView.resetSizeAndOffsetMemoization();
   }
 }
 

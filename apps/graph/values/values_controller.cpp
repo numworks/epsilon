@@ -255,7 +255,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   return recordAtColumn(i, &isDerivative);
 }
 
-void ValuesController::updateNumberOfColumns() const {
+void ValuesController::updateNumberOfColumns() {
   for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes;
        symbolTypeIndex++) {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;

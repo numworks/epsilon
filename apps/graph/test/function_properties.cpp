@@ -23,13 +23,14 @@ struct FunctionProperties {
   bool m_isOfDegreeTwo = ContinuousFunctionProperties::k_defaultIsOfDegreeTwo;
   int m_numberOfSubCurves = 1;
   bool m_isAlongY = ContinuousFunctionProperties::k_defaultIsAlongY;
+  ContinuousFunctionProperties::AreaType m_areaType =
+      ContinuousFunctionProperties::AreaType::None;
 };
 
-void assert_check_function_properties(
-    const char* expression, FunctionProperties expectedProperties,
-    ContinuousFunctionStore* store, Context* context,
-    ContinuousFunctionProperties::AreaType expectedAreaType =
-        ContinuousFunctionProperties::AreaType::None) {
+void assert_check_function_properties(const char* expression,
+                                      FunctionProperties expectedProperties,
+                                      ContinuousFunctionStore* store,
+                                      Context* context) {
   ContinuousFunction* function = addFunction(expression, store, context);
   ContinuousFunctionProperties fProperties = function->properties();
   quiz_assert(fProperties.caption() == expectedProperties.m_caption);
@@ -47,18 +48,16 @@ void assert_check_function_properties(
                 expectedProperties.m_numberOfSubCurves);
     quiz_assert(fProperties.equationType() ==
                 expectedProperties.m_equationType);
-    quiz_assert(fProperties.areaType() == expectedAreaType);
+    quiz_assert(fProperties.areaType() == expectedProperties.m_areaType);
   }
 }
 
-void assert_check_function_properties(
-    const char* expression, FunctionProperties expectedProperties,
-    ContinuousFunctionProperties::AreaType expectedAreaType =
-        ContinuousFunctionProperties::AreaType::None) {
+void assert_check_function_properties(const char* expression,
+                                      FunctionProperties expectedProperties) {
   GlobalContext context;
   ContinuousFunctionStore store;
   assert_check_function_properties(expression, expectedProperties, &store,
-                                   &context, expectedAreaType);
+                                   &context);
   store.removeAll();
 }
 
@@ -80,8 +79,9 @@ void assert_same_function_properties(const char* expression1,
           .m_isOfDegreeTwo = properties1.isOfDegreeTwo(),
           .m_numberOfSubCurves = function1->numberOfSubCurves(),
           .m_isAlongY = properties1.isAlongY(),
+          .m_areaType = properties1.areaType(),
       },
-      &store, &context, properties1.areaType());
+      &store, &context);
 }
 
 QUIZ_CASE(graph_function_properties) {
@@ -269,64 +269,67 @@ QUIZ_CASE(graph_function_properties) {
                                        : k_alongYOfDegreeTwoWithTwoSubCurves);
 
     assert_check_function_properties(
-        "x^2<0",
-        (noInequations || noImplicitPlot)
-            ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType = Poincare::ComparisonNode::
-                                     OperatorType::Inferior,
-                                 .m_isOfDegreeTwo = true,
-                                 .m_numberOfSubCurves = 1,
-                                 .m_isAlongY = true},
-        ContinuousFunctionProperties::AreaType::Inside);
+        "x^2<0", (noInequations || noImplicitPlot)
+                     ? k_bannedProperties
+                     : FunctionProperties{
+                           .m_caption = I18n::Message::InequalityType,
+                           .m_equationType =
+                               Poincare::ComparisonNode::OperatorType::Inferior,
+                           .m_isOfDegreeTwo = true,
+                           .m_numberOfSubCurves = 1,
+                           .m_isAlongY = true,
+                           .m_areaType =
+                               ContinuousFunctionProperties::AreaType::Inside});
 
     assert_check_function_properties(
         "y>log(x)",
         noInequations
             ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType = Poincare::ComparisonNode::
-                                     OperatorType::Superior,
-                                 .m_curveParameterType =
-                                     ContinuousFunctionProperties::
-                                         CurveParameterType::CartesianFunction},
-        ContinuousFunctionProperties::AreaType::Above);
+            : FunctionProperties{
+                  .m_caption = I18n::Message::InequalityType,
+                  .m_equationType =
+                      Poincare::ComparisonNode::OperatorType::Superior,
+                  .m_curveParameterType = ContinuousFunctionProperties::
+                      CurveParameterType::CartesianFunction,
+                  .m_areaType = ContinuousFunctionProperties::AreaType::Above});
 
     assert_check_function_properties(
         "2-y>log(x)",
         (noInequations || noImplicitPlot)
             ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType = Poincare::ComparisonNode::
-                                     OperatorType::Inferior,
-                                 .m_curveParameterType =
-                                     ContinuousFunctionProperties::
-                                         CurveParameterType::CartesianFunction},
-        ContinuousFunctionProperties::AreaType::Below);
+            : FunctionProperties{
+                  .m_caption = I18n::Message::InequalityType,
+                  .m_equationType =
+                      Poincare::ComparisonNode::OperatorType::Inferior,
+                  .m_curveParameterType = ContinuousFunctionProperties::
+                      CurveParameterType::CartesianFunction,
+                  .m_areaType = ContinuousFunctionProperties::AreaType::Below});
 
     // Conics
     assert_check_function_properties(
         "2-y^2>x^2+x+y",
         (noInequations || noImplicitPlot)
             ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType = Poincare::ComparisonNode::
-                                     OperatorType::Inferior,
-                                 .m_conicShape = Poincare::Conic::Shape::Circle,
-                                 .m_isOfDegreeTwo = true,
-                                 .m_numberOfSubCurves = 2},
-        ContinuousFunctionProperties::AreaType::Inside);
+            : FunctionProperties{
+                  .m_caption = I18n::Message::InequalityType,
+                  .m_equationType =
+                      Poincare::ComparisonNode::OperatorType::Inferior,
+                  .m_conicShape = Poincare::Conic::Shape::Circle,
+                  .m_isOfDegreeTwo = true,
+                  .m_numberOfSubCurves = 2,
+                  .m_areaType =
+                      ContinuousFunctionProperties::AreaType::Inside});
     assert_check_function_properties(
         "p(x)>log(x)",
         noInequations
             ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType = Poincare::ComparisonNode::
-                                     OperatorType::Superior,
-                                 .m_curveParameterType =
-                                     ContinuousFunctionProperties::
-                                         CurveParameterType::CartesianFunction},
-        ContinuousFunctionProperties::AreaType::Above);
+            : FunctionProperties{
+                  .m_caption = I18n::Message::InequalityType,
+                  .m_equationType =
+                      Poincare::ComparisonNode::OperatorType::Superior,
+                  .m_curveParameterType = ContinuousFunctionProperties::
+                      CurveParameterType::CartesianFunction,
+                  .m_areaType = ContinuousFunctionProperties::AreaType::Above});
     assert_check_function_properties(
         "x^2+y^2=12",
         noImplicitPlot
@@ -405,23 +408,25 @@ QUIZ_CASE(graph_function_properties) {
         "y^2>-1",
         (noInequations || noImplicitPlot)
             ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType =
-                                     ComparisonNode::OperatorType::Superior,
-                                 .m_isOfDegreeTwo = true,
-                                 .m_numberOfSubCurves = 2},
-        ContinuousFunctionProperties::AreaType::Outside);
+            : FunctionProperties{
+                  .m_caption = I18n::Message::InequalityType,
+                  .m_equationType = ComparisonNode::OperatorType::Superior,
+                  .m_isOfDegreeTwo = true,
+                  .m_numberOfSubCurves = 2,
+                  .m_areaType =
+                      ContinuousFunctionProperties::AreaType::Outside});
 
     assert_check_function_properties(
         "(y-x+x^2)^2>=0",
         (noInequations || noImplicitPlot)
             ? k_bannedProperties
-            : FunctionProperties{.m_caption = I18n::Message::InequalityType,
-                                 .m_equationType = ComparisonNode::
-                                     OperatorType::SuperiorEqual,
-                                 .m_isOfDegreeTwo = true,
-                                 .m_numberOfSubCurves = 2},
-        ContinuousFunctionProperties::AreaType::Outside);
+            : FunctionProperties{
+                  .m_caption = I18n::Message::InequalityType,
+                  .m_equationType = ComparisonNode::OperatorType::SuperiorEqual,
+                  .m_isOfDegreeTwo = true,
+                  .m_numberOfSubCurves = 2,
+                  .m_areaType =
+                      ContinuousFunctionProperties::AreaType::Outside});
 
     // === Polar functions ===
 

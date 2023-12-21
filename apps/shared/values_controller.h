@@ -28,6 +28,7 @@ class ValuesController : public EditableCellTableViewController,
 
   // View controller
   Escher::View* view() override { return &m_prefacedTwiceTableView; }
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Values");
@@ -90,7 +91,6 @@ class ValuesController : public EditableCellTableViewController,
   // Number of columns memoization
   virtual void updateNumberOfColumns() const = 0;
   mutable int m_numberOfColumns;
-  mutable bool m_numberOfColumnsNeedUpdate;
 
   /* Function evaluation memoization
    * We memoize value cell layouts to increase scrolling speed. However

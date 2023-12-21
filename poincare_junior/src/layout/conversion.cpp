@@ -1,6 +1,7 @@
 #include <poincare/junior_layout.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
@@ -132,9 +133,24 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
           CodePointLayout::GetCodePoint(l),
           CodePointLayout::GetCombinedCodePoint(l));
     case LayoutType::Matrix: {
-      Poincare::MatrixLayout l = Poincare::MatrixLayout::EmptyMatrixBuilder();
-      // TODO
-      return l;
+      const Grid *g = Grid::From(l);
+      Poincare::MatrixLayout m = Poincare::MatrixLayout::EmptyMatrixBuilder();
+      int n = 0;
+      for (int i = 0; const Tree *child : g->children()) {
+        if (g->childIsPlaceholder(i)) {
+          i++;
+          continue;
+        }
+        if (i == 0) {
+          m.replaceChildAtIndexInPlace(0, ToPoincareLayout(child));
+        } else {
+          m.addChildAtIndexInPlace(ToPoincareLayout(child), n, n);
+        }
+        n++;
+        i++;
+      }
+      m.setDimensions(g->numberOfRows() - 1, g->numberOfColumns() - 1);
+      return m;
     }
     case LayoutType::Piecewise: {
       Poincare::PiecewiseOperatorLayout l =
@@ -228,11 +244,13 @@ void PushPoincareLayout(Poincare::OLayout l) {
     }
     case OT::MatrixLayout: {
       Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
-      SharedEditionPool->push<BlockType::MatrixLayout>(
+      Tree *t = SharedEditionPool->push<BlockType::MatrixLayout>(
           (uint8_t)m.numberOfRows(), (uint8_t)m.numberOfColumns());
       for (int i = 0; i < l.numberOfChildren(); i++) {
         PushPoincareRack(l.childAtIndex(i));
       }
+      Grid::From(t)->addEmptyColumn();
+      Grid::From(t)->addEmptyRow();
       return;
     }
     case OT::PiecewiseOperatorLayout: {

@@ -130,19 +130,19 @@ static void compareSolutions(SystemOfEquations *system,
      * a const char * we need to add parentheses that are not necessary when
      * creating an expression from a layout. */
 
-    Poincare::Expression expectedExpression =
-        Poincare::Expression::Parse(expectedValue, &solverContext, false);
+    Expression expectedExpression =
+        Expression::Parse(expectedValue, &solverContext, false);
     quiz_assert(!expectedExpression.isUninitialized());
 
-    Poincare::Layout obtainedLayout = system->solution(i)->exactLayout();
+    Layout obtainedLayout = system->solution(i)->exactLayout();
     if (obtainedLayout.isUninitialized()) {
       obtainedLayout = system->solution(i)->approximateLayout();
     }
     constexpr int bufferSize = 200;
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);
-    Poincare::Expression obtainedExpression = Poincare::Expression::Parse(
-        obtainedLayoutBuffer, &solverContext, false);
+    Expression obtainedExpression =
+        Expression::Parse(obtainedLayoutBuffer, &solverContext, false);
     quiz_assert(
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 
@@ -212,8 +212,7 @@ void set(const char *variable, const char *value) {
 
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
-  Poincare::Expression e =
-      Poincare::Expression::ParseAndSimplify(buffer, &solverContext);
+  Expression e = Expression::ParseAndSimplify(buffer, &solverContext);
   static_cast<Store &>(e).storeValueForSymbol(&globalContext);
 }
 

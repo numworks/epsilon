@@ -30,9 +30,7 @@ void assert_check_function_properties(
     ContinuousFunctionStore* store, Context* context,
     ContinuousFunctionProperties::AreaType expectedAreaType =
         ContinuousFunctionProperties::AreaType::None) {
-  Shared::ContinuousFunction* function =
-      addFunction(expression, store, context);
-
+  ContinuousFunction* function = addFunction(expression, store, context);
   ContinuousFunctionProperties fProperties = function->properties();
   quiz_assert(fProperties.caption() == expectedProperties.m_caption);
   quiz_assert(fProperties.status() == expectedProperties.m_status);
@@ -62,6 +60,28 @@ void assert_check_function_properties(
   assert_check_function_properties(expression, expectedProperties, &store,
                                    &context, expectedAreaType);
   store.removeAll();
+}
+
+void assert_same_function_properties(const char* expression1,
+                                     const char* expression2) {
+  GlobalContext context;
+  ContinuousFunctionStore store;
+  ContinuousFunction* function1 = addFunction(expression1, &store, &context);
+  ContinuousFunctionProperties properties1 = function1->properties();
+  assert_check_function_properties(
+      expression2,
+      FunctionProperties{
+          .m_status = properties1.status(),
+          .m_caption = properties1.caption(),
+          .m_symbolType = properties1.symbolType(),
+          .m_equationType = properties1.equationType(),
+          .m_curveParameterType = properties1.getCurveParameterType(),
+          .m_conicShape = properties1.conicShape(),
+          .m_isOfDegreeTwo = properties1.isOfDegreeTwo(),
+          .m_numberOfSubCurves = function1->numberOfSubCurves(),
+          .m_isAlongY = properties1.isAlongY(),
+      },
+      &store, &context, properties1.areaType());
 }
 
 QUIZ_CASE(graph_function_properties) {
@@ -405,6 +425,7 @@ QUIZ_CASE(graph_function_properties) {
 
     // === Polar functions ===
 
+    assert_same_function_properties("r=θ", "r(θ)=θ");
     assert_check_function_properties(
         "r=θ",
         FunctionProperties{
@@ -413,6 +434,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Polar});
 
+    assert_same_function_properties("r=2", "r(θ)=2");
     assert_check_function_properties(
         "r=2",
         FunctionProperties{
@@ -422,6 +444,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Circle});
 
+    assert_same_function_properties("r=π/3cos(θ+5)", "r(θ)=π/3cos(θ+5)");
     assert_check_function_properties(
         "r=π/3cos(θ+5)",
         FunctionProperties{
@@ -430,6 +453,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Polar});
 
+    assert_same_function_properties("r=π/3cos(θ)", "r(θ)=π/3cos(θ)");
     assert_check_function_properties(
         "r=π/3cos(θ)",
         FunctionProperties{
@@ -438,6 +462,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Polar});
 
+    assert_same_function_properties("r=π/3sin(θ)", "r(θ)=π/3sin(θ)");
     assert_check_function_properties(
         "r=π/3sin(θ)",
         FunctionProperties{
@@ -446,6 +471,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Polar});
 
+    assert_same_function_properties("r=1.2cos(θ-3.1)", "r(θ)=1.2cos(θ-3.1)");
     assert_check_function_properties(
         "r=1.2cos(θ-3.1)",
         FunctionProperties{
@@ -455,6 +481,8 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Circle});
 
+    assert_same_function_properties("r=2/(1+0.2cos(θ-3.1))",
+                                    "r(θ)=2/(1+0.2cos(θ-3.1))");
     assert_check_function_properties(
         "r=2/(1+0.2cos(θ-3.1))",
         FunctionProperties{
@@ -464,6 +492,8 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Ellipse});
 
+    assert_same_function_properties("r=π/(5-4cos(θ+1))",
+                                    "r(θ)=π/(5-4cos(θ+1))");
     assert_check_function_properties(
         "r=π/(5-4cos(θ+1))",
         FunctionProperties{
@@ -473,6 +503,8 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Ellipse});
 
+    assert_same_function_properties("r=2/(1+2cos(θ-3.1))",
+                                    "r(θ)=2/(1+2cos(θ-3.1))");
     assert_check_function_properties(
         "r=2/(1+2cos(θ-3.1))",
         FunctionProperties{
@@ -482,6 +514,8 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Hyperbola});
 
+    assert_same_function_properties("r=1/(0.2-cos(θ-3.1))",
+                                    "r(θ)=1/(0.2-cos(θ-3.1))");
     assert_check_function_properties(
         "r=1/(0.2-cos(θ-3.1))",
         FunctionProperties{
@@ -491,6 +525,8 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Hyperbola});
 
+    assert_same_function_properties("r=2/(1+cos(θ-3.1))",
+                                    "r(θ)=2/(1+cos(θ-3.1))");
     assert_check_function_properties(
         "r=2/(1+cos(θ-3.1))",
         FunctionProperties{
@@ -500,6 +536,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Parabola});
 
+    assert_same_function_properties("r=1/(1+cos(2θ))", "r(θ)=1/(1+cos(2θ))");
     assert_check_function_properties(
         "r=1/(1+cos(2θ))",
         FunctionProperties{
@@ -508,6 +545,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Polar});
 
+    assert_same_function_properties("r=1/tan(θ)", "r(θ)=1/tan(θ)");
     assert_check_function_properties(
         "r=1/tan(θ)",
         FunctionProperties{
@@ -516,6 +554,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Polar});
 
+    assert_same_function_properties("r=diff(x^2,x,θ)", "r(θ)=diff(x^2,x,θ)");
     assert_check_function_properties(
         "r=diff(x^2,x,θ)",
         FunctionProperties{

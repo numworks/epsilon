@@ -116,7 +116,7 @@ void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
                   KDColor expressionColor, KDColor backgroundColor,
                   LayoutSelection selection) const {
   Render::Draw(getTree(), ctx, p, font, expressionColor, backgroundColor,
-               selection);
+               nullptr);
 }
 
 KDSize Layout::size(KDFont::Size font) const { return Render::Size(getTree()); }

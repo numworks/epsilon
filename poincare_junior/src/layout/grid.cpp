@@ -3,6 +3,7 @@
 #include "k_tree.h"
 #include "layout_cursor.h"
 #include "rack_layout.h"
+#include "render.h"
 
 namespace PoincareJ {
 

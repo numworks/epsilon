@@ -45,9 +45,7 @@ class LayoutView : public GlyphsView {
   mutable Poincare::Layout m_layout;
 
  private:
-  virtual PoincareJ::LayoutSelection selection() const {
-    return PoincareJ::LayoutSelection();
-  }
+  virtual PoincareJ::LayoutCursor* cursor() const { return nullptr; }
   KDCoordinate m_horizontalMargin;
 };
 
@@ -61,9 +59,7 @@ class LayoutViewWithCursor : public LayoutView {
 
  private:
   Poincare::Layout layout() const override { return m_cursor->layoutBuffer(); }
-  PoincareJ::LayoutSelection selection() const override {
-    return m_cursor->selection();
-  }
+  PoincareJ::LayoutCursor* cursor() const override { return m_cursor; }
   PoincareJ::LayoutBufferCursor* m_cursor;
 };
 

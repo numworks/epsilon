@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <poincare/junior_layout.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/render.h>
 
 #include <algorithm>
@@ -55,22 +56,24 @@ JuniorLayout JuniorLayout::Juniorize(OLayout l) {
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                        const PoincareJ::LayoutSelection& selection,
+                        PoincareJ::LayoutCursor* cursor,
                         KDColor selectionColor) {
-  node()->draw(ctx, p, style, selection, selectionColor);
+  node()->draw(ctx, p, style, cursor, selectionColor);
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
-  draw(ctx, p, style, PoincareJ::LayoutSelection());
+  draw(ctx, p, style, nullptr);
 }
 
 // Rendering
 
 void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                            const PoincareJ::LayoutSelection& selection,
+                            PoincareJ::LayoutCursor* cursor,
                             KDColor selectionColor) {
+  PoincareJ::LayoutSelection selection =
+      cursor ? cursor->selection() : PoincareJ::LayoutSelection();
   PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
-                          style.backgroundColor, selection);
+                          style.backgroundColor, cursor, selection);
 }
 
 }  // namespace Poincare

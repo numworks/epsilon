@@ -48,7 +48,7 @@ KDPoint LayoutView::drawingOrigin() const {
 void LayoutView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
   if (!layout().isUninitialized()) {
-    layout().draw(ctx, drawingOrigin(), m_glyphFormat.style, selection());
+    layout().draw(ctx, drawingOrigin(), m_glyphFormat.style, cursor());
   }
 }
 

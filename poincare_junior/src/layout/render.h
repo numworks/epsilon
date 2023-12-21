@@ -5,6 +5,7 @@
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
+#include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/tree.h>
 
@@ -23,6 +24,7 @@ class Render final {
   static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite,
+                   const LayoutCursor* cursor = nullptr,
                    LayoutSelection selection = {});
 
  private:

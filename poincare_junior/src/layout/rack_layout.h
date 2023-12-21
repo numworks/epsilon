@@ -1,8 +1,9 @@
 #ifndef POINCARE_JUNIOR_RACK_LAYOUT_H
 #define POINCARE_JUNIOR_RACK_LAYOUT_H
 
+#include <kandinsky/context.h>
+
 #include "../memory/edition_reference.h"
-#include "render.h"
 
 namespace PoincareJ {
 
@@ -26,7 +27,7 @@ class RackLayout {
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                          bool isGridPlaceholder = false);
 
-  static LayoutCursor* layoutCursor;
+  static const LayoutCursor* layoutCursor;
 
  private:
   static KDFont::Size font;

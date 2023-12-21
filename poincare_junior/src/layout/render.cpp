@@ -530,8 +530,10 @@ KDCoordinate Render::Baseline(const Tree* node) {
 
 void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
                   KDFont::Size font, KDColor expressionColor,
-                  KDColor backgroundColor, LayoutSelection selection) {
+                  KDColor backgroundColor, const LayoutCursor* cursor,
+                  LayoutSelection selection) {
   Render::font = font;
+  RackLayout::layoutCursor = cursor;
   PrivateDraw(node, ctx, p, expressionColor, backgroundColor, selection);
 }
 

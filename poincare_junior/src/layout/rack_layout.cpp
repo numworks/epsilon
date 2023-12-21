@@ -7,6 +7,7 @@
 #include "empty_rectangle.h"
 #include "indices.h"
 #include "layout_cursor.h"
+#include "render.h"
 
 namespace PoincareJ {
 
@@ -15,7 +16,7 @@ constexpr static KDCoordinate IndiceHeight = 10;
 }  // namespace VerticalOffset
 
 KDFont::Size RackLayout::font = KDFont::Size::Large;
-LayoutCursor* RackLayout::layoutCursor = nullptr;
+const LayoutCursor* RackLayout::layoutCursor = nullptr;
 
 KDSize RackLayout::Size(const Tree* node) {
   return SizeBetweenIndexes(node, 0, node->numberOfChildren());

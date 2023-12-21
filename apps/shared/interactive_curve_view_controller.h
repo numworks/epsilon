@@ -67,6 +67,10 @@ class InteractiveCurveViewController
   RangeParameterController* rangeParameterController();
   ViewController* zoomParameterController();
 
+  void showGridTypeMenu(bool visible) {
+    m_rangeParameterController.showGridTypeMenu(visible);
+  }
+
  protected:
   constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
 

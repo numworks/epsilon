@@ -30,6 +30,7 @@ GraphController::GraphController(
                                  &m_view, this),
       m_functionSelectionController(this) {
   m_graphRange->setDelegate(this);
+  showGridTypeMenu(true);
 }
 
 I18n::Message GraphController::emptyMessage() {

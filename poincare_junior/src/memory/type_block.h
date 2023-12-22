@@ -19,6 +19,7 @@ namespace PoincareJ {
 
 #define NARY NAryNumberOfChildrenTag
 #define NARY2D NAry2DNumberOfChildrenTag
+#define NARY16 NAryLargeNumberOfChildrenTag
 
 // Boilerplate to alias NODE(F) as NODE3(F, 0, 0), NODE3 is the varying macro
 #define GET4TH(A, B, C, D, ...) D
@@ -105,22 +106,29 @@ class TypeBlock : public Block {
 
   // Their next metaBlock contains the numberOfChildren
   constexpr static bool IsNAry(BlockType type) {
-    return NumberOfChildrenOrTag(type) == NAryNumberOfChildrenTag;
+    return NumberOfChildrenOrTag(type) == NAryNumberOfChildrenTag ||
+           NumberOfChildrenOrTag(type) == NAryLargeNumberOfChildrenTag;
   }
   constexpr bool isNAry() const { return IsNAry(type()); }
   // NAry with a single metaBlock
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
+  constexpr static bool IsNAry16(BlockType type) {
+    return NumberOfChildrenOrTag(type) == NAryLargeNumberOfChildrenTag;
+  }
+  constexpr bool isNAry16() const { return IsNAry16(type()); }
 
  private:
   constexpr static int NAryNumberOfChildrenTag = -1;
   constexpr static int NAry2DNumberOfChildrenTag = -2;
+  constexpr static int NAryLargeNumberOfChildrenTag = -3;
 
   consteval static size_t DefaultNumberOfMetaBlocks(int N) {
-    return N == NAry2DNumberOfChildrenTag ? 3
-           : N == NAryNumberOfChildrenTag ? 2
-                                          : 1;
+    return N == NAry2DNumberOfChildrenTag      ? 3
+           : N == NAryNumberOfChildrenTag      ? 2
+           : N == NAryLargeNumberOfChildrenTag ? 3
+                                               : 1;
   }
 
  public:
@@ -175,6 +183,8 @@ class TypeBlock : public Block {
       return n;
     } else if (n == NAryNumberOfChildrenTag) {
       return static_cast<uint8_t>(*next());
+    } else if (n == NAryLargeNumberOfChildrenTag) {
+      return *reinterpret_cast<const uint16_t *>(next());
     } else {
       assert(n == NAry2DNumberOfChildrenTag);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));

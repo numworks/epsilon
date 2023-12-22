@@ -1,4 +1,4 @@
-NODE(Rack, NARY)
+NODE(Rack, NARY16)
 NODE(Fraction, 2)
 NODE(VerticalOffset, 1, 1)
 

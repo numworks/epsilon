@@ -7,16 +7,16 @@
 namespace PoincareJ {
 
 // TODO: A RackLayout shouldn't have RackLayout children.
-constexpr auto KRackL = KNAry<BlockType::RackLayout>();
+constexpr auto KRackL = KNAry16<BlockType::RackLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout, 0>();
 constexpr auto KVertOffL = KUnary<BlockType::VerticalOffsetLayout, 0>();
 
 constexpr auto KEmptyMatrixL =
-    KTree<BlockType::MatrixLayout, 2, 2, BlockType::RackLayout, 0,
-          BlockType::RackLayout, 0, BlockType::RackLayout, 0,
-          BlockType::RackLayout, 0>();
+    KTree<BlockType::MatrixLayout, 2, 2, BlockType::RackLayout, 0, 0,
+          BlockType::RackLayout, 0, 0, BlockType::RackLayout, 0, 0,
+          BlockType::RackLayout, 0, 0>();
 
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint
@@ -34,8 +34,9 @@ struct _RackLayoutHelper;
 
 template <String S, std::size_t... I>
 struct _RackLayoutHelper<S, std::index_sequence<I...>>
-    : Concat<KTree<BlockType::RackLayout, sizeof...(I)>,
-             KCodePointL<S.codePointAt(I)>...> {};
+    : Concat<
+          KTree<BlockType::RackLayout, sizeof...(I) % 256, sizeof...(I) / 256>,
+          KCodePointL<S.codePointAt(I)>...> {};
 
 template <String S>
 consteval auto operator"" _l() {

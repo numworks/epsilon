@@ -130,6 +130,17 @@ struct KNAry {
   }
 };
 
+template <Block Tag>
+struct KNAry16 {
+  template <TreeConcept... CTS>
+  consteval auto operator()(CTS... args) const {
+    return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
+  }
+
+  template <size_t Nb>
+  static constexpr KTree<Tag, Nb % 256, Nb / 256> node{};
+};
+
 template <size_t Nb, Block Tag>
 struct KFixedArity : public KTree<Tag> {
   template <TreeConcept... CTS>

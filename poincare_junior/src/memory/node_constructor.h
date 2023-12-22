@@ -50,6 +50,7 @@ class NodeConstructor final {
             blockType != BlockType::DoubleFloat &&
             blockType != BlockType::UserSymbol &&
             blockType != BlockType::IntegerPosBig &&
+            blockType != BlockType::RackLayout &&
             blockType != BlockType::IntegerNegBig,
         "BlockType associated with specific specialized creators shouldn't end "
         "up in the default SpecializedCreateBlockAtIndexForType");
@@ -161,6 +162,16 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
       CodePointLayout::SubCodePointLayoutAtIndex(second, 1),
       CodePointLayout::SubCodePointLayoutAtIndex(second, 2),
       CodePointLayout::SubCodePointLayoutAtIndex(second, 3));
+}
+
+template <>
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::RackLayout>(
+    Block* block, size_t blockIndex, int nbChildren) {
+  assert(nbChildren < UINT16_MAX);
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
+                                            BlockType::RackLayout,
+                                            nbChildren % 256, nbChildren / 256);
 }
 
 template <>

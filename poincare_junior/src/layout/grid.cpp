@@ -23,6 +23,13 @@ const Tree* Grid::childAt(uint8_t col, uint8_t row) const {
   return child(row * numberOfColumns() + col);
 }
 
+bool Grid::childIsPlaceholder(int index) const {
+  return childIsBottomOfGrid(index) ||
+         (childIsRightOfGrid(index) &&
+          (!isPiecewiseLayout() || (childIsInLastNonGrayRow(index) &&
+                                    RackLayout::IsEmpty(child(index)))));
+}
+
 Tree* Grid::willFillEmptyChildAtIndex(int childIndex) {
   assert(isEditing());
   bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
@@ -190,7 +197,7 @@ KDCoordinate Grid::columnWidth(int column, KDFont::Size font) const {
 
 KDCoordinate Grid::width(KDFont::Size font) const {
   KDCoordinate totalWidth = 0;
-  int nb = numberOfColumns() - !isEditing();
+  int nb = numberOfColumns() - (!numberOfColumnsIsFixed() && !isEditing());
   for (int j = 0; j < nb; j++) {
     totalWidth += columnWidth(j, font);
   }

@@ -74,9 +74,7 @@ class Grid : public Tree {
 
   // Row and columns
   bool isEditing() const;
-  bool childIsPlaceholder(int index) const {
-    return childIsRightOfGrid(index) || childIsBottomOfGrid(index);
-  }
+  bool childIsPlaceholder(int index) const;
 
   bool isColumnEmpty(int index) const {
     return isColumnOrRowEmpty(true, index);

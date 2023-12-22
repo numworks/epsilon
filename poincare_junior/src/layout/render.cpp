@@ -205,15 +205,14 @@ KDSize Render::Size(const Tree* node) {
       return SquareBracketPair::SizeGivenChildSize(
           Grid::From(node)->size(font));
     case LayoutType::Piecewise: {
-      KDSize sizeWithoutBrace = Grid::From(node)->size(font);
-#if 0
-      if (numberOfChildren() == 2 && !isEditing() &&
-          node->child(1)->isEmpty()) {
+      const Grid* grid = Grid::From(node);
+      KDSize sizeWithoutBrace = grid->size(font);
+      if (node->numberOfChildren() == 4 && !grid->isEditing() &&
+          RackLayout::IsEmpty(node->child(1))) {
         // If there is only 1 row and the condition is empty, shrink the size
         sizeWithoutBrace =
-            KDSize(columnWidth(0, font), sizeWithoutBrace.height());
+            KDSize(grid->columnWidth(0, font), sizeWithoutBrace.height());
       }
-#endif
       // Add a right margin of size k_curlyBraceWidth
       KDSize sizeWithBrace =
           KDSize(sizeWithoutBrace.width() + 2 * CurlyBrace::k_curlyBraceWidth,
@@ -251,6 +250,7 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
   if (isMatrixLayout()) {
     return p.translatedBy(SquareBracketPair::ChildOffset());
   }
+  assert(isPiecewiseLayout());
   return p.translatedBy(
       KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness));
 }
@@ -1204,32 +1204,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);
       assert(grid->numberOfColumns() == 2);
-      bool cursorIsInsideOperator = false /* TODO isEditing() */;
 
-      /* Set the right color for the condition if empty.
-       * The last condition must be grayed if empty.
-       * Other conditions are yellow if empty.
-       * Every color should be already correctly set except for the last
-       * condition which is yellow instead of gray, and the penultimate
-       * condition which could have been previously set to gray here and should
-       * be set to yellow. */
-      int lastRealRow =
-          grid->numberOfRows() - 1 - static_cast<int>(cursorIsInsideOperator);
-      const Tree* lastRealCondition = node->child(lastRealRow * 2 + 1);
-#if 0
-      if (lastRealCondition->isEmpty()) {
-        static_cast<HorizontalLayoutNode*>(lastRealCondition)
-            ->setEmptyColor(EmptyRectangle::Color::Gray);
-      }
-      if (node->numberOfChildren() >
-          2 + 2 * static_cast<int>(cursorIsInsideOperator)) {
-        const Tree* conditionAboveLast = node->child(lastRealRow * 2 - 1);
-        if (conditionAboveLast->isEmpty()) {
-          static_cast<HorizontalLayoutNode*>(conditionAboveLast)
-              ->setEmptyColor(EmptyRectangle::Color::Gray);
-        }
-      }
-#endif
       // Draw the grid and the {
       RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
                                       style.glyphColor, style.backgroundColor);
@@ -1238,30 +1213,32 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
                                    grid->columnWidth(0, style.font) +
                                    k_gridEntryMargin;
-      for (int i = 0; i < grid->numberOfRows(); i++) {
+      int nbRows = grid->numberOfRows() - !grid->isEditing();
+      for (int i = 0; i < nbRows; i++) {
         const Tree* leftChild = node->child(i * 2);
-        const Tree* rightChild = node->child(1 + i * 2);
-#if 0
-        if (!cursorIsInsideOperator && i == NumberOfRows(node) - 1 &&
-            rightChild->isEmpty()) {
-          // Last empty condition should be invisible when out of the layout
-          assert(static_cast<HorizontalLayoutNode*>(rightChild)
-          ->emptyVisibility() == EmptyRectangle::State::Hidden);
-          continue;  // Do not draw the comma
-        }
-#endif
+        int rightChildIndex = i * 2 + 1;
         KDPoint leftChildPosition = PositionOfChild(node, i * 2);
         KDPoint commaPosition =
             KDPoint(commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
                                        KDFont::GlyphHeight(style.font) / 2);
-#if 0
-        if (rightChild->isEmpty() &&
-            static_cast<HorizontalLayoutNode*>(rightChild)->emptyColor() ==
-                EmptyRectangle::Color::Gray) {
-          style.glyphColor = Escher::Palette::GrayDark;
+        KDGlyph::Style commaStyle = style;
+        if (grid->childIsPlaceholder(rightChildIndex)) {
+          if (!grid->isEditing()) {
+            continue;
+          }
+          commaStyle.glyphColor = Escher::Palette::GrayDark;
         }
-#endif
-        ctx->drawString(",", commaPosition.translatedBy(p), style);
+        ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
+      }
+      if (grid->isEditing()) {
+        // Draw gray squares
+        for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
+          if (!Grid::From(node)->childIsPlaceholder(index)) {
+            continue;
+          }
+          RackLayout::RenderNode(
+              child, ctx, p.translatedBy(PositionOfChild(node, index)), true);
+        }
       }
       return;
     }

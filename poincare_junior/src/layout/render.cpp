@@ -1180,55 +1180,49 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       return;
     }
-    case LayoutType::Matrix: {
-      const Grid* grid = Grid::From(node);
-      RenderSquareBracketPair(true, grid->height(font), ctx, p,
-                              style.glyphColor, style.backgroundColor);
-      KDCoordinate rightOffset =
-          SquareBracketPair::ChildOffset().x() + grid->width(font);
-      RenderSquareBracketPair(false, grid->height(font), ctx,
-                              p.translatedBy(KDPoint(rightOffset, 0)),
-                              style.glyphColor, style.backgroundColor);
-      if (grid->isEditing()) {
-        // Draw gray squares
-        for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-          if (!Grid::From(node)->childIsPlaceholder(index)) {
-            continue;
-          }
-          RackLayout::RenderNode(
-              child, ctx, p.translatedBy(PositionOfChild(node, index)), true);
-        }
-      }
-      return;
-    }
+    case LayoutType::Matrix:
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);
-      assert(grid->numberOfColumns() == 2);
 
-      // Draw the grid and the {
-      RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
-                                      style.glyphColor, style.backgroundColor);
+      if (node->isMatrixLayout()) {
+        // Matrix
+        RenderSquareBracketPair(true, grid->height(font), ctx, p,
+                                style.glyphColor, style.backgroundColor);
+        KDCoordinate rightOffset =
+            SquareBracketPair::ChildOffset().x() + grid->width(font);
+        RenderSquareBracketPair(false, grid->height(font), ctx,
+                                p.translatedBy(KDPoint(rightOffset, 0)),
+                                style.glyphColor, style.backgroundColor);
+      } else {
+        // Piecewise
+        assert(grid->numberOfColumns() == 2);
 
-      // Draw the commas
-      KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
-                                   grid->columnWidth(0, style.font) +
-                                   k_gridEntryMargin;
-      int nbRows = grid->numberOfRows() - !grid->isEditing();
-      for (int i = 0; i < nbRows; i++) {
-        const Tree* leftChild = node->child(i * 2);
-        int rightChildIndex = i * 2 + 1;
-        KDPoint leftChildPosition = PositionOfChild(node, i * 2);
-        KDPoint commaPosition =
-            KDPoint(commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
-                                       KDFont::GlyphHeight(style.font) / 2);
-        KDGlyph::Style commaStyle = style;
-        if (grid->childIsPlaceholder(rightChildIndex)) {
-          if (!grid->isEditing()) {
-            continue;
+        // Draw the curly brace
+        RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
+                                        style.glyphColor,
+                                        style.backgroundColor);
+
+        // Draw the commas
+        KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
+                                     grid->columnWidth(0, style.font) +
+                                     k_gridEntryMargin;
+        int nbRows = grid->numberOfRows() - !grid->isEditing();
+        for (int i = 0; i < nbRows; i++) {
+          const Tree* leftChild = node->child(i * 2);
+          int rightChildIndex = i * 2 + 1;
+          KDPoint leftChildPosition = PositionOfChild(node, i * 2);
+          KDPoint commaPosition = KDPoint(
+              commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
+                                 KDFont::GlyphHeight(style.font) / 2);
+          KDGlyph::Style commaStyle = style;
+          if (grid->childIsPlaceholder(rightChildIndex)) {
+            if (!grid->isEditing()) {
+              continue;
+            }
+            commaStyle.glyphColor = Escher::Palette::GrayDark;
           }
-          commaStyle.glyphColor = Escher::Palette::GrayDark;
+          ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
         }
-        ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
       }
       if (grid->isEditing()) {
         // Draw gray squares

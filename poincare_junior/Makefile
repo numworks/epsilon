@@ -52,6 +52,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/variables.cpp \
   expression/vector.cpp \
   expression.cpp \
+  layout/app_helpers.cpp \
   layout/autocompleted_pair.cpp \
   layout/code_point_layout.cpp \
   layout/conversion.cpp \

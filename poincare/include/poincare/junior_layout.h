@@ -60,6 +60,7 @@ class JuniorLayoutNode final : public LayoutNode {
   const PoincareJ::Tree* tree() const {
     return PoincareJ::Tree::FromBlocks(m_blocks);
   }
+  PoincareJ::Tree* tree() { return PoincareJ::Tree::FromBlocks(m_blocks); }
   PoincareJ::Block m_blocks[0];
 };
 
@@ -71,7 +72,7 @@ class JuniorLayout final
 
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   static JuniorLayout Juniorize(OLayout l);
-  const PoincareJ::Tree* tree() const {
+  PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
 

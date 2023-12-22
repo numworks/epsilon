@@ -14,6 +14,7 @@
 #include <poincare/string_layout.h>
 #include <poincare/symbol.h>
 #include <poincare/xnt_helpers.h>
+#include <poincare_junior/src/layout/app_helpers.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
 #include <string.h>
@@ -366,16 +367,9 @@ bool LayoutField::insertText(const char *text, bool indentation,
    * but this case never occurs for now), the resultExpression could
    * be analyzed to know if the parenthesis should be made temporary or not.
    * */
-  if (!forceCursorRightOfText && resultLayout.isHorizontal() &&
-      resultLayout.numberOfChildren() > 0) {
-    OLayout lastChild =
-        resultLayout.childAtIndex(resultLayout.numberOfChildren() - 1);
-    if (lastChild.type() == LayoutNode::Type::ParenthesisLayout &&
-        !static_cast<ParenthesisLayoutNode *>(lastChild.node())
-             ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left)) {
-      static_cast<ParenthesisLayoutNode *>(lastChild.node())
-          ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
-    }
+  if (!forceCursorRightOfText) {
+    PoincareJ::AppHelpers::MakeRightMostParenthesisTemporary(
+        static_cast<JuniorLayout &>(resultLayout).tree());
   }
 
   insertLayoutAtCursor(resultLayout, forceCursorRightOfText,

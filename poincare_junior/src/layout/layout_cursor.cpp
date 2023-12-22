@@ -359,7 +359,9 @@ void LayoutBufferCursor::addEmptyExponentialLayout(Context *context) {
 }
 
 void LayoutBufferCursor::addEmptyTenPowerLayout(Context *context) {
-  insertLayout(KRackL("1"_cl, "0"_cl, KVertOffL(""_l)), context, false, false);
+  insertLayout(KRackL(KCodePointL<UCodePointMultiplicationSign>(), "1"_cl,
+                      "0"_cl, KVertOffL(""_l)),
+               context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {

@@ -113,7 +113,15 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
   if (!RackLayout::layoutCursor) {
     return false;
   }
-  return node->numberOfChildren() == 0 && node != layoutCursor->cursorNode();
+  if (node->numberOfChildren() != 0 || node == layoutCursor->cursorNode()) {
+    return false;
+  }
+  // TODO : avoid access to parent
+  const Tree* parent = layoutCursor->rootNode()->parentOfDescendant(node);
+  if (!parent || parent->isAutocompletedPair()) {
+    return false;
+  }
+  return true;
 }
 
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,

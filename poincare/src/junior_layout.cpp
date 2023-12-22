@@ -29,9 +29,7 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                              numberOfSignificantDigits);
 }
 
-OLayout JuniorLayoutNode::makeEditable() {
-  return PoincareJ::Layout::ToPoincareLayout(tree());
-}
+OLayout JuniorLayoutNode::makeEditable() { return OLayout(this); }
 
 JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   size_t size = tree->treeSize();

@@ -306,6 +306,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 
   // - Step 7 - Insert layout
   int numberOfInsertedChildren = ref->numberOfChildren();
+  bool autocompletedPairInserted =
+      (numberOfInsertedChildren == 1) && ref->child(0)->isAutocompletedPair();
   EditionReference toCollapse =
       numberOfInsertedChildren == 1 ? ref->child(0) : nullptr;
   /* AddOrMergeLayoutAtIndex will replace current layout with an
@@ -324,7 +326,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 
   /* - Step 8 - Collapse siblings and find position to point to if layout was
    * not merged */
-  if (numberOfInsertedChildren == 1) {
+  if (numberOfInsertedChildren == 1 && !autocompletedPairInserted) {
     // ref is undef
     collapseSiblingsOfLayout(toCollapse);
     int indexOfChildToPointTo =

@@ -156,11 +156,18 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
       return m;
     }
     case LayoutType::Piecewise: {
-      Poincare::PiecewiseOperatorLayout l =
+      const Grid *g = Grid::From(l);
+      Poincare::PiecewiseOperatorLayout m =
           Poincare::PiecewiseOperatorLayout::Builder();
-      l.addRow(Poincare::HorizontalLayout::Builder());
-      // TODO
-      return l;
+      for (int i = 0; const Tree *child : g->children()) {
+        if (g->childIsBottomOfGrid(i)) {
+          break;
+        }
+        m.GridLayout::addChildAtIndexInPlace(ToPoincareLayout(child), i, i);
+        i++;
+      }
+      m.setDimensions(g->numberOfRows() - 1, g->numberOfColumns());
+      return m;
     }
     default:
       assert(false);
@@ -261,12 +268,13 @@ void PushPoincareLayout(Poincare::OLayout l) {
     case OT::PiecewiseOperatorLayout: {
       Poincare::PiecewiseOperatorLayout m =
           static_cast<Poincare::PiecewiseOperatorLayout &>(l);
-      SharedEditionPool->push(BlockType::PiecewiseLayout);
+      Tree *t = SharedEditionPool->push(BlockType::PiecewiseLayout);
       SharedEditionPool->push(m.numberOfRows());
       SharedEditionPool->push(m.numberOfColumns());
       for (int i = 0; i < l.numberOfChildren(); i++) {
         PushPoincareRack(l.childAtIndex(i));
       }
+      Grid::From(t)->addEmptyRow();
       return;
     }
     case OT::JuniorLayout: {

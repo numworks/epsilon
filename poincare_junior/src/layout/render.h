@@ -13,14 +13,23 @@ namespace PoincareJ {
 
 class Render final {
  public:
+  // TODO hide overloads without font from the external API
   static KDSize Size(const Tree* node);
-
+  static KDSize Size(const Tree* node, KDFont::Size fontSize) {
+    font = fontSize;
+    return Size(node);
+  }
   static KDCoordinate Height(const Tree* node) { return Size(node).height(); }
   static KDCoordinate Width(const Tree* node) { return Size(node).width(); }
 
+  static KDCoordinate Baseline(const Tree* node);
+  static KDCoordinate Baseline(const Tree* node, KDFont::Size fontSize) {
+    font = fontSize;
+    return Baseline(node);
+  }
+
   static KDPoint AbsoluteOrigin(const Tree* node, const Tree* root);
   static KDPoint PositionOfChild(const Tree* node, int childIndex);
-  static KDCoordinate Baseline(const Tree* node);
   static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite,

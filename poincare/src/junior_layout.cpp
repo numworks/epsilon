@@ -9,11 +9,11 @@
 namespace Poincare {
 
 KDSize JuniorLayoutNode::computeSize(KDFont::Size font) {
-  return PoincareJ::Render::Size(tree());
+  return PoincareJ::Render::Size(tree(), font);
 }
 
 KDCoordinate JuniorLayoutNode::computeBaseline(KDFont::Size font) {
-  return PoincareJ::Render::Baseline(tree());
+  return PoincareJ::Render::Baseline(tree(), font);
 }
 
 void JuniorLayoutNode::render(KDContext* ctx, KDPoint p, KDGlyph::Style style) {

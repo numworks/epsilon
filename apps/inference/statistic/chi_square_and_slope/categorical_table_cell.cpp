@@ -184,6 +184,7 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   tableModel()->recomputeData();
   m_selectableTableView.deselectTable();
   m_selectableTableView.resetScroll();
+  categoricalController()->selectableListView()->reloadData(false);
   recomputeDimensionsAndReload(true, true);
   m_selectableTableView.selectCellAtClippedLocation(column, 1, false);
 }

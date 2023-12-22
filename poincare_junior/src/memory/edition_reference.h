@@ -24,7 +24,6 @@ class EditionReference {
       : EditionReference(static_cast<Tree*>(other)) {}
 
   EditionReference& operator=(const EditionReference& other) {
-    SharedEditionPool->deleteIdentifier(m_identifier);
     *this = EditionReference(static_cast<Tree*>(other));
     return *this;
   }

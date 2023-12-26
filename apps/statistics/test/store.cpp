@@ -232,7 +232,7 @@ void assert_data_box_plot(Store* store, int numberOfData,
   GlobalPreferences::sharedGlobalPreferences->setCountry(I18n::Country::WW);
 }
 
-QUIZ_CASE(data_statistics) {
+QUIZ_CASE(statistics) {
   GlobalContext context;
   UserPreferences userPreferences;
   Store store(&context, &userPreferences);
@@ -972,7 +972,7 @@ void assert_data_statistics_multiple_series_equal_to(
   quiz_assert(minValueIgnoringFrequency == store->minValueForAllSeries(true));
 }
 
-QUIZ_CASE(data_statistics_multiple_series) {
+QUIZ_CASE(statistics_multiple_series) {
   GlobalContext context;
   UserPreferences userPreferences;
   Store store(&context, &userPreferences);
@@ -1000,7 +1000,7 @@ QUIZ_CASE(data_statistics_multiple_series) {
   setStoreData(&store, {}, {}, 0, 2);
 }
 
-QUIZ_CASE(data_statistics_histograms) {
+QUIZ_CASE(statistics_histograms) {
   GlobalContext context;
   UserPreferences userPreferences;
   Store store(&context, &userPreferences);

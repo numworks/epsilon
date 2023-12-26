@@ -31,6 +31,7 @@ bool CategoricalController::ButtonAction(CategoricalController *controller,
 
 void CategoricalController::scrollViewDidChangeOffset(
     ScrollViewDataSource *scrollViewDataSource) {
+  assert(scrollViewDataSource == this);
   /* Transfer the CategoricalController offset to the CategoricalTableCell
    * offset. This is a hack to ensure that the categorical table cell doesn't
    * require too many displayable cells. If the scroll was handled by the
@@ -43,7 +44,7 @@ void CategoricalController::scrollViewDidChangeOffset(
   KDCoordinate maximalOffsetY =
       m_selectableListView.minimalSizeForOptimalDisplay().height() -
       m_selectableListView.bounds().height();
-  KDCoordinate offsetToAdd = scrollViewDataSource->offset().y();
+  KDCoordinate offsetToAdd = offset().y();
   if (offsetToAdd > maximalOffsetY) {
     /* Prevent the table from scrolling past the screen */
     offsetToAdd = maximalOffsetY;

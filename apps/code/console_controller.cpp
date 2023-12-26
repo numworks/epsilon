@@ -37,7 +37,7 @@ ConsoleController::ConsoleController(Responder *parentResponder,
       MicroPython::ExecutionEnvironment(),
       m_pythonDelegate(pythonDelegate),
       m_importScriptsWhenViewAppears(false),
-      m_selectableTableView(this, this, this, this),
+      m_selectableListView(this, this, this, this),
       m_editCell(this, this),
       m_sandboxController(this),
       m_inputRunLoopActive(false)
@@ -46,12 +46,12 @@ ConsoleController::ConsoleController(Responder *parentResponder,
       m_locked(lockOnConsole)
 #endif
 {
-  m_selectableTableView.setMargins({Metric::TitleBarExternHorizontalMargin,
-                                    Metric::CommonMargins.right(), 0, 0});
-  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  m_selectableListView.setMargins({Metric::TitleBarExternHorizontalMargin,
+                                   Metric::CommonMargins.right(), 0, 0});
+  m_selectableListView.setBackgroundColor(KDColorWhite);
   m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
-    m_cells[i].setParentResponder(&m_selectableTableView);
+    m_cells[i].setParentResponder(&m_selectableListView);
   }
 }
 
@@ -189,24 +189,24 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
         typeAtRow(selectedRow()) == k_lineCellType) {
       const char *text = m_consoleStore.lineAtIndex(selectedRow()).text();
       m_editCell.setEditing(true);
-      m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
+      m_selectableListView.selectCell(m_consoleStore.numberOfLines());
       App::app()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
   } else if (event == Ion::Events::Clear) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     m_consoleStore.clear();
-    m_selectableTableView.reloadData();
-    m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
+    m_selectableListView.reloadData();
+    m_selectableListView.selectCell(m_consoleStore.numberOfLines());
     return true;
   } else if (event == Ion::Events::Backspace) {
     int rowToDelete = selectedRow();
     assert(typeAtRow(rowToDelete) == k_lineCellType);
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     int firstDeletedLineIndex =
         m_consoleStore.deleteCommandAndResultsAtIndex(rowToDelete);
-    m_selectableTableView.reloadData();
-    m_selectableTableView.selectCell(firstDeletedLineIndex);
+    m_selectableListView.reloadData();
+    m_selectableListView.selectCell(firstDeletedLineIndex);
     return true;
   }
 #if EPSILON_GETOPT
@@ -268,7 +268,7 @@ void ConsoleController::fillCellForRow(HighlightCell *cell, int row) {
 void ConsoleController::listViewDidChangeSelectionAndDidScroll(
     Escher::SelectableListView *l, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
-  assert(l == &m_selectableTableView);
+  assert(l == &m_selectableListView);
   if (withinTemporarySelection) {
     return;
   }
@@ -317,7 +317,7 @@ bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField *textField,
     if (m_consoleStore.numberOfLines() > 0 &&
         typeAtRow(selectedRow()) == k_editCellType) {
       m_editCell.setEditing(false);
-      m_selectableTableView.selectCell(m_consoleStore.numberOfLines() - 1);
+      m_selectableListView.selectCell(m_consoleStore.numberOfLines() - 1);
       return true;
     }
   }
@@ -407,8 +407,8 @@ void ConsoleController::refreshPrintOutput() {
 }
 
 void ConsoleController::reloadData() {
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
+  m_selectableListView.reloadData();
+  m_selectableListView.selectCell(m_consoleStore.numberOfLines());
 }
 
 /* printText is called by the Python machine.

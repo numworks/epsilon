@@ -22,7 +22,7 @@ app_settings_src = $(addprefix apps/settings/,\
 app_settings_src += $(app_settings_test_src)
 apps_src += $(app_settings_src)
 
-i18n_files += $(call i18n_with_universal_for,settings/base)
+i18n_files += $(call i18n_with_universal_for,settings/i18n/base)
 
 $(eval $(call depends_on_image,apps/settings/app.cpp,apps/settings/settings_icon.png))
 $(eval $(call depends_on_transparent_image,apps/settings/sub_menu/press_to_test_controller.cpp,apps/settings/sub_menu/press_to_test_success.png))

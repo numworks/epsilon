@@ -22,7 +22,7 @@ ListController::ListController(
     FunctionParameterController *functionParameterController)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),
-      m_editableCell(this, this),
+      m_editableCell(this, this, &m_modelsStackController),
       m_parameterController(functionParameterController),
       m_modelsParameterController(this, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
@@ -285,8 +285,14 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
 }
 
 void ListController::addNewModelAction() {
-  App::app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f,
-                                         Metric::PopUpMarginsNoBottom);
+  Ion::Storage::Record::ErrorStatus error =
+      App::app()->functionStore()->addEmptyModel();
+  if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
+    return;
+  }
+  assert(error == Ion::Storage::Record::ErrorStatus::None);
+
+  editExpression(Ion::Events::OK);
 }
 
 ContinuousFunctionStore *ListController::modelStore() const {

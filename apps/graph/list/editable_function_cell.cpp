@@ -8,11 +8,20 @@ namespace Graph {
 
 EditableFunctionCell::EditableFunctionCell(
     Escher::Responder* parentResponder,
-    Escher::LayoutFieldDelegate* layoutFieldDelegate)
+    Escher::LayoutFieldDelegate* layoutFieldDelegate,
+    Escher::StackViewController* modelsStackController)
+
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
       m_buttonCell(expressionCell()->layoutField(),
-                   Invocation::Builder<void>([](void*, void*) { return true; },
-                                             nullptr)) {
+                   Invocation::Builder<ViewController>(
+                       [](ViewController* controller, void* sender) {
+                         static_cast<ButtonCell*>(sender)->deselect();
+                         App::app()->displayModalViewController(
+                             controller, 0.f, 0.f,
+                             Metric::PopUpMarginsNoBottom);
+                         return true;
+                       },
+                       modelsStackController)) {
   // Initialize expression cell
   expressionCell()->layoutField()->setParentResponder(parentResponder);
   expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
@@ -52,6 +61,11 @@ void EditableFunctionCell::layoutSubviews(bool force) {
 }
 
 // EditableFunctionCell::ButtonCell
+void EditableFunctionCell::ButtonCell::deselect() {
+  layoutField()->setEditing(true);
+  App::app()->setFirstResponder(layoutField());
+}
+
 bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     layoutField()->setEditing(true);

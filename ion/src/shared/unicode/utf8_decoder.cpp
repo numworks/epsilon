@@ -171,19 +171,20 @@ bool UTF8Decoder::IsInTheMiddleOfACodePoint(uint8_t value) {
 }
 
 bool UTF8Decoder::IsTheEndOfACodePoint(const char* end, const char* begin) {
-  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(end);
-
-  for (int i = 0; ptr >= reinterpret_cast<const uint8_t*>(begin); i++, ptr--) {
+  int numberOfBytes = 0;
+  for (const uint8_t* ptr = reinterpret_cast<const uint8_t*>(end);
+       ptr >= reinterpret_cast<const uint8_t*>(begin); ptr--) {
     int ones = leading_ones(*ptr);
     assert(isValidChar(ones));
-
+    numberOfBytes++;
+    assert(numberOfBytes <= 4);
     switch (ones) {
       case 1:
         break;
       case 0:
-        return i == 0;
+        return numberOfBytes == 1;
       default:
-        return ones == i + 1;
+        return ones == numberOfBytes;
     }
   }
 

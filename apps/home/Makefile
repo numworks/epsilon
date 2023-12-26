@@ -6,7 +6,7 @@ app_home_src = $(addprefix apps/home/,\
 
 apps_src += $(app_home_src)
 
-i18n_files += $(call i18n_without_universal_for,home/base)
+i18n_files += $(call i18n_without_universal_for,home/i18n/base)
 
 # Apps layout file generation
 

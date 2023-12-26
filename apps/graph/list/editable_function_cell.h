@@ -3,6 +3,7 @@
 
 #include <escher/button_cell.h>
 #include <escher/editable_expression_model_cell.h>
+#include <escher/stack_view_controller.h>
 
 #include "function_cell.h"
 
@@ -12,7 +13,8 @@ class EditableFunctionCell
     : public TemplatedFunctionCell<Shared::WithEditableExpressionCell> {
  public:
   EditableFunctionCell(Escher::Responder* parentResponder,
-                       Escher::LayoutFieldDelegate* layoutFieldDelegate);
+                       Escher::LayoutFieldDelegate* layoutFieldDelegate,
+                       Escher::StackViewController* modelsStackController);
 
   void updateSubviewsBackgroundAfterChangingState() override {
     m_expressionBackground = backgroundColor();
@@ -57,6 +59,13 @@ class EditableFunctionCell
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
+
+    void deselect();
+
+    void didEnterResponderChain(Responder* previousFirstResponder) override {
+      // This is called when pressing Back from the template menu.
+      layoutField()->setEditing(true);
+    }
 
    private:
     Escher::LayoutField* layoutField() const {

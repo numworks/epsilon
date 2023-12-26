@@ -97,12 +97,6 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
 
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    Ion::Storage::Record::ErrorStatus error =
-        App::app()->functionStore()->addEmptyModel();
-    if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-      return true;
-    }
-    assert(error == Ion::Storage::Record::ErrorStatus::None);
     char buffer[k_maxSizeOfNamedModel] = "";
     if (selectedRow() > 0) {
       m_layouts[selectedRow() - 1].serializeForParsing(buffer,

@@ -40,7 +40,7 @@ class ConsoleController : public Escher::ViewController,
   void terminateInputLoop();
 
   // ViewController
-  Escher::View* view() override { return &m_selectableTableView; }
+  Escher::View* view() override { return &m_selectableListView; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -116,7 +116,7 @@ class ConsoleController : public Escher::ViewController,
   App* m_pythonDelegate;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
-  Escher::SelectableListView m_selectableTableView;
+  Escher::SelectableListView m_selectableListView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
   char m_outputAccumulationBuffer[k_outputAccumulationBufferSize];

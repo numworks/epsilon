@@ -43,7 +43,7 @@ app_regression_src = $(addprefix apps/regression/,\
 app_regression_src += $(app_regression_test_src)
 apps_src += $(app_regression_src)
 
-i18n_files += $(call i18n_with_universal_for,regression/base)
+i18n_files += $(call i18n_with_universal_for,regression/i18n/base)
 
 tests_src += $(addprefix apps/regression/test/,\
   model.cpp\

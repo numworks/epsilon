@@ -19,7 +19,7 @@ app_solver_src = $(addprefix apps/solver/,\
 app_solver_src += $(app_solver_test_src)
 apps_src += $(app_solver_src)
 
-i18n_files += $(call i18n_without_universal_for,solver/base)
+i18n_files += $(call i18n_without_universal_for,solver/i18n/base)
 
 tests_src += $(addprefix apps/solver/test/,\
   equation_store.cpp \

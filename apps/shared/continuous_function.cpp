@@ -154,7 +154,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
    * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error =
-      editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
+      m_model.setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     // Set proper name
     error = updateNameIfNeeded(context);

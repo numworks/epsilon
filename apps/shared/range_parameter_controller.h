@@ -49,9 +49,9 @@ class RangeParameterController
   void buttonAction();
   void fillCells();
 
-  class GridTypeController : public Escher::SelectableListViewController<
-                                 Escher::SimpleListViewDataSource>,
-                             public Escher::SelectableListViewDelegate {
+  class GridTypeController
+      : public Escher::ExplicitSelectableListViewController,
+        public Escher::SelectableListViewDelegate {
    public:
     using GridType = InteractiveCurveViewRange::GridType;
     GridTypeController(Escher::Responder *parentResponder,
@@ -69,10 +69,9 @@ class RangeParameterController
     }
 
     int numberOfRows() const override { return 2; }
-    int reusableCellCount() const override { return 2; }
-    Escher::HighlightCell *reusableCell(int index) override {
-      assert(index >= 0 & index < 2);
-      return &cells[index];
+    Escher::HighlightCell *cell(int row) override {
+      assert(row >= 0 & row < 2);
+      return &cells[row];
     }
 
    private:

@@ -173,8 +173,7 @@ void RangeParameterController::buttonAction() {
 RangeParameterController::GridTypeController::GridTypeController(
     Escher::Responder *parentResponder,
     InteractiveCurveViewRange *interactiveCurveViewRange)
-    : Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(
-          parentResponder, this),
+    : Escher::ExplicitSelectableListViewController(parentResponder, this),
       m_viewRange(interactiveCurveViewRange) {
   cells[0].label()->setMessage(I18n::Message::CartesianGrid);
   cells[1].label()->setMessage(I18n::Message::PolarGrid);

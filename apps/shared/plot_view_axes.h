@@ -27,13 +27,10 @@ class Axes : public CGrid {
     m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
     m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
   }
-  static void DrawGrid(const AbstractPlotView *plotView, KDContext *ctx,
-                       KDRect rect) {
-    CGrid::DrawGrid(plotView, ctx, rect);
-  }
+
   void drawAxesAndGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect) const {
-    DrawGrid(plotView, ctx, rect);
+    CGrid::DrawGrid(plotView, ctx, rect);
     drawAxes(plotView, ctx, rect);
   }
   void reloadAxes(AbstractPlotView *plotView) {

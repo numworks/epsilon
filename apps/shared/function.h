@@ -27,6 +27,10 @@ class Function : public ExpressionModelHandle {
   ;
 
   constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
+  static size_t NameWithArgument(Ion::Storage::Record record,
+                                 CodePoint argument, char* buffer,
+                                 size_t bufferSize);
+
   // Constructors
   Function(Ion::Storage::Record record) : ExpressionModelHandle(record) {}
 

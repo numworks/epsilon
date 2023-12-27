@@ -819,6 +819,12 @@ Evaluation<U> Expression::approximateToEvaluation(
   return e;
 }
 
+Ion::Storage::Record::ErrorStatus Expression::storeWithNameAndExtension(
+    const char *baseName, const char *extension) const {
+  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      baseName, extension, addressInPool(), size(), true);
+}
+
 Expression Expression::deepReplaceSymbolWithExpression(
     const SymbolAbstract &symbol, const Expression expression) {
   /* In this case, replacing a symbol does not alter the number of children,

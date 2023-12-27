@@ -571,6 +571,9 @@ class Expression : public TreeHandle {
   Evaluation<U> approximateToEvaluation(
       const ApproximationContext& approximationContext) const;
 
+  Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
+      const char* baseName, const char* extension) const;
+
  protected:
   Expression(const ExpressionNode* n) : TreeHandle(n) {}
 

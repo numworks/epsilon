@@ -84,43 +84,43 @@ class ContinuousFunctionProperties {
 
   // Getters
   I18n::Message caption() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return (!isEquality() && canBeActive()) ? I18n::Message::InequalityType
                                             : m_caption;
   }
   Status status() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return static_cast<Status>(m_propertiesBitField.m_status);
   }
   Poincare::ComparisonNode::OperatorType equationType() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return static_cast<Poincare::ComparisonNode::OperatorType>(
         m_propertiesBitField.m_equationType);
   }
   SymbolType symbolType() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return static_cast<SymbolType>(m_propertiesBitField.m_symbolType);
   }
   CurveParameterType getCurveParameterType() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return static_cast<CurveParameterType>(
         m_propertiesBitField.m_curveParameterType);
   }
   bool isOfDegreeTwo() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return m_propertiesBitField.m_isOfDegreeTwo;
   }
   Poincare::Conic::Shape conicShape() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return static_cast<Poincare::Conic::Shape>(
         m_propertiesBitField.m_conicShape);
   }
   bool isAlongY() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return m_propertiesBitField.m_isAlongY;
   }
   bool hideDetails() const {
-    assert(isInitialized());
+    assert(m_isInitialized);
     return m_propertiesBitField.m_hideDetails;
   }
 

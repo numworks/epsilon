@@ -86,7 +86,7 @@ void RangeParameterController::fillRangeCells() {
 
   I18n::Message gridTypeCellSubMessage =
       m_tempInteractiveRange.gridType() ==
-              GridSelectionController::GridType::Cartesian
+              GridTypeController::GridType::Cartesian
           ? I18n::Message::CartesianGrid
           : I18n::Message::PolarGrid;
 
@@ -168,9 +168,9 @@ void RangeParameterController::buttonAction() {
   stackController()->pop();
 }
 
-// RangeParameterController::GridSelectionController
+// RangeParameterController::GridTypeController
 
-RangeParameterController::GridSelectionController::GridSelectionController(
+RangeParameterController::GridTypeController::GridTypeController(
     Escher::Responder *parentResponder,
     InteractiveCurveViewRange *interactiveCurveViewRange)
     : Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(
@@ -183,11 +183,11 @@ RangeParameterController::GridSelectionController::GridSelectionController(
   cells[1].accessory()->setImage(ImageStore::PolarGridIcon);
 }
 
-void RangeParameterController::GridSelectionController::viewWillAppear() {
+void RangeParameterController::GridTypeController::viewWillAppear() {
   selectRow(m_viewRange->gridType() == GridType::Cartesian ? 0 : 1);
 }
 
-bool RangeParameterController::GridSelectionController::handleEvent(
+bool RangeParameterController::GridTypeController::handleEvent(
     Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Update the view range before RangeParameterController::ViewWillAppear is

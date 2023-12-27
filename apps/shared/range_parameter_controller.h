@@ -50,14 +50,13 @@ class RangeParameterController
   void buttonAction();
   void fillRangeCells();
 
-  class GridSelectionController : public Escher::SelectableListViewController<
-                                      Escher::SimpleListViewDataSource>,
-                                  public Escher::SelectableListViewDelegate {
+  class GridTypeController : public Escher::SelectableListViewController<
+                                 Escher::SimpleListViewDataSource>,
+                             public Escher::SelectableListViewDelegate {
    public:
     using GridType = InteractiveCurveViewRange::GridType;
-    GridSelectionController(
-        Escher::Responder *parentResponder,
-        InteractiveCurveViewRange *interactiveCurveViewRange);
+    GridTypeController(Escher::Responder *parentResponder,
+                       InteractiveCurveViewRange *interactiveCurveViewRange);
 
     void viewWillAppear() override;
 
@@ -98,7 +97,7 @@ class RangeParameterController
   SingleInteractiveCurveViewRangeController
       m_singleInteractiveCurveViewRangeController;
 
-  GridSelectionController m_gridSelectionController;
+  GridTypeController m_gridSelectionController;
 };
 
 }  // namespace Shared

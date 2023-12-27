@@ -97,7 +97,7 @@ class RangeParameterController
   SingleInteractiveCurveViewRangeController
       m_singleInteractiveCurveViewRangeController;
 
-  GridTypeController m_gridSelectionController;
+  GridTypeController m_gridTypeController;
 };
 
 }  // namespace Shared

@@ -23,7 +23,8 @@ void Clipboard::store(const char* storedText, int length) {
       length--;
     }
   }
-  assert(length >= 0 && UTF8Decoder::IsTheEndOfACodePoint(
+  assert(length >= 0);
+  assert(length == 0 || UTF8Decoder::IsTheEndOfACodePoint(
                             &storedText[length - 1], storedText));
   strlcpy(m_textBuffer, storedText, length + 1);
   Ion::Clipboard::write(m_textBuffer);

@@ -12,15 +12,15 @@ namespace PlotPolicy {
 
 // WithCartesianGrid
 
-void WithCartesianGrid::drawGrid(const AbstractPlotView* plotView,
+void WithCartesianGrid::DrawGrid(const AbstractPlotView* plotView,
                                  KDContext* ctx, KDRect rect) {
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, false);
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, false);
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, true);
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, true);
+  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, false);
+  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, false);
+  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, true);
+  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, true);
 }
 
-void WithCartesianGrid::drawGridLines(const AbstractPlotView* plotView,
+void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
                                       KDContext* ctx, KDRect rect,
                                       AbstractPlotView::Axis parallel,
                                       bool boldGrid) {
@@ -49,7 +49,7 @@ void WithCartesianGrid::drawGridLines(const AbstractPlotView* plotView,
 
 // WithPolarGrid
 
-void WithPolarGrid::drawPolarCircles(const AbstractPlotView* plotView,
+void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
                                      KDContext* ctx, KDRect rect) {
   float step = plotView->range()->xGridUnit();
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
@@ -78,9 +78,9 @@ void WithPolarGrid::drawPolarCircles(const AbstractPlotView* plotView,
   }
 }
 
-void WithPolarGrid::drawGrid(const AbstractPlotView* plotView, KDContext* ctx,
+void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                              KDRect rect) {
-  drawPolarCircles(plotView, ctx, rect);
+  DrawPolarCircles(plotView, ctx, rect);
   // The widest label is of length 4 : '360°'
   constexpr int graduationHorizontalMargin =
       KDFont::GlyphWidth(KDFont::Size::Small) * 4 / 2;

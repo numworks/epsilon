@@ -66,7 +66,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
 
 void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
                                  KDContext* ctx, KDRect rect) const {
-  PlotPolicy::WithPolarGrid::drawGrid(plotView, ctx, rect);
+  PlotPolicy::WithPolarGrid::DrawGrid(plotView, ctx, rect);
   plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f, KDColorBlack);
   // Labels should be as close to the axes as possible so we place them manually
   KDRect labelRect = plotView->labelRect(

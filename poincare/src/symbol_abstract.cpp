@@ -98,11 +98,6 @@ bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {
   return strcmp(other.name(), name()) == 0;
 }
 
-size_t SymbolAbstract::TruncateExtension(char *dst, const char *src,
-                                         size_t size) {
-  return UTF8Helper::CopyUntilCodePoint(dst, size, src, '.');
-}
-
 bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                              ExpressionTrinaryTest test, Context *context,
                              void *auxiliary,

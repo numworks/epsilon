@@ -156,23 +156,17 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
     symbolLength = SymbolAbstract::TruncateExtension(
         symbolName, record.fullName(), SymbolAbstractNode::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
+    CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Storage::funcExtension)) {
-      ExpiringPointer<ContinuousFunction> f =
-          GlobalContext::continuousFunctionStore->modelForRecord(record);
-      symbolLength = f->nameWithArgument(
-          symbolName, Shared::Function::k_maxNameWithArgumentSize);
+      symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
+                   ->symbol();
     } else {
       assert(record.hasExtension(Storage::regExtension));
-      strlcpy(symbolName, record.name().baseName,
-              record.name().baseNameLength + 1);
-      symbolLength = strlen(symbolName);
-      symbolName[symbolLength] = '(';
-      symbolName[symbolLength + 1] = 'x';
-      symbolName[symbolLength + 2] = ')';
-      symbolName[symbolLength + 3] = 0;
-      symbolLength += 3;
-      assert(symbolLength < Shared::Function::k_maxNameWithArgumentSize);
+      symbol = ContinuousFunctionProperties::k_cartesianSymbol;
     }
+    symbolLength = Function::NameWithArgument(
+        record, symbol, symbolName, Function::k_maxNameWithArgumentSize);
+
   } else {
     assert(m_currentPage == Page::Sequence);
     Shared::Sequence u(record);

@@ -18,6 +18,26 @@ using namespace Poincare;
 
 namespace Shared {
 
+size_t Function::NameWithArgument(Ion::Storage::Record record,
+                                  CodePoint argument, char *buffer,
+                                  size_t bufferSize) {
+  size_t length =
+      SymbolAbstract::TruncateExtension(buffer, record.fullName(), bufferSize);
+  assert(0 < length && length < bufferSize - 1);
+  length +=
+      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
+  assert(length < bufferSize - 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint(argument) <= 2);
+  length += UTF8Decoder::CodePointToChars(argument, buffer + length,
+                                          bufferSize - length);
+  assert(length <= bufferSize - 1);
+  length +=
+      SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');
+  assert(length <= bufferSize - 1);
+  assert(length <= k_maxNameWithArgumentSize);
+  return length;
+}
+
 bool Function::isActive() const { return recordData()->isActive(); }
 
 KDColor Function::color() const { return recordData()->color(); }
@@ -43,20 +63,7 @@ int Function::name(char *buffer, size_t bufferSize) const {
 }
 
 int Function::nameWithArgument(char *buffer, size_t bufferSize) {
-  size_t length = name(buffer, bufferSize);
-  assert(0 < length && length < bufferSize - 1);
-  length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
-  assert(length < bufferSize - 1);
-  assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
-  length += UTF8Decoder::CodePointToChars(symbol(), buffer + length,
-                                          bufferSize - length);
-  assert(length <= bufferSize - 1);
-  length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');
-  assert(length <= bufferSize - 1);
-  assert(length <= k_maxNameWithArgumentSize);
-  return length;
+  return Function::NameWithArgument(*this, symbol(), buffer, bufferSize);
 }
 
 Function::RecordDataBuffer *Function::recordData() const {

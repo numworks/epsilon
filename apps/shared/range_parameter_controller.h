@@ -15,7 +15,7 @@
 
 namespace Shared {
 
-using RangeCell =
+using ParameterCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                      Escher::ChevronView>;
 
@@ -48,7 +48,7 @@ class RangeParameterController
 
  private:
   void buttonAction();
-  void fillRangeCells();
+  void fillCells();
 
   class GridTypeController : public Escher::SelectableListViewController<
                                  Escher::SimpleListViewDataSource>,
@@ -89,9 +89,9 @@ class RangeParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::UnequalView>
       m_normalizeCell;
-  RangeCell m_xRangeCell;
-  RangeCell m_yRangeCell;
-  RangeCell m_gridTypeCell;
+  ParameterCell m_xRangeCell;
+  ParameterCell m_yRangeCell;
+  ParameterCell m_gridTypeCell;
   Escher::ButtonCell m_okButton;
   Shared::MessagePopUpController m_confirmPopUpController;
   SingleInteractiveCurveViewRangeController

@@ -62,10 +62,10 @@ void RangeParameterController::fillRangeCells() {
       strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting),
               bufferSize);
     } else {
-      float min = (axis == Axis::X) ? m_tempInteractiveRange.xMin()
-                                    : m_tempInteractiveRange.yMin();
-      float max = (axis == Axis::X) ? m_tempInteractiveRange.xMax()
-                                    : m_tempInteractiveRange.yMax();
+      float min = axis == Axis::X ? m_tempInteractiveRange.xMin()
+                                  : m_tempInteractiveRange.yMin();
+      float max = axis == Axis::X ? m_tempInteractiveRange.xMax()
+                                  : m_tempInteractiveRange.yMax();
       int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
@@ -80,7 +80,7 @@ void RangeParameterController::fillRangeCells() {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = 0;
     }
-    RangeCell *cell = (axis == Axis::X) ? &m_xRangeCell : &m_yRangeCell;
+    RangeCell *cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
 

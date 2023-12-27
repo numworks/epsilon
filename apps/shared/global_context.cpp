@@ -36,21 +36,21 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char *baseName) {
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
+  Context *context = Escher::App::app()->localContext();
   if (record.hasExtension(Ion::Storage::expExtension) ||
       record.hasExtension(Ion::Storage::lisExtension) ||
       record.hasExtension(Ion::Storage::matExtension)) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record),
-                                         Escher::App::app()->localContext());
-  } else if (record.hasExtension(Ion::Storage::funcExtension)) {
-    ExpiringPointer<ContinuousFunction> f =
-        continuousFunctionStore->modelForRecord(record);
+                                         context);
+  } else if (record.hasExtension(Ion::Storage::funcExtension) ||
+             record.hasExtension(Ion::Storage::regExtension)) {
+    CodePoint symbol = ContinuousFunctionProperties::k_cartesianSymbol;
+    if (record.hasExtension(Ion::Storage::funcExtension)) {
+      symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
+                   ->symbol();
+    }
     return PoincareHelpers::CreateLayout(
-        ExpressionForFunction(Symbol::Builder(f->symbol()), record),
-        Escher::App::app()->localContext());
-  } else if (record.hasExtension(Ion::Storage::regExtension)) {
-    return PoincareHelpers::CreateLayout(
-        ExpressionForFunction(Symbol::Builder('x'), record),
-        Escher::App::app()->localContext());
+        ExpressionForFunction(Symbol::Builder(symbol), record), context);
   } else {
     assert(record.hasExtension(Ion::Storage::seqExtension));
     return Sequence(record).layout();

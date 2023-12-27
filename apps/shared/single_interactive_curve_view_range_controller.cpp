@@ -25,6 +25,8 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
   float min = m_axis == Axis::X ? m_range->xMin() : m_range->yMin();
   float max = m_axis == Axis::X ? m_range->xMax() : m_range->yMax();
 
+  assert(m_axis == Axis::X || m_axis == Axis::Y);
+
   return m_autoParam != (m_range->isAuto(m_axis)) ||
          m_rangeParam.min() != min || m_rangeParam.max() != max;
 }
@@ -35,6 +37,7 @@ void SingleInteractiveCurveViewRangeController::extractParameters() {
   if (m_axis == Axis::X) {
     m_rangeParam = Range1D::ValidRangeBetween(m_range->xMin(), m_range->xMax());
   } else {
+    assert(m_axis == Axis::Y);
     m_rangeParam = Range1D::ValidRangeBetween(m_range->yMin(), m_range->yMax());
   }
   // Reset m_secondaryRangeParam
@@ -61,6 +64,8 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
        * confirmParameters. */
       m_secondaryRangeParam =
           Range1D::ValidRangeBetween(tempRange.yMin(), tempRange.yMax());
+    } else {
+      assert(m_axis == Axis::Y);
     }
   }
 }
@@ -88,6 +93,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
       m_range->setAuto(Axis::Y, true);
     }
   } else {
+    assert(m_axis == Axis::Y);
     m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
     m_range->setAuto(Axis::Y, m_autoParam);
   }

@@ -610,14 +610,13 @@ KDRect GraphView::boundsWithoutBanner() const {
 void GraphView::drawAxesAndGrid(KDContext *ctx, KDRect rect) const {
   InteractiveCurveViewRange *viewRange =
       static_cast<InteractiveCurveViewRange *>(range());
+  if (viewRange->gridType() == InteractiveCurveViewRange::GridType::Polar) {
+    PlotPolicy::WithPolarGrid::drawGrid(this, ctx, rect);
 
-  switch (viewRange->gridType()) {
-    case InteractiveCurveViewRange::GridType::Polar:
-      PlotPolicy::WithPolarGrid::drawGrid(this, ctx, rect);
-      break;
-    case InteractiveCurveViewRange::GridType::Cartesian:
-      PlotPolicy::WithCartesianGrid::drawGrid(this, ctx, rect);
-      break;
+  } else {
+    assert(viewRange->gridType() ==
+           InteractiveCurveViewRange::GridType::Cartesian);
+    PlotPolicy::WithCartesianGrid::drawGrid(this, ctx, rect);
   }
   drawAxes(this, ctx, rect);
 }

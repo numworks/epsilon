@@ -506,7 +506,6 @@ Expression ContinuousFunction::Model::expressionReduced(
             {.complexFormat = complexFormat, .angleUnit = angleUnit});
       }
     } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
-               !thisProperties.isScatterPlot() &&
                (record->fullName() == nullptr ||
                 record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Polar, inversePolar and cartesian equations are unnamed. Here

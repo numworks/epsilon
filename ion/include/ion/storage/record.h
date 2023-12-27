@@ -60,6 +60,7 @@ class Record {
   bool isNull() const { return m_fullNameCRC32 == 0; }
   Name name() const;
   const char* fullName() const;
+  size_t nameWithoutExtension(char* buffer, size_t bufferSize) const;
   Data value() const;
   ErrorStatus setValue(Data data);
   /* destroy asserts that the record can be destroyed while tryToDestroy returns

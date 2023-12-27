@@ -21,8 +21,7 @@ namespace Shared {
 size_t Function::NameWithArgument(Ion::Storage::Record record,
                                   CodePoint argument, char *buffer,
                                   size_t bufferSize) {
-  size_t length =
-      SymbolAbstract::TruncateExtension(buffer, record.fullName(), bufferSize);
+  size_t length = record.nameWithoutExtension(buffer, bufferSize);
   assert(0 < length && length < bufferSize - 1);
   length +=
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
@@ -59,7 +58,7 @@ int Function::printValue(double cursorT, double cursorX, double cursorY,
 }
 
 int Function::name(char *buffer, size_t bufferSize) const {
-  return SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
+  return nameWithoutExtension(buffer, bufferSize);
 }
 
 int Function::nameWithArgument(char *buffer, size_t bufferSize) {

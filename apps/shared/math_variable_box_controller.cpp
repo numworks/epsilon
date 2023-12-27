@@ -153,8 +153,8 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
     static_assert(Shared::Function::k_maxNameWithArgumentSize >
                       SymbolAbstractNode::k_maxNameSize,
                   "Forgot argument's size?");
-    symbolLength = SymbolAbstract::TruncateExtension(
-        symbolName, record.fullName(), SymbolAbstractNode::k_maxNameSize);
+    symbolLength = record.nameWithoutExtension(
+        symbolName, SymbolAbstractNode::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
     CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Storage::funcExtension)) {
@@ -278,8 +278,8 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   constexpr size_t nameToHandleMaxSize =
       Shared::Function::k_maxNameWithArgumentSize;
   char nameToHandle[nameToHandleMaxSize];
-  size_t nameLength = SymbolAbstract::TruncateExtension(
-      nameToHandle, record.fullName(), nameToHandleMaxSize);
+  size_t nameLength =
+      record.nameWithoutExtension(nameToHandle, nameToHandleMaxSize);
 
   if (m_currentPage == Page::Function || m_currentPage == Page::Sequence) {
     // Add parentheses to a function name, and braces to a sequence

@@ -81,6 +81,10 @@ const char *Record::fullName() const {
   return Storage::FileSystem::sharedFileSystem->nameOfRecord(*this).baseName;
 }
 
+size_t Record::nameWithoutExtension(char *buffer, size_t bufferSize) const {
+  return UTF8Helper::CopyUntilCodePoint(buffer, bufferSize, fullName(), '.');
+}
+
 Record::Data Record::value() const {
   return Storage::FileSystem::sharedFileSystem->valueOfRecord(*this);
 }

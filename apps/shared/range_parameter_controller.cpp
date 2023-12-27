@@ -189,14 +189,15 @@ void RangeParameterController::GridSelectionController::viewWillAppear() {
 
 bool RangeParameterController::GridSelectionController::handleEvent(
     Ion::Events::Event event) {
-  if (event == Ion::Events::Back || event == Ion::Events::Left ||
-      event == Ion::Events::OK || event == Ion::Events::EXE) {
-    // Exit the sub-menu.
-
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Update the view range before RangeParameterController::ViewWillAppear is
      * called. */
     m_viewRange->setGridType(selectedRow() == 0 ? GridType::Cartesian
                                                 : GridType::Polar);
+    stackController()->pop();
+    return true;
+  }
+  if (event == Ion::Events::Back || event == Ion::Events::Left) {
     stackController()->pop();
     return true;
   }

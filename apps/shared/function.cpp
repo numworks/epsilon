@@ -43,18 +43,20 @@ int Function::name(char *buffer, size_t bufferSize) const {
 }
 
 int Function::nameWithArgument(char *buffer, size_t bufferSize) {
-  int funcNameSize = name(buffer, bufferSize);
-  assert(funcNameSize > 0);
-  size_t result = funcNameSize;
-  assert(result <= bufferSize);
-  buffer[result++] = '(';
-  assert(result <= bufferSize);
+  size_t length = name(buffer, bufferSize);
+  assert(0 < length && length < bufferSize - 1);
+  length +=
+      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
+  assert(length < bufferSize - 1);
   assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
-  result += UTF8Decoder::CodePointToChars(symbol(), buffer + result,
-                                          bufferSize - result);
-  assert(result <= bufferSize);
-  result += strlcpy(buffer + result, ")", bufferSize - result);
-  return result;
+  length += UTF8Decoder::CodePointToChars(symbol(), buffer + length,
+                                          bufferSize - length);
+  assert(length <= bufferSize - 1);
+  length +=
+      SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');
+  assert(length <= bufferSize - 1);
+  assert(length <= k_maxNameWithArgumentSize);
+  return length;
 }
 
 Function::RecordDataBuffer *Function::recordData() const {

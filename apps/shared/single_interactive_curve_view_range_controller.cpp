@@ -27,8 +27,8 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
 
   assert(m_axis == Axis::X || m_axis == Axis::Y);
 
-  return m_autoParam != (m_range->isAuto(m_axis)) ||
-         m_rangeParam.min() != min || m_rangeParam.max() != max;
+  return m_autoParam != m_range->isAuto(m_axis) || m_rangeParam.min() != min ||
+         m_rangeParam.max() != max;
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {

@@ -104,7 +104,7 @@ app_shared_src = $(addprefix apps/shared/,\
 app_shared_src += $(app_shared_test_src)
 apps_src += $(app_shared_src)
 
-i18n_files += $(call i18n_with_universal_for,shared/colors)
+i18n_files += $(call i18n_with_universal_for,shared/i18n/colors)
 
 tests_src += $(addprefix apps/shared/test/,\
   function_alignement.cpp \

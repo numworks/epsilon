@@ -30,7 +30,7 @@ app_sequence_src = $(addprefix apps/sequence/,\
 app_sequence_src += $(app_sequence_test_src)
 apps_src += $(app_sequence_src)
 
-i18n_files += $(call i18n_without_universal_for,sequence/base)
+i18n_files += $(call i18n_without_universal_for,sequence/i18n/base)
 
 tests_src += $(addprefix apps/sequence/test/,\
   sequence.cpp\

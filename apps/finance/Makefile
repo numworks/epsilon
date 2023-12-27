@@ -16,7 +16,7 @@ app_finance_src = $(addprefix apps/finance/,\
 app_finance_src += $(app_finance_test_src)
 apps_src += $(app_finance_src)
 
-i18n_files += $(call i18n_with_universal_for,finance/base)
+i18n_files += $(call i18n_with_universal_for,finance/i18n/base)
 
 tests_src += $(addprefix apps/finance/test/,\
   finance.cpp \

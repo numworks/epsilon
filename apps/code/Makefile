@@ -37,8 +37,8 @@ tests_src += $(addprefix apps/code/test/,\
 app_code_src += $(app_code_test_src)
 apps_src += $(app_code_src)
 
-i18n_files += $(call i18n_with_universal_for,code/base)
-i18n_files += $(call i18n_with_universal_for,code/catalog)
-i18n_files += $(call i18n_with_universal_for,code/toolbox)
+i18n_files += $(call i18n_with_universal_for,code/i18n/base)
+i18n_files += $(call i18n_with_universal_for,code/i18n/catalog)
+i18n_files += $(call i18n_with_universal_for,code/i18n/toolbox)
 
 $(eval $(call depends_on_image,apps/code/app.cpp,apps/code/code_icon.png))

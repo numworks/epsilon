@@ -79,7 +79,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
 
   if (m_axis == Axis::X) {
     m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
-    m_range->setAuto(Axis::X, m_autoParam);
+    m_range->setAuto(m_axis, m_autoParam);
     if (m_autoParam && m_range->isAuto(Axis::Y)) {
       /* yMin and yMax must also be updated. We could avoid having to store
        * these values if we called m_range->computeRanges() instead, but it
@@ -95,7 +95,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
   } else {
     assert(m_axis == Axis::Y);
     m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
-    m_range->setAuto(Axis::Y, m_autoParam);
+    m_range->setAuto(m_axis, m_autoParam);
   }
   assert(!parametersAreDifferent());
 }

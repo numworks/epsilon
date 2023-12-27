@@ -15,15 +15,14 @@
 
 namespace Shared {
 
-using ParameterCell =
-    Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
-                     Escher::ChevronView>;
-
 class RangeParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
   using Axis = SingleInteractiveCurveViewRangeController::Axis;
 
+  using ParameterCell =
+      Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
+                       Escher::ChevronView>;
   RangeParameterController(
       Escher::Responder *parentResponder,
       InteractiveCurveViewRange *interactiveCurveViewRange);

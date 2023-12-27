@@ -27,13 +27,13 @@ class Axes : public CGrid {
     m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
     m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
   }
-  static void drawGrid(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect) {
-    CGrid::drawGrid(plotView, ctx, rect);
+    CGrid::DrawGrid(plotView, ctx, rect);
   }
   void drawAxesAndGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect) const {
-    drawGrid(plotView, ctx, rect);
+    DrawGrid(plotView, ctx, rect);
     drawAxes(plotView, ctx, rect);
   }
   void reloadAxes(AbstractPlotView *plotView) {
@@ -50,18 +50,18 @@ class Axes : public CGrid {
 
 class NoGrid {
  protected:
-  static void drawGrid(const AbstractPlotView *, KDContext *, KDRect) {}
+  static void DrawGrid(const AbstractPlotView *, KDContext *, KDRect) {}
 };
 
 class WithCartesianGrid {
  protected:
-  static void drawGrid(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect);
 
  private:
   constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_lightColor = Escher::Palette::GrayWhite;
-  static void drawGridLines(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGridLines(const AbstractPlotView *plotView, KDContext *ctx,
                             KDRect rect, AbstractPlotView::Axis parallel,
                             bool boldGrid);
 };
@@ -70,7 +70,7 @@ class WithPolarGrid {
   friend class Graph::GraphView;
 
  protected:
-  static void drawGrid(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGrid(const AbstractPlotView *plotView, KDContext *ctx,
                        KDRect rect);
 
  private:
@@ -79,7 +79,7 @@ class WithPolarGrid {
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
   constexpr static int k_angleStepInDegree = 15;
 
-  static void drawPolarCircles(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawPolarCircles(const AbstractPlotView *plotView, KDContext *ctx,
                                KDRect rect);
 };
 

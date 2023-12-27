@@ -611,12 +611,12 @@ void GraphView::drawAxesAndGrid(KDContext *ctx, KDRect rect) const {
   InteractiveCurveViewRange *viewRange =
       static_cast<InteractiveCurveViewRange *>(range());
   if (viewRange->gridType() == InteractiveCurveViewRange::GridType::Polar) {
-    PlotPolicy::WithPolarGrid::drawGrid(this, ctx, rect);
+    PlotPolicy::WithPolarGrid::DrawGrid(this, ctx, rect);
 
   } else {
     assert(viewRange->gridType() ==
            InteractiveCurveViewRange::GridType::Cartesian);
-    PlotPolicy::WithCartesianGrid::drawGrid(this, ctx, rect);
+    PlotPolicy::WithCartesianGrid::DrawGrid(this, ctx, rect);
   }
   drawAxes(this, ctx, rect);
 }

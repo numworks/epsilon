@@ -47,8 +47,8 @@ app_calculation_src = $(addprefix apps/calculation/,\
 app_calculation_src += $(app_calculation_test_src)
 apps_src += $(app_calculation_src)
 
-i18n_files += $(call i18n_without_universal_for,calculation/base)
-i18n_files += $(call i18n_without_universal_for,calculation/additional_results/unit_comparison)
+i18n_files += $(call i18n_without_universal_for,calculation/i18n/base)
+i18n_files += $(call i18n_without_universal_for,calculation/additional_results/i18n/unit_comparison)
 
 tests_src += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\

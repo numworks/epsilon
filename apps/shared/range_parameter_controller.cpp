@@ -49,7 +49,7 @@ HighlightCell *RangeParameterController::cell(int row) {
   return cells[row];
 }
 
-void RangeParameterController::fillRangeCells() {
+void RangeParameterController::fillCells() {
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr size_t bufferSize =
       2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
@@ -80,7 +80,7 @@ void RangeParameterController::fillRangeCells() {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = 0;
     }
-    RangeCell *cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
+    ParameterCell *cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
 
@@ -102,7 +102,7 @@ KDCoordinate RangeParameterController::separatorBeforeRow(int row) {
 void RangeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_normalizeCell.setVisible(!m_tempInteractiveRange.zoomNormalize());
-  fillRangeCells();
+  fillCells();
   if (selectedRow() == -1) {
     selectRow(0);
   }
@@ -136,14 +136,14 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
-      static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<ParameterCell *>(cell)->canBeActivatedByEvent(event)) {
     m_singleInteractiveCurveViewRangeController.setAxis(
         cell == &m_xRangeCell ? Axis::X : Axis::Y);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }
   if (cell == &m_gridTypeCell &&
-      static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<ParameterCell *>(cell)->canBeActivatedByEvent(event)) {
     stackController()->push(&m_gridTypeController);
     return true;
   }

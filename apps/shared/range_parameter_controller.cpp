@@ -34,7 +34,7 @@ RangeParameterController::RangeParameterController(
           this)),
       m_singleInteractiveCurveViewRangeController(
           parentResponder, &m_tempInteractiveRange, &m_confirmPopUpController),
-      m_gridSelectionController(parentResponder, &m_tempInteractiveRange) {
+      m_gridTypeController(parentResponder, &m_tempInteractiveRange) {
   m_normalizeCell.label()->setMessage(I18n::Message::MakeOrthonormal);
   m_xRangeCell.label()->setMessage(I18n::Message::ValuesOfX);
   m_yRangeCell.label()->setMessage(I18n::Message::ValuesOfY);
@@ -144,7 +144,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_gridTypeCell &&
       static_cast<RangeCell *>(cell)->canBeActivatedByEvent(event)) {
-    stackController()->push(&m_gridSelectionController);
+    stackController()->push(&m_gridTypeController);
     return true;
   }
   return false;

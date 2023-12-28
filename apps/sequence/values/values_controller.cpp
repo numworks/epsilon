@@ -85,8 +85,8 @@ int ValuesController::fillColumnName(int column, char *buffer) {
   }
   int sigmaLength = UTF8Decoder::CodePointToChars(
       UCodePointNArySummation, buffer, k_maxSizeOfColumnName);
-  buffer += sigmaLength;
-  return sigmaLength + seq->name(buffer, k_maxSizeOfColumnName - sigmaLength);
+  return sigmaLength +
+         seq->name(buffer + sigmaLength, k_maxSizeOfColumnName - sigmaLength);
 }
 
 // EditableCellTableViewController

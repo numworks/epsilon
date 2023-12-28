@@ -120,7 +120,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
       buffer[k] = '.';
       continue;
     }
-    if (intLength > firstDigitChar) {
+    if (static_cast<int>(intLength) > firstDigitChar) {
       assert(UTF8Decoder::CharSizeOfCodePoint(tempBuffer[intLength - 1]) == 1);
       buffer[k] = tempBuffer[--intLength];
       continue;

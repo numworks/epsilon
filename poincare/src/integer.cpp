@@ -176,7 +176,7 @@ size_t Integer::serialize(char *buffer, size_t bufferSize,
   }
 }
 
-int Integer::serializeInDecimal(char *buffer, int bufferSize) const {
+size_t Integer::serializeInDecimal(char *buffer, size_t bufferSize) const {
   Integer base(10);
   Integer abs = *this;
   abs.setNegative(false);
@@ -217,9 +217,9 @@ int Integer::serializeInDecimal(char *buffer, int bufferSize) const {
   return length;
 }
 
-int Integer::serializeInBinaryBase(char *buffer, int bufferSize, char symbol,
-                                   OMG::Base base) const {
-  int currentChar = 0;
+size_t Integer::serializeInBinaryBase(char *buffer, size_t bufferSize,
+                                      char symbol, OMG::Base base) const {
+  size_t currentChar = 0;
   // Check that we can at least write "0x0"
   if (bufferSize <= 4) {
     return bufferSize - 1;
@@ -239,7 +239,7 @@ int Integer::serializeInBinaryBase(char *buffer, int bufferSize, char symbol,
   }
 
   // Compute the required bufferSize to print the integer
-  int requiredBufferSize =
+  size_t requiredBufferSize =
       OMG::Print::MaxLengthOfUInt32(base) * (nbOfDigits - 1) +
       OMG::Print::LengthOfUInt32(base, digit(nbOfDigits - 1));
   // Don't forget 0x prefix and the null termination

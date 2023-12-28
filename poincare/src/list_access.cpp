@@ -27,7 +27,7 @@ size_t ListAccessNode<U>::serialize(
   size_t written = childAtIndex(k_listChildIndex)
                        ->serialize(buffer, bufferSize, floatDisplayMode,
                                    numberOfSignificantDigits);
-  if (written == -1 || bufferSize - written <= 0) {
+  if (written < 0 || bufferSize - written <= 0) {
     return -1;
   }
   return written + SerializationHelper::Prefix(

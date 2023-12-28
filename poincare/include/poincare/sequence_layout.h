@@ -78,10 +78,10 @@ class SequenceLayoutNode : public LayoutNode {
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override;
 
-  int writeDerivedClassInBuffer(const char* operatorName, char* buffer,
-                                int bufferSize,
-                                Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits) const;
+  size_t writeDerivedClassInBuffer(const char* operatorName, char* buffer,
+                                   size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const;
   LayoutNode* argumentLayout() { return childAtIndex(k_argumentLayoutIndex); }
   LayoutNode* variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode* lowerBoundLayout() {

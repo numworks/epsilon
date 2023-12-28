@@ -6,14 +6,14 @@
 #include <escher/stack_view_controller.h>
 #include <escher/transparent_image_view.h>
 
-#include "interactive_curve_view_range.h"
-
 namespace Shared {
+
+class InteractiveCurveViewRange;
 
 class GridTypeController : public Escher::ExplicitSelectableListViewController,
                            public Escher::SelectableListViewDelegate {
  public:
-  using GridType = InteractiveCurveViewRange::GridType;
+  enum class GridType { Cartesian, Polar };
   GridTypeController(Escher::Responder *parentResponder,
                      InteractiveCurveViewRange *interactiveCurveViewRange);
 

@@ -181,16 +181,16 @@ void RangeParameterController::GridSelectionController::viewWillAppear() {
   selectRow(m_viewRange->gridType() == GridType::Cartesian ? 0 : 1);
 }
 
-void RangeParameterController::GridSelectionController::viewDidDisappear() {
-  m_viewRange->setGridType(selectedRow() == 0 ? GridType::Cartesian
-                                              : GridType::Polar);
-}
-
 bool RangeParameterController::GridSelectionController::handleEvent(
     Ion::Events::Event event) {
   if (event == Ion::Events::Back || event == Ion::Events::Left ||
       event == Ion::Events::OK || event == Ion::Events::EXE) {
     // Exit the sub-menu.
+
+    /* Update the view range before RangeParameterController::ViewWillAppear is
+     * called. */
+    m_viewRange->setGridType(selectedRow() == 0 ? GridType::Cartesian
+                                                : GridType::Polar);
     stackController()->pop();
     return true;
   }

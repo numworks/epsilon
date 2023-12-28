@@ -57,7 +57,6 @@ class RangeParameterController
         InteractiveCurveViewRange *interactiveCurveViewRange);
 
     void viewWillAppear() override;
-    void viewDidDisappear() override;
 
     bool handleEvent(Ion::Events::Event event) override;
     Escher::StackViewController *stackController() {

@@ -9,6 +9,7 @@
 #include <escher/transparent_image_view.h>
 #include <escher/unequal_view.h>
 
+#include "grid_type_controller.h"
 #include "interactive_curve_view_range.h"
 #include "pop_up_controller.h"
 #include "single_interactive_curve_view_range_controller.h"
@@ -48,39 +49,6 @@ class RangeParameterController
  private:
   void buttonAction();
   void fillCells();
-
-  class GridTypeController
-      : public Escher::ExplicitSelectableListViewController,
-        public Escher::SelectableListViewDelegate {
-   public:
-    using GridType = InteractiveCurveViewRange::GridType;
-    GridTypeController(Escher::Responder *parentResponder,
-                       InteractiveCurveViewRange *interactiveCurveViewRange);
-
-    void viewWillAppear() override;
-
-    bool handleEvent(Ion::Events::Event event) override;
-    Escher::StackViewController *stackController() {
-      return static_cast<Escher::StackViewController *>(parentResponder());
-    }
-
-    const char *title() override {
-      return I18n::translate(I18n::Message::GridType);
-    }
-
-    int numberOfRows() const override { return 2; }
-    Escher::HighlightCell *cell(int row) override {
-      assert(row >= 0 & row < 2);
-      return &cells[row];
-    }
-
-   private:
-    using MenuCell =
-        Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                         Escher::TransparentImageView>;
-    MenuCell cells[2];
-    InteractiveCurveViewRange *m_viewRange;
-  };
 
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;

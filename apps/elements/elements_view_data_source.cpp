@@ -101,7 +101,7 @@ bool ElementsViewDataSource::elementNumberMatchesFilter(AtomicNumber z) const {
   constexpr size_t k_maxZSize = 4;
   char zBuffer[k_maxZSize];
   int zLength = Poincare::PrintInt::Left(z, zBuffer, k_maxZSize);
-  zBuffer[zLength] = '\0';
+  zBuffer[zLength] = 0;
   return UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, zBuffer);
 }
 

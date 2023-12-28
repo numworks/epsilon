@@ -16,15 +16,15 @@ namespace Poincare {
 void fillBufferWithStartingAndEndingSpace(char *nameBuffer, int sizeOfBuffer,
                                           const char *operatorName,
                                           bool startingSpace) {
-  int currentIndex = 0;
+  size_t currentIndex = 0;
   if (startingSpace) {
-    nameBuffer[0] = ' ';
-    currentIndex++;
+    currentIndex +=
+        SerializationHelper::CodePoint(nameBuffer, sizeOfBuffer, ' ');
   }
   currentIndex += strlcpy(nameBuffer + currentIndex, operatorName,
                           sizeOfBuffer - currentIndex);
-  nameBuffer[currentIndex] = ' ';
-  nameBuffer[currentIndex + 1] = 0;
+  SerializationHelper::CodePoint(nameBuffer + currentIndex,
+                                 sizeOfBuffer - currentIndex, ' ');
 }
 
 int LogicalOperatorNode::LogicalOperatorTypePrecedence(

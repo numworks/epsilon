@@ -49,7 +49,7 @@ int ParameteredExpressionNode::getVariables(Context* context,
     }
   }
   if (numberOfVariables < Expression::k_maxNumberOfVariables) {
-    variables[numberOfVariables * maxSizeVariable] = '\0';
+    variables[numberOfVariables * maxSizeVariable] = 0;
   }
   nextVariableIndex = numberOfVariables;
   static_assert(ParameteredExpression::ParameteredChildIndex() == 0 &&

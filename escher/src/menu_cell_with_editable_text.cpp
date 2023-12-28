@@ -9,7 +9,7 @@ AbstractWithEditableText::AbstractWithEditableText(
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
                   this, k_defaultFormat),
       m_editable(true) {
-  m_textBody[0] = '\0';
+  m_textBody[0] = 0;
 }
 
 // ChainedTextFieldDelegate

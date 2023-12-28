@@ -70,7 +70,7 @@ QUIZ_CASE(calculation_store) {
     for (size_t i = 0; i < calculationSize; i += patternSize) {
       memcpy(text + i, pattern, patternSize);
     }
-    text[calculationSize - 1] = '\0';
+    text[calculationSize - 1] = 0;
 
     while (store.remainingBufferSize() > minimalSize) {
       store.push(text, &globalContext);
@@ -101,7 +101,7 @@ QUIZ_CASE(calculation_store) {
     for (size_t i = 0; i < calculationSize; i += patternSize) {
       memcpy(text + i, pattern, patternSize);
     }
-    text[calculationSize - 1] = '\0';
+    text[calculationSize - 1] = 0;
 
     // Push big calculations until approaching the limit
     while (store.remainingBufferSize() > 2 * minimalSize) {

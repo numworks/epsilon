@@ -4,6 +4,7 @@
 #include <escher/container.h>
 #include <poincare/comparison.h>
 #include <poincare/print.h>
+#include <poincare/serialization_helper.h>
 
 #include "column_parameter_controller.h"
 #include "poincare_helpers.h"
@@ -96,13 +97,12 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
   size_t filledLength =
       fillColumnNameFromStore(referencedColumn(), templateString);
   if (filledLength < ClearColumnHelper::k_maxSizeOfColumnName - 1) {
-    templateString[filledLength] = '=';
-    templateString[filledLength + 1] = 0;
+    filledLength += SerializationHelper::CodePoint(
+        templateString + filledLength, k_sizeOfBuffer - filledLength, '=');
   }
   if (!templateLayout.isUninitialized()) {
-    templateLayout.serializeParsedExpression(templateString + filledLength + 1,
-                                             k_sizeOfBuffer - filledLength - 1,
-                                             nullptr);
+    templateLayout.serializeParsedExpression(
+        templateString + filledLength, k_sizeOfBuffer - filledLength, nullptr);
   }
   inputViewController()->setTextBody(templateString);
   inputViewController()->edit(

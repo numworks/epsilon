@@ -40,7 +40,7 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
   constexpr size_t k_bufferSize = 4;
   char zBuffer[k_bufferSize];
   int zLength = Poincare::PrintInt::Left(z, zBuffer, k_bufferSize - 1);
-  zBuffer[zLength] = '\0';
+  zBuffer[zLength] = 0;
   KDSize zSize = KDFont::Font(k_numbersFont)->stringSize(zBuffer);
 
   uint16_t a = ElementsDataBase::NumberOfMass(z);
@@ -48,11 +48,11 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
   KDSize aSize = KDSizeZero;
   if (a == ElementData::k_AUnknown) {
     symbolXOffset += zSize.width();
-    aBuffer[0] = '\0';
+    aBuffer[0] = 0;
   } else {
     assert(a < 1000);
     int aLength = Poincare::PrintInt::Left(a, aBuffer, k_bufferSize - 1);
-    aBuffer[aLength] = '\0';
+    aBuffer[aLength] = 0;
     aSize = KDFont::Font(k_numbersFont)->stringSize(aBuffer);
     assert(aSize.width() >= zSize.width());  // since A >= Z
     symbolXOffset += aSize.width();

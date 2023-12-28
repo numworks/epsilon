@@ -133,14 +133,16 @@ void CalculationParameterController::fillAreaCell() {
   char secondPlaceHolder[bufferSize];
   if (!ShouldDisplayChevronInAreaCell()) {
     // If there are only 2 functions, display "Area between f(x) and g(x)"
-    secondPlaceHolder[0] = ' ';
+    size_t numberOfChars = Poincare::SerializationHelper::CodePoint(
+        secondPlaceHolder, bufferSize, ' ');
     Ion::Storage::Record secondRecord =
         AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
             0, m_record);
     ExpiringPointer<ContinuousFunction> secondFunction =
         App::app()->functionStore()->modelForRecord(secondRecord);
-    secondFunction->nameWithArgument(secondPlaceHolder + 1, bufferSize);
-    if (strcmp(mainFunctionName, secondPlaceHolder + 1) == 0) {
+    secondFunction->nameWithArgument(secondPlaceHolder + numberOfChars,
+                                     bufferSize);
+    if (strcmp(mainFunctionName, secondPlaceHolder + numberOfChars) == 0) {
       // If both functions are name "y", display "Area between curves"
       m_areaCell.label()->setMessageWithPlaceholders(
           I18n::Message::AreaBetweenCurves);

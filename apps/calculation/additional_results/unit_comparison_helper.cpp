@@ -4,6 +4,7 @@
 #include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/print_float.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/unit.h>
 
 #include <array>
@@ -575,9 +576,8 @@ void FillRatioBuffer(double ratio, char *textBuffer, int bufferSize) {
   // Add % at the end
   if (withPercentage) {
     assert(bufferIndex < bufferSize - 1);
-    textBuffer[bufferIndex] = '%';
-    bufferIndex++;
-    textBuffer[bufferIndex] = 0;
+    bufferIndex += SerializationHelper::CodePoint(
+        textBuffer + bufferIndex, bufferSize - bufferIndex, '%');
   }
 }
 

@@ -137,8 +137,8 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     Context *context, Expression *simplifiedEquations) {
   m_numberOfResolutionVariables = 0;
   m_numberOfUserVariables = 0;
-  m_variables[0][0] = '\0';
-  m_userVariables[0][0] = '\0';
+  m_variables[0][0] = 0;
+  m_userVariables[0][0] = 0;
   m_complexFormat = Preferences::sharedPreferences->complexFormat();
 
   bool forbidSimultaneousEquation = Preferences::sharedPreferences->examMode()
@@ -352,7 +352,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       parameterIndex++;
       assert(parameterNameLength >= 1 &&
              parameterNameLength < parameterNameSize);
-      parameterName[parameterNameLength] = '\0';
+      parameterName[parameterNameLength] = 0;
       ab.addChildAtIndexInPlace(
           Symbol::Builder(parameterName, parameterNameLength), abChildren,
           abChildren);

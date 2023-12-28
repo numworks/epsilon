@@ -29,7 +29,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       true);
 
   assert(numberOfChar < k_textBufferSize);
-  buffer[numberOfChar++] = '\0';
+  buffer[numberOfChar++] = 0;
   bannerView()->abscissaValue()->setEditing(false);
   bannerView()->abscissaValue()->setText(buffer);
 
@@ -43,7 +43,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       numberOfSignificantDigits(cappedNumberOfSignificantDigits), context,
       false);
   assert(numberOfChar < k_textBufferSize);
-  buffer[numberOfChar++] = '\0';
+  buffer[numberOfChar++] = 0;
   bannerView()->ordinateView()->setText(buffer);
 
   bannerView()->reload();

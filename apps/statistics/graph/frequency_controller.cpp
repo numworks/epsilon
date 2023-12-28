@@ -4,6 +4,7 @@
 #include <escher/container.h>
 #include <omg/ieee754.h>
 #include <poincare/print.h>
+#include <poincare/serialization_helper.h>
 
 #include "../app.h"
 
@@ -72,9 +73,8 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
     labelBuffer[0] = 0;
     return;
   }
-  assert(labelBuffer[length - 1] != '%');
-  labelBuffer[length] = '%';
-  labelBuffer[length + 1] = 0;
+  length += Poincare::SerializationHelper::CodePoint(labelBuffer + length,
+                                                     maxSize - length, '%');
 }
 
 void FrequencyController::reloadValueInBanner(

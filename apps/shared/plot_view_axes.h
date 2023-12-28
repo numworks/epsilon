@@ -161,7 +161,7 @@ class LabeledAxis : public AbstractLabeledAxis {
  public:
   LabeledAxis() {
     for (size_t i = 0; i < N; i++) {
-      m_labels[i][0] = '\0';
+      m_labels[i][0] = 0;
     }
   }
 

@@ -46,7 +46,7 @@ HighlightCell *RangeParameterController::cell(int row) {
 
 void RangeParameterController::fillRangeCells() {
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
-  constexpr int bufferSize =
+  constexpr size_t bufferSize =
       2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
   char buffer[bufferSize];
   for (int i = 0; i < 2; ++i) {
@@ -60,7 +60,7 @@ void RangeParameterController::fillRangeCells() {
                          : m_tempInteractiveRange.yMin();
       float max = i == 0 ? m_tempInteractiveRange.xMax()
                          : m_tempInteractiveRange.yMax();
-      int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      size_t numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
       numberOfChars += SerializationHelper::CodePoint(

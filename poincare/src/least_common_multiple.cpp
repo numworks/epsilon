@@ -16,8 +16,9 @@ Layout LeastCommonMultipleNode::createLayout(
       LeastCommonMultiple::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int LeastCommonMultipleNode::serialize(
-    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t LeastCommonMultipleNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,

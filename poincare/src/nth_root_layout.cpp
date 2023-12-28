@@ -78,9 +78,10 @@ NthRootLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
       childIndex, k_radicandLayoutIndex);
 }
 
-int NthRootLayoutNode::serialize(char *buffer, int bufferSize,
-                                 Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits) const {
+size_t NthRootLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   if (isSquareRoot()) {
     /* Case: squareRoot(x) or root(x,empty):
      * Write "SquareRootSymbol(radicandLayout) */

@@ -19,7 +19,7 @@ void TextToInsertForCommandMessage(I18n::Message message, char* buffer,
 void TextToInsertForCommandText(const char* command, int commandLength,
                                 char* buffer, int bufferSize,
                                 bool replaceArgsWithEmptyChar) {
-  int index = 0;
+  size_t index = 0;
   int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
   bool insideQuote = false;

@@ -347,10 +347,11 @@ Layout MultiplicationNode::createLayout(
       });
 }
 
-int MultiplicationNode::serialize(char *buffer, int bufferSize,
-                                  Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits) const {
-  constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
+size_t MultiplicationNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  constexpr size_t stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
   SerializationHelper::CodePoint(string, stringMaxSize,
                                  UCodePointMultiplicationSign);

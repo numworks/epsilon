@@ -20,9 +20,9 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
   CodePoint combinedCodePoint() const { return m_combinedCodePoint; }
 
   // LayoutNode
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(CombinedCodePointsLayoutNode); }
@@ -31,7 +31,7 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
     stream << "CombinedCodePointsLayout";
   }
   void logAttributes(std::ostream &stream) const override {
-    constexpr int bufferSize = 2 * CodePoint::MaxCodePointCharLength + 1;
+    constexpr size_t bufferSize = 2 * CodePoint::MaxCodePointCharLength + 1;
     char buffer[bufferSize];
     serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal,
               PrintFloat::k_floatNumberOfSignificantDigits);

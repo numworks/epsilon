@@ -26,9 +26,9 @@ Layout DeterminantNode::createLayout(
       Determinant::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int DeterminantNode::serialize(char* buffer, int bufferSize,
-                               Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfSignificantDigits) const {
+size_t DeterminantNode::serialize(char* buffer, size_t bufferSize,
+                                  Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Determinant::s_functionHelper.aliasesList().mainAlias());

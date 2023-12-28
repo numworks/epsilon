@@ -11,9 +11,9 @@ class ListSequenceLayoutNode final : public LayoutNode {
  public:
   // Layout
   Type type() const override { return Type::ListSequenceLayout; }
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(ListSequenceLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if POINCARE_TREE_LOG

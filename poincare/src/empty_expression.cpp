@@ -5,9 +5,10 @@
 
 namespace Poincare {
 
-int EmptyExpressionNode::serialize(char* buffer, int bufferSize,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
+size_t EmptyExpressionNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::CodePoint(buffer, bufferSize, UCodePointEmpty);
 }
 

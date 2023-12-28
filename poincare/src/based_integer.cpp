@@ -49,9 +49,9 @@ void BasedIntegerNode::logAttributes(std::ostream &stream) const {
 }
 #endif
 
-int BasedIntegerNode::serialize(char *buffer, int bufferSize,
-                                Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits) const {
+size_t BasedIntegerNode::serialize(char *buffer, size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const {
   return integer().serialize(buffer, bufferSize, m_base);
 }
 

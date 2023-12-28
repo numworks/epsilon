@@ -21,9 +21,9 @@ Layout SumNode::createSumAndProductLayout(Layout argumentLayout,
                             superscriptLayout);
 }
 
-int SumNode::serialize(char* buffer, int bufferSize,
-                       Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits) const {
+size_t SumNode::serialize(char* buffer, size_t bufferSize,
+                          Preferences::PrintFloatMode floatDisplayMode,
+                          int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Sum::s_functionHelper.aliasesList().mainAlias());

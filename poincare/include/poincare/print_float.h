@@ -109,7 +109,7 @@ class PrintFloat {
                               Long* digit);
     static void MultiplySmallLongByTen(Long& smallLong);
 
-    int serialize(char* buffer, int bufferSize) const;
+    size_t serialize(char* buffer, size_t bufferSize) const;
     uint32_t digit(uint8_t i) const {
       assert(i >= 0 && i < k_numberOfDigits);
       return m_digits[i];
@@ -118,7 +118,7 @@ class PrintFloat {
    private:
     constexpr static int64_t k_base = 1000000000;
     constexpr static int k_numberOfDigits = 2;
-    constexpr static int k_maxNumberOfCharsForDigit = 9;
+    constexpr static size_t k_maxNumberOfCharsForDigit = 9;
 
     bool m_negative;
     uint32_t m_digits[k_numberOfDigits];

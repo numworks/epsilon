@@ -31,7 +31,7 @@ class Sequence : public Function {
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return k_sequenceSymbol; }
-  int nameWithArgumentAndType(char *buffer, size_t bufferSize);
+  size_t nameWithArgumentAndType(char *buffer, size_t bufferSize);
 
   // MetaData getters
   Type type() const { return recordData()->type(); }

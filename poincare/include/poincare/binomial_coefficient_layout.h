@@ -26,9 +26,9 @@ class BinomialCoefficientLayoutNode final : public LayoutNode {
       int childIndex) const override;
 
   // SerializableNode
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientLayoutNode); }

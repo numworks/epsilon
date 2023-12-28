@@ -21,14 +21,14 @@ enum class ParenthesisType : uint8_t {
   None,
 };
 
-int ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
-                                                       int length = -1);
+size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
+                                                          size_t length = -1);
 
 // SerializableReference to text
-int Infix(const TreeNode* node, char* buffer, int bufferSize,
-          Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,
-          const char* operatorName, int firstChildIndex = 0,
-          int lastChildIndex = -1);
+size_t Infix(const TreeNode* node, char* buffer, size_t bufferSize,
+             Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,
+             const char* operatorName, int firstChildIndex = 0,
+             int lastChildIndex = -1);
 
 /* ParenthesisType::System add System parentheses wrapping the layout children.
  * It is used when serializing layouts to avoid creating a parsable string
@@ -37,19 +37,19 @@ int Infix(const TreeNode* node, char* buffer, int bufferSize,
  * instead of "abs(2)(3)".
  *
  * /!\ A layout that calls Prefix should put true to needsSystemParentheses */
-int Prefix(const TreeNode* node, char* buffer, int bufferSize,
-           Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,
-           const char* operatorName,
-           ParenthesisType typeOfParenthesis = ParenthesisType::Classic,
-           int lastChildIndex = -1);
+size_t Prefix(const TreeNode* node, char* buffer, size_t bufferSize,
+              Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,
+              const char* operatorName,
+              ParenthesisType typeOfParenthesis = ParenthesisType::Classic,
+              int lastChildIndex = -1);
 
-int SerializeChild(const TreeNode* childNode, const TreeNode* parentNode,
-                   char* buffer, int bufferSize,
-                   Preferences::PrintFloatMode floatDisplayMode,
-                   int numberOfDigits);
+size_t SerializeChild(const TreeNode* childNode, const TreeNode* parentNode,
+                      char* buffer, size_t bufferSize,
+                      Preferences::PrintFloatMode floatDisplayMode,
+                      int numberOfDigits);
 
 // Write one code point in a buffer and a null-terminating char
-int CodePoint(char* buffer, int bufferSize, CodePoint c);
+size_t CodePoint(char* buffer, size_t bufferSize, CodePoint c);
 
 /* Default childNeedsSystemParenthesesAtSerialization for postfix operators
  * such as % and ! */

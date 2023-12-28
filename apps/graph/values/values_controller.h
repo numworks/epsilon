@@ -106,7 +106,7 @@ class ValuesController : public Shared::ValuesController,
   }
 
   // ColumnHelper
-  int fillColumnName(int column, char *buffer) override;
+  size_t fillColumnName(int column, char *buffer) override;
 
   // EditableCellTableViewController
   void reloadEditedCell(int column, int row) override;

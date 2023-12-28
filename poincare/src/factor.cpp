@@ -28,9 +28,9 @@ Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       Factor::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int FactorNode::serialize(char* buffer, int bufferSize,
-                          Preferences::PrintFloatMode floatDisplayMode,
-                          int numberOfSignificantDigits) const {
+size_t FactorNode::serialize(char* buffer, size_t bufferSize,
+                             Preferences::PrintFloatMode floatDisplayMode,
+                             int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Factor::s_functionHelper.aliasesList().mainAlias());

@@ -147,7 +147,8 @@ Integer::Integer(const char *digits, size_t length, bool negative, OMG::Base b)
 
 // Serialization
 
-int Integer::serialize(char *buffer, int bufferSize, OMG::Base base) const {
+size_t Integer::serialize(char *buffer, size_t bufferSize,
+                          OMG::Base base) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -181,7 +182,7 @@ int Integer::serializeInDecimal(char *buffer, int bufferSize) const {
   abs.setNegative(false);
   IntegerDivision d = udiv(abs, base);
 
-  int length = 0;
+  size_t length = 0;
   if (isZero()) {
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '0');

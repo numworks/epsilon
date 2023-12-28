@@ -56,8 +56,8 @@ void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
   draw(ctx, p, style, LayoutSelection());
 }
 
-int Layout::serializeParsedExpression(char *buffer, int bufferSize,
-                                      Context *context) const {
+size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
+                                         Context *context) const {
   /* This method fixes the following problem:
    * Some layouts have a special serialization so they can be parsed afterwards,
    * such has logBase3(2) that serializes as log_{3}(2). When handling the

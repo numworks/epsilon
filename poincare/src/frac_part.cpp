@@ -20,9 +20,9 @@ Layout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       FracPart::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int FracPartNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t FracPartNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       FracPart::s_functionHelper.aliasesList().mainAlias());

@@ -27,9 +27,10 @@ Layout MatrixTransposeNode::createLayout(
       MatrixTranspose::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int MatrixTransposeNode::serialize(char* buffer, int bufferSize,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
+size_t MatrixTransposeNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       MatrixTranspose::s_functionHelper.aliasesList().mainAlias());

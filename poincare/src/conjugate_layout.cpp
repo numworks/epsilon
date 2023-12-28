@@ -12,9 +12,10 @@ ConjugateLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
   return StandardDeletionMethodForLayoutContainingArgument(childIndex, 0);
 }
 
-int ConjugateLayoutNode::serialize(char* buffer, int bufferSize,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
+size_t ConjugateLayoutNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Conjugate::s_functionHelper.aliasesList().mainAlias(),

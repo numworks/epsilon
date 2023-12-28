@@ -12,9 +12,9 @@ Layout PointNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                               k_prefix, context);
 }
 
-int PointNode::serialize(char* buffer, int bufferSize,
-                         Preferences::PrintFloatMode floatDisplayMode,
-                         int significantDigits) const {
+size_t PointNode::serialize(char* buffer, size_t bufferSize,
+                            Preferences::PrintFloatMode floatDisplayMode,
+                            int significantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode,
                                      significantDigits, k_prefix);
 }

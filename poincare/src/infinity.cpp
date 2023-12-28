@@ -14,14 +14,14 @@ Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits,
                                   Context* context) const {
   char buffer[5];
-  int numberOfChars =
+  size_t numberOfChars =
       serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);
 }
 
-int InfinityNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t InfinityNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }

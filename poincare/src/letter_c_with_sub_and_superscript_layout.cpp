@@ -15,8 +15,9 @@ const uint8_t symbolUpperHalf[] = {
     0x6B, 0x8D, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF,
 };
 
-int LetterCWithSubAndSuperscriptLayoutNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t LetterCWithSubAndSuperscriptLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,

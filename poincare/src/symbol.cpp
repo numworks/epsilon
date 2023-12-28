@@ -114,9 +114,9 @@ bool SymbolNode::isUnknown() const {
 }
 
 Symbol Symbol::Builder(CodePoint name) {
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
-  int codePointLength =
+  size_t codePointLength =
       SerializationHelper::CodePoint(buffer, bufferSize - 1, name);
   assert(codePointLength < bufferSize);
   return Symbol::Builder(buffer, codePointLength);

@@ -146,9 +146,9 @@ Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return res;
 }
 
-int DecimalNode::serialize(char *buffer, int bufferSize,
-                           Preferences::PrintFloatMode floatDisplayMode,
-                           int numberOfSignificantDigits) const {
+size_t DecimalNode::serialize(char *buffer, size_t bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits) const {
   return convertToText(buffer, bufferSize, floatDisplayMode,
                        numberOfSignificantDigits);
 }

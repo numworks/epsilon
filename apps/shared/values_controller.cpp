@@ -479,7 +479,7 @@ void ValuesController::clearSelectedColumn() {
   m_selectableTableView.resetSizeAndOffsetMemoization();
 }
 
-int ValuesController::fillColumnName(int column, char *buffer) {
+size_t ValuesController::fillColumnName(int column, char *buffer) {
   assert(typeAtLocation(column, 0) == k_abscissaTitleCellType);
   return FillColumnNameWithMessage(buffer,
                                    valuesParameterMessageAtColumn(column));

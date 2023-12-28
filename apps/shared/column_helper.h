@@ -17,7 +17,7 @@ class ColumnNameHelper {
   /* this is an ad hoc value. Most of the time, colum_name are very short like
    * "X1", "n" or "f(x)" */
   constexpr static int k_maxSizeOfColumnName = 16;
-  virtual int fillColumnName(int column, char* buffer) = 0;
+  virtual size_t fillColumnName(int column, char* buffer) = 0;
 
  protected:
   static int FillColumnNameWithMessage(char* buffer, I18n::Message message);
@@ -68,7 +68,7 @@ class StoreColumnHelper {
   bool fillColumnWithFormula(const char* text);
 
   /* Clear series */
-  int fillColumnNameFromStore(int column, char* buffer) {
+  size_t fillColumnNameFromStore(int column, char* buffer) {
     return store()->fillColumnName(store()->seriesAtColumn(column),
                                    store()->relativeColumn(column), buffer);
   }

@@ -8,8 +8,9 @@
 namespace Poincare {
 
 // SerializableNode
-int PiecewiseOperatorLayoutNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t PiecewiseOperatorLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   assert(numberOfColumns() == 2);
   int lastChildIndex = numberOfChildren() - 1;

@@ -30,10 +30,10 @@ I18n::Message Sequence::parameterMessageName() const {
   return I18n::Message::N;
 }
 
-int Sequence::nameWithArgumentAndType(char *buffer, size_t bufferSize) {
-  int result = nameWithArgument(buffer, bufferSize);
+size_t Sequence::nameWithArgumentAndType(char *buffer, size_t bufferSize) {
+  size_t result = nameWithArgument(buffer, bufferSize);
   assert(result >= 1);
-  int offset = result - 1;
+  size_t offset = result - 1;
   switch (type()) {
     case Type::SingleRecurrence:
       result += strlcpy(buffer + offset, "+1)", bufferSize - offset);

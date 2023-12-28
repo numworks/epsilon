@@ -28,8 +28,9 @@ Layout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
   return layoutToPointTo;
 }
 
-int HorizontalLayoutNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t HorizontalLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
@@ -40,7 +41,7 @@ int HorizontalLayoutNode::serialize(
     return 0;
   }
 
-  int numberOfChar = 0;
+  size_t numberOfChar = 0;
   // Write the children, adding multiplication signs if needed
   LayoutNode *currentChild = childAtIndex(0);
   LayoutNode *nextChild = nullptr;

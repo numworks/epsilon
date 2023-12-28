@@ -216,12 +216,12 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
 
 // ColumnHelper
 
-int ValuesController::fillColumnName(int column, char *buffer) {
+size_t ValuesController::fillColumnName(int column, char *buffer) {
   if (typeAtLocation(column, 0) == k_functionTitleCellType) {
     Layout functionTitle = functionTitleLayout(column, true);
     constexpr size_t bufferNameSize =
         ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    int size = functionTitle.serializeForParsing(buffer, bufferNameSize);
+    size_t size = functionTitle.serializeForParsing(buffer, bufferNameSize);
     // Serialization may have introduced system parentheses.
     SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
         buffer, bufferNameSize - 1);

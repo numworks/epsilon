@@ -125,7 +125,8 @@ void CalculationParameterController::fillAreaCell() {
   // Get the name of the selected function
   ExpiringPointer<ContinuousFunction> mainFunction =
       App::app()->functionStore()->modelForRecord(m_record);
-  constexpr static int bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+  constexpr static size_t bufferSize =
+      Shared::Function::k_maxNameWithArgumentSize;
   char mainFunctionName[bufferSize];
   mainFunction->nameWithArgument(mainFunctionName, bufferSize);
 

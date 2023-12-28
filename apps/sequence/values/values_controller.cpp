@@ -72,7 +72,7 @@ int ValuesController::computeIndexAfterCumulatedSize(KDCoordinate offset,
 
 // ColumnHelper
 
-int ValuesController::fillColumnName(int column, char *buffer) {
+size_t ValuesController::fillColumnName(int column, char *buffer) {
   if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return Shared::ValuesController::fillColumnName(column, buffer);
   }
@@ -83,7 +83,7 @@ int ValuesController::fillColumnName(int column, char *buffer) {
   if (!isSumColumn) {
     return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
   }
-  int sigmaLength = SerializationHelper::CodePoint(
+  size_t sigmaLength = SerializationHelper::CodePoint(
       buffer, k_maxSizeOfColumnName, UCodePointNArySummation);
   return sigmaLength +
          seq->name(buffer + sigmaLength, k_maxSizeOfColumnName - sigmaLength);

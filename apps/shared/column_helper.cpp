@@ -91,9 +91,9 @@ void StoreColumnHelper::displayFormulaInput() {
 }
 
 void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
-  constexpr int k_sizeOfBuffer = Constant::MaxSerializedExpressionSize;
+  constexpr size_t k_sizeOfBuffer = Constant::MaxSerializedExpressionSize;
   char templateString[k_sizeOfBuffer];
-  int filledLength =
+  size_t filledLength =
       fillColumnNameFromStore(referencedColumn(), templateString);
   if (filledLength < ClearColumnHelper::k_maxSizeOfColumnName - 1) {
     templateString[filledLength] = '=';

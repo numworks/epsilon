@@ -47,7 +47,7 @@ class UnitNode final : public ExpressionNode {
     static const Prefix* EmptyPrefix();
     const char* symbol() const { return m_symbol; }
     int8_t exponent() const { return m_exponent; }
-    int serialize(char* buffer, int bufferSize) const;
+    size_t serialize(char* buffer, size_t bufferSize) const;
 
    private:
     constexpr Prefix(const char* symbol, int8_t exponent)
@@ -182,7 +182,8 @@ class UnitNode final : public ExpressionNode {
     bool isOutputPrefixable() const {
       return m_outputPrefixable != Prefixable::None;
     }
-    int serialize(char* buffer, int bufferSize, const Prefix* prefix) const;
+    size_t serialize(char* buffer, size_t bufferSize,
+                     const Prefix* prefix) const;
     bool canParseWithEquivalents(const char* symbol, size_t length,
                                  const Representative** representative,
                                  const Prefix** prefix) const;
@@ -989,9 +990,9 @@ class UnitNode final : public ExpressionNode {
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
                       Context* context) const override;
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   /* Approximation */
   Evaluation<float> approximate(

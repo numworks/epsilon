@@ -62,8 +62,8 @@ void DoublePairStore::tidy() {
   }
 }
 
-int DoublePairStore::fillColumnName(int series, int column,
-                                    char *buffer) const {
+size_t DoublePairStore::fillColumnName(int series, int column,
+                                       char *buffer) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(column >= 0 && column < k_numberOfColumnsPerSeries);
   buffer[0] = columnNamePrefixAtIndex(column);
@@ -424,7 +424,7 @@ bool DoublePairStore::updateSeries(int series, bool delayUpdate) {
 
 bool DoublePairStore::storeColumn(int series, int i) const {
   char name[k_columnNamesLength + 1];
-  int nameLength = fillColumnName(series, i, name);
+  size_t nameLength = fillColumnName(series, i, name);
   if (lengthOfColumn(series, i) == 0) {
     Record(name, lisExtension).destroy();
     return true;

@@ -36,9 +36,9 @@ int DependencyNode::getPolynomialCoefficients(Context *context,
   return result;
 }
 
-int DependencyNode::serialize(char *buffer, int bufferSize,
-                              Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits) const {
+size_t DependencyNode::serialize(char *buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Dependency::s_functionHelper.aliasesList().mainAlias());

@@ -28,7 +28,7 @@ class SlopeTableCell : public DoubleColumnTableCell,
   }
 
   // ClearColumnHelper
-  int fillColumnName(int column, char *buffer) override {
+  size_t fillColumnName(int column, char *buffer) override {
     return fillColumnNameFromStore(column, buffer);
   }
   // StoreColumnHelper

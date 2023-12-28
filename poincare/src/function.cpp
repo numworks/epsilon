@@ -61,9 +61,9 @@ Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                               numberOfSignificantDigits, m_name, context);
 }
 
-int FunctionNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t FunctionNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode,
                                      numberOfSignificantDigits, m_name);
 }

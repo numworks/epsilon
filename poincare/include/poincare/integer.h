@@ -110,8 +110,8 @@ class Integer final : public TreeHandle {
   }  // 0 is always positive
 
   // Serialization
-  int serialize(char *buffer, int bufferSize,
-                OMG::Base base = OMG::Base::Decimal) const;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   OMG::Base base = OMG::Base::Decimal) const;
 
   // Layout
   Layout createLayout(OMG::Base base = OMG::Base::Decimal) const;

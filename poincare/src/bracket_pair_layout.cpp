@@ -40,11 +40,12 @@ void BracketPairLayoutNode::render(KDContext* ctx, KDPoint p,
                    style);
 }
 
-int BracketPairLayoutNode::serializeWithSymbol(
-    char symbolOpen, char symbolClose, char* buffer, int bufferSize,
+size_t BracketPairLayoutNode::serializeWithSymbol(
+    char symbolOpen, char symbolClose, char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  int length = SerializationHelper::CodePoint(buffer, bufferSize, symbolOpen);
+  size_t length =
+      SerializationHelper::CodePoint(buffer, bufferSize, symbolOpen);
   if (length >= bufferSize - 1) {
     return bufferSize - 1;
   }

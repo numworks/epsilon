@@ -36,9 +36,9 @@ Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       Randint::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int RandintNode::serialize(char* buffer, int bufferSize,
-                           Preferences::PrintFloatMode floatDisplayMode,
-                           int numberOfSignificantDigits) const {
+size_t RandintNode::serialize(char* buffer, size_t bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       createExpressionWithTwoChildren().node(), buffer, bufferSize,
       floatDisplayMode, numberOfSignificantDigits,

@@ -118,8 +118,8 @@ int ExpressionsListController::numberOfRows() const {
   return nbOfRows;
 }
 
-int ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
-                                           HighlightCell* cell, int index) {
+size_t ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
+                                              HighlightCell* cell, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   ScrollableThreeLayoutsView::SubviewPosition position =
       static_cast<AdditionalResultCell*>(cell)

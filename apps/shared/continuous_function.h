@@ -49,11 +49,12 @@ class ContinuousFunction : public Function {
     return properties().symbolMessage();
   }
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
-  int nameWithArgument(char *buffer, size_t bufferSize) override;
+  size_t nameWithArgument(char *buffer, size_t bufferSize) override;
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
-  int printValue(double cursorT, double cursorX, double cursorY, char *buffer,
-                 int bufferSize, int precision, Poincare::Context *context,
-                 bool symbolValue = false) override;
+  size_t printValue(double cursorT, double cursorX, double cursorY,
+                    char *buffer, size_t bufferSize, int precision,
+                    Poincare::Context *context,
+                    bool symbolValue = false) override;
   // Return true if the ContinuousFunction is active
   bool isActive() const override {
     return Function::isActive() && properties().canBeActive();
@@ -149,7 +150,7 @@ class ContinuousFunction : public Function {
     return recordData()->setDisplayDerivative(display);
   }
   // Insert derivative name with argument in buffer (f'(x) or y')
-  int derivativeNameWithArgument(char *buffer, size_t bufferSize);
+  size_t derivativeNameWithArgument(char *buffer, size_t bufferSize);
   // Approximate derivative at x, on given sub curve if there is one
   double approximateDerivative(double x, Poincare::Context *context,
                                int subCurveIndex = 0,

@@ -37,9 +37,9 @@ void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell *cell,
   }
 }
 
-int InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
-  int length = strlcpy(buffer, I18n::translate(I18n::Message::Group),
-                       Shared::ColumnParameterController::k_titleBufferSize);
+size_t InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
+  size_t length = strlcpy(buffer, I18n::translate(I18n::Message::Group),
+                          Shared::ColumnParameterController::k_titleBufferSize);
   buffer[length++] = '0' + column;
   buffer[length] = '\0';
   assert(length < Shared::ColumnParameterController::k_titleBufferSize);

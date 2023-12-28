@@ -74,10 +74,10 @@ void IllustratedExpressionsListController::setShowIllustration(
   m_listController.selectableListView()->resetSizeAndOffsetMemoization();
 }
 
-int IllustratedExpressionsListController::textAtIndex(char* buffer,
-                                                      size_t bufferSize,
-                                                      HighlightCell* cell,
-                                                      int index) {
+size_t IllustratedExpressionsListController::textAtIndex(char* buffer,
+                                                         size_t bufferSize,
+                                                         HighlightCell* cell,
+                                                         int index) {
   if (index == 0) {
     // Illustration cell does not have a text
     buffer[0] = 0;

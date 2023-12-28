@@ -19,9 +19,10 @@ Layout RandintNoRepeatNode::createLayout(
       RandintNoRepeat::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int RandintNoRepeatNode::serialize(char* buffer, int bufferSize,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
+size_t RandintNoRepeatNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       RandintNoRepeat::s_functionHelper.aliasesList().mainAlias());

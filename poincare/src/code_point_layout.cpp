@@ -9,9 +9,10 @@ bool CodePointLayoutNode::IsCodePoint(Layout l, CodePoint c) {
          static_cast<CodePointLayout &>(l).codePoint() == c;
 }
 
-int CodePointLayoutNode::serialize(char *buffer, int bufferSize,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
+size_t CodePointLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
 }
 

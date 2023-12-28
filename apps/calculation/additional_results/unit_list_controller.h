@@ -46,8 +46,8 @@ class UnitListController : public ExpressionsListController {
 
   I18n::Message messageAtIndex(int index) override;
   void fillBufferCellAtIndex(BufferCell* bufferCell, int index);
-  int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
-                  int index) override;
+  size_t textAtIndex(char* buffer, size_t bufferSize,
+                     Escher::HighlightCell* cell, int index) override;
 
   int m_numberOfExpressionCells;
   int m_numberOfBufferCells;

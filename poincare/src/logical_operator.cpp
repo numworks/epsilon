@@ -65,8 +65,9 @@ Layout LogicalOperatorNotNode::createLayout(
                               false);
 }
 
-int LogicalOperatorNotNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t LogicalOperatorNotNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   char nameBuffer[k_sizeOfNameBuffer];
   fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer,
@@ -174,8 +175,9 @@ Layout BinaryLogicalOperatorNode::createLayout(
                              numberOfSignificantDigits, nameBuffer, context);
 }
 
-int BinaryLogicalOperatorNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t BinaryLogicalOperatorNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   char nameBuffer[k_sizeOfNameBuffer];
   fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer,

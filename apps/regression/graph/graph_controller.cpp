@@ -122,13 +122,13 @@ bool GraphController::buildRegressionExpression(
       coefficients,
       GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol(),
       significantDigits, displayMode);
-  int length = l.serializeForParsing(buffer, bufferSize);
-  if (length >= static_cast<int>(bufferSize - 1) || length == 0) {
+  size_t length = l.serializeForParsing(buffer, bufferSize);
+  if (length >= bufferSize - 1 || length == 0) {
     return false;
   }
   return SerializationHelper::
              ReplaceSystemParenthesesAndBracesByUserParentheses(
-                 buffer, length) < static_cast<int>(bufferSize - 1);
+                 buffer, length) < bufferSize - 1;
 }
 
 // SimpleInteractiveCurveViewController

@@ -74,10 +74,10 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-int RationalListController::textAtIndex(char *buffer, size_t bufferSize,
-                                        Escher::HighlightCell *cell,
-                                        int index) {
-  int length =
+size_t RationalListController::textAtIndex(char *buffer, size_t bufferSize,
+                                           Escher::HighlightCell *cell,
+                                           int index) {
+  size_t length =
       ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
   if (index == 1) {
     // Get rid of the left part of the equality

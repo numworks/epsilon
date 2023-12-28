@@ -113,7 +113,7 @@ class ValuesController : public EditableCellTableViewController,
 
   virtual Poincare::Layout functionTitleLayout(
       int column, bool forceShortVersion = false) = 0;
-  int fillColumnName(int column, char* buffer) override;
+  size_t fillColumnName(int column, char* buffer) override;
   void setTitleCellText(Escher::HighlightCell* titleCell, int column) override;
   void setTitleCellStyle(Escher::HighlightCell* titleCell, int column) override;
   void reloadEditedCell(int column, int row) override;

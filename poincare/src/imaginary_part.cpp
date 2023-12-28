@@ -21,9 +21,10 @@ Layout ImaginaryPartNode::createLayout(
       ImaginaryPart::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int ImaginaryPartNode::serialize(char* buffer, int bufferSize,
-                                 Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits) const {
+size_t ImaginaryPartNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       ImaginaryPart::s_functionHelper.aliasesList().mainAlias());

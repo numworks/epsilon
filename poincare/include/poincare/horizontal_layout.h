@@ -44,9 +44,9 @@ class HorizontalLayoutNode final : public LayoutNode {
   }
   Layout deepChildToPointToWhenInserting() const;
 
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   bool isCollapsable(int *numberOfOpenParenthesis,
                      OMG::HorizontalDirection direction) const override {

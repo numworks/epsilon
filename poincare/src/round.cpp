@@ -20,9 +20,9 @@ Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       Round::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int RoundNode::serialize(char* buffer, int bufferSize,
-                         Preferences::PrintFloatMode floatDisplayMode,
-                         int numberOfSignificantDigits) const {
+size_t RoundNode::serialize(char* buffer, size_t bufferSize,
+                            Preferences::PrintFloatMode floatDisplayMode,
+                            int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Round::s_functionHelper.aliasesList().mainAlias());

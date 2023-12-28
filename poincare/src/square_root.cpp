@@ -28,9 +28,9 @@ Layout SquareRootNode::createLayout(
       floatDisplayMode, numberOfSignificantDigits, context));
 }
 
-int SquareRootNode::serialize(char *buffer, int bufferSize,
-                              Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits) const {
+size_t SquareRootNode::serialize(char *buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       SquareRoot::s_functionHelper.aliasesList().mainAlias());

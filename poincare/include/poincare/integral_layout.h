@@ -20,9 +20,9 @@ class IntegralLayoutNode final : public LayoutNode {
   Type type() const override { return Type::IntegralLayout; }
 
   // LayoutNode
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
   int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,
                                      int currentIndex,
                                      bool* shouldRedrawLayout) override;

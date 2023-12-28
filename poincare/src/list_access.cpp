@@ -20,12 +20,13 @@ ExpressionNode::Type ListAccessNode<2>::type() const {
 }
 
 template <int U>
-int ListAccessNode<U>::serialize(char* buffer, int bufferSize,
-                                 Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits) const {
-  int written = childAtIndex(k_listChildIndex)
-                    ->serialize(buffer, bufferSize, floatDisplayMode,
-                                numberOfSignificantDigits);
+size_t ListAccessNode<U>::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  size_t written = childAtIndex(k_listChildIndex)
+                       ->serialize(buffer, bufferSize, floatDisplayMode,
+                                   numberOfSignificantDigits);
   if (written == -1 || bufferSize - written <= 0) {
     return -1;
   }
@@ -241,11 +242,13 @@ Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
   return std::move(typedList);
 }
 
-template int ListAccessNode<1>::serialize(
-    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+template size_t ListAccessNode<1>::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const;
-template int ListAccessNode<2>::serialize(
-    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+template size_t ListAccessNode<2>::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const;
 template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(
     const ApproximationContext& approximationContext) const;

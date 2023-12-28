@@ -6,9 +6,10 @@
 
 namespace Poincare {
 
-int ProductLayoutNode::serialize(char* buffer, int bufferSize,
-                                 Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits) const {
+size_t ProductLayoutNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SequenceLayoutNode::writeDerivedClassInBuffer(
       "product", buffer, bufferSize, floatDisplayMode,
       numberOfSignificantDigits);

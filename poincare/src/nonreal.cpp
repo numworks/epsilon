@@ -22,11 +22,11 @@ bool NonrealNode::derivate(const ReductionContext& reductionContext,
   return true;
 }
 
-int NonrealNode::serialize(char* buffer, int bufferSize,
-                           Preferences::PrintFloatMode floatDisplayMode,
-                           int numberOfSignificantDigits) const {
-  return std::min<int>(strlcpy(buffer, Nonreal::Name(), bufferSize),
-                       bufferSize - 1);
+size_t NonrealNode::serialize(char* buffer, size_t bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits) const {
+  return std::min<size_t>(strlcpy(buffer, Nonreal::Name(), bufferSize),
+                          bufferSize - 1);
 }
 
 }  // namespace Poincare

@@ -208,7 +208,8 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
+  size_t numberOfChar =
+      function->derivativeNameWithArgument(buffer, bufferSize);
   assert(function->canDisplayDerivative());
   Poincare::Print::CustomPrintf(
       buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed", derivative,

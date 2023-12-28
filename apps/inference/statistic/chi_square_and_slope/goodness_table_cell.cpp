@@ -47,7 +47,7 @@ bool GoodnessTableCell::recomputeDimensionsAndReload(bool forceReloadTableCell,
   return false;
 }
 
-int GoodnessTableCell::fillColumnName(int column, char* buffer) {
+size_t GoodnessTableCell::fillColumnName(int column, char* buffer) {
   return strlcpy(buffer, I18n::translate(k_columnHeaders[column]),
                  Shared::ColumnParameterController::k_titleBufferSize);
 }

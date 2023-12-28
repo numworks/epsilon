@@ -10,8 +10,9 @@
 
 namespace Poincare {
 
-int DerivativeLayoutNode::serialize(
-    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t DerivativeLayoutNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,

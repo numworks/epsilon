@@ -33,9 +33,9 @@ Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       Sine::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int SineNode::serialize(char* buffer, int bufferSize,
-                        Preferences::PrintFloatMode floatDisplayMode,
-                        int numberOfSignificantDigits) const {
+size_t SineNode::serialize(char* buffer, size_t bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Sine::s_functionHelper.aliasesList().mainAlias());

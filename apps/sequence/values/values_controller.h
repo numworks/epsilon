@@ -55,7 +55,7 @@ class ValuesController : public Shared::ValuesController,
                                      KDCoordinate defaultSize) override;
 
   // ColumnHelper
-  int fillColumnName(int column, char *buffer) override;
+  size_t fillColumnName(int column, char *buffer) override;
 
   // EditableCellTableViewController
   bool checkDataAtLocation(double floatBody, int column,

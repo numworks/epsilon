@@ -22,9 +22,9 @@ Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       Random::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int RandomNode::serialize(char *buffer, int bufferSize,
-                          Preferences::PrintFloatMode floatDisplayMode,
-                          int numberOfSignificantDigits) const {
+size_t RandomNode::serialize(char *buffer, size_t bufferSize,
+                             Preferences::PrintFloatMode floatDisplayMode,
+                             int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Random::s_functionHelper.aliasesList().mainAlias());

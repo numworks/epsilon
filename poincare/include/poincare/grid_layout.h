@@ -46,9 +46,9 @@ class GridLayoutNode : public Array, public LayoutNode {
       int childIndex) const override;
 
   // SerializableNode
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override {
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override {
     assert(false);
     return 0;
   }

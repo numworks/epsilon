@@ -73,9 +73,9 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
   CodePoint operatorSymbol() const;
 
   // Serialize
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   // Simplification
   Expression shallowBeautify(const ReductionContext& reductionContext) override;

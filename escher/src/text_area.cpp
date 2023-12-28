@@ -585,8 +585,8 @@ void TextArea::ContentView::setText(char *textBuffer, size_t textBufferSize) {
 bool TextArea::ContentView::insertTextAtLocation(const char *text,
                                                  char *location,
                                                  int textLength) {
-  int textLen = textLength < 0 ? strlen(text) : textLength;
-  assert(textLen <= static_cast<int>(strlen(text)));
+  size_t textLen = textLength < 0 ? strlen(text) : textLength;
+  assert(textLen <= strlen(text));
   if (m_text.textLength() + textLen >= m_text.bufferSize() || textLen == 0) {
     return false;
   }

@@ -229,9 +229,9 @@ class Integer final : public TreeHandle {
 
   // Serialization
   typedef char (*CharacterForDigit)(uint8_t d);
-  int serializeInBinaryBase(char *buffer, int bufferSize, char symbol,
-                            OMG::Base base) const;
-  int serializeInDecimal(char *buffer, int bufferSize) const;
+  size_t serializeInBinaryBase(char *buffer, size_t bufferSize, char symbol,
+                               OMG::Base base) const;
+  size_t serializeInDecimal(char *buffer, size_t bufferSize) const;
 
   /* buffer has to be k_maxNumberOfDigits+1 to allow temporary overflow (ie, in
    * subtraction) */

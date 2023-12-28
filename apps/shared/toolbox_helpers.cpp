@@ -10,14 +10,14 @@ namespace Shared {
 namespace ToolboxHelpers {
 
 void TextToInsertForCommandMessage(I18n::Message message, char* buffer,
-                                   int bufferSize,
+                                   size_t bufferSize,
                                    bool replaceArgsWithEmptyChar) {
   TextToInsertForCommandText(I18n::translate(message), -1, buffer, bufferSize,
                              replaceArgsWithEmptyChar);
 }
 
 void TextToInsertForCommandText(const char* command, int commandLength,
-                                char* buffer, int bufferSize,
+                                char* buffer, size_t bufferSize,
                                 bool replaceArgsWithEmptyChar) {
   size_t index = 0;
   int numberOfOpenParentheses = 0;
@@ -28,8 +28,7 @@ void TextToInsertForCommandText(const char* command, int commandLength,
   UTF8Decoder decoder(command);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull &&
-         index + static_cast<int>(UTF8Decoder::CharSizeOfCodePoint(codePoint)) <
-             bufferSize &&
+         index + UTF8Decoder::CharSizeOfCodePoint(codePoint) < bufferSize &&
          (commandLength < 0 ||
           (decoder.stringPosition() - command <= commandLength))) {
     if (codePoint == ')') {

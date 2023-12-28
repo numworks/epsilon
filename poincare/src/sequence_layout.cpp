@@ -140,8 +140,8 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
   return KDPoint(x, y);
 }
 
-int SequenceLayoutNode::writeDerivedClassInBuffer(
-    const char *operatorName, char *buffer, int bufferSize,
+size_t SequenceLayoutNode::writeDerivedClassInBuffer(
+    const char *operatorName, char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   assert(operatorName != nullptr);

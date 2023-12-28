@@ -22,18 +22,13 @@ size_t Function::NameWithArgument(Ion::Storage::Record record,
                                   CodePoint argument, char *buffer,
                                   size_t bufferSize) {
   size_t length = record.nameWithoutExtension(buffer, bufferSize);
-  assert(0 < length && length < bufferSize - 1);
   length +=
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
-  assert(length < bufferSize - 1);
   assert(UTF8Decoder::CharSizeOfCodePoint(argument) <= 2);
   length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
                                            argument);
-  assert(length <= bufferSize - 1);
   length +=
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');
-  assert(length <= bufferSize - 1);
-  assert(length <= k_maxNameWithArgumentSize);
   return length;
 }
 

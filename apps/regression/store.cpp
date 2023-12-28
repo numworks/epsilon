@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare/preferences.h>
+#include <poincare/print_int.h>
 #include <poincare/symbol.h>
 #include <string.h>
 
@@ -439,11 +440,11 @@ Model *Store::regressionModel(int index) {
 
 int Store::BuildFunctionName(int series, char *buffer, int bufferSize) {
   assert(bufferSize >= k_functionNameSize);
-  assert(strlen(k_functionName) == 1);
-  buffer[0] = k_functionName[0];
-  buffer[1] = '1' + series;
-  buffer[2] = 0;
-  return k_functionNameSize - 1;
+  size_t length = strlcpy(buffer, k_functionName, bufferSize);
+  length += PrintInt::Left(1 + series, buffer + length, bufferSize - length);
+  assert(length == k_functionNameSize - 1);
+  buffer[length] = 0;
+  return length;
 }
 
 Ion::Storage::Record Store::functionRecord(int series) const {

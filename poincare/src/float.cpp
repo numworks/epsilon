@@ -25,9 +25,9 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode *e,
 }
 
 template <typename T>
-int FloatNode<T>::serialize(char *buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t FloatNode<T>::serialize(char *buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   return PrintFloat::ConvertFloatToText(
              m_value, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength,
              numberOfSignificantDigits, floatDisplayMode)
@@ -39,8 +39,8 @@ Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits,
                                   Context *context) const {
   char buffer[PrintFloat::k_maxFloatCharSize];
-  int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatCharSize,
-                                floatDisplayMode, numberOfSignificantDigits);
+  size_t numberOfChars = serialize(buffer, PrintFloat::k_maxFloatCharSize,
+                                   floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);
 }
 

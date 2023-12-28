@@ -93,14 +93,14 @@ void RationalNode::logAttributes(std::ostream &stream) const {
 }
 #endif
 
-int RationalNode::serialize(char *buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t RationalNode::serialize(char *buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
   buffer[bufferSize - 1] = 0;
-  int numberOfChar = signedNumerator().serialize(buffer, bufferSize);
+  size_t numberOfChar = signedNumerator().serialize(buffer, bufferSize);
   if (numberOfChar >= bufferSize - 1) {
     return numberOfChar;
   }

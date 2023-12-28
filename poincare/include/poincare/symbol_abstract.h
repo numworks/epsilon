@@ -69,9 +69,9 @@ class SymbolAbstractNode : public ExpressionNode {
 
  protected:
   // Layout
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   char m_name[0];  // MUST be the last member variable
 

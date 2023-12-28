@@ -35,7 +35,7 @@ class GoodnessTableCell : public DoubleColumnTableCell {
           I18n::Message::Observed, I18n::Message::Expected};
 
   // ClearColumnHelper
-  int fillColumnName(int column, char *buffer) override;
+  size_t fillColumnName(int column, char *buffer) override;
 
   Escher::HighlightCell *headerCell(int index) override {
     return &m_header[index];

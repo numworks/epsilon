@@ -58,9 +58,9 @@ Layout DerivativeNode::createLayout(
                                     context));
 }
 
-int DerivativeNode::serialize(char* buffer, int bufferSize,
-                              Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits) const {
+size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
   int lastChildIndex =
       isFirstOrder() ? numberOfChildren() - 2 : numberOfChildren() - 1;
   return SerializationHelper::Prefix(

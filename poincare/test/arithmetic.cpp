@@ -9,7 +9,7 @@ using namespace Poincare;
 
 void fill_buffer_with(char* buffer, size_t bufferSize, const char* functionName,
                       Integer* a, int numberOfIntegers) {
-  int numberOfChar = strlcpy(buffer, functionName, bufferSize);
+  size_t numberOfChar = strlcpy(buffer, functionName, bufferSize);
   for (int i = 0; i < numberOfIntegers; i++) {
     if (i > 0) {
       numberOfChar +=

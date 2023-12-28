@@ -58,10 +58,10 @@ class BracketPairLayoutNode : public LayoutNode {
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   LayoutNode* childLayout() const { return childAtIndex(0); }
-  int serializeWithSymbol(char symbolOpen, char symbolClose, char* buffer,
-                          int bufferSize,
-                          Preferences::PrintFloatMode floatDisplayMode,
-                          int numberOfSignificantDigits) const;
+  size_t serializeWithSymbol(char symbolOpen, char symbolClose, char* buffer,
+                             size_t bufferSize,
+                             Preferences::PrintFloatMode floatDisplayMode,
+                             int numberOfSignificantDigits) const;
   virtual KDCoordinate bracketWidth() const = 0;
   virtual KDCoordinate minVerticalMargin() const = 0;
   virtual void renderOneBracket(bool left, KDContext* ctx, KDPoint p,

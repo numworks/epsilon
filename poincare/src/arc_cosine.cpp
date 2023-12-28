@@ -27,9 +27,9 @@ Layout ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       ArcCosine::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int ArcCosineNode::serialize(char* buffer, int bufferSize,
-                             Preferences::PrintFloatMode floatDisplayMode,
-                             int numberOfSignificantDigits) const {
+size_t ArcCosineNode::serialize(char* buffer, size_t bufferSize,
+                                Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       ArcCosine::s_functionHelper.aliasesList().mainAlias());

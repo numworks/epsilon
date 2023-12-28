@@ -30,9 +30,9 @@ class VerticalOffsetLayoutNode final : public LayoutNode {
   HorizontalPosition horizontalPosition() const { return m_horizontalPosition; }
 
   // LayoutNode
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
   int indexAfterVerticalCursorMove(OMG::VerticalDirection direction,
                                    int currentIndex,
                                    PositionInLayout positionAtCurrentIndex,

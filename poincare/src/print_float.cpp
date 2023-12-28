@@ -20,7 +20,7 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr int PrintFloat::Long::k_maxNumberOfCharsForDigit;
+constexpr size_t PrintFloat::Long::k_maxNumberOfCharsForDigit;
 
 PrintFloat::Long::Long(int64_t i) : m_negative(i < 0) {
   int64_t nonNegativeI = m_negative ? -i : i;
@@ -66,7 +66,7 @@ void PrintFloat::Long::MultiplySmallLongByTen(Long& smallLong) {
   smallLong = Long(0, newDigit1, smallLong.isNegative());
 }
 
-int PrintFloat::Long::serialize(char* buffer, int bufferSize) const {
+size_t PrintFloat::Long::serialize(char* buffer, size_t bufferSize) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -74,14 +74,14 @@ int PrintFloat::Long::serialize(char* buffer, int bufferSize) const {
     buffer[0] = 0;
     return bufferSize - 1;
   }
-  int numberOfChars = 0;
+  size_t numberOfChars = 0;
   if (m_negative) {
     numberOfChars += SerializationHelper::CodePoint(buffer, bufferSize, '-');
   }
   if (m_digits[0] != 0) {
     numberOfChars += PrintInt::Left(m_digits[0], buffer + numberOfChars,
                                     bufferSize - numberOfChars - 1);
-    int wantedNumberOfChars = numberOfChars + k_maxNumberOfCharsForDigit + 1;
+    size_t wantedNumberOfChars = numberOfChars + k_maxNumberOfCharsForDigit + 1;
     if (wantedNumberOfChars > bufferSize) {
       /* There is not enough space for serializing the second digit and the null
        * terminating char. */
@@ -109,7 +109,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
   assert(bufferLength > 0 && decimalMarkerPosition != 0);
   constexpr int tempBufferSize = PrintFloat::k_maxFloatCharSize;
   char tempBuffer[tempBufferSize];
-  int intLength = i.serialize(tempBuffer, tempBufferSize);
+  size_t intLength = i.serialize(tempBuffer, tempBufferSize);
   int firstDigitChar = UTF8Helper::CodePointIs(tempBuffer, '-') ? 1 : 0;
   /* We should use the UTF8Decoder to write code points in buffers, but it is
    * much clearer to manipulate chars directly as we know that the code point we

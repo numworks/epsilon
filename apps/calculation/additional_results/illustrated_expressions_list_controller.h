@@ -50,8 +50,8 @@ class IllustratedExpressionsListController
                       const Poincare::ComputationContext& computationContext);
 
  private:
-  int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
-                  int index) override;
+  size_t textAtIndex(char* buffer, size_t bufferSize,
+                     Escher::HighlightCell* cell, int index) override;
   virtual KDCoordinate illustrationHeight() { return k_illustrationHeight; }
   virtual IllustrationCell* illustrationCell() = 0;
 };

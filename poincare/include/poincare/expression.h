@@ -404,15 +404,13 @@ class Expression : public TreeHandle {
   }
 
   /* TODO:
-   * - change signature to
-   *   size_t serialize(char * buffer, size_t bufferSize...)
    * - Use same convention as strlcpy: return size of the source even if the
    * bufferSize was too small.*/
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode =
-                    Preferences::PrintFloatMode::Decimal,
-                int numberOfSignificantDigits =
-                    PrintFloat::k_maxNumberOfSignificantDigits) const;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode =
+                       Preferences::PrintFloatMode::Decimal,
+                   int numberOfSignificantDigits =
+                       PrintFloat::k_maxNumberOfSignificantDigits) const;
 
   /* Simplification */
   /* Simplification routines are divided in 2 groups:

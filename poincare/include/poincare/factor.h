@@ -33,9 +33,9 @@ class FactorNode final : public ExpressionNode {
                       int numberOfSignificantDigits,
                       Context* context) const override;
   /* Serialization */
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
   /* Simplification */
   Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;

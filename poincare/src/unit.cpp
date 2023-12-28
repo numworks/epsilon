@@ -210,9 +210,10 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
   return (std::fabs(order) < std::fabs(otherOrder));
 }
 
-int UnitNode::Prefix::serialize(char* buffer, int bufferSize) const {
+size_t UnitNode::Prefix::serialize(char* buffer, size_t bufferSize) const {
   assert(bufferSize >= 0);
-  return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
+  return std::min<size_t>(strlcpy(buffer, m_symbol, bufferSize),
+                          bufferSize - 1);
 }
 
 const UnitNode::Representative*
@@ -251,16 +252,16 @@ UnitNode::Representative::defaultFindBestRepresentative(
   return result;
 }
 
-int UnitNode::Representative::serialize(char* buffer, int bufferSize,
-                                        const Prefix* prefix) const {
-  int length = 0;
+size_t UnitNode::Representative::serialize(char* buffer, size_t bufferSize,
+                                           const Prefix* prefix) const {
+  size_t length = 0;
   length += prefix->serialize(buffer, bufferSize);
   assert(length == 0 || isInputPrefixable());
   assert(length < bufferSize);
   buffer += length;
   bufferSize -= length;
   assert(bufferSize >= 0);
-  length += std::min<int>(
+  length += std::min<size_t>(
       strlcpy(buffer, m_rootSymbols.mainAlias(), bufferSize), bufferSize - 1);
   return length;
 }
@@ -1055,8 +1056,8 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   constexpr static size_t bufferSize = 10;
   char buffer[bufferSize];
   char* string = buffer;
-  int stringLen = serialize(buffer, bufferSize, floatDisplayMode,
-                            numberOfSignificantDigits);
+  size_t stringLen = serialize(buffer, bufferSize, floatDisplayMode,
+                               numberOfSignificantDigits);
   if (!context ||
       (context->canRemoveUnderscoreToUnits() &&
        context->expressionTypeForIdentifier(buffer + 1, strlen(buffer) - 1) ==
@@ -1069,12 +1070,12 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::StringToStringLayout(string, stringLen);
 }
 
-int UnitNode::serialize(char* buffer, int bufferSize,
-                        Preferences::PrintFloatMode floatDisplayMode,
-                        int numberOfSignificantDigits) const {
+size_t UnitNode::serialize(char* buffer, size_t bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
   assert(bufferSize >= 0);
-  int underscoreLength =
-      std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+  size_t underscoreLength =
+      std::min<size_t>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
   buffer += underscoreLength;
   bufferSize -= underscoreLength;
   return underscoreLength +

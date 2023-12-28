@@ -31,11 +31,11 @@ bool UndefinedNode::derivate(const ReductionContext& reductionContext,
   return true;
 }
 
-int UndefinedNode::serialize(char* buffer, int bufferSize,
-                             Preferences::PrintFloatMode floatDisplayMode,
-                             int numberOfSignificantDigits) const {
-  return std::min<int>(strlcpy(buffer, Undefined::Name(), bufferSize),
-                       bufferSize - 1);
+size_t UndefinedNode::serialize(char* buffer, size_t bufferSize,
+                                Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits) const {
+  return std::min<size_t>(strlcpy(buffer, Undefined::Name(), bufferSize),
+                          bufferSize - 1);
 }
 
 template <typename T>

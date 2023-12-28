@@ -74,10 +74,11 @@ int SymbolAbstractNode::simplificationOrderSameType(
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }
 
-int SymbolAbstractNode::serialize(char *buffer, int bufferSize,
-                                  Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits) const {
-  return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
+size_t SymbolAbstractNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
 template <typename T, typename U>

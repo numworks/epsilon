@@ -31,9 +31,9 @@ Layout BooleanNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::String(aliasesList().mainAlias());
 }
 
-int BooleanNode::serialize(char *buffer, int bufferSize,
-                           Preferences::PrintFloatMode floatDisplayMode,
-                           int numberOfSignificantDigits) const {
+size_t BooleanNode::serialize(char *buffer, size_t bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits) const {
   return strlcpy(buffer, aliasesList().mainAlias(), bufferSize);
 }
 

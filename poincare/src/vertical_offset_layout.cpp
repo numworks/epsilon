@@ -19,8 +19,9 @@ VerticalOffsetLayoutNode::deletionMethodForCursorLeftOfChild(
              : DeletionMethod::MoveLeft;
 }
 
-int VerticalOffsetLayoutNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t VerticalOffsetLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   if (verticalPosition() == VerticalPosition::Subscript ||
       horizontalPosition() == HorizontalPosition::Prefix) {
@@ -32,7 +33,7 @@ int VerticalOffsetLayoutNode::serialize(
       return bufferSize - 1;
     }
 
-    int numberOfChar = 0;
+    size_t numberOfChar = 0;
 
     /* If the layout is a subscript or a prefix, write "\x14{indice\x14}".
      * System braces are used to avoid confusion with lists. */
@@ -77,7 +78,7 @@ int VerticalOffsetLayoutNode::serialize(
 
   assert(verticalPosition() == VerticalPosition::Superscript);
   // If the layout is a superscript, write: '^' 'System(' indice 'System)'
-  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '^');
+  size_t numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '^');
   if (numberOfChar >= bufferSize - 1) {
     return bufferSize - 1;
   }

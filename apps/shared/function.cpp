@@ -50,18 +50,18 @@ void Function::setActive(bool active) {
   }
 }
 
-int Function::printValue(double cursorT, double cursorX, double cursorY,
-                         char *buffer, int bufferSize, int precision,
-                         Poincare::Context *context, bool symbolValue) {
+size_t Function::printValue(double cursorT, double cursorX, double cursorY,
+                            char *buffer, size_t bufferSize, int precision,
+                            Poincare::Context *context, bool symbolValue) {
   return PoincareHelpers::ConvertFloatToText<double>(
       symbolValue ? cursorT : cursorY, buffer, bufferSize, precision);
 }
 
-int Function::name(char *buffer, size_t bufferSize) const {
+size_t Function::name(char *buffer, size_t bufferSize) const {
   return nameWithoutExtension(buffer, bufferSize);
 }
 
-int Function::nameWithArgument(char *buffer, size_t bufferSize) {
+size_t Function::nameWithArgument(char *buffer, size_t bufferSize) {
   return Function::NameWithArgument(*this, symbol(), buffer, bufferSize);
 }
 

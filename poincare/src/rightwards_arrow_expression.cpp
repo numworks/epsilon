@@ -9,10 +9,11 @@
 
 namespace Poincare {
 
-int RightwardsArrowExpressionNode::serialize(
-    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t RightwardsArrowExpressionNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
+  constexpr size_t stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
   SerializationHelper::CodePoint(string, stringMaxSize,
                                  UCodePointRightwardsArrow);

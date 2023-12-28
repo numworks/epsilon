@@ -25,9 +25,9 @@ Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       floatDisplayMode, numberOfSignificantDigits, context));
 }
 
-int FloorNode::serialize(char* buffer, int bufferSize,
-                         Preferences::PrintFloatMode floatDisplayMode,
-                         int numberOfSignificantDigits) const {
+size_t FloorNode::serialize(char* buffer, size_t bufferSize,
+                            Preferences::PrintFloatMode floatDisplayMode,
+                            int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Floor::s_functionHelper.aliasesList().mainAlias());

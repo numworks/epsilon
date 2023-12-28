@@ -11,9 +11,9 @@ int ListSortNode::numberOfChildren() const {
   return ListSort::s_functionHelper.numberOfChildren();
 }
 
-int ListSortNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t ListSortNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       ListSort::s_functionHelper.aliasesList().mainAlias());

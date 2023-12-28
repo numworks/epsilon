@@ -49,9 +49,9 @@ Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return std::move(layout);
 }
 
-int MatrixNode::serialize(char *buffer, int bufferSize,
-                          Preferences::PrintFloatMode floatDisplayMode,
-                          int numberOfSignificantDigits) const {
+size_t MatrixNode::serialize(char *buffer, size_t bufferSize,
+                             Preferences::PrintFloatMode floatDisplayMode,
+                             int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -59,7 +59,7 @@ int MatrixNode::serialize(char *buffer, int bufferSize,
   if (bufferSize == 1) {
     return bufferSize - 1;
   }
-  int currentChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
+  size_t currentChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
   if (currentChar >= bufferSize - 1) {
     return currentChar;
   }

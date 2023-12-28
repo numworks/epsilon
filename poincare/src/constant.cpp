@@ -43,11 +43,11 @@ int ConstantNode::simplificationOrderSameType(const ExpressionNode* e,
          static_cast<const ConstantNode*>(e)->rankOfConstant();
 }
 
-int ConstantNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t ConstantNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   assert(bufferSize >= 0);
-  return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
+  return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,

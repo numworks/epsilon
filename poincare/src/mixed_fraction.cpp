@@ -27,9 +27,10 @@ Layout MixedFractionNode::createLayout(
                              numberOfSignificantDigits, "", context);
 }
 
-int MixedFractionNode::serialize(char* buffer, int bufferSize,
-                                 Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits) const {
+size_t MixedFractionNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode,
                                     numberOfSignificantDigits, " ");
 }

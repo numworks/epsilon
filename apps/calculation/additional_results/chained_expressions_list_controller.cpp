@@ -76,10 +76,10 @@ int ChainedExpressionsListController::numberOfRows() const {
          (m_tail ? m_tail->numberOfRows() : 0);
 }
 
-int ChainedExpressionsListController::textAtIndex(char* buffer,
-                                                  size_t bufferSize,
-                                                  HighlightCell* cell,
-                                                  int index) {
+size_t ChainedExpressionsListController::textAtIndex(char* buffer,
+                                                     size_t bufferSize,
+                                                     HighlightCell* cell,
+                                                     int index) {
   int numberOfOwnedCells = ExpressionsListController::numberOfRows();
   if (index >= numberOfOwnedCells) {
     return m_tail->textAtIndex(buffer, bufferSize, cell,

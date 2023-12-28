@@ -43,10 +43,10 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
           rank, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
-int SequenceNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
-  int result = SerializationHelper::Prefix(
+size_t SequenceNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
+  size_t result = SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       m_name, SerializationHelper::ParenthesisType::Braces);
   return result;

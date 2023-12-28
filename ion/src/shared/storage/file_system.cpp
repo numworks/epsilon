@@ -83,8 +83,8 @@ int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
    * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
   int id = 1;
   while (id <= maxId) {
-    int length = Poincare::Integer(id).serialize(buffer + prefixLength,
-                                                 bufferSize - prefixLength);
+    size_t length = Poincare::Integer(id).serialize(buffer + prefixLength,
+                                                    bufferSize - prefixLength);
     assert(buffer[prefixLength + length] == 0);
     if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions)
             .isNull()) {

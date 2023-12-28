@@ -24,9 +24,9 @@ class BasedIntegerNode final : public NumberNode {
 #endif
 
   // SerializationHelperInterface
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   // Expression subclassing
   Type type() const override { return Type::BasedInteger; }

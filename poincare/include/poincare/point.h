@@ -31,9 +31,9 @@ class PointNode : public ExpressionNode {
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Point"; }
 #endif
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int significantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int significantDigits) const override;
 
  private:
   constexpr static char k_prefix[] = "";

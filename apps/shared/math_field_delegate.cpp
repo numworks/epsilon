@@ -61,9 +61,9 @@ bool AbstractMathFieldDelegate::ExpressionCanBeSerialized(
     Symbol ansSymbol = Symbol::Ans();
     exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
   }
-  constexpr int maxSerializationSize = Constant::MaxSerializedExpressionSize;
+  constexpr size_t maxSerializationSize = Constant::MaxSerializedExpressionSize;
   char buffer[maxSerializationSize];
-  int length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
+  size_t length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
   /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
    * escaped before printing utterly the expression. */
   if (length >= maxSerializationSize - 1) {
@@ -108,9 +108,9 @@ bool MathLayoutFieldDelegate::layoutFieldHasSyntaxError(
    * not displayed, like:
    * - 2a
    * - log_{2}(x) */
-  constexpr int bufferSize = TextField::MaxBufferSize();
+  constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
+  size_t length = layoutField->layout().serializeForParsing(buffer, bufferSize);
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */

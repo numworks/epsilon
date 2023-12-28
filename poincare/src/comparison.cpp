@@ -185,10 +185,10 @@ Layout ComparisonNode::createLayout(
   return std::move(result);
 }
 
-int ComparisonNode::serialize(char* buffer, int bufferSize,
-                              Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits) const {
-  int numberOfChar = 0;
+size_t ComparisonNode::serialize(char* buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
+  size_t numberOfChar = 0;
   for (int i = 0; i < m_numberOfOperands; i++) {
     if (i > 0) {
       // Write the operator

@@ -217,7 +217,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   constexpr static size_t bufferSize = 220;
   char identifiersString[bufferSize];
   identifiersString[0] = 0;
-  int bufferCurrentLength = 0;
+  size_t bufferCurrentLength = 0;
   for (int i = firstIndexOfIdentifier; i <= rightmostIndexToBeautify; i++) {
     Layout currentChild = h.childAtIndex(i);
     assert(currentChild.type() == LayoutNode::Type::CodePointLayout);

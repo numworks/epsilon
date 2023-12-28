@@ -46,7 +46,7 @@ class StoreController : public EditableCellTableViewController,
   void didBecomeFirstResponder() override;
 
   // ClearColumnHelper
-  int fillColumnName(int column, char* buffer) override {
+  size_t fillColumnName(int column, char* buffer) override {
     return fillColumnNameFromStore(column, buffer);
   }
 

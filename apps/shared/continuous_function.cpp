@@ -91,7 +91,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
   return m_model.renameRecordIfNeeded(this, context);
 }
 
-int ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
+size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
@@ -102,10 +102,10 @@ int ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
           : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol));
 }
 
-int ContinuousFunction::printValue(double cursorT, double cursorX,
-                                   double cursorY, char *buffer, int bufferSize,
-                                   int precision, Context *context,
-                                   bool symbolValue) {
+size_t ContinuousFunction::printValue(double cursorT, double cursorX,
+                                      double cursorY, char *buffer,
+                                      size_t bufferSize, int precision,
+                                      Context *context, bool symbolValue) {
   ContinuousFunctionProperties thisProperties = properties();
 
   if (symbolValue) {
@@ -252,16 +252,16 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   }
 }
 
-int ContinuousFunction::derivativeNameWithArgument(char *buffer,
-                                                   size_t bufferSize) {
+size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
+                                                      size_t bufferSize) {
   if (!isNamed()) {
     return strlcpy(buffer, "y'", bufferSize);
   }
   const CodePoint derivative = '\'';
-  int derivativeSize = UTF8Decoder::CharSizeOfCodePoint(derivative);
+  size_t derivativeSize = UTF8Decoder::CharSizeOfCodePoint(derivative);
   // Fill buffer with f(x). Keep size for derivative sign.
-  int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
-  assert(numberOfChars + derivativeSize < (int)bufferSize);
+  size_t numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
+  assert(numberOfChars + derivativeSize < bufferSize);
   // Find (x)
   char *firstParenthesis =
       const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));

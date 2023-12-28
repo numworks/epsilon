@@ -39,8 +39,8 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
     e = e.replaceSymbolWithExpression(Symbol::SystemSymbol(),
                                       Symbol::Builder(symbol));
   }
-  int serializedSize = e.serialize(buffer, bufferSize);
-  if (serializedSize >= (int)bufferSize - 1) {
+  size_t serializedSize = e.serialize(buffer, bufferSize);
+  if (serializedSize >= bufferSize - 1) {
     // It is very likely that the buffer is overflowed
     buffer[0] = 0;
   }

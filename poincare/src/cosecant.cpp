@@ -34,9 +34,9 @@ Layout CosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       Cosecant::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int CosecantNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t CosecantNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Cosecant::s_functionHelper.aliasesList().mainAlias());

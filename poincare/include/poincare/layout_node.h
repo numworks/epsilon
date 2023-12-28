@@ -91,10 +91,10 @@ class LayoutNode : public TreeNode {
 
   // TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode =
-                    Preferences::PrintFloatMode::Decimal,
-                int numberOfSignificantDigits = 0) const override {
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode =
+                       Preferences::PrintFloatMode::Decimal,
+                   int numberOfSignificantDigits = 0) const override {
     assert(false);
     return 0;
   }

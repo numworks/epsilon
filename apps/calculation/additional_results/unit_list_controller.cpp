@@ -146,10 +146,10 @@ void UnitListController::computeAdditionalResults(
   int currentExpressionIndex = 0;
   while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;
-    constexpr int buffersSize = Constant::MaxSerializedExpressionSize;
+    constexpr size_t buffersSize = Constant::MaxSerializedExpressionSize;
     char buffer1[buffersSize];
-    int size1 = PoincareHelpers::Serialize(expressions[currentExpressionIndex],
-                                           buffer1, buffersSize);
+    size_t size1 = PoincareHelpers::Serialize(
+        expressions[currentExpressionIndex], buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
       /* Compare the currentExpression to all previous expressions and to
        * exactClone */
@@ -157,7 +157,7 @@ void UnitListController::computeAdditionalResults(
           i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());
       char buffer2[buffersSize];
-      int size2 =
+      size_t size2 =
           PoincareHelpers::Serialize(comparedExpression, buffer2, buffersSize);
       if (size1 == size2 && strcmp(buffer1, buffer2) == 0) {
         numberOfExpressions--;
@@ -261,8 +261,8 @@ void UnitListController::fillBufferCellAtIndex(BufferCell *bufferCell,
                                                   floatToTextBuffer);
 }
 
-int UnitListController::textAtIndex(char *buffer, size_t bufferSize,
-                                    HighlightCell *cell, int index) {
+size_t UnitListController::textAtIndex(char *buffer, size_t bufferSize,
+                                       HighlightCell *cell, int index) {
   assert(index >= 0);
   if (index < m_numberOfExpressionCells) {
     return ExpressionsListController::textAtIndex(buffer, bufferSize, cell,

@@ -63,9 +63,9 @@ Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return std::move(result);
 }
 
-int OppositeNode::serialize(char* buffer, int bufferSize,
-                            Preferences::PrintFloatMode floatDisplayMode,
-                            int numberOfSignificantDigits) const {
+size_t OppositeNode::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -73,7 +73,7 @@ int OppositeNode::serialize(char* buffer, int bufferSize,
   if (bufferSize == 1) {
     return bufferSize - 1;
   }
-  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '-');
+  size_t numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '-');
   if (numberOfChar >= bufferSize - 1) {
     return bufferSize - 1;
   }

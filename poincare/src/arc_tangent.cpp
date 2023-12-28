@@ -25,9 +25,9 @@ Layout ArcTangentNode::createLayout(
       ArcTangent::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int ArcTangentNode::serialize(char* buffer, int bufferSize,
-                              Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits) const {
+size_t ArcTangentNode::serialize(char* buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       ArcTangent::s_functionHelper.aliasesList().mainAlias());

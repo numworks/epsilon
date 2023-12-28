@@ -48,9 +48,10 @@ inline int ConvertFloatToTextWithDisplayMode(
       .CharLength;
 }
 
-inline int Serialize(const Poincare::Expression e, char* buffer, int bufferSize,
-                     int numberOfSignificantDigits =
-                         Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
+inline size_t Serialize(
+    const Poincare::Expression e, char* buffer, size_t bufferSize,
+    int numberOfSignificantDigits =
+        Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
   return e.serialize(buffer, bufferSize,
                      Poincare::Preferences::sharedPreferences->displayMode(),
                      numberOfSignificantDigits);

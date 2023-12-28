@@ -77,9 +77,10 @@ IntegralLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
       childIndex, k_integrandLayoutIndex);
 }
 
-int IntegralLayoutNode::serialize(char *buffer, int bufferSize,
-                                  Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits) const {
+size_t IntegralLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Integral::s_functionHelper.aliasesList().mainAlias(),

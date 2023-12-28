@@ -585,7 +585,7 @@ bool AbstractTextField::privateHandleEventWithText(
 
   if (eventText[0] != 0) {
     // Remove the Empty code points
-    constexpr int bufferSize = AbstractTextField::MaxBufferSize();
+    constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
     char buffer[bufferSize];
     {
       CodePoint c[] = {UCodePointEmpty, '\n'};

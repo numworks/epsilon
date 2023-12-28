@@ -1139,9 +1139,9 @@ Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return l;
 }
 
-int Expression::serialize(char *buffer, int bufferSize,
-                          Preferences::PrintFloatMode floatDisplayMode,
-                          int numberOfSignificantDigits) const {
+size_t Expression::serialize(char *buffer, size_t bufferSize,
+                             Preferences::PrintFloatMode floatDisplayMode,
+                             int numberOfSignificantDigits) const {
   return isUninitialized()
              ? 0
              : node()->serialize(buffer, bufferSize, floatDisplayMode,

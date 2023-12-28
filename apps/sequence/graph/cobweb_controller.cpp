@@ -92,11 +92,11 @@ bool CobwebController::isRecordSuitable() const { return m_isSuitable; }
 
 void CobwebController::reloadBannerView() {
   m_bannerView->abscissaSymbol()->setText("n=");
-  constexpr int bufferSize = 20;
+  constexpr size_t bufferSize = 20;
   char buffer[bufferSize];
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%i", rankAtCurrentStep());
   m_bannerView->abscissaValue()->setText(buffer);
-  int nameLength = sequence()->nameWithArgument(buffer, bufferSize);
+  size_t nameLength = sequence()->nameWithArgument(buffer, bufferSize);
   double u_n =
       sequence()
           ->evaluateXYAtParameter(static_cast<double>(rankAtCurrentStep()),

@@ -25,9 +25,9 @@ Layout VectorNormNode::createLayout(
       floatDisplayMode, numberOfSignificantDigits, context));
 }
 
-int VectorNormNode::serialize(char* buffer, int bufferSize,
-                              Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits) const {
+size_t VectorNormNode::serialize(char* buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       VectorNorm::s_functionHelper.aliasesList().mainAlias());

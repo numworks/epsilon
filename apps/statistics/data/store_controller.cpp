@@ -31,7 +31,7 @@ void StoreController::sortSelectedColumn() {
       relativeIndex != k_cumulatedFrequencyRelativeColumn ? relativeIndex : 0);
 }
 
-int StoreController::fillColumnName(int column, char *buffer) {
+size_t StoreController::fillColumnName(int column, char *buffer) {
   if (isCumulatedFrequencyColumn(column)) {
     // FC column options doesn't specify the column name.
     buffer[0] = 0;

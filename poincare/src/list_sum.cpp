@@ -9,9 +9,9 @@ int ListSumNode::numberOfChildren() const {
   return ListSum::s_functionHelper.numberOfChildren();
 }
 
-int ListSumNode::serialize(char* buffer, int bufferSize,
-                           Preferences::PrintFloatMode floatDisplayMode,
-                           int numberOfSignificantDigits) const {
+size_t ListSumNode::serialize(char* buffer, size_t bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       ListSum::s_functionHelper.aliasesList().mainAlias());

@@ -116,8 +116,8 @@ Layout LayoutHelper::StringLayoutOfSerialization(
     const Expression& expression, char* buffer, int bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) {
-  int length = expression.serialize(buffer, bufferSize, floatDisplayMode,
-                                    numberOfSignificantDigits);
+  size_t length = expression.serialize(buffer, bufferSize, floatDisplayMode,
+                                       numberOfSignificantDigits);
   assert(length < bufferSize);
   return LayoutHelper::String(buffer, length);
 }

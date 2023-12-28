@@ -60,11 +60,11 @@ class Layout : public TreeHandle {
   }
 
   // Serialization
-  int serializeForParsing(char *buffer, int bufferSize) const {
+  size_t serializeForParsing(char *buffer, size_t bufferSize) const {
     return node()->serialize(buffer, bufferSize);
   }
-  int serializeParsedExpression(char *buffer, int bufferSize,
-                                Context *context) const;
+  size_t serializeParsedExpression(char *buffer, size_t bufferSize,
+                                   Context *context) const;
 
   // Layout properties
   /* Return True if the layout succeeded the test, Unknown if its children

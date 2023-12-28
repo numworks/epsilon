@@ -41,9 +41,10 @@ FractionLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
              : DeletionMethod::MoveLeft;
 }
 
-int FractionLayoutNode::serialize(char* buffer, int bufferSize,
-                                  Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits) const {
+size_t FractionLayoutNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -59,7 +60,7 @@ int FractionLayoutNode::serialize(char* buffer, int bufferSize,
    */
 
   // Add system parenthesis
-  int numberOfChar = SerializationHelper::CodePoint(
+  size_t numberOfChar = SerializationHelper::CodePoint(
       buffer, bufferSize, UCodePointLeftSystemParenthesis);
   if (numberOfChar >= bufferSize - 1) {
     return bufferSize - 1;

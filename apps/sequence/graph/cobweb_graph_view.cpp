@@ -47,9 +47,9 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   SequenceStore *sequenceStore = App::app()->functionStore();
   ExpiringPointer<Shared::Sequence> sequence =
       sequenceStore->modelForRecord(m_record);
-  constexpr int bufferSize = k_textMaxLength + 1;
+  constexpr size_t bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
-  int nameLength = sequence->name(name, bufferSize);
+  size_t nameLength = sequence->name(name, bufferSize);
   KDColor fadedColor =
       KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
   SequenceContext *context =

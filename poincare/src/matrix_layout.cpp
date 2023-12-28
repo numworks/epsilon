@@ -8,9 +8,9 @@
 namespace Poincare {
 
 // SerializableNode
-int MatrixLayoutNode::serialize(char *buffer, int bufferSize,
-                                Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits) const {
+size_t MatrixLayoutNode::serialize(char *buffer, size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -20,7 +20,7 @@ int MatrixLayoutNode::serialize(char *buffer, int bufferSize,
   }
 
   // Write the opening bracket
-  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
+  size_t numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
   if (numberOfChar >= bufferSize - 1) {
     return bufferSize - 1;
   }

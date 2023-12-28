@@ -13,9 +13,9 @@ class ProductLayoutNode final : public SequenceLayoutNode {
   // Layout
   Type type() const override { return Type::ProductLayout; }
 
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(ProductLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

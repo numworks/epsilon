@@ -17,9 +17,9 @@ class PiecewiseOperatorLayoutNode final : public GridLayoutNode {
   Type type() const override { return Type::PiecewiseOperatorLayout; }
 
   // SerializableNode
-  int serialize(char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override;
 
   // Grid layout node
   void startEditing() override;

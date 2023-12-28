@@ -56,10 +56,11 @@ Layout PercentSimpleNode::createLayout(
   return std::move(result);
 }
 
-int PercentSimpleNode::serialize(char* buffer, int bufferSize,
-                                 Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits) const {
-  int numberOfChar = SerializationHelper::SerializeChild(
+size_t PercentSimpleNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  size_t numberOfChar = SerializationHelper::SerializeChild(
       childAtIndex(0), this, buffer, bufferSize, floatDisplayMode,
       numberOfSignificantDigits);
   if ((numberOfChar < 0) || (numberOfChar >= bufferSize - 1)) {

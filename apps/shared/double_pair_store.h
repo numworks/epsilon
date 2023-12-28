@@ -49,7 +49,7 @@ class DoublePairStore {
   // Column name
   virtual char columnNamePrefixAtIndex(int column) const = 0;
   // Fills 3 chars in the buffer (2 chars for name + null terminate)
-  int fillColumnName(int series, int column, char *buffer) const;
+  size_t fillColumnName(int series, int column, char *buffer) const;
   bool isColumnName(const char *name, int nameLen, int *returnSeries = nullptr,
                     int *returnColumn = nullptr);
 

@@ -80,10 +80,10 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return std::move(result);
 }
 
-int FactorialNode::serialize(char* buffer, int bufferSize,
-                             Preferences::PrintFloatMode floatDisplayMode,
-                             int numberOfSignificantDigits) const {
-  int numberOfChar = SerializationHelper::SerializeChild(
+size_t FactorialNode::serialize(char* buffer, size_t bufferSize,
+                                Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits) const {
+  size_t numberOfChar = SerializationHelper::SerializeChild(
       childAtIndex(0), this, buffer, bufferSize, floatDisplayMode,
       numberOfSignificantDigits);
   if ((numberOfChar < 0) || (numberOfChar >= bufferSize - 1)) {

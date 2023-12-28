@@ -16,9 +16,9 @@ Layout StringLayoutNode::makeEditable() {
   return StringLayout(this).makeEditable();
 }
 
-int StringLayoutNode::serialize(char *buffer, int bufferSize,
-                                Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits) const {
+size_t StringLayoutNode::serialize(char *buffer, size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const {
   return strlcpy(buffer, m_string, bufferSize);
 }
 

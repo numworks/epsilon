@@ -151,7 +151,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(
   buffer[bufferSize - 1] = 0;
 
   // Write the operator name
-  int numberOfChar = strlcpy(buffer, operatorName, bufferSize);
+  size_t numberOfChar = strlcpy(buffer, operatorName, bufferSize);
   if (numberOfChar >= bufferSize - 1) {
     return bufferSize - 1;
   }

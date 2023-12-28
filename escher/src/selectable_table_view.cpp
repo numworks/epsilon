@@ -176,7 +176,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (!cell) {
       return false;
     }
-    constexpr int bufferSize = TextField::MaxBufferSize();
+    constexpr size_t bufferSize = TextField::MaxBufferSize();
     char buffer[bufferSize] = "";
     // Step 1: Determine text to store
     const char* text = cell->text();

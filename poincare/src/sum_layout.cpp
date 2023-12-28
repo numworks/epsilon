@@ -21,9 +21,9 @@ const uint8_t symbolPixelOneBranchLargeFont
         0xFF, 0xFF, 0x30, 0xBF, 0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0x30, 0xFF, 0xFF,
 };
 
-int SumLayoutNode::serialize(char *buffer, int bufferSize,
-                             Preferences::PrintFloatMode floatDisplayMode,
-                             int numberOfSignificantDigits) const {
+size_t SumLayoutNode::serialize(char *buffer, size_t bufferSize,
+                                Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits) const {
   return SequenceLayoutNode::writeDerivedClassInBuffer(
       "sum", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }

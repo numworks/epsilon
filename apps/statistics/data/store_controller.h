@@ -21,7 +21,7 @@ class StoreController : public Shared::StoreController {
 
   /* Shared::StoreController */
   void sortSelectedColumn() override;
-  int fillColumnName(int column, char* buffer) override;
+  size_t fillColumnName(int column, char* buffer) override;
 
   // TableViewDataSource
   int numberOfColumns() const override;

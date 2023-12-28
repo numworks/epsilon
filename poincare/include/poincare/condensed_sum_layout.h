@@ -19,9 +19,9 @@ class CondensedSumLayoutNode final : public LayoutNode {
   /* CondensedSumLayout is only used in apps/shared/sum_graph_controller.cpp, in
    * a view with no cursor. */
 
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override {
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override {
     assert(false);
     return 0;
   }

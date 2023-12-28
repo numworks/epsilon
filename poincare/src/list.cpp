@@ -17,10 +17,10 @@ namespace Poincare {
 
 // ListNode
 
-int ListNode::serialize(char* buffer, int bufferSize,
-                        Preferences::PrintFloatMode floatDisplayMode,
-                        int numberOfSignificantDigits) const {
-  int writtenChars = SerializationHelper::CodePoint(buffer, bufferSize, '{');
+size_t ListNode::serialize(char* buffer, size_t bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
+  size_t writtenChars = SerializationHelper::CodePoint(buffer, bufferSize, '{');
   if (writtenChars >= bufferSize - 1) {
     return writtenChars;
   }

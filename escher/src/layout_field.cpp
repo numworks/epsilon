@@ -60,7 +60,7 @@ void LayoutField::ContentView::copySelection(Context *context,
     }
     return;
   }
-  constexpr int bufferSize = TextField::MaxBufferSize();
+  constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
   Layout layoutToParse;
   if (selection.layout().isHorizontal()) {

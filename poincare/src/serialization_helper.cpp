@@ -8,8 +8,8 @@
 
 namespace Poincare {
 
-int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
-    char *buffer, int length) {
+size_t SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
+    char *buffer, size_t length) {
   assert(
       UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
   assert(
@@ -24,7 +24,7 @@ int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
     length = strlen(buffer);
   }
 
-  int offset = 0;
+  size_t offset = 0;
   char c = *(buffer + offset);
   bool pendingSystemCodePoint = false;
   while (c != 0) {
@@ -49,7 +49,7 @@ int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
   return length;
 }
 
-static bool checkBufferSize(char *buffer, int bufferSize, int *result) {
+static bool checkBufferSize(char *buffer, size_t bufferSize, size_t *result) {
   // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
     *result = -1;
@@ -64,18 +64,18 @@ static bool checkBufferSize(char *buffer, int bufferSize, int *result) {
   return false;
 }
 
-int SerializationHelper::SerializeChild(
+size_t SerializationHelper::SerializeChild(
     const TreeNode *childNode, const TreeNode *parentNode, char *buffer,
-    int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    size_t bufferSize, Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits) {
   {
-    int result = 0;
+    size_t result = 0;
     if (checkBufferSize(buffer, bufferSize, &result)) {
       return result;
     }
   }
 
-  int numberOfChar = 0;
+  size_t numberOfChar = 0;
   // Write the child with parentheses if needed
   bool addParentheses =
       parentNode->childNeedsSystemParenthesesAtSerialization(childNode);
@@ -107,19 +107,20 @@ int SerializationHelper::SerializeChild(
   return numberOfChar;
 }
 
-int InfixPrefix(bool prefix, const TreeNode *node, char *buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfDigits, const char *operatorName,
-                SerializationHelper::ParenthesisType typeOfParenthesis,
-                int firstChildIndex, int lastChildIndex) {
+size_t InfixPrefix(bool prefix, const TreeNode *node, char *buffer,
+                   size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfDigits, const char *operatorName,
+                   SerializationHelper::ParenthesisType typeOfParenthesis,
+                   int firstChildIndex, int lastChildIndex) {
   {
-    int result = 0;
+    size_t result = 0;
     if (checkBufferSize(buffer, bufferSize, &result)) {
       return result;
     }
   }
 
-  int numberOfChar = 0;
+  size_t numberOfChar = 0;
   CodePoint openingCodePoint = UCodePointNull;
   CodePoint closingCodePoint = UCodePointNull;
 
@@ -243,37 +244,37 @@ int InfixPrefix(bool prefix, const TreeNode *node, char *buffer, int bufferSize,
   return numberOfChar;
 }
 
-int SerializationHelper::Infix(const TreeNode *node, char *buffer,
-                               int bufferSize,
-                               Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfDigits, const char *operatorName,
-                               int firstChildIndex, int lastChildIndex) {
+size_t SerializationHelper::Infix(const TreeNode *node, char *buffer,
+                                  size_t bufferSize,
+                                  Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfDigits, const char *operatorName,
+                                  int firstChildIndex, int lastChildIndex) {
   return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode,
                      numberOfDigits, operatorName, ParenthesisType::None,
                      firstChildIndex, lastChildIndex);
 }
 
-int SerializationHelper::Prefix(const TreeNode *node, char *buffer,
-                                int bufferSize,
-                                Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfDigits, const char *operatorName,
-                                ParenthesisType typeOfParenthesis,
-                                int lastChildIndex) {
+size_t SerializationHelper::Prefix(const TreeNode *node, char *buffer,
+                                   size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfDigits, const char *operatorName,
+                                   ParenthesisType typeOfParenthesis,
+                                   int lastChildIndex) {
   return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode,
                      numberOfDigits, operatorName, typeOfParenthesis, 0,
                      lastChildIndex);
 }
 
-int SerializationHelper::CodePoint(char *buffer, int bufferSize,
-                                   class CodePoint c) {
+size_t SerializationHelper::CodePoint(char *buffer, size_t bufferSize,
+                                      class CodePoint c) {
   {
-    int result = 0;
+    size_t result = 0;
     if (checkBufferSize(buffer, bufferSize, &result)) {
       return result;
     }
   }
   size_t length = UTF8Decoder::CharSizeOfCodePoint(c);
-  if (static_cast<int>(length) >= bufferSize) {
+  if (length >= bufferSize) {
     /* Code point doesn't fit, nullify the rest of the buffer to prevent
      * truncated utf8 characters */
     memset(buffer, 0, bufferSize);

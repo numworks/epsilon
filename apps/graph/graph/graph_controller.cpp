@@ -318,7 +318,7 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
       store->modelForRecord(store->activeRecordAtIndex(j));
   constexpr size_t bufferSize = ContinuousFunction::k_maxNameWithArgumentSize;
   char buffer[bufferSize];
-  int size = function->nameWithArgument(buffer, bufferSize);
+  size_t size = function->nameWithArgument(buffer, bufferSize);
   return LayoutHelper::String(buffer, size);
 }
 

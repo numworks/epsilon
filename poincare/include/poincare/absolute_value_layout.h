@@ -14,9 +14,9 @@ class AbsoluteValueLayoutNode final : public SquareBracketPairLayoutNode {
   Type type() const override { return Type::AbsoluteValueLayout; }
 
   // SerializationHelperInterface
-  int serialize(char* buffer, int bufferSize,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override {
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode,
+                   int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(
         this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
         AbsoluteValue::s_functionHelper.aliasesList().mainAlias(),

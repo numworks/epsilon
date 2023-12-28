@@ -7,10 +7,11 @@ namespace Poincare {
 
 // LayoutNode
 
-int CombinedCodePointsLayoutNode::serialize(
-    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+size_t CombinedCodePointsLayoutNode::serialize(
+    char *buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  int numberOfChar =
+  size_t numberOfChar =
       SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
   numberOfChar += SerializationHelper::CodePoint(
       buffer + numberOfChar, bufferSize - numberOfChar, m_combinedCodePoint);

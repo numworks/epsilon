@@ -5,15 +5,15 @@
 #include <ion/display.h>
 #include <stdint.h>
 
+#include "grid_type_controller.h"
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
-
 namespace Shared {
 
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
-  enum class GridType { Cartesian, Polar };
+  using GridType = GridTypeController::GridType;
 
   InteractiveCurveViewRange(
       InteractiveCurveViewRangeDelegate* delegate = nullptr)

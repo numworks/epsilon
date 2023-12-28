@@ -1,5 +1,6 @@
 #include "input_homogeneity_table_cell.h"
 
+#include <poincare/print_int.h>
 #include <shared/column_parameter_controller.h>
 
 #include "input_homogeneity_controller.h"
@@ -38,10 +39,13 @@ void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell *cell,
 }
 
 size_t InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
-  size_t length = strlcpy(buffer, I18n::translate(I18n::Message::Group),
-                          Shared::ColumnParameterController::k_titleBufferSize);
-  buffer[length++] = '0' + column;
-  buffer[length] = '\0';
+  constexpr size_t bufferSize =
+      Shared::ColumnParameterController::k_titleBufferSize;
+  size_t length =
+      strlcpy(buffer, I18n::translate(I18n::Message::Group), bufferSize);
+  length +=
+      Poincare::PrintInt::Left(column, buffer + length, bufferSize - length);
+  buffer[length] = 0;
   assert(length < Shared::ColumnParameterController::k_titleBufferSize);
   return length;
 }

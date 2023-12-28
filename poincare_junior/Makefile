@@ -59,6 +59,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/cursor_motion.cpp \
   layout/empty_rectangle.cpp \
   layout/grid.cpp \
+  layout/input_beautification.cpp \
   layout/layout_cursor.cpp \
   layout/layoutter.cpp \
   layout/parser.cpp \

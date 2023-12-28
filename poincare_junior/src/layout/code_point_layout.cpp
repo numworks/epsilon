@@ -23,4 +23,8 @@ void CodePointLayout::GetName(const Tree* node, char* buffer,
   buffer[size] = 0;
 }
 
+bool CodePointLayout::IsCodePoint(const Tree* node, CodePoint cp) {
+  return node->isCodePointLayout() && GetCodePoint(node) == cp;
+}
+
 }  // namespace PoincareJ

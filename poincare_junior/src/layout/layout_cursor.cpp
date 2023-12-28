@@ -5,6 +5,7 @@
 #include <poincare_junior/src/layout/autocompleted_pair.h>
 #include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/layout/indices.h>
+#include <poincare_junior/src/layout/input_beautification.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -205,14 +206,12 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   // - Step 1 - Delete selection
   deleteAndResetSelection(context, nullptr);
 
-#if 0
   // - Step 2 - Beautify the current layout if needed.
   InputBeautification::BeautificationMethod beautificationMethod =
-      InputBeautification::BeautificationMethodWhenInsertingLayout(layout);
+      InputBeautification::BeautificationMethodWhenInsertingLayout(ref);
   if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
     InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
   }
-#endif
 
   /* - Step 3 - Add empty row to grid layout if needed
    * When an empty child at the bottom or right of the grid is filled,
@@ -343,12 +342,13 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 
   // - Step 10 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
-#if 0
+
   // - Step 11 - Beautify after insertion if needed
   if (beautificationMethod.beautifyAfterInserting) {
     InputBeautification::BeautifyLeftOfCursorAfterInsertion(this, context);
   }
 
+#if 0
   // - Step 12 - Invalidate layout sizes and positions
   invalidateSizesAndPositions();
 #endif

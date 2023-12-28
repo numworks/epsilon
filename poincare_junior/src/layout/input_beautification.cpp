@@ -1,18 +1,20 @@
-#include <poincare/input_beautification.h>
+#include "input_beautification.h"
 
+#include <poincare_junior/src/n_ary.h>
+
+#include "autocompleted_pair.h"
 #include "parsing/tokenizer.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 // public
 
 InputBeautification::BeautificationMethod
 InputBeautification::BeautificationMethodWhenInsertingLayout(
-    Layout insertedLayout) {
-  Layout leftMostLayout =
-      insertedLayout.isHorizontal() && insertedLayout.numberOfChildren() > 0
-          ? insertedLayout.childAtIndex(0)
-          : insertedLayout;
+    const Tree *insertedLayout) {
+  const Tree *leftMostLayout = insertedLayout->numberOfChildren() > 0
+                                   ? insertedLayout->child(0)
+                                   : insertedLayout;
 
   /* Case 1: The inserted layout has identifier material on its left.
    *         = Do not apply any beautfication.
@@ -45,14 +47,12 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
    *
    * */
 
-  bool onlyOneLayoutIsInserted = (!insertedLayout.isHorizontal() ||
-                                  insertedLayout.numberOfChildren() == 1);
+  bool onlyOneLayoutIsInserted = insertedLayout->numberOfChildren() == 1;
 
   bool onlyLeftParenthesisIsInserted =
       onlyOneLayoutIsInserted &&
-      (leftMostLayout.type() == LayoutNode::Type::ParenthesisLayout &&
-       !static_cast<ParenthesisLayoutNode *>(leftMostLayout.node())
-            ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
+      (leftMostLayout->isParenthesisLayout() &&
+       !AutocompletedPair::IsTemporary(leftMostLayout, Side::Left));
 
   return BeautificationMethod{
       .beautifyIdentifiersBeforeInserting = !onlyLeftParenthesisIsInserted,
@@ -61,23 +61,23 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     LayoutCursor *layoutCursor, Context *context) {
-  Layout l = layoutCursor->layout();
+  Tree *l = layoutCursor->cursorNode();
   int position = layoutCursor->position();
-  if (!l.isHorizontal() || position == 0) {
+  if (position == 0) {
     return false;
   }
-  return TokenizeAndBeautifyIdentifiers(static_cast<HorizontalLayout &>(l),
-                                        position - 1, k_simpleIdentifiersRules,
-                                        k_lenOfSimpleIdentifiersRules, context,
-                                        layoutCursor);
+  return TokenizeAndBeautifyIdentifiers(
+      l, position - 1, k_simpleIdentifiersRules, k_lenOfSimpleIdentifiersRules,
+      context, layoutCursor);
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     LayoutCursor *layoutCursor, Context *context) {
-  Layout l = layoutCursor->layout();
+  Tree *l = layoutCursor->cursorNode();
+  Tree *root = layoutCursor->rootNode();
   int position = layoutCursor->position();
 
-  HorizontalLayout h = HorizontalLayout::Builder();
+  Tree *h = nullptr;
   int insertedLayoutIndex = -1;
 
   // - Step 1 - Find the inserted layout
@@ -87,27 +87,27 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
      * insertion. --> Beautify left of its parent
      * For example "sqrt(|4+5)" -> "|" is left of "|4+5", so
      * beautify left of the parenthesis ("sqrt()"). */
-    Layout insertedLayout = l.parent();
+    EditionReference insertedLayout = l->parent(root);
     if (insertedLayout.isUninitialized()) {
       return false;
     }
-    Layout horizontalParent = insertedLayout.parent();
+    EditionReference horizontalParent = insertedLayout->parent(root);
     if (horizontalParent.isUninitialized() ||
-        !horizontalParent.isHorizontal()) {
+        !horizontalParent->isRackLayout()) {
       return false;
     }
-    h = static_cast<HorizontalLayout &>(horizontalParent);
-    insertedLayoutIndex = horizontalParent.indexOfChild(insertedLayout);
-  } else if (l.isHorizontal()) {
+    h = horizontalParent;
+    insertedLayoutIndex = horizontalParent->indexOfChild(insertedLayout);
+  } else if (l->isRackLayout()) {
     insertedLayoutIndex = position - 1;
-    h = static_cast<HorizontalLayout &>(l);
+    h = l;
   } else {
     return false;
   }
 
   // - Step 2 - Apply the beautification
-  Layout insertedLayout = h.childAtIndex(insertedLayoutIndex);
-  if (insertedLayout.type() == LayoutNode::Type::ParenthesisLayout) {
+  EditionReference insertedLayout = h->child(insertedLayoutIndex);
+  if (insertedLayout->isParenthesisLayout()) {
     /* - Step 2.1 - Beautify after a parenthesis insertion.
      *    > Beautify identifiers and functions left of the parenthesis.
      *    > Beautifiy d/dx() into derivative function */
@@ -133,20 +133,17 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 
 // private
 
-bool InputBeautification::LayoutIsIdentifierMaterial(Layout l) {
-  return l.type() == LayoutNode::Type::CodePointLayout &&
-         Tokenizer::IsIdentifierMaterial(
-             static_cast<CodePointLayout &>(l).codePoint());
+bool InputBeautification::LayoutIsIdentifierMaterial(const Tree *l) {
+  return l->isCodePointLayout() &&
+         Tokenizer::IsIdentifierMaterial(CodePointLayout::GetCodePoint(l));
 }
 
-bool InputBeautification::BeautifySymbols(HorizontalLayout h,
-                                          int rightmostIndexToBeautify,
+bool InputBeautification::BeautifySymbols(Tree *h, int rightmostIndexToBeautify,
                                           LayoutCursor *layoutCursor) {
-  assert(!h.isUninitialized());
-  assert(rightmostIndexToBeautify < h.numberOfChildren() &&
+  assert(h);
+  assert(rightmostIndexToBeautify < h->numberOfChildren() &&
          rightmostIndexToBeautify >= 0);
-  if (h.childAtIndex(rightmostIndexToBeautify).type() !=
-      LayoutNode::Type::CodePointLayout) {
+  if (!h->child(rightmostIndexToBeautify)->isCodePointLayout()) {
     return false;
   }
   // Try beautifying non-identifiers (ex: <=, ->, ...)
@@ -165,9 +162,9 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
     // Compare the code points of the input with the pattern
     bool matchesPattern = true;
     for (int i = 0; i < length; i++) {
-      Layout child =
-          h.childAtIndex(rightmostIndexToBeautify - (length - 1) + i);
-      if (!CodePointLayoutNode::IsCodePoint(child, pattern[i])) {
+      EditionReference child =
+          h->child(rightmostIndexToBeautify - (length - 1) + i);
+      if (!CodePointLayout::IsCodePoint(child, pattern[i])) {
         matchesPattern = false;
         break;
       }
@@ -187,21 +184,20 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
 }
 
 bool InputBeautification::TokenizeAndBeautifyIdentifiers(
-    HorizontalLayout h, int rightmostIndexToBeautify,
-    const BeautificationRule *rulesList, size_t numberOfRules, Context *context,
-    LayoutCursor *layoutCursor, bool logBeautification) {
-  assert(!h.isUninitialized());
-  assert(rightmostIndexToBeautify < h.numberOfChildren() &&
+    Tree *h, int rightmostIndexToBeautify, const BeautificationRule *rulesList,
+    size_t numberOfRules, Context *context, LayoutCursor *layoutCursor,
+    bool logBeautification) {
+  assert(h);
+  assert(rightmostIndexToBeautify < h->numberOfChildren() &&
          rightmostIndexToBeautify >= 0);
   bool followedByParenthesis =
-      (rightmostIndexToBeautify < h.numberOfChildren() - 1 &&
-       h.childAtIndex(rightmostIndexToBeautify + 1).type() ==
-           LayoutNode::Type::ParenthesisLayout);
+      (rightmostIndexToBeautify < h->numberOfChildren() - 1 &&
+       h->child(rightmostIndexToBeautify + 1)->isParenthesisLayout());
 
   // Get the identifiers string.
   int firstIndexOfIdentifier = 0;
   for (int i = rightmostIndexToBeautify; i >= 0; i--) {
-    Layout currentLayout = h.childAtIndex(i);
+    EditionReference currentLayout = h->child(i);
     if (!LayoutIsIdentifierMaterial(currentLayout)) {
       firstIndexOfIdentifier = i + 1;
       break;
@@ -218,9 +214,9 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   char identifiersString[bufferSize];
   int bufferCurrentLength = 0;
   for (int i = firstIndexOfIdentifier; i <= rightmostIndexToBeautify; i++) {
-    Layout currentChild = h.childAtIndex(i);
-    assert(currentChild.type() == LayoutNode::Type::CodePointLayout);
-    CodePoint c = static_cast<CodePointLayout &>(currentChild).codePoint();
+    EditionReference currentChild = h->child(i);
+    assert(currentChild->isCodePointLayout());
+    CodePoint c = CodePointLayout::GetCodePoint(currentChild);
     // This does not add null termination
     size_t cLen = UTF8Decoder::CharSizeOfCodePoint(c);
     if (bufferCurrentLength + cLen >= bufferSize) {
@@ -233,6 +229,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   }
   identifiersString[bufferCurrentLength] = 0;
 
+#if 0
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
   ParsingContext parsingContext(context,
@@ -295,7 +292,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
         // Check if function is "log"
         k_logarithmRule.listOfBeautifiedAliases.contains(
             currentIdentifier.text(), currentIdentifier.length())) {
-      Layout baseOfLog =
+      EditionReference baseOfLog =
           nextIdentifier.expression()
               .createLayout(Preferences::PrintFloatMode::Decimal,
                             Preferences::LargeNumberOfSignificantDigits,
@@ -314,53 +311,60 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
     }
   }
   return layoutsWereBeautified;
+#else
+  return false;
+#endif
 }
 
-bool InputBeautification::BeautifyPipeKey(HorizontalLayout h,
-                                          int indexOfPipeKey,
+bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
                                           LayoutCursor *cursor) {
-  Layout pipeKey = h.childAtIndex(indexOfPipeKey);
-  if (!CodePointLayoutNode::IsCodePoint(pipeKey, '|')) {
+#if 0
+  EditionReference pipeKey = h->child(indexOfPipeKey);
+  if (!CodePointLayout::IsCodePoint(pipeKey, '|')) {
     return false;
   }
   h.removeChildAtIndexInPlace(indexOfPipeKey);
-  Layout parameter = HorizontalLayout::Builder();
-  Layout toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
+  EditionReference parameter = KRackL()->clone();
+  EditionReference toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutCursor cursorForInsertion(h);
   cursorForInsertion.safeSetPosition(indexOfPipeKey);
   cursorForInsertion.insertLayout(toInsert, nullptr);
   if (cursor->layout() == h && cursor->position() == indexOfPipeKey + 1) {
-    cursor->safeSetLayout(toInsert.childAtIndex(0), OMG::Direction::Left());
+    cursor->safeSetLayout(toInsert->child(0), OMG::Direction::Left());
   }
   return true;
+#else
+  return false;
+#endif
 }
 
 bool InputBeautification::BeautifyFractionIntoDerivative(
-    HorizontalLayout h, int indexOfFraction, LayoutCursor *layoutCursor) {
-  assert(indexOfFraction >= 0 && indexOfFraction < h.numberOfChildren() - 1 &&
-         h.childAtIndex(indexOfFraction + 1).type() ==
-             LayoutNode::Type::ParenthesisLayout);
-  Layout childToMatch = h.childAtIndex(indexOfFraction);
-  Layout fractionDDXLayout = FractionLayout::Builder(
-      HorizontalLayout::Builder(CodePointLayout::Builder('d')),
-      HorizontalLayout::Builder(CodePointLayout::Builder('d'),
-                                CodePointLayout::Builder('x')));
-  if (!fractionDDXLayout.isIdenticalTo(childToMatch)) {
+    Tree *h, int indexOfFraction, LayoutCursor *layoutCursor) {
+  assert(indexOfFraction >= 0 && indexOfFraction < h->numberOfChildren() - 1 &&
+         h->child(indexOfFraction + 1)->isParenthesisLayout());
+  EditionReference childToMatch = h->child(indexOfFraction);
+  const Tree *fractionDDXLayout = KFracL("d"_l, "dx"_l);
+  if (!fractionDDXLayout->treeIsIdenticalTo(childToMatch)) {
     return false;
   }
+#if 0
   return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
       h, indexOfFraction, indexOfFraction, k_derivativeRule, layoutCursor);
+#else
+  return false;
+#endif
 }
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
-    HorizontalLayout h, int indexOfSuperscript, LayoutCursor *layoutCursor) {
-  Layout superscript = h.childAtIndex(indexOfSuperscript);
+    Tree *h, int indexOfSuperscript, LayoutCursor *layoutCursor) {
+#if 0
+  EditionReference superscript = h->child(indexOfSuperscript);
   if (superscript.type() != LayoutNode::Type::VerticalOffsetLayout ||
       static_cast<VerticalOffsetLayout &>(superscript).verticalPosition() !=
           VerticalOffsetLayoutNode::VerticalPosition::Superscript) {
     return false;
   }
-  Layout firstOrderDerivative = h.parent();
+  EditionReference firstOrderDerivative = h.parent();
   if (firstOrderDerivative.isUninitialized() ||
       firstOrderDerivative.type() !=
           LayoutNode::Type::FirstOrderDerivativeLayout ||
@@ -371,22 +375,24 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
           DerivativeLayoutNode::VariableSlot::Fraction) {
     return false;
   }
-  Layout derivativeOrder = superscript.childAtIndex(0);
+  EditionReference derivativeOrder = superscript.child(0);
   h.removeChildAtIndexInPlace(indexOfSuperscript);
   if (layoutCursor->layout() == h &&
       layoutCursor->position() > h.numberOfChildren()) {
     layoutCursor->safeSetLayout(derivativeOrder, OMG::Direction::Right());
   }
   HigherOrderDerivativeLayout newDerivative =
-      HigherOrderDerivativeLayout::Builder(firstOrderDerivative.childAtIndex(0),
-                                           firstOrderDerivative.childAtIndex(1),
-                                           firstOrderDerivative.childAtIndex(2),
-                                           derivativeOrder);
+      HigherOrderDerivativeLayout::Builder(
+          firstOrderDerivative.child(0), firstOrderDerivative.child(1),
+          firstOrderDerivative.child(2), derivativeOrder);
   firstOrderDerivative.replaceWithInPlace(newDerivative);
   return true;
+#else
+  return false;
+#endif
 }
 
-bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
+bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
                                       Context *context,
                                       LayoutCursor *layoutCursor) {
   /* The "sum(" function is ambiguous". It can either be:
@@ -400,18 +406,19 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
    *  - "sum|" -> insert "(" -> "sum(" -> do not beautify
    *  - "sum(k^2|" -> insert "," -> "sum(k^2,|" -> beautify with a big sigma
    * */
+#if 0
   assert(!h.isUninitialized());
   assert(indexOfComma < h.numberOfChildren() && indexOfComma >= 0);
-  Layout comma = h.childAtIndex(indexOfComma);
+  EditionReference comma = h.child(indexOfComma);
   if (!CodePointLayoutNode::IsCodePoint(comma, ',')) {
     return false;
   }
-  Layout parenthesis = h.parent();
+  EditionReference parenthesis = h.parent();
   if (parenthesis.isUninitialized() ||
       parenthesis.type() != LayoutNode::Type::ParenthesisLayout) {
     return false;
   }
-  Layout horizontalParent = parenthesis.parent();
+  EditionReference horizontalParent = parenthesis.parent();
   if (horizontalParent.isUninitialized() || !horizontalParent.isHorizontal()) {
     return false;
   }
@@ -425,7 +432,7 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
   // Check if "sum" is written before the parenthesis
   for (int i = 0; i < nameLen; i++) {
     if (!CodePointLayoutNode::IsCodePoint(
-            horizontalParent.childAtIndex(i + indexOfParenthesis - nameLen),
+            horizontalParent.child(i + indexOfParenthesis - nameLen),
             k_sumName[i])) {
       return false;
     }
@@ -438,25 +445,29 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
       &k_sumRule, 1, context, layoutCursor);
   if (result) {
     // Replace the cursor if it's in variable slot
-    Layout parent = layoutCursor->layout().parent();
+    EditionReference parent = layoutCursor->layout().parent();
     assert(!parent.isUninitialized() &&
            parent.type() == LayoutNode::Type::SumLayout);
     if (parent.indexOfChild(layoutCursor->layout()) ==
         SequenceLayoutNode::k_variableLayoutIndex) {
       layoutCursor->safeSetLayout(
-          parent.childAtIndex(SumLayoutNode::k_lowerBoundLayoutIndex),
+          parent.child(SumLayoutNode::k_lowerBoundLayoutIndex),
           OMG::Direction::Left());
     }
   }
   return result;
+#else
+  return false;
+#endif
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(
     const char *identifier, size_t identifierLength,
-    BeautificationRule beautificationRule, HorizontalLayout h, int startIndex,
+    BeautificationRule beautificationRule, Tree *h, int startIndex,
     LayoutCursor *layoutCursor, int *comparisonResult,
     int *numberOfLayoutsAddedOrRemoved) {
-  AliasesList patternAliases = beautificationRule.listOfBeautifiedAliases;
+#if 0
+  Aliases patternAliases = beautificationRule.listOfBeautifiedAliases;
   *comparisonResult =
       patternAliases.maxDifferenceWith(identifier, identifierLength);
   if (*comparisonResult == 0) {
@@ -464,21 +475,21 @@ bool InputBeautification::CompareAndBeautifyIdentifier(
         h, startIndex, startIndex + identifierLength - 1, beautificationRule,
         layoutCursor, numberOfLayoutsAddedOrRemoved);
   }
+#endif
   return false;
 }
 
 bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-    HorizontalLayout h, int startIndex, int endIndex,
+    Tree *h, int startIndex, int endIndex,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor,
-    int *numberOfLayoutsAddedOrRemoved, Layout preProcessedParameter,
+    int *numberOfLayoutsAddedOrRemoved, Tree *preProcessedParameter,
     int indexOfPreProcessedParameter) {
   assert(beautificationRule.numberOfParameters == 0 ||
-         h.childAtIndex(endIndex + 1).type() ==
-             LayoutNode::Type::ParenthesisLayout);
-  int currentNumberOfChildren = h.numberOfChildren();
+         h->child(endIndex + 1)->isParenthesisLayout());
+  int currentNumberOfChildren = h->numberOfChildren();
   // Create pattern layout
-  Layout parameters[k_maxNumberOfParameters];
-  if (!preProcessedParameter.isUninitialized()) {
+  Tree *parameters[k_maxNumberOfParameters];
+  if (preProcessedParameter) {
     assert(indexOfPreProcessedParameter < k_maxNumberOfParameters);
     parameters[indexOfPreProcessedParameter] = preProcessedParameter;
   }
@@ -491,31 +502,32 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
       return false;
     }
   }
-  Layout inserted = beautificationRule.layoutBuilder(parameters);
+  EditionReference inserted = beautificationRule.layoutBuilder(parameters);
 
   // Remove layout
   int numberOfRemovedLayouts = endIndex - startIndex + 1;
-  bool cursorIsInRemovedLayouts = layoutCursor->layout() == h &&
+  bool cursorIsInRemovedLayouts = layoutCursor->cursorNode() == h &&
                                   layoutCursor->position() > startIndex &&
                                   layoutCursor->position() <= endIndex;
   bool cursorIsAfterRemovedLayouts =
-      layoutCursor->layout() == h && layoutCursor->position() > endIndex;
+      layoutCursor->cursorNode() == h && layoutCursor->position() > endIndex;
   while (endIndex >= startIndex) {
-    h.removeChildAtIndexInPlace(endIndex);
+    NAry::RemoveChildAtIndex(h, endIndex);
     endIndex--;
   }
   assert(endIndex == startIndex - 1);
   // Replace input with pattern
   int numberOfInsertedLayouts =
-      inserted.isHorizontal() ? inserted.numberOfChildren() : 1;
-  h.addOrMergeChildAtIndex(inserted, startIndex);
+      inserted->isRackLayout() ? inserted->numberOfChildren() : 1;
+  NAry::AddOrMergeChildAtIndex(h, inserted, startIndex);
   // Set cursor to a proper position
   if (cursorIsInRemovedLayouts) {
-    layoutCursor->safeSetPosition(startIndex);
+    // TODO safeSetPosition
+    layoutCursor->setPosition(startIndex);
   } else if (cursorIsAfterRemovedLayouts) {
-    layoutCursor->safeSetPosition(layoutCursor->position() -
-                                  numberOfRemovedLayouts +
-                                  numberOfInsertedLayouts);
+    // TODO safeSetPosition
+    layoutCursor->setPosition(layoutCursor->position() -
+                              numberOfRemovedLayouts + numberOfInsertedLayouts);
   } else {
     /* When creating the parameters of a function, a new cursor was created
      * at a moment where its layout was not attached to its parent. It's a
@@ -523,38 +535,39 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
      * it has to startEditing().
      * So the cursor is reset here to ensure every initialization is properly
      * done.*/
-    layoutCursor->didExitPosition();
-    layoutCursor->didEnterCurrentPosition();
+    // layoutCursor->didExitPosition();
+    // layoutCursor->didEnterCurrentPosition();
   }
 
   if (numberOfLayoutsAddedOrRemoved) {
     *numberOfLayoutsAddedOrRemoved =
-        h.numberOfChildren() - currentNumberOfChildren;
+        h->numberOfChildren() - currentNumberOfChildren;
   }
   return true;
 }
 
 bool InputBeautification::CreateParametersList(
-    Layout *parameters, HorizontalLayout h, int parenthesisIndexInParent,
+    Tree **parameters, Tree *h, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
-  Layout parenthesis = h.childAtIndex(parenthesisIndexInParent);
-  assert(parenthesis.type() == LayoutNode::Type::ParenthesisLayout);
+  EditionReference parenthesis = h->child(parenthesisIndexInParent);
+  assert(parenthesis->isParenthesisLayout());
   // Left parenthesis should not be temporary
-  assert(!static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())
-              ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
+  assert(!AutocompletedPair::IsTemporary(parenthesis, Side::Left));
 
-  Layout paramsString = parenthesis.childAtIndex(0);
-  assert(paramsString.isHorizontal());
+  EditionReference paramsString = parenthesis->child(0);
+  assert(paramsString->isRackLayout());
   assert(beautificationRule.numberOfParameters <= k_maxNumberOfParameters);
 
   int i = 0;  // Index in paramsString
-  int n = paramsString.numberOfChildren();
+  int n = paramsString->numberOfChildren();
   int parameterIndex = 0;
-  HorizontalLayout currentParameter = HorizontalLayout::Builder();
+  Tree *currentParameter = KRackL()->clone();
 
-  int cursorPosition =
-      layoutCursor->layout() == paramsString ? layoutCursor->position() : -1;
-  LayoutCursor newCursor;
+  int cursorPosition = layoutCursor->cursorNode() == paramsString
+                           ? layoutCursor->position()
+                           : -1;
+  LayoutBufferCursor newCursor =
+      *static_cast<LayoutBufferCursor *>(layoutCursor);
 
   while (i <= n) {
     if (parameterIndex >= beautificationRule.numberOfParameters) {
@@ -562,25 +575,24 @@ bool InputBeautification::CreateParametersList(
       return false;
     }
     if (cursorPosition == 0) {
-      newCursor = LayoutCursor(currentParameter);
+      newCursor.setLayout(currentParameter, OMG::HorizontalDirection::Left());
     }
 
-    Layout child = i < n ? paramsString.childAtIndex(i) : Layout();
-    if (i == n || CodePointLayoutNode::IsCodePoint(child, ',')) {
+    EditionReference child = i < n ? paramsString->child(i) : nullptr;
+    if (i == n || CodePointLayout::IsCodePoint(child, ',')) {
       // right parenthesis or ',' reached. Add parameter
       assert(parameterIndex < k_maxNumberOfParameters);
       parameters[parameterIndex] = currentParameter;
-      currentParameter = HorizontalLayout::Builder();
+      currentParameter = KRackL()->clone();
       do {
         parameterIndex++;
         /* Some parameters are already preprocessed (like when beautifying
          * log2(..)). Skip them. */
       } while (parameterIndex < k_maxNumberOfParameters &&
-               !parameters[parameterIndex].isUninitialized());
+               parameters[parameterIndex]);
     } else {
       // Add layout to parameter
-      currentParameter.addOrMergeChildAtIndex(
-          child.clone(), currentParameter.numberOfChildren());
+      NAry::AddOrMergeChild(currentParameter, child->clone());
     }
 
     cursorPosition--;
@@ -589,7 +601,7 @@ bool InputBeautification::CreateParametersList(
 
   // Fill the remaining parameters with empty layouts
   for (int p = parameterIndex; p < beautificationRule.numberOfParameters; p++) {
-    parameters[p] = HorizontalLayout::Builder();
+    parameters[p] = KRackL()->clone();
   }
 
   if (!newCursor.isUninitialized()) {
@@ -598,4 +610,4 @@ bool InputBeautification::CreateParametersList(
   return true;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

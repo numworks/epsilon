@@ -1,26 +1,15 @@
 #ifndef POINCARE_INPUT_BEAUTIFICATION_H
 #define POINCARE_INPUT_BEAUTIFICATION_H
 
-#include <poincare/binomial_coefficient.h>
-#include <poincare/comparison.h>
-#include <poincare/conjugate.h>
-#include <poincare/derivative.h>
-#include <poincare/integral.h>
-#include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
-#include <poincare/logarithm.h>
-#include <poincare/nth_root.h>
-#include <poincare/piecewise_operator.h>
-#include <poincare/power.h>
-#include <poincare/product.h>
-#include <poincare/square_root.h>
-#include <poincare/sum.h>
-#include <poincare_layouts.h>
+#include <poincare_junior/src/expression/aliases.h>
+#include <poincare_junior/src/expression/builtin.h>
 
 #include <array>
 
-namespace Poincare {
+#include "k_tree.h"
+#include "layout_cursor.h"
+
+namespace PoincareJ {
 
 class InputBeautification {
  public:
@@ -30,7 +19,7 @@ class InputBeautification {
   };
 
   static BeautificationMethod BeautificationMethodWhenInsertingLayout(
-      Layout insertedLayout);
+      const Tree* insertedLayout);
 
   /* Both of the following functions return true if layouts were beautified.
    *
@@ -54,10 +43,10 @@ class InputBeautification {
                                                  Context* context);
 
  private:
-  using BeautifiedLayoutBuilder = Layout (*)(Layout* parameters);
+  using BeautifiedLayoutBuilder = Tree* (*)(Tree** parameters);
   constexpr static int k_maxNumberOfParameters = 4;
   struct BeautificationRule {
-    AliasesList listOfBeautifiedAliases;
+    Aliases listOfBeautifiedAliases;
     int numberOfParameters;
     BeautifiedLayoutBuilder layoutBuilder;
   };
@@ -68,7 +57,8 @@ class InputBeautification {
    * means that BeautificationRule on 1 char aliases isn't always ensured.
    * Currently, "*" is the only beautification affected. */
   constexpr static const BeautificationRule k_symbolsRules[] = {
-      // Comparison operators
+  // Comparison operators
+#if 0
       {"<=", 0,
        [](Layout* parameters) {
          return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
@@ -84,36 +74,33 @@ class InputBeautification {
          return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::NotEqual));
        }},
+#endif
       // Special char
       {"->", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             CodePointLayout::Builder(UCodePointRightwardsArrow));
+       [](Tree** parameters) {
+         return KCodePointL<UCodePointRightwardsArrow>()->clone();
        }},
       {"*", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             CodePointLayout::Builder(UCodePointMultiplicationSign));
+       [](Tree** parameters) {
+         return KCodePointL<UCodePointMultiplicationSign>()->clone();
        }},
   };
 
   constexpr static BeautificationRule k_infRule = {
-      "inf", 0, [](Layout* parameters) {
-        return static_cast<Layout>(
-            CodePointLayout::Builder(UCodePointInfinity));
+      "inf", 0, [](Tree** parameters) {
+        return KCodePointL<UCodePointInfinity>()->clone();
       }};
 
   constexpr static BeautificationRule k_piRule = {
-      "pi", 0, [](Layout* parameters) {
-        return static_cast<Layout>(
-            CodePointLayout::Builder(UCodePointGreekSmallLetterPi));
+      "pi", 0, [](Tree** parameters) {
+        return KCodePointL<UCodePointGreekSmallLetterPi>()->clone();
       }};
   constexpr static BeautificationRule k_thetaRule = {
-      "theta", 0, [](Layout* parameters) {
-        return static_cast<Layout>(
-            CodePointLayout::Builder(UCodePointGreekSmallLetterTheta));
+      "theta", 0, [](Tree** parameters) {
+        return KCodePointL<UCodePointGreekSmallLetterTheta>()->clone();
       }};
 
+#if 0
   constexpr static BeautificationRule k_absoluteValueRule = {
       AbsoluteValue::s_functionHelper.aliasesList(), 1, [](Layout* parameters) {
         return static_cast<Layout>(AbsoluteValueLayout::Builder(parameters[0]));
@@ -128,6 +115,7 @@ class InputBeautification {
         return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(
             parameters[0], parameters[1], parameters[2]));
       }};
+#endif
 
   /* WARNING 1: The following arrays (k_simpleIdentifiersRules and
    * k_identifiersRules) will be beautified only if the expression can be parsed
@@ -146,6 +134,7 @@ class InputBeautification {
 
   // simpleIdentifiersRules are included in identifiersRules
   constexpr static const BeautificationRule k_identifiersRules[] = {
+#if 0
       /* abs( */ k_absoluteValueRule,
       {/* binomial( */
        BinomialCoefficient::s_functionHelper.aliasesList(), 2,
@@ -234,11 +223,14 @@ class InputBeautification {
        [](Layout* parameters) {
          return static_cast<Layout>(NthRootLayout::Builder(parameters[0]));
        }},
-      /* theta */ k_thetaRule};
+      /* theta */ k_thetaRule
+#endif
+  };
 
-  constexpr static size_t k_lenOfIdentifiersRules =
-      std::size(k_identifiersRules);
+  constexpr static size_t k_lenOfIdentifiersRules = 0;
+  //      std::size(k_identifiersRules);
 
+#if 0
   constexpr static BeautificationRule k_sumRule = {
       Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {
         if (parameters[1].isEmpty()) {  // This preserves cursor
@@ -256,55 +248,55 @@ class InputBeautification {
                 .makeEditable());
       }};
   constexpr static int k_indexOfBaseOfLog = 1;
+#endif
 
-  static bool LayoutIsIdentifierMaterial(Layout l);
+  static bool LayoutIsIdentifierMaterial(const Tree* l);
 
   // All following methods return true if layout was beautified
 
   /* Apply k_symbolsRules  */
-  static bool BeautifySymbols(HorizontalLayout h, int rightmostIndexToBeautify,
+  static bool BeautifySymbols(Tree* rack, int rightmostIndexToBeautify,
                               LayoutCursor* layoutCursor);
 
   /* Apply the rules passed in rulesList as long as they match a tokenizable
    * identifiers. */
   static bool TokenizeAndBeautifyIdentifiers(
-      HorizontalLayout h, int rightmostIndexToBeautify,
+      Tree* rack, int rightmostIndexToBeautify,
       const BeautificationRule* rulesList, size_t numberOfRules,
       Context* context, LayoutCursor* layoutCursor,
       bool logBeautification = false);
 
-  static bool BeautifyPipeKey(HorizontalLayout h, int indexOfPipeKey,
+  static bool BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
                               LayoutCursor* cursor);
 
-  static bool BeautifyFractionIntoDerivative(HorizontalLayout h,
-                                             int indexOfFraction,
+  static bool BeautifyFractionIntoDerivative(Tree* rack, int indexOfFraction,
                                              LayoutCursor* layoutCursor);
   static bool BeautifyFirstOrderDerivativeIntoNthOrder(
-      HorizontalLayout h, int indexOfSuperscript, LayoutCursor* layoutCursor);
+      Tree* rack, int indexOfSuperscript, LayoutCursor* layoutCursor);
 
-  static bool BeautifySum(HorizontalLayout h, int indexOfComma,
-                          Context* context, LayoutCursor* layoutCursor);
+  static bool BeautifySum(Tree* rack, int indexOfComma, Context* context,
+                          LayoutCursor* layoutCursor);
 
   static bool CompareAndBeautifyIdentifier(
       const char* identifier, size_t identifierLength,
-      BeautificationRule beautificationRule, HorizontalLayout h, int startIndex,
+      BeautificationRule beautificationRule, Tree* rack, int startIndex,
       LayoutCursor* layoutCursor, int* comparisonResult,
       int* numberOfLayoutsAddedOrRemoved);
 
   static bool RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-      HorizontalLayout h, int startIndex, int endIndex,
+      Tree* rack, int startIndex, int endIndex,
       BeautificationRule beautificationRule, LayoutCursor* layoutCursor,
       int* numberOfLayoutsAddedOrRemoved = nullptr,
-      Layout preProcessedParameter = Layout(),
+      Tree* preProcessedParameter = nullptr,
       int indexOfPreProcessedParameter = -1);
 
   // Return false if there are too many parameters
-  static bool CreateParametersList(Layout* parameters, HorizontalLayout h,
+  static bool CreateParametersList(Tree** parameters, Tree* rack,
                                    int parenthesisIndexInParent,
                                    BeautificationRule beautificationRule,
                                    LayoutCursor* layoutCursor);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

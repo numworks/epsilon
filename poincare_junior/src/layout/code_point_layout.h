@@ -16,6 +16,8 @@ class CodePointLayout {
   static CodePoint GetCodePoint(const Tree* node);
   static CodePoint GetCombinedCodePoint(const Tree* node);
   static void GetName(const Tree* node, char* buffer, size_t bufferSize);
+
+  static bool IsCodePoint(const Tree* node, CodePoint cp);
 };
 
 }  // namespace PoincareJ

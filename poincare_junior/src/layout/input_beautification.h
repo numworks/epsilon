@@ -287,7 +287,7 @@ class InputBeautification {
                           LayoutCursor* layoutCursor);
 
   static bool CompareAndBeautifyIdentifier(
-      const char* identifier, size_t identifierLength,
+      const Tree* firstLayout, size_t identifierLength,
       BeautificationRule beautificationRule, Tree* rack, int startIndex,
       LayoutCursor* layoutCursor, int* comparisonResult,
       int* numberOfLayoutsAddedOrRemoved);

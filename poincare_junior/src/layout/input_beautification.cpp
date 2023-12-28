@@ -227,12 +227,11 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   }
   identifiersString[bufferCurrentLength] = 0;
 
-#if 0
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
-  ParsingContext parsingContext(context,
+  ParsingContext parsingContext(/*context, */
                                 ParsingContext::ParsingMethod::Classic);
-  Tokenizer tokenizer = Tokenizer(identifiersString, &parsingContext);
+  Tokenizer tokenizer = Tokenizer(h /* TODO start */, &parsingContext);
   Token currentIdentifier = Token(Token::Type::Undefined);
   Token nextIdentifier = tokenizer.popToken();
   bool layoutsWereBeautified = false;
@@ -241,9 +240,8 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   while (nextIdentifier.type() != Token::Type::EndOfStream) {
     // Offset the index of the identifier in the horizontal layout
     firstIndexOfIdentifier +=
-        UTF8Helper::StringGlyphLength(currentIdentifier.text(),
-                                      currentIdentifier.length()) +
-        numberOfLayoutsAddedOrRemovedLastLoop;
+        // TODO handle combining codepoints correctly
+        currentIdentifier.length() + numberOfLayoutsAddedOrRemovedLastLoop;
     currentIdentifier = nextIdentifier;
     nextIdentifier = tokenizer.popToken();
     numberOfLayoutsAddedOrRemovedLastLoop = 0;
@@ -260,7 +258,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       int comparison = 0;
       layoutsWereBeautified =
           CompareAndBeautifyIdentifier(
-              currentIdentifier.text(), currentIdentifier.length(),
+              currentIdentifier.firstLayout(), currentIdentifier.length(),
               beautificationRule, h, firstIndexOfIdentifier, layoutCursor,
               &comparison, &numberOfLayoutsAddedOrRemovedLastLoop) ||
           layoutsWereBeautified;
@@ -269,6 +267,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       }
     }
 
+#if 0
     /* The log beautification is using a bool in the signature of this method
      * which is a bit too specific, but this ensures that, when beautifying
      * after a parenthesis insertion, the identifiers string is tokenized
@@ -307,11 +306,9 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
           layoutsWereBeautified;
       break;
     }
+#endif
   }
   return layoutsWereBeautified;
-#else
-  return false;
-#endif
 }
 
 bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
@@ -456,20 +453,21 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(
-    const char *identifier, size_t identifierLength,
+    const Tree *firstLayout, size_t identifierLength,
     BeautificationRule beautificationRule, Tree *h, int startIndex,
     LayoutCursor *layoutCursor, int *comparisonResult,
     int *numberOfLayoutsAddedOrRemoved) {
-#if 0
   Aliases patternAliases = beautificationRule.listOfBeautifiedAliases;
-  *comparisonResult =
-      patternAliases.maxDifferenceWith(identifier, identifierLength);
+  int firstIndex;
+  const Tree *rack =
+      layoutCursor->rootNode()->parentOfDescendant(firstLayout, &firstIndex);
+  RackLayoutDecoder decoder(rack, firstIndex, firstIndex + identifierLength);
+  *comparisonResult = patternAliases.maxDifferenceWith(&decoder);
   if (*comparisonResult == 0) {
     return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
         h, startIndex, startIndex + identifierLength - 1, beautificationRule,
         layoutCursor, numberOfLayoutsAddedOrRemoved);
   }
-#endif
   return false;
 }
 

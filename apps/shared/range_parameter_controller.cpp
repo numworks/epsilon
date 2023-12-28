@@ -1,5 +1,7 @@
 #include "range_parameter_controller.h"
 
+#include <poincare/serialization_helper.h>
+
 #include "poincare_helpers.h"
 
 using namespace Escher;
@@ -61,13 +63,16 @@ void RangeParameterController::fillRangeCells() {
       int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
-      buffer[numberOfChars++] = ' ';
-      buffer[numberOfChars++] = ';';
-      buffer[numberOfChars++] = ' ';
+      numberOfChars += SerializationHelper::CodePoint(
+          buffer + numberOfChars, bufferSize - numberOfChars, ' ');
+      numberOfChars += SerializationHelper::CodePoint(
+          buffer + numberOfChars, bufferSize - numberOfChars, ';');
+      numberOfChars += SerializationHelper::CodePoint(
+          buffer + numberOfChars, bufferSize - numberOfChars, ' ');
       numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           max, buffer + numberOfChars, bufferSize - numberOfChars, precision,
           Preferences::PrintFloatMode::Decimal);
-      buffer[numberOfChars++] = '\0';
+      buffer[numberOfChars++] = 0;
     }
     RangeCell *cell = i == 0 ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);

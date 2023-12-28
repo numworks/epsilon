@@ -29,8 +29,8 @@ static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
   memmove(buffer + spacesLength, buffer, sizeToMove);
   for (int i = 0; i < spacesCount; i++) {
     int spaceOffset = i * spaceCharSize;
-    UTF8Decoder::CodePointToChars(' ', buffer + spaceOffset,
-                                  bufferSize - spaceOffset);
+    Poincare::SerializationHelper::CodePoint(buffer + spaceOffset,
+                                             bufferSize - spaceOffset, ' ');
   }
 }
 
@@ -350,8 +350,9 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces,
   assert(location + spacesSize + sizeToMove <= m_buffer + m_bufferSize);
   memmove(location + spacesSize, location, sizeToMove);
   for (int i = 0; i < numberOfSpaces; i++) {
-    UTF8Decoder::CodePointToChars(' ', location + i * spaceCharSize,
-                                  (m_buffer + m_bufferSize) - location);
+    Poincare::SerializationHelper::CodePoint(
+        location + i * spaceCharSize, (m_buffer + m_bufferSize) - location,
+        ' ');
   }
 }
 

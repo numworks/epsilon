@@ -5,7 +5,6 @@
 #include <escher/text_input_helpers.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
-#include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/aliases_list.h>
 #include <poincare/parametered_expression.h>
@@ -357,8 +356,8 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     }
   }
   removePreviousGlyphIfRepetition(defaultXNTHasChanged);
-  return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer,
-                                       bufferLength);
+  return Poincare::SerializationHelper::CodePoint(buffer, bufferLength,
+                                                  defaultXNTCodePoint);
 }
 
 bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {

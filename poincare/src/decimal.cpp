@@ -224,9 +224,7 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
   int currentChar = 0;
   if (m_negative) {
     assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
-    buffer[0] = '-';
-    buffer[1] = 0;
-    currentChar++;
+    currentChar += SerializationHelper::CodePoint(buffer, bufferSize, '-');
     if (currentChar >= bufferSize - 1) {
       return bufferSize - 1;
     }

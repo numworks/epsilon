@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare/serialization_helper.h>
 #include <string.h>
 
 namespace Shared {
@@ -45,13 +46,13 @@ void TextToInsertForCommandText(const char* command, int commandLength,
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index,
-                                             bufferSize - index - 1);
+      index += Poincare::SerializationHelper::CodePoint(
+          buffer + index, bufferSize - index, codePoint);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
         assert(index < bufferSize);
-        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index,
-                                               bufferSize - index - 1);
+        index += Poincare::SerializationHelper::CodePoint(
+            buffer + index, bufferSize - index, UCodePointEmpty);
         argumentAlreadyReplaced = true;
       }
     }
@@ -65,7 +66,7 @@ void TextToInsertForCommandText(const char* command, int commandLength,
     codePoint = decoder.nextCodePoint();
   }
   assert(index < bufferSize);
-  buffer[index] = 0;
+  assert(buffer[index] == 0);
 }
 
 }  // namespace ToolboxHelpers

@@ -62,6 +62,7 @@ app_shared_src = $(addprefix apps/shared/,\
   function_title_cell.cpp \
   function_zoom_and_pan_curve_view_controller.cpp \
   go_to_parameter_controller.cpp \
+  grid_type_controller.cpp \
   interactive_curve_view_controller.cpp \
   interval.cpp \
   interval_parameter_controller.cpp \
@@ -94,7 +95,7 @@ app_shared_src = $(addprefix apps/shared/,\
   vertical_cursor_view.cpp \
 )
 
-$(eval $(call depends_on_transparent_image,apps/shared/range_parameter_controller.cpp, $(addprefix apps/shared/images/, \
+$(eval $(call depends_on_transparent_image,apps/shared/grid_type_controller.cpp, $(addprefix apps/shared/images/, \
   polar_grid_icon.png cartesian_grid_icon.png)))
 
 app_shared_src += $(app_shared_test_src)

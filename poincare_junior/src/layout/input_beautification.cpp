@@ -1,7 +1,5 @@
 #include "input_beautification.h"
 
-#include <poincare_junior/src/n_ary.h>
-
 #include "autocompleted_pair.h"
 #include "parsing/tokenizer.h"
 
@@ -347,12 +345,8 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
   if (!fractionDDXLayout->treeIsIdenticalTo(childToMatch)) {
     return false;
   }
-#if 0
   return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
       h, indexOfFraction, indexOfFraction, k_derivativeRule, layoutCursor);
-#else
-  return false;
-#endif
 }
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
@@ -488,7 +482,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
          h->child(endIndex + 1)->isParenthesisLayout());
   int currentNumberOfChildren = h->numberOfChildren();
   // Create pattern layout
-  Tree *parameters[k_maxNumberOfParameters];
+  Tree *parameters[k_maxNumberOfParameters] = {};
   if (preProcessedParameter) {
     assert(indexOfPreProcessedParameter < k_maxNumberOfParameters);
     parameters[indexOfPreProcessedParameter] = preProcessedParameter;
@@ -566,12 +560,13 @@ bool InputBeautification::CreateParametersList(
   int cursorPosition = layoutCursor->cursorNode() == paramsString
                            ? layoutCursor->position()
                            : -1;
-  LayoutBufferCursor newCursor =
-      *static_cast<LayoutBufferCursor *>(layoutCursor);
+  LayoutBufferCursor::EditionPoolCursor newCursor =
+      *static_cast<LayoutBufferCursor::EditionPoolCursor *>(layoutCursor);
 
   while (i <= n) {
     if (parameterIndex >= beautificationRule.numberOfParameters) {
       // Too many parameters, cancel beautification
+      // TODO delete parameters or raise exception
       return false;
     }
     if (cursorPosition == 0) {
@@ -599,13 +594,16 @@ bool InputBeautification::CreateParametersList(
     i++;
   }
 
+  currentParameter->removeTree();
+
   // Fill the remaining parameters with empty layouts
   for (int p = parameterIndex; p < beautificationRule.numberOfParameters; p++) {
     parameters[p] = KRackL()->clone();
   }
 
   if (!newCursor.isUninitialized()) {
-    *layoutCursor = newCursor;
+    layoutCursor->setLayout(newCursor.cursorNode(),
+                            OMG::HorizontalDirection::Left());
   }
   return true;
 }

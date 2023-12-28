@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include <array>
 
@@ -110,17 +111,20 @@ class InputBeautification {
         return abs;
       }};
 
-#if 0
   constexpr static BeautificationRule k_derivativeRule = {
-      Derivative::s_functionHelper.aliasesList(), 3, [](Layout* parameters) {
-        if (parameters[1].isEmpty()) {  // This preserves cursor
-          parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('x'), 0,
-                                               0);
+      "diff", 3, [](Tree** parameters) -> Tree* {
+        EditionReference diff =
+            SharedEditionPool->push(BlockType::DerivativeLayout);
+        SharedEditionPool->push(0);
+        diff->moveTreeAfterNode(parameters[2]);
+        diff->moveTreeAfterNode(parameters[1]);
+        EditionReference var = parameters[0];
+        diff->moveTreeAfterNode(parameters[0]);
+        if (RackLayout::IsEmpty(var)) {  // This preserves cursor
+          NAry::AddChildAtIndex(var, "x"_cl->clone(), 0);
         }
-        return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(
-            parameters[0], parameters[1], parameters[2]));
+        return diff;
       }};
-#endif
 
   /* WARNING 1: The following arrays (k_simpleIdentifiersRules and
    * k_identifiersRules) will be beautified only if the expression can be parsed

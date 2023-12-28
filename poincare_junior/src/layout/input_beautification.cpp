@@ -318,24 +318,24 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
 
 bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
                                           LayoutCursor *cursor) {
-#if 0
   EditionReference pipeKey = h->child(indexOfPipeKey);
   if (!CodePointLayout::IsCodePoint(pipeKey, '|')) {
     return false;
   }
-  h.removeChildAtIndexInPlace(indexOfPipeKey);
-  EditionReference parameter = KRackL()->clone();
+  NAry::RemoveChildAtIndex(h, indexOfPipeKey);
+  Tree *parameter = KRackL()->clone();
   EditionReference toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
-  LayoutCursor cursorForInsertion(h);
-  cursorForInsertion.safeSetPosition(indexOfPipeKey);
-  cursorForInsertion.insertLayout(toInsert, nullptr);
-  if (cursor->layout() == h && cursor->position() == indexOfPipeKey + 1) {
-    cursor->safeSetLayout(toInsert->child(0), OMG::Direction::Left());
+  LayoutBufferCursor::EditionPoolCursor cursorForInsertion =
+      *static_cast<LayoutBufferCursor::EditionPoolCursor *>(cursor);
+  cursorForInsertion.setLayout(h, OMG::Direction::Left());
+  cursorForInsertion.setPosition(indexOfPipeKey);
+  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext data{toInsert};
+  cursorForInsertion.insertLayout(nullptr, &data);
+  if (cursor->cursorNode() == h && cursor->position() == indexOfPipeKey + 1) {
+    cursor->setLayout(cursorForInsertion.cursorNode(),
+                      OMG::Direction::Left());  // safe?
   }
   return true;
-#else
-  return false;
-#endif
 }
 
 bool InputBeautification::BeautifyFractionIntoDerivative(

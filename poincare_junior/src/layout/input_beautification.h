@@ -3,6 +3,7 @@
 
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtin.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 #include <array>
 
@@ -100,12 +101,16 @@ class InputBeautification {
         return KCodePointL<UCodePointGreekSmallLetterTheta>()->clone();
       }};
 
-#if 0
   constexpr static BeautificationRule k_absoluteValueRule = {
-      AbsoluteValue::s_functionHelper.aliasesList(), 1, [](Layout* parameters) {
-        return static_cast<Layout>(AbsoluteValueLayout::Builder(parameters[0]));
+      // Builtin::GetReservedFunction(BlockType::Abs)->second,
+      "abs", 1, [](Tree** parameters) -> Tree* {
+        EditionReference abs =
+            SharedEditionPool->push(BlockType::AbsoluteValueLayout);
+        parameters[0]->detachTree();
+        return abs;
       }};
 
+#if 0
   constexpr static BeautificationRule k_derivativeRule = {
       Derivative::s_functionHelper.aliasesList(), 3, [](Layout* parameters) {
         if (parameters[1].isEmpty()) {  // This preserves cursor

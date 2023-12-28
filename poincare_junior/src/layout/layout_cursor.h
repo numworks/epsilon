@@ -131,6 +131,8 @@ class LayoutCursor {
 };
 
 class LayoutBufferCursor final : public LayoutCursor {
+  friend class InputBeautification;
+
  public:
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
@@ -183,6 +185,8 @@ class LayoutBufferCursor final : public LayoutCursor {
  private:
   class EditionPoolCursor final : public LayoutCursor {
     friend class LayoutBufferCursor;
+    friend class InputBeautification;
+
     EditionPoolCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
       setCursorNode(Tree::FromBlocks(rootNode()->block() + cursorOffset));

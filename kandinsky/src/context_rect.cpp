@@ -89,11 +89,13 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
   int deltaRow = 0;  // columns increment rows naturally
   if (horizontalFlip) {
     currentPixelAddress += absoluteRect.width() - 1;
+    startingI += rect.width() - absoluteRect.width();
     deltaCol = -1;
     deltaRow = 2;
   }
   if (verticalFlip) {
     currentPixelAddress += absoluteRect.width() * (absoluteRect.height() - 1);
+    startingJ += rect.height() - absoluteRect.height();
     deltaRow -= 2;
   }
   deltaRow *= absoluteRect.width();

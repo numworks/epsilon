@@ -117,9 +117,8 @@ Symbol Symbol::Builder(CodePoint name) {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   int codePointLength =
-      UTF8Decoder::CodePointToChars(name, buffer, bufferSize - 1);
+      SerializationHelper::CodePoint(buffer, bufferSize - 1, name);
   assert(codePointLength < bufferSize);
-  buffer[codePointLength] = 0;
   return Symbol::Builder(buffer, codePointLength);
 }
 

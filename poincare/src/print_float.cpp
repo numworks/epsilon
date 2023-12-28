@@ -74,7 +74,10 @@ int PrintFloat::Long::serialize(char* buffer, int bufferSize) const {
     buffer[0] = 0;
     return bufferSize - 1;
   }
-  int numberOfChars = m_negative ? 1 : 0;  // 1 for the minus sign char
+  int numberOfChars = 0;
+  if (m_negative) {
+    numberOfChars += SerializationHelper::CodePoint(buffer, bufferSize, '-');
+  }
   if (m_digits[0] != 0) {
     numberOfChars += PrintInt::Left(m_digits[0], buffer + numberOfChars,
                                     bufferSize - numberOfChars - 1);
@@ -90,12 +93,6 @@ int PrintFloat::Long::serialize(char* buffer, int bufferSize) const {
   } else {
     numberOfChars += PrintInt::Left(m_digits[1], buffer + numberOfChars,
                                     bufferSize - numberOfChars - 1);
-  }
-  if (m_negative) {
-    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
-    if (bufferSize > 0) {
-      buffer[0] = '-';
-    }
   }
   if (numberOfChars <= bufferSize - 1) {
     buffer[numberOfChars] = 0;

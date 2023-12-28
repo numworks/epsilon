@@ -1,6 +1,6 @@
 #include "function_banner_delegate.h"
 
-#include <ion/unicode/utf8_decoder.h>
+#include <poincare/serialization_helper.h>
 
 #include "poincare_helpers.h"
 
@@ -15,11 +15,12 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   size_t numberOfChar = 0;
-  numberOfChar +=
-      UTF8Decoder::CodePointToChars(function->symbol(), buffer + numberOfChar,
-                                    k_textBufferSize - numberOfChar - 1);
+  numberOfChar += SerializationHelper::CodePoint(
+      buffer + numberOfChar, k_textBufferSize - numberOfChar - 1,
+      function->symbol());
   assert(numberOfChar <= k_textBufferSize);
-  strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
+  numberOfChar += SerializationHelper::CodePoint(
+      buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
   bannerView()->abscissaSymbol()->setText(buffer);
 
   numberOfChar = function->printValue(
@@ -34,8 +35,8 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
 
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
-  numberOfChar +=
-      strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
+  numberOfChar += SerializationHelper::CodePoint(
+      buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
   numberOfChar += function->printValue(
       cursor->t(), cursor->x(), cursor->y(), buffer + numberOfChar,
       k_textBufferSize - numberOfChar,

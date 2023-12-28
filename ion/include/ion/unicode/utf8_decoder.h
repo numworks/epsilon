@@ -82,8 +82,6 @@ class UTF8Decoder : public UnicodeDecoder {
   // No null-terminating char
   static size_t CodePointToChars(CodePoint c, char* buffer,
                                  size_t bufferLength);
-  static size_t CodePointToCharsWithNullTermination(CodePoint c, char* buffer,
-                                                    size_t bufferSize);
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
 
   /* Check whether 'end' points to the last byte of a code point in a string.

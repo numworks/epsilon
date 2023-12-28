@@ -27,8 +27,8 @@ size_t Function::NameWithArgument(Ion::Storage::Record record,
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
   assert(length < bufferSize - 1);
   assert(UTF8Decoder::CharSizeOfCodePoint(argument) <= 2);
-  length += UTF8Decoder::CodePointToChars(argument, buffer + length,
-                                          bufferSize - length);
+  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
+                                           argument);
   assert(length <= bufferSize - 1);
   length +=
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');

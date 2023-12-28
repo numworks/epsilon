@@ -72,22 +72,23 @@ void ListController::fillWithDefaultFunctionEquation(
     CodePoint symbol) const {
   size_t length;
   if (symbol == ContinuousFunction::k_polarSymbol) {
-    length = UTF8Decoder::CodePointToChars(ContinuousFunction::k_radiusSymbol,
-                                           buffer, bufferSize);
+    length = SerializationHelper::CodePoint(buffer, bufferSize,
+                                            ContinuousFunction::k_radiusSymbol);
   } else if (FunctionModelsParameterController::EquationsPrefered()) {
-    length = UTF8Decoder::CodePointToChars(ContinuousFunction::k_ordinateSymbol,
-                                           buffer, bufferSize);
+    length = SerializationHelper::CodePoint(
+        buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
   } else {
     length = modelsParameterController->DefaultName(buffer, bufferSize);
-    assert(bufferSize > length);
-    buffer[length++] = '(';
-    length += UTF8Decoder::CodePointToChars(symbol, buffer + length,
-                                            bufferSize - length);
-    assert(bufferSize > length + 2);
-    buffer[length++] = ')';
+    assert(0 < length && length < bufferSize - 1);
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, '(');
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, symbol);
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, ')');
   }
-  buffer[length++] = '=';
-  buffer[length++] = 0;
+  length +=
+      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');
 }
 
 // Return true if given layout contains θ

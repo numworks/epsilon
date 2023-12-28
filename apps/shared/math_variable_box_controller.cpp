@@ -6,11 +6,11 @@
 #include <apps/shared/sequence.h>
 #include <assert.h>
 #include <escher/metric.h>
-#include <ion/unicode/utf8_decoder.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
+#include <poincare/serialization_helper.h>
 
 #include <algorithm>
 
@@ -287,26 +287,25 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
     char closingChar = m_currentPage == Page::Function ? ')' : '}';
     assert(nameLength < nameToHandleMaxSize);
     if (m_currentPage == Page::Sequence) {
-      nameLength += UTF8Decoder::CodePointToChars(
-          UCodePointSystem, nameToHandle + nameLength,
-          nameToHandleMaxSize - nameLength - 1);
+      nameLength += SerializationHelper::CodePoint(
+          nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
+          UCodePointSystem);
     }
-    nameLength +=
-        UTF8Decoder::CodePointToChars(openingChar, nameToHandle + nameLength,
-                                      nameToHandleMaxSize - nameLength - 1);
-    nameLength += UTF8Decoder::CodePointToChars(
-        UCodePointEmpty, nameToHandle + nameLength,
-        nameToHandleMaxSize - nameLength - 1);
+    nameLength += SerializationHelper::CodePoint(
+        nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
+        openingChar);
+    nameLength += SerializationHelper::CodePoint(
+        nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
+        UCodePointEmpty);
     if (m_currentPage == Page::Sequence) {
-      nameLength += UTF8Decoder::CodePointToChars(
-          UCodePointSystem, nameToHandle + nameLength,
-          nameToHandleMaxSize - nameLength - 1);
+      nameLength += SerializationHelper::CodePoint(
+          nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
+          UCodePointSystem);
     }
-    nameLength +=
-        UTF8Decoder::CodePointToChars(closingChar, nameToHandle + nameLength,
-                                      nameToHandleMaxSize - nameLength - 1);
+    nameLength += SerializationHelper::CodePoint(
+        nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
+        closingChar);
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength] = 0;
   }
 
   // Handle the text

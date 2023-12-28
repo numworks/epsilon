@@ -205,7 +205,7 @@ int Integer::serializeInDecimal(char *buffer, int bufferSize) const {
     d = udiv(d.quotient, base);
   }
   assert(length <= bufferSize - 1);
-  buffer[length] = 0;
+  assert(buffer[length] == 0);
 
   // Flip the string
   for (int i = m_negative, j = length - 1; i < j; i++, j--) {
@@ -224,14 +224,16 @@ int Integer::serializeInBinaryBase(char *buffer, int bufferSize, char symbol,
     return bufferSize - 1;
   }
   // Fill buffer with "0x"
-  buffer[currentChar++] = '0';
-  buffer[currentChar++] = symbol;
+  currentChar += SerializationHelper::CodePoint(buffer + currentChar,
+                                                bufferSize - currentChar, '0');
+  currentChar += SerializationHelper::CodePoint(
+      buffer + currentChar, bufferSize - currentChar, symbol);
 
   int nbOfDigits = numberOfDigits();
   // Special case for 0
   if (nbOfDigits == 0) {
-    buffer[currentChar++] = '0';
-    buffer[currentChar] = 0;
+    currentChar += SerializationHelper::CodePoint(
+        buffer + currentChar, bufferSize - currentChar, '0');
     return currentChar;
   }
 

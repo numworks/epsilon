@@ -95,11 +95,11 @@ int ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
-  return UTF8Decoder::CodePointToCharsWithNullTermination(
+  return SerializationHelper::CodePoint(
+      buffer, bufferSize,
       properties().isPolar()
           ? k_radiusSymbol
-          : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol),
-      buffer, bufferSize);
+          : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol));
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX,

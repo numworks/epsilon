@@ -52,7 +52,7 @@ int BracketPairLayoutNode::serializeWithSymbol(
       childLayout()->serialize(buffer + length, bufferSize - length,
                                floatDisplayMode, numberOfSignificantDigits);
   if (length >= bufferSize) {
-    buffer[bufferSize - 1] = '\0';
+    assert(buffer[bufferSize - 1] == 0);
     return bufferSize;
   }
   length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,

@@ -216,6 +216,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
    * TODO : Factorize bufferSize with TextField::k_maxBufferSize */
   constexpr static size_t bufferSize = 220;
   char identifiersString[bufferSize];
+  identifiersString[0] = 0;
   int bufferCurrentLength = 0;
   for (int i = firstIndexOfIdentifier; i <= rightmostIndexToBeautify; i++) {
     Layout currentChild = h.childAtIndex(i);
@@ -227,11 +228,11 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       // String is too long
       return false;
     }
-    UTF8Decoder::CodePointToChars(c, identifiersString + bufferCurrentLength,
-                                  bufferSize - bufferCurrentLength);
+    SerializationHelper::CodePoint(identifiersString + bufferCurrentLength,
+                                   bufferSize - bufferCurrentLength, c);
     bufferCurrentLength += cLen;
   }
-  identifiersString[bufferCurrentLength] = 0;
+  assert(identifiersString[bufferCurrentLength] == 0);
 
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */

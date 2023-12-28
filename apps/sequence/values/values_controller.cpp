@@ -83,8 +83,8 @@ int ValuesController::fillColumnName(int column, char *buffer) {
   if (!isSumColumn) {
     return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
   }
-  int sigmaLength = UTF8Decoder::CodePointToChars(
-      UCodePointNArySummation, buffer, k_maxSizeOfColumnName);
+  int sigmaLength = SerializationHelper::CodePoint(
+      buffer, k_maxSizeOfColumnName, UCodePointNArySummation);
   return sigmaLength +
          seq->name(buffer + sigmaLength, k_maxSizeOfColumnName - sigmaLength);
 }

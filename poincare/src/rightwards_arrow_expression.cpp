@@ -26,8 +26,7 @@ Layout RightwardsArrowExpressionNode::createLayout(
   constexpr CodePoint arrow = UCodePointRightwardsArrow;
   constexpr size_t k_sizeOfArrow = UTF8Decoder::CharSizeOfCodePoint(arrow) + 1;
   char arrowString[k_sizeOfArrow];
-  UTF8Decoder::CodePointToCharsWithNullTermination(arrow, arrowString,
-                                                   k_sizeOfArrow);
+  SerializationHelper::CodePoint(arrowString, k_sizeOfArrow, arrow);
   return LayoutHelper::Infix(Expression(this), floatDisplayMode,
                              numberOfSignificantDigits, arrowString, context);
 }

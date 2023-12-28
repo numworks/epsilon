@@ -68,7 +68,7 @@ void KDContext::drawAntialiasedLine(float x1, float y1, float x2, float y2,
   /* Implements Xiaolin Wu's line algorithm
    * https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm */
 
-  bool steep = abs(y2 - y1) > abs(x2 - x1);
+  bool steep = std::fabs(y2 - y1) > std::fabs(x2 - x1);
   if (steep) {
     std::swap(x1, y1);
     std::swap(x2, y2);

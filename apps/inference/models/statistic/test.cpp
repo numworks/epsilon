@@ -124,11 +124,11 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
     if (zoomSide) {
       alpha = thresholdAbscissa(
           Poincare::ComparisonNode::OperatorType::Superior, 0.5);
-      z = abs(z);
+      z = std::abs(z);
     } else {
       alpha = thresholdAbscissa(
           Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
-      z = -abs(z);
+      z = -std::abs(z);
     }
   } else {
     alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());

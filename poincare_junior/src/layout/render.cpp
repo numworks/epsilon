@@ -53,6 +53,7 @@ KDSize Render::Size(const Tree* node) {
       return newSize;
     }
     case LayoutType::CondensedSum: {
+      assert(font == KDFont::Size::Small);
       KDSize baseSize = Size(node->child(0));
       KDSize subscriptSize = Size(node->child(1));
       KDSize superscriptSize = Size(node->child(2));
@@ -285,6 +286,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       }
     }
     case LayoutType::CondensedSum: {
+      assert(font == KDFont::Size::Small);
       KDCoordinate x = 0;
       KDCoordinate y = 0;
       KDSize baseSize = Size(node->child(0));
@@ -483,6 +485,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
           NthRoot::AdjustedIndexSize(node, font).height());
     }
     case LayoutType::CondensedSum:
+      assert(font == KDFont::Size::Small);
       return Baseline(node->child(0)) +
              std::max(0, Height(node->child(2)) - Height(node->child(0)) / 2);
     case LayoutType::Derivative:

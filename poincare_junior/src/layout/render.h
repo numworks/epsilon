@@ -12,6 +12,8 @@
 namespace PoincareJ {
 
 class Render final {
+  friend class RackLayout;
+
  public:
   // TODO hide overloads without font from the external API
   static KDSize Size(const Tree* node);

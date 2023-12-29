@@ -15,7 +15,6 @@ namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
 }  // namespace VerticalOffset
 
-KDFont::Size RackLayout::font = KDFont::Size::Large;
 const LayoutCursor* RackLayout::layoutCursor = nullptr;
 
 KDSize RackLayout::Size(const Tree* node) {
@@ -35,7 +34,7 @@ KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
   int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
   KDCoordinate baseBaseline =
       (baseIndex == -1 || baseIndex == node->numberOfChildren())
-          ? KDFont::GlyphHeight(font) / 2
+          ? KDFont::GlyphHeight(Render::font) / 2
           : ChildBaseline(node, baseIndex);
   if (!VerticalOffset::IsSuperscript(childI)) {
     return baseBaseline;
@@ -53,7 +52,7 @@ KDCoordinate RackLayout::ChildYPosition(const Tree* node, int i) {
 
   KDCoordinate baseHeight =
       (baseIndex == -1 || baseIndex == node->numberOfChildren())
-          ? KDFont::GlyphHeight(font)
+          ? KDFont::GlyphHeight(Render::font)
           : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
   return Baseline(node) - RackLayout::ChildBaseline(node, i) + baseHeight -
          VerticalOffset::IndiceHeight;
@@ -64,7 +63,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
   if (node->numberOfChildren() == 0) {
-    KDSize emptyRectangleSize = EmptyRectangle::RectangleSize(font);
+    KDSize emptyRectangleSize = EmptyRectangle::RectangleSize(Render::font);
     KDCoordinate width =
         ShouldDrawEmptyRectangle(node) ? emptyRectangleSize.width() : 0;
     return KDSize(width, emptyRectangleSize.height());
@@ -79,7 +78,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
       int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
       KDCoordinate baseHeight =
           (baseIndex == -1 || baseIndex == node->numberOfChildren())
-              ? KDFont::GlyphHeight(font)
+              ? KDFont::GlyphHeight(Render::font)
               : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
       childSize =
           childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
@@ -99,7 +98,7 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
   if (node->numberOfChildren() == 0) {
-    return EmptyRectangle::RectangleBaseLine(font);
+    return EmptyRectangle::RectangleBaseLine(Render::font);
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
@@ -127,7 +126,7 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                             bool isGridPlaceholder) {
   if (ShouldDrawEmptyRectangle(node)) {
-    EmptyRectangle::DrawEmptyRectangle(ctx, p, font,
+    EmptyRectangle::DrawEmptyRectangle(ctx, p, Render::font,
                                        isGridPlaceholder
                                            ? EmptyRectangle::Color::Gray
                                            : EmptyRectangle::Color::Yellow);

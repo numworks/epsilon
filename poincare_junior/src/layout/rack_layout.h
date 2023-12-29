@@ -28,9 +28,6 @@ class RackLayout {
                          bool isGridPlaceholder = false);
 
   static const LayoutCursor* layoutCursor;
-
- private:
-  static KDFont::Size font;
 };
 
 }  // namespace PoincareJ

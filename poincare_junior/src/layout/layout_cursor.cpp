@@ -132,11 +132,9 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
     stopSelecting();
   }
 
-#if 0
   if (*shouldRedrawLayout) {
     invalidateSizesAndPositions();
   }
-#endif
   return moved;
 }
 

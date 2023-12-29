@@ -115,11 +115,7 @@ class LayoutCursor {
   bool verticalMoveWithoutSelection(OMG::VerticalDirection direction);
 
   void privateStartSelecting() { m_startOfSelection = m_position; }
-#if 0
-  bool setEmptyRectangleVisibilityAtCurrentPosition(
-      EmptyRectangle::State state);
-  void invalidateSizesAndPositions();
-#endif
+  virtual void invalidateSizesAndPositions() {}
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
 
   void collapseSiblingsOfLayout(Tree* l);
@@ -180,6 +176,9 @@ class LayoutBufferCursor final : public LayoutCursor {
     execute(&EditionPoolCursor::deleteAndResetSelection);
   }
   void performBackspace() { execute(&EditionPoolCursor::performBackspace); }
+  void invalidateSizesAndPositions() override {
+    m_layout.invalidAllSizesPositionsAndBaselines();
+  }
 
  private:
   class EditionPoolCursor final : public LayoutCursor {

@@ -5,13 +5,16 @@
 #include <escher/selectable_list_view_delegate.h>
 #include <escher/stack_view_controller.h>
 #include <escher/transparent_image_view.h>
-
 namespace Shared {
 
 class InteractiveCurveViewRange;
 
-class GridTypeController : public Escher::ExplicitSelectableListViewController,
-                           public Escher::SelectableListViewDelegate {
+class GridTypeController
+    : public Escher::UniformSelectableListController<
+          Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                           Escher::TransparentImageView>,
+          2>,
+      public Escher::SelectableListViewDelegate {
  public:
   enum class GridType { Cartesian, Polar };
   GridTypeController(Escher::Responder *parentResponder,
@@ -26,17 +29,7 @@ class GridTypeController : public Escher::ExplicitSelectableListViewController,
 
   const char *title() override;
 
-  int numberOfRows() const override { return 2; }
-  Escher::HighlightCell *cell(int row) override {
-    assert(row >= 0 & row < 2);
-    return &m_cells[row];
-  }
-
  private:
-  using MenuCell =
-      Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                       Escher::TransparentImageView>;
-  MenuCell m_cells[2];
   InteractiveCurveViewRange *m_viewRange;
 };
 

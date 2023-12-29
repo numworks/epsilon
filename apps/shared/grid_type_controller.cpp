@@ -13,13 +13,15 @@ namespace Shared {
 GridTypeController::GridTypeController(
     Escher::Responder *parentResponder,
     InteractiveCurveViewRange *interactiveCurveViewRange)
-    : Escher::ExplicitSelectableListViewController(parentResponder, this),
+    : UniformSelectableListController<
+          MenuCell<MessageTextView, EmptyCellWidget, TransparentImageView>, 2>(
+          parentResponder, this),
       m_viewRange(interactiveCurveViewRange) {
-  m_cells[0].label()->setMessage(I18n::Message::CartesianGrid);
-  m_cells[1].label()->setMessage(I18n::Message::PolarGrid);
+  cell(0)->label()->setMessage(I18n::Message::CartesianGrid);
+  cell(1)->label()->setMessage(I18n::Message::PolarGrid);
 
-  m_cells[0].accessory()->setImage(ImageStore::CartesianGridIcon);
-  m_cells[1].accessory()->setImage(ImageStore::PolarGridIcon);
+  cell(0)->accessory()->setImage(ImageStore::CartesianGridIcon);
+  cell(1)->accessory()->setImage(ImageStore::PolarGridIcon);
 }
 
 const char *GridTypeController::title() {

@@ -258,21 +258,22 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
      * chars, including the quotation marks). */
     constexpr size_t k_maxSize =
         SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
-    char bufferSymbol[k_maxSize + 2];
+    constexpr size_t bufferSize = k_maxSize + 2;
+    char bufferSymbol[bufferSize];
     if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
       // It's a solution row, get symbol name
       if (system->type() == SystemOfEquations::Type::LinearSystem) {
         /* The system has more than one variable: the cell text is the
          * variable name */
         const char *varName = system->variable(row);
-        SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
+        SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
                                                       varName, strlen(varName));
       } else {
         /* The system has one variable but might have many solutions: the cell
          * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
         const char *varName = system->variable(0);
-        int length = SymbolAbstractNode::NameWithoutQuotationMarks(
-            bufferSymbol, k_maxSize, varName, strlen(varName));
+        size_t length = SymbolAbstractNode::NameWithoutQuotationMarks(
+            bufferSymbol, bufferSize, varName, strlen(varName));
         if (row < 9) {
           bufferSymbol[length++] = row + '1';
         } else {
@@ -287,7 +288,7 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
       assert(rowOfUserVariablesMessage >= 0);
       const char *varName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
+      SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
                                                     varName, strlen(varName));
     }
     static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(bufferSymbol);
@@ -295,7 +296,7 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
   if (type == k_approximateValueCellType) {
     assert(system->numberOfSolutions() > 0);
     // Get values of the solutions
-    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+    constexpr size_t bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char bufferValue[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(

@@ -88,14 +88,14 @@ class JuniorLayout final
     return *this;
   }
 
+  bool isEmpty() const { return tree()->numberOfChildren() == 0; }
+
   // Render
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
             PoincareJ::LayoutCursor* cursor,
             KDColor selectionColor = Escher::Palette::Select);
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 
- private:
-  using OLayout::node;
   JuniorLayoutNode* node() {
     return static_cast<JuniorLayoutNode*>(OLayout::node());
   }

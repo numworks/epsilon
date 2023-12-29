@@ -26,7 +26,7 @@ class LayoutField : public EditableField {
   void scrollToCursor();
 
   bool isEmpty() const { return layout().isEmpty(); }
-  Poincare::OLayout layout() const {
+  Poincare::Layout layout() const {
     return m_contentView.layoutView()->layout();
   }
   bool layoutHasNode() const {

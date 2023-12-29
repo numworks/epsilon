@@ -120,7 +120,8 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
        m_interactiveRange->isAuto(Axis::X) !=
            m_tempInteractiveRange.isAuto(Axis::X) ||
        m_interactiveRange->isAuto(Axis::Y) !=
-           m_tempInteractiveRange.isAuto(Axis::Y))) {
+           m_tempInteractiveRange.isAuto(Axis::Y) ||
+       m_interactiveRange->gridType() != m_tempInteractiveRange.gridType())) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
     return true;

@@ -18,7 +18,7 @@ GridTypeController::GridTypeController(
           parentResponder, nullptr),
       m_interactiveCurveViewRange(interactiveCurveViewRange) {
   cell(0)->label()->setMessage(I18n::Message::CartesianGrid);
-  cell(1)->label()->setMessage(I18n::Message::PolarGrid);
+  cell(1)->label()->setMessage(I18n::Message::Polar);
 
   cell(0)->accessory()->setImage(ImageStore::CartesianGridIcon);
   cell(1)->accessory()->setImage(ImageStore::PolarGridIcon);

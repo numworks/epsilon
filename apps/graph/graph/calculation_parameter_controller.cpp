@@ -141,7 +141,7 @@ void CalculationParameterController::fillAreaCell() {
     ExpiringPointer<ContinuousFunction> secondFunction =
         App::app()->functionStore()->modelForRecord(secondRecord);
     secondFunction->nameWithArgument(secondPlaceHolder + numberOfChars,
-                                     bufferSize);
+                                     bufferSize - numberOfChars);
     if (strcmp(mainFunctionName, secondPlaceHolder + numberOfChars) == 0) {
       // If both functions are name "y", display "Area between curves"
       m_areaCell.label()->setMessageWithPlaceholders(

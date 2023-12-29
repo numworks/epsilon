@@ -7,6 +7,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
+#include <poincare/print_int.h>
 #include <poincare/symbol.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
@@ -274,13 +275,8 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
         const char *varName = system->variable(0);
         size_t length = SymbolAbstractNode::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
-        if (row < 9) {
-          bufferSymbol[length++] = row + '1';
-        } else {
-          assert(row == 9);
-          bufferSymbol[length++] = '1';
-          bufferSymbol[length++] = '0';
-        }
+        length +=
+            PrintInt::Left(row + 1, bufferSymbol + length, bufferSize - length);
         bufferSymbol[length] = 0;
       }
     } else {

@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/tree.h>
 
+#include <algorithm>
+
 namespace PoincareJ {
 
 class LayoutSelection {
@@ -45,6 +47,8 @@ class LayoutSelection {
     return !isEmpty() && b >= m_node->child(leftPosition())->block() &&
            b <= m_node->child(rightPosition() - 1)->block();
   }
+
+  Tree* cloneSelection() const;
 
  private:
   const Tree* m_node;

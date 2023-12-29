@@ -124,7 +124,7 @@ class LayoutField : public EditableField {
     // View
     KDSize minimalSizeForOptimalDisplay() const override;
     // Selection
-    void copySelection(Poincare::Context* context, bool intoStoreMenu);
+    void copySelection(PoincareJ::Context* context, bool intoStoreMenu);
     KDFont::Size font() const { return m_layoutView.font(); }
 
     KDRect cursorRect() const override;

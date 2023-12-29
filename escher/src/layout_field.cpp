@@ -58,7 +58,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + TextCursorView::k_width, evSize.height());
 }
 
-void LayoutField::ContentView::copySelection(Context *context,
+void LayoutField::ContentView::copySelection(PoincareJ::Context *context,
                                              bool intoStoreMenu) {
   PoincareJ::LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
@@ -69,21 +69,12 @@ void LayoutField::ContentView::copySelection(Context *context,
   }
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  OLayout layoutToParse;
-#if 0
-  if (selection.layout().isHorizontal()) {
-    layoutToParse = HorizontalLayout::Builder();
-    for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
-      static_cast<HorizontalLayout &>(layoutToParse)
-          .addChildAtIndexInPlace(selection.layout().childAtIndex(i),
-                                  i - selection.leftPosition(),
-                                  i - selection.leftPosition());
-    }
-  } else {
-    layoutToParse = selection.layout();
-  }
+  PoincareJ::Tree *t = selection.cloneSelection();
+  Layout layoutToParse = JuniorLayout::Builder(t);
+  t->removeTree();
 
-  layoutToParse.serializeParsedExpression(buffer, bufferSize, context);
+  layoutToParse.serializeParsedExpression(buffer, bufferSize,
+                                          /* TODO context */ nullptr);
   if (buffer[0] == 0) {
     layoutToParse.serializeForParsing(buffer, bufferSize);
   }
@@ -95,7 +86,6 @@ void LayoutField::ContentView::copySelection(Context *context,
   } else {
     Clipboard::SharedClipboard()->store(buffer);
   }
-#endif
 }
 
 View *LayoutField::ContentView::subviewAtIndex(int index) {
@@ -521,7 +511,6 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     return true;
   }
 
-#if 0
   // Handle copy, cut
   if ((event == Ion::Events::Copy || event == Ion::Events::Cut) &&
       isEditing()) {
@@ -532,7 +521,6 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     }
     return true;
   }
-#endif
 
   // Handle paste
   if (event == Ion::Events::Paste) {
@@ -601,9 +589,7 @@ size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
 }
 
 bool LayoutField::handleStoreEvent() {
-#if 0
   m_contentView.copySelection(context(), true);
-#endif
   return true;
 }
 

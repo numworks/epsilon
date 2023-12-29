@@ -61,6 +61,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/grid.cpp \
   layout/input_beautification.cpp \
   layout/layout_cursor.cpp \
+  layout/layout_selection.cpp \
   layout/layoutter.cpp \
   layout/parser.cpp \
   layout/parsing/helper.cpp \

@@ -13,8 +13,7 @@ class GridTypeController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::TransparentImageView>,
-          2>,
-      public Escher::SelectableListViewDelegate {
+          2> {
  public:
   enum class GridType { Cartesian, Polar };
   GridTypeController(Escher::Responder *parentResponder,

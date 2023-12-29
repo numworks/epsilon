@@ -15,7 +15,7 @@ GridTypeController::GridTypeController(
     InteractiveCurveViewRange *interactiveCurveViewRange)
     : UniformSelectableListController<
           MenuCell<MessageTextView, EmptyCellWidget, TransparentImageView>, 2>(
-          parentResponder, this),
+          parentResponder, nullptr),
       m_interactiveCurveViewRange(interactiveCurveViewRange) {
   cell(0)->label()->setMessage(I18n::Message::CartesianGrid);
   cell(1)->label()->setMessage(I18n::Message::PolarGrid);

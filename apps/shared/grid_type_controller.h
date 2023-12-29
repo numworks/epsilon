@@ -30,7 +30,7 @@ class GridTypeController
   const char *title() override;
 
  private:
-  InteractiveCurveViewRange *m_viewRange;
+  InteractiveCurveViewRange *m_interactiveCurveViewRange;
 };
 
 }  // namespace Shared

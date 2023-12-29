@@ -21,7 +21,7 @@ class RangeParameterController
  public:
   using Axis = SingleInteractiveCurveViewRangeController::Axis;
 
-  using ParameterCell =
+  using MenuCell =
       Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                        Escher::ChevronView>;
   RangeParameterController(
@@ -55,9 +55,9 @@ class RangeParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::UnequalView>
       m_normalizeCell;
-  ParameterCell m_xRangeCell;
-  ParameterCell m_yRangeCell;
-  ParameterCell m_gridTypeCell;
+  MenuCell m_xRangeCell;
+  MenuCell m_yRangeCell;
+  MenuCell m_gridTypeCell;
   Escher::ButtonCell m_okButton;
   Shared::MessagePopUpController m_confirmPopUpController;
   SingleInteractiveCurveViewRangeController

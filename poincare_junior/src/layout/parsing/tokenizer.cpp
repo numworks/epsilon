@@ -426,6 +426,9 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
   if (Builtin::HasSpecialIdentifier(&subString)) {
     return Token::Type::SpecialIdentifier;
   }
+  if (BuiltinsAliases::k_piAliases.contains(&subString)) {
+    return Token::Type::Constant;
+  }
   Token::Type logicalOperatorType;
   if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
     return logicalOperatorType;

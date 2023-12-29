@@ -35,8 +35,9 @@ void GridTypeController::viewWillAppear() {
 
 bool GridTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    /* Update the view range before ViewWillAppear is
-     * called. */
+    /* m_viewRange must be updated before the controller is popped rather than
+     * in viewDidDisappear as RangeParameterController uses it in to fill cells
+     * accordingly in viewWillAppear. */
     m_interactiveCurveViewRange->setGridType(
         selectedRow() == 0 ? GridType::Cartesian : GridType::Polar);
     stackController()->pop();
